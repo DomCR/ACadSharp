@@ -171,6 +171,14 @@ namespace ACadSharp
 		public CadSummaryInfo SummaryInfo { get; set; }
 
 		/// <summary>
+		/// The collection of all table styles in the drawing.
+		/// </summary>
+		/// <remarks>
+		/// The collection is null if the <see cref="CadDictionary.AcadTableStyle"/> doesn't exist in the root dictionary.
+		/// </remarks>
+		public TableStyleCollection TableStyles { get; private set; }
+
+		/// <summary>
 		/// The collection of all text styles in the drawing.
 		/// </summary>
 		public TextStylesTable TextStyles { get; private set; }
@@ -262,7 +270,7 @@ namespace ACadSharp
 				CadDictionary.CreateDefaultEntries(this.RootDictionary);
 			}
 
-			this.UpdateCollections(true);
+			this.UpdateCollections(true, true);
 
 			//Default variables
 			this.AppIds.CreateDefaultEntries();
@@ -345,6 +353,15 @@ namespace ACadSharp
 						}
 					}
 					return null;
+				case Type t when t.Equals(typeof(TableStyle)):
+					if (this.DictionaryVariables.TryGet(DictionaryVariable.CurrentTableStyle, out variable))
+					{
+						if (this.TableStyles.TryGet(variable.Value, out TableStyle style))
+						{
+							return style as T;
+						}
+					}
+					return null;
 				default:
 					throw new NotSupportedException($"The type {typeof(T)} is not a configurable type in the document.");
 			}
@@ -412,6 +429,18 @@ namespace ACadSharp
 					}
 					this.MLeaderStyles.TryAdd(multiLeaderStyle);
 					break;
+				case TableStyle tableStyle:
+					if (this.DictionaryVariables.TryGet(DictionaryVariable.CurrentTableStyle, out variable))
+					{
+						variable.Value = tableStyle.Name;
+					}
+					else
+					{
+						variable = new DictionaryVariable(DictionaryVariable.CurrentTableStyle, tableStyle.Name);
+						this.DictionaryVariables.Add(variable);
+					}
+					this.TableStyles.TryAdd(tableStyle);
+					break;
 				default:
 					throw new NotSupportedException($"The type {typeof(T)} is not a configurable type in the document.");
 			}
@@ -445,7 +474,7 @@ namespace ACadSharp
 		/// Updates the collections in the document and link them to it's dictionary.
 		/// </summary>
 		/// <param name="createDictionaries"></param>
-		public void UpdateCollections(bool createDictionaries)
+		public void UpdateCollections(bool createDictionaries, bool createDefaults)
 		{
 			if (createDictionaries && this.RootDictionary == null)
 			{
@@ -469,16 +498,25 @@ namespace ACadSharp
 			if (this.updateCollection(CadDictionary.AcadScaleList, createDictionaries, out CadDictionary scales))
 			{
 				this.Scales = new ScaleCollection(scales);
+				if (createDefaults) { this.Scales.CreateDefaults(); }
 			}
 
 			if (this.updateCollection(CadDictionary.AcadMLineStyle, createDictionaries, out CadDictionary mlineStyles))
 			{
 				this.MLineStyles = new MLineStyleCollection(mlineStyles);
+				if (createDefaults) { this.MLineStyles.CreateDefaults(); }
 			}
 
 			if (this.updateCollection(CadDictionary.AcadMLeaderStyle, createDictionaries, out CadDictionary mleaderStyles))
 			{
 				this.MLeaderStyles = new MLeaderStyleCollection(mleaderStyles);
+				if (createDefaults) { this.MLeaderStyles.CreateDefaults(); }
+			}
+
+			if (this.updateCollection(CadDictionary.AcadTableStyle, createDictionaries, out CadDictionary tableStyles))
+			{
+				this.TableStyles = new TableStyleCollection(tableStyles);
+				if (createDefaults) { this.TableStyles.CreateDefaults(); }
 			}
 
 			if (this.updateCollection(CadDictionary.AcadImageDict, createDictionaries, out CadDictionary imageDefinitions))
@@ -499,11 +537,13 @@ namespace ACadSharp
 			if (this.updateCollection(CadDictionary.VariableDictionary, createDictionaries, out CadDictionary variables))
 			{
 				this.DictionaryVariables = new DictionaryVariableCollection(variables);
+				if (createDefaults) { this.DictionaryVariables.CreateDefaults(); }
 			}
 
 			if (this.updateCollection(CadDictionary.AcadMaterial, createDictionaries, out CadDictionary materials))
 			{
 				this.Materials = new MaterialCollection(materials);
+				if (createDefaults) { this.Materials.CreateDefaults(); }
 			}
 		}
 

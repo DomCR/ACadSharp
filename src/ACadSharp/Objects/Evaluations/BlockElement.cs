@@ -15,6 +15,6 @@ namespace ACadSharp.Objects.Evaluations
 		public string ElementName { get; set; }
 
 		[DxfCodeValue(1071)]
-		internal int Value1071 { get; set; }
+		public int Value1071 { get; set; }
 	}
 }

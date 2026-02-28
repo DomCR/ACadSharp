@@ -47,7 +47,7 @@ namespace ACadSharp.Entities
 				Left = 8
 			}
 
-			public enum CellAlignment
+			public enum CellAlignmentType
 			{
 				None = 0,
 				TopLeft = 1,

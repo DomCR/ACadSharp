@@ -8,6 +8,7 @@ using System;
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
+using System.Xml.Linq;
 using Xunit;
 using Xunit.Abstractions;
 
@@ -23,6 +24,7 @@ namespace ACadSharp.Tests.IO
 			Data.Add(new(nameof(SingleCaseGenerator.Empty)));
 			Data.Add(new(nameof(SingleCaseGenerator.ArcToPolyline)));
 			Data.Add(new(nameof(SingleCaseGenerator.ArcSegments)));
+			Data.Add(new(nameof(SingleCaseGenerator.GenerateExampleDxf)));
 			Data.Add(new(nameof(SingleCaseGenerator.SingleEllipse)));
 			Data.Add(new(nameof(SingleCaseGenerator.SingleLine)));
 			Data.Add(new(nameof(SingleCaseGenerator.ViewZoom)));
@@ -35,6 +37,7 @@ namespace ACadSharp.Tests.IO
 			Data.Add(new(nameof(SingleCaseGenerator.EntityColorByIndex)));
 			Data.Add(new(nameof(SingleCaseGenerator.CurrentEntityColorTrueColor)));
 			Data.Add(new(nameof(SingleCaseGenerator.CurrentEntityByIndex)));
+			Data.Add(new(nameof(SingleCaseGenerator.CurrentEntityByLayer)));
 			Data.Add(new(nameof(SingleCaseGenerator.CurrentEntityByBlock)));
 			Data.Add(new(nameof(SingleCaseGenerator.DefaultLayer)));
 			Data.Add(new(nameof(SingleCaseGenerator.LayerTrueColor)));
@@ -60,6 +63,7 @@ namespace ACadSharp.Tests.IO
 			Data.Add(new(nameof(SingleCaseGenerator.CreateHatchPolyline)));
 			Data.Add(new(nameof(SingleCaseGenerator.CreateHatch)));
 			Data.Add(new(nameof(SingleCaseGenerator.CreateCircleHatch)));
+			Data.Add(new(nameof(SingleCaseGenerator.HatchWithEntities)));
 			Data.Add(new(nameof(SingleCaseGenerator.ChangedEncoding)));
 			Data.Add(new(nameof(SingleCaseGenerator.AddBlockWithAttributes)));
 			Data.Add(new(nameof(SingleCaseGenerator.AddCustomScale)));
@@ -402,6 +406,44 @@ namespace ACadSharp.Tests.IO
 				this.Document.Entities.Add(pline);
 			}
 
+			public void HatchWithEntities()
+			{
+				Hatch hatch = new Hatch();
+				hatch.IsSolid = true;
+
+				Circle c = new Circle
+				{
+					Radius = 5
+				};
+
+				hatch.Paths.Add(new Hatch.BoundaryPath(c));
+
+				this.Document.Entities.Add(hatch);
+				this.Document.Entities.Add(c);
+
+				hatch = new Hatch();
+				hatch.IsSolid = true;
+
+				hatch.Paths.Add(new Hatch.BoundaryPath(new Arc
+				{
+					Radius = 5,
+					Center = new XYZ(10, 10, 0)
+				}));
+
+				this.Document.Entities.Add(hatch);
+
+				hatch = new Hatch();
+				hatch.IsSolid = true;
+
+				hatch.Paths.Add(new Hatch.BoundaryPath(new Line
+				{
+					StartPoint = XYZ.Zero,
+					EndPoint = new XYZ(10, 10, 0)
+				}));
+
+				this.Document.Entities.Add(hatch);
+			}
+
 			public void CreateCircleHatch()
 			{
 				Hatch hatch = new Hatch();
@@ -605,6 +647,11 @@ namespace ACadSharp.Tests.IO
 				layerstates.Add(record);
 
 				this.Document.Layers.Add(lay);
+			}
+
+			public void CurrentEntityByLayer()
+			{
+				this.Document.Header.CurrentEntityColor = Color.ByLayer;
 			}
 
 			public void CurrentEntityByBlock()
@@ -903,6 +950,30 @@ namespace ACadSharp.Tests.IO
 
 			public void Empty()
 			{ }
+
+			public void GenerateExampleDxf()
+			{
+				this.Document.Header.UnitMode = (short)ACadSharp.Types.Units.UnitsType.Millimeters;
+				var dxfLayer = new Layer("Example layer");
+				this.Document.Layers.Add(dxfLayer);
+				var anotherDxfLayer = new Layer("Another layer");
+				this.Document.Layers.Add(anotherDxfLayer);
+
+				var line = new Polyline2D(vertices: [new Vertex2D(new CSMath.XY(0, 0)), new Vertex2D(new CSMath.XY(100, 100))], isClosed: false)
+				{
+					Layer = dxfLayer,
+					Color = new Color(128)
+				};
+
+				var anotherLine = new Polyline2D(vertices: [new Vertex2D(new CSMath.XY(50, 50)), new Vertex2D(new CSMath.XY(100, 100))], isClosed: false)
+				{
+					Layer = anotherDxfLayer,
+					Color = new Color(64)
+				};
+
+				this.Document.Entities.Add(line);
+				this.Document.Entities.Add(anotherLine);
+			}
 
 			public void EntityChangeNormal()
 			{

@@ -31,7 +31,8 @@ namespace ACadSharp.Entities
 			[DxfCodeValue(140)]
 			public double TextHeight { get; set; }
 
-			[DxfCodeValue(340)]
+			//[DxfCodeValue(DxfReferenceType.Handle, 340)]
+			[DxfCodeValue(DxfReferenceType.Name, 7)]
 			public TextStyle TextStyle { get; set; }
 
 			[DxfCodeValue(92)]

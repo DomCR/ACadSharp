@@ -12,7 +12,7 @@ namespace ACadSharp.Tests.Objects.Collections
 			CadDocument document = new CadDocument();
 			var c = this.getDocumentCollection(document);
 
-			c.AddVariable("hello", "value");
+			c.AddOrUpdateVariable("hello", "value");
 
 			Assert.NotEmpty(c);
 			Assert.True(c.TryGet("hello", out DictionaryVariable variable));
@@ -21,7 +21,7 @@ namespace ACadSharp.Tests.Objects.Collections
 
 			Assert.Null(c.GetValue("goodbye"));
 
-			c.AddVariable("hello", "new_value");
+			c.AddOrUpdateVariable("hello", "new_value");
 			Assert.Equal("new_value", c.GetValue("hello"));
 		}
 

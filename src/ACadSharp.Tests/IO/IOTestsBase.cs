@@ -28,19 +28,19 @@ namespace ACadSharp.Tests.IO
 		{
 		};
 
+		protected readonly ITestOutputHelper _output;
+
 		protected readonly SvgConfiguration _svgConfiguration = new SvgConfiguration
 		{
 			DefaultLineWeight = 0.15,
 			LineWeightRatio = 50,
 		};
 
-		protected readonly ITestOutputHelper _output;
-
 		static IOTestsBase()
 		{
 			loadSamples("", "dwg", DwgFilePaths);
-			loadSamples("", "dxf", DxfAsciiFiles);
-			loadSamples("", "dxf", DxfBinaryFiles);
+			loadSamples("", "_ascii", "dxf", DxfAsciiFiles);
+			loadSamples("", "_binary", "dxf", DxfBinaryFiles);
 
 			Versions = new TheoryData<ACadVersion>
 			{
@@ -69,6 +69,11 @@ namespace ACadSharp.Tests.IO
 
 		protected static void loadSamples(string folder, string ext, TheoryData<FileModel> files)
 		{
+			loadSamples(folder, string.Empty, ext, files);
+		}
+
+		protected static void loadSamples(string folder, string prefix, string ext, TheoryData<FileModel> files)
+		{
 			string path = TestVariables.SamplesFolder;
 
 			if (!string.IsNullOrEmpty(folder))
@@ -82,7 +87,7 @@ namespace ACadSharp.Tests.IO
 				return;
 			}
 
-			foreach (string file in Directory.GetFiles(path, $"*.{ext}"))
+			foreach (string file in Directory.GetFiles(path, $"*{prefix}.{ext}"))
 			{
 				files.Add(new FileModel(file));
 			}
@@ -90,6 +95,18 @@ namespace ACadSharp.Tests.IO
 			if (files.Count == 0)
 			{
 				files.Add(new FileModel());
+			}
+		}
+
+		protected CadReaderConfiguration getConfiguration(FileModel test)
+		{
+			if (test.IsDxf)
+			{
+				return new DxfReaderConfiguration();
+			}
+			else
+			{
+				return new DwgReaderConfiguration();
 			}
 		}
 

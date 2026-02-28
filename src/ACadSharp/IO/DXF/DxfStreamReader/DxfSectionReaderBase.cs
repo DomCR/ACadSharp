@@ -142,13 +142,14 @@ namespace ACadSharp.IO.DXF
 					this.readExtendedData(template.EDataTemplateByAppName);
 					break;
 				default:
-					this._builder.Notify($"[{template.CadObject.SubclassMarker}] Unhandled dxf code {this._reader.Code} with value {this._reader.ValueAsString}", NotificationType.None);
+					this._builder.Notify($"[{this.currentSubclass}] Unhandled dxf code {this._reader.Code} with value {this._reader.ValueAsString}", NotificationType.None);
 					break;
 			}
 		}
 
 		protected CadEntityTemplate readEntity()
 		{
+			this.currentSubclass = string.Empty;
 			switch (this._reader.ValueAsString)
 			{
 				case DxfFileToken.EntityAttribute:
@@ -320,6 +321,7 @@ namespace ACadSharp.IO.DXF
 			}
 		}
 
+		[Obsolete("use lockpointer instead")]
 		protected bool checkObjectEnd(CadTemplate template, DxfMap map, Func<CadTemplate, DxfMap, bool> func)
 		{
 			if (this._reader.DxfCode == DxfCode.Start)
@@ -652,23 +654,76 @@ namespace ACadSharp.IO.DXF
 
 			switch (this._reader.Code)
 			{
-				//TODO: Implement multiline text def codes
 				case 1 or 3 when tmp.CadObject is MText mtext:
 					mtext.Value += this._reader.ValueAsString;
 					return true;
 				case 50 when tmp.CadObject is MText mtext://Read only for MText
-					double angle = MathHelper.DegToRad(this._reader.ValueAsDouble);
+					double angle = this._reader.ValueAsAngle;
 					mtext.AlignmentPoint = new XYZ(System.Math.Cos(angle), System.Math.Sin(angle), 0.0);
-					return true;
-				case 70:
-				case 74:
-				case 101:
 					return true;
 				case 7:
 					tmp.StyleName = this._reader.ValueAsString;
 					return true;
+				case 101 when tmp.CadObject is MText mtext:
+					this.readColumnData(mtext);
+					this.lockPointer = true;
+					return true;
 				default:
 					return this.tryAssignCurrentValue(template.CadObject, map.SubClasses[mapName]);
+			}
+		}
+
+		private void readColumnData(MText mtext)
+		{
+			this._reader.ReadNext();
+			while (this._reader.DxfCode != DxfCode.Start)
+			{
+				switch (this._reader.Code)
+				{
+					//Element count?
+					case 70:
+						break;
+					case 71:
+						mtext.ColumnData.ColumnType = (ColumnType)this._reader.ValueAsShort;
+						break;
+					case 72:
+						mtext.ColumnData.ColumnCount = this._reader.ValueAsInt;
+						break;
+					//X - axis dir 3BD 10
+					case 10:
+					case 20:
+					case 30:
+					//Insertion point 3BD 11
+					case 11:
+					case 21:
+					case 31:
+					//Rect width BD 40
+					case 40:
+					//Rect height BD 41
+					case 41:
+					//Extents width BD 42
+					case 42:
+					//Extents height BD 43
+					case 43:
+						break;
+					case 44:
+						mtext.ColumnData.Width = this._reader.ValueAsDouble;
+						break;
+					case 45:
+						mtext.ColumnData.Gutter = this._reader.ValueAsDouble;
+						break;
+					case 73:
+						mtext.ColumnData.AutoHeight = this._reader.ValueAsBool;
+						break;
+					case 74:
+						mtext.ColumnData.FlowReversed = this._reader.ValueAsBool;
+						break;
+					default:
+						this._builder.Notify($"[MText.ColumnData] unkown dxf code {this._reader.Code}.", NotificationType.None);
+						break;
+				}
+
+				this._reader.ReadNext();
 			}
 		}
 
@@ -876,51 +931,83 @@ namespace ACadSharp.IO.DXF
 
 		private CadEntityTemplate readPolyline()
 		{
-			CadPolyLineTemplate template = null;
-
 			if (this._builder.Version == ACadVersion.Unknown
 				|| this._builder.Version == ACadVersion.AC1009)
 			{
-				var polyline = new Polyline2D();
-				template = new CadPolyLineTemplate(polyline);
-				this.readEntityCodes<Polyline2D>(template, this.readPolyline);
-
-				while (this._reader.Code == 0 && this._reader.ValueAsString == DxfFileToken.EntityVertex)
-				{
-					Vertex2D v = new Vertex2D();
-					CadVertexTemplate vertexTemplate = new CadVertexTemplate(v);
-					this.readEntityCodes<Vertex2D>(vertexTemplate, this.readVertex);
-
-					if (vertexTemplate.Vertex.Handle == 0)
-					{
-						polyline.Vertices.Add(v);
-					}
-					else
-					{
-						template.OwnedObjectsHandlers.Add(vertexTemplate.Vertex.Handle);
-						this._builder.AddTemplate(vertexTemplate);
-					}
-				}
-
-				while (this._reader.Code == 0 && this._reader.ValueAsString == DxfFileToken.EndSequence)
-				{
-					var seqend = new Seqend();
-					var seqendTemplate = new CadEntityTemplate<Seqend>(seqend);
-					this.readEntityCodes<Seqend>(seqendTemplate, this.readEntitySubclassMap);
-
-					polyline.Vertices.Seqend = seqend;
-				}
+				return this.readLegacyPolyline();
 			}
-			else
-			{
-				template = new CadPolyLineTemplate();
-				this.readEntityCodes<Entity>(template, this.readPolyline);
-			}
+
+			CadPolyLineTemplate template = null;
+			template = new CadPolyLineTemplate();
+			this.readEntityCodes<Entity>(template, this.readPolyline);
 
 			if (template.CadObject is CadPolyLineTemplate.PolyLinePlaceholder)
 			{
 				this._builder.Notify($"[{DxfFileToken.EntityPolyline}] Subclass not found, entity discarded", NotificationType.Warning);
 				return null;
+			}
+
+			while (this._reader.Code == 0 && this._reader.ValueAsString == DxfFileToken.EntityVertex)
+			{
+				var vertexTemplate = this.readEntityCodes<Entity>(new CadVertexTemplate(), this.readVertex);
+
+				if (vertexTemplate.OwnerHandle == null)
+				{
+					vertexTemplate.OwnerHandle = template.CadObject.Handle;
+				}
+
+				template.OwnedObjectsHandlers.Add(vertexTemplate.CadObject.Handle);
+				_builder.AddTemplate(vertexTemplate);
+			}
+
+			while (this._reader.Code == 0 && this._reader.ValueAsString == DxfFileToken.EndSequence)
+			{
+				var seqend = new Seqend();
+				var seqendTemplate = new CadEntityTemplate<Seqend>(seqend);
+				this.readEntityCodes<Seqend>(seqendTemplate, this.readEntitySubclassMap);
+
+				if (seqendTemplate.OwnerHandle == null)
+				{
+					seqendTemplate.OwnerHandle = template.CadObject.Handle;
+				}
+
+				template.OwnedObjectsHandlers.Add(seqendTemplate.CadObject.Handle);
+				_builder.AddTemplate(seqendTemplate);
+			}
+
+			return template;
+		}
+
+		private CadEntityTemplate readLegacyPolyline()
+		{
+			var polyline = new Polyline2D();
+			CadPolyLineTemplate template = new CadPolyLineTemplate(polyline);
+			this.readEntityCodes<Polyline2D>(template, this.readPolyline);
+
+			while (this._reader.Code == 0 && this._reader.ValueAsString == DxfFileToken.EntityVertex)
+			{
+				Vertex2D v = new Vertex2D();
+				CadVertexTemplate vertexTemplate = new CadVertexTemplate(v);
+				this.readEntityCodes<Vertex2D>(vertexTemplate, this.readVertex);
+
+				if (vertexTemplate.Vertex.Handle == 0)
+				{
+					polyline.Vertices.Add(v);
+				}
+				else
+				{
+					template.OwnedObjectsHandlers.Add(vertexTemplate.Vertex.Handle);
+					this._builder.AddTemplate(vertexTemplate);
+				}
+			}
+
+			while (this._reader.Code == 0 && this._reader.ValueAsString == DxfFileToken.EndSequence)
+			{
+				var seqend = new Seqend();
+				var seqendTemplate = new CadEntityTemplate<Seqend>(seqend);
+				this.readEntityCodes<Seqend>(seqendTemplate, this.readEntitySubclassMap);
+
+				polyline.Vertices.Seqend = seqend;
 			}
 
 			return template;
@@ -938,14 +1025,6 @@ namespace ACadSharp.IO.DXF
 				case 20:
 				//Obsolete; formerly an “entities follow flag” (optional; ignore if present)
 				case 66:
-				//Polygon mesh M vertex count (optional; default = 0)
-				case 71:
-				//Polygon mesh N vertex count(optional; default = 0)
-				case 72:
-				//Smooth surface M density(optional; default = 0)
-				case 73:
-				//Smooth surface N density (optional; default = 0)
-				case 74:
 					return true;
 				case 100:
 					switch (this._reader.ValueAsString)
@@ -961,6 +1040,10 @@ namespace ACadSharp.IO.DXF
 						case DxfSubclassMarker.PolyfaceMesh:
 							tmp.SetPolyLineObject(new PolyfaceMesh());
 							map.SubClasses.Add(DxfSubclassMarker.PolyfaceMesh, DxfClassMap.Create<PolyfaceMesh>());
+							return true;
+						case DxfSubclassMarker.PolygonMesh:
+							tmp.SetPolyLineObject(new PolygonMesh());
+							map.SubClasses.Add(DxfSubclassMarker.PolygonMesh, DxfClassMap.Create<PolygonMesh>());
 							return true;
 						default:
 							return false;
@@ -1227,7 +1310,7 @@ namespace ACadSharp.IO.DXF
 		{
 			this._reader.ReadNext();
 
-			DxfMap map = DxfMap.Create<MultiLeaderObjectContextData>();
+			var map = DxfClassMap.Create<MultiLeaderObjectContextData>();
 			var contextData = template.CadObject as MultiLeaderObjectContextData;
 
 			bool end = false;
@@ -1245,7 +1328,7 @@ namespace ACadSharp.IO.DXF
 						template.TextStyleHandle = this._reader.ValueAsHandle;
 						break;
 					default:
-						if (!this.tryAssignCurrentValue(contextData, map.SubClasses[contextData.SubclassMarker]))
+						if (!this.tryAssignCurrentValue(contextData, map))
 						{
 							this._builder.Notify($"[AcDbMLeaderObjectContextData] Unhandled dxf code {this._reader.Code} with value {this._reader.ValueAsString}", NotificationType.None);
 						}
@@ -1545,6 +1628,10 @@ namespace ACadSharp.IO.DXF
 						case DxfSubclassMarker.PolyfaceMeshFace:
 							tmp.SetVertexObject(new VertexFaceRecord());
 							map.SubClasses.Add(DxfSubclassMarker.PolyfaceMeshFace, DxfClassMap.Create<VertexFaceRecord>());
+							return true;
+						case DxfSubclassMarker.PolygonMeshVertex:
+							tmp.SetVertexObject(new PolygonMeshVertex());
+							map.SubClasses.Add(DxfSubclassMarker.PolygonMeshVertex, DxfClassMap.Create<PolygonMeshVertex>());
 							return true;
 						default:
 							return false;
@@ -2058,10 +2145,10 @@ namespace ACadSharp.IO.DXF
 								spline.Degree = this._reader.ValueAsInt;
 								break;
 							case 73:
-								spline.Rational = this._reader.ValueAsBool;
+								spline.IsRational = this._reader.ValueAsBool;
 								break;
 							case 74:
-								spline.Periodic = this._reader.ValueAsBool;
+								spline.IsPeriodic = this._reader.ValueAsBool;
 								break;
 							case 95:
 								nKnots = this._reader.ValueAsInt;
@@ -2090,7 +2177,10 @@ namespace ACadSharp.IO.DXF
 		{
 			this.readDefinedGroups(out ulong? xdict, out HashSet<ulong> reactorsHandles);
 
-			template.XDictHandle = xdict;
+			if (xdict.HasValue)
+			{
+				template.XDictHandle = xdict;
+			}
 			template.ReactorsHandles.UnionWith(reactorsHandles);
 		}
 
@@ -2135,6 +2225,23 @@ namespace ACadSharp.IO.DXF
 			}
 
 			return reactors;
+		}
+
+		protected bool tryAssignCurrentValue(object cadObject, DxfMap map)
+		{
+			if (string.IsNullOrEmpty(this.currentSubclass))
+			{
+				return false;
+			}
+
+			if (map.SubClasses.TryGetValue(this.currentSubclass, out var subClass))
+			{
+				return this.tryAssignCurrentValue(cadObject, subClass);
+			}
+			else
+			{
+				return false;
+			}
 		}
 
 		protected bool tryAssignCurrentValue(object cadObject, DxfClassMap map)

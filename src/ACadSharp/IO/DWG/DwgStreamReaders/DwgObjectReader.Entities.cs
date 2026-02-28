@@ -668,7 +668,7 @@ namespace ACadSharp.IO.DWG
 				if (flags.HasFlag(Cell.OverrideFlags.CellAlignment))
 				{
 					//Cell alignment RS 170 Present only if bit 0x01 is set in cell flag 
-					cell.StyleOverride.CellAlignment = (Cell.CellAlignment)this._mergedReaders.ReadBitShort();
+					cell.StyleOverride.CellAlignment = (Cell.CellAlignmentType)this._mergedReaders.ReadBitShort();
 				}
 				if (flags.HasFlag(Cell.OverrideFlags.BackgroundFillNone))
 				{
@@ -937,10 +937,10 @@ namespace ACadSharp.IO.DWG
 						break;
 					case CellValueType.General:
 					case CellValueType.String:
-						value.Value = this.readStringCellValue();
+						value.Value = this.readStringCadValue();
 						break;
 					case CellValueType.Date:
-						System.DateTime? dateTime = this.readDateCellValue();
+						System.DateTime? dateTime = this.readDateCadValue();
 						if (dateTime.HasValue)
 						{
 							value.Value = dateTime.Value;
@@ -966,7 +966,7 @@ namespace ACadSharp.IO.DWG
 			if (this.R2007Plus)
 			{
 				//Unit type BL 94 0 = no units, 1 = distance, 2 = angle, 4 = area, 8 = volume
-				value.Units = (ValueUnitType)this._mergedReaders.ReadBitLong();
+				value.Units = (TableEntity.ValueUnitType)this._mergedReaders.ReadBitLong();
 				//Format String TV 300
 				value.Format = this._mergedReaders.ReadVariableText();
 				//Value String TV 302
@@ -974,7 +974,7 @@ namespace ACadSharp.IO.DWG
 			}
 		}
 
-		private string readStringCellValue()
+		private string readStringCadValue()
 		{
 			//General, BL containing the byte count followed by a
 			//byte array. (introduced in R2007, use Unknown before
@@ -995,18 +995,63 @@ namespace ACadSharp.IO.DWG
 			}
 		}
 
-		private System.DateTime? readDateCellValue()
+		private System.DateTime? readDateCadValue()
 		{
 			//data size N, 
-			int data = this._mergedReaders.ReadBitLong();
-
-			if (data > 0)
+			int size = this._mergedReaders.ReadBitLong();
+			if (size <= 0)
 			{
-				byte[] array = this._mergedReaders.ReadBytes(data);
+				return null;
 			}
 
-			//TODO: Finish implementation
-			return null;
+			//followed by N bytes (Int64 value)
+			byte[] array = this._mergedReaders.ReadBytes(size);
+			if (this.R2007Plus)
+			{
+				switch (size)
+				{
+					case 16:
+						{
+							int year = LittleEndianConverter.Instance.ToInt16(array, 0);
+							int month = LittleEndianConverter.Instance.ToInt16(array, 2);
+							int day = LittleEndianConverter.Instance.ToInt16(array, 6);
+							int hour = LittleEndianConverter.Instance.ToInt16(array, 8);
+							int minute = LittleEndianConverter.Instance.ToInt16(array, 10);
+							int second = LittleEndianConverter.Instance.ToInt16(array, 12);
+							int millisecond = LittleEndianConverter.Instance.ToInt16(array, 14);
+
+							return new System.DateTime(year, month, day, hour, minute, second, millisecond);
+						}
+					case 14:
+						{
+							int year = LittleEndianConverter.Instance.ToInt16(array, 0);
+							int month = LittleEndianConverter.Instance.ToInt16(array, 2);
+							int day = LittleEndianConverter.Instance.ToInt16(array, 4);
+							int hour = LittleEndianConverter.Instance.ToInt16(array, 6);
+							int minute = LittleEndianConverter.Instance.ToInt16(array, 8);
+							int second = LittleEndianConverter.Instance.ToInt16(array, 10);
+							int millisecond = LittleEndianConverter.Instance.ToInt16(array, 12);
+
+							return new System.DateTime(year, month, day, hour, minute, second, millisecond);
+						}
+					default:
+						return null;
+				}
+			}
+			else
+			{
+				if (size != 8)
+				{
+					return null;
+				}
+
+				long high = BigEndianConverter.Instance.ToInt32(array, 0);
+				long low = BigEndianConverter.Instance.ToInt32(array, 4);
+
+				long seconds = (high << 32) | (low & 0xFFFFFFFFL);
+
+				return new System.DateTime(1970, 1, 1, 0, 0, 0, System.DateTimeKind.Utc).AddSeconds(seconds);
+			}
 		}
 
 		private XY? readCellValueXY()
@@ -1037,7 +1082,7 @@ namespace ACadSharp.IO.DWG
 			CellStyle cellStyle = (CellStyle)template.Format;
 
 			//BL 90 Cell style type
-			cellStyle.Type = (CellStyleTypeType)this._mergedReaders.ReadBitLong();
+			cellStyle.Type = (CellStyleType)this._mergedReaders.ReadBitLong();
 
 			//BS 170 Data flags, 0 = no data, 1 = data is present
 			//If data is present
@@ -1087,13 +1132,31 @@ namespace ACadSharp.IO.DWG
 			{
 				//BL 95 Edge flags
 				CellEdgeFlags edgeFlags = (CellEdgeFlags)this._mergedReaders.ReadBitLong();
-				// If edge flags is non - zero
-				if (edgeFlags != 0)
-				{
-					CellBorder border = new CellBorder(edgeFlags);
-					cellStyle.Borders.Add(border);
 
-					this.readBorder(template, border);
+				// If edge flags is non - zero
+				switch (edgeFlags)
+				{
+					case CellEdgeFlags.Top:
+						this.readBorder(template, cellStyle.TopBorder);
+						break;
+					case CellEdgeFlags.Right:
+						this.readBorder(template, cellStyle.RightBorder);
+						break;
+					case CellEdgeFlags.Bottom:
+						this.readBorder(template, cellStyle.BottomBorder);
+						break;
+					case CellEdgeFlags.Left:
+						this.readBorder(template, cellStyle.LeftBorder);
+						break;
+					case CellEdgeFlags.InsideVertical:
+						this.readBorder(template, cellStyle.VerticalInsideBorder);
+						break;
+					case CellEdgeFlags.InsideHorizontal:
+						this.readBorder(template, cellStyle.HorizontalInsideBorder);
+						break;
+					case CellEdgeFlags.Unknown:
+					default:
+						continue;
 				}
 			}
 		}
@@ -1113,7 +1176,7 @@ namespace ACadSharp.IO.DWG
 			//BL 93 Invisibility: 1 = invisible, 0 = visible.
 			border.IsInvisible = (this._mergedReaders.ReadBitLong() == 1);
 			//BD 40 Double line spacing
-			border.DoubleLineSpacing = (this._mergedReaders.ReadBitDouble());
+			border.DoubleLineSpacing = this._mergedReaders.ReadBitDouble();
 		}
 
 		private void readTableCell(CadTableCellTemplate template)

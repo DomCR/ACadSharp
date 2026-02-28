@@ -1,6 +1,4 @@
 ﻿using ACadSharp.Attributes;
-using System;
-using System.Collections.Generic;
 
 namespace ACadSharp.Entities
 {
@@ -15,12 +13,15 @@ namespace ACadSharp.Entities
 			[DxfCodeValue(63)]
 			public Color BackgroundColor { get; set; }
 
-			[Obsolete("use oriented base borders")]
-			public List<CellBorder> Borders { get; set; } = new();
-
 			public CellBorder BottomBorder { get; set; } = new(CellEdgeFlags.Bottom);
 
 			public double BottomMargin { get; set; }
+
+			/// <summary>
+			/// Gets or sets the alignment of the content within a cell.
+			/// </summary>
+			[DxfCodeValue(170)]
+			public Cell.CellAlignmentType CellAlignment { get; set; }
 
 			/// <summary>
 			/// Value for the color of cell content; override applied at the cell level
@@ -30,7 +31,9 @@ namespace ACadSharp.Entities
 
 			public TableCellContentLayoutFlags ContentLayoutFlags { get; set; }
 
-			public double HorizontalMargin { get; set; }
+			public CellBorder HorizontalInsideBorder { get; set; } = new(CellEdgeFlags.InsideHorizontal);
+
+			public double HorizontalMargin { get; set; } = 0.06d;
 
 			/// <summary>
 			/// Boolean flag for whether the fill color is on; override applied at the cell level
@@ -47,25 +50,32 @@ namespace ACadSharp.Entities
 
 			public double MarginVerticalSpacing { get; set; }
 
+			[DxfCodeValue(300)]
+			public string Name { get; set; }
+
 			public CellBorder RightBorder { get; set; } = new(CellEdgeFlags.Right);
 
 			public double RightMargin { get; set; }
 
+			[DxfCodeValue(91)]
+			public CellStyleClass StyleClass { get; set; }
+
 			[DxfCodeValue(92)]
 			public TableCellStylePropertyFlags TableCellStylePropertyFlags { get; set; }
+
+			[DxfCodeValue(62)]
+			public Color TextColor { get; set; }
 
 			public CellBorder TopBorder { get; set; } = new(CellEdgeFlags.Right);
 
 			[DxfCodeValue(90)]
-			public CellStyleTypeType Type { get; set; }
+			public CellStyleType Type { get; set; }
 
-			public double VerticalMargin { get; set; }
+			public CellBorder VerticalInsideBorder { get; set; } = new(CellEdgeFlags.InsideVertical);
 
-			/// <summary>
-			/// Gets or sets the alignment of the content within a cell.
-			/// </summary>
-			[DxfCodeValue(170)]
-			public Cell.CellAlignment CellAlignment { get; set; }
+			public double VerticalMargin { get; set; } = 0.06d;
+
+			internal int Id { get; set; }
 		}
 	}
 }

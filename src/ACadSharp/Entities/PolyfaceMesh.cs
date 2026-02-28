@@ -13,19 +13,22 @@ namespace ACadSharp.Entities
 	[DxfSubClass(DxfSubclassMarker.PolyfaceMesh)]
 	public class PolyfaceMesh : Polyline<VertexFaceMesh>
 	{
+		/// <summary>
+		/// Face records with the triangle indexes.
+		/// </summary>
+		public CadObjectCollection<VertexFaceRecord> Faces { get; private set; }
+
 		/// <inheritdoc/>
-		public override ObjectType ObjectType { get { return ObjectType.POLYLINE_PFACE; } }
+		public override PolylineFlags Flags { get => base.Flags | (PolylineFlags.PolyfaceMesh); set => base.Flags = value; }
 
 		/// <inheritdoc/>
 		public override string ObjectName => DxfFileToken.EntityPolyline;
 
 		/// <inheritdoc/>
-		public override string SubclassMarker => DxfSubclassMarker.PolyfaceMesh;
+		public override ObjectType ObjectType { get { return ObjectType.POLYLINE_PFACE; } }
 
-		/// <summary>
-		/// Face records with the triangle indexes.
-		/// </summary>
-		public CadObjectCollection<VertexFaceRecord> Faces { get; private set; }
+		/// <inheritdoc/>
+		public override string SubclassMarker => DxfSubclassMarker.PolyfaceMesh;
 
 		/// <inheritdoc/>
 		public PolyfaceMesh() : base()

@@ -2,8 +2,9 @@
 {
 	public partial class TableEntity
 	{
-		public enum CellStyleTypeType
+		public enum CellStyleType
 		{
+			Unknown = 0,
 			Cell = 1,
 			Row = 2,
 			Column = 3,

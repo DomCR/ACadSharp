@@ -5,6 +5,7 @@ using ACadSharp.Tables;
 using ACadSharp.Tables.Collections;
 using System;
 using System.Collections.Generic;
+using System.Linq;
 
 namespace ACadSharp.IO
 {
@@ -270,7 +271,20 @@ namespace ACadSharp.IO
 				dictionaryTemplate.Build(this);
 			}
 
-			this.DocumentToBuild.UpdateCollections(true);
+			if (this.DocumentToBuild.RootDictionary == null)
+			{
+				var root = this.dictionaryTemplates.Values.Select(t => t.CadObject).OfType<CadDictionary>().Where(d => d.Owner == null);
+				if (root.Count() > 1 || !root.Any())
+				{
+					this.Notify($"The root dictionary could not be found.", NotificationType.Warning);
+				}
+				else
+				{
+					this.DocumentToBuild.RootDictionary = root.FirstOrDefault();
+				}
+			}
+
+			this.DocumentToBuild.UpdateCollections(true, false);
 		}
 
 		protected void createMissingHandles()

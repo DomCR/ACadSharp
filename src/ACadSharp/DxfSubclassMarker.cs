@@ -20,11 +20,15 @@
 
 		public const string AttributeDefinition = "AcDbAttributeDefinition";
 
+		public const string BlkRefObjectContextData = "AcDbBlkRefObjectContextData";
+
 		public const string Block1PtParameter = "AcDbBlock1PtParameter";
 
 		public const string Block2PtParameter = "AcDbBlock2PtParameter";
 
 		public const string BlockAction = "AcDbBlockAction";
+
+		public const string BlockActionBasePt = "AcDbBlockActionWithBasePt";
 
 		public const string BlockBasePointParameter = "AcDbBlockBasePointParameter";
 
@@ -42,15 +46,21 @@
 
 		public const string BlockGrip = "AcDbBlockGrip";
 
-		public const string BlockGripExpression = "AcDbBlockGripExpression";
-
-		public const string BlockGripLocationComponent = "AcDbBlockGripLocationComponent";
+		public const string BlockGripExpression = "AcDbBlockGripExpr";
 
 		public const string BlockLinearParameter = "AcDbBlockLinearParameter";
 
 		public const string BlockParameter = "AcDbBlockParameter";
 
 		public const string BlockRecord = "AcDbBlockTableRecord";
+
+		public const string BlockRepresentationData = "AcDbBlockRepresentationData";
+
+		public const string BlockRotationAction = "AcDbBlockRotationAction";
+
+		public const string BlockRotationGrip = "AcDbBlockRotationGrip";
+
+		public const string BlockRotationParameter = "AcDbBlockRotationParameter";
 
 		public const string BlockVisibilityGrip = "AcDbBlockVisibilityGrip";
 
@@ -88,6 +98,10 @@
 
 		public const string Face3d = "AcDbFace";
 
+		public const string Field = "AcDbField";
+
+		public const string FieldList = "AcDbFieldList";
+
 		public const string Filter = "AcDbFilter";
 
 		public const string FormattedTableData = "AcDbFormattedTableData";
@@ -99,6 +113,8 @@
 		public const string Hatch = "AcDbHatch";
 
 		public const string Helix = "AcDbHelix";
+
+		public const string IdSet = "AcDbIdSet";
 
 		public const string Insert = "AcDbBlockReference";
 
@@ -115,6 +131,8 @@
 		public const string Linetype = "AcDbLinetypeTableRecord";
 
 		public const string LinkedData = "AcDbLinkedData";
+
+		public const string LinkedTableData = "AcDbLinkedTableData";
 
 		public const string LwPolyline = "AcDbPolyline";
 
@@ -133,6 +151,8 @@
 		public const string ModelerGeometry = "AcDbModelerGeometry";
 
 		public const string MText = "AcDbMText";
+
+		public const string MTextAttributeObjectContextData = "AcDbMTextAttributeObjectContextData";
 
 		public const string MultiLeader = "AcDbMLeader";
 
@@ -157,6 +177,10 @@
 		public const string PolyfaceMeshFace = "AcDbFaceRecord";
 
 		public const string PolyfaceMeshVertex = "AcDbPolyFaceMeshVertex";
+
+		public const string PolygonMesh = "AcDbPolygonMesh";
+
+		public const string PolygonMeshVertex = "AcDbPolygonMeshVertex";
 
 		public const string Polyline = "AcDb2dPolyline";
 
@@ -201,8 +225,6 @@
 		public const string TableContent = "AcDbTableContent";
 
 		public const string TableEntity = "AcDbTable";
-
-		public const string LinkedTableData = "AcDbLinkedTableData";
 
 		public const string TableRecord = "AcDbSymbolTableRecord";
 

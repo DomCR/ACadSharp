@@ -118,6 +118,11 @@ namespace ACadSharp.IO.DWG
 							children.AddRange(pline3d.Vertices);
 							seqend = pline3d.Vertices.Seqend;
 							break;
+						case PolygonMesh polygonMesh:
+							this.writePolygonMesh(polygonMesh);
+							children.AddRange(polygonMesh.Vertices);
+							seqend = polygonMesh.Vertices.Seqend;
+							break;
 						default:
 							throw new NotImplementedException($"Polyline not implemented : {entity.GetType().FullName}");
 					}
@@ -170,6 +175,7 @@ namespace ACadSharp.IO.DWG
 							break;
 						case Vertex3D:
 						case VertexFaceMesh:
+						case PolygonMeshVertex:
 							this.writeVertex(vertex);
 							break;
 						default:
@@ -1009,9 +1015,9 @@ namespace ACadSharp.IO.DWG
 								//degree BL 94 degree of the spline
 								this._writer.WriteBitLong(splineEdge.Degree);
 								//isrational B 73 1 if rational(has weights), else 0
-								this._writer.WriteBit(splineEdge.Rational);
+								this._writer.WriteBit(splineEdge.IsRational);
 								//isperiodic B 74 1 if periodic, else 0
-								this._writer.WriteBit(splineEdge.Periodic);
+								this._writer.WriteBit(splineEdge.IsPeriodic);
 
 								//numknots BL 95 number of knots
 								this._writer.WriteBitLong(splineEdge.Knots.Count);
@@ -1028,7 +1034,7 @@ namespace ACadSharp.IO.DWG
 									//pt0 2RD 10 control point
 									this._writer.Write2RawDouble((XY)splineEdge.ControlPoints[p]);
 
-									if (splineEdge.Rational)
+									if (splineEdge.IsRational)
 										//weight BD 40 weight
 										this._writer.WriteBitDouble(splineEdge.ControlPoints[p].Z);
 								}
@@ -1797,6 +1803,47 @@ namespace ACadSharp.IO.DWG
 			this._writer.HandleReference(DwgReferenceType.HardOwnership, pline.Vertices.Seqend);
 		}
 
+		private void writePolygonMesh(PolygonMesh pline)
+		{
+			//Flags BS 70
+			this._writer.WriteBitShort((short)pline.Flags);
+			//Curve type BS 75 Curve and smooth surface type.
+			this._writer.WriteBitShort((short)pline.SmoothSurface);
+			//M vert count BS 71 M vertex count
+			this._writer.WriteBitShort(pline.MVertexCount);
+			//N vert count BS 72 N vertex count
+			this._writer.WriteBitShort(pline.NVertexCount);
+			//M density BS 73 M vertex count
+			this._writer.WriteBitShort(pline.MSmoothSurfaceDensity);
+			//N density BS 74 N vertex count
+			this._writer.WriteBitShort(pline.NSmoothSurfaceDensity);
+
+			//R13-R2000:
+			if (this._version >= ACadVersion.AC1012 && this._version <= ACadVersion.AC1015)
+			{
+				//H first VERTEX (soft pointer)
+				this._writer.HandleReference(DwgReferenceType.SoftPointer, pline.Vertices.FirstOrDefault());
+				//H last VERTEX (soft pointer)
+				this._writer.HandleReference(DwgReferenceType.SoftPointer, pline.Vertices.LastOrDefault());
+			}
+
+			//R2004+:
+			if (this.R2004Plus)
+			{
+				//Owned Object Count BL Number of objects owned by this object.
+				this._writer.WriteBitLong(pline.Vertices.Count);
+
+				foreach (var vertex in pline.Vertices)
+				{
+					this._writer.HandleReference(DwgReferenceType.HardOwnership, vertex);
+				}
+			}
+
+			//Common:
+			//H SEQEND(hard owner)
+			this._writer.HandleReference(DwgReferenceType.HardOwnership, pline.Vertices.Seqend);
+		}
+
 		private void writeSeqend(Seqend seqend)
 		{
 			//for empty list seqend is null
@@ -1919,7 +1966,7 @@ namespace ACadSharp.IO.DWG
 			//Reactor, not needed
 			this._writer.HandleReference(image.DefinitionReactor);
 
-			if(image.DefinitionReactor != null)
+			if (image.DefinitionReactor != null)
 			{
 				this._objects.Enqueue(image.DefinitionReactor);
 			}
@@ -2278,26 +2325,26 @@ namespace ACadSharp.IO.DWG
 			//END REDUNDANT FIELDS
 
 			//Column type BS 71 0 = No columns, 1 = static columns, 2 = dynamic columns
-			this._writer.WriteBitShort((short)mtext.Column.ColumnType);
+			this._writer.WriteBitShort((short)mtext.ColumnData.ColumnType);
 
 			//IF Has Columns data(column type is not 0)
-			if (mtext.Column.ColumnType != ColumnType.NoColumns)
+			if (mtext.ColumnData.ColumnType != ColumnType.NoColumns)
 			{
 				//Column height count BL 72
-				this._writer.WriteBitLong(mtext.Column.ColumnCount);
+				this._writer.WriteBitLong(mtext.ColumnData.ColumnCount);
 				//Columnn width BD 44
-				this._writer.WriteBitDouble(mtext.Column.ColumnWidth);
+				this._writer.WriteBitDouble(mtext.ColumnData.Width);
 				//Gutter BD 45
-				this._writer.WriteBitDouble(mtext.Column.ColumnGutter);
+				this._writer.WriteBitDouble(mtext.ColumnData.Gutter);
 				//Auto height? B 73
-				this._writer.WriteBit(mtext.Column.ColumnAutoHeight);
+				this._writer.WriteBit(mtext.ColumnData.AutoHeight);
 				//Flow reversed? B 74
-				this._writer.WriteBit(mtext.Column.ColumnFlowReversed);
+				this._writer.WriteBit(mtext.ColumnData.FlowReversed);
 
 				//IF not auto height and column type is dynamic columns
-				if (!mtext.Column.ColumnAutoHeight && mtext.Column.ColumnType == ColumnType.DynamicColumns)
+				if (!mtext.ColumnData.AutoHeight && mtext.ColumnData.ColumnType == ColumnType.DynamicColumns)
 				{
-					foreach (double h in mtext.Column.ColumnHeights)
+					foreach (double h in mtext.ColumnData.Heights)
 					{
 						//Column height BD 46
 						this._writer.WriteBitDouble(h);

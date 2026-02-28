@@ -324,6 +324,32 @@ namespace ACadSharp.Tests.Entities
 		}
 
 		[Fact]
+		public void InitStartEndTest()
+		{
+			var start = XYZ.AxisX;
+			var end = XYZ.AxisY;
+			var center = XYZ.Zero;
+			Arc arc = new Arc(center, start, end);
+
+			Assert.Equal(0, arc.StartAngle);
+			Assert.Equal(MathHelper.HalfPI, arc.EndAngle);
+
+			arc.GetEndVertices(out XYZ s, out XYZ e);
+			AssertUtils.AreEqual(start, s);
+			AssertUtils.AreEqual(end, e);
+
+			arc = new Arc(center, end, start);
+
+			Assert.Equal(0, arc.EndAngle);
+			Assert.Equal(MathHelper.HalfPI, arc.StartAngle);
+
+			arc.GetEndVertices(out s, out e);
+			AssertUtils.AreEqual(start, e);
+			AssertUtils.AreEqual(end, s);
+			AssertUtils.AreEqual(end, s);
+		}
+
+		[Fact]
 		public void RotationTest()
 		{
 			double radius = 5;

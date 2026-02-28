@@ -451,6 +451,12 @@ namespace ACadSharp.Objects
 		[DxfCodeValue(148)]
 		public double Translucence { get; set; } = 0.0;
 
+		public const string ByBlockName = "ByBlock";
+
+		public const string ByLayerName = "ByLayer";
+
+		public const string GlobalName = "Global";
+
 		private double _ambientColorFactor = 1.0;
 
 		private double _diffuseColorFactor = 1.0;
