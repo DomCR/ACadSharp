@@ -16,7 +16,7 @@ namespace ACadSharp.Entities
 	/// </remarks>
 	[DxfName(DxfFileToken.EntitySpline)]
 	[DxfSubClass(DxfSubclassMarker.Spline)]
-	public class Spline : Entity, IPolylineEquivalent
+	public class Spline : Entity
 	{
 		/// <summary>
 		/// Number of control points (in WCS).
@@ -293,27 +293,6 @@ namespace ACadSharp.Entities
 			}
 
 			return vertexes;
-		}
-
-		public Polyline3D ToPolyline(int precision = 255)
-		{
-			if (!this.ControlPoints.Any())
-			{
-				//Should not update the entity
-				if (!this.UpdateFromFitPoints())
-				{
-					return new Polyline3D(this.FitPoints);
-				}
-			}
-
-			if (this.TryPolygonalVertexes(precision, out List<XYZ> pts))
-			{
-				var pline = new Polyline3D(pts);
-				//pline.IsClosed = this.IsClosed;
-				return pline;
-			}
-
-			return new Polyline3D();
 		}
 
 		/// <summary>

@@ -12,7 +12,7 @@ namespace ACadSharp.Entities
 	/// </remarks>
 	[DxfName(DxfFileToken.EntityLine)]
 	[DxfSubClass(DxfSubclassMarker.Line)]
-	public class Line : Entity, IPolylineEquivalent
+	public class Line : Entity
 	{
 		/// <summary>
 		/// A 3D coordinate representing the end point of the object.
@@ -89,18 +89,6 @@ namespace ACadSharp.Entities
 			var max = new XYZ(System.Math.Max(this.StartPoint.X, this.EndPoint.X), System.Math.Max(this.StartPoint.Y, this.EndPoint.Y), System.Math.Max(this.StartPoint.Z, this.EndPoint.Z));
 
 			return new BoundingBox(min, max);
-		}
-
-		/// <inheritdoc/>
-		public Polyline3D ToPolyline(int precision = 255)
-		{
-			var pline = new Polyline3D(this.StartPoint, this.EndPoint);
-			pline.Thickness = this.Thickness;
-			pline.Normal = this.Normal;
-
-			this.MatchProperties(pline);
-
-			return pline;
 		}
 	}
 }

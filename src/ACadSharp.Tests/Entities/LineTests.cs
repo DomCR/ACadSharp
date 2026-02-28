@@ -8,22 +8,15 @@ namespace ACadSharp.Tests.Entities
 	public class LineTests : CommonEntityTests<Line>
 	{
 		[Fact]
-		public void TranslationTest()
+		public override void GetBoundingBoxTest()
 		{
-			var start = XYZ.Zero;
-			var end = new XYZ(1, 1, 0);
-			Line line = new Line
-			{
-				StartPoint = start,
-				EndPoint = end,
-			};
+			Line line = new Line();
+			line.EndPoint = new XYZ(10, 10, 0);
 
-			XYZ move = new XYZ(5, 5, 0);
-			Transform transform = Transform.CreateTranslation(move);
-			line.ApplyTransform(transform);
+			BoundingBox boundingBox = line.GetBoundingBox();
 
-			AssertUtils.AreEqual(start.Add(move), line.StartPoint);
-			AssertUtils.AreEqual(end.Add(move), line.EndPoint);
+			Assert.Equal(new XYZ(0, 0, 0), boundingBox.Min);
+			Assert.Equal(new XYZ(10, 10, 0), boundingBox.Max);
 		}
 
 		[Fact]
@@ -66,9 +59,9 @@ namespace ACadSharp.Tests.Entities
 		}
 
 		[Fact]
-		public void ToPolylineTest()
+		public void TranslationTest()
 		{
-			var start = new XYZ(-1, -1, 0);
+			var start = XYZ.Zero;
 			var end = new XYZ(1, 1, 0);
 			Line line = new Line
 			{
@@ -76,23 +69,12 @@ namespace ACadSharp.Tests.Entities
 				EndPoint = end,
 			};
 
-			var pline = line.ToPolyline();
+			XYZ move = new XYZ(5, 5, 0);
+			Transform transform = Transform.CreateTranslation(move);
+			line.ApplyTransform(transform);
 
-			Assert.NotNull(pline);
-			Assert.Equal(pline.Vertices[0].Location, start);
-			Assert.Equal(pline.Vertices[1].Location, end);
-		}
-
-		[Fact]
-		public override void GetBoundingBoxTest()
-		{
-			Line line = new Line();
-			line.EndPoint = new XYZ(10, 10, 0);
-
-			BoundingBox boundingBox = line.GetBoundingBox();
-
-			Assert.Equal(new XYZ(0, 0, 0), boundingBox.Min);
-			Assert.Equal(new XYZ(10, 10, 0), boundingBox.Max);
+			AssertUtils.AreEqual(start.Add(move), line.StartPoint);
+			AssertUtils.AreEqual(end.Add(move), line.EndPoint);
 		}
 	}
 }

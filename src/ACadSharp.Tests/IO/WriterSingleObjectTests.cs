@@ -22,7 +22,6 @@ namespace ACadSharp.Tests.IO
 		{
 			Data = new();
 			Data.Add(new(nameof(SingleCaseGenerator.Empty)));
-			Data.Add(new(nameof(SingleCaseGenerator.ArcToPolyline)));
 			Data.Add(new(nameof(SingleCaseGenerator.ArcSegments)));
 			Data.Add(new(nameof(SingleCaseGenerator.GenerateExampleDxf)));
 			Data.Add(new(nameof(SingleCaseGenerator.SingleEllipse)));
@@ -324,23 +323,6 @@ namespace ACadSharp.Tests.IO
 				this.Document.Entities.Add(polyline);
 				this.Document.Entities.Add(l);
 			}
-
-			public void ArcToPolyline()
-			{
-				Arc arc = new Arc()
-				{
-					Center = new XYZ(100, 0, 0),
-					Radius = 50,
-					StartAngle = MathHelper.HalfPI,
-					EndAngle = Math.PI,
-				};
-
-				var pline = arc.ToPolyline();
-
-				this.Document.Entities.Add(arc);
-				this.Document.Entities.Add(pline);
-			}
-
 
 			public void ChangedEncoding()
 			{
