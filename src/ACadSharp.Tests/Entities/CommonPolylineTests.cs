@@ -14,7 +14,7 @@ namespace ACadSharp.Tests.Entities
 		where R : Vertex, new()
 	{
 		[Fact]
-		public void ClearVertrticesTest()
+		public void ClearVerticesTest()
 		{
 			CadDocument doc = new CadDocument();
 
@@ -94,6 +94,18 @@ namespace ACadSharp.Tests.Entities
 
 			Assert.Equal(polyline.Layer.Name, vertex.Layer.Name);
 			Assert.Equal(polyline.LineType.Name, vertex.LineType.Name);
+
+			polyline = new T();
+			polyline.Layer = new Layer("test_layer");
+			polyline.LineType = new LineType("test_ltype");
+			polyline.MatchVerticesEntityProperties = false;
+
+			vertex = new R();
+
+			polyline.Vertices.Add(vertex);
+
+			Assert.NotEqual(polyline.Layer.Name, vertex.Layer.Name);
+			Assert.NotEqual(polyline.LineType.Name, vertex.LineType.Name);
 		}
 
 		protected T createPolyline(IEnumerable<R> vertices)

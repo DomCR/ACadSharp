@@ -43,7 +43,7 @@ namespace ACadSharp.Entities
 
 		/// <inheritdoc/>
 		[DxfCodeValue(DxfReferenceType.Name, 8)]
-		public Layer Layer
+		public virtual Layer Layer
 		{
 			get { return this._layer; }
 			set
@@ -59,7 +59,7 @@ namespace ACadSharp.Entities
 
 		/// <inheritdoc/>
 		[DxfCodeValue(DxfReferenceType.Name, 6)]
-		public LineType LineType
+		public virtual LineType LineType
 		{
 			get { return this._lineType; }
 			set
@@ -69,7 +69,7 @@ namespace ACadSharp.Entities
 					throw new ArgumentNullException(nameof(value));
 				}
 
-				this._lineType = CadObject.updateCollection(value, this.Document?.LineTypes);
+				this._lineType = updateCollection(value, this.Document?.LineTypes);
 			}
 		}
 
