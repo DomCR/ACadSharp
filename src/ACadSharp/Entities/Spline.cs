@@ -285,11 +285,22 @@ namespace ACadSharp.Entities
 			this.prepare(out XYZ[] controlPts, out double[] weights, out double[] knots);
 			this.getStartAndEndKnots(knots, out double uStart, out double uEnd);
 
+			if (!this.IsClosed && !this.IsPeriodic)
+			{
+				precision -= 1;
+			}
+
 			double uDelta = (uEnd - uStart) / precision;
+
 			for (int i = 0; i < precision; i++)
 			{
 				double u = uStart + uDelta * i;
 				vertexes.Add(c(controlPts, weights, knots, this.Degree, u));
+			}
+
+			if (!(this.IsClosed || this.IsPeriodic))
+			{
+				vertexes.Add(controlPts[controlPts.Length - 1]);
 			}
 
 			return vertexes;
@@ -430,12 +441,13 @@ namespace ACadSharp.Entities
 					double currEndDelta = endDelta;
 					endDelta = endMag * (endTangent - lastV2).ToEnumerable().Sum(v => v * v);
 
-					if (startDelta >= currStartDelta && endDelta >= currEndDelta)
+					if ((startDelta >= currStartDelta && endDelta >= currEndDelta)
+						|| --iterationLimit <= 0)
 					{
 						return false;
 					}
 				}
-				while (startDelta + endDelta > MathHelper.Epsilon && --iterationLimit > 0);
+				while (startDelta + endDelta > MathHelper.Epsilon);
 
 				this.ControlPoints.AddRange(controlPoints);
 			}
@@ -694,7 +706,7 @@ namespace ACadSharp.Entities
 		}
 
 		private static void take3<T>(T[] pts, bool reverse, out T pt1, out T pt2, out T pt3)
-			where T : struct
+																					where T : struct
 		{
 			if (reverse)
 			{
@@ -712,7 +724,12 @@ namespace ACadSharp.Entities
 
 		private void getStartAndEndKnots(double[] knots, out double uStart, out double uEnd)
 		{
-			if (this.IsPeriodic)
+			if (this.IsClosed)
+			{
+				uStart = knots[0];
+				uEnd = knots[knots.Length - 1];
+			}
+			else if (this.IsPeriodic)
 			{
 				uStart = knots[this.Degree];
 				uEnd = knots[knots.Length - this.Degree - 1];
@@ -774,7 +791,12 @@ namespace ACadSharp.Entities
 			double uEnd;
 			List<XYZ> vertexes = new List<XYZ>();
 
-			if (this.IsPeriodic)
+			if (this.IsClosed)
+			{
+				uStart = knots[0];
+				uEnd = knots[knots.Length - 1];
+			}
+			else if (this.IsPeriodic)
 			{
 				uStart = knots[this.Degree];
 				uEnd = knots[knots.Length - this.Degree - 1];
