@@ -158,9 +158,10 @@ namespace ACadSharp.Entities
 		/// clockwise; otherwise, <see langword="false"/>.</param>
 		/// <returns>The bulge factor of the arc, which represents the tangent of one-fourth of the included angle. A positive value
 		/// indicates a counterclockwise arc, while a negative value indicates a clockwise arc.</returns>
-		public static double GetBulge(XY center, XY start, XY end, bool clockWise)
+		internal static double GetBulge(XY center, XY start, XY end, bool clockWise)
 		{
-			//TODO: add normal
+
+			//TODO: add normal //Needed??
 
 			XY u = start - center;
 			XY u2 = new XY(0.0 - u.Y, u.X);
@@ -186,8 +187,9 @@ namespace ACadSharp.Entities
 		/// </summary>
 		/// <param name="angle">The angle, in radians, for which to calculate the bulge. The angle must be a finite value.</param>
 		/// <returns>The bulge value, which is the tangent of half the angle.</returns>
-		public static double GetBulgeFromAngle(double angle)
+		internal static double GetBulgeFromAngle(double angle)
 		{
+			// TODO: NEEDED?
 			return Math.Tan(angle / 4);
 		}
 

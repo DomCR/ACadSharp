@@ -148,8 +148,6 @@ namespace ACadSharp.Entities
 		//varies
 		//Pattern line data.Repeats number of times specified by code 78. See Pattern Data
 		//11	For MPolygon, offset vector
-
-		//99	For MPolygon, number of degenerate boundary paths(loops), where a degenerate boundary path is a border that is ignored by the hatch
 		//99	For MPolygon, number of degenerate boundary paths(loops), where a degenerate boundary path is a border that is ignored by the hatch
 		/// <inheritdoc/>
 		public Hatch() : base() { }
