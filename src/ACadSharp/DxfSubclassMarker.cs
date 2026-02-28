@@ -2,6 +2,16 @@
 {
 	public static class DxfSubclassMarker
 	{
+		public const string AecWall = "AecDbWall";
+
+		public const string AecDbWallStyle = "AecDbWallStyle";
+
+		public const string AecDbCleanupGroupDef = "AecDbCleanupGroupDef";
+
+		public const string BinRecord = "BinRecord";
+
+		public const string ApplicationId = "AcDbRegAppTableRecord";
+
 		public const string AcDbPlaceHolder = "AcDbPlaceHolder";
 
 		public const string AlignedDimension = "AcDbAlignedDimension";
@@ -11,8 +21,6 @@
 		public const string Angular3PointDimension = "AcDb3PointAngularDimension";
 
 		public const string AnnotScaleObjectContextData = "AcDbAnnotScaleObjectContextData";
-
-		public const string ApplicationId = "AcDbRegAppTableRecord";
 
 		public const string Arc = "AcDbArc";
 
