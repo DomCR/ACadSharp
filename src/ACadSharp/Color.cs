@@ -541,7 +541,7 @@ namespace ACadSharp
 		/// Approximates color from a true color RGB.
 		/// </summary>
 		/// <returns>Approximate RGB color.</returns>
-		public byte GetApproxIndex()
+		public short GetApproxIndex()
 		{
 			if (this.IsTrueColor)
 			{
@@ -549,7 +549,7 @@ namespace ACadSharp
 			}
 			else
 			{
-				return (byte)this.Index;
+				return this.Index;
 			}
 		}
 

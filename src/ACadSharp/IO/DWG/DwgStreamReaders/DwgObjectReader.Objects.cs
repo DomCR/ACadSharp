@@ -1,11 +1,35 @@
 ﻿using ACadSharp.IO.Templates;
 using ACadSharp.Objects;
 using ACadSharp.Objects.Evaluations;
+using System;
 
 namespace ACadSharp.IO.DWG;
 
 internal partial class DwgObjectReader : DwgSectionIO
 {
+	private void readAnnotScaleObjectContextData(CadAnnotScaleObjectContextDataTemplate template)
+	{
+		this.readObjectContextData(template);
+
+		template.ScaleHandle = this.handleReference();
+	}
+
+	private CadTemplate readBlkRefObjectContextData()
+	{
+		BlockReferenceObjectContextData contextData = new BlockReferenceObjectContextData();
+		CadAnnotScaleObjectContextDataTemplate template = new CadAnnotScaleObjectContextDataTemplate(contextData);
+
+		this.readAnnotScaleObjectContextData(template);
+
+		contextData.Rotation = this._mergedReaders.ReadBitDouble();
+		contextData.InsertionPoint = this._mergedReaders.Read3BitDouble();
+		contextData.XScale = this._mergedReaders.ReadBitDouble();
+		contextData.YScale = this._mergedReaders.ReadBitDouble();
+		contextData.ZScale = this._mergedReaders.ReadBitDouble();
+
+		return template;
+	}
+
 	private void readBlock1PtParameter(CadBlock1PtParameterTemplate template)
 	{
 		this.readBlockParameter(template);
@@ -80,12 +104,12 @@ internal partial class DwgObjectReader : DwgSectionIO
 		BlockActionBasePt blockActionBasePt = template.CadObject as BlockActionBasePt;
 
 		blockActionBasePt.Value1011 = this._mergedReaders.Read3BitDouble();
-		
+
 		blockActionBasePt.Value92 = this._mergedReaders.ReadBitLong();
 		blockActionBasePt.Value301 = this._mergedReaders.ReadVariableText();
 		blockActionBasePt.Value93 = this._mergedReaders.ReadBitLong();
 		blockActionBasePt.Value302 = this._mergedReaders.ReadVariableText();
-		
+
 		blockActionBasePt.Value280 = this._mergedReaders.ReadBit();
 		blockActionBasePt.Value1012 = this._mergedReaders.Read3BitDouble();
 	}
@@ -158,7 +182,7 @@ internal partial class DwgObjectReader : DwgSectionIO
 		this.readBlockActionBasePt(template);
 
 		rotationAction.Value94 = this._mergedReaders.ReadBitLong();
-		rotationAction. Value303 = this._mergedReaders.ReadVariableText();
+		rotationAction.Value303 = this._mergedReaders.ReadVariableText();
 
 		return template;
 	}
@@ -255,6 +279,183 @@ internal partial class DwgObjectReader : DwgSectionIO
 
 		//90
 		template.CadObject.Id = this._objectReader.ReadBitLong();
+	}
+
+	private CadTemplate readField()
+	{
+		var field = new Field();
+		CadFieldTemplate template = new CadFieldTemplate(field);
+
+		this.readCommonNonEntityData(template);
+
+		//TV 1 Evaluator ID TV 2,3 Field code(in DXF strings longer than 255 characters
+		//are written in chunks of 255 characters in one 2 group and one or
+		//more 3 groups).
+		field.EvaluatorId = this._mergedReaders.ReadVariableText();
+		field.FieldCode = this._mergedReaders.ReadVariableText();
+		//BL 90 Number of child fields
+		int nchild = this._mergedReaders.ReadBitLong();
+		for (int i = 0; i < nchild; i++)
+		{
+			//H 360 Child field handle (hard owner)
+			template.ChildrenHandles.Add(this.handleReference());
+		}
+
+		//BL 97 Number of field objects
+		int nfields = this._mergedReaders.ReadBitLong();
+		for (int j = 0; j < nfields; j++)
+		{
+			//H 331 Field object handle (soft pointer)
+			template.CadObjectsHandles.Add(this.handleReference());
+		}
+
+		//-R2004
+		if (this._version < ACadVersion.AC1021)
+		{
+			//TV 4 Format string. After R2004 the format became part of the value object.
+			field.FormatString = this._mergedReaders.ReadVariableText();
+		}
+
+		//Common BL 91 Evaluation option flags:
+		field.EvaluationOptionFlags = (EvaluationOptionFlags)this._mergedReaders.ReadBitLong();
+		//BL 92 Filing option flags:
+		field.FilingOptionFlags = (FilingOptionFlags)this._mergedReaders.ReadBitLong();
+		//BL 96 Evaluation error code
+		field.FieldStateFlags = (FieldStateFlags)this._mergedReaders.ReadBitLong();
+		//BL 94 Field state flags:
+		field.EvaluationStatusFlags = (EvaluationStatusFlags)this._mergedReaders.ReadBitLong();
+		//BL 96 Evaluation error code
+		field.EvaluationErrorCode = this._mergedReaders.ReadBitLong();
+		//TV 300 Evaluation error message
+		field.EvaluationErrorMessage = this._mergedReaders.ReadVariableText();
+
+		//... ... The field value, see paragraph 20.4.99.
+		template.CadValueTemplates.Add(this.readCadValue(field.Value));
+
+		//TV 301,9 Value string(DXF: written in 255 character chunks)
+		field.FormatString = this._mergedReaders.ReadVariableText();
+		this._mergedReaders.ReadBitLong();
+		int num3 = this._mergedReaders.ReadBitLong();
+		for (int k = 0; k < num3; k++)
+		{
+			//TV 6 Child field key
+			string key = this._mergedReaders.ReadVariableText();
+			CadValue value = new CadValue();
+			template.CadValueTemplates.Add(this.readCadValue(value));
+			field.Values.Add(key, value);
+		}
+
+		return template;
+	}
+
+	private CadValueTemplate readCadValue(CadValue value)
+	{
+		CadValueTemplate template = new CadValueTemplate(value);
+
+		//R2007+:
+		if (this.R2007Plus)
+		{
+			//Flags BL 93 Flags & 0x01 => type is kGeneral
+			value.Flags = this._mergedReaders.ReadBitLong();
+		}
+
+		//Common:
+		//Data type BL 90
+		value.ValueType = (CadValueType)this._mergedReaders.ReadBitLong();
+		if (!this.R2007Plus || !value.IsEmpty)
+		{
+			//Varies by type: Not present in case bit 1 in Flags is set
+			switch (value.ValueType)
+			{
+				case CadValueType.Unknown:
+				case CadValueType.Long:
+					value.Value = this._mergedReaders.ReadBitLong();
+					break;
+				case CadValueType.Double:
+					value.Value = this._mergedReaders.ReadBitDouble();
+					break;
+				case CadValueType.General:
+				case CadValueType.String:
+					value.Value = this.readStringCadValue();
+					break;
+				case CadValueType.Date:
+					System.DateTime? dateTime = this.readDateCadValue();
+					if (dateTime.HasValue)
+					{
+						value.Value = dateTime.Value;
+					}
+					break;
+				case CadValueType.Point2D:
+					value.Value = this.readCellValueXY();
+					break;
+				case CadValueType.Point3D:
+					value.Value = this.readCellValueXYZ();
+					break;
+				case CadValueType.Handle:
+					template.ValueHandle = this.handleReference();
+					break;
+				case CadValueType.Buffer:
+				case CadValueType.ResultBuffer:
+				default:
+					throw new NotImplementedException();
+			}
+		}
+
+		//R2007+:
+		if (this.R2007Plus)
+		{
+			//Unit type BL 94 0 = no units, 1 = distance, 2 = angle, 4 = area, 8 = volume
+			value.Units = (CadValueUnitType)this._mergedReaders.ReadBitLong();
+			//Format String TV 300
+			value.Format = this._mergedReaders.ReadVariableText();
+			//Value String TV 302
+			value.FormattedValue = this._mergedReaders.ReadVariableText();
+		}
+
+		return template;
+	}
+
+	private CadTemplate readFieldList()
+	{
+		FieldList fieldList = new FieldList();
+		CadFieldListTemplate template = new CadFieldListTemplate(fieldList);
+
+		this.readCommonNonEntityData(template);
+
+		//BL Number of fields
+		int nhandles = this._mergedReaders.ReadBitLong();
+		//B Unknown
+		this._mergedReaders.ReadBit();
+		for (int i = 0; i < nhandles; i++)
+		{
+			//H 330 Field handle (soft pointer)
+			template.OwnedObjectsHandlers.Add(this.handleReference());
+		}
+
+		return template;
+	}
+
+	private CadTemplate readMTextAttributeObjectContextData()
+	{
+		//TODO: MTextAttributeObjectContextData for dwg
+		MTextAttributeObjectContextData contextData = new();
+		CadAnnotScaleObjectContextDataTemplate template = new CadAnnotScaleObjectContextDataTemplate(contextData);
+
+		//this.readAnnotScaleObjectContextData(template);
+
+		return null;
+	}
+
+	private void readObjectContextData(CadTemplate template)
+	{
+		this.readCommonNonEntityData(template);
+
+		ObjectContextData contextData = (ObjectContextData)template.CadObject;
+
+		//BS	70	Version (default value is 3).
+		contextData.Version = _objectReader.ReadBitShort();
+		//B	290	Default flag (default value is false).
+		contextData.Default = _objectReader.ReadBit();
 	}
 
 	private CadBlockVisibilityParameterTemplate.StateTemplate readState()

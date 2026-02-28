@@ -1,4 +1,5 @@
 ﻿using ACadSharp.Entities;
+using ACadSharp.Tables;
 using ACadSharp.Tests.Common;
 using CSMath;
 using System;
@@ -13,7 +14,7 @@ namespace ACadSharp.Tests.Entities
 		where R : Vertex, new()
 	{
 		[Fact]
-		public void ClearVertrticesTest()
+		public void ClearVerticesTest()
 		{
 			CadDocument doc = new CadDocument();
 
@@ -80,6 +81,40 @@ namespace ACadSharp.Tests.Entities
 			Assert.True(polyline.Flags.HasFlag(PolylineFlags.ClosedPolygonMeshInN));
 		}
 
+		[Fact]
+		public void OnAddVertexShouldMatchProperties()
+		{
+			var polyline = new T();
+			polyline.Layer = new Layer("test_layer");
+			polyline.LineType = new LineType("test_ltype");
+
+			var vertex = new R();
+
+			polyline.Vertices.Add(vertex);
+
+			Assert.Equal(polyline.Layer.Name, vertex.Layer.Name);
+			Assert.Equal(polyline.LineType.Name, vertex.LineType.Name);
+
+			polyline = new T();
+			polyline.Layer = new Layer("test_layer");
+			polyline.LineType = new LineType("test_ltype");
+			polyline.MatchVerticesEntityProperties = false;
+
+			vertex = new R();
+
+			polyline.Vertices.Add(vertex);
+
+			Assert.NotEqual(polyline.Layer.Name, vertex.Layer.Name);
+			Assert.NotEqual(polyline.LineType.Name, vertex.LineType.Name);
+		}
+
+		protected T createPolyline(IEnumerable<R> vertices)
+		{
+			T polyline = new T();
+			polyline.Vertices.AddRange(vertices);
+			return polyline;
+		}
+
 		protected IEnumerable<R> createVertices(int amount = 5)
 		{
 			List<R> vertices = new List<R>();
@@ -90,13 +125,6 @@ namespace ACadSharp.Tests.Entities
 				vertices.Add(v);
 			}
 			return vertices;
-		}
-
-		protected T createPolyline(IEnumerable<R> vertices)
-		{
-			T polyline = new T();
-			polyline.Vertices.AddRange(vertices);
-			return polyline;
 		}
 	}
 }

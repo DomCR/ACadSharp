@@ -1,9 +1,11 @@
 ﻿using ACadSharp.Attributes;
+using System;
 
 namespace ACadSharp.Entities
 {
 	public partial class TableEntity
 	{
+		[Obsolete("Replace for ACadSharp.CadValue")]
 		public class CellValue
 		{
 			[DxfCodeValue(90)]

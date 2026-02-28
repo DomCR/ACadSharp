@@ -2,177 +2,281 @@
 {
 	public static class DxfFileToken
 	{
-		public const string Undefined = "";
-
 		public const string BeginSection = "SECTION";
-		public const string EndSection = "ENDSEC";
-		public const string EndSequence = "SEQEND";
+
+		public const string BlkRefObjectContextData = "ACDB_BLKREFOBJECTCONTEXTDATA_CLASS";
+
+		public const string BlkRefToken = "{BLKREFS";
+
+		public const string Block = "BLOCK";
+
+		public const string BlocksSection = "BLOCKS";
+
+		public const string ClassEntry = "CLASS";
+
+		public const string ClassesSection = "CLASSES";
+
+		public const string CustomData = "CUSTOMDATA";
+
+		public const string DictionaryToken = "{ACAD_XDICTIONARY";
+
+		public const string EndBlock = "ENDBLK";
+
 		public const string EndOfFile = "EOF";
+
+		public const string EndSection = "ENDSEC";
+
+		public const string EndSequence = "SEQEND";
+
+		public const string EndTable = "ENDTAB";
+
+		public const string EntitiesSection = "ENTITIES";
+
+		public const string Entity3DFace = "3DFACE";
+
+		public const string Entity3DSolid = "3DSOLID";
+
+		public const string EntityAecWall = "AEC_WALL";
+
+		public const string EntityArc = "ARC";
+
+		public const string EntityAttribute = "ATTRIB";
+
+		public const string EntityAttributeDefinition = "ATTDEF";
+
+		public const string EntityBody = "BODY";
+
+		public const string EntityCircle = "CIRCLE";
+
+		public const string EntityCoordinationModel = "COORDINATION MODEL";
+
+		public const string EntityDimension = "DIMENSION";
+
+		public const string EntityEllipse = "ELLIPSE";
+
+		public const string EntityHatch = "HATCH";
+
+		public const string EntityHelix = "HELIX";
+
+		public const string EntityImage = "IMAGE";
+
+		public const string EntityInsert = "INSERT";
+
+		public const string EntityLeader = "LEADER";
+
+		public const string EntityLight = "LIGHT";
+
+		public const string EntityLine = "LINE";
+
+		public const string EntityLwPolyline = "LWPOLYLINE";
+
+		public const string EntityMesh = "MESH";
+
+		public const string EntityMLine = "MLINE";
+
+		public const string EntityMText = "MTEXT";
+
+		public const string EntityMultiLeader = "MULTILEADER";
+
+		public const string EntityOle2Frame = "OLE2FRAME";
+
+		public const string EntityOleFrame = "OLEFRAME";
+
+		public const string EntityPdfUnderlay = "PDFUNDERLAY";
+
+		public const string EntityPoint = "POINT";
+
+		public const string EntityPolyFaceMesh = "PFACE";
+
+		public const string EntityPolyline = "POLYLINE";
+
+		public const string EntityProxyEntity = "ACAD_PROXY_ENTITY";
+
+		public const string EntityRay = "RAY";
+
+		public const string EntityRegion = "REGION";
+
+		public const string EntitySection = "SECTION";
+
+		public const string EntitySeqend = "SEQEND";
+
+		public const string EntityShape = "SHAPE";
+
+		public const string EntitySolid = "SOLID";
+
+		public const string EntitySpline = "SPLINE";
+
+		public const string EntitySun = "SUN";
+
+		public const string EntitySurface = "SURFACE";
+
+		public const string EntityTable = "ACAD_TABLE";
+
+		public const string EntityText = "TEXT";
+
+		public const string EntityTolerance = "TOLERANCE";
+
+		public const string EntityTrace = "TRACE";
+
+		public const string EntityUnderlay = "UNDERLAY";
+
+		public const string EntityVertex = "VERTEX";
+
+		public const string EntityViewport = "VIEWPORT";
+
+		public const string EntityWipeout = "WIPEOUT";
+
+		public const string EntityXline = "XLINE";
+
+		public const string FormattedTableDataColumn_BEGIN = "FORMATTEDTABLEDATACOLUMN_BEGIN";
+
+		public const string FormattedTableDataColumn_END = "FORMATTEDTABLEDATACOLUMN_END";
+
+		public const string FormattedTableDataRow_BEGIN = "FORMATTEDTABLEDATAROW_BEGIN";
+
+		public const string FormattedTableDataRow_END = "FORMATTEDTABLEDATAROW_END";
 
 		public const string HeaderSection = "HEADER";
 
-		public const string ClassesSection = "CLASSES";
-		public const string ClassEntry = "CLASS";
+		public const string LinkedTableDataCell_BEGIN = "LINKEDTABLEDATACELL_BEGIN";
 
-		/// <summary>
-		/// Object reactors, list of handles
-		/// </summary>
-		public const string ReactorsToken = "{ACAD_REACTORS";
+		public const string LinkedTableDataCell_END = "LINKEDTABLEDATACELL_END";
 
-		/// <summary>
-		/// Handle for the xdictionary
-		/// </summary>
-		public const string DictionaryToken = "{ACAD_XDICTIONARY";
+		public const string LinkedTableDataColumn_BEGIN = "LINKEDTABLEDATACOLUMN_BEGIN";
 
-		/// <summary>
-		/// Block references
-		/// </summary>
-		public const string BlkRefToken = "{BLKREFS";
+		public const string LinkedTableDataColumn_END = "LINKEDTABLEDATACOLUMN_END";
 
-		#region Tables
+		public const string LinkedTableDataRow_BEGIN = "LINKEDTABLEDATAROW_BEGIN";
 
-		public const string TablesSection = "TABLES";
-		public const string TableEntry = "TABLE";
-		public const string EndTable = "ENDTAB";
-		public const string TableAppId = "APPID";
-		public const string TableBlockRecord = "BLOCK_RECORD";
-		public const string TableDimstyle = "DIMSTYLE";
-		public const string TableGroup = "GROUP";
-		public const string TableLayer = "LAYER";
-		public const string TableLinetype = "LTYPE";
-		public const string TableStyle = "STYLE";
-		public const string TableUcs = "UCS";
-		public const string TableView = "VIEW";
-		public const string TableVport = "VPORT";
+		public const string LinkedTableDataRow_END = "LINKEDTABLEDATAROW_END";
 
-		#endregion
+		public const string MTextAttributeObjectContextData = "ACDB_MTEXTATTRIBUTEOBJECTCONTEXTDATA_CLASS";
 
-		public const string BlocksSection = "BLOCKS";
-		public const string Block = "BLOCK";
-		public const string EndBlock = "ENDBLK";
-
-		#region Entities
-
-		public const string EntitiesSection = "ENTITIES";
-		public const string Entity3DFace = "3DFACE";
-		public const string Entity3DSolid = "3DSOLID";
-		public const string EntityAecWall = "AEC_WALL";
-		public const string EntityProxyEntity = "ACAD_PROXY_ENTITY";
-		public const string EntityTable = "ACAD_TABLE";
-		public const string EntityArc = "ARC";
-		public const string EntityAttributeDefinition = "ATTDEF";
-		public const string EntityAttribute = "ATTRIB";
-		public const string EntityBody = "BODY";
-		public const string EntityCircle = "CIRCLE";
-		public const string EntityCoordinationModel = "COORDINATION MODEL";
-		public const string EntityDimension = "DIMENSION";
-		public const string EntityEllipse = "ELLIPSE";
-		public const string EntityHatch = "HATCH";
-		public const string EntityHelix = "HELIX";
-		public const string EntityImage = "IMAGE";
-		public const string EntityInsert = "INSERT";
-		public const string EntityLeader = "LEADER";
-		public const string EntityLight = "LIGHT";
-		public const string EntityLine = "LINE";
-		public const string EntityLwPolyline = "LWPOLYLINE";
-		public const string EntityMesh = "MESH";
-		public const string EntityMultiLeader = "MULTILEADER";
-		public const string EntityMLine = "MLINE";
-		public const string EntityMText = "MTEXT";
-		public const string EntityOleFrame = "OLEFRAME";
-		public const string EntityOle2Frame = "OLE2FRAME";
-		public const string EntityPdfUnderlay = "PDFUNDERLAY";
-		public const string EntityPoint = "POINT";
-		public const string EntityPolyline = "POLYLINE";
-		public const string EntityPolyFaceMesh = "PFACE";
-		public const string EntityRay = "RAY";
-		public const string EntityRegion = "REGION";
-		public const string EntitySection = "SECTION";
-		public const string EntitySeqend = "SEQEND";
-		public const string EntityShape = "SHAPE";
-		public const string EntitySolid = "SOLID";
-		public const string EntitySpline = "SPLINE";
-		public const string EntitySun = "SUN";
-		public const string EntitySurface = "SURFACE";
-		public const string EntityText = "TEXT";
-		public const string EntityTolerance = "TOLERANCE";
-		public const string EntityTrace = "TRACE";
-		public const string EntityUnderlay = "UNDERLAY";
-		public const string EntityVertex = "VERTEX";
-		public const string EntityViewport = "VIEWPORT";
-		public const string EntityWipeout = "WIPEOUT";
-		public const string EntityXline = "XLINE";
-
-		#endregion
-
-		#region Objects
-
-		public const string ObjectsSection = "OBJECTS";
-		public const string ObjectDictionary = "DICTIONARY";
-		public const string ObjectDictionaryWithDefault = "ACDBDICTIONARYWDFLT";
-		public const string ObjectProxyObject = "ACAD_PROXY_OBJECT";
-		public const string ObjectDictionaryVar = "DICTIONARYVAR";
-		public const string ObjectDBColor = "DBCOLOR";
-		public const string ObjectPlotSettings = "PLOTSETTINGS";
-		public const string ObjectPlaceholder = "ACDBPLACEHOLDER";
-		public const string ObjectLayout = "LAYOUT";
-		public const string ObjectMLeaderStyle = "MLEADERSTYLE";
-		public const string ObjectImageDefinition = "IMAGEDEF";
-		public const string ObjectImageDefinitionReactor = "IMAGEDEF_REACTOR";
-		public const string ObjectMaterial = "MATERIAL";
-		public const string ObjectMLineStyle = "MLINESTYLE";
-		public const string ObjectPdfDefinition = "PDFDEFINITION";
-		public const string ObjectRasterVariables = "RASTERVARIABLES";
-		public const string ObjectVisualStyle = "VISUALSTYLE";
-		public const string ObjectScale = "SCALE";
-		public const string ObjectSortEntsTable = "SORTENTSTABLE";
-		public const string ObjectXRecord = "XRECORD";
-		public const string ObjectMLeaderContextData = "ACDB_MLEADEROBJECTCONTEXTDATA_CLASS";
-		public const string ObjectBlockRepresentationData = "ACDB_BLOCKREPRESENTATION_DATA";
-		public const string ObjectEvalGraph = "ACAD_EVALUATION_GRAPH";
-		public const string ObjectBlockLinearParameter = "BLOCKLINEARPARAMETER";
-		public const string ObjectBlockVisibilityParameter = "BLOCKVISIBILITYPARAMETER";
-		public const string ObjectBlockRotationGrip = "BLOCKROTATIONGRIP";
-		public const string ObjectBlockVisibilityGrip = "BLOCKVISIBILITYGRIP";
 		public const string ObjectBlockBasePointParameter = "BLOCKBASEPOINTPARAMETER";
-		public const string ObjectBlockRotationParameter = "BLOCKROTATIONPARAMETER";
-		public const string ObjectBlockPointParameter = "BLOCKPOINTPARAMETER";
-		public const string ObjectBlockGripLocationComponent = "BLOCKGRIPLOCATIONCOMPONENT";
-		public const string ObjectBlockFlipParameter = "BLOCKFLIPPARAMETER";
+
 		public const string ObjectBlockFlipAction = "BLOCKFLIPACTION";
+
+		public const string ObjectBlockFlipParameter = "BLOCKFLIPPARAMETER";
+
+		public const string ObjectBlockGripLocationComponent = "BLOCKGRIPLOCATIONCOMPONENT";
+
+		public const string ObjectBlockLinearParameter = "BLOCKLINEARPARAMETER";
+
+		public const string ObjectBlockPointParameter = "BLOCKPOINTPARAMETER";
+
+		public const string ObjectBlockRepresentationData = "ACDB_BLOCKREPRESENTATION_DATA";
+
 		public const string ObjectBlockRotateAction = "BLOCKROTATEACTION";
-		public const string ObjectTableContent = "TABLECONTENT";
-		public const string ObjectGeoData = "GEODATA";
-		public const string ObjectGroup = "GROUP";
-		public const string ObjectTableStyle = "TABLESTYLE";
+
+		public const string ObjectBlockRotationGrip = "BLOCKROTATIONGRIP";
+
+		public const string ObjectBlockRotationParameter = "BLOCKROTATIONPARAMETER";
+
+		public const string ObjectBlockVisibilityGrip = "BLOCKVISIBILITYGRIP";
+
+		public const string ObjectBlockVisibilityParameter = "BLOCKVISIBILITYPARAMETER";
+
+		public const string ObjectCell = "CELL";
+
 		public const string ObjectCellStyleMap = "CELLSTYLEMAP";
+
+		public const string ObjectDBColor = "DBCOLOR";
+
+		public const string ObjectDictionary = "DICTIONARY";
+
+		public const string ObjectDictionaryVar = "DICTIONARYVAR";
+
+		public const string ObjectDictionaryWithDefault = "ACDBDICTIONARYWDFLT";
+
+		public const string ObjectEvalGraph = "ACAD_EVALUATION_GRAPH";
+
+		public const string ObjectField = "FIELD";
+
+		public const string ObjectFieldList = "FIELDLIST";
+
+		public const string ObjectGeoData = "GEODATA";
+
+		public const string ObjectGroup = "GROUP";
+
+		public const string ObjectImageDefinition = "IMAGEDEF";
+
+		public const string ObjectImageDefinitionReactor = "IMAGEDEF_REACTOR";
+
+		public const string ObjectLayout = "LAYOUT";
+
+		public const string ObjectMaterial = "MATERIAL";
+
+		public const string ObjectMLeaderContextData = "ACDB_MLEADEROBJECTCONTEXTDATA_CLASS";
+
+		public const string ObjectMLeaderStyle = "MLEADERSTYLE";
+
+		public const string ObjectMLineStyle = "MLINESTYLE";
+
+		public const string ObjectPdfDefinition = "PDFDEFINITION";
+
+		public const string ObjectPlaceholder = "ACDBPLACEHOLDER";
+
+		public const string ObjectPlotSettings = "PLOTSETTINGS";
+
+		public const string ObjectProxyObject = "ACAD_PROXY_OBJECT";
+
+		public const string ObjectRasterVariables = "RASTERVARIABLES";
+
+		public const string ObjectScale = "SCALE";
+
+		public const string ObjectSortEntsTable = "SORTENTSTABLE";
+
 		public const string ObjectSpatialFilter = "SPATIAL_FILTER";
 		public const string ObjectBinRecord = "BINRECORD";
 		public const string ObjectAecWallStyle = "AEC_WALL_STYLE";
 		public const string ObjectAecCleanupGroupDef = "AEC_CLEANUP_GROUP_DEF";
 
-		//Table tokens
+		public const string ObjectsSection = "OBJECTS";
+
 		public const string ObjectTableColumn = "COLUMN";
+
 		public const string ObjectTableColumnBegin = "TABLECOLUMN_BEGIN";
+
 		public const string ObjectTableColumnEnd = "TABLECOLUMN_END";
-		public const string LinkedTableDataColumn_BEGIN = "LINKEDTABLEDATACOLUMN_BEGIN";
-		public const string LinkedTableDataColumn_END = "LINKEDTABLEDATACOLUMN_END";
-		public const string FormattedTableDataColumn_BEGIN = "FORMATTEDTABLEDATACOLUMN_BEGIN";
-		public const string FormattedTableDataColumn_END = "FORMATTEDTABLEDATACOLUMN_END";
+
+		public const string ObjectTableContent = "TABLECONTENT";
 
 		public const string ObjectTableRow = "ROW";
+
 		public const string ObjectTableRowBegin = "TABLEROW_BEGIN";
+
 		public const string ObjectTableRowEnd = "TABLEOW_END";
-		public const string LinkedTableDataRow_BEGIN = "LINKEDTABLEDATAROW_BEGIN";
-		public const string LinkedTableDataRow_END = "LINKEDTABLEDATAROW_END";
-		public const string FormattedTableDataRow_BEGIN = "FORMATTEDTABLEDATAROW_BEGIN";
-		public const string FormattedTableDataRow_END = "FORMATTEDTABLEDATAROW_END";
 
-		public const string ObjectCell = "CELL";
-		public const string LinkedTableDataCell_BEGIN = "LINKEDTABLEDATACELL_BEGIN";
-		public const string LinkedTableDataCell_END = "LINKEDTABLEDATACELL_END";
+		public const string ObjectTableStyle = "TABLESTYLE";
 
-		public const string CustomData = "CUSTOMDATA";
-		#endregion
+		public const string ObjectVisualStyle = "VISUALSTYLE";
+
+		public const string ObjectXRecord = "XRECORD";
+
+		public const string ReactorsToken = "{ACAD_REACTORS";
+
+		public const string TableAppId = "APPID";
+
+		public const string TableBlockRecord = "BLOCK_RECORD";
+
+		public const string TableDimstyle = "DIMSTYLE";
+
+		public const string TableEntry = "TABLE";
+
+		public const string TableGroup = "GROUP";
+
+		public const string TableLayer = "LAYER";
+
+		public const string TableLinetype = "LTYPE";
+
+		public const string TablesSection = "TABLES";
+
+		public const string TableStyle = "STYLE";
+
+		public const string TableUcs = "UCS";
+
+		public const string TableView = "VIEW";
+
+		public const string TableVport = "VPORT";
 	}
 }

@@ -149,6 +149,7 @@ namespace ACadSharp.IO.DXF
 
 		protected CadEntityTemplate readEntity()
 		{
+			this.currentSubclass = string.Empty;
 			switch (this._reader.ValueAsString)
 			{
 				case DxfFileToken.EntityAttribute:
@@ -653,23 +654,76 @@ namespace ACadSharp.IO.DXF
 
 			switch (this._reader.Code)
 			{
-				//TODO: Implement multiline text def codes
 				case 1 or 3 when tmp.CadObject is MText mtext:
 					mtext.Value += this._reader.ValueAsString;
 					return true;
 				case 50 when tmp.CadObject is MText mtext://Read only for MText
-					double angle = MathHelper.DegToRad(this._reader.ValueAsDouble);
+					double angle = this._reader.ValueAsAngle;
 					mtext.AlignmentPoint = new XYZ(System.Math.Cos(angle), System.Math.Sin(angle), 0.0);
-					return true;
-				case 70:
-				case 74:
-				case 101:
 					return true;
 				case 7:
 					tmp.StyleName = this._reader.ValueAsString;
 					return true;
+				case 101 when tmp.CadObject is MText mtext:
+					this.readColumnData(mtext);
+					this.lockPointer = true;
+					return true;
 				default:
 					return this.tryAssignCurrentValue(template.CadObject, map.SubClasses[mapName]);
+			}
+		}
+
+		private void readColumnData(MText mtext)
+		{
+			this._reader.ReadNext();
+			while (this._reader.DxfCode != DxfCode.Start)
+			{
+				switch (this._reader.Code)
+				{
+					//Element count?
+					case 70:
+						break;
+					case 71:
+						mtext.ColumnData.ColumnType = (ColumnType)this._reader.ValueAsShort;
+						break;
+					case 72:
+						mtext.ColumnData.ColumnCount = this._reader.ValueAsInt;
+						break;
+					//X - axis dir 3BD 10
+					case 10:
+					case 20:
+					case 30:
+					//Insertion point 3BD 11
+					case 11:
+					case 21:
+					case 31:
+					//Rect width BD 40
+					case 40:
+					//Rect height BD 41
+					case 41:
+					//Extents width BD 42
+					case 42:
+					//Extents height BD 43
+					case 43:
+						break;
+					case 44:
+						mtext.ColumnData.Width = this._reader.ValueAsDouble;
+						break;
+					case 45:
+						mtext.ColumnData.Gutter = this._reader.ValueAsDouble;
+						break;
+					case 73:
+						mtext.ColumnData.AutoHeight = this._reader.ValueAsBool;
+						break;
+					case 74:
+						mtext.ColumnData.FlowReversed = this._reader.ValueAsBool;
+						break;
+					default:
+						this._builder.Notify($"[MText.ColumnData] unkown dxf code {this._reader.Code}.", NotificationType.None);
+						break;
+				}
+
+				this._reader.ReadNext();
 			}
 		}
 
@@ -1256,7 +1310,7 @@ namespace ACadSharp.IO.DXF
 		{
 			this._reader.ReadNext();
 
-			DxfMap map = DxfMap.Create<MultiLeaderObjectContextData>();
+			var map = DxfClassMap.Create<MultiLeaderObjectContextData>();
 			var contextData = template.CadObject as MultiLeaderObjectContextData;
 
 			bool end = false;
@@ -1274,7 +1328,7 @@ namespace ACadSharp.IO.DXF
 						template.TextStyleHandle = this._reader.ValueAsHandle;
 						break;
 					default:
-						if (!this.tryAssignCurrentValue(contextData, map.SubClasses[contextData.SubclassMarker]))
+						if (!this.tryAssignCurrentValue(contextData, map))
 						{
 							this._builder.Notify($"[AcDbMLeaderObjectContextData] Unhandled dxf code {this._reader.Code} with value {this._reader.ValueAsString}", NotificationType.None);
 						}

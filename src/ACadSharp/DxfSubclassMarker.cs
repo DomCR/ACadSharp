@@ -28,6 +28,8 @@
 
 		public const string AttributeDefinition = "AcDbAttributeDefinition";
 
+		public const string BlkRefObjectContextData = "AcDbBlkRefObjectContextData";
+
 		public const string Block1PtParameter = "AcDbBlock1PtParameter";
 
 		public const string Block2PtParameter = "AcDbBlock2PtParameter";
@@ -104,6 +106,10 @@
 
 		public const string Face3d = "AcDbFace";
 
+		public const string Field = "AcDbField";
+
+		public const string FieldList = "AcDbFieldList";
+
 		public const string Filter = "AcDbFilter";
 
 		public const string FormattedTableData = "AcDbFormattedTableData";
@@ -115,6 +121,8 @@
 		public const string Hatch = "AcDbHatch";
 
 		public const string Helix = "AcDbHelix";
+
+		public const string IdSet = "AcDbIdSet";
 
 		public const string Insert = "AcDbBlockReference";
 
@@ -151,6 +159,8 @@
 		public const string ModelerGeometry = "AcDbModelerGeometry";
 
 		public const string MText = "AcDbMText";
+
+		public const string MTextAttributeObjectContextData = "AcDbMTextAttributeObjectContextData";
 
 		public const string MultiLeader = "AcDbMLeader";
 

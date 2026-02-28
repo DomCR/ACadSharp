@@ -61,6 +61,10 @@ namespace ACadSharp.IO.DXF
 			this.currentSubclass = string.Empty;
 			switch (this._reader.ValueAsString)
 			{
+				case DxfFileToken.BlkRefObjectContextData:
+					return this.readObjectCodes<BlockReferenceObjectContextData>(new CadAnnotScaleObjectContextDataTemplate(new BlockReferenceObjectContextData()), this.readAnnotScaleObjectContextData);
+				case DxfFileToken.MTextAttributeObjectContextData:
+					return this.readObjectCodes<MTextAttributeObjectContextData>(new CadAnnotScaleObjectContextDataTemplate(new MTextAttributeObjectContextData()), this.readAnnotScaleObjectContextData);
 				case DxfFileToken.ObjectPlaceholder:
 					return this.readObjectCodes<AcdbPlaceHolder>(new CadNonGraphicalObjectTemplate(new AcdbPlaceHolder()), this.readObjectSubclassMap);
 				case DxfFileToken.ObjectDBColor:
@@ -86,7 +90,7 @@ namespace ACadSharp.IO.DXF
 				case DxfFileToken.ObjectImageDefinitionReactor:
 					return this.readObjectCodes<ImageDefinitionReactor>(new CadNonGraphicalObjectTemplate(new ImageDefinitionReactor()), this.readObjectSubclassMap);
 				case DxfFileToken.ObjectProxyObject:
-					return this.readObjectCodes<ProxyObject>(new CadNonGraphicalObjectTemplate(new ProxyObject()), this.readProxyObject);
+					return this.readObjectCodes<ProxyObject>(new CadProxyObjectTemplate(), this.readProxyObject);
 				case DxfFileToken.ObjectRasterVariables:
 					return this.readObjectCodes<RasterVariables>(new CadNonGraphicalObjectTemplate(new RasterVariables()), this.readObjectSubclassMap);
 				case DxfFileToken.ObjectGroup:
@@ -125,6 +129,10 @@ namespace ACadSharp.IO.DXF
 					return this.readObjectCodes<BlockRotationGrip>(new CadBlockRotationGripTemplate(), this.readBlockRotationGrip);
 				case DxfFileToken.ObjectBlockRotateAction:
 					return this.readObjectCodes<BlockRotationAction>(new CadBlockRotationActionTemplate(), this.readBlockRotationAction);
+				case DxfFileToken.ObjectField:
+					return this.readObjectCodes<Field>(new CadFieldTemplate(new Field()), this.readField);
+				case DxfFileToken.ObjectFieldList:
+					return this.readObjectCodes<FieldList>(new CadFieldListTemplate(new FieldList()), this.readFieldList);
 				default:
 					DxfMap map = DxfMap.Create<CadObject>();
 					CadUnknownNonGraphicalObjectTemplate unknownEntityTemplate = null;
@@ -188,8 +196,107 @@ namespace ACadSharp.IO.DXF
 			return template;
 		}
 
+		private bool readFieldList(CadTemplate template, DxfMap map)
+		{
+			var tmp = template as CadFieldListTemplate;
+
+			switch (this._reader.Code)
+			{
+				case 100 when this._reader.ValueAsString == DxfSubclassMarker.IdSet:
+					this.currentSubclass = this._reader.ValueAsString;
+					return true;
+				case 90 when this.currentSubclass == DxfSubclassMarker.IdSet:
+					return true;
+				case 330 when this.currentSubclass == DxfSubclassMarker.IdSet:
+					tmp.OwnedObjectsHandlers.Add(this._reader.ValueAsHandle);
+					return true;
+				default:
+					return this.tryAssignCurrentValue(template.CadObject, map.SubClasses[DxfSubclassMarker.FieldList]);
+			}
+		}
+
+		private bool readField(CadTemplate template, DxfMap map)
+		{
+			var tmp = template as CadFieldTemplate;
+
+			switch (this._reader.Code)
+			{
+				case 3:
+					tmp.CadObject.FieldCode += this._reader.ValueAsString;
+					return true;
+				//98 Length of format string
+				case 98:
+					return true;
+				case 6:
+					string key = this._reader.ValueAsString;
+					var t = this.readCadValue(this._reader.ValueAsString);
+					tmp.CadObject.Values.Add(key, t.CadValue);
+					tmp.CadValueTemplates.Add(t);
+					return true;
+				case 7:
+					t = this.readCadValue(this._reader.ValueAsString);
+					tmp.CadObject.Value = t.CadValue;
+					tmp.CadValueTemplates.Add(t);
+					return true;
+				case 331:
+					tmp.CadObjectsHandles.Add(this._reader.ValueAsHandle);
+					return true;
+				case 360:
+					tmp.ChildrenHandles.Add(this._reader.ValueAsHandle);
+					return true;
+				default:
+					return this.tryAssignCurrentValue(template.CadObject, map.SubClasses[DxfSubclassMarker.Field]);
+			}
+		}
+
+		private CadValueTemplate readCadValue(string name)
+		{
+			this._reader.ReadNext();
+
+			CadValue value = new();
+			CadValueTemplate template = new(value);
+			var map = DxfClassMap.Create(value.GetType(), name);
+
+			while (this._reader.Code != 304)
+			{
+				switch (this._reader.Code)
+				{
+					case 11:
+						XYZ xyz = new XYZ();
+						xyz.X = this._reader.ValueAsDouble;
+						this._reader.ReadNext();
+						xyz.Y = this._reader.ValueAsDouble;
+						this._reader.ReadNext();
+						xyz.Z = this._reader.ValueAsDouble;
+
+						value.Value = xyz;
+						break;
+					case 91:
+						value.Value = this._reader.ValueAsInt;
+						break;
+					case 140:
+						value.Value = this._reader.ValueAsDouble;
+						break;
+					case 330:
+						template.ValueHandle = this._reader.ValueAsHandle;
+						break;
+					default:
+						if (!this.tryAssignCurrentValue(value, map))
+						{
+							this._builder.Notify($"Unhandled dxf code {this._reader.Code} value {this._reader.ValueAsString} at {nameof(readCadValue)} method.", NotificationType.None);
+						}
+						break;
+				}
+
+				this._reader.ReadNext();
+			}
+
+			return template;
+		}
+
 		private bool readProxyObject(CadTemplate template, DxfMap map)
 		{
+			CadProxyObjectTemplate tmp = template as CadProxyObjectTemplate;
 			ProxyObject proxy = template.CadObject as ProxyObject;
 
 			switch (this._reader.Code)
@@ -230,6 +337,12 @@ namespace ACadSharp.IO.DXF
 					}
 					proxy.Data.Write(this._reader.ValueAsBinaryChunk, 0, this._reader.ValueAsBinaryChunk.Length);
 					return true;
+				case 330:
+				case 340:
+				case 350:
+				case 360:
+					tmp.Entries.Add(this._reader.ValueAsHandle);
+					return true;
 				default:
 					return this.tryAssignCurrentValue(template.CadObject, map.SubClasses[DxfSubclassMarker.ProxyObject]);
 			}
@@ -240,7 +353,34 @@ namespace ACadSharp.IO.DXF
 			switch (this._reader.Code)
 			{
 				default:
-					return this.tryAssignCurrentValue(template.CadObject, map.SubClasses[template.CadObject.SubclassMarker]);
+					if (string.IsNullOrEmpty(this.currentSubclass))
+					{
+						return this.tryAssignCurrentValue(template.CadObject, map.SubClasses[template.CadObject.SubclassMarker]);
+					}
+					else
+					{
+						return this.tryAssignCurrentValue(template.CadObject, map.SubClasses[this.currentSubclass]);
+					}
+			}
+		}
+
+		private bool readAnnotScaleObjectContextData(CadTemplate template, DxfMap map)
+		{
+			var tmp = template as CadAnnotScaleObjectContextDataTemplate;
+			switch (this._reader.Code)
+			{
+				case 340:
+					tmp.ScaleHandle = this._reader.ValueAsHandle;
+					return true;
+				default:
+					if (string.IsNullOrEmpty(this.currentSubclass))
+					{
+						return this.tryAssignCurrentValue(template.CadObject, map.SubClasses[template.CadObject.SubclassMarker]);
+					}
+					else
+					{
+						return this.tryAssignCurrentValue(template.CadObject, map.SubClasses[this.currentSubclass]);
+					}
 			}
 		}
 

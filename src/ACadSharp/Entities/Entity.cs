@@ -43,7 +43,7 @@ namespace ACadSharp.Entities
 
 		/// <inheritdoc/>
 		[DxfCodeValue(DxfReferenceType.Name, 8)]
-		public Layer Layer
+		public virtual Layer Layer
 		{
 			get { return this._layer; }
 			set
@@ -59,7 +59,7 @@ namespace ACadSharp.Entities
 
 		/// <inheritdoc/>
 		[DxfCodeValue(DxfReferenceType.Name, 6)]
-		public LineType LineType
+		public virtual LineType LineType
 		{
 			get { return this._lineType; }
 			set
@@ -69,7 +69,7 @@ namespace ACadSharp.Entities
 					throw new ArgumentNullException(nameof(value));
 				}
 
-				this._lineType = CadObject.updateCollection(value, this.Document?.LineTypes);
+				this._lineType = updateCollection(value, this.Document?.LineTypes);
 			}
 		}
 
@@ -226,22 +226,24 @@ namespace ACadSharp.Entities
 				throw new ArgumentNullException(nameof(entity));
 			}
 
-			if (entity.Handle == 0)
+			if (entity.Handle == 0 || this.Document != entity.Document)
 			{
-				entity.Layer = (Layer)this.Layer.Clone();
-				entity.LineType = (LineType)this.LineType.Clone();
+				this.Layer = (Layer)entity.Layer.Clone();
+				this.LineType = (LineType)entity.LineType.Clone();
+				this.Material = (Material)entity.Material?.Clone();
 			}
 			else
 			{
-				entity.Layer = this.Layer;
-				entity.LineType = this.LineType;
+				this.Layer = entity.Layer;
+				this.LineType = entity.LineType;
+				this.Material = entity.Material;
 			}
 
-			entity.Color = this.Color;
-			entity.LineWeight = this.LineWeight;
-			entity.LineTypeScale = this.LineTypeScale;
-			entity.IsInvisible = this.IsInvisible;
-			entity.Transparency = this.Transparency;
+			this.Color = entity.Color;
+			this.LineWeight = entity.LineWeight;
+			this.LineTypeScale = entity.LineTypeScale;
+			this.IsInvisible = entity.IsInvisible;
+			this.Transparency = entity.Transparency;
 		}
 
 		internal override void AssignDocument(CadDocument doc)
