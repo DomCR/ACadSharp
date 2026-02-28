@@ -1,5 +1,6 @@
 ﻿using ACadSharp.Attributes;
 using ACadSharp.Extensions;
+using ACadSharp.Tables;
 using CSMath;
 using CSUtilities.Extensions;
 using System.Collections.Generic;
@@ -52,6 +53,40 @@ namespace ACadSharp.Entities
 				}
 			}
 		}
+
+		/// <inheritdoc/>
+		public override Layer Layer
+		{
+			get => base.Layer;
+			set
+			{
+				base.Layer = value;
+				if (this.MatchVerticesEntityProperties)
+				{
+					this.Vertices.ForEach(v => v.Layer = this.Layer);
+				}
+			}
+		}
+
+		/// <inheritdoc/>
+		public override LineType LineType
+		{
+			get => base.LineType;
+			set
+			{
+				base.LineType = value;
+				if (this.MatchVerticesEntityProperties)
+				{
+					this.Vertices.ForEach(v => v.Layer = this.Layer);
+				}
+			}
+		}
+
+		/// <summary>
+		/// Gets or sets a value indicating whether entity properties in the <see cref="Vertex"/> should be equals to the polyline
+		/// when adding vertices or modifying the polyline properties.
+		/// </summary>
+		public bool MatchVerticesEntityProperties { get; set; } = true;
 
 		/// <inheritdoc/>
 		[DxfCodeValue(210, 220, 230)]
@@ -222,7 +257,10 @@ namespace ACadSharp.Entities
 				return;
 			}
 
-			entity.MatchProperties(this);
+			if (this.MatchVerticesEntityProperties)
+			{
+				entity.MatchProperties(this);
+			}
 		}
 	}
 }

@@ -497,7 +497,8 @@ namespace ACadSharp.Classes
 			});
 
 			//AcDbMLeaderObjectContextData
-			doc.Classes.AddOrUpdate(new DxfClass {
+			doc.Classes.AddOrUpdate(new DxfClass
+			{
 				CppClassName = DxfSubclassMarker.MultiLeaderObjectContextData,
 				ClassNumber = (short)(500 + doc.Classes.Count),
 				DwgVersion = ACadVersion.MC0_0,
@@ -518,6 +519,58 @@ namespace ACadSharp.Classes
 				ItemClassId = 499,
 				MaintenanceVersion = 42,
 				ProxyFlags = ProxyFlags.None,
+				WasZombie = false,
+			});
+
+			//AcDbField
+			doc.Classes.AddOrUpdate(new DxfClass
+			{
+				CppClassName = DxfSubclassMarker.Field,
+				ClassNumber = (short)(500 + doc.Classes.Count),
+				DwgVersion = ACadVersion.AC1018,
+				DxfName = DxfFileToken.ObjectField,
+				ItemClassId = 499,
+				MaintenanceVersion = 0,
+				ProxyFlags = ProxyFlags.CloningAllowed | ProxyFlags.DisablesProxyWarningDialog,
+				WasZombie = false,
+			});
+
+			//AcDbFieldList
+			doc.Classes.AddOrUpdate(new DxfClass
+			{
+				CppClassName = DxfSubclassMarker.FieldList,
+				ClassNumber = (short)(500 + doc.Classes.Count),
+				DwgVersion = ACadVersion.AC1018,
+				DxfName = DxfFileToken.ObjectFieldList,
+				ItemClassId = 499,
+				MaintenanceVersion = 0,
+				ProxyFlags = ProxyFlags.CloningAllowed | ProxyFlags.DisablesProxyWarningDialog,
+				WasZombie = false,
+			});
+
+			//AcDbMTextAttributeObjectContextData
+			doc.Classes.AddOrUpdate(new DxfClass
+			{
+				CppClassName = DxfSubclassMarker.MTextAttributeObjectContextData,
+				ClassNumber = (short)(500 + doc.Classes.Count),
+				DwgVersion = ACadVersion.AC1021,
+				DxfName = DxfFileToken.MTextAttributeObjectContextData,
+				ItemClassId = 499,
+				MaintenanceVersion = 0,
+				ProxyFlags = ProxyFlags.EraseAllowed | ProxyFlags.CloningAllowed | ProxyFlags.DisablesProxyWarningDialog,
+				WasZombie = false,
+			});
+
+			//AcDbBlkRefObjectContextData
+			doc.Classes.AddOrUpdate(new DxfClass
+			{
+				CppClassName = DxfSubclassMarker.BlkRefObjectContextData,
+				ClassNumber = (short)(500 + doc.Classes.Count),
+				DwgVersion = ACadVersion.AC1021,
+				DxfName = DxfFileToken.BlkRefObjectContextData,
+				ItemClassId = 499,
+				MaintenanceVersion = 0,
+				ProxyFlags = ProxyFlags.EraseAllowed | ProxyFlags.CloningAllowed | ProxyFlags.DisablesProxyWarningDialog,
 				WasZombie = false,
 			});
 		}

@@ -36,6 +36,7 @@ namespace ACadSharp.Tests.IO
 			Data.Add(new(nameof(SingleCaseGenerator.EntityColorByIndex)));
 			Data.Add(new(nameof(SingleCaseGenerator.CurrentEntityColorTrueColor)));
 			Data.Add(new(nameof(SingleCaseGenerator.CurrentEntityByIndex)));
+			Data.Add(new(nameof(SingleCaseGenerator.CurrentEntityByLayer)));
 			Data.Add(new(nameof(SingleCaseGenerator.CurrentEntityByBlock)));
 			Data.Add(new(nameof(SingleCaseGenerator.DefaultLayer)));
 			Data.Add(new(nameof(SingleCaseGenerator.LayerTrueColor)));
@@ -46,6 +47,7 @@ namespace ACadSharp.Tests.IO
 			Data.Add(new(nameof(SingleCaseGenerator.CreateGroup)));
 			Data.Add(new(nameof(SingleCaseGenerator.SingleMTextMultiline)));
 			Data.Add(new(nameof(SingleCaseGenerator.SinglePoint)));
+			Data.Add(new(nameof(SingleCaseGenerator.PolylineVertexLayer)));
 			Data.Add(new(nameof(SingleCaseGenerator.ClosedLwPolyline)));
 			Data.Add(new(nameof(SingleCaseGenerator.ClosedPolyline2DTest)));
 			Data.Add(new(nameof(SingleCaseGenerator.ClosedPolyline3DTest)));
@@ -630,6 +632,11 @@ namespace ACadSharp.Tests.IO
 				this.Document.Layers.Add(lay);
 			}
 
+			public void CurrentEntityByLayer()
+			{
+				this.Document.Header.CurrentEntityColor = Color.ByLayer;
+			}
+
 			public void CurrentEntityByBlock()
 			{
 				this.Document.Header.CurrentEntityColor = Color.ByBlock;
@@ -926,6 +933,29 @@ namespace ACadSharp.Tests.IO
 
 			public void Empty()
 			{ }
+
+			public void PolylineVertexLayer()
+			{
+				var dxfLayer = new Layer("Example layer");
+				this.Document.Layers.Add(dxfLayer);
+				var anotherDxfLayer = new Layer("Another layer");
+				this.Document.Layers.Add(anotherDxfLayer);
+
+				var line = new Polyline2D(vertices: [new Vertex2D(new CSMath.XY(0, 0)), new Vertex2D(new CSMath.XY(100, 100))], isClosed: false)
+				{
+					Layer = dxfLayer,
+					Color = new Color(128)
+				};
+
+				var anotherLine = new Polyline2D(vertices: [new Vertex2D(new CSMath.XY(50, 50)), new Vertex2D(new CSMath.XY(100, 100))], isClosed: false)
+				{
+					Layer = anotherDxfLayer,
+					Color = new Color(64)
+				};
+
+				this.Document.Entities.Add(line);
+				this.Document.Entities.Add(anotherLine);
+			}
 
 			public void GenerateExampleDxf()
 			{
