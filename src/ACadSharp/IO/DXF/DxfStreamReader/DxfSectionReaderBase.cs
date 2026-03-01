@@ -1959,37 +1959,49 @@ namespace ACadSharp.IO.DXF
 				return null;
 			}
 
-			//72
-			bool hasBulge = this._reader.ValueAsBool;
-			this._reader.ReadNext();
-
-			//73
-			bool isClosed = this._reader.ValueAsBool;
-			this._reader.ReadNext();
-
-			//93
-			int nvertices = this._reader.ValueAsInt;
-			this._reader.ReadNext();
-
-			for (int i = 0; i < nvertices; i++)
+			bool end = false;
+			bool hasBulge = false;
+			while (!end)
 			{
-				double bulge = 0.0;
-
-				//10
-				double x = this._reader.ValueAsDouble;
-				this._reader.ReadNext();
-				//20
-				double y = this._reader.ValueAsDouble;
-				this._reader.ReadNext();
-
-				if (hasBulge)
+				switch (this._reader.Code)
 				{
-					//42
-					bulge = this._reader.ValueAsDouble;
-					this._reader.ReadNext();
+					case 72:
+						hasBulge = this._reader.ValueAsBool;
+						break;
+					case 73:
+						boundary.IsClosed = this._reader.ValueAsBool;
+						break;
+					case 93:
+						int nvertices = this._reader.ValueAsInt;
+						this._reader.ReadNext();
+
+						for (int i = 0; i < nvertices; i++)
+						{
+							double bulge = 0.0;
+
+							//10
+							double x = this._reader.ValueAsDouble;
+							this._reader.ReadNext();
+							//20
+							double y = this._reader.ValueAsDouble;
+							this._reader.ReadNext();
+
+							if (hasBulge)
+							{
+								//42
+								bulge = this._reader.ValueAsDouble;
+								this._reader.ReadNext();
+							}
+
+							boundary.Vertices.Add(new XYZ(x, y, bulge));
+						}
+						continue;
+					default:
+						end = true;
+						continue;
 				}
 
-				boundary.Vertices.Add(new XYZ(x, y, bulge));
+				this._reader.ReadNext();
 			}
 
 			return boundary;
