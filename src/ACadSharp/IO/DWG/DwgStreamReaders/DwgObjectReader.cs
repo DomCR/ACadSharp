@@ -2,7 +2,6 @@
 using ACadSharp.Classes;
 using ACadSharp.Entities;
 using ACadSharp.Entities.AecObjects;
-using ACadSharp.Exceptions;
 using ACadSharp.IO.Templates;
 using ACadSharp.Objects;
 using ACadSharp.Objects.Evaluations;
@@ -14,11 +13,9 @@ using CSMath;
 using CSUtilities.Converters;
 using System;
 using System.Collections.Generic;
-using System.Diagnostics;
 using System.Globalization;
 using System.IO;
 using System.Linq;
-using System.Reflection;
 using System.Text;
 using static ACadSharp.Objects.MultiLeaderObjectContextData;
 
@@ -249,8 +246,6 @@ namespace ACadSharp.IO.DWG
 
 			return type;
 		}
-
-		#region Common entity data
 
 		/// <summary>
 		/// Get the handle of the entity and saves the value to the <see cref="_handles"/>
@@ -743,11 +738,7 @@ namespace ACadSharp.IO.DWG
 			this._mergedReaders = new DwgMergedReader(this._objectReader, this._textReader, this._handlesReader);
 		}
 
-		#endregion Common entity data
-
-		#region Object readers
-
-		private static bool looksLikeUtf16Le(byte[] buffer, int offset)
+			private static bool looksLikeUtf16Le(byte[] buffer, int offset)
 		{
 			if (buffer == null || offset < 0 || offset + 1 >= buffer.Length)
 				return false;
@@ -959,14 +950,6 @@ namespace ACadSharp.IO.DWG
 					NotificationType.Error,
 					ex);
 			}
-
-			return template;
-		}
-
-		private CadTemplate readAnnotScaleObjectContextData(CadAnnotScaleObjectContextDataTemplate template)
-		{
-			this.readObjectContextData(template);
-			template.ScaleHandle = this.handleReference();
 
 			return template;
 		}
@@ -2068,8 +2051,6 @@ namespace ACadSharp.IO.DWG
 			int npaths = this._objectReader.ReadBitLong();
 			bool hasDerivedBoundary = false;
 
-			#region Read the boundary path data
-
 			for (int i = 0; i < npaths; i++)
 			{
 				CadHatchTemplate.CadBoundaryPathTemplate pathTemplate = new CadHatchTemplate.CadBoundaryPathTemplate();
@@ -2230,8 +2211,6 @@ namespace ACadSharp.IO.DWG
 
 				template.PathTemplates.Add(pathTemplate);
 			}
-
-			#endregion Read the boundary path data
 
 			//style BS 75 style of hatch 0==odd parity, 1==outermost, 2==whole area
 			hatch.Style = (HatchStyleType)this._objectReader.ReadBitShort();
@@ -3775,28 +3754,28 @@ namespace ACadSharp.IO.DWG
 				//END REDUNDANT FIELDS
 
 				//Column type BS 71 0 = No columns, 1 = static columns, 2 = dynamic columns
-				mtext.Column.ColumnType = (ColumnType)this._objectReader.ReadBitShort();
+				mtext.ColumnData.ColumnType = (ColumnType)this._objectReader.ReadBitShort();
 				//IF Has Columns data(column type is not 0)
-				if (mtext.Column.ColumnType != ColumnType.NoColumns)
+				if (mtext.ColumnData.ColumnType != ColumnType.NoColumns)
 				{
 					//Column height count BL 72
 					int count = this._objectReader.ReadBitLong();
 					//Columnn width BD 44
-					mtext.Column.ColumnWidth = this._objectReader.ReadBitDouble();
+					mtext.ColumnData.Width = this._objectReader.ReadBitDouble();
 					//Gutter BD 45
-					mtext.Column.ColumnGutter = this._objectReader.ReadBitDouble();
+					mtext.ColumnData.Gutter = this._objectReader.ReadBitDouble();
 					//Auto height? B 73
-					mtext.Column.ColumnAutoHeight = this._objectReader.ReadBit();
+					mtext.ColumnData.AutoHeight = this._objectReader.ReadBit();
 					//Flow reversed? B 74
-					mtext.Column.ColumnFlowReversed = this._objectReader.ReadBit();
+					mtext.ColumnData.FlowReversed = this._objectReader.ReadBit();
 
 					//IF not auto height and column type is dynamic columns
-					if (!mtext.Column.ColumnAutoHeight && mtext.Column.ColumnType == ColumnType.DynamicColumns && count > 0)
+					if (!mtext.ColumnData.AutoHeight && mtext.ColumnData.ColumnType == ColumnType.DynamicColumns && count > 0)
 					{
 						for (int i = 0; i < count; ++i)
 						{
 							//Column height BD 46
-							mtext.Column.ColumnHeights.Add(this._objectReader.ReadBitDouble());
+							mtext.ColumnData.Heights.Add(this._objectReader.ReadBitDouble());
 						}
 					}
 				}
@@ -4520,21 +4499,6 @@ namespace ACadSharp.IO.DWG
 			{
 				this._builder.Notify($"Object type not implemented: {type}", NotificationType.NotImplemented);
 			}
-
-			return template;
-		}
-
-		private CadTemplate readObjectContextData(CadTemplate template)
-		{
-			this.readCommonNonEntityData(template);
-			ObjectContextData contextData = (ObjectContextData)template.CadObject;
-
-			//BS	70	Version (default value is 3).
-			contextData.Version = _objectReader.ReadBitShort();
-			//B	-	Has file to extension dictionary (default value is true).
-			contextData.HasFileToExtensionDictionary = _objectReader.ReadBit();
-			//B	290	Default flag (default value is false).
-			contextData.Default = _objectReader.ReadBit();
 
 			return template;
 		}
@@ -5691,6 +5655,18 @@ namespace ACadSharp.IO.DWG
 				case DxfFileToken.ObjectTableStyle:
 					template = this.readTableStyle();
 					break;
+				case DxfFileToken.BlkRefObjectContextData:
+					template = this.readBlkRefObjectContextData();
+					break;
+				case DxfFileToken.MTextAttributeObjectContextData:
+					template = this.readMTextAttributeObjectContextData();
+					break;
+				case DxfFileToken.ObjectFieldList:
+					template = this.readFieldList();
+					break;
+				case DxfFileToken.ObjectField:
+					template = this.readField();
+					break;
 			}
 
 			if (template == null && c.IsAnEntity)
@@ -6324,8 +6300,6 @@ namespace ACadSharp.IO.DWG
 			return template;
 		}
 
-		#region Dimensions
-
 		private void readCommonDimensionAlignedData(CadDimensionTemplate template)
 		{
 			DimensionAligned dimension = (DimensionAligned)template.CadObject;
@@ -6578,8 +6552,6 @@ namespace ACadSharp.IO.DWG
 
 			return template;
 		}
-
-		#endregion Dimensions
 
 		private CadTemplate readView()
 		{
@@ -7272,8 +7244,6 @@ namespace ACadSharp.IO.DWG
 
 			return template;
 		}
-
-		#endregion Object readers
 
 		private CadTemplate readDbColor()
 		{
