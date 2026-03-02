@@ -239,11 +239,11 @@ namespace ACadSharp.IO.DXF
 
 		protected void writeLongTextValue(int code, int subcode, string text)
 		{
-			for (int i = 0; i < text.Length - 250; i += 250)
+			while (text.Length > 250)
 			{
-				this._writer.Write(subcode, text.Substring(i, 250));
+				this._writer.Write(subcode, text.Substring(0, 250));
+				text = text.Remove(0, 250);
 			}
-
 			this._writer.Write(code, text);
 		}
 

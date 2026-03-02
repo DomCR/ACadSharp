@@ -41,6 +41,7 @@ namespace ACadSharp.Tests.IO
 			Data.Add(new(nameof(SingleCaseGenerator.DefaultLayer)));
 			Data.Add(new(nameof(SingleCaseGenerator.LayerTrueColor)));
 			Data.Add(new(nameof(SingleCaseGenerator.SingleMText)));
+			Data.Add(new(nameof(SingleCaseGenerator.SingleLongMText)));
 			Data.Add(new(nameof(SingleCaseGenerator.SingleMTextRotation)));
 			Data.Add(new(nameof(SingleCaseGenerator.SingleMTextSpecialCharacter)));
 			Data.Add(new(nameof(SingleCaseGenerator.TextWithChineseCharacters)));
@@ -1326,6 +1327,16 @@ namespace ACadSharp.Tests.IO
 				MText mtext = new MText();
 
 				mtext.Value = "HELLO I'm an MTEXT";
+
+				this.Document.Entities.Add(mtext);
+			}
+
+			public void SingleLongMText()
+			{
+				MText mtext = new MText();
+
+				mtext.Value = "HELLO I'm a long MTEXT with more than 250 characters that I need to be tested in the dxfwriter to see if I've been written correctly in any Cad software.\n" +
+					"Lorem ipsum dolor sit amet, consectetur adipiscing elit. Cras accumsan erat velit, nec sagittis felis convallis id. Morbi ac metus at purus tempor ornare quis vel mi. Phasellus iaculis molestie neque eu ultrices. Praesent in interdum mauris. Nulla in mi non eros aliquam tempus ut at metus. Sed vel ligula vitae ante facilisis malesuada id sit amet elit. Praesent fringilla enim at ipsum posuere blandit. Aliquam id magna metus. Aenean at ex mi. Etiam auctor elit lectus, at eleifend urna feugiat sed. Vivamus vitae tortor vel enim consectetur venenatis. Nulla gravida tellus id fermentum feugiat. Pellentesque laoreet elit a mi.\n";
 
 				this.Document.Entities.Add(mtext);
 			}
