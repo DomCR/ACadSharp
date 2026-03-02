@@ -1,5 +1,6 @@
 ﻿using ACadSharp.Blocks;
 using ACadSharp.Entities;
+using ACadSharp.Entities.AecObjects;
 using ACadSharp.Objects;
 using ACadSharp.Tables;
 using ACadSharp.Tables.Collections;
@@ -255,6 +256,7 @@ namespace ACadSharp.IO.DWG
 					return false;
 				case Shape:
 					return this.WriteShapes;
+				case Wall:
 				case ProxyEntity:
 				case TableEntity:
 				case Solid3D:

@@ -1,4 +1,5 @@
 ﻿using ACadSharp.Entities;
+using ACadSharp.Entities.AecObjects;
 using ACadSharp.Objects;
 using CSMath;
 using System;
@@ -148,6 +149,7 @@ namespace ACadSharp.IO.DXF
 				case Solid3D:
 				case CadBody:
 				case Region:
+				case Wall:
 					this.notify($"Entity type not implemented {entity.GetType().FullName}", NotificationType.NotImplemented);
 					return false;
 				default:

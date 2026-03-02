@@ -36,6 +36,8 @@
 
 		public const string Entity3DSolid = "3DSOLID";
 
+		public const string EntityAecWall = "AEC_WALL";
+
 		public const string EntityArc = "ARC";
 
 		public const string EntityAttribute = "ATTRIB";
@@ -225,6 +227,9 @@
 		public const string ObjectSortEntsTable = "SORTENTSTABLE";
 
 		public const string ObjectSpatialFilter = "SPATIAL_FILTER";
+		public const string ObjectBinRecord = "BINRECORD";
+		public const string ObjectAecWallStyle = "AEC_WALL_STYLE";
+		public const string ObjectAecCleanupGroupDef = "AEC_CLEANUP_GROUP_DEF";
 
 		public const string ObjectsSection = "OBJECTS";
 
