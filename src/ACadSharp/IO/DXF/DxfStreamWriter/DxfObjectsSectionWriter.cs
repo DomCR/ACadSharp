@@ -570,6 +570,9 @@ namespace ACadSharp.IO.DXF
 			{
 				case UnknownNonGraphicalObject:
 					return false;
+				case AecWallStyle:
+				case AecCleanupGroup:
+				case AecBinRecord:
 				case AcdbPlaceHolder:
 				case EvaluationGraph:
 				case Material:

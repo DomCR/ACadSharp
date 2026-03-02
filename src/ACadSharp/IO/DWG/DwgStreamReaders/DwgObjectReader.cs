@@ -738,7 +738,7 @@ namespace ACadSharp.IO.DWG
 			this._mergedReaders = new DwgMergedReader(this._objectReader, this._textReader, this._handlesReader);
 		}
 
-			private static bool looksLikeUtf16Le(byte[] buffer, int offset)
+		private static bool looksLikeUtf16Le(byte[] buffer, int offset)
 		{
 			if (buffer == null || offset < 0 || offset + 1 >= buffer.Length)
 				return false;
@@ -870,42 +870,32 @@ namespace ACadSharp.IO.DWG
 
 			this.readCommonEntityData(template);
 
-			try
+			// Version information (common in AEC objects)
+			if (this.R2000Plus)
 			{
-				// Version information (common in AEC objects)
-				if (this.R2000Plus)
-				{
-					wall.Version = this._mergedReaders.ReadBitLong();
-				}
-
-				// Read standard handles
-				this.handleReference(); // skip 0 handle
-				template.StyleHandle = this.handleReference(); // Should be AEC_WALL_STYLE
-				template.CleanupGroupHandle = this.handleReference(); // Should be AEC_CLEANUP_GROUP_DEF
-
-				long objectPos = this._objectReader.PositionInBits();
-				long handlesPos = this._handlesReader.PositionInBits();
-				long objectDataSize = handlesPos - objectPos;
-
-				// Store raw proprietary data
-				if (objectDataSize > 0)
-				{
-					int dataBytes = (int)(objectDataSize / 8);
-					if (objectDataSize % 8 != 0) dataBytes++;
-
-					byte[] rawData = this._objectReader.ReadBytes(dataBytes);
-					template.RawData = rawData;
-				}
-
-				// search in the rawData
+				wall.Version = this._mergedReaders.ReadBitLong();
 			}
-			catch (Exception ex)
+
+			// Read standard handles
+			this.handleReference(); // skip 0 handle
+			template.StyleHandle = this.handleReference(); // Should be AEC_WALL_STYLE
+			template.CleanupGroupHandle = this.handleReference(); // Should be AEC_CLEANUP_GROUP_DEF
+
+			long objectPos = this._objectReader.PositionInBits();
+			long handlesPos = this._handlesReader.PositionInBits();
+			long objectDataSize = handlesPos - objectPos;
+
+			// Store raw proprietary data
+			if (objectDataSize > 0)
 			{
-				this._builder.Notify(
-					$"Error reading AEC_WALL entity [Handle: {wall.Handle:X}]: {ex.Message}",
-					NotificationType.Error,
-					ex);
+				int dataBytes = (int)(objectDataSize / 8);
+				if (objectDataSize % 8 != 0) dataBytes++;
+
+				byte[] rawData = this._objectReader.ReadBytes(dataBytes);
+				template.RawData = rawData;
 			}
+
+			// search in the rawData
 
 			return template;
 		}
@@ -917,38 +907,27 @@ namespace ACadSharp.IO.DWG
 
 			this.readCommonNonEntityData(template);
 
-			try
+			// Version information (common in AEC objects)
+			if (this.R2000Plus)
 			{
-				// Version information (common in AEC objects)
-				if (this.R2000Plus)
-				{
-					wallStyle.Version = this._mergedReaders.ReadBitLong();
-				}
-
-				// Description field (common in AEC style objects)
-				wallStyle.Description = this._mergedReaders.ReadVariableText();
-
-				long currentPos = this._mergedReaders.PositionInBits();
-				long endPos = this._objectInitialPos + (this._size * 8);
-				long remainingBits = endPos - currentPos;
-
-				// Store any remaining data as proprietary binary data for future analysis
-				if (remainingBits > 0)
-				{
-					int remainingBytes = (int)(remainingBits / 8);
-					if (remainingBytes > 0)
-					{
-						wallStyle.RawData = this._mergedReaders.ReadBytes(remainingBytes);
-					}
-				}
+				wallStyle.Version = this._mergedReaders.ReadBitLong();
 			}
-			catch (Exception ex)
+
+			// Description field (common in AEC style objects)
+			wallStyle.Description = this._mergedReaders.ReadVariableText();
+
+			long currentPos = this._mergedReaders.PositionInBits();
+			long endPos = this._objectInitialPos + (this._size * 8);
+			long remainingBits = endPos - currentPos;
+
+			// Store any remaining data as proprietary binary data for future analysis
+			if (remainingBits > 0)
 			{
-				this._builder.Notify(
-					$"Error reading AEC_WALL_STYLE [Handle: {wallStyle.Handle:X}]: {ex.Message}\n" +
-					$"Position: {this._mergedReaders.PositionInBits()} bits",
-					NotificationType.Error,
-					ex);
+				int remainingBytes = (int)(remainingBits / 8);
+				if (remainingBytes > 0)
+				{
+					wallStyle.RawData = this._mergedReaders.ReadBytes(remainingBytes);
+				}
 			}
 
 			return template;

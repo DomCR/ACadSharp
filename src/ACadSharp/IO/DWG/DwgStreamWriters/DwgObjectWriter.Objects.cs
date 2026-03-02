@@ -34,6 +34,9 @@ namespace ACadSharp.IO.DWG
 				case XRecord when !this.WriteXRecords:
 					notify = false;
 					return true;
+				case AecWallStyle:
+				case AecCleanupGroup:
+				case AecBinRecord:
 				case EvaluationGraph:
 				case Material:
 				case UnknownNonGraphicalObject:
