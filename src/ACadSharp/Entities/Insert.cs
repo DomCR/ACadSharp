@@ -305,9 +305,14 @@ namespace ACadSharp.Entities
 		}
 
 		/// <summary>
-		/// Explodes the current insert.
+		/// Returns an enumerable collection of entities representing the exploded contents of the block, with all entities
+		/// transformed into the current coordinate system.
 		/// </summary>
-		/// <returns></returns>
+		/// <remarks>The returned entities are clones or converted equivalents of the original block entities, with
+		/// geometric transformations applied. For example, arcs and circles are converted to their corresponding geometric
+		/// representations. The original block and its entities remain unchanged.</remarks>
+		/// <returns>An enumerable collection of <see cref="Entity"/> objects that make up the exploded block. Each entity is
+		/// transformed according to the block's transform. The collection may be empty if the block contains no entities.</returns>
 		public IEnumerable<Entity> Explode()
 		{
 			Transform transform = this.GetTransform();
@@ -320,10 +325,10 @@ namespace ACadSharp.Entities
 						arc.GetEndVertices(out XYZ start, out XYZ end);
 
 						Arc a = new Arc(
-						transform.ApplyTransform(arc.Center),
-						transform.ApplyTransform(start),
-						transform.ApplyTransform(end),
-						arc.Normal);
+								transform.ApplyTransform(arc.Center),
+								transform.ApplyTransform(start),
+								transform.ApplyTransform(end),
+								arc.Normal);
 
 						a.MatchProperties(e);
 

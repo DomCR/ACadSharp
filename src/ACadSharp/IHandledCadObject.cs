@@ -6,7 +6,7 @@
 	public interface IHandledCadObject
 	{
 		/// <summary>
-		/// Unique handle for this object
+		/// Unique handle for this object in a <see cref="CadDocument"/>.
 		/// </summary>
 		ulong Handle { get; }
 	}

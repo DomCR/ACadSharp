@@ -33,6 +33,50 @@ namespace ACadSharp.Tests.Entities
 			Assert.Equal(MathHelper.HalfPI, dim.Measurement);
 		}
 
+		[Fact]
+		public void MeasurementTest_DimensionArc_BetweenVectors()
+		{
+			var dim = this.createDim();
+			dim.DefinitionPoint = XYZ.AxisX; // 0°
+			dim.SecondPoint = new XYZ(1, 1, 0).Normalize(); // 45°
+			dim.DimensionArc = new XYZ(1, 0.5f, 0); // somewhere between
+
+			Assert.Equal(MathHelper.HalfPI * 0.5f, dim.Measurement);
+		}
+
+		[Fact]
+		public void MeasurementTest_DimensionArc_After2ndVector()
+		{
+			var dim = this.createDim();
+			dim.DefinitionPoint = XYZ.AxisX; // 0°
+			dim.SecondPoint = new XYZ(1, 1, 0).Normalize(); // 45°
+			dim.DimensionArc = new XYZ(0, 1, 0).Normalize(); //After 2nd vector
+
+			Assert.Equal(MathHelper.HalfPI * 1.5f, dim.Measurement);
+		}
+
+		[Fact]
+		public void MeasurementTest_DimensionArc_BetweenMirroredVector()
+		{
+			var dim = this.createDim();
+			dim.DefinitionPoint = XYZ.AxisX; // 0°
+			dim.SecondPoint = new XYZ(1, 1, 0).Normalize(); // 45°
+			dim.DimensionArc = new XYZ(-1, -0.5f, 0); // somewhere between
+
+			Assert.Equal(MathHelper.HalfPI * 0.5f, dim.Measurement);
+		}
+
+		[Fact]
+		public void MeasurementTest_DimensionArc_BeforeFirstVector()
+		{
+			var dim = this.createDim();
+			dim.DefinitionPoint = XYZ.AxisX; // 0°
+			dim.SecondPoint = new XYZ(1, 1, 0).Normalize(); // 45°
+			dim.DimensionArc = new XYZ(0, -1, 0).Normalize(); //After 2nd vector
+
+			Assert.Equal(MathHelper.HalfPI * 1.5f, dim.Measurement);
+		}
+
 		public override void UpdateBlockTests()
 		{
 		}
@@ -43,8 +87,8 @@ namespace ACadSharp.Tests.Entities
 			angular.FirstPoint = XYZ.Zero;
 			angular.SecondPoint = XYZ.AxisX;
 
-			angular.DefinitionPoint = XYZ.Zero;
-			angular.AngleVertex = XYZ.AxisY;
+			angular.AngleVertex = XYZ.Zero;
+			angular.DefinitionPoint = XYZ.AxisY;
 
 			return angular;
 		}

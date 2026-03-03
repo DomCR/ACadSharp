@@ -30,7 +30,7 @@ namespace ACadSharp.Types.Units
 		/// <summary>
 		/// Gets or sets the suppression of zeros in the angular values.
 		/// </summary>
-		public ZeroHandling AngularZeroHandling { get; set; } = ZeroHandling.SuppressDecimalTrailingZeroes;
+		public AngularZeroHandling AngularZeroHandling { get; set; } = AngularZeroHandling.DisplayAll;
 
 		/// <summary>
 		/// Gets or set the decimal separator.
@@ -232,25 +232,27 @@ namespace ACadSharp.Types.Units
 		/// <returns></returns>
 		public string GetZeroHandlingFormat(bool isAngular = false)
 		{
-			short decimalPlaces = this.LinearDecimalPlaces;
-			ZeroHandling handling;
-
+			short decimalPlaces;
+			char leading;
+			char trailing;
 			if (isAngular)
 			{
-				handling = this.AngularZeroHandling;
+				decimalPlaces = this.AngularDecimalPlaces;
+				leading = this.AngularZeroHandling == AngularZeroHandling.SuppressLeadingZeroes 
+					|| this.AngularZeroHandling == AngularZeroHandling.SupressAll ? '#' : '0';
+				trailing = this.AngularZeroHandling == AngularZeroHandling.SupressTrailingZeroes
+					|| this.AngularZeroHandling == AngularZeroHandling.SupressAll ? '#' : '0';
 			}
 			else
 			{
-				handling = this.LinearZeroHandling;
+				decimalPlaces = this.LinearDecimalPlaces;
+				leading = this.LinearZeroHandling == ZeroHandling.SuppressDecimalLeadingZeroes
+				  || this.LinearZeroHandling == ZeroHandling.SuppressDecimalLeadingAndTrailingZeroes ?
+				  '#' : '0';
+				trailing = this.LinearZeroHandling == ZeroHandling.SuppressDecimalTrailingZeroes
+				  || this.LinearZeroHandling == ZeroHandling.SuppressDecimalLeadingAndTrailingZeroes ?
+				  '#' : '0';
 			}
-
-			char leading = handling == ZeroHandling.SuppressDecimalLeadingZeroes
-				   || handling == ZeroHandling.SuppressDecimalLeadingAndTrailingZeroes ?
-				   '#' : '0';
-
-			char trailing = handling == ZeroHandling.SuppressDecimalTrailingZeroes
-			   || handling == ZeroHandling.SuppressDecimalLeadingAndTrailingZeroes ?
-			   '#' : '0';
 
 			StringBuilder zeroes = new();
 
@@ -387,11 +389,25 @@ namespace ACadSharp.Types.Units
 		}
 
 		/// <summary>
+		/// Converts an angle value in degrees string representation.
+		/// </summary>
+		/// <param name="angle">Angle value in radians.</param>
+		/// <returns>A string that represents the value in degrees</returns>
+		public string ToDegrees(double angle)
+		{
+			double degrees = MathHelper.RadToDeg(angle);
+			NumberFormatInfo numberFormat = new NumberFormatInfo
+			{
+				NumberDecimalSeparator = this.DecimalSeparator
+			};
+			return degrees.ToString(GetZeroHandlingFormat(isAngular: true), numberFormat) + this.DegreesSymbol;
+		}
+
+		/// <summary>
 		/// Converts an angle value in degrees into its degrees, minutes and seconds string representation.
 		/// </summary>
 		/// <param name="angle">Angle value in radians.</param>
-		/// <returns></returns>
-		/// <exception cref="ArgumentNullException"></exception>
+		/// <returns>A string that represents the value in degrees, minutes and seconds</returns>
 		public string ToDegreesMinutesSeconds(double angle)
 		{
 			double degrees = MathHelper.RadToDeg(angle);

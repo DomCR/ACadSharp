@@ -50,6 +50,43 @@ namespace ACadSharp.Entities
 				/// <inheritdoc/>
 				public override EdgeType Type => EdgeType.EllipticArc;
 
+				/// <summary>
+				/// Initializes a new instance of the Ellipse class.
+				/// </summary>
+				public Ellipse()
+				{ }
+
+				/// <summary>
+				/// Initializes a new instance of the Ellipse class based on the specified ellipse entity.
+				/// </summary>
+				/// <remarks>The constructed Ellipse will represent a full ellipse if the source entity indicates so;
+				/// otherwise, it will use the start and end parameters from the source. The orientation and axes are derived from
+				/// the source entity's properties.</remarks>
+				/// <param name="ellipse">The source ellipse entity containing the geometric parameters to initialize this instance. Cannot be null.</param>
+				public Ellipse(Entities.Ellipse ellipse)
+				{
+					Matrix3 trans = Matrix3.ArbitraryAxis(ellipse.Normal).Transpose();
+
+					XYZ point = trans * ellipse.Center;
+					this.Center = new XY(point.X, point.Y);
+
+					double sine = 0.5 * ellipse.MajorAxis * Math.Sin(ellipse.Rotation);
+					double cosine = 0.5 * ellipse.MajorAxis * Math.Cos(ellipse.Rotation);
+					this.MajorAxisEndPoint = new XY(cosine, sine);
+					this.MinorToMajorRatio = ellipse.MinorAxis / ellipse.MajorAxis;
+					if (ellipse.IsFullEllipse)
+					{
+						this.StartAngle = 0.0;
+						this.EndAngle = MathHelper.TwoPI;
+					}
+					else
+					{
+						this.StartAngle = ellipse.StartParameter;
+						this.EndAngle = ellipse.EndParameter;
+					}
+					this.CounterClockWise = true;
+				}
+
 				/// <inheritdoc/>
 				public override void ApplyTransform(Transform transform)
 				{
@@ -63,6 +100,16 @@ namespace ACadSharp.Entities
 					return this.ToEntity().GetBoundingBox();
 				}
 
+				/// <summary>
+				/// Converts the ellipse in a list of vertexes.
+				/// </summary>
+				/// <param name="precision">Number of vertexes generated.</param>
+				/// <returns>A list vertexes that represents the arc expressed in object coordinate system.</returns>
+				public List<XYZ> PolygonalVertexes(int precision)
+				{
+					return ((Entities.Ellipse)this.ToEntity()).PolygonalVertexes(precision);
+				}
+
 				/// <inheritdoc/>
 				public override Entity ToEntity()
 				{
@@ -74,16 +121,6 @@ namespace ACadSharp.Entities
 					ellipse.RadiusRatio = this.MinorToMajorRatio;
 
 					return ellipse;
-				}
-
-				/// <summary>
-				/// Converts the ellipse in a list of vertexes.
-				/// </summary>
-				/// <param name="precision">Number of vertexes generated.</param>
-				/// <returns>A list vertexes that represents the arc expressed in object coordinate system.</returns>
-				public List<XYZ> PolygonalVertexes(int precision)
-				{
-					return ((Entities.Ellipse)this.ToEntity()).PolygonalVertexes(precision);
 				}
 			}
 		}

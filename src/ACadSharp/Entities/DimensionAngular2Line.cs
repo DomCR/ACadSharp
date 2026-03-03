@@ -54,8 +54,25 @@ namespace ACadSharp.Entities
 			{
 				var v1 = this.SecondPoint - this.FirstPoint;
 				var v2 = this.DefinitionPoint - this.AngleVertex;
+				var angle = v1.AngleBetweenVectors(v2);
 
-				return v1.AngleBetweenVectors(v2);
+				var vArc = this.DimensionArc - this.Center;
+				if (vArc.IsZero())
+					return angle;
+
+				var cross1 = XYZ.Cross(v1, vArc);
+				var cross2 = XYZ.Cross(vArc, v2);
+
+				// Check if both cross products point in the same direction as the normal
+				// This means vArc is in the sector between v1 and v2 (going counterclockwise)
+				var dot1 = cross1.Dot(this.Normal);
+				var dot2 = cross2.Dot(this.Normal);
+
+				var isInOppositeSector = (dot1 < 0 && dot2 > 0) || (dot1 > 0 && dot2 < 0);
+				if (isInOppositeSector)
+					angle = MathHelper.PI - angle;
+
+				return angle;
 			}
 		}
 

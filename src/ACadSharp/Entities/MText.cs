@@ -55,13 +55,27 @@ namespace ACadSharp.Entities
 		[DxfCodeValue(441)]
 		public Transparency BackgroundTransparency { get; set; }
 
-		public TextColumn Column { get; set; } = new TextColumn();
+		/// <summary>
+		/// Gets or sets the text column data associated with this instance.
+		/// </summary>
+		public TextColumnData ColumnData { get; private set; } = new();
 
 		/// <summary>
 		/// Drawing direction
 		/// </summary>
 		[DxfCodeValue(72)]
 		public DrawingDirectionType DrawingDirection { get; set; } = DrawingDirectionType.LeftToRight;
+
+		/// <summary>
+		/// Gets a value indicating whether the current object contains any columns.
+		/// </summary>
+		public bool HasColumns
+		{
+			get
+			{
+				return this.ColumnData.ColumnType != ColumnType.NoColumns;
+			}
+		}
 
 		/// <inheritdoc/>
 		[DxfCodeValue(40)]
@@ -319,7 +333,7 @@ namespace ACadSharp.Entities
 			MText clone = (MText)base.Clone();
 
 			clone.Style = (TextStyle)(this.Style?.Clone());
-			clone.Column = this.Column?.Clone();
+			clone.ColumnData = this.ColumnData?.Clone();
 
 			return clone;
 		}

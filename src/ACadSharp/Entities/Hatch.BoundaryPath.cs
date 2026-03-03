@@ -2,6 +2,7 @@
 using ACadSharp.Extensions;
 using CSMath;
 using CSUtilities.Extensions;
+using System;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.Collections.Specialized;
@@ -58,11 +59,38 @@ namespace ACadSharp.Entities
 			private BoundaryPathFlags _flags;
 
 			/// <summary>
-			/// Default constructor.
+			/// Initializes a new instance of the BoundaryPath class.
 			/// </summary>
+			/// <remarks>Subscribes to changes in the Edges collection to keep the BoundaryPath instance updated when
+			/// the collection is modified.</remarks>
 			public BoundaryPath()
 			{
 				this.Edges.CollectionChanged += this.onEdgesCollectionChanged;
+			}
+
+			/// <summary>
+			/// Initializes a new instance of the BoundaryPath class with the specified collection of edges.
+			/// </summary>
+			/// <param name="edges">A collection of Edge objects that define the boundary path. Cannot be null.</param>
+			public BoundaryPath(IEnumerable<Edge> edges) : this()
+			{
+				foreach (var edge in edges)
+				{
+					this.Edges.Add(edge);
+				}
+			}
+
+			/// <summary>
+			/// Initializes a new instance of the BoundaryPath class using the specified collection of entities.
+			/// </summary>
+			/// <remarks>The entities provided are added to the Entities collection of the BoundaryPath. The path is
+			/// marked as derived and external by default.</remarks>
+			/// <param name="entities">A collection of Entity objects that define the segments of the boundary path. Cannot be null.</param>
+			public BoundaryPath(params IEnumerable<Entity> entities) : this()
+			{
+				this._flags = BoundaryPathFlags.Derived | BoundaryPathFlags.External;
+				this.Entities.AddRange(entities);
+				this.UpdateEdges();
 			}
 
 			/// <inheritdoc/>
@@ -139,6 +167,51 @@ namespace ACadSharp.Entities
 				}
 
 				return pts;
+			}
+
+			/// <summary>
+			/// Updates the collection of edges to reflect the current set of entities in the boundary definition.
+			/// </summary>
+			/// <remarks>This method clears the existing edges and reconstructs them based on the current entities. It
+			/// should be called after modifying the entities collection to ensure the edges remain consistent with the boundary
+			/// definition.</remarks>
+			/// <exception cref="ArgumentException">Thrown if an entity in the collection is not of a supported type. Only Arc, Circle, Ellipse, Line, Polyline2D,
+			/// Polyline3D, and Spline entities are allowed as hatch boundary elements.</exception>
+			public void UpdateEdges()
+			{
+				if (!this.Entities.Any())
+				{
+					return;
+				}
+
+				this.Edges.Clear();
+
+				foreach (var entity in this.Entities)
+				{
+					switch (entity)
+					{
+						case Entities.Arc arc:
+							this.Edges.Add(new Arc(arc));
+							break;
+						case Entities.Circle circle:
+							this.Edges.Add(new Arc(circle));
+							break;
+						case Entities.Ellipse ellipse:
+							this.Edges.Add(new Ellipse(ellipse));
+							break;
+						case Entities.Line line:
+							this.Edges.Add(new Line(line));
+							break;
+						case IPolyline polyline:
+							this.Edges.Add(new Polyline(polyline));
+							break;
+						case Entities.Spline spline:
+							this.Edges.Add(new Spline(spline));
+							break;
+						default:
+							throw new ArgumentException(($"The entity type {entity.ObjectName} cannot be part of a hatch boundary. Only Arc, Circle, Ellipse, Line, Polyline2D, Polyline3D, and Spline entities are allowed."));
+					}
+				}
 			}
 
 			private void onAdd(NotifyCollectionChangedEventArgs e)

@@ -8,6 +8,7 @@ using System;
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
+using System.Xml.Linq;
 using Xunit;
 using Xunit.Abstractions;
 
@@ -22,6 +23,7 @@ namespace ACadSharp.Tests.IO
 			Data = new();
 			Data.Add(new(nameof(SingleCaseGenerator.Empty)));
 			Data.Add(new(nameof(SingleCaseGenerator.ArcSegments)));
+			Data.Add(new(nameof(SingleCaseGenerator.GenerateExampleDxf)));
 			Data.Add(new(nameof(SingleCaseGenerator.SingleEllipse)));
 			Data.Add(new(nameof(SingleCaseGenerator.SingleLine)));
 			Data.Add(new(nameof(SingleCaseGenerator.ViewZoom)));
@@ -34,16 +36,19 @@ namespace ACadSharp.Tests.IO
 			Data.Add(new(nameof(SingleCaseGenerator.EntityColorByIndex)));
 			Data.Add(new(nameof(SingleCaseGenerator.CurrentEntityColorTrueColor)));
 			Data.Add(new(nameof(SingleCaseGenerator.CurrentEntityByIndex)));
+			Data.Add(new(nameof(SingleCaseGenerator.CurrentEntityByLayer)));
 			Data.Add(new(nameof(SingleCaseGenerator.CurrentEntityByBlock)));
 			Data.Add(new(nameof(SingleCaseGenerator.DefaultLayer)));
 			Data.Add(new(nameof(SingleCaseGenerator.LayerTrueColor)));
 			Data.Add(new(nameof(SingleCaseGenerator.SingleMText)));
+			Data.Add(new(nameof(SingleCaseGenerator.SingleLongMText)));
 			Data.Add(new(nameof(SingleCaseGenerator.SingleMTextRotation)));
 			Data.Add(new(nameof(SingleCaseGenerator.SingleMTextSpecialCharacter)));
 			Data.Add(new(nameof(SingleCaseGenerator.TextWithChineseCharacters)));
 			Data.Add(new(nameof(SingleCaseGenerator.CreateGroup)));
 			Data.Add(new(nameof(SingleCaseGenerator.SingleMTextMultiline)));
 			Data.Add(new(nameof(SingleCaseGenerator.SinglePoint)));
+			Data.Add(new(nameof(SingleCaseGenerator.PolylineVertexLayer)));
 			Data.Add(new(nameof(SingleCaseGenerator.ClosedLwPolyline)));
 			Data.Add(new(nameof(SingleCaseGenerator.ClosedPolyline2DTest)));
 			Data.Add(new(nameof(SingleCaseGenerator.ClosedPolyline3DTest)));
@@ -59,6 +64,7 @@ namespace ACadSharp.Tests.IO
 			Data.Add(new(nameof(SingleCaseGenerator.CreateHatchPolyline)));
 			Data.Add(new(nameof(SingleCaseGenerator.CreateHatch)));
 			Data.Add(new(nameof(SingleCaseGenerator.CreateCircleHatch)));
+			Data.Add(new(nameof(SingleCaseGenerator.HatchWithEntities)));
 			Data.Add(new(nameof(SingleCaseGenerator.ChangedEncoding)));
 			Data.Add(new(nameof(SingleCaseGenerator.AddBlockWithAttributes)));
 			Data.Add(new(nameof(SingleCaseGenerator.AddCustomScale)));
@@ -78,6 +84,7 @@ namespace ACadSharp.Tests.IO
 			Data.Add(new(nameof(SingleCaseGenerator.XData)));
 			Data.Add(new(nameof(SingleCaseGenerator.XRef)));
 			Data.Add(new(nameof(SingleCaseGenerator.SPlineCreation)));
+			Data.Add(new(nameof(SingleCaseGenerator.TextAlignment)));
 			Data.Add(new(nameof(SingleCaseGenerator.CreateXRecords)));
 		}
 
@@ -383,6 +390,44 @@ namespace ACadSharp.Tests.IO
 				this.Document.Entities.Add(pline);
 			}
 
+			public void HatchWithEntities()
+			{
+				Hatch hatch = new Hatch();
+				hatch.IsSolid = true;
+
+				Circle c = new Circle
+				{
+					Radius = 5
+				};
+
+				hatch.Paths.Add(new Hatch.BoundaryPath(c));
+
+				this.Document.Entities.Add(hatch);
+				this.Document.Entities.Add(c);
+
+				hatch = new Hatch();
+				hatch.IsSolid = true;
+
+				hatch.Paths.Add(new Hatch.BoundaryPath(new Arc
+				{
+					Radius = 5,
+					Center = new XYZ(10, 10, 0)
+				}));
+
+				this.Document.Entities.Add(hatch);
+
+				hatch = new Hatch();
+				hatch.IsSolid = true;
+
+				hatch.Paths.Add(new Hatch.BoundaryPath(new Line
+				{
+					StartPoint = XYZ.Zero,
+					EndPoint = new XYZ(10, 10, 0)
+				}));
+
+				this.Document.Entities.Add(hatch);
+			}
+
 			public void CreateCircleHatch()
 			{
 				Hatch hatch = new Hatch();
@@ -586,6 +631,11 @@ namespace ACadSharp.Tests.IO
 				layerstates.Add(record);
 
 				this.Document.Layers.Add(lay);
+			}
+
+			public void CurrentEntityByLayer()
+			{
+				this.Document.Header.CurrentEntityColor = Color.ByLayer;
 			}
 
 			public void CurrentEntityByBlock()
@@ -885,6 +935,53 @@ namespace ACadSharp.Tests.IO
 
 			public void Empty()
 			{ }
+
+			public void PolylineVertexLayer()
+			{
+				var dxfLayer = new Layer("Example layer");
+				this.Document.Layers.Add(dxfLayer);
+				var anotherDxfLayer = new Layer("Another layer");
+				this.Document.Layers.Add(anotherDxfLayer);
+
+				var line = new Polyline2D(vertices: [new Vertex2D(new CSMath.XY(0, 0)), new Vertex2D(new CSMath.XY(100, 100))], isClosed: false)
+				{
+					Layer = dxfLayer,
+					Color = new Color(128)
+				};
+
+				var anotherLine = new Polyline2D(vertices: [new Vertex2D(new CSMath.XY(50, 50)), new Vertex2D(new CSMath.XY(100, 100))], isClosed: false)
+				{
+					Layer = anotherDxfLayer,
+					Color = new Color(64)
+				};
+
+				this.Document.Entities.Add(line);
+				this.Document.Entities.Add(anotherLine);
+			}
+
+			public void GenerateExampleDxf()
+			{
+				this.Document.Header.UnitMode = (short)ACadSharp.Types.Units.UnitsType.Millimeters;
+				var dxfLayer = new Layer("Example layer");
+				this.Document.Layers.Add(dxfLayer);
+				var anotherDxfLayer = new Layer("Another layer");
+				this.Document.Layers.Add(anotherDxfLayer);
+
+				var line = new Polyline2D(vertices: [new Vertex2D(new CSMath.XY(0, 0)), new Vertex2D(new CSMath.XY(100, 100))], isClosed: false)
+				{
+					Layer = dxfLayer,
+					Color = new Color(128)
+				};
+
+				var anotherLine = new Polyline2D(vertices: [new Vertex2D(new CSMath.XY(50, 50)), new Vertex2D(new CSMath.XY(100, 100))], isClosed: false)
+				{
+					Layer = anotherDxfLayer,
+					Color = new Color(64)
+				};
+
+				this.Document.Entities.Add(line);
+				this.Document.Entities.Add(anotherLine);
+			}
 
 			public void EntityChangeNormal()
 			{
@@ -1231,6 +1328,16 @@ namespace ACadSharp.Tests.IO
 				MText mtext = new MText();
 
 				mtext.Value = "HELLO I'm an MTEXT";
+
+				this.Document.Entities.Add(mtext);
+			}
+
+			public void SingleLongMText()
+			{
+				MText mtext = new MText();
+
+				mtext.Value = "HELLO I'm a long MTEXT with more than 250 characters that I need to be tested in the dxfwriter to see if I've been written correctly in any Cad software.\n" +
+					"Lorem ipsum dolor sit amet, consectetur adipiscing elit. Cras accumsan erat velit, nec sagittis felis convallis id. Morbi ac metus at purus tempor ornare quis vel mi. Phasellus iaculis molestie neque eu ultrices. Praesent in interdum mauris. Nulla in mi non eros aliquam tempus ut at metus. Sed vel ligula vitae ante facilisis malesuada id sit amet elit. Praesent fringilla enim at ipsum posuere blandit. Aliquam id magna metus. Aenean at ex mi. Etiam auctor elit lectus, at eleifend urna feugiat sed. Vivamus vitae tortor vel enim consectetur venenatis. Nulla gravida tellus id fermentum feugiat. Pellentesque laoreet elit a mi.\n";
 
 				this.Document.Entities.Add(mtext);
 			}

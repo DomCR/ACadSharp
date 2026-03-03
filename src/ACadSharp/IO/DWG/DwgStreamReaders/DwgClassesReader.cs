@@ -95,18 +95,6 @@ namespace ACadSharp.IO.DWG
 				dxfClass.WasZombie = this._sreader.ReadBit();
 				//BS : itemclassid -- 0x1F2 for classes which produce entities, 0x1F3 for classes which produce objects.
 				dxfClass.ItemClassId = this._sreader.ReadBitShort();
-				if (dxfClass.ItemClassId == 0x1F2)
-				{
-					dxfClass.IsAnEntity = true;
-				}
-				else if (dxfClass.ItemClassId == 0x1F3)
-				{
-					dxfClass.IsAnEntity = false;
-				}
-				else
-				{
-					this.notify($"Invalid DxfClass id value: {dxfClass.ItemClassId} for {dxfClass.CppClassName}", NotificationType.Warning);
-				}
 
 				if (this.R2004Plus)
 				{

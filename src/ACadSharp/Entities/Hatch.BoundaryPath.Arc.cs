@@ -47,6 +47,45 @@ namespace ACadSharp.Entities
 				/// <inheritdoc/>
 				public override EdgeType Type => EdgeType.CircularArc;
 
+				/// <summary>
+				/// Initializes a new instance of the Arc class.
+				/// </summary>
+				public Arc() { }
+
+				/// <summary>
+				/// Initializes a new instance of the Arc class based on the specified circle or arc geometry.
+				/// </summary>
+				/// <remarks>
+				/// If the provided circle is an arc, the arc's center, radius, start angle, and end angle are
+				/// used. If the provided circle is a full circle, the arc will represent a full circle with a start angle of 0 and
+				/// an end angle of 2π. The arc is always constructed in a counterclockwise direction.
+				/// </remarks>
+				/// <param name="circle">The circle or arc from which to construct the arc. Must not be null.</param>
+				public Arc(Circle circle)
+				{
+					XYZ point;
+					Matrix3 trans = Matrix3.ArbitraryAxis(circle.Normal).Transpose();
+					switch (circle)
+					{
+						case Entities.Arc arc:
+							point = trans * arc.Center;
+							this.Center = new XY(point.X, point.Y);
+							this.Radius = arc.Radius;
+							this.StartAngle = arc.StartAngle;
+							this.EndAngle = arc.EndAngle;
+							this.CounterClockWise = true;
+							break;
+						case Circle:
+							point = trans * circle.Center;
+							this.Center = new XY(point.X, point.Y);
+							this.Radius = circle.Radius;
+							this.StartAngle = 0.0;
+							this.EndAngle = MathHelper.TwoPI;
+							this.CounterClockWise = true;
+							break;
+					}
+				}
+
 				/// <inheritdoc/>
 				public override void ApplyTransform(Transform transform)
 				{

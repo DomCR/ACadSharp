@@ -11,6 +11,13 @@ namespace ACadSharp.Tests.IO.DXF
 
 		[Theory()]
 		[MemberData(nameof(Data))]
+		public void WriteCasesAC1015(SingleCaseGenerator data)
+		{
+			this.writeDxfFile(data, ACadVersion.AC1015);
+		}
+
+		[Theory()]
+		[MemberData(nameof(Data))]
 		public void WriteCasesAC1018(SingleCaseGenerator data)
 		{
 			this.writeDxfFile(data, ACadVersion.AC1018);

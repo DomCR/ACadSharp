@@ -28,13 +28,13 @@ namespace ACadSharp.Tests.IO
 		{
 		};
 
+		protected readonly ITestOutputHelper _output;
+
 		protected readonly SvgConfiguration _svgConfiguration = new SvgConfiguration
 		{
 			DefaultLineWeight = 0.15,
 			LineWeightRatio = 50,
 		};
-
-		protected readonly ITestOutputHelper _output;
 
 		static IOTestsBase()
 		{
@@ -95,6 +95,18 @@ namespace ACadSharp.Tests.IO
 			if (files.Count == 0)
 			{
 				files.Add(new FileModel());
+			}
+		}
+
+		protected CadReaderConfiguration getConfiguration(FileModel test)
+		{
+			if (test.IsDxf)
+			{
+				return new DxfReaderConfiguration();
+			}
+			else
+			{
+				return new DwgReaderConfiguration();
 			}
 		}
 

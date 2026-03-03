@@ -2,12 +2,18 @@
 using CSUtilities.Converters;
 using System;
 
-
 namespace ACadSharp.IO.DXF
 {
 	internal abstract class DxfStreamWriterBase : IDxfStreamWriter
 	{
 		public bool WriteOptional { get; set; } = false;
+
+		public abstract void Close();
+
+		/// <inheritdoc/>
+		public abstract void Dispose();
+
+		public abstract void Flush();
 
 		public void Write(DxfCode code, object value, DxfClassMap map = null)
 		{
@@ -24,62 +30,6 @@ namespace ACadSharp.IO.DXF
 			for (int i = 0; i < value.Dimension; i++)
 			{
 				this.Write(code + i * 10, value[i], map);
-			}
-		}
-
-		public void WriteTrueColor(int code, Color color, DxfClassMap map = null)
-		{
-			byte[] arr = new byte[4];
-			arr[0] = (byte)color.B;
-			arr[1] = (byte)color.G;
-			arr[2] = (byte)color.R;
-			arr[3] = 0;
-
-			this.Write(code, LittleEndianConverter.Instance.ToInt32(arr), map);
-		}
-
-		public void WriteCmColor(int code, Color color, DxfClassMap map = null)
-		{
-			if (GroupCodeValue.TransformValue(code) == GroupCodeValueType.Int16)
-			{
-				//BS: Color Index
-				this.Write(code, Convert.ToInt16(color.GetApproxIndex()));
-			}
-			else
-			{
-				byte[] arr = new byte[4];
-
-				if (color.IsTrueColor)
-				{
-					arr[0] = (byte)color.B;
-					arr[1] = (byte)color.G;
-					arr[2] = (byte)color.R;
-					arr[3] = 0b1100_0010;   //	0xC2
-				}
-				else
-				{
-					arr[3] = 0b1100_0001;
-					arr[0] = (byte)color.Index;
-				}
-
-				//BL: RGB value
-				this.Write(code, LittleEndianConverter.Instance.ToInt32(arr), map);
-			}
-		}
-
-		public void WriteHandle(int code, IHandledCadObject value, DxfClassMap map = null)
-		{
-			if (value != null)
-			{
-				this.Write(code, value.Handle, map);
-			}
-		}
-
-		public void WriteName(int code, INamedCadObject value, DxfClassMap map = null)
-		{
-			if (value != null)
-			{
-				this.Write(code, value.Name, map);
 			}
 		}
 
@@ -120,12 +70,69 @@ namespace ACadSharp.IO.DXF
 			}
 		}
 
-		/// <inheritdoc/>
-		public abstract void Dispose();
+		public void WriteCmColor(int code, Color color, DxfClassMap map = null)
+		{
+			if (GroupCodeValue.TransformValue(code) == GroupCodeValueType.Int16)
+			{
+				//BS: Color Index
+				this.Write(code, Convert.ToInt16(color.GetApproxIndex()));
+			}
+			else
+			{
+				byte[] arr = new byte[4];
 
-		public abstract void Flush();
+				if (color.IsTrueColor)
+				{
+					arr[0] = (byte)color.B;
+					arr[1] = (byte)color.G;
+					arr[2] = (byte)color.R;
+					arr[3] = 0b1100_0010;   //	0xC2
+				}
+				else
+				{
+					arr[3] = 0b1100_0001;
+					arr[0] = (byte)color.Index;
+				}
 
-		public abstract void Close();
+				//BL: RGB value
+				this.Write(code, LittleEndianConverter.Instance.ToInt32(arr), map);
+			}
+		}
+
+		public void WriteHandle(int code, IHandledCadObject value, DxfClassMap map = null)
+		{
+			if (value != null)
+			{
+				this.Write(code, value.Handle, map);
+			}
+		}
+
+		public void WriteIfNotDefault<T>(int code, T value, T defaultValue, DxfClassMap map = null)
+		{
+			if (!value.Equals(defaultValue))
+			{
+				this.Write(code, value, map);
+			}
+		}
+
+		public void WriteName(int code, INamedCadObject value, DxfClassMap map = null)
+		{
+			if (value != null)
+			{
+				this.Write(code, value.Name, map);
+			}
+		}
+
+		public void WriteTrueColor(int code, Color color, DxfClassMap map = null)
+		{
+			byte[] arr = new byte[4];
+			arr[0] = (byte)color.B;
+			arr[1] = (byte)color.G;
+			arr[2] = (byte)color.R;
+			arr[3] = 0;
+
+			this.Write(code, LittleEndianConverter.Instance.ToInt32(arr), map);
+		}
 
 		protected abstract void writeDxfCode(int code);
 

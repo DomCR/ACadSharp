@@ -94,19 +94,8 @@ namespace ACadSharp.Entities
 			this.Center = center;
 			this.Radius = center.DistanceFrom(start);
 
-			var startAngle = XYZ.AxisX.GetAngle2(start - center, Normal);
-			var endAngle = XYZ.AxisX.GetAngle2(end - center, Normal);
-
-			if (endAngle < startAngle)
-			{
-				this.StartAngle = endAngle;
-				this.EndAngle = startAngle;
-			}
-			else
-			{
-				this.StartAngle = startAngle;
-				this.EndAngle = endAngle;
-			}
+			this.StartAngle = XYZ.AxisX.GetAngle2(start - center, Normal);
+			this.EndAngle = XYZ.AxisX.GetAngle2(end - center, Normal);
 		}
 
 		/// <summary>
@@ -158,6 +147,53 @@ namespace ACadSharp.Entities
 		}
 
 		/// <summary>
+		/// Calculates the bulge factor for an arc defined by its center, start point, end point, and direction.
+		/// </summary>
+		/// <remarks>The bulge factor is commonly used in geometric and CAD applications to represent arcs in polyline
+		/// definitions.</remarks>
+		/// <param name="center">The center point of the arc.</param>
+		/// <param name="start">The starting point of the arc.</param>
+		/// <param name="end">The ending point of the arc.</param>
+		/// <param name="clockWise">A value indicating whether the arc is drawn in a clockwise direction. <see langword="true"/> if the arc is
+		/// clockwise; otherwise, <see langword="false"/>.</param>
+		/// <returns>The bulge factor of the arc, which represents the tangent of one-fourth of the included angle. A positive value
+		/// indicates a counterclockwise arc, while a negative value indicates a clockwise arc.</returns>
+		internal static double GetBulge(XY center, XY start, XY end, bool clockWise)
+		{
+
+			//TODO: add normal //Needed??
+
+			XY u = start - center;
+			XY u2 = new XY(0.0 - u.Y, u.X);
+			XY v = end - center;
+			double angle = Math.Atan2(x: u.Dot(v), y: u2.Dot(v));
+			if (clockWise)
+			{
+				if (angle > 0.0)
+				{
+					angle -= MathHelper.PI * 2.0;
+				}
+			}
+			else if (angle < 0.0)
+			{
+				angle += MathHelper.PI * 2.0;
+			}
+
+			return Math.Tan(angle / 4.0);
+		}
+
+		/// <summary>
+		/// Calculates the bulge value corresponding to a given angle.
+		/// </summary>
+		/// <param name="angle">The angle, in radians, for which to calculate the bulge. The angle must be a finite value.</param>
+		/// <returns>The bulge value, which is the tangent of half the angle.</returns>
+		internal static double GetBulgeFromAngle(double angle)
+		{
+			// TODO: NEEDED?
+			return Math.Tan(angle / 4);
+		}
+
+		/// <summary>
 		/// Get the center coordinate from a start, end an a bulge value.
 		/// </summary>
 		/// <param name="start">Start point.</param>
@@ -185,7 +221,7 @@ namespace ACadSharp.Entities
 
 			double gamma = (Math.PI - theta) / 2;
 			double phi = (end - start).GetAngle() + Math.Sign(bulge) * gamma;
-			return new XY(start.X + radius * CSMath.MathHelper.Cos(phi), start.Y + radius * CSMath.MathHelper.Sin(phi));
+			return new XY(start.X + radius * MathHelper.Cos(phi), start.Y + radius * MathHelper.Sin(phi));
 		}
 
 		/// <inheritdoc/>

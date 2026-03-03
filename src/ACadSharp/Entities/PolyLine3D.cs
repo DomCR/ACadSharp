@@ -1,5 +1,6 @@
 ﻿using ACadSharp.Attributes;
 using CSMath;
+using CSUtilities.Extensions;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -17,6 +18,9 @@ namespace ACadSharp.Entities
 	[DxfSubClass(DxfSubclassMarker.Polyline3d)]
 	public class Polyline3D : Polyline<Vertex3D>
 	{
+		/// <inheritdoc/>
+		public override PolylineFlags Flags { get => base.Flags | (PolylineFlags.Polyline3D); set => base.Flags = value; }
+
 		/// <inheritdoc/>
 		public override ObjectType ObjectType => ObjectType.POLYLINE_3D;
 

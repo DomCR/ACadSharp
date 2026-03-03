@@ -16,12 +16,12 @@ namespace ACadSharp.Objects.Evaluations
 		public XYZ Location { get; set; }
 
 		[DxfCodeValue(93)]
-		internal long Value93 { get; set; }
+		public long Value93 { get; set; }
 
 		[DxfCodeValue(170)]
-		internal short Value170 { get; set; }
+		public short Value170 { get; set; }
 
 		[DxfCodeValue(171)]
-		internal short Value171 { get; set; }
+		public short Value171 { get; set; }
 	}
 }

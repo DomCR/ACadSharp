@@ -2,71 +2,72 @@
 
 using ACadSharp.Attributes;
 
-namespace ACadSharp.Objects
+namespace ACadSharp.Objects;
+
+[DxfSubClass(null, true)]
+public abstract class AnnotScaleObjectContextData : ObjectContextData
 {
-	[DxfSubClass(DxfSubclassMarker.AnnotScaleObjectContextData)]
-	public abstract class AnnotScaleObjectContextData : ObjectContextData
+	//TODO: solve conflict with MultiLeaderObjectContextData
+	//[DxfCodeValue(DxfReferenceType.Handle, 340)]
+	public Scale Scale
 	{
-		[DxfCodeValue(DxfReferenceType.Handle, 340)]
-		public Scale Scale
+		get { return _scale; }
+		set
 		{
-			get { return _scale; }
-			set
+			if (value == null)
 			{
-				if (value == null)
-				{
-					throw new ArgumentNullException(nameof(value));
-				}
+				throw new ArgumentNullException(nameof(value));
+			}
 
-				if (this.Document != null)
-				{
-					this._scale = CadObject.updateCollection(value, this.Document.Scales);
-				}
-				else
-				{
-					this._scale = value;
-				}
+			if (this.Document != null)
+			{
+				this._scale = CadObject.updateCollection(value, this.Document.Scales);
+			}
+			else
+			{
+				this._scale = value;
 			}
 		}
+	}
 
-		/// <inheritdoc/>
-		public override string SubclassMarker => DxfSubclassMarker.AnnotScaleObjectContextData;
+	/// <inheritdoc/>
+	public override string SubclassMarker => DxfSubclassMarker.AnnotScaleObjectContextData;
 
-		private Scale _scale = Scale.Default;
+	private Scale _scale = Scale.Default;
 
-		public override CadObject Clone()
+	/// <inheritdoc/>
+	public override CadObject Clone()
+	{
+		AnnotScaleObjectContextData clone = (AnnotScaleObjectContextData)base.Clone();
+
+		clone._scale = (Scale)this._scale?.Clone();
+
+		return clone;
+	}
+
+	internal override void AssignDocument(CadDocument doc)
+	{
+		base.AssignDocument(doc);
+
+		this._scale = CadObject.updateCollection(this._scale, this.Document?.Scales);
+
+		this.Document.Scales.OnRemove += tableOnRemove;
+	}
+
+	internal override void UnassignDocument()
+	{
+		this.Document.Scales.OnRemove -= tableOnRemove;
+
+		base.UnassignDocument();
+
+		this._scale = (Scale)this._scale.Clone();
+	}
+
+	private void tableOnRemove(object sender, CollectionChangedEventArgs e)
+	{
+		if (e.Item.Equals(this._scale))
 		{
-			AnnotScaleObjectContextData clone = (AnnotScaleObjectContextData)base.Clone();
-
-			clone._scale = (Scale)this._scale?.Clone();
-
-			return clone;
-		}
-
-		internal override void AssignDocument(CadDocument doc)
-		{
-			base.AssignDocument(doc);
-
-			this._scale = CadObject.updateCollection(this._scale, this.Document?.Scales);
-
-			this.Document.Scales.OnRemove += tableOnRemove;
-		}
-
-		internal override void UnassignDocument()
-		{
-			this.Document.Scales.OnRemove -= tableOnRemove;
-
-			base.UnassignDocument();
-
-			this._scale = (Scale)this._scale.Clone();
-		}
-
-		private void tableOnRemove(object sender, CollectionChangedEventArgs e)
-		{
-			if (e.Item.Equals(this._scale))
-			{
-				this._scale = this.Document.Scales[Scale.Default.Name];
-			}
+			this._scale = this.Document.Scales[Scale.Default.Name];
 		}
 	}
 }

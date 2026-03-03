@@ -248,7 +248,6 @@ namespace ACadSharp.IO
 				writer.Write();
 				this._fileHeaderWriter.AddSection(DwgSectionDefinition.Preview, stream, false, 0x400);
 			}
-
 		}
 
 		private void writeAppInfo()

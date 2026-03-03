@@ -1,5 +1,6 @@
 ﻿using ACadSharp.IO;
 using ACadSharp.IO.DWG;
+using ACadSharp.IO.DWG.FileHeaders;
 using System.IO;
 using Xunit;
 using Xunit.Abstractions;

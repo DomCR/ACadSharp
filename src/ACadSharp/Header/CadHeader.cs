@@ -604,7 +604,7 @@ namespace ACadSharp.Header
 		/// System variable DIMAZIN
 		/// </remarks>
 		[CadSystemVariable("$DIMAZIN", 70)]
-		public ZeroHandling DimensionAngularZeroHandling
+		public AngularZeroHandling DimensionAngularZeroHandling
 		{
 			get { return this._dimensionStyleOverrides.AngularZeroHandling; }
 			set

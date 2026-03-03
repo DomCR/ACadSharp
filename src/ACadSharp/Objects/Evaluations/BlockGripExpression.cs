@@ -1,31 +1,28 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
+﻿using ACadSharp.Attributes;
 
-using ACadSharp.Attributes;
-
-
-namespace ACadSharp.Objects.Evaluations {
-
-	//BLOCKGRIPLOCATIONCOMPONENT
-	//  AcDbEvalExpr
-	//  AcDbBlockGripExpr
-	//		91	BL	2
-	//		300	S	UpdatedX
-
+namespace ACadSharp.Objects.Evaluations
+{
+	/// <summary>
+	/// Represents a BLOCKGRIPLOCATIONCOMPONENT object.
+	/// </summary>
+	/// <remarks>
+	/// Object name <see cref="DxfFileToken.ObjectBlockGripLocationComponent"/> <br/>
+	/// Dxf class name <see cref="DxfSubclassMarker.BlockGripExpression"/>
+	/// </remarks>
+	[DxfName(DxfFileToken.ObjectBlockGripLocationComponent)]
 	[DxfSubClass(DxfSubclassMarker.BlockGripExpression)]
-	public abstract class BlockGripExpression : EvaluationExpression {
-
+	public class BlockGripExpression : EvaluationExpression
+	{
 		/// <inheritdoc/>
-		///	public override string ObjectName => DxfFileToken.ObjectBlockFlipAction;
+		public override string ObjectName => DxfFileToken.ObjectBlockGripLocationComponent;
 
 		/// <inheritdoc/>
 		public override string SubclassMarker => DxfSubclassMarker.BlockGripExpression;
 
+		[DxfCodeValue(300)]
+		public string Value300 { get; set; }
 
-		//		91	BL	2
-		//		300	S	UpdatedX
+		[DxfCodeValue(91)]
+		public int Value91 { get; set; }
 	}
 }

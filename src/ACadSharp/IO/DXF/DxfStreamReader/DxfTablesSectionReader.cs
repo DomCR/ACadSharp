@@ -418,7 +418,7 @@ namespace ACadSharp.IO.DXF
 					template.CadObject.ZeroHandling = (ZeroHandling)this._reader.ValueAsShort;
 					return true;
 				case 79:
-					template.CadObject.AngularZeroHandling = (ZeroHandling)this._reader.ValueAsShort;
+					template.CadObject.AngularZeroHandling = (AngularZeroHandling)this._reader.ValueAsShort;
 					return true;
 				case 90:
 					template.CadObject.ArcLengthSymbolPosition = (ArcLengthSymbolPosition)(int)this._reader.ValueAsShort;
