@@ -37,6 +37,7 @@ namespace ACadSharp.IO.DWG
 				case AecWallStyle:
 				case AecCleanupGroup:
 				case AecBinRecord:
+				case DimensionAssociation:
 				case EvaluationGraph:
 				case Material:
 				case UnknownNonGraphicalObject:

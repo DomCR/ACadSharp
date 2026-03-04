@@ -574,6 +574,7 @@ namespace ACadSharp.IO.DXF
 				case AecCleanupGroup:
 				case AecBinRecord:
 				case AcdbPlaceHolder:
+				case DimensionAssociation:
 				case EvaluationGraph:
 				case Material:
 				case MultiLeaderObjectContextData:
