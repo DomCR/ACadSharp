@@ -13,7 +13,7 @@ namespace ACadSharp.Objects;
 /// </remarks>
 [DxfName(DxfFileToken.ObjectDimensionAssociation)]
 [DxfSubClass(DxfSubclassMarker.DimensionAssociation)]
-public class DimensionAssociation : NonGraphicalObject
+public partial class DimensionAssociation : NonGraphicalObject
 {
 	/// <summary>
 	/// Gets or sets the associativity flags that define the reference points for an entity.
@@ -26,6 +26,10 @@ public class DimensionAssociation : NonGraphicalObject
 	/// </summary>
 	[DxfCodeValue(DxfReferenceType.Handle, 330)]
 	public Dimension Dimension { get; set; }
+
+	public OsnapPointRef FirstPointRef { get; set; }
+
+	public OsnapPointRef FourthPointRef { get; set; }
 
 	/// <summary>
 	/// Gets or sets the associated geometry object.
@@ -51,52 +55,20 @@ public class DimensionAssociation : NonGraphicalObject
 	[DxfCodeValue(71)]
 	public RotatedDimensionType RotatedDimensionType { get; set; } = RotatedDimensionType.Unknown;
 
+	public OsnapPointRef SecondPointRef { get; set; }
+
 	//301
 	//Handle(string) of Xref object
 	/// <inheritdoc/>
 	public override string SubclassMarker => DxfSubclassMarker.DimensionAssociation;
 
+	public OsnapPointRef ThirdPointRef { get; set; }
 
 	public const string OsnapPointRefClassName = "AcDbOsnapPointRef";
 
 	/// <inheritdoc/>
 	public DimensionAssociation() : base()
 	{
-	}
-
-	public class OsnapPointRef
-	{
-		/// <summary>
-		/// Gets or sets the object snap type associated with the entity.
-		/// </summary>
-		[DxfCodeValue(72)]
-		public ObjectOsnapType ObjectOsnapType { get; set; }
-
-		/// <summary>
-		/// Gets or sets the type of the rotated dimension, indicating whether it is parallel or perpendicular.
-		/// </summary>
-		[DxfCodeValue(73)]
-		public SubentType SubentType { get; set; } = SubentType.Unknown;
-
-		/// <summary>
-		/// Gets the name of the associated class for the dimension reference.
-		/// </summary>
-		[DxfCodeValue(1)]
-		public string ClassName { get; internal set; } = DimensionAssociation.OsnapPointRefClassName;
-
-		/// <summary>
-		/// Gets or sets the geometry parameter used for the Near object snap (Osnap).
-		/// </summary>
-		[DxfCodeValue(40)]
-		public double GeometryParameter { get; set; }
-
-		/// <summary>
-		/// Gets or sets the object snap (Osnap) point in world coordinate system (WCS).
-		/// </summary>
-		/// <remarks>The Osnap point is used to specify precise locations on geometry for object snapping
-		/// operations.</remarks>
-		[DxfCodeValue(10, 20, 30)]
-		public XYZ OsnapPoint { get; set; }
 	}
 
 	//91

@@ -7126,30 +7126,31 @@ namespace ACadSharp.IO.DWG
 
 			if (association.AssociativityFlags.HasFlag(AssociativityFlags.FirstPointReference))
 			{
-				this.readOsnapPointRef();
+				template.FirstPointRef = this.readOsnapPointRef();
 			}
 
 			if (association.AssociativityFlags.HasFlag(AssociativityFlags.SecondPointReference))
 			{
-				this.readOsnapPointRef();
+				template.SecondPointRef = this.readOsnapPointRef();
 			}
 
 			if (association.AssociativityFlags.HasFlag(AssociativityFlags.ThirdPointReference))
 			{
-				this.readOsnapPointRef();
+				template.ThirdPointRef = this.readOsnapPointRef();
 			}
 
 			if (association.AssociativityFlags.HasFlag(AssociativityFlags.FourthPointReference))
 			{
-				this.readOsnapPointRef();
+				template.FourthPointRef = this.readOsnapPointRef();
 			}
 
 			return template;
 		}
 
-		private DimensionAssociation.OsnapPointRef readOsnapPointRef()
+		private CadDimensionAssociationTemplate.OsnapPointRefTemplate readOsnapPointRef()
 		{
 			var osnap = new DimensionAssociation.OsnapPointRef();
+			var template = new CadDimensionAssociationTemplate.OsnapPointRefTemplate(osnap);
 
 			//1
 			osnap.ClassName = this._mergedReaders.ReadVariableText();
@@ -7157,9 +7158,9 @@ namespace ACadSharp.IO.DWG
 			osnap.ObjectOsnapType = (ObjectOsnapType)this._mergedReaders.ReadByte();
 
 			//331
-			ulong h1 = this.handleReference();
+			template.ObjectHandle = this.handleReference();
 
-			return osnap;
+			return template;
 		}
 
 		private CadTemplate readXLine()

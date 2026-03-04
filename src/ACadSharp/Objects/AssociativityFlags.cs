@@ -1,16 +1,15 @@
-﻿namespace ACadSharp.Objects
+﻿namespace ACadSharp.Objects;
+
+[System.Flags]
+public enum AssociativityFlags : short
 {
-	[System.Flags]
-	public enum AssociativityFlags : short
-	{
-		None = 0,
+	None = 0,
 
-		FirstPointReference = 1,
+	FirstPointReference = 1,
 
-		SecondPointReference = 2,
+	SecondPointReference = 2,
 
-		ThirdPointReference = 4,
+	ThirdPointReference = 4,
 
-		FourthPointReference = 8
-	}
+	FourthPointReference = 8
 }

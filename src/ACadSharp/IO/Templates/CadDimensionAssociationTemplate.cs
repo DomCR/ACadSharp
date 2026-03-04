@@ -1,31 +1,82 @@
 ﻿using ACadSharp.Entities;
 using ACadSharp.Objects;
 
-namespace ACadSharp.IO.Templates
+namespace ACadSharp.IO.Templates;
+
+internal class CadDimensionAssociationTemplate : CadTemplate<DimensionAssociation>
 {
-	internal class CadDimensionAssociationTemplate : CadTemplate<DimensionAssociation>
+	public ulong? DimensionHandle { get; set; }
+
+	public OsnapPointRefTemplate FirstPointRef { get; set; }
+
+	public OsnapPointRefTemplate FourthPointRef { get; set; }
+
+	public ulong? GeometryHandle { get; set; }
+
+	public OsnapPointRefTemplate SecondPointRef { get; set; }
+
+	public OsnapPointRefTemplate ThirdPointRef { get; set; }
+
+	public CadDimensionAssociationTemplate() : base(new())
 	{
-		public ulong? DimensionHandle { get; set; }
+	}
 
-		public ulong? GeometryHandle { get; set; }
+	public CadDimensionAssociationTemplate(DimensionAssociation obj) : base(obj)
+	{
+	}
 
-		public CadDimensionAssociationTemplate() : base(new())
+	protected override void build(CadDocumentBuilder builder)
+	{
+		base.build(builder);
+
+		if (builder.TryGetCadObject<Dimension>(this.DimensionHandle, out var dimension))
+		{
+			this.CadObject.Dimension = dimension;
+		}
+
+		if (builder.TryGetCadObject<CadObject>(this.GeometryHandle, out var geom))
 		{
 		}
 
-		public CadDimensionAssociationTemplate(DimensionAssociation obj) : base(obj)
+		if (this.FirstPointRef != null)
 		{
+			this.CadObject.FirstPointRef = this.FirstPointRef.OsnapPointRef;
+			this.FirstPointRef.Build(builder);
 		}
 
-		protected override void build(CadDocumentBuilder builder)
+		if (this.SecondPointRef != null)
 		{
-			base.build(builder);
+			this.CadObject.SecondPointRef = this.SecondPointRef.OsnapPointRef;
+			this.SecondPointRef.Build(builder);
+		}
 
-			if (builder.TryGetCadObject<Dimension>(this.DimensionHandle, out var dimension))
-			{
-			}
+		if (this.ThirdPointRef != null)
+		{
+			this.CadObject.ThirdPointRef = this.ThirdPointRef.OsnapPointRef;
+			this.ThirdPointRef.Build(builder);
+		}
 
-			if (builder.TryGetCadObject<CadObject>(this.GeometryHandle, out var geom))
+		if (this.FourthPointRef != null)
+		{
+			this.CadObject.FourthPointRef = this.FourthPointRef.OsnapPointRef;
+			this.FourthPointRef.Build(builder);
+		}
+	}
+
+	public class OsnapPointRefTemplate : ICadTemplate
+	{
+		public ulong? ObjectHandle { get; set; }
+
+		public DimensionAssociation.OsnapPointRef OsnapPointRef { get; set; }
+
+		public OsnapPointRefTemplate(DimensionAssociation.OsnapPointRef pointRef)
+		{
+			OsnapPointRef = pointRef;
+		}
+
+		public void Build(CadDocumentBuilder builder)
+		{
+			if (builder.TryGetCadObject<CadObject>(this.ObjectHandle, out var obj))
 			{
 			}
 		}
