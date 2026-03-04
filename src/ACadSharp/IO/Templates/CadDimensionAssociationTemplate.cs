@@ -11,8 +11,6 @@ internal class CadDimensionAssociationTemplate : CadTemplate<DimensionAssociatio
 
 	public OsnapPointRefTemplate FourthPointRef { get; set; }
 
-	public ulong? GeometryHandle { get; set; }
-
 	public OsnapPointRefTemplate SecondPointRef { get; set; }
 
 	public OsnapPointRefTemplate ThirdPointRef { get; set; }
@@ -32,10 +30,6 @@ internal class CadDimensionAssociationTemplate : CadTemplate<DimensionAssociatio
 		if (builder.TryGetCadObject<Dimension>(this.DimensionHandle, out var dimension))
 		{
 			this.CadObject.Dimension = dimension;
-		}
-
-		if (builder.TryGetCadObject<CadObject>(this.GeometryHandle, out var geom))
-		{
 		}
 
 		if (this.FirstPointRef != null)
@@ -78,6 +72,7 @@ internal class CadDimensionAssociationTemplate : CadTemplate<DimensionAssociatio
 		{
 			if (builder.TryGetCadObject<CadObject>(this.ObjectHandle, out var obj))
 			{
+				OsnapPointRef.Geometry = obj;
 			}
 		}
 	}

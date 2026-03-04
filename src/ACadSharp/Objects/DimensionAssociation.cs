@@ -32,12 +32,6 @@ public partial class DimensionAssociation : NonGraphicalObject
 	public OsnapPointRef FourthPointRef { get; set; }
 
 	/// <summary>
-	/// Gets or sets the associated geometry object.
-	/// </summary>
-	[DxfCodeValue(DxfReferenceType.Handle, 331)]
-	public CadObject Geometry { get; set; }
-
-	/// <summary>
 	/// Gets or sets a value indicating whether the entity is in trans-space.
 	/// </summary>
 	[DxfCodeValue(70)]
@@ -57,8 +51,6 @@ public partial class DimensionAssociation : NonGraphicalObject
 
 	public OsnapPointRef SecondPointRef { get; set; }
 
-	//301
-	//Handle(string) of Xref object
 	/// <inheritdoc/>
 	public override string SubclassMarker => DxfSubclassMarker.DimensionAssociation;
 
@@ -70,22 +62,4 @@ public partial class DimensionAssociation : NonGraphicalObject
 	public DimensionAssociation() : base()
 	{
 	}
-
-	//91
-	//GsMarker of main object (index)
-
-	//332
-	//ID of intersection object (geometry)
-
-	//74
-	//SubentType of intersction object (edge/face)
-
-	//92
-	//GsMarker of intersection object (index)
-
-	//302
-	//Handle(string) of intersection Xref object
-
-	//75
-	//hasLastPointRef flag(true/false)
 }

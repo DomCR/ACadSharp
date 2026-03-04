@@ -2348,15 +2348,121 @@ namespace ACadSharp.IO.DXF
 
 			switch (this._reader.Code)
 			{
+				case 1 when this._reader.ValueAsString.Equals(DimensionAssociation.OsnapPointRefClassName):
+					if (dimassoc.AssociativityFlags.HasFlag(AssociativityFlags.FirstPointReference)
+						&& dimassoc.FirstPointRef == null)
+					{
+						dimassoc.FirstPointRef = new DimensionAssociation.OsnapPointRef();
+						this.readOsnapPointRef(dimassoc.FirstPointRef);
+						this.lockPointer = true;
+						return true;
+					}
+
+					if (dimassoc.AssociativityFlags.HasFlag(AssociativityFlags.SecondPointReference)
+						&& dimassoc.SecondPointRef == null)
+					{
+						dimassoc.SecondPointRef = new DimensionAssociation.OsnapPointRef();
+						this.readOsnapPointRef(dimassoc.SecondPointRef);
+						this.lockPointer = true;
+						return true;
+					}
+
+					if (dimassoc.AssociativityFlags.HasFlag(AssociativityFlags.ThirdPointReference)
+						&& dimassoc.ThirdPointRef == null)
+					{
+						dimassoc.ThirdPointRef = new DimensionAssociation.OsnapPointRef();
+						this.readOsnapPointRef(dimassoc.ThirdPointRef);
+						this.lockPointer = true;
+						return true;
+					}
+
+					if (dimassoc.AssociativityFlags.HasFlag(AssociativityFlags.FourthPointReference)
+						&& dimassoc.FourthPointRef == null)
+					{
+						dimassoc.FourthPointRef = new DimensionAssociation.OsnapPointRef();
+						this.readOsnapPointRef(dimassoc.FourthPointRef);
+						this.lockPointer = true;
+						return true;
+					}
+
+					return true;
 				case 330 when template.OwnerHandle.HasValue:
 					tmp.DimensionHandle = this._reader.ValueAsHandle;
-					return true;
-				case 331:
-					tmp.GeometryHandle = this._reader.ValueAsHandle;
 					return true;
 				default:
 					return this.tryAssignCurrentValue(template.CadObject, map.SubClasses[tmp.CadObject.SubclassMarker]);
 			}
+		}
+
+		private CadDimensionAssociationTemplate.OsnapPointRefTemplate readOsnapPointRef(DimensionAssociation.OsnapPointRef osnapPoint)
+		{
+			var template = new CadDimensionAssociationTemplate.OsnapPointRefTemplate(osnapPoint);
+
+			this._reader.ReadNext();
+
+			bool end = false;
+			while (!end)
+			{
+				switch (this._reader.Code)
+				{
+					case 10:
+						osnapPoint.OsnapPoint = new XYZ(
+							this._reader.ValueAsDouble,
+							osnapPoint.OsnapPoint.Y,
+							osnapPoint.OsnapPoint.Z
+							);
+						break;
+					case 20:
+						osnapPoint.OsnapPoint = new XYZ(
+							osnapPoint.OsnapPoint.X,
+							this._reader.ValueAsDouble,
+							osnapPoint.OsnapPoint.Z
+							);
+						break;
+					case 30:
+						osnapPoint.OsnapPoint = new XYZ(
+						osnapPoint.OsnapPoint.X,
+						osnapPoint.OsnapPoint.Y,
+						this._reader.ValueAsDouble
+						);
+						break;
+					case 40:
+						osnapPoint.GeometryParameter = this._reader.ValueAsDouble;
+						break;
+					case 72:
+						osnapPoint.ObjectOsnapType = (ObjectOsnapType)this._reader.ValueAsShort;
+						break;
+					case 73:
+						osnapPoint.SubentType = (SubentType)this._reader.ValueAsShort;
+						break;
+					case 74:
+						osnapPoint.IntersectionSubType = (SubentType)this._reader.ValueAsShort;
+						break;
+					case 75:
+						osnapPoint.HasLastPointRef = this._reader.ValueAsBool;
+						break;
+					case 91:
+						osnapPoint.GsMarker = this._reader.ValueAsInt;
+						break;
+					case 92:
+						osnapPoint.IntersectionGsMarker = this._reader.ValueAsInt;
+						break;
+					case 331:
+						template.ObjectHandle = this._reader.ValueAsHandle;
+						break;
+					case 302:
+					case 332:
+						//What are these?
+						break;
+					default:
+						end = true;
+						continue;
+				}
+
+				this._reader.ReadNext();
+			}
+
+			return template;
 		}
 
 		private bool readDictionary(CadTemplate template, DxfMap map)

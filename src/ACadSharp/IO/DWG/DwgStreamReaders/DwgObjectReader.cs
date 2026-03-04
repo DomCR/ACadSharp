@@ -7153,7 +7153,7 @@ namespace ACadSharp.IO.DWG
 			var template = new CadDimensionAssociationTemplate.OsnapPointRefTemplate(osnap);
 
 			//1
-			osnap.ClassName = this._mergedReaders.ReadVariableText();
+			var className = this._mergedReaders.ReadVariableText();
 			//72
 			osnap.ObjectOsnapType = (ObjectOsnapType)this._mergedReaders.ReadByte();
 
