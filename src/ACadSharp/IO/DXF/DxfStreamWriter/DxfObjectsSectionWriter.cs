@@ -377,6 +377,9 @@ namespace ACadSharp.IO.DXF
 
 			switch (co)
 			{
+				case AcdbPlaceHolder acdbPlaceHolder:
+					this.writeAcdbPlaceHolder(acdbPlaceHolder);
+					return;
 				case BookColor bookColor:
 					this.writeBookColor(bookColor);
 					return;
@@ -576,7 +579,7 @@ namespace ACadSharp.IO.DXF
 				case AecWallStyle:
 				case AecCleanupGroup:
 				case AecBinRecord:
-				case AcdbPlaceHolder:
+				case DimensionAssociation:
 				case EvaluationGraph:
 				case Material:
 				case MultiLeaderObjectContextData:
@@ -591,6 +594,10 @@ namespace ACadSharp.IO.DXF
 				default:
 					return true;
 			}
+		}
+
+		private void writeAcdbPlaceHolder(AcdbPlaceHolder acdbPlaceHolder)
+		{
 		}
 
 		private void writeDimensionAssociation(DimensionAssociation dimAssociation)
