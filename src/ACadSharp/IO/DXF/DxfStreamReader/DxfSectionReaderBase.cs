@@ -712,6 +712,9 @@ namespace ACadSharp.IO.DXF
 					case 45:
 						mtext.ColumnData.Gutter = this._reader.ValueAsDouble;
 						break;
+					case 46:
+						mtext.ColumnData.Heights.Add(this._reader.ValueAsDouble);
+						break;
 					case 73:
 						mtext.ColumnData.AutoHeight = this._reader.ValueAsBool;
 						break;

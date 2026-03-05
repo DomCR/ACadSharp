@@ -377,6 +377,9 @@ namespace ACadSharp.IO.DXF
 
 			switch (co)
 			{
+				case AcdbPlaceHolder acdbPlaceHolder:
+					this.writeAcdbPlaceHolder(acdbPlaceHolder);
+					return;
 				case BookColor bookColor:
 					this.writeBookColor(bookColor);
 					return;
@@ -385,6 +388,9 @@ namespace ACadSharp.IO.DXF
 					return;
 				case DictionaryVariable dictvar:
 					this.writeDictionaryVariable(dictvar);
+					break;
+				case DimensionAssociation dimAssociation:
+					this.writeDimensionAssociation(dimAssociation);
 					break;
 				case GeoData geodata:
 					this.writeGeoData(geodata);
@@ -573,7 +579,7 @@ namespace ACadSharp.IO.DXF
 				case AecWallStyle:
 				case AecCleanupGroup:
 				case AecBinRecord:
-				case AcdbPlaceHolder:
+				case DimensionAssociation:
 				case EvaluationGraph:
 				case Material:
 				case MultiLeaderObjectContextData:
@@ -587,6 +593,42 @@ namespace ACadSharp.IO.DXF
 					return false;
 				default:
 					return true;
+			}
+		}
+
+		private void writeAcdbPlaceHolder(AcdbPlaceHolder acdbPlaceHolder)
+		{
+		}
+
+		private void writeDimensionAssociation(DimensionAssociation dimAssociation)
+		{
+			DxfClassMap map = DxfClassMap.Create<DimensionAssociation>();
+
+			this._writer.Write(100, DxfSubclassMarker.DimensionAssociation);
+
+			this._writer.WriteHandle(330, dimAssociation.Dimension, map);
+			this._writer.Write(90, (int)dimAssociation.AssociativityFlags, map);
+			this._writer.Write(70, dimAssociation.IsTransSpace, map);
+			this._writer.Write(71, (short)dimAssociation.RotatedDimensionType, map);
+
+			if (dimAssociation.AssociativityFlags.HasFlag(AssociativityFlags.FirstPointReference))
+			{
+				this.writeOsnapPointRef(dimAssociation.FirstPointRef);
+			}
+
+			if (dimAssociation.AssociativityFlags.HasFlag(AssociativityFlags.SecondPointReference))
+			{
+				this.writeOsnapPointRef(dimAssociation.SecondPointRef);
+			}
+
+			if (dimAssociation.AssociativityFlags.HasFlag(AssociativityFlags.ThirdPointReference))
+			{
+				this.writeOsnapPointRef(dimAssociation.ThirdPointRef);
+			}
+
+			if (dimAssociation.AssociativityFlags.HasFlag(AssociativityFlags.FourthPointReference))
+			{
+				this.writeOsnapPointRef(dimAssociation.FourthPointRef);
 			}
 		}
 
@@ -651,6 +693,26 @@ namespace ACadSharp.IO.DXF
 
 			this._writer.Write(90, reactor.ClassVersion);
 			this._writer.WriteHandle(330, reactor.Image);
+		}
+
+		private void writeOsnapPointRef(DimensionAssociation.OsnapPointRef osnapPoint)
+		{
+			if (osnapPoint == null)
+			{
+				return;
+			}
+
+			this._writer.Write(1, DimensionAssociation.OsnapPointRefClassName);
+
+			this._writer.Write(72, (short)osnapPoint.ObjectOsnapType);
+			this._writer.WriteHandle(331, osnapPoint.Geometry);
+			this._writer.Write(73, (short)osnapPoint.SubentType);
+			this._writer.Write(91, osnapPoint.GsMarker);
+			this._writer.Write(40, osnapPoint.GeometryParameter);
+
+			this._writer.Write(10, osnapPoint.OsnapPoint);
+
+			this._writer.Write(75, (short)(osnapPoint.HasLastPointRef ? 1 : 0));
 		}
 
 		private void writeSortentsTable(SortEntitiesTable e)

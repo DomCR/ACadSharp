@@ -37,6 +37,7 @@ namespace ACadSharp.IO.DWG
 				case AecWallStyle:
 				case AecCleanupGroup:
 				case AecBinRecord:
+				case DimensionAssociation:
 				case EvaluationGraph:
 				case Material:
 				case UnknownNonGraphicalObject:
@@ -309,6 +310,38 @@ namespace ACadSharp.IO.DWG
 
 			//BS a string
 			this._writer.WriteVariableText(dictionaryVariable.Value);
+		}
+
+		private void writeDimensionAssociation(DimensionAssociation association)
+		{
+			this._writer.HandleReference(DwgReferenceType.SoftPointer, association.Dimension);
+
+			//90
+			this._writer.WriteBitLong((int)association.AssociativityFlags);
+			//70
+			this._writer.WriteBit(association.IsTransSpace);
+			//71
+			this._writer.WriteByte((byte)association.RotatedDimensionType);
+
+			if (association.AssociativityFlags.HasFlag(AssociativityFlags.FirstPointReference))
+			{
+				this.writeOsnapPointRef(association.FirstPointRef);
+			}
+
+			if (association.AssociativityFlags.HasFlag(AssociativityFlags.SecondPointReference))
+			{
+				this.writeOsnapPointRef(association.SecondPointRef);
+			}
+
+			if (association.AssociativityFlags.HasFlag(AssociativityFlags.ThirdPointReference))
+			{
+				this.writeOsnapPointRef(association.ThirdPointRef);
+			}
+
+			if (association.AssociativityFlags.HasFlag(AssociativityFlags.FourthPointReference))
+			{
+				this.writeOsnapPointRef(association.FourthPointRef);
+			}
 		}
 
 		private void writeField(Field field)
@@ -839,6 +872,9 @@ namespace ACadSharp.IO.DWG
 				case DictionaryVariable dictionaryVariable:
 					this.writeDictionaryVariable(dictionaryVariable);
 					break;
+				case DimensionAssociation dimAssoc:
+					this.writeDimensionAssociation(dimAssoc);
+					break;
 				case GeoData geodata:
 					this.writeGeoData(geodata);
 					break;
@@ -917,6 +953,17 @@ namespace ACadSharp.IO.DWG
 
 				this.writeObject(obj);
 			}
+		}
+
+		private void writeOsnapPointRef(DimensionAssociation.OsnapPointRef osnap)
+		{
+			//1
+			this._writer.WriteVariableText(DimensionAssociation.OsnapPointRefClassName);
+
+			//72
+			this._writer.WriteByte((byte)osnap.ObjectOsnapType);
+			//331
+			this._writer.HandleReference(DwgReferenceType.Undefined, osnap.Geometry);
 		}
 
 		private void writePdfDefinition(PdfUnderlayDefinition definition)

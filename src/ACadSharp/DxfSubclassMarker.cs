@@ -96,6 +96,8 @@
 
 		public const string DimensionStyleTable = "AcDbDimStyleTable";
 
+		public const string DimensionAssociation = "AcDbDimAssoc";
+
 		public const string Ellipse = "AcDbEllipse";
 
 		public const string Entity = "AcDbEntity";
