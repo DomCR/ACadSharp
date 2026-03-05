@@ -3,7 +3,7 @@ using ACadSharp.Objects;
 
 namespace ACadSharp.IO.Templates;
 
-internal class CadDimensionAssociationTemplate : CadTemplate<DimensionAssociation>
+internal partial class CadDimensionAssociationTemplate : CadTemplate<DimensionAssociation>
 {
 	public ulong? DimensionHandle { get; set; }
 
@@ -54,26 +54,6 @@ internal class CadDimensionAssociationTemplate : CadTemplate<DimensionAssociatio
 		{
 			this.CadObject.FourthPointRef = this.FourthPointRef.OsnapPointRef;
 			this.FourthPointRef.Build(builder);
-		}
-	}
-
-	public class OsnapPointRefTemplate : ICadTemplate
-	{
-		public ulong? ObjectHandle { get; set; }
-
-		public DimensionAssociation.OsnapPointRef OsnapPointRef { get; set; }
-
-		public OsnapPointRefTemplate(DimensionAssociation.OsnapPointRef pointRef)
-		{
-			OsnapPointRef = pointRef;
-		}
-
-		public void Build(CadDocumentBuilder builder)
-		{
-			if (builder.TryGetCadObject<CadObject>(this.ObjectHandle, out var obj))
-			{
-				OsnapPointRef.Geometry = obj;
-			}
 		}
 	}
 }
