@@ -698,7 +698,7 @@ namespace ACadSharp.IO.DXF
 			this._writer.Write(1, DimensionAssociation.OsnapPointRefClassName);
 
 			this._writer.Write(72, (short)osnapPoint.ObjectOsnapType);
-			this._writer.Write(331, osnapPoint.Geometry);
+			this._writer.WriteHandle(331, osnapPoint.Geometry);
 			this._writer.Write(73, (short)osnapPoint.SubentType);
 			this._writer.Write(91, osnapPoint.GsMarker);
 			this._writer.Write(40, osnapPoint.GeometryParameter);
