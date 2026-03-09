@@ -45,7 +45,6 @@ namespace ACadSharp.IO.DWG
 				case TableStyle:
 				case ProxyObject:
 				case BlockRepresentationData:
-				case BlockReferenceObjectContextData:
 				case MTextAttributeObjectContextData:
 					return true;
 			}

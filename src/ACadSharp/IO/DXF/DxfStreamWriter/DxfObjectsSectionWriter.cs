@@ -380,6 +380,9 @@ namespace ACadSharp.IO.DXF
 				case AcdbPlaceHolder acdbPlaceHolder:
 					this.writeAcdbPlaceHolder(acdbPlaceHolder);
 					return;
+				case BlockReferenceObjectContextData blockContextData:
+					this.writeBlockReferenceObjectContextData(blockContextData);
+					return;
 				case BookColor bookColor:
 					this.writeBookColor(bookColor);
 					return;
@@ -588,7 +591,6 @@ namespace ACadSharp.IO.DXF
 				case ProxyObject:
 				case BlockRepresentationData:
 				case MTextAttributeObjectContextData:
-				case BlockReferenceObjectContextData:
 					this.notify($"Object not implemented : {co.GetType().FullName}", NotificationType.NotImplemented);
 					return false;
 				default:
@@ -598,6 +600,28 @@ namespace ACadSharp.IO.DXF
 
 		private void writeAcdbPlaceHolder(AcdbPlaceHolder acdbPlaceHolder)
 		{
+		}
+
+		private void writeAnnotScaleObjectContextData(AnnotScaleObjectContextData contextData)
+		{
+			this._writer.Write(100, DxfSubclassMarker.AnnotScaleObjectContextData);
+
+			this._writer.WriteHandle(340, contextData.Scale);
+		}
+
+		private void writeBlockReferenceObjectContextData(BlockReferenceObjectContextData contextData)
+		{
+			DxfClassMap map = DxfClassMap.Create<BlockReferenceObjectContextData>();
+
+			this.writeAnnotScaleObjectContextData(contextData);
+
+			this._writer.Write(50, contextData.Rotation, map);
+
+			this._writer.Write(10, contextData.InsertionPoint, map);
+
+			this._writer.Write(41, contextData.XScale, map);
+			this._writer.Write(42, contextData.YScale, map);
+			this._writer.Write(43, contextData.ZScale, map);
 		}
 
 		private void writeDimensionAssociation(DimensionAssociation dimAssociation)
