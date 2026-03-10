@@ -379,16 +379,19 @@ namespace ACadSharp.IO.DXF
 			{
 				case AcdbPlaceHolder acdbPlaceHolder:
 					this.writeAcdbPlaceHolder(acdbPlaceHolder);
-					return;
+					break;
 				case BlockReferenceObjectContextData blockContextData:
 					this.writeBlockReferenceObjectContextData(blockContextData);
-					return;
+					break;
+				case MTextAttributeObjectContextData mtextContextData:
+					this.writeMTextAttributeObjectContextData(mtextContextData);
+					break;
 				case BookColor bookColor:
 					this.writeBookColor(bookColor);
-					return;
+					break;
 				case CadDictionary cadDictionary:
 					this.writeDictionary(cadDictionary);
-					return;
+					break;
 				case DictionaryVariable dictvar:
 					this.writeDictionaryVariable(dictvar);
 					break;
@@ -403,10 +406,10 @@ namespace ACadSharp.IO.DXF
 					break;
 				case ImageDefinition imageDefinition:
 					this.writeImageDefinition(imageDefinition);
-					return;
+					break;
 				case ImageDefinitionReactor reactor:
 					this.writeImageDefinitionReactor(reactor);
-					return;
+					break;
 				case Layout layout:
 					this.writeLayout(layout);
 					break;
@@ -590,7 +593,6 @@ namespace ACadSharp.IO.DXF
 				case TableStyle:
 				case ProxyObject:
 				case BlockRepresentationData:
-				case MTextAttributeObjectContextData:
 					this.notify($"Object not implemented : {co.GetType().FullName}", NotificationType.NotImplemented);
 					return false;
 				default:
@@ -622,6 +624,22 @@ namespace ACadSharp.IO.DXF
 			this._writer.Write(41, contextData.XScale, map);
 			this._writer.Write(42, contextData.YScale, map);
 			this._writer.Write(43, contextData.ZScale, map);
+		}
+
+		private void writeMTextAttributeObjectContextData(MTextAttributeObjectContextData contextData)
+		{
+			DxfClassMap map = DxfClassMap.Create<MTextAttributeObjectContextData>();
+
+			this.writeAnnotScaleObjectContextData(contextData);
+
+			this._writer.Write(70, contextData.AttachmentPoint, map);
+
+			this._writer.Write(50, contextData.Rotation, map);
+
+			this._writer.Write(10, contextData.AlignmentPoint, map);
+			this._writer.Write(11, contextData.InsertPoint, map);
+
+			this._writer.Write(290, contextData.Value290, map);
 		}
 
 		private void writeDimensionAssociation(DimensionAssociation dimAssociation)
