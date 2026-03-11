@@ -69,7 +69,20 @@ namespace ACadSharp.IO.DWG
 
 		private void writeAnnotScaleObjectContextData(AnnotScaleObjectContextData annotScaleObjectContextData)
 		{
+			this.writeObjectContextData(annotScaleObjectContextData);
+
 			this._writer.HandleReference(DwgReferenceType.HardPointer, annotScaleObjectContextData.Scale);
+		}
+
+		private void writeBlockReferenceObjectContextData(BlockReferenceObjectContextData contextData)
+		{
+			this.writeAnnotScaleObjectContextData(contextData);
+
+			this._writer.WriteBitDouble(contextData.Rotation);
+			this._writer.Write3BitDouble(contextData.InsertionPoint);
+			this._writer.WriteBitDouble(contextData.XScale);
+			this._writer.WriteBitDouble(contextData.YScale);
+			this._writer.WriteBitDouble(contextData.ZScale);
 		}
 
 		private void writeBookColor(BookColor color)
@@ -723,7 +736,9 @@ namespace ACadSharp.IO.DWG
 
 		private void writeMultiLeaderAnnotContext(MultiLeaderObjectContextData multiLeaderAnnotContext)
 		{
-			writeMultiLeaderAnnotContextSubObject(false, multiLeaderAnnotContext);
+			this.writeAnnotScaleObjectContextData(multiLeaderAnnotContext);
+
+			this.writeMultiLeaderAnnotContextSubObject(false, multiLeaderAnnotContext);
 		}
 
 		private void writeMultiLeaderStyle(MultiLeaderStyle mLeaderStyle)
@@ -862,6 +877,9 @@ namespace ACadSharp.IO.DWG
 				case BookColor bookColor:
 					this.writeBookColor(bookColor);
 					break;
+				case BlockReferenceObjectContextData blockContextData:
+					this.writeBlockReferenceObjectContextData(blockContextData);
+					break;
 				case CadDictionaryWithDefault dictionarydef:
 					this.writeCadDictionaryWithDefault(dictionarydef);
 					break;
@@ -896,8 +914,6 @@ namespace ACadSharp.IO.DWG
 					this.writeMultiLeaderStyle(multiLeaderStyle);
 					break;
 				case MultiLeaderObjectContextData multiLeaderObjectContextData:
-					this.writeObjectContextData(multiLeaderObjectContextData);
-					this.writeAnnotScaleObjectContextData(multiLeaderObjectContextData);
 					this.writeMultiLeaderAnnotContext(multiLeaderObjectContextData);
 					break;
 				case PdfUnderlayDefinition pdfDefinition:
@@ -938,8 +954,6 @@ namespace ACadSharp.IO.DWG
 		{
 			//BS	70	Version.
 			this._writer.WriteBitShort(objectContextData.Version);
-			//B	-	Has file to extension dictionary.
-			this._writer.WriteBit(objectContextData.HasFileToExtensionDictionary);
 			//B	290	Default flag.
 			this._writer.WriteBit(objectContextData.Default);
 		}
