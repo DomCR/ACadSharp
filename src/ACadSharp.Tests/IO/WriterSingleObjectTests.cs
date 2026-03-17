@@ -570,6 +570,36 @@ namespace ACadSharp.Tests.IO
 				hatch.Paths.Add(path);
 
 				this.Document.Entities.Add(hatch);
+
+				Hatch multiplePoly = new Hatch();
+				multiplePoly.IsSolid = true;
+				multiplePoly.SeedPoints.Add(new XY());
+				multiplePoly.Color = new Color(30);
+
+				Hatch.BoundaryPath.Polyline pol = new();
+				pol.Vertices.Add(new CSMath.XYZ(0, 10, 0));
+				pol.Vertices.Add(new CSMath.XYZ(10, 10, 0));
+				pol.Vertices.Add(new CSMath.XYZ(10, 0, 0));
+				pol.Vertices.Add(new CSMath.XYZ(0, 0, 0));
+				pol.Vertices.Add(new CSMath.XYZ(0, 10, 0));
+				pol.IsClosed = true;
+
+				Hatch.BoundaryPath.Polyline pol2 = new();
+				pol2.Vertices.Add(new CSMath.XYZ(-5, 0, 0));
+				pol2.Vertices.Add(new CSMath.XYZ(-5, 5, 0));
+				pol2.Vertices.Add(new CSMath.XYZ(0, 0, 0));
+				pol2.Vertices.Add(new CSMath.XYZ(-5, 0, 0));
+				pol2.IsClosed = true;
+
+				Hatch.BoundaryPath path1 = new Hatch.BoundaryPath();
+				Hatch.BoundaryPath path2 = new Hatch.BoundaryPath();
+				path1.Edges.Add(pol);
+				path2.Edges.Add(pol2);
+
+				multiplePoly.Paths.Add(path1);
+				multiplePoly.Paths.Add(path2);
+
+				this.Document.Entities.Add(multiplePoly);
 			}
 
 			public void CreateInsertWithHatch()
