@@ -11,7 +11,7 @@ namespace ACadSharp.Entities
 
 			public ContentFormat Format { get; } = new();
 
-			public CellValue Value { get; } = new CellValue();
+			public CadValue Value { get; set; } = new();
 		}
 	}
 }

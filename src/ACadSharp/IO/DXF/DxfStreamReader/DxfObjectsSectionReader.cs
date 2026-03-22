@@ -251,13 +251,13 @@ namespace ACadSharp.IO.DXF
 			}
 		}
 
-		private CadValueTemplate readCadValue(string name)
+		private CadValueTemplate readCadValue(string mapName)
 		{
 			this._reader.ReadNext();
 
 			CadValue value = new();
 			CadValueTemplate template = new(value);
-			var map = DxfClassMap.Create(value.GetType(), name);
+			var map = DxfClassMap.Create(value.GetType(), mapName);
 
 			while (this._reader.Code != 304)
 			{
@@ -270,7 +270,6 @@ namespace ACadSharp.IO.DXF
 						xyz.Y = this._reader.ValueAsDouble;
 						this._reader.ReadNext();
 						xyz.Z = this._reader.ValueAsDouble;
-
 						value.Value = xyz;
 						break;
 					case 91:
@@ -1406,7 +1405,9 @@ namespace ACadSharp.IO.DXF
 					case 91:
 						break;
 					case 300 when this._reader.ValueAsString.Equals("VALUE", StringComparison.InvariantCultureIgnoreCase):
-						this.readDataMapValue();
+						var valueTemplate = this.readCadValue(this._reader.ValueAsString);
+						content.Value = valueTemplate.CadValue;
+						template.CadValueTemplate = valueTemplate;
 						break;
 					case 309:
 						end = this._reader.ValueAsString.Equals("CELLCONTENT_END", StringComparison.InvariantCultureIgnoreCase);
@@ -1704,7 +1705,7 @@ namespace ACadSharp.IO.DXF
 						//Name
 						break;
 					case 301 when this._reader.ValueAsString.Equals("DATAMAP_VALUE", StringComparison.InvariantCultureIgnoreCase):
-						this.readDataMapValue();
+						this.readDataMapValue(); 
 						break;
 					case 309:
 						end = this._reader.ValueAsString.Equals("DATAMAP_END", StringComparison.InvariantCultureIgnoreCase);
@@ -1725,7 +1726,7 @@ namespace ACadSharp.IO.DXF
 
 		private void readDataMapValue()
 		{
-			TableEntity.CellValue value = new TableEntity.CellValue();
+			CadValue value = new();
 			var map = DxfClassMap.Create(value.GetType(), "DATAMAP_VALUE");
 
 			this._reader.ReadNext();

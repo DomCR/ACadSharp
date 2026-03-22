@@ -120,6 +120,8 @@ namespace ACadSharp.IO.Templates
 
 			public ulong? FieldHandle { get; set; }
 
+			public CadValueTemplate CadValueTemplate { get; set; }
+
 			public CadTableCellContentTemplate(TableEntity.CellContent content)
 			{
 				Content = content;

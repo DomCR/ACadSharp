@@ -5,7 +5,7 @@ namespace ACadSharp.Entities
 {
 	public partial class TableEntity
 	{
-		[Obsolete("Replace for ACadSharp.CadValue")]
+		[Obsolete("Replace for ACadSharp.CadValue", true)]
 		public class CellValue
 		{
 			[DxfCodeValue(90)]

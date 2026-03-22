@@ -420,7 +420,7 @@ namespace ACadSharp.IO.DXF
 					if (tmp.CurrentCell.Content == null)
 					{
 						content = new TableEntity.CellContent();
-						content.Value.ValueType = TableEntity.CellValueType.String;
+						content.Value.ValueType = CadValueType.String;
 						tmp.CurrentCell.Contents.Add(content);
 					}
 					else
@@ -615,7 +615,7 @@ namespace ACadSharp.IO.DXF
 						content.Value.Value = this._reader.ValueAsString;
 						break;
 					case 90:
-						content.Value.ValueType = (TableEntity.CellValueType)this._reader.ValueAsInt;
+						content.Value.ValueType = (CadValueType)this._reader.ValueAsInt;
 						break;
 					case 91:
 						content.Value.Value = this._reader.ValueAsInt;
@@ -627,7 +627,7 @@ namespace ACadSharp.IO.DXF
 						content.Value.Flags = this._reader.ValueAsInt;
 						break;
 					case 94:
-						content.Value.Units = (TableEntity.ValueUnitType)this._reader.ValueAsInt;
+						content.Value.Units = (CadValueUnitType)this._reader.ValueAsInt;
 						break;
 					case 140:
 						content.Value.Value = this._reader.ValueAsDouble;

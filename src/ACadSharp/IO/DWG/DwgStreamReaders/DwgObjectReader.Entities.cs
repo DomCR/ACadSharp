@@ -623,7 +623,7 @@ namespace ACadSharp.IO.DWG
 				case CellType.Text when template.ValueHandle == 0 && this._version < ACadVersion.AC1021:
 					//Text string TV 1 Present only if 344 value below is 0
 					var content = new CellContent();
-					content.Value.ValueType = CellValueType.String;
+					content.Value.ValueType = CadValueType.String;
 					content.Value.Value = this._mergedReaders.ReadVariableText();
 					cell.Contents.Add(content);
 					break;
@@ -768,7 +768,7 @@ namespace ACadSharp.IO.DWG
 				var unknown = this._mergedReaders.ReadBitLong();
 				//Value fields … See paragraph 20.4.98.
 				cell.Contents.Add(new CellContent());
-				this.readCustomTableDataValue(cell.Content.Value);
+				this.readCadValue(cell.Content.Value);
 			}
 		}
 
@@ -908,70 +908,7 @@ namespace ACadSharp.IO.DWG
 		{
 			//TV 300 Item name
 			entry.Name = this._mergedReaders.ReadVariableText();
-			this.readCustomTableDataValue(entry.Value);
-		}
-
-		private void readCustomTableDataValue(CellValue value)
-		{
-			//R2007+:
-			if (this.R2007Plus)
-			{
-				//Flags BL 93 Flags & 0x01 => type is kGeneral
-				value.Flags = this._mergedReaders.ReadBitLong();
-			}
-
-			//Common:
-			//Data type BL 90
-			value.ValueType = (CellValueType)this._mergedReaders.ReadBitLong();
-			if (!this.R2007Plus || !value.IsEmpty)
-			{
-				//Varies by type: Not present in case bit 1 in Flags is set
-				switch (value.ValueType)
-				{
-					case CellValueType.Unknown:
-					case CellValueType.Long:
-						value.Value = this._mergedReaders.ReadBitLong();
-						break;
-					case CellValueType.Double:
-						value.Value = this._mergedReaders.ReadBitDouble();
-						break;
-					case CellValueType.General:
-					case CellValueType.String:
-						value.Value = this.readStringCadValue();
-						break;
-					case CellValueType.Date:
-						System.DateTime? dateTime = this.readDateCadValue();
-						if (dateTime.HasValue)
-						{
-							value.Value = dateTime.Value;
-						}
-						break;
-					case CellValueType.Point2D:
-						value.Value = this.readCellValueXY();
-						break;
-					case CellValueType.Point3D:
-						value.Value = this.readCellValueXYZ();
-						break;
-					case CellValueType.Handle:
-						value.Value = this.handleReference();
-						break;
-					case CellValueType.Buffer:
-					case CellValueType.ResultBuffer:
-					default:
-						throw new NotImplementedException();
-				}
-			}
-
-			//R2007+:
-			if (this.R2007Plus)
-			{
-				//Unit type BL 94 0 = no units, 1 = distance, 2 = angle, 4 = area, 8 = volume
-				value.Units = (TableEntity.ValueUnitType)this._mergedReaders.ReadBitLong();
-				//Format String TV 300
-				value.Format = this._mergedReaders.ReadVariableText();
-				//Value String TV 302
-				value.FormattedValue = this._mergedReaders.ReadVariableText();
-			}
+			this.readCadValue(entry.Value);
 		}
 
 		private string readStringCadValue()
@@ -1289,7 +1226,7 @@ namespace ACadSharp.IO.DWG
 				case TableCellContentType.Unknown:
 					break;
 				case TableCellContentType.Value:
-					this.readCustomTableDataValue(template.Content.Value);
+					this.readCadValue(template.Content.Value);
 					break;
 				case TableCellContentType.Field:
 					//H 340 Handle to AcDbField object (hard pointer).
