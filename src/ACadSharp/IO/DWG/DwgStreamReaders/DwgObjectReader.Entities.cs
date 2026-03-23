@@ -623,8 +623,7 @@ namespace ACadSharp.IO.DWG
 				case CellType.Text when template.ValueHandle == 0 && this._version < ACadVersion.AC1021:
 					//Text string TV 1 Present only if 344 value below is 0
 					var content = new CellContent();
-					content.Value.ValueType = CadValueType.String;
-					content.Value.Value = this._mergedReaders.ReadVariableText();
+					content.CadValue.SetValue(this._mergedReaders.ReadVariableText(), CadValueType.String);
 					cell.Contents.Add(content);
 					break;
 				case CellType.Block:
@@ -768,7 +767,7 @@ namespace ACadSharp.IO.DWG
 				var unknown = this._mergedReaders.ReadBitLong();
 				//Value fields … See paragraph 20.4.98.
 				cell.Contents.Add(new CellContent());
-				this.readCadValue(cell.Content.Value);
+				this.readCadValue(cell.Content.CadValue);
 			}
 		}
 
@@ -991,7 +990,7 @@ namespace ACadSharp.IO.DWG
 			}
 		}
 
-		private XY? readCellValueXY()
+		private XY? readValueXY()
 		{
 			XY? result = null;
 			int length = this._mergedReaders.ReadBitLong();
@@ -1002,7 +1001,7 @@ namespace ACadSharp.IO.DWG
 			return result;
 		}
 
-		private XYZ? readCellValueXYZ()
+		private XYZ? readValueXYZ()
 		{
 			XYZ? result = null;
 			int length = this._mergedReaders.ReadBitLong();
@@ -1226,7 +1225,7 @@ namespace ACadSharp.IO.DWG
 				case TableCellContentType.Unknown:
 					break;
 				case TableCellContentType.Value:
-					this.readCadValue(template.Content.Value);
+					this.readCadValue(template.Content.CadValue);
 					break;
 				case TableCellContentType.Field:
 					//H 340 Handle to AcDbField object (hard pointer).

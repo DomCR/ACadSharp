@@ -1,4 +1,6 @@
 ﻿using ACadSharp.Attributes;
+using CSMath;
+using System;
 
 namespace ACadSharp;
 
@@ -51,12 +53,6 @@ public class CadValue
 	}
 
 	/// <summary>
-	/// Gets or sets the text content of this value.
-	/// </summary>
-	[DxfCodeValue(1)]
-	public string Text { get; set; }
-
-	/// <summary>
 	/// Gets or sets the unit type for this value.
 	/// </summary>
 	[DxfCodeValue(94)]
@@ -65,13 +61,45 @@ public class CadValue
 	/// <summary>
 	/// Gets or sets the underlying value object. The actual type depends on <see cref="ValueType"/>.
 	/// </summary>
-	public object Value { get; set; }
+	public object Value { get; private set; }
 
 	/// <summary>
 	/// Gets or sets the data type of <see cref="Value"/>.
 	/// </summary>
 	[DxfCodeValue(90)]
 	public CadValueType ValueType { get; set; }
+
+	public void SetValue(object value)
+	{
+		switch (this.ValueType)
+		{
+			case CadValueType.Point2D when value is IVector:
+				this.Value = ((IVector)value).Convert<XY>();
+				break;
+			case CadValueType.Point3D when value is IVector:
+				this.Value = ((IVector)value).Convert<XYZ>();
+				break;
+			case CadValueType.Long when value is int:
+			case CadValueType.Double when value is double:
+			case CadValueType.Date when value is DateTime:
+			case CadValueType.Handle when value is IHandledCadObject:
+			case CadValueType.String when value is string:
+			case CadValueType.General when value is string:
+				this.Value = value;
+				break;
+			case CadValueType.Unknown:
+			case CadValueType.Buffer:
+			case CadValueType.ResultBuffer:
+			default:
+				throw new InvalidOperationException();
+		}
+	}
+
+	public void SetValue(object value, CadValueType valueType)
+	{
+		this.ValueType = valueType;
+		this.SetValue(value);
+	}
 
 	/// <inheritdoc/>
 	public override string ToString()

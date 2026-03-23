@@ -251,50 +251,6 @@ namespace ACadSharp.IO.DXF
 			}
 		}
 
-		private CadValueTemplate readCadValue(string mapName)
-		{
-			this._reader.ReadNext();
-
-			CadValue value = new();
-			CadValueTemplate template = new(value);
-			var map = DxfClassMap.Create(value.GetType(), mapName);
-
-			while (this._reader.Code != 304)
-			{
-				switch (this._reader.Code)
-				{
-					case 11:
-						XYZ xyz = new XYZ();
-						xyz.X = this._reader.ValueAsDouble;
-						this._reader.ReadNext();
-						xyz.Y = this._reader.ValueAsDouble;
-						this._reader.ReadNext();
-						xyz.Z = this._reader.ValueAsDouble;
-						value.Value = xyz;
-						break;
-					case 91:
-						value.Value = this._reader.ValueAsInt;
-						break;
-					case 140:
-						value.Value = this._reader.ValueAsDouble;
-						break;
-					case 330:
-						template.ValueHandle = this._reader.ValueAsHandle;
-						break;
-					default:
-						if (!this.tryAssignCurrentValue(value, map))
-						{
-							this._builder.Notify($"Unhandled dxf code {this._reader.Code} value {this._reader.ValueAsString} at {nameof(readCadValue)} method.", NotificationType.None);
-						}
-						break;
-				}
-
-				this._reader.ReadNext();
-			}
-
-			return template;
-		}
-
 		private bool readProxyObject(CadTemplate template, DxfMap map)
 		{
 			CadProxyObjectTemplate tmp = template as CadProxyObjectTemplate;
@@ -1406,7 +1362,7 @@ namespace ACadSharp.IO.DXF
 						break;
 					case 300 when this._reader.ValueAsString.Equals("VALUE", StringComparison.InvariantCultureIgnoreCase):
 						var valueTemplate = this.readCadValue(this._reader.ValueAsString);
-						content.Value = valueTemplate.CadValue;
+						content.CadValue = valueTemplate.CadValue;
 						template.CadValueTemplate = valueTemplate;
 						break;
 					case 309:
@@ -1705,7 +1661,7 @@ namespace ACadSharp.IO.DXF
 						//Name
 						break;
 					case 301 when this._reader.ValueAsString.Equals("DATAMAP_VALUE", StringComparison.InvariantCultureIgnoreCase):
-						this.readDataMapValue(); 
+						this.readDataMapValue();
 						break;
 					case 309:
 						end = this._reader.ValueAsString.Equals("DATAMAP_END", StringComparison.InvariantCultureIgnoreCase);
