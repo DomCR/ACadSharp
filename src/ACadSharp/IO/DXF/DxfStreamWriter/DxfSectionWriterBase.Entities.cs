@@ -494,16 +494,16 @@ namespace ACadSharp.IO.DXF
 				case Hatch.BoundaryPath.Arc arc:
 					this._writer.Write(10, arc.Center);
 					this._writer.Write(40, arc.Radius);
-					this._writer.Write(50, arc.StartAngle);
-					this._writer.Write(51, arc.EndAngle);
+					this._writer.Write(50, MathHelper.RadToDeg(arc.StartAngle));
+					this._writer.Write(51, MathHelper.RadToDeg(arc.EndAngle));
 					this._writer.Write(73, arc.CounterClockWise ? (short)1 : (short)0);
 					break;
 				case Hatch.BoundaryPath.Ellipse ellipse:
 					this._writer.Write(10, ellipse.Center);
 					this._writer.Write(11, ellipse.MajorAxisEndPoint);
 					this._writer.Write(40, ellipse.MinorToMajorRatio);
-					this._writer.Write(50, ellipse.StartAngle);
-					this._writer.Write(51, ellipse.EndAngle);
+					this._writer.Write(50, MathHelper.RadToDeg(ellipse.StartAngle));
+					this._writer.Write(51, MathHelper.RadToDeg(ellipse.EndAngle));
 					this._writer.Write(73, ellipse.CounterClockWise ? (short)1 : (short)0);
 					break;
 				case Hatch.BoundaryPath.Line line:
