@@ -69,6 +69,16 @@ public class CadValue
 	[DxfCodeValue(90)]
 	public CadValueType ValueType { get; set; }
 
+	/// <summary>
+	/// Sets the value of the current object, converting or validating the input as required by the current value type.
+	/// </summary>
+	/// <remarks>The type of the value parameter must match the requirements of the current value type. If the value
+	/// type is XY or XYZ, the value is converted to the appropriate coordinate type. Supplying a value of an
+	/// incorrect type will result in an exception.</remarks>
+	/// <param name="value">The value to assign. The expected type depends on the current value type: for XY or XYZ, an object
+	/// implementing IVector; for Long, an int; for Double, a double; for Date, a DateTime; for Handle, an
+	/// IHandledCadObject; for String or General, a string.</param>
+	/// <exception cref="InvalidOperationException">Thrown if the current value type does not support assignment or if the value type is unknown.</exception>
 	public void SetValue(object value)
 	{
 		switch (this.ValueType)
@@ -95,6 +105,11 @@ public class CadValue
 		}
 	}
 
+	/// <summary>
+	/// Sets the value and specifies its type for the current instance.
+	/// </summary>
+	/// <param name="value">The value to assign. The type of this object must be compatible with the specified value type.</param>
+	/// <param name="valueType">The type that describes how the value should be interpreted.</param>
 	public void SetValue(object value, CadValueType valueType)
 	{
 		this.ValueType = valueType;
