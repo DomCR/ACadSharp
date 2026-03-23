@@ -1851,7 +1851,7 @@ namespace ACadSharp.IO.DXF
 					cellStyle.TextHeight = this._reader.ValueAsDouble;
 					return true;
 				case 170:
-					cellStyle.CellAlignment = (TableEntity.Cell.CellAlignmentType)this._reader.ValueAsShort;
+					cellStyle.CellAlignment = (TableEntity.CellAlignmentType)this._reader.ValueAsShort;
 					return true;
 				case 283:
 					cellStyle.IsFillColorOn = this._reader.ValueAsBool;

@@ -4977,7 +4977,7 @@ namespace ACadSharp.IO.DWG
 			//Text alignment BS 170 Top left = 1, top center = 2, top right = 3, middle
 			//left = 4, middle center = 5, middle right = 6,
 			//bottom left = 7, bottom center = 8, bottom right = 9
-			style.CellAlignment = (TableEntity.Cell.CellAlignmentType)this._mergedReaders.ReadBitShort();
+			style.CellAlignment = (TableEntity.CellAlignmentType)this._mergedReaders.ReadBitShort();
 			//Text color CMC 62
 			style.TextColor = this._mergedReaders.ReadCmColor(this.R2004Pre);
 			//Fill color CMC 63
