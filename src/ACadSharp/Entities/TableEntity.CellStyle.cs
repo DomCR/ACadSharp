@@ -21,7 +21,7 @@ namespace ACadSharp.Entities
 			/// Gets or sets the alignment of the content within a cell.
 			/// </summary>
 			[DxfCodeValue(170)]
-			public Cell.CellAlignmentType CellAlignment { get; set; }
+			public CellAlignmentType CellAlignment { get; set; }
 
 			/// <summary>
 			/// Value for the color of cell content; override applied at the cell level

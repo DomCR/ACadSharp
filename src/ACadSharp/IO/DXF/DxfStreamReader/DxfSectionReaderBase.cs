@@ -9,6 +9,7 @@ using System.Collections.Generic;
 using System.Diagnostics;
 using System.Linq;
 using static ACadSharp.IO.Templates.CadMLeaderAnnotContextTemplate;
+using static ACadSharp.IO.Templates.CadTableEntityTemplate;
 
 namespace ACadSharp.IO.DXF
 {
@@ -420,7 +421,7 @@ namespace ACadSharp.IO.DXF
 					if (tmp.CurrentCell.Content == null)
 					{
 						content = new TableEntity.CellContent();
-						content.Value.ValueType = TableEntity.CellValueType.String;
+						content.CadValue.ValueType = CadValueType.String;
 						tmp.CurrentCell.Contents.Add(content);
 					}
 					else
@@ -428,30 +429,30 @@ namespace ACadSharp.IO.DXF
 						content = tmp.CurrentCell.Content;
 					}
 
-					if (content.Value.Value == null)
+					if (content.CadValue.Value == null)
 					{
-						content.Value.Value = this._reader.ValueAsString;
+						content.CadValue.SetValue(this._reader.ValueAsString, CadValueType.String);
 					}
 					else
 					{
-						string str = content.Value.Value as string;
+						string str = content.CadValue.Value as string;
 						str += this._reader.ValueAsString;
-						content.Value.Value = str;
+						content.CadValue.SetValue(str, CadValueType.String);
 					}
 					return true;
 				case 2:
 					if (this.currentSubclass.Equals(DxfSubclassMarker.TableEntity, StringComparison.OrdinalIgnoreCase))
 					{
 						content = tmp.CurrentCell.Content;
-						if (content.Value.Value == null)
+						if (content.CadValue.Value == null)
 						{
-							content.Value.Value = this._reader.ValueAsString;
+							content.CadValue.SetValue(this._reader.ValueAsString, CadValueType.String);
 						}
 						else
 						{
-							string str = content.Value.Value as string;
+							string str = content.CadValue.Value as string;
 							str += this._reader.ValueAsString;
-							content.Value.Value = str;
+							content.CadValue.SetValue(str, CadValueType.String);
 						}
 					}
 					else
@@ -564,8 +565,10 @@ namespace ACadSharp.IO.DXF
 					return true;
 				case 301:
 					content = new TableEntity.CellContent();
+					var contentTemplate = new CadTableCellContentTemplate(content);
 					tmp.CurrentCell.Contents.Add(content);
-					this.readCellValue(content);
+					var valTemplate = readCadValue(content.CadValue);
+					contentTemplate.CadValueTemplate = valTemplate;
 					return true;
 				case 340:
 					tmp.CurrentCellTemplate.ValueHandle = this._reader.ValueAsHandle;
@@ -579,72 +582,64 @@ namespace ACadSharp.IO.DXF
 			}
 		}
 
-		private void readCellValue(TableEntity.CellContent content)
+		protected CadValueTemplate readCadValue(CadValue value)
 		{
-			if (this._reader.ValueAsString.Equals("CELL_VALUE", StringComparison.OrdinalIgnoreCase))
-			{
-				this._reader.ReadNext();
-			}
-			else
-			{
-				throw new Exceptions.DxfException($"Expected value not found CELL_VALUE", this._reader.Position);
-			}
+			this._reader.ReadNext();
 
-			while (this._reader.Code != 304
-				&& !this._reader.ValueAsString.Equals("ACVALUE_END", StringComparison.OrdinalIgnoreCase))
+			CadValueTemplate template = new(value);
+			var map = DxfClassMap.Create(value.GetType(), "CadValue");
+
+			while (this._reader.Code != 304)
 			{
 				switch (this._reader.Code)
 				{
 					case 1:
-						content.Value.Text = this._reader.ValueAsString;
+						value.SetValue(this._reader.ValueAsString);
 						break;
 					case 2:
-						content.Value.Text += this._reader.ValueAsString;
+						value.SetValue((value.Value as string) + this._reader.ValueAsString);
 						break;
 					case 11:
-						content.Value.Value = new XYZ(this._reader.ValueAsDouble, 0, 0);
+						XYZ xyz = new XYZ();
+						xyz.X = this._reader.ValueAsDouble;
+						value.SetValue(xyz);
 						break;
 					case 21:
-						content.Value.Value = new XYZ(0, this._reader.ValueAsDouble, 0);
+						{
+							IVector v = value.Value as IVector;
+							v[1] = this._reader.ValueAsDouble;
+							value.SetValue(v);
+						}
 						break;
 					case 31:
-						content.Value.Value = new XYZ(0, 0, this._reader.ValueAsDouble);
-						break;
-					case 302:
-						//TODO: Fix this assignation to cell value
-						content.Value.Value = this._reader.ValueAsString;
-						break;
-					case 90:
-						content.Value.ValueType = (TableEntity.CellValueType)this._reader.ValueAsInt;
+						{
+							IVector v = value.Value as IVector;
+							v = v.Convert<XYZ>();
+							v[2] = this._reader.ValueAsDouble;
+							value.SetValue(v);
+						}
 						break;
 					case 91:
-						content.Value.Value = this._reader.ValueAsInt;
-						break;
-					case 92:
-						//Extended cell flags (from AutoCAD 2007)
-						break;
-					case 93:
-						content.Value.Flags = this._reader.ValueAsInt;
-						break;
-					case 94:
-						content.Value.Units = (TableEntity.ValueUnitType)this._reader.ValueAsInt;
+						value.SetValue(this._reader.ValueAsInt);
 						break;
 					case 140:
-						content.Value.Value = this._reader.ValueAsDouble;
+						value.SetValue(this._reader.ValueAsDouble);
 						break;
-					case 300:
-						content.Value.Format = this._reader.ValueAsString;
-						break;
-					case 310:
-						//Data for proxy entity graphics (multiple lines; 256-character maximum per line)
+					case 330:
+						template.ValueHandle = this._reader.ValueAsHandle;
 						break;
 					default:
-						this._builder.Notify($"[CELL_VALUE] Unhandled dxf code {this._reader.Code} with value {this._reader.ValueAsString}", NotificationType.None);
+						if (!this.tryAssignCurrentValue(value, map))
+						{
+							this._builder.Notify($"Unhandled dxf code {this._reader.Code} value {this._reader.ValueAsString} at {nameof(readCadValue)} method.", NotificationType.None);
+						}
 						break;
 				}
 
 				this._reader.ReadNext();
 			}
+
+			return template;
 		}
 
 		private bool readTextEntity(CadEntityTemplate template, DxfMap map, string subclass = null)

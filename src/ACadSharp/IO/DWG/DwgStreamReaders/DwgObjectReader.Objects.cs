@@ -369,27 +369,27 @@ internal partial class DwgObjectReader : DwgSectionIO
 			{
 				case CadValueType.Unknown:
 				case CadValueType.Long:
-					value.Value = this._mergedReaders.ReadBitLong();
+					value.SetValue(this._mergedReaders.ReadBitLong());
 					break;
 				case CadValueType.Double:
-					value.Value = this._mergedReaders.ReadBitDouble();
+					value.SetValue(this._mergedReaders.ReadBitDouble());
 					break;
 				case CadValueType.General:
 				case CadValueType.String:
-					value.Value = this.readStringCadValue();
+					value.SetValue(this.readStringCadValue());
 					break;
 				case CadValueType.Date:
 					System.DateTime? dateTime = this.readDateCadValue();
 					if (dateTime.HasValue)
 					{
-						value.Value = dateTime.Value;
+						value.SetValue(dateTime.Value);
 					}
 					break;
 				case CadValueType.Point2D:
-					value.Value = this.readCellValueXY();
+					value.SetValue(this.readValueXY());
 					break;
 				case CadValueType.Point3D:
-					value.Value = this.readCellValueXYZ();
+					value.SetValue(this.readValueXYZ());
 					break;
 				case CadValueType.Handle:
 					template.ValueHandle = this.handleReference();

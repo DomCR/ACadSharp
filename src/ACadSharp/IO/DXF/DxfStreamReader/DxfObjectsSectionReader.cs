@@ -231,12 +231,12 @@ namespace ACadSharp.IO.DXF
 					return true;
 				case 6:
 					string key = this._reader.ValueAsString;
-					var t = this.readCadValue(this._reader.ValueAsString);
+					var t = this.readCadValue(new CadValue());
 					tmp.CadObject.Values.Add(key, t.CadValue);
 					tmp.CadValueTemplates.Add(t);
 					return true;
 				case 7:
-					t = this.readCadValue(this._reader.ValueAsString);
+					t = this.readCadValue(new CadValue());
 					tmp.CadObject.Value = t.CadValue;
 					tmp.CadValueTemplates.Add(t);
 					return true;
@@ -249,51 +249,6 @@ namespace ACadSharp.IO.DXF
 				default:
 					return this.tryAssignCurrentValue(template.CadObject, map.SubClasses[DxfSubclassMarker.Field]);
 			}
-		}
-
-		private CadValueTemplate readCadValue(string name)
-		{
-			this._reader.ReadNext();
-
-			CadValue value = new();
-			CadValueTemplate template = new(value);
-			var map = DxfClassMap.Create(value.GetType(), name);
-
-			while (this._reader.Code != 304)
-			{
-				switch (this._reader.Code)
-				{
-					case 11:
-						XYZ xyz = new XYZ();
-						xyz.X = this._reader.ValueAsDouble;
-						this._reader.ReadNext();
-						xyz.Y = this._reader.ValueAsDouble;
-						this._reader.ReadNext();
-						xyz.Z = this._reader.ValueAsDouble;
-
-						value.Value = xyz;
-						break;
-					case 91:
-						value.Value = this._reader.ValueAsInt;
-						break;
-					case 140:
-						value.Value = this._reader.ValueAsDouble;
-						break;
-					case 330:
-						template.ValueHandle = this._reader.ValueAsHandle;
-						break;
-					default:
-						if (!this.tryAssignCurrentValue(value, map))
-						{
-							this._builder.Notify($"Unhandled dxf code {this._reader.Code} value {this._reader.ValueAsString} at {nameof(readCadValue)} method.", NotificationType.None);
-						}
-						break;
-				}
-
-				this._reader.ReadNext();
-			}
-
-			return template;
 		}
 
 		private bool readProxyObject(CadTemplate template, DxfMap map)
@@ -1406,7 +1361,8 @@ namespace ACadSharp.IO.DXF
 					case 91:
 						break;
 					case 300 when this._reader.ValueAsString.Equals("VALUE", StringComparison.InvariantCultureIgnoreCase):
-						this.readDataMapValue();
+						var valueTemplate = this.readCadValue(content.CadValue);
+						template.CadValueTemplate = valueTemplate;
 						break;
 					case 309:
 						end = this._reader.ValueAsString.Equals("CELLCONTENT_END", StringComparison.InvariantCultureIgnoreCase);
@@ -1725,7 +1681,7 @@ namespace ACadSharp.IO.DXF
 
 		private void readDataMapValue()
 		{
-			TableEntity.CellValue value = new TableEntity.CellValue();
+			CadValue value = new();
 			var map = DxfClassMap.Create(value.GetType(), "DATAMAP_VALUE");
 
 			this._reader.ReadNext();
@@ -1895,7 +1851,7 @@ namespace ACadSharp.IO.DXF
 					cellStyle.TextHeight = this._reader.ValueAsDouble;
 					return true;
 				case 170:
-					cellStyle.CellAlignment = (TableEntity.Cell.CellAlignmentType)this._reader.ValueAsShort;
+					cellStyle.CellAlignment = (TableEntity.CellAlignmentType)this._reader.ValueAsShort;
 					return true;
 				case 283:
 					cellStyle.IsFillColorOn = this._reader.ValueAsBool;
