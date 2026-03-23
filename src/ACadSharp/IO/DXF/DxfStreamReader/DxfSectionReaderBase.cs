@@ -567,8 +567,7 @@ namespace ACadSharp.IO.DXF
 					content = new TableEntity.CellContent();
 					var contentTemplate = new CadTableCellContentTemplate(content);
 					tmp.CurrentCell.Contents.Add(content);
-					var valTemplate = readCadValue(this._reader.ValueAsString);
-					content.CadValue = valTemplate.CadValue;
+					var valTemplate = readCadValue(content.CadValue);
 					contentTemplate.CadValueTemplate = valTemplate;
 					return true;
 				case 340:
@@ -583,13 +582,12 @@ namespace ACadSharp.IO.DXF
 			}
 		}
 
-		protected CadValueTemplate readCadValue(string mapName)
+		protected CadValueTemplate readCadValue(CadValue value)
 		{
 			this._reader.ReadNext();
 
-			CadValue value = new();
 			CadValueTemplate template = new(value);
-			var map = DxfClassMap.Create(value.GetType(), mapName);
+			var map = DxfClassMap.Create(value.GetType(), "CadValue");
 
 			while (this._reader.Code != 304)
 			{

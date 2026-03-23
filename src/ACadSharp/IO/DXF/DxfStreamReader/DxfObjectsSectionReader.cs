@@ -231,12 +231,12 @@ namespace ACadSharp.IO.DXF
 					return true;
 				case 6:
 					string key = this._reader.ValueAsString;
-					var t = this.readCadValue(this._reader.ValueAsString);
+					var t = this.readCadValue(new CadValue());
 					tmp.CadObject.Values.Add(key, t.CadValue);
 					tmp.CadValueTemplates.Add(t);
 					return true;
 				case 7:
-					t = this.readCadValue(this._reader.ValueAsString);
+					t = this.readCadValue(new CadValue());
 					tmp.CadObject.Value = t.CadValue;
 					tmp.CadValueTemplates.Add(t);
 					return true;
@@ -1361,8 +1361,7 @@ namespace ACadSharp.IO.DXF
 					case 91:
 						break;
 					case 300 when this._reader.ValueAsString.Equals("VALUE", StringComparison.InvariantCultureIgnoreCase):
-						var valueTemplate = this.readCadValue(this._reader.ValueAsString);
-						content.CadValue = valueTemplate.CadValue;
+						var valueTemplate = this.readCadValue(content.CadValue);
 						template.CadValueTemplate = valueTemplate;
 						break;
 					case 309:
