@@ -1332,9 +1332,9 @@ namespace ACadSharp.IO.DXF
 
 			this._writer.Write(10, v.Location, map);
 
-			this._writer.Write(40, v.StartWidth, map);
-			this._writer.Write(41, v.EndWidth, map);
-			this._writer.Write(42, v.Bulge, map);
+			this._writer.WriteIfNotDefault(40, v.StartWidth, 0, map);
+			this._writer.WriteIfNotDefault(41, v.EndWidth, 0, map);
+			this._writer.WriteIfNotDefault(42, v.Bulge, 0, map);
 
 			this._writer.Write(70, v.Flags, map);
 
