@@ -54,5 +54,8 @@ namespace ACadSharp.Entities
 		/// </remarks>
 		[DxfCodeValue(74)]
 		public short Index4 { get; set; }
+
+		/// <inheritdoc/>
+		public override VertexFlags Flags { get => base.Flags | (VertexFlags.PolyfaceMeshVertex); set => base.Flags = value; }
 	}
 }

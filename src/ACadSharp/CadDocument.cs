@@ -12,8 +12,13 @@ using System.Linq;
 namespace ACadSharp
 {
 	/// <summary>
-	/// A CAD drawing.
+	/// Represents a CAD drawing document, providing access to all collections, tables, and configuration objects within the
+	/// drawing. Supports management of entities, layers, styles, dictionaries, and other core CAD structures.
 	/// </summary>
+	/// <remarks>The CadDocument class serves as the root container for all objects and settings in a CAD drawing. It
+	/// provides methods to retrieve, configure, and manage drawing content, including entities, tables, and dictionaries.
+	/// Many collections are initialized automatically, but some may be null if the corresponding dictionary entry does not
+	/// exist in the root dictionary.</remarks>
 	public class CadDocument : IHandledCadObject
 	{
 		/// <summary>
@@ -444,6 +449,12 @@ namespace ACadSharp
 				default:
 					throw new NotSupportedException($"The type {typeof(T)} is not a configurable type in the document.");
 			}
+		}
+
+		/// <inheritdoc/>
+		public override string ToString()
+		{
+			return $"{this.Header.ToString()}";
 		}
 
 		/// <summary>

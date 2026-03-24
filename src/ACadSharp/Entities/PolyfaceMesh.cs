@@ -16,6 +16,7 @@ namespace ACadSharp.Entities
 		/// <summary>
 		/// Face records with the triangle indexes.
 		/// </summary>
+		[DxfCodeValue(DxfReferenceType.Count, 72)]
 		public CadObjectCollection<VertexFaceRecord> Faces { get; private set; }
 
 		/// <inheritdoc/>
@@ -41,7 +42,7 @@ namespace ACadSharp.Entities
 		{
 			PolyfaceMesh clone = (PolyfaceMesh)base.Clone();
 
-			clone.Faces = new SeqendCollection<VertexFaceRecord>(clone);
+			clone.Faces = new CadObjectCollection<VertexFaceRecord>(clone);
 			foreach (VertexFaceRecord v in this.Faces)
 			{
 				clone.Faces.Add((VertexFaceRecord)v.Clone());
