@@ -1097,6 +1097,11 @@ namespace ACadSharp.IO.DXF
 				this._writer.WriteIfNotDefault(73, polygon.MSmoothSurfaceDensity, 0, map);
 				this._writer.WriteIfNotDefault(74, polygon.NSmoothSurfaceDensity, 0, map);
 			}
+			else if (polyline is PolyfaceMesh faceMesh)
+			{
+				this._writer.WriteIfNotDefault(71, faceMesh.Vertices.Count, 0, map);
+				this._writer.WriteIfNotDefault(72, faceMesh.Faces.Count, 0, map);
+			}
 
 			this._writer.Write(210, polyline.Normal, map);
 
@@ -1105,6 +1110,14 @@ namespace ACadSharp.IO.DXF
 				foreach (T v in polyline.Vertices)
 				{
 					this.writeEntity(v);
+				}
+
+				if (polyline is PolyfaceMesh faceMesh)
+				{
+					foreach (var f in faceMesh.Faces)
+					{
+						this.writeEntity(f);
+					}
 				}
 
 				this.writeSeqend(polyline.Vertices.Seqend);
@@ -1310,7 +1323,11 @@ namespace ACadSharp.IO.DXF
 		{
 			DxfClassMap map = DxfClassMap.Create<Vertex>();
 
-			this._writer.Write(DxfCode.Subclass, DxfSubclassMarker.Vertex);
+			if (v is not VertexFaceRecord)
+			{
+				this._writer.Write(DxfCode.Subclass, DxfSubclassMarker.Vertex);
+			}
+
 			this._writer.Write(DxfCode.Subclass, v.SubclassMarker);
 
 			this._writer.Write(10, v.Location, map);
@@ -1322,6 +1339,14 @@ namespace ACadSharp.IO.DXF
 			this._writer.Write(70, v.Flags, map);
 
 			this._writer.Write(50, v.CurveTangent, map);
+
+			if (v is VertexFaceRecord faceRecord)
+			{
+				this._writer.Write(71, faceRecord.Index1, map);
+				this._writer.Write(72, faceRecord.Index2, map);
+				this._writer.Write(73, faceRecord.Index3, map);
+				this._writer.Write(74, faceRecord.Index4, map);
+			}
 		}
 
 		private void writeViewport(Viewport vp)

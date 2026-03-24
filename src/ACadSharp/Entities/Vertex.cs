@@ -30,7 +30,7 @@ namespace ACadSharp.Entities
 		/// Vertex flags.
 		/// </summary>
 		[DxfCodeValue(70)]
-		public VertexFlags Flags { get; set; }
+		public virtual VertexFlags Flags { get => _flags; set => _flags = value; }
 
 		/// <summary>
 		/// Vertex identifier.
@@ -46,10 +46,22 @@ namespace ACadSharp.Entities
 
 		IVector IVertex.Location { get { return this.Location; } set { this.Location = value.Convert<XYZ>(); } }
 
+		/// <inheritdoc/>
+		public override string ObjectName => DxfFileToken.EntityVertex;
+
+		/// <summary>
+		/// Starting width
+		/// </summary>
+		[DxfCodeValue(DxfReferenceType.Optional, 40)]
+		public double StartWidth { get; set; } = 0.0;
+
+		protected VertexFlags _flags;
+
 		/// <summary>
 		/// Default constructor.
 		/// </summary>
-		public Vertex() { }
+		public Vertex()
+		{ }
 
 		/// <summary>
 		/// Location constructor.
@@ -59,15 +71,6 @@ namespace ACadSharp.Entities
 		{
 			this.Location = location;
 		}
-
-		/// <inheritdoc/>
-		public override string ObjectName => DxfFileToken.EntityVertex;
-
-		/// <summary>
-		/// Starting width
-		/// </summary>
-		[DxfCodeValue(DxfReferenceType.Optional, 40)]
-		public double StartWidth { get; set; } = 0.0;
 
 		/// <inheritdoc/>
 		public override void ApplyTransform(Transform transform)
