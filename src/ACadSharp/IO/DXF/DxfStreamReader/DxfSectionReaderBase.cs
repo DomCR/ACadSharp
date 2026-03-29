@@ -2058,10 +2058,10 @@ namespace ACadSharp.IO.DXF
 								arc.Radius = this._reader.ValueAsDouble;
 								break;
 							case 50:
-								arc.StartAngle = this._reader.ValueAsDouble;
+								arc.StartAngle = MathHelper.DegToRad(this._reader.ValueAsDouble);
 								break;
 							case 51:
-								arc.EndAngle = this._reader.ValueAsDouble;
+								arc.EndAngle = MathHelper.DegToRad(this._reader.ValueAsDouble);
 								break;
 							case 73:
 								arc.CounterClockWise = this._reader.ValueAsBool;
@@ -2094,10 +2094,10 @@ namespace ACadSharp.IO.DXF
 								ellipse.MinorToMajorRatio = this._reader.ValueAsDouble;
 								break;
 							case 50:
-								ellipse.StartAngle = this._reader.ValueAsDouble;
+								ellipse.StartAngle = MathHelper.DegToRad(this._reader.ValueAsDouble);
 								break;
 							case 51:
-								ellipse.EndAngle = this._reader.ValueAsDouble;
+								ellipse.EndAngle = MathHelper.DegToRad(this._reader.ValueAsDouble);
 								break;
 							case 73:
 								ellipse.CounterClockWise = this._reader.ValueAsBool;
