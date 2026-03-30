@@ -26,7 +26,7 @@ namespace ACadSharp.Entities
 				/// <summary>
 				/// End angle.
 				/// </summary>
-				[DxfCodeValue(51)]
+				[DxfCodeValue(DxfReferenceType.IsAngle, 51)]
 				public double EndAngle { get; set; }
 
 				/// <summary>
@@ -41,7 +41,7 @@ namespace ACadSharp.Entities
 				/// <summary>
 				/// Start angle.
 				/// </summary>
-				[DxfCodeValue(50)]
+				[DxfCodeValue(DxfReferenceType.IsAngle, 50)]
 				public double StartAngle { get; set; }
 
 				/// <inheritdoc/>
