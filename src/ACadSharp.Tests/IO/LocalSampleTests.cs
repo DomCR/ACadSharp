@@ -52,7 +52,9 @@ namespace ACadSharp.Tests.IO
 
 			CadDocument doc = DxfReader.Read(test.Path, this.onNotification);
 
-			if(doc.Header.Version < ACadVersion.AC1012)
+			var item = doc.Entities.OfType<Insert>().FirstOrDefault(i => i.Block.Name == "DRM10__1");
+
+			if (doc.Header.Version < ACadVersion.AC1012)
 			{
 				doc.Header.Version = ACadVersion.AC1032;
 				doc.CreateDefaults();
