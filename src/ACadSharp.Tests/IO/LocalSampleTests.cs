@@ -51,6 +51,13 @@ namespace ACadSharp.Tests.IO
 				return;
 
 			CadDocument doc = DxfReader.Read(test.Path, this.onNotification);
+
+			if (doc.Header.Version < ACadVersion.AC1012)
+			{
+				doc.Header.Version = ACadVersion.AC1032;
+				doc.CreateDefaults();
+			}
+
 			if (!TestVariables.SaveOutputInStream)
 			{
 				DxfWriter.Write(Path.Combine(TestVariables.DesktopFolder, "output", "test.dxf"), doc, notification: onNotification);
