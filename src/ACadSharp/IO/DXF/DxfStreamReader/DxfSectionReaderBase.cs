@@ -164,7 +164,13 @@ namespace ACadSharp.IO.DXF
 				case DxfFileToken.EntityCircle:
 					return this.readEntityCodes<Circle>(new CadEntityTemplate<Circle>(), this.readCircle);
 				case DxfFileToken.EntityDimension:
-					return this.readEntityCodes<Dimension>(new CadDimensionTemplate(), this.readDimension);
+					var dimTemplate = this.readEntityCodes<Dimension>(new CadDimensionTemplate(), this.readDimension);
+					if (dimTemplate.CadObject is CadDimensionTemplate.DimensionPlaceholder)
+					{
+						this._builder.Notify($"[{DxfFileToken.EntityDimension}] No subtype found, object discarded.", NotificationType.Warning);
+						return null;
+					}
+					return dimTemplate;
 				case DxfFileToken.Entity3DFace:
 					return this.readEntityCodes<Face3D>(new CadEntityTemplate<Face3D>(), this.readEntitySubclassMap);
 				case DxfFileToken.EntityEllipse:
@@ -755,11 +761,56 @@ namespace ACadSharp.IO.DXF
 					var dim = new DimensionLinear();
 					tmp.SetDimensionObject(dim);
 					dim.Rotation = this._reader.ValueAsAngle;
-					map.SubClasses.Add(DxfSubclassMarker.LinearDimension, DxfClassMap.Create<DimensionLinear>());
+					if (!map.SubClasses.ContainsKey(DxfSubclassMarker.LinearDimension))
+					{
+						map.SubClasses.Add(DxfSubclassMarker.LinearDimension, DxfClassMap.Create<DimensionLinear>());
+					}
 					return true;
 				case 70:
 					//Flags do not have set
 					tmp.SetDimensionFlags((DimensionType)this._reader.ValueAsShort);
+
+					if (tmp.CadObject is CadDimensionTemplate.DimensionPlaceholder placeholder && this._builder.Version < ACadVersion.AC1012)
+					{
+						switch (placeholder.Flags)
+						{
+							case DimensionType.Linear:
+								tmp.SetDimensionObject(new DimensionLinear());
+								map.SubClasses.Add(DxfSubclassMarker.AlignedDimension, DxfClassMap.Create<DimensionAligned>());
+								map.SubClasses.Add(DxfSubclassMarker.LinearDimension, DxfClassMap.Create<DimensionLinear>());
+								break;
+							case DimensionType.Aligned:
+								tmp.SetDimensionObject(new DimensionAligned());
+								map.SubClasses.Add(DxfSubclassMarker.AlignedDimension, DxfClassMap.Create<DimensionAligned>());
+								break;
+							case DimensionType.Angular:
+								tmp.SetDimensionObject(new DimensionAngular2Line());
+								map.SubClasses.Add(DxfSubclassMarker.Angular2LineDimension, DxfClassMap.Create<DimensionAngular2Line>());
+								break;
+							case DimensionType.Diameter:
+								tmp.SetDimensionObject(new DimensionDiameter());
+								map.SubClasses.Add(DxfSubclassMarker.DiametricDimension, DxfClassMap.Create<DimensionDiameter>());
+								break;
+							case DimensionType.Radius:
+								tmp.SetDimensionObject(new DimensionRadius());
+								map.SubClasses.Add(DxfSubclassMarker.RadialDimension, DxfClassMap.Create<DimensionRadius>());
+								break;
+							case DimensionType.Angular3Point:
+								tmp.SetDimensionObject(new DimensionAngular3Pt());
+								map.SubClasses.Add(DxfSubclassMarker.Angular3PointDimension, DxfClassMap.Create<DimensionAngular3Pt>());
+								break;
+							case DimensionType.Ordinate:
+							case DimensionType.OrdinateTypeX:
+							case DimensionType.Ordinate | DimensionType.OrdinateTypeX:
+								tmp.SetDimensionObject(new DimensionOrdinate());
+								map.SubClasses.Add(DxfSubclassMarker.OrdinateDimension, DxfClassMap.Create<DimensionOrdinate>());
+								break;
+							case DimensionType.BlockReference:
+							case DimensionType.TextUserDefinedLocation:
+							default:
+								break;
+						}
+					}
 					return true;
 				//Measurement - read only
 				case 42:
