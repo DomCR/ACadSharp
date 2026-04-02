@@ -1,9 +1,7 @@
 ﻿using ACadSharp.Objects;
 using CSMath;
 using System;
-using System.Collections.Generic;
 using System.Linq;
-using System.Text;
 
 namespace ACadSharp.Tests.Common
 {

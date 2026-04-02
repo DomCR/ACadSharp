@@ -1,7 +1,6 @@
 ﻿using ACadSharp.Blocks;
 using ACadSharp.Entities;
 using ACadSharp.Tables;
-using CSUtilities.Extensions;
 using System;
 
 namespace ACadSharp.Tests.Common

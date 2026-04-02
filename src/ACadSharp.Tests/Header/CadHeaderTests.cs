@@ -1,5 +1,4 @@
 ﻿using ACadSharp.Header;
-using ACadSharp.Objects;
 using ACadSharp.Tables;
 using Xunit;
 
