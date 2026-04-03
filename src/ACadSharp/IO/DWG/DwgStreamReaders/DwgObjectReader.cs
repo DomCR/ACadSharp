@@ -2,7 +2,7 @@
 using ACadSharp.Classes;
 using ACadSharp.Entities;
 using ACadSharp.Entities.AecObjects;
-using ACadSharp.Entities.BOM;
+using ACadSharp.Entities.Mechanical;
 using ACadSharp.IO.Templates;
 using ACadSharp.Objects;
 using ACadSharp.Objects.Evaluations;
