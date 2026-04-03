@@ -1,4 +1,10 @@
-﻿namespace ACadSharp.Entities.ProxyGraphics;
+﻿using CSUtilities.Converters;
+using CSUtilities.IO;
+using System.Collections;
+using System.Collections.Generic;
+using System.Runtime.CompilerServices;
+
+namespace ACadSharp.Entities.ProxyGraphics;
 
 public enum GraphicsType
 {
@@ -38,4 +44,140 @@ public enum GraphicsType
 	UnicodeText = 36,
 	Unknown37 = 37,
 	UnicodeText2 = 38,//No code specified
+}
+
+public interface IProxyGeometry
+{
+	public GraphicsType GraphicsType { get; }
+}
+
+public class ProxyGeometry
+{
+	public static IEnumerable<IProxyGeometry> ReadGeometries(byte[] arr)
+	{
+		List<IProxyGeometry> geometries = new();
+
+		StreamIO stream = new StreamIO(arr);
+		stream.EndianConverter = new LittleEndianConverter();
+		var size = stream.ReadInt();
+		var count = stream.ReadInt();
+
+		for (int i = 0; i < count; i++)
+		{
+			var objSize = stream.ReadInt(); //Includes size and type
+			GraphicsType type = (GraphicsType)stream.ReadInt();
+
+			var pos = stream.Position;
+
+			switch (type)
+			{
+				case GraphicsType.Unknown:
+					break;
+				case GraphicsType.Extents:
+					stream.ReadDouble();
+					stream.ReadDouble();
+					stream.ReadDouble();
+
+					stream.ReadDouble();
+					stream.ReadDouble();
+					stream.ReadDouble();
+					break;
+				case GraphicsType.Circle:
+					break;
+				case GraphicsType.CirclePt3:
+					break;
+				case GraphicsType.CircularArc:
+					break;
+				case GraphicsType.CircularArc3Pt:
+					break;
+				case GraphicsType.Polyline:
+					var pointCount = stream.ReadInt();//4
+					for (int j = 0; j < pointCount; j++)
+					{
+						//8
+						stream.ReadDouble();
+						stream.ReadDouble();
+						stream.ReadDouble();
+					}
+					break;
+				case GraphicsType.Polygon:
+					break;
+				case GraphicsType.Mesh:
+					break;
+				case GraphicsType.Shell:
+					break;
+				case GraphicsType.Text:
+					break;
+				case GraphicsType.Text2:
+					break;
+				case GraphicsType.XLine:
+					break;
+				case GraphicsType.Ray:
+					break;
+				case GraphicsType.SubentColor:
+					break;
+				case GraphicsType.SubentLayer:
+					break;
+				case GraphicsType.SubentLineType:
+					break;
+				case GraphicsType.SubentMarker:
+					stream.ReadInt();
+					break;
+				case GraphicsType.SubentFillon:
+					break;
+				case GraphicsType.SubentTrueColor:
+					stream.ReadByte();
+					stream.ReadByte();
+					stream.ReadByte();
+					//Missing alpha
+					stream.ReadByte();
+					break;
+				case GraphicsType.SubentLineWeight:
+					break;
+				case GraphicsType.SubentLineTypeScale:
+					break;
+				case GraphicsType.SubentThickness:
+					break;
+				case GraphicsType.SubentPlotStyleName:
+					break;
+				case GraphicsType.PushClip:
+					break;
+				case GraphicsType.PopClip:
+					break;
+				case GraphicsType.PushModelTransform:
+					break;
+				case GraphicsType.PushModelTransform2:
+					break;
+				case GraphicsType.PophModelTransform:
+					break;
+				case GraphicsType.PolylineWithNormal:
+					break;
+				case GraphicsType.LwPolyine:
+					break;
+				case GraphicsType.SubEntityMaterial:
+					break;
+				case GraphicsType.SubEntityMapper:
+					break;
+				case GraphicsType.UnicodeText:
+					break;
+				case GraphicsType.Unknown37:
+					break;
+				case GraphicsType.UnicodeText2:
+					break;
+			}
+
+			if (stream.Position == pos)
+			{
+				//jump not implemented
+				stream.ReadBytes(objSize - 8);
+			}
+		}
+
+		return geometries;
+	}
+}
+
+public class ProxyCircle
+{
+
 }

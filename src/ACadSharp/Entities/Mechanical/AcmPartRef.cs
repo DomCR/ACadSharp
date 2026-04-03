@@ -1,10 +1,14 @@
-﻿using CSMath;
+﻿using ACadSharp.Entities.ProxyGraphics;
+using CSMath;
+using System.Collections.Generic;
 
 namespace ACadSharp.Entities.Mechanical;
 
 public class AcmPartRef : Entity
 {
 	public override ObjectType ObjectType { get { return ObjectType.UNLISTED; } }
+
+	public override string ObjectName => DxfFileToken.AcmPartRef;
 
 	public XYZ Position { get; internal set; }
 

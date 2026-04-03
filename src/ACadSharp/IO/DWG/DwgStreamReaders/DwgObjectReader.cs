@@ -316,8 +316,7 @@ internal partial class DwgObjectReader : DwgSectionIO
 
 			//Common:
 			//X: The graphic image
-			//entityHandler.CadObject.JumpGraphicImage(this, entityHandler, graphicImageSize);
-			this._objectReader.Advance((int)graphicImageSize);
+			template.ProxyGraphics = this._objectReader.ReadBytes((int)graphicImageSize);
 		}
 
 		//R13 - R14 Only:
@@ -1330,7 +1329,7 @@ internal partial class DwgObjectReader : DwgSectionIO
 	{
 		//Class ID BL 91
 		//It seems to be the same for all versions
-		int classId = this._mergedReaders.ReadBitLong(); ;
+		int classId = this._mergedReaders.ReadBitLong();
 
 		if (this._classes.TryGetValue((short)classId, out DxfClass dxfClass))
 		{
@@ -5493,7 +5492,7 @@ internal partial class DwgObjectReader : DwgSectionIO
 
 		switch (c.DxfName)
 		{
-			case "ACMPARTREF":
+			case DxfFileToken.AcmPartRef:
 				template = this.readAcmPartRef();
 				break;
 			case DxfFileToken.EntityAecWall:
