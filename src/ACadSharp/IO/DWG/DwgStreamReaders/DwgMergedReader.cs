@@ -333,6 +333,15 @@ namespace ACadSharp.IO.DWG
 			return this._textReader.ReadVariableText();
 		}
 
+		public string ReadPaddedUnicodeString()
+		{
+			//Handle the text section if is empty
+			if (this._textReader.IsEmpty)
+				return string.Empty;
+
+			return this._textReader.ReadVariableText();
+		}
+
 		public ushort ResetShift()
 		{
 			return this._mainReader.ResetShift();
