@@ -1,6 +1,4 @@
-﻿using ACadSharp.Entities.ProxyGraphics;
-using CSMath;
-using System.Collections.Generic;
+﻿using CSMath;
 
 namespace ACadSharp.Entities.Mechanical;
 
