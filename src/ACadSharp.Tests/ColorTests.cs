@@ -1,6 +1,5 @@
 ﻿using ACadSharp.Tests.Common;
 using System;
-using System.Drawing;
 using Xunit;
 using Xunit.Abstractions;
 

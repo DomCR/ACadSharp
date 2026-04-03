@@ -1,6 +1,4 @@
 ﻿using ACadSharp.Entities;
-using ACadSharp.IO;
-using ACadSharp.Tests.Common;
 using ACadSharp.Tests.TestModels;
 using CSMath;
 using System.Collections.Generic;
