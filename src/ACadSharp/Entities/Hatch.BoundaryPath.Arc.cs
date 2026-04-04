@@ -89,32 +89,65 @@ namespace ACadSharp.Entities
 				/// <inheritdoc/>
 				public override void ApplyTransform(Transform transform)
 				{
-					double num = this.Radius;
-					double num2 = this.StartAngle;
-					double num3 = this.EndAngle;
-					bool flag = this.CounterClockWise;
-					this.Center = transform.ApplyTransform(this.Center.Convert<XYZ>()).Convert<XY>();
-					this.Radius = transform.ApplyTransform(new XYZ(this.Radius, 0.0, 0.0)).GetLength();
+					this.Center = transform
+						.ApplyTransform(this.Center.Convert<XYZ>())
+						.Convert<XY>();
 
-					if (!this.CounterClockWise)
+					var m = transform.Matrix;
+
+					// XY linear part
+					double m11 = m.M11;
+					double m12 = m.M12;
+					double m21 = m.M21;
+					double m22 = m.M22;
+
+					// Detect if transform is uniform in XY
+					double scaleX = Math.Sqrt(m.M00 * m.M00 + m.M10 * m.M10);
+					double scaleY = Math.Sqrt(m.M01 * m.M01 + m.M11 * m.M11);
+
+					bool uniform = Math.Abs(scaleX - scaleY) < 1e-9;
+
+					if (!uniform)
 					{
-						this.StartAngle = 0.0 - this.StartAngle;
-						this.EndAngle = 0.0 - this.EndAngle;
+						throw new InvalidOperationException(
+							"Non-uniform scaling turns circle into ellipse. Convert to Ellipse instead."
+						);
 					}
 
-					XYZ vstart = new XYZ(Math.Cos(StartAngle), Math.Sin(StartAngle), 0);
-					XYZ vend = new XYZ(Math.Cos(EndAngle), Math.Sin(EndAngle), 0);
+					// Scale radius using linear part only
+					this.Radius *= scaleX;
 
-					vstart = transform.ApplyTransform(vstart);
-					this.StartAngle = Math.Atan2(vstart.Y, vstart.X);
+					// Transform start & end direction vectors (NO translation!)
+					XYZ vStart = new XYZ(Math.Cos(StartAngle), Math.Sin(StartAngle), 0);
+					XYZ vEnd = new XYZ(Math.Cos(EndAngle), Math.Sin(EndAngle), 0);
 
-					vend = transform.ApplyTransform(vend);
-					this.EndAngle = Math.Atan2(vend.Y, vend.X);
+					XYZ newStart = new XYZ(
+						vStart.X * m11 + vStart.Y * m21,
+						vStart.X * m12 + vStart.Y * m22,
+						0);
 
-					if (!this.CounterClockWise)
+					XYZ newEnd = new XYZ(
+						vEnd.X * m11 + vEnd.Y * m21,
+						vEnd.X * m12 + vEnd.Y * m22,
+						0);
+
+					// Normalize (important after scaling)
+					newStart = newStart.Normalize();
+					newEnd = newEnd.Normalize();
+
+					this.StartAngle = Math.Atan2(newStart.Y, newStart.X);
+					this.EndAngle = Math.Atan2(newEnd.Y, newEnd.X);
+
+					// Handle mirroring (determinant < 0)
+					double det = m11 * m22 - m12 * m21;
+					if (det < 0)
 					{
-						this.StartAngle = 0.0 - this.StartAngle;
-						this.EndAngle = 0.0 - this.EndAngle;
+						// Reflection flips orientation
+						double tmp = this.StartAngle;
+						this.StartAngle = this.EndAngle;
+						this.EndAngle = tmp;
+
+						this.CounterClockWise = !this.CounterClockWise;
 					}
 				}
 
