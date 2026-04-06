@@ -105,6 +105,56 @@ public class InsertTest
 	}
 
 	[Fact]
+	public void GetBoundingBoxForRotatedInsert()
+	{
+		var l = new Line(XYZ.Zero, new XYZ(10, 0, 0));
+		BlockRecord record = new BlockRecord(this._blockName);
+		record.Entities.Add(l);
+
+		Insert insert = new Insert(record);
+		insert.Rotation = MathHelper.HalfPI;
+
+		var box = insert.GetBoundingBox();
+
+		Assert.Equal(XYZ.Zero, box.Min);
+		Assert.Equal(new XYZ(0, 10, 0), box.Max);
+	}
+
+	[Fact]
+	public void GetBoundingBoxForScaledInsert()
+	{
+		var l = new Line(XYZ.Zero, new XYZ(10, 10, 0));
+		BlockRecord record = new BlockRecord(this._blockName);
+		record.Entities.Add(l);
+
+		Insert insert = new Insert(record);
+
+		//Scale
+		insert.XScale = 2;
+
+		var box = insert.GetBoundingBox();
+
+		Assert.Equal(XYZ.Zero, box.Min);
+		Assert.Equal(new XYZ(20, 10, 0), box.Max);
+	}
+
+	[Fact]
+	public void GetBoundingBoxTest()
+	{
+		var l = new Line(XYZ.Zero, new XYZ(10, 10, 0));
+		BlockRecord record = new BlockRecord(this._blockName);
+
+		record.Entities.Add(l);
+
+		Insert insert = new Insert(record);
+
+		var lineBox = l.GetBoundingBox();
+		var box = insert.GetBoundingBox();
+
+		Assert.Equal(lineBox, box);
+	}
+
+	[Fact]
 	public void LinkedAttributes()
 	{
 		BlockRecord record = new BlockRecord(this._blockName);
