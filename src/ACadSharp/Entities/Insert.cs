@@ -364,6 +364,13 @@ public class Insert : Entity
 		var min = box.Min * scale + this.InsertPoint;
 		var max = box.Max * scale + this.InsertPoint;
 
+		if (this.Rotation != 0)
+		{
+			var t = Transform.CreateRotation(this.Normal, this.Rotation);
+			min = t.ApplyRotation(min);
+			max = t.ApplyRotation(max);
+		}
+
 		return new BoundingBox(min, max);
 	}
 
