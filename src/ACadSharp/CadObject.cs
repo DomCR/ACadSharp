@@ -38,7 +38,7 @@ namespace ACadSharp
 		/// <summary>
 		/// The CAD class name of an object.
 		/// </summary>
-		public virtual string ObjectName { get; }
+		public abstract string ObjectName { get; }
 
 		/// <summary>
 		/// Get the object type.

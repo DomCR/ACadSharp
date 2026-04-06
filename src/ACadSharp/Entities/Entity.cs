@@ -1,4 +1,5 @@
 ﻿using ACadSharp.Attributes;
+using ACadSharp.Entities.ProxyGraphics;
 using ACadSharp.Objects;
 using ACadSharp.Tables;
 using CSMath;
@@ -36,6 +37,8 @@ namespace ACadSharp.Entities
 		/// <inheritdoc/>
 		[DxfCodeValue(62, 420)]
 		public Color Color { get; set; } = Color.ByLayer;
+
+		public List<IProxyGeometry> ProxyGeometries { get; } = new();
 
 		/// <inheritdoc/>
 		[DxfCodeValue(60)]
