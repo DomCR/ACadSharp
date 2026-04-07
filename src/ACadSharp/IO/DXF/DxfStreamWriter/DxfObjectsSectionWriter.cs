@@ -2,10 +2,8 @@
 using ACadSharp.Objects;
 using ACadSharp.Objects.Evaluations;
 using CSMath;
-using CSUtilities.Converters;
 using System;
 using System.Linq;
-using System.Numerics;
 
 namespace ACadSharp.IO.DXF
 {

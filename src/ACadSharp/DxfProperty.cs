@@ -1,7 +1,6 @@
 ﻿using ACadSharp.Attributes;
 using ACadSharp.XData;
 using System;
-using System.Collections;
 using System.Collections.Generic;
 using System.Linq;
 using System.Reflection;

@@ -6,7 +6,6 @@ using ACadSharp.Objects.Evaluations;
 using ACadSharp.Types.Units;
 using CSMath;
 using ACadSharp.XData;
-using CSUtilities.Extensions;
 using System;
 using System.Collections.Generic;
 using System.IO;
@@ -60,6 +59,8 @@ public class BlockRecord : TableEntry, IGeometricEntity
 			Layout layout = new Layout();
 			layout.Name = Layout.PaperLayoutName;
 			layout.AssociatedBlock = record;
+
+			layout.UpdatePaperViewport();
 
 			return record;
 		}

@@ -1,7 +1,6 @@
 ﻿using ACadSharp.Attributes;
 using CSUtilities.Extensions;
 using System;
-using System.Drawing;
 using System.Linq;
 
 namespace ACadSharp.Objects

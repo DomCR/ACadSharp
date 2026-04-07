@@ -1,6 +1,5 @@
 ﻿using ACadSharp.Attributes;
 using ACadSharp.Entities;
-using CSMath;
 
 namespace ACadSharp.Objects;
 

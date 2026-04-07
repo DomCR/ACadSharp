@@ -1,7 +1,5 @@
 ﻿using ACadSharp.Entities;
 using ACadSharp.IO.Templates;
-using ACadSharp.Objects;
-using System;
 using System.Collections.Generic;
 
 namespace ACadSharp.IO.DWG

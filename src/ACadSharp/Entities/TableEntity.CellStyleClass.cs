@@ -1,6 +1,4 @@
-﻿using ACadSharp.Attributes;
-
-namespace ACadSharp.Entities
+﻿namespace ACadSharp.Entities
 {
 	public partial class TableEntity
 	{

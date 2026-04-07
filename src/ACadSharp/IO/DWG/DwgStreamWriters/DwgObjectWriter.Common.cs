@@ -3,7 +3,6 @@ using ACadSharp.Entities;
 using ACadSharp.Tables;
 using ACadSharp.XData;
 using CSUtilities.Converters;
-using CSUtilities.Extensions;
 using System.IO;
 using System.Linq;
 using System.Text;

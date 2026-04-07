@@ -1,5 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
+﻿using System.Collections.Generic;
 using ACadSharp.Objects.Evaluations;
 
 namespace ACadSharp.IO.Templates
