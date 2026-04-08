@@ -1,7 +1,5 @@
 ﻿using ACadSharp.Header;
-using ACadSharp.Objects;
 using CSUtilities.IO;
-using CSUtilities.Text;
 using System.IO;
 using System.Text;
 

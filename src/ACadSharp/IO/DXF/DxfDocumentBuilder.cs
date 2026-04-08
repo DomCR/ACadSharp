@@ -2,7 +2,6 @@
 using ACadSharp.IO.Templates;
 using ACadSharp.Objects;
 using ACadSharp.Tables;
-using System;
 using System.Collections.Generic;
 using System.Linq;
 

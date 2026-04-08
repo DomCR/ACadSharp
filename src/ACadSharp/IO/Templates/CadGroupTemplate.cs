@@ -1,5 +1,4 @@
-﻿using ACadSharp.Entities;
-using ACadSharp.Objects;
+﻿using ACadSharp.Objects;
 using System.Collections.Generic;
 
 namespace ACadSharp.IO.Templates

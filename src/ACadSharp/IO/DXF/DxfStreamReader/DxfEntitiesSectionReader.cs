@@ -1,5 +1,4 @@
-﻿using ACadSharp.Blocks;
-using ACadSharp.IO.Templates;
+﻿using ACadSharp.IO.Templates;
 using System;
 
 namespace ACadSharp.IO.DXF

@@ -1,5 +1,4 @@
 ﻿using ACadSharp.Attributes;
-using System;
 
 namespace ACadSharp.Entities
 {

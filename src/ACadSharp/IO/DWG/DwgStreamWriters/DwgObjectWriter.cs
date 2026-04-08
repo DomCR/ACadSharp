@@ -5,7 +5,6 @@ using ACadSharp.Objects;
 using ACadSharp.Tables;
 using ACadSharp.Tables.Collections;
 using CSUtilities.Converters;
-using CSUtilities.Text;
 using System;
 using System.Collections.Generic;
 using System.IO;

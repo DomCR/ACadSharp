@@ -617,7 +617,7 @@ namespace ACadSharp.IO.DWG
 			//330 associated paperspace block record handle(soft pointer)
 			this._writer.HandleReference(DwgReferenceType.SoftPointer, layout.AssociatedBlock);
 			//331 last active viewport handle(soft pointer)
-			this._writer.HandleReference(DwgReferenceType.SoftPointer, layout.Viewport);
+			this._writer.HandleReference(DwgReferenceType.SoftPointer, layout.LastActiveViewport);
 
 			//If not present and 76 code is non-zero, then base UCS is taken to be WORLD
 			if (layout.UcsOrthographicType == OrthographicType.None)

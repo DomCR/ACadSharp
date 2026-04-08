@@ -1,8 +1,5 @@
 ﻿using ACadSharp.Exceptions;
-using ACadSharp.IO.DWG;
 using CSUtilities.Text;
-using System;
-using System.Collections.Generic;
 
 namespace ACadSharp.IO.DWG
 {
