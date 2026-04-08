@@ -1,4 +1,6 @@
-﻿using ACadSharp.Exceptions;
+﻿#define TEST
+
+using ACadSharp.Exceptions;
 using CSMath;
 using CSUtilities.Converters;
 using CSUtilities.IO;
@@ -7,6 +9,7 @@ using System;
 using System.IO;
 using System.Runtime.CompilerServices;
 using System.Text;
+using static System.Net.Mime.MediaTypeNames;
 
 namespace ACadSharp.IO.DWG
 {
@@ -888,6 +891,19 @@ namespace ACadSharp.IO.DWG
 			else
 				str = string.Empty;
 			return str;
+		}
+
+		/// <inheritdoc/>
+		public virtual string ReadPaddedUnicodeString()
+		{
+			byte[] nullTerminator = new byte[] { 0, 0 };
+
+			List<byte> stringBytes = new List<byte>();
+			byte[] character;
+			while (!(character = this.ReadBytes(2)).AsSpan().SequenceEqual(nullTerminator)) {
+				stringBytes.AddRange(character);
+			}
+			return Encoding.Unicode.GetString(stringBytes.ToArray());
 		}
 
 		/// <inheritdoc/>
