@@ -2142,7 +2142,7 @@ namespace ACadSharp.IO.DXF
 								ellipse.MajorAxisEndPoint = new XY(ellipse.Center.X, this._reader.ValueAsDouble);
 								break;
 							case 40:
-								ellipse.MinorToMajorRatio = this._reader.ValueAsDouble;
+								ellipse.RadiusRatio = this._reader.ValueAsDouble;
 								break;
 							case 50:
 								ellipse.StartAngle = MathHelper.DegToRad(this._reader.ValueAsDouble);
