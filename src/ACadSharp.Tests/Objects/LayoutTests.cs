@@ -3,65 +3,74 @@ using System;
 using System.Linq;
 using Xunit;
 
-namespace ACadSharp.Tests.Objects
+namespace ACadSharp.Tests.Objects;
+
+public class LayoutTests : NonGraphicalObjectTests<Layout>
 {
-	public class LayoutTests: NonGraphicalObjectTests<Layout>
+	[Fact]
+	public void AddLayout()
 	{
-		[Fact]
-		public void AddLayout()
-		{
-			CadDocument document = new CadDocument();
+		CadDocument document = new CadDocument();
 
-			string layoutName = "my_layout";
-			Layout layout = new Layout(layoutName);
+		string layoutName = "my_layout";
+		Layout layout = new Layout(layoutName);
 
-			document.Layouts.Add(layout);
+		document.Layouts.Add(layout);
 
-			Assert.Equal(layoutName, layout.AssociatedBlock.Name);
-			Assert.Equal(3, document.Layouts.Count());
-			Assert.True(document.BlockRecords.Contains(layoutName));
-		}
+		Assert.Equal(layoutName, layout.AssociatedBlock.Name);
+		Assert.Equal(3, document.Layouts.Count());
+		Assert.True(document.BlockRecords.Contains(layoutName));
+	}
 
-		[Fact]
-		public void RemoveBlockRecordTest()
-		{
-			var document = new CadDocument();
+	[Fact]
+	public void CannotRemoveDefaultLayouts()
+	{
+		var document = new CadDocument();
 
-			string layoutName = "my_layout";
-			Layout layout = new Layout(layoutName);
+		Assert.Throws<ArgumentException>(() => document.Layouts.Remove(Layout.ModelLayoutName));
+		Assert.Throws<ArgumentException>(() => document.Layouts.Remove(Layout.PaperLayoutName));
+	}
 
-			document.Layouts.Add(layout);
+	[Fact]
+	public void CreateDefaultLayout()
+	{
+		string layoutName = "my_layout";
+		Layout layout = new Layout(layoutName);
 
-			document.BlockRecords.Remove(layoutName);
+		Assert.NotEmpty(layout.Viewports);
+		Assert.True(layout.Viewports.First().RepresentsPaper);
+	}
 
-			Assert.Equal(2, document.Layouts.Count());
-			Assert.False(document.Layouts.ContainsKey(layoutName));
-			Assert.False(document.BlockRecords.Contains(layoutName));
-		}
+	[Fact]
+	public void RemoveBlockRecordTest()
+	{
+		var document = new CadDocument();
 
-		[Fact]
-		public void RemoveTest()
-		{
-			var document = new CadDocument();
+		string layoutName = "my_layout";
+		Layout layout = new Layout(layoutName);
 
-			string layoutName = "my_layout";
-			Layout layout = new Layout(layoutName);
+		document.Layouts.Add(layout);
 
-			document.Layouts.Add(layout);
+		document.BlockRecords.Remove(layoutName);
 
-			Assert.True(document.Layouts.Remove(layoutName));
-			Assert.Equal(2, document.Layouts.Count());
-			Assert.True(document.BlockRecords.Contains(layoutName));
-			Assert.NotEqual(document.BlockRecords[layoutName], layout.AssociatedBlock);
-		}
+		Assert.Equal(2, document.Layouts.Count());
+		Assert.False(document.Layouts.ContainsKey(layoutName));
+		Assert.False(document.BlockRecords.Contains(layoutName));
+	}
 
-		[Fact]
-		public void CannotRemoveDefaultLayouts()
-		{
-			var document = new CadDocument();
+	[Fact]
+	public void RemoveTest()
+	{
+		var document = new CadDocument();
 
-			Assert.Throws<ArgumentException>(() => document.Layouts.Remove(Layout.ModelLayoutName));
-			Assert.Throws<ArgumentException>(() => document.Layouts.Remove(Layout.PaperLayoutName));
-		}
+		string layoutName = "my_layout";
+		Layout layout = new Layout(layoutName);
+
+		document.Layouts.Add(layout);
+
+		Assert.True(document.Layouts.Remove(layoutName));
+		Assert.Equal(2, document.Layouts.Count());
+		Assert.True(document.BlockRecords.Contains(layoutName));
+		Assert.NotEqual(document.BlockRecords[layoutName], layout.AssociatedBlock);
 	}
 }

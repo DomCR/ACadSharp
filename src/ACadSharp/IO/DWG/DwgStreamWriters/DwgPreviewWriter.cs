@@ -1,7 +1,5 @@
-﻿using CSUtilities.IO;
-using CSUtilities.Text;
+﻿using CSUtilities.Text;
 using System.IO;
-using System.Text;
 
 namespace ACadSharp.IO.DWG
 {
