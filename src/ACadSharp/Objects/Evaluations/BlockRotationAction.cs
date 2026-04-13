@@ -7,6 +7,9 @@ namespace ACadSharp.Objects.Evaluations;
 public class BlockRotationAction : BlockActionBasePt
 {
 	/// <inheritdoc/>
+	public override string ObjectName => DxfFileToken.ObjectBlockRotateAction;
+
+	/// <inheritdoc/>
 	public override string SubclassMarker => DxfSubclassMarker.BlockRotationAction;
 
 	[DxfCodeValue(303)]
