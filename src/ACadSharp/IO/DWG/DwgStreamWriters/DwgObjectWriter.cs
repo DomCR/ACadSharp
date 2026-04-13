@@ -257,7 +257,6 @@ namespace ACadSharp.IO.DWG
 					return this.WriteShapes;
 				case Wall:
 				case ProxyEntity:
-				case TableEntity:
 				case Solid3D:
 				case CadBody:
 				case Region:
