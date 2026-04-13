@@ -1,23 +1,26 @@
 ﻿using System.Collections.Generic;
 
-namespace ACadSharp.IO.Templates
+namespace ACadSharp.IO.Templates;
+
+internal class CadViewportEntityControlTemplate : CadTemplate
 {
-	internal class CadViewportEntityControlTemplate : CadTemplate
+	public HashSet<ulong> EntryHandles { get; } = new();
+
+	public CadViewportEntityControlTemplate() : base(new VPEntityPlaceholder())
 	{
-		public HashSet<ulong> EntryHandles { get; } = new();
+	}
 
-		public CadViewportEntityControlTemplate() : base(new VPEntityPlaceholder()) { }
+	protected override void build(CadDocumentBuilder builder)
+	{
+		base.build(builder);
+	}
 
-		protected override void build(CadDocumentBuilder builder)
-		{
-			base.build(builder);
-		}
+	public class VPEntityPlaceholder : CadObject
+	{
+		public override string ObjectName { get; }
 
-		public class VPEntityPlaceholder : CadObject
-		{
-			public override ObjectType ObjectType { get; }
+		public override ObjectType ObjectType { get; }
 
-			public override string SubclassMarker { get; }
-		}
+		public override string SubclassMarker { get; }
 	}
 }

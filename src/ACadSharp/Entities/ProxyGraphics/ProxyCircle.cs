@@ -2,9 +2,11 @@
 
 namespace ACadSharp.Entities.ProxyGraphics;
 
-public class ProxyCircle : IProxyGraphic
+public class ProxyCircle : IProxyGeometry
 {
-	public XYZ Center { get; set; }
+	public GraphicsType GraphicsType { get { return GraphicsType.Circle; } }
+
 	public double Radius { get; set; }
+	public XYZ Center { get; set; }
 	public XYZ Normal { get; set; }
 }

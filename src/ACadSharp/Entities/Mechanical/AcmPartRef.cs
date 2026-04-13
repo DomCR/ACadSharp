@@ -6,6 +6,8 @@ public class AcmPartRef : ProxyDataEntity
 {
 	public override ObjectType ObjectType { get { return ObjectType.UNLISTED; } }
 
+	public override string ObjectName => DxfFileToken.AcmPartRef;
+
 	public XYZ Position { get; internal set; }
 
 	public double Radius { get; internal set; }

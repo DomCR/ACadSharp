@@ -316,18 +316,9 @@ internal partial class DwgObjectReader : DwgSectionIO
 			long graphicImageSize = this._version >= ACadVersion.AC1024 ?
 				this._objectReader.ReadBitLongLong() : this._objectReader.ReadRawLong();
 
-			// Read supported proxy entities or skip graphics object
-			if (entity is ProxyDataEntity proxyEntity)
-			{
-				proxyEntity.ProxyGraphics = this.readProxyEntities();
-			}
-			else
-			{
-				//Common:
-				//X: The graphic image
-				//entityHandler.CadObject.JumpGraphicImage(this, entityHandler, graphicImageSize);
-				this._objectReader.Advance((int)graphicImageSize);
-			}
+			//Common:
+			//X: The graphic image
+			template.ProxyGraphics = this._objectReader.ReadBytes((int)graphicImageSize);
 		}
 
 		//R13 - R14 Only:
@@ -1494,7 +1485,7 @@ internal partial class DwgObjectReader : DwgSectionIO
 	{
 		//Class ID BL 91
 		//It seems to be the same for all versions
-		int classId = this._mergedReaders.ReadBitLong(); ;
+		int classId = this._mergedReaders.ReadBitLong();
 
 		if (this._classes.TryGetValue((short)classId, out DxfClass dxfClass))
 		{
@@ -5657,7 +5648,7 @@ internal partial class DwgObjectReader : DwgSectionIO
 
 		switch (c.DxfName)
 		{
-			case "ACMPARTREF":
+			case DxfFileToken.AcmPartRef:
 				template = this.readAcmPartRef();
 				break;
 			case "ACMBALLOON":
