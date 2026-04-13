@@ -227,7 +227,7 @@ public class ProxyGeometry
 
 	private static IProxyGeometry readPopModelTransform(StreamIO stream)
 	{
-		throw new NotImplementedException();
+		return new ProxyPophModelTransform();
 	}
 
 	private static IProxyGeometry readPushClip(StreamIO stream)
@@ -283,7 +283,12 @@ public class ProxyGeometry
 
 	private static IProxyGeometry readSubentFillon(StreamIO stream)
 	{
-		throw new NotImplementedException();
+		ProxySubentFillon fillOn = new ProxySubentFillon();
+
+		int fillValue = stream.ReadInt();
+		fillOn.IsOn = fillValue == 1;	// Also seen value 2 as well
+
+		return fillOn;
 	}
 
 	private static IProxyGeometry readSubEntityMapper(StreamIO stream)
@@ -298,12 +303,20 @@ public class ProxyGeometry
 
 	private static IProxyGeometry readSubentLayer(StreamIO stream)
 	{
-		throw new NotImplementedException();
+		ProxySubentLayer layer = new ProxySubentLayer();
+
+		layer.LayerIndex = stream.ReadInt();
+
+		return layer;
 	}
 
 	private static IProxyGeometry readSubentLineType(StreamIO stream)
 	{
-		throw new NotImplementedException();
+		ProxySubentLineType lineType = new ProxySubentLineType();
+
+		lineType.LinetypeIndex = stream.ReadUInt();
+
+		return lineType;
 	}
 
 	private static IProxyGeometry readSubentLineTypeScale(StreamIO stream)
@@ -313,13 +326,20 @@ public class ProxyGeometry
 
 	private static IProxyGeometry readSubentLineWeight(StreamIO stream)
 	{
-		throw new NotImplementedException();
+		ProxySubentLineWeight lineWeight= new ProxySubentLineWeight();
+
+		lineWeight.LineWeight = (LineWeightType) stream.ReadInt();
+
+		return lineWeight;
 	}
 
 	private static IProxyGeometry readSubentMarker(StreamIO stream)
 	{
-		stream.ReadInt();
-		throw new NotImplementedException();
+		ProxySubentMarker marker = new ProxySubentMarker();
+
+		marker.MarkerIndex = stream.ReadInt();
+
+		return marker;
 	}
 
 	private static IProxyGeometry readSubentPlotStyleName(StreamIO stream)
@@ -334,13 +354,17 @@ public class ProxyGeometry
 
 	private static IProxyGeometry readSubentTrueColor(StreamIO stream)
 	{
-		stream.ReadByte();
-		stream.ReadByte();
-		stream.ReadByte();
-		//Missing alpha
+		ProxySubentTrueColor trueColor = new ProxySubentTrueColor();
+
+		byte r = stream.ReadByte();
+		byte g = stream.ReadByte();
+		byte b = stream.ReadByte();
+		trueColor.Color = new Color(r, g, b);
+		
+		// Read padding (to next 4 byte border)
 		stream.ReadByte();
 
-		throw new NotImplementedException();
+		return trueColor;
 	}
 
 	private static IProxyGeometry readText(StreamIO stream)
