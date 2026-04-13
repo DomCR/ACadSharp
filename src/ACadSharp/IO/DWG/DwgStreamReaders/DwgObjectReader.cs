@@ -330,160 +330,6 @@ internal partial class DwgObjectReader : DwgSectionIO
 		this.readEntityMode(template);
 	}
 
-	private IProxyGraphic readProxyCircle()
-	{
-		ProxyCircle circle = new ProxyCircle();
-		circle.Center = this._objectReader.Read3RawDouble();
-		circle.Radius = this._objectReader.ReadDouble();
-		circle.Normal = this._objectReader.Read3RawDouble();
-		return circle;
-	}
-
-	private IProxyGraphic readProxyPolyline()
-	{
-		ProxyPolyline line = new ProxyPolyline();
-		int pointCount = this._objectReader.ReadInt();
-
-		line.Points = new XYZ[pointCount];
-		for (int j = 0; j < pointCount; j++)
-		{
-			line.Points[j] = this._objectReader.Read3RawDouble();
-		}
-
-		return line;
-	}
-
-	private IProxyGraphic readProxyPushModelTransform()
-	{
-		ProxyPushModelTransform modelTransform = new ProxyPushModelTransform();
-
-		Matrix4 matrix = Matrix4.Identity;
-		matrix.M00 = this._objectReader.ReadDouble();
-		matrix.M01 = this._objectReader.ReadDouble();
-		matrix.M02 = this._objectReader.ReadDouble();
-		matrix.M03 = this._objectReader.ReadDouble();
-		matrix.M10 = this._objectReader.ReadDouble();
-		matrix.M11 = this._objectReader.ReadDouble();
-		matrix.M12 = this._objectReader.ReadDouble();
-		matrix.M13 = this._objectReader.ReadDouble();
-		matrix.M20 = this._objectReader.ReadDouble();
-		matrix.M21 = this._objectReader.ReadDouble();
-		matrix.M22 = this._objectReader.ReadDouble();
-		matrix.M23 = this._objectReader.ReadDouble();
-		matrix.M30 = this._objectReader.ReadDouble();
-		matrix.M31 = this._objectReader.ReadDouble();
-		matrix.M32 = this._objectReader.ReadDouble();
-		matrix.M33 = this._objectReader.ReadDouble();
-
-		modelTransform.TransformationMatrix = matrix;
-		return modelTransform;
-	}
-
-	private IProxyGraphic readProxyText()
-	{
-		ProxyText text = new ProxyText();
-		text.StartPoint = this._objectReader.Read3RawDouble();
-		text.Normal = this._objectReader.Read3RawDouble();
-		text.TextDirection = this._objectReader.Read3RawDouble();
-		text.Text = this._objectReader.ReadPaddedUnicodeString();
-
-		// Padding to align the text to the next 4-byte boundary
-		if (text.Text.Length % 2 == 0)
-		{
-			this._objectReader.ReadShort();
-		}
-
-		text.TextLength = this._objectReader.ReadInt();
-		text.IsRaw = this._objectReader.ReadInt() == 0;
-		text.Height = this._objectReader.ReadDouble();
-		text.WidthFactor = this._objectReader.ReadDouble();
-		text.ObliqueAngle = this._objectReader.ReadDouble();
-		text.TrackingPercentage = this._objectReader.ReadDouble();
-
-		text.IsBackwards = this._objectReader.ReadInt() == 1;
-		text.IsUpsideDown = this._objectReader.ReadInt() == 1;
-		text.IsVertical = this._objectReader.ReadInt() == 1;
-		text.IsUnderlined = this._objectReader.ReadInt() == 1;
-		text.IsOverlined = this._objectReader.ReadInt() == 1;
-
-		TrueTypeFontDescriptor fontDescriptor = new TrueTypeFontDescriptor();
-		fontDescriptor.IsBold = this._objectReader.ReadInt() == 1;
-		fontDescriptor.IsItalic = this._objectReader.ReadInt() == 1;
-		fontDescriptor.Charset = (byte)this._objectReader.ReadInt();
-		fontDescriptor.PitchAndFamily = (byte)this._objectReader.ReadInt();
-		fontDescriptor.Typeface = this._objectReader.ReadPaddedUnicodeString();
-
-		// Padding to align the text to the next 4-byte boundary
-		if (fontDescriptor.Typeface.Length % 2 == 0)
-		{
-			this._objectReader.ReadShort();
-		}
-
-		fontDescriptor.FontFilename = this._objectReader.ReadPaddedUnicodeString();
-
-		// Padding to align the text to the next 4-byte boundary
-		if (fontDescriptor.FontFilename.Length % 2 == 0)
-		{
-			this._objectReader.ReadShort();
-		}
-
-		text.FontDescriptor = fontDescriptor;
-		text.BigFontFilename = this._objectReader.ReadPaddedUnicodeString();
-
-		// Padding to align the text to the next 4-byte boundary
-		if (fontDescriptor.FontFilename.Length % 2 == 0)
-		{
-			this._objectReader.ReadShort();
-		}
-
-		return text;
-	}
-
-	private IProxyGraphic readProxyEntity(GraphicsType type)
-	{
-		switch (type)
-		{
-			case GraphicsType.Circle:
-				return this.readProxyCircle();
-			case GraphicsType.Polyline:
-				return this.readProxyPolyline();
-			case GraphicsType.PushModelTransform:
-				return this.readProxyPushModelTransform();
-			case GraphicsType.UnicodeText2:
-				return this.readProxyText();
-			default:
-				return null;
-		}
-	}
-
-	private IProxyGraphic[] readProxyEntities()
-	{
-		int proxyObjectSize = this._objectReader.ReadInt(); // Size of the entire proxy object (including the bytes of this field)
-		int entityCount = this._objectReader.ReadInt();
-		IProxyGraphic[] entities = new IProxyGraphic[entityCount];
-
-		for (int i = 0; i < entities.Length; i++)
-		{
-			int objectSize = this._objectReader.ReadInt();  // Size of the object (including the bytes of this field)
-			GraphicsType type = (GraphicsType)this._objectReader.ReadInt();
-
-			// Read the proxy entity
-			IProxyGraphic entity = this.readProxyEntity(type);
-			if (entity != null)
-			{
-				entities[i] = entity;
-			}
-			else
-			{
-				// Proxy entity not yet implemented, skip bytes and set entity to default value
-				this._objectReader.ReadBytes(objectSize - sizeof(int) * 2);
-				entities[i] = new ProxyEntityUnsupported();
-			}
-		}
-
-		return entities;
-	}
-
 	private void readCommonNonEntityData(CadTemplate template)
 	{
 		this.readCommonData(template);
@@ -5651,10 +5497,10 @@ internal partial class DwgObjectReader : DwgSectionIO
 			case DxfFileToken.AcmPartRef:
 				template = this.readAcmPartRef();
 				break;
-			case "ACMBALLOON":
+			case DxfFileToken.AcmBalloon:
 				template = this.readAcmBalloon();
 				break;
-			case "ACMPARTLIST":
+			case DxfFileToken.AcmPartList:
 				template = this.readAcmPartList();
 				break;
 			case DxfFileToken.EntityAecWall:

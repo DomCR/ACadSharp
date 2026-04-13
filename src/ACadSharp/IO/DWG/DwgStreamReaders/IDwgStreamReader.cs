@@ -328,13 +328,6 @@ namespace ACadSharp.IO.DWG
 		string ReadVariableText();
 
 		/// <summary>
-		/// PUS : Padded Unicode string, The bytes are encoded using Unicode encoding. 
-		/// The bytes consist of byte pairs and the string is terminated by 2 zero bytes.
-		/// </summary>
-		/// <returns></returns>
-		string ReadPaddedUnicodeString();
-
-		/// <summary>
 		/// Sets the shift displacement to 0.
 		/// </summary>
 		/// <returns></returns>

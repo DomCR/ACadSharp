@@ -2,7 +2,7 @@
 
 namespace ACadSharp.Entities.Mechanical;
 
-public class AcmPartRef : ProxyDataEntity
+public class AcmPartRef : Entity
 {
 	public override ObjectType ObjectType { get { return ObjectType.UNLISTED; } }
 

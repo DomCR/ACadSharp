@@ -285,4 +285,8 @@ public static class DxfFileToken
 	public const string TableVport = "VPORT";
 
 	public const string AcmPartRef = "ACMPARTREF";
+
+	public const string AcmBalloon = "ACMBALLOON";
+
+	public const string AcmPartList = "ACMPARTLIST";
 }

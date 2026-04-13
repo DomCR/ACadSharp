@@ -1,8 +1,9 @@
-﻿using CSUtilities.Converters;
+﻿using CSMath;
+using CSUtilities.Converters;
 using CSUtilities.IO;
 using System;
-using CSMath;
 using System.Collections.Generic;
+using System.Text;
 
 namespace ACadSharp.Entities.ProxyGraphics;
 
@@ -108,7 +109,7 @@ public class ProxyGeometry
 					geometries.Add(readPushModelTransform2(stream));
 					break;
 				case GraphicsType.PophModelTransform:
-					geometries.Add(readPophModelTransform(stream));
+					geometries.Add(readPopModelTransform(stream));
 					break;
 				case GraphicsType.PolylineWithNormal:
 					geometries.Add(readPolylineWithNormal(stream));
@@ -224,7 +225,7 @@ public class ProxyGeometry
 		throw new NotImplementedException();
 	}
 
-	private static IProxyGeometry readPophModelTransform(StreamIO stream)
+	private static IProxyGeometry readPopModelTransform(StreamIO stream)
 	{
 		throw new NotImplementedException();
 	}
@@ -236,7 +237,28 @@ public class ProxyGeometry
 
 	private static IProxyGeometry readPushModelTransform(StreamIO stream)
 	{
-		throw new NotImplementedException();
+		ProxyPushModelTransform modelTransform = new ProxyPushModelTransform();
+
+		Matrix4 matrix = Matrix4.Identity;
+		matrix.M00 = stream.ReadDouble();
+		matrix.M01 = stream.ReadDouble();
+		matrix.M02 = stream.ReadDouble();
+		matrix.M03 = stream.ReadDouble();
+		matrix.M10 = stream.ReadDouble();
+		matrix.M11 = stream.ReadDouble();
+		matrix.M12 = stream.ReadDouble();
+		matrix.M13 = stream.ReadDouble();
+		matrix.M20 = stream.ReadDouble();
+		matrix.M21 = stream.ReadDouble();
+		matrix.M22 = stream.ReadDouble();
+		matrix.M23 = stream.ReadDouble();
+		matrix.M30 = stream.ReadDouble();
+		matrix.M31 = stream.ReadDouble();
+		matrix.M32 = stream.ReadDouble();
+		matrix.M33 = stream.ReadDouble();
+
+		modelTransform.TransformationMatrix = matrix;
+		return modelTransform;
 	}
 
 	private static IProxyGeometry readPushModelTransform2(StreamIO stream)
@@ -338,7 +360,62 @@ public class ProxyGeometry
 
 	private static IProxyGeometry readUnicodeText2(StreamIO stream)
 	{
-		throw new NotImplementedException();
+		ProxyText text = new ProxyText();
+		text.StartPoint = readPoint(stream);
+		text.Normal = readPoint(stream);
+		text.TextDirection = readPoint(stream);
+		text.Text = readPaddedUnicodeString(stream);
+
+		// Padding to align the text to the next 4-byte boundary
+		if (text.Text.Length % 2 == 0)
+		{
+			stream.ReadShort();
+		}
+
+		text.TextLength = stream.ReadInt();
+		text.IsRaw = stream.ReadInt() == 0;
+		text.Height = stream.ReadDouble();
+		text.WidthFactor = stream.ReadDouble();
+		text.ObliqueAngle = stream.ReadDouble();
+		text.TrackingPercentage = stream.ReadDouble();
+
+		text.IsBackwards = stream.ReadInt() == 1;
+		text.IsUpsideDown = stream.ReadInt() == 1;
+		text.IsVertical = stream.ReadInt() == 1;
+		text.IsUnderlined = stream.ReadInt() == 1;
+		text.IsOverlined = stream.ReadInt() == 1;
+
+		TrueTypeFontDescriptor fontDescriptor = new TrueTypeFontDescriptor();
+		fontDescriptor.IsBold = stream.ReadInt() == 1;
+		fontDescriptor.IsItalic = stream.ReadInt() == 1;
+		fontDescriptor.Charset = (byte)stream.ReadInt();
+		fontDescriptor.PitchAndFamily = (byte)stream.ReadInt();
+		fontDescriptor.Typeface = readPaddedUnicodeString(stream);
+
+		// Padding to align the text to the next 4-byte boundary
+		if (fontDescriptor.Typeface.Length % 2 == 0)
+		{
+			stream.ReadShort();
+		}
+
+		fontDescriptor.FontFilename = readPaddedUnicodeString(stream);
+
+		// Padding to align the text to the next 4-byte boundary
+		if (fontDescriptor.FontFilename.Length % 2 == 0)
+		{
+			stream.ReadShort();
+		}
+
+		text.FontDescriptor = fontDescriptor;
+		text.BigFontFilename = readPaddedUnicodeString(stream);
+
+		// Padding to align the text to the next 4-byte boundary
+		if (fontDescriptor.FontFilename.Length % 2 == 0)
+		{
+			stream.ReadShort();
+		}
+
+		return text;
 	}
 
 	private static IProxyGeometry readUnknown37(StreamIO stream)
@@ -349,5 +426,23 @@ public class ProxyGeometry
 	private static IProxyGeometry readXLine(StreamIO stream)
 	{
 		throw new NotImplementedException();
+	}
+
+	/// <summary>
+	/// PUS : Padded Unicode string, The bytes are encoded using Unicode encoding. 
+	/// The bytes consist of byte pairs and the string is terminated by 2 zero bytes.
+	/// </summary>
+	/// <returns></returns>
+	private static string readPaddedUnicodeString(StreamIO stream)
+	{
+		byte[] nullTerminator = new byte[] { 0, 0 };
+
+		List<byte> stringBytes = new List<byte>();
+		byte[] character;
+		while (!(character = stream.ReadBytes(2)).AsSpan().SequenceEqual(nullTerminator))
+		{
+			stringBytes.AddRange(character);
+		}
+		return Encoding.Unicode.GetString(stringBytes.ToArray());
 	}
 }
