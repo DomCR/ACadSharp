@@ -90,8 +90,34 @@ namespace ACadSharp.Entities
 				/// <inheritdoc/>
 				public override void ApplyTransform(Transform transform)
 				{
-					this.Center = transform.ApplyTransform(this.Center.Convert<XYZ>()).Convert<XY>();
-					this.MajorAxisEndPoint = transform.ApplyTransform(this.MajorAxisEndPoint.Convert<XYZ>()).Convert<XY>();
+					// Transform center (position → full affine transform)
+					this.Center = transform
+						.ApplyTransform(this.Center.Convert<XYZ>())
+						.Convert<XY>();
+
+					// Transform major axis vector (vector → linear only!)
+					XYZ axis = this.MajorAxisEndPoint.Convert<XYZ>();
+
+					var m = transform.Matrix;
+
+					XYZ transformedAxis = new XYZ(
+						axis.X * m.M00 + axis.Y * m.M10,
+						axis.X * m.M01 + axis.Y * m.M11,
+						0
+					);
+
+					this.MajorAxisEndPoint = transformedAxis.Convert<XY>();
+
+					// Handle reflection (flip orientation if determinant < 0)
+					double det = m.M00 * m.M11 - m.M01 * m.M10;
+					if (det < 0)
+					{
+						this.CounterClockWise = !this.CounterClockWise;
+
+						double tmp = this.StartAngle;
+						this.StartAngle = this.EndAngle;
+						this.EndAngle = tmp;
+					}
 				}
 
 				/// <inheritdoc/>
