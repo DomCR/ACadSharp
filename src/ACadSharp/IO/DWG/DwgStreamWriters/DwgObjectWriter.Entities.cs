@@ -1962,9 +1962,7 @@ namespace ACadSharp.IO.DWG
 			}
 
 			this._writer.HandleReference(DwgReferenceType.HardPointer, image.Definition);
-
-			//Reactor, not needed
-			this._writer.HandleReference(image.DefinitionReactor);
+			this._writer.HandleReference(DwgReferenceType.HardOwnership, image.DefinitionReactor);
 
 			if (image.DefinitionReactor != null)
 			{
