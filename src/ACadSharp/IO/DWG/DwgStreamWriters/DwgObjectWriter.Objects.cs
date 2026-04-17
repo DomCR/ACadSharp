@@ -6,6 +6,7 @@ using CSUtilities.IO;
 using CSUtilities.Text;
 using System;
 using System.Collections.Generic;
+using System.Globalization;
 using System.IO;
 using System.Linq;
 
@@ -451,7 +452,7 @@ internal partial class DwgObjectWriter : DwgSectionIO
 				this._writer.Write3BitDouble(geodata.UpDirection);
 
 				//BD Angle of north direction (radians, angle measured clockwise from the (0, 1) vector).
-				this._writer.WriteBitDouble(System.Math.PI / 2.0 - geodata.NorthDirection.GetAngle());
+				this._writer.WriteBitDouble(Math.PI / 2.0 - geodata.NorthDirection.GetAngle());
 
 				//3BD  Obsolete, ODA writes(1, 1, 1)
 				this._writer.Write3BitDouble(new XYZ(1, 1, 1));
@@ -1180,21 +1181,24 @@ internal partial class DwgObjectWriter : DwgSectionIO
 		{
 			if (string.IsNullOrEmpty(text))
 			{
-				ms.Write<short, LittleEndianConverter>(0);
+				ms.Write<short>(0);
 				return;
 			}
 
-			ms.Write<short, LittleEndianConverter>((short)text.Length);
+			ms.Write<short>(0);
+			return;
+
+			ms.Write<short>((short)text.Length);
 			ms.Write(text, System.Text.Encoding.Unicode);
 		}
 		else if (string.IsNullOrEmpty(text))
 		{
-			ms.Write<short, LittleEndianConverter>(0);
+			ms.Write<short>(0);
 			ms.Write((byte)CadUtils.GetCodeIndex((CodePage)this._writer.Encoding.CodePage));
 		}
 		else
 		{
-			ms.Write<short, LittleEndianConverter>((short)text.Length);
+			ms.Write<short>((short)text.Length);
 			ms.Write((byte)CadUtils.GetCodeIndex((CodePage)this._writer.Encoding.CodePage));
 			ms.Write(text, this._writer.Encoding);
 		}
@@ -1220,34 +1224,34 @@ internal partial class DwgObjectWriter : DwgSectionIO
 			{
 				case GroupCodeValueType.Byte:
 				case GroupCodeValueType.Bool:
-					ms.Write(Convert.ToByte(entry.Value, System.Globalization.CultureInfo.InvariantCulture));
+					ms.Write(Convert.ToByte(entry.Value, CultureInfo.InvariantCulture));
 					break;
 				case GroupCodeValueType.Int16:
 				case GroupCodeValueType.ExtendedDataInt16:
-					ms.Write(Convert.ToInt16(entry.Value, System.Globalization.CultureInfo.InvariantCulture));
+					ms.Write(Convert.ToInt16(entry.Value, CultureInfo.InvariantCulture));
 					break;
 				case GroupCodeValueType.Int32:
 				case GroupCodeValueType.ExtendedDataInt32:
-					ms.Write(Convert.ToInt32(entry.Value, System.Globalization.CultureInfo.InvariantCulture));
+					ms.Write(Convert.ToInt32(entry.Value, CultureInfo.InvariantCulture));
 					break;
 				case GroupCodeValueType.Int64:
-					ms.Write(Convert.ToInt64(entry.Value, System.Globalization.CultureInfo.InvariantCulture));
+					ms.Write(Convert.ToInt64(entry.Value, CultureInfo.InvariantCulture));
 					break;
 				case GroupCodeValueType.Double:
 				case GroupCodeValueType.ExtendedDataDouble:
 					double d = (entry.Value as double?).Value;
-					ms.Write<double, LittleEndianConverter>(d);
+					ms.Write<double>(d);
 					break;
 				case GroupCodeValueType.Point3D:
 					XYZ xyz = (entry.Value as XYZ?).Value;
-					ms.Write<double, LittleEndianConverter>(xyz.X);
-					ms.Write<double, LittleEndianConverter>(xyz.Y);
-					ms.Write<double, LittleEndianConverter>(xyz.Z);
+					ms.Write<double>(xyz.X);
+					ms.Write<double>(xyz.Y);
+					ms.Write<double>(xyz.Z);
 					break;
 				case GroupCodeValueType.Chunk:
 				case GroupCodeValueType.ExtendedDataChunk:
 					byte[] array = (byte[])entry.Value;
-					ms.Write((byte)array.Length);
+					ms.Write<byte>((byte)array.Length);
 					ms.WriteBytes(array);
 					break;
 				case GroupCodeValueType.Handle:
@@ -1258,23 +1262,24 @@ internal partial class DwgObjectWriter : DwgSectionIO
 					}
 					else
 					{
-						this.writeStringInStream(ms, obj.Handle.ToString("X", System.Globalization.CultureInfo.InvariantCulture));
+						this.writeStringInStream(ms, obj.Handle.ToString("X", CultureInfo.InvariantCulture));
 					}
 					break;
 				case GroupCodeValueType.String:
 				case GroupCodeValueType.ExtendedDataString:
-					string text = (string)entry.Value;
+					string text = Convert.ToString(entry.Value, CultureInfo.InvariantCulture);
 					this.writeStringInStream(ms, text);
 					break;
 				case GroupCodeValueType.ObjectId:
 				case GroupCodeValueType.ExtendedDataHandle:
-					if (entry.GetReference() == null)
+					obj = entry.GetReference();
+					if (obj == null)
 					{
-						ms.Write<ulong, LittleEndianConverter>(0);
+						ms.Write<ulong>(0);
 					}
 					else
 					{
-						ms.Write<ulong, LittleEndianConverter>(entry.GetReference().Handle);
+						ms.Write<ulong>(obj.Handle);
 					}
 					break;
 				default:
