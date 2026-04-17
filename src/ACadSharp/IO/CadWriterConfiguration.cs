@@ -63,7 +63,7 @@ namespace ACadSharp.IO
 		/// Due the complexity of XRecords, if this flag is set to true, it may cause a corruption of the file.
 		/// </remarks>
 		/// <value>
-		/// default: true
+		/// default: false
 		/// </value>
 		public bool WriteXRecords { get; set; } = true;
 

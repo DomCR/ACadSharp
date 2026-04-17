@@ -268,10 +268,6 @@ internal partial class DwgObjectReader : DwgSectionIO
 			var groupValue = GroupCodeValue.TransformValue(code);
 			switch (groupValue)
 			{
-				case GroupCodeValueType.Int16:
-				case GroupCodeValueType.ExtendedDataInt16:
-					this._mergedReaders.ReadBitShort();
-					break;
 				case GroupCodeValueType.Double:
 				case GroupCodeValueType.ExtendedDataDouble:
 					this._mergedReaders.ReadBitDouble();
