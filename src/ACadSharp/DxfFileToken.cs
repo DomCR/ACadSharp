@@ -283,4 +283,6 @@ public static class DxfFileToken
 	public const string TableView = "VIEW";
 
 	public const string TableVport = "VPORT";
+
+	public const string ValueEnd = "ACVALUE_END";
 }

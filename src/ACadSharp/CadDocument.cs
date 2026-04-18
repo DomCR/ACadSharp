@@ -34,7 +34,7 @@ public class CadDocument : IHandledCadObject
 	/// <summary>
 	/// Dxf classes defined in this document.
 	/// </summary>
-	public DxfClassCollection Classes { get; set; } = new DxfClassCollection();
+	public DxfClassCollection Classes { get; }
 
 	/// <summary>
 	/// The collection of all book colors in the drawing.
@@ -230,6 +230,7 @@ public class CadDocument : IHandledCadObject
 	internal CadDocument(bool createDefaults)
 	{
 		this._cadObjects.Add(this.Handle, this);
+		this.Classes = new DxfClassCollection(this);
 
 		if (createDefaults)
 		{
@@ -242,7 +243,7 @@ public class CadDocument : IHandledCadObject
 	/// </summary>
 	public void CreateDefaults()
 	{
-		DxfClassCollection.UpdateDxfClasses(this);
+		this.Classes.UpdateDxfClasses();
 
 		//Header and summary
 		if (this.Header is null)
@@ -569,15 +570,15 @@ public class CadDocument : IHandledCadObject
 			this.Classes.Clear();
 		}
 
-		DxfClassCollection.UpdateDxfClasses(this);
+		this.Classes.UpdateDxfClasses();
+	}
 
-		foreach (var item in this.Classes)
-		{
-			item.InstanceCount = this._cadObjects.Values
-				.OfType<CadObject>()
-				.Where(c => c.ObjectName == item.DxfName)
-				.Count();
-		}
+	public int GetInstanceCount(string dxfName)
+	{
+		return this._cadObjects.Values
+			.OfType<CadObject>()
+			.Where(c => c.ObjectName == dxfName)
+			.Count();
 	}
 
 	/// <summary>

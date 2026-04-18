@@ -150,7 +150,7 @@ namespace ACadSharp.Tests.Internal
 				sreader,
 				handles,
 				writer.Map,
-				new Classes.DxfClassCollection()
+				docResult.Classes
 				);
 			reader.Read();
 
