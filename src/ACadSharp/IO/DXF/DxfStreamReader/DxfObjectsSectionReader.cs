@@ -1707,7 +1707,7 @@ namespace ACadSharp.IO.DXF
 						//Value as byte array
 						break;
 					case 304:
-						end = this._reader.ValueAsString.Equals("ACVALUE_END", StringComparison.InvariantCultureIgnoreCase);
+						end = this._reader.ValueAsString.Equals(DxfFileToken.ValueEnd, StringComparison.InvariantCultureIgnoreCase);
 						break;
 					default:
 						if (!this.tryAssignCurrentValue(value, map))

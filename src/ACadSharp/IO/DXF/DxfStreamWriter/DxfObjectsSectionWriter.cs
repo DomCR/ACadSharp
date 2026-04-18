@@ -579,7 +579,6 @@ namespace ACadSharp.IO.DXF
 				case AecBinRecord:
 				case DimensionAssociation:
 				case EvaluationGraph:
-				case Field:
 				case Material:
 				case MultiLeaderObjectContextData:
 				case VisualStyle:

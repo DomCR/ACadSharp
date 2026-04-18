@@ -625,8 +625,14 @@ namespace ACadSharp.IO.DXF
 							value.SetValue(v);
 						}
 						break;
+					case 90:
+						value.ValueType = (CadValueType)this._reader.ValueAsInt;
+						break;
 					case 91:
 						value.SetValue(this._reader.ValueAsInt);
+						break;
+					case 93:
+						value.Flags = this._reader.ValueAsInt;
 						break;
 					case 140:
 						value.SetValue(this._reader.ValueAsDouble);
