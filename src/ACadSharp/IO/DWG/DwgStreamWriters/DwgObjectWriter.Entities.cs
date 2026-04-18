@@ -711,7 +711,7 @@ internal partial class DwgObjectWriter : DwgSectionIO
 							//endpoint 2RD 11 endpoint of major axis
 							this._writer.Write2RawDouble(ellispe.MajorAxisEndPoint);
 							//minormajoratio BD 40 ratio of minor to major axis
-							this._writer.WriteBitDouble(ellispe.MinorToMajorRatio);
+							this._writer.WriteBitDouble(ellispe.RadiusRatio);
 							//startangle BD 50 start angle
 							this._writer.WriteBitDouble(ellispe.StartAngle);
 							//endangle BD 51 endangle
