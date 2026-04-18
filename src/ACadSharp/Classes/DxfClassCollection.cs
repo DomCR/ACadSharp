@@ -176,6 +176,7 @@ public class DxfClassCollection : ICollection<DxfClass>
 			MaintenanceVersion = 0,
 			ProxyFlags = ProxyFlags.None,
 			WasZombie = false,
+			InstanceCount = this._document.GetInstanceCount(DxfFileToken.ObjectPlaceholder),
 		});
 
 		//AcDbLayout
@@ -189,6 +190,7 @@ public class DxfClassCollection : ICollection<DxfClass>
 			MaintenanceVersion = 0,
 			ProxyFlags = ProxyFlags.None,
 			WasZombie = false,
+			InstanceCount = this._document.GetInstanceCount(DxfFileToken.ObjectLayout),
 		});
 
 		//AcDbDictionaryVar
@@ -202,6 +204,7 @@ public class DxfClassCollection : ICollection<DxfClass>
 			MaintenanceVersion = 0,
 			ProxyFlags = ProxyFlags.None,
 			WasZombie = false,
+			InstanceCount = this._document.GetInstanceCount(DxfFileToken.ObjectDictionaryVar),
 		});
 
 		//AcDbTableStyle
@@ -215,6 +218,7 @@ public class DxfClassCollection : ICollection<DxfClass>
 			MaintenanceVersion = 0,
 			ProxyFlags = (ProxyFlags)4095,
 			WasZombie = false,
+			InstanceCount = this._document.GetInstanceCount(DxfFileToken.ObjectTableStyle),
 		});
 
 		//AcDbMaterial
@@ -228,6 +232,7 @@ public class DxfClassCollection : ICollection<DxfClass>
 			MaintenanceVersion = 0,
 			ProxyFlags = ProxyFlags.EraseAllowed | ProxyFlags.CloningAllowed | ProxyFlags.DisablesProxyWarningDialog,
 			WasZombie = false,
+			InstanceCount = this._document.GetInstanceCount(DxfFileToken.ObjectMaterial),
 		});
 
 		//AcDbVisualStyle
@@ -241,6 +246,7 @@ public class DxfClassCollection : ICollection<DxfClass>
 			MaintenanceVersion = 0,
 			ProxyFlags = (ProxyFlags)4095,
 			WasZombie = false,
+			InstanceCount = this._document.GetInstanceCount(DxfFileToken.ObjectVisualStyle),
 		});
 
 		//AcDbScale
@@ -254,6 +260,7 @@ public class DxfClassCollection : ICollection<DxfClass>
 			MaintenanceVersion = 1,
 			ProxyFlags = ProxyFlags.EraseAllowed | ProxyFlags.CloningAllowed | ProxyFlags.DisablesProxyWarningDialog,
 			WasZombie = false,
+			InstanceCount = this._document.GetInstanceCount(DxfFileToken.ObjectScale),
 		});
 
 		//AcDbMLeaderStyle
@@ -267,6 +274,7 @@ public class DxfClassCollection : ICollection<DxfClass>
 			MaintenanceVersion = 25,
 			ProxyFlags = (ProxyFlags)4095,
 			WasZombie = false,
+			InstanceCount = this._document.GetInstanceCount(DxfFileToken.ObjectMLeaderStyle),
 		});
 
 		//AcDbCellStyleMap
@@ -280,6 +288,7 @@ public class DxfClassCollection : ICollection<DxfClass>
 			MaintenanceVersion = 25,
 			ProxyFlags = ProxyFlags.CloningAllowed | ProxyFlags.DisablesProxyWarningDialog,
 			WasZombie = false,
+			InstanceCount = this._document.GetInstanceCount(DxfFileToken.ObjectCellStyleMap),
 		});
 
 		//ExAcXREFPanelObject
@@ -293,6 +302,7 @@ public class DxfClassCollection : ICollection<DxfClass>
 			MaintenanceVersion = 0,
 			ProxyFlags = ProxyFlags.EraseAllowed | ProxyFlags.DisablesProxyWarningDialog,
 			WasZombie = false,
+			InstanceCount = this._document.GetInstanceCount("EXACXREFPANELOBJECT"),
 		});
 
 		//AcDbImpNonPersistentObjectsCollection
@@ -306,6 +316,7 @@ public class DxfClassCollection : ICollection<DxfClass>
 			MaintenanceVersion = 0,
 			ProxyFlags = ProxyFlags.EraseAllowed | ProxyFlags.CloningAllowed | ProxyFlags.DisablesProxyWarningDialog,
 			WasZombie = false,
+			InstanceCount = this._document.GetInstanceCount("NPOCOLLECTION"),
 		});
 
 		//AcDbLayerIndex
@@ -319,6 +330,7 @@ public class DxfClassCollection : ICollection<DxfClass>
 			MaintenanceVersion = 0,
 			ProxyFlags = ProxyFlags.None,
 			WasZombie = false,
+			InstanceCount = this._document.GetInstanceCount("LAYER_INDEX"),
 		});
 
 		//AcDbSpatialIndex
@@ -332,6 +344,7 @@ public class DxfClassCollection : ICollection<DxfClass>
 			MaintenanceVersion = 0,
 			ProxyFlags = ProxyFlags.None,
 			WasZombie = false,
+			InstanceCount = this._document.GetInstanceCount("SPATIAL_INDEX"),
 		});
 
 		//AcDbIdBuffer
@@ -345,6 +358,7 @@ public class DxfClassCollection : ICollection<DxfClass>
 			MaintenanceVersion = 0,
 			ProxyFlags = ProxyFlags.R13FormatProxy,
 			WasZombie = false,
+			InstanceCount = this._document.GetInstanceCount("IDBUFFER"),
 		});
 
 		//AcDbSectionViewStyle
@@ -358,6 +372,7 @@ public class DxfClassCollection : ICollection<DxfClass>
 			MaintenanceVersion = 0,
 			ProxyFlags = ProxyFlags.EraseAllowed | ProxyFlags.DisablesProxyWarningDialog,
 			WasZombie = false,
+			InstanceCount = this._document.GetInstanceCount("ACDBSECTIONVIEWSTYLE"),
 		});
 
 		//AcDbDetailViewStyle
@@ -371,6 +386,7 @@ public class DxfClassCollection : ICollection<DxfClass>
 			MaintenanceVersion = 0,
 			ProxyFlags = ProxyFlags.EraseAllowed | ProxyFlags.DisablesProxyWarningDialog,
 			WasZombie = false,
+			InstanceCount = this._document.GetInstanceCount("ACDBDETAILVIEWSTYLE"),
 		});
 
 		//AcDbSubDMesh
@@ -384,6 +400,7 @@ public class DxfClassCollection : ICollection<DxfClass>
 			MaintenanceVersion = 0,
 			ProxyFlags = ProxyFlags.None,
 			WasZombie = false,
+			InstanceCount = this._document.GetInstanceCount(DxfFileToken.EntityMesh),
 		});
 
 		//AcDbSortentsTable
@@ -397,6 +414,7 @@ public class DxfClassCollection : ICollection<DxfClass>
 			MaintenanceVersion = 0,
 			ProxyFlags = ProxyFlags.None,
 			WasZombie = false,
+			InstanceCount = this._document.GetInstanceCount(DxfFileToken.ObjectSortEntsTable),
 		});
 
 		//AcDbTextObjectContextData
@@ -410,6 +428,7 @@ public class DxfClassCollection : ICollection<DxfClass>
 			MaintenanceVersion = 0,
 			ProxyFlags = ProxyFlags.EraseAllowed | ProxyFlags.CloningAllowed | ProxyFlags.DisablesProxyWarningDialog,
 			WasZombie = false,
+			InstanceCount = this._document.GetInstanceCount("ACDB_TEXTOBJECTCONTEXTDATA_CLASS"),
 		});
 
 		//AcDbWipeout
@@ -424,6 +443,7 @@ public class DxfClassCollection : ICollection<DxfClass>
 			MaintenanceVersion = 0,
 			ProxyFlags = ProxyFlags.EraseAllowed | ProxyFlags.TransformAllowed | ProxyFlags.ColorChangeAllowed | ProxyFlags.LayerChangeAllowed | ProxyFlags.LinetypeChangeAllowed | ProxyFlags.LinetypeScaleChangeAllowed | ProxyFlags.VisibilityChangeAllowed | ProxyFlags.R13FormatProxy,
 			WasZombie = false,
+			InstanceCount = this._document.GetInstanceCount(DxfFileToken.EntityWipeout),
 		});
 
 		//AcDbWipeoutVariables
@@ -438,6 +458,7 @@ public class DxfClassCollection : ICollection<DxfClass>
 			MaintenanceVersion = 0,
 			ProxyFlags = ProxyFlags.R13FormatProxy,
 			WasZombie = false,
+			InstanceCount = this._document.GetInstanceCount("WIPEOUTVARIABLES"),
 		});
 
 		//AcDbDimAssoc
@@ -452,6 +473,7 @@ public class DxfClassCollection : ICollection<DxfClass>
 			MaintenanceVersion = 0,
 			ProxyFlags = ProxyFlags.None,
 			WasZombie = false,
+			InstanceCount = this._document.GetInstanceCount("DIMASSOC"),
 		});
 
 		//AcDbTable
@@ -465,6 +487,7 @@ public class DxfClassCollection : ICollection<DxfClass>
 			MaintenanceVersion = 0,
 			ProxyFlags = ProxyFlags.EraseAllowed | ProxyFlags.DisablesProxyWarningDialog,
 			WasZombie = false,
+			InstanceCount = this._document.GetInstanceCount(DxfFileToken.EntityTable),
 		});
 
 		//AcDbTableContent
@@ -478,6 +501,7 @@ public class DxfClassCollection : ICollection<DxfClass>
 			MaintenanceVersion = 21,
 			ProxyFlags = ProxyFlags.CloningAllowed | ProxyFlags.DisablesProxyWarningDialog,
 			WasZombie = false,
+			InstanceCount = this._document.GetInstanceCount(DxfFileToken.ObjectTableContent),
 		});
 
 		//AcDbTableGeometry
@@ -491,6 +515,7 @@ public class DxfClassCollection : ICollection<DxfClass>
 			MaintenanceVersion = 0,
 			ProxyFlags = ProxyFlags.CloningAllowed | ProxyFlags.DisablesProxyWarningDialog,
 			WasZombie = false,
+			InstanceCount = this._document.GetInstanceCount("TABLEGEOMETRY"),
 		});
 
 		//AcDbRasterImage
@@ -505,6 +530,7 @@ public class DxfClassCollection : ICollection<DxfClass>
 			MaintenanceVersion = 0,
 			ProxyFlags = ProxyFlags.EraseAllowed | ProxyFlags.TransformAllowed | ProxyFlags.ColorChangeAllowed | ProxyFlags.LayerChangeAllowed | ProxyFlags.LinetypeChangeAllowed | ProxyFlags.LinetypeScaleChangeAllowed | ProxyFlags.VisibilityChangeAllowed | ProxyFlags.R13FormatProxy,
 			WasZombie = false,
+			InstanceCount = this._document.GetInstanceCount(DxfFileToken.EntityImage),
 		});
 
 		//AcDbRasterImageDef
@@ -519,6 +545,7 @@ public class DxfClassCollection : ICollection<DxfClass>
 			MaintenanceVersion = 0,
 			ProxyFlags = ProxyFlags.None,
 			WasZombie = false,
+			InstanceCount = this._document.GetInstanceCount(DxfFileToken.ObjectImageDefinition),
 		});
 
 		////AcDbRasterImageDefReactor
@@ -533,6 +560,7 @@ public class DxfClassCollection : ICollection<DxfClass>
 			MaintenanceVersion = 0,
 			ProxyFlags = ProxyFlags.EraseAllowed,
 			WasZombie = false,
+			InstanceCount = this._document.GetInstanceCount(DxfFileToken.ObjectImageDefinitionReactor),
 		});
 
 		//AcDbColor
@@ -546,6 +574,7 @@ public class DxfClassCollection : ICollection<DxfClass>
 			MaintenanceVersion = 14,
 			ProxyFlags = ProxyFlags.None,
 			WasZombie = false,
+			InstanceCount = this._document.GetInstanceCount(DxfFileToken.ObjectDBColor),
 		});
 
 		//AcDbGeoData
@@ -559,6 +588,7 @@ public class DxfClassCollection : ICollection<DxfClass>
 			MaintenanceVersion = 45,
 			ProxyFlags = (ProxyFlags)4095,
 			WasZombie = false,
+			InstanceCount = this._document.GetInstanceCount(DxfFileToken.ObjectGeoData),
 		});
 
 		//AcDbMLeader
@@ -572,6 +602,7 @@ public class DxfClassCollection : ICollection<DxfClass>
 			MaintenanceVersion = 0,
 			ProxyFlags = ProxyFlags.EraseAllowed | ProxyFlags.DisablesProxyWarningDialog,
 			WasZombie = false,
+			InstanceCount = this._document.GetInstanceCount(DxfFileToken.EntityMultiLeader),
 		});
 
 		//AcDbPdfReference
@@ -585,6 +616,7 @@ public class DxfClassCollection : ICollection<DxfClass>
 			MaintenanceVersion = 0,
 			ProxyFlags = (ProxyFlags)4095,
 			WasZombie = false,
+			InstanceCount = this._document.GetInstanceCount(DxfFileToken.EntityPdfUnderlay),
 		});
 
 		//AcDbPdfDefinition
@@ -598,6 +630,7 @@ public class DxfClassCollection : ICollection<DxfClass>
 			MaintenanceVersion = 0,
 			ProxyFlags = ProxyFlags.EraseAllowed | ProxyFlags.CloningAllowed | ProxyFlags.DisablesProxyWarningDialog,
 			WasZombie = false,
+			InstanceCount = this._document.GetInstanceCount(DxfFileToken.ObjectPdfDefinition),
 		});
 
 		//AcDbRasterVariables
@@ -612,6 +645,7 @@ public class DxfClassCollection : ICollection<DxfClass>
 			MaintenanceVersion = 0,
 			ProxyFlags = ProxyFlags.None,
 			WasZombie = false,
+			InstanceCount = this._document.GetInstanceCount(DxfFileToken.ObjectRasterVariables),
 		});
 
 		//AcDbSpatialFilter
@@ -625,6 +659,7 @@ public class DxfClassCollection : ICollection<DxfClass>
 			MaintenanceVersion = 0,
 			ProxyFlags = ProxyFlags.None,
 			WasZombie = false,
+			InstanceCount = this._document.GetInstanceCount(DxfFileToken.ObjectSpatialFilter),
 		});
 
 		//AcDbMLeaderObjectContextData
@@ -638,6 +673,7 @@ public class DxfClassCollection : ICollection<DxfClass>
 			MaintenanceVersion = 0,
 			ProxyFlags = ProxyFlags.EraseAllowed | ProxyFlags.DisablesProxyWarningDialog,
 			WasZombie = false,
+			InstanceCount = this._document.GetInstanceCount(DxfFileToken.ObjectMLeaderContextData),
 		});
 
 		//AcDbPlotSettings
@@ -651,6 +687,7 @@ public class DxfClassCollection : ICollection<DxfClass>
 			MaintenanceVersion = 42,
 			ProxyFlags = ProxyFlags.None,
 			WasZombie = false,
+			InstanceCount = this._document.GetInstanceCount(DxfFileToken.ObjectPlotSettings),
 		});
 
 		//AcDbField
@@ -664,6 +701,7 @@ public class DxfClassCollection : ICollection<DxfClass>
 			MaintenanceVersion = 0,
 			ProxyFlags = ProxyFlags.CloningAllowed | ProxyFlags.DisablesProxyWarningDialog,
 			WasZombie = false,
+			InstanceCount = this._document.GetInstanceCount(DxfFileToken.ObjectField),
 		});
 
 		//AcDbFieldList
@@ -677,6 +715,7 @@ public class DxfClassCollection : ICollection<DxfClass>
 			MaintenanceVersion = 0,
 			ProxyFlags = ProxyFlags.CloningAllowed | ProxyFlags.DisablesProxyWarningDialog,
 			WasZombie = false,
+			InstanceCount = this._document.GetInstanceCount(DxfFileToken.ObjectFieldList),
 		});
 
 		//AcDbMTextAttributeObjectContextData
@@ -690,6 +729,7 @@ public class DxfClassCollection : ICollection<DxfClass>
 			MaintenanceVersion = 0,
 			ProxyFlags = ProxyFlags.EraseAllowed | ProxyFlags.CloningAllowed | ProxyFlags.DisablesProxyWarningDialog,
 			WasZombie = false,
+			InstanceCount = this._document.GetInstanceCount(DxfFileToken.MTextAttributeObjectContextData),
 		});
 
 		//AcDbBlkRefObjectContextData
@@ -703,6 +743,7 @@ public class DxfClassCollection : ICollection<DxfClass>
 			MaintenanceVersion = 0,
 			ProxyFlags = ProxyFlags.EraseAllowed | ProxyFlags.CloningAllowed | ProxyFlags.DisablesProxyWarningDialog,
 			WasZombie = false,
+			InstanceCount = this._document.GetInstanceCount(DxfFileToken.BlkRefObjectContextData),
 		});
 	}
 
