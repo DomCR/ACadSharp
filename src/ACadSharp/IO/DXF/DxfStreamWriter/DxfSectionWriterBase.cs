@@ -85,6 +85,8 @@ internal abstract partial class DxfSectionWriterBase
 				this._writer.Write(91, 0);
 				break;
 		}
+
+		this._writer.Write(304, DxfFileToken.ValueEnd);
 	}
 
 	protected void writeCommonObjectData(CadObject cadObject)
