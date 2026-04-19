@@ -123,12 +123,27 @@ namespace ACadSharp.Entities
 
 			this.getWorldMatrix(transform, this.Normal, newNormal, out Matrix3 transOW, out Matrix3 transWO);
 
+			var m = transform.Matrix;
+			double det =
+				m.M00 * m.M11 -
+				m.M01 * m.M10;
+
+			bool mirrored = det < 0;
+
 			foreach (var vertex in this.Vertices)
 			{
-				XYZ v = transOW * vertex.Location.Convert<XYZ>();
-				v = transform.ApplyTransform(v);
-				v = transWO * v;
-				vertex.Location = v.Convert<XY>();
+				// OCS → WCS
+				XYZ transformationVector = transOW * vertex.Location.Convert<XYZ>();
+				transformationVector = transform.ApplyTransform(transformationVector);
+
+				// WCS → new OCS
+				transformationVector = transWO * transformationVector;
+				vertex.Location = transformationVector.Convert<XY>();
+
+				if (mirrored && vertex.Bulge != 0.0)
+				{
+					vertex.Bulge = -vertex.Bulge;
+				}
 			}
 
 			this.Normal = newNormal;
