@@ -145,9 +145,17 @@ namespace ACadSharp.IO.DWG
 			this.Main.WriteBytes(bytes);
 		}
 
-		public void WriteCmColor(Color value)
+		public void WriteCmColor(Color value, bool useTextStream = false)
 		{
+			if (!(this.Main is DwgStreamWriterAC18) && !useTextStream)
+			{
+				this.Main.WriteCmColor(value);
+				return;
+			}
+
 			this.Main.WriteCmColor(value);
+
+			//TODO: Implement true color support for writer
 		}
 
 		public void WriteEnColor(Color color, Transparency transparency)

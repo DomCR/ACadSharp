@@ -54,7 +54,7 @@ namespace ACadSharp.IO.DWG
 
 		void WriteTimeSpan(TimeSpan value);
 
-		void WriteCmColor(Color value);
+		void WriteCmColor(Color value, bool useTextStream = false);
 
 		void WriteEnColor(Color color, Transparency transparency);
 

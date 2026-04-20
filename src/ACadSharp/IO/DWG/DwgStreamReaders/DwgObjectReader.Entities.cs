@@ -5,7 +5,7 @@ using CSMath;
 using CSUtilities.Converters;
 using System;
 using static ACadSharp.Entities.TableEntity;
-using static ACadSharp.Entities.TableEntity.BreakData;
+using static ACadSharp.Entities.TableEntity.TableBreakData;
 using static ACadSharp.IO.Templates.CadTableEntityTemplate;
 
 namespace ACadSharp.IO.DWG
@@ -57,7 +57,7 @@ namespace ACadSharp.IO.DWG
 				bool hasBreakData = this._mergedReaders.ReadBitLong() == 1;
 				if (hasBreakData)
 				{
-					TableEntity.BreakData breakData = table.TableBreakData;
+					TableEntity.TableBreakData breakData = table.BreakData;
 					//BL Option flags:
 					breakData.Flags = (BreakOptionFlags)this._mergedReaders.ReadBitLong();
 					//BL Flow direction:
@@ -857,7 +857,7 @@ namespace ACadSharp.IO.DWG
 					row.CustomDataCollection.Add(entry);
 				}
 
-				//Cell style data, see paragraph 20.4.101.4, this contains cell style overrides for the column.
+				//Cell style data, see paragraph 20.4.101.4, this contains cell style overrides for the row.
 				CadCellStyleTemplate colStyleTemplate = new(row.CellStyleOverride);
 				this.readCellStyle(colStyleTemplate);
 
@@ -875,7 +875,7 @@ namespace ACadSharp.IO.DWG
 			for (int n = 0; n < nfields; n++)
 			{
 				//H Handle to field (AcDbField), hard owner.
-				this._mergedReaders.HandleReference();
+				template.FieldHandles.Add(this._mergedReaders.HandleReference());
 			}
 
 			//The table’s cell style override fields (see paragraph 20.4.101.4). The table’s
@@ -886,17 +886,17 @@ namespace ACadSharp.IO.DWG
 			int nranges = this._mergedReaders.ReadBitLong();
 			for (int i = 0; i < nranges; i++)
 			{
-				CellRange dxfTableCellRange = new();
+				CellRange cellRange = new();
 				//BL 91 Top row index
-				dxfTableCellRange.TopRowIndex = this._mergedReaders.ReadBitLong();
+				cellRange.TopRowIndex = this._mergedReaders.ReadBitLong();
 				//BL 92 Left column index
-				dxfTableCellRange.LeftColumnIndex = this._mergedReaders.ReadBitLong();
+				cellRange.LeftColumnIndex = this._mergedReaders.ReadBitLong();
 				//BL 93 Bottom row index
-				dxfTableCellRange.BottomRowIndex = this._mergedReaders.ReadBitLong();
+				cellRange.BottomRowIndex = this._mergedReaders.ReadBitLong();
 				//BL 94 Right column index
-				dxfTableCellRange.RightColumnIndex = this._mergedReaders.ReadBitLong();
+				cellRange.RightColumnIndex = this._mergedReaders.ReadBitLong();
 
-				content.MergedCellRanges.Add(dxfTableCellRange);
+				content.MergedCellRanges.Add(cellRange);
 			}
 
 			//H 340 Handle to table style(hard pointer).

@@ -37,6 +37,7 @@ namespace ACadSharp.Tests.IO
 			if (!TestVariables.SaveOutputInStream)
 			{
 				DwgWriter.Write(Path.Combine(TestVariables.DesktopFolder, "output", "test.dwg"), doc, notification: onNotification);
+				DwgReader.Read(Path.Combine(TestVariables.DesktopFolder, "output", "test.dwg"), notification: onNotification);
 			}
 		}
 

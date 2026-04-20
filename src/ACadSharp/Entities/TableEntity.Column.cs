@@ -1,27 +1,32 @@
 ﻿using ACadSharp.Attributes;
 using System.Collections.Generic;
 
-namespace ACadSharp.Entities
+namespace ACadSharp.Entities;
+
+public partial class TableEntity
 {
-	public partial class TableEntity
+	/// <summary>
+	/// Represents a table column with a name, width, custom data, and style information.
+	/// </summary>
+	public class Column
 	{
-		public class Column
-		{
-			[DxfCodeValue(300)]
-			public string Name { get; set; }
+		[DxfCodeValue(300)]
+		public string Name { get; set; } = string.Empty;
 
-			/// <summary>
-			/// Column width.
-			/// </summary>
-			[DxfCodeValue(142)]
-			public double Width { get; set; }
+		/// <summary>
+		/// Column width.
+		/// </summary>
+		[DxfCodeValue(142)]
+		public double Width { get; set; }
 
-			[DxfCodeValue(91)]
-			public int CustomData { get; set; }
+		/// <summary>
+		/// Gets or sets the custom data value associated with the entity.
+		/// </summary>
+		[DxfCodeValue(91)]
+		public int CustomData { get; set; }
 
-			public CellStyle CellStyleOverride { get; set; } = new();
+		public CellStyle CellStyleOverride { get; set; } = new();
 
-			public List<CustomDataEntry> CustomDataCollection { get; internal set; }
-		}
+		public List<CustomDataEntry> CustomDataCollection { get; } = new();
 	}
 }

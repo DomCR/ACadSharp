@@ -15,6 +15,8 @@ internal class CadTableEntityTemplate : CadInsertTemplate
 
 	public CadTableCellTemplate CurrentCellTemplate { get; private set; }
 
+	public List<ulong> FieldHandles { get; } = new();
+
 	// Horizontal cell margin; override applied at the table entity level
 	public double? HorizontalMargin { get; set; }
 
@@ -57,6 +59,11 @@ internal class CadTableEntityTemplate : CadInsertTemplate
 		foreach (var cellTemplate in this.CadTableCellTemplates)
 		{
 			cellTemplate.Build(builder);
+		}
+
+		foreach (var handle in this.FieldHandles)
+		{
+
 		}
 	}
 

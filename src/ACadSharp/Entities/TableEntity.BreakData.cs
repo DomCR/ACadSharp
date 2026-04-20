@@ -1,22 +1,25 @@
 ﻿using CSMath;
 using System.Collections.Generic;
 
-namespace ACadSharp.Entities
-{
-	public partial class TableEntity
-	{
-		internal class BreakData
-		{
-			internal struct BreakHeight
-			{
-				public XYZ Position { get; internal set; }
-				public double Height { get; internal set; }
-			}
+namespace ACadSharp.Entities;
 
-			public BreakOptionFlags Flags { get; internal set; }
-			public BreakFlowDirection FlowDirection { get; internal set; }
-			public double BreakSpacing { get; internal set; }
-			public List<BreakHeight> Heights { get; internal set; } = new List<BreakHeight>();
+public partial class TableEntity
+{
+	public class TableBreakData
+	{
+		public double BreakSpacing { get; set; }
+
+		public BreakOptionFlags Flags { get; set; } = BreakOptionFlags.None;
+
+		public BreakFlowDirection FlowDirection { get; set; }
+
+		public List<BreakHeight> Heights { get; set; } = new List<BreakHeight>();
+
+		public struct BreakHeight
+		{
+			public double Height { get; set; }
+
+			public XYZ Position { get; set; }
 		}
 	}
 }

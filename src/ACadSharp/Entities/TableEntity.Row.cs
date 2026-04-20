@@ -1,26 +1,25 @@
 ﻿using ACadSharp.Attributes;
 using System.Collections.Generic;
 
-namespace ACadSharp.Entities
+namespace ACadSharp.Entities;
+
+public partial class TableEntity
 {
-	public partial class TableEntity
+	public class Row
 	{
-		public class Row
-		{
-			/// <summary>
-			/// Row height.
-			/// </summary>
-			[DxfCodeValue(141)]
-			public double Height { get; set; }
+		public List<Cell> Cells { get; set; } = new();
 
-			[DxfCodeValue(90)]
-			public int CustomData { get; set; }
+		public CellStyle CellStyleOverride { get; set; } = new();
 
-			public CellStyle CellStyleOverride { get; set; } = new();
+		[DxfCodeValue(90)]
+		public int CustomData { get; set; }
 
-			public List<Cell> Cells { get; set; } = new();
+		public List<CustomDataEntry> CustomDataCollection { get; } = new();
 
-			public List<CustomDataEntry> CustomDataCollection { get; internal set; }
-		}
+		/// <summary>
+		/// Row height.
+		/// </summary>
+		[DxfCodeValue(141)]
+		public double Height { get; set; }
 	}
 }
