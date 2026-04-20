@@ -2478,18 +2478,22 @@ internal partial class DwgObjectWriter : DwgSectionIO
 		}
 
 		//BL 92 Has linked data flags, 0 = false, 1 = true If has linked data
-		this._writer.WriteBitLong(cell.HasLinkedData ? 1 : 0);
-		if (cell.HasLinkedData)
+		this._writer.WriteBitLong(0);
+		if (false)
 		{
-			//H 340 Handle to data link object (hard pointer).
-			this._writer.HandleReference(null);
-			//BL 93 Row count.
-			this._writer.WriteBitLong(0);
-			//BL 94 Column count.
-			this._writer.WriteBitLong(0);
-			//BL 96 Unknown.
-			this._writer.WriteBitLong(0);
-			//End if has linked data
+			this._writer.WriteBitLong(cell.HasLinkedData ? 1 : 0);
+			if (cell.HasLinkedData)
+			{
+				//H 340 Handle to data link object (hard pointer).
+				this._writer.HandleReference(null);
+				//BL 93 Row count.
+				this._writer.WriteBitLong(0);
+				//BL 94 Column count.
+				this._writer.WriteBitLong(0);
+				//BL 96 Unknown.
+				this._writer.WriteBitLong(0);
+				//End if has linked data
+			}
 		}
 
 		//BL 95 Number of cell contents
