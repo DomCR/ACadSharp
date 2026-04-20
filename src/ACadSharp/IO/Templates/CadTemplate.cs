@@ -39,6 +39,13 @@ namespace ACadSharp.IO.Templates
 			}
 
 			this.build(builder);
+
+			builder.NotifyProgress(ReadStage.Build, this);
+		}
+
+		public CadObjectData GetObjectData()
+		{
+			return new CadObjectData(this.CadObject);
 		}
 
 		public override string ToString()

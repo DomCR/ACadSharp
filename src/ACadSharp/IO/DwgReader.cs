@@ -102,13 +102,15 @@ public class DwgReader : CadReaderBase<DwgReaderConfiguration>
 	/// <inheritdoc/>
 	public override CadDocument Read()
 	{
-		this._document = new CadDocument(false);
-
 		//Read the file header
 		this._fileHeader = this.readFileHeader();
 
 		this._builder = new DwgDocumentBuilder(this._fileHeader.AcadVersion, this._document, this.Configuration);
 		this._builder.OnNotification += this.onNotificationEvent;
+		if (this.onProgressEventEnabled())
+		{
+			this._builder.OnProgress += this.onProgressEvent;
+		}
 
 		this._document.SummaryInfo = this.ReadSummaryInfo();
 

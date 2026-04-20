@@ -16,6 +16,8 @@ namespace ACadSharp.IO
 		/// </remarks>
 		event NotificationEventHandler OnNotification;
 
+		event ProgressEventHandler OnProgress;
+
 		/// <summary>
 		/// Read the Cad header section of the file.
 		/// </summary>

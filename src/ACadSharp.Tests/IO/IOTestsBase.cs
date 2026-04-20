@@ -143,6 +143,10 @@ namespace ACadSharp.Tests.IO
 			}
 		}
 
+		protected void onProgress(object sender, ProgressEventArgs e)
+		{
+		}
+
 		protected void onNotification(object sender, NotificationEventArgs e)
 		{
 			if (e.NotificationType == NotificationType.Error)
