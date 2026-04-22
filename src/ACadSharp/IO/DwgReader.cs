@@ -895,6 +895,7 @@ public class DwgReader : CadReaderBase<DwgReaderConfiguration>
 			descriptor.Name = decompressedStream.ReadString(64).Split('\0')[0];
 
 			//Following this, the following (local) section page map data will be present
+			ulong decompressSizeCounter = 0;
 			for (int j = 0; j < descriptor.PageCount; ++j)
 			{
 				DwgLocalSectionMap localmap = new DwgLocalSectionMap();
@@ -905,6 +906,19 @@ public class DwgReader : CadReaderBase<DwgReaderConfiguration>
 				//0x08	8	Start offset for this page(OdUInt64).If this start offset is smaller than the sum of the decompressed size of all previous pages, then this page is to be preceded by zero pages until this condition is met.
 				localmap.Offset = decompressedStream.ReadULong();
 
+				// Insert empty pages to fill gaps in the offset
+				while (decompressSizeCounter < localmap.Offset)
+				{
+					descriptor.LocalSections.Add(new DwgLocalSectionMap
+					{
+						IsEmpty = true,
+						Offset = decompressSizeCounter,
+						CompressedSize = 0,
+						DecompressedSize = descriptor.DecompressedSize
+					});
+					decompressSizeCounter += descriptor.DecompressedSize;
+				}
+
 				//same decompressed size and seeker (temporal values)
 				localmap.DecompressedSize = descriptor.DecompressedSize;
 				localmap.Seeker = fileheader.Records[localmap.PageNumber].Seeker;
@@ -913,6 +927,7 @@ public class DwgReader : CadReaderBase<DwgReaderConfiguration>
 				//If a logical section of the file (the database objects, for example) exceeds this size, then it is broken up into pages of size 0x7400.
 
 				descriptor.LocalSections.Add(localmap);
+				decompressSizeCounter += localmap.DecompressedSize;
 			}
 
 			//Get the final size for the local section
@@ -1134,8 +1149,6 @@ public class DwgReader : CadReaderBase<DwgReaderConfiguration>
 				//8	Page CRC
 				page.CRC = sectionMapStream.ReadULong<LittleEndianConverter>();
 
-#if false
-//this code it doesn't take any effect on the reading
 				//Create an empty page to fill the gap
 				if (currentOffset < page.Offset)
 				{
@@ -1149,7 +1162,7 @@ public class DwgReader : CadReaderBase<DwgReaderConfiguration>
 					//Add the empty local section to the current descriptor
 					section.LocalSections.Add(emptyPage);
 				}
-#endif
+
 				//Add the page to the section
 				section.LocalSections.Add(page);
 				//Move the offset
