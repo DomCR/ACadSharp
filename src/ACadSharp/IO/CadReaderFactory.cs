@@ -3,7 +3,13 @@ using System.IO;
 
 namespace ACadSharp.IO;
 
-public static class CadReader
+/// <summary>
+/// Provides factory methods for creating CAD file readers based on file format.
+/// </summary>
+/// <remarks>Use this class to obtain an appropriate ICadReader instance for supported CAD file types such as DWG
+/// and DXF. The factory selects the correct reader implementation based on the file extension. This class does not
+/// validate file existence or content; it only inspects the file extension.</remarks>
+public static class CadReaderFactory
 {
 	/// <summary>
 	/// Creates an <see cref="ICadReader"/> instance for the specified CAD file format.

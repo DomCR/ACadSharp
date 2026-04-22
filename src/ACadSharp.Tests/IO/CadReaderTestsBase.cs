@@ -114,7 +114,7 @@ public abstract class CadReaderTestsBase<T> : IOTestsBase, IDisposable
 		if (this._documents.TryGetValue(test.Path, out var doc))
 			return doc;
 
-		using (ICadReader reader = CadReader.CreateReader(test.Path))
+		using (ICadReader reader = CadReaderFactory.CreateReader(test.Path))
 		{
 			if (addNotificationEvent)
 			{

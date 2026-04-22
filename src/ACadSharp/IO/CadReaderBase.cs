@@ -30,11 +30,6 @@ public abstract class CadReaderBase<T> : ICadReader
 
 	protected Encoding _encoding = Encoding.Default;
 
-	protected bool onProgressEventEnabled()
-	{
-		return OnProgress != null;
-	}
-
 	protected CadReaderBase(NotificationEventHandler notification)
 	{
 		this.OnNotification += notification;
@@ -86,6 +81,11 @@ public abstract class CadReaderBase<T> : ICadReader
 	protected void onProgressEvent(object sender, ProgressEventArgs e)
 	{
 		this.OnProgress?.Invoke(this, e);
+	}
+
+	protected bool onProgressEventEnabled()
+	{
+		return OnProgress != null;
 	}
 
 	protected void triggerNotification(string message, NotificationType notificationType, Exception ex = null)
