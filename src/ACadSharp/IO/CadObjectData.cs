@@ -25,14 +25,14 @@ public readonly struct CadObjectData
 	public string Name { get; }
 
 	/// <summary>
+	/// Gets the name of the CAD object type, which can be used to determine the specific type of object.
+	/// </summary>
+	public string ObjectName { get; }
+
+	/// <summary>
 	/// Gets the handle of the owner object, or <see langword="null"/> if no owner is specified.
 	/// </summary>
 	public ulong? OwnerHandle { get; }
-
-	/// <summary>
-	/// Gets the type name of the CAD object, corresponding to <see cref="CadObject.ObjectName"/>.
-	/// </summary>
-	public string Type { get; }
 
 	/// <summary>
 	/// Gets the handle of the extension dictionary associated with this object, or <see langword="null"/> if none is assigned.
@@ -53,7 +53,7 @@ public readonly struct CadObjectData
 		EntityData? entityData = null)
 	{
 		this.Handle = cadObject.Handle;
-		this.Type = cadObject.ObjectName;
+		this.ObjectName = cadObject.ObjectName;
 
 		if (cadObject is INamedCadObject named)
 		{
@@ -63,5 +63,11 @@ public readonly struct CadObjectData
 		this.OwnerHandle = ownerHandle;
 		this.XDictHandle = xDictHandle;
 		this.EntityData = entityData;
+	}
+
+	/// <inheritdoc/>
+	public override string ToString()
+	{
+		return $"{ObjectName}:{Handle}";
 	}
 }
