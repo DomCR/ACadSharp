@@ -143,6 +143,21 @@ namespace ACadSharp.Tests.IO
 			}
 		}
 
+		protected void onProgress(object sender, ProgressEventArgs e)
+		{
+			if (e.Stage == ReadStage.Read)
+			{
+				Assert.True(e.Current.Handle != 0, "Current object handle is 0.");
+			}
+
+			if (e.Stage == ReadStage.Build && e.Current.EntityData.HasValue)
+			{
+				EntityData edata = e.Current.EntityData.Value;
+				Assert.True(edata.Layer.Handle != 0 || !string.IsNullOrEmpty(edata.Layer.Name));
+				Assert.True(edata.LineType.Handle != 0 || !string.IsNullOrEmpty(edata.LineType.Name));
+			}
+		}
+
 		protected void onNotification(object sender, NotificationEventArgs e)
 		{
 			if (e.NotificationType == NotificationType.Error)
