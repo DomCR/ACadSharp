@@ -1,16 +1,32 @@
 ﻿namespace ACadSharp.IO;
 
 /// <summary>
-/// Specifies the type of notification or status reported by an operation or component.
+/// Defines the type of notification raised during read/write operations.
 /// </summary>
-/// <remarks>Use this enumeration to indicate the outcome or status of an operation, such as whether it completed
-/// successfully, encountered an error, or is not supported. The values can be used to control application flow or to
-/// provide user feedback based on the result of an action.</remarks>
 public enum NotificationType
 {
+	/// <summary>
+	/// The feature is not yet implemented.
+	/// </summary>
 	NotImplemented = -1,
+
+	/// <summary>
+	/// No notification.
+	/// </summary>
 	None = 0,
+
+	/// <summary>
+	/// The feature is not supported.
+	/// </summary>
 	NotSupported = 1,
+
+	/// <summary>
+	/// A warning occurred during the operation.
+	/// </summary>
 	Warning = 2,
+
+	/// <summary>
+	/// An error occurred during the operation.
+	/// </summary>
 	Error = 3,
 }

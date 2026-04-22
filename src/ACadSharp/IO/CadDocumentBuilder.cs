@@ -143,6 +143,16 @@ internal abstract class CadDocumentBuilder
 		this.OnNotification?.Invoke(this, new NotificationEventArgs(message, notificationType, exception));
 	}
 
+	public void NotifyProgress(ReadStage stage, ICadObjectTemplate template)
+	{
+		if (this.OnProgress == null)
+		{
+			return;
+		}
+
+		this.OnProgress?.Invoke(this, new ProgressEventArgs(stage, template.GetObjectData()));
+	}
+
 	public void RegisterTables()
 	{
 		this.DocumentToBuild.RegisterCollection(this.AppIds);
@@ -340,15 +350,5 @@ internal abstract class CadDocumentBuilder
 		this.templatesMap.Add(template.CadObject.Handle, template);
 		this.cadObjects.Add(template.CadObject.Handle, template.CadObject);
 		return true;
-	}
-
-	public void NotifyProgress(ReadStage stage, ICadObjectTemplate template)
-	{
-		if (this.OnProgress == null)
-		{
-			return;
-		}
-
-		this.OnProgress?.Invoke(this, new ProgressEventArgs(stage, template.GetObjectData()));
 	}
 }
