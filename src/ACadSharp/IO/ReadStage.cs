@@ -13,5 +13,5 @@ public enum ReadStage
 	/// <summary>
 	/// The building stage where parsed data is assembled into objects.
 	/// </summary>
-	Buildd
+	Build
 }
