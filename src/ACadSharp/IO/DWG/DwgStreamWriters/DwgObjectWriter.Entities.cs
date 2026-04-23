@@ -4,8 +4,6 @@ using CSMath;
 using System;
 using System.Collections.Generic;
 using System.Linq;
-using static ACadSharp.Entities.TableEntity;
-using static ACadSharp.IO.Templates.CadTableEntityTemplate;
 
 namespace ACadSharp.IO.DWG;
 
@@ -2503,7 +2501,6 @@ internal partial class DwgObjectWriter : DwgSectionIO
 			this.writeTableCellContent(cellContent);
 		}
 
-		CadCellStyleTemplate formatTemplate = new(cell.StyleOverride);
 		this.writeCellStyle(cell.StyleOverride);
 
 		//BL 90 Cell style ID, points to the cell style in the table’s table style that is used as the
@@ -2541,16 +2538,16 @@ internal partial class DwgObjectWriter : DwgSectionIO
 
 		switch (content.ContentType)
 		{
-			case TableCellContentType.Unknown:
+			case TableEntity.TableCellContentType.Unknown:
 				break;
-			case TableCellContentType.Value:
+			case TableEntity.TableCellContentType.Value:
 				this.writeCadValue(content.CadValue);
 				break;
-			case TableCellContentType.Field:
+			case TableEntity.TableCellContentType.Field:
 				//H 340 Handle to AcDbField object (hard pointer).
 				//template.FieldHandle = this.handleReference();
 				throw new NotImplementedException();
-			case TableCellContentType.Block:
+			case TableEntity.TableCellContentType.Block:
 				//H 340 Handle to block record (hard pointer).
 				//template.BlockRecordHandle = this.handleReference();
 				throw new NotImplementedException();
@@ -2580,7 +2577,7 @@ internal partial class DwgObjectWriter : DwgSectionIO
 		}
 	}
 
-	private void writeCellContentFormat(ContentFormat format)
+	private void writeCellContentFormat(TableEntity.ContentFormat format)
 	{
 		//20.4.101.3 Content format
 

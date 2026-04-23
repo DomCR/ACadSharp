@@ -63,7 +63,6 @@ internal class CadTableEntityTemplate : CadInsertTemplate
 
 		foreach (var handle in this.FieldHandles)
 		{
-
 		}
 	}
 
@@ -130,7 +129,7 @@ internal class CadTableEntityTemplate : CadInsertTemplate
 
 		public CadTableCellContentTemplate(TableEntity.CellContent content)
 		{
-			Content = content;
+			this.Content = content;
 		}
 
 		public void Build(CadDocumentBuilder builder)
@@ -159,13 +158,18 @@ internal class CadTableEntityTemplate : CadInsertTemplate
 
 		public CadTableCellTemplate(TableEntity.Cell cell)
 		{
-			Cell = cell;
+			this.Cell = cell;
 		}
 
 		public void Build(CadDocumentBuilder builder)
 		{
 			if (builder.TryGetCadObject<CadObject>(this.ValueHandle, out var cadObject))
 			{
+			}
+
+			foreach (var contentTemplate in this.ContentTemplates)
+			{
+				contentTemplate.Build(builder);
 			}
 		}
 	}
