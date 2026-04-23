@@ -4,14 +4,14 @@ public class ProxySubentLineType : IProxyGeometry
 {
 	public GraphicsType GraphicsType { get { return GraphicsType.SubentLineType; } }
 
-	public uint LinetypeIndex { get; set; }
+	public uint LineTypeIndex { get; set; }
 
 	/// <summary>
 	/// Defines if the color is defined by block.
 	/// </summary>
 	public bool IsByBlock
 	{
-		get { return this.LinetypeIndex == 0xFFFFFFFE; }
+		get { return this.LineTypeIndex == 0xFFFFFFFE; }
 	}
 
 	/// <summary>
@@ -19,6 +19,6 @@ public class ProxySubentLineType : IProxyGeometry
 	/// </summary>
 	public bool IsByLayer
 	{
-		get { return this.LinetypeIndex == 0xFFFFFFFF; }
+		get { return this.LineTypeIndex == 0xFFFFFFFF; }
 	}
 }

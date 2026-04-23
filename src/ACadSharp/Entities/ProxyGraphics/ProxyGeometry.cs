@@ -227,7 +227,7 @@ public class ProxyGeometry
 
 	private static IProxyGeometry readPopModelTransform(StreamIO stream)
 	{
-		return new ProxyPophModelTransform();
+		return new ProxyPopModelTransform();
 	}
 
 	private static IProxyGeometry readPushClip(StreamIO stream)
@@ -314,7 +314,7 @@ public class ProxyGeometry
 	{
 		ProxySubentLineType lineType = new ProxySubentLineType();
 
-		lineType.LinetypeIndex = stream.ReadUInt();
+		lineType.LineTypeIndex = stream.ReadUInt();
 
 		return lineType;
 	}
