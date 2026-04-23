@@ -23,14 +23,14 @@ internal partial class DwgObjectReader : DwgSectionIO
 		//BL 92 Line weight
 		border.LineWeight = ((LineWeightType)this._mergedReaders.ReadBitLong());
 		//H 40 Line type (hard pointer)
-		template.BorderLinetypePairs.Add(new Tuple<CellBorder, ulong>(border, this.handleReference()));
+		template.BorderLineTypePairs.Add(new Tuple<CellBorder, ulong>(border, this.handleReference()));
 		//BL 93 Invisibility: 1 = invisible, 0 = visible.
 		border.IsInvisible = (this._mergedReaders.ReadBitLong() == 1);
 		//BD 40 Double line spacing
 		border.DoubleLineSpacing = this._mergedReaders.ReadBitDouble();
 	}
 
-	private void readCellContentFormat(CadTableCellContentFormatTemplate template, ContentFormat format)
+	private void readCellContentFormat(CellContentFormatTemplate template, ContentFormat format)
 	{
 		//Cell.ContentFormat format = template.Content.Format;
 
@@ -367,6 +367,8 @@ internal partial class DwgObjectReader : DwgSectionIO
 			tableAttribute.Value = this._mergedReaders.ReadVariableText();
 			//BL 92 Index (starts at 1).
 			this._mergedReaders.ReadBitLong();
+
+			template.AttTemplates.Add(attTemplate);
 			//End repeat attributes
 		}
 
@@ -374,7 +376,7 @@ internal partial class DwgObjectReader : DwgSectionIO
 		template.Content.Format.HasData = this._mergedReaders.ReadBitShortAsBool();
 		if (template.Content.Format.HasData)
 		{
-			CadTableCellContentFormatTemplate formatTemplate = new CadTableCellContentFormatTemplate(template.Content.Format);
+			CellContentFormatTemplate formatTemplate = new CellContentFormatTemplate(template.Content.Format);
 			this.readCellContentFormat(formatTemplate, template.Content.Format);
 		}
 	}
@@ -575,7 +577,10 @@ internal partial class DwgObjectReader : DwgSectionIO
 		for (int i = 0; i < cols; i++)
 		{
 			TableEntity.Column column = new TableEntity.Column();
+			CadTableComponentTemplate columnTemplate = new CadTableComponentTemplate(column);
+
 			tableEntity.Columns.Add(column);
+			template.CadTableComponentTemplates.Add(columnTemplate);
 
 			//TV 300 Column name
 			column.Name = this._mergedReaders.ReadVariableText();
@@ -597,11 +602,12 @@ internal partial class DwgObjectReader : DwgSectionIO
 
 			//Cell style data, see paragraph 20.4.101.4, this contains cell style overrides for the column.
 			CadCellStyleTemplate colStyleTemplate = new(column.CellStyleOverride);
+			columnTemplate.CellStyleTemplate = colStyleTemplate;
 			this.readCellStyle(colStyleTemplate);
 
 			//BL 90 Cell style ID, points to the cell style in the table’s table style that is used as the
 			//base cell style for the column. 0 if not present.
-			this._mergedReaders.ReadBitLong();
+			columnTemplate.StyleId = this._mergedReaders.ReadBitLong();
 
 			//BD 40 Column width.
 			column.Width = this._mergedReaders.ReadBitDouble();
@@ -614,7 +620,10 @@ internal partial class DwgObjectReader : DwgSectionIO
 		{
 			//Begin repeat rows.
 			Row row = new Row();
+			CadTableComponentTemplate rowTemplate = new(row);
+
 			tableEntity.Rows.Add(row);
+			template.CadTableComponentTemplates.Add(rowTemplate);
 
 			//BL 90 Number of cells in row.
 			int ncells = this._mergedReaders.ReadBitLong();
@@ -624,6 +633,7 @@ internal partial class DwgObjectReader : DwgSectionIO
 				Cell cell = new();
 				CadTableCellTemplate cellTemplate = new CadTableCellTemplate(cell);
 
+				template.CadTableCellTemplates.Add(cellTemplate);
 				this.readTableCell(cellTemplate);
 
 				row.Cells.Add(cell);
@@ -646,12 +656,13 @@ internal partial class DwgObjectReader : DwgSectionIO
 			}
 
 			//Cell style data, see paragraph 20.4.101.4, this contains cell style overrides for the row.
-			CadCellStyleTemplate colStyleTemplate = new(row.CellStyleOverride);
-			this.readCellStyle(colStyleTemplate);
+			CadCellStyleTemplate rowStyleTemplate = new(row.CellStyleOverride);
+			rowTemplate.CellStyleTemplate = rowStyleTemplate;
+			this.readCellStyle(rowStyleTemplate);
 
 			//BL 90 Cell style ID, points to the cell style in the table’s table style that is used as the
 			//base cell style for the column. 0 if not present.
-			this._mergedReaders.ReadBitLong();
+			rowTemplate.StyleId = this._mergedReaders.ReadBitLong();
 
 			//40 Row height
 			row.Height = this._mergedReaders.ReadBitDouble();

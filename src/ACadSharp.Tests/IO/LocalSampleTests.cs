@@ -1,7 +1,9 @@
-﻿using ACadSharp.IO;
+﻿using ACadSharp.Entities;
+using ACadSharp.IO;
 using ACadSharp.Tests.TestModels;
 using System.Diagnostics;
 using System.IO;
+using System.Linq;
 using Xunit;
 using Xunit.Abstractions;
 
@@ -34,10 +36,14 @@ namespace ACadSharp.Tests.IO
 				return;
 
 			CadDocument doc = DwgReader.Read(test.Path, this._dwgConfiguration, this.onNotification);
+			var t = doc.Entities.First() as TableEntity;
+
+			var cell = t.GetCell(0, 0);
+
 			if (!TestVariables.SaveOutputInStream)
 			{
 				DwgWriter.Write(Path.Combine(TestVariables.DesktopFolder, "output", "test.dwg"), doc, notification: onNotification);
-				DwgReader.Read(Path.Combine(TestVariables.DesktopFolder, "output", "test.dwg"), notification: onNotification);
+				var doc1 = DwgReader.Read(Path.Combine(TestVariables.DesktopFolder, "output", "test.dwg"), notification: onNotification);
 			}
 		}
 

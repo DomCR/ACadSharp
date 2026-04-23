@@ -8,7 +8,7 @@ public partial class TableEntity
 	/// <summary>
 	/// Represents a table column with a name, width, custom data, and style information.
 	/// </summary>
-	public class Column
+	public class Column : ITableComponent
 	{
 		[DxfCodeValue(300)]
 		public string Name { get; set; } = string.Empty;
@@ -17,7 +17,7 @@ public partial class TableEntity
 		/// Column width.
 		/// </summary>
 		[DxfCodeValue(142)]
-		public double Width { get; set; }
+		public double Width { get; set; } = 1.0;
 
 		/// <summary>
 		/// Gets or sets the custom data value associated with the entity.

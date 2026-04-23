@@ -5,7 +5,14 @@ namespace ACadSharp.Entities;
 
 public partial class TableEntity
 {
-	public class Row
+	public interface ITableComponent
+	{
+		CellStyle CellStyleOverride { get; set; }
+		int CustomData { get; set; }
+		List<CustomDataEntry> CustomDataCollection { get; }
+	}
+
+	public class Row: ITableComponent
 	{
 		public List<Cell> Cells { get; set; } = new();
 
@@ -20,6 +27,6 @@ public partial class TableEntity
 		/// Row height.
 		/// </summary>
 		[DxfCodeValue(141)]
-		public double Height { get; set; }
+		public double Height { get; set; } = 1.0;
 	}
 }

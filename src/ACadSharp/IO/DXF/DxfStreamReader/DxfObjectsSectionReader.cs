@@ -1390,7 +1390,7 @@ namespace ACadSharp.IO.DXF
 		private void readFormattedCellContent()
 		{
 			TableEntity.ContentFormat format = new();
-			CadTableCellContentFormatTemplate template = new CadTableCellContentFormatTemplate(format);
+			CellContentFormatTemplate template = new CellContentFormatTemplate(format);
 			var map = DxfClassMap.Create(format.GetType(), "FORMATTEDCELLCONTENT");
 
 			this._reader.ReadNext();
@@ -1423,7 +1423,7 @@ namespace ACadSharp.IO.DXF
 			}
 		}
 
-		private void readContentFormat(CadTableCellContentFormatTemplate template)
+		private void readContentFormat(CellContentFormatTemplate template)
 		{
 			var format = template.Format;
 			var map = DxfClassMap.Create(format.GetType(), "CONTENTFORMAT_BEGIN");
@@ -1511,7 +1511,7 @@ namespace ACadSharp.IO.DXF
 					case 1 when this._reader.ValueAsString.Equals("TABLEFORMAT_BEGIN", StringComparison.InvariantCultureIgnoreCase):
 						break;
 					case 300 when this._reader.ValueAsString.Equals("CONTENTFORMAT", StringComparison.InvariantCultureIgnoreCase):
-						readContentFormat(new CadTableCellContentFormatTemplate(new TableEntity.ContentFormat()));
+						readContentFormat(new CellContentFormatTemplate(new TableEntity.ContentFormat()));
 						break;
 					case 301 when this._reader.ValueAsString.Equals("MARGIN", StringComparison.InvariantCultureIgnoreCase):
 						this.readCellMargin(template);
@@ -1563,7 +1563,7 @@ namespace ACadSharp.IO.DXF
 						border.IsInvisible = this._reader.ValueAsBool;
 						break;
 					case 340:
-						template.BorderLinetypePairs.Add(new Tuple<TableEntity.CellBorder, ulong>(border, this._reader.ValueAsHandle));
+						template.BorderLineTypePairs.Add(new Tuple<TableEntity.CellBorder, ulong>(border, this._reader.ValueAsHandle));
 						break;
 					case 309:
 						end = this._reader.ValueAsString.Equals("GRIDFORMAT_END", StringComparison.InvariantCultureIgnoreCase);
