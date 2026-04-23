@@ -39,6 +39,20 @@ internal class CadEntityTemplate : CadTemplate<Entity>
 	{
 	}
 
+	public override CadObjectData GetObjectData()
+	{
+		EntityData data = new EntityData(
+			new ReferenceData(this.BookColorName, this.ColorHandle),
+			this.CadObject.Color,
+			this.CadObject.IsInvisible,
+			new ReferenceData(this.LayerName, this.LayerHandle),
+			new ReferenceData(this.LineTypeName, this.LineTypeHandle),
+			this.CadObject.LineTypeScale,
+			this.CadObject.LineWeight
+			);
+		return new CadObjectData(this.CadObject, this.OwnerHandle, this.XDictHandle, data);
+	}
+
 	public void SetUnlinkedReferences()
 	{
 		if (!string.IsNullOrEmpty(this.LayerName))

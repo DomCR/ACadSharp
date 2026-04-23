@@ -289,4 +289,6 @@ public static class DxfFileToken
 	public const string AcmBalloon = "ACMBALLOON";
 
 	public const string AcmPartList = "ACMPARTLIST";
+	
+	public const string ValueEnd = "ACVALUE_END";
 }

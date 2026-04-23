@@ -457,7 +457,536 @@ internal partial class DwgObjectReader : DwgSectionIO
 			//Material flags BB 00 = bylayer, 01 = byblock, 11 = material handle present at end of object
 			if (this._objectReader.Read2Bits() == 3)
 			{
-				//MATERIAL present if material flags were 11
+				case GeoDataVersion.R2009:
+					//3BD  Reference point
+					geoData.ReferencePoint = this._mergedReaders.Read3BitDouble();
+
+					//BL  Units value horizontal
+					geoData.HorizontalUnits = (UnitsType)this._mergedReaders.ReadBitLong();
+					geoData.VerticalUnits = geoData.HorizontalUnits;
+
+					//3BD  Design point
+					geoData.DesignPoint = this._mergedReaders.Read3BitDouble();
+
+					//3BD  Obsolete, ODA writes (0, 0, 0)
+					this._mergedReaders.Read3BitDouble();
+
+					//3BD  Up direction
+					geoData.UpDirection = this._mergedReaders.Read3BitDouble();
+
+					//BD Angle of north direction (radians, angle measured clockwise from the (0, 1) vector).
+					double angle = System.Math.PI / 2.0 - this._mergedReaders.ReadBitDouble();
+					geoData.NorthDirection = new XY(Math.Cos(angle), Math.Sin(angle));
+
+					//3BD  Obsolete, ODA writes(1, 1, 1)
+					this._mergedReaders.Read3BitDouble();
+
+					//VT  Coordinate system definition. In AutoCAD 2009 this is a “Well known text” (WKT)string containing a projected coordinate system(PROJCS).
+					geoData.CoordinateSystemDefinition = this._mergedReaders.ReadVariableText();
+					//VT  Geo RSS tag.
+					geoData.GeoRssTag = this._mergedReaders.ReadVariableText();
+
+					//BD Unit scale factor horizontal
+					geoData.HorizontalUnitScale = this._mergedReaders.ReadBitDouble();
+					geoData.VerticalUnitScale = geoData.HorizontalUnitScale;
+
+					//VT  Obsolete, coordinate system datum name
+					this._mergedReaders.ReadVariableText();
+					//VT  Obsolete: coordinate system WKT
+					this._mergedReaders.ReadVariableText();
+					break;
+				case GeoDataVersion.R2010:
+				case GeoDataVersion.R2013:
+					//3BD  Design point
+					geoData.DesignPoint = this._mergedReaders.Read3BitDouble();
+					//3BD  Reference point
+					geoData.ReferencePoint = this._mergedReaders.Read3BitDouble();
+					//BD  Unit scale factor horizontal
+					geoData.HorizontalUnitScale = this._mergedReaders.ReadBitDouble();
+					//BL  Units value horizontal
+					geoData.HorizontalUnits = (UnitsType)this._mergedReaders.ReadBitLong();
+					//BD  Unit scale factor vertical
+					geoData.VerticalUnitScale = this._mergedReaders.ReadBitDouble();
+					//BL  Units value vertical
+					geoData.HorizontalUnits = (UnitsType)this._mergedReaders.ReadBitLong();
+					//3RD  Up direction
+					geoData.UpDirection = this._mergedReaders.Read3BitDouble();
+					//3RD  North direction
+					geoData.NorthDirection = this._mergedReaders.Read2RawDouble();
+					//BL Scale estimation method.
+					geoData.ScaleEstimationMethod = (ScaleEstimationType)this._mergedReaders.ReadBitLong();
+					//BD  User specified scale factor
+					geoData.UserSpecifiedScaleFactor = this._mergedReaders.ReadBitDouble();
+					//B  Do sea level correction
+					geoData.EnableSeaLevelCorrection = this._mergedReaders.ReadBit();
+					//BD  Sea level elevation
+					geoData.SeaLevelElevation = this._mergedReaders.ReadBitDouble();
+					//BD  Coordinate projection radius
+					geoData.CoordinateProjectionRadius = this._mergedReaders.ReadBitDouble();
+					//VT  Coordinate system definition . In AutoCAD 2010 this is a map guide XML string.
+					geoData.CoordinateSystemDefinition = this._mergedReaders.ReadVariableText();
+					//VT  Geo RSS tag.
+					geoData.GeoRssTag = this._mergedReaders.ReadVariableText();
+					break;
+				default:
+					break;
+			}
+
+			//VT  Observation from tag
+			geoData.ObservationFromTag = this._mergedReaders.ReadVariableText();
+			//VT  Observation to tag
+			geoData.ObservationToTag = this._mergedReaders.ReadVariableText();
+			//VT  Observation coverage tag
+			geoData.ObservationCoverageTag = this._mergedReaders.ReadVariableText();
+
+			//BL Number of geo mesh points
+			int npts = this._mergedReaders.ReadBitLong();
+			for (int i = 0; i < npts; i++)
+			{
+				var pt = new GeoData.GeoMeshPoint();
+				//2RD Source point
+				pt.Source = this._mergedReaders.Read2RawDouble();
+				//2RD Destination point
+				pt.Destination = this._mergedReaders.Read2RawDouble();
+				geoData.Points.Add(pt);
+			}
+
+			//BL Number of geo mesh faces
+			int nfaces = this._mergedReaders.ReadBitLong();
+			for (int i = 0; i < nfaces; i++)
+			{
+				var face = new GeoData.GeoMeshFace();
+				//BL Face index 1
+				face.Index1 = this._mergedReaders.ReadBitLong();
+				//BL Face index 2
+				face.Index2 = this._mergedReaders.ReadBitLong();
+				//BL Face index 3
+				face.Index3 = this._mergedReaders.ReadBitLong();
+				geoData.Faces.Add(face);
+			}
+
+			return template;
+		}
+
+		private CadTemplate readGroup()
+		{
+			Group group = new Group();
+			CadGroupTemplate template = new CadGroupTemplate(group);
+
+			this.readCommonNonEntityData(template);
+
+			//Str TV name of group
+			group.Description = this._textReader.ReadVariableText();
+
+			//Unnamed BS 1 if group has no name
+			bool isUnnamed = this._objectReader.ReadBitShort() > 0;
+			//Selectable BS 1 if group selectable
+			group.Selectable = this._objectReader.ReadBitShort() > 0;
+
+			//Numhandles BL # objhandles in this group
+			int numhandles = this._objectReader.ReadBitLong();
+			for (int index = 0; index < numhandles; ++index)
+				//the entries in the group(hard pointer)
+				template.Handles.Add(this.handleReference());
+
+			return template;
+		}
+
+		private CadTemplate readHatch()
+		{
+			Hatch hatch = new Hatch();
+			CadHatchTemplate template = new CadHatchTemplate(hatch);
+
+			this.readCommonEntityData(template);
+
+			//R2004+:
+			if (this.R2004Plus)
+			{
+				//Is Gradient Fill BL 450 Non-zero indicates a gradient fill is used.
+				hatch.GradientColor.Enabled = this._objectReader.ReadBitLong() != 0;
+
+				//Reserved BL 451
+				hatch.GradientColor.Reserved = this._objectReader.ReadBitLong();
+				//Gradient Angle BD 460
+				hatch.GradientColor.Angle = this._objectReader.ReadBitDouble();
+				//Gradient Shift BD 461
+				hatch.GradientColor.Shift = this._objectReader.ReadBitDouble();
+				//Single Color Grad.BL 452
+				hatch.GradientColor.IsSingleColorGradient = (uint)this._objectReader.ReadBitLong() > 0U;
+				//Gradient Tint BD 462
+				hatch.GradientColor.ColorTint = this._objectReader.ReadBitDouble();
+
+				//# of Gradient Colors BL 453
+				int ncolors = this._objectReader.ReadBitLong();
+				for (int i = 0; i < ncolors; ++i)
+				{
+					GradientColor color = new GradientColor();
+
+					//Gradient Value double BD 463
+					color.Value = this._objectReader.ReadBitDouble();
+					//RGB Color
+					color.Color = this._mergedReaders.ReadCmColor();
+
+					hatch.GradientColor.Colors.Add(color);
+				}
+
+				//Gradient Name TV 470
+				hatch.GradientColor.Name = this._textReader.ReadVariableText();
+			}
+
+			//Common:
+			//Z coord BD 30 X, Y always 0.0
+			hatch.Elevation = this._objectReader.ReadBitDouble();
+			//Extrusion 3BD 210
+			hatch.Normal = this._objectReader.Read3BitDouble();
+			//Name TV 2 name of hatch
+			hatch.Pattern = new HatchPattern(this._textReader.ReadVariableText());
+			//Solidfill B 70 1 if solidfill, else 0
+			hatch.IsSolid = this._objectReader.ReadBit();
+			//Associative B 71 1 if associative, else 0
+			hatch.IsAssociative = this._objectReader.ReadBit();
+
+			//Numpaths BL 91 Number of paths enclosing the hatch
+			int npaths = this._objectReader.ReadBitLong();
+			bool hasDerivedBoundary = false;
+
+			for (int i = 0; i < npaths; i++)
+			{
+				CadHatchTemplate.CadBoundaryPathTemplate pathTemplate = new CadHatchTemplate.CadBoundaryPathTemplate();
+
+				//Pathflag BL 92 Path flag
+				var flags = (BoundaryPathFlags)this._objectReader.ReadBitLong();
+
+				pathTemplate.Path.Flags = flags;
+
+				if (pathTemplate.Path.Flags.HasFlag(BoundaryPathFlags.Derived))
+					hasDerivedBoundary = true;
+
+				if (!flags.HasFlag(BoundaryPathFlags.Polyline))
+				{
+					//Numpathsegs BL 93 number of segments in this path
+					int nsegments = this._objectReader.ReadBitLong();
+					for (int j = 0; j < nsegments; ++j)
+					{
+						//pathtypestatus RC 72 type of path
+						Hatch.BoundaryPath.EdgeType pathTypeStatus = (Hatch.BoundaryPath.EdgeType)this._objectReader.ReadByte();
+						switch (pathTypeStatus)
+						{
+							case Hatch.BoundaryPath.EdgeType.Line:
+								pathTemplate.Path.Edges.Add(new Hatch.BoundaryPath.Line
+								{
+									//pt0 2RD 10 first endpoint
+									Start = this._objectReader.Read2RawDouble(),
+									//pt1 2RD 11 second endpoint
+									End = this._objectReader.Read2RawDouble()
+								});
+								break;
+							case Hatch.BoundaryPath.EdgeType.CircularArc:
+								pathTemplate.Path.Edges.Add(new Hatch.BoundaryPath.Arc
+								{
+									//pt0 2RD 10 center
+									Center = this._objectReader.Read2RawDouble(),
+									//radius BD 40 radius
+									Radius = this._objectReader.ReadBitDouble(),
+									//startangle BD 50 start angle
+									StartAngle = this._objectReader.ReadBitDouble(),
+									//endangle BD 51 endangle
+									EndAngle = this._objectReader.ReadBitDouble(),
+									//isccw B 73 1 if counter clockwise, otherwise 0
+									CounterClockWise = this._objectReader.ReadBit()
+								});
+								break;
+							case Hatch.BoundaryPath.EdgeType.EllipticArc:
+								pathTemplate.Path.Edges.Add(new Hatch.BoundaryPath.Ellipse
+								{
+									//pt0 2RD 10 center
+									Center = this._objectReader.Read2RawDouble(),
+									//endpoint 2RD 11 endpoint of major axis
+									MajorAxisEndPoint = this._objectReader.Read2RawDouble(),
+									//minormajoratio BD 40 ratio of minor to major axis
+									RadiusRatio = this._objectReader.ReadBitDouble(),
+									//startangle BD 50 start angle
+									StartAngle = this._objectReader.ReadBitDouble(),
+									//endangle BD 51 endangle
+									EndAngle = this._objectReader.ReadBitDouble(),
+									//isccw B 73 1 if counter clockwise, otherwise 0
+									CounterClockWise = this._objectReader.ReadBit()
+								});
+								break;
+							case Hatch.BoundaryPath.EdgeType.Spline:
+								Hatch.BoundaryPath.Spline splineEdge = new Hatch.BoundaryPath.Spline();
+
+								//degree BL 94 degree of the spline
+								splineEdge.Degree = this._objectReader.ReadBitLong();
+								//isrational B 73 1 if rational(has weights), else 0
+								splineEdge.IsRational = this._objectReader.ReadBit();
+								//isperiodic B 74 1 if periodic, else 0
+								splineEdge.IsPeriodic = this._objectReader.ReadBit();
+
+								//numknots BL 95 number of knots
+								int numknots = this._objectReader.ReadBitLong();
+								//numctlpts BL 96 number of control points
+								int numctlpts = this._objectReader.ReadBitLong();
+
+								for (int k = 0; k < numknots; ++k)
+									//knot BD 40 knot value
+									splineEdge.Knots.Add(this._objectReader.ReadBitDouble());
+
+								for (int p = 0; p < numctlpts; ++p)
+								{
+									//pt0 2RD 10 control point
+									var cp = this._objectReader.Read2RawDouble();
+
+									double wheight = 0;
+									if (splineEdge.IsRational)
+										//weight BD 40 weight
+										wheight = this._objectReader.ReadBitDouble();
+
+									//Add the control point and its wheight
+									splineEdge.ControlPoints.Add(new XYZ(cp.X, cp.Y, wheight));
+								}
+
+								//R24:
+								if (this.R2010Plus)
+								{
+									//Numfitpoints BL 97 number of fit points
+									int nfitPoints = this._objectReader.ReadBitLong();
+									if (nfitPoints > 0)
+									{
+										for (int fp = 0; fp < nfitPoints; ++fp)
+										{
+											//Fitpoint 2RD 11
+											splineEdge.FitPoints.Add(this._objectReader.Read2RawDouble());
+										}
+
+										//Start tangent 2RD 12
+										splineEdge.StartTangent = this._objectReader.Read2RawDouble();
+										//End tangent 2RD 13
+										splineEdge.EndTangent = this._objectReader.Read2RawDouble();
+									}
+								}
+
+								//Add the spline
+								pathTemplate.Path.Edges.Add(splineEdge);
+								break;
+						}
+					}
+				}
+				else    //POLYLINE PATH
+				{
+					Hatch.BoundaryPath.Polyline pline = new Hatch.BoundaryPath.Polyline();
+					//bulgespresent B 72 bulges are present if 1
+					bool bulgespresent = this._objectReader.ReadBit();
+					//closed B 73 1 if closed
+					pline.IsClosed = this._objectReader.ReadBit();
+
+					//numpathsegs BL 91 number of path segments
+					int numpathsegs = this._objectReader.ReadBitLong();
+					for (int index = 0; index < numpathsegs; ++index)
+					{
+						//pt0 2RD 10 point on polyline
+						XY vertex = this._objectReader.Read2RawDouble();
+						double bulge = 0;
+						if (bulgespresent)
+						{
+							//bulge BD 42 bulge
+							bulge = this._objectReader.ReadBitDouble();
+						}
+
+						//Add the vertex
+						pline.Vertices.Add(new XYZ(vertex.X, vertex.Y, bulge));
+					}
+
+					pathTemplate.Path.Edges.Add(pline);
+				}
+
+				//numboundaryobjhandles BL 97 Number of boundary object handles for this path
+				int numboundaryobjhandles = this._objectReader.ReadBitLong();
+				for (int h = 0; h < numboundaryobjhandles; h++)
+				{
+					//boundaryhandle H 330 boundary handle(soft pointer)
+					pathTemplate.Handles.Add(this.handleReference());
+				}
+
+				template.PathTemplates.Add(pathTemplate);
+			}
+
+			//style BS 75 style of hatch 0==odd parity, 1==outermost, 2==whole area
+			hatch.Style = (HatchStyleType)this._objectReader.ReadBitShort();
+			//patterntype BS 76 pattern type 0==user-defined, 1==predefined, 2==custom
+			hatch.PatternType = (HatchPatternType)this._objectReader.ReadBitShort();
+
+			if (!hatch.IsSolid)
+			{
+				//angle BD 52 hatch angle
+				hatch.PatternAngle = this._objectReader.ReadBitDouble();
+				//scaleorspacing BD 41 scale or spacing(pattern fill only)
+				hatch.PatternScale = this._objectReader.ReadBitDouble();
+				//doublehatch B 77 1 for double hatch
+				hatch.IsDouble = this._objectReader.ReadBit();
+
+				//numdeflines BS 78 number of definition lines
+				int numdeflines = this._objectReader.ReadBitShort();
+				for (int li = 0; li < numdeflines; ++li)
+				{
+					HatchPattern.Line line = new HatchPattern.Line();
+					//angle BD 53 line angle
+					line.Angle = this._objectReader.ReadBitDouble();
+					//pt0 2BD 43 / 44 pattern through this point(X, Y)
+					line.BasePoint = this._objectReader.Read2BitDouble();
+					//offset 2BD 45 / 56 pattern line offset
+					line.Offset = this._objectReader.Read2BitDouble();
+
+					//  numdashes BS 79 number of dash length items
+					int ndashes = this._objectReader.ReadBitShort();
+					for (int ds = 0; ds < ndashes; ++ds)
+					{
+						//dashlength BD 49 dash length
+						line.DashLengths.Add(this._objectReader.ReadBitDouble());
+					}
+
+					hatch.Pattern.Lines.Add(line);
+				}
+			}
+
+			if (hasDerivedBoundary)
+				//pixelsize BD 47 pixel size
+				hatch.PixelSize = this._objectReader.ReadBitDouble();
+
+			//numseedpoints BL 98 number of seed points
+			int numseedpoints = this._objectReader.ReadBitLong();
+			for (int sp = 0; sp < numseedpoints; ++sp)
+			{
+				//pt0 2RD 10 seed point
+				XY spt = this._objectReader.Read2RawDouble();
+				hatch.SeedPoints.Add(spt);
+			}
+
+			return template;
+		}
+
+		private CadTemplate readImageDefinition()
+		{
+			ImageDefinition definition = new ImageDefinition();
+			CadNonGraphicalObjectTemplate template = new CadNonGraphicalObjectTemplate(definition);
+
+			this.readCommonNonEntityData(template);
+
+			//Common:
+			//Clsver BL 0 class version
+			definition.ClassVersion = this._mergedReaders.ReadBitLong();
+			//Imgsize 2RD 10 size of image in pixels
+			definition.Size = this._mergedReaders.Read2RawDouble();
+			//Filepath TV 1 path to file
+			definition.FileName = this._mergedReaders.ReadVariableText();
+			//Isloaded B 280 0==no, 1==yes
+			definition.IsLoaded = this._mergedReaders.ReadBit();
+			//Resunits RC 281 0==none, 2==centimeters, 5==inches
+			definition.Units = (ResolutionUnit)this._mergedReaders.ReadByte();
+			//Pixelsize 2RD 11 size of one pixel in AutoCAD units
+			definition.DefaultSize = this._mergedReaders.Read2RawDouble();
+
+			return template;
+		}
+
+		private CadTemplate readImageDefinitionReactor()
+		{
+			ImageDefinitionReactor definition = new ImageDefinitionReactor();
+			CadNonGraphicalObjectTemplate template = new CadNonGraphicalObjectTemplate(definition);
+
+			this.readCommonNonEntityData(template);
+
+			//Common:
+			//Classver BL 90 class version
+			definition.ClassVersion = this._objectReader.ReadBitLong();
+
+			return template;
+		}
+
+		private CadTemplate readLayer()
+		{
+			Layer layer = new Layer();
+			CadLayerTemplate template = new CadLayerTemplate(layer);
+
+			this.readCommonNonEntityData(template);
+
+			//Common:
+			//Entry name TV 2
+			string name = this._textReader.ReadVariableText();
+			if (!string.IsNullOrWhiteSpace(name))
+			{
+				layer.Name = name;
+			}
+
+			this.readXrefDependantBit(template.CadObject);
+
+			//R13-R14 Only:
+			if (this.R13_14Only)
+			{
+				//Frozen B 70 if frozen (1 bit)
+				if (this._objectReader.ReadBit())
+					layer.Flags |= LayerFlags.Frozen;
+
+				//On B if on.
+				layer.IsOn = this._objectReader.ReadBit();
+
+				//Frz in new B 70 if frozen by default in new viewports (2 bit)
+				if (this._objectReader.ReadBit())
+					layer.Flags |= LayerFlags.FrozenNewViewports;
+
+				//Locked B 70 if locked (4 bit)
+				if (this._objectReader.ReadBit())
+					layer.Flags |= LayerFlags.Locked;
+			}
+			//R2000+:
+			if (this.R2000Plus)
+			{
+				//Values BS 70,290,370
+				short values = this._objectReader.ReadBitShort();
+
+				//contains frozen (1 bit),
+				if (((uint)values & 0b1) > 0)
+					layer.Flags |= LayerFlags.Frozen;
+
+				//on (2 bit)
+				layer.IsOn = (values & 0b10) == 0;
+
+				//frozen by default in new viewports (4 bit)
+				if (((uint)values & 0b100) > 0)
+					layer.Flags |= LayerFlags.FrozenNewViewports;
+				//locked (8 bit)
+				if (((uint)values & 0b1000) > 0)
+					layer.Flags |= LayerFlags.Locked;
+
+				//plotting flag (16 bit),
+				layer.PlotFlag = ((uint)values & 0b10000) > 0;
+
+				//and lineweight (mask with 0x03E0)
+				byte lineweight = (byte)((values & 0x3E0) >> 5);
+				layer.LineWeight = CadUtils.ToValue(lineweight);
+			}
+
+			//Common:
+			//Color CMC 62
+			var color = this._mergedReaders.ReadCmColor();
+			layer.Color = color.IsByBlock || color.IsByLayer ? new(30) : color;
+
+			//TODO: This is not the Layer control handle
+			template.LayerControlHandle = this.handleReference();
+			//Handle refs H Layer control (soft pointer)
+			//[Reactors(soft pointer)]
+			//xdicobjhandle(hard owner)
+			//External reference block handle(hard pointer)
+
+			//R2000+:
+			if (this.R2000Plus)
+				//H 390 Plotstyle (hard pointer), by default points to PLACEHOLDER with handle 0x0f.
+				template.PlotStyleHandle = this.handleReference();
+
+			//R2007+:
+			if (this.R2007Plus)
+			{
+				//H 347 Material
 				template.MaterialHandle = this.handleReference();
 			}
 

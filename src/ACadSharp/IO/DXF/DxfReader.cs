@@ -128,7 +128,6 @@ namespace ACadSharp.IO
 		/// <inheritdoc/>
 		public override CadDocument Read()
 		{
-			this._document = new CadDocument(false);
 			this._document.SummaryInfo = new CadSummaryInfo();
 
 			this._reader = this._reader ?? this.getReader();
@@ -156,7 +155,7 @@ namespace ACadSharp.IO
 						this._builder.InitialHandSeed = this._document.Header.HandleSeed;
 						break;
 					case DxfFileToken.ClassesSection:
-						this._document.Classes = this.readClasses();
+						this.readClasses();
 						break;
 					case DxfFileToken.TablesSection:
 						this.readTables();
@@ -335,7 +334,7 @@ namespace ACadSharp.IO
 			//Get the needed handler
 			this._reader = this.goToSection(DxfFileToken.ClassesSection);
 
-			DxfClassCollection classes = new DxfClassCollection();
+			DxfClassCollection classes = this._document.Classes;
 
 			//Advance to the first value in the section
 			this._reader.ReadNext();
@@ -346,7 +345,7 @@ namespace ACadSharp.IO
 				{
 					var dxfClass = this.readClass();
 
-					if(dxfClass.ClassNumber < 500)
+					if (dxfClass.ClassNumber < 500)
 					{
 						dxfClass.ClassNumber = (short)(500 + classes.Count);
 					}
@@ -386,7 +385,7 @@ namespace ACadSharp.IO
 						break;
 					//Proxy capabilities flag.
 					case 90:
-						curr.ProxyFlags = (ProxyFlags)(ushort)this._reader.ValueAsInt; 
+						curr.ProxyFlags = (ProxyFlags)(ushort)this._reader.ValueAsInt;
 						break;
 					//Instance count for a custom class
 					case 91:
@@ -538,7 +537,7 @@ namespace ACadSharp.IO
 				tmpReader.ReadNext();
 			}
 
-			if(this._version == ACadVersion.Unknown)
+			if (this._version == ACadVersion.Unknown)
 			{
 				this.triggerNotification($"Dxf version not found, using a generic reader.", NotificationType.Warning);
 			}

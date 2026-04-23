@@ -501,7 +501,7 @@ namespace ACadSharp.IO.DXF
 				case Hatch.BoundaryPath.Ellipse ellipse:
 					this._writer.Write(10, ellipse.Center);
 					this._writer.Write(11, ellipse.MajorAxisEndPoint);
-					this._writer.Write(40, ellipse.MinorToMajorRatio);
+					this._writer.Write(40, ellipse.RadiusRatio);
 					this._writer.Write(50, MathHelper.RadToDeg(ellipse.StartAngle));
 					this._writer.Write(51, MathHelper.RadToDeg(ellipse.EndAngle));
 					this._writer.Write(73, ellipse.CounterClockWise ? (short)1 : (short)0);
