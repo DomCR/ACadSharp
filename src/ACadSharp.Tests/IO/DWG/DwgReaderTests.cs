@@ -60,6 +60,13 @@ namespace ACadSharp.Tests.IO.DWG
 			base.AssertTableHierarchy(test);
 		}
 
+		[Theory]
+		[MemberData(nameof(DwgFilePaths))]
+		public override void OnProgressTest(FileModel test)
+		{
+			base.OnProgressTest(test);
+		}
+
 		[Theory(Skip = "Long time test")]
 		[MemberData(nameof(DwgFilePaths))]
 		public void ReadCrcEnabledTest(FileModel test)

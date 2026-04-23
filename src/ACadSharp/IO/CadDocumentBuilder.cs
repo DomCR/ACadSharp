@@ -13,6 +13,8 @@ internal abstract class CadDocumentBuilder
 {
 	public event NotificationEventHandler OnNotification;
 
+	public event ProgressEventHandler OnProgress;
+
 	public AppIdsTable AppIds { get; set; } = new AppIdsTable();
 
 	public BlockRecordsTable BlockRecords { get; set; } = new BlockRecordsTable();
@@ -63,6 +65,8 @@ internal abstract class CadDocumentBuilder
 
 	public void AddTemplate(ICadObjectTemplate template)
 	{
+		this.NotifyProgress(ReadStage.Read, template);
+
 		if (!this.addToMap(template))
 		{
 			return;
@@ -137,6 +141,16 @@ internal abstract class CadDocumentBuilder
 	public void Notify(string message, NotificationType notificationType = NotificationType.None, Exception exception = null)
 	{
 		this.OnNotification?.Invoke(this, new NotificationEventArgs(message, notificationType, exception));
+	}
+
+	public void NotifyProgress(ReadStage stage, ICadObjectTemplate template)
+	{
+		if (this.OnProgress == null)
+		{
+			return;
+		}
+
+		this.OnProgress?.Invoke(this, new ProgressEventArgs(stage, template.GetObjectData()));
 	}
 
 	public void RegisterTables()
