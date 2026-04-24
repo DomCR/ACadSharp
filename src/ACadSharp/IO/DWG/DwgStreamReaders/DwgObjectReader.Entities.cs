@@ -28,6 +28,8 @@ internal partial class DwgObjectReader : DwgSectionIO
 		border.IsInvisible = (this._mergedReaders.ReadBitLong() == 1);
 		//BD 40 Double line spacing
 		border.DoubleLineSpacing = this._mergedReaders.ReadBitDouble();
+
+		border.ApplyBorder = true;
 	}
 
 	private void readCellContentFormat(CellContentFormatTemplate template, ContentFormat format)

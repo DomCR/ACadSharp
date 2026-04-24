@@ -20,7 +20,6 @@ internal partial class CadTableEntityTemplate : CadInsertTemplate
 
 	public List<ulong> FieldHandles { get; } = new();
 
-	// Horizontal cell margin; override applied at the table entity level
 	public double? HorizontalMargin { get; set; }
 
 	public ulong? NullHandle { get; set; }

@@ -4,6 +4,7 @@ using CSMath;
 using System;
 using System.Collections.Generic;
 using System.Linq;
+using static ACadSharp.Entities.TableEntity;
 
 namespace ACadSharp.IO.DWG;
 
@@ -2611,17 +2612,106 @@ internal partial class DwgObjectWriter : DwgSectionIO
 		this._writer.WriteBitLong((int)cellStyle.Type);
 
 		//BS 170 Data flags, 0 = no data, 1 = data is present
-		//If data is present
-		this._writer.WriteBitShort(0);
-		return;
-
 		this._writer.WriteBitShort((short)(cellStyle.HasData ? 1 : 0));
+		//If data is present
 		if (!cellStyle.HasData)
 		{
 			return;
 		}
 
-		throw new NotImplementedException();
+		//BL 91 Property override flags. The definition is the same as the content format
+		//propery override flags, see paragraph 20.4.101.3.
+		this._writer.WriteBitLong((int)cellStyle.PropertyOverrideFlags);
+		//BL  92 Merge flags, but may only for bits 0x8000 and 0x10000.
+		this._writer.WriteBitLong((int)cellStyle.TableCellStylePropertyFlags);
+		//TC 62 Background color
+		this._writer.WriteCmColor(cellStyle.BackgroundColor, this.R2004Pre);
+
+		//BL 93 Content layout flags
+		this._writer.WriteBitLong((int)cellStyle.ContentLayoutFlags);
+
+		//Content format fields (see paragraph 20.4.101.3)
+		this.writeCellContentFormat(cellStyle);
+
+		//BS 171 Margin override flags, bit 1 is set if margin overrides are present
+		//If margin overrides are present
+		this._writer.WriteBitShort((short)cellStyle.MarginOverrideFlags);
+		if (cellStyle.MarginOverrideFlags.HasFlag(MarginFlags.Override))
+		{
+			//BD 40 Vertical margin
+			this._writer.WriteBitDouble(cellStyle.VerticalMargin);
+			//BD 40 Horizontal margin
+			this._writer.WriteBitDouble(cellStyle.HorizontalMargin);
+			//BD 40 Bottom margin
+			this._writer.WriteBitDouble(cellStyle.BottomMargin);
+			//BD 40 Right margin
+			this._writer.WriteBitDouble(cellStyle.RightMargin);
+			//BD 40 Margin horizontal spacing
+			this._writer.WriteBitDouble(cellStyle.MarginHorizontalSpacing);
+			//BD 40 Margin vertical spacing
+			this._writer.WriteBitDouble(cellStyle.MarginVerticalSpacing);
+		}
+
+		//BL 94 Number of borders present (0-6)
+		int nborders = 0;
+		if (cellStyle.TopBorder.ApplyBorder)
+		{
+			nborders++;
+		}
+		if (cellStyle.RightBorder.ApplyBorder)
+		{
+			nborders++;
+		}
+		if (cellStyle.BottomBorder.ApplyBorder)
+		{
+			nborders++;
+		}
+		if (cellStyle.LeftBorder.ApplyBorder)
+		{
+			nborders++;
+		}
+		if (cellStyle.VerticalInsideBorder.ApplyBorder)
+		{
+			nborders++;
+		}
+		if (cellStyle.HorizontalInsideBorder.ApplyBorder)
+		{
+			nborders++;
+		}
+
+		this._writer.WriteBitLong(nborders);
+		this.writeBorder(cellStyle.TopBorder);
+		this.writeBorder(cellStyle.RightBorder);
+		this.writeBorder(cellStyle.BottomBorder);
+		this.writeBorder(cellStyle.LeftBorder);
+		this.writeBorder(cellStyle.VerticalInsideBorder);
+		this.writeBorder(cellStyle.HorizontalInsideBorder);
+	}
+
+	private void writeBorder(TableEntity.CellBorder border)
+	{
+		if (!border.ApplyBorder)
+		{
+			return;
+		}
+
+		//BL 95 Edge flags
+		this._writer.WriteBitLong((int)border.EdgeFlags);
+		//BL 90 Border property override flags
+		this._writer.WriteBitLong((int)border.PropertyOverrideFlags);
+		//BL 91 Border type
+		this._writer.WriteBitLong((int)border.Type);
+		//TC 62 Color
+		this._writer.WriteCmColor(border.Color, this.R2004Pre);
+		//BL 92 Line weight
+		this._writer.WriteBitLong((int)border.LineWeight);
+		//H 40 Line type (hard pointer)
+		//this._writer.HandleReference(DwgReferenceType.HardPointer, border.LineType);
+		this._writer.HandleReference(DwgReferenceType.HardPointer, null);
+		//BL 93 Invisibility: 1 = invisible, 0 = visible.
+		this._writer.WriteBitLong(border.IsInvisible ? 1 : 0);
+		//BD 40 Double line spacing
+		this._writer.WriteBitDouble(border.DoubleLineSpacing);
 	}
 
 	private void writeCustomTableData(TableEntity.CustomDataEntry entry)
