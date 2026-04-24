@@ -25,7 +25,7 @@ internal partial class CadTableEntityTemplate
 			{
 				this.Format.TextStyle = textStyle;
 			}
-			else
+			else if(this.TextStyleHandle != null || !string.IsNullOrEmpty(this.TextStyleName))
 			{
 				builder.Notify($"{typeof(TextStyle).FullName} table reference with handle: {this.TextStyleName} | name: {this.TextStyleName} not found for {this.Format.GetType().FullName}", NotificationType.Warning);
 			}

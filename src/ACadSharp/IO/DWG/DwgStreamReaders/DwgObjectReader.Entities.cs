@@ -679,7 +679,9 @@ internal partial class DwgObjectReader : DwgSectionIO
 
 		//The table’s cell style override fields (see paragraph 20.4.101.4). The table’s
 		//base cell style is the table style’s overall cell style (present from R2010 onwards).
-		this.readCellStyle(new CadCellStyleTemplate(content.CellStyleOverride));
+		var cellStyleTemplate = new CadCellStyleTemplate(content.CellStyleOverride);
+		template.CellStyleTemplate = cellStyleTemplate;
+		this.readCellStyle(cellStyleTemplate);
 
 		//Bl 90 Number of merged cell ranges
 		int nranges = this._mergedReaders.ReadBitLong();

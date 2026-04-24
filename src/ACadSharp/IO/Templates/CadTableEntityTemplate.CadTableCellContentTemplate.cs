@@ -26,7 +26,7 @@ internal partial class CadTableEntityTemplate
 		{
 			this.CadValueTemplate?.Build(builder);
 
-			foreach (var att in AttTemplates)
+			foreach (var att in this.AttTemplates)
 			{
 				att.Build(builder);
 			}

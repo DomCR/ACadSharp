@@ -10,6 +10,22 @@ public partial class TableEntity
 	/// </summary>
 	public class Column : ITableComponent
 	{
+		/// <inheritdoc/>
+		public CellStyle CellStyle { get; set; }
+
+		/// <inheritdoc/>
+		public CellStyle CellStyleOverride { get; set; } = new();
+
+		/// <inheritdoc/>
+		[DxfCodeValue(91)]
+		public int CustomData { get; set; }
+
+		/// <inheritdoc/>
+		public List<CustomDataEntry> CustomDataCollection { get; } = new();
+
+		/// <summary>
+		/// Gets or sets the name associated with this instance.
+		/// </summary>
 		[DxfCodeValue(300)]
 		public string Name { get; set; } = string.Empty;
 
@@ -18,15 +34,5 @@ public partial class TableEntity
 		/// </summary>
 		[DxfCodeValue(142)]
 		public double Width { get; set; } = 1.0;
-
-		/// <summary>
-		/// Gets or sets the custom data value associated with the entity.
-		/// </summary>
-		[DxfCodeValue(91)]
-		public int CustomData { get; set; }
-
-		public CellStyle CellStyleOverride { get; set; } = new();
-
-		public List<CustomDataEntry> CustomDataCollection { get; } = new();
 	}
 }

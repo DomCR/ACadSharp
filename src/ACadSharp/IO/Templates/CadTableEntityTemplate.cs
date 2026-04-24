@@ -23,11 +23,13 @@ internal partial class CadTableEntityTemplate : CadInsertTemplate
 	// Horizontal cell margin; override applied at the table entity level
 	public double? HorizontalMargin { get; set; }
 
-	public ulong? NullHandle { get; internal set; }
+	public ulong? NullHandle { get; set; }
 
 	public ulong? StyleHandle { get; set; }
 
 	public TableEntity TableEntity { get { return this.CadObject as TableEntity; } }
+
+	public CadCellStyleTemplate CellStyleTemplate { get; set; }
 
 	private int _currCellIndex = 0;
 
@@ -72,5 +74,7 @@ internal partial class CadTableEntityTemplate : CadInsertTemplate
 		foreach (var handle in this.FieldHandles)
 		{
 		}
+
+		this.CellStyleTemplate?.Build(builder);
 	}
 }
