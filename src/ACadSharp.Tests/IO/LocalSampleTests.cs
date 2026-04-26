@@ -36,10 +36,6 @@ namespace ACadSharp.Tests.IO
 				return;
 
 			CadDocument doc = DwgReader.Read(test.Path, this._dwgConfiguration, this.onNotification);
-			var t = doc.Entities.First() as TableEntity;
-
-			var cell = t.GetCell(0, 0);
-
 			if (!TestVariables.SaveOutputInStream)
 			{
 				DwgWriter.Write(Path.Combine(TestVariables.DesktopFolder, "output", "test.dwg"), doc, notification: onNotification);

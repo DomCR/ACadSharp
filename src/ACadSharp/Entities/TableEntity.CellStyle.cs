@@ -9,6 +9,10 @@ public partial class TableEntity
 	/// </summary>
 	public class CellStyle : ContentFormat
 	{
+		public const string DataCellStyleName = "_DATA";
+		public const string HeaderCellStyleName = "_HEADER";
+		public const string TitleCellStyleName = "_TITLE";
+
 		/// <summary>
 		/// Value for the background (fill) color of cell content;
 		/// override applied at the cell level.
@@ -79,5 +83,10 @@ public partial class TableEntity
 		public double VerticalMargin { get; set; } = 0.06d;
 
 		internal int Id { get; set; }
+
+		public override string ToString()
+		{
+			return $"{Id}|{Name}";
+		}
 	}
 }

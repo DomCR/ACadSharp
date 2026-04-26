@@ -125,7 +125,9 @@ namespace ACadSharp.Entities
 			[DxfCodeValue(90)]
 			public TableCellStateFlags StateFlags { get; set; }
 
-			public CellStyle StyleOverride { get; set; } = new();
+			public CellStyle StyleOverride { get; set; } = new CellStyle();
+
+			public CellStyle Style { get; set; }
 
 			[DxfCodeValue(300)]
 			public string ToolTip { get; set; }

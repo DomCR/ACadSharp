@@ -5319,13 +5319,12 @@ namespace ACadSharp.IO.DWG
 			var h = this.handleReference();
 
 			//… The cell style with name “Table”, see paragraph 20.4.101.4.
-			var tableCellStyleTemplate = new CadTableEntityTemplate.CadCellStyleTemplate(style.TableCellStyle);
-			this.readCellStyle(tableCellStyleTemplate);
+			template.TableCellStyleTemplate = new CadTableEntityTemplate.CadCellStyleTemplate(style.TableCellStyle);
+			this.readCellStyle(template.TableCellStyleTemplate);
 
 			//BL 90 Cell style ID, 1 = title, 2 = header, 3 = data, 4 = table (new in R24).
 			//The cell style ID is used by cells, columns, rows to reference a cell style in the
 			//table’s table style.Custom cell style ID’s are numbered starting at 101.
-			//TODO: is the same as the cell type??
 			style.TableCellStyle.Id = this._mergedReaders.ReadBitLong();
 			//BL 91 Cell style class, 1= data, 2 = label. The default value is label.
 			style.TableCellStyle.StyleClass = (TableEntity.CellStyleClass)this._mergedReaders.ReadBitLong();
@@ -5341,6 +5340,7 @@ namespace ACadSharp.IO.DWG
 				template.CellStyleTemplates.Add(cellStyleTemplate);
 
 				//… The cell style fields, see paragraph 20.4.101.4.
+				//Index starting by 1
 				int unknown = this._mergedReaders.ReadBitLong();
 				this.readCellStyle(cellStyleTemplate);
 

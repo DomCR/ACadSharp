@@ -2313,8 +2313,8 @@ internal partial class DwgObjectWriter : DwgSectionIO
 
 			//BL Has break data flag (0 = no break data, 1 = has break data)
 			//Begin break data(optional)
-			this._writer.WriteBitLong(table.BreakData.Flags != TableEntity.BreakOptionFlags.None ? 1 : 0);
-			if (table.BreakData != null)
+			this._writer.WriteBitLong(table.HasBreadData ? 1 : 0);
+			if (table.HasBreadData)
 			{
 				//BL Option flags:
 				this._writer.WriteBitLong((int)table.BreakData.Flags);
@@ -2388,7 +2388,7 @@ internal partial class DwgObjectWriter : DwgSectionIO
 
 			//BL 90 Cell style ID, points to the cell style in the table’s table style that is used as the
 			//base cell style for the column. 0 if not present.
-			this._writer.WriteBitLong(0);//TODO: Cellstyle id
+			this._writer.WriteBitLong(column.CellStyle != null ? column.CellStyle.Id : 0);
 
 			//BD 40 Column width.
 			this._writer.WriteBitDouble(column.Width);
@@ -2423,7 +2423,7 @@ internal partial class DwgObjectWriter : DwgSectionIO
 
 			//BL 90 Cell style ID, points to the cell style in the table’s table style that is used as the
 			//base cell style for the column. 0 if not present.
-			this._writer.WriteBitLong(0);//TODO: Cellstyle id
+			this._writer.WriteBitLong(row.CellStyle != null ? row.CellStyle.Id : 0);
 
 			//40 Row height
 			this._writer.WriteBitDouble(row.Height);
@@ -2477,22 +2477,19 @@ internal partial class DwgObjectWriter : DwgSectionIO
 		}
 
 		//BL 92 Has linked data flags, 0 = false, 1 = true If has linked data
-		this._writer.WriteBitLong(0);
-		if (false)
+		this._writer.WriteBitLong(cell.HasLinkedData ? 1 : 0);
+		if (cell.HasLinkedData)
 		{
-			this._writer.WriteBitLong(cell.HasLinkedData ? 1 : 0);
-			if (cell.HasLinkedData)
-			{
-				//H 340 Handle to data link object (hard pointer).
-				this._writer.HandleReference(null);
-				//BL 93 Row count.
-				this._writer.WriteBitLong(0);
-				//BL 94 Column count.
-				this._writer.WriteBitLong(0);
-				//BL 96 Unknown.
-				this._writer.WriteBitLong(0);
-				//End if has linked data
-			}
+			//H 340 Handle to data link object (hard pointer).
+			this._writer.HandleReference(null);
+			//BL 93 Row count.
+			this._writer.WriteBitLong(0);
+			//BL 94 Column count.
+			this._writer.WriteBitLong(0);
+			//BL 96 Unknown.
+			this._writer.WriteBitLong(0);
+			//End if has linked data
+			throw new Exception();
 		}
 
 		//BL 95 Number of cell contents
@@ -2506,7 +2503,7 @@ internal partial class DwgObjectWriter : DwgSectionIO
 
 		//BL 90 Cell style ID, points to the cell style in the table’s table style that is used as the
 		//base cell style for the cell. 0 if not present.
-		this._writer.WriteBitLong(0);
+		this._writer.WriteBitLong(cell.Style != null ? cell.Style.Id : 0);
 
 		//BL 91 Unknown flag
 		this._writer.WriteBitLong(0);
@@ -2604,6 +2601,20 @@ internal partial class DwgObjectWriter : DwgSectionIO
 		this._writer.HandleReference(DwgReferenceType.HardPointer, format.TextStyle);
 		//BD 144 Text height
 		this._writer.WriteBitDouble(format.TextHeight);
+	}
+
+	private void writeCellStyleWithId(TableEntity.CellStyle cellStyle)
+	{
+		writeCellStyle(cellStyle);
+
+		//BL - Cell style ID, 1 = title, 2 = header, 3 = data, 4 = table (new in R24).
+		//The cell style ID is used by cells, columns, rows to reference a cell style in the
+		//table’s table style.Custom cell style ID’s are numbered starting at 101.
+		this._writer.WriteBitLong(cellStyle.Id);
+		//BL - Cell style class, 1= data, 2 = label. The default value is label.
+		this._writer.WriteBitLong((int)cellStyle.StyleClass);
+		//TV - Cell style name
+		this._writer.WriteVariableText(cellStyle.Name);
 	}
 
 	private void writeCellStyle(TableEntity.CellStyle cellStyle)

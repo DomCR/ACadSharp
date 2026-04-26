@@ -1,4 +1,5 @@
 ﻿using ACadSharp.Entities;
+using ACadSharp.Objects;
 using System.Collections.Generic;
 using static ACadSharp.Entities.TableEntity;
 
@@ -11,8 +12,6 @@ internal partial class CadTableEntityTemplate : CadInsertTemplate
 	public List<CadTableCellTemplate> CadTableCellTemplates { get; } = new();
 
 	public List<CadTableComponentTemplate> CadTableComponentTemplates { get; } = new();
-
-	public List<CadTableComponentTemplate> CadTableRowTemplates { get; } = new();
 
 	public Cell CurrentCell { get { return this.CurrentCellTemplate.Cell; } }
 
@@ -60,6 +59,16 @@ internal partial class CadTableEntityTemplate : CadInsertTemplate
 	{
 		base.build(builder);
 
+		if (builder.TryGetObjectTemplate<CadTableStyleTemplate>(this.StyleHandle, out var tableStyle))
+		{
+			this.TableEntity.Style = tableStyle.CadObject;
+			tableStyle.Build(builder);
+		}
+		else
+		{
+			throw new System.Exception();
+		}
+
 		foreach (var cellTemplate in this.CadTableCellTemplates)
 		{
 			cellTemplate.Build(builder);
@@ -67,7 +76,7 @@ internal partial class CadTableEntityTemplate : CadInsertTemplate
 
 		foreach (var component in this.CadTableComponentTemplates)
 		{
-			component.Build(builder);
+			component.Build(builder, this.TableEntity.Style);
 		}
 
 		foreach (var handle in this.FieldHandles)

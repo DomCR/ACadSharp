@@ -9,6 +9,7 @@ using System.Collections.Generic;
 using System.Globalization;
 using System.IO;
 using System.Linq;
+using static ACadSharp.Objects.Evaluations.BlockVisibilityParameter;
 
 namespace ACadSharp.IO.DWG;
 
@@ -43,7 +44,6 @@ internal partial class DwgObjectWriter : DwgSectionIO
 			case Material:
 			case UnknownNonGraphicalObject:
 			case VisualStyle:
-			case TableStyle:
 			case ProxyObject:
 			case BlockRepresentationData:
 			case BlockReferenceObjectContextData:
@@ -920,6 +920,9 @@ internal partial class DwgObjectWriter : DwgSectionIO
 			case SpatialFilter spatialFilter:
 				this.writeSpatialFilter(spatialFilter);
 				break;
+			case TableStyle tableStyle:
+				this.writeTableStyle(tableStyle);
+				break;
 			case Field field:
 				this.writeField(field);
 				break;
@@ -1185,9 +1188,6 @@ internal partial class DwgObjectWriter : DwgSectionIO
 				return;
 			}
 
-			ms.Write<short>(0);
-			return;
-
 			ms.Write<short>((short)text.Length);
 			ms.Write(text, System.Text.Encoding.Unicode);
 		}
@@ -1201,6 +1201,74 @@ internal partial class DwgObjectWriter : DwgSectionIO
 			ms.Write<short>((short)text.Length);
 			ms.Write((byte)CadUtils.GetCodeIndex((CodePage)this._writer.Encoding.CodePage));
 			ms.Write(text, this._writer.Encoding);
+		}
+	}
+
+	private void writeTableStyle(TableStyle tableStyle)
+	{
+		if (this.R2007Pre)
+		{
+			throw new NotImplementedException();
+		}
+
+		//RC - Unknown
+		this._writer.WriteByte(0);
+		//Description TV 3
+		this._writer.WriteVariableText(tableStyle.Description);
+		//BL - Unknown
+		this._writer.WriteBitLong(0);
+		//BL - Unknown
+		this._writer.WriteBitLong(0);
+		//H - Unknown(hard owner)
+		this._writer.HandleReference(DwgReferenceType.HardOwnership, null);
+
+		//… The cell style with name “Table”, see paragraph 20.4.101.4.
+		this.writeCellStyleWithId(tableStyle.TableCellStyle);
+
+		//BL The number of cell styles (should be 3), the non-custom cell styles are present
+		//only in the CELLSTYLEMAP.
+		int nCellStyles = tableStyle.CellStyles.Count;
+		if (tableStyle.TitleCellStyle != null && !tableStyle.CellStyles.Contains(tableStyle.TitleCellStyle))
+		{
+			nCellStyles++;
+		}
+		if (tableStyle.HeaderCellStyle != null && !tableStyle.CellStyles.Contains(tableStyle.HeaderCellStyle))
+		{
+			nCellStyles++;
+		}
+		if (tableStyle.DataCellStyle != null && !tableStyle.CellStyles.Contains(tableStyle.DataCellStyle))
+		{
+			nCellStyles++;
+		}
+
+		this._writer.WriteBitLong(nCellStyles);
+
+		int index = 1;
+		if (tableStyle.TitleCellStyle != null)
+		{
+			this._writer.WriteBitLong(index++);
+			this.writeCellStyleWithId(tableStyle.TitleCellStyle);
+		}
+		if (tableStyle.HeaderCellStyle != null)
+		{
+			this._writer.WriteBitLong(index++);
+			this.writeCellStyleWithId(tableStyle.HeaderCellStyle);
+		}
+		if (tableStyle.DataCellStyle != null)
+		{
+			this._writer.WriteBitLong(index++);
+			this.writeCellStyleWithId(tableStyle.DataCellStyle);
+		}
+
+		index = 101;
+		foreach (var cellStyle in tableStyle.CellStyles)
+		{
+			if (cellStyle != tableStyle.TitleCellStyle && cellStyle != tableStyle.HeaderCellStyle && cellStyle != tableStyle.DataCellStyle)
+			{
+				this._writer.WriteBitLong(index);
+				this.writeCellStyleWithId(cellStyle);
+				index++;
+			}
 		}
 	}
 

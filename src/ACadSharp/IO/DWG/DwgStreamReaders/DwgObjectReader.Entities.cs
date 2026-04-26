@@ -316,11 +316,11 @@ internal partial class DwgObjectReader : DwgSectionIO
 		{
 			//If unknown flag is non-zero
 			//BL 91 Unknown
-			this._mergedReaders.ReadBitLong();
+			var value91 = this._mergedReaders.ReadBitLong();
 			//BD 40 Unknown
-			this._mergedReaders.ReadBitDouble();
+			var value40 = this._mergedReaders.ReadBitDouble();
 			//BD 40 Unknown
-			this._mergedReaders.ReadBitDouble();
+			var value41 = this._mergedReaders.ReadBitDouble();
 			//BL Geometry data flags
 			var geomFlags = this._mergedReaders.ReadBitLong();
 
@@ -749,6 +749,7 @@ internal partial class DwgObjectReader : DwgSectionIO
 			//BL Has break data flag (0 = no break data, 1 = has break data)
 			//Begin break data(optional)
 			bool hasBreakData = this._mergedReaders.ReadBitLong() == 1;
+			table.HasBreadData = hasBreakData;
 			if (hasBreakData)
 			{
 				TableEntity.TableBreakData breakData = table.BreakData;

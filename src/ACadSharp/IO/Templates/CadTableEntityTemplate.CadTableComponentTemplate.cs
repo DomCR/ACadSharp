@@ -1,10 +1,12 @@
-﻿using static ACadSharp.Entities.TableEntity;
+﻿using ACadSharp.Entities;
+using ACadSharp.Objects;
+using static ACadSharp.Entities.TableEntity;
 
 namespace ACadSharp.IO.Templates;
 
 internal partial class CadTableEntityTemplate
 {
-	internal class CadTableComponentTemplate : ICadTemplate
+	internal class CadTableComponentTemplate
 	{
 		public CadCellStyleTemplate CellStyleTemplate { get; set; }
 
@@ -17,8 +19,23 @@ internal partial class CadTableEntityTemplate
 			this._component = component;
 		}
 
-		public void Build(CadDocumentBuilder builder)
+		public void Build(CadDocumentBuilder builder, TableStyle table)
 		{
+			switch (this.StyleId)
+			{
+				case 1:
+					this._component.CellStyle = table.TitleCellStyle;
+					break;
+				case 2:
+					this._component.CellStyle = table.HeaderCellStyle;
+					break;
+				case 3:
+					this._component.CellStyle = table.DataCellStyle;
+					break;
+				default:
+					break;
+			}
+
 			this.CellStyleTemplate.Build(builder);
 		}
 	}
