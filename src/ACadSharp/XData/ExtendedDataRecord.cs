@@ -41,30 +41,30 @@ namespace ACadSharp.XData
 			switch (groupCode)
 			{
 				case GroupCodeValueType.Bool:
-					return new ExtendedDataInteger16((short)(((bool)value) ? 1 : 0));
+					return new ExtendedDataInteger16((short)((System.Convert.ToBoolean(value)) ? 1 : 0));
 				case GroupCodeValueType.Point3D:
 					return new ExtendedDataCoordinate((XYZ)value);
 				case GroupCodeValueType.Handle:
 				case GroupCodeValueType.ObjectId:
-					return new ExtendedDataHandle((ulong)value);
+					return new ExtendedDataHandle(System.Convert.ToUInt64(value));
 				case GroupCodeValueType.String:
 				case GroupCodeValueType.Comment:
 				case GroupCodeValueType.ExtendedDataString:
-					return new ExtendedDataString((string)value);
+					return new ExtendedDataString(System.Convert.ToString(value));
 				case GroupCodeValueType.Chunk:
 				case GroupCodeValueType.ExtendedDataChunk:
 					return new ExtendedDataBinaryChunk((byte[])value);
 				case GroupCodeValueType.ExtendedDataHandle:
-					return new ExtendedDataHandle((ulong)value);
+					return new ExtendedDataHandle(System.Convert.ToUInt64(value));
 				case GroupCodeValueType.Double:
 				case GroupCodeValueType.ExtendedDataDouble:
-					return new ExtendedDataReal((double)value);
+					return new ExtendedDataReal(System.Convert.ToDouble(value));
 				case GroupCodeValueType.Int16:
 				case GroupCodeValueType.ExtendedDataInt16:
-					return new ExtendedDataInteger16((short)value);
+					return new ExtendedDataInteger16(System.Convert.ToInt16(value));
 				case GroupCodeValueType.Int32:
 				case GroupCodeValueType.ExtendedDataInt32:
-					return new ExtendedDataInteger32((int)value);
+					return new ExtendedDataInteger32(System.Convert.ToInt32(value));
 				case GroupCodeValueType.None:
 				case GroupCodeValueType.Byte:
 				case GroupCodeValueType.Int64:
