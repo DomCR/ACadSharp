@@ -70,7 +70,9 @@ internal class CadTableStyleTemplate : CadTemplate<TableStyle>
 	private bool tryGetCellStyle(string name, out TableEntity.CellStyle cellStyle)
 	{
 		var cellStyleTemplate = this.CellStyleTemplates
-		.FirstOrDefault(s => s.CellStyle.Name.Equals(
+		.FirstOrDefault(s =>
+		s.CellStyle.Name != null
+		&& s.CellStyle.Name.Equals(
 			name,
 			System.StringComparison.OrdinalIgnoreCase));
 
