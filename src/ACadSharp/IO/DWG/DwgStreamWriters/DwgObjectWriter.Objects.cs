@@ -1263,7 +1263,9 @@ internal partial class DwgObjectWriter : DwgSectionIO
 		index = 101;
 		foreach (var cellStyle in tableStyle.CellStyles)
 		{
-			if (cellStyle != tableStyle.TitleCellStyle && cellStyle != tableStyle.HeaderCellStyle && cellStyle != tableStyle.DataCellStyle)
+			if (cellStyle != tableStyle.TitleCellStyle 
+				&& cellStyle != tableStyle.HeaderCellStyle 
+				&& cellStyle != tableStyle.DataCellStyle)
 			{
 				this._writer.WriteBitLong(index);
 				this.writeCellStyleWithId(cellStyle);

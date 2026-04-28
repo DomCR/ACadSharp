@@ -43,27 +43,15 @@ internal class CadTableStyleTemplate : CadTemplate<TableStyle>
 		{
 			this.CadObject.DataCellStyle = dataStyle;
 		}
-		else
-		{
-			this.CadObject.DataCellStyle = new TableEntity.CellStyle();
-		}
 
 		if (this.tryGetCellStyle(TableEntity.CellStyle.HeaderCellStyleName, out TableEntity.CellStyle headerStyle))
 		{
 			this.CadObject.HeaderCellStyle = headerStyle;
 		}
-		else
-		{
-			this.CadObject.HeaderCellStyle = new TableEntity.CellStyle();
-		}
 
 		if (this.tryGetCellStyle(TableEntity.CellStyle.TitleCellStyleName, out TableEntity.CellStyle titleStyle))
 		{
 			this.CadObject.TitleCellStyle = titleStyle;
-		}
-		else
-		{
-			this.CadObject.TitleCellStyle = new TableEntity.CellStyle();
 		}
 	}
 

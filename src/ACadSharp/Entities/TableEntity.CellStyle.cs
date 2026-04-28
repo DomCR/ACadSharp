@@ -9,9 +9,44 @@ public partial class TableEntity
 	/// </summary>
 	public class CellStyle : ContentFormat
 	{
-		public const string DataCellStyleName = "_DATA";
-		public const string HeaderCellStyleName = "_HEADER";
-		public const string TitleCellStyleName = "_TITLE";
+		public static CellStyle DefaultDataCellStyle
+		{
+			get
+			{
+				var data = new CellStyle
+				{
+					Name = DataCellStyleName
+				};
+
+				return data;
+			}
+		}
+
+		public static CellStyle DefaultHeaderCellStyle
+		{
+			get
+			{
+				var data = new CellStyle
+				{
+					Name = HeaderCellStyleName
+				};
+
+				return data;
+			}
+		}
+
+		public static CellStyle DefaultTitleCellStyle
+		{
+			get
+			{
+				var data = new CellStyle
+				{
+					Name = TitleCellStyleName
+				};
+
+				return data;
+			}
+		}
 
 		/// <summary>
 		/// Value for the background (fill) color of cell content;
@@ -83,6 +118,12 @@ public partial class TableEntity
 		public double VerticalMargin { get; set; } = 0.06d;
 
 		internal int Id { get; set; }
+
+		public const string DataCellStyleName = "_DATA";
+
+		public const string HeaderCellStyleName = "_HEADER";
+
+		public const string TitleCellStyleName = "_TITLE";
 
 		public override string ToString()
 		{

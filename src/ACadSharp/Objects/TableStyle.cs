@@ -28,7 +28,7 @@ public class TableStyle : NonGraphicalObject
 	/// <summary>
 	/// Gets the style settings applied to data cells within the table entity.
 	/// </summary>
-	public TableEntity.CellStyle DataCellStyle { get; set; }
+	public TableEntity.CellStyle DataCellStyle { get; set; } = TableEntity.CellStyle.DefaultDataCellStyle;
 
 	/// <summary>
 	/// Table style description.
@@ -54,7 +54,7 @@ public class TableStyle : NonGraphicalObject
 	/// <summary>
 	/// Gets the style settings applied to the header cells of the table.
 	/// </summary>
-	public TableEntity.CellStyle HeaderCellStyle { get; set; }
+	public TableEntity.CellStyle HeaderCellStyle { get; set; } = TableEntity.CellStyle.DefaultHeaderCellStyle;
 
 	/// <summary>
 	/// Gets or sets the horizontal margin, in drawing units, applied to the content within each cell.
@@ -82,7 +82,7 @@ public class TableStyle : NonGraphicalObject
 
 	public TableEntity.CellStyle TableCellStyle { get; set; } = new();
 
-	public TableEntity.CellStyle TitleCellStyle { get; set; }
+	public TableEntity.CellStyle TitleCellStyle { get; set; } = TableEntity.CellStyle.DefaultTitleCellStyle;
 
 	/// <summary>
 	/// Gets or sets the vertical margin, in drawing units, applied to the content within a cell.
