@@ -105,6 +105,7 @@ internal partial class DwgObjectWriter : DwgSectionIO
 			case Shape:
 				return this.WriteShapes;
 			case Wall:
+			case TableEntity when !this.R2010Plus:
 			case ProxyEntity:
 			case Solid3D:
 			case CadBody:

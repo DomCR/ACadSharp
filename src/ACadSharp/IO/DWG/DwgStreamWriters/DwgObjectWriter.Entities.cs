@@ -2353,6 +2353,15 @@ internal partial class DwgObjectWriter : DwgSectionIO
 			return;
 		}
 
+		//Until R2007
+
+		//Common:
+		//Flag for table value BS 90
+		//	Bit flags, 0x06(0x02 + 0x04): has block,
+		//	0x10: table direction, 0 = up, 1 = down,
+		//	0x20: title suppressed.
+		//	Normally 0x06 is always set.
+
 		throw new NotImplementedException();
 	}
 
