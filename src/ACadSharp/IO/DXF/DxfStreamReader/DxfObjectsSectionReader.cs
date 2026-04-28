@@ -1754,13 +1754,14 @@ namespace ACadSharp.IO.DXF
 					return true;
 				case 20:
 					var pt = filter.BoundaryPoints.LastOrDefault();
-					filter.BoundaryPoints.Add(new CSMath.XY(pt.X, this._reader.ValueAsDouble));
+					filter.BoundaryPoints[filter.BoundaryPoints.Count - 1] = new CSMath.XY(pt.X, this._reader.ValueAsDouble);
 					return true;
 				case 40:
 					if (filter.ClipFrontPlane && !tmp.HasFrontPlane)
 					{
 						filter.FrontDistance = this._reader.ValueAsDouble;
 						tmp.HasFrontPlane = true;
+						return true;
 					}
 
 					double[] array = new double[16]
