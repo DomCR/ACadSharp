@@ -2542,12 +2542,12 @@ internal partial class DwgObjectWriter : DwgSectionIO
 				break;
 			case TableEntity.TableCellContentType.Field:
 				//H 340 Handle to AcDbField object (hard pointer).
-				//template.FieldHandle = this.handleReference();
-				throw new NotImplementedException();
+				this._writer.HandleReference(DwgReferenceType.HardPointer, null);
+				break;
 			case TableEntity.TableCellContentType.Block:
 				//H 340 Handle to block record (hard pointer).
-				//template.BlockRecordHandle = this.handleReference();
-				throw new NotImplementedException();
+				this._writer.HandleReference(DwgReferenceType.HardPointer, null);
+				break;
 		}
 
 		//BL 91 Number of attributes
@@ -2573,10 +2573,12 @@ internal partial class DwgObjectWriter : DwgSectionIO
 			this.writeCellContentFormat(content.Format);
 		}
 	}
-		
+
 	private void writeCustomTableData(TableEntity.CustomDataEntry entry)
 	{
-		throw new NotImplementedException();
+		//TV 300 Item name
+		this._writer.WriteVariableText(entry.Name);
+		this.writeCadValue(entry.Value);
 	}
 
 	private void writeTextEntity(TextEntity text)
