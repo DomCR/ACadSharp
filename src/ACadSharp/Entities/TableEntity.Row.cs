@@ -1,5 +1,6 @@
 ﻿using ACadSharp.Attributes;
 using System.Collections.Generic;
+using static ACadSharp.Objects.TableStyle;
 
 namespace ACadSharp.Entities;
 

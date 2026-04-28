@@ -1,8 +1,8 @@
 ﻿using ACadSharp.Attributes;
 
-namespace ACadSharp.Entities;
+namespace ACadSharp.Objects;
 
-public partial class TableEntity
+public partial class TableStyle
 {
 	/// <summary>
 	/// Represents the cell style of a table cell. Cell styles are defined at the table level and can be overridden at the cell level.
@@ -63,7 +63,7 @@ public partial class TableEntity
 		/// Gets or sets the alignment of the content within a cell.
 		/// </summary>
 		[DxfCodeValue(170)]
-		public CellAlignmentType CellAlignment { get; set; }
+		public TableStyle.CellAlignmentType CellAlignment { get; set; }
 
 		/// <summary>
 		/// Value for the color of cell content; override applied at the cell level
@@ -71,7 +71,7 @@ public partial class TableEntity
 		[DxfCodeValue(64)]
 		public Color ContentColor { get; internal set; }
 
-		public TableCellContentLayoutFlags ContentLayoutFlags { get; set; }
+		public CellContentLayoutFlags ContentLayoutFlags { get; set; }
 
 		public CellBorder HorizontalInsideBorder { get; set; } = new(CellEdgeFlags.InsideHorizontal);
 
@@ -103,7 +103,7 @@ public partial class TableEntity
 		public CellStyleClass StyleClass { get; set; }
 
 		[DxfCodeValue(92)]
-		public TableCellStylePropertyFlags TableCellStylePropertyFlags { get; set; }
+		public CellStylePropertyFlags TableCellStylePropertyFlags { get; set; }
 
 		[DxfCodeValue(62)]
 		public Color TextColor { get; set; }
@@ -125,6 +125,7 @@ public partial class TableEntity
 
 		public const string TitleCellStyleName = "_TITLE";
 
+		/// <inheritdoc/>
 		public override string ToString()
 		{
 			return $"{Id}|{Name}";

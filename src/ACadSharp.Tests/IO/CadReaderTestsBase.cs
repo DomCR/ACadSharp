@@ -1,11 +1,9 @@
-﻿using ACadSharp.Entities;
-using ACadSharp.Header;
+﻿using ACadSharp.Header;
 using ACadSharp.IO;
 using ACadSharp.Tables;
 using ACadSharp.Tests.TestModels;
 using System;
 using System.Collections.Generic;
-using System.Linq;
 using Xunit;
 using Xunit.Abstractions;
 

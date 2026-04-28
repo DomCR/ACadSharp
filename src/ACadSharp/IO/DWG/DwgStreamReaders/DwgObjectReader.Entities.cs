@@ -7,6 +7,8 @@ using System;
 using static ACadSharp.Entities.TableEntity;
 using static ACadSharp.Entities.TableEntity.TableBreakData;
 using static ACadSharp.IO.Templates.CadTableEntityTemplate;
+using static ACadSharp.IO.Templates.CadTableStyleTemplate;
+using static ACadSharp.Objects.TableStyle;
 
 namespace ACadSharp.IO.DWG;
 
@@ -15,7 +17,7 @@ internal partial class DwgObjectReader : DwgSectionIO
 	private void readBorder(CadCellStyleTemplate template, CellBorder border)
 	{
 		//BL 90 Border property override flags
-		border.PropertyOverrideFlags = (TableBorderPropertyFlags)this._mergedReaders.ReadBitLong();
+		border.PropertyOverrideFlags = (BorderPropertyFlags)this._mergedReaders.ReadBitLong();
 		//BL 91 Border type
 		border.Type = ((BorderType)this._mergedReaders.ReadBitLong());
 		//TC 62 Color
@@ -32,14 +34,14 @@ internal partial class DwgObjectReader : DwgSectionIO
 		border.ApplyBorder = true;
 	}
 
-	private void readCellContentFormat(CellContentFormatTemplate template, ContentFormat format)
+	private void readCellContentFormat(CellContentFormatTemplate template, TableStyle.ContentFormat format)
 	{
 		//Cell.ContentFormat format = template.Content.Format;
 
 		//20.4.101.3 Content format
 
 		//BL 90 Property override flags
-		format.PropertyOverrideFlags = (TableCellStylePropertyFlags)this._mergedReaders.ReadBitLong();
+		format.PropertyOverrideFlags = (TableStyle.CellStylePropertyFlags)this._mergedReaders.ReadBitLong();
 		//BL 91 Property flags. Contains property bit values for property Auto Scale only
 		format.PropertyFlags = this._mergedReaders.ReadBitLong();
 		//BL 92 Value data type, see also paragraph 20.4.98.
@@ -82,7 +84,7 @@ internal partial class DwgObjectReader : DwgSectionIO
 		geometry.Flags = this._mergedReaders.ReadBitLong();
 	}
 
-	private void readCellStyle(CadCellStyleTemplate template)
+	private void readCellStyle(CadTableStyleTemplate.CadCellStyleTemplate template)
 	{
 		//20.4.101.4
 		CellStyle cellStyle = (CellStyle)template.Format;
@@ -100,14 +102,14 @@ internal partial class DwgObjectReader : DwgSectionIO
 
 		//BL 91 Property override flags. The definition is the same as the content format
 		//propery override flags, see paragraph 20.4.101.3.
-		cellStyle.PropertyOverrideFlags = (TableCellStylePropertyFlags)this._mergedReaders.ReadBitLong();
+		cellStyle.PropertyOverrideFlags = (TableStyle.CellStylePropertyFlags)this._mergedReaders.ReadBitLong();
 		//BL  92 Merge flags, but may only for bits 0x8000 and 0x10000.
-		cellStyle.TableCellStylePropertyFlags = (TableCellStylePropertyFlags)this._mergedReaders.ReadBitLong();
+		cellStyle.TableCellStylePropertyFlags = (CellStylePropertyFlags)this._mergedReaders.ReadBitLong();
 		//TC 62 Background color
 		cellStyle.BackgroundColor = this._mergedReaders.ReadCmColor(this.R2004Pre);
 
 		//BL 93 Content layout flags
-		cellStyle.ContentLayoutFlags = (TableCellContentLayoutFlags)this._mergedReaders.ReadBitLong();
+		cellStyle.ContentLayoutFlags = (CellContentLayoutFlags)this._mergedReaders.ReadBitLong();
 
 		//Content format fields (see paragraph 20.4.101.3)
 		this.readCellContentFormat(template, cellStyle);

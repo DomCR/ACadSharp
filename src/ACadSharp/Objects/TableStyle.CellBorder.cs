@@ -1,11 +1,13 @@
 ﻿using ACadSharp.Attributes;
 
-namespace ACadSharp.Entities;
+namespace ACadSharp.Objects;
 
-public partial class TableEntity
+public partial class TableStyle
 {
 	public class CellBorder
 	{
+		public bool ApplyBorder { get; set; } = false;
+
 		//[DxfCodeValue(62)]
 		//64-69
 		public Color Color { get; set; }
@@ -25,12 +27,10 @@ public partial class TableEntity
 		public LineWeightType LineWeight { get; set; }
 
 		[DxfCodeValue(90)]
-		public TableBorderPropertyFlags PropertyOverrideFlags { get; set; }
+		public BorderPropertyFlags PropertyOverrideFlags { get; set; }
 
 		[DxfCodeValue(91)]
 		public BorderType Type { get; set; }
-
-		public bool ApplyBorder { get; set; } = false;
 
 		public CellBorder(CellEdgeFlags edgeFlags)
 		{

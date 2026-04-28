@@ -1,9 +1,9 @@
 ﻿using ACadSharp.Tables;
-using static ACadSharp.Entities.TableEntity;
+using static ACadSharp.Objects.TableStyle;
 
 namespace ACadSharp.IO.Templates;
 
-internal partial class CadTableEntityTemplate
+internal partial class CadTableStyleTemplate
 {
 	internal class CellContentFormatTemplate : ICadTemplate
 	{

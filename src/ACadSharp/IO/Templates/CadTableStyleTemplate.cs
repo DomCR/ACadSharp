@@ -1,17 +1,17 @@
 ﻿using ACadSharp.Objects;
-using ACadSharp.Entities;
 using System.Collections.Generic;
 using System.Linq;
+using static ACadSharp.Objects.TableStyle;
 
 namespace ACadSharp.IO.Templates;
 
-internal class CadTableStyleTemplate : CadTemplate<TableStyle>
+internal partial class CadTableStyleTemplate : CadTemplate<TableStyle>
 {
-	public List<CadTableEntityTemplate.CadCellStyleTemplate> CellStyleTemplates { get; } = new();
+	public List<CadTableStyleTemplate.CadCellStyleTemplate> CellStyleTemplates { get; } = new();
 
-	public CadTableEntityTemplate.CadCellStyleTemplate CurrentCellStyleTemplate { get; private set; }
+	public CadTableStyleTemplate.CadCellStyleTemplate CurrentCellStyleTemplate { get; private set; }
 
-	public CadTableEntityTemplate.CadCellStyleTemplate TableCellStyleTemplate { get; set; }
+	public CadTableStyleTemplate.CadCellStyleTemplate TableCellStyleTemplate { get; set; }
 
 	public CadTableStyleTemplate() : base(new TableStyle())
 	{
@@ -21,9 +21,9 @@ internal class CadTableStyleTemplate : CadTemplate<TableStyle>
 	{
 	}
 
-	public CadTableEntityTemplate.CadCellStyleTemplate CreateCurrentCellStyleTemplate()
+	public CadTableStyleTemplate.CadCellStyleTemplate CreateCurrentCellStyleTemplate()
 	{
-		this.CurrentCellStyleTemplate = new CadTableEntityTemplate.CadCellStyleTemplate();
+		this.CurrentCellStyleTemplate = new CadTableStyleTemplate.CadCellStyleTemplate();
 		this.CellStyleTemplates.Add(this.CurrentCellStyleTemplate);
 		return this.CurrentCellStyleTemplate;
 	}
@@ -39,23 +39,23 @@ internal class CadTableStyleTemplate : CadTemplate<TableStyle>
 			item.Build(builder);
 		}
 
-		if (this.tryGetCellStyle(TableEntity.CellStyle.DataCellStyleName, out TableEntity.CellStyle dataStyle))
+		if (this.tryGetCellStyle(TableStyle.CellStyle.DataCellStyleName, out CellStyle dataStyle))
 		{
 			this.CadObject.DataCellStyle = dataStyle;
 		}
 
-		if (this.tryGetCellStyle(TableEntity.CellStyle.HeaderCellStyleName, out TableEntity.CellStyle headerStyle))
+		if (this.tryGetCellStyle(CellStyle.HeaderCellStyleName, out CellStyle headerStyle))
 		{
 			this.CadObject.HeaderCellStyle = headerStyle;
 		}
 
-		if (this.tryGetCellStyle(TableEntity.CellStyle.TitleCellStyleName, out TableEntity.CellStyle titleStyle))
+		if (this.tryGetCellStyle(CellStyle.TitleCellStyleName, out CellStyle titleStyle))
 		{
 			this.CadObject.TitleCellStyle = titleStyle;
 		}
 	}
 
-	private bool tryGetCellStyle(string name, out TableEntity.CellStyle cellStyle)
+	private bool tryGetCellStyle(string name, out CellStyle cellStyle)
 	{
 		var cellStyleTemplate = this.CellStyleTemplates
 		.FirstOrDefault(s =>

@@ -1,7 +1,7 @@
 ﻿using ACadSharp.Attributes;
 using ACadSharp.Entities;
 using System.Collections.Generic;
-using static ACadSharp.Entities.TableEntity;
+using static ACadSharp.Objects.TableStyle;
 
 namespace ACadSharp.Objects
 {
@@ -59,7 +59,7 @@ namespace ACadSharp.Objects
 		/// <inheritdoc/>
 		public override string SubclassMarker => DxfSubclassMarker.FormattedTableData;
 
-		public List<CellRange> MergedCellRanges { get; set; } = new();
+		public List<TableEntity.CellRange> MergedCellRanges { get; set; } = new();
 
 		public CellStyle CellStyleOverride { get; set; } = new();
 	}

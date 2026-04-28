@@ -1,5 +1,4 @@
 ﻿using ACadSharp.Attributes;
-using ACadSharp.Entities;
 using System.Collections.Generic;
 
 namespace ACadSharp.Objects;
@@ -13,8 +12,23 @@ namespace ACadSharp.Objects;
 /// </remarks>
 [DxfName(DxfFileToken.ObjectTableStyle)]
 [DxfSubClass(DxfSubclassMarker.TableStyle)]
-public class TableStyle : NonGraphicalObject
+public partial class TableStyle : NonGraphicalObject
 {
+	public enum CellStyleClass
+	{
+		Data = 1,
+
+		Label = 2
+	}
+
+	[System.Flags]
+	public enum CellContentLayoutFlags
+	{
+		None = 0,
+		Flow = 1,
+		StackedHorizontal = 2,
+		StackedVertical = 4
+	}
 	/// <summary>
 	/// Gets the default TableStyle.
 	/// </summary>
@@ -23,12 +37,12 @@ public class TableStyle : NonGraphicalObject
 	/// <summary>
 	/// Gets the collection of cell styles applied to the table entity.
 	/// </summary>
-	public List<TableEntity.CellStyle> CellStyles { get; } = new();
+	public List<CellStyle> CellStyles { get; } = new();
 
 	/// <summary>
 	/// Gets the style settings applied to data cells within the table entity.
 	/// </summary>
-	public TableEntity.CellStyle DataCellStyle { get; set; } = TableEntity.CellStyle.DefaultDataCellStyle;
+	public CellStyle DataCellStyle { get; set; } = CellStyle.DefaultDataCellStyle;
 
 	/// <summary>
 	/// Table style description.
@@ -54,7 +68,7 @@ public class TableStyle : NonGraphicalObject
 	/// <summary>
 	/// Gets the style settings applied to the header cells of the table.
 	/// </summary>
-	public TableEntity.CellStyle HeaderCellStyle { get; set; } = TableEntity.CellStyle.DefaultHeaderCellStyle;
+	public CellStyle HeaderCellStyle { get; set; } = CellStyle.DefaultHeaderCellStyle;
 
 	/// <summary>
 	/// Gets or sets the horizontal margin, in drawing units, applied to the content within each cell.
@@ -80,9 +94,9 @@ public class TableStyle : NonGraphicalObject
 	[DxfCodeValue(280)]
 	public bool SuppressTitle { get; set; }
 
-	public TableEntity.CellStyle TableCellStyle { get; set; } = new();
+	public CellStyle TableCellStyle { get; set; } = new();
 
-	public TableEntity.CellStyle TitleCellStyle { get; set; } = TableEntity.CellStyle.DefaultTitleCellStyle;
+	public CellStyle TitleCellStyle { get; set; } = CellStyle.DefaultTitleCellStyle;
 
 	/// <summary>
 	/// Gets or sets the vertical margin, in drawing units, applied to the content within a cell.

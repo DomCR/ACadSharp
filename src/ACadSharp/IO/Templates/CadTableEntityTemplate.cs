@@ -1,7 +1,7 @@
 ﻿using ACadSharp.Entities;
-using ACadSharp.Objects;
 using System.Collections.Generic;
 using static ACadSharp.Entities.TableEntity;
+using static ACadSharp.IO.Templates.CadTableStyleTemplate;
 
 namespace ACadSharp.IO.Templates;
 

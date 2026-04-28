@@ -1,10 +1,10 @@
 ﻿using System;
 using System.Collections.Generic;
-using static ACadSharp.Entities.TableEntity;
+using static ACadSharp.Objects.TableStyle;
 
 namespace ACadSharp.IO.Templates;
 
-internal partial class CadTableEntityTemplate
+internal partial class CadTableStyleTemplate
 {
 	internal class CadCellStyleTemplate : CellContentFormatTemplate
 	{
@@ -17,7 +17,7 @@ internal partial class CadTableEntityTemplate
 		}
 
 		public CadCellStyleTemplate(CellStyle style) : base(style)
-		{
+		{			
 		}
 	}
 }

@@ -1198,7 +1198,7 @@ namespace ACadSharp.IO.DWG
 			return template;
 		}
 
-		private void readBorderStyle(TableEntity.CellBorder border)
+		private void readBorderStyle(TableStyle.CellBorder border)
 		{
 			//Line weight BS 274-279
 			border.LineWeight = (LineWeightType)this._mergedReaders.ReadBitShort();
@@ -4964,9 +4964,9 @@ namespace ACadSharp.IO.DWG
 			return template;
 		}
 
-		private void readRowCellStyle(CadTableStyleTemplate tableStyleTemplate, TableEntity.CellStyle style)
+		private void readRowCellStyle(CadTableStyleTemplate tableStyleTemplate, TableStyle.CellStyle style)
 		{
-			var cellStyleTemplate = new CadTableEntityTemplate.CadCellStyleTemplate(style);
+			var cellStyleTemplate = new CadTableStyleTemplate.CadCellStyleTemplate(style);
 
 			tableStyleTemplate.CellStyleTemplates.Add(cellStyleTemplate);
 
@@ -4977,7 +4977,7 @@ namespace ACadSharp.IO.DWG
 			//Text alignment BS 170 Top left = 1, top center = 2, top right = 3, middle
 			//left = 4, middle center = 5, middle right = 6,
 			//bottom left = 7, bottom center = 8, bottom right = 9
-			style.CellAlignment = (TableEntity.CellAlignmentType)this._mergedReaders.ReadBitShort();
+			style.CellAlignment = (TableStyle.CellAlignmentType)this._mergedReaders.ReadBitShort();
 			//Text color CMC 62
 			style.TextColor = this._mergedReaders.ReadCmColor(this.R2004Pre);
 			//Fill color CMC 63
@@ -5319,7 +5319,7 @@ namespace ACadSharp.IO.DWG
 			var h = this.handleReference();
 
 			//… The cell style with name “Table”, see paragraph 20.4.101.4.
-			template.TableCellStyleTemplate = new CadTableEntityTemplate.CadCellStyleTemplate(style.TableCellStyle);
+			template.TableCellStyleTemplate = new CadTableStyleTemplate.CadCellStyleTemplate(style.TableCellStyle);
 			this.readCellStyle(template.TableCellStyleTemplate);
 
 			//BL 90 Cell style ID, 1 = title, 2 = header, 3 = data, 4 = table (new in R24).
@@ -5327,7 +5327,7 @@ namespace ACadSharp.IO.DWG
 			//table’s table style.Custom cell style ID’s are numbered starting at 101.
 			style.TableCellStyle.Id = this._mergedReaders.ReadBitLong();
 			//BL 91 Cell style class, 1= data, 2 = label. The default value is label.
-			style.TableCellStyle.StyleClass = (TableEntity.CellStyleClass)this._mergedReaders.ReadBitLong();
+			style.TableCellStyle.StyleClass = (TableStyle.CellStyleClass)this._mergedReaders.ReadBitLong();
 			//TV 300 Cell style name
 			style.TableCellStyle.Name = this._mergedReaders.ReadVariableText();
 			//BL The number of cell styles (should be 3), the non-custom cell styles are present
@@ -5335,8 +5335,8 @@ namespace ACadSharp.IO.DWG
 			int nCellStyles = this._mergedReaders.ReadBitLong();
 			for (int i = 0; i < nCellStyles; i++)
 			{
-				var cellStyle = new TableEntity.CellStyle();
-				var cellStyleTemplate = new CadTableEntityTemplate.CadCellStyleTemplate(cellStyle);
+				var cellStyle = new TableStyle.CellStyle();
+				var cellStyleTemplate = new CadTableStyleTemplate.CadCellStyleTemplate(cellStyle);
 				template.CellStyleTemplates.Add(cellStyleTemplate);
 
 				//… The cell style fields, see paragraph 20.4.101.4.
@@ -5349,7 +5349,7 @@ namespace ACadSharp.IO.DWG
 				//table’s table style.Custom cell style ID’s are numbered starting at 101.
 				cellStyle.Id = this._mergedReaders.ReadBitLong();
 				//BL - Cell style class, 1= data, 2 = label. The default value is label.
-				cellStyle.StyleClass = (TableEntity.CellStyleClass)this._mergedReaders.ReadBitLong();
+				cellStyle.StyleClass = (TableStyle.CellStyleClass)this._mergedReaders.ReadBitLong();
 				//TV - Cell style name
 				cellStyle.Name = this._mergedReaders.ReadVariableText();
 			}

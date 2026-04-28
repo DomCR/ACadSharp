@@ -1,5 +1,4 @@
-﻿using ACadSharp.Entities;
-using CSMath;
+﻿using CSMath;
 using System;
 using System.IO;
 using System.Text;
