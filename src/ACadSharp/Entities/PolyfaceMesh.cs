@@ -20,7 +20,7 @@ public class PolyfaceMesh : Polyline<VertexFaceMesh>
 	public CadObjectCollection<VertexFaceRecord> Faces { get; private set; }
 
 	/// <inheritdoc/>
-	public override PolylineFlags Flags { get => base.Flags | (PolylineFlags.PolyfaceMesh); set => base.Flags = value; }
+	public override PolylineFlags Flags { get => base.Flags | PolylineFlags.PolyfaceMesh; set => base.Flags = value; }
 
 	/// <inheritdoc/>
 	public override string ObjectName => DxfFileToken.EntityPolyline;
