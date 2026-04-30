@@ -85,7 +85,7 @@ namespace ACadSharp
 				return GroupCodeValueType.Int16;
 
 			if (code >= 280 && code <= 289)
-				return GroupCodeValueType.Byte;
+				return GroupCodeValueType.Int16;
 
 			if (code >= 290 && code <= 299)
 				return GroupCodeValueType.Bool;
