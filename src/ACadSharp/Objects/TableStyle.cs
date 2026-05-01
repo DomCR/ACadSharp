@@ -14,21 +14,6 @@ namespace ACadSharp.Objects;
 [DxfSubClass(DxfSubclassMarker.TableStyle)]
 public partial class TableStyle : NonGraphicalObject
 {
-	public enum CellStyleClass
-	{
-		Data = 1,
-
-		Label = 2
-	}
-
-	[System.Flags]
-	public enum CellContentLayoutFlags
-	{
-		None = 0,
-		Flow = 1,
-		StackedHorizontal = 2,
-		StackedVertical = 4
-	}
 	/// <summary>
 	/// Gets the default TableStyle.
 	/// </summary>

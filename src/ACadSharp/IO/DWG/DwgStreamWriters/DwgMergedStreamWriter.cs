@@ -1,4 +1,5 @@
 ﻿using CSMath;
+using CSUtilities.Converters;
 using System;
 using System.IO;
 using System.Text;
@@ -153,9 +154,37 @@ namespace ACadSharp.IO.DWG
 				return;
 			}
 
-			this.Main.WriteCmColor(value);
+			//CMC:
+			//BS: color index(always 0)
+			this.WriteBitShort(0);
 
-			//TODO: Implement true color support for writer
+			byte[] arr = new byte[4];
+
+			if (value.IsTrueColor)
+			{
+				arr[2] = (byte)value.R;
+				arr[1] = (byte)value.G;
+				arr[0] = (byte)value.B;
+				arr[3] = 0b1100_0010;
+			}
+			else if (value.IsByLayer)
+			{
+				arr[3] = 0b11000000;
+			}
+			else
+			{
+				arr[3] = 0b1100_0011;
+				arr[0] = (byte)value.Index;
+			}
+
+			//BL: RGB value
+			this.WriteBitLong(LittleEndianConverter.Instance.ToInt32(arr));
+
+			//RC: Color Byte
+			this.WriteByte(0);
+
+			//(&1 => color name follows(TV),
+			//&2 => book name follows(TV))
 		}
 
 		public void WriteEnColor(Color color, Transparency transparency)

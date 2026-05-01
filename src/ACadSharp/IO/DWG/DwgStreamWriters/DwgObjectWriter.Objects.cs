@@ -35,6 +35,8 @@ internal partial class DwgObjectWriter : DwgSectionIO
 			case XRecord when !this.WriteXRecords:
 				notify = false;
 				return true;
+			//case TableStyle when this.R2007Pre:
+			//	return true;
 			case AecWallStyle:
 			case AecCleanupGroup:
 			case AecBinRecord:
