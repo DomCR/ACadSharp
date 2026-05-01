@@ -1,4 +1,5 @@
 ﻿using ACadSharp.Entities;
+using ACadSharp.Objects;
 using System.Collections.Generic;
 using static ACadSharp.Entities.TableEntity;
 using static ACadSharp.IO.Templates.CadTableStyleTemplate;
@@ -66,7 +67,7 @@ internal partial class CadTableEntityTemplate : CadInsertTemplate
 		}
 		else
 		{
-			throw new System.Exception();
+			builder.Notify($"[{nameof(TableStyle)}] {this.StyleHandle} not found for table with handle {this.CadObject.Handle}", NotificationType.Warning);
 		}
 
 		foreach (var cellTemplate in this.CadTableCellTemplates)
