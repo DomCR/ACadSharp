@@ -64,6 +64,7 @@ namespace ACadSharp.Entities
 		//An object ID(multiple entries can appear) (optional)
 
 		//94 0 (indicates end of object ID section)
+
 		/// <inheritdoc/>
 		public ACadVersion Version { get; set; }
 

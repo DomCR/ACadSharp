@@ -6,57 +6,20 @@ namespace ACadSharp.IO.Templates;
 
 internal class CadDimensionTemplate : CadEntityTemplate
 {
-	public ulong? StyleHandle { get; set; }
-
 	public ulong? BlockHandle { get; set; }
 
 	public string BlockName { get; set; }
 
+	public ulong? StyleHandle { get; set; }
+
 	public string StyleName { get; set; }
 
-	public CadDimensionTemplate() : base(new DimensionPlaceholder()) { }
-
-	public CadDimensionTemplate(Dimension dimension) : base(dimension) { }
-
-	protected override void build(CadDocumentBuilder builder)
+	public CadDimensionTemplate() : base(new DimensionPlaceholder())
 	{
-		base.build(builder);
-
-		Dimension dimension = this.CadObject as Dimension;
-
-		if (this.getTableReference(builder, this.StyleHandle, this.StyleName, out DimensionStyle style))
-		{
-			dimension.Style = style;
-		}
-
-		if (this.getTableReference(builder, this.BlockHandle, this.BlockName, out BlockRecord block))
-		{
-			dimension.Block = block;
-		}
 	}
 
-	public class DimensionPlaceholder : Dimension
+	public CadDimensionTemplate(Dimension dimension) : base(dimension)
 	{
-		public override ObjectType ObjectType { get { return ObjectType.INVALID; } }
-
-		public override double Measurement { get; }
-
-		public DimensionPlaceholder() : base(DimensionType.Linear) { }
-
-		public override BoundingBox GetBoundingBox()
-		{
-			throw new System.InvalidOperationException();
-		}
-
-		public override void ApplyTransform(Transform transform)
-		{
-			throw new System.NotImplementedException();
-		}
-
-		public override void UpdateBlock()
-		{
-			throw new System.NotImplementedException();
-		}
 	}
 
 	public void SetDimensionFlags(DimensionType flags)
@@ -105,5 +68,50 @@ internal class CadDimensionTemplate : CadEntityTemplate
 		}
 
 		this.CadObject = dimension;
+	}
+
+	protected override void build(CadDocumentBuilder builder)
+	{
+		base.build(builder);
+
+		Dimension dimension = this.CadObject as Dimension;
+
+		if (this.getTableReference(builder, this.StyleHandle, this.StyleName, out DimensionStyle style))
+		{
+			dimension.Style = style;
+		}
+
+		if (this.getTableReference(builder, this.BlockHandle, this.BlockName, out BlockRecord block))
+		{
+			dimension.Block = block;
+		}
+	}
+
+	public class DimensionPlaceholder : Dimension
+	{
+		public override double Measurement { get; }
+
+		public override string ObjectName { get; }
+
+		public override ObjectType ObjectType { get { return ObjectType.INVALID; } }
+
+		public DimensionPlaceholder() : base(DimensionType.Linear)
+		{
+		}
+
+		public override void ApplyTransform(Transform transform)
+		{
+			throw new System.NotImplementedException();
+		}
+
+		public override BoundingBox GetBoundingBox()
+		{
+			throw new System.InvalidOperationException();
+		}
+
+		public override void UpdateBlock()
+		{
+			throw new System.NotImplementedException();
+		}
 	}
 }

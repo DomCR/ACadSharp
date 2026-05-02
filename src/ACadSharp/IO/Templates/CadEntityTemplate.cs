@@ -1,7 +1,11 @@
 ﻿using ACadSharp.Entities;
+using ACadSharp.Entities.ProxyGraphics;
 using ACadSharp.Objects;
 using ACadSharp.Tables;
+using CSUtilities.Converters;
 using CSUtilities.Extensions;
+using CSUtilities.IO;
+using System.Reflection;
 
 namespace ACadSharp.IO.Templates;
 
@@ -28,6 +32,8 @@ internal class CadEntityTemplate : CadTemplate<Entity>
 	public ulong? NextEntity { get; set; }
 
 	public ulong? PrevEntity { get; set; }
+
+	public byte[] ProxyGraphics { get; set; }
 
 	public CadEntityTemplate(Entity entity) : base(entity)
 	{
@@ -101,6 +107,13 @@ internal class CadEntityTemplate : CadTemplate<Entity>
 			builder.DocumentToBuild.Colors.TryGet(this.BookColorName, out color))
 		{
 			this.CadObject.BookColor = color;
+		}
+
+		if (this.ProxyGraphics != null)
+		{
+			//TO REMOVE
+			builder.Notify($"[{this.CadObject.ObjectName}] Proxy graphics found.");
+			this.CadObject.ProxyGeometries.AddRange(ProxyGeometry.ReadGeometries(this.ProxyGraphics));
 		}
 	}
 }
