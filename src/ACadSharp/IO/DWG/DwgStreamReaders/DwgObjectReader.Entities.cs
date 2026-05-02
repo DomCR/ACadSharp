@@ -750,9 +750,8 @@ internal partial class DwgObjectReader : DwgSectionIO
 
 			//BL Has break data flag (0 = no break data, 1 = has break data)
 			//Begin break data(optional)
-			bool hasBreakData = this._mergedReaders.ReadBitLong() == 1;
-			table.HasBreadData = hasBreakData;
-			if (hasBreakData)
+			table.HasBreadData = this._mergedReaders.ReadBitLong() == 1;
+			if (table.HasBreadData)
 			{
 				TableEntity.TableBreakData breakData = table.BreakData;
 				//BL Option flags:

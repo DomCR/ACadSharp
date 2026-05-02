@@ -17,6 +17,9 @@ namespace ACadSharp.Entities;
 [DxfSubClass(DxfSubclassMarker.TableEntity)]
 public partial class TableEntity : Insert
 {
+	/// <summary>
+	/// Gets the table break data that defines how the table should be divided across breaks, including spacing, flow direction,
+	/// </summary>
 	public TableBreakData BreakData { get; } = new();
 
 	/// <summary>
@@ -24,6 +27,11 @@ public partial class TableEntity : Insert
 	/// </summary>
 	[DxfCodeValue(DxfReferenceType.Count, 92)]
 	public List<Column> Columns { get { return this.Content.Columns; } }
+
+	/// <summary>
+	/// Gets or sets a value indicating whether bread data is available.
+	/// </summary>
+	public bool HasBreadData { get; set; }
 
 	/// <summary>
 	/// Horizontal direction vector
@@ -116,6 +124,12 @@ public partial class TableEntity : Insert
 		return BoundingBox.Null;
 	}
 
+	/// <summary>
+	/// Retrieves the cell at the specified row and column indices.
+	/// </summary>
+	/// <param name="row">The zero-based index of the row containing the cell to retrieve.</param>
+	/// <param name="column">The zero-based index of the column containing the cell to retrieve.</param>
+	/// <returns>The cell located at the specified row and column.</returns>
 	public Cell GetCell(int row, int column)
 	{
 		return this.Rows[row].Cells[column];
