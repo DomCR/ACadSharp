@@ -49,7 +49,7 @@ public class DxfProperty : DxfPropertyBase<DxfCodeValueAttribute>
 	/// DxfProperty instance.
 	/// </summary>
 	/// <param name="value">The DxfProperty instance from which to copy property information. Cannot be null.</param>
-	public DxfProperty(DxfProperty value) : this(value._property)
+	public DxfProperty(DxfProperty value) : this(value.AssignedCode, value._property)
 	{
 	}
 
