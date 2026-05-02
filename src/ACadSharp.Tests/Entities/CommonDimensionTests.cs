@@ -16,6 +16,7 @@ public abstract class CommonDimensionTests<T> : CommonEntityTests<T>
 		T dim = new T();
 		DimensionStyle style = new DimensionStyle();
 		style.ScaleFactor = 2.0;
+		style.ToleranceZeroHandling = ZeroHandling.ShowZeroFeetSuppressZeroInches;
 
 		dim.SetDimensionOverride(style);
 
