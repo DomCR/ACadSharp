@@ -43,7 +43,6 @@ internal partial class DwgObjectWriter : DwgSectionIO
 			case Material:
 			case UnknownNonGraphicalObject:
 			case VisualStyle:
-			case TableStyle:
 			case ProxyObject:
 			case BlockRepresentationData:
 			case BlockReferenceObjectContextData:
@@ -114,6 +113,42 @@ internal partial class DwgObjectWriter : DwgSectionIO
 				this._writer.WriteVariableText(color.BookName);
 			}
 		}
+	}
+
+	private void writeBorder(TableStyle.CellBorder border)
+	{
+		if (!border.ApplyBorder)
+		{
+			return;
+		}
+
+		//BL 95 Edge flags
+		this._writer.WriteBitLong((int)border.EdgeFlags);
+		//BL 90 Border property override flags
+		this._writer.WriteBitLong((int)border.PropertyOverrideFlags);
+		//BL 91 Border type
+		this._writer.WriteBitLong((int)border.Type);
+		//TC 62 Color
+		this._writer.WriteCmColor(border.Color, this.R2004Pre);
+		//BL 92 Line weight
+		this._writer.WriteBitLong((int)border.LineWeight);
+		//H 40 Line type (hard pointer)
+		//this._writer.HandleReference(DwgReferenceType.HardPointer, border.LineType);
+		this._writer.HandleReference(DwgReferenceType.HardPointer, null);
+		//BL 93 Invisibility: 1 = invisible, 0 = visible.
+		this._writer.WriteBitLong(border.IsInvisible ? 1 : 0);
+		//BD 40 Double line spacing
+		this._writer.WriteBitDouble(border.DoubleLineSpacing);
+	}
+
+	private void writeBorderStyle(TableStyle.CellBorder border)
+	{
+		//Line weight BS 274-279
+		this._writer.WriteBitShort((short)border.LineWeight);
+		//Visible B 284-289 0 = invisible, 1 = visible
+		this._writer.WriteBit(!border.IsInvisible);
+		//Border color CMC 64-69
+		this._writer.WriteCmColor(border.Color, this.R2004Pre);
 	}
 
 	private void writeCadDictionaryWithDefault(CadDictionaryWithDefault dictionary)
@@ -211,6 +246,130 @@ internal partial class DwgObjectWriter : DwgSectionIO
 		{
 			this._writer.WriteBitLong(0);
 		}
+	}
+
+	private void writeCellContentFormat(TableStyle.ContentFormat format)
+	{
+		//20.4.101.3 Content format
+
+		//BL 90 Property override flags
+		this._writer.WriteBitLong((int)format.PropertyOverrideFlags);
+		//BL 91 Property flags. Contains property bit values for property Auto Scale only
+		this._writer.WriteBitLong(format.PropertyFlags);
+		//BL 92 Value data type, see also paragraph 20.4.98.
+		this._writer.WriteBitLong(format.ValueDataType);
+		//BL 93 Value unit type, see also paragraph 20.4.98.
+		this._writer.WriteBitLong(format.ValueUnitType);
+		//TV 300 Value format string
+		this._writer.WriteVariableText(format.ValueFormatString);
+		//BD 40 Rotation
+		this._writer.WriteBitDouble(format.Rotation);
+		//BD 140 Block scale
+		this._writer.WriteBitDouble(format.Scale);
+		//BL  94 Cell alignment
+		this._writer.WriteBitLong(format.Alignment);
+		//TC 62 Content color
+		this._writer.WriteCmColor(format.Color, this.R2004Pre);
+		//H 340 Text style handle (hard pointer)
+		this._writer.HandleReference(DwgReferenceType.HardPointer, format.TextStyle);
+		//BD 144 Text height
+		this._writer.WriteBitDouble(format.TextHeight);
+	}
+
+	private void writeCellStyle(TableStyle.CellStyle cellStyle)
+	{
+		//BL 90 Cell style type
+		this._writer.WriteBitLong((int)cellStyle.Type);
+
+		//BS 170 Data flags, 0 = no data, 1 = data is present
+		this._writer.WriteBitShort((short)(cellStyle.HasData ? 1 : 0));
+		//If data is present
+		if (!cellStyle.HasData)
+		{
+			return;
+		}
+
+		//BL 91 Property override flags. The definition is the same as the content format
+		//propery override flags, see paragraph 20.4.101.3.
+		this._writer.WriteBitLong((int)cellStyle.PropertyOverrideFlags);
+		//BL  92 Merge flags, but may only for bits 0x8000 and 0x10000.
+		this._writer.WriteBitLong((int)cellStyle.TableCellStylePropertyFlags);
+		//TC 62 Background color
+		this._writer.WriteCmColor(cellStyle.BackgroundColor, this.R2004Pre);
+
+		//BL 93 Content layout flags
+		this._writer.WriteBitLong((int)cellStyle.ContentLayoutFlags);
+
+		//Content format fields (see paragraph 20.4.101.3)
+		this.writeCellContentFormat(cellStyle);
+
+		//BS 171 Margin override flags, bit 1 is set if margin overrides are present
+		//If margin overrides are present
+		this._writer.WriteBitShort((short)cellStyle.MarginOverrideFlags);
+		if (cellStyle.MarginOverrideFlags.HasFlag(TableStyle.MarginFlags.Override))
+		{
+			//BD 40 Vertical margin
+			this._writer.WriteBitDouble(cellStyle.VerticalMargin);
+			//BD 40 Horizontal margin
+			this._writer.WriteBitDouble(cellStyle.HorizontalMargin);
+			//BD 40 Bottom margin
+			this._writer.WriteBitDouble(cellStyle.BottomMargin);
+			//BD 40 Right margin
+			this._writer.WriteBitDouble(cellStyle.RightMargin);
+			//BD 40 Margin horizontal spacing
+			this._writer.WriteBitDouble(cellStyle.MarginHorizontalSpacing);
+			//BD 40 Margin vertical spacing
+			this._writer.WriteBitDouble(cellStyle.MarginVerticalSpacing);
+		}
+
+		//BL 94 Number of borders present (0-6)
+		int nborders = 0;
+		if (cellStyle.TopBorder.ApplyBorder)
+		{
+			nborders++;
+		}
+		if (cellStyle.RightBorder.ApplyBorder)
+		{
+			nborders++;
+		}
+		if (cellStyle.BottomBorder.ApplyBorder)
+		{
+			nborders++;
+		}
+		if (cellStyle.LeftBorder.ApplyBorder)
+		{
+			nborders++;
+		}
+		if (cellStyle.VerticalInsideBorder.ApplyBorder)
+		{
+			nborders++;
+		}
+		if (cellStyle.HorizontalInsideBorder.ApplyBorder)
+		{
+			nborders++;
+		}
+
+		this._writer.WriteBitLong(nborders);
+		this.writeBorder(cellStyle.TopBorder);
+		this.writeBorder(cellStyle.RightBorder);
+		this.writeBorder(cellStyle.BottomBorder);
+		this.writeBorder(cellStyle.LeftBorder);
+		this.writeBorder(cellStyle.VerticalInsideBorder);
+		this.writeBorder(cellStyle.HorizontalInsideBorder);
+	}
+
+	private void writeCellStyleWithId(TableStyle.CellStyle cellStyle)
+	{
+		writeCellStyle(cellStyle);
+
+		//BL - Cell style ID, 1 = title, 2 = header, 3 = data, 4 = table (new in R24).
+		//The cell style ID is used by cells, columns, rows to reference a cell style in the
+		//table’s table style.Custom cell style ID’s are numbered starting at 101.
+		this._writer.WriteBitLong(cellStyle.Id);
+		//BL - Cell style class, 1= data, 2 = label. The default value is label.
+		this._writer.WriteBitLong((int)cellStyle.StyleClass);
+		//TV - Cell style name
+		this._writer.WriteVariableText(cellStyle.Name);
 	}
 
 	private void writeDateCadValue(System.DateTime? date)
@@ -920,6 +1079,9 @@ internal partial class DwgObjectWriter : DwgSectionIO
 			case SpatialFilter spatialFilter:
 				this.writeSpatialFilter(spatialFilter);
 				break;
+			case TableStyle tableStyle:
+				this.writeTableStyle(tableStyle);
+				break;
 			case Field field:
 				this.writeField(field);
 				break;
@@ -1074,6 +1236,45 @@ internal partial class DwgObjectWriter : DwgSectionIO
 		this._writer.WriteBitShort((short)vars.Units);
 	}
 
+	private void writeRowCellStyle(TableStyle.CellStyle style)
+	{
+		//Text style ID H 7 Hard pointer.
+		this._writer.HandleReference(DwgReferenceType.HardPointer, style.TextStyle);
+
+		//Text height BD 140
+		this._writer.WriteBitDouble(style.TextHeight);
+		//Text alignment BS 170 Top left = 1, top center = 2, top right = 3, middle
+		//left = 4, middle center = 5, middle right = 6,
+		//bottom left = 7, bottom center = 8, bottom right = 9
+		this._writer.WriteBitShort((short)style.CellAlignment);
+		//Text color CMC 62
+		this._writer.WriteCmColor(style.TextColor, this.R2004Pre);
+		//Fill color CMC 63
+		this._writer.WriteCmColor(style.BackgroundColor, this.R2004Pre);
+		//Background color enabled B 283
+		this._writer.WriteBit(style.IsFillColorOn);
+
+		// Begin repeat 6 times (borders: top, horizontal inside, bottom, left, vertical inside, right, in Begin repeat 6 times
+		// (borders: top, horizontal inside, bottom, left, vertical inside, right, in this order)
+		this.writeBorderStyle(style.TopBorder);
+		this.writeBorderStyle(style.HorizontalInsideBorder);
+		this.writeBorderStyle(style.BottomBorder);
+		this.writeBorderStyle(style.LeftBorder);
+		this.writeBorderStyle(style.VerticalInsideBorder);
+		this.writeBorderStyle(style.RightBorder);
+
+		//R2007+
+		if (this.R2007Plus)
+		{
+			//Data type BL 90 As defined in the ACAD_TABLE entity.
+			this._writer.WriteBitLong(style.ValueDataType);
+			//Data unit type BL 91 As defined in the ACAD_TABLE entity.
+			this._writer.WriteBitLong(style.ValueUnitType);
+			//Format string TV 1
+			this._writer.WriteVariableText(style.ValueFormatString);
+		}
+	}
+
 	private void writeScale(Scale scale)
 	{
 		//BS	70	Unknown(ODA writes 0).
@@ -1185,9 +1386,6 @@ internal partial class DwgObjectWriter : DwgSectionIO
 				return;
 			}
 
-			ms.Write<short>(0);
-			return;
-
 			ms.Write<short>((short)text.Length);
 			ms.Write(text, System.Text.Encoding.Unicode);
 		}
@@ -1201,6 +1399,100 @@ internal partial class DwgObjectWriter : DwgSectionIO
 			ms.Write<short>((short)text.Length);
 			ms.Write((byte)CadUtils.GetCodeIndex((CodePage)this._writer.Encoding.CodePage));
 			ms.Write(text, this._writer.Encoding);
+		}
+	}
+
+	private void writeTableStyle(TableStyle tableStyle)
+	{
+		if (this.R2007Pre)
+		{
+			//TABLESTYLE format until R21
+			//Common:
+			//Description TV 3
+			this._writer.WriteVariableText(tableStyle.Description);
+			//Flow direction BS 70 0 = down, 1 = up
+			this._writer.WriteBitShort((short)tableStyle.FlowDirection);
+			//Bit flags BS 71 Meaning unknown.
+			this._writer.WriteBitShort((short)tableStyle.Flags);
+			//Horizontal cell margin BD 40
+			this._writer.WriteBitDouble(tableStyle.HorizontalCellMargin);
+			//Vertical cell margin BD 41
+			this._writer.WriteBitDouble(tableStyle.VerticalCellMargin);
+			//Suppress title B 280
+			this._writer.WriteBit(tableStyle.SuppressTitle);
+			//Suppress header B 281
+			this._writer.WriteBit(tableStyle.SuppressHeaderRow);
+
+			//Begin repeat 3 times (data, title and header row styles in this order)
+			this.writeRowCellStyle(tableStyle.DataCellStyle);
+			this.writeRowCellStyle(tableStyle.TitleCellStyle);
+			this.writeRowCellStyle(tableStyle.HeaderCellStyle);
+
+			return;
+		}
+
+		//RC - Unknown
+		this._writer.WriteByte(0);
+		//Description TV 3
+		this._writer.WriteVariableText(tableStyle.Description);
+		//BL - Unknown
+		this._writer.WriteBitLong(0);
+		//BL - Unknown
+		this._writer.WriteBitLong(0);
+		//H - Unknown(hard owner)
+		this._writer.HandleReference(DwgReferenceType.HardOwnership, null);
+
+		//… The cell style with name “Table”, see paragraph 20.4.101.4.
+		this.writeCellStyleWithId(tableStyle.TableCellStyle);
+
+		//BL The number of cell styles (should be 3), the non-custom cell styles are present
+		//only in the CELLSTYLEMAP.
+		int nCellStyles = tableStyle.CellStyles.Count;
+		if (tableStyle.TitleCellStyle != null && !tableStyle.CellStyles.Contains(tableStyle.TitleCellStyle))
+		{
+			nCellStyles++;
+		}
+		if (tableStyle.HeaderCellStyle != null && !tableStyle.CellStyles.Contains(tableStyle.HeaderCellStyle))
+		{
+			nCellStyles++;
+		}
+		if (tableStyle.DataCellStyle != null && !tableStyle.CellStyles.Contains(tableStyle.DataCellStyle))
+		{
+			nCellStyles++;
+		}
+
+		this._writer.WriteBitLong(nCellStyles);
+
+		int index = 1;
+		if (tableStyle.TitleCellStyle != null)
+		{
+			this._writer.WriteBitLong(index++);
+			this.writeCellStyleWithId(tableStyle.TitleCellStyle);
+		}
+		if (tableStyle.HeaderCellStyle != null)
+		{
+			this._writer.WriteBitLong(index++);
+			this.writeCellStyleWithId(tableStyle.HeaderCellStyle);
+		}
+		if (tableStyle.DataCellStyle != null)
+		{
+			this._writer.WriteBitLong(index++);
+			this.writeCellStyleWithId(tableStyle.DataCellStyle);
+		}
+
+		index = 101;
+		foreach (var cellStyle in tableStyle.CellStyles)
+		{
+			if (cellStyle != tableStyle.TitleCellStyle
+				&& cellStyle != tableStyle.HeaderCellStyle
+				&& cellStyle != tableStyle.DataCellStyle)
+			{
+				//… The cell style fields, see paragraph 20.4.101.4.
+				//Index starting by 1
+				this._writer.WriteBitLong(index);
+				this.writeCellStyleWithId(cellStyle);
+				index++;
+			}
 		}
 	}
 
