@@ -33,7 +33,7 @@ namespace ACadSharp
 			this.Name = map.Name;
 			foreach (var item in map.DxfProperties)
 			{
-				this.DxfProperties.Add(item.Key, item.Value);
+				this.DxfProperties.Add(item.Key, new DxfProperty(item.Value));
 			}
 		}
 
@@ -52,6 +52,12 @@ namespace ACadSharp
 			return Create(typeof(T));
 		}
 
+		/// <summary>
+		/// Creates a new instance of the DxfClassMap for the specified CAD object type and instance.
+		/// </summary>
+		/// <typeparam name="T">The type of CAD object for which to create the class map. Must inherit from CadObject.</typeparam>
+		/// <param name="obj">The CAD object instance to associate with the created class map.</param>
+		/// <returns>A DxfClassMap instance representing the mapping for the specified CAD object type and instance.</returns>
 		public static DxfClassMap Create<T>(T obj)
 			where T : CadObject
 		{

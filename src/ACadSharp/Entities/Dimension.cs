@@ -323,7 +323,7 @@ namespace ACadSharp.Entities
 		/// <returns></returns>
 		public string GetMeasurementText()
 		{
-			return this.GetMeasurementText(this.Style);
+			return this.GetMeasurementText(this.GetActiveDimensionStyle());
 		}
 
 		/// <summary>
