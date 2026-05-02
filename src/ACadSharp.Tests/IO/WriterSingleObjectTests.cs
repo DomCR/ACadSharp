@@ -87,6 +87,7 @@ public abstract class WriterSingleObjectTests : IOTestsBase
 		Data.Add(new(nameof(SingleCaseGenerator.SPlineCreation)));
 		Data.Add(new(nameof(SingleCaseGenerator.TextAlignment)));
 		Data.Add(new(nameof(SingleCaseGenerator.CreateXRecords)));
+		Data.Add(new(nameof(SingleCaseGenerator.SingleTableEntity)));
 	}
 
 	public WriterSingleObjectTests(ITestOutputHelper output) : base(output)
@@ -1442,6 +1443,17 @@ public abstract class WriterSingleObjectTests : IOTestsBase
 		public void SinglePoint()
 		{
 			this.Document.Entities.Add(new Point(XYZ.Zero));
+		}
+
+		public void SingleTableEntity()
+		{
+			//TODO: Generate a valid table entity, currently it creates an invalid one but it is correctly read by AutoCAD
+			var t = new TableEntity();
+
+			t.Columns.Add(new TableEntity.Column() { Width = 10 });
+			t.Rows.Add(new TableEntity.Row() { Height = 5 });
+
+			this.Document.Entities.Add(t);
 		}
 
 		public void SingleRasterImage()
