@@ -73,7 +73,7 @@ namespace ACadSharp.Objects
 		/// Physical paper height in millimeters.
 		/// </summary>
 		[DxfCodeValue(45)]
-		public double PaperHeight { get; set; }
+		public double PaperHeight { get; set; } = 210;
 
 		/// <summary>
 		/// Paper image origin
@@ -114,7 +114,7 @@ namespace ACadSharp.Objects
 		/// Physical paper width in millimeters.
 		/// </summary>
 		[DxfCodeValue(44)]
-		public double PaperWidth { get; set; }
+		public double PaperWidth { get; set; } = 297;
 
 		/// <summary>
 		/// Plot origin: X value of origin offset in millimeters
