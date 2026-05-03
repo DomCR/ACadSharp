@@ -1,4 +1,5 @@
-﻿using ACadSharp.Tables;
+﻿using ACadSharp.Entities;
+using ACadSharp.Tables;
 using ACadSharp.Tables.Collections;
 using CSMath;
 using System;
@@ -102,10 +103,8 @@ namespace ACadSharp.IO.DXF
 				case VPort vport:
 					this.writeVPort(vport, map.SubClasses[vport.SubclassMarker]);
 					break;
-#if TEST
 				default:
-					throw new NotImplementedException();
-#endif
+					throw new NotImplementedException($"TableEntry not implemented {entry.GetType().FullName}");
 			}
 
 			this.writeExtendedData(entry.ExtendedData);
