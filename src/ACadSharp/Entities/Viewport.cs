@@ -358,7 +358,7 @@ public class Viewport : Entity
 	/// Width in paper space units.
 	/// </summary>
 	[DxfCodeValue(40)]
-	public double Width { get; set; } 
+	public double Width { get; set; }
 
 	public const string ASDK_XREC_ANNOTATION_SCALE_INFO = "ASDK_XREC_ANNOTATION_SCALE_INFO";
 
