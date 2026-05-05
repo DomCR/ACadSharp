@@ -388,19 +388,14 @@ public class BlockRecord : TableEntry, IGeometricEntity
 
 		if (this.SortEntitiesTable != null)
 		{
-			clone.SortEntitiesTable.BlockOwner = clone;
+			clone.XDictionary.Remove(SortEntitiesTable.DictionaryEntryName);
 		}
 
 		clone.Entities = new CadObjectCollection<Entity>(clone);
-		foreach (var item in this.Entities)
+		foreach (var item in this.GetSortedEntities())
 		{
 			var e = (Entity)item.Clone();
 			clone.Entities.Add(e);
-
-			if (this.SortEntitiesTable != null)
-			{
-				clone.SortEntitiesTable.Add(e, this.SortEntitiesTable.GetSorterHandle(item));
-			}
 		}
 
 		clone.BlockEntity = (Block)this.BlockEntity.Clone();
