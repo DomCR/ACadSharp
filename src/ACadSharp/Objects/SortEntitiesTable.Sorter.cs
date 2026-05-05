@@ -1,59 +1,58 @@
 ﻿using ACadSharp.Attributes;
 using ACadSharp.Entities;
 
-namespace ACadSharp.Objects
+namespace ACadSharp.Objects;
+
+public partial class SortEntitiesTable
 {
-	public partial class SortEntitiesTable
+	/// <summary>
+	/// Entity sorter based in their position in the collection.
+	/// </summary>
+	public class Sorter : System.IComparable<Sorter>
 	{
 		/// <summary>
-		/// Entity sorter based in their position in the collection.
+		/// Sorter handle, if this doesn't point to an entity, the value will match with <see cref="Entity"/>'s handle.
 		/// </summary>
-		public class Sorter : System.IComparable<Sorter>
+		[DxfCodeValue(5)]
+		public ulong SortHandle { get; set; }
+
+		/// <summary>
+		/// Entity to set the order to.
+		/// </summary>
+		[DxfCodeValue(331)]
+		public Entity Entity { get; set; }
+
+		/// <summary>
+		/// Sorter constructor with the entity and handle.
+		/// </summary>
+		/// <param name="entity">Entity in the block to be sorted.</param>
+		/// <param name="handle">Sorter handle.</param>
+		public Sorter(Entity entity, ulong handle)
 		{
-			/// <summary>
-			/// Sorter handle, if this doesn't point to an entity, the value will match with <see cref="Entity"/>'s handle.
-			/// </summary>
-			[DxfCodeValue(5)]
-			public ulong SortHandle { get; set; }
+			this.Entity = entity;
+			this.SortHandle = handle;
+		}
 
-			/// <summary>
-			/// Entity to set the order to.
-			/// </summary>
-			[DxfCodeValue(331)]
-			public Entity Entity { get; set; }
+		/// <inheritdoc/>
+		public override string ToString()
+		{
+			return $"{this.SortHandle} | {this.Entity?.ToString()}";
+		}
 
-			/// <summary>
-			/// Sorter constructor with the entity and handle.
-			/// </summary>
-			/// <param name="entity">Entity in the block to be sorted.</param>
-			/// <param name="handle">Sorter handle.</param>
-			public Sorter(Entity entity, ulong handle)
+		/// <inheritdoc/>
+		public int CompareTo(Sorter other)
+		{
+			if (this.SortHandle < other.SortHandle)
 			{
-				this.Entity = entity;
-				this.SortHandle = handle;
+				return -1;
 			}
-
-			/// <inheritdoc/>
-			public override string ToString()
+			else if (this.SortHandle > other.SortHandle)
 			{
-				return $"{this.SortHandle} | {this.Entity?.ToString()}";
+				return 1;
 			}
-
-			/// <inheritdoc/>
-			public int CompareTo(Sorter other)
+			else
 			{
-				if (this.SortHandle < other.SortHandle)
-				{
-					return -1;
-				}
-				else if (this.SortHandle > other.SortHandle)
-				{
-					return 1;
-				}
-				else
-				{
-					return 0;
-				}
+				return 0;
 			}
 		}
 	}
