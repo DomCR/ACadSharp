@@ -137,7 +137,7 @@ public partial class LwPolyline : Entity, IPolyline
 	/// <inheritdoc/>
 	public override CadObject Clone()
 	{
-		LwPolyline clone = (LwPolyline)this.MemberwiseClone();
+		LwPolyline clone = (LwPolyline)base.Clone();
 		foreach (var v in this.Vertices)
 		{
 			clone.Vertices.Add(v.Clone());
