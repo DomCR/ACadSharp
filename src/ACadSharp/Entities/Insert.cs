@@ -407,8 +407,6 @@ public class Insert : Entity
 			{
 				AttributeEntity att = new AttributeEntity(attdef);
 
-				Transform transform = this.GetTransform();
-				att.ApplyTransform(transform);
 				this.Attributes.Add(att);
 			}
 		}
@@ -445,5 +443,12 @@ public class Insert : Entity
 	private void initCollections()
 	{
 		this.Attributes = new SeqendCollection<AttributeEntity>(this);
+		this.Attributes.OnAdd += this.onAddAttribute;
+	}
+
+	private void onAddAttribute(object sender, CollectionChangedEventArgs e)
+	{
+		Transform transform = this.GetTransform();
+		(e.Item as AttributeEntity).ApplyTransform(transform);
 	}
 }
