@@ -138,6 +138,8 @@ public partial class LwPolyline : Entity, IPolyline
 	public override CadObject Clone()
 	{
 		LwPolyline clone = (LwPolyline)base.Clone();
+
+		clone.Vertices = new List<Vertex>();
 		foreach (var v in this.Vertices)
 		{
 			clone.Vertices.Add(v.Clone());
