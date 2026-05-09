@@ -9,7 +9,8 @@
 					]
 				}
 			],
-			"dest": "api"
+			"dest": "api",
+			"filter": "filterConfig.yml"
 		}
 	],
 	"build": {
@@ -19,9 +20,13 @@
 		],
 		"content": [
 			{
+				{
+					"files": [
+						"api/**.yml",
+						"api/index.md"
+					]
+				},
 				"files": [
-					"api/**.yml",
-					"api/index.md",
 					"articles/**.md",
 					"index.md",
 					"toc.yml"

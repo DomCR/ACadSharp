@@ -1,0 +1,34 @@
+name: GitHub Pages Documentation
+
+on:
+  push:
+    branches: [ master ]
+
+permissions:
+  contents: write
+
+jobs:
+  generate:
+    runs-on: windows-latest
+    steps:
+
+    - name: Checkout
+      run: git config --global core.autocrlf true
+    - uses: actions/checkout@v2
+      with: 
+        submodules: true
+
+    - name: Install DocFX
+      run: dotnet tool install -g docfx
+    
+    - name: Build metadata
+      run: docfx docs/docfx.json metadata
+
+    - name: Build site
+      run: docfx docs/docfx.json build
+
+    - name: Publish to GitHub Pages
+      uses: peaceiris/actions-gh-pages@v4
+      with:
+        github_token: ${{ secrets.GITHUB_TOKEN }}
+        publish_dir: docs/_site
