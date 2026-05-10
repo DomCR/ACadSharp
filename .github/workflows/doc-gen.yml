@@ -1,7 +1,7 @@
 name: GitHub Pages Documentation
 
 on:
-  pull_request: # Change to push
+  push:
     branches: [ master ]
 
 permissions:
