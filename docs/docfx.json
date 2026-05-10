@@ -30,7 +30,7 @@
 					"articles/**.md",
 					"articles/index.md",
 					"index.md",
-					"toc.yml"
+					"**/toc.yml"
 				]
 			},
 			{
