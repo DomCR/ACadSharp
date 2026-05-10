@@ -137,10 +137,10 @@ namespace ACadSharp.Objects
 		public BlockContentConnectionType BlockContentConnection { get; set; }
 
 		/// <summary>
-		/// Gets or sets the location of the böock content of the multileader.
+		/// Gets or sets the location of the block content of the multileader.
 		/// </summary>
 		/// <remarks>
-		/// This location is evaluated by AutoCAD from the <see cref="Conn"/>
+		/// This location is evaluated by AutoCAD from the <see cref="BlockContentConnection"/>.
 		/// </remarks>
 		[DxfCodeValue(15, 25, 35)]
 		public XYZ BlockContentLocation { get; set; }
@@ -336,7 +336,7 @@ namespace ACadSharp.Objects
 
 		/// <summary>
 		/// Gets or sets the text alignment, i.e. the alignment of text lines if the a multiline
-		/// text label, relative to the <see cref="Location"/>.
+		/// text label, relative to the <see cref="TextLocation"/>.
 		/// This property overrides the value from <see cref="MultiLeaderStyle"/>
 		/// when the <see cref="MultiLeaderPropertyOverrideFlags.TextAlignment"/> flag is set in the
 		/// <see cref="MultiLeader.PropertyOverrideFlags"/> property.
@@ -346,7 +346,7 @@ namespace ACadSharp.Objects
 		/// <see cref="MultiLeader.TextAlignment"/> and seems always to be consistent with
 		/// <see cref="TextAttachmentPoint"/>.
 		/// </para><para>
-		/// Note that when changing this value the <see cref="Location"/> must be changed
+		/// Note that when changing this value the <see cref="TextLocation"/> must be changed
 		/// accordingly.
 		/// </para>
 		/// </remarks>
@@ -447,9 +447,6 @@ namespace ACadSharp.Objects
 		/// <summary>
 		/// Gets or sets the location of the text label of the multileader.
 		/// </summary>
-		/// <remarks>
-		/// This location is evaluated by AutoCAD from the <see cref="Conn"/>
-		/// </remarks>
 		[DxfCodeValue(12, 22, 32)]
 		public XYZ TextLocation { get; set; }
 
@@ -541,7 +538,7 @@ namespace ACadSharp.Objects
 		public TextAttachmentType TextTopAttachment { get; set; }
 
 		/// <summary>
-		/// Gets a array of 16 doubles containg the complete transformation
+		/// Gets a array of 16 doubles containing the complete transformation
 		/// matrix.
 		/// </summary>
 		/// <remarks>

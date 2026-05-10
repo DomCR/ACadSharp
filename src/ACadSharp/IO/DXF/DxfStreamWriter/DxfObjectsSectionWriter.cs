@@ -1,5 +1,6 @@
 ﻿using ACadSharp.Entities;
 using ACadSharp.Objects;
+using ACadSharp.Objects.AEC;
 using ACadSharp.Objects.Evaluations;
 using CSMath;
 using System;
