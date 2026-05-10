@@ -1,3 +1,5 @@
+- name: Readme
+  href: ~/../README.md
 - name: Articles
   href: articles/
 - name: API

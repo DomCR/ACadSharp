@@ -22,6 +22,9 @@ jobs:
       uses: actions/setup-dotnet@v3
       with:
         dotnet-version: 8.x
+    
+    - name: Update Index
+      run: cp README.md docs/index.md
 
     - name: Install DocFX
       run: dotnet tool install -g docfx
