@@ -6,7 +6,7 @@
       <meta name="viewport" content="width=device-width, initial-scale=1.0">
       <meta name="title" content="Class Wall | ACadSharp ">
       
-      
+      <meta name="description" content="Represents an AEC (Architecture, Engineering and Construction) Wall entity.">
       <link rel="icon" href="../favicon.ico">
       <link rel="stylesheet" href="../public/docfx.min.css">
       <link rel="stylesheet" href="../public/main.css">
@@ -16,7 +16,7 @@
       <meta name="docfx:rel" content="../">
       
       
-      <meta name="docfx:docurl" content="https://github.com/DomCR/ACadSharp/new/1065/merge/apiSpec/new?filename=ACadSharp_Entities_AecObjects_Wall.md&amp;value=---%0Auid%3A%20ACadSharp.Entities.AecObjects.Wall%0Asummary%3A%20&#39;*You%20can%20override%20summary%20for%20the%20API%20here%20using%20*MARKDOWN*%20syntax&#39;%0A---%0A%0A*Please%20type%20below%20more%20information%20about%20this%20API%3A*%0A%0A">
+      <meta name="docfx:docurl" content="https://github.com/DomCR/ACadSharp/new/master/apiSpec/new?filename=ACadSharp_Entities_AecObjects_Wall.md&amp;value=---%0Auid%3A%20ACadSharp.Entities.AecObjects.Wall%0Asummary%3A%20&#39;*You%20can%20override%20summary%20for%20the%20API%20here%20using%20*MARKDOWN*%20syntax&#39;%0A---%0A%0A*Please%20type%20below%20more%20information%20about%20this%20API%3A*%0A%0A">
       <meta name="loc:inThisArticle" content="In this article">
       <meta name="loc:searchResultsCount" content="{count} results for &quot;{query}&quot;">
       <meta name="loc:searchNoResults" content="No results for &quot;{query}&quot;">
@@ -89,7 +89,7 @@
 
 
   <h1 id="ACadSharp_Entities_AecObjects_Wall" data-uid="ACadSharp.Entities.AecObjects.Wall" class="text-break">
-Class Wall  <a class="header-action link-secondary" title="View source" href="https://github.com/DomCR/ACadSharp/blob/1065/merge/src/ACadSharp/Entities/AecObjects/Wall.cs/#L14"><i class="bi bi-code-slash"></i></a>
+Class Wall  <a class="header-action link-secondary" title="View source" href="https://github.com/DomCR/ACadSharp/blob/master/src/ACadSharp/Entities/AecObjects/Wall.cs/#L15"><i class="bi bi-code-slash"></i></a>
   </h1>
 
   <div class="facts text-secondary">
@@ -97,7 +97,8 @@ Class Wall  <a class="header-action link-secondary" title="View source" href="ht
   <dl><dt>Assembly</dt><dd>ACadSharp.dll</dd></dl>
   </div>
 
-  <div class="markdown summary"></div>
+  <div class="markdown summary"><p>Represents an AEC (Architecture, Engineering and Construction) Wall entity.</p>
+</div>
   <div class="markdown conceptual"></div>
 
   <div class="codewrapper">
@@ -273,6 +274,10 @@ public class Wall : Entity, IEntity, IHandledCadObject, IGeometricEntity</code><
 
 
 
+  <h2 id="ACadSharp_Entities_AecObjects_Wall_remarks">Remarks</h2>
+  <div class="markdown level0 remarks"><p>AEC Wall entities can only be stored in DWG files, not in DXF files.
+DXF files may contain the class definition but not the actual entity instances.</p>
+</div>
 
 
   <h2 class="section" id="properties">Properties
@@ -283,7 +288,7 @@ public class Wall : Entity, IEntity, IHandledCadObject, IGeometricEntity</code><
 
   <h3 id="ACadSharp_Entities_AecObjects_Wall_BaseHeight" data-uid="ACadSharp.Entities.AecObjects.Wall.BaseHeight">
   BaseHeight
-  <a class="header-action link-secondary" title="View source" href="https://github.com/DomCR/ACadSharp/blob/1065/merge/src/ACadSharp/Entities/AecObjects/Wall.cs/#L21"><i class="bi bi-code-slash"></i></a>
+  <a class="header-action link-secondary" title="View source" href="https://github.com/DomCR/ACadSharp/blob/master/src/ACadSharp/Entities/AecObjects/Wall.cs/#L22"><i class="bi bi-code-slash"></i></a>
   </h3>
 
   <div class="markdown level1 summary"><p>Base height of the wall.</p>
@@ -315,7 +320,7 @@ public class Wall : Entity, IEntity, IHandledCadObject, IGeometricEntity</code><
 
   <h3 id="ACadSharp_Entities_AecObjects_Wall_BinRecord" data-uid="ACadSharp.Entities.AecObjects.Wall.BinRecord">
   BinRecord
-  <a class="header-action link-secondary" title="View source" href="https://github.com/DomCR/ACadSharp/blob/1065/merge/src/ACadSharp/Entities/AecObjects/Wall.cs/#L26"><i class="bi bi-code-slash"></i></a>
+  <a class="header-action link-secondary" title="View source" href="https://github.com/DomCR/ACadSharp/blob/master/src/ACadSharp/Entities/AecObjects/Wall.cs/#L27"><i class="bi bi-code-slash"></i></a>
   </h3>
 
   <div class="markdown level1 summary"><p>Reference to the BinRecord containing wall-specific data</p>
@@ -332,7 +337,7 @@ public class Wall : Entity, IEntity, IHandledCadObject, IGeometricEntity</code><
 
   <h4 class="section">Property Value</h4>
   <dl class="parameters">
-    <dt><a class="xref" href="ACadSharp.Objects.AecBinRecord.html">AecBinRecord</a></dt>
+    <dt><a class="xref" href="ACadSharp.Objects.AEC.AecBinRecord.html">AecBinRecord</a></dt>
     <dd></dd>
   </dl>
 
@@ -347,7 +352,7 @@ public class Wall : Entity, IEntity, IHandledCadObject, IGeometricEntity</code><
 
   <h3 id="ACadSharp_Entities_AecObjects_Wall_BinRecordHandle" data-uid="ACadSharp.Entities.AecObjects.Wall.BinRecordHandle">
   BinRecordHandle
-  <a class="header-action link-secondary" title="View source" href="https://github.com/DomCR/ACadSharp/blob/1065/merge/src/ACadSharp/Entities/AecObjects/Wall.cs/#L35"><i class="bi bi-code-slash"></i></a>
+  <a class="header-action link-secondary" title="View source" href="https://github.com/DomCR/ACadSharp/blob/master/src/ACadSharp/Entities/AecObjects/Wall.cs/#L36"><i class="bi bi-code-slash"></i></a>
   </h3>
 
   <div class="markdown level1 summary"><p>Handle reference to the AcAecBinRecord object containing the actual wall geometry data.</p>
@@ -383,7 +388,7 @@ properties in a proprietary binary format.</p>
 
   <h3 id="ACadSharp_Entities_AecObjects_Wall_CleanupGroup" data-uid="ACadSharp.Entities.AecObjects.Wall.CleanupGroup">
   CleanupGroup
-  <a class="header-action link-secondary" title="View source" href="https://github.com/DomCR/ACadSharp/blob/1065/merge/src/ACadSharp/Entities/AecObjects/Wall.cs/#L40"><i class="bi bi-code-slash"></i></a>
+  <a class="header-action link-secondary" title="View source" href="https://github.com/DomCR/ACadSharp/blob/master/src/ACadSharp/Entities/AecObjects/Wall.cs/#L41"><i class="bi bi-code-slash"></i></a>
   </h3>
 
   <div class="markdown level1 summary"><p>Reference to the cleanup group that manages wall intersections and cleanup operations.</p>
@@ -415,7 +420,7 @@ properties in a proprietary binary format.</p>
 
   <h3 id="ACadSharp_Entities_AecObjects_Wall_CleanupGroupHandle" data-uid="ACadSharp.Entities.AecObjects.Wall.CleanupGroupHandle">
   CleanupGroupHandle
-  <a class="header-action link-secondary" title="View source" href="https://github.com/DomCR/ACadSharp/blob/1065/merge/src/ACadSharp/Entities/AecObjects/Wall.cs/#L45"><i class="bi bi-code-slash"></i></a>
+  <a class="header-action link-secondary" title="View source" href="https://github.com/DomCR/ACadSharp/blob/master/src/ACadSharp/Entities/AecObjects/Wall.cs/#L46"><i class="bi bi-code-slash"></i></a>
   </h3>
 
   <div class="markdown level1 summary"><p>Handle reference to the cleanup group object.</p>
@@ -447,7 +452,7 @@ properties in a proprietary binary format.</p>
 
   <h3 id="ACadSharp_Entities_AecObjects_Wall_EndPoint" data-uid="ACadSharp.Entities.AecObjects.Wall.EndPoint">
   EndPoint
-  <a class="header-action link-secondary" title="View source" href="https://github.com/DomCR/ACadSharp/blob/1065/merge/src/ACadSharp/Entities/AecObjects/Wall.cs/#L50"><i class="bi bi-code-slash"></i></a>
+  <a class="header-action link-secondary" title="View source" href="https://github.com/DomCR/ACadSharp/blob/master/src/ACadSharp/Entities/AecObjects/Wall.cs/#L51"><i class="bi bi-code-slash"></i></a>
   </h3>
 
   <div class="markdown level1 summary"><p>End position of the wall.</p>
@@ -479,7 +484,7 @@ properties in a proprietary binary format.</p>
 
   <h3 id="ACadSharp_Entities_AecObjects_Wall_Height" data-uid="ACadSharp.Entities.AecObjects.Wall.Height">
   Height
-  <a class="header-action link-secondary" title="View source" href="https://github.com/DomCR/ACadSharp/blob/1065/merge/src/ACadSharp/Entities/AecObjects/Wall.cs/#L52"><i class="bi bi-code-slash"></i></a>
+  <a class="header-action link-secondary" title="View source" href="https://github.com/DomCR/ACadSharp/blob/master/src/ACadSharp/Entities/AecObjects/Wall.cs/#L53"><i class="bi bi-code-slash"></i></a>
   </h3>
 
   <div class="markdown level1 summary"></div>
@@ -510,7 +515,7 @@ properties in a proprietary binary format.</p>
 
   <h3 id="ACadSharp_Entities_AecObjects_Wall_Justification" data-uid="ACadSharp.Entities.AecObjects.Wall.Justification">
   Justification
-  <a class="header-action link-secondary" title="View source" href="https://github.com/DomCR/ACadSharp/blob/1065/merge/src/ACadSharp/Entities/AecObjects/Wall.cs/#L57"><i class="bi bi-code-slash"></i></a>
+  <a class="header-action link-secondary" title="View source" href="https://github.com/DomCR/ACadSharp/blob/master/src/ACadSharp/Entities/AecObjects/Wall.cs/#L58"><i class="bi bi-code-slash"></i></a>
   </h3>
 
   <div class="markdown level1 summary"><p>Wall justification (e.g., Baseline, Left, Center, Right).</p>
@@ -542,7 +547,7 @@ properties in a proprietary binary format.</p>
 
   <h3 id="ACadSharp_Entities_AecObjects_Wall_Length" data-uid="ACadSharp.Entities.AecObjects.Wall.Length">
   Length
-  <a class="header-action link-secondary" title="View source" href="https://github.com/DomCR/ACadSharp/blob/1065/merge/src/ACadSharp/Entities/AecObjects/Wall.cs/#L62"><i class="bi bi-code-slash"></i></a>
+  <a class="header-action link-secondary" title="View source" href="https://github.com/DomCR/ACadSharp/blob/master/src/ACadSharp/Entities/AecObjects/Wall.cs/#L63"><i class="bi bi-code-slash"></i></a>
   </h3>
 
   <div class="markdown level1 summary"><p>Length of the wall.</p>
@@ -574,7 +579,7 @@ properties in a proprietary binary format.</p>
 
   <h3 id="ACadSharp_Entities_AecObjects_Wall_Normal" data-uid="ACadSharp.Entities.AecObjects.Wall.Normal">
   Normal
-  <a class="header-action link-secondary" title="View source" href="https://github.com/DomCR/ACadSharp/blob/1065/merge/src/ACadSharp/Entities/AecObjects/Wall.cs/#L64"><i class="bi bi-code-slash"></i></a>
+  <a class="header-action link-secondary" title="View source" href="https://github.com/DomCR/ACadSharp/blob/master/src/ACadSharp/Entities/AecObjects/Wall.cs/#L65"><i class="bi bi-code-slash"></i></a>
   </h3>
 
   <div class="markdown level1 summary"></div>
@@ -605,7 +610,7 @@ properties in a proprietary binary format.</p>
 
   <h3 id="ACadSharp_Entities_AecObjects_Wall_ObjectName" data-uid="ACadSharp.Entities.AecObjects.Wall.ObjectName">
   ObjectName
-  <a class="header-action link-secondary" title="View source" href="https://github.com/DomCR/ACadSharp/blob/1065/merge/src/ACadSharp/Entities/AecObjects/Wall.cs/#L67"><i class="bi bi-code-slash"></i></a>
+  <a class="header-action link-secondary" title="View source" href="https://github.com/DomCR/ACadSharp/blob/master/src/ACadSharp/Entities/AecObjects/Wall.cs/#L68"><i class="bi bi-code-slash"></i></a>
   </h3>
 
   <div class="markdown level1 summary"><p>The CAD class name of an object.</p>
@@ -637,7 +642,7 @@ properties in a proprietary binary format.</p>
 
   <h3 id="ACadSharp_Entities_AecObjects_Wall_ObjectType" data-uid="ACadSharp.Entities.AecObjects.Wall.ObjectType">
   ObjectType
-  <a class="header-action link-secondary" title="View source" href="https://github.com/DomCR/ACadSharp/blob/1065/merge/src/ACadSharp/Entities/AecObjects/Wall.cs/#L69"><i class="bi bi-code-slash"></i></a>
+  <a class="header-action link-secondary" title="View source" href="https://github.com/DomCR/ACadSharp/blob/master/src/ACadSharp/Entities/AecObjects/Wall.cs/#L70"><i class="bi bi-code-slash"></i></a>
   </h3>
 
   <div class="markdown level1 summary"><p>Get the object type.</p>
@@ -669,7 +674,7 @@ properties in a proprietary binary format.</p>
 
   <h3 id="ACadSharp_Entities_AecObjects_Wall_RawData" data-uid="ACadSharp.Entities.AecObjects.Wall.RawData">
   RawData
-  <a class="header-action link-secondary" title="View source" href="https://github.com/DomCR/ACadSharp/blob/1065/merge/src/ACadSharp/Entities/AecObjects/Wall.cs/#L71"><i class="bi bi-code-slash"></i></a>
+  <a class="header-action link-secondary" title="View source" href="https://github.com/DomCR/ACadSharp/blob/master/src/ACadSharp/Entities/AecObjects/Wall.cs/#L72"><i class="bi bi-code-slash"></i></a>
   </h3>
 
   <div class="markdown level1 summary"></div>
@@ -700,7 +705,7 @@ properties in a proprietary binary format.</p>
 
   <h3 id="ACadSharp_Entities_AecObjects_Wall_StartPoint" data-uid="ACadSharp.Entities.AecObjects.Wall.StartPoint">
   StartPoint
-  <a class="header-action link-secondary" title="View source" href="https://github.com/DomCR/ACadSharp/blob/1065/merge/src/ACadSharp/Entities/AecObjects/Wall.cs/#L76"><i class="bi bi-code-slash"></i></a>
+  <a class="header-action link-secondary" title="View source" href="https://github.com/DomCR/ACadSharp/blob/master/src/ACadSharp/Entities/AecObjects/Wall.cs/#L77"><i class="bi bi-code-slash"></i></a>
   </h3>
 
   <div class="markdown level1 summary"><p>Start position of the wall (insertion point).</p>
@@ -732,7 +737,7 @@ properties in a proprietary binary format.</p>
 
   <h3 id="ACadSharp_Entities_AecObjects_Wall_Style" data-uid="ACadSharp.Entities.AecObjects.Wall.Style">
   Style
-  <a class="header-action link-secondary" title="View source" href="https://github.com/DomCR/ACadSharp/blob/1065/merge/src/ACadSharp/Entities/AecObjects/Wall.cs/#L81"><i class="bi bi-code-slash"></i></a>
+  <a class="header-action link-secondary" title="View source" href="https://github.com/DomCR/ACadSharp/blob/master/src/ACadSharp/Entities/AecObjects/Wall.cs/#L82"><i class="bi bi-code-slash"></i></a>
   </h3>
 
   <div class="markdown level1 summary"><p>Reference to the wall style that defines this wall's appearance and properties.</p>
@@ -764,7 +769,7 @@ properties in a proprietary binary format.</p>
 
   <h3 id="ACadSharp_Entities_AecObjects_Wall_SubclassMarker" data-uid="ACadSharp.Entities.AecObjects.Wall.SubclassMarker">
   SubclassMarker
-  <a class="header-action link-secondary" title="View source" href="https://github.com/DomCR/ACadSharp/blob/1065/merge/src/ACadSharp/Entities/AecObjects/Wall.cs/#L84"><i class="bi bi-code-slash"></i></a>
+  <a class="header-action link-secondary" title="View source" href="https://github.com/DomCR/ACadSharp/blob/master/src/ACadSharp/Entities/AecObjects/Wall.cs/#L85"><i class="bi bi-code-slash"></i></a>
   </h3>
 
   <div class="markdown level1 summary"><p>Object Subclass marker.</p>
@@ -796,7 +801,7 @@ properties in a proprietary binary format.</p>
 
   <h3 id="ACadSharp_Entities_AecObjects_Wall_Version" data-uid="ACadSharp.Entities.AecObjects.Wall.Version">
   Version
-  <a class="header-action link-secondary" title="View source" href="https://github.com/DomCR/ACadSharp/blob/1065/merge/src/ACadSharp/Entities/AecObjects/Wall.cs/#L89"><i class="bi bi-code-slash"></i></a>
+  <a class="header-action link-secondary" title="View source" href="https://github.com/DomCR/ACadSharp/blob/master/src/ACadSharp/Entities/AecObjects/Wall.cs/#L90"><i class="bi bi-code-slash"></i></a>
   </h3>
 
   <div class="markdown level1 summary"><p>AEC object version number (if available from DWG).</p>
@@ -828,7 +833,7 @@ properties in a proprietary binary format.</p>
 
   <h3 id="ACadSharp_Entities_AecObjects_Wall_Width" data-uid="ACadSharp.Entities.AecObjects.Wall.Width">
   Width
-  <a class="header-action link-secondary" title="View source" href="https://github.com/DomCR/ACadSharp/blob/1065/merge/src/ACadSharp/Entities/AecObjects/Wall.cs/#L94"><i class="bi bi-code-slash"></i></a>
+  <a class="header-action link-secondary" title="View source" href="https://github.com/DomCR/ACadSharp/blob/master/src/ACadSharp/Entities/AecObjects/Wall.cs/#L95"><i class="bi bi-code-slash"></i></a>
   </h3>
 
   <div class="markdown level1 summary"><p>Wall width (thickness).</p>
@@ -864,7 +869,7 @@ properties in a proprietary binary format.</p>
 
   <h3 id="ACadSharp_Entities_AecObjects_Wall_ApplyTransform_CSMath_Transform_" data-uid="ACadSharp.Entities.AecObjects.Wall.ApplyTransform(CSMath.Transform)">
   ApplyTransform(Transform)
-  <a class="header-action link-secondary" title="View source" href="https://github.com/DomCR/ACadSharp/blob/1065/merge/src/ACadSharp/Entities/AecObjects/Wall.cs/#L96"><i class="bi bi-code-slash"></i></a>
+  <a class="header-action link-secondary" title="View source" href="https://github.com/DomCR/ACadSharp/blob/master/src/ACadSharp/Entities/AecObjects/Wall.cs/#L97"><i class="bi bi-code-slash"></i></a>
   </h3>
 
   <div class="markdown level1 summary"><p>Apply a transform matrix to this entity.</p>
@@ -896,7 +901,7 @@ properties in a proprietary binary format.</p>
 
   <h3 id="ACadSharp_Entities_AecObjects_Wall_GetBoundingBox" data-uid="ACadSharp.Entities.AecObjects.Wall.GetBoundingBox">
   GetBoundingBox()
-  <a class="header-action link-secondary" title="View source" href="https://github.com/DomCR/ACadSharp/blob/1065/merge/src/ACadSharp/Entities/AecObjects/Wall.cs/#L103"><i class="bi bi-code-slash"></i></a>
+  <a class="header-action link-secondary" title="View source" href="https://github.com/DomCR/ACadSharp/blob/master/src/ACadSharp/Entities/AecObjects/Wall.cs/#L104"><i class="bi bi-code-slash"></i></a>
   </h3>
 
   <div class="markdown level1 summary"><p>Gets the bounding box aligned with the axis XYZ that occupies this entity.</p>
@@ -929,7 +934,7 @@ properties in a proprietary binary format.</p>
 </article>
 
         <div class="contribution d-print-none">
-          <a href="https://github.com/DomCR/ACadSharp/blob/1065/merge/src/ACadSharp/Entities/AecObjects/Wall.cs/#L14" class="edit-link">Edit this page</a>
+          <a href="https://github.com/DomCR/ACadSharp/blob/master/src/ACadSharp/Entities/AecObjects/Wall.cs/#L15" class="edit-link">Edit this page</a>
         </div>
 
 

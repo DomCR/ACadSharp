@@ -6,7 +6,7 @@
       <meta name="viewport" content="width=device-width, initial-scale=1.0">
       <meta name="title" content="Class AecBinRecord | ACadSharp ">
       
-      
+      <meta name="description" content="Represents an AcAecBinRecord object used by AEC (Architecture, Engineering and Construction) entities.">
       <link rel="icon" href="../favicon.ico">
       <link rel="stylesheet" href="../public/docfx.min.css">
       <link rel="stylesheet" href="../public/main.css">
@@ -16,7 +16,7 @@
       <meta name="docfx:rel" content="../">
       
       
-      <meta name="docfx:docurl" content="https://github.com/DomCR/ACadSharp/new/1065/merge/apiSpec/new?filename=ACadSharp_Objects_AecBinRecord.md&amp;value=---%0Auid%3A%20ACadSharp.Objects.AecBinRecord%0Asummary%3A%20&#39;*You%20can%20override%20summary%20for%20the%20API%20here%20using%20*MARKDOWN*%20syntax&#39;%0A---%0A%0A*Please%20type%20below%20more%20information%20about%20this%20API%3A*%0A%0A">
+      <meta name="docfx:docurl" content="https://github.com/DomCR/ACadSharp/new/master/apiSpec/new?filename=ACadSharp_Objects_AEC_AecBinRecord.md&amp;value=---%0Auid%3A%20ACadSharp.Objects.AEC.AecBinRecord%0Asummary%3A%20&#39;*You%20can%20override%20summary%20for%20the%20API%20here%20using%20*MARKDOWN*%20syntax&#39;%0A---%0A%0A*Please%20type%20below%20more%20information%20about%20this%20API%3A*%0A%0A">
       <meta name="loc:inThisArticle" content="In this article">
       <meta name="loc:searchResultsCount" content="{count} results for &quot;{query}&quot;">
       <meta name="loc:searchNoResults" content="No results for &quot;{query}&quot;">
@@ -84,20 +84,21 @@
           <nav id="breadcrumb"></nav>
         </div>
 
-        <article data-uid="ACadSharp.Objects.AecBinRecord">
+        <article data-uid="ACadSharp.Objects.AEC.AecBinRecord">
 
 
 
-  <h1 id="ACadSharp_Objects_AecBinRecord" data-uid="ACadSharp.Objects.AecBinRecord" class="text-break">
-Class AecBinRecord  <a class="header-action link-secondary" title="View source" href="https://github.com/DomCR/ACadSharp/blob/1065/merge/src/ACadSharp/Objects/AEC/AecBinRecord.cs/#L13"><i class="bi bi-code-slash"></i></a>
+  <h1 id="ACadSharp_Objects_AEC_AecBinRecord" data-uid="ACadSharp.Objects.AEC.AecBinRecord" class="text-break">
+Class AecBinRecord  <a class="header-action link-secondary" title="View source" href="https://github.com/DomCR/ACadSharp/blob/master/src/ACadSharp/Objects/AEC/AecBinRecord.cs/#L13"><i class="bi bi-code-slash"></i></a>
   </h1>
 
   <div class="facts text-secondary">
-    <dl><dt>Namespace</dt><dd><a class="xref" href="ACadSharp.html">ACadSharp</a>.<a class="xref" href="ACadSharp.Objects.html">Objects</a></dd></dl>
+    <dl><dt>Namespace</dt><dd><a class="xref" href="ACadSharp.html">ACadSharp</a>.<a class="xref" href="ACadSharp.Objects.html">Objects</a>.<a class="xref" href="ACadSharp.Objects.AEC.html">AEC</a></dd></dl>
   <dl><dt>Assembly</dt><dd>ACadSharp.dll</dd></dl>
   </div>
 
-  <div class="markdown summary"></div>
+  <div class="markdown summary"><p>Represents an AcAecBinRecord object used by AEC (Architecture, Engineering and Construction) entities.</p>
+</div>
   <div class="markdown conceptual"></div>
 
   <div class="codewrapper">
@@ -212,17 +213,22 @@ public class AecBinRecord : NonGraphicalObject, IHandledCadObject, INamedCadObje
 
 
 
+  <h2 id="ACadSharp_Objects_AEC_AecBinRecord_remarks">Remarks</h2>
+  <div class="markdown level0 remarks"><p>AcAecBinRecord objects store the actual geometry and property data for AEC entities
+like AEC_WALL, AEC_DOOR, AEC_WINDOW, etc. The parent AEC entity contains a reference
+to this object which holds the actual data in a proprietary binary format.</p>
+</div>
 
 
   <h2 class="section" id="properties">Properties
 </h2>
 
 
-  <a id="ACadSharp_Objects_AecBinRecord_BinaryData_" data-uid="ACadSharp.Objects.AecBinRecord.BinaryData*"></a>
+  <a id="ACadSharp_Objects_AEC_AecBinRecord_BinaryData_" data-uid="ACadSharp.Objects.AEC.AecBinRecord.BinaryData*"></a>
 
-  <h3 id="ACadSharp_Objects_AecBinRecord_BinaryData" data-uid="ACadSharp.Objects.AecBinRecord.BinaryData">
+  <h3 id="ACadSharp_Objects_AEC_AecBinRecord_BinaryData" data-uid="ACadSharp.Objects.AEC.AecBinRecord.BinaryData">
   BinaryData
-  <a class="header-action link-secondary" title="View source" href="https://github.com/DomCR/ACadSharp/blob/1065/merge/src/ACadSharp/Objects/AEC/AecBinRecord.cs/#L34"><i class="bi bi-code-slash"></i></a>
+  <a class="header-action link-secondary" title="View source" href="https://github.com/DomCR/ACadSharp/blob/master/src/ACadSharp/Objects/AEC/AecBinRecord.cs/#L34"><i class="bi bi-code-slash"></i></a>
   </h3>
 
   <div class="markdown level1 summary"><p>Binary data containing the actual AEC object properties.
@@ -251,11 +257,11 @@ The format is proprietary and undocumented.</p>
 
 
 
-  <a id="ACadSharp_Objects_AecBinRecord_Name_" data-uid="ACadSharp.Objects.AecBinRecord.Name*"></a>
+  <a id="ACadSharp_Objects_AEC_AecBinRecord_Name_" data-uid="ACadSharp.Objects.AEC.AecBinRecord.Name*"></a>
 
-  <h3 id="ACadSharp_Objects_AecBinRecord_Name" data-uid="ACadSharp.Objects.AecBinRecord.Name">
+  <h3 id="ACadSharp_Objects_AEC_AecBinRecord_Name" data-uid="ACadSharp.Objects.AEC.AecBinRecord.Name">
   Name
-  <a class="header-action link-secondary" title="View source" href="https://github.com/DomCR/ACadSharp/blob/1065/merge/src/ACadSharp/Objects/AEC/AecBinRecord.cs/#L39"><i class="bi bi-code-slash"></i></a>
+  <a class="header-action link-secondary" title="View source" href="https://github.com/DomCR/ACadSharp/blob/master/src/ACadSharp/Objects/AEC/AecBinRecord.cs/#L39"><i class="bi bi-code-slash"></i></a>
   </h3>
 
   <div class="markdown level1 summary"><p>Optional name/identifier for this binary record.</p>
@@ -283,11 +289,11 @@ The format is proprietary and undocumented.</p>
 
 
 
-  <a id="ACadSharp_Objects_AecBinRecord_ObjectName_" data-uid="ACadSharp.Objects.AecBinRecord.ObjectName*"></a>
+  <a id="ACadSharp_Objects_AEC_AecBinRecord_ObjectName_" data-uid="ACadSharp.Objects.AEC.AecBinRecord.ObjectName*"></a>
 
-  <h3 id="ACadSharp_Objects_AecBinRecord_ObjectName" data-uid="ACadSharp.Objects.AecBinRecord.ObjectName">
+  <h3 id="ACadSharp_Objects_AEC_AecBinRecord_ObjectName" data-uid="ACadSharp.Objects.AEC.AecBinRecord.ObjectName">
   ObjectName
-  <a class="header-action link-secondary" title="View source" href="https://github.com/DomCR/ACadSharp/blob/1065/merge/src/ACadSharp/Objects/AEC/AecBinRecord.cs/#L21"><i class="bi bi-code-slash"></i></a>
+  <a class="header-action link-secondary" title="View source" href="https://github.com/DomCR/ACadSharp/blob/master/src/ACadSharp/Objects/AEC/AecBinRecord.cs/#L21"><i class="bi bi-code-slash"></i></a>
   </h3>
 
   <div class="markdown level1 summary"><p>The CAD class name of an object.</p>
@@ -315,11 +321,11 @@ The format is proprietary and undocumented.</p>
 
 
 
-  <a id="ACadSharp_Objects_AecBinRecord_ObjectType_" data-uid="ACadSharp.Objects.AecBinRecord.ObjectType*"></a>
+  <a id="ACadSharp_Objects_AEC_AecBinRecord_ObjectType_" data-uid="ACadSharp.Objects.AEC.AecBinRecord.ObjectType*"></a>
 
-  <h3 id="ACadSharp_Objects_AecBinRecord_ObjectType" data-uid="ACadSharp.Objects.AecBinRecord.ObjectType">
+  <h3 id="ACadSharp_Objects_AEC_AecBinRecord_ObjectType" data-uid="ACadSharp.Objects.AEC.AecBinRecord.ObjectType">
   ObjectType
-  <a class="header-action link-secondary" title="View source" href="https://github.com/DomCR/ACadSharp/blob/1065/merge/src/ACadSharp/Objects/AEC/AecBinRecord.cs/#L18"><i class="bi bi-code-slash"></i></a>
+  <a class="header-action link-secondary" title="View source" href="https://github.com/DomCR/ACadSharp/blob/master/src/ACadSharp/Objects/AEC/AecBinRecord.cs/#L18"><i class="bi bi-code-slash"></i></a>
   </h3>
 
   <div class="markdown level1 summary"><p>Get the object type.</p>
@@ -347,11 +353,11 @@ The format is proprietary and undocumented.</p>
 
 
 
-  <a id="ACadSharp_Objects_AecBinRecord_SubclassMarker_" data-uid="ACadSharp.Objects.AecBinRecord.SubclassMarker*"></a>
+  <a id="ACadSharp_Objects_AEC_AecBinRecord_SubclassMarker_" data-uid="ACadSharp.Objects.AEC.AecBinRecord.SubclassMarker*"></a>
 
-  <h3 id="ACadSharp_Objects_AecBinRecord_SubclassMarker" data-uid="ACadSharp.Objects.AecBinRecord.SubclassMarker">
+  <h3 id="ACadSharp_Objects_AEC_AecBinRecord_SubclassMarker" data-uid="ACadSharp.Objects.AEC.AecBinRecord.SubclassMarker">
   SubclassMarker
-  <a class="header-action link-secondary" title="View source" href="https://github.com/DomCR/ACadSharp/blob/1065/merge/src/ACadSharp/Objects/AEC/AecBinRecord.cs/#L23"><i class="bi bi-code-slash"></i></a>
+  <a class="header-action link-secondary" title="View source" href="https://github.com/DomCR/ACadSharp/blob/master/src/ACadSharp/Objects/AEC/AecBinRecord.cs/#L23"><i class="bi bi-code-slash"></i></a>
   </h3>
 
   <div class="markdown level1 summary"><p>Object Subclass marker.</p>
@@ -379,11 +385,11 @@ The format is proprietary and undocumented.</p>
 
 
 
-  <a id="ACadSharp_Objects_AecBinRecord_Version_" data-uid="ACadSharp.Objects.AecBinRecord.Version*"></a>
+  <a id="ACadSharp_Objects_AEC_AecBinRecord_Version_" data-uid="ACadSharp.Objects.AEC.AecBinRecord.Version*"></a>
 
-  <h3 id="ACadSharp_Objects_AecBinRecord_Version" data-uid="ACadSharp.Objects.AecBinRecord.Version">
+  <h3 id="ACadSharp_Objects_AEC_AecBinRecord_Version" data-uid="ACadSharp.Objects.AEC.AecBinRecord.Version">
   Version
-  <a class="header-action link-secondary" title="View source" href="https://github.com/DomCR/ACadSharp/blob/1065/merge/src/ACadSharp/Objects/AEC/AecBinRecord.cs/#L28"><i class="bi bi-code-slash"></i></a>
+  <a class="header-action link-secondary" title="View source" href="https://github.com/DomCR/ACadSharp/blob/master/src/ACadSharp/Objects/AEC/AecBinRecord.cs/#L28"><i class="bi bi-code-slash"></i></a>
   </h3>
 
   <div class="markdown level1 summary"><p>Version number of the binary record format.</p>
@@ -415,7 +421,7 @@ The format is proprietary and undocumented.</p>
 </article>
 
         <div class="contribution d-print-none">
-          <a href="https://github.com/DomCR/ACadSharp/blob/1065/merge/src/ACadSharp/Objects/AEC/AecBinRecord.cs/#L13" class="edit-link">Edit this page</a>
+          <a href="https://github.com/DomCR/ACadSharp/blob/master/src/ACadSharp/Objects/AEC/AecBinRecord.cs/#L13" class="edit-link">Edit this page</a>
         </div>
 
 

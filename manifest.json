@@ -554,7 +554,7 @@
       "Uid": null,
       "IsMRef": true,
       "Title": "ACadSharp.Entities.AecObjects.Wall",
-      "Summary": null
+      "Summary": "<p sourcefile=\"api/ACadSharp.Entities.AecObjects.Wall.yml\" sourcestartlinenumber=\"1\">Represents an AEC (Architecture, Engineering and Construction) Wall entity.</p>\n"
     },
     {
       "type": "ManagedReference",
@@ -3442,6 +3442,34 @@
     },
     {
       "type": "ManagedReference",
+      "source_relative_path": "api/ACadSharp.Objects.AEC.AecBinRecord.yml",
+      "output": {
+        ".html": {
+          "relative_path": "api/ACadSharp.Objects.AEC.AecBinRecord.html"
+        }
+      },
+      "version": "",
+      "Uid": null,
+      "IsMRef": true,
+      "Title": "ACadSharp.Objects.AEC.AecBinRecord",
+      "Summary": "<p sourcefile=\"api/ACadSharp.Objects.AEC.AecBinRecord.yml\" sourcestartlinenumber=\"1\">Represents an AcAecBinRecord object used by AEC (Architecture, Engineering and Construction) entities.</p>\n"
+    },
+    {
+      "type": "ManagedReference",
+      "source_relative_path": "api/ACadSharp.Objects.AEC.yml",
+      "output": {
+        ".html": {
+          "relative_path": "api/ACadSharp.Objects.AEC.html"
+        }
+      },
+      "version": "",
+      "Uid": null,
+      "IsMRef": true,
+      "Title": "ACadSharp.Objects.AEC",
+      "Summary": null
+    },
+    {
+      "type": "ManagedReference",
       "source_relative_path": "api/ACadSharp.Objects.AcdbPlaceHolder.yml",
       "output": {
         ".html": {
@@ -3453,20 +3481,6 @@
       "IsMRef": true,
       "Title": "ACadSharp.Objects.AcdbPlaceHolder",
       "Summary": "<p sourcefile=\"api/ACadSharp.Objects.AcdbPlaceHolder.yml\" sourcestartlinenumber=\"1\">Represents a <xref href=\"ACadSharp.Objects.AcdbPlaceHolder\" data-throw-if-not-resolved=\"false\"></xref> object.</p>\n"
-    },
-    {
-      "type": "ManagedReference",
-      "source_relative_path": "api/ACadSharp.Objects.AecBinRecord.yml",
-      "output": {
-        ".html": {
-          "relative_path": "api/ACadSharp.Objects.AecBinRecord.html"
-        }
-      },
-      "version": "",
-      "Uid": null,
-      "IsMRef": true,
-      "Title": "ACadSharp.Objects.AecBinRecord",
-      "Summary": null
     },
     {
       "type": "ManagedReference",
