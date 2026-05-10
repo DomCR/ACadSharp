@@ -4,6 +4,7 @@ using ACadSharp.Entities;
 using ACadSharp.Entities.AecObjects;
 using ACadSharp.IO.Templates;
 using ACadSharp.Objects;
+using ACadSharp.Objects.AEC;
 using ACadSharp.Objects.Evaluations;
 using ACadSharp.Tables;
 using ACadSharp.Tables.Collections;

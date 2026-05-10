@@ -1,4 +1,5 @@
-﻿ACadSharp ![Build&Test](https://github.com/DomCr/ACadSharp/actions/workflows/csharp.yml/badge.svg) ![License](https://img.shields.io/github/license/DomCr/ACadSharp) ![nuget](https://img.shields.io/nuget/v/Acadsharp) [![Coverage Status](https://coveralls.io/repos/github/DomCR/ACadSharp/badge.svg?branch=master)](https://coveralls.io/github/DomCR/ACadSharp?branch=master)
+﻿# ACadSharp
+![Build&Test](https://github.com/DomCr/ACadSharp/actions/workflows/csharp.yml/badge.svg) ![License](https://img.shields.io/github/license/DomCr/ACadSharp) ![nuget](https://img.shields.io/nuget/v/Acadsharp) [![Coverage Status](https://coveralls.io/repos/github/DomCR/ACadSharp/badge.svg?branch=master)](https://coveralls.io/github/DomCR/ACadSharp?branch=master)
 ---
 
 C# library to read/write cad files like dxf/dwg.
@@ -49,9 +50,7 @@ private static void onNotification(object sender, NotificationEventArgs e)
 
 For more code examples [check](https://github.com/DomCR/ACadSharp/tree/master/src/ACadSharp.Examples).
 
-Visit the :construction: [wiki](https://github.com/DomCR/ACadSharp/wiki) :construction: for the API specification of the library.
-
-Check the [documentation](https://github.com/DomCR/ACadSharp/tree/master/docs/) for specific information about some use cases.
+Check the [documentation](https://domcr.github.io/ACadSharp/index.html) for specific information about the library.
 
 Building
 ---
