@@ -1,5 +1,3 @@
-- name: Home
-  href: index.md
 - name: Articles
   href: articles/
 - name: API
