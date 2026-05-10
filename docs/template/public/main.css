@@ -2,3 +2,7 @@
 .typelist.inheritedMembers {
 	display: none;
 }
+
+.typelist.extensionMethods {
+	display: none;
+} 
