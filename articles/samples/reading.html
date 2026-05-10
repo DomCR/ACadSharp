@@ -2,21 +2,21 @@
 <html>
   <head>
     <meta charset="utf-8">
-      <title>Overview | ACadSharp </title>
+      <title>Reading CAD Files | ACadSharp </title>
       <meta name="viewport" content="width=device-width, initial-scale=1.0">
-      <meta name="title" content="Overview | ACadSharp ">
+      <meta name="title" content="Reading CAD Files | ACadSharp ">
       
       
-      <link rel="icon" href="../favicon.ico">
-      <link rel="stylesheet" href="../public/docfx.min.css">
-      <link rel="stylesheet" href="../public/main.css">
-      <meta name="docfx:navrel" content="../toc.html">
-      <meta name="docfx:tocrel" content="../toc.html">
+      <link rel="icon" href="../../favicon.ico">
+      <link rel="stylesheet" href="../../public/docfx.min.css">
+      <link rel="stylesheet" href="../../public/main.css">
+      <meta name="docfx:navrel" content="../../toc.html">
+      <meta name="docfx:tocrel" content="../../toc.html">
       
-      <meta name="docfx:rel" content="../">
+      <meta name="docfx:rel" content="../../">
       
       
-      <meta name="docfx:docurl" content="https://github.com/DomCR/ACadSharp/blob/1065/merge/docs/articles/index.md/#L1">
+      <meta name="docfx:docurl" content="https://github.com/DomCR/ACadSharp/blob/1065/merge/docs/articles/samples/reading.md/#L1">
       <meta name="loc:inThisArticle" content="In this article">
       <meta name="loc:searchResultsCount" content="{count} results for &quot;{query}&quot;">
       <meta name="loc:searchNoResults" content="No results for &quot;{query}&quot;">
@@ -30,7 +30,7 @@
       <meta name="loc:copy" content="Copy">
       <meta name="loc:downloadPdf" content="Download PDF">
 
-      <script type="module" src="./../public/docfx.min.js"></script>
+      <script type="module" src="./../../public/docfx.min.js"></script>
 
       <script>
         const theme = localStorage.getItem('theme') || 'auto'
@@ -43,8 +43,8 @@
     <header class="bg-body border-bottom">
       <nav id="autocollapse" class="navbar navbar-expand-md" role="navigation">
         <div class="container-xxl flex-nowrap">
-          <a class="navbar-brand" href="../index.html">
-            <img id="logo" class="svg" src="../logo.svg" alt="ACadSharp">
+          <a class="navbar-brand" href="../../index.html">
+            <img id="logo" class="svg" src="../../logo.svg" alt="ACadSharp">
             ACadSharp
           </a>
           <button class="btn btn-lg d-md-none border-0" type="button" data-bs-toggle="collapse" data-bs-target="#navpanel" aria-controls="navpanel" aria-expanded="false" aria-label="Toggle navigation">
@@ -71,13 +71,43 @@
         </div>
 
         <article data-uid="">
-<h1 id="overview">Overview</h1>
+<h1 id="reading-cad-files">Reading CAD Files</h1>
 
+<p>ACadSharp supports reading both <strong>DWG</strong> and <strong>DXF</strong> file formats. This page shows common reading scenarios.</p>
+<hr>
+<h2 id="read-a-dxf-file">Read a DXF File</h2>
+<p>Use <code>DxfReader</code> to load a <code>.dxf</code> file into a <code>CadDocument</code>:</p>
+<pre><code class="lang-C#">using ACadSharp.IO;
+using (DxfReader reader = new DxfReader(&quot;path/to/file.dxf&quot;)) 
+{
+	CadDocument doc = reader.Read();
+}
+</code></pre>
+<hr>
+<h2 id="read-using-the-factory">Read Using the Factory</h2>
+<p>If the file format is not known ahead of time, use <code>CadReaderFactory</code> to automatically select the correct reader based on the file extension:</p>
+<pre><code class="lang-C#">using ACadSharp.IO;
+using (ICadReader reader = CadReaderFactory.CreateReader(&quot;path/to/file.dwg&quot;)) 
+{
+	CadDocument doc = reader.Read();
+}
+</code></pre>
+<p>Supported extensions: <code>.dwg</code>, <code>.dxf</code>.</p>
+<hr>
+<h2 id="handling-notifications">Handling Notifications</h2>
+<p>All readers expose an <code>OnNotification</code> event that reports warnings and informational messages during the reading process:</p>
+<pre><code class="lang-C#">using ACadSharp.IO;
+using (DwgReader reader = new DwgReader(&quot;path/to/file.dwg&quot;)) 
+{ 
+	reader.OnNotification += (sender, args) =&gt; { Console.WriteLine($&quot;[{args.NotificationType}] {args.Message}&quot;); };
+	CadDocument doc = reader.Read();
+}
+</code></pre>
 
 </article>
 
         <div class="contribution d-print-none">
-          <a href="https://github.com/DomCR/ACadSharp/blob/1065/merge/docs/articles/index.md/#L1" class="edit-link">Edit this page</a>
+          <a href="https://github.com/DomCR/ACadSharp/blob/1065/merge/docs/articles/samples/reading.md/#L1" class="edit-link">Edit this page</a>
         </div>
 
         <div class="next-article d-print-none border-top" id="nextArticle"></div>

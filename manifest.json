@@ -7003,6 +7003,26 @@
     },
     {
       "type": "Conceptual",
+      "source_relative_path": "articles/samples/dimensions.md",
+      "output": {
+        ".html": {
+          "relative_path": "articles/samples/dimensions.html"
+        }
+      },
+      "version": ""
+    },
+    {
+      "type": "Conceptual",
+      "source_relative_path": "articles/samples/reading.md",
+      "output": {
+        ".html": {
+          "relative_path": "articles/samples/reading.html"
+        }
+      },
+      "version": ""
+    },
+    {
+      "type": "Conceptual",
       "source_relative_path": "index.md",
       "output": {
         ".html": {
