@@ -1,4 +1,4 @@
-/* This rule hides the display of inherited types */
-.typelist.inheritance {
+/* This rule hides the display of inherited members */
+.typelist.inheritedMembers {
 	display: none;
 }
