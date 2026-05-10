@@ -1,0 +1,786 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <meta charset="utf-8">
+      <title>Class SpatialFilter | ACadSharp </title>
+      <meta name="viewport" content="width=device-width, initial-scale=1.0">
+      <meta name="title" content="Class SpatialFilter | ACadSharp ">
+      
+      <meta name="description" content="Represents a  object.">
+      <link rel="icon" href="../favicon.ico">
+      <link rel="stylesheet" href="../public/docfx.min.css">
+      <link rel="stylesheet" href="../public/main.css">
+      <meta name="docfx:navrel" content="../toc.html">
+      <meta name="docfx:tocrel" content="toc.html">
+      
+      <meta name="docfx:rel" content="../">
+      
+      
+      <meta name="docfx:docurl" content="https://github.com/DomCR/ACadSharp/new/1065/merge/apiSpec/new?filename=ACadSharp_Objects_SpatialFilter.md&amp;value=---%0Auid%3A%20ACadSharp.Objects.SpatialFilter%0Asummary%3A%20&#39;*You%20can%20override%20summary%20for%20the%20API%20here%20using%20*MARKDOWN*%20syntax&#39;%0A---%0A%0A*Please%20type%20below%20more%20information%20about%20this%20API%3A*%0A%0A">
+      <meta name="loc:inThisArticle" content="In this article">
+      <meta name="loc:searchResultsCount" content="{count} results for &quot;{query}&quot;">
+      <meta name="loc:searchNoResults" content="No results for &quot;{query}&quot;">
+      <meta name="loc:tocFilter" content="Filter by title">
+      <meta name="loc:nextArticle" content="Next">
+      <meta name="loc:prevArticle" content="Previous">
+      <meta name="loc:themeLight" content="Light">
+      <meta name="loc:themeDark" content="Dark">
+      <meta name="loc:themeAuto" content="Auto">
+      <meta name="loc:changeTheme" content="Change theme">
+      <meta name="loc:copy" content="Copy">
+      <meta name="loc:downloadPdf" content="Download PDF">
+
+      <script type="module" src="./../public/docfx.min.js"></script>
+
+      <script>
+        const theme = localStorage.getItem('theme') || 'auto'
+        document.documentElement.setAttribute('data-bs-theme', theme === 'auto' ? (window.matchMedia('(prefers-color-scheme: dark)').matches ? 'dark' : 'light') : theme)
+      </script>
+
+  </head>
+
+  <body class="tex2jax_ignore" data-layout="" data-yaml-mime="ManagedReference">
+    <header class="bg-body border-bottom">
+      <nav id="autocollapse" class="navbar navbar-expand-md" role="navigation">
+        <div class="container-xxl flex-nowrap">
+          <a class="navbar-brand" href="../index.html">
+            <img id="logo" class="svg" src="../logo.svg" alt="ACadSharp">
+            ACadSharp
+          </a>
+          <button class="btn btn-lg d-md-none border-0" type="button" data-bs-toggle="collapse" data-bs-target="#navpanel" aria-controls="navpanel" aria-expanded="false" aria-label="Toggle navigation">
+            <i class="bi bi-three-dots"></i>
+          </button>
+          <div class="collapse navbar-collapse" id="navpanel">
+            <div id="navbar">
+              <form class="search" role="search" id="search">
+                <i class="bi bi-search"></i>
+                <input class="form-control" id="search-query" type="search" disabled placeholder="Search" autocomplete="off" aria-label="Search">
+              </form>
+            </div>
+          </div>
+        </div>
+      </nav>
+    </header>
+
+    <main class="container-xxl">
+      <div class="toc-offcanvas">
+        <div class="offcanvas-md offcanvas-start" tabindex="-1" id="tocOffcanvas" aria-labelledby="tocOffcanvasLabel">
+          <div class="offcanvas-header">
+            <h5 class="offcanvas-title" id="tocOffcanvasLabel">Table of Contents</h5>
+            <button type="button" class="btn-close" data-bs-dismiss="offcanvas" data-bs-target="#tocOffcanvas" aria-label="Close"></button>
+          </div>
+          <div class="offcanvas-body">
+            <nav class="toc" id="toc"></nav>
+          </div>
+        </div>
+      </div>
+
+      <div class="content">
+        <div class="actionbar">
+          <button class="btn btn-lg border-0 d-md-none" type="button" data-bs-toggle="offcanvas" data-bs-target="#tocOffcanvas" aria-controls="tocOffcanvas" aria-expanded="false" aria-label="Show table of contents">
+            <i class="bi bi-list"></i>
+          </button>
+
+          <nav id="breadcrumb"></nav>
+        </div>
+
+        <article data-uid="ACadSharp.Objects.SpatialFilter">
+
+
+
+  <h1 id="ACadSharp_Objects_SpatialFilter" data-uid="ACadSharp.Objects.SpatialFilter" class="text-break">
+Class SpatialFilter  <a class="header-action link-secondary" title="View source" href="https://github.com/DomCR/ACadSharp/blob/1065/merge/src/ACadSharp/Objects/SpatialFilter.cs/#L14"><i class="bi bi-code-slash"></i></a>
+  </h1>
+
+  <div class="facts text-secondary">
+    <dl><dt>Namespace</dt><dd><a class="xref" href="ACadSharp.html">ACadSharp</a>.<a class="xref" href="ACadSharp.Objects.html">Objects</a></dd></dl>
+  <dl><dt>Assembly</dt><dd>ACadSharp.dll</dd></dl>
+  </div>
+
+  <div class="markdown summary"><p>Represents a <a class="xref" href="ACadSharp.Objects.SpatialFilter.html">SpatialFilter</a> object.</p>
+</div>
+  <div class="markdown conceptual"></div>
+
+  <div class="codewrapper">
+    <pre><code class="lang-csharp hljs">[DxfName(&quot;SPATIAL_FILTER&quot;)]
+[DxfSubClass(&quot;AcDbSpatialFilter&quot;)]
+public class SpatialFilter : Filter, IHandledCadObject, INamedCadObject</code></pre>
+  </div>
+
+
+
+
+  <dl class="typelist inheritance">
+    <dt>Inheritance</dt>
+    <dd>
+      <div><a class="xref" href="https://learn.microsoft.com/dotnet/api/system.object">object</a></div>
+      <div><a class="xref" href="ACadSharp.CadObject.html">CadObject</a></div>
+      <div><a class="xref" href="ACadSharp.Objects.NonGraphicalObject.html">NonGraphicalObject</a></div>
+      <div><a class="xref" href="ACadSharp.Objects.Filter.html">Filter</a></div>
+      <div><span class="xref">SpatialFilter</span></div>
+    </dd>
+  </dl>
+
+  <dl class="typelist implements">
+    <dt>Implements</dt>
+    <dd>
+      <div><a class="xref" href="ACadSharp.IHandledCadObject.html">IHandledCadObject</a></div>
+      <div><a class="xref" href="ACadSharp.INamedCadObject.html">INamedCadObject</a></div>
+    </dd>
+  </dl>
+
+
+  <dl class="typelist inheritedMembers">
+    <dt>Inherited Members</dt>
+    <dd>
+    <div>
+      <a class="xref" href="ACadSharp.Objects.Filter.html#ACadSharp_Objects_Filter_FilterEntryName">Filter.FilterEntryName</a>
+    </div>
+    <div>
+      <a class="xref" href="ACadSharp.Objects.NonGraphicalObject.html#ACadSharp_Objects_NonGraphicalObject_OnNameChanged">NonGraphicalObject.OnNameChanged</a>
+    </div>
+    <div>
+      <a class="xref" href="ACadSharp.Objects.NonGraphicalObject.html#ACadSharp_Objects_NonGraphicalObject_Name">NonGraphicalObject.Name</a>
+    </div>
+    <div>
+      <a class="xref" href="ACadSharp.Objects.NonGraphicalObject.html#ACadSharp_Objects_NonGraphicalObject_Clone">NonGraphicalObject.Clone()</a>
+    </div>
+    <div>
+      <a class="xref" href="ACadSharp.Objects.NonGraphicalObject.html#ACadSharp_Objects_NonGraphicalObject_ToString">NonGraphicalObject.ToString()</a>
+    </div>
+    <div>
+      <a class="xref" href="ACadSharp.CadObject.html#ACadSharp_CadObject_Document">CadObject.Document</a>
+    </div>
+    <div>
+      <a class="xref" href="ACadSharp.CadObject.html#ACadSharp_CadObject_ExtendedData">CadObject.ExtendedData</a>
+    </div>
+    <div>
+      <a class="xref" href="ACadSharp.CadObject.html#ACadSharp_CadObject_Handle">CadObject.Handle</a>
+    </div>
+    <div>
+      <a class="xref" href="ACadSharp.CadObject.html#ACadSharp_CadObject_HasDynamicSubclass">CadObject.HasDynamicSubclass</a>
+    </div>
+    <div>
+      <a class="xref" href="ACadSharp.CadObject.html#ACadSharp_CadObject_Owner">CadObject.Owner</a>
+    </div>
+    <div>
+      <a class="xref" href="ACadSharp.CadObject.html#ACadSharp_CadObject_Reactors">CadObject.Reactors</a>
+    </div>
+    <div>
+      <a class="xref" href="ACadSharp.CadObject.html#ACadSharp_CadObject_XDictionary">CadObject.XDictionary</a>
+    </div>
+    <div>
+      <a class="xref" href="ACadSharp.CadObject.html#ACadSharp_CadObject_AddReactor_ACadSharp_CadObject_">CadObject.AddReactor(CadObject)</a>
+    </div>
+    <div>
+      <a class="xref" href="ACadSharp.CadObject.html#ACadSharp_CadObject_CleanReactors">CadObject.CleanReactors()</a>
+    </div>
+    <div>
+      <a class="xref" href="ACadSharp.CadObject.html#ACadSharp_CadObject_CreateExtendedDictionary">CadObject.CreateExtendedDictionary()</a>
+    </div>
+    <div>
+      <a class="xref" href="ACadSharp.CadObject.html#ACadSharp_CadObject_RemoveReactor_ACadSharp_CadObject_">CadObject.RemoveReactor(CadObject)</a>
+    </div>
+    <div>
+      <a class="xref" href="ACadSharp.CadObject.html#ACadSharp_CadObject_updateCollection__1___0_ACadSharp_ICadCollection___0__">CadObject.updateCollection&lt;T&gt;(T, ICadCollection&lt;T&gt;)</a>
+    </div>
+    <div>
+      <a class="xref" href="https://learn.microsoft.com/dotnet/api/system.object.equals#system-object-equals(system-object)">object.Equals(object)</a>
+    </div>
+    <div>
+      <a class="xref" href="https://learn.microsoft.com/dotnet/api/system.object.equals#system-object-equals(system-object-system-object)">object.Equals(object, object)</a>
+    </div>
+    <div>
+      <a class="xref" href="https://learn.microsoft.com/dotnet/api/system.object.gethashcode">object.GetHashCode()</a>
+    </div>
+    <div>
+      <a class="xref" href="https://learn.microsoft.com/dotnet/api/system.object.gettype">object.GetType()</a>
+    </div>
+    <div>
+      <a class="xref" href="https://learn.microsoft.com/dotnet/api/system.object.memberwiseclone">object.MemberwiseClone()</a>
+    </div>
+    <div>
+      <a class="xref" href="https://learn.microsoft.com/dotnet/api/system.object.referenceequals">object.ReferenceEquals(object, object)</a>
+    </div>
+  </dd></dl>
+
+  <dl class="typelist extensionMethods">
+    <dt>Extension Methods</dt>
+    <dd>
+  <div>
+      <a class="xref" href="ACadSharp.Extensions.INamedCadObjectExtensions.html#ACadSharp_Extensions_INamedCadObjectExtensions_IsValidDxfName_ACadSharp_INamedCadObject_ACadSharp_ACadVersion_">INamedCadObjectExtensions.IsValidDxfName(INamedCadObject, ACadVersion)</a>
+  </div>
+  <div>
+      <a class="xref" href="ACadSharp.Extensions.CadObjectExtensions.html#ACadSharp_Extensions_CadObjectExtensions_CloneTyped__1___0_">CadObjectExtensions.CloneTyped&lt;T&gt;(T)</a>
+  </div>
+  <div>
+      <a class="xref" href="CSMath.Geometry.LineExtensions.html#CSMath_Geometry_LineExtensions_TryFindIntersection__2___0___0___1__">LineExtensions.TryFindIntersection&lt;T, R&gt;(T, T, out R)</a>
+  </div>
+  </dd></dl>
+
+
+
+  <h2 id="ACadSharp_Objects_SpatialFilter_remarks">Remarks</h2>
+  <div class="markdown level0 remarks"><p>Object name <a class="xref" href="ACadSharp.DxfFileToken.html#ACadSharp_DxfFileToken_ObjectSpatialFilter">ObjectSpatialFilter</a> <br>
+Dxf class name <a class="xref" href="ACadSharp.DxfSubclassMarker.html#ACadSharp_DxfSubclassMarker_SpatialFilter">SpatialFilter</a></p>
+</div>
+
+
+  <h2 class="section" id="constructors">Constructors
+</h2>
+
+
+  <a id="ACadSharp_Objects_SpatialFilter__ctor_" data-uid="ACadSharp.Objects.SpatialFilter.#ctor*"></a>
+
+  <h3 id="ACadSharp_Objects_SpatialFilter__ctor" data-uid="ACadSharp.Objects.SpatialFilter.#ctor">
+  SpatialFilter()
+  <a class="header-action link-secondary" title="View source" href="https://github.com/DomCR/ACadSharp/blob/1065/merge/src/ACadSharp/Objects/SpatialFilter.cs/#L95"><i class="bi bi-code-slash"></i></a>
+  </h3>
+
+  <div class="markdown level1 summary"><p>Default constructor.</p>
+</div>
+  <div class="markdown level1 conceptual"></div>
+
+  <div class="codewrapper">
+    <pre><code class="lang-csharp hljs">public SpatialFilter()</code></pre>
+  </div>
+
+
+
+
+
+
+
+
+
+
+
+
+
+  <a id="ACadSharp_Objects_SpatialFilter__ctor_" data-uid="ACadSharp.Objects.SpatialFilter.#ctor*"></a>
+
+  <h3 id="ACadSharp_Objects_SpatialFilter__ctor_System_String_" data-uid="ACadSharp.Objects.SpatialFilter.#ctor(System.String)">
+  SpatialFilter(string)
+  <a class="header-action link-secondary" title="View source" href="https://github.com/DomCR/ACadSharp/blob/1065/merge/src/ACadSharp/Objects/SpatialFilter.cs/#L100"><i class="bi bi-code-slash"></i></a>
+  </h3>
+
+  <div class="markdown level1 summary"><p>Initialize a <a class="xref" href="ACadSharp.Objects.NonGraphicalObject.html">NonGraphicalObject</a> with an specific name.</p>
+</div>
+  <div class="markdown level1 conceptual"></div>
+
+  <div class="codewrapper">
+    <pre><code class="lang-csharp hljs">public SpatialFilter(string name)</code></pre>
+  </div>
+
+  <h4 class="section">Parameters</h4>
+  <dl class="parameters">
+    <dt><code>name</code> <a class="xref" href="https://learn.microsoft.com/dotnet/api/system.string">string</a></dt>
+    <dd></dd>
+  </dl>
+
+
+
+
+
+
+
+
+
+
+
+
+  <h2 class="section" id="fields">Fields
+</h2>
+
+
+
+  <h3 id="ACadSharp_Objects_SpatialFilter_SpatialFilterEntryName" data-uid="ACadSharp.Objects.SpatialFilter.SpatialFilterEntryName">
+  SpatialFilterEntryName
+  <a class="header-action link-secondary" title="View source" href="https://github.com/DomCR/ACadSharp/blob/1065/merge/src/ACadSharp/Objects/SpatialFilter.cs/#L18"><i class="bi bi-code-slash"></i></a>
+  </h3>
+
+  <div class="markdown level1 summary"></div>
+  <div class="markdown level1 conceptual"></div>
+
+  <div class="codewrapper">
+    <pre><code class="lang-csharp hljs">public const string SpatialFilterEntryName = &quot;SPATIAL&quot;</code></pre>
+  </div>
+
+
+
+
+  <h4 class="section">Field Value</h4>
+  <dl class="parameters">
+    <dt><a class="xref" href="https://learn.microsoft.com/dotnet/api/system.string">string</a></dt>
+    <dd></dd>
+  </dl>
+
+
+
+
+
+
+
+
+
+  <h2 class="section" id="properties">Properties
+</h2>
+
+
+  <a id="ACadSharp_Objects_SpatialFilter_BackDistance_" data-uid="ACadSharp.Objects.SpatialFilter.BackDistance*"></a>
+
+  <h3 id="ACadSharp_Objects_SpatialFilter_BackDistance" data-uid="ACadSharp.Objects.SpatialFilter.BackDistance">
+  BackDistance
+  <a class="header-action link-secondary" title="View source" href="https://github.com/DomCR/ACadSharp/blob/1065/merge/src/ACadSharp/Objects/SpatialFilter.cs/#L23"><i class="bi bi-code-slash"></i></a>
+  </h3>
+
+  <div class="markdown level1 summary"><p>Back clipping plane distance.</p>
+</div>
+  <div class="markdown level1 conceptual"></div>
+
+  <div class="codewrapper">
+    <pre><code class="lang-csharp hljs">[DxfCodeValue(new int[] { 41 })]
+public double BackDistance { get; set; }</code></pre>
+  </div>
+
+
+
+
+
+  <h4 class="section">Property Value</h4>
+  <dl class="parameters">
+    <dt><a class="xref" href="https://learn.microsoft.com/dotnet/api/system.double">double</a></dt>
+    <dd></dd>
+  </dl>
+
+
+
+
+
+
+
+
+  <a id="ACadSharp_Objects_SpatialFilter_BoundaryPoints_" data-uid="ACadSharp.Objects.SpatialFilter.BoundaryPoints*"></a>
+
+  <h3 id="ACadSharp_Objects_SpatialFilter_BoundaryPoints" data-uid="ACadSharp.Objects.SpatialFilter.BoundaryPoints">
+  BoundaryPoints
+  <a class="header-action link-secondary" title="View source" href="https://github.com/DomCR/ACadSharp/blob/1065/merge/src/ACadSharp/Objects/SpatialFilter.cs/#L34"><i class="bi bi-code-slash"></i></a>
+  </h3>
+
+  <div class="markdown level1 summary"><p>Clip boundary definition point (in OCS). <br>
+Always 2 or more based on an xref scale of 1.</p>
+</div>
+  <div class="markdown level1 conceptual"></div>
+
+  <div class="codewrapper">
+    <pre><code class="lang-csharp hljs">[DxfCodeValue(DxfReferenceType.Count, new int[] { 70 })]
+[DxfCollectionCodeValue(new int[] { 10, 20 })]
+public List&lt;XY&gt; BoundaryPoints { get; set; }</code></pre>
+  </div>
+
+
+
+
+
+  <h4 class="section">Property Value</h4>
+  <dl class="parameters">
+    <dt><a class="xref" href="https://learn.microsoft.com/dotnet/api/system.collections.generic.list-1">List</a>&lt;<a class="xref" href="CSMath.XY.html">XY</a>&gt;</dt>
+    <dd></dd>
+  </dl>
+
+
+
+
+  <h4 class="section" id="ACadSharp_Objects_SpatialFilter_BoundaryPoints_remarks">Remarks</h4>
+  <div class="markdown level1 remarks"><p>2 points = Rectangular clip boundary (lower-left and upper-right) <br>
+greater than 2 points = Polyline clip boundary</p>
+</div>
+
+
+
+
+  <a id="ACadSharp_Objects_SpatialFilter_ClipBackPlane_" data-uid="ACadSharp.Objects.SpatialFilter.ClipBackPlane*"></a>
+
+  <h3 id="ACadSharp_Objects_SpatialFilter_ClipBackPlane" data-uid="ACadSharp.Objects.SpatialFilter.ClipBackPlane">
+  ClipBackPlane
+  <a class="header-action link-secondary" title="View source" href="https://github.com/DomCR/ACadSharp/blob/1065/merge/src/ACadSharp/Objects/SpatialFilter.cs/#L41"><i class="bi bi-code-slash"></i></a>
+  </h3>
+
+  <div class="markdown level1 summary"><p>Back clipping plane flag.</p>
+</div>
+  <div class="markdown level1 conceptual"></div>
+
+  <div class="codewrapper">
+    <pre><code class="lang-csharp hljs">[DxfCodeValue(new int[] { 73 })]
+public bool ClipBackPlane { get; set; }</code></pre>
+  </div>
+
+
+
+
+
+  <h4 class="section">Property Value</h4>
+  <dl class="parameters">
+    <dt><a class="xref" href="https://learn.microsoft.com/dotnet/api/system.boolean">bool</a></dt>
+    <dd></dd>
+  </dl>
+
+
+
+
+
+
+
+
+  <a id="ACadSharp_Objects_SpatialFilter_ClipFrontPlane_" data-uid="ACadSharp.Objects.SpatialFilter.ClipFrontPlane*"></a>
+
+  <h3 id="ACadSharp_Objects_SpatialFilter_ClipFrontPlane" data-uid="ACadSharp.Objects.SpatialFilter.ClipFrontPlane">
+  ClipFrontPlane
+  <a class="header-action link-secondary" title="View source" href="https://github.com/DomCR/ACadSharp/blob/1065/merge/src/ACadSharp/Objects/SpatialFilter.cs/#L47"><i class="bi bi-code-slash"></i></a>
+  </h3>
+
+  <div class="markdown level1 summary"><p>Front clipping plane flag.</p>
+</div>
+  <div class="markdown level1 conceptual"></div>
+
+  <div class="codewrapper">
+    <pre><code class="lang-csharp hljs">[DxfCodeValue(new int[] { 72 })]
+public bool ClipFrontPlane { get; set; }</code></pre>
+  </div>
+
+
+
+
+
+  <h4 class="section">Property Value</h4>
+  <dl class="parameters">
+    <dt><a class="xref" href="https://learn.microsoft.com/dotnet/api/system.boolean">bool</a></dt>
+    <dd></dd>
+  </dl>
+
+
+
+
+
+
+
+
+  <a id="ACadSharp_Objects_SpatialFilter_DisplayBoundary_" data-uid="ACadSharp.Objects.SpatialFilter.DisplayBoundary*"></a>
+
+  <h3 id="ACadSharp_Objects_SpatialFilter_DisplayBoundary" data-uid="ACadSharp.Objects.SpatialFilter.DisplayBoundary">
+  DisplayBoundary
+  <a class="header-action link-secondary" title="View source" href="https://github.com/DomCR/ACadSharp/blob/1065/merge/src/ACadSharp/Objects/SpatialFilter.cs/#L53"><i class="bi bi-code-slash"></i></a>
+  </h3>
+
+  <div class="markdown level1 summary"><p>Clip boundary display enabled flag.</p>
+</div>
+  <div class="markdown level1 conceptual"></div>
+
+  <div class="codewrapper">
+    <pre><code class="lang-csharp hljs">[DxfCodeValue(new int[] { 71 })]
+public bool DisplayBoundary { get; set; }</code></pre>
+  </div>
+
+
+
+
+
+  <h4 class="section">Property Value</h4>
+  <dl class="parameters">
+    <dt><a class="xref" href="https://learn.microsoft.com/dotnet/api/system.boolean">bool</a></dt>
+    <dd></dd>
+  </dl>
+
+
+
+
+
+
+
+
+  <a id="ACadSharp_Objects_SpatialFilter_FrontDistance_" data-uid="ACadSharp.Objects.SpatialFilter.FrontDistance*"></a>
+
+  <h3 id="ACadSharp_Objects_SpatialFilter_FrontDistance" data-uid="ACadSharp.Objects.SpatialFilter.FrontDistance">
+  FrontDistance
+  <a class="header-action link-secondary" title="View source" href="https://github.com/DomCR/ACadSharp/blob/1065/merge/src/ACadSharp/Objects/SpatialFilter.cs/#L59"><i class="bi bi-code-slash"></i></a>
+  </h3>
+
+  <div class="markdown level1 summary"><p>Front clipping plane distance.</p>
+</div>
+  <div class="markdown level1 conceptual"></div>
+
+  <div class="codewrapper">
+    <pre><code class="lang-csharp hljs">[DxfCodeValue(new int[] { 40 })]
+public double FrontDistance { get; set; }</code></pre>
+  </div>
+
+
+
+
+
+  <h4 class="section">Property Value</h4>
+  <dl class="parameters">
+    <dt><a class="xref" href="https://learn.microsoft.com/dotnet/api/system.double">double</a></dt>
+    <dd></dd>
+  </dl>
+
+
+
+
+
+
+
+
+  <a id="ACadSharp_Objects_SpatialFilter_InsertTransform_" data-uid="ACadSharp.Objects.SpatialFilter.InsertTransform*"></a>
+
+  <h3 id="ACadSharp_Objects_SpatialFilter_InsertTransform" data-uid="ACadSharp.Objects.SpatialFilter.InsertTransform">
+  InsertTransform
+  <a class="header-action link-secondary" title="View source" href="https://github.com/DomCR/ACadSharp/blob/1065/merge/src/ACadSharp/Objects/SpatialFilter.cs/#L65"><i class="bi bi-code-slash"></i></a>
+  </h3>
+
+  <div class="markdown level1 summary"><p>This matrix transforms points into the coordinate system of the clip boundary.</p>
+</div>
+  <div class="markdown level1 conceptual"></div>
+
+  <div class="codewrapper">
+    <pre><code class="lang-csharp hljs">public Matrix4 InsertTransform { get; set; }</code></pre>
+  </div>
+
+
+
+
+
+  <h4 class="section">Property Value</h4>
+  <dl class="parameters">
+    <dt><a class="xref" href="CSMath.Matrix4.html">Matrix4</a></dt>
+    <dd></dd>
+  </dl>
+
+
+
+
+
+
+
+
+  <a id="ACadSharp_Objects_SpatialFilter_InverseInsertTransform_" data-uid="ACadSharp.Objects.SpatialFilter.InverseInsertTransform*"></a>
+
+  <h3 id="ACadSharp_Objects_SpatialFilter_InverseInsertTransform" data-uid="ACadSharp.Objects.SpatialFilter.InverseInsertTransform">
+  InverseInsertTransform
+  <a class="header-action link-secondary" title="View source" href="https://github.com/DomCR/ACadSharp/blob/1065/merge/src/ACadSharp/Objects/SpatialFilter.cs/#L71"><i class="bi bi-code-slash"></i></a>
+  </h3>
+
+  <div class="markdown level1 summary"><p>This matrix is the inverse of the original block reference (insert entity) transformation.
+The original block reference transformation is the one that is applied to all entities in the block when the block reference is regenerated.</p>
+</div>
+  <div class="markdown level1 conceptual"></div>
+
+  <div class="codewrapper">
+    <pre><code class="lang-csharp hljs">public Matrix4 InverseInsertTransform { get; set; }</code></pre>
+  </div>
+
+
+
+
+
+  <h4 class="section">Property Value</h4>
+  <dl class="parameters">
+    <dt><a class="xref" href="CSMath.Matrix4.html">Matrix4</a></dt>
+    <dd></dd>
+  </dl>
+
+
+
+
+
+
+
+
+  <a id="ACadSharp_Objects_SpatialFilter_Normal_" data-uid="ACadSharp.Objects.SpatialFilter.Normal*"></a>
+
+  <h3 id="ACadSharp_Objects_SpatialFilter_Normal" data-uid="ACadSharp.Objects.SpatialFilter.Normal">
+  Normal
+  <a class="header-action link-secondary" title="View source" href="https://github.com/DomCR/ACadSharp/blob/1065/merge/src/ACadSharp/Objects/SpatialFilter.cs/#L76"><i class="bi bi-code-slash"></i></a>
+  </h3>
+
+  <div class="markdown level1 summary"><p>Specifies the three-dimensional normal unit vector for the object.</p>
+</div>
+  <div class="markdown level1 conceptual"></div>
+
+  <div class="codewrapper">
+    <pre><code class="lang-csharp hljs">[DxfCodeValue(new int[] { 210, 220, 230 })]
+public XYZ Normal { get; set; }</code></pre>
+  </div>
+
+
+
+
+
+  <h4 class="section">Property Value</h4>
+  <dl class="parameters">
+    <dt><a class="xref" href="CSMath.XYZ.html">XYZ</a></dt>
+    <dd></dd>
+  </dl>
+
+
+
+
+
+
+
+
+  <a id="ACadSharp_Objects_SpatialFilter_ObjectName_" data-uid="ACadSharp.Objects.SpatialFilter.ObjectName*"></a>
+
+  <h3 id="ACadSharp_Objects_SpatialFilter_ObjectName" data-uid="ACadSharp.Objects.SpatialFilter.ObjectName">
+  ObjectName
+  <a class="header-action link-secondary" title="View source" href="https://github.com/DomCR/ACadSharp/blob/1065/merge/src/ACadSharp/Objects/SpatialFilter.cs/#L80"><i class="bi bi-code-slash"></i></a>
+  </h3>
+
+  <div class="markdown level1 summary"><p>The CAD class name of an object.</p>
+</div>
+  <div class="markdown level1 conceptual"></div>
+
+  <div class="codewrapper">
+    <pre><code class="lang-csharp hljs">public override string ObjectName { get; }</code></pre>
+  </div>
+
+
+
+
+
+  <h4 class="section">Property Value</h4>
+  <dl class="parameters">
+    <dt><a class="xref" href="https://learn.microsoft.com/dotnet/api/system.string">string</a></dt>
+    <dd></dd>
+  </dl>
+
+
+
+
+
+
+
+
+  <a id="ACadSharp_Objects_SpatialFilter_ObjectType_" data-uid="ACadSharp.Objects.SpatialFilter.ObjectType*"></a>
+
+  <h3 id="ACadSharp_Objects_SpatialFilter_ObjectType" data-uid="ACadSharp.Objects.SpatialFilter.ObjectType">
+  ObjectType
+  <a class="header-action link-secondary" title="View source" href="https://github.com/DomCR/ACadSharp/blob/1065/merge/src/ACadSharp/Objects/SpatialFilter.cs/#L83"><i class="bi bi-code-slash"></i></a>
+  </h3>
+
+  <div class="markdown level1 summary"><p>Get the object type.</p>
+</div>
+  <div class="markdown level1 conceptual"></div>
+
+  <div class="codewrapper">
+    <pre><code class="lang-csharp hljs">public override ObjectType ObjectType { get; }</code></pre>
+  </div>
+
+
+
+
+
+  <h4 class="section">Property Value</h4>
+  <dl class="parameters">
+    <dt><a class="xref" href="ACadSharp.ObjectType.html">ObjectType</a></dt>
+    <dd></dd>
+  </dl>
+
+
+
+
+
+
+
+
+  <a id="ACadSharp_Objects_SpatialFilter_Origin_" data-uid="ACadSharp.Objects.SpatialFilter.Origin*"></a>
+
+  <h3 id="ACadSharp_Objects_SpatialFilter_Origin" data-uid="ACadSharp.Objects.SpatialFilter.Origin">
+  Origin
+  <a class="header-action link-secondary" title="View source" href="https://github.com/DomCR/ACadSharp/blob/1065/merge/src/ACadSharp/Objects/SpatialFilter.cs/#L88"><i class="bi bi-code-slash"></i></a>
+  </h3>
+
+  <div class="markdown level1 summary"><p>Origin used to define the local coordinate system of the clip boundary.</p>
+</div>
+  <div class="markdown level1 conceptual"></div>
+
+  <div class="codewrapper">
+    <pre><code class="lang-csharp hljs">[DxfCodeValue(new int[] { 11, 21, 31 })]
+public XYZ Origin { get; set; }</code></pre>
+  </div>
+
+
+
+
+
+  <h4 class="section">Property Value</h4>
+  <dl class="parameters">
+    <dt><a class="xref" href="CSMath.XYZ.html">XYZ</a></dt>
+    <dd></dd>
+  </dl>
+
+
+
+
+
+
+
+
+  <a id="ACadSharp_Objects_SpatialFilter_SubclassMarker_" data-uid="ACadSharp.Objects.SpatialFilter.SubclassMarker*"></a>
+
+  <h3 id="ACadSharp_Objects_SpatialFilter_SubclassMarker" data-uid="ACadSharp.Objects.SpatialFilter.SubclassMarker">
+  SubclassMarker
+  <a class="header-action link-secondary" title="View source" href="https://github.com/DomCR/ACadSharp/blob/1065/merge/src/ACadSharp/Objects/SpatialFilter.cs/#L92"><i class="bi bi-code-slash"></i></a>
+  </h3>
+
+  <div class="markdown level1 summary"><p>Object Subclass marker.</p>
+</div>
+  <div class="markdown level1 conceptual"></div>
+
+  <div class="codewrapper">
+    <pre><code class="lang-csharp hljs">public override string SubclassMarker { get; }</code></pre>
+  </div>
+
+
+
+
+
+  <h4 class="section">Property Value</h4>
+  <dl class="parameters">
+    <dt><a class="xref" href="https://learn.microsoft.com/dotnet/api/system.string">string</a></dt>
+    <dd></dd>
+  </dl>
+
+
+
+
+
+
+
+
+
+</article>
+
+        <div class="contribution d-print-none">
+          <a href="https://github.com/DomCR/ACadSharp/blob/1065/merge/src/ACadSharp/Objects/SpatialFilter.cs/#L14" class="edit-link">Edit this page</a>
+        </div>
+
+
+      </div>
+
+      <div class="affix">
+        <nav id="affix"></nav>
+      </div>
+    </main>
+
+    <div class="container-xxl search-results" id="search-results"></div>
+
+    <footer class="border-top text-secondary">
+      <div class="container-xxl">
+        <div class="flex-fill">
+          <span>Made with <a href="https://dotnet.github.io/docfx">docfx</a></span>
+        </div>
+      </div>
+    </footer>
+  </body>
+</html>

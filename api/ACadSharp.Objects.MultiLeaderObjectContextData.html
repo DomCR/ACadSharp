@@ -1,0 +1,2253 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <meta charset="utf-8">
+      <title>Class MultiLeaderObjectContextData | ACadSharp </title>
+      <meta name="viewport" content="width=device-width, initial-scale=1.0">
+      <meta name="title" content="Class MultiLeaderObjectContextData | ACadSharp ">
+      
+      <meta name="description" content="This class represents a subset ob the properties of the MLeaderAnnotContext object, that are embedded into the MultiLeader entity.">
+      <link rel="icon" href="../favicon.ico">
+      <link rel="stylesheet" href="../public/docfx.min.css">
+      <link rel="stylesheet" href="../public/main.css">
+      <meta name="docfx:navrel" content="../toc.html">
+      <meta name="docfx:tocrel" content="toc.html">
+      
+      <meta name="docfx:rel" content="../">
+      
+      
+      <meta name="docfx:docurl" content="https://github.com/DomCR/ACadSharp/new/1065/merge/apiSpec/new?filename=ACadSharp_Objects_MultiLeaderObjectContextData.md&amp;value=---%0Auid%3A%20ACadSharp.Objects.MultiLeaderObjectContextData%0Asummary%3A%20&#39;*You%20can%20override%20summary%20for%20the%20API%20here%20using%20*MARKDOWN*%20syntax&#39;%0A---%0A%0A*Please%20type%20below%20more%20information%20about%20this%20API%3A*%0A%0A">
+      <meta name="loc:inThisArticle" content="In this article">
+      <meta name="loc:searchResultsCount" content="{count} results for &quot;{query}&quot;">
+      <meta name="loc:searchNoResults" content="No results for &quot;{query}&quot;">
+      <meta name="loc:tocFilter" content="Filter by title">
+      <meta name="loc:nextArticle" content="Next">
+      <meta name="loc:prevArticle" content="Previous">
+      <meta name="loc:themeLight" content="Light">
+      <meta name="loc:themeDark" content="Dark">
+      <meta name="loc:themeAuto" content="Auto">
+      <meta name="loc:changeTheme" content="Change theme">
+      <meta name="loc:copy" content="Copy">
+      <meta name="loc:downloadPdf" content="Download PDF">
+
+      <script type="module" src="./../public/docfx.min.js"></script>
+
+      <script>
+        const theme = localStorage.getItem('theme') || 'auto'
+        document.documentElement.setAttribute('data-bs-theme', theme === 'auto' ? (window.matchMedia('(prefers-color-scheme: dark)').matches ? 'dark' : 'light') : theme)
+      </script>
+
+  </head>
+
+  <body class="tex2jax_ignore" data-layout="" data-yaml-mime="ManagedReference">
+    <header class="bg-body border-bottom">
+      <nav id="autocollapse" class="navbar navbar-expand-md" role="navigation">
+        <div class="container-xxl flex-nowrap">
+          <a class="navbar-brand" href="../index.html">
+            <img id="logo" class="svg" src="../logo.svg" alt="ACadSharp">
+            ACadSharp
+          </a>
+          <button class="btn btn-lg d-md-none border-0" type="button" data-bs-toggle="collapse" data-bs-target="#navpanel" aria-controls="navpanel" aria-expanded="false" aria-label="Toggle navigation">
+            <i class="bi bi-three-dots"></i>
+          </button>
+          <div class="collapse navbar-collapse" id="navpanel">
+            <div id="navbar">
+              <form class="search" role="search" id="search">
+                <i class="bi bi-search"></i>
+                <input class="form-control" id="search-query" type="search" disabled placeholder="Search" autocomplete="off" aria-label="Search">
+              </form>
+            </div>
+          </div>
+        </div>
+      </nav>
+    </header>
+
+    <main class="container-xxl">
+      <div class="toc-offcanvas">
+        <div class="offcanvas-md offcanvas-start" tabindex="-1" id="tocOffcanvas" aria-labelledby="tocOffcanvasLabel">
+          <div class="offcanvas-header">
+            <h5 class="offcanvas-title" id="tocOffcanvasLabel">Table of Contents</h5>
+            <button type="button" class="btn-close" data-bs-dismiss="offcanvas" data-bs-target="#tocOffcanvas" aria-label="Close"></button>
+          </div>
+          <div class="offcanvas-body">
+            <nav class="toc" id="toc"></nav>
+          </div>
+        </div>
+      </div>
+
+      <div class="content">
+        <div class="actionbar">
+          <button class="btn btn-lg border-0 d-md-none" type="button" data-bs-toggle="offcanvas" data-bs-target="#tocOffcanvas" aria-controls="tocOffcanvas" aria-expanded="false" aria-label="Show table of contents">
+            <i class="bi bi-list"></i>
+          </button>
+
+          <nav id="breadcrumb"></nav>
+        </div>
+
+        <article data-uid="ACadSharp.Objects.MultiLeaderObjectContextData">
+
+
+
+  <h1 id="ACadSharp_Objects_MultiLeaderObjectContextData" data-uid="ACadSharp.Objects.MultiLeaderObjectContextData" class="text-break">
+Class MultiLeaderObjectContextData  <a class="header-action link-secondary" title="View source" href="https://github.com/DomCR/ACadSharp/blob/1065/merge/src/ACadSharp/Objects/MultiLeaderObjectContextData.StartEndPointPair.cs/#L7"><i class="bi bi-code-slash"></i></a>
+  </h1>
+
+  <div class="facts text-secondary">
+    <dl><dt>Namespace</dt><dd><a class="xref" href="ACadSharp.html">ACadSharp</a>.<a class="xref" href="ACadSharp.Objects.html">Objects</a></dd></dl>
+  <dl><dt>Assembly</dt><dd>ACadSharp.dll</dd></dl>
+  </div>
+
+  <div class="markdown summary"><p>This class represents a subset ob the properties of the MLeaderAnnotContext
+object, that are embedded into the MultiLeader entity.</p>
+</div>
+  <div class="markdown conceptual"></div>
+
+  <div class="codewrapper">
+    <pre><code class="lang-csharp hljs">[DxfName(&quot;ACDB_MLEADEROBJECTCONTEXTDATA_CLASS&quot;)]
+[DxfSubClass(&quot;AcDbMLeaderObjectContextData&quot;)]
+public class MultiLeaderObjectContextData : AnnotScaleObjectContextData, IHandledCadObject, INamedCadObject</code></pre>
+  </div>
+
+
+
+
+  <dl class="typelist inheritance">
+    <dt>Inheritance</dt>
+    <dd>
+      <div><a class="xref" href="https://learn.microsoft.com/dotnet/api/system.object">object</a></div>
+      <div><a class="xref" href="ACadSharp.CadObject.html">CadObject</a></div>
+      <div><a class="xref" href="ACadSharp.Objects.NonGraphicalObject.html">NonGraphicalObject</a></div>
+      <div><a class="xref" href="ACadSharp.Objects.ObjectContextData.html">ObjectContextData</a></div>
+      <div><a class="xref" href="ACadSharp.Objects.AnnotScaleObjectContextData.html">AnnotScaleObjectContextData</a></div>
+      <div><span class="xref">MultiLeaderObjectContextData</span></div>
+    </dd>
+  </dl>
+
+  <dl class="typelist implements">
+    <dt>Implements</dt>
+    <dd>
+      <div><a class="xref" href="ACadSharp.IHandledCadObject.html">IHandledCadObject</a></div>
+      <div><a class="xref" href="ACadSharp.INamedCadObject.html">INamedCadObject</a></div>
+    </dd>
+  </dl>
+
+
+  <dl class="typelist inheritedMembers">
+    <dt>Inherited Members</dt>
+    <dd>
+    <div>
+      <a class="xref" href="ACadSharp.Objects.AnnotScaleObjectContextData.html#ACadSharp_Objects_AnnotScaleObjectContextData_Scale">AnnotScaleObjectContextData.Scale</a>
+    </div>
+    <div>
+      <a class="xref" href="ACadSharp.Objects.ObjectContextData.html#ACadSharp_Objects_ObjectContextData_Version">ObjectContextData.Version</a>
+    </div>
+    <div>
+      <a class="xref" href="ACadSharp.Objects.ObjectContextData.html#ACadSharp_Objects_ObjectContextData_HasFileToExtensionDictionary">ObjectContextData.HasFileToExtensionDictionary</a>
+    </div>
+    <div>
+      <a class="xref" href="ACadSharp.Objects.ObjectContextData.html#ACadSharp_Objects_ObjectContextData_Default">ObjectContextData.Default</a>
+    </div>
+    <div>
+      <a class="xref" href="ACadSharp.Objects.NonGraphicalObject.html#ACadSharp_Objects_NonGraphicalObject_OnNameChanged">NonGraphicalObject.OnNameChanged</a>
+    </div>
+    <div>
+      <a class="xref" href="ACadSharp.Objects.NonGraphicalObject.html#ACadSharp_Objects_NonGraphicalObject_Name">NonGraphicalObject.Name</a>
+    </div>
+    <div>
+      <a class="xref" href="ACadSharp.Objects.NonGraphicalObject.html#ACadSharp_Objects_NonGraphicalObject_ToString">NonGraphicalObject.ToString()</a>
+    </div>
+    <div>
+      <a class="xref" href="ACadSharp.CadObject.html#ACadSharp_CadObject_Document">CadObject.Document</a>
+    </div>
+    <div>
+      <a class="xref" href="ACadSharp.CadObject.html#ACadSharp_CadObject_ExtendedData">CadObject.ExtendedData</a>
+    </div>
+    <div>
+      <a class="xref" href="ACadSharp.CadObject.html#ACadSharp_CadObject_Handle">CadObject.Handle</a>
+    </div>
+    <div>
+      <a class="xref" href="ACadSharp.CadObject.html#ACadSharp_CadObject_HasDynamicSubclass">CadObject.HasDynamicSubclass</a>
+    </div>
+    <div>
+      <a class="xref" href="ACadSharp.CadObject.html#ACadSharp_CadObject_Owner">CadObject.Owner</a>
+    </div>
+    <div>
+      <a class="xref" href="ACadSharp.CadObject.html#ACadSharp_CadObject_Reactors">CadObject.Reactors</a>
+    </div>
+    <div>
+      <a class="xref" href="ACadSharp.CadObject.html#ACadSharp_CadObject_XDictionary">CadObject.XDictionary</a>
+    </div>
+    <div>
+      <a class="xref" href="ACadSharp.CadObject.html#ACadSharp_CadObject_AddReactor_ACadSharp_CadObject_">CadObject.AddReactor(CadObject)</a>
+    </div>
+    <div>
+      <a class="xref" href="ACadSharp.CadObject.html#ACadSharp_CadObject_CleanReactors">CadObject.CleanReactors()</a>
+    </div>
+    <div>
+      <a class="xref" href="ACadSharp.CadObject.html#ACadSharp_CadObject_CreateExtendedDictionary">CadObject.CreateExtendedDictionary()</a>
+    </div>
+    <div>
+      <a class="xref" href="ACadSharp.CadObject.html#ACadSharp_CadObject_RemoveReactor_ACadSharp_CadObject_">CadObject.RemoveReactor(CadObject)</a>
+    </div>
+    <div>
+      <a class="xref" href="ACadSharp.CadObject.html#ACadSharp_CadObject_updateCollection__1___0_ACadSharp_ICadCollection___0__">CadObject.updateCollection&lt;T&gt;(T, ICadCollection&lt;T&gt;)</a>
+    </div>
+    <div>
+      <a class="xref" href="https://learn.microsoft.com/dotnet/api/system.object.equals#system-object-equals(system-object)">object.Equals(object)</a>
+    </div>
+    <div>
+      <a class="xref" href="https://learn.microsoft.com/dotnet/api/system.object.equals#system-object-equals(system-object-system-object)">object.Equals(object, object)</a>
+    </div>
+    <div>
+      <a class="xref" href="https://learn.microsoft.com/dotnet/api/system.object.gethashcode">object.GetHashCode()</a>
+    </div>
+    <div>
+      <a class="xref" href="https://learn.microsoft.com/dotnet/api/system.object.gettype">object.GetType()</a>
+    </div>
+    <div>
+      <a class="xref" href="https://learn.microsoft.com/dotnet/api/system.object.memberwiseclone">object.MemberwiseClone()</a>
+    </div>
+    <div>
+      <a class="xref" href="https://learn.microsoft.com/dotnet/api/system.object.referenceequals">object.ReferenceEquals(object, object)</a>
+    </div>
+  </dd></dl>
+
+  <dl class="typelist extensionMethods">
+    <dt>Extension Methods</dt>
+    <dd>
+  <div>
+      <a class="xref" href="ACadSharp.Extensions.INamedCadObjectExtensions.html#ACadSharp_Extensions_INamedCadObjectExtensions_IsValidDxfName_ACadSharp_INamedCadObject_ACadSharp_ACadVersion_">INamedCadObjectExtensions.IsValidDxfName(INamedCadObject, ACadVersion)</a>
+  </div>
+  <div>
+      <a class="xref" href="ACadSharp.Extensions.CadObjectExtensions.html#ACadSharp_Extensions_CadObjectExtensions_CloneTyped__1___0_">CadObjectExtensions.CloneTyped&lt;T&gt;(T)</a>
+  </div>
+  <div>
+      <a class="xref" href="CSMath.Geometry.LineExtensions.html#CSMath_Geometry_LineExtensions_TryFindIntersection__2___0___0___1__">LineExtensions.TryFindIntersection&lt;T, R&gt;(T, T, out R)</a>
+  </div>
+  </dd></dl>
+
+
+
+
+
+  <h2 class="section" id="constructors">Constructors
+</h2>
+
+
+  <a id="ACadSharp_Objects_MultiLeaderObjectContextData__ctor_" data-uid="ACadSharp.Objects.MultiLeaderObjectContextData.#ctor*"></a>
+
+  <h3 id="ACadSharp_Objects_MultiLeaderObjectContextData__ctor" data-uid="ACadSharp.Objects.MultiLeaderObjectContextData.#ctor">
+  MultiLeaderObjectContextData()
+  <a class="header-action link-secondary" title="View source" href="https://github.com/DomCR/ACadSharp/blob/1065/merge/src/ACadSharp/Objects/MultiLeaderObjectContextData.cs/#L575"><i class="bi bi-code-slash"></i></a>
+  </h3>
+
+  <div class="markdown level1 summary"><p>Initializes a new instance of a <a class="xref" href="ACadSharp.Objects.MultiLeaderObjectContextData.html">MultiLeaderObjectContextData</a>.</p>
+</div>
+  <div class="markdown level1 conceptual"></div>
+
+  <div class="codewrapper">
+    <pre><code class="lang-csharp hljs">public MultiLeaderObjectContextData()</code></pre>
+  </div>
+
+
+
+
+
+
+
+
+
+
+
+
+
+  <h2 class="section" id="properties">Properties
+</h2>
+
+
+  <a id="ACadSharp_Objects_MultiLeaderObjectContextData_ArrowheadSize_" data-uid="ACadSharp.Objects.MultiLeaderObjectContextData.ArrowheadSize*"></a>
+
+  <h3 id="ACadSharp_Objects_MultiLeaderObjectContextData_ArrowheadSize" data-uid="ACadSharp.Objects.MultiLeaderObjectContextData.ArrowheadSize">
+  ArrowheadSize
+  <a class="header-action link-secondary" title="View source" href="https://github.com/DomCR/ACadSharp/blob/1065/merge/src/ACadSharp/Objects/MultiLeaderObjectContextData.cs/#L40"><i class="bi bi-code-slash"></i></a>
+  </h3>
+
+  <div class="markdown level1 summary"><p>Gets or sets the arrowhead size (see <a class="xref" href="ACadSharp.Objects.MultiLeaderStyle.html#ACadSharp_Objects_MultiLeaderStyle_Arrowhead">Arrowhead</a>)
+for every leader line.
+This property overrides the value from <a class="xref" href="ACadSharp.Objects.MultiLeaderStyle.html">MultiLeaderStyle</a>
+when the <a class="xref" href="ACadSharp.Entities.MultiLeaderPropertyOverrideFlags.html#ACadSharp_Entities_MultiLeaderPropertyOverrideFlags_ArrowheadSize">ArrowheadSize</a> flag is set in the
+<a class="xref" href="ACadSharp.Entities.MultiLeader.html#ACadSharp_Entities_MultiLeader_PropertyOverrideFlags">PropertyOverrideFlags</a> property.</p>
+</div>
+  <div class="markdown level1 conceptual"></div>
+
+  <div class="codewrapper">
+    <pre><code class="lang-csharp hljs">[DxfCodeValue(new int[] { 140 })]
+public double ArrowheadSize { get; set; }</code></pre>
+  </div>
+
+
+
+
+
+  <h4 class="section">Property Value</h4>
+  <dl class="parameters">
+    <dt><a class="xref" href="https://learn.microsoft.com/dotnet/api/system.double">double</a></dt>
+    <dd><p>The value returned is the value entered in AutoCAD multiplied with the <a class="xref" href="ACadSharp.Objects.MultiLeaderObjectContextData.html#ACadSharp_Objects_MultiLeaderObjectContextData_ScaleFactor">ScaleFactor</a>.</p>
+</dd>
+  </dl>
+
+
+
+
+  <h4 class="section" id="ACadSharp_Objects_MultiLeaderObjectContextData_ArrowheadSize_remarks">Remarks</h4>
+  <div class="markdown level1 remarks"><p>
+The value for all leader lines can be overridden for each individual leader line by the
+<a class="xref" href="ACadSharp.Objects.MultiLeaderObjectContextData.LeaderLine.html#ACadSharp_Objects_MultiLeaderObjectContextData_LeaderLine_ArrowheadSize">ArrowheadSize</a> property when the
+<a class="xref" href="ACadSharp.Objects.LeaderLinePropertOverrideFlags.html#ACadSharp_Objects_LeaderLinePropertOverrideFlags_ArrowheadSize">ArrowheadSize</a> flag is set in the
+<a class="xref" href="ACadSharp.Objects.MultiLeaderObjectContextData.LeaderLine.html#ACadSharp_Objects_MultiLeaderObjectContextData_LeaderLine_OverrideFlags">OverrideFlags</a> property.
+</p><p>
+This property is also exposed by the <a class="xref" href="ACadSharp.Entities.MultiLeader.html">MultiLeader</a> class
+(<a class="xref" href="ACadSharp.Entities.MultiLeader.html#ACadSharp_Entities_MultiLeader_ArrowheadSize">ArrowheadSize</a>).
+Values should be equal, the value of this property is assumed to be used.
+</p>
+</div>
+
+
+
+
+  <a id="ACadSharp_Objects_MultiLeaderObjectContextData_BackgroundFillColor_" data-uid="ACadSharp.Objects.MultiLeaderObjectContextData.BackgroundFillColor*"></a>
+
+  <h3 id="ACadSharp_Objects_MultiLeaderObjectContextData_BackgroundFillColor" data-uid="ACadSharp.Objects.MultiLeaderObjectContextData.BackgroundFillColor">
+  BackgroundFillColor
+  <a class="header-action link-secondary" title="View source" href="https://github.com/DomCR/ACadSharp/blob/1065/merge/src/ACadSharp/Objects/MultiLeaderObjectContextData.cs/#L47"><i class="bi bi-code-slash"></i></a>
+  </h3>
+
+  <div class="markdown level1 summary"><p>Background fill color</p>
+</div>
+  <div class="markdown level1 conceptual"></div>
+
+  <div class="codewrapper">
+    <pre><code class="lang-csharp hljs">[DxfCodeValue(new int[] { 91 })]
+public Color BackgroundFillColor { get; set; }</code></pre>
+  </div>
+
+
+
+
+
+  <h4 class="section">Property Value</h4>
+  <dl class="parameters">
+    <dt><a class="xref" href="ACadSharp.Color.html">Color</a></dt>
+    <dd></dd>
+  </dl>
+
+
+
+
+
+
+
+
+  <a id="ACadSharp_Objects_MultiLeaderObjectContextData_BackgroundFillEnabled_" data-uid="ACadSharp.Objects.MultiLeaderObjectContextData.BackgroundFillEnabled*"></a>
+
+  <h3 id="ACadSharp_Objects_MultiLeaderObjectContextData_BackgroundFillEnabled" data-uid="ACadSharp.Objects.MultiLeaderObjectContextData.BackgroundFillEnabled">
+  BackgroundFillEnabled
+  <a class="header-action link-secondary" title="View source" href="https://github.com/DomCR/ACadSharp/blob/1065/merge/src/ACadSharp/Objects/MultiLeaderObjectContextData.cs/#L54"><i class="bi bi-code-slash"></i></a>
+  </h3>
+
+  <div class="markdown level1 summary"><p>Is background fill enabled</p>
+</div>
+  <div class="markdown level1 conceptual"></div>
+
+  <div class="codewrapper">
+    <pre><code class="lang-csharp hljs">[DxfCodeValue(new int[] { 291 })]
+public bool BackgroundFillEnabled { get; set; }</code></pre>
+  </div>
+
+
+
+
+
+  <h4 class="section">Property Value</h4>
+  <dl class="parameters">
+    <dt><a class="xref" href="https://learn.microsoft.com/dotnet/api/system.boolean">bool</a></dt>
+    <dd></dd>
+  </dl>
+
+
+
+
+
+
+
+
+  <a id="ACadSharp_Objects_MultiLeaderObjectContextData_BackgroundMaskFillOn_" data-uid="ACadSharp.Objects.MultiLeaderObjectContextData.BackgroundMaskFillOn*"></a>
+
+  <h3 id="ACadSharp_Objects_MultiLeaderObjectContextData_BackgroundMaskFillOn" data-uid="ACadSharp.Objects.MultiLeaderObjectContextData.BackgroundMaskFillOn">
+  BackgroundMaskFillOn
+  <a class="header-action link-secondary" title="View source" href="https://github.com/DomCR/ACadSharp/blob/1065/merge/src/ACadSharp/Objects/MultiLeaderObjectContextData.cs/#L61"><i class="bi bi-code-slash"></i></a>
+  </h3>
+
+  <div class="markdown level1 summary"><p>Is background mask fill on</p>
+</div>
+  <div class="markdown level1 conceptual"></div>
+
+  <div class="codewrapper">
+    <pre><code class="lang-csharp hljs">[DxfCodeValue(new int[] { 292 })]
+public bool BackgroundMaskFillOn { get; set; }</code></pre>
+  </div>
+
+
+
+
+
+  <h4 class="section">Property Value</h4>
+  <dl class="parameters">
+    <dt><a class="xref" href="https://learn.microsoft.com/dotnet/api/system.boolean">bool</a></dt>
+    <dd></dd>
+  </dl>
+
+
+
+
+
+
+
+
+  <a id="ACadSharp_Objects_MultiLeaderObjectContextData_BackgroundScaleFactor_" data-uid="ACadSharp.Objects.MultiLeaderObjectContextData.BackgroundScaleFactor*"></a>
+
+  <h3 id="ACadSharp_Objects_MultiLeaderObjectContextData_BackgroundScaleFactor" data-uid="ACadSharp.Objects.MultiLeaderObjectContextData.BackgroundScaleFactor">
+  BackgroundScaleFactor
+  <a class="header-action link-secondary" title="View source" href="https://github.com/DomCR/ACadSharp/blob/1065/merge/src/ACadSharp/Objects/MultiLeaderObjectContextData.cs/#L68"><i class="bi bi-code-slash"></i></a>
+  </h3>
+
+  <div class="markdown level1 summary"><p>Background scale factor</p>
+</div>
+  <div class="markdown level1 conceptual"></div>
+
+  <div class="codewrapper">
+    <pre><code class="lang-csharp hljs">[DxfCodeValue(new int[] { 141 })]
+public double BackgroundScaleFactor { get; set; }</code></pre>
+  </div>
+
+
+
+
+
+  <h4 class="section">Property Value</h4>
+  <dl class="parameters">
+    <dt><a class="xref" href="https://learn.microsoft.com/dotnet/api/system.double">double</a></dt>
+    <dd></dd>
+  </dl>
+
+
+
+
+
+
+
+
+  <a id="ACadSharp_Objects_MultiLeaderObjectContextData_BackgroundTransparency_" data-uid="ACadSharp.Objects.MultiLeaderObjectContextData.BackgroundTransparency*"></a>
+
+  <h3 id="ACadSharp_Objects_MultiLeaderObjectContextData_BackgroundTransparency" data-uid="ACadSharp.Objects.MultiLeaderObjectContextData.BackgroundTransparency">
+  BackgroundTransparency
+  <a class="header-action link-secondary" title="View source" href="https://github.com/DomCR/ACadSharp/blob/1065/merge/src/ACadSharp/Objects/MultiLeaderObjectContextData.cs/#L75"><i class="bi bi-code-slash"></i></a>
+  </h3>
+
+  <div class="markdown level1 summary"><p>Background transparency</p>
+</div>
+  <div class="markdown level1 conceptual"></div>
+
+  <div class="codewrapper">
+    <pre><code class="lang-csharp hljs">[DxfCodeValue(new int[] { 92 })]
+public int BackgroundTransparency { get; set; }</code></pre>
+  </div>
+
+
+
+
+
+  <h4 class="section">Property Value</h4>
+  <dl class="parameters">
+    <dt><a class="xref" href="https://learn.microsoft.com/dotnet/api/system.int32">int</a></dt>
+    <dd></dd>
+  </dl>
+
+
+
+
+
+
+
+
+  <a id="ACadSharp_Objects_MultiLeaderObjectContextData_BaseDirection_" data-uid="ACadSharp.Objects.MultiLeaderObjectContextData.BaseDirection*"></a>
+
+  <h3 id="ACadSharp_Objects_MultiLeaderObjectContextData_BaseDirection" data-uid="ACadSharp.Objects.MultiLeaderObjectContextData.BaseDirection">
+  BaseDirection
+  <a class="header-action link-secondary" title="View source" href="https://github.com/DomCR/ACadSharp/blob/1065/merge/src/ACadSharp/Objects/MultiLeaderObjectContextData.cs/#L81"><i class="bi bi-code-slash"></i></a>
+  </h3>
+
+  <div class="markdown level1 summary"><p>Base direction</p>
+</div>
+  <div class="markdown level1 conceptual"></div>
+
+  <div class="codewrapper">
+    <pre><code class="lang-csharp hljs">[DxfCodeValue(new int[] { 111, 121, 131 })]
+public XYZ BaseDirection { get; set; }</code></pre>
+  </div>
+
+
+
+
+
+  <h4 class="section">Property Value</h4>
+  <dl class="parameters">
+    <dt><a class="xref" href="CSMath.XYZ.html">XYZ</a></dt>
+    <dd></dd>
+  </dl>
+
+
+
+
+
+
+
+
+  <a id="ACadSharp_Objects_MultiLeaderObjectContextData_BasePoint_" data-uid="ACadSharp.Objects.MultiLeaderObjectContextData.BasePoint*"></a>
+
+  <h3 id="ACadSharp_Objects_MultiLeaderObjectContextData_BasePoint" data-uid="ACadSharp.Objects.MultiLeaderObjectContextData.BasePoint">
+  BasePoint
+  <a class="header-action link-secondary" title="View source" href="https://github.com/DomCR/ACadSharp/blob/1065/merge/src/ACadSharp/Objects/MultiLeaderObjectContextData.cs/#L87"><i class="bi bi-code-slash"></i></a>
+  </h3>
+
+  <div class="markdown level1 summary"><p>Base point</p>
+</div>
+  <div class="markdown level1 conceptual"></div>
+
+  <div class="codewrapper">
+    <pre><code class="lang-csharp hljs">[DxfCodeValue(new int[] { 110, 120, 130 })]
+public XYZ BasePoint { get; set; }</code></pre>
+  </div>
+
+
+
+
+
+  <h4 class="section">Property Value</h4>
+  <dl class="parameters">
+    <dt><a class="xref" href="CSMath.XYZ.html">XYZ</a></dt>
+    <dd></dd>
+  </dl>
+
+
+
+
+
+
+
+
+  <a id="ACadSharp_Objects_MultiLeaderObjectContextData_BaseVertical_" data-uid="ACadSharp.Objects.MultiLeaderObjectContextData.BaseVertical*"></a>
+
+  <h3 id="ACadSharp_Objects_MultiLeaderObjectContextData_BaseVertical" data-uid="ACadSharp.Objects.MultiLeaderObjectContextData.BaseVertical">
+  BaseVertical
+  <a class="header-action link-secondary" title="View source" href="https://github.com/DomCR/ACadSharp/blob/1065/merge/src/ACadSharp/Objects/MultiLeaderObjectContextData.cs/#L93"><i class="bi bi-code-slash"></i></a>
+  </h3>
+
+  <div class="markdown level1 summary"><p>Base vertical</p>
+</div>
+  <div class="markdown level1 conceptual"></div>
+
+  <div class="codewrapper">
+    <pre><code class="lang-csharp hljs">[DxfCodeValue(new int[] { 112, 122, 132 })]
+public XYZ BaseVertical { get; set; }</code></pre>
+  </div>
+
+
+
+
+
+  <h4 class="section">Property Value</h4>
+  <dl class="parameters">
+    <dt><a class="xref" href="CSMath.XYZ.html">XYZ</a></dt>
+    <dd></dd>
+  </dl>
+
+
+
+
+
+
+
+
+  <a id="ACadSharp_Objects_MultiLeaderObjectContextData_BlockContent_" data-uid="ACadSharp.Objects.MultiLeaderObjectContextData.BlockContent*"></a>
+
+  <h3 id="ACadSharp_Objects_MultiLeaderObjectContextData_BlockContent" data-uid="ACadSharp.Objects.MultiLeaderObjectContextData.BlockContent">
+  BlockContent
+  <a class="header-action link-secondary" title="View source" href="https://github.com/DomCR/ACadSharp/blob/1065/merge/src/ACadSharp/Objects/MultiLeaderObjectContextData.cs/#L100"><i class="bi bi-code-slash"></i></a>
+  </h3>
+
+  <div class="markdown level1 summary"><p>Gets a <a class="xref" href="ACadSharp.Tables.BlockRecord.html">BlockRecord</a> containing elements
+to be drawn as content for the multileader.</p>
+</div>
+  <div class="markdown level1 conceptual"></div>
+
+  <div class="codewrapper">
+    <pre><code class="lang-csharp hljs">[DxfCodeValue(DxfReferenceType.Handle, new int[] { 341 })]
+public BlockRecord BlockContent { get; set; }</code></pre>
+  </div>
+
+
+
+
+
+  <h4 class="section">Property Value</h4>
+  <dl class="parameters">
+    <dt><a class="xref" href="ACadSharp.Tables.BlockRecord.html">BlockRecord</a></dt>
+    <dd></dd>
+  </dl>
+
+
+
+
+
+
+
+
+  <a id="ACadSharp_Objects_MultiLeaderObjectContextData_BlockContentColor_" data-uid="ACadSharp.Objects.MultiLeaderObjectContextData.BlockContentColor*"></a>
+
+  <h3 id="ACadSharp_Objects_MultiLeaderObjectContextData_BlockContentColor" data-uid="ACadSharp.Objects.MultiLeaderObjectContextData.BlockContentColor">
+  BlockContentColor
+  <a class="header-action link-secondary" title="View source" href="https://github.com/DomCR/ACadSharp/blob/1065/merge/src/ACadSharp/Objects/MultiLeaderObjectContextData.cs/#L122"><i class="bi bi-code-slash"></i></a>
+  </h3>
+
+  <div class="markdown level1 summary"><p>Gets or sets the block-content color.
+This property overrides the value from <a class="xref" href="ACadSharp.Objects.MultiLeaderStyle.html">MultiLeaderStyle</a>
+when the <a class="xref" href="ACadSharp.Entities.MultiLeaderPropertyOverrideFlags.html#ACadSharp_Entities_MultiLeaderPropertyOverrideFlags_BlockContentColor">BlockContentColor</a> flag is set (see
+<a class="xref" href="ACadSharp.Entities.MultiLeader.html#ACadSharp_Entities_MultiLeader_PropertyOverrideFlags">PropertyOverrideFlags</a> property).</p>
+</div>
+  <div class="markdown level1 conceptual"></div>
+
+  <div class="codewrapper">
+    <pre><code class="lang-csharp hljs">public Color BlockContentColor { get; set; }</code></pre>
+  </div>
+
+
+
+
+
+  <h4 class="section">Property Value</h4>
+  <dl class="parameters">
+    <dt><a class="xref" href="ACadSharp.Color.html">Color</a></dt>
+    <dd></dd>
+  </dl>
+
+
+
+
+  <h4 class="section" id="ACadSharp_Objects_MultiLeaderObjectContextData_BlockContentColor_remarks">Remarks</h4>
+  <div class="markdown level1 remarks"><p>This property is also exposed by the <a class="xref" href="ACadSharp.Entities.MultiLeader.html">MultiLeader</a> class
+(<a class="xref" href="ACadSharp.Entities.MultiLeader.html#ACadSharp_Entities_MultiLeader_BlockContentColor">BlockContentColor</a>).
+Values should be equal, the value of this property is assumed to be used.</p>
+</div>
+
+
+
+
+  <a id="ACadSharp_Objects_MultiLeaderObjectContextData_BlockContentConnection_" data-uid="ACadSharp.Objects.MultiLeaderObjectContextData.BlockContentConnection*"></a>
+
+  <h3 id="ACadSharp_Objects_MultiLeaderObjectContextData_BlockContentConnection" data-uid="ACadSharp.Objects.MultiLeaderObjectContextData.BlockContentConnection">
+  BlockContentConnection
+  <a class="header-action link-secondary" title="View source" href="https://github.com/DomCR/ACadSharp/blob/1065/merge/src/ACadSharp/Objects/MultiLeaderObjectContextData.cs/#L136"><i class="bi bi-code-slash"></i></a>
+  </h3>
+
+  <div class="markdown level1 summary"><p>Gets or sets a value indicating whether the multileader connects to the content-block extents
+or to the content-block base point.
+This property overrides the value from <a class="xref" href="ACadSharp.Objects.MultiLeaderStyle.html">MultiLeaderStyle</a>
+when the <a class="xref" href="ACadSharp.Entities.MultiLeaderPropertyOverrideFlags.html#ACadSharp_Entities_MultiLeaderPropertyOverrideFlags_BlockContentConnection">BlockContentConnection</a> flag is set in the
+<a class="xref" href="ACadSharp.Entities.MultiLeader.html#ACadSharp_Entities_MultiLeader_PropertyOverrideFlags">PropertyOverrideFlags</a> property.</p>
+</div>
+  <div class="markdown level1 conceptual"></div>
+
+  <div class="codewrapper">
+    <pre><code class="lang-csharp hljs">[DxfCodeValue(new int[] { 177 })]
+public BlockContentConnectionType BlockContentConnection { get; set; }</code></pre>
+  </div>
+
+
+
+
+
+  <h4 class="section">Property Value</h4>
+  <dl class="parameters">
+    <dt><a class="xref" href="ACadSharp.Entities.BlockContentConnectionType.html">BlockContentConnectionType</a></dt>
+    <dd></dd>
+  </dl>
+
+
+
+
+  <h4 class="section" id="ACadSharp_Objects_MultiLeaderObjectContextData_BlockContentConnection_remarks">Remarks</h4>
+  <div class="markdown level1 remarks"><p>This property is also exposed by the <a class="xref" href="ACadSharp.Entities.MultiLeader.html">MultiLeader</a> class
+(<a class="xref" href="ACadSharp.Entities.MultiLeader.html#ACadSharp_Entities_MultiLeader_BlockContentConnection">BlockContentConnection</a>).
+Values should be equal, the value of this property is assumed to be used.</p>
+</div>
+
+
+
+
+  <a id="ACadSharp_Objects_MultiLeaderObjectContextData_BlockContentLocation_" data-uid="ACadSharp.Objects.MultiLeaderObjectContextData.BlockContentLocation*"></a>
+
+  <h3 id="ACadSharp_Objects_MultiLeaderObjectContextData_BlockContentLocation" data-uid="ACadSharp.Objects.MultiLeaderObjectContextData.BlockContentLocation">
+  BlockContentLocation
+  <a class="header-action link-secondary" title="View source" href="https://github.com/DomCR/ACadSharp/blob/1065/merge/src/ACadSharp/Objects/MultiLeaderObjectContextData.cs/#L145"><i class="bi bi-code-slash"></i></a>
+  </h3>
+
+  <div class="markdown level1 summary"><p>Gets or sets the location of the böock content of the multileader.</p>
+</div>
+  <div class="markdown level1 conceptual"></div>
+
+  <div class="codewrapper">
+    <pre><code class="lang-csharp hljs">[DxfCodeValue(new int[] { 15, 25, 35 })]
+public XYZ BlockContentLocation { get; set; }</code></pre>
+  </div>
+
+
+
+
+
+  <h4 class="section">Property Value</h4>
+  <dl class="parameters">
+    <dt><a class="xref" href="CSMath.XYZ.html">XYZ</a></dt>
+    <dd></dd>
+  </dl>
+
+
+
+
+  <h4 class="section" id="ACadSharp_Objects_MultiLeaderObjectContextData_BlockContentLocation_remarks">Remarks</h4>
+  <div class="markdown level1 remarks"><p>This location is evaluated by AutoCAD from the Conn</p>
+</div>
+
+
+
+
+  <a id="ACadSharp_Objects_MultiLeaderObjectContextData_BlockContentNormal_" data-uid="ACadSharp.Objects.MultiLeaderObjectContextData.BlockContentNormal*"></a>
+
+  <h3 id="ACadSharp_Objects_MultiLeaderObjectContextData_BlockContentNormal" data-uid="ACadSharp.Objects.MultiLeaderObjectContextData.BlockContentNormal">
+  BlockContentNormal
+  <a class="header-action link-secondary" title="View source" href="https://github.com/DomCR/ACadSharp/blob/1065/merge/src/ACadSharp/Objects/MultiLeaderObjectContextData.cs/#L151"><i class="bi bi-code-slash"></i></a>
+  </h3>
+
+  <div class="markdown level1 summary"><p>Gets or sets the normal vector for the block content of the multileader.</p>
+</div>
+  <div class="markdown level1 conceptual"></div>
+
+  <div class="codewrapper">
+    <pre><code class="lang-csharp hljs">[DxfCodeValue(new int[] { 14, 24, 34 })]
+public XYZ BlockContentNormal { get; set; }</code></pre>
+  </div>
+
+
+
+
+
+  <h4 class="section">Property Value</h4>
+  <dl class="parameters">
+    <dt><a class="xref" href="CSMath.XYZ.html">XYZ</a></dt>
+    <dd></dd>
+  </dl>
+
+
+
+
+
+
+
+
+  <a id="ACadSharp_Objects_MultiLeaderObjectContextData_BlockContentRotation_" data-uid="ACadSharp.Objects.MultiLeaderObjectContextData.BlockContentRotation*"></a>
+
+  <h3 id="ACadSharp_Objects_MultiLeaderObjectContextData_BlockContentRotation" data-uid="ACadSharp.Objects.MultiLeaderObjectContextData.BlockContentRotation">
+  BlockContentRotation
+  <a class="header-action link-secondary" title="View source" href="https://github.com/DomCR/ACadSharp/blob/1065/merge/src/ACadSharp/Objects/MultiLeaderObjectContextData.cs/#L165"><i class="bi bi-code-slash"></i></a>
+  </h3>
+
+  <div class="markdown level1 summary"><p>Gets or sets the rotation of the block content of the multileader.</p>
+</div>
+  <div class="markdown level1 conceptual"></div>
+
+  <div class="codewrapper">
+    <pre><code class="lang-csharp hljs">[DxfCodeValue(DxfReferenceType.IsAngle, new int[] { 46 })]
+public double BlockContentRotation { get; set; }</code></pre>
+  </div>
+
+
+
+
+
+  <h4 class="section">Property Value</h4>
+  <dl class="parameters">
+    <dt><a class="xref" href="https://learn.microsoft.com/dotnet/api/system.double">double</a></dt>
+    <dd><p>The rotation angle in radians.</p>
+</dd>
+  </dl>
+
+
+
+
+  <h4 class="section" id="ACadSharp_Objects_MultiLeaderObjectContextData_BlockContentRotation_remarks">Remarks</h4>
+  <div class="markdown level1 remarks"><p>This property is also exposed by the <a class="xref" href="ACadSharp.Entities.MultiLeader.html">MultiLeader</a> class
+(<a class="xref" href="ACadSharp.Entities.MultiLeader.html#ACadSharp_Entities_MultiLeader_BlockContentRotation">BlockContentRotation</a>).
+Values should be equal, the value of this property is assumed to be used.</p>
+</div>
+
+
+
+
+  <a id="ACadSharp_Objects_MultiLeaderObjectContextData_BlockContentScale_" data-uid="ACadSharp.Objects.MultiLeaderObjectContextData.BlockContentScale*"></a>
+
+  <h3 id="ACadSharp_Objects_MultiLeaderObjectContextData_BlockContentScale" data-uid="ACadSharp.Objects.MultiLeaderObjectContextData.BlockContentScale">
+  BlockContentScale
+  <a class="header-action link-secondary" title="View source" href="https://github.com/DomCR/ACadSharp/blob/1065/merge/src/ACadSharp/Objects/MultiLeaderObjectContextData.cs/#L179"><i class="bi bi-code-slash"></i></a>
+  </h3>
+
+  <div class="markdown level1 summary"><p>Gets or sets the scale factor for block content.
+This property overrides the value from <a class="xref" href="ACadSharp.Objects.MultiLeaderStyle.html">MultiLeaderStyle</a>
+when the <a class="xref" href="ACadSharp.Entities.MultiLeaderPropertyOverrideFlags.html#ACadSharp_Entities_MultiLeaderPropertyOverrideFlags_BlockContentScale">BlockContentScale</a> flag is set (see
+<a class="xref" href="ACadSharp.Entities.MultiLeader.html#ACadSharp_Entities_MultiLeader_PropertyOverrideFlags">PropertyOverrideFlags</a> property).</p>
+</div>
+  <div class="markdown level1 conceptual"></div>
+
+  <div class="codewrapper">
+    <pre><code class="lang-csharp hljs">[DxfCodeValue(new int[] { 16, 26, 36 })]
+public XYZ BlockContentScale { get; set; }</code></pre>
+  </div>
+
+
+
+
+
+  <h4 class="section">Property Value</h4>
+  <dl class="parameters">
+    <dt><a class="xref" href="CSMath.XYZ.html">XYZ</a></dt>
+    <dd></dd>
+  </dl>
+
+
+
+
+  <h4 class="section" id="ACadSharp_Objects_MultiLeaderObjectContextData_BlockContentScale_remarks">Remarks</h4>
+  <div class="markdown level1 remarks"><p>This property is also exposed by the <a class="xref" href="ACadSharp.Entities.MultiLeader.html">MultiLeader</a> class
+(<a class="xref" href="ACadSharp.Entities.MultiLeader.html#ACadSharp_Entities_MultiLeader_BlockContentScale">BlockContentScale</a>).
+Values should be equal, the value of this property is assumed to be used.</p>
+</div>
+
+
+
+
+  <a id="ACadSharp_Objects_MultiLeaderObjectContextData_BoundaryHeight_" data-uid="ACadSharp.Objects.MultiLeaderObjectContextData.BoundaryHeight*"></a>
+
+  <h3 id="ACadSharp_Objects_MultiLeaderObjectContextData_BoundaryHeight" data-uid="ACadSharp.Objects.MultiLeaderObjectContextData.BoundaryHeight">
+  BoundaryHeight
+  <a class="header-action link-secondary" title="View source" href="https://github.com/DomCR/ACadSharp/blob/1065/merge/src/ACadSharp/Objects/MultiLeaderObjectContextData.cs/#L187"><i class="bi bi-code-slash"></i></a>
+  </h3>
+
+  <div class="markdown level1 summary"><p>Boundary height (DXF Reference: TextHeight)
+Value seems to be always zero.</p>
+</div>
+  <div class="markdown level1 conceptual"></div>
+
+  <div class="codewrapper">
+    <pre><code class="lang-csharp hljs">[DxfCodeValue(new int[] { 44 })]
+public double BoundaryHeight { get; set; }</code></pre>
+  </div>
+
+
+
+
+
+  <h4 class="section">Property Value</h4>
+  <dl class="parameters">
+    <dt><a class="xref" href="https://learn.microsoft.com/dotnet/api/system.double">double</a></dt>
+    <dd></dd>
+  </dl>
+
+
+
+
+
+
+
+
+  <a id="ACadSharp_Objects_MultiLeaderObjectContextData_BoundaryWidth_" data-uid="ACadSharp.Objects.MultiLeaderObjectContextData.BoundaryWidth*"></a>
+
+  <h3 id="ACadSharp_Objects_MultiLeaderObjectContextData_BoundaryWidth" data-uid="ACadSharp.Objects.MultiLeaderObjectContextData.BoundaryWidth">
+  BoundaryWidth
+  <a class="header-action link-secondary" title="View source" href="https://github.com/DomCR/ACadSharp/blob/1065/merge/src/ACadSharp/Objects/MultiLeaderObjectContextData.cs/#L195"><i class="bi bi-code-slash"></i></a>
+  </h3>
+
+  <div class="markdown level1 summary"><p>Boundary width (DXF Reference: TextWidth)
+Value seems to be always zero.</p>
+</div>
+  <div class="markdown level1 conceptual"></div>
+
+  <div class="codewrapper">
+    <pre><code class="lang-csharp hljs">[DxfCodeValue(new int[] { 43 })]
+public double BoundaryWidth { get; set; }</code></pre>
+  </div>
+
+
+
+
+
+  <h4 class="section">Property Value</h4>
+  <dl class="parameters">
+    <dt><a class="xref" href="https://learn.microsoft.com/dotnet/api/system.double">double</a></dt>
+    <dd></dd>
+  </dl>
+
+
+
+
+
+
+
+
+  <a id="ACadSharp_Objects_MultiLeaderObjectContextData_ColumnFlowReversed_" data-uid="ACadSharp.Objects.MultiLeaderObjectContextData.ColumnFlowReversed*"></a>
+
+  <h3 id="ACadSharp_Objects_MultiLeaderObjectContextData_ColumnFlowReversed" data-uid="ACadSharp.Objects.MultiLeaderObjectContextData.ColumnFlowReversed">
+  ColumnFlowReversed
+  <a class="header-action link-secondary" title="View source" href="https://github.com/DomCR/ACadSharp/blob/1065/merge/src/ACadSharp/Objects/MultiLeaderObjectContextData.cs/#L202"><i class="bi bi-code-slash"></i></a>
+  </h3>
+
+  <div class="markdown level1 summary"><p>Column flow reversed</p>
+</div>
+  <div class="markdown level1 conceptual"></div>
+
+  <div class="codewrapper">
+    <pre><code class="lang-csharp hljs">[DxfCodeValue(new int[] { 294 })]
+public bool ColumnFlowReversed { get; set; }</code></pre>
+  </div>
+
+
+
+
+
+  <h4 class="section">Property Value</h4>
+  <dl class="parameters">
+    <dt><a class="xref" href="https://learn.microsoft.com/dotnet/api/system.boolean">bool</a></dt>
+    <dd></dd>
+  </dl>
+
+
+
+
+
+
+
+
+  <a id="ACadSharp_Objects_MultiLeaderObjectContextData_ColumnGutter_" data-uid="ACadSharp.Objects.MultiLeaderObjectContextData.ColumnGutter*"></a>
+
+  <h3 id="ACadSharp_Objects_MultiLeaderObjectContextData_ColumnGutter" data-uid="ACadSharp.Objects.MultiLeaderObjectContextData.ColumnGutter">
+  ColumnGutter
+  <a class="header-action link-secondary" title="View source" href="https://github.com/DomCR/ACadSharp/blob/1065/merge/src/ACadSharp/Objects/MultiLeaderObjectContextData.cs/#L209"><i class="bi bi-code-slash"></i></a>
+  </h3>
+
+  <div class="markdown level1 summary"><p>Column gutter</p>
+</div>
+  <div class="markdown level1 conceptual"></div>
+
+  <div class="codewrapper">
+    <pre><code class="lang-csharp hljs">[DxfCodeValue(new int[] { 143 })]
+public double ColumnGutter { get; set; }</code></pre>
+  </div>
+
+
+
+
+
+  <h4 class="section">Property Value</h4>
+  <dl class="parameters">
+    <dt><a class="xref" href="https://learn.microsoft.com/dotnet/api/system.double">double</a></dt>
+    <dd></dd>
+  </dl>
+
+
+
+
+
+
+
+
+  <a id="ACadSharp_Objects_MultiLeaderObjectContextData_ColumnSizes_" data-uid="ACadSharp.Objects.MultiLeaderObjectContextData.ColumnSizes*"></a>
+
+  <h3 id="ACadSharp_Objects_MultiLeaderObjectContextData_ColumnSizes" data-uid="ACadSharp.Objects.MultiLeaderObjectContextData.ColumnSizes">
+  ColumnSizes
+  <a class="header-action link-secondary" title="View source" href="https://github.com/DomCR/ACadSharp/blob/1065/merge/src/ACadSharp/Objects/MultiLeaderObjectContextData.cs/#L216"><i class="bi bi-code-slash"></i></a>
+  </h3>
+
+  <div class="markdown level1 summary"><p>Get a list of column sizes</p>
+</div>
+  <div class="markdown level1 conceptual"></div>
+
+  <div class="codewrapper">
+    <pre><code class="lang-csharp hljs">[DxfCodeValue(new int[] { 144 })]
+public IList&lt;double&gt; ColumnSizes { get; }</code></pre>
+  </div>
+
+
+
+
+
+  <h4 class="section">Property Value</h4>
+  <dl class="parameters">
+    <dt><a class="xref" href="https://learn.microsoft.com/dotnet/api/system.collections.generic.ilist-1">IList</a>&lt;<a class="xref" href="https://learn.microsoft.com/dotnet/api/system.double">double</a>&gt;</dt>
+    <dd></dd>
+  </dl>
+
+
+
+
+
+
+
+
+  <a id="ACadSharp_Objects_MultiLeaderObjectContextData_ColumnType_" data-uid="ACadSharp.Objects.MultiLeaderObjectContextData.ColumnType*"></a>
+
+  <h3 id="ACadSharp_Objects_MultiLeaderObjectContextData_ColumnType" data-uid="ACadSharp.Objects.MultiLeaderObjectContextData.ColumnType">
+  ColumnType
+  <a class="header-action link-secondary" title="View source" href="https://github.com/DomCR/ACadSharp/blob/1065/merge/src/ACadSharp/Objects/MultiLeaderObjectContextData.cs/#L223"><i class="bi bi-code-slash"></i></a>
+  </h3>
+
+  <div class="markdown level1 summary"><p>Column type (ODA writes 0)</p>
+</div>
+  <div class="markdown level1 conceptual"></div>
+
+  <div class="codewrapper">
+    <pre><code class="lang-csharp hljs">[DxfCodeValue(new int[] { 173 })]
+public short ColumnType { get; set; }</code></pre>
+  </div>
+
+
+
+
+
+  <h4 class="section">Property Value</h4>
+  <dl class="parameters">
+    <dt><a class="xref" href="https://learn.microsoft.com/dotnet/api/system.int16">short</a></dt>
+    <dd></dd>
+  </dl>
+
+
+
+
+
+
+
+
+  <a id="ACadSharp_Objects_MultiLeaderObjectContextData_ColumnWidth_" data-uid="ACadSharp.Objects.MultiLeaderObjectContextData.ColumnWidth*"></a>
+
+  <h3 id="ACadSharp_Objects_MultiLeaderObjectContextData_ColumnWidth" data-uid="ACadSharp.Objects.MultiLeaderObjectContextData.ColumnWidth">
+  ColumnWidth
+  <a class="header-action link-secondary" title="View source" href="https://github.com/DomCR/ACadSharp/blob/1065/merge/src/ACadSharp/Objects/MultiLeaderObjectContextData.cs/#L230"><i class="bi bi-code-slash"></i></a>
+  </h3>
+
+  <div class="markdown level1 summary"><p>Column width</p>
+</div>
+  <div class="markdown level1 conceptual"></div>
+
+  <div class="codewrapper">
+    <pre><code class="lang-csharp hljs">[DxfCodeValue(new int[] { 142 })]
+public double ColumnWidth { get; set; }</code></pre>
+  </div>
+
+
+
+
+
+  <h4 class="section">Property Value</h4>
+  <dl class="parameters">
+    <dt><a class="xref" href="https://learn.microsoft.com/dotnet/api/system.double">double</a></dt>
+    <dd></dd>
+  </dl>
+
+
+
+
+
+
+
+
+  <a id="ACadSharp_Objects_MultiLeaderObjectContextData_ContentBasePoint_" data-uid="ACadSharp.Objects.MultiLeaderObjectContextData.ContentBasePoint*"></a>
+
+  <h3 id="ACadSharp_Objects_MultiLeaderObjectContextData_ContentBasePoint" data-uid="ACadSharp.Objects.MultiLeaderObjectContextData.ContentBasePoint">
+  ContentBasePoint
+  <a class="header-action link-secondary" title="View source" href="https://github.com/DomCR/ACadSharp/blob/1065/merge/src/ACadSharp/Objects/MultiLeaderObjectContextData.cs/#L241"><i class="bi bi-code-slash"></i></a>
+  </h3>
+
+  <div class="markdown level1 summary"><p>Gets or sets the content base point. This point is identical with the landing end
+point of the first leader.</p>
+</div>
+  <div class="markdown level1 conceptual"></div>
+
+  <div class="codewrapper">
+    <pre><code class="lang-csharp hljs">[DxfCodeValue(new int[] { 10, 20, 30 })]
+public XYZ ContentBasePoint { get; set; }</code></pre>
+  </div>
+
+
+
+
+
+  <h4 class="section">Property Value</h4>
+  <dl class="parameters">
+    <dt><a class="xref" href="CSMath.XYZ.html">XYZ</a></dt>
+    <dd></dd>
+  </dl>
+
+
+
+
+  <h4 class="section" id="ACadSharp_Objects_MultiLeaderObjectContextData_ContentBasePoint_remarks">Remarks</h4>
+  <div class="markdown level1 remarks"><p>This point</p>
+</div>
+
+
+
+
+  <a id="ACadSharp_Objects_MultiLeaderObjectContextData_Direction_" data-uid="ACadSharp.Objects.MultiLeaderObjectContextData.Direction*"></a>
+
+  <h3 id="ACadSharp_Objects_MultiLeaderObjectContextData_Direction" data-uid="ACadSharp.Objects.MultiLeaderObjectContextData.Direction">
+  Direction
+  <a class="header-action link-secondary" title="View source" href="https://github.com/DomCR/ACadSharp/blob/1065/merge/src/ACadSharp/Objects/MultiLeaderObjectContextData.cs/#L247"><i class="bi bi-code-slash"></i></a>
+  </h3>
+
+  <div class="markdown level1 summary"><p>Direction</p>
+</div>
+  <div class="markdown level1 conceptual"></div>
+
+  <div class="codewrapper">
+    <pre><code class="lang-csharp hljs">[DxfCodeValue(new int[] { 13, 23, 33 })]
+public XYZ Direction { get; set; }</code></pre>
+  </div>
+
+
+
+
+
+  <h4 class="section">Property Value</h4>
+  <dl class="parameters">
+    <dt><a class="xref" href="CSMath.XYZ.html">XYZ</a></dt>
+    <dd></dd>
+  </dl>
+
+
+
+
+
+
+
+
+  <a id="ACadSharp_Objects_MultiLeaderObjectContextData_FlowDirection_" data-uid="ACadSharp.Objects.MultiLeaderObjectContextData.FlowDirection*"></a>
+
+  <h3 id="ACadSharp_Objects_MultiLeaderObjectContextData_FlowDirection" data-uid="ACadSharp.Objects.MultiLeaderObjectContextData.FlowDirection">
+  FlowDirection
+  <a class="header-action link-secondary" title="View source" href="https://github.com/DomCR/ACadSharp/blob/1065/merge/src/ACadSharp/Objects/MultiLeaderObjectContextData.cs/#L256"><i class="bi bi-code-slash"></i></a>
+  </h3>
+
+  <div class="markdown level1 summary"><p>Gets or sets a value indicating the flow direction.</p>
+</div>
+  <div class="markdown level1 conceptual"></div>
+
+  <div class="codewrapper">
+    <pre><code class="lang-csharp hljs">[DxfCodeValue(new int[] { 172 })]
+public FlowDirectionType FlowDirection { get; set; }</code></pre>
+  </div>
+
+
+
+
+
+  <h4 class="section">Property Value</h4>
+  <dl class="parameters">
+    <dt><a class="xref" href="ACadSharp.FlowDirectionType.html">FlowDirectionType</a></dt>
+    <dd></dd>
+  </dl>
+
+
+
+
+
+
+
+
+  <a id="ACadSharp_Objects_MultiLeaderObjectContextData_HasContentsBlock_" data-uid="ACadSharp.Objects.MultiLeaderObjectContextData.HasContentsBlock*"></a>
+
+  <h3 id="ACadSharp_Objects_MultiLeaderObjectContextData_HasContentsBlock" data-uid="ACadSharp.Objects.MultiLeaderObjectContextData.HasContentsBlock">
+  HasContentsBlock
+  <a class="header-action link-secondary" title="View source" href="https://github.com/DomCR/ACadSharp/blob/1065/merge/src/ACadSharp/Objects/MultiLeaderObjectContextData.cs/#L263"><i class="bi bi-code-slash"></i></a>
+  </h3>
+
+  <div class="markdown level1 summary"><p>Gets or sets a value indicating that the multileader has a content block.</p>
+</div>
+  <div class="markdown level1 conceptual"></div>
+
+  <div class="codewrapper">
+    <pre><code class="lang-csharp hljs">[DxfCodeValue(new int[] { 296 })]
+public bool HasContentsBlock { get; set; }</code></pre>
+  </div>
+
+
+
+
+
+  <h4 class="section">Property Value</h4>
+  <dl class="parameters">
+    <dt><a class="xref" href="https://learn.microsoft.com/dotnet/api/system.boolean">bool</a></dt>
+    <dd></dd>
+  </dl>
+
+
+
+
+
+
+
+
+  <a id="ACadSharp_Objects_MultiLeaderObjectContextData_HasTextContents_" data-uid="ACadSharp.Objects.MultiLeaderObjectContextData.HasTextContents*"></a>
+
+  <h3 id="ACadSharp_Objects_MultiLeaderObjectContextData_HasTextContents" data-uid="ACadSharp.Objects.MultiLeaderObjectContextData.HasTextContents">
+  HasTextContents
+  <a class="header-action link-secondary" title="View source" href="https://github.com/DomCR/ACadSharp/blob/1065/merge/src/ACadSharp/Objects/MultiLeaderObjectContextData.cs/#L270"><i class="bi bi-code-slash"></i></a>
+  </h3>
+
+  <div class="markdown level1 summary"><p>Gets or sets a value indicating that the mutileader has a text label.</p>
+</div>
+  <div class="markdown level1 conceptual"></div>
+
+  <div class="codewrapper">
+    <pre><code class="lang-csharp hljs">[DxfCodeValue(new int[] { 290 })]
+public bool HasTextContents { get; set; }</code></pre>
+  </div>
+
+
+
+
+
+  <h4 class="section">Property Value</h4>
+  <dl class="parameters">
+    <dt><a class="xref" href="https://learn.microsoft.com/dotnet/api/system.boolean">bool</a></dt>
+    <dd></dd>
+  </dl>
+
+
+
+
+
+
+
+
+  <a id="ACadSharp_Objects_MultiLeaderObjectContextData_LandingGap_" data-uid="ACadSharp.Objects.MultiLeaderObjectContextData.LandingGap*"></a>
+
+  <h3 id="ACadSharp_Objects_MultiLeaderObjectContextData_LandingGap" data-uid="ACadSharp.Objects.MultiLeaderObjectContextData.LandingGap">
+  LandingGap
+  <a class="header-action link-secondary" title="View source" href="https://github.com/DomCR/ACadSharp/blob/1065/merge/src/ACadSharp/Objects/MultiLeaderObjectContextData.cs/#L279"><i class="bi bi-code-slash"></i></a>
+  </h3>
+
+  <div class="markdown level1 summary"><p>Gets or sets the landing gap (see <a class="xref" href="ACadSharp.Objects.MultiLeaderStyle.html#ACadSharp_Objects_MultiLeaderStyle_LandingGap">LandingGap</a>).
+This property overrides the value from <a class="xref" href="ACadSharp.Objects.MultiLeaderStyle.html">MultiLeaderStyle</a>
+when the <a class="xref" href="ACadSharp.Entities.MultiLeaderPropertyOverrideFlags.html#ACadSharp_Entities_MultiLeaderPropertyOverrideFlags_LandingGap">LandingGap</a> flag is set (see
+<a class="xref" href="ACadSharp.Entities.MultiLeader.html#ACadSharp_Entities_MultiLeader_PropertyOverrideFlags">PropertyOverrideFlags</a> property).</p>
+</div>
+  <div class="markdown level1 conceptual"></div>
+
+  <div class="codewrapper">
+    <pre><code class="lang-csharp hljs">[DxfCodeValue(new int[] { 145 })]
+public double LandingGap { get; set; }</code></pre>
+  </div>
+
+
+
+
+
+  <h4 class="section">Property Value</h4>
+  <dl class="parameters">
+    <dt><a class="xref" href="https://learn.microsoft.com/dotnet/api/system.double">double</a></dt>
+    <dd></dd>
+  </dl>
+
+
+
+
+
+
+
+
+  <a id="ACadSharp_Objects_MultiLeaderObjectContextData_LeaderRoots_" data-uid="ACadSharp.Objects.MultiLeaderObjectContextData.LeaderRoots*"></a>
+
+  <h3 id="ACadSharp_Objects_MultiLeaderObjectContextData_LeaderRoots" data-uid="ACadSharp.Objects.MultiLeaderObjectContextData.LeaderRoots">
+  LeaderRoots
+  <a class="header-action link-secondary" title="View source" href="https://github.com/DomCR/ACadSharp/blob/1065/merge/src/ACadSharp/Objects/MultiLeaderObjectContextData.cs/#L289"><i class="bi bi-code-slash"></i></a>
+  </h3>
+
+  <div class="markdown level1 summary"><p>Gets the list of <a class="xref" href="ACadSharp.Objects.MultiLeaderObjectContextData.LeaderRoot.html">MultiLeaderObjectContextData.LeaderRoot</a> objects of the multileader.</p>
+</div>
+  <div class="markdown level1 conceptual"></div>
+
+  <div class="codewrapper">
+    <pre><code class="lang-csharp hljs">public IList&lt;MultiLeaderObjectContextData.LeaderRoot&gt; LeaderRoots { get; }</code></pre>
+  </div>
+
+
+
+
+
+  <h4 class="section">Property Value</h4>
+  <dl class="parameters">
+    <dt><a class="xref" href="https://learn.microsoft.com/dotnet/api/system.collections.generic.ilist-1">IList</a>&lt;<a class="xref" href="ACadSharp.Objects.MultiLeaderObjectContextData.html">MultiLeaderObjectContextData</a>.<a class="xref" href="ACadSharp.Objects.MultiLeaderObjectContextData.LeaderRoot.html">LeaderRoot</a>&gt;</dt>
+    <dd></dd>
+  </dl>
+
+
+
+
+  <h4 class="section" id="ACadSharp_Objects_MultiLeaderObjectContextData_LeaderRoots_remarks">Remarks</h4>
+  <div class="markdown level1 remarks"><p>A <a class="xref" href="ACadSharp.Entities.MultiLeader.html">MultiLeader</a> can have one or two leader roots having one ore more
+leader lines each.</p>
+</div>
+
+
+
+
+  <a id="ACadSharp_Objects_MultiLeaderObjectContextData_LineSpacing_" data-uid="ACadSharp.Objects.MultiLeaderObjectContextData.LineSpacing*"></a>
+
+  <h3 id="ACadSharp_Objects_MultiLeaderObjectContextData_LineSpacing" data-uid="ACadSharp.Objects.MultiLeaderObjectContextData.LineSpacing">
+  LineSpacing
+  <a class="header-action link-secondary" title="View source" href="https://github.com/DomCR/ACadSharp/blob/1065/merge/src/ACadSharp/Objects/MultiLeaderObjectContextData.cs/#L294"><i class="bi bi-code-slash"></i></a>
+  </h3>
+
+  <div class="markdown level1 summary"><p>Gets or sets the line spacing style for the display of the text label.</p>
+</div>
+  <div class="markdown level1 conceptual"></div>
+
+  <div class="codewrapper">
+    <pre><code class="lang-csharp hljs">[DxfCodeValue(new int[] { 170 })]
+public LineSpacingStyle LineSpacing { get; set; }</code></pre>
+  </div>
+
+
+
+
+
+  <h4 class="section">Property Value</h4>
+  <dl class="parameters">
+    <dt><a class="xref" href="ACadSharp.LineSpacingStyle.html">LineSpacingStyle</a></dt>
+    <dd></dd>
+  </dl>
+
+
+
+
+
+
+
+
+  <a id="ACadSharp_Objects_MultiLeaderObjectContextData_LineSpacingFactor_" data-uid="ACadSharp.Objects.MultiLeaderObjectContextData.LineSpacingFactor*"></a>
+
+  <h3 id="ACadSharp_Objects_MultiLeaderObjectContextData_LineSpacingFactor" data-uid="ACadSharp.Objects.MultiLeaderObjectContextData.LineSpacingFactor">
+  LineSpacingFactor
+  <a class="header-action link-secondary" title="View source" href="https://github.com/DomCR/ACadSharp/blob/1065/merge/src/ACadSharp/Objects/MultiLeaderObjectContextData.cs/#L300"><i class="bi bi-code-slash"></i></a>
+  </h3>
+
+  <div class="markdown level1 summary"><p>Gets or sets the line-spacing factor for the display of the text label.</p>
+</div>
+  <div class="markdown level1 conceptual"></div>
+
+  <div class="codewrapper">
+    <pre><code class="lang-csharp hljs">[DxfCodeValue(new int[] { 45 })]
+public double LineSpacingFactor { get; set; }</code></pre>
+  </div>
+
+
+
+
+
+  <h4 class="section">Property Value</h4>
+  <dl class="parameters">
+    <dt><a class="xref" href="https://learn.microsoft.com/dotnet/api/system.double">double</a></dt>
+    <dd></dd>
+  </dl>
+
+
+
+
+
+
+
+
+  <a id="ACadSharp_Objects_MultiLeaderObjectContextData_NormalReversed_" data-uid="ACadSharp.Objects.MultiLeaderObjectContextData.NormalReversed*"></a>
+
+  <h3 id="ACadSharp_Objects_MultiLeaderObjectContextData_NormalReversed" data-uid="ACadSharp.Objects.MultiLeaderObjectContextData.NormalReversed">
+  NormalReversed
+  <a class="header-action link-secondary" title="View source" href="https://github.com/DomCR/ACadSharp/blob/1065/merge/src/ACadSharp/Objects/MultiLeaderObjectContextData.cs/#L306"><i class="bi bi-code-slash"></i></a>
+  </h3>
+
+  <div class="markdown level1 summary"><p>Is normal reversed?</p>
+</div>
+  <div class="markdown level1 conceptual"></div>
+
+  <div class="codewrapper">
+    <pre><code class="lang-csharp hljs">[DxfCodeValue(new int[] { 297 })]
+public bool NormalReversed { get; set; }</code></pre>
+  </div>
+
+
+
+
+
+  <h4 class="section">Property Value</h4>
+  <dl class="parameters">
+    <dt><a class="xref" href="https://learn.microsoft.com/dotnet/api/system.boolean">bool</a></dt>
+    <dd></dd>
+  </dl>
+
+
+
+
+
+
+
+
+  <a id="ACadSharp_Objects_MultiLeaderObjectContextData_ObjectName_" data-uid="ACadSharp.Objects.MultiLeaderObjectContextData.ObjectName*"></a>
+
+  <h3 id="ACadSharp_Objects_MultiLeaderObjectContextData_ObjectName" data-uid="ACadSharp.Objects.MultiLeaderObjectContextData.ObjectName">
+  ObjectName
+  <a class="header-action link-secondary" title="View source" href="https://github.com/DomCR/ACadSharp/blob/1065/merge/src/ACadSharp/Objects/MultiLeaderObjectContextData.cs/#L310"><i class="bi bi-code-slash"></i></a>
+  </h3>
+
+  <div class="markdown level1 summary"><p>The CAD class name of an object.</p>
+</div>
+  <div class="markdown level1 conceptual"></div>
+
+  <div class="codewrapper">
+    <pre><code class="lang-csharp hljs">public override string ObjectName { get; }</code></pre>
+  </div>
+
+
+
+
+
+  <h4 class="section">Property Value</h4>
+  <dl class="parameters">
+    <dt><a class="xref" href="https://learn.microsoft.com/dotnet/api/system.string">string</a></dt>
+    <dd></dd>
+  </dl>
+
+
+
+
+
+
+
+
+  <a id="ACadSharp_Objects_MultiLeaderObjectContextData_ObjectType_" data-uid="ACadSharp.Objects.MultiLeaderObjectContextData.ObjectType*"></a>
+
+  <h3 id="ACadSharp_Objects_MultiLeaderObjectContextData_ObjectType" data-uid="ACadSharp.Objects.MultiLeaderObjectContextData.ObjectType">
+  ObjectType
+  <a class="header-action link-secondary" title="View source" href="https://github.com/DomCR/ACadSharp/blob/1065/merge/src/ACadSharp/Objects/MultiLeaderObjectContextData.cs/#L312"><i class="bi bi-code-slash"></i></a>
+  </h3>
+
+  <div class="markdown level1 summary"><p>Get the object type.</p>
+</div>
+  <div class="markdown level1 conceptual"></div>
+
+  <div class="codewrapper">
+    <pre><code class="lang-csharp hljs">public override ObjectType ObjectType { get; }</code></pre>
+  </div>
+
+
+
+
+
+  <h4 class="section">Property Value</h4>
+  <dl class="parameters">
+    <dt><a class="xref" href="ACadSharp.ObjectType.html">ObjectType</a></dt>
+    <dd></dd>
+  </dl>
+
+
+
+
+
+
+
+
+  <a id="ACadSharp_Objects_MultiLeaderObjectContextData_ScaleFactor_" data-uid="ACadSharp.Objects.MultiLeaderObjectContextData.ScaleFactor*"></a>
+
+  <h3 id="ACadSharp_Objects_MultiLeaderObjectContextData_ScaleFactor" data-uid="ACadSharp.Objects.MultiLeaderObjectContextData.ScaleFactor">
+  ScaleFactor
+  <a class="header-action link-secondary" title="View source" href="https://github.com/DomCR/ACadSharp/blob/1065/merge/src/ACadSharp/Objects/MultiLeaderObjectContextData.cs/#L331"><i class="bi bi-code-slash"></i></a>
+  </h3>
+
+  <div class="markdown level1 summary"><p>Gets or sets a scale factor (see <a class="xref" href="ACadSharp.Objects.MultiLeaderStyle.html#ACadSharp_Objects_MultiLeaderStyle_ScaleFactor">ScaleFactor</a>).
+This property overrides the value from <a class="xref" href="ACadSharp.Objects.MultiLeaderStyle.html">MultiLeaderStyle</a>
+when the <a class="xref" href="ACadSharp.Entities.MultiLeaderPropertyOverrideFlags.html#ACadSharp_Entities_MultiLeaderPropertyOverrideFlags_ScaleFactor">ScaleFactor</a> flag is set (see
+<a class="xref" href="ACadSharp.Entities.MultiLeader.html#ACadSharp_Entities_MultiLeader_PropertyOverrideFlags">PropertyOverrideFlags</a> property).
+The scale factor is applied by AutoCAD.</p>
+</div>
+  <div class="markdown level1 conceptual"></div>
+
+  <div class="codewrapper">
+    <pre><code class="lang-csharp hljs">[DxfCodeValue(new int[] { 40 })]
+public double ScaleFactor { get; set; }</code></pre>
+  </div>
+
+
+
+
+
+  <h4 class="section">Property Value</h4>
+  <dl class="parameters">
+    <dt><a class="xref" href="https://learn.microsoft.com/dotnet/api/system.double">double</a></dt>
+    <dd></dd>
+  </dl>
+
+
+
+
+  <h4 class="section" id="ACadSharp_Objects_MultiLeaderObjectContextData_ScaleFactor_remarks">Remarks</h4>
+  <div class="markdown level1 remarks"><p>
+The following properties entered in AutoCAD are multiplied with this scale factor:
+</p>
+<a class="xref" href="ACadSharp.Objects.MultiLeaderObjectContextData.html#ACadSharp_Objects_MultiLeaderObjectContextData_ArrowheadSize">ArrowheadSize</a>, <a class="xref" href="ACadSharp.Entities.MultiLeader.html#ACadSharp_Entities_MultiLeader_LandingDistance">LandingDistance</a>, <a class="xref" href="ACadSharp.Objects.MultiLeaderObjectContextData.html#ACadSharp_Objects_MultiLeaderObjectContextData_LandingGap">LandingGap</a>,
+<a class="xref" href="ACadSharp.Objects.MultiLeaderObjectContextData.html#ACadSharp_Objects_MultiLeaderObjectContextData_TextHeight">TextHeight</a>, and the elements of <a class="xref" href="ACadSharp.Objects.MultiLeaderObjectContextData.html#ACadSharp_Objects_MultiLeaderObjectContextData_BlockContentScale">BlockContentScale</a>.
+<p>
+The <a class="xref" href="ACadSharp.Objects.MultiLeaderObjectContextData.html#ACadSharp_Objects_MultiLeaderObjectContextData_ContentBasePoint">ContentBasePoint</a> is adjusted.
+</p>
+</div>
+
+
+
+
+  <a id="ACadSharp_Objects_MultiLeaderObjectContextData_SubclassMarker_" data-uid="ACadSharp.Objects.MultiLeaderObjectContextData.SubclassMarker*"></a>
+
+  <h3 id="ACadSharp_Objects_MultiLeaderObjectContextData_SubclassMarker" data-uid="ACadSharp.Objects.MultiLeaderObjectContextData.SubclassMarker">
+  SubclassMarker
+  <a class="header-action link-secondary" title="View source" href="https://github.com/DomCR/ACadSharp/blob/1065/merge/src/ACadSharp/Objects/MultiLeaderObjectContextData.cs/#L335"><i class="bi bi-code-slash"></i></a>
+  </h3>
+
+  <div class="markdown level1 summary"><p>Object Subclass marker.</p>
+</div>
+  <div class="markdown level1 conceptual"></div>
+
+  <div class="codewrapper">
+    <pre><code class="lang-csharp hljs">public override string SubclassMarker { get; }</code></pre>
+  </div>
+
+
+
+
+
+  <h4 class="section">Property Value</h4>
+  <dl class="parameters">
+    <dt><a class="xref" href="https://learn.microsoft.com/dotnet/api/system.string">string</a></dt>
+    <dd></dd>
+  </dl>
+
+
+
+
+
+
+
+
+  <a id="ACadSharp_Objects_MultiLeaderObjectContextData_TextAlignment_" data-uid="ACadSharp.Objects.MultiLeaderObjectContextData.TextAlignment*"></a>
+
+  <h3 id="ACadSharp_Objects_MultiLeaderObjectContextData_TextAlignment" data-uid="ACadSharp.Objects.MultiLeaderObjectContextData.TextAlignment">
+  TextAlignment
+  <a class="header-action link-secondary" title="View source" href="https://github.com/DomCR/ACadSharp/blob/1065/merge/src/ACadSharp/Objects/MultiLeaderObjectContextData.cs/#L353"><i class="bi bi-code-slash"></i></a>
+  </h3>
+
+  <div class="markdown level1 summary"><p>Gets or sets the text alignment, i.e. the alignment of text lines if the a multiline
+text label, relative to the Location.
+This property overrides the value from <a class="xref" href="ACadSharp.Objects.MultiLeaderStyle.html">MultiLeaderStyle</a>
+when the <a class="xref" href="ACadSharp.Entities.MultiLeaderPropertyOverrideFlags.html#ACadSharp_Entities_MultiLeaderPropertyOverrideFlags_TextAlignment">TextAlignment</a> flag is set in the
+<a class="xref" href="ACadSharp.Entities.MultiLeader.html#ACadSharp_Entities_MultiLeader_PropertyOverrideFlags">PropertyOverrideFlags</a> property.</p>
+</div>
+  <div class="markdown level1 conceptual"></div>
+
+  <div class="codewrapper">
+    <pre><code class="lang-csharp hljs">[DxfCodeValue(new int[] { 176 })]
+public TextAlignmentType TextAlignment { get; set; }</code></pre>
+  </div>
+
+
+
+
+
+  <h4 class="section">Property Value</h4>
+  <dl class="parameters">
+    <dt><a class="xref" href="ACadSharp.TextAlignmentType.html">TextAlignmentType</a></dt>
+    <dd></dd>
+  </dl>
+
+
+
+
+  <h4 class="section" id="ACadSharp_Objects_MultiLeaderObjectContextData_TextAlignment_remarks">Remarks</h4>
+  <div class="markdown level1 remarks"><p>
+    This property contains the alignment value specified in AutoCAD rather than
+    <a class="xref" href="ACadSharp.Entities.MultiLeader.html#ACadSharp_Entities_MultiLeader_TextAlignment">TextAlignment</a> and seems always to be consistent with
+    <a class="xref" href="ACadSharp.Objects.MultiLeaderObjectContextData.html#ACadSharp_Objects_MultiLeaderObjectContextData_TextAttachmentPoint">TextAttachmentPoint</a>.
+    </p><p>
+    Note that when changing this value the Location must be changed
+    accordingly.
+    </p>
+</div>
+
+
+
+
+  <a id="ACadSharp_Objects_MultiLeaderObjectContextData_TextAttachmentPoint_" data-uid="ACadSharp.Objects.MultiLeaderObjectContextData.TextAttachmentPoint*"></a>
+
+  <h3 id="ACadSharp_Objects_MultiLeaderObjectContextData_TextAttachmentPoint" data-uid="ACadSharp.Objects.MultiLeaderObjectContextData.TextAttachmentPoint">
+  TextAttachmentPoint
+  <a class="header-action link-secondary" title="View source" href="https://github.com/DomCR/ACadSharp/blob/1065/merge/src/ACadSharp/Objects/MultiLeaderObjectContextData.cs/#L370"><i class="bi bi-code-slash"></i></a>
+  </h3>
+
+  <div class="markdown level1 summary"><p>Gets or sets a value indicating the text attachment point.</p>
+</div>
+  <div class="markdown level1 conceptual"></div>
+
+  <div class="codewrapper">
+    <pre><code class="lang-csharp hljs">[DxfCodeValue(new int[] { 171 })]
+public TextAttachmentPointType TextAttachmentPoint { get; set; }</code></pre>
+  </div>
+
+
+
+
+
+  <h4 class="section">Property Value</h4>
+  <dl class="parameters">
+    <dt><a class="xref" href="ACadSharp.TextAttachmentPointType.html">TextAttachmentPointType</a></dt>
+    <dd></dd>
+  </dl>
+
+
+
+
+  <h4 class="section" id="ACadSharp_Objects_MultiLeaderObjectContextData_TextAttachmentPoint_remarks">Remarks</h4>
+  <div class="markdown level1 remarks"><p>
+    In the Open Design Specification this property is documented as <i>Alignment</i>, in DXF
+    reference as <i>Text Attachment</i>. It is not clear what the meaning of this property
+    is in contrast to the <a class="xref" href="ACadSharp.Objects.MultiLeaderObjectContextData.html#ACadSharp_Objects_MultiLeaderObjectContextData_TextAlignment">TextAlignment</a> property. The value seems to be always
+    consistent.
+    </p><p>
+    This property is also exposed by the <a class="xref" href="ACadSharp.Entities.MultiLeader.html">MultiLeader</a> class
+    (<a class="xref" href="ACadSharp.Entities.MultiLeader.html#ACadSharp_Entities_MultiLeader_TextAttachmentPoint">TextAttachmentPoint</a>).
+    Values should be equal, the value of this property is assumed to be used.
+    </p>
+</div>
+
+
+
+
+  <a id="ACadSharp_Objects_MultiLeaderObjectContextData_TextBottomAttachment_" data-uid="ACadSharp.Objects.MultiLeaderObjectContextData.TextBottomAttachment*"></a>
+
+  <h3 id="ACadSharp_Objects_MultiLeaderObjectContextData_TextBottomAttachment" data-uid="ACadSharp.Objects.MultiLeaderObjectContextData.TextBottomAttachment">
+  TextBottomAttachment
+  <a class="header-action link-secondary" title="View source" href="https://github.com/DomCR/ACadSharp/blob/1065/merge/src/ACadSharp/Objects/MultiLeaderObjectContextData.cs/#L390"><i class="bi bi-code-slash"></i></a>
+  </h3>
+
+  <div class="markdown level1 summary"><p>Gets or sets the text bottom attachment type (see <a class="xref" href="ACadSharp.Objects.MultiLeaderStyle.html#ACadSharp_Objects_MultiLeaderStyle_TextBottomAttachment">TextBottomAttachment</a>).
+This property override the value from <a class="xref" href="ACadSharp.Objects.MultiLeaderStyle.html">MultiLeaderStyle</a>
+when the <a class="xref" href="ACadSharp.Entities.MultiLeaderPropertyOverrideFlags.html#ACadSharp_Entities_MultiLeaderPropertyOverrideFlags_TextBottomAttachment">TextBottomAttachment</a> flag is set (see
+<a class="xref" href="ACadSharp.Entities.MultiLeader.html#ACadSharp_Entities_MultiLeader_PropertyOverrideFlags">PropertyOverrideFlags</a> property).</p>
+</div>
+  <div class="markdown level1 conceptual"></div>
+
+  <div class="codewrapper">
+    <pre><code class="lang-csharp hljs">[DxfCodeValue(new int[] { 272 })]
+public TextAttachmentType TextBottomAttachment { get; set; }</code></pre>
+  </div>
+
+
+
+
+
+  <h4 class="section">Property Value</h4>
+  <dl class="parameters">
+    <dt><a class="xref" href="ACadSharp.TextAttachmentType.html">TextAttachmentType</a></dt>
+    <dd><p>A <a class="xref" href="ACadSharp.TextAttachmentType.html">TextAttachmentType</a> having the values
+9 = Center,
+10 = Underline and Center
+can be used (&quot;vertical&quot; attachment types).</p>
+</dd>
+  </dl>
+
+
+
+
+  <h4 class="section" id="ACadSharp_Objects_MultiLeaderObjectContextData_TextBottomAttachment_remarks">Remarks</h4>
+  <div class="markdown level1 remarks"><p>This property is also exposed by the <a class="xref" href="ACadSharp.Entities.MultiLeader.html">MultiLeader</a> class
+(<a class="xref" href="ACadSharp.Entities.MultiLeader.html#ACadSharp_Entities_MultiLeader_TextBottomAttachment">TextBottomAttachment</a>).
+Values should be equal, the value of this property is assumed to be used.</p>
+</div>
+
+
+
+
+  <a id="ACadSharp_Objects_MultiLeaderObjectContextData_TextColor_" data-uid="ACadSharp.Objects.MultiLeaderObjectContextData.TextColor*"></a>
+
+  <h3 id="ACadSharp_Objects_MultiLeaderObjectContextData_TextColor" data-uid="ACadSharp.Objects.MultiLeaderObjectContextData.TextColor">
+  TextColor
+  <a class="header-action link-secondary" title="View source" href="https://github.com/DomCR/ACadSharp/blob/1065/merge/src/ACadSharp/Objects/MultiLeaderObjectContextData.cs/#L396"><i class="bi bi-code-slash"></i></a>
+  </h3>
+
+  <div class="markdown level1 summary"><p>Gets or sets the color for the display of the text label</p>
+</div>
+  <div class="markdown level1 conceptual"></div>
+
+  <div class="codewrapper">
+    <pre><code class="lang-csharp hljs">[DxfCodeValue(new int[] { 90 })]
+public Color TextColor { get; set; }</code></pre>
+  </div>
+
+
+
+
+
+  <h4 class="section">Property Value</h4>
+  <dl class="parameters">
+    <dt><a class="xref" href="ACadSharp.Color.html">Color</a></dt>
+    <dd></dd>
+  </dl>
+
+
+
+
+
+
+
+
+  <a id="ACadSharp_Objects_MultiLeaderObjectContextData_TextHeight_" data-uid="ACadSharp.Objects.MultiLeaderObjectContextData.TextHeight*"></a>
+
+  <h3 id="ACadSharp_Objects_MultiLeaderObjectContextData_TextHeight" data-uid="ACadSharp.Objects.MultiLeaderObjectContextData.TextHeight">
+  TextHeight
+  <a class="header-action link-secondary" title="View source" href="https://github.com/DomCR/ACadSharp/blob/1065/merge/src/ACadSharp/Objects/MultiLeaderObjectContextData.cs/#L409"><i class="bi bi-code-slash"></i></a>
+  </h3>
+
+  <div class="markdown level1 summary"><p>Get or sets the text height for the lext label of the multileader
+(see <a class="xref" href="ACadSharp.Objects.MultiLeaderStyle.html#ACadSharp_Objects_MultiLeaderStyle_TextHeight">TextHeight</a>).
+This property overrides the value from <a class="xref" href="ACadSharp.Objects.MultiLeaderStyle.html">MultiLeaderStyle</a>
+when the <a class="xref" href="ACadSharp.Entities.MultiLeaderPropertyOverrideFlags.html#ACadSharp_Entities_MultiLeaderPropertyOverrideFlags_TextHeight">TextHeight</a> flag is set in the
+<a class="xref" href="ACadSharp.Entities.MultiLeader.html#ACadSharp_Entities_MultiLeader_PropertyOverrideFlags">PropertyOverrideFlags</a> property.</p>
+</div>
+  <div class="markdown level1 conceptual"></div>
+
+  <div class="codewrapper">
+    <pre><code class="lang-csharp hljs">[DxfCodeValue(new int[] { 41 })]
+public double TextHeight { get; set; }</code></pre>
+  </div>
+
+
+
+
+
+  <h4 class="section">Property Value</h4>
+  <dl class="parameters">
+    <dt><a class="xref" href="https://learn.microsoft.com/dotnet/api/system.double">double</a></dt>
+    <dd><p>The value returned is the value entered in AutoCAD multiplied with the <a class="xref" href="ACadSharp.Objects.MultiLeaderObjectContextData.html#ACadSharp_Objects_MultiLeaderObjectContextData_ScaleFactor">ScaleFactor</a>.</p>
+</dd>
+  </dl>
+
+
+
+
+
+
+
+
+  <a id="ACadSharp_Objects_MultiLeaderObjectContextData_TextHeightAutomatic_" data-uid="ACadSharp.Objects.MultiLeaderObjectContextData.TextHeightAutomatic*"></a>
+
+  <h3 id="ACadSharp_Objects_MultiLeaderObjectContextData_TextHeightAutomatic" data-uid="ACadSharp.Objects.MultiLeaderObjectContextData.TextHeightAutomatic">
+  TextHeightAutomatic
+  <a class="header-action link-secondary" title="View source" href="https://github.com/DomCR/ACadSharp/blob/1065/merge/src/ACadSharp/Objects/MultiLeaderObjectContextData.cs/#L416"><i class="bi bi-code-slash"></i></a>
+  </h3>
+
+  <div class="markdown level1 summary"><p>Is text height automatic?</p>
+</div>
+  <div class="markdown level1 conceptual"></div>
+
+  <div class="codewrapper">
+    <pre><code class="lang-csharp hljs">[DxfCodeValue(new int[] { 293 })]
+public bool TextHeightAutomatic { get; set; }</code></pre>
+  </div>
+
+
+
+
+
+  <h4 class="section">Property Value</h4>
+  <dl class="parameters">
+    <dt><a class="xref" href="https://learn.microsoft.com/dotnet/api/system.boolean">bool</a></dt>
+    <dd></dd>
+  </dl>
+
+
+
+
+
+
+
+
+  <a id="ACadSharp_Objects_MultiLeaderObjectContextData_TextLabel_" data-uid="ACadSharp.Objects.MultiLeaderObjectContextData.TextLabel*"></a>
+
+  <h3 id="ACadSharp_Objects_MultiLeaderObjectContextData_TextLabel" data-uid="ACadSharp.Objects.MultiLeaderObjectContextData.TextLabel">
+  TextLabel
+  <a class="header-action link-secondary" title="View source" href="https://github.com/DomCR/ACadSharp/blob/1065/merge/src/ACadSharp/Objects/MultiLeaderObjectContextData.cs/#L426"><i class="bi bi-code-slash"></i></a>
+  </h3>
+
+  <div class="markdown level1 summary"><p>Gets or sets a string containg the text tat is to be dispayed a s text label of the
+multileader.</p>
+</div>
+  <div class="markdown level1 conceptual"></div>
+
+  <div class="codewrapper">
+    <pre><code class="lang-csharp hljs">[DxfCodeValue(new int[] { 304 })]
+public string TextLabel { get; set; }</code></pre>
+  </div>
+
+
+
+
+
+  <h4 class="section">Property Value</h4>
+  <dl class="parameters">
+    <dt><a class="xref" href="https://learn.microsoft.com/dotnet/api/system.string">string</a></dt>
+    <dd></dd>
+  </dl>
+
+
+
+
+  <h4 class="section" id="ACadSharp_Objects_MultiLeaderObjectContextData_TextLabel_remarks">Remarks</h4>
+  <div class="markdown level1 remarks"><p>The string may contain MTEXT markups to specify new-lines, font, size, style, etc.</p>
+</div>
+
+
+
+
+  <a id="ACadSharp_Objects_MultiLeaderObjectContextData_TextLeftAttachment_" data-uid="ACadSharp.Objects.MultiLeaderObjectContextData.TextLeftAttachment*"></a>
+
+  <h3 id="ACadSharp_Objects_MultiLeaderObjectContextData_TextLeftAttachment" data-uid="ACadSharp.Objects.MultiLeaderObjectContextData.TextLeftAttachment">
+  TextLeftAttachment
+  <a class="header-action link-secondary" title="View source" href="https://github.com/DomCR/ACadSharp/blob/1065/merge/src/ACadSharp/Objects/MultiLeaderObjectContextData.cs/#L444"><i class="bi bi-code-slash"></i></a>
+  </h3>
+
+  <div class="markdown level1 summary"><p>Gets or sets the text top attachment type (see <a class="xref" href="ACadSharp.Objects.MultiLeaderStyle.html#ACadSharp_Objects_MultiLeaderStyle_TextLeftAttachment">TextLeftAttachment</a>).
+This property overrides the value from <a class="xref" href="ACadSharp.Objects.MultiLeaderStyle.html">MultiLeaderStyle</a>
+when the <a class="xref" href="ACadSharp.Entities.MultiLeaderPropertyOverrideFlags.html#ACadSharp_Entities_MultiLeaderPropertyOverrideFlags_TextLeftAttachment">TextLeftAttachment</a> flag is set (see
+<a class="xref" href="ACadSharp.Entities.MultiLeader.html#ACadSharp_Entities_MultiLeader_PropertyOverrideFlags">PropertyOverrideFlags</a> property).</p>
+</div>
+  <div class="markdown level1 conceptual"></div>
+
+  <div class="codewrapper">
+    <pre><code class="lang-csharp hljs">[DxfCodeValue(new int[] { 174 })]
+public TextAttachmentType TextLeftAttachment { get; set; }</code></pre>
+  </div>
+
+
+
+
+
+  <h4 class="section">Property Value</h4>
+  <dl class="parameters">
+    <dt><a class="xref" href="ACadSharp.TextAttachmentType.html">TextAttachmentType</a></dt>
+    <dd><p>A <a class="xref" href="ACadSharp.TextAttachmentType.html">TextAttachmentType</a> having the values 0-8
+can be used (&quot;horizontal&quot; attachment types).</p>
+</dd>
+  </dl>
+
+
+
+
+  <h4 class="section" id="ACadSharp_Objects_MultiLeaderObjectContextData_TextLeftAttachment_remarks">Remarks</h4>
+  <div class="markdown level1 remarks"><p>This property is also exposed by the <a class="xref" href="ACadSharp.Entities.MultiLeader.html">MultiLeader</a> class
+(<a class="xref" href="ACadSharp.Entities.MultiLeader.html#ACadSharp_Entities_MultiLeader_TextLeftAttachment">TextLeftAttachment</a>).
+Values should be equal, the value of this property is assumed to be used.</p>
+</div>
+
+
+
+
+  <a id="ACadSharp_Objects_MultiLeaderObjectContextData_TextLocation_" data-uid="ACadSharp.Objects.MultiLeaderObjectContextData.TextLocation*"></a>
+
+  <h3 id="ACadSharp_Objects_MultiLeaderObjectContextData_TextLocation" data-uid="ACadSharp.Objects.MultiLeaderObjectContextData.TextLocation">
+  TextLocation
+  <a class="header-action link-secondary" title="View source" href="https://github.com/DomCR/ACadSharp/blob/1065/merge/src/ACadSharp/Objects/MultiLeaderObjectContextData.cs/#L453"><i class="bi bi-code-slash"></i></a>
+  </h3>
+
+  <div class="markdown level1 summary"><p>Gets or sets the location of the text label of the multileader.</p>
+</div>
+  <div class="markdown level1 conceptual"></div>
+
+  <div class="codewrapper">
+    <pre><code class="lang-csharp hljs">[DxfCodeValue(new int[] { 12, 22, 32 })]
+public XYZ TextLocation { get; set; }</code></pre>
+  </div>
+
+
+
+
+
+  <h4 class="section">Property Value</h4>
+  <dl class="parameters">
+    <dt><a class="xref" href="CSMath.XYZ.html">XYZ</a></dt>
+    <dd></dd>
+  </dl>
+
+
+
+
+  <h4 class="section" id="ACadSharp_Objects_MultiLeaderObjectContextData_TextLocation_remarks">Remarks</h4>
+  <div class="markdown level1 remarks"><p>This location is evaluated by AutoCAD from the Conn</p>
+</div>
+
+
+
+
+  <a id="ACadSharp_Objects_MultiLeaderObjectContextData_TextNormal_" data-uid="ACadSharp.Objects.MultiLeaderObjectContextData.TextNormal*"></a>
+
+  <h3 id="ACadSharp_Objects_MultiLeaderObjectContextData_TextNormal" data-uid="ACadSharp.Objects.MultiLeaderObjectContextData.TextNormal">
+  TextNormal
+  <a class="header-action link-secondary" title="View source" href="https://github.com/DomCR/ACadSharp/blob/1065/merge/src/ACadSharp/Objects/MultiLeaderObjectContextData.cs/#L459"><i class="bi bi-code-slash"></i></a>
+  </h3>
+
+  <div class="markdown level1 summary"><p>Gets or sets the normal vector for the text label of the multileader.</p>
+</div>
+  <div class="markdown level1 conceptual"></div>
+
+  <div class="codewrapper">
+    <pre><code class="lang-csharp hljs">[DxfCodeValue(new int[] { 11, 21, 31 })]
+public XYZ TextNormal { get; set; }</code></pre>
+  </div>
+
+
+
+
+
+  <h4 class="section">Property Value</h4>
+  <dl class="parameters">
+    <dt><a class="xref" href="CSMath.XYZ.html">XYZ</a></dt>
+    <dd></dd>
+  </dl>
+
+
+
+
+
+
+
+
+  <a id="ACadSharp_Objects_MultiLeaderObjectContextData_TextRightAttachment_" data-uid="ACadSharp.Objects.MultiLeaderObjectContextData.TextRightAttachment*"></a>
+
+  <h3 id="ACadSharp_Objects_MultiLeaderObjectContextData_TextRightAttachment" data-uid="ACadSharp.Objects.MultiLeaderObjectContextData.TextRightAttachment">
+  TextRightAttachment
+  <a class="header-action link-secondary" title="View source" href="https://github.com/DomCR/ACadSharp/blob/1065/merge/src/ACadSharp/Objects/MultiLeaderObjectContextData.cs/#L477"><i class="bi bi-code-slash"></i></a>
+  </h3>
+
+  <div class="markdown level1 summary"><p>Gets or sets the text top attachment type (see <a class="xref" href="ACadSharp.Objects.MultiLeaderStyle.html#ACadSharp_Objects_MultiLeaderStyle_TextRightAttachment">TextRightAttachment</a>).
+This property overrides the value from <a class="xref" href="ACadSharp.Objects.MultiLeaderStyle.html">MultiLeaderStyle</a>
+when the <a class="xref" href="ACadSharp.Entities.MultiLeaderPropertyOverrideFlags.html#ACadSharp_Entities_MultiLeaderPropertyOverrideFlags_TextRightAttachment">TextRightAttachment</a> flag is set (see
+<a class="xref" href="ACadSharp.Entities.MultiLeader.html#ACadSharp_Entities_MultiLeader_PropertyOverrideFlags">PropertyOverrideFlags</a> property).</p>
+</div>
+  <div class="markdown level1 conceptual"></div>
+
+  <div class="codewrapper">
+    <pre><code class="lang-csharp hljs">[DxfCodeValue(new int[] { 175 })]
+public TextAttachmentType TextRightAttachment { get; set; }</code></pre>
+  </div>
+
+
+
+
+
+  <h4 class="section">Property Value</h4>
+  <dl class="parameters">
+    <dt><a class="xref" href="ACadSharp.TextAttachmentType.html">TextAttachmentType</a></dt>
+    <dd><p>A <a class="xref" href="ACadSharp.TextAttachmentType.html">TextAttachmentType</a> having the values 0-8
+can be used (&quot;horizontal&quot; attachment types).</p>
+</dd>
+  </dl>
+
+
+
+
+  <h4 class="section" id="ACadSharp_Objects_MultiLeaderObjectContextData_TextRightAttachment_remarks">Remarks</h4>
+  <div class="markdown level1 remarks"><p>This property is also exposed by the <a class="xref" href="ACadSharp.Entities.MultiLeader.html">MultiLeader</a> class
+(<a class="xref" href="ACadSharp.Entities.MultiLeader.html#ACadSharp_Entities_MultiLeader_TextRightAttachment">TextRightAttachment</a>).
+Values should be equal, the value of this property is assumed to be used.</p>
+</div>
+
+
+
+
+  <a id="ACadSharp_Objects_MultiLeaderObjectContextData_TextRotation_" data-uid="ACadSharp.Objects.MultiLeaderObjectContextData.TextRotation*"></a>
+
+  <h3 id="ACadSharp_Objects_MultiLeaderObjectContextData_TextRotation" data-uid="ACadSharp.Objects.MultiLeaderObjectContextData.TextRotation">
+  TextRotation
+  <a class="header-action link-secondary" title="View source" href="https://github.com/DomCR/ACadSharp/blob/1065/merge/src/ACadSharp/Objects/MultiLeaderObjectContextData.cs/#L486"><i class="bi bi-code-slash"></i></a>
+  </h3>
+
+  <div class="markdown level1 summary"><p>Gets or sets the rotation of the text label of the multileader.</p>
+</div>
+  <div class="markdown level1 conceptual"></div>
+
+  <div class="codewrapper">
+    <pre><code class="lang-csharp hljs">[DxfCodeValue(DxfReferenceType.IsAngle, new int[] { 42 })]
+public double TextRotation { get; set; }</code></pre>
+  </div>
+
+
+
+
+
+  <h4 class="section">Property Value</h4>
+  <dl class="parameters">
+    <dt><a class="xref" href="https://learn.microsoft.com/dotnet/api/system.double">double</a></dt>
+    <dd><p>The rotation angle in radians.</p>
+</dd>
+  </dl>
+
+
+
+
+
+
+
+
+  <a id="ACadSharp_Objects_MultiLeaderObjectContextData_TextStyle_" data-uid="ACadSharp.Objects.MultiLeaderObjectContextData.TextStyle*"></a>
+
+  <h3 id="ACadSharp_Objects_MultiLeaderObjectContextData_TextStyle" data-uid="ACadSharp.Objects.MultiLeaderObjectContextData.TextStyle">
+  TextStyle
+  <a class="header-action link-secondary" title="View source" href="https://github.com/DomCR/ACadSharp/blob/1065/merge/src/ACadSharp/Objects/MultiLeaderObjectContextData.cs/#L501"><i class="bi bi-code-slash"></i></a>
+  </h3>
+
+  <div class="markdown level1 summary"><p>Gets or sets the <a class="xref" href="ACadSharp.Objects.MultiLeaderObjectContextData.html#ACadSharp_Objects_MultiLeaderObjectContextData_TextStyle">TextStyle</a> to be used to display the text label of the
+multileader.
+This property overrides the value from <a class="xref" href="ACadSharp.Objects.MultiLeaderStyle.html">MultiLeaderStyle</a>
+when the <a class="xref" href="ACadSharp.Entities.MultiLeaderPropertyOverrideFlags.html#ACadSharp_Entities_MultiLeaderPropertyOverrideFlags_TextStyle">TextStyle</a> flag is set in the
+<a class="xref" href="ACadSharp.Entities.MultiLeader.html#ACadSharp_Entities_MultiLeader_PropertyOverrideFlags">PropertyOverrideFlags</a> property.</p>
+</div>
+  <div class="markdown level1 conceptual"></div>
+
+  <div class="codewrapper">
+    <pre><code class="lang-csharp hljs">[DxfCodeValue(DxfReferenceType.Handle, new int[] { 340 })]
+public TextStyle TextStyle { get; set; }</code></pre>
+  </div>
+
+
+
+
+
+  <h4 class="section">Property Value</h4>
+  <dl class="parameters">
+    <dt><a class="xref" href="ACadSharp.Tables.TextStyle.html">TextStyle</a></dt>
+    <dd></dd>
+  </dl>
+
+
+
+
+  <h4 class="section" id="ACadSharp_Objects_MultiLeaderObjectContextData_TextStyle_remarks">Remarks</h4>
+  <div class="markdown level1 remarks"><p>This property is also exposed by the <a class="xref" href="ACadSharp.Entities.MultiLeader.html">MultiLeader</a> class
+(<a class="xref" href="ACadSharp.Entities.MultiLeader.html#ACadSharp_Entities_MultiLeader_TextStyle">TextStyle</a>).
+Values should be equal, the value of this property is assumed to be used.</p>
+</div>
+
+
+
+
+  <a id="ACadSharp_Objects_MultiLeaderObjectContextData_TextTopAttachment_" data-uid="ACadSharp.Objects.MultiLeaderObjectContextData.TextTopAttachment*"></a>
+
+  <h3 id="ACadSharp_Objects_MultiLeaderObjectContextData_TextTopAttachment" data-uid="ACadSharp.Objects.MultiLeaderObjectContextData.TextTopAttachment">
+  TextTopAttachment
+  <a class="header-action link-secondary" title="View source" href="https://github.com/DomCR/ACadSharp/blob/1065/merge/src/ACadSharp/Objects/MultiLeaderObjectContextData.cs/#L540"><i class="bi bi-code-slash"></i></a>
+  </h3>
+
+  <div class="markdown level1 summary"><p>Gets or sets the text top attachment type (see <a class="xref" href="ACadSharp.Objects.MultiLeaderStyle.html#ACadSharp_Objects_MultiLeaderStyle_TextTopAttachment">TextTopAttachment</a>).
+This property override the value from <a class="xref" href="ACadSharp.Objects.MultiLeaderStyle.html">MultiLeaderStyle</a>
+when the <a class="xref" href="ACadSharp.Entities.MultiLeaderPropertyOverrideFlags.html#ACadSharp_Entities_MultiLeaderPropertyOverrideFlags_TextTopAttachment">TextTopAttachment</a> flag is set (see
+<a class="xref" href="ACadSharp.Entities.MultiLeader.html#ACadSharp_Entities_MultiLeader_PropertyOverrideFlags">PropertyOverrideFlags</a> property).</p>
+</div>
+  <div class="markdown level1 conceptual"></div>
+
+  <div class="codewrapper">
+    <pre><code class="lang-csharp hljs">[DxfCodeValue(new int[] { 273 })]
+public TextAttachmentType TextTopAttachment { get; set; }</code></pre>
+  </div>
+
+
+
+
+
+  <h4 class="section">Property Value</h4>
+  <dl class="parameters">
+    <dt><a class="xref" href="ACadSharp.TextAttachmentType.html">TextAttachmentType</a></dt>
+    <dd><p>A <a class="xref" href="ACadSharp.TextAttachmentType.html">TextAttachmentType</a> having the values
+9 = Center,
+10 = Underline and Center
+can be used (&quot;vertical&quot; attachment types).</p>
+</dd>
+  </dl>
+
+
+
+
+  <h4 class="section" id="ACadSharp_Objects_MultiLeaderObjectContextData_TextTopAttachment_remarks">Remarks</h4>
+  <div class="markdown level1 remarks"><p>This property is also exposed by the <a class="xref" href="ACadSharp.Entities.MultiLeader.html">MultiLeader</a> class
+(<a class="xref" href="ACadSharp.Entities.MultiLeader.html#ACadSharp_Entities_MultiLeader_TextTopAttachment">TextTopAttachment</a>).
+Values should be equal, the value of this property is assumed to be used.</p>
+</div>
+
+
+
+
+  <a id="ACadSharp_Objects_MultiLeaderObjectContextData_TransformationMatrix_" data-uid="ACadSharp.Objects.MultiLeaderObjectContextData.TransformationMatrix*"></a>
+
+  <h3 id="ACadSharp_Objects_MultiLeaderObjectContextData_TransformationMatrix" data-uid="ACadSharp.Objects.MultiLeaderObjectContextData.TransformationMatrix">
+  TransformationMatrix
+  <a class="header-action link-secondary" title="View source" href="https://github.com/DomCR/ACadSharp/blob/1065/merge/src/ACadSharp/Objects/MultiLeaderObjectContextData.cs/#L559"><i class="bi bi-code-slash"></i></a>
+  </h3>
+
+  <div class="markdown level1 summary"><p>Gets a array of 16 doubles containg the complete transformation
+matrix.</p>
+</div>
+  <div class="markdown level1 conceptual"></div>
+
+  <div class="codewrapper">
+    <pre><code class="lang-csharp hljs">public Matrix4 TransformationMatrix { get; set; }</code></pre>
+  </div>
+
+
+
+
+
+  <h4 class="section">Property Value</h4>
+  <dl class="parameters">
+    <dt><a class="xref" href="CSMath.Matrix4.html">Matrix4</a></dt>
+    <dd></dd>
+  </dl>
+
+
+
+
+  <h4 class="section" id="ACadSharp_Objects_MultiLeaderObjectContextData_TransformationMatrix_remarks">Remarks</h4>
+  <div class="markdown level1 remarks"><p>
+Order of transformation is:
+</p>
+</div>
+
+
+
+
+  <a id="ACadSharp_Objects_MultiLeaderObjectContextData_WordBreak_" data-uid="ACadSharp.Objects.MultiLeaderObjectContextData.WordBreak*"></a>
+
+  <h3 id="ACadSharp_Objects_MultiLeaderObjectContextData_WordBreak" data-uid="ACadSharp.Objects.MultiLeaderObjectContextData.WordBreak">
+  WordBreak
+  <a class="header-action link-secondary" title="View source" href="https://github.com/DomCR/ACadSharp/blob/1065/merge/src/ACadSharp/Objects/MultiLeaderObjectContextData.cs/#L565"><i class="bi bi-code-slash"></i></a>
+  </h3>
+
+  <div class="markdown level1 summary"><p>Word break</p>
+</div>
+  <div class="markdown level1 conceptual"></div>
+
+  <div class="codewrapper">
+    <pre><code class="lang-csharp hljs">[DxfCodeValue(new int[] { 295 })]
+public bool WordBreak { get; set; }</code></pre>
+  </div>
+
+
+
+
+
+  <h4 class="section">Property Value</h4>
+  <dl class="parameters">
+    <dt><a class="xref" href="https://learn.microsoft.com/dotnet/api/system.boolean">bool</a></dt>
+    <dd></dd>
+  </dl>
+
+
+
+
+
+
+
+
+  <h2 class="section" id="methods">Methods
+</h2>
+
+
+  <a id="ACadSharp_Objects_MultiLeaderObjectContextData_Clone_" data-uid="ACadSharp.Objects.MultiLeaderObjectContextData.Clone*"></a>
+
+  <h3 id="ACadSharp_Objects_MultiLeaderObjectContextData_Clone" data-uid="ACadSharp.Objects.MultiLeaderObjectContextData.Clone">
+  Clone()
+  <a class="header-action link-secondary" title="View source" href="https://github.com/DomCR/ACadSharp/blob/1065/merge/src/ACadSharp/Objects/MultiLeaderObjectContextData.cs/#L578"><i class="bi bi-code-slash"></i></a>
+  </h3>
+
+  <div class="markdown level1 summary"><p>Creates a new object that is a copy of the current instance.</p>
+</div>
+  <div class="markdown level1 conceptual"></div>
+
+  <div class="codewrapper">
+    <pre><code class="lang-csharp hljs">public override CadObject Clone()</code></pre>
+  </div>
+
+
+  <h4 class="section">Returns</h4>
+  <dl class="parameters">
+    <dt><a class="xref" href="ACadSharp.CadObject.html">CadObject</a></dt>
+    <dd><p>A new object that is a copy of this instance.</p>
+</dd>
+  </dl>
+
+
+
+
+
+
+
+  <h4 class="section" id="ACadSharp_Objects_MultiLeaderObjectContextData_Clone_remarks">Remarks</h4>
+  <div class="markdown level1 remarks"><p>The copy will be unattached from the document or any reference.</p>
+</div>
+
+
+
+
+
+</article>
+
+        <div class="contribution d-print-none">
+          <a href="https://github.com/DomCR/ACadSharp/blob/1065/merge/src/ACadSharp/Objects/MultiLeaderObjectContextData.StartEndPointPair.cs/#L7" class="edit-link">Edit this page</a>
+        </div>
+
+
+      </div>
+
+      <div class="affix">
+        <nav id="affix"></nav>
+      </div>
+    </main>
+
+    <div class="container-xxl search-results" id="search-results"></div>
+
+    <footer class="border-top text-secondary">
+      <div class="container-xxl">
+        <div class="flex-fill">
+          <span>Made with <a href="https://dotnet.github.io/docfx">docfx</a></span>
+        </div>
+      </div>
+    </footer>
+  </body>
+</html>

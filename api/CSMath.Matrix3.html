@@ -1,0 +1,906 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <meta charset="utf-8">
+      <title>Struct Matrix3 | ACadSharp </title>
+      <meta name="viewport" content="width=device-width, initial-scale=1.0">
+      <meta name="title" content="Struct Matrix3 | ACadSharp ">
+      
+      
+      <link rel="icon" href="../favicon.ico">
+      <link rel="stylesheet" href="../public/docfx.min.css">
+      <link rel="stylesheet" href="../public/main.css">
+      <meta name="docfx:navrel" content="../toc.html">
+      <meta name="docfx:tocrel" content="toc.html">
+      
+      <meta name="docfx:rel" content="../">
+      
+      
+      <meta name="docfx:docurl" content="https://github.com/DomCR/CSUtilities/new/1065/merge/apiSpec/new?filename=CSMath_Matrix3.md&amp;value=---%0Auid%3A%20CSMath.Matrix3%0Asummary%3A%20&#39;*You%20can%20override%20summary%20for%20the%20API%20here%20using%20*MARKDOWN*%20syntax&#39;%0A---%0A%0A*Please%20type%20below%20more%20information%20about%20this%20API%3A*%0A%0A">
+      <meta name="loc:inThisArticle" content="In this article">
+      <meta name="loc:searchResultsCount" content="{count} results for &quot;{query}&quot;">
+      <meta name="loc:searchNoResults" content="No results for &quot;{query}&quot;">
+      <meta name="loc:tocFilter" content="Filter by title">
+      <meta name="loc:nextArticle" content="Next">
+      <meta name="loc:prevArticle" content="Previous">
+      <meta name="loc:themeLight" content="Light">
+      <meta name="loc:themeDark" content="Dark">
+      <meta name="loc:themeAuto" content="Auto">
+      <meta name="loc:changeTheme" content="Change theme">
+      <meta name="loc:copy" content="Copy">
+      <meta name="loc:downloadPdf" content="Download PDF">
+
+      <script type="module" src="./../public/docfx.min.js"></script>
+
+      <script>
+        const theme = localStorage.getItem('theme') || 'auto'
+        document.documentElement.setAttribute('data-bs-theme', theme === 'auto' ? (window.matchMedia('(prefers-color-scheme: dark)').matches ? 'dark' : 'light') : theme)
+      </script>
+
+  </head>
+
+  <body class="tex2jax_ignore" data-layout="" data-yaml-mime="ManagedReference">
+    <header class="bg-body border-bottom">
+      <nav id="autocollapse" class="navbar navbar-expand-md" role="navigation">
+        <div class="container-xxl flex-nowrap">
+          <a class="navbar-brand" href="../index.html">
+            <img id="logo" class="svg" src="../logo.svg" alt="ACadSharp">
+            ACadSharp
+          </a>
+          <button class="btn btn-lg d-md-none border-0" type="button" data-bs-toggle="collapse" data-bs-target="#navpanel" aria-controls="navpanel" aria-expanded="false" aria-label="Toggle navigation">
+            <i class="bi bi-three-dots"></i>
+          </button>
+          <div class="collapse navbar-collapse" id="navpanel">
+            <div id="navbar">
+              <form class="search" role="search" id="search">
+                <i class="bi bi-search"></i>
+                <input class="form-control" id="search-query" type="search" disabled placeholder="Search" autocomplete="off" aria-label="Search">
+              </form>
+            </div>
+          </div>
+        </div>
+      </nav>
+    </header>
+
+    <main class="container-xxl">
+      <div class="toc-offcanvas">
+        <div class="offcanvas-md offcanvas-start" tabindex="-1" id="tocOffcanvas" aria-labelledby="tocOffcanvasLabel">
+          <div class="offcanvas-header">
+            <h5 class="offcanvas-title" id="tocOffcanvasLabel">Table of Contents</h5>
+            <button type="button" class="btn-close" data-bs-dismiss="offcanvas" data-bs-target="#tocOffcanvas" aria-label="Close"></button>
+          </div>
+          <div class="offcanvas-body">
+            <nav class="toc" id="toc"></nav>
+          </div>
+        </div>
+      </div>
+
+      <div class="content">
+        <div class="actionbar">
+          <button class="btn btn-lg border-0 d-md-none" type="button" data-bs-toggle="offcanvas" data-bs-target="#tocOffcanvas" aria-controls="tocOffcanvas" aria-expanded="false" aria-label="Show table of contents">
+            <i class="bi bi-list"></i>
+          </button>
+
+          <nav id="breadcrumb"></nav>
+        </div>
+
+        <article data-uid="CSMath.Matrix3">
+
+
+
+  <h1 id="CSMath_Matrix3" data-uid="CSMath.Matrix3" class="text-break">
+Struct Matrix3  <a class="header-action link-secondary" title="View source" href="https://github.com/DomCR/CSUtilities/blob/1065/merge/CSMath/Matrix3.operators.cs/#L3"><i class="bi bi-code-slash"></i></a>
+  </h1>
+
+  <div class="facts text-secondary">
+    <dl><dt>Namespace</dt><dd><a class="xref" href="CSMath.html">CSMath</a></dd></dl>
+  <dl><dt>Assembly</dt><dd>ACadSharp.dll</dd></dl>
+  </div>
+
+  <div class="markdown summary"></div>
+  <div class="markdown conceptual"></div>
+
+  <div class="codewrapper">
+    <pre><code class="lang-csharp hljs">public struct Matrix3</code></pre>
+  </div>
+
+
+
+
+
+
+
+  <dl class="typelist inheritedMembers">
+    <dt>Inherited Members</dt>
+    <dd>
+    <div>
+      <a class="xref" href="https://learn.microsoft.com/dotnet/api/system.valuetype.equals">ValueType.Equals(object)</a>
+    </div>
+    <div>
+      <a class="xref" href="https://learn.microsoft.com/dotnet/api/system.valuetype.gethashcode">ValueType.GetHashCode()</a>
+    </div>
+    <div>
+      <a class="xref" href="https://learn.microsoft.com/dotnet/api/system.object.equals#system-object-equals(system-object-system-object)">object.Equals(object, object)</a>
+    </div>
+    <div>
+      <a class="xref" href="https://learn.microsoft.com/dotnet/api/system.object.gettype">object.GetType()</a>
+    </div>
+    <div>
+      <a class="xref" href="https://learn.microsoft.com/dotnet/api/system.object.referenceequals">object.ReferenceEquals(object, object)</a>
+    </div>
+  </dd></dl>
+
+  <dl class="typelist extensionMethods">
+    <dt>Extension Methods</dt>
+    <dd>
+  <div>
+      <a class="xref" href="CSMath.Geometry.LineExtensions.html#CSMath_Geometry_LineExtensions_TryFindIntersection__2___0___0___1__">LineExtensions.TryFindIntersection&lt;T, R&gt;(T, T, out R)</a>
+  </div>
+  </dd></dl>
+
+
+
+
+
+  <h2 class="section" id="constructors">Constructors
+</h2>
+
+
+  <a id="CSMath_Matrix3__ctor_" data-uid="CSMath.Matrix3.#ctor*"></a>
+
+  <h3 id="CSMath_Matrix3__ctor_CSMath_Matrix4_" data-uid="CSMath.Matrix3.#ctor(CSMath.Matrix4)">
+  Matrix3(Matrix4)
+  <a class="header-action link-secondary" title="View source" href="https://github.com/DomCR/CSUtilities/blob/1065/merge/CSMath/Matrix3.cs/#L166"><i class="bi bi-code-slash"></i></a>
+  </h3>
+
+  <div class="markdown level1 summary"></div>
+  <div class="markdown level1 conceptual"></div>
+
+  <div class="codewrapper">
+    <pre><code class="lang-csharp hljs">public Matrix3(Matrix4 matrix)</code></pre>
+  </div>
+
+  <h4 class="section">Parameters</h4>
+  <dl class="parameters">
+    <dt><code>matrix</code> <a class="xref" href="CSMath.Matrix4.html">Matrix4</a></dt>
+    <dd></dd>
+  </dl>
+
+
+
+
+
+
+
+
+
+
+
+
+  <a id="CSMath_Matrix3__ctor_" data-uid="CSMath.Matrix3.#ctor*"></a>
+
+  <h3 id="CSMath_Matrix3__ctor_System_Double_System_Double_System_Double_System_Double_System_Double_System_Double_System_Double_System_Double_System_Double_" data-uid="CSMath.Matrix3.#ctor(System.Double,System.Double,System.Double,System.Double,System.Double,System.Double,System.Double,System.Double,System.Double)">
+  Matrix3(double, double, double, double, double, double, double, double, double)
+  <a class="header-action link-secondary" title="View source" href="https://github.com/DomCR/CSUtilities/blob/1065/merge/CSMath/Matrix3.cs/#L145"><i class="bi bi-code-slash"></i></a>
+  </h3>
+
+  <div class="markdown level1 summary"></div>
+  <div class="markdown level1 conceptual"></div>
+
+  <div class="codewrapper">
+    <pre><code class="lang-csharp hljs">public Matrix3(double m00, double m10, double m20, double m01, double m11, double m21, double m02, double m12, double m22)</code></pre>
+  </div>
+
+  <h4 class="section">Parameters</h4>
+  <dl class="parameters">
+    <dt><code>m00</code> <a class="xref" href="https://learn.microsoft.com/dotnet/api/system.double">double</a></dt>
+    <dd></dd>
+    <dt><code>m10</code> <a class="xref" href="https://learn.microsoft.com/dotnet/api/system.double">double</a></dt>
+    <dd></dd>
+    <dt><code>m20</code> <a class="xref" href="https://learn.microsoft.com/dotnet/api/system.double">double</a></dt>
+    <dd></dd>
+    <dt><code>m01</code> <a class="xref" href="https://learn.microsoft.com/dotnet/api/system.double">double</a></dt>
+    <dd></dd>
+    <dt><code>m11</code> <a class="xref" href="https://learn.microsoft.com/dotnet/api/system.double">double</a></dt>
+    <dd></dd>
+    <dt><code>m21</code> <a class="xref" href="https://learn.microsoft.com/dotnet/api/system.double">double</a></dt>
+    <dd></dd>
+    <dt><code>m02</code> <a class="xref" href="https://learn.microsoft.com/dotnet/api/system.double">double</a></dt>
+    <dd></dd>
+    <dt><code>m12</code> <a class="xref" href="https://learn.microsoft.com/dotnet/api/system.double">double</a></dt>
+    <dd></dd>
+    <dt><code>m22</code> <a class="xref" href="https://learn.microsoft.com/dotnet/api/system.double">double</a></dt>
+    <dd></dd>
+  </dl>
+
+
+
+
+
+
+
+
+
+
+
+
+  <h2 class="section" id="fields">Fields
+</h2>
+
+
+
+  <h3 id="CSMath_Matrix3_Identity" data-uid="CSMath.Matrix3.Identity">
+  Identity
+  <a class="header-action link-secondary" title="View source" href="https://github.com/DomCR/CSUtilities/blob/1065/merge/CSMath/Matrix3.cs/#L20"><i class="bi bi-code-slash"></i></a>
+  </h3>
+
+  <div class="markdown level1 summary"><p>4-dimensional identity matrix.</p>
+</div>
+  <div class="markdown level1 conceptual"></div>
+
+  <div class="codewrapper">
+    <pre><code class="lang-csharp hljs">public static readonly Matrix3 Identity</code></pre>
+  </div>
+
+
+
+
+  <h4 class="section">Field Value</h4>
+  <dl class="parameters">
+    <dt><a class="xref" href="CSMath.Matrix3.html">Matrix3</a></dt>
+    <dd></dd>
+  </dl>
+
+
+
+
+
+
+
+
+
+
+  <h3 id="CSMath_Matrix3_M00" data-uid="CSMath.Matrix3.M00">
+  M00
+  <a class="header-action link-secondary" title="View source" href="https://github.com/DomCR/CSUtilities/blob/1065/merge/CSMath/Matrix3.cs/#L30"><i class="bi bi-code-slash"></i></a>
+  </h3>
+
+  <div class="markdown level1 summary"><p>Value at column 0, row 0 of the matrix.</p>
+</div>
+  <div class="markdown level1 conceptual"></div>
+
+  <div class="codewrapper">
+    <pre><code class="lang-csharp hljs">public double M00</code></pre>
+  </div>
+
+
+
+
+  <h4 class="section">Field Value</h4>
+  <dl class="parameters">
+    <dt><a class="xref" href="https://learn.microsoft.com/dotnet/api/system.double">double</a></dt>
+    <dd></dd>
+  </dl>
+
+
+
+
+
+
+
+
+
+
+  <h3 id="CSMath_Matrix3_M01" data-uid="CSMath.Matrix3.M01">
+  M01
+  <a class="header-action link-secondary" title="View source" href="https://github.com/DomCR/CSUtilities/blob/1065/merge/CSMath/Matrix3.cs/#L34"><i class="bi bi-code-slash"></i></a>
+  </h3>
+
+  <div class="markdown level1 summary"><p>Value at column 0, row 1 of the matrix.</p>
+</div>
+  <div class="markdown level1 conceptual"></div>
+
+  <div class="codewrapper">
+    <pre><code class="lang-csharp hljs">public double M01</code></pre>
+  </div>
+
+
+
+
+  <h4 class="section">Field Value</h4>
+  <dl class="parameters">
+    <dt><a class="xref" href="https://learn.microsoft.com/dotnet/api/system.double">double</a></dt>
+    <dd></dd>
+  </dl>
+
+
+
+
+
+
+
+
+
+
+  <h3 id="CSMath_Matrix3_M02" data-uid="CSMath.Matrix3.M02">
+  M02
+  <a class="header-action link-secondary" title="View source" href="https://github.com/DomCR/CSUtilities/blob/1065/merge/CSMath/Matrix3.cs/#L38"><i class="bi bi-code-slash"></i></a>
+  </h3>
+
+  <div class="markdown level1 summary"><p>Value at column 0, row 2 of the matrix.</p>
+</div>
+  <div class="markdown level1 conceptual"></div>
+
+  <div class="codewrapper">
+    <pre><code class="lang-csharp hljs">public double M02</code></pre>
+  </div>
+
+
+
+
+  <h4 class="section">Field Value</h4>
+  <dl class="parameters">
+    <dt><a class="xref" href="https://learn.microsoft.com/dotnet/api/system.double">double</a></dt>
+    <dd></dd>
+  </dl>
+
+
+
+
+
+
+
+
+
+
+  <h3 id="CSMath_Matrix3_M10" data-uid="CSMath.Matrix3.M10">
+  M10
+  <a class="header-action link-secondary" title="View source" href="https://github.com/DomCR/CSUtilities/blob/1065/merge/CSMath/Matrix3.cs/#L43"><i class="bi bi-code-slash"></i></a>
+  </h3>
+
+  <div class="markdown level1 summary"><p>Value at column 1, row 0 of the matrix.</p>
+</div>
+  <div class="markdown level1 conceptual"></div>
+
+  <div class="codewrapper">
+    <pre><code class="lang-csharp hljs">public double M10</code></pre>
+  </div>
+
+
+
+
+  <h4 class="section">Field Value</h4>
+  <dl class="parameters">
+    <dt><a class="xref" href="https://learn.microsoft.com/dotnet/api/system.double">double</a></dt>
+    <dd></dd>
+  </dl>
+
+
+
+
+
+
+
+
+
+
+  <h3 id="CSMath_Matrix3_M11" data-uid="CSMath.Matrix3.M11">
+  M11
+  <a class="header-action link-secondary" title="View source" href="https://github.com/DomCR/CSUtilities/blob/1065/merge/CSMath/Matrix3.cs/#L47"><i class="bi bi-code-slash"></i></a>
+  </h3>
+
+  <div class="markdown level1 summary"><p>Value at column 1, row 1 of the matrix.</p>
+</div>
+  <div class="markdown level1 conceptual"></div>
+
+  <div class="codewrapper">
+    <pre><code class="lang-csharp hljs">public double M11</code></pre>
+  </div>
+
+
+
+
+  <h4 class="section">Field Value</h4>
+  <dl class="parameters">
+    <dt><a class="xref" href="https://learn.microsoft.com/dotnet/api/system.double">double</a></dt>
+    <dd></dd>
+  </dl>
+
+
+
+
+
+
+
+
+
+
+  <h3 id="CSMath_Matrix3_M12" data-uid="CSMath.Matrix3.M12">
+  M12
+  <a class="header-action link-secondary" title="View source" href="https://github.com/DomCR/CSUtilities/blob/1065/merge/CSMath/Matrix3.cs/#L51"><i class="bi bi-code-slash"></i></a>
+  </h3>
+
+  <div class="markdown level1 summary"><p>Value at column 1, row 2 of the matrix.</p>
+</div>
+  <div class="markdown level1 conceptual"></div>
+
+  <div class="codewrapper">
+    <pre><code class="lang-csharp hljs">public double M12</code></pre>
+  </div>
+
+
+
+
+  <h4 class="section">Field Value</h4>
+  <dl class="parameters">
+    <dt><a class="xref" href="https://learn.microsoft.com/dotnet/api/system.double">double</a></dt>
+    <dd></dd>
+  </dl>
+
+
+
+
+
+
+
+
+
+
+  <h3 id="CSMath_Matrix3_M20" data-uid="CSMath.Matrix3.M20">
+  M20
+  <a class="header-action link-secondary" title="View source" href="https://github.com/DomCR/CSUtilities/blob/1065/merge/CSMath/Matrix3.cs/#L56"><i class="bi bi-code-slash"></i></a>
+  </h3>
+
+  <div class="markdown level1 summary"><p>Value at column 2, row 0 of the matrix.</p>
+</div>
+  <div class="markdown level1 conceptual"></div>
+
+  <div class="codewrapper">
+    <pre><code class="lang-csharp hljs">public double M20</code></pre>
+  </div>
+
+
+
+
+  <h4 class="section">Field Value</h4>
+  <dl class="parameters">
+    <dt><a class="xref" href="https://learn.microsoft.com/dotnet/api/system.double">double</a></dt>
+    <dd></dd>
+  </dl>
+
+
+
+
+
+
+
+
+
+
+  <h3 id="CSMath_Matrix3_M21" data-uid="CSMath.Matrix3.M21">
+  M21
+  <a class="header-action link-secondary" title="View source" href="https://github.com/DomCR/CSUtilities/blob/1065/merge/CSMath/Matrix3.cs/#L60"><i class="bi bi-code-slash"></i></a>
+  </h3>
+
+  <div class="markdown level1 summary"><p>Value at column 2, row 1 of the matrix.</p>
+</div>
+  <div class="markdown level1 conceptual"></div>
+
+  <div class="codewrapper">
+    <pre><code class="lang-csharp hljs">public double M21</code></pre>
+  </div>
+
+
+
+
+  <h4 class="section">Field Value</h4>
+  <dl class="parameters">
+    <dt><a class="xref" href="https://learn.microsoft.com/dotnet/api/system.double">double</a></dt>
+    <dd></dd>
+  </dl>
+
+
+
+
+
+
+
+
+
+
+  <h3 id="CSMath_Matrix3_M22" data-uid="CSMath.Matrix3.M22">
+  M22
+  <a class="header-action link-secondary" title="View source" href="https://github.com/DomCR/CSUtilities/blob/1065/merge/CSMath/Matrix3.cs/#L64"><i class="bi bi-code-slash"></i></a>
+  </h3>
+
+  <div class="markdown level1 summary"><p>Value at column 2, row 2 of the matrix.</p>
+</div>
+  <div class="markdown level1 conceptual"></div>
+
+  <div class="codewrapper">
+    <pre><code class="lang-csharp hljs">public double M22</code></pre>
+  </div>
+
+
+
+
+  <h4 class="section">Field Value</h4>
+  <dl class="parameters">
+    <dt><a class="xref" href="https://learn.microsoft.com/dotnet/api/system.double">double</a></dt>
+    <dd></dd>
+  </dl>
+
+
+
+
+
+
+
+
+
+
+  <h3 id="CSMath_Matrix3_Zero" data-uid="CSMath.Matrix3.Zero">
+  Zero
+  <a class="header-action link-secondary" title="View source" href="https://github.com/DomCR/CSUtilities/blob/1065/merge/CSMath/Matrix3.cs/#L12"><i class="bi bi-code-slash"></i></a>
+  </h3>
+
+  <div class="markdown level1 summary"><p>4-dimensional zero matrix.</p>
+</div>
+  <div class="markdown level1 conceptual"></div>
+
+  <div class="codewrapper">
+    <pre><code class="lang-csharp hljs">public static readonly Matrix3 Zero</code></pre>
+  </div>
+
+
+
+
+  <h4 class="section">Field Value</h4>
+  <dl class="parameters">
+    <dt><a class="xref" href="CSMath.Matrix3.html">Matrix3</a></dt>
+    <dd></dd>
+  </dl>
+
+
+
+
+
+
+
+
+
+  <h2 class="section" id="properties">Properties
+</h2>
+
+
+  <a id="CSMath_Matrix3_Item_" data-uid="CSMath.Matrix3.Item*"></a>
+
+  <h3 id="CSMath_Matrix3_Item_System_Int32_" data-uid="CSMath.Matrix3.Item(System.Int32)">
+  this[int]
+  <a class="header-action link-secondary" title="View source" href="https://github.com/DomCR/CSUtilities/blob/1065/merge/CSMath/Matrix3.cs/#L68"><i class="bi bi-code-slash"></i></a>
+  </h3>
+
+  <div class="markdown level1 summary"></div>
+  <div class="markdown level1 conceptual"></div>
+
+  <div class="codewrapper">
+    <pre><code class="lang-csharp hljs">public double this[int index] { get; set; }</code></pre>
+  </div>
+
+  <h4 class="section">Parameters</h4>
+  <dl class="parameters">
+    <dt><code>index</code> <a class="xref" href="https://learn.microsoft.com/dotnet/api/system.int32">int</a></dt>
+    <dd></dd>
+  </dl>
+
+
+
+
+  <h4 class="section">Property Value</h4>
+  <dl class="parameters">
+    <dt><a class="xref" href="https://learn.microsoft.com/dotnet/api/system.double">double</a></dt>
+    <dd></dd>
+  </dl>
+
+
+
+
+
+
+
+
+  <a id="CSMath_Matrix3_Item_" data-uid="CSMath.Matrix3.Item*"></a>
+
+  <h3 id="CSMath_Matrix3_Item_System_Int32_System_Int32_" data-uid="CSMath.Matrix3.Item(System.Int32,System.Int32)">
+  this[int, int]
+  <a class="header-action link-secondary" title="View source" href="https://github.com/DomCR/CSUtilities/blob/1065/merge/CSMath/Matrix3.cs/#L133"><i class="bi bi-code-slash"></i></a>
+  </h3>
+
+  <div class="markdown level1 summary"></div>
+  <div class="markdown level1 conceptual"></div>
+
+  <div class="codewrapper">
+    <pre><code class="lang-csharp hljs">public double this[int column, int row] { get; set; }</code></pre>
+  </div>
+
+  <h4 class="section">Parameters</h4>
+  <dl class="parameters">
+    <dt><code>column</code> <a class="xref" href="https://learn.microsoft.com/dotnet/api/system.int32">int</a></dt>
+    <dd></dd>
+    <dt><code>row</code> <a class="xref" href="https://learn.microsoft.com/dotnet/api/system.int32">int</a></dt>
+    <dd></dd>
+  </dl>
+
+
+
+
+  <h4 class="section">Property Value</h4>
+  <dl class="parameters">
+    <dt><a class="xref" href="https://learn.microsoft.com/dotnet/api/system.double">double</a></dt>
+    <dd></dd>
+  </dl>
+
+
+
+
+
+
+
+
+  <h2 class="section" id="methods">Methods
+</h2>
+
+
+  <a id="CSMath_Matrix3_ArbitraryAxis_" data-uid="CSMath.Matrix3.ArbitraryAxis*"></a>
+
+  <h3 id="CSMath_Matrix3_ArbitraryAxis_CSMath_XYZ_" data-uid="CSMath.Matrix3.ArbitraryAxis(CSMath.XYZ)">
+  ArbitraryAxis(XYZ)
+  <a class="header-action link-secondary" title="View source" href="https://github.com/DomCR/CSUtilities/blob/1065/merge/CSMath/Matrix3.cs/#L195"><i class="bi bi-code-slash"></i></a>
+  </h3>
+
+  <div class="markdown level1 summary"><p>Gets the rotation matrix from the normal vector (extrusion direction) of an entity.</p>
+</div>
+  <div class="markdown level1 conceptual"></div>
+
+  <div class="codewrapper">
+    <pre><code class="lang-csharp hljs">public static Matrix3 ArbitraryAxis(XYZ zAxis)</code></pre>
+  </div>
+
+  <h4 class="section">Parameters</h4>
+  <dl class="parameters">
+    <dt><code>zAxis</code> <a class="xref" href="CSMath.XYZ.html">XYZ</a></dt>
+    <dd><p>Normal vector.</p>
+</dd>
+  </dl>
+
+  <h4 class="section">Returns</h4>
+  <dl class="parameters">
+    <dt><a class="xref" href="CSMath.Matrix3.html">Matrix3</a></dt>
+    <dd><p>Rotation matrix.</p>
+</dd>
+  </dl>
+
+
+
+
+
+
+
+
+
+
+
+  <a id="CSMath_Matrix3_RotationZ_" data-uid="CSMath.Matrix3.RotationZ*"></a>
+
+  <h3 id="CSMath_Matrix3_RotationZ_System_Double_" data-uid="CSMath.Matrix3.RotationZ(System.Double)">
+  RotationZ(double)
+  <a class="header-action link-secondary" title="View source" href="https://github.com/DomCR/CSUtilities/blob/1065/merge/CSMath/Matrix3.cs/#L231"><i class="bi bi-code-slash"></i></a>
+  </h3>
+
+  <div class="markdown level1 summary"><p>Builds a rotation matrix for a rotation around the z-axis.</p>
+</div>
+  <div class="markdown level1 conceptual"></div>
+
+  <div class="codewrapper">
+    <pre><code class="lang-csharp hljs">public static Matrix3 RotationZ(double angle)</code></pre>
+  </div>
+
+  <h4 class="section">Parameters</h4>
+  <dl class="parameters">
+    <dt><code>angle</code> <a class="xref" href="https://learn.microsoft.com/dotnet/api/system.double">double</a></dt>
+    <dd><p>The counter-clockwise angle in radians.</p>
+</dd>
+  </dl>
+
+  <h4 class="section">Returns</h4>
+  <dl class="parameters">
+    <dt><a class="xref" href="CSMath.Matrix3.html">Matrix3</a></dt>
+    <dd><p>The resulting Matrix3 instance.</p>
+</dd>
+  </dl>
+
+
+
+
+
+
+
+  <h4 class="section" id="CSMath_Matrix3_RotationZ_System_Double__remarks">Remarks</h4>
+  <div class="markdown level1 remarks"><p>Matrix3 adopts the convention of using column vectors to represent a transformation matrix.</p>
+</div>
+
+
+
+
+  <a id="CSMath_Matrix3_ToString_" data-uid="CSMath.Matrix3.ToString*"></a>
+
+  <h3 id="CSMath_Matrix3_ToString" data-uid="CSMath.Matrix3.ToString">
+  ToString()
+  <a class="header-action link-secondary" title="View source" href="https://github.com/DomCR/CSUtilities/blob/1065/merge/CSMath/Matrix3.cs/#L241"><i class="bi bi-code-slash"></i></a>
+  </h3>
+
+  <div class="markdown level1 summary"><p>Returns the fully qualified type name of this instance.</p>
+</div>
+  <div class="markdown level1 conceptual"></div>
+
+  <div class="codewrapper">
+    <pre><code class="lang-csharp hljs">public override string ToString()</code></pre>
+  </div>
+
+
+  <h4 class="section">Returns</h4>
+  <dl class="parameters">
+    <dt><a class="xref" href="https://learn.microsoft.com/dotnet/api/system.string">string</a></dt>
+    <dd><p>The fully qualified type name.</p>
+</dd>
+  </dl>
+
+
+
+
+
+
+
+
+
+
+
+  <a id="CSMath_Matrix3_Transpose_" data-uid="CSMath.Matrix3.Transpose*"></a>
+
+  <h3 id="CSMath_Matrix3_Transpose" data-uid="CSMath.Matrix3.Transpose">
+  Transpose()
+  <a class="header-action link-secondary" title="View source" href="https://github.com/DomCR/CSUtilities/blob/1065/merge/CSMath/Matrix3.cs/#L183"><i class="bi bi-code-slash"></i></a>
+  </h3>
+
+  <div class="markdown level1 summary"><p>Obtains the transpose matrix.</p>
+</div>
+  <div class="markdown level1 conceptual"></div>
+
+  <div class="codewrapper">
+    <pre><code class="lang-csharp hljs">public Matrix3 Transpose()</code></pre>
+  </div>
+
+
+  <h4 class="section">Returns</h4>
+  <dl class="parameters">
+    <dt><a class="xref" href="CSMath.Matrix3.html">Matrix3</a></dt>
+    <dd><p>Transpose matrix.</p>
+</dd>
+  </dl>
+
+
+
+
+
+
+
+
+
+
+
+  <h2 class="section" id="operators">Operators
+</h2>
+
+
+  <a id="CSMath_Matrix3_op_Multiply_" data-uid="CSMath.Matrix3.op_Multiply*"></a>
+
+  <h3 id="CSMath_Matrix3_op_Multiply_CSMath_Matrix3_CSMath_Matrix3_" data-uid="CSMath.Matrix3.op_Multiply(CSMath.Matrix3,CSMath.Matrix3)">
+  operator *(Matrix3, Matrix3)
+  <a class="header-action link-secondary" title="View source" href="https://github.com/DomCR/CSUtilities/blob/1065/merge/CSMath/Matrix3.operators.cs/#L12"><i class="bi bi-code-slash"></i></a>
+  </h3>
+
+  <div class="markdown level1 summary"></div>
+  <div class="markdown level1 conceptual"></div>
+
+  <div class="codewrapper">
+    <pre><code class="lang-csharp hljs">public static Matrix3 operator *(Matrix3 a, Matrix3 b)</code></pre>
+  </div>
+
+  <h4 class="section">Parameters</h4>
+  <dl class="parameters">
+    <dt><code>a</code> <a class="xref" href="CSMath.Matrix3.html">Matrix3</a></dt>
+    <dd></dd>
+    <dt><code>b</code> <a class="xref" href="CSMath.Matrix3.html">Matrix3</a></dt>
+    <dd></dd>
+  </dl>
+
+  <h4 class="section">Returns</h4>
+  <dl class="parameters">
+    <dt><a class="xref" href="CSMath.Matrix3.html">Matrix3</a></dt>
+    <dd></dd>
+  </dl>
+
+
+
+
+
+
+
+
+
+
+
+  <a id="CSMath_Matrix3_op_Multiply_" data-uid="CSMath.Matrix3.op_Multiply*"></a>
+
+  <h3 id="CSMath_Matrix3_op_Multiply_CSMath_Matrix3_CSMath_XYZ_" data-uid="CSMath.Matrix3.op_Multiply(CSMath.Matrix3,CSMath.XYZ)">
+  operator *(Matrix3, XYZ)
+  <a class="header-action link-secondary" title="View source" href="https://github.com/DomCR/CSUtilities/blob/1065/merge/CSMath/Matrix3.operators.cs/#L5"><i class="bi bi-code-slash"></i></a>
+  </h3>
+
+  <div class="markdown level1 summary"></div>
+  <div class="markdown level1 conceptual"></div>
+
+  <div class="codewrapper">
+    <pre><code class="lang-csharp hljs">public static XYZ operator *(Matrix3 matrix, XYZ value)</code></pre>
+  </div>
+
+  <h4 class="section">Parameters</h4>
+  <dl class="parameters">
+    <dt><code>matrix</code> <a class="xref" href="CSMath.Matrix3.html">Matrix3</a></dt>
+    <dd></dd>
+    <dt><code>value</code> <a class="xref" href="CSMath.XYZ.html">XYZ</a></dt>
+    <dd></dd>
+  </dl>
+
+  <h4 class="section">Returns</h4>
+  <dl class="parameters">
+    <dt><a class="xref" href="CSMath.XYZ.html">XYZ</a></dt>
+    <dd></dd>
+  </dl>
+
+
+
+
+
+
+
+
+
+
+
+
+</article>
+
+        <div class="contribution d-print-none">
+          <a href="https://github.com/DomCR/CSUtilities/blob/1065/merge/CSMath/Matrix3.operators.cs/#L3" class="edit-link">Edit this page</a>
+        </div>
+
+
+      </div>
+
+      <div class="affix">
+        <nav id="affix"></nav>
+      </div>
+    </main>
+
+    <div class="container-xxl search-results" id="search-results"></div>
+
+    <footer class="border-top text-secondary">
+      <div class="container-xxl">
+        <div class="flex-fill">
+          <span>Made with <a href="https://dotnet.github.io/docfx">docfx</a></span>
+        </div>
+      </div>
+    </footer>
+  </body>
+</html>

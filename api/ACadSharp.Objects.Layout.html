@@ -1,0 +1,1340 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <meta charset="utf-8">
+      <title>Class Layout | ACadSharp </title>
+      <meta name="viewport" content="width=device-width, initial-scale=1.0">
+      <meta name="title" content="Class Layout | ACadSharp ">
+      
+      <meta name="description" content="Represents a  object.">
+      <link rel="icon" href="../favicon.ico">
+      <link rel="stylesheet" href="../public/docfx.min.css">
+      <link rel="stylesheet" href="../public/main.css">
+      <meta name="docfx:navrel" content="../toc.html">
+      <meta name="docfx:tocrel" content="toc.html">
+      
+      <meta name="docfx:rel" content="../">
+      
+      
+      <meta name="docfx:docurl" content="https://github.com/DomCR/ACadSharp/new/1065/merge/apiSpec/new?filename=ACadSharp_Objects_Layout.md&amp;value=---%0Auid%3A%20ACadSharp.Objects.Layout%0Asummary%3A%20&#39;*You%20can%20override%20summary%20for%20the%20API%20here%20using%20*MARKDOWN*%20syntax&#39;%0A---%0A%0A*Please%20type%20below%20more%20information%20about%20this%20API%3A*%0A%0A">
+      <meta name="loc:inThisArticle" content="In this article">
+      <meta name="loc:searchResultsCount" content="{count} results for &quot;{query}&quot;">
+      <meta name="loc:searchNoResults" content="No results for &quot;{query}&quot;">
+      <meta name="loc:tocFilter" content="Filter by title">
+      <meta name="loc:nextArticle" content="Next">
+      <meta name="loc:prevArticle" content="Previous">
+      <meta name="loc:themeLight" content="Light">
+      <meta name="loc:themeDark" content="Dark">
+      <meta name="loc:themeAuto" content="Auto">
+      <meta name="loc:changeTheme" content="Change theme">
+      <meta name="loc:copy" content="Copy">
+      <meta name="loc:downloadPdf" content="Download PDF">
+
+      <script type="module" src="./../public/docfx.min.js"></script>
+
+      <script>
+        const theme = localStorage.getItem('theme') || 'auto'
+        document.documentElement.setAttribute('data-bs-theme', theme === 'auto' ? (window.matchMedia('(prefers-color-scheme: dark)').matches ? 'dark' : 'light') : theme)
+      </script>
+
+  </head>
+
+  <body class="tex2jax_ignore" data-layout="" data-yaml-mime="ManagedReference">
+    <header class="bg-body border-bottom">
+      <nav id="autocollapse" class="navbar navbar-expand-md" role="navigation">
+        <div class="container-xxl flex-nowrap">
+          <a class="navbar-brand" href="../index.html">
+            <img id="logo" class="svg" src="../logo.svg" alt="ACadSharp">
+            ACadSharp
+          </a>
+          <button class="btn btn-lg d-md-none border-0" type="button" data-bs-toggle="collapse" data-bs-target="#navpanel" aria-controls="navpanel" aria-expanded="false" aria-label="Toggle navigation">
+            <i class="bi bi-three-dots"></i>
+          </button>
+          <div class="collapse navbar-collapse" id="navpanel">
+            <div id="navbar">
+              <form class="search" role="search" id="search">
+                <i class="bi bi-search"></i>
+                <input class="form-control" id="search-query" type="search" disabled placeholder="Search" autocomplete="off" aria-label="Search">
+              </form>
+            </div>
+          </div>
+        </div>
+      </nav>
+    </header>
+
+    <main class="container-xxl">
+      <div class="toc-offcanvas">
+        <div class="offcanvas-md offcanvas-start" tabindex="-1" id="tocOffcanvas" aria-labelledby="tocOffcanvasLabel">
+          <div class="offcanvas-header">
+            <h5 class="offcanvas-title" id="tocOffcanvasLabel">Table of Contents</h5>
+            <button type="button" class="btn-close" data-bs-dismiss="offcanvas" data-bs-target="#tocOffcanvas" aria-label="Close"></button>
+          </div>
+          <div class="offcanvas-body">
+            <nav class="toc" id="toc"></nav>
+          </div>
+        </div>
+      </div>
+
+      <div class="content">
+        <div class="actionbar">
+          <button class="btn btn-lg border-0 d-md-none" type="button" data-bs-toggle="offcanvas" data-bs-target="#tocOffcanvas" aria-controls="tocOffcanvas" aria-expanded="false" aria-label="Show table of contents">
+            <i class="bi bi-list"></i>
+          </button>
+
+          <nav id="breadcrumb"></nav>
+        </div>
+
+        <article data-uid="ACadSharp.Objects.Layout">
+
+
+
+  <h1 id="ACadSharp_Objects_Layout" data-uid="ACadSharp.Objects.Layout" class="text-break">
+Class Layout  <a class="header-action link-secondary" title="View source" href="https://github.com/DomCR/ACadSharp/blob/1065/merge/src/ACadSharp/Objects/Layout.cs/#L18"><i class="bi bi-code-slash"></i></a>
+  </h1>
+
+  <div class="facts text-secondary">
+    <dl><dt>Namespace</dt><dd><a class="xref" href="ACadSharp.html">ACadSharp</a>.<a class="xref" href="ACadSharp.Objects.html">Objects</a></dd></dl>
+  <dl><dt>Assembly</dt><dd>ACadSharp.dll</dd></dl>
+  </div>
+
+  <div class="markdown summary"><p>Represents a <a class="xref" href="ACadSharp.Objects.Layout.html">Layout</a> object.</p>
+</div>
+  <div class="markdown conceptual"></div>
+
+  <div class="codewrapper">
+    <pre><code class="lang-csharp hljs">[DxfName(&quot;LAYOUT&quot;)]
+[DxfSubClass(&quot;AcDbLayout&quot;)]
+public class Layout : PlotSettings, IHandledCadObject, INamedCadObject</code></pre>
+  </div>
+
+
+
+
+  <dl class="typelist inheritance">
+    <dt>Inheritance</dt>
+    <dd>
+      <div><a class="xref" href="https://learn.microsoft.com/dotnet/api/system.object">object</a></div>
+      <div><a class="xref" href="ACadSharp.CadObject.html">CadObject</a></div>
+      <div><a class="xref" href="ACadSharp.Objects.NonGraphicalObject.html">NonGraphicalObject</a></div>
+      <div><a class="xref" href="ACadSharp.Objects.PlotSettings.html">PlotSettings</a></div>
+      <div><span class="xref">Layout</span></div>
+    </dd>
+  </dl>
+
+  <dl class="typelist implements">
+    <dt>Implements</dt>
+    <dd>
+      <div><a class="xref" href="ACadSharp.IHandledCadObject.html">IHandledCadObject</a></div>
+      <div><a class="xref" href="ACadSharp.INamedCadObject.html">INamedCadObject</a></div>
+    </dd>
+  </dl>
+
+
+  <dl class="typelist inheritedMembers">
+    <dt>Inherited Members</dt>
+    <dd>
+    <div>
+      <a class="xref" href="ACadSharp.Objects.PlotSettings.html#ACadSharp_Objects_PlotSettings_DenominatorScale">PlotSettings.DenominatorScale</a>
+    </div>
+    <div>
+      <a class="xref" href="ACadSharp.Objects.PlotSettings.html#ACadSharp_Objects_PlotSettings_Flags">PlotSettings.Flags</a>
+    </div>
+    <div>
+      <a class="xref" href="ACadSharp.Objects.PlotSettings.html#ACadSharp_Objects_PlotSettings_NumeratorScale">PlotSettings.NumeratorScale</a>
+    </div>
+    <div>
+      <a class="xref" href="ACadSharp.Objects.PlotSettings.html#ACadSharp_Objects_PlotSettings_PageName">PlotSettings.PageName</a>
+    </div>
+    <div>
+      <a class="xref" href="ACadSharp.Objects.PlotSettings.html#ACadSharp_Objects_PlotSettings_PaperHeight">PlotSettings.PaperHeight</a>
+    </div>
+    <div>
+      <a class="xref" href="ACadSharp.Objects.PlotSettings.html#ACadSharp_Objects_PlotSettings_PaperImageOrigin">PlotSettings.PaperImageOrigin</a>
+    </div>
+    <div>
+      <a class="xref" href="ACadSharp.Objects.PlotSettings.html#ACadSharp_Objects_PlotSettings_PaperImageOriginX">PlotSettings.PaperImageOriginX</a>
+    </div>
+    <div>
+      <a class="xref" href="ACadSharp.Objects.PlotSettings.html#ACadSharp_Objects_PlotSettings_PaperImageOriginY">PlotSettings.PaperImageOriginY</a>
+    </div>
+    <div>
+      <a class="xref" href="ACadSharp.Objects.PlotSettings.html#ACadSharp_Objects_PlotSettings_PaperRotation">PlotSettings.PaperRotation</a>
+    </div>
+    <div>
+      <a class="xref" href="ACadSharp.Objects.PlotSettings.html#ACadSharp_Objects_PlotSettings_PaperSize">PlotSettings.PaperSize</a>
+    </div>
+    <div>
+      <a class="xref" href="ACadSharp.Objects.PlotSettings.html#ACadSharp_Objects_PlotSettings_PaperUnits">PlotSettings.PaperUnits</a>
+    </div>
+    <div>
+      <a class="xref" href="ACadSharp.Objects.PlotSettings.html#ACadSharp_Objects_PlotSettings_PaperWidth">PlotSettings.PaperWidth</a>
+    </div>
+    <div>
+      <a class="xref" href="ACadSharp.Objects.PlotSettings.html#ACadSharp_Objects_PlotSettings_PlotOriginX">PlotSettings.PlotOriginX</a>
+    </div>
+    <div>
+      <a class="xref" href="ACadSharp.Objects.PlotSettings.html#ACadSharp_Objects_PlotSettings_PlotOriginY">PlotSettings.PlotOriginY</a>
+    </div>
+    <div>
+      <a class="xref" href="ACadSharp.Objects.PlotSettings.html#ACadSharp_Objects_PlotSettings_PlotType">PlotSettings.PlotType</a>
+    </div>
+    <div>
+      <a class="xref" href="ACadSharp.Objects.PlotSettings.html#ACadSharp_Objects_PlotSettings_PlotViewName">PlotSettings.PlotViewName</a>
+    </div>
+    <div>
+      <a class="xref" href="ACadSharp.Objects.PlotSettings.html#ACadSharp_Objects_PlotSettings_PrintScale">PlotSettings.PrintScale</a>
+    </div>
+    <div>
+      <a class="xref" href="ACadSharp.Objects.PlotSettings.html#ACadSharp_Objects_PlotSettings_ScaledFit">PlotSettings.ScaledFit</a>
+    </div>
+    <div>
+      <a class="xref" href="ACadSharp.Objects.PlotSettings.html#ACadSharp_Objects_PlotSettings_ShadePlotDPI">PlotSettings.ShadePlotDPI</a>
+    </div>
+    <div>
+      <a class="xref" href="ACadSharp.Objects.PlotSettings.html#ACadSharp_Objects_PlotSettings_ShadePlotIDHandle">PlotSettings.ShadePlotIDHandle</a>
+    </div>
+    <div>
+      <a class="xref" href="ACadSharp.Objects.PlotSettings.html#ACadSharp_Objects_PlotSettings_ShadePlotMode">PlotSettings.ShadePlotMode</a>
+    </div>
+    <div>
+      <a class="xref" href="ACadSharp.Objects.PlotSettings.html#ACadSharp_Objects_PlotSettings_ShadePlotResolutionMode">PlotSettings.ShadePlotResolutionMode</a>
+    </div>
+    <div>
+      <a class="xref" href="ACadSharp.Objects.PlotSettings.html#ACadSharp_Objects_PlotSettings_StandardScale">PlotSettings.StandardScale</a>
+    </div>
+    <div>
+      <a class="xref" href="ACadSharp.Objects.PlotSettings.html#ACadSharp_Objects_PlotSettings_StyleSheet">PlotSettings.StyleSheet</a>
+    </div>
+    <div>
+      <a class="xref" href="ACadSharp.Objects.PlotSettings.html#ACadSharp_Objects_PlotSettings_SystemPrinterName">PlotSettings.SystemPrinterName</a>
+    </div>
+    <div>
+      <a class="xref" href="ACadSharp.Objects.PlotSettings.html#ACadSharp_Objects_PlotSettings_UnprintableMargin">PlotSettings.UnprintableMargin</a>
+    </div>
+    <div>
+      <a class="xref" href="ACadSharp.Objects.PlotSettings.html#ACadSharp_Objects_PlotSettings_WindowLowerLeftX">PlotSettings.WindowLowerLeftX</a>
+    </div>
+    <div>
+      <a class="xref" href="ACadSharp.Objects.PlotSettings.html#ACadSharp_Objects_PlotSettings_WindowLowerLeftY">PlotSettings.WindowLowerLeftY</a>
+    </div>
+    <div>
+      <a class="xref" href="ACadSharp.Objects.PlotSettings.html#ACadSharp_Objects_PlotSettings_WindowUpperLeftX">PlotSettings.WindowUpperLeftX</a>
+    </div>
+    <div>
+      <a class="xref" href="ACadSharp.Objects.PlotSettings.html#ACadSharp_Objects_PlotSettings_WindowUpperLeftY">PlotSettings.WindowUpperLeftY</a>
+    </div>
+    <div>
+      <a class="xref" href="ACadSharp.Objects.NonGraphicalObject.html#ACadSharp_Objects_NonGraphicalObject_OnNameChanged">NonGraphicalObject.OnNameChanged</a>
+    </div>
+    <div>
+      <a class="xref" href="ACadSharp.CadObject.html#ACadSharp_CadObject_Document">CadObject.Document</a>
+    </div>
+    <div>
+      <a class="xref" href="ACadSharp.CadObject.html#ACadSharp_CadObject_ExtendedData">CadObject.ExtendedData</a>
+    </div>
+    <div>
+      <a class="xref" href="ACadSharp.CadObject.html#ACadSharp_CadObject_Handle">CadObject.Handle</a>
+    </div>
+    <div>
+      <a class="xref" href="ACadSharp.CadObject.html#ACadSharp_CadObject_HasDynamicSubclass">CadObject.HasDynamicSubclass</a>
+    </div>
+    <div>
+      <a class="xref" href="ACadSharp.CadObject.html#ACadSharp_CadObject_Owner">CadObject.Owner</a>
+    </div>
+    <div>
+      <a class="xref" href="ACadSharp.CadObject.html#ACadSharp_CadObject_Reactors">CadObject.Reactors</a>
+    </div>
+    <div>
+      <a class="xref" href="ACadSharp.CadObject.html#ACadSharp_CadObject_XDictionary">CadObject.XDictionary</a>
+    </div>
+    <div>
+      <a class="xref" href="ACadSharp.CadObject.html#ACadSharp_CadObject_AddReactor_ACadSharp_CadObject_">CadObject.AddReactor(CadObject)</a>
+    </div>
+    <div>
+      <a class="xref" href="ACadSharp.CadObject.html#ACadSharp_CadObject_CleanReactors">CadObject.CleanReactors()</a>
+    </div>
+    <div>
+      <a class="xref" href="ACadSharp.CadObject.html#ACadSharp_CadObject_CreateExtendedDictionary">CadObject.CreateExtendedDictionary()</a>
+    </div>
+    <div>
+      <a class="xref" href="ACadSharp.CadObject.html#ACadSharp_CadObject_RemoveReactor_ACadSharp_CadObject_">CadObject.RemoveReactor(CadObject)</a>
+    </div>
+    <div>
+      <a class="xref" href="ACadSharp.CadObject.html#ACadSharp_CadObject_updateCollection__1___0_ACadSharp_ICadCollection___0__">CadObject.updateCollection&lt;T&gt;(T, ICadCollection&lt;T&gt;)</a>
+    </div>
+    <div>
+      <a class="xref" href="https://learn.microsoft.com/dotnet/api/system.object.equals#system-object-equals(system-object)">object.Equals(object)</a>
+    </div>
+    <div>
+      <a class="xref" href="https://learn.microsoft.com/dotnet/api/system.object.equals#system-object-equals(system-object-system-object)">object.Equals(object, object)</a>
+    </div>
+    <div>
+      <a class="xref" href="https://learn.microsoft.com/dotnet/api/system.object.gethashcode">object.GetHashCode()</a>
+    </div>
+    <div>
+      <a class="xref" href="https://learn.microsoft.com/dotnet/api/system.object.gettype">object.GetType()</a>
+    </div>
+    <div>
+      <a class="xref" href="https://learn.microsoft.com/dotnet/api/system.object.memberwiseclone">object.MemberwiseClone()</a>
+    </div>
+    <div>
+      <a class="xref" href="https://learn.microsoft.com/dotnet/api/system.object.referenceequals">object.ReferenceEquals(object, object)</a>
+    </div>
+  </dd></dl>
+
+  <dl class="typelist extensionMethods">
+    <dt>Extension Methods</dt>
+    <dd>
+  <div>
+      <a class="xref" href="ACadSharp.Extensions.INamedCadObjectExtensions.html#ACadSharp_Extensions_INamedCadObjectExtensions_IsValidDxfName_ACadSharp_INamedCadObject_ACadSharp_ACadVersion_">INamedCadObjectExtensions.IsValidDxfName(INamedCadObject, ACadVersion)</a>
+  </div>
+  <div>
+      <a class="xref" href="ACadSharp.Extensions.CadObjectExtensions.html#ACadSharp_Extensions_CadObjectExtensions_CloneTyped__1___0_">CadObjectExtensions.CloneTyped&lt;T&gt;(T)</a>
+  </div>
+  <div>
+      <a class="xref" href="CSMath.Geometry.LineExtensions.html#CSMath_Geometry_LineExtensions_TryFindIntersection__2___0___0___1__">LineExtensions.TryFindIntersection&lt;T, R&gt;(T, T, out R)</a>
+  </div>
+  </dd></dl>
+
+
+
+  <h2 id="ACadSharp_Objects_Layout_remarks">Remarks</h2>
+  <div class="markdown level0 remarks"><p>Object name <a class="xref" href="ACadSharp.DxfFileToken.html#ACadSharp_DxfFileToken_ObjectLayout">ObjectLayout</a>. <br>
+Dxf class name <a class="xref" href="ACadSharp.DxfSubclassMarker.html#ACadSharp_DxfSubclassMarker_Layout">Layout</a>.</p>
+</div>
+
+
+  <h2 class="section" id="constructors">Constructors
+</h2>
+
+
+  <a id="ACadSharp_Objects_Layout__ctor_" data-uid="ACadSharp.Objects.Layout.#ctor*"></a>
+
+  <h3 id="ACadSharp_Objects_Layout__ctor_System_String_" data-uid="ACadSharp.Objects.Layout.#ctor(System.String)">
+  Layout(string)
+  <a class="header-action link-secondary" title="View source" href="https://github.com/DomCR/ACadSharp/blob/1065/merge/src/ACadSharp/Objects/Layout.cs/#L214"><i class="bi bi-code-slash"></i></a>
+  </h3>
+
+  <div class="markdown level1 summary"><p>Initializes a new instance of the Layout class using the specified name for both the layout's name and display
+name.</p>
+</div>
+  <div class="markdown level1 conceptual"></div>
+
+  <div class="codewrapper">
+    <pre><code class="lang-csharp hljs">public Layout(string name)</code></pre>
+  </div>
+
+  <h4 class="section">Parameters</h4>
+  <dl class="parameters">
+    <dt><code>name</code> <a class="xref" href="https://learn.microsoft.com/dotnet/api/system.string">string</a></dt>
+    <dd><p>The name to assign to the layout. This value is used for both the internal name and the display name.</p>
+</dd>
+  </dl>
+
+
+
+
+
+
+
+
+
+
+
+
+  <a id="ACadSharp_Objects_Layout__ctor_" data-uid="ACadSharp.Objects.Layout.#ctor*"></a>
+
+  <h3 id="ACadSharp_Objects_Layout__ctor_System_String_System_String_" data-uid="ACadSharp.Objects.Layout.#ctor(System.String,System.String)">
+  Layout(string, string)
+  <a class="header-action link-secondary" title="View source" href="https://github.com/DomCR/ACadSharp/blob/1065/merge/src/ACadSharp/Objects/Layout.cs/#L223"><i class="bi bi-code-slash"></i></a>
+  </h3>
+
+  <div class="markdown level1 summary"><p>Initializes a new instance of the Layout class with the specified layout name and associated block record name.</p>
+</div>
+  <div class="markdown level1 conceptual"></div>
+
+  <div class="codewrapper">
+    <pre><code class="lang-csharp hljs">public Layout(string name, string blockName)</code></pre>
+  </div>
+
+  <h4 class="section">Parameters</h4>
+  <dl class="parameters">
+    <dt><code>name</code> <a class="xref" href="https://learn.microsoft.com/dotnet/api/system.string">string</a></dt>
+    <dd><p>The name to assign to the layout. Cannot be null or empty.</p>
+</dd>
+    <dt><code>blockName</code> <a class="xref" href="https://learn.microsoft.com/dotnet/api/system.string">string</a></dt>
+    <dd><p>The name of the block record associated with the layout. Cannot be null or empty.</p>
+</dd>
+  </dl>
+
+
+
+
+
+
+
+
+
+
+
+
+  <h2 class="section" id="fields">Fields
+</h2>
+
+
+
+  <h3 id="ACadSharp_Objects_Layout_ModelLayoutName" data-uid="ACadSharp.Objects.Layout.ModelLayoutName">
+  ModelLayoutName
+  <a class="header-action link-secondary" title="View source" href="https://github.com/DomCR/ACadSharp/blob/1065/merge/src/ACadSharp/Objects/Layout.cs/#L197"><i class="bi bi-code-slash"></i></a>
+  </h3>
+
+  <div class="markdown level1 summary"><p>Represents the name of the model layout used in view rendering.</p>
+</div>
+  <div class="markdown level1 conceptual"></div>
+
+  <div class="codewrapper">
+    <pre><code class="lang-csharp hljs">public const string ModelLayoutName = &quot;Model&quot;</code></pre>
+  </div>
+
+
+
+
+  <h4 class="section">Field Value</h4>
+  <dl class="parameters">
+    <dt><a class="xref" href="https://learn.microsoft.com/dotnet/api/system.string">string</a></dt>
+    <dd></dd>
+  </dl>
+
+
+
+
+
+
+
+
+
+
+  <h3 id="ACadSharp_Objects_Layout_PaperLayoutName" data-uid="ACadSharp.Objects.Layout.PaperLayoutName">
+  PaperLayoutName
+  <a class="header-action link-secondary" title="View source" href="https://github.com/DomCR/ACadSharp/blob/1065/merge/src/ACadSharp/Objects/Layout.cs/#L202"><i class="bi bi-code-slash"></i></a>
+  </h3>
+
+  <div class="markdown level1 summary"><p>Specifies the default name for the paper layout used in document generation.</p>
+</div>
+  <div class="markdown level1 conceptual"></div>
+
+  <div class="codewrapper">
+    <pre><code class="lang-csharp hljs">public const string PaperLayoutName = &quot;Layout1&quot;</code></pre>
+  </div>
+
+
+
+
+  <h4 class="section">Field Value</h4>
+  <dl class="parameters">
+    <dt><a class="xref" href="https://learn.microsoft.com/dotnet/api/system.string">string</a></dt>
+    <dd></dd>
+  </dl>
+
+
+
+
+
+
+
+
+
+  <h2 class="section" id="properties">Properties
+</h2>
+
+
+  <a id="ACadSharp_Objects_Layout_AssociatedBlock_" data-uid="ACadSharp.Objects.Layout.AssociatedBlock*"></a>
+
+  <h3 id="ACadSharp_Objects_Layout_AssociatedBlock" data-uid="ACadSharp.Objects.Layout.AssociatedBlock">
+  AssociatedBlock
+  <a class="header-action link-secondary" title="View source" href="https://github.com/DomCR/ACadSharp/blob/1065/merge/src/ACadSharp/Objects/Layout.cs/#L25"><i class="bi bi-code-slash"></i></a>
+  </h3>
+
+  <div class="markdown level1 summary"><p>The associated paper space block table record.</p>
+</div>
+  <div class="markdown level1 conceptual"></div>
+
+  <div class="codewrapper">
+    <pre><code class="lang-csharp hljs">[DxfCodeValue(DxfReferenceType.Handle, new int[] { 330 })]
+public BlockRecord AssociatedBlock { get; }</code></pre>
+  </div>
+
+
+
+
+
+  <h4 class="section">Property Value</h4>
+  <dl class="parameters">
+    <dt><a class="xref" href="ACadSharp.Tables.BlockRecord.html">BlockRecord</a></dt>
+    <dd></dd>
+  </dl>
+
+
+
+
+
+
+
+
+  <a id="ACadSharp_Objects_Layout_BaseUCS_" data-uid="ACadSharp.Objects.Layout.BaseUCS*"></a>
+
+  <h3 id="ACadSharp_Objects_Layout_BaseUCS" data-uid="ACadSharp.Objects.Layout.BaseUCS">
+  BaseUCS
+  <a class="header-action link-secondary" title="View source" href="https://github.com/DomCR/ACadSharp/blob/1065/merge/src/ACadSharp/Objects/Layout.cs/#L47"><i class="bi bi-code-slash"></i></a>
+  </h3>
+
+  <div class="markdown level1 summary"><p>UCSTableRecord of base UCS if UCS is orthographic (<a class="xref" href="ACadSharp.Objects.Layout.html#ACadSharp_Objects_Layout_UcsOrthographicType">UcsOrthographicType</a> is non-zero).</p>
+</div>
+  <div class="markdown level1 conceptual"></div>
+
+  <div class="codewrapper">
+    <pre><code class="lang-csharp hljs">[DxfCodeValue(DxfReferenceType.Handle, new int[] { 346 })]
+public UCS BaseUCS { get; set; }</code></pre>
+  </div>
+
+
+
+
+
+  <h4 class="section">Property Value</h4>
+  <dl class="parameters">
+    <dt><a class="xref" href="ACadSharp.Tables.UCS.html">UCS</a></dt>
+    <dd></dd>
+  </dl>
+
+
+
+
+  <h4 class="section" id="ACadSharp_Objects_Layout_BaseUCS_remarks">Remarks</h4>
+  <div class="markdown level1 remarks"><p>If not present and <a class="xref" href="ACadSharp.Objects.Layout.html#ACadSharp_Objects_Layout_UcsOrthographicType">UcsOrthographicType</a> is non-zero, then base UCS is taken to be WORLD.</p>
+</div>
+
+
+
+
+  <a id="ACadSharp_Objects_Layout_Elevation_" data-uid="ACadSharp.Objects.Layout.Elevation*"></a>
+
+  <h3 id="ACadSharp_Objects_Layout_Elevation" data-uid="ACadSharp.Objects.Layout.Elevation">
+  Elevation
+  <a class="header-action link-secondary" title="View source" href="https://github.com/DomCR/ACadSharp/blob/1065/merge/src/ACadSharp/Objects/Layout.cs/#L53"><i class="bi bi-code-slash"></i></a>
+  </h3>
+
+  <div class="markdown level1 summary"><p>Layout elevation.</p>
+</div>
+  <div class="markdown level1 conceptual"></div>
+
+  <div class="codewrapper">
+    <pre><code class="lang-csharp hljs">[DxfCodeValue(new int[] { 146 })]
+public double Elevation { get; set; }</code></pre>
+  </div>
+
+
+
+
+
+  <h4 class="section">Property Value</h4>
+  <dl class="parameters">
+    <dt><a class="xref" href="https://learn.microsoft.com/dotnet/api/system.double">double</a></dt>
+    <dd></dd>
+  </dl>
+
+
+
+
+
+
+
+
+  <a id="ACadSharp_Objects_Layout_InsertionBasePoint_" data-uid="ACadSharp.Objects.Layout.InsertionBasePoint*"></a>
+
+  <h3 id="ACadSharp_Objects_Layout_InsertionBasePoint" data-uid="ACadSharp.Objects.Layout.InsertionBasePoint">
+  InsertionBasePoint
+  <a class="header-action link-secondary" title="View source" href="https://github.com/DomCR/ACadSharp/blob/1065/merge/src/ACadSharp/Objects/Layout.cs/#L59"><i class="bi bi-code-slash"></i></a>
+  </h3>
+
+  <div class="markdown level1 summary"><p>Insertion base point for this layout(defined by INSBASE while this layout is current).</p>
+</div>
+  <div class="markdown level1 conceptual"></div>
+
+  <div class="codewrapper">
+    <pre><code class="lang-csharp hljs">[DxfCodeValue(new int[] { 12, 22, 32 })]
+public XYZ InsertionBasePoint { get; set; }</code></pre>
+  </div>
+
+
+
+
+
+  <h4 class="section">Property Value</h4>
+  <dl class="parameters">
+    <dt><a class="xref" href="CSMath.XYZ.html">XYZ</a></dt>
+    <dd></dd>
+  </dl>
+
+
+
+
+
+
+
+
+  <a id="ACadSharp_Objects_Layout_IsPaperSpace_" data-uid="ACadSharp.Objects.Layout.IsPaperSpace*"></a>
+
+  <h3 id="ACadSharp_Objects_Layout_IsPaperSpace" data-uid="ACadSharp.Objects.Layout.IsPaperSpace">
+  IsPaperSpace
+  <a class="header-action link-secondary" title="View source" href="https://github.com/DomCR/ACadSharp/blob/1065/merge/src/ACadSharp/Objects/Layout.cs/#L65"><i class="bi bi-code-slash"></i></a>
+  </h3>
+
+  <div class="markdown level1 summary"><p>If true, the layout is a paper space.</p>
+</div>
+  <div class="markdown level1 conceptual"></div>
+
+  <div class="codewrapper">
+    <pre><code class="lang-csharp hljs">public bool IsPaperSpace { get; }</code></pre>
+  </div>
+
+
+
+
+
+  <h4 class="section">Property Value</h4>
+  <dl class="parameters">
+    <dt><a class="xref" href="https://learn.microsoft.com/dotnet/api/system.boolean">bool</a></dt>
+    <dd></dd>
+  </dl>
+
+
+
+
+
+
+
+
+  <a id="ACadSharp_Objects_Layout_LastActiveViewport_" data-uid="ACadSharp.Objects.Layout.LastActiveViewport*"></a>
+
+  <h3 id="ACadSharp_Objects_Layout_LastActiveViewport" data-uid="ACadSharp.Objects.Layout.LastActiveViewport">
+  LastActiveViewport
+  <a class="header-action link-secondary" title="View source" href="https://github.com/DomCR/ACadSharp/blob/1065/merge/src/ACadSharp/Objects/Layout.cs/#L76"><i class="bi bi-code-slash"></i></a>
+  </h3>
+
+  <div class="markdown level1 summary"><p>Viewport that was last active in this layout when the layout was current.</p>
+</div>
+  <div class="markdown level1 conceptual"></div>
+
+  <div class="codewrapper">
+    <pre><code class="lang-csharp hljs">[DxfCodeValue(DxfReferenceType.Handle, new int[] { 331 })]
+public Viewport LastActiveViewport { get; }</code></pre>
+  </div>
+
+
+
+
+
+  <h4 class="section">Property Value</h4>
+  <dl class="parameters">
+    <dt><a class="xref" href="ACadSharp.Entities.Viewport.html">Viewport</a></dt>
+    <dd></dd>
+  </dl>
+
+
+
+
+
+
+
+
+  <a id="ACadSharp_Objects_Layout_LayoutFlags_" data-uid="ACadSharp.Objects.Layout.LayoutFlags*"></a>
+
+  <h3 id="ACadSharp_Objects_Layout_LayoutFlags" data-uid="ACadSharp.Objects.Layout.LayoutFlags">
+  LayoutFlags
+  <a class="header-action link-secondary" title="View source" href="https://github.com/DomCR/ACadSharp/blob/1065/merge/src/ACadSharp/Objects/Layout.cs/#L92"><i class="bi bi-code-slash"></i></a>
+  </h3>
+
+  <div class="markdown level1 summary"><p>Layout flags.</p>
+</div>
+  <div class="markdown level1 conceptual"></div>
+
+  <div class="codewrapper">
+    <pre><code class="lang-csharp hljs">[DxfCodeValue(new int[] { 70 })]
+public LayoutFlags LayoutFlags { get; set; }</code></pre>
+  </div>
+
+
+
+
+
+  <h4 class="section">Property Value</h4>
+  <dl class="parameters">
+    <dt><a class="xref" href="ACadSharp.Objects.LayoutFlags.html">LayoutFlags</a></dt>
+    <dd></dd>
+  </dl>
+
+
+
+
+
+
+
+
+  <a id="ACadSharp_Objects_Layout_MaxExtents_" data-uid="ACadSharp.Objects.Layout.MaxExtents*"></a>
+
+  <h3 id="ACadSharp_Objects_Layout_MaxExtents" data-uid="ACadSharp.Objects.Layout.MaxExtents">
+  MaxExtents
+  <a class="header-action link-secondary" title="View source" href="https://github.com/DomCR/ACadSharp/blob/1065/merge/src/ACadSharp/Objects/Layout.cs/#L98"><i class="bi bi-code-slash"></i></a>
+  </h3>
+
+  <div class="markdown level1 summary"><p>Maximum extents for this layout(defined by EXTMAX while this layout is current).</p>
+</div>
+  <div class="markdown level1 conceptual"></div>
+
+  <div class="codewrapper">
+    <pre><code class="lang-csharp hljs">[DxfCodeValue(new int[] { 15, 25, 35 })]
+public XYZ MaxExtents { get; set; }</code></pre>
+  </div>
+
+
+
+
+
+  <h4 class="section">Property Value</h4>
+  <dl class="parameters">
+    <dt><a class="xref" href="CSMath.XYZ.html">XYZ</a></dt>
+    <dd></dd>
+  </dl>
+
+
+
+
+
+
+
+
+  <a id="ACadSharp_Objects_Layout_MaxLimits_" data-uid="ACadSharp.Objects.Layout.MaxLimits*"></a>
+
+  <h3 id="ACadSharp_Objects_Layout_MaxLimits" data-uid="ACadSharp.Objects.Layout.MaxLimits">
+  MaxLimits
+  <a class="header-action link-secondary" title="View source" href="https://github.com/DomCR/ACadSharp/blob/1065/merge/src/ACadSharp/Objects/Layout.cs/#L104"><i class="bi bi-code-slash"></i></a>
+  </h3>
+
+  <div class="markdown level1 summary"><p>Maximum limits for this layout(defined by LIMMAX while this layout is current).</p>
+</div>
+  <div class="markdown level1 conceptual"></div>
+
+  <div class="codewrapper">
+    <pre><code class="lang-csharp hljs">[DxfCodeValue(new int[] { 11, 21 })]
+public XY MaxLimits { get; set; }</code></pre>
+  </div>
+
+
+
+
+
+  <h4 class="section">Property Value</h4>
+  <dl class="parameters">
+    <dt><a class="xref" href="CSMath.XY.html">XY</a></dt>
+    <dd></dd>
+  </dl>
+
+
+
+
+
+
+
+
+  <a id="ACadSharp_Objects_Layout_MinExtents_" data-uid="ACadSharp.Objects.Layout.MinExtents*"></a>
+
+  <h3 id="ACadSharp_Objects_Layout_MinExtents" data-uid="ACadSharp.Objects.Layout.MinExtents">
+  MinExtents
+  <a class="header-action link-secondary" title="View source" href="https://github.com/DomCR/ACadSharp/blob/1065/merge/src/ACadSharp/Objects/Layout.cs/#L110"><i class="bi bi-code-slash"></i></a>
+  </h3>
+
+  <div class="markdown level1 summary"><p>Minimum extents for this layout(defined by EXTMIN while this layout is current).</p>
+</div>
+  <div class="markdown level1 conceptual"></div>
+
+  <div class="codewrapper">
+    <pre><code class="lang-csharp hljs">[DxfCodeValue(new int[] { 14, 24, 34 })]
+public XYZ MinExtents { get; set; }</code></pre>
+  </div>
+
+
+
+
+
+  <h4 class="section">Property Value</h4>
+  <dl class="parameters">
+    <dt><a class="xref" href="CSMath.XYZ.html">XYZ</a></dt>
+    <dd></dd>
+  </dl>
+
+
+
+
+
+
+
+
+  <a id="ACadSharp_Objects_Layout_MinLimits_" data-uid="ACadSharp.Objects.Layout.MinLimits*"></a>
+
+  <h3 id="ACadSharp_Objects_Layout_MinLimits" data-uid="ACadSharp.Objects.Layout.MinLimits">
+  MinLimits
+  <a class="header-action link-secondary" title="View source" href="https://github.com/DomCR/ACadSharp/blob/1065/merge/src/ACadSharp/Objects/Layout.cs/#L116"><i class="bi bi-code-slash"></i></a>
+  </h3>
+
+  <div class="markdown level1 summary"><p>Minimum limits for this layout (defined by LIMMIN while this layout is current).</p>
+</div>
+  <div class="markdown level1 conceptual"></div>
+
+  <div class="codewrapper">
+    <pre><code class="lang-csharp hljs">[DxfCodeValue(new int[] { 10, 20 })]
+public XY MinLimits { get; set; }</code></pre>
+  </div>
+
+
+
+
+
+  <h4 class="section">Property Value</h4>
+  <dl class="parameters">
+    <dt><a class="xref" href="CSMath.XY.html">XY</a></dt>
+    <dd></dd>
+  </dl>
+
+
+
+
+
+
+
+
+  <a id="ACadSharp_Objects_Layout_Name_" data-uid="ACadSharp.Objects.Layout.Name*"></a>
+
+  <h3 id="ACadSharp_Objects_Layout_Name" data-uid="ACadSharp.Objects.Layout.Name">
+  Name
+  <a class="header-action link-secondary" title="View source" href="https://github.com/DomCR/ACadSharp/blob/1065/merge/src/ACadSharp/Objects/Layout.cs/#L122"><i class="bi bi-code-slash"></i></a>
+  </h3>
+
+  <div class="markdown level1 summary"><p>Layout name.</p>
+</div>
+  <div class="markdown level1 conceptual"></div>
+
+  <div class="codewrapper">
+    <pre><code class="lang-csharp hljs">[DxfCodeValue(new int[] { 1 })]
+public override string Name { get; set; }</code></pre>
+  </div>
+
+
+
+
+
+  <h4 class="section">Property Value</h4>
+  <dl class="parameters">
+    <dt><a class="xref" href="https://learn.microsoft.com/dotnet/api/system.string">string</a></dt>
+    <dd></dd>
+  </dl>
+
+
+
+
+
+
+
+
+  <a id="ACadSharp_Objects_Layout_ObjectName_" data-uid="ACadSharp.Objects.Layout.ObjectName*"></a>
+
+  <h3 id="ACadSharp_Objects_Layout_ObjectName" data-uid="ACadSharp.Objects.Layout.ObjectName">
+  ObjectName
+  <a class="header-action link-secondary" title="View source" href="https://github.com/DomCR/ACadSharp/blob/1065/merge/src/ACadSharp/Objects/Layout.cs/#L136"><i class="bi bi-code-slash"></i></a>
+  </h3>
+
+  <div class="markdown level1 summary"><p>The CAD class name of an object.</p>
+</div>
+  <div class="markdown level1 conceptual"></div>
+
+  <div class="codewrapper">
+    <pre><code class="lang-csharp hljs">public override string ObjectName { get; }</code></pre>
+  </div>
+
+
+
+
+
+  <h4 class="section">Property Value</h4>
+  <dl class="parameters">
+    <dt><a class="xref" href="https://learn.microsoft.com/dotnet/api/system.string">string</a></dt>
+    <dd></dd>
+  </dl>
+
+
+
+
+
+
+
+
+  <a id="ACadSharp_Objects_Layout_ObjectType_" data-uid="ACadSharp.Objects.Layout.ObjectType*"></a>
+
+  <h3 id="ACadSharp_Objects_Layout_ObjectType" data-uid="ACadSharp.Objects.Layout.ObjectType">
+  ObjectType
+  <a class="header-action link-secondary" title="View source" href="https://github.com/DomCR/ACadSharp/blob/1065/merge/src/ACadSharp/Objects/Layout.cs/#L139"><i class="bi bi-code-slash"></i></a>
+  </h3>
+
+  <div class="markdown level1 summary"><p>Get the object type.</p>
+</div>
+  <div class="markdown level1 conceptual"></div>
+
+  <div class="codewrapper">
+    <pre><code class="lang-csharp hljs">public override ObjectType ObjectType { get; }</code></pre>
+  </div>
+
+
+
+
+
+  <h4 class="section">Property Value</h4>
+  <dl class="parameters">
+    <dt><a class="xref" href="ACadSharp.ObjectType.html">ObjectType</a></dt>
+    <dd></dd>
+  </dl>
+
+
+
+
+
+
+
+
+  <a id="ACadSharp_Objects_Layout_Origin_" data-uid="ACadSharp.Objects.Layout.Origin*"></a>
+
+  <h3 id="ACadSharp_Objects_Layout_Origin" data-uid="ACadSharp.Objects.Layout.Origin">
+  Origin
+  <a class="header-action link-secondary" title="View source" href="https://github.com/DomCR/ACadSharp/blob/1065/merge/src/ACadSharp/Objects/Layout.cs/#L144"><i class="bi bi-code-slash"></i></a>
+  </h3>
+
+  <div class="markdown level1 summary"><p>UCS origin.</p>
+</div>
+  <div class="markdown level1 conceptual"></div>
+
+  <div class="codewrapper">
+    <pre><code class="lang-csharp hljs">[DxfCodeValue(new int[] { 13, 23, 33 })]
+public XYZ Origin { get; set; }</code></pre>
+  </div>
+
+
+
+
+
+  <h4 class="section">Property Value</h4>
+  <dl class="parameters">
+    <dt><a class="xref" href="CSMath.XYZ.html">XYZ</a></dt>
+    <dd></dd>
+  </dl>
+
+
+
+
+
+
+
+
+  <a id="ACadSharp_Objects_Layout_SubclassMarker_" data-uid="ACadSharp.Objects.Layout.SubclassMarker*"></a>
+
+  <h3 id="ACadSharp_Objects_Layout_SubclassMarker" data-uid="ACadSharp.Objects.Layout.SubclassMarker">
+  SubclassMarker
+  <a class="header-action link-secondary" title="View source" href="https://github.com/DomCR/ACadSharp/blob/1065/merge/src/ACadSharp/Objects/Layout.cs/#L148"><i class="bi bi-code-slash"></i></a>
+  </h3>
+
+  <div class="markdown level1 summary"><p>Object Subclass marker.</p>
+</div>
+  <div class="markdown level1 conceptual"></div>
+
+  <div class="codewrapper">
+    <pre><code class="lang-csharp hljs">public override string SubclassMarker { get; }</code></pre>
+  </div>
+
+
+
+
+
+  <h4 class="section">Property Value</h4>
+  <dl class="parameters">
+    <dt><a class="xref" href="https://learn.microsoft.com/dotnet/api/system.string">string</a></dt>
+    <dd></dd>
+  </dl>
+
+
+
+
+
+
+
+
+  <a id="ACadSharp_Objects_Layout_TabOrder_" data-uid="ACadSharp.Objects.Layout.TabOrder*"></a>
+
+  <h3 id="ACadSharp_Objects_Layout_TabOrder" data-uid="ACadSharp.Objects.Layout.TabOrder">
+  TabOrder
+  <a class="header-action link-secondary" title="View source" href="https://github.com/DomCR/ACadSharp/blob/1065/merge/src/ACadSharp/Objects/Layout.cs/#L153"><i class="bi bi-code-slash"></i></a>
+  </h3>
+
+  <div class="markdown level1 summary"><p>Tab order. This number is an ordinal indicating this layout's ordering in the tab control that is attached to the drawing window. Note that the “Model” tab always appears as the first tab regardless of its tab order.</p>
+</div>
+  <div class="markdown level1 conceptual"></div>
+
+  <div class="codewrapper">
+    <pre><code class="lang-csharp hljs">[DxfCodeValue(new int[] { 71 })]
+public int TabOrder { get; set; }</code></pre>
+  </div>
+
+
+
+
+
+  <h4 class="section">Property Value</h4>
+  <dl class="parameters">
+    <dt><a class="xref" href="https://learn.microsoft.com/dotnet/api/system.int32">int</a></dt>
+    <dd></dd>
+  </dl>
+
+
+
+
+
+
+
+
+  <a id="ACadSharp_Objects_Layout_UCS_" data-uid="ACadSharp.Objects.Layout.UCS*"></a>
+
+  <h3 id="ACadSharp_Objects_Layout_UCS" data-uid="ACadSharp.Objects.Layout.UCS">
+  UCS
+  <a class="header-action link-secondary" title="View source" href="https://github.com/DomCR/ACadSharp/blob/1065/merge/src/ACadSharp/Objects/Layout.cs/#L162"><i class="bi bi-code-slash"></i></a>
+  </h3>
+
+  <div class="markdown level1 summary"><p>UCS Table Record if UCS is a named UCS.</p>
+</div>
+  <div class="markdown level1 conceptual"></div>
+
+  <div class="codewrapper">
+    <pre><code class="lang-csharp hljs">[DxfCodeValue(DxfReferenceType.Handle, new int[] { 345 })]
+public UCS UCS { get; set; }</code></pre>
+  </div>
+
+
+
+
+
+  <h4 class="section">Property Value</h4>
+  <dl class="parameters">
+    <dt><a class="xref" href="ACadSharp.Tables.UCS.html">UCS</a></dt>
+    <dd></dd>
+  </dl>
+
+
+
+
+  <h4 class="section" id="ACadSharp_Objects_Layout_UCS_remarks">Remarks</h4>
+  <div class="markdown level1 remarks"><p>If not present, then UCS is unnamed.</p>
+</div>
+
+
+
+
+  <a id="ACadSharp_Objects_Layout_UcsOrthographicType_" data-uid="ACadSharp.Objects.Layout.UcsOrthographicType*"></a>
+
+  <h3 id="ACadSharp_Objects_Layout_UcsOrthographicType" data-uid="ACadSharp.Objects.Layout.UcsOrthographicType">
+  UcsOrthographicType
+  <a class="header-action link-secondary" title="View source" href="https://github.com/DomCR/ACadSharp/blob/1065/merge/src/ACadSharp/Objects/Layout.cs/#L168"><i class="bi bi-code-slash"></i></a>
+  </h3>
+
+  <div class="markdown level1 summary"><p>Orthographic type of UCS.</p>
+</div>
+  <div class="markdown level1 conceptual"></div>
+
+  <div class="codewrapper">
+    <pre><code class="lang-csharp hljs">[DxfCodeValue(new int[] { 76 })]
+public OrthographicType UcsOrthographicType { get; set; }</code></pre>
+  </div>
+
+
+
+
+
+  <h4 class="section">Property Value</h4>
+  <dl class="parameters">
+    <dt><a class="xref" href="ACadSharp.OrthographicType.html">OrthographicType</a></dt>
+    <dd></dd>
+  </dl>
+
+
+
+
+
+
+
+
+  <a id="ACadSharp_Objects_Layout_Viewports_" data-uid="ACadSharp.Objects.Layout.Viewports*"></a>
+
+  <h3 id="ACadSharp_Objects_Layout_Viewports" data-uid="ACadSharp.Objects.Layout.Viewports">
+  Viewports
+  <a class="header-action link-secondary" title="View source" href="https://github.com/DomCR/ACadSharp/blob/1065/merge/src/ACadSharp/Objects/Layout.cs/#L174"><i class="bi bi-code-slash"></i></a>
+  </h3>
+
+  <div class="markdown level1 summary"><p>Gets the collection of viewports associated with this instance.</p>
+</div>
+  <div class="markdown level1 conceptual"></div>
+
+  <div class="codewrapper">
+    <pre><code class="lang-csharp hljs">public IEnumerable&lt;Viewport&gt; Viewports { get; }</code></pre>
+  </div>
+
+
+
+
+
+  <h4 class="section">Property Value</h4>
+  <dl class="parameters">
+    <dt><a class="xref" href="https://learn.microsoft.com/dotnet/api/system.collections.generic.ienumerable-1">IEnumerable</a>&lt;<a class="xref" href="ACadSharp.Entities.Viewport.html">Viewport</a>&gt;</dt>
+    <dd></dd>
+  </dl>
+
+
+
+
+
+
+
+
+  <a id="ACadSharp_Objects_Layout_XAxis_" data-uid="ACadSharp.Objects.Layout.XAxis*"></a>
+
+  <h3 id="ACadSharp_Objects_Layout_XAxis" data-uid="ACadSharp.Objects.Layout.XAxis">
+  XAxis
+  <a class="header-action link-secondary" title="View source" href="https://github.com/DomCR/ACadSharp/blob/1065/merge/src/ACadSharp/Objects/Layout.cs/#L185"><i class="bi bi-code-slash"></i></a>
+  </h3>
+
+  <div class="markdown level1 summary"><p>UCS X-axis.</p>
+</div>
+  <div class="markdown level1 conceptual"></div>
+
+  <div class="codewrapper">
+    <pre><code class="lang-csharp hljs">[DxfCodeValue(new int[] { 16, 26, 36 })]
+public XYZ XAxis { get; set; }</code></pre>
+  </div>
+
+
+
+
+
+  <h4 class="section">Property Value</h4>
+  <dl class="parameters">
+    <dt><a class="xref" href="CSMath.XYZ.html">XYZ</a></dt>
+    <dd></dd>
+  </dl>
+
+
+
+
+
+
+
+
+  <a id="ACadSharp_Objects_Layout_YAxis_" data-uid="ACadSharp.Objects.Layout.YAxis*"></a>
+
+  <h3 id="ACadSharp_Objects_Layout_YAxis" data-uid="ACadSharp.Objects.Layout.YAxis">
+  YAxis
+  <a class="header-action link-secondary" title="View source" href="https://github.com/DomCR/ACadSharp/blob/1065/merge/src/ACadSharp/Objects/Layout.cs/#L191"><i class="bi bi-code-slash"></i></a>
+  </h3>
+
+  <div class="markdown level1 summary"><p>UCS Y-axis.</p>
+</div>
+  <div class="markdown level1 conceptual"></div>
+
+  <div class="codewrapper">
+    <pre><code class="lang-csharp hljs">[DxfCodeValue(new int[] { 17, 27, 37 })]
+public XYZ YAxis { get; set; }</code></pre>
+  </div>
+
+
+
+
+
+  <h4 class="section">Property Value</h4>
+  <dl class="parameters">
+    <dt><a class="xref" href="CSMath.XYZ.html">XYZ</a></dt>
+    <dd></dd>
+  </dl>
+
+
+
+
+
+
+
+
+  <h2 class="section" id="methods">Methods
+</h2>
+
+
+  <a id="ACadSharp_Objects_Layout_AddViewport_" data-uid="ACadSharp.Objects.Layout.AddViewport*"></a>
+
+  <h3 id="ACadSharp_Objects_Layout_AddViewport_ACadSharp_Entities_Viewport_" data-uid="ACadSharp.Objects.Layout.AddViewport(ACadSharp.Entities.Viewport)">
+  AddViewport(Viewport)
+  <a class="header-action link-secondary" title="View source" href="https://github.com/DomCR/ACadSharp/blob/1065/merge/src/ACadSharp/Objects/Layout.cs/#L242"><i class="bi bi-code-slash"></i></a>
+  </h3>
+
+  <div class="markdown level1 summary"><p>Adds the specified viewport to the collection of entities associated with this block.</p>
+</div>
+  <div class="markdown level1 conceptual"></div>
+
+  <div class="codewrapper">
+    <pre><code class="lang-csharp hljs">public void AddViewport(Viewport viewport)</code></pre>
+  </div>
+
+  <h4 class="section">Parameters</h4>
+  <dl class="parameters">
+    <dt><code>viewport</code> <a class="xref" href="ACadSharp.Entities.Viewport.html">Viewport</a></dt>
+    <dd><p>The viewport to add to the associated block's entities. Cannot be null.</p>
+</dd>
+  </dl>
+
+
+
+
+
+
+
+
+
+
+
+
+  <a id="ACadSharp_Objects_Layout_Clone_" data-uid="ACadSharp.Objects.Layout.Clone*"></a>
+
+  <h3 id="ACadSharp_Objects_Layout_Clone" data-uid="ACadSharp.Objects.Layout.Clone">
+  Clone()
+  <a class="header-action link-secondary" title="View source" href="https://github.com/DomCR/ACadSharp/blob/1065/merge/src/ACadSharp/Objects/Layout.cs/#L248"><i class="bi bi-code-slash"></i></a>
+  </h3>
+
+  <div class="markdown level1 summary"><p>Creates a new object that is a copy of the current instance.</p>
+</div>
+  <div class="markdown level1 conceptual"></div>
+
+  <div class="codewrapper">
+    <pre><code class="lang-csharp hljs">public override CadObject Clone()</code></pre>
+  </div>
+
+
+  <h4 class="section">Returns</h4>
+  <dl class="parameters">
+    <dt><a class="xref" href="ACadSharp.CadObject.html">CadObject</a></dt>
+    <dd><p>A new object that is a copy of this instance.</p>
+</dd>
+  </dl>
+
+
+
+
+
+
+
+  <h4 class="section" id="ACadSharp_Objects_Layout_Clone_remarks">Remarks</h4>
+  <div class="markdown level1 remarks"><p>The copy will be unattached from the document or any reference.</p>
+</div>
+
+
+
+
+  <a id="ACadSharp_Objects_Layout_ToString_" data-uid="ACadSharp.Objects.Layout.ToString*"></a>
+
+  <h3 id="ACadSharp_Objects_Layout_ToString" data-uid="ACadSharp.Objects.Layout.ToString">
+  ToString()
+  <a class="header-action link-secondary" title="View source" href="https://github.com/DomCR/ACadSharp/blob/1065/merge/src/ACadSharp/Objects/Layout.cs/#L258"><i class="bi bi-code-slash"></i></a>
+  </h3>
+
+  <div class="markdown level1 summary"><p>Returns a string that represents the current object.</p>
+</div>
+  <div class="markdown level1 conceptual"></div>
+
+  <div class="codewrapper">
+    <pre><code class="lang-csharp hljs">public override string ToString()</code></pre>
+  </div>
+
+
+  <h4 class="section">Returns</h4>
+  <dl class="parameters">
+    <dt><a class="xref" href="https://learn.microsoft.com/dotnet/api/system.string">string</a></dt>
+    <dd><p>A string that represents the current object.</p>
+</dd>
+  </dl>
+
+
+
+
+
+
+
+
+
+
+
+  <a id="ACadSharp_Objects_Layout_UpdatePaperViewport_" data-uid="ACadSharp.Objects.Layout.UpdatePaperViewport*"></a>
+
+  <h3 id="ACadSharp_Objects_Layout_UpdatePaperViewport" data-uid="ACadSharp.Objects.Layout.UpdatePaperViewport">
+  UpdatePaperViewport()
+  <a class="header-action link-secondary" title="View source" href="https://github.com/DomCR/ACadSharp/blob/1065/merge/src/ACadSharp/Objects/Layout.cs/#L268"><i class="bi bi-code-slash"></i></a>
+  </h3>
+
+  <div class="markdown level1 summary"><p>Ensures that the paper viewport exists and updates its dimensions to match the current paper size.</p>
+</div>
+  <div class="markdown level1 conceptual"></div>
+
+  <div class="codewrapper">
+    <pre><code class="lang-csharp hljs">public void UpdatePaperViewport()</code></pre>
+  </div>
+
+
+
+
+
+
+
+
+
+  <h4 class="section" id="ACadSharp_Objects_Layout_UpdatePaperViewport_remarks">Remarks</h4>
+  <div class="markdown level1 remarks"><p>If no viewport is associated with the paper space, a new viewport is created and added. This method
+has no effect if the object is not in paper space or if there is no associated block.</p>
+</div>
+
+
+
+
+
+</article>
+
+        <div class="contribution d-print-none">
+          <a href="https://github.com/DomCR/ACadSharp/blob/1065/merge/src/ACadSharp/Objects/Layout.cs/#L18" class="edit-link">Edit this page</a>
+        </div>
+
+
+      </div>
+
+      <div class="affix">
+        <nav id="affix"></nav>
+      </div>
+    </main>
+
+    <div class="container-xxl search-results" id="search-results"></div>
+
+    <footer class="border-top text-secondary">
+      <div class="container-xxl">
+        <div class="flex-fill">
+          <span>Made with <a href="https://dotnet.github.io/docfx">docfx</a></span>
+        </div>
+      </div>
+    </footer>
+  </body>
+</html>

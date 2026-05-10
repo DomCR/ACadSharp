@@ -1,0 +1,1487 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <meta charset="utf-8">
+      <title>Class VisualStyle | ACadSharp </title>
+      <meta name="viewport" content="width=device-width, initial-scale=1.0">
+      <meta name="title" content="Class VisualStyle | ACadSharp ">
+      
+      <meta name="description" content="Represents a  object">
+      <link rel="icon" href="../favicon.ico">
+      <link rel="stylesheet" href="../public/docfx.min.css">
+      <link rel="stylesheet" href="../public/main.css">
+      <meta name="docfx:navrel" content="../toc.html">
+      <meta name="docfx:tocrel" content="toc.html">
+      
+      <meta name="docfx:rel" content="../">
+      
+      
+      <meta name="docfx:docurl" content="https://github.com/DomCR/ACadSharp/new/1065/merge/apiSpec/new?filename=ACadSharp_Objects_VisualStyle.md&amp;value=---%0Auid%3A%20ACadSharp.Objects.VisualStyle%0Asummary%3A%20&#39;*You%20can%20override%20summary%20for%20the%20API%20here%20using%20*MARKDOWN*%20syntax&#39;%0A---%0A%0A*Please%20type%20below%20more%20information%20about%20this%20API%3A*%0A%0A">
+      <meta name="loc:inThisArticle" content="In this article">
+      <meta name="loc:searchResultsCount" content="{count} results for &quot;{query}&quot;">
+      <meta name="loc:searchNoResults" content="No results for &quot;{query}&quot;">
+      <meta name="loc:tocFilter" content="Filter by title">
+      <meta name="loc:nextArticle" content="Next">
+      <meta name="loc:prevArticle" content="Previous">
+      <meta name="loc:themeLight" content="Light">
+      <meta name="loc:themeDark" content="Dark">
+      <meta name="loc:themeAuto" content="Auto">
+      <meta name="loc:changeTheme" content="Change theme">
+      <meta name="loc:copy" content="Copy">
+      <meta name="loc:downloadPdf" content="Download PDF">
+
+      <script type="module" src="./../public/docfx.min.js"></script>
+
+      <script>
+        const theme = localStorage.getItem('theme') || 'auto'
+        document.documentElement.setAttribute('data-bs-theme', theme === 'auto' ? (window.matchMedia('(prefers-color-scheme: dark)').matches ? 'dark' : 'light') : theme)
+      </script>
+
+  </head>
+
+  <body class="tex2jax_ignore" data-layout="" data-yaml-mime="ManagedReference">
+    <header class="bg-body border-bottom">
+      <nav id="autocollapse" class="navbar navbar-expand-md" role="navigation">
+        <div class="container-xxl flex-nowrap">
+          <a class="navbar-brand" href="../index.html">
+            <img id="logo" class="svg" src="../logo.svg" alt="ACadSharp">
+            ACadSharp
+          </a>
+          <button class="btn btn-lg d-md-none border-0" type="button" data-bs-toggle="collapse" data-bs-target="#navpanel" aria-controls="navpanel" aria-expanded="false" aria-label="Toggle navigation">
+            <i class="bi bi-three-dots"></i>
+          </button>
+          <div class="collapse navbar-collapse" id="navpanel">
+            <div id="navbar">
+              <form class="search" role="search" id="search">
+                <i class="bi bi-search"></i>
+                <input class="form-control" id="search-query" type="search" disabled placeholder="Search" autocomplete="off" aria-label="Search">
+              </form>
+            </div>
+          </div>
+        </div>
+      </nav>
+    </header>
+
+    <main class="container-xxl">
+      <div class="toc-offcanvas">
+        <div class="offcanvas-md offcanvas-start" tabindex="-1" id="tocOffcanvas" aria-labelledby="tocOffcanvasLabel">
+          <div class="offcanvas-header">
+            <h5 class="offcanvas-title" id="tocOffcanvasLabel">Table of Contents</h5>
+            <button type="button" class="btn-close" data-bs-dismiss="offcanvas" data-bs-target="#tocOffcanvas" aria-label="Close"></button>
+          </div>
+          <div class="offcanvas-body">
+            <nav class="toc" id="toc"></nav>
+          </div>
+        </div>
+      </div>
+
+      <div class="content">
+        <div class="actionbar">
+          <button class="btn btn-lg border-0 d-md-none" type="button" data-bs-toggle="offcanvas" data-bs-target="#tocOffcanvas" aria-controls="tocOffcanvas" aria-expanded="false" aria-label="Show table of contents">
+            <i class="bi bi-list"></i>
+          </button>
+
+          <nav id="breadcrumb"></nav>
+        </div>
+
+        <article data-uid="ACadSharp.Objects.VisualStyle">
+
+
+
+  <h1 id="ACadSharp_Objects_VisualStyle" data-uid="ACadSharp.Objects.VisualStyle" class="text-break">
+Class VisualStyle  <a class="header-action link-secondary" title="View source" href="https://github.com/DomCR/ACadSharp/blob/1065/merge/src/ACadSharp/Objects/VisualStyle.cs/#L12"><i class="bi bi-code-slash"></i></a>
+  </h1>
+
+  <div class="facts text-secondary">
+    <dl><dt>Namespace</dt><dd><a class="xref" href="ACadSharp.html">ACadSharp</a>.<a class="xref" href="ACadSharp.Objects.html">Objects</a></dd></dl>
+  <dl><dt>Assembly</dt><dd>ACadSharp.dll</dd></dl>
+  </div>
+
+  <div class="markdown summary"><p>Represents a <a class="xref" href="ACadSharp.Objects.VisualStyle.html">VisualStyle</a> object</p>
+</div>
+  <div class="markdown conceptual"></div>
+
+  <div class="codewrapper">
+    <pre><code class="lang-csharp hljs">[DxfName(&quot;VISUALSTYLE&quot;)]
+[DxfSubClass(&quot;AcDbVisualStyle&quot;)]
+public class VisualStyle : NonGraphicalObject, IHandledCadObject, INamedCadObject</code></pre>
+  </div>
+
+
+
+
+  <dl class="typelist inheritance">
+    <dt>Inheritance</dt>
+    <dd>
+      <div><a class="xref" href="https://learn.microsoft.com/dotnet/api/system.object">object</a></div>
+      <div><a class="xref" href="ACadSharp.CadObject.html">CadObject</a></div>
+      <div><a class="xref" href="ACadSharp.Objects.NonGraphicalObject.html">NonGraphicalObject</a></div>
+      <div><span class="xref">VisualStyle</span></div>
+    </dd>
+  </dl>
+
+  <dl class="typelist implements">
+    <dt>Implements</dt>
+    <dd>
+      <div><a class="xref" href="ACadSharp.IHandledCadObject.html">IHandledCadObject</a></div>
+      <div><a class="xref" href="ACadSharp.INamedCadObject.html">INamedCadObject</a></div>
+    </dd>
+  </dl>
+
+
+  <dl class="typelist inheritedMembers">
+    <dt>Inherited Members</dt>
+    <dd>
+    <div>
+      <a class="xref" href="ACadSharp.Objects.NonGraphicalObject.html#ACadSharp_Objects_NonGraphicalObject_OnNameChanged">NonGraphicalObject.OnNameChanged</a>
+    </div>
+    <div>
+      <a class="xref" href="ACadSharp.Objects.NonGraphicalObject.html#ACadSharp_Objects_NonGraphicalObject_Name">NonGraphicalObject.Name</a>
+    </div>
+    <div>
+      <a class="xref" href="ACadSharp.Objects.NonGraphicalObject.html#ACadSharp_Objects_NonGraphicalObject_Clone">NonGraphicalObject.Clone()</a>
+    </div>
+    <div>
+      <a class="xref" href="ACadSharp.Objects.NonGraphicalObject.html#ACadSharp_Objects_NonGraphicalObject_ToString">NonGraphicalObject.ToString()</a>
+    </div>
+    <div>
+      <a class="xref" href="ACadSharp.CadObject.html#ACadSharp_CadObject_Document">CadObject.Document</a>
+    </div>
+    <div>
+      <a class="xref" href="ACadSharp.CadObject.html#ACadSharp_CadObject_ExtendedData">CadObject.ExtendedData</a>
+    </div>
+    <div>
+      <a class="xref" href="ACadSharp.CadObject.html#ACadSharp_CadObject_Handle">CadObject.Handle</a>
+    </div>
+    <div>
+      <a class="xref" href="ACadSharp.CadObject.html#ACadSharp_CadObject_HasDynamicSubclass">CadObject.HasDynamicSubclass</a>
+    </div>
+    <div>
+      <a class="xref" href="ACadSharp.CadObject.html#ACadSharp_CadObject_Owner">CadObject.Owner</a>
+    </div>
+    <div>
+      <a class="xref" href="ACadSharp.CadObject.html#ACadSharp_CadObject_Reactors">CadObject.Reactors</a>
+    </div>
+    <div>
+      <a class="xref" href="ACadSharp.CadObject.html#ACadSharp_CadObject_XDictionary">CadObject.XDictionary</a>
+    </div>
+    <div>
+      <a class="xref" href="ACadSharp.CadObject.html#ACadSharp_CadObject_AddReactor_ACadSharp_CadObject_">CadObject.AddReactor(CadObject)</a>
+    </div>
+    <div>
+      <a class="xref" href="ACadSharp.CadObject.html#ACadSharp_CadObject_CleanReactors">CadObject.CleanReactors()</a>
+    </div>
+    <div>
+      <a class="xref" href="ACadSharp.CadObject.html#ACadSharp_CadObject_CreateExtendedDictionary">CadObject.CreateExtendedDictionary()</a>
+    </div>
+    <div>
+      <a class="xref" href="ACadSharp.CadObject.html#ACadSharp_CadObject_RemoveReactor_ACadSharp_CadObject_">CadObject.RemoveReactor(CadObject)</a>
+    </div>
+    <div>
+      <a class="xref" href="ACadSharp.CadObject.html#ACadSharp_CadObject_updateCollection__1___0_ACadSharp_ICadCollection___0__">CadObject.updateCollection&lt;T&gt;(T, ICadCollection&lt;T&gt;)</a>
+    </div>
+    <div>
+      <a class="xref" href="https://learn.microsoft.com/dotnet/api/system.object.equals#system-object-equals(system-object)">object.Equals(object)</a>
+    </div>
+    <div>
+      <a class="xref" href="https://learn.microsoft.com/dotnet/api/system.object.equals#system-object-equals(system-object-system-object)">object.Equals(object, object)</a>
+    </div>
+    <div>
+      <a class="xref" href="https://learn.microsoft.com/dotnet/api/system.object.gethashcode">object.GetHashCode()</a>
+    </div>
+    <div>
+      <a class="xref" href="https://learn.microsoft.com/dotnet/api/system.object.gettype">object.GetType()</a>
+    </div>
+    <div>
+      <a class="xref" href="https://learn.microsoft.com/dotnet/api/system.object.memberwiseclone">object.MemberwiseClone()</a>
+    </div>
+    <div>
+      <a class="xref" href="https://learn.microsoft.com/dotnet/api/system.object.referenceequals">object.ReferenceEquals(object, object)</a>
+    </div>
+  </dd></dl>
+
+  <dl class="typelist extensionMethods">
+    <dt>Extension Methods</dt>
+    <dd>
+  <div>
+      <a class="xref" href="ACadSharp.Extensions.INamedCadObjectExtensions.html#ACadSharp_Extensions_INamedCadObjectExtensions_IsValidDxfName_ACadSharp_INamedCadObject_ACadSharp_ACadVersion_">INamedCadObjectExtensions.IsValidDxfName(INamedCadObject, ACadVersion)</a>
+  </div>
+  <div>
+      <a class="xref" href="ACadSharp.Extensions.CadObjectExtensions.html#ACadSharp_Extensions_CadObjectExtensions_CloneTyped__1___0_">CadObjectExtensions.CloneTyped&lt;T&gt;(T)</a>
+  </div>
+  <div>
+      <a class="xref" href="CSMath.Geometry.LineExtensions.html#CSMath_Geometry_LineExtensions_TryFindIntersection__2___0___0___1__">LineExtensions.TryFindIntersection&lt;T, R&gt;(T, T, out R)</a>
+  </div>
+  </dd></dl>
+
+
+
+  <h2 id="ACadSharp_Objects_VisualStyle_remarks">Remarks</h2>
+  <div class="markdown level0 remarks"><p>Object name <a class="xref" href="ACadSharp.DxfFileToken.html#ACadSharp_DxfFileToken_ObjectVisualStyle">ObjectVisualStyle</a> <br>
+Dxf class name <a class="xref" href="ACadSharp.DxfSubclassMarker.html#ACadSharp_DxfSubclassMarker_VisualStyle">VisualStyle</a></p>
+</div>
+
+
+  <h2 class="section" id="fields">Fields
+</h2>
+
+
+
+  <h3 id="ACadSharp_Objects_VisualStyle_DefaultName" data-uid="ACadSharp.Objects.VisualStyle.DefaultName">
+  DefaultName
+  <a class="header-action link-secondary" title="View source" href="https://github.com/DomCR/ACadSharp/blob/1065/merge/src/ACadSharp/Objects/VisualStyle.cs/#L162"><i class="bi bi-code-slash"></i></a>
+  </h3>
+
+  <div class="markdown level1 summary"><p>Default <a class="xref" href="ACadSharp.Objects.VisualStyle.html">VisualStyle</a> name.</p>
+</div>
+  <div class="markdown level1 conceptual"></div>
+
+  <div class="codewrapper">
+    <pre><code class="lang-csharp hljs">public const string DefaultName = &quot;2dWireframe&quot;</code></pre>
+  </div>
+
+
+
+
+  <h4 class="section">Field Value</h4>
+  <dl class="parameters">
+    <dt><a class="xref" href="https://learn.microsoft.com/dotnet/api/system.string">string</a></dt>
+    <dd></dd>
+  </dl>
+
+
+
+
+
+
+
+
+
+  <h2 class="section" id="properties">Properties
+</h2>
+
+
+  <a id="ACadSharp_Objects_VisualStyle_Brightness_" data-uid="ACadSharp.Objects.VisualStyle.Brightness*"></a>
+
+  <h3 id="ACadSharp_Objects_VisualStyle_Brightness" data-uid="ACadSharp.Objects.VisualStyle.Brightness">
+  Brightness
+  <a class="header-action link-secondary" title="View source" href="https://github.com/DomCR/ACadSharp/blob/1065/merge/src/ACadSharp/Objects/VisualStyle.cs/#L16"><i class="bi bi-code-slash"></i></a>
+  </h3>
+
+  <div class="markdown level1 summary"></div>
+  <div class="markdown level1 conceptual"></div>
+
+  <div class="codewrapper">
+    <pre><code class="lang-csharp hljs">[DxfCodeValue(new int[] { 44 })]
+public double Brightness { get; set; }</code></pre>
+  </div>
+
+
+
+
+
+  <h4 class="section">Property Value</h4>
+  <dl class="parameters">
+    <dt><a class="xref" href="https://learn.microsoft.com/dotnet/api/system.double">double</a></dt>
+    <dd></dd>
+  </dl>
+
+
+
+
+
+
+
+
+  <a id="ACadSharp_Objects_VisualStyle_Color_" data-uid="ACadSharp.Objects.VisualStyle.Color*"></a>
+
+  <h3 id="ACadSharp_Objects_VisualStyle_Color" data-uid="ACadSharp.Objects.VisualStyle.Color">
+  Color
+  <a class="header-action link-secondary" title="View source" href="https://github.com/DomCR/ACadSharp/blob/1065/merge/src/ACadSharp/Objects/VisualStyle.cs/#L22"><i class="bi bi-code-slash"></i></a>
+  </h3>
+
+  <div class="markdown level1 summary"><p>Color</p>
+</div>
+  <div class="markdown level1 conceptual"></div>
+
+  <div class="codewrapper">
+    <pre><code class="lang-csharp hljs">[DxfCodeValue(new int[] { 62, 63 })]
+public Color Color { get; set; }</code></pre>
+  </div>
+
+
+
+
+
+  <h4 class="section">Property Value</h4>
+  <dl class="parameters">
+    <dt><a class="xref" href="ACadSharp.Color.html">Color</a></dt>
+    <dd></dd>
+  </dl>
+
+
+
+
+
+
+
+
+  <a id="ACadSharp_Objects_VisualStyle_Description_" data-uid="ACadSharp.Objects.VisualStyle.Description*"></a>
+
+  <h3 id="ACadSharp_Objects_VisualStyle_Description" data-uid="ACadSharp.Objects.VisualStyle.Description">
+  Description
+  <a class="header-action link-secondary" title="View source" href="https://github.com/DomCR/ACadSharp/blob/1065/merge/src/ACadSharp/Objects/VisualStyle.cs/#L28"><i class="bi bi-code-slash"></i></a>
+  </h3>
+
+  <div class="markdown level1 summary"><p>Description</p>
+</div>
+  <div class="markdown level1 conceptual"></div>
+
+  <div class="codewrapper">
+    <pre><code class="lang-csharp hljs">[DxfCodeValue(new int[] { 2 })]
+public string Description { get; set; }</code></pre>
+  </div>
+
+
+
+
+
+  <h4 class="section">Property Value</h4>
+  <dl class="parameters">
+    <dt><a class="xref" href="https://learn.microsoft.com/dotnet/api/system.string">string</a></dt>
+    <dd></dd>
+  </dl>
+
+
+
+
+
+
+
+
+  <a id="ACadSharp_Objects_VisualStyle_DisplaySettings_" data-uid="ACadSharp.Objects.VisualStyle.DisplaySettings*"></a>
+
+  <h3 id="ACadSharp_Objects_VisualStyle_DisplaySettings" data-uid="ACadSharp.Objects.VisualStyle.DisplaySettings">
+  DisplaySettings
+  <a class="header-action link-secondary" title="View source" href="https://github.com/DomCR/ACadSharp/blob/1065/merge/src/ACadSharp/Objects/VisualStyle.cs/#L31"><i class="bi bi-code-slash"></i></a>
+  </h3>
+
+  <div class="markdown level1 summary"></div>
+  <div class="markdown level1 conceptual"></div>
+
+  <div class="codewrapper">
+    <pre><code class="lang-csharp hljs">[DxfCodeValue(new int[] { 93 })]
+public int DisplaySettings { get; set; }</code></pre>
+  </div>
+
+
+
+
+
+  <h4 class="section">Property Value</h4>
+  <dl class="parameters">
+    <dt><a class="xref" href="https://learn.microsoft.com/dotnet/api/system.int32">int</a></dt>
+    <dd></dd>
+  </dl>
+
+
+
+
+
+
+
+
+  <a id="ACadSharp_Objects_VisualStyle_EdgeApplyStyleFlag_" data-uid="ACadSharp.Objects.VisualStyle.EdgeApplyStyleFlag*"></a>
+
+  <h3 id="ACadSharp_Objects_VisualStyle_EdgeApplyStyleFlag" data-uid="ACadSharp.Objects.VisualStyle.EdgeApplyStyleFlag">
+  EdgeApplyStyleFlag
+  <a class="header-action link-secondary" title="View source" href="https://github.com/DomCR/ACadSharp/blob/1065/merge/src/ACadSharp/Objects/VisualStyle.cs/#L34"><i class="bi bi-code-slash"></i></a>
+  </h3>
+
+  <div class="markdown level1 summary"></div>
+  <div class="markdown level1 conceptual"></div>
+
+  <div class="codewrapper">
+    <pre><code class="lang-csharp hljs">[DxfCodeValue(new int[] { 174 })]
+public short EdgeApplyStyleFlag { get; set; }</code></pre>
+  </div>
+
+
+
+
+
+  <h4 class="section">Property Value</h4>
+  <dl class="parameters">
+    <dt><a class="xref" href="https://learn.microsoft.com/dotnet/api/system.int16">short</a></dt>
+    <dd></dd>
+  </dl>
+
+
+
+
+
+
+
+
+  <a id="ACadSharp_Objects_VisualStyle_EdgeColor_" data-uid="ACadSharp.Objects.VisualStyle.EdgeColor*"></a>
+
+  <h3 id="ACadSharp_Objects_VisualStyle_EdgeColor" data-uid="ACadSharp.Objects.VisualStyle.EdgeColor">
+  EdgeColor
+  <a class="header-action link-secondary" title="View source" href="https://github.com/DomCR/ACadSharp/blob/1065/merge/src/ACadSharp/Objects/VisualStyle.cs/#L37"><i class="bi bi-code-slash"></i></a>
+  </h3>
+
+  <div class="markdown level1 summary"></div>
+  <div class="markdown level1 conceptual"></div>
+
+  <div class="codewrapper">
+    <pre><code class="lang-csharp hljs">[DxfCodeValue(new int[] { 66 })]
+public int EdgeColor { get; set; }</code></pre>
+  </div>
+
+
+
+
+
+  <h4 class="section">Property Value</h4>
+  <dl class="parameters">
+    <dt><a class="xref" href="https://learn.microsoft.com/dotnet/api/system.int32">int</a></dt>
+    <dd></dd>
+  </dl>
+
+
+
+
+
+
+
+
+  <a id="ACadSharp_Objects_VisualStyle_EdgeCreaseAngle_" data-uid="ACadSharp.Objects.VisualStyle.EdgeCreaseAngle*"></a>
+
+  <h3 id="ACadSharp_Objects_VisualStyle_EdgeCreaseAngle" data-uid="ACadSharp.Objects.VisualStyle.EdgeCreaseAngle">
+  EdgeCreaseAngle
+  <a class="header-action link-secondary" title="View source" href="https://github.com/DomCR/ACadSharp/blob/1065/merge/src/ACadSharp/Objects/VisualStyle.cs/#L40"><i class="bi bi-code-slash"></i></a>
+  </h3>
+
+  <div class="markdown level1 summary"></div>
+  <div class="markdown level1 conceptual"></div>
+
+  <div class="codewrapper">
+    <pre><code class="lang-csharp hljs">[DxfCodeValue(new int[] { 42 })]
+public double EdgeCreaseAngle { get; set; }</code></pre>
+  </div>
+
+
+
+
+
+  <h4 class="section">Property Value</h4>
+  <dl class="parameters">
+    <dt><a class="xref" href="https://learn.microsoft.com/dotnet/api/system.double">double</a></dt>
+    <dd></dd>
+  </dl>
+
+
+
+
+
+
+
+
+  <a id="ACadSharp_Objects_VisualStyle_EdgeIntersectionColor_" data-uid="ACadSharp.Objects.VisualStyle.EdgeIntersectionColor*"></a>
+
+  <h3 id="ACadSharp_Objects_VisualStyle_EdgeIntersectionColor" data-uid="ACadSharp.Objects.VisualStyle.EdgeIntersectionColor">
+  EdgeIntersectionColor
+  <a class="header-action link-secondary" title="View source" href="https://github.com/DomCR/ACadSharp/blob/1065/merge/src/ACadSharp/Objects/VisualStyle.cs/#L43"><i class="bi bi-code-slash"></i></a>
+  </h3>
+
+  <div class="markdown level1 summary"></div>
+  <div class="markdown level1 conceptual"></div>
+
+  <div class="codewrapper">
+    <pre><code class="lang-csharp hljs">[DxfCodeValue(new int[] { 64 })]
+public Color EdgeIntersectionColor { get; set; }</code></pre>
+  </div>
+
+
+
+
+
+  <h4 class="section">Property Value</h4>
+  <dl class="parameters">
+    <dt><a class="xref" href="ACadSharp.Color.html">Color</a></dt>
+    <dd></dd>
+  </dl>
+
+
+
+
+
+
+
+
+  <a id="ACadSharp_Objects_VisualStyle_EdgeIntersectionLineType_" data-uid="ACadSharp.Objects.VisualStyle.EdgeIntersectionLineType*"></a>
+
+  <h3 id="ACadSharp_Objects_VisualStyle_EdgeIntersectionLineType" data-uid="ACadSharp.Objects.VisualStyle.EdgeIntersectionLineType">
+  EdgeIntersectionLineType
+  <a class="header-action link-secondary" title="View source" href="https://github.com/DomCR/ACadSharp/blob/1065/merge/src/ACadSharp/Objects/VisualStyle.cs/#L46"><i class="bi bi-code-slash"></i></a>
+  </h3>
+
+  <div class="markdown level1 summary"></div>
+  <div class="markdown level1 conceptual"></div>
+
+  <div class="codewrapper">
+    <pre><code class="lang-csharp hljs">[DxfCodeValue(new int[] { 175 })]
+public int EdgeIntersectionLineType { get; set; }</code></pre>
+  </div>
+
+
+
+
+
+  <h4 class="section">Property Value</h4>
+  <dl class="parameters">
+    <dt><a class="xref" href="https://learn.microsoft.com/dotnet/api/system.int32">int</a></dt>
+    <dd></dd>
+  </dl>
+
+
+
+
+
+
+
+
+  <a id="ACadSharp_Objects_VisualStyle_EdgeIsolineCount_" data-uid="ACadSharp.Objects.VisualStyle.EdgeIsolineCount*"></a>
+
+  <h3 id="ACadSharp_Objects_VisualStyle_EdgeIsolineCount" data-uid="ACadSharp.Objects.VisualStyle.EdgeIsolineCount">
+  EdgeIsolineCount
+  <a class="header-action link-secondary" title="View source" href="https://github.com/DomCR/ACadSharp/blob/1065/merge/src/ACadSharp/Objects/VisualStyle.cs/#L49"><i class="bi bi-code-slash"></i></a>
+  </h3>
+
+  <div class="markdown level1 summary"></div>
+  <div class="markdown level1 conceptual"></div>
+
+  <div class="codewrapper">
+    <pre><code class="lang-csharp hljs">[DxfCodeValue(new int[] { 171 })]
+public short EdgeIsolineCount { get; set; }</code></pre>
+  </div>
+
+
+
+
+
+  <h4 class="section">Property Value</h4>
+  <dl class="parameters">
+    <dt><a class="xref" href="https://learn.microsoft.com/dotnet/api/system.int16">short</a></dt>
+    <dd></dd>
+  </dl>
+
+
+
+
+
+
+
+
+  <a id="ACadSharp_Objects_VisualStyle_EdgeJitter_" data-uid="ACadSharp.Objects.VisualStyle.EdgeJitter*"></a>
+
+  <h3 id="ACadSharp_Objects_VisualStyle_EdgeJitter" data-uid="ACadSharp.Objects.VisualStyle.EdgeJitter">
+  EdgeJitter
+  <a class="header-action link-secondary" title="View source" href="https://github.com/DomCR/ACadSharp/blob/1065/merge/src/ACadSharp/Objects/VisualStyle.cs/#L52"><i class="bi bi-code-slash"></i></a>
+  </h3>
+
+  <div class="markdown level1 summary"></div>
+  <div class="markdown level1 conceptual"></div>
+
+  <div class="codewrapper">
+    <pre><code class="lang-csharp hljs">[DxfCodeValue(new int[] { 78 })]
+public int EdgeJitter { get; set; }</code></pre>
+  </div>
+
+
+
+
+
+  <h4 class="section">Property Value</h4>
+  <dl class="parameters">
+    <dt><a class="xref" href="https://learn.microsoft.com/dotnet/api/system.int32">int</a></dt>
+    <dd></dd>
+  </dl>
+
+
+
+
+
+
+
+
+  <a id="ACadSharp_Objects_VisualStyle_EdgeModifiers_" data-uid="ACadSharp.Objects.VisualStyle.EdgeModifiers*"></a>
+
+  <h3 id="ACadSharp_Objects_VisualStyle_EdgeModifiers" data-uid="ACadSharp.Objects.VisualStyle.EdgeModifiers">
+  EdgeModifiers
+  <a class="header-action link-secondary" title="View source" href="https://github.com/DomCR/ACadSharp/blob/1065/merge/src/ACadSharp/Objects/VisualStyle.cs/#L55"><i class="bi bi-code-slash"></i></a>
+  </h3>
+
+  <div class="markdown level1 summary"></div>
+  <div class="markdown level1 conceptual"></div>
+
+  <div class="codewrapper">
+    <pre><code class="lang-csharp hljs">[DxfCodeValue(new int[] { 92 })]
+public int EdgeModifiers { get; set; }</code></pre>
+  </div>
+
+
+
+
+
+  <h4 class="section">Property Value</h4>
+  <dl class="parameters">
+    <dt><a class="xref" href="https://learn.microsoft.com/dotnet/api/system.int32">int</a></dt>
+    <dd></dd>
+  </dl>
+
+
+
+
+
+
+
+
+  <a id="ACadSharp_Objects_VisualStyle_EdgeObscuredColor_" data-uid="ACadSharp.Objects.VisualStyle.EdgeObscuredColor*"></a>
+
+  <h3 id="ACadSharp_Objects_VisualStyle_EdgeObscuredColor" data-uid="ACadSharp.Objects.VisualStyle.EdgeObscuredColor">
+  EdgeObscuredColor
+  <a class="header-action link-secondary" title="View source" href="https://github.com/DomCR/ACadSharp/blob/1065/merge/src/ACadSharp/Objects/VisualStyle.cs/#L58"><i class="bi bi-code-slash"></i></a>
+  </h3>
+
+  <div class="markdown level1 summary"></div>
+  <div class="markdown level1 conceptual"></div>
+
+  <div class="codewrapper">
+    <pre><code class="lang-csharp hljs">[DxfCodeValue(new int[] { 65 })]
+public Color EdgeObscuredColor { get; set; }</code></pre>
+  </div>
+
+
+
+
+
+  <h4 class="section">Property Value</h4>
+  <dl class="parameters">
+    <dt><a class="xref" href="ACadSharp.Color.html">Color</a></dt>
+    <dd></dd>
+  </dl>
+
+
+
+
+
+
+
+
+  <a id="ACadSharp_Objects_VisualStyle_EdgeObscuredLineType_" data-uid="ACadSharp.Objects.VisualStyle.EdgeObscuredLineType*"></a>
+
+  <h3 id="ACadSharp_Objects_VisualStyle_EdgeObscuredLineType" data-uid="ACadSharp.Objects.VisualStyle.EdgeObscuredLineType">
+  EdgeObscuredLineType
+  <a class="header-action link-secondary" title="View source" href="https://github.com/DomCR/ACadSharp/blob/1065/merge/src/ACadSharp/Objects/VisualStyle.cs/#L61"><i class="bi bi-code-slash"></i></a>
+  </h3>
+
+  <div class="markdown level1 summary"></div>
+  <div class="markdown level1 conceptual"></div>
+
+  <div class="codewrapper">
+    <pre><code class="lang-csharp hljs">[DxfCodeValue(new int[] { 75 })]
+public int EdgeObscuredLineType { get; set; }</code></pre>
+  </div>
+
+
+
+
+
+  <h4 class="section">Property Value</h4>
+  <dl class="parameters">
+    <dt><a class="xref" href="https://learn.microsoft.com/dotnet/api/system.int32">int</a></dt>
+    <dd></dd>
+  </dl>
+
+
+
+
+
+
+
+
+  <a id="ACadSharp_Objects_VisualStyle_EdgeOverhang_" data-uid="ACadSharp.Objects.VisualStyle.EdgeOverhang*"></a>
+
+  <h3 id="ACadSharp_Objects_VisualStyle_EdgeOverhang" data-uid="ACadSharp.Objects.VisualStyle.EdgeOverhang">
+  EdgeOverhang
+  <a class="header-action link-secondary" title="View source" href="https://github.com/DomCR/ACadSharp/blob/1065/merge/src/ACadSharp/Objects/VisualStyle.cs/#L64"><i class="bi bi-code-slash"></i></a>
+  </h3>
+
+  <div class="markdown level1 summary"></div>
+  <div class="markdown level1 conceptual"></div>
+
+  <div class="codewrapper">
+    <pre><code class="lang-csharp hljs">[DxfCodeValue(new int[] { 77 })]
+public int EdgeOverhang { get; set; }</code></pre>
+  </div>
+
+
+
+
+
+  <h4 class="section">Property Value</h4>
+  <dl class="parameters">
+    <dt><a class="xref" href="https://learn.microsoft.com/dotnet/api/system.int32">int</a></dt>
+    <dd></dd>
+  </dl>
+
+
+
+
+
+
+
+
+  <a id="ACadSharp_Objects_VisualStyle_EdgeSilhouetteColor_" data-uid="ACadSharp.Objects.VisualStyle.EdgeSilhouetteColor*"></a>
+
+  <h3 id="ACadSharp_Objects_VisualStyle_EdgeSilhouetteColor" data-uid="ACadSharp.Objects.VisualStyle.EdgeSilhouetteColor">
+  EdgeSilhouetteColor
+  <a class="header-action link-secondary" title="View source" href="https://github.com/DomCR/ACadSharp/blob/1065/merge/src/ACadSharp/Objects/VisualStyle.cs/#L67"><i class="bi bi-code-slash"></i></a>
+  </h3>
+
+  <div class="markdown level1 summary"></div>
+  <div class="markdown level1 conceptual"></div>
+
+  <div class="codewrapper">
+    <pre><code class="lang-csharp hljs">[DxfCodeValue(new int[] { 67 })]
+public Color EdgeSilhouetteColor { get; set; }</code></pre>
+  </div>
+
+
+
+
+
+  <h4 class="section">Property Value</h4>
+  <dl class="parameters">
+    <dt><a class="xref" href="ACadSharp.Color.html">Color</a></dt>
+    <dd></dd>
+  </dl>
+
+
+
+
+
+
+
+
+  <a id="ACadSharp_Objects_VisualStyle_EdgeSilhouetteWidth_" data-uid="ACadSharp.Objects.VisualStyle.EdgeSilhouetteWidth*"></a>
+
+  <h3 id="ACadSharp_Objects_VisualStyle_EdgeSilhouetteWidth" data-uid="ACadSharp.Objects.VisualStyle.EdgeSilhouetteWidth">
+  EdgeSilhouetteWidth
+  <a class="header-action link-secondary" title="View source" href="https://github.com/DomCR/ACadSharp/blob/1065/merge/src/ACadSharp/Objects/VisualStyle.cs/#L70"><i class="bi bi-code-slash"></i></a>
+  </h3>
+
+  <div class="markdown level1 summary"></div>
+  <div class="markdown level1 conceptual"></div>
+
+  <div class="codewrapper">
+    <pre><code class="lang-csharp hljs">[DxfCodeValue(new int[] { 79 })]
+public int EdgeSilhouetteWidth { get; set; }</code></pre>
+  </div>
+
+
+
+
+
+  <h4 class="section">Property Value</h4>
+  <dl class="parameters">
+    <dt><a class="xref" href="https://learn.microsoft.com/dotnet/api/system.int32">int</a></dt>
+    <dd></dd>
+  </dl>
+
+
+
+
+
+
+
+
+  <a id="ACadSharp_Objects_VisualStyle_EdgeStyle_" data-uid="ACadSharp.Objects.VisualStyle.EdgeStyle*"></a>
+
+  <h3 id="ACadSharp_Objects_VisualStyle_EdgeStyle" data-uid="ACadSharp.Objects.VisualStyle.EdgeStyle">
+  EdgeStyle
+  <a class="header-action link-secondary" title="View source" href="https://github.com/DomCR/ACadSharp/blob/1065/merge/src/ACadSharp/Objects/VisualStyle.cs/#L73"><i class="bi bi-code-slash"></i></a>
+  </h3>
+
+  <div class="markdown level1 summary"></div>
+  <div class="markdown level1 conceptual"></div>
+
+  <div class="codewrapper">
+    <pre><code class="lang-csharp hljs">[DxfCodeValue(new int[] { 91 })]
+public int EdgeStyle { get; set; }</code></pre>
+  </div>
+
+
+
+
+
+  <h4 class="section">Property Value</h4>
+  <dl class="parameters">
+    <dt><a class="xref" href="https://learn.microsoft.com/dotnet/api/system.int32">int</a></dt>
+    <dd></dd>
+  </dl>
+
+
+
+
+
+
+
+
+  <a id="ACadSharp_Objects_VisualStyle_EdgeStyleModel_" data-uid="ACadSharp.Objects.VisualStyle.EdgeStyleModel*"></a>
+
+  <h3 id="ACadSharp_Objects_VisualStyle_EdgeStyleModel" data-uid="ACadSharp.Objects.VisualStyle.EdgeStyleModel">
+  EdgeStyleModel
+  <a class="header-action link-secondary" title="View source" href="https://github.com/DomCR/ACadSharp/blob/1065/merge/src/ACadSharp/Objects/VisualStyle.cs/#L76"><i class="bi bi-code-slash"></i></a>
+  </h3>
+
+  <div class="markdown level1 summary"></div>
+  <div class="markdown level1 conceptual"></div>
+
+  <div class="codewrapper">
+    <pre><code class="lang-csharp hljs">[DxfCodeValue(new int[] { 74 })]
+public EdgeStyleModel EdgeStyleModel { get; set; }</code></pre>
+  </div>
+
+
+
+
+
+  <h4 class="section">Property Value</h4>
+  <dl class="parameters">
+    <dt><a class="xref" href="ACadSharp.Objects.EdgeStyleModel.html">EdgeStyleModel</a></dt>
+    <dd></dd>
+  </dl>
+
+
+
+
+
+
+
+
+  <a id="ACadSharp_Objects_VisualStyle_EdgeWidth_" data-uid="ACadSharp.Objects.VisualStyle.EdgeWidth*"></a>
+
+  <h3 id="ACadSharp_Objects_VisualStyle_EdgeWidth" data-uid="ACadSharp.Objects.VisualStyle.EdgeWidth">
+  EdgeWidth
+  <a class="header-action link-secondary" title="View source" href="https://github.com/DomCR/ACadSharp/blob/1065/merge/src/ACadSharp/Objects/VisualStyle.cs/#L79"><i class="bi bi-code-slash"></i></a>
+  </h3>
+
+  <div class="markdown level1 summary"></div>
+  <div class="markdown level1 conceptual"></div>
+
+  <div class="codewrapper">
+    <pre><code class="lang-csharp hljs">[DxfCodeValue(new int[] { 76 })]
+public int EdgeWidth { get; set; }</code></pre>
+  </div>
+
+
+
+
+
+  <h4 class="section">Property Value</h4>
+  <dl class="parameters">
+    <dt><a class="xref" href="https://learn.microsoft.com/dotnet/api/system.int32">int</a></dt>
+    <dd></dd>
+  </dl>
+
+
+
+
+
+
+
+
+  <a id="ACadSharp_Objects_VisualStyle_FaceColorMode_" data-uid="ACadSharp.Objects.VisualStyle.FaceColorMode*"></a>
+
+  <h3 id="ACadSharp_Objects_VisualStyle_FaceColorMode" data-uid="ACadSharp.Objects.VisualStyle.FaceColorMode">
+  FaceColorMode
+  <a class="header-action link-secondary" title="View source" href="https://github.com/DomCR/ACadSharp/blob/1065/merge/src/ACadSharp/Objects/VisualStyle.cs/#L82"><i class="bi bi-code-slash"></i></a>
+  </h3>
+
+  <div class="markdown level1 summary"></div>
+  <div class="markdown level1 conceptual"></div>
+
+  <div class="codewrapper">
+    <pre><code class="lang-csharp hljs">[DxfCodeValue(new int[] { 73 })]
+public FaceColorMode FaceColorMode { get; set; }</code></pre>
+  </div>
+
+
+
+
+
+  <h4 class="section">Property Value</h4>
+  <dl class="parameters">
+    <dt><a class="xref" href="ACadSharp.Objects.FaceColorMode.html">FaceColorMode</a></dt>
+    <dd></dd>
+  </dl>
+
+
+
+
+
+
+
+
+  <a id="ACadSharp_Objects_VisualStyle_FaceLightingModel_" data-uid="ACadSharp.Objects.VisualStyle.FaceLightingModel*"></a>
+
+  <h3 id="ACadSharp_Objects_VisualStyle_FaceLightingModel" data-uid="ACadSharp.Objects.VisualStyle.FaceLightingModel">
+  FaceLightingModel
+  <a class="header-action link-secondary" title="View source" href="https://github.com/DomCR/ACadSharp/blob/1065/merge/src/ACadSharp/Objects/VisualStyle.cs/#L90"><i class="bi bi-code-slash"></i></a>
+  </h3>
+
+  <div class="markdown level1 summary"><p>Gets or sets the lighting model used to render the face.</p>
+</div>
+  <div class="markdown level1 conceptual"></div>
+
+  <div class="codewrapper">
+    <pre><code class="lang-csharp hljs">[DxfCodeValue(new int[] { 71 })]
+public FaceLightingModelType FaceLightingModel { get; set; }</code></pre>
+  </div>
+
+
+
+
+
+  <h4 class="section">Property Value</h4>
+  <dl class="parameters">
+    <dt><a class="xref" href="ACadSharp.Objects.FaceLightingModelType.html">FaceLightingModelType</a></dt>
+    <dd></dd>
+  </dl>
+
+
+
+
+  <h4 class="section" id="ACadSharp_Objects_VisualStyle_FaceLightingModel_remarks">Remarks</h4>
+  <div class="markdown level1 remarks"><p>The lighting model determines how light interacts with the face during rendering, affecting its
+appearance and shading. Set this property to control the visual style of the face in 3D scenes.</p>
+</div>
+
+
+
+
+  <a id="ACadSharp_Objects_VisualStyle_FaceLightingQuality_" data-uid="ACadSharp.Objects.VisualStyle.FaceLightingQuality*"></a>
+
+  <h3 id="ACadSharp_Objects_VisualStyle_FaceLightingQuality" data-uid="ACadSharp.Objects.VisualStyle.FaceLightingQuality">
+  FaceLightingQuality
+  <a class="header-action link-secondary" title="View source" href="https://github.com/DomCR/ACadSharp/blob/1065/merge/src/ACadSharp/Objects/VisualStyle.cs/#L93"><i class="bi bi-code-slash"></i></a>
+  </h3>
+
+  <div class="markdown level1 summary"></div>
+  <div class="markdown level1 conceptual"></div>
+
+  <div class="codewrapper">
+    <pre><code class="lang-csharp hljs">[DxfCodeValue(new int[] { 72 })]
+public FaceLightingQualityType FaceLightingQuality { get; set; }</code></pre>
+  </div>
+
+
+
+
+
+  <h4 class="section">Property Value</h4>
+  <dl class="parameters">
+    <dt><a class="xref" href="ACadSharp.Objects.FaceLightingQualityType.html">FaceLightingQualityType</a></dt>
+    <dd></dd>
+  </dl>
+
+
+
+
+
+
+
+
+  <a id="ACadSharp_Objects_VisualStyle_FaceModifiers_" data-uid="ACadSharp.Objects.VisualStyle.FaceModifiers*"></a>
+
+  <h3 id="ACadSharp_Objects_VisualStyle_FaceModifiers" data-uid="ACadSharp.Objects.VisualStyle.FaceModifiers">
+  FaceModifiers
+  <a class="header-action link-secondary" title="View source" href="https://github.com/DomCR/ACadSharp/blob/1065/merge/src/ACadSharp/Objects/VisualStyle.cs/#L96"><i class="bi bi-code-slash"></i></a>
+  </h3>
+
+  <div class="markdown level1 summary"></div>
+  <div class="markdown level1 conceptual"></div>
+
+  <div class="codewrapper">
+    <pre><code class="lang-csharp hljs">[DxfCodeValue(new int[] { 90 })]
+public FaceModifierType FaceModifiers { get; set; }</code></pre>
+  </div>
+
+
+
+
+
+  <h4 class="section">Property Value</h4>
+  <dl class="parameters">
+    <dt><a class="xref" href="ACadSharp.Objects.FaceModifierType.html">FaceModifierType</a></dt>
+    <dd></dd>
+  </dl>
+
+
+
+
+
+
+
+
+  <a id="ACadSharp_Objects_VisualStyle_FaceOpacityLevel_" data-uid="ACadSharp.Objects.VisualStyle.FaceOpacityLevel*"></a>
+
+  <h3 id="ACadSharp_Objects_VisualStyle_FaceOpacityLevel" data-uid="ACadSharp.Objects.VisualStyle.FaceOpacityLevel">
+  FaceOpacityLevel
+  <a class="header-action link-secondary" title="View source" href="https://github.com/DomCR/ACadSharp/blob/1065/merge/src/ACadSharp/Objects/VisualStyle.cs/#L102"><i class="bi bi-code-slash"></i></a>
+  </h3>
+
+  <div class="markdown level1 summary"><p>Face opacity level</p>
+</div>
+  <div class="markdown level1 conceptual"></div>
+
+  <div class="codewrapper">
+    <pre><code class="lang-csharp hljs">[DxfCodeValue(new int[] { 40 })]
+public double FaceOpacityLevel { get; set; }</code></pre>
+  </div>
+
+
+
+
+
+  <h4 class="section">Property Value</h4>
+  <dl class="parameters">
+    <dt><a class="xref" href="https://learn.microsoft.com/dotnet/api/system.double">double</a></dt>
+    <dd></dd>
+  </dl>
+
+
+
+
+
+
+
+
+  <a id="ACadSharp_Objects_VisualStyle_FaceSpecularLevel_" data-uid="ACadSharp.Objects.VisualStyle.FaceSpecularLevel*"></a>
+
+  <h3 id="ACadSharp_Objects_VisualStyle_FaceSpecularLevel" data-uid="ACadSharp.Objects.VisualStyle.FaceSpecularLevel">
+  FaceSpecularLevel
+  <a class="header-action link-secondary" title="View source" href="https://github.com/DomCR/ACadSharp/blob/1065/merge/src/ACadSharp/Objects/VisualStyle.cs/#L108"><i class="bi bi-code-slash"></i></a>
+  </h3>
+
+  <div class="markdown level1 summary"><p>Face specular level</p>
+</div>
+  <div class="markdown level1 conceptual"></div>
+
+  <div class="codewrapper">
+    <pre><code class="lang-csharp hljs">[DxfCodeValue(new int[] { 41 })]
+public double FaceSpecularLevel { get; set; }</code></pre>
+  </div>
+
+
+
+
+
+  <h4 class="section">Property Value</h4>
+  <dl class="parameters">
+    <dt><a class="xref" href="https://learn.microsoft.com/dotnet/api/system.double">double</a></dt>
+    <dd></dd>
+  </dl>
+
+
+
+
+
+
+
+
+  <a id="ACadSharp_Objects_VisualStyle_FaceStyleMonoColor_" data-uid="ACadSharp.Objects.VisualStyle.FaceStyleMonoColor*"></a>
+
+  <h3 id="ACadSharp_Objects_VisualStyle_FaceStyleMonoColor" data-uid="ACadSharp.Objects.VisualStyle.FaceStyleMonoColor">
+  FaceStyleMonoColor
+  <a class="header-action link-secondary" title="View source" href="https://github.com/DomCR/ACadSharp/blob/1065/merge/src/ACadSharp/Objects/VisualStyle.cs/#L114"><i class="bi bi-code-slash"></i></a>
+  </h3>
+
+  <div class="markdown level1 summary"><p>Face style mono color</p>
+</div>
+  <div class="markdown level1 conceptual"></div>
+
+  <div class="codewrapper">
+    <pre><code class="lang-csharp hljs">[DxfCodeValue(new int[] { 421 })]
+public Color FaceStyleMonoColor { get; set; }</code></pre>
+  </div>
+
+
+
+
+
+  <h4 class="section">Property Value</h4>
+  <dl class="parameters">
+    <dt><a class="xref" href="ACadSharp.Color.html">Color</a></dt>
+    <dd></dd>
+  </dl>
+
+
+
+
+
+
+
+
+  <a id="ACadSharp_Objects_VisualStyle_HaloGap_" data-uid="ACadSharp.Objects.VisualStyle.HaloGap*"></a>
+
+  <h3 id="ACadSharp_Objects_VisualStyle_HaloGap" data-uid="ACadSharp.Objects.VisualStyle.HaloGap">
+  HaloGap
+  <a class="header-action link-secondary" title="View source" href="https://github.com/DomCR/ACadSharp/blob/1065/merge/src/ACadSharp/Objects/VisualStyle.cs/#L117"><i class="bi bi-code-slash"></i></a>
+  </h3>
+
+  <div class="markdown level1 summary"></div>
+  <div class="markdown level1 conceptual"></div>
+
+  <div class="codewrapper">
+    <pre><code class="lang-csharp hljs">[DxfCodeValue(new int[] { 170 })]
+public short HaloGap { get; set; }</code></pre>
+  </div>
+
+
+
+
+
+  <h4 class="section">Property Value</h4>
+  <dl class="parameters">
+    <dt><a class="xref" href="https://learn.microsoft.com/dotnet/api/system.int16">short</a></dt>
+    <dd></dd>
+  </dl>
+
+
+
+
+
+
+
+
+  <a id="ACadSharp_Objects_VisualStyle_InternalFlag_" data-uid="ACadSharp.Objects.VisualStyle.InternalFlag*"></a>
+
+  <h3 id="ACadSharp_Objects_VisualStyle_InternalFlag" data-uid="ACadSharp.Objects.VisualStyle.InternalFlag">
+  InternalFlag
+  <a class="header-action link-secondary" title="View source" href="https://github.com/DomCR/ACadSharp/blob/1065/merge/src/ACadSharp/Objects/VisualStyle.cs/#L123"><i class="bi bi-code-slash"></i></a>
+  </h3>
+
+  <div class="markdown level1 summary"><p>Internal use only flag</p>
+</div>
+  <div class="markdown level1 conceptual"></div>
+
+  <div class="codewrapper">
+    <pre><code class="lang-csharp hljs">[DxfCodeValue(new int[] { 291 })]
+public bool InternalFlag { get; }</code></pre>
+  </div>
+
+
+
+
+
+  <h4 class="section">Property Value</h4>
+  <dl class="parameters">
+    <dt><a class="xref" href="https://learn.microsoft.com/dotnet/api/system.boolean">bool</a></dt>
+    <dd></dd>
+  </dl>
+
+
+
+
+
+
+
+
+  <a id="ACadSharp_Objects_VisualStyle_ObjectName_" data-uid="ACadSharp.Objects.VisualStyle.ObjectName*"></a>
+
+  <h3 id="ACadSharp_Objects_VisualStyle_ObjectName" data-uid="ACadSharp.Objects.VisualStyle.ObjectName">
+  ObjectName
+  <a class="header-action link-secondary" title="View source" href="https://github.com/DomCR/ACadSharp/blob/1065/merge/src/ACadSharp/Objects/VisualStyle.cs/#L127"><i class="bi bi-code-slash"></i></a>
+  </h3>
+
+  <div class="markdown level1 summary"><p>The CAD class name of an object.</p>
+</div>
+  <div class="markdown level1 conceptual"></div>
+
+  <div class="codewrapper">
+    <pre><code class="lang-csharp hljs">public override string ObjectName { get; }</code></pre>
+  </div>
+
+
+
+
+
+  <h4 class="section">Property Value</h4>
+  <dl class="parameters">
+    <dt><a class="xref" href="https://learn.microsoft.com/dotnet/api/system.string">string</a></dt>
+    <dd></dd>
+  </dl>
+
+
+
+
+
+
+
+
+  <a id="ACadSharp_Objects_VisualStyle_ObjectType_" data-uid="ACadSharp.Objects.VisualStyle.ObjectType*"></a>
+
+  <h3 id="ACadSharp_Objects_VisualStyle_ObjectType" data-uid="ACadSharp.Objects.VisualStyle.ObjectType">
+  ObjectType
+  <a class="header-action link-secondary" title="View source" href="https://github.com/DomCR/ACadSharp/blob/1065/merge/src/ACadSharp/Objects/VisualStyle.cs/#L130"><i class="bi bi-code-slash"></i></a>
+  </h3>
+
+  <div class="markdown level1 summary"><p>Get the object type.</p>
+</div>
+  <div class="markdown level1 conceptual"></div>
+
+  <div class="codewrapper">
+    <pre><code class="lang-csharp hljs">public override ObjectType ObjectType { get; }</code></pre>
+  </div>
+
+
+
+
+
+  <h4 class="section">Property Value</h4>
+  <dl class="parameters">
+    <dt><a class="xref" href="ACadSharp.ObjectType.html">ObjectType</a></dt>
+    <dd></dd>
+  </dl>
+
+
+
+
+
+
+
+
+  <a id="ACadSharp_Objects_VisualStyle_OpacityLevel_" data-uid="ACadSharp.Objects.VisualStyle.OpacityLevel*"></a>
+
+  <h3 id="ACadSharp_Objects_VisualStyle_OpacityLevel" data-uid="ACadSharp.Objects.VisualStyle.OpacityLevel">
+  OpacityLevel
+  <a class="header-action link-secondary" title="View source" href="https://github.com/DomCR/ACadSharp/blob/1065/merge/src/ACadSharp/Objects/VisualStyle.cs/#L132"><i class="bi bi-code-slash"></i></a>
+  </h3>
+
+  <div class="markdown level1 summary"></div>
+  <div class="markdown level1 conceptual"></div>
+
+  <div class="codewrapper">
+    <pre><code class="lang-csharp hljs">[DxfCodeValue(new int[] { 43 })]
+public double OpacityLevel { get; set; }</code></pre>
+  </div>
+
+
+
+
+
+  <h4 class="section">Property Value</h4>
+  <dl class="parameters">
+    <dt><a class="xref" href="https://learn.microsoft.com/dotnet/api/system.double">double</a></dt>
+    <dd></dd>
+  </dl>
+
+
+
+
+
+
+
+
+  <a id="ACadSharp_Objects_VisualStyle_PrecisionFlag_" data-uid="ACadSharp.Objects.VisualStyle.PrecisionFlag*"></a>
+
+  <h3 id="ACadSharp_Objects_VisualStyle_PrecisionFlag" data-uid="ACadSharp.Objects.VisualStyle.PrecisionFlag">
+  PrecisionFlag
+  <a class="header-action link-secondary" title="View source" href="https://github.com/DomCR/ACadSharp/blob/1065/merge/src/ACadSharp/Objects/VisualStyle.cs/#L138"><i class="bi bi-code-slash"></i></a>
+  </h3>
+
+  <div class="markdown level1 summary"><p>Edge hide precision flag</p>
+</div>
+  <div class="markdown level1 conceptual"></div>
+
+  <div class="codewrapper">
+    <pre><code class="lang-csharp hljs">[DxfCodeValue(new int[] { 290 })]
+public bool PrecisionFlag { get; set; }</code></pre>
+  </div>
+
+
+
+
+
+  <h4 class="section">Property Value</h4>
+  <dl class="parameters">
+    <dt><a class="xref" href="https://learn.microsoft.com/dotnet/api/system.boolean">bool</a></dt>
+    <dd></dd>
+  </dl>
+
+
+
+
+
+
+
+
+  <a id="ACadSharp_Objects_VisualStyle_RasterFile_" data-uid="ACadSharp.Objects.VisualStyle.RasterFile*"></a>
+
+  <h3 id="ACadSharp_Objects_VisualStyle_RasterFile" data-uid="ACadSharp.Objects.VisualStyle.RasterFile">
+  RasterFile
+  <a class="header-action link-secondary" title="View source" href="https://github.com/DomCR/ACadSharp/blob/1065/merge/src/ACadSharp/Objects/VisualStyle.cs/#L144"><i class="bi bi-code-slash"></i></a>
+  </h3>
+
+  <div class="markdown level1 summary"><p>Raster file name</p>
+</div>
+  <div class="markdown level1 conceptual"></div>
+
+  <div class="codewrapper">
+    <pre><code class="lang-csharp hljs">[DxfCodeValue(new int[] { 1 })]
+public string RasterFile { get; set; }</code></pre>
+  </div>
+
+
+
+
+
+  <h4 class="section">Property Value</h4>
+  <dl class="parameters">
+    <dt><a class="xref" href="https://learn.microsoft.com/dotnet/api/system.string">string</a></dt>
+    <dd></dd>
+  </dl>
+
+
+
+
+
+
+
+
+  <a id="ACadSharp_Objects_VisualStyle_ShadowType_" data-uid="ACadSharp.Objects.VisualStyle.ShadowType*"></a>
+
+  <h3 id="ACadSharp_Objects_VisualStyle_ShadowType" data-uid="ACadSharp.Objects.VisualStyle.ShadowType">
+  ShadowType
+  <a class="header-action link-secondary" title="View source" href="https://github.com/DomCR/ACadSharp/blob/1065/merge/src/ACadSharp/Objects/VisualStyle.cs/#L147"><i class="bi bi-code-slash"></i></a>
+  </h3>
+
+  <div class="markdown level1 summary"></div>
+  <div class="markdown level1 conceptual"></div>
+
+  <div class="codewrapper">
+    <pre><code class="lang-csharp hljs">[DxfCodeValue(new int[] { 173 })]
+public short ShadowType { get; set; }</code></pre>
+  </div>
+
+
+
+
+
+  <h4 class="section">Property Value</h4>
+  <dl class="parameters">
+    <dt><a class="xref" href="https://learn.microsoft.com/dotnet/api/system.int16">short</a></dt>
+    <dd></dd>
+  </dl>
+
+
+
+
+
+
+
+
+  <a id="ACadSharp_Objects_VisualStyle_SubclassMarker_" data-uid="ACadSharp.Objects.VisualStyle.SubclassMarker*"></a>
+
+  <h3 id="ACadSharp_Objects_VisualStyle_SubclassMarker" data-uid="ACadSharp.Objects.VisualStyle.SubclassMarker">
+  SubclassMarker
+  <a class="header-action link-secondary" title="View source" href="https://github.com/DomCR/ACadSharp/blob/1065/merge/src/ACadSharp/Objects/VisualStyle.cs/#L151"><i class="bi bi-code-slash"></i></a>
+  </h3>
+
+  <div class="markdown level1 summary"><p>Object Subclass marker.</p>
+</div>
+  <div class="markdown level1 conceptual"></div>
+
+  <div class="codewrapper">
+    <pre><code class="lang-csharp hljs">public override string SubclassMarker { get; }</code></pre>
+  </div>
+
+
+
+
+
+  <h4 class="section">Property Value</h4>
+  <dl class="parameters">
+    <dt><a class="xref" href="https://learn.microsoft.com/dotnet/api/system.string">string</a></dt>
+    <dd></dd>
+  </dl>
+
+
+
+
+
+
+
+
+  <a id="ACadSharp_Objects_VisualStyle_Type_" data-uid="ACadSharp.Objects.VisualStyle.Type*"></a>
+
+  <h3 id="ACadSharp_Objects_VisualStyle_Type" data-uid="ACadSharp.Objects.VisualStyle.Type">
+  Type
+  <a class="header-action link-secondary" title="View source" href="https://github.com/DomCR/ACadSharp/blob/1065/merge/src/ACadSharp/Objects/VisualStyle.cs/#L156"><i class="bi bi-code-slash"></i></a>
+  </h3>
+
+  <div class="markdown level1 summary"><p>Type</p>
+</div>
+  <div class="markdown level1 conceptual"></div>
+
+  <div class="codewrapper">
+    <pre><code class="lang-csharp hljs">[DxfCodeValue(new int[] { 70 })]
+public int Type { get; set; }</code></pre>
+  </div>
+
+
+
+
+
+  <h4 class="section">Property Value</h4>
+  <dl class="parameters">
+    <dt><a class="xref" href="https://learn.microsoft.com/dotnet/api/system.int32">int</a></dt>
+    <dd></dd>
+  </dl>
+
+
+
+
+
+
+
+
+
+</article>
+
+        <div class="contribution d-print-none">
+          <a href="https://github.com/DomCR/ACadSharp/blob/1065/merge/src/ACadSharp/Objects/VisualStyle.cs/#L12" class="edit-link">Edit this page</a>
+        </div>
+
+
+      </div>
+
+      <div class="affix">
+        <nav id="affix"></nav>
+      </div>
+    </main>
+
+    <div class="container-xxl search-results" id="search-results"></div>
+
+    <footer class="border-top text-secondary">
+      <div class="container-xxl">
+        <div class="flex-fill">
+          <span>Made with <a href="https://dotnet.github.io/docfx">docfx</a></span>
+        </div>
+      </div>
+    </footer>
+  </body>
+</html>

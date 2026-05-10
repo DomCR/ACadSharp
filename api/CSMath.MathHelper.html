@@ -1,0 +1,1322 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <meta charset="utf-8">
+      <title>Class MathHelper | ACadSharp </title>
+      <meta name="viewport" content="width=device-width, initial-scale=1.0">
+      <meta name="title" content="Class MathHelper | ACadSharp ">
+      
+      <meta name="description" content="Provides helper methods and constants for common mathematical operations, including angle conversions, floating-point comparisons, and rounding.">
+      <link rel="icon" href="../favicon.ico">
+      <link rel="stylesheet" href="../public/docfx.min.css">
+      <link rel="stylesheet" href="../public/main.css">
+      <meta name="docfx:navrel" content="../toc.html">
+      <meta name="docfx:tocrel" content="toc.html">
+      
+      <meta name="docfx:rel" content="../">
+      
+      
+      <meta name="docfx:docurl" content="https://github.com/DomCR/CSUtilities/new/1065/merge/apiSpec/new?filename=CSMath_MathHelper.md&amp;value=---%0Auid%3A%20CSMath.MathHelper%0Asummary%3A%20&#39;*You%20can%20override%20summary%20for%20the%20API%20here%20using%20*MARKDOWN*%20syntax&#39;%0A---%0A%0A*Please%20type%20below%20more%20information%20about%20this%20API%3A*%0A%0A">
+      <meta name="loc:inThisArticle" content="In this article">
+      <meta name="loc:searchResultsCount" content="{count} results for &quot;{query}&quot;">
+      <meta name="loc:searchNoResults" content="No results for &quot;{query}&quot;">
+      <meta name="loc:tocFilter" content="Filter by title">
+      <meta name="loc:nextArticle" content="Next">
+      <meta name="loc:prevArticle" content="Previous">
+      <meta name="loc:themeLight" content="Light">
+      <meta name="loc:themeDark" content="Dark">
+      <meta name="loc:themeAuto" content="Auto">
+      <meta name="loc:changeTheme" content="Change theme">
+      <meta name="loc:copy" content="Copy">
+      <meta name="loc:downloadPdf" content="Download PDF">
+
+      <script type="module" src="./../public/docfx.min.js"></script>
+
+      <script>
+        const theme = localStorage.getItem('theme') || 'auto'
+        document.documentElement.setAttribute('data-bs-theme', theme === 'auto' ? (window.matchMedia('(prefers-color-scheme: dark)').matches ? 'dark' : 'light') : theme)
+      </script>
+
+  </head>
+
+  <body class="tex2jax_ignore" data-layout="" data-yaml-mime="ManagedReference">
+    <header class="bg-body border-bottom">
+      <nav id="autocollapse" class="navbar navbar-expand-md" role="navigation">
+        <div class="container-xxl flex-nowrap">
+          <a class="navbar-brand" href="../index.html">
+            <img id="logo" class="svg" src="../logo.svg" alt="ACadSharp">
+            ACadSharp
+          </a>
+          <button class="btn btn-lg d-md-none border-0" type="button" data-bs-toggle="collapse" data-bs-target="#navpanel" aria-controls="navpanel" aria-expanded="false" aria-label="Toggle navigation">
+            <i class="bi bi-three-dots"></i>
+          </button>
+          <div class="collapse navbar-collapse" id="navpanel">
+            <div id="navbar">
+              <form class="search" role="search" id="search">
+                <i class="bi bi-search"></i>
+                <input class="form-control" id="search-query" type="search" disabled placeholder="Search" autocomplete="off" aria-label="Search">
+              </form>
+            </div>
+          </div>
+        </div>
+      </nav>
+    </header>
+
+    <main class="container-xxl">
+      <div class="toc-offcanvas">
+        <div class="offcanvas-md offcanvas-start" tabindex="-1" id="tocOffcanvas" aria-labelledby="tocOffcanvasLabel">
+          <div class="offcanvas-header">
+            <h5 class="offcanvas-title" id="tocOffcanvasLabel">Table of Contents</h5>
+            <button type="button" class="btn-close" data-bs-dismiss="offcanvas" data-bs-target="#tocOffcanvas" aria-label="Close"></button>
+          </div>
+          <div class="offcanvas-body">
+            <nav class="toc" id="toc"></nav>
+          </div>
+        </div>
+      </div>
+
+      <div class="content">
+        <div class="actionbar">
+          <button class="btn btn-lg border-0 d-md-none" type="button" data-bs-toggle="offcanvas" data-bs-target="#tocOffcanvas" aria-controls="tocOffcanvas" aria-expanded="false" aria-label="Show table of contents">
+            <i class="bi bi-list"></i>
+          </button>
+
+          <nav id="breadcrumb"></nav>
+        </div>
+
+        <article data-uid="CSMath.MathHelper">
+
+
+
+  <h1 id="CSMath_MathHelper" data-uid="CSMath.MathHelper" class="text-break">
+Class MathHelper  <a class="header-action link-secondary" title="View source" href="https://github.com/DomCR/CSUtilities/blob/1065/merge/CSMath/MathHelper.cs/#L13"><i class="bi bi-code-slash"></i></a>
+  </h1>
+
+  <div class="facts text-secondary">
+    <dl><dt>Namespace</dt><dd><a class="xref" href="CSMath.html">CSMath</a></dd></dl>
+  <dl><dt>Assembly</dt><dd>ACadSharp.dll</dd></dl>
+  </div>
+
+  <div class="markdown summary"><p>Provides helper methods and constants for common mathematical operations, including angle conversions,
+floating-point comparisons, and rounding.</p>
+</div>
+  <div class="markdown conceptual"></div>
+
+  <div class="codewrapper">
+    <pre><code class="lang-csharp hljs">public static class MathHelper</code></pre>
+  </div>
+
+
+
+
+  <dl class="typelist inheritance">
+    <dt>Inheritance</dt>
+    <dd>
+      <div><a class="xref" href="https://learn.microsoft.com/dotnet/api/system.object">object</a></div>
+      <div><span class="xref">MathHelper</span></div>
+    </dd>
+  </dl>
+
+
+
+  <dl class="typelist inheritedMembers">
+    <dt>Inherited Members</dt>
+    <dd>
+    <div>
+      <a class="xref" href="https://learn.microsoft.com/dotnet/api/system.object.equals#system-object-equals(system-object)">object.Equals(object)</a>
+    </div>
+    <div>
+      <a class="xref" href="https://learn.microsoft.com/dotnet/api/system.object.equals#system-object-equals(system-object-system-object)">object.Equals(object, object)</a>
+    </div>
+    <div>
+      <a class="xref" href="https://learn.microsoft.com/dotnet/api/system.object.gethashcode">object.GetHashCode()</a>
+    </div>
+    <div>
+      <a class="xref" href="https://learn.microsoft.com/dotnet/api/system.object.gettype">object.GetType()</a>
+    </div>
+    <div>
+      <a class="xref" href="https://learn.microsoft.com/dotnet/api/system.object.memberwiseclone">object.MemberwiseClone()</a>
+    </div>
+    <div>
+      <a class="xref" href="https://learn.microsoft.com/dotnet/api/system.object.referenceequals">object.ReferenceEquals(object, object)</a>
+    </div>
+    <div>
+      <a class="xref" href="https://learn.microsoft.com/dotnet/api/system.object.tostring">object.ToString()</a>
+    </div>
+  </dd></dl>
+
+
+
+
+  <h2 id="CSMath_MathHelper_remarks">Remarks</h2>
+  <div class="markdown level0 remarks"><p>This static class includes constants for frequently used mathematical values and conversion factors
+between degrees, radians, and gradians. It also offers utility methods for comparing floating-point numbers with a
+configurable tolerance, normalizing angles, and rounding values. The methods are designed to address common issues
+with floating-point precision and angle normalization in mathematical computations.</p>
+</div>
+
+
+  <h2 class="section" id="fields">Fields
+</h2>
+
+
+
+  <h3 id="CSMath_MathHelper_DegToGradFactor" data-uid="CSMath.MathHelper.DegToGradFactor">
+  DegToGradFactor
+  <a class="header-action link-secondary" title="View source" href="https://github.com/DomCR/CSUtilities/blob/1065/merge/CSMath/MathHelper.cs/#L18"><i class="bi bi-code-slash"></i></a>
+  </h3>
+
+  <div class="markdown level1 summary"><p>Factor for converting an angle between degrees and gradians.</p>
+</div>
+  <div class="markdown level1 conceptual"></div>
+
+  <div class="codewrapper">
+    <pre><code class="lang-csharp hljs">public const double DegToGradFactor = 1.1111111111111112</code></pre>
+  </div>
+
+
+
+
+  <h4 class="section">Field Value</h4>
+  <dl class="parameters">
+    <dt><a class="xref" href="https://learn.microsoft.com/dotnet/api/system.double">double</a></dt>
+    <dd></dd>
+  </dl>
+
+
+
+
+
+
+
+
+
+
+  <h3 id="CSMath_MathHelper_DegToRadFactor" data-uid="CSMath.MathHelper.DegToRadFactor">
+  DegToRadFactor
+  <a class="header-action link-secondary" title="View source" href="https://github.com/DomCR/CSUtilities/blob/1065/merge/CSMath/MathHelper.cs/#L23"><i class="bi bi-code-slash"></i></a>
+  </h3>
+
+  <div class="markdown level1 summary"><p>Factor for converting degrees to radians.</p>
+</div>
+  <div class="markdown level1 conceptual"></div>
+
+  <div class="codewrapper">
+    <pre><code class="lang-csharp hljs">public const double DegToRadFactor = 0.017453292519943295</code></pre>
+  </div>
+
+
+
+
+  <h4 class="section">Field Value</h4>
+  <dl class="parameters">
+    <dt><a class="xref" href="https://learn.microsoft.com/dotnet/api/system.double">double</a></dt>
+    <dd></dd>
+  </dl>
+
+
+
+
+
+
+
+
+
+
+  <h3 id="CSMath_MathHelper_Epsilon" data-uid="CSMath.MathHelper.Epsilon">
+  Epsilon
+  <a class="header-action link-secondary" title="View source" href="https://github.com/DomCR/CSUtilities/blob/1065/merge/CSMath/MathHelper.cs/#L28"><i class="bi bi-code-slash"></i></a>
+  </h3>
+
+  <div class="markdown level1 summary"><p>Default tolerance</p>
+</div>
+  <div class="markdown level1 conceptual"></div>
+
+  <div class="codewrapper">
+    <pre><code class="lang-csharp hljs">public const double Epsilon = 1E-12</code></pre>
+  </div>
+
+
+
+
+  <h4 class="section">Field Value</h4>
+  <dl class="parameters">
+    <dt><a class="xref" href="https://learn.microsoft.com/dotnet/api/system.double">double</a></dt>
+    <dd></dd>
+  </dl>
+
+
+
+
+
+
+
+
+
+
+  <h3 id="CSMath_MathHelper_GradToDegFactor" data-uid="CSMath.MathHelper.GradToDegFactor">
+  GradToDegFactor
+  <a class="header-action link-secondary" title="View source" href="https://github.com/DomCR/CSUtilities/blob/1065/merge/CSMath/MathHelper.cs/#L33"><i class="bi bi-code-slash"></i></a>
+  </h3>
+
+  <div class="markdown level1 summary"><p>Factor for converting an angle between gradians and degrees.</p>
+</div>
+  <div class="markdown level1 conceptual"></div>
+
+  <div class="codewrapper">
+    <pre><code class="lang-csharp hljs">public const double GradToDegFactor = 0.9</code></pre>
+  </div>
+
+
+
+
+  <h4 class="section">Field Value</h4>
+  <dl class="parameters">
+    <dt><a class="xref" href="https://learn.microsoft.com/dotnet/api/system.double">double</a></dt>
+    <dd></dd>
+  </dl>
+
+
+
+
+
+
+
+
+
+
+  <h3 id="CSMath_MathHelper_GradToRadFactor" data-uid="CSMath.MathHelper.GradToRadFactor">
+  GradToRadFactor
+  <a class="header-action link-secondary" title="View source" href="https://github.com/DomCR/CSUtilities/blob/1065/merge/CSMath/MathHelper.cs/#L38"><i class="bi bi-code-slash"></i></a>
+  </h3>
+
+  <div class="markdown level1 summary"><p>Factor for converting an angle between gradians and radians.</p>
+</div>
+  <div class="markdown level1 conceptual"></div>
+
+  <div class="codewrapper">
+    <pre><code class="lang-csharp hljs">public const double GradToRadFactor = 0.015707963267948967</code></pre>
+  </div>
+
+
+
+
+  <h4 class="section">Field Value</h4>
+  <dl class="parameters">
+    <dt><a class="xref" href="https://learn.microsoft.com/dotnet/api/system.double">double</a></dt>
+    <dd></dd>
+  </dl>
+
+
+
+
+
+
+
+
+
+
+  <h3 id="CSMath_MathHelper_HalfPI" data-uid="CSMath.MathHelper.HalfPI">
+  HalfPI
+  <a class="header-action link-secondary" title="View source" href="https://github.com/DomCR/CSUtilities/blob/1065/merge/CSMath/MathHelper.cs/#L43"><i class="bi bi-code-slash"></i></a>
+  </h3>
+
+  <div class="markdown level1 summary"><p>Equivalent to 90 degrees.</p>
+</div>
+  <div class="markdown level1 conceptual"></div>
+
+  <div class="codewrapper">
+    <pre><code class="lang-csharp hljs">public const double HalfPI = 1.5707963267948966</code></pre>
+  </div>
+
+
+
+
+  <h4 class="section">Field Value</h4>
+  <dl class="parameters">
+    <dt><a class="xref" href="https://learn.microsoft.com/dotnet/api/system.double">double</a></dt>
+    <dd></dd>
+  </dl>
+
+
+
+
+
+
+
+
+
+
+  <h3 id="CSMath_MathHelper_PI" data-uid="CSMath.MathHelper.PI">
+  PI
+  <a class="header-action link-secondary" title="View source" href="https://github.com/DomCR/CSUtilities/blob/1065/merge/CSMath/MathHelper.cs/#L48"><i class="bi bi-code-slash"></i></a>
+  </h3>
+
+  <div class="markdown level1 summary"><p>Equivalent to 180 degrees.</p>
+</div>
+  <div class="markdown level1 conceptual"></div>
+
+  <div class="codewrapper">
+    <pre><code class="lang-csharp hljs">public const double PI = 3.141592653589793</code></pre>
+  </div>
+
+
+
+
+  <h4 class="section">Field Value</h4>
+  <dl class="parameters">
+    <dt><a class="xref" href="https://learn.microsoft.com/dotnet/api/system.double">double</a></dt>
+    <dd></dd>
+  </dl>
+
+
+
+
+
+
+
+
+
+
+  <h3 id="CSMath_MathHelper_RadToDegFactor" data-uid="CSMath.MathHelper.RadToDegFactor">
+  RadToDegFactor
+  <a class="header-action link-secondary" title="View source" href="https://github.com/DomCR/CSUtilities/blob/1065/merge/CSMath/MathHelper.cs/#L53"><i class="bi bi-code-slash"></i></a>
+  </h3>
+
+  <div class="markdown level1 summary"><p>Factor for converting radians to degrees.</p>
+</div>
+  <div class="markdown level1 conceptual"></div>
+
+  <div class="codewrapper">
+    <pre><code class="lang-csharp hljs">public const double RadToDegFactor = 57.29577951308232</code></pre>
+  </div>
+
+
+
+
+  <h4 class="section">Field Value</h4>
+  <dl class="parameters">
+    <dt><a class="xref" href="https://learn.microsoft.com/dotnet/api/system.double">double</a></dt>
+    <dd></dd>
+  </dl>
+
+
+
+
+
+
+
+
+
+
+  <h3 id="CSMath_MathHelper_RadToGradFactor" data-uid="CSMath.MathHelper.RadToGradFactor">
+  RadToGradFactor
+  <a class="header-action link-secondary" title="View source" href="https://github.com/DomCR/CSUtilities/blob/1065/merge/CSMath/MathHelper.cs/#L58"><i class="bi bi-code-slash"></i></a>
+  </h3>
+
+  <div class="markdown level1 summary"><p>Factor for converting radians to gradians.</p>
+</div>
+  <div class="markdown level1 conceptual"></div>
+
+  <div class="codewrapper">
+    <pre><code class="lang-csharp hljs">public const double RadToGradFactor = 63.66197723675813</code></pre>
+  </div>
+
+
+
+
+  <h4 class="section">Field Value</h4>
+  <dl class="parameters">
+    <dt><a class="xref" href="https://learn.microsoft.com/dotnet/api/system.double">double</a></dt>
+    <dd></dd>
+  </dl>
+
+
+
+
+
+
+
+
+
+
+  <h3 id="CSMath_MathHelper_ThreeHalfPI" data-uid="CSMath.MathHelper.ThreeHalfPI">
+  ThreeHalfPI
+  <a class="header-action link-secondary" title="View source" href="https://github.com/DomCR/CSUtilities/blob/1065/merge/CSMath/MathHelper.cs/#L63"><i class="bi bi-code-slash"></i></a>
+  </h3>
+
+  <div class="markdown level1 summary"><p>Equivalent to 270 degrees.</p>
+</div>
+  <div class="markdown level1 conceptual"></div>
+
+  <div class="codewrapper">
+    <pre><code class="lang-csharp hljs">public const double ThreeHalfPI = 4.71238898038469</code></pre>
+  </div>
+
+
+
+
+  <h4 class="section">Field Value</h4>
+  <dl class="parameters">
+    <dt><a class="xref" href="https://learn.microsoft.com/dotnet/api/system.double">double</a></dt>
+    <dd></dd>
+  </dl>
+
+
+
+
+
+
+
+
+
+
+  <h3 id="CSMath_MathHelper_TwoPI" data-uid="CSMath.MathHelper.TwoPI">
+  TwoPI
+  <a class="header-action link-secondary" title="View source" href="https://github.com/DomCR/CSUtilities/blob/1065/merge/CSMath/MathHelper.cs/#L68"><i class="bi bi-code-slash"></i></a>
+  </h3>
+
+  <div class="markdown level1 summary"><p>Equivalent to 360 degrees.</p>
+</div>
+  <div class="markdown level1 conceptual"></div>
+
+  <div class="codewrapper">
+    <pre><code class="lang-csharp hljs">public const double TwoPI = 6.283185307179586</code></pre>
+  </div>
+
+
+
+
+  <h4 class="section">Field Value</h4>
+  <dl class="parameters">
+    <dt><a class="xref" href="https://learn.microsoft.com/dotnet/api/system.double">double</a></dt>
+    <dd></dd>
+  </dl>
+
+
+
+
+
+
+
+
+
+  <h2 class="section" id="methods">Methods
+</h2>
+
+
+  <a id="CSMath_MathHelper_Cos_" data-uid="CSMath.MathHelper.Cos*"></a>
+
+  <h3 id="CSMath_MathHelper_Cos_System_Double_" data-uid="CSMath.MathHelper.Cos(System.Double)">
+  Cos(double)
+  <a class="header-action link-secondary" title="View source" href="https://github.com/DomCR/CSUtilities/blob/1065/merge/CSMath/MathHelper.cs/#L75"><i class="bi bi-code-slash"></i></a>
+  </h3>
+
+  <div class="markdown level1 summary"><p>Returns the cosine of specific angle in radians adjusting the value to 0 using <a class="xref" href="CSMath.MathHelper.html#CSMath_MathHelper_Epsilon">Epsilon</a> as tolerance.</p>
+</div>
+  <div class="markdown level1 conceptual"></div>
+
+  <div class="codewrapper">
+    <pre><code class="lang-csharp hljs">public static double Cos(double value)</code></pre>
+  </div>
+
+  <h4 class="section">Parameters</h4>
+  <dl class="parameters">
+    <dt><code>value</code> <a class="xref" href="https://learn.microsoft.com/dotnet/api/system.double">double</a></dt>
+    <dd></dd>
+  </dl>
+
+  <h4 class="section">Returns</h4>
+  <dl class="parameters">
+    <dt><a class="xref" href="https://learn.microsoft.com/dotnet/api/system.double">double</a></dt>
+    <dd></dd>
+  </dl>
+
+
+
+
+
+
+
+
+
+
+
+  <a id="CSMath_MathHelper_DegToGrad_" data-uid="CSMath.MathHelper.DegToGrad*"></a>
+
+  <h3 id="CSMath_MathHelper_DegToGrad_System_Double_" data-uid="CSMath.MathHelper.DegToGrad(System.Double)">
+  DegToGrad(double)
+  <a class="header-action link-secondary" title="View source" href="https://github.com/DomCR/CSUtilities/blob/1065/merge/CSMath/MathHelper.cs/#L86"><i class="bi bi-code-slash"></i></a>
+  </h3>
+
+  <div class="markdown level1 summary"><p>Convert a value from degrees to gradian.</p>
+</div>
+  <div class="markdown level1 conceptual"></div>
+
+  <div class="codewrapper">
+    <pre><code class="lang-csharp hljs">public static double DegToGrad(double value)</code></pre>
+  </div>
+
+  <h4 class="section">Parameters</h4>
+  <dl class="parameters">
+    <dt><code>value</code> <a class="xref" href="https://learn.microsoft.com/dotnet/api/system.double">double</a></dt>
+    <dd><p>Value in degree.</p>
+</dd>
+  </dl>
+
+  <h4 class="section">Returns</h4>
+  <dl class="parameters">
+    <dt><a class="xref" href="https://learn.microsoft.com/dotnet/api/system.double">double</a></dt>
+    <dd><p>The gradian value.</p>
+</dd>
+  </dl>
+
+
+
+
+
+
+
+
+
+
+
+  <a id="CSMath_MathHelper_DegToRad_" data-uid="CSMath.MathHelper.DegToRad*"></a>
+
+  <h3 id="CSMath_MathHelper_DegToRad_System_Double_" data-uid="CSMath.MathHelper.DegToRad(System.Double)">
+  DegToRad(double)
+  <a class="header-action link-secondary" title="View source" href="https://github.com/DomCR/CSUtilities/blob/1065/merge/CSMath/MathHelper.cs/#L96"><i class="bi bi-code-slash"></i></a>
+  </h3>
+
+  <div class="markdown level1 summary"><p>Convert a value from degree to radian</p>
+</div>
+  <div class="markdown level1 conceptual"></div>
+
+  <div class="codewrapper">
+    <pre><code class="lang-csharp hljs">public static double DegToRad(double value)</code></pre>
+  </div>
+
+  <h4 class="section">Parameters</h4>
+  <dl class="parameters">
+    <dt><code>value</code> <a class="xref" href="https://learn.microsoft.com/dotnet/api/system.double">double</a></dt>
+    <dd><p>Value in degrees</p>
+</dd>
+  </dl>
+
+  <h4 class="section">Returns</h4>
+  <dl class="parameters">
+    <dt><a class="xref" href="https://learn.microsoft.com/dotnet/api/system.double">double</a></dt>
+    <dd><p>The radian value</p>
+</dd>
+  </dl>
+
+
+
+
+
+
+
+
+
+
+
+  <a id="CSMath_MathHelper_FixZero_" data-uid="CSMath.MathHelper.FixZero*"></a>
+
+  <h3 id="CSMath_MathHelper_FixZero_System_Double_" data-uid="CSMath.MathHelper.FixZero(System.Double)">
+  FixZero(double)
+  <a class="header-action link-secondary" title="View source" href="https://github.com/DomCR/CSUtilities/blob/1065/merge/CSMath/MathHelper.cs/#L106"><i class="bi bi-code-slash"></i></a>
+  </h3>
+
+  <div class="markdown level1 summary"><p>Returns zero if the specified number is within a small tolerance of zero; otherwise, returns the original number.</p>
+</div>
+  <div class="markdown level1 conceptual"></div>
+
+  <div class="codewrapper">
+    <pre><code class="lang-csharp hljs">public static double FixZero(double number)</code></pre>
+  </div>
+
+  <h4 class="section">Parameters</h4>
+  <dl class="parameters">
+    <dt><code>number</code> <a class="xref" href="https://learn.microsoft.com/dotnet/api/system.double">double</a></dt>
+    <dd><p>The number to evaluate for near-zero equivalence.</p>
+</dd>
+  </dl>
+
+  <h4 class="section">Returns</h4>
+  <dl class="parameters">
+    <dt><a class="xref" href="https://learn.microsoft.com/dotnet/api/system.double">double</a></dt>
+    <dd><p>Zero if the specified number is considered close enough to zero; otherwise, the original number.</p>
+</dd>
+  </dl>
+
+
+
+
+
+
+
+
+
+
+
+  <a id="CSMath_MathHelper_FixZero_" data-uid="CSMath.MathHelper.FixZero*"></a>
+
+  <h3 id="CSMath_MathHelper_FixZero_System_Double_System_Double_" data-uid="CSMath.MathHelper.FixZero(System.Double,System.Double)">
+  FixZero(double, double)
+  <a class="header-action link-secondary" title="View source" href="https://github.com/DomCR/CSUtilities/blob/1065/merge/CSMath/MathHelper.cs/#L121"><i class="bi bi-code-slash"></i></a>
+  </h3>
+
+  <div class="markdown level1 summary"><p>Returns zero if the specified number is within the given threshold of zero; otherwise, returns the original number.</p>
+</div>
+  <div class="markdown level1 conceptual"></div>
+
+  <div class="codewrapper">
+    <pre><code class="lang-csharp hljs">public static double FixZero(double number, double threshold)</code></pre>
+  </div>
+
+  <h4 class="section">Parameters</h4>
+  <dl class="parameters">
+    <dt><code>number</code> <a class="xref" href="https://learn.microsoft.com/dotnet/api/system.double">double</a></dt>
+    <dd><p>The value to evaluate for near-zero equivalence.</p>
+</dd>
+    <dt><code>threshold</code> <a class="xref" href="https://learn.microsoft.com/dotnet/api/system.double">double</a></dt>
+    <dd><p>The tolerance within which the number is considered to be zero. Must be non-negative.</p>
+</dd>
+  </dl>
+
+  <h4 class="section">Returns</h4>
+  <dl class="parameters">
+    <dt><a class="xref" href="https://learn.microsoft.com/dotnet/api/system.double">double</a></dt>
+    <dd><p>Zero if the absolute value of the number is less than or equal to the threshold; otherwise, the original number.</p>
+</dd>
+  </dl>
+
+
+
+
+
+
+
+  <h4 class="section" id="CSMath_MathHelper_FixZero_System_Double_System_Double__remarks">Remarks</h4>
+  <div class="markdown level1 remarks"><p>This method is useful for normalizing values that are very close to zero due to floating-point
+precision errors. It can help avoid issues where extremely small values are treated as nonzero in
+calculations.</p>
+</div>
+
+
+
+
+  <a id="CSMath_MathHelper_FixZero_" data-uid="CSMath.MathHelper.FixZero*"></a>
+
+  <h3 id="CSMath_MathHelper_FixZero__1___0_" data-uid="CSMath.MathHelper.FixZero``1(``0)">
+  FixZero&lt;T&gt;(T)
+  <a class="header-action link-secondary" title="View source" href="https://github.com/DomCR/CSUtilities/blob/1065/merge/CSMath/MathHelper.cs/#L132"><i class="bi bi-code-slash"></i></a>
+  </h3>
+
+  <div class="markdown level1 summary"><p>Returns a copy of the specified vector with components that are effectively zero replaced by exact zeros.</p>
+</div>
+  <div class="markdown level1 conceptual"></div>
+
+  <div class="codewrapper">
+    <pre><code class="lang-csharp hljs">public static T FixZero&lt;T&gt;(T vector) where T : IVector, new()</code></pre>
+  </div>
+
+  <h4 class="section">Parameters</h4>
+  <dl class="parameters">
+    <dt><code>vector</code> <span class="xref">T</span></dt>
+    <dd><p>The vector to process. Components close to zero will be set to zero.</p>
+</dd>
+  </dl>
+
+  <h4 class="section">Returns</h4>
+  <dl class="parameters">
+    <dt><span class="xref">T</span></dt>
+    <dd><p>A new vector of type T with near-zero components set to zero.</p>
+</dd>
+  </dl>
+
+  <h4 class="section">Type Parameters</h4>
+  <dl class="parameters">
+    <dt><code>T</code></dt>
+    <dd><p>The type of vector. Must implement the IVector interface and have a parameterless constructor.</p>
+</dd>
+  </dl>
+
+
+
+
+
+
+
+
+
+
+  <a id="CSMath_MathHelper_FixZero_" data-uid="CSMath.MathHelper.FixZero*"></a>
+
+  <h3 id="CSMath_MathHelper_FixZero__1___0_System_Double_" data-uid="CSMath.MathHelper.FixZero``1(``0,System.Double)">
+  FixZero&lt;T&gt;(T, double)
+  <a class="header-action link-secondary" title="View source" href="https://github.com/DomCR/CSUtilities/blob/1065/merge/CSMath/MathHelper.cs/#L150"><i class="bi bi-code-slash"></i></a>
+  </h3>
+
+  <div class="markdown level1 summary"><p>Returns a new vector in which each component of the input vector is replaced with zero if its absolute value is
+less than the specified threshold.</p>
+</div>
+  <div class="markdown level1 conceptual"></div>
+
+  <div class="codewrapper">
+    <pre><code class="lang-csharp hljs">public static T FixZero&lt;T&gt;(T vector, double threshold) where T : IVector, new()</code></pre>
+  </div>
+
+  <h4 class="section">Parameters</h4>
+  <dl class="parameters">
+    <dt><code>vector</code> <span class="xref">T</span></dt>
+    <dd><p>The input vector whose components are to be processed.</p>
+</dd>
+    <dt><code>threshold</code> <a class="xref" href="https://learn.microsoft.com/dotnet/api/system.double">double</a></dt>
+    <dd><p>The threshold below which a component is considered to be zero. Components with an absolute value less than this
+value are set to zero.</p>
+</dd>
+  </dl>
+
+  <h4 class="section">Returns</h4>
+  <dl class="parameters">
+    <dt><span class="xref">T</span></dt>
+    <dd><p>A new vector of type T with components set to zero if their absolute value is less than the specified threshold;
+otherwise, the original component value is retained.</p>
+</dd>
+  </dl>
+
+  <h4 class="section">Type Parameters</h4>
+  <dl class="parameters">
+    <dt><code>T</code></dt>
+    <dd><p>The type of vector. Must implement the IVector interface and have a parameterless constructor.</p>
+</dd>
+  </dl>
+
+
+
+
+
+
+  <h4 class="section" id="CSMath_MathHelper_FixZero__1___0_System_Double__remarks">Remarks</h4>
+  <div class="markdown level1 remarks"><p>This method does not modify the input vector. The returned vector is a new instance of type T. Use
+this method to eliminate near-zero noise in vector data.</p>
+</div>
+
+
+
+
+  <a id="CSMath_MathHelper_GradToDeg_" data-uid="CSMath.MathHelper.GradToDeg*"></a>
+
+  <h3 id="CSMath_MathHelper_GradToDeg_System_Double_" data-uid="CSMath.MathHelper.GradToDeg(System.Double)">
+  GradToDeg(double)
+  <a class="header-action link-secondary" title="View source" href="https://github.com/DomCR/CSUtilities/blob/1065/merge/CSMath/MathHelper.cs/#L168"><i class="bi bi-code-slash"></i></a>
+  </h3>
+
+  <div class="markdown level1 summary"><p>Convert a value from gradian to degrees.</p>
+</div>
+  <div class="markdown level1 conceptual"></div>
+
+  <div class="codewrapper">
+    <pre><code class="lang-csharp hljs">public static double GradToDeg(double value)</code></pre>
+  </div>
+
+  <h4 class="section">Parameters</h4>
+  <dl class="parameters">
+    <dt><code>value</code> <a class="xref" href="https://learn.microsoft.com/dotnet/api/system.double">double</a></dt>
+    <dd><p>Value in gradians.</p>
+</dd>
+  </dl>
+
+  <h4 class="section">Returns</h4>
+  <dl class="parameters">
+    <dt><a class="xref" href="https://learn.microsoft.com/dotnet/api/system.double">double</a></dt>
+    <dd><p>The gradian value.</p>
+</dd>
+  </dl>
+
+
+
+
+
+
+
+
+
+
+
+  <a id="CSMath_MathHelper_GradToRad_" data-uid="CSMath.MathHelper.GradToRad*"></a>
+
+  <h3 id="CSMath_MathHelper_GradToRad_System_Double_" data-uid="CSMath.MathHelper.GradToRad(System.Double)">
+  GradToRad(double)
+  <a class="header-action link-secondary" title="View source" href="https://github.com/DomCR/CSUtilities/blob/1065/merge/CSMath/MathHelper.cs/#L178"><i class="bi bi-code-slash"></i></a>
+  </h3>
+
+  <div class="markdown level1 summary"><p>Convert a value from gradian to radian.</p>
+</div>
+  <div class="markdown level1 conceptual"></div>
+
+  <div class="codewrapper">
+    <pre><code class="lang-csharp hljs">public static double GradToRad(double value)</code></pre>
+  </div>
+
+  <h4 class="section">Parameters</h4>
+  <dl class="parameters">
+    <dt><code>value</code> <a class="xref" href="https://learn.microsoft.com/dotnet/api/system.double">double</a></dt>
+    <dd><p>Value in gradians</p>
+</dd>
+  </dl>
+
+  <h4 class="section">Returns</h4>
+  <dl class="parameters">
+    <dt><a class="xref" href="https://learn.microsoft.com/dotnet/api/system.double">double</a></dt>
+    <dd><p>The gradian value.</p>
+</dd>
+  </dl>
+
+
+
+
+
+
+
+
+
+
+
+  <a id="CSMath_MathHelper_IsAlmostZero_" data-uid="CSMath.MathHelper.IsAlmostZero*"></a>
+
+  <h3 id="CSMath_MathHelper_IsAlmostZero_System_Double_" data-uid="CSMath.MathHelper.IsAlmostZero(System.Double)">
+  IsAlmostZero(double)
+  <a class="header-action link-secondary" title="View source" href="https://github.com/DomCR/CSUtilities/blob/1065/merge/CSMath/MathHelper.cs/#L189"><i class="bi bi-code-slash"></i></a>
+  </h3>
+
+  <div class="markdown level1 summary"><p>Determines whether the specified double-precision floating-point value is approximately zero, within a small
+tolerance.</p>
+</div>
+  <div class="markdown level1 conceptual"></div>
+
+  <div class="codewrapper">
+    <pre><code class="lang-csharp hljs">public static bool IsAlmostZero(double value)</code></pre>
+  </div>
+
+  <h4 class="section">Parameters</h4>
+  <dl class="parameters">
+    <dt><code>value</code> <a class="xref" href="https://learn.microsoft.com/dotnet/api/system.double">double</a></dt>
+    <dd><p>The value to compare to zero.</p>
+</dd>
+  </dl>
+
+  <h4 class="section">Returns</h4>
+  <dl class="parameters">
+    <dt><a class="xref" href="https://learn.microsoft.com/dotnet/api/system.boolean">bool</a></dt>
+    <dd><p>true if the value is within a small range of zero; otherwise, false.</p>
+</dd>
+  </dl>
+
+
+
+
+
+
+
+
+
+
+
+  <a id="CSMath_MathHelper_IsEqual_" data-uid="CSMath.MathHelper.IsEqual*"></a>
+
+  <h3 id="CSMath_MathHelper_IsEqual_System_Double_System_Double_" data-uid="CSMath.MathHelper.IsEqual(System.Double,System.Double)">
+  IsEqual(double, double)
+  <a class="header-action link-secondary" title="View source" href="https://github.com/DomCR/CSUtilities/blob/1065/merge/CSMath/MathHelper.cs/#L204"><i class="bi bi-code-slash"></i></a>
+  </h3>
+
+  <div class="markdown level1 summary"><p>Checks if a number is equal to another.</p>
+</div>
+  <div class="markdown level1 conceptual"></div>
+
+  <div class="codewrapper">
+    <pre><code class="lang-csharp hljs">public static bool IsEqual(double a, double b)</code></pre>
+  </div>
+
+  <h4 class="section">Parameters</h4>
+  <dl class="parameters">
+    <dt><code>a</code> <a class="xref" href="https://learn.microsoft.com/dotnet/api/system.double">double</a></dt>
+    <dd><p>Double precision number.</p>
+</dd>
+    <dt><code>b</code> <a class="xref" href="https://learn.microsoft.com/dotnet/api/system.double">double</a></dt>
+    <dd><p>Double precision number.</p>
+</dd>
+  </dl>
+
+  <h4 class="section">Returns</h4>
+  <dl class="parameters">
+    <dt><a class="xref" href="https://learn.microsoft.com/dotnet/api/system.boolean">bool</a></dt>
+    <dd><p>True if its close to one or false in any other case.</p>
+</dd>
+  </dl>
+
+
+
+
+
+
+
+
+
+
+
+  <a id="CSMath_MathHelper_IsEqual_" data-uid="CSMath.MathHelper.IsEqual*"></a>
+
+  <h3 id="CSMath_MathHelper_IsEqual_System_Double_System_Double_System_Double_" data-uid="CSMath.MathHelper.IsEqual(System.Double,System.Double,System.Double)">
+  IsEqual(double, double, double)
+  <a class="header-action link-secondary" title="View source" href="https://github.com/DomCR/CSUtilities/blob/1065/merge/CSMath/MathHelper.cs/#L216"><i class="bi bi-code-slash"></i></a>
+  </h3>
+
+  <div class="markdown level1 summary"><p>Checks if a number is equal to another.</p>
+</div>
+  <div class="markdown level1 conceptual"></div>
+
+  <div class="codewrapper">
+    <pre><code class="lang-csharp hljs">public static bool IsEqual(double a, double b, double threshold)</code></pre>
+  </div>
+
+  <h4 class="section">Parameters</h4>
+  <dl class="parameters">
+    <dt><code>a</code> <a class="xref" href="https://learn.microsoft.com/dotnet/api/system.double">double</a></dt>
+    <dd><p>Double precision number.</p>
+</dd>
+    <dt><code>b</code> <a class="xref" href="https://learn.microsoft.com/dotnet/api/system.double">double</a></dt>
+    <dd><p>Double precision number.</p>
+</dd>
+    <dt><code>threshold</code> <a class="xref" href="https://learn.microsoft.com/dotnet/api/system.double">double</a></dt>
+    <dd><p>Tolerance.</p>
+</dd>
+  </dl>
+
+  <h4 class="section">Returns</h4>
+  <dl class="parameters">
+    <dt><a class="xref" href="https://learn.microsoft.com/dotnet/api/system.boolean">bool</a></dt>
+    <dd><p>True if its close to one or false in any other case.</p>
+</dd>
+  </dl>
+
+
+
+
+
+
+
+
+
+
+
+  <a id="CSMath_MathHelper_IsZero_" data-uid="CSMath.MathHelper.IsZero*"></a>
+
+  <h3 id="CSMath_MathHelper_IsZero_System_Double_" data-uid="CSMath.MathHelper.IsZero(System.Double)">
+  IsZero(double)
+  <a class="header-action link-secondary" title="View source" href="https://github.com/DomCR/CSUtilities/blob/1065/merge/CSMath/MathHelper.cs/#L226"><i class="bi bi-code-slash"></i></a>
+  </h3>
+
+  <div class="markdown level1 summary"><p>Checks if a number is close to zero.</p>
+</div>
+  <div class="markdown level1 conceptual"></div>
+
+  <div class="codewrapper">
+    <pre><code class="lang-csharp hljs">public static bool IsZero(double number)</code></pre>
+  </div>
+
+  <h4 class="section">Parameters</h4>
+  <dl class="parameters">
+    <dt><code>number</code> <a class="xref" href="https://learn.microsoft.com/dotnet/api/system.double">double</a></dt>
+    <dd><p>Double precision number.</p>
+</dd>
+  </dl>
+
+  <h4 class="section">Returns</h4>
+  <dl class="parameters">
+    <dt><a class="xref" href="https://learn.microsoft.com/dotnet/api/system.boolean">bool</a></dt>
+    <dd><p>True if its close to one or false in any other case.</p>
+</dd>
+  </dl>
+
+
+
+
+
+
+
+
+
+
+
+  <a id="CSMath_MathHelper_IsZero_" data-uid="CSMath.MathHelper.IsZero*"></a>
+
+  <h3 id="CSMath_MathHelper_IsZero_System_Double_System_Double_" data-uid="CSMath.MathHelper.IsZero(System.Double,System.Double)">
+  IsZero(double, double)
+  <a class="header-action link-secondary" title="View source" href="https://github.com/DomCR/CSUtilities/blob/1065/merge/CSMath/MathHelper.cs/#L237"><i class="bi bi-code-slash"></i></a>
+  </h3>
+
+  <div class="markdown level1 summary"><p>Checks if a number is close to zero.</p>
+</div>
+  <div class="markdown level1 conceptual"></div>
+
+  <div class="codewrapper">
+    <pre><code class="lang-csharp hljs">public static bool IsZero(double number, double threshold)</code></pre>
+  </div>
+
+  <h4 class="section">Parameters</h4>
+  <dl class="parameters">
+    <dt><code>number</code> <a class="xref" href="https://learn.microsoft.com/dotnet/api/system.double">double</a></dt>
+    <dd><p>Double precision number.</p>
+</dd>
+    <dt><code>threshold</code> <a class="xref" href="https://learn.microsoft.com/dotnet/api/system.double">double</a></dt>
+    <dd><p>Tolerance.</p>
+</dd>
+  </dl>
+
+  <h4 class="section">Returns</h4>
+  <dl class="parameters">
+    <dt><a class="xref" href="https://learn.microsoft.com/dotnet/api/system.boolean">bool</a></dt>
+    <dd><p>True if its close to one or false in any other case.</p>
+</dd>
+  </dl>
+
+
+
+
+
+
+
+
+
+
+
+  <a id="CSMath_MathHelper_NormalizeAngle_" data-uid="CSMath.MathHelper.NormalizeAngle*"></a>
+
+  <h3 id="CSMath_MathHelper_NormalizeAngle_System_Double_" data-uid="CSMath.MathHelper.NormalizeAngle(System.Double)">
+  NormalizeAngle(double)
+  <a class="header-action link-secondary" title="View source" href="https://github.com/DomCR/CSUtilities/blob/1065/merge/CSMath/MathHelper.cs/#L248"><i class="bi bi-code-slash"></i></a>
+  </h3>
+
+  <div class="markdown level1 summary"><p>Normalizes the value of an angle in degrees between 0-360.</p>
+</div>
+  <div class="markdown level1 conceptual"></div>
+
+  <div class="codewrapper">
+    <pre><code class="lang-csharp hljs">public static double NormalizeAngle(double angle)</code></pre>
+  </div>
+
+  <h4 class="section">Parameters</h4>
+  <dl class="parameters">
+    <dt><code>angle</code> <a class="xref" href="https://learn.microsoft.com/dotnet/api/system.double">double</a></dt>
+    <dd><p>Angle in degrees.</p>
+</dd>
+  </dl>
+
+  <h4 class="section">Returns</h4>
+  <dl class="parameters">
+    <dt><a class="xref" href="https://learn.microsoft.com/dotnet/api/system.double">double</a></dt>
+    <dd><p>The equivalent angle in the range 0-360.</p>
+</dd>
+  </dl>
+
+
+
+
+
+
+
+  <h4 class="section" id="CSMath_MathHelper_NormalizeAngle_System_Double__remarks">Remarks</h4>
+  <div class="markdown level1 remarks"><p>Negative angles will be converted to its positive equivalent.</p>
+</div>
+
+
+
+
+  <a id="CSMath_MathHelper_RadToDeg_" data-uid="CSMath.MathHelper.RadToDeg*"></a>
+
+  <h3 id="CSMath_MathHelper_RadToDeg_System_Double_System_Boolean_" data-uid="CSMath.MathHelper.RadToDeg(System.Double,System.Boolean)">
+  RadToDeg(double, bool)
+  <a class="header-action link-secondary" title="View source" href="https://github.com/DomCR/CSUtilities/blob/1065/merge/CSMath/MathHelper.cs/#L275"><i class="bi bi-code-slash"></i></a>
+  </h3>
+
+  <div class="markdown level1 summary"><p>Convert a value from radian to degree</p>
+</div>
+  <div class="markdown level1 conceptual"></div>
+
+  <div class="codewrapper">
+    <pre><code class="lang-csharp hljs">public static double RadToDeg(double value, bool absolute = true)</code></pre>
+  </div>
+
+  <h4 class="section">Parameters</h4>
+  <dl class="parameters">
+    <dt><code>value</code> <a class="xref" href="https://learn.microsoft.com/dotnet/api/system.double">double</a></dt>
+    <dd><p>Value in radians</p>
+</dd>
+    <dt><code>absolute</code> <a class="xref" href="https://learn.microsoft.com/dotnet/api/system.boolean">bool</a></dt>
+    <dd><p>Calculates the negative values in a 0-360 range.</p>
+</dd>
+  </dl>
+
+  <h4 class="section">Returns</h4>
+  <dl class="parameters">
+    <dt><a class="xref" href="https://learn.microsoft.com/dotnet/api/system.double">double</a></dt>
+    <dd><p>The radian value</p>
+</dd>
+  </dl>
+
+
+
+
+
+
+
+
+
+
+
+  <a id="CSMath_MathHelper_RadToGrad_" data-uid="CSMath.MathHelper.RadToGrad*"></a>
+
+  <h3 id="CSMath_MathHelper_RadToGrad_System_Double_" data-uid="CSMath.MathHelper.RadToGrad(System.Double)">
+  RadToGrad(double)
+  <a class="header-action link-secondary" title="View source" href="https://github.com/DomCR/CSUtilities/blob/1065/merge/CSMath/MathHelper.cs/#L286"><i class="bi bi-code-slash"></i></a>
+  </h3>
+
+  <div class="markdown level1 summary"><p>Convert a value from radian to gradian.</p>
+</div>
+  <div class="markdown level1 conceptual"></div>
+
+  <div class="codewrapper">
+    <pre><code class="lang-csharp hljs">public static double RadToGrad(double value)</code></pre>
+  </div>
+
+  <h4 class="section">Parameters</h4>
+  <dl class="parameters">
+    <dt><code>value</code> <a class="xref" href="https://learn.microsoft.com/dotnet/api/system.double">double</a></dt>
+    <dd><p>Value in radians.</p>
+</dd>
+  </dl>
+
+  <h4 class="section">Returns</h4>
+  <dl class="parameters">
+    <dt><a class="xref" href="https://learn.microsoft.com/dotnet/api/system.double">double</a></dt>
+    <dd><p>The radian value.</p>
+</dd>
+  </dl>
+
+
+
+
+
+
+
+
+
+
+
+  <a id="CSMath_MathHelper_RoundToNearest_" data-uid="CSMath.MathHelper.RoundToNearest*"></a>
+
+  <h3 id="CSMath_MathHelper_RoundToNearest_System_Double_System_Double_" data-uid="CSMath.MathHelper.RoundToNearest(System.Double,System.Double)">
+  RoundToNearest(double, double)
+  <a class="header-action link-secondary" title="View source" href="https://github.com/DomCR/CSUtilities/blob/1065/merge/CSMath/MathHelper.cs/#L297"><i class="bi bi-code-slash"></i></a>
+  </h3>
+
+  <div class="markdown level1 summary"><p>Round off a numeric value to the nearest of another value.</p>
+</div>
+  <div class="markdown level1 conceptual"></div>
+
+  <div class="codewrapper">
+    <pre><code class="lang-csharp hljs">public static double RoundToNearest(double number, double roundTo)</code></pre>
+  </div>
+
+  <h4 class="section">Parameters</h4>
+  <dl class="parameters">
+    <dt><code>number</code> <a class="xref" href="https://learn.microsoft.com/dotnet/api/system.double">double</a></dt>
+    <dd><p>Number to round off.</p>
+</dd>
+    <dt><code>roundTo</code> <a class="xref" href="https://learn.microsoft.com/dotnet/api/system.double">double</a></dt>
+    <dd><p>The number will be rounded to the nearest of this value.</p>
+</dd>
+  </dl>
+
+  <h4 class="section">Returns</h4>
+  <dl class="parameters">
+    <dt><a class="xref" href="https://learn.microsoft.com/dotnet/api/system.double">double</a></dt>
+    <dd><p>The number rounded to the nearest value.</p>
+</dd>
+  </dl>
+
+
+
+
+
+
+
+
+
+
+
+  <a id="CSMath_MathHelper_Sin_" data-uid="CSMath.MathHelper.Sin*"></a>
+
+  <h3 id="CSMath_MathHelper_Sin_System_Double_" data-uid="CSMath.MathHelper.Sin(System.Double)">
+  Sin(double)
+  <a class="header-action link-secondary" title="View source" href="https://github.com/DomCR/CSUtilities/blob/1065/merge/CSMath/MathHelper.cs/#L308"><i class="bi bi-code-slash"></i></a>
+  </h3>
+
+  <div class="markdown level1 summary"><p>Returns the sine of specific angle in radians adjusting the value to 0 using <a class="xref" href="CSMath.MathHelper.html#CSMath_MathHelper_Epsilon">Epsilon</a> as tolerance.</p>
+</div>
+  <div class="markdown level1 conceptual"></div>
+
+  <div class="codewrapper">
+    <pre><code class="lang-csharp hljs">public static double Sin(double value)</code></pre>
+  </div>
+
+  <h4 class="section">Parameters</h4>
+  <dl class="parameters">
+    <dt><code>value</code> <a class="xref" href="https://learn.microsoft.com/dotnet/api/system.double">double</a></dt>
+    <dd></dd>
+  </dl>
+
+  <h4 class="section">Returns</h4>
+  <dl class="parameters">
+    <dt><a class="xref" href="https://learn.microsoft.com/dotnet/api/system.double">double</a></dt>
+    <dd></dd>
+  </dl>
+
+
+
+
+
+
+
+
+
+
+
+
+</article>
+
+        <div class="contribution d-print-none">
+          <a href="https://github.com/DomCR/CSUtilities/blob/1065/merge/CSMath/MathHelper.cs/#L13" class="edit-link">Edit this page</a>
+        </div>
+
+
+      </div>
+
+      <div class="affix">
+        <nav id="affix"></nav>
+      </div>
+    </main>
+
+    <div class="container-xxl search-results" id="search-results"></div>
+
+    <footer class="border-top text-secondary">
+      <div class="container-xxl">
+        <div class="flex-fill">
+          <span>Made with <a href="https://dotnet.github.io/docfx">docfx</a></span>
+        </div>
+      </div>
+    </footer>
+  </body>
+</html>

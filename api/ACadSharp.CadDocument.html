@@ -1,0 +1,1632 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <meta charset="utf-8">
+      <title>Class CadDocument | ACadSharp </title>
+      <meta name="viewport" content="width=device-width, initial-scale=1.0">
+      <meta name="title" content="Class CadDocument | ACadSharp ">
+      
+      <meta name="description" content="Represents a CAD drawing document, providing access to all collections, tables, and configuration objects within the drawing. Supports management of entities, layers, styles, dictionaries, and other core CAD structures.">
+      <link rel="icon" href="../favicon.ico">
+      <link rel="stylesheet" href="../public/docfx.min.css">
+      <link rel="stylesheet" href="../public/main.css">
+      <meta name="docfx:navrel" content="../toc.html">
+      <meta name="docfx:tocrel" content="toc.html">
+      
+      <meta name="docfx:rel" content="../">
+      
+      
+      <meta name="docfx:docurl" content="https://github.com/DomCR/ACadSharp/new/1065/merge/apiSpec/new?filename=ACadSharp_CadDocument.md&amp;value=---%0Auid%3A%20ACadSharp.CadDocument%0Asummary%3A%20&#39;*You%20can%20override%20summary%20for%20the%20API%20here%20using%20*MARKDOWN*%20syntax&#39;%0A---%0A%0A*Please%20type%20below%20more%20information%20about%20this%20API%3A*%0A%0A">
+      <meta name="loc:inThisArticle" content="In this article">
+      <meta name="loc:searchResultsCount" content="{count} results for &quot;{query}&quot;">
+      <meta name="loc:searchNoResults" content="No results for &quot;{query}&quot;">
+      <meta name="loc:tocFilter" content="Filter by title">
+      <meta name="loc:nextArticle" content="Next">
+      <meta name="loc:prevArticle" content="Previous">
+      <meta name="loc:themeLight" content="Light">
+      <meta name="loc:themeDark" content="Dark">
+      <meta name="loc:themeAuto" content="Auto">
+      <meta name="loc:changeTheme" content="Change theme">
+      <meta name="loc:copy" content="Copy">
+      <meta name="loc:downloadPdf" content="Download PDF">
+
+      <script type="module" src="./../public/docfx.min.js"></script>
+
+      <script>
+        const theme = localStorage.getItem('theme') || 'auto'
+        document.documentElement.setAttribute('data-bs-theme', theme === 'auto' ? (window.matchMedia('(prefers-color-scheme: dark)').matches ? 'dark' : 'light') : theme)
+      </script>
+
+  </head>
+
+  <body class="tex2jax_ignore" data-layout="" data-yaml-mime="ManagedReference">
+    <header class="bg-body border-bottom">
+      <nav id="autocollapse" class="navbar navbar-expand-md" role="navigation">
+        <div class="container-xxl flex-nowrap">
+          <a class="navbar-brand" href="../index.html">
+            <img id="logo" class="svg" src="../logo.svg" alt="ACadSharp">
+            ACadSharp
+          </a>
+          <button class="btn btn-lg d-md-none border-0" type="button" data-bs-toggle="collapse" data-bs-target="#navpanel" aria-controls="navpanel" aria-expanded="false" aria-label="Toggle navigation">
+            <i class="bi bi-three-dots"></i>
+          </button>
+          <div class="collapse navbar-collapse" id="navpanel">
+            <div id="navbar">
+              <form class="search" role="search" id="search">
+                <i class="bi bi-search"></i>
+                <input class="form-control" id="search-query" type="search" disabled placeholder="Search" autocomplete="off" aria-label="Search">
+              </form>
+            </div>
+          </div>
+        </div>
+      </nav>
+    </header>
+
+    <main class="container-xxl">
+      <div class="toc-offcanvas">
+        <div class="offcanvas-md offcanvas-start" tabindex="-1" id="tocOffcanvas" aria-labelledby="tocOffcanvasLabel">
+          <div class="offcanvas-header">
+            <h5 class="offcanvas-title" id="tocOffcanvasLabel">Table of Contents</h5>
+            <button type="button" class="btn-close" data-bs-dismiss="offcanvas" data-bs-target="#tocOffcanvas" aria-label="Close"></button>
+          </div>
+          <div class="offcanvas-body">
+            <nav class="toc" id="toc"></nav>
+          </div>
+        </div>
+      </div>
+
+      <div class="content">
+        <div class="actionbar">
+          <button class="btn btn-lg border-0 d-md-none" type="button" data-bs-toggle="offcanvas" data-bs-target="#tocOffcanvas" aria-controls="tocOffcanvas" aria-expanded="false" aria-label="Show table of contents">
+            <i class="bi bi-list"></i>
+          </button>
+
+          <nav id="breadcrumb"></nav>
+        </div>
+
+        <article data-uid="ACadSharp.CadDocument">
+
+
+
+  <h1 id="ACadSharp_CadDocument" data-uid="ACadSharp.CadDocument" class="text-break">
+Class CadDocument  <a class="header-action link-secondary" title="View source" href="https://github.com/DomCR/ACadSharp/blob/1065/merge/src/ACadSharp/CadDocument.cs/#L22"><i class="bi bi-code-slash"></i></a>
+  </h1>
+
+  <div class="facts text-secondary">
+    <dl><dt>Namespace</dt><dd><a class="xref" href="ACadSharp.html">ACadSharp</a></dd></dl>
+  <dl><dt>Assembly</dt><dd>ACadSharp.dll</dd></dl>
+  </div>
+
+  <div class="markdown summary"><p>Represents a CAD drawing document, providing access to all collections, tables, and configuration objects within the
+drawing. Supports management of entities, layers, styles, dictionaries, and other core CAD structures.</p>
+</div>
+  <div class="markdown conceptual"></div>
+
+  <div class="codewrapper">
+    <pre><code class="lang-csharp hljs">public class CadDocument : IHandledCadObject</code></pre>
+  </div>
+
+
+
+
+  <dl class="typelist inheritance">
+    <dt>Inheritance</dt>
+    <dd>
+      <div><a class="xref" href="https://learn.microsoft.com/dotnet/api/system.object">object</a></div>
+      <div><span class="xref">CadDocument</span></div>
+    </dd>
+  </dl>
+
+  <dl class="typelist implements">
+    <dt>Implements</dt>
+    <dd>
+      <div><a class="xref" href="ACadSharp.IHandledCadObject.html">IHandledCadObject</a></div>
+    </dd>
+  </dl>
+
+
+  <dl class="typelist inheritedMembers">
+    <dt>Inherited Members</dt>
+    <dd>
+    <div>
+      <a class="xref" href="https://learn.microsoft.com/dotnet/api/system.object.equals#system-object-equals(system-object)">object.Equals(object)</a>
+    </div>
+    <div>
+      <a class="xref" href="https://learn.microsoft.com/dotnet/api/system.object.equals#system-object-equals(system-object-system-object)">object.Equals(object, object)</a>
+    </div>
+    <div>
+      <a class="xref" href="https://learn.microsoft.com/dotnet/api/system.object.gethashcode">object.GetHashCode()</a>
+    </div>
+    <div>
+      <a class="xref" href="https://learn.microsoft.com/dotnet/api/system.object.gettype">object.GetType()</a>
+    </div>
+    <div>
+      <a class="xref" href="https://learn.microsoft.com/dotnet/api/system.object.memberwiseclone">object.MemberwiseClone()</a>
+    </div>
+    <div>
+      <a class="xref" href="https://learn.microsoft.com/dotnet/api/system.object.referenceequals">object.ReferenceEquals(object, object)</a>
+    </div>
+  </dd></dl>
+
+  <dl class="typelist extensionMethods">
+    <dt>Extension Methods</dt>
+    <dd>
+  <div>
+      <a class="xref" href="CSMath.Geometry.LineExtensions.html#CSMath_Geometry_LineExtensions_TryFindIntersection__2___0___0___1__">LineExtensions.TryFindIntersection&lt;T, R&gt;(T, T, out R)</a>
+  </div>
+  </dd></dl>
+
+
+
+  <h2 id="ACadSharp_CadDocument_remarks">Remarks</h2>
+  <div class="markdown level0 remarks"><p>The CadDocument class serves as the root container for all objects and settings in a CAD drawing. It
+provides methods to retrieve, configure, and manage drawing content, including entities, tables, and dictionaries.
+Many collections are initialized automatically, but some may be null if the corresponding dictionary entry does not
+exist in the root dictionary.</p>
+</div>
+
+
+  <h2 class="section" id="constructors">Constructors
+</h2>
+
+
+  <a id="ACadSharp_CadDocument__ctor_" data-uid="ACadSharp.CadDocument.#ctor*"></a>
+
+  <h3 id="ACadSharp_CadDocument__ctor" data-uid="ACadSharp.CadDocument.#ctor">
+  CadDocument()
+  <a class="header-action link-secondary" title="View source" href="https://github.com/DomCR/ACadSharp/blob/1065/merge/src/ACadSharp/CadDocument.cs/#L219"><i class="bi bi-code-slash"></i></a>
+  </h3>
+
+  <div class="markdown level1 summary"><p>Creates a document with the default objects</p>
+</div>
+  <div class="markdown level1 conceptual"></div>
+
+  <div class="codewrapper">
+    <pre><code class="lang-csharp hljs">public CadDocument()</code></pre>
+  </div>
+
+
+
+
+
+
+
+
+
+  <h4 class="section" id="ACadSharp_CadDocument__ctor_remarks">Remarks</h4>
+  <div class="markdown level1 remarks"><p>Default version <a class="xref" href="ACadSharp.ACadVersion.html#ACadSharp_ACadVersion_AC1032">AC1032</a></p>
+</div>
+
+
+
+
+  <a id="ACadSharp_CadDocument__ctor_" data-uid="ACadSharp.CadDocument.#ctor*"></a>
+
+  <h3 id="ACadSharp_CadDocument__ctor_ACadSharp_ACadVersion_" data-uid="ACadSharp.CadDocument.#ctor(ACadSharp.ACadVersion)">
+  CadDocument(ACadVersion)
+  <a class="header-action link-secondary" title="View source" href="https://github.com/DomCR/ACadSharp/blob/1065/merge/src/ACadSharp/CadDocument.cs/#L225"><i class="bi bi-code-slash"></i></a>
+  </h3>
+
+  <div class="markdown level1 summary"><p>Creates a document with the default objects and a specific version</p>
+</div>
+  <div class="markdown level1 conceptual"></div>
+
+  <div class="codewrapper">
+    <pre><code class="lang-csharp hljs">public CadDocument(ACadVersion version)</code></pre>
+  </div>
+
+  <h4 class="section">Parameters</h4>
+  <dl class="parameters">
+    <dt><code>version</code> <a class="xref" href="ACadSharp.ACadVersion.html">ACadVersion</a></dt>
+    <dd><p>Version of the document</p>
+</dd>
+  </dl>
+
+
+
+
+
+
+
+
+
+
+
+
+  <h2 class="section" id="properties">Properties
+</h2>
+
+
+  <a id="ACadSharp_CadDocument_AppIds_" data-uid="ACadSharp.CadDocument.AppIds*"></a>
+
+  <h3 id="ACadSharp_CadDocument_AppIds" data-uid="ACadSharp.CadDocument.AppIds">
+  AppIds
+  <a class="header-action link-secondary" title="View source" href="https://github.com/DomCR/ACadSharp/blob/1065/merge/src/ACadSharp/CadDocument.cs/#L27"><i class="bi bi-code-slash"></i></a>
+  </h3>
+
+  <div class="markdown level1 summary"><p>The collection of all registered applications in the drawing.</p>
+</div>
+  <div class="markdown level1 conceptual"></div>
+
+  <div class="codewrapper">
+    <pre><code class="lang-csharp hljs">public AppIdsTable AppIds { get; }</code></pre>
+  </div>
+
+
+
+
+
+  <h4 class="section">Property Value</h4>
+  <dl class="parameters">
+    <dt><a class="xref" href="ACadSharp.Tables.Collections.AppIdsTable.html">AppIdsTable</a></dt>
+    <dd></dd>
+  </dl>
+
+
+
+
+
+
+
+
+  <a id="ACadSharp_CadDocument_BlockRecords_" data-uid="ACadSharp.CadDocument.BlockRecords*"></a>
+
+  <h3 id="ACadSharp_CadDocument_BlockRecords" data-uid="ACadSharp.CadDocument.BlockRecords">
+  BlockRecords
+  <a class="header-action link-secondary" title="View source" href="https://github.com/DomCR/ACadSharp/blob/1065/merge/src/ACadSharp/CadDocument.cs/#L32"><i class="bi bi-code-slash"></i></a>
+  </h3>
+
+  <div class="markdown level1 summary"><p>The collection of all block records in the drawing.</p>
+</div>
+  <div class="markdown level1 conceptual"></div>
+
+  <div class="codewrapper">
+    <pre><code class="lang-csharp hljs">public BlockRecordsTable BlockRecords { get; }</code></pre>
+  </div>
+
+
+
+
+
+  <h4 class="section">Property Value</h4>
+  <dl class="parameters">
+    <dt><a class="xref" href="ACadSharp.Tables.Collections.BlockRecordsTable.html">BlockRecordsTable</a></dt>
+    <dd></dd>
+  </dl>
+
+
+
+
+
+
+
+
+  <a id="ACadSharp_CadDocument_Classes_" data-uid="ACadSharp.CadDocument.Classes*"></a>
+
+  <h3 id="ACadSharp_CadDocument_Classes" data-uid="ACadSharp.CadDocument.Classes">
+  Classes
+  <a class="header-action link-secondary" title="View source" href="https://github.com/DomCR/ACadSharp/blob/1065/merge/src/ACadSharp/CadDocument.cs/#L37"><i class="bi bi-code-slash"></i></a>
+  </h3>
+
+  <div class="markdown level1 summary"><p>Dxf classes defined in this document.</p>
+</div>
+  <div class="markdown level1 conceptual"></div>
+
+  <div class="codewrapper">
+    <pre><code class="lang-csharp hljs">public DxfClassCollection Classes { get; }</code></pre>
+  </div>
+
+
+
+
+
+  <h4 class="section">Property Value</h4>
+  <dl class="parameters">
+    <dt><a class="xref" href="ACadSharp.Classes.DxfClassCollection.html">DxfClassCollection</a></dt>
+    <dd></dd>
+  </dl>
+
+
+
+
+
+
+
+
+  <a id="ACadSharp_CadDocument_Colors_" data-uid="ACadSharp.CadDocument.Colors*"></a>
+
+  <h3 id="ACadSharp_CadDocument_Colors" data-uid="ACadSharp.CadDocument.Colors">
+  Colors
+  <a class="header-action link-secondary" title="View source" href="https://github.com/DomCR/ACadSharp/blob/1065/merge/src/ACadSharp/CadDocument.cs/#L45"><i class="bi bi-code-slash"></i></a>
+  </h3>
+
+  <div class="markdown level1 summary"><p>The collection of all book colors in the drawing.</p>
+</div>
+  <div class="markdown level1 conceptual"></div>
+
+  <div class="codewrapper">
+    <pre><code class="lang-csharp hljs">public ColorCollection Colors { get; }</code></pre>
+  </div>
+
+
+
+
+
+  <h4 class="section">Property Value</h4>
+  <dl class="parameters">
+    <dt><a class="xref" href="ACadSharp.Objects.Collections.ColorCollection.html">ColorCollection</a></dt>
+    <dd></dd>
+  </dl>
+
+
+
+
+  <h4 class="section" id="ACadSharp_CadDocument_Colors_remarks">Remarks</h4>
+  <div class="markdown level1 remarks"><p>The collection is null if the <a class="xref" href="ACadSharp.Objects.CadDictionary.html#ACadSharp_Objects_CadDictionary_AcadColor">AcadColor</a> doesn't exist in the root dictionary.</p>
+</div>
+
+
+
+
+  <a id="ACadSharp_CadDocument_DictionaryVariables_" data-uid="ACadSharp.CadDocument.DictionaryVariables*"></a>
+
+  <h3 id="ACadSharp_CadDocument_DictionaryVariables" data-uid="ACadSharp.CadDocument.DictionaryVariables">
+  DictionaryVariables
+  <a class="header-action link-secondary" title="View source" href="https://github.com/DomCR/ACadSharp/blob/1065/merge/src/ACadSharp/CadDocument.cs/#L53"><i class="bi bi-code-slash"></i></a>
+  </h3>
+
+  <div class="markdown level1 summary"><p>The collection of the system variables in the drawing.</p>
+</div>
+  <div class="markdown level1 conceptual"></div>
+
+  <div class="codewrapper">
+    <pre><code class="lang-csharp hljs">public DictionaryVariableCollection DictionaryVariables { get; }</code></pre>
+  </div>
+
+
+
+
+
+  <h4 class="section">Property Value</h4>
+  <dl class="parameters">
+    <dt><a class="xref" href="ACadSharp.Objects.Collections.DictionaryVariableCollection.html">DictionaryVariableCollection</a></dt>
+    <dd></dd>
+  </dl>
+
+
+
+
+  <h4 class="section" id="ACadSharp_CadDocument_DictionaryVariables_remarks">Remarks</h4>
+  <div class="markdown level1 remarks"><p>The collection is null if the <a class="xref" href="ACadSharp.Objects.CadDictionary.html#ACadSharp_Objects_CadDictionary_VariableDictionary">VariableDictionary</a> doesn't exist in the root dictionary.</p>
+</div>
+
+
+
+
+  <a id="ACadSharp_CadDocument_DimensionStyles_" data-uid="ACadSharp.CadDocument.DimensionStyles*"></a>
+
+  <h3 id="ACadSharp_CadDocument_DimensionStyles" data-uid="ACadSharp.CadDocument.DimensionStyles">
+  DimensionStyles
+  <a class="header-action link-secondary" title="View source" href="https://github.com/DomCR/ACadSharp/blob/1065/merge/src/ACadSharp/CadDocument.cs/#L58"><i class="bi bi-code-slash"></i></a>
+  </h3>
+
+  <div class="markdown level1 summary"><p>The collection of all dimension styles in the drawing.</p>
+</div>
+  <div class="markdown level1 conceptual"></div>
+
+  <div class="codewrapper">
+    <pre><code class="lang-csharp hljs">public DimensionStylesTable DimensionStyles { get; }</code></pre>
+  </div>
+
+
+
+
+
+  <h4 class="section">Property Value</h4>
+  <dl class="parameters">
+    <dt><a class="xref" href="ACadSharp.Tables.Collections.DimensionStylesTable.html">DimensionStylesTable</a></dt>
+    <dd></dd>
+  </dl>
+
+
+
+
+
+
+
+
+  <a id="ACadSharp_CadDocument_Entities_" data-uid="ACadSharp.CadDocument.Entities*"></a>
+
+  <h3 id="ACadSharp_CadDocument_Entities" data-uid="ACadSharp.CadDocument.Entities">
+  Entities
+  <a class="header-action link-secondary" title="View source" href="https://github.com/DomCR/ACadSharp/blob/1065/merge/src/ACadSharp/CadDocument.cs/#L63"><i class="bi bi-code-slash"></i></a>
+  </h3>
+
+  <div class="markdown level1 summary"><p>Collection with all the entities in the drawing</p>
+</div>
+  <div class="markdown level1 conceptual"></div>
+
+  <div class="codewrapper">
+    <pre><code class="lang-csharp hljs">public CadObjectCollection&lt;Entity&gt; Entities { get; }</code></pre>
+  </div>
+
+
+
+
+
+  <h4 class="section">Property Value</h4>
+  <dl class="parameters">
+    <dt><a class="xref" href="ACadSharp.CadObjectCollection-1.html">CadObjectCollection</a>&lt;<a class="xref" href="ACadSharp.Entities.Entity.html">Entity</a>&gt;</dt>
+    <dd></dd>
+  </dl>
+
+
+
+
+
+
+
+
+  <a id="ACadSharp_CadDocument_Groups_" data-uid="ACadSharp.CadDocument.Groups*"></a>
+
+  <h3 id="ACadSharp_CadDocument_Groups" data-uid="ACadSharp.CadDocument.Groups">
+  Groups
+  <a class="header-action link-secondary" title="View source" href="https://github.com/DomCR/ACadSharp/blob/1065/merge/src/ACadSharp/CadDocument.cs/#L71"><i class="bi bi-code-slash"></i></a>
+  </h3>
+
+  <div class="markdown level1 summary"><p>The collection of all groups in the drawing.</p>
+</div>
+  <div class="markdown level1 conceptual"></div>
+
+  <div class="codewrapper">
+    <pre><code class="lang-csharp hljs">public GroupCollection Groups { get; }</code></pre>
+  </div>
+
+
+
+
+
+  <h4 class="section">Property Value</h4>
+  <dl class="parameters">
+    <dt><a class="xref" href="ACadSharp.Objects.Collections.GroupCollection.html">GroupCollection</a></dt>
+    <dd></dd>
+  </dl>
+
+
+
+
+  <h4 class="section" id="ACadSharp_CadDocument_Groups_remarks">Remarks</h4>
+  <div class="markdown level1 remarks"><p>The collection is null if the <a class="xref" href="ACadSharp.Objects.CadDictionary.html#ACadSharp_Objects_CadDictionary_AcadGroup">AcadGroup</a> doesn't exist in the root dictionary.</p>
+</div>
+
+
+
+
+  <a id="ACadSharp_CadDocument_Handle_" data-uid="ACadSharp.CadDocument.Handle*"></a>
+
+  <h3 id="ACadSharp_CadDocument_Handle" data-uid="ACadSharp.CadDocument.Handle">
+  Handle
+  <a class="header-action link-secondary" title="View source" href="https://github.com/DomCR/ACadSharp/blob/1065/merge/src/ACadSharp/CadDocument.cs/#L76"><i class="bi bi-code-slash"></i></a>
+  </h3>
+
+  <div class="markdown level1 summary"><p>The document handle is always 0, this field makes sure that no object overrides this value.</p>
+</div>
+  <div class="markdown level1 conceptual"></div>
+
+  <div class="codewrapper">
+    <pre><code class="lang-csharp hljs">public ulong Handle { get; }</code></pre>
+  </div>
+
+
+
+
+
+  <h4 class="section">Property Value</h4>
+  <dl class="parameters">
+    <dt><a class="xref" href="https://learn.microsoft.com/dotnet/api/system.uint64">ulong</a></dt>
+    <dd></dd>
+  </dl>
+
+
+
+
+
+
+
+
+  <a id="ACadSharp_CadDocument_Header_" data-uid="ACadSharp.CadDocument.Header*"></a>
+
+  <h3 id="ACadSharp_CadDocument_Header" data-uid="ACadSharp.CadDocument.Header">
+  Header
+  <a class="header-action link-secondary" title="View source" href="https://github.com/DomCR/ACadSharp/blob/1065/merge/src/ACadSharp/CadDocument.cs/#L81"><i class="bi bi-code-slash"></i></a>
+  </h3>
+
+  <div class="markdown level1 summary"><p>Contains all the header variables for this document.</p>
+</div>
+  <div class="markdown level1 conceptual"></div>
+
+  <div class="codewrapper">
+    <pre><code class="lang-csharp hljs">public CadHeader Header { get; }</code></pre>
+  </div>
+
+
+
+
+
+  <h4 class="section">Property Value</h4>
+  <dl class="parameters">
+    <dt><a class="xref" href="ACadSharp.Header.CadHeader.html">CadHeader</a></dt>
+    <dd></dd>
+  </dl>
+
+
+
+
+
+
+
+
+  <a id="ACadSharp_CadDocument_ImageDefinitions_" data-uid="ACadSharp.CadDocument.ImageDefinitions*"></a>
+
+  <h3 id="ACadSharp_CadDocument_ImageDefinitions" data-uid="ACadSharp.CadDocument.ImageDefinitions">
+  ImageDefinitions
+  <a class="header-action link-secondary" title="View source" href="https://github.com/DomCR/ACadSharp/blob/1065/merge/src/ACadSharp/CadDocument.cs/#L89"><i class="bi bi-code-slash"></i></a>
+  </h3>
+
+  <div class="markdown level1 summary"><p>The collection of all images in the drawing.</p>
+</div>
+  <div class="markdown level1 conceptual"></div>
+
+  <div class="codewrapper">
+    <pre><code class="lang-csharp hljs">public ImageDefinitionCollection ImageDefinitions { get; }</code></pre>
+  </div>
+
+
+
+
+
+  <h4 class="section">Property Value</h4>
+  <dl class="parameters">
+    <dt><a class="xref" href="ACadSharp.Objects.Collections.ImageDefinitionCollection.html">ImageDefinitionCollection</a></dt>
+    <dd></dd>
+  </dl>
+
+
+
+
+  <h4 class="section" id="ACadSharp_CadDocument_ImageDefinitions_remarks">Remarks</h4>
+  <div class="markdown level1 remarks"><p>The collection is null if the <a class="xref" href="ACadSharp.Objects.CadDictionary.html#ACadSharp_Objects_CadDictionary_AcadImageDict">AcadImageDict</a> doesn't exist in the root dictionary.</p>
+</div>
+
+
+
+
+  <a id="ACadSharp_CadDocument_Layers_" data-uid="ACadSharp.CadDocument.Layers*"></a>
+
+  <h3 id="ACadSharp_CadDocument_Layers" data-uid="ACadSharp.CadDocument.Layers">
+  Layers
+  <a class="header-action link-secondary" title="View source" href="https://github.com/DomCR/ACadSharp/blob/1065/merge/src/ACadSharp/CadDocument.cs/#L94"><i class="bi bi-code-slash"></i></a>
+  </h3>
+
+  <div class="markdown level1 summary"><p>The collection of all layers in the drawing.</p>
+</div>
+  <div class="markdown level1 conceptual"></div>
+
+  <div class="codewrapper">
+    <pre><code class="lang-csharp hljs">public LayersTable Layers { get; }</code></pre>
+  </div>
+
+
+
+
+
+  <h4 class="section">Property Value</h4>
+  <dl class="parameters">
+    <dt><a class="xref" href="ACadSharp.Tables.Collections.LayersTable.html">LayersTable</a></dt>
+    <dd></dd>
+  </dl>
+
+
+
+
+
+
+
+
+  <a id="ACadSharp_CadDocument_Layouts_" data-uid="ACadSharp.CadDocument.Layouts*"></a>
+
+  <h3 id="ACadSharp_CadDocument_Layouts" data-uid="ACadSharp.CadDocument.Layouts">
+  Layouts
+  <a class="header-action link-secondary" title="View source" href="https://github.com/DomCR/ACadSharp/blob/1065/merge/src/ACadSharp/CadDocument.cs/#L102"><i class="bi bi-code-slash"></i></a>
+  </h3>
+
+  <div class="markdown level1 summary"><p>The collection of all layouts in the drawing.</p>
+</div>
+  <div class="markdown level1 conceptual"></div>
+
+  <div class="codewrapper">
+    <pre><code class="lang-csharp hljs">public LayoutCollection Layouts { get; }</code></pre>
+  </div>
+
+
+
+
+
+  <h4 class="section">Property Value</h4>
+  <dl class="parameters">
+    <dt><a class="xref" href="ACadSharp.Objects.Collections.LayoutCollection.html">LayoutCollection</a></dt>
+    <dd></dd>
+  </dl>
+
+
+
+
+  <h4 class="section" id="ACadSharp_CadDocument_Layouts_remarks">Remarks</h4>
+  <div class="markdown level1 remarks"><p>The collection is null if the <a class="xref" href="ACadSharp.Objects.CadDictionary.html#ACadSharp_Objects_CadDictionary_AcadLayout">AcadLayout</a> doesn't exist in the root dictionary.</p>
+</div>
+
+
+
+
+  <a id="ACadSharp_CadDocument_LineTypes_" data-uid="ACadSharp.CadDocument.LineTypes*"></a>
+
+  <h3 id="ACadSharp_CadDocument_LineTypes" data-uid="ACadSharp.CadDocument.LineTypes">
+  LineTypes
+  <a class="header-action link-secondary" title="View source" href="https://github.com/DomCR/ACadSharp/blob/1065/merge/src/ACadSharp/CadDocument.cs/#L107"><i class="bi bi-code-slash"></i></a>
+  </h3>
+
+  <div class="markdown level1 summary"><p>The collection of all line types in the drawing.</p>
+</div>
+  <div class="markdown level1 conceptual"></div>
+
+  <div class="codewrapper">
+    <pre><code class="lang-csharp hljs">public LineTypesTable LineTypes { get; }</code></pre>
+  </div>
+
+
+
+
+
+  <h4 class="section">Property Value</h4>
+  <dl class="parameters">
+    <dt><a class="xref" href="ACadSharp.Tables.Collections.LineTypesTable.html">LineTypesTable</a></dt>
+    <dd></dd>
+  </dl>
+
+
+
+
+
+
+
+
+  <a id="ACadSharp_CadDocument_MLeaderStyles_" data-uid="ACadSharp.CadDocument.MLeaderStyles*"></a>
+
+  <h3 id="ACadSharp_CadDocument_MLeaderStyles" data-uid="ACadSharp.CadDocument.MLeaderStyles">
+  MLeaderStyles
+  <a class="header-action link-secondary" title="View source" href="https://github.com/DomCR/ACadSharp/blob/1065/merge/src/ACadSharp/CadDocument.cs/#L123"><i class="bi bi-code-slash"></i></a>
+  </h3>
+
+  <div class="markdown level1 summary"><p>The collection of all Multi leader styles in the drawing.</p>
+</div>
+  <div class="markdown level1 conceptual"></div>
+
+  <div class="codewrapper">
+    <pre><code class="lang-csharp hljs">public MLeaderStyleCollection MLeaderStyles { get; }</code></pre>
+  </div>
+
+
+
+
+
+  <h4 class="section">Property Value</h4>
+  <dl class="parameters">
+    <dt><a class="xref" href="ACadSharp.Objects.Collections.MLeaderStyleCollection.html">MLeaderStyleCollection</a></dt>
+    <dd></dd>
+  </dl>
+
+
+
+
+  <h4 class="section" id="ACadSharp_CadDocument_MLeaderStyles_remarks">Remarks</h4>
+  <div class="markdown level1 remarks"><p>The collection is null if the <a class="xref" href="ACadSharp.Objects.CadDictionary.html#ACadSharp_Objects_CadDictionary_AcadMLeaderStyle">AcadMLeaderStyle</a> doesn't exist in the root dictionary.</p>
+</div>
+
+
+
+
+  <a id="ACadSharp_CadDocument_MLineStyles_" data-uid="ACadSharp.CadDocument.MLineStyles*"></a>
+
+  <h3 id="ACadSharp_CadDocument_MLineStyles" data-uid="ACadSharp.CadDocument.MLineStyles">
+  MLineStyles
+  <a class="header-action link-secondary" title="View source" href="https://github.com/DomCR/ACadSharp/blob/1065/merge/src/ACadSharp/CadDocument.cs/#L131"><i class="bi bi-code-slash"></i></a>
+  </h3>
+
+  <div class="markdown level1 summary"><p>The collection of all Multi line styles in the drawing.</p>
+</div>
+  <div class="markdown level1 conceptual"></div>
+
+  <div class="codewrapper">
+    <pre><code class="lang-csharp hljs">public MLineStyleCollection MLineStyles { get; }</code></pre>
+  </div>
+
+
+
+
+
+  <h4 class="section">Property Value</h4>
+  <dl class="parameters">
+    <dt><a class="xref" href="ACadSharp.Objects.Collections.MLineStyleCollection.html">MLineStyleCollection</a></dt>
+    <dd></dd>
+  </dl>
+
+
+
+
+  <h4 class="section" id="ACadSharp_CadDocument_MLineStyles_remarks">Remarks</h4>
+  <div class="markdown level1 remarks"><p>The collection is null if the <a class="xref" href="ACadSharp.Objects.CadDictionary.html#ACadSharp_Objects_CadDictionary_AcadMLineStyle">AcadMLineStyle</a> doesn't exist in the root dictionary.</p>
+</div>
+
+
+
+
+  <a id="ACadSharp_CadDocument_Materials_" data-uid="ACadSharp.CadDocument.Materials*"></a>
+
+  <h3 id="ACadSharp_CadDocument_Materials" data-uid="ACadSharp.CadDocument.Materials">
+  Materials
+  <a class="header-action link-secondary" title="View source" href="https://github.com/DomCR/ACadSharp/blob/1065/merge/src/ACadSharp/CadDocument.cs/#L115"><i class="bi bi-code-slash"></i></a>
+  </h3>
+
+  <div class="markdown level1 summary"><p>The collection of all materials in the drawing.</p>
+</div>
+  <div class="markdown level1 conceptual"></div>
+
+  <div class="codewrapper">
+    <pre><code class="lang-csharp hljs">public MaterialCollection Materials { get; }</code></pre>
+  </div>
+
+
+
+
+
+  <h4 class="section">Property Value</h4>
+  <dl class="parameters">
+    <dt><a class="xref" href="ACadSharp.Objects.Collections.MaterialCollection.html">MaterialCollection</a></dt>
+    <dd></dd>
+  </dl>
+
+
+
+
+  <h4 class="section" id="ACadSharp_CadDocument_Materials_remarks">Remarks</h4>
+  <div class="markdown level1 remarks"><p>The collection is null if the <a class="xref" href="ACadSharp.Objects.CadDictionary.html#ACadSharp_Objects_CadDictionary_AcadMaterial">AcadMaterial</a> doesn't exist in the root dictionary.</p>
+</div>
+
+
+
+
+  <a id="ACadSharp_CadDocument_ModelSpace_" data-uid="ACadSharp.CadDocument.ModelSpace*"></a>
+
+  <h3 id="ACadSharp_CadDocument_ModelSpace" data-uid="ACadSharp.CadDocument.ModelSpace">
+  ModelSpace
+  <a class="header-action link-secondary" title="View source" href="https://github.com/DomCR/ACadSharp/blob/1065/merge/src/ACadSharp/CadDocument.cs/#L136"><i class="bi bi-code-slash"></i></a>
+  </h3>
+
+  <div class="markdown level1 summary"><p>Model space block record containing the drawing</p>
+</div>
+  <div class="markdown level1 conceptual"></div>
+
+  <div class="codewrapper">
+    <pre><code class="lang-csharp hljs">public BlockRecord ModelSpace { get; }</code></pre>
+  </div>
+
+
+
+
+
+  <h4 class="section">Property Value</h4>
+  <dl class="parameters">
+    <dt><a class="xref" href="ACadSharp.Tables.BlockRecord.html">BlockRecord</a></dt>
+    <dd></dd>
+  </dl>
+
+
+
+
+
+
+
+
+  <a id="ACadSharp_CadDocument_PaperSpace_" data-uid="ACadSharp.CadDocument.PaperSpace*"></a>
+
+  <h3 id="ACadSharp_CadDocument_PaperSpace" data-uid="ACadSharp.CadDocument.PaperSpace">
+  PaperSpace
+  <a class="header-action link-secondary" title="View source" href="https://github.com/DomCR/ACadSharp/blob/1065/merge/src/ACadSharp/CadDocument.cs/#L141"><i class="bi bi-code-slash"></i></a>
+  </h3>
+
+  <div class="markdown level1 summary"><p>Default paper space of the model</p>
+</div>
+  <div class="markdown level1 conceptual"></div>
+
+  <div class="codewrapper">
+    <pre><code class="lang-csharp hljs">public BlockRecord PaperSpace { get; }</code></pre>
+  </div>
+
+
+
+
+
+  <h4 class="section">Property Value</h4>
+  <dl class="parameters">
+    <dt><a class="xref" href="ACadSharp.Tables.BlockRecord.html">BlockRecord</a></dt>
+    <dd></dd>
+  </dl>
+
+
+
+
+
+
+
+
+  <a id="ACadSharp_CadDocument_PdfDefinitions_" data-uid="ACadSharp.CadDocument.PdfDefinitions*"></a>
+
+  <h3 id="ACadSharp_CadDocument_PdfDefinitions" data-uid="ACadSharp.CadDocument.PdfDefinitions">
+  PdfDefinitions
+  <a class="header-action link-secondary" title="View source" href="https://github.com/DomCR/ACadSharp/blob/1065/merge/src/ACadSharp/CadDocument.cs/#L149"><i class="bi bi-code-slash"></i></a>
+  </h3>
+
+  <div class="markdown level1 summary"><p>The collection of all images in the drawing.</p>
+</div>
+  <div class="markdown level1 conceptual"></div>
+
+  <div class="codewrapper">
+    <pre><code class="lang-csharp hljs">public PdfDefinitionCollection PdfDefinitions { get; }</code></pre>
+  </div>
+
+
+
+
+
+  <h4 class="section">Property Value</h4>
+  <dl class="parameters">
+    <dt><a class="xref" href="ACadSharp.Objects.Collections.PdfDefinitionCollection.html">PdfDefinitionCollection</a></dt>
+    <dd></dd>
+  </dl>
+
+
+
+
+  <h4 class="section" id="ACadSharp_CadDocument_PdfDefinitions_remarks">Remarks</h4>
+  <div class="markdown level1 remarks"><p>The collection is null if the <a class="xref" href="ACadSharp.Objects.CadDictionary.html#ACadSharp_Objects_CadDictionary_AcadImageDict">AcadImageDict</a> doesn't exist in the root dictionary.</p>
+</div>
+
+
+
+
+  <a id="ACadSharp_CadDocument_RootDictionary_" data-uid="ACadSharp.CadDocument.RootDictionary*"></a>
+
+  <h3 id="ACadSharp_CadDocument_RootDictionary" data-uid="ACadSharp.CadDocument.RootDictionary">
+  RootDictionary
+  <a class="header-action link-secondary" title="View source" href="https://github.com/DomCR/ACadSharp/blob/1065/merge/src/ACadSharp/CadDocument.cs/#L154"><i class="bi bi-code-slash"></i></a>
+  </h3>
+
+  <div class="markdown level1 summary"><p>Root dictionary of the document.</p>
+</div>
+  <div class="markdown level1 conceptual"></div>
+
+  <div class="codewrapper">
+    <pre><code class="lang-csharp hljs">public CadDictionary RootDictionary { get; }</code></pre>
+  </div>
+
+
+
+
+
+  <h4 class="section">Property Value</h4>
+  <dl class="parameters">
+    <dt><a class="xref" href="ACadSharp.Objects.CadDictionary.html">CadDictionary</a></dt>
+    <dd></dd>
+  </dl>
+
+
+
+
+
+
+
+
+  <a id="ACadSharp_CadDocument_Scales_" data-uid="ACadSharp.CadDocument.Scales*"></a>
+
+  <h3 id="ACadSharp_CadDocument_Scales" data-uid="ACadSharp.CadDocument.Scales">
+  Scales
+  <a class="header-action link-secondary" title="View source" href="https://github.com/DomCR/ACadSharp/blob/1065/merge/src/ACadSharp/CadDocument.cs/#L171"><i class="bi bi-code-slash"></i></a>
+  </h3>
+
+  <div class="markdown level1 summary"><p>The collection of all scales in the drawing.</p>
+</div>
+  <div class="markdown level1 conceptual"></div>
+
+  <div class="codewrapper">
+    <pre><code class="lang-csharp hljs">public ScaleCollection Scales { get; }</code></pre>
+  </div>
+
+
+
+
+
+  <h4 class="section">Property Value</h4>
+  <dl class="parameters">
+    <dt><a class="xref" href="ACadSharp.Objects.Collections.ScaleCollection.html">ScaleCollection</a></dt>
+    <dd></dd>
+  </dl>
+
+
+
+
+  <h4 class="section" id="ACadSharp_CadDocument_Scales_remarks">Remarks</h4>
+  <div class="markdown level1 remarks"><p>The collection is null if the <a class="xref" href="ACadSharp.Objects.CadDictionary.html#ACadSharp_Objects_CadDictionary_AcadScaleList">AcadScaleList</a> doesn't exist in the root dictionary.</p>
+</div>
+
+
+
+
+  <a id="ACadSharp_CadDocument_SummaryInfo_" data-uid="ACadSharp.CadDocument.SummaryInfo*"></a>
+
+  <h3 id="ACadSharp_CadDocument_SummaryInfo" data-uid="ACadSharp.CadDocument.SummaryInfo">
+  SummaryInfo
+  <a class="header-action link-secondary" title="View source" href="https://github.com/DomCR/ACadSharp/blob/1065/merge/src/ACadSharp/CadDocument.cs/#L176"><i class="bi bi-code-slash"></i></a>
+  </h3>
+
+  <div class="markdown level1 summary"><p>Accesses drawing properties such as the Title, Subject, Author, and Keywords properties.</p>
+</div>
+  <div class="markdown level1 conceptual"></div>
+
+  <div class="codewrapper">
+    <pre><code class="lang-csharp hljs">public CadSummaryInfo SummaryInfo { get; set; }</code></pre>
+  </div>
+
+
+
+
+
+  <h4 class="section">Property Value</h4>
+  <dl class="parameters">
+    <dt><a class="xref" href="ACadSharp.CadSummaryInfo.html">CadSummaryInfo</a></dt>
+    <dd></dd>
+  </dl>
+
+
+
+
+
+
+
+
+  <a id="ACadSharp_CadDocument_TableStyles_" data-uid="ACadSharp.CadDocument.TableStyles*"></a>
+
+  <h3 id="ACadSharp_CadDocument_TableStyles" data-uid="ACadSharp.CadDocument.TableStyles">
+  TableStyles
+  <a class="header-action link-secondary" title="View source" href="https://github.com/DomCR/ACadSharp/blob/1065/merge/src/ACadSharp/CadDocument.cs/#L184"><i class="bi bi-code-slash"></i></a>
+  </h3>
+
+  <div class="markdown level1 summary"><p>The collection of all table styles in the drawing.</p>
+</div>
+  <div class="markdown level1 conceptual"></div>
+
+  <div class="codewrapper">
+    <pre><code class="lang-csharp hljs">public TableStyleCollection TableStyles { get; }</code></pre>
+  </div>
+
+
+
+
+
+  <h4 class="section">Property Value</h4>
+  <dl class="parameters">
+    <dt><a class="xref" href="ACadSharp.Objects.Collections.TableStyleCollection.html">TableStyleCollection</a></dt>
+    <dd></dd>
+  </dl>
+
+
+
+
+  <h4 class="section" id="ACadSharp_CadDocument_TableStyles_remarks">Remarks</h4>
+  <div class="markdown level1 remarks"><p>The collection is null if the <a class="xref" href="ACadSharp.Objects.CadDictionary.html#ACadSharp_Objects_CadDictionary_AcadTableStyle">AcadTableStyle</a> doesn't exist in the root dictionary.</p>
+</div>
+
+
+
+
+  <a id="ACadSharp_CadDocument_TextStyles_" data-uid="ACadSharp.CadDocument.TextStyles*"></a>
+
+  <h3 id="ACadSharp_CadDocument_TextStyles" data-uid="ACadSharp.CadDocument.TextStyles">
+  TextStyles
+  <a class="header-action link-secondary" title="View source" href="https://github.com/DomCR/ACadSharp/blob/1065/merge/src/ACadSharp/CadDocument.cs/#L189"><i class="bi bi-code-slash"></i></a>
+  </h3>
+
+  <div class="markdown level1 summary"><p>The collection of all text styles in the drawing.</p>
+</div>
+  <div class="markdown level1 conceptual"></div>
+
+  <div class="codewrapper">
+    <pre><code class="lang-csharp hljs">public TextStylesTable TextStyles { get; }</code></pre>
+  </div>
+
+
+
+
+
+  <h4 class="section">Property Value</h4>
+  <dl class="parameters">
+    <dt><a class="xref" href="ACadSharp.Tables.Collections.TextStylesTable.html">TextStylesTable</a></dt>
+    <dd></dd>
+  </dl>
+
+
+
+
+
+
+
+
+  <a id="ACadSharp_CadDocument_UCSs_" data-uid="ACadSharp.CadDocument.UCSs*"></a>
+
+  <h3 id="ACadSharp_CadDocument_UCSs" data-uid="ACadSharp.CadDocument.UCSs">
+  UCSs
+  <a class="header-action link-secondary" title="View source" href="https://github.com/DomCR/ACadSharp/blob/1065/merge/src/ACadSharp/CadDocument.cs/#L194"><i class="bi bi-code-slash"></i></a>
+  </h3>
+
+  <div class="markdown level1 summary"><p>The collection of all user coordinate systems (UCSs) in the drawing.</p>
+</div>
+  <div class="markdown level1 conceptual"></div>
+
+  <div class="codewrapper">
+    <pre><code class="lang-csharp hljs">public UCSTable UCSs { get; }</code></pre>
+  </div>
+
+
+
+
+
+  <h4 class="section">Property Value</h4>
+  <dl class="parameters">
+    <dt><a class="xref" href="ACadSharp.Tables.Collections.UCSTable.html">UCSTable</a></dt>
+    <dd></dd>
+  </dl>
+
+
+
+
+
+
+
+
+  <a id="ACadSharp_CadDocument_VPorts_" data-uid="ACadSharp.CadDocument.VPorts*"></a>
+
+  <h3 id="ACadSharp_CadDocument_VPorts" data-uid="ACadSharp.CadDocument.VPorts">
+  VPorts
+  <a class="header-action link-secondary" title="View source" href="https://github.com/DomCR/ACadSharp/blob/1065/merge/src/ACadSharp/CadDocument.cs/#L204"><i class="bi bi-code-slash"></i></a>
+  </h3>
+
+  <div class="markdown level1 summary"><p>The collection of all vports in the drawing.</p>
+</div>
+  <div class="markdown level1 conceptual"></div>
+
+  <div class="codewrapper">
+    <pre><code class="lang-csharp hljs">public VPortsTable VPorts { get; }</code></pre>
+  </div>
+
+
+
+
+
+  <h4 class="section">Property Value</h4>
+  <dl class="parameters">
+    <dt><a class="xref" href="ACadSharp.Tables.Collections.VPortsTable.html">VPortsTable</a></dt>
+    <dd></dd>
+  </dl>
+
+
+
+
+
+
+
+
+  <a id="ACadSharp_CadDocument_Views_" data-uid="ACadSharp.CadDocument.Views*"></a>
+
+  <h3 id="ACadSharp_CadDocument_Views" data-uid="ACadSharp.CadDocument.Views">
+  Views
+  <a class="header-action link-secondary" title="View source" href="https://github.com/DomCR/ACadSharp/blob/1065/merge/src/ACadSharp/CadDocument.cs/#L199"><i class="bi bi-code-slash"></i></a>
+  </h3>
+
+  <div class="markdown level1 summary"><p>The collection of all views in the drawing.</p>
+</div>
+  <div class="markdown level1 conceptual"></div>
+
+  <div class="codewrapper">
+    <pre><code class="lang-csharp hljs">public ViewsTable Views { get; }</code></pre>
+  </div>
+
+
+
+
+
+  <h4 class="section">Property Value</h4>
+  <dl class="parameters">
+    <dt><a class="xref" href="ACadSharp.Tables.Collections.ViewsTable.html">ViewsTable</a></dt>
+    <dd></dd>
+  </dl>
+
+
+
+
+
+
+
+
+  <h2 class="section" id="methods">Methods
+</h2>
+
+
+  <a id="ACadSharp_CadDocument_CreateDefaults_" data-uid="ACadSharp.CadDocument.CreateDefaults*"></a>
+
+  <h3 id="ACadSharp_CadDocument_CreateDefaults" data-uid="ACadSharp.CadDocument.CreateDefaults">
+  CreateDefaults()
+  <a class="header-action link-secondary" title="View source" href="https://github.com/DomCR/ACadSharp/blob/1065/merge/src/ACadSharp/CadDocument.cs/#L244"><i class="bi bi-code-slash"></i></a>
+  </h3>
+
+  <div class="markdown level1 summary"><p>Create the default entries and objects for the <a class="xref" href="ACadSharp.CadDocument.html">CadDocument</a>.</p>
+</div>
+  <div class="markdown level1 conceptual"></div>
+
+  <div class="codewrapper">
+    <pre><code class="lang-csharp hljs">public void CreateDefaults()</code></pre>
+  </div>
+
+
+
+
+
+
+
+
+
+
+
+
+
+  <a id="ACadSharp_CadDocument_GetCadObject_" data-uid="ACadSharp.CadDocument.GetCadObject*"></a>
+
+  <h3 id="ACadSharp_CadDocument_GetCadObject_System_UInt64_" data-uid="ACadSharp.CadDocument.GetCadObject(System.UInt64)">
+  GetCadObject(ulong)
+  <a class="header-action link-secondary" title="View source" href="https://github.com/DomCR/ACadSharp/blob/1065/merge/src/ACadSharp/CadDocument.cs/#L309"><i class="bi bi-code-slash"></i></a>
+  </h3>
+
+  <div class="markdown level1 summary"><p>Gets an object in the document by it's handle</p>
+</div>
+  <div class="markdown level1 conceptual"></div>
+
+  <div class="codewrapper">
+    <pre><code class="lang-csharp hljs">public CadObject GetCadObject(ulong handle)</code></pre>
+  </div>
+
+  <h4 class="section">Parameters</h4>
+  <dl class="parameters">
+    <dt><code>handle</code> <a class="xref" href="https://learn.microsoft.com/dotnet/api/system.uint64">ulong</a></dt>
+    <dd></dd>
+  </dl>
+
+  <h4 class="section">Returns</h4>
+  <dl class="parameters">
+    <dt><a class="xref" href="ACadSharp.CadObject.html">CadObject</a></dt>
+    <dd><p>the cadObject or null if doesn't exists in the document</p>
+</dd>
+  </dl>
+
+
+
+
+
+
+
+
+
+
+
+  <a id="ACadSharp_CadDocument_GetCadObject_" data-uid="ACadSharp.CadDocument.GetCadObject*"></a>
+
+  <h3 id="ACadSharp_CadDocument_GetCadObject__1_System_UInt64_" data-uid="ACadSharp.CadDocument.GetCadObject``1(System.UInt64)">
+  GetCadObject&lt;T&gt;(ulong)
+  <a class="header-action link-secondary" title="View source" href="https://github.com/DomCR/ACadSharp/blob/1065/merge/src/ACadSharp/CadDocument.cs/#L320"><i class="bi bi-code-slash"></i></a>
+  </h3>
+
+  <div class="markdown level1 summary"><p>Gets an object in the document by it's handle</p>
+</div>
+  <div class="markdown level1 conceptual"></div>
+
+  <div class="codewrapper">
+    <pre><code class="lang-csharp hljs">public T GetCadObject&lt;T&gt;(ulong handle) where T : CadObject</code></pre>
+  </div>
+
+  <h4 class="section">Parameters</h4>
+  <dl class="parameters">
+    <dt><code>handle</code> <a class="xref" href="https://learn.microsoft.com/dotnet/api/system.uint64">ulong</a></dt>
+    <dd></dd>
+  </dl>
+
+  <h4 class="section">Returns</h4>
+  <dl class="parameters">
+    <dt><span class="xref">T</span></dt>
+    <dd><p>the cadObject or null if doesn't exists in the document</p>
+</dd>
+  </dl>
+
+  <h4 class="section">Type Parameters</h4>
+  <dl class="parameters">
+    <dt><code>T</code></dt>
+    <dd></dd>
+  </dl>
+
+
+
+
+
+
+
+
+
+
+  <a id="ACadSharp_CadDocument_GetCurrent_" data-uid="ACadSharp.CadDocument.GetCurrent*"></a>
+
+  <h3 id="ACadSharp_CadDocument_GetCurrent__1" data-uid="ACadSharp.CadDocument.GetCurrent``1">
+  GetCurrent&lt;T&gt;()
+  <a class="header-action link-secondary" title="View source" href="https://github.com/DomCR/ACadSharp/blob/1065/merge/src/ACadSharp/CadDocument.cs/#L338"><i class="bi bi-code-slash"></i></a>
+  </h3>
+
+  <div class="markdown level1 summary"><p>Retrieves the current object of the specified type from the document's configuration.</p>
+</div>
+  <div class="markdown level1 conceptual"></div>
+
+  <div class="codewrapper">
+    <pre><code class="lang-csharp hljs">public T GetCurrent&lt;T&gt;() where T : CadObject, INamedCadObject</code></pre>
+  </div>
+
+
+  <h4 class="section">Returns</h4>
+  <dl class="parameters">
+    <dt><span class="xref">T</span></dt>
+    <dd><p>The current object of the specified type, or throws an exception if the type is not supported.</p>
+</dd>
+  </dl>
+
+  <h4 class="section">Type Parameters</h4>
+  <dl class="parameters">
+    <dt><code>T</code></dt>
+    <dd><p>The type of the object to retrieve. Must be a type that implements <a class="xref" href="ACadSharp.CadObject.html">CadObject</a> and <a class="xref" href="ACadSharp.INamedCadObject.html">INamedCadObject</a>.</p>
+</dd>
+  </dl>
+
+
+
+
+
+
+
+  <h4 class="section">Exceptions</h4>
+  <dl class="parameters">
+    <dt><a class="xref" href="https://learn.microsoft.com/dotnet/api/system.notsupportedexception">NotSupportedException</a></dt>
+    <dd><p>Thrown if the specified type <code class="typeparamref">T</code> is not a configurable type in the document.</p>
+</dd>
+  </dl>
+
+
+
+  <a id="ACadSharp_CadDocument_GetInstanceCount_" data-uid="ACadSharp.CadDocument.GetInstanceCount*"></a>
+
+  <h3 id="ACadSharp_CadDocument_GetInstanceCount_System_String_" data-uid="ACadSharp.CadDocument.GetInstanceCount(System.String)">
+  GetInstanceCount(string)
+  <a class="header-action link-secondary" title="View source" href="https://github.com/DomCR/ACadSharp/blob/1065/merge/src/ACadSharp/CadDocument.cs/#L576"><i class="bi bi-code-slash"></i></a>
+  </h3>
+
+  <div class="markdown level1 summary"></div>
+  <div class="markdown level1 conceptual"></div>
+
+  <div class="codewrapper">
+    <pre><code class="lang-csharp hljs">public int GetInstanceCount(string dxfName)</code></pre>
+  </div>
+
+  <h4 class="section">Parameters</h4>
+  <dl class="parameters">
+    <dt><code>dxfName</code> <a class="xref" href="https://learn.microsoft.com/dotnet/api/system.string">string</a></dt>
+    <dd></dd>
+  </dl>
+
+  <h4 class="section">Returns</h4>
+  <dl class="parameters">
+    <dt><a class="xref" href="https://learn.microsoft.com/dotnet/api/system.int32">int</a></dt>
+    <dd></dd>
+  </dl>
+
+
+
+
+
+
+
+
+
+
+
+  <a id="ACadSharp_CadDocument_RestoreHandles_" data-uid="ACadSharp.CadDocument.RestoreHandles*"></a>
+
+  <h3 id="ACadSharp_CadDocument_RestoreHandles" data-uid="ACadSharp.CadDocument.RestoreHandles">
+  RestoreHandles()
+  <a class="header-action link-secondary" title="View source" href="https://github.com/DomCR/ACadSharp/blob/1065/merge/src/ACadSharp/CadDocument.cs/#L379"><i class="bi bi-code-slash"></i></a>
+  </h3>
+
+  <div class="markdown level1 summary"><p>Reassign all the handles in the document to avoid the variable <a class="xref" href="ACadSharp.Header.CadHeader.html#ACadSharp_Header_CadHeader_HandleSeed">HandleSeed</a> to grow past its limit.</p>
+</div>
+  <div class="markdown level1 conceptual"></div>
+
+  <div class="codewrapper">
+    <pre><code class="lang-csharp hljs">public void RestoreHandles()</code></pre>
+  </div>
+
+
+
+
+
+
+
+
+
+
+
+
+
+  <a id="ACadSharp_CadDocument_SetCurrent_" data-uid="ACadSharp.CadDocument.SetCurrent*"></a>
+
+  <h3 id="ACadSharp_CadDocument_SetCurrent__1___0_" data-uid="ACadSharp.CadDocument.SetCurrent``1(``0)">
+  SetCurrent&lt;T&gt;(T)
+  <a class="header-action link-secondary" title="View source" href="https://github.com/DomCR/ACadSharp/blob/1065/merge/src/ACadSharp/CadDocument.cs/#L406"><i class="bi bi-code-slash"></i></a>
+  </h3>
+
+  <div class="markdown level1 summary"><p>This method sets the current configurable object of the specified type in the document's configuration.</p>
+</div>
+  <div class="markdown level1 conceptual"></div>
+
+  <div class="codewrapper">
+    <pre><code class="lang-csharp hljs">public void SetCurrent&lt;T&gt;(T obj) where T : CadObject, INamedCadObject</code></pre>
+  </div>
+
+  <h4 class="section">Parameters</h4>
+  <dl class="parameters">
+    <dt><code>obj</code> <span class="xref">T</span></dt>
+    <dd></dd>
+  </dl>
+
+
+  <h4 class="section">Type Parameters</h4>
+  <dl class="parameters">
+    <dt><code>T</code></dt>
+    <dd></dd>
+  </dl>
+
+
+
+
+
+
+
+  <h4 class="section">Exceptions</h4>
+  <dl class="parameters">
+    <dt><a class="xref" href="https://learn.microsoft.com/dotnet/api/system.notsupportedexception">NotSupportedException</a></dt>
+    <dd></dd>
+  </dl>
+
+
+
+  <a id="ACadSharp_CadDocument_ToString_" data-uid="ACadSharp.CadDocument.ToString*"></a>
+
+  <h3 id="ACadSharp_CadDocument_ToString" data-uid="ACadSharp.CadDocument.ToString">
+  ToString()
+  <a class="header-action link-secondary" title="View source" href="https://github.com/DomCR/ACadSharp/blob/1065/merge/src/ACadSharp/CadDocument.cs/#L456"><i class="bi bi-code-slash"></i></a>
+  </h3>
+
+  <div class="markdown level1 summary"><p>Returns a string that represents the current object.</p>
+</div>
+  <div class="markdown level1 conceptual"></div>
+
+  <div class="codewrapper">
+    <pre><code class="lang-csharp hljs">public override string ToString()</code></pre>
+  </div>
+
+
+  <h4 class="section">Returns</h4>
+  <dl class="parameters">
+    <dt><a class="xref" href="https://learn.microsoft.com/dotnet/api/system.string">string</a></dt>
+    <dd><p>A string that represents the current object.</p>
+</dd>
+  </dl>
+
+
+
+
+
+
+
+
+
+
+
+  <a id="ACadSharp_CadDocument_TryGetCadObject_" data-uid="ACadSharp.CadDocument.TryGetCadObject*"></a>
+
+  <h3 id="ACadSharp_CadDocument_TryGetCadObject__1_System_UInt64___0__" data-uid="ACadSharp.CadDocument.TryGetCadObject``1(System.UInt64,``0@)">
+  TryGetCadObject&lt;T&gt;(ulong, out T)
+  <a class="header-action link-secondary" title="View source" href="https://github.com/DomCR/ACadSharp/blob/1065/merge/src/ACadSharp/CadDocument.cs/#L468"><i class="bi bi-code-slash"></i></a>
+  </h3>
+
+  <div class="markdown level1 summary"><p>Gets an object in the document by it's handle</p>
+</div>
+  <div class="markdown level1 conceptual"></div>
+
+  <div class="codewrapper">
+    <pre><code class="lang-csharp hljs">public bool TryGetCadObject&lt;T&gt;(ulong handle, out T cadObject) where T : CadObject</code></pre>
+  </div>
+
+  <h4 class="section">Parameters</h4>
+  <dl class="parameters">
+    <dt><code>handle</code> <a class="xref" href="https://learn.microsoft.com/dotnet/api/system.uint64">ulong</a></dt>
+    <dd></dd>
+    <dt><code>cadObject</code> <span class="xref">T</span></dt>
+    <dd></dd>
+  </dl>
+
+  <h4 class="section">Returns</h4>
+  <dl class="parameters">
+    <dt><a class="xref" href="https://learn.microsoft.com/dotnet/api/system.boolean">bool</a></dt>
+    <dd></dd>
+  </dl>
+
+  <h4 class="section">Type Parameters</h4>
+  <dl class="parameters">
+    <dt><code>T</code></dt>
+    <dd></dd>
+  </dl>
+
+
+
+
+
+
+
+
+
+
+  <a id="ACadSharp_CadDocument_UpdateCollections_" data-uid="ACadSharp.CadDocument.UpdateCollections*"></a>
+
+  <h3 id="ACadSharp_CadDocument_UpdateCollections_System_Boolean_System_Boolean_" data-uid="ACadSharp.CadDocument.UpdateCollections(System.Boolean,System.Boolean)">
+  UpdateCollections(bool, bool)
+  <a class="header-action link-secondary" title="View source" href="https://github.com/DomCR/ACadSharp/blob/1065/merge/src/ACadSharp/CadDocument.cs/#L489"><i class="bi bi-code-slash"></i></a>
+  </h3>
+
+  <div class="markdown level1 summary"><p>Updates the collections in the document and link them to it's dictionary.</p>
+</div>
+  <div class="markdown level1 conceptual"></div>
+
+  <div class="codewrapper">
+    <pre><code class="lang-csharp hljs">public void UpdateCollections(bool createDictionaries, bool createDefaults)</code></pre>
+  </div>
+
+  <h4 class="section">Parameters</h4>
+  <dl class="parameters">
+    <dt><code>createDictionaries</code> <a class="xref" href="https://learn.microsoft.com/dotnet/api/system.boolean">bool</a></dt>
+    <dd></dd>
+    <dt><code>createDefaults</code> <a class="xref" href="https://learn.microsoft.com/dotnet/api/system.boolean">bool</a></dt>
+    <dd></dd>
+  </dl>
+
+
+
+
+
+
+
+
+
+
+
+
+  <a id="ACadSharp_CadDocument_UpdateDxfClasses_" data-uid="ACadSharp.CadDocument.UpdateDxfClasses*"></a>
+
+  <h3 id="ACadSharp_CadDocument_UpdateDxfClasses_System_Boolean_" data-uid="ACadSharp.CadDocument.UpdateDxfClasses(System.Boolean)">
+  UpdateDxfClasses(bool)
+  <a class="header-action link-secondary" title="View source" href="https://github.com/DomCR/ACadSharp/blob/1065/merge/src/ACadSharp/CadDocument.cs/#L566"><i class="bi bi-code-slash"></i></a>
+  </h3>
+
+  <div class="markdown level1 summary"><p>Updates the <a class="xref" href="ACadSharp.Classes.DxfClass.html">DxfClass</a> in the document and their instance count.</p>
+</div>
+  <div class="markdown level1 conceptual"></div>
+
+  <div class="codewrapper">
+    <pre><code class="lang-csharp hljs">public void UpdateDxfClasses(bool reset)</code></pre>
+  </div>
+
+  <h4 class="section">Parameters</h4>
+  <dl class="parameters">
+    <dt><code>reset</code> <a class="xref" href="https://learn.microsoft.com/dotnet/api/system.boolean">bool</a></dt>
+    <dd><p>Resets the list and clears any unnecessary classes.</p>
+</dd>
+  </dl>
+
+
+
+
+
+
+
+
+
+
+
+
+  <a id="ACadSharp_CadDocument_UpdateImageReactors_" data-uid="ACadSharp.CadDocument.UpdateImageReactors*"></a>
+
+  <h3 id="ACadSharp_CadDocument_UpdateImageReactors" data-uid="ACadSharp.CadDocument.UpdateImageReactors">
+  UpdateImageReactors()
+  <a class="header-action link-secondary" title="View source" href="https://github.com/DomCR/ACadSharp/blob/1065/merge/src/ACadSharp/CadDocument.cs/#L592"><i class="bi bi-code-slash"></i></a>
+  </h3>
+
+  <div class="markdown level1 summary"><p>Updates the image definition reactors for all raster images in the current collection.</p>
+</div>
+  <div class="markdown level1 conceptual"></div>
+
+  <div class="codewrapper">
+    <pre><code class="lang-csharp hljs">public void UpdateImageReactors()</code></pre>
+  </div>
+
+
+
+
+
+
+
+
+
+  <h4 class="section" id="ACadSharp_CadDocument_UpdateImageReactors_remarks">Remarks</h4>
+  <div class="markdown level1 remarks"><p>This method removes existing <a class="xref" href="ACadSharp.Objects.ImageDefinitionReactor.html">ImageDefinitionReactor</a> instances from the document
+and creates new reactors for each <a class="xref" href="ACadSharp.Entities.RasterImage.html">RasterImage</a>. The new reactors are associated with their
+corresponding image definitions and added to the document.</p>
+</div>
+
+
+
+
+
+</article>
+
+        <div class="contribution d-print-none">
+          <a href="https://github.com/DomCR/ACadSharp/blob/1065/merge/src/ACadSharp/CadDocument.cs/#L22" class="edit-link">Edit this page</a>
+        </div>
+
+
+      </div>
+
+      <div class="affix">
+        <nav id="affix"></nav>
+      </div>
+    </main>
+
+    <div class="container-xxl search-results" id="search-results"></div>
+
+    <footer class="border-top text-secondary">
+      <div class="container-xxl">
+        <div class="flex-fill">
+          <span>Made with <a href="https://dotnet.github.io/docfx">docfx</a></span>
+        </div>
+      </div>
+    </footer>
+  </body>
+</html>

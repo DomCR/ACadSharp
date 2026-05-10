@@ -1,0 +1,1389 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <meta charset="utf-8">
+      <title>Class Spline | ACadSharp </title>
+      <meta name="viewport" content="width=device-width, initial-scale=1.0">
+      <meta name="title" content="Class Spline | ACadSharp ">
+      
+      <meta name="description" content="Represents a  entity.">
+      <link rel="icon" href="../favicon.ico">
+      <link rel="stylesheet" href="../public/docfx.min.css">
+      <link rel="stylesheet" href="../public/main.css">
+      <meta name="docfx:navrel" content="../toc.html">
+      <meta name="docfx:tocrel" content="toc.html">
+      
+      <meta name="docfx:rel" content="../">
+      
+      
+      <meta name="docfx:docurl" content="https://github.com/DomCR/ACadSharp/new/1065/merge/apiSpec/new?filename=ACadSharp_Entities_Spline.md&amp;value=---%0Auid%3A%20ACadSharp.Entities.Spline%0Asummary%3A%20&#39;*You%20can%20override%20summary%20for%20the%20API%20here%20using%20*MARKDOWN*%20syntax&#39;%0A---%0A%0A*Please%20type%20below%20more%20information%20about%20this%20API%3A*%0A%0A">
+      <meta name="loc:inThisArticle" content="In this article">
+      <meta name="loc:searchResultsCount" content="{count} results for &quot;{query}&quot;">
+      <meta name="loc:searchNoResults" content="No results for &quot;{query}&quot;">
+      <meta name="loc:tocFilter" content="Filter by title">
+      <meta name="loc:nextArticle" content="Next">
+      <meta name="loc:prevArticle" content="Previous">
+      <meta name="loc:themeLight" content="Light">
+      <meta name="loc:themeDark" content="Dark">
+      <meta name="loc:themeAuto" content="Auto">
+      <meta name="loc:changeTheme" content="Change theme">
+      <meta name="loc:copy" content="Copy">
+      <meta name="loc:downloadPdf" content="Download PDF">
+
+      <script type="module" src="./../public/docfx.min.js"></script>
+
+      <script>
+        const theme = localStorage.getItem('theme') || 'auto'
+        document.documentElement.setAttribute('data-bs-theme', theme === 'auto' ? (window.matchMedia('(prefers-color-scheme: dark)').matches ? 'dark' : 'light') : theme)
+      </script>
+
+  </head>
+
+  <body class="tex2jax_ignore" data-layout="" data-yaml-mime="ManagedReference">
+    <header class="bg-body border-bottom">
+      <nav id="autocollapse" class="navbar navbar-expand-md" role="navigation">
+        <div class="container-xxl flex-nowrap">
+          <a class="navbar-brand" href="../index.html">
+            <img id="logo" class="svg" src="../logo.svg" alt="ACadSharp">
+            ACadSharp
+          </a>
+          <button class="btn btn-lg d-md-none border-0" type="button" data-bs-toggle="collapse" data-bs-target="#navpanel" aria-controls="navpanel" aria-expanded="false" aria-label="Toggle navigation">
+            <i class="bi bi-three-dots"></i>
+          </button>
+          <div class="collapse navbar-collapse" id="navpanel">
+            <div id="navbar">
+              <form class="search" role="search" id="search">
+                <i class="bi bi-search"></i>
+                <input class="form-control" id="search-query" type="search" disabled placeholder="Search" autocomplete="off" aria-label="Search">
+              </form>
+            </div>
+          </div>
+        </div>
+      </nav>
+    </header>
+
+    <main class="container-xxl">
+      <div class="toc-offcanvas">
+        <div class="offcanvas-md offcanvas-start" tabindex="-1" id="tocOffcanvas" aria-labelledby="tocOffcanvasLabel">
+          <div class="offcanvas-header">
+            <h5 class="offcanvas-title" id="tocOffcanvasLabel">Table of Contents</h5>
+            <button type="button" class="btn-close" data-bs-dismiss="offcanvas" data-bs-target="#tocOffcanvas" aria-label="Close"></button>
+          </div>
+          <div class="offcanvas-body">
+            <nav class="toc" id="toc"></nav>
+          </div>
+        </div>
+      </div>
+
+      <div class="content">
+        <div class="actionbar">
+          <button class="btn btn-lg border-0 d-md-none" type="button" data-bs-toggle="offcanvas" data-bs-target="#tocOffcanvas" aria-controls="tocOffcanvas" aria-expanded="false" aria-label="Show table of contents">
+            <i class="bi bi-list"></i>
+          </button>
+
+          <nav id="breadcrumb"></nav>
+        </div>
+
+        <article data-uid="ACadSharp.Entities.Spline">
+
+
+
+  <h1 id="ACadSharp_Entities_Spline" data-uid="ACadSharp.Entities.Spline" class="text-break">
+Class Spline  <a class="header-action link-secondary" title="View source" href="https://github.com/DomCR/ACadSharp/blob/1065/merge/src/ACadSharp/Entities/Spline.cs/#L17"><i class="bi bi-code-slash"></i></a>
+  </h1>
+
+  <div class="facts text-secondary">
+    <dl><dt>Namespace</dt><dd><a class="xref" href="ACadSharp.html">ACadSharp</a>.<a class="xref" href="ACadSharp.Entities.html">Entities</a></dd></dl>
+  <dl><dt>Assembly</dt><dd>ACadSharp.dll</dd></dl>
+  </div>
+
+  <div class="markdown summary"><p>Represents a <a class="xref" href="ACadSharp.Entities.Spline.html">Spline</a> entity.</p>
+</div>
+  <div class="markdown conceptual"></div>
+
+  <div class="codewrapper">
+    <pre><code class="lang-csharp hljs">[DxfName(&quot;SPLINE&quot;)]
+[DxfSubClass(&quot;AcDbSpline&quot;)]
+public class Spline : Entity, IEntity, IHandledCadObject, IGeometricEntity</code></pre>
+  </div>
+
+
+
+
+  <dl class="typelist inheritance">
+    <dt>Inheritance</dt>
+    <dd>
+      <div><a class="xref" href="https://learn.microsoft.com/dotnet/api/system.object">object</a></div>
+      <div><a class="xref" href="ACadSharp.CadObject.html">CadObject</a></div>
+      <div><a class="xref" href="ACadSharp.Entities.Entity.html">Entity</a></div>
+      <div><span class="xref">Spline</span></div>
+    </dd>
+  </dl>
+
+  <dl class="typelist implements">
+    <dt>Implements</dt>
+    <dd>
+      <div><a class="xref" href="ACadSharp.Entities.IEntity.html">IEntity</a></div>
+      <div><a class="xref" href="ACadSharp.IHandledCadObject.html">IHandledCadObject</a></div>
+      <div><a class="xref" href="ACadSharp.Entities.IGeometricEntity.html">IGeometricEntity</a></div>
+    </dd>
+  </dl>
+
+
+  <dl class="typelist inheritedMembers">
+    <dt>Inherited Members</dt>
+    <dd>
+    <div>
+      <a class="xref" href="ACadSharp.Entities.Entity.html#ACadSharp_Entities_Entity_BookColor">Entity.BookColor</a>
+    </div>
+    <div>
+      <a class="xref" href="ACadSharp.Entities.Entity.html#ACadSharp_Entities_Entity_Color">Entity.Color</a>
+    </div>
+    <div>
+      <a class="xref" href="ACadSharp.Entities.Entity.html#ACadSharp_Entities_Entity_IsInvisible">Entity.IsInvisible</a>
+    </div>
+    <div>
+      <a class="xref" href="ACadSharp.Entities.Entity.html#ACadSharp_Entities_Entity_Layer">Entity.Layer</a>
+    </div>
+    <div>
+      <a class="xref" href="ACadSharp.Entities.Entity.html#ACadSharp_Entities_Entity_LineType">Entity.LineType</a>
+    </div>
+    <div>
+      <a class="xref" href="ACadSharp.Entities.Entity.html#ACadSharp_Entities_Entity_LineTypeScale">Entity.LineTypeScale</a>
+    </div>
+    <div>
+      <a class="xref" href="ACadSharp.Entities.Entity.html#ACadSharp_Entities_Entity_LineWeight">Entity.LineWeight</a>
+    </div>
+    <div>
+      <a class="xref" href="ACadSharp.Entities.Entity.html#ACadSharp_Entities_Entity_Material">Entity.Material</a>
+    </div>
+    <div>
+      <a class="xref" href="ACadSharp.Entities.Entity.html#ACadSharp_Entities_Entity_Transparency">Entity.Transparency</a>
+    </div>
+    <div>
+      <a class="xref" href="ACadSharp.Entities.Entity.html#ACadSharp_Entities_Entity_ApplyRotation_CSMath_XYZ_System_Double_">Entity.ApplyRotation(XYZ, double)</a>
+    </div>
+    <div>
+      <a class="xref" href="ACadSharp.Entities.Entity.html#ACadSharp_Entities_Entity_ApplyScaling_CSMath_XYZ_">Entity.ApplyScaling(XYZ)</a>
+    </div>
+    <div>
+      <a class="xref" href="ACadSharp.Entities.Entity.html#ACadSharp_Entities_Entity_ApplyScaling_CSMath_XYZ_CSMath_XYZ_">Entity.ApplyScaling(XYZ, XYZ)</a>
+    </div>
+    <div>
+      <a class="xref" href="ACadSharp.Entities.Entity.html#ACadSharp_Entities_Entity_ApplyTranslation_CSMath_XYZ_">Entity.ApplyTranslation(XYZ)</a>
+    </div>
+    <div>
+      <a class="xref" href="ACadSharp.Entities.Entity.html#ACadSharp_Entities_Entity_GetActiveColor">Entity.GetActiveColor()</a>
+    </div>
+    <div>
+      <a class="xref" href="ACadSharp.Entities.Entity.html#ACadSharp_Entities_Entity_GetActiveLineType">Entity.GetActiveLineType()</a>
+    </div>
+    <div>
+      <a class="xref" href="ACadSharp.Entities.Entity.html#ACadSharp_Entities_Entity_GetActiveLineWeightType">Entity.GetActiveLineWeightType()</a>
+    </div>
+    <div>
+      <a class="xref" href="ACadSharp.Entities.Entity.html#ACadSharp_Entities_Entity_MatchProperties_ACadSharp_Entities_IEntity_">Entity.MatchProperties(IEntity)</a>
+    </div>
+    <div>
+      <a class="xref" href="ACadSharp.Entities.Entity.html#ACadSharp_Entities_Entity_applyRotation_System_Collections_Generic_IEnumerable_CSMath_XY__System_Double_">Entity.applyRotation(IEnumerable&lt;XY&gt;, double)</a>
+    </div>
+    <div>
+      <a class="xref" href="ACadSharp.Entities.Entity.html#ACadSharp_Entities_Entity_applyWorldMatrix_CSMath_XYZ_CSMath_Transform_CSMath_Matrix3_CSMath_Matrix3_">Entity.applyWorldMatrix(XYZ, Transform, Matrix3, Matrix3)</a>
+    </div>
+    <div>
+      <a class="xref" href="ACadSharp.Entities.Entity.html#ACadSharp_Entities_Entity_getWorldMatrix_CSMath_Transform_CSMath_XYZ_CSMath_XYZ_CSMath_Matrix3__CSMath_Matrix3__">Entity.getWorldMatrix(Transform, XYZ, XYZ, out Matrix3, out Matrix3)</a>
+    </div>
+    <div>
+      <a class="xref" href="ACadSharp.Entities.Entity.html#ACadSharp_Entities_Entity_tableOnRemove_System_Object_ACadSharp_CollectionChangedEventArgs_">Entity.tableOnRemove(object, CollectionChangedEventArgs)</a>
+    </div>
+    <div>
+      <a class="xref" href="ACadSharp.Entities.Entity.html#ACadSharp_Entities_Entity_transformNormal_CSMath_Transform_CSMath_XYZ_">Entity.transformNormal(Transform, XYZ)</a>
+    </div>
+    <div>
+      <a class="xref" href="ACadSharp.CadObject.html#ACadSharp_CadObject_Document">CadObject.Document</a>
+    </div>
+    <div>
+      <a class="xref" href="ACadSharp.CadObject.html#ACadSharp_CadObject_ExtendedData">CadObject.ExtendedData</a>
+    </div>
+    <div>
+      <a class="xref" href="ACadSharp.CadObject.html#ACadSharp_CadObject_Handle">CadObject.Handle</a>
+    </div>
+    <div>
+      <a class="xref" href="ACadSharp.CadObject.html#ACadSharp_CadObject_HasDynamicSubclass">CadObject.HasDynamicSubclass</a>
+    </div>
+    <div>
+      <a class="xref" href="ACadSharp.CadObject.html#ACadSharp_CadObject_Owner">CadObject.Owner</a>
+    </div>
+    <div>
+      <a class="xref" href="ACadSharp.CadObject.html#ACadSharp_CadObject_Reactors">CadObject.Reactors</a>
+    </div>
+    <div>
+      <a class="xref" href="ACadSharp.CadObject.html#ACadSharp_CadObject_XDictionary">CadObject.XDictionary</a>
+    </div>
+    <div>
+      <a class="xref" href="ACadSharp.CadObject.html#ACadSharp_CadObject_AddReactor_ACadSharp_CadObject_">CadObject.AddReactor(CadObject)</a>
+    </div>
+    <div>
+      <a class="xref" href="ACadSharp.CadObject.html#ACadSharp_CadObject_CleanReactors">CadObject.CleanReactors()</a>
+    </div>
+    <div>
+      <a class="xref" href="ACadSharp.CadObject.html#ACadSharp_CadObject_CreateExtendedDictionary">CadObject.CreateExtendedDictionary()</a>
+    </div>
+    <div>
+      <a class="xref" href="ACadSharp.CadObject.html#ACadSharp_CadObject_RemoveReactor_ACadSharp_CadObject_">CadObject.RemoveReactor(CadObject)</a>
+    </div>
+    <div>
+      <a class="xref" href="ACadSharp.CadObject.html#ACadSharp_CadObject_ToString">CadObject.ToString()</a>
+    </div>
+    <div>
+      <a class="xref" href="ACadSharp.CadObject.html#ACadSharp_CadObject_updateCollection__1___0_ACadSharp_ICadCollection___0__">CadObject.updateCollection&lt;T&gt;(T, ICadCollection&lt;T&gt;)</a>
+    </div>
+    <div>
+      <a class="xref" href="https://learn.microsoft.com/dotnet/api/system.object.equals#system-object-equals(system-object)">object.Equals(object)</a>
+    </div>
+    <div>
+      <a class="xref" href="https://learn.microsoft.com/dotnet/api/system.object.equals#system-object-equals(system-object-system-object)">object.Equals(object, object)</a>
+    </div>
+    <div>
+      <a class="xref" href="https://learn.microsoft.com/dotnet/api/system.object.gethashcode">object.GetHashCode()</a>
+    </div>
+    <div>
+      <a class="xref" href="https://learn.microsoft.com/dotnet/api/system.object.gettype">object.GetType()</a>
+    </div>
+    <div>
+      <a class="xref" href="https://learn.microsoft.com/dotnet/api/system.object.memberwiseclone">object.MemberwiseClone()</a>
+    </div>
+    <div>
+      <a class="xref" href="https://learn.microsoft.com/dotnet/api/system.object.referenceequals">object.ReferenceEquals(object, object)</a>
+    </div>
+  </dd></dl>
+
+  <dl class="typelist extensionMethods">
+    <dt>Extension Methods</dt>
+    <dd>
+  <div>
+      <a class="xref" href="ACadSharp.Extensions.CadObjectExtensions.html#ACadSharp_Extensions_CadObjectExtensions_CloneTyped__1___0_">CadObjectExtensions.CloneTyped&lt;T&gt;(T)</a>
+  </div>
+  <div>
+      <a class="xref" href="CSMath.Geometry.LineExtensions.html#CSMath_Geometry_LineExtensions_TryFindIntersection__2___0___0___1__">LineExtensions.TryFindIntersection&lt;T, R&gt;(T, T, out R)</a>
+  </div>
+  </dd></dl>
+
+
+
+  <h2 id="ACadSharp_Entities_Spline_remarks">Remarks</h2>
+  <div class="markdown level0 remarks"><p>Object name <a class="xref" href="ACadSharp.DxfFileToken.html#ACadSharp_DxfFileToken_EntitySpline">EntitySpline</a> <br>
+Dxf class name <a class="xref" href="ACadSharp.DxfSubclassMarker.html#ACadSharp_DxfSubclassMarker_Spline">Spline</a></p>
+</div>
+
+
+  <h2 class="section" id="constructors">Constructors
+</h2>
+
+
+  <a id="ACadSharp_Entities_Spline__ctor_" data-uid="ACadSharp.Entities.Spline.#ctor*"></a>
+
+  <h3 id="ACadSharp_Entities_Spline__ctor" data-uid="ACadSharp.Entities.Spline.#ctor">
+  Spline()
+  <a class="header-action link-secondary" title="View source" href="https://github.com/DomCR/ACadSharp/blob/1065/merge/src/ACadSharp/Entities/Spline.cs/#L201"><i class="bi bi-code-slash"></i></a>
+  </h3>
+
+  <div class="markdown level1 summary"><p>Default constructor.</p>
+</div>
+  <div class="markdown level1 conceptual"></div>
+
+  <div class="codewrapper">
+    <pre><code class="lang-csharp hljs">public Spline()</code></pre>
+  </div>
+
+
+
+
+
+
+
+
+
+
+
+
+
+  <h2 class="section" id="fields">Fields
+</h2>
+
+
+
+  <h3 id="ACadSharp_Entities_Spline_MaxDegree" data-uid="ACadSharp.Entities.Spline.MaxDegree">
+  MaxDegree
+  <a class="header-action link-secondary" title="View source" href="https://github.com/DomCR/ACadSharp/blob/1065/merge/src/ACadSharp/Entities/Spline.cs/#L194"><i class="bi bi-code-slash"></i></a>
+  </h3>
+
+  <div class="markdown level1 summary"></div>
+  <div class="markdown level1 conceptual"></div>
+
+  <div class="codewrapper">
+    <pre><code class="lang-csharp hljs">public const short MaxDegree = 10</code></pre>
+  </div>
+
+
+
+
+  <h4 class="section">Field Value</h4>
+  <dl class="parameters">
+    <dt><a class="xref" href="https://learn.microsoft.com/dotnet/api/system.int16">short</a></dt>
+    <dd></dd>
+  </dl>
+
+
+
+
+
+
+
+
+
+  <h2 class="section" id="properties">Properties
+</h2>
+
+
+  <a id="ACadSharp_Entities_Spline_ControlPointTolerance_" data-uid="ACadSharp.Entities.Spline.ControlPointTolerance*"></a>
+
+  <h3 id="ACadSharp_Entities_Spline_ControlPointTolerance" data-uid="ACadSharp.Entities.Spline.ControlPointTolerance">
+  ControlPointTolerance
+  <a class="header-action link-secondary" title="View source" href="https://github.com/DomCR/ACadSharp/blob/1065/merge/src/ACadSharp/Entities/Spline.cs/#L31"><i class="bi bi-code-slash"></i></a>
+  </h3>
+
+  <div class="markdown level1 summary"><p>Control-point tolerance.</p>
+</div>
+  <div class="markdown level1 conceptual"></div>
+
+  <div class="codewrapper">
+    <pre><code class="lang-csharp hljs">[DxfCodeValue(new int[] { 43 })]
+public double ControlPointTolerance { get; set; }</code></pre>
+  </div>
+
+
+
+
+
+  <h4 class="section">Property Value</h4>
+  <dl class="parameters">
+    <dt><a class="xref" href="https://learn.microsoft.com/dotnet/api/system.double">double</a></dt>
+    <dd></dd>
+  </dl>
+
+
+
+
+
+
+
+
+  <a id="ACadSharp_Entities_Spline_ControlPoints_" data-uid="ACadSharp.Entities.Spline.ControlPoints*"></a>
+
+  <h3 id="ACadSharp_Entities_Spline_ControlPoints" data-uid="ACadSharp.Entities.Spline.ControlPoints">
+  ControlPoints
+  <a class="header-action link-secondary" title="View source" href="https://github.com/DomCR/ACadSharp/blob/1065/merge/src/ACadSharp/Entities/Spline.cs/#L24"><i class="bi bi-code-slash"></i></a>
+  </h3>
+
+  <div class="markdown level1 summary"><p>Number of control points (in WCS).</p>
+</div>
+  <div class="markdown level1 conceptual"></div>
+
+  <div class="codewrapper">
+    <pre><code class="lang-csharp hljs">[DxfCodeValue(DxfReferenceType.Count, new int[] { 73 })]
+[DxfCollectionCodeValue(new int[] { 10, 20, 30 })]
+public List&lt;XYZ&gt; ControlPoints { get; }</code></pre>
+  </div>
+
+
+
+
+
+  <h4 class="section">Property Value</h4>
+  <dl class="parameters">
+    <dt><a class="xref" href="https://learn.microsoft.com/dotnet/api/system.collections.generic.list-1">List</a>&lt;<a class="xref" href="CSMath.XYZ.html">XYZ</a>&gt;</dt>
+    <dd></dd>
+  </dl>
+
+
+
+
+
+
+
+
+  <a id="ACadSharp_Entities_Spline_Degree_" data-uid="ACadSharp.Entities.Spline.Degree*"></a>
+
+  <h3 id="ACadSharp_Entities_Spline_Degree" data-uid="ACadSharp.Entities.Spline.Degree">
+  Degree
+  <a class="header-action link-secondary" title="View source" href="https://github.com/DomCR/ACadSharp/blob/1065/merge/src/ACadSharp/Entities/Spline.cs/#L40"><i class="bi bi-code-slash"></i></a>
+  </h3>
+
+  <div class="markdown level1 summary"><p>Gets or sets the polynomial degree of the resulting spline.</p>
+</div>
+  <div class="markdown level1 conceptual"></div>
+
+  <div class="codewrapper">
+    <pre><code class="lang-csharp hljs">[DxfCodeValue(new int[] { 71 })]
+public int Degree { get; set; }</code></pre>
+  </div>
+
+
+
+
+
+  <h4 class="section">Property Value</h4>
+  <dl class="parameters">
+    <dt><a class="xref" href="https://learn.microsoft.com/dotnet/api/system.int32">int</a></dt>
+    <dd></dd>
+  </dl>
+
+
+
+
+  <h4 class="section" id="ACadSharp_Entities_Spline_Degree_remarks">Remarks</h4>
+  <div class="markdown level1 remarks"><p>Valid values are 1 (linear), degree 2 (quadratic), degree 3 (cubic), and so on up to degree 10.</p>
+</div>
+
+
+
+
+  <a id="ACadSharp_Entities_Spline_EndTangent_" data-uid="ACadSharp.Entities.Spline.EndTangent*"></a>
+
+  <h3 id="ACadSharp_Entities_Spline_EndTangent" data-uid="ACadSharp.Entities.Spline.EndTangent">
+  EndTangent
+  <a class="header-action link-secondary" title="View source" href="https://github.com/DomCR/ACadSharp/blob/1065/merge/src/ACadSharp/Entities/Spline.cs/#L46"><i class="bi bi-code-slash"></i></a>
+  </h3>
+
+  <div class="markdown level1 summary"><p>End tangent—may be omitted in WCS.</p>
+</div>
+  <div class="markdown level1 conceptual"></div>
+
+  <div class="codewrapper">
+    <pre><code class="lang-csharp hljs">[DxfCodeValue(new int[] { 13, 23, 33 })]
+public XYZ EndTangent { get; set; }</code></pre>
+  </div>
+
+
+
+
+
+  <h4 class="section">Property Value</h4>
+  <dl class="parameters">
+    <dt><a class="xref" href="CSMath.XYZ.html">XYZ</a></dt>
+    <dd></dd>
+  </dl>
+
+
+
+
+
+
+
+
+  <a id="ACadSharp_Entities_Spline_FitPoints_" data-uid="ACadSharp.Entities.Spline.FitPoints*"></a>
+
+  <h3 id="ACadSharp_Entities_Spline_FitPoints" data-uid="ACadSharp.Entities.Spline.FitPoints">
+  FitPoints
+  <a class="header-action link-secondary" title="View source" href="https://github.com/DomCR/ACadSharp/blob/1065/merge/src/ACadSharp/Entities/Spline.cs/#L52"><i class="bi bi-code-slash"></i></a>
+  </h3>
+
+  <div class="markdown level1 summary"><p>Number of fit points (in WCS).</p>
+</div>
+  <div class="markdown level1 conceptual"></div>
+
+  <div class="codewrapper">
+    <pre><code class="lang-csharp hljs">[DxfCodeValue(DxfReferenceType.Count, new int[] { 74 })]
+[DxfCollectionCodeValue(new int[] { 11, 21, 31 })]
+public List&lt;XYZ&gt; FitPoints { get; }</code></pre>
+  </div>
+
+
+
+
+
+  <h4 class="section">Property Value</h4>
+  <dl class="parameters">
+    <dt><a class="xref" href="https://learn.microsoft.com/dotnet/api/system.collections.generic.list-1">List</a>&lt;<a class="xref" href="CSMath.XYZ.html">XYZ</a>&gt;</dt>
+    <dd></dd>
+  </dl>
+
+
+
+
+
+
+
+
+  <a id="ACadSharp_Entities_Spline_FitTolerance_" data-uid="ACadSharp.Entities.Spline.FitTolerance*"></a>
+
+  <h3 id="ACadSharp_Entities_Spline_FitTolerance" data-uid="ACadSharp.Entities.Spline.FitTolerance">
+  FitTolerance
+  <a class="header-action link-secondary" title="View source" href="https://github.com/DomCR/ACadSharp/blob/1065/merge/src/ACadSharp/Entities/Spline.cs/#L59"><i class="bi bi-code-slash"></i></a>
+  </h3>
+
+  <div class="markdown level1 summary"><p>Fit tolerance.</p>
+</div>
+  <div class="markdown level1 conceptual"></div>
+
+  <div class="codewrapper">
+    <pre><code class="lang-csharp hljs">[DxfCodeValue(new int[] { 44 })]
+public double FitTolerance { get; set; }</code></pre>
+  </div>
+
+
+
+
+
+  <h4 class="section">Property Value</h4>
+  <dl class="parameters">
+    <dt><a class="xref" href="https://learn.microsoft.com/dotnet/api/system.double">double</a></dt>
+    <dd></dd>
+  </dl>
+
+
+
+
+
+
+
+
+  <a id="ACadSharp_Entities_Spline_Flags_" data-uid="ACadSharp.Entities.Spline.Flags*"></a>
+
+  <h3 id="ACadSharp_Entities_Spline_Flags" data-uid="ACadSharp.Entities.Spline.Flags">
+  Flags
+  <a class="header-action link-secondary" title="View source" href="https://github.com/DomCR/ACadSharp/blob/1065/merge/src/ACadSharp/Entities/Spline.cs/#L65"><i class="bi bi-code-slash"></i></a>
+  </h3>
+
+  <div class="markdown level1 summary"><p>Spline flags.</p>
+</div>
+  <div class="markdown level1 conceptual"></div>
+
+  <div class="codewrapper">
+    <pre><code class="lang-csharp hljs">[DxfCodeValue(new int[] { 70 })]
+public SplineFlags Flags { get; set; }</code></pre>
+  </div>
+
+
+
+
+
+  <h4 class="section">Property Value</h4>
+  <dl class="parameters">
+    <dt><a class="xref" href="ACadSharp.Entities.SplineFlags.html">SplineFlags</a></dt>
+    <dd></dd>
+  </dl>
+
+
+
+
+
+
+
+
+  <a id="ACadSharp_Entities_Spline_Flags1_" data-uid="ACadSharp.Entities.Spline.Flags1*"></a>
+
+  <h3 id="ACadSharp_Entities_Spline_Flags1" data-uid="ACadSharp.Entities.Spline.Flags1">
+  Flags1
+  <a class="header-action link-secondary" title="View source" href="https://github.com/DomCR/ACadSharp/blob/1065/merge/src/ACadSharp/Entities/Spline.cs/#L74"><i class="bi bi-code-slash"></i></a>
+  </h3>
+
+  <div class="markdown level1 summary"><p>Spline flags1.</p>
+</div>
+  <div class="markdown level1 conceptual"></div>
+
+  <div class="codewrapper">
+    <pre><code class="lang-csharp hljs">public SplineFlags1 Flags1 { get; set; }</code></pre>
+  </div>
+
+
+
+
+
+  <h4 class="section">Property Value</h4>
+  <dl class="parameters">
+    <dt><a class="xref" href="ACadSharp.Entities.SplineFlags1.html">SplineFlags1</a></dt>
+    <dd></dd>
+  </dl>
+
+
+
+
+  <h4 class="section" id="ACadSharp_Entities_Spline_Flags1_remarks">Remarks</h4>
+  <div class="markdown level1 remarks"><p>Only valid for dwg.</p>
+</div>
+
+
+
+
+  <a id="ACadSharp_Entities_Spline_HasValidKnotCount_" data-uid="ACadSharp.Entities.Spline.HasValidKnotCount*"></a>
+
+  <h3 id="ACadSharp_Entities_Spline_HasValidKnotCount" data-uid="ACadSharp.Entities.Spline.HasValidKnotCount">
+  HasValidKnotCount
+  <a class="header-action link-secondary" title="View source" href="https://github.com/DomCR/ACadSharp/blob/1065/merge/src/ACadSharp/Entities/Spline.cs/#L82"><i class="bi bi-code-slash"></i></a>
+  </h3>
+
+  <div class="markdown level1 summary"><p>Gets a value indicating whether the knot vector has a valid count based on the control points, degree, and closure
+status of the curve.</p>
+</div>
+  <div class="markdown level1 conceptual"></div>
+
+  <div class="codewrapper">
+    <pre><code class="lang-csharp hljs">public bool HasValidKnotCount { get; }</code></pre>
+  </div>
+
+
+
+
+
+  <h4 class="section">Property Value</h4>
+  <dl class="parameters">
+    <dt><a class="xref" href="https://learn.microsoft.com/dotnet/api/system.boolean">bool</a></dt>
+    <dd></dd>
+  </dl>
+
+
+
+
+  <h4 class="section" id="ACadSharp_Entities_Spline_HasValidKnotCount_remarks">Remarks</h4>
+  <div class="markdown level1 remarks"><p>The expected knot count is calculated as the number of control points plus the degree of the
+curve, adjusted for whether the curve is closed.</p>
+</div>
+
+
+
+
+  <a id="ACadSharp_Entities_Spline_IsClosed_" data-uid="ACadSharp.Entities.Spline.IsClosed*"></a>
+
+  <h3 id="ACadSharp_Entities_Spline_IsClosed" data-uid="ACadSharp.Entities.Spline.IsClosed">
+  IsClosed
+  <a class="header-action link-secondary" title="View source" href="https://github.com/DomCR/ACadSharp/blob/1065/merge/src/ACadSharp/Entities/Spline.cs/#L94"><i class="bi bi-code-slash"></i></a>
+  </h3>
+
+  <div class="markdown level1 summary"><p>Flag whether the spline is closed.</p>
+</div>
+  <div class="markdown level1 conceptual"></div>
+
+  <div class="codewrapper">
+    <pre><code class="lang-csharp hljs">public bool IsClosed { get; set; }</code></pre>
+  </div>
+
+
+
+
+
+  <h4 class="section">Property Value</h4>
+  <dl class="parameters">
+    <dt><a class="xref" href="https://learn.microsoft.com/dotnet/api/system.boolean">bool</a></dt>
+    <dd></dd>
+  </dl>
+
+
+
+
+
+
+
+
+  <a id="ACadSharp_Entities_Spline_IsPeriodic_" data-uid="ACadSharp.Entities.Spline.IsPeriodic*"></a>
+
+  <h3 id="ACadSharp_Entities_Spline_IsPeriodic" data-uid="ACadSharp.Entities.Spline.IsPeriodic">
+  IsPeriodic
+  <a class="header-action link-secondary" title="View source" href="https://github.com/DomCR/ACadSharp/blob/1065/merge/src/ACadSharp/Entities/Spline.cs/#L120"><i class="bi bi-code-slash"></i></a>
+  </h3>
+
+  <div class="markdown level1 summary"><p>Gets or sets a value indicating whether the spline is periodic.</p>
+</div>
+  <div class="markdown level1 conceptual"></div>
+
+  <div class="codewrapper">
+    <pre><code class="lang-csharp hljs">public bool IsPeriodic { get; set; }</code></pre>
+  </div>
+
+
+
+
+
+  <h4 class="section">Property Value</h4>
+  <dl class="parameters">
+    <dt><a class="xref" href="https://learn.microsoft.com/dotnet/api/system.boolean">bool</a></dt>
+    <dd></dd>
+  </dl>
+
+
+
+
+  <h4 class="section" id="ACadSharp_Entities_Spline_IsPeriodic_remarks">Remarks</h4>
+  <div class="markdown level1 remarks"><p>A periodic spline forms a closed loop, where the start and end points are connected seamlessly.
+Setting this property updates the internal flags to reflect the periodicity of the spline.</p>
+</div>
+
+
+
+
+  <a id="ACadSharp_Entities_Spline_KnotParametrization_" data-uid="ACadSharp.Entities.Spline.KnotParametrization*"></a>
+
+  <h3 id="ACadSharp_Entities_Spline_KnotParametrization" data-uid="ACadSharp.Entities.Spline.KnotParametrization">
+  KnotParametrization
+  <a class="header-action link-secondary" title="View source" href="https://github.com/DomCR/ACadSharp/blob/1065/merge/src/ACadSharp/Entities/Spline.cs/#L149"><i class="bi bi-code-slash"></i></a>
+  </h3>
+
+  <div class="markdown level1 summary"><p>Knot parameters.</p>
+</div>
+  <div class="markdown level1 conceptual"></div>
+
+  <div class="codewrapper">
+    <pre><code class="lang-csharp hljs">public KnotParametrization KnotParametrization { get; set; }</code></pre>
+  </div>
+
+
+
+
+
+  <h4 class="section">Property Value</h4>
+  <dl class="parameters">
+    <dt><a class="xref" href="ACadSharp.Entities.KnotParametrization.html">KnotParametrization</a></dt>
+    <dd></dd>
+  </dl>
+
+
+
+
+
+
+
+
+  <a id="ACadSharp_Entities_Spline_KnotTolerance_" data-uid="ACadSharp.Entities.Spline.KnotTolerance*"></a>
+
+  <h3 id="ACadSharp_Entities_Spline_KnotTolerance" data-uid="ACadSharp.Entities.Spline.KnotTolerance">
+  KnotTolerance
+  <a class="header-action link-secondary" title="View source" href="https://github.com/DomCR/ACadSharp/blob/1065/merge/src/ACadSharp/Entities/Spline.cs/#L161"><i class="bi bi-code-slash"></i></a>
+  </h3>
+
+  <div class="markdown level1 summary"><p>Knot tolerance.</p>
+</div>
+  <div class="markdown level1 conceptual"></div>
+
+  <div class="codewrapper">
+    <pre><code class="lang-csharp hljs">[DxfCodeValue(new int[] { 42 })]
+public double KnotTolerance { get; set; }</code></pre>
+  </div>
+
+
+
+
+
+  <h4 class="section">Property Value</h4>
+  <dl class="parameters">
+    <dt><a class="xref" href="https://learn.microsoft.com/dotnet/api/system.double">double</a></dt>
+    <dd></dd>
+  </dl>
+
+
+
+
+
+
+
+
+  <a id="ACadSharp_Entities_Spline_Knots_" data-uid="ACadSharp.Entities.Spline.Knots*"></a>
+
+  <h3 id="ACadSharp_Entities_Spline_Knots" data-uid="ACadSharp.Entities.Spline.Knots">
+  Knots
+  <a class="header-action link-secondary" title="View source" href="https://github.com/DomCR/ACadSharp/blob/1065/merge/src/ACadSharp/Entities/Spline.cs/#L154"><i class="bi bi-code-slash"></i></a>
+  </h3>
+
+  <div class="markdown level1 summary"><p>Number of knots.</p>
+</div>
+  <div class="markdown level1 conceptual"></div>
+
+  <div class="codewrapper">
+    <pre><code class="lang-csharp hljs">[DxfCodeValue(DxfReferenceType.Count, new int[] { 72 })]
+[DxfCollectionCodeValue(new int[] { 40 })]
+public List&lt;double&gt; Knots { get; }</code></pre>
+  </div>
+
+
+
+
+
+  <h4 class="section">Property Value</h4>
+  <dl class="parameters">
+    <dt><a class="xref" href="https://learn.microsoft.com/dotnet/api/system.collections.generic.list-1">List</a>&lt;<a class="xref" href="https://learn.microsoft.com/dotnet/api/system.double">double</a>&gt;</dt>
+    <dd></dd>
+  </dl>
+
+
+
+
+
+
+
+
+  <a id="ACadSharp_Entities_Spline_Normal_" data-uid="ACadSharp.Entities.Spline.Normal*"></a>
+
+  <h3 id="ACadSharp_Entities_Spline_Normal" data-uid="ACadSharp.Entities.Spline.Normal">
+  Normal
+  <a class="header-action link-secondary" title="View source" href="https://github.com/DomCR/ACadSharp/blob/1065/merge/src/ACadSharp/Entities/Spline.cs/#L170"><i class="bi bi-code-slash"></i></a>
+  </h3>
+
+  <div class="markdown level1 summary"><p>Specifies the three-dimensional normal unit vector for the object.</p>
+</div>
+  <div class="markdown level1 conceptual"></div>
+
+  <div class="codewrapper">
+    <pre><code class="lang-csharp hljs">[DxfCodeValue(new int[] { 210, 220, 230 })]
+public XYZ Normal { get; set; }</code></pre>
+  </div>
+
+
+
+
+
+  <h4 class="section">Property Value</h4>
+  <dl class="parameters">
+    <dt><a class="xref" href="CSMath.XYZ.html">XYZ</a></dt>
+    <dd></dd>
+  </dl>
+
+
+
+
+  <h4 class="section" id="ACadSharp_Entities_Spline_Normal_remarks">Remarks</h4>
+  <div class="markdown level1 remarks"><p>Omitted if the spline is non-planar.</p>
+</div>
+
+
+
+
+  <a id="ACadSharp_Entities_Spline_ObjectName_" data-uid="ACadSharp.Entities.Spline.ObjectName*"></a>
+
+  <h3 id="ACadSharp_Entities_Spline_ObjectName" data-uid="ACadSharp.Entities.Spline.ObjectName">
+  ObjectName
+  <a class="header-action link-secondary" title="View source" href="https://github.com/DomCR/ACadSharp/blob/1065/merge/src/ACadSharp/Entities/Spline.cs/#L174"><i class="bi bi-code-slash"></i></a>
+  </h3>
+
+  <div class="markdown level1 summary"><p>The CAD class name of an object.</p>
+</div>
+  <div class="markdown level1 conceptual"></div>
+
+  <div class="codewrapper">
+    <pre><code class="lang-csharp hljs">public override string ObjectName { get; }</code></pre>
+  </div>
+
+
+
+
+
+  <h4 class="section">Property Value</h4>
+  <dl class="parameters">
+    <dt><a class="xref" href="https://learn.microsoft.com/dotnet/api/system.string">string</a></dt>
+    <dd></dd>
+  </dl>
+
+
+
+
+
+
+
+
+  <a id="ACadSharp_Entities_Spline_ObjectType_" data-uid="ACadSharp.Entities.Spline.ObjectType*"></a>
+
+  <h3 id="ACadSharp_Entities_Spline_ObjectType" data-uid="ACadSharp.Entities.Spline.ObjectType">
+  ObjectType
+  <a class="header-action link-secondary" title="View source" href="https://github.com/DomCR/ACadSharp/blob/1065/merge/src/ACadSharp/Entities/Spline.cs/#L177"><i class="bi bi-code-slash"></i></a>
+  </h3>
+
+  <div class="markdown level1 summary"><p>Get the object type.</p>
+</div>
+  <div class="markdown level1 conceptual"></div>
+
+  <div class="codewrapper">
+    <pre><code class="lang-csharp hljs">public override ObjectType ObjectType { get; }</code></pre>
+  </div>
+
+
+
+
+
+  <h4 class="section">Property Value</h4>
+  <dl class="parameters">
+    <dt><a class="xref" href="ACadSharp.ObjectType.html">ObjectType</a></dt>
+    <dd></dd>
+  </dl>
+
+
+
+
+
+
+
+
+  <a id="ACadSharp_Entities_Spline_StartTangent_" data-uid="ACadSharp.Entities.Spline.StartTangent*"></a>
+
+  <h3 id="ACadSharp_Entities_Spline_StartTangent" data-uid="ACadSharp.Entities.Spline.StartTangent">
+  StartTangent
+  <a class="header-action link-secondary" title="View source" href="https://github.com/DomCR/ACadSharp/blob/1065/merge/src/ACadSharp/Entities/Spline.cs/#L182"><i class="bi bi-code-slash"></i></a>
+  </h3>
+
+  <div class="markdown level1 summary"><p>Start tangent—may be omitted in WCS.</p>
+</div>
+  <div class="markdown level1 conceptual"></div>
+
+  <div class="codewrapper">
+    <pre><code class="lang-csharp hljs">[DxfCodeValue(new int[] { 12, 22, 32 })]
+public XYZ StartTangent { get; set; }</code></pre>
+  </div>
+
+
+
+
+
+  <h4 class="section">Property Value</h4>
+  <dl class="parameters">
+    <dt><a class="xref" href="CSMath.XYZ.html">XYZ</a></dt>
+    <dd></dd>
+  </dl>
+
+
+
+
+
+
+
+
+  <a id="ACadSharp_Entities_Spline_SubclassMarker_" data-uid="ACadSharp.Entities.Spline.SubclassMarker*"></a>
+
+  <h3 id="ACadSharp_Entities_Spline_SubclassMarker" data-uid="ACadSharp.Entities.Spline.SubclassMarker">
+  SubclassMarker
+  <a class="header-action link-secondary" title="View source" href="https://github.com/DomCR/ACadSharp/blob/1065/merge/src/ACadSharp/Entities/Spline.cs/#L186"><i class="bi bi-code-slash"></i></a>
+  </h3>
+
+  <div class="markdown level1 summary"><p>Object Subclass marker.</p>
+</div>
+  <div class="markdown level1 conceptual"></div>
+
+  <div class="codewrapper">
+    <pre><code class="lang-csharp hljs">public override string SubclassMarker { get; }</code></pre>
+  </div>
+
+
+
+
+
+  <h4 class="section">Property Value</h4>
+  <dl class="parameters">
+    <dt><a class="xref" href="https://learn.microsoft.com/dotnet/api/system.string">string</a></dt>
+    <dd></dd>
+  </dl>
+
+
+
+
+
+
+
+
+  <a id="ACadSharp_Entities_Spline_Weights_" data-uid="ACadSharp.Entities.Spline.Weights*"></a>
+
+  <h3 id="ACadSharp_Entities_Spline_Weights" data-uid="ACadSharp.Entities.Spline.Weights">
+  Weights
+  <a class="header-action link-secondary" title="View source" href="https://github.com/DomCR/ACadSharp/blob/1065/merge/src/ACadSharp/Entities/Spline.cs/#L191"><i class="bi bi-code-slash"></i></a>
+  </h3>
+
+  <div class="markdown level1 summary"><p>Weight(if not 1); with multiple group pairs, they are present if all are not 1.</p>
+</div>
+  <div class="markdown level1 conceptual"></div>
+
+  <div class="codewrapper">
+    <pre><code class="lang-csharp hljs">[DxfCodeValue(DxfReferenceType.Count, new int[] { 41 })]
+public List&lt;double&gt; Weights { get; }</code></pre>
+  </div>
+
+
+
+
+
+  <h4 class="section">Property Value</h4>
+  <dl class="parameters">
+    <dt><a class="xref" href="https://learn.microsoft.com/dotnet/api/system.collections.generic.list-1">List</a>&lt;<a class="xref" href="https://learn.microsoft.com/dotnet/api/system.double">double</a>&gt;</dt>
+    <dd></dd>
+  </dl>
+
+
+
+
+
+
+
+
+  <h2 class="section" id="methods">Methods
+</h2>
+
+
+  <a id="ACadSharp_Entities_Spline_ApplyTransform_" data-uid="ACadSharp.Entities.Spline.ApplyTransform*"></a>
+
+  <h3 id="ACadSharp_Entities_Spline_ApplyTransform_CSMath_Transform_" data-uid="ACadSharp.Entities.Spline.ApplyTransform(CSMath.Transform)">
+  ApplyTransform(Transform)
+  <a class="header-action link-secondary" title="View source" href="https://github.com/DomCR/ACadSharp/blob/1065/merge/src/ACadSharp/Entities/Spline.cs/#L204"><i class="bi bi-code-slash"></i></a>
+  </h3>
+
+  <div class="markdown level1 summary"><p>Apply a transform matrix to this entity.</p>
+</div>
+  <div class="markdown level1 conceptual"></div>
+
+  <div class="codewrapper">
+    <pre><code class="lang-csharp hljs">public override void ApplyTransform(Transform transform)</code></pre>
+  </div>
+
+  <h4 class="section">Parameters</h4>
+  <dl class="parameters">
+    <dt><code>transform</code> <a class="xref" href="CSMath.Transform.html">Transform</a></dt>
+    <dd></dd>
+  </dl>
+
+
+
+
+
+
+
+
+
+
+
+
+  <a id="ACadSharp_Entities_Spline_Clone_" data-uid="ACadSharp.Entities.Spline.Clone*"></a>
+
+  <h3 id="ACadSharp_Entities_Spline_Clone" data-uid="ACadSharp.Entities.Spline.Clone">
+  Clone()
+  <a class="header-action link-secondary" title="View source" href="https://github.com/DomCR/ACadSharp/blob/1065/merge/src/ACadSharp/Entities/Spline.cs/#L223"><i class="bi bi-code-slash"></i></a>
+  </h3>
+
+  <div class="markdown level1 summary"><p>Creates a new object that is a copy of the current instance.</p>
+</div>
+  <div class="markdown level1 conceptual"></div>
+
+  <div class="codewrapper">
+    <pre><code class="lang-csharp hljs">public override CadObject Clone()</code></pre>
+  </div>
+
+
+  <h4 class="section">Returns</h4>
+  <dl class="parameters">
+    <dt><a class="xref" href="ACadSharp.CadObject.html">CadObject</a></dt>
+    <dd><p>A new object that is a copy of this instance.</p>
+</dd>
+  </dl>
+
+
+
+
+
+
+
+  <h4 class="section" id="ACadSharp_Entities_Spline_Clone_remarks">Remarks</h4>
+  <div class="markdown level1 remarks"><p>The copy will be unattached from the document or any reference.</p>
+</div>
+
+
+
+
+  <a id="ACadSharp_Entities_Spline_GetBoundingBox_" data-uid="ACadSharp.Entities.Spline.GetBoundingBox*"></a>
+
+  <h3 id="ACadSharp_Entities_Spline_GetBoundingBox" data-uid="ACadSharp.Entities.Spline.GetBoundingBox">
+  GetBoundingBox()
+  <a class="header-action link-secondary" title="View source" href="https://github.com/DomCR/ACadSharp/blob/1065/merge/src/ACadSharp/Entities/Spline.cs/#L236"><i class="bi bi-code-slash"></i></a>
+  </h3>
+
+  <div class="markdown level1 summary"><p>Gets the bounding box aligned with the axis XYZ that occupies this entity.</p>
+</div>
+  <div class="markdown level1 conceptual"></div>
+
+  <div class="codewrapper">
+    <pre><code class="lang-csharp hljs">public override BoundingBox GetBoundingBox()</code></pre>
+  </div>
+
+
+  <h4 class="section">Returns</h4>
+  <dl class="parameters">
+    <dt><a class="xref" href="CSMath.BoundingBox.html">BoundingBox</a></dt>
+    <dd><p>The bounding box where this entity resides.</p>
+</dd>
+  </dl>
+
+
+
+
+
+
+
+
+
+
+
+  <a id="ACadSharp_Entities_Spline_PointOnSpline_" data-uid="ACadSharp.Entities.Spline.PointOnSpline*"></a>
+
+  <h3 id="ACadSharp_Entities_Spline_PointOnSpline_System_Double_" data-uid="ACadSharp.Entities.Spline.PointOnSpline(System.Double)">
+  PointOnSpline(double)
+  <a class="header-action link-secondary" title="View source" href="https://github.com/DomCR/ACadSharp/blob/1065/merge/src/ACadSharp/Entities/Spline.cs/#L254"><i class="bi bi-code-slash"></i></a>
+  </h3>
+
+  <div class="markdown level1 summary"><p>Calculates the point on the spline at the specified parametric position.</p>
+</div>
+  <div class="markdown level1 conceptual"></div>
+
+  <div class="codewrapper">
+    <pre><code class="lang-csharp hljs">public XYZ PointOnSpline(double t)</code></pre>
+  </div>
+
+  <h4 class="section">Parameters</h4>
+  <dl class="parameters">
+    <dt><code>t</code> <a class="xref" href="https://learn.microsoft.com/dotnet/api/system.double">double</a></dt>
+    <dd><p>The parametric position along the spline, where <code>0</code> represents the start of the spline and <code>1</code> represents the end. Must be a value between <code>0</code> and <code>1</code>.</p>
+</dd>
+  </dl>
+
+  <h4 class="section">Returns</h4>
+  <dl class="parameters">
+    <dt><a class="xref" href="CSMath.XYZ.html">XYZ</a></dt>
+    <dd><p>The point on the spline at the specified parametric position, represented as an <a class="xref" href="CSMath.XYZ.html">XYZ</a> object.</p>
+</dd>
+  </dl>
+
+
+
+
+
+
+
+
+  <h4 class="section">Exceptions</h4>
+  <dl class="parameters">
+    <dt><a class="xref" href="https://learn.microsoft.com/dotnet/api/system.argumentoutofrangeexception">ArgumentOutOfRangeException</a></dt>
+    <dd><p>Thrown if <code class="paramref">t</code> is less than <code>0</code> or greater than <code>1</code>.</p>
+</dd>
+  </dl>
+
+
+
+  <a id="ACadSharp_Entities_Spline_PolygonalVertexes_" data-uid="ACadSharp.Entities.Spline.PolygonalVertexes*"></a>
+
+  <h3 id="ACadSharp_Entities_Spline_PolygonalVertexes_System_Int32_" data-uid="ACadSharp.Entities.Spline.PolygonalVertexes(System.Int32)">
+  PolygonalVertexes(int)
+  <a class="header-action link-secondary" title="View source" href="https://github.com/DomCR/ACadSharp/blob/1065/merge/src/ACadSharp/Entities/Spline.cs/#L283"><i class="bi bi-code-slash"></i></a>
+  </h3>
+
+  <div class="markdown level1 summary"><p>Generates a list of vertex points representing a polygonal approximation of the curve.</p>
+</div>
+  <div class="markdown level1 conceptual"></div>
+
+  <div class="codewrapper">
+    <pre><code class="lang-csharp hljs">public List&lt;XYZ&gt; PolygonalVertexes(int precision)</code></pre>
+  </div>
+
+  <h4 class="section">Parameters</h4>
+  <dl class="parameters">
+    <dt><code>precision</code> <a class="xref" href="https://learn.microsoft.com/dotnet/api/system.int32">int</a></dt>
+    <dd><p>The number of segments used to approximate the curve. Must be equal to or greater than 2.</p>
+</dd>
+  </dl>
+
+  <h4 class="section">Returns</h4>
+  <dl class="parameters">
+    <dt><a class="xref" href="https://learn.microsoft.com/dotnet/api/system.collections.generic.list-1">List</a>&lt;<a class="xref" href="CSMath.XYZ.html">XYZ</a>&gt;</dt>
+    <dd><p>A list of <a class="xref" href="CSMath.XYZ.html">XYZ</a> objects representing the vertex points of the polygonal approximation.</p>
+</dd>
+  </dl>
+
+
+
+
+
+
+
+  <h4 class="section" id="ACadSharp_Entities_Spline_PolygonalVertexes_System_Int32__remarks">Remarks</h4>
+  <div class="markdown level1 remarks"><p>The method calculates the vertex points by dividing the curve into segments based on the specified
+precision. If the curve is not closed or periodic, the last control point is explicitly added to the
+result.</p>
+</div>
+
+  <h4 class="section">Exceptions</h4>
+  <dl class="parameters">
+    <dt><a class="xref" href="https://learn.microsoft.com/dotnet/api/system.argumentoutofrangeexception">ArgumentOutOfRangeException</a></dt>
+    <dd><p>Thrown if <code class="paramref">precision</code> is less than 2.</p>
+</dd>
+  </dl>
+
+
+
+  <a id="ACadSharp_Entities_Spline_TryPointOnSpline_" data-uid="ACadSharp.Entities.Spline.TryPointOnSpline*"></a>
+
+  <h3 id="ACadSharp_Entities_Spline_TryPointOnSpline_System_Double_CSMath_XYZ__" data-uid="ACadSharp.Entities.Spline.TryPointOnSpline(System.Double,CSMath.XYZ@)">
+  TryPointOnSpline(double, out XYZ)
+  <a class="header-action link-secondary" title="View source" href="https://github.com/DomCR/ACadSharp/blob/1065/merge/src/ACadSharp/Entities/Spline.cs/#L326"><i class="bi bi-code-slash"></i></a>
+  </h3>
+
+  <div class="markdown level1 summary"><p>Attempts to calculate a point on the spline at the specified parameter value.</p>
+</div>
+  <div class="markdown level1 conceptual"></div>
+
+  <div class="codewrapper">
+    <pre><code class="lang-csharp hljs">public bool TryPointOnSpline(double t, out XYZ point)</code></pre>
+  </div>
+
+  <h4 class="section">Parameters</h4>
+  <dl class="parameters">
+    <dt><code>t</code> <a class="xref" href="https://learn.microsoft.com/dotnet/api/system.double">double</a></dt>
+    <dd><p>The parameter value along the spline, typically in the range [0, 1].</p>
+</dd>
+    <dt><code>point</code> <a class="xref" href="CSMath.XYZ.html">XYZ</a></dt>
+    <dd><p>When this method returns, contains the calculated point on the spline if the operation succeeds; otherwise, <a class="xref" href="CSMath.XYZ.html#CSMath_XYZ_NaN">NaN</a>. This parameter is passed uninitialized.</p>
+</dd>
+  </dl>
+
+  <h4 class="section">Returns</h4>
+  <dl class="parameters">
+    <dt><a class="xref" href="https://learn.microsoft.com/dotnet/api/system.boolean">bool</a></dt>
+    <dd><p><a href="https://learn.microsoft.com/dotnet/csharp/language-reference/builtin-types/bool">true</a> if the point was successfully calculated; otherwise, <a href="https://learn.microsoft.com/dotnet/csharp/language-reference/builtin-types/bool">false</a>.</p>
+</dd>
+  </dl>
+
+
+
+
+
+
+
+  <h4 class="section" id="ACadSharp_Entities_Spline_TryPointOnSpline_System_Double_CSMath_XYZ___remarks">Remarks</h4>
+  <div class="markdown level1 remarks"><p>This method catches any exceptions that occur during the calculation and returns <a href="https://learn.microsoft.com/dotnet/csharp/language-reference/builtin-types/bool">false</a> in such cases. Ensure that the parameter <code class="paramref">t</code> is within the valid range for the
+spline to avoid errors.</p>
+</div>
+
+
+
+
+  <a id="ACadSharp_Entities_Spline_TryPolygonalVertexes_" data-uid="ACadSharp.Entities.Spline.TryPolygonalVertexes*"></a>
+
+  <h3 id="ACadSharp_Entities_Spline_TryPolygonalVertexes_System_Int32_System_Collections_Generic_List_CSMath_XYZ___" data-uid="ACadSharp.Entities.Spline.TryPolygonalVertexes(System.Int32,System.Collections.Generic.List{CSMath.XYZ}@)">
+  TryPolygonalVertexes(int, out List&lt;XYZ&gt;)
+  <a class="header-action link-secondary" title="View source" href="https://github.com/DomCR/ACadSharp/blob/1065/merge/src/ACadSharp/Entities/Spline.cs/#L351"><i class="bi bi-code-slash"></i></a>
+  </h3>
+
+  <div class="markdown level1 summary"><p>Attempts to calculate the polygonal vertexes of the current object with the specified precision.</p>
+</div>
+  <div class="markdown level1 conceptual"></div>
+
+  <div class="codewrapper">
+    <pre><code class="lang-csharp hljs">public bool TryPolygonalVertexes(int precision, out List&lt;XYZ&gt; points)</code></pre>
+  </div>
+
+  <h4 class="section">Parameters</h4>
+  <dl class="parameters">
+    <dt><code>precision</code> <a class="xref" href="https://learn.microsoft.com/dotnet/api/system.int32">int</a></dt>
+    <dd><p>The level of precision to use when calculating the polygonal vertexes. Must be a positive integer.</p>
+</dd>
+    <dt><code>points</code> <a class="xref" href="https://learn.microsoft.com/dotnet/api/system.collections.generic.list-1">List</a>&lt;<a class="xref" href="CSMath.XYZ.html">XYZ</a>&gt;</dt>
+    <dd><p>When this method returns, contains a list of <a class="xref" href="CSMath.XYZ.html">XYZ</a> objects representing the calculated polygonal
+vertexes, if the operation succeeds; otherwise, contains an empty list.</p>
+</dd>
+  </dl>
+
+  <h4 class="section">Returns</h4>
+  <dl class="parameters">
+    <dt><a class="xref" href="https://learn.microsoft.com/dotnet/api/system.boolean">bool</a></dt>
+    <dd><p><a href="https://learn.microsoft.com/dotnet/csharp/language-reference/builtin-types/bool">true</a> if the polygonal vertexes were successfully calculated; otherwise, <a href="https://learn.microsoft.com/dotnet/csharp/language-reference/builtin-types/bool">false</a>.</p>
+</dd>
+  </dl>
+
+
+
+
+
+
+
+  <h4 class="section" id="ACadSharp_Entities_Spline_TryPolygonalVertexes_System_Int32_System_Collections_Generic_List_CSMath_XYZ____remarks">Remarks</h4>
+  <div class="markdown level1 remarks"><p>This method catches and suppresses any exceptions that occur during the calculation, returning
+<a href="https://learn.microsoft.com/dotnet/csharp/language-reference/builtin-types/bool">false</a> in such cases. The <code class="paramref">points</code> parameter will always be initialized, even if
+the operation fails.</p>
+</div>
+
+
+
+
+  <a id="ACadSharp_Entities_Spline_UpdateFromFitPoints_" data-uid="ACadSharp.Entities.Spline.UpdateFromFitPoints*"></a>
+
+  <h3 id="ACadSharp_Entities_Spline_UpdateFromFitPoints_System_UInt32_" data-uid="ACadSharp.Entities.Spline.UpdateFromFitPoints(System.UInt32)">
+  UpdateFromFitPoints(uint)
+  <a class="header-action link-secondary" title="View source" href="https://github.com/DomCR/ACadSharp/blob/1065/merge/src/ACadSharp/Entities/Spline.cs/#L377"><i class="bi bi-code-slash"></i></a>
+  </h3>
+
+  <div class="markdown level1 summary"><p>Updates the spline's control points, knots, and weights based on the current fit points and tangents.</p>
+</div>
+  <div class="markdown level1 conceptual"></div>
+
+  <div class="codewrapper">
+    <pre><code class="lang-csharp hljs">public bool UpdateFromFitPoints(uint iterationLimit = 255)</code></pre>
+  </div>
+
+  <h4 class="section">Parameters</h4>
+  <dl class="parameters">
+    <dt><code>iterationLimit</code> <a class="xref" href="https://learn.microsoft.com/dotnet/api/system.uint32">uint</a></dt>
+    <dd><p>The maximum number of iterations allowed for refining the tangents. Defaults to <a class="xref" href="https://learn.microsoft.com/dotnet/api/system.byte.maxvalue">MaxValue</a>.</p>
+</dd>
+  </dl>
+
+  <h4 class="section">Returns</h4>
+  <dl class="parameters">
+    <dt><a class="xref" href="https://learn.microsoft.com/dotnet/api/system.boolean">bool</a></dt>
+    <dd><p><a href="https://learn.microsoft.com/dotnet/csharp/language-reference/builtin-types/bool">true</a> if the spline was successfully updated; otherwise, <a href="https://learn.microsoft.com/dotnet/csharp/language-reference/builtin-types/bool">false</a>.</p>
+</dd>
+  </dl>
+
+
+
+
+
+
+
+  <h4 class="section" id="ACadSharp_Entities_Spline_UpdateFromFitPoints_System_UInt32__remarks">Remarks</h4>
+  <div class="markdown level1 remarks"><p>This method performs the following operations:</p>
+<ul><li>Validates the spline's
+    degree, fit points, and knot parametrization.</li><li>Generates knots and control points based on the fit
+    points and tangents.</li><li>Refines the tangents iteratively if necessary, up to the specified iteration
+    limit.</li><li>Assigns uniform weights to the control points.</li></ul>
+ The method returns <a href="https://learn.microsoft.com/dotnet/csharp/language-reference/builtin-types/bool">false</a> if the spline's degree is not 3, if there are fewer than two fit points, if the knot
+    parametrization is set to <a class="xref" href="ACadSharp.Entities.KnotParametrization.html#ACadSharp_Entities_KnotParametrization_Custom">Custom</a>, or if tangent refinement fails.
+</div>
+
+
+
+
+
+</article>
+
+        <div class="contribution d-print-none">
+          <a href="https://github.com/DomCR/ACadSharp/blob/1065/merge/src/ACadSharp/Entities/Spline.cs/#L17" class="edit-link">Edit this page</a>
+        </div>
+
+
+      </div>
+
+      <div class="affix">
+        <nav id="affix"></nav>
+      </div>
+    </main>
+
+    <div class="container-xxl search-results" id="search-results"></div>
+
+    <footer class="border-top text-secondary">
+      <div class="container-xxl">
+        <div class="flex-fill">
+          <span>Made with <a href="https://dotnet.github.io/docfx">docfx</a></span>
+        </div>
+      </div>
+    </footer>
+  </body>
+</html>

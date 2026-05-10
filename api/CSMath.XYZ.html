@@ -1,0 +1,1623 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <meta charset="utf-8">
+      <title>Struct XYZ | ACadSharp </title>
+      <meta name="viewport" content="width=device-width, initial-scale=1.0">
+      <meta name="title" content="Struct XYZ | ACadSharp ">
+      
+      
+      <link rel="icon" href="../favicon.ico">
+      <link rel="stylesheet" href="../public/docfx.min.css">
+      <link rel="stylesheet" href="../public/main.css">
+      <meta name="docfx:navrel" content="../toc.html">
+      <meta name="docfx:tocrel" content="toc.html">
+      
+      <meta name="docfx:rel" content="../">
+      
+      
+      <meta name="docfx:docurl" content="https://github.com/DomCR/CSUtilities/new/1065/merge/apiSpec/new?filename=CSMath_XYZ.md&amp;value=---%0Auid%3A%20CSMath.XYZ%0Asummary%3A%20&#39;*You%20can%20override%20summary%20for%20the%20API%20here%20using%20*MARKDOWN*%20syntax&#39;%0A---%0A%0A*Please%20type%20below%20more%20information%20about%20this%20API%3A*%0A%0A">
+      <meta name="loc:inThisArticle" content="In this article">
+      <meta name="loc:searchResultsCount" content="{count} results for &quot;{query}&quot;">
+      <meta name="loc:searchNoResults" content="No results for &quot;{query}&quot;">
+      <meta name="loc:tocFilter" content="Filter by title">
+      <meta name="loc:nextArticle" content="Next">
+      <meta name="loc:prevArticle" content="Previous">
+      <meta name="loc:themeLight" content="Light">
+      <meta name="loc:themeDark" content="Dark">
+      <meta name="loc:themeAuto" content="Auto">
+      <meta name="loc:changeTheme" content="Change theme">
+      <meta name="loc:copy" content="Copy">
+      <meta name="loc:downloadPdf" content="Download PDF">
+
+      <script type="module" src="./../public/docfx.min.js"></script>
+
+      <script>
+        const theme = localStorage.getItem('theme') || 'auto'
+        document.documentElement.setAttribute('data-bs-theme', theme === 'auto' ? (window.matchMedia('(prefers-color-scheme: dark)').matches ? 'dark' : 'light') : theme)
+      </script>
+
+  </head>
+
+  <body class="tex2jax_ignore" data-layout="" data-yaml-mime="ManagedReference">
+    <header class="bg-body border-bottom">
+      <nav id="autocollapse" class="navbar navbar-expand-md" role="navigation">
+        <div class="container-xxl flex-nowrap">
+          <a class="navbar-brand" href="../index.html">
+            <img id="logo" class="svg" src="../logo.svg" alt="ACadSharp">
+            ACadSharp
+          </a>
+          <button class="btn btn-lg d-md-none border-0" type="button" data-bs-toggle="collapse" data-bs-target="#navpanel" aria-controls="navpanel" aria-expanded="false" aria-label="Toggle navigation">
+            <i class="bi bi-three-dots"></i>
+          </button>
+          <div class="collapse navbar-collapse" id="navpanel">
+            <div id="navbar">
+              <form class="search" role="search" id="search">
+                <i class="bi bi-search"></i>
+                <input class="form-control" id="search-query" type="search" disabled placeholder="Search" autocomplete="off" aria-label="Search">
+              </form>
+            </div>
+          </div>
+        </div>
+      </nav>
+    </header>
+
+    <main class="container-xxl">
+      <div class="toc-offcanvas">
+        <div class="offcanvas-md offcanvas-start" tabindex="-1" id="tocOffcanvas" aria-labelledby="tocOffcanvasLabel">
+          <div class="offcanvas-header">
+            <h5 class="offcanvas-title" id="tocOffcanvasLabel">Table of Contents</h5>
+            <button type="button" class="btn-close" data-bs-dismiss="offcanvas" data-bs-target="#tocOffcanvas" aria-label="Close"></button>
+          </div>
+          <div class="offcanvas-body">
+            <nav class="toc" id="toc"></nav>
+          </div>
+        </div>
+      </div>
+
+      <div class="content">
+        <div class="actionbar">
+          <button class="btn btn-lg border-0 d-md-none" type="button" data-bs-toggle="offcanvas" data-bs-target="#tocOffcanvas" aria-controls="tocOffcanvas" aria-expanded="false" aria-label="Show table of contents">
+            <i class="bi bi-list"></i>
+          </button>
+
+          <nav id="breadcrumb"></nav>
+        </div>
+
+        <article data-uid="CSMath.XYZ">
+
+
+
+  <h1 id="CSMath_XYZ" data-uid="CSMath.XYZ" class="text-break">
+Struct XYZ  <a class="header-action link-secondary" title="View source" href="https://github.com/DomCR/CSUtilities/blob/1065/merge/CSMath/XYZ.cs/#L5"><i class="bi bi-code-slash"></i></a>
+  </h1>
+
+  <div class="facts text-secondary">
+    <dl><dt>Namespace</dt><dd><a class="xref" href="CSMath.html">CSMath</a></dd></dl>
+  <dl><dt>Assembly</dt><dd>ACadSharp.dll</dd></dl>
+  </div>
+
+  <div class="markdown summary"></div>
+  <div class="markdown conceptual"></div>
+
+  <div class="codewrapper">
+    <pre><code class="lang-csharp hljs">public struct XYZ : IVector, IEquatable&lt;XYZ&gt;</code></pre>
+  </div>
+
+
+
+
+
+  <dl class="typelist implements">
+    <dt>Implements</dt>
+    <dd>
+      <div><a class="xref" href="CSMath.IVector.html">IVector</a></div>
+      <div><a class="xref" href="https://learn.microsoft.com/dotnet/api/system.iequatable-1">IEquatable</a>&lt;<a class="xref" href="CSMath.XYZ.html">XYZ</a>&gt;</div>
+    </dd>
+  </dl>
+
+
+  <dl class="typelist inheritedMembers">
+    <dt>Inherited Members</dt>
+    <dd>
+    <div>
+      <a class="xref" href="https://learn.microsoft.com/dotnet/api/system.object.equals#system-object-equals(system-object-system-object)">object.Equals(object, object)</a>
+    </div>
+    <div>
+      <a class="xref" href="https://learn.microsoft.com/dotnet/api/system.object.gettype">object.GetType()</a>
+    </div>
+    <div>
+      <a class="xref" href="https://learn.microsoft.com/dotnet/api/system.object.referenceequals">object.ReferenceEquals(object, object)</a>
+    </div>
+  </dd></dl>
+
+  <dl class="typelist extensionMethods">
+    <dt>Extension Methods</dt>
+    <dd>
+  <div>
+      <a class="xref" href="CSMath.VectorExtensions.html#CSMath_VectorExtensions_Convert__1_CSMath_IVector_">VectorExtensions.Convert&lt;T&gt;(IVector)</a>
+  </div>
+  <div>
+      <a class="xref" href="CSMath.Geometry.LineExtensions.html#CSMath_Geometry_LineExtensions_TryFindIntersection__2___0___0___1__">LineExtensions.TryFindIntersection&lt;T, R&gt;(T, T, out R)</a>
+  </div>
+  <div>
+      <a class="xref" href="CSMath.VectorExtensions.html#CSMath_VectorExtensions_Add__1___0___0_">VectorExtensions.Add&lt;T&gt;(T, T)</a>
+  </div>
+  <div>
+      <a class="xref" href="CSMath.VectorExtensions.html#CSMath_VectorExtensions_AngleBetweenVectors__1___0___0_">VectorExtensions.AngleBetweenVectors&lt;T&gt;(T, T)</a>
+  </div>
+  <div>
+      <a class="xref" href="CSMath.VectorExtensions.html#CSMath_VectorExtensions_CopyValues__1___0_CSMath_IVector_">VectorExtensions.CopyValues&lt;T&gt;(T, IVector)</a>
+  </div>
+  <div>
+      <a class="xref" href="CSMath.VectorExtensions.html#CSMath_VectorExtensions_DistanceFrom__1___0___0_">VectorExtensions.DistanceFrom&lt;T&gt;(T, T)</a>
+  </div>
+  <div>
+      <a class="xref" href="CSMath.VectorExtensions.html#CSMath_VectorExtensions_Divide__1___0___0_">VectorExtensions.Divide&lt;T&gt;(T, T)</a>
+  </div>
+  <div>
+      <a class="xref" href="CSMath.VectorExtensions.html#CSMath_VectorExtensions_Divide__1___0_System_Double_">VectorExtensions.Divide&lt;T&gt;(T, double)</a>
+  </div>
+  <div>
+      <a class="xref" href="CSMath.VectorExtensions.html#CSMath_VectorExtensions_Dot__1___0___0_">VectorExtensions.Dot&lt;T&gt;(T, T)</a>
+  </div>
+  <div>
+      <a class="xref" href="CSMath.VectorExtensions.html#CSMath_VectorExtensions_GetLengthSquared__1___0_">VectorExtensions.GetLengthSquared&lt;T&gt;(T)</a>
+  </div>
+  <div>
+      <a class="xref" href="CSMath.VectorExtensions.html#CSMath_VectorExtensions_GetLength__1___0_">VectorExtensions.GetLength&lt;T&gt;(T)</a>
+  </div>
+  <div>
+      <a class="xref" href="CSMath.VectorExtensions.html#CSMath_VectorExtensions_IsEqual__1___0___0_">VectorExtensions.IsEqual&lt;T&gt;(T, T)</a>
+  </div>
+  <div>
+      <a class="xref" href="CSMath.VectorExtensions.html#CSMath_VectorExtensions_IsEqual__1___0___0_System_Int32_">VectorExtensions.IsEqual&lt;T&gt;(T, T, int)</a>
+  </div>
+  <div>
+      <a class="xref" href="CSMath.VectorExtensions.html#CSMath_VectorExtensions_IsNaN__1___0_">VectorExtensions.IsNaN&lt;T&gt;(T)</a>
+  </div>
+  <div>
+      <a class="xref" href="CSMath.VectorExtensions.html#CSMath_VectorExtensions_IsNormalized__1___0_">VectorExtensions.IsNormalized&lt;T&gt;(T)</a>
+  </div>
+  <div>
+      <a class="xref" href="CSMath.VectorExtensions.html#CSMath_VectorExtensions_IsParallel__1___0___0_">VectorExtensions.IsParallel&lt;T&gt;(T, T)</a>
+  </div>
+  <div>
+      <a class="xref" href="CSMath.VectorExtensions.html#CSMath_VectorExtensions_IsPerpendicular__1___0___0_">VectorExtensions.IsPerpendicular&lt;T&gt;(T, T)</a>
+  </div>
+  <div>
+      <a class="xref" href="CSMath.VectorExtensions.html#CSMath_VectorExtensions_IsZero__1___0_">VectorExtensions.IsZero&lt;T&gt;(T)</a>
+  </div>
+  <div>
+      <a class="xref" href="CSMath.VectorExtensions.html#CSMath_VectorExtensions_Mid__1___0___0_">VectorExtensions.Mid&lt;T&gt;(T, T)</a>
+  </div>
+  <div>
+      <a class="xref" href="CSMath.VectorExtensions.html#CSMath_VectorExtensions_Multiply__1___0___0_">VectorExtensions.Multiply&lt;T&gt;(T, T)</a>
+  </div>
+  <div>
+      <a class="xref" href="CSMath.VectorExtensions.html#CSMath_VectorExtensions_Multiply__1___0_System_Double_">VectorExtensions.Multiply&lt;T&gt;(T, double)</a>
+  </div>
+  <div>
+      <a class="xref" href="CSMath.VectorExtensions.html#CSMath_VectorExtensions_Normalize__1___0_">VectorExtensions.Normalize&lt;T&gt;(T)</a>
+  </div>
+  <div>
+      <a class="xref" href="CSMath.VectorExtensions.html#CSMath_VectorExtensions_RoundZero__1___0_System_Double_">VectorExtensions.RoundZero&lt;T&gt;(T, double)</a>
+  </div>
+  <div>
+      <a class="xref" href="CSMath.VectorExtensions.html#CSMath_VectorExtensions_Round__1___0_">VectorExtensions.Round&lt;T&gt;(T)</a>
+  </div>
+  <div>
+      <a class="xref" href="CSMath.VectorExtensions.html#CSMath_VectorExtensions_Round__1___0_System_Int32_">VectorExtensions.Round&lt;T&gt;(T, int)</a>
+  </div>
+  <div>
+      <a class="xref" href="CSMath.VectorExtensions.html#CSMath_VectorExtensions_Subtract__1___0___0_">VectorExtensions.Subtract&lt;T&gt;(T, T)</a>
+  </div>
+  <div>
+      <a class="xref" href="CSMath.VectorExtensions.html#CSMath_VectorExtensions_ToEnumerable__1___0_">VectorExtensions.ToEnumerable&lt;T&gt;(T)</a>
+  </div>
+  </dd></dl>
+
+
+
+
+
+  <h2 class="section" id="constructors">Constructors
+</h2>
+
+
+  <a id="CSMath_XYZ__ctor_" data-uid="CSMath.XYZ.#ctor*"></a>
+
+  <h3 id="CSMath_XYZ__ctor_System_Double_" data-uid="CSMath.XYZ.#ctor(System.Double)">
+  XYZ(double)
+  <a class="header-action link-secondary" title="View source" href="https://github.com/DomCR/CSUtilities/blob/1065/merge/CSMath/XYZ.cs/#L52"><i class="bi bi-code-slash"></i></a>
+  </h3>
+
+  <div class="markdown level1 summary"><p>Constructs a vector whose elements are all the single specified value.</p>
+</div>
+  <div class="markdown level1 conceptual"></div>
+
+  <div class="codewrapper">
+    <pre><code class="lang-csharp hljs">public XYZ(double value)</code></pre>
+  </div>
+
+  <h4 class="section">Parameters</h4>
+  <dl class="parameters">
+    <dt><code>value</code> <a class="xref" href="https://learn.microsoft.com/dotnet/api/system.double">double</a></dt>
+    <dd><p>The element to fill the vector with.</p>
+</dd>
+  </dl>
+
+
+
+
+
+
+
+
+
+
+
+
+  <a id="CSMath_XYZ__ctor_" data-uid="CSMath.XYZ.#ctor*"></a>
+
+  <h3 id="CSMath_XYZ__ctor_System_Double_System_Double_System_Double_" data-uid="CSMath.XYZ.#ctor(System.Double,System.Double,System.Double)">
+  XYZ(double, double, double)
+  <a class="header-action link-secondary" title="View source" href="https://github.com/DomCR/CSUtilities/blob/1065/merge/CSMath/XYZ.cs/#L41"><i class="bi bi-code-slash"></i></a>
+  </h3>
+
+  <div class="markdown level1 summary"><p>Constructor with the coordinate components</p>
+</div>
+  <div class="markdown level1 conceptual"></div>
+
+  <div class="codewrapper">
+    <pre><code class="lang-csharp hljs">public XYZ(double x, double y, double z)</code></pre>
+  </div>
+
+  <h4 class="section">Parameters</h4>
+  <dl class="parameters">
+    <dt><code>x</code> <a class="xref" href="https://learn.microsoft.com/dotnet/api/system.double">double</a></dt>
+    <dd><p>Value of the X-coordinate</p>
+</dd>
+    <dt><code>y</code> <a class="xref" href="https://learn.microsoft.com/dotnet/api/system.double">double</a></dt>
+    <dd><p>Value of the Y-coordinate</p>
+</dd>
+    <dt><code>z</code> <a class="xref" href="https://learn.microsoft.com/dotnet/api/system.double">double</a></dt>
+    <dd><p>Value of the Z-coordinate</p>
+</dd>
+  </dl>
+
+
+
+
+
+
+
+
+
+
+
+
+  <a id="CSMath_XYZ__ctor_" data-uid="CSMath.XYZ.#ctor*"></a>
+
+  <h3 id="CSMath_XYZ__ctor_System_Double___" data-uid="CSMath.XYZ.#ctor(System.Double[])">
+  XYZ(double[])
+  <a class="header-action link-secondary" title="View source" href="https://github.com/DomCR/CSUtilities/blob/1065/merge/CSMath/XYZ.cs/#L54"><i class="bi bi-code-slash"></i></a>
+  </h3>
+
+  <div class="markdown level1 summary"></div>
+  <div class="markdown level1 conceptual"></div>
+
+  <div class="codewrapper">
+    <pre><code class="lang-csharp hljs">[Obsolete(&quot;Deprecated&quot;)]
+public XYZ(double[] components)</code></pre>
+  </div>
+
+  <h4 class="section">Parameters</h4>
+  <dl class="parameters">
+    <dt><code>components</code> <a class="xref" href="https://learn.microsoft.com/dotnet/api/system.double">double</a>[]</dt>
+    <dd></dd>
+  </dl>
+
+
+
+
+
+
+
+
+
+
+
+
+  <h2 class="section" id="fields">Fields
+</h2>
+
+
+
+  <h3 id="CSMath_XYZ_AxisX" data-uid="CSMath.XYZ.AxisX">
+  AxisX
+  <a class="header-action link-secondary" title="View source" href="https://github.com/DomCR/CSUtilities/blob/1065/merge/CSMath/XYZ.cs/#L25"><i class="bi bi-code-slash"></i></a>
+  </h3>
+
+  <div class="markdown level1 summary"></div>
+  <div class="markdown level1 conceptual"></div>
+
+  <div class="codewrapper">
+    <pre><code class="lang-csharp hljs">public static readonly XYZ AxisX</code></pre>
+  </div>
+
+
+
+
+  <h4 class="section">Field Value</h4>
+  <dl class="parameters">
+    <dt><a class="xref" href="CSMath.XYZ.html">XYZ</a></dt>
+    <dd></dd>
+  </dl>
+
+
+
+
+
+
+
+
+
+
+  <h3 id="CSMath_XYZ_AxisY" data-uid="CSMath.XYZ.AxisY">
+  AxisY
+  <a class="header-action link-secondary" title="View source" href="https://github.com/DomCR/CSUtilities/blob/1065/merge/CSMath/XYZ.cs/#L27"><i class="bi bi-code-slash"></i></a>
+  </h3>
+
+  <div class="markdown level1 summary"></div>
+  <div class="markdown level1 conceptual"></div>
+
+  <div class="codewrapper">
+    <pre><code class="lang-csharp hljs">public static readonly XYZ AxisY</code></pre>
+  </div>
+
+
+
+
+  <h4 class="section">Field Value</h4>
+  <dl class="parameters">
+    <dt><a class="xref" href="CSMath.XYZ.html">XYZ</a></dt>
+    <dd></dd>
+  </dl>
+
+
+
+
+
+
+
+
+
+
+  <h3 id="CSMath_XYZ_AxisZ" data-uid="CSMath.XYZ.AxisZ">
+  AxisZ
+  <a class="header-action link-secondary" title="View source" href="https://github.com/DomCR/CSUtilities/blob/1065/merge/CSMath/XYZ.cs/#L29"><i class="bi bi-code-slash"></i></a>
+  </h3>
+
+  <div class="markdown level1 summary"></div>
+  <div class="markdown level1 conceptual"></div>
+
+  <div class="codewrapper">
+    <pre><code class="lang-csharp hljs">public static readonly XYZ AxisZ</code></pre>
+  </div>
+
+
+
+
+  <h4 class="section">Field Value</h4>
+  <dl class="parameters">
+    <dt><a class="xref" href="CSMath.XYZ.html">XYZ</a></dt>
+    <dd></dd>
+  </dl>
+
+
+
+
+
+
+
+
+
+
+  <h3 id="CSMath_XYZ_NaN" data-uid="CSMath.XYZ.NaN">
+  NaN
+  <a class="header-action link-secondary" title="View source" href="https://github.com/DomCR/CSUtilities/blob/1065/merge/CSMath/XYZ.cs/#L31"><i class="bi bi-code-slash"></i></a>
+  </h3>
+
+  <div class="markdown level1 summary"></div>
+  <div class="markdown level1 conceptual"></div>
+
+  <div class="codewrapper">
+    <pre><code class="lang-csharp hljs">public static readonly XYZ NaN</code></pre>
+  </div>
+
+
+
+
+  <h4 class="section">Field Value</h4>
+  <dl class="parameters">
+    <dt><a class="xref" href="CSMath.XYZ.html">XYZ</a></dt>
+    <dd></dd>
+  </dl>
+
+
+
+
+
+
+
+
+
+
+  <h3 id="CSMath_XYZ_Zero" data-uid="CSMath.XYZ.Zero">
+  Zero
+  <a class="header-action link-secondary" title="View source" href="https://github.com/DomCR/CSUtilities/blob/1065/merge/CSMath/XYZ.cs/#L33"><i class="bi bi-code-slash"></i></a>
+  </h3>
+
+  <div class="markdown level1 summary"></div>
+  <div class="markdown level1 conceptual"></div>
+
+  <div class="codewrapper">
+    <pre><code class="lang-csharp hljs">public static readonly XYZ Zero</code></pre>
+  </div>
+
+
+
+
+  <h4 class="section">Field Value</h4>
+  <dl class="parameters">
+    <dt><a class="xref" href="CSMath.XYZ.html">XYZ</a></dt>
+    <dd></dd>
+  </dl>
+
+
+
+
+
+
+
+
+
+  <h2 class="section" id="properties">Properties
+</h2>
+
+
+  <a id="CSMath_XYZ_Dimension_" data-uid="CSMath.XYZ.Dimension*"></a>
+
+  <h3 id="CSMath_XYZ_Dimension" data-uid="CSMath.XYZ.Dimension">
+  Dimension
+  <a class="header-action link-secondary" title="View source" href="https://github.com/DomCR/CSUtilities/blob/1065/merge/CSMath/XYZ.cs/#L8"><i class="bi bi-code-slash"></i></a>
+  </h3>
+
+  <div class="markdown level1 summary"><p>Get the dimension of the <a class="xref" href="CSMath.IVector.html">IVector</a>.</p>
+</div>
+  <div class="markdown level1 conceptual"></div>
+
+  <div class="codewrapper">
+    <pre><code class="lang-csharp hljs">public uint Dimension { get; }</code></pre>
+  </div>
+
+
+
+
+
+  <h4 class="section">Property Value</h4>
+  <dl class="parameters">
+    <dt><a class="xref" href="https://learn.microsoft.com/dotnet/api/system.uint32">uint</a></dt>
+    <dd></dd>
+  </dl>
+
+
+
+
+
+
+
+
+  <a id="CSMath_XYZ_Item_" data-uid="CSMath.XYZ.Item*"></a>
+
+  <h3 id="CSMath_XYZ_Item_System_Int32_" data-uid="CSMath.XYZ.Item(System.Int32)">
+  this[int]
+  <a class="header-action link-secondary" title="View source" href="https://github.com/DomCR/CSUtilities/blob/1065/merge/CSMath/XYZ.cs/#L200"><i class="bi bi-code-slash"></i></a>
+  </h3>
+
+  <div class="markdown level1 summary"><p>Value of the coordinate at the specified index.</p>
+</div>
+  <div class="markdown level1 conceptual"></div>
+
+  <div class="codewrapper">
+    <pre><code class="lang-csharp hljs">public double this[int index] { get; set; }</code></pre>
+  </div>
+
+  <h4 class="section">Parameters</h4>
+  <dl class="parameters">
+    <dt><code>index</code> <a class="xref" href="https://learn.microsoft.com/dotnet/api/system.int32">int</a></dt>
+    <dd><p>The index.</p>
+</dd>
+  </dl>
+
+
+
+
+  <h4 class="section">Property Value</h4>
+  <dl class="parameters">
+    <dt><a class="xref" href="https://learn.microsoft.com/dotnet/api/system.double">double</a></dt>
+    <dd><p>The value of the coordinate at the specified index.</p>
+</dd>
+  </dl>
+
+
+
+
+
+
+
+
+  <a id="CSMath_XYZ_X_" data-uid="CSMath.XYZ.X*"></a>
+
+  <h3 id="CSMath_XYZ_X" data-uid="CSMath.XYZ.X">
+  X
+  <a class="header-action link-secondary" title="View source" href="https://github.com/DomCR/CSUtilities/blob/1065/merge/CSMath/XYZ.cs/#L13"><i class="bi bi-code-slash"></i></a>
+  </h3>
+
+  <div class="markdown level1 summary"><p>Specifies the X-value of the vector component</p>
+</div>
+  <div class="markdown level1 conceptual"></div>
+
+  <div class="codewrapper">
+    <pre><code class="lang-csharp hljs">public double X { readonly get; set; }</code></pre>
+  </div>
+
+
+
+
+
+  <h4 class="section">Property Value</h4>
+  <dl class="parameters">
+    <dt><a class="xref" href="https://learn.microsoft.com/dotnet/api/system.double">double</a></dt>
+    <dd></dd>
+  </dl>
+
+
+
+
+
+
+
+
+  <a id="CSMath_XYZ_Y_" data-uid="CSMath.XYZ.Y*"></a>
+
+  <h3 id="CSMath_XYZ_Y" data-uid="CSMath.XYZ.Y">
+  Y
+  <a class="header-action link-secondary" title="View source" href="https://github.com/DomCR/CSUtilities/blob/1065/merge/CSMath/XYZ.cs/#L18"><i class="bi bi-code-slash"></i></a>
+  </h3>
+
+  <div class="markdown level1 summary"><p>Specifies the Y-value of the vector component</p>
+</div>
+  <div class="markdown level1 conceptual"></div>
+
+  <div class="codewrapper">
+    <pre><code class="lang-csharp hljs">public double Y { readonly get; set; }</code></pre>
+  </div>
+
+
+
+
+
+  <h4 class="section">Property Value</h4>
+  <dl class="parameters">
+    <dt><a class="xref" href="https://learn.microsoft.com/dotnet/api/system.double">double</a></dt>
+    <dd></dd>
+  </dl>
+
+
+
+
+
+
+
+
+  <a id="CSMath_XYZ_Z_" data-uid="CSMath.XYZ.Z*"></a>
+
+  <h3 id="CSMath_XYZ_Z" data-uid="CSMath.XYZ.Z">
+  Z
+  <a class="header-action link-secondary" title="View source" href="https://github.com/DomCR/CSUtilities/blob/1065/merge/CSMath/XYZ.cs/#L23"><i class="bi bi-code-slash"></i></a>
+  </h3>
+
+  <div class="markdown level1 summary"><p>Specifies the Z-value of the vector component</p>
+</div>
+  <div class="markdown level1 conceptual"></div>
+
+  <div class="codewrapper">
+    <pre><code class="lang-csharp hljs">public double Z { readonly get; set; }</code></pre>
+  </div>
+
+
+
+
+
+  <h4 class="section">Property Value</h4>
+  <dl class="parameters">
+    <dt><a class="xref" href="https://learn.microsoft.com/dotnet/api/system.double">double</a></dt>
+    <dd></dd>
+  </dl>
+
+
+
+
+
+
+
+
+  <h2 class="section" id="methods">Methods
+</h2>
+
+
+  <a id="CSMath_XYZ_CreateFrom_" data-uid="CSMath.XYZ.CreateFrom*"></a>
+
+  <h3 id="CSMath_XYZ_CreateFrom_System_Double___System_Int32_" data-uid="CSMath.XYZ.CreateFrom(System.Double[],System.Int32)">
+  CreateFrom(double[], int)
+  <a class="header-action link-secondary" title="View source" href="https://github.com/DomCR/CSUtilities/blob/1065/merge/CSMath/XYZ.cs/#L57"><i class="bi bi-code-slash"></i></a>
+  </h3>
+
+  <div class="markdown level1 summary"></div>
+  <div class="markdown level1 conceptual"></div>
+
+  <div class="codewrapper">
+    <pre><code class="lang-csharp hljs">[Obsolete(&quot;Deprecated&quot;)]
+public static XYZ CreateFrom(double[] arr, int offset)</code></pre>
+  </div>
+
+  <h4 class="section">Parameters</h4>
+  <dl class="parameters">
+    <dt><code>arr</code> <a class="xref" href="https://learn.microsoft.com/dotnet/api/system.double">double</a>[]</dt>
+    <dd></dd>
+    <dt><code>offset</code> <a class="xref" href="https://learn.microsoft.com/dotnet/api/system.int32">int</a></dt>
+    <dd></dd>
+  </dl>
+
+  <h4 class="section">Returns</h4>
+  <dl class="parameters">
+    <dt><a class="xref" href="CSMath.XYZ.html">XYZ</a></dt>
+    <dd></dd>
+  </dl>
+
+
+
+
+
+
+
+
+
+
+
+  <a id="CSMath_XYZ_Cross_" data-uid="CSMath.XYZ.Cross*"></a>
+
+  <h3 id="CSMath_XYZ_Cross_CSMath_XYZ_CSMath_XYZ_" data-uid="CSMath.XYZ.Cross(CSMath.XYZ,CSMath.XYZ)">
+  Cross(XYZ, XYZ)
+  <a class="header-action link-secondary" title="View source" href="https://github.com/DomCR/CSUtilities/blob/1065/merge/CSMath/XYZ.cs/#L75"><i class="bi bi-code-slash"></i></a>
+  </h3>
+
+  <div class="markdown level1 summary"><p>Computes the cross product of two coordinates.</p>
+</div>
+  <div class="markdown level1 conceptual"></div>
+
+  <div class="codewrapper">
+    <pre><code class="lang-csharp hljs">public static XYZ Cross(XYZ xyz1, XYZ xyz2)</code></pre>
+  </div>
+
+  <h4 class="section">Parameters</h4>
+  <dl class="parameters">
+    <dt><code>xyz1</code> <a class="xref" href="CSMath.XYZ.html">XYZ</a></dt>
+    <dd><p>The first coordinate.</p>
+</dd>
+    <dt><code>xyz2</code> <a class="xref" href="CSMath.XYZ.html">XYZ</a></dt>
+    <dd><p>The second coordinate.</p>
+</dd>
+  </dl>
+
+  <h4 class="section">Returns</h4>
+  <dl class="parameters">
+    <dt><a class="xref" href="CSMath.XYZ.html">XYZ</a></dt>
+    <dd><p>The cross product.</p>
+</dd>
+  </dl>
+
+
+
+
+
+
+
+
+
+
+
+  <a id="CSMath_XYZ_Equals_" data-uid="CSMath.XYZ.Equals*"></a>
+
+  <h3 id="CSMath_XYZ_Equals_CSMath_XYZ_" data-uid="CSMath.XYZ.Equals(CSMath.XYZ)">
+  Equals(XYZ)
+  <a class="header-action link-secondary" title="View source" href="https://github.com/DomCR/CSUtilities/blob/1065/merge/CSMath/XYZ.cs/#L116"><i class="bi bi-code-slash"></i></a>
+  </h3>
+
+  <div class="markdown level1 summary"><p>Indicates whether the current object is equal to another object of the same type.</p>
+</div>
+  <div class="markdown level1 conceptual"></div>
+
+  <div class="codewrapper">
+    <pre><code class="lang-csharp hljs">public bool Equals(XYZ other)</code></pre>
+  </div>
+
+  <h4 class="section">Parameters</h4>
+  <dl class="parameters">
+    <dt><code>other</code> <a class="xref" href="CSMath.XYZ.html">XYZ</a></dt>
+    <dd><p>An object to compare with this object.</p>
+</dd>
+  </dl>
+
+  <h4 class="section">Returns</h4>
+  <dl class="parameters">
+    <dt><a class="xref" href="https://learn.microsoft.com/dotnet/api/system.boolean">bool</a></dt>
+    <dd><p><a href="https://learn.microsoft.com/dotnet/csharp/language-reference/builtin-types/bool">true</a> if the current object is equal to the <code class="paramref">other</code> parameter; otherwise, <a href="https://learn.microsoft.com/dotnet/csharp/language-reference/builtin-types/bool">false</a>.</p>
+</dd>
+  </dl>
+
+
+
+
+
+
+
+
+
+
+
+  <a id="CSMath_XYZ_Equals_" data-uid="CSMath.XYZ.Equals*"></a>
+
+  <h3 id="CSMath_XYZ_Equals_CSMath_XYZ_System_Int32_" data-uid="CSMath.XYZ.Equals(CSMath.XYZ,System.Int32)">
+  Equals(XYZ, int)
+  <a class="header-action link-secondary" title="View source" href="https://github.com/DomCR/CSUtilities/blob/1065/merge/CSMath/XYZ.cs/#L110"><i class="bi bi-code-slash"></i></a>
+  </h3>
+
+  <div class="markdown level1 summary"><p>Indicates whether this instance and a specified object are equal with in a specific precision.</p>
+</div>
+  <div class="markdown level1 conceptual"></div>
+
+  <div class="codewrapper">
+    <pre><code class="lang-csharp hljs">public bool Equals(XYZ other, int digits)</code></pre>
+  </div>
+
+  <h4 class="section">Parameters</h4>
+  <dl class="parameters">
+    <dt><code>other</code> <a class="xref" href="CSMath.XYZ.html">XYZ</a></dt>
+    <dd></dd>
+    <dt><code>digits</code> <a class="xref" href="https://learn.microsoft.com/dotnet/api/system.int32">int</a></dt>
+    <dd><p>number of decimals</p>
+</dd>
+  </dl>
+
+  <h4 class="section">Returns</h4>
+  <dl class="parameters">
+    <dt><a class="xref" href="https://learn.microsoft.com/dotnet/api/system.boolean">bool</a></dt>
+    <dd></dd>
+  </dl>
+
+
+
+
+
+
+
+
+
+
+
+  <a id="CSMath_XYZ_Equals_" data-uid="CSMath.XYZ.Equals*"></a>
+
+  <h3 id="CSMath_XYZ_Equals_System_Object_" data-uid="CSMath.XYZ.Equals(System.Object)">
+  Equals(object?)
+  <a class="header-action link-secondary" title="View source" href="https://github.com/DomCR/CSUtilities/blob/1065/merge/CSMath/XYZ.cs/#L96"><i class="bi bi-code-slash"></i></a>
+  </h3>
+
+  <div class="markdown level1 summary"><p>Indicates whether this instance and a specified object are equal.</p>
+</div>
+  <div class="markdown level1 conceptual"></div>
+
+  <div class="codewrapper">
+    <pre><code class="lang-csharp hljs">public override bool Equals(object? obj)</code></pre>
+  </div>
+
+  <h4 class="section">Parameters</h4>
+  <dl class="parameters">
+    <dt><code>obj</code> <a class="xref" href="https://learn.microsoft.com/dotnet/api/system.object">object</a></dt>
+    <dd><p>The object to compare with the current instance.</p>
+</dd>
+  </dl>
+
+  <h4 class="section">Returns</h4>
+  <dl class="parameters">
+    <dt><a class="xref" href="https://learn.microsoft.com/dotnet/api/system.boolean">bool</a></dt>
+    <dd><p><a href="https://learn.microsoft.com/dotnet/csharp/language-reference/builtin-types/bool">true</a> if <code class="paramref">obj</code> and this instance are the same type and represent the same value; otherwise, <a href="https://learn.microsoft.com/dotnet/csharp/language-reference/builtin-types/bool">false</a>.</p>
+</dd>
+  </dl>
+
+
+
+
+
+
+
+
+
+
+
+  <a id="CSMath_XYZ_FindNormal_" data-uid="CSMath.XYZ.FindNormal*"></a>
+
+  <h3 id="CSMath_XYZ_FindNormal_CSMath_XYZ_CSMath_XYZ_CSMath_XYZ_" data-uid="CSMath.XYZ.FindNormal(CSMath.XYZ,CSMath.XYZ,CSMath.XYZ)">
+  FindNormal(XYZ, XYZ, XYZ)
+  <a class="header-action link-secondary" title="View source" href="https://github.com/DomCR/CSUtilities/blob/1065/merge/CSMath/XYZ.cs/#L83"><i class="bi bi-code-slash"></i></a>
+  </h3>
+
+  <div class="markdown level1 summary"></div>
+  <div class="markdown level1 conceptual"></div>
+
+  <div class="codewrapper">
+    <pre><code class="lang-csharp hljs">public static XYZ FindNormal(XYZ point1, XYZ point2, XYZ point3)</code></pre>
+  </div>
+
+  <h4 class="section">Parameters</h4>
+  <dl class="parameters">
+    <dt><code>point1</code> <a class="xref" href="CSMath.XYZ.html">XYZ</a></dt>
+    <dd></dd>
+    <dt><code>point2</code> <a class="xref" href="CSMath.XYZ.html">XYZ</a></dt>
+    <dd></dd>
+    <dt><code>point3</code> <a class="xref" href="CSMath.XYZ.html">XYZ</a></dt>
+    <dd></dd>
+  </dl>
+
+  <h4 class="section">Returns</h4>
+  <dl class="parameters">
+    <dt><a class="xref" href="CSMath.XYZ.html">XYZ</a></dt>
+    <dd></dd>
+  </dl>
+
+
+
+
+
+
+
+
+
+
+
+  <a id="CSMath_XYZ_GetAngle_" data-uid="CSMath.XYZ.GetAngle*"></a>
+
+  <h3 id="CSMath_XYZ_GetAngle_CSMath_XYZ_" data-uid="CSMath.XYZ.GetAngle(CSMath.XYZ)">
+  GetAngle(XYZ)
+  <a class="header-action link-secondary" title="View source" href="https://github.com/DomCR/CSUtilities/blob/1065/merge/CSMath/XYZ.cs/#L129"><i class="bi bi-code-slash"></i></a>
+  </h3>
+
+  <div class="markdown level1 summary"><p>Calculates the angle, in radians, between this vector and the specified vector.</p>
+</div>
+  <div class="markdown level1 conceptual"></div>
+
+  <div class="codewrapper">
+    <pre><code class="lang-csharp hljs">public double GetAngle(XYZ dir)</code></pre>
+  </div>
+
+  <h4 class="section">Parameters</h4>
+  <dl class="parameters">
+    <dt><code>dir</code> <a class="xref" href="CSMath.XYZ.html">XYZ</a></dt>
+    <dd><p>The vector to which the angle is measured.</p>
+</dd>
+  </dl>
+
+  <h4 class="section">Returns</h4>
+  <dl class="parameters">
+    <dt><a class="xref" href="https://learn.microsoft.com/dotnet/api/system.double">double</a></dt>
+    <dd><p>The angle, in radians, between this vector and <code class="paramref">dir</code>. The value is in the range [0, π].</p>
+</dd>
+  </dl>
+
+
+
+
+
+
+
+  <h4 class="section" id="CSMath_XYZ_GetAngle_CSMath_XYZ__remarks">Remarks</h4>
+  <div class="markdown level1 remarks"><p>If either vector has zero length, the result may not be meaningful. The method returns 0 if the
+vectors are parallel and point in the same direction, and π if they are parallel and point in opposite
+directions.</p>
+</div>
+
+
+
+
+  <a id="CSMath_XYZ_GetAngle2_" data-uid="CSMath.XYZ.GetAngle2*"></a>
+
+  <h3 id="CSMath_XYZ_GetAngle2_CSMath_XYZ_CSMath_XYZ_" data-uid="CSMath.XYZ.GetAngle2(CSMath.XYZ,CSMath.XYZ)">
+  GetAngle2(XYZ, XYZ)
+  <a class="header-action link-secondary" title="View source" href="https://github.com/DomCR/CSUtilities/blob/1065/merge/CSMath/XYZ.cs/#L154"><i class="bi bi-code-slash"></i></a>
+  </h3>
+
+  <div class="markdown level1 summary"><p>Calculates the signed angle, in radians, between this vector and the specified direction vector, using the given
+normal to determine the sign.</p>
+</div>
+  <div class="markdown level1 conceptual"></div>
+
+  <div class="codewrapper">
+    <pre><code class="lang-csharp hljs">public double GetAngle2(XYZ dir, XYZ normal)</code></pre>
+  </div>
+
+  <h4 class="section">Parameters</h4>
+  <dl class="parameters">
+    <dt><code>dir</code> <a class="xref" href="CSMath.XYZ.html">XYZ</a></dt>
+    <dd><p>The direction vector to which the angle is measured.</p>
+</dd>
+    <dt><code>normal</code> <a class="xref" href="CSMath.XYZ.html">XYZ</a></dt>
+    <dd><p>The normal vector that defines the orientation of the plane in which the angle is measured. The sign of the angle
+is determined based on the direction of this normal.</p>
+</dd>
+  </dl>
+
+  <h4 class="section">Returns</h4>
+  <dl class="parameters">
+    <dt><a class="xref" href="https://learn.microsoft.com/dotnet/api/system.double">double</a></dt>
+    <dd><p>The signed angle, in radians, between this vector and <code class="paramref">dir</code>. The value is in the range [0, 2π].</p>
+</dd>
+  </dl>
+
+
+
+
+
+
+
+  <h4 class="section" id="CSMath_XYZ_GetAngle2_CSMath_XYZ_CSMath_XYZ__remarks">Remarks</h4>
+  <div class="markdown level1 remarks"><p>The returned angle is measured in the plane defined by this vector and <code class="paramref">dir</code>,
+with the sign determined by the right-hand rule using <code class="paramref">normal</code>. If the vectors are parallel, the
+angle is 0 or π depending on their direction.</p>
+</div>
+
+
+
+
+  <a id="CSMath_XYZ_GetHashCode_" data-uid="CSMath.XYZ.GetHashCode*"></a>
+
+  <h3 id="CSMath_XYZ_GetHashCode" data-uid="CSMath.XYZ.GetHashCode">
+  GetHashCode()
+  <a class="header-action link-secondary" title="View source" href="https://github.com/DomCR/CSUtilities/blob/1065/merge/CSMath/XYZ.cs/#L177"><i class="bi bi-code-slash"></i></a>
+  </h3>
+
+  <div class="markdown level1 summary"><p>Returns the hash code for this instance.</p>
+</div>
+  <div class="markdown level1 conceptual"></div>
+
+  <div class="codewrapper">
+    <pre><code class="lang-csharp hljs">public override int GetHashCode()</code></pre>
+  </div>
+
+
+  <h4 class="section">Returns</h4>
+  <dl class="parameters">
+    <dt><a class="xref" href="https://learn.microsoft.com/dotnet/api/system.int32">int</a></dt>
+    <dd><p>A 32-bit signed integer that is the hash code for this instance.</p>
+</dd>
+  </dl>
+
+
+
+
+
+
+
+
+
+
+
+  <a id="CSMath_XYZ_ToString_" data-uid="CSMath.XYZ.ToString*"></a>
+
+  <h3 id="CSMath_XYZ_ToString" data-uid="CSMath.XYZ.ToString">
+  ToString()
+  <a class="header-action link-secondary" title="View source" href="https://github.com/DomCR/CSUtilities/blob/1065/merge/CSMath/XYZ.cs/#L183"><i class="bi bi-code-slash"></i></a>
+  </h3>
+
+  <div class="markdown level1 summary"><p>Returns the fully qualified type name of this instance.</p>
+</div>
+  <div class="markdown level1 conceptual"></div>
+
+  <div class="codewrapper">
+    <pre><code class="lang-csharp hljs">public override string ToString()</code></pre>
+  </div>
+
+
+  <h4 class="section">Returns</h4>
+  <dl class="parameters">
+    <dt><a class="xref" href="https://learn.microsoft.com/dotnet/api/system.string">string</a></dt>
+    <dd><p>The fully qualified type name.</p>
+</dd>
+  </dl>
+
+
+
+
+
+
+
+
+
+
+
+  <a id="CSMath_XYZ_ToString_" data-uid="CSMath.XYZ.ToString*"></a>
+
+  <h3 id="CSMath_XYZ_ToString_System_IFormatProvider_" data-uid="CSMath.XYZ.ToString(System.IFormatProvider)">
+  ToString(IFormatProvider?)
+  <a class="header-action link-secondary" title="View source" href="https://github.com/DomCR/CSUtilities/blob/1065/merge/CSMath/XYZ.cs/#L194"><i class="bi bi-code-slash"></i></a>
+  </h3>
+
+  <div class="markdown level1 summary"><p>Converts the numeric value of this instance to its equivalent string representation
+using the specified culture-specific format information.</p>
+</div>
+  <div class="markdown level1 conceptual"></div>
+
+  <div class="codewrapper">
+    <pre><code class="lang-csharp hljs">public string ToString(IFormatProvider? cultureInfo)</code></pre>
+  </div>
+
+  <h4 class="section">Parameters</h4>
+  <dl class="parameters">
+    <dt><code>cultureInfo</code> <a class="xref" href="https://learn.microsoft.com/dotnet/api/system.iformatprovider">IFormatProvider</a></dt>
+    <dd><p>An object that supplies culture-specific formatting information.</p>
+</dd>
+  </dl>
+
+  <h4 class="section">Returns</h4>
+  <dl class="parameters">
+    <dt><a class="xref" href="https://learn.microsoft.com/dotnet/api/system.string">string</a></dt>
+    <dd><p>The string representation of the value of this instance as specified by provider.</p>
+</dd>
+  </dl>
+
+
+
+
+
+
+
+
+
+
+
+  <h2 class="section" id="operators">Operators
+</h2>
+
+
+  <a id="CSMath_XYZ_op_Addition_" data-uid="CSMath.XYZ.op_Addition*"></a>
+
+  <h3 id="CSMath_XYZ_op_Addition_CSMath_XYZ_CSMath_XYZ_" data-uid="CSMath.XYZ.op_Addition(CSMath.XYZ,CSMath.XYZ)">
+  operator +(XYZ, XYZ)
+  <a class="header-action link-secondary" title="View source" href="https://github.com/DomCR/CSUtilities/blob/1065/merge/CSMath/XYZ.operators.cs/#L13"><i class="bi bi-code-slash"></i></a>
+  </h3>
+
+  <div class="markdown level1 summary"><p>Adds two vectors together.</p>
+</div>
+  <div class="markdown level1 conceptual"></div>
+
+  <div class="codewrapper">
+    <pre><code class="lang-csharp hljs">public static XYZ operator +(XYZ left, XYZ right)</code></pre>
+  </div>
+
+  <h4 class="section">Parameters</h4>
+  <dl class="parameters">
+    <dt><code>left</code> <a class="xref" href="CSMath.XYZ.html">XYZ</a></dt>
+    <dd><p>The first source vector.</p>
+</dd>
+    <dt><code>right</code> <a class="xref" href="CSMath.XYZ.html">XYZ</a></dt>
+    <dd><p>The second source vector.</p>
+</dd>
+  </dl>
+
+  <h4 class="section">Returns</h4>
+  <dl class="parameters">
+    <dt><a class="xref" href="CSMath.XYZ.html">XYZ</a></dt>
+    <dd><p>The summed vector.</p>
+</dd>
+  </dl>
+
+
+
+
+
+
+
+
+
+
+
+  <a id="CSMath_XYZ_op_Division_" data-uid="CSMath.XYZ.op_Division*"></a>
+
+  <h3 id="CSMath_XYZ_op_Division_CSMath_XYZ_CSMath_XYZ_" data-uid="CSMath.XYZ.op_Division(CSMath.XYZ,CSMath.XYZ)">
+  operator /(XYZ, XYZ)
+  <a class="header-action link-secondary" title="View source" href="https://github.com/DomCR/CSUtilities/blob/1065/merge/CSMath/XYZ.operators.cs/#L68"><i class="bi bi-code-slash"></i></a>
+  </h3>
+
+  <div class="markdown level1 summary"><p>Divides the first vector by the second.</p>
+</div>
+  <div class="markdown level1 conceptual"></div>
+
+  <div class="codewrapper">
+    <pre><code class="lang-csharp hljs">public static XYZ operator /(XYZ left, XYZ right)</code></pre>
+  </div>
+
+  <h4 class="section">Parameters</h4>
+  <dl class="parameters">
+    <dt><code>left</code> <a class="xref" href="CSMath.XYZ.html">XYZ</a></dt>
+    <dd><p>The first source vector.</p>
+</dd>
+    <dt><code>right</code> <a class="xref" href="CSMath.XYZ.html">XYZ</a></dt>
+    <dd><p>The second source vector.</p>
+</dd>
+  </dl>
+
+  <h4 class="section">Returns</h4>
+  <dl class="parameters">
+    <dt><a class="xref" href="CSMath.XYZ.html">XYZ</a></dt>
+    <dd><p>The vector resulting from the division.</p>
+</dd>
+  </dl>
+
+
+
+
+
+
+
+
+
+
+
+  <a id="CSMath_XYZ_op_Division_" data-uid="CSMath.XYZ.op_Division*"></a>
+
+  <h3 id="CSMath_XYZ_op_Division_CSMath_XYZ_System_Double_" data-uid="CSMath.XYZ.op_Division(CSMath.XYZ,System.Double)">
+  operator /(XYZ, double)
+  <a class="header-action link-secondary" title="View source" href="https://github.com/DomCR/CSUtilities/blob/1065/merge/CSMath/XYZ.operators.cs/#L94"><i class="bi bi-code-slash"></i></a>
+  </h3>
+
+  <div class="markdown level1 summary"><p>Divides the vector by the given scalar.</p>
+</div>
+  <div class="markdown level1 conceptual"></div>
+
+  <div class="codewrapper">
+    <pre><code class="lang-csharp hljs">public static XYZ operator /(XYZ xyz, double value)</code></pre>
+  </div>
+
+  <h4 class="section">Parameters</h4>
+  <dl class="parameters">
+    <dt><code>xyz</code> <a class="xref" href="CSMath.XYZ.html">XYZ</a></dt>
+    <dd><p>The source vector.</p>
+</dd>
+    <dt><code>value</code> <a class="xref" href="https://learn.microsoft.com/dotnet/api/system.double">double</a></dt>
+    <dd><p>The scalar value.</p>
+</dd>
+  </dl>
+
+  <h4 class="section">Returns</h4>
+  <dl class="parameters">
+    <dt><a class="xref" href="CSMath.XYZ.html">XYZ</a></dt>
+    <dd><p>The result of the division.</p>
+</dd>
+  </dl>
+
+
+
+
+
+
+
+
+
+
+
+  <a id="CSMath_XYZ_op_Division_" data-uid="CSMath.XYZ.op_Division*"></a>
+
+  <h3 id="CSMath_XYZ_op_Division_CSMath_XYZ_System_Single_" data-uid="CSMath.XYZ.op_Division(CSMath.XYZ,System.Single)">
+  operator /(XYZ, float)
+  <a class="header-action link-secondary" title="View source" href="https://github.com/DomCR/CSUtilities/blob/1065/merge/CSMath/XYZ.operators.cs/#L79"><i class="bi bi-code-slash"></i></a>
+  </h3>
+
+  <div class="markdown level1 summary"><p>Divides the vector by the given scalar.</p>
+</div>
+  <div class="markdown level1 conceptual"></div>
+
+  <div class="codewrapper">
+    <pre><code class="lang-csharp hljs">public static XYZ operator /(XYZ xyz, float value)</code></pre>
+  </div>
+
+  <h4 class="section">Parameters</h4>
+  <dl class="parameters">
+    <dt><code>xyz</code> <a class="xref" href="CSMath.XYZ.html">XYZ</a></dt>
+    <dd><p>The source vector.</p>
+</dd>
+    <dt><code>value</code> <a class="xref" href="https://learn.microsoft.com/dotnet/api/system.single">float</a></dt>
+    <dd><p>The scalar value.</p>
+</dd>
+  </dl>
+
+  <h4 class="section">Returns</h4>
+  <dl class="parameters">
+    <dt><a class="xref" href="CSMath.XYZ.html">XYZ</a></dt>
+    <dd><p>The result of the division.</p>
+</dd>
+  </dl>
+
+
+
+
+
+
+
+
+
+
+
+  <a id="CSMath_XYZ_op_Equality_" data-uid="CSMath.XYZ.op_Equality*"></a>
+
+  <h3 id="CSMath_XYZ_op_Equality_CSMath_XYZ_CSMath_XYZ_" data-uid="CSMath.XYZ.op_Equality(CSMath.XYZ,CSMath.XYZ)">
+  operator ==(XYZ, XYZ)
+  <a class="header-action link-secondary" title="View source" href="https://github.com/DomCR/CSUtilities/blob/1065/merge/CSMath/XYZ.operators.cs/#L119"><i class="bi bi-code-slash"></i></a>
+  </h3>
+
+  <div class="markdown level1 summary"><p>Returns a boolean indicating whether the two given vectors are equal.</p>
+</div>
+  <div class="markdown level1 conceptual"></div>
+
+  <div class="codewrapper">
+    <pre><code class="lang-csharp hljs">public static bool operator ==(XYZ left, XYZ right)</code></pre>
+  </div>
+
+  <h4 class="section">Parameters</h4>
+  <dl class="parameters">
+    <dt><code>left</code> <a class="xref" href="CSMath.XYZ.html">XYZ</a></dt>
+    <dd><p>The first vector to compare.</p>
+</dd>
+    <dt><code>right</code> <a class="xref" href="CSMath.XYZ.html">XYZ</a></dt>
+    <dd><p>The second vector to compare.</p>
+</dd>
+  </dl>
+
+  <h4 class="section">Returns</h4>
+  <dl class="parameters">
+    <dt><a class="xref" href="https://learn.microsoft.com/dotnet/api/system.boolean">bool</a></dt>
+    <dd><p>True if the vectors are equal; False otherwise.</p>
+</dd>
+  </dl>
+
+
+
+
+
+
+
+
+
+
+
+  <a id="CSMath_XYZ_op_Explicit_" data-uid="CSMath.XYZ.op_Explicit*"></a>
+
+  <h3 id="CSMath_XYZ_op_Explicit_CSMath_XY__CSMath_XYZ" data-uid="CSMath.XYZ.op_Explicit(CSMath.XY)~CSMath.XYZ">
+  explicit operator XYZ(XY)
+  <a class="header-action link-secondary" title="View source" href="https://github.com/DomCR/CSUtilities/blob/1065/merge/CSMath/XYZ.operators.cs/#L139"><i class="bi bi-code-slash"></i></a>
+  </h3>
+
+  <div class="markdown level1 summary"></div>
+  <div class="markdown level1 conceptual"></div>
+
+  <div class="codewrapper">
+    <pre><code class="lang-csharp hljs">public static explicit operator XYZ(XY xy)</code></pre>
+  </div>
+
+  <h4 class="section">Parameters</h4>
+  <dl class="parameters">
+    <dt><code>xy</code> <a class="xref" href="CSMath.XY.html">XY</a></dt>
+    <dd></dd>
+  </dl>
+
+  <h4 class="section">Returns</h4>
+  <dl class="parameters">
+    <dt><a class="xref" href="CSMath.XYZ.html">XYZ</a></dt>
+    <dd></dd>
+  </dl>
+
+
+
+
+
+
+
+
+
+
+
+  <a id="CSMath_XYZ_op_Inequality_" data-uid="CSMath.XYZ.op_Inequality*"></a>
+
+  <h3 id="CSMath_XYZ_op_Inequality_CSMath_XYZ_CSMath_XYZ_" data-uid="CSMath.XYZ.op_Inequality(CSMath.XYZ,CSMath.XYZ)">
+  operator !=(XYZ, XYZ)
+  <a class="header-action link-secondary" title="View source" href="https://github.com/DomCR/CSUtilities/blob/1065/merge/CSMath/XYZ.operators.cs/#L132"><i class="bi bi-code-slash"></i></a>
+  </h3>
+
+  <div class="markdown level1 summary"><p>Returns a boolean indicating whether the two given vectors are not equal.</p>
+</div>
+  <div class="markdown level1 conceptual"></div>
+
+  <div class="codewrapper">
+    <pre><code class="lang-csharp hljs">public static bool operator !=(XYZ left, XYZ right)</code></pre>
+  </div>
+
+  <h4 class="section">Parameters</h4>
+  <dl class="parameters">
+    <dt><code>left</code> <a class="xref" href="CSMath.XYZ.html">XYZ</a></dt>
+    <dd><p>The first vector to compare.</p>
+</dd>
+    <dt><code>right</code> <a class="xref" href="CSMath.XYZ.html">XYZ</a></dt>
+    <dd><p>The second vector to compare.</p>
+</dd>
+  </dl>
+
+  <h4 class="section">Returns</h4>
+  <dl class="parameters">
+    <dt><a class="xref" href="https://learn.microsoft.com/dotnet/api/system.boolean">bool</a></dt>
+    <dd><p>True if the vectors are not equal; False if they are equal.</p>
+</dd>
+  </dl>
+
+
+
+
+
+
+
+
+
+
+
+  <a id="CSMath_XYZ_op_Multiply_" data-uid="CSMath.XYZ.op_Multiply*"></a>
+
+  <h3 id="CSMath_XYZ_op_Multiply_CSMath_XYZ_CSMath_XYZ_" data-uid="CSMath.XYZ.op_Multiply(CSMath.XYZ,CSMath.XYZ)">
+  operator *(XYZ, XYZ)
+  <a class="header-action link-secondary" title="View source" href="https://github.com/DomCR/CSUtilities/blob/1065/merge/CSMath/XYZ.operators.cs/#L35"><i class="bi bi-code-slash"></i></a>
+  </h3>
+
+  <div class="markdown level1 summary"><p>Multiplies two vectors together.</p>
+</div>
+  <div class="markdown level1 conceptual"></div>
+
+  <div class="codewrapper">
+    <pre><code class="lang-csharp hljs">public static XYZ operator *(XYZ left, XYZ right)</code></pre>
+  </div>
+
+  <h4 class="section">Parameters</h4>
+  <dl class="parameters">
+    <dt><code>left</code> <a class="xref" href="CSMath.XYZ.html">XYZ</a></dt>
+    <dd><p>The first source vector.</p>
+</dd>
+    <dt><code>right</code> <a class="xref" href="CSMath.XYZ.html">XYZ</a></dt>
+    <dd><p>The second source vector.</p>
+</dd>
+  </dl>
+
+  <h4 class="section">Returns</h4>
+  <dl class="parameters">
+    <dt><a class="xref" href="CSMath.XYZ.html">XYZ</a></dt>
+    <dd><p>The product vector.</p>
+</dd>
+  </dl>
+
+
+
+
+
+
+
+
+
+
+
+  <a id="CSMath_XYZ_op_Multiply_" data-uid="CSMath.XYZ.op_Multiply*"></a>
+
+  <h3 id="CSMath_XYZ_op_Multiply_CSMath_XYZ_System_Double_" data-uid="CSMath.XYZ.op_Multiply(CSMath.XYZ,System.Double)">
+  operator *(XYZ, double)
+  <a class="header-action link-secondary" title="View source" href="https://github.com/DomCR/CSUtilities/blob/1065/merge/CSMath/XYZ.operators.cs/#L46"><i class="bi bi-code-slash"></i></a>
+  </h3>
+
+  <div class="markdown level1 summary"><p>Multiplies a vector by the given scalar.</p>
+</div>
+  <div class="markdown level1 conceptual"></div>
+
+  <div class="codewrapper">
+    <pre><code class="lang-csharp hljs">public static XYZ operator *(XYZ left, double scalar)</code></pre>
+  </div>
+
+  <h4 class="section">Parameters</h4>
+  <dl class="parameters">
+    <dt><code>left</code> <a class="xref" href="CSMath.XYZ.html">XYZ</a></dt>
+    <dd><p>The source vector.</p>
+</dd>
+    <dt><code>scalar</code> <a class="xref" href="https://learn.microsoft.com/dotnet/api/system.double">double</a></dt>
+    <dd><p>The scalar value.</p>
+</dd>
+  </dl>
+
+  <h4 class="section">Returns</h4>
+  <dl class="parameters">
+    <dt><a class="xref" href="CSMath.XYZ.html">XYZ</a></dt>
+    <dd><p>The scaled vector.</p>
+</dd>
+  </dl>
+
+
+
+
+
+
+
+
+
+
+
+  <a id="CSMath_XYZ_op_Multiply_" data-uid="CSMath.XYZ.op_Multiply*"></a>
+
+  <h3 id="CSMath_XYZ_op_Multiply_System_Double_CSMath_XYZ_" data-uid="CSMath.XYZ.op_Multiply(System.Double,CSMath.XYZ)">
+  operator *(double, XYZ)
+  <a class="header-action link-secondary" title="View source" href="https://github.com/DomCR/CSUtilities/blob/1065/merge/CSMath/XYZ.operators.cs/#L57"><i class="bi bi-code-slash"></i></a>
+  </h3>
+
+  <div class="markdown level1 summary"><p>Multiplies a vector by the given scalar.</p>
+</div>
+  <div class="markdown level1 conceptual"></div>
+
+  <div class="codewrapper">
+    <pre><code class="lang-csharp hljs">public static XYZ operator *(double scalar, XYZ vector)</code></pre>
+  </div>
+
+  <h4 class="section">Parameters</h4>
+  <dl class="parameters">
+    <dt><code>scalar</code> <a class="xref" href="https://learn.microsoft.com/dotnet/api/system.double">double</a></dt>
+    <dd><p>The scalar value.</p>
+</dd>
+    <dt><code>vector</code> <a class="xref" href="CSMath.XYZ.html">XYZ</a></dt>
+    <dd><p>The source vector.</p>
+</dd>
+  </dl>
+
+  <h4 class="section">Returns</h4>
+  <dl class="parameters">
+    <dt><a class="xref" href="CSMath.XYZ.html">XYZ</a></dt>
+    <dd><p>The scaled vector.</p>
+</dd>
+  </dl>
+
+
+
+
+
+
+
+
+
+
+
+  <a id="CSMath_XYZ_op_Subtraction_" data-uid="CSMath.XYZ.op_Subtraction*"></a>
+
+  <h3 id="CSMath_XYZ_op_Subtraction_CSMath_XYZ_CSMath_XYZ_" data-uid="CSMath.XYZ.op_Subtraction(CSMath.XYZ,CSMath.XYZ)">
+  operator -(XYZ, XYZ)
+  <a class="header-action link-secondary" title="View source" href="https://github.com/DomCR/CSUtilities/blob/1065/merge/CSMath/XYZ.operators.cs/#L24"><i class="bi bi-code-slash"></i></a>
+  </h3>
+
+  <div class="markdown level1 summary"><p>Subtracts the second vector from the first.</p>
+</div>
+  <div class="markdown level1 conceptual"></div>
+
+  <div class="codewrapper">
+    <pre><code class="lang-csharp hljs">public static XYZ operator -(XYZ left, XYZ right)</code></pre>
+  </div>
+
+  <h4 class="section">Parameters</h4>
+  <dl class="parameters">
+    <dt><code>left</code> <a class="xref" href="CSMath.XYZ.html">XYZ</a></dt>
+    <dd><p>The first source vector.</p>
+</dd>
+    <dt><code>right</code> <a class="xref" href="CSMath.XYZ.html">XYZ</a></dt>
+    <dd><p>The second source vector.</p>
+</dd>
+  </dl>
+
+  <h4 class="section">Returns</h4>
+  <dl class="parameters">
+    <dt><a class="xref" href="CSMath.XYZ.html">XYZ</a></dt>
+    <dd><p>The difference vector.</p>
+</dd>
+  </dl>
+
+
+
+
+
+
+
+
+
+
+
+  <a id="CSMath_XYZ_op_UnaryNegation_" data-uid="CSMath.XYZ.op_UnaryNegation*"></a>
+
+  <h3 id="CSMath_XYZ_op_UnaryNegation_CSMath_XYZ_" data-uid="CSMath.XYZ.op_UnaryNegation(CSMath.XYZ)">
+  operator -(XYZ)
+  <a class="header-action link-secondary" title="View source" href="https://github.com/DomCR/CSUtilities/blob/1065/merge/CSMath/XYZ.operators.cs/#L108"><i class="bi bi-code-slash"></i></a>
+  </h3>
+
+  <div class="markdown level1 summary"><p>Negates a given vector.</p>
+</div>
+  <div class="markdown level1 conceptual"></div>
+
+  <div class="codewrapper">
+    <pre><code class="lang-csharp hljs">public static XYZ operator -(XYZ value)</code></pre>
+  </div>
+
+  <h4 class="section">Parameters</h4>
+  <dl class="parameters">
+    <dt><code>value</code> <a class="xref" href="CSMath.XYZ.html">XYZ</a></dt>
+    <dd><p>The source vector.</p>
+</dd>
+  </dl>
+
+  <h4 class="section">Returns</h4>
+  <dl class="parameters">
+    <dt><a class="xref" href="CSMath.XYZ.html">XYZ</a></dt>
+    <dd><p>The negated vector.</p>
+</dd>
+  </dl>
+
+
+
+
+
+
+
+
+
+
+
+
+</article>
+
+        <div class="contribution d-print-none">
+          <a href="https://github.com/DomCR/CSUtilities/blob/1065/merge/CSMath/XYZ.cs/#L5" class="edit-link">Edit this page</a>
+        </div>
+
+
+      </div>
+
+      <div class="affix">
+        <nav id="affix"></nav>
+      </div>
+    </main>
+
+    <div class="container-xxl search-results" id="search-results"></div>
+
+    <footer class="border-top text-secondary">
+      <div class="container-xxl">
+        <div class="flex-fill">
+          <span>Made with <a href="https://dotnet.github.io/docfx">docfx</a></span>
+        </div>
+      </div>
+    </footer>
+  </body>
+</html>

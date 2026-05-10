@@ -1,0 +1,1205 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <meta charset="utf-8">
+      <title>Class TableStyle.CellStyle | ACadSharp </title>
+      <meta name="viewport" content="width=device-width, initial-scale=1.0">
+      <meta name="title" content="Class TableStyle.CellStyle | ACadSharp ">
+      
+      <meta name="description" content="Represents the cell style of a table cell. Cell styles are defined at the table level and can be overridden at the cell level.">
+      <link rel="icon" href="../favicon.ico">
+      <link rel="stylesheet" href="../public/docfx.min.css">
+      <link rel="stylesheet" href="../public/main.css">
+      <meta name="docfx:navrel" content="../toc.html">
+      <meta name="docfx:tocrel" content="toc.html">
+      
+      <meta name="docfx:rel" content="../">
+      
+      
+      <meta name="docfx:docurl" content="https://github.com/DomCR/ACadSharp/new/1065/merge/apiSpec/new?filename=ACadSharp_Objects_TableStyle_CellStyle.md&amp;value=---%0Auid%3A%20ACadSharp.Objects.TableStyle.CellStyle%0Asummary%3A%20&#39;*You%20can%20override%20summary%20for%20the%20API%20here%20using%20*MARKDOWN*%20syntax&#39;%0A---%0A%0A*Please%20type%20below%20more%20information%20about%20this%20API%3A*%0A%0A">
+      <meta name="loc:inThisArticle" content="In this article">
+      <meta name="loc:searchResultsCount" content="{count} results for &quot;{query}&quot;">
+      <meta name="loc:searchNoResults" content="No results for &quot;{query}&quot;">
+      <meta name="loc:tocFilter" content="Filter by title">
+      <meta name="loc:nextArticle" content="Next">
+      <meta name="loc:prevArticle" content="Previous">
+      <meta name="loc:themeLight" content="Light">
+      <meta name="loc:themeDark" content="Dark">
+      <meta name="loc:themeAuto" content="Auto">
+      <meta name="loc:changeTheme" content="Change theme">
+      <meta name="loc:copy" content="Copy">
+      <meta name="loc:downloadPdf" content="Download PDF">
+
+      <script type="module" src="./../public/docfx.min.js"></script>
+
+      <script>
+        const theme = localStorage.getItem('theme') || 'auto'
+        document.documentElement.setAttribute('data-bs-theme', theme === 'auto' ? (window.matchMedia('(prefers-color-scheme: dark)').matches ? 'dark' : 'light') : theme)
+      </script>
+
+  </head>
+
+  <body class="tex2jax_ignore" data-layout="" data-yaml-mime="ManagedReference">
+    <header class="bg-body border-bottom">
+      <nav id="autocollapse" class="navbar navbar-expand-md" role="navigation">
+        <div class="container-xxl flex-nowrap">
+          <a class="navbar-brand" href="../index.html">
+            <img id="logo" class="svg" src="../logo.svg" alt="ACadSharp">
+            ACadSharp
+          </a>
+          <button class="btn btn-lg d-md-none border-0" type="button" data-bs-toggle="collapse" data-bs-target="#navpanel" aria-controls="navpanel" aria-expanded="false" aria-label="Toggle navigation">
+            <i class="bi bi-three-dots"></i>
+          </button>
+          <div class="collapse navbar-collapse" id="navpanel">
+            <div id="navbar">
+              <form class="search" role="search" id="search">
+                <i class="bi bi-search"></i>
+                <input class="form-control" id="search-query" type="search" disabled placeholder="Search" autocomplete="off" aria-label="Search">
+              </form>
+            </div>
+          </div>
+        </div>
+      </nav>
+    </header>
+
+    <main class="container-xxl">
+      <div class="toc-offcanvas">
+        <div class="offcanvas-md offcanvas-start" tabindex="-1" id="tocOffcanvas" aria-labelledby="tocOffcanvasLabel">
+          <div class="offcanvas-header">
+            <h5 class="offcanvas-title" id="tocOffcanvasLabel">Table of Contents</h5>
+            <button type="button" class="btn-close" data-bs-dismiss="offcanvas" data-bs-target="#tocOffcanvas" aria-label="Close"></button>
+          </div>
+          <div class="offcanvas-body">
+            <nav class="toc" id="toc"></nav>
+          </div>
+        </div>
+      </div>
+
+      <div class="content">
+        <div class="actionbar">
+          <button class="btn btn-lg border-0 d-md-none" type="button" data-bs-toggle="offcanvas" data-bs-target="#tocOffcanvas" aria-controls="tocOffcanvas" aria-expanded="false" aria-label="Show table of contents">
+            <i class="bi bi-list"></i>
+          </button>
+
+          <nav id="breadcrumb"></nav>
+        </div>
+
+        <article data-uid="ACadSharp.Objects.TableStyle.CellStyle">
+
+
+
+  <h1 id="ACadSharp_Objects_TableStyle_CellStyle" data-uid="ACadSharp.Objects.TableStyle.CellStyle" class="text-break">
+Class TableStyle.CellStyle  <a class="header-action link-secondary" title="View source" href="https://github.com/DomCR/ACadSharp/blob/1065/merge/src/ACadSharp/Objects/TableStyle.CellStyle.cs/#L14"><i class="bi bi-code-slash"></i></a>
+  </h1>
+
+  <div class="facts text-secondary">
+    <dl><dt>Namespace</dt><dd><a class="xref" href="ACadSharp.html">ACadSharp</a>.<a class="xref" href="ACadSharp.Objects.html">Objects</a></dd></dl>
+  <dl><dt>Assembly</dt><dd>ACadSharp.dll</dd></dl>
+  </div>
+
+  <div class="markdown summary"><p>Represents the cell style of a table cell. Cell styles are defined at the table level and can be overridden at the cell level.</p>
+</div>
+  <div class="markdown conceptual"></div>
+
+  <div class="codewrapper">
+    <pre><code class="lang-csharp hljs">public class TableStyle.CellStyle : TableStyle.ContentFormat</code></pre>
+  </div>
+
+
+
+
+  <dl class="typelist inheritance">
+    <dt>Inheritance</dt>
+    <dd>
+      <div><a class="xref" href="https://learn.microsoft.com/dotnet/api/system.object">object</a></div>
+      <div><a class="xref" href="ACadSharp.Objects.TableStyle.html">TableStyle</a>.<a class="xref" href="ACadSharp.Objects.TableStyle.ContentFormat.html">ContentFormat</a></div>
+      <div><span class="xref">TableStyle.CellStyle</span></div>
+    </dd>
+  </dl>
+
+
+
+  <dl class="typelist inheritedMembers">
+    <dt>Inherited Members</dt>
+    <dd>
+    <div>
+      <a class="xref" href="ACadSharp.Objects.TableStyle.ContentFormat.html#ACadSharp_Objects_TableStyle_ContentFormat_Alignment">TableStyle.ContentFormat.Alignment</a>
+    </div>
+    <div>
+      <a class="xref" href="ACadSharp.Objects.TableStyle.ContentFormat.html#ACadSharp_Objects_TableStyle_ContentFormat_Color">TableStyle.ContentFormat.Color</a>
+    </div>
+    <div>
+      <a class="xref" href="ACadSharp.Objects.TableStyle.ContentFormat.html#ACadSharp_Objects_TableStyle_ContentFormat_HasData">TableStyle.ContentFormat.HasData</a>
+    </div>
+    <div>
+      <a class="xref" href="ACadSharp.Objects.TableStyle.ContentFormat.html#ACadSharp_Objects_TableStyle_ContentFormat_PropertyFlags">TableStyle.ContentFormat.PropertyFlags</a>
+    </div>
+    <div>
+      <a class="xref" href="ACadSharp.Objects.TableStyle.ContentFormat.html#ACadSharp_Objects_TableStyle_ContentFormat_PropertyOverrideFlags">TableStyle.ContentFormat.PropertyOverrideFlags</a>
+    </div>
+    <div>
+      <a class="xref" href="ACadSharp.Objects.TableStyle.ContentFormat.html#ACadSharp_Objects_TableStyle_ContentFormat_Rotation">TableStyle.ContentFormat.Rotation</a>
+    </div>
+    <div>
+      <a class="xref" href="ACadSharp.Objects.TableStyle.ContentFormat.html#ACadSharp_Objects_TableStyle_ContentFormat_Scale">TableStyle.ContentFormat.Scale</a>
+    </div>
+    <div>
+      <a class="xref" href="ACadSharp.Objects.TableStyle.ContentFormat.html#ACadSharp_Objects_TableStyle_ContentFormat_TextHeight">TableStyle.ContentFormat.TextHeight</a>
+    </div>
+    <div>
+      <a class="xref" href="ACadSharp.Objects.TableStyle.ContentFormat.html#ACadSharp_Objects_TableStyle_ContentFormat_TextStyle">TableStyle.ContentFormat.TextStyle</a>
+    </div>
+    <div>
+      <a class="xref" href="ACadSharp.Objects.TableStyle.ContentFormat.html#ACadSharp_Objects_TableStyle_ContentFormat_ValueDataType">TableStyle.ContentFormat.ValueDataType</a>
+    </div>
+    <div>
+      <a class="xref" href="ACadSharp.Objects.TableStyle.ContentFormat.html#ACadSharp_Objects_TableStyle_ContentFormat_ValueFormatString">TableStyle.ContentFormat.ValueFormatString</a>
+    </div>
+    <div>
+      <a class="xref" href="ACadSharp.Objects.TableStyle.ContentFormat.html#ACadSharp_Objects_TableStyle_ContentFormat_ValueUnitType">TableStyle.ContentFormat.ValueUnitType</a>
+    </div>
+    <div>
+      <a class="xref" href="https://learn.microsoft.com/dotnet/api/system.object.equals#system-object-equals(system-object)">object.Equals(object)</a>
+    </div>
+    <div>
+      <a class="xref" href="https://learn.microsoft.com/dotnet/api/system.object.equals#system-object-equals(system-object-system-object)">object.Equals(object, object)</a>
+    </div>
+    <div>
+      <a class="xref" href="https://learn.microsoft.com/dotnet/api/system.object.gethashcode">object.GetHashCode()</a>
+    </div>
+    <div>
+      <a class="xref" href="https://learn.microsoft.com/dotnet/api/system.object.gettype">object.GetType()</a>
+    </div>
+    <div>
+      <a class="xref" href="https://learn.microsoft.com/dotnet/api/system.object.memberwiseclone">object.MemberwiseClone()</a>
+    </div>
+    <div>
+      <a class="xref" href="https://learn.microsoft.com/dotnet/api/system.object.referenceequals">object.ReferenceEquals(object, object)</a>
+    </div>
+  </dd></dl>
+
+  <dl class="typelist extensionMethods">
+    <dt>Extension Methods</dt>
+    <dd>
+  <div>
+      <a class="xref" href="CSMath.Geometry.LineExtensions.html#CSMath_Geometry_LineExtensions_TryFindIntersection__2___0___0___1__">LineExtensions.TryFindIntersection&lt;T, R&gt;(T, T, out R)</a>
+  </div>
+  </dd></dl>
+
+
+
+  <h2 id="ACadSharp_Objects_TableStyle_CellStyle_remarks">Remarks</h2>
+  <div class="markdown level0 remarks"><p>A <a class="xref" href="ACadSharp.Objects.TableStyle.CellStyle.html">TableStyle.CellStyle</a> defines visual and layout properties such as colors, margins, borders, and text alignment
+for cells in a <a class="xref" href="ACadSharp.Objects.TableStyle.html">TableStyle</a>. Default cell styles are provided for data, header, and title cells.</p>
+</div>
+
+
+  <h2 class="section" id="fields">Fields
+</h2>
+
+
+
+  <h3 id="ACadSharp_Objects_TableStyle_CellStyle_DataCellStyleName" data-uid="ACadSharp.Objects.TableStyle.CellStyle.DataCellStyleName">
+  DataCellStyleName
+  <a class="header-action link-secondary" title="View source" href="https://github.com/DomCR/ACadSharp/blob/1065/merge/src/ACadSharp/Objects/TableStyle.CellStyle.cs/#L203"><i class="bi bi-code-slash"></i></a>
+  </h3>
+
+  <div class="markdown level1 summary"><p>The name constant for the default data cell style.</p>
+</div>
+  <div class="markdown level1 conceptual"></div>
+
+  <div class="codewrapper">
+    <pre><code class="lang-csharp hljs">public const string DataCellStyleName = &quot;_DATA&quot;</code></pre>
+  </div>
+
+
+
+
+  <h4 class="section">Field Value</h4>
+  <dl class="parameters">
+    <dt><a class="xref" href="https://learn.microsoft.com/dotnet/api/system.string">string</a></dt>
+    <dd></dd>
+  </dl>
+
+
+
+
+
+
+
+
+
+
+  <h3 id="ACadSharp_Objects_TableStyle_CellStyle_HeaderCellStyleName" data-uid="ACadSharp.Objects.TableStyle.CellStyle.HeaderCellStyleName">
+  HeaderCellStyleName
+  <a class="header-action link-secondary" title="View source" href="https://github.com/DomCR/ACadSharp/blob/1065/merge/src/ACadSharp/Objects/TableStyle.CellStyle.cs/#L208"><i class="bi bi-code-slash"></i></a>
+  </h3>
+
+  <div class="markdown level1 summary"><p>The name constant for the default header cell style.</p>
+</div>
+  <div class="markdown level1 conceptual"></div>
+
+  <div class="codewrapper">
+    <pre><code class="lang-csharp hljs">public const string HeaderCellStyleName = &quot;_HEADER&quot;</code></pre>
+  </div>
+
+
+
+
+  <h4 class="section">Field Value</h4>
+  <dl class="parameters">
+    <dt><a class="xref" href="https://learn.microsoft.com/dotnet/api/system.string">string</a></dt>
+    <dd></dd>
+  </dl>
+
+
+
+
+
+
+
+
+
+
+  <h3 id="ACadSharp_Objects_TableStyle_CellStyle_TitleCellStyleName" data-uid="ACadSharp.Objects.TableStyle.CellStyle.TitleCellStyleName">
+  TitleCellStyleName
+  <a class="header-action link-secondary" title="View source" href="https://github.com/DomCR/ACadSharp/blob/1065/merge/src/ACadSharp/Objects/TableStyle.CellStyle.cs/#L213"><i class="bi bi-code-slash"></i></a>
+  </h3>
+
+  <div class="markdown level1 summary"><p>The name constant for the default title cell style.</p>
+</div>
+  <div class="markdown level1 conceptual"></div>
+
+  <div class="codewrapper">
+    <pre><code class="lang-csharp hljs">public const string TitleCellStyleName = &quot;_TITLE&quot;</code></pre>
+  </div>
+
+
+
+
+  <h4 class="section">Field Value</h4>
+  <dl class="parameters">
+    <dt><a class="xref" href="https://learn.microsoft.com/dotnet/api/system.string">string</a></dt>
+    <dd></dd>
+  </dl>
+
+
+
+
+
+
+
+
+
+  <h2 class="section" id="properties">Properties
+</h2>
+
+
+  <a id="ACadSharp_Objects_TableStyle_CellStyle_BackgroundColor_" data-uid="ACadSharp.Objects.TableStyle.CellStyle.BackgroundColor*"></a>
+
+  <h3 id="ACadSharp_Objects_TableStyle_CellStyle_BackgroundColor" data-uid="ACadSharp.Objects.TableStyle.CellStyle.BackgroundColor">
+  BackgroundColor
+  <a class="header-action link-secondary" title="View source" href="https://github.com/DomCR/ACadSharp/blob/1065/merge/src/ACadSharp/Objects/TableStyle.CellStyle.cs/#L71"><i class="bi bi-code-slash"></i></a>
+  </h3>
+
+  <div class="markdown level1 summary"><p>Gets or sets the background (fill) color of the cell content.
+Override applied at the cell level.</p>
+</div>
+  <div class="markdown level1 conceptual"></div>
+
+  <div class="codewrapper">
+    <pre><code class="lang-csharp hljs">[DxfCodeValue(new int[] { 63 })]
+public Color BackgroundColor { get; set; }</code></pre>
+  </div>
+
+
+
+
+
+  <h4 class="section">Property Value</h4>
+  <dl class="parameters">
+    <dt><a class="xref" href="ACadSharp.Color.html">Color</a></dt>
+    <dd></dd>
+  </dl>
+
+
+
+
+
+
+
+
+  <a id="ACadSharp_Objects_TableStyle_CellStyle_BottomBorder_" data-uid="ACadSharp.Objects.TableStyle.CellStyle.BottomBorder*"></a>
+
+  <h3 id="ACadSharp_Objects_TableStyle_CellStyle_BottomBorder" data-uid="ACadSharp.Objects.TableStyle.CellStyle.BottomBorder">
+  BottomBorder
+  <a class="header-action link-secondary" title="View source" href="https://github.com/DomCR/ACadSharp/blob/1065/merge/src/ACadSharp/Objects/TableStyle.CellStyle.cs/#L77"><i class="bi bi-code-slash"></i></a>
+  </h3>
+
+  <div class="markdown level1 summary"><p>Gets or sets the bottom border style of the cell.</p>
+</div>
+  <div class="markdown level1 conceptual"></div>
+
+  <div class="codewrapper">
+    <pre><code class="lang-csharp hljs">public TableStyle.CellBorder BottomBorder { get; set; }</code></pre>
+  </div>
+
+
+
+
+
+  <h4 class="section">Property Value</h4>
+  <dl class="parameters">
+    <dt><a class="xref" href="ACadSharp.Objects.TableStyle.html">TableStyle</a>.<a class="xref" href="ACadSharp.Objects.TableStyle.CellBorder.html">CellBorder</a></dt>
+    <dd></dd>
+  </dl>
+
+
+
+
+
+
+
+
+  <a id="ACadSharp_Objects_TableStyle_CellStyle_BottomMargin_" data-uid="ACadSharp.Objects.TableStyle.CellStyle.BottomMargin*"></a>
+
+  <h3 id="ACadSharp_Objects_TableStyle_CellStyle_BottomMargin" data-uid="ACadSharp.Objects.TableStyle.CellStyle.BottomMargin">
+  BottomMargin
+  <a class="header-action link-secondary" title="View source" href="https://github.com/DomCR/ACadSharp/blob/1065/merge/src/ACadSharp/Objects/TableStyle.CellStyle.cs/#L82"><i class="bi bi-code-slash"></i></a>
+  </h3>
+
+  <div class="markdown level1 summary"><p>Gets or sets the bottom margin of the cell.</p>
+</div>
+  <div class="markdown level1 conceptual"></div>
+
+  <div class="codewrapper">
+    <pre><code class="lang-csharp hljs">public double BottomMargin { get; set; }</code></pre>
+  </div>
+
+
+
+
+
+  <h4 class="section">Property Value</h4>
+  <dl class="parameters">
+    <dt><a class="xref" href="https://learn.microsoft.com/dotnet/api/system.double">double</a></dt>
+    <dd></dd>
+  </dl>
+
+
+
+
+
+
+
+
+  <a id="ACadSharp_Objects_TableStyle_CellStyle_CellAlignment_" data-uid="ACadSharp.Objects.TableStyle.CellStyle.CellAlignment*"></a>
+
+  <h3 id="ACadSharp_Objects_TableStyle_CellStyle_CellAlignment" data-uid="ACadSharp.Objects.TableStyle.CellStyle.CellAlignment">
+  CellAlignment
+  <a class="header-action link-secondary" title="View source" href="https://github.com/DomCR/ACadSharp/blob/1065/merge/src/ACadSharp/Objects/TableStyle.CellStyle.cs/#L87"><i class="bi bi-code-slash"></i></a>
+  </h3>
+
+  <div class="markdown level1 summary"><p>Gets or sets the alignment of the content within a cell.</p>
+</div>
+  <div class="markdown level1 conceptual"></div>
+
+  <div class="codewrapper">
+    <pre><code class="lang-csharp hljs">[DxfCodeValue(new int[] { 170 })]
+public TableStyle.CellAlignmentType CellAlignment { get; set; }</code></pre>
+  </div>
+
+
+
+
+
+  <h4 class="section">Property Value</h4>
+  <dl class="parameters">
+    <dt><a class="xref" href="ACadSharp.Objects.TableStyle.html">TableStyle</a>.<a class="xref" href="ACadSharp.Objects.TableStyle.CellAlignmentType.html">CellAlignmentType</a></dt>
+    <dd></dd>
+  </dl>
+
+
+
+
+
+
+
+
+  <a id="ACadSharp_Objects_TableStyle_CellStyle_ContentColor_" data-uid="ACadSharp.Objects.TableStyle.CellStyle.ContentColor*"></a>
+
+  <h3 id="ACadSharp_Objects_TableStyle_CellStyle_ContentColor" data-uid="ACadSharp.Objects.TableStyle.CellStyle.ContentColor">
+  ContentColor
+  <a class="header-action link-secondary" title="View source" href="https://github.com/DomCR/ACadSharp/blob/1065/merge/src/ACadSharp/Objects/TableStyle.CellStyle.cs/#L94"><i class="bi bi-code-slash"></i></a>
+  </h3>
+
+  <div class="markdown level1 summary"><p>Gets or sets the color of cell content.
+Override applied at the cell level.</p>
+</div>
+  <div class="markdown level1 conceptual"></div>
+
+  <div class="codewrapper">
+    <pre><code class="lang-csharp hljs">[DxfCodeValue(new int[] { 64 })]
+public Color ContentColor { get; }</code></pre>
+  </div>
+
+
+
+
+
+  <h4 class="section">Property Value</h4>
+  <dl class="parameters">
+    <dt><a class="xref" href="ACadSharp.Color.html">Color</a></dt>
+    <dd></dd>
+  </dl>
+
+
+
+
+
+
+
+
+  <a id="ACadSharp_Objects_TableStyle_CellStyle_ContentLayoutFlags_" data-uid="ACadSharp.Objects.TableStyle.CellStyle.ContentLayoutFlags*"></a>
+
+  <h3 id="ACadSharp_Objects_TableStyle_CellStyle_ContentLayoutFlags" data-uid="ACadSharp.Objects.TableStyle.CellStyle.ContentLayoutFlags">
+  ContentLayoutFlags
+  <a class="header-action link-secondary" title="View source" href="https://github.com/DomCR/ACadSharp/blob/1065/merge/src/ACadSharp/Objects/TableStyle.CellStyle.cs/#L100"><i class="bi bi-code-slash"></i></a>
+  </h3>
+
+  <div class="markdown level1 summary"><p>Gets or sets the layout flags that control how content is arranged within the cell.</p>
+</div>
+  <div class="markdown level1 conceptual"></div>
+
+  <div class="codewrapper">
+    <pre><code class="lang-csharp hljs">public TableStyle.CellContentLayoutFlags ContentLayoutFlags { get; set; }</code></pre>
+  </div>
+
+
+
+
+
+  <h4 class="section">Property Value</h4>
+  <dl class="parameters">
+    <dt><a class="xref" href="ACadSharp.Objects.TableStyle.html">TableStyle</a>.<a class="xref" href="ACadSharp.Objects.TableStyle.CellContentLayoutFlags.html">CellContentLayoutFlags</a></dt>
+    <dd></dd>
+  </dl>
+
+
+
+
+
+
+
+
+  <a id="ACadSharp_Objects_TableStyle_CellStyle_DefaultDataCellStyle_" data-uid="ACadSharp.Objects.TableStyle.CellStyle.DefaultDataCellStyle*"></a>
+
+  <h3 id="ACadSharp_Objects_TableStyle_CellStyle_DefaultDataCellStyle" data-uid="ACadSharp.Objects.TableStyle.CellStyle.DefaultDataCellStyle">
+  DefaultDataCellStyle
+  <a class="header-action link-secondary" title="View source" href="https://github.com/DomCR/ACadSharp/blob/1065/merge/src/ACadSharp/Objects/TableStyle.CellStyle.cs/#L19"><i class="bi bi-code-slash"></i></a>
+  </h3>
+
+  <div class="markdown level1 summary"><p>Gets the default cell style used for data cells.</p>
+</div>
+  <div class="markdown level1 conceptual"></div>
+
+  <div class="codewrapper">
+    <pre><code class="lang-csharp hljs">public static TableStyle.CellStyle DefaultDataCellStyle { get; }</code></pre>
+  </div>
+
+
+
+
+
+  <h4 class="section">Property Value</h4>
+  <dl class="parameters">
+    <dt><a class="xref" href="ACadSharp.Objects.TableStyle.html">TableStyle</a>.<a class="xref" href="ACadSharp.Objects.TableStyle.CellStyle.html">CellStyle</a></dt>
+    <dd></dd>
+  </dl>
+
+
+
+
+
+
+
+
+  <a id="ACadSharp_Objects_TableStyle_CellStyle_DefaultHeaderCellStyle_" data-uid="ACadSharp.Objects.TableStyle.CellStyle.DefaultHeaderCellStyle*"></a>
+
+  <h3 id="ACadSharp_Objects_TableStyle_CellStyle_DefaultHeaderCellStyle" data-uid="ACadSharp.Objects.TableStyle.CellStyle.DefaultHeaderCellStyle">
+  DefaultHeaderCellStyle
+  <a class="header-action link-secondary" title="View source" href="https://github.com/DomCR/ACadSharp/blob/1065/merge/src/ACadSharp/Objects/TableStyle.CellStyle.cs/#L36"><i class="bi bi-code-slash"></i></a>
+  </h3>
+
+  <div class="markdown level1 summary"><p>Gets the default cell style used for header cells.</p>
+</div>
+  <div class="markdown level1 conceptual"></div>
+
+  <div class="codewrapper">
+    <pre><code class="lang-csharp hljs">public static TableStyle.CellStyle DefaultHeaderCellStyle { get; }</code></pre>
+  </div>
+
+
+
+
+
+  <h4 class="section">Property Value</h4>
+  <dl class="parameters">
+    <dt><a class="xref" href="ACadSharp.Objects.TableStyle.html">TableStyle</a>.<a class="xref" href="ACadSharp.Objects.TableStyle.CellStyle.html">CellStyle</a></dt>
+    <dd></dd>
+  </dl>
+
+
+
+
+
+
+
+
+  <a id="ACadSharp_Objects_TableStyle_CellStyle_DefaultTitleCellStyle_" data-uid="ACadSharp.Objects.TableStyle.CellStyle.DefaultTitleCellStyle*"></a>
+
+  <h3 id="ACadSharp_Objects_TableStyle_CellStyle_DefaultTitleCellStyle" data-uid="ACadSharp.Objects.TableStyle.CellStyle.DefaultTitleCellStyle">
+  DefaultTitleCellStyle
+  <a class="header-action link-secondary" title="View source" href="https://github.com/DomCR/ACadSharp/blob/1065/merge/src/ACadSharp/Objects/TableStyle.CellStyle.cs/#L53"><i class="bi bi-code-slash"></i></a>
+  </h3>
+
+  <div class="markdown level1 summary"><p>Gets the default cell style used for title cells.</p>
+</div>
+  <div class="markdown level1 conceptual"></div>
+
+  <div class="codewrapper">
+    <pre><code class="lang-csharp hljs">public static TableStyle.CellStyle DefaultTitleCellStyle { get; }</code></pre>
+  </div>
+
+
+
+
+
+  <h4 class="section">Property Value</h4>
+  <dl class="parameters">
+    <dt><a class="xref" href="ACadSharp.Objects.TableStyle.html">TableStyle</a>.<a class="xref" href="ACadSharp.Objects.TableStyle.CellStyle.html">CellStyle</a></dt>
+    <dd></dd>
+  </dl>
+
+
+
+
+
+
+
+
+  <a id="ACadSharp_Objects_TableStyle_CellStyle_HorizontalInsideBorder_" data-uid="ACadSharp.Objects.TableStyle.CellStyle.HorizontalInsideBorder*"></a>
+
+  <h3 id="ACadSharp_Objects_TableStyle_CellStyle_HorizontalInsideBorder" data-uid="ACadSharp.Objects.TableStyle.CellStyle.HorizontalInsideBorder">
+  HorizontalInsideBorder
+  <a class="header-action link-secondary" title="View source" href="https://github.com/DomCR/ACadSharp/blob/1065/merge/src/ACadSharp/Objects/TableStyle.CellStyle.cs/#L105"><i class="bi bi-code-slash"></i></a>
+  </h3>
+
+  <div class="markdown level1 summary"><p>Gets or sets the horizontal inside border style of the cell.</p>
+</div>
+  <div class="markdown level1 conceptual"></div>
+
+  <div class="codewrapper">
+    <pre><code class="lang-csharp hljs">public TableStyle.CellBorder HorizontalInsideBorder { get; set; }</code></pre>
+  </div>
+
+
+
+
+
+  <h4 class="section">Property Value</h4>
+  <dl class="parameters">
+    <dt><a class="xref" href="ACadSharp.Objects.TableStyle.html">TableStyle</a>.<a class="xref" href="ACadSharp.Objects.TableStyle.CellBorder.html">CellBorder</a></dt>
+    <dd></dd>
+  </dl>
+
+
+
+
+
+
+
+
+  <a id="ACadSharp_Objects_TableStyle_CellStyle_HorizontalMargin_" data-uid="ACadSharp.Objects.TableStyle.CellStyle.HorizontalMargin*"></a>
+
+  <h3 id="ACadSharp_Objects_TableStyle_CellStyle_HorizontalMargin" data-uid="ACadSharp.Objects.TableStyle.CellStyle.HorizontalMargin">
+  HorizontalMargin
+  <a class="header-action link-secondary" title="View source" href="https://github.com/DomCR/ACadSharp/blob/1065/merge/src/ACadSharp/Objects/TableStyle.CellStyle.cs/#L110"><i class="bi bi-code-slash"></i></a>
+  </h3>
+
+  <div class="markdown level1 summary"><p>Gets or sets the horizontal margin of the cell. Default is <code>0.06</code>.</p>
+</div>
+  <div class="markdown level1 conceptual"></div>
+
+  <div class="codewrapper">
+    <pre><code class="lang-csharp hljs">public double HorizontalMargin { get; set; }</code></pre>
+  </div>
+
+
+
+
+
+  <h4 class="section">Property Value</h4>
+  <dl class="parameters">
+    <dt><a class="xref" href="https://learn.microsoft.com/dotnet/api/system.double">double</a></dt>
+    <dd></dd>
+  </dl>
+
+
+
+
+
+
+
+
+  <a id="ACadSharp_Objects_TableStyle_CellStyle_IsFillColorOn_" data-uid="ACadSharp.Objects.TableStyle.CellStyle.IsFillColorOn*"></a>
+
+  <h3 id="ACadSharp_Objects_TableStyle_CellStyle_IsFillColorOn" data-uid="ACadSharp.Objects.TableStyle.CellStyle.IsFillColorOn">
+  IsFillColorOn
+  <a class="header-action link-secondary" title="View source" href="https://github.com/DomCR/ACadSharp/blob/1065/merge/src/ACadSharp/Objects/TableStyle.CellStyle.cs/#L116"><i class="bi bi-code-slash"></i></a>
+  </h3>
+
+  <div class="markdown level1 summary"><p>Gets or sets a value indicating whether the fill color is enabled.
+Override applied at the cell level.</p>
+</div>
+  <div class="markdown level1 conceptual"></div>
+
+  <div class="codewrapper">
+    <pre><code class="lang-csharp hljs">[DxfCodeValue(new int[] { 283 })]
+public bool IsFillColorOn { get; set; }</code></pre>
+  </div>
+
+
+
+
+
+  <h4 class="section">Property Value</h4>
+  <dl class="parameters">
+    <dt><a class="xref" href="https://learn.microsoft.com/dotnet/api/system.boolean">bool</a></dt>
+    <dd></dd>
+  </dl>
+
+
+
+
+
+
+
+
+  <a id="ACadSharp_Objects_TableStyle_CellStyle_LeftBorder_" data-uid="ACadSharp.Objects.TableStyle.CellStyle.LeftBorder*"></a>
+
+  <h3 id="ACadSharp_Objects_TableStyle_CellStyle_LeftBorder" data-uid="ACadSharp.Objects.TableStyle.CellStyle.LeftBorder">
+  LeftBorder
+  <a class="header-action link-secondary" title="View source" href="https://github.com/DomCR/ACadSharp/blob/1065/merge/src/ACadSharp/Objects/TableStyle.CellStyle.cs/#L122"><i class="bi bi-code-slash"></i></a>
+  </h3>
+
+  <div class="markdown level1 summary"><p>Gets or sets the left border style of the cell.</p>
+</div>
+  <div class="markdown level1 conceptual"></div>
+
+  <div class="codewrapper">
+    <pre><code class="lang-csharp hljs">public TableStyle.CellBorder LeftBorder { get; set; }</code></pre>
+  </div>
+
+
+
+
+
+  <h4 class="section">Property Value</h4>
+  <dl class="parameters">
+    <dt><a class="xref" href="ACadSharp.Objects.TableStyle.html">TableStyle</a>.<a class="xref" href="ACadSharp.Objects.TableStyle.CellBorder.html">CellBorder</a></dt>
+    <dd></dd>
+  </dl>
+
+
+
+
+
+
+
+
+  <a id="ACadSharp_Objects_TableStyle_CellStyle_MarginHorizontalSpacing_" data-uid="ACadSharp.Objects.TableStyle.CellStyle.MarginHorizontalSpacing*"></a>
+
+  <h3 id="ACadSharp_Objects_TableStyle_CellStyle_MarginHorizontalSpacing" data-uid="ACadSharp.Objects.TableStyle.CellStyle.MarginHorizontalSpacing">
+  MarginHorizontalSpacing
+  <a class="header-action link-secondary" title="View source" href="https://github.com/DomCR/ACadSharp/blob/1065/merge/src/ACadSharp/Objects/TableStyle.CellStyle.cs/#L127"><i class="bi bi-code-slash"></i></a>
+  </h3>
+
+  <div class="markdown level1 summary"><p>Gets or sets the horizontal spacing between cell margins.</p>
+</div>
+  <div class="markdown level1 conceptual"></div>
+
+  <div class="codewrapper">
+    <pre><code class="lang-csharp hljs">public double MarginHorizontalSpacing { get; set; }</code></pre>
+  </div>
+
+
+
+
+
+  <h4 class="section">Property Value</h4>
+  <dl class="parameters">
+    <dt><a class="xref" href="https://learn.microsoft.com/dotnet/api/system.double">double</a></dt>
+    <dd></dd>
+  </dl>
+
+
+
+
+
+
+
+
+  <a id="ACadSharp_Objects_TableStyle_CellStyle_MarginOverrideFlags_" data-uid="ACadSharp.Objects.TableStyle.CellStyle.MarginOverrideFlags*"></a>
+
+  <h3 id="ACadSharp_Objects_TableStyle_CellStyle_MarginOverrideFlags" data-uid="ACadSharp.Objects.TableStyle.CellStyle.MarginOverrideFlags">
+  MarginOverrideFlags
+  <a class="header-action link-secondary" title="View source" href="https://github.com/DomCR/ACadSharp/blob/1065/merge/src/ACadSharp/Objects/TableStyle.CellStyle.cs/#L132"><i class="bi bi-code-slash"></i></a>
+  </h3>
+
+  <div class="markdown level1 summary"><p>Gets or sets the flags that indicate which margin overrides are applied.</p>
+</div>
+  <div class="markdown level1 conceptual"></div>
+
+  <div class="codewrapper">
+    <pre><code class="lang-csharp hljs">[DxfCodeValue(new int[] { 171 })]
+public TableStyle.MarginFlags MarginOverrideFlags { get; set; }</code></pre>
+  </div>
+
+
+
+
+
+  <h4 class="section">Property Value</h4>
+  <dl class="parameters">
+    <dt><a class="xref" href="ACadSharp.Objects.TableStyle.html">TableStyle</a>.<a class="xref" href="ACadSharp.Objects.TableStyle.MarginFlags.html">MarginFlags</a></dt>
+    <dd></dd>
+  </dl>
+
+
+
+
+
+
+
+
+  <a id="ACadSharp_Objects_TableStyle_CellStyle_MarginVerticalSpacing_" data-uid="ACadSharp.Objects.TableStyle.CellStyle.MarginVerticalSpacing*"></a>
+
+  <h3 id="ACadSharp_Objects_TableStyle_CellStyle_MarginVerticalSpacing" data-uid="ACadSharp.Objects.TableStyle.CellStyle.MarginVerticalSpacing">
+  MarginVerticalSpacing
+  <a class="header-action link-secondary" title="View source" href="https://github.com/DomCR/ACadSharp/blob/1065/merge/src/ACadSharp/Objects/TableStyle.CellStyle.cs/#L138"><i class="bi bi-code-slash"></i></a>
+  </h3>
+
+  <div class="markdown level1 summary"><p>Gets or sets the vertical spacing between cell margins.</p>
+</div>
+  <div class="markdown level1 conceptual"></div>
+
+  <div class="codewrapper">
+    <pre><code class="lang-csharp hljs">public double MarginVerticalSpacing { get; set; }</code></pre>
+  </div>
+
+
+
+
+
+  <h4 class="section">Property Value</h4>
+  <dl class="parameters">
+    <dt><a class="xref" href="https://learn.microsoft.com/dotnet/api/system.double">double</a></dt>
+    <dd></dd>
+  </dl>
+
+
+
+
+
+
+
+
+  <a id="ACadSharp_Objects_TableStyle_CellStyle_Name_" data-uid="ACadSharp.Objects.TableStyle.CellStyle.Name*"></a>
+
+  <h3 id="ACadSharp_Objects_TableStyle_CellStyle_Name" data-uid="ACadSharp.Objects.TableStyle.CellStyle.Name">
+  Name
+  <a class="header-action link-secondary" title="View source" href="https://github.com/DomCR/ACadSharp/blob/1065/merge/src/ACadSharp/Objects/TableStyle.CellStyle.cs/#L143"><i class="bi bi-code-slash"></i></a>
+  </h3>
+
+  <div class="markdown level1 summary"><p>Gets or sets the name of the cell style.</p>
+</div>
+  <div class="markdown level1 conceptual"></div>
+
+  <div class="codewrapper">
+    <pre><code class="lang-csharp hljs">[DxfCodeValue(new int[] { 300 })]
+public string Name { get; set; }</code></pre>
+  </div>
+
+
+
+
+
+  <h4 class="section">Property Value</h4>
+  <dl class="parameters">
+    <dt><a class="xref" href="https://learn.microsoft.com/dotnet/api/system.string">string</a></dt>
+    <dd></dd>
+  </dl>
+
+
+
+
+
+
+
+
+  <a id="ACadSharp_Objects_TableStyle_CellStyle_RightBorder_" data-uid="ACadSharp.Objects.TableStyle.CellStyle.RightBorder*"></a>
+
+  <h3 id="ACadSharp_Objects_TableStyle_CellStyle_RightBorder" data-uid="ACadSharp.Objects.TableStyle.CellStyle.RightBorder">
+  RightBorder
+  <a class="header-action link-secondary" title="View source" href="https://github.com/DomCR/ACadSharp/blob/1065/merge/src/ACadSharp/Objects/TableStyle.CellStyle.cs/#L149"><i class="bi bi-code-slash"></i></a>
+  </h3>
+
+  <div class="markdown level1 summary"><p>Gets or sets the right border style of the cell.</p>
+</div>
+  <div class="markdown level1 conceptual"></div>
+
+  <div class="codewrapper">
+    <pre><code class="lang-csharp hljs">public TableStyle.CellBorder RightBorder { get; set; }</code></pre>
+  </div>
+
+
+
+
+
+  <h4 class="section">Property Value</h4>
+  <dl class="parameters">
+    <dt><a class="xref" href="ACadSharp.Objects.TableStyle.html">TableStyle</a>.<a class="xref" href="ACadSharp.Objects.TableStyle.CellBorder.html">CellBorder</a></dt>
+    <dd></dd>
+  </dl>
+
+
+
+
+
+
+
+
+  <a id="ACadSharp_Objects_TableStyle_CellStyle_RightMargin_" data-uid="ACadSharp.Objects.TableStyle.CellStyle.RightMargin*"></a>
+
+  <h3 id="ACadSharp_Objects_TableStyle_CellStyle_RightMargin" data-uid="ACadSharp.Objects.TableStyle.CellStyle.RightMargin">
+  RightMargin
+  <a class="header-action link-secondary" title="View source" href="https://github.com/DomCR/ACadSharp/blob/1065/merge/src/ACadSharp/Objects/TableStyle.CellStyle.cs/#L154"><i class="bi bi-code-slash"></i></a>
+  </h3>
+
+  <div class="markdown level1 summary"><p>Gets or sets the right margin of the cell.</p>
+</div>
+  <div class="markdown level1 conceptual"></div>
+
+  <div class="codewrapper">
+    <pre><code class="lang-csharp hljs">public double RightMargin { get; set; }</code></pre>
+  </div>
+
+
+
+
+
+  <h4 class="section">Property Value</h4>
+  <dl class="parameters">
+    <dt><a class="xref" href="https://learn.microsoft.com/dotnet/api/system.double">double</a></dt>
+    <dd></dd>
+  </dl>
+
+
+
+
+
+
+
+
+  <a id="ACadSharp_Objects_TableStyle_CellStyle_StyleClass_" data-uid="ACadSharp.Objects.TableStyle.CellStyle.StyleClass*"></a>
+
+  <h3 id="ACadSharp_Objects_TableStyle_CellStyle_StyleClass" data-uid="ACadSharp.Objects.TableStyle.CellStyle.StyleClass">
+  StyleClass
+  <a class="header-action link-secondary" title="View source" href="https://github.com/DomCR/ACadSharp/blob/1065/merge/src/ACadSharp/Objects/TableStyle.CellStyle.cs/#L159"><i class="bi bi-code-slash"></i></a>
+  </h3>
+
+  <div class="markdown level1 summary"><p>Gets or sets the class of the cell style, which categorizes the style type.</p>
+</div>
+  <div class="markdown level1 conceptual"></div>
+
+  <div class="codewrapper">
+    <pre><code class="lang-csharp hljs">[DxfCodeValue(new int[] { 91 })]
+public TableStyle.CellStyleClass StyleClass { get; set; }</code></pre>
+  </div>
+
+
+
+
+
+  <h4 class="section">Property Value</h4>
+  <dl class="parameters">
+    <dt><a class="xref" href="ACadSharp.Objects.TableStyle.html">TableStyle</a>.<a class="xref" href="ACadSharp.Objects.TableStyle.CellStyleClass.html">CellStyleClass</a></dt>
+    <dd></dd>
+  </dl>
+
+
+
+
+
+
+
+
+  <a id="ACadSharp_Objects_TableStyle_CellStyle_TableCellStylePropertyFlags_" data-uid="ACadSharp.Objects.TableStyle.CellStyle.TableCellStylePropertyFlags*"></a>
+
+  <h3 id="ACadSharp_Objects_TableStyle_CellStyle_TableCellStylePropertyFlags" data-uid="ACadSharp.Objects.TableStyle.CellStyle.TableCellStylePropertyFlags">
+  TableCellStylePropertyFlags
+  <a class="header-action link-secondary" title="View source" href="https://github.com/DomCR/ACadSharp/blob/1065/merge/src/ACadSharp/Objects/TableStyle.CellStyle.cs/#L165"><i class="bi bi-code-slash"></i></a>
+  </h3>
+
+  <div class="markdown level1 summary"><p>Gets or sets the property flags that define which table cell style properties are applied.</p>
+</div>
+  <div class="markdown level1 conceptual"></div>
+
+  <div class="codewrapper">
+    <pre><code class="lang-csharp hljs">[DxfCodeValue(new int[] { 92 })]
+public TableStyle.CellStylePropertyFlags TableCellStylePropertyFlags { get; set; }</code></pre>
+  </div>
+
+
+
+
+
+  <h4 class="section">Property Value</h4>
+  <dl class="parameters">
+    <dt><a class="xref" href="ACadSharp.Objects.TableStyle.html">TableStyle</a>.<a class="xref" href="ACadSharp.Objects.TableStyle.CellStylePropertyFlags.html">CellStylePropertyFlags</a></dt>
+    <dd></dd>
+  </dl>
+
+
+
+
+
+
+
+
+  <a id="ACadSharp_Objects_TableStyle_CellStyle_TextColor_" data-uid="ACadSharp.Objects.TableStyle.CellStyle.TextColor*"></a>
+
+  <h3 id="ACadSharp_Objects_TableStyle_CellStyle_TextColor" data-uid="ACadSharp.Objects.TableStyle.CellStyle.TextColor">
+  TextColor
+  <a class="header-action link-secondary" title="View source" href="https://github.com/DomCR/ACadSharp/blob/1065/merge/src/ACadSharp/Objects/TableStyle.CellStyle.cs/#L171"><i class="bi bi-code-slash"></i></a>
+  </h3>
+
+  <div class="markdown level1 summary"><p>Gets or sets the text color of the cell content.</p>
+</div>
+  <div class="markdown level1 conceptual"></div>
+
+  <div class="codewrapper">
+    <pre><code class="lang-csharp hljs">[DxfCodeValue(new int[] { 62 })]
+public Color TextColor { get; set; }</code></pre>
+  </div>
+
+
+
+
+
+  <h4 class="section">Property Value</h4>
+  <dl class="parameters">
+    <dt><a class="xref" href="ACadSharp.Color.html">Color</a></dt>
+    <dd></dd>
+  </dl>
+
+
+
+
+
+
+
+
+  <a id="ACadSharp_Objects_TableStyle_CellStyle_TopBorder_" data-uid="ACadSharp.Objects.TableStyle.CellStyle.TopBorder*"></a>
+
+  <h3 id="ACadSharp_Objects_TableStyle_CellStyle_TopBorder" data-uid="ACadSharp.Objects.TableStyle.CellStyle.TopBorder">
+  TopBorder
+  <a class="header-action link-secondary" title="View source" href="https://github.com/DomCR/ACadSharp/blob/1065/merge/src/ACadSharp/Objects/TableStyle.CellStyle.cs/#L177"><i class="bi bi-code-slash"></i></a>
+  </h3>
+
+  <div class="markdown level1 summary"><p>Gets or sets the top border style of the cell.</p>
+</div>
+  <div class="markdown level1 conceptual"></div>
+
+  <div class="codewrapper">
+    <pre><code class="lang-csharp hljs">public TableStyle.CellBorder TopBorder { get; set; }</code></pre>
+  </div>
+
+
+
+
+
+  <h4 class="section">Property Value</h4>
+  <dl class="parameters">
+    <dt><a class="xref" href="ACadSharp.Objects.TableStyle.html">TableStyle</a>.<a class="xref" href="ACadSharp.Objects.TableStyle.CellBorder.html">CellBorder</a></dt>
+    <dd></dd>
+  </dl>
+
+
+
+
+
+
+
+
+  <a id="ACadSharp_Objects_TableStyle_CellStyle_Type_" data-uid="ACadSharp.Objects.TableStyle.CellStyle.Type*"></a>
+
+  <h3 id="ACadSharp_Objects_TableStyle_CellStyle_Type" data-uid="ACadSharp.Objects.TableStyle.CellStyle.Type">
+  Type
+  <a class="header-action link-secondary" title="View source" href="https://github.com/DomCR/ACadSharp/blob/1065/merge/src/ACadSharp/Objects/TableStyle.CellStyle.cs/#L182"><i class="bi bi-code-slash"></i></a>
+  </h3>
+
+  <div class="markdown level1 summary"><p>Gets or sets the type of the cell style.</p>
+</div>
+  <div class="markdown level1 conceptual"></div>
+
+  <div class="codewrapper">
+    <pre><code class="lang-csharp hljs">[DxfCodeValue(new int[] { 90 })]
+public TableStyle.CellStyleType Type { get; set; }</code></pre>
+  </div>
+
+
+
+
+
+  <h4 class="section">Property Value</h4>
+  <dl class="parameters">
+    <dt><a class="xref" href="ACadSharp.Objects.TableStyle.html">TableStyle</a>.<a class="xref" href="ACadSharp.Objects.TableStyle.CellStyleType.html">CellStyleType</a></dt>
+    <dd></dd>
+  </dl>
+
+
+
+
+
+
+
+
+  <a id="ACadSharp_Objects_TableStyle_CellStyle_VerticalInsideBorder_" data-uid="ACadSharp.Objects.TableStyle.CellStyle.VerticalInsideBorder*"></a>
+
+  <h3 id="ACadSharp_Objects_TableStyle_CellStyle_VerticalInsideBorder" data-uid="ACadSharp.Objects.TableStyle.CellStyle.VerticalInsideBorder">
+  VerticalInsideBorder
+  <a class="header-action link-secondary" title="View source" href="https://github.com/DomCR/ACadSharp/blob/1065/merge/src/ACadSharp/Objects/TableStyle.CellStyle.cs/#L188"><i class="bi bi-code-slash"></i></a>
+  </h3>
+
+  <div class="markdown level1 summary"><p>Gets or sets the vertical inside border style of the cell.</p>
+</div>
+  <div class="markdown level1 conceptual"></div>
+
+  <div class="codewrapper">
+    <pre><code class="lang-csharp hljs">public TableStyle.CellBorder VerticalInsideBorder { get; set; }</code></pre>
+  </div>
+
+
+
+
+
+  <h4 class="section">Property Value</h4>
+  <dl class="parameters">
+    <dt><a class="xref" href="ACadSharp.Objects.TableStyle.html">TableStyle</a>.<a class="xref" href="ACadSharp.Objects.TableStyle.CellBorder.html">CellBorder</a></dt>
+    <dd></dd>
+  </dl>
+
+
+
+
+
+
+
+
+  <a id="ACadSharp_Objects_TableStyle_CellStyle_VerticalMargin_" data-uid="ACadSharp.Objects.TableStyle.CellStyle.VerticalMargin*"></a>
+
+  <h3 id="ACadSharp_Objects_TableStyle_CellStyle_VerticalMargin" data-uid="ACadSharp.Objects.TableStyle.CellStyle.VerticalMargin">
+  VerticalMargin
+  <a class="header-action link-secondary" title="View source" href="https://github.com/DomCR/ACadSharp/blob/1065/merge/src/ACadSharp/Objects/TableStyle.CellStyle.cs/#L193"><i class="bi bi-code-slash"></i></a>
+  </h3>
+
+  <div class="markdown level1 summary"><p>Gets or sets the vertical margin of the cell. Default is <code>0.06</code>.</p>
+</div>
+  <div class="markdown level1 conceptual"></div>
+
+  <div class="codewrapper">
+    <pre><code class="lang-csharp hljs">public double VerticalMargin { get; set; }</code></pre>
+  </div>
+
+
+
+
+
+  <h4 class="section">Property Value</h4>
+  <dl class="parameters">
+    <dt><a class="xref" href="https://learn.microsoft.com/dotnet/api/system.double">double</a></dt>
+    <dd></dd>
+  </dl>
+
+
+
+
+
+
+
+
+  <h2 class="section" id="methods">Methods
+</h2>
+
+
+  <a id="ACadSharp_Objects_TableStyle_CellStyle_ToString_" data-uid="ACadSharp.Objects.TableStyle.CellStyle.ToString*"></a>
+
+  <h3 id="ACadSharp_Objects_TableStyle_CellStyle_ToString" data-uid="ACadSharp.Objects.TableStyle.CellStyle.ToString">
+  ToString()
+  <a class="header-action link-secondary" title="View source" href="https://github.com/DomCR/ACadSharp/blob/1065/merge/src/ACadSharp/Objects/TableStyle.CellStyle.cs/#L216"><i class="bi bi-code-slash"></i></a>
+  </h3>
+
+  <div class="markdown level1 summary"><p>Returns a string that represents the current object.</p>
+</div>
+  <div class="markdown level1 conceptual"></div>
+
+  <div class="codewrapper">
+    <pre><code class="lang-csharp hljs">public override string ToString()</code></pre>
+  </div>
+
+
+  <h4 class="section">Returns</h4>
+  <dl class="parameters">
+    <dt><a class="xref" href="https://learn.microsoft.com/dotnet/api/system.string">string</a></dt>
+    <dd><p>A string that represents the current object.</p>
+</dd>
+  </dl>
+
+
+
+
+
+
+
+
+
+
+
+
+</article>
+
+        <div class="contribution d-print-none">
+          <a href="https://github.com/DomCR/ACadSharp/blob/1065/merge/src/ACadSharp/Objects/TableStyle.CellStyle.cs/#L14" class="edit-link">Edit this page</a>
+        </div>
+
+
+      </div>
+
+      <div class="affix">
+        <nav id="affix"></nav>
+      </div>
+    </main>
+
+    <div class="container-xxl search-results" id="search-results"></div>
+
+    <footer class="border-top text-secondary">
+      <div class="container-xxl">
+        <div class="flex-fill">
+          <span>Made with <a href="https://dotnet.github.io/docfx">docfx</a></span>
+        </div>
+      </div>
+    </footer>
+  </body>
+</html>

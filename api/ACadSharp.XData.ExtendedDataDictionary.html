@@ -1,0 +1,846 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <meta charset="utf-8">
+      <title>Class ExtendedDataDictionary | ACadSharp </title>
+      <meta name="viewport" content="width=device-width, initial-scale=1.0">
+      <meta name="title" content="Class ExtendedDataDictionary | ACadSharp ">
+      
+      <meta name="description" content="Dictionary containing all the extended data for a giving , each entry is identified with an  key that identifies the application that has added the collection of Extended Data (XData) into the object.">
+      <link rel="icon" href="../favicon.ico">
+      <link rel="stylesheet" href="../public/docfx.min.css">
+      <link rel="stylesheet" href="../public/main.css">
+      <meta name="docfx:navrel" content="../toc.html">
+      <meta name="docfx:tocrel" content="toc.html">
+      
+      <meta name="docfx:rel" content="../">
+      
+      
+      <meta name="docfx:docurl" content="https://github.com/DomCR/ACadSharp/new/1065/merge/apiSpec/new?filename=ACadSharp_XData_ExtendedDataDictionary.md&amp;value=---%0Auid%3A%20ACadSharp.XData.ExtendedDataDictionary%0Asummary%3A%20&#39;*You%20can%20override%20summary%20for%20the%20API%20here%20using%20*MARKDOWN*%20syntax&#39;%0A---%0A%0A*Please%20type%20below%20more%20information%20about%20this%20API%3A*%0A%0A">
+      <meta name="loc:inThisArticle" content="In this article">
+      <meta name="loc:searchResultsCount" content="{count} results for &quot;{query}&quot;">
+      <meta name="loc:searchNoResults" content="No results for &quot;{query}&quot;">
+      <meta name="loc:tocFilter" content="Filter by title">
+      <meta name="loc:nextArticle" content="Next">
+      <meta name="loc:prevArticle" content="Previous">
+      <meta name="loc:themeLight" content="Light">
+      <meta name="loc:themeDark" content="Dark">
+      <meta name="loc:themeAuto" content="Auto">
+      <meta name="loc:changeTheme" content="Change theme">
+      <meta name="loc:copy" content="Copy">
+      <meta name="loc:downloadPdf" content="Download PDF">
+
+      <script type="module" src="./../public/docfx.min.js"></script>
+
+      <script>
+        const theme = localStorage.getItem('theme') || 'auto'
+        document.documentElement.setAttribute('data-bs-theme', theme === 'auto' ? (window.matchMedia('(prefers-color-scheme: dark)').matches ? 'dark' : 'light') : theme)
+      </script>
+
+  </head>
+
+  <body class="tex2jax_ignore" data-layout="" data-yaml-mime="ManagedReference">
+    <header class="bg-body border-bottom">
+      <nav id="autocollapse" class="navbar navbar-expand-md" role="navigation">
+        <div class="container-xxl flex-nowrap">
+          <a class="navbar-brand" href="../index.html">
+            <img id="logo" class="svg" src="../logo.svg" alt="ACadSharp">
+            ACadSharp
+          </a>
+          <button class="btn btn-lg d-md-none border-0" type="button" data-bs-toggle="collapse" data-bs-target="#navpanel" aria-controls="navpanel" aria-expanded="false" aria-label="Toggle navigation">
+            <i class="bi bi-three-dots"></i>
+          </button>
+          <div class="collapse navbar-collapse" id="navpanel">
+            <div id="navbar">
+              <form class="search" role="search" id="search">
+                <i class="bi bi-search"></i>
+                <input class="form-control" id="search-query" type="search" disabled placeholder="Search" autocomplete="off" aria-label="Search">
+              </form>
+            </div>
+          </div>
+        </div>
+      </nav>
+    </header>
+
+    <main class="container-xxl">
+      <div class="toc-offcanvas">
+        <div class="offcanvas-md offcanvas-start" tabindex="-1" id="tocOffcanvas" aria-labelledby="tocOffcanvasLabel">
+          <div class="offcanvas-header">
+            <h5 class="offcanvas-title" id="tocOffcanvasLabel">Table of Contents</h5>
+            <button type="button" class="btn-close" data-bs-dismiss="offcanvas" data-bs-target="#tocOffcanvas" aria-label="Close"></button>
+          </div>
+          <div class="offcanvas-body">
+            <nav class="toc" id="toc"></nav>
+          </div>
+        </div>
+      </div>
+
+      <div class="content">
+        <div class="actionbar">
+          <button class="btn btn-lg border-0 d-md-none" type="button" data-bs-toggle="offcanvas" data-bs-target="#tocOffcanvas" aria-controls="tocOffcanvas" aria-expanded="false" aria-label="Show table of contents">
+            <i class="bi bi-list"></i>
+          </button>
+
+          <nav id="breadcrumb"></nav>
+        </div>
+
+        <article data-uid="ACadSharp.XData.ExtendedDataDictionary">
+
+
+
+  <h1 id="ACadSharp_XData_ExtendedDataDictionary" data-uid="ACadSharp.XData.ExtendedDataDictionary" class="text-break">
+Class ExtendedDataDictionary  <a class="header-action link-secondary" title="View source" href="https://github.com/DomCR/ACadSharp/blob/1065/merge/src/ACadSharp/XData/ExtendedDataDictionary.cs/#L14"><i class="bi bi-code-slash"></i></a>
+  </h1>
+
+  <div class="facts text-secondary">
+    <dl><dt>Namespace</dt><dd><a class="xref" href="ACadSharp.html">ACadSharp</a>.<a class="xref" href="ACadSharp.XData.html">XData</a></dd></dl>
+  <dl><dt>Assembly</dt><dd>ACadSharp.dll</dd></dl>
+  </div>
+
+  <div class="markdown summary"><p>Dictionary containing all the extended data for a giving <a class="xref" href="ACadSharp.CadObject.html">CadObject</a>,
+each entry is identified with an <a class="xref" href="ACadSharp.Tables.AppId.html">AppId</a> key that identifies the application that
+has added the collection of Extended Data (XData) into the object.</p>
+</div>
+  <div class="markdown conceptual"></div>
+
+  <div class="codewrapper">
+    <pre><code class="lang-csharp hljs">public class ExtendedDataDictionary : IEnumerable&lt;KeyValuePair&lt;AppId, ExtendedData&gt;&gt;, IEnumerable</code></pre>
+  </div>
+
+
+
+
+  <dl class="typelist inheritance">
+    <dt>Inheritance</dt>
+    <dd>
+      <div><a class="xref" href="https://learn.microsoft.com/dotnet/api/system.object">object</a></div>
+      <div><span class="xref">ExtendedDataDictionary</span></div>
+    </dd>
+  </dl>
+
+  <dl class="typelist implements">
+    <dt>Implements</dt>
+    <dd>
+      <div><a class="xref" href="https://learn.microsoft.com/dotnet/api/system.collections.generic.ienumerable-1">IEnumerable</a>&lt;<a class="xref" href="https://learn.microsoft.com/dotnet/api/system.collections.generic.keyvaluepair-2">KeyValuePair</a>&lt;<a class="xref" href="ACadSharp.Tables.AppId.html">AppId</a>, <a class="xref" href="ACadSharp.XData.ExtendedData.html">ExtendedData</a>&gt;&gt;</div>
+      <div><a class="xref" href="https://learn.microsoft.com/dotnet/api/system.collections.ienumerable">IEnumerable</a></div>
+    </dd>
+  </dl>
+
+
+  <dl class="typelist inheritedMembers">
+    <dt>Inherited Members</dt>
+    <dd>
+    <div>
+      <a class="xref" href="https://learn.microsoft.com/dotnet/api/system.object.equals#system-object-equals(system-object)">object.Equals(object)</a>
+    </div>
+    <div>
+      <a class="xref" href="https://learn.microsoft.com/dotnet/api/system.object.equals#system-object-equals(system-object-system-object)">object.Equals(object, object)</a>
+    </div>
+    <div>
+      <a class="xref" href="https://learn.microsoft.com/dotnet/api/system.object.gethashcode">object.GetHashCode()</a>
+    </div>
+    <div>
+      <a class="xref" href="https://learn.microsoft.com/dotnet/api/system.object.gettype">object.GetType()</a>
+    </div>
+    <div>
+      <a class="xref" href="https://learn.microsoft.com/dotnet/api/system.object.memberwiseclone">object.MemberwiseClone()</a>
+    </div>
+    <div>
+      <a class="xref" href="https://learn.microsoft.com/dotnet/api/system.object.referenceequals">object.ReferenceEquals(object, object)</a>
+    </div>
+    <div>
+      <a class="xref" href="https://learn.microsoft.com/dotnet/api/system.object.tostring">object.ToString()</a>
+    </div>
+  </dd></dl>
+
+  <dl class="typelist extensionMethods">
+    <dt>Extension Methods</dt>
+    <dd>
+  <div>
+      <a class="xref" href="CSMath.Geometry.LineExtensions.html#CSMath_Geometry_LineExtensions_TryFindIntersection__2___0___0___1__">LineExtensions.TryFindIntersection&lt;T, R&gt;(T, T, out R)</a>
+  </div>
+  </dd></dl>
+
+
+
+
+
+  <h2 class="section" id="constructors">Constructors
+</h2>
+
+
+  <a id="ACadSharp_XData_ExtendedDataDictionary__ctor_" data-uid="ACadSharp.XData.ExtendedDataDictionary.#ctor*"></a>
+
+  <h3 id="ACadSharp_XData_ExtendedDataDictionary__ctor_ACadSharp_CadObject_" data-uid="ACadSharp.XData.ExtendedDataDictionary.#ctor(ACadSharp.CadObject)">
+  ExtendedDataDictionary(CadObject)
+  <a class="header-action link-secondary" title="View source" href="https://github.com/DomCR/ACadSharp/blob/1065/merge/src/ACadSharp/XData/ExtendedDataDictionary.cs/#L29"><i class="bi bi-code-slash"></i></a>
+  </h3>
+
+  <div class="markdown level1 summary"><p>Default constructor.</p>
+</div>
+  <div class="markdown level1 conceptual"></div>
+
+  <div class="codewrapper">
+    <pre><code class="lang-csharp hljs">public ExtendedDataDictionary(CadObject owner)</code></pre>
+  </div>
+
+  <h4 class="section">Parameters</h4>
+  <dl class="parameters">
+    <dt><code>owner</code> <a class="xref" href="ACadSharp.CadObject.html">CadObject</a></dt>
+    <dd></dd>
+  </dl>
+
+
+
+
+
+
+
+
+
+
+
+
+  <h2 class="section" id="properties">Properties
+</h2>
+
+
+  <a id="ACadSharp_XData_ExtendedDataDictionary_Document_" data-uid="ACadSharp.XData.ExtendedDataDictionary.Document*"></a>
+
+  <h3 id="ACadSharp_XData_ExtendedDataDictionary_Document" data-uid="ACadSharp.XData.ExtendedDataDictionary.Document">
+  Document
+  <a class="header-action link-secondary" title="View source" href="https://github.com/DomCR/ACadSharp/blob/1065/merge/src/ACadSharp/XData/ExtendedDataDictionary.cs/#L16"><i class="bi bi-code-slash"></i></a>
+  </h3>
+
+  <div class="markdown level1 summary"></div>
+  <div class="markdown level1 conceptual"></div>
+
+  <div class="codewrapper">
+    <pre><code class="lang-csharp hljs">public CadDocument Document { get; }</code></pre>
+  </div>
+
+
+
+
+
+  <h4 class="section">Property Value</h4>
+  <dl class="parameters">
+    <dt><a class="xref" href="ACadSharp.CadDocument.html">CadDocument</a></dt>
+    <dd></dd>
+  </dl>
+
+
+
+
+
+
+
+
+  <a id="ACadSharp_XData_ExtendedDataDictionary_Owner_" data-uid="ACadSharp.XData.ExtendedDataDictionary.Owner*"></a>
+
+  <h3 id="ACadSharp_XData_ExtendedDataDictionary_Owner" data-uid="ACadSharp.XData.ExtendedDataDictionary.Owner">
+  Owner
+  <a class="header-action link-secondary" title="View source" href="https://github.com/DomCR/ACadSharp/blob/1065/merge/src/ACadSharp/XData/ExtendedDataDictionary.cs/#L21"><i class="bi bi-code-slash"></i></a>
+  </h3>
+
+  <div class="markdown level1 summary"><p>Owner of the Extended Data dictionary.</p>
+</div>
+  <div class="markdown level1 conceptual"></div>
+
+  <div class="codewrapper">
+    <pre><code class="lang-csharp hljs">public CadObject Owner { get; }</code></pre>
+  </div>
+
+
+
+
+
+  <h4 class="section">Property Value</h4>
+  <dl class="parameters">
+    <dt><a class="xref" href="ACadSharp.CadObject.html">CadObject</a></dt>
+    <dd></dd>
+  </dl>
+
+
+
+
+
+
+
+
+  <h2 class="section" id="methods">Methods
+</h2>
+
+
+  <a id="ACadSharp_XData_ExtendedDataDictionary_Add_" data-uid="ACadSharp.XData.ExtendedDataDictionary.Add*"></a>
+
+  <h3 id="ACadSharp_XData_ExtendedDataDictionary_Add_ACadSharp_Tables_AppId_" data-uid="ACadSharp.XData.ExtendedDataDictionary.Add(ACadSharp.Tables.AppId)">
+  Add(AppId)
+  <a class="header-action link-secondary" title="View source" href="https://github.com/DomCR/ACadSharp/blob/1065/merge/src/ACadSharp/XData/ExtendedDataDictionary.cs/#L38"><i class="bi bi-code-slash"></i></a>
+  </h3>
+
+  <div class="markdown level1 summary"><p>Add an empty entry of ExtendedData for a given <a class="xref" href="ACadSharp.Tables.AppId.html">AppId</a>.</p>
+</div>
+  <div class="markdown level1 conceptual"></div>
+
+  <div class="codewrapper">
+    <pre><code class="lang-csharp hljs">public void Add(AppId app)</code></pre>
+  </div>
+
+  <h4 class="section">Parameters</h4>
+  <dl class="parameters">
+    <dt><code>app</code> <a class="xref" href="ACadSharp.Tables.AppId.html">AppId</a></dt>
+    <dd></dd>
+  </dl>
+
+
+
+
+
+
+
+
+
+
+
+
+  <a id="ACadSharp_XData_ExtendedDataDictionary_Add_" data-uid="ACadSharp.XData.ExtendedDataDictionary.Add*"></a>
+
+  <h3 id="ACadSharp_XData_ExtendedDataDictionary_Add_ACadSharp_Tables_AppId_ACadSharp_XData_ExtendedData_" data-uid="ACadSharp.XData.ExtendedDataDictionary.Add(ACadSharp.Tables.AppId,ACadSharp.XData.ExtendedData)">
+  Add(AppId, ExtendedData)
+  <a class="header-action link-secondary" title="View source" href="https://github.com/DomCR/ACadSharp/blob/1065/merge/src/ACadSharp/XData/ExtendedDataDictionary.cs/#L67"><i class="bi bi-code-slash"></i></a>
+  </h3>
+
+  <div class="markdown level1 summary"><p>Add ExtendedData for a specific <a class="xref" href="ACadSharp.Tables.AppId.html">AppId</a> to the Dictionary.</p>
+</div>
+  <div class="markdown level1 conceptual"></div>
+
+  <div class="codewrapper">
+    <pre><code class="lang-csharp hljs">public void Add(AppId app, ExtendedData extendedData)</code></pre>
+  </div>
+
+  <h4 class="section">Parameters</h4>
+  <dl class="parameters">
+    <dt><code>app</code> <a class="xref" href="ACadSharp.Tables.AppId.html">AppId</a></dt>
+    <dd></dd>
+    <dt><code>extendedData</code> <a class="xref" href="ACadSharp.XData.ExtendedData.html">ExtendedData</a></dt>
+    <dd></dd>
+  </dl>
+
+
+
+
+
+
+
+
+
+
+
+
+  <a id="ACadSharp_XData_ExtendedDataDictionary_Add_" data-uid="ACadSharp.XData.ExtendedDataDictionary.Add*"></a>
+
+  <h3 id="ACadSharp_XData_ExtendedDataDictionary_Add_ACadSharp_Tables_AppId_System_Collections_Generic_IEnumerable_ACadSharp_XData_ExtendedDataRecord__" data-uid="ACadSharp.XData.ExtendedDataDictionary.Add(ACadSharp.Tables.AppId,System.Collections.Generic.IEnumerable{ACadSharp.XData.ExtendedDataRecord})">
+  Add(AppId, IEnumerable&lt;ExtendedDataRecord&gt;)
+  <a class="header-action link-secondary" title="View source" href="https://github.com/DomCR/ACadSharp/blob/1065/merge/src/ACadSharp/XData/ExtendedDataDictionary.cs/#L92"><i class="bi bi-code-slash"></i></a>
+  </h3>
+
+  <div class="markdown level1 summary"><p>Add ExtendedData for a specific <a class="xref" href="ACadSharp.Tables.AppId.html">AppId</a> to the Dictionary.</p>
+</div>
+  <div class="markdown level1 conceptual"></div>
+
+  <div class="codewrapper">
+    <pre><code class="lang-csharp hljs">public void Add(AppId app, IEnumerable&lt;ExtendedDataRecord&gt; records)</code></pre>
+  </div>
+
+  <h4 class="section">Parameters</h4>
+  <dl class="parameters">
+    <dt><code>app</code> <a class="xref" href="ACadSharp.Tables.AppId.html">AppId</a></dt>
+    <dd><p>The AppId object.</p>
+</dd>
+    <dt><code>records</code> <a class="xref" href="https://learn.microsoft.com/dotnet/api/system.collections.generic.ienumerable-1">IEnumerable</a>&lt;<a class="xref" href="ACadSharp.XData.ExtendedDataRecord.html">ExtendedDataRecord</a>&gt;</dt>
+    <dd><p>The ExtendedData records.</p>
+</dd>
+  </dl>
+
+
+
+
+
+
+
+
+
+
+
+
+  <a id="ACadSharp_XData_ExtendedDataDictionary_Add_" data-uid="ACadSharp.XData.ExtendedDataDictionary.Add*"></a>
+
+  <h3 id="ACadSharp_XData_ExtendedDataDictionary_Add_System_String_" data-uid="ACadSharp.XData.ExtendedDataDictionary.Add(System.String)">
+  Add(string)
+  <a class="header-action link-secondary" title="View source" href="https://github.com/DomCR/ACadSharp/blob/1065/merge/src/ACadSharp/XData/ExtendedDataDictionary.cs/#L47"><i class="bi bi-code-slash"></i></a>
+  </h3>
+
+  <div class="markdown level1 summary"><p>Adds a new application with the specified name.</p>
+</div>
+  <div class="markdown level1 conceptual"></div>
+
+  <div class="codewrapper">
+    <pre><code class="lang-csharp hljs">public void Add(string appName)</code></pre>
+  </div>
+
+  <h4 class="section">Parameters</h4>
+  <dl class="parameters">
+    <dt><code>appName</code> <a class="xref" href="https://learn.microsoft.com/dotnet/api/system.string">string</a></dt>
+    <dd><p>The name of the application to add. Cannot be null or empty.</p>
+</dd>
+  </dl>
+
+
+
+
+
+
+
+
+
+
+
+
+  <a id="ACadSharp_XData_ExtendedDataDictionary_Add_" data-uid="ACadSharp.XData.ExtendedDataDictionary.Add*"></a>
+
+  <h3 id="ACadSharp_XData_ExtendedDataDictionary_Add_System_String_ACadSharp_XData_ExtendedData_" data-uid="ACadSharp.XData.ExtendedDataDictionary.Add(System.String,ACadSharp.XData.ExtendedData)">
+  Add(string, ExtendedData)
+  <a class="header-action link-secondary" title="View source" href="https://github.com/DomCR/ACadSharp/blob/1065/merge/src/ACadSharp/XData/ExtendedDataDictionary.cs/#L57"><i class="bi bi-code-slash"></i></a>
+  </h3>
+
+  <div class="markdown level1 summary"><p>Adds an application and its associated extended data to the collection.</p>
+</div>
+  <div class="markdown level1 conceptual"></div>
+
+  <div class="codewrapper">
+    <pre><code class="lang-csharp hljs">public void Add(string appName, ExtendedData extendedData)</code></pre>
+  </div>
+
+  <h4 class="section">Parameters</h4>
+  <dl class="parameters">
+    <dt><code>appName</code> <a class="xref" href="https://learn.microsoft.com/dotnet/api/system.string">string</a></dt>
+    <dd><p>The name of the application to add. Cannot be null or empty.</p>
+</dd>
+    <dt><code>extendedData</code> <a class="xref" href="ACadSharp.XData.ExtendedData.html">ExtendedData</a></dt>
+    <dd><p>The extended data associated with the application. Cannot be null.</p>
+</dd>
+  </dl>
+
+
+
+
+
+
+
+
+
+
+
+
+  <a id="ACadSharp_XData_ExtendedDataDictionary_Clear_" data-uid="ACadSharp.XData.ExtendedDataDictionary.Clear*"></a>
+
+  <h3 id="ACadSharp_XData_ExtendedDataDictionary_Clear" data-uid="ACadSharp.XData.ExtendedDataDictionary.Clear">
+  Clear()
+  <a class="header-action link-secondary" title="View source" href="https://github.com/DomCR/ACadSharp/blob/1065/merge/src/ACadSharp/XData/ExtendedDataDictionary.cs/#L100"><i class="bi bi-code-slash"></i></a>
+  </h3>
+
+  <div class="markdown level1 summary"><p>Clear all Dictionary entries.</p>
+</div>
+  <div class="markdown level1 conceptual"></div>
+
+  <div class="codewrapper">
+    <pre><code class="lang-csharp hljs">public void Clear()</code></pre>
+  </div>
+
+
+
+
+
+
+
+
+
+
+
+
+
+  <a id="ACadSharp_XData_ExtendedDataDictionary_ContainsKey_" data-uid="ACadSharp.XData.ExtendedDataDictionary.ContainsKey*"></a>
+
+  <h3 id="ACadSharp_XData_ExtendedDataDictionary_ContainsKey_ACadSharp_Tables_AppId_" data-uid="ACadSharp.XData.ExtendedDataDictionary.ContainsKey(ACadSharp.Tables.AppId)">
+  ContainsKey(AppId)
+  <a class="header-action link-secondary" title="View source" href="https://github.com/DomCR/ACadSharp/blob/1065/merge/src/ACadSharp/XData/ExtendedDataDictionary.cs/#L109"><i class="bi bi-code-slash"></i></a>
+  </h3>
+
+  <div class="markdown level1 summary"><p>Check whether a given AppId is in the Dictionary.</p>
+</div>
+  <div class="markdown level1 conceptual"></div>
+
+  <div class="codewrapper">
+    <pre><code class="lang-csharp hljs">public bool ContainsKey(AppId app)</code></pre>
+  </div>
+
+  <h4 class="section">Parameters</h4>
+  <dl class="parameters">
+    <dt><code>app</code> <a class="xref" href="ACadSharp.Tables.AppId.html">AppId</a></dt>
+    <dd><p>The AppId object.</p>
+</dd>
+  </dl>
+
+  <h4 class="section">Returns</h4>
+  <dl class="parameters">
+    <dt><a class="xref" href="https://learn.microsoft.com/dotnet/api/system.boolean">bool</a></dt>
+    <dd></dd>
+  </dl>
+
+
+
+
+
+
+
+
+
+
+
+  <a id="ACadSharp_XData_ExtendedDataDictionary_ContainsKeyName_" data-uid="ACadSharp.XData.ExtendedDataDictionary.ContainsKeyName*"></a>
+
+  <h3 id="ACadSharp_XData_ExtendedDataDictionary_ContainsKeyName_System_String_" data-uid="ACadSharp.XData.ExtendedDataDictionary.ContainsKeyName(System.String)">
+  ContainsKeyName(string)
+  <a class="header-action link-secondary" title="View source" href="https://github.com/DomCR/ACadSharp/blob/1065/merge/src/ACadSharp/XData/ExtendedDataDictionary.cs/#L118"><i class="bi bi-code-slash"></i></a>
+  </h3>
+
+  <div class="markdown level1 summary"><p>Check whether a given AppId is in the Dictionary.</p>
+</div>
+  <div class="markdown level1 conceptual"></div>
+
+  <div class="codewrapper">
+    <pre><code class="lang-csharp hljs">public bool ContainsKeyName(string name)</code></pre>
+  </div>
+
+  <h4 class="section">Parameters</h4>
+  <dl class="parameters">
+    <dt><code>name</code> <a class="xref" href="https://learn.microsoft.com/dotnet/api/system.string">string</a></dt>
+    <dd><p>The AppId name.</p>
+</dd>
+  </dl>
+
+  <h4 class="section">Returns</h4>
+  <dl class="parameters">
+    <dt><a class="xref" href="https://learn.microsoft.com/dotnet/api/system.boolean">bool</a></dt>
+    <dd></dd>
+  </dl>
+
+
+
+
+
+
+
+
+
+
+
+  <a id="ACadSharp_XData_ExtendedDataDictionary_Get_" data-uid="ACadSharp.XData.ExtendedDataDictionary.Get*"></a>
+
+  <h3 id="ACadSharp_XData_ExtendedDataDictionary_Get_ACadSharp_Tables_AppId_" data-uid="ACadSharp.XData.ExtendedDataDictionary.Get(ACadSharp.Tables.AppId)">
+  Get(AppId)
+  <a class="header-action link-secondary" title="View source" href="https://github.com/DomCR/ACadSharp/blob/1065/merge/src/ACadSharp/XData/ExtendedDataDictionary.cs/#L137"><i class="bi bi-code-slash"></i></a>
+  </h3>
+
+  <div class="markdown level1 summary"><p>Get ExtendedData for a specific <a class="xref" href="ACadSharp.Tables.AppId.html">AppId</a> from the Dictionary.</p>
+</div>
+  <div class="markdown level1 conceptual"></div>
+
+  <div class="codewrapper">
+    <pre><code class="lang-csharp hljs">public ExtendedData Get(AppId app)</code></pre>
+  </div>
+
+  <h4 class="section">Parameters</h4>
+  <dl class="parameters">
+    <dt><code>app</code> <a class="xref" href="ACadSharp.Tables.AppId.html">AppId</a></dt>
+    <dd><p>The AppId object.</p>
+</dd>
+  </dl>
+
+  <h4 class="section">Returns</h4>
+  <dl class="parameters">
+    <dt><a class="xref" href="ACadSharp.XData.ExtendedData.html">ExtendedData</a></dt>
+    <dd></dd>
+  </dl>
+
+
+
+
+
+
+
+
+
+
+
+  <a id="ACadSharp_XData_ExtendedDataDictionary_Get_" data-uid="ACadSharp.XData.ExtendedDataDictionary.Get*"></a>
+
+  <h3 id="ACadSharp_XData_ExtendedDataDictionary_Get_System_String_" data-uid="ACadSharp.XData.ExtendedDataDictionary.Get(System.String)">
+  Get(string)
+  <a class="header-action link-secondary" title="View source" href="https://github.com/DomCR/ACadSharp/blob/1065/merge/src/ACadSharp/XData/ExtendedDataDictionary.cs/#L128"><i class="bi bi-code-slash"></i></a>
+  </h3>
+
+  <div class="markdown level1 summary"><p>Get the Extended data for a given <a class="xref" href="ACadSharp.Tables.AppId.html">AppId</a> name.</p>
+</div>
+  <div class="markdown level1 conceptual"></div>
+
+  <div class="codewrapper">
+    <pre><code class="lang-csharp hljs">public ExtendedData Get(string name)</code></pre>
+  </div>
+
+  <h4 class="section">Parameters</h4>
+  <dl class="parameters">
+    <dt><code>name</code> <a class="xref" href="https://learn.microsoft.com/dotnet/api/system.string">string</a></dt>
+    <dd></dd>
+  </dl>
+
+  <h4 class="section">Returns</h4>
+  <dl class="parameters">
+    <dt><a class="xref" href="ACadSharp.XData.ExtendedData.html">ExtendedData</a></dt>
+    <dd></dd>
+  </dl>
+
+
+
+
+
+
+
+
+
+
+
+  <a id="ACadSharp_XData_ExtendedDataDictionary_GetEnumerator_" data-uid="ACadSharp.XData.ExtendedDataDictionary.GetEnumerator*"></a>
+
+  <h3 id="ACadSharp_XData_ExtendedDataDictionary_GetEnumerator" data-uid="ACadSharp.XData.ExtendedDataDictionary.GetEnumerator">
+  GetEnumerator()
+  <a class="header-action link-secondary" title="View source" href="https://github.com/DomCR/ACadSharp/blob/1065/merge/src/ACadSharp/XData/ExtendedDataDictionary.cs/#L143"><i class="bi bi-code-slash"></i></a>
+  </h3>
+
+  <div class="markdown level1 summary"><p>Returns an enumerator that iterates through the collection.</p>
+</div>
+  <div class="markdown level1 conceptual"></div>
+
+  <div class="codewrapper">
+    <pre><code class="lang-csharp hljs">public IEnumerator&lt;KeyValuePair&lt;AppId, ExtendedData&gt;&gt; GetEnumerator()</code></pre>
+  </div>
+
+
+  <h4 class="section">Returns</h4>
+  <dl class="parameters">
+    <dt><a class="xref" href="https://learn.microsoft.com/dotnet/api/system.collections.generic.ienumerator-1">IEnumerator</a>&lt;<a class="xref" href="https://learn.microsoft.com/dotnet/api/system.collections.generic.keyvaluepair-2">KeyValuePair</a>&lt;<a class="xref" href="ACadSharp.Tables.AppId.html">AppId</a>, <a class="xref" href="ACadSharp.XData.ExtendedData.html">ExtendedData</a>&gt;&gt;</dt>
+    <dd><p>An enumerator that can be used to iterate through the collection.</p>
+</dd>
+  </dl>
+
+
+
+
+
+
+
+
+
+
+
+  <a id="ACadSharp_XData_ExtendedDataDictionary_GetExtendedDataByName_" data-uid="ACadSharp.XData.ExtendedDataDictionary.GetExtendedDataByName*"></a>
+
+  <h3 id="ACadSharp_XData_ExtendedDataDictionary_GetExtendedDataByName" data-uid="ACadSharp.XData.ExtendedDataDictionary.GetExtendedDataByName">
+  GetExtendedDataByName()
+  <a class="header-action link-secondary" title="View source" href="https://github.com/DomCR/ACadSharp/blob/1065/merge/src/ACadSharp/XData/ExtendedDataDictionary.cs/#L158"><i class="bi bi-code-slash"></i></a>
+  </h3>
+
+  <div class="markdown level1 summary"><p>Get the different extended data by it's name.</p>
+</div>
+  <div class="markdown level1 conceptual"></div>
+
+  <div class="codewrapper">
+    <pre><code class="lang-csharp hljs">public IDictionary&lt;string, ExtendedData&gt; GetExtendedDataByName()</code></pre>
+  </div>
+
+
+  <h4 class="section">Returns</h4>
+  <dl class="parameters">
+    <dt><a class="xref" href="https://learn.microsoft.com/dotnet/api/system.collections.generic.idictionary-2">IDictionary</a>&lt;<a class="xref" href="https://learn.microsoft.com/dotnet/api/system.string">string</a>, <a class="xref" href="ACadSharp.XData.ExtendedData.html">ExtendedData</a>&gt;</dt>
+    <dd></dd>
+  </dl>
+
+
+
+
+
+
+
+
+
+
+
+  <a id="ACadSharp_XData_ExtendedDataDictionary_TryAdd_" data-uid="ACadSharp.XData.ExtendedDataDictionary.TryAdd*"></a>
+
+  <h3 id="ACadSharp_XData_ExtendedDataDictionary_TryAdd_System_String_ACadSharp_XData_ExtendedData_" data-uid="ACadSharp.XData.ExtendedDataDictionary.TryAdd(System.String,ACadSharp.XData.ExtendedData)">
+  TryAdd(string, ExtendedData)
+  <a class="header-action link-secondary" title="View source" href="https://github.com/DomCR/ACadSharp/blob/1065/merge/src/ACadSharp/XData/ExtendedDataDictionary.cs/#L174"><i class="bi bi-code-slash"></i></a>
+  </h3>
+
+  <div class="markdown level1 summary"><p>Adds the specified extended data for the given application name if it does not already exist, and returns the
+stored extended data.</p>
+</div>
+  <div class="markdown level1 conceptual"></div>
+
+  <div class="codewrapper">
+    <pre><code class="lang-csharp hljs">public ExtendedData TryAdd(string appName, ExtendedData extendedData)</code></pre>
+  </div>
+
+  <h4 class="section">Parameters</h4>
+  <dl class="parameters">
+    <dt><code>appName</code> <a class="xref" href="https://learn.microsoft.com/dotnet/api/system.string">string</a></dt>
+    <dd><p>The name of the application to associate with the extended data. Cannot be null.</p>
+</dd>
+    <dt><code>extendedData</code> <a class="xref" href="ACadSharp.XData.ExtendedData.html">ExtendedData</a></dt>
+    <dd><p>The extended data to add if no data is already associated with the specified application name. Cannot be null.</p>
+</dd>
+  </dl>
+
+  <h4 class="section">Returns</h4>
+  <dl class="parameters">
+    <dt><a class="xref" href="ACadSharp.XData.ExtendedData.html">ExtendedData</a></dt>
+    <dd><p>The existing extended data associated with the specified application name if it was already present; otherwise,
+the newly added extended data.</p>
+</dd>
+  </dl>
+
+
+
+
+
+
+
+  <h4 class="section" id="ACadSharp_XData_ExtendedDataDictionary_TryAdd_System_String_ACadSharp_XData_ExtendedData__remarks">Remarks</h4>
+  <div class="markdown level1 remarks"><p>If extended data for the specified application name already exists, this method does not
+overwrite it. Use this method to ensure that only one instance of extended data is associated with each
+application name.</p>
+</div>
+
+
+
+
+  <a id="ACadSharp_XData_ExtendedDataDictionary_TryGet_" data-uid="ACadSharp.XData.ExtendedDataDictionary.TryGet*"></a>
+
+  <h3 id="ACadSharp_XData_ExtendedDataDictionary_TryGet_ACadSharp_Tables_AppId_ACadSharp_XData_ExtendedData__" data-uid="ACadSharp.XData.ExtendedDataDictionary.TryGet(ACadSharp.Tables.AppId,ACadSharp.XData.ExtendedData@)">
+  TryGet(AppId, out ExtendedData)
+  <a class="header-action link-secondary" title="View source" href="https://github.com/DomCR/ACadSharp/blob/1065/merge/src/ACadSharp/XData/ExtendedDataDictionary.cs/#L192"><i class="bi bi-code-slash"></i></a>
+  </h3>
+
+  <div class="markdown level1 summary"><p>Try to get ExtendedData for a specific <a class="xref" href="ACadSharp.Tables.AppId.html">AppId</a> from the Dictionary.</p>
+</div>
+  <div class="markdown level1 conceptual"></div>
+
+  <div class="codewrapper">
+    <pre><code class="lang-csharp hljs">public bool TryGet(AppId app, out ExtendedData value)</code></pre>
+  </div>
+
+  <h4 class="section">Parameters</h4>
+  <dl class="parameters">
+    <dt><code>app</code> <a class="xref" href="ACadSharp.Tables.AppId.html">AppId</a></dt>
+    <dd><p>The AppId object.</p>
+</dd>
+    <dt><code>value</code> <a class="xref" href="ACadSharp.XData.ExtendedData.html">ExtendedData</a></dt>
+    <dd><p>ExtendedData object.</p>
+</dd>
+  </dl>
+
+  <h4 class="section">Returns</h4>
+  <dl class="parameters">
+    <dt><a class="xref" href="https://learn.microsoft.com/dotnet/api/system.boolean">bool</a></dt>
+    <dd></dd>
+  </dl>
+
+
+
+
+
+
+
+
+
+
+
+  <a id="ACadSharp_XData_ExtendedDataDictionary_TryGet_" data-uid="ACadSharp.XData.ExtendedDataDictionary.TryGet*"></a>
+
+  <h3 id="ACadSharp_XData_ExtendedDataDictionary_TryGet_System_String_ACadSharp_XData_ExtendedData__" data-uid="ACadSharp.XData.ExtendedDataDictionary.TryGet(System.String,ACadSharp.XData.ExtendedData@)">
+  TryGet(string, out ExtendedData)
+  <a class="header-action link-secondary" title="View source" href="https://github.com/DomCR/ACadSharp/blob/1065/merge/src/ACadSharp/XData/ExtendedDataDictionary.cs/#L203"><i class="bi bi-code-slash"></i></a>
+  </h3>
+
+  <div class="markdown level1 summary"><p>Try to get ExtendedData for a specific <a class="xref" href="ACadSharp.Tables.AppId.html">AppId</a> name from the Dictionary.</p>
+</div>
+  <div class="markdown level1 conceptual"></div>
+
+  <div class="codewrapper">
+    <pre><code class="lang-csharp hljs">public bool TryGet(string name, out ExtendedData value)</code></pre>
+  </div>
+
+  <h4 class="section">Parameters</h4>
+  <dl class="parameters">
+    <dt><code>name</code> <a class="xref" href="https://learn.microsoft.com/dotnet/api/system.string">string</a></dt>
+    <dd><p>The AppId name.</p>
+</dd>
+    <dt><code>value</code> <a class="xref" href="ACadSharp.XData.ExtendedData.html">ExtendedData</a></dt>
+    <dd><p>ExtendedData object.</p>
+</dd>
+  </dl>
+
+  <h4 class="section">Returns</h4>
+  <dl class="parameters">
+    <dt><a class="xref" href="https://learn.microsoft.com/dotnet/api/system.boolean">bool</a></dt>
+    <dd><p>true, if found.</p>
+</dd>
+  </dl>
+
+
+
+
+
+
+
+
+
+
+
+
+</article>
+
+        <div class="contribution d-print-none">
+          <a href="https://github.com/DomCR/ACadSharp/blob/1065/merge/src/ACadSharp/XData/ExtendedDataDictionary.cs/#L14" class="edit-link">Edit this page</a>
+        </div>
+
+
+      </div>
+
+      <div class="affix">
+        <nav id="affix"></nav>
+      </div>
+    </main>
+
+    <div class="container-xxl search-results" id="search-results"></div>
+
+    <footer class="border-top text-secondary">
+      <div class="container-xxl">
+        <div class="flex-fill">
+          <span>Made with <a href="https://dotnet.github.io/docfx">docfx</a></span>
+        </div>
+      </div>
+    </footer>
+  </body>
+</html>

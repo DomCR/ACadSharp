@@ -1,0 +1,616 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <meta charset="utf-8">
+      <title>Interface IEntity | ACadSharp </title>
+      <meta name="viewport" content="width=device-width, initial-scale=1.0">
+      <meta name="title" content="Interface IEntity | ACadSharp ">
+      
+      <meta name="description" content="Defines the contract for a CAD entity, providing common properties and methods for graphical objects within a CAD document.">
+      <link rel="icon" href="../favicon.ico">
+      <link rel="stylesheet" href="../public/docfx.min.css">
+      <link rel="stylesheet" href="../public/main.css">
+      <meta name="docfx:navrel" content="../toc.html">
+      <meta name="docfx:tocrel" content="toc.html">
+      
+      <meta name="docfx:rel" content="../">
+      
+      
+      <meta name="docfx:docurl" content="https://github.com/DomCR/ACadSharp/new/1065/merge/apiSpec/new?filename=ACadSharp_Entities_IEntity.md&amp;value=---%0Auid%3A%20ACadSharp.Entities.IEntity%0Asummary%3A%20&#39;*You%20can%20override%20summary%20for%20the%20API%20here%20using%20*MARKDOWN*%20syntax&#39;%0A---%0A%0A*Please%20type%20below%20more%20information%20about%20this%20API%3A*%0A%0A">
+      <meta name="loc:inThisArticle" content="In this article">
+      <meta name="loc:searchResultsCount" content="{count} results for &quot;{query}&quot;">
+      <meta name="loc:searchNoResults" content="No results for &quot;{query}&quot;">
+      <meta name="loc:tocFilter" content="Filter by title">
+      <meta name="loc:nextArticle" content="Next">
+      <meta name="loc:prevArticle" content="Previous">
+      <meta name="loc:themeLight" content="Light">
+      <meta name="loc:themeDark" content="Dark">
+      <meta name="loc:themeAuto" content="Auto">
+      <meta name="loc:changeTheme" content="Change theme">
+      <meta name="loc:copy" content="Copy">
+      <meta name="loc:downloadPdf" content="Download PDF">
+
+      <script type="module" src="./../public/docfx.min.js"></script>
+
+      <script>
+        const theme = localStorage.getItem('theme') || 'auto'
+        document.documentElement.setAttribute('data-bs-theme', theme === 'auto' ? (window.matchMedia('(prefers-color-scheme: dark)').matches ? 'dark' : 'light') : theme)
+      </script>
+
+  </head>
+
+  <body class="tex2jax_ignore" data-layout="" data-yaml-mime="ManagedReference">
+    <header class="bg-body border-bottom">
+      <nav id="autocollapse" class="navbar navbar-expand-md" role="navigation">
+        <div class="container-xxl flex-nowrap">
+          <a class="navbar-brand" href="../index.html">
+            <img id="logo" class="svg" src="../logo.svg" alt="ACadSharp">
+            ACadSharp
+          </a>
+          <button class="btn btn-lg d-md-none border-0" type="button" data-bs-toggle="collapse" data-bs-target="#navpanel" aria-controls="navpanel" aria-expanded="false" aria-label="Toggle navigation">
+            <i class="bi bi-three-dots"></i>
+          </button>
+          <div class="collapse navbar-collapse" id="navpanel">
+            <div id="navbar">
+              <form class="search" role="search" id="search">
+                <i class="bi bi-search"></i>
+                <input class="form-control" id="search-query" type="search" disabled placeholder="Search" autocomplete="off" aria-label="Search">
+              </form>
+            </div>
+          </div>
+        </div>
+      </nav>
+    </header>
+
+    <main class="container-xxl">
+      <div class="toc-offcanvas">
+        <div class="offcanvas-md offcanvas-start" tabindex="-1" id="tocOffcanvas" aria-labelledby="tocOffcanvasLabel">
+          <div class="offcanvas-header">
+            <h5 class="offcanvas-title" id="tocOffcanvasLabel">Table of Contents</h5>
+            <button type="button" class="btn-close" data-bs-dismiss="offcanvas" data-bs-target="#tocOffcanvas" aria-label="Close"></button>
+          </div>
+          <div class="offcanvas-body">
+            <nav class="toc" id="toc"></nav>
+          </div>
+        </div>
+      </div>
+
+      <div class="content">
+        <div class="actionbar">
+          <button class="btn btn-lg border-0 d-md-none" type="button" data-bs-toggle="offcanvas" data-bs-target="#tocOffcanvas" aria-controls="tocOffcanvas" aria-expanded="false" aria-label="Show table of contents">
+            <i class="bi bi-list"></i>
+          </button>
+
+          <nav id="breadcrumb"></nav>
+        </div>
+
+        <article data-uid="ACadSharp.Entities.IEntity">
+
+
+
+  <h1 id="ACadSharp_Entities_IEntity" data-uid="ACadSharp.Entities.IEntity" class="text-break">
+Interface IEntity  <a class="header-action link-secondary" title="View source" href="https://github.com/DomCR/ACadSharp/blob/1065/merge/src/ACadSharp/Entities/IEntity.cs/#L15"><i class="bi bi-code-slash"></i></a>
+  </h1>
+
+  <div class="facts text-secondary">
+    <dl><dt>Namespace</dt><dd><a class="xref" href="ACadSharp.html">ACadSharp</a>.<a class="xref" href="ACadSharp.Entities.html">Entities</a></dd></dl>
+  <dl><dt>Assembly</dt><dd>ACadSharp.dll</dd></dl>
+  </div>
+
+  <div class="markdown summary"><p>Defines the contract for a CAD entity, providing common properties and methods for graphical objects within a CAD
+document.</p>
+</div>
+  <div class="markdown conceptual"></div>
+
+  <div class="codewrapper">
+    <pre><code class="lang-csharp hljs">public interface IEntity : IHandledCadObject, IGeometricEntity</code></pre>
+  </div>
+
+
+
+
+
+
+
+  <dl class="typelist inheritedMembers">
+    <dt>Inherited Members</dt>
+    <dd>
+    <div>
+      <a class="xref" href="ACadSharp.IHandledCadObject.html#ACadSharp_IHandledCadObject_Handle">IHandledCadObject.Handle</a>
+    </div>
+    <div>
+      <a class="xref" href="ACadSharp.Entities.IGeometricEntity.html#ACadSharp_Entities_IGeometricEntity_ApplyTransform_CSMath_Transform_">IGeometricEntity.ApplyTransform(Transform)</a>
+    </div>
+    <div>
+      <a class="xref" href="ACadSharp.Entities.IGeometricEntity.html#ACadSharp_Entities_IGeometricEntity_GetBoundingBox">IGeometricEntity.GetBoundingBox()</a>
+    </div>
+  </dd></dl>
+
+  <dl class="typelist extensionMethods">
+    <dt>Extension Methods</dt>
+    <dd>
+  <div>
+      <a class="xref" href="CSMath.Geometry.LineExtensions.html#CSMath_Geometry_LineExtensions_TryFindIntersection__2___0___0___1__">LineExtensions.TryFindIntersection&lt;T, R&gt;(T, T, out R)</a>
+  </div>
+  </dd></dl>
+
+
+
+  <h2 id="ACadSharp_Entities_IEntity_remarks">Remarks</h2>
+  <div class="markdown level0 remarks"><p>The <a class="xref" href="ACadSharp.Entities.IEntity.html">IEntity</a> interface exposes standard attributes such as color, layer, linetype, line weight,
+material, and transparency, as well as methods to resolve effective property values and to match properties with
+another entity. Implementations are expected to represent geometric or drawable objects in a CAD environment. This
+interface extends IHandledCadObject and IGeometricEntity, ensuring that all entities have unique handles and
+geometric characteristics. Thread safety and mutability depend on the specific implementation.</p>
+</div>
+
+
+  <h2 class="section" id="properties">Properties
+</h2>
+
+
+  <a id="ACadSharp_Entities_IEntity_Color_" data-uid="ACadSharp.Entities.IEntity.Color*"></a>
+
+  <h3 id="ACadSharp_Entities_IEntity_Color" data-uid="ACadSharp.Entities.IEntity.Color">
+  Color
+  <a class="header-action link-secondary" title="View source" href="https://github.com/DomCR/ACadSharp/blob/1065/merge/src/ACadSharp/Entities/IEntity.cs/#L25"><i class="bi bi-code-slash"></i></a>
+  </h3>
+
+  <div class="markdown level1 summary"><p>The True Color object of the object.</p>
+</div>
+  <div class="markdown level1 conceptual"></div>
+
+  <div class="codewrapper">
+    <pre><code class="lang-csharp hljs">Color Color { get; set; }</code></pre>
+  </div>
+
+
+
+
+
+  <h4 class="section">Property Value</h4>
+  <dl class="parameters">
+    <dt><a class="xref" href="ACadSharp.Color.html">Color</a></dt>
+    <dd></dd>
+  </dl>
+
+
+
+
+  <h4 class="section" id="ACadSharp_Entities_IEntity_Color_remarks">Remarks</h4>
+  <div class="markdown level1 remarks"><p>This property is used to change an object's color. Colors are identified by an AcCmColor object.
+This object can hold an RGB value, an ACI number (an integer from 1 to 255), or a named color.
+Using an RGB value, you can choose from millions of colors.</p>
+</div>
+
+
+
+
+  <a id="ACadSharp_Entities_IEntity_Document_" data-uid="ACadSharp.Entities.IEntity.Document*"></a>
+
+  <h3 id="ACadSharp_Entities_IEntity_Document" data-uid="ACadSharp.Entities.IEntity.Document">
+  Document
+  <a class="header-action link-secondary" title="View source" href="https://github.com/DomCR/ACadSharp/blob/1065/merge/src/ACadSharp/Entities/IEntity.cs/#L30"><i class="bi bi-code-slash"></i></a>
+  </h3>
+
+  <div class="markdown level1 summary"><p>Document where this element belongs.</p>
+</div>
+  <div class="markdown level1 conceptual"></div>
+
+  <div class="codewrapper">
+    <pre><code class="lang-csharp hljs">CadDocument Document { get; }</code></pre>
+  </div>
+
+
+
+
+
+  <h4 class="section">Property Value</h4>
+  <dl class="parameters">
+    <dt><a class="xref" href="ACadSharp.CadDocument.html">CadDocument</a></dt>
+    <dd></dd>
+  </dl>
+
+
+
+
+
+
+
+
+  <a id="ACadSharp_Entities_IEntity_IsInvisible_" data-uid="ACadSharp.Entities.IEntity.IsInvisible*"></a>
+
+  <h3 id="ACadSharp_Entities_IEntity_IsInvisible" data-uid="ACadSharp.Entities.IEntity.IsInvisible">
+  IsInvisible
+  <a class="header-action link-secondary" title="View source" href="https://github.com/DomCR/ACadSharp/blob/1065/merge/src/ACadSharp/Entities/IEntity.cs/#L40"><i class="bi bi-code-slash"></i></a>
+  </h3>
+
+  <div class="markdown level1 summary"><p>Specifies the visibility of an object or the application.</p>
+</div>
+  <div class="markdown level1 conceptual"></div>
+
+  <div class="codewrapper">
+    <pre><code class="lang-csharp hljs">bool IsInvisible { get; set; }</code></pre>
+  </div>
+
+
+
+
+
+  <h4 class="section">Property Value</h4>
+  <dl class="parameters">
+    <dt><a class="xref" href="https://learn.microsoft.com/dotnet/api/system.boolean">bool</a></dt>
+    <dd></dd>
+  </dl>
+
+
+
+
+  <h4 class="section" id="ACadSharp_Entities_IEntity_IsInvisible_remarks">Remarks</h4>
+  <div class="markdown level1 remarks"><p>If you specify an object to be invisible, it will be invisible regardless of the application
+visible setting. Other factors can also cause an object to be invisible;
+for example, an object will not be displayed if its layer is off or frozen.</p>
+</div>
+
+
+
+
+  <a id="ACadSharp_Entities_IEntity_Layer_" data-uid="ACadSharp.Entities.IEntity.Layer*"></a>
+
+  <h3 id="ACadSharp_Entities_IEntity_Layer" data-uid="ACadSharp.Entities.IEntity.Layer">
+  Layer
+  <a class="header-action link-secondary" title="View source" href="https://github.com/DomCR/ACadSharp/blob/1065/merge/src/ACadSharp/Entities/IEntity.cs/#L45"><i class="bi bi-code-slash"></i></a>
+  </h3>
+
+  <div class="markdown level1 summary"><p>Specifies the layer for an object.</p>
+</div>
+  <div class="markdown level1 conceptual"></div>
+
+  <div class="codewrapper">
+    <pre><code class="lang-csharp hljs">Layer Layer { get; set; }</code></pre>
+  </div>
+
+
+
+
+
+  <h4 class="section">Property Value</h4>
+  <dl class="parameters">
+    <dt><a class="xref" href="ACadSharp.Tables.Layer.html">Layer</a></dt>
+    <dd></dd>
+  </dl>
+
+
+
+
+
+
+
+
+  <a id="ACadSharp_Entities_IEntity_LineType_" data-uid="ACadSharp.Entities.IEntity.LineType*"></a>
+
+  <h3 id="ACadSharp_Entities_IEntity_LineType" data-uid="ACadSharp.Entities.IEntity.LineType">
+  LineType
+  <a class="header-action link-secondary" title="View source" href="https://github.com/DomCR/ACadSharp/blob/1065/merge/src/ACadSharp/Entities/IEntity.cs/#L51"><i class="bi bi-code-slash"></i></a>
+  </h3>
+
+  <div class="markdown level1 summary"><p>Linetype name (present if not BYLAYER).
+The special name BYBLOCK indicates a floating linetype (optional)</p>
+</div>
+  <div class="markdown level1 conceptual"></div>
+
+  <div class="codewrapper">
+    <pre><code class="lang-csharp hljs">LineType LineType { get; set; }</code></pre>
+  </div>
+
+
+
+
+
+  <h4 class="section">Property Value</h4>
+  <dl class="parameters">
+    <dt><a class="xref" href="ACadSharp.Tables.LineType.html">LineType</a></dt>
+    <dd></dd>
+  </dl>
+
+
+
+
+
+
+
+
+  <a id="ACadSharp_Entities_IEntity_LineTypeScale_" data-uid="ACadSharp.Entities.IEntity.LineTypeScale*"></a>
+
+  <h3 id="ACadSharp_Entities_IEntity_LineTypeScale" data-uid="ACadSharp.Entities.IEntity.LineTypeScale">
+  LineTypeScale
+  <a class="header-action link-secondary" title="View source" href="https://github.com/DomCR/ACadSharp/blob/1065/merge/src/ACadSharp/Entities/IEntity.cs/#L59"><i class="bi bi-code-slash"></i></a>
+  </h3>
+
+  <div class="markdown level1 summary"><p>Linetype scale for this entity.</p>
+</div>
+  <div class="markdown level1 conceptual"></div>
+
+  <div class="codewrapper">
+    <pre><code class="lang-csharp hljs">double LineTypeScale { get; set; }</code></pre>
+  </div>
+
+
+
+
+
+  <h4 class="section">Property Value</h4>
+  <dl class="parameters">
+    <dt><a class="xref" href="https://learn.microsoft.com/dotnet/api/system.double">double</a></dt>
+    <dd></dd>
+  </dl>
+
+
+
+
+  <h4 class="section" id="ACadSharp_Entities_IEntity_LineTypeScale_remarks">Remarks</h4>
+  <div class="markdown level1 remarks"><p>This must be a positive, non-negative number.</p>
+</div>
+
+
+
+
+  <a id="ACadSharp_Entities_IEntity_LineWeight_" data-uid="ACadSharp.Entities.IEntity.LineWeight*"></a>
+
+  <h3 id="ACadSharp_Entities_IEntity_LineWeight" data-uid="ACadSharp.Entities.IEntity.LineWeight">
+  LineWeight
+  <a class="header-action link-secondary" title="View source" href="https://github.com/DomCR/ACadSharp/blob/1065/merge/src/ACadSharp/Entities/IEntity.cs/#L64"><i class="bi bi-code-slash"></i></a>
+  </h3>
+
+  <div class="markdown level1 summary"><p>Specifies the line weight of an individual object or the default line weight for the drawing.</p>
+</div>
+  <div class="markdown level1 conceptual"></div>
+
+  <div class="codewrapper">
+    <pre><code class="lang-csharp hljs">LineWeightType LineWeight { get; set; }</code></pre>
+  </div>
+
+
+
+
+
+  <h4 class="section">Property Value</h4>
+  <dl class="parameters">
+    <dt><a class="xref" href="ACadSharp.LineWeightType.html">LineWeightType</a></dt>
+    <dd></dd>
+  </dl>
+
+
+
+
+
+
+
+
+  <a id="ACadSharp_Entities_IEntity_Material_" data-uid="ACadSharp.Entities.IEntity.Material*"></a>
+
+  <h3 id="ACadSharp_Entities_IEntity_Material" data-uid="ACadSharp.Entities.IEntity.Material">
+  Material
+  <a class="header-action link-secondary" title="View source" href="https://github.com/DomCR/ACadSharp/blob/1065/merge/src/ACadSharp/Entities/IEntity.cs/#L69"><i class="bi bi-code-slash"></i></a>
+  </h3>
+
+  <div class="markdown level1 summary"><p>Material object (present if not BYLAYER)</p>
+</div>
+  <div class="markdown level1 conceptual"></div>
+
+  <div class="codewrapper">
+    <pre><code class="lang-csharp hljs">Material Material { get; set; }</code></pre>
+  </div>
+
+
+
+
+
+  <h4 class="section">Property Value</h4>
+  <dl class="parameters">
+    <dt><a class="xref" href="ACadSharp.Objects.Material.html">Material</a></dt>
+    <dd></dd>
+  </dl>
+
+
+
+
+
+
+
+
+  <a id="ACadSharp_Entities_IEntity_Transparency_" data-uid="ACadSharp.Entities.IEntity.Transparency*"></a>
+
+  <h3 id="ACadSharp_Entities_IEntity_Transparency" data-uid="ACadSharp.Entities.IEntity.Transparency">
+  Transparency
+  <a class="header-action link-secondary" title="View source" href="https://github.com/DomCR/ACadSharp/blob/1065/merge/src/ACadSharp/Entities/IEntity.cs/#L74"><i class="bi bi-code-slash"></i></a>
+  </h3>
+
+  <div class="markdown level1 summary"><p>Transparency value.</p>
+</div>
+  <div class="markdown level1 conceptual"></div>
+
+  <div class="codewrapper">
+    <pre><code class="lang-csharp hljs">Transparency Transparency { get; set; }</code></pre>
+  </div>
+
+
+
+
+
+  <h4 class="section">Property Value</h4>
+  <dl class="parameters">
+    <dt><a class="xref" href="ACadSharp.Transparency.html">Transparency</a></dt>
+    <dd></dd>
+  </dl>
+
+
+
+
+
+
+
+
+  <h2 class="section" id="methods">Methods
+</h2>
+
+
+  <a id="ACadSharp_Entities_IEntity_GetActiveColor_" data-uid="ACadSharp.Entities.IEntity.GetActiveColor*"></a>
+
+  <h3 id="ACadSharp_Entities_IEntity_GetActiveColor" data-uid="ACadSharp.Entities.IEntity.GetActiveColor">
+  GetActiveColor()
+  <a class="header-action link-secondary" title="View source" href="https://github.com/DomCR/ACadSharp/blob/1065/merge/src/ACadSharp/Entities/IEntity.cs/#L80"><i class="bi bi-code-slash"></i></a>
+  </h3>
+
+  <div class="markdown level1 summary"><p>Get the active color for the entity, process the colors like <a class="xref" href="ACadSharp.Color.html#ACadSharp_Color_ByBlock">ByBlock</a> and <a class="xref" href="ACadSharp.Color.html#ACadSharp_Color_ByLayer">ByLayer</a>.</p>
+</div>
+  <div class="markdown level1 conceptual"></div>
+
+  <div class="codewrapper">
+    <pre><code class="lang-csharp hljs">Color GetActiveColor()</code></pre>
+  </div>
+
+
+  <h4 class="section">Returns</h4>
+  <dl class="parameters">
+    <dt><a class="xref" href="ACadSharp.Color.html">Color</a></dt>
+    <dd></dd>
+  </dl>
+
+
+
+
+
+
+
+
+
+
+
+  <a id="ACadSharp_Entities_IEntity_GetActiveLineType_" data-uid="ACadSharp.Entities.IEntity.GetActiveLineType*"></a>
+
+  <h3 id="ACadSharp_Entities_IEntity_GetActiveLineType" data-uid="ACadSharp.Entities.IEntity.GetActiveLineType">
+  GetActiveLineType()
+  <a class="header-action link-secondary" title="View source" href="https://github.com/DomCR/ACadSharp/blob/1065/merge/src/ACadSharp/Entities/IEntity.cs/#L86"><i class="bi bi-code-slash"></i></a>
+  </h3>
+
+  <div class="markdown level1 summary"><p>Get the active line type for the entity, process the line types like <a class="xref" href="ACadSharp.Tables.LineType.html#ACadSharp_Tables_LineType_ByBlock">ByBlock</a> and <a class="xref" href="ACadSharp.Tables.LineType.html#ACadSharp_Tables_LineType_ByLayer">ByLayer</a>.</p>
+</div>
+  <div class="markdown level1 conceptual"></div>
+
+  <div class="codewrapper">
+    <pre><code class="lang-csharp hljs">LineType GetActiveLineType()</code></pre>
+  </div>
+
+
+  <h4 class="section">Returns</h4>
+  <dl class="parameters">
+    <dt><a class="xref" href="ACadSharp.Tables.LineType.html">LineType</a></dt>
+    <dd></dd>
+  </dl>
+
+
+
+
+
+
+
+
+
+
+
+  <a id="ACadSharp_Entities_IEntity_GetActiveLineWeightType_" data-uid="ACadSharp.Entities.IEntity.GetActiveLineWeightType*"></a>
+
+  <h3 id="ACadSharp_Entities_IEntity_GetActiveLineWeightType" data-uid="ACadSharp.Entities.IEntity.GetActiveLineWeightType">
+  GetActiveLineWeightType()
+  <a class="header-action link-secondary" title="View source" href="https://github.com/DomCR/ACadSharp/blob/1065/merge/src/ACadSharp/Entities/IEntity.cs/#L92"><i class="bi bi-code-slash"></i></a>
+  </h3>
+
+  <div class="markdown level1 summary"><p>Get the active line weight for the entity, process the line weights like <a class="xref" href="ACadSharp.LineWeightType.html#ACadSharp_LineWeightType_ByBlock">ByBlock</a> and <a class="xref" href="ACadSharp.LineWeightType.html#ACadSharp_LineWeightType_ByLayer">ByLayer</a>.</p>
+</div>
+  <div class="markdown level1 conceptual"></div>
+
+  <div class="codewrapper">
+    <pre><code class="lang-csharp hljs">LineWeightType GetActiveLineWeightType()</code></pre>
+  </div>
+
+
+  <h4 class="section">Returns</h4>
+  <dl class="parameters">
+    <dt><a class="xref" href="ACadSharp.LineWeightType.html">LineWeightType</a></dt>
+    <dd></dd>
+  </dl>
+
+
+
+
+
+
+
+
+
+
+
+  <a id="ACadSharp_Entities_IEntity_MatchProperties_" data-uid="ACadSharp.Entities.IEntity.MatchProperties*"></a>
+
+  <h3 id="ACadSharp_Entities_IEntity_MatchProperties_ACadSharp_Entities_IEntity_" data-uid="ACadSharp.Entities.IEntity.MatchProperties(ACadSharp.Entities.IEntity)">
+  MatchProperties(IEntity)
+  <a class="header-action link-secondary" title="View source" href="https://github.com/DomCR/ACadSharp/blob/1065/merge/src/ACadSharp/Entities/IEntity.cs/#L100"><i class="bi bi-code-slash"></i></a>
+  </h3>
+
+  <div class="markdown level1 summary"><p>Copies matching property values from the specified entity to the current object.</p>
+</div>
+  <div class="markdown level1 conceptual"></div>
+
+  <div class="codewrapper">
+    <pre><code class="lang-csharp hljs">void MatchProperties(IEntity entity)</code></pre>
+  </div>
+
+  <h4 class="section">Parameters</h4>
+  <dl class="parameters">
+    <dt><code>entity</code> <a class="xref" href="ACadSharp.Entities.IEntity.html">IEntity</a></dt>
+    <dd><p>The source entity whose property values will be matched and copied. Cannot be null.</p>
+</dd>
+  </dl>
+
+
+
+
+
+
+
+
+  <h4 class="section" id="ACadSharp_Entities_IEntity_MatchProperties_ACadSharp_Entities_IEntity__remarks">Remarks</h4>
+  <div class="markdown level1 remarks"><p>Only properties with matching names and compatible types are considered for copying. Properties that
+do not exist or are not compatible in either object are ignored.</p>
+</div>
+
+
+
+
+
+</article>
+
+        <div class="contribution d-print-none">
+          <a href="https://github.com/DomCR/ACadSharp/blob/1065/merge/src/ACadSharp/Entities/IEntity.cs/#L15" class="edit-link">Edit this page</a>
+        </div>
+
+
+      </div>
+
+      <div class="affix">
+        <nav id="affix"></nav>
+      </div>
+    </main>
+
+    <div class="container-xxl search-results" id="search-results"></div>
+
+    <footer class="border-top text-secondary">
+      <div class="container-xxl">
+        <div class="flex-fill">
+          <span>Made with <a href="https://dotnet.github.io/docfx">docfx</a></span>
+        </div>
+      </div>
+    </footer>
+  </body>
+</html>

@@ -1,0 +1,930 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <meta charset="utf-8">
+      <title>Struct BoundingBox | ACadSharp </title>
+      <meta name="viewport" content="width=device-width, initial-scale=1.0">
+      <meta name="title" content="Struct BoundingBox | ACadSharp ">
+      
+      <meta name="description" content="Bounding box representation aligned to XYZ axis.">
+      <link rel="icon" href="../favicon.ico">
+      <link rel="stylesheet" href="../public/docfx.min.css">
+      <link rel="stylesheet" href="../public/main.css">
+      <meta name="docfx:navrel" content="../toc.html">
+      <meta name="docfx:tocrel" content="toc.html">
+      
+      <meta name="docfx:rel" content="../">
+      
+      
+      <meta name="docfx:docurl" content="https://github.com/DomCR/CSUtilities/new/1065/merge/apiSpec/new?filename=CSMath_BoundingBox.md&amp;value=---%0Auid%3A%20CSMath.BoundingBox%0Asummary%3A%20&#39;*You%20can%20override%20summary%20for%20the%20API%20here%20using%20*MARKDOWN*%20syntax&#39;%0A---%0A%0A*Please%20type%20below%20more%20information%20about%20this%20API%3A*%0A%0A">
+      <meta name="loc:inThisArticle" content="In this article">
+      <meta name="loc:searchResultsCount" content="{count} results for &quot;{query}&quot;">
+      <meta name="loc:searchNoResults" content="No results for &quot;{query}&quot;">
+      <meta name="loc:tocFilter" content="Filter by title">
+      <meta name="loc:nextArticle" content="Next">
+      <meta name="loc:prevArticle" content="Previous">
+      <meta name="loc:themeLight" content="Light">
+      <meta name="loc:themeDark" content="Dark">
+      <meta name="loc:themeAuto" content="Auto">
+      <meta name="loc:changeTheme" content="Change theme">
+      <meta name="loc:copy" content="Copy">
+      <meta name="loc:downloadPdf" content="Download PDF">
+
+      <script type="module" src="./../public/docfx.min.js"></script>
+
+      <script>
+        const theme = localStorage.getItem('theme') || 'auto'
+        document.documentElement.setAttribute('data-bs-theme', theme === 'auto' ? (window.matchMedia('(prefers-color-scheme: dark)').matches ? 'dark' : 'light') : theme)
+      </script>
+
+  </head>
+
+  <body class="tex2jax_ignore" data-layout="" data-yaml-mime="ManagedReference">
+    <header class="bg-body border-bottom">
+      <nav id="autocollapse" class="navbar navbar-expand-md" role="navigation">
+        <div class="container-xxl flex-nowrap">
+          <a class="navbar-brand" href="../index.html">
+            <img id="logo" class="svg" src="../logo.svg" alt="ACadSharp">
+            ACadSharp
+          </a>
+          <button class="btn btn-lg d-md-none border-0" type="button" data-bs-toggle="collapse" data-bs-target="#navpanel" aria-controls="navpanel" aria-expanded="false" aria-label="Toggle navigation">
+            <i class="bi bi-three-dots"></i>
+          </button>
+          <div class="collapse navbar-collapse" id="navpanel">
+            <div id="navbar">
+              <form class="search" role="search" id="search">
+                <i class="bi bi-search"></i>
+                <input class="form-control" id="search-query" type="search" disabled placeholder="Search" autocomplete="off" aria-label="Search">
+              </form>
+            </div>
+          </div>
+        </div>
+      </nav>
+    </header>
+
+    <main class="container-xxl">
+      <div class="toc-offcanvas">
+        <div class="offcanvas-md offcanvas-start" tabindex="-1" id="tocOffcanvas" aria-labelledby="tocOffcanvasLabel">
+          <div class="offcanvas-header">
+            <h5 class="offcanvas-title" id="tocOffcanvasLabel">Table of Contents</h5>
+            <button type="button" class="btn-close" data-bs-dismiss="offcanvas" data-bs-target="#tocOffcanvas" aria-label="Close"></button>
+          </div>
+          <div class="offcanvas-body">
+            <nav class="toc" id="toc"></nav>
+          </div>
+        </div>
+      </div>
+
+      <div class="content">
+        <div class="actionbar">
+          <button class="btn btn-lg border-0 d-md-none" type="button" data-bs-toggle="offcanvas" data-bs-target="#tocOffcanvas" aria-controls="tocOffcanvas" aria-expanded="false" aria-label="Show table of contents">
+            <i class="bi bi-list"></i>
+          </button>
+
+          <nav id="breadcrumb"></nav>
+        </div>
+
+        <article data-uid="CSMath.BoundingBox">
+
+
+
+  <h1 id="CSMath_BoundingBox" data-uid="CSMath.BoundingBox" class="text-break">
+Struct BoundingBox  <a class="header-action link-secondary" title="View source" href="https://github.com/DomCR/CSUtilities/blob/1065/merge/CSMath/BoundingBox.cs/#L9"><i class="bi bi-code-slash"></i></a>
+  </h1>
+
+  <div class="facts text-secondary">
+    <dl><dt>Namespace</dt><dd><a class="xref" href="CSMath.html">CSMath</a></dd></dl>
+  <dl><dt>Assembly</dt><dd>ACadSharp.dll</dd></dl>
+  </div>
+
+  <div class="markdown summary"><p>Bounding box representation aligned to XYZ axis.</p>
+</div>
+  <div class="markdown conceptual"></div>
+
+  <div class="codewrapper">
+    <pre><code class="lang-csharp hljs">public struct BoundingBox</code></pre>
+  </div>
+
+
+
+
+
+
+
+  <dl class="typelist inheritedMembers">
+    <dt>Inherited Members</dt>
+    <dd>
+    <div>
+      <a class="xref" href="https://learn.microsoft.com/dotnet/api/system.valuetype.equals">ValueType.Equals(object)</a>
+    </div>
+    <div>
+      <a class="xref" href="https://learn.microsoft.com/dotnet/api/system.valuetype.gethashcode">ValueType.GetHashCode()</a>
+    </div>
+    <div>
+      <a class="xref" href="https://learn.microsoft.com/dotnet/api/system.valuetype.tostring">ValueType.ToString()</a>
+    </div>
+    <div>
+      <a class="xref" href="https://learn.microsoft.com/dotnet/api/system.object.equals#system-object-equals(system-object-system-object)">object.Equals(object, object)</a>
+    </div>
+    <div>
+      <a class="xref" href="https://learn.microsoft.com/dotnet/api/system.object.gettype">object.GetType()</a>
+    </div>
+    <div>
+      <a class="xref" href="https://learn.microsoft.com/dotnet/api/system.object.referenceequals">object.ReferenceEquals(object, object)</a>
+    </div>
+  </dd></dl>
+
+  <dl class="typelist extensionMethods">
+    <dt>Extension Methods</dt>
+    <dd>
+  <div>
+      <a class="xref" href="CSMath.Geometry.LineExtensions.html#CSMath_Geometry_LineExtensions_TryFindIntersection__2___0___0___1__">LineExtensions.TryFindIntersection&lt;T, R&gt;(T, T, out R)</a>
+  </div>
+  </dd></dl>
+
+
+
+
+
+  <h2 class="section" id="constructors">Constructors
+</h2>
+
+
+  <a id="CSMath_BoundingBox__ctor_" data-uid="CSMath.BoundingBox.#ctor*"></a>
+
+  <h3 id="CSMath_BoundingBox__ctor_CSMath_XYZ_" data-uid="CSMath.BoundingBox.#ctor(CSMath.XYZ)">
+  BoundingBox(XYZ)
+  <a class="header-action link-secondary" title="View source" href="https://github.com/DomCR/CSUtilities/blob/1065/merge/CSMath/BoundingBox.cs/#L119"><i class="bi bi-code-slash"></i></a>
+  </h3>
+
+  <div class="markdown level1 summary"><p>Initializes a new instance of the BoundingBox class that represents a single point.</p>
+</div>
+  <div class="markdown level1 conceptual"></div>
+
+  <div class="codewrapper">
+    <pre><code class="lang-csharp hljs">public BoundingBox(XYZ point)</code></pre>
+  </div>
+
+  <h4 class="section">Parameters</h4>
+  <dl class="parameters">
+    <dt><code>point</code> <a class="xref" href="CSMath.XYZ.html">XYZ</a></dt>
+    <dd><p>The point to use as both the minimum and maximum bounds of the bounding box.</p>
+</dd>
+  </dl>
+
+
+
+
+
+
+
+
+
+
+
+
+  <a id="CSMath_BoundingBox__ctor_" data-uid="CSMath.BoundingBox.#ctor*"></a>
+
+  <h3 id="CSMath_BoundingBox__ctor_CSMath_XYZ_CSMath_XYZ_" data-uid="CSMath.BoundingBox.#ctor(CSMath.XYZ,CSMath.XYZ)">
+  BoundingBox(XYZ, XYZ)
+  <a class="header-action link-secondary" title="View source" href="https://github.com/DomCR/CSUtilities/blob/1065/merge/CSMath/BoundingBox.cs/#L135"><i class="bi bi-code-slash"></i></a>
+  </h3>
+
+  <div class="markdown level1 summary"><p>Initializes a new instance of the BoundingBox class that represents the axis-aligned box defined by the specified
+minimum and maximum coordinates.</p>
+</div>
+  <div class="markdown level1 conceptual"></div>
+
+  <div class="codewrapper">
+    <pre><code class="lang-csharp hljs">public BoundingBox(XYZ min, XYZ max)</code></pre>
+  </div>
+
+  <h4 class="section">Parameters</h4>
+  <dl class="parameters">
+    <dt><code>min</code> <a class="xref" href="CSMath.XYZ.html">XYZ</a></dt>
+    <dd><p>The point representing the minimum X, Y, and Z coordinates of the bounding box.</p>
+</dd>
+    <dt><code>max</code> <a class="xref" href="CSMath.XYZ.html">XYZ</a></dt>
+    <dd><p>The point representing the maximum X, Y, and Z coordinates of the bounding box.</p>
+</dd>
+  </dl>
+
+
+
+
+
+
+
+
+  <h4 class="section" id="CSMath_BoundingBox__ctor_CSMath_XYZ_CSMath_XYZ__remarks">Remarks</h4>
+  <div class="markdown level1 remarks"><p>If the specified minimum and maximum points are equal, the bounding box represents a single point.
+The constructor automatically assigns the smaller of each coordinate to Min and the larger to Max, regardless of the
+order of the input parameters.</p>
+</div>
+
+
+
+
+  <a id="CSMath_BoundingBox__ctor_" data-uid="CSMath.BoundingBox.#ctor*"></a>
+
+  <h3 id="CSMath_BoundingBox__ctor_System_Double_System_Double_System_Double_System_Double_System_Double_System_Double_" data-uid="CSMath.BoundingBox.#ctor(System.Double,System.Double,System.Double,System.Double,System.Double,System.Double)">
+  BoundingBox(double, double, double, double, double, double)
+  <a class="header-action link-secondary" title="View source" href="https://github.com/DomCR/CSUtilities/blob/1065/merge/CSMath/BoundingBox.cs/#L160"><i class="bi bi-code-slash"></i></a>
+  </h3>
+
+  <div class="markdown level1 summary"><p>Initializes a new instance of the BoundingBox structure using the specified minimum and maximum X, Y, and Z
+coordinates.</p>
+</div>
+  <div class="markdown level1 conceptual"></div>
+
+  <div class="codewrapper">
+    <pre><code class="lang-csharp hljs">public BoundingBox(double minX, double minY, double minZ, double maxX, double maxY, double maxZ)</code></pre>
+  </div>
+
+  <h4 class="section">Parameters</h4>
+  <dl class="parameters">
+    <dt><code>minX</code> <a class="xref" href="https://learn.microsoft.com/dotnet/api/system.double">double</a></dt>
+    <dd><p>The minimum X coordinate of the bounding box.</p>
+</dd>
+    <dt><code>minY</code> <a class="xref" href="https://learn.microsoft.com/dotnet/api/system.double">double</a></dt>
+    <dd><p>The minimum Y coordinate of the bounding box.</p>
+</dd>
+    <dt><code>minZ</code> <a class="xref" href="https://learn.microsoft.com/dotnet/api/system.double">double</a></dt>
+    <dd><p>The minimum Z coordinate of the bounding box.</p>
+</dd>
+    <dt><code>maxX</code> <a class="xref" href="https://learn.microsoft.com/dotnet/api/system.double">double</a></dt>
+    <dd><p>The maximum X coordinate of the bounding box.</p>
+</dd>
+    <dt><code>maxY</code> <a class="xref" href="https://learn.microsoft.com/dotnet/api/system.double">double</a></dt>
+    <dd><p>The maximum Y coordinate of the bounding box.</p>
+</dd>
+    <dt><code>maxZ</code> <a class="xref" href="https://learn.microsoft.com/dotnet/api/system.double">double</a></dt>
+    <dd><p>The maximum Z coordinate of the bounding box.</p>
+</dd>
+  </dl>
+
+
+
+
+
+
+
+
+
+
+
+
+  <h2 class="section" id="fields">Fields
+</h2>
+
+
+
+  <h3 id="CSMath_BoundingBox_Infinite" data-uid="CSMath.BoundingBox.Infinite">
+  Infinite
+  <a class="header-action link-secondary" title="View source" href="https://github.com/DomCR/CSUtilities/blob/1065/merge/CSMath/BoundingBox.cs/#L19"><i class="bi bi-code-slash"></i></a>
+  </h3>
+
+  <div class="markdown level1 summary"><p>Instance of an infinite bounding box.</p>
+</div>
+  <div class="markdown level1 conceptual"></div>
+
+  <div class="codewrapper">
+    <pre><code class="lang-csharp hljs">public static readonly BoundingBox Infinite</code></pre>
+  </div>
+
+
+
+
+  <h4 class="section">Field Value</h4>
+  <dl class="parameters">
+    <dt><a class="xref" href="CSMath.BoundingBox.html">BoundingBox</a></dt>
+    <dd></dd>
+  </dl>
+
+
+
+
+
+
+
+
+
+
+  <h3 id="CSMath_BoundingBox_Null" data-uid="CSMath.BoundingBox.Null">
+  Null
+  <a class="header-action link-secondary" title="View source" href="https://github.com/DomCR/CSUtilities/blob/1065/merge/CSMath/BoundingBox.cs/#L14"><i class="bi bi-code-slash"></i></a>
+  </h3>
+
+  <div class="markdown level1 summary"><p>Instance of a null bounding box.</p>
+</div>
+  <div class="markdown level1 conceptual"></div>
+
+  <div class="codewrapper">
+    <pre><code class="lang-csharp hljs">public static readonly BoundingBox Null</code></pre>
+  </div>
+
+
+
+
+  <h4 class="section">Field Value</h4>
+  <dl class="parameters">
+    <dt><a class="xref" href="CSMath.BoundingBox.html">BoundingBox</a></dt>
+    <dd></dd>
+  </dl>
+
+
+
+
+
+
+
+
+
+  <h2 class="section" id="properties">Properties
+</h2>
+
+
+  <a id="CSMath_BoundingBox_Center_" data-uid="CSMath.BoundingBox.Center*"></a>
+
+  <h3 id="CSMath_BoundingBox_Center" data-uid="CSMath.BoundingBox.Center">
+  Center
+  <a class="header-action link-secondary" title="View source" href="https://github.com/DomCR/CSUtilities/blob/1065/merge/CSMath/BoundingBox.cs/#L36"><i class="bi bi-code-slash"></i></a>
+  </h3>
+
+  <div class="markdown level1 summary"><p>Center of the box.</p>
+</div>
+  <div class="markdown level1 conceptual"></div>
+
+  <div class="codewrapper">
+    <pre><code class="lang-csharp hljs">public XYZ Center { get; }</code></pre>
+  </div>
+
+
+
+
+
+  <h4 class="section">Property Value</h4>
+  <dl class="parameters">
+    <dt><a class="xref" href="CSMath.XYZ.html">XYZ</a></dt>
+    <dd></dd>
+  </dl>
+
+
+
+
+
+
+
+
+  <a id="CSMath_BoundingBox_Extent_" data-uid="CSMath.BoundingBox.Extent*"></a>
+
+  <h3 id="CSMath_BoundingBox_Extent" data-uid="CSMath.BoundingBox.Extent">
+  Extent
+  <a class="header-action link-secondary" title="View source" href="https://github.com/DomCR/CSUtilities/blob/1065/merge/CSMath/BoundingBox.cs/#L21"><i class="bi bi-code-slash"></i></a>
+  </h3>
+
+  <div class="markdown level1 summary"></div>
+  <div class="markdown level1 conceptual"></div>
+
+  <div class="codewrapper">
+    <pre><code class="lang-csharp hljs">public readonly BoundingBoxExtent Extent { get; }</code></pre>
+  </div>
+
+
+
+
+
+  <h4 class="section">Property Value</h4>
+  <dl class="parameters">
+    <dt><a class="xref" href="CSMath.BoundingBoxExtent.html">BoundingBoxExtent</a></dt>
+    <dd></dd>
+  </dl>
+
+
+
+
+
+
+
+
+  <a id="CSMath_BoundingBox_Height_" data-uid="CSMath.BoundingBox.Height*"></a>
+
+  <h3 id="CSMath_BoundingBox_Height" data-uid="CSMath.BoundingBox.Height">
+  Height
+  <a class="header-action link-secondary" title="View source" href="https://github.com/DomCR/CSUtilities/blob/1065/merge/CSMath/BoundingBox.cs/#L86"><i class="bi bi-code-slash"></i></a>
+  </h3>
+
+  <div class="markdown level1 summary"></div>
+  <div class="markdown level1 conceptual"></div>
+
+  <div class="codewrapper">
+    <pre><code class="lang-csharp hljs">[Obsolete(&quot;Use LengthY instead.&quot;)]
+public double Height { get; }</code></pre>
+  </div>
+
+
+
+
+
+  <h4 class="section">Property Value</h4>
+  <dl class="parameters">
+    <dt><a class="xref" href="https://learn.microsoft.com/dotnet/api/system.double">double</a></dt>
+    <dd></dd>
+  </dl>
+
+
+
+
+
+
+
+
+  <a id="CSMath_BoundingBox_LengthX_" data-uid="CSMath.BoundingBox.LengthX*"></a>
+
+  <h3 id="CSMath_BoundingBox_LengthX" data-uid="CSMath.BoundingBox.LengthX">
+  LengthX
+  <a class="header-action link-secondary" title="View source" href="https://github.com/DomCR/CSUtilities/blob/1065/merge/CSMath/BoundingBox.cs/#L47"><i class="bi bi-code-slash"></i></a>
+  </h3>
+
+  <div class="markdown level1 summary"><p>Gets the length of the bounding box along the X-axis.</p>
+</div>
+  <div class="markdown level1 conceptual"></div>
+
+  <div class="codewrapper">
+    <pre><code class="lang-csharp hljs">public double LengthX { get; }</code></pre>
+  </div>
+
+
+
+
+
+  <h4 class="section">Property Value</h4>
+  <dl class="parameters">
+    <dt><a class="xref" href="https://learn.microsoft.com/dotnet/api/system.double">double</a></dt>
+    <dd></dd>
+  </dl>
+
+
+
+
+
+
+
+
+  <a id="CSMath_BoundingBox_LengthY_" data-uid="CSMath.BoundingBox.LengthY*"></a>
+
+  <h3 id="CSMath_BoundingBox_LengthY" data-uid="CSMath.BoundingBox.LengthY">
+  LengthY
+  <a class="header-action link-secondary" title="View source" href="https://github.com/DomCR/CSUtilities/blob/1065/merge/CSMath/BoundingBox.cs/#L58"><i class="bi bi-code-slash"></i></a>
+  </h3>
+
+  <div class="markdown level1 summary"><p>Gets the length of the bounding box along the Y-axis.</p>
+</div>
+  <div class="markdown level1 conceptual"></div>
+
+  <div class="codewrapper">
+    <pre><code class="lang-csharp hljs">public double LengthY { get; }</code></pre>
+  </div>
+
+
+
+
+
+  <h4 class="section">Property Value</h4>
+  <dl class="parameters">
+    <dt><a class="xref" href="https://learn.microsoft.com/dotnet/api/system.double">double</a></dt>
+    <dd></dd>
+  </dl>
+
+
+
+
+
+
+
+
+  <a id="CSMath_BoundingBox_LengthZ_" data-uid="CSMath.BoundingBox.LengthZ*"></a>
+
+  <h3 id="CSMath_BoundingBox_LengthZ" data-uid="CSMath.BoundingBox.LengthZ">
+  LengthZ
+  <a class="header-action link-secondary" title="View source" href="https://github.com/DomCR/CSUtilities/blob/1065/merge/CSMath/BoundingBox.cs/#L69"><i class="bi bi-code-slash"></i></a>
+  </h3>
+
+  <div class="markdown level1 summary"><p>Gets the length of the bounding box along the Z-axis.</p>
+</div>
+  <div class="markdown level1 conceptual"></div>
+
+  <div class="codewrapper">
+    <pre><code class="lang-csharp hljs">public double LengthZ { get; }</code></pre>
+  </div>
+
+
+
+
+
+  <h4 class="section">Property Value</h4>
+  <dl class="parameters">
+    <dt><a class="xref" href="https://learn.microsoft.com/dotnet/api/system.double">double</a></dt>
+    <dd></dd>
+  </dl>
+
+
+
+
+
+
+
+
+  <a id="CSMath_BoundingBox_Max_" data-uid="CSMath.BoundingBox.Max*"></a>
+
+  <h3 id="CSMath_BoundingBox_Max" data-uid="CSMath.BoundingBox.Max">
+  Max
+  <a class="header-action link-secondary" title="View source" href="https://github.com/DomCR/CSUtilities/blob/1065/merge/CSMath/BoundingBox.cs/#L31"><i class="bi bi-code-slash"></i></a>
+  </h3>
+
+  <div class="markdown level1 summary"><p>Get the max corner of the bounding box.</p>
+</div>
+  <div class="markdown level1 conceptual"></div>
+
+  <div class="codewrapper">
+    <pre><code class="lang-csharp hljs">public XYZ Max { readonly get; set; }</code></pre>
+  </div>
+
+
+
+
+
+  <h4 class="section">Property Value</h4>
+  <dl class="parameters">
+    <dt><a class="xref" href="CSMath.XYZ.html">XYZ</a></dt>
+    <dd></dd>
+  </dl>
+
+
+
+
+
+
+
+
+  <a id="CSMath_BoundingBox_Min_" data-uid="CSMath.BoundingBox.Min*"></a>
+
+  <h3 id="CSMath_BoundingBox_Min" data-uid="CSMath.BoundingBox.Min">
+  Min
+  <a class="header-action link-secondary" title="View source" href="https://github.com/DomCR/CSUtilities/blob/1065/merge/CSMath/BoundingBox.cs/#L26"><i class="bi bi-code-slash"></i></a>
+  </h3>
+
+  <div class="markdown level1 summary"><p>Get the min corner of the bounding box.</p>
+</div>
+  <div class="markdown level1 conceptual"></div>
+
+  <div class="codewrapper">
+    <pre><code class="lang-csharp hljs">public XYZ Min { readonly get; set; }</code></pre>
+  </div>
+
+
+
+
+
+  <h4 class="section">Property Value</h4>
+  <dl class="parameters">
+    <dt><a class="xref" href="CSMath.XYZ.html">XYZ</a></dt>
+    <dd></dd>
+  </dl>
+
+
+
+
+
+
+
+
+  <a id="CSMath_BoundingBox_Width_" data-uid="CSMath.BoundingBox.Width*"></a>
+
+  <h3 id="CSMath_BoundingBox_Width" data-uid="CSMath.BoundingBox.Width">
+  Width
+  <a class="header-action link-secondary" title="View source" href="https://github.com/DomCR/CSUtilities/blob/1065/merge/CSMath/BoundingBox.cs/#L77"><i class="bi bi-code-slash"></i></a>
+  </h3>
+
+  <div class="markdown level1 summary"></div>
+  <div class="markdown level1 conceptual"></div>
+
+  <div class="codewrapper">
+    <pre><code class="lang-csharp hljs">[Obsolete(&quot;Use LengthX instead.&quot;)]
+public double Width { get; }</code></pre>
+  </div>
+
+
+
+
+
+  <h4 class="section">Property Value</h4>
+  <dl class="parameters">
+    <dt><a class="xref" href="https://learn.microsoft.com/dotnet/api/system.double">double</a></dt>
+    <dd></dd>
+  </dl>
+
+
+
+
+
+
+
+
+  <h2 class="section" id="methods">Methods
+</h2>
+
+
+  <a id="CSMath_BoundingBox_FromPoints_" data-uid="CSMath.BoundingBox.FromPoints*"></a>
+
+  <h3 id="CSMath_BoundingBox_FromPoints_System_Collections_Generic_IEnumerable_CSMath_XYZ__" data-uid="CSMath.BoundingBox.FromPoints(System.Collections.Generic.IEnumerable{CSMath.XYZ})">
+  FromPoints(IEnumerable&lt;XYZ&gt;)
+  <a class="header-action link-secondary" title="View source" href="https://github.com/DomCR/CSUtilities/blob/1065/merge/CSMath/BoundingBox.cs/#L277"><i class="bi bi-code-slash"></i></a>
+  </h3>
+
+  <div class="markdown level1 summary"><p>Create a bounding box from a collection of points.</p>
+</div>
+  <div class="markdown level1 conceptual"></div>
+
+  <div class="codewrapper">
+    <pre><code class="lang-csharp hljs">public static BoundingBox FromPoints(IEnumerable&lt;XYZ&gt; points)</code></pre>
+  </div>
+
+  <h4 class="section">Parameters</h4>
+  <dl class="parameters">
+    <dt><code>points</code> <a class="xref" href="https://learn.microsoft.com/dotnet/api/system.collections.generic.ienumerable-1">IEnumerable</a>&lt;<a class="xref" href="CSMath.XYZ.html">XYZ</a>&gt;</dt>
+    <dd></dd>
+  </dl>
+
+  <h4 class="section">Returns</h4>
+  <dl class="parameters">
+    <dt><a class="xref" href="CSMath.BoundingBox.html">BoundingBox</a></dt>
+    <dd></dd>
+  </dl>
+
+
+
+
+
+
+
+
+
+
+
+  <a id="CSMath_BoundingBox_IsIn_" data-uid="CSMath.BoundingBox.IsIn*"></a>
+
+  <h3 id="CSMath_BoundingBox_IsIn_CSMath_BoundingBox_" data-uid="CSMath.BoundingBox.IsIn(CSMath.BoundingBox)">
+  IsIn(BoundingBox)
+  <a class="header-action link-secondary" title="View source" href="https://github.com/DomCR/CSUtilities/blob/1065/merge/CSMath/BoundingBox.cs/#L214"><i class="bi bi-code-slash"></i></a>
+  </h3>
+
+  <div class="markdown level1 summary"><p>Checks if the given box is in the bounds of this box.</p>
+</div>
+  <div class="markdown level1 conceptual"></div>
+
+  <div class="codewrapper">
+    <pre><code class="lang-csharp hljs">public bool IsIn(BoundingBox box)</code></pre>
+  </div>
+
+  <h4 class="section">Parameters</h4>
+  <dl class="parameters">
+    <dt><code>box</code> <a class="xref" href="CSMath.BoundingBox.html">BoundingBox</a></dt>
+    <dd></dd>
+  </dl>
+
+  <h4 class="section">Returns</h4>
+  <dl class="parameters">
+    <dt><a class="xref" href="https://learn.microsoft.com/dotnet/api/system.boolean">bool</a></dt>
+    <dd></dd>
+  </dl>
+
+
+
+
+
+
+
+
+
+
+
+  <a id="CSMath_BoundingBox_IsIn_" data-uid="CSMath.BoundingBox.IsIn*"></a>
+
+  <h3 id="CSMath_BoundingBox_IsIn_CSMath_BoundingBox_System_Boolean__" data-uid="CSMath.BoundingBox.IsIn(CSMath.BoundingBox,System.Boolean@)">
+  IsIn(BoundingBox, out bool)
+  <a class="header-action link-secondary" title="View source" href="https://github.com/DomCR/CSUtilities/blob/1065/merge/CSMath/BoundingBox.cs/#L225"><i class="bi bi-code-slash"></i></a>
+  </h3>
+
+  <div class="markdown level1 summary"><p>Checks if the given box is in the bounds of this box.</p>
+</div>
+  <div class="markdown level1 conceptual"></div>
+
+  <div class="codewrapper">
+    <pre><code class="lang-csharp hljs">public bool IsIn(BoundingBox box, out bool partialIn)</code></pre>
+  </div>
+
+  <h4 class="section">Parameters</h4>
+  <dl class="parameters">
+    <dt><code>box</code> <a class="xref" href="CSMath.BoundingBox.html">BoundingBox</a></dt>
+    <dd></dd>
+    <dt><code>partialIn</code> <a class="xref" href="https://learn.microsoft.com/dotnet/api/system.boolean">bool</a></dt>
+    <dd><p>Flag to notify that on part of the box is inside but not completely.</p>
+</dd>
+  </dl>
+
+  <h4 class="section">Returns</h4>
+  <dl class="parameters">
+    <dt><a class="xref" href="https://learn.microsoft.com/dotnet/api/system.boolean">bool</a></dt>
+    <dd></dd>
+  </dl>
+
+
+
+
+
+
+
+
+
+
+
+  <a id="CSMath_BoundingBox_IsIn_" data-uid="CSMath.BoundingBox.IsIn*"></a>
+
+  <h3 id="CSMath_BoundingBox_IsIn_CSMath_XYZ_" data-uid="CSMath.BoundingBox.IsIn(CSMath.XYZ)">
+  IsIn(XYZ)
+  <a class="header-action link-secondary" title="View source" href="https://github.com/DomCR/CSUtilities/blob/1065/merge/CSMath/BoundingBox.cs/#L240"><i class="bi bi-code-slash"></i></a>
+  </h3>
+
+  <div class="markdown level1 summary"><p>Checks if the point is in the bounds of the box.</p>
+</div>
+  <div class="markdown level1 conceptual"></div>
+
+  <div class="codewrapper">
+    <pre><code class="lang-csharp hljs">public bool IsIn(XYZ point)</code></pre>
+  </div>
+
+  <h4 class="section">Parameters</h4>
+  <dl class="parameters">
+    <dt><code>point</code> <a class="xref" href="CSMath.XYZ.html">XYZ</a></dt>
+    <dd></dd>
+  </dl>
+
+  <h4 class="section">Returns</h4>
+  <dl class="parameters">
+    <dt><a class="xref" href="https://learn.microsoft.com/dotnet/api/system.boolean">bool</a></dt>
+    <dd></dd>
+  </dl>
+
+
+
+
+
+
+
+
+
+
+
+  <a id="CSMath_BoundingBox_Merge_" data-uid="CSMath.BoundingBox.Merge*"></a>
+
+  <h3 id="CSMath_BoundingBox_Merge_CSMath_BoundingBox_" data-uid="CSMath.BoundingBox.Merge(CSMath.BoundingBox)">
+  Merge(BoundingBox)
+  <a class="header-action link-secondary" title="View source" href="https://github.com/DomCR/CSUtilities/blob/1065/merge/CSMath/BoundingBox.cs/#L181"><i class="bi bi-code-slash"></i></a>
+  </h3>
+
+  <div class="markdown level1 summary"><p>Merge 2 boxes into the common one.</p>
+</div>
+  <div class="markdown level1 conceptual"></div>
+
+  <div class="codewrapper">
+    <pre><code class="lang-csharp hljs">public BoundingBox Merge(BoundingBox box)</code></pre>
+  </div>
+
+  <h4 class="section">Parameters</h4>
+  <dl class="parameters">
+    <dt><code>box</code> <a class="xref" href="CSMath.BoundingBox.html">BoundingBox</a></dt>
+    <dd></dd>
+  </dl>
+
+  <h4 class="section">Returns</h4>
+  <dl class="parameters">
+    <dt><a class="xref" href="CSMath.BoundingBox.html">BoundingBox</a></dt>
+    <dd><p>The merged box.</p>
+</dd>
+  </dl>
+
+
+
+
+
+
+
+
+
+
+
+  <a id="CSMath_BoundingBox_Merge_" data-uid="CSMath.BoundingBox.Merge*"></a>
+
+  <h3 id="CSMath_BoundingBox_Merge_System_Collections_Generic_IEnumerable_CSMath_BoundingBox__" data-uid="CSMath.BoundingBox.Merge(System.Collections.Generic.IEnumerable{CSMath.BoundingBox})">
+  Merge(IEnumerable&lt;BoundingBox&gt;)
+  <a class="header-action link-secondary" title="View source" href="https://github.com/DomCR/CSUtilities/blob/1065/merge/CSMath/BoundingBox.cs/#L260"><i class="bi bi-code-slash"></i></a>
+  </h3>
+
+  <div class="markdown level1 summary"><p>Merge Multiple boxes into the common one.</p>
+</div>
+  <div class="markdown level1 conceptual"></div>
+
+  <div class="codewrapper">
+    <pre><code class="lang-csharp hljs">public static BoundingBox Merge(IEnumerable&lt;BoundingBox&gt; boxes)</code></pre>
+  </div>
+
+  <h4 class="section">Parameters</h4>
+  <dl class="parameters">
+    <dt><code>boxes</code> <a class="xref" href="https://learn.microsoft.com/dotnet/api/system.collections.generic.ienumerable-1">IEnumerable</a>&lt;<a class="xref" href="CSMath.BoundingBox.html">BoundingBox</a>&gt;</dt>
+    <dd></dd>
+  </dl>
+
+  <h4 class="section">Returns</h4>
+  <dl class="parameters">
+    <dt><a class="xref" href="CSMath.BoundingBox.html">BoundingBox</a></dt>
+    <dd><p>The merged box.</p>
+</dd>
+  </dl>
+
+
+
+
+
+
+
+
+
+
+
+  <a id="CSMath_BoundingBox_Move_" data-uid="CSMath.BoundingBox.Move*"></a>
+
+  <h3 id="CSMath_BoundingBox_Move_CSMath_XYZ_" data-uid="CSMath.BoundingBox.Move(CSMath.XYZ)">
+  Move(XYZ)
+  <a class="header-action link-secondary" title="View source" href="https://github.com/DomCR/CSUtilities/blob/1065/merge/CSMath/BoundingBox.cs/#L171"><i class="bi bi-code-slash"></i></a>
+  </h3>
+
+  <div class="markdown level1 summary"><p>Returns a new bounding box translated by the specified vector.</p>
+</div>
+  <div class="markdown level1 conceptual"></div>
+
+  <div class="codewrapper">
+    <pre><code class="lang-csharp hljs">public BoundingBox Move(XYZ xyz)</code></pre>
+  </div>
+
+  <h4 class="section">Parameters</h4>
+  <dl class="parameters">
+    <dt><code>xyz</code> <a class="xref" href="CSMath.XYZ.html">XYZ</a></dt>
+    <dd><p>The vector by which to translate the bounding box. Each component is added to the corresponding coordinates of the
+bounding box's minimum and maximum points.</p>
+</dd>
+  </dl>
+
+  <h4 class="section">Returns</h4>
+  <dl class="parameters">
+    <dt><a class="xref" href="CSMath.BoundingBox.html">BoundingBox</a></dt>
+    <dd><p>A new BoundingBox instance that is the result of translating the current bounding box by the specified vector.</p>
+</dd>
+  </dl>
+
+
+
+
+
+
+
+
+
+
+
+
+</article>
+
+        <div class="contribution d-print-none">
+          <a href="https://github.com/DomCR/CSUtilities/blob/1065/merge/CSMath/BoundingBox.cs/#L9" class="edit-link">Edit this page</a>
+        </div>
+
+
+      </div>
+
+      <div class="affix">
+        <nav id="affix"></nav>
+      </div>
+    </main>
+
+    <div class="container-xxl search-results" id="search-results"></div>
+
+    <footer class="border-top text-secondary">
+      <div class="container-xxl">
+        <div class="flex-fill">
+          <span>Made with <a href="https://dotnet.github.io/docfx">docfx</a></span>
+        </div>
+      </div>
+    </footer>
+  </body>
+</html>

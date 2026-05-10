@@ -1,0 +1,972 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <meta charset="utf-8">
+      <title>Class TableEntity | ACadSharp </title>
+      <meta name="viewport" content="width=device-width, initial-scale=1.0">
+      <meta name="title" content="Class TableEntity | ACadSharp ">
+      
+      <meta name="description" content="Represents a  entity.">
+      <link rel="icon" href="../favicon.ico">
+      <link rel="stylesheet" href="../public/docfx.min.css">
+      <link rel="stylesheet" href="../public/main.css">
+      <meta name="docfx:navrel" content="../toc.html">
+      <meta name="docfx:tocrel" content="toc.html">
+      
+      <meta name="docfx:rel" content="../">
+      
+      
+      <meta name="docfx:docurl" content="https://github.com/DomCR/ACadSharp/new/1065/merge/apiSpec/new?filename=ACadSharp_Entities_TableEntity.md&amp;value=---%0Auid%3A%20ACadSharp.Entities.TableEntity%0Asummary%3A%20&#39;*You%20can%20override%20summary%20for%20the%20API%20here%20using%20*MARKDOWN*%20syntax&#39;%0A---%0A%0A*Please%20type%20below%20more%20information%20about%20this%20API%3A*%0A%0A">
+      <meta name="loc:inThisArticle" content="In this article">
+      <meta name="loc:searchResultsCount" content="{count} results for &quot;{query}&quot;">
+      <meta name="loc:searchNoResults" content="No results for &quot;{query}&quot;">
+      <meta name="loc:tocFilter" content="Filter by title">
+      <meta name="loc:nextArticle" content="Next">
+      <meta name="loc:prevArticle" content="Previous">
+      <meta name="loc:themeLight" content="Light">
+      <meta name="loc:themeDark" content="Dark">
+      <meta name="loc:themeAuto" content="Auto">
+      <meta name="loc:changeTheme" content="Change theme">
+      <meta name="loc:copy" content="Copy">
+      <meta name="loc:downloadPdf" content="Download PDF">
+
+      <script type="module" src="./../public/docfx.min.js"></script>
+
+      <script>
+        const theme = localStorage.getItem('theme') || 'auto'
+        document.documentElement.setAttribute('data-bs-theme', theme === 'auto' ? (window.matchMedia('(prefers-color-scheme: dark)').matches ? 'dark' : 'light') : theme)
+      </script>
+
+  </head>
+
+  <body class="tex2jax_ignore" data-layout="" data-yaml-mime="ManagedReference">
+    <header class="bg-body border-bottom">
+      <nav id="autocollapse" class="navbar navbar-expand-md" role="navigation">
+        <div class="container-xxl flex-nowrap">
+          <a class="navbar-brand" href="../index.html">
+            <img id="logo" class="svg" src="../logo.svg" alt="ACadSharp">
+            ACadSharp
+          </a>
+          <button class="btn btn-lg d-md-none border-0" type="button" data-bs-toggle="collapse" data-bs-target="#navpanel" aria-controls="navpanel" aria-expanded="false" aria-label="Toggle navigation">
+            <i class="bi bi-three-dots"></i>
+          </button>
+          <div class="collapse navbar-collapse" id="navpanel">
+            <div id="navbar">
+              <form class="search" role="search" id="search">
+                <i class="bi bi-search"></i>
+                <input class="form-control" id="search-query" type="search" disabled placeholder="Search" autocomplete="off" aria-label="Search">
+              </form>
+            </div>
+          </div>
+        </div>
+      </nav>
+    </header>
+
+    <main class="container-xxl">
+      <div class="toc-offcanvas">
+        <div class="offcanvas-md offcanvas-start" tabindex="-1" id="tocOffcanvas" aria-labelledby="tocOffcanvasLabel">
+          <div class="offcanvas-header">
+            <h5 class="offcanvas-title" id="tocOffcanvasLabel">Table of Contents</h5>
+            <button type="button" class="btn-close" data-bs-dismiss="offcanvas" data-bs-target="#tocOffcanvas" aria-label="Close"></button>
+          </div>
+          <div class="offcanvas-body">
+            <nav class="toc" id="toc"></nav>
+          </div>
+        </div>
+      </div>
+
+      <div class="content">
+        <div class="actionbar">
+          <button class="btn btn-lg border-0 d-md-none" type="button" data-bs-toggle="offcanvas" data-bs-target="#tocOffcanvas" aria-controls="tocOffcanvas" aria-expanded="false" aria-label="Show table of contents">
+            <i class="bi bi-list"></i>
+          </button>
+
+          <nav id="breadcrumb"></nav>
+        </div>
+
+        <article data-uid="ACadSharp.Entities.TableEntity">
+
+
+
+  <h1 id="ACadSharp_Entities_TableEntity" data-uid="ACadSharp.Entities.TableEntity" class="text-break">
+Class TableEntity  <a class="header-action link-secondary" title="View source" href="https://github.com/DomCR/ACadSharp/blob/1065/merge/src/ACadSharp/Entities/TableEntity.ValueUnitType.cs/#L3"><i class="bi bi-code-slash"></i></a>
+  </h1>
+
+  <div class="facts text-secondary">
+    <dl><dt>Namespace</dt><dd><a class="xref" href="ACadSharp.html">ACadSharp</a>.<a class="xref" href="ACadSharp.Entities.html">Entities</a></dd></dl>
+  <dl><dt>Assembly</dt><dd>ACadSharp.dll</dd></dl>
+  </div>
+
+  <div class="markdown summary"><p>Represents a <a class="xref" href="ACadSharp.Entities.TableEntity.html">TableEntity</a> entity.</p>
+</div>
+  <div class="markdown conceptual"></div>
+
+  <div class="codewrapper">
+    <pre><code class="lang-csharp hljs">[DxfName(&quot;ACAD_TABLE&quot;)]
+[DxfSubClass(&quot;AcDbTable&quot;)]
+public class TableEntity : Insert, IEntity, IHandledCadObject, IGeometricEntity</code></pre>
+  </div>
+
+
+
+
+  <dl class="typelist inheritance">
+    <dt>Inheritance</dt>
+    <dd>
+      <div><a class="xref" href="https://learn.microsoft.com/dotnet/api/system.object">object</a></div>
+      <div><a class="xref" href="ACadSharp.CadObject.html">CadObject</a></div>
+      <div><a class="xref" href="ACadSharp.Entities.Entity.html">Entity</a></div>
+      <div><a class="xref" href="ACadSharp.Entities.Insert.html">Insert</a></div>
+      <div><span class="xref">TableEntity</span></div>
+    </dd>
+  </dl>
+
+  <dl class="typelist implements">
+    <dt>Implements</dt>
+    <dd>
+      <div><a class="xref" href="ACadSharp.Entities.IEntity.html">IEntity</a></div>
+      <div><a class="xref" href="ACadSharp.IHandledCadObject.html">IHandledCadObject</a></div>
+      <div><a class="xref" href="ACadSharp.Entities.IGeometricEntity.html">IGeometricEntity</a></div>
+    </dd>
+  </dl>
+
+
+  <dl class="typelist inheritedMembers">
+    <dt>Inherited Members</dt>
+    <dd>
+    <div>
+      <a class="xref" href="ACadSharp.Entities.Insert.html#ACadSharp_Entities_Insert_Attributes">Insert.Attributes</a>
+    </div>
+    <div>
+      <a class="xref" href="ACadSharp.Entities.Insert.html#ACadSharp_Entities_Insert_Block">Insert.Block</a>
+    </div>
+    <div>
+      <a class="xref" href="ACadSharp.Entities.Insert.html#ACadSharp_Entities_Insert_ColumnCount">Insert.ColumnCount</a>
+    </div>
+    <div>
+      <a class="xref" href="ACadSharp.Entities.Insert.html#ACadSharp_Entities_Insert_ColumnSpacing">Insert.ColumnSpacing</a>
+    </div>
+    <div>
+      <a class="xref" href="ACadSharp.Entities.Insert.html#ACadSharp_Entities_Insert_HasAttributes">Insert.HasAttributes</a>
+    </div>
+    <div>
+      <a class="xref" href="ACadSharp.Entities.Insert.html#ACadSharp_Entities_Insert_HasDynamicSubclass">Insert.HasDynamicSubclass</a>
+    </div>
+    <div>
+      <a class="xref" href="ACadSharp.Entities.Insert.html#ACadSharp_Entities_Insert_InsertPoint">Insert.InsertPoint</a>
+    </div>
+    <div>
+      <a class="xref" href="ACadSharp.Entities.Insert.html#ACadSharp_Entities_Insert_IsMultiple">Insert.IsMultiple</a>
+    </div>
+    <div>
+      <a class="xref" href="ACadSharp.Entities.Insert.html#ACadSharp_Entities_Insert_Normal">Insert.Normal</a>
+    </div>
+    <div>
+      <a class="xref" href="ACadSharp.Entities.Insert.html#ACadSharp_Entities_Insert_Rotation">Insert.Rotation</a>
+    </div>
+    <div>
+      <a class="xref" href="ACadSharp.Entities.Insert.html#ACadSharp_Entities_Insert_RowCount">Insert.RowCount</a>
+    </div>
+    <div>
+      <a class="xref" href="ACadSharp.Entities.Insert.html#ACadSharp_Entities_Insert_RowSpacing">Insert.RowSpacing</a>
+    </div>
+    <div>
+      <a class="xref" href="ACadSharp.Entities.Insert.html#ACadSharp_Entities_Insert_SpatialFilter">Insert.SpatialFilter</a>
+    </div>
+    <div>
+      <a class="xref" href="ACadSharp.Entities.Insert.html#ACadSharp_Entities_Insert_XScale">Insert.XScale</a>
+    </div>
+    <div>
+      <a class="xref" href="ACadSharp.Entities.Insert.html#ACadSharp_Entities_Insert_YScale">Insert.YScale</a>
+    </div>
+    <div>
+      <a class="xref" href="ACadSharp.Entities.Insert.html#ACadSharp_Entities_Insert_ZScale">Insert.ZScale</a>
+    </div>
+    <div>
+      <a class="xref" href="ACadSharp.Entities.Insert.html#ACadSharp_Entities_Insert_ApplyTransform_CSMath_Transform_">Insert.ApplyTransform(Transform)</a>
+    </div>
+    <div>
+      <a class="xref" href="ACadSharp.Entities.Insert.html#ACadSharp_Entities_Insert_Explode">Insert.Explode()</a>
+    </div>
+    <div>
+      <a class="xref" href="ACadSharp.Entities.Insert.html#ACadSharp_Entities_Insert_GetTransform">Insert.GetTransform()</a>
+    </div>
+    <div>
+      <a class="xref" href="ACadSharp.Entities.Insert.html#ACadSharp_Entities_Insert_UpdateAttributes">Insert.UpdateAttributes()</a>
+    </div>
+    <div>
+      <a class="xref" href="ACadSharp.Entities.Entity.html#ACadSharp_Entities_Entity_BookColor">Entity.BookColor</a>
+    </div>
+    <div>
+      <a class="xref" href="ACadSharp.Entities.Entity.html#ACadSharp_Entities_Entity_Color">Entity.Color</a>
+    </div>
+    <div>
+      <a class="xref" href="ACadSharp.Entities.Entity.html#ACadSharp_Entities_Entity_IsInvisible">Entity.IsInvisible</a>
+    </div>
+    <div>
+      <a class="xref" href="ACadSharp.Entities.Entity.html#ACadSharp_Entities_Entity_Layer">Entity.Layer</a>
+    </div>
+    <div>
+      <a class="xref" href="ACadSharp.Entities.Entity.html#ACadSharp_Entities_Entity_LineType">Entity.LineType</a>
+    </div>
+    <div>
+      <a class="xref" href="ACadSharp.Entities.Entity.html#ACadSharp_Entities_Entity_LineTypeScale">Entity.LineTypeScale</a>
+    </div>
+    <div>
+      <a class="xref" href="ACadSharp.Entities.Entity.html#ACadSharp_Entities_Entity_LineWeight">Entity.LineWeight</a>
+    </div>
+    <div>
+      <a class="xref" href="ACadSharp.Entities.Entity.html#ACadSharp_Entities_Entity_Material">Entity.Material</a>
+    </div>
+    <div>
+      <a class="xref" href="ACadSharp.Entities.Entity.html#ACadSharp_Entities_Entity_Transparency">Entity.Transparency</a>
+    </div>
+    <div>
+      <a class="xref" href="ACadSharp.Entities.Entity.html#ACadSharp_Entities_Entity_ApplyRotation_CSMath_XYZ_System_Double_">Entity.ApplyRotation(XYZ, double)</a>
+    </div>
+    <div>
+      <a class="xref" href="ACadSharp.Entities.Entity.html#ACadSharp_Entities_Entity_ApplyScaling_CSMath_XYZ_">Entity.ApplyScaling(XYZ)</a>
+    </div>
+    <div>
+      <a class="xref" href="ACadSharp.Entities.Entity.html#ACadSharp_Entities_Entity_ApplyScaling_CSMath_XYZ_CSMath_XYZ_">Entity.ApplyScaling(XYZ, XYZ)</a>
+    </div>
+    <div>
+      <a class="xref" href="ACadSharp.Entities.Entity.html#ACadSharp_Entities_Entity_ApplyTranslation_CSMath_XYZ_">Entity.ApplyTranslation(XYZ)</a>
+    </div>
+    <div>
+      <a class="xref" href="ACadSharp.Entities.Entity.html#ACadSharp_Entities_Entity_GetActiveColor">Entity.GetActiveColor()</a>
+    </div>
+    <div>
+      <a class="xref" href="ACadSharp.Entities.Entity.html#ACadSharp_Entities_Entity_GetActiveLineType">Entity.GetActiveLineType()</a>
+    </div>
+    <div>
+      <a class="xref" href="ACadSharp.Entities.Entity.html#ACadSharp_Entities_Entity_GetActiveLineWeightType">Entity.GetActiveLineWeightType()</a>
+    </div>
+    <div>
+      <a class="xref" href="ACadSharp.Entities.Entity.html#ACadSharp_Entities_Entity_MatchProperties_ACadSharp_Entities_IEntity_">Entity.MatchProperties(IEntity)</a>
+    </div>
+    <div>
+      <a class="xref" href="ACadSharp.Entities.Entity.html#ACadSharp_Entities_Entity_applyRotation_System_Collections_Generic_IEnumerable_CSMath_XY__System_Double_">Entity.applyRotation(IEnumerable&lt;XY&gt;, double)</a>
+    </div>
+    <div>
+      <a class="xref" href="ACadSharp.Entities.Entity.html#ACadSharp_Entities_Entity_applyWorldMatrix_CSMath_XYZ_CSMath_Transform_CSMath_Matrix3_CSMath_Matrix3_">Entity.applyWorldMatrix(XYZ, Transform, Matrix3, Matrix3)</a>
+    </div>
+    <div>
+      <a class="xref" href="ACadSharp.Entities.Entity.html#ACadSharp_Entities_Entity_getWorldMatrix_CSMath_Transform_CSMath_XYZ_CSMath_XYZ_CSMath_Matrix3__CSMath_Matrix3__">Entity.getWorldMatrix(Transform, XYZ, XYZ, out Matrix3, out Matrix3)</a>
+    </div>
+    <div>
+      <a class="xref" href="ACadSharp.Entities.Entity.html#ACadSharp_Entities_Entity_tableOnRemove_System_Object_ACadSharp_CollectionChangedEventArgs_">Entity.tableOnRemove(object, CollectionChangedEventArgs)</a>
+    </div>
+    <div>
+      <a class="xref" href="ACadSharp.Entities.Entity.html#ACadSharp_Entities_Entity_transformNormal_CSMath_Transform_CSMath_XYZ_">Entity.transformNormal(Transform, XYZ)</a>
+    </div>
+    <div>
+      <a class="xref" href="ACadSharp.CadObject.html#ACadSharp_CadObject_Document">CadObject.Document</a>
+    </div>
+    <div>
+      <a class="xref" href="ACadSharp.CadObject.html#ACadSharp_CadObject_ExtendedData">CadObject.ExtendedData</a>
+    </div>
+    <div>
+      <a class="xref" href="ACadSharp.CadObject.html#ACadSharp_CadObject_Handle">CadObject.Handle</a>
+    </div>
+    <div>
+      <a class="xref" href="ACadSharp.CadObject.html#ACadSharp_CadObject_Owner">CadObject.Owner</a>
+    </div>
+    <div>
+      <a class="xref" href="ACadSharp.CadObject.html#ACadSharp_CadObject_Reactors">CadObject.Reactors</a>
+    </div>
+    <div>
+      <a class="xref" href="ACadSharp.CadObject.html#ACadSharp_CadObject_XDictionary">CadObject.XDictionary</a>
+    </div>
+    <div>
+      <a class="xref" href="ACadSharp.CadObject.html#ACadSharp_CadObject_AddReactor_ACadSharp_CadObject_">CadObject.AddReactor(CadObject)</a>
+    </div>
+    <div>
+      <a class="xref" href="ACadSharp.CadObject.html#ACadSharp_CadObject_CleanReactors">CadObject.CleanReactors()</a>
+    </div>
+    <div>
+      <a class="xref" href="ACadSharp.CadObject.html#ACadSharp_CadObject_CreateExtendedDictionary">CadObject.CreateExtendedDictionary()</a>
+    </div>
+    <div>
+      <a class="xref" href="ACadSharp.CadObject.html#ACadSharp_CadObject_RemoveReactor_ACadSharp_CadObject_">CadObject.RemoveReactor(CadObject)</a>
+    </div>
+    <div>
+      <a class="xref" href="ACadSharp.CadObject.html#ACadSharp_CadObject_ToString">CadObject.ToString()</a>
+    </div>
+    <div>
+      <a class="xref" href="ACadSharp.CadObject.html#ACadSharp_CadObject_updateCollection__1___0_ACadSharp_ICadCollection___0__">CadObject.updateCollection&lt;T&gt;(T, ICadCollection&lt;T&gt;)</a>
+    </div>
+    <div>
+      <a class="xref" href="https://learn.microsoft.com/dotnet/api/system.object.equals#system-object-equals(system-object)">object.Equals(object)</a>
+    </div>
+    <div>
+      <a class="xref" href="https://learn.microsoft.com/dotnet/api/system.object.equals#system-object-equals(system-object-system-object)">object.Equals(object, object)</a>
+    </div>
+    <div>
+      <a class="xref" href="https://learn.microsoft.com/dotnet/api/system.object.gethashcode">object.GetHashCode()</a>
+    </div>
+    <div>
+      <a class="xref" href="https://learn.microsoft.com/dotnet/api/system.object.gettype">object.GetType()</a>
+    </div>
+    <div>
+      <a class="xref" href="https://learn.microsoft.com/dotnet/api/system.object.memberwiseclone">object.MemberwiseClone()</a>
+    </div>
+    <div>
+      <a class="xref" href="https://learn.microsoft.com/dotnet/api/system.object.referenceequals">object.ReferenceEquals(object, object)</a>
+    </div>
+  </dd></dl>
+
+  <dl class="typelist extensionMethods">
+    <dt>Extension Methods</dt>
+    <dd>
+  <div>
+      <a class="xref" href="ACadSharp.Extensions.CadObjectExtensions.html#ACadSharp_Extensions_CadObjectExtensions_CloneTyped__1___0_">CadObjectExtensions.CloneTyped&lt;T&gt;(T)</a>
+  </div>
+  <div>
+      <a class="xref" href="CSMath.Geometry.LineExtensions.html#CSMath_Geometry_LineExtensions_TryFindIntersection__2___0___0___1__">LineExtensions.TryFindIntersection&lt;T, R&gt;(T, T, out R)</a>
+  </div>
+  </dd></dl>
+
+
+
+  <h2 id="ACadSharp_Entities_TableEntity_remarks">Remarks</h2>
+  <div class="markdown level0 remarks"><p>Object name <a class="xref" href="ACadSharp.DxfFileToken.html#ACadSharp_DxfFileToken_EntityTable">EntityTable</a> <br>
+Dxf class name <a class="xref" href="ACadSharp.DxfSubclassMarker.html#ACadSharp_DxfSubclassMarker_TableEntity">TableEntity</a></p>
+</div>
+
+
+  <h2 class="section" id="properties">Properties
+</h2>
+
+
+  <a id="ACadSharp_Entities_TableEntity_BreakData_" data-uid="ACadSharp.Entities.TableEntity.BreakData*"></a>
+
+  <h3 id="ACadSharp_Entities_TableEntity_BreakData" data-uid="ACadSharp.Entities.TableEntity.BreakData">
+  BreakData
+  <a class="header-action link-secondary" title="View source" href="https://github.com/DomCR/ACadSharp/blob/1065/merge/src/ACadSharp/Entities/TableEntity.cs/#L23"><i class="bi bi-code-slash"></i></a>
+  </h3>
+
+  <div class="markdown level1 summary"><p>Gets the table break data that defines how the table should be divided across breaks, including spacing, flow direction,</p>
+</div>
+  <div class="markdown level1 conceptual"></div>
+
+  <div class="codewrapper">
+    <pre><code class="lang-csharp hljs">public TableEntity.TableBreakData BreakData { get; }</code></pre>
+  </div>
+
+
+
+
+
+  <h4 class="section">Property Value</h4>
+  <dl class="parameters">
+    <dt><a class="xref" href="ACadSharp.Entities.TableEntity.html">TableEntity</a>.<a class="xref" href="ACadSharp.Entities.TableEntity.TableBreakData.html">TableBreakData</a></dt>
+    <dd></dd>
+  </dl>
+
+
+
+
+
+
+
+
+  <a id="ACadSharp_Entities_TableEntity_Columns_" data-uid="ACadSharp.Entities.TableEntity.Columns*"></a>
+
+  <h3 id="ACadSharp_Entities_TableEntity_Columns" data-uid="ACadSharp.Entities.TableEntity.Columns">
+  Columns
+  <a class="header-action link-secondary" title="View source" href="https://github.com/DomCR/ACadSharp/blob/1065/merge/src/ACadSharp/Entities/TableEntity.cs/#L28"><i class="bi bi-code-slash"></i></a>
+  </h3>
+
+  <div class="markdown level1 summary"><p>Gets the collection of columns in the table entity.</p>
+</div>
+  <div class="markdown level1 conceptual"></div>
+
+  <div class="codewrapper">
+    <pre><code class="lang-csharp hljs">[DxfCodeValue(DxfReferenceType.Count, new int[] { 92 })]
+public List&lt;TableEntity.Column&gt; Columns { get; }</code></pre>
+  </div>
+
+
+
+
+
+  <h4 class="section">Property Value</h4>
+  <dl class="parameters">
+    <dt><a class="xref" href="https://learn.microsoft.com/dotnet/api/system.collections.generic.list-1">List</a>&lt;<a class="xref" href="ACadSharp.Entities.TableEntity.html">TableEntity</a>.<a class="xref" href="ACadSharp.Entities.TableEntity.Column.html">Column</a>&gt;</dt>
+    <dd></dd>
+  </dl>
+
+
+
+
+
+
+
+
+  <a id="ACadSharp_Entities_TableEntity_HasBreadData_" data-uid="ACadSharp.Entities.TableEntity.HasBreadData*"></a>
+
+  <h3 id="ACadSharp_Entities_TableEntity_HasBreadData" data-uid="ACadSharp.Entities.TableEntity.HasBreadData">
+  HasBreadData
+  <a class="header-action link-secondary" title="View source" href="https://github.com/DomCR/ACadSharp/blob/1065/merge/src/ACadSharp/Entities/TableEntity.cs/#L34"><i class="bi bi-code-slash"></i></a>
+  </h3>
+
+  <div class="markdown level1 summary"><p>Gets or sets a value indicating whether bread data is available.</p>
+</div>
+  <div class="markdown level1 conceptual"></div>
+
+  <div class="codewrapper">
+    <pre><code class="lang-csharp hljs">public bool HasBreadData { get; set; }</code></pre>
+  </div>
+
+
+
+
+
+  <h4 class="section">Property Value</h4>
+  <dl class="parameters">
+    <dt><a class="xref" href="https://learn.microsoft.com/dotnet/api/system.boolean">bool</a></dt>
+    <dd></dd>
+  </dl>
+
+
+
+
+
+
+
+
+  <a id="ACadSharp_Entities_TableEntity_HorizontalDirection_" data-uid="ACadSharp.Entities.TableEntity.HorizontalDirection*"></a>
+
+  <h3 id="ACadSharp_Entities_TableEntity_HorizontalDirection" data-uid="ACadSharp.Entities.TableEntity.HorizontalDirection">
+  HorizontalDirection
+  <a class="header-action link-secondary" title="View source" href="https://github.com/DomCR/ACadSharp/blob/1065/merge/src/ACadSharp/Entities/TableEntity.cs/#L39"><i class="bi bi-code-slash"></i></a>
+  </h3>
+
+  <div class="markdown level1 summary"><p>Horizontal direction vector</p>
+</div>
+  <div class="markdown level1 conceptual"></div>
+
+  <div class="codewrapper">
+    <pre><code class="lang-csharp hljs">[DxfCodeValue(new int[] { 11, 21, 31 })]
+public XYZ HorizontalDirection { get; set; }</code></pre>
+  </div>
+
+
+
+
+
+  <h4 class="section">Property Value</h4>
+  <dl class="parameters">
+    <dt><a class="xref" href="CSMath.XYZ.html">XYZ</a></dt>
+    <dd></dd>
+  </dl>
+
+
+
+
+
+
+
+
+  <a id="ACadSharp_Entities_TableEntity_ObjectName_" data-uid="ACadSharp.Entities.TableEntity.ObjectName*"></a>
+
+  <h3 id="ACadSharp_Entities_TableEntity_ObjectName" data-uid="ACadSharp.Entities.TableEntity.ObjectName">
+  ObjectName
+  <a class="header-action link-secondary" title="View source" href="https://github.com/DomCR/ACadSharp/blob/1065/merge/src/ACadSharp/Entities/TableEntity.cs/#L43"><i class="bi bi-code-slash"></i></a>
+  </h3>
+
+  <div class="markdown level1 summary"><p>The CAD class name of an object.</p>
+</div>
+  <div class="markdown level1 conceptual"></div>
+
+  <div class="codewrapper">
+    <pre><code class="lang-csharp hljs">public override string ObjectName { get; }</code></pre>
+  </div>
+
+
+
+
+
+  <h4 class="section">Property Value</h4>
+  <dl class="parameters">
+    <dt><a class="xref" href="https://learn.microsoft.com/dotnet/api/system.string">string</a></dt>
+    <dd></dd>
+  </dl>
+
+
+
+
+
+
+
+
+  <a id="ACadSharp_Entities_TableEntity_ObjectType_" data-uid="ACadSharp.Entities.TableEntity.ObjectType*"></a>
+
+  <h3 id="ACadSharp_Entities_TableEntity_ObjectType" data-uid="ACadSharp.Entities.TableEntity.ObjectType">
+  ObjectType
+  <a class="header-action link-secondary" title="View source" href="https://github.com/DomCR/ACadSharp/blob/1065/merge/src/ACadSharp/Entities/TableEntity.cs/#L46"><i class="bi bi-code-slash"></i></a>
+  </h3>
+
+  <div class="markdown level1 summary"><p>Get the object type.</p>
+</div>
+  <div class="markdown level1 conceptual"></div>
+
+  <div class="codewrapper">
+    <pre><code class="lang-csharp hljs">public override ObjectType ObjectType { get; }</code></pre>
+  </div>
+
+
+
+
+
+  <h4 class="section">Property Value</h4>
+  <dl class="parameters">
+    <dt><a class="xref" href="ACadSharp.ObjectType.html">ObjectType</a></dt>
+    <dd></dd>
+  </dl>
+
+
+
+
+
+
+
+
+  <a id="ACadSharp_Entities_TableEntity_OverrideBorderColor_" data-uid="ACadSharp.Entities.TableEntity.OverrideBorderColor*"></a>
+
+  <h3 id="ACadSharp_Entities_TableEntity_OverrideBorderColor" data-uid="ACadSharp.Entities.TableEntity.OverrideBorderColor">
+  OverrideBorderColor
+  <a class="header-action link-secondary" title="View source" href="https://github.com/DomCR/ACadSharp/blob/1065/merge/src/ACadSharp/Entities/TableEntity.cs/#L51"><i class="bi bi-code-slash"></i></a>
+  </h3>
+
+  <div class="markdown level1 summary"><p>Flag for an override of border color.</p>
+</div>
+  <div class="markdown level1 conceptual"></div>
+
+  <div class="codewrapper">
+    <pre><code class="lang-csharp hljs">[DxfCodeValue(new int[] { 94 })]
+public bool OverrideBorderColor { get; set; }</code></pre>
+  </div>
+
+
+
+
+
+  <h4 class="section">Property Value</h4>
+  <dl class="parameters">
+    <dt><a class="xref" href="https://learn.microsoft.com/dotnet/api/system.boolean">bool</a></dt>
+    <dd></dd>
+  </dl>
+
+
+
+
+
+
+
+
+  <a id="ACadSharp_Entities_TableEntity_OverrideBorderLineWeight_" data-uid="ACadSharp.Entities.TableEntity.OverrideBorderLineWeight*"></a>
+
+  <h3 id="ACadSharp_Entities_TableEntity_OverrideBorderLineWeight" data-uid="ACadSharp.Entities.TableEntity.OverrideBorderLineWeight">
+  OverrideBorderLineWeight
+  <a class="header-action link-secondary" title="View source" href="https://github.com/DomCR/ACadSharp/blob/1065/merge/src/ACadSharp/Entities/TableEntity.cs/#L57"><i class="bi bi-code-slash"></i></a>
+  </h3>
+
+  <div class="markdown level1 summary"><p>Flag for an override of border line weight.</p>
+</div>
+  <div class="markdown level1 conceptual"></div>
+
+  <div class="codewrapper">
+    <pre><code class="lang-csharp hljs">[DxfCodeValue(new int[] { 95 })]
+public bool OverrideBorderLineWeight { get; set; }</code></pre>
+  </div>
+
+
+
+
+
+  <h4 class="section">Property Value</h4>
+  <dl class="parameters">
+    <dt><a class="xref" href="https://learn.microsoft.com/dotnet/api/system.boolean">bool</a></dt>
+    <dd></dd>
+  </dl>
+
+
+
+
+
+
+
+
+  <a id="ACadSharp_Entities_TableEntity_OverrideBorderVisibility_" data-uid="ACadSharp.Entities.TableEntity.OverrideBorderVisibility*"></a>
+
+  <h3 id="ACadSharp_Entities_TableEntity_OverrideBorderVisibility" data-uid="ACadSharp.Entities.TableEntity.OverrideBorderVisibility">
+  OverrideBorderVisibility
+  <a class="header-action link-secondary" title="View source" href="https://github.com/DomCR/ACadSharp/blob/1065/merge/src/ACadSharp/Entities/TableEntity.cs/#L63"><i class="bi bi-code-slash"></i></a>
+  </h3>
+
+  <div class="markdown level1 summary"><p>Flag for an override of border visibility.</p>
+</div>
+  <div class="markdown level1 conceptual"></div>
+
+  <div class="codewrapper">
+    <pre><code class="lang-csharp hljs">[DxfCodeValue(new int[] { 96 })]
+public bool OverrideBorderVisibility { get; set; }</code></pre>
+  </div>
+
+
+
+
+
+  <h4 class="section">Property Value</h4>
+  <dl class="parameters">
+    <dt><a class="xref" href="https://learn.microsoft.com/dotnet/api/system.boolean">bool</a></dt>
+    <dd></dd>
+  </dl>
+
+
+
+
+
+
+
+
+  <a id="ACadSharp_Entities_TableEntity_OverrideFlag_" data-uid="ACadSharp.Entities.TableEntity.OverrideFlag*"></a>
+
+  <h3 id="ACadSharp_Entities_TableEntity_OverrideFlag" data-uid="ACadSharp.Entities.TableEntity.OverrideFlag">
+  OverrideFlag
+  <a class="header-action link-secondary" title="View source" href="https://github.com/DomCR/ACadSharp/blob/1065/merge/src/ACadSharp/Entities/TableEntity.cs/#L69"><i class="bi bi-code-slash"></i></a>
+  </h3>
+
+  <div class="markdown level1 summary"><p>Flag for an override.</p>
+</div>
+  <div class="markdown level1 conceptual"></div>
+
+  <div class="codewrapper">
+    <pre><code class="lang-csharp hljs">[DxfCodeValue(new int[] { 93 })]
+public bool OverrideFlag { get; set; }</code></pre>
+  </div>
+
+
+
+
+
+  <h4 class="section">Property Value</h4>
+  <dl class="parameters">
+    <dt><a class="xref" href="https://learn.microsoft.com/dotnet/api/system.boolean">bool</a></dt>
+    <dd></dd>
+  </dl>
+
+
+
+
+
+
+
+
+  <a id="ACadSharp_Entities_TableEntity_Rows_" data-uid="ACadSharp.Entities.TableEntity.Rows*"></a>
+
+  <h3 id="ACadSharp_Entities_TableEntity_Rows" data-uid="ACadSharp.Entities.TableEntity.Rows">
+  Rows
+  <a class="header-action link-secondary" title="View source" href="https://github.com/DomCR/ACadSharp/blob/1065/merge/src/ACadSharp/Entities/TableEntity.cs/#L75"><i class="bi bi-code-slash"></i></a>
+  </h3>
+
+  <div class="markdown level1 summary"><p>Table rows.</p>
+</div>
+  <div class="markdown level1 conceptual"></div>
+
+  <div class="codewrapper">
+    <pre><code class="lang-csharp hljs">[DxfCodeValue(DxfReferenceType.Count, new int[] { 91 })]
+public List&lt;TableEntity.Row&gt; Rows { get; }</code></pre>
+  </div>
+
+
+
+
+
+  <h4 class="section">Property Value</h4>
+  <dl class="parameters">
+    <dt><a class="xref" href="https://learn.microsoft.com/dotnet/api/system.collections.generic.list-1">List</a>&lt;<a class="xref" href="ACadSharp.Entities.TableEntity.html">TableEntity</a>.<a class="xref" href="ACadSharp.Entities.TableEntity.Row.html">Row</a>&gt;</dt>
+    <dd></dd>
+  </dl>
+
+
+
+
+
+
+
+
+  <a id="ACadSharp_Entities_TableEntity_Style_" data-uid="ACadSharp.Entities.TableEntity.Style*"></a>
+
+  <h3 id="ACadSharp_Entities_TableEntity_Style" data-uid="ACadSharp.Entities.TableEntity.Style">
+  Style
+  <a class="header-action link-secondary" title="View source" href="https://github.com/DomCR/ACadSharp/blob/1065/merge/src/ACadSharp/Entities/TableEntity.cs/#L81"><i class="bi bi-code-slash"></i></a>
+  </h3>
+
+  <div class="markdown level1 summary"><p>Gets or sets the table style associated with this object.</p>
+</div>
+  <div class="markdown level1 conceptual"></div>
+
+  <div class="codewrapper">
+    <pre><code class="lang-csharp hljs">[DxfCodeValue(DxfReferenceType.Handle, new int[] { 342 })]
+public TableStyle Style { get; set; }</code></pre>
+  </div>
+
+
+
+
+
+  <h4 class="section">Property Value</h4>
+  <dl class="parameters">
+    <dt><a class="xref" href="ACadSharp.Objects.TableStyle.html">TableStyle</a></dt>
+    <dd></dd>
+  </dl>
+
+
+
+
+
+
+
+
+  <a id="ACadSharp_Entities_TableEntity_SubclassMarker_" data-uid="ACadSharp.Entities.TableEntity.SubclassMarker*"></a>
+
+  <h3 id="ACadSharp_Entities_TableEntity_SubclassMarker" data-uid="ACadSharp.Entities.TableEntity.SubclassMarker">
+  SubclassMarker
+  <a class="header-action link-secondary" title="View source" href="https://github.com/DomCR/ACadSharp/blob/1065/merge/src/ACadSharp/Entities/TableEntity.cs/#L92"><i class="bi bi-code-slash"></i></a>
+  </h3>
+
+  <div class="markdown level1 summary"><p>Object Subclass marker.</p>
+</div>
+  <div class="markdown level1 conceptual"></div>
+
+  <div class="codewrapper">
+    <pre><code class="lang-csharp hljs">public override string SubclassMarker { get; }</code></pre>
+  </div>
+
+
+
+
+
+  <h4 class="section">Property Value</h4>
+  <dl class="parameters">
+    <dt><a class="xref" href="https://learn.microsoft.com/dotnet/api/system.string">string</a></dt>
+    <dd></dd>
+  </dl>
+
+
+
+
+
+
+
+
+  <a id="ACadSharp_Entities_TableEntity_ValueFlag_" data-uid="ACadSharp.Entities.TableEntity.ValueFlag*"></a>
+
+  <h3 id="ACadSharp_Entities_TableEntity_ValueFlag" data-uid="ACadSharp.Entities.TableEntity.ValueFlag">
+  ValueFlag
+  <a class="header-action link-secondary" title="View source" href="https://github.com/DomCR/ACadSharp/blob/1065/merge/src/ACadSharp/Entities/TableEntity.cs/#L97"><i class="bi bi-code-slash"></i></a>
+  </h3>
+
+  <div class="markdown level1 summary"><p>Flag for table value.</p>
+</div>
+  <div class="markdown level1 conceptual"></div>
+
+  <div class="codewrapper">
+    <pre><code class="lang-csharp hljs">[DxfCodeValue(new int[] { 90 })]
+public int ValueFlag { get; set; }</code></pre>
+  </div>
+
+
+
+
+
+  <h4 class="section">Property Value</h4>
+  <dl class="parameters">
+    <dt><a class="xref" href="https://learn.microsoft.com/dotnet/api/system.int32">int</a></dt>
+    <dd></dd>
+  </dl>
+
+
+
+
+
+
+
+
+  <a id="ACadSharp_Entities_TableEntity_Version_" data-uid="ACadSharp.Entities.TableEntity.Version*"></a>
+
+  <h3 id="ACadSharp_Entities_TableEntity_Version" data-uid="ACadSharp.Entities.TableEntity.Version">
+  Version
+  <a class="header-action link-secondary" title="View source" href="https://github.com/DomCR/ACadSharp/blob/1065/merge/src/ACadSharp/Entities/TableEntity.cs/#L103"><i class="bi bi-code-slash"></i></a>
+  </h3>
+
+  <div class="markdown level1 summary"><p>Table data version</p>
+</div>
+  <div class="markdown level1 conceptual"></div>
+
+  <div class="codewrapper">
+    <pre><code class="lang-csharp hljs">[DxfCodeValue(new int[] { 280 })]
+public short Version { get; set; }</code></pre>
+  </div>
+
+
+
+
+
+  <h4 class="section">Property Value</h4>
+  <dl class="parameters">
+    <dt><a class="xref" href="https://learn.microsoft.com/dotnet/api/system.int16">short</a></dt>
+    <dd></dd>
+  </dl>
+
+
+
+
+
+
+
+
+  <h2 class="section" id="methods">Methods
+</h2>
+
+
+  <a id="ACadSharp_Entities_TableEntity_Clone_" data-uid="ACadSharp.Entities.TableEntity.Clone*"></a>
+
+  <h3 id="ACadSharp_Entities_TableEntity_Clone" data-uid="ACadSharp.Entities.TableEntity.Clone">
+  Clone()
+  <a class="header-action link-secondary" title="View source" href="https://github.com/DomCR/ACadSharp/blob/1065/merge/src/ACadSharp/Entities/TableEntity.cs/#L114"><i class="bi bi-code-slash"></i></a>
+  </h3>
+
+  <div class="markdown level1 summary"><p>Creates a new object that is a copy of the current instance.</p>
+</div>
+  <div class="markdown level1 conceptual"></div>
+
+  <div class="codewrapper">
+    <pre><code class="lang-csharp hljs">public override CadObject Clone()</code></pre>
+  </div>
+
+
+  <h4 class="section">Returns</h4>
+  <dl class="parameters">
+    <dt><a class="xref" href="ACadSharp.CadObject.html">CadObject</a></dt>
+    <dd><p>A new object that is a copy of this instance.</p>
+</dd>
+  </dl>
+
+
+
+
+
+
+
+  <h4 class="section" id="ACadSharp_Entities_TableEntity_Clone_remarks">Remarks</h4>
+  <div class="markdown level1 remarks"><p>The copy will be unattached from the document or any reference.</p>
+</div>
+
+
+
+
+  <a id="ACadSharp_Entities_TableEntity_GetBoundingBox_" data-uid="ACadSharp.Entities.TableEntity.GetBoundingBox*"></a>
+
+  <h3 id="ACadSharp_Entities_TableEntity_GetBoundingBox" data-uid="ACadSharp.Entities.TableEntity.GetBoundingBox">
+  GetBoundingBox()
+  <a class="header-action link-secondary" title="View source" href="https://github.com/DomCR/ACadSharp/blob/1065/merge/src/ACadSharp/Entities/TableEntity.cs/#L122"><i class="bi bi-code-slash"></i></a>
+  </h3>
+
+  <div class="markdown level1 summary"><p>Gets the bounding box aligned with the axis XYZ that occupies this entity.</p>
+</div>
+  <div class="markdown level1 conceptual"></div>
+
+  <div class="codewrapper">
+    <pre><code class="lang-csharp hljs">public override BoundingBox GetBoundingBox()</code></pre>
+  </div>
+
+
+  <h4 class="section">Returns</h4>
+  <dl class="parameters">
+    <dt><a class="xref" href="CSMath.BoundingBox.html">BoundingBox</a></dt>
+    <dd><p>The bounding box where this entity resides.</p>
+</dd>
+  </dl>
+
+
+
+
+
+
+
+
+
+
+
+  <a id="ACadSharp_Entities_TableEntity_GetCell_" data-uid="ACadSharp.Entities.TableEntity.GetCell*"></a>
+
+  <h3 id="ACadSharp_Entities_TableEntity_GetCell_System_Int32_System_Int32_" data-uid="ACadSharp.Entities.TableEntity.GetCell(System.Int32,System.Int32)">
+  GetCell(int, int)
+  <a class="header-action link-secondary" title="View source" href="https://github.com/DomCR/ACadSharp/blob/1065/merge/src/ACadSharp/Entities/TableEntity.cs/#L133"><i class="bi bi-code-slash"></i></a>
+  </h3>
+
+  <div class="markdown level1 summary"><p>Retrieves the cell at the specified row and column indices.</p>
+</div>
+  <div class="markdown level1 conceptual"></div>
+
+  <div class="codewrapper">
+    <pre><code class="lang-csharp hljs">public TableEntity.Cell GetCell(int row, int column)</code></pre>
+  </div>
+
+  <h4 class="section">Parameters</h4>
+  <dl class="parameters">
+    <dt><code>row</code> <a class="xref" href="https://learn.microsoft.com/dotnet/api/system.int32">int</a></dt>
+    <dd><p>The zero-based index of the row containing the cell to retrieve.</p>
+</dd>
+    <dt><code>column</code> <a class="xref" href="https://learn.microsoft.com/dotnet/api/system.int32">int</a></dt>
+    <dd><p>The zero-based index of the column containing the cell to retrieve.</p>
+</dd>
+  </dl>
+
+  <h4 class="section">Returns</h4>
+  <dl class="parameters">
+    <dt><a class="xref" href="ACadSharp.Entities.TableEntity.html">TableEntity</a>.<a class="xref" href="ACadSharp.Entities.TableEntity.Cell.html">Cell</a></dt>
+    <dd><p>The cell located at the specified row and column.</p>
+</dd>
+  </dl>
+
+
+
+
+
+
+
+
+
+
+
+
+</article>
+
+        <div class="contribution d-print-none">
+          <a href="https://github.com/DomCR/ACadSharp/blob/1065/merge/src/ACadSharp/Entities/TableEntity.ValueUnitType.cs/#L3" class="edit-link">Edit this page</a>
+        </div>
+
+
+      </div>
+
+      <div class="affix">
+        <nav id="affix"></nav>
+      </div>
+    </main>
+
+    <div class="container-xxl search-results" id="search-results"></div>
+
+    <footer class="border-top text-secondary">
+      <div class="container-xxl">
+        <div class="flex-fill">
+          <span>Made with <a href="https://dotnet.github.io/docfx">docfx</a></span>
+        </div>
+      </div>
+    </footer>
+  </body>
+</html>

@@ -1,0 +1,1462 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <meta charset="utf-8">
+      <title>Class MText | ACadSharp </title>
+      <meta name="viewport" content="width=device-width, initial-scale=1.0">
+      <meta name="title" content="Class MText | ACadSharp ">
+      
+      <meta name="description" content="Represents a  entity.">
+      <link rel="icon" href="../favicon.ico">
+      <link rel="stylesheet" href="../public/docfx.min.css">
+      <link rel="stylesheet" href="../public/main.css">
+      <meta name="docfx:navrel" content="../toc.html">
+      <meta name="docfx:tocrel" content="toc.html">
+      
+      <meta name="docfx:rel" content="../">
+      
+      
+      <meta name="docfx:docurl" content="https://github.com/DomCR/ACadSharp/new/1065/merge/apiSpec/new?filename=ACadSharp_Entities_MText.md&amp;value=---%0Auid%3A%20ACadSharp.Entities.MText%0Asummary%3A%20&#39;*You%20can%20override%20summary%20for%20the%20API%20here%20using%20*MARKDOWN*%20syntax&#39;%0A---%0A%0A*Please%20type%20below%20more%20information%20about%20this%20API%3A*%0A%0A">
+      <meta name="loc:inThisArticle" content="In this article">
+      <meta name="loc:searchResultsCount" content="{count} results for &quot;{query}&quot;">
+      <meta name="loc:searchNoResults" content="No results for &quot;{query}&quot;">
+      <meta name="loc:tocFilter" content="Filter by title">
+      <meta name="loc:nextArticle" content="Next">
+      <meta name="loc:prevArticle" content="Previous">
+      <meta name="loc:themeLight" content="Light">
+      <meta name="loc:themeDark" content="Dark">
+      <meta name="loc:themeAuto" content="Auto">
+      <meta name="loc:changeTheme" content="Change theme">
+      <meta name="loc:copy" content="Copy">
+      <meta name="loc:downloadPdf" content="Download PDF">
+
+      <script type="module" src="./../public/docfx.min.js"></script>
+
+      <script>
+        const theme = localStorage.getItem('theme') || 'auto'
+        document.documentElement.setAttribute('data-bs-theme', theme === 'auto' ? (window.matchMedia('(prefers-color-scheme: dark)').matches ? 'dark' : 'light') : theme)
+      </script>
+
+  </head>
+
+  <body class="tex2jax_ignore" data-layout="" data-yaml-mime="ManagedReference">
+    <header class="bg-body border-bottom">
+      <nav id="autocollapse" class="navbar navbar-expand-md" role="navigation">
+        <div class="container-xxl flex-nowrap">
+          <a class="navbar-brand" href="../index.html">
+            <img id="logo" class="svg" src="../logo.svg" alt="ACadSharp">
+            ACadSharp
+          </a>
+          <button class="btn btn-lg d-md-none border-0" type="button" data-bs-toggle="collapse" data-bs-target="#navpanel" aria-controls="navpanel" aria-expanded="false" aria-label="Toggle navigation">
+            <i class="bi bi-three-dots"></i>
+          </button>
+          <div class="collapse navbar-collapse" id="navpanel">
+            <div id="navbar">
+              <form class="search" role="search" id="search">
+                <i class="bi bi-search"></i>
+                <input class="form-control" id="search-query" type="search" disabled placeholder="Search" autocomplete="off" aria-label="Search">
+              </form>
+            </div>
+          </div>
+        </div>
+      </nav>
+    </header>
+
+    <main class="container-xxl">
+      <div class="toc-offcanvas">
+        <div class="offcanvas-md offcanvas-start" tabindex="-1" id="tocOffcanvas" aria-labelledby="tocOffcanvasLabel">
+          <div class="offcanvas-header">
+            <h5 class="offcanvas-title" id="tocOffcanvasLabel">Table of Contents</h5>
+            <button type="button" class="btn-close" data-bs-dismiss="offcanvas" data-bs-target="#tocOffcanvas" aria-label="Close"></button>
+          </div>
+          <div class="offcanvas-body">
+            <nav class="toc" id="toc"></nav>
+          </div>
+        </div>
+      </div>
+
+      <div class="content">
+        <div class="actionbar">
+          <button class="btn btn-lg border-0 d-md-none" type="button" data-bs-toggle="offcanvas" data-bs-target="#tocOffcanvas" aria-controls="tocOffcanvas" aria-expanded="false" aria-label="Show table of contents">
+            <i class="bi bi-list"></i>
+          </button>
+
+          <nav id="breadcrumb"></nav>
+        </div>
+
+        <article data-uid="ACadSharp.Entities.MText">
+
+
+
+  <h1 id="ACadSharp_Entities_MText" data-uid="ACadSharp.Entities.MText" class="text-break">
+Class MText  <a class="header-action link-secondary" title="View source" href="https://github.com/DomCR/ACadSharp/blob/1065/merge/src/ACadSharp/Entities/MText.TextColumnData.cs/#L6"><i class="bi bi-code-slash"></i></a>
+  </h1>
+
+  <div class="facts text-secondary">
+    <dl><dt>Namespace</dt><dd><a class="xref" href="ACadSharp.html">ACadSharp</a>.<a class="xref" href="ACadSharp.Entities.html">Entities</a></dd></dl>
+  <dl><dt>Assembly</dt><dd>ACadSharp.dll</dd></dl>
+  </div>
+
+  <div class="markdown summary"><p>Represents a <a class="xref" href="ACadSharp.Entities.MText.html">MText</a> entity.</p>
+</div>
+  <div class="markdown conceptual"></div>
+
+  <div class="codewrapper">
+    <pre><code class="lang-csharp hljs">[DxfName(&quot;MTEXT&quot;)]
+[DxfSubClass(&quot;AcDbMText&quot;)]
+public class MText : Entity, IText, IEntity, IHandledCadObject, IGeometricEntity</code></pre>
+  </div>
+
+
+
+
+  <dl class="typelist inheritance">
+    <dt>Inheritance</dt>
+    <dd>
+      <div><a class="xref" href="https://learn.microsoft.com/dotnet/api/system.object">object</a></div>
+      <div><a class="xref" href="ACadSharp.CadObject.html">CadObject</a></div>
+      <div><a class="xref" href="ACadSharp.Entities.Entity.html">Entity</a></div>
+      <div><span class="xref">MText</span></div>
+    </dd>
+  </dl>
+
+  <dl class="typelist implements">
+    <dt>Implements</dt>
+    <dd>
+      <div><a class="xref" href="ACadSharp.Entities.IText.html">IText</a></div>
+      <div><a class="xref" href="ACadSharp.Entities.IEntity.html">IEntity</a></div>
+      <div><a class="xref" href="ACadSharp.IHandledCadObject.html">IHandledCadObject</a></div>
+      <div><a class="xref" href="ACadSharp.Entities.IGeometricEntity.html">IGeometricEntity</a></div>
+    </dd>
+  </dl>
+
+
+  <dl class="typelist inheritedMembers">
+    <dt>Inherited Members</dt>
+    <dd>
+    <div>
+      <a class="xref" href="ACadSharp.Entities.Entity.html#ACadSharp_Entities_Entity_BookColor">Entity.BookColor</a>
+    </div>
+    <div>
+      <a class="xref" href="ACadSharp.Entities.Entity.html#ACadSharp_Entities_Entity_Color">Entity.Color</a>
+    </div>
+    <div>
+      <a class="xref" href="ACadSharp.Entities.Entity.html#ACadSharp_Entities_Entity_IsInvisible">Entity.IsInvisible</a>
+    </div>
+    <div>
+      <a class="xref" href="ACadSharp.Entities.Entity.html#ACadSharp_Entities_Entity_Layer">Entity.Layer</a>
+    </div>
+    <div>
+      <a class="xref" href="ACadSharp.Entities.Entity.html#ACadSharp_Entities_Entity_LineType">Entity.LineType</a>
+    </div>
+    <div>
+      <a class="xref" href="ACadSharp.Entities.Entity.html#ACadSharp_Entities_Entity_LineTypeScale">Entity.LineTypeScale</a>
+    </div>
+    <div>
+      <a class="xref" href="ACadSharp.Entities.Entity.html#ACadSharp_Entities_Entity_LineWeight">Entity.LineWeight</a>
+    </div>
+    <div>
+      <a class="xref" href="ACadSharp.Entities.Entity.html#ACadSharp_Entities_Entity_Material">Entity.Material</a>
+    </div>
+    <div>
+      <a class="xref" href="ACadSharp.Entities.Entity.html#ACadSharp_Entities_Entity_Transparency">Entity.Transparency</a>
+    </div>
+    <div>
+      <a class="xref" href="ACadSharp.Entities.Entity.html#ACadSharp_Entities_Entity_ApplyRotation_CSMath_XYZ_System_Double_">Entity.ApplyRotation(XYZ, double)</a>
+    </div>
+    <div>
+      <a class="xref" href="ACadSharp.Entities.Entity.html#ACadSharp_Entities_Entity_ApplyScaling_CSMath_XYZ_">Entity.ApplyScaling(XYZ)</a>
+    </div>
+    <div>
+      <a class="xref" href="ACadSharp.Entities.Entity.html#ACadSharp_Entities_Entity_ApplyScaling_CSMath_XYZ_CSMath_XYZ_">Entity.ApplyScaling(XYZ, XYZ)</a>
+    </div>
+    <div>
+      <a class="xref" href="ACadSharp.Entities.Entity.html#ACadSharp_Entities_Entity_ApplyTranslation_CSMath_XYZ_">Entity.ApplyTranslation(XYZ)</a>
+    </div>
+    <div>
+      <a class="xref" href="ACadSharp.Entities.Entity.html#ACadSharp_Entities_Entity_GetActiveColor">Entity.GetActiveColor()</a>
+    </div>
+    <div>
+      <a class="xref" href="ACadSharp.Entities.Entity.html#ACadSharp_Entities_Entity_GetActiveLineType">Entity.GetActiveLineType()</a>
+    </div>
+    <div>
+      <a class="xref" href="ACadSharp.Entities.Entity.html#ACadSharp_Entities_Entity_GetActiveLineWeightType">Entity.GetActiveLineWeightType()</a>
+    </div>
+    <div>
+      <a class="xref" href="ACadSharp.Entities.Entity.html#ACadSharp_Entities_Entity_MatchProperties_ACadSharp_Entities_IEntity_">Entity.MatchProperties(IEntity)</a>
+    </div>
+    <div>
+      <a class="xref" href="ACadSharp.Entities.Entity.html#ACadSharp_Entities_Entity_applyRotation_System_Collections_Generic_IEnumerable_CSMath_XY__System_Double_">Entity.applyRotation(IEnumerable&lt;XY&gt;, double)</a>
+    </div>
+    <div>
+      <a class="xref" href="ACadSharp.Entities.Entity.html#ACadSharp_Entities_Entity_applyWorldMatrix_CSMath_XYZ_CSMath_Transform_CSMath_Matrix3_CSMath_Matrix3_">Entity.applyWorldMatrix(XYZ, Transform, Matrix3, Matrix3)</a>
+    </div>
+    <div>
+      <a class="xref" href="ACadSharp.Entities.Entity.html#ACadSharp_Entities_Entity_getWorldMatrix_CSMath_Transform_CSMath_XYZ_CSMath_XYZ_CSMath_Matrix3__CSMath_Matrix3__">Entity.getWorldMatrix(Transform, XYZ, XYZ, out Matrix3, out Matrix3)</a>
+    </div>
+    <div>
+      <a class="xref" href="ACadSharp.Entities.Entity.html#ACadSharp_Entities_Entity_transformNormal_CSMath_Transform_CSMath_XYZ_">Entity.transformNormal(Transform, XYZ)</a>
+    </div>
+    <div>
+      <a class="xref" href="ACadSharp.CadObject.html#ACadSharp_CadObject_Document">CadObject.Document</a>
+    </div>
+    <div>
+      <a class="xref" href="ACadSharp.CadObject.html#ACadSharp_CadObject_ExtendedData">CadObject.ExtendedData</a>
+    </div>
+    <div>
+      <a class="xref" href="ACadSharp.CadObject.html#ACadSharp_CadObject_Handle">CadObject.Handle</a>
+    </div>
+    <div>
+      <a class="xref" href="ACadSharp.CadObject.html#ACadSharp_CadObject_HasDynamicSubclass">CadObject.HasDynamicSubclass</a>
+    </div>
+    <div>
+      <a class="xref" href="ACadSharp.CadObject.html#ACadSharp_CadObject_Owner">CadObject.Owner</a>
+    </div>
+    <div>
+      <a class="xref" href="ACadSharp.CadObject.html#ACadSharp_CadObject_Reactors">CadObject.Reactors</a>
+    </div>
+    <div>
+      <a class="xref" href="ACadSharp.CadObject.html#ACadSharp_CadObject_XDictionary">CadObject.XDictionary</a>
+    </div>
+    <div>
+      <a class="xref" href="ACadSharp.CadObject.html#ACadSharp_CadObject_AddReactor_ACadSharp_CadObject_">CadObject.AddReactor(CadObject)</a>
+    </div>
+    <div>
+      <a class="xref" href="ACadSharp.CadObject.html#ACadSharp_CadObject_CleanReactors">CadObject.CleanReactors()</a>
+    </div>
+    <div>
+      <a class="xref" href="ACadSharp.CadObject.html#ACadSharp_CadObject_CreateExtendedDictionary">CadObject.CreateExtendedDictionary()</a>
+    </div>
+    <div>
+      <a class="xref" href="ACadSharp.CadObject.html#ACadSharp_CadObject_RemoveReactor_ACadSharp_CadObject_">CadObject.RemoveReactor(CadObject)</a>
+    </div>
+    <div>
+      <a class="xref" href="ACadSharp.CadObject.html#ACadSharp_CadObject_ToString">CadObject.ToString()</a>
+    </div>
+    <div>
+      <a class="xref" href="ACadSharp.CadObject.html#ACadSharp_CadObject_updateCollection__1___0_ACadSharp_ICadCollection___0__">CadObject.updateCollection&lt;T&gt;(T, ICadCollection&lt;T&gt;)</a>
+    </div>
+    <div>
+      <a class="xref" href="https://learn.microsoft.com/dotnet/api/system.object.equals#system-object-equals(system-object)">object.Equals(object)</a>
+    </div>
+    <div>
+      <a class="xref" href="https://learn.microsoft.com/dotnet/api/system.object.equals#system-object-equals(system-object-system-object)">object.Equals(object, object)</a>
+    </div>
+    <div>
+      <a class="xref" href="https://learn.microsoft.com/dotnet/api/system.object.gethashcode">object.GetHashCode()</a>
+    </div>
+    <div>
+      <a class="xref" href="https://learn.microsoft.com/dotnet/api/system.object.gettype">object.GetType()</a>
+    </div>
+    <div>
+      <a class="xref" href="https://learn.microsoft.com/dotnet/api/system.object.memberwiseclone">object.MemberwiseClone()</a>
+    </div>
+    <div>
+      <a class="xref" href="https://learn.microsoft.com/dotnet/api/system.object.referenceequals">object.ReferenceEquals(object, object)</a>
+    </div>
+  </dd></dl>
+
+  <dl class="typelist extensionMethods">
+    <dt>Extension Methods</dt>
+    <dd>
+  <div>
+      <a class="xref" href="ACadSharp.Extensions.CadObjectExtensions.html#ACadSharp_Extensions_CadObjectExtensions_CloneTyped__1___0_">CadObjectExtensions.CloneTyped&lt;T&gt;(T)</a>
+  </div>
+  <div>
+      <a class="xref" href="CSMath.Geometry.LineExtensions.html#CSMath_Geometry_LineExtensions_TryFindIntersection__2___0___0___1__">LineExtensions.TryFindIntersection&lt;T, R&gt;(T, T, out R)</a>
+  </div>
+  </dd></dl>
+
+
+
+  <h2 id="ACadSharp_Entities_MText_remarks">Remarks</h2>
+  <div class="markdown level0 remarks"><p>Object name <a class="xref" href="ACadSharp.DxfFileToken.html#ACadSharp_DxfFileToken_EntityMText">EntityMText</a> <br>
+Dxf class name <a class="xref" href="ACadSharp.DxfSubclassMarker.html#ACadSharp_DxfSubclassMarker_MText">MText</a></p>
+</div>
+
+
+  <h2 class="section" id="constructors">Constructors
+</h2>
+
+
+  <a id="ACadSharp_Entities_MText__ctor_" data-uid="ACadSharp.Entities.MText.#ctor*"></a>
+
+  <h3 id="ACadSharp_Entities_MText__ctor" data-uid="ACadSharp.Entities.MText.#ctor">
+  MText()
+  <a class="header-action link-secondary" title="View source" href="https://github.com/DomCR/ACadSharp/blob/1065/merge/src/ACadSharp/Entities/MText.cs/#L223"><i class="bi bi-code-slash"></i></a>
+  </h3>
+
+  <div class="markdown level1 summary"><p>Default constructor.</p>
+</div>
+  <div class="markdown level1 conceptual"></div>
+
+  <div class="codewrapper">
+    <pre><code class="lang-csharp hljs">public MText()</code></pre>
+  </div>
+
+
+
+
+
+
+
+
+
+
+
+
+
+  <a id="ACadSharp_Entities_MText__ctor_" data-uid="ACadSharp.Entities.MText.#ctor*"></a>
+
+  <h3 id="ACadSharp_Entities_MText__ctor_System_String_" data-uid="ACadSharp.Entities.MText.#ctor(System.String)">
+  MText(string)
+  <a class="header-action link-secondary" title="View source" href="https://github.com/DomCR/ACadSharp/blob/1065/merge/src/ACadSharp/Entities/MText.cs/#L229"><i class="bi bi-code-slash"></i></a>
+  </h3>
+
+  <div class="markdown level1 summary"><p>Initializes a new instance of the <a class="xref" href="ACadSharp.Entities.MText.html">MText</a> class with the specified text value.</p>
+</div>
+  <div class="markdown level1 conceptual"></div>
+
+  <div class="codewrapper">
+    <pre><code class="lang-csharp hljs">public MText(string value)</code></pre>
+  </div>
+
+  <h4 class="section">Parameters</h4>
+  <dl class="parameters">
+    <dt><code>value</code> <a class="xref" href="https://learn.microsoft.com/dotnet/api/system.string">string</a></dt>
+    <dd><p>The text value to initialize the instance with. Cannot be <a href="https://learn.microsoft.com/dotnet/csharp/language-reference/keywords/null">null</a>.</p>
+</dd>
+  </dl>
+
+
+
+
+
+
+
+
+
+
+
+
+  <h2 class="section" id="properties">Properties
+</h2>
+
+
+  <a id="ACadSharp_Entities_MText_AlignmentPoint_" data-uid="ACadSharp.Entities.MText.AlignmentPoint*"></a>
+
+  <h3 id="ACadSharp_Entities_MText_AlignmentPoint" data-uid="ACadSharp.Entities.MText.AlignmentPoint">
+  AlignmentPoint
+  <a class="header-action link-secondary" title="View source" href="https://github.com/DomCR/ACadSharp/blob/1065/merge/src/ACadSharp/Entities/MText.cs/#L22"><i class="bi bi-code-slash"></i></a>
+  </h3>
+
+  <div class="markdown level1 summary"><p>X-axis direction vector(in WCS).</p>
+</div>
+  <div class="markdown level1 conceptual"></div>
+
+  <div class="codewrapper">
+    <pre><code class="lang-csharp hljs">[DxfCodeValue(new int[] { 11, 21, 31 })]
+public XYZ AlignmentPoint { get; set; }</code></pre>
+  </div>
+
+
+
+
+
+  <h4 class="section">Property Value</h4>
+  <dl class="parameters">
+    <dt><a class="xref" href="CSMath.XYZ.html">XYZ</a></dt>
+    <dd></dd>
+  </dl>
+
+
+
+
+  <h4 class="section" id="ACadSharp_Entities_MText_AlignmentPoint_remarks">Remarks</h4>
+  <div class="markdown level1 remarks"><p>A group code 50 (rotation angle in radians) passed as DXF input is converted to the equivalent direction vector (if both a code 50 and codes 11, 21, 31 are passed, the last one wins). This is provided as a convenience for conversions from text objects</p>
+</div>
+
+
+
+
+  <a id="ACadSharp_Entities_MText_AttachmentPoint_" data-uid="ACadSharp.Entities.MText.AttachmentPoint*"></a>
+
+  <h3 id="ACadSharp_Entities_MText_AttachmentPoint" data-uid="ACadSharp.Entities.MText.AttachmentPoint">
+  AttachmentPoint
+  <a class="header-action link-secondary" title="View source" href="https://github.com/DomCR/ACadSharp/blob/1065/merge/src/ACadSharp/Entities/MText.cs/#L28"><i class="bi bi-code-slash"></i></a>
+  </h3>
+
+  <div class="markdown level1 summary"><p>Attachment point</p>
+</div>
+  <div class="markdown level1 conceptual"></div>
+
+  <div class="codewrapper">
+    <pre><code class="lang-csharp hljs">[DxfCodeValue(new int[] { 71 })]
+public AttachmentPointType AttachmentPoint { get; set; }</code></pre>
+  </div>
+
+
+
+
+
+  <h4 class="section">Property Value</h4>
+  <dl class="parameters">
+    <dt><a class="xref" href="ACadSharp.Entities.AttachmentPointType.html">AttachmentPointType</a></dt>
+    <dd></dd>
+  </dl>
+
+
+
+
+
+
+
+
+  <a id="ACadSharp_Entities_MText_BackgroundColor_" data-uid="ACadSharp.Entities.MText.BackgroundColor*"></a>
+
+  <h3 id="ACadSharp_Entities_MText_BackgroundColor" data-uid="ACadSharp.Entities.MText.BackgroundColor">
+  BackgroundColor
+  <a class="header-action link-secondary" title="View source" href="https://github.com/DomCR/ACadSharp/blob/1065/merge/src/ACadSharp/Entities/MText.cs/#L37"><i class="bi bi-code-slash"></i></a>
+  </h3>
+
+  <div class="markdown level1 summary"><p>Background fill color</p>
+</div>
+  <div class="markdown level1 conceptual"></div>
+
+  <div class="codewrapper">
+    <pre><code class="lang-csharp hljs">[DxfCodeValue(new int[] { 63, 421, 430 })]
+public Color BackgroundColor { get; set; }</code></pre>
+  </div>
+
+
+
+
+
+  <h4 class="section">Property Value</h4>
+  <dl class="parameters">
+    <dt><a class="xref" href="ACadSharp.Color.html">Color</a></dt>
+    <dd></dd>
+  </dl>
+
+
+
+
+  <h4 class="section" id="ACadSharp_Entities_MText_BackgroundColor_remarks">Remarks</h4>
+  <div class="markdown level1 remarks"><p>Color to use for background fill when group code 90 is 1.</p>
+</div>
+
+
+
+
+  <a id="ACadSharp_Entities_MText_BackgroundFillFlags_" data-uid="ACadSharp.Entities.MText.BackgroundFillFlags*"></a>
+
+  <h3 id="ACadSharp_Entities_MText_BackgroundFillFlags" data-uid="ACadSharp.Entities.MText.BackgroundFillFlags">
+  BackgroundFillFlags
+  <a class="header-action link-secondary" title="View source" href="https://github.com/DomCR/ACadSharp/blob/1065/merge/src/ACadSharp/Entities/MText.cs/#L43"><i class="bi bi-code-slash"></i></a>
+  </h3>
+
+  <div class="markdown level1 summary"><p>Background fill setting</p>
+</div>
+  <div class="markdown level1 conceptual"></div>
+
+  <div class="codewrapper">
+    <pre><code class="lang-csharp hljs">[DxfCodeValue(new int[] { 90 })]
+public BackgroundFillFlags BackgroundFillFlags { get; set; }</code></pre>
+  </div>
+
+
+
+
+
+  <h4 class="section">Property Value</h4>
+  <dl class="parameters">
+    <dt><a class="xref" href="ACadSharp.Entities.BackgroundFillFlags.html">BackgroundFillFlags</a></dt>
+    <dd></dd>
+  </dl>
+
+
+
+
+
+
+
+
+  <a id="ACadSharp_Entities_MText_BackgroundScale_" data-uid="ACadSharp.Entities.MText.BackgroundScale*"></a>
+
+  <h3 id="ACadSharp_Entities_MText_BackgroundScale" data-uid="ACadSharp.Entities.MText.BackgroundScale">
+  BackgroundScale
+  <a class="header-action link-secondary" title="View source" href="https://github.com/DomCR/ACadSharp/blob/1065/merge/src/ACadSharp/Entities/MText.cs/#L49"><i class="bi bi-code-slash"></i></a>
+  </h3>
+
+  <div class="markdown level1 summary"><p>Determines how much border there is around the text.</p>
+</div>
+  <div class="markdown level1 conceptual"></div>
+
+  <div class="codewrapper">
+    <pre><code class="lang-csharp hljs">[DxfCodeValue(new int[] { 45 })]
+public double BackgroundScale { get; set; }</code></pre>
+  </div>
+
+
+
+
+
+  <h4 class="section">Property Value</h4>
+  <dl class="parameters">
+    <dt><a class="xref" href="https://learn.microsoft.com/dotnet/api/system.double">double</a></dt>
+    <dd></dd>
+  </dl>
+
+
+
+
+
+
+
+
+  <a id="ACadSharp_Entities_MText_BackgroundTransparency_" data-uid="ACadSharp.Entities.MText.BackgroundTransparency*"></a>
+
+  <h3 id="ACadSharp_Entities_MText_BackgroundTransparency" data-uid="ACadSharp.Entities.MText.BackgroundTransparency">
+  BackgroundTransparency
+  <a class="header-action link-secondary" title="View source" href="https://github.com/DomCR/ACadSharp/blob/1065/merge/src/ACadSharp/Entities/MText.cs/#L55"><i class="bi bi-code-slash"></i></a>
+  </h3>
+
+  <div class="markdown level1 summary"><p>Transparency of background fill color</p>
+</div>
+  <div class="markdown level1 conceptual"></div>
+
+  <div class="codewrapper">
+    <pre><code class="lang-csharp hljs">[DxfCodeValue(new int[] { 441 })]
+public Transparency BackgroundTransparency { get; set; }</code></pre>
+  </div>
+
+
+
+
+
+  <h4 class="section">Property Value</h4>
+  <dl class="parameters">
+    <dt><a class="xref" href="ACadSharp.Transparency.html">Transparency</a></dt>
+    <dd></dd>
+  </dl>
+
+
+
+
+
+
+
+
+  <a id="ACadSharp_Entities_MText_ColumnData_" data-uid="ACadSharp.Entities.MText.ColumnData*"></a>
+
+  <h3 id="ACadSharp_Entities_MText_ColumnData" data-uid="ACadSharp.Entities.MText.ColumnData">
+  ColumnData
+  <a class="header-action link-secondary" title="View source" href="https://github.com/DomCR/ACadSharp/blob/1065/merge/src/ACadSharp/Entities/MText.cs/#L61"><i class="bi bi-code-slash"></i></a>
+  </h3>
+
+  <div class="markdown level1 summary"><p>Gets or sets the text column data associated with this instance.</p>
+</div>
+  <div class="markdown level1 conceptual"></div>
+
+  <div class="codewrapper">
+    <pre><code class="lang-csharp hljs">public MText.TextColumnData ColumnData { get; }</code></pre>
+  </div>
+
+
+
+
+
+  <h4 class="section">Property Value</h4>
+  <dl class="parameters">
+    <dt><a class="xref" href="ACadSharp.Entities.MText.html">MText</a>.<a class="xref" href="ACadSharp.Entities.MText.TextColumnData.html">TextColumnData</a></dt>
+    <dd></dd>
+  </dl>
+
+
+
+
+
+
+
+
+  <a id="ACadSharp_Entities_MText_DrawingDirection_" data-uid="ACadSharp.Entities.MText.DrawingDirection*"></a>
+
+  <h3 id="ACadSharp_Entities_MText_DrawingDirection" data-uid="ACadSharp.Entities.MText.DrawingDirection">
+  DrawingDirection
+  <a class="header-action link-secondary" title="View source" href="https://github.com/DomCR/ACadSharp/blob/1065/merge/src/ACadSharp/Entities/MText.cs/#L66"><i class="bi bi-code-slash"></i></a>
+  </h3>
+
+  <div class="markdown level1 summary"><p>Drawing direction</p>
+</div>
+  <div class="markdown level1 conceptual"></div>
+
+  <div class="codewrapper">
+    <pre><code class="lang-csharp hljs">[DxfCodeValue(new int[] { 72 })]
+public DrawingDirectionType DrawingDirection { get; set; }</code></pre>
+  </div>
+
+
+
+
+
+  <h4 class="section">Property Value</h4>
+  <dl class="parameters">
+    <dt><a class="xref" href="ACadSharp.Entities.DrawingDirectionType.html">DrawingDirectionType</a></dt>
+    <dd></dd>
+  </dl>
+
+
+
+
+
+
+
+
+  <a id="ACadSharp_Entities_MText_HasColumns_" data-uid="ACadSharp.Entities.MText.HasColumns*"></a>
+
+  <h3 id="ACadSharp_Entities_MText_HasColumns" data-uid="ACadSharp.Entities.MText.HasColumns">
+  HasColumns
+  <a class="header-action link-secondary" title="View source" href="https://github.com/DomCR/ACadSharp/blob/1065/merge/src/ACadSharp/Entities/MText.cs/#L72"><i class="bi bi-code-slash"></i></a>
+  </h3>
+
+  <div class="markdown level1 summary"><p>Gets a value indicating whether the current object contains any columns.</p>
+</div>
+  <div class="markdown level1 conceptual"></div>
+
+  <div class="codewrapper">
+    <pre><code class="lang-csharp hljs">public bool HasColumns { get; }</code></pre>
+  </div>
+
+
+
+
+
+  <h4 class="section">Property Value</h4>
+  <dl class="parameters">
+    <dt><a class="xref" href="https://learn.microsoft.com/dotnet/api/system.boolean">bool</a></dt>
+    <dd></dd>
+  </dl>
+
+
+
+
+
+
+
+
+  <a id="ACadSharp_Entities_MText_Height_" data-uid="ACadSharp.Entities.MText.Height*"></a>
+
+  <h3 id="ACadSharp_Entities_MText_Height" data-uid="ACadSharp.Entities.MText.Height">
+  Height
+  <a class="header-action link-secondary" title="View source" href="https://github.com/DomCR/ACadSharp/blob/1065/merge/src/ACadSharp/Entities/MText.cs/#L81"><i class="bi bi-code-slash"></i></a>
+  </h3>
+
+  <div class="markdown level1 summary"><p>Changes the height of the object.</p>
+</div>
+  <div class="markdown level1 conceptual"></div>
+
+  <div class="codewrapper">
+    <pre><code class="lang-csharp hljs">[DxfCodeValue(new int[] { 40 })]
+public double Height { get; set; }</code></pre>
+  </div>
+
+
+
+
+
+  <h4 class="section">Property Value</h4>
+  <dl class="parameters">
+    <dt><a class="xref" href="https://learn.microsoft.com/dotnet/api/system.double">double</a></dt>
+    <dd><p>Valid values must be greater than zero. Default: 1.0</p>
+</dd>
+  </dl>
+
+
+
+
+
+
+
+
+  <a id="ACadSharp_Entities_MText_HorizontalWidth_" data-uid="ACadSharp.Entities.MText.HorizontalWidth*"></a>
+
+  <h3 id="ACadSharp_Entities_MText_HorizontalWidth" data-uid="ACadSharp.Entities.MText.HorizontalWidth">
+  HorizontalWidth
+  <a class="header-action link-secondary" title="View source" href="https://github.com/DomCR/ACadSharp/blob/1065/merge/src/ACadSharp/Entities/MText.cs/#L103"><i class="bi bi-code-slash"></i></a>
+  </h3>
+
+  <div class="markdown level1 summary"><p>Horizontal width of the characters that make up the mtext entity.
+This value will always be equal to or less than the value of group code 41</p>
+</div>
+  <div class="markdown level1 conceptual"></div>
+
+  <div class="codewrapper">
+    <pre><code class="lang-csharp hljs">[DxfCodeValue(DxfReferenceType.Ignored, new int[] { 42 })]
+public double HorizontalWidth { get; set; }</code></pre>
+  </div>
+
+
+
+
+
+  <h4 class="section">Property Value</h4>
+  <dl class="parameters">
+    <dt><a class="xref" href="https://learn.microsoft.com/dotnet/api/system.double">double</a></dt>
+    <dd></dd>
+  </dl>
+
+
+
+
+  <h4 class="section" id="ACadSharp_Entities_MText_HorizontalWidth_remarks">Remarks</h4>
+  <div class="markdown level1 remarks"><p>read-only, ignored if supplied</p>
+</div>
+
+
+
+
+  <a id="ACadSharp_Entities_MText_InsertPoint_" data-uid="ACadSharp.Entities.MText.InsertPoint*"></a>
+
+  <h3 id="ACadSharp_Entities_MText_InsertPoint" data-uid="ACadSharp.Entities.MText.InsertPoint">
+  InsertPoint
+  <a class="header-action link-secondary" title="View source" href="https://github.com/DomCR/ACadSharp/blob/1065/merge/src/ACadSharp/Entities/MText.cs/#L109"><i class="bi bi-code-slash"></i></a>
+  </h3>
+
+  <div class="markdown level1 summary"><p>A 3D WCS coordinate representing the insertion or origin point.</p>
+</div>
+  <div class="markdown level1 conceptual"></div>
+
+  <div class="codewrapper">
+    <pre><code class="lang-csharp hljs">[DxfCodeValue(new int[] { 10, 20, 30 })]
+public XYZ InsertPoint { get; set; }</code></pre>
+  </div>
+
+
+
+
+
+  <h4 class="section">Property Value</h4>
+  <dl class="parameters">
+    <dt><a class="xref" href="CSMath.XYZ.html">XYZ</a></dt>
+    <dd></dd>
+  </dl>
+
+
+
+
+
+
+
+
+  <a id="ACadSharp_Entities_MText_IsAnnotative_" data-uid="ACadSharp.Entities.MText.IsAnnotative*"></a>
+
+  <h3 id="ACadSharp_Entities_MText_IsAnnotative" data-uid="ACadSharp.Entities.MText.IsAnnotative">
+  IsAnnotative
+  <a class="header-action link-secondary" title="View source" href="https://github.com/DomCR/ACadSharp/blob/1065/merge/src/ACadSharp/Entities/MText.cs/#L112"><i class="bi bi-code-slash"></i></a>
+  </h3>
+
+  <div class="markdown level1 summary"></div>
+  <div class="markdown level1 conceptual"></div>
+
+  <div class="codewrapper">
+    <pre><code class="lang-csharp hljs">public bool IsAnnotative { get; set; }</code></pre>
+  </div>
+
+
+
+
+
+  <h4 class="section">Property Value</h4>
+  <dl class="parameters">
+    <dt><a class="xref" href="https://learn.microsoft.com/dotnet/api/system.boolean">bool</a></dt>
+    <dd></dd>
+  </dl>
+
+
+
+
+
+
+
+
+  <a id="ACadSharp_Entities_MText_LineSpacing_" data-uid="ACadSharp.Entities.MText.LineSpacing*"></a>
+
+  <h3 id="ACadSharp_Entities_MText_LineSpacing" data-uid="ACadSharp.Entities.MText.LineSpacing">
+  LineSpacing
+  <a class="header-action link-secondary" title="View source" href="https://github.com/DomCR/ACadSharp/blob/1065/merge/src/ACadSharp/Entities/MText.cs/#L120"><i class="bi bi-code-slash"></i></a>
+  </h3>
+
+  <div class="markdown level1 summary"><p>Mtext line spacing factor.</p>
+</div>
+  <div class="markdown level1 conceptual"></div>
+
+  <div class="codewrapper">
+    <pre><code class="lang-csharp hljs">[DxfCodeValue(new int[] { 44 })]
+public double LineSpacing { get; set; }</code></pre>
+  </div>
+
+
+
+
+
+  <h4 class="section">Property Value</h4>
+  <dl class="parameters">
+    <dt><a class="xref" href="https://learn.microsoft.com/dotnet/api/system.double">double</a></dt>
+    <dd></dd>
+  </dl>
+
+
+
+
+  <h4 class="section" id="ACadSharp_Entities_MText_LineSpacing_remarks">Remarks</h4>
+  <div class="markdown level1 remarks"><p>Percentage of default (3-on-5) line spacing to be applied.Valid values range from 0.25 to 4.00</p>
+</div>
+
+
+
+
+  <a id="ACadSharp_Entities_MText_LineSpacingStyle_" data-uid="ACadSharp.Entities.MText.LineSpacingStyle*"></a>
+
+  <h3 id="ACadSharp_Entities_MText_LineSpacingStyle" data-uid="ACadSharp.Entities.MText.LineSpacingStyle">
+  LineSpacingStyle
+  <a class="header-action link-secondary" title="View source" href="https://github.com/DomCR/ACadSharp/blob/1065/merge/src/ACadSharp/Entities/MText.cs/#L126"><i class="bi bi-code-slash"></i></a>
+  </h3>
+
+  <div class="markdown level1 summary"><p>Mtext line spacing style.</p>
+</div>
+  <div class="markdown level1 conceptual"></div>
+
+  <div class="codewrapper">
+    <pre><code class="lang-csharp hljs">[DxfCodeValue(new int[] { 73 })]
+public LineSpacingStyleType LineSpacingStyle { get; set; }</code></pre>
+  </div>
+
+
+
+
+
+  <h4 class="section">Property Value</h4>
+  <dl class="parameters">
+    <dt><a class="xref" href="ACadSharp.Entities.LineSpacingStyleType.html">LineSpacingStyleType</a></dt>
+    <dd></dd>
+  </dl>
+
+
+
+
+
+
+
+
+  <a id="ACadSharp_Entities_MText_Normal_" data-uid="ACadSharp.Entities.MText.Normal*"></a>
+
+  <h3 id="ACadSharp_Entities_MText_Normal" data-uid="ACadSharp.Entities.MText.Normal">
+  Normal
+  <a class="header-action link-secondary" title="View source" href="https://github.com/DomCR/ACadSharp/blob/1065/merge/src/ACadSharp/Entities/MText.cs/#L132"><i class="bi bi-code-slash"></i></a>
+  </h3>
+
+  <div class="markdown level1 summary"><p>Specifies the three-dimensional normal unit vector for the object.</p>
+</div>
+  <div class="markdown level1 conceptual"></div>
+
+  <div class="codewrapper">
+    <pre><code class="lang-csharp hljs">[DxfCodeValue(new int[] { 210, 220, 230 })]
+public XYZ Normal { get; set; }</code></pre>
+  </div>
+
+
+
+
+
+  <h4 class="section">Property Value</h4>
+  <dl class="parameters">
+    <dt><a class="xref" href="CSMath.XYZ.html">XYZ</a></dt>
+    <dd></dd>
+  </dl>
+
+
+
+
+
+
+
+
+  <a id="ACadSharp_Entities_MText_ObjectName_" data-uid="ACadSharp.Entities.MText.ObjectName*"></a>
+
+  <h3 id="ACadSharp_Entities_MText_ObjectName" data-uid="ACadSharp.Entities.MText.ObjectName">
+  ObjectName
+  <a class="header-action link-secondary" title="View source" href="https://github.com/DomCR/ACadSharp/blob/1065/merge/src/ACadSharp/Entities/MText.cs/#L136"><i class="bi bi-code-slash"></i></a>
+  </h3>
+
+  <div class="markdown level1 summary"><p>The CAD class name of an object.</p>
+</div>
+  <div class="markdown level1 conceptual"></div>
+
+  <div class="codewrapper">
+    <pre><code class="lang-csharp hljs">public override string ObjectName { get; }</code></pre>
+  </div>
+
+
+
+
+
+  <h4 class="section">Property Value</h4>
+  <dl class="parameters">
+    <dt><a class="xref" href="https://learn.microsoft.com/dotnet/api/system.string">string</a></dt>
+    <dd></dd>
+  </dl>
+
+
+
+
+
+
+
+
+  <a id="ACadSharp_Entities_MText_ObjectType_" data-uid="ACadSharp.Entities.MText.ObjectType*"></a>
+
+  <h3 id="ACadSharp_Entities_MText_ObjectType" data-uid="ACadSharp.Entities.MText.ObjectType">
+  ObjectType
+  <a class="header-action link-secondary" title="View source" href="https://github.com/DomCR/ACadSharp/blob/1065/merge/src/ACadSharp/Entities/MText.cs/#L139"><i class="bi bi-code-slash"></i></a>
+  </h3>
+
+  <div class="markdown level1 summary"><p>Get the object type.</p>
+</div>
+  <div class="markdown level1 conceptual"></div>
+
+  <div class="codewrapper">
+    <pre><code class="lang-csharp hljs">public override ObjectType ObjectType { get; }</code></pre>
+  </div>
+
+
+
+
+
+  <h4 class="section">Property Value</h4>
+  <dl class="parameters">
+    <dt><a class="xref" href="ACadSharp.ObjectType.html">ObjectType</a></dt>
+    <dd></dd>
+  </dl>
+
+
+
+
+
+
+
+
+  <a id="ACadSharp_Entities_MText_PlainText_" data-uid="ACadSharp.Entities.MText.PlainText*"></a>
+
+  <h3 id="ACadSharp_Entities_MText_PlainText" data-uid="ACadSharp.Entities.MText.PlainText">
+  PlainText
+  <a class="header-action link-secondary" title="View source" href="https://github.com/DomCR/ACadSharp/blob/1065/merge/src/ACadSharp/Entities/MText.cs/#L146"><i class="bi bi-code-slash"></i></a>
+  </h3>
+
+  <div class="markdown level1 summary"><p>Gets the plain text representation of the processed value.</p>
+</div>
+  <div class="markdown level1 conceptual"></div>
+
+  <div class="codewrapper">
+    <pre><code class="lang-csharp hljs">public string PlainText { get; }</code></pre>
+  </div>
+
+
+
+
+
+  <h4 class="section">Property Value</h4>
+  <dl class="parameters">
+    <dt><a class="xref" href="https://learn.microsoft.com/dotnet/api/system.string">string</a></dt>
+    <dd></dd>
+  </dl>
+
+
+
+
+  <h4 class="section" id="ACadSharp_Entities_MText_PlainText_remarks">Remarks</h4>
+  <div class="markdown level1 remarks"><p>This property processes the underlying value and returns its plain text equivalent. The parsing
+operation may involve removing formatting or extracting meaningful content.</p>
+</div>
+
+
+
+
+  <a id="ACadSharp_Entities_MText_RectangleHeight_" data-uid="ACadSharp.Entities.MText.RectangleHeight*"></a>
+
+  <h3 id="ACadSharp_Entities_MText_RectangleHeight" data-uid="ACadSharp.Entities.MText.RectangleHeight">
+  RectangleHeight
+  <a class="header-action link-secondary" title="View source" href="https://github.com/DomCR/ACadSharp/blob/1065/merge/src/ACadSharp/Entities/MText.cs/#L157"><i class="bi bi-code-slash"></i></a>
+  </h3>
+
+  <div class="markdown level1 summary"><p>Reference rectangle height.</p>
+</div>
+  <div class="markdown level1 conceptual"></div>
+
+  <div class="codewrapper">
+    <pre><code class="lang-csharp hljs">[DxfCodeValue(new int[] { 46 })]
+public double RectangleHeight { get; set; }</code></pre>
+  </div>
+
+
+
+
+
+  <h4 class="section">Property Value</h4>
+  <dl class="parameters">
+    <dt><a class="xref" href="https://learn.microsoft.com/dotnet/api/system.double">double</a></dt>
+    <dd></dd>
+  </dl>
+
+
+
+
+
+
+
+
+  <a id="ACadSharp_Entities_MText_RectangleWidth_" data-uid="ACadSharp.Entities.MText.RectangleWidth*"></a>
+
+  <h3 id="ACadSharp_Entities_MText_RectangleWidth" data-uid="ACadSharp.Entities.MText.RectangleWidth">
+  RectangleWidth
+  <a class="header-action link-secondary" title="View source" href="https://github.com/DomCR/ACadSharp/blob/1065/merge/src/ACadSharp/Entities/MText.cs/#L163"><i class="bi bi-code-slash"></i></a>
+  </h3>
+
+  <div class="markdown level1 summary"><p>Reference rectangle width.</p>
+</div>
+  <div class="markdown level1 conceptual"></div>
+
+  <div class="codewrapper">
+    <pre><code class="lang-csharp hljs">[DxfCodeValue(new int[] { 41 })]
+public double RectangleWidth { get; set; }</code></pre>
+  </div>
+
+
+
+
+
+  <h4 class="section">Property Value</h4>
+  <dl class="parameters">
+    <dt><a class="xref" href="https://learn.microsoft.com/dotnet/api/system.double">double</a></dt>
+    <dd></dd>
+  </dl>
+
+
+
+
+
+
+
+
+  <a id="ACadSharp_Entities_MText_Rotation_" data-uid="ACadSharp.Entities.MText.Rotation*"></a>
+
+  <h3 id="ACadSharp_Entities_MText_Rotation" data-uid="ACadSharp.Entities.MText.Rotation">
+  Rotation
+  <a class="header-action link-secondary" title="View source" href="https://github.com/DomCR/ACadSharp/blob/1065/merge/src/ACadSharp/Entities/MText.cs/#L170"><i class="bi bi-code-slash"></i></a>
+  </h3>
+
+  <div class="markdown level1 summary"><p>Specifies the rotation angle for the object.</p>
+</div>
+  <div class="markdown level1 conceptual"></div>
+
+  <div class="codewrapper">
+    <pre><code class="lang-csharp hljs">[DxfCodeValue(DxfReferenceType.Ignored|DxfReferenceType.IsAngle, new int[] { 50 })]
+public double Rotation { get; }</code></pre>
+  </div>
+
+
+
+
+
+  <h4 class="section">Property Value</h4>
+  <dl class="parameters">
+    <dt><a class="xref" href="https://learn.microsoft.com/dotnet/api/system.double">double</a></dt>
+    <dd><p>The rotation angle in radians.</p>
+</dd>
+  </dl>
+
+
+
+
+  <h4 class="section" id="ACadSharp_Entities_MText_Rotation_remarks">Remarks</h4>
+  <div class="markdown level1 remarks"><p>The rotation is only valid if the <a class="xref" href="ACadSharp.Entities.MText.html#ACadSharp_Entities_MText_Normal">Normal</a> is set to the Z axis.</p>
+</div>
+
+
+
+
+  <a id="ACadSharp_Entities_MText_Style_" data-uid="ACadSharp.Entities.MText.Style*"></a>
+
+  <h3 id="ACadSharp_Entities_MText_Style" data-uid="ACadSharp.Entities.MText.Style">
+  Style
+  <a class="header-action link-secondary" title="View source" href="https://github.com/DomCR/ACadSharp/blob/1065/merge/src/ACadSharp/Entities/MText.cs/#L180"><i class="bi bi-code-slash"></i></a>
+  </h3>
+
+  <div class="markdown level1 summary"><p>Style of this text entity.</p>
+</div>
+  <div class="markdown level1 conceptual"></div>
+
+  <div class="codewrapper">
+    <pre><code class="lang-csharp hljs">[DxfCodeValue(DxfReferenceType.Name|DxfReferenceType.Optional, new int[] { 7 })]
+public TextStyle Style { get; set; }</code></pre>
+  </div>
+
+
+
+
+
+  <h4 class="section">Property Value</h4>
+  <dl class="parameters">
+    <dt><a class="xref" href="ACadSharp.Tables.TextStyle.html">TextStyle</a></dt>
+    <dd></dd>
+  </dl>
+
+
+
+
+
+
+
+
+  <a id="ACadSharp_Entities_MText_SubclassMarker_" data-uid="ACadSharp.Entities.MText.SubclassMarker*"></a>
+
+  <h3 id="ACadSharp_Entities_MText_SubclassMarker" data-uid="ACadSharp.Entities.MText.SubclassMarker">
+  SubclassMarker
+  <a class="header-action link-secondary" title="View source" href="https://github.com/DomCR/ACadSharp/blob/1065/merge/src/ACadSharp/Entities/MText.cs/#L203"><i class="bi bi-code-slash"></i></a>
+  </h3>
+
+  <div class="markdown level1 summary"><p>Object Subclass marker.</p>
+</div>
+  <div class="markdown level1 conceptual"></div>
+
+  <div class="codewrapper">
+    <pre><code class="lang-csharp hljs">public override string SubclassMarker { get; }</code></pre>
+  </div>
+
+
+
+
+
+  <h4 class="section">Property Value</h4>
+  <dl class="parameters">
+    <dt><a class="xref" href="https://learn.microsoft.com/dotnet/api/system.string">string</a></dt>
+    <dd></dd>
+  </dl>
+
+
+
+
+
+
+
+
+  <a id="ACadSharp_Entities_MText_Value_" data-uid="ACadSharp.Entities.MText.Value*"></a>
+
+  <h3 id="ACadSharp_Entities_MText_Value" data-uid="ACadSharp.Entities.MText.Value">
+  Value
+  <a class="header-action link-secondary" title="View source" href="https://github.com/DomCR/ACadSharp/blob/1065/merge/src/ACadSharp/Entities/MText.cs/#L206"><i class="bi bi-code-slash"></i></a>
+  </h3>
+
+  <div class="markdown level1 summary"><p>Specifies the text string for the entity.</p>
+</div>
+  <div class="markdown level1 conceptual"></div>
+
+  <div class="codewrapper">
+    <pre><code class="lang-csharp hljs">[DxfCodeValue(new int[] { 1 })]
+public string Value { get; set; }</code></pre>
+  </div>
+
+
+
+
+
+  <h4 class="section">Property Value</h4>
+  <dl class="parameters">
+    <dt><a class="xref" href="https://learn.microsoft.com/dotnet/api/system.string">string</a></dt>
+    <dd></dd>
+  </dl>
+
+
+
+
+
+
+
+
+  <a id="ACadSharp_Entities_MText_VerticalHeight_" data-uid="ACadSharp.Entities.MText.VerticalHeight*"></a>
+
+  <h3 id="ACadSharp_Entities_MText_VerticalHeight" data-uid="ACadSharp.Entities.MText.VerticalHeight">
+  VerticalHeight
+  <a class="header-action link-secondary" title="View source" href="https://github.com/DomCR/ACadSharp/blob/1065/merge/src/ACadSharp/Entities/MText.cs/#L215"><i class="bi bi-code-slash"></i></a>
+  </h3>
+
+  <div class="markdown level1 summary"><p>Vertical height of the mtext entity</p>
+</div>
+  <div class="markdown level1 conceptual"></div>
+
+  <div class="codewrapper">
+    <pre><code class="lang-csharp hljs">[DxfCodeValue(DxfReferenceType.Ignored, new int[] { 43 })]
+public double VerticalHeight { get; set; }</code></pre>
+  </div>
+
+
+
+
+
+  <h4 class="section">Property Value</h4>
+  <dl class="parameters">
+    <dt><a class="xref" href="https://learn.microsoft.com/dotnet/api/system.double">double</a></dt>
+    <dd></dd>
+  </dl>
+
+
+
+
+  <h4 class="section" id="ACadSharp_Entities_MText_VerticalHeight_remarks">Remarks</h4>
+  <div class="markdown level1 remarks"><p>read-only, ignored if supplied</p>
+</div>
+
+
+
+
+  <h2 class="section" id="methods">Methods
+</h2>
+
+
+  <a id="ACadSharp_Entities_MText_ApplyTransform_" data-uid="ACadSharp.Entities.MText.ApplyTransform*"></a>
+
+  <h3 id="ACadSharp_Entities_MText_ApplyTransform_CSMath_Transform_" data-uid="ACadSharp.Entities.MText.ApplyTransform(CSMath.Transform)">
+  ApplyTransform(Transform)
+  <a class="header-action link-secondary" title="View source" href="https://github.com/DomCR/ACadSharp/blob/1065/merge/src/ACadSharp/Entities/MText.cs/#L235"><i class="bi bi-code-slash"></i></a>
+  </h3>
+
+  <div class="markdown level1 summary"><p>Apply a transform matrix to this entity.</p>
+</div>
+  <div class="markdown level1 conceptual"></div>
+
+  <div class="codewrapper">
+    <pre><code class="lang-csharp hljs">public override void ApplyTransform(Transform transform)</code></pre>
+  </div>
+
+  <h4 class="section">Parameters</h4>
+  <dl class="parameters">
+    <dt><code>transform</code> <a class="xref" href="CSMath.Transform.html">Transform</a></dt>
+    <dd></dd>
+  </dl>
+
+
+
+
+
+
+
+
+
+
+
+
+  <a id="ACadSharp_Entities_MText_Clone_" data-uid="ACadSharp.Entities.MText.Clone*"></a>
+
+  <h3 id="ACadSharp_Entities_MText_Clone" data-uid="ACadSharp.Entities.MText.Clone">
+  Clone()
+  <a class="header-action link-secondary" title="View source" href="https://github.com/DomCR/ACadSharp/blob/1065/merge/src/ACadSharp/Entities/MText.cs/#L331"><i class="bi bi-code-slash"></i></a>
+  </h3>
+
+  <div class="markdown level1 summary"><p>Creates a new object that is a copy of the current instance.</p>
+</div>
+  <div class="markdown level1 conceptual"></div>
+
+  <div class="codewrapper">
+    <pre><code class="lang-csharp hljs">public override CadObject Clone()</code></pre>
+  </div>
+
+
+  <h4 class="section">Returns</h4>
+  <dl class="parameters">
+    <dt><a class="xref" href="ACadSharp.CadObject.html">CadObject</a></dt>
+    <dd><p>A new object that is a copy of this instance.</p>
+</dd>
+  </dl>
+
+
+
+
+
+
+
+  <h4 class="section" id="ACadSharp_Entities_MText_Clone_remarks">Remarks</h4>
+  <div class="markdown level1 remarks"><p>The copy will be unattached from the document or any reference.</p>
+</div>
+
+
+
+
+  <a id="ACadSharp_Entities_MText_GetBoundingBox_" data-uid="ACadSharp.Entities.MText.GetBoundingBox*"></a>
+
+  <h3 id="ACadSharp_Entities_MText_GetBoundingBox" data-uid="ACadSharp.Entities.MText.GetBoundingBox">
+  GetBoundingBox()
+  <a class="header-action link-secondary" title="View source" href="https://github.com/DomCR/ACadSharp/blob/1065/merge/src/ACadSharp/Entities/MText.cs/#L342"><i class="bi bi-code-slash"></i></a>
+  </h3>
+
+  <div class="markdown level1 summary"><p>Gets the bounding box aligned with the axis XYZ that occupies this entity.</p>
+</div>
+  <div class="markdown level1 conceptual"></div>
+
+  <div class="codewrapper">
+    <pre><code class="lang-csharp hljs">public override BoundingBox GetBoundingBox()</code></pre>
+  </div>
+
+
+  <h4 class="section">Returns</h4>
+  <dl class="parameters">
+    <dt><a class="xref" href="CSMath.BoundingBox.html">BoundingBox</a></dt>
+    <dd><p>The bounding box where this entity resides.</p>
+</dd>
+  </dl>
+
+
+
+
+
+
+
+
+
+
+
+  <a id="ACadSharp_Entities_MText_GetPlainTextLines_" data-uid="ACadSharp.Entities.MText.GetPlainTextLines*"></a>
+
+  <h3 id="ACadSharp_Entities_MText_GetPlainTextLines" data-uid="ACadSharp.Entities.MText.GetPlainTextLines">
+  GetPlainTextLines()
+  <a class="header-action link-secondary" title="View source" href="https://github.com/DomCR/ACadSharp/blob/1065/merge/src/ACadSharp/Entities/MText.cs/#L356"><i class="bi bi-code-slash"></i></a>
+  </h3>
+
+  <div class="markdown level1 summary"><p>Splits the plain text into an array of lines based on common line break sequences.</p>
+</div>
+  <div class="markdown level1 conceptual"></div>
+
+  <div class="codewrapper">
+    <pre><code class="lang-csharp hljs">public string[] GetPlainTextLines()</code></pre>
+  </div>
+
+
+  <h4 class="section">Returns</h4>
+  <dl class="parameters">
+    <dt><a class="xref" href="https://learn.microsoft.com/dotnet/api/system.string">string</a>[]</dt>
+    <dd><p>An array of strings, where each string represents a line of text. The array may contain empty strings if the plain
+text includes consecutive line break sequences.</p>
+</dd>
+  </dl>
+
+
+
+
+
+
+
+  <h4 class="section" id="ACadSharp_Entities_MText_GetPlainTextLines_remarks">Remarks</h4>
+  <div class="markdown level1 remarks"><p>The method splits the text using the following line break sequences:  carriage return and line feed
+(&quot;\r\n&quot;), carriage return (&quot;\r&quot;), line feed (&quot;\n&quot;), and the Unicode paragraph separator (&quot;\P&quot;).
+The resulting array includes all lines, including empty ones.</p>
+</div>
+
+
+
+
+  <a id="ACadSharp_Entities_MText_GetTextLines_" data-uid="ACadSharp.Entities.MText.GetTextLines*"></a>
+
+  <h3 id="ACadSharp_Entities_MText_GetTextLines" data-uid="ACadSharp.Entities.MText.GetTextLines">
+  GetTextLines()
+  <a class="header-action link-secondary" title="View source" href="https://github.com/DomCR/ACadSharp/blob/1065/merge/src/ACadSharp/Entities/MText.cs/#L375"><i class="bi bi-code-slash"></i></a>
+  </h3>
+
+  <div class="markdown level1 summary"><p>Splits the text into an array of lines based on common line break sequences.</p>
+</div>
+  <div class="markdown level1 conceptual"></div>
+
+  <div class="codewrapper">
+    <pre><code class="lang-csharp hljs">public string[] GetTextLines()</code></pre>
+  </div>
+
+
+  <h4 class="section">Returns</h4>
+  <dl class="parameters">
+    <dt><a class="xref" href="https://learn.microsoft.com/dotnet/api/system.string">string</a>[]</dt>
+    <dd><p>An array of strings, where each string represents a line of text. The array may contain empty strings if the
+text includes consecutive line break sequences.</p>
+</dd>
+  </dl>
+
+
+
+
+
+
+
+  <h4 class="section" id="ACadSharp_Entities_MText_GetTextLines_remarks">Remarks</h4>
+  <div class="markdown level1 remarks"><p>The method splits the text using the following line break sequences: carriage return and line feed
+(&quot;\r\n&quot;), carriage return (&quot;\r&quot;),  line feed (&quot;\n&quot;), and the Unicode paragraph separator (&quot;\P&quot;).
+The resulting array includes all lines, including empty ones.</p>
+</div>
+
+
+
+
+  <a id="ACadSharp_Entities_MText_tableOnRemove_" data-uid="ACadSharp.Entities.MText.tableOnRemove*"></a>
+
+  <h3 id="ACadSharp_Entities_MText_tableOnRemove_System_Object_ACadSharp_CollectionChangedEventArgs_" data-uid="ACadSharp.Entities.MText.tableOnRemove(System.Object,ACadSharp.CollectionChangedEventArgs)">
+  tableOnRemove(object, CollectionChangedEventArgs)
+  <a class="header-action link-secondary" title="View source" href="https://github.com/DomCR/ACadSharp/blob/1065/merge/src/ACadSharp/Entities/MText.cs/#L401"><i class="bi bi-code-slash"></i></a>
+  </h3>
+
+  <div class="markdown level1 summary"></div>
+  <div class="markdown level1 conceptual"></div>
+
+  <div class="codewrapper">
+    <pre><code class="lang-csharp hljs">protected override void tableOnRemove(object sender, CollectionChangedEventArgs e)</code></pre>
+  </div>
+
+  <h4 class="section">Parameters</h4>
+  <dl class="parameters">
+    <dt><code>sender</code> <a class="xref" href="https://learn.microsoft.com/dotnet/api/system.object">object</a></dt>
+    <dd></dd>
+    <dt><code>e</code> <a class="xref" href="ACadSharp.CollectionChangedEventArgs.html">CollectionChangedEventArgs</a></dt>
+    <dd></dd>
+  </dl>
+
+
+
+
+
+
+
+
+
+
+
+
+
+</article>
+
+        <div class="contribution d-print-none">
+          <a href="https://github.com/DomCR/ACadSharp/blob/1065/merge/src/ACadSharp/Entities/MText.TextColumnData.cs/#L6" class="edit-link">Edit this page</a>
+        </div>
+
+
+      </div>
+
+      <div class="affix">
+        <nav id="affix"></nav>
+      </div>
+    </main>
+
+    <div class="container-xxl search-results" id="search-results"></div>
+
+    <footer class="border-top text-secondary">
+      <div class="container-xxl">
+        <div class="flex-fill">
+          <span>Made with <a href="https://dotnet.github.io/docfx">docfx</a></span>
+        </div>
+      </div>
+    </footer>
+  </body>
+</html>

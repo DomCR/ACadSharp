@@ -1,6 +1,0 @@
-<Project>
-  <PropertyGroup>
-    <LangVersion>latest</LangVersion>
-    <Configurations>Debug;Release;Test</Configurations>
-  </PropertyGroup>
-</Project>
