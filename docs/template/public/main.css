@@ -1,0 +1,4 @@
+/* This rule hides the display of inherited types */
+.typelist.inheritance {
+	display: none;
+}
