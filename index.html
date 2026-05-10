@@ -1,0 +1,212 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <meta charset="utf-8">
+      <title> | ACadSharp </title>
+      <meta name="viewport" content="width=device-width, initial-scale=1.0">
+      <meta name="title" content=" | ACadSharp ">
+      
+      
+      <link rel="icon" href="favicon.ico">
+      <link rel="stylesheet" href="public/docfx.min.css">
+      <link rel="stylesheet" href="public/main.css">
+      <meta name="docfx:navrel" content="toc.html">
+      <meta name="docfx:tocrel" content="toc.html">
+      
+      <meta name="docfx:rel" content="">
+      
+      
+      <meta name="docfx:docurl" content="https://github.com/DomCR/ACadSharp/blob/1065/merge/docs/index.md/#L1">
+      <meta name="loc:inThisArticle" content="In this article">
+      <meta name="loc:searchResultsCount" content="{count} results for &quot;{query}&quot;">
+      <meta name="loc:searchNoResults" content="No results for &quot;{query}&quot;">
+      <meta name="loc:tocFilter" content="Filter by title">
+      <meta name="loc:nextArticle" content="Next">
+      <meta name="loc:prevArticle" content="Previous">
+      <meta name="loc:themeLight" content="Light">
+      <meta name="loc:themeDark" content="Dark">
+      <meta name="loc:themeAuto" content="Auto">
+      <meta name="loc:changeTheme" content="Change theme">
+      <meta name="loc:copy" content="Copy">
+      <meta name="loc:downloadPdf" content="Download PDF">
+
+      <script type="module" src="./public/docfx.min.js"></script>
+
+      <script>
+        const theme = localStorage.getItem('theme') || 'auto'
+        document.documentElement.setAttribute('data-bs-theme', theme === 'auto' ? (window.matchMedia('(prefers-color-scheme: dark)').matches ? 'dark' : 'light') : theme)
+      </script>
+
+  </head>
+
+  <body class="tex2jax_ignore" data-layout="" data-yaml-mime="">
+    <header class="bg-body border-bottom">
+      <nav id="autocollapse" class="navbar navbar-expand-md" role="navigation">
+        <div class="container-xxl flex-nowrap">
+          <a class="navbar-brand" href="index.html">
+            <img id="logo" class="svg" src="logo.svg" alt="ACadSharp">
+            ACadSharp
+          </a>
+          <button class="btn btn-lg d-md-none border-0" type="button" data-bs-toggle="collapse" data-bs-target="#navpanel" aria-controls="navpanel" aria-expanded="false" aria-label="Toggle navigation">
+            <i class="bi bi-three-dots"></i>
+          </button>
+          <div class="collapse navbar-collapse" id="navpanel">
+            <div id="navbar">
+              <form class="search" role="search" id="search">
+                <i class="bi bi-search"></i>
+                <input class="form-control" id="search-query" type="search" disabled placeholder="Search" autocomplete="off" aria-label="Search">
+              </form>
+            </div>
+          </div>
+        </div>
+      </nav>
+    </header>
+
+    <main class="container-xxl">
+
+      <div class="content">
+        <div class="actionbar">
+
+          <nav id="breadcrumb"></nav>
+        </div>
+
+        <article data-uid="">
+
+<h2 id="acadsharp-buildtest-license-nuget-coverage-status">ACadSharp <img src="https://github.com/DomCr/ACadSharp/actions/workflows/csharp.yml/badge.svg" alt="Build&amp;Test"> <img src="https://img.shields.io/github/license/DomCr/ACadSharp" alt="License"> <img src="https://img.shields.io/nuget/v/Acadsharp" alt="nuget"> <a href="https://coveralls.io/github/DomCR/ACadSharp?branch=master"><img src="https://coveralls.io/repos/github/DomCR/ACadSharp/badge.svg?branch=master" alt="Coverage Status"></a></h2>
+<p>C# library to read/write cad files like dxf/dwg.</p>
+<h3 id="features">Features</h3>
+<p>ACadSharp allows to read or create CAD files using .Net and also extract or modify existing content in the files, the main features may be listed as:</p>
+<ul>
+<li>Read/Write Dxf binary files</li>
+<li>Read/Write Dxf ASCII files</li>
+<li>Read Dwg files</li>
+<li>Write Dwg files</li>
+<li>Extract/Modify the geometric information from the different <a href="https://help.autodesk.com/view/OARX/2021/ENU/?guid=GUID-7D07C886-FD1D-4A0C-A7AB-B4D21F18E484">entities</a> in the model</li>
+<li>Control over the table elements like Blocks, Layers and Styles, allows you to read, create or modify the different tables</li>
+</ul>
+<p>For pdf export check 🚧 <a href="https://github.com/DomCR/ACadSharp.Pdf">ACadSharp.Pdf</a> 🚧.</p>
+<h4 id="compatible-dwgdxf-versions">Compatible Dwg/Dxf versions:</h4>
+<table>
+<thead>
+<tr>
+<th></th>
+<th style="text-align: center;">DxfReader</th>
+<th style="text-align: center;">DxfWriter</th>
+<th style="text-align: center;">DwgReader</th>
+<th style="text-align: center;">DwgWriter</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>AC1009</td>
+<td style="text-align: center;">✔️</td>
+<td style="text-align: center;">❌</td>
+<td style="text-align: center;">❌</td>
+<td style="text-align: center;">❌</td>
+</tr>
+<tr>
+<td>AC1012</td>
+<td style="text-align: center;">✔️</td>
+<td style="text-align: center;">✔️</td>
+<td style="text-align: center;">❌</td>
+<td style="text-align: center;">❌</td>
+</tr>
+<tr>
+<td>AC1014</td>
+<td style="text-align: center;">✔️</td>
+<td style="text-align: center;">✔️</td>
+<td style="text-align: center;">✔️</td>
+<td style="text-align: center;">✔️</td>
+</tr>
+<tr>
+<td>AC1015</td>
+<td style="text-align: center;">✔️</td>
+<td style="text-align: center;">✔️</td>
+<td style="text-align: center;">✔️</td>
+<td style="text-align: center;">✔️</td>
+</tr>
+<tr>
+<td>AC1018</td>
+<td style="text-align: center;">✔️</td>
+<td style="text-align: center;">✔️</td>
+<td style="text-align: center;">✔️</td>
+<td style="text-align: center;">✔️</td>
+</tr>
+<tr>
+<td>AC1021</td>
+<td style="text-align: center;">✔️</td>
+<td style="text-align: center;">✔️</td>
+<td style="text-align: center;">✔️</td>
+<td style="text-align: center;">❌</td>
+</tr>
+<tr>
+<td>AC1024</td>
+<td style="text-align: center;">✔️</td>
+<td style="text-align: center;">✔️</td>
+<td style="text-align: center;">✔️</td>
+<td style="text-align: center;">✔️</td>
+</tr>
+<tr>
+<td>AC1027</td>
+<td style="text-align: center;">✔️</td>
+<td style="text-align: center;">✔️</td>
+<td style="text-align: center;">✔️</td>
+<td style="text-align: center;">✔️</td>
+</tr>
+<tr>
+<td>AC1032</td>
+<td style="text-align: center;">✔️</td>
+<td style="text-align: center;">✔️</td>
+<td style="text-align: center;">✔️</td>
+<td style="text-align: center;">✔️</td>
+</tr>
+</tbody>
+</table>
+<h2 id="code-example">Code Example</h2>
+<pre><code class="lang-c#">public static void Main()
+{
+	string path = &quot;sample.dwg&quot;;
+	CadDocument doc = DwgReader.Read(path, onNotification);
+}
+
+// Process a notification from the reader
+private static void onNotification(object sender, NotificationEventArgs e)
+{
+	Console.WriteLine(e.Message);
+}
+</code></pre>
+<p>For more code examples <a href="https://github.com/DomCR/ACadSharp/tree/master/src/ACadSharp.Examples">check</a>.</p>
+<p>Visit the 🚧 <a href="https://github.com/DomCR/ACadSharp/wiki">wiki</a> 🚧 for the API specification of the library.</p>
+<p>Check the <a href="https://github.com/DomCR/ACadSharp/tree/master/docs/">documentation</a> for specific information about some use cases.</p>
+<h2 id="building">Building</h2>
+<p>Before building run:</p>
+<pre><code class="lang-console">git submodule update --init --recursive
+</code></pre>
+<p>This command will clone the submodules necessary to build the project.</p>
+
+</article>
+
+        <div class="contribution d-print-none">
+          <a href="https://github.com/DomCR/ACadSharp/blob/1065/merge/docs/index.md/#L1" class="edit-link">Edit this page</a>
+        </div>
+
+        <div class="next-article d-print-none border-top" id="nextArticle"></div>
+
+      </div>
+
+      <div class="affix">
+        <nav id="affix"></nav>
+      </div>
+    </main>
+
+    <div class="container-xxl search-results" id="search-results"></div>
+
+    <footer class="border-top text-secondary">
+      <div class="container-xxl">
+        <div class="flex-fill">
+          <span>Made with <a href="https://dotnet.github.io/docfx">docfx</a></span>
+        </div>
+      </div>
+    </footer>
+  </body>
+</html>
