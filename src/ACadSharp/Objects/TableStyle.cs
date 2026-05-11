@@ -42,13 +42,13 @@ public partial class TableStyle : NonGraphicalObject
 	/// Meaning unknown.
 	/// </summary>
 	[DxfCodeValue(71)]
-	public short Flags { get; internal set; }
+	public short Flags { get; set; }
 
 	/// <summary>
 	/// Gets or sets the direction in which table rows and columns are arranged.
 	/// </summary>
 	[DxfCodeValue(70)]
-	public TableFlowDirectionType FlowDirection { get; set; }
+	public TableFlowDirectionType FlowDirection { get; set; } = TableFlowDirectionType.Down;
 
 	/// <summary>
 	/// Gets the style settings applied to the header cells of the table.

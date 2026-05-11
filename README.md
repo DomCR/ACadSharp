@@ -1,5 +1,5 @@
 ﻿# ACadSharp
-![Build&Test](https://github.com/DomCr/ACadSharp/actions/workflows/csharp.yml/badge.svg) ![License](https://img.shields.io/github/license/DomCr/ACadSharp) ![nuget](https://img.shields.io/nuget/v/Acadsharp) [![Coverage Status](https://coveralls.io/repos/github/DomCR/ACadSharp/badge.svg?branch=master)](https://coveralls.io/github/DomCR/ACadSharp?branch=master)
+![Build&Test](https://github.com/DomCr/ACadSharp/actions/workflows/csharp.yml/badge.svg) ![License](https://img.shields.io/github/license/DomCr/ACadSharp) ![nuget](https://img.shields.io/nuget/v/Acadsharp) ![downloads](https://img.shields.io/nuget/dt/ACadSharp) [![Coverage Status](https://coveralls.io/repos/github/DomCR/ACadSharp/badge.svg?branch=master)](https://coveralls.io/github/DomCR/ACadSharp?branch=master) 
 ---
 
 C# library to read/write cad files like dxf/dwg.
