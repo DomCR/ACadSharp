@@ -6,7 +6,7 @@
       <meta name="viewport" content="width=device-width, initial-scale=1.0">
       <meta name="title" content="Class TableStyle.CellBorder | ACadSharp ">
       
-      
+      <meta name="description" content="Represents the border settings for a cell, including appearance, visibility, and style options.">
       <link rel="icon" href="../favicon.ico">
       <link rel="stylesheet" href="../public/docfx.min.css">
       <link rel="stylesheet" href="../public/main.css">
@@ -89,7 +89,7 @@
 
 
   <h1 id="ACadSharp_Objects_TableStyle_CellBorder" data-uid="ACadSharp.Objects.TableStyle.CellBorder" class="text-break">
-Class TableStyle.CellBorder  <a class="header-action link-secondary" title="View source" href="https://github.com/DomCR/ACadSharp/blob/master/src/ACadSharp/Objects/TableStyle.CellBorder.cs/#L7"><i class="bi bi-code-slash"></i></a>
+Class TableStyle.CellBorder  <a class="header-action link-secondary" title="View source" href="https://github.com/DomCR/ACadSharp/blob/master/src/ACadSharp/Objects/TableStyle.CellBorder.cs/#L13"><i class="bi bi-code-slash"></i></a>
   </h1>
 
   <div class="facts text-secondary">
@@ -97,7 +97,8 @@ Class TableStyle.CellBorder  <a class="header-action link-secondary" title="View
   <dl><dt>Assembly</dt><dd>ACadSharp.dll</dd></dl>
   </div>
 
-  <div class="markdown summary"></div>
+  <div class="markdown summary"><p>Represents the border settings for a cell, including appearance, visibility, and style options.</p>
+</div>
   <div class="markdown conceptual"></div>
 
   <div class="codewrapper">
@@ -153,6 +154,11 @@ Class TableStyle.CellBorder  <a class="header-action link-secondary" title="View
 
 
 
+  <h2 id="ACadSharp_Objects_TableStyle_CellBorder_remarks">Remarks</h2>
+  <div class="markdown level0 remarks"><p>Use this class to configure the visual and printing characteristics of cell borders in a drawing or
+table. The properties allow customization of color, line weight, border type, and visibility. Changes to these
+settings affect how borders are displayed in the editor and when plotted or printed.</p>
+</div>
 
 
   <h2 class="section" id="constructors">Constructors
@@ -163,10 +169,11 @@ Class TableStyle.CellBorder  <a class="header-action link-secondary" title="View
 
   <h3 id="ACadSharp_Objects_TableStyle_CellBorder__ctor_ACadSharp_Objects_TableStyle_CellEdgeFlags_" data-uid="ACadSharp.Objects.TableStyle.CellBorder.#ctor(ACadSharp.Objects.TableStyle.CellEdgeFlags)">
   CellBorder(CellEdgeFlags)
-  <a class="header-action link-secondary" title="View source" href="https://github.com/DomCR/ACadSharp/blob/master/src/ACadSharp/Objects/TableStyle.CellBorder.cs/#L35"><i class="bi bi-code-slash"></i></a>
+  <a class="header-action link-secondary" title="View source" href="https://github.com/DomCR/ACadSharp/blob/master/src/ACadSharp/Objects/TableStyle.CellBorder.cs/#L71"><i class="bi bi-code-slash"></i></a>
   </h3>
 
-  <div class="markdown level1 summary"></div>
+  <div class="markdown level1 summary"><p>Initializes a new instance of the CellBorder class with the specified edge flags.</p>
+</div>
   <div class="markdown level1 conceptual"></div>
 
   <div class="codewrapper">
@@ -176,7 +183,8 @@ Class TableStyle.CellBorder  <a class="header-action link-secondary" title="View
   <h4 class="section">Parameters</h4>
   <dl class="parameters">
     <dt><code>edgeFlags</code> <a class="xref" href="ACadSharp.Objects.TableStyle.html">TableStyle</a>.<a class="xref" href="ACadSharp.Objects.TableStyle.CellEdgeFlags.html">CellEdgeFlags</a></dt>
-    <dd></dd>
+    <dd><p>The set of edge flags that define which borders are applied to the cell.</p>
+</dd>
   </dl>
 
 
@@ -198,10 +206,11 @@ Class TableStyle.CellBorder  <a class="header-action link-secondary" title="View
 
   <h3 id="ACadSharp_Objects_TableStyle_CellBorder_ApplyBorder" data-uid="ACadSharp.Objects.TableStyle.CellBorder.ApplyBorder">
   ApplyBorder
-  <a class="header-action link-secondary" title="View source" href="https://github.com/DomCR/ACadSharp/blob/master/src/ACadSharp/Objects/TableStyle.CellBorder.cs/#L9"><i class="bi bi-code-slash"></i></a>
+  <a class="header-action link-secondary" title="View source" href="https://github.com/DomCR/ACadSharp/blob/master/src/ACadSharp/Objects/TableStyle.CellBorder.cs/#L18"><i class="bi bi-code-slash"></i></a>
   </h3>
 
-  <div class="markdown level1 summary"></div>
+  <div class="markdown level1 summary"><p>Gets or sets a value indicating whether a border is applied.</p>
+</div>
   <div class="markdown level1 conceptual"></div>
 
   <div class="codewrapper">
@@ -229,14 +238,16 @@ Class TableStyle.CellBorder  <a class="header-action link-secondary" title="View
 
   <h3 id="ACadSharp_Objects_TableStyle_CellBorder_Color" data-uid="ACadSharp.Objects.TableStyle.CellBorder.Color">
   Color
-  <a class="header-action link-secondary" title="View source" href="https://github.com/DomCR/ACadSharp/blob/master/src/ACadSharp/Objects/TableStyle.CellBorder.cs/#L13"><i class="bi bi-code-slash"></i></a>
+  <a class="header-action link-secondary" title="View source" href="https://github.com/DomCR/ACadSharp/blob/master/src/ACadSharp/Objects/TableStyle.CellBorder.cs/#L23"><i class="bi bi-code-slash"></i></a>
   </h3>
 
-  <div class="markdown level1 summary"></div>
+  <div class="markdown level1 summary"><p>Gets or sets the color associated with the entity.</p>
+</div>
   <div class="markdown level1 conceptual"></div>
 
   <div class="codewrapper">
-    <pre><code class="lang-csharp hljs">public Color Color { get; set; }</code></pre>
+    <pre><code class="lang-csharp hljs">[DxfCodeValue(new int[] { 64 })]
+public Color Color { get; set; }</code></pre>
   </div>
 
 
@@ -260,10 +271,11 @@ Class TableStyle.CellBorder  <a class="header-action link-secondary" title="View
 
   <h3 id="ACadSharp_Objects_TableStyle_CellBorder_DoubleLineSpacing" data-uid="ACadSharp.Objects.TableStyle.CellBorder.DoubleLineSpacing">
   DoubleLineSpacing
-  <a class="header-action link-secondary" title="View source" href="https://github.com/DomCR/ACadSharp/blob/master/src/ACadSharp/Objects/TableStyle.CellBorder.cs/#L15"><i class="bi bi-code-slash"></i></a>
+  <a class="header-action link-secondary" title="View source" href="https://github.com/DomCR/ACadSharp/blob/master/src/ACadSharp/Objects/TableStyle.CellBorder.cs/#L32"><i class="bi bi-code-slash"></i></a>
   </h3>
 
-  <div class="markdown level1 summary"></div>
+  <div class="markdown level1 summary"><p>Gets or sets the spacing distance between parallel lines in a double-line entity.</p>
+</div>
   <div class="markdown level1 conceptual"></div>
 
   <div class="codewrapper">
@@ -284,6 +296,11 @@ public double DoubleLineSpacing { get; set; }</code></pre>
 
 
 
+  <h4 class="section" id="ACadSharp_Objects_TableStyle_CellBorder_DoubleLineSpacing_remarks">Remarks</h4>
+  <div class="markdown level1 remarks"><p>The value determines the distance between the two lines when rendering double-line geometry.
+Adjust this property to control the visual separation of the lines. The unit of measurement is typically
+consistent with the drawing's coordinate system.</p>
+</div>
 
 
 
@@ -292,10 +309,11 @@ public double DoubleLineSpacing { get; set; }</code></pre>
 
   <h3 id="ACadSharp_Objects_TableStyle_CellBorder_EdgeFlags" data-uid="ACadSharp.Objects.TableStyle.CellBorder.EdgeFlags">
   EdgeFlags
-  <a class="header-action link-secondary" title="View source" href="https://github.com/DomCR/ACadSharp/blob/master/src/ACadSharp/Objects/TableStyle.CellBorder.cs/#L18"><i class="bi bi-code-slash"></i></a>
+  <a class="header-action link-secondary" title="View source" href="https://github.com/DomCR/ACadSharp/blob/master/src/ACadSharp/Objects/TableStyle.CellBorder.cs/#L40"><i class="bi bi-code-slash"></i></a>
   </h3>
 
-  <div class="markdown level1 summary"></div>
+  <div class="markdown level1 summary"><p>Gets the set of flags that describe the characteristics of the cell's edges.</p>
+</div>
   <div class="markdown level1 conceptual"></div>
 
   <div class="codewrapper">
@@ -316,6 +334,10 @@ public TableStyle.CellEdgeFlags EdgeFlags { get; }</code></pre>
 
 
 
+  <h4 class="section" id="ACadSharp_Objects_TableStyle_CellBorder_EdgeFlags_remarks">Remarks</h4>
+  <div class="markdown level1 remarks"><p>Use these flags to determine which edges of the cell have specific properties, such as visibility
+or formatting. The meaning of each flag is defined by the CellEdgeFlags enumeration.</p>
+</div>
 
 
 
@@ -324,10 +346,11 @@ public TableStyle.CellEdgeFlags EdgeFlags { get; }</code></pre>
 
   <h3 id="ACadSharp_Objects_TableStyle_CellBorder_IsInvisible" data-uid="ACadSharp.Objects.TableStyle.CellBorder.IsInvisible">
   IsInvisible
-  <a class="header-action link-secondary" title="View source" href="https://github.com/DomCR/ACadSharp/blob/master/src/ACadSharp/Objects/TableStyle.CellBorder.cs/#L22"><i class="bi bi-code-slash"></i></a>
+  <a class="header-action link-secondary" title="View source" href="https://github.com/DomCR/ACadSharp/blob/master/src/ACadSharp/Objects/TableStyle.CellBorder.cs/#L46"><i class="bi bi-code-slash"></i></a>
   </h3>
 
-  <div class="markdown level1 summary"></div>
+  <div class="markdown level1 summary"><p>Gets or sets a value indicating whether the border is invisible. Invisible borders are not plotted and do not print, but they are still visible in the drawing editor.</p>
+</div>
   <div class="markdown level1 conceptual"></div>
 
   <div class="codewrapper">
@@ -356,10 +379,11 @@ public bool IsInvisible { get; set; }</code></pre>
 
   <h3 id="ACadSharp_Objects_TableStyle_CellBorder_LineWeight" data-uid="ACadSharp.Objects.TableStyle.CellBorder.LineWeight">
   LineWeight
-  <a class="header-action link-secondary" title="View source" href="https://github.com/DomCR/ACadSharp/blob/master/src/ACadSharp/Objects/TableStyle.CellBorder.cs/#L26"><i class="bi bi-code-slash"></i></a>
+  <a class="header-action link-secondary" title="View source" href="https://github.com/DomCR/ACadSharp/blob/master/src/ACadSharp/Objects/TableStyle.CellBorder.cs/#L52"><i class="bi bi-code-slash"></i></a>
   </h3>
 
-  <div class="markdown level1 summary"></div>
+  <div class="markdown level1 summary"><p>Gets or sets the line weight to use when rendering the entity.</p>
+</div>
   <div class="markdown level1 conceptual"></div>
 
   <div class="codewrapper">
@@ -388,10 +412,11 @@ public LineWeightType LineWeight { get; set; }</code></pre>
 
   <h3 id="ACadSharp_Objects_TableStyle_CellBorder_PropertyOverrideFlags" data-uid="ACadSharp.Objects.TableStyle.CellBorder.PropertyOverrideFlags">
   PropertyOverrideFlags
-  <a class="header-action link-secondary" title="View source" href="https://github.com/DomCR/ACadSharp/blob/master/src/ACadSharp/Objects/TableStyle.CellBorder.cs/#L29"><i class="bi bi-code-slash"></i></a>
+  <a class="header-action link-secondary" title="View source" href="https://github.com/DomCR/ACadSharp/blob/master/src/ACadSharp/Objects/TableStyle.CellBorder.cs/#L58"><i class="bi bi-code-slash"></i></a>
   </h3>
 
-  <div class="markdown level1 summary"></div>
+  <div class="markdown level1 summary"><p>Gets or sets the set of flags that specify which border properties are overridden.</p>
+</div>
   <div class="markdown level1 conceptual"></div>
 
   <div class="codewrapper">
@@ -420,10 +445,11 @@ public TableStyle.BorderPropertyFlags PropertyOverrideFlags { get; set; }</code>
 
   <h3 id="ACadSharp_Objects_TableStyle_CellBorder_Type" data-uid="ACadSharp.Objects.TableStyle.CellBorder.Type">
   Type
-  <a class="header-action link-secondary" title="View source" href="https://github.com/DomCR/ACadSharp/blob/master/src/ACadSharp/Objects/TableStyle.CellBorder.cs/#L32"><i class="bi bi-code-slash"></i></a>
+  <a class="header-action link-secondary" title="View source" href="https://github.com/DomCR/ACadSharp/blob/master/src/ACadSharp/Objects/TableStyle.CellBorder.cs/#L64"><i class="bi bi-code-slash"></i></a>
   </h3>
 
-  <div class="markdown level1 summary"></div>
+  <div class="markdown level1 summary"><p>Gets or sets the border style type to be applied.</p>
+</div>
   <div class="markdown level1 conceptual"></div>
 
   <div class="codewrapper">
@@ -452,7 +478,7 @@ public TableStyle.BorderType Type { get; set; }</code></pre>
 </article>
 
         <div class="contribution d-print-none">
-          <a href="https://github.com/DomCR/ACadSharp/blob/master/src/ACadSharp/Objects/TableStyle.CellBorder.cs/#L7" class="edit-link">Edit this page</a>
+          <a href="https://github.com/DomCR/ACadSharp/blob/master/src/ACadSharp/Objects/TableStyle.CellBorder.cs/#L13" class="edit-link">Edit this page</a>
         </div>
 
 

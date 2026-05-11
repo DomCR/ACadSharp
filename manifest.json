@@ -5202,7 +5202,7 @@
       "Uid": null,
       "IsMRef": true,
       "Title": "ACadSharp.Objects.TableStyle.CellBorder",
-      "Summary": null
+      "Summary": "<p sourcefile=\"api/ACadSharp.Objects.TableStyle.CellBorder.yml\" sourcestartlinenumber=\"1\">Represents the border settings for a cell, including appearance, visibility, and style options.</p>\n"
     },
     {
       "type": "ManagedReference",
