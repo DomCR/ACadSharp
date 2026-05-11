@@ -41,8 +41,7 @@ internal class DxfObjectsSectionWriter : DxfSectionWriterBase
 			}
 
 			//Not compatible dictionaries
-			if (item.Name == CadDictionary.AcadTableStyle
-					|| item.Name == CadDictionary.AcadMaterial)
+			if (item.Name == CadDictionary.AcadMaterial)
 			{
 				return;
 			}
@@ -443,6 +442,9 @@ internal class DxfObjectsSectionWriter : DxfSectionWriterBase
 			case SortEntitiesTable sortensTable:
 				this.writeSortentsTable(sortensTable);
 				break;
+			case TableStyle tableStyle:
+				this.writeTableStyle(tableStyle);
+				break;
 			case XRecord record:
 				this.writeXRecord(record);
 				break;
@@ -590,7 +592,6 @@ internal class DxfObjectsSectionWriter : DxfSectionWriterBase
 			case Material:
 			case MultiLeaderObjectContextData:
 			case VisualStyle:
-			case TableStyle:
 			case ProxyObject:
 			case BlockRepresentationData:
 			case MTextAttributeObjectContextData:
@@ -604,6 +605,35 @@ internal class DxfObjectsSectionWriter : DxfSectionWriterBase
 
 	private void writeAcdbPlaceHolder(AcdbPlaceHolder acdbPlaceHolder)
 	{
+	}
+
+	private void writeCellStyle(TableStyle.CellStyle cellStyle)
+	{
+		this._writer.WriteName(7, cellStyle.TextStyle);
+
+		this._writer.Write(140, cellStyle.TextHeight);
+		this._writer.Write(170, cellStyle.CellAlignment);
+
+		this._writer.Write(62, cellStyle.ContentColor.GetApproxIndex());
+		this._writer.Write(63, cellStyle.BackgroundColor.GetApproxIndex());
+		this._writer.Write(283, cellStyle.IsFillColorOn ? 1 : 0);
+
+		this._writer.Write(90, (int)cellStyle.Type);
+		this._writer.Write(91, (int)cellStyle.ValueDataType);
+
+		this.writeCellStyleBorder(cellStyle.TopBorder, 0);
+		this.writeCellStyleBorder(cellStyle.HorizontalInsideBorder, 1);
+		this.writeCellStyleBorder(cellStyle.BottomBorder, 2);
+		this.writeCellStyleBorder(cellStyle.LeftBorder, 3);
+		this.writeCellStyleBorder(cellStyle.VerticalInsideBorder, 4);
+		this.writeCellStyleBorder(cellStyle.RightBorder, 5);
+	}
+
+	private void writeCellStyleBorder(TableStyle.CellBorder border, int i)
+	{
+		this._writer.Write(274 + i, (short)border.LineWeight);
+		this._writer.Write(284 + i, border.IsInvisible ? 0 : 1);
+		this._writer.Write(64 + i, border.Color.GetApproxIndex());
 	}
 
 	private void writeDimensionAssociation(DimensionAssociation dimAssociation)
@@ -777,5 +807,27 @@ internal class DxfObjectsSectionWriter : DxfSectionWriterBase
 		{
 			this._writer.Write(40, array[i]);
 		}
+	}
+
+	private void writeTableStyle(TableStyle style)
+	{
+		DxfClassMap map = DxfClassMap.Create<TableStyle>();
+
+		this._writer.Write(100, DxfSubclassMarker.TableStyle);
+
+		this._writer.Write(3, style.Description, map);
+
+		this._writer.Write(70, style.FlowDirection, map);
+		this._writer.Write(71, style.Flags, map);
+
+		this._writer.Write(40, style.HorizontalCellMargin, map);
+		this._writer.Write(41, style.VerticalCellMargin, map);
+
+		this._writer.Write(280, style.SuppressTitle ? 1 : 0, map);
+		this._writer.Write(281, style.SuppressHeaderRow ? 1 : 0, map);
+
+		this.writeCellStyle(style.DataCellStyle);
+		this.writeCellStyle(style.TitleCellStyle);
+		this.writeCellStyle(style.HeaderCellStyle);
 	}
 }
