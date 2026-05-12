@@ -10,6 +10,8 @@ using System.IO;
 using System.Linq;
 using Xunit;
 using Xunit.Abstractions;
+using static ACadSharp.Objects.XRecord;
+using static System.Net.WebRequestMethods;
 
 namespace ACadSharp.Tests.IO;
 
@@ -115,7 +117,7 @@ public abstract class WriterSingleObjectTests : IOTestsBase
 
 		public SingleCaseGenerator()
 		{
-			this.Document.Header.ShowModelSpace = true;
+			this.Document.Header.ShowModelSpace = false;
 		}
 
 		public SingleCaseGenerator(string name) : this()
@@ -213,75 +215,23 @@ public abstract class WriterSingleObjectTests : IOTestsBase
 				Center = new XYZ(148.5, 105, 0),
 				Width = 50,
 				Height = 50,
-
-				//ViewCenter = new XY(50, 50),
-				//ViewHeight = 120,
-				//ViewTarget = new XYZ(50, 50, 0),
-				//ViewDirection = new XYZ(0, 0, 1),
-
+				Scale = new Scale("scale") { DrawingUnits = 0.5, PaperUnits = 1 },
 				Status = ViewportStatusFlags.UcsIconVisibility | ViewportStatusFlags.FastZoom | ViewportStatusFlags.CurrentlyAlwaysEnabled,
-				Color = Color.Yellow,
+				Color = Color.Blue,
 			};
 
-			this.Document.Layouts["Layout1"].AddViewport(vp1);
-			var vp2 = vp1.CloneTyped();
-			vp2.Color = Color.Red;
-			vp2.Width = 100;
-			vp2.Height = 100;
+			Viewport vp2 = new Viewport
+			{
+				Center = new XYZ(148.5, 105, 0),
+				Width = 100,
+				Height = 100,
+				Scale = new Scale("scale") { DrawingUnits = 0.5, PaperUnits = 1 },
+				Status = ViewportStatusFlags.UcsIconVisibility | ViewportStatusFlags.FastZoom | ViewportStatusFlags.CurrentlyAlwaysEnabled,
+				Color = Color.Red,
+			};
 
-			this.Document.PaperSpace.Entities.Add(vp2);
-
-			//CadDocument doc = this.Document;
-			//Line line1 = new Line
-			//{
-			//	StartPoint = new XYZ(0, 0, 0),
-			//	EndPoint = new XYZ(100, 100, 0),
-			//	Color = Color.Red
-			//};
-
-			//Line line2 = new Line
-			//{
-			//	StartPoint = new XYZ(100, 0, 0),
-			//	EndPoint = new XYZ(0, 100, 0),
-			//	Color = Color.Green
-			//};
-
-			//doc.Entities.Add(line1);
-			//doc.Entities.Add(line2);
-
-			//if (doc.Layouts.TryGet("Layout1", out Layout layout))
-			//{
-			//	layout.PaperSize = "ISO_A4_(210.00_x_297.00_MM)";
-			//	layout.PaperHeight = 210.0;
-			//	layout.PaperWidth = 297.0;
-			//	layout.PaperUnits = PlotPaperUnits.Millimeters;
-
-			//	Viewport vp = new Viewport
-			//	{
-			//		Center = new XYZ(148.5, 105, 0),
-			//		Width = 200,
-			//		Height = 150,
-			//		ViewCenter = new XY(50, 50),
-			//		ViewHeight = 120,
-
-			//		ViewTarget = new XYZ(50, 50, 0),
-			//		ViewDirection = new XYZ(0, 0, 1),
-
-			//		Status = ViewportStatusFlags.UcsIconVisibility | ViewportStatusFlags.FastZoom | ViewportStatusFlags.CurrentlyAlwaysEnabled
-			//	};
-
-			//	//layout.AssociatedBlock.Entities.Add(vp);
-			//	doc.PaperSpace.Entities.Add(vp);
-
-			//	LwPolyline border = new LwPolyline();
-			//	border.Vertices.Add(new LwPolyline.Vertex(new XY(5, 5)));
-			//	border.Vertices.Add(new LwPolyline.Vertex(new XY(292, 5)));
-			//	border.Vertices.Add(new LwPolyline.Vertex(new XY(292, 205)));
-			//	border.Vertices.Add(new LwPolyline.Vertex(new XY(5, 205)));
-			//	border.IsClosed = true;
-			//	border.Color = Color.Blue;
-			//	layout.AssociatedBlock.Entities.Add(border);
-			//}
+			this.Document.PaperSpace.Layout.AddViewport(vp1);
+			this.Document.PaperSpace.Layout.AddViewport(vp2);
 		}
 
 		public void ArcSegments()

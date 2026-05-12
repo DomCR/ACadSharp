@@ -1360,6 +1360,7 @@ namespace ACadSharp.IO.DXF
 			this._writer.Write(40, vp.Width, map);
 			this._writer.Write(41, vp.Height, map);
 
+			this._writer.Write(68, vp.ActiveStatus, map);
 			this._writer.Write(69, vp.Id, map);
 
 			this._writer.Write(12, vp.ViewCenter, map);

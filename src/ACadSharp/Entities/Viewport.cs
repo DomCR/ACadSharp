@@ -21,6 +21,17 @@ namespace ACadSharp.Entities;
 public class Viewport : Entity
 {
 	/// <summary>
+	/// Gets or sets the active status code.
+	/// </summary>
+	/// <remarks>
+	/// -1 = On, but is fully off screen, or is one of the viewports that is not active because the $MAXACTVP count is currently being exceeded.<br/>
+	/// 0 = Off<br/>
+	/// 'positive value' = On and active.The value indicates the order of stacking for the viewports, where 1 is the active viewport, 2 is the next, and so forth
+	/// </remarks>
+	[DxfCodeValue(68)]
+	public short ActiveStatus { get; set; } = 1;
+
+	/// <summary>
 	/// Ambient light color.Write only if not black color.
 	/// </summary>
 	[DxfCodeValue(63, 421, 431)]
@@ -456,6 +467,11 @@ public class Viewport : Entity
 
 		this._scale = updateCollection(this._scale, doc.Scales);
 
+		if (this._scale != null)
+		{
+			this.updateScaleXRecord();
+		}
+
 		this.Document.Scales.OnRemove += this.scalesOnRemove;
 	}
 
@@ -481,6 +497,11 @@ public class Viewport : Entity
 		if (this.Document == null)
 		{
 			return;
+		}
+
+		if (this.XDictionary == null)
+		{
+			this.CreateExtendedDictionary();
 		}
 
 		if (this.XDictionary.TryGetEntry(ASDK_XREC_ANNOTATION_SCALE_INFO, out XRecord record))
