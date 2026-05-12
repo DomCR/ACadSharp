@@ -54,7 +54,7 @@ public partial class Mesh : Entity
 	/// Version number
 	/// </summary>
 	[DxfCodeValue(71)]
-	public short Version { get; internal set; }
+	public short Version { get; set; } = 2;
 
 	/// <summary>
 	/// Vertex count of level 0

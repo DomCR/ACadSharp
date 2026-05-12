@@ -765,7 +765,7 @@ namespace ACadSharp.IO.DXF
 			this._writer.Write(95, mesh.Edges.Count, map);
 			foreach (Mesh.Edge edge in mesh.Edges)
 			{
-				this._writer.Write(140, edge.Crease);
+				this._writer.Write(140, edge.Crease.HasValue ? edge.Crease.Value : 0.0d);
 			}
 
 			this._writer.Write(90, 0);
