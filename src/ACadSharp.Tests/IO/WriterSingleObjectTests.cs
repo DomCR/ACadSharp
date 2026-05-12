@@ -10,8 +10,6 @@ using System.IO;
 using System.Linq;
 using Xunit;
 using Xunit.Abstractions;
-using static ACadSharp.Objects.XRecord;
-using static System.Net.WebRequestMethods;
 
 namespace ACadSharp.Tests.IO;
 
