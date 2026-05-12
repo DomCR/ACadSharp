@@ -1405,6 +1405,11 @@ public abstract class WriterSingleObjectTests : IOTestsBase
 
 			mesh.Faces.Add([0, 1, 2, 3]);
 
+			//mesh.Edges.Add(new Mesh.Edge { Start = 0, End = 1 });
+			//mesh.Edges.Add(new Mesh.Edge { Start = 1, End = 2 });
+			//mesh.Edges.Add(new Mesh.Edge { Start = 2, End = 3 });
+			//mesh.Edges.Add(new Mesh.Edge { Start = 0, End = 3 });
+
 			this.Document.Entities.Add(mesh);
 		}
 
