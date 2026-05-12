@@ -1258,8 +1258,6 @@ namespace ACadSharp.IO.DXF
 						tmp.CadObject.Faces.Add(face);
 					}
 
-					Debug.Assert(this._reader.Code == 90);
-
 					return true;
 				case 94:
 					int numEdges = this._reader.ValueAsInt;
@@ -1280,8 +1278,6 @@ namespace ACadSharp.IO.DXF
 						tmp.CadObject.Edges.Add(edge);
 					}
 
-					Debug.Assert(this._reader.Code == 90);
-
 					return true;
 				case 95:
 					this._reader.ReadNext();
@@ -1297,8 +1293,6 @@ namespace ACadSharp.IO.DXF
 							this._reader.ReadNext();
 						}
 					}
-
-					Debug.Assert(this._reader.Code == 140);
 
 					return true;
 				default:
