@@ -144,6 +144,17 @@ public class Layout : PlotSettings
 	[DxfCodeValue(13, 23, 33)]
 	public XYZ Origin { get; set; } = XYZ.Zero;
 
+	/// <summary>
+	/// Gets the paper viewport associated with this layout. If there are multiple viewports, this property returns the first one found. If no viewports are associated with the layout, this property returns null.
+	/// </summary>
+	public Viewport PaperViewport
+	{
+		get
+		{
+			return this.Viewports.FirstOrDefault();
+		}
+	}
+
 	/// <inheritdoc/>
 	public override string SubclassMarker => DxfSubclassMarker.Layout;
 
@@ -200,17 +211,6 @@ public class Layout : PlotSettings
 	/// Specifies the default name for the paper layout used in document generation.
 	/// </summary>
 	public const string PaperLayoutName = "Layout1";
-
-	/// <summary>
-	/// Gets the paper viewport associated with this layout. If there are multiple viewports, this property returns the first one found. If no viewports are associated with the layout, this property returns null.
-	/// </summary>
-	public Viewport PaperViewport
-	{
-		get
-		{
-			return this.Viewports.FirstOrDefault();
-		}
-	}
 
 	private BlockRecord _blockRecord;
 
