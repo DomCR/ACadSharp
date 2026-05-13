@@ -38,7 +38,10 @@ public class LayoutTests : NonGraphicalObjectTests<Layout>
 		Layout layout = new Layout(layoutName);
 
 		Assert.NotEmpty(layout.Viewports);
+		Assert.NotNull(layout.AssociatedBlock);
+		Assert.NotNull(layout.AssociatedBlock.Layout);
 		Assert.True(layout.Viewports.First().RepresentsPaper);
+		Assert.False(layout.AssociatedBlock.Entities.Remove(layout.Viewports.First()));
 	}
 
 	[Fact]

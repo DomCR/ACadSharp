@@ -223,7 +223,7 @@ public class Layout : PlotSettings
 	public Layout(string name, string blockName) : base()
 	{
 		this.Name = name;
-		this._blockRecord = new BlockRecord(blockName);
+		this.AssociatedBlock = new BlockRecord(blockName);
 
 		if (this.IsPaperSpace)
 		{

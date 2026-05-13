@@ -184,7 +184,12 @@ public class Viewport : Entity
 	{
 		get
 		{
-			return this.Id == PaperViewId;
+			if(this.Owner is BlockRecord record && record.Layout != null)
+			{
+				return record.Layout.IsPaperSpace && this.Id == PaperViewId;
+			}
+
+			return false;
 		}
 	}
 

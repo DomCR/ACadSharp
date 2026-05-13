@@ -294,18 +294,18 @@ namespace ACadSharp.Tests
 
 			doc.Entities.Add(line);
 
-			Entity l = doc.Entities.Remove(line);
+			doc.Entities.Remove(line);
 
 			//Assert removed element
-			Assert.NotNull(l);
-			Assert.Equal(line, l);
-			Assert.True(0 == l.Handle);
-			Assert.Equal(line.Handle, l.Handle);
+			Assert.NotNull(line);
+			Assert.Equal(line, (Entity)line);
+			Assert.True(0 == line.Handle);
+			Assert.Equal(line.Handle, line.Handle);
 
-			Assert.True(0 == l.Layer.Handle);
-			Assert.Null(l.Layer.Document);
-			Assert.True(0 == l.LineType.Handle);
-			Assert.Null(l.LineType.Document);
+			Assert.True(0 == line.Layer.Handle);
+			Assert.Null(line.Layer.Document);
+			Assert.True(0 == line.LineType.Handle);
+			Assert.Null(line.LineType.Document);
 		}
 
 		[Fact]
