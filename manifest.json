@@ -3690,7 +3690,7 @@
       "Uid": null,
       "IsMRef": true,
       "Title": "ACadSharp.Objects.Collections.LayoutCollection",
-      "Summary": null
+      "Summary": "<p sourcefile=\"api/ACadSharp.Objects.Collections.LayoutCollection.yml\" sourcestartlinenumber=\"1\">Represents a collection of named <xref href=\"ACadSharp.Objects.Layout\" data-throw-if-not-resolved=\"false\"></xref> definitions stored in a CAD dictionary.</p>\n"
     },
     {
       "type": "ManagedReference",

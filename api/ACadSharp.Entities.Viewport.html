@@ -284,7 +284,7 @@ Dxf class name <a class="xref" href="ACadSharp.DxfSubclassMarker.html#ACadSharp_
 
   <h3 id="ACadSharp_Entities_Viewport_ASDK_XREC_ANNOTATION_SCALE_INFO" data-uid="ACadSharp.Entities.Viewport.ASDK_XREC_ANNOTATION_SCALE_INFO">
   ASDK_XREC_ANNOTATION_SCALE_INFO
-  <a class="header-action link-secondary" title="View source" href="https://github.com/DomCR/ACadSharp/blob/master/src/ACadSharp/Entities/Viewport.cs/#L363"><i class="bi bi-code-slash"></i></a>
+  <a class="header-action link-secondary" title="View source" href="https://github.com/DomCR/ACadSharp/blob/master/src/ACadSharp/Entities/Viewport.cs/#L379"><i class="bi bi-code-slash"></i></a>
   </h3>
 
   <div class="markdown level1 summary"></div>
@@ -314,7 +314,7 @@ Dxf class name <a class="xref" href="ACadSharp.DxfSubclassMarker.html#ACadSharp_
 
   <h3 id="ACadSharp_Entities_Viewport_PaperViewId" data-uid="ACadSharp.Entities.Viewport.PaperViewId">
   PaperViewId
-  <a class="header-action link-secondary" title="View source" href="https://github.com/DomCR/ACadSharp/blob/master/src/ACadSharp/Entities/Viewport.cs/#L368"><i class="bi bi-code-slash"></i></a>
+  <a class="header-action link-secondary" title="View source" href="https://github.com/DomCR/ACadSharp/blob/master/src/ACadSharp/Entities/Viewport.cs/#L384"><i class="bi bi-code-slash"></i></a>
   </h3>
 
   <div class="markdown level1 summary"><p>Paper view Id, it indicates that the viewport acts as a paper size.</p>
@@ -346,11 +346,49 @@ Dxf class name <a class="xref" href="ACadSharp.DxfSubclassMarker.html#ACadSharp_
 </h2>
 
 
+  <a id="ACadSharp_Entities_Viewport_ActiveStatus_" data-uid="ACadSharp.Entities.Viewport.ActiveStatus*"></a>
+
+  <h3 id="ACadSharp_Entities_Viewport_ActiveStatus" data-uid="ACadSharp.Entities.Viewport.ActiveStatus">
+  ActiveStatus
+  <a class="header-action link-secondary" title="View source" href="https://github.com/DomCR/ACadSharp/blob/master/src/ACadSharp/Entities/Viewport.cs/#L31"><i class="bi bi-code-slash"></i></a>
+  </h3>
+
+  <div class="markdown level1 summary"><p>Gets or sets the active status code.</p>
+</div>
+  <div class="markdown level1 conceptual"></div>
+
+  <div class="codewrapper">
+    <pre><code class="lang-csharp hljs">[DxfCodeValue(new int[] { 68 })]
+public short ActiveStatus { get; set; }</code></pre>
+  </div>
+
+
+
+
+
+  <h4 class="section">Property Value</h4>
+  <dl class="parameters">
+    <dt><a class="xref" href="https://learn.microsoft.com/dotnet/api/system.int16">short</a></dt>
+    <dd></dd>
+  </dl>
+
+
+
+
+  <h4 class="section" id="ACadSharp_Entities_Viewport_ActiveStatus_remarks">Remarks</h4>
+  <div class="markdown level1 remarks"><p>-1 = On, but is fully off screen, or is one of the viewports that is not active because the $MAXACTVP count is currently being exceeded.<br>
+0 = Off<br>
+'positive value' = On and active.The value indicates the order of stacking for the viewports, where 1 is the active viewport, 2 is the next, and so forth</p>
+</div>
+
+
+
+
   <a id="ACadSharp_Entities_Viewport_AmbientLightColor_" data-uid="ACadSharp.Entities.Viewport.AmbientLightColor*"></a>
 
   <h3 id="ACadSharp_Entities_Viewport_AmbientLightColor" data-uid="ACadSharp.Entities.Viewport.AmbientLightColor">
   AmbientLightColor
-  <a class="header-action link-secondary" title="View source" href="https://github.com/DomCR/ACadSharp/blob/master/src/ACadSharp/Entities/Viewport.cs/#L26"><i class="bi bi-code-slash"></i></a>
+  <a class="header-action link-secondary" title="View source" href="https://github.com/DomCR/ACadSharp/blob/master/src/ACadSharp/Entities/Viewport.cs/#L37"><i class="bi bi-code-slash"></i></a>
   </h3>
 
   <div class="markdown level1 summary"><p>Ambient light color.Write only if not black color.</p>
@@ -383,7 +421,7 @@ public Color AmbientLightColor { get; set; }</code></pre>
 
   <h3 id="ACadSharp_Entities_Viewport_BackClipPlane" data-uid="ACadSharp.Entities.Viewport.BackClipPlane">
   BackClipPlane
-  <a class="header-action link-secondary" title="View source" href="https://github.com/DomCR/ACadSharp/blob/master/src/ACadSharp/Entities/Viewport.cs/#L32"><i class="bi bi-code-slash"></i></a>
+  <a class="header-action link-secondary" title="View source" href="https://github.com/DomCR/ACadSharp/blob/master/src/ACadSharp/Entities/Viewport.cs/#L43"><i class="bi bi-code-slash"></i></a>
   </h3>
 
   <div class="markdown level1 summary"><p>Back clip plane Z value.</p>
@@ -416,7 +454,7 @@ public double BackClipPlane { get; set; }</code></pre>
 
   <h3 id="ACadSharp_Entities_Viewport_Boundary" data-uid="ACadSharp.Entities.Viewport.Boundary">
   Boundary
-  <a class="header-action link-secondary" title="View source" href="https://github.com/DomCR/ACadSharp/blob/master/src/ACadSharp/Entities/Viewport.cs/#L38"><i class="bi bi-code-slash"></i></a>
+  <a class="header-action link-secondary" title="View source" href="https://github.com/DomCR/ACadSharp/blob/master/src/ACadSharp/Entities/Viewport.cs/#L49"><i class="bi bi-code-slash"></i></a>
   </h3>
 
   <div class="markdown level1 summary"><p>Hard-pointer ID/handle to entity that serves as the viewport's clipping boundary (only present if viewport is non-rectangular)</p>
@@ -449,7 +487,7 @@ public Entity Boundary { get; set; }</code></pre>
 
   <h3 id="ACadSharp_Entities_Viewport_Brightness" data-uid="ACadSharp.Entities.Viewport.Brightness">
   Brightness
-  <a class="header-action link-secondary" title="View source" href="https://github.com/DomCR/ACadSharp/blob/master/src/ACadSharp/Entities/Viewport.cs/#L44"><i class="bi bi-code-slash"></i></a>
+  <a class="header-action link-secondary" title="View source" href="https://github.com/DomCR/ACadSharp/blob/master/src/ACadSharp/Entities/Viewport.cs/#L55"><i class="bi bi-code-slash"></i></a>
   </h3>
 
   <div class="markdown level1 summary"><p>View brightness</p>
@@ -482,7 +520,7 @@ public double Brightness { get; set; }</code></pre>
 
   <h3 id="ACadSharp_Entities_Viewport_Center" data-uid="ACadSharp.Entities.Viewport.Center">
   Center
-  <a class="header-action link-secondary" title="View source" href="https://github.com/DomCR/ACadSharp/blob/master/src/ACadSharp/Entities/Viewport.cs/#L50"><i class="bi bi-code-slash"></i></a>
+  <a class="header-action link-secondary" title="View source" href="https://github.com/DomCR/ACadSharp/blob/master/src/ACadSharp/Entities/Viewport.cs/#L61"><i class="bi bi-code-slash"></i></a>
   </h3>
 
   <div class="markdown level1 summary"><p>Center point(in WCS).</p>
@@ -515,7 +553,7 @@ public XYZ Center { get; set; }</code></pre>
 
   <h3 id="ACadSharp_Entities_Viewport_CircleZoomPercent" data-uid="ACadSharp.Entities.Viewport.CircleZoomPercent">
   CircleZoomPercent
-  <a class="header-action link-secondary" title="View source" href="https://github.com/DomCR/ACadSharp/blob/master/src/ACadSharp/Entities/Viewport.cs/#L56"><i class="bi bi-code-slash"></i></a>
+  <a class="header-action link-secondary" title="View source" href="https://github.com/DomCR/ACadSharp/blob/master/src/ACadSharp/Entities/Viewport.cs/#L67"><i class="bi bi-code-slash"></i></a>
   </h3>
 
   <div class="markdown level1 summary"><p>Circle zoom percent</p>
@@ -548,7 +586,7 @@ public short CircleZoomPercent { get; set; }</code></pre>
 
   <h3 id="ACadSharp_Entities_Viewport_Contrast" data-uid="ACadSharp.Entities.Viewport.Contrast">
   Contrast
-  <a class="header-action link-secondary" title="View source" href="https://github.com/DomCR/ACadSharp/blob/master/src/ACadSharp/Entities/Viewport.cs/#L62"><i class="bi bi-code-slash"></i></a>
+  <a class="header-action link-secondary" title="View source" href="https://github.com/DomCR/ACadSharp/blob/master/src/ACadSharp/Entities/Viewport.cs/#L73"><i class="bi bi-code-slash"></i></a>
   </h3>
 
   <div class="markdown level1 summary"><p>View contrast</p>
@@ -581,7 +619,7 @@ public double Contrast { get; set; }</code></pre>
 
   <h3 id="ACadSharp_Entities_Viewport_DefaultLightingType" data-uid="ACadSharp.Entities.Viewport.DefaultLightingType">
   DefaultLightingType
-  <a class="header-action link-secondary" title="View source" href="https://github.com/DomCR/ACadSharp/blob/master/src/ACadSharp/Entities/Viewport.cs/#L72"><i class="bi bi-code-slash"></i></a>
+  <a class="header-action link-secondary" title="View source" href="https://github.com/DomCR/ACadSharp/blob/master/src/ACadSharp/Entities/Viewport.cs/#L83"><i class="bi bi-code-slash"></i></a>
   </h3>
 
   <div class="markdown level1 summary"><p>Default lighting type.</p>
@@ -618,7 +656,7 @@ public LightingType DefaultLightingType { get; set; }</code></pre>
 
   <h3 id="ACadSharp_Entities_Viewport_DisplayUcsIcon" data-uid="ACadSharp.Entities.Viewport.DisplayUcsIcon">
   DisplayUcsIcon
-  <a class="header-action link-secondary" title="View source" href="https://github.com/DomCR/ACadSharp/blob/master/src/ACadSharp/Entities/Viewport.cs/#L81"><i class="bi bi-code-slash"></i></a>
+  <a class="header-action link-secondary" title="View source" href="https://github.com/DomCR/ACadSharp/blob/master/src/ACadSharp/Entities/Viewport.cs/#L92"><i class="bi bi-code-slash"></i></a>
   </h3>
 
   <div class="markdown level1 summary"><p>Display UCS icon at UCS origin flag</p>
@@ -654,7 +692,7 @@ public bool DisplayUcsIcon { get; set; }</code></pre>
 
   <h3 id="ACadSharp_Entities_Viewport_Elevation" data-uid="ACadSharp.Entities.Viewport.Elevation">
   Elevation
-  <a class="header-action link-secondary" title="View source" href="https://github.com/DomCR/ACadSharp/blob/master/src/ACadSharp/Entities/Viewport.cs/#L87"><i class="bi bi-code-slash"></i></a>
+  <a class="header-action link-secondary" title="View source" href="https://github.com/DomCR/ACadSharp/blob/master/src/ACadSharp/Entities/Viewport.cs/#L98"><i class="bi bi-code-slash"></i></a>
   </h3>
 
   <div class="markdown level1 summary"><p>Viewport elevation</p>
@@ -687,7 +725,7 @@ public double Elevation { get; set; }</code></pre>
 
   <h3 id="ACadSharp_Entities_Viewport_FrontClipPlane" data-uid="ACadSharp.Entities.Viewport.FrontClipPlane">
   FrontClipPlane
-  <a class="header-action link-secondary" title="View source" href="https://github.com/DomCR/ACadSharp/blob/master/src/ACadSharp/Entities/Viewport.cs/#L93"><i class="bi bi-code-slash"></i></a>
+  <a class="header-action link-secondary" title="View source" href="https://github.com/DomCR/ACadSharp/blob/master/src/ACadSharp/Entities/Viewport.cs/#L104"><i class="bi bi-code-slash"></i></a>
   </h3>
 
   <div class="markdown level1 summary"><p>Front clip plane Z value.</p>
@@ -720,7 +758,7 @@ public double FrontClipPlane { get; set; }</code></pre>
 
   <h3 id="ACadSharp_Entities_Viewport_FrozenLayers" data-uid="ACadSharp.Entities.Viewport.FrozenLayers">
   FrozenLayers
-  <a class="header-action link-secondary" title="View source" href="https://github.com/DomCR/ACadSharp/blob/master/src/ACadSharp/Entities/Viewport.cs/#L99"><i class="bi bi-code-slash"></i></a>
+  <a class="header-action link-secondary" title="View source" href="https://github.com/DomCR/ACadSharp/blob/master/src/ACadSharp/Entities/Viewport.cs/#L110"><i class="bi bi-code-slash"></i></a>
   </h3>
 
   <div class="markdown level1 summary"><p>Frozen layer object ID/handle(multiple entries may exist)</p>
@@ -753,7 +791,7 @@ public List&lt;Layer&gt; FrozenLayers { get; }</code></pre>
 
   <h3 id="ACadSharp_Entities_Viewport_GridSpacing" data-uid="ACadSharp.Entities.Viewport.GridSpacing">
   GridSpacing
-  <a class="header-action link-secondary" title="View source" href="https://github.com/DomCR/ACadSharp/blob/master/src/ACadSharp/Entities/Viewport.cs/#L105"><i class="bi bi-code-slash"></i></a>
+  <a class="header-action link-secondary" title="View source" href="https://github.com/DomCR/ACadSharp/blob/master/src/ACadSharp/Entities/Viewport.cs/#L116"><i class="bi bi-code-slash"></i></a>
   </h3>
 
   <div class="markdown level1 summary"><p>Grid spacing</p>
@@ -786,7 +824,7 @@ public XY GridSpacing { get; set; }</code></pre>
 
   <h3 id="ACadSharp_Entities_Viewport_Height" data-uid="ACadSharp.Entities.Viewport.Height">
   Height
-  <a class="header-action link-secondary" title="View source" href="https://github.com/DomCR/ACadSharp/blob/master/src/ACadSharp/Entities/Viewport.cs/#L111"><i class="bi bi-code-slash"></i></a>
+  <a class="header-action link-secondary" title="View source" href="https://github.com/DomCR/ACadSharp/blob/master/src/ACadSharp/Entities/Viewport.cs/#L122"><i class="bi bi-code-slash"></i></a>
   </h3>
 
   <div class="markdown level1 summary"><p>Height in paper space units.</p>
@@ -819,7 +857,7 @@ public double Height { get; set; }</code></pre>
 
   <h3 id="ACadSharp_Entities_Viewport_Id" data-uid="ACadSharp.Entities.Viewport.Id">
   Id
-  <a class="header-action link-secondary" title="View source" href="https://github.com/DomCR/ACadSharp/blob/master/src/ACadSharp/Entities/Viewport.cs/#L120"><i class="bi bi-code-slash"></i></a>
+  <a class="header-action link-secondary" title="View source" href="https://github.com/DomCR/ACadSharp/blob/master/src/ACadSharp/Entities/Viewport.cs/#L131"><i class="bi bi-code-slash"></i></a>
   </h3>
 
   <div class="markdown level1 summary"><p>Viewport ID.</p>
@@ -855,7 +893,7 @@ public short Id { get; }</code></pre>
 
   <h3 id="ACadSharp_Entities_Viewport_LensLength" data-uid="ACadSharp.Entities.Viewport.LensLength">
   LensLength
-  <a class="header-action link-secondary" title="View source" href="https://github.com/DomCR/ACadSharp/blob/master/src/ACadSharp/Entities/Viewport.cs/#L145"><i class="bi bi-code-slash"></i></a>
+  <a class="header-action link-secondary" title="View source" href="https://github.com/DomCR/ACadSharp/blob/master/src/ACadSharp/Entities/Viewport.cs/#L156"><i class="bi bi-code-slash"></i></a>
   </h3>
 
   <div class="markdown level1 summary"><p>Perspective lens length</p>
@@ -888,7 +926,7 @@ public double LensLength { get; set; }</code></pre>
 
   <h3 id="ACadSharp_Entities_Viewport_MajorGridLineFrequency" data-uid="ACadSharp.Entities.Viewport.MajorGridLineFrequency">
   MajorGridLineFrequency
-  <a class="header-action link-secondary" title="View source" href="https://github.com/DomCR/ACadSharp/blob/master/src/ACadSharp/Entities/Viewport.cs/#L151"><i class="bi bi-code-slash"></i></a>
+  <a class="header-action link-secondary" title="View source" href="https://github.com/DomCR/ACadSharp/blob/master/src/ACadSharp/Entities/Viewport.cs/#L162"><i class="bi bi-code-slash"></i></a>
   </h3>
 
   <div class="markdown level1 summary"><p>Frequency of major grid lines compared to minor grid lines</p>
@@ -921,7 +959,7 @@ public short MajorGridLineFrequency { get; set; }</code></pre>
 
   <h3 id="ACadSharp_Entities_Viewport_ObjectName" data-uid="ACadSharp.Entities.Viewport.ObjectName">
   ObjectName
-  <a class="header-action link-secondary" title="View source" href="https://github.com/DomCR/ACadSharp/blob/master/src/ACadSharp/Entities/Viewport.cs/#L155"><i class="bi bi-code-slash"></i></a>
+  <a class="header-action link-secondary" title="View source" href="https://github.com/DomCR/ACadSharp/blob/master/src/ACadSharp/Entities/Viewport.cs/#L166"><i class="bi bi-code-slash"></i></a>
   </h3>
 
   <div class="markdown level1 summary"><p>The CAD class name of an object.</p>
@@ -953,7 +991,7 @@ public short MajorGridLineFrequency { get; set; }</code></pre>
 
   <h3 id="ACadSharp_Entities_Viewport_ObjectType" data-uid="ACadSharp.Entities.Viewport.ObjectType">
   ObjectType
-  <a class="header-action link-secondary" title="View source" href="https://github.com/DomCR/ACadSharp/blob/master/src/ACadSharp/Entities/Viewport.cs/#L158"><i class="bi bi-code-slash"></i></a>
+  <a class="header-action link-secondary" title="View source" href="https://github.com/DomCR/ACadSharp/blob/master/src/ACadSharp/Entities/Viewport.cs/#L169"><i class="bi bi-code-slash"></i></a>
   </h3>
 
   <div class="markdown level1 summary"><p>Get the object type.</p>
@@ -985,7 +1023,7 @@ public short MajorGridLineFrequency { get; set; }</code></pre>
 
   <h3 id="ACadSharp_Entities_Viewport_RenderMode" data-uid="ACadSharp.Entities.Viewport.RenderMode">
   RenderMode
-  <a class="header-action link-secondary" title="View source" href="https://github.com/DomCR/ACadSharp/blob/master/src/ACadSharp/Entities/Viewport.cs/#L163"><i class="bi bi-code-slash"></i></a>
+  <a class="header-action link-secondary" title="View source" href="https://github.com/DomCR/ACadSharp/blob/master/src/ACadSharp/Entities/Viewport.cs/#L174"><i class="bi bi-code-slash"></i></a>
   </h3>
 
   <div class="markdown level1 summary"><p>Render mode</p>
@@ -1018,7 +1056,7 @@ public RenderMode RenderMode { get; set; }</code></pre>
 
   <h3 id="ACadSharp_Entities_Viewport_RepresentsPaper" data-uid="ACadSharp.Entities.Viewport.RepresentsPaper">
   RepresentsPaper
-  <a class="header-action link-secondary" title="View source" href="https://github.com/DomCR/ACadSharp/blob/master/src/ACadSharp/Entities/Viewport.cs/#L172"><i class="bi bi-code-slash"></i></a>
+  <a class="header-action link-secondary" title="View source" href="https://github.com/DomCR/ACadSharp/blob/master/src/ACadSharp/Entities/Viewport.cs/#L183"><i class="bi bi-code-slash"></i></a>
   </h3>
 
   <div class="markdown level1 summary"><p>Flag that set for those viewports that represent the paper in the view.</p>
@@ -1053,7 +1091,7 @@ public RenderMode RenderMode { get; set; }</code></pre>
 
   <h3 id="ACadSharp_Entities_Viewport_Scale" data-uid="ACadSharp.Entities.Viewport.Scale">
   Scale
-  <a class="header-action link-secondary" title="View source" href="https://github.com/DomCR/ACadSharp/blob/master/src/ACadSharp/Entities/Viewport.cs/#L183"><i class="bi bi-code-slash"></i></a>
+  <a class="header-action link-secondary" title="View source" href="https://github.com/DomCR/ACadSharp/blob/master/src/ACadSharp/Entities/Viewport.cs/#L199"><i class="bi bi-code-slash"></i></a>
   </h3>
 
   <div class="markdown level1 summary"><p>Scale assigned for this viewport.</p>
@@ -1085,7 +1123,7 @@ public RenderMode RenderMode { get; set; }</code></pre>
 
   <h3 id="ACadSharp_Entities_Viewport_ScaleFactor" data-uid="ACadSharp.Entities.Viewport.ScaleFactor">
   ScaleFactor
-  <a class="header-action link-secondary" title="View source" href="https://github.com/DomCR/ACadSharp/blob/master/src/ACadSharp/Entities/Viewport.cs/#L229"><i class="bi bi-code-slash"></i></a>
+  <a class="header-action link-secondary" title="View source" href="https://github.com/DomCR/ACadSharp/blob/master/src/ACadSharp/Entities/Viewport.cs/#L245"><i class="bi bi-code-slash"></i></a>
   </h3>
 
   <div class="markdown level1 summary"><p>Scale factor applied in this viewport.</p>
@@ -1120,7 +1158,7 @@ public RenderMode RenderMode { get; set; }</code></pre>
 
   <h3 id="ACadSharp_Entities_Viewport_ShadePlotMode" data-uid="ACadSharp.Entities.Viewport.ShadePlotMode">
   ShadePlotMode
-  <a class="header-action link-secondary" title="View source" href="https://github.com/DomCR/ACadSharp/blob/master/src/ACadSharp/Entities/Viewport.cs/#L234"><i class="bi bi-code-slash"></i></a>
+  <a class="header-action link-secondary" title="View source" href="https://github.com/DomCR/ACadSharp/blob/master/src/ACadSharp/Entities/Viewport.cs/#L250"><i class="bi bi-code-slash"></i></a>
   </h3>
 
   <div class="markdown level1 summary"><p>Orthographic type of UCS</p>
@@ -1153,7 +1191,7 @@ public ShadePlotMode ShadePlotMode { get; set; }</code></pre>
 
   <h3 id="ACadSharp_Entities_Viewport_SnapAngle" data-uid="ACadSharp.Entities.Viewport.SnapAngle">
   SnapAngle
-  <a class="header-action link-secondary" title="View source" href="https://github.com/DomCR/ACadSharp/blob/master/src/ACadSharp/Entities/Viewport.cs/#L240"><i class="bi bi-code-slash"></i></a>
+  <a class="header-action link-secondary" title="View source" href="https://github.com/DomCR/ACadSharp/blob/master/src/ACadSharp/Entities/Viewport.cs/#L256"><i class="bi bi-code-slash"></i></a>
   </h3>
 
   <div class="markdown level1 summary"><p>Snap angle</p>
@@ -1186,7 +1224,7 @@ public double SnapAngle { get; set; }</code></pre>
 
   <h3 id="ACadSharp_Entities_Viewport_SnapBase" data-uid="ACadSharp.Entities.Viewport.SnapBase">
   SnapBase
-  <a class="header-action link-secondary" title="View source" href="https://github.com/DomCR/ACadSharp/blob/master/src/ACadSharp/Entities/Viewport.cs/#L246"><i class="bi bi-code-slash"></i></a>
+  <a class="header-action link-secondary" title="View source" href="https://github.com/DomCR/ACadSharp/blob/master/src/ACadSharp/Entities/Viewport.cs/#L262"><i class="bi bi-code-slash"></i></a>
   </h3>
 
   <div class="markdown level1 summary"><p>Snap base point</p>
@@ -1219,7 +1257,7 @@ public XY SnapBase { get; set; }</code></pre>
 
   <h3 id="ACadSharp_Entities_Viewport_SnapSpacing" data-uid="ACadSharp.Entities.Viewport.SnapSpacing">
   SnapSpacing
-  <a class="header-action link-secondary" title="View source" href="https://github.com/DomCR/ACadSharp/blob/master/src/ACadSharp/Entities/Viewport.cs/#L252"><i class="bi bi-code-slash"></i></a>
+  <a class="header-action link-secondary" title="View source" href="https://github.com/DomCR/ACadSharp/blob/master/src/ACadSharp/Entities/Viewport.cs/#L268"><i class="bi bi-code-slash"></i></a>
   </h3>
 
   <div class="markdown level1 summary"><p>Snap spacing</p>
@@ -1252,7 +1290,7 @@ public XY SnapSpacing { get; set; }</code></pre>
 
   <h3 id="ACadSharp_Entities_Viewport_Status" data-uid="ACadSharp.Entities.Viewport.Status">
   Status
-  <a class="header-action link-secondary" title="View source" href="https://github.com/DomCR/ACadSharp/blob/master/src/ACadSharp/Entities/Viewport.cs/#L258"><i class="bi bi-code-slash"></i></a>
+  <a class="header-action link-secondary" title="View source" href="https://github.com/DomCR/ACadSharp/blob/master/src/ACadSharp/Entities/Viewport.cs/#L274"><i class="bi bi-code-slash"></i></a>
   </h3>
 
   <div class="markdown level1 summary"><p>Viewport status.</p>
@@ -1285,7 +1323,7 @@ public ViewportStatusFlags Status { get; set; }</code></pre>
 
   <h3 id="ACadSharp_Entities_Viewport_StyleSheetName" data-uid="ACadSharp.Entities.Viewport.StyleSheetName">
   StyleSheetName
-  <a class="header-action link-secondary" title="View source" href="https://github.com/DomCR/ACadSharp/blob/master/src/ACadSharp/Entities/Viewport.cs/#L264"><i class="bi bi-code-slash"></i></a>
+  <a class="header-action link-secondary" title="View source" href="https://github.com/DomCR/ACadSharp/blob/master/src/ACadSharp/Entities/Viewport.cs/#L280"><i class="bi bi-code-slash"></i></a>
   </h3>
 
   <div class="markdown level1 summary"><p>Plot style sheet name assigned to this viewport</p>
@@ -1318,7 +1356,7 @@ public string StyleSheetName { get; set; }</code></pre>
 
   <h3 id="ACadSharp_Entities_Viewport_SubclassMarker" data-uid="ACadSharp.Entities.Viewport.SubclassMarker">
   SubclassMarker
-  <a class="header-action link-secondary" title="View source" href="https://github.com/DomCR/ACadSharp/blob/master/src/ACadSharp/Entities/Viewport.cs/#L268"><i class="bi bi-code-slash"></i></a>
+  <a class="header-action link-secondary" title="View source" href="https://github.com/DomCR/ACadSharp/blob/master/src/ACadSharp/Entities/Viewport.cs/#L284"><i class="bi bi-code-slash"></i></a>
   </h3>
 
   <div class="markdown level1 summary"><p>Object Subclass marker.</p>
@@ -1350,7 +1388,7 @@ public string StyleSheetName { get; set; }</code></pre>
 
   <h3 id="ACadSharp_Entities_Viewport_TwistAngle" data-uid="ACadSharp.Entities.Viewport.TwistAngle">
   TwistAngle
-  <a class="header-action link-secondary" title="View source" href="https://github.com/DomCR/ACadSharp/blob/master/src/ACadSharp/Entities/Viewport.cs/#L273"><i class="bi bi-code-slash"></i></a>
+  <a class="header-action link-secondary" title="View source" href="https://github.com/DomCR/ACadSharp/blob/master/src/ACadSharp/Entities/Viewport.cs/#L289"><i class="bi bi-code-slash"></i></a>
   </h3>
 
   <div class="markdown level1 summary"><p>View twist angle</p>
@@ -1383,7 +1421,7 @@ public double TwistAngle { get; set; }</code></pre>
 
   <h3 id="ACadSharp_Entities_Viewport_UcsOrigin" data-uid="ACadSharp.Entities.Viewport.UcsOrigin">
   UcsOrigin
-  <a class="header-action link-secondary" title="View source" href="https://github.com/DomCR/ACadSharp/blob/master/src/ACadSharp/Entities/Viewport.cs/#L279"><i class="bi bi-code-slash"></i></a>
+  <a class="header-action link-secondary" title="View source" href="https://github.com/DomCR/ACadSharp/blob/master/src/ACadSharp/Entities/Viewport.cs/#L295"><i class="bi bi-code-slash"></i></a>
   </h3>
 
   <div class="markdown level1 summary"><p>UCS origin</p>
@@ -1416,7 +1454,7 @@ public XYZ UcsOrigin { get; set; }</code></pre>
 
   <h3 id="ACadSharp_Entities_Viewport_UcsOrthographicType" data-uid="ACadSharp.Entities.Viewport.UcsOrthographicType">
   UcsOrthographicType
-  <a class="header-action link-secondary" title="View source" href="https://github.com/DomCR/ACadSharp/blob/master/src/ACadSharp/Entities/Viewport.cs/#L285"><i class="bi bi-code-slash"></i></a>
+  <a class="header-action link-secondary" title="View source" href="https://github.com/DomCR/ACadSharp/blob/master/src/ACadSharp/Entities/Viewport.cs/#L301"><i class="bi bi-code-slash"></i></a>
   </h3>
 
   <div class="markdown level1 summary"><p>Orthographic type of UCS</p>
@@ -1449,7 +1487,7 @@ public OrthographicType UcsOrthographicType { get; set; }</code></pre>
 
   <h3 id="ACadSharp_Entities_Viewport_UcsPerViewport" data-uid="ACadSharp.Entities.Viewport.UcsPerViewport">
   UcsPerViewport
-  <a class="header-action link-secondary" title="View source" href="https://github.com/DomCR/ACadSharp/blob/master/src/ACadSharp/Entities/Viewport.cs/#L295"><i class="bi bi-code-slash"></i></a>
+  <a class="header-action link-secondary" title="View source" href="https://github.com/DomCR/ACadSharp/blob/master/src/ACadSharp/Entities/Viewport.cs/#L311"><i class="bi bi-code-slash"></i></a>
   </h3>
 
   <div class="markdown level1 summary"><p>UCS per viewport flag</p>
@@ -1486,7 +1524,7 @@ public bool UcsPerViewport { get; set; }</code></pre>
 
   <h3 id="ACadSharp_Entities_Viewport_UcsXAxis" data-uid="ACadSharp.Entities.Viewport.UcsXAxis">
   UcsXAxis
-  <a class="header-action link-secondary" title="View source" href="https://github.com/DomCR/ACadSharp/blob/master/src/ACadSharp/Entities/Viewport.cs/#L301"><i class="bi bi-code-slash"></i></a>
+  <a class="header-action link-secondary" title="View source" href="https://github.com/DomCR/ACadSharp/blob/master/src/ACadSharp/Entities/Viewport.cs/#L317"><i class="bi bi-code-slash"></i></a>
   </h3>
 
   <div class="markdown level1 summary"><p>UCS X-axis</p>
@@ -1519,7 +1557,7 @@ public XYZ UcsXAxis { get; set; }</code></pre>
 
   <h3 id="ACadSharp_Entities_Viewport_UcsYAxis" data-uid="ACadSharp.Entities.Viewport.UcsYAxis">
   UcsYAxis
-  <a class="header-action link-secondary" title="View source" href="https://github.com/DomCR/ACadSharp/blob/master/src/ACadSharp/Entities/Viewport.cs/#L307"><i class="bi bi-code-slash"></i></a>
+  <a class="header-action link-secondary" title="View source" href="https://github.com/DomCR/ACadSharp/blob/master/src/ACadSharp/Entities/Viewport.cs/#L323"><i class="bi bi-code-slash"></i></a>
   </h3>
 
   <div class="markdown level1 summary"><p>UCS Y-axis</p>
@@ -1552,7 +1590,7 @@ public XYZ UcsYAxis { get; set; }</code></pre>
 
   <h3 id="ACadSharp_Entities_Viewport_UseDefaultLighting" data-uid="ACadSharp.Entities.Viewport.UseDefaultLighting">
   UseDefaultLighting
-  <a class="header-action link-secondary" title="View source" href="https://github.com/DomCR/ACadSharp/blob/master/src/ACadSharp/Entities/Viewport.cs/#L313"><i class="bi bi-code-slash"></i></a>
+  <a class="header-action link-secondary" title="View source" href="https://github.com/DomCR/ACadSharp/blob/master/src/ACadSharp/Entities/Viewport.cs/#L329"><i class="bi bi-code-slash"></i></a>
   </h3>
 
   <div class="markdown level1 summary"><p>Default lighting flag.On when no user lights are specified.</p>
@@ -1585,7 +1623,7 @@ public bool UseDefaultLighting { get; set; }</code></pre>
 
   <h3 id="ACadSharp_Entities_Viewport_ViewCenter" data-uid="ACadSharp.Entities.Viewport.ViewCenter">
   ViewCenter
-  <a class="header-action link-secondary" title="View source" href="https://github.com/DomCR/ACadSharp/blob/master/src/ACadSharp/Entities/Viewport.cs/#L319"><i class="bi bi-code-slash"></i></a>
+  <a class="header-action link-secondary" title="View source" href="https://github.com/DomCR/ACadSharp/blob/master/src/ACadSharp/Entities/Viewport.cs/#L335"><i class="bi bi-code-slash"></i></a>
   </h3>
 
   <div class="markdown level1 summary"><p>View center point(in DCS).</p>
@@ -1618,7 +1656,7 @@ public XY ViewCenter { get; set; }</code></pre>
 
   <h3 id="ACadSharp_Entities_Viewport_ViewDirection" data-uid="ACadSharp.Entities.Viewport.ViewDirection">
   ViewDirection
-  <a class="header-action link-secondary" title="View source" href="https://github.com/DomCR/ACadSharp/blob/master/src/ACadSharp/Entities/Viewport.cs/#L325"><i class="bi bi-code-slash"></i></a>
+  <a class="header-action link-secondary" title="View source" href="https://github.com/DomCR/ACadSharp/blob/master/src/ACadSharp/Entities/Viewport.cs/#L341"><i class="bi bi-code-slash"></i></a>
   </h3>
 
   <div class="markdown level1 summary"><p>View direction vector(in WCS)</p>
@@ -1651,7 +1689,7 @@ public XYZ ViewDirection { get; set; }</code></pre>
 
   <h3 id="ACadSharp_Entities_Viewport_ViewHeight" data-uid="ACadSharp.Entities.Viewport.ViewHeight">
   ViewHeight
-  <a class="header-action link-secondary" title="View source" href="https://github.com/DomCR/ACadSharp/blob/master/src/ACadSharp/Entities/Viewport.cs/#L331"><i class="bi bi-code-slash"></i></a>
+  <a class="header-action link-secondary" title="View source" href="https://github.com/DomCR/ACadSharp/blob/master/src/ACadSharp/Entities/Viewport.cs/#L347"><i class="bi bi-code-slash"></i></a>
   </h3>
 
   <div class="markdown level1 summary"><p>View height(in model space units).</p>
@@ -1684,7 +1722,7 @@ public double ViewHeight { get; set; }</code></pre>
 
   <h3 id="ACadSharp_Entities_Viewport_ViewTarget" data-uid="ACadSharp.Entities.Viewport.ViewTarget">
   ViewTarget
-  <a class="header-action link-secondary" title="View source" href="https://github.com/DomCR/ACadSharp/blob/master/src/ACadSharp/Entities/Viewport.cs/#L337"><i class="bi bi-code-slash"></i></a>
+  <a class="header-action link-secondary" title="View source" href="https://github.com/DomCR/ACadSharp/blob/master/src/ACadSharp/Entities/Viewport.cs/#L353"><i class="bi bi-code-slash"></i></a>
   </h3>
 
   <div class="markdown level1 summary"><p>View target point(in WCS)</p>
@@ -1717,7 +1755,7 @@ public XYZ ViewTarget { get; set; }</code></pre>
 
   <h3 id="ACadSharp_Entities_Viewport_ViewWidth" data-uid="ACadSharp.Entities.Viewport.ViewWidth">
   ViewWidth
-  <a class="header-action link-secondary" title="View source" href="https://github.com/DomCR/ACadSharp/blob/master/src/ACadSharp/Entities/Viewport.cs/#L343"><i class="bi bi-code-slash"></i></a>
+  <a class="header-action link-secondary" title="View source" href="https://github.com/DomCR/ACadSharp/blob/master/src/ACadSharp/Entities/Viewport.cs/#L359"><i class="bi bi-code-slash"></i></a>
   </h3>
 
   <div class="markdown level1 summary"><p>View width (in model space units).</p>
@@ -1749,7 +1787,7 @@ public XYZ ViewTarget { get; set; }</code></pre>
 
   <h3 id="ACadSharp_Entities_Viewport_VisualStyle" data-uid="ACadSharp.Entities.Viewport.VisualStyle">
   VisualStyle
-  <a class="header-action link-secondary" title="View source" href="https://github.com/DomCR/ACadSharp/blob/master/src/ACadSharp/Entities/Viewport.cs/#L354"><i class="bi bi-code-slash"></i></a>
+  <a class="header-action link-secondary" title="View source" href="https://github.com/DomCR/ACadSharp/blob/master/src/ACadSharp/Entities/Viewport.cs/#L370"><i class="bi bi-code-slash"></i></a>
   </h3>
 
   <div class="markdown level1 summary"><p>Visual style</p>
@@ -1782,7 +1820,7 @@ public VisualStyle VisualStyle { get; set; }</code></pre>
 
   <h3 id="ACadSharp_Entities_Viewport_Width" data-uid="ACadSharp.Entities.Viewport.Width">
   Width
-  <a class="header-action link-secondary" title="View source" href="https://github.com/DomCR/ACadSharp/blob/master/src/ACadSharp/Entities/Viewport.cs/#L360"><i class="bi bi-code-slash"></i></a>
+  <a class="header-action link-secondary" title="View source" href="https://github.com/DomCR/ACadSharp/blob/master/src/ACadSharp/Entities/Viewport.cs/#L376"><i class="bi bi-code-slash"></i></a>
   </h3>
 
   <div class="markdown level1 summary"><p>Width in paper space units.</p>
@@ -1819,7 +1857,7 @@ public double Width { get; set; }</code></pre>
 
   <h3 id="ACadSharp_Entities_Viewport_ApplyTransform_CSMath_Transform_" data-uid="ACadSharp.Entities.Viewport.ApplyTransform(CSMath.Transform)">
   ApplyTransform(Transform)
-  <a class="header-action link-secondary" title="View source" href="https://github.com/DomCR/ACadSharp/blob/master/src/ACadSharp/Entities/Viewport.cs/#L373"><i class="bi bi-code-slash"></i></a>
+  <a class="header-action link-secondary" title="View source" href="https://github.com/DomCR/ACadSharp/blob/master/src/ACadSharp/Entities/Viewport.cs/#L389"><i class="bi bi-code-slash"></i></a>
   </h3>
 
   <div class="markdown level1 summary"><p>Apply a transform matrix to this entity.</p>
@@ -1851,7 +1889,7 @@ public double Width { get; set; }</code></pre>
 
   <h3 id="ACadSharp_Entities_Viewport_Clone" data-uid="ACadSharp.Entities.Viewport.Clone">
   Clone()
-  <a class="header-action link-secondary" title="View source" href="https://github.com/DomCR/ACadSharp/blob/master/src/ACadSharp/Entities/Viewport.cs/#L392"><i class="bi bi-code-slash"></i></a>
+  <a class="header-action link-secondary" title="View source" href="https://github.com/DomCR/ACadSharp/blob/master/src/ACadSharp/Entities/Viewport.cs/#L408"><i class="bi bi-code-slash"></i></a>
   </h3>
 
   <div class="markdown level1 summary"><p>Creates a new object that is a copy of the current instance.</p>
@@ -1887,7 +1925,7 @@ public double Width { get; set; }</code></pre>
 
   <h3 id="ACadSharp_Entities_Viewport_GetBoundingBox" data-uid="ACadSharp.Entities.Viewport.GetBoundingBox">
   GetBoundingBox()
-  <a class="header-action link-secondary" title="View source" href="https://github.com/DomCR/ACadSharp/blob/master/src/ACadSharp/Entities/Viewport.cs/#L410"><i class="bi bi-code-slash"></i></a>
+  <a class="header-action link-secondary" title="View source" href="https://github.com/DomCR/ACadSharp/blob/master/src/ACadSharp/Entities/Viewport.cs/#L426"><i class="bi bi-code-slash"></i></a>
   </h3>
 
   <div class="markdown level1 summary"><p>Gets the bounding box aligned with the axis XYZ that occupies this entity.</p>
@@ -1920,7 +1958,7 @@ public double Width { get; set; }</code></pre>
 
   <h3 id="ACadSharp_Entities_Viewport_GetModelBoundingBox" data-uid="ACadSharp.Entities.Viewport.GetModelBoundingBox">
   GetModelBoundingBox()
-  <a class="header-action link-secondary" title="View source" href="https://github.com/DomCR/ACadSharp/blob/master/src/ACadSharp/Entities/Viewport.cs/#L421"><i class="bi bi-code-slash"></i></a>
+  <a class="header-action link-secondary" title="View source" href="https://github.com/DomCR/ACadSharp/blob/master/src/ACadSharp/Entities/Viewport.cs/#L437"><i class="bi bi-code-slash"></i></a>
   </h3>
 
   <div class="markdown level1 summary"><p>Gets the bounding box of this viewport in the model space.</p>
@@ -1952,7 +1990,7 @@ public double Width { get; set; }</code></pre>
 
   <h3 id="ACadSharp_Entities_Viewport_SelectEntities_System_Boolean_" data-uid="ACadSharp.Entities.Viewport.SelectEntities(System.Boolean)">
   SelectEntities(bool)
-  <a class="header-action link-secondary" title="View source" href="https://github.com/DomCR/ACadSharp/blob/master/src/ACadSharp/Entities/Viewport.cs/#L432"><i class="bi bi-code-slash"></i></a>
+  <a class="header-action link-secondary" title="View source" href="https://github.com/DomCR/ACadSharp/blob/master/src/ACadSharp/Entities/Viewport.cs/#L448"><i class="bi bi-code-slash"></i></a>
   </h3>
 
   <div class="markdown level1 summary"><p>Gets all the entities from the model that are in the view of the viewport.</p>

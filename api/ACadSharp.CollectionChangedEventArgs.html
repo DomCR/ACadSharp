@@ -167,10 +167,11 @@ Class CollectionChangedEventArgs  <a class="header-action link-secondary" title=
 
   <h3 id="ACadSharp_CollectionChangedEventArgs__ctor_ACadSharp_CadObject_" data-uid="ACadSharp.CollectionChangedEventArgs.#ctor(ACadSharp.CadObject)">
   CollectionChangedEventArgs(CadObject)
-  <a class="header-action link-secondary" title="View source" href="https://github.com/DomCR/ACadSharp/blob/master/src/ACadSharp/CollectionChangedEventArgs.cs/#L12"><i class="bi bi-code-slash"></i></a>
+  <a class="header-action link-secondary" title="View source" href="https://github.com/DomCR/ACadSharp/blob/master/src/ACadSharp/CollectionChangedEventArgs.cs/#L24"><i class="bi bi-code-slash"></i></a>
   </h3>
 
-  <div class="markdown level1 summary"></div>
+  <div class="markdown level1 summary"><p>Initializes a new instance of the <a class="xref" href="ACadSharp.CollectionChangedEventArgs.html">CollectionChangedEventArgs</a> class with the specified item that is being added or removed from the collection.</p>
+</div>
   <div class="markdown level1 conceptual"></div>
 
   <div class="codewrapper">
@@ -180,7 +181,8 @@ Class CollectionChangedEventArgs  <a class="header-action link-secondary" title=
   <h4 class="section">Parameters</h4>
   <dl class="parameters">
     <dt><code>item</code> <a class="xref" href="ACadSharp.CadObject.html">CadObject</a></dt>
-    <dd></dd>
+    <dd><p>The item that is being added or removed from the collection.</p>
+</dd>
   </dl>
 
 
@@ -198,11 +200,46 @@ Class CollectionChangedEventArgs  <a class="header-action link-secondary" title=
 </h2>
 
 
+  <a id="ACadSharp_CollectionChangedEventArgs_Cancel_" data-uid="ACadSharp.CollectionChangedEventArgs.Cancel*"></a>
+
+  <h3 id="ACadSharp_CollectionChangedEventArgs_Cancel" data-uid="ACadSharp.CollectionChangedEventArgs.Cancel">
+  Cancel
+  <a class="header-action link-secondary" title="View source" href="https://github.com/DomCR/ACadSharp/blob/master/src/ACadSharp/CollectionChangedEventArgs.cs/#L13"><i class="bi bi-code-slash"></i></a>
+  </h3>
+
+  <div class="markdown level1 summary"><p>Gets or sets a value indicating whether the current operation should be canceled.</p>
+</div>
+  <div class="markdown level1 conceptual"></div>
+
+  <div class="codewrapper">
+    <pre><code class="lang-csharp hljs">public bool Cancel { get; set; }</code></pre>
+  </div>
+
+
+
+
+
+  <h4 class="section">Property Value</h4>
+  <dl class="parameters">
+    <dt><a class="xref" href="https://learn.microsoft.com/dotnet/api/system.boolean">bool</a></dt>
+    <dd></dd>
+  </dl>
+
+
+
+
+  <h4 class="section" id="ACadSharp_CollectionChangedEventArgs_Cancel_remarks">Remarks</h4>
+  <div class="markdown level1 remarks"><p>This property is used by the OnBeforeAdd and OnBeforeRemove events to cancel the add or remove operation.</p>
+</div>
+
+
+
+
   <a id="ACadSharp_CollectionChangedEventArgs_Item_" data-uid="ACadSharp.CollectionChangedEventArgs.Item*"></a>
 
   <h3 id="ACadSharp_CollectionChangedEventArgs_Item" data-uid="ACadSharp.CollectionChangedEventArgs.Item">
   Item
-  <a class="header-action link-secondary" title="View source" href="https://github.com/DomCR/ACadSharp/blob/master/src/ACadSharp/CollectionChangedEventArgs.cs/#L10"><i class="bi bi-code-slash"></i></a>
+  <a class="header-action link-secondary" title="View source" href="https://github.com/DomCR/ACadSharp/blob/master/src/ACadSharp/CollectionChangedEventArgs.cs/#L18"><i class="bi bi-code-slash"></i></a>
   </h3>
 
   <div class="markdown level1 summary"><p>Item that is beeing added or removed from the collection</p>

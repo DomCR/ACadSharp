@@ -6,7 +6,7 @@
       <meta name="viewport" content="width=device-width, initial-scale=1.0">
       <meta name="title" content="Class LayoutCollection | ACadSharp ">
       
-      
+      <meta name="description" content="Represents a collection of named  definitions stored in a CAD dictionary.">
       <link rel="icon" href="../favicon.ico">
       <link rel="stylesheet" href="../public/docfx.min.css">
       <link rel="stylesheet" href="../public/main.css">
@@ -89,7 +89,7 @@
 
 
   <h1 id="ACadSharp_Objects_Collections_LayoutCollection" data-uid="ACadSharp.Objects.Collections.LayoutCollection" class="text-break">
-Class LayoutCollection  <a class="header-action link-secondary" title="View source" href="https://github.com/DomCR/ACadSharp/blob/master/src/ACadSharp/Objects/Collections/LayoutCollection.cs/#L5"><i class="bi bi-code-slash"></i></a>
+Class LayoutCollection  <a class="header-action link-secondary" title="View source" href="https://github.com/DomCR/ACadSharp/blob/master/src/ACadSharp/Objects/Collections/LayoutCollection.cs/#L13"><i class="bi bi-code-slash"></i></a>
   </h1>
 
   <div class="facts text-secondary">
@@ -97,7 +97,8 @@ Class LayoutCollection  <a class="header-action link-secondary" title="View sour
   <dl><dt>Assembly</dt><dd>ACadSharp.dll</dd></dl>
   </div>
 
-  <div class="markdown summary"></div>
+  <div class="markdown summary"><p>Represents a collection of named <a class="xref" href="ACadSharp.Objects.Layout.html">Layout</a> definitions stored in a CAD dictionary.</p>
+</div>
   <div class="markdown conceptual"></div>
 
   <div class="codewrapper">
@@ -200,6 +201,11 @@ Class LayoutCollection  <a class="header-action link-secondary" title="View sour
 
 
 
+  <h2 id="ACadSharp_Objects_Collections_LayoutCollection_remarks">Remarks</h2>
+  <div class="markdown level0 remarks"><p>This collection provides access to individual <a class="xref" href="ACadSharp.Objects.Layout.html">Layout</a> definitions by name and supports enumeration of
+all layouts in the associated CAD dictionary. Modifications to the collection are reflected in the underlying
+dictionary.</p>
+</div>
 
 
   <h2 class="section" id="constructors">Constructors
@@ -210,10 +216,11 @@ Class LayoutCollection  <a class="header-action link-secondary" title="View sour
 
   <h3 id="ACadSharp_Objects_Collections_LayoutCollection__ctor_ACadSharp_Objects_CadDictionary_" data-uid="ACadSharp.Objects.Collections.LayoutCollection.#ctor(ACadSharp.Objects.CadDictionary)">
   LayoutCollection(CadDictionary)
-  <a class="header-action link-secondary" title="View source" href="https://github.com/DomCR/ACadSharp/blob/master/src/ACadSharp/Objects/Collections/LayoutCollection.cs/#L7"><i class="bi bi-code-slash"></i></a>
+  <a class="header-action link-secondary" title="View source" href="https://github.com/DomCR/ACadSharp/blob/master/src/ACadSharp/Objects/Collections/LayoutCollection.cs/#L16"><i class="bi bi-code-slash"></i></a>
   </h3>
 
-  <div class="markdown level1 summary"></div>
+  <div class="markdown level1 summary"><p>Initializes a new instance of the ObjectDictionaryCollection class with the specified CAD dictionary.</p>
+</div>
   <div class="markdown level1 conceptual"></div>
 
   <div class="codewrapper">
@@ -223,7 +230,8 @@ Class LayoutCollection  <a class="header-action link-secondary" title="View sour
   <h4 class="section">Parameters</h4>
   <dl class="parameters">
     <dt><code>dictionary</code> <a class="xref" href="ACadSharp.Objects.CadDictionary.html">CadDictionary</a></dt>
-    <dd></dd>
+    <dd><p>The CAD dictionary that provides the underlying storage for the collection. Cannot be null.</p>
+</dd>
   </dl>
 
 
@@ -245,7 +253,7 @@ Class LayoutCollection  <a class="header-action link-secondary" title="View sour
 
   <h3 id="ACadSharp_Objects_Collections_LayoutCollection_Remove_System_String_ACadSharp_Objects_Layout__" data-uid="ACadSharp.Objects.Collections.LayoutCollection.Remove(System.String,ACadSharp.Objects.Layout@)">
   Remove(string, out Layout)
-  <a class="header-action link-secondary" title="View source" href="https://github.com/DomCR/ACadSharp/blob/master/src/ACadSharp/Objects/Collections/LayoutCollection.cs/#L13"><i class="bi bi-code-slash"></i></a>
+  <a class="header-action link-secondary" title="View source" href="https://github.com/DomCR/ACadSharp/blob/master/src/ACadSharp/Objects/Collections/LayoutCollection.cs/#L22"><i class="bi bi-code-slash"></i></a>
   </h3>
 
   <div class="markdown level1 summary"><p>Remove an entry from the collection.</p>
@@ -284,7 +292,7 @@ Class LayoutCollection  <a class="header-action link-secondary" title="View sour
 </article>
 
         <div class="contribution d-print-none">
-          <a href="https://github.com/DomCR/ACadSharp/blob/master/src/ACadSharp/Objects/Collections/LayoutCollection.cs/#L5" class="edit-link">Edit this page</a>
+          <a href="https://github.com/DomCR/ACadSharp/blob/master/src/ACadSharp/Objects/Collections/LayoutCollection.cs/#L13" class="edit-link">Edit this page</a>
         </div>
 
 

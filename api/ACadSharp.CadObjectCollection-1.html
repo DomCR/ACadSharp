@@ -254,7 +254,7 @@ Class CadObjectCollection&lt;T&gt;  <a class="header-action link-secondary" titl
 
   <h3 id="ACadSharp_CadObjectCollection_1_Count" data-uid="ACadSharp.CadObjectCollection`1.Count">
   Count
-  <a class="header-action link-secondary" title="View source" href="https://github.com/DomCR/ACadSharp/blob/master/src/ACadSharp/CadObjectCollection.cs/#L30"><i class="bi bi-code-slash"></i></a>
+  <a class="header-action link-secondary" title="View source" href="https://github.com/DomCR/ACadSharp/blob/master/src/ACadSharp/CadObjectCollection.cs/#L33"><i class="bi bi-code-slash"></i></a>
   </h3>
 
   <div class="markdown level1 summary"><p>Gets the number of elements that are contained in the collection.</p>
@@ -286,7 +286,7 @@ Class CadObjectCollection&lt;T&gt;  <a class="header-action link-secondary" titl
 
   <h3 id="ACadSharp_CadObjectCollection_1_Item_System_Int32_" data-uid="ACadSharp.CadObjectCollection`1.Item(System.Int32)">
   this[int]
-  <a class="header-action link-secondary" title="View source" href="https://github.com/DomCR/ACadSharp/blob/master/src/ACadSharp/CadObjectCollection.cs/#L32"><i class="bi bi-code-slash"></i></a>
+  <a class="header-action link-secondary" title="View source" href="https://github.com/DomCR/ACadSharp/blob/master/src/ACadSharp/CadObjectCollection.cs/#L140"><i class="bi bi-code-slash"></i></a>
   </h3>
 
   <div class="markdown level1 summary"></div>
@@ -322,7 +322,7 @@ Class CadObjectCollection&lt;T&gt;  <a class="header-action link-secondary" titl
 
   <h3 id="ACadSharp_CadObjectCollection_1_Owner" data-uid="ACadSharp.CadObjectCollection`1.Owner">
   Owner
-  <a class="header-action link-secondary" title="View source" href="https://github.com/DomCR/ACadSharp/blob/master/src/ACadSharp/CadObjectCollection.cs/#L25"><i class="bi bi-code-slash"></i></a>
+  <a class="header-action link-secondary" title="View source" href="https://github.com/DomCR/ACadSharp/blob/master/src/ACadSharp/CadObjectCollection.cs/#L38"><i class="bi bi-code-slash"></i></a>
   </h3>
 
   <div class="markdown level1 summary"><p>Owner of the collection.</p>
@@ -456,7 +456,7 @@ Class CadObjectCollection&lt;T&gt;  <a class="header-action link-secondary" titl
 
   <h3 id="ACadSharp_CadObjectCollection_1_GetEnumerator" data-uid="ACadSharp.CadObjectCollection`1.GetEnumerator">
   GetEnumerator()
-  <a class="header-action link-secondary" title="View source" href="https://github.com/DomCR/ACadSharp/blob/master/src/ACadSharp/CadObjectCollection.cs/#L115"><i class="bi bi-code-slash"></i></a>
+  <a class="header-action link-secondary" title="View source" href="https://github.com/DomCR/ACadSharp/blob/master/src/ACadSharp/CadObjectCollection.cs/#L98"><i class="bi bi-code-slash"></i></a>
   </h3>
 
   <div class="markdown level1 summary"><p>Returns an enumerator that iterates through the collection.</p>
@@ -489,27 +489,28 @@ Class CadObjectCollection&lt;T&gt;  <a class="header-action link-secondary" titl
 
   <h3 id="ACadSharp_CadObjectCollection_1_Remove__0_" data-uid="ACadSharp.CadObjectCollection`1.Remove(`0)">
   Remove(T)
-  <a class="header-action link-secondary" title="View source" href="https://github.com/DomCR/ACadSharp/blob/master/src/ACadSharp/CadObjectCollection.cs/#L102"><i class="bi bi-code-slash"></i></a>
+  <a class="header-action link-secondary" title="View source" href="https://github.com/DomCR/ACadSharp/blob/master/src/ACadSharp/CadObjectCollection.cs/#L116"><i class="bi bi-code-slash"></i></a>
   </h3>
 
-  <div class="markdown level1 summary"><p>Removes a <a class="xref" href="ACadSharp.CadObject.html">CadObject</a> from the collection, this method triggers <a class="xref" href="ACadSharp.CadObjectCollection-1.html#ACadSharp_CadObjectCollection_1_OnRemove">OnRemove</a>.</p>
+  <div class="markdown level1 summary"><p>Removes the specified item from the collection.</p>
 </div>
   <div class="markdown level1 conceptual"></div>
 
   <div class="codewrapper">
-    <pre><code class="lang-csharp hljs">public virtual T Remove(T item)</code></pre>
+    <pre><code class="lang-csharp hljs">public virtual bool Remove(T item)</code></pre>
   </div>
 
   <h4 class="section">Parameters</h4>
   <dl class="parameters">
     <dt><code>item</code> <span class="xref">T</span></dt>
-    <dd></dd>
+    <dd><p>The item to remove from the collection.</p>
+</dd>
   </dl>
 
   <h4 class="section">Returns</h4>
   <dl class="parameters">
-    <dt><span class="xref">T</span></dt>
-    <dd><p>The removed <a class="xref" href="ACadSharp.CadObject.html">CadObject</a></p>
+    <dt><a class="xref" href="https://learn.microsoft.com/dotnet/api/system.boolean">bool</a></dt>
+    <dd><p>true if the item was successfully removed; otherwise, false.</p>
 </dd>
   </dl>
 
@@ -519,6 +520,10 @@ Class CadObjectCollection&lt;T&gt;  <a class="header-action link-secondary" titl
 
 
 
+  <h4 class="section" id="ACadSharp_CadObjectCollection_1_Remove__0__remarks">Remarks</h4>
+  <div class="markdown level1 remarks"><p>If an event handler for the removal is registered and cancels the operation, the item will not be
+removed. After successful removal, the item's owner is set to null and a removal event is raised.</p>
+</div>
 
 
 
@@ -533,7 +538,7 @@ Class CadObjectCollection&lt;T&gt;  <a class="header-action link-secondary" titl
   <a class="header-action link-secondary" title="View source" href="https://github.com/DomCR/ACadSharp/blob/master/src/ACadSharp/CadObjectCollection.cs/#L17"><i class="bi bi-code-slash"></i></a>
   </h3>
 
-  <div class="markdown level1 summary"><p>Event triggerrs when an object is added to the collection.</p>
+  <div class="markdown level1 summary"><p>Event triggers when an object is added to the collection.</p>
 </div>
   <div class="markdown level1 conceptual"></div>
 
@@ -559,12 +564,48 @@ Class CadObjectCollection&lt;T&gt;  <a class="header-action link-secondary" titl
 
 
 
-  <h3 id="ACadSharp_CadObjectCollection_1_OnRemove" data-uid="ACadSharp.CadObjectCollection`1.OnRemove">
-  OnRemove
-  <a class="header-action link-secondary" title="View source" href="https://github.com/DomCR/ACadSharp/blob/master/src/ACadSharp/CadObjectCollection.cs/#L20"><i class="bi bi-code-slash"></i></a>
+  <h3 id="ACadSharp_CadObjectCollection_1_OnBeforeRemove" data-uid="ACadSharp.CadObjectCollection`1.OnBeforeRemove">
+  OnBeforeRemove
+  <a class="header-action link-secondary" title="View source" href="https://github.com/DomCR/ACadSharp/blob/master/src/ACadSharp/CadObjectCollection.cs/#L25"><i class="bi bi-code-slash"></i></a>
   </h3>
 
-  <div class="markdown level1 summary"><p>Event triggerrs when an object is removed from the collection.</p>
+  <div class="markdown level1 summary"><p>Occurs before an item is removed from the collection.</p>
+</div>
+  <div class="markdown level1 conceptual"></div>
+
+  <div class="codewrapper">
+    <pre><code class="lang-csharp hljs">public event EventHandler&lt;CollectionChangedEventArgs&gt; OnBeforeRemove</code></pre>
+  </div>
+
+
+
+
+
+
+  <h4 class="section">Event Type</h4>
+  <dl class="parameters">
+    <dt><a class="xref" href="https://learn.microsoft.com/dotnet/api/system.eventhandler-1">EventHandler</a>&lt;<a class="xref" href="ACadSharp.CollectionChangedEventArgs.html">CollectionChangedEventArgs</a>&gt;</dt>
+    <dd></dd>
+  </dl>
+
+
+
+  <h4 class="section" id="ACadSharp_CadObjectCollection_1_OnBeforeRemove_remarks">Remarks</h4>
+  <div class="markdown level1 remarks"><p>Subscribers can use this event to perform actions or validation before the removal operation
+completes. To cancel the removal, handle the event and set the appropriate property on the event arguments if
+supported.</p>
+</div>
+
+
+
+
+
+  <h3 id="ACadSharp_CadObjectCollection_1_OnRemove" data-uid="ACadSharp.CadObjectCollection`1.OnRemove">
+  OnRemove
+  <a class="header-action link-secondary" title="View source" href="https://github.com/DomCR/ACadSharp/blob/master/src/ACadSharp/CadObjectCollection.cs/#L28"><i class="bi bi-code-slash"></i></a>
+  </h3>
+
+  <div class="markdown level1 summary"><p>Event triggers when an object is removed from the collection.</p>
 </div>
   <div class="markdown level1 conceptual"></div>
 

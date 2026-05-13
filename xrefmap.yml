@@ -1805,6 +1805,14 @@ references:
   fullName.vb: ACadSharp.CadObjectCollection(Of T).OnAdd
   nameWithType: CadObjectCollection<T>.OnAdd
   nameWithType.vb: CadObjectCollection(Of T).OnAdd
+- uid: ACadSharp.CadObjectCollection`1.OnBeforeRemove
+  name: OnBeforeRemove
+  href: api/ACadSharp.CadObjectCollection-1.html#ACadSharp_CadObjectCollection_1_OnBeforeRemove
+  commentId: E:ACadSharp.CadObjectCollection`1.OnBeforeRemove
+  fullName: ACadSharp.CadObjectCollection<T>.OnBeforeRemove
+  fullName.vb: ACadSharp.CadObjectCollection(Of T).OnBeforeRemove
+  nameWithType: CadObjectCollection<T>.OnBeforeRemove
+  nameWithType.vb: CadObjectCollection(Of T).OnBeforeRemove
 - uid: ACadSharp.CadObjectCollection`1.OnRemove
   name: OnRemove
   href: api/ACadSharp.CadObjectCollection-1.html#ACadSharp_CadObjectCollection_1_OnRemove
@@ -2833,6 +2841,19 @@ references:
   fullName.vb: ACadSharp.CollectionChangedEventArgs.New
   nameWithType: CollectionChangedEventArgs.CollectionChangedEventArgs
   nameWithType.vb: CollectionChangedEventArgs.New
+- uid: ACadSharp.CollectionChangedEventArgs.Cancel
+  name: Cancel
+  href: api/ACadSharp.CollectionChangedEventArgs.html#ACadSharp_CollectionChangedEventArgs_Cancel
+  commentId: P:ACadSharp.CollectionChangedEventArgs.Cancel
+  fullName: ACadSharp.CollectionChangedEventArgs.Cancel
+  nameWithType: CollectionChangedEventArgs.Cancel
+- uid: ACadSharp.CollectionChangedEventArgs.Cancel*
+  name: Cancel
+  href: api/ACadSharp.CollectionChangedEventArgs.html#ACadSharp_CollectionChangedEventArgs_Cancel_
+  commentId: Overload:ACadSharp.CollectionChangedEventArgs.Cancel
+  isSpec: "True"
+  fullName: ACadSharp.CollectionChangedEventArgs.Cancel
+  nameWithType: CollectionChangedEventArgs.Cancel
 - uid: ACadSharp.CollectionChangedEventArgs.Item
   name: Item
   href: api/ACadSharp.CollectionChangedEventArgs.html#ACadSharp_CollectionChangedEventArgs_Item
@@ -22339,6 +22360,19 @@ references:
   commentId: F:ACadSharp.Entities.Viewport.ASDK_XREC_ANNOTATION_SCALE_INFO
   fullName: ACadSharp.Entities.Viewport.ASDK_XREC_ANNOTATION_SCALE_INFO
   nameWithType: Viewport.ASDK_XREC_ANNOTATION_SCALE_INFO
+- uid: ACadSharp.Entities.Viewport.ActiveStatus
+  name: ActiveStatus
+  href: api/ACadSharp.Entities.Viewport.html#ACadSharp_Entities_Viewport_ActiveStatus
+  commentId: P:ACadSharp.Entities.Viewport.ActiveStatus
+  fullName: ACadSharp.Entities.Viewport.ActiveStatus
+  nameWithType: Viewport.ActiveStatus
+- uid: ACadSharp.Entities.Viewport.ActiveStatus*
+  name: ActiveStatus
+  href: api/ACadSharp.Entities.Viewport.html#ACadSharp_Entities_Viewport_ActiveStatus_
+  commentId: Overload:ACadSharp.Entities.Viewport.ActiveStatus
+  isSpec: "True"
+  fullName: ACadSharp.Entities.Viewport.ActiveStatus
+  nameWithType: Viewport.ActiveStatus
 - uid: ACadSharp.Entities.Viewport.AmbientLightColor
   name: AmbientLightColor
   href: api/ACadSharp.Entities.Viewport.html#ACadSharp_Entities_Viewport_AmbientLightColor
@@ -36885,6 +36919,19 @@ references:
   commentId: F:ACadSharp.Objects.Layout.PaperLayoutName
   fullName: ACadSharp.Objects.Layout.PaperLayoutName
   nameWithType: Layout.PaperLayoutName
+- uid: ACadSharp.Objects.Layout.PaperViewport
+  name: PaperViewport
+  href: api/ACadSharp.Objects.Layout.html#ACadSharp_Objects_Layout_PaperViewport
+  commentId: P:ACadSharp.Objects.Layout.PaperViewport
+  fullName: ACadSharp.Objects.Layout.PaperViewport
+  nameWithType: Layout.PaperViewport
+- uid: ACadSharp.Objects.Layout.PaperViewport*
+  name: PaperViewport
+  href: api/ACadSharp.Objects.Layout.html#ACadSharp_Objects_Layout_PaperViewport_
+  commentId: Overload:ACadSharp.Objects.Layout.PaperViewport
+  isSpec: "True"
+  fullName: ACadSharp.Objects.Layout.PaperViewport
+  nameWithType: Layout.PaperViewport
 - uid: ACadSharp.Objects.Layout.SubclassMarker
   name: SubclassMarker
   href: api/ACadSharp.Objects.Layout.html#ACadSharp_Objects_Layout_SubclassMarker
