@@ -115,7 +115,7 @@ public abstract class WriterSingleObjectTests : IOTestsBase
 
 		public SingleCaseGenerator()
 		{
-			this.Document.Header.ShowModelSpace = false;
+			this.Document.Header.ShowModelSpace = true;
 		}
 
 		public SingleCaseGenerator(string name) : this()
