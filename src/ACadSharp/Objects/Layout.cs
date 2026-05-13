@@ -201,6 +201,17 @@ public class Layout : PlotSettings
 	/// </summary>
 	public const string PaperLayoutName = "Layout1";
 
+	/// <summary>
+	/// Gets the paper viewport associated with this layout. If there are multiple viewports, this property returns the first one found. If no viewports are associated with the layout, this property returns null.
+	/// </summary>
+	public Viewport PaperViewport
+	{
+		get
+		{
+			return this.Viewports.FirstOrDefault();
+		}
+	}
+
 	private BlockRecord _blockRecord;
 
 	//333	Shade plot ID
@@ -272,15 +283,17 @@ public class Layout : PlotSettings
 			return;
 		}
 
-		Viewport vp = this.Viewports.FirstOrDefault();
+		Viewport vp = this.PaperViewport;
 		if (vp == null)
 		{
 			vp = new Viewport();
 			this.AddViewport(vp);
 		}
 
+		// It doesn't take any real effect
 		vp.Height = this.PaperHeight;
 		vp.Width = this.PaperWidth;
+		vp.Center = new XYZ(vp.Width / 2, vp.Height / 2, 0);
 	}
 
 	internal override void AssignDocument(CadDocument doc)
