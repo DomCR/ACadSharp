@@ -334,6 +334,8 @@ public class BlockRecord : TableEntry, IGeometricEntity
 		this.BlockEntity = new Block(this);
 		this.BlockEnd = new BlockEnd(this);
 		this.Entities = new CadObjectCollection<Entity>(this);
+
+		this.Entities.OnBeforeRemove += this.onEntitiesBeforeRemove;
 	}
 
 	/// <summary>
@@ -494,5 +496,13 @@ public class BlockRecord : TableEntry, IGeometricEntity
 		this.Document.UnregisterCollection(this.Entities);
 
 		base.UnassignDocument();
+	}
+
+	private void onEntitiesBeforeRemove(object sender, CollectionChangedEventArgs e)
+	{
+		if (e.Item is Viewport vp && vp.RepresentsPaper)
+		{
+			e.Cancel = true;
+		}
 	}
 }

@@ -83,6 +83,23 @@ public abstract class CadReaderTestsBase<T> : IOTestsBase, IDisposable
 		this._docIntegrity.AssertTableHierarchy(doc);
 	}
 
+	public virtual void CheckPaperViewportsTest(FileModel test)
+	{
+		CadDocument doc = this.getDocument(test);
+
+		foreach (var layout in doc.Layouts)
+		{
+			if (!layout.IsPaperSpace)
+			{
+				Assert.Null(layout.PaperViewport);
+			}
+			else
+			{
+				Assert.NotNull(layout.PaperViewport);
+			}
+		}
+	}
+
 	public void Dispose()
 	{
 		this._documents.Clear();

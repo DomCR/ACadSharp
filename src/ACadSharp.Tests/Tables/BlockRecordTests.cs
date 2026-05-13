@@ -50,6 +50,19 @@ public class BlockRecordTests : TableEntryCommonTests<BlockRecord>
 		Assert.NotNull(record.BlockEnd);
 	}
 
+	[Fact]
+	public void CanRemoveViewport()
+	{
+		string name = "my_block";
+		BlockRecord record = new BlockRecord(name);
+
+		Viewport vp = new Viewport();
+		record.Entities.Add(vp);
+
+		Assert.False(vp.RepresentsPaper);
+		Assert.True(record.Entities.Remove(vp));
+	}
+
 	[Fact()]
 	public void CloneDetachDocumentTest()
 	{

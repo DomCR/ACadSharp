@@ -62,9 +62,16 @@ namespace ACadSharp.Tests.Common
 			this.entryNotNull(doc.VPorts, VPort.DefaultName);
 
 			//Assert Model layout
-			var layout = doc.Layouts.FirstOrDefault(l => l.Name == Layout.ModelLayoutName);
-			this.notNull(layout, "Layout Model is null");
-			Assert.True(layout.AssociatedBlock == doc.ModelSpace);
+			var model = doc.Layouts.FirstOrDefault(l => l.Name == Layout.ModelLayoutName);
+			this.notNull(model, "Layout Model is null");
+			Assert.True(model.AssociatedBlock == doc.ModelSpace);
+			Assert.False(model.IsPaperSpace);
+			Assert.Null(model.PaperViewport);
+
+			var paper = doc.Layouts.FirstOrDefault(l => l.Name == Layout.PaperLayoutName);
+			this.notNull(paper, "Layout Paper is null");
+			Assert.True(paper.IsPaperSpace);
+			Assert.NotNull(paper.PaperViewport);
 
 			this.entryNotNull(doc.Materials, Material.GlobalName);
 			this.entryNotNull(doc.Materials, Material.ByLayerName);

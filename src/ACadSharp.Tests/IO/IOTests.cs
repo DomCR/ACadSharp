@@ -26,8 +26,10 @@ namespace ACadSharp.Tests.IO
 			List<Entity> entities = new List<Entity>(doc.Entities);
 			foreach (var item in entities)
 			{
-				Entity e = doc.Entities.Remove(item);
-				transfer.Entities.Add(e);
+				if (doc.Entities.Remove(item))
+				{
+					transfer.Entities.Add(item);
+				}
 			}
 
 			string file = Path.GetFileNameWithoutExtension(test.Path);
@@ -47,8 +49,10 @@ namespace ACadSharp.Tests.IO
 			List<Entity> entities = new List<Entity>(doc.Entities);
 			foreach (var item in entities)
 			{
-				Entity e = doc.Entities.Remove(item);
-				transfer.Entities.Add(e);
+				if (doc.Entities.Remove(item))
+				{
+					transfer.Entities.Add(item);
+				}
 			}
 
 			string file = Path.GetFileNameWithoutExtension(test.Path);
@@ -91,8 +95,10 @@ namespace ACadSharp.Tests.IO
 			List<Entity> entities = new List<Entity>(doc.Entities);
 			foreach (var item in entities)
 			{
-				Entity e = doc.Entities.Remove(item);
-				transfer.Entities.Add(e);
+				if (doc.Entities.Remove(item))
+				{
+					transfer.Entities.Add(item);
+				}
 			}
 
 			string file = Path.GetFileNameWithoutExtension(test.Path);
