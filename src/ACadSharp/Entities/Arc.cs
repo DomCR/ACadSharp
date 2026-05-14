@@ -94,8 +94,8 @@ namespace ACadSharp.Entities
 			this.Center = center;
 			this.Radius = center.DistanceFrom(start);
 
-			this.StartAngle = XYZ.AxisX.GetAngle2(start - center, Normal);
-			this.EndAngle = XYZ.AxisX.GetAngle2(end - center, Normal);
+			this.StartAngle = XYZ.AxisX.GetAngle(start - center, Normal);
+			this.EndAngle = XYZ.AxisX.GetAngle(end - center, Normal);
 		}
 
 		/// <summary>
