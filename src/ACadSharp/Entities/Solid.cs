@@ -74,7 +74,7 @@ namespace ACadSharp.Entities
 		/// <inheritdoc/>
 		public override BoundingBox GetBoundingBox()
 		{
-			return BoundingBox.Null;
+			return BoundingBox.FromPoints(new[] { this.FirstCorner, this.SecondCorner, this.ThirdCorner, this.FourthCorner });
 		}
 	}
 }

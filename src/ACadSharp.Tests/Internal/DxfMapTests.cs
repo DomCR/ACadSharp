@@ -24,7 +24,8 @@ namespace ACadSharp.Tests.Internal
 				if (item.IsSubclassOf(typeof(Entity))
 					|| item.IsSubclassOf(typeof(TableEntry)))
 				{
-					if (item == typeof(UnknownEntity))
+					if (item == typeof(UnknownEntity) 
+						|| item == typeof(PdfUnderlay))
 					{
 						continue;
 					}

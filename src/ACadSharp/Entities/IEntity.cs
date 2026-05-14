@@ -3,6 +3,15 @@ using ACadSharp.Tables;
 
 namespace ACadSharp.Entities
 {
+	/// <summary>
+	/// Defines the contract for a CAD entity, providing common properties and methods for graphical objects within a CAD
+	/// document.
+	/// </summary>
+	/// <remarks>The <see cref="IEntity"/> interface exposes standard attributes such as color, layer, linetype, line weight,
+	/// material, and transparency, as well as methods to resolve effective property values and to match properties with
+	/// another entity. Implementations are expected to represent geometric or drawable objects in a CAD environment. This
+	/// interface extends IHandledCadObject and IGeometricEntity, ensuring that all entities have unique handles and
+	/// geometric characteristics. Thread safety and mutability depend on the specific implementation.</remarks>
 	public interface IEntity : IHandledCadObject, IGeometricEntity
 	{
 		/// <summary>
@@ -14,6 +23,11 @@ namespace ACadSharp.Entities
 		/// Using an RGB value, you can choose from millions of colors.
 		/// </remarks>
 		Color Color { get; set; }
+
+		/// <summary>
+		/// Document where this element belongs.
+		/// </summary>
+		public CadDocument Document { get; }
 
 		/// <summary>
 		/// Specifies the visibility of an object or the application.
@@ -42,12 +56,12 @@ namespace ACadSharp.Entities
 		/// <remarks>
 		/// This must be a positive, non-negative number.
 		/// </remarks>
-		double LinetypeScale { get; set; }
+		double LineTypeScale { get; set; }
 
 		/// <summary>
-		/// Specifies the lineweight of an individual object or the default lineweight for the drawing.
+		/// Specifies the line weight of an individual object or the default line weight for the drawing.
 		/// </summary>
-		LineweightType LineWeight { get; set; }
+		LineWeightType LineWeight { get; set; }
 
 		/// <summary>
 		/// Material object (present if not BYLAYER)
@@ -66,9 +80,23 @@ namespace ACadSharp.Entities
 		Color GetActiveColor();
 
 		/// <summary>
-		/// Match entity properties to another entity
+		/// Get the active line type for the entity, process the line types like <see cref="LineType.ByBlock"/> and <see cref="LineType.ByLayer"/>.
 		/// </summary>
-		/// <param name="entity"></param>
+		/// <returns></returns>
+		LineType GetActiveLineType();
+
+		/// <summary>
+		/// Get the active line weight for the entity, process the line weights like <see cref="LineWeightType.ByBlock"/> and <see cref="LineWeightType.ByLayer"/>.
+		/// </summary>
+		/// <returns></returns>
+		LineWeightType GetActiveLineWeightType();
+
+		/// <summary>
+		/// Copies matching property values from the specified entity to the current object.
+		/// </summary>
+		/// <remarks>Only properties with matching names and compatible types are considered for copying. Properties that
+		/// do not exist or are not compatible in either object are ignored.</remarks>
+		/// <param name="entity">The source entity whose property values will be matched and copied. Cannot be null.</param>
 		void MatchProperties(IEntity entity);
 	}
 }

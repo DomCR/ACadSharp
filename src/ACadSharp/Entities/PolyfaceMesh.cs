@@ -1,76 +1,70 @@
 ﻿using ACadSharp.Attributes;
-using CSMath;
-using System;
-using System.Collections.Generic;
 
-namespace ACadSharp.Entities
+namespace ACadSharp.Entities;
+
+/// <summary>
+/// Represents a <see cref="PolyfaceMesh"/> entity.
+/// </summary>
+/// <remarks>
+/// Object name <see cref="DxfFileToken.EntityPolyline"/> <br/>
+/// Dxf class name <see cref="DxfSubclassMarker.PolyfaceMesh"/>
+/// </remarks>
+[DxfName(DxfFileToken.EntityPolyline)]
+[DxfSubClass(DxfSubclassMarker.PolyfaceMesh)]
+public class PolyfaceMesh : Polyline<VertexFaceMesh>
 {
 	/// <summary>
-	/// Represents a <see cref="PolyfaceMesh"/> entity.
+	/// Face records with the triangle indexes.
 	/// </summary>
-	/// <remarks>
-	/// Object name <see cref="DxfFileToken.EntityPolyline"/> <br/>
-	/// Dxf class name <see cref="DxfSubclassMarker.PolyfaceMesh"/>
-	/// </remarks>
-	[DxfName(DxfFileToken.EntityPolyline)]
-	[DxfSubClass(DxfSubclassMarker.PolyfaceMesh)]
-	public class PolyfaceMesh : Polyline
+	[DxfCodeValue(DxfReferenceType.Count, 72)]
+	public CadObjectCollection<VertexFaceRecord> Faces { get; private set; }
+
+	/// <inheritdoc/>
+	public override PolylineFlags Flags { get => base.Flags | PolylineFlags.PolyfaceMesh; set => base.Flags = value; }
+
+	/// <inheritdoc/>
+	public override string ObjectName => DxfFileToken.EntityPolyline;
+
+	/// <inheritdoc/>
+	public override ObjectType ObjectType { get { return ObjectType.POLYLINE_PFACE; } }
+
+	/// <inheritdoc/>
+	public override string SubclassMarker => DxfSubclassMarker.PolyfaceMesh;
+
+	/// <inheritdoc/>
+	public PolyfaceMesh() : base()
 	{
-		/// <inheritdoc/>
-		public override ObjectType ObjectType { get { return ObjectType.POLYLINE_PFACE; } }
+	}
 
-		/// <inheritdoc/>
-		public override string ObjectName => DxfFileToken.EntityPolyline;
+	/// <inheritdoc/>
+	public override CadObject Clone()
+	{
+		PolyfaceMesh clone = (PolyfaceMesh)base.Clone();
 
-		/// <inheritdoc/>
-		public override string SubclassMarker => DxfSubclassMarker.PolyfaceMesh;
-
-		public CadObjectCollection<VertexFaceRecord> Faces { get; private set; }
-
-		public PolyfaceMesh()
+		foreach (VertexFaceRecord v in this.Faces)
 		{
-			this.Vertices.OnAdd += this.verticesOnAdd;
-			this.Faces = new CadObjectCollection<VertexFaceRecord>(this);
+			clone.Faces.Add((VertexFaceRecord)v.Clone());
 		}
 
-		public override IEnumerable<Entity> Explode()
-		{
-			throw new System.NotImplementedException();
-		}
+		return clone;
+	}
 
-		/// <inheritdoc/>
-		public override CadObject Clone()
-		{
-			PolyfaceMesh clone = (PolyfaceMesh)base.Clone();
+	internal override void AssignDocument(CadDocument doc)
+	{
+		base.AssignDocument(doc);
+		doc.RegisterCollection(this.Faces);
+	}
 
-			clone.Faces = new SeqendCollection<VertexFaceRecord>(clone);
-			foreach (VertexFaceRecord v in this.Faces)
-			{
-				clone.Vertices.Add((VertexFaceRecord)v.Clone());
-			}
+	internal override void UnassignDocument()
+	{
+		this.Document.UnregisterCollection(this.Faces);
+		base.UnassignDocument();
+	}
 
-			return clone;
-		}
-
-		protected override void verticesOnAdd(object sender, CollectionChangedEventArgs e)
-		{
-			if (e.Item is not VertexFaceMesh)
-			{
-				this.Vertices.Remove((Vertex)e.Item);
-				throw new ArgumentException($"Wrong vertex type {e.Item.SubclassMarker} for {this.SubclassMarker}");
-			}
-		}
-
-		internal override void AssignDocument(CadDocument doc)
-		{
-			base.AssignDocument(doc);
-			doc.RegisterCollection(this.Faces);
-		}
-
-		internal override void UnassignDocument()
-		{
-			this.Document.UnregisterCollection(this.Faces);
-			base.UnassignDocument();
-		}
+	protected override void initCollections()
+	{
+		base.initCollections();
+		this.Faces = new CadObjectCollection<VertexFaceRecord>(this);
+		this.Faces.OnAdd += this.onAddVertices;
 	}
 }

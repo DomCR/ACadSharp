@@ -1,26 +1,25 @@
 ﻿using System.IO;
 using System.Text;
 
-namespace ACadSharp.IO.DWG
+namespace ACadSharp.IO.DWG.DwgStreamWriters;
+
+internal class DwgFileHeaderWriterAC21 : DwgFileHeaderWriterAC18
 {
-	internal class DwgFileHeaderWriterAC21 : DwgFileHeaderWriterAC18
+	public override int FileHeaderSize { get { return 0x480; } }
+
+	protected override ICompressor compressor => new DwgLZ77AC21Compressor();
+
+	public DwgFileHeaderWriterAC21(Stream stream, Encoding encoding, CadDocument model) : base(stream, encoding, model)
 	{
-		protected override int _fileHeaderSize { get { return 0x480; } }
+	}
 
-		protected override ICompressor compressor => new DwgLZ77AC21Compressor();
+	protected override void craeteLocalSection(DwgSectionDescriptor descriptor, byte[] buffer, int decompressedSize, ulong offset, int totalSize, bool isCompressed)
+	{
+		MemoryStream descriptorStream = this.applyCompression(buffer, decompressedSize, offset, totalSize, isCompressed);
 
-		public DwgFileHeaderWriterAC21(Stream stream, Encoding encoding, CadDocument model) : base(stream, encoding, model)
-		{
-		}
+		this.writeMagicNumber();
 
-		protected override void craeteLocalSection(DwgSectionDescriptor descriptor, byte[] buffer, int decompressedSize, ulong offset, int totalSize, bool isCompressed)
-		{
-			MemoryStream descriptorStream = this.applyCompression(buffer, decompressedSize, offset, totalSize, isCompressed);
-
-			this.writeMagicNumber();
-
-			//Implementation for the LZ77 compressor for AC1021
-			//modify the localsection writer to match this specific version
-		}
+		//Implementation for the LZ77 compressor for AC1021
+		//modify the localsection writer to match this specific version
 	}
 }

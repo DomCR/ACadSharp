@@ -1,7 +1,5 @@
 ﻿using ACadSharp.Entities;
-using ACadSharp.IO;
 using ACadSharp.Tests.TestModels;
-using System.IO;
 using Xunit;
 using Xunit.Abstractions;
 

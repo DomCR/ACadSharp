@@ -30,8 +30,8 @@ namespace ACadSharp
 			return DxfMap.Create(typeof(T));
 		}
 
-		//TODO: change to public? Using the type parameter does not constraing the use of the method
-		internal static DxfMap Create(Type type)
+		//Useful only for none cad objects
+		internal static DxfMap Create(Type type, string name = null)
 		{
 			if (tryGetFromCache(type, out var map))
 			{
@@ -43,7 +43,14 @@ namespace ACadSharp
 
 			DxfNameAttribute dxf = type.GetCustomAttribute<DxfNameAttribute>();
 
-			map.Name = dxf?.Name;
+			if (string.IsNullOrEmpty(name))
+			{
+				map.Name = dxf?.Name;
+			}
+			else
+			{
+				map.Name = name;
+			}
 
 			for (Type t = type; t != null; t = t.BaseType)
 			{

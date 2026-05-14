@@ -41,8 +41,77 @@ namespace ACadSharp.Entities
 		/// <inheritdoc/>
 		public override string SubclassMarker => DxfSubclassMarker.Arc;
 
+		/// <summary>
+		/// Sweep of the arc, in radians.
+		/// </summary>
+		public double Sweep
+		{
+			get
+			{
+				double start = this.StartAngle;
+				double end = this.EndAngle;
+				if (end < start)
+				{
+					end += MathHelper.TwoPI;
+				}
+
+				return start - end;
+			}
+		}
+
 		/// <inheritdoc/>
 		public Arc() : base() { }
+
+		/// <summary>
+		/// Initializes a new instance of the <see cref="Arc"/> class.
+		/// </summary>
+		/// <param name="center"></param>
+		/// <param name="radius"></param>
+		/// <param name="start"></param>
+		/// <param name="end"></param>
+		public Arc(XYZ center, double radius, double start, double end) : base()
+		{
+			this.Center = center;
+			this.Radius = radius;
+			this.StartAngle = start;
+			this.EndAngle = end;
+		}
+
+		/// <summary>
+		/// Initializes a new instance of the Arc class that passes through the specified start and end points, is centered at
+		/// the given point, and lies in the plane defined by the specified normal vector.
+		/// </summary>
+		/// <remarks>The arc is constructed in the plane defined by the normal vector, with its center at the
+		/// specified point. The start and end points determine the angular span of the arc. The direction from start to end
+		/// is determined by the order of the points and the orientation of the normal vector.</remarks>
+		/// <param name="center">The center point of the arc. Defines the origin of the arc's circle.</param>
+		/// <param name="start">The start point of the arc. Must lie on the circle defined by the center and radius.</param>
+		/// <param name="end">The end point of the arc. Must lie on the circle defined by the center and radius.</param>
+		/// <param name="normal">The normal vector defining the plane in which the arc lies. Must be a non-zero vector.</param>
+		public Arc(XYZ center, XYZ start, XYZ end, XYZ normal)
+		{
+			this.Normal = normal;
+			this.Center = center;
+			this.Radius = center.DistanceFrom(start);
+
+			this.StartAngle = XYZ.AxisX.GetAngle(start - center, Normal);
+			this.EndAngle = XYZ.AxisX.GetAngle(end - center, Normal);
+		}
+
+		/// <summary>
+		/// Initializes a new instance of the Arc class that passes through the specified center, start, and end points, using
+		/// the default axis of rotation.
+		/// </summary>
+		/// <remarks>This constructor creates an arc in the plane defined by the provided points, using the Z axis as
+		/// the default normal. To specify a different axis of rotation, use the constructor that accepts an axis
+		/// parameter.</remarks>
+		/// <param name="center">The center point of the arc.</param>
+		/// <param name="start">The start point of the arc.</param>
+		/// <param name="end">The end point of the arc.</param>
+		public Arc(XYZ center, XYZ start, XYZ end)
+			: this(center, start, end, XYZ.AxisZ)
+		{
+		}
 
 		/// <summary>
 		/// Creates an arc using 2 points and a bulge.
@@ -78,6 +147,53 @@ namespace ACadSharp.Entities
 		}
 
 		/// <summary>
+		/// Calculates the bulge factor for an arc defined by its center, start point, end point, and direction.
+		/// </summary>
+		/// <remarks>The bulge factor is commonly used in geometric and CAD applications to represent arcs in polyline
+		/// definitions.</remarks>
+		/// <param name="center">The center point of the arc.</param>
+		/// <param name="start">The starting point of the arc.</param>
+		/// <param name="end">The ending point of the arc.</param>
+		/// <param name="clockWise">A value indicating whether the arc is drawn in a clockwise direction. <see langword="true"/> if the arc is
+		/// clockwise; otherwise, <see langword="false"/>.</param>
+		/// <returns>The bulge factor of the arc, which represents the tangent of one-fourth of the included angle. A positive value
+		/// indicates a counterclockwise arc, while a negative value indicates a clockwise arc.</returns>
+		internal static double GetBulge(XY center, XY start, XY end, bool clockWise)
+		{
+
+			//TODO: add normal //Needed??
+
+			XY u = start - center;
+			XY u2 = new XY(0.0 - u.Y, u.X);
+			XY v = end - center;
+			double angle = Math.Atan2(x: u.Dot(v), y: u2.Dot(v));
+			if (clockWise)
+			{
+				if (angle > 0.0)
+				{
+					angle -= MathHelper.PI * 2.0;
+				}
+			}
+			else if (angle < 0.0)
+			{
+				angle += MathHelper.PI * 2.0;
+			}
+
+			return Math.Tan(angle / 4.0);
+		}
+
+		/// <summary>
+		/// Calculates the bulge value corresponding to a given angle.
+		/// </summary>
+		/// <param name="angle">The angle, in radians, for which to calculate the bulge. The angle must be a finite value.</param>
+		/// <returns>The bulge value, which is the tangent of half the angle.</returns>
+		internal static double GetBulgeFromAngle(double angle)
+		{
+			// TODO: NEEDED?
+			return Math.Tan(angle / 4);
+		}
+
+		/// <summary>
 		/// Get the center coordinate from a start, end an a bulge value.
 		/// </summary>
 		/// <param name="start">Start point.</param>
@@ -105,19 +221,17 @@ namespace ACadSharp.Entities
 
 			double gamma = (Math.PI - theta) / 2;
 			double phi = (end - start).GetAngle() + Math.Sign(bulge) * gamma;
-			return new XY(start.X + radius * CSMath.MathHelper.Cos(phi), start.Y + radius * CSMath.MathHelper.Sin(phi));
+			return new XY(start.X + radius * MathHelper.Cos(phi), start.Y + radius * MathHelper.Sin(phi));
 		}
 
 		/// <inheritdoc/>
 		public override void ApplyTransform(Transform transform)
 		{
-			var center = this.Center;
 			var normal = this.Normal;
-			var radius = this.Radius;
 
 			base.ApplyTransform(transform);
 
-			Matrix3 trans = getWorldMatrix(transform, normal, this.Normal, out Matrix3 transOW, out Matrix3 transWO);
+			Matrix3 trans = this.getWorldMatrix(transform, normal, this.Normal, out Matrix3 transOW, out Matrix3 transWO);
 
 			XY start = XY.Rotate(new XY(this.Radius, 0.0), this.StartAngle);
 			XY end = XY.Rotate(new XY(this.Radius, 0.0), this.EndAngle);
@@ -133,7 +247,7 @@ namespace ACadSharp.Entities
 			XY startPoint = new XY(vStart.X, vStart.Y);
 			XY endPoint = new XY(vEnd.X, vEnd.Y);
 
-			if (Math.Sign(trans.m00 * trans.m11 * trans.m22) < 0)
+			if (Math.Sign(trans.M00 * trans.M11 * trans.M22) < 0)
 			{
 				this.EndAngle = startPoint.GetAngle();
 				this.StartAngle = endPoint.GetAngle();
@@ -189,15 +303,13 @@ namespace ACadSharp.Entities
 				throw new ArgumentOutOfRangeException(nameof(precision), precision, "The arc precision must be equal or greater than two.");
 			}
 
-			this.GetEndVertices(out XYZ start, out XYZ end);
-
 			return CurveExtensions.PolygonalVertexes(
 				precision,
 				this.Center,
 				this.StartAngle,
 				this.EndAngle,
-				this.Normal,
-				start - this.Center
+				this.Radius,
+				this.Normal.Normalize()
 			);
 		}
 	}

@@ -1,4 +1,5 @@
-﻿using ACadSharp.Tables;
+﻿using ACadSharp.Entities;
+using ACadSharp.Tables;
 using ACadSharp.Tables.Collections;
 using CSMath;
 using System;
@@ -102,10 +103,8 @@ namespace ACadSharp.IO.DXF
 				case VPort vport:
 					this.writeVPort(vport, map.SubClasses[vport.SubclassMarker]);
 					break;
-#if TEST
 				default:
-					throw new NotImplementedException();
-#endif
+					throw new NotImplementedException($"TableEntry not implemented {entry.GetType().FullName}");
 			}
 
 			this.writeExtendedData(entry.ExtendedData);
@@ -140,7 +139,7 @@ namespace ACadSharp.IO.DXF
 			if (style.TextBackgroundFillMode != 0)
 			{
 				this._writer.Write(69, (short)style.TextBackgroundFillMode, map);
-				this._writer.Write(70, style.TextBackgroundColor.Index, map);
+				this._writer.Write(70, style.TextBackgroundColor.GetApproxIndex(), map);
 			}
 			else
 			{
@@ -183,7 +182,7 @@ namespace ACadSharp.IO.DXF
 			this._writer.Write(177, style.ExtensionLineColor.GetApproxIndex(), map);
 			this._writer.Write(178, style.TextColor.GetApproxIndex(), map);
 
-			this._writer.Write(179, style.AngularDimensionDecimalPlaces);
+			this._writer.Write(179, style.AngularDecimalPlaces);
 
 			this._writer.Write(271, style.DecimalPlaces);
 			this._writer.Write(272, style.ToleranceDecimalPlaces);
@@ -249,20 +248,20 @@ namespace ACadSharp.IO.DXF
 
 			this._writer.Write(72, (short)linetype.Alignment, map);
 			this._writer.Write(73, (short)linetype.Segments.Count(), map);
-			this._writer.Write(40, linetype.PatternLen);
+			this._writer.Write(40, linetype.PatternLength);
 
 			foreach (LineType.Segment s in linetype.Segments)
 			{
 				this._writer.Write(49, s.Length);
-				this._writer.Write(74, (short)s.Shapeflag);
+				this._writer.Write(74, (short)s.Flags);
 
-				if (s.Shapeflag != LinetypeShapeFlags.None)
+				if (s.Flags != LineTypeShapeFlags.None)
 				{
-					if (s.Shapeflag.HasFlag(LinetypeShapeFlags.Shape))
+					if (s.Flags.HasFlag(LineTypeShapeFlags.Shape))
 					{
 						this._writer.Write(75, s.ShapeNumber);
 					}
-					if (s.Shapeflag.HasFlag(LinetypeShapeFlags.Text))
+					if (s.Flags.HasFlag(LineTypeShapeFlags.Text))
 					{
 						this._writer.Write(75, (short)0);
 					}

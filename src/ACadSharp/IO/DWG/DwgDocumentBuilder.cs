@@ -1,7 +1,5 @@
 ﻿using ACadSharp.Entities;
 using ACadSharp.IO.Templates;
-using ACadSharp.Objects;
-using System;
 using System.Collections.Generic;
 
 namespace ACadSharp.IO.DWG
@@ -30,10 +28,12 @@ namespace ACadSharp.IO.DWG
 
 		public override void BuildDocument()
 		{
+			this.createMissingHandles();
+
 			//Set the names for the block records before add them to the table
 			foreach (var item in this.BlockRecordTemplates)
 			{
-				item.SetBlockToRecord(this);
+				item.SetBlockToRecord(this, this.HeaderHandles);
 			}
 
 			this.RegisterTables();

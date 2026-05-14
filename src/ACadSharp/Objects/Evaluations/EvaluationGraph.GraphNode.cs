@@ -77,8 +77,8 @@ namespace ACadSharp.Objects.Evaluations
 			{
 				Node clone = (Node)MemberwiseClone();
 
-				clone.Next = (Node)Next.Clone();
-				clone.Expression = (EvaluationExpression)Expression.Clone();
+				clone.Next = (Node)Next?.Clone();
+				clone.Expression = (EvaluationExpression)Expression?.Clone();
 
 				return clone;
 			}

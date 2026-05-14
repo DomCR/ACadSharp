@@ -81,17 +81,17 @@ namespace ACadSharp.IO.DWG
 					throw new NotSupportedException($"Dwg version not supported: {version}");
 				case ACadVersion.AC1012:
 				case ACadVersion.AC1014:
-					return new DwgmMergedStreamWriterAC14(
+					return new DwgMergedStreamWriterAC14(
 						stream,
 						new DwgStreamWriterAC12(stream, encoding),
 						new DwgStreamWriterAC12(new MemoryStream(), encoding));
 				case ACadVersion.AC1015:
-					return new DwgmMergedStreamWriterAC14(
+					return new DwgMergedStreamWriterAC14(
 							stream,
 							new DwgStreamWriterAC15(stream, encoding),
 							new DwgStreamWriterAC15(new MemoryStream(), encoding));
 				case ACadVersion.AC1018:
-					return new DwgmMergedStreamWriterAC14(
+					return new DwgMergedStreamWriterAC14(
 							stream,
 							new DwgStreamWriterAC18(stream, encoding),
 							new DwgStreamWriterAC18(new MemoryStream(), encoding));
@@ -153,7 +153,7 @@ namespace ACadSharp.IO.DWG
 			}
 		}
 
-		public void WriteBytes(byte[] arr, int initialIndex, int length)
+		public override void WriteBytes(byte[] arr, int initialIndex, int length)
 		{
 			if (this.BitShift == 0)
 			{
@@ -363,7 +363,7 @@ namespace ACadSharp.IO.DWG
 			this.WriteRawLong(miliseconds);
 		}
 
-		public virtual void WriteCmColor(Color value)
+		public virtual void WriteCmColor(Color value, bool useTextStream = false)
 		{
 			//R15 and earlier: BS color index
 			short index = 0;

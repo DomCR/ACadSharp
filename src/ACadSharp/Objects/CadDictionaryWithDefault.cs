@@ -13,15 +13,6 @@ namespace ACadSharp.Objects
 	[DxfSubClass(DxfSubclassMarker.DictionaryWithDefault)]
 	public class CadDictionaryWithDefault : CadDictionary
 	{
-		/// <inheritdoc/>
-		public override ObjectType ObjectType { get { return ObjectType.UNLISTED; } }
-
-		/// <inheritdoc/>
-		public override string ObjectName => DxfFileToken.ObjectDictionaryWithDefault;
-
-		/// <inheritdoc/>
-		public override string SubclassMarker => DxfSubclassMarker.DictionaryWithDefault;
-
 		/// <summary>
 		/// Default entry.
 		/// </summary>
@@ -30,5 +21,23 @@ namespace ACadSharp.Objects
 		/// </remarks>
 		[DxfCodeValue(DxfReferenceType.Handle, 340)]
 		public CadObject DefaultEntry { get; set; }
+
+		/// <inheritdoc/>
+		public override string ObjectName => DxfFileToken.ObjectDictionaryWithDefault;
+
+		/// <inheritdoc/>
+		public override ObjectType ObjectType { get { return ObjectType.UNLISTED; } }
+
+		/// <inheritdoc/>
+		public override string SubclassMarker => DxfSubclassMarker.DictionaryWithDefault;
+
+		public CadDictionaryWithDefault() : base()
+		{
+		}
+
+		public CadDictionaryWithDefault(string name, CadObject defaultEntry) : base(name)
+		{
+			this.DefaultEntry = defaultEntry;
+		}
 	}
 }

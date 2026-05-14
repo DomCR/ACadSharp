@@ -6,7 +6,7 @@ namespace ACadSharp.Tables
 	/// Represents a line type complex element type.
 	/// </summary>
 	[Flags]
-	public enum LinetypeShapeFlags : short
+	public enum LineTypeShapeFlags : short
 	{
 		/// <summary>
 		/// None.

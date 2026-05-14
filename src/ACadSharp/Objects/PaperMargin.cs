@@ -1,4 +1,6 @@
-﻿namespace ACadSharp.Objects
+﻿using CSMath;
+
+namespace ACadSharp.Objects
 {
 	/// <summary>
 	/// Represents the unprintable margins of a paper. 
@@ -24,6 +26,16 @@
 		/// Gets or set the size, in millimeters, of unprintable margin on top side of paper.
 		/// </summary>
 		public double Top { get; set; }
+
+		/// <summary>
+		/// Gets the bottom left corner of the margin.
+		/// </summary>
+		public XY BottomLeftCorner { get { return new XY(this.Left, this.Bottom); } }
+
+		/// <summary>
+		/// Gets the top right corer of the margin.
+		/// </summary>
+		public XY TopCorner { get { return new XY(this.Right, this.Top); } }
 
 		/// <summary>
 		/// Initializes a new instance of <see cref="PaperMargin"/>.

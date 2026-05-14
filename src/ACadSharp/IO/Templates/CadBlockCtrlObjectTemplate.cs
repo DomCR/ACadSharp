@@ -11,9 +11,9 @@ namespace ACadSharp.IO.Templates
 
 		public CadBlockCtrlObjectTemplate(BlockRecordsTable blocks) : base(blocks) { }
 
-		public override void Build(CadDocumentBuilder builder)
+		protected override void build(CadDocumentBuilder builder)
 		{
-			base.Build(builder);
+			base.build(builder);
 
 			if (builder.TryGetCadObject<BlockRecord>(this.ModelSpaceHandle, out BlockRecord modelSpace))
 			{

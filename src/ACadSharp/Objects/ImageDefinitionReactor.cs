@@ -1,10 +1,11 @@
 ﻿using ACadSharp.Attributes;
-using System;
+using ACadSharp.Entities;
 
 namespace ACadSharp.Objects
 {
 	/// <summary>
-	/// Represents a <see cref="ImageDefinitionReactor"/> object.
+	/// Represents a <see cref="ImageDefinitionReactor"/> object. <br/>
+	/// This object is for internal use only.
 	/// </summary>
 	/// <remarks>
 	/// Object name <see cref="DxfFileToken.ObjectImageDefinitionReactor"/> <br/>
@@ -12,7 +13,6 @@ namespace ACadSharp.Objects
 	/// </remarks>
 	[DxfName(DxfFileToken.ObjectImageDefinitionReactor)]
 	[DxfSubClass(DxfSubclassMarker.RasterImageDefReactor)]
-	[Obsolete("This object doesn't seem to be needed for any kind of app.")]
 	public class ImageDefinitionReactor : NonGraphicalObject
 	{
 		/// <inheritdoc/>
@@ -28,19 +28,20 @@ namespace ACadSharp.Objects
 		/// Class version 2.
 		/// </summary>
 		[DxfCodeValue(90)]
-		public int ClassVersion { get; set; }
+		public int ClassVersion { get; set; } = 2;
 
 		/// <summary>
 		/// Object ID for associated image object.
 		/// </summary>
 		[DxfCodeValue(DxfReferenceType.Handle, 330)]
-		public ImageDefinition Definition { get; set; }
+		public RasterImage Image { get; set; }
 
 		internal ImageDefinitionReactor() { }
 
-		internal ImageDefinitionReactor(ImageDefinition definition)
+		internal ImageDefinitionReactor(RasterImage image)
 		{
-			this.Definition = definition;
+			this.Owner = image;
+			this.Image = image;
 		}
 	}
 }

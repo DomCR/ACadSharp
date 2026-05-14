@@ -4,23 +4,25 @@ using System.Collections.Generic;
 namespace ACadSharp.Objects.Evaluations
 {
 	/// <summary>
-	/// Represents an evaluation graph containing a list of <see cref="Node"/>
+	/// Represents an evaluation graph containing a list of <see cref="Node"/>.
 	/// objects.
 	/// </summary>
 	[DxfName(DxfFileToken.ObjectEvalGraph)]
 	[DxfSubClass(DxfSubclassMarker.EvalGraph)]
 	public partial class EvaluationGraph : NonGraphicalObject
 	{
-		/// <summary>
-		/// Dictionary entry name for the object <see cref="EvaluationGraph"/>
-		/// </summary>
-		public const string DictionaryEntryName = "ACAD_ENHANCEDBLOCK";
+		public IList<Edge> Edges { get; private set; } = new List<Edge>();
 
-		/// <inheritdoc/>
-		public override ObjectType ObjectType => ObjectType.UNLISTED;
+		/// <summary>
+		/// Gets a list of <see cref="Node"/> objects.
+		/// </summary>
+		public IList<Node> Nodes { get; private set; } = new List<Node>();
 
 		/// <inheritdoc/>
 		public override string ObjectName => DxfFileToken.ObjectEvalGraph;
+
+		/// <inheritdoc/>
+		public override ObjectType ObjectType => ObjectType.UNLISTED;
 
 		/// <inheritdoc/>
 		public override string SubclassMarker => DxfSubclassMarker.EvalGraph;
@@ -32,13 +34,15 @@ namespace ACadSharp.Objects.Evaluations
 		public int Value97 { get; set; }
 
 		/// <summary>
-		/// Gets a list of <see cref="Node"/> objects.
+		/// Dictionary entry name for the object <see cref="EvaluationGraph"/>
 		/// </summary>
-		public IList<Node> Nodes { get; private set; } = new List<Node>();
+		public const string DictionaryEntryName = "ACAD_ENHANCEDBLOCK";
 
-		public IList<Edge> Edges { get; private set; } = new List<Edge>();
-
-		public EvaluationGraph() { }
+		/// <summary>
+		/// Initializes a new instance of the EvaluationGraph class.
+		/// </summary>
+		public EvaluationGraph()
+		{ }
 
 		/// <inheritdoc/>
 		public override CadObject Clone()

@@ -1,4 +1,5 @@
 ﻿using ACadSharp.Entities;
+using ACadSharp.Extensions;
 using CSMath;
 using System.Collections.Generic;
 using System.Linq;
@@ -6,7 +7,7 @@ using Xunit;
 
 namespace ACadSharp.Tests.Entities
 {
-	public class LwPolylineTests
+	public class LwPolylineTests : CommonEntityTests<LwPolyline>
 	{
 		private XYZ[] _points = new XYZ[]
 			{
@@ -112,6 +113,10 @@ namespace ACadSharp.Tests.Entities
 
 				Assert.NotNull(result);
 			}
+		}
+
+		public override void GetBoundingBoxTest()
+		{
 		}
 	}
 }

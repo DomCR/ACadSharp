@@ -17,15 +17,15 @@ namespace ACadSharp.IO.Templates
 
 		public ulong? LasActiveViewportHandle { get; set; }
 
-		public List<ulong> ViewportHandles { get; set; } = new List<ulong>();
+		public HashSet<ulong> ViewportHandles { get; set; } = new();
 
 		public CadLayoutTemplate() : base(new Layout()) { }
 
 		public CadLayoutTemplate(Layout layout) : base(layout) { }
 
-		public override void Build(CadDocumentBuilder builder)
+		protected override void build(CadDocumentBuilder builder)
 		{
-			base.Build(builder);
+			base.build(builder);
 
 			if (builder.TryGetCadObject(this.PaperSpaceBlockHandle, out BlockRecord record))
 			{
@@ -34,7 +34,7 @@ namespace ACadSharp.IO.Templates
 
 			if (builder.TryGetCadObject(this.ActiveViewportHandle, out Viewport viewport))
 			{
-				this.CadObject.Viewport = viewport;
+				this.CadObject.LastActiveViewport = viewport;
 			}
 
 			if (builder.TryGetCadObject(this.BaseUcsHandle, out UCS ucs))

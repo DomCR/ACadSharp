@@ -17,9 +17,9 @@ namespace ACadSharp.IO.Templates
 
 		public ulong AnnotationHandle { get; set; }
 
-		public override void Build(CadDocumentBuilder builder)
+		protected override void build(CadDocumentBuilder builder)
 		{
-			base.Build(builder);
+			base.build(builder);
 
 			Leader leader = (Leader)this.CadObject;
 

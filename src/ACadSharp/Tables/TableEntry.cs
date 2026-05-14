@@ -26,7 +26,7 @@ namespace ACadSharp.Tables
 			get { return this.name; }
 			set
 			{
-				if (string.IsNullOrEmpty(value))
+				if (string.IsNullOrWhiteSpace(value))
 				{
 					throw new ArgumentNullException(nameof(value), $"Table entry [{this.GetType().FullName}] must have a name");
 				}

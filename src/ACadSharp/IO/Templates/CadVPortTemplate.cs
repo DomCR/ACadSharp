@@ -1,5 +1,4 @@
-﻿using ACadSharp.IO.DWG;
-using ACadSharp.Tables;
+﻿using ACadSharp.Tables;
 
 namespace ACadSharp.IO.Templates
 {
@@ -21,9 +20,9 @@ namespace ACadSharp.IO.Templates
 
 		public CadVPortTemplate(VPort cadObject) : base(cadObject) { }
 
-		public override void Build(CadDocumentBuilder builder)
+		protected override void build(CadDocumentBuilder builder)
 		{
-			base.Build(builder);
+			base.build(builder);
 
 			if (builder.TryGetCadObject(this.BaseUcsHandle, out UCS baseUcs))
 			{

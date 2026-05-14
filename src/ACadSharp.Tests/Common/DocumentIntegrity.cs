@@ -1,5 +1,6 @@
 ﻿using ACadSharp.Entities;
 using ACadSharp.Objects;
+using ACadSharp.Objects.Collections;
 using ACadSharp.Tables;
 using ACadSharp.Tables.Collections;
 using ACadSharp.Tests.TestModels;
@@ -43,29 +44,40 @@ namespace ACadSharp.Tests.Common
 		public void AssertDocumentDefaults(CadDocument doc)
 		{
 			//Assert the default values for the document
-			this.entryNotNull(doc.BlockRecords, "*Model_Space");
-			this.entryNotNull(doc.BlockRecords, "*Paper_Space");
+			this.entryNotNull(doc.BlockRecords, BlockRecord.ModelSpaceName);
+			this.entryNotNull(doc.BlockRecords, BlockRecord.PaperSpaceName);
 
-			this.entryNotNull(doc.LineTypes, "ByLayer");
-			this.entryNotNull(doc.LineTypes, "ByBlock");
-			this.entryNotNull(doc.LineTypes, "Continuous");
+			this.entryNotNull(doc.LineTypes, LineType.ByLayerName);
+			this.entryNotNull(doc.LineTypes, LineType.ByBlockName);
+			this.entryNotNull(doc.LineTypes, LineType.ContinuousName);
 
-			this.entryNotNull(doc.Layers, "0");
+			this.entryNotNull(doc.Layers, Layer.DefaultName);
 
-			this.entryNotNull(doc.TextStyles, "Standard");
+			this.entryNotNull(doc.TextStyles, TextStyle.DefaultName);
 
-			this.entryNotNull(doc.AppIds, "ACAD");
+			this.entryNotNull(doc.AppIds, AppId.DefaultName);
 
-			this.entryNotNull(doc.DimensionStyles, "Standard");
+			this.entryNotNull(doc.DimensionStyles, DimensionStyle.DefaultName);
 
-			this.entryNotNull(doc.VPorts, "*Active");
+			this.entryNotNull(doc.VPorts, VPort.DefaultName);
 
 			//Assert Model layout
-			var layout = doc.Layouts.FirstOrDefault(l => l.Name == Layout.ModelLayoutName);
+			var model = doc.Layouts.FirstOrDefault(l => l.Name == Layout.ModelLayoutName);
+			this.notNull(model, "Layout Model is null");
+			Assert.True(model.AssociatedBlock == doc.ModelSpace);
+			Assert.False(model.IsPaperSpace);
+			Assert.Null(model.PaperViewport);
 
-			this.notNull(layout, "Layout Model is null");
+			var paper = doc.Layouts.FirstOrDefault(l => l.Name == Layout.PaperLayoutName);
+			this.notNull(paper, "Layout Paper is null");
+			Assert.True(paper.IsPaperSpace);
+			Assert.NotNull(paper.PaperViewport);
 
-			Assert.True(layout.AssociatedBlock == doc.ModelSpace);
+			this.entryNotNull(doc.Materials, Material.GlobalName);
+			this.entryNotNull(doc.Materials, Material.ByLayerName);
+			this.entryNotNull(doc.Materials, Material.ByBlockName);
+
+			this.entryNotNull(doc.TableStyles, TableStyle.DefaultName);
 		}
 
 		public void AssertBlockRecords(CadDocument doc)
@@ -215,7 +227,6 @@ namespace ACadSharp.Tests.Common
 							//The dynamic block instance for tables are generated on the spot and not saved.
 							break;
 						}
-
 						this.assertCollectionTree(record.Entities, blockRecordNode.Entities);
 						break;
 					case Layer layer when child is LayerNode layerNode:
@@ -255,7 +266,7 @@ namespace ACadSharp.Tests.Common
 
 			//Assert.Equal(entity.Transparency, node.Transparency);
 			Assert.Equal(entity.LineType.Name, node.LinetypeName, ignoreCase: true);
-			Assert.Equal(entity.LinetypeScale, node.LinetypeScale);
+			Assert.Equal(entity.LineTypeScale, node.LinetypeScale);
 
 			if (this._document.Header.Version > ACadVersion.AC1014)
 			{
@@ -267,6 +278,9 @@ namespace ACadSharp.Tests.Common
 			{
 				case Dimension dim:
 					assertDimensionProperties(dim, node);
+					break;
+				case IPolyline pline:
+					Assert.True(pline.Vertices.Any());
 					break;
 			}
 		}
@@ -333,6 +347,14 @@ namespace ACadSharp.Tests.Common
 		{
 			var record = table[entry];
 			Assert.True(record != null, $"Entry with name {entry} is null for table {table}");
+			Assert.NotNull(record.Document);
+		}
+
+		private void entryNotNull<T>(ObjectDictionaryCollection<T> table, string entry)
+			where T : NonGraphicalObject
+		{
+			var record = table[entry];
+			Assert.True(record != null, $"Entry with name {entry} is null for dictionary {table}");
 			Assert.NotNull(record.Document);
 		}
 	}

@@ -17,11 +17,15 @@ namespace ACadSharp
 		/// </summary>
 		public Dictionary<int, DxfProperty> DxfProperties { get; } = new Dictionary<int, DxfProperty>();
 
-		protected static void addClassProperties(DxfMapBase map, Type type)
+		protected static void addClassProperties(DxfMapBase map, Type type, CadObject obj = null)
 		{
 			foreach (var item in cadObjectMapDxf(type))
 			{
 				map.DxfProperties.Add(item.Key, item.Value);
+				if (obj != null)
+				{
+					item.Value.StoredValue = item.Value.GetRawValue(obj);
+				}
 			}
 		}
 
@@ -33,11 +37,8 @@ namespace ACadSharp
 			{
 				DxfCodeValueAttribute att = p.GetCustomAttribute<DxfCodeValueAttribute>();
 				if (att == null)
-					continue;
-
-				if (att.ReferenceType == DxfReferenceType.Count)
 				{
-
+					continue;
 				}
 
 				foreach (var item in att.ValueCodes)

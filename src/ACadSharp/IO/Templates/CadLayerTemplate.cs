@@ -22,11 +22,11 @@ namespace ACadSharp.IO.Templates
 
 		public CadLayerTemplate(Layer entry) : base(entry) { }
 
-		public override void Build(CadDocumentBuilder builder)
+		protected override void build(CadDocumentBuilder builder)
 		{
 			//TODO: finish the build for the layer
 
-			base.Build(builder);
+			base.build(builder);
 
 			//this.CadObject.PlotStyleName = builder.GetCadObject(PlotStyleHandle);
 

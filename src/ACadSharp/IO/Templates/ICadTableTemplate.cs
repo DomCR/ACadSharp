@@ -4,6 +4,6 @@ namespace ACadSharp.IO.Templates
 {
 	internal interface ICadTableTemplate : ICadObjectTemplate
 	{
-		List<ulong> EntryHandles { get; }
+		HashSet<ulong> EntryHandles { get; }
 	}
 }
