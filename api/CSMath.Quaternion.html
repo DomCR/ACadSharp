@@ -89,7 +89,7 @@
 
 
   <h1 id="CSMath_Quaternion" data-uid="CSMath.Quaternion" class="text-break">
-Struct Quaternion  <a class="header-action link-secondary" title="View source" href="https://github.com/DomCR/CSUtilities/blob/master/CSMath/Quaternion.cs/#L8"><i class="bi bi-code-slash"></i></a>
+Struct Quaternion  <a class="header-action link-secondary" title="View source" href="https://github.com/DomCR/CSUtilities/blob/master/CSMath/Quaternion.operators.cs/#L3"><i class="bi bi-code-slash"></i></a>
   </h1>
 
   <div class="facts text-secondary">
@@ -236,7 +236,7 @@ Struct Quaternion  <a class="header-action link-secondary" title="View source" h
 
   <h3 id="CSMath_Quaternion__ctor_CSMath_XYZ_System_Double_" data-uid="CSMath.Quaternion.#ctor(CSMath.XYZ,System.Double)">
   Quaternion(XYZ, double)
-  <a class="header-action link-secondary" title="View source" href="https://github.com/DomCR/CSUtilities/blob/master/CSMath/Quaternion.cs/#L101"><i class="bi bi-code-slash"></i></a>
+  <a class="header-action link-secondary" title="View source" href="https://github.com/DomCR/CSUtilities/blob/master/CSMath/Quaternion.cs/#L61"><i class="bi bi-code-slash"></i></a>
   </h3>
 
   <div class="markdown level1 summary"><p>Constructs a Quaternion from the given vector and rotation parts.</p>
@@ -244,12 +244,12 @@ Struct Quaternion  <a class="header-action link-secondary" title="View source" h
   <div class="markdown level1 conceptual"></div>
 
   <div class="codewrapper">
-    <pre><code class="lang-csharp hljs">public Quaternion(XYZ vectorPart, double scalarPart)</code></pre>
+    <pre><code class="lang-csharp hljs">public Quaternion(XYZ vector, double scalarPart)</code></pre>
   </div>
 
   <h4 class="section">Parameters</h4>
   <dl class="parameters">
-    <dt><code>vectorPart</code> <a class="xref" href="CSMath.XYZ.html">XYZ</a></dt>
+    <dt><code>vector</code> <a class="xref" href="CSMath.XYZ.html">XYZ</a></dt>
     <dd><p>The vector part of the Quaternion.</p>
 </dd>
     <dt><code>scalarPart</code> <a class="xref" href="https://learn.microsoft.com/dotnet/api/system.double">double</a></dt>
@@ -272,7 +272,7 @@ Struct Quaternion  <a class="header-action link-secondary" title="View source" h
 
   <h3 id="CSMath_Quaternion__ctor_System_Double_System_Double_System_Double_System_Double_" data-uid="CSMath.Quaternion.#ctor(System.Double,System.Double,System.Double,System.Double)">
   Quaternion(double, double, double, double)
-  <a class="header-action link-secondary" title="View source" href="https://github.com/DomCR/CSUtilities/blob/master/CSMath/Quaternion.cs/#L88"><i class="bi bi-code-slash"></i></a>
+  <a class="header-action link-secondary" title="View source" href="https://github.com/DomCR/CSUtilities/blob/master/CSMath/Quaternion.cs/#L48"><i class="bi bi-code-slash"></i></a>
   </h3>
 
   <div class="markdown level1 summary"><p>Constructs a Quaternion from the given components.</p>
@@ -318,7 +318,7 @@ Struct Quaternion  <a class="header-action link-secondary" title="View source" h
 
   <h3 id="CSMath_Quaternion_Dimension" data-uid="CSMath.Quaternion.Dimension">
   Dimension
-  <a class="header-action link-secondary" title="View source" href="https://github.com/DomCR/CSUtilities/blob/master/CSMath/Quaternion.cs/#L30"><i class="bi bi-code-slash"></i></a>
+  <a class="header-action link-secondary" title="View source" href="https://github.com/DomCR/CSUtilities/blob/master/CSMath/Quaternion.cs/#L19"><i class="bi bi-code-slash"></i></a>
   </h3>
 
   <div class="markdown level1 summary"><p>Get the dimension of the <a class="xref" href="CSMath.IVector.html">IVector</a>.</p>
@@ -350,7 +350,7 @@ Struct Quaternion  <a class="header-action link-secondary" title="View source" h
 
   <h3 id="CSMath_Quaternion_Identity" data-uid="CSMath.Quaternion.Identity">
   Identity
-  <a class="header-action link-secondary" title="View source" href="https://github.com/DomCR/CSUtilities/blob/master/CSMath/Quaternion.cs/#L76"><i class="bi bi-code-slash"></i></a>
+  <a class="header-action link-secondary" title="View source" href="https://github.com/DomCR/CSUtilities/blob/master/CSMath/Quaternion.cs/#L13"><i class="bi bi-code-slash"></i></a>
   </h3>
 
   <div class="markdown level1 summary"><p>Returns a Quaternion representing no rotation.</p>
@@ -382,7 +382,7 @@ Struct Quaternion  <a class="header-action link-secondary" title="View source" h
 
   <h3 id="CSMath_Quaternion_Item_System_Int32_" data-uid="CSMath.Quaternion.Item(System.Int32)">
   this[int]
-  <a class="header-action link-secondary" title="View source" href="https://github.com/DomCR/CSUtilities/blob/master/CSMath/Quaternion.cs/#L33"><i class="bi bi-code-slash"></i></a>
+  <a class="header-action link-secondary" title="View source" href="https://github.com/DomCR/CSUtilities/blob/master/CSMath/Quaternion.cs/#L292"><i class="bi bi-code-slash"></i></a>
   </h3>
 
   <div class="markdown level1 summary"><p>Value of the coordinate at the specified index.</p>
@@ -421,7 +421,7 @@ Struct Quaternion  <a class="header-action link-secondary" title="View source" h
 
   <h3 id="CSMath_Quaternion_W" data-uid="CSMath.Quaternion.W">
   W
-  <a class="header-action link-secondary" title="View source" href="https://github.com/DomCR/CSUtilities/blob/master/CSMath/Quaternion.cs/#L28"><i class="bi bi-code-slash"></i></a>
+  <a class="header-action link-secondary" title="View source" href="https://github.com/DomCR/CSUtilities/blob/master/CSMath/Quaternion.cs/#L24"><i class="bi bi-code-slash"></i></a>
   </h3>
 
   <div class="markdown level1 summary"><p>Specifies the rotation component of the Quaternion.</p>
@@ -453,7 +453,7 @@ Struct Quaternion  <a class="header-action link-secondary" title="View source" h
 
   <h3 id="CSMath_Quaternion_X" data-uid="CSMath.Quaternion.X">
   X
-  <a class="header-action link-secondary" title="View source" href="https://github.com/DomCR/CSUtilities/blob/master/CSMath/Quaternion.cs/#L13"><i class="bi bi-code-slash"></i></a>
+  <a class="header-action link-secondary" title="View source" href="https://github.com/DomCR/CSUtilities/blob/master/CSMath/Quaternion.cs/#L29"><i class="bi bi-code-slash"></i></a>
   </h3>
 
   <div class="markdown level1 summary"><p>Specifies the X-value of the vector component of the Quaternion.</p>
@@ -485,7 +485,7 @@ Struct Quaternion  <a class="header-action link-secondary" title="View source" h
 
   <h3 id="CSMath_Quaternion_Y" data-uid="CSMath.Quaternion.Y">
   Y
-  <a class="header-action link-secondary" title="View source" href="https://github.com/DomCR/CSUtilities/blob/master/CSMath/Quaternion.cs/#L18"><i class="bi bi-code-slash"></i></a>
+  <a class="header-action link-secondary" title="View source" href="https://github.com/DomCR/CSUtilities/blob/master/CSMath/Quaternion.cs/#L34"><i class="bi bi-code-slash"></i></a>
   </h3>
 
   <div class="markdown level1 summary"><p>Specifies the Y-value of the vector component of the Quaternion.</p>
@@ -517,7 +517,7 @@ Struct Quaternion  <a class="header-action link-secondary" title="View source" h
 
   <h3 id="CSMath_Quaternion_Z" data-uid="CSMath.Quaternion.Z">
   Z
-  <a class="header-action link-secondary" title="View source" href="https://github.com/DomCR/CSUtilities/blob/master/CSMath/Quaternion.cs/#L23"><i class="bi bi-code-slash"></i></a>
+  <a class="header-action link-secondary" title="View source" href="https://github.com/DomCR/CSUtilities/blob/master/CSMath/Quaternion.cs/#L39"><i class="bi bi-code-slash"></i></a>
   </h3>
 
   <div class="markdown level1 summary"><p>Specifies the Z-value of the vector component of the Quaternion.</p>
@@ -553,7 +553,7 @@ Struct Quaternion  <a class="header-action link-secondary" title="View source" h
 
   <h3 id="CSMath_Quaternion_CreateFromRotationMatrix_CSMath_Matrix4_" data-uid="CSMath.Quaternion.CreateFromRotationMatrix(CSMath.Matrix4)">
   CreateFromRotationMatrix(Matrix4)
-  <a class="header-action link-secondary" title="View source" href="https://github.com/DomCR/CSUtilities/blob/master/CSMath/Quaternion.cs/#L194"><i class="bi bi-code-slash"></i></a>
+  <a class="header-action link-secondary" title="View source" href="https://github.com/DomCR/CSUtilities/blob/master/CSMath/Quaternion.cs/#L74"><i class="bi bi-code-slash"></i></a>
   </h3>
 
   <div class="markdown level1 summary"><p>Creates a Quaternion from the given rotation matrix.</p>
@@ -592,7 +592,7 @@ Struct Quaternion  <a class="header-action link-secondary" title="View source" h
 
   <h3 id="CSMath_Quaternion_CreateFromYawPitchRoll_CSMath_XYZ_" data-uid="CSMath.Quaternion.CreateFromYawPitchRoll(CSMath.XYZ)">
   CreateFromYawPitchRoll(XYZ)
-  <a class="header-action link-secondary" title="View source" href="https://github.com/DomCR/CSUtilities/blob/master/CSMath/Quaternion.cs/#L114"><i class="bi bi-code-slash"></i></a>
+  <a class="header-action link-secondary" title="View source" href="https://github.com/DomCR/CSUtilities/blob/master/CSMath/Quaternion.cs/#L128"><i class="bi bi-code-slash"></i></a>
   </h3>
 
   <div class="markdown level1 summary"><p>Creates a new Quaternion from the given yaw, pitch, and roll, in radians.</p>
@@ -630,7 +630,7 @@ Struct Quaternion  <a class="header-action link-secondary" title="View source" h
 
   <h3 id="CSMath_Quaternion_CreateFromYawPitchRoll_System_Double_System_Double_System_Double_" data-uid="CSMath.Quaternion.CreateFromYawPitchRoll(System.Double,System.Double,System.Double)">
   CreateFromYawPitchRoll(double, double, double)
-  <a class="header-action link-secondary" title="View source" href="https://github.com/DomCR/CSUtilities/blob/master/CSMath/Quaternion.cs/#L162"><i class="bi bi-code-slash"></i></a>
+  <a class="header-action link-secondary" title="View source" href="https://github.com/DomCR/CSUtilities/blob/master/CSMath/Quaternion.cs/#L143"><i class="bi bi-code-slash"></i></a>
   </h3>
 
   <div class="markdown level1 summary"><p>Creates a new Quaternion from the given yaw, pitch, and roll, in radians.</p>
@@ -677,7 +677,7 @@ Struct Quaternion  <a class="header-action link-secondary" title="View source" h
 
   <h3 id="CSMath_Quaternion_Equals_CSMath_Quaternion_" data-uid="CSMath.Quaternion.Equals(CSMath.Quaternion)">
   Equals(Quaternion)
-  <a class="header-action link-secondary" title="View source" href="https://github.com/DomCR/CSUtilities/blob/master/CSMath/Quaternion.cs/#L259"><i class="bi bi-code-slash"></i></a>
+  <a class="header-action link-secondary" title="View source" href="https://github.com/DomCR/CSUtilities/blob/master/CSMath/Quaternion.cs/#L221"><i class="bi bi-code-slash"></i></a>
   </h3>
 
   <div class="markdown level1 summary"><p>Indicates whether the current object is equal to another object of the same type.</p>
@@ -716,7 +716,7 @@ Struct Quaternion  <a class="header-action link-secondary" title="View source" h
 
   <h3 id="CSMath_Quaternion_Equals_CSMath_Quaternion_System_Int32_" data-uid="CSMath.Quaternion.Equals(CSMath.Quaternion,System.Int32)">
   Equals(Quaternion, int)
-  <a class="header-action link-secondary" title="View source" href="https://github.com/DomCR/CSUtilities/blob/master/CSMath/Quaternion.cs/#L273"><i class="bi bi-code-slash"></i></a>
+  <a class="header-action link-secondary" title="View source" href="https://github.com/DomCR/CSUtilities/blob/master/CSMath/Quaternion.cs/#L235"><i class="bi bi-code-slash"></i></a>
   </h3>
 
   <div class="markdown level1 summary"><p>Indicates whether the current object is equal to another object of the same type.</p>
@@ -752,11 +752,104 @@ Struct Quaternion  <a class="header-action link-secondary" title="View source" h
 
 
 
+  <a id="CSMath_Quaternion_FromAngleAxis_" data-uid="CSMath.Quaternion.FromAngleAxis*"></a>
+
+  <h3 id="CSMath_Quaternion_FromAngleAxis_System_Double_CSMath_XYZ_" data-uid="CSMath.Quaternion.FromAngleAxis(System.Double,CSMath.XYZ)">
+  FromAngleAxis(double, XYZ)
+  <a class="header-action link-secondary" title="View source" href="https://github.com/DomCR/CSUtilities/blob/master/CSMath/Quaternion.cs/#L178"><i class="bi bi-code-slash"></i></a>
+  </h3>
+
+  <div class="markdown level1 summary"><p>Creates a quaternion representing a rotation of a specified angle around a given axis.</p>
+</div>
+  <div class="markdown level1 conceptual"></div>
+
+  <div class="codewrapper">
+    <pre><code class="lang-csharp hljs">public static Quaternion FromAngleAxis(double rotation, XYZ axis)</code></pre>
+  </div>
+
+  <h4 class="section">Parameters</h4>
+  <dl class="parameters">
+    <dt><code>rotation</code> <a class="xref" href="https://learn.microsoft.com/dotnet/api/system.double">double</a></dt>
+    <dd><p>The rotation angle, in radians, to apply around the specified axis.</p>
+</dd>
+    <dt><code>axis</code> <a class="xref" href="CSMath.XYZ.html">XYZ</a></dt>
+    <dd><p>The axis of rotation, represented as an <a class="xref" href="CSMath.XYZ.html">XYZ</a> vector. The vector should be normalized.</p>
+</dd>
+  </dl>
+
+  <h4 class="section">Returns</h4>
+  <dl class="parameters">
+    <dt><a class="xref" href="CSMath.Quaternion.html">Quaternion</a></dt>
+    <dd><p>A <a class="xref" href="CSMath.Quaternion.html">Quaternion</a> representing the rotation defined by the specified angle and axis.</p>
+</dd>
+  </dl>
+
+
+
+
+
+
+
+  <h4 class="section" id="CSMath_Quaternion_FromAngleAxis_System_Double_CSMath_XYZ__remarks">Remarks</h4>
+  <div class="markdown level1 remarks"><p>The axis parameter should be a unit vector to ensure the resulting quaternion represents a valid
+rotation. The method assumes a right-handed coordinate system.</p>
+</div>
+
+
+
+
+  <a id="CSMath_Quaternion_FromRotation_" data-uid="CSMath.Quaternion.FromRotation*"></a>
+
+  <h3 id="CSMath_Quaternion_FromRotation_CSMath_XYZ_CSMath_XYZ_" data-uid="CSMath.Quaternion.FromRotation(CSMath.XYZ,CSMath.XYZ)">
+  FromRotation(XYZ, XYZ)
+  <a class="header-action link-secondary" title="View source" href="https://github.com/DomCR/CSUtilities/blob/master/CSMath/Quaternion.cs/#L193"><i class="bi bi-code-slash"></i></a>
+  </h3>
+
+  <div class="markdown level1 summary"><p>Creates a quaternion representing the shortest rotation that aligns the specified origin vector with the destination
+vector.</p>
+</div>
+  <div class="markdown level1 conceptual"></div>
+
+  <div class="codewrapper">
+    <pre><code class="lang-csharp hljs">public static Quaternion FromRotation(XYZ orig, XYZ dest)</code></pre>
+  </div>
+
+  <h4 class="section">Parameters</h4>
+  <dl class="parameters">
+    <dt><code>orig</code> <a class="xref" href="CSMath.XYZ.html">XYZ</a></dt>
+    <dd><p>The initial direction vector to be rotated. Must be a non-zero vector.</p>
+</dd>
+    <dt><code>dest</code> <a class="xref" href="CSMath.XYZ.html">XYZ</a></dt>
+    <dd><p>The target direction vector to align with. Must be a non-zero vector.</p>
+</dd>
+  </dl>
+
+  <h4 class="section">Returns</h4>
+  <dl class="parameters">
+    <dt><a class="xref" href="CSMath.Quaternion.html">Quaternion</a></dt>
+    <dd><p>A quaternion that rotates the origin vector to align with the destination vector.</p>
+</dd>
+  </dl>
+
+
+
+
+
+
+
+  <h4 class="section" id="CSMath_Quaternion_FromRotation_CSMath_XYZ_CSMath_XYZ__remarks">Remarks</h4>
+  <div class="markdown level1 remarks"><p>If the origin and destination vectors are opposite, the method selects an arbitrary orthogonal axis
+for the rotation. Both input vectors should be normalized for accurate results.</p>
+</div>
+
+
+
+
   <a id="CSMath_Quaternion_ToEulerAngles_" data-uid="CSMath.Quaternion.ToEulerAngles*"></a>
 
   <h3 id="CSMath_Quaternion_ToEulerAngles" data-uid="CSMath.Quaternion.ToEulerAngles">
   ToEulerAngles()
-  <a class="header-action link-secondary" title="View source" href="https://github.com/DomCR/CSUtilities/blob/master/CSMath/Quaternion.cs/#L123"><i class="bi bi-code-slash"></i></a>
+  <a class="header-action link-secondary" title="View source" href="https://github.com/DomCR/CSUtilities/blob/master/CSMath/Quaternion.cs/#L247"><i class="bi bi-code-slash"></i></a>
   </h3>
 
   <div class="markdown level1 summary"><p>Get the Euler angles, in radians, for this quaternion.</p>
@@ -788,7 +881,7 @@ Struct Quaternion  <a class="header-action link-secondary" title="View source" h
 
   <h3 id="CSMath_Quaternion_ToMatrix" data-uid="CSMath.Quaternion.ToMatrix">
   ToMatrix()
-  <a class="header-action link-secondary" title="View source" href="https://github.com/DomCR/CSUtilities/blob/master/CSMath/Quaternion.cs/#L247"><i class="bi bi-code-slash"></i></a>
+  <a class="header-action link-secondary" title="View source" href="https://github.com/DomCR/CSUtilities/blob/master/CSMath/Quaternion.cs/#L280"><i class="bi bi-code-slash"></i></a>
   </h3>
 
   <div class="markdown level1 summary"><p>Create a rotation matrix</p>
@@ -820,7 +913,7 @@ Struct Quaternion  <a class="header-action link-secondary" title="View source" h
 
   <h3 id="CSMath_Quaternion_ToString" data-uid="CSMath.Quaternion.ToString">
   ToString()
-  <a class="header-action link-secondary" title="View source" href="https://github.com/DomCR/CSUtilities/blob/master/CSMath/Quaternion.cs/#L253"><i class="bi bi-code-slash"></i></a>
+  <a class="header-action link-secondary" title="View source" href="https://github.com/DomCR/CSUtilities/blob/master/CSMath/Quaternion.cs/#L286"><i class="bi bi-code-slash"></i></a>
   </h3>
 
   <div class="markdown level1 summary"><p>Returns the fully qualified type name of this instance.</p>
@@ -849,11 +942,53 @@ Struct Quaternion  <a class="header-action link-secondary" title="View source" h
 
 
 
+  <h2 class="section" id="operators">Operators
+</h2>
+
+
+  <a id="CSMath_Quaternion_op_Multiply_" data-uid="CSMath.Quaternion.op_Multiply*"></a>
+
+  <h3 id="CSMath_Quaternion_op_Multiply_CSMath_Quaternion_CSMath_XYZ_" data-uid="CSMath.Quaternion.op_Multiply(CSMath.Quaternion,CSMath.XYZ)">
+  operator *(Quaternion, XYZ)
+  <a class="header-action link-secondary" title="View source" href="https://github.com/DomCR/CSUtilities/blob/master/CSMath/Quaternion.operators.cs/#L5"><i class="bi bi-code-slash"></i></a>
+  </h3>
+
+  <div class="markdown level1 summary"></div>
+  <div class="markdown level1 conceptual"></div>
+
+  <div class="codewrapper">
+    <pre><code class="lang-csharp hljs">public static XYZ operator *(Quaternion q, XYZ v)</code></pre>
+  </div>
+
+  <h4 class="section">Parameters</h4>
+  <dl class="parameters">
+    <dt><code>q</code> <a class="xref" href="CSMath.Quaternion.html">Quaternion</a></dt>
+    <dd></dd>
+    <dt><code>v</code> <a class="xref" href="CSMath.XYZ.html">XYZ</a></dt>
+    <dd></dd>
+  </dl>
+
+  <h4 class="section">Returns</h4>
+  <dl class="parameters">
+    <dt><a class="xref" href="CSMath.XYZ.html">XYZ</a></dt>
+    <dd></dd>
+  </dl>
+
+
+
+
+
+
+
+
+
+
+
 
 </article>
 
         <div class="contribution d-print-none">
-          <a href="https://github.com/DomCR/CSUtilities/blob/master/CSMath/Quaternion.cs/#L8" class="edit-link">Edit this page</a>
+          <a href="https://github.com/DomCR/CSUtilities/blob/master/CSMath/Quaternion.operators.cs/#L3" class="edit-link">Edit this page</a>
         </div>
 
 

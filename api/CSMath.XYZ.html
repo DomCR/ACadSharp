@@ -941,10 +941,10 @@ directions.</p>
 
 
 
-  <a id="CSMath_XYZ_GetAngle2_" data-uid="CSMath.XYZ.GetAngle2*"></a>
+  <a id="CSMath_XYZ_GetAngle_" data-uid="CSMath.XYZ.GetAngle*"></a>
 
-  <h3 id="CSMath_XYZ_GetAngle2_CSMath_XYZ_CSMath_XYZ_" data-uid="CSMath.XYZ.GetAngle2(CSMath.XYZ,CSMath.XYZ)">
-  GetAngle2(XYZ, XYZ)
+  <h3 id="CSMath_XYZ_GetAngle_CSMath_XYZ_CSMath_XYZ_" data-uid="CSMath.XYZ.GetAngle(CSMath.XYZ,CSMath.XYZ)">
+  GetAngle(XYZ, XYZ)
   <a class="header-action link-secondary" title="View source" href="https://github.com/DomCR/CSUtilities/blob/master/CSMath/XYZ.cs/#L154"><i class="bi bi-code-slash"></i></a>
   </h3>
 
@@ -954,7 +954,7 @@ normal to determine the sign.</p>
   <div class="markdown level1 conceptual"></div>
 
   <div class="codewrapper">
-    <pre><code class="lang-csharp hljs">public double GetAngle2(XYZ dir, XYZ normal)</code></pre>
+    <pre><code class="lang-csharp hljs">public double GetAngle(XYZ dir, XYZ normal)</code></pre>
   </div>
 
   <h4 class="section">Parameters</h4>
@@ -981,7 +981,7 @@ is determined based on the direction of this normal.</p>
 
 
 
-  <h4 class="section" id="CSMath_XYZ_GetAngle2_CSMath_XYZ_CSMath_XYZ__remarks">Remarks</h4>
+  <h4 class="section" id="CSMath_XYZ_GetAngle_CSMath_XYZ_CSMath_XYZ__remarks">Remarks</h4>
   <div class="markdown level1 remarks"><p>The returned angle is measured in the plane defined by this vector and <code class="paramref">dir</code>,
 with the sign determined by the right-hand rule using <code class="paramref">normal</code>. If the vectors are parallel, the
 angle is 0 or π depending on their direction.</p>

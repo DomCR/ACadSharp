@@ -54555,6 +54555,35 @@ references:
   isSpec: "True"
   fullName: CSMath.Quaternion.Equals
   nameWithType: Quaternion.Equals
+- uid: CSMath.Quaternion.FromAngleAxis(System.Double,CSMath.XYZ)
+  name: FromAngleAxis(double, XYZ)
+  href: api/CSMath.Quaternion.html#CSMath_Quaternion_FromAngleAxis_System_Double_CSMath_XYZ_
+  commentId: M:CSMath.Quaternion.FromAngleAxis(System.Double,CSMath.XYZ)
+  name.vb: FromAngleAxis(Double, XYZ)
+  fullName: CSMath.Quaternion.FromAngleAxis(double, CSMath.XYZ)
+  fullName.vb: CSMath.Quaternion.FromAngleAxis(Double, CSMath.XYZ)
+  nameWithType: Quaternion.FromAngleAxis(double, XYZ)
+  nameWithType.vb: Quaternion.FromAngleAxis(Double, XYZ)
+- uid: CSMath.Quaternion.FromAngleAxis*
+  name: FromAngleAxis
+  href: api/CSMath.Quaternion.html#CSMath_Quaternion_FromAngleAxis_
+  commentId: Overload:CSMath.Quaternion.FromAngleAxis
+  isSpec: "True"
+  fullName: CSMath.Quaternion.FromAngleAxis
+  nameWithType: Quaternion.FromAngleAxis
+- uid: CSMath.Quaternion.FromRotation(CSMath.XYZ,CSMath.XYZ)
+  name: FromRotation(XYZ, XYZ)
+  href: api/CSMath.Quaternion.html#CSMath_Quaternion_FromRotation_CSMath_XYZ_CSMath_XYZ_
+  commentId: M:CSMath.Quaternion.FromRotation(CSMath.XYZ,CSMath.XYZ)
+  fullName: CSMath.Quaternion.FromRotation(CSMath.XYZ, CSMath.XYZ)
+  nameWithType: Quaternion.FromRotation(XYZ, XYZ)
+- uid: CSMath.Quaternion.FromRotation*
+  name: FromRotation
+  href: api/CSMath.Quaternion.html#CSMath_Quaternion_FromRotation_
+  commentId: Overload:CSMath.Quaternion.FromRotation
+  isSpec: "True"
+  fullName: CSMath.Quaternion.FromRotation
+  nameWithType: Quaternion.FromRotation
 - uid: CSMath.Quaternion.Identity
   name: Identity
   href: api/CSMath.Quaternion.html#CSMath_Quaternion_Identity
@@ -54678,6 +54707,25 @@ references:
   isSpec: "True"
   fullName: CSMath.Quaternion.Z
   nameWithType: Quaternion.Z
+- uid: CSMath.Quaternion.op_Multiply(CSMath.Quaternion,CSMath.XYZ)
+  name: operator *(Quaternion, XYZ)
+  href: api/CSMath.Quaternion.html#CSMath_Quaternion_op_Multiply_CSMath_Quaternion_CSMath_XYZ_
+  commentId: M:CSMath.Quaternion.op_Multiply(CSMath.Quaternion,CSMath.XYZ)
+  name.vb: '*(Quaternion, XYZ)'
+  fullName: CSMath.Quaternion.operator *(CSMath.Quaternion, CSMath.XYZ)
+  fullName.vb: CSMath.Quaternion.*(CSMath.Quaternion, CSMath.XYZ)
+  nameWithType: Quaternion.operator *(Quaternion, XYZ)
+  nameWithType.vb: Quaternion.*(Quaternion, XYZ)
+- uid: CSMath.Quaternion.op_Multiply*
+  name: operator *
+  href: api/CSMath.Quaternion.html#CSMath_Quaternion_op_Multiply_
+  commentId: Overload:CSMath.Quaternion.op_Multiply
+  isSpec: "True"
+  name.vb: '*'
+  fullName: CSMath.Quaternion.operator *
+  fullName.vb: CSMath.Quaternion.*
+  nameWithType: Quaternion.operator *
+  nameWithType.vb: Quaternion.*
 - uid: CSMath.Transform
   name: Transform
   href: api/CSMath.Transform.html
@@ -55914,6 +55962,12 @@ references:
   commentId: M:CSMath.XYZ.GetAngle(CSMath.XYZ)
   fullName: CSMath.XYZ.GetAngle(CSMath.XYZ)
   nameWithType: XYZ.GetAngle(XYZ)
+- uid: CSMath.XYZ.GetAngle(CSMath.XYZ,CSMath.XYZ)
+  name: GetAngle(XYZ, XYZ)
+  href: api/CSMath.XYZ.html#CSMath_XYZ_GetAngle_CSMath_XYZ_CSMath_XYZ_
+  commentId: M:CSMath.XYZ.GetAngle(CSMath.XYZ,CSMath.XYZ)
+  fullName: CSMath.XYZ.GetAngle(CSMath.XYZ, CSMath.XYZ)
+  nameWithType: XYZ.GetAngle(XYZ, XYZ)
 - uid: CSMath.XYZ.GetAngle*
   name: GetAngle
   href: api/CSMath.XYZ.html#CSMath_XYZ_GetAngle_
@@ -55921,19 +55975,6 @@ references:
   isSpec: "True"
   fullName: CSMath.XYZ.GetAngle
   nameWithType: XYZ.GetAngle
-- uid: CSMath.XYZ.GetAngle2(CSMath.XYZ,CSMath.XYZ)
-  name: GetAngle2(XYZ, XYZ)
-  href: api/CSMath.XYZ.html#CSMath_XYZ_GetAngle2_CSMath_XYZ_CSMath_XYZ_
-  commentId: M:CSMath.XYZ.GetAngle2(CSMath.XYZ,CSMath.XYZ)
-  fullName: CSMath.XYZ.GetAngle2(CSMath.XYZ, CSMath.XYZ)
-  nameWithType: XYZ.GetAngle2(XYZ, XYZ)
-- uid: CSMath.XYZ.GetAngle2*
-  name: GetAngle2
-  href: api/CSMath.XYZ.html#CSMath_XYZ_GetAngle2_
-  commentId: Overload:CSMath.XYZ.GetAngle2
-  isSpec: "True"
-  fullName: CSMath.XYZ.GetAngle2
-  nameWithType: XYZ.GetAngle2
 - uid: CSMath.XYZ.GetHashCode
   name: GetHashCode()
   href: api/CSMath.XYZ.html#CSMath_XYZ_GetHashCode
