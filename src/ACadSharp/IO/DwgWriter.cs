@@ -386,7 +386,7 @@ namespace ACadSharp.IO
 			//Int16	2	Template description string length in bytes(the ODA always writes 0 here).
 			writer.Write<short>(0);
 			//UInt16	2	MEASUREMENT system variable(0 = English, 1 = Metric).
-			writer.Write<ushort>((ushort)1);
+			writer.Write<ushort>((ushort)this._document.Header.MeasurementUnits);
 
 			this._fileHeaderWriter.AddSection(DwgSectionDefinition.Template, stream, true);
 		}

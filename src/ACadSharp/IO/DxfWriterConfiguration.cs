@@ -41,6 +41,7 @@ namespace ACadSharp.IO
 			"$EXTNAMES",
 			"$INSBASE",
 			"$INSUNITS",
+			"$MEASUREMENT",
 			"$LTSCALE",
 			"$LWDISPLAY",
 			"$PDMODE",
