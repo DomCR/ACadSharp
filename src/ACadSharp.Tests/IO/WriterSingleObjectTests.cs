@@ -21,6 +21,7 @@ public abstract class WriterSingleObjectTests : IOTestsBase
 	{
 		Data = new();
 		Data.Add(new(nameof(SingleCaseGenerator.Empty)));
+		Data.Add(new(nameof(SingleCaseGenerator.AddBlockWithMTextAttributes)));
 		Data.Add(new(nameof(SingleCaseGenerator.ArcSegments)));
 		Data.Add(new(nameof(SingleCaseGenerator.GenerateExampleDxf)));
 		Data.Add(new(nameof(SingleCaseGenerator.SingleEllipse)));
@@ -142,6 +143,61 @@ public abstract class WriterSingleObjectTests : IOTestsBase
 				HorizontalAlignment = TextHorizontalAlignment.Left,
 				Height = 18,
 				AttributeType = AttributeType.SingleLine,
+			});
+
+			record.Entities.Add(new AttributeDefinition()
+			{
+				InsertPoint = new XYZ(10, 10, 0),
+				Prompt = "Name_custom",
+				Tag = "CIRCLE_NAME",
+				Value = "Circilla",
+				HorizontalAlignment = TextHorizontalAlignment.Left,
+				Height = 18,
+				AttributeType = AttributeType.SingleLine,
+			});
+
+			this.Document.BlockRecords.Add(record);
+
+			var insert = new Insert(record)
+			{
+				InsertPoint = new XYZ(0, 0, 0),
+				XScale = 0.8,
+				YScale = 0.8,
+			};
+
+			insert.Attributes.Add(new AttributeEntity()
+			{
+				InsertPoint = new XYZ(-10, -10, 0),
+				Tag = "CIRCLE_NAME_ATT",
+				Value = "Bla",
+				HorizontalAlignment = TextHorizontalAlignment.Left,
+				Height = 18,
+				AttributeType = AttributeType.SingleLine,
+			});
+
+			this.Document.Entities.Add(insert);
+		}
+
+		public void AddBlockWithMTextAttributes()
+		{
+			BlockRecord record = new("my_block");
+
+			record.Entities.Add(new Circle
+			{
+				Radius = 10,
+				Center = XYZ.Zero
+			});
+
+			record.Entities.Add(new AttributeDefinition()
+			{
+				InsertPoint = XYZ.Zero,
+				Prompt = "mtext_custom",
+				Tag = "MTEXT_ATT",
+				Value = "Hello I'm an MText",
+				HorizontalAlignment = TextHorizontalAlignment.Left,
+				Height = 18,
+				AttributeType = AttributeType.SingleLine,
+				MText = new MText { Value = "Hello I'm an MText" }
 			});
 
 			record.Entities.Add(new AttributeDefinition()
