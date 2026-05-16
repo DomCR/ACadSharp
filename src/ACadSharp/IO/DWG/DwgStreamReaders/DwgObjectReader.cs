@@ -5951,7 +5951,7 @@ namespace ACadSharp.IO.DWG
 			if (this.R2007Plus)
 			{
 				//Lock position flag B 280
-				att.IsReallyLocked = this._objectReader.ReadBit();
+				att.IsLocked = this._objectReader.ReadBit();
 			}
 		}
 

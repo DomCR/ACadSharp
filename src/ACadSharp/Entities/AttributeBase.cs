@@ -21,8 +21,14 @@ public abstract class AttributeBase : TextEntity
 	[DxfCodeValue(70)]
 	public AttributeFlags Flags { get; set; }
 
-	public bool IsReallyLocked { get; set; }
+	/// <summary>
+	/// Gets or sets a value indicating whether the object is currently locked.
+	/// </summary>
+	public bool IsLocked { get; set; }
 
+	/// <summary>
+	/// Gets or sets the multi-line text content associated with this object.
+	/// </summary>
 	public MText MText { get; set; }
 
 	/// <summary>
@@ -94,7 +100,7 @@ public abstract class AttributeBase : TextEntity
 		this.Tag = src.Tag;
 		this.Flags = src.Flags;
 		this.AttributeType = src.AttributeType;
-		this.IsReallyLocked = src.IsReallyLocked;
+		this.IsLocked = src.IsLocked;
 
 		this.InsertPoint = src.InsertPoint;
 	}

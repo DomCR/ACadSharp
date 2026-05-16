@@ -136,17 +136,25 @@ internal partial class DwgObjectWriter : DwgSectionIO
 		//R2018+:
 		if (this.R2018Plus)
 		{
-			this._writer.WriteByte((byte)att.AttributeType);
-
-			if (att.AttributeType == AttributeType.MultiLine ||
-				att.AttributeType == AttributeType.ConstantMultiLine)
+			if (att.MText == null)
 			{
-				this.writeEntityMode(att.MText);
+				this._writer.WriteByte((byte)AttributeType.SingleLine);
+			}
+			else
+			{
+				this._writer.WriteByte((byte)att.AttributeType);
 
-				this.writeMText(att.MText);
+				if (att.AttributeType == AttributeType.MultiLine ||
+					att.AttributeType == AttributeType.ConstantMultiLine)
+				{
+					this.writeEntityMode(att.MText);
 
-				//TODO: Write attribute MText data
-				this._writer.WriteBitShort(0);
+					this.writeMText(att.MText);
+
+					//TODO: Write attribute MText data
+					//Annotative data
+					this._writer.WriteBitShort(0);
+				}
 			}
 		}
 
@@ -162,7 +170,7 @@ internal partial class DwgObjectWriter : DwgSectionIO
 		if (this.R2007Plus)
 		{
 			//Lock position flag B 280
-			this._writer.WriteBit(att.IsReallyLocked);
+			this._writer.WriteBit(att.IsLocked);
 		}
 	}
 
