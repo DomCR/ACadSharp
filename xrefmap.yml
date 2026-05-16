@@ -7291,19 +7291,19 @@ references:
   isSpec: "True"
   fullName: ACadSharp.Entities.AttributeBase.Flags
   nameWithType: AttributeBase.Flags
-- uid: ACadSharp.Entities.AttributeBase.IsReallyLocked
-  name: IsReallyLocked
-  href: api/ACadSharp.Entities.AttributeBase.html#ACadSharp_Entities_AttributeBase_IsReallyLocked
-  commentId: P:ACadSharp.Entities.AttributeBase.IsReallyLocked
-  fullName: ACadSharp.Entities.AttributeBase.IsReallyLocked
-  nameWithType: AttributeBase.IsReallyLocked
-- uid: ACadSharp.Entities.AttributeBase.IsReallyLocked*
-  name: IsReallyLocked
-  href: api/ACadSharp.Entities.AttributeBase.html#ACadSharp_Entities_AttributeBase_IsReallyLocked_
-  commentId: Overload:ACadSharp.Entities.AttributeBase.IsReallyLocked
+- uid: ACadSharp.Entities.AttributeBase.IsLocked
+  name: IsLocked
+  href: api/ACadSharp.Entities.AttributeBase.html#ACadSharp_Entities_AttributeBase_IsLocked
+  commentId: P:ACadSharp.Entities.AttributeBase.IsLocked
+  fullName: ACadSharp.Entities.AttributeBase.IsLocked
+  nameWithType: AttributeBase.IsLocked
+- uid: ACadSharp.Entities.AttributeBase.IsLocked*
+  name: IsLocked
+  href: api/ACadSharp.Entities.AttributeBase.html#ACadSharp_Entities_AttributeBase_IsLocked_
+  commentId: Overload:ACadSharp.Entities.AttributeBase.IsLocked
   isSpec: "True"
-  fullName: ACadSharp.Entities.AttributeBase.IsReallyLocked
-  nameWithType: AttributeBase.IsReallyLocked
+  fullName: ACadSharp.Entities.AttributeBase.IsLocked
+  nameWithType: AttributeBase.IsLocked
 - uid: ACadSharp.Entities.AttributeBase.MText
   name: MText
   href: api/ACadSharp.Entities.AttributeBase.html#ACadSharp_Entities_AttributeBase_MText
