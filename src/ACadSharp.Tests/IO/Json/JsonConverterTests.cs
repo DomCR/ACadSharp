@@ -8,7 +8,7 @@ using System;
 using ACadSharp.Tables;
 using System.Linq;
 using ACadSharp.Tests.Common;
-using Newtonsoft.Json.Linq;
+using static ACadSharp.Objects.XRecord;
 
 #if NET
 
@@ -45,6 +45,34 @@ public class JsonConverterTests
 		this._output = output;
 	}
 
+	[Fact]
+	public void BlockRecordToJsonTest()
+	{
+		BlockRecord blk = new BlockRecord("my_block");
+		blk.Entities.Add(new Line(new XYZ(0, 0, 0), new XYZ(10, 10, 0)));
+
+#if NET
+		string json = CadJsonConverter.Serialize(blk, new JsonSerializerOptions
+		{
+			WriteIndented = true,
+			IgnoreReadOnlyProperties = true,
+			IgnoreReadOnlyFields = true,
+		});
+
+		JsonObject obj = JsonNode.Parse(json).AsObject();
+
+#else
+		string json = CadJsonConverter.Serialize(blk, new JsonSerializerSettings
+		{
+		});
+
+		JObject obj = JObject.Parse(json);
+#endif
+
+		this._output.WriteLine(json);
+		this.assertCadObjectJson(obj);
+	}
+
 	[Theory]
 	[MemberData(nameof(Entities))]
 	public void EntityToJsonTest(Type type)
@@ -59,9 +87,8 @@ public class JsonConverterTests
 			IgnoreReadOnlyFields = true,
 		});
 
-		this._output.WriteLine(json);
-
 		JsonObject obj = JsonNode.Parse(json).AsObject();
+
 #else
 		string json = CadJsonConverter.Serialize(entity, new JsonSerializerSettings
 		{
@@ -70,6 +97,7 @@ public class JsonConverterTests
 		JObject obj = JObject.Parse(json);
 #endif
 
+		this._output.WriteLine(json);
 		this.assertCadObjectJson(obj);
 		this.assertEntityJson(obj);
 	}
@@ -87,6 +115,7 @@ public class JsonConverterTests
 	}
 
 #if NET
+
 	private void assertEntityJson(JsonObject obj)
 #else
 	private void assertEntityJson(JObject obj)
