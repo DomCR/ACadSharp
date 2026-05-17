@@ -17,7 +17,7 @@ namespace ACadSharp.IO.Json;
 /// <remarks>This class supports custom serialization for CadObject types using the appropriate JSON serialization
 /// options. It ensures that the necessary converters are applied for correct handling of CadObject instances. All
 /// methods are static and can be used without creating an instance of JsonConverter.</remarks>
-public class JsonConverter
+public class CadJsonConverter
 {
 	/// <summary>
 	/// Serializes a <see cref="CadObject"/> to a JSON string.
