@@ -2,10 +2,19 @@
 using Xunit;
 using ACadSharp.Entities;
 using ACadSharp.IO.Json;
+using Xunit.Abstractions;
+using System.Collections.Generic;
+using System;
+using ACadSharp.Tables;
+using System.Linq;
+using ACadSharp.Tests.Common;
+using Newtonsoft.Json.Linq;
 
 #if NET
+
 using System.Text.Json;
 using System.Text.Json.Nodes;
+
 #else
 using Newtonsoft.Json;
 using Newtonsoft.Json.Linq;
@@ -15,21 +24,46 @@ namespace ACadSharp.Tests.IO.Json;
 
 public class JsonConverterTests
 {
-	[Fact]
-	public void EntityToJsonTest()
+	public static readonly TheoryData<Type> Entities = new TheoryData<Type>();
+
+	private readonly ITestOutputHelper _output;
+
+	static JsonConverterTests()
 	{
-		Line line = new Line(new XYZ(0, 0, 0), new XYZ(10, 10, 0));
+		var d = AppDomain.CurrentDomain.GetAssemblies().FirstOrDefault(a => a.ManifestModule.Name == "ACadSharp.dll");
+		foreach (var item in d.GetTypes().Where(i => !i.IsAbstract && i.IsPublic))
+		{
+			if (item.IsSubclassOf(typeof(Entity)) && item.GetConstructor(Array.Empty<Type>()) != null)
+			{
+				Entities.Add(item);
+			}
+		}
+	}
+
+	public JsonConverterTests(ITestOutputHelper output)
+	{
+		this._output = output;
+	}
+
+	[Theory]
+	[MemberData(nameof(Entities))]
+	public void EntityToJsonTest(Type type)
+	{
+		Entity entity = (Entity)Factory.CreateObject(type);
 
 #if NET
-		string json = CadJsonConverter.Serialize(line, new JsonSerializerOptions
+		string json = CadJsonConverter.Serialize(entity, new JsonSerializerOptions
 		{
+			WriteIndented = true,
 			IgnoreReadOnlyProperties = true,
 			IgnoreReadOnlyFields = true,
 		});
 
+		this._output.WriteLine(json);
+
 		JsonObject obj = JsonNode.Parse(json).AsObject();
 #else
-		string json = CadJsonConverter.Serialize(line, new JsonSerializerSettings
+		string json = CadJsonConverter.Serialize(entity, new JsonSerializerSettings
 		{
 		});
 
@@ -37,12 +71,11 @@ public class JsonConverterTests
 #endif
 
 		this.assertCadObjectJson(obj);
-
-		Assert.True(obj.ContainsKey(nameof(Line.StartPoint)));
-		Assert.True(obj.ContainsKey(nameof(Line.EndPoint)));
+		this.assertEntityJson(obj);
 	}
 
 #if NET
+
 	private void assertCadObjectJson(JsonObject obj)
 #else
 	private void assertCadObjectJson(JObject obj)
@@ -51,5 +84,21 @@ public class JsonConverterTests
 		Assert.True(obj.ContainsKey(nameof(CadObject.Handle)));
 		Assert.True(obj.ContainsKey(nameof(CadObject.Owner)));
 		Assert.True(obj.ContainsKey(nameof(CadObject.XDictionary)));
+	}
+
+#if NET
+	private void assertEntityJson(JsonObject obj)
+#else
+	private void assertEntityJson(JObject obj)
+#endif
+	{
+		Assert.True(obj.ContainsKey(nameof(Entity.Layer)));
+		Assert.True(obj.ContainsKey(nameof(Entity.Color)));
+		Assert.True(obj.ContainsKey(nameof(Entity.IsInvisible)));
+		Assert.True(obj.ContainsKey(nameof(Entity.LineType)));
+		Assert.True(obj.ContainsKey(nameof(Entity.LineTypeScale)));
+		Assert.True(obj.ContainsKey(nameof(Entity.LineWeight)));
+		Assert.True(obj.ContainsKey(nameof(Entity.Material)));
+		Assert.True(obj.ContainsKey(nameof(Entity.Transparency)));
 	}
 }
