@@ -79,7 +79,7 @@ public partial class TableStyle : NonGraphicalObject
 	[DxfCodeValue(280)]
 	public bool SuppressTitle { get; set; }
 
-	public CellStyle TableCellStyle { get; set; } = new();
+	public CellStyle TableCellStyle { get; set; } = CellStyle.DefaultTableCellStyle;
 
 	public CellStyle TitleCellStyle { get; set; } = CellStyle.DefaultTitleCellStyle;
 

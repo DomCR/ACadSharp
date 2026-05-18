@@ -24,6 +24,8 @@ public partial class TableStyle
 				{
 					Name = DataCellStyleName,
 					StyleClass = CellStyleClass.Label,
+					Id = 3,
+					HasData = true,
 				};
 
 				return data;
@@ -41,6 +43,8 @@ public partial class TableStyle
 				{
 					Name = HeaderCellStyleName,
 					StyleClass = CellStyleClass.Data,
+					Id = 2,
+					HasData = true,
 				};
 
 				return data;
@@ -58,11 +62,37 @@ public partial class TableStyle
 				{
 					Name = TitleCellStyleName,
 					StyleClass = CellStyleClass.Data,
+					Id = 1,
+					HasData = true,
 				};
 
 				return data;
 			}
 		}
+
+		/// <summary>
+		/// Gets the default cell style used as the table's overall ("Table") style.
+		/// </summary>
+		public static CellStyle DefaultTableCellStyle
+		{
+			get
+			{
+				var data = new CellStyle
+				{
+					Name = TableCellStyleName,
+					StyleClass = CellStyleClass.Label,
+					Id = 4,
+					HasData = true,
+				};
+
+				return data;
+			}
+		}
+
+		/// <summary>
+		/// The name constant for the default table-level cell style.
+		/// </summary>
+		public const string TableCellStyleName = "Table";
 
 		/// <summary>
 		/// Gets or sets the background (fill) color of the cell content.
