@@ -335,6 +335,76 @@ Dxf class name <a class="xref" href="ACadSharp.DxfSubclassMarker.html#ACadSharp_
 </div>
 
 
+  <h2 class="section" id="constructors">Constructors
+</h2>
+
+
+  <a id="ACadSharp_Entities_TableEntity__ctor_" data-uid="ACadSharp.Entities.TableEntity.#ctor*"></a>
+
+  <h3 id="ACadSharp_Entities_TableEntity__ctor" data-uid="ACadSharp.Entities.TableEntity.#ctor">
+  TableEntity()
+  <a class="header-action link-secondary" title="View source" href="https://github.com/DomCR/ACadSharp/blob/master/src/ACadSharp/Entities/TableEntity.cs/#L117"><i class="bi bi-code-slash"></i></a>
+  </h3>
+
+  <div class="markdown level1 summary"><p>Initializes a new instance of the <a class="xref" href="ACadSharp.Entities.TableEntity.html">TableEntity</a> class.</p>
+</div>
+  <div class="markdown level1 conceptual"></div>
+
+  <div class="codewrapper">
+    <pre><code class="lang-csharp hljs">public TableEntity()</code></pre>
+  </div>
+
+
+
+
+
+
+
+
+
+
+
+
+
+  <a id="ACadSharp_Entities_TableEntity__ctor_" data-uid="ACadSharp.Entities.TableEntity.#ctor*"></a>
+
+  <h3 id="ACadSharp_Entities_TableEntity__ctor_ACadSharp_Tables_BlockRecord_" data-uid="ACadSharp.Entities.TableEntity.#ctor(ACadSharp.Tables.BlockRecord)">
+  TableEntity(BlockRecord)
+  <a class="header-action link-secondary" title="View source" href="https://github.com/DomCR/ACadSharp/blob/master/src/ACadSharp/Entities/TableEntity.cs/#L127"><i class="bi bi-code-slash"></i></a>
+  </h3>
+
+  <div class="markdown level1 summary"><p>Initializes a new instance of the <a class="xref" href="ACadSharp.Entities.TableEntity.html">TableEntity</a> class
+bound to the given anonymous <a class="xref" href="ACadSharp.Tables.BlockRecord.html">BlockRecord</a> that will host the table cache.</p>
+</div>
+  <div class="markdown level1 conceptual"></div>
+
+  <div class="codewrapper">
+    <pre><code class="lang-csharp hljs">public TableEntity(BlockRecord block)</code></pre>
+  </div>
+
+  <h4 class="section">Parameters</h4>
+  <dl class="parameters">
+    <dt><code>block</code> <a class="xref" href="ACadSharp.Tables.BlockRecord.html">BlockRecord</a></dt>
+    <dd><p>Anonymous block record used as the table's owning block (DXF 343).</p>
+</dd>
+  </dl>
+
+
+
+
+
+
+
+
+
+  <h4 class="section">Exceptions</h4>
+  <dl class="parameters">
+    <dt><a class="xref" href="https://learn.microsoft.com/dotnet/api/system.argumentnullexception">ArgumentNullException</a></dt>
+    <dd></dd>
+  </dl>
+
+
+
   <h2 class="section" id="properties">Properties
 </h2>
 
@@ -343,7 +413,7 @@ Dxf class name <a class="xref" href="ACadSharp.DxfSubclassMarker.html#ACadSharp_
 
   <h3 id="ACadSharp_Entities_TableEntity_BreakData" data-uid="ACadSharp.Entities.TableEntity.BreakData">
   BreakData
-  <a class="header-action link-secondary" title="View source" href="https://github.com/DomCR/ACadSharp/blob/master/src/ACadSharp/Entities/TableEntity.cs/#L23"><i class="bi bi-code-slash"></i></a>
+  <a class="header-action link-secondary" title="View source" href="https://github.com/DomCR/ACadSharp/blob/master/src/ACadSharp/Entities/TableEntity.cs/#L24"><i class="bi bi-code-slash"></i></a>
   </h3>
 
   <div class="markdown level1 summary"><p>Gets the table break data that defines how the table should be divided across breaks, including spacing, flow direction,</p>
@@ -371,11 +441,44 @@ Dxf class name <a class="xref" href="ACadSharp.DxfSubclassMarker.html#ACadSharp_
 
 
 
+  <a id="ACadSharp_Entities_TableEntity_CellStyleOverride_" data-uid="ACadSharp.Entities.TableEntity.CellStyleOverride*"></a>
+
+  <h3 id="ACadSharp_Entities_TableEntity_CellStyleOverride" data-uid="ACadSharp.Entities.TableEntity.CellStyleOverride">
+  CellStyleOverride
+  <a class="header-action link-secondary" title="View source" href="https://github.com/DomCR/ACadSharp/blob/master/src/ACadSharp/Entities/TableEntity.cs/#L167"><i class="bi bi-code-slash"></i></a>
+  </h3>
+
+  <div class="markdown level1 summary"><p>Gets the cell style override applied at the table level.
+Use this to set table-level overrides such as flow direction (FlowDirectionBottomToTop).</p>
+</div>
+  <div class="markdown level1 conceptual"></div>
+
+  <div class="codewrapper">
+    <pre><code class="lang-csharp hljs">public TableStyle.CellStyle CellStyleOverride { get; }</code></pre>
+  </div>
+
+
+
+
+
+  <h4 class="section">Property Value</h4>
+  <dl class="parameters">
+    <dt><a class="xref" href="ACadSharp.Objects.TableStyle.html">TableStyle</a>.<a class="xref" href="ACadSharp.Objects.TableStyle.CellStyle.html">CellStyle</a></dt>
+    <dd></dd>
+  </dl>
+
+
+
+
+
+
+
+
   <a id="ACadSharp_Entities_TableEntity_Columns_" data-uid="ACadSharp.Entities.TableEntity.Columns*"></a>
 
   <h3 id="ACadSharp_Entities_TableEntity_Columns" data-uid="ACadSharp.Entities.TableEntity.Columns">
   Columns
-  <a class="header-action link-secondary" title="View source" href="https://github.com/DomCR/ACadSharp/blob/master/src/ACadSharp/Entities/TableEntity.cs/#L28"><i class="bi bi-code-slash"></i></a>
+  <a class="header-action link-secondary" title="View source" href="https://github.com/DomCR/ACadSharp/blob/master/src/ACadSharp/Entities/TableEntity.cs/#L29"><i class="bi bi-code-slash"></i></a>
   </h3>
 
   <div class="markdown level1 summary"><p>Gets the collection of columns in the table entity.</p>
@@ -408,7 +511,7 @@ public List&lt;TableEntity.Column&gt; Columns { get; }</code></pre>
 
   <h3 id="ACadSharp_Entities_TableEntity_HasBreadData" data-uid="ACadSharp.Entities.TableEntity.HasBreadData">
   HasBreadData
-  <a class="header-action link-secondary" title="View source" href="https://github.com/DomCR/ACadSharp/blob/master/src/ACadSharp/Entities/TableEntity.cs/#L34"><i class="bi bi-code-slash"></i></a>
+  <a class="header-action link-secondary" title="View source" href="https://github.com/DomCR/ACadSharp/blob/master/src/ACadSharp/Entities/TableEntity.cs/#L35"><i class="bi bi-code-slash"></i></a>
   </h3>
 
   <div class="markdown level1 summary"><p>Gets or sets a value indicating whether bread data is available.</p>
@@ -440,7 +543,7 @@ public List&lt;TableEntity.Column&gt; Columns { get; }</code></pre>
 
   <h3 id="ACadSharp_Entities_TableEntity_HorizontalDirection" data-uid="ACadSharp.Entities.TableEntity.HorizontalDirection">
   HorizontalDirection
-  <a class="header-action link-secondary" title="View source" href="https://github.com/DomCR/ACadSharp/blob/master/src/ACadSharp/Entities/TableEntity.cs/#L39"><i class="bi bi-code-slash"></i></a>
+  <a class="header-action link-secondary" title="View source" href="https://github.com/DomCR/ACadSharp/blob/master/src/ACadSharp/Entities/TableEntity.cs/#L40"><i class="bi bi-code-slash"></i></a>
   </h3>
 
   <div class="markdown level1 summary"><p>Horizontal direction vector</p>
@@ -469,11 +572,43 @@ public XYZ HorizontalDirection { get; set; }</code></pre>
 
 
 
+  <a id="ACadSharp_Entities_TableEntity_MergedCellRanges_" data-uid="ACadSharp.Entities.TableEntity.MergedCellRanges*"></a>
+
+  <h3 id="ACadSharp_Entities_TableEntity_MergedCellRanges" data-uid="ACadSharp.Entities.TableEntity.MergedCellRanges">
+  MergedCellRanges
+  <a class="header-action link-secondary" title="View source" href="https://github.com/DomCR/ACadSharp/blob/master/src/ACadSharp/Entities/TableEntity.cs/#L161"><i class="bi bi-code-slash"></i></a>
+  </h3>
+
+  <div class="markdown level1 summary"><p>Gets the collection of merged cell ranges associated with this table.</p>
+</div>
+  <div class="markdown level1 conceptual"></div>
+
+  <div class="codewrapper">
+    <pre><code class="lang-csharp hljs">public List&lt;TableEntity.CellRange&gt; MergedCellRanges { get; }</code></pre>
+  </div>
+
+
+
+
+
+  <h4 class="section">Property Value</h4>
+  <dl class="parameters">
+    <dt><a class="xref" href="https://learn.microsoft.com/dotnet/api/system.collections.generic.list-1">List</a>&lt;<a class="xref" href="ACadSharp.Entities.TableEntity.html">TableEntity</a>.<a class="xref" href="ACadSharp.Entities.TableEntity.CellRange.html">CellRange</a>&gt;</dt>
+    <dd></dd>
+  </dl>
+
+
+
+
+
+
+
+
   <a id="ACadSharp_Entities_TableEntity_ObjectName_" data-uid="ACadSharp.Entities.TableEntity.ObjectName*"></a>
 
   <h3 id="ACadSharp_Entities_TableEntity_ObjectName" data-uid="ACadSharp.Entities.TableEntity.ObjectName">
   ObjectName
-  <a class="header-action link-secondary" title="View source" href="https://github.com/DomCR/ACadSharp/blob/master/src/ACadSharp/Entities/TableEntity.cs/#L43"><i class="bi bi-code-slash"></i></a>
+  <a class="header-action link-secondary" title="View source" href="https://github.com/DomCR/ACadSharp/blob/master/src/ACadSharp/Entities/TableEntity.cs/#L44"><i class="bi bi-code-slash"></i></a>
   </h3>
 
   <div class="markdown level1 summary"><p>The CAD class name of an object.</p>
@@ -505,7 +640,7 @@ public XYZ HorizontalDirection { get; set; }</code></pre>
 
   <h3 id="ACadSharp_Entities_TableEntity_ObjectType" data-uid="ACadSharp.Entities.TableEntity.ObjectType">
   ObjectType
-  <a class="header-action link-secondary" title="View source" href="https://github.com/DomCR/ACadSharp/blob/master/src/ACadSharp/Entities/TableEntity.cs/#L46"><i class="bi bi-code-slash"></i></a>
+  <a class="header-action link-secondary" title="View source" href="https://github.com/DomCR/ACadSharp/blob/master/src/ACadSharp/Entities/TableEntity.cs/#L47"><i class="bi bi-code-slash"></i></a>
   </h3>
 
   <div class="markdown level1 summary"><p>Get the object type.</p>
@@ -537,7 +672,7 @@ public XYZ HorizontalDirection { get; set; }</code></pre>
 
   <h3 id="ACadSharp_Entities_TableEntity_OverrideBorderColor" data-uid="ACadSharp.Entities.TableEntity.OverrideBorderColor">
   OverrideBorderColor
-  <a class="header-action link-secondary" title="View source" href="https://github.com/DomCR/ACadSharp/blob/master/src/ACadSharp/Entities/TableEntity.cs/#L51"><i class="bi bi-code-slash"></i></a>
+  <a class="header-action link-secondary" title="View source" href="https://github.com/DomCR/ACadSharp/blob/master/src/ACadSharp/Entities/TableEntity.cs/#L52"><i class="bi bi-code-slash"></i></a>
   </h3>
 
   <div class="markdown level1 summary"><p>Flag for an override of border color.</p>
@@ -570,7 +705,7 @@ public bool OverrideBorderColor { get; set; }</code></pre>
 
   <h3 id="ACadSharp_Entities_TableEntity_OverrideBorderLineWeight" data-uid="ACadSharp.Entities.TableEntity.OverrideBorderLineWeight">
   OverrideBorderLineWeight
-  <a class="header-action link-secondary" title="View source" href="https://github.com/DomCR/ACadSharp/blob/master/src/ACadSharp/Entities/TableEntity.cs/#L57"><i class="bi bi-code-slash"></i></a>
+  <a class="header-action link-secondary" title="View source" href="https://github.com/DomCR/ACadSharp/blob/master/src/ACadSharp/Entities/TableEntity.cs/#L58"><i class="bi bi-code-slash"></i></a>
   </h3>
 
   <div class="markdown level1 summary"><p>Flag for an override of border line weight.</p>
@@ -603,7 +738,7 @@ public bool OverrideBorderLineWeight { get; set; }</code></pre>
 
   <h3 id="ACadSharp_Entities_TableEntity_OverrideBorderVisibility" data-uid="ACadSharp.Entities.TableEntity.OverrideBorderVisibility">
   OverrideBorderVisibility
-  <a class="header-action link-secondary" title="View source" href="https://github.com/DomCR/ACadSharp/blob/master/src/ACadSharp/Entities/TableEntity.cs/#L63"><i class="bi bi-code-slash"></i></a>
+  <a class="header-action link-secondary" title="View source" href="https://github.com/DomCR/ACadSharp/blob/master/src/ACadSharp/Entities/TableEntity.cs/#L64"><i class="bi bi-code-slash"></i></a>
   </h3>
 
   <div class="markdown level1 summary"><p>Flag for an override of border visibility.</p>
@@ -636,7 +771,7 @@ public bool OverrideBorderVisibility { get; set; }</code></pre>
 
   <h3 id="ACadSharp_Entities_TableEntity_OverrideFlag" data-uid="ACadSharp.Entities.TableEntity.OverrideFlag">
   OverrideFlag
-  <a class="header-action link-secondary" title="View source" href="https://github.com/DomCR/ACadSharp/blob/master/src/ACadSharp/Entities/TableEntity.cs/#L69"><i class="bi bi-code-slash"></i></a>
+  <a class="header-action link-secondary" title="View source" href="https://github.com/DomCR/ACadSharp/blob/master/src/ACadSharp/Entities/TableEntity.cs/#L70"><i class="bi bi-code-slash"></i></a>
   </h3>
 
   <div class="markdown level1 summary"><p>Flag for an override.</p>
@@ -669,7 +804,7 @@ public bool OverrideFlag { get; set; }</code></pre>
 
   <h3 id="ACadSharp_Entities_TableEntity_Rows" data-uid="ACadSharp.Entities.TableEntity.Rows">
   Rows
-  <a class="header-action link-secondary" title="View source" href="https://github.com/DomCR/ACadSharp/blob/master/src/ACadSharp/Entities/TableEntity.cs/#L75"><i class="bi bi-code-slash"></i></a>
+  <a class="header-action link-secondary" title="View source" href="https://github.com/DomCR/ACadSharp/blob/master/src/ACadSharp/Entities/TableEntity.cs/#L76"><i class="bi bi-code-slash"></i></a>
   </h3>
 
   <div class="markdown level1 summary"><p>Table rows.</p>
@@ -702,7 +837,7 @@ public List&lt;TableEntity.Row&gt; Rows { get; }</code></pre>
 
   <h3 id="ACadSharp_Entities_TableEntity_Style" data-uid="ACadSharp.Entities.TableEntity.Style">
   Style
-  <a class="header-action link-secondary" title="View source" href="https://github.com/DomCR/ACadSharp/blob/master/src/ACadSharp/Entities/TableEntity.cs/#L81"><i class="bi bi-code-slash"></i></a>
+  <a class="header-action link-secondary" title="View source" href="https://github.com/DomCR/ACadSharp/blob/master/src/ACadSharp/Entities/TableEntity.cs/#L82"><i class="bi bi-code-slash"></i></a>
   </h3>
 
   <div class="markdown level1 summary"><p>Gets or sets the table style associated with this object.</p>
@@ -735,7 +870,7 @@ public TableStyle Style { get; set; }</code></pre>
 
   <h3 id="ACadSharp_Entities_TableEntity_SubclassMarker" data-uid="ACadSharp.Entities.TableEntity.SubclassMarker">
   SubclassMarker
-  <a class="header-action link-secondary" title="View source" href="https://github.com/DomCR/ACadSharp/blob/master/src/ACadSharp/Entities/TableEntity.cs/#L92"><i class="bi bi-code-slash"></i></a>
+  <a class="header-action link-secondary" title="View source" href="https://github.com/DomCR/ACadSharp/blob/master/src/ACadSharp/Entities/TableEntity.cs/#L93"><i class="bi bi-code-slash"></i></a>
   </h3>
 
   <div class="markdown level1 summary"><p>Object Subclass marker.</p>
@@ -767,7 +902,7 @@ public TableStyle Style { get; set; }</code></pre>
 
   <h3 id="ACadSharp_Entities_TableEntity_ValueFlag" data-uid="ACadSharp.Entities.TableEntity.ValueFlag">
   ValueFlag
-  <a class="header-action link-secondary" title="View source" href="https://github.com/DomCR/ACadSharp/blob/master/src/ACadSharp/Entities/TableEntity.cs/#L97"><i class="bi bi-code-slash"></i></a>
+  <a class="header-action link-secondary" title="View source" href="https://github.com/DomCR/ACadSharp/blob/master/src/ACadSharp/Entities/TableEntity.cs/#L98"><i class="bi bi-code-slash"></i></a>
   </h3>
 
   <div class="markdown level1 summary"><p>Flag for table value.</p>
@@ -800,7 +935,7 @@ public int ValueFlag { get; set; }</code></pre>
 
   <h3 id="ACadSharp_Entities_TableEntity_Version" data-uid="ACadSharp.Entities.TableEntity.Version">
   Version
-  <a class="header-action link-secondary" title="View source" href="https://github.com/DomCR/ACadSharp/blob/master/src/ACadSharp/Entities/TableEntity.cs/#L103"><i class="bi bi-code-slash"></i></a>
+  <a class="header-action link-secondary" title="View source" href="https://github.com/DomCR/ACadSharp/blob/master/src/ACadSharp/Entities/TableEntity.cs/#L104"><i class="bi bi-code-slash"></i></a>
   </h3>
 
   <div class="markdown level1 summary"><p>Table data version</p>
@@ -837,7 +972,7 @@ public short Version { get; set; }</code></pre>
 
   <h3 id="ACadSharp_Entities_TableEntity_Clone" data-uid="ACadSharp.Entities.TableEntity.Clone">
   Clone()
-  <a class="header-action link-secondary" title="View source" href="https://github.com/DomCR/ACadSharp/blob/master/src/ACadSharp/Entities/TableEntity.cs/#L114"><i class="bi bi-code-slash"></i></a>
+  <a class="header-action link-secondary" title="View source" href="https://github.com/DomCR/ACadSharp/blob/master/src/ACadSharp/Entities/TableEntity.cs/#L134"><i class="bi bi-code-slash"></i></a>
   </h3>
 
   <div class="markdown level1 summary"><p>Creates a new object that is a copy of the current instance.</p>
@@ -873,7 +1008,7 @@ public short Version { get; set; }</code></pre>
 
   <h3 id="ACadSharp_Entities_TableEntity_GetBoundingBox" data-uid="ACadSharp.Entities.TableEntity.GetBoundingBox">
   GetBoundingBox()
-  <a class="header-action link-secondary" title="View source" href="https://github.com/DomCR/ACadSharp/blob/master/src/ACadSharp/Entities/TableEntity.cs/#L122"><i class="bi bi-code-slash"></i></a>
+  <a class="header-action link-secondary" title="View source" href="https://github.com/DomCR/ACadSharp/blob/master/src/ACadSharp/Entities/TableEntity.cs/#L142"><i class="bi bi-code-slash"></i></a>
   </h3>
 
   <div class="markdown level1 summary"><p>Gets the bounding box aligned with the axis XYZ that occupies this entity.</p>
@@ -906,7 +1041,7 @@ public short Version { get; set; }</code></pre>
 
   <h3 id="ACadSharp_Entities_TableEntity_GetCell_System_Int32_System_Int32_" data-uid="ACadSharp.Entities.TableEntity.GetCell(System.Int32,System.Int32)">
   GetCell(int, int)
-  <a class="header-action link-secondary" title="View source" href="https://github.com/DomCR/ACadSharp/blob/master/src/ACadSharp/Entities/TableEntity.cs/#L133"><i class="bi bi-code-slash"></i></a>
+  <a class="header-action link-secondary" title="View source" href="https://github.com/DomCR/ACadSharp/blob/master/src/ACadSharp/Entities/TableEntity.cs/#L153"><i class="bi bi-code-slash"></i></a>
   </h3>
 
   <div class="markdown level1 summary"><p>Retrieves the cell at the specified row and column indices.</p>

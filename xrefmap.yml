@@ -19518,6 +19518,34 @@ references:
   commentId: T:ACadSharp.Entities.TableEntity
   fullName: ACadSharp.Entities.TableEntity
   nameWithType: TableEntity
+- uid: ACadSharp.Entities.TableEntity.#ctor
+  name: TableEntity()
+  href: api/ACadSharp.Entities.TableEntity.html#ACadSharp_Entities_TableEntity__ctor
+  commentId: M:ACadSharp.Entities.TableEntity.#ctor
+  name.vb: New()
+  fullName: ACadSharp.Entities.TableEntity.TableEntity()
+  fullName.vb: ACadSharp.Entities.TableEntity.New()
+  nameWithType: TableEntity.TableEntity()
+  nameWithType.vb: TableEntity.New()
+- uid: ACadSharp.Entities.TableEntity.#ctor(ACadSharp.Tables.BlockRecord)
+  name: TableEntity(BlockRecord)
+  href: api/ACadSharp.Entities.TableEntity.html#ACadSharp_Entities_TableEntity__ctor_ACadSharp_Tables_BlockRecord_
+  commentId: M:ACadSharp.Entities.TableEntity.#ctor(ACadSharp.Tables.BlockRecord)
+  name.vb: New(BlockRecord)
+  fullName: ACadSharp.Entities.TableEntity.TableEntity(ACadSharp.Tables.BlockRecord)
+  fullName.vb: ACadSharp.Entities.TableEntity.New(ACadSharp.Tables.BlockRecord)
+  nameWithType: TableEntity.TableEntity(BlockRecord)
+  nameWithType.vb: TableEntity.New(BlockRecord)
+- uid: ACadSharp.Entities.TableEntity.#ctor*
+  name: TableEntity
+  href: api/ACadSharp.Entities.TableEntity.html#ACadSharp_Entities_TableEntity__ctor_
+  commentId: Overload:ACadSharp.Entities.TableEntity.#ctor
+  isSpec: "True"
+  name.vb: New
+  fullName: ACadSharp.Entities.TableEntity.TableEntity
+  fullName.vb: ACadSharp.Entities.TableEntity.New
+  nameWithType: TableEntity.TableEntity
+  nameWithType.vb: TableEntity.New
 - uid: ACadSharp.Entities.TableEntity.BreakData
   name: BreakData
   href: api/ACadSharp.Entities.TableEntity.html#ACadSharp_Entities_TableEntity_BreakData
@@ -20063,6 +20091,19 @@ references:
   isSpec: "True"
   fullName: ACadSharp.Entities.TableEntity.CellRange.TopRowIndex
   nameWithType: TableEntity.CellRange.TopRowIndex
+- uid: ACadSharp.Entities.TableEntity.CellStyleOverride
+  name: CellStyleOverride
+  href: api/ACadSharp.Entities.TableEntity.html#ACadSharp_Entities_TableEntity_CellStyleOverride
+  commentId: P:ACadSharp.Entities.TableEntity.CellStyleOverride
+  fullName: ACadSharp.Entities.TableEntity.CellStyleOverride
+  nameWithType: TableEntity.CellStyleOverride
+- uid: ACadSharp.Entities.TableEntity.CellStyleOverride*
+  name: CellStyleOverride
+  href: api/ACadSharp.Entities.TableEntity.html#ACadSharp_Entities_TableEntity_CellStyleOverride_
+  commentId: Overload:ACadSharp.Entities.TableEntity.CellStyleOverride
+  isSpec: "True"
+  fullName: ACadSharp.Entities.TableEntity.CellStyleOverride
+  nameWithType: TableEntity.CellStyleOverride
 - uid: ACadSharp.Entities.TableEntity.CellType
   name: TableEntity.CellType
   href: api/ACadSharp.Entities.TableEntity.CellType.html
@@ -20336,6 +20377,19 @@ references:
   isSpec: "True"
   fullName: ACadSharp.Entities.TableEntity.ITableComponent.CustomDataCollection
   nameWithType: TableEntity.ITableComponent.CustomDataCollection
+- uid: ACadSharp.Entities.TableEntity.MergedCellRanges
+  name: MergedCellRanges
+  href: api/ACadSharp.Entities.TableEntity.html#ACadSharp_Entities_TableEntity_MergedCellRanges
+  commentId: P:ACadSharp.Entities.TableEntity.MergedCellRanges
+  fullName: ACadSharp.Entities.TableEntity.MergedCellRanges
+  nameWithType: TableEntity.MergedCellRanges
+- uid: ACadSharp.Entities.TableEntity.MergedCellRanges*
+  name: MergedCellRanges
+  href: api/ACadSharp.Entities.TableEntity.html#ACadSharp_Entities_TableEntity_MergedCellRanges_
+  commentId: Overload:ACadSharp.Entities.TableEntity.MergedCellRanges
+  isSpec: "True"
+  fullName: ACadSharp.Entities.TableEntity.MergedCellRanges
+  nameWithType: TableEntity.MergedCellRanges
 - uid: ACadSharp.Entities.TableEntity.ObjectName
   name: ObjectName
   href: api/ACadSharp.Entities.TableEntity.html#ACadSharp_Entities_TableEntity_ObjectName
@@ -43443,6 +43497,19 @@ references:
   isSpec: "True"
   fullName: ACadSharp.Objects.TableStyle.CellStyle.DefaultHeaderCellStyle
   nameWithType: TableStyle.CellStyle.DefaultHeaderCellStyle
+- uid: ACadSharp.Objects.TableStyle.CellStyle.DefaultTableCellStyle
+  name: DefaultTableCellStyle
+  href: api/ACadSharp.Objects.TableStyle.CellStyle.html#ACadSharp_Objects_TableStyle_CellStyle_DefaultTableCellStyle
+  commentId: P:ACadSharp.Objects.TableStyle.CellStyle.DefaultTableCellStyle
+  fullName: ACadSharp.Objects.TableStyle.CellStyle.DefaultTableCellStyle
+  nameWithType: TableStyle.CellStyle.DefaultTableCellStyle
+- uid: ACadSharp.Objects.TableStyle.CellStyle.DefaultTableCellStyle*
+  name: DefaultTableCellStyle
+  href: api/ACadSharp.Objects.TableStyle.CellStyle.html#ACadSharp_Objects_TableStyle_CellStyle_DefaultTableCellStyle_
+  commentId: Overload:ACadSharp.Objects.TableStyle.CellStyle.DefaultTableCellStyle
+  isSpec: "True"
+  fullName: ACadSharp.Objects.TableStyle.CellStyle.DefaultTableCellStyle
+  nameWithType: TableStyle.CellStyle.DefaultTableCellStyle
 - uid: ACadSharp.Objects.TableStyle.CellStyle.DefaultTitleCellStyle
   name: DefaultTitleCellStyle
   href: api/ACadSharp.Objects.TableStyle.CellStyle.html#ACadSharp_Objects_TableStyle_CellStyle_DefaultTitleCellStyle
@@ -43605,6 +43672,12 @@ references:
   isSpec: "True"
   fullName: ACadSharp.Objects.TableStyle.CellStyle.StyleClass
   nameWithType: TableStyle.CellStyle.StyleClass
+- uid: ACadSharp.Objects.TableStyle.CellStyle.TableCellStyleName
+  name: TableCellStyleName
+  href: api/ACadSharp.Objects.TableStyle.CellStyle.html#ACadSharp_Objects_TableStyle_CellStyle_TableCellStyleName
+  commentId: F:ACadSharp.Objects.TableStyle.CellStyle.TableCellStyleName
+  fullName: ACadSharp.Objects.TableStyle.CellStyle.TableCellStyleName
+  nameWithType: TableStyle.CellStyle.TableCellStyleName
 - uid: ACadSharp.Objects.TableStyle.CellStyle.TableCellStylePropertyFlags
   name: TableCellStylePropertyFlags
   href: api/ACadSharp.Objects.TableStyle.CellStyle.html#ACadSharp_Objects_TableStyle_CellStyle_TableCellStylePropertyFlags
