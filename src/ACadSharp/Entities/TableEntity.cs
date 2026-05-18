@@ -2,6 +2,7 @@
 using ACadSharp.Objects;
 using ACadSharp.Tables;
 using CSMath;
+using System;
 using System.Collections.Generic;
 
 namespace ACadSharp.Entities;
@@ -110,6 +111,25 @@ public partial class TableEntity : Insert
 	[DxfCodeValue(DxfReferenceType.Handle, 343)]
 	internal BlockRecord TableBlock { get { return this.Block; } }
 
+	/// <summary>
+	/// Initializes a new instance of the <see cref="TableEntity"/> class.
+	/// </summary>
+	public TableEntity() : base()
+	{
+	}
+
+	/// <summary>
+	/// Initializes a new instance of the <see cref="TableEntity"/> class
+	/// bound to the given anonymous <see cref="BlockRecord"/> that will host the table cache.
+	/// </summary>
+	/// <param name="block">Anonymous block record used as the table's owning block (DXF 343).</param>
+	/// <exception cref="ArgumentNullException"></exception>
+	public TableEntity(BlockRecord block) : base()
+	{
+		if (block is null) throw new ArgumentNullException(nameof(block));
+		this.Block = block;
+	}
+
 	/// <inheritdoc/>
 	public override CadObject Clone()
 	{
@@ -134,4 +154,15 @@ public partial class TableEntity : Insert
 	{
 		return this.Rows[row].Cells[column];
 	}
+
+	/// <summary>
+	/// Gets the collection of merged cell ranges associated with this table.
+	/// </summary>
+	public List<CellRange> MergedCellRanges { get { return this.Content.MergedCellRanges; } }
+
+	/// <summary>
+	/// Gets the cell style override applied at the table level.
+	/// Use this to set table-level overrides such as flow direction (FlowDirectionBottomToTop).
+	/// </summary>
+	public TableStyle.CellStyle CellStyleOverride { get { return this.Content.CellStyleOverride; } }
 }
