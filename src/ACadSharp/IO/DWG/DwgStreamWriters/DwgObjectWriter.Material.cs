@@ -96,9 +96,9 @@ internal partial class DwgObjectWriter : DwgSectionIO
 		this._writer.WriteBitDouble(material.Translucence);
 		this._writer.WriteBitDouble(0.0);                   // self_illumination
 		this._writer.WriteBitDouble(material.Reflectivity);
-		this._writer.WriteBitLong(material.IlluminationModel);
-		this._writer.WriteBitLong(material.ChannelFlags == 0 ? 127 : material.ChannelFlags);
-		this._writer.WriteBitLong(0);                       // mode
+		this._writer.WriteBitLong((int)material.IlluminationModel);
+		this._writer.WriteBitLong((int)material.ChannelFlags);
+		this._writer.WriteBitLong((int)material.Mode);
 	}
 
 	private void writeMaterialColor(ColorMethod method, double factor, Color rgb)

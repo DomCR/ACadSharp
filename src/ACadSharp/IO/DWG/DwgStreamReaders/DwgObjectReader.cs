@@ -3240,6 +3240,18 @@ namespace ACadSharp.IO.DWG
 
 			#endregion Refraction
 
+			// SINCE R_2007a tail block. AutoCAD writes these every time, even
+			// when the values are default; consuming them keeps the in-memory
+			// model in sync with the file and lets ACadSharp round-trip a
+			// non-default material (e.g. one with kMetalShader or a custom
+			// channel-flag mask) without losing the choice.
+			material.Translucence = this._mergedReaders.ReadBitDouble();
+			this._mergedReaders.ReadBitDouble();                                   // self_illumination (not modeled)
+			material.Reflectivity = this._mergedReaders.ReadBitDouble();
+			material.IlluminationModel = (MaterialIlluminationModel)this._mergedReaders.ReadBitLong();
+			material.ChannelFlags = (MaterialChannelFlags)this._mergedReaders.ReadBitLong();
+			material.Mode = (MaterialMode)this._mergedReaders.ReadBitLong();
+
 #if TEST
 			var obj = DwgStreamReaderBase.Explore(this._objectReader);
 			var text = DwgStreamReaderBase.Explore(this._textReader);
