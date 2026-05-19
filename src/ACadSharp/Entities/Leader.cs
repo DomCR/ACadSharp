@@ -1,5 +1,6 @@
 ﻿using ACadSharp.Attributes;
 using ACadSharp.Tables;
+using ACadSharp.XData;
 using CSMath;
 using System;
 using System.Collections.Generic;
@@ -209,6 +210,69 @@ namespace ACadSharp.Entities
 			{
 				this.Style = this.Document.DimensionStyles[DimensionStyle.DefaultName];
 			}
+		}
+
+		/// <summary>
+		/// Applies the specified dimension style override to the current leader, updating its extended data
+		/// to reflect the overridden properties (e.g. arrowhead block, DIMLDRBLK = code 341).
+		/// </summary>
+		/// <remarks>
+		/// Only properties that differ between the leader's current style and <paramref name="styleOverride"/>
+		/// are serialised into the DSTYLE XDATA block, mirroring the behaviour of
+		/// <see cref="Dimension.SetDimensionOverride"/>.
+		/// </remarks>
+		/// <param name="styleOverride">
+		/// The dimension style whose values should override the leader's current style.
+		/// Only properties with values different from the current style are applied.
+		/// </param>
+		public void SetDimensionOverride(DimensionStyle styleOverride)
+		{
+			DxfClassMap styleMap = DxfClassMap.Create<DimensionStyle>();
+			styleMap.DxfProperties.Remove(2);   // name — not an override
+			styleMap.DxfProperties.Remove(70);  // flags — not an override
+
+			DxfClassMap overrideMap = new DxfClassMap();
+			foreach (KeyValuePair<int, DxfProperty> item in styleMap.DxfProperties)
+			{
+				var curr = item.Value.GetRawValue(this.Style);
+				var over = item.Value.GetRawValue(styleOverride);
+
+				// Skip only when both values are null (no change to detect).
+				// When exactly one is null the property value has changed
+				// (e.g. a handle property going from null/default to a BlockRecord),
+				// so it must be included in the override.
+				if (curr == null && over == null)
+				{
+					continue;
+				}
+
+				if (curr == null || over == null || !curr.Equals(over))
+				{
+					item.Value.StoredValue = over;
+					overrideMap.DxfProperties.Add(item.Key, item.Value);
+				}
+			}
+
+			this.SetStyleOverrideMap(overrideMap);
+		}
+
+		/// <summary>
+		/// Sets the style override mapping for the current leader using the specified DXF class map,
+		/// writing the entries as <c>ACAD / DSTYLE / { … }</c> extended data.
+		/// </summary>
+		/// <param name="map">A DXF class map containing the property overrides to apply.</param>
+		public void SetStyleOverrideMap(DxfClassMap map)
+		{
+			ExtendedData edata = this.ExtendedData.TryAdd(AppId.DefaultName, new ExtendedData());
+			edata.Records.Clear();
+
+			edata.Records.Add(new ExtendedDataString(DimensionStyle.StyleOverrideEntryName));
+			edata.Records.Add(new ExtendedDataControlString(false));
+			foreach (DxfProperty p in map.DxfProperties.Values)
+			{
+				edata.Records.AddRange(p.ToXDataRecords());
+			}
+			edata.Records.Add(new ExtendedDataControlString(true));
 		}
 	}
 }

@@ -485,12 +485,16 @@ namespace ACadSharp.Entities
 				var curr = item.Value.GetRawValue(this.Style);
 				var over = item.Value.GetRawValue(styleOverride);
 
-				if (curr == null || over == null)
+				// Skip only when both values are null (no change to detect).
+				// When exactly one is null the property value has changed
+				// (e.g. a handle property going from null/default to a BlockRecord,
+				// or being explicitly cleared), so it must be included in the override.
+				if (curr == null && over == null)
 				{
 					continue;
 				}
 
-				if (!curr.Equals(over))
+				if (curr == null || over == null || !curr.Equals(over))
 				{
 					item.Value.StoredValue = over;
 					overrideMap.DxfProperties.Add(item.Key, item.Value);
