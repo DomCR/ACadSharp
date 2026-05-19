@@ -109,12 +109,18 @@ internal partial class DwgObjectWriter : DwgSectionIO
 		this._writer.WriteBitDouble(factor);
 		if (method == ColorMethod.Override)
 		{
+			// True-color tag 0xc2 in the high byte marks the BL as a 24-bit
+			// RGB true color instead of an index. ACadSharp's reader strips
+			// this byte before constructing the Color so the round-trip works
+			// either way; AutoCAD and DWG TrueView actually inspect the tag
+			// when rendering. Writing 0 here was making materials come out
+			// black under Realistic / Conceptual.
 			byte[] arr = new byte[]
 			{
 				rgb.B,
 				rgb.G,
 				rgb.R,
-				0
+				0b11000010
 			};
 			uint packed = CSUtilities.Converters.LittleEndianConverter.Instance.ToUInt32(arr);
 			this._writer.WriteBitLong((int)packed);
