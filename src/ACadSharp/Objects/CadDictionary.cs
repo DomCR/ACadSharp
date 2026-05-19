@@ -225,6 +225,14 @@ namespace ACadSharp.Objects
 				throw new ArgumentNullException(nameof(value), $"NonGraphicalObject [{this.GetType().FullName}] must have a name");
 			}
 
+			// Keep the value's Name in sync with the dictionary key so that writers (which serialize
+			// item.Name as the dictionary entry name) emit the correct key. Without this, calling
+			// Add("MY_KEY", new XRecord()) would persist with an empty entry name.
+			if (string.IsNullOrEmpty(value.Name))
+			{
+				value.Name = key;
+			}
+
 			this._entries.Add(key, value);
 			value.Owner = this;
 

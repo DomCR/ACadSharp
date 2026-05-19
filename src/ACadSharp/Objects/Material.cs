@@ -97,11 +97,15 @@ namespace ACadSharp.Objects
 		/// </summary>
 		/// <summary>
 		/// Bit flags telling the renderer which Material channels to evaluate.
-		/// Defaults to <see cref="MaterialChannelFlags.UseAll"/> to match what
-		/// AutoCAD writes for every material it emits.
+		/// Defaults to <see cref="MaterialChannelFlags.UseDiffuse"/> to match
+		/// what AutoCAD writes for a basic material. Setting
+		/// <see cref="MaterialChannelFlags.UseAll"/> here breaks texture
+		/// rendering in DWG TrueView because the renderer then tries to sample
+		/// channels (bump, reflection, refraction, normal) that the material
+		/// has no data for.
 		/// </summary>
 		[DxfCodeValue(94)]
-		public MaterialChannelFlags ChannelFlags { get; set; } = MaterialChannelFlags.UseAll;
+		public MaterialChannelFlags ChannelFlags { get; set; } = MaterialChannelFlags.UseDiffuse;
 
 		/// <summary>
 		/// Material description.

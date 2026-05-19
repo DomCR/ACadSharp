@@ -63,6 +63,17 @@ public partial class Mesh : Entity
 	[DxfCollectionCodeValue(10, 20, 30)]
 	public List<XYZ> Vertices { get; private set; } = new();
 
+	/// <summary>
+	/// Per-vertex texture coordinates (U, V, W). Empty if the mesh has no UV mapping.
+	/// </summary>
+	/// <remarks>
+	/// Persisted as an <c>ADSK_XREC_SUBDVERTEXTEXCOORDS</c> XRecord on the mesh extension dictionary,
+	/// matching the AutoCAD/AcDbSubDMesh convention. The list must have the same length as <see cref="Vertices"/>.
+	/// </remarks>
+	public List<XYZ> TextureCoordinates { get; private set; } = new();
+
+	internal const string TextureCoordsXRecordName = "ADSK_XREC_SUBDVERTEXTEXCOORDS";
+
 	//90	Count of sub-entity which property has been overridden
 
 	//91	Sub-entity marker
@@ -92,6 +103,7 @@ public partial class Mesh : Entity
 		clone.Edges = new List<Edge>(this.Edges);
 		clone.Vertices = new List<XYZ>(this.Vertices);
 		clone.Faces = new List<int[]>(this.Faces);
+		clone.TextureCoordinates = new List<XYZ>(this.TextureCoordinates);
 
 		return clone;
 	}
