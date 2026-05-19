@@ -285,7 +285,7 @@ namespace ACadSharp.Tables
 		/// Ambient color(only output when non-black)
 		/// </summary>
 		[DxfCodeValue(63, 421, 431)]
-		public Color AmbientColor { get; set; }
+		public Color AmbientColor { get; set; } = Color.Black;
 
 		private XYZ _direction = XYZ.AxisZ;
 
