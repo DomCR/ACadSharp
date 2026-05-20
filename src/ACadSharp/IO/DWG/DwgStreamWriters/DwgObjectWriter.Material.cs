@@ -90,15 +90,19 @@ internal partial class DwgObjectWriter : DwgSectionIO
 			(byte)material.RefractionMapSource,
 			material.RefractionMapFileName);
 
-		// Tail block (R2007a+): values not read by readMaterial but emitted by
-		// AutoCAD so the declared body size matches. Defaults sampled from an
-		// AutoCAD-produced AC1027 reference: channel_flags = 0x7F, rest = 0.
-		this._writer.WriteBitDouble(material.Translucence);
-		this._writer.WriteBitDouble(0.0);                   // self_illumination
-		this._writer.WriteBitDouble(material.Reflectivity);
-		this._writer.WriteBitLong((int)material.IlluminationModel);
-		this._writer.WriteBitLong((int)material.ChannelFlags);
-		this._writer.WriteBitLong((int)material.Mode);
+		// Tail block (R2007a+): render-mode hints AutoCAD always emits so the
+		// declared body size matches. Defaults sampled from an AutoCAD-produced
+		// AC1027 reference: channel_flags = UseDiffuse, rest = 0. Pre-R2007
+		// MATERIAL objects end after the refraction block.
+		if (this.R2007Plus)
+		{
+			this._writer.WriteBitDouble(material.Translucence);
+			this._writer.WriteBitDouble(0.0);                   // self_illumination
+			this._writer.WriteBitDouble(material.Reflectivity);
+			this._writer.WriteBitLong((int)material.IlluminationModel);
+			this._writer.WriteBitLong((int)material.ChannelFlags);
+			this._writer.WriteBitLong((int)material.Mode);
+		}
 	}
 
 	private void writeMaterialColor(ColorMethod method, double factor, Color rgb)
