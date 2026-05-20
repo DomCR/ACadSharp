@@ -43,6 +43,9 @@ internal abstract partial class DxfSectionWriterBase
 			case Hatch hatch:
 				this.writeHatch(hatch);
 				break;
+			case TableEntity tableEntity:
+				this.writeTableEntity(tableEntity);
+				break;
 			case Insert insert:
 				this.writeInsert(insert);
 				break;
@@ -145,7 +148,6 @@ internal abstract partial class DxfSectionWriterBase
 			case Shape:
 				return this.Configuration.WriteShapes;
 			case ProxyEntity:
-			case TableEntity:
 			case Solid3D:
 			case CadBody:
 			case Region:
@@ -576,6 +578,107 @@ internal abstract partial class DxfSectionWriterBase
 				}
 			}
 		}
+	}
+
+	private void writeTableEntity(TableEntity table)
+	{
+		// Emit the AcDbBlockReference (Insert) layer first. AutoCAD reads the block
+		// reference to instantiate the anonymous BlockRecord that holds the rendered
+		// table geometry, so even before the AcDbTable cells are populated the viewer
+		// has something to draw.
+		this._writer.Write(DxfCode.Subclass, DxfSubclassMarker.Insert);
+		if (table.Block != null)
+		{
+			this._writer.Write(2, table.Block.Name);
+		}
+		this._writer.Write(10, table.InsertPoint);
+		this._writer.Write(41, table.XScale);
+		this._writer.Write(42, table.YScale);
+		this._writer.Write(43, table.ZScale);
+		this._writer.Write(50, table.Rotation);
+		this._writer.Write(210, table.Normal);
+
+		// AcDbTable subclass with the table-level data. This is the minimal set of
+		// codes the DXF reader expects; advanced features (per-cell content beyond a
+		// single text run, custom data, borders, format runs, merged ranges) are not
+		// emitted yet and will be lost on round-trip.
+		this._writer.Write(DxfCode.Subclass, DxfSubclassMarker.TableEntity);
+		this._writer.Write(280, table.Version);
+
+		this._writer.Write(11, table.HorizontalDirection);
+
+		int flag = table.ValueFlag;
+		if (table.OverrideFlag)
+		{
+			flag |= 1;
+		}
+		this._writer.Write(90, flag);
+
+		this._writer.Write(91, table.Rows.Count);
+		this._writer.Write(92, table.Columns.Count);
+
+		if (table.OverrideBorderColor)
+		{
+			this._writer.Write(94, 1);
+		}
+		if (table.OverrideBorderLineWeight)
+		{
+			this._writer.Write(95, 1);
+		}
+		if (table.OverrideBorderVisibility)
+		{
+			this._writer.Write(96, 1);
+		}
+
+		if (table.Style != null)
+		{
+			this._writer.Write(342, table.Style.Handle);
+		}
+		if (table.Block != null)
+		{
+			this._writer.Write(343, table.Block.Handle);
+		}
+
+		foreach (var col in table.Columns)
+		{
+			this._writer.Write(142, col.Width);
+		}
+
+		foreach (var row in table.Rows)
+		{
+			this._writer.Write(141, row.Height);
+
+			foreach (var cell in row.Cells)
+			{
+				this._writer.Write(171, (short)cell.Type);
+				this._writer.Write(172, (short)cell.EdgeFlags);
+				this._writer.Write(173, (short)cell.MergedValue);
+				this._writer.Write(174, cell.AutoFit);
+				this._writer.Write(175, cell.BorderWidth);
+				this._writer.Write(176, cell.BorderHeight);
+
+				// First text content if available. Block-cell payloads and multi-run
+				// content are intentionally skipped in this initial pass.
+				string textValue = null;
+				if (cell.Content != null && cell.Content.CadValue.Value is string s)
+				{
+					textValue = s;
+				}
+				else if (cell.Contents.Count > 0 && cell.Contents[0].CadValue.Value is string s2)
+				{
+					textValue = s2;
+				}
+
+				if (!string.IsNullOrEmpty(textValue))
+				{
+					this._writer.Write(1, textValue);
+				}
+
+				this._writer.Write(145, cell.Rotation);
+			}
+		}
+
+		this.notify("TableEntity DXF writer emits a minimal subset of cell data; advanced cell content, borders, and merged ranges are not yet round-tripped.", NotificationType.Warning);
 	}
 
 	private void writeInsert(Insert insert)
