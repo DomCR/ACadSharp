@@ -6438,10 +6438,10 @@ namespace ACadSharp.IO.DWG
 			this.readCommonDimensionData(template);
 
 			//Common:
-			//10 - pt 3BD 10 See DXF documentation.
-			dimension.DefinitionPoint = this._objectReader.Read3BitDouble();
 			//15-pt 3BD 15 See DXF documentation.
 			dimension.AngleVertex = this._objectReader.Read3BitDouble();
+			//10 - pt 3BD 10 See DXF documentation.
+			dimension.DefinitionPoint = this._objectReader.Read3BitDouble();
 			//Leader len D 40 Leader length.
 			dimension.LeaderLength = this._objectReader.ReadBitDouble();
 

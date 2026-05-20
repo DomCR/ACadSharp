@@ -406,10 +406,10 @@ internal partial class DwgObjectWriter : DwgSectionIO
 	private void writeDimensionDiameter(DimensionDiameter dimension)
 	{
 		//Common:
-		//10 - pt 3BD 10 See DXF documentation.
-		this._writer.Write3BitDouble(dimension.DefinitionPoint);
 		//15-pt 3BD 15 See DXF documentation.
 		this._writer.Write3BitDouble(dimension.AngleVertex);
+		//10 - pt 3BD 10 See DXF documentation.
+		this._writer.Write3BitDouble(dimension.DefinitionPoint);
 		//Leader len D 40 Leader length.
 		this._writer.WriteBitDouble(dimension.LeaderLength);
 	}
