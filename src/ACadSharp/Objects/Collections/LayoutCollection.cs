@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Linq;
 
 namespace ACadSharp.Objects.Collections;
 
@@ -18,13 +19,17 @@ public class LayoutCollection : ObjectDictionaryCollection<Layout>
 		this._dictionary = dictionary;
 	}
 
-	/// <inheritdoc/>
 	public override bool Remove(string name, out Layout entry)
 	{
-		if (name.Equals(Layout.ModelLayoutName, StringComparison.InvariantCultureIgnoreCase)
-			|| name.Equals(Layout.PaperLayoutName, StringComparison.InvariantCultureIgnoreCase))
+		if (name.Equals(Layout.ModelLayoutName, StringComparison.InvariantCultureIgnoreCase))
 		{
 			throw new ArgumentException($"The Layout {name} cannot be removed.");
+		}
+
+		if (this.ContainsKey(name) && this.Count() <= 2)
+		{
+			throw new ArgumentException(
+				$"The Layout {name} cannot be removed: a DWG/DXF document must contain at least one paper layout.");
 		}
 
 		return base.Remove(name, out entry);
