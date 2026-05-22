@@ -598,10 +598,15 @@ internal abstract partial class DxfSectionWriterBase
 		this._writer.Write(50, table.Rotation);
 		this._writer.Write(210, table.Normal);
 
-		// AcDbTable subclass with the table-level data. This is the minimal set of
-		// codes the DXF reader expects; advanced features (per-cell content beyond a
-		// single text run, custom data, borders, format runs, merged ranges) are not
-		// emitted yet and will be lost on round-trip.
+		// AcDbTable subclass with the table-level header. Rows/columns/cells are
+		// intentionally not emitted in this minimal pass: when both AcDbBlockReference
+		// and a fully populated AcDbTable describe the same entity, AutoCAD ends up
+		// rendering the table twice (once from the anonymous BlockRecord pointed to
+		// by code 2, once from the AcDbTable cells), and the two renderings are
+		// usually offset because the AcDbTable renderer does not pick up the Insert's
+		// transform. Emitting only the header lets AutoCAD treat the entity as an
+		// Insert visually while keeping it tagged as ACAD_TABLE for tooling that
+		// inspects the class.
 		this._writer.Write(DxfCode.Subclass, DxfSubclassMarker.TableEntity);
 		this._writer.Write(280, table.Version);
 
@@ -614,8 +619,8 @@ internal abstract partial class DxfSectionWriterBase
 		}
 		this._writer.Write(90, flag);
 
-		this._writer.Write(91, table.Rows.Count);
-		this._writer.Write(92, table.Columns.Count);
+		this._writer.Write(91, 0); // row count placeholder
+		this._writer.Write(92, 0); // column count placeholder
 
 		if (table.OverrideBorderColor)
 		{
@@ -639,46 +644,7 @@ internal abstract partial class DxfSectionWriterBase
 			this._writer.Write(343, table.Block.Handle);
 		}
 
-		foreach (var col in table.Columns)
-		{
-			this._writer.Write(142, col.Width);
-		}
-
-		foreach (var row in table.Rows)
-		{
-			this._writer.Write(141, row.Height);
-
-			foreach (var cell in row.Cells)
-			{
-				this._writer.Write(171, (short)cell.Type);
-				this._writer.Write(172, (short)cell.EdgeFlags);
-				this._writer.Write(173, (short)cell.MergedValue);
-				this._writer.Write(174, cell.AutoFit);
-				this._writer.Write(175, cell.BorderWidth);
-				this._writer.Write(176, cell.BorderHeight);
-
-				// First text content if available. Block-cell payloads and multi-run
-				// content are intentionally skipped in this initial pass.
-				string textValue = null;
-				if (cell.Content != null && cell.Content.CadValue.Value is string s)
-				{
-					textValue = s;
-				}
-				else if (cell.Contents.Count > 0 && cell.Contents[0].CadValue.Value is string s2)
-				{
-					textValue = s2;
-				}
-
-				if (!string.IsNullOrEmpty(textValue))
-				{
-					this._writer.Write(1, textValue);
-				}
-
-				this._writer.Write(145, cell.Rotation);
-			}
-		}
-
-		this.notify("TableEntity DXF writer emits a minimal subset of cell data; advanced cell content, borders, and merged ranges are not yet round-tripped.", NotificationType.Warning);
+		this.notify("TableEntity DXF writer emits the entity as a block reference; cell data is not round-tripped.", NotificationType.Warning);
 	}
 
 	private void writeInsert(Insert insert)
