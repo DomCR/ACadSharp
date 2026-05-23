@@ -844,6 +844,373 @@ references:
   commentId: F:ACadSharp.Blocks.BlockTypeFlags.XRefResolved
   fullName: ACadSharp.Blocks.BlockTypeFlags.XRefResolved
   nameWithType: BlockTypeFlags.XRefResolved
+- uid: ACadSharp.Blocks.DimensionArrowhead
+  name: DimensionArrowhead
+  href: api/ACadSharp.Blocks.DimensionArrowhead.html
+  commentId: T:ACadSharp.Blocks.DimensionArrowhead
+  fullName: ACadSharp.Blocks.DimensionArrowhead
+  nameWithType: DimensionArrowhead
+- uid: ACadSharp.Blocks.DimensionArrowhead.ArchitecturalTick
+  name: ArchitecturalTick
+  href: api/ACadSharp.Blocks.DimensionArrowhead.html#ACadSharp_Blocks_DimensionArrowhead_ArchitecturalTick
+  commentId: P:ACadSharp.Blocks.DimensionArrowhead.ArchitecturalTick
+  fullName: ACadSharp.Blocks.DimensionArrowhead.ArchitecturalTick
+  nameWithType: DimensionArrowhead.ArchitecturalTick
+- uid: ACadSharp.Blocks.DimensionArrowhead.ArchitecturalTick*
+  name: ArchitecturalTick
+  href: api/ACadSharp.Blocks.DimensionArrowhead.html#ACadSharp_Blocks_DimensionArrowhead_ArchitecturalTick_
+  commentId: Overload:ACadSharp.Blocks.DimensionArrowhead.ArchitecturalTick
+  isSpec: "True"
+  fullName: ACadSharp.Blocks.DimensionArrowhead.ArchitecturalTick
+  nameWithType: DimensionArrowhead.ArchitecturalTick
+- uid: ACadSharp.Blocks.DimensionArrowhead.ArchitecturalTickName
+  name: ArchitecturalTickName
+  href: api/ACadSharp.Blocks.DimensionArrowhead.html#ACadSharp_Blocks_DimensionArrowhead_ArchitecturalTickName
+  commentId: F:ACadSharp.Blocks.DimensionArrowhead.ArchitecturalTickName
+  fullName: ACadSharp.Blocks.DimensionArrowhead.ArchitecturalTickName
+  nameWithType: DimensionArrowhead.ArchitecturalTickName
+- uid: ACadSharp.Blocks.DimensionArrowhead.BoxBlank
+  name: BoxBlank
+  href: api/ACadSharp.Blocks.DimensionArrowhead.html#ACadSharp_Blocks_DimensionArrowhead_BoxBlank
+  commentId: P:ACadSharp.Blocks.DimensionArrowhead.BoxBlank
+  fullName: ACadSharp.Blocks.DimensionArrowhead.BoxBlank
+  nameWithType: DimensionArrowhead.BoxBlank
+- uid: ACadSharp.Blocks.DimensionArrowhead.BoxBlank*
+  name: BoxBlank
+  href: api/ACadSharp.Blocks.DimensionArrowhead.html#ACadSharp_Blocks_DimensionArrowhead_BoxBlank_
+  commentId: Overload:ACadSharp.Blocks.DimensionArrowhead.BoxBlank
+  isSpec: "True"
+  fullName: ACadSharp.Blocks.DimensionArrowhead.BoxBlank
+  nameWithType: DimensionArrowhead.BoxBlank
+- uid: ACadSharp.Blocks.DimensionArrowhead.BoxBlankName
+  name: BoxBlankName
+  href: api/ACadSharp.Blocks.DimensionArrowhead.html#ACadSharp_Blocks_DimensionArrowhead_BoxBlankName
+  commentId: F:ACadSharp.Blocks.DimensionArrowhead.BoxBlankName
+  fullName: ACadSharp.Blocks.DimensionArrowhead.BoxBlankName
+  nameWithType: DimensionArrowhead.BoxBlankName
+- uid: ACadSharp.Blocks.DimensionArrowhead.BoxFilled
+  name: BoxFilled
+  href: api/ACadSharp.Blocks.DimensionArrowhead.html#ACadSharp_Blocks_DimensionArrowhead_BoxFilled
+  commentId: P:ACadSharp.Blocks.DimensionArrowhead.BoxFilled
+  fullName: ACadSharp.Blocks.DimensionArrowhead.BoxFilled
+  nameWithType: DimensionArrowhead.BoxFilled
+- uid: ACadSharp.Blocks.DimensionArrowhead.BoxFilled*
+  name: BoxFilled
+  href: api/ACadSharp.Blocks.DimensionArrowhead.html#ACadSharp_Blocks_DimensionArrowhead_BoxFilled_
+  commentId: Overload:ACadSharp.Blocks.DimensionArrowhead.BoxFilled
+  isSpec: "True"
+  fullName: ACadSharp.Blocks.DimensionArrowhead.BoxFilled
+  nameWithType: DimensionArrowhead.BoxFilled
+- uid: ACadSharp.Blocks.DimensionArrowhead.BoxFilledName
+  name: BoxFilledName
+  href: api/ACadSharp.Blocks.DimensionArrowhead.html#ACadSharp_Blocks_DimensionArrowhead_BoxFilledName
+  commentId: F:ACadSharp.Blocks.DimensionArrowhead.BoxFilledName
+  fullName: ACadSharp.Blocks.DimensionArrowhead.BoxFilledName
+  nameWithType: DimensionArrowhead.BoxFilledName
+- uid: ACadSharp.Blocks.DimensionArrowhead.Closed
+  name: Closed
+  href: api/ACadSharp.Blocks.DimensionArrowhead.html#ACadSharp_Blocks_DimensionArrowhead_Closed
+  commentId: P:ACadSharp.Blocks.DimensionArrowhead.Closed
+  fullName: ACadSharp.Blocks.DimensionArrowhead.Closed
+  nameWithType: DimensionArrowhead.Closed
+- uid: ACadSharp.Blocks.DimensionArrowhead.Closed*
+  name: Closed
+  href: api/ACadSharp.Blocks.DimensionArrowhead.html#ACadSharp_Blocks_DimensionArrowhead_Closed_
+  commentId: Overload:ACadSharp.Blocks.DimensionArrowhead.Closed
+  isSpec: "True"
+  fullName: ACadSharp.Blocks.DimensionArrowhead.Closed
+  nameWithType: DimensionArrowhead.Closed
+- uid: ACadSharp.Blocks.DimensionArrowhead.ClosedBlank
+  name: ClosedBlank
+  href: api/ACadSharp.Blocks.DimensionArrowhead.html#ACadSharp_Blocks_DimensionArrowhead_ClosedBlank
+  commentId: P:ACadSharp.Blocks.DimensionArrowhead.ClosedBlank
+  fullName: ACadSharp.Blocks.DimensionArrowhead.ClosedBlank
+  nameWithType: DimensionArrowhead.ClosedBlank
+- uid: ACadSharp.Blocks.DimensionArrowhead.ClosedBlank*
+  name: ClosedBlank
+  href: api/ACadSharp.Blocks.DimensionArrowhead.html#ACadSharp_Blocks_DimensionArrowhead_ClosedBlank_
+  commentId: Overload:ACadSharp.Blocks.DimensionArrowhead.ClosedBlank
+  isSpec: "True"
+  fullName: ACadSharp.Blocks.DimensionArrowhead.ClosedBlank
+  nameWithType: DimensionArrowhead.ClosedBlank
+- uid: ACadSharp.Blocks.DimensionArrowhead.ClosedBlankName
+  name: ClosedBlankName
+  href: api/ACadSharp.Blocks.DimensionArrowhead.html#ACadSharp_Blocks_DimensionArrowhead_ClosedBlankName
+  commentId: F:ACadSharp.Blocks.DimensionArrowhead.ClosedBlankName
+  fullName: ACadSharp.Blocks.DimensionArrowhead.ClosedBlankName
+  nameWithType: DimensionArrowhead.ClosedBlankName
+- uid: ACadSharp.Blocks.DimensionArrowhead.ClosedName
+  name: ClosedName
+  href: api/ACadSharp.Blocks.DimensionArrowhead.html#ACadSharp_Blocks_DimensionArrowhead_ClosedName
+  commentId: F:ACadSharp.Blocks.DimensionArrowhead.ClosedName
+  fullName: ACadSharp.Blocks.DimensionArrowhead.ClosedName
+  nameWithType: DimensionArrowhead.ClosedName
+- uid: ACadSharp.Blocks.DimensionArrowhead.DatumBlankName
+  name: DatumBlankName
+  href: api/ACadSharp.Blocks.DimensionArrowhead.html#ACadSharp_Blocks_DimensionArrowhead_DatumBlankName
+  commentId: F:ACadSharp.Blocks.DimensionArrowhead.DatumBlankName
+  fullName: ACadSharp.Blocks.DimensionArrowhead.DatumBlankName
+  nameWithType: DimensionArrowhead.DatumBlankName
+- uid: ACadSharp.Blocks.DimensionArrowhead.DatumFilled
+  name: DatumFilled
+  href: api/ACadSharp.Blocks.DimensionArrowhead.html#ACadSharp_Blocks_DimensionArrowhead_DatumFilled
+  commentId: P:ACadSharp.Blocks.DimensionArrowhead.DatumFilled
+  fullName: ACadSharp.Blocks.DimensionArrowhead.DatumFilled
+  nameWithType: DimensionArrowhead.DatumFilled
+- uid: ACadSharp.Blocks.DimensionArrowhead.DatumFilled*
+  name: DatumFilled
+  href: api/ACadSharp.Blocks.DimensionArrowhead.html#ACadSharp_Blocks_DimensionArrowhead_DatumFilled_
+  commentId: Overload:ACadSharp.Blocks.DimensionArrowhead.DatumFilled
+  isSpec: "True"
+  fullName: ACadSharp.Blocks.DimensionArrowhead.DatumFilled
+  nameWithType: DimensionArrowhead.DatumFilled
+- uid: ACadSharp.Blocks.DimensionArrowhead.DatumFilledName
+  name: DatumFilledName
+  href: api/ACadSharp.Blocks.DimensionArrowhead.html#ACadSharp_Blocks_DimensionArrowhead_DatumFilledName
+  commentId: F:ACadSharp.Blocks.DimensionArrowhead.DatumFilledName
+  fullName: ACadSharp.Blocks.DimensionArrowhead.DatumFilledName
+  nameWithType: DimensionArrowhead.DatumFilledName
+- uid: ACadSharp.Blocks.DimensionArrowhead.DatumTriangle
+  name: DatumTriangle
+  href: api/ACadSharp.Blocks.DimensionArrowhead.html#ACadSharp_Blocks_DimensionArrowhead_DatumTriangle
+  commentId: P:ACadSharp.Blocks.DimensionArrowhead.DatumTriangle
+  fullName: ACadSharp.Blocks.DimensionArrowhead.DatumTriangle
+  nameWithType: DimensionArrowhead.DatumTriangle
+- uid: ACadSharp.Blocks.DimensionArrowhead.DatumTriangle*
+  name: DatumTriangle
+  href: api/ACadSharp.Blocks.DimensionArrowhead.html#ACadSharp_Blocks_DimensionArrowhead_DatumTriangle_
+  commentId: Overload:ACadSharp.Blocks.DimensionArrowhead.DatumTriangle
+  isSpec: "True"
+  fullName: ACadSharp.Blocks.DimensionArrowhead.DatumTriangle
+  nameWithType: DimensionArrowhead.DatumTriangle
+- uid: ACadSharp.Blocks.DimensionArrowhead.Dot
+  name: Dot
+  href: api/ACadSharp.Blocks.DimensionArrowhead.html#ACadSharp_Blocks_DimensionArrowhead_Dot
+  commentId: P:ACadSharp.Blocks.DimensionArrowhead.Dot
+  fullName: ACadSharp.Blocks.DimensionArrowhead.Dot
+  nameWithType: DimensionArrowhead.Dot
+- uid: ACadSharp.Blocks.DimensionArrowhead.Dot*
+  name: Dot
+  href: api/ACadSharp.Blocks.DimensionArrowhead.html#ACadSharp_Blocks_DimensionArrowhead_Dot_
+  commentId: Overload:ACadSharp.Blocks.DimensionArrowhead.Dot
+  isSpec: "True"
+  fullName: ACadSharp.Blocks.DimensionArrowhead.Dot
+  nameWithType: DimensionArrowhead.Dot
+- uid: ACadSharp.Blocks.DimensionArrowhead.DotBlank
+  name: DotBlank
+  href: api/ACadSharp.Blocks.DimensionArrowhead.html#ACadSharp_Blocks_DimensionArrowhead_DotBlank
+  commentId: P:ACadSharp.Blocks.DimensionArrowhead.DotBlank
+  fullName: ACadSharp.Blocks.DimensionArrowhead.DotBlank
+  nameWithType: DimensionArrowhead.DotBlank
+- uid: ACadSharp.Blocks.DimensionArrowhead.DotBlank*
+  name: DotBlank
+  href: api/ACadSharp.Blocks.DimensionArrowhead.html#ACadSharp_Blocks_DimensionArrowhead_DotBlank_
+  commentId: Overload:ACadSharp.Blocks.DimensionArrowhead.DotBlank
+  isSpec: "True"
+  fullName: ACadSharp.Blocks.DimensionArrowhead.DotBlank
+  nameWithType: DimensionArrowhead.DotBlank
+- uid: ACadSharp.Blocks.DimensionArrowhead.DotBlankName
+  name: DotBlankName
+  href: api/ACadSharp.Blocks.DimensionArrowhead.html#ACadSharp_Blocks_DimensionArrowhead_DotBlankName
+  commentId: F:ACadSharp.Blocks.DimensionArrowhead.DotBlankName
+  fullName: ACadSharp.Blocks.DimensionArrowhead.DotBlankName
+  nameWithType: DimensionArrowhead.DotBlankName
+- uid: ACadSharp.Blocks.DimensionArrowhead.DotName
+  name: DotName
+  href: api/ACadSharp.Blocks.DimensionArrowhead.html#ACadSharp_Blocks_DimensionArrowhead_DotName
+  commentId: F:ACadSharp.Blocks.DimensionArrowhead.DotName
+  fullName: ACadSharp.Blocks.DimensionArrowhead.DotName
+  nameWithType: DimensionArrowhead.DotName
+- uid: ACadSharp.Blocks.DimensionArrowhead.DotSmall
+  name: DotSmall
+  href: api/ACadSharp.Blocks.DimensionArrowhead.html#ACadSharp_Blocks_DimensionArrowhead_DotSmall
+  commentId: P:ACadSharp.Blocks.DimensionArrowhead.DotSmall
+  fullName: ACadSharp.Blocks.DimensionArrowhead.DotSmall
+  nameWithType: DimensionArrowhead.DotSmall
+- uid: ACadSharp.Blocks.DimensionArrowhead.DotSmall*
+  name: DotSmall
+  href: api/ACadSharp.Blocks.DimensionArrowhead.html#ACadSharp_Blocks_DimensionArrowhead_DotSmall_
+  commentId: Overload:ACadSharp.Blocks.DimensionArrowhead.DotSmall
+  isSpec: "True"
+  fullName: ACadSharp.Blocks.DimensionArrowhead.DotSmall
+  nameWithType: DimensionArrowhead.DotSmall
+- uid: ACadSharp.Blocks.DimensionArrowhead.DotSmallBlank
+  name: DotSmallBlank
+  href: api/ACadSharp.Blocks.DimensionArrowhead.html#ACadSharp_Blocks_DimensionArrowhead_DotSmallBlank
+  commentId: P:ACadSharp.Blocks.DimensionArrowhead.DotSmallBlank
+  fullName: ACadSharp.Blocks.DimensionArrowhead.DotSmallBlank
+  nameWithType: DimensionArrowhead.DotSmallBlank
+- uid: ACadSharp.Blocks.DimensionArrowhead.DotSmallBlank*
+  name: DotSmallBlank
+  href: api/ACadSharp.Blocks.DimensionArrowhead.html#ACadSharp_Blocks_DimensionArrowhead_DotSmallBlank_
+  commentId: Overload:ACadSharp.Blocks.DimensionArrowhead.DotSmallBlank
+  isSpec: "True"
+  fullName: ACadSharp.Blocks.DimensionArrowhead.DotSmallBlank
+  nameWithType: DimensionArrowhead.DotSmallBlank
+- uid: ACadSharp.Blocks.DimensionArrowhead.DotSmallBlankName
+  name: DotSmallBlankName
+  href: api/ACadSharp.Blocks.DimensionArrowhead.html#ACadSharp_Blocks_DimensionArrowhead_DotSmallBlankName
+  commentId: F:ACadSharp.Blocks.DimensionArrowhead.DotSmallBlankName
+  fullName: ACadSharp.Blocks.DimensionArrowhead.DotSmallBlankName
+  nameWithType: DimensionArrowhead.DotSmallBlankName
+- uid: ACadSharp.Blocks.DimensionArrowhead.DotSmallName
+  name: DotSmallName
+  href: api/ACadSharp.Blocks.DimensionArrowhead.html#ACadSharp_Blocks_DimensionArrowhead_DotSmallName
+  commentId: F:ACadSharp.Blocks.DimensionArrowhead.DotSmallName
+  fullName: ACadSharp.Blocks.DimensionArrowhead.DotSmallName
+  nameWithType: DimensionArrowhead.DotSmallName
+- uid: ACadSharp.Blocks.DimensionArrowhead.Integral
+  name: Integral
+  href: api/ACadSharp.Blocks.DimensionArrowhead.html#ACadSharp_Blocks_DimensionArrowhead_Integral
+  commentId: P:ACadSharp.Blocks.DimensionArrowhead.Integral
+  fullName: ACadSharp.Blocks.DimensionArrowhead.Integral
+  nameWithType: DimensionArrowhead.Integral
+- uid: ACadSharp.Blocks.DimensionArrowhead.Integral*
+  name: Integral
+  href: api/ACadSharp.Blocks.DimensionArrowhead.html#ACadSharp_Blocks_DimensionArrowhead_Integral_
+  commentId: Overload:ACadSharp.Blocks.DimensionArrowhead.Integral
+  isSpec: "True"
+  fullName: ACadSharp.Blocks.DimensionArrowhead.Integral
+  nameWithType: DimensionArrowhead.Integral
+- uid: ACadSharp.Blocks.DimensionArrowhead.IntegralName
+  name: IntegralName
+  href: api/ACadSharp.Blocks.DimensionArrowhead.html#ACadSharp_Blocks_DimensionArrowhead_IntegralName
+  commentId: F:ACadSharp.Blocks.DimensionArrowhead.IntegralName
+  fullName: ACadSharp.Blocks.DimensionArrowhead.IntegralName
+  nameWithType: DimensionArrowhead.IntegralName
+- uid: ACadSharp.Blocks.DimensionArrowhead.None
+  name: None
+  href: api/ACadSharp.Blocks.DimensionArrowhead.html#ACadSharp_Blocks_DimensionArrowhead_None
+  commentId: P:ACadSharp.Blocks.DimensionArrowhead.None
+  fullName: ACadSharp.Blocks.DimensionArrowhead.None
+  nameWithType: DimensionArrowhead.None
+- uid: ACadSharp.Blocks.DimensionArrowhead.None*
+  name: None
+  href: api/ACadSharp.Blocks.DimensionArrowhead.html#ACadSharp_Blocks_DimensionArrowhead_None_
+  commentId: Overload:ACadSharp.Blocks.DimensionArrowhead.None
+  isSpec: "True"
+  fullName: ACadSharp.Blocks.DimensionArrowhead.None
+  nameWithType: DimensionArrowhead.None
+- uid: ACadSharp.Blocks.DimensionArrowhead.NoneName
+  name: NoneName
+  href: api/ACadSharp.Blocks.DimensionArrowhead.html#ACadSharp_Blocks_DimensionArrowhead_NoneName
+  commentId: F:ACadSharp.Blocks.DimensionArrowhead.NoneName
+  fullName: ACadSharp.Blocks.DimensionArrowhead.NoneName
+  nameWithType: DimensionArrowhead.NoneName
+- uid: ACadSharp.Blocks.DimensionArrowhead.Oblique
+  name: Oblique
+  href: api/ACadSharp.Blocks.DimensionArrowhead.html#ACadSharp_Blocks_DimensionArrowhead_Oblique
+  commentId: P:ACadSharp.Blocks.DimensionArrowhead.Oblique
+  fullName: ACadSharp.Blocks.DimensionArrowhead.Oblique
+  nameWithType: DimensionArrowhead.Oblique
+- uid: ACadSharp.Blocks.DimensionArrowhead.Oblique*
+  name: Oblique
+  href: api/ACadSharp.Blocks.DimensionArrowhead.html#ACadSharp_Blocks_DimensionArrowhead_Oblique_
+  commentId: Overload:ACadSharp.Blocks.DimensionArrowhead.Oblique
+  isSpec: "True"
+  fullName: ACadSharp.Blocks.DimensionArrowhead.Oblique
+  nameWithType: DimensionArrowhead.Oblique
+- uid: ACadSharp.Blocks.DimensionArrowhead.ObliqueName
+  name: ObliqueName
+  href: api/ACadSharp.Blocks.DimensionArrowhead.html#ACadSharp_Blocks_DimensionArrowhead_ObliqueName
+  commentId: F:ACadSharp.Blocks.DimensionArrowhead.ObliqueName
+  fullName: ACadSharp.Blocks.DimensionArrowhead.ObliqueName
+  nameWithType: DimensionArrowhead.ObliqueName
+- uid: ACadSharp.Blocks.DimensionArrowhead.Open
+  name: Open
+  href: api/ACadSharp.Blocks.DimensionArrowhead.html#ACadSharp_Blocks_DimensionArrowhead_Open
+  commentId: P:ACadSharp.Blocks.DimensionArrowhead.Open
+  fullName: ACadSharp.Blocks.DimensionArrowhead.Open
+  nameWithType: DimensionArrowhead.Open
+- uid: ACadSharp.Blocks.DimensionArrowhead.Open*
+  name: Open
+  href: api/ACadSharp.Blocks.DimensionArrowhead.html#ACadSharp_Blocks_DimensionArrowhead_Open_
+  commentId: Overload:ACadSharp.Blocks.DimensionArrowhead.Open
+  isSpec: "True"
+  fullName: ACadSharp.Blocks.DimensionArrowhead.Open
+  nameWithType: DimensionArrowhead.Open
+- uid: ACadSharp.Blocks.DimensionArrowhead.Open30
+  name: Open30
+  href: api/ACadSharp.Blocks.DimensionArrowhead.html#ACadSharp_Blocks_DimensionArrowhead_Open30
+  commentId: P:ACadSharp.Blocks.DimensionArrowhead.Open30
+  fullName: ACadSharp.Blocks.DimensionArrowhead.Open30
+  nameWithType: DimensionArrowhead.Open30
+- uid: ACadSharp.Blocks.DimensionArrowhead.Open30*
+  name: Open30
+  href: api/ACadSharp.Blocks.DimensionArrowhead.html#ACadSharp_Blocks_DimensionArrowhead_Open30_
+  commentId: Overload:ACadSharp.Blocks.DimensionArrowhead.Open30
+  isSpec: "True"
+  fullName: ACadSharp.Blocks.DimensionArrowhead.Open30
+  nameWithType: DimensionArrowhead.Open30
+- uid: ACadSharp.Blocks.DimensionArrowhead.Open30Name
+  name: Open30Name
+  href: api/ACadSharp.Blocks.DimensionArrowhead.html#ACadSharp_Blocks_DimensionArrowhead_Open30Name
+  commentId: F:ACadSharp.Blocks.DimensionArrowhead.Open30Name
+  fullName: ACadSharp.Blocks.DimensionArrowhead.Open30Name
+  nameWithType: DimensionArrowhead.Open30Name
+- uid: ACadSharp.Blocks.DimensionArrowhead.Open90
+  name: Open90
+  href: api/ACadSharp.Blocks.DimensionArrowhead.html#ACadSharp_Blocks_DimensionArrowhead_Open90
+  commentId: P:ACadSharp.Blocks.DimensionArrowhead.Open90
+  fullName: ACadSharp.Blocks.DimensionArrowhead.Open90
+  nameWithType: DimensionArrowhead.Open90
+- uid: ACadSharp.Blocks.DimensionArrowhead.Open90*
+  name: Open90
+  href: api/ACadSharp.Blocks.DimensionArrowhead.html#ACadSharp_Blocks_DimensionArrowhead_Open90_
+  commentId: Overload:ACadSharp.Blocks.DimensionArrowhead.Open90
+  isSpec: "True"
+  fullName: ACadSharp.Blocks.DimensionArrowhead.Open90
+  nameWithType: DimensionArrowhead.Open90
+- uid: ACadSharp.Blocks.DimensionArrowhead.Open90Name
+  name: Open90Name
+  href: api/ACadSharp.Blocks.DimensionArrowhead.html#ACadSharp_Blocks_DimensionArrowhead_Open90Name
+  commentId: F:ACadSharp.Blocks.DimensionArrowhead.Open90Name
+  fullName: ACadSharp.Blocks.DimensionArrowhead.Open90Name
+  nameWithType: DimensionArrowhead.Open90Name
+- uid: ACadSharp.Blocks.DimensionArrowhead.OpenName
+  name: OpenName
+  href: api/ACadSharp.Blocks.DimensionArrowhead.html#ACadSharp_Blocks_DimensionArrowhead_OpenName
+  commentId: F:ACadSharp.Blocks.DimensionArrowhead.OpenName
+  fullName: ACadSharp.Blocks.DimensionArrowhead.OpenName
+  nameWithType: DimensionArrowhead.OpenName
+- uid: ACadSharp.Blocks.DimensionArrowhead.OriginIndicator
+  name: OriginIndicator
+  href: api/ACadSharp.Blocks.DimensionArrowhead.html#ACadSharp_Blocks_DimensionArrowhead_OriginIndicator
+  commentId: P:ACadSharp.Blocks.DimensionArrowhead.OriginIndicator
+  fullName: ACadSharp.Blocks.DimensionArrowhead.OriginIndicator
+  nameWithType: DimensionArrowhead.OriginIndicator
+- uid: ACadSharp.Blocks.DimensionArrowhead.OriginIndicator*
+  name: OriginIndicator
+  href: api/ACadSharp.Blocks.DimensionArrowhead.html#ACadSharp_Blocks_DimensionArrowhead_OriginIndicator_
+  commentId: Overload:ACadSharp.Blocks.DimensionArrowhead.OriginIndicator
+  isSpec: "True"
+  fullName: ACadSharp.Blocks.DimensionArrowhead.OriginIndicator
+  nameWithType: DimensionArrowhead.OriginIndicator
+- uid: ACadSharp.Blocks.DimensionArrowhead.OriginIndicator2
+  name: OriginIndicator2
+  href: api/ACadSharp.Blocks.DimensionArrowhead.html#ACadSharp_Blocks_DimensionArrowhead_OriginIndicator2
+  commentId: P:ACadSharp.Blocks.DimensionArrowhead.OriginIndicator2
+  fullName: ACadSharp.Blocks.DimensionArrowhead.OriginIndicator2
+  nameWithType: DimensionArrowhead.OriginIndicator2
+- uid: ACadSharp.Blocks.DimensionArrowhead.OriginIndicator2*
+  name: OriginIndicator2
+  href: api/ACadSharp.Blocks.DimensionArrowhead.html#ACadSharp_Blocks_DimensionArrowhead_OriginIndicator2_
+  commentId: Overload:ACadSharp.Blocks.DimensionArrowhead.OriginIndicator2
+  isSpec: "True"
+  fullName: ACadSharp.Blocks.DimensionArrowhead.OriginIndicator2
+  nameWithType: DimensionArrowhead.OriginIndicator2
+- uid: ACadSharp.Blocks.DimensionArrowhead.OriginIndicator2Name
+  name: OriginIndicator2Name
+  href: api/ACadSharp.Blocks.DimensionArrowhead.html#ACadSharp_Blocks_DimensionArrowhead_OriginIndicator2Name
+  commentId: F:ACadSharp.Blocks.DimensionArrowhead.OriginIndicator2Name
+  fullName: ACadSharp.Blocks.DimensionArrowhead.OriginIndicator2Name
+  nameWithType: DimensionArrowhead.OriginIndicator2Name
+- uid: ACadSharp.Blocks.DimensionArrowhead.OriginIndicatorName
+  name: OriginIndicatorName
+  href: api/ACadSharp.Blocks.DimensionArrowhead.html#ACadSharp_Blocks_DimensionArrowhead_OriginIndicatorName
+  commentId: F:ACadSharp.Blocks.DimensionArrowhead.OriginIndicatorName
+  fullName: ACadSharp.Blocks.DimensionArrowhead.OriginIndicatorName
+  nameWithType: DimensionArrowhead.OriginIndicatorName
 - uid: ACadSharp.CadDocument
   name: CadDocument
   href: api/ACadSharp.CadDocument.html
@@ -8019,6 +8386,15 @@ references:
   fullName.vb: ACadSharp.Entities.Circle.New()
   nameWithType: Circle.Circle()
   nameWithType.vb: Circle.New()
+- uid: ACadSharp.Entities.Circle.#ctor(CSMath.XYZ,System.Double)
+  name: Circle(XYZ, double)
+  href: api/ACadSharp.Entities.Circle.html#ACadSharp_Entities_Circle__ctor_CSMath_XYZ_System_Double_
+  commentId: M:ACadSharp.Entities.Circle.#ctor(CSMath.XYZ,System.Double)
+  name.vb: New(XYZ, Double)
+  fullName: ACadSharp.Entities.Circle.Circle(CSMath.XYZ, double)
+  fullName.vb: ACadSharp.Entities.Circle.New(CSMath.XYZ, Double)
+  nameWithType: Circle.Circle(XYZ, double)
+  nameWithType.vb: Circle.New(XYZ, Double)
 - uid: ACadSharp.Entities.Circle.#ctor*
   name: Circle
   href: api/ACadSharp.Entities.Circle.html#ACadSharp_Entities_Circle__ctor_
@@ -14375,6 +14751,15 @@ references:
   fullName.vb: ACadSharp.Entities.LwPolyline.Vertex.New(CSMath.XY)
   nameWithType: LwPolyline.Vertex.Vertex(XY)
   nameWithType.vb: LwPolyline.Vertex.New(XY)
+- uid: ACadSharp.Entities.LwPolyline.Vertex.#ctor(System.Double,System.Double)
+  name: Vertex(double, double)
+  href: api/ACadSharp.Entities.LwPolyline.Vertex.html#ACadSharp_Entities_LwPolyline_Vertex__ctor_System_Double_System_Double_
+  commentId: M:ACadSharp.Entities.LwPolyline.Vertex.#ctor(System.Double,System.Double)
+  name.vb: New(Double, Double)
+  fullName: ACadSharp.Entities.LwPolyline.Vertex.Vertex(double, double)
+  fullName.vb: ACadSharp.Entities.LwPolyline.Vertex.New(Double, Double)
+  nameWithType: LwPolyline.Vertex.Vertex(double, double)
+  nameWithType.vb: LwPolyline.Vertex.New(Double, Double)
 - uid: ACadSharp.Entities.LwPolyline.Vertex.#ctor*
   name: Vertex
   href: api/ACadSharp.Entities.LwPolyline.Vertex.html#ACadSharp_Entities_LwPolyline_Vertex__ctor_
@@ -18836,6 +19221,43 @@ references:
   commentId: T:ACadSharp.Entities.Solid
   fullName: ACadSharp.Entities.Solid
   nameWithType: Solid
+- uid: ACadSharp.Entities.Solid.#ctor
+  name: Solid()
+  href: api/ACadSharp.Entities.Solid.html#ACadSharp_Entities_Solid__ctor
+  commentId: M:ACadSharp.Entities.Solid.#ctor
+  name.vb: New()
+  fullName: ACadSharp.Entities.Solid.Solid()
+  fullName.vb: ACadSharp.Entities.Solid.New()
+  nameWithType: Solid.Solid()
+  nameWithType.vb: Solid.New()
+- uid: ACadSharp.Entities.Solid.#ctor(CSMath.XYZ,CSMath.XYZ,CSMath.XYZ)
+  name: Solid(XYZ, XYZ, XYZ)
+  href: api/ACadSharp.Entities.Solid.html#ACadSharp_Entities_Solid__ctor_CSMath_XYZ_CSMath_XYZ_CSMath_XYZ_
+  commentId: M:ACadSharp.Entities.Solid.#ctor(CSMath.XYZ,CSMath.XYZ,CSMath.XYZ)
+  name.vb: New(XYZ, XYZ, XYZ)
+  fullName: ACadSharp.Entities.Solid.Solid(CSMath.XYZ, CSMath.XYZ, CSMath.XYZ)
+  fullName.vb: ACadSharp.Entities.Solid.New(CSMath.XYZ, CSMath.XYZ, CSMath.XYZ)
+  nameWithType: Solid.Solid(XYZ, XYZ, XYZ)
+  nameWithType.vb: Solid.New(XYZ, XYZ, XYZ)
+- uid: ACadSharp.Entities.Solid.#ctor(CSMath.XYZ,CSMath.XYZ,CSMath.XYZ,CSMath.XYZ)
+  name: Solid(XYZ, XYZ, XYZ, XYZ)
+  href: api/ACadSharp.Entities.Solid.html#ACadSharp_Entities_Solid__ctor_CSMath_XYZ_CSMath_XYZ_CSMath_XYZ_CSMath_XYZ_
+  commentId: M:ACadSharp.Entities.Solid.#ctor(CSMath.XYZ,CSMath.XYZ,CSMath.XYZ,CSMath.XYZ)
+  name.vb: New(XYZ, XYZ, XYZ, XYZ)
+  fullName: ACadSharp.Entities.Solid.Solid(CSMath.XYZ, CSMath.XYZ, CSMath.XYZ, CSMath.XYZ)
+  fullName.vb: ACadSharp.Entities.Solid.New(CSMath.XYZ, CSMath.XYZ, CSMath.XYZ, CSMath.XYZ)
+  nameWithType: Solid.Solid(XYZ, XYZ, XYZ, XYZ)
+  nameWithType.vb: Solid.New(XYZ, XYZ, XYZ, XYZ)
+- uid: ACadSharp.Entities.Solid.#ctor*
+  name: Solid
+  href: api/ACadSharp.Entities.Solid.html#ACadSharp_Entities_Solid__ctor_
+  commentId: Overload:ACadSharp.Entities.Solid.#ctor
+  isSpec: "True"
+  name.vb: New
+  fullName: ACadSharp.Entities.Solid.Solid
+  fullName.vb: ACadSharp.Entities.Solid.New
+  nameWithType: Solid.Solid
+  nameWithType.vb: Solid.New
 - uid: ACadSharp.Entities.Solid.ApplyTransform(CSMath.Transform)
   name: ApplyTransform(Transform)
   href: api/ACadSharp.Entities.Solid.html#ACadSharp_Entities_Solid_ApplyTransform_CSMath_Transform_

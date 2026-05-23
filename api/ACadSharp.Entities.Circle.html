@@ -298,7 +298,7 @@ Dxf class name <a class="xref" href="ACadSharp.DxfSubclassMarker.html#ACadSharp_
   <a class="header-action link-secondary" title="View source" href="https://github.com/DomCR/ACadSharp/blob/master/src/ACadSharp/Entities/Circle.cs/#L72"><i class="bi bi-code-slash"></i></a>
   </h3>
 
-  <div class="markdown level1 summary"><p>Default constructor</p>
+  <div class="markdown level1 summary"><p>Default constructor.</p>
 </div>
   <div class="markdown level1 conceptual"></div>
 
@@ -306,6 +306,42 @@ Dxf class name <a class="xref" href="ACadSharp.DxfSubclassMarker.html#ACadSharp_
     <pre><code class="lang-csharp hljs">public Circle()</code></pre>
   </div>
 
+
+
+
+
+
+
+
+
+
+
+
+
+  <a id="ACadSharp_Entities_Circle__ctor_" data-uid="ACadSharp.Entities.Circle.#ctor*"></a>
+
+  <h3 id="ACadSharp_Entities_Circle__ctor_CSMath_XYZ_System_Double_" data-uid="ACadSharp.Entities.Circle.#ctor(CSMath.XYZ,System.Double)">
+  Circle(XYZ, double)
+  <a class="header-action link-secondary" title="View source" href="https://github.com/DomCR/ACadSharp/blob/master/src/ACadSharp/Entities/Circle.cs/#L79"><i class="bi bi-code-slash"></i></a>
+  </h3>
+
+  <div class="markdown level1 summary"><p>Initializes a new instance of the Circle class with the specified center point and radius.</p>
+</div>
+  <div class="markdown level1 conceptual"></div>
+
+  <div class="codewrapper">
+    <pre><code class="lang-csharp hljs">public Circle(XYZ center, double radius)</code></pre>
+  </div>
+
+  <h4 class="section">Parameters</h4>
+  <dl class="parameters">
+    <dt><code>center</code> <a class="xref" href="CSMath.XYZ.html">XYZ</a></dt>
+    <dd><p>The center point of the circle.</p>
+</dd>
+    <dt><code>radius</code> <a class="xref" href="https://learn.microsoft.com/dotnet/api/system.double">double</a></dt>
+    <dd><p>The radius of the circle. Must be a non-negative value.</p>
+</dd>
+  </dl>
 
 
 
@@ -593,7 +629,7 @@ public double Thickness { get; set; }</code></pre>
 
   <h3 id="ACadSharp_Entities_Circle_ApplyTransform_CSMath_Transform_" data-uid="ACadSharp.Entities.Circle.ApplyTransform(CSMath.Transform)">
   ApplyTransform(Transform)
-  <a class="header-action link-secondary" title="View source" href="https://github.com/DomCR/ACadSharp/blob/master/src/ACadSharp/Entities/Circle.cs/#L75"><i class="bi bi-code-slash"></i></a>
+  <a class="header-action link-secondary" title="View source" href="https://github.com/DomCR/ACadSharp/blob/master/src/ACadSharp/Entities/Circle.cs/#L86"><i class="bi bi-code-slash"></i></a>
   </h3>
 
   <div class="markdown level1 summary"><p>Apply a transform matrix to this entity.</p>
@@ -625,7 +661,7 @@ public double Thickness { get; set; }</code></pre>
 
   <h3 id="ACadSharp_Entities_Circle_GetBoundingBox" data-uid="ACadSharp.Entities.Circle.GetBoundingBox">
   GetBoundingBox()
-  <a class="header-action link-secondary" title="View source" href="https://github.com/DomCR/ACadSharp/blob/master/src/ACadSharp/Entities/Circle.cs/#L93"><i class="bi bi-code-slash"></i></a>
+  <a class="header-action link-secondary" title="View source" href="https://github.com/DomCR/ACadSharp/blob/master/src/ACadSharp/Entities/Circle.cs/#L104"><i class="bi bi-code-slash"></i></a>
   </h3>
 
   <div class="markdown level1 summary"><p>Gets the bounding box aligned with the axis XYZ that occupies this entity.</p>
@@ -658,7 +694,7 @@ public double Thickness { get; set; }</code></pre>
 
   <h3 id="ACadSharp_Entities_Circle_PolarCoordinateRelativeToCenter_System_Double_" data-uid="ACadSharp.Entities.Circle.PolarCoordinateRelativeToCenter(System.Double)">
   PolarCoordinateRelativeToCenter(double)
-  <a class="header-action link-secondary" title="View source" href="https://github.com/DomCR/ACadSharp/blob/master/src/ACadSharp/Entities/Circle.cs/#L101"><i class="bi bi-code-slash"></i></a>
+  <a class="header-action link-secondary" title="View source" href="https://github.com/DomCR/ACadSharp/blob/master/src/ACadSharp/Entities/Circle.cs/#L112"><i class="bi bi-code-slash"></i></a>
   </h3>
 
   <div class="markdown level1 summary"><p>Calculate the local point on the curve for a given angle relative to the center.</p>
@@ -697,7 +733,7 @@ public double Thickness { get; set; }</code></pre>
 
   <h3 id="ACadSharp_Entities_Circle_PolygonalVertexes_System_Int32_" data-uid="ACadSharp.Entities.Circle.PolygonalVertexes(System.Int32)">
   PolygonalVertexes(int)
-  <a class="header-action link-secondary" title="View source" href="https://github.com/DomCR/ACadSharp/blob/master/src/ACadSharp/Entities/Circle.cs/#L116"><i class="bi bi-code-slash"></i></a>
+  <a class="header-action link-secondary" title="View source" href="https://github.com/DomCR/ACadSharp/blob/master/src/ACadSharp/Entities/Circle.cs/#L127"><i class="bi bi-code-slash"></i></a>
   </h3>
 
   <div class="markdown level1 summary"><p>Converts the curve in a list of vertexes.</p>

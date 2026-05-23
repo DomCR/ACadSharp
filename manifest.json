@@ -166,6 +166,20 @@
     },
     {
       "type": "ManagedReference",
+      "source_relative_path": "api/ACadSharp.Blocks.DimensionArrowhead.yml",
+      "output": {
+        ".html": {
+          "relative_path": "api/ACadSharp.Blocks.DimensionArrowhead.html"
+        }
+      },
+      "version": "",
+      "Uid": null,
+      "IsMRef": true,
+      "Title": "ACadSharp.Blocks.DimensionArrowhead",
+      "Summary": "<p sourcefile=\"api/ACadSharp.Blocks.DimensionArrowhead.yml\" sourcestartlinenumber=\"1\">Provides predefined dimension arrowhead block records used in dimensioning.</p>\n"
+    },
+    {
+      "type": "ManagedReference",
       "source_relative_path": "api/ACadSharp.Blocks.yml",
       "output": {
         ".html": {

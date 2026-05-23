@@ -280,6 +280,126 @@ Dxf class name <a class="xref" href="ACadSharp.DxfSubclassMarker.html#ACadSharp_
 </div>
 
 
+  <h2 class="section" id="constructors">Constructors
+</h2>
+
+
+  <a id="ACadSharp_Entities_Solid__ctor_" data-uid="ACadSharp.Entities.Solid.#ctor*"></a>
+
+  <h3 id="ACadSharp_Entities_Solid__ctor" data-uid="ACadSharp.Entities.Solid.#ctor">
+  Solid()
+  <a class="header-action link-secondary" title="View source" href="https://github.com/DomCR/ACadSharp/blob/master/src/ACadSharp/Entities/Solid.cs/#L69"><i class="bi bi-code-slash"></i></a>
+  </h3>
+
+  <div class="markdown level1 summary"><p>Initializes a new instance of the <a class="xref" href="ACadSharp.Entities.Solid.html">Solid</a> class.</p>
+</div>
+  <div class="markdown level1 conceptual"></div>
+
+  <div class="codewrapper">
+    <pre><code class="lang-csharp hljs">public Solid()</code></pre>
+  </div>
+
+
+
+
+
+
+
+
+
+
+
+
+
+  <a id="ACadSharp_Entities_Solid__ctor_" data-uid="ACadSharp.Entities.Solid.#ctor*"></a>
+
+  <h3 id="ACadSharp_Entities_Solid__ctor_CSMath_XYZ_CSMath_XYZ_CSMath_XYZ_" data-uid="ACadSharp.Entities.Solid.#ctor(CSMath.XYZ,CSMath.XYZ,CSMath.XYZ)">
+  Solid(XYZ, XYZ, XYZ)
+  <a class="header-action link-secondary" title="View source" href="https://github.com/DomCR/ACadSharp/blob/master/src/ACadSharp/Entities/Solid.cs/#L97"><i class="bi bi-code-slash"></i></a>
+  </h3>
+
+  <div class="markdown level1 summary"><p>Initializes a new instance of the Solid class using the specified three corner points.</p>
+</div>
+  <div class="markdown level1 conceptual"></div>
+
+  <div class="codewrapper">
+    <pre><code class="lang-csharp hljs">public Solid(XYZ firstCorner, XYZ secondCorner, XYZ thirdCorner)</code></pre>
+  </div>
+
+  <h4 class="section">Parameters</h4>
+  <dl class="parameters">
+    <dt><code>firstCorner</code> <a class="xref" href="CSMath.XYZ.html">XYZ</a></dt>
+    <dd><p>The first corner point of the solid. Defines one vertex of the solid's base.</p>
+</dd>
+    <dt><code>secondCorner</code> <a class="xref" href="CSMath.XYZ.html">XYZ</a></dt>
+    <dd><p>The second corner point of the solid. Defines a second vertex of the solid's base.</p>
+</dd>
+    <dt><code>thirdCorner</code> <a class="xref" href="CSMath.XYZ.html">XYZ</a></dt>
+    <dd><p>The third corner point of the solid. Defines a third vertex of the solid's base.</p>
+</dd>
+  </dl>
+
+
+
+
+
+
+
+
+  <h4 class="section" id="ACadSharp_Entities_Solid__ctor_CSMath_XYZ_CSMath_XYZ_CSMath_XYZ__remarks">Remarks</h4>
+  <div class="markdown level1 remarks"><p>The three corner points must be specified to define the base of the solid. The order and position
+of the points affect the orientation and shape of the resulting solid.</p>
+</div>
+
+
+
+
+  <a id="ACadSharp_Entities_Solid__ctor_" data-uid="ACadSharp.Entities.Solid.#ctor*"></a>
+
+  <h3 id="ACadSharp_Entities_Solid__ctor_CSMath_XYZ_CSMath_XYZ_CSMath_XYZ_CSMath_XYZ_" data-uid="ACadSharp.Entities.Solid.#ctor(CSMath.XYZ,CSMath.XYZ,CSMath.XYZ,CSMath.XYZ)">
+  Solid(XYZ, XYZ, XYZ, XYZ)
+  <a class="header-action link-secondary" title="View source" href="https://github.com/DomCR/ACadSharp/blob/master/src/ACadSharp/Entities/Solid.cs/#L81"><i class="bi bi-code-slash"></i></a>
+  </h3>
+
+  <div class="markdown level1 summary"><p>Initializes a new instance of the Solid class using the specified corner points.</p>
+</div>
+  <div class="markdown level1 conceptual"></div>
+
+  <div class="codewrapper">
+    <pre><code class="lang-csharp hljs">public Solid(XYZ firstCorner, XYZ secondCorner, XYZ thirdCorner, XYZ fourthCorner)</code></pre>
+  </div>
+
+  <h4 class="section">Parameters</h4>
+  <dl class="parameters">
+    <dt><code>firstCorner</code> <a class="xref" href="CSMath.XYZ.html">XYZ</a></dt>
+    <dd><p>The first corner point of the solid. Defines one vertex of the quadrilateral base.</p>
+</dd>
+    <dt><code>secondCorner</code> <a class="xref" href="CSMath.XYZ.html">XYZ</a></dt>
+    <dd><p>The second corner point of the solid. Must be distinct from the other corners.</p>
+</dd>
+    <dt><code>thirdCorner</code> <a class="xref" href="CSMath.XYZ.html">XYZ</a></dt>
+    <dd><p>The third corner point of the solid. Must be distinct from the other corners.</p>
+</dd>
+    <dt><code>fourthCorner</code> <a class="xref" href="CSMath.XYZ.html">XYZ</a></dt>
+    <dd><p>The fourth corner point of the solid. Must be distinct from the other corners.</p>
+</dd>
+  </dl>
+
+
+
+
+
+
+
+
+  <h4 class="section" id="ACadSharp_Entities_Solid__ctor_CSMath_XYZ_CSMath_XYZ_CSMath_XYZ_CSMath_XYZ__remarks">Remarks</h4>
+  <div class="markdown level1 remarks"><p>The four corner points define the base of the solid in 3D space. The order of the points determines
+the orientation of the solid.</p>
+</div>
+
+
+
+
   <h2 class="section" id="properties">Properties
 </h2>
 
@@ -487,7 +607,7 @@ public XYZ SecondCorner { get; set; }</code></pre>
 
   <h3 id="ACadSharp_Entities_Solid_SubclassMarker" data-uid="ACadSharp.Entities.Solid.SubclassMarker">
   SubclassMarker
-  <a class="header-action link-secondary" title="View source" href="https://github.com/DomCR/ACadSharp/blob/master/src/ACadSharp/Entities/Solid.cs/#L51"><i class="bi bi-code-slash"></i></a>
+  <a class="header-action link-secondary" title="View source" href="https://github.com/DomCR/ACadSharp/blob/master/src/ACadSharp/Entities/Solid.cs/#L52"><i class="bi bi-code-slash"></i></a>
   </h3>
 
   <div class="markdown level1 summary"><p>Object Subclass marker.</p>
@@ -519,7 +639,7 @@ public XYZ SecondCorner { get; set; }</code></pre>
 
   <h3 id="ACadSharp_Entities_Solid_Thickness" data-uid="ACadSharp.Entities.Solid.Thickness">
   Thickness
-  <a class="header-action link-secondary" title="View source" href="https://github.com/DomCR/ACadSharp/blob/master/src/ACadSharp/Entities/Solid.cs/#L56"><i class="bi bi-code-slash"></i></a>
+  <a class="header-action link-secondary" title="View source" href="https://github.com/DomCR/ACadSharp/blob/master/src/ACadSharp/Entities/Solid.cs/#L57"><i class="bi bi-code-slash"></i></a>
   </h3>
 
   <div class="markdown level1 summary"><p>Specifies the distance a 2D object is extruded above or below its elevation.</p>
@@ -552,7 +672,7 @@ public double Thickness { get; set; }</code></pre>
 
   <h3 id="ACadSharp_Entities_Solid_ThirdCorner" data-uid="ACadSharp.Entities.Solid.ThirdCorner">
   ThirdCorner
-  <a class="header-action link-secondary" title="View source" href="https://github.com/DomCR/ACadSharp/blob/master/src/ACadSharp/Entities/Solid.cs/#L62"><i class="bi bi-code-slash"></i></a>
+  <a class="header-action link-secondary" title="View source" href="https://github.com/DomCR/ACadSharp/blob/master/src/ACadSharp/Entities/Solid.cs/#L63"><i class="bi bi-code-slash"></i></a>
   </h3>
 
   <div class="markdown level1 summary"><p>Third corner.</p>
@@ -589,7 +709,7 @@ public XYZ ThirdCorner { get; set; }</code></pre>
 
   <h3 id="ACadSharp_Entities_Solid_ApplyTransform_CSMath_Transform_" data-uid="ACadSharp.Entities.Solid.ApplyTransform(CSMath.Transform)">
   ApplyTransform(Transform)
-  <a class="header-action link-secondary" title="View source" href="https://github.com/DomCR/ACadSharp/blob/master/src/ACadSharp/Entities/Solid.cs/#L66"><i class="bi bi-code-slash"></i></a>
+  <a class="header-action link-secondary" title="View source" href="https://github.com/DomCR/ACadSharp/blob/master/src/ACadSharp/Entities/Solid.cs/#L103"><i class="bi bi-code-slash"></i></a>
   </h3>
 
   <div class="markdown level1 summary"><p>Apply a transform matrix to this entity.</p>
@@ -621,7 +741,7 @@ public XYZ ThirdCorner { get; set; }</code></pre>
 
   <h3 id="ACadSharp_Entities_Solid_GetBoundingBox" data-uid="ACadSharp.Entities.Solid.GetBoundingBox">
   GetBoundingBox()
-  <a class="header-action link-secondary" title="View source" href="https://github.com/DomCR/ACadSharp/blob/master/src/ACadSharp/Entities/Solid.cs/#L75"><i class="bi bi-code-slash"></i></a>
+  <a class="header-action link-secondary" title="View source" href="https://github.com/DomCR/ACadSharp/blob/master/src/ACadSharp/Entities/Solid.cs/#L112"><i class="bi bi-code-slash"></i></a>
   </h3>
 
   <div class="markdown level1 summary"><p>Gets the bounding box aligned with the axis XYZ that occupies this entity.</p>
