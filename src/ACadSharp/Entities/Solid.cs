@@ -95,10 +95,8 @@ public class Solid : Entity
 	/// <param name="secondCorner">The second corner point of the solid. Defines a second vertex of the solid's base.</param>
 	/// <param name="thirdCorner">The third corner point of the solid. Defines a third vertex of the solid's base.</param>
 	public Solid(XYZ firstCorner, XYZ secondCorner, XYZ thirdCorner)
+		: this(firstCorner, secondCorner, thirdCorner, thirdCorner)
 	{
-		this.FirstCorner = firstCorner;
-		this.SecondCorner = secondCorner;
-		this.ThirdCorner = thirdCorner;
 	}
 
 	/// <inheritdoc/>

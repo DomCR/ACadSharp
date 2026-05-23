@@ -85,9 +85,9 @@ public static class DimensionArrowhead
 		{
 			BlockRecord block = new BlockRecord(ClosedName);
 
-			block.Entities.Add(setDefault(() => new Line(new XYZ(-1, 1 / 6, 0), XYZ.Zero)));
-			block.Entities.Add(setDefault(() => new Line(XYZ.Zero, new XYZ(-1, -1 / 6, 0))));
-			block.Entities.Add(setDefault(() => new Line(new XYZ(-1, 1 / 6, 0), new XYZ(-1, -1 / 6, 0))));
+			block.Entities.Add(setDefault(() => new Line(new XYZ(-1, 1 / 6.0d, 0), XYZ.Zero)));
+			block.Entities.Add(setDefault(() => new Line(XYZ.Zero, new XYZ(-1, -1 / 6.0d, 0))));
+			block.Entities.Add(setDefault(() => new Line(new XYZ(-1, 1 / 6.0d, 0), new XYZ(-1, -1 / 6.0d, 0))));
 			block.Entities.Add(setDefault(() => new Line(XYZ.Zero, -XYZ.AxisX)));
 
 			return block;
@@ -103,9 +103,9 @@ public static class DimensionArrowhead
 		{
 			BlockRecord block = new BlockRecord(ClosedBlankName);
 
-			block.Entities.Add(setDefault(() => new Line(new XYZ(-1, 1 / 6, 0), XYZ.Zero)));
-			block.Entities.Add(setDefault(() => new Line(XYZ.Zero, new XYZ(-1, -1 / 6, 0))));
-			block.Entities.Add(setDefault(() => new Line(new XYZ(-1, 1 / 6, 0), new XYZ(-1, -1 / 6, 0))));
+			block.Entities.Add(setDefault(() => new Line(new XYZ(-1, 1 / 6.0d, 0), XYZ.Zero)));
+			block.Entities.Add(setDefault(() => new Line(XYZ.Zero, new XYZ(-1, -1 / 6.0d, 0))));
+			block.Entities.Add(setDefault(() => new Line(new XYZ(-1, 1 / 6.0d, 0), new XYZ(-1, -1 / 6.0d, 0))));
 
 			return block;
 		}
@@ -236,11 +236,11 @@ public static class DimensionArrowhead
 
 			block.Entities.Add(setDefault(() => new Arc(
 				new XYZ(0.44488802, -0.09133463, 0.0),
-				0.4541666700000001, 101.9999999980395, 167.9999999799193)));
+				0.4541666700000001, 1.78024, 2.93215)));
 
 			block.Entities.Add(setDefault(() => new Arc(
 				new XYZ(-0.44488802, 0.09133463, 0.0),
-				0.4541666700000001, 282.0000000215427, 348.0000000034225)));
+				0.4541666700000001, 4.9218284909877905164, 6.0737457969849337758)));
 
 			return block;
 		}
@@ -280,8 +280,8 @@ public static class DimensionArrowhead
 		{
 			BlockRecord block = new BlockRecord(OpenName);
 
-			block.Entities.Add(setDefault(() => new Line(new XYZ(-1.0, 0.5 / 3, 0.0), XYZ.Zero)));
-			block.Entities.Add(setDefault(() => new Line(XYZ.Zero, new XYZ(-1.0, -0.5 / 3, 0.0))));
+			block.Entities.Add(setDefault(() => new Line(new XYZ(-1.0, 0.5 / 3.0d, 0.0), XYZ.Zero)));
+			block.Entities.Add(setDefault(() => new Line(XYZ.Zero, new XYZ(-1.0, -0.5 / 3.0d, 0.0))));
 			block.Entities.Add(setDefault(() => new Line(XYZ.Zero, -XYZ.AxisX)));
 
 			return block;
