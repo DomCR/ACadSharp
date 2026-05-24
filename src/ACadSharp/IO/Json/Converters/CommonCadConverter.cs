@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Linq;
 
 #if NET
 
@@ -7,6 +8,11 @@ using System.Text.Json.Serialization;
 
 #else
 using Newtonsoft.Json;
+#endif
+#if NET5_0
+
+using CSUtilities.Extensions;
+
 #endif
 
 namespace ACadSharp.IO.Json.Converters;
@@ -19,6 +25,8 @@ namespace ACadSharp.IO.Json.Converters;
 /// System.Text.Json serialization scenarios where CadObject or its derived types require custom handling.</remarks>
 public class CommonCadConverter : JsonConverter<CadObject>
 {
+	private readonly string[] _idProperties = new[] { nameof(CadObject.ObjectName), nameof(CadObject.SubclassMarker) };
+
 #if NET
 
 	/// <inheritdoc/>
@@ -48,9 +56,12 @@ public class CommonCadConverter : JsonConverter<CadObject>
 	{
 		writer.WriteStartObject();
 
-		foreach (var prop in value.GetType().GetProperties())
+		writer.WriteString(nameof(CadObject.ObjectName), value.ObjectName);
+		writer.WriteString(nameof(CadObject.SubclassMarker), value.SubclassMarker);
+
+		foreach (var prop in value.GetType().GetProperties().DistinctBy(p => p.Name))
 		{
-			if (!prop.CanRead)
+			if (!prop.CanRead || this._idProperties.Contains(prop.Name))
 				continue;
 
 			if (!prop.CanWrite && options.IgnoreReadOnlyProperties)

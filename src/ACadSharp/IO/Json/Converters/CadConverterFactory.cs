@@ -1,4 +1,7 @@
 ﻿using System;
+using System.Collections.Generic;
+
+
 
 #if NET
 
@@ -22,17 +25,24 @@ public class CadConverterFactory :
 	public override bool CanConvert(Type typeToConvert)
 	{
 		return typeToConvert.IsSubclassOf(typeof(CadObject))
-			|| typeToConvert == typeof(CadDocument);
+			|| _converters.ContainsKey(typeToConvert);
 	}
+
+	private readonly Dictionary<Type, JsonConverter> _converters = new()
+	{
+		{ typeof(Color), new ColorConverter() },
+		{ typeof(CadDocument), new CadDocumentConverter() },
+	};
 
 #if NET
 
+
 	/// <inheritdoc/>
-	public override System.Text.Json.Serialization.JsonConverter CreateConverter(Type typeToConvert, JsonSerializerOptions options)
+	public override JsonConverter CreateConverter(Type typeToConvert, JsonSerializerOptions options)
 	{
-		if (typeToConvert == typeof(CadDocument))
+		if (_converters.TryGetValue(typeToConvert, out var converter))
 		{
-			return new CadDocumentConverter();
+			return converter;
 		}
 
 		return new CommonCadConverter();
@@ -55,4 +65,5 @@ public class CadConverterFactory :
 			new CommonCadConverter().WriteJson(writer, value, serializer);
 	}
 #endif
+
 }

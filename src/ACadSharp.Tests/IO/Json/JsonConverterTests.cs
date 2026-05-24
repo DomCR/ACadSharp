@@ -109,6 +109,8 @@ public class JsonConverterTests
 	private void assertCadObjectJson(JObject obj)
 #endif
 	{
+		Assert.True(obj.ContainsKey(nameof(CadObject.ObjectName)));
+		Assert.True(obj.ContainsKey(nameof(CadObject.SubclassMarker)));
 		Assert.True(obj.ContainsKey(nameof(CadObject.Handle)));
 		Assert.True(obj.ContainsKey(nameof(CadObject.Owner)));
 		Assert.True(obj.ContainsKey(nameof(CadObject.XDictionary)));
