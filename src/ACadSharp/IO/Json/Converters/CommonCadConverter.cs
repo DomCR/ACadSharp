@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Collections;
 using System.Linq;
 
 #if NET
@@ -96,6 +97,20 @@ public class CommonCadConverter : JsonConverter<CadObject>
 
 			writer.WritePropertyName(prop.Name);
 			JsonSerializer.Serialize(writer, pValue, pValue.GetType(), options);
+		}
+
+		if (value is IEnumerable arr)
+		{
+			writer.WritePropertyName("Entries");
+
+			writer.WriteStartArray();
+
+			foreach (var item in arr)
+			{
+				JsonSerializer.Serialize(writer, item, item.GetType(), options);
+			}
+
+			writer.WriteEndArray();
 		}
 
 		writer.WriteEndObject();
