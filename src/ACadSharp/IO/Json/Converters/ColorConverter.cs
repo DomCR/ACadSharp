@@ -16,6 +16,9 @@ using CSUtilities.Extensions;
 
 namespace ACadSharp.IO.Json.Converters;
 
+/// <summary>
+/// Provides custom JSON serialization and deserialization for <see cref="Color"/>.
+/// </summary>
 public class ColorConverter : JsonConverter<Color>
 {
 #if NET
@@ -39,14 +42,25 @@ public class ColorConverter : JsonConverter<Color>
 	}
 
 #else
+	/// <inheritdoc/>
 	public override Color ReadJson(JsonReader reader, Type objectType, Color existingValue, bool hasExistingValue, JsonSerializer serializer)
 	{
 		throw new NotImplementedException();
 	}
 
+	/// <inheritdoc/>
 	public override void WriteJson(JsonWriter writer, Color value, JsonSerializer serializer)
 	{
-		throw new NotImplementedException();
+		writer.WriteStartObject();
+
+		writer.WritePropertyName(nameof(value.R));
+		writer.WriteValue(value.R);
+		writer.WritePropertyName(nameof(value.G));
+		writer.WriteValue(value.G);
+		writer.WritePropertyName(nameof(value.B));
+		writer.WriteValue(value.B);
+
+		writer.WriteEndObject();
 	}
 #endif
 }

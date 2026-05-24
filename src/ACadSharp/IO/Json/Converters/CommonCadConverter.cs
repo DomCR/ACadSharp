@@ -25,7 +25,12 @@ namespace ACadSharp.IO.Json.Converters;
 /// System.Text.Json serialization scenarios where CadObject or its derived types require custom handling.</remarks>
 public class CommonCadConverter : JsonConverter<CadObject>
 {
-	private readonly string[] _idProperties = new[] { nameof(CadObject.ObjectName), nameof(CadObject.SubclassMarker) };
+	private readonly string[] _ignore = new[]
+	{
+		nameof(CadObject.ObjectName),
+		nameof(CadObject.SubclassMarker),
+		nameof(CadObject.Document),
+	};
 
 #if NET
 
@@ -61,10 +66,10 @@ public class CommonCadConverter : JsonConverter<CadObject>
 
 		foreach (var prop in value.GetType().GetProperties().DistinctBy(p => p.Name))
 		{
-			if (!prop.CanRead || this._idProperties.Contains(prop.Name))
+			if (!prop.CanRead || this._ignore.Contains(prop.Name))
 				continue;
 
-			if (!prop.CanWrite && options.IgnoreReadOnlyProperties)
+			if (!prop.CanWrite)
 				continue;
 
 			var pValue = prop.GetValue(value);

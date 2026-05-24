@@ -1,0 +1,54 @@
+﻿using ACadSharp.Header;
+using System;
+
+#if NET
+
+using System.Text.Json;
+using System.Text.Json.Serialization;
+
+#else
+using Newtonsoft.Json;
+#endif
+
+namespace ACadSharp.IO.Json.Converters;
+
+public class CadHeaderConverter : JsonConverter<CadHeader>
+{
+#if NET
+
+	public override CadHeader Read(ref Utf8JsonReader reader, Type typeToConvert, JsonSerializerOptions options)
+	{
+		throw new NotImplementedException();
+	}
+
+	public override void Write(Utf8JsonWriter writer, CadHeader value, JsonSerializerOptions options)
+	{
+		writer.WriteStartObject();
+
+		foreach (var item in CadHeader.GetHeaderMap().Keys)
+		{
+			var pValue = value.GetValue(item);
+			if(pValue == null)
+			{
+				continue;
+			}
+
+			writer.WritePropertyName(item);
+			JsonSerializer.Serialize(writer, pValue, pValue.GetType(), options);
+		}
+
+		writer.WriteEndObject();
+	}
+
+#else
+	public override CadHeader ReadJson(JsonReader reader, Type objectType, CadHeader existingValue, bool hasExistingValue, JsonSerializer serializer)
+	{
+		throw new NotImplementedException();
+	}
+
+	public override void WriteJson(JsonWriter writer, CadHeader value, JsonSerializer serializer)
+	{
+		throw new NotImplementedException();
+	}
+#endif
+}

@@ -1,4 +1,5 @@
-﻿using System;
+﻿using ACadSharp.Header;
+using System;
 
 #if NET
 
@@ -22,7 +23,33 @@ public class CadDocumentConverter : JsonConverter<CadDocument>
 
 	public override void Write(Utf8JsonWriter writer, CadDocument value, JsonSerializerOptions options)
 	{
-		throw new NotImplementedException();
+		writer.WriteStartObject();
+
+		writer.WritePropertyName(nameof(CadDocument.AppIds));
+		JsonSerializer.Serialize(writer, value.AppIds, options);
+
+		writer.WritePropertyName(nameof(CadDocument.BlockRecords));
+		JsonSerializer.Serialize(writer, value.BlockRecords, options);
+
+		writer.WritePropertyName(nameof(CadDocument.DimensionStyles));
+		JsonSerializer.Serialize(writer, value.DimensionStyles, options);
+
+		writer.WritePropertyName(nameof(CadDocument.Layers));
+		JsonSerializer.Serialize(writer, value.Layers, options);
+
+		writer.WritePropertyName(nameof(CadDocument.LineTypes));
+		JsonSerializer.Serialize(writer, value.LineTypes, options);
+
+		writer.WritePropertyName(nameof(CadDocument.TextStyles));
+		JsonSerializer.Serialize(writer, value.TextStyles, options);
+
+		writer.WritePropertyName(nameof(CadDocument.RootDictionary));
+		JsonSerializer.Serialize(writer, value.RootDictionary, options);
+
+		writer.WritePropertyName(nameof(CadDocument.Header));
+		JsonSerializer.Serialize(writer, value.Header, options);
+
+		writer.WriteEndObject();
 	}
 
 #else

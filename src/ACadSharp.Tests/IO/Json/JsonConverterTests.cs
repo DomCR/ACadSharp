@@ -46,6 +46,29 @@ public class JsonConverterTests
 	}
 
 	[Fact]
+	public void CadDocumentToJsonTest()
+	{
+		CadDocument doc = new();
+
+#if NET
+		string json = CadJsonConverter.Serialize(doc, new JsonSerializerOptions
+		{
+			WriteIndented = true,
+		});
+
+		JsonObject obj = JsonNode.Parse(json).AsObject();
+#else
+		string json = CadJsonConverter.Serialize(doc, new JsonSerializerSettings
+		{
+		});
+
+		JObject obj = JObject.Parse(json);
+#endif
+
+		this._output.WriteLine(json);
+	}
+
+	[Fact]
 	public void BlockRecordToJsonTest()
 	{
 		BlockRecord blk = new BlockRecord("my_block");
@@ -55,8 +78,6 @@ public class JsonConverterTests
 		string json = CadJsonConverter.Serialize(blk, new JsonSerializerOptions
 		{
 			WriteIndented = true,
-			IgnoreReadOnlyProperties = true,
-			IgnoreReadOnlyFields = true,
 		});
 
 		JsonObject obj = JsonNode.Parse(json).AsObject();
@@ -83,8 +104,6 @@ public class JsonConverterTests
 		string json = CadJsonConverter.Serialize(entity, new JsonSerializerOptions
 		{
 			WriteIndented = true,
-			IgnoreReadOnlyProperties = true,
-			IgnoreReadOnlyFields = true,
 		});
 
 		JsonObject obj = JsonNode.Parse(json).AsObject();

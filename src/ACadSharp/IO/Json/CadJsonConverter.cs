@@ -2,9 +2,10 @@
 using System.Linq;
 using System;
 
-
 #if NET
+
 using System.Text.Json;
+
 #else
 using Newtonsoft.Json;
 #endif
@@ -19,6 +20,12 @@ namespace ACadSharp.IO.Json;
 /// methods are static and can be used without creating an instance of JsonConverter.</remarks>
 public class CadJsonConverter
 {
+	public static string Deserialize<T>(string json)
+			where T : CadObject
+	{
+		throw new NotImplementedException();
+	}
+
 	/// <summary>
 	/// Serializes a <see cref="CadObject"/> to a JSON string.
 	/// </summary>
@@ -33,6 +40,28 @@ public class CadJsonConverter
 		JsonSerializerSettings options = null
 #endif
 		) where T : CadObject
+	{
+		return serialize(obj, options);
+	}
+
+	public static string Serialize(CadDocument doc,
+#if NET
+		JsonSerializerOptions options = null
+#else
+		JsonSerializerSettings options = null
+#endif
+		)
+	{
+		return serialize(doc, options);
+	}
+
+	private static string serialize(object doc,
+#if NET
+		JsonSerializerOptions options = null
+#else
+		JsonSerializerSettings options = null
+#endif
+		)
 	{
 		if (options == null)
 		{
@@ -49,15 +78,9 @@ public class CadJsonConverter
 		}
 
 #if NET
-		return JsonSerializer.Serialize(obj, obj.GetType(), options);
+		return JsonSerializer.Serialize(doc, doc.GetType(), options);
 #else
-		return JsonConvert.SerializeObject(obj, obj.GetType(), options);
+		return JsonConvert.SerializeObject(doc, doc.GetType(), options);
 #endif
-	}
-
-	public static string Deserialize<T>(string json) 
-		where T : CadObject
-	{
-		throw new NotImplementedException();
 	}
 }

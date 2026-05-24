@@ -1037,11 +1037,11 @@ namespace ACadSharp.Tables
 
 		internal double AltMzf { get; set; }
 
-		internal string AltMzs { get; set; }
+		internal string AltMzs { get; set; } = string.Empty;
 
 		internal double Mzf { get; set; }
 
-		internal string Mzs { get; set; }
+		internal string Mzs { get; set; } = string.Empty;
 
 		public const string DefaultName = "Standard";
 

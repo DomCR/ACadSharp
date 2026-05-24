@@ -1,4 +1,5 @@
-﻿using System;
+﻿using ACadSharp.Header;
+using System;
 using System.Collections.Generic;
 
 
@@ -32,6 +33,7 @@ public class CadConverterFactory :
 	{
 		{ typeof(Color), new ColorConverter() },
 		{ typeof(CadDocument), new CadDocumentConverter() },
+		{ typeof(CadHeader), new CadHeaderConverter() },
 	};
 
 #if NET
@@ -40,7 +42,7 @@ public class CadConverterFactory :
 	/// <inheritdoc/>
 	public override JsonConverter CreateConverter(Type typeToConvert, JsonSerializerOptions options)
 	{
-		if (_converters.TryGetValue(typeToConvert, out var converter))
+		if (this._converters.TryGetValue(typeToConvert, out var converter))
 		{
 			return converter;
 		}
