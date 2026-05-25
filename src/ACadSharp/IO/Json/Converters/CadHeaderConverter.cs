@@ -14,6 +14,35 @@ namespace ACadSharp.IO.Json.Converters;
 
 public class CadHeaderConverter : JsonConverter<CadHeader>
 {
+
+	/// <inheritdoc/>
+#if NET
+	public override void Write(Utf8JsonWriter writer, CadHeader value, JsonSerializerOptions options)
+#else
+	public override void WriteJson(JsonWriter writer, CadHeader value, JsonSerializer serializer)
+#endif
+	{
+		writer.WriteStartObject();
+
+		foreach (var item in CadHeader.GetHeaderMap().Keys)
+		{
+			var pValue = value.GetValue(item);
+			if (pValue == null)
+			{
+				continue;
+			}
+
+			writer.WritePropertyName(item);
+#if NET
+			JsonSerializer.Serialize(writer, pValue, pValue.GetType(), options);
+#else
+			serializer.Serialize(writer, pValue);
+#endif
+		}
+
+		writer.WriteEndObject();
+	}
+
 #if NET
 
 	public override CadHeader Read(ref Utf8JsonReader reader, Type typeToConvert, JsonSerializerOptions options)
@@ -21,32 +50,8 @@ public class CadHeaderConverter : JsonConverter<CadHeader>
 		throw new NotImplementedException();
 	}
 
-	public override void Write(Utf8JsonWriter writer, CadHeader value, JsonSerializerOptions options)
-	{
-		writer.WriteStartObject();
-
-		foreach (var item in CadHeader.GetHeaderMap().Keys)
-		{
-			var pValue = value.GetValue(item);
-			if(pValue == null)
-			{
-				continue;
-			}
-
-			writer.WritePropertyName(item);
-			JsonSerializer.Serialize(writer, pValue, pValue.GetType(), options);
-		}
-
-		writer.WriteEndObject();
-	}
-
 #else
 	public override CadHeader ReadJson(JsonReader reader, Type objectType, CadHeader existingValue, bool hasExistingValue, JsonSerializer serializer)
-	{
-		throw new NotImplementedException();
-	}
-
-	public override void WriteJson(JsonWriter writer, CadHeader value, JsonSerializer serializer)
 	{
 		throw new NotImplementedException();
 	}
