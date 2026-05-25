@@ -1,4 +1,6 @@
-﻿using System;
+﻿using ACadSharp.Tables;
+using CSUtilities.Extensions;
+using System;
 using System.Collections;
 using System.Linq;
 
@@ -52,14 +54,37 @@ public class CommonCadConverter : JsonConverter<CadObject>
 				string propertyName = reader.GetString();
 				var prop = typeToConvert.GetProperty(propertyName);
 
+				if (!prop.CanWrite)
+				{
+					continue;
+				}
+
 				reader.Read();
 
-				var value = JsonSerializer.Deserialize(ref reader, prop.PropertyType, options);
+				if (reader.TokenType == JsonTokenType.Null)
+				{
+					continue;
+				}
+
+				object value = null;
+				if (prop.PropertyType.HasInterface<INamedCadObject>())
+				{
+					value = Activator.CreateInstance(prop.PropertyType, reader.GetString());
+				}
+				else
+				{
+					value = JsonSerializer.Deserialize(ref reader, prop.PropertyType, options);
+				}
+
 				prop.SetValue(obj, value);
+			}
+			else if (reader.TokenType == JsonTokenType.EndObject)
+			{
+				return obj;
 			}
 		}
 
-		throw new NotImplementedException();
+		throw new JsonException("Expected EndObject token.");
 	}
 
 #else

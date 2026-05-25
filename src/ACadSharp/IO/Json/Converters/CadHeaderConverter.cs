@@ -43,17 +43,13 @@ public class CadHeaderConverter : JsonConverter<CadHeader>
 		writer.WriteEndObject();
 	}
 
+	/// <inheritdoc/>
 #if NET
-
 	public override CadHeader Read(ref Utf8JsonReader reader, Type typeToConvert, JsonSerializerOptions options)
-	{
-		throw new NotImplementedException();
-	}
-
 #else
 	public override CadHeader ReadJson(JsonReader reader, Type objectType, CadHeader existingValue, bool hasExistingValue, JsonSerializer serializer)
+#endif
 	{
 		throw new NotImplementedException();
 	}
-#endif
 }

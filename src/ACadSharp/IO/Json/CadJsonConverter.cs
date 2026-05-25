@@ -20,10 +20,20 @@ namespace ACadSharp.IO.Json;
 /// methods are static and can be used without creating an instance of JsonConverter.</remarks>
 public class CadJsonConverter
 {
-	public static string Deserialize<T>(string json)
+	public static T Deserialize<T>(string json)
 			where T : CadObject
 	{
 		throw new NotImplementedException();
+	}
+
+	public static CadObject Deserialize(string json, Type type)
+	{
+		if (!type.IsSubclassOf(typeof(CadObject)))
+		{
+			throw new ArgumentException($"The provided type must be a subclass of {typeof(CadObject).FullName}.", nameof(type));
+		}
+
+		return (CadObject)deserialize(json, type);
 	}
 
 	/// <summary>
@@ -53,6 +63,35 @@ public class CadJsonConverter
 		)
 	{
 		return serialize(doc, options);
+	}
+
+	private static object deserialize(string json, Type type,
+#if NET
+		JsonSerializerOptions options = null
+#else
+		JsonSerializerSettings options = null
+#endif
+		)
+	{
+		if (options == null)
+		{
+#if NET
+			options = new JsonSerializerOptions();
+#else
+			options = new JsonSerializerSettings();
+#endif
+		}
+
+		if (!options.Converters.OfType<CadConverterFactory>().Any())
+		{
+			options.Converters.Add(new CadConverterFactory());
+		}
+
+#if NET
+		return JsonSerializer.Deserialize(json, type, options);
+#else
+		return JsonConvert.DeserializeObject(json, type, options);
+#endif
 	}
 
 	private static string serialize(object doc,

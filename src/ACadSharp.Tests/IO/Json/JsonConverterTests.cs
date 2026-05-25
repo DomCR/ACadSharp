@@ -119,6 +119,31 @@ private readonly JsonSerializerSettings _jsonOptions = new JsonSerializerSetting
 		this.assertEntityJson(obj);
 	}
 
+	[Theory]
+	[MemberData(nameof(Entities))]
+	public void JsonToEntityTest(Type type)
+	{
+		Entity entity = (Entity)Factory.CreateObject(type);
+
+#if NET
+		string json = CadJsonConverter.Serialize(entity, _jsonOptions);
+
+		JsonObject obj = JsonNode.Parse(json).AsObject();
+
+#else
+		string json = CadJsonConverter.Serialize(entity, _jsonOptions);
+
+		JObject obj = JObject.Parse(json);
+#endif
+
+		this._output.WriteLine(json);
+
+		var cadobj = CadJsonConverter.Deserialize(json, type);
+
+		Assert.Equal(type, cadobj.GetType());
+		EntityComparator.Equals(entity, (Entity)cadobj);
+	}
+
 #if NET
 
 	private void assertCadObjectJson(JsonObject obj)

@@ -26,7 +26,43 @@ public class ColorConverter : JsonConverter<Color>
 	/// <inheritdoc/>
 	public override Color Read(ref Utf8JsonReader reader, Type typeToConvert, JsonSerializerOptions options)
 	{
-		throw new NotImplementedException();
+		if (reader.TokenType != JsonTokenType.StartObject)
+		{
+			throw new JsonException("Expected StartObject token.");
+		}
+
+		byte r = 0, g = 0, b = 0;
+
+		while (reader.Read())
+		{
+			if (reader.TokenType == JsonTokenType.EndObject)
+			{
+				return new Color(r, g, b);
+			}
+
+			if (reader.TokenType != JsonTokenType.PropertyName)
+			{
+				throw new JsonException("Expected PropertyName token.");
+			}
+
+			string propertyName = reader.GetString();
+			reader.Read();
+
+			switch (propertyName)
+			{
+				case nameof(Color.R):
+					r = reader.GetByte();
+					break;
+				case nameof(Color.G):
+					g = reader.GetByte();
+					break;
+				case nameof(Color.B):
+					b = reader.GetByte();
+					break;
+			}
+		}
+
+		throw new JsonException("Expected EndObject token.");
 	}
 
 	/// <inheritdoc/>
@@ -45,7 +81,43 @@ public class ColorConverter : JsonConverter<Color>
 	/// <inheritdoc/>
 	public override Color ReadJson(JsonReader reader, Type objectType, Color existingValue, bool hasExistingValue, JsonSerializer serializer)
 	{
-		throw new NotImplementedException();
+		if (reader.TokenType != JsonToken.StartObject)
+		{
+			throw new JsonSerializationException("Expected StartObject token.");
+		}
+
+		byte r = 0, g = 0, b = 0;
+
+		while (reader.Read())
+		{
+			if (reader.TokenType == JsonToken.EndObject)
+			{
+				return new Color(r, g, b);
+			}
+
+			if (reader.TokenType != JsonToken.PropertyName)
+			{
+				throw new JsonSerializationException("Expected PropertyName token.");
+			}
+
+			string propertyName = (string)reader.Value;
+			reader.Read();
+
+			switch (propertyName)
+			{
+				case nameof(Color.R):
+					r = Convert.ToByte(reader.Value);
+					break;
+				case nameof(Color.G):
+					g = Convert.ToByte(reader.Value);
+					break;
+				case nameof(Color.B):
+					b = Convert.ToByte(reader.Value);
+					break;
+			}
+		}
+
+		throw new JsonSerializationException("Expected EndObject token.");
 	}
 
 	/// <inheritdoc/>
