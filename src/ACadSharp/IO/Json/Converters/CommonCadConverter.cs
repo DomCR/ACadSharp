@@ -137,7 +137,7 @@ public class CommonCadConverter : JsonConverter<CadObject>
 			foreach (var item in arr)
 			{
 #if NET
-			JsonSerializer.Serialize(writer, item, item.GetType(), options);
+				JsonSerializer.Serialize(writer, item, item.GetType(), options);
 #else
 				serializer.Serialize(writer, item);
 #endif
