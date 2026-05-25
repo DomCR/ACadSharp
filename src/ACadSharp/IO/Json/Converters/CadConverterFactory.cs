@@ -2,8 +2,6 @@
 using System;
 using System.Collections.Generic;
 
-
-
 #if NET
 
 using System.Text.Json;
@@ -22,13 +20,6 @@ public class CadConverterFactory :
 	Newtonsoft.Json.JsonConverter
 #endif
 {
-	/// <inheritdoc/>
-	public override bool CanConvert(Type typeToConvert)
-	{
-		return typeToConvert.IsSubclassOf(typeof(CadObject))
-			|| _converters.ContainsKey(typeToConvert);
-	}
-
 	private readonly Dictionary<Type, JsonConverter> _converters = new()
 	{
 		{ typeof(Color), new ColorConverter() },
@@ -36,9 +27,14 @@ public class CadConverterFactory :
 		{ typeof(CadHeader), new CadHeaderConverter() },
 	};
 
+	/// <inheritdoc/>
+	public override bool CanConvert(Type typeToConvert)
+	{
+		return typeToConvert.IsSubclassOf(typeof(CadObject))
+			|| _converters.ContainsKey(typeToConvert);
+	}
+
 #if NET
-
-
 	/// <inheritdoc/>
 	public override JsonConverter CreateConverter(Type typeToConvert, JsonSerializerOptions options)
 	{
@@ -51,21 +47,27 @@ public class CadConverterFactory :
 	}
 
 #else
+	/// <inheritdoc/>
 	public override object ReadJson(JsonReader reader, Type objectType, object existingValue, JsonSerializer serializer)
 	{
-		if (objectType == typeof(CadDocument))
-			return new CadDocumentConverter().ReadJson(reader, objectType, existingValue, serializer);
+		if (this._converters.TryGetValue(objectType, out var converter))
+		{
+			return converter.ReadJson(reader, objectType, existingValue, serializer);
+		}
 
 		return new CommonCadConverter().ReadJson(reader, objectType, existingValue, serializer);
 	}
 
+	/// <inheritdoc/>
 	public override void WriteJson(JsonWriter writer, object value, JsonSerializer serializer)
 	{
-		if (value is CadDocument)
-			new CadDocumentConverter().WriteJson(writer, value, serializer);
-		else
-			new CommonCadConverter().WriteJson(writer, value, serializer);
+		if (this._converters.TryGetValue(value.GetType(), out var converter))
+		{
+			converter.WriteJson(writer, value, serializer);
+			return;
+		}
+
+		new CommonCadConverter().WriteJson(writer, value, serializer);
 	}
 #endif
-
 }

@@ -26,6 +26,18 @@ public class JsonConverterTests
 {
 	public static readonly TheoryData<Type> Entities = new TheoryData<Type>();
 
+#if NET
+	private readonly JsonSerializerOptions _jsonOptions = new JsonSerializerOptions
+	{
+		WriteIndented = true,
+	};
+#else
+private readonly JsonSerializerSettings _jsonOptions = new JsonSerializerSettings
+{
+	Formatting = Formatting.Indented,
+};
+#endif
+
 	private readonly ITestOutputHelper _output;
 
 	static JsonConverterTests()
@@ -46,52 +58,43 @@ public class JsonConverterTests
 	}
 
 	[Fact]
-	public void CadDocumentToJsonTest()
-	{
-		CadDocument doc = new();
-
-#if NET
-		string json = CadJsonConverter.Serialize(doc, new JsonSerializerOptions
-		{
-			WriteIndented = true,
-		});
-
-		JsonObject obj = JsonNode.Parse(json).AsObject();
-#else
-		string json = CadJsonConverter.Serialize(doc, new JsonSerializerSettings
-		{
-		});
-
-		JObject obj = JObject.Parse(json);
-#endif
-
-		this._output.WriteLine(json);
-	}
-
-	[Fact]
 	public void BlockRecordToJsonTest()
 	{
 		BlockRecord blk = new BlockRecord("my_block");
 		blk.Entities.Add(new Line(new XYZ(0, 0, 0), new XYZ(10, 10, 0)));
 
 #if NET
-		string json = CadJsonConverter.Serialize(blk, new JsonSerializerOptions
-		{
-			WriteIndented = true,
-		});
+		string json = CadJsonConverter.Serialize(blk, _jsonOptions);
 
 		JsonObject obj = JsonNode.Parse(json).AsObject();
 
 #else
-		string json = CadJsonConverter.Serialize(blk, new JsonSerializerSettings
-		{
-		});
+		string json = CadJsonConverter.Serialize(blk, _jsonOptions);
 
 		JObject obj = JObject.Parse(json);
 #endif
 
 		this._output.WriteLine(json);
 		this.assertCadObjectJson(obj);
+	}
+
+	[Fact]
+	public void CadDocumentToJsonTest()
+	{
+		CadDocument doc = new();
+		doc.Entities.Add(new Line(new XYZ(0, 0, 0), new XYZ(10, 10, 0)));
+
+#if NET
+		string json = CadJsonConverter.Serialize(doc, _jsonOptions);
+
+		JsonObject obj = JsonNode.Parse(json).AsObject();
+#else
+		string json = CadJsonConverter.Serialize(doc, _jsonOptions);
+
+		JObject obj = JObject.Parse(json);
+#endif
+
+		this._output.WriteLine(json);
 	}
 
 	[Theory]
@@ -101,17 +104,12 @@ public class JsonConverterTests
 		Entity entity = (Entity)Factory.CreateObject(type);
 
 #if NET
-		string json = CadJsonConverter.Serialize(entity, new JsonSerializerOptions
-		{
-			WriteIndented = true,
-		});
+		string json = CadJsonConverter.Serialize(entity, _jsonOptions);
 
 		JsonObject obj = JsonNode.Parse(json).AsObject();
 
 #else
-		string json = CadJsonConverter.Serialize(entity, new JsonSerializerSettings
-		{
-		});
+		string json = CadJsonConverter.Serialize(entity, _jsonOptions);
 
 		JObject obj = JObject.Parse(json);
 #endif
