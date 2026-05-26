@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Linq;
+using ACadSharp.Tables;
 
 namespace ACadSharp.Objects.Collections;
 
@@ -19,19 +20,44 @@ public class LayoutCollection : ObjectDictionaryCollection<Layout>
 		this._dictionary = dictionary;
 	}
 
+	public override void Add(Layout entry)
+	{
+		if (!isDefaultLayout(entry))
+			entry.AssociatedBlock.Name = findSmallestFreePaperSpaceName(this._dictionary.Document);
+
+		base.Add(entry);
+	}
+
 	public override bool Remove(string name, out Layout entry)
 	{
-		if (name.Equals(Layout.ModelLayoutName, StringComparison.InvariantCultureIgnoreCase))
+		if (!this.TryGet(name, out entry))
+			return false;
+
+		if (isDefaultLayout(entry))
 		{
 			throw new ArgumentException($"The Layout {name} cannot be removed.");
 		}
 
-		if (this.ContainsKey(name) && this.Count() <= 2)
-		{
-			throw new ArgumentException(
-				$"The Layout {name} cannot be removed: a DWG/DXF document must contain at least one paper layout.");
-		}
-
 		return base.Remove(name, out entry);
+	}
+
+	private static bool isDefaultLayout(Layout layout)
+	{
+		return layout.AssociatedBlock.Name.Equals(BlockRecord.PaperSpaceName, StringComparison.InvariantCultureIgnoreCase) ||
+		       layout.AssociatedBlock.Name.Equals(BlockRecord.ModelSpaceName, StringComparison.InvariantCultureIgnoreCase);
+	}
+
+	private static string findSmallestFreePaperSpaceName(CadDocument doc)
+	{
+		int n = 0;
+		while (true)
+		{
+			string candidate = Tables.BlockRecord.PaperSpaceName + n.ToString(System.Globalization.CultureInfo.InvariantCulture);
+			if (!doc.BlockRecords.Contains(candidate))
+			{
+				return candidate;
+			}
+			n++;
+		}
 	}
 }
