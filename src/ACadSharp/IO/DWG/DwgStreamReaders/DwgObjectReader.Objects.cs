@@ -215,6 +215,65 @@ internal partial class DwgObjectReader : DwgSectionIO
 		return template;
 	}
 
+	private CadTemplate readBlockLinearParameter()
+	{
+		BlockLinearParameter blockLinearParameter = new();
+		CadBlockLinearParameterTemplate template = new CadBlockLinearParameterTemplate(blockLinearParameter);
+
+		// The connection table is read inline with a fixed sequence instead of calling
+		// readBlock2PtParameter, whose generic connection-list loop is not byte-compatible
+		// with the dynamic blocks this reader was validated against.
+		this.readBlockParameter(template);
+
+		//1010 1020 1030
+		blockLinearParameter.FirstPoint = this._mergedReaders.Read3BitDouble();
+		//1011 1021 1031
+		blockLinearParameter.SecondPoint = this._mergedReaders.Read3BitDouble();
+
+		//171 172 173
+		this._mergedReaders.ReadBitShort();
+		this._mergedReaders.ReadBitShort();
+		this._mergedReaders.ReadBitShort();
+		//94
+		this._mergedReaders.ReadBitLong();
+		//303
+		this._mergedReaders.ReadVariableText();
+		//174 number of connections
+		this._mergedReaders.ReadBitShort();
+		//95
+		this._mergedReaders.ReadBitLong();
+		//304
+		this._mergedReaders.ReadVariableText();
+
+		this._mergedReaders.ReadBitLong();
+		this._mergedReaders.ReadBitLong();
+		this._mergedReaders.ReadBitLong();
+		this._mergedReaders.ReadBitLong();
+
+		//177
+		blockLinearParameter.BaseLocation = (LinearParameterBaseLocation)this._mergedReaders.ReadBitShort();
+		//305
+		blockLinearParameter.Label = this._mergedReaders.ReadVariableText();
+		//306
+		blockLinearParameter.Description = this._mergedReaders.ReadVariableText();
+		//140
+		blockLinearParameter.LabelOffset = this._mergedReaders.ReadBitDouble();
+		//96
+		this._mergedReaders.ReadBitLong();
+		//141
+		blockLinearParameter.Minimum = this._mergedReaders.ReadBitDouble();
+		//142
+		blockLinearParameter.Maximum = this._mergedReaders.ReadBitDouble();
+		//143
+		blockLinearParameter.Increment = this._mergedReaders.ReadBitDouble();
+
+		int numberOfValues = this._objectReader.ReadBitShort();
+		for (int i = 0; i < numberOfValues; i++)
+			blockLinearParameter.Values.Add(this._mergedReaders.ReadBitDouble());
+
+		return template;
+	}
+
 	private CadTemplate readBlockVisibilityParameter()
 	{
 		BlockVisibilityParameter blockVisibilityParameter = new BlockVisibilityParameter();
