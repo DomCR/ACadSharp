@@ -524,10 +524,10 @@ internal abstract partial class DxfSectionWriterBase
 				}
 				break;
 			case Hatch.BoundaryPath.Spline spline:
+				this._writer.Write(94, (int)spline.Degree);
 				this._writer.Write(73, spline.IsRational ? (short)1 : (short)0);
 				this._writer.Write(74, spline.IsPeriodic ? (short)1 : (short)0);
 
-				this._writer.Write(94, (int)spline.Degree);
 				this._writer.Write(95, spline.Knots.Count);
 				this._writer.Write(96, spline.ControlPoints.Count);
 
@@ -544,6 +544,21 @@ internal abstract partial class DxfSectionWriterBase
 					{
 						this._writer.Write(42, point.Z);
 					}
+				}
+
+				this._writer.Write(97, spline.FitPoints.Count);
+				foreach (var fitPoint in spline.FitPoints)
+				{
+					this._writer.Write(11, fitPoint.X);
+					this._writer.Write(21, fitPoint.Y);
+				}
+
+				if (spline.FitPoints.Count > 0)
+				{
+					this._writer.Write(12, spline.StartTangent.X);
+					this._writer.Write(22, spline.StartTangent.Y);
+					this._writer.Write(13, spline.EndTangent.X);
+					this._writer.Write(23, spline.EndTangent.Y);
 				}
 				break;
 			default:

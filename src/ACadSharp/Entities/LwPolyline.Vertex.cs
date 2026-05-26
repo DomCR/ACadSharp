@@ -59,6 +59,11 @@ public partial class LwPolyline
 			Location = location;
 		}
 
+		public Vertex(double x, double y)
+			: this(new XY(x, y))
+		{
+		}
+
 		/// <inheritdoc/>
 		public Vertex Clone()
 		{
