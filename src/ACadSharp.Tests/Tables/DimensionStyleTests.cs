@@ -1,10 +1,297 @@
-﻿using ACadSharp.Tables;
+﻿using ACadSharp.Entities;
+using ACadSharp.Tables;
+using ACadSharp.Tables.Collections;
+using CSMath;
 using Xunit;
+using ACadSharp.Types.Units;
 
 namespace ACadSharp.Tests.Tables
 {
-	public class DimensionStyleTests
+	public class DimensionStyleTests : TableEntryCommonTests<DimensionStyle>
 	{
+		public static readonly TheoryData<DimensionStyle, DimensionAngular2Line, string> AngularStyleFormat;
+
+		public static readonly TheoryData<DimensionStyle, DimensionAligned, string> LinearStyleFormat;
+
+		static DimensionStyleTests()
+		{
+			AngularStyleFormat = new()
+			{
+				{
+					new DimensionStyle {
+						AngularUnit = AngularUnitFormat.DegreesMinutesSeconds
+					},
+					new DimensionAngular2Line{
+						FirstPoint = XYZ.Zero,
+						SecondPoint = new XYZ(10, 0, 0),
+						AngleVertex = XYZ.Zero,
+						DefinitionPoint = new XYZ(0,10, 0),
+					},
+					"90°"
+				},
+				{
+					new DimensionStyle {
+						AngularUnit = AngularUnitFormat.Radians,
+						AngularDecimalPlaces = 2
+					},
+					new DimensionAngular2Line{
+						FirstPoint = XYZ.Zero,
+						SecondPoint = new XYZ(10, 0, 0),
+						AngleVertex = XYZ.Zero,
+						DefinitionPoint = new XYZ(0,10, 0),
+					},
+					"1.57r"
+				},
+				{
+					new DimensionStyle {
+						AngularUnit = AngularUnitFormat.DecimalDegrees
+					},
+					new DimensionAngular2Line{
+						FirstPoint = XYZ.Zero,
+						SecondPoint = new XYZ(10, 0, 0),
+						AngleVertex = XYZ.Zero,
+						DefinitionPoint = new XYZ(0,10, 0),
+					},
+					"90°"
+				},
+				{
+					new DimensionStyle {
+						AngularUnit = AngularUnitFormat.DecimalDegrees,
+						AngularZeroHandling = AngularZeroHandling.SuppressLeadingZeroes,
+						AngularDecimalPlaces = 2
+					},
+					new DimensionAngular2Line{
+						FirstPoint = XYZ.Zero,
+						SecondPoint = new XYZ(10, 0, 0),
+						AngleVertex = XYZ.Zero,
+						DefinitionPoint = new XYZ(0,10, 0),
+					},
+					"90.00°"
+				},
+				{
+					new DimensionStyle {
+						AngularUnit = AngularUnitFormat.Radians,
+						AngularDecimalPlaces = 2
+					},
+					new DimensionAngular2Line{
+						FirstPoint = XYZ.Zero,
+						SecondPoint = new XYZ(10, 0, 0),
+						AngleVertex = XYZ.Zero,
+						DefinitionPoint = new XYZ(0,10, 0),
+					},
+					"1.57r"
+				},
+				{
+					new DimensionStyle {
+						AngularUnit = AngularUnitFormat.Radians,
+						AngularDecimalPlaces = 2,
+						DecimalSeparator = ','
+					},
+					new DimensionAngular2Line{
+						FirstPoint = XYZ.Zero,
+						SecondPoint = new XYZ(10, 0, 0),
+						AngleVertex = XYZ.Zero,
+						DefinitionPoint = new XYZ(0,10, 0),
+					},
+					"1,57r"
+				},
+				{
+					new DimensionStyle {
+						AngularUnit = AngularUnitFormat.Gradians,
+						AngularDecimalPlaces = 2,
+						AngularZeroHandling = AngularZeroHandling.SupressAll
+					},
+					new DimensionAngular2Line{
+						FirstPoint = XYZ.Zero,
+						SecondPoint = new XYZ(10, 0, 0),
+						AngleVertex = XYZ.Zero,
+						DefinitionPoint = new XYZ(0,10, 0),
+					},
+					"100g"
+				},
+				{
+					new DimensionStyle {
+						AngularUnit = AngularUnitFormat.Gradians,
+						AngularZeroHandling = AngularZeroHandling.SuppressLeadingZeroes,
+						AngularDecimalPlaces = 2
+					},
+					new DimensionAngular2Line{
+						FirstPoint = XYZ.Zero,
+						SecondPoint = new XYZ(10, 0, 0),
+						AngleVertex = XYZ.Zero,
+						DefinitionPoint = new XYZ(0,10, 0),
+					},
+					"100.00g"
+				},
+			};
+
+			LinearStyleFormat = new()
+			{
+				{
+					new DimensionStyle {
+						LinearUnitFormat = LinearUnitFormat.Decimal
+					},
+					new DimensionAligned(XYZ.Zero, new XYZ(10, 0, 0)),
+					"10"
+				},
+				{
+					new DimensionStyle {
+						LinearUnitFormat = LinearUnitFormat.Decimal,
+						LinearScaleFactor = 10
+					},
+					new DimensionLinear {
+						FirstPoint = XYZ.Zero,
+						SecondPoint = new XYZ(10, 0, 0)
+					},
+					"100"
+				},
+				{
+					new DimensionStyle {
+						LinearUnitFormat = LinearUnitFormat.Decimal
+					},
+					new DimensionAligned(XYZ.Zero, new XYZ(10.5, 0, 0)),
+					"10.5"
+				},
+				{
+					new DimensionStyle {
+						LinearUnitFormat = LinearUnitFormat.Decimal,
+						Rounding = 1
+					},
+					new DimensionAligned(XYZ.Zero, new XYZ(10.1, 0, 0)),
+					"10"
+				},
+				{
+					new DimensionStyle {
+						LinearUnitFormat = LinearUnitFormat.Decimal,
+						DecimalSeparator = ',',
+					},
+					new DimensionAligned(XYZ.Zero, new XYZ(10.5, 0, 0)),
+					"10,5"
+				},
+				{
+					new DimensionStyle {
+						LinearUnitFormat = LinearUnitFormat.Fractional,
+						FractionFormat = FractionFormat.None
+					},
+					new DimensionAligned(XYZ.Zero, new XYZ(0.5, 0, 0)),
+					"1/2"
+				},
+				{
+					new DimensionStyle {
+						LinearUnitFormat = LinearUnitFormat.Fractional,
+						FractionFormat = FractionFormat.None
+					},
+					new DimensionAligned(XYZ.Zero, new XYZ(1.25, 0, 0)),
+					"1 1/4"
+				},
+				{
+					new DimensionStyle {
+						LinearUnitFormat = LinearUnitFormat.Architectural
+					},
+					new DimensionAligned(XYZ.Zero, new XYZ(10.25, 0, 0)),
+					"\\A1;0'-10{\\H1x;\\S1/4;}\""
+				},
+				{
+					new DimensionStyle {
+						LinearUnitFormat = LinearUnitFormat.Scientific
+					},
+					new DimensionAligned(XYZ.Zero, new XYZ(10.25, 0, 0)),
+					"1.03E+01"
+				},
+				{
+					new DimensionStyle {
+						LinearUnitFormat = LinearUnitFormat.Decimal
+					},
+					new DimensionAligned { 
+						FirstPoint = XYZ.Zero, 
+						SecondPoint = new XYZ(10, 0, 0),
+						Text = "<> Dimension"
+						},
+					"10 Dimension"
+				},
+				{
+					new DimensionStyle {
+						LinearUnitFormat = LinearUnitFormat.Decimal
+					},
+					new DimensionAligned {
+						FirstPoint = XYZ.Zero,
+						SecondPoint = new XYZ(13, 0, 0),
+						Text = "A very long text with <> \\x\\p something"
+						},
+					"A very long text with 13 \\x\\p something"
+				},
+			};
+		}
+
+		[Fact]
+		public void ApplyRoundingTest()
+		{
+			double value = 42.3645788954;
+			DimensionStyle style = this.createEntry();
+
+			style.Rounding = 0.0;
+			Assert.Equal(value, style.ApplyRounding(value));
+			style.Rounding = 0.0001;
+			Assert.Equal(42.3646, style.ApplyRounding(value));
+			style.Rounding = 0.0005;
+			Assert.Equal(42.3645, style.ApplyRounding(value));
+			style.Rounding = 0.25;
+			Assert.Equal(42.25, style.ApplyRounding(value));
+			style.Rounding = 1;
+			Assert.Equal(42.0d, style.ApplyRounding(value));
+			style.Rounding = 10;
+			Assert.Equal(40.0d, style.ApplyRounding(value));
+
+			style.AlternateUnitRounding = 0.0;
+			Assert.Equal(value, style.ApplyRounding(value, true));
+		}
+
+		[Theory]
+		[MemberData(nameof(AngularStyleFormat))]
+		public void GetAngularMeasurementText(DimensionStyle style, DimensionAngular2Line dim, string result)
+		{
+			Assert.Equal(result, dim.GetMeasurementText(style));
+		}
+
+		[Fact]
+		public void GetDimensionOverride()
+		{
+			string styleName = "my_style";
+			DimensionStyle style = new DimensionStyle(styleName);
+			DimensionAligned dim = new DimensionAligned(XYZ.Zero, new XYZ(5, 0, 0));
+			dim.Style = style;
+
+			var active = dim.GetActiveDimensionStyle();
+			Assert.NotNull(active);
+			Assert.Equal(style, active);
+			Assert.Equal(styleName, active.Name);
+
+			style.ScaleFactor = 5;
+
+			Assert.Equal(5, active.ScaleFactor);
+
+			string dimOverrideName = "my_override";
+			DimensionStyle dimOverride = new DimensionStyle(dimOverrideName);
+			dimOverride.ScaleFactor = 50;
+
+			dim.SetDimensionOverride(dimOverride);
+
+			Assert.True(dim.HasStyleOverride);
+
+			active = dim.GetActiveDimensionStyle();
+			Assert.NotNull(active);
+			Assert.NotEqual(style, active);
+			Assert.Equal("override", active.Name);
+			Assert.Equal(50, active.ScaleFactor);
+		}
+
+		[Theory]
+		[MemberData(nameof(LinearStyleFormat))]
+		public void GetLinearMeasurementText(DimensionStyle style, DimensionAligned dim, string result)
+		{
+			Assert.Equal(result, dim.GetMeasurementText(style));
+		}
+
 		[Fact]
 		public void RemoveTableEntries()
 		{
@@ -66,6 +353,11 @@ namespace ACadSharp.Tests.Tables
 			Assert.Null(style.DimArrow2);
 			doc.BlockRecords.Remove(arrowBlockName);
 			Assert.Null(style.ArrowBlock);
+		}
+
+		protected override Table<DimensionStyle> getTable(CadDocument document)
+		{
+			return document.DimensionStyles;
 		}
 	}
 }

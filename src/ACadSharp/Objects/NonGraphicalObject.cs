@@ -43,7 +43,7 @@ namespace ACadSharp.Objects
 		/// <param name="name"></param>
 		public NonGraphicalObject(string name)
 		{
-			this._name = name;
+			this.Name = name;
 		}
 
 		/// <inheritdoc/>

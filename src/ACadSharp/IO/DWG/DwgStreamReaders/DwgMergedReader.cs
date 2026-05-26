@@ -2,8 +2,6 @@
 using CSUtilities.Converters;
 using System;
 using System.IO;
-using System.Linq;
-using System.Reflection;
 using System.Text;
 
 namespace ACadSharp.IO.DWG
@@ -158,10 +156,12 @@ namespace ACadSharp.IO.DWG
 			return this._mainReader.Read3BitDoubleWithDefault(defValues);
 		}
 
-		public Color ReadCmColor()
+		public Color ReadCmColor(bool useTextStream = false)
 		{
-			if (!(this._mainReader is DwgStreamReaderAC18))
+			if (!(this._mainReader is DwgStreamReaderAC18) && !useTextStream)
+			{
 				return this._mainReader.ReadCmColor();
+			}
 
 			Color color = default;
 
@@ -239,7 +239,7 @@ namespace ACadSharp.IO.DWG
 		{
 			throw new NotImplementedException();
 		}
-		public int ReadSignedModularChar()
+		public long ReadSignedModularChar()
 		{
 			throw new NotImplementedException();
 		}

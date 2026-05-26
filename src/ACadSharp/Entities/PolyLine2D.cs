@@ -1,6 +1,4 @@
 ﻿using ACadSharp.Attributes;
-using CSMath;
-using System;
 using System.Collections.Generic;
 
 namespace ACadSharp.Entities
@@ -14,7 +12,7 @@ namespace ACadSharp.Entities
 	/// </remarks>
 	[DxfName(DxfFileToken.EntityPolyline)]
 	[DxfSubClass(DxfSubclassMarker.Polyline)]
-	public class Polyline2D : Polyline
+	public class Polyline2D : Polyline<Vertex2D>
 	{
 		/// <inheritdoc/>
 		public override ObjectType ObjectType => ObjectType.POLYLINE_2D;
@@ -27,23 +25,8 @@ namespace ACadSharp.Entities
 		{
 		}
 
-		public Polyline2D(IEnumerable<Vertex2D> vertices, bool isColsed) : base(vertices, isColsed)
+		public Polyline2D(IEnumerable<Vertex2D> vertices, bool isClosed) : base(vertices, isClosed)
 		{
-		}
-
-		/// <inheritdoc/>
-		public override IEnumerable<Entity> Explode()
-		{
-			return Polyline.Explode(this);
-		}
-
-		protected override void verticesOnAdd(object sender, CollectionChangedEventArgs e)
-		{
-			if (e.Item is not Vertex2D)
-			{
-				this.Vertices.Remove((Vertex)e.Item);
-				throw new ArgumentException($"Wrong vertex type for {DxfSubclassMarker.Polyline}");
-			}
 		}
 	}
 }

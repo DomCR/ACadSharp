@@ -17,6 +17,8 @@ namespace ACadSharp.IO.DXF
 
 		void Write(int code, object value, DxfClassMap map = null);
 
+		void WriteIfNotDefault<T>(int code, T value, T defaultValue, DxfClassMap map = null);
+
 		void Write(int code, IVector value, DxfClassMap map = null);
 
 		void WriteCmColor(int code, Color color, DxfClassMap map = null);

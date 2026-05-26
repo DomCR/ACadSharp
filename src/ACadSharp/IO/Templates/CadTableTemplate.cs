@@ -8,13 +8,13 @@ namespace ACadSharp.IO.Templates
 	internal class CadTableTemplate<T> : CadTemplate<Table<T>>, ICadTableTemplate
 		where T : TableEntry
 	{
-		public List<ulong> EntryHandles { get; } = new List<ulong>();
+		public HashSet<ulong> EntryHandles { get; } = new();
 
 		public CadTableTemplate(Table<T> tableControl) : base(tableControl) { }
 
-		public override void Build(CadDocumentBuilder builder)
+		protected override void build(CadDocumentBuilder builder)
 		{
-			base.Build(builder);
+			base.build(builder);
 
 			foreach (ulong handle in this.EntryHandles)
 			{

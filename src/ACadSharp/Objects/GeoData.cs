@@ -59,7 +59,7 @@ namespace ACadSharp.Objects
 
 				if (this.Document != null)
 				{
-					this._hostBlock = this.updateTable(value, this.Document.BlockRecords);
+					this._hostBlock = CadObject.updateCollection(value, this.Document.BlockRecords);
 				}
 				else
 				{

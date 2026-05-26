@@ -42,7 +42,7 @@ jobs:
     - name: Build
       run: dotnet build --no-restore
     - name: Test with the dotnet CLI
-      run: dotnet test --no-build --no-restore --framework net6.0
+      run: dotnet test --no-build --no-restore --framework net9.0
 
   testFramework:
     name: Test net Framework

@@ -58,13 +58,17 @@ namespace ACadSharp.IO.DWG.DwgStreamReaders
 			}
 
 			byte[] header = null;
-			Debug.Assert(this._previewAddress + 39 == headerDataStart);
 			header = this._reader.ReadBytes((int)headerDataSize.Value);
 
 			byte[] body = null;
-			Debug.Assert(this._previewAddress + headerDataSize + 39 == startOfImage);
-			body = this._reader.ReadBytes((int)sizeImage);
-
+			if (sizeImage.HasValue)
+			{
+				body = this._reader.ReadBytes((int)sizeImage);
+			}
+			else
+			{
+				body = new byte[0];
+			}
 
 			//0xE0,0xDA,0x92,0xF8,0x2B,0xc9,0xD7,0xD7,0x62,0xA8,0x35,0xC0,0x62,0xBB,0xEF,0xD4
 			byte[] endSentinel = this._reader.ReadSentinel();

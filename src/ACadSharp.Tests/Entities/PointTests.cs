@@ -7,8 +7,6 @@ namespace ACadSharp.Tests.Entities
 {
 	public class PointTests : CommonEntityTests<Point>
 	{
-		private CSMathRandom _random = new CSMathRandom();
-
 		[Fact]
 		public void TranslateTest()
 		{
@@ -38,6 +36,16 @@ namespace ACadSharp.Tests.Entities
 			//Rotation around origin
 			AssertUtils.AreEqual(new XYZ(5, 0, 5), point.Location, "Point Location");
 			AssertUtils.AreEqual(XYZ.AxisY, point.Normal);
+		}
+
+		public override void GetBoundingBoxTest()
+		{
+			XYZ pt = _random.NextXYZ();
+			Point point = new Point(pt);
+
+			var box = point.GetBoundingBox();
+			Assert.Equal(BoundingBoxExtent.Point, box.Extent);
+			Assert.Equal(pt, box.Center);
 		}
 	}
 }

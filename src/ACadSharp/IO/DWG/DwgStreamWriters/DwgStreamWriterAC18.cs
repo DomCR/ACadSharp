@@ -10,7 +10,7 @@ namespace ACadSharp.IO.DWG
 		{
 		}
 
-		public override void WriteCmColor(Color value)
+		public override void WriteCmColor(Color value, bool useTextStream = false)
 		{
 			//CMC:
 			//BS: color index(always 0)

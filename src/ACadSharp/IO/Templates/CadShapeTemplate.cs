@@ -13,9 +13,9 @@ namespace ACadSharp.IO.Templates
 
 		public CadShapeTemplate(Shape shape) : base(shape) { }
 
-		public override void Build(CadDocumentBuilder builder)
+		protected override void build(CadDocumentBuilder builder)
 		{
-			base.Build(builder);
+			base.build(builder);
 
 			Shape shape = this.CadObject as Shape;
 

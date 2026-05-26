@@ -5,110 +5,118 @@ using ACadSharp.Tables;
 using System.Collections.Generic;
 using System.Linq;
 
-namespace ACadSharp.IO.DXF
+namespace ACadSharp.IO.DXF;
+
+internal class DxfDocumentBuilder : CadDocumentBuilder
 {
-	internal class DxfDocumentBuilder : CadDocumentBuilder
+	public DxfReaderConfiguration Configuration { get; }
+
+	public override bool KeepUnknownEntities => this.Configuration.KeepUnknownEntities;
+
+	public override bool KeepUnknownNonGraphicalObjects => this.Configuration.KeepUnknownNonGraphicalObjects;
+
+	public HashSet<Entity> ModelSpaceEntities { get; } = new();
+
+	public CadBlockRecordTemplate ModelSpaceTemplate { get; set; }
+
+	public List<CadTemplate> OrphanTemplates { get; set; } = new();
+
+	public DxfDocumentBuilder(ACadVersion version, CadDocument document, DxfReaderConfiguration configuration) : base(version, document)
 	{
-		public DxfReaderConfiguration Configuration { get; }
+		this.Configuration = configuration;
+	}
 
-		public CadBlockRecordTemplate ModelSpaceTemplate { get; set; }
-
-		public HashSet<ulong> ModelSpaceEntities { get; } = new();
-
-		public override bool KeepUnknownEntities => this.Configuration.KeepUnknownEntities;
-
-		public override bool KeepUnknownNonGraphicalObjects => this.Configuration.KeepUnknownNonGraphicalObjects;
-
-		public DxfDocumentBuilder(ACadVersion version, CadDocument document, DxfReaderConfiguration configuration) : base(version, document)
+	public override void BuildDocument()
+	{
+		if (this.ModelSpaceTemplate == null)
 		{
-			this.Configuration = configuration;
+			BlockRecord record = BlockRecord.ModelSpace;
+			this.BlockRecords.Add(record);
+			this.ModelSpaceTemplate = new CadBlockRecordTemplate(record);
+			this.AddTemplate(this.ModelSpaceTemplate);
 		}
 
-		public override void BuildDocument()
+		this.createMissingHandles();
+
+		this.ModelSpaceTemplate.OwnedObjectsHandlers.UnionWith(this.ModelSpaceEntities.Select(o => o.Handle));
+
+		this.RegisterTables();
+
+		this.BuildTables();
+
+		this.buildDictionaries();
+
+		//Assign the owners for the different objects
+		foreach (CadTemplate template in this.OrphanTemplates)
 		{
-			if (this.ModelSpaceTemplate == null)
-			{
-				BlockRecord record = BlockRecord.ModelSpace;
-				this.BlockRecords.Add(record);
-				this.ModelSpaceTemplate = new CadBlockRecordTemplate(record);
-				this.AddTemplate(this.ModelSpaceTemplate);
-			}
-
-			this.ModelSpaceTemplate.OwnedObjectsHandlers.AddRange(this.ModelSpaceEntities);
-
-			this.RegisterTables();
-
-			this.BuildTables();
-
-			this.buildDictionaries();
-
-			//Assign the owners for the different objects
-			foreach (CadTemplate template in this.cadObjectsTemplates.Values)
-			{
-				this.assignOwner(template);
-			}
-
-			base.BuildDocument();
+			this.assignOwner(template);
 		}
 
-		public List<Entity> BuildEntities()
+		base.BuildDocument();
+
+		if (this.Configuration.CreateDefaults)
 		{
-			var entities = new List<Entity>();
+			this.DocumentToBuild.CreateDefaults();
+		}
+	}
 
-			foreach (CadEntityTemplate item in this.cadObjectsTemplates.Values.OfType<CadEntityTemplate>())
-			{
-				item.Build(this);
+	public List<Entity> BuildEntities()
+	{
+		var entities = new List<Entity>();
 
-				item.SetUnlinkedReferences();
-			}
+		foreach (CadEntityTemplate item in this.cadObjectsTemplates.Values.OfType<CadEntityTemplate>())
+		{
+			item.Build(this);
 
-			foreach (var item in this.cadObjectsTemplates.Values
-				.OfType<CadEntityTemplate>()
-				.Where(o => o.CadObject.Owner == null))
-			{
-				item.CadObject.Handle = 0;
-				entities.Add(item.CadObject);
-			}
-
-			return entities;
+			item.SetUnlinkedReferences();
 		}
 
-		private void assignOwner(CadTemplate template)
+		foreach (var item in this.cadObjectsTemplates.Values
+			.OfType<CadEntityTemplate>()
+			.Where(o => o.CadObject.Owner == null))
 		{
-			if (template.CadObject.Owner != null || template.CadObject is CadDictionary || !template.OwnerHandle.HasValue)
-				return;
+			item.CadObject.Handle = 0;
+			entities.Add(item.CadObject);
+		}
 
-			if (this.TryGetObjectTemplate(template.OwnerHandle, out CadTemplate owner))
+		return entities;
+	}
+
+	private void assignOwner(CadTemplate template)
+	{
+		if (template.CadObject.Owner != null || template.CadObject is CadDictionary || !template.OwnerHandle.HasValue)
+			return;
+
+		if (this.TryGetObjectTemplate(template.OwnerHandle, out CadTemplate owner))
+		{
+			switch (owner)
 			{
-				switch (owner)
-				{
-					case CadDictionaryTemplate:
-						//Entries of the dictionary are assigned in the template
-						break;
-					case CadBlockRecordTemplate record when template.CadObject is Entity entity:
-						//The entries should be assigned in the blocks or entities section
-						break;
-					case CadPolyLineTemplate pline when template.CadObject is Vertex v:
-						pline.VertexHandles.Add(v.Handle);
-						break;
-					case CadPolyLineTemplate pline when template.CadObject is Seqend seqend:
-						pline.SeqendHandle = seqend.Handle;
-						break;
-					case CadInsertTemplate insert when template.CadObject is AttributeEntity att:
-						insert.AttributesHandles.Add(att.Handle);
-						break;
-					case CadInsertTemplate insert when template.CadObject is Seqend seqend:
-						insert.SeqendHandle = seqend.Handle;
-						break;
-					default:
-						this.Notify($"Owner {owner.GetType().Name} with handle {template.OwnerHandle} assignation not implemented for {template.CadObject.GetType().Name} with handle {template.CadObject.Handle}");
-						break;
-				}
+				case CadDictionaryTemplate:
+					//Entries of the dictionary are assigned in the template
+					break;
+				case CadBlockRecordTemplate record when template.CadObject is Entity entity:
+					//The entries should be assigned in the blocks or entities section
+					break;
+				case CadPolyLineTemplate pline when template.CadObject is Vertex v:
+					pline.OwnedObjectsHandlers.Add(v.Handle);
+					break;
+				case CadPolyLineTemplate pline when template.CadObject is Seqend seqend:
+					pline.SeqendHandle = seqend.Handle;
+					break;
+				case CadInsertTemplate insert when template.CadObject is AttributeEntity att:
+					insert.OwnedObjectsHandlers.Add(att.Handle);
+					break;
+				case CadInsertTemplate insert when template.CadObject is Seqend seqend:
+					insert.SeqendHandle = seqend.Handle;
+					break;
+				default:
+					this.Notify($"Owner {owner.GetType().Name} with handle {template.OwnerHandle} assignation not implemented for {template.CadObject.GetType().Name} with handle {template.CadObject.Handle}", NotificationType.Warning);
+					break;
 			}
-			else
-			{
-				this.Notify($"Owner {template.OwnerHandle} not found for {template.GetType().FullName} with handle {template.CadObject.Handle}");
-			}
+		}
+		else
+		{
+			this.Notify($"Owner {template.OwnerHandle} not found for {template.GetType().FullName} with handle {template.CadObject.Handle}", NotificationType.Warning);
 		}
 	}
 }

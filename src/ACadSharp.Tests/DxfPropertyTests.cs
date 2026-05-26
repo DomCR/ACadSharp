@@ -4,57 +4,68 @@ using System;
 using System.Reflection;
 using Xunit;
 
-namespace ACadSharp.Tests
+namespace ACadSharp.Tests;
+
+public class DxfPropertyTests
 {
-	public class DxfPropertyTests
+	[Fact]
+	public void Constructor()
 	{
-		[Fact]
-		public void Constructor()
-		{
-			DxfClassMap map = DxfClassMap.Create<Line>();
-			PropertyInfo dxfProp = typeof(Line).GetProperty(nameof(Line.StartPoint));
-			PropertyInfo info = typeof(Line).GetProperty(nameof(Line.SubclassMarker));
+		DxfClassMap map = DxfClassMap.Create<Line>();
+		PropertyInfo dxfProp = typeof(Line).GetProperty(nameof(Line.StartPoint));
+		PropertyInfo info = typeof(Line).GetProperty(nameof(Line.SubclassMarker));
 
-			Assert.Throws<ArgumentException>(() => new DxfProperty(-7, dxfProp));
-			Assert.Throws<ArgumentException>(() => new DxfProperty(-7, info));
-			Assert.Throws<ArgumentNullException>(() => new DxfProperty(-7, null));
-		}
+		Assert.Throws<ArgumentException>(() => new DxfProperty(-7, dxfProp));
+		Assert.Throws<ArgumentException>(() => new DxfProperty(-7, info));
+		Assert.Throws<ArgumentNullException>(() => new DxfProperty(-7, null));
+	}
 
-		[Fact]
-		public void SetXYValueTest()
-		{
-			Viewport viewport = new Viewport();
+	[Fact]
+	public void NotReferencedByCache()
+	{
+		DxfClassMap map = DxfClassMap.Create<Line>();
+		DxfClassMap modified = DxfClassMap.Create<Line>();
 
-			XY manual = new XY(1, 1);
-			XY dxfProp = new XY(2, 2);
+		modified.DxfProperties.Remove(39);
 
-			viewport.SnapBase = manual;
+		Assert.False(modified.DxfProperties.ContainsKey(39));
+		Assert.True(map.DxfProperties.ContainsKey(39));
+	}
 
-			DxfClassMap map = DxfClassMap.Create<Viewport>();
+	[Fact]
+	public void SetXYValueTest()
+	{
+		Viewport viewport = new Viewport();
 
-			map.DxfProperties[13].SetValue(viewport, dxfProp.X);
-			map.DxfProperties[23].SetValue(viewport, dxfProp.Y);
+		XY manual = new XY(1, 1);
+		XY dxfProp = new XY(2, 2);
 
-			Assert.Equal(dxfProp, viewport.SnapBase);
-		}
+		viewport.SnapBase = manual;
 
-		[Fact]
-		public void SetXYZValueTest()
-		{
-			Line line = new Line();
+		DxfClassMap map = DxfClassMap.Create<Viewport>();
 
-			XYZ manual = new XYZ(1, 1, 1);
-			XYZ dxfProp = new XYZ(2, 2, 2);
+		map.DxfProperties[13].SetValue(viewport, dxfProp.X);
+		map.DxfProperties[23].SetValue(viewport, dxfProp.Y);
 
-			line.StartPoint = manual;
+		Assert.Equal(dxfProp, viewport.SnapBase);
+	}
 
-			DxfClassMap map = DxfClassMap.Create<Line>();
+	[Fact]
+	public void SetXYZValueTest()
+	{
+		Line line = new Line();
 
-			map.DxfProperties[10].SetValue(line, dxfProp.X);
-			map.DxfProperties[20].SetValue(line, dxfProp.Y);
-			map.DxfProperties[30].SetValue(line, dxfProp.Z);
+		XYZ manual = new XYZ(1, 1, 1);
+		XYZ dxfProp = new XYZ(2, 2, 2);
 
-			Assert.Equal(dxfProp, line.StartPoint);
-		}
+		line.StartPoint = manual;
+
+		DxfClassMap map = DxfClassMap.Create<Line>();
+
+		map.DxfProperties[10].SetValue(line, dxfProp.X);
+		map.DxfProperties[20].SetValue(line, dxfProp.Y);
+		map.DxfProperties[30].SetValue(line, dxfProp.Z);
+
+		Assert.Equal(dxfProp, line.StartPoint);
 	}
 }

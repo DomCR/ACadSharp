@@ -1,7 +1,6 @@
 ﻿using ACadSharp.Entities;
 using ACadSharp.IO;
 using ACadSharp.Tests.TestModels;
-using System.IO;
 using Xunit;
 using Xunit.Abstractions;
 
@@ -13,7 +12,7 @@ namespace ACadSharp.Tests.IO
 
 		static MultiLeaderTests()
 		{
-			//loadSamples("./", "dxf", MultiLeaderFilePaths);
+			loadSamples("./", "dxf", MultiLeaderFilePaths);
 			loadSamples("./", "dwg", MultiLeaderFilePaths);
 		}
 
@@ -30,6 +29,9 @@ namespace ACadSharp.Tests.IO
 			if (test.IsDxf)
 			{
 				doc = DxfReader.Read(test.Path);
+
+				if (doc.Header.Version <= ACadVersion.AC1009)
+					return;
 			}
 			else
 			{

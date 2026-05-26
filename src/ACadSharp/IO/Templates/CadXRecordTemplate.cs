@@ -16,9 +16,9 @@ namespace ACadSharp.IO.Templates
 			_entries.Add(new Tuple<int, ulong>(code, handle));
 		}
 
-		public override void Build(CadDocumentBuilder builder)
+		protected override void build(CadDocumentBuilder builder)
 		{
-			base.Build(builder);
+			base.build(builder);
 
 			foreach (var entry in _entries)
 			{

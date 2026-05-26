@@ -4,13 +4,13 @@ namespace ACadSharp.IO.Templates
 {
 	internal class CadViewportEntityControlTemplate : CadTemplate
 	{
-		public List<ulong> EntryHandles { get; } = new List<ulong>();
+		public HashSet<ulong> EntryHandles { get; } = new();
 
 		public CadViewportEntityControlTemplate() : base(new VPEntityPlaceholder()) { }
 
-		public override void Build(CadDocumentBuilder builder)
+		protected override void build(CadDocumentBuilder builder)
 		{
-			base.Build(builder);
+			base.build(builder);
 		}
 
 		public class VPEntityPlaceholder : CadObject

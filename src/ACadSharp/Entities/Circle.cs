@@ -67,14 +67,24 @@ namespace ACadSharp.Entities
 		private double _radius = 1.0;
 
 		/// <summary>
-		/// Default constructor
+		/// Default constructor.
 		/// </summary>
 		public Circle() : base() { }
+
+		/// <summary>
+		/// Initializes a new instance of the Circle class with the specified center point and radius.
+		/// </summary>
+		/// <param name="center">The center point of the circle.</param>
+		/// <param name="radius">The radius of the circle. Must be a non-negative value.</param>
+		public Circle(XYZ center, double radius) : this()
+		{
+			this.Center = center;
+			this.Radius = radius;
+		}
 
 		/// <inheritdoc/>
 		public override void ApplyTransform(Transform transform)
 		{
-			var center = this.Center;
 			var normal = this.Normal;
 
 			this.Center = transform.ApplyTransform(this.Center);
@@ -106,7 +116,7 @@ namespace ACadSharp.Entities
 			start = this.Center + this.Radius * start;
 			start = Matrix4.GetArbitraryAxis(this.Normal) * start;
 
-			return CurveExtensions.PolarCoordinateRelativeToCenter(
+			return CurveExtensions.PolarCoordinate(
 					angle,
 					this.Center,
 					this.Normal,
@@ -116,20 +126,19 @@ namespace ACadSharp.Entities
 		/// <inheritdoc/>
 		public virtual List<XYZ> PolygonalVertexes(int precision)
 		{
-			//Start vector If normal = Z
-			var start = XYZ.AxisX;
-			start = this.Center + this.Radius * start;
-			start = Matrix4.GetArbitraryAxis(this.Normal) * start;
+			if (precision < 2)
+			{
+				throw new ArgumentOutOfRangeException(nameof(precision), precision, "The arc precision must be equal or greater than two.");
+			}
 
 			return CurveExtensions.PolygonalVertexes(
-					precision,
-					this.Center,
-					0,
-					MathHelper.TwoPI,
-					this.Normal,
-					start - this.Center,
-					this.RadiusRatio
-					);
+				precision,
+				this.Center,
+				0,
+				MathHelper.TwoPI,
+				this.Radius,
+				this.Normal.Normalize()
+			);
 		}
 	}
 }

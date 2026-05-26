@@ -26,6 +26,10 @@ namespace ACadSharp.Tests.Internal
 		{
 			CadDocument document = new CadDocument();
 			document.Header.Version = version;
+			if (document.Header.Version < ACadVersion.AC1018)
+			{
+				document.VEntityControl ??= new ViewportEntityControl(document);
+			}
 
 			DwgDocumentBuilder builder = this.writeInfo(document);
 
@@ -48,6 +52,10 @@ namespace ACadSharp.Tests.Internal
 		{
 			CadDocument document = new CadDocument();
 			document.Header.Version = version;
+			if (document.Header.Version < ACadVersion.AC1018)
+			{
+				document.VEntityControl ??= new ViewportEntityControl(document);
+			}
 
 			document.Entities.Add(EntityFactory.Create<Arc>());
 			document.Entities.Add(EntityFactory.Create<Circle>());
@@ -142,7 +150,7 @@ namespace ACadSharp.Tests.Internal
 				sreader,
 				handles,
 				writer.Map,
-				new Classes.DxfClassCollection()
+				docResult.Classes
 				);
 			reader.Read();
 
