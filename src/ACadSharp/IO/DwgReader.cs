@@ -318,7 +318,7 @@ public class DwgReader : CadReaderBase<DwgReaderConfiguration>
 
 		byte[] decompressedData = new byte[uncompressedSize];
 
-		DwgLZ77AC21Decompressor.Decompress(compressedData, 0U, (uint)compressedSize, decompressedData);
+		new DwgLZ77AC21Decompressor().Decompress(compressedData, 0U, (uint)compressedSize, decompressedData);
 
 		return decompressedData;
 	}
@@ -443,7 +443,7 @@ public class DwgReader : CadReaderBase<DwgReaderConfiguration>
 				{
 					//Page is compressed
 					byte[] arr = new byte[page.DecompressedSize];
-					DwgLZ77AC21Decompressor.Decompress(pageBytes, 0U, (uint)page.CompressedSize, arr);
+					new DwgLZ77AC21Decompressor().Decompress(pageBytes, 0U, (uint)page.CompressedSize, arr);
 					pageBytes = arr;
 				}
 
@@ -982,7 +982,7 @@ public class DwgReader : CadReaderBase<DwgReaderConfiguration>
 		//If ComprLen is positive, the ComprLen bytes of data are compressed
 		else
 		{
-			DwgLZ77AC21Decompressor.Decompress(decodedData, 32U, (uint)comprLen, buffer);
+			new DwgLZ77AC21Decompressor().Decompress(decodedData, 32U, (uint)comprLen, buffer);
 		}
 
 		//Get the descompressed stream to read the records
