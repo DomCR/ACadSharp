@@ -3,12 +3,10 @@ using Xunit;
 using ACadSharp.Entities;
 using ACadSharp.IO.Json;
 using Xunit.Abstractions;
-using System.Collections.Generic;
 using System;
 using ACadSharp.Tables;
 using System.Linq;
 using ACadSharp.Tests.Common;
-using static ACadSharp.Objects.XRecord;
 
 #if NET
 
@@ -24,13 +22,15 @@ namespace ACadSharp.Tests.IO.Json;
 
 public class JsonConverterTests
 {
-	public static readonly TheoryData<Type> Entities = new TheoryData<Type>();
+	public static readonly TheoryData<Type> EntityTypes = new TheoryData<Type>();
 
 #if NET
+
 	private readonly JsonSerializerOptions _jsonOptions = new JsonSerializerOptions
 	{
 		WriteIndented = true,
 	};
+
 #else
 private readonly JsonSerializerSettings _jsonOptions = new JsonSerializerSettings
 {
@@ -47,7 +47,7 @@ private readonly JsonSerializerSettings _jsonOptions = new JsonSerializerSetting
 		{
 			if (item.IsSubclassOf(typeof(Entity)) && item.GetConstructor(Array.Empty<Type>()) != null)
 			{
-				Entities.Add(item);
+				EntityTypes.Add(item);
 			}
 		}
 	}
@@ -98,7 +98,7 @@ private readonly JsonSerializerSettings _jsonOptions = new JsonSerializerSetting
 	}
 
 	[Theory]
-	[MemberData(nameof(Entities))]
+	[MemberData(nameof(EntityTypes))]
 	public void EntityToJsonTest(Type type)
 	{
 		Entity entity = (Entity)Factory.CreateObject(type);
@@ -120,7 +120,7 @@ private readonly JsonSerializerSettings _jsonOptions = new JsonSerializerSetting
 	}
 
 	[Theory]
-	[MemberData(nameof(Entities))]
+	[MemberData(nameof(EntityTypes))]
 	public void JsonToEntityTest(Type type)
 	{
 		Entity entity = (Entity)Factory.CreateObject(type);

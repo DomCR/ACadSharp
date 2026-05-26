@@ -1,37 +1,28 @@
-﻿using ACadSharp.Tables;
+﻿using ACadSharp.Entities;
+using ACadSharp.Tables;
 using CSUtilities.Extensions;
 using System;
 using System.Collections;
 using System.Linq;
+using System.Reflection;
+
 
 #if NET
 
 using System.Text.Json;
 using System.Text.Json.Serialization;
-using System.Xml.Linq;
+using static ACadSharp.Entities.Hatch.BoundaryPath;
+
 
 #else
 using Newtonsoft.Json;
 using Newtonsoft.Json.Linq;
-
-
-
-#endif
-#if NET5_0 || !NET
-
-using CSUtilities.Extensions;
-
 #endif
 
 namespace ACadSharp.IO.Json.Converters;
 
-/// <summary>
-/// Provides custom JSON serialization and deserialization for CadObject instances using System.Text.Json.
-/// </summary>
-/// <remarks>This converter enables reading and writing of CadObject types to and from JSON, handling property
-/// mapping and special cases for INamedCadObject and IHandledCadObject implementations. It is intended for use with
-/// System.Text.Json serialization scenarios where CadObject or its derived types require custom handling.</remarks>
-public class CommonCadConverter : JsonConverter<CadObject>
+public class CommonCadConverter<T> : JsonConverter<T>
+ where T : CadObject
 {
 	private readonly string[] _ignore = new[]
 	{
@@ -43,9 +34,9 @@ public class CommonCadConverter : JsonConverter<CadObject>
 #if NET
 
 	/// <inheritdoc/>
-	public override CadObject Read(ref Utf8JsonReader reader, Type typeToConvert, JsonSerializerOptions options)
+	public override T Read(ref Utf8JsonReader reader, Type typeToConvert, JsonSerializerOptions options)
 	{
-		CadObject obj = (CadObject)Activator.CreateInstance(typeToConvert);
+		T obj = (T)Activator.CreateInstance(typeToConvert);
 
 		while (reader.Read())
 		{
@@ -89,7 +80,7 @@ public class CommonCadConverter : JsonConverter<CadObject>
 
 #else
 	/// <inheritdoc/>
-	public override CadObject ReadJson(JsonReader reader, Type objectType, CadObject existingValue, bool hasExistingValue, JsonSerializer serializer)
+	public override T ReadJson(JsonReader reader, Type objectType, T existingValue, bool hasExistingValue, JsonSerializer serializer)
 	{
 		throw new NotImplementedException();
 	}
@@ -97,9 +88,9 @@ public class CommonCadConverter : JsonConverter<CadObject>
 
 	/// <inheritdoc/>
 #if NET
-	public override void Write(Utf8JsonWriter writer, CadObject value, JsonSerializerOptions options)
+	public override void Write(Utf8JsonWriter writer, T value, JsonSerializerOptions options)
 #else
-	public override void WriteJson(JsonWriter writer, CadObject value, JsonSerializer serializer)
+	public override void WriteJson(JsonWriter writer, T value, JsonSerializer serializer)
 #endif
 	{
 		writer.WriteStartObject();
@@ -109,47 +100,10 @@ public class CommonCadConverter : JsonConverter<CadObject>
 
 		foreach (var prop in value.GetType().GetProperties().DistinctBy(p => p.Name))
 		{
-			if (!prop.CanRead || this._ignore.Contains(prop.Name))
-				continue;
-
-			if (!prop.CanWrite)
-				continue;
-
-			var pValue = prop.GetValue(value);
-			if (pValue == null)
-			{
 #if NET
-				if (!options.DefaultIgnoreCondition.HasFlag(JsonIgnoreCondition.WhenWritingNull))
-				{
-					writer.WriteNull(prop.Name);
-				}
+			this.writeProperty(prop, writer, value, options);
 #else
-				if (serializer.NullValueHandling == NullValueHandling.Include)
-				{
-					writer.WritePropertyName(prop.Name);
-					writer.WriteNull();
-				}
-#endif
-				continue;
-			}
-
-			if (pValue is INamedCadObject named)
-			{
-				writer.WriteStringValue(prop.Name, named.Name);
-				continue;
-			}
-
-			if (pValue is IHandledCadObject handled)
-			{
-				writer.WriteNumberValue(prop.Name, handled.Handle);
-				continue;
-			}
-
-			writer.WritePropertyName(prop.Name);
-#if NET
-			JsonSerializer.Serialize(writer, pValue, pValue.GetType(), options);
-#else
-			serializer.Serialize(writer, pValue);
+			this.writeProperty(prop, writer, value, serializer);
 #endif
 		}
 
@@ -172,5 +126,108 @@ public class CommonCadConverter : JsonConverter<CadObject>
 		}
 
 		writer.WriteEndObject();
+	}
+
+	protected virtual void writeProperty(PropertyInfo prop,
+#if NET
+		Utf8JsonWriter writer, T value, JsonSerializerOptions options
+#else
+		JsonWriter writer, T value, JsonSerializer serializer
+#endif
+		)
+	{
+		if (!prop.CanRead || this._ignore.Contains(prop.Name))
+		{
+			return;
+		}
+
+		if (!prop.CanWrite)
+		{
+			return;
+		}
+
+		var pValue = prop.GetValue(value);
+		if (pValue == null)
+		{
+#if NET
+			if (!options.DefaultIgnoreCondition.HasFlag(JsonIgnoreCondition.WhenWritingNull))
+			{
+				writer.WriteNull(prop.Name);
+			}
+#else
+				if (serializer.NullValueHandling == NullValueHandling.Include)
+				{
+					writer.WritePropertyName(prop.Name);
+					writer.WriteNull();
+				}
+#endif
+			return;
+		}
+
+		if (pValue is INamedCadObject named)
+		{
+			writer.WriteStringValue(prop.Name, named.Name);
+			return;
+		}
+
+		if (pValue is IHandledCadObject handled)
+		{
+			writer.WriteNumberValue(prop.Name, handled.Handle);
+			return;
+		}
+
+		writer.WritePropertyName(prop.Name);
+#if NET
+		JsonSerializer.Serialize(writer, pValue, pValue.GetType(), options);
+#else
+		serializer.Serialize(writer, pValue);
+#endif
+	}
+}
+
+/// <summary>
+/// Provides custom JSON serialization and deserialization for CadObject instances using System.Text.Json.
+/// </summary>
+/// <remarks>This converter enables reading and writing of CadObject types to and from JSON, handling property
+/// mapping and special cases for INamedCadObject and IHandledCadObject implementations. It is intended for use with
+/// System.Text.Json serialization scenarios where CadObject or its derived types require custom handling.</remarks>
+public class CommonCadConverter : CommonCadConverter<CadObject>
+{
+}
+
+public class CommonPolylineConverter<T> : CommonCadConverter<Polyline<T>>
+	where T : Entity, IVertex
+{
+	protected override void writeProperty(PropertyInfo prop,
+#if NET
+	Utf8JsonWriter writer, Polyline<T> value, JsonSerializerOptions options
+#else
+		JsonWriter writer, Polyline<T> value, JsonSerializer serializer
+#endif
+	)
+	{
+		if (prop.Name.Equals(nameof(Polyline<T>.Vertices)))
+		{
+			writer.WritePropertyName(nameof(Polyline<T>.Vertices));
+
+			writer.WriteStartArray();
+
+			foreach (var item in value.Vertices)
+			{
+#if NET
+				JsonSerializer.Serialize(writer, item, item.GetType(), options);
+#else
+				serializer.Serialize(writer, item);
+#endif
+			}
+
+			writer.WriteEndArray();
+		}
+
+#if NET
+		base.writeProperty(prop, writer, value, options);
+#else
+		base.writeProperty(prop, writer, value, serializer);
+#endif
 	}
 }

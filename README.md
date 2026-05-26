@@ -4,6 +4,8 @@
 
 C# library to read/write cad files like dxf/dwg.
 
+Check the [documentation](https://domcr.github.io/ACadSharp/index.html) for specific information about the library.
+
 ### Features
 
 ACadSharp allows to read or create CAD files using .Net and also extract or modify existing content in the files, the main features may be listed as: 
@@ -49,8 +51,6 @@ private static void onNotification(object sender, NotificationEventArgs e)
 ```
 
 For more code examples [check](https://github.com/DomCR/ACadSharp/tree/master/src/ACadSharp.Examples).
-
-Check the [documentation](https://domcr.github.io/ACadSharp/index.html) for specific information about the library.
 
 Building
 ---

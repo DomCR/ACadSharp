@@ -61,9 +61,18 @@ namespace ACadSharp.Tests.Common
 			}
 
 			if (!randomize)
+			{
 				return (Entity)e;
+			}
 
-			return (Entity)Factory.map(e);
+			switch (e)
+			{
+				case Polyline2D pline:
+					RandomizePolyline(pline);
+					return pline;
+				default:
+					return (Entity)Factory.map(e);
+			}
 		}
 
 		public static void RandomizeEntity(Entity entity)
