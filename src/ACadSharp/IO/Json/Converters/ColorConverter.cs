@@ -8,11 +8,6 @@ using System.Text.Json.Serialization;
 #else
 using Newtonsoft.Json;
 #endif
-#if NET5_0
-
-using CSUtilities.Extensions;
-
-#endif
 
 namespace ACadSharp.IO.Json.Converters;
 

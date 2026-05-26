@@ -1,18 +1,14 @@
 ﻿using ACadSharp.Entities;
-using ACadSharp.Tables;
 using CSUtilities.Extensions;
 using System;
 using System.Collections;
 using System.Linq;
 using System.Reflection;
 
-
 #if NET
 
 using System.Text.Json;
 using System.Text.Json.Serialization;
-using static ACadSharp.Entities.Hatch.BoundaryPath;
-
 
 #else
 using Newtonsoft.Json;
@@ -88,6 +84,7 @@ public class CommonCadConverter<T> : JsonConverter<T>
 
 	/// <inheritdoc/>
 #if NET
+
 	public override void Write(Utf8JsonWriter writer, T value, JsonSerializerOptions options)
 #else
 	public override void WriteJson(JsonWriter writer, T value, JsonSerializer serializer)
@@ -109,23 +106,38 @@ public class CommonCadConverter<T> : JsonConverter<T>
 
 		if (value is IEnumerable arr)
 		{
-			writer.WritePropertyName("Entries");
-
-			writer.WriteStartArray();
-
-			foreach (var item in arr)
-			{
 #if NET
-				JsonSerializer.Serialize(writer, item, item.GetType(), options);
+			this.writeEnumerable("Entries", arr, writer, value, options);
 #else
-				serializer.Serialize(writer, item);
+			this.writeEnumerable("Entries", arr, writer, value, serializer);
 #endif
-			}
-
-			writer.WriteEndArray();
 		}
 
 		writer.WriteEndObject();
+	}
+
+	protected void writeEnumerable(string name, IEnumerable arr,
+#if NET
+	Utf8JsonWriter writer, T value, JsonSerializerOptions options
+#else
+		JsonWriter writer, T value, JsonSerializer serializer
+#endif
+	)
+	{
+		writer.WritePropertyName(name);
+
+		writer.WriteStartArray();
+
+		foreach (var item in arr)
+		{
+#if NET
+			JsonSerializer.Serialize(writer, item, item.GetType(), options);
+#else
+				serializer.Serialize(writer, item);
+#endif
+		}
+
+		writer.WriteEndArray();
 	}
 
 	protected virtual void writeProperty(PropertyInfo prop,
@@ -193,41 +205,4 @@ public class CommonCadConverter<T> : JsonConverter<T>
 /// System.Text.Json serialization scenarios where CadObject or its derived types require custom handling.</remarks>
 public class CommonCadConverter : CommonCadConverter<CadObject>
 {
-}
-
-public class CommonPolylineConverter<T> : CommonCadConverter<Polyline<T>>
-	where T : Entity, IVertex
-{
-	protected override void writeProperty(PropertyInfo prop,
-#if NET
-	Utf8JsonWriter writer, Polyline<T> value, JsonSerializerOptions options
-#else
-		JsonWriter writer, Polyline<T> value, JsonSerializer serializer
-#endif
-	)
-	{
-		if (prop.Name.Equals(nameof(Polyline<T>.Vertices)))
-		{
-			writer.WritePropertyName(nameof(Polyline<T>.Vertices));
-
-			writer.WriteStartArray();
-
-			foreach (var item in value.Vertices)
-			{
-#if NET
-				JsonSerializer.Serialize(writer, item, item.GetType(), options);
-#else
-				serializer.Serialize(writer, item);
-#endif
-			}
-
-			writer.WriteEndArray();
-		}
-
-#if NET
-		base.writeProperty(prop, writer, value, options);
-#else
-		base.writeProperty(prop, writer, value, serializer);
-#endif
-	}
 }

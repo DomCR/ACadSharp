@@ -7,12 +7,6 @@ namespace ACadSharp.Tests.Common
 {
 	public class EntityFactory : Factory
 	{
-		public static T CreateDefault<T>()
-			where T : Entity, new()
-		{
-			return new T();
-		}
-
 		/// <summary>
 		/// Create a default entity
 		/// </summary>
@@ -70,14 +64,24 @@ namespace ACadSharp.Tests.Common
 				case Polyline2D pline:
 					RandomizePolyline(pline);
 					return pline;
+				case Polyline3D pline3d:
+					RandomizePolyline(pline3d);
+					return pline3d;
+				case PolyfaceMesh polyfaceMesh:
+					RandomizePolyline(polyfaceMesh);
+					return polyfaceMesh;
+				case PolygonMesh polygonMesh:
+					RandomizePolyline(polygonMesh);
+					return polygonMesh;
 				default:
 					return (Entity)Factory.map(e);
 			}
 		}
 
-		public static void RandomizeEntity(Entity entity)
+		public static T CreateDefault<T>()
+			where T : Entity, new()
 		{
-			entity.Color = _random.NextColor();
+			return new T();
 		}
 
 		public static void RandomizeArc(Arc arc)
@@ -120,22 +124,18 @@ namespace ACadSharp.Tests.Common
 			dimension.HorizontalDirection = _random.NextDouble();
 		}
 
+		public static void RandomizeDimension3Pt(DimensionAngular3Pt dimension)
+		{
+			dimension.FirstPoint = _random.NextXYZ();
+			dimension.SecondPoint = _random.NextXYZ();
+			dimension.AngleVertex = _random.NextXYZ();
+		}
+
 		public static void RandomizeDimensionAligned(DimensionAligned dimension)
 		{
 			dimension.FirstPoint = _random.NextXYZ();
 			dimension.SecondPoint = _random.NextXYZ();
 			dimension.ExtLineRotation = _random.NextDouble();
-		}
-
-		public static void RandomizeDimensionLinear(DimensionLinear dimension)
-		{
-			dimension.Rotation = _random.NextDouble();
-		}
-
-		public static void RandomizeDimensionRadius(DimensionRadius dimension)
-		{
-			dimension.AngleVertex = _random.NextXYZ();
-			dimension.LeaderLength = _random.NextDouble();
 		}
 
 		public static void RandomizeDimensionAngular2Line(DimensionAngular2Line dimension)
@@ -146,23 +146,27 @@ namespace ACadSharp.Tests.Common
 			dimension.DimensionArc = _random.NextXYZ();
 		}
 
-		public static void RandomizeDimension3Pt(DimensionAngular3Pt dimension)
-		{
-			dimension.FirstPoint = _random.NextXYZ();
-			dimension.SecondPoint = _random.NextXYZ();
-			dimension.AngleVertex = _random.NextXYZ();
-		}
-
 		public static void RandomizeDimensionDiameter(DimensionDiameter dimension)
 		{
 			dimension.AngleVertex = _random.NextXYZ();
 			dimension.LeaderLength = _random.NextDouble();
 		}
 
+		public static void RandomizeDimensionLinear(DimensionLinear dimension)
+		{
+			dimension.Rotation = _random.NextDouble();
+		}
+
 		public static void RandomizeDimensionOrdinate(DimensionOrdinate dimension)
 		{
 			dimension.FeatureLocation = _random.NextXYZ();
 			dimension.LeaderEndpoint = _random.NextXYZ();
+		}
+
+		public static void RandomizeDimensionRadius(DimensionRadius dimension)
+		{
+			dimension.AngleVertex = _random.NextXYZ();
+			dimension.LeaderLength = _random.NextDouble();
 		}
 
 		public static void RandomizeEllipse(Ellipse ellipse)
@@ -176,6 +180,11 @@ namespace ACadSharp.Tests.Common
 			ellipse.RadiusRatio = _random.NextDouble();
 			ellipse.StartParameter = _random.NextDouble();
 			ellipse.EndParameter = _random.NextDouble();
+		}
+
+		public static void RandomizeEntity(Entity entity)
+		{
+			entity.Color = _random.NextColor();
 		}
 
 		public static void RandomizeLine(Line line)
@@ -221,29 +230,16 @@ namespace ACadSharp.Tests.Common
 		}
 
 		public static void RandomizePolyline<T>(Polyline<T> pline)
-			where T : Entity, IVertex
+			where T : Entity, IVertex, new()
 		{
 			RandomizeEntity(pline);
 
 			int nv = _random.Next(2, 100);
 			for (int i = 0; i < nv; i++)
 			{
-				Vertex v = null;
-
-				switch (pline)
-				{
-					case Polyline2D pline2d:
-						v = new Vertex2D();
-						pline2d.Vertices.Add(v as Vertex2D);
-						break;
-					case Polyline3D pline3d:
-						v = new Vertex3D();
-						pline3d.Vertices.Add(v as Vertex3D);
-						break;
-				}
-
-				v.Id = i;
+				T v = new T();
 				v.Location = _random.NextXYZ();
+				pline.Vertices.Add(v);
 			}
 		}
 
