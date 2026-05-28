@@ -1,5 +1,6 @@
 ﻿using ACadSharp.Classes;
 using ACadSharp.Entities;
+using ACadSharp.IO.DXF.DxfStreamReader;
 using ACadSharp.IO.Templates;
 using ACadSharp.Objects;
 using ACadSharp.Objects.Evaluations;

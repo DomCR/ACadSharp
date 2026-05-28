@@ -1,4 +1,5 @@
-﻿using ACadSharp.IO.Templates;
+﻿using ACadSharp.IO.DXF.DxfStreamReader;
+using ACadSharp.IO.Templates;
 using System;
 
 namespace ACadSharp.IO.DXF
