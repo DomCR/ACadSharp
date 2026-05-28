@@ -543,7 +543,18 @@ namespace ACadSharp.IO.DXF
 					tmp.CurrentCell.Rotation = this._reader.ValueAsDouble;
 					return true;
 				case 170:
-					//Has data flag
+					// Per-cell alignment (set when the cell flag at code 91 has the
+					// CellAlignment override bit). Capture it on the cell-level
+					// StyleOverride so callers reading the table back via DXF can
+					// resolve alignment exactly like they do through DWG.
+					if (tmp.CurrentCell != null)
+					{
+						tmp.CurrentCell.StyleOverride.HasData = true;
+						tmp.CurrentCell.StyleOverride.CellAlignment =
+							(ACadSharp.Objects.TableStyle.CellAlignmentType)this._reader.ValueAsShort;
+						tmp.CurrentCell.StyleOverride.PropertyOverrideFlags |=
+							ACadSharp.Objects.TableStyle.CellStylePropertyFlags.Alignment;
+					}
 					return true;
 				case 171:
 					tmp.CreateCell((TableEntity.CellType)this._reader.ValueAsInt);
@@ -568,6 +579,18 @@ namespace ACadSharp.IO.DXF
 					return true;
 				case 179:
 					//Unknown value
+					return true;
+				case 70:
+					// Table-level flow direction (0 = top to bottom, 1 = bottom to top).
+					// Stored on the table-level CellStyleOverride so callers can read it
+					// through the same API used for round-tripping the rest of the
+					// override flags.
+					if (this._reader.ValueAsShort == 1)
+					{
+						table.CellStyleOverride.HasData = true;
+						table.CellStyleOverride.TableCellStylePropertyFlags |=
+							ACadSharp.Objects.TableStyle.CellStylePropertyFlags.FlowDirectionBottomToTop;
+					}
 					return true;
 				case 301:
 					content = new TableEntity.CellContent();
