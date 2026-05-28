@@ -1,5 +1,6 @@
 ﻿using ACadSharp.IO.DXF;
 using System.IO;
+using System.Text;
 
 namespace ACadSharp.IO;
 
@@ -115,15 +116,16 @@ public class DxfWriter : CadWriterBase<DxfWriterConfiguration>
 
 	private void createStreamWriter()
 	{
-		this._encoding ??= this.getListedEncoding(this._document.Header.CodePage);
+		var encoding = this._document.Header.Version < ACadVersion.AC1021 ?
+			this.getListedEncoding(this._document.Header.CodePage) : new UTF8Encoding(false);
 
 		if (this.IsBinary)
 		{
-			this._writer = new DxfBinaryWriter(new BinaryWriter(this._stream, this._encoding));
+			this._writer = new DxfBinaryWriter(new BinaryWriter(this._stream, encoding));
 		}
 		else
 		{
-			this._writer = new DxfAsciiWriter(new StreamWriter(this._stream, this._encoding));
+			this._writer = new DxfAsciiWriter(new StreamWriter(this._stream, encoding));
 		}
 
 		this._writer.WriteOptional = this.Configuration.WriteOptionalValues;
