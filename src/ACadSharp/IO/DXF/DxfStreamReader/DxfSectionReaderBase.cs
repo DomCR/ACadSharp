@@ -4,6 +4,7 @@ using ACadSharp.Objects;
 using ACadSharp.Tables;
 using ACadSharp.XData;
 using CSMath;
+using CSUtilities.Extensions;
 using System;
 using System.Collections.Generic;
 using System.Diagnostics;
@@ -782,34 +783,34 @@ internal abstract class DxfSectionReaderBase
 					{
 						case DimensionType.Linear:
 							tmp.SetDimensionObject(new DimensionLinear());
-							map.SubClasses.Add(DxfSubclassMarker.AlignedDimension, DxfClassMap.Create<DimensionAligned>());
-							map.SubClasses.Add(DxfSubclassMarker.LinearDimension, DxfClassMap.Create<DimensionLinear>());
+							map.SubClasses.TryAdd(DxfSubclassMarker.AlignedDimension, DxfClassMap.Create<DimensionAligned>());
+							map.SubClasses.TryAdd(DxfSubclassMarker.LinearDimension, DxfClassMap.Create<DimensionLinear>());
 							break;
 						case DimensionType.Aligned:
 							tmp.SetDimensionObject(new DimensionAligned());
-							map.SubClasses.Add(DxfSubclassMarker.AlignedDimension, DxfClassMap.Create<DimensionAligned>());
+							map.SubClasses.TryAdd(DxfSubclassMarker.AlignedDimension, DxfClassMap.Create<DimensionAligned>());
 							break;
 						case DimensionType.Angular:
 							tmp.SetDimensionObject(new DimensionAngular2Line());
-							map.SubClasses.Add(DxfSubclassMarker.Angular2LineDimension, DxfClassMap.Create<DimensionAngular2Line>());
+							map.SubClasses.TryAdd(DxfSubclassMarker.Angular2LineDimension, DxfClassMap.Create<DimensionAngular2Line>());
 							break;
 						case DimensionType.Diameter:
 							tmp.SetDimensionObject(new DimensionDiameter());
-							map.SubClasses.Add(DxfSubclassMarker.DiametricDimension, DxfClassMap.Create<DimensionDiameter>());
+							map.SubClasses.TryAdd(DxfSubclassMarker.DiametricDimension, DxfClassMap.Create<DimensionDiameter>());
 							break;
 						case DimensionType.Radius:
 							tmp.SetDimensionObject(new DimensionRadius());
-							map.SubClasses.Add(DxfSubclassMarker.RadialDimension, DxfClassMap.Create<DimensionRadius>());
+							map.SubClasses.TryAdd(DxfSubclassMarker.RadialDimension, DxfClassMap.Create<DimensionRadius>());
 							break;
 						case DimensionType.Angular3Point:
 							tmp.SetDimensionObject(new DimensionAngular3Pt());
-							map.SubClasses.Add(DxfSubclassMarker.Angular3PointDimension, DxfClassMap.Create<DimensionAngular3Pt>());
+							map.SubClasses.TryAdd(DxfSubclassMarker.Angular3PointDimension, DxfClassMap.Create<DimensionAngular3Pt>());
 							break;
 						case DimensionType.Ordinate:
 						case DimensionType.OrdinateTypeX:
 						case DimensionType.Ordinate | DimensionType.OrdinateTypeX:
 							tmp.SetDimensionObject(new DimensionOrdinate());
-							map.SubClasses.Add(DxfSubclassMarker.OrdinateDimension, DxfClassMap.Create<DimensionOrdinate>());
+							map.SubClasses.TryAdd(DxfSubclassMarker.OrdinateDimension, DxfClassMap.Create<DimensionOrdinate>());
 							break;
 						case DimensionType.BlockReference:
 						case DimensionType.TextUserDefinedLocation:
@@ -832,32 +833,34 @@ internal abstract class DxfSectionReaderBase
 				switch (this._reader.ValueAsString)
 				{
 					case DxfSubclassMarker.Dimension:
-						return this.tryAssignCurrentValue(template.CadObject, map.SubClasses[DxfSubclassMarker.Dimension]);
+						return true;
 					case DxfSubclassMarker.AlignedDimension:
 						tmp.SetDimensionObject(new DimensionAligned());
-						map.SubClasses.Add(this._reader.ValueAsString, DxfClassMap.Create<DimensionAligned>());
+						map.SubClasses.TryAdd(this._reader.ValueAsString, DxfClassMap.Create<DimensionAligned>());
 						return true;
 					case DxfSubclassMarker.DiametricDimension:
 						tmp.SetDimensionObject(new DimensionDiameter());
-						map.SubClasses.Add(this._reader.ValueAsString, DxfClassMap.Create<DimensionDiameter>());
+						map.SubClasses.TryAdd(this._reader.ValueAsString, DxfClassMap.Create<DimensionDiameter>());
 						return true;
 					case DxfSubclassMarker.Angular2LineDimension:
 						tmp.SetDimensionObject(new DimensionAngular2Line());
-						map.SubClasses.Add(this._reader.ValueAsString, DxfClassMap.Create<DimensionAngular2Line>());
+						map.SubClasses.TryAdd(this._reader.ValueAsString, DxfClassMap.Create<DimensionAngular2Line>());
 						return true;
 					case DxfSubclassMarker.Angular3PointDimension:
 						tmp.SetDimensionObject(new DimensionAngular3Pt());
-						map.SubClasses.Add(this._reader.ValueAsString, DxfClassMap.Create<DimensionAngular3Pt>());
+						map.SubClasses.TryAdd(this._reader.ValueAsString, DxfClassMap.Create<DimensionAngular3Pt>());
 						return true;
 					case DxfSubclassMarker.RadialDimension:
 						tmp.SetDimensionObject(new DimensionRadius());
-						map.SubClasses.Add(this._reader.ValueAsString, DxfClassMap.Create<DimensionRadius>());
+						map.SubClasses.TryAdd(this._reader.ValueAsString, DxfClassMap.Create<DimensionRadius>());
 						return true;
 					case DxfSubclassMarker.OrdinateDimension:
 						tmp.SetDimensionObject(new DimensionOrdinate());
-						map.SubClasses.Add(this._reader.ValueAsString, DxfClassMap.Create<DimensionOrdinate>());
+						map.SubClasses.TryAdd(this._reader.ValueAsString, DxfClassMap.Create<DimensionOrdinate>());
 						return true;
 					case DxfSubclassMarker.LinearDimension:
+						tmp.SetDimensionObject(new DimensionLinear());
+						map.SubClasses.TryAdd(DxfSubclassMarker.LinearDimension, DxfClassMap.Create<DimensionLinear>());
 						return true;
 					default:
 						return false;

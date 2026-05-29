@@ -468,7 +468,7 @@ internal abstract partial class DxfSectionWriterBase
 
 		this.writeHatchPattern(hatch, hatch.Pattern);
 
-		if (hatch.PixelSize != 0)
+		if (!hatch.IsSolid || hatch.Paths.Any(p => p.Flags.HasFlag(BoundaryPathFlags.Derived)) || hatch.PixelSize != 0)
 		{
 			this._writer.Write(47, hatch.PixelSize, map);
 		}
@@ -777,11 +777,11 @@ internal abstract partial class DxfSectionWriterBase
 			this._writer.Write(90, edge.End);
 		}
 
-			this._writer.Write(95, mesh.Edges.Count, map);
-			foreach (Mesh.Edge edge in mesh.Edges)
-			{
-				this._writer.Write(140, edge.Crease.HasValue ? edge.Crease.Value : 0.0d);
-			}
+		this._writer.Write(95, mesh.Edges.Count, map);
+		foreach (Mesh.Edge edge in mesh.Edges)
+		{
+			this._writer.Write(140, edge.Crease.HasValue ? edge.Crease.Value : 0.0d);
+		}
 
 		this._writer.Write(90, 0);
 	}
