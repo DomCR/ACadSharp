@@ -47,4 +47,32 @@ public class CommonPolylineConverter<T> : CommonCadConverter<Polyline<T>>
 		base.writeProperty(prop, writer, value, serializer);
 #endif
 	}
+
+#if NET
+	protected override void readPropertyValue(Polyline<T> obj, PropertyInfo prop, ref Utf8JsonReader reader, JsonSerializerOptions options)
+	{
+		if (!prop.Name.Equals(nameof(Polyline<T>.Vertices)))
+		{
+			base.readPropertyValue(obj, prop, ref reader, options);
+			return;
+		}
+
+		reader.Read();
+
+		if (reader.TokenType == JsonTokenType.StartArray)
+		{
+			reader.Read();
+
+			while (reader.TokenType != JsonTokenType.EndArray)
+			{
+				var v = JsonSerializer.Deserialize(ref reader, typeof(T), options);
+				obj.Vertices.Add((T)v);
+
+				reader.Read();
+			}
+
+			reader.Read();
+		}
+	}
+#endif
 }

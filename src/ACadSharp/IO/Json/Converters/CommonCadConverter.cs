@@ -40,30 +40,7 @@ public class CommonCadConverter<T> : JsonConverter<T>
 			{
 				string propertyName = reader.GetString();
 				var prop = typeToConvert.GetProperty(propertyName);
-
-				if (!prop.CanWrite)
-				{
-					continue;
-				}
-
-				reader.Read();
-
-				if (reader.TokenType == JsonTokenType.Null)
-				{
-					continue;
-				}
-
-				object value = null;
-				if (prop.PropertyType.HasInterface<INamedCadObject>())
-				{
-					value = Activator.CreateInstance(prop.PropertyType, reader.GetString());
-				}
-				else
-				{
-					value = JsonSerializer.Deserialize(ref reader, prop.PropertyType, options);
-				}
-
-				prop.SetValue(obj, value);
+				this.readPropertyValue(obj, prop, ref reader, options);
 			}
 			else if (reader.TokenType == JsonTokenType.EndObject)
 			{
@@ -72,6 +49,30 @@ public class CommonCadConverter<T> : JsonConverter<T>
 		}
 
 		throw new JsonException("Expected EndObject token.");
+	}
+
+	protected virtual void readPropertyValue(T obj, PropertyInfo prop, ref Utf8JsonReader reader, JsonSerializerOptions options)
+	{
+		if (!prop.CanWrite)
+		{
+			return;
+		}
+
+		object value = null;
+		if (prop.PropertyType.HasInterface<INamedCadObject>())
+		{
+			value = Activator.CreateInstance(prop.PropertyType, reader.GetString());
+		}
+		else if(prop.PropertyType.IsAssignableFrom(typeof(IHandledCadObject)))
+		{
+			return;
+		}
+		else
+		{
+			value = JsonSerializer.Deserialize(ref reader, prop.PropertyType, options);
+		}
+
+		prop.SetValue(obj, value);
 	}
 
 #else
