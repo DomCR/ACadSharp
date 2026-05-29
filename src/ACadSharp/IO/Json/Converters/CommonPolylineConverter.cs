@@ -20,24 +20,26 @@ namespace ACadSharp.IO.Json.Converters;
 /// collections are properly processed. It is intended for use with CAD-related data models where polylines are composed
 /// of custom vertex types.
 /// </remarks>
-/// <typeparam name="T">The type of vertex contained in the polyline. Must inherit from Entity and implement <see cref="IVertex"/>.</typeparam>
-public class CommonPolylineConverter<T> : CommonCadConverter<Polyline<T>>
-	where T : Entity, IVertex
+/// <typeparam name="TPolyline">The type of polyline. Must inherit from <see cref="Polyline{TVertex}"/>.</typeparam>
+/// <typeparam name="TVertex">The type of vertex contained in the polyline. Must inherit from Entity and implement <see cref="IVertex"/>.</typeparam>
+public class CommonPolylineConverter<TPolyline, TVertex> : CommonCadConverter<TPolyline>
+	where TPolyline : Polyline<TVertex>
+	where TVertex : Entity, IVertex
 {
 	protected override void writeProperty(PropertyInfo prop,
 #if NET
-	Utf8JsonWriter writer, Polyline<T> value, JsonSerializerOptions options
+	Utf8JsonWriter writer, TPolyline value, JsonSerializerOptions options
 #else
-		JsonWriter writer, Polyline<T> value, JsonSerializer serializer
+		JsonWriter writer, TPolyline value, JsonSerializer serializer
 #endif
 	)
 	{
-		if (prop.Name.Equals(nameof(Polyline<T>.Vertices)))
+		if (prop.Name.Equals(nameof(Polyline<>.Vertices)))
 		{
 #if NET
-			this.writeEnumerable(nameof(Polyline<T>.Vertices), value.Vertices, writer, value, options);
+			this.writeEnumerable(nameof(Polyline<>.Vertices), value.Vertices, writer, value, options);
 #else
-			this.writeEnumerable(nameof(Polyline<T>.Vertices), value.Vertices, writer, value, serializer);
+			this.writeEnumerable(nameof(Polyline<>.Vertices), value.Vertices, writer, value, serializer);
 #endif
 		}
 
@@ -49,9 +51,9 @@ public class CommonPolylineConverter<T> : CommonCadConverter<Polyline<T>>
 	}
 
 #if NET
-	protected override void readPropertyValue(Polyline<T> obj, PropertyInfo prop, ref Utf8JsonReader reader, JsonSerializerOptions options)
+	protected override void readPropertyValue(TPolyline obj, PropertyInfo prop, ref Utf8JsonReader reader, JsonSerializerOptions options)
 	{
-		if (!prop.Name.Equals(nameof(Polyline<T>.Vertices)))
+		if (!prop.Name.Equals(nameof(Polyline<>.Vertices)))
 		{
 			base.readPropertyValue(obj, prop, ref reader, options);
 			return;
@@ -65,8 +67,39 @@ public class CommonPolylineConverter<T> : CommonCadConverter<Polyline<T>>
 
 			while (reader.TokenType != JsonTokenType.EndArray)
 			{
-				var v = JsonSerializer.Deserialize(ref reader, typeof(T), options);
-				obj.Vertices.Add((T)v);
+				var v = JsonSerializer.Deserialize(ref reader, typeof(TVertex), options);
+				obj.Vertices.Add((TVertex)v);
+
+				reader.Read();
+			}
+
+			reader.Read();
+		}
+	}
+#endif
+}
+
+public class PolyfaceMeshConverter : CommonPolylineConverter<PolyfaceMesh, VertexFaceMesh>
+{
+#if NET
+	protected override void readPropertyValue(PolyfaceMesh obj, PropertyInfo prop, ref Utf8JsonReader reader, JsonSerializerOptions options)
+	{
+		if (!prop.Name.Equals(nameof(PolyfaceMesh.Faces)))
+		{
+			base.readPropertyValue(obj, prop, ref reader, options);
+			return;
+		}
+
+		reader.Read();
+
+		if (reader.TokenType == JsonTokenType.StartArray)
+		{
+			reader.Read();
+
+			while (reader.TokenType != JsonTokenType.EndArray)
+			{
+				var v = JsonSerializer.Deserialize(ref reader, typeof(VertexFaceRecord), options);
+				obj.Faces.Add((VertexFaceRecord)v);
 
 				reader.Read();
 			}
