@@ -67,6 +67,11 @@ internal class CadDimensionTemplate : CadEntityTemplate
 
 	public void SetDimensionObject(Dimension dimension)
 	{
+		if (this.CadObject.GetType() == dimension.GetType())
+		{
+			return;
+		}
+
 		dimension.Handle = this.CadObject.Handle;
 		dimension.Owner = this.CadObject.Owner;
 

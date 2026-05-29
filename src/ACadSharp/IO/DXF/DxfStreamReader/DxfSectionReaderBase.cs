@@ -765,13 +765,13 @@ internal abstract class DxfSectionReaderBase
 				tmp.StyleName = this._reader.ValueAsString;
 				return true;
 			case 50:
-				var dim = new DimensionLinear();
-				tmp.SetDimensionObject(dim);
-				dim.Rotation = this._reader.ValueAsAngle;
-				if (!map.SubClasses.ContainsKey(DxfSubclassMarker.LinearDimension))
+				if (tmp.CadObject is not DimensionLinear dim)
 				{
-					map.SubClasses.Add(DxfSubclassMarker.LinearDimension, DxfClassMap.Create<DimensionLinear>());
+					dim = new DimensionLinear();
+					tmp.SetDimensionObject(dim);
 				}
+				dim.Rotation = this._reader.ValueAsAngle;
+				map.SubClasses.TryAdd(DxfSubclassMarker.LinearDimension, DxfClassMap.Create<DimensionLinear>());
 				return true;
 			case 70:
 				//Flags do not have set
