@@ -25,20 +25,7 @@ public class PolyfaceMeshConverter : CommonPolylineConverter<PolyfaceMesh, Verte
 
 		reader.Read();
 
-		if (reader.TokenType == JsonTokenType.StartArray)
-		{
-			reader.Read();
-
-			while (reader.TokenType != JsonTokenType.EndArray)
-			{
-				var v = JsonSerializer.Deserialize(ref reader, typeof(VertexFaceRecord), options);
-				obj.Faces.Add((VertexFaceRecord)v);
-
-				reader.Read();
-			}
-
-			reader.Read();
-		}
+		obj.Faces.AddRange(this.readArray<VertexFaceRecord>(ref reader, options));
 	}
 #endif
 }

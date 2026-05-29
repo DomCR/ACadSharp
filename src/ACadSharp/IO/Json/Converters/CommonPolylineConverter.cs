@@ -1,5 +1,8 @@
 ﻿using ACadSharp.Entities;
+using System.Collections;
+using System.Collections.Generic;
 using System.Reflection;
+
 
 #if NET
 
@@ -61,20 +64,29 @@ public class CommonPolylineConverter<TPolyline, TVertex> : CommonCadConverter<TP
 
 		reader.Read();
 
+		obj.Vertices.AddRange(this.readArray<TVertex>(ref reader, options));
+	}
+
+	protected IEnumerable<T> readArray<T>(ref Utf8JsonReader reader, JsonSerializerOptions options)
+	{
+		List<T> lst = new List<T>();
+
 		if (reader.TokenType == JsonTokenType.StartArray)
 		{
 			reader.Read();
 
 			while (reader.TokenType != JsonTokenType.EndArray)
 			{
-				var v = JsonSerializer.Deserialize(ref reader, typeof(TVertex), options);
-				obj.Vertices.Add((TVertex)v);
+				var v = JsonSerializer.Deserialize(ref reader, typeof(T), options);
+				lst.Add((T)v);
 
 				reader.Read();
 			}
 
 			reader.Read();
 		}
+
+		return lst;
 	}
 #endif
 }
