@@ -33,7 +33,7 @@ public class CommonPolylineConverter<TPolyline, TVertex> : CommonCadConverter<TP
 #if NET
 	Utf8JsonWriter writer, TPolyline value, JsonSerializerOptions options
 #else
-		JsonWriter writer, TPolyline value, JsonSerializer serializer
+	JsonWriter writer, TPolyline value, JsonSerializer serializer
 #endif
 	)
 	{

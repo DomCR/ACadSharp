@@ -97,6 +97,27 @@ private readonly JsonSerializerSettings _jsonOptions = new JsonSerializerSetting
 		this._output.WriteLine(json);
 	}
 
+	[Fact]
+	public void JsonToCadDocumentTest()
+	{
+		CadDocument doc = new();
+		doc.Entities.Add(new Line(new XYZ(0, 0, 0), new XYZ(10, 10, 0)));
+
+#if NET
+		string json = CadJsonConverter.Serialize(doc, _jsonOptions);
+
+		JsonObject obj = JsonNode.Parse(json).AsObject();
+#else
+		string json = CadJsonConverter.Serialize(doc, _jsonOptions);
+
+		JObject obj = JObject.Parse(json);
+#endif
+
+		this._output.WriteLine(json);
+
+		var result = CadJsonConverter.Deserialize(json, typeof(CadDocument));
+	}
+
 	[Theory]
 	[MemberData(nameof(EntityTypes))]
 	public void EntityToJsonTest(Type type)
