@@ -6,230 +6,236 @@ using System.Collections.Generic;
 using System.Linq;
 using Xunit;
 
-namespace ACadSharp.Tests.Entities
+namespace ACadSharp.Tests.Entities;
+
+public class HatchTests : CommonEntityTests<Hatch>
 {
-	public class HatchTests : CommonEntityTests<Hatch>
+	[Fact]
+	public void BoundaryPathToEntityTest()
 	{
-		[Fact]
-		public void BoundaryPathToEntityTest()
+		var a = new Hatch.BoundaryPath.Arc
 		{
-			var a = new Hatch.BoundaryPath.Arc
-			{
-				Center = new XY(25, 0),
-				StartAngle = 0,
-				EndAngle = MathHelper.HalfPI,
-				Radius = 10,
-				CounterClockWise = true
-			};
+			Center = new XY(25, 0),
+			StartAngle = 0,
+			EndAngle = MathHelper.HalfPI,
+			Radius = 10,
+			CounterClockWise = true
+		};
 
-			ACadSharp.Entities.Arc arc = (Arc)a.ToEntity();
+		ACadSharp.Entities.Arc arc = (Arc)a.ToEntity();
 
-			Assert.NotNull(arc);
-			Assert.Equal(a.Center.Convert<XYZ>(), arc.Center);
-			Assert.Equal(a.StartAngle, arc.StartAngle);
-			Assert.Equal(a.EndAngle, arc.EndAngle);
-			Assert.Equal(a.Radius, arc.Radius);
+		Assert.NotNull(arc);
+		Assert.Equal(a.Center.Convert<XYZ>(), arc.Center);
+		Assert.Equal(a.StartAngle, arc.StartAngle);
+		Assert.Equal(a.EndAngle, arc.EndAngle);
+		Assert.Equal(a.Radius, arc.Radius);
 
-			var l = new Hatch.BoundaryPath.Line
-			{
-				Start = new XY(25, 0),
-				End = new XY(25, 0)
-			};
+		var l = new Hatch.BoundaryPath.Line
+		{
+			Start = new XY(25, 0),
+			End = new XY(25, 0)
+		};
 
-			ACadSharp.Entities.Line line = (Line)l.ToEntity();
+		ACadSharp.Entities.Line line = (Line)l.ToEntity();
 
-			Assert.NotNull(line);
-			Assert.Equal(l.Start.Convert<XYZ>(), line.StartPoint);
-			Assert.Equal(l.End.Convert<XYZ>(), line.EndPoint);
+		Assert.NotNull(line);
+		Assert.Equal(l.Start.Convert<XYZ>(), line.StartPoint);
+		Assert.Equal(l.End.Convert<XYZ>(), line.EndPoint);
+	}
+
+	[Fact]
+	public void CreateHatch()
+	{
+		Hatch hatch = new Hatch();
+		hatch.IsSolid = true;
+
+		hatch.SeedPoints.Add(new XY());
+
+		List<Hatch.BoundaryPath.Line> edges = new List<Hatch.BoundaryPath.Line>();
+
+		//edges
+		Hatch.BoundaryPath.Line edge1 = new Hatch.BoundaryPath.Line
+		{
+			Start = new CSMath.XY(0, 0),
+			End = new CSMath.XY(1, 0)
+		};
+		edges.Add(edge1);
+
+		Hatch.BoundaryPath.Line edge2 = new Hatch.BoundaryPath.Line
+		{
+			Start = new CSMath.XY(1, 0),
+			End = new CSMath.XY(1, 1)
+		};
+		edges.Add(edge2);
+
+		Hatch.BoundaryPath.Line edge3 = new Hatch.BoundaryPath.Line
+		{
+			Start = new CSMath.XY(1, 1),
+			End = new CSMath.XY(0, 1)
+		};
+		edges.Add(edge3);
+
+		Hatch.BoundaryPath.Line edge4 = new Hatch.BoundaryPath.Line
+		{
+			Start = new CSMath.XY(0, 1),
+			End = new CSMath.XY(0, 0)
+		};
+		edges.Add(edge4);
+
+		Hatch.BoundaryPath path = new Hatch.BoundaryPath();
+		foreach (var item in edges)
+		{
+			path.Edges.Add(item);
 		}
 
-		[Fact]
-		public void CreateHatch()
+		hatch.Paths.Add(path);
+
+		Assert.NotEmpty(hatch.Paths);
+		Assert.NotEmpty(path.Edges);
+		Assert.False(path.IsPolyline);
+	}
+
+	[Fact]
+	public void CreatePolylineHatch()
+	{
+		Hatch hatch = new Hatch();
+		Hatch.BoundaryPath path = new Hatch.BoundaryPath();
+		Hatch.BoundaryPath.Polyline pline = createPolylineBoundary();
+
+		path.Edges.Add(pline);
+		hatch.Paths.Add(path);
+
+		Assert.True(path.IsPolyline);
+	}
+
+	[Fact]
+	public void ExplodePatternTest()
+	{
+		Hatch hatch = new Hatch();
+
+		var lines = hatch.ExplodePattern();
+	}
+
+	[Fact]
+	public void ExplodeTest()
+	{
+		Hatch hatch = new Hatch();
+		Hatch.BoundaryPath path = new Hatch.BoundaryPath();
+		Hatch.BoundaryPath.Polyline pline = createPolylineBoundary();
+
+		path.Edges.Add(pline);
+		hatch.Paths.Add(path);
+
+		var entities = hatch.Explode();
+
+		Assert.NotEmpty(entities);
+
+		Polyline2D result = entities.OfType<Polyline2D>().FirstOrDefault();
+		Assert.NotNull(result);
+		Assert.NotEmpty(result.Vertices);
+
+		for (int i = 0; i < result.Vertices.Count; i++)
 		{
-			Hatch hatch = new Hatch();
-			hatch.IsSolid = true;
+			AssertUtils.AreEqual(pline.Vertices[i], result.Vertices[i].Location);
+		}
+	}
 
-			hatch.SeedPoints.Add(new XY());
+	[Fact]
+	public override void GetBoundingBoxTest()
+	{
+		Hatch hatch = this.createPolylineHatch();
 
-			List<Hatch.BoundaryPath.Line> edges = new List<Hatch.BoundaryPath.Line>();
+		var box = hatch.GetBoundingBox();
 
-			//edges
-			Hatch.BoundaryPath.Line edge1 = new Hatch.BoundaryPath.Line
-			{
-				Start = new CSMath.XY(0, 0),
-				End = new CSMath.XY(1, 0)
-			};
-			edges.Add(edge1);
+		Assert.Equal(new XYZ(0, 0, 0), box.Min);
+		Assert.Equal(new XYZ(1, 1, 0), box.Max);
+	}
 
-			Hatch.BoundaryPath.Line edge2 = new Hatch.BoundaryPath.Line
-			{
-				Start = new CSMath.XY(1, 0),
-				End = new CSMath.XY(1, 1)
-			};
-			edges.Add(edge2);
+	[Fact]
+	public void PolylineHatchNotAllowMoreEdges()
+	{
+		Hatch.BoundaryPath path = new Hatch.BoundaryPath();
+		Hatch.BoundaryPath.Polyline pline = createPolylineBoundary();
+		path.Edges.Add(pline);
 
-			Hatch.BoundaryPath.Line edge3 = new Hatch.BoundaryPath.Line
-			{
-				Start = new CSMath.XY(1, 1),
-				End = new CSMath.XY(0, 1)
-			};
-			edges.Add(edge3);
+		Assert.Throws<InvalidOperationException>(() =>
+		{
+			path.Edges.Add(new Hatch.BoundaryPath.Line());
+		}
+		);
 
-			Hatch.BoundaryPath.Line edge4 = new Hatch.BoundaryPath.Line
-			{
-				Start = new CSMath.XY(0, 1),
-				End = new CSMath.XY(0, 0)
-			};
-			edges.Add(edge4);
+		Assert.Throws<InvalidOperationException>(() =>
+		{
+			path.Edges.Add(new Hatch.BoundaryPath.Polyline());
+		}
+		);
+	}
 
-			Hatch.BoundaryPath path = new Hatch.BoundaryPath();
-			foreach (var item in edges)
-			{
-				path.Edges.Add(item);
-			}
+	[Fact]
+	public void TransformTest()
+	{
+		Hatch hatch = this.createPolylineHatch();
+		var translation = Transform.CreateTranslation(new XYZ(10, 10, 0));
 
-			hatch.Paths.Add(path);
+		hatch.ApplyTransform(translation);
+	}
 
-			Assert.NotEmpty(hatch.Paths);
-			Assert.NotEmpty(path.Edges);
-			Assert.False(path.IsPolyline);
+	[Fact]
+	public void UpdatePattern()
+	{
+		Hatch hatch = new Hatch();
+		var pattern = new HatchPattern("custom");
+		hatch.Pattern = pattern;
+
+		pattern.Lines.Add(new HatchPattern.Line
+		{
+			Angle = 0,
+			Offset = new XY(-1, 1),
+			DashLengths = { 0.5, 0.5 }
+		});
+
+		hatch.PatternScale = 2;
+
+		var line = pattern.Lines.First();
+		Assert.Equal(new XY(-2, 2), line.Offset);
+		foreach (var item in line.DashLengths)
+		{
+			Assert.Equal(1, item);
 		}
 
-		[Fact]
-		public void CreatePolylineHatch()
-		{
-			Hatch hatch = new Hatch();
-			Hatch.BoundaryPath path = new Hatch.BoundaryPath();
-			Hatch.BoundaryPath.Polyline pline = createPolylineBoundary();
+		hatch.PatternAngle = MathHelper.HalfPI;
+		Assert.Equal(MathHelper.HalfPI, line.Angle);
+	}
 
-			path.Edges.Add(pline);
-			hatch.Paths.Add(path);
+	private Hatch.BoundaryPath.Polyline createPolylineBoundary()
+	{
+		Hatch.BoundaryPath.Polyline pline = new Hatch.BoundaryPath.Polyline();
+		pline.Vertices.Add(new XYZ(0, 0, 0));
+		pline.Vertices.Add(new XYZ(1, 0, 0));
+		pline.Vertices.Add(new XYZ(1, 1, 0));
+		pline.Vertices.Add(new XYZ(0, 1, 0));
+		pline.Vertices.Add(new XYZ(0, 0, 0));
 
-			Assert.True(path.IsPolyline);
-		}
+		return pline;
+	}
 
-		[Fact]
-		public void ExplodeTest()
-		{
-			Hatch hatch = new Hatch();
-			Hatch.BoundaryPath path = new Hatch.BoundaryPath();
-			Hatch.BoundaryPath.Polyline pline = createPolylineBoundary();
+	private Hatch createPolylineHatch()
+	{
+		Hatch hatch = new Hatch();
 
-			path.Edges.Add(pline);
-			hatch.Paths.Add(path);
+		Hatch.BoundaryPath path = new Hatch.BoundaryPath();
 
-			var entities = hatch.Explode();
+		Hatch.BoundaryPath.Polyline pline = new Hatch.BoundaryPath.Polyline();
+		pline.Vertices.Add(new XYZ(0, 0, 0));
+		pline.Vertices.Add(new XYZ(1, 0, 0));
+		pline.Vertices.Add(new XYZ(1, 1, 0));
+		pline.Vertices.Add(new XYZ(0, 1, 0));
+		pline.Vertices.Add(new XYZ(0, 0, 0));
 
-			Assert.NotEmpty(entities);
+		path.Edges.Add(pline);
 
-			Polyline2D result = entities.OfType<Polyline2D>().FirstOrDefault();
-			Assert.NotNull(result);
-			Assert.NotEmpty(result.Vertices);
+		hatch.Paths.Add(path);
 
-			for (int i = 0; i < result.Vertices.Count; i++)
-			{
-				AssertUtils.AreEqual(pline.Vertices[i], result.Vertices[i].Location);
-			}
-
-		}
-
-		[Fact]
-		public void TransformTest()
-		{
-			Hatch hatch = this.createPolylineHatch();
-			var translation = Transform.CreateTranslation(new XYZ(10, 10, 0));
-
-			hatch.ApplyTransform(translation);
-		}
-
-		[Fact]
-		public override void GetBoundingBoxTest()
-		{
-			Hatch hatch = this.createPolylineHatch();
-
-			var box = hatch.GetBoundingBox();
-
-			Assert.Equal(new XYZ(0, 0, 0), box.Min);
-			Assert.Equal(new XYZ(1, 1, 0), box.Max);
-		}
-
-		[Fact]
-		public void PolylineHatchNotAllowMoreEdges()
-		{
-			Hatch.BoundaryPath path = new Hatch.BoundaryPath();
-			Hatch.BoundaryPath.Polyline pline = createPolylineBoundary();
-			path.Edges.Add(pline);
-
-			Assert.Throws<InvalidOperationException>(() =>
-			{
-				path.Edges.Add(new Hatch.BoundaryPath.Line());
-			}
-			);
-
-			Assert.Throws<InvalidOperationException>(() =>
-			{
-				path.Edges.Add(new Hatch.BoundaryPath.Polyline());
-			}
-			);
-		}
-
-		[Fact]
-		public void UpdatePattern()
-		{
-			Hatch hatch = new Hatch();
-			var pattern = new HatchPattern("custom");
-			hatch.Pattern = pattern;
-
-			pattern.Lines.Add(new HatchPattern.Line
-			{
-				Angle = 0,
-				Offset = new XY(-1, 1),
-				DashLengths = { 0.5, 0.5 }
-			});
-
-			hatch.PatternScale = 2;
-
-			var line = pattern.Lines.First();
-			Assert.Equal(new XY(-2, 2), line.Offset);
-			foreach (var item in line.DashLengths)
-			{
-				Assert.Equal(1, item);
-			}
-
-			hatch.PatternAngle = MathHelper.HalfPI;
-			Assert.Equal(MathHelper.HalfPI, line.Angle);
-		}
-
-		private Hatch createPolylineHatch()
-		{
-			Hatch hatch = new Hatch();
-
-			Hatch.BoundaryPath path = new Hatch.BoundaryPath();
-
-			Hatch.BoundaryPath.Polyline pline = new Hatch.BoundaryPath.Polyline();
-			pline.Vertices.Add(new XYZ(0, 0, 0));
-			pline.Vertices.Add(new XYZ(1, 0, 0));
-			pline.Vertices.Add(new XYZ(1, 1, 0));
-			pline.Vertices.Add(new XYZ(0, 1, 0));
-			pline.Vertices.Add(new XYZ(0, 0, 0));
-
-			path.Edges.Add(pline);
-
-			hatch.Paths.Add(path);
-
-			return hatch;
-		}
-
-		private Hatch.BoundaryPath.Polyline createPolylineBoundary()
-		{
-			Hatch.BoundaryPath.Polyline pline = new Hatch.BoundaryPath.Polyline();
-			pline.Vertices.Add(new XYZ(0, 0, 0));
-			pline.Vertices.Add(new XYZ(1, 0, 0));
-			pline.Vertices.Add(new XYZ(1, 1, 0));
-			pline.Vertices.Add(new XYZ(0, 1, 0));
-			pline.Vertices.Add(new XYZ(0, 0, 0));
-
-			return pline;
-		}
+		return hatch;
 	}
 }
