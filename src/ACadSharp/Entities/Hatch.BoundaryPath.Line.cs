@@ -1,61 +1,73 @@
 ﻿using ACadSharp.Attributes;
 using CSMath;
+using CSMath.Geometry;
+using System.Collections.Generic;
 
-namespace ACadSharp.Entities
+namespace ACadSharp.Entities;
+
+public partial class Hatch
 {
-	public partial class Hatch
+	public partial class BoundaryPath
 	{
-		public partial class BoundaryPath
+		public class Line : Edge
 		{
-			public class Line : Edge
+			/// <summary>
+			/// Endpoint (in OCS)
+			/// </summary>
+			[DxfCodeValue(11, 21)]
+			public XY End { get; set; }
+
+			/// <summary>
+			/// Start point (in OCS)
+			/// </summary>
+			[DxfCodeValue(10, 20)]
+			public XY Start { get; set; }
+
+			public override EdgeType Type => EdgeType.Line;
+
+			/// <summary>
+			/// Initializes a new instance of the Line class.
+			/// </summary>
+			public Line() { }
+
+			/// <summary>
+			/// Initializes a new instance of the Line class using the specified line entity.
+			/// </summary>
+			/// <param name="line">The line entity from which to initialize the start and end points. Cannot be null.</param>
+			public Line(Entities.Line line)
 			{
-				/// <summary>
-				/// Endpoint (in OCS)
-				/// </summary>
-				[DxfCodeValue(11, 21)]
-				public XY End { get; set; }
+				this.Start = line.StartPoint.Convert<XY>();
+				this.End = line.EndPoint.Convert<XY>();
+			}
 
-				/// <summary>
-				/// Start point (in OCS)
-				/// </summary>
-				[DxfCodeValue(10, 20)]
-				public XY Start { get; set; }
+			/// <inheritdoc/>
+			public override void ApplyTransform(Transform transform)
+			{
+				this.Start = transform.ApplyTransform(this.Start.Convert<XYZ>()).Convert<XY>();
+				this.End = transform.ApplyTransform(this.End.Convert<XYZ>()).Convert<XY>();
+			}
 
-				public override EdgeType Type => EdgeType.Line;
+			/// <inheritdoc/>
+			public override BoundingBox GetBoundingBox()
+			{
+				return BoundingBox.FromPoints([(XYZ)this.Start, (XYZ)this.End]);
+			}
 
-				/// <summary>
-				/// Initializes a new instance of the Line class.
-				/// </summary>
-				public Line() { }
+			/// <inheritdoc/>
+			public override Entity ToEntity()
+			{
+				return new Entities.Line(this.Start, this.End);
+			}
 
-				/// <summary>
-				/// Initializes a new instance of the Line class using the specified line entity.
-				/// </summary>
-				/// <param name="line">The line entity from which to initialize the start and end points. Cannot be null.</param>
-				public Line(Entities.Line line)
-				{
-					this.Start = line.StartPoint.Convert<XY>();
-					this.End = line.EndPoint.Convert<XY>();
-				}
+			/// <inheritdoc/>
+			public override IEnumerable<XY> FindIntersections(Line2D line)
+			{
+				return new[] { this.ToSegment2D().FindIntersection(line) };
+			}
 
-				/// <inheritdoc/>
-				public override void ApplyTransform(Transform transform)
-				{
-					this.Start = transform.ApplyTransform(this.Start.Convert<XYZ>()).Convert<XY>();
-					this.End = transform.ApplyTransform(this.End.Convert<XYZ>()).Convert<XY>();
-				}
-
-				/// <inheritdoc/>
-				public override BoundingBox GetBoundingBox()
-				{
-					return BoundingBox.FromPoints([(XYZ)this.Start, (XYZ)this.End]);
-				}
-
-				/// <inheritdoc/>
-				public override Entity ToEntity()
-				{
-					return new Entities.Line(this.Start, this.End);
-				}
+			public Segment2D ToSegment2D()
+			{
+				return new Segment2D(this.Start, this.End);
 			}
 		}
 	}

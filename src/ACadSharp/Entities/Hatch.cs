@@ -219,18 +219,32 @@ public partial class Hatch : Entity
 		return entities;
 	}
 
-	public IEnumerable<Line> ExplodePattern()
+	public IEnumerable<Entity> ExplodePattern()
 	{
-		List<Line> lines = new List<Line>();
+		List<Entity> entities = new List<Entity>();
 
 		if (this.Pattern == null
 			|| this.Pattern.Lines.Count == 0
 			|| this.Paths.Count == 0)
 		{
-			return lines;
+			return entities;
 		}
 
-		throw new System.NotImplementedException();
+		foreach (BoundaryPath b in this.Paths)
+		{
+			foreach (var pl in this.Pattern.Lines)
+			{
+				var l = pl.ToLine2D();
+
+				var intersections = b.FindIntersections(l);
+				foreach (var intersection in b.FindIntersections(l))
+				{
+					entities.Add(new Circle(intersection.Convert<XYZ>(), 0.5));
+				}
+			}
+		}
+
+		return entities;
 	}
 
 	/// <inheritdoc/>

@@ -1,5 +1,6 @@
 ﻿using ACadSharp.Attributes;
 using CSMath;
+using CSMath.Geometry;
 using System;
 using System.Collections.Generic;
 
@@ -142,6 +143,11 @@ public partial class Hatch
 				ellipse.RadiusRatio = this.RadiusRatio;
 
 				return ellipse;
+			}
+
+			public override IEnumerable<XY> FindIntersections(Line2D line)
+			{
+				throw new NotImplementedException();
 			}
 		}
 	}

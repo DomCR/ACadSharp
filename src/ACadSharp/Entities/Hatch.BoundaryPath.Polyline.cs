@@ -1,129 +1,151 @@
 ﻿using ACadSharp.Attributes;
 using CSMath;
+using CSMath.Geometry;
 using System.Collections.Generic;
 using System.Linq;
 
-namespace ACadSharp.Entities
+namespace ACadSharp.Entities;
+
+public partial class Hatch
 {
-	public partial class Hatch
+	public partial class BoundaryPath
 	{
-		public partial class BoundaryPath
+		public class Polyline : Edge
 		{
-			public class Polyline : Edge
+			/// <summary>
+			/// Bulges applied to each vertice, the number of bulges must be equal to the vertices or empty.
+			/// </summary>
+			/// <remarks>
+			/// default value, 0 if not set
+			/// </remarks>
+			[DxfCodeValue(DxfReferenceType.Optional, 42)]
+			public IEnumerable<double> Bulges { get { return this.Vertices.Select(v => v.Z); } }
+
+			/// <summary>
+			/// The polyline has bulges with value different than 0.
+			/// </summary>
+			[DxfCodeValue(72)]
+			public bool HasBulge => this.Bulges.Any(b => b != 0);
+
+			/// <summary>
+			/// Is closed flag.
+			/// </summary>
+			[DxfCodeValue(73)]
+			public bool IsClosed { get; set; }
+
+			/// <inheritdoc/>
+			public override EdgeType Type => EdgeType.Polyline;
+
+			/// <summary>
+			/// Position values are only X and Y.
+			/// </summary>
+			/// <remarks>
+			/// The vertex bulge is stored in the Z component.
+			/// </remarks>
+			[DxfCodeValue(DxfReferenceType.Count, 93)]
+			public List<XYZ> Vertices { get; private set; } = new();
+
+			/// <summary>
+			/// Initializes a new instance of the Polyline class.
+			/// </summary>
+			public Polyline()
+			{ }
+
+			/// <summary>
+			/// Initializes a new instance of the Polyline class with the specified vertices and closure state.
+			/// </summary>
+			/// <param name="vertices">The collection of points that define the vertices of the polyline. The order of the points determines the
+			/// sequence of the polyline's segments. Cannot be null or empty.</param>
+			/// <param name="isClosed">true to create a closed polyline where the last vertex connects to the first; otherwise, false.</param>
+			public Polyline(IEnumerable<XYZ> vertices, bool isClosed = true)
 			{
-				/// <summary>
-				/// Bulges applied to each vertice, the number of bulges must be equal to the vertices or empty.
-				/// </summary>
-				/// <remarks>
-				/// default value, 0 if not set
-				/// </remarks>
-				[DxfCodeValue(DxfReferenceType.Optional, 42)]
-				public IEnumerable<double> Bulges { get { return this.Vertices.Select(v => v.Z); } }
+				this.Vertices.AddRange(vertices);
+				this.IsClosed = isClosed;
+			}
 
-				/// <summary>
-				/// The polyline has bulges with value different than 0.
-				/// </summary>
-				[DxfCodeValue(72)]
-				public bool HasBulge => this.Bulges.Any(b => b != 0);
-
-				/// <summary>
-				/// Is closed flag.
-				/// </summary>
-				[DxfCodeValue(73)]
-				public bool IsClosed { get; set; }
-
-				/// <inheritdoc/>
-				public override EdgeType Type => EdgeType.Polyline;
-
-				/// <summary>
-				/// Position values are only X and Y.
-				/// </summary>
-				/// <remarks>
-				/// The vertex bulge is stored in the Z component.
-				/// </remarks>
-				[DxfCodeValue(DxfReferenceType.Count, 93)]
-				public List<XYZ> Vertices { get; private set; } = new();
-
-				/// <summary>
-				/// Initializes a new instance of the Polyline class.
-				/// </summary>
-				public Polyline()
-				{ }
-
-				/// <summary>
-				/// Initializes a new instance of the Polyline class with the specified vertices and closure state.
-				/// </summary>
-				/// <param name="vertices">The collection of points that define the vertices of the polyline. The order of the points determines the
-				/// sequence of the polyline's segments. Cannot be null or empty.</param>
-				/// <param name="isClosed">true to create a closed polyline where the last vertex connects to the first; otherwise, false.</param>
-				public Polyline(IEnumerable<XYZ> vertices, bool isClosed = true)
+			/// <summary>
+			/// Initializes a new instance of the Polyline class by copying the vertices and closed state from the specified
+			/// polyline.
+			/// </summary>
+			/// <param name="polyline">The source polyline whose vertices and closed state are used to initialize the new instance. Cannot be null.</param>
+			public Polyline(IPolyline polyline)
+			{
+				foreach (var v in polyline.Vertices)
 				{
-					this.Vertices.AddRange(vertices);
-					this.IsClosed = isClosed;
+					XY xy = v.Location.Convert<XY>();
+					this.Vertices.Add(new XYZ(xy.X, xy.Y, v.Bulge));
 				}
 
-				/// <summary>
-				/// Initializes a new instance of the Polyline class by copying the vertices and closed state from the specified
-				/// polyline.
-				/// </summary>
-				/// <param name="polyline">The source polyline whose vertices and closed state are used to initialize the new instance. Cannot be null.</param>
-				public Polyline(IPolyline polyline)
-				{
-					foreach (var v in polyline.Vertices)
-					{
-						XY xy = v.Location.Convert<XY>();
-						this.Vertices.Add(new XYZ(xy.X, xy.Y, v.Bulge));
-					}
+				this.IsClosed = polyline.IsClosed;
+			}
 
-					this.IsClosed = polyline.IsClosed;
+			/// <inheritdoc/>
+			public override void ApplyTransform(Transform transform)
+			{
+				var arr = this.Vertices.ToArray();
+				this.Vertices.Clear();
+				for (int i = 0; i < arr.Length; i++)
+				{
+					var bulge = arr[i].Z;
+					var v = transform.ApplyTransform(arr[i]);
+					v.Z = bulge;
+
+					this.Vertices.Add(v);
 				}
+			}
 
-				/// <inheritdoc/>
-				public override void ApplyTransform(Transform transform)
+			/// <inheritdoc/>
+			public override Edge Clone()
+			{
+				Polyline clone = (Polyline)base.Clone();
+
+				clone.Vertices = new List<XYZ>(this.Vertices);
+
+				return clone;
+			}
+
+			/// <inheritdoc/>
+			public override IEnumerable<XY> FindIntersections(Line2D line)
+			{
+				for (int i = 0; i < this.Vertices.Count - 1; i++)
 				{
-					var arr = this.Vertices.ToArray();
-					this.Vertices.Clear();
-					for (int i = 0; i < arr.Length; i++)
+					var curr = new Segment2D(this.Vertices[i].Convert<XY>(), this.Vertices[i + 1].Convert<XY>());
+					if (curr.TryFindIntersection(line, out XY intersection))
 					{
-						var bulge = arr[i].Z;
-						var v = transform.ApplyTransform(arr[i]);
-						v.Z = bulge;
-
-						this.Vertices.Add(v);
+						yield return intersection;
 					}
 				}
 
-				/// <inheritdoc/>
-				public override Edge Clone()
+				if (this.IsClosed)
 				{
-					Polyline clone = (Polyline)base.Clone();
-
-					clone.Vertices = new List<XYZ>(Vertices);
-
-					return clone;
-				}
-
-				/// <inheritdoc/>
-				public override BoundingBox GetBoundingBox()
-				{
-					return BoundingBox.FromPoints(this.Vertices);
-				}
-
-				/// <inheritdoc/>
-				public override Entity ToEntity()
-				{
-					List<Vertex> vertices = new();
-					foreach (XYZ v in this.Vertices)
+					var curr = new Segment2D(this.Vertices.First().Convert<XY>(), this.Vertices.Last().Convert<XY>());
+					if (curr.TryFindIntersection(line, out XY intersection))
 					{
-						var vertex = new Vertex2D(v.Convert<XY>())
-						{
-							Bulge = v.Z,
-						};
-						vertices.Add(vertex);
+						yield return intersection;
 					}
-
-					return new Polyline2D(vertices.Cast<Vertex2D>(), this.IsClosed);
 				}
+			}
+
+			/// <inheritdoc/>
+			public override BoundingBox GetBoundingBox()
+			{
+				return BoundingBox.FromPoints(this.Vertices);
+			}
+
+			/// <inheritdoc/>
+			public override Entity ToEntity()
+			{
+				List<Vertex> vertices = new();
+				foreach (XYZ v in this.Vertices)
+				{
+					var vertex = new Vertex2D(v.Convert<XY>())
+					{
+						Bulge = v.Z,
+					};
+					vertices.Add(vertex);
+				}
+
+				return new Polyline2D(vertices.Cast<Vertex2D>(), this.IsClosed);
 			}
 		}
 	}
