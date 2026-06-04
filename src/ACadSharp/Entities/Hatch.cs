@@ -1,6 +1,8 @@
 ﻿using ACadSharp.Attributes;
 using CSMath;
+using CSMath.Geometry;
 using System.Collections.Generic;
+using System.Linq;
 
 namespace ACadSharp.Entities;
 
@@ -221,7 +223,7 @@ public partial class Hatch : Entity
 
 	public IEnumerable<Entity> ExplodePattern()
 	{
-		List<Entity> entities = new List<Entity>();
+		List<Entity> entities = new();
 
 		if (this.Pattern == null
 			|| this.Pattern.Lines.Count == 0
@@ -230,16 +232,89 @@ public partial class Hatch : Entity
 			return entities;
 		}
 
-		foreach (BoundaryPath b in this.Paths)
+		foreach (BoundaryPath boundary in this.Paths)
 		{
-			foreach (var pl in this.Pattern.Lines)
-			{
-				var l = pl.ToLine2D();
+			BoundingBox box = boundary.GetBoundingBox();
 
-				var intersections = b.FindIntersections(l);
-				foreach (var intersection in b.FindIntersections(l))
+			XY[] corners =
+			[
+				new XY(box.Min.X, box.Min.Y),
+				new XY(box.Min.X, box.Max.Y),
+				new XY(box.Max.X, box.Min.Y),
+				new XY(box.Max.X, box.Max.Y)
+			];
+
+			foreach (var patLine in this.Pattern.Lines)
+			{
+				if (patLine.Direction.IsZero())
 				{
-					entities.Add(new Circle(intersection.Convert<XYZ>(), 0.5));
+					continue;
+				}
+
+				XY normal = new XY(-patLine.Direction.Y, patLine.Direction.X);
+
+				double minProj = double.PositiveInfinity;
+				double maxProj = double.NegativeInfinity;
+				for (int i = 0; i < corners.Length; i++)
+				{
+					double p = corners[i].X * normal.X + corners[i].Y * normal.Y;
+					if (p < minProj) minProj = p;
+					if (p > maxProj) maxProj = p;
+				}
+
+				double c0 = patLine.BasePoint.X * normal.X + patLine.BasePoint.Y * normal.Y;
+
+				int kStart;
+				int kEnd;
+				if (System.Math.Abs((double)patLine.LineOffset) <= MathHelper.Epsilon)
+				{
+					kStart = 0;
+					kEnd = 0;
+				}
+				else
+				{
+					double k1 = (minProj - c0) / (double)patLine.LineOffset;
+					double k2 = (maxProj - c0) / (double)patLine.LineOffset;
+
+					double kMin = System.Math.Min(k1, k2);
+					double kMax = System.Math.Max(k1, k2);
+
+					kStart = (int)System.Math.Floor(kMin) - 1;
+					kEnd = (int)System.Math.Ceiling(kMax) + 1;
+				}
+
+				for (int k = kStart; k <= kEnd; k++)
+				{
+					XY basePoint = new XY(
+						patLine.BasePoint.X + patLine.Offset.X * k,
+						patLine.BasePoint.Y + patLine.Offset.Y * k);
+
+					Line2D geomLine = new Line2D(basePoint, patLine.Direction);
+
+					List<XY> intersections = boundary.FindIntersections(geomLine).ToList();
+					if (intersections.Count < 2)
+					{
+						continue;
+					}
+
+					intersections.Sort((a, b) =>
+					{
+						double ta = (a.X - basePoint.X) * patLine.Direction.X + (a.Y - basePoint.Y) * patLine.Direction.Y;
+						double tb = (b.X - basePoint.X) * patLine.Direction.X + (b.Y - basePoint.Y) * patLine.Direction.Y;
+						return ta.CompareTo(tb);
+					});
+
+					for (int i = 0; i + 1 < intersections.Count; i += 2)
+					{
+						XY start = intersections[i];
+						XY end = intersections[i + 1];
+						if (start.Equals(end))
+						{
+							continue;
+						}
+
+						entities.Add(new Line(start, end));
+					}
 				}
 			}
 		}

@@ -44,6 +44,7 @@ public class LocalSampleTests : IOTestsBase
 			toAdd.AddRange(item.ExplodePattern());
 		}
 
+		toAdd.ForEach(e => e.Color = Color.Red);
 		doc.Entities.AddRange(toAdd);
 
 		if (!TestVariables.SaveOutputInStream)
