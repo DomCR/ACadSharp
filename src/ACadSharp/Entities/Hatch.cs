@@ -205,7 +205,7 @@ public partial class Hatch : Entity
 	/// <summary>
 	/// Explode the hatch edges into the equivalent entities.
 	/// </summary>
-	/// <returns></returns>
+	/// <returns>A collection of entities representing the exploded hatch edges.</returns>
 	public IEnumerable<Entity> Explode()
 	{
 		List<Entity> entities = new List<Entity>();
@@ -221,6 +221,10 @@ public partial class Hatch : Entity
 		return entities;
 	}
 
+	/// <summary>
+	/// Explode the hatch pattern into the equivalent entities.
+	/// </summary>
+	/// <returns>A collection of entities representing the exploded hatch pattern.</returns>
 	public IEnumerable<Entity> ExplodePattern()
 	{
 		List<Entity> entities = new();
@@ -291,7 +295,6 @@ public partial class Hatch : Entity
 
 					Line2D geomLine = new Line2D(basePoint, patLine.Direction);
 
-					// Collect intersections, removing duplicates (vertex hits).
 					List<XY> intersections = boundary.FindIntersections(geomLine).Distinct().ToList();
 					if (intersections.Count < 2)
 					{
@@ -323,7 +326,8 @@ public partial class Hatch : Entity
 							continue;
 						}
 
-						entities.AddRange(emitDashedSegment(basePoint, patLine.Direction, tA, tB, patLine.DashLengths));
+						Line2D line = new Line2D(basePoint, patLine.Direction);
+						entities.AddRange(emitDashedSegment(line, tA, tB, patLine.DashLengths));
 					}
 				}
 			}
@@ -332,12 +336,24 @@ public partial class Hatch : Entity
 		return entities;
 	}
 
-	private IEnumerable<Line> emitDashedSegment(XY origin, XY dir, double tStart, double tEnd, List<double> dashLengths)
+	/// <inheritdoc/>
+	public override BoundingBox GetBoundingBox()
 	{
-		// Continuous if no dash pattern.
+		BoundingBox box = BoundingBox.Null;
+
+		foreach (BoundaryPath bp in this.Paths)
+		{
+			box = box.Merge(bp.GetBoundingBox());
+		}
+
+		return box;
+	}
+
+	private IEnumerable<Line> emitDashedSegment(Line2D line, double tStart, double tEnd, List<double> dashLengths)
+	{
 		if (dashLengths == null || dashLengths.Count == 0)
 		{
-			return new[] { new Line(pointInLineAt(origin, dir, tStart), pointInLineAt(origin, dir, tEnd)) };
+			return new[] { new Line(line.PointInLine(tStart), line.PointInLine(tEnd)) };
 		}
 
 		double[] abs = dashLengths.Select(d => System.Math.Abs(d)).ToArray();
@@ -347,7 +363,8 @@ public partial class Hatch : Entity
 			return Enumerable.Empty<Line>();
 		}
 
-		double pos = mod(tStart, cycle);
+		double m = tStart % cycle;
+		double pos = m < 0 ? m + cycle : m;
 		int idx = 0;
 		double acc = 0.0;
 
@@ -388,7 +405,7 @@ public partial class Hatch : Entity
 			{
 				double t0 = cursor;
 				double t1 = cursor + step;
-				entities.Add(new Line(pointInLineAt(origin, dir, t0), pointInLineAt(origin, dir, t1)));
+				entities.Add(new Line(line.PointInLine(t0), line.PointInLine(t1)));
 			}
 
 			cursor += step;
@@ -402,30 +419,5 @@ public partial class Hatch : Entity
 		}
 
 		return entities;
-	}
-
-	private static XYZ pointInLineAt(XY origin, XY dir, double t)
-	{
-		return new XYZ(origin.X + dir.X * t, origin.Y + dir.Y * t, 0.0);
-	}
-
-	private static double mod(double value, double period)
-	{
-		double m = value % period;
-		return m < 0 ? m + period : m;
-	}
-
-
-	/// <inheritdoc/>
-	public override BoundingBox GetBoundingBox()
-	{
-		BoundingBox box = BoundingBox.Null;
-
-		foreach (BoundaryPath bp in this.Paths)
-		{
-			box = box.Merge(bp.GetBoundingBox());
-		}
-
-		return box;
 	}
 }
