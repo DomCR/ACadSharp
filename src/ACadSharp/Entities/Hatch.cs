@@ -291,7 +291,8 @@ public partial class Hatch : Entity
 
 					Line2D geomLine = new Line2D(basePoint, patLine.Direction);
 
-					List<XY> intersections = boundary.FindIntersections(geomLine).ToList();
+					// Collect intersections, removing duplicates (vertex hits).
+					List<XY> intersections = boundary.FindIntersections(geomLine).Distinct().ToList();
 					if (intersections.Count < 2)
 					{
 						continue;
@@ -306,14 +307,23 @@ public partial class Hatch : Entity
 
 					for (int i = 0; i + 1 < intersections.Count; i += 2)
 					{
-						XY start = intersections[i];
-						XY end = intersections[i + 1];
-						if (start.Equals(end))
+						XY a = intersections[i];
+						XY b = intersections[i + 1];
+
+						double tA = (a.X - basePoint.X) * patLine.Direction.X + (a.Y - basePoint.Y) * patLine.Direction.Y;
+						double tB = (b.X - basePoint.X) * patLine.Direction.X + (b.Y - basePoint.Y) * patLine.Direction.Y;
+
+						if (tB < tA)
+						{
+							(tA, tB) = (tB, tA);
+						}
+
+						if ((tB - tA) <= MathHelper.Epsilon)
 						{
 							continue;
 						}
 
-						entities.Add(new Line(start, end));
+						entities.AddRange(emitDashedSegment(basePoint, patLine.Direction, tA, tB, patLine.DashLengths));
 					}
 				}
 			}
@@ -321,6 +331,90 @@ public partial class Hatch : Entity
 
 		return entities;
 	}
+
+	private IEnumerable<Line> emitDashedSegment(XY origin, XY dir, double tStart, double tEnd, List<double> dashLengths)
+	{
+		// Continuous if no dash pattern.
+		if (dashLengths == null || dashLengths.Count == 0)
+		{
+			return new[] { new Line(pointInLineAt(origin, dir, tStart), pointInLineAt(origin, dir, tEnd)) };
+		}
+
+		double[] abs = dashLengths.Select(d => System.Math.Abs(d)).ToArray();
+		double cycle = abs.Sum();
+		if (cycle <= MathHelper.Epsilon)
+		{
+			return Enumerable.Empty<Line>();
+		}
+
+		double pos = mod(tStart, cycle);
+		int idx = 0;
+		double acc = 0.0;
+
+		while (idx < abs.Length && acc + abs[idx] <= pos + MathHelper.Epsilon)
+		{
+			acc += abs[idx];
+			idx++;
+		}
+
+		if (idx >= abs.Length)
+		{
+			idx = 0;
+			acc = 0.0;
+			pos = 0.0;
+		}
+
+		var entities = new List<Line>();
+
+		double cursor = tStart;
+		double remaining = abs[idx] - (pos - acc);
+		while (cursor < tEnd - MathHelper.Epsilon)
+		{
+			int guard = 0;
+			while (remaining <= MathHelper.Epsilon && guard < abs.Length + 1)
+			{
+				idx = (idx + 1) % abs.Length;
+				remaining = abs[idx];
+				guard++;
+			}
+
+			if (remaining <= MathHelper.Epsilon)
+			{
+				break;
+			}
+
+			double step = System.Math.Min(remaining, tEnd - cursor);
+			if (dashLengths[idx] > 0.0 && step > MathHelper.Epsilon)
+			{
+				double t0 = cursor;
+				double t1 = cursor + step;
+				entities.Add(new Line(pointInLineAt(origin, dir, t0), pointInLineAt(origin, dir, t1)));
+			}
+
+			cursor += step;
+			remaining -= step;
+
+			if (remaining <= MathHelper.Epsilon)
+			{
+				idx = (idx + 1) % abs.Length;
+				remaining = abs[idx];
+			}
+		}
+
+		return entities;
+	}
+
+	private static XYZ pointInLineAt(XY origin, XY dir, double t)
+	{
+		return new XYZ(origin.X + dir.X * t, origin.Y + dir.Y * t, 0.0);
+	}
+
+	private static double mod(double value, double period)
+	{
+		double m = value % period;
+		return m < 0 ? m + period : m;
+	}
+
 
 	/// <inheritdoc/>
 	public override BoundingBox GetBoundingBox()
