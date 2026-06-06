@@ -44,7 +44,7 @@ internal partial class DwgObjectReader : DwgSectionIO
 		template.Block1PtParameter.Value93 = this._mergedReaders.ReadBitLong();
 	}
 
-	private void readBlock2PtParameter(CadBlock2PtParameterTemplate template)
+	private short readBlock2PtParameter(CadBlock2PtParameterTemplate template)
 	{
 		this.readBlockParameter(template);
 
@@ -73,7 +73,10 @@ internal partial class DwgObjectReader : DwgSectionIO
 			var f = this._mergedReaders.ReadBitLong();
 		}
 
-		var value177 = this._mergedReaders.ReadBitShort();
+		//177
+		short value177 = this._mergedReaders.ReadBitShort();
+
+		return value177;
 	}
 
 	private void readBlockAction(CadBlockActionTemplate template)
@@ -220,38 +223,13 @@ internal partial class DwgObjectReader : DwgSectionIO
 		BlockLinearParameter blockLinearParameter = new();
 		CadBlockLinearParameterTemplate template = new CadBlockLinearParameterTemplate(blockLinearParameter);
 
-		// The connection table is read inline with a fixed sequence instead of calling
-		// readBlock2PtParameter, whose generic connection-list loop is not byte-compatible
-		// with the dynamic blocks this reader was validated against.
-		this.readBlockParameter(template);
-
-		//1010 1020 1030
-		blockLinearParameter.FirstPoint = this._mergedReaders.Read3BitDouble();
-		//1011 1021 1031
-		blockLinearParameter.SecondPoint = this._mergedReaders.Read3BitDouble();
-
-		//171 172 173
-		this._mergedReaders.ReadBitShort();
-		this._mergedReaders.ReadBitShort();
-		this._mergedReaders.ReadBitShort();
-		//94
-		this._mergedReaders.ReadBitLong();
-		//303
-		this._mergedReaders.ReadVariableText();
-		//174 number of connections
-		this._mergedReaders.ReadBitShort();
-		//95
-		this._mergedReaders.ReadBitLong();
-		//304
-		this._mergedReaders.ReadVariableText();
-
-		this._mergedReaders.ReadBitLong();
-		this._mergedReaders.ReadBitLong();
-		this._mergedReaders.ReadBitLong();
-		this._mergedReaders.ReadBitLong();
+		//Reads the common 2 point parameter data (FirstPoint, SecondPoint and the
+		//variable-length connection table). The trailing 177 value returned is the
+		//base location of the linear parameter.
+		short value177 = this.readBlock2PtParameter(template);
 
 		//177
-		blockLinearParameter.BaseLocation = (LinearParameterBaseLocation)this._mergedReaders.ReadBitShort();
+		blockLinearParameter.BaseLocation = (LinearParameterBaseLocation)value177;
 		//305
 		blockLinearParameter.Label = this._mergedReaders.ReadVariableText();
 		//306
@@ -267,7 +245,8 @@ internal partial class DwgObjectReader : DwgSectionIO
 		//143
 		blockLinearParameter.Increment = this._mergedReaders.ReadBitDouble();
 
-		int numberOfValues = this._objectReader.ReadBitShort();
+		//171 number of discrete values
+		short numberOfValues = this._mergedReaders.ReadBitShort();
 		for (int i = 0; i < numberOfValues; i++)
 			blockLinearParameter.Values.Add(this._mergedReaders.ReadBitDouble());
 
