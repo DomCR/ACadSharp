@@ -1,4 +1,5 @@
 ﻿using ACadSharp.Attributes;
+using ACadSharp.Extensions;
 using CSMath;
 using CSMath.Geometry;
 using System.Collections.Generic;
@@ -107,21 +108,27 @@ public partial class Hatch
 			/// <inheritdoc/>
 			public override IEnumerable<XY> FindIntersections(Line2D line)
 			{
-				for (int i = 0; i < this.Vertices.Count - 1; i++)
-				{
-					var curr = new Segment2D(this.Vertices[i].Convert<XY>(), this.Vertices[i + 1].Convert<XY>());
-					if (curr.TryFindIntersection(line, out XY intersection))
-					{
-						yield return intersection;
-					}
-				}
+				var pline = this.ToEntity() as Polyline2D;
+				var entities = pline.Explode();
 
-				if (this.IsClosed)
+				foreach (var entity in entities)
 				{
-					var curr = new Segment2D(this.Vertices.First().Convert<XY>(), this.Vertices.Last().Convert<XY>());
-					if (curr.TryFindIntersection(line, out XY intersection))
+					if (entity is Entities.Line l)
 					{
-						yield return intersection;
+						var s = l.ToSegment3D();
+						var seg2d = new Segment2D(s.Origin.Convert<XY>(), s.End.Convert<XY>());
+						if (seg2d.TryFindIntersection(line, out XY intersection))
+						{
+							yield return intersection;
+						}
+					}
+					else if (entity is Entities.Arc arc)
+					{
+						var a = arc.ToArc2D();
+						foreach (var intersection in a.FindIntersections(line))
+						{
+							yield return intersection;
+						}
 					}
 				}
 			}

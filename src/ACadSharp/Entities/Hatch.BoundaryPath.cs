@@ -15,19 +15,6 @@ public partial class Hatch
 {
 	public partial class BoundaryPath : IGeometricEntity
 	{
-		public IEnumerable<XY> FindIntersections(Line2D line)
-		{
-			var intersections = new List<XY>();
-
-			foreach (Edge edge in this.Edges)
-			{
-				foreach (var intersection in edge.FindIntersections(line))
-				{
-					yield return intersection;
-				}
-			}
-		}
-
 		/// <summary>
 		/// Edges that form the boundary.
 		/// </summary>
@@ -128,6 +115,24 @@ public partial class Hatch
 				this.Edges.Select(e => e.Clone()));
 
 			return path;
+		}
+
+		/// <summary>
+		/// Finds the intersection points between the boundary path and a given line. The method iterates through each edge in the boundary path and collects the intersection points with the specified line, returning them as an enumerable collection of XY coordinates.
+		/// </summary>
+		/// <param name="line">The line to check for intersections with the boundary path.</param>
+		/// <returns>An enumerable collection of XY coordinates representing the intersection points.</returns>
+		public IEnumerable<XY> FindIntersections(Line2D line)
+		{
+			var intersections = new List<XY>();
+
+			foreach (Edge edge in this.Edges)
+			{
+				foreach (var intersection in edge.FindIntersections(line))
+				{
+					yield return intersection;
+				}
+			}
 		}
 
 		/// <inheritdoc/>
