@@ -169,6 +169,10 @@ public abstract class Entity : CadObject, IEntity
 		else if (this.Color.IsByBlock && this.Owner is BlockRecord record)
 		{
 			color = record.BlockEntity.Color;
+			if (color.IsByLayer)
+			{
+				color = this.Layer.Color;
+			}
 		}
 		else
 		{
