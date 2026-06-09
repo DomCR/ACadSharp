@@ -155,6 +155,30 @@ public class InsertTest
 	}
 
 	[Fact]
+	public void GetBoundingBoxUsesAllTransformedCorners()
+	{
+		var solid = new Solid(
+			new XYZ(0, 0, 0),
+			new XYZ(10, 0, 0),
+			new XYZ(10, 20, 0),
+			new XYZ(0, 20, 0));
+		BlockRecord record = new BlockRecord(this._blockName);
+		record.Entities.Add(solid);
+
+		Insert insert = new Insert(record)
+		{
+			Rotation = Math.PI / 4
+		};
+
+		var box = insert.GetBoundingBox();
+
+		Assert.InRange(box.Min.X, -14.143, -14.141);
+		Assert.InRange(box.Min.Y, -0.001, 0.001);
+		Assert.InRange(box.Max.X, 7.070, 7.072);
+		Assert.InRange(box.Max.Y, 21.212, 21.214);
+	}
+
+	[Fact]
 	public void LinkedAttributes()
 	{
 		BlockRecord record = new BlockRecord(this._blockName);

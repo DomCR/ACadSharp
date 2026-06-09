@@ -364,13 +364,27 @@ public class Insert : Entity
 	public override BoundingBox GetBoundingBox()
 	{
 		BoundingBox box = this.Block.GetBoundingBox();
+		if (box.Extent == BoundingBoxExtent.Null || box.Extent == BoundingBoxExtent.Infinite)
+		{
+			return box;
+		}
 
 		var t = this.GetTransform();
 
-		var min = t.ApplyTransform(box.Min);
-		var max = t.ApplyTransform(box.Max);
+		var points = new[]
+		{
+			new XYZ(box.Min.X, box.Min.Y, box.Min.Z),
+			new XYZ(box.Min.X, box.Min.Y, box.Max.Z),
+			new XYZ(box.Min.X, box.Max.Y, box.Min.Z),
+			new XYZ(box.Min.X, box.Max.Y, box.Max.Z),
+			new XYZ(box.Max.X, box.Min.Y, box.Min.Z),
+			new XYZ(box.Max.X, box.Min.Y, box.Max.Z),
+			new XYZ(box.Max.X, box.Max.Y, box.Min.Z),
+			new XYZ(box.Max.X, box.Max.Y, box.Max.Z),
+		}
+		.Select(point => t.ApplyTransform(point));
 
-		return new BoundingBox(min, max);
+		return BoundingBox.FromPoints(points);
 	}
 
 	/// <summary>
