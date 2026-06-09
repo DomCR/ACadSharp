@@ -1,61 +1,72 @@
 ﻿using ACadSharp.Attributes;
+using CSMath;
 
-namespace ACadSharp.Entities
+namespace ACadSharp.Entities;
+
+/// <summary>
+/// Represents a <see cref="VertexFaceRecord"/> entity.
+/// </summary>
+/// <remarks>
+/// Object name <see cref="DxfFileToken.EntityVertex"/> <br/>
+/// Dxf class name <see cref="DxfSubclassMarker.PolyfaceMeshVertex"/>
+/// </remarks>
+[DxfName(DxfFileToken.EntityVertex)]
+[DxfSubClass(DxfSubclassMarker.PolyfaceMeshFace)]
+public class VertexFaceRecord : Vertex
 {
+	/// <inheritdoc/>
+	public override VertexFlags Flags { get => base.Flags | VertexFlags.PolyFaceMeshVertex; set => base.Flags = value; }
+
 	/// <summary>
-	/// Represents a <see cref="VertexFaceRecord"/> entity.
+	/// Index 1 of the face.
 	/// </summary>
 	/// <remarks>
-	/// Object name <see cref="DxfFileToken.EntityVertex"/> <br/>
-	/// Dxf class name <see cref="DxfSubclassMarker.PolyfaceMeshVertex"/>
+	/// The start value for indexes is 1, if 0 the index will not take an effect.
 	/// </remarks>
-	[DxfName(DxfFileToken.EntityVertex)]
-	[DxfSubClass(DxfSubclassMarker.PolyfaceMeshFace)]
-	public class VertexFaceRecord : Vertex
+	[DxfCodeValue(71)]
+	public short Index1 { get; set; }
+
+	/// <summary>
+	/// Index 2 of the face.
+	/// </summary>
+	/// <remarks>
+	/// The start value for indexes is 1, if 0 the index will not take an effect.
+	/// </remarks>
+	[DxfCodeValue(72)]
+	public short Index2 { get; set; }
+
+	/// <summary>
+	/// Index 3 of the face.
+	/// </summary>
+	/// <remarks>
+	/// The start value for indexes is 1, if 0 the index will not take an effect.
+	/// </remarks>
+	[DxfCodeValue(73)]
+	public short Index3 { get; set; }
+
+	/// <summary>
+	/// Index 4 of the face.
+	/// </summary>
+	/// <remarks>
+	/// The start value for indexes is 1, if 0 the index will not take an effect.
+	/// </remarks>
+	[DxfCodeValue(74)]
+	public short Index4 { get; set; }
+
+	/// <inheritdoc/>
+	public override ObjectType ObjectType => ObjectType.VERTEX_PFACE_FACE;
+
+	/// <inheritdoc/>
+	public override string SubclassMarker => DxfSubclassMarker.PolyfaceMeshFace;
+
+	/// <inheritdoc/>
+	public VertexFaceRecord() : base()
 	{
-		/// <inheritdoc/>
-		public override ObjectType ObjectType => ObjectType.VERTEX_PFACE_FACE;
+	}
 
-		/// <inheritdoc/>
-		public override string SubclassMarker => DxfSubclassMarker.PolyfaceMeshFace;
-
-		/// <summary>
-		/// Index 1 of the face.
-		/// </summary>
-		/// <remarks>
-		/// The start value for indexes is 1, if 0 the index will not take an effect.
-		/// </remarks>
-		[DxfCodeValue(71)]
-		public short Index1 { get; set; }
-
-		/// <summary>
-		/// Index 2 of the face.
-		/// </summary>
-		/// <remarks>
-		/// The start value for indexes is 1, if 0 the index will not take an effect.
-		/// </remarks>
-		[DxfCodeValue(72)]
-		public short Index2 { get; set; }
-
-		/// <summary>
-		/// Index 3 of the face.
-		/// </summary>
-		/// <remarks>
-		/// The start value for indexes is 1, if 0 the index will not take an effect.
-		/// </remarks>
-		[DxfCodeValue(73)]
-		public short Index3 { get; set; }
-
-		/// <summary>
-		/// Index 4 of the face.
-		/// </summary>
-		/// <remarks>
-		/// The start value for indexes is 1, if 0 the index will not take an effect.
-		/// </remarks>
-		[DxfCodeValue(74)]
-		public short Index4 { get; set; }
-
-		/// <inheritdoc/>
-		public override VertexFlags Flags { get => base.Flags | (VertexFlags.PolyfaceMeshVertex); set => base.Flags = value; }
+	/// <inheritdoc/>
+	public VertexFaceRecord(IVector location)
+		: base(location)
+	{
 	}
 }

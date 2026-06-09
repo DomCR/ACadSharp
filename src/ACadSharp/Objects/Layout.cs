@@ -144,6 +144,17 @@ public class Layout : PlotSettings
 	[DxfCodeValue(13, 23, 33)]
 	public XYZ Origin { get; set; } = XYZ.Zero;
 
+	/// <summary>
+	/// Gets the paper viewport associated with this layout. If there are multiple viewports, this property returns the first one found. If no viewports are associated with the layout, this property returns null.
+	/// </summary>
+	public Viewport PaperViewport
+	{
+		get
+		{
+			return this.Viewports.FirstOrDefault();
+		}
+	}
+
 	/// <inheritdoc/>
 	public override string SubclassMarker => DxfSubclassMarker.Layout;
 
@@ -223,7 +234,7 @@ public class Layout : PlotSettings
 	public Layout(string name, string blockName) : base()
 	{
 		this.Name = name;
-		this._blockRecord = new BlockRecord(blockName);
+		this.AssociatedBlock = new BlockRecord(blockName);
 
 		if (this.IsPaperSpace)
 		{
@@ -261,10 +272,10 @@ public class Layout : PlotSettings
 	}
 
 	/// <summary>
-	/// Ensures that the paper viewport exists and updates its dimensions to match the current paper size.
+	/// Ensures that the paper <see cref="Viewport"/> exists and updates its dimensions to match the current paper size.
 	/// </summary>
-	/// <remarks>If no viewport is associated with the paper space, a new viewport is created and added. This method
-	/// has no effect if the object is not in paper space or if there is no associated block.</remarks>
+	/// <remarks>If no <see cref="Viewport"/> is associated with the paper space, a new <see cref="Viewport"/> is created and added. This method
+	/// has no effect if the object is not a paper space.</remarks>
 	public void UpdatePaperViewport()
 	{
 		if (!this.IsPaperSpace || this.AssociatedBlock == null)
@@ -272,15 +283,15 @@ public class Layout : PlotSettings
 			return;
 		}
 
-		Viewport vp = this.Viewports.FirstOrDefault();
-		if (vp == null)
+		if (this.PaperViewport == null)
 		{
-			vp = new Viewport();
-			this.AddViewport(vp);
+			this.AddViewport(new Viewport());
 		}
 
-		vp.Height = this.PaperHeight;
-		vp.Width = this.PaperWidth;
+		// It doesn't take any real effect
+		this.PaperViewport.Height = this.PaperHeight;
+		this.PaperViewport.Width = this.PaperWidth;
+		this.PaperViewport.Center = new XYZ(this.PaperViewport.Width / 2, this.PaperViewport.Height / 2, 0);
 	}
 
 	internal override void AssignDocument(CadDocument doc)

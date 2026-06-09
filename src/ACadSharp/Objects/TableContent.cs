@@ -23,7 +23,7 @@ namespace ACadSharp.Objects
 		public override string SubclassMarker => DxfSubclassMarker.TableContent;
 
 		[DxfCodeValue(DxfReferenceType.Handle, 340)]
-		public TableStyle Style { get; set; } = new();
+		public TableStyle Style { get; set; } = TableStyle.Default;
 
 		public TableStyle StyleOverride { get; set; }
 	}

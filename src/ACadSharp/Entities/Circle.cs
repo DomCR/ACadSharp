@@ -67,9 +67,20 @@ namespace ACadSharp.Entities
 		private double _radius = 1.0;
 
 		/// <summary>
-		/// Default constructor
+		/// Default constructor.
 		/// </summary>
 		public Circle() : base() { }
+
+		/// <summary>
+		/// Initializes a new instance of the Circle class with the specified center point and radius.
+		/// </summary>
+		/// <param name="center">The center point of the circle.</param>
+		/// <param name="radius">The radius of the circle. Must be a non-negative value.</param>
+		public Circle(XYZ center, double radius) : this()
+		{
+			this.Center = center;
+			this.Radius = radius;
+		}
 
 		/// <inheritdoc/>
 		public override void ApplyTransform(Transform transform)

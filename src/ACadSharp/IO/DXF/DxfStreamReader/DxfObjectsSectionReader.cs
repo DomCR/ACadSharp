@@ -1,5 +1,6 @@
 ﻿using ACadSharp.Classes;
 using ACadSharp.Entities;
+using ACadSharp.IO.DXF.DxfStreamReader;
 using ACadSharp.IO.Templates;
 using ACadSharp.Objects;
 using ACadSharp.Objects.Evaluations;
@@ -11,6 +12,7 @@ using System.IO;
 using System.Linq;
 using static ACadSharp.IO.Templates.CadEvaluationGraphTemplate;
 using static ACadSharp.IO.Templates.CadTableEntityTemplate;
+using static ACadSharp.IO.Templates.CadTableStyleTemplate;
 
 namespace ACadSharp.IO.DXF
 {
@@ -1389,8 +1391,8 @@ namespace ACadSharp.IO.DXF
 
 		private void readFormattedCellContent()
 		{
-			TableEntity.ContentFormat format = new();
-			CadTableCellContentFormatTemplate template = new CadTableCellContentFormatTemplate(format);
+			TableStyle.ContentFormat format = new();
+			CellContentFormatTemplate template = new CellContentFormatTemplate(format);
 			var map = DxfClassMap.Create(format.GetType(), "FORMATTEDCELLCONTENT");
 
 			this._reader.ReadNext();
@@ -1423,7 +1425,7 @@ namespace ACadSharp.IO.DXF
 			}
 		}
 
-		private void readContentFormat(CadTableCellContentFormatTemplate template)
+		private void readContentFormat(CellContentFormatTemplate template)
 		{
 			var format = template.Format;
 			var map = DxfClassMap.Create(format.GetType(), "CONTENTFORMAT_BEGIN");
@@ -1493,31 +1495,31 @@ namespace ACadSharp.IO.DXF
 
 		private void readStyleOverride(CadCellStyleTemplate template)
 		{
-			var style = template.Format as TableEntity.CellStyle;
+			var style = template.Format as TableStyle.CellStyle;
 			var mapstyle = DxfClassMap.Create(style.GetType(), "TABLEFORMAT_STYLE");
-			var mapformat = DxfClassMap.Create(typeof(TableEntity.ContentFormat), "TABLEFORMAT_BEGIN");
+			var mapformat = DxfClassMap.Create(typeof(TableStyle.ContentFormat), "TABLEFORMAT_BEGIN");
 
 			this._reader.ReadNext();
 
 			bool end = false;
-			TableEntity.CellEdgeFlags currBorder = TableEntity.CellEdgeFlags.Unknown;
+			var currBorder = TableStyle.CellEdgeFlags.Unknown;
 			while (this._reader.DxfCode != DxfCode.Start)
 			{
 				switch (this._reader.Code)
 				{
 					case 95:
-						currBorder = (TableEntity.CellEdgeFlags)this._reader.ValueAsInt;
+						currBorder = (TableStyle.CellEdgeFlags)this._reader.ValueAsInt;
 						break;
 					case 1 when this._reader.ValueAsString.Equals("TABLEFORMAT_BEGIN", StringComparison.InvariantCultureIgnoreCase):
 						break;
 					case 300 when this._reader.ValueAsString.Equals("CONTENTFORMAT", StringComparison.InvariantCultureIgnoreCase):
-						readContentFormat(new CadTableCellContentFormatTemplate(new TableEntity.ContentFormat()));
+						readContentFormat(new CellContentFormatTemplate(new TableStyle.ContentFormat()));
 						break;
 					case 301 when this._reader.ValueAsString.Equals("MARGIN", StringComparison.InvariantCultureIgnoreCase):
 						this.readCellMargin(template);
 						break;
 					case 302 when this._reader.ValueAsString.Equals("GRIDFORMAT", StringComparison.InvariantCultureIgnoreCase):
-						TableEntity.CellBorder border = new TableEntity.CellBorder(currBorder);
+						TableStyle.CellBorder border = new TableStyle.CellBorder(currBorder);
 						this.readGridFormat(template, border);
 						break;
 					case 309:
@@ -1540,9 +1542,9 @@ namespace ACadSharp.IO.DXF
 			}
 		}
 
-		private void readGridFormat(CadCellStyleTemplate template, TableEntity.CellBorder border)
+		private void readGridFormat(CadCellStyleTemplate template, TableStyle.CellBorder border)
 		{
-			var map = DxfClassMap.Create(border.GetType(), nameof(TableEntity.CellBorder));
+			var map = DxfClassMap.Create(border.GetType(), nameof(TableStyle.CellBorder));
 
 			this._reader.ReadNext();
 
@@ -1563,7 +1565,7 @@ namespace ACadSharp.IO.DXF
 						border.IsInvisible = this._reader.ValueAsBool;
 						break;
 					case 340:
-						template.BorderLinetypePairs.Add(new Tuple<TableEntity.CellBorder, ulong>(border, this._reader.ValueAsHandle));
+						template.BorderLineTypePairs.Add(new Tuple<TableStyle.CellBorder, ulong>(border, this._reader.ValueAsHandle));
 						break;
 					case 309:
 						end = this._reader.ValueAsString.Equals("GRIDFORMAT_END", StringComparison.InvariantCultureIgnoreCase);
@@ -1587,7 +1589,7 @@ namespace ACadSharp.IO.DXF
 
 		private void readCellMargin(CadCellStyleTemplate template)
 		{
-			var style = template.Format as TableEntity.CellStyle;
+			var style = template.Format as TableStyle.CellStyle;
 
 			this._reader.ReadNext();
 
@@ -1754,13 +1756,14 @@ namespace ACadSharp.IO.DXF
 					return true;
 				case 20:
 					var pt = filter.BoundaryPoints.LastOrDefault();
-					filter.BoundaryPoints.Add(new CSMath.XY(pt.X, this._reader.ValueAsDouble));
+					filter.BoundaryPoints[filter.BoundaryPoints.Count - 1] = new CSMath.XY(pt.X, this._reader.ValueAsDouble);
 					return true;
 				case 40:
 					if (filter.ClipFrontPlane && !tmp.HasFrontPlane)
 					{
 						filter.FrontDistance = this._reader.ValueAsDouble;
 						tmp.HasFrontPlane = true;
+						return true;
 					}
 
 					double[] array = new double[16]
@@ -1851,16 +1854,16 @@ namespace ACadSharp.IO.DXF
 					cellStyle.TextHeight = this._reader.ValueAsDouble;
 					return true;
 				case 170:
-					cellStyle.CellAlignment = (TableEntity.CellAlignmentType)this._reader.ValueAsShort;
+					cellStyle.CellAlignment = (TableStyle.CellAlignmentType)this._reader.ValueAsShort;
 					return true;
 				case 283:
 					cellStyle.IsFillColorOn = this._reader.ValueAsBool;
 					return true;
 				case 90:
-					cellStyle.Type = (TableEntity.CellStyleType)this._reader.ValueAsShort;
+					cellStyle.Type = (TableStyle.CellStyleType)this._reader.ValueAsShort;
 					return true;
 				case 91:
-					cellStyle.StyleClass = (TableEntity.CellStyleClass)this._reader.ValueAsShort;
+					cellStyle.StyleClass = (TableStyle.CellStyleClass)this._reader.ValueAsShort;
 					return true;
 				case 1:
 					//Undocumented

@@ -1,4 +1,5 @@
-﻿using ACadSharp.Entities;
+﻿using ACadSharp.Blocks;
+using ACadSharp.Entities;
 using ACadSharp.Extensions;
 using ACadSharp.Objects;
 using ACadSharp.Tables;
@@ -21,6 +22,8 @@ public abstract class WriterSingleObjectTests : IOTestsBase
 	{
 		Data = new();
 		Data.Add(new(nameof(SingleCaseGenerator.Empty)));
+		Data.Add(new(nameof(SingleCaseGenerator.ArrowBlocks)));
+		Data.Add(new(nameof(SingleCaseGenerator.AddBlockWithMTextAttributes)));
 		Data.Add(new(nameof(SingleCaseGenerator.ArcSegments)));
 		Data.Add(new(nameof(SingleCaseGenerator.GenerateExampleDxf)));
 		Data.Add(new(nameof(SingleCaseGenerator.SingleEllipse)));
@@ -87,6 +90,8 @@ public abstract class WriterSingleObjectTests : IOTestsBase
 		Data.Add(new(nameof(SingleCaseGenerator.SPlineCreation)));
 		Data.Add(new(nameof(SingleCaseGenerator.TextAlignment)));
 		Data.Add(new(nameof(SingleCaseGenerator.CreateXRecords)));
+		Data.Add(new(nameof(SingleCaseGenerator.SingleTableEntity)));
+		Data.Add(new(nameof(SingleCaseGenerator.SingleMesh)));
 	}
 
 	public WriterSingleObjectTests(ITestOutputHelper output) : base(output)
@@ -113,7 +118,7 @@ public abstract class WriterSingleObjectTests : IOTestsBase
 
 		public SingleCaseGenerator()
 		{
-			//this.Document.Header.ShowModelSpace = true;
+			this.Document.Header.ShowModelSpace = true;
 		}
 
 		public SingleCaseGenerator(string name) : this()
@@ -140,6 +145,61 @@ public abstract class WriterSingleObjectTests : IOTestsBase
 				HorizontalAlignment = TextHorizontalAlignment.Left,
 				Height = 18,
 				AttributeType = AttributeType.SingleLine,
+			});
+
+			record.Entities.Add(new AttributeDefinition()
+			{
+				InsertPoint = new XYZ(10, 10, 0),
+				Prompt = "Name_custom",
+				Tag = "CIRCLE_NAME",
+				Value = "Circilla",
+				HorizontalAlignment = TextHorizontalAlignment.Left,
+				Height = 18,
+				AttributeType = AttributeType.SingleLine,
+			});
+
+			this.Document.BlockRecords.Add(record);
+
+			var insert = new Insert(record)
+			{
+				InsertPoint = new XYZ(0, 0, 0),
+				XScale = 0.8,
+				YScale = 0.8,
+			};
+
+			insert.Attributes.Add(new AttributeEntity()
+			{
+				InsertPoint = new XYZ(-10, -10, 0),
+				Tag = "CIRCLE_NAME_ATT",
+				Value = "Bla",
+				HorizontalAlignment = TextHorizontalAlignment.Left,
+				Height = 18,
+				AttributeType = AttributeType.SingleLine,
+			});
+
+			this.Document.Entities.Add(insert);
+		}
+
+		public void AddBlockWithMTextAttributes()
+		{
+			BlockRecord record = new("my_block");
+
+			record.Entities.Add(new Circle
+			{
+				Radius = 10,
+				Center = XYZ.Zero
+			});
+
+			record.Entities.Add(new AttributeDefinition()
+			{
+				InsertPoint = XYZ.Zero,
+				Prompt = "mtext_custom",
+				Tag = "MTEXT_ATT",
+				Value = "Hello I'm an MText",
+				HorizontalAlignment = TextHorizontalAlignment.Left,
+				Height = 18,
+				AttributeType = AttributeType.SingleLine,
+				MText = new MText { Value = "Hello I'm an MText" }
 			});
 
 			record.Entities.Add(new AttributeDefinition()
@@ -202,6 +262,32 @@ public abstract class WriterSingleObjectTests : IOTestsBase
 		public void AddCustomScale()
 		{
 			this.Document.Scales.Add(new Scale("Hello"));
+		}
+
+		public void AddViewport()
+		{
+			Viewport vp1 = new Viewport
+			{
+				Center = new XYZ(148.5, 105, 0),
+				Width = 50,
+				Height = 50,
+				Scale = new Scale("scale") { DrawingUnits = 0.5, PaperUnits = 1 },
+				Status = ViewportStatusFlags.UcsIconVisibility | ViewportStatusFlags.FastZoom | ViewportStatusFlags.CurrentlyAlwaysEnabled,
+				Color = Color.Blue,
+			};
+
+			Viewport vp2 = new Viewport
+			{
+				Center = new XYZ(148.5, 105, 0),
+				Width = 100,
+				Height = 100,
+				Scale = new Scale("scale") { DrawingUnits = 0.5, PaperUnits = 1 },
+				Status = ViewportStatusFlags.UcsIconVisibility | ViewportStatusFlags.FastZoom | ViewportStatusFlags.CurrentlyAlwaysEnabled,
+				Color = Color.Red,
+			};
+
+			this.Document.PaperSpace.Layout.AddViewport(vp1);
+			this.Document.PaperSpace.Layout.AddViewport(vp2);
 		}
 
 		public void ArcSegments()
@@ -739,6 +825,140 @@ public abstract class WriterSingleObjectTests : IOTestsBase
 			this.Document.Entities.Add(dim);
 
 			dim.UpdateBlock();
+		}
+
+		public void ArrowBlocks()
+		{
+			DimensionLinear dim1 = new DimensionLinear
+			{
+				FirstPoint = new XYZ(0, 0, 0),
+				SecondPoint = new XYZ(10, 0, 0),
+				Offset = 0.5,
+				Style = new DimensionStyle("style_01")
+				{
+					DimArrow1 = DimensionArrowhead.ArchitecturalTick,
+					DimArrow2 = DimensionArrowhead.BoxBlank,
+				}
+			};
+
+			DimensionLinear dim2 = new DimensionLinear
+			{
+				FirstPoint = new XYZ(0, 5, 0),
+				SecondPoint = new XYZ(10, 5, 0),
+				Offset = 0.5,
+				Style = new DimensionStyle("style_02")
+				{
+					DimArrow1 = DimensionArrowhead.BoxFilled,
+					DimArrow2 = DimensionArrowhead.Closed,
+				}
+			};
+
+			DimensionLinear dim3 = new DimensionLinear
+			{
+				FirstPoint = new XYZ(0, 10, 0),
+				SecondPoint = new XYZ(10, 10, 0),
+				Offset = 0.5,
+				Style = new DimensionStyle("style_03")
+				{
+					DimArrow1 = DimensionArrowhead.ClosedBlank,
+					DimArrow2 = DimensionArrowhead.DatumFilled,
+				}
+			};
+
+			DimensionLinear dim4 = new DimensionLinear
+			{
+				FirstPoint = new XYZ(0, 15, 0),
+				SecondPoint = new XYZ(10, 15, 0),
+				Offset = 0.5,
+				Style = new DimensionStyle("style_04")
+				{
+					DimArrow1 = DimensionArrowhead.DatumTriangle,
+					DimArrow2 = DimensionArrowhead.Dot,
+				}
+			};
+
+			DimensionLinear dim5 = new DimensionLinear
+			{
+				FirstPoint = new XYZ(0, 20, 0),
+				SecondPoint = new XYZ(10, 20, 0),
+				Offset = 0.5,
+				Style = new DimensionStyle("style_05")
+				{
+					DimArrow1 = DimensionArrowhead.DotBlank,
+					DimArrow2 = DimensionArrowhead.DotSmall,
+				}
+			};
+
+			DimensionLinear dim6 = new DimensionLinear
+			{
+				FirstPoint = new XYZ(0, 25, 0),
+				SecondPoint = new XYZ(10, 25, 0),
+				Offset = 0.5,
+				Style = new DimensionStyle("style_06")
+				{
+					DimArrow1 = DimensionArrowhead.DotSmallBlank,
+					DimArrow2 = DimensionArrowhead.Integral,
+				}
+			};
+
+			DimensionLinear dim7 = new DimensionLinear
+			{
+				FirstPoint = new XYZ(0, 30, 0),
+				SecondPoint = new XYZ(10, 30, 0),
+				Offset = 0.5,
+				Style = new DimensionStyle("style_07")
+				{
+					DimArrow1 = DimensionArrowhead.None,
+					DimArrow2 = DimensionArrowhead.Oblique,
+				}
+			};
+
+			DimensionLinear dim8 = new DimensionLinear
+			{
+				FirstPoint = new XYZ(0, 35, 0),
+				SecondPoint = new XYZ(10, 35, 0),
+				Offset = 0.5,
+				Style = new DimensionStyle("style_08")
+				{
+					DimArrow1 = DimensionArrowhead.Open,
+					DimArrow2 = DimensionArrowhead.Open30,
+				}
+			};
+
+			DimensionLinear dim9 = new DimensionLinear
+			{
+				FirstPoint = new XYZ(0, 40, 0),
+				SecondPoint = new XYZ(10, 40, 0),
+				Offset = 0.5,
+				Style = new DimensionStyle("style_09")
+				{
+					DimArrow1 = DimensionArrowhead.Open90,
+					DimArrow2 = DimensionArrowhead.OriginIndicator,
+				}
+			};
+
+			DimensionLinear dim10 = new DimensionLinear
+			{
+				FirstPoint = new XYZ(0, 45, 0),
+				SecondPoint = new XYZ(10, 45, 0),
+				Offset = 0.5,
+				Style = new DimensionStyle("style_10")
+				{
+					DimArrow1 = DimensionArrowhead.OriginIndicator2,
+					DimArrow2 = DimensionArrowhead.OriginIndicator2,
+				}
+			};
+
+			this.Document.Entities.Add(dim1);
+			this.Document.Entities.Add(dim2);
+			this.Document.Entities.Add(dim3);
+			this.Document.Entities.Add(dim4);
+			this.Document.Entities.Add(dim5);
+			this.Document.Entities.Add(dim6);
+			this.Document.Entities.Add(dim7);
+			this.Document.Entities.Add(dim8);
+			this.Document.Entities.Add(dim9);
+			this.Document.Entities.Add(dim10);
 		}
 
 		public void DimensionLinear()
@@ -1315,6 +1535,24 @@ public abstract class WriterSingleObjectTests : IOTestsBase
 			this.Document.Entities.Add(mtext);
 		}
 
+		public void SingleMesh()
+		{
+			Mesh mesh = new Mesh();
+			mesh.Vertices.Add(new XYZ(0, 0, 0));
+			mesh.Vertices.Add(new XYZ(1, 0, 0));
+			mesh.Vertices.Add(new XYZ(1, 1, 0));
+			mesh.Vertices.Add(new XYZ(0, 1, 0));
+
+			mesh.Faces.Add([0, 1, 2, 3]);
+
+			//mesh.Edges.Add(new Mesh.Edge { Start = 0, End = 1 });
+			//mesh.Edges.Add(new Mesh.Edge { Start = 1, End = 2 });
+			//mesh.Edges.Add(new Mesh.Edge { Start = 2, End = 3 });
+			//mesh.Edges.Add(new Mesh.Edge { Start = 0, End = 3 });
+
+			this.Document.Entities.Add(mesh);
+		}
+
 		public void SingleMLeader()
 		{
 			MultiLeader mleader = new MultiLeader();
@@ -1465,6 +1703,17 @@ public abstract class WriterSingleObjectTests : IOTestsBase
 			this.Document.Entities.Add(raster);
 		}
 
+		public void SingleTableEntity()
+		{
+			//TODO: Generate a valid table entity, currently it creates an invalid one but it is correctly read by AutoCAD
+			var t = new TableEntity();
+
+			t.Columns.Add(new TableEntity.Column() { Width = 10 });
+			t.Rows.Add(new TableEntity.Row() { Height = 5 });
+
+			this.Document.Entities.Add(t);
+		}
+
 		public void SingleWipeout()
 		{
 			Wipeout wipeout = new Wipeout();
@@ -1583,84 +1832,6 @@ public abstract class WriterSingleObjectTests : IOTestsBase
 			//active.BottomLeft = (XY)box.Min;
 			//active.TopRight = (XY)box.Max;
 			active.ViewHeight = 100;
-		}
-
-		public void AddViewport()
-		{
-			Viewport vp1 = new Viewport
-			{
-				Center = new XYZ(148.5, 105, 0),
-				Width = 50,
-				Height = 50,
-
-				//ViewCenter = new XY(50, 50),
-				//ViewHeight = 120,
-				//ViewTarget = new XYZ(50, 50, 0),
-				//ViewDirection = new XYZ(0, 0, 1),
-
-				Status = ViewportStatusFlags.UcsIconVisibility | ViewportStatusFlags.FastZoom | ViewportStatusFlags.CurrentlyAlwaysEnabled,
-				Color = Color.Yellow,
-			};
-
-			this.Document.Layouts["Layout1"].AddViewport(vp1);
-			var vp2 = vp1.CloneTyped();
-			vp2.Color = Color.Red;
-			vp2.Width = 100;
-			vp2.Height = 100;
-
-			this.Document.PaperSpace.Entities.Add(vp2);
-
-			//CadDocument doc = this.Document;
-			//Line line1 = new Line
-			//{
-			//	StartPoint = new XYZ(0, 0, 0),
-			//	EndPoint = new XYZ(100, 100, 0),
-			//	Color = Color.Red
-			//};
-
-			//Line line2 = new Line
-			//{
-			//	StartPoint = new XYZ(100, 0, 0),
-			//	EndPoint = new XYZ(0, 100, 0),
-			//	Color = Color.Green
-			//};
-
-			//doc.Entities.Add(line1);
-			//doc.Entities.Add(line2);
-
-			//if (doc.Layouts.TryGet("Layout1", out Layout layout))
-			//{
-			//	layout.PaperSize = "ISO_A4_(210.00_x_297.00_MM)";
-			//	layout.PaperHeight = 210.0;
-			//	layout.PaperWidth = 297.0;
-			//	layout.PaperUnits = PlotPaperUnits.Millimeters;
-
-			//	Viewport vp = new Viewport
-			//	{
-			//		Center = new XYZ(148.5, 105, 0),
-			//		Width = 200,
-			//		Height = 150,
-			//		ViewCenter = new XY(50, 50),
-			//		ViewHeight = 120,
-
-			//		ViewTarget = new XYZ(50, 50, 0),
-			//		ViewDirection = new XYZ(0, 0, 1),
-
-			//		Status = ViewportStatusFlags.UcsIconVisibility | ViewportStatusFlags.FastZoom | ViewportStatusFlags.CurrentlyAlwaysEnabled
-			//	};
-
-			//	//layout.AssociatedBlock.Entities.Add(vp);
-			//	doc.PaperSpace.Entities.Add(vp);
-
-			//	LwPolyline border = new LwPolyline();
-			//	border.Vertices.Add(new LwPolyline.Vertex(new XY(5, 5)));
-			//	border.Vertices.Add(new LwPolyline.Vertex(new XY(292, 5)));
-			//	border.Vertices.Add(new LwPolyline.Vertex(new XY(292, 205)));
-			//	border.Vertices.Add(new LwPolyline.Vertex(new XY(5, 205)));
-			//	border.IsClosed = true;
-			//	border.Color = Color.Blue;
-			//	layout.AssociatedBlock.Entities.Add(border);
-			//}
 		}
 
 		public void XData()

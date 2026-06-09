@@ -96,7 +96,7 @@ namespace ACadSharp.Entities
 					for (int i = 0; i < spline.ControlPoints.Count; i++)
 					{
 						XYZ point = trans * spline.ControlPoints[i];
-						this.ControlPoints[i] = new XYZ(point.X, point.Y, spline.Weights[i]);
+						this.ControlPoints.Add(new XYZ(point.X, point.Y, spline.Weights[i]));
 					}
 
 					this.Knots.AddRange(spline.Knots);

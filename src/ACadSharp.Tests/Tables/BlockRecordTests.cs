@@ -4,236 +4,251 @@ using ACadSharp.Objects;
 using ACadSharp.Tables;
 using ACadSharp.Tables.Collections;
 using ACadSharp.Tests.Common;
+using CSMath;
 using System;
 using System.IO;
 using System.Linq;
 using Xunit;
 
-namespace ACadSharp.Tests.Tables
+namespace ACadSharp.Tests.Tables;
+
+public class BlockRecordTests : TableEntryCommonTests<BlockRecord>
 {
-	public class BlockRecordTests : TableEntryCommonTests<BlockRecord>
+	[Fact()]
+	public void AddEntityTest()
 	{
-		[Fact()]
-		public void AddEntityTest()
+		string name = "my_block";
+		BlockRecord record = new BlockRecord(name);
+
+		Line l1 = new Line();
+		Line l2 = new Line();
+		Line l3 = new Line();
+		Line l4 = new Line();
+
+		record.Entities.Add(l1);
+		record.Entities.Add(l2);
+		record.Entities.Add(l3);
+		record.Entities.Add(l4);
+
+		foreach (Entity e in record.Entities)
 		{
-			string name = "my_block";
-			BlockRecord record = new BlockRecord(name);
-
-			Line l1 = new Line();
-			Line l2 = new Line();
-			Line l3 = new Line();
-			Line l4 = new Line();
-
-			record.Entities.Add(l1);
-			record.Entities.Add(l2);
-			record.Entities.Add(l3);
-			record.Entities.Add(l4);
-
-			foreach (Entity e in record.Entities)
-			{
-				Assert.Equal(record, e.Owner);
-			}
+			Assert.Equal(record, e.Owner);
 		}
+	}
 
-		[Fact()]
-		public void BlockRecordTest()
-		{
-			string name = "my_block";
-			BlockRecord record = new BlockRecord(name);
+	[Fact()]
+	public void BlockRecordTest()
+	{
+		string name = "my_block";
+		BlockRecord record = new BlockRecord(name);
 
-			Assert.Equal(name, record.Name);
+		Assert.Equal(name, record.Name);
 
-			Assert.NotNull(record.BlockEntity);
-			Assert.Equal(record.Name, record.BlockEntity.Name);
+		Assert.NotNull(record.BlockEntity);
+		Assert.Equal(record.Name, record.BlockEntity.Name);
 
-			Assert.NotNull(record.BlockEnd);
-		}
+		Assert.NotNull(record.BlockEnd);
+	}
 
-		[Fact()]
-		public void CloneDetachDocumentTest()
-		{
-			string name = "my_block";
-			BlockRecord record = new BlockRecord(name);
-			CadDocument doc = new CadDocument();
+	[Fact]
+	public void CanRemoveViewport()
+	{
+		string name = "my_block";
+		BlockRecord record = new BlockRecord(name);
 
-			doc.BlockRecords.Add(record);
+		Viewport vp = new Viewport();
+		record.Entities.Add(vp);
 
-			BlockRecord clone = (BlockRecord)record.Clone();
+		Assert.False(vp.RepresentsPaper);
+		Assert.True(record.Entities.Remove(vp));
+	}
 
-			Assert.Null(clone.Document);
-			Assert.Null(clone.BlockEntity.Document);
-			Assert.Null(clone.BlockEnd.Document);
+	[Fact()]
+	public void CloneDetachDocumentTest()
+	{
+		string name = "my_block";
+		BlockRecord record = new BlockRecord(name);
+		CadDocument doc = new CadDocument();
 
-			Assert.NotNull(record.Document);
-			Assert.NotNull(record.BlockEntity.Document);
-			Assert.NotNull(record.BlockEnd.Document);
-		}
+		doc.BlockRecords.Add(record);
 
-		[Fact()]
-		public void CloneInDocumentTest()
-		{
-			string name = "my_block";
-			BlockRecord record = new BlockRecord(name);
-			CadDocument doc = new CadDocument();
+		BlockRecord clone = (BlockRecord)record.Clone();
 
-			doc.BlockRecords.Add(record);
+		Assert.Null(clone.Document);
+		Assert.Null(clone.BlockEntity.Document);
+		Assert.Null(clone.BlockEnd.Document);
 
-			Assert.NotNull(record.Document);
-			Assert.NotNull(record.BlockEntity.Document);
-			Assert.NotNull(record.BlockEnd.Document);
-		}
+		Assert.NotNull(record.Document);
+		Assert.NotNull(record.BlockEntity.Document);
+		Assert.NotNull(record.BlockEnd.Document);
+	}
 
-		[Fact()]
-		public void ClonePaperSpaceTest()
-		{
-			CadDocument doc = new CadDocument();
+	[Fact()]
+	public void CloneInDocumentTest()
+	{
+		string name = "my_block";
+		BlockRecord record = new BlockRecord(name);
+		CadDocument doc = new CadDocument();
 
-			BlockRecord record = doc.PaperSpace.CloneTyped();
+		doc.BlockRecords.Add(record);
 
-			Assert.NotNull(record);
-			Assert.Null(record.Layout);
+		Assert.NotNull(record.Document);
+		Assert.NotNull(record.BlockEntity.Document);
+		Assert.NotNull(record.BlockEnd.Document);
+	}
 
-			//Test the layout keeps the block
-			Layout paper = doc.Layouts["Layout1"];
-			Layout layout = paper.CloneTyped();
+	[Fact()]
+	public void ClonePaperSpaceTest()
+	{
+		CadDocument doc = new CadDocument();
 
-			Assert.NotNull(layout);
-			Assert.NotNull(layout.AssociatedBlock);
-		}
+		BlockRecord record = doc.PaperSpace.CloneTyped();
 
-		[Fact()]
-		public void CloneSortensTableTest()
-		{
-			string name = "my_block";
-			BlockRecord record = new BlockRecord(name);
+		Assert.NotNull(record);
+		Assert.Null(record.Layout);
 
-			Line l1 = new Line() { Handle = 10 };
-			Line l2 = new Line() { Handle = 11 };
-			Line l3 = new Line() { Handle = 12 };
-			Line l4 = new Line() { Handle = 13 };
-			Line l5 = new Line() { Handle = 14 };
+		//Test the layout keeps the block
+		Layout paper = doc.Layouts["Layout1"];
+		Layout layout = paper.CloneTyped();
 
-			record.Entities.Add(l1);
-			record.Entities.Add(l2);
-			record.Entities.Add(l3);
-			record.Entities.Add(l4);
-			record.Entities.Add(l5);
+		Assert.NotNull(layout);
+		Assert.NotNull(layout.AssociatedBlock);
+	}
 
-			record.CreateSortEntitiesTable();
+	[Fact()]
+	public void CloneSortensTableTest()
+	{
+		string name = "my_block";
+		BlockRecord record = new BlockRecord(name);
 
-			record.SortEntitiesTable.Add(l1, 1);
-			record.SortEntitiesTable.Add(l3, 3);
-			record.SortEntitiesTable.Add(l4, 8);
-			record.SortEntitiesTable.Add(l5, 4);
+		var p1 = new XYZ(1);
+		var p2 = new XYZ(2);
+		var p3 = new XYZ(3);
+		var p4 = new XYZ(4);
+		var p5 = new XYZ(5);
 
-			var sorted = record.GetSortedEntities().ToArray();
+		var l1 = new Point(p1) { Handle = 10 };
+		var l2 = new Point(p2) { Handle = 11 };
+		var l3 = new Point(p3) { Handle = 12 };
+		var l4 = new Point(p4) { Handle = 13 };
+		var l5 = new Point(p5) { Handle = 14 };
 
-			Assert.NotNull(record.SortEntitiesTable);
-			Assert.NotEmpty(record.SortEntitiesTable);
-			Assert.Equal(4, record.SortEntitiesTable.Count());
+		record.Entities.Add(l1);
+		record.Entities.Add(l2);
+		record.Entities.Add(l3);
+		record.Entities.Add(l4);
+		record.Entities.Add(l5);
 
-			Assert.Equal(l1, sorted[0]);
-			Assert.Equal(l3, sorted[1]);
-			Assert.Equal(l5, sorted[2]);
-			Assert.Equal(l4, sorted[3]);
-			Assert.Equal(l2, sorted[4]);
+		record.CreateSortEntitiesTable();
 
-			BlockRecord clone = record.CloneTyped();
+		record.SortEntitiesTable.Add(l1, 1);
+		record.SortEntitiesTable.Add(l3, 3);
+		record.SortEntitiesTable.Add(l4, 8);
+		record.SortEntitiesTable.Add(l5, 4);
 
-			Assert.NotNull(clone.SortEntitiesTable);
-			Assert.NotEmpty(clone.SortEntitiesTable);
-			Assert.Equal(5, clone.SortEntitiesTable.Count());
+		var sorted = record.GetSortedEntities().ToArray();
 
-			sorted = clone.GetSortedEntities().ToArray();
+		Assert.NotNull(record.SortEntitiesTable);
+		Assert.NotEmpty(record.SortEntitiesTable);
+		Assert.Equal(4, record.SortEntitiesTable.Count());
 
-			Assert.NotNull(clone.SortEntitiesTable);
-			Assert.NotNull(clone.SortEntitiesTable.BlockOwner);
+		Assert.Equal(l1, sorted[0]);
+		Assert.Equal(l3, sorted[1]);
+		Assert.Equal(l5, sorted[2]);
+		Assert.Equal(l4, sorted[3]);
+		Assert.Equal(l2, sorted[4]);
 
-			Assert.Equal(clone, clone.SortEntitiesTable.BlockOwner);
+		BlockRecord clone = record.CloneTyped();
 
-			Assert.NotEqual(clone.SortEntitiesTable.Owner, record.SortEntitiesTable.Owner);
-			Assert.NotEqual(clone.SortEntitiesTable.BlockOwner, record.SortEntitiesTable.BlockOwner);
-		}
+		Assert.Null(clone.SortEntitiesTable);
 
-		[Fact()]
-		public void CloneTest()
-		{
-			string name = "my_block";
-			BlockRecord record = new BlockRecord(name);
+		sorted = clone.GetSortedEntities().ToArray();
 
-			Line l1 = new Line();
-			Line l2 = new Line();
-			Line l3 = new Line();
-			Line l4 = new Line();
+		Assert.Equal(l1.Location, p1);
+		Assert.Equal(l3.Location, p3);
+		Assert.Equal(l5.Location, p5);
+		Assert.Equal(l4.Location, p4);
+		Assert.Equal(l2.Location, p2);
+	}
 
-			record.Entities.Add(l1);
-			record.Entities.Add(l2);
-			record.Entities.Add(l3);
-			record.Entities.Add(l4);
+	[Fact()]
+	public void CloneTest()
+	{
+		string name = "my_block";
+		BlockRecord record = new BlockRecord(name);
 
-			BlockRecord clone = record.Clone() as BlockRecord;
+		Line l1 = new Line();
+		Line l2 = new Line();
+		Line l3 = new Line();
+		Line l4 = new Line();
 
-			CadObjectTestUtils.AssertTableEntryClone(record, clone);
+		record.Entities.Add(l1);
+		record.Entities.Add(l2);
+		record.Entities.Add(l3);
+		record.Entities.Add(l4);
 
-			Assert.NotEqual(clone.BlockEntity.Owner, record);
+		BlockRecord clone = record.Clone() as BlockRecord;
 
-			CadObjectTestUtils.AssertEntityCollection(record.Entities, clone.Entities);
-		}
+		CadObjectTestUtils.AssertTableEntryClone(record, clone);
 
-		[Fact()]
-		public void CreateSortensTableTest()
-		{
-			string name = "my_block";
-			BlockRecord record = new BlockRecord(name);
+		Assert.NotEqual(clone.BlockEntity.Owner, record);
 
-			record.Entities.Add(new Line());
-			record.Entities.Add(new Line());
-			record.Entities.Add(new Line());
-			record.Entities.Add(new Line());
+		CadObjectTestUtils.AssertEntityCollection(record.Entities, clone.Entities);
+	}
 
-			record.CreateSortEntitiesTable();
+	[Fact()]
+	public void CreateSortensTableTest()
+	{
+		string name = "my_block";
+		BlockRecord record = new BlockRecord(name);
 
-			Assert.NotNull(record.SortEntitiesTable);
-			Assert.Empty(record.SortEntitiesTable);
-		}
+		record.Entities.Add(new Line());
+		record.Entities.Add(new Line());
+		record.Entities.Add(new Line());
+		record.Entities.Add(new Line());
 
-		[Fact()]
-		public void CreateXRef()
-		{
-			string name = "my_block";
-			string path = Path.Combine(TestVariables.SamplesFolder, "sample_AC1032.dwg");
-			BlockRecord record = new BlockRecord(name, path);
+		record.CreateSortEntitiesTable();
 
-			Assert.Equal(name, record.Name);
-			Assert.Equal(path, record.BlockEntity.XRefPath);
-			Assert.True(record.Flags.HasFlag(Blocks.BlockTypeFlags.XRef));
-			Assert.True(record.Flags.HasFlag(Blocks.BlockTypeFlags.XRefResolved));
-			Assert.False(record.Flags.HasFlag(Blocks.BlockTypeFlags.XRefOverlay));
+		Assert.NotNull(record.SortEntitiesTable);
+		Assert.Empty(record.SortEntitiesTable);
+	}
 
-			BlockRecord overlay = new BlockRecord(name, path, true);
+	[Fact()]
+	public void CreateXRef()
+	{
+		string name = "my_block";
+		string path = Path.Combine(TestVariables.SamplesFolder, "sample_AC1032.dwg");
+		BlockRecord record = new BlockRecord(name, path);
 
-			Assert.Equal(name, overlay.Name);
-			Assert.Equal(path, overlay.BlockEntity.XRefPath);
-			Assert.True(overlay.Flags.HasFlag(Blocks.BlockTypeFlags.XRef));
-			Assert.True(overlay.Flags.HasFlag(Blocks.BlockTypeFlags.XRefResolved));
-			Assert.True(overlay.Flags.HasFlag(Blocks.BlockTypeFlags.XRefOverlay));
-		}
+		Assert.Equal(name, record.Name);
+		Assert.Equal(path, record.BlockEntity.XRefPath);
+		Assert.True(record.Flags.HasFlag(Blocks.BlockTypeFlags.XRef));
+		Assert.True(record.Flags.HasFlag(Blocks.BlockTypeFlags.XRefResolved));
+		Assert.False(record.Flags.HasFlag(Blocks.BlockTypeFlags.XRefOverlay));
 
-		[Fact()]
-		public void NotAllowDuplicatesTest()
-		{
-			string name = "my_block";
-			BlockRecord record = new BlockRecord(name);
+		BlockRecord overlay = new BlockRecord(name, path, true);
 
-			Line l1 = new Line();
+		Assert.Equal(name, overlay.Name);
+		Assert.Equal(path, overlay.BlockEntity.XRefPath);
+		Assert.True(overlay.Flags.HasFlag(Blocks.BlockTypeFlags.XRef));
+		Assert.True(overlay.Flags.HasFlag(Blocks.BlockTypeFlags.XRefResolved));
+		Assert.True(overlay.Flags.HasFlag(Blocks.BlockTypeFlags.XRefOverlay));
+	}
 
-			record.Entities.Add(l1);
-			Assert.Throws<ArgumentException>(() => record.Entities.Add(l1));
-		}
+	[Fact()]
+	public void NotAllowDuplicatesTest()
+	{
+		string name = "my_block";
+		BlockRecord record = new BlockRecord(name);
 
-		protected override Table<BlockRecord> getTable(CadDocument document)
-		{
-			return document.BlockRecords;
-		}
+		Line l1 = new Line();
+
+		record.Entities.Add(l1);
+		Assert.Throws<ArgumentException>(() => record.Entities.Add(l1));
+	}
+
+	protected override Table<BlockRecord> getTable(CadDocument document)
+	{
+		return document.BlockRecords;
 	}
 }

@@ -62,7 +62,7 @@ public class InsertTest
 		};
 		insert.Attributes.Add(att1);
 
-		Assert.Equal(new XYZ(15, 15, 0), att1.InsertPoint);
+		Assert.Equal(new CSMath.XYZ(5, 5, 0), att1.InsertPoint);
 
 		Insert clone = insert.CloneTyped();
 
@@ -75,7 +75,7 @@ public class InsertTest
 			InsertPoint = new CSMath.XYZ(5, 5, 0)
 		};
 		clone.Attributes.Add(att2);
-		Assert.Equal(new XYZ(15, 15, 0), att2.InsertPoint);
+		Assert.Equal(new CSMath.XYZ(5, 5, 0), att2.InsertPoint);
 	}
 
 	[Fact]

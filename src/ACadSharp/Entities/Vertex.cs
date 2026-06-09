@@ -1,92 +1,91 @@
 ﻿using ACadSharp.Attributes;
 using CSMath;
 
-namespace ACadSharp.Entities
+namespace ACadSharp.Entities;
+
+/// <summary>
+/// Represents a base type for Vertex entities.
+/// </summary>
+[DxfSubClass(DxfSubclassMarker.Vertex, true)]
+public abstract class Vertex : Entity, IVertex
 {
+	/// <inheritdoc/>
+	[DxfCodeValue(DxfReferenceType.Optional, 42)]
+	public double Bulge { get; set; } = 0.0;
+
 	/// <summary>
-	/// Represents a base type for Vertex entities.
+	/// Curve fit tangent direction.
 	/// </summary>
-	[DxfSubClass(DxfSubclassMarker.Vertex, true)]
-	public abstract class Vertex : Entity, IVertex
+	[DxfCodeValue(DxfReferenceType.IsAngle, 50)]
+	public double CurveTangent { get; set; }
+
+	/// <summary>
+	/// Ending width.
+	/// </summary>
+	[DxfCodeValue(DxfReferenceType.Optional, 41)]
+	public double EndWidth { get; set; } = 0.0;
+
+	/// <summary>
+	/// Vertex flags.
+	/// </summary>
+	[DxfCodeValue(70)]
+	public virtual VertexFlags Flags { get => _flags; set => _flags = value; }
+
+	/// <summary>
+	/// Vertex identifier.
+	/// </summary>
+	[DxfCodeValue(DxfReferenceType.Ignored, 91)]    //TODO: for some versions this code is invalid
+	public int Id { get; set; }
+
+	/// <summary>
+	/// Location point (in OCS when 2D, and WCS when 3D).
+	/// </summary>
+	[DxfCodeValue(10, 20, 30)]
+	public XYZ Location { get; set; } = XYZ.Zero;
+
+	IVector IVertex.Location { get { return this.Location; } set { this.Location = value.Convert<XYZ>(); } }
+
+	/// <inheritdoc/>
+	public override string ObjectName => DxfFileToken.EntityVertex;
+
+	/// <summary>
+	/// Starting width
+	/// </summary>
+	[DxfCodeValue(DxfReferenceType.Optional, 40)]
+	public double StartWidth { get; set; } = 0.0;
+
+	protected VertexFlags _flags;
+
+	/// <summary>
+	/// Default constructor.
+	/// </summary>
+	protected Vertex()
+	{ }
+
+	/// <summary>
+	/// Initializes a new instance of the Vertex class with the specified location.
+	/// </summary>
+	/// <param name="location">The location of the vertex. Must implement the IVector interface and be convertible to an XYZ vector.</param>
+	protected Vertex(IVector location)
 	{
-		/// <inheritdoc/>
-		[DxfCodeValue(DxfReferenceType.Optional, 42)]
-		public double Bulge { get; set; } = 0.0;
+		this.Location = location.Convert<XYZ>();
+	}
 
-		/// <summary>
-		/// Curve fit tangent direction.
-		/// </summary>
-		[DxfCodeValue(DxfReferenceType.IsAngle, 50)]
-		public double CurveTangent { get; set; }
+	/// <inheritdoc/>
+	public override void ApplyTransform(Transform transform)
+	{
+		this.Location = transform.ApplyTransform(this.Location);
+	}
 
-		/// <summary>
-		/// Ending width.
-		/// </summary>
-		[DxfCodeValue(DxfReferenceType.Optional, 41)]
-		public double EndWidth { get; set; } = 0.0;
+	/// <inheritdoc/>
+	public override BoundingBox GetBoundingBox()
+	{
+		return new BoundingBox(this.Location);
+	}
 
-		/// <summary>
-		/// Vertex flags.
-		/// </summary>
-		[DxfCodeValue(70)]
-		public virtual VertexFlags Flags { get => _flags; set => _flags = value; }
-
-		/// <summary>
-		/// Vertex identifier.
-		/// </summary>
-		[DxfCodeValue(DxfReferenceType.Ignored, 91)]    //TODO: for some versions this code is invalid
-		public int Id { get; set; }
-
-		/// <summary>
-		/// Location point (in OCS when 2D, and WCS when 3D).
-		/// </summary>
-		[DxfCodeValue(10, 20, 30)]
-		public XYZ Location { get; set; } = XYZ.Zero;
-
-		IVector IVertex.Location { get { return this.Location; } set { this.Location = value.Convert<XYZ>(); } }
-
-		/// <inheritdoc/>
-		public override string ObjectName => DxfFileToken.EntityVertex;
-
-		/// <summary>
-		/// Starting width
-		/// </summary>
-		[DxfCodeValue(DxfReferenceType.Optional, 40)]
-		public double StartWidth { get; set; } = 0.0;
-
-		protected VertexFlags _flags;
-
-		/// <summary>
-		/// Default constructor.
-		/// </summary>
-		public Vertex()
-		{ }
-
-		/// <summary>
-		/// Location constructor.
-		/// </summary>
-		/// <param name="location"></param>
-		public Vertex(XYZ location)
-		{
-			this.Location = location;
-		}
-
-		/// <inheritdoc/>
-		public override void ApplyTransform(Transform transform)
-		{
-			this.Location = transform.ApplyTransform(this.Location);
-		}
-
-		/// <inheritdoc/>
-		public override BoundingBox GetBoundingBox()
-		{
-			return new BoundingBox(this.Location);
-		}
-
-		/// <inheritdoc/>
-		public override string ToString()
-		{
-			return $"{this.SubclassMarker}|{this.Location.ToString()}";
-		}
+	/// <inheritdoc/>
+	public override string ToString()
+	{
+		return $"{this.SubclassMarker}|{this.Location.ToString()}";
 	}
 }
