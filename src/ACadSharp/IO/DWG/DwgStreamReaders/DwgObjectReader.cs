@@ -2,6 +2,7 @@
 using ACadSharp.Classes;
 using ACadSharp.Entities;
 using ACadSharp.Entities.AecObjects;
+using ACadSharp.Entities.Mechanical;
 using ACadSharp.IO.Templates;
 using ACadSharp.Objects;
 using ACadSharp.Objects.AEC;
@@ -316,8 +317,7 @@ namespace ACadSharp.IO.DWG
 
 				//Common:
 				//X: The graphic image
-				//entityHandler.CadObject.JumpGraphicImage(this, entityHandler, graphicImageSize);
-				this._objectReader.Advance((int)graphicImageSize);
+				template.ProxyGraphics = this._objectReader.ReadBytes((int)graphicImageSize);
 			}
 
 			//R13 - R14 Only:
@@ -2891,93 +2891,7 @@ namespace ACadSharp.IO.DWG
 			{
 				this.readCommonEntityData(template);
 
-				//B : bytes containing the LWPOLYLINE entity data.
-				//This excludes the common entity data.
-				//More specifically: it starts at the LWPOLYLINE flags (BS), and ends with the width array (BD).
-
-				short flags = this._objectReader.ReadBitShort();
-				if ((flags & 0x100) != 0)
-					lwPolyline.Flags |= LwPolylineFlags.Plinegen;
-				if ((flags & 0x200) != 0)
-					lwPolyline.Flags |= LwPolylineFlags.Closed;
-
-				if ((flags & 0x4u) != 0)
-				{
-					lwPolyline.ConstantWidth = this._objectReader.ReadBitDouble();
-				}
-
-				if ((flags & 0x8u) != 0)
-				{
-					lwPolyline.Elevation = this._objectReader.ReadBitDouble();
-				}
-
-				if ((flags & 0x2u) != 0)
-				{
-					lwPolyline.Thickness = this._objectReader.ReadBitDouble();
-				}
-
-				if ((flags & (true ? 1u : 0u)) != 0)
-				{
-					lwPolyline.Normal = this._objectReader.Read3BitDouble();
-				}
-
-				int nvertices = this._objectReader.ReadBitLong();
-				int nbulges = 0;
-
-				if (((uint)flags & 0x10) != 0)
-				{
-					nbulges = this._objectReader.ReadBitLong();
-				}
-
-				int nids = 0;
-				if (((uint)flags & 0x400) != 0)
-				{
-					nids = this._objectReader.ReadBitLong();
-				}
-
-				int ndiffwidth = 0;
-				if (((uint)flags & 0x20) != 0)
-				{
-					ndiffwidth = this._objectReader.ReadBitLong();
-				}
-
-				if (this.R13_14Only)
-				{
-					for (int i = 0; i < nvertices; i++)
-					{
-						Vertex2D v = new Vertex2D();
-						XY loc = this._objectReader.Read2RawDouble();
-						lwPolyline.Vertices.Add(new LwPolyline.Vertex(loc));
-					}
-				}
-
-				if (this.R2000Plus && nvertices > 0)
-				{
-					XY loc = this._objectReader.Read2RawDouble();
-					lwPolyline.Vertices.Add(new LwPolyline.Vertex(loc));
-					for (int j = 1; j < nvertices; j++)
-					{
-						loc = this._objectReader.Read2BitDoubleWithDefault(loc);
-						lwPolyline.Vertices.Add(new LwPolyline.Vertex(loc));
-					}
-				}
-
-				for (int k = 0; k < nbulges; k++)
-				{
-					lwPolyline.Vertices[k].Bulge = this._objectReader.ReadBitDouble();
-				}
-
-				for (int l = 0; l < nids; l++)
-				{
-					lwPolyline.Vertices[l].Id = this._objectReader.ReadBitLong();
-				}
-
-				for (int m = 0; m < ndiffwidth; m++)
-				{
-					LwPolyline.Vertex vertex = lwPolyline.Vertices[m];
-					vertex.StartWidth = this._objectReader.ReadBitDouble();
-					vertex.EndWidth = this._objectReader.ReadBitDouble();
-				}
+				readLWPolyline(this._objectReader, this._version, lwPolyline);
 			}
 			catch (System.Exception ex)
 			{
@@ -2986,6 +2900,97 @@ namespace ACadSharp.IO.DWG
 			}
 
 			return template;
+		}
+
+		internal static void readLWPolyline(IDwgStreamReader reader, ACadVersion version, LwPolyline lwPolyline)
+		{
+			//B : bytes containing the LWPOLYLINE entity data.
+			//This excludes the common entity data.
+			//More specifically: it starts at the LWPOLYLINE flags (BS), and ends with the width array (BD).
+
+			short flags = reader.ReadBitShort();
+			if ((flags & 0x100) != 0)
+				lwPolyline.Flags |= LwPolylineFlags.Plinegen;
+			if ((flags & 0x200) != 0)
+				lwPolyline.Flags |= LwPolylineFlags.Closed;
+
+			if ((flags & 0x4u) != 0)
+			{
+				lwPolyline.ConstantWidth = reader.ReadBitDouble();
+			}
+
+			if ((flags & 0x8u) != 0)
+			{
+				lwPolyline.Elevation = reader.ReadBitDouble();
+			}
+
+			if ((flags & 0x2u) != 0)
+			{
+				lwPolyline.Thickness = reader.ReadBitDouble();
+			}
+
+			if ((flags & (true ? 1u : 0u)) != 0)
+			{
+				lwPolyline.Normal = reader.Read3BitDouble();
+			}
+
+			int nvertices = reader.ReadBitLong();
+			int nbulges = 0;
+
+			if (((uint)flags & 0x10) != 0)
+			{
+				nbulges = reader.ReadBitLong();
+			}
+
+			int nids = 0;
+			if (((uint)flags & 0x400) != 0)
+			{
+				nids = reader.ReadBitLong();
+			}
+
+			int ndiffwidth = 0;
+			if (((uint)flags & 0x20) != 0)
+			{
+				ndiffwidth = reader.ReadBitLong();
+			}
+
+			if (version == ACadVersion.AC1014 || version == ACadVersion.AC1012)
+			{
+				for (int i = 0; i < nvertices; i++)
+				{
+					Vertex2D v = new Vertex2D();
+					XY loc = reader.Read2RawDouble();
+					lwPolyline.Vertices.Add(new LwPolyline.Vertex(loc));
+				}
+			}
+
+			if (version >= ACadVersion.AC1015 && nvertices > 0)
+			{
+				XY loc = reader.Read2RawDouble();
+				lwPolyline.Vertices.Add(new LwPolyline.Vertex(loc));
+				for (int j = 1; j < nvertices; j++)
+				{
+					loc = reader.Read2BitDoubleWithDefault(loc);
+					lwPolyline.Vertices.Add(new LwPolyline.Vertex(loc));
+				}
+			}
+
+			for (int k = 0; k < nbulges; k++)
+			{
+				lwPolyline.Vertices[k].Bulge = reader.ReadBitDouble();
+			}
+
+			for (int l = 0; l < nids; l++)
+			{
+				lwPolyline.Vertices[l].Id = reader.ReadBitLong();
+			}
+
+			for (int m = 0; m < ndiffwidth; m++)
+			{
+				LwPolyline.Vertex vertex = lwPolyline.Vertices[m];
+				vertex.StartWidth = reader.ReadBitDouble();
+				vertex.EndWidth = reader.ReadBitDouble();
+			}
 		}
 
 		private CadTemplate readMaterial()
@@ -5493,6 +5498,15 @@ namespace ACadSharp.IO.DWG
 
 			switch (c.DxfName)
 			{
+				case DxfFileToken.AcmPartRef:
+					template = this.readAcmPartRef();
+					break;
+				case DxfFileToken.AcmBalloon:
+					template = this.readAcmBalloon();
+					break;
+				case DxfFileToken.AcmPartList:
+					template = this.readAcmPartList();
+					break;
 				case DxfFileToken.EntityAecWall:
 					template = this.readAecWall();
 					break;
@@ -6226,6 +6240,94 @@ namespace ACadSharp.IO.DWG
 		}
 
 		#endregion Insert methods
+
+		private CadTemplate readAcmPartRef()
+		{
+			AcmPartRef proxy = new AcmPartRef();
+			CadEntityTemplate<AcmPartRef> template = new CadEntityTemplate<AcmPartRef>(proxy);
+
+			this.readCommonEntityData(template);
+
+			var unknown1 = this._mergedReaders.ReadBitLong();	// 212
+
+			proxy.Position = this._mergedReaders.Read3BitDouble();
+
+			proxy.StandardDINHandle = this.handleReference();
+			proxy.BOMStandardDINHandle = this.handleReference();
+
+			proxy.LineResHandle = this.handleReference();
+			var unknownHandle1 = this.handleReference();		// 0x0
+			proxy.DataEntryPartHandle = this.handleReference();
+
+			template.LayerHandle = this.handleReference();
+
+			return template;
+		}
+
+		private CadTemplate readAcmPartList()
+		{
+			AcmPartList proxy = new AcmPartList();
+			CadEntityTemplate<AcmPartList> template = new CadEntityTemplate<AcmPartList>(proxy);
+
+			this.readCommonEntityData(template);
+
+			var unknown1 = this._mergedReaders.ReadBitLong();   // 212
+
+			proxy.Position = this._mergedReaders.Read3BitDouble();
+
+			proxy.StandardDINHandle = this.handleReference();
+			proxy.BOMStandardDINHandle = this.handleReference();
+
+			proxy.BomHandle = this.handleReference();			// ACMBOM:*A1 (AcmBom)
+			proxy.ItemFilterCustomHandle = this.handleReference();
+
+			// Handles to each data row (excluding the headers) of the BOM table follow.
+			// Then seemingly always 3 handles of value 0x0 follow 
+
+			List<ulong> rowHandles = new List<ulong>();
+			ulong handle;
+			while (true) 
+			{
+				handle = this.handleReference();
+				if (handle == 0)
+				{
+					break;
+				}
+				rowHandles.Add(handle);
+			}
+			proxy.BomRowHandles = rowHandles;
+
+			// ulong handle: 0x0
+			var unknownHandle1 = this.handleReference();        // 0x0
+			var unknownHandle2 = this.handleReference();        // 0x0
+
+			return template;
+		}
+
+		private CadTemplate readAcmBalloon()
+		{
+			AcmBalloon proxy = new AcmBalloon();
+			CadAcmBalloonTemplate template = new CadAcmBalloonTemplate(proxy);
+
+			this.readCommonEntityData(template);
+
+			var unknown1 = this._mergedReaders.ReadBitLong();   // 212
+
+			proxy.Position = this._mergedReaders.Read3BitDouble();
+
+			var unknown_position1 = this._mergedReaders.Read3BitDouble();
+			var unknown_position2 = this._mergedReaders.Read3BitDouble();
+
+			proxy.StandardDINHandle = this.handleReference();
+			proxy.BOMStandardDINHandle = this.handleReference();
+
+			proxy.BomRowHandle = this.handleReference();
+			template.BlockHandle = this.handleReference();
+
+			var unknownHandle1 = this.handleReference();		// 0x0
+
+			return template;
+		}
 
 		private CadTemplate readVertex2D()
 		{
