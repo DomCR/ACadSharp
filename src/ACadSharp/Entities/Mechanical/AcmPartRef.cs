@@ -1,16 +1,26 @@
-﻿using CSMath;
+﻿using ACadSharp.Attributes;
+using CSMath;
 
 namespace ACadSharp.Entities.Mechanical;
 
+/// <summary>
+/// Represents a <see cref="AcmPartRef"/> entity.
+/// </summary>
+/// <remarks>
+/// Object name <see cref="DxfFileToken.AcmPartRef"/> <br/>
+/// Dxf class name <see cref="DxfSubclassMarker.PartRef"/>
+/// </remarks>
+[DxfName(DxfFileToken.AcmPartRef)]
+[DxfSubClass(DxfSubclassMarker.PartRef)]
 public class AcmPartRef : Entity
 {
-	public override ObjectType ObjectType { get { return ObjectType.UNLISTED; } }
+	public override ObjectType ObjectType => ObjectType.UNLISTED;
 
 	public override string ObjectName => DxfFileToken.AcmPartRef;
 
-	public XYZ Position { get; internal set; }
+	public override string SubclassMarker => DxfSubclassMarker.PartRef;
 
-	public double Radius { get; internal set; }
+	public XYZ Position { get; set; }
 
 	public ulong StandardDINHandle { get; set; }
 
@@ -22,11 +32,15 @@ public class AcmPartRef : Entity
 
 	public override void ApplyTransform(Transform transform)
 	{
-		throw new System.NotImplementedException();
+		this.Position = transform.ApplyTransform(this.Position);
+
+		// TODO: Would probably also require to transform proxy entity data
 	}
 
 	public override BoundingBox GetBoundingBox()
 	{
-		throw new System.NotImplementedException();
+		// TODO: Would probably require to get proxy entity data
+
+		return new BoundingBox(XYZ.Zero, XYZ.Zero);
 	}
 }
