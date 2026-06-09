@@ -138,7 +138,28 @@ public partial class Hatch
 			/// <inheritdoc/>
 			public override IEnumerable<XY> FindIntersections(Line2D line)
 			{
-				throw new NotImplementedException();
+				List<XYZ> pts = this.PolygonalVertexes(256);
+				if (pts.Count == 0)
+				{
+					yield break;
+				}
+
+				Segment2D s;
+				XY intersection;
+				for (int i = 0; i < pts.Count - 1; i++)
+				{
+					s = new Segment2D(pts[i].Convert<XY>(), pts[i + 1].Convert<XY>());
+					if (s.TryFindIntersection(line, out intersection))
+					{
+						yield return intersection;
+					}
+				}
+
+				s = new Segment2D(pts.Last().Convert<XY>(), pts.First().Convert<XY>());
+				if (s.TryFindIntersection(line, out intersection))
+				{
+					yield return intersection;
+				}
 			}
 
 			/// <inheritdoc/>
@@ -162,7 +183,7 @@ public partial class Hatch
 			public override Entity ToEntity()
 			{
 				Entities.Spline spline = new();
-
+				spline.IsClosed = true;
 				spline.Degree = this.Degree;
 				spline.Flags = this.IsPeriodic ? spline.Flags |= (SplineFlags.Periodic) : spline.Flags;
 				spline.Flags = this.IsRational ? spline.Flags |= (SplineFlags.Rational) : spline.Flags;
@@ -170,7 +191,7 @@ public partial class Hatch
 				spline.StartTangent = this.StartTangent.Convert<XYZ>();
 				spline.EndTangent = this.EndTangent.Convert<XYZ>();
 
-				spline.ControlPoints.AddRange(this.ControlPoints);
+				spline.ControlPoints.AddRange(this.ControlPoints.Select(cp => new XYZ(cp.X, cp.Y, 0)));
 				spline.Weights.AddRange(this.ControlPoints.Select(x => x.Z));
 				spline.FitPoints.AddRange(this.FitPoints.Select(x => x.Convert<XYZ>()));
 				spline.Knots.AddRange(this.Knots);
