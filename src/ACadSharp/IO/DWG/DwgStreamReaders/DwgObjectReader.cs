@@ -6277,9 +6277,10 @@ internal partial class DwgObjectReader : DwgSectionIO
 		// Then seemingly always 3 handles of value 0x0 follow 
 
 		List<ulong> rowHandles = new List<ulong>();
+		ulong handle;
 		while (true) 
 		{
-			ulong handle = this.handleReference();
+			handle = this.handleReference();
 			if (handle == 0)
 			{
 				break;
@@ -6288,9 +6289,9 @@ internal partial class DwgObjectReader : DwgSectionIO
 		}
 		proxy.BomRowHandles = rowHandles;
 
+		// ulong handle: 0x0
 		var unknownHandle1 = this.handleReference();        // 0x0
 		var unknownHandle2 = this.handleReference();        // 0x0
-		var unknownHandle3 = this.handleReference();        // 0x0
 
 		return template;
 	}
