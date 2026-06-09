@@ -4,11 +4,9 @@ using CSUtilities.Converters;
 using CSUtilities.IO;
 using CSUtilities.Text;
 using System;
-using System.Collections.Generic;
 using System.IO;
 using System.Runtime.CompilerServices;
 using System.Text;
-using static System.Net.Mime.MediaTypeNames;
 
 namespace ACadSharp.IO.DWG
 {

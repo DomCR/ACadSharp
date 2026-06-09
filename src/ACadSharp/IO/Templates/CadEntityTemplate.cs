@@ -2,10 +2,7 @@
 using ACadSharp.Entities.ProxyGraphics;
 using ACadSharp.Objects;
 using ACadSharp.Tables;
-using CSUtilities.Converters;
 using CSUtilities.Extensions;
-using CSUtilities.IO;
-using System.Reflection;
 
 namespace ACadSharp.IO.Templates;
 
