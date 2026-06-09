@@ -19,7 +19,9 @@ using System.Diagnostics;
 using System.Globalization;
 using System.IO;
 using System.Linq;
+using System.Reflection;
 using System.Text;
+using static ACadSharp.IO.Templates.CadDimensionTemplate;
 using static ACadSharp.Objects.MultiLeaderObjectContextData;
 
 namespace ACadSharp.IO.DWG;
@@ -2886,99 +2888,13 @@ internal partial class DwgObjectReader : DwgSectionIO
 	private CadTemplate readLWPolyline()
 	{
 		LwPolyline lwPolyline = new LwPolyline();
-		CadEntityTemplate template = new CadEntityTemplate(lwPolyline);
+		CadEntityTemplate<LwPolyline> template = new CadEntityTemplate<LwPolyline>(lwPolyline);
 
 		try
 		{
 			this.readCommonEntityData(template);
 
-			//B : bytes containing the LWPOLYLINE entity data.
-			//This excludes the common entity data.
-			//More specifically: it starts at the LWPOLYLINE flags (BS), and ends with the width array (BD).
-
-			short flags = this._objectReader.ReadBitShort();
-			if ((flags & 0x100) != 0)
-				lwPolyline.Flags |= LwPolylineFlags.Plinegen;
-			if ((flags & 0x200) != 0)
-				lwPolyline.Flags |= LwPolylineFlags.Closed;
-
-			if ((flags & 0x4u) != 0)
-			{
-				lwPolyline.ConstantWidth = this._objectReader.ReadBitDouble();
-			}
-
-			if ((flags & 0x8u) != 0)
-			{
-				lwPolyline.Elevation = this._objectReader.ReadBitDouble();
-			}
-
-			if ((flags & 0x2u) != 0)
-			{
-				lwPolyline.Thickness = this._objectReader.ReadBitDouble();
-			}
-
-			if ((flags & (true ? 1u : 0u)) != 0)
-			{
-				lwPolyline.Normal = this._objectReader.Read3BitDouble();
-			}
-
-			int nvertices = this._objectReader.ReadBitLong();
-			int nbulges = 0;
-
-			if (((uint)flags & 0x10) != 0)
-			{
-				nbulges = this._objectReader.ReadBitLong();
-			}
-
-			int nids = 0;
-			if (((uint)flags & 0x400) != 0)
-			{
-				nids = this._objectReader.ReadBitLong();
-			}
-
-			int ndiffwidth = 0;
-			if (((uint)flags & 0x20) != 0)
-			{
-				ndiffwidth = this._objectReader.ReadBitLong();
-			}
-
-			if (this.R13_14Only)
-			{
-				for (int i = 0; i < nvertices; i++)
-				{
-					Vertex2D v = new Vertex2D();
-					XY loc = this._objectReader.Read2RawDouble();
-					lwPolyline.Vertices.Add(new LwPolyline.Vertex(loc));
-				}
-			}
-
-			if (this.R2000Plus && nvertices > 0)
-			{
-				XY loc = this._objectReader.Read2RawDouble();
-				lwPolyline.Vertices.Add(new LwPolyline.Vertex(loc));
-				for (int j = 1; j < nvertices; j++)
-				{
-					loc = this._objectReader.Read2BitDoubleWithDefault(loc);
-					lwPolyline.Vertices.Add(new LwPolyline.Vertex(loc));
-				}
-			}
-
-			for (int k = 0; k < nbulges; k++)
-			{
-				lwPolyline.Vertices[k].Bulge = this._objectReader.ReadBitDouble();
-			}
-
-			for (int l = 0; l < nids; l++)
-			{
-				lwPolyline.Vertices[l].Id = this._objectReader.ReadBitLong();
-			}
-
-			for (int m = 0; m < ndiffwidth; m++)
-			{
-				LwPolyline.Vertex vertex = lwPolyline.Vertices[m];
-				vertex.StartWidth = this._objectReader.ReadBitDouble();
-				vertex.EndWidth = this._objectReader.ReadBitDouble();
-			}
+			readLWPolyline(this._objectReader, this._version, lwPolyline);
 		}
 		catch (System.Exception ex)
 		{
@@ -2987,6 +2903,97 @@ internal partial class DwgObjectReader : DwgSectionIO
 		}
 
 		return template;
+	}
+
+	internal static void readLWPolyline(IDwgStreamReader reader, ACadVersion version, LwPolyline lwPolyline)
+	{
+		//B : bytes containing the LWPOLYLINE entity data.
+		//This excludes the common entity data.
+		//More specifically: it starts at the LWPOLYLINE flags (BS), and ends with the width array (BD).
+
+		short flags = reader.ReadBitShort();
+		if ((flags & 0x100) != 0)
+			lwPolyline.Flags |= LwPolylineFlags.Plinegen;
+		if ((flags & 0x200) != 0)
+			lwPolyline.Flags |= LwPolylineFlags.Closed;
+
+		if ((flags & 0x4u) != 0)
+		{
+			lwPolyline.ConstantWidth = reader.ReadBitDouble();
+		}
+
+		if ((flags & 0x8u) != 0)
+		{
+			lwPolyline.Elevation = reader.ReadBitDouble();
+		}
+
+		if ((flags & 0x2u) != 0)
+		{
+			lwPolyline.Thickness = reader.ReadBitDouble();
+		}
+
+		if ((flags & (true ? 1u : 0u)) != 0)
+		{
+			lwPolyline.Normal = reader.Read3BitDouble();
+		}
+
+		int nvertices = reader.ReadBitLong();
+		int nbulges = 0;
+
+		if (((uint)flags & 0x10) != 0)
+		{
+			nbulges = reader.ReadBitLong();
+		}
+
+		int nids = 0;
+		if (((uint)flags & 0x400) != 0)
+		{
+			nids = reader.ReadBitLong();
+		}
+
+		int ndiffwidth = 0;
+		if (((uint)flags & 0x20) != 0)
+		{
+			ndiffwidth = reader.ReadBitLong();
+		}
+
+		if (version == ACadVersion.AC1014 || version == ACadVersion.AC1012)
+		{
+			for (int i = 0; i < nvertices; i++)
+			{
+				Vertex2D v = new Vertex2D();
+				XY loc = reader.Read2RawDouble();
+				lwPolyline.Vertices.Add(new LwPolyline.Vertex(loc));
+			}
+		}
+
+		if (version >= ACadVersion.AC1015 && nvertices > 0)
+		{
+			XY loc = reader.Read2RawDouble();
+			lwPolyline.Vertices.Add(new LwPolyline.Vertex(loc));
+			for (int j = 1; j < nvertices; j++)
+			{
+				loc = reader.Read2BitDoubleWithDefault(loc);
+				lwPolyline.Vertices.Add(new LwPolyline.Vertex(loc));
+			}
+		}
+
+		for (int k = 0; k < nbulges; k++)
+		{
+			lwPolyline.Vertices[k].Bulge = reader.ReadBitDouble();
+		}
+
+		for (int l = 0; l < nids; l++)
+		{
+			lwPolyline.Vertices[l].Id = reader.ReadBitLong();
+		}
+
+		for (int m = 0; m < ndiffwidth; m++)
+		{
+			LwPolyline.Vertex vertex = lwPolyline.Vertices[m];
+			vertex.StartWidth = reader.ReadBitDouble();
+			vertex.EndWidth = reader.ReadBitDouble();
+		}
 	}
 
 	private CadTemplate readMaterial()
@@ -6232,22 +6239,18 @@ internal partial class DwgObjectReader : DwgSectionIO
 
 		this.readCommonEntityData(template);
 
-		var l1 = this._mergedReaders.ReadBitLong();
+		var unknown1 = this._mergedReaders.ReadBitLong();	// 212
 
-		//ID Specify point:  X = 6600.00     Y = 1185.00     Z = 0.00
-		var pt = this._mergedReaders.Read3BitDouble();
+		proxy.Position = this._mergedReaders.Read3BitDouble();
 
-		//340 value x2
-		var h1 = this.handleReference(); //0x13ABC2;
-		var h2 = this.handleReference(); //0x13ABC7
+		proxy.StandardDINHandle = this.handleReference();
+		proxy.BOMStandardDINHandle = this.handleReference();
 
-		//330 value x2
-		var h3 = this.handleReference(); //0x162A62
-		var h4 = this.handleReference(); //0x0
+		proxy.LineResHandle = this.handleReference();
+		var unknownHandle1 = this.handleReference();		// 0x0
+		proxy.DataEntryPartHandle = this.handleReference();
 
-		//340 value x2
-		var h5 = this.handleReference(); //0x162A5D
-		var h6 = this.handleReference(); //0x162A5F
+		template.LayerHandle = this.handleReference();
 
 		return template;
 	}
@@ -6259,15 +6262,59 @@ internal partial class DwgObjectReader : DwgSectionIO
 
 		this.readCommonEntityData(template);
 
+		var unknown1 = this._mergedReaders.ReadBitLong();   // 212
+
+		proxy.Position = this._mergedReaders.Read3BitDouble();
+
+		proxy.StandardDINHandle = this.handleReference();
+		proxy.BOMStandardDINHandle = this.handleReference();
+
+		proxy.BomHandle = this.handleReference();			// ACMBOM:*A1 (AcmBom)
+		proxy.ItemFilterCustomHandle = this.handleReference();
+
+		// Handles to each data row (excluding the headers) of the BOM table follow.
+		// Then seemingly always 3 handles of value 0x0 follow 
+
+		List<ulong> rowHandles = new List<ulong>();
+		while (true) 
+		{
+			ulong handle = this.handleReference();
+			if (handle == 0)
+			{
+				break;
+			}
+			rowHandles.Add(handle);
+		}
+		proxy.BomRowHandles = rowHandles;
+
+		var unknownHandle1 = this.handleReference();        // 0x0
+		var unknownHandle2 = this.handleReference();        // 0x0
+		var unknownHandle3 = this.handleReference();        // 0x0
+
 		return template;
 	}
 
 	private CadTemplate readAcmBalloon()
 	{
 		AcmBalloon proxy = new AcmBalloon();
-		CadEntityTemplate<AcmBalloon> template = new CadEntityTemplate<AcmBalloon>(proxy);
+		CadAcmBalloonTemplate template = new CadAcmBalloonTemplate(proxy);
 
 		this.readCommonEntityData(template);
+
+		var unknown1 = this._mergedReaders.ReadBitLong();   // 212
+
+		proxy.Position = this._mergedReaders.Read3BitDouble();
+
+		var unknown_position1 = this._mergedReaders.Read3BitDouble();
+		var unknown_position2 = this._mergedReaders.Read3BitDouble();
+
+		proxy.StandardDINHandle = this.handleReference();
+		proxy.BOMStandardDINHandle = this.handleReference();
+
+		proxy.BomRowHandle = this.handleReference();
+		template.BlockHandle = this.handleReference();
+
+		var unknownHandle1 = this.handleReference();		// 0x0
 
 		return template;
 	}

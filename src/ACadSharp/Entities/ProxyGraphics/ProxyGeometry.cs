@@ -1,15 +1,21 @@
-﻿using CSMath;
+﻿using ACadSharp.IO;
+using ACadSharp.IO.DWG;
+using CSMath;
 using CSUtilities.Converters;
 using CSUtilities.IO;
 using System;
 using System.Collections.Generic;
+using System.Diagnostics;
+using System.Linq;
 using System.Text;
 
 namespace ACadSharp.Entities.ProxyGraphics;
 
+// "TODO: VALIDATE" comments used to indicate type parser that have not yet been tested
+
 public class ProxyGeometry
 {
-	public static IEnumerable<IProxyGeometry> ReadGeometries(byte[] arr)
+	internal static IEnumerable<IProxyGeometry> ReadGeometries(CadDocumentBuilder builder, byte[] arr)
 	{
 		List<IProxyGeometry> geometries = new();
 
@@ -115,7 +121,7 @@ public class ProxyGeometry
 					geometries.Add(readPolylineWithNormal(stream));
 					break;
 				case GraphicsType.LwPolyine:
-					geometries.Add(readLwPolyine(stream));
+					geometries.Add(readLwPolyine(builder, stream));
 					break;
 				case GraphicsType.SubEntityMaterial:
 					geometries.Add(readSubEntityMaterial(stream));
@@ -134,13 +140,15 @@ public class ProxyGeometry
 					break;
 				case GraphicsType.Unknown:
 				default:
+					// Type 51 (size 12, data: zeros)
 					break;
 			}
 
-			if (stream.Position == pos)
+			long readDiff = objSize - (stream.Position - pos) - 8;
+			if (readDiff > 0)
 			{
 				//jump not implemented proxies
-				stream.ReadBytes(objSize - 8);
+				stream.ReadBytes((int) readDiff);
 			}
 		}
 
@@ -158,17 +166,40 @@ public class ProxyGeometry
 
 	private static IProxyGeometry readCirclePt3(StreamIO stream)
 	{
-		throw new NotImplementedException();
+		ProxyCirclePt3 circle = new ProxyCirclePt3();
+
+		circle.Point1 = readPoint(stream);
+		circle.Point2 = readPoint(stream);
+		circle.Point3 = readPoint(stream);
+
+		Debugger.Break();	// TODO: VALIDATE
+		return circle;
 	}
 
 	private static IProxyGeometry readCircularArc(StreamIO stream)
 	{
-		throw new NotImplementedException();
+		ProxyCircularArc arc = new ProxyCircularArc();
+
+		arc.Center = readPoint(stream);
+		arc.Radius = stream.ReadDouble();
+		arc.Normal = readPoint(stream);
+		arc.StartVectorDirection = readPoint(stream);
+		arc.SweepAngle = stream.ReadDouble();
+		arc.ArcType = stream.ReadInt();
+
+		return arc;
 	}
 
 	private static IProxyGeometry readCircularArc3Pt(StreamIO stream)
 	{
-		throw new NotImplementedException();
+		ProxyCircularArc3Pt arc = new ProxyCircularArc3Pt();
+
+		arc.Point1 = readPoint(stream);
+		arc.Point2 = readPoint(stream);
+		arc.Point3 = readPoint(stream);
+		arc.ArcType = stream.ReadInt();
+
+		return arc;
 	}
 
 	private static IProxyGeometry readExtents(StreamIO stream)
@@ -181,9 +212,22 @@ public class ProxyGeometry
 		return extents;
 	}
 
-	private static IProxyGeometry readLwPolyine(StreamIO stream)
+	private static IProxyGeometry readLwPolyine(CadDocumentBuilder builder, StreamIO stream)
 	{
-		throw new NotImplementedException();
+		int dataSize = stream.ReadInt();
+		ProxyLwPolyine polyline = new ProxyLwPolyine();
+
+		IDwgStreamReader reader = DwgStreamReaderBase.GetStreamHandler(builder.Version, stream.Stream);
+
+		polyline.Entity = new LwPolyline();
+		DwgObjectReader.readLWPolyline(reader, builder.Version, polyline.Entity);
+		// TODO: Read LwPolyline entity w/o common data
+
+		polyline.Unknown1 = stream.ReadByte();
+		polyline.Unknown2 = stream.ReadByte();
+		polyline.Unknown3 = stream.ReadByte();
+
+		return polyline;
 	}
 
 	private static IProxyGeometry readMesh(StreamIO stream)
@@ -191,38 +235,48 @@ public class ProxyGeometry
 		throw new NotImplementedException();
 	}
 
-	private static XYZ readPoint(StreamIO stream)
-	{
-		var x = stream.ReadDouble();
-		var y = stream.ReadDouble();
-		var z = stream.ReadDouble();
-		return new XYZ(x, y, z);
-	}
-
 	private static IProxyGeometry readPolygon(StreamIO stream)
 	{
-		throw new NotImplementedException();
+		ProxyPolygon polygon = new ProxyPolygon();
+		polygon.Points = [];
+
+		int pointCount = stream.ReadInt();
+		for (int i = 0; i < pointCount; i++)
+		{
+			polygon.Points.Add(readPoint(stream));
+		}
+
+		return polygon;
 	}
 
 	private static IProxyGeometry readPolyline(StreamIO stream)
 	{
-		ProxyPolyline pline = new ProxyPolyline();
-		var pointCount = stream.ReadInt();
-		for (int j = 0; j < pointCount; j++)
+		ProxyPolyline polyline = new ProxyPolyline();
+		int pointCount = stream.ReadInt();
+		for (int i = 0; i < pointCount; i++)
 		{
-			pline.Points.Add(readPoint(stream));
+			polyline.Points.Add(readPoint(stream));
 		}
-		return pline;
+		return polyline;
 	}
 
 	private static IProxyGeometry readPolylineWithNormal(StreamIO stream)
 	{
-		throw new NotImplementedException();
+		ProxyPolylineWithNormal polyline = new ProxyPolylineWithNormal();
+
+		int pointCount = stream.ReadInt();
+		for (int i = 0; i < pointCount; i++)
+		{
+			polyline.Points.Add(readPoint(stream));
+		}
+		polyline.Normal = readPoint(stream);
+
+		return polyline;
 	}
 
 	private static IProxyGeometry readPopClip(StreamIO stream)
 	{
-		throw new NotImplementedException();
+		return new ProxyPopClip();
 	}
 
 	private static IProxyGeometry readPopModelTransform(StreamIO stream)
@@ -232,32 +286,33 @@ public class ProxyGeometry
 
 	private static IProxyGeometry readPushClip(StreamIO stream)
 	{
-		throw new NotImplementedException();
+		ProxyPushClip clip = new ProxyPushClip();
+
+		clip.Extrusion = readPoint(stream);
+		clip.ClipBoundaryOrigin = readPoint(stream);
+		clip.PointCount = stream.ReadInt();
+		clip.Points = [];
+		for (int i = 0; i < clip.PointCount; i++)
+		{
+			clip.Points.Add(new XY(stream.ReadDouble(), stream.ReadDouble()));
+		}
+		clip.ClipBoundaryTransformMatrix = readMatrix(stream);
+		clip.InverseBlockTransformMatrix = readMatrix(stream);
+		clip.FrontClipOn = stream.ReadInt();
+		clip.BackClipOn = stream.ReadInt();
+		clip.FrontClip = stream.ReadDouble();
+		clip.BackClip = stream.ReadDouble();
+		clip.DrawBoundary = stream.ReadInt() == 1;
+
+		Debugger.Break();    // TODO: VALIDATE
+		return clip;
 	}
 
 	private static IProxyGeometry readPushModelTransform(StreamIO stream)
 	{
 		ProxyPushModelTransform modelTransform = new ProxyPushModelTransform();
 
-		Matrix4 matrix = Matrix4.Identity;
-		matrix.M00 = stream.ReadDouble();
-		matrix.M01 = stream.ReadDouble();
-		matrix.M02 = stream.ReadDouble();
-		matrix.M03 = stream.ReadDouble();
-		matrix.M10 = stream.ReadDouble();
-		matrix.M11 = stream.ReadDouble();
-		matrix.M12 = stream.ReadDouble();
-		matrix.M13 = stream.ReadDouble();
-		matrix.M20 = stream.ReadDouble();
-		matrix.M21 = stream.ReadDouble();
-		matrix.M22 = stream.ReadDouble();
-		matrix.M23 = stream.ReadDouble();
-		matrix.M30 = stream.ReadDouble();
-		matrix.M31 = stream.ReadDouble();
-		matrix.M32 = stream.ReadDouble();
-		matrix.M33 = stream.ReadDouble();
-
-		modelTransform.TransformationMatrix = matrix;
+		modelTransform.TransformationMatrix = readMatrix(stream);
 		return modelTransform;
 	}
 
@@ -268,17 +323,123 @@ public class ProxyGeometry
 
 	private static IProxyGeometry readRay(StreamIO stream)
 	{
-		throw new NotImplementedException();
+		ProxyRay ray = new ProxyRay();
+
+		ray.ConstructionLinePoint = readPoint(stream);
+		ray.Point2 = readPoint(stream);
+
+		Debugger.Break();    // TODO: VALIDATE
+		return ray;
 	}
 
 	private static IProxyGeometry readShell(StreamIO stream)
 	{
-		throw new NotImplementedException();
+		ProxyShell shell = new ProxyShell();
+
+		Func<int, bool> adHasPrimTraits = a => (a & 0xFFFFL) != 0;
+		Func<int, bool> adPrimsHaveColors = a => (a & 0x0001L) != 0;
+		Func<int, bool> adPrimsHaveLayers = a => (a & 0x0002L) != 0;
+		Func<int, bool> adPrimsHaveLinetypes = a => (a & 0x0004L) != 0;
+		Func<int, bool> adPrimsHaveMarkers = a => (a & 0x0020L) != 0;
+		Func<int, bool> adPrimsHaveVisibilities = a => (a & 0x0040L) != 0;
+		Func<int, bool> adPrimsHaveNormals = a => (a & 0x0080L) != 0;
+		Func<int, bool> adPrimsHaveOrientation = a => (a & 0x0400L) != 0;
+
+		shell.PointCount = stream.ReadInt();
+		shell.Vertices = [];
+		for (int i = 0; i < shell.PointCount; i++) {
+			shell.Vertices.Add(readPoint(stream));
+		}
+		shell.FaceCount = stream.ReadInt();
+		shell.Faces = [];
+		List<int> face = [];
+		for (int i = 0; i < shell.FaceCount; i++) {
+			int value = stream.ReadInt();
+			if (value < 0) {
+				int vertexCount = value * -1;
+				shell.Faces.Add(face);
+				face = [];
+				for (int j = 0; j < vertexCount; j++) {
+					face.Add(stream.ReadInt());
+				}
+				shell.Faces.Add(face);
+				face = [];
+			}
+			else {
+				// TODO: Check if this ever happens and if so, if this is correct
+				face.Add(value);
+			}
+		}
+		if (face.Count > 0) {
+			shell.Faces.Add(face);
+		}
+
+		// TODO: Validate and fix the below logic
+
+		int edgePrimitiveFlags = stream.ReadInt();
+		if (adHasPrimTraits(edgePrimitiveFlags)) {
+			// TODO: Actually get edge count
+			if (adPrimsHaveColors(edgePrimitiveFlags)) {
+				int edgeColor = stream.ReadInt();		// color for each edge
+			}
+			if (adPrimsHaveLayers(edgePrimitiveFlags)) {
+				int layerIds = stream.ReadInt();		// layer ids, 1 for each edge
+			}
+			if (adPrimsHaveLinetypes(edgePrimitiveFlags)) {
+				int linetypeIds = stream.ReadInt();		// linetype ids, 1 for each edge
+			}
+			if (adPrimsHaveMarkers(edgePrimitiveFlags)) {
+				int markerIndices = stream.ReadInt();	// marker indices, 1 for each edge
+			}
+			if (adPrimsHaveVisibilities(edgePrimitiveFlags)) {
+				for (int i = 0; i < shell.Faces.SelectMany(x => x).Where(x => x >= 0 && x < shell.Vertices.Count).Distinct().Count(); i++) {
+					int visibilityIndicator = stream.ReadInt();		// visibility indicator, 1 for each edge
+				}
+			}
+		}
+
+		int facePrimitiveFlags = stream.ReadInt();
+		if (adHasPrimTraits(facePrimitiveFlags)) {
+			if (adPrimsHaveColors(facePrimitiveFlags)) {
+				int edgeColor = stream.ReadInt();		// color for each face
+			}
+			if (adPrimsHaveLayers(facePrimitiveFlags)) {
+				int layerIds = stream.ReadInt();        // layer ids, 1 for each face
+			}
+			if (adPrimsHaveLinetypes(facePrimitiveFlags)) {
+				int linetypeIds = stream.ReadInt();     // linetype ids, 1 for each face
+			}
+			if (adPrimsHaveMarkers(facePrimitiveFlags)) {
+				int markerIndices = stream.ReadInt();   // marker indices, 1 for each face
+			}
+			if (adPrimsHaveVisibilities(facePrimitiveFlags)) {
+				int visibilityIndicator = stream.ReadInt();     // visibility indicator, 1 for each face
+			}
+		}
+
+		int vertexPrimitiveFlags = stream.ReadInt();
+		if (adHasPrimTraits(vertexPrimitiveFlags)) {
+			int vertexCount = /* TODO: rows * cols */ 0;
+			if (adPrimsHaveNormals(vertexPrimitiveFlags)) {
+				XYZ normal = readPoint(stream);			// normal, 1 for each vertex
+			}
+			if (adPrimsHaveOrientation(vertexPrimitiveFlags)) {
+				int orientation = stream.ReadInt();		// orientation indicator, 1 ONLY
+			}
+		}
+
+		return shell;
 	}
 
 	private static IProxyGeometry readSubentColor(StreamIO stream)
 	{
-		throw new NotImplementedException();
+		ProxySubentColor color = new ProxySubentColor();
+
+		color.ColorIndex = stream.ReadInt();
+
+		if (color.ColorIndex > 256) Debugger.Break();	// seen 257
+
+		return color;
 	}
 
 	private static IProxyGeometry readSubentFillon(StreamIO stream)
@@ -293,12 +454,29 @@ public class ProxyGeometry
 
 	private static IProxyGeometry readSubEntityMapper(StreamIO stream)
 	{
-		throw new NotImplementedException();
+		ProxySubEntityMapper mapper = new ProxySubEntityMapper();
+
+		mapper.DummyValue1 = stream.ReadInt();
+		mapper.DummyValue2 = stream.ReadInt();
+		mapper.Projection = stream.ReadInt();
+		mapper.UTiling = stream.ReadInt();
+		mapper.VTiling = stream.ReadInt();
+		mapper.AutoTransform = stream.ReadInt();
+		mapper.DummyValue3 = stream.ReadInt();
+
+		Debugger.Break();    // TODO: VALIDATE
+		return mapper;
 	}
 
 	private static IProxyGeometry readSubEntityMaterial(StreamIO stream)
 	{
-		throw new NotImplementedException();
+		ProxySubEntityMaterial material = new ProxySubEntityMaterial();
+
+		//material.MaterialHandle = new DwgStreamReaderAC24(stream.Stream, false).HandleReference();
+		material.MaterialHandle = (ulong) stream.ReadInt();
+		int unknown1 = stream.ReadInt();
+
+		return material;
 	}
 
 	private static IProxyGeometry readSubentLayer(StreamIO stream)
@@ -321,7 +499,11 @@ public class ProxyGeometry
 
 	private static IProxyGeometry readSubentLineTypeScale(StreamIO stream)
 	{
-		throw new NotImplementedException();
+		ProxySubentLineTypeScale scale = new ProxySubentLineTypeScale();
+
+		scale.LineTypeScale = stream.ReadDouble();
+
+		return scale;
 	}
 
 	private static IProxyGeometry readSubentLineWeight(StreamIO stream)
@@ -344,47 +526,152 @@ public class ProxyGeometry
 
 	private static IProxyGeometry readSubentPlotStyleName(StreamIO stream)
 	{
-		throw new NotImplementedException();
+		ProxySubentPlotStyleName psName = new ProxySubentPlotStyleName();
+
+		psName.Type = (ProxyPlotStyleType) stream.ReadInt();
+		psName.PlotStyleIndex = stream.ReadInt();
+
+		return psName;
 	}
 
 	private static IProxyGeometry readSubentThickness(StreamIO stream)
 	{
-		throw new NotImplementedException();
+		ProxySubentThickness thickness = new ProxySubentThickness();
+
+		thickness.Thickness = stream.ReadDouble();
+
+		return thickness;
 	}
 
 	private static IProxyGeometry readSubentTrueColor(StreamIO stream)
 	{
 		ProxySubentTrueColor trueColor = new ProxySubentTrueColor();
 
-		byte r = stream.ReadByte();
-		byte g = stream.ReadByte();
-		byte b = stream.ReadByte();
-		trueColor.Color = new Color(r, g, b);
-		
-		// Read padding (to next 4 byte border)
-		stream.ReadByte();
+		// The first three bytes are the value and the fourth byte indicates how
+		// those 3 previous bytes should be interpreted (see https://help.autodesk.com/view/OARX/2025/ENU/?guid=OARX-RefGuide-AcGiSubEntityTraits__setTrueColor_AcCmEntityColor_)
+
+		byte b1 = stream.ReadByte();
+		byte b2 = stream.ReadByte();
+		byte b3 = stream.ReadByte();
+		ProxyColorMethod method = (ProxyColorMethod) stream.ReadByte();
+
+		switch (method) 
+		{
+			case ProxyColorMethod.ByLayer:
+				trueColor.Color = Color.ByLayer;
+				break;
+			case ProxyColorMethod.ByBlock:
+				trueColor.Color = Color.ByBlock;
+				break;
+			case ProxyColorMethod.ByColor:
+				trueColor.Color = new Color(b1, b2, b3);
+				break;
+			case ProxyColorMethod.ByACI:
+				trueColor.Color = new Color(b1);
+				break;
+			case ProxyColorMethod.Foreground:
+				trueColor.Color = new Color(7);	// TODO: Check if this is what foreground actually means
+				break;
+			case ProxyColorMethod.None:
+				break;
+			default:
+				break;
+		}
 
 		return trueColor;
 	}
 
 	private static IProxyGeometry readText(StreamIO stream)
 	{
-		throw new NotImplementedException();
+		ProxyText text = new ProxyText();
+
+		text.StartPoint = readPoint(stream);
+		text.Normal = readPoint(stream);
+		text.TextDirection = readPoint(stream);
+		text.Height = stream.ReadDouble();
+		text.WidthFactor = stream.ReadDouble();
+		text.ObliqueAngle = stream.ReadDouble();
+		text.Text = readPaddedString(stream);
+
+		// Padding to align the text to the next 4-byte boundary
+		if ((text.Text.Length + 1) % 4 != 0)
+		{
+			stream.ReadBytes(4 - (text.Text.Length + 1) % 4);
+		}
+
+		return text;
 	}
 
 	private static IProxyGeometry readText2(StreamIO stream)
 	{
-		throw new NotImplementedException();
+		ProxyText2 text = new ProxyText2();
+		text.StartPoint = readPoint(stream);
+		text.Normal = readPoint(stream);
+		text.TextDirection = readPoint(stream);
+		text.Text = readPaddedString(stream);
+
+		// Padding to align the text to the next 4-byte boundary
+		if ((text.Text.Length + 1) % 4 != 0)
+		{
+			stream.ReadBytes(4 - (text.Text.Length + 1) % 4);
+		}
+
+		text.TextLength = stream.ReadInt();
+		text.IsRaw = stream.ReadInt() == 0;
+		text.Height = stream.ReadDouble();
+		text.WidthFactor = stream.ReadDouble();
+		text.ObliqueAngle = stream.ReadDouble();
+		text.TrackingPercentage = stream.ReadDouble();
+
+		text.IsBackwards = stream.ReadInt() == 1;
+		text.IsUpsideDown = stream.ReadInt() == 1;
+		text.IsVertical = stream.ReadInt() == 1;
+		text.IsUnderlined = stream.ReadInt() == 1;
+		text.IsOverlined = stream.ReadInt() == 1;
+
+		text.FontFilename = readPaddedString(stream);
+
+		// Padding to align the text to the next 4-byte boundary
+		if ((text.FontFilename.Length + 1) % 4 != 0)
+		{
+			stream.ReadBytes(4 - (text.FontFilename.Length + 1) % 4);
+		}
+
+		text.BigFontFilename = readPaddedString(stream);
+
+		// Padding to align the text to the next 4-byte boundary
+		if ((text.BigFontFilename.Length + 1) % 4 != 0)
+		{
+			stream.ReadBytes(4 - (text.BigFontFilename.Length + 1) % 4);
+		}
+
+		return text;
 	}
 
 	private static IProxyGeometry readUnicodeText(StreamIO stream)
 	{
-		throw new NotImplementedException();
+		ProxyUnicodeText text = new ProxyUnicodeText();
+
+		text.StartPoint = readPoint(stream);
+		text.Normal = readPoint(stream);
+		text.TextDirection = readPoint(stream);
+		text.Height = stream.ReadDouble();
+		text.WidthFactor = stream.ReadDouble();
+		text.ObliqueAngle = stream.ReadDouble();
+		text.Text = readPaddedUnicodeString(stream);
+
+		// Padding to align the text to the next 4-byte boundary
+		if (text.Text.Length % 2 == 0)
+		{
+			stream.ReadShort();
+		}
+
+		return text;
 	}
 
 	private static IProxyGeometry readUnicodeText2(StreamIO stream)
 	{
-		ProxyText text = new ProxyText();
+		ProxyUnicodeText2 text = new ProxyUnicodeText2();
 		text.StartPoint = readPoint(stream);
 		text.Normal = readPoint(stream);
 		text.TextDirection = readPoint(stream);
@@ -444,12 +731,48 @@ public class ProxyGeometry
 
 	private static IProxyGeometry readUnknown37(StreamIO stream)
 	{
-		throw new NotImplementedException();
+		Debugger.Break();    // TODO: VALIDATE
+		return new ProxyUnknown37();
 	}
 
 	private static IProxyGeometry readXLine(StreamIO stream)
 	{
-		throw new NotImplementedException();
+		ProxyXLine xline = new ProxyXLine();
+
+		xline.Point1 = readPoint(stream);
+		xline.Point2 = readPoint(stream);
+
+		return xline;
+	}
+
+	private static XYZ readPoint(StreamIO stream)
+	{
+		var x = stream.ReadDouble();
+		var y = stream.ReadDouble();
+		var z = stream.ReadDouble();
+		return new XYZ(x, y, z);
+	}
+
+	private static Matrix4 readMatrix(StreamIO stream)
+	{
+		Matrix4 matrix = Matrix4.Identity;
+		matrix.M00 = stream.ReadDouble();
+		matrix.M01 = stream.ReadDouble();
+		matrix.M02 = stream.ReadDouble();
+		matrix.M03 = stream.ReadDouble();
+		matrix.M10 = stream.ReadDouble();
+		matrix.M11 = stream.ReadDouble();
+		matrix.M12 = stream.ReadDouble();
+		matrix.M13 = stream.ReadDouble();
+		matrix.M20 = stream.ReadDouble();
+		matrix.M21 = stream.ReadDouble();
+		matrix.M22 = stream.ReadDouble();
+		matrix.M23 = stream.ReadDouble();
+		matrix.M30 = stream.ReadDouble();
+		matrix.M31 = stream.ReadDouble();
+		matrix.M32 = stream.ReadDouble();
+		matrix.M33 = stream.ReadDouble();
+		return matrix;
 	}
 
 	/// <summary>
@@ -468,5 +791,32 @@ public class ProxyGeometry
 			stringBytes.AddRange(character);
 		}
 		return Encoding.Unicode.GetString(stringBytes.ToArray());
+	}
+
+	/// <summary>
+	/// PS : Padded string. This is a string, terminated with a zero byte.
+	/// The file’s text encoding (code page) is used to encode / decode 
+	/// the bytes into a string
+	/// </summary>
+	/// <returns></returns>
+	private static string readPaddedString(StreamIO stream)
+	{
+		List<byte> stringBytes = new List<byte>();
+		byte character;
+		while ((character = stream.ReadByte()) != 0)
+		{
+			stringBytes.Add(character);
+		}
+		return stream.Encoding.GetString(stringBytes.ToArray());
+	}
+
+	public enum ProxyColorMethod : byte
+	{
+		ByLayer = 0xC0,
+		ByBlock = 0xC1,
+		ByColor = 0xC2,
+		ByACI = 0xC3,
+		Foreground = 0xC5,
+		None = 0xC8
 	}
 }

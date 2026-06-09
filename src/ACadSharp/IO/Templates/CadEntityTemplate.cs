@@ -113,7 +113,7 @@ internal class CadEntityTemplate : CadTemplate<Entity>
 		{
 			//TO REMOVE
 			builder.Notify($"[{this.CadObject.ObjectName}] Proxy graphics found.");
-			this.CadObject.ProxyGeometries.AddRange(ProxyGeometry.ReadGeometries(this.ProxyGraphics));
+			this.CadObject.ProxyGeometries.AddRange(ProxyGeometry.ReadGeometries(builder, this.ProxyGraphics));
 		}
 	}
 }

@@ -12,6 +12,14 @@ public class AcmPartRef : Entity
 
 	public double Radius { get; internal set; }
 
+	public ulong StandardDINHandle { get; set; }
+
+	public ulong BOMStandardDINHandle { get; set; }
+
+	public ulong LineResHandle { get; set; }
+
+	public ulong DataEntryPartHandle { get; set; }
+
 	public override void ApplyTransform(Transform transform)
 	{
 		throw new System.NotImplementedException();

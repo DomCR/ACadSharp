@@ -3,4 +3,6 @@
 public class ProxySubEntityMaterial : IProxyGeometry
 {
 	public GraphicsType GraphicsType { get { return GraphicsType.SubEntityMaterial; } }
+
+	public ulong MaterialHandle { get; set; }
 }
