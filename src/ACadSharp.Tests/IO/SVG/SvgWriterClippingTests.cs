@@ -6,6 +6,8 @@ using ACadSharp.Tests.IO;
 using ACadSharp.Tables;
 using CSMath;
 using System.IO;
+using System.Linq;
+using System.Xml.Linq;
 using Xunit;
 using Xunit.Abstractions;
 
@@ -43,6 +45,13 @@ namespace ACadSharp.Tests.IO.SVG
 
 			using SvgWriter writer = this.createWriter("wipeout.svg", document);
 			writer.Write();
+
+			string svg = File.ReadAllText(Path.Combine(TestVariables.OutputSvgFolder, "wipeout.svg"));
+			XElement root = XDocument.Parse(svg).Root!;
+			XElement? wipeoutPolygon = root.Descendants().FirstOrDefault(e => e.Name.LocalName == "polygon" && e.Attribute("stroke")?.Value == "none");
+			Assert.NotNull(wipeoutPolygon);
+			Assert.Equal("white", wipeoutPolygon!.Attribute("fill")?.Value);
+			Assert.Equal("1", wipeoutPolygon.Attribute("fill-opacity")?.Value);
 		}
 
 		[Fact]

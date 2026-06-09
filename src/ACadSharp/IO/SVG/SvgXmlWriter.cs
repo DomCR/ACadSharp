@@ -649,11 +649,13 @@ namespace ACadSharp.IO.SVG
 			var insertTransform = insert.GetTransform();
 			var merged = new Transform(transform.Matrix * insertTransform.Matrix);
 			SpatialFilter? filter = insert.SpatialFilter;
+			var hasBoundary = filter?.BoundaryPoints.Any() == true;
+			var showBoundary = filter?.DisplayBoundary == true && hasBoundary;
 
 			string? clipId = null;
-			if (filter != null && filter.BoundaryPoints.Any())
+			if (hasBoundary)
 			{
-				clipId = this.writeSpatialFilterClip(filter, merged);
+				clipId = this.writeSpatialFilterClip(filter!, merged);
 			}
 
 			if (clipId != null)
@@ -668,9 +670,9 @@ namespace ACadSharp.IO.SVG
 
 				this._clipPathId = previousClip;
 
-				if (filter != null && filter.DisplayBoundary && filter.BoundaryPoints.Any())
+				if (showBoundary)
 				{
-					this.writeSpatialFilterBoundary(filter, merged);
+					this.writeSpatialFilterBoundary(filter!, merged);
 				}
 			}
 			else
@@ -683,9 +685,11 @@ namespace ACadSharp.IO.SVG
 					this.writeEntity(e);
 				}
 
-				if (filter != null && filter.DisplayBoundary && filter.BoundaryPoints.Any())
+				if (showBoundary)
 				{
-					this.writeSpatialFilterBoundary(filter, new Transform());
+					// The boundary is drawn in the insert-local group, so it only needs
+					// the spatial filter transform here.
+					this.writeSpatialFilterBoundary(filter!, new Transform());
 				}
 
 				this.WriteEndElement();
@@ -910,6 +914,7 @@ namespace ACadSharp.IO.SVG
 
 		private void writeSpatialFilterBoundary(SpatialFilter filter, Transform transform)
 		{
+			// Show the filter extent as a red outline when the source DWG requests it.
 			this.WriteStartElement("polygon");
 			this.WriteAttributeString("fill", "none");
 			this.WriteAttributeString("stroke", "red");
@@ -941,7 +946,10 @@ namespace ACadSharp.IO.SVG
 
 			this.writeEntityHeader(wipeout, transform, drawStroke: false);
 
+			// Wipeouts are visibility masks in DWG. SVG has no equivalent retroactive
+			// masking here, so we emit the boundary as an explicit opaque cover shape.
 			this.WriteAttributeString("fill", "white");
+			this.WriteAttributeString("fill-opacity", "1");
 			this.WriteAttributeString("points", this.svgPoints(this.wipeoutPoints(wipeout)));
 
 			this.WriteEndElement();
