@@ -96,9 +96,14 @@ namespace ACadSharp.Entities
 			/// <inheritdoc/>
 			public void ApplyTransform(Transform transform)
 			{
-				foreach (var e in this.Edges)
+				foreach (var edge in this.Edges)
 				{
-					e.ApplyTransform(transform);
+					edge.ApplyTransform(transform);
+				}
+
+				foreach (var entity in this.Entities)
+				{
+					entity.ApplyTransform(transform);
 				}
 			}
 
