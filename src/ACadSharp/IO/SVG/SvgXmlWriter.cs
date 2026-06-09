@@ -19,6 +19,8 @@ namespace ACadSharp.IO.SVG
 	{
 		public event NotificationEventHandler OnNotification;
 
+		private string? _clipPathId;
+
 		public SvgConfiguration Configuration { get; } = new();
 
 		public Layout Layout { get; set; }
@@ -154,6 +156,9 @@ namespace ACadSharp.IO.SVG
 				case Solid solid:
 					this.writeSolid(solid, transform);
 					break;
+				case Wipeout wipeout:
+					this.writeWipeout(wipeout, transform);
+					break;
 				default:
 					this.notify($"[{entity.ObjectName}] Entity not implemented.", NotificationType.NotImplemented);
 					break;
@@ -259,6 +264,24 @@ namespace ACadSharp.IO.SVG
 			StringBuilder sb = new StringBuilder();
 			sb.Append(points.First().ToPixelSize(this.Units).ToSvg());
 			foreach (T point in points.Skip(1))
+			{
+				sb.Append(' ');
+				sb.Append(point.ToPixelSize(this.Units).ToSvg());
+			}
+
+			return sb.ToString();
+		}
+
+		private string svgPoints(IEnumerable<XYZ> points)
+		{
+			if (!points.Any())
+			{
+				return string.Empty;
+			}
+
+			StringBuilder sb = new StringBuilder();
+			sb.Append(points.First().ToPixelSize(this.Units).ToSvg());
+			foreach (var point in points.Skip(1))
 			{
 				sb.Append(' ');
 				sb.Append(point.ToPixelSize(this.Units).ToSvg());
@@ -451,6 +474,10 @@ namespace ACadSharp.IO.SVG
 			this.WriteAttributeString("stroke-width", $"{this.Configuration.GetLineWeightValue(lineWeight, this.Units).ToSvg(UnitsType.Millimeters)}");
 
 			this.writeTransform(transform);
+			if (this._clipPathId != null)
+			{
+				this.WriteAttributeString("clip-path", $"url(#{this._clipPathId})");
+			}
 
 			LineType lt = entity.GetActiveLineType();
 			if (this.drawableLineType(lt))
@@ -621,16 +648,48 @@ namespace ACadSharp.IO.SVG
 		{
 			var insertTransform = insert.GetTransform();
 			var merged = new Transform(transform.Matrix * insertTransform.Matrix);
+			SpatialFilter? filter = insert.SpatialFilter;
 
-			this.WriteStartElement("g");
-			this.writeTransform(merged);
-
-			foreach (var e in insert.Block.Entities)
+			string? clipId = null;
+			if (filter != null && filter.BoundaryPoints.Any())
 			{
-				this.writeEntity(e);
+				clipId = this.writeSpatialFilterClip(filter, merged);
 			}
 
-			this.WriteEndElement();
+			if (clipId != null)
+			{
+				string? previousClip = this._clipPathId;
+				this._clipPathId = clipId;
+
+				foreach (var e in insert.Block.Entities)
+				{
+					this.writeEntity(e, merged);
+				}
+
+				this._clipPathId = previousClip;
+
+				if (filter != null && filter.DisplayBoundary && filter.BoundaryPoints.Any())
+				{
+					this.writeSpatialFilterBoundary(filter, merged);
+				}
+			}
+			else
+			{
+				this.WriteStartElement("g");
+				this.writeTransform(merged);
+
+				foreach (var e in insert.Block.Entities)
+				{
+					this.writeEntity(e);
+				}
+
+				if (filter != null && filter.DisplayBoundary && filter.BoundaryPoints.Any())
+				{
+					this.writeSpatialFilterBoundary(filter, new Transform());
+				}
+
+				this.WriteEndElement();
+			}
 		}
 
 		private void writeLine(Line line, Transform transform)
@@ -701,6 +760,10 @@ namespace ACadSharp.IO.SVG
 			}
 
 			this.WriteStartElement("g");
+			if (this._clipPathId != null)
+			{
+				this.WriteAttributeString("clip-path", $"url(#{this._clipPathId})");
+			}
 			this.writeTransform(transform);
 
 			this.WriteStartElement("text");
@@ -843,6 +906,138 @@ namespace ACadSharp.IO.SVG
 			this.WriteAttributeString("fill", this.colorSvg(solid.GetActiveColor()));
 
 			this.WriteEndElement();
+		}
+
+		private void writeSpatialFilterBoundary(SpatialFilter filter, Transform transform)
+		{
+			this.WriteStartElement("polygon");
+			this.WriteAttributeString("fill", "none");
+			this.WriteAttributeString("stroke", "red");
+			this.WriteAttributeString("stroke-width", "0.25");
+			this.WriteAttributeString("points", this.svgPoints(this.spatialFilterPoints(filter, transform)));
+			this.WriteEndElement();
+		}
+
+		private string writeSpatialFilterClip(SpatialFilter filter, Transform transform)
+		{
+			string id = $"clip_{Guid.NewGuid():N}";
+
+			this.WriteStartElement("defs");
+			this.WriteStartElement("clipPath");
+			this.WriteAttributeString("id", id);
+			this.WriteAttributeString("clipPathUnits", "userSpaceOnUse");
+			this.WriteStartElement("polygon");
+			this.WriteAttributeString("points", this.svgPoints(this.spatialFilterPoints(filter, transform)));
+			this.WriteEndElement();
+			this.WriteEndElement();
+			this.WriteEndElement();
+
+			return id;
+		}
+
+		private void writeWipeout(Wipeout wipeout, Transform transform)
+		{
+			this.WriteStartElement("polygon");
+
+			this.writeEntityHeader(wipeout, transform, drawStroke: false);
+
+			this.WriteAttributeString("fill", "white");
+			this.WriteAttributeString("points", this.svgPoints(this.wipeoutPoints(wipeout)));
+
+			this.WriteEndElement();
+		}
+
+		private IEnumerable<XYZ> spatialFilterPoints(SpatialFilter filter, Transform transform)
+		{
+			IEnumerable<XYZ> points;
+
+			if (filter.BoundaryPoints.Count == 2)
+			{
+				var p1 = filter.BoundaryPoints[0];
+				var p2 = filter.BoundaryPoints[1];
+
+				double minX = Math.Min(p1.X, p2.X);
+				double minY = Math.Min(p1.Y, p2.Y);
+				double maxX = Math.Max(p1.X, p2.X);
+				double maxY = Math.Max(p1.Y, p2.Y);
+
+				points = new[]
+				{
+					new XYZ(minX, minY, 0),
+					new XYZ(minX, maxY, 0),
+					new XYZ(maxX, maxY, 0),
+					new XYZ(maxX, minY, 0),
+				};
+			}
+			else
+			{
+				points = filter.BoundaryPoints.Select(p => new XYZ(p.X, p.Y, 0));
+			}
+
+			var clipTransform = new Transform(transform.Matrix * filter.InsertTransform);
+			return points.Select(p => clipTransform.ApplyTransform(p));
+		}
+
+		private IEnumerable<XYZ> spatialFilterLocalPoints(SpatialFilter filter)
+		{
+			IEnumerable<XYZ> points;
+
+			if (filter.BoundaryPoints.Count == 2)
+			{
+				var p1 = filter.BoundaryPoints[0];
+				var p2 = filter.BoundaryPoints[1];
+
+				double minX = Math.Min(p1.X, p2.X);
+				double minY = Math.Min(p1.Y, p2.Y);
+				double maxX = Math.Max(p1.X, p2.X);
+				double maxY = Math.Max(p1.Y, p2.Y);
+
+				points = new[]
+				{
+					new XYZ(minX, minY, 0),
+					new XYZ(minX, maxY, 0),
+					new XYZ(maxX, maxY, 0),
+					new XYZ(maxX, minY, 0),
+				};
+			}
+			else
+			{
+				points = filter.BoundaryPoints.Select(p => new XYZ(p.X, p.Y, 0));
+			}
+
+			var clipTransform = new Transform(filter.InsertTransform);
+			return points.Select(p => clipTransform.ApplyTransform(p));
+		}
+
+		private IEnumerable<XYZ> wipeoutPoints(Wipeout wipeout)
+		{
+			if (!wipeout.ClipBoundaryVertices.Any())
+			{
+				return Enumerable.Empty<XYZ>();
+			}
+
+			IEnumerable<XY> boundary = wipeout.ClipBoundaryVertices;
+
+			if (boundary.Count() == 2)
+			{
+				var p1 = boundary.First();
+				var p2 = boundary.Last();
+
+				double minX = Math.Min(p1.X, p2.X);
+				double minY = Math.Min(p1.Y, p2.Y);
+				double maxX = Math.Max(p1.X, p2.X);
+				double maxY = Math.Max(p1.Y, p2.Y);
+
+				boundary = new[]
+				{
+					new XY(minX, minY),
+					new XY(minX, maxY),
+					new XY(maxX, maxY),
+					new XY(maxX, minY),
+				};
+			}
+
+			return boundary.Select(v => wipeout.InsertPoint + (wipeout.UVector * v.X) + (wipeout.VVector * v.Y));
 		}
 
 		private void writeSpline(Spline spline, Transform transform)
