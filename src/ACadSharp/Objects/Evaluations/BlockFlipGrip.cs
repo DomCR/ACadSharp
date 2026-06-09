@@ -1,7 +1,6 @@
 ﻿using ACadSharp.Attributes;
 
-namespace ACadSharp.Objects.Evaluations
-{
+namespace ACadSharp.Objects.Evaluations {
 
 	//BLOCKFLIPGRIP
 	//100	S	AcDbEvalExpr
@@ -15,8 +14,7 @@ namespace ACadSharp.Objects.Evaluations
 	//93	BL	8
 
 	[DxfSubClass(DxfSubclassMarker.BlockFlipGrip)]
-	public class BlockFlipGrip : BlockGrip
-	{
+	public class BlockFlipGrip : BlockGrip {
 
 		// /// <inheritdoc/>
 		//public override string ObjectName => DxfFileToken.ObjectBlockFlipAction;

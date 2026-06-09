@@ -3,7 +3,6 @@ using ACadSharp.Classes;
 using ACadSharp.Entities;
 using ACadSharp.Entities.AecObjects;
 using ACadSharp.Entities.Mechanical;
-using ACadSharp.Entities.ProxyGraphics;
 using ACadSharp.IO.Templates;
 using ACadSharp.Objects;
 using ACadSharp.Objects.AEC;
@@ -20,29 +19,28 @@ using System.Globalization;
 using System.IO;
 using System.Linq;
 using System.Text;
-using static ACadSharp.IO.Templates.CadDimensionTemplate;
 using static ACadSharp.Objects.MultiLeaderObjectContextData;
 
 namespace ACadSharp.IO.DWG
 {
 	/* Documentation:
-	* This region holds the actual objects in the drawing.
-	* These can be entities, table entries, dictionary entries, and objects.
-	* This second use of objects is somewhat confusing; all items stored in the file are “objects”,
-	* but only some of them are object objects.
-	* Others are entities, table entries, etc.
-	* The objects in this section can appear in any order.
-	*
-	* Not all objects present in the file are actually used.
-	* The used objects can be traced back to handle references in the Header section.
-	*
-	* So the proper way to read a file is to start reading the header and then tracing all
-	* references from there until all references have been followed.
-	* Very occasionally a file contains e.g. two APPID objects with the same name,
-	* of which one is used, and the other is not. Reading both would be incorrect due to a
-	* name clash. To complicate matters more, files also exist with table records with duplicate
-	* names. This is incorrect, and the software should rename the record to be unique upon reading.
-	*/
+	 * This region holds the actual objects in the drawing.
+	 * These can be entities, table entries, dictionary entries, and objects.
+	 * This second use of objects is somewhat confusing; all items stored in the file are “objects”,
+	 * but only some of them are object objects.
+	 * Others are entities, table entries, etc.
+	 * The objects in this section can appear in any order.
+	 *
+	 * Not all objects present in the file are actually used.
+	 * The used objects can be traced back to handle references in the Header section.
+	 *
+	 * So the proper way to read a file is to start reading the header and then tracing all
+	 * references from there until all references have been followed.
+	 * Very occasionally a file contains e.g. two APPID objects with the same name,
+	 * of which one is used, and the other is not. Reading both would be incorrect due to a
+	 * name clash. To complicate matters more, files also exist with table records with duplicate
+	 * names. This is incorrect, and the software should rename the record to be unique upon reading.
+	 */
 	internal partial class DwgObjectReader : DwgSectionIO
 	{
 		public override string SectionName { get { return DwgSectionDefinition.AcDbObjects; } }
@@ -665,9 +663,9 @@ namespace ACadSharp.IO.DWG
 			//R2004+:
 			if (this.R2004Plus)
 				/*XDic Missing Flag
-				* B
-				* If 1, no XDictionary handle is stored for this object,
-				* otherwise XDictionary handle is stored as in R2000 and earlier.
+				 * B
+				 * If 1, no XDictionary handle is stored for this object,
+				 * otherwise XDictionary handle is stored as in R2000 and earlier.
 				*/
 				flag = this._objectReader.ReadBit();
 
@@ -3247,10 +3245,10 @@ namespace ACadSharp.IO.DWG
 
 			#endregion Refraction
 
-	#if TEST
+#if TEST
 			var obj = DwgStreamReaderBase.Explore(this._objectReader);
 			var text = DwgStreamReaderBase.Explore(this._textReader);
-	#endif
+#endif
 
 			return template;
 		}
@@ -3425,7 +3423,7 @@ namespace ACadSharp.IO.DWG
 			//Flags BS A short which reconstitutes the mlinestyle flags as defined in DXF.
 			//Here are the bits as they relate to DXF:
 			/*
-			DWG bit goes with DXF bit
+			 DWG bit goes with DXF bit
 				1				2
 				2				1
 				16				16
@@ -3434,7 +3432,7 @@ namespace ACadSharp.IO.DWG
 				256				256
 				512				1024
 				1024			512
-			*/
+			 */
 			short flags = this._objectReader.ReadBitShort();
 			if (((uint)flags & 1U) > 0U)
 				mlineStyle.Flags |= MLineStyleFlags.DisplayJoints;
@@ -6982,10 +6980,10 @@ namespace ACadSharp.IO.DWG
 			//70 Count then repeat 90 and 176
 			int count = this._objectReader.ReadBitLong();
 
-	#if TEST
+#if TEST
 			var objValues = DwgStreamReaderBase.Explore(_objectReader);
 			var textValues = DwgStreamReaderBase.Explore(_textReader);
-	#endif
+#endif
 
 			//TODO: Finish dwg implementation for VisualStyle (avoids noise in the logs)
 
