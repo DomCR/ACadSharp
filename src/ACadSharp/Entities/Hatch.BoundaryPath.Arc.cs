@@ -3,6 +3,7 @@ using CSMath;
 using CSMath.Geometry;
 using System;
 using System.Collections.Generic;
+using System.Linq;
 
 namespace ACadSharp.Entities;
 
@@ -123,8 +124,32 @@ public partial class Hatch
 			/// <inheritdoc/>
 			public override IEnumerable<XY> FindIntersections(Line2D line)
 			{
-				var arc = this.ToArc2D();
-				return arc.FindIntersections(line);
+				List<XYZ> pts = this.PolygonalVertexes(256);
+				if (pts.Count == 0)
+				{
+					yield break;
+				}
+
+				Segment2D s;
+				XY intersection;
+				for (int i = 0; i < pts.Count - 1; i++)
+				{
+					s = new Segment2D(pts[i].Convert<XY>(), pts[i + 1].Convert<XY>());
+					if (s.TryFindIntersection(line, out intersection))
+					{
+						yield return intersection;
+					}
+				}
+
+				s = new Segment2D(pts.Last().Convert<XY>(), pts.First().Convert<XY>());
+				if (s.TryFindIntersection(line, out intersection))
+				{
+					yield return intersection;
+				}
+
+				//TODO: improve the method by calculating the intersection between the line and the arc directly, without the need of generating a list of vertexes.
+				//var arc = this.ToArc2D();
+				//return arc.FindIntersections(line);
 			}
 
 			/// <inheritdoc/>

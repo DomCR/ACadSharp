@@ -37,16 +37,6 @@ public class LocalSampleTests : IOTestsBase
 			return;
 
 		CadDocument doc = DwgReader.Read(test.Path, this._dwgConfiguration, this.onNotification);
-
-		var toAdd = new List<Entity>();
-		foreach (var item in doc.Entities.OfType<Hatch>())
-		{
-			toAdd.AddRange(item.ExplodePattern());
-		}
-
-		toAdd.ForEach(e => e.Color = Color.Red);
-		doc.Entities.AddRange(toAdd);
-
 		if (!TestVariables.SaveOutputInStream)
 		{
 			DwgWriter.Write(Path.Combine(TestVariables.DesktopFolder, "output", "test.dwg"), doc, notification: this.onNotification);

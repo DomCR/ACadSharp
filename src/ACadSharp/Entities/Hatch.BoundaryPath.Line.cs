@@ -62,7 +62,14 @@ public partial class Hatch
 			/// <inheritdoc/>
 			public override IEnumerable<XY> FindIntersections(Line2D line)
 			{
-				return new[] { this.ToSegment2D().FindIntersection(line) };
+				if (this.ToSegment2D().TryFindIntersection(line, out XY intersection))
+				{
+					return new[] { intersection };
+				}
+				else
+				{
+					return [];
+				}
 			}
 
 			public Segment2D ToSegment2D()
