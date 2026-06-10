@@ -298,7 +298,7 @@ internal abstract partial class DxfSectionWriterBase
 		this._writer.Write(72, (short)dim.LineSpacingStyle, map);
 		this._writer.Write(41, dim.LineSpacingFactor, map);
 
-		if (string.IsNullOrEmpty(dim.Text))
+		if (!string.IsNullOrEmpty(dim.Text))
 		{
 			this._writer.Write(1, dim.Text, map);
 		}
