@@ -22,32 +22,6 @@ namespace ACadSharp.Tests.Internal
 
 		[Theory]
 		[MemberData(nameof(DwgVersions))]
-		public void WriteEmptyDocumentTest(ACadVersion version)
-		{
-			CadDocument document = new CadDocument();
-			document.Header.Version = version;
-			if (document.Header.Version < ACadVersion.AC1018)
-			{
-				document.VEntityControl ??= new ViewportEntityControl(document);
-			}
-
-			DwgDocumentBuilder builder = this.writeInfo(document);
-
-			builder.BuildDocument();
-
-			this.assertTable(document.AppIds, builder.AppIds);
-			this.assertTable(document.Layers, builder.Layers);
-			this.assertTable(document.LineTypes, builder.LineTypesTable);
-			this.assertTable(document.TextStyles, builder.TextStyles);
-			this.assertTable(document.UCSs, builder.UCSs);
-			this.assertTable(document.Views, builder.Views);
-			this.assertTable(document.DimensionStyles, builder.DimensionStyles);
-			this.assertTable(document.VPorts, builder.VPorts);
-			this.assertTable(document.BlockRecords, builder.BlockRecords);
-		}
-
-		[Theory]
-		[MemberData(nameof(DwgVersions))]
 		public void EntitiesTest(ACadVersion version)
 		{
 			CadDocument document = new CadDocument();
@@ -107,8 +81,41 @@ namespace ACadSharp.Tests.Internal
 			}
 		}
 
+		[Theory]
+		[MemberData(nameof(DwgVersions))]
+		public void WriteEmptyDocumentTest(ACadVersion version)
+		{
+			CadDocument document = new CadDocument();
+			document.Header.Version = version;
+			if (document.Header.Version < ACadVersion.AC1018)
+			{
+				document.VEntityControl ??= new ViewportEntityControl(document);
+			}
+
+			DwgDocumentBuilder builder = this.writeInfo(document);
+
+			builder.BuildDocument();
+
+			this.assertTable(document.AppIds, builder.AppIds);
+			this.assertTable(document.Layers, builder.Layers);
+			this.assertTable(document.LineTypes, builder.LineTypesTable);
+			this.assertTable(document.TextStyles, builder.TextStyles);
+			this.assertTable(document.UCSs, builder.UCSs);
+			this.assertTable(document.Views, builder.Views);
+			this.assertTable(document.DimensionStyles, builder.DimensionStyles);
+			this.assertTable(document.VPorts, builder.VPorts);
+			this.assertTable(document.BlockRecords, builder.BlockRecords);
+		}
+
+		protected override void onNotification(object sender, NotificationEventArgs e)
+		{
+			Assert.False(e.NotificationType == NotificationType.Error, e.Message);
+
+			base.onNotification(sender, e);
+		}
+
 		private void assertTable<T>(Table<T> expected, Table<T> actual)
-			where T : TableEntry
+					where T : TableEntry
 		{
 			Assert.NotNull(expected);
 			Assert.Equal(expected.Handle, actual.Handle);
@@ -155,13 +162,6 @@ namespace ACadSharp.Tests.Internal
 			reader.Read();
 
 			return builder;
-		}
-
-		protected override void onNotification(object sender, NotificationEventArgs e)
-		{
-			Assert.False(e.NotificationType == NotificationType.Error, e.Message);
-
-			base.onNotification(sender, e);
 		}
 	}
 }
