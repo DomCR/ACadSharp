@@ -6690,6 +6690,34 @@
     },
     {
       "type": "ManagedReference",
+      "source_relative_path": "api/CSMath.Geometry.Arc2D.yml",
+      "output": {
+        ".html": {
+          "relative_path": "api/CSMath.Geometry.Arc2D.html"
+        }
+      },
+      "version": "",
+      "Uid": null,
+      "IsMRef": true,
+      "Title": "CSMath.Geometry.Arc2D",
+      "Summary": "<p sourcefile=\"api/CSMath.Geometry.Arc2D.yml\" sourcestartlinenumber=\"1\">Represents a 2D circular arc defined by a center point, radius, and angular range.</p>\n"
+    },
+    {
+      "type": "ManagedReference",
+      "source_relative_path": "api/CSMath.Geometry.Circle2D.yml",
+      "output": {
+        ".html": {
+          "relative_path": "api/CSMath.Geometry.Circle2D.html"
+        }
+      },
+      "version": "",
+      "Uid": null,
+      "IsMRef": true,
+      "Title": "CSMath.Geometry.Circle2D",
+      "Summary": "<p sourcefile=\"api/CSMath.Geometry.Circle2D.yml\" sourcestartlinenumber=\"1\">Represents a circle in 2D space defined by a center point and radius.</p>\n"
+    },
+    {
+      "type": "ManagedReference",
       "source_relative_path": "api/CSMath.Geometry.CurveExtensions.yml",
       "output": {
         ".html": {
@@ -6742,7 +6770,7 @@
       "Uid": null,
       "IsMRef": true,
       "Title": "CSMath.Geometry.Line2D",
-      "Summary": null
+      "Summary": "<p sourcefile=\"api/CSMath.Geometry.Line2D.yml\" sourcestartlinenumber=\"1\">Represents a 2D line defined by an origin point and a direction vector.</p>\n"
     },
     {
       "type": "ManagedReference",
@@ -6770,6 +6798,34 @@
       "Uid": null,
       "IsMRef": true,
       "Title": "CSMath.Geometry.LineExtensions",
+      "Summary": null
+    },
+    {
+      "type": "ManagedReference",
+      "source_relative_path": "api/CSMath.Geometry.Segment2D.yml",
+      "output": {
+        ".html": {
+          "relative_path": "api/CSMath.Geometry.Segment2D.html"
+        }
+      },
+      "version": "",
+      "Uid": null,
+      "IsMRef": true,
+      "Title": "CSMath.Geometry.Segment2D",
+      "Summary": null
+    },
+    {
+      "type": "ManagedReference",
+      "source_relative_path": "api/CSMath.Geometry.Segment3D.yml",
+      "output": {
+        ".html": {
+          "relative_path": "api/CSMath.Geometry.Segment3D.html"
+        }
+      },
+      "version": "",
+      "Uid": null,
+      "IsMRef": true,
+      "Title": "CSMath.Geometry.Segment3D",
       "Summary": null
     },
     {

@@ -156,10 +156,11 @@ Class LineExtensions  <a class="header-action link-secondary" title="View source
 
   <h3 id="CSMath_Geometry_LineExtensions_CreateFromPoints__2___1___1_" data-uid="CSMath.Geometry.LineExtensions.CreateFromPoints``2(``1,``1)">
   CreateFromPoints&lt;T, R&gt;(R, R)
-  <a class="header-action link-secondary" title="View source" href="https://github.com/DomCR/CSUtilities/blob/master/CSMath/Geometry/LineExtensions.cs/#L7"><i class="bi bi-code-slash"></i></a>
+  <a class="header-action link-secondary" title="View source" href="https://github.com/DomCR/CSUtilities/blob/master/CSMath/Geometry/LineExtensions.cs/#L15"><i class="bi bi-code-slash"></i></a>
   </h3>
 
-  <div class="markdown level1 summary"></div>
+  <div class="markdown level1 summary"><p>Creates a line from 2 points, the first point is the origin and the second point is used to calculate the direction.</p>
+</div>
   <div class="markdown level1 conceptual"></div>
 
   <div class="codewrapper">
@@ -169,23 +170,28 @@ Class LineExtensions  <a class="header-action link-secondary" title="View source
   <h4 class="section">Parameters</h4>
   <dl class="parameters">
     <dt><code>pt1</code> <span class="xref">R</span></dt>
-    <dd></dd>
+    <dd><p>The first point, which will be the origin of the line.</p>
+</dd>
     <dt><code>pt2</code> <span class="xref">R</span></dt>
-    <dd></dd>
+    <dd><p>The second point, used to calculate the direction of the line.</p>
+</dd>
   </dl>
 
   <h4 class="section">Returns</h4>
   <dl class="parameters">
     <dt><span class="xref">T</span></dt>
-    <dd></dd>
+    <dd><p>A new instance of the specified line type.</p>
+</dd>
   </dl>
 
   <h4 class="section">Type Parameters</h4>
   <dl class="parameters">
     <dt><code>T</code></dt>
-    <dd></dd>
+    <dd><p>The type of the line to create.</p>
+</dd>
     <dt><code>R</code></dt>
-    <dd></dd>
+    <dd><p>The type of the vector used for the points.</p>
+</dd>
   </dl>
 
 
@@ -201,7 +207,7 @@ Class LineExtensions  <a class="header-action link-secondary" title="View source
 
   <h3 id="CSMath_Geometry_LineExtensions_IsPointOnLine__1_CSMath_Geometry_ILine___0____0_" data-uid="CSMath.Geometry.LineExtensions.IsPointOnLine``1(CSMath.Geometry.ILine{``0},``0)">
   IsPointOnLine&lt;T&gt;(ILine&lt;T&gt;, T)
-  <a class="header-action link-secondary" title="View source" href="https://github.com/DomCR/CSUtilities/blob/master/CSMath/Geometry/LineExtensions.cs/#L20"><i class="bi bi-code-slash"></i></a>
+  <a class="header-action link-secondary" title="View source" href="https://github.com/DomCR/CSUtilities/blob/master/CSMath/Geometry/LineExtensions.cs/#L28"><i class="bi bi-code-slash"></i></a>
   </h3>
 
   <div class="markdown level1 summary"><p>Determines whether the specified point is on the line, or not.</p>
@@ -215,15 +221,18 @@ Class LineExtensions  <a class="header-action link-secondary" title="View source
   <h4 class="section">Parameters</h4>
   <dl class="parameters">
     <dt><code>line</code> <a class="xref" href="CSMath.Geometry.ILine-1.html">ILine</a>&lt;T&gt;</dt>
-    <dd></dd>
+    <dd><p>The line to check against.</p>
+</dd>
     <dt><code>point</code> <span class="xref">T</span></dt>
-    <dd></dd>
+    <dd><p>The point to check.</p>
+</dd>
   </dl>
 
   <h4 class="section">Returns</h4>
   <dl class="parameters">
     <dt><a class="xref" href="https://learn.microsoft.com/dotnet/api/system.boolean">bool</a></dt>
-    <dd></dd>
+    <dd><p>True if the point is on the line; otherwise, false.</p>
+</dd>
   </dl>
 
   <h4 class="section">Type Parameters</h4>
@@ -243,9 +252,9 @@ Class LineExtensions  <a class="header-action link-secondary" title="View source
 
   <a id="CSMath_Geometry_LineExtensions_TryFindIntersection_" data-uid="CSMath.Geometry.LineExtensions.TryFindIntersection*"></a>
 
-  <h3 id="CSMath_Geometry_LineExtensions_TryFindIntersection__2___0___0___1__" data-uid="CSMath.Geometry.LineExtensions.TryFindIntersection``2(``0,``0,``1@)">
-  TryFindIntersection&lt;T, R&gt;(T, T, out R)
-  <a class="header-action link-secondary" title="View source" href="https://github.com/DomCR/CSUtilities/blob/master/CSMath/Geometry/LineExtensions.cs/#L47"><i class="bi bi-code-slash"></i></a>
+  <h3 id="CSMath_Geometry_LineExtensions_TryFindIntersection__3___0___1___2__" data-uid="CSMath.Geometry.LineExtensions.TryFindIntersection``3(``0,``1,``2@)">
+  TryFindIntersection&lt;T, S, R&gt;(T, S, out R)
+  <a class="header-action link-secondary" title="View source" href="https://github.com/DomCR/CSUtilities/blob/master/CSMath/Geometry/LineExtensions.cs/#L56"><i class="bi bi-code-slash"></i></a>
   </h3>
 
   <div class="markdown level1 summary"><p>Tries to find the intersection between 2 lines.</p>
@@ -253,17 +262,20 @@ Class LineExtensions  <a class="header-action link-secondary" title="View source
   <div class="markdown level1 conceptual"></div>
 
   <div class="codewrapper">
-    <pre><code class="lang-csharp hljs">public static bool TryFindIntersection&lt;T, R&gt;(this T line1, T line2, out R intersection) where T : ILine&lt;R&gt; where R : IVector</code></pre>
+    <pre><code class="lang-csharp hljs">public static bool TryFindIntersection&lt;T, S, R&gt;(this T line1, S line2, out R intersection) where T : ILine&lt;R&gt; where S : ILine&lt;R&gt; where R : IVector</code></pre>
   </div>
 
   <h4 class="section">Parameters</h4>
   <dl class="parameters">
     <dt><code>line1</code> <span class="xref">T</span></dt>
-    <dd></dd>
-    <dt><code>line2</code> <span class="xref">T</span></dt>
-    <dd></dd>
+    <dd><p>The first line.</p>
+</dd>
+    <dt><code>line2</code> <span class="xref">S</span></dt>
+    <dd><p>The second line.</p>
+</dd>
     <dt><code>intersection</code> <span class="xref">R</span></dt>
-    <dd></dd>
+    <dd><p>The intersection point, if found.</p>
+</dd>
   </dl>
 
   <h4 class="section">Returns</h4>
@@ -276,9 +288,14 @@ Class LineExtensions  <a class="header-action link-secondary" title="View source
   <h4 class="section">Type Parameters</h4>
   <dl class="parameters">
     <dt><code>T</code></dt>
-    <dd></dd>
+    <dd><p>The type of the first line.</p>
+</dd>
+    <dt><code>S</code></dt>
+    <dd><p>The type of the second line.</p>
+</dd>
     <dt><code>R</code></dt>
-    <dd></dd>
+    <dd><p>The type of the vector used for the lines.</p>
+</dd>
   </dl>
 
 

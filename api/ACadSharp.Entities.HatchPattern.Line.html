@@ -89,7 +89,7 @@
 
 
   <h1 id="ACadSharp_Entities_HatchPattern_Line" data-uid="ACadSharp.Entities.HatchPattern.Line" class="text-break">
-Class HatchPattern.Line  <a class="header-action link-secondary" title="View source" href="https://github.com/DomCR/ACadSharp/blob/master/src/ACadSharp/Entities/HatchPattern.Line.cs/#L10"><i class="bi bi-code-slash"></i></a>
+Class HatchPattern.Line  <a class="header-action link-secondary" title="View source" href="https://github.com/DomCR/ACadSharp/blob/master/src/ACadSharp/Entities/HatchPattern.Line.cs/#L11"><i class="bi bi-code-slash"></i></a>
   </h1>
 
   <div class="facts text-secondary">
@@ -147,7 +147,7 @@ Class HatchPattern.Line  <a class="header-action link-secondary" title="View sou
     <dt>Extension Methods</dt>
     <dd>
   <div>
-      <a class="xref" href="CSMath.Geometry.LineExtensions.html#CSMath_Geometry_LineExtensions_TryFindIntersection__2___0___0___1__">LineExtensions.TryFindIntersection&lt;T, R&gt;(T, T, out R)</a>
+      <a class="xref" href="CSMath.Geometry.LineExtensions.html#CSMath_Geometry_LineExtensions_TryFindIntersection__3___0___1___2__">LineExtensions.TryFindIntersection&lt;T, S, R&gt;(T, S, out R)</a>
   </div>
   </dd></dl>
 
@@ -163,7 +163,7 @@ Class HatchPattern.Line  <a class="header-action link-secondary" title="View sou
 
   <h3 id="ACadSharp_Entities_HatchPattern_Line_Angle" data-uid="ACadSharp.Entities.HatchPattern.Line.Angle">
   Angle
-  <a class="header-action link-secondary" title="View source" href="https://github.com/DomCR/ACadSharp/blob/master/src/ACadSharp/Entities/HatchPattern.Line.cs/#L15"><i class="bi bi-code-slash"></i></a>
+  <a class="header-action link-secondary" title="View source" href="https://github.com/DomCR/ACadSharp/blob/master/src/ACadSharp/Entities/HatchPattern.Line.cs/#L16"><i class="bi bi-code-slash"></i></a>
   </h3>
 
   <div class="markdown level1 summary"><p>Pattern line angle.</p>
@@ -196,7 +196,7 @@ public double Angle { get; set; }</code></pre>
 
   <h3 id="ACadSharp_Entities_HatchPattern_Line_BasePoint" data-uid="ACadSharp.Entities.HatchPattern.Line.BasePoint">
   BasePoint
-  <a class="header-action link-secondary" title="View source" href="https://github.com/DomCR/ACadSharp/blob/master/src/ACadSharp/Entities/HatchPattern.Line.cs/#L21"><i class="bi bi-code-slash"></i></a>
+  <a class="header-action link-secondary" title="View source" href="https://github.com/DomCR/ACadSharp/blob/master/src/ACadSharp/Entities/HatchPattern.Line.cs/#L22"><i class="bi bi-code-slash"></i></a>
   </h3>
 
   <div class="markdown level1 summary"><p>Pattern line base point.</p>
@@ -229,7 +229,7 @@ public XY BasePoint { get; set; }</code></pre>
 
   <h3 id="ACadSharp_Entities_HatchPattern_Line_DashLengths" data-uid="ACadSharp.Entities.HatchPattern.Line.DashLengths">
   DashLengths
-  <a class="header-action link-secondary" title="View source" href="https://github.com/DomCR/ACadSharp/blob/master/src/ACadSharp/Entities/HatchPattern.Line.cs/#L27"><i class="bi bi-code-slash"></i></a>
+  <a class="header-action link-secondary" title="View source" href="https://github.com/DomCR/ACadSharp/blob/master/src/ACadSharp/Entities/HatchPattern.Line.cs/#L28"><i class="bi bi-code-slash"></i></a>
   </h3>
 
   <div class="markdown level1 summary"><p>Line dashes.</p>
@@ -259,11 +259,43 @@ public List&lt;double&gt; DashLengths { get; set; }</code></pre>
 
 
 
+  <a id="ACadSharp_Entities_HatchPattern_Line_Direction_" data-uid="ACadSharp.Entities.HatchPattern.Line.Direction*"></a>
+
+  <h3 id="ACadSharp_Entities_HatchPattern_Line_Direction" data-uid="ACadSharp.Entities.HatchPattern.Line.Direction">
+  Direction
+  <a class="header-action link-secondary" title="View source" href="https://github.com/DomCR/ACadSharp/blob/master/src/ACadSharp/Entities/HatchPattern.Line.cs/#L35"><i class="bi bi-code-slash"></i></a>
+  </h3>
+
+  <div class="markdown level1 summary"><p>Gets the direction vector of the pattern line based on the specified angle.</p>
+</div>
+  <div class="markdown level1 conceptual"></div>
+
+  <div class="codewrapper">
+    <pre><code class="lang-csharp hljs">public XY Direction { get; }</code></pre>
+  </div>
+
+
+
+
+
+  <h4 class="section">Property Value</h4>
+  <dl class="parameters">
+    <dt><a class="xref" href="CSMath.XY.html">XY</a></dt>
+    <dd></dd>
+  </dl>
+
+
+
+
+
+
+
+
   <a id="ACadSharp_Entities_HatchPattern_Line_LineOffset_" data-uid="ACadSharp.Entities.HatchPattern.Line.LineOffset*"></a>
 
   <h3 id="ACadSharp_Entities_HatchPattern_Line_LineOffset" data-uid="ACadSharp.Entities.HatchPattern.Line.LineOffset">
   LineOffset
-  <a class="header-action link-secondary" title="View source" href="https://github.com/DomCR/ACadSharp/blob/master/src/ACadSharp/Entities/HatchPattern.Line.cs/#L34"><i class="bi bi-code-slash"></i></a>
+  <a class="header-action link-secondary" title="View source" href="https://github.com/DomCR/ACadSharp/blob/master/src/ACadSharp/Entities/HatchPattern.Line.cs/#L48"><i class="bi bi-code-slash"></i></a>
   </h3>
 
   <div class="markdown level1 summary"><p>Perpendicular distance for the next line to be located.</p>
@@ -295,7 +327,7 @@ public List&lt;double&gt; DashLengths { get; set; }</code></pre>
 
   <h3 id="ACadSharp_Entities_HatchPattern_Line_Offset" data-uid="ACadSharp.Entities.HatchPattern.Line.Offset">
   Offset
-  <a class="header-action link-secondary" title="View source" href="https://github.com/DomCR/ACadSharp/blob/master/src/ACadSharp/Entities/HatchPattern.Line.cs/#L48"><i class="bi bi-code-slash"></i></a>
+  <a class="header-action link-secondary" title="View source" href="https://github.com/DomCR/ACadSharp/blob/master/src/ACadSharp/Entities/HatchPattern.Line.cs/#L62"><i class="bi bi-code-slash"></i></a>
   </h3>
 
   <div class="markdown level1 summary"><p>Gets or sets the local displacements between lines of the same family.</p>
@@ -328,7 +360,7 @@ public XY Offset { get; set; }</code></pre>
 
   <h3 id="ACadSharp_Entities_HatchPattern_Line_Shift" data-uid="ACadSharp.Entities.HatchPattern.Line.Shift">
   Shift
-  <a class="header-action link-secondary" title="View source" href="https://github.com/DomCR/ACadSharp/blob/master/src/ACadSharp/Entities/HatchPattern.Line.cs/#L54"><i class="bi bi-code-slash"></i></a>
+  <a class="header-action link-secondary" title="View source" href="https://github.com/DomCR/ACadSharp/blob/master/src/ACadSharp/Entities/HatchPattern.Line.cs/#L68"><i class="bi bi-code-slash"></i></a>
   </h3>
 
   <div class="markdown level1 summary"><p>Gets the horizontal shift of the offset after applying the specified angle transformation.</p>
@@ -364,7 +396,7 @@ public XY Offset { get; set; }</code></pre>
 
   <h3 id="ACadSharp_Entities_HatchPattern_Line_Clone" data-uid="ACadSharp.Entities.HatchPattern.Line.Clone">
   Clone()
-  <a class="header-action link-secondary" title="View source" href="https://github.com/DomCR/ACadSharp/blob/master/src/ACadSharp/Entities/HatchPattern.Line.cs/#L69"><i class="bi bi-code-slash"></i></a>
+  <a class="header-action link-secondary" title="View source" href="https://github.com/DomCR/ACadSharp/blob/master/src/ACadSharp/Entities/HatchPattern.Line.cs/#L83"><i class="bi bi-code-slash"></i></a>
   </h3>
 
   <div class="markdown level1 summary"><p>Clones this line.</p>
@@ -392,11 +424,42 @@ public XY Offset { get; set; }</code></pre>
 
 
 
+  <a id="ACadSharp_Entities_HatchPattern_Line_ToLine2D_" data-uid="ACadSharp.Entities.HatchPattern.Line.ToLine2D*"></a>
+
+  <h3 id="ACadSharp_Entities_HatchPattern_Line_ToLine2D" data-uid="ACadSharp.Entities.HatchPattern.Line.ToLine2D">
+  ToLine2D()
+  <a class="header-action link-secondary" title="View source" href="https://github.com/DomCR/ACadSharp/blob/master/src/ACadSharp/Entities/HatchPattern.Line.cs/#L90"><i class="bi bi-code-slash"></i></a>
+  </h3>
+
+  <div class="markdown level1 summary"></div>
+  <div class="markdown level1 conceptual"></div>
+
+  <div class="codewrapper">
+    <pre><code class="lang-csharp hljs">public Line2D ToLine2D()</code></pre>
+  </div>
+
+
+  <h4 class="section">Returns</h4>
+  <dl class="parameters">
+    <dt><a class="xref" href="CSMath.Geometry.Line2D.html">Line2D</a></dt>
+    <dd></dd>
+  </dl>
+
+
+
+
+
+
+
+
+
+
+
 
 </article>
 
         <div class="contribution d-print-none">
-          <a href="https://github.com/DomCR/ACadSharp/blob/master/src/ACadSharp/Entities/HatchPattern.Line.cs/#L10" class="edit-link">Edit this page</a>
+          <a href="https://github.com/DomCR/ACadSharp/blob/master/src/ACadSharp/Entities/HatchPattern.Line.cs/#L11" class="edit-link">Edit this page</a>
         </div>
 
 

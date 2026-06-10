@@ -6,7 +6,7 @@
       <meta name="viewport" content="width=device-width, initial-scale=1.0">
       <meta name="title" content="Struct Line2D | ACadSharp ">
       
-      
+      <meta name="description" content="Represents a 2D line defined by an origin point and a direction vector.">
       <link rel="icon" href="../favicon.ico">
       <link rel="stylesheet" href="../public/docfx.min.css">
       <link rel="stylesheet" href="../public/main.css">
@@ -89,7 +89,7 @@
 
 
   <h1 id="CSMath_Geometry_Line2D" data-uid="CSMath.Geometry.Line2D" class="text-break">
-Struct Line2D  <a class="header-action link-secondary" title="View source" href="https://github.com/DomCR/CSUtilities/blob/master/CSMath/Geometry/Line2D.cs/#L5"><i class="bi bi-code-slash"></i></a>
+Struct Line2D  <a class="header-action link-secondary" title="View source" href="https://github.com/DomCR/CSUtilities/blob/master/CSMath/Geometry/Line2D.cs/#L8"><i class="bi bi-code-slash"></i></a>
   </h1>
 
   <div class="facts text-secondary">
@@ -97,7 +97,8 @@ Struct Line2D  <a class="header-action link-secondary" title="View source" href=
   <dl><dt>Assembly</dt><dd>ACadSharp.dll</dd></dl>
   </div>
 
-  <div class="markdown summary"></div>
+  <div class="markdown summary"><p>Represents a 2D line defined by an origin point and a direction vector.</p>
+</div>
   <div class="markdown conceptual"></div>
 
   <div class="codewrapper">
@@ -121,12 +122,6 @@ Struct Line2D  <a class="header-action link-secondary" title="View source" href=
     <dt>Inherited Members</dt>
     <dd>
     <div>
-      <a class="xref" href="https://learn.microsoft.com/dotnet/api/system.valuetype.equals">ValueType.Equals(object)</a>
-    </div>
-    <div>
-      <a class="xref" href="https://learn.microsoft.com/dotnet/api/system.valuetype.gethashcode">ValueType.GetHashCode()</a>
-    </div>
-    <div>
       <a class="xref" href="https://learn.microsoft.com/dotnet/api/system.valuetype.tostring">ValueType.ToString()</a>
     </div>
     <div>
@@ -147,7 +142,7 @@ Struct Line2D  <a class="header-action link-secondary" title="View source" href=
       <a class="xref" href="CSMath.Geometry.LineExtensions.html#CSMath_Geometry_LineExtensions_IsPointOnLine__1_CSMath_Geometry_ILine___0____0_">LineExtensions.IsPointOnLine&lt;T&gt;(ILine&lt;T&gt;, T)</a>
   </div>
   <div>
-      <a class="xref" href="CSMath.Geometry.LineExtensions.html#CSMath_Geometry_LineExtensions_TryFindIntersection__2___0___0___1__">LineExtensions.TryFindIntersection&lt;T, R&gt;(T, T, out R)</a>
+      <a class="xref" href="CSMath.Geometry.LineExtensions.html#CSMath_Geometry_LineExtensions_TryFindIntersection__3___0___1___2__">LineExtensions.TryFindIntersection&lt;T, S, R&gt;(T, S, out R)</a>
   </div>
   </dd></dl>
 
@@ -163,7 +158,7 @@ Struct Line2D  <a class="header-action link-secondary" title="View source" href=
 
   <h3 id="CSMath_Geometry_Line2D__ctor_CSMath_XY_CSMath_XY_" data-uid="CSMath.Geometry.Line2D.#ctor(CSMath.XY,CSMath.XY)">
   Line2D(XY, XY)
-  <a class="header-action link-secondary" title="View source" href="https://github.com/DomCR/CSUtilities/blob/master/CSMath/Geometry/Line2D.cs/#L17"><i class="bi bi-code-slash"></i></a>
+  <a class="header-action link-secondary" title="View source" href="https://github.com/DomCR/CSUtilities/blob/master/CSMath/Geometry/Line2D.cs/#L26"><i class="bi bi-code-slash"></i></a>
   </h3>
 
   <div class="markdown level1 summary"></div>
@@ -200,7 +195,7 @@ Struct Line2D  <a class="header-action link-secondary" title="View source" href=
 
   <h3 id="CSMath_Geometry_Line2D_Direction" data-uid="CSMath.Geometry.Line2D.Direction">
   Direction
-  <a class="header-action link-secondary" title="View source" href="https://github.com/DomCR/CSUtilities/blob/master/CSMath/Geometry/Line2D.cs/#L8"><i class="bi bi-code-slash"></i></a>
+  <a class="header-action link-secondary" title="View source" href="https://github.com/DomCR/CSUtilities/blob/master/CSMath/Geometry/Line2D.cs/#L11"><i class="bi bi-code-slash"></i></a>
   </h3>
 
   <div class="markdown level1 summary"><p>Direction fo the line</p>
@@ -232,10 +227,11 @@ Struct Line2D  <a class="header-action link-secondary" title="View source" href=
 
   <h3 id="CSMath_Geometry_Line2D_Offset" data-uid="CSMath.Geometry.Line2D.Offset">
   Offset
-  <a class="header-action link-secondary" title="View source" href="https://github.com/DomCR/CSUtilities/blob/master/CSMath/Geometry/Line2D.cs/#L10"><i class="bi bi-code-slash"></i></a>
+  <a class="header-action link-secondary" title="View source" href="https://github.com/DomCR/CSUtilities/blob/master/CSMath/Geometry/Line2D.cs/#L16"><i class="bi bi-code-slash"></i></a>
   </h3>
 
-  <div class="markdown level1 summary"></div>
+  <div class="markdown level1 summary"><p>Gets the y-intercept of the line, calculated from the origin and slope.</p>
+</div>
   <div class="markdown level1 conceptual"></div>
 
   <div class="codewrapper">
@@ -263,7 +259,7 @@ Struct Line2D  <a class="header-action link-secondary" title="View source" href=
 
   <h3 id="CSMath_Geometry_Line2D_Origin" data-uid="CSMath.Geometry.Line2D.Origin">
   Origin
-  <a class="header-action link-secondary" title="View source" href="https://github.com/DomCR/CSUtilities/blob/master/CSMath/Geometry/Line2D.cs/#L13"><i class="bi bi-code-slash"></i></a>
+  <a class="header-action link-secondary" title="View source" href="https://github.com/DomCR/CSUtilities/blob/master/CSMath/Geometry/Line2D.cs/#L19"><i class="bi bi-code-slash"></i></a>
   </h3>
 
   <div class="markdown level1 summary"><p>Origin point that the line intersects with</p>
@@ -295,10 +291,11 @@ Struct Line2D  <a class="header-action link-secondary" title="View source" href=
 
   <h3 id="CSMath_Geometry_Line2D_Slope" data-uid="CSMath.Geometry.Line2D.Slope">
   Slope
-  <a class="header-action link-secondary" title="View source" href="https://github.com/DomCR/CSUtilities/blob/master/CSMath/Geometry/Line2D.cs/#L15"><i class="bi bi-code-slash"></i></a>
+  <a class="header-action link-secondary" title="View source" href="https://github.com/DomCR/CSUtilities/blob/master/CSMath/Geometry/Line2D.cs/#L24"><i class="bi bi-code-slash"></i></a>
   </h3>
 
-  <div class="markdown level1 summary"></div>
+  <div class="markdown level1 summary"><p>Gets the slope of the line based on its direction vector.</p>
+</div>
   <div class="markdown level1 conceptual"></div>
 
   <div class="codewrapper">
@@ -330,7 +327,7 @@ Struct Line2D  <a class="header-action link-secondary" title="View source" href=
 
   <h3 id="CSMath_Geometry_Line2D_Equals_CSMath_Geometry_Line2D_" data-uid="CSMath.Geometry.Line2D.Equals(CSMath.Geometry.Line2D)">
   Equals(Line2D)
-  <a class="header-action link-secondary" title="View source" href="https://github.com/DomCR/CSUtilities/blob/master/CSMath/Geometry/Line2D.cs/#L24"><i class="bi bi-code-slash"></i></a>
+  <a class="header-action link-secondary" title="View source" href="https://github.com/DomCR/CSUtilities/blob/master/CSMath/Geometry/Line2D.cs/#L54"><i class="bi bi-code-slash"></i></a>
   </h3>
 
   <div class="markdown level1 summary"><p>Indicates whether the current object is equal to another object of the same type.</p>
@@ -365,11 +362,50 @@ Struct Line2D  <a class="header-action link-secondary" title="View source" href=
 
 
 
+  <a id="CSMath_Geometry_Line2D_Equals_" data-uid="CSMath.Geometry.Line2D.Equals*"></a>
+
+  <h3 id="CSMath_Geometry_Line2D_Equals_System_Object_" data-uid="CSMath.Geometry.Line2D.Equals(System.Object)">
+  Equals(object)
+  <a class="header-action link-secondary" title="View source" href="https://github.com/DomCR/CSUtilities/blob/master/CSMath/Geometry/Line2D.cs/#L60"><i class="bi bi-code-slash"></i></a>
+  </h3>
+
+  <div class="markdown level1 summary"><p>Indicates whether this instance and a specified object are equal.</p>
+</div>
+  <div class="markdown level1 conceptual"></div>
+
+  <div class="codewrapper">
+    <pre><code class="lang-csharp hljs">public override bool Equals(object obj)</code></pre>
+  </div>
+
+  <h4 class="section">Parameters</h4>
+  <dl class="parameters">
+    <dt><code>obj</code> <a class="xref" href="https://learn.microsoft.com/dotnet/api/system.object">object</a></dt>
+    <dd><p>The object to compare with the current instance.</p>
+</dd>
+  </dl>
+
+  <h4 class="section">Returns</h4>
+  <dl class="parameters">
+    <dt><a class="xref" href="https://learn.microsoft.com/dotnet/api/system.boolean">bool</a></dt>
+    <dd><p><a href="https://learn.microsoft.com/dotnet/csharp/language-reference/builtin-types/bool">true</a> if <code class="paramref">obj</code> and this instance are the same type and represent the same value; otherwise, <a href="https://learn.microsoft.com/dotnet/csharp/language-reference/builtin-types/bool">false</a>.</p>
+</dd>
+  </dl>
+
+
+
+
+
+
+
+
+
+
+
   <a id="CSMath_Geometry_Line2D_FindIntersection_" data-uid="CSMath.Geometry.Line2D.FindIntersection*"></a>
 
   <h3 id="CSMath_Geometry_Line2D_FindIntersection_CSMath_Geometry_ILine_CSMath_XY__" data-uid="CSMath.Geometry.Line2D.FindIntersection(CSMath.Geometry.ILine{CSMath.XY})">
   FindIntersection(ILine&lt;XY&gt;)
-  <a class="header-action link-secondary" title="View source" href="https://github.com/DomCR/CSUtilities/blob/master/CSMath/Geometry/Line2D.cs/#L30"><i class="bi bi-code-slash"></i></a>
+  <a class="header-action link-secondary" title="View source" href="https://github.com/DomCR/CSUtilities/blob/master/CSMath/Geometry/Line2D.cs/#L66"><i class="bi bi-code-slash"></i></a>
   </h3>
 
   <div class="markdown level1 summary"><p>Find the intersection between 2 lines.</p>
@@ -403,11 +439,164 @@ Struct Line2D  <a class="header-action link-secondary" title="View source" href=
 
 
 
+  <a id="CSMath_Geometry_Line2D_FromPoints_" data-uid="CSMath.Geometry.Line2D.FromPoints*"></a>
+
+  <h3 id="CSMath_Geometry_Line2D_FromPoints_CSMath_XY_CSMath_XY_" data-uid="CSMath.Geometry.Line2D.FromPoints(CSMath.XY,CSMath.XY)">
+  FromPoints(XY, XY)
+  <a class="header-action link-secondary" title="View source" href="https://github.com/DomCR/CSUtilities/blob/master/CSMath/Geometry/Line2D.cs/#L38"><i class="bi bi-code-slash"></i></a>
+  </h3>
+
+  <div class="markdown level1 summary"><p>Creates a line from 2 points, the first point is the origin and the second point is used to calculate the direction.</p>
+</div>
+  <div class="markdown level1 conceptual"></div>
+
+  <div class="codewrapper">
+    <pre><code class="lang-csharp hljs">public static Line2D FromPoints(XY pt1, XY pt2)</code></pre>
+  </div>
+
+  <h4 class="section">Parameters</h4>
+  <dl class="parameters">
+    <dt><code>pt1</code> <a class="xref" href="CSMath.XY.html">XY</a></dt>
+    <dd><p>The first point, which will be the origin of the line.</p>
+</dd>
+    <dt><code>pt2</code> <a class="xref" href="CSMath.XY.html">XY</a></dt>
+    <dd><p>The second point, used to calculate the direction of the line.</p>
+</dd>
+  </dl>
+
+  <h4 class="section">Returns</h4>
+  <dl class="parameters">
+    <dt><a class="xref" href="CSMath.Geometry.Line2D.html">Line2D</a></dt>
+    <dd><p>A new instance of the <a class="xref" href="CSMath.Geometry.Line2D.html">Line2D</a> class.</p>
+</dd>
+  </dl>
+
+
+
+
+
+
+
+
+
+
+
+  <a id="CSMath_Geometry_Line2D_FromSegment2D_" data-uid="CSMath.Geometry.Line2D.FromSegment2D*"></a>
+
+  <h3 id="CSMath_Geometry_Line2D_FromSegment2D_CSMath_Geometry_Segment2D_" data-uid="CSMath.Geometry.Line2D.FromSegment2D(CSMath.Geometry.Segment2D)">
+  FromSegment2D(Segment2D)
+  <a class="header-action link-secondary" title="View source" href="https://github.com/DomCR/CSUtilities/blob/master/CSMath/Geometry/Line2D.cs/#L48"><i class="bi bi-code-slash"></i></a>
+  </h3>
+
+  <div class="markdown level1 summary"><p>Creates a line from a 2D segment, using the segment's origin and direction.</p>
+</div>
+  <div class="markdown level1 conceptual"></div>
+
+  <div class="codewrapper">
+    <pre><code class="lang-csharp hljs">public static Line2D FromSegment2D(Segment2D segment)</code></pre>
+  </div>
+
+  <h4 class="section">Parameters</h4>
+  <dl class="parameters">
+    <dt><code>segment</code> <a class="xref" href="CSMath.Geometry.Segment2D.html">Segment2D</a></dt>
+    <dd><p>The 2D segment used to create the line.</p>
+</dd>
+  </dl>
+
+  <h4 class="section">Returns</h4>
+  <dl class="parameters">
+    <dt><a class="xref" href="CSMath.Geometry.Line2D.html">Line2D</a></dt>
+    <dd><p>A new instance of the <a class="xref" href="CSMath.Geometry.Line2D.html">Line2D</a> class.</p>
+</dd>
+  </dl>
+
+
+
+
+
+
+
+
+
+
+
+  <a id="CSMath_Geometry_Line2D_GetHashCode_" data-uid="CSMath.Geometry.Line2D.GetHashCode*"></a>
+
+  <h3 id="CSMath_Geometry_Line2D_GetHashCode" data-uid="CSMath.Geometry.Line2D.GetHashCode">
+  GetHashCode()
+  <a class="header-action link-secondary" title="View source" href="https://github.com/DomCR/CSUtilities/blob/master/CSMath/Geometry/Line2D.cs/#L80"><i class="bi bi-code-slash"></i></a>
+  </h3>
+
+  <div class="markdown level1 summary"><p>Returns the hash code for this instance.</p>
+</div>
+  <div class="markdown level1 conceptual"></div>
+
+  <div class="codewrapper">
+    <pre><code class="lang-csharp hljs">public override int GetHashCode()</code></pre>
+  </div>
+
+
+  <h4 class="section">Returns</h4>
+  <dl class="parameters">
+    <dt><a class="xref" href="https://learn.microsoft.com/dotnet/api/system.int32">int</a></dt>
+    <dd><p>A 32-bit signed integer that is the hash code for this instance.</p>
+</dd>
+  </dl>
+
+
+
+
+
+
+
+
+
+
+
+  <a id="CSMath_Geometry_Line2D_PointInLine_" data-uid="CSMath.Geometry.Line2D.PointInLine*"></a>
+
+  <h3 id="CSMath_Geometry_Line2D_PointInLine_System_Double_" data-uid="CSMath.Geometry.Line2D.PointInLine(System.Double)">
+  PointInLine(double)
+  <a class="header-action link-secondary" title="View source" href="https://github.com/DomCR/CSUtilities/blob/master/CSMath/Geometry/Line2D.cs/#L90"><i class="bi bi-code-slash"></i></a>
+  </h3>
+
+  <div class="markdown level1 summary"><p>Determines if a given point lies on the line.</p>
+</div>
+  <div class="markdown level1 conceptual"></div>
+
+  <div class="codewrapper">
+    <pre><code class="lang-csharp hljs">public XY PointInLine(double lambda)</code></pre>
+  </div>
+
+  <h4 class="section">Parameters</h4>
+  <dl class="parameters">
+    <dt><code>lambda</code> <a class="xref" href="https://learn.microsoft.com/dotnet/api/system.double">double</a></dt>
+    <dd><p>The parameter value along the line.</p>
+</dd>
+  </dl>
+
+  <h4 class="section">Returns</h4>
+  <dl class="parameters">
+    <dt><a class="xref" href="CSMath.XY.html">XY</a></dt>
+    <dd><p>The point on the line corresponding to the given parameter value.</p>
+</dd>
+  </dl>
+
+
+
+
+
+
+
+
+
+
+
 
 </article>
 
         <div class="contribution d-print-none">
-          <a href="https://github.com/DomCR/CSUtilities/blob/master/CSMath/Geometry/Line2D.cs/#L5" class="edit-link">Edit this page</a>
+          <a href="https://github.com/DomCR/CSUtilities/blob/master/CSMath/Geometry/Line2D.cs/#L8" class="edit-link">Edit this page</a>
         </div>
 
 

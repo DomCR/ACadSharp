@@ -7547,6 +7547,19 @@ references:
   isSpec: "True"
   fullName: ACadSharp.Entities.Arc.Sweep
   nameWithType: Arc.Sweep
+- uid: ACadSharp.Entities.Arc.ToArc2D
+  name: ToArc2D()
+  href: api/ACadSharp.Entities.Arc.html#ACadSharp_Entities_Arc_ToArc2D
+  commentId: M:ACadSharp.Entities.Arc.ToArc2D
+  fullName: ACadSharp.Entities.Arc.ToArc2D()
+  nameWithType: Arc.ToArc2D()
+- uid: ACadSharp.Entities.Arc.ToArc2D*
+  name: ToArc2D
+  href: api/ACadSharp.Entities.Arc.html#ACadSharp_Entities_Arc_ToArc2D_
+  commentId: Overload:ACadSharp.Entities.Arc.ToArc2D
+  isSpec: "True"
+  fullName: ACadSharp.Entities.Arc.ToArc2D
+  nameWithType: Arc.ToArc2D
 - uid: ACadSharp.Entities.AttachmentPointType
   name: AttachmentPointType
   href: api/ACadSharp.Entities.AttachmentPointType.html
@@ -11420,6 +11433,19 @@ references:
   isSpec: "True"
   fullName: ACadSharp.Entities.Hatch.BoundaryPath.Arc.EndAngle
   nameWithType: Hatch.BoundaryPath.Arc.EndAngle
+- uid: ACadSharp.Entities.Hatch.BoundaryPath.Arc.FindIntersections(CSMath.Geometry.Line2D)
+  name: FindIntersections(Line2D)
+  href: api/ACadSharp.Entities.Hatch.BoundaryPath.Arc.html#ACadSharp_Entities_Hatch_BoundaryPath_Arc_FindIntersections_CSMath_Geometry_Line2D_
+  commentId: M:ACadSharp.Entities.Hatch.BoundaryPath.Arc.FindIntersections(CSMath.Geometry.Line2D)
+  fullName: ACadSharp.Entities.Hatch.BoundaryPath.Arc.FindIntersections(CSMath.Geometry.Line2D)
+  nameWithType: Hatch.BoundaryPath.Arc.FindIntersections(Line2D)
+- uid: ACadSharp.Entities.Hatch.BoundaryPath.Arc.FindIntersections*
+  name: FindIntersections
+  href: api/ACadSharp.Entities.Hatch.BoundaryPath.Arc.html#ACadSharp_Entities_Hatch_BoundaryPath_Arc_FindIntersections_
+  commentId: Overload:ACadSharp.Entities.Hatch.BoundaryPath.Arc.FindIntersections
+  isSpec: "True"
+  fullName: ACadSharp.Entities.Hatch.BoundaryPath.Arc.FindIntersections
+  nameWithType: Hatch.BoundaryPath.Arc.FindIntersections
 - uid: ACadSharp.Entities.Hatch.BoundaryPath.Arc.GetBoundingBox
   name: GetBoundingBox()
   href: api/ACadSharp.Entities.Hatch.BoundaryPath.Arc.html#ACadSharp_Entities_Hatch_BoundaryPath_Arc_GetBoundingBox
@@ -11475,6 +11501,19 @@ references:
   isSpec: "True"
   fullName: ACadSharp.Entities.Hatch.BoundaryPath.Arc.StartAngle
   nameWithType: Hatch.BoundaryPath.Arc.StartAngle
+- uid: ACadSharp.Entities.Hatch.BoundaryPath.Arc.ToArc2D
+  name: ToArc2D()
+  href: api/ACadSharp.Entities.Hatch.BoundaryPath.Arc.html#ACadSharp_Entities_Hatch_BoundaryPath_Arc_ToArc2D
+  commentId: M:ACadSharp.Entities.Hatch.BoundaryPath.Arc.ToArc2D
+  fullName: ACadSharp.Entities.Hatch.BoundaryPath.Arc.ToArc2D()
+  nameWithType: Hatch.BoundaryPath.Arc.ToArc2D()
+- uid: ACadSharp.Entities.Hatch.BoundaryPath.Arc.ToArc2D*
+  name: ToArc2D
+  href: api/ACadSharp.Entities.Hatch.BoundaryPath.Arc.html#ACadSharp_Entities_Hatch_BoundaryPath_Arc_ToArc2D_
+  commentId: Overload:ACadSharp.Entities.Hatch.BoundaryPath.Arc.ToArc2D
+  isSpec: "True"
+  fullName: ACadSharp.Entities.Hatch.BoundaryPath.Arc.ToArc2D
+  nameWithType: Hatch.BoundaryPath.Arc.ToArc2D
 - uid: ACadSharp.Entities.Hatch.BoundaryPath.Arc.ToEntity
   name: ToEntity()
   href: api/ACadSharp.Entities.Hatch.BoundaryPath.Arc.html#ACadSharp_Entities_Hatch_BoundaryPath_Arc_ToEntity
@@ -11546,6 +11585,19 @@ references:
   isSpec: "True"
   fullName: ACadSharp.Entities.Hatch.BoundaryPath.Edge.Clone
   nameWithType: Hatch.BoundaryPath.Edge.Clone
+- uid: ACadSharp.Entities.Hatch.BoundaryPath.Edge.FindIntersections(CSMath.Geometry.Line2D)
+  name: FindIntersections(Line2D)
+  href: api/ACadSharp.Entities.Hatch.BoundaryPath.Edge.html#ACadSharp_Entities_Hatch_BoundaryPath_Edge_FindIntersections_CSMath_Geometry_Line2D_
+  commentId: M:ACadSharp.Entities.Hatch.BoundaryPath.Edge.FindIntersections(CSMath.Geometry.Line2D)
+  fullName: ACadSharp.Entities.Hatch.BoundaryPath.Edge.FindIntersections(CSMath.Geometry.Line2D)
+  nameWithType: Hatch.BoundaryPath.Edge.FindIntersections(Line2D)
+- uid: ACadSharp.Entities.Hatch.BoundaryPath.Edge.FindIntersections*
+  name: FindIntersections
+  href: api/ACadSharp.Entities.Hatch.BoundaryPath.Edge.html#ACadSharp_Entities_Hatch_BoundaryPath_Edge_FindIntersections_
+  commentId: Overload:ACadSharp.Entities.Hatch.BoundaryPath.Edge.FindIntersections
+  isSpec: "True"
+  fullName: ACadSharp.Entities.Hatch.BoundaryPath.Edge.FindIntersections
+  nameWithType: Hatch.BoundaryPath.Edge.FindIntersections
 - uid: ACadSharp.Entities.Hatch.BoundaryPath.Edge.GetBoundingBox
   name: GetBoundingBox()
   href: api/ACadSharp.Entities.Hatch.BoundaryPath.Edge.html#ACadSharp_Entities_Hatch_BoundaryPath_Edge_GetBoundingBox
@@ -11720,6 +11772,19 @@ references:
   isSpec: "True"
   fullName: ACadSharp.Entities.Hatch.BoundaryPath.Ellipse.EndAngle
   nameWithType: Hatch.BoundaryPath.Ellipse.EndAngle
+- uid: ACadSharp.Entities.Hatch.BoundaryPath.Ellipse.FindIntersections(CSMath.Geometry.Line2D)
+  name: FindIntersections(Line2D)
+  href: api/ACadSharp.Entities.Hatch.BoundaryPath.Ellipse.html#ACadSharp_Entities_Hatch_BoundaryPath_Ellipse_FindIntersections_CSMath_Geometry_Line2D_
+  commentId: M:ACadSharp.Entities.Hatch.BoundaryPath.Ellipse.FindIntersections(CSMath.Geometry.Line2D)
+  fullName: ACadSharp.Entities.Hatch.BoundaryPath.Ellipse.FindIntersections(CSMath.Geometry.Line2D)
+  nameWithType: Hatch.BoundaryPath.Ellipse.FindIntersections(Line2D)
+- uid: ACadSharp.Entities.Hatch.BoundaryPath.Ellipse.FindIntersections*
+  name: FindIntersections
+  href: api/ACadSharp.Entities.Hatch.BoundaryPath.Ellipse.html#ACadSharp_Entities_Hatch_BoundaryPath_Ellipse_FindIntersections_
+  commentId: Overload:ACadSharp.Entities.Hatch.BoundaryPath.Ellipse.FindIntersections
+  isSpec: "True"
+  fullName: ACadSharp.Entities.Hatch.BoundaryPath.Ellipse.FindIntersections
+  nameWithType: Hatch.BoundaryPath.Ellipse.FindIntersections
 - uid: ACadSharp.Entities.Hatch.BoundaryPath.Ellipse.GetBoundingBox
   name: GetBoundingBox()
   href: api/ACadSharp.Entities.Hatch.BoundaryPath.Ellipse.html#ACadSharp_Entities_Hatch_BoundaryPath_Ellipse_GetBoundingBox
@@ -11866,6 +11931,19 @@ references:
   isSpec: "True"
   fullName: ACadSharp.Entities.Hatch.BoundaryPath.Entities
   nameWithType: Hatch.BoundaryPath.Entities
+- uid: ACadSharp.Entities.Hatch.BoundaryPath.FindIntersections(CSMath.Geometry.Line2D)
+  name: FindIntersections(Line2D)
+  href: api/ACadSharp.Entities.Hatch.BoundaryPath.html#ACadSharp_Entities_Hatch_BoundaryPath_FindIntersections_CSMath_Geometry_Line2D_
+  commentId: M:ACadSharp.Entities.Hatch.BoundaryPath.FindIntersections(CSMath.Geometry.Line2D)
+  fullName: ACadSharp.Entities.Hatch.BoundaryPath.FindIntersections(CSMath.Geometry.Line2D)
+  nameWithType: Hatch.BoundaryPath.FindIntersections(Line2D)
+- uid: ACadSharp.Entities.Hatch.BoundaryPath.FindIntersections*
+  name: FindIntersections
+  href: api/ACadSharp.Entities.Hatch.BoundaryPath.html#ACadSharp_Entities_Hatch_BoundaryPath_FindIntersections_
+  commentId: Overload:ACadSharp.Entities.Hatch.BoundaryPath.FindIntersections
+  isSpec: "True"
+  fullName: ACadSharp.Entities.Hatch.BoundaryPath.FindIntersections
+  nameWithType: Hatch.BoundaryPath.FindIntersections
 - uid: ACadSharp.Entities.Hatch.BoundaryPath.Flags
   name: Flags
   href: api/ACadSharp.Entities.Hatch.BoundaryPath.html#ACadSharp_Entities_Hatch_BoundaryPath_Flags
@@ -11981,6 +12059,19 @@ references:
   isSpec: "True"
   fullName: ACadSharp.Entities.Hatch.BoundaryPath.Line.End
   nameWithType: Hatch.BoundaryPath.Line.End
+- uid: ACadSharp.Entities.Hatch.BoundaryPath.Line.FindIntersections(CSMath.Geometry.Line2D)
+  name: FindIntersections(Line2D)
+  href: api/ACadSharp.Entities.Hatch.BoundaryPath.Line.html#ACadSharp_Entities_Hatch_BoundaryPath_Line_FindIntersections_CSMath_Geometry_Line2D_
+  commentId: M:ACadSharp.Entities.Hatch.BoundaryPath.Line.FindIntersections(CSMath.Geometry.Line2D)
+  fullName: ACadSharp.Entities.Hatch.BoundaryPath.Line.FindIntersections(CSMath.Geometry.Line2D)
+  nameWithType: Hatch.BoundaryPath.Line.FindIntersections(Line2D)
+- uid: ACadSharp.Entities.Hatch.BoundaryPath.Line.FindIntersections*
+  name: FindIntersections
+  href: api/ACadSharp.Entities.Hatch.BoundaryPath.Line.html#ACadSharp_Entities_Hatch_BoundaryPath_Line_FindIntersections_
+  commentId: Overload:ACadSharp.Entities.Hatch.BoundaryPath.Line.FindIntersections
+  isSpec: "True"
+  fullName: ACadSharp.Entities.Hatch.BoundaryPath.Line.FindIntersections
+  nameWithType: Hatch.BoundaryPath.Line.FindIntersections
 - uid: ACadSharp.Entities.Hatch.BoundaryPath.Line.GetBoundingBox
   name: GetBoundingBox()
   href: api/ACadSharp.Entities.Hatch.BoundaryPath.Line.html#ACadSharp_Entities_Hatch_BoundaryPath_Line_GetBoundingBox
@@ -12020,6 +12111,19 @@ references:
   isSpec: "True"
   fullName: ACadSharp.Entities.Hatch.BoundaryPath.Line.ToEntity
   nameWithType: Hatch.BoundaryPath.Line.ToEntity
+- uid: ACadSharp.Entities.Hatch.BoundaryPath.Line.ToSegment2D
+  name: ToSegment2D()
+  href: api/ACadSharp.Entities.Hatch.BoundaryPath.Line.html#ACadSharp_Entities_Hatch_BoundaryPath_Line_ToSegment2D
+  commentId: M:ACadSharp.Entities.Hatch.BoundaryPath.Line.ToSegment2D
+  fullName: ACadSharp.Entities.Hatch.BoundaryPath.Line.ToSegment2D()
+  nameWithType: Hatch.BoundaryPath.Line.ToSegment2D()
+- uid: ACadSharp.Entities.Hatch.BoundaryPath.Line.ToSegment2D*
+  name: ToSegment2D
+  href: api/ACadSharp.Entities.Hatch.BoundaryPath.Line.html#ACadSharp_Entities_Hatch_BoundaryPath_Line_ToSegment2D_
+  commentId: Overload:ACadSharp.Entities.Hatch.BoundaryPath.Line.ToSegment2D
+  isSpec: "True"
+  fullName: ACadSharp.Entities.Hatch.BoundaryPath.Line.ToSegment2D
+  nameWithType: Hatch.BoundaryPath.Line.ToSegment2D
 - uid: ACadSharp.Entities.Hatch.BoundaryPath.Line.Type
   name: Type
   href: api/ACadSharp.Entities.Hatch.BoundaryPath.Line.html#ACadSharp_Entities_Hatch_BoundaryPath_Line_Type
@@ -12115,6 +12219,19 @@ references:
   isSpec: "True"
   fullName: ACadSharp.Entities.Hatch.BoundaryPath.Polyline.Clone
   nameWithType: Hatch.BoundaryPath.Polyline.Clone
+- uid: ACadSharp.Entities.Hatch.BoundaryPath.Polyline.FindIntersections(CSMath.Geometry.Line2D)
+  name: FindIntersections(Line2D)
+  href: api/ACadSharp.Entities.Hatch.BoundaryPath.Polyline.html#ACadSharp_Entities_Hatch_BoundaryPath_Polyline_FindIntersections_CSMath_Geometry_Line2D_
+  commentId: M:ACadSharp.Entities.Hatch.BoundaryPath.Polyline.FindIntersections(CSMath.Geometry.Line2D)
+  fullName: ACadSharp.Entities.Hatch.BoundaryPath.Polyline.FindIntersections(CSMath.Geometry.Line2D)
+  nameWithType: Hatch.BoundaryPath.Polyline.FindIntersections(Line2D)
+- uid: ACadSharp.Entities.Hatch.BoundaryPath.Polyline.FindIntersections*
+  name: FindIntersections
+  href: api/ACadSharp.Entities.Hatch.BoundaryPath.Polyline.html#ACadSharp_Entities_Hatch_BoundaryPath_Polyline_FindIntersections_
+  commentId: Overload:ACadSharp.Entities.Hatch.BoundaryPath.Polyline.FindIntersections
+  isSpec: "True"
+  fullName: ACadSharp.Entities.Hatch.BoundaryPath.Polyline.FindIntersections
+  nameWithType: Hatch.BoundaryPath.Polyline.FindIntersections
 - uid: ACadSharp.Entities.Hatch.BoundaryPath.Polyline.GetBoundingBox
   name: GetBoundingBox()
   href: api/ACadSharp.Entities.Hatch.BoundaryPath.Polyline.html#ACadSharp_Entities_Hatch_BoundaryPath_Polyline_GetBoundingBox
@@ -12292,6 +12409,19 @@ references:
   isSpec: "True"
   fullName: ACadSharp.Entities.Hatch.BoundaryPath.Spline.EndTangent
   nameWithType: Hatch.BoundaryPath.Spline.EndTangent
+- uid: ACadSharp.Entities.Hatch.BoundaryPath.Spline.FindIntersections(CSMath.Geometry.Line2D)
+  name: FindIntersections(Line2D)
+  href: api/ACadSharp.Entities.Hatch.BoundaryPath.Spline.html#ACadSharp_Entities_Hatch_BoundaryPath_Spline_FindIntersections_CSMath_Geometry_Line2D_
+  commentId: M:ACadSharp.Entities.Hatch.BoundaryPath.Spline.FindIntersections(CSMath.Geometry.Line2D)
+  fullName: ACadSharp.Entities.Hatch.BoundaryPath.Spline.FindIntersections(CSMath.Geometry.Line2D)
+  nameWithType: Hatch.BoundaryPath.Spline.FindIntersections(Line2D)
+- uid: ACadSharp.Entities.Hatch.BoundaryPath.Spline.FindIntersections*
+  name: FindIntersections
+  href: api/ACadSharp.Entities.Hatch.BoundaryPath.Spline.html#ACadSharp_Entities_Hatch_BoundaryPath_Spline_FindIntersections_
+  commentId: Overload:ACadSharp.Entities.Hatch.BoundaryPath.Spline.FindIntersections
+  isSpec: "True"
+  fullName: ACadSharp.Entities.Hatch.BoundaryPath.Spline.FindIntersections
+  nameWithType: Hatch.BoundaryPath.Spline.FindIntersections
 - uid: ACadSharp.Entities.Hatch.BoundaryPath.Spline.FitPoints
   name: FitPoints
   href: api/ACadSharp.Entities.Hatch.BoundaryPath.Spline.html#ACadSharp_Entities_Hatch_BoundaryPath_Spline_FitPoints
@@ -12477,6 +12607,19 @@ references:
   isSpec: "True"
   fullName: ACadSharp.Entities.Hatch.Explode
   nameWithType: Hatch.Explode
+- uid: ACadSharp.Entities.Hatch.ExplodePattern
+  name: ExplodePattern()
+  href: api/ACadSharp.Entities.Hatch.html#ACadSharp_Entities_Hatch_ExplodePattern
+  commentId: M:ACadSharp.Entities.Hatch.ExplodePattern
+  fullName: ACadSharp.Entities.Hatch.ExplodePattern()
+  nameWithType: Hatch.ExplodePattern()
+- uid: ACadSharp.Entities.Hatch.ExplodePattern*
+  name: ExplodePattern
+  href: api/ACadSharp.Entities.Hatch.html#ACadSharp_Entities_Hatch_ExplodePattern_
+  commentId: Overload:ACadSharp.Entities.Hatch.ExplodePattern
+  isSpec: "True"
+  fullName: ACadSharp.Entities.Hatch.ExplodePattern
+  nameWithType: Hatch.ExplodePattern
 - uid: ACadSharp.Entities.Hatch.GetBoundingBox
   name: GetBoundingBox()
   href: api/ACadSharp.Entities.Hatch.html#ACadSharp_Entities_Hatch_GetBoundingBox
@@ -12945,6 +13088,19 @@ references:
   isSpec: "True"
   fullName: ACadSharp.Entities.HatchPattern.Line.DashLengths
   nameWithType: HatchPattern.Line.DashLengths
+- uid: ACadSharp.Entities.HatchPattern.Line.Direction
+  name: Direction
+  href: api/ACadSharp.Entities.HatchPattern.Line.html#ACadSharp_Entities_HatchPattern_Line_Direction
+  commentId: P:ACadSharp.Entities.HatchPattern.Line.Direction
+  fullName: ACadSharp.Entities.HatchPattern.Line.Direction
+  nameWithType: HatchPattern.Line.Direction
+- uid: ACadSharp.Entities.HatchPattern.Line.Direction*
+  name: Direction
+  href: api/ACadSharp.Entities.HatchPattern.Line.html#ACadSharp_Entities_HatchPattern_Line_Direction_
+  commentId: Overload:ACadSharp.Entities.HatchPattern.Line.Direction
+  isSpec: "True"
+  fullName: ACadSharp.Entities.HatchPattern.Line.Direction
+  nameWithType: HatchPattern.Line.Direction
 - uid: ACadSharp.Entities.HatchPattern.Line.LineOffset
   name: LineOffset
   href: api/ACadSharp.Entities.HatchPattern.Line.html#ACadSharp_Entities_HatchPattern_Line_LineOffset
@@ -12984,6 +13140,19 @@ references:
   isSpec: "True"
   fullName: ACadSharp.Entities.HatchPattern.Line.Shift
   nameWithType: HatchPattern.Line.Shift
+- uid: ACadSharp.Entities.HatchPattern.Line.ToLine2D
+  name: ToLine2D()
+  href: api/ACadSharp.Entities.HatchPattern.Line.html#ACadSharp_Entities_HatchPattern_Line_ToLine2D
+  commentId: M:ACadSharp.Entities.HatchPattern.Line.ToLine2D
+  fullName: ACadSharp.Entities.HatchPattern.Line.ToLine2D()
+  nameWithType: HatchPattern.Line.ToLine2D()
+- uid: ACadSharp.Entities.HatchPattern.Line.ToLine2D*
+  name: ToLine2D
+  href: api/ACadSharp.Entities.HatchPattern.Line.html#ACadSharp_Entities_HatchPattern_Line_ToLine2D_
+  commentId: Overload:ACadSharp.Entities.HatchPattern.Line.ToLine2D
+  isSpec: "True"
+  fullName: ACadSharp.Entities.HatchPattern.Line.ToLine2D
+  nameWithType: HatchPattern.Line.ToLine2D
 - uid: ACadSharp.Entities.HatchPattern.Lines
   name: Lines
   href: api/ACadSharp.Entities.HatchPattern.html#ACadSharp_Entities_HatchPattern_Lines
@@ -14504,6 +14673,19 @@ references:
   isSpec: "True"
   fullName: ACadSharp.Entities.Line.Thickness
   nameWithType: Line.Thickness
+- uid: ACadSharp.Entities.Line.ToSegment3D
+  name: ToSegment3D()
+  href: api/ACadSharp.Entities.Line.html#ACadSharp_Entities_Line_ToSegment3D
+  commentId: M:ACadSharp.Entities.Line.ToSegment3D
+  fullName: ACadSharp.Entities.Line.ToSegment3D()
+  nameWithType: Line.ToSegment3D()
+- uid: ACadSharp.Entities.Line.ToSegment3D*
+  name: ToSegment3D
+  href: api/ACadSharp.Entities.Line.html#ACadSharp_Entities_Line_ToSegment3D_
+  commentId: Overload:ACadSharp.Entities.Line.ToSegment3D
+  isSpec: "True"
+  fullName: ACadSharp.Entities.Line.ToSegment3D
+  nameWithType: Line.ToSegment3D
 - uid: ACadSharp.Entities.LineSpacingStyleType
   name: LineSpacingStyleType
   href: api/ACadSharp.Entities.LineSpacingStyleType.html
@@ -53460,6 +53642,185 @@ references:
   commentId: N:CSMath.Geometry
   fullName: CSMath.Geometry
   nameWithType: CSMath.Geometry
+- uid: CSMath.Geometry.Arc2D
+  name: Arc2D
+  href: api/CSMath.Geometry.Arc2D.html
+  commentId: T:CSMath.Geometry.Arc2D
+  fullName: CSMath.Geometry.Arc2D
+  nameWithType: Arc2D
+- uid: CSMath.Geometry.Arc2D.#ctor(CSMath.XY,System.Double,System.Double,System.Double)
+  name: Arc2D(XY, double, double, double)
+  href: api/CSMath.Geometry.Arc2D.html#CSMath_Geometry_Arc2D__ctor_CSMath_XY_System_Double_System_Double_System_Double_
+  commentId: M:CSMath.Geometry.Arc2D.#ctor(CSMath.XY,System.Double,System.Double,System.Double)
+  name.vb: New(XY, Double, Double, Double)
+  fullName: CSMath.Geometry.Arc2D.Arc2D(CSMath.XY, double, double, double)
+  fullName.vb: CSMath.Geometry.Arc2D.New(CSMath.XY, Double, Double, Double)
+  nameWithType: Arc2D.Arc2D(XY, double, double, double)
+  nameWithType.vb: Arc2D.New(XY, Double, Double, Double)
+- uid: CSMath.Geometry.Arc2D.#ctor*
+  name: Arc2D
+  href: api/CSMath.Geometry.Arc2D.html#CSMath_Geometry_Arc2D__ctor_
+  commentId: Overload:CSMath.Geometry.Arc2D.#ctor
+  isSpec: "True"
+  name.vb: New
+  fullName: CSMath.Geometry.Arc2D.Arc2D
+  fullName.vb: CSMath.Geometry.Arc2D.New
+  nameWithType: Arc2D.Arc2D
+  nameWithType.vb: Arc2D.New
+- uid: CSMath.Geometry.Arc2D.Center
+  name: Center
+  href: api/CSMath.Geometry.Arc2D.html#CSMath_Geometry_Arc2D_Center
+  commentId: P:CSMath.Geometry.Arc2D.Center
+  fullName: CSMath.Geometry.Arc2D.Center
+  nameWithType: Arc2D.Center
+- uid: CSMath.Geometry.Arc2D.Center*
+  name: Center
+  href: api/CSMath.Geometry.Arc2D.html#CSMath_Geometry_Arc2D_Center_
+  commentId: Overload:CSMath.Geometry.Arc2D.Center
+  isSpec: "True"
+  fullName: CSMath.Geometry.Arc2D.Center
+  nameWithType: Arc2D.Center
+- uid: CSMath.Geometry.Arc2D.EndAngle
+  name: EndAngle
+  href: api/CSMath.Geometry.Arc2D.html#CSMath_Geometry_Arc2D_EndAngle
+  commentId: P:CSMath.Geometry.Arc2D.EndAngle
+  fullName: CSMath.Geometry.Arc2D.EndAngle
+  nameWithType: Arc2D.EndAngle
+- uid: CSMath.Geometry.Arc2D.EndAngle*
+  name: EndAngle
+  href: api/CSMath.Geometry.Arc2D.html#CSMath_Geometry_Arc2D_EndAngle_
+  commentId: Overload:CSMath.Geometry.Arc2D.EndAngle
+  isSpec: "True"
+  fullName: CSMath.Geometry.Arc2D.EndAngle
+  nameWithType: Arc2D.EndAngle
+- uid: CSMath.Geometry.Arc2D.FindIntersections(CSMath.Geometry.Line2D,System.Double)
+  name: FindIntersections(Line2D, double)
+  href: api/CSMath.Geometry.Arc2D.html#CSMath_Geometry_Arc2D_FindIntersections_CSMath_Geometry_Line2D_System_Double_
+  commentId: M:CSMath.Geometry.Arc2D.FindIntersections(CSMath.Geometry.Line2D,System.Double)
+  name.vb: FindIntersections(Line2D, Double)
+  fullName: CSMath.Geometry.Arc2D.FindIntersections(CSMath.Geometry.Line2D, double)
+  fullName.vb: CSMath.Geometry.Arc2D.FindIntersections(CSMath.Geometry.Line2D, Double)
+  nameWithType: Arc2D.FindIntersections(Line2D, double)
+  nameWithType.vb: Arc2D.FindIntersections(Line2D, Double)
+- uid: CSMath.Geometry.Arc2D.FindIntersections*
+  name: FindIntersections
+  href: api/CSMath.Geometry.Arc2D.html#CSMath_Geometry_Arc2D_FindIntersections_
+  commentId: Overload:CSMath.Geometry.Arc2D.FindIntersections
+  isSpec: "True"
+  fullName: CSMath.Geometry.Arc2D.FindIntersections
+  nameWithType: Arc2D.FindIntersections
+- uid: CSMath.Geometry.Arc2D.InAngularRange(CSMath.XY)
+  name: InAngularRange(XY)
+  href: api/CSMath.Geometry.Arc2D.html#CSMath_Geometry_Arc2D_InAngularRange_CSMath_XY_
+  commentId: M:CSMath.Geometry.Arc2D.InAngularRange(CSMath.XY)
+  fullName: CSMath.Geometry.Arc2D.InAngularRange(CSMath.XY)
+  nameWithType: Arc2D.InAngularRange(XY)
+- uid: CSMath.Geometry.Arc2D.InAngularRange*
+  name: InAngularRange
+  href: api/CSMath.Geometry.Arc2D.html#CSMath_Geometry_Arc2D_InAngularRange_
+  commentId: Overload:CSMath.Geometry.Arc2D.InAngularRange
+  isSpec: "True"
+  fullName: CSMath.Geometry.Arc2D.InAngularRange
+  nameWithType: Arc2D.InAngularRange
+- uid: CSMath.Geometry.Arc2D.Radius
+  name: Radius
+  href: api/CSMath.Geometry.Arc2D.html#CSMath_Geometry_Arc2D_Radius
+  commentId: P:CSMath.Geometry.Arc2D.Radius
+  fullName: CSMath.Geometry.Arc2D.Radius
+  nameWithType: Arc2D.Radius
+- uid: CSMath.Geometry.Arc2D.Radius*
+  name: Radius
+  href: api/CSMath.Geometry.Arc2D.html#CSMath_Geometry_Arc2D_Radius_
+  commentId: Overload:CSMath.Geometry.Arc2D.Radius
+  isSpec: "True"
+  fullName: CSMath.Geometry.Arc2D.Radius
+  nameWithType: Arc2D.Radius
+- uid: CSMath.Geometry.Arc2D.StartAngle
+  name: StartAngle
+  href: api/CSMath.Geometry.Arc2D.html#CSMath_Geometry_Arc2D_StartAngle
+  commentId: P:CSMath.Geometry.Arc2D.StartAngle
+  fullName: CSMath.Geometry.Arc2D.StartAngle
+  nameWithType: Arc2D.StartAngle
+- uid: CSMath.Geometry.Arc2D.StartAngle*
+  name: StartAngle
+  href: api/CSMath.Geometry.Arc2D.html#CSMath_Geometry_Arc2D_StartAngle_
+  commentId: Overload:CSMath.Geometry.Arc2D.StartAngle
+  isSpec: "True"
+  fullName: CSMath.Geometry.Arc2D.StartAngle
+  nameWithType: Arc2D.StartAngle
+- uid: CSMath.Geometry.Circle2D
+  name: Circle2D
+  href: api/CSMath.Geometry.Circle2D.html
+  commentId: T:CSMath.Geometry.Circle2D
+  fullName: CSMath.Geometry.Circle2D
+  nameWithType: Circle2D
+- uid: CSMath.Geometry.Circle2D.#ctor(CSMath.XY,System.Double)
+  name: Circle2D(XY, double)
+  href: api/CSMath.Geometry.Circle2D.html#CSMath_Geometry_Circle2D__ctor_CSMath_XY_System_Double_
+  commentId: M:CSMath.Geometry.Circle2D.#ctor(CSMath.XY,System.Double)
+  name.vb: New(XY, Double)
+  fullName: CSMath.Geometry.Circle2D.Circle2D(CSMath.XY, double)
+  fullName.vb: CSMath.Geometry.Circle2D.New(CSMath.XY, Double)
+  nameWithType: Circle2D.Circle2D(XY, double)
+  nameWithType.vb: Circle2D.New(XY, Double)
+- uid: CSMath.Geometry.Circle2D.#ctor(System.Double,System.Double,System.Double)
+  name: Circle2D(double, double, double)
+  href: api/CSMath.Geometry.Circle2D.html#CSMath_Geometry_Circle2D__ctor_System_Double_System_Double_System_Double_
+  commentId: M:CSMath.Geometry.Circle2D.#ctor(System.Double,System.Double,System.Double)
+  name.vb: New(Double, Double, Double)
+  fullName: CSMath.Geometry.Circle2D.Circle2D(double, double, double)
+  fullName.vb: CSMath.Geometry.Circle2D.New(Double, Double, Double)
+  nameWithType: Circle2D.Circle2D(double, double, double)
+  nameWithType.vb: Circle2D.New(Double, Double, Double)
+- uid: CSMath.Geometry.Circle2D.#ctor*
+  name: Circle2D
+  href: api/CSMath.Geometry.Circle2D.html#CSMath_Geometry_Circle2D__ctor_
+  commentId: Overload:CSMath.Geometry.Circle2D.#ctor
+  isSpec: "True"
+  name.vb: New
+  fullName: CSMath.Geometry.Circle2D.Circle2D
+  fullName.vb: CSMath.Geometry.Circle2D.New
+  nameWithType: Circle2D.Circle2D
+  nameWithType.vb: Circle2D.New
+- uid: CSMath.Geometry.Circle2D.Center
+  name: Center
+  href: api/CSMath.Geometry.Circle2D.html#CSMath_Geometry_Circle2D_Center
+  commentId: P:CSMath.Geometry.Circle2D.Center
+  fullName: CSMath.Geometry.Circle2D.Center
+  nameWithType: Circle2D.Center
+- uid: CSMath.Geometry.Circle2D.Center*
+  name: Center
+  href: api/CSMath.Geometry.Circle2D.html#CSMath_Geometry_Circle2D_Center_
+  commentId: Overload:CSMath.Geometry.Circle2D.Center
+  isSpec: "True"
+  fullName: CSMath.Geometry.Circle2D.Center
+  nameWithType: Circle2D.Center
+- uid: CSMath.Geometry.Circle2D.FindIntersections(CSMath.Geometry.Line2D)
+  name: FindIntersections(Line2D)
+  href: api/CSMath.Geometry.Circle2D.html#CSMath_Geometry_Circle2D_FindIntersections_CSMath_Geometry_Line2D_
+  commentId: M:CSMath.Geometry.Circle2D.FindIntersections(CSMath.Geometry.Line2D)
+  fullName: CSMath.Geometry.Circle2D.FindIntersections(CSMath.Geometry.Line2D)
+  nameWithType: Circle2D.FindIntersections(Line2D)
+- uid: CSMath.Geometry.Circle2D.FindIntersections*
+  name: FindIntersections
+  href: api/CSMath.Geometry.Circle2D.html#CSMath_Geometry_Circle2D_FindIntersections_
+  commentId: Overload:CSMath.Geometry.Circle2D.FindIntersections
+  isSpec: "True"
+  fullName: CSMath.Geometry.Circle2D.FindIntersections
+  nameWithType: Circle2D.FindIntersections
+- uid: CSMath.Geometry.Circle2D.Radius
+  name: Radius
+  href: api/CSMath.Geometry.Circle2D.html#CSMath_Geometry_Circle2D_Radius
+  commentId: P:CSMath.Geometry.Circle2D.Radius
+  fullName: CSMath.Geometry.Circle2D.Radius
+  nameWithType: Circle2D.Radius
+- uid: CSMath.Geometry.Circle2D.Radius*
+  name: Radius
+  href: api/CSMath.Geometry.Circle2D.html#CSMath_Geometry_Circle2D_Radius_
+  commentId: Overload:CSMath.Geometry.Circle2D.Radius
+  isSpec: "True"
+  fullName: CSMath.Geometry.Circle2D.Radius
+  nameWithType: Circle2D.Radius
 - uid: CSMath.Geometry.CurveExtensions
   name: CurveExtensions
   href: api/CSMath.Geometry.CurveExtensions.html
@@ -53685,6 +54046,15 @@ references:
   commentId: M:CSMath.Geometry.Line2D.Equals(CSMath.Geometry.Line2D)
   fullName: CSMath.Geometry.Line2D.Equals(CSMath.Geometry.Line2D)
   nameWithType: Line2D.Equals(Line2D)
+- uid: CSMath.Geometry.Line2D.Equals(System.Object)
+  name: Equals(object)
+  href: api/CSMath.Geometry.Line2D.html#CSMath_Geometry_Line2D_Equals_System_Object_
+  commentId: M:CSMath.Geometry.Line2D.Equals(System.Object)
+  name.vb: Equals(Object)
+  fullName: CSMath.Geometry.Line2D.Equals(object)
+  fullName.vb: CSMath.Geometry.Line2D.Equals(Object)
+  nameWithType: Line2D.Equals(object)
+  nameWithType.vb: Line2D.Equals(Object)
 - uid: CSMath.Geometry.Line2D.Equals*
   name: Equals
   href: api/CSMath.Geometry.Line2D.html#CSMath_Geometry_Line2D_Equals_
@@ -53708,6 +54078,45 @@ references:
   isSpec: "True"
   fullName: CSMath.Geometry.Line2D.FindIntersection
   nameWithType: Line2D.FindIntersection
+- uid: CSMath.Geometry.Line2D.FromPoints(CSMath.XY,CSMath.XY)
+  name: FromPoints(XY, XY)
+  href: api/CSMath.Geometry.Line2D.html#CSMath_Geometry_Line2D_FromPoints_CSMath_XY_CSMath_XY_
+  commentId: M:CSMath.Geometry.Line2D.FromPoints(CSMath.XY,CSMath.XY)
+  fullName: CSMath.Geometry.Line2D.FromPoints(CSMath.XY, CSMath.XY)
+  nameWithType: Line2D.FromPoints(XY, XY)
+- uid: CSMath.Geometry.Line2D.FromPoints*
+  name: FromPoints
+  href: api/CSMath.Geometry.Line2D.html#CSMath_Geometry_Line2D_FromPoints_
+  commentId: Overload:CSMath.Geometry.Line2D.FromPoints
+  isSpec: "True"
+  fullName: CSMath.Geometry.Line2D.FromPoints
+  nameWithType: Line2D.FromPoints
+- uid: CSMath.Geometry.Line2D.FromSegment2D(CSMath.Geometry.Segment2D)
+  name: FromSegment2D(Segment2D)
+  href: api/CSMath.Geometry.Line2D.html#CSMath_Geometry_Line2D_FromSegment2D_CSMath_Geometry_Segment2D_
+  commentId: M:CSMath.Geometry.Line2D.FromSegment2D(CSMath.Geometry.Segment2D)
+  fullName: CSMath.Geometry.Line2D.FromSegment2D(CSMath.Geometry.Segment2D)
+  nameWithType: Line2D.FromSegment2D(Segment2D)
+- uid: CSMath.Geometry.Line2D.FromSegment2D*
+  name: FromSegment2D
+  href: api/CSMath.Geometry.Line2D.html#CSMath_Geometry_Line2D_FromSegment2D_
+  commentId: Overload:CSMath.Geometry.Line2D.FromSegment2D
+  isSpec: "True"
+  fullName: CSMath.Geometry.Line2D.FromSegment2D
+  nameWithType: Line2D.FromSegment2D
+- uid: CSMath.Geometry.Line2D.GetHashCode
+  name: GetHashCode()
+  href: api/CSMath.Geometry.Line2D.html#CSMath_Geometry_Line2D_GetHashCode
+  commentId: M:CSMath.Geometry.Line2D.GetHashCode
+  fullName: CSMath.Geometry.Line2D.GetHashCode()
+  nameWithType: Line2D.GetHashCode()
+- uid: CSMath.Geometry.Line2D.GetHashCode*
+  name: GetHashCode
+  href: api/CSMath.Geometry.Line2D.html#CSMath_Geometry_Line2D_GetHashCode_
+  commentId: Overload:CSMath.Geometry.Line2D.GetHashCode
+  isSpec: "True"
+  fullName: CSMath.Geometry.Line2D.GetHashCode
+  nameWithType: Line2D.GetHashCode
 - uid: CSMath.Geometry.Line2D.Offset
   name: Offset
   href: api/CSMath.Geometry.Line2D.html#CSMath_Geometry_Line2D_Offset
@@ -53734,6 +54143,22 @@ references:
   isSpec: "True"
   fullName: CSMath.Geometry.Line2D.Origin
   nameWithType: Line2D.Origin
+- uid: CSMath.Geometry.Line2D.PointInLine(System.Double)
+  name: PointInLine(double)
+  href: api/CSMath.Geometry.Line2D.html#CSMath_Geometry_Line2D_PointInLine_System_Double_
+  commentId: M:CSMath.Geometry.Line2D.PointInLine(System.Double)
+  name.vb: PointInLine(Double)
+  fullName: CSMath.Geometry.Line2D.PointInLine(double)
+  fullName.vb: CSMath.Geometry.Line2D.PointInLine(Double)
+  nameWithType: Line2D.PointInLine(double)
+  nameWithType.vb: Line2D.PointInLine(Double)
+- uid: CSMath.Geometry.Line2D.PointInLine*
+  name: PointInLine
+  href: api/CSMath.Geometry.Line2D.html#CSMath_Geometry_Line2D_PointInLine_
+  commentId: Overload:CSMath.Geometry.Line2D.PointInLine
+  isSpec: "True"
+  fullName: CSMath.Geometry.Line2D.PointInLine
+  nameWithType: Line2D.PointInLine
 - uid: CSMath.Geometry.Line2D.Slope
   name: Slope
   href: api/CSMath.Geometry.Line2D.html#CSMath_Geometry_Line2D_Slope
@@ -53814,6 +54239,32 @@ references:
   isSpec: "True"
   fullName: CSMath.Geometry.Line3D.FindIntersection
   nameWithType: Line3D.FindIntersection
+- uid: CSMath.Geometry.Line3D.FromPoints(CSMath.XYZ,CSMath.XYZ)
+  name: FromPoints(XYZ, XYZ)
+  href: api/CSMath.Geometry.Line3D.html#CSMath_Geometry_Line3D_FromPoints_CSMath_XYZ_CSMath_XYZ_
+  commentId: M:CSMath.Geometry.Line3D.FromPoints(CSMath.XYZ,CSMath.XYZ)
+  fullName: CSMath.Geometry.Line3D.FromPoints(CSMath.XYZ, CSMath.XYZ)
+  nameWithType: Line3D.FromPoints(XYZ, XYZ)
+- uid: CSMath.Geometry.Line3D.FromPoints*
+  name: FromPoints
+  href: api/CSMath.Geometry.Line3D.html#CSMath_Geometry_Line3D_FromPoints_
+  commentId: Overload:CSMath.Geometry.Line3D.FromPoints
+  isSpec: "True"
+  fullName: CSMath.Geometry.Line3D.FromPoints
+  nameWithType: Line3D.FromPoints
+- uid: CSMath.Geometry.Line3D.FromSegment3D(CSMath.Geometry.Segment3D)
+  name: FromSegment3D(Segment3D)
+  href: api/CSMath.Geometry.Line3D.html#CSMath_Geometry_Line3D_FromSegment3D_CSMath_Geometry_Segment3D_
+  commentId: M:CSMath.Geometry.Line3D.FromSegment3D(CSMath.Geometry.Segment3D)
+  fullName: CSMath.Geometry.Line3D.FromSegment3D(CSMath.Geometry.Segment3D)
+  nameWithType: Line3D.FromSegment3D(Segment3D)
+- uid: CSMath.Geometry.Line3D.FromSegment3D*
+  name: FromSegment3D
+  href: api/CSMath.Geometry.Line3D.html#CSMath_Geometry_Line3D_FromSegment3D_
+  commentId: Overload:CSMath.Geometry.Line3D.FromSegment3D
+  isSpec: "True"
+  fullName: CSMath.Geometry.Line3D.FromSegment3D
+  nameWithType: Line3D.FromSegment3D
 - uid: CSMath.Geometry.Line3D.Origin
   name: Origin
   href: api/CSMath.Geometry.Line3D.html#CSMath_Geometry_Line3D_Origin
@@ -53872,15 +54323,245 @@ references:
   isSpec: "True"
   fullName: CSMath.Geometry.LineExtensions.TryFindIntersection
   nameWithType: LineExtensions.TryFindIntersection
-- uid: CSMath.Geometry.LineExtensions.TryFindIntersection``2(``0,``0,``1@)
-  name: TryFindIntersection<T, R>(T, T, out R)
-  href: api/CSMath.Geometry.LineExtensions.html#CSMath_Geometry_LineExtensions_TryFindIntersection__2___0___0___1__
-  commentId: M:CSMath.Geometry.LineExtensions.TryFindIntersection``2(``0,``0,``1@)
-  name.vb: TryFindIntersection(Of T, R)(T, T, R)
-  fullName: CSMath.Geometry.LineExtensions.TryFindIntersection<T, R>(T, T, out R)
-  fullName.vb: CSMath.Geometry.LineExtensions.TryFindIntersection(Of T, R)(T, T, R)
-  nameWithType: LineExtensions.TryFindIntersection<T, R>(T, T, out R)
-  nameWithType.vb: LineExtensions.TryFindIntersection(Of T, R)(T, T, R)
+- uid: CSMath.Geometry.LineExtensions.TryFindIntersection``3(``0,``1,``2@)
+  name: TryFindIntersection<T, S, R>(T, S, out R)
+  href: api/CSMath.Geometry.LineExtensions.html#CSMath_Geometry_LineExtensions_TryFindIntersection__3___0___1___2__
+  commentId: M:CSMath.Geometry.LineExtensions.TryFindIntersection``3(``0,``1,``2@)
+  name.vb: TryFindIntersection(Of T, S, R)(T, S, R)
+  fullName: CSMath.Geometry.LineExtensions.TryFindIntersection<T, S, R>(T, S, out R)
+  fullName.vb: CSMath.Geometry.LineExtensions.TryFindIntersection(Of T, S, R)(T, S, R)
+  nameWithType: LineExtensions.TryFindIntersection<T, S, R>(T, S, out R)
+  nameWithType.vb: LineExtensions.TryFindIntersection(Of T, S, R)(T, S, R)
+- uid: CSMath.Geometry.Segment2D
+  name: Segment2D
+  href: api/CSMath.Geometry.Segment2D.html
+  commentId: T:CSMath.Geometry.Segment2D
+  fullName: CSMath.Geometry.Segment2D
+  nameWithType: Segment2D
+- uid: CSMath.Geometry.Segment2D.#ctor(CSMath.XY,CSMath.XY)
+  name: Segment2D(XY, XY)
+  href: api/CSMath.Geometry.Segment2D.html#CSMath_Geometry_Segment2D__ctor_CSMath_XY_CSMath_XY_
+  commentId: M:CSMath.Geometry.Segment2D.#ctor(CSMath.XY,CSMath.XY)
+  name.vb: New(XY, XY)
+  fullName: CSMath.Geometry.Segment2D.Segment2D(CSMath.XY, CSMath.XY)
+  fullName.vb: CSMath.Geometry.Segment2D.New(CSMath.XY, CSMath.XY)
+  nameWithType: Segment2D.Segment2D(XY, XY)
+  nameWithType.vb: Segment2D.New(XY, XY)
+- uid: CSMath.Geometry.Segment2D.#ctor*
+  name: Segment2D
+  href: api/CSMath.Geometry.Segment2D.html#CSMath_Geometry_Segment2D__ctor_
+  commentId: Overload:CSMath.Geometry.Segment2D.#ctor
+  isSpec: "True"
+  name.vb: New
+  fullName: CSMath.Geometry.Segment2D.Segment2D
+  fullName.vb: CSMath.Geometry.Segment2D.New
+  nameWithType: Segment2D.Segment2D
+  nameWithType.vb: Segment2D.New
+- uid: CSMath.Geometry.Segment2D.Direction
+  name: Direction
+  href: api/CSMath.Geometry.Segment2D.html#CSMath_Geometry_Segment2D_Direction
+  commentId: P:CSMath.Geometry.Segment2D.Direction
+  fullName: CSMath.Geometry.Segment2D.Direction
+  nameWithType: Segment2D.Direction
+- uid: CSMath.Geometry.Segment2D.Direction*
+  name: Direction
+  href: api/CSMath.Geometry.Segment2D.html#CSMath_Geometry_Segment2D_Direction_
+  commentId: Overload:CSMath.Geometry.Segment2D.Direction
+  isSpec: "True"
+  fullName: CSMath.Geometry.Segment2D.Direction
+  nameWithType: Segment2D.Direction
+- uid: CSMath.Geometry.Segment2D.End
+  name: End
+  href: api/CSMath.Geometry.Segment2D.html#CSMath_Geometry_Segment2D_End
+  commentId: P:CSMath.Geometry.Segment2D.End
+  fullName: CSMath.Geometry.Segment2D.End
+  nameWithType: Segment2D.End
+- uid: CSMath.Geometry.Segment2D.End*
+  name: End
+  href: api/CSMath.Geometry.Segment2D.html#CSMath_Geometry_Segment2D_End_
+  commentId: Overload:CSMath.Geometry.Segment2D.End
+  isSpec: "True"
+  fullName: CSMath.Geometry.Segment2D.End
+  nameWithType: Segment2D.End
+- uid: CSMath.Geometry.Segment2D.Equals(CSMath.Geometry.Segment2D)
+  name: Equals(Segment2D)
+  href: api/CSMath.Geometry.Segment2D.html#CSMath_Geometry_Segment2D_Equals_CSMath_Geometry_Segment2D_
+  commentId: M:CSMath.Geometry.Segment2D.Equals(CSMath.Geometry.Segment2D)
+  fullName: CSMath.Geometry.Segment2D.Equals(CSMath.Geometry.Segment2D)
+  nameWithType: Segment2D.Equals(Segment2D)
+- uid: CSMath.Geometry.Segment2D.Equals(System.Object)
+  name: Equals(object)
+  href: api/CSMath.Geometry.Segment2D.html#CSMath_Geometry_Segment2D_Equals_System_Object_
+  commentId: M:CSMath.Geometry.Segment2D.Equals(System.Object)
+  name.vb: Equals(Object)
+  fullName: CSMath.Geometry.Segment2D.Equals(object)
+  fullName.vb: CSMath.Geometry.Segment2D.Equals(Object)
+  nameWithType: Segment2D.Equals(object)
+  nameWithType.vb: Segment2D.Equals(Object)
+- uid: CSMath.Geometry.Segment2D.Equals*
+  name: Equals
+  href: api/CSMath.Geometry.Segment2D.html#CSMath_Geometry_Segment2D_Equals_
+  commentId: Overload:CSMath.Geometry.Segment2D.Equals
+  isSpec: "True"
+  fullName: CSMath.Geometry.Segment2D.Equals
+  nameWithType: Segment2D.Equals
+- uid: CSMath.Geometry.Segment2D.FindIntersection(CSMath.Geometry.ILine{CSMath.XY})
+  name: FindIntersection(ILine<XY>)
+  href: api/CSMath.Geometry.Segment2D.html#CSMath_Geometry_Segment2D_FindIntersection_CSMath_Geometry_ILine_CSMath_XY__
+  commentId: M:CSMath.Geometry.Segment2D.FindIntersection(CSMath.Geometry.ILine{CSMath.XY})
+  name.vb: FindIntersection(ILine(Of XY))
+  fullName: CSMath.Geometry.Segment2D.FindIntersection(CSMath.Geometry.ILine<CSMath.XY>)
+  fullName.vb: CSMath.Geometry.Segment2D.FindIntersection(CSMath.Geometry.ILine(Of CSMath.XY))
+  nameWithType: Segment2D.FindIntersection(ILine<XY>)
+  nameWithType.vb: Segment2D.FindIntersection(ILine(Of XY))
+- uid: CSMath.Geometry.Segment2D.FindIntersection*
+  name: FindIntersection
+  href: api/CSMath.Geometry.Segment2D.html#CSMath_Geometry_Segment2D_FindIntersection_
+  commentId: Overload:CSMath.Geometry.Segment2D.FindIntersection
+  isSpec: "True"
+  fullName: CSMath.Geometry.Segment2D.FindIntersection
+  nameWithType: Segment2D.FindIntersection
+- uid: CSMath.Geometry.Segment2D.GetHashCode
+  name: GetHashCode()
+  href: api/CSMath.Geometry.Segment2D.html#CSMath_Geometry_Segment2D_GetHashCode
+  commentId: M:CSMath.Geometry.Segment2D.GetHashCode
+  fullName: CSMath.Geometry.Segment2D.GetHashCode()
+  nameWithType: Segment2D.GetHashCode()
+- uid: CSMath.Geometry.Segment2D.GetHashCode*
+  name: GetHashCode
+  href: api/CSMath.Geometry.Segment2D.html#CSMath_Geometry_Segment2D_GetHashCode_
+  commentId: Overload:CSMath.Geometry.Segment2D.GetHashCode
+  isSpec: "True"
+  fullName: CSMath.Geometry.Segment2D.GetHashCode
+  nameWithType: Segment2D.GetHashCode
+- uid: CSMath.Geometry.Segment2D.Origin
+  name: Origin
+  href: api/CSMath.Geometry.Segment2D.html#CSMath_Geometry_Segment2D_Origin
+  commentId: P:CSMath.Geometry.Segment2D.Origin
+  fullName: CSMath.Geometry.Segment2D.Origin
+  nameWithType: Segment2D.Origin
+- uid: CSMath.Geometry.Segment2D.Origin*
+  name: Origin
+  href: api/CSMath.Geometry.Segment2D.html#CSMath_Geometry_Segment2D_Origin_
+  commentId: Overload:CSMath.Geometry.Segment2D.Origin
+  isSpec: "True"
+  fullName: CSMath.Geometry.Segment2D.Origin
+  nameWithType: Segment2D.Origin
+- uid: CSMath.Geometry.Segment3D
+  name: Segment3D
+  href: api/CSMath.Geometry.Segment3D.html
+  commentId: T:CSMath.Geometry.Segment3D
+  fullName: CSMath.Geometry.Segment3D
+  nameWithType: Segment3D
+- uid: CSMath.Geometry.Segment3D.#ctor(CSMath.XYZ,CSMath.XYZ)
+  name: Segment3D(XYZ, XYZ)
+  href: api/CSMath.Geometry.Segment3D.html#CSMath_Geometry_Segment3D__ctor_CSMath_XYZ_CSMath_XYZ_
+  commentId: M:CSMath.Geometry.Segment3D.#ctor(CSMath.XYZ,CSMath.XYZ)
+  name.vb: New(XYZ, XYZ)
+  fullName: CSMath.Geometry.Segment3D.Segment3D(CSMath.XYZ, CSMath.XYZ)
+  fullName.vb: CSMath.Geometry.Segment3D.New(CSMath.XYZ, CSMath.XYZ)
+  nameWithType: Segment3D.Segment3D(XYZ, XYZ)
+  nameWithType.vb: Segment3D.New(XYZ, XYZ)
+- uid: CSMath.Geometry.Segment3D.#ctor*
+  name: Segment3D
+  href: api/CSMath.Geometry.Segment3D.html#CSMath_Geometry_Segment3D__ctor_
+  commentId: Overload:CSMath.Geometry.Segment3D.#ctor
+  isSpec: "True"
+  name.vb: New
+  fullName: CSMath.Geometry.Segment3D.Segment3D
+  fullName.vb: CSMath.Geometry.Segment3D.New
+  nameWithType: Segment3D.Segment3D
+  nameWithType.vb: Segment3D.New
+- uid: CSMath.Geometry.Segment3D.Direction
+  name: Direction
+  href: api/CSMath.Geometry.Segment3D.html#CSMath_Geometry_Segment3D_Direction
+  commentId: P:CSMath.Geometry.Segment3D.Direction
+  fullName: CSMath.Geometry.Segment3D.Direction
+  nameWithType: Segment3D.Direction
+- uid: CSMath.Geometry.Segment3D.Direction*
+  name: Direction
+  href: api/CSMath.Geometry.Segment3D.html#CSMath_Geometry_Segment3D_Direction_
+  commentId: Overload:CSMath.Geometry.Segment3D.Direction
+  isSpec: "True"
+  fullName: CSMath.Geometry.Segment3D.Direction
+  nameWithType: Segment3D.Direction
+- uid: CSMath.Geometry.Segment3D.End
+  name: End
+  href: api/CSMath.Geometry.Segment3D.html#CSMath_Geometry_Segment3D_End
+  commentId: P:CSMath.Geometry.Segment3D.End
+  fullName: CSMath.Geometry.Segment3D.End
+  nameWithType: Segment3D.End
+- uid: CSMath.Geometry.Segment3D.End*
+  name: End
+  href: api/CSMath.Geometry.Segment3D.html#CSMath_Geometry_Segment3D_End_
+  commentId: Overload:CSMath.Geometry.Segment3D.End
+  isSpec: "True"
+  fullName: CSMath.Geometry.Segment3D.End
+  nameWithType: Segment3D.End
+- uid: CSMath.Geometry.Segment3D.Equals(CSMath.Geometry.Segment3D)
+  name: Equals(Segment3D)
+  href: api/CSMath.Geometry.Segment3D.html#CSMath_Geometry_Segment3D_Equals_CSMath_Geometry_Segment3D_
+  commentId: M:CSMath.Geometry.Segment3D.Equals(CSMath.Geometry.Segment3D)
+  fullName: CSMath.Geometry.Segment3D.Equals(CSMath.Geometry.Segment3D)
+  nameWithType: Segment3D.Equals(Segment3D)
+- uid: CSMath.Geometry.Segment3D.Equals(System.Object)
+  name: Equals(object)
+  href: api/CSMath.Geometry.Segment3D.html#CSMath_Geometry_Segment3D_Equals_System_Object_
+  commentId: M:CSMath.Geometry.Segment3D.Equals(System.Object)
+  name.vb: Equals(Object)
+  fullName: CSMath.Geometry.Segment3D.Equals(object)
+  fullName.vb: CSMath.Geometry.Segment3D.Equals(Object)
+  nameWithType: Segment3D.Equals(object)
+  nameWithType.vb: Segment3D.Equals(Object)
+- uid: CSMath.Geometry.Segment3D.Equals*
+  name: Equals
+  href: api/CSMath.Geometry.Segment3D.html#CSMath_Geometry_Segment3D_Equals_
+  commentId: Overload:CSMath.Geometry.Segment3D.Equals
+  isSpec: "True"
+  fullName: CSMath.Geometry.Segment3D.Equals
+  nameWithType: Segment3D.Equals
+- uid: CSMath.Geometry.Segment3D.FindIntersection(CSMath.Geometry.ILine{CSMath.XYZ})
+  name: FindIntersection(ILine<XYZ>)
+  href: api/CSMath.Geometry.Segment3D.html#CSMath_Geometry_Segment3D_FindIntersection_CSMath_Geometry_ILine_CSMath_XYZ__
+  commentId: M:CSMath.Geometry.Segment3D.FindIntersection(CSMath.Geometry.ILine{CSMath.XYZ})
+  name.vb: FindIntersection(ILine(Of XYZ))
+  fullName: CSMath.Geometry.Segment3D.FindIntersection(CSMath.Geometry.ILine<CSMath.XYZ>)
+  fullName.vb: CSMath.Geometry.Segment3D.FindIntersection(CSMath.Geometry.ILine(Of CSMath.XYZ))
+  nameWithType: Segment3D.FindIntersection(ILine<XYZ>)
+  nameWithType.vb: Segment3D.FindIntersection(ILine(Of XYZ))
+- uid: CSMath.Geometry.Segment3D.FindIntersection*
+  name: FindIntersection
+  href: api/CSMath.Geometry.Segment3D.html#CSMath_Geometry_Segment3D_FindIntersection_
+  commentId: Overload:CSMath.Geometry.Segment3D.FindIntersection
+  isSpec: "True"
+  fullName: CSMath.Geometry.Segment3D.FindIntersection
+  nameWithType: Segment3D.FindIntersection
+- uid: CSMath.Geometry.Segment3D.GetHashCode
+  name: GetHashCode()
+  href: api/CSMath.Geometry.Segment3D.html#CSMath_Geometry_Segment3D_GetHashCode
+  commentId: M:CSMath.Geometry.Segment3D.GetHashCode
+  fullName: CSMath.Geometry.Segment3D.GetHashCode()
+  nameWithType: Segment3D.GetHashCode()
+- uid: CSMath.Geometry.Segment3D.GetHashCode*
+  name: GetHashCode
+  href: api/CSMath.Geometry.Segment3D.html#CSMath_Geometry_Segment3D_GetHashCode_
+  commentId: Overload:CSMath.Geometry.Segment3D.GetHashCode
+  isSpec: "True"
+  fullName: CSMath.Geometry.Segment3D.GetHashCode
+  nameWithType: Segment3D.GetHashCode
+- uid: CSMath.Geometry.Segment3D.Origin
+  name: Origin
+  href: api/CSMath.Geometry.Segment3D.html#CSMath_Geometry_Segment3D_Origin
+  commentId: P:CSMath.Geometry.Segment3D.Origin
+  fullName: CSMath.Geometry.Segment3D.Origin
+  nameWithType: Segment3D.Origin
+- uid: CSMath.Geometry.Segment3D.Origin*
+  name: Origin
+  href: api/CSMath.Geometry.Segment3D.html#CSMath_Geometry_Segment3D_Origin_
+  commentId: Overload:CSMath.Geometry.Segment3D.Origin
+  isSpec: "True"
+  fullName: CSMath.Geometry.Segment3D.Origin
+  nameWithType: Segment3D.Origin
 - uid: CSMath.IVector
   name: IVector
   href: api/CSMath.IVector.html
@@ -54100,6 +54781,22 @@ references:
   isSpec: "True"
   fullName: CSMath.MathHelper.IsAlmostZero
   nameWithType: MathHelper.IsAlmostZero
+- uid: CSMath.MathHelper.IsAngleInRange(System.Double,System.Double,System.Double,System.Double)
+  name: IsAngleInRange(double, double, double, double)
+  href: api/CSMath.MathHelper.html#CSMath_MathHelper_IsAngleInRange_System_Double_System_Double_System_Double_System_Double_
+  commentId: M:CSMath.MathHelper.IsAngleInRange(System.Double,System.Double,System.Double,System.Double)
+  name.vb: IsAngleInRange(Double, Double, Double, Double)
+  fullName: CSMath.MathHelper.IsAngleInRange(double, double, double, double)
+  fullName.vb: CSMath.MathHelper.IsAngleInRange(Double, Double, Double, Double)
+  nameWithType: MathHelper.IsAngleInRange(double, double, double, double)
+  nameWithType.vb: MathHelper.IsAngleInRange(Double, Double, Double, Double)
+- uid: CSMath.MathHelper.IsAngleInRange*
+  name: IsAngleInRange
+  href: api/CSMath.MathHelper.html#CSMath_MathHelper_IsAngleInRange_
+  commentId: Overload:CSMath.MathHelper.IsAngleInRange
+  isSpec: "True"
+  fullName: CSMath.MathHelper.IsAngleInRange
+  nameWithType: MathHelper.IsAngleInRange
 - uid: CSMath.MathHelper.IsEqual(System.Double,System.Double)
   name: IsEqual(double, double)
   href: api/CSMath.MathHelper.html#CSMath_MathHelper_IsEqual_System_Double_System_Double_
@@ -54166,6 +54863,22 @@ references:
   isSpec: "True"
   fullName: CSMath.MathHelper.NormalizeAngle
   nameWithType: MathHelper.NormalizeAngle
+- uid: CSMath.MathHelper.NormalizeAngleRadians(System.Double)
+  name: NormalizeAngleRadians(double)
+  href: api/CSMath.MathHelper.html#CSMath_MathHelper_NormalizeAngleRadians_System_Double_
+  commentId: M:CSMath.MathHelper.NormalizeAngleRadians(System.Double)
+  name.vb: NormalizeAngleRadians(Double)
+  fullName: CSMath.MathHelper.NormalizeAngleRadians(double)
+  fullName.vb: CSMath.MathHelper.NormalizeAngleRadians(Double)
+  nameWithType: MathHelper.NormalizeAngleRadians(double)
+  nameWithType.vb: MathHelper.NormalizeAngleRadians(Double)
+- uid: CSMath.MathHelper.NormalizeAngleRadians*
+  name: NormalizeAngleRadians
+  href: api/CSMath.MathHelper.html#CSMath_MathHelper_NormalizeAngleRadians_
+  commentId: Overload:CSMath.MathHelper.NormalizeAngleRadians
+  isSpec: "True"
+  fullName: CSMath.MathHelper.NormalizeAngleRadians
+  nameWithType: MathHelper.NormalizeAngleRadians
 - uid: CSMath.MathHelper.PI
   name: PI
   href: api/CSMath.MathHelper.html#CSMath_MathHelper_PI

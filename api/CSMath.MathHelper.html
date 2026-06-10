@@ -663,10 +663,10 @@ with floating-point precision and angle normalization in mathematical computatio
 
   <h3 id="CSMath_MathHelper_FixZero_System_Double_System_Double_" data-uid="CSMath.MathHelper.FixZero(System.Double,System.Double)">
   FixZero(double, double)
-  <a class="header-action link-secondary" title="View source" href="https://github.com/DomCR/CSUtilities/blob/master/CSMath/MathHelper.cs/#L121"><i class="bi bi-code-slash"></i></a>
+  <a class="header-action link-secondary" title="View source" href="https://github.com/DomCR/CSUtilities/blob/master/CSMath/MathHelper.cs/#L117"><i class="bi bi-code-slash"></i></a>
   </h3>
 
-  <div class="markdown level1 summary"><p>Returns zero if the specified number is within the given threshold of zero; otherwise, returns the original number.</p>
+  <div class="markdown level1 summary"><p>Replaces the specified number with zero if it is within the defined threshold.</p>
 </div>
   <div class="markdown level1 conceptual"></div>
 
@@ -677,17 +677,17 @@ with floating-point precision and angle normalization in mathematical computatio
   <h4 class="section">Parameters</h4>
   <dl class="parameters">
     <dt><code>number</code> <a class="xref" href="https://learn.microsoft.com/dotnet/api/system.double">double</a></dt>
-    <dd><p>The value to evaluate for near-zero equivalence.</p>
+    <dd><p>The number to evaluate.</p>
 </dd>
     <dt><code>threshold</code> <a class="xref" href="https://learn.microsoft.com/dotnet/api/system.double">double</a></dt>
-    <dd><p>The tolerance within which the number is considered to be zero. Must be non-negative.</p>
+    <dd><p>The threshold value for determining if the number is considered zero.</p>
 </dd>
   </dl>
 
   <h4 class="section">Returns</h4>
   <dl class="parameters">
     <dt><a class="xref" href="https://learn.microsoft.com/dotnet/api/system.double">double</a></dt>
-    <dd><p>Zero if the absolute value of the number is less than or equal to the threshold; otherwise, the original number.</p>
+    <dd><p>Zero if the number is within the threshold; otherwise, the original number.</p>
 </dd>
   </dl>
 
@@ -697,11 +697,6 @@ with floating-point precision and angle normalization in mathematical computatio
 
 
 
-  <h4 class="section" id="CSMath_MathHelper_FixZero_System_Double_System_Double__remarks">Remarks</h4>
-  <div class="markdown level1 remarks"><p>This method is useful for normalizing values that are very close to zero due to floating-point
-precision errors. It can help avoid issues where extremely small values are treated as nonzero in
-calculations.</p>
-</div>
 
 
 
@@ -710,10 +705,10 @@ calculations.</p>
 
   <h3 id="CSMath_MathHelper_FixZero__1___0_" data-uid="CSMath.MathHelper.FixZero``1(``0)">
   FixZero&lt;T&gt;(T)
-  <a class="header-action link-secondary" title="View source" href="https://github.com/DomCR/CSUtilities/blob/master/CSMath/MathHelper.cs/#L132"><i class="bi bi-code-slash"></i></a>
+  <a class="header-action link-secondary" title="View source" href="https://github.com/DomCR/CSUtilities/blob/master/CSMath/MathHelper.cs/#L137"><i class="bi bi-code-slash"></i></a>
   </h3>
 
-  <div class="markdown level1 summary"><p>Returns a copy of the specified vector with components that are effectively zero replaced by exact zeros.</p>
+  <div class="markdown level1 summary"><p>Returns zero if the specified number is within the given threshold of zero; otherwise, returns the original number.</p>
 </div>
   <div class="markdown level1 conceptual"></div>
 
@@ -731,7 +726,7 @@ calculations.</p>
   <h4 class="section">Returns</h4>
   <dl class="parameters">
     <dt><span class="xref">T</span></dt>
-    <dd><p>A new vector of type T with near-zero components set to zero.</p>
+    <dd><p>Zero if the absolute value of the number is less than or equal to the threshold; otherwise, the original number.</p>
 </dd>
   </dl>
 
@@ -747,6 +742,11 @@ calculations.</p>
 
 
 
+  <h4 class="section" id="CSMath_MathHelper_FixZero__1___0__remarks">Remarks</h4>
+  <div class="markdown level1 remarks"><p>This method is useful for normalizing values that are very close to zero due to floating-point
+precision errors. It can help avoid issues where extremely small values are treated as nonzero in
+calculations.</p>
+</div>
 
 
 
@@ -755,7 +755,7 @@ calculations.</p>
 
   <h3 id="CSMath_MathHelper_FixZero__1___0_System_Double_" data-uid="CSMath.MathHelper.FixZero``1(``0,System.Double)">
   FixZero&lt;T&gt;(T, double)
-  <a class="header-action link-secondary" title="View source" href="https://github.com/DomCR/CSUtilities/blob/master/CSMath/MathHelper.cs/#L150"><i class="bi bi-code-slash"></i></a>
+  <a class="header-action link-secondary" title="View source" href="https://github.com/DomCR/CSUtilities/blob/master/CSMath/MathHelper.cs/#L155"><i class="bi bi-code-slash"></i></a>
   </h3>
 
   <div class="markdown level1 summary"><p>Returns a new vector in which each component of the input vector is replaced with zero if its absolute value is
@@ -810,7 +810,7 @@ this method to eliminate near-zero noise in vector data.</p>
 
   <h3 id="CSMath_MathHelper_GradToDeg_System_Double_" data-uid="CSMath.MathHelper.GradToDeg(System.Double)">
   GradToDeg(double)
-  <a class="header-action link-secondary" title="View source" href="https://github.com/DomCR/CSUtilities/blob/master/CSMath/MathHelper.cs/#L168"><i class="bi bi-code-slash"></i></a>
+  <a class="header-action link-secondary" title="View source" href="https://github.com/DomCR/CSUtilities/blob/master/CSMath/MathHelper.cs/#L173"><i class="bi bi-code-slash"></i></a>
   </h3>
 
   <div class="markdown level1 summary"><p>Convert a value from gradian to degrees.</p>
@@ -849,7 +849,7 @@ this method to eliminate near-zero noise in vector data.</p>
 
   <h3 id="CSMath_MathHelper_GradToRad_System_Double_" data-uid="CSMath.MathHelper.GradToRad(System.Double)">
   GradToRad(double)
-  <a class="header-action link-secondary" title="View source" href="https://github.com/DomCR/CSUtilities/blob/master/CSMath/MathHelper.cs/#L178"><i class="bi bi-code-slash"></i></a>
+  <a class="header-action link-secondary" title="View source" href="https://github.com/DomCR/CSUtilities/blob/master/CSMath/MathHelper.cs/#L183"><i class="bi bi-code-slash"></i></a>
   </h3>
 
   <div class="markdown level1 summary"><p>Convert a value from gradian to radian.</p>
@@ -888,7 +888,7 @@ this method to eliminate near-zero noise in vector data.</p>
 
   <h3 id="CSMath_MathHelper_IsAlmostZero_System_Double_" data-uid="CSMath.MathHelper.IsAlmostZero(System.Double)">
   IsAlmostZero(double)
-  <a class="header-action link-secondary" title="View source" href="https://github.com/DomCR/CSUtilities/blob/master/CSMath/MathHelper.cs/#L189"><i class="bi bi-code-slash"></i></a>
+  <a class="header-action link-secondary" title="View source" href="https://github.com/DomCR/CSUtilities/blob/master/CSMath/MathHelper.cs/#L194"><i class="bi bi-code-slash"></i></a>
   </h3>
 
   <div class="markdown level1 summary"><p>Determines whether the specified double-precision floating-point value is approximately zero, within a small
@@ -924,11 +924,64 @@ tolerance.</p>
 
 
 
+  <a id="CSMath_MathHelper_IsAngleInRange_" data-uid="CSMath.MathHelper.IsAngleInRange*"></a>
+
+  <h3 id="CSMath_MathHelper_IsAngleInRange_System_Double_System_Double_System_Double_System_Double_" data-uid="CSMath.MathHelper.IsAngleInRange(System.Double,System.Double,System.Double,System.Double)">
+  IsAngleInRange(double, double, double, double)
+  <a class="header-action link-secondary" title="View source" href="https://github.com/DomCR/CSUtilities/blob/master/CSMath/MathHelper.cs/#L218"><i class="bi bi-code-slash"></i></a>
+  </h3>
+
+  <div class="markdown level1 summary"><p>Determines whether a specified angle falls within a given angular range.</p>
+</div>
+  <div class="markdown level1 conceptual"></div>
+
+  <div class="codewrapper">
+    <pre><code class="lang-csharp hljs">public static bool IsAngleInRange(double angle, double start, double end, double precision = 1E-12)</code></pre>
+  </div>
+
+  <h4 class="section">Parameters</h4>
+  <dl class="parameters">
+    <dt><code>angle</code> <a class="xref" href="https://learn.microsoft.com/dotnet/api/system.double">double</a></dt>
+    <dd><p>The angle to test, in radians.</p>
+</dd>
+    <dt><code>start</code> <a class="xref" href="https://learn.microsoft.com/dotnet/api/system.double">double</a></dt>
+    <dd><p>The start of the angular range, in radians.</p>
+</dd>
+    <dt><code>end</code> <a class="xref" href="https://learn.microsoft.com/dotnet/api/system.double">double</a></dt>
+    <dd><p>The end of the angular range, in radians.</p>
+</dd>
+    <dt><code>precision</code> <a class="xref" href="https://learn.microsoft.com/dotnet/api/system.double">double</a></dt>
+    <dd><p>The precision value for the calculation.</p>
+</dd>
+  </dl>
+
+  <h4 class="section">Returns</h4>
+  <dl class="parameters">
+    <dt><a class="xref" href="https://learn.microsoft.com/dotnet/api/system.boolean">bool</a></dt>
+    <dd><p><code>true</code> if the angle falls within the specified range (inclusive); otherwise, <code>false</code>.</p>
+</dd>
+  </dl>
+
+
+
+
+
+
+
+  <h4 class="section" id="CSMath_MathHelper_IsAngleInRange_System_Double_System_Double_System_Double_System_Double__remarks">Remarks</h4>
+  <div class="markdown level1 remarks"><p>This method normalizes all angles to the range [0, 2π) before comparison. It correctly handles ranges that wrap
+around the 0/2π boundary. For example, if the start angle is greater than the end angle, the range is considered
+to span across 0 radians.</p>
+</div>
+
+
+
+
   <a id="CSMath_MathHelper_IsEqual_" data-uid="CSMath.MathHelper.IsEqual*"></a>
 
   <h3 id="CSMath_MathHelper_IsEqual_System_Double_System_Double_" data-uid="CSMath.MathHelper.IsEqual(System.Double,System.Double)">
   IsEqual(double, double)
-  <a class="header-action link-secondary" title="View source" href="https://github.com/DomCR/CSUtilities/blob/master/CSMath/MathHelper.cs/#L204"><i class="bi bi-code-slash"></i></a>
+  <a class="header-action link-secondary" title="View source" href="https://github.com/DomCR/CSUtilities/blob/master/CSMath/MathHelper.cs/#L238"><i class="bi bi-code-slash"></i></a>
   </h3>
 
   <div class="markdown level1 summary"><p>Checks if a number is equal to another.</p>
@@ -970,7 +1023,7 @@ tolerance.</p>
 
   <h3 id="CSMath_MathHelper_IsEqual_System_Double_System_Double_System_Double_" data-uid="CSMath.MathHelper.IsEqual(System.Double,System.Double,System.Double)">
   IsEqual(double, double, double)
-  <a class="header-action link-secondary" title="View source" href="https://github.com/DomCR/CSUtilities/blob/master/CSMath/MathHelper.cs/#L216"><i class="bi bi-code-slash"></i></a>
+  <a class="header-action link-secondary" title="View source" href="https://github.com/DomCR/CSUtilities/blob/master/CSMath/MathHelper.cs/#L250"><i class="bi bi-code-slash"></i></a>
   </h3>
 
   <div class="markdown level1 summary"><p>Checks if a number is equal to another.</p>
@@ -1015,7 +1068,7 @@ tolerance.</p>
 
   <h3 id="CSMath_MathHelper_IsZero_System_Double_" data-uid="CSMath.MathHelper.IsZero(System.Double)">
   IsZero(double)
-  <a class="header-action link-secondary" title="View source" href="https://github.com/DomCR/CSUtilities/blob/master/CSMath/MathHelper.cs/#L226"><i class="bi bi-code-slash"></i></a>
+  <a class="header-action link-secondary" title="View source" href="https://github.com/DomCR/CSUtilities/blob/master/CSMath/MathHelper.cs/#L260"><i class="bi bi-code-slash"></i></a>
   </h3>
 
   <div class="markdown level1 summary"><p>Checks if a number is close to zero.</p>
@@ -1054,7 +1107,7 @@ tolerance.</p>
 
   <h3 id="CSMath_MathHelper_IsZero_System_Double_System_Double_" data-uid="CSMath.MathHelper.IsZero(System.Double,System.Double)">
   IsZero(double, double)
-  <a class="header-action link-secondary" title="View source" href="https://github.com/DomCR/CSUtilities/blob/master/CSMath/MathHelper.cs/#L237"><i class="bi bi-code-slash"></i></a>
+  <a class="header-action link-secondary" title="View source" href="https://github.com/DomCR/CSUtilities/blob/master/CSMath/MathHelper.cs/#L271"><i class="bi bi-code-slash"></i></a>
   </h3>
 
   <div class="markdown level1 summary"><p>Checks if a number is close to zero.</p>
@@ -1096,7 +1149,7 @@ tolerance.</p>
 
   <h3 id="CSMath_MathHelper_NormalizeAngle_System_Double_" data-uid="CSMath.MathHelper.NormalizeAngle(System.Double)">
   NormalizeAngle(double)
-  <a class="header-action link-secondary" title="View source" href="https://github.com/DomCR/CSUtilities/blob/master/CSMath/MathHelper.cs/#L248"><i class="bi bi-code-slash"></i></a>
+  <a class="header-action link-secondary" title="View source" href="https://github.com/DomCR/CSUtilities/blob/master/CSMath/MathHelper.cs/#L282"><i class="bi bi-code-slash"></i></a>
   </h3>
 
   <div class="markdown level1 summary"><p>Normalizes the value of an angle in degrees between 0-360.</p>
@@ -1134,14 +1187,53 @@ tolerance.</p>
 
 
 
+  <a id="CSMath_MathHelper_NormalizeAngleRadians_" data-uid="CSMath.MathHelper.NormalizeAngleRadians*"></a>
+
+  <h3 id="CSMath_MathHelper_NormalizeAngleRadians_System_Double_" data-uid="CSMath.MathHelper.NormalizeAngleRadians(System.Double)">
+  NormalizeAngleRadians(double)
+  <a class="header-action link-secondary" title="View source" href="https://github.com/DomCR/CSUtilities/blob/master/CSMath/MathHelper.cs/#L308"><i class="bi bi-code-slash"></i></a>
+  </h3>
+
+  <div class="markdown level1 summary"><p>Normalizes the value of an angle in radians between 0-2π.</p>
+</div>
+  <div class="markdown level1 conceptual"></div>
+
+  <div class="codewrapper">
+    <pre><code class="lang-csharp hljs">public static double NormalizeAngleRadians(double angle)</code></pre>
+  </div>
+
+  <h4 class="section">Parameters</h4>
+  <dl class="parameters">
+    <dt><code>angle</code> <a class="xref" href="https://learn.microsoft.com/dotnet/api/system.double">double</a></dt>
+    <dd><p>Angle in radians.</p>
+</dd>
+  </dl>
+
+  <h4 class="section">Returns</h4>
+  <dl class="parameters">
+    <dt><a class="xref" href="https://learn.microsoft.com/dotnet/api/system.double">double</a></dt>
+    <dd><p>The equivalent angle in the range 0-2π.</p>
+</dd>
+  </dl>
+
+
+
+
+
+
+
+
+
+
+
   <a id="CSMath_MathHelper_RadToDeg_" data-uid="CSMath.MathHelper.RadToDeg*"></a>
 
   <h3 id="CSMath_MathHelper_RadToDeg_System_Double_System_Boolean_" data-uid="CSMath.MathHelper.RadToDeg(System.Double,System.Boolean)">
   RadToDeg(double, bool)
-  <a class="header-action link-secondary" title="View source" href="https://github.com/DomCR/CSUtilities/blob/master/CSMath/MathHelper.cs/#L275"><i class="bi bi-code-slash"></i></a>
+  <a class="header-action link-secondary" title="View source" href="https://github.com/DomCR/CSUtilities/blob/master/CSMath/MathHelper.cs/#L324"><i class="bi bi-code-slash"></i></a>
   </h3>
 
-  <div class="markdown level1 summary"><p>Convert a value from radian to degree</p>
+  <div class="markdown level1 summary"><p>Convert a value from radian to degree.</p>
 </div>
   <div class="markdown level1 conceptual"></div>
 
@@ -1162,7 +1254,7 @@ tolerance.</p>
   <h4 class="section">Returns</h4>
   <dl class="parameters">
     <dt><a class="xref" href="https://learn.microsoft.com/dotnet/api/system.double">double</a></dt>
-    <dd><p>The radian value</p>
+    <dd><p>The degree value.</p>
 </dd>
   </dl>
 
@@ -1180,7 +1272,7 @@ tolerance.</p>
 
   <h3 id="CSMath_MathHelper_RadToGrad_System_Double_" data-uid="CSMath.MathHelper.RadToGrad(System.Double)">
   RadToGrad(double)
-  <a class="header-action link-secondary" title="View source" href="https://github.com/DomCR/CSUtilities/blob/master/CSMath/MathHelper.cs/#L286"><i class="bi bi-code-slash"></i></a>
+  <a class="header-action link-secondary" title="View source" href="https://github.com/DomCR/CSUtilities/blob/master/CSMath/MathHelper.cs/#L335"><i class="bi bi-code-slash"></i></a>
   </h3>
 
   <div class="markdown level1 summary"><p>Convert a value from radian to gradian.</p>
@@ -1201,7 +1293,7 @@ tolerance.</p>
   <h4 class="section">Returns</h4>
   <dl class="parameters">
     <dt><a class="xref" href="https://learn.microsoft.com/dotnet/api/system.double">double</a></dt>
-    <dd><p>The radian value.</p>
+    <dd><p>The gradian value.</p>
 </dd>
   </dl>
 
@@ -1219,7 +1311,7 @@ tolerance.</p>
 
   <h3 id="CSMath_MathHelper_RoundToNearest_System_Double_System_Double_" data-uid="CSMath.MathHelper.RoundToNearest(System.Double,System.Double)">
   RoundToNearest(double, double)
-  <a class="header-action link-secondary" title="View source" href="https://github.com/DomCR/CSUtilities/blob/master/CSMath/MathHelper.cs/#L297"><i class="bi bi-code-slash"></i></a>
+  <a class="header-action link-secondary" title="View source" href="https://github.com/DomCR/CSUtilities/blob/master/CSMath/MathHelper.cs/#L346"><i class="bi bi-code-slash"></i></a>
   </h3>
 
   <div class="markdown level1 summary"><p>Round off a numeric value to the nearest of another value.</p>
@@ -1261,7 +1353,7 @@ tolerance.</p>
 
   <h3 id="CSMath_MathHelper_Sin_System_Double_" data-uid="CSMath.MathHelper.Sin(System.Double)">
   Sin(double)
-  <a class="header-action link-secondary" title="View source" href="https://github.com/DomCR/CSUtilities/blob/master/CSMath/MathHelper.cs/#L308"><i class="bi bi-code-slash"></i></a>
+  <a class="header-action link-secondary" title="View source" href="https://github.com/DomCR/CSUtilities/blob/master/CSMath/MathHelper.cs/#L357"><i class="bi bi-code-slash"></i></a>
   </h3>
 
   <div class="markdown level1 summary"><p>Returns the sine of specific angle in radians adjusting the value to 0 using <a class="xref" href="CSMath.MathHelper.html#CSMath_MathHelper_Epsilon">Epsilon</a> as tolerance.</p>
@@ -1275,13 +1367,15 @@ tolerance.</p>
   <h4 class="section">Parameters</h4>
   <dl class="parameters">
     <dt><code>value</code> <a class="xref" href="https://learn.microsoft.com/dotnet/api/system.double">double</a></dt>
-    <dd></dd>
+    <dd><p>Angle in radians.</p>
+</dd>
   </dl>
 
   <h4 class="section">Returns</h4>
   <dl class="parameters">
     <dt><a class="xref" href="https://learn.microsoft.com/dotnet/api/system.double">double</a></dt>
-    <dd></dd>
+    <dd><p>The sine of the angle.</p>
+</dd>
   </dl>
 
 
