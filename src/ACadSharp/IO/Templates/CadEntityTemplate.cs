@@ -102,6 +102,11 @@ internal class CadEntityTemplate : CadTemplate<Entity>
 		{
 			this.CadObject.BookColor = color;
 		}
+
+		if (builder.TryGetCadObject(this.MaterialHandle, out Material material))
+		{
+			this.CadObject.Material = material;
+		}
 	}
 }
 

@@ -95,8 +95,17 @@ namespace ACadSharp.Objects
 		/// <summary>
 		/// Channel Flags.
 		/// </summary>
+		/// <summary>
+		/// Bit flags telling the renderer which Material channels to evaluate.
+		/// Defaults to <see cref="MaterialChannelFlags.UseDiffuse"/> to match
+		/// what AutoCAD writes for a basic material. Setting
+		/// <see cref="MaterialChannelFlags.UseAll"/> here breaks texture
+		/// rendering in DWG TrueView because the renderer then tries to sample
+		/// channels (bump, reflection, refraction, normal) that the material
+		/// has no data for.
+		/// </summary>
 		[DxfCodeValue(94)]
-		public int ChannelFlags { get; set; }
+		public MaterialChannelFlags ChannelFlags { get; set; } = MaterialChannelFlags.UseDiffuse;
 
 		/// <summary>
 		/// Material description.
@@ -178,8 +187,20 @@ namespace ACadSharp.Objects
 		[DxfCodeValue(74)]
 		public TilingMethod DiffuseTilingMethod { get; set; } = TilingMethod.Tile;
 
+		/// <summary>
+		/// Shader chosen to evaluate the Material's illumination. Defaults to
+		/// <see cref="MaterialIlluminationModel.BlinnShader"/>, the ODA SDK
+		/// default for <c>OdGiMaterialTraits</c>.
+		/// </summary>
 		[DxfCodeValue(93)]
-		public int IlluminationModel { get; set; } = 0;
+		public MaterialIlluminationModel IlluminationModel { get; set; } = MaterialIlluminationModel.BlinnShader;
+
+		/// <summary>
+		/// Render-pipeline mode hint. Defaults to
+		/// <see cref="MaterialMode.Realistic"/>, the ODA SDK default.
+		/// </summary>
+		[DxfCodeValue(282)]
+		public MaterialMode Mode { get; set; } = MaterialMode.Realistic;
 
 		/// <summary>
 		/// Material name.

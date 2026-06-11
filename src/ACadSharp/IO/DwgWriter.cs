@@ -56,6 +56,12 @@ namespace ACadSharp.IO
 
 			this.getFileHeaderWriter();
 
+			// Allocate handles for any synthetic objects that the writer materializes during entity
+			// serialization (Mesh.TextureCoordinates -> ADSK_XREC_SUBDVERTEXTEXCOORDS XRecord, etc.)
+			// before writeHeader emits the HandleSeed. Otherwise the header reports a stale seed and
+			// the resulting file opens in recovery mode.
+			this.prepareDocument();
+
 			this.writeHeader();
 			this.writeClasses();
 			//this.writeEmptySection();
@@ -176,6 +182,46 @@ namespace ACadSharp.IO
 			writer.Write();
 
 			this._fileHeaderWriter.AddSection(DwgSectionDefinition.Header, stream, true);
+		}
+
+		private void prepareDocument()
+		{
+			foreach (var record in this._document.BlockRecords)
+			{
+				foreach (var entity in record.Entities)
+				{
+					if (entity is Entities.Mesh mesh)
+					{
+						syncMeshTextureCoordinates(mesh);
+					}
+				}
+			}
+		}
+
+		private static void syncMeshTextureCoordinates(Entities.Mesh mesh)
+		{
+			bool hasCoords = mesh.TextureCoordinates != null && mesh.TextureCoordinates.Count > 0;
+
+			if (!hasCoords)
+			{
+				return;
+			}
+
+			var xdict = mesh.CreateExtendedDictionary();
+			if (xdict.ContainsKey(Entities.Mesh.TextureCoordsXRecordName))
+			{
+				xdict.Remove(Entities.Mesh.TextureCoordsXRecordName, out _);
+			}
+
+			var xrec = new Objects.XRecord(Entities.Mesh.TextureCoordsXRecordName);
+			foreach (var uv in mesh.TextureCoordinates)
+			{
+				xrec.CreateEntry(43, uv.X);
+				xrec.CreateEntry(44, uv.Y);
+				xrec.CreateEntry(45, uv.Z);
+			}
+
+			xdict.Add(xrec);
 		}
 
 		private void writeClasses()
