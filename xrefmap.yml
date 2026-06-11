@@ -14366,6 +14366,32 @@ references:
   isSpec: "True"
   fullName: ACadSharp.Entities.Leader.PathType
   nameWithType: Leader.PathType
+- uid: ACadSharp.Entities.Leader.SetDimensionOverride(ACadSharp.Tables.DimensionStyle)
+  name: SetDimensionOverride(DimensionStyle)
+  href: api/ACadSharp.Entities.Leader.html#ACadSharp_Entities_Leader_SetDimensionOverride_ACadSharp_Tables_DimensionStyle_
+  commentId: M:ACadSharp.Entities.Leader.SetDimensionOverride(ACadSharp.Tables.DimensionStyle)
+  fullName: ACadSharp.Entities.Leader.SetDimensionOverride(ACadSharp.Tables.DimensionStyle)
+  nameWithType: Leader.SetDimensionOverride(DimensionStyle)
+- uid: ACadSharp.Entities.Leader.SetDimensionOverride*
+  name: SetDimensionOverride
+  href: api/ACadSharp.Entities.Leader.html#ACadSharp_Entities_Leader_SetDimensionOverride_
+  commentId: Overload:ACadSharp.Entities.Leader.SetDimensionOverride
+  isSpec: "True"
+  fullName: ACadSharp.Entities.Leader.SetDimensionOverride
+  nameWithType: Leader.SetDimensionOverride
+- uid: ACadSharp.Entities.Leader.SetStyleOverrideMap(ACadSharp.DxfClassMap)
+  name: SetStyleOverrideMap(DxfClassMap)
+  href: api/ACadSharp.Entities.Leader.html#ACadSharp_Entities_Leader_SetStyleOverrideMap_ACadSharp_DxfClassMap_
+  commentId: M:ACadSharp.Entities.Leader.SetStyleOverrideMap(ACadSharp.DxfClassMap)
+  fullName: ACadSharp.Entities.Leader.SetStyleOverrideMap(ACadSharp.DxfClassMap)
+  nameWithType: Leader.SetStyleOverrideMap(DxfClassMap)
+- uid: ACadSharp.Entities.Leader.SetStyleOverrideMap*
+  name: SetStyleOverrideMap
+  href: api/ACadSharp.Entities.Leader.html#ACadSharp_Entities_Leader_SetStyleOverrideMap_
+  commentId: Overload:ACadSharp.Entities.Leader.SetStyleOverrideMap
+  isSpec: "True"
+  fullName: ACadSharp.Entities.Leader.SetStyleOverrideMap
+  nameWithType: Leader.SetStyleOverrideMap
 - uid: ACadSharp.Entities.Leader.Style
   name: Style
   href: api/ACadSharp.Entities.Leader.html#ACadSharp_Entities_Leader_Style
