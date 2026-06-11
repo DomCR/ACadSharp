@@ -1099,10 +1099,11 @@ representations. The original block and its entities remain unchanged.</p>
 
   <h3 id="ACadSharp_Entities_Insert_GetTransform" data-uid="ACadSharp.Entities.Insert.GetTransform">
   GetTransform()
-  <a class="header-action link-secondary" title="View source" href="https://github.com/DomCR/ACadSharp/blob/master/src/ACadSharp/Entities/Insert.cs/#L380"><i class="bi bi-code-slash"></i></a>
+  <a class="header-action link-secondary" title="View source" href="https://github.com/DomCR/ACadSharp/blob/master/src/ACadSharp/Entities/Insert.cs/#L381"><i class="bi bi-code-slash"></i></a>
   </h3>
 
-  <div class="markdown level1 summary"><p>Get the transform that will be applied to the entities in the <a class="xref" href="ACadSharp.Tables.BlockRecord.html">BlockRecord</a> when this entity is processed.</p>
+  <div class="markdown level1 summary"><p>Get the transform that will be applied to the entities in the <a class="xref" href="ACadSharp.Tables.BlockRecord.html">BlockRecord</a> when this entity is processed.
+This accounts for the block base point so the inserted geometry lands in the expected position.</p>
 </div>
   <div class="markdown level1 conceptual"></div>
 
@@ -1131,7 +1132,7 @@ representations. The original block and its entities remain unchanged.</p>
 
   <h3 id="ACadSharp_Entities_Insert_UpdateAttributes" data-uid="ACadSharp.Entities.Insert.UpdateAttributes">
   UpdateAttributes()
-  <a class="header-action link-secondary" title="View source" href="https://github.com/DomCR/ACadSharp/blob/master/src/ACadSharp/Entities/Insert.cs/#L396"><i class="bi bi-code-slash"></i></a>
+  <a class="header-action link-secondary" title="View source" href="https://github.com/DomCR/ACadSharp/blob/master/src/ACadSharp/Entities/Insert.cs/#L398"><i class="bi bi-code-slash"></i></a>
   </h3>
 
   <div class="markdown level1 summary"><p>Updates all attribute definitions contained in the block reference as <a class="xref" href="ACadSharp.Entities.AttributeDefinition.html">AttributeDefinition</a> entities in the insert.</p>
