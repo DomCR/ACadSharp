@@ -375,12 +375,14 @@ public class Insert : Entity
 
 	/// <summary>
 	/// Get the transform that will be applied to the entities in the <see cref="BlockRecord"/> when this entity is processed.
+	/// This accounts for the block base point so the inserted geometry lands in the expected position.
 	/// </summary>
 	/// <returns></returns>
 	public Transform GetTransform()
 	{
 		var world = Matrix4.GetArbitraryAxis(this.Normal);
-		var translation = Transform.CreateTranslation(this.InsertPoint);
+		XYZ basePoint = this.Block?.BlockEntity?.BasePoint ?? XYZ.Zero;
+		var translation = Transform.CreateTranslation(this.InsertPoint - basePoint);
 		var rotation = Transform.CreateRotation(XYZ.AxisZ, this.Rotation);
 		var scale = Transform.CreateScaling(new XYZ(this.XScale, this.YScale, this.ZScale));
 
