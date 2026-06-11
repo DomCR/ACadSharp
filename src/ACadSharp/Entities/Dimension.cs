@@ -485,12 +485,16 @@ namespace ACadSharp.Entities
 				var curr = item.Value.GetRawValue(this.Style);
 				var over = item.Value.GetRawValue(styleOverride);
 
-				if (curr == null || over == null)
-				{
+				// over=null means "reset to default": ToXDataRecords emits nothing for a null
+				// StoredValue, so skip to avoid adding a useless entry to the override map.
+				if (over == null)
 					continue;
-				}
 
-				if (!curr.Equals(over))
+				// object.Equals handles curr=null safely:
+				//   (null, null)   → true  → already skipped above (over would be null)
+				//   (null, value)  → false → include (null→value: new assignment)
+				//   (value, value) → delegates to curr.Equals(over)
+				if (!object.Equals(curr, over))
 				{
 					item.Value.StoredValue = over;
 					overrideMap.DxfProperties.Add(item.Key, item.Value);
