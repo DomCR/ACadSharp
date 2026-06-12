@@ -311,9 +311,8 @@ public class Layout : PlotSettings
 
 		if (this.AssociatedBlock != null)
 		{
+			this.Document.BlockRecords.Remove(this.AssociatedBlock.Name);
 			this.AssociatedBlock.Layout = null;
-			this.Document.BlockRecords.OnRemove -= this.onRemoveBlockRecord;
-			this._blockRecord = (BlockRecord)this._blockRecord?.Clone();
 		}
 
 		base.UnassignDocument();
