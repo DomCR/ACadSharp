@@ -1,16 +1,28 @@
-echo Prepare commit
-#Get commit details
-author=`git log -1 --format="%an"`
-email=`git log -1 --format="%ae"`
+#!/usr/bin/env sh
+set -eu
 
-git config --local user.email "$email"
-git config --local user.name "$author" 
-git add .
-if git diff-index --quiet HEAD; then
+echo "Prepare commit"
+
+#Get commit details
+author="$(git config --get user.name || true)"
+email="$(git config --get user.email || true)"
+
+if [ -z "${author}" ] || [ -z "${email}" ]; then
+  echo "Git user identity is not configured."
+  exit 1
+fi
+
+git add -A
+
+if git diff-index --quiet HEAD --; then
   echo "Nothing changed"
   exit 0
 fi
 
-echo "Pushing changes $BRANCH"
-git commit -m "Update project version to $VERSION"
-git push origin $BRANCH
+branch="${BRANCH:-$(git rev-parse --abbrev-ref HEAD)}"
+remote="$(git config --get "branch.${branch}.remote" || true)"
+remote="${remote:-origin}"
+
+echo "Pushing changes to ${remote}/${branch}"
+git commit -m "Update project version to ${VERSION}"
+git push "${remote}" "${branch}"
