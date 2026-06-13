@@ -44,7 +44,7 @@ internal partial class DwgObjectReader : DwgSectionIO
 		template.Block1PtParameter.Value93 = this._mergedReaders.ReadBitLong();
 	}
 
-	private void readBlock2PtParameter(CadBlock2PtParameterTemplate template)
+	private short readBlock2PtParameter(CadBlock2PtParameterTemplate template)
 	{
 		this.readBlockParameter(template);
 
@@ -73,7 +73,10 @@ internal partial class DwgObjectReader : DwgSectionIO
 			var f = this._mergedReaders.ReadBitLong();
 		}
 
-		var value177 = this._mergedReaders.ReadBitShort();
+		//177
+		short value177 = this._mergedReaders.ReadBitShort();
+
+		return value177;
 	}
 
 	private void readBlockAction(CadBlockActionTemplate template)
@@ -211,6 +214,41 @@ internal partial class DwgObjectReader : DwgSectionIO
 		blockRotationParameter.Value143 = this._mergedReaders.ReadBitDouble();
 
 		blockRotationParameter.Value175 = this._mergedReaders.ReadBitLong();
+
+		return template;
+	}
+
+	private CadTemplate readBlockLinearParameter()
+	{
+		BlockLinearParameter blockLinearParameter = new();
+		CadBlockLinearParameterTemplate template = new CadBlockLinearParameterTemplate(blockLinearParameter);
+
+		//Reads the common 2 point parameter data (FirstPoint, SecondPoint and the
+		//variable-length connection table). The trailing 177 value returned is the
+		//base location of the linear parameter.
+		short value177 = this.readBlock2PtParameter(template);
+
+		//177
+		blockLinearParameter.BaseLocation = (LinearParameterBaseLocation)value177;
+		//305
+		blockLinearParameter.Label = this._mergedReaders.ReadVariableText();
+		//306
+		blockLinearParameter.Description = this._mergedReaders.ReadVariableText();
+		//140
+		blockLinearParameter.LabelOffset = this._mergedReaders.ReadBitDouble();
+		//96
+		this._mergedReaders.ReadBitLong();
+		//141
+		blockLinearParameter.Minimum = this._mergedReaders.ReadBitDouble();
+		//142
+		blockLinearParameter.Maximum = this._mergedReaders.ReadBitDouble();
+		//143
+		blockLinearParameter.Increment = this._mergedReaders.ReadBitDouble();
+
+		//171 number of discrete values
+		short numberOfValues = this._mergedReaders.ReadBitShort();
+		for (int i = 0; i < numberOfValues; i++)
+			blockLinearParameter.Values.Add(this._mergedReaders.ReadBitDouble());
 
 		return template;
 	}

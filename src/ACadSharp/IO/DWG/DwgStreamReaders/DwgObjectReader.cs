@@ -5591,6 +5591,9 @@ namespace ACadSharp.IO.DWG
 				case DxfFileToken.ObjectEvalGraph:
 					template = this.readEvaluationGraph();
 					break;
+				case DxfFileToken.ObjectBlockLinearParameter:
+					template = this.readBlockLinearParameter();
+					break;
 				case DxfFileToken.ObjectBlockRotationParameter:
 					template = this.readBlockRotationParameter();
 					break;
