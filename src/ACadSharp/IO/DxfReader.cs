@@ -3,6 +3,7 @@ using ACadSharp.Entities;
 using ACadSharp.Exceptions;
 using ACadSharp.Header;
 using ACadSharp.IO.DXF;
+using ACadSharp.IO.DXF.DxfStreamReader;
 using CSUtilities.IO;
 using CSUtilities.Text;
 using System;
