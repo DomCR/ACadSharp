@@ -3269,7 +3269,7 @@ namespace ACadSharp.IO.DWG
 			matrix.M32 = this._mergedReaders.ReadBitDouble();
 			matrix.M33 = this._mergedReaders.ReadBitDouble();
 
-			return Matrix4.Identity;
+			return matrix;
 		}
 
 		private CadTemplate readMesh()
