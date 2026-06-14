@@ -73,7 +73,8 @@ internal partial class DwgObjectReader : DwgSectionIO
 			var f = this._mergedReaders.ReadBitLong();
 		}
 
-		var value177 = this._mergedReaders.ReadBitShort();
+		//177
+		template.Block2PtParameter.BaseLocation = (LinearParameterBaseLocation)this._mergedReaders.ReadBitShort();
 	}
 
 	private void readBlockAction(CadBlockActionTemplate template)
@@ -211,6 +212,39 @@ internal partial class DwgObjectReader : DwgSectionIO
 		blockRotationParameter.Value143 = this._mergedReaders.ReadBitDouble();
 
 		blockRotationParameter.Value175 = this._mergedReaders.ReadBitLong();
+
+		return template;
+	}
+
+	private CadTemplate readBlockLinearParameter()
+	{
+		BlockLinearParameter blockLinearParameter = new();
+		CadBlockLinearParameterTemplate template = new CadBlockLinearParameterTemplate(blockLinearParameter);
+
+		this.readBlock2PtParameter(template);
+
+		//305
+		blockLinearParameter.Label = this._mergedReaders.ReadVariableText();
+		//306
+		blockLinearParameter.Description = this._mergedReaders.ReadVariableText();
+		//140
+		blockLinearParameter.LabelOffset = this._mergedReaders.ReadBitDouble();
+
+		//96
+		this._mergedReaders.ReadBitLong();
+		//141
+		blockLinearParameter.Minimum = this._mergedReaders.ReadBitDouble();
+		//142
+		blockLinearParameter.Maximum = this._mergedReaders.ReadBitDouble();
+		//143
+		blockLinearParameter.Increment = this._mergedReaders.ReadBitDouble();
+
+		//171 number of discrete values
+		short numberOfValues = this._mergedReaders.ReadBitShort();
+		for (int i = 0; i < numberOfValues; i++)
+		{
+			blockLinearParameter.Values.Add(this._mergedReaders.ReadBitDouble());
+		}
 
 		return template;
 	}
