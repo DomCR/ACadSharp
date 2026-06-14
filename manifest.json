@@ -4110,7 +4110,7 @@
       "Uid": null,
       "IsMRef": true,
       "Title": "ACadSharp.Objects.Evaluations.BlockLinearParameter",
-      "Summary": ""
+      "Summary": "<p sourcefile=\"api/ACadSharp.Objects.Evaluations.BlockLinearParameter.yml\" sourcestartlinenumber=\"1\">Represents a BLOCKLINEARPARAMETER object, used in AutoCAD to control a\ndistance between two points in a dynamic block.</p>\n"
     },
     {
       "type": "ManagedReference",
@@ -4222,7 +4222,7 @@
       "Uid": null,
       "IsMRef": true,
       "Title": "ACadSharp.Objects.Evaluations.EvaluationExpression",
-      "Summary": ""
+      "Summary": "<p sourcefile=\"api/ACadSharp.Objects.Evaluations.EvaluationExpression.yml\" sourcestartlinenumber=\"1\">Represents an evaluation expression used in AutoCAD to define dynamic block parameters and constraints.</p>\n"
     },
     {
       "type": "ManagedReference",
@@ -4265,6 +4265,20 @@
       "IsMRef": true,
       "Title": "ACadSharp.Objects.Evaluations.EvaluationGraph",
       "Summary": "<p sourcefile=\"api/ACadSharp.Objects.Evaluations.EvaluationGraph.yml\" sourcestartlinenumber=\"1\">Represents an evaluation graph containing a list of <xref href=\"ACadSharp.Objects.Evaluations.EvaluationGraph.Node\" data-throw-if-not-resolved=\"false\"></xref>.\nobjects.</p>\n"
+    },
+    {
+      "type": "ManagedReference",
+      "source_relative_path": "api/ACadSharp.Objects.Evaluations.LinearParameterBaseLocation.yml",
+      "output": {
+        ".html": {
+          "relative_path": "api/ACadSharp.Objects.Evaluations.LinearParameterBaseLocation.html"
+        }
+      },
+      "version": "",
+      "Uid": null,
+      "IsMRef": true,
+      "Title": "ACadSharp.Objects.Evaluations.LinearParameterBaseLocation",
+      "Summary": "<p sourcefile=\"api/ACadSharp.Objects.Evaluations.LinearParameterBaseLocation.yml\" sourcestartlinenumber=\"1\">Defines where the base point of a <xref href=\"ACadSharp.Objects.Evaluations.BlockLinearParameter\" data-throw-if-not-resolved=\"false\"></xref> is located.</p>\n"
     },
     {
       "type": "ManagedReference",
