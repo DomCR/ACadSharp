@@ -3251,17 +3251,12 @@ namespace ACadSharp.IO.DWG
 			if (this.R2007Plus)
 			{
 				material.Translucence = this._mergedReaders.ReadBitDouble();
-				this._mergedReaders.ReadBitDouble();                                   // self_illumination (not modeled)
+				material.SelfIllumination = this._mergedReaders.ReadBitDouble();
 				material.Reflectivity = this._mergedReaders.ReadBitDouble();
 				material.IlluminationModel = (MaterialIlluminationModel)this._mergedReaders.ReadBitLong();
 				material.ChannelFlags = (MaterialChannelFlags)this._mergedReaders.ReadBitLong();
 				material.Mode = (MaterialMode)this._mergedReaders.ReadBitLong();
 			}
-
-#if TEST
-			var obj = DwgStreamReaderBase.Explore(this._objectReader);
-			var text = DwgStreamReaderBase.Explore(this._textReader);
-#endif
 
 			return template;
 		}

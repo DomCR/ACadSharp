@@ -1,6 +1,8 @@
 ﻿using ACadSharp.Attributes;
+using ACadSharp.Objects;
 using CSMath;
 using System.Collections.Generic;
+using System.Linq;
 
 namespace ACadSharp.Entities;
 
@@ -51,6 +53,84 @@ public partial class Mesh : Entity
 	public int SubdivisionLevel { get; set; }
 
 	/// <summary>
+	/// Per-vertex texture coordinates (U, V, W). Empty if the mesh has no UV mapping.
+	/// </summary>
+	/// <remarks>
+	/// Persisted as an <c>ADSK_XREC_SUBDVERTEXTEXCOORDS</c> XRecord on the mesh extension dictionary,
+	/// matching the AutoCAD/AcDbSubDMesh convention. The list must have the same length as <see cref="Vertices"/>.
+	/// </remarks>
+	public IEnumerable<XYZ> TextureCoordinates
+	{
+		get
+		{
+			if (this.XDictionary == null
+				|| !this.XDictionary.TryGetEntry(Mesh.TextureCoordsXRecordName, out XRecord xrec))
+			{
+				return Enumerable.Empty<XYZ>();
+			}
+
+			var coords = new List<XYZ>();
+
+			double? u = null, v = null;
+			foreach (var entry in xrec.Entries)
+			{
+				switch (entry.Code)
+				{
+					case 43:
+						u = System.Convert.ToDouble(entry.Value, System.Globalization.CultureInfo.InvariantCulture);
+						break;
+					case 44:
+						v = System.Convert.ToDouble(entry.Value, System.Globalization.CultureInfo.InvariantCulture);
+						break;
+					case 45:
+						double w = System.Convert.ToDouble(entry.Value, System.Globalization.CultureInfo.InvariantCulture);
+						if (u.HasValue && v.HasValue)
+						{
+							coords.Add(new XYZ(u.Value, v.Value, w));
+						}
+						u = null;
+						v = null;
+						break;
+				}
+			}
+
+			return coords;
+		}
+		set
+		{
+			var xdict = this.CreateExtendedDictionary();
+			if (!xdict.TryGetEntry(Entities.Mesh.TextureCoordsXRecordName, out XRecord xrec))
+			{
+				xrec = new XRecord(Entities.Mesh.TextureCoordsXRecordName);
+				xdict.Add(xrec);
+			}
+
+			xrec.Clear();
+
+			foreach (var uv in value)
+			{
+				xrec.CreateEntry(43, uv.X);
+				xrec.CreateEntry(44, uv.Y);
+				xrec.CreateEntry(45, uv.Z);
+			}
+		}
+	}
+
+	public void AddTextureCoordinate(XYZ uvw)
+	{
+		var xdict = this.CreateExtendedDictionary();
+		if (!xdict.TryGetEntry(Entities.Mesh.TextureCoordsXRecordName, out XRecord xrec))
+		{
+			xrec = new XRecord(Entities.Mesh.TextureCoordsXRecordName);
+			xdict.Add(xrec);
+		}
+
+		xrec.CreateEntry(43, uvw.X);
+		xrec.CreateEntry(44, uvw.Y);
+		xrec.CreateEntry(45, uvw.Z);
+	}
+
+	/// <summary>
 	/// Version number
 	/// </summary>
 	[DxfCodeValue(71)]
@@ -62,15 +142,6 @@ public partial class Mesh : Entity
 	[DxfCodeValue(DxfReferenceType.Count, 92)]
 	[DxfCollectionCodeValue(10, 20, 30)]
 	public List<XYZ> Vertices { get; private set; } = new();
-
-	/// <summary>
-	/// Per-vertex texture coordinates (U, V, W). Empty if the mesh has no UV mapping.
-	/// </summary>
-	/// <remarks>
-	/// Persisted as an <c>ADSK_XREC_SUBDVERTEXTEXCOORDS</c> XRecord on the mesh extension dictionary,
-	/// matching the AutoCAD/AcDbSubDMesh convention. The list must have the same length as <see cref="Vertices"/>.
-	/// </remarks>
-	public List<XYZ> TextureCoordinates { get; private set; } = new();
 
 	internal const string TextureCoordsXRecordName = "ADSK_XREC_SUBDVERTEXTEXCOORDS";
 
@@ -103,7 +174,6 @@ public partial class Mesh : Entity
 		clone.Edges = new List<Edge>(this.Edges);
 		clone.Vertices = new List<XYZ>(this.Vertices);
 		clone.Faces = new List<int[]>(this.Faces);
-		clone.TextureCoordinates = new List<XYZ>(this.TextureCoordinates);
 
 		return clone;
 	}
