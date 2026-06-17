@@ -116,6 +116,25 @@ public partial class Mesh : Entity
 		}
 	}
 
+	/// <summary>
+	/// Version number.
+	/// </summary>
+	[DxfCodeValue(71)]
+	public short Version { get; set; } = 2;
+
+	/// <summary>
+	/// Vertex count of level 0.
+	/// </summary>
+	[DxfCodeValue(DxfReferenceType.Count, 92)]
+	[DxfCollectionCodeValue(10, 20, 30)]
+	public List<XYZ> Vertices { get; private set; } = new();
+
+	internal const string TextureCoordsXRecordName = "ADSK_XREC_SUBDVERTEXTEXCOORDS";
+
+	/// <summary>
+	/// Adds a texture coordinate to the mesh. The coordinates are stored in an XRecord in the mesh's extension dictionary.
+	/// </summary>
+	/// <param name="uvw">The texture coordinate to add.</param>
 	public void AddTextureCoordinate(XYZ uvw)
 	{
 		var xdict = this.CreateExtendedDictionary();
@@ -129,21 +148,6 @@ public partial class Mesh : Entity
 		xrec.CreateEntry(44, uvw.Y);
 		xrec.CreateEntry(45, uvw.Z);
 	}
-
-	/// <summary>
-	/// Version number
-	/// </summary>
-	[DxfCodeValue(71)]
-	public short Version { get; set; } = 2;
-
-	/// <summary>
-	/// Vertex count of level 0
-	/// </summary>
-	[DxfCodeValue(DxfReferenceType.Count, 92)]
-	[DxfCollectionCodeValue(10, 20, 30)]
-	public List<XYZ> Vertices { get; private set; } = new();
-
-	internal const string TextureCoordsXRecordName = "ADSK_XREC_SUBDVERTEXTEXCOORDS";
 
 	//90	Count of sub-entity which property has been overridden
 
