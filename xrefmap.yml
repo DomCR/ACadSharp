@@ -16062,6 +16062,19 @@ references:
   commentId: T:ACadSharp.Entities.Mesh
   fullName: ACadSharp.Entities.Mesh
   nameWithType: Mesh
+- uid: ACadSharp.Entities.Mesh.AddTextureCoordinate(CSMath.XYZ)
+  name: AddTextureCoordinate(XYZ)
+  href: api/ACadSharp.Entities.Mesh.html#ACadSharp_Entities_Mesh_AddTextureCoordinate_CSMath_XYZ_
+  commentId: M:ACadSharp.Entities.Mesh.AddTextureCoordinate(CSMath.XYZ)
+  fullName: ACadSharp.Entities.Mesh.AddTextureCoordinate(CSMath.XYZ)
+  nameWithType: Mesh.AddTextureCoordinate(XYZ)
+- uid: ACadSharp.Entities.Mesh.AddTextureCoordinate*
+  name: AddTextureCoordinate
+  href: api/ACadSharp.Entities.Mesh.html#ACadSharp_Entities_Mesh_AddTextureCoordinate_
+  commentId: Overload:ACadSharp.Entities.Mesh.AddTextureCoordinate
+  isSpec: "True"
+  fullName: ACadSharp.Entities.Mesh.AddTextureCoordinate
+  nameWithType: Mesh.AddTextureCoordinate
 - uid: ACadSharp.Entities.Mesh.ApplyTransform(CSMath.Transform)
   name: ApplyTransform(Transform)
   href: api/ACadSharp.Entities.Mesh.html#ACadSharp_Entities_Mesh_ApplyTransform_CSMath_Transform_
@@ -16269,6 +16282,19 @@ references:
   isSpec: "True"
   fullName: ACadSharp.Entities.Mesh.SubdivisionLevel
   nameWithType: Mesh.SubdivisionLevel
+- uid: ACadSharp.Entities.Mesh.TextureCoordinates
+  name: TextureCoordinates
+  href: api/ACadSharp.Entities.Mesh.html#ACadSharp_Entities_Mesh_TextureCoordinates
+  commentId: P:ACadSharp.Entities.Mesh.TextureCoordinates
+  fullName: ACadSharp.Entities.Mesh.TextureCoordinates
+  nameWithType: Mesh.TextureCoordinates
+- uid: ACadSharp.Entities.Mesh.TextureCoordinates*
+  name: TextureCoordinates
+  href: api/ACadSharp.Entities.Mesh.html#ACadSharp_Entities_Mesh_TextureCoordinates_
+  commentId: Overload:ACadSharp.Entities.Mesh.TextureCoordinates
+  isSpec: "True"
+  fullName: ACadSharp.Entities.Mesh.TextureCoordinates
+  nameWithType: Mesh.TextureCoordinates
 - uid: ACadSharp.Entities.Mesh.Version
   name: Version
   href: api/ACadSharp.Entities.Mesh.html#ACadSharp_Entities_Mesh_Version
@@ -38810,6 +38836,19 @@ references:
   isSpec: "True"
   fullName: ACadSharp.Objects.Material.IlluminationModel
   nameWithType: Material.IlluminationModel
+- uid: ACadSharp.Objects.Material.Mode
+  name: Mode
+  href: api/ACadSharp.Objects.Material.html#ACadSharp_Objects_Material_Mode
+  commentId: P:ACadSharp.Objects.Material.Mode
+  fullName: ACadSharp.Objects.Material.Mode
+  nameWithType: Material.Mode
+- uid: ACadSharp.Objects.Material.Mode*
+  name: Mode
+  href: api/ACadSharp.Objects.Material.html#ACadSharp_Objects_Material_Mode_
+  commentId: Overload:ACadSharp.Objects.Material.Mode
+  isSpec: "True"
+  fullName: ACadSharp.Objects.Material.Mode
+  nameWithType: Material.Mode
 - uid: ACadSharp.Objects.Material.Name
   name: Name
   href: api/ACadSharp.Objects.Material.html#ACadSharp_Objects_Material_Name
@@ -39161,6 +39200,19 @@ references:
   isSpec: "True"
   fullName: ACadSharp.Objects.Material.RefractionTilingMethod
   nameWithType: Material.RefractionTilingMethod
+- uid: ACadSharp.Objects.Material.SelfIllumination
+  name: SelfIllumination
+  href: api/ACadSharp.Objects.Material.html#ACadSharp_Objects_Material_SelfIllumination
+  commentId: P:ACadSharp.Objects.Material.SelfIllumination
+  fullName: ACadSharp.Objects.Material.SelfIllumination
+  nameWithType: Material.SelfIllumination
+- uid: ACadSharp.Objects.Material.SelfIllumination*
+  name: SelfIllumination
+  href: api/ACadSharp.Objects.Material.html#ACadSharp_Objects_Material_SelfIllumination_
+  commentId: Overload:ACadSharp.Objects.Material.SelfIllumination
+  isSpec: "True"
+  fullName: ACadSharp.Objects.Material.SelfIllumination
+  nameWithType: Material.SelfIllumination
 - uid: ACadSharp.Objects.Material.SpecularAutoTransform
   name: SpecularAutoTransform
   href: api/ACadSharp.Objects.Material.html#ACadSharp_Objects_Material_SpecularAutoTransform
@@ -39330,6 +39382,102 @@ references:
   isSpec: "True"
   fullName: ACadSharp.Objects.Material.Translucence
   nameWithType: Material.Translucence
+- uid: ACadSharp.Objects.MaterialChannelFlags
+  name: MaterialChannelFlags
+  href: api/ACadSharp.Objects.MaterialChannelFlags.html
+  commentId: T:ACadSharp.Objects.MaterialChannelFlags
+  fullName: ACadSharp.Objects.MaterialChannelFlags
+  nameWithType: MaterialChannelFlags
+- uid: ACadSharp.Objects.MaterialChannelFlags.None
+  name: None
+  href: api/ACadSharp.Objects.MaterialChannelFlags.html#ACadSharp_Objects_MaterialChannelFlags_None
+  commentId: F:ACadSharp.Objects.MaterialChannelFlags.None
+  fullName: ACadSharp.Objects.MaterialChannelFlags.None
+  nameWithType: MaterialChannelFlags.None
+- uid: ACadSharp.Objects.MaterialChannelFlags.UseAll
+  name: UseAll
+  href: api/ACadSharp.Objects.MaterialChannelFlags.html#ACadSharp_Objects_MaterialChannelFlags_UseAll
+  commentId: F:ACadSharp.Objects.MaterialChannelFlags.UseAll
+  fullName: ACadSharp.Objects.MaterialChannelFlags.UseAll
+  nameWithType: MaterialChannelFlags.UseAll
+- uid: ACadSharp.Objects.MaterialChannelFlags.UseBump
+  name: UseBump
+  href: api/ACadSharp.Objects.MaterialChannelFlags.html#ACadSharp_Objects_MaterialChannelFlags_UseBump
+  commentId: F:ACadSharp.Objects.MaterialChannelFlags.UseBump
+  fullName: ACadSharp.Objects.MaterialChannelFlags.UseBump
+  nameWithType: MaterialChannelFlags.UseBump
+- uid: ACadSharp.Objects.MaterialChannelFlags.UseDiffuse
+  name: UseDiffuse
+  href: api/ACadSharp.Objects.MaterialChannelFlags.html#ACadSharp_Objects_MaterialChannelFlags_UseDiffuse
+  commentId: F:ACadSharp.Objects.MaterialChannelFlags.UseDiffuse
+  fullName: ACadSharp.Objects.MaterialChannelFlags.UseDiffuse
+  nameWithType: MaterialChannelFlags.UseDiffuse
+- uid: ACadSharp.Objects.MaterialChannelFlags.UseNormalMap
+  name: UseNormalMap
+  href: api/ACadSharp.Objects.MaterialChannelFlags.html#ACadSharp_Objects_MaterialChannelFlags_UseNormalMap
+  commentId: F:ACadSharp.Objects.MaterialChannelFlags.UseNormalMap
+  fullName: ACadSharp.Objects.MaterialChannelFlags.UseNormalMap
+  nameWithType: MaterialChannelFlags.UseNormalMap
+- uid: ACadSharp.Objects.MaterialChannelFlags.UseOpacity
+  name: UseOpacity
+  href: api/ACadSharp.Objects.MaterialChannelFlags.html#ACadSharp_Objects_MaterialChannelFlags_UseOpacity
+  commentId: F:ACadSharp.Objects.MaterialChannelFlags.UseOpacity
+  fullName: ACadSharp.Objects.MaterialChannelFlags.UseOpacity
+  nameWithType: MaterialChannelFlags.UseOpacity
+- uid: ACadSharp.Objects.MaterialChannelFlags.UseReflection
+  name: UseReflection
+  href: api/ACadSharp.Objects.MaterialChannelFlags.html#ACadSharp_Objects_MaterialChannelFlags_UseReflection
+  commentId: F:ACadSharp.Objects.MaterialChannelFlags.UseReflection
+  fullName: ACadSharp.Objects.MaterialChannelFlags.UseReflection
+  nameWithType: MaterialChannelFlags.UseReflection
+- uid: ACadSharp.Objects.MaterialChannelFlags.UseRefraction
+  name: UseRefraction
+  href: api/ACadSharp.Objects.MaterialChannelFlags.html#ACadSharp_Objects_MaterialChannelFlags_UseRefraction
+  commentId: F:ACadSharp.Objects.MaterialChannelFlags.UseRefraction
+  fullName: ACadSharp.Objects.MaterialChannelFlags.UseRefraction
+  nameWithType: MaterialChannelFlags.UseRefraction
+- uid: ACadSharp.Objects.MaterialChannelFlags.UseSpecular
+  name: UseSpecular
+  href: api/ACadSharp.Objects.MaterialChannelFlags.html#ACadSharp_Objects_MaterialChannelFlags_UseSpecular
+  commentId: F:ACadSharp.Objects.MaterialChannelFlags.UseSpecular
+  fullName: ACadSharp.Objects.MaterialChannelFlags.UseSpecular
+  nameWithType: MaterialChannelFlags.UseSpecular
+- uid: ACadSharp.Objects.MaterialIlluminationModel
+  name: MaterialIlluminationModel
+  href: api/ACadSharp.Objects.MaterialIlluminationModel.html
+  commentId: T:ACadSharp.Objects.MaterialIlluminationModel
+  fullName: ACadSharp.Objects.MaterialIlluminationModel
+  nameWithType: MaterialIlluminationModel
+- uid: ACadSharp.Objects.MaterialIlluminationModel.BlinnShader
+  name: BlinnShader
+  href: api/ACadSharp.Objects.MaterialIlluminationModel.html#ACadSharp_Objects_MaterialIlluminationModel_BlinnShader
+  commentId: F:ACadSharp.Objects.MaterialIlluminationModel.BlinnShader
+  fullName: ACadSharp.Objects.MaterialIlluminationModel.BlinnShader
+  nameWithType: MaterialIlluminationModel.BlinnShader
+- uid: ACadSharp.Objects.MaterialIlluminationModel.MetalShader
+  name: MetalShader
+  href: api/ACadSharp.Objects.MaterialIlluminationModel.html#ACadSharp_Objects_MaterialIlluminationModel_MetalShader
+  commentId: F:ACadSharp.Objects.MaterialIlluminationModel.MetalShader
+  fullName: ACadSharp.Objects.MaterialIlluminationModel.MetalShader
+  nameWithType: MaterialIlluminationModel.MetalShader
+- uid: ACadSharp.Objects.MaterialMode
+  name: MaterialMode
+  href: api/ACadSharp.Objects.MaterialMode.html
+  commentId: T:ACadSharp.Objects.MaterialMode
+  fullName: ACadSharp.Objects.MaterialMode
+  nameWithType: MaterialMode
+- uid: ACadSharp.Objects.MaterialMode.Advanced
+  name: Advanced
+  href: api/ACadSharp.Objects.MaterialMode.html#ACadSharp_Objects_MaterialMode_Advanced
+  commentId: F:ACadSharp.Objects.MaterialMode.Advanced
+  fullName: ACadSharp.Objects.MaterialMode.Advanced
+  nameWithType: MaterialMode.Advanced
+- uid: ACadSharp.Objects.MaterialMode.Realistic
+  name: Realistic
+  href: api/ACadSharp.Objects.MaterialMode.html#ACadSharp_Objects_MaterialMode_Realistic
+  commentId: F:ACadSharp.Objects.MaterialMode.Realistic
+  fullName: ACadSharp.Objects.MaterialMode.Realistic
+  nameWithType: MaterialMode.Realistic
 - uid: ACadSharp.Objects.MultiLeaderDrawOrderType
   name: MultiLeaderDrawOrderType
   href: api/ACadSharp.Objects.MultiLeaderDrawOrderType.html
@@ -45739,6 +45887,32 @@ references:
   fullName.vb: ACadSharp.Objects.XRecord.New
   nameWithType: XRecord.XRecord
   nameWithType.vb: XRecord.New
+- uid: ACadSharp.Objects.XRecord.Clear
+  name: Clear()
+  href: api/ACadSharp.Objects.XRecord.html#ACadSharp_Objects_XRecord_Clear
+  commentId: M:ACadSharp.Objects.XRecord.Clear
+  fullName: ACadSharp.Objects.XRecord.Clear()
+  nameWithType: XRecord.Clear()
+- uid: ACadSharp.Objects.XRecord.Clear*
+  name: Clear
+  href: api/ACadSharp.Objects.XRecord.html#ACadSharp_Objects_XRecord_Clear_
+  commentId: Overload:ACadSharp.Objects.XRecord.Clear
+  isSpec: "True"
+  fullName: ACadSharp.Objects.XRecord.Clear
+  nameWithType: XRecord.Clear
+- uid: ACadSharp.Objects.XRecord.Clone
+  name: Clone()
+  href: api/ACadSharp.Objects.XRecord.html#ACadSharp_Objects_XRecord_Clone
+  commentId: M:ACadSharp.Objects.XRecord.Clone
+  fullName: ACadSharp.Objects.XRecord.Clone()
+  nameWithType: XRecord.Clone()
+- uid: ACadSharp.Objects.XRecord.Clone*
+  name: Clone
+  href: api/ACadSharp.Objects.XRecord.html#ACadSharp_Objects_XRecord_Clone_
+  commentId: Overload:ACadSharp.Objects.XRecord.Clone
+  isSpec: "True"
+  fullName: ACadSharp.Objects.XRecord.Clone
+  nameWithType: XRecord.Clone
 - uid: ACadSharp.Objects.XRecord.CloningFlags
   name: CloningFlags
   href: api/ACadSharp.Objects.XRecord.html#ACadSharp_Objects_XRecord_CloningFlags

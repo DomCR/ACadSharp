@@ -4730,6 +4730,48 @@
     },
     {
       "type": "ManagedReference",
+      "source_relative_path": "api/ACadSharp.Objects.MaterialChannelFlags.yml",
+      "output": {
+        ".html": {
+          "relative_path": "api/ACadSharp.Objects.MaterialChannelFlags.html"
+        }
+      },
+      "version": "",
+      "Uid": null,
+      "IsMRef": true,
+      "Title": "ACadSharp.Objects.MaterialChannelFlags",
+      "Summary": "<p sourcefile=\"api/ACadSharp.Objects.MaterialChannelFlags.yml\" sourcestartlinenumber=\"1\">Material channel-enable flags. Each bit toggles whether the renderer\nconsiders the corresponding channel data on the <xref href=\"ACadSharp.Objects.Material\" data-throw-if-not-resolved=\"false\"></xref>.\nMirrors the ODA-side <code>OdGiMaterialTraits::ChannelFlags</code> enum.</p>\n"
+    },
+    {
+      "type": "ManagedReference",
+      "source_relative_path": "api/ACadSharp.Objects.MaterialIlluminationModel.yml",
+      "output": {
+        ".html": {
+          "relative_path": "api/ACadSharp.Objects.MaterialIlluminationModel.html"
+        }
+      },
+      "version": "",
+      "Uid": null,
+      "IsMRef": true,
+      "Title": "ACadSharp.Objects.MaterialIlluminationModel",
+      "Summary": "<p sourcefile=\"api/ACadSharp.Objects.MaterialIlluminationModel.yml\" sourcestartlinenumber=\"1\">Shader chosen to evaluate the illumination of a <xref href=\"ACadSharp.Objects.Material\" data-throw-if-not-resolved=\"false\"></xref>.\nMirrors the ODA-side <code>OdGiMaterialTraits::IlluminationModel</code> enum.</p>\n"
+    },
+    {
+      "type": "ManagedReference",
+      "source_relative_path": "api/ACadSharp.Objects.MaterialMode.yml",
+      "output": {
+        ".html": {
+          "relative_path": "api/ACadSharp.Objects.MaterialMode.html"
+        }
+      },
+      "version": "",
+      "Uid": null,
+      "IsMRef": true,
+      "Title": "ACadSharp.Objects.MaterialMode",
+      "Summary": "<p sourcefile=\"api/ACadSharp.Objects.MaterialMode.yml\" sourcestartlinenumber=\"1\">Render-pipeline mode hint for a <xref href=\"ACadSharp.Objects.Material\" data-throw-if-not-resolved=\"false\"></xref>. Mirrors the\nODA-side <code>OdGiMaterialTraits::Mode</code> enum.</p>\n"
+    },
+    {
+      "type": "ManagedReference",
       "source_relative_path": "api/ACadSharp.Objects.MultiLeaderDrawOrderType.yml",
       "output": {
         ".html": {
