@@ -41,7 +41,6 @@ internal partial class DwgObjectWriter : DwgSectionIO
 			case AecBinRecord:
 			case DimensionAssociation:
 			case EvaluationGraph:
-			case Material:
 			case UnknownNonGraphicalObject:
 			case VisualStyle:
 			case ProxyObject:
@@ -1050,6 +1049,9 @@ internal partial class DwgObjectWriter : DwgSectionIO
 				break;
 			case Layout layout:
 				this.writeLayout(layout);
+				break;
+			case Material material:
+				this.writeMaterial(material);
 				break;
 			case MLineStyle style:
 				this.writeMLineStyle(style);
