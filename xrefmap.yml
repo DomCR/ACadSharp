@@ -53536,19 +53536,6 @@ references:
   isSpec: "True"
   fullName: CSMath.BoundingBox.FromPoints
   nameWithType: BoundingBox.FromPoints
-- uid: CSMath.BoundingBox.Height
-  name: Height
-  href: api/CSMath.BoundingBox.html#CSMath_BoundingBox_Height
-  commentId: P:CSMath.BoundingBox.Height
-  fullName: CSMath.BoundingBox.Height
-  nameWithType: BoundingBox.Height
-- uid: CSMath.BoundingBox.Height*
-  name: Height
-  href: api/CSMath.BoundingBox.html#CSMath_BoundingBox_Height_
-  commentId: Overload:CSMath.BoundingBox.Height
-  isSpec: "True"
-  fullName: CSMath.BoundingBox.Height
-  nameWithType: BoundingBox.Height
 - uid: CSMath.BoundingBox.Infinite
   name: Infinite
   href: api/CSMath.BoundingBox.html#CSMath_BoundingBox_Infinite
@@ -53689,19 +53676,6 @@ references:
   commentId: F:CSMath.BoundingBox.Null
   fullName: CSMath.BoundingBox.Null
   nameWithType: BoundingBox.Null
-- uid: CSMath.BoundingBox.Width
-  name: Width
-  href: api/CSMath.BoundingBox.html#CSMath_BoundingBox_Width
-  commentId: P:CSMath.BoundingBox.Width
-  fullName: CSMath.BoundingBox.Width
-  nameWithType: BoundingBox.Width
-- uid: CSMath.BoundingBox.Width*
-  name: Width
-  href: api/CSMath.BoundingBox.html#CSMath_BoundingBox_Width_
-  commentId: Overload:CSMath.BoundingBox.Width
-  isSpec: "True"
-  fullName: CSMath.BoundingBox.Width
-  nameWithType: BoundingBox.Width
 - uid: CSMath.BoundingBoxExtent
   name: BoundingBoxExtent
   href: api/CSMath.BoundingBoxExtent.html
@@ -57137,15 +57111,6 @@ references:
   fullName.vb: CSMath.XYZ.New(Double, Double, Double)
   nameWithType: XYZ.XYZ(double, double, double)
   nameWithType.vb: XYZ.New(Double, Double, Double)
-- uid: CSMath.XYZ.#ctor(System.Double[])
-  name: XYZ(double[])
-  href: api/CSMath.XYZ.html#CSMath_XYZ__ctor_System_Double___
-  commentId: M:CSMath.XYZ.#ctor(System.Double[])
-  name.vb: New(Double())
-  fullName: CSMath.XYZ.XYZ(double[])
-  fullName.vb: CSMath.XYZ.New(Double())
-  nameWithType: XYZ.XYZ(double[])
-  nameWithType.vb: XYZ.New(Double())
 - uid: CSMath.XYZ.#ctor*
   name: XYZ
   href: api/CSMath.XYZ.html#CSMath_XYZ__ctor_
@@ -57174,22 +57139,6 @@ references:
   commentId: F:CSMath.XYZ.AxisZ
   fullName: CSMath.XYZ.AxisZ
   nameWithType: XYZ.AxisZ
-- uid: CSMath.XYZ.CreateFrom(System.Double[],System.Int32)
-  name: CreateFrom(double[], int)
-  href: api/CSMath.XYZ.html#CSMath_XYZ_CreateFrom_System_Double___System_Int32_
-  commentId: M:CSMath.XYZ.CreateFrom(System.Double[],System.Int32)
-  name.vb: CreateFrom(Double(), Integer)
-  fullName: CSMath.XYZ.CreateFrom(double[], int)
-  fullName.vb: CSMath.XYZ.CreateFrom(Double(), Integer)
-  nameWithType: XYZ.CreateFrom(double[], int)
-  nameWithType.vb: XYZ.CreateFrom(Double(), Integer)
-- uid: CSMath.XYZ.CreateFrom*
-  name: CreateFrom
-  href: api/CSMath.XYZ.html#CSMath_XYZ_CreateFrom_
-  commentId: Overload:CSMath.XYZ.CreateFrom
-  isSpec: "True"
-  fullName: CSMath.XYZ.CreateFrom
-  nameWithType: XYZ.CreateFrom
 - uid: CSMath.XYZ.Cross(CSMath.XYZ,CSMath.XYZ)
   name: Cross(XYZ, XYZ)
   href: api/CSMath.XYZ.html#CSMath_XYZ_Cross_CSMath_XYZ_CSMath_XYZ_
