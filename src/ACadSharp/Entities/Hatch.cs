@@ -236,99 +236,100 @@ public partial class Hatch : Entity
 			return entities;
 		}
 
-		foreach (BoundaryPath boundary in this.Paths)
+		BoundingBox box = this.GetBoundingBox();
+		XY[] corners =
+		[
+			new XY(box.Min.X, box.Min.Y),
+			new XY(box.Min.X, box.Max.Y),
+			new XY(box.Max.X, box.Min.Y),
+			new XY(box.Max.X, box.Max.Y)
+		];
+
+		foreach (var patLine in this.Pattern.Lines)
 		{
-			BoundingBox box = boundary.GetBoundingBox();
-
-			XY[] corners =
-			[
-				new XY(box.Min.X, box.Min.Y),
-				new XY(box.Min.X, box.Max.Y),
-				new XY(box.Max.X, box.Min.Y),
-				new XY(box.Max.X, box.Max.Y)
-			];
-
-			foreach (var patLine in this.Pattern.Lines)
+			if (patLine.Direction.IsZero())
 			{
-				if (patLine.Direction.IsZero())
+				continue;
+			}
+
+			XY normal = new XY(-patLine.Direction.Y, patLine.Direction.X);
+
+			double minProj = double.PositiveInfinity;
+			double maxProj = double.NegativeInfinity;
+			for (int i = 0; i < corners.Length; i++)
+			{
+				double p = corners[i].X * normal.X + corners[i].Y * normal.Y;
+				if (p < minProj) minProj = p;
+				if (p > maxProj) maxProj = p;
+			}
+
+			double c0 = patLine.BasePoint.X * normal.X + patLine.BasePoint.Y * normal.Y;
+
+			int kStart;
+			int kEnd;
+			if (System.Math.Abs((double)patLine.LineOffset) <= MathHelper.Epsilon)
+			{
+				kStart = 0;
+				kEnd = 0;
+			}
+			else
+			{
+				double k1 = (minProj - c0) / (double)patLine.LineOffset;
+				double k2 = (maxProj - c0) / (double)patLine.LineOffset;
+
+				double kMin = System.Math.Min(k1, k2);
+				double kMax = System.Math.Max(k1, k2);
+
+				kStart = (int)System.Math.Floor(kMin) - 1;
+				kEnd = (int)System.Math.Ceiling(kMax) + 1;
+			}
+
+			for (int k = kStart; k <= kEnd; k++)
+			{
+				XY basePoint = new XY(
+					patLine.BasePoint.X + patLine.Offset.X * k,
+					patLine.BasePoint.Y + patLine.Offset.Y * k);
+
+				Line2D geomLine = new Line2D(basePoint, patLine.Direction);
+
+				List<XY> intersections = new List<XY>();
+				foreach (BoundaryPath boundary in this.Paths)
+				{
+					intersections.AddRange(boundary.FindIntersections(geomLine).Distinct());
+				}
+
+				if (intersections.Count < 2)
 				{
 					continue;
 				}
 
-				XY normal = new XY(-patLine.Direction.Y, patLine.Direction.X);
-
-				double minProj = double.PositiveInfinity;
-				double maxProj = double.NegativeInfinity;
-				for (int i = 0; i < corners.Length; i++)
+				intersections.Sort((a, b) =>
 				{
-					double p = corners[i].X * normal.X + corners[i].Y * normal.Y;
-					if (p < minProj) minProj = p;
-					if (p > maxProj) maxProj = p;
-				}
+					double ta = (a.X - basePoint.X) * patLine.Direction.X + (a.Y - basePoint.Y) * patLine.Direction.Y;
+					double tb = (b.X - basePoint.X) * patLine.Direction.X + (b.Y - basePoint.Y) * patLine.Direction.Y;
+					return ta.CompareTo(tb);
+				});
 
-				double c0 = patLine.BasePoint.X * normal.X + patLine.BasePoint.Y * normal.Y;
-
-				int kStart;
-				int kEnd;
-				if (System.Math.Abs((double)patLine.LineOffset) <= MathHelper.Epsilon)
+				for (int i = 0; i + 1 < intersections.Count; i += 2)
 				{
-					kStart = 0;
-					kEnd = 0;
-				}
-				else
-				{
-					double k1 = (minProj - c0) / (double)patLine.LineOffset;
-					double k2 = (maxProj - c0) / (double)patLine.LineOffset;
+					XY a = intersections[i];
+					XY b = intersections[i + 1];
 
-					double kMin = System.Math.Min(k1, k2);
-					double kMax = System.Math.Max(k1, k2);
+					double tA = (a.X - basePoint.X) * patLine.Direction.X + (a.Y - basePoint.Y) * patLine.Direction.Y;
+					double tB = (b.X - basePoint.X) * patLine.Direction.X + (b.Y - basePoint.Y) * patLine.Direction.Y;
 
-					kStart = (int)System.Math.Floor(kMin) - 1;
-					kEnd = (int)System.Math.Ceiling(kMax) + 1;
-				}
+					if (tB < tA)
+					{
+						(tA, tB) = (tB, tA);
+					}
 
-				for (int k = kStart; k <= kEnd; k++)
-				{
-					XY basePoint = new XY(
-						patLine.BasePoint.X + patLine.Offset.X * k,
-						patLine.BasePoint.Y + patLine.Offset.Y * k);
-
-					Line2D geomLine = new Line2D(basePoint, patLine.Direction);
-
-					List<XY> intersections = boundary.FindIntersections(geomLine).Distinct().ToList();
-					if (intersections.Count < 2)
+					if ((tB - tA) <= MathHelper.Epsilon)
 					{
 						continue;
 					}
 
-					intersections.Sort((a, b) =>
-					{
-						double ta = (a.X - basePoint.X) * patLine.Direction.X + (a.Y - basePoint.Y) * patLine.Direction.Y;
-						double tb = (b.X - basePoint.X) * patLine.Direction.X + (b.Y - basePoint.Y) * patLine.Direction.Y;
-						return ta.CompareTo(tb);
-					});
-
-					for (int i = 0; i + 1 < intersections.Count; i += 2)
-					{
-						XY a = intersections[i];
-						XY b = intersections[i + 1];
-
-						double tA = (a.X - basePoint.X) * patLine.Direction.X + (a.Y - basePoint.Y) * patLine.Direction.Y;
-						double tB = (b.X - basePoint.X) * patLine.Direction.X + (b.Y - basePoint.Y) * patLine.Direction.Y;
-
-						if (tB < tA)
-						{
-							(tA, tB) = (tB, tA);
-						}
-
-						if ((tB - tA) <= MathHelper.Epsilon)
-						{
-							continue;
-						}
-
-						Line2D line = new Line2D(basePoint, patLine.Direction);
-						entities.AddRange(emitDashedSegment(line, tA, tB, patLine.DashLengths));
-					}
+					Line2D line = new Line2D(basePoint, patLine.Direction);
+					entities.AddRange(emitDashedSegment(line, tA, tB, patLine.DashLengths));
 				}
 			}
 		}
@@ -405,7 +406,11 @@ public partial class Hatch : Entity
 			{
 				double t0 = cursor;
 				double t1 = cursor + step;
-				entities.Add(new Line(line.PointInLine(t0), line.PointInLine(t1)));
+
+				var entity = new Line(line.PointInLine(t0), line.PointInLine(t1));
+				entity.MatchProperties(this);
+				entity.LineType = Tables.LineType.Continuous;
+				entities.Add(entity);
 			}
 
 			cursor += step;
