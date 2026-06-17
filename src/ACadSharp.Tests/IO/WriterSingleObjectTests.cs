@@ -1344,8 +1344,12 @@ public abstract class WriterSingleObjectTests : IOTestsBase
 			Line line = new Line(new CSMath.XY(1, 1), new CSMath.XY(-1, -1));
 			arrowHead.Entities.Add(line);
 
-			leader.Style.LeaderArrow = arrowHead;
-			leader.Style.ArrowSize = 2;
+			DimensionStyle style = new DimensionStyle("my_style");
+			style.LeaderArrow = arrowHead;
+			style.ArrowSize = 2;
+
+			leader.Style = style;
+
 			leader.ArrowHeadEnabled = true;
 
 			this.Document.Entities.Add(leader);
