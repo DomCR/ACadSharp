@@ -1,4 +1,5 @@
 ﻿using ACadSharp.Attributes;
+using ACadSharp.Extensions;
 
 namespace ACadSharp.Entities;
 
@@ -34,5 +35,6 @@ public class AttributeEntity : AttributeBase
 	public AttributeEntity(AttributeDefinition definition) : this()
 	{
 		this.matchAttributeProperties(definition);
+		this.MText = definition.MText.CloneTyped();
 	}
 }
