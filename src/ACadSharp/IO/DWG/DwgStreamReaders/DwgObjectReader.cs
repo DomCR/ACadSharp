@@ -6893,54 +6893,112 @@ namespace ACadSharp.IO.DWG
 			}
 
 			//Read face
-			style.FaceLightingModel = (FaceLightingModelType)_mergedReaders.ReadBitLong();
-			style.FaceLightingQuality = (FaceLightingQualityType)_mergedReaders.ReadBitLong();
-			style.FaceColorMode = (FaceColorMode)_mergedReaders.ReadBitLong();
-
 			if (this.R2010Plus)
 			{
-				style.FaceModifiers = (FaceModifierType)_mergedReaders.ReadBitLong();
-				style.FaceOpacityLevel = _mergedReaders.ReadBitDouble();
-				style.FaceSpecularLevel = _mergedReaders.ReadBitDouble();
-				style.FaceStyleMonoColor = _mergedReaders.ReadCmColor();
+				style.FaceLightingModel = (FaceLightingModelType)this._mergedReaders.ReadBitLong();
+				this._mergedReaders.ReadBitShort();
+				style.FaceLightingQuality = (FaceLightingQualityType)this._mergedReaders.ReadBitLong();
+				this._mergedReaders.ReadBitShort();
+				style.FaceColorMode = (FaceColorMode)this._mergedReaders.ReadBitLong();
+				this._mergedReaders.ReadBitShort();
+				style.FaceModifiers = (FaceModifierType)this._mergedReaders.ReadBitLong();
+				this._mergedReaders.ReadBitShort();
+				style.FaceOpacityLevel = this._mergedReaders.ReadBitDouble();
+				this._mergedReaders.ReadBitShort();
+				style.FaceSpecularLevel = this._mergedReaders.ReadBitDouble();
+				this._mergedReaders.ReadBitShort();
+				style.FaceStyleMonoColor = this._mergedReaders.ReadCmColor();
+				this._mergedReaders.ReadBitShort();
 			}
 			else
 			{
-				style.FaceOpacityLevel = _mergedReaders.ReadBitDouble();
-				style.FaceSpecularLevel = _mergedReaders.ReadBitDouble();
-				style.FaceStyleMonoColor = _mergedReaders.ReadCmColor();
-				style.FaceModifiers = (FaceModifierType)_mergedReaders.ReadBitLong();
+				style.FaceLightingModel = (FaceLightingModelType)this._mergedReaders.ReadBitLong();
+				style.FaceLightingQuality = (FaceLightingQualityType)this._mergedReaders.ReadBitLong();
+				style.FaceColorMode = (FaceColorMode)this._mergedReaders.ReadBitLong();
+				style.FaceOpacityLevel = this._mergedReaders.ReadBitDouble();
+				style.FaceSpecularLevel = this._mergedReaders.ReadBitDouble();
+				style.FaceStyleMonoColor = this._mergedReaders.ReadCmColor();
+				style.FaceModifiers = (FaceModifierType)this._mergedReaders.ReadBitLong();
 			}
 
 			//Read edge
-			style.EdgeStyleModel = (EdgeStyleModel)_mergedReaders.ReadBitLong();
-			style.EdgeStyle = _mergedReaders.ReadBitLong();
-			style.EdgeIntersectionColor = _mergedReaders.ReadCmColor();
-			style.EdgeObscuredColor = _mergedReaders.ReadCmColor();
-			style.EdgeObscuredLineType = _mergedReaders.ReadBitLong();
-
 			if (this.R2010Plus)
 			{
-				style.EdgeIntersectionLineType = _mergedReaders.ReadBitLong();
+				style.EdgeStyleModel = (EdgeStyleModel)this._mergedReaders.ReadBitLong();
+				this._mergedReaders.ReadBitShort();
+				style.EdgeStyle = this._mergedReaders.ReadBitLong();
+				this._mergedReaders.ReadBitShort();
+				style.EdgeIntersectionColor = this._mergedReaders.ReadCmColor();
+				this._mergedReaders.ReadBitShort();
+				style.EdgeObscuredColor = this._mergedReaders.ReadCmColor();
+				this._mergedReaders.ReadBitShort();
+				style.EdgeObscuredLineType = this._mergedReaders.ReadBitLong();
+				this._mergedReaders.ReadBitShort();
+				style.EdgeIntersectionLineType = this._mergedReaders.ReadBitLong();
+				this._mergedReaders.ReadBitShort();
+				style.EdgeCreaseAngle = this._mergedReaders.ReadBitDouble();
+				this._mergedReaders.ReadBitShort();
+				style.EdgeModifiers = this._mergedReaders.ReadBitLong();
+				this._mergedReaders.ReadBitShort();
+				style.EdgeColor = this._mergedReaders.ReadCmColor();
+				this._mergedReaders.ReadBitShort();
+				style.OpacityLevel = this._mergedReaders.ReadBitDouble();
+				this._mergedReaders.ReadBitShort();
+				style.EdgeWidth = (short)this._mergedReaders.ReadBitLong();
+				this._mergedReaders.ReadBitShort();
+				style.EdgeOverhang = (short)this._mergedReaders.ReadBitLong();
+				this._mergedReaders.ReadBitShort();
+				style.EdgeJitter = this._mergedReaders.ReadBitLong();
+				this._mergedReaders.ReadBitShort();
+				style.EdgeSilhouetteColor = this._mergedReaders.ReadCmColor();
+				this._mergedReaders.ReadBitShort();
+				style.EdgeSilhouetteWidth = (short)this._mergedReaders.ReadBitLong();
+				this._mergedReaders.ReadBitShort();
+				style.HaloGap = (short)this._mergedReaders.ReadBitLong();
+				this._mergedReaders.ReadBitShort();
+				style.EdgeIsolineCount = (short)this._mergedReaders.ReadBitLong();
+				this._mergedReaders.ReadBitShort();
+				style.PrecisionFlag = this._mergedReaders.ReadBit();
+				this._mergedReaders.ReadBitShort();
+			}
+			else
+			{
+				style.EdgeStyleModel = (EdgeStyleModel)this._mergedReaders.ReadBitLong();
+				style.EdgeStyle = this._mergedReaders.ReadBitLong();
+				style.EdgeIntersectionColor = this._mergedReaders.ReadCmColor();
+				style.EdgeObscuredColor = this._mergedReaders.ReadCmColor();
+				style.EdgeObscuredLineType = this._mergedReaders.ReadBitLong();
+				style.EdgeCreaseAngle = this._mergedReaders.ReadBitDouble();
+				style.EdgeModifiers = this._mergedReaders.ReadBitLong();
+				style.EdgeColor = this._mergedReaders.ReadCmColor();
+				style.OpacityLevel = this._mergedReaders.ReadBitDouble();
+				style.EdgeWidth = (short)this._mergedReaders.ReadBitLong();
+				style.EdgeOverhang = (short)this._mergedReaders.ReadBitLong();
+				style.EdgeJitter = this._mergedReaders.ReadBitLong();
+				style.EdgeSilhouetteColor = this._mergedReaders.ReadCmColor();
+				style.EdgeSilhouetteWidth = (short)this._mergedReaders.ReadBitLong();
+				style.HaloGap = (short)this._mergedReaders.ReadBitLong();
+				style.EdgeIsolineCount = (short)this._mergedReaders.ReadBitLong();
+				style.PrecisionFlag = this._mergedReaders.ReadBit();
+				style.EdgeApplyStyleFlag = this._mergedReaders.ReadBitShort();
+				style.EdgeIntersectionLineType = this._mergedReaders.ReadBitShort();
 			}
 
-			style.EdgeCreaseAngle = _mergedReaders.ReadBitDouble();
-			style.EdgeModifiers = _mergedReaders.ReadBitLong();
-			style.EdgeColor = _mergedReaders.ReadCmColor();
-			style.OpacityLevel = _mergedReaders.ReadBitDouble();
-			style.EdgeWidth = (short)_mergedReaders.ReadBitLong();
-			style.EdgeOverhang = (short)_mergedReaders.ReadBitLong();
-			style.EdgeJitter = _mergedReaders.ReadBitLong();
-			style.EdgeSilhouetteColor = _mergedReaders.ReadCmColor();
-			style.EdgeSilhouetteWidth = (short)_mergedReaders.ReadBitLong();
-			style.HaloGap = (short)_mergedReaders.ReadBitLong();
-			style.EdgeIsolineCount = (short)_mergedReaders.ReadBitLong();
-			style.PrecisionFlag = _mergedReaders.ReadBit();
-
-			if (!this.R2010Plus)
+			//read display
+			if (this.R2010Plus)
 			{
-				style.EdgeApplyStyleFlag = _mergedReaders.ReadBitShort();
-				style.EdgeIntersectionLineType = _mergedReaders.ReadBitShort();
+				style.DisplaySettings = _mergedReaders.ReadBitLong();
+				this._mergedReaders.ReadBitShort();
+				style.Brightness = _mergedReaders.ReadBitLong();
+				this._mergedReaders.ReadBitShort();
+				style.ShadowType = (short)_mergedReaders.ReadBitLong();
+				this._mergedReaders.ReadBitShort();
+			}
+			else
+			{
+				style.DisplaySettings = _mergedReaders.ReadBitLong();
+				style.Brightness = _mergedReaders.ReadBitLong();
+				style.ShadowType = (short)_mergedReaders.ReadBitLong();
 			}
 
 			return template;
