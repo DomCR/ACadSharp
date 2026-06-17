@@ -115,7 +115,7 @@ private readonly JsonSerializerSettings _jsonOptions = new JsonSerializerSetting
 
 		this._output.WriteLine(json);
 
-		var result = CadJsonConverter.Deserialize(json, typeof(CadDocument));
+		var result = CadJsonConverter.DeserializeDocument(json);
 	}
 
 	[Theory]

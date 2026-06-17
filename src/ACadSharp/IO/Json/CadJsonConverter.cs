@@ -20,10 +20,15 @@ namespace ACadSharp.IO.Json;
 /// methods are static and can be used without creating an instance of JsonConverter.</remarks>
 public class CadJsonConverter
 {
+	public static CadDocument DeserializeDocument(string json)
+	{
+		throw new NotImplementedException();
+	}
+
 	public static T Deserialize<T>(string json)
 			where T : CadObject
 	{
-		throw new NotImplementedException();
+		return (T)deserialize(json, typeof(T));
 	}
 
 	public static CadObject Deserialize(string json, Type type)
