@@ -6874,32 +6874,74 @@ namespace ACadSharp.IO.DWG
 
 		private CadTemplate readVisualStyle()
 		{
-			VisualStyle visualStyle = new VisualStyle();
-			CadTemplate<VisualStyle> template = new CadTemplate<VisualStyle>(visualStyle);
+			VisualStyle style = new VisualStyle();
+			CadTemplate<VisualStyle> template = new CadTemplate<VisualStyle>(style);
 
 			this.readCommonNonEntityData(template);
 
 			//WARNING: this object is not documented, the fields have been found using exploration methods and matching them with the dxf file
 
 			//2 Name
-			visualStyle.Name = this._textReader.ReadVariableText();
+			style.Name = this._textReader.ReadVariableText();
 			//70
-			visualStyle.Type = this._objectReader.ReadBitLong();
+			style.Type = this._objectReader.ReadBitLong();
 
-			//177
-			var value177 = _objectReader.ReadBitShort();
-			//291 Internal use only flag
-			var value291 = this._objectReader.ReadBit();
+			if (this.R2010Plus)
+			{
+				this._mergedReaders.ReadBitShort();
+				this._mergedReaders.ReadBit();
+			}
 
-			//70 Count then repeat 90 and 176
-			int count = this._objectReader.ReadBitLong();
+			//Read face
+			style.FaceLightingModel = (FaceLightingModelType)_mergedReaders.ReadBitLong();
+			style.FaceLightingQuality = (FaceLightingQualityType)_mergedReaders.ReadBitLong();
+			style.FaceColorMode = (FaceColorMode)_mergedReaders.ReadBitLong();
 
-#if TEST
-			var objValues = DwgStreamReaderBase.Explore(_objectReader);
-			var textValues = DwgStreamReaderBase.Explore(_textReader);
-#endif
+			if (this.R2010Plus)
+			{
+				style.FaceModifiers = (FaceModifierType)_mergedReaders.ReadBitLong();
+				style.FaceOpacityLevel = _mergedReaders.ReadBitDouble();
+				style.FaceSpecularLevel = _mergedReaders.ReadBitDouble();
+				style.FaceStyleMonoColor = _mergedReaders.ReadCmColor();
+			}
+			else
+			{
+				style.FaceOpacityLevel = _mergedReaders.ReadBitDouble();
+				style.FaceSpecularLevel = _mergedReaders.ReadBitDouble();
+				style.FaceStyleMonoColor = _mergedReaders.ReadCmColor();
+				style.FaceModifiers = (FaceModifierType)_mergedReaders.ReadBitLong();
+			}
 
-			//TODO: Finish dwg implementation for VisualStyle (avoids noise in the logs)
+			//Read edge
+			style.EdgeStyleModel = (EdgeStyleModel)_mergedReaders.ReadBitLong();
+			style.EdgeStyle = _mergedReaders.ReadBitLong();
+			style.EdgeIntersectionColor = _mergedReaders.ReadCmColor();
+			style.EdgeObscuredColor = _mergedReaders.ReadCmColor();
+			style.EdgeObscuredLineType = _mergedReaders.ReadBitLong();
+
+			if (this.R2010Plus)
+			{
+				style.EdgeIntersectionLineType = _mergedReaders.ReadBitLong();
+			}
+
+			style.EdgeCreaseAngle = _mergedReaders.ReadBitDouble();
+			style.EdgeModifiers = _mergedReaders.ReadBitLong();
+			style.EdgeColor = _mergedReaders.ReadCmColor();
+			style.OpacityLevel = _mergedReaders.ReadBitDouble();
+			style.EdgeWidth = (short)_mergedReaders.ReadBitLong();
+			style.EdgeOverhang = (short)_mergedReaders.ReadBitLong();
+			style.EdgeJitter = _mergedReaders.ReadBitLong();
+			style.EdgeSilhouetteColor = _mergedReaders.ReadCmColor();
+			style.EdgeSilhouetteWidth = (short)_mergedReaders.ReadBitLong();
+			style.HaloGap = (short)_mergedReaders.ReadBitLong();
+			style.EdgeIsolineCount = (short)_mergedReaders.ReadBitLong();
+			style.PrecisionFlag = _mergedReaders.ReadBit();
+
+			if (!this.R2010Plus)
+			{
+				style.EdgeApplyStyleFlag = _mergedReaders.ReadBitShort();
+				style.EdgeIntersectionLineType = _mergedReaders.ReadBitShort();
+			}
 
 			return template;
 		}
