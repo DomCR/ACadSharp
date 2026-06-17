@@ -92,6 +92,8 @@ public abstract class WriterSingleObjectTests : IOTestsBase
 		Data.Add(new(nameof(SingleCaseGenerator.CreateXRecords)));
 		Data.Add(new(nameof(SingleCaseGenerator.SingleTableEntity)));
 		Data.Add(new(nameof(SingleCaseGenerator.SingleMesh)));
+		Data.Add(new(nameof(SingleCaseGenerator.SingleMeshWithTextureCoordinates)));
+		Data.Add(new(nameof(SingleCaseGenerator.SingleMaterial)));
 	}
 
 	public WriterSingleObjectTests(ITestOutputHelper output) : base(output)
@@ -410,6 +412,140 @@ public abstract class WriterSingleObjectTests : IOTestsBase
 			this.Document.Entities.Add(arc);
 			this.Document.Entities.Add(polyline);
 			this.Document.Entities.Add(l);
+		}
+
+		public void ArrowBlocks()
+		{
+			DimensionLinear dim1 = new DimensionLinear
+			{
+				FirstPoint = new XYZ(0, 0, 0),
+				SecondPoint = new XYZ(10, 0, 0),
+				Offset = 0.5,
+				Style = new DimensionStyle("style_01")
+				{
+					DimArrow1 = DimensionArrowhead.ArchitecturalTick,
+					DimArrow2 = DimensionArrowhead.BoxBlank,
+				}
+			};
+
+			DimensionLinear dim2 = new DimensionLinear
+			{
+				FirstPoint = new XYZ(0, 5, 0),
+				SecondPoint = new XYZ(10, 5, 0),
+				Offset = 0.5,
+				Style = new DimensionStyle("style_02")
+				{
+					DimArrow1 = DimensionArrowhead.BoxFilled,
+					DimArrow2 = DimensionArrowhead.Closed,
+				}
+			};
+
+			DimensionLinear dim3 = new DimensionLinear
+			{
+				FirstPoint = new XYZ(0, 10, 0),
+				SecondPoint = new XYZ(10, 10, 0),
+				Offset = 0.5,
+				Style = new DimensionStyle("style_03")
+				{
+					DimArrow1 = DimensionArrowhead.ClosedBlank,
+					DimArrow2 = DimensionArrowhead.DatumFilled,
+				}
+			};
+
+			DimensionLinear dim4 = new DimensionLinear
+			{
+				FirstPoint = new XYZ(0, 15, 0),
+				SecondPoint = new XYZ(10, 15, 0),
+				Offset = 0.5,
+				Style = new DimensionStyle("style_04")
+				{
+					DimArrow1 = DimensionArrowhead.DatumTriangle,
+					DimArrow2 = DimensionArrowhead.Dot,
+				}
+			};
+
+			DimensionLinear dim5 = new DimensionLinear
+			{
+				FirstPoint = new XYZ(0, 20, 0),
+				SecondPoint = new XYZ(10, 20, 0),
+				Offset = 0.5,
+				Style = new DimensionStyle("style_05")
+				{
+					DimArrow1 = DimensionArrowhead.DotBlank,
+					DimArrow2 = DimensionArrowhead.DotSmall,
+				}
+			};
+
+			DimensionLinear dim6 = new DimensionLinear
+			{
+				FirstPoint = new XYZ(0, 25, 0),
+				SecondPoint = new XYZ(10, 25, 0),
+				Offset = 0.5,
+				Style = new DimensionStyle("style_06")
+				{
+					DimArrow1 = DimensionArrowhead.DotSmallBlank,
+					DimArrow2 = DimensionArrowhead.Integral,
+				}
+			};
+
+			DimensionLinear dim7 = new DimensionLinear
+			{
+				FirstPoint = new XYZ(0, 30, 0),
+				SecondPoint = new XYZ(10, 30, 0),
+				Offset = 0.5,
+				Style = new DimensionStyle("style_07")
+				{
+					DimArrow1 = DimensionArrowhead.None,
+					DimArrow2 = DimensionArrowhead.Oblique,
+				}
+			};
+
+			DimensionLinear dim8 = new DimensionLinear
+			{
+				FirstPoint = new XYZ(0, 35, 0),
+				SecondPoint = new XYZ(10, 35, 0),
+				Offset = 0.5,
+				Style = new DimensionStyle("style_08")
+				{
+					DimArrow1 = DimensionArrowhead.Open,
+					DimArrow2 = DimensionArrowhead.Open30,
+				}
+			};
+
+			DimensionLinear dim9 = new DimensionLinear
+			{
+				FirstPoint = new XYZ(0, 40, 0),
+				SecondPoint = new XYZ(10, 40, 0),
+				Offset = 0.5,
+				Style = new DimensionStyle("style_09")
+				{
+					DimArrow1 = DimensionArrowhead.Open90,
+					DimArrow2 = DimensionArrowhead.OriginIndicator,
+				}
+			};
+
+			DimensionLinear dim10 = new DimensionLinear
+			{
+				FirstPoint = new XYZ(0, 45, 0),
+				SecondPoint = new XYZ(10, 45, 0),
+				Offset = 0.5,
+				Style = new DimensionStyle("style_10")
+				{
+					DimArrow1 = DimensionArrowhead.OriginIndicator2,
+					DimArrow2 = DimensionArrowhead.OriginIndicator2,
+				}
+			};
+
+			this.Document.Entities.Add(dim1);
+			this.Document.Entities.Add(dim2);
+			this.Document.Entities.Add(dim3);
+			this.Document.Entities.Add(dim4);
+			this.Document.Entities.Add(dim5);
+			this.Document.Entities.Add(dim6);
+			this.Document.Entities.Add(dim7);
+			this.Document.Entities.Add(dim8);
+			this.Document.Entities.Add(dim9);
+			this.Document.Entities.Add(dim10);
 		}
 
 		public void ChangedEncoding()
@@ -825,140 +961,6 @@ public abstract class WriterSingleObjectTests : IOTestsBase
 			this.Document.Entities.Add(dim);
 
 			dim.UpdateBlock();
-		}
-
-		public void ArrowBlocks()
-		{
-			DimensionLinear dim1 = new DimensionLinear
-			{
-				FirstPoint = new XYZ(0, 0, 0),
-				SecondPoint = new XYZ(10, 0, 0),
-				Offset = 0.5,
-				Style = new DimensionStyle("style_01")
-				{
-					DimArrow1 = DimensionArrowhead.ArchitecturalTick,
-					DimArrow2 = DimensionArrowhead.BoxBlank,
-				}
-			};
-
-			DimensionLinear dim2 = new DimensionLinear
-			{
-				FirstPoint = new XYZ(0, 5, 0),
-				SecondPoint = new XYZ(10, 5, 0),
-				Offset = 0.5,
-				Style = new DimensionStyle("style_02")
-				{
-					DimArrow1 = DimensionArrowhead.BoxFilled,
-					DimArrow2 = DimensionArrowhead.Closed,
-				}
-			};
-
-			DimensionLinear dim3 = new DimensionLinear
-			{
-				FirstPoint = new XYZ(0, 10, 0),
-				SecondPoint = new XYZ(10, 10, 0),
-				Offset = 0.5,
-				Style = new DimensionStyle("style_03")
-				{
-					DimArrow1 = DimensionArrowhead.ClosedBlank,
-					DimArrow2 = DimensionArrowhead.DatumFilled,
-				}
-			};
-
-			DimensionLinear dim4 = new DimensionLinear
-			{
-				FirstPoint = new XYZ(0, 15, 0),
-				SecondPoint = new XYZ(10, 15, 0),
-				Offset = 0.5,
-				Style = new DimensionStyle("style_04")
-				{
-					DimArrow1 = DimensionArrowhead.DatumTriangle,
-					DimArrow2 = DimensionArrowhead.Dot,
-				}
-			};
-
-			DimensionLinear dim5 = new DimensionLinear
-			{
-				FirstPoint = new XYZ(0, 20, 0),
-				SecondPoint = new XYZ(10, 20, 0),
-				Offset = 0.5,
-				Style = new DimensionStyle("style_05")
-				{
-					DimArrow1 = DimensionArrowhead.DotBlank,
-					DimArrow2 = DimensionArrowhead.DotSmall,
-				}
-			};
-
-			DimensionLinear dim6 = new DimensionLinear
-			{
-				FirstPoint = new XYZ(0, 25, 0),
-				SecondPoint = new XYZ(10, 25, 0),
-				Offset = 0.5,
-				Style = new DimensionStyle("style_06")
-				{
-					DimArrow1 = DimensionArrowhead.DotSmallBlank,
-					DimArrow2 = DimensionArrowhead.Integral,
-				}
-			};
-
-			DimensionLinear dim7 = new DimensionLinear
-			{
-				FirstPoint = new XYZ(0, 30, 0),
-				SecondPoint = new XYZ(10, 30, 0),
-				Offset = 0.5,
-				Style = new DimensionStyle("style_07")
-				{
-					DimArrow1 = DimensionArrowhead.None,
-					DimArrow2 = DimensionArrowhead.Oblique,
-				}
-			};
-
-			DimensionLinear dim8 = new DimensionLinear
-			{
-				FirstPoint = new XYZ(0, 35, 0),
-				SecondPoint = new XYZ(10, 35, 0),
-				Offset = 0.5,
-				Style = new DimensionStyle("style_08")
-				{
-					DimArrow1 = DimensionArrowhead.Open,
-					DimArrow2 = DimensionArrowhead.Open30,
-				}
-			};
-
-			DimensionLinear dim9 = new DimensionLinear
-			{
-				FirstPoint = new XYZ(0, 40, 0),
-				SecondPoint = new XYZ(10, 40, 0),
-				Offset = 0.5,
-				Style = new DimensionStyle("style_09")
-				{
-					DimArrow1 = DimensionArrowhead.Open90,
-					DimArrow2 = DimensionArrowhead.OriginIndicator,
-				}
-			};
-
-			DimensionLinear dim10 = new DimensionLinear
-			{
-				FirstPoint = new XYZ(0, 45, 0),
-				SecondPoint = new XYZ(10, 45, 0),
-				Offset = 0.5,
-				Style = new DimensionStyle("style_10")
-				{
-					DimArrow1 = DimensionArrowhead.OriginIndicator2,
-					DimArrow2 = DimensionArrowhead.OriginIndicator2,
-				}
-			};
-
-			this.Document.Entities.Add(dim1);
-			this.Document.Entities.Add(dim2);
-			this.Document.Entities.Add(dim3);
-			this.Document.Entities.Add(dim4);
-			this.Document.Entities.Add(dim5);
-			this.Document.Entities.Add(dim6);
-			this.Document.Entities.Add(dim7);
-			this.Document.Entities.Add(dim8);
-			this.Document.Entities.Add(dim9);
-			this.Document.Entities.Add(dim10);
 		}
 
 		public void DimensionLinear()
@@ -1535,6 +1537,45 @@ public abstract class WriterSingleObjectTests : IOTestsBase
 			this.Document.Entities.Add(mtext);
 		}
 
+		public void SingleMaterial()
+		{
+			Material material = new Material("TestMaterial")
+			{
+				Description = "Round-trip test material",
+				AmbientColorMethod = ColorMethod.Override,
+				AmbientColor = new Color(10, 20, 30),
+				DiffuseColorMethod = ColorMethod.Override,
+				DiffuseColor = new Color(200, 100, 50),
+				SpecularColorMethod = ColorMethod.Override,
+				SpecularColor = new Color(255, 255, 255),
+				SpecularGlossFactor = 0.5,
+				Opacity = 0.8,
+				RefractionIndex = 1.2,
+				Translucence = 0.1,
+				Reflectivity = 0.3,
+				ChannelFlags = MaterialChannelFlags.UseDiffuse | MaterialChannelFlags.UseBump,
+				IlluminationModel = MaterialIlluminationModel.MetalShader,
+				Mode = MaterialMode.Advanced,
+				DiffuseMapSource = MapSource.UseImageFile,
+				DiffuseMapFileName = "diffuse.png",
+				DiffuseMapBlendFactor = 1.0,
+			};
+
+			this.Document.Materials.Add(material);
+
+			// Anchor the material to an entity so the on-disk handle reference is exercised too.
+			Mesh mesh = new Mesh
+			{
+				Material = material,
+			};
+			mesh.Vertices.Add(new XYZ(0, 0, 0));
+			mesh.Vertices.Add(new XYZ(1, 0, 0));
+			mesh.Vertices.Add(new XYZ(1, 1, 0));
+			mesh.Faces.Add([0, 1, 2]);
+
+			this.Document.Entities.Add(mesh);
+		}
+
 		public void SingleMesh()
 		{
 			Mesh mesh = new Mesh();
@@ -1549,6 +1590,31 @@ public abstract class WriterSingleObjectTests : IOTestsBase
 			//mesh.Edges.Add(new Mesh.Edge { Start = 1, End = 2 });
 			//mesh.Edges.Add(new Mesh.Edge { Start = 2, End = 3 });
 			//mesh.Edges.Add(new Mesh.Edge { Start = 0, End = 3 });
+
+			this.Document.Entities.Add(mesh);
+		}
+
+		public void SingleMeshWithTextureCoordinates()
+		{
+			// Face-corner-duplicated vertices so each corner gets its own UV, matching
+			// the AcDbSubDMesh convention persisted via the ADSK_XREC_SUBDVERTEXTEXCOORDS XRecord.
+			Mesh mesh = new Mesh();
+			mesh.Vertices.Add(new XYZ(0, 0, 0));
+			mesh.Vertices.Add(new XYZ(1, 0, 0));
+			mesh.Vertices.Add(new XYZ(1, 1, 0));
+			mesh.Vertices.Add(new XYZ(0, 0, 0));
+			mesh.Vertices.Add(new XYZ(1, 1, 0));
+			mesh.Vertices.Add(new XYZ(0, 1, 0));
+
+			mesh.Faces.Add([0, 1, 2]);
+			mesh.Faces.Add([3, 4, 5]);
+
+			mesh.AddTextureCoordinate(new XYZ(0, 0, 0));
+			mesh.AddTextureCoordinate(new XYZ(1, 0, 0));
+			mesh.AddTextureCoordinate(new XYZ(1, 1, 0));
+			mesh.AddTextureCoordinate(new XYZ(0, 0, 0));
+			mesh.AddTextureCoordinate(new XYZ(1, 1, 0));
+			mesh.AddTextureCoordinate(new XYZ(0, 1, 0));
 
 			this.Document.Entities.Add(mesh);
 		}

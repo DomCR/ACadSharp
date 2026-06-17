@@ -293,8 +293,16 @@ namespace ACadSharp.IO.DWG
 			//R2007+:
 			if (this.R2007Plus)
 			{
-				//Material flags BB 00 = bylayer, 01 = byblock, 11 = material handle present at end of object
-				this._writer.Write2Bits(0b00);
+				//Material flags BB 00 = bylayer, 01 = byblock, 11 = material handle present
+				if (entity.Material == null)
+				{
+					this._writer.Write2Bits(0b00);
+				}
+				else
+				{
+					this._writer.Write2Bits(0b11);
+					this._writer.HandleReference(DwgReferenceType.HardPointer, entity.Material);
+				}
 
 				//Shadow flags RC
 				this._writer.WriteByte(0);

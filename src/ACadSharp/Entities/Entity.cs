@@ -83,7 +83,20 @@ public abstract class Entity : CadObject, IEntity
 
 	/// <inheritdoc/>
 	[DxfCodeValue(DxfReferenceType.Handle, 347)]
-	public Material Material { get; set; }
+	public Material Material
+	{
+		get { return this._material; }
+		set
+		{
+			if (value == null)
+			{
+				this._material = null;
+				return;
+			}
+
+			this._material = updateCollection(value, this.Document?.Materials);
+		}
+	}
 
 	/// <inheritdoc/>
 	public override string SubclassMarker => DxfSubclassMarker.Entity;
@@ -97,6 +110,8 @@ public abstract class Entity : CadObject, IEntity
 	private Layer _layer = Layer.Default;
 
 	private LineType _lineType = LineType.ByLayer;
+
+	private Material _material;
 
 	/// <inheritdoc/>
 	public Entity() : base() { }
@@ -169,6 +184,10 @@ public abstract class Entity : CadObject, IEntity
 		else if (this.Color.IsByBlock && this.Owner is BlockRecord record)
 		{
 			color = record.BlockEntity.Color;
+			if (color.IsByLayer)
+			{
+				color = this.Layer.Color;
+			}
 		}
 		else
 		{
@@ -255,6 +274,9 @@ public abstract class Entity : CadObject, IEntity
 
 		doc.Layers.OnRemove += this.tableOnRemove;
 		doc.LineTypes.OnRemove += this.tableOnRemove;
+
+		//TODO: Ensure the event is set after the document is read or modified
+		doc.Materials?.OnRemove += this.tableOnRemove;
 	}
 
 	internal override void UnassignDocument()
@@ -262,10 +284,13 @@ public abstract class Entity : CadObject, IEntity
 		this.Document.Layers.OnRemove -= this.tableOnRemove;
 		this.Document.LineTypes.OnRemove -= this.tableOnRemove;
 
+		this.Document.Materials?.OnRemove -= this.tableOnRemove;
+
 		base.UnassignDocument();
 
 		this.Layer = (Layer)this.Layer.Clone();
 		this.LineType = (LineType)this.LineType.Clone();
+		this.Material = (Material)this.Material?.Clone();
 	}
 
 	protected List<XY> applyRotation(IEnumerable<XY> points, double rotation)
@@ -317,7 +342,12 @@ public abstract class Entity : CadObject, IEntity
 
 		if (e.Item.Equals(this.LineType))
 		{
-			this.LineType = this.Document.LineTypes[LineType.ByLayerName];
+			this.LineType = this.Document.LineTypes.ByLayer;
+		}
+
+		if (e.Item.Equals(this.Material))
+		{
+			this.Material = null;
 		}
 	}
 

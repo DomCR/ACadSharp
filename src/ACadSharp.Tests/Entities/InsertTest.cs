@@ -155,6 +155,24 @@ public class InsertTest
 	}
 
 	[Fact]
+	public void GetTransformHonorsBlockBasePoint()
+	{
+		BlockRecord record = new BlockRecord(this._blockName);
+		record.BlockEntity.BasePoint = new XYZ(10, 10, 0);
+		record.Entities.Add(new Line(new XYZ(10, 10, 0), new XYZ(20, 10, 0)));
+
+		Insert insert = new Insert(record)
+		{
+			InsertPoint = new XYZ(100, 100, 0)
+		};
+
+		Transform transform = insert.GetTransform();
+
+		Assert.Equal(new XYZ(100, 100, 0), transform.ApplyTransform(new XYZ(10, 10, 0)));
+		Assert.Equal(new XYZ(110, 100, 0), transform.ApplyTransform(new XYZ(20, 10, 0)));
+	}
+
+	[Fact]
 	public void LinkedAttributes()
 	{
 		BlockRecord record = new BlockRecord(this._blockName);

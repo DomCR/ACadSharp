@@ -3240,10 +3240,23 @@ namespace ACadSharp.IO.DWG
 
 			#endregion Refraction
 
-#if TEST
-			var obj = DwgStreamReaderBase.Explore(this._objectReader);
-			var text = DwgStreamReaderBase.Explore(this._textReader);
-#endif
+			// Since R2007a there is a tail block with the render-mode hints.
+			// AutoCAD writes these every time, even when the values are default;
+			// consuming them keeps the in-memory model in sync with the file and
+			// lets ACadSharp round-trip a non-default material (e.g. one with
+			// kMetalShader or a custom channel-flag mask) without losing the choice.
+			// Pre-R2007 MATERIAL objects end after the refraction block, so reading
+			// the tail there would run past the end of the object and corrupt the
+			// stream position for every subsequent object.
+			if (this.R2007Plus)
+			{
+				material.Translucence = this._mergedReaders.ReadBitDouble();
+				material.SelfIllumination = this._mergedReaders.ReadBitDouble();
+				material.Reflectivity = this._mergedReaders.ReadBitDouble();
+				material.IlluminationModel = (MaterialIlluminationModel)this._mergedReaders.ReadBitLong();
+				material.ChannelFlags = (MaterialChannelFlags)this._mergedReaders.ReadBitLong();
+				material.Mode = (MaterialMode)this._mergedReaders.ReadBitLong();
+			}
 
 			return template;
 		}
@@ -3269,7 +3282,7 @@ namespace ACadSharp.IO.DWG
 			matrix.M32 = this._mergedReaders.ReadBitDouble();
 			matrix.M33 = this._mergedReaders.ReadBitDouble();
 
-			return Matrix4.Identity;
+			return matrix;
 		}
 
 		private CadTemplate readMesh()
@@ -5590,6 +5603,9 @@ namespace ACadSharp.IO.DWG
 					break;
 				case DxfFileToken.ObjectEvalGraph:
 					template = this.readEvaluationGraph();
+					break;
+				case DxfFileToken.ObjectBlockLinearParameter:
+					template = this.readBlockLinearParameter();
 					break;
 				case DxfFileToken.ObjectBlockRotationParameter:
 					template = this.readBlockRotationParameter();
