@@ -1,13 +1,19 @@
-﻿using ACadSharp.Entities;
+using ACadSharp.Entities;
+using ACadSharp.Objects;
+using CSMath;
 
-namespace ACadSharp.IO.Templates
+namespace ACadSharp.IO.Templates;
+
+internal class CadMeshTemplate : CadEntityTemplate<Mesh>
 {
-	internal class CadMeshTemplate : CadEntityTemplate<Mesh>
+	public bool SubclassMarker { get; set; } = false;
+
+	public CadMeshTemplate() { }
+
+	public CadMeshTemplate(Mesh mesh) : base(mesh) { }
+
+	protected override void build(CadDocumentBuilder builder)
 	{
-		public bool SubclassMarker { get; set; } = false;
-
-		public CadMeshTemplate() { }
-
-		public CadMeshTemplate(Mesh mesh) : base(mesh) { }
-}
+		base.build(builder);
+	}
 }
