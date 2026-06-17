@@ -383,7 +383,7 @@ public class Material : NonGraphicalObject
 	/// <summary>
 	/// Self-illumination factor.
 	/// </summary>
-	[DxfCodeValue(90)]
+	[DxfCodeValue(149)]
 	public double SelfIllumination { get; set; } = 0.0;
 
 	/// <summary>
