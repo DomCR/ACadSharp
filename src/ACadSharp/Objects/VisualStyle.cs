@@ -3,7 +3,7 @@
 namespace ACadSharp.Objects;
 
 /// <summary>
-/// Represents a <see cref="VisualStyle"/> object
+/// Represents a <see cref="VisualStyle"/> object.
 /// </summary>
 /// <remarks>
 /// Object name <see cref="DxfFileToken.ObjectVisualStyle"/> <br/>
@@ -11,7 +11,7 @@ namespace ACadSharp.Objects;
 /// </remarks>
 [DxfName(DxfFileToken.ObjectVisualStyle)]
 [DxfSubClass(DxfSubclassMarker.VisualStyle)]
-public class VisualStyle : NonGraphicalObject
+public partial class VisualStyle : NonGraphicalObject
 {
 	/// <summary>
 	/// Gets or sets the overall brightness level.
@@ -65,7 +65,7 @@ public class VisualStyle : NonGraphicalObject
 	/// Gets or sets the line type used for edge intersections.
 	/// </summary>
 	[DxfCodeValue(175)]
-	public int EdgeIntersectionLineType { get; set; }
+	public LineType EdgeIntersectionLineType { get; set; }
 
 	/// <summary>
 	/// Gets or sets the number of isolines displayed on edges.
@@ -95,7 +95,7 @@ public class VisualStyle : NonGraphicalObject
 	/// Gets or sets the line type used for obscured edges.
 	/// </summary>
 	[DxfCodeValue(75)]
-	public int EdgeObscuredLineType { get; set; }
+	public LineType EdgeObscuredLineType { get; set; }
 
 	/// <summary>
 	/// Gets or sets the edge overhang amount.
@@ -185,7 +185,7 @@ public class VisualStyle : NonGraphicalObject
 	/// Gets a value indicating whether this visual style is marked for internal use only.
 	/// </summary>
 	[DxfCodeValue(291)]
-	public bool InternalFlag { get; internal set; }
+	public bool InternalUseOnlyFlag { get; internal set; }
 
 	/// <inheritdoc/>
 	public override string ObjectName => DxfFileToken.ObjectVisualStyle;
