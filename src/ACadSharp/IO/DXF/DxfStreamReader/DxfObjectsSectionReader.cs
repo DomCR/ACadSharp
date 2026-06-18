@@ -130,6 +130,8 @@ internal class DxfObjectsSectionReader : DxfSectionReaderBase
 				return this.readObjectCodes<BlockRotationParameter>(new CadBlockRotationParameterTemplate(), this.readBlockRotationParameter);
 			case DxfFileToken.ObjectBlockLinearParameter:
 				return this.readObjectCodes<BlockLinearParameter>(new CadBlockLinearParameterTemplate(), this.readBlockLinearParameter);
+			case DxfFileToken.ObjectBlockLookupParameter:
+				return this.readObjectCodes<BlockLookupParameter>(new CadBlockLookupParameterTemplate(new BlockLookupParameter()), this.readBlockLookupParameter);
 			case DxfFileToken.ObjectBlockRotationGrip:
 				return this.readObjectCodes<BlockRotationGrip>(new CadBlockRotationGripTemplate(), this.readBlockRotationGrip);
 			case DxfFileToken.ObjectBlockRotateAction:
@@ -2111,6 +2113,19 @@ internal class DxfObjectsSectionReader : DxfSectionReaderBase
 				if (!this.tryAssignCurrentValue(template.CadObject, map))
 				{
 					return this.readBlock2PtParameter(template, map);
+				}
+				return true;
+		}
+	}
+
+	private bool readBlockLookupParameter(CadTemplate template, DxfMap map)
+	{
+		switch (this._reader.Code)
+		{
+			default:
+				if (!this.tryAssignCurrentValue(template.CadObject, map.SubClasses[DxfSubclassMarker.BlockLookupParameter]))
+				{
+					return this.readBlock1PtParameter(template, map);
 				}
 				return true;
 		}

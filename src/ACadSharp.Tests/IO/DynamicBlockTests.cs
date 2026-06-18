@@ -100,6 +100,9 @@ namespace ACadSharp.Tests.IO
 				case DxfFileToken.ObjectBlockLinearParameter:
 					this.assertLinearParameter(doc);
 					break;
+				case DxfFileToken.ObjectBlockLookupParameter:
+					this.assertLookupParameter(doc);
+					break;
 				default:
 					throw new System.NotImplementedException();
 			}
@@ -139,6 +142,39 @@ namespace ACadSharp.Tests.IO
 		private void assertPointParameter(CadDocument doc)
 		{
 			//Not implemented in this PR
+		}
+
+		private void assertLookupParameter(CadDocument doc)
+		{
+			foreach (Insert insert in doc.Entities.OfType<Insert>())
+			{
+				if (insert.XDictionary == null)
+				{
+					continue;
+				}
+
+				var lookupParams = insert.Block.Source.EvaluationGraph.Nodes
+					.Select(n => n.Expression)
+					.OfType<BlockLookupParameter>()
+					.ToList();
+
+				Assert.NotEmpty(lookupParams);
+
+				foreach (BlockLookupParameter param in lookupParams)
+				{
+					Assert.False(string.IsNullOrEmpty(param.Name),
+						$"BlockLookupParameter (Id={param.Id}) should have a non-empty Name.");
+				}
+
+				XRecord record = insert.XDictionary
+					.GetEntry<CadDictionary>("AcDbBlockRepresentation")
+					.GetEntry<CadDictionary>("AppDataCache")
+					.GetEntry<CadDictionary>("ACAD_ENHANCEDBLOCKDATA")
+					.OfType<XRecord>().First();
+
+				var value = record.Entries.FirstOrDefault(e => e.Code == 1).Value as string;
+				Assert.False(string.IsNullOrEmpty(value));
+			}
 		}
 
 		private void assertRotationParameter(CadDocument doc)
