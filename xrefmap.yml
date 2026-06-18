@@ -55066,6 +55066,38 @@ references:
   isSpec: "True"
   fullName: CSMath.MathHelper.IsEqual
   nameWithType: MathHelper.IsEqual
+- uid: CSMath.MathHelper.IsEven(System.Int32)
+  name: IsEven(int)
+  href: api/CSMath.MathHelper.html#CSMath_MathHelper_IsEven_System_Int32_
+  commentId: M:CSMath.MathHelper.IsEven(System.Int32)
+  name.vb: IsEven(Integer)
+  fullName: CSMath.MathHelper.IsEven(int)
+  fullName.vb: CSMath.MathHelper.IsEven(Integer)
+  nameWithType: MathHelper.IsEven(int)
+  nameWithType.vb: MathHelper.IsEven(Integer)
+- uid: CSMath.MathHelper.IsEven*
+  name: IsEven
+  href: api/CSMath.MathHelper.html#CSMath_MathHelper_IsEven_
+  commentId: Overload:CSMath.MathHelper.IsEven
+  isSpec: "True"
+  fullName: CSMath.MathHelper.IsEven
+  nameWithType: MathHelper.IsEven
+- uid: CSMath.MathHelper.IsOdd(System.Int32)
+  name: IsOdd(int)
+  href: api/CSMath.MathHelper.html#CSMath_MathHelper_IsOdd_System_Int32_
+  commentId: M:CSMath.MathHelper.IsOdd(System.Int32)
+  name.vb: IsOdd(Integer)
+  fullName: CSMath.MathHelper.IsOdd(int)
+  fullName.vb: CSMath.MathHelper.IsOdd(Integer)
+  nameWithType: MathHelper.IsOdd(int)
+  nameWithType.vb: MathHelper.IsOdd(Integer)
+- uid: CSMath.MathHelper.IsOdd*
+  name: IsOdd
+  href: api/CSMath.MathHelper.html#CSMath_MathHelper_IsOdd_
+  commentId: Overload:CSMath.MathHelper.IsOdd
+  isSpec: "True"
+  fullName: CSMath.MathHelper.IsOdd
+  nameWithType: MathHelper.IsOdd
 - uid: CSMath.MathHelper.IsZero(System.Double)
   name: IsZero(double)
   href: api/CSMath.MathHelper.html#CSMath_MathHelper_IsZero_System_Double_
