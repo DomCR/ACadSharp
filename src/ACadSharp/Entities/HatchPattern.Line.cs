@@ -23,7 +23,7 @@ public partial class HatchPattern
 		public XY BasePoint { get; set; }
 
 		/// <summary>
-		/// Line dashes.
+		/// Gets or sets the dash lengths of the pattern line. A negative value represents a space, zero a dot, and a positive value a line segment.
 		/// </summary>
 		[DxfCodeValue(DxfReferenceType.Count, 79)]
 		[DxfCollectionCodeValue(49)]

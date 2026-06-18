@@ -94,6 +94,7 @@ public abstract class WriterSingleObjectTests : IOTestsBase
 		Data.Add(new(nameof(SingleCaseGenerator.SingleMesh)));
 		Data.Add(new(nameof(SingleCaseGenerator.SingleMeshWithTextureCoordinates)));
 		Data.Add(new(nameof(SingleCaseGenerator.SingleMaterial)));
+		Data.Add(new(nameof(SingleCaseGenerator.LeaderWithArrowHead)));
 	}
 
 	public WriterSingleObjectTests(ITestOutputHelper output) : base(output)
@@ -1329,6 +1330,29 @@ public abstract class WriterSingleObjectTests : IOTestsBase
 			layer.Color = Color.FromTrueColor(1151726);
 
 			this.Document.Layers.Add(layer);
+		}
+
+		public void LeaderWithArrowHead()
+		{
+			Leader leader = new Leader()
+			{
+				Vertices = { new CSMath.XYZ(0, 0, 0), new CSMath.XYZ(0, 5, 0) }
+			};
+
+			BlockRecord arrowHead = new BlockRecord("ArrowHead");
+
+			Line line = new Line(new CSMath.XY(1, 1), new CSMath.XY(-1, -1));
+			arrowHead.Entities.Add(line);
+
+			DimensionStyle style = new DimensionStyle("my_style");
+			style.LeaderArrow = arrowHead;
+			style.ArrowSize = 2;
+
+			leader.Style = style;
+
+			leader.ArrowHeadEnabled = true;
+
+			this.Document.Entities.Add(leader);
 		}
 
 		public void LineTypeInBlock()
