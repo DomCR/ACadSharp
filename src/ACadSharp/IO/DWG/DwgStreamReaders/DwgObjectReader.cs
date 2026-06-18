@@ -6932,9 +6932,9 @@ namespace ACadSharp.IO.DWG
 				this._mergedReaders.ReadBitShort();
 				style.EdgeObscuredColor = this._mergedReaders.ReadCmColor();
 				this._mergedReaders.ReadBitShort();
-				style.EdgeObscuredLineType = this._mergedReaders.ReadBitLong();
+				style.EdgeObscuredLineType = (VisualStyle.LineType)this._mergedReaders.ReadBitLong();
 				this._mergedReaders.ReadBitShort();
-				style.EdgeIntersectionLineType = this._mergedReaders.ReadBitLong();
+				style.EdgeIntersectionLineType = (VisualStyle.LineType)this._mergedReaders.ReadBitLong();
 				this._mergedReaders.ReadBitShort();
 				style.EdgeCreaseAngle = this._mergedReaders.ReadBitDouble();
 				this._mergedReaders.ReadBitShort();
@@ -6967,7 +6967,7 @@ namespace ACadSharp.IO.DWG
 				style.EdgeStyle = this._mergedReaders.ReadBitLong();
 				style.EdgeIntersectionColor = this._mergedReaders.ReadCmColor();
 				style.EdgeObscuredColor = this._mergedReaders.ReadCmColor();
-				style.EdgeObscuredLineType = this._mergedReaders.ReadBitLong();
+				style.EdgeObscuredLineType = (VisualStyle.LineType)this._mergedReaders.ReadBitLong();
 				style.EdgeCreaseAngle = this._mergedReaders.ReadBitDouble();
 				style.EdgeModifiers = this._mergedReaders.ReadBitLong();
 				style.EdgeColor = this._mergedReaders.ReadCmColor();
@@ -6981,7 +6981,7 @@ namespace ACadSharp.IO.DWG
 				style.EdgeIsolineCount = (short)this._mergedReaders.ReadBitLong();
 				style.PrecisionFlag = this._mergedReaders.ReadBit();
 				style.EdgeApplyStyleFlag = this._mergedReaders.ReadBitShort();
-				style.EdgeIntersectionLineType = this._mergedReaders.ReadBitShort();
+				style.EdgeIntersectionLineType = (VisualStyle.LineType)this._mergedReaders.ReadBitShort();
 			}
 
 			//read display
