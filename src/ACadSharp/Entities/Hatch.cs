@@ -236,99 +236,98 @@ public partial class Hatch : Entity
 			return entities;
 		}
 
-		foreach (BoundaryPath boundary in this.Paths)
+		BoundingBox box = this.GetBoundingBox();
+		XY[] corners =
+		[
+			new XY(box.Min.X, box.Min.Y),
+			new XY(box.Min.X, box.Max.Y),
+			new XY(box.Max.X, box.Min.Y),
+			new XY(box.Max.X, box.Max.Y)
+		];
+
+		foreach (var patLine in this.Pattern.Lines)
 		{
-			BoundingBox box = boundary.GetBoundingBox();
-
-			XY[] corners =
-			[
-				new XY(box.Min.X, box.Min.Y),
-				new XY(box.Min.X, box.Max.Y),
-				new XY(box.Max.X, box.Min.Y),
-				new XY(box.Max.X, box.Max.Y)
-			];
-
-			foreach (var patLine in this.Pattern.Lines)
+			if (patLine.Direction.IsZero())
 			{
-				if (patLine.Direction.IsZero())
+				continue;
+			}
+
+			XY normal = new XY(-patLine.Direction.Y, patLine.Direction.X);
+
+			double minProj = double.PositiveInfinity;
+			double maxProj = double.NegativeInfinity;
+			for (int i = 0; i < corners.Length; i++)
+			{
+				double p = corners[i].X * normal.X + corners[i].Y * normal.Y;
+				if (p < minProj) minProj = p;
+				if (p > maxProj) maxProj = p;
+			}
+
+			double c0 = patLine.BasePoint.X * normal.X + patLine.BasePoint.Y * normal.Y;
+
+			int kStart;
+			int kEnd;
+			if (System.Math.Abs((double)patLine.LineOffset) <= MathHelper.Epsilon)
+			{
+				kStart = 0;
+				kEnd = 0;
+			}
+			else
+			{
+				double k1 = (minProj - c0) / (double)patLine.LineOffset;
+				double k2 = (maxProj - c0) / (double)patLine.LineOffset;
+
+				double kMin = System.Math.Min(k1, k2);
+				double kMax = System.Math.Max(k1, k2);
+
+				kStart = (int)System.Math.Floor(kMin) - 1;
+				kEnd = (int)System.Math.Ceiling(kMax) + 1;
+			}
+
+			for (int k = kStart; k <= kEnd; k++)
+			{
+				XY basePoint = new XY(
+					patLine.BasePoint.X + patLine.Offset.X * k,
+					patLine.BasePoint.Y + patLine.Offset.Y * k);
+
+				Line2D geomLine = new Line2D(basePoint, patLine.Direction);
+
+				List<double> tHits = new();
+				foreach (BoundaryPath boundary in this.Paths)
+				{
+					foreach (XY p in boundary.FindIntersections(geomLine))
+					{
+						double t = (p.X - basePoint.X) * patLine.Direction.X + (p.Y - basePoint.Y) * patLine.Direction.Y;
+						tHits.Add(t);
+					}
+				}
+
+				var ts = mergeParameters(tHits).ToArray();
+				if (ts.Length < 2)
 				{
 					continue;
 				}
 
-				XY normal = new XY(-patLine.Direction.Y, patLine.Direction.X);
-
-				double minProj = double.PositiveInfinity;
-				double maxProj = double.NegativeInfinity;
-				for (int i = 0; i < corners.Length; i++)
+				for (int i = 0; i + 1 < ts.Length; i++)
 				{
-					double p = corners[i].X * normal.X + corners[i].Y * normal.Y;
-					if (p < minProj) minProj = p;
-					if (p > maxProj) maxProj = p;
-				}
+					double tA = ts[i];
+					double tB = ts[i + 1];
 
-				double c0 = patLine.BasePoint.X * normal.X + patLine.BasePoint.Y * normal.Y;
-
-				int kStart;
-				int kEnd;
-				if (System.Math.Abs((double)patLine.LineOffset) <= MathHelper.Epsilon)
-				{
-					kStart = 0;
-					kEnd = 0;
-				}
-				else
-				{
-					double k1 = (minProj - c0) / (double)patLine.LineOffset;
-					double k2 = (maxProj - c0) / (double)patLine.LineOffset;
-
-					double kMin = System.Math.Min(k1, k2);
-					double kMax = System.Math.Max(k1, k2);
-
-					kStart = (int)System.Math.Floor(kMin) - 1;
-					kEnd = (int)System.Math.Ceiling(kMax) + 1;
-				}
-
-				for (int k = kStart; k <= kEnd; k++)
-				{
-					XY basePoint = new XY(
-						patLine.BasePoint.X + patLine.Offset.X * k,
-						patLine.BasePoint.Y + patLine.Offset.Y * k);
-
-					Line2D geomLine = new Line2D(basePoint, patLine.Direction);
-
-					List<XY> intersections = boundary.FindIntersections(geomLine).Distinct().ToList();
-					if (intersections.Count < 2)
+					if ((tB - tA) <= MathHelper.Epsilon)
 					{
 						continue;
 					}
 
-					intersections.Sort((a, b) =>
+					double tMid = 0.5 * (tA + tB);
+					XY mid = geomLine.PointInLine(tMid);
+
+					// Prevents false segments caused by corner-touch intersections
+					if (!this.isPointInsideByParity(mid))
 					{
-						double ta = (a.X - basePoint.X) * patLine.Direction.X + (a.Y - basePoint.Y) * patLine.Direction.Y;
-						double tb = (b.X - basePoint.X) * patLine.Direction.X + (b.Y - basePoint.Y) * patLine.Direction.Y;
-						return ta.CompareTo(tb);
-					});
-
-					for (int i = 0; i + 1 < intersections.Count; i += 2)
-					{
-						XY a = intersections[i];
-						XY b = intersections[i + 1];
-
-						double tA = (a.X - basePoint.X) * patLine.Direction.X + (a.Y - basePoint.Y) * patLine.Direction.Y;
-						double tB = (b.X - basePoint.X) * patLine.Direction.X + (b.Y - basePoint.Y) * patLine.Direction.Y;
-
-						if (tB < tA)
-						{
-							(tA, tB) = (tB, tA);
-						}
-
-						if ((tB - tA) <= MathHelper.Epsilon)
-						{
-							continue;
-						}
-
-						Line2D line = new Line2D(basePoint, patLine.Direction);
-						entities.AddRange(emitDashedSegment(line, tA, tB, patLine.DashLengths));
+						continue;
 					}
+
+					entities.AddRange(emitDashedSegment(geomLine, tA, tB, patLine.DashLengths));
 				}
 			}
 		}
@@ -349,49 +348,86 @@ public partial class Hatch : Entity
 		return box;
 	}
 
-	private IEnumerable<Line> emitDashedSegment(Line2D line, double tStart, double tEnd, List<double> dashLengths)
+	private static IEnumerable<double> mergeParameters(IEnumerable<double> values, double tolerance = MathHelper.Epsilon)
+	{
+		double[] sorted = values.OrderBy(x => x).ToArray();
+		if (sorted.Length == 0)
+		{
+			return sorted;
+		}
+
+		List<double> merged = new() { sorted[0] };
+		for (int i = 1; i < sorted.Length; i++)
+		{
+			if (System.Math.Abs(sorted[i] - merged.Last()) <= tolerance)
+			{
+				merged[merged.Count - 1] = 0.5 * (merged.Last() + sorted[i]);
+			}
+			else
+			{
+				merged.Add(sorted[i]);
+			}
+		}
+
+		return merged;
+	}
+
+	private IEnumerable<Entity> emitDashedSegment(Line2D line, double tStart, double tEnd, List<double> dashLengths)
 	{
 		if (dashLengths == null || dashLengths.Count == 0)
 		{
-			return new[] { new Line(line.PointInLine(tStart), line.PointInLine(tEnd)) };
+			var solid = new Line(line.PointInLine(tStart), line.PointInLine(tEnd));
+			solid.MatchProperties(this);
+			solid.LineType = Tables.LineType.Continuous;
+			return new Entity[] { solid };
 		}
 
-		double[] abs = dashLengths.Select(d => System.Math.Abs(d)).ToArray();
-		double cycle = abs.Sum();
+		double cycle = dashLengths.Sum(d => System.Math.Abs(d));
 		if (cycle <= MathHelper.Epsilon)
 		{
-			return Enumerable.Empty<Line>();
+			return Enumerable.Empty<Entity>();
 		}
 
-		double m = tStart % cycle;
-		double pos = m < 0 ? m + cycle : m;
+		double pos = tStart % cycle;
+		if (pos < 0)
+		{
+			pos += cycle;
+		}
+
 		int idx = 0;
 		double acc = 0.0;
-
-		while (idx < abs.Length && acc + abs[idx] <= pos + MathHelper.Epsilon)
+		while (idx < dashLengths.Count && acc + System.Math.Abs(dashLengths[idx]) <= pos + MathHelper.Epsilon)
 		{
-			acc += abs[idx];
+			acc += System.Math.Abs(dashLengths[idx]);
 			idx++;
 		}
 
-		if (idx >= abs.Length)
+		if (idx >= dashLengths.Count)
 		{
 			idx = 0;
 			acc = 0.0;
 			pos = 0.0;
 		}
 
-		var entities = new List<Line>();
-
+		var result = new List<Entity>();
 		double cursor = tStart;
-		double remaining = abs[idx] - (pos - acc);
+		double remaining = System.Math.Abs(dashLengths[idx]) - (pos - acc);
+
 		while (cursor < tEnd - MathHelper.Epsilon)
 		{
 			int guard = 0;
-			while (remaining <= MathHelper.Epsilon && guard < abs.Length + 1)
+			while (remaining <= MathHelper.Epsilon && guard < dashLengths.Count + 1)
 			{
-				idx = (idx + 1) % abs.Length;
-				remaining = abs[idx];
+				if (dashLengths[idx] == 0.0)
+				{
+					//Draw a point for 0 dash value
+					var dot = new Line(line.PointInLine(cursor), line.PointInLine(cursor + MathHelper.Epsilon));
+					dot.MatchProperties(this);
+					result.Add(dot);
+				}
+
+				idx = (idx + 1) % dashLengths.Count;
+				remaining = System.Math.Abs(dashLengths[idx]);
 				guard++;
 			}
 
@@ -401,11 +437,14 @@ public partial class Hatch : Entity
 			}
 
 			double step = System.Math.Min(remaining, tEnd - cursor);
-			if (dashLengths[idx] > 0.0 && step > MathHelper.Epsilon)
+
+			if (dashLengths[idx] > MathHelper.Epsilon && step > MathHelper.Epsilon)
 			{
-				double t0 = cursor;
-				double t1 = cursor + step;
-				entities.Add(new Line(line.PointInLine(t0), line.PointInLine(t1)));
+				//Draw a dash segment
+				var dash = new Line(line.PointInLine((double)cursor), line.PointInLine((double)(cursor + step)));
+				dash.MatchProperties(this);
+				dash.LineType = Tables.LineType.Continuous;
+				result.Add(dash);
 			}
 
 			cursor += step;
@@ -413,11 +452,31 @@ public partial class Hatch : Entity
 
 			if (remaining <= MathHelper.Epsilon)
 			{
-				idx = (idx + 1) % abs.Length;
-				remaining = abs[idx];
+				idx = (idx + 1) % dashLengths.Count;
+				remaining = System.Math.Abs(dashLengths[idx]);
 			}
 		}
 
-		return entities;
+		return result;
+	}
+
+	private bool isPointInsideByParity(XY point, double jitter = 1e-7)
+	{
+		Line2D ray = new Line2D(new XY(point.X, point.Y + jitter), XY.AxisX);
+
+		List<double> hits = new();
+		foreach (BoundaryPath boundary in this.Paths)
+		{
+			foreach (XY p in boundary.FindIntersections(ray))
+			{
+				if (p.X >= point.X - MathHelper.Epsilon)
+				{
+					hits.Add(p.X);
+				}
+			}
+		}
+
+		List<double> merged = mergeParameters(hits).ToList();
+		return merged.Count.IsOdd();
 	}
 }
