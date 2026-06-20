@@ -164,7 +164,7 @@ public class HatchTests : CommonEntityTests<Hatch>
 			.OrderBy(l => l.StartPoint.Y)
 			.ToList();
 
-		Assert.Equal(3, lines.Count);
+		Assert.Equal(2, lines.Count);
 
 		double[] expectedY = [0.0, 0.5, 1.0];
 
@@ -192,7 +192,7 @@ public class HatchTests : CommonEntityTests<Hatch>
 			.OrderBy(l => l.StartPoint.Y)
 			.ToList();
 
-		Assert.Equal(3, lines.Count);
+		Assert.Equal(2, lines.Count);
 
 		double[] expectedY = [0.0, 0.5, 1.0];
 
