@@ -46,6 +46,6 @@ public class AcmPartList : Entity
 	{
 		// TODO: Would probably require to get proxy entity data
 
-		return new BoundingBox(XYZ.Zero, XYZ.Zero);
+		return new BoundingBox(this.Position);
 	}
 }
