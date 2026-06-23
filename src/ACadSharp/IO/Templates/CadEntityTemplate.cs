@@ -105,13 +105,18 @@ internal class CadEntityTemplate : CadTemplate<Entity>
 		{
 			this.CadObject.BookColor = color;
 		}
+    
+		if (builder.TryGetCadObject(this.MaterialHandle, out Material material))
+		{
+			this.CadObject.Material = material;
+		}
 
 		if (this.ProxyGraphics != null)
 		{
 			//TO REMOVE
 			builder.Notify($"[{this.CadObject.ObjectName}] Proxy graphics found.");
 			this.CadObject.ProxyGeometries.AddRange(ProxyGeometry.ReadGeometries(builder, this.ProxyGraphics));
-		}
+    }
 	}
 }
 

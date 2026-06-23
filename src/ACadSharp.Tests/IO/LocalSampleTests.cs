@@ -1,6 +1,7 @@
 ﻿using ACadSharp.Entities;
 using ACadSharp.IO;
 using ACadSharp.Tests.TestModels;
+using System.Collections.Generic;
 using System.Diagnostics;
 using System.IO;
 using System.Linq;
@@ -36,6 +37,18 @@ public class LocalSampleTests : IOTestsBase
 			return;
 
 		CadDocument doc = DwgReader.Read(test.Path, this._dwgConfiguration, this.onNotification);
+
+		var h = doc.GetCadObject<Hatch>(0x421);
+
+		doc.Entities.AddRange(h.ExplodePattern());
+
+		//List<Entity> entities = new List<Entity>();
+		//foreach (var entity in doc.Entities.OfType<Hatch>())
+		//{
+		//	entities.AddRange(entity.ExplodePattern());
+		//}
+		//doc.Entities.AddRange(entities);
+
 		if (!TestVariables.SaveOutputInStream)
 		{
 			DwgWriter.Write(Path.Combine(TestVariables.DesktopFolder, "output", "test.dwg"), doc, notification: this.onNotification);

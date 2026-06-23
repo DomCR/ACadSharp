@@ -35,7 +35,7 @@ public partial class XRecord : NonGraphicalObject
 	/// <inheritdoc/>
 	public override string SubclassMarker => DxfSubclassMarker.XRecord;
 
-	private readonly List<Entry> _entries = new List<Entry>();
+	private List<Entry> _entries = new List<Entry>();
 
 	/// <inheritdoc/>
 	public XRecord() : base()
@@ -45,6 +45,24 @@ public partial class XRecord : NonGraphicalObject
 	/// <inheritdoc/>
 	public XRecord(string name) : base(name)
 	{
+	}
+
+	/// <summary>
+	/// Clears all entries from the collection.
+	/// </summary>
+	public void Clear()
+	{
+		this._entries.Clear();
+	}
+
+	/// <inheritdoc/>
+	public override CadObject Clone()
+	{
+		XRecord clone = (XRecord)base.Clone();
+
+		clone._entries = new List<Entry>(this._entries);
+
+		return clone;
 	}
 
 	/// <summary>
