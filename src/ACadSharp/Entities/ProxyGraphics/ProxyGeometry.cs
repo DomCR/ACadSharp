@@ -8,6 +8,7 @@ using System.Collections.Generic;
 using System.Diagnostics;
 using System.Linq;
 using System.Text;
+using static ACadSharp.Entities.Hatch.BoundaryPath;
 
 namespace ACadSharp.Entities.ProxyGraphics;
 
@@ -271,7 +272,17 @@ public class ProxyGeometry
 			ndiffwidth = reader.ReadBitLong();
 		}
 
-		if (nvertices > 0)
+		if (builder.Version == ACadVersion.AC1014 || builder.Version == ACadVersion.AC1012)
+		{
+			for (int i = 0; i < nvertices; i++)
+			{
+				Vertex2D v = new Vertex2D();
+				XY loc = reader.Read2RawDouble();
+				polyline.Entity.Vertices.Add(new LwPolyline.Vertex(loc));
+			}
+		}
+
+		if (builder.Version >= ACadVersion.AC1015 && nvertices > 0)
 		{
 			XY loc = reader.Read2RawDouble();
 			polyline.Entity.Vertices.Add(new LwPolyline.Vertex(loc));
@@ -308,122 +319,110 @@ public class ProxyGeometry
 		return polyline;
 	}
 
+	private static bool adHasPrimTraits(int a) => (a & 0xFFFFL) != 0;
+	private static bool adPrimsHaveColors(int a) => (a & 0x0001L) != 0;
+	private static bool adPrimsHaveLayers(int a) => (a & 0x0002L) != 0;
+	private static bool adPrimsHaveLineTypes(int a) => (a & 0x0004L) != 0;
+	private static bool adPrimsHaveMarkers(int a) => (a & 0x0020L) != 0;
+	private static bool adPrimsHaveVisibilities(int a) => (a & 0x0040L) != 0;
+	private static bool adPrimsHaveNormal(int a) => (a & 0x0080L) != 0;
+	private static bool adPrimsHaveOrientation(int a) => (a & 0x0400L) != 0;
+
 	private static IProxyGeometry readMesh(StreamIO stream)
 	{
-		throw new NotImplementedException();
-	}
+		ProxyMesh mesh = new ProxyMesh();
 
-	private static IProxyGeometry readPolygon(StreamIO stream)
-	{
-		ProxyPolygon polygon = new ProxyPolygon();
-		polygon.Points = [];
+		int rows = stream.ReadInt();
+		int columns = stream.ReadInt();
 
-		int pointCount = stream.ReadInt();
-		for (int i = 0; i < pointCount; i++)
-		{
-			polygon.Points.Add(readPoint(stream));
+		for (int y = 0; y < rows; y++) {
+			for (int x = 0; x < columns; x++) {
+				XYZ vertex = readPoint(stream);
+			}
 		}
 
-		return polygon;
-	}
-
-	private static IProxyGeometry readPolyline(StreamIO stream)
-	{
-		ProxyPolyline polyline = new ProxyPolyline();
-
-		int pointCount = stream.ReadInt();
-		for (int i = 0; i < pointCount; i++)
-		{
-			polyline.Points.Add(readPoint(stream));
+		// Parse traits for all edges
+		int edgeFlags = stream.ReadInt();
+		if (adHasPrimTraits(edgeFlags)) {
+			int meshEdgeCount = (rows - 1) * columns + (columns - 1) * rows;
+			if (adPrimsHaveColors(edgeFlags)) {
+				for (int i = 0; i < meshEdgeCount; i++) {
+					int edgeColor = stream.ReadInt();
+				}
+			}
+			if (adPrimsHaveLayers(edgeFlags)) {
+				for (int i = 0; i < meshEdgeCount; i++) {
+					int layerIds = stream.ReadInt();
+				}
+			}
+			if (adPrimsHaveLineTypes(edgeFlags)) {
+				for (int i = 0; i < meshEdgeCount; i++) {
+					int lineTypeIds = stream.ReadInt();
+				}
+			}
+			if (adPrimsHaveMarkers(edgeFlags)) {
+				for (int i = 0; i < meshEdgeCount; i++) {
+					int markerIndices = stream.ReadInt();
+				}
+			}
+			if (adPrimsHaveVisibilities(edgeFlags)) {
+				for (int i = 0; i < meshEdgeCount; i++) {
+					int visibilityIndicator = stream.ReadInt();
+				}
+			}
 		}
 
-		return polyline;
-	}
-
-	private static IProxyGeometry readPolylineWithNormal(StreamIO stream)
-	{
-		ProxyPolylineWithNormal polyline = new ProxyPolylineWithNormal();
-
-		int pointCount = stream.ReadInt();
-		for (int i = 0; i < pointCount; i++)
-		{
-			polyline.Points.Add(readPoint(stream));
+		// Parse traits for all faces
+		int faceFlags = stream.ReadInt();
+		if (adHasPrimTraits(faceFlags)) {
+			int meshFaceCount = (rows - 1) * (columns - 1);
+			if (adPrimsHaveColors(faceFlags)) {
+				for (int i = 0; i < meshFaceCount; i++) {
+					int edgeColor = stream.ReadInt();
+				}
+			}
+			if (adPrimsHaveLayers(faceFlags)) {
+				for (int i = 0; i < meshFaceCount; i++) {
+					int layerIds = stream.ReadInt();
+				}
+			}
+			if (adPrimsHaveMarkers(faceFlags)) {
+				for (int i = 0; i < meshFaceCount; i++) {
+					int markerIndices = stream.ReadInt();
+				}
+			}
+			if (adPrimsHaveNormal(faceFlags)) {
+				for (int i = 0; i < meshFaceCount; i++) {
+					XYZ normal = readPoint(stream);
+				}
+			}
+			if (adPrimsHaveVisibilities(faceFlags)) {
+				for (int i = 0; i < meshFaceCount; i++) {
+					int visibilityIndicator = stream.ReadInt();
+				}
+			}
 		}
-		polyline.Normal = readPoint(stream);
 
-		return polyline;
-	}
-
-	private static IProxyGeometry readPopClip(StreamIO stream)
-	{
-		return new ProxyPopClip();
-	}
-
-	private static IProxyGeometry readPopModelTransform(StreamIO stream)
-	{
-		return new ProxyPopModelTransform();
-	}
-
-	private static IProxyGeometry readPushClip(StreamIO stream)
-	{
-		ProxyPushClip clip = new ProxyPushClip();
-
-		clip.Extrusion = readPoint(stream);
-		clip.ClipBoundaryOrigin = readPoint(stream);
-		clip.PointCount = stream.ReadInt();
-		clip.Points = [];
-		for (int i = 0; i < clip.PointCount; i++)
-		{
-			clip.Points.Add(new XY(stream.ReadDouble(), stream.ReadDouble()));
+		// Parse traits for all vertices
+		int vertexFlags = stream.ReadInt();
+		if (adHasPrimTraits(vertexFlags)) {
+			int meshVertexCount = rows * columns;
+			if (adPrimsHaveNormal(vertexFlags)) {
+				for (int i = 0; i < meshVertexCount; i++) {
+					XYZ normal = readPoint(stream);
+				}
+			}
+			if (adPrimsHaveOrientation(vertexFlags)) {
+				int orientation = stream.ReadInt();
+			}
 		}
-		clip.ClipBoundaryTransformMatrix = readMatrix(stream);
-		clip.InverseBlockTransformMatrix = readMatrix(stream);
-		clip.FrontClipOn = stream.ReadInt();
-		clip.BackClipOn = stream.ReadInt();
-		clip.FrontClip = stream.ReadDouble();
-		clip.BackClip = stream.ReadDouble();
-		clip.DrawBoundary = stream.ReadInt() == 1;
 
-		Debugger.Break();    // TODO: VALIDATE
-		return clip;
-	}
-
-	private static IProxyGeometry readPushModelTransform(StreamIO stream)
-	{
-		ProxyPushModelTransform modelTransform = new ProxyPushModelTransform();
-
-		modelTransform.TransformationMatrix = readMatrix(stream);
-
-		return modelTransform;
-	}
-
-	private static IProxyGeometry readPushModelTransform2(StreamIO stream)
-	{
-		throw new NotImplementedException();
-	}
-
-	private static IProxyGeometry readRay(StreamIO stream)
-	{
-		ProxyRay ray = new ProxyRay();
-
-		ray.ConstructionLinePoint = readPoint(stream);
-		ray.Point2 = readPoint(stream);
-
-		return ray;
+		return mesh;
 	}
 
 	private static IProxyGeometry readShell(StreamIO stream)
 	{
 		ProxyShell shell = new ProxyShell();
-
-		static bool adHasPrimTraits(int a) => (a & 0xFFFFL) != 0;
-		static bool adPrimsHaveColors(int a) => (a & 0x0001L) != 0;
-		static bool adPrimsHaveLayers(int a) => (a & 0x0002L) != 0;
-		static bool adPrimsHaveLineTypes(int a) => (a & 0x0004L) != 0;
-		static bool adPrimsHaveMarkers(int a) => (a & 0x0020L) != 0;
-		static bool adPrimsHaveVisibilities(int a) => (a & 0x0040L) != 0;
-		static bool adPrimsHaveNormal(int a) => (a & 0x0080L) != 0;
-		static bool adPrimsHaveOrientation(int a) => (a & 0x0400L) != 0;
 
 		shell.PointCount = stream.ReadInt();
 		shell.Vertices = [];
@@ -516,7 +515,6 @@ public class ProxyGeometry
 		int vertexFlags = stream.ReadInt();
 		if (adHasPrimTraits(vertexFlags)) {
 			if (adPrimsHaveNormal(vertexFlags)) {
-				// TODO: Check if this is the correct vertex count (As ODA stated "compute numvertices as rows * cols")
 				for (int i = 0; i < shell.Vertices.Count; i++) {
 					XYZ normal = readPoint(stream);
 				}
@@ -527,6 +525,112 @@ public class ProxyGeometry
 		}
 
 		return shell;
+	}
+
+	private static IProxyGeometry readPolygon(StreamIO stream)
+	{
+		ProxyPolygon polygon = new ProxyPolygon();
+		polygon.Points = [];
+
+		int pointCount = stream.ReadInt();
+		for (int i = 0; i < pointCount; i++)
+		{
+			polygon.Points.Add(readPoint(stream));
+		}
+
+		return polygon;
+	}
+
+	private static IProxyGeometry readPolyline(StreamIO stream)
+	{
+		ProxyPolyline polyline = new ProxyPolyline();
+
+		int pointCount = stream.ReadInt();
+		for (int i = 0; i < pointCount; i++)
+		{
+			polyline.Points.Add(readPoint(stream));
+		}
+
+		return polyline;
+	}
+
+	private static IProxyGeometry readPolylineWithNormal(StreamIO stream)
+	{
+		ProxyPolylineWithNormal polyline = new ProxyPolylineWithNormal();
+
+		int pointCount = stream.ReadInt();
+		for (int i = 0; i < pointCount; i++)
+		{
+			polyline.Points.Add(readPoint(stream));
+		}
+		polyline.Normal = readPoint(stream);
+
+		return polyline;
+	}
+
+	private static IProxyGeometry readPopClip(StreamIO stream)
+	{
+		return new ProxyPopClip();
+	}
+
+	private static IProxyGeometry readPopModelTransform(StreamIO stream)
+	{
+		return new ProxyPopModelTransform();
+	}
+
+	private static IProxyGeometry readPushClip(StreamIO stream)
+	{
+		ProxyPushClip clip = new ProxyPushClip();
+
+		clip.Extrusion = readPoint(stream);
+		clip.ClipBoundaryOrigin = readPoint(stream);
+		clip.PointCount = stream.ReadInt();
+		clip.Points = [];
+		for (int i = 0; i < clip.PointCount; i++)
+		{
+			clip.Points.Add(new XY(stream.ReadDouble(), stream.ReadDouble()));
+		}
+		clip.ClipBoundaryTransformMatrix = readMatrix(stream);
+		clip.InverseBlockTransformMatrix = readMatrix(stream);
+		clip.FrontClipOn = stream.ReadInt();
+		clip.BackClipOn = stream.ReadInt();
+		clip.FrontClip = stream.ReadDouble();
+		clip.BackClip = stream.ReadDouble();
+		clip.DrawBoundary = stream.ReadInt() == 1;
+
+		Debugger.Break();    // TODO: VALIDATE
+		return clip;
+	}
+
+	private static IProxyGeometry readPushModelTransform(StreamIO stream)
+	{
+		ProxyPushModelTransform modelTransform = new ProxyPushModelTransform();
+
+		modelTransform.TransformationMatrix = readMatrix(stream);
+
+		return modelTransform;
+	}
+
+	private static IProxyGeometry readPushModelTransform2(StreamIO stream)
+	{
+		ProxyPushModelTransform2 modelTransform = new ProxyPushModelTransform2();
+
+		modelTransform.TransformationMatrix = readMatrix(stream);
+		// TODO: Unknown data according to ODA
+
+		Debugger.Break();    // TODO: VALIDATE
+
+		return modelTransform;
+	}
+
+	private static IProxyGeometry readRay(StreamIO stream)
+	{
+		ProxyRay ray = new ProxyRay();
+
+		ray.ConstructionLinePoint = readPoint(stream);
+		ray.Point2 = readPoint(stream);
+
+		return ray;
 	}
 
 	private static IProxyGeometry readSubentColor(StreamIO stream)
