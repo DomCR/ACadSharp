@@ -269,5 +269,11 @@
 		public const string XLine = "AcDbXline";
 
 		public const string XRecord = "AcDbXrecord";
+
+		public const string PartList = "AcmPartList";
+
+		public const string PartRef = "AcmPartRef";
+
+		public const string Balloon = "AcmBalloon";
 	}
 }

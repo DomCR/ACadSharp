@@ -2,6 +2,7 @@
 using ACadSharp.Classes;
 using ACadSharp.Entities;
 using ACadSharp.Entities.AecObjects;
+using ACadSharp.Entities.Mechanical;
 using ACadSharp.IO.Templates;
 using ACadSharp.Objects;
 using ACadSharp.Objects.AEC;
@@ -316,8 +317,7 @@ namespace ACadSharp.IO.DWG
 
 				//Common:
 				//X: The graphic image
-				//entityHandler.CadObject.JumpGraphicImage(this, entityHandler, graphicImageSize);
-				this._objectReader.Advance((int)graphicImageSize);
+				template.ProxyGraphics = this._objectReader.ReadBytes((int)graphicImageSize);
 			}
 
 			//R13 - R14 Only:
@@ -5506,6 +5506,15 @@ namespace ACadSharp.IO.DWG
 
 			switch (c.DxfName)
 			{
+				case DxfFileToken.AcmPartRef:
+					template = this.readAcmPartRef();
+					break;
+				case DxfFileToken.AcmBalloon:
+					template = this.readAcmBalloon();
+					break;
+				case DxfFileToken.AcmPartList:
+					template = this.readAcmPartList();
+					break;
 				case DxfFileToken.EntityAecWall:
 					template = this.readAecWall();
 					break;
@@ -6242,6 +6251,94 @@ namespace ACadSharp.IO.DWG
 		}
 
 		#endregion Insert methods
+
+		private CadTemplate readAcmPartRef()
+		{
+			AcmPartRef proxy = new AcmPartRef();
+			CadEntityTemplate<AcmPartRef> template = new CadEntityTemplate<AcmPartRef>(proxy);
+
+			this.readCommonEntityData(template);
+
+			var unknown1 = this._mergedReaders.ReadBitLong();	// 212
+
+			proxy.Position = this._mergedReaders.Read3BitDouble();
+
+			proxy.StandardDINHandle = this.handleReference();
+			proxy.BOMStandardDINHandle = this.handleReference();
+
+			proxy.LineResHandle = this.handleReference();
+			var unknownHandle1 = this.handleReference();		// 0x0
+			proxy.DataEntryPartHandle = this.handleReference();
+
+			template.LayerHandle = this.handleReference();
+
+			return template;
+		}
+
+		private CadTemplate readAcmPartList()
+		{
+			AcmPartList proxy = new AcmPartList();
+			CadEntityTemplate<AcmPartList> template = new CadEntityTemplate<AcmPartList>(proxy);
+
+			this.readCommonEntityData(template);
+
+			var unknown1 = this._mergedReaders.ReadBitLong();   // 212
+
+			proxy.Position = this._mergedReaders.Read3BitDouble();
+
+			proxy.StandardDINHandle = this.handleReference();
+			proxy.BOMStandardDINHandle = this.handleReference();
+
+			proxy.BomHandle = this.handleReference();			// ACMBOM:*A1 (AcmBom)
+			proxy.ItemFilterCustomHandle = this.handleReference();
+
+			// Handles to each data row (excluding the headers) of the BOM table follow.
+			// Then seemingly always 3 handles of value 0x0 follow 
+
+			List<ulong> rowHandles = new List<ulong>();
+			ulong handle;
+			while (true) 
+			{
+				handle = this.handleReference();
+				if (handle == 0)
+				{
+					break;
+				}
+				rowHandles.Add(handle);
+			}
+			proxy.BomRowHandles = rowHandles;
+
+			// ulong handle: 0x0
+			var unknownHandle1 = this.handleReference();        // 0x0
+			var unknownHandle2 = this.handleReference();        // 0x0
+
+			return template;
+		}
+
+		private CadTemplate readAcmBalloon()
+		{
+			AcmBalloon proxy = new AcmBalloon();
+			CadAcmBalloonTemplate template = new CadAcmBalloonTemplate(proxy);
+
+			this.readCommonEntityData(template);
+
+			var unknown1 = this._mergedReaders.ReadBitLong();   // 212
+
+			proxy.Position = this._mergedReaders.Read3BitDouble();
+
+			var unknown_position1 = this._mergedReaders.Read3BitDouble();
+			var unknown_position2 = this._mergedReaders.Read3BitDouble();
+
+			proxy.StandardDINHandle = this.handleReference();
+			proxy.BOMStandardDINHandle = this.handleReference();
+
+			proxy.BomRowHandle = this.handleReference();
+			template.BlockHandle = this.handleReference();
+
+			var unknownHandle1 = this.handleReference();		// 0x0
+
+			return template;
+		}
 
 		private CadTemplate readVertex2D()
 		{
