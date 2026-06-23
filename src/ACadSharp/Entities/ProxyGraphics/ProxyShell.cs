@@ -10,5 +10,5 @@ public class ProxyShell : IProxyGeometry
 	public int PointCount { get; set; }
 	public List<XYZ> Vertices { get; set; }
 	public int FaceCount { get; set; }
-	public List<List<int>> Faces { get; set; }
+	public List<List<XYZ>> Faces { get; set; }
 }

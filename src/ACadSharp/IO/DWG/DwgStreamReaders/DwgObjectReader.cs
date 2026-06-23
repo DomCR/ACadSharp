@@ -2891,7 +2891,93 @@ namespace ACadSharp.IO.DWG
 			{
 				this.readCommonEntityData(template);
 
-				readLWPolyline(this._objectReader, this._version, lwPolyline);
+				//B : bytes containing the LWPOLYLINE entity data.
+				//This excludes the common entity data.
+				//More specifically: it starts at the LWPOLYLINE flags (BS), and ends with the width array (BD).
+
+				short flags = this._objectReader.ReadBitShort();
+				if ((flags & 0x100) != 0)
+					lwPolyline.Flags |= LwPolylineFlags.Plinegen;
+				if ((flags & 0x200) != 0)
+					lwPolyline.Flags |= LwPolylineFlags.Closed;
+
+				if ((flags & 0x4u) != 0)
+				{
+					lwPolyline.ConstantWidth = this._objectReader.ReadBitDouble();
+				}
+
+				if ((flags & 0x8u) != 0)
+				{
+					lwPolyline.Elevation = this._objectReader.ReadBitDouble();
+				}
+
+				if ((flags & 0x2u) != 0)
+				{
+					lwPolyline.Thickness = this._objectReader.ReadBitDouble();
+				}
+
+				if ((flags & (true ? 1u : 0u)) != 0)
+				{
+					lwPolyline.Normal = this._objectReader.Read3BitDouble();
+				}
+
+				int nvertices = this._objectReader.ReadBitLong();
+				int nbulges = 0;
+
+				if (((uint)flags & 0x10) != 0)
+				{
+					nbulges = this._objectReader.ReadBitLong();
+				}
+
+				int nids = 0;
+				if (((uint)flags & 0x400) != 0)
+				{
+					nids = this._objectReader.ReadBitLong();
+				}
+
+				int ndiffwidth = 0;
+				if (((uint)flags & 0x20) != 0)
+				{
+					ndiffwidth = this._objectReader.ReadBitLong();
+				}
+
+				if (this._version == ACadVersion.AC1014 || this._version == ACadVersion.AC1012)
+				{
+					for (int i = 0; i < nvertices; i++)
+					{
+						Vertex2D v = new Vertex2D();
+						XY loc = this._objectReader.Read2RawDouble();
+						lwPolyline.Vertices.Add(new LwPolyline.Vertex(loc));
+					}
+				}
+
+				if (this._version >= ACadVersion.AC1015 && nvertices > 0)
+				{
+					XY loc = this._objectReader.Read2RawDouble();
+					lwPolyline.Vertices.Add(new LwPolyline.Vertex(loc));
+					for (int j = 1; j < nvertices; j++)
+					{
+						loc = this._objectReader.Read2BitDoubleWithDefault(loc);
+						lwPolyline.Vertices.Add(new LwPolyline.Vertex(loc));
+					}
+				}
+
+				for (int k = 0; k < nbulges; k++)
+				{
+					lwPolyline.Vertices[k].Bulge = this._objectReader.ReadBitDouble();
+				}
+
+				for (int l = 0; l < nids; l++)
+				{
+					lwPolyline.Vertices[l].Id = this._objectReader.ReadBitLong();
+				}
+
+				for (int m = 0; m < ndiffwidth; m++)
+				{
+					LwPolyline.Vertex vertex = lwPolyline.Vertices[m];
+					vertex.StartWidth = this._objectReader.ReadBitDouble();
+					vertex.EndWidth = this._objectReader.ReadBitDouble();
+				}
 			}
 			catch (System.Exception ex)
 			{
@@ -2900,97 +2986,6 @@ namespace ACadSharp.IO.DWG
 			}
 
 			return template;
-		}
-
-		internal static void readLWPolyline(IDwgStreamReader reader, ACadVersion version, LwPolyline lwPolyline)
-		{
-			//B : bytes containing the LWPOLYLINE entity data.
-			//This excludes the common entity data.
-			//More specifically: it starts at the LWPOLYLINE flags (BS), and ends with the width array (BD).
-
-			short flags = reader.ReadBitShort();
-			if ((flags & 0x100) != 0)
-				lwPolyline.Flags |= LwPolylineFlags.Plinegen;
-			if ((flags & 0x200) != 0)
-				lwPolyline.Flags |= LwPolylineFlags.Closed;
-
-			if ((flags & 0x4u) != 0)
-			{
-				lwPolyline.ConstantWidth = reader.ReadBitDouble();
-			}
-
-			if ((flags & 0x8u) != 0)
-			{
-				lwPolyline.Elevation = reader.ReadBitDouble();
-			}
-
-			if ((flags & 0x2u) != 0)
-			{
-				lwPolyline.Thickness = reader.ReadBitDouble();
-			}
-
-			if ((flags & (true ? 1u : 0u)) != 0)
-			{
-				lwPolyline.Normal = reader.Read3BitDouble();
-			}
-
-			int nvertices = reader.ReadBitLong();
-			int nbulges = 0;
-
-			if (((uint)flags & 0x10) != 0)
-			{
-				nbulges = reader.ReadBitLong();
-			}
-
-			int nids = 0;
-			if (((uint)flags & 0x400) != 0)
-			{
-				nids = reader.ReadBitLong();
-			}
-
-			int ndiffwidth = 0;
-			if (((uint)flags & 0x20) != 0)
-			{
-				ndiffwidth = reader.ReadBitLong();
-			}
-
-			if (version == ACadVersion.AC1014 || version == ACadVersion.AC1012)
-			{
-				for (int i = 0; i < nvertices; i++)
-				{
-					Vertex2D v = new Vertex2D();
-					XY loc = reader.Read2RawDouble();
-					lwPolyline.Vertices.Add(new LwPolyline.Vertex(loc));
-				}
-			}
-
-			if (version >= ACadVersion.AC1015 && nvertices > 0)
-			{
-				XY loc = reader.Read2RawDouble();
-				lwPolyline.Vertices.Add(new LwPolyline.Vertex(loc));
-				for (int j = 1; j < nvertices; j++)
-				{
-					loc = reader.Read2BitDoubleWithDefault(loc);
-					lwPolyline.Vertices.Add(new LwPolyline.Vertex(loc));
-				}
-			}
-
-			for (int k = 0; k < nbulges; k++)
-			{
-				lwPolyline.Vertices[k].Bulge = reader.ReadBitDouble();
-			}
-
-			for (int l = 0; l < nids; l++)
-			{
-				lwPolyline.Vertices[l].Id = reader.ReadBitLong();
-			}
-
-			for (int m = 0; m < ndiffwidth; m++)
-			{
-				LwPolyline.Vertex vertex = lwPolyline.Vertices[m];
-				vertex.StartWidth = reader.ReadBitDouble();
-				vertex.EndWidth = reader.ReadBitDouble();
-			}
 		}
 
 		private CadTemplate readMaterial()

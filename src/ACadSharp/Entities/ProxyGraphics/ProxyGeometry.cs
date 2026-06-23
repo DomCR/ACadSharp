@@ -158,9 +158,11 @@ public class ProxyGeometry
 	private static IProxyGeometry readCircle(StreamIO stream)
 	{
 		ProxyCircle circle = new ProxyCircle();
+
 		circle.Center = readPoint(stream);
 		circle.Radius = stream.ReadDouble();
 		circle.Normal = readPoint(stream);
+
 		return circle;
 	}
 
@@ -172,7 +174,6 @@ public class ProxyGeometry
 		circle.Point2 = readPoint(stream);
 		circle.Point3 = readPoint(stream);
 
-		Debugger.Break();	// TODO: VALIDATE
 		return circle;
 	}
 
@@ -215,13 +216,90 @@ public class ProxyGeometry
 	private static IProxyGeometry readLwPolyine(CadDocumentBuilder builder, StreamIO stream)
 	{
 		int dataSize = stream.ReadInt();
-		ProxyLwPolyine polyline = new ProxyLwPolyine();
+		ProxyLwPolyine polyline = new ProxyLwPolyine
+		{
+			Entity = new LwPolyline()
+		};
+
+		// The following reads the LwPolyline entity like the DwgObjectReader
 
 		IDwgStreamReader reader = DwgStreamReaderBase.GetStreamHandler(builder.Version, stream.Stream);
 
-		polyline.Entity = new LwPolyline();
-		DwgObjectReader.readLWPolyline(reader, builder.Version, polyline.Entity);
-		// TODO: Read LwPolyline entity w/o common data
+		short flags = reader.ReadBitShort();
+		if ((flags & 0x100) != 0)
+		{
+			polyline.Entity.Flags |= LwPolylineFlags.Plinegen;
+		}
+		if ((flags & 0x200) != 0)
+		{
+			polyline.Entity.Flags |= LwPolylineFlags.Closed;
+		}
+		if ((flags & 0x4u) != 0)
+		{
+			polyline.Entity.ConstantWidth = reader.ReadBitDouble();
+		}
+		if ((flags & 0x8u) != 0)
+		{
+			polyline.Entity.Elevation = reader.ReadBitDouble();
+		}
+		if ((flags & 0x2u) != 0)
+		{
+			polyline.Entity.Thickness = reader.ReadBitDouble();
+		}
+		if ((flags & (true ? 1u : 0u)) != 0)
+		{
+			polyline.Entity.Normal = reader.Read3BitDouble();
+		}
+
+		int nvertices = reader.ReadBitLong();
+
+		int nbulges = 0;
+		if (((uint)flags & 0x10) != 0)
+		{
+			nbulges = reader.ReadBitLong();
+		}
+
+		int nids = 0;
+		if (((uint)flags & 0x400) != 0)
+		{
+			nids = reader.ReadBitLong();
+		}
+
+		int ndiffwidth = 0;
+		if (((uint)flags & 0x20) != 0)
+		{
+			ndiffwidth = reader.ReadBitLong();
+		}
+
+		if (nvertices > 0)
+		{
+			XY loc = reader.Read2RawDouble();
+			polyline.Entity.Vertices.Add(new LwPolyline.Vertex(loc));
+			for (int j = 1; j < nvertices; j++)
+			{
+				loc = reader.Read2BitDoubleWithDefault(loc);
+				polyline.Entity.Vertices.Add(new LwPolyline.Vertex(loc));
+			}
+		}
+
+		for (int k = 0; k < nbulges; k++)
+		{
+			polyline.Entity.Vertices[k].Bulge = reader.ReadBitDouble();
+		}
+
+		for (int l = 0; l < nids; l++)
+		{
+			polyline.Entity.Vertices[l].Id = reader.ReadBitLong();
+		}
+
+		for (int m = 0; m < ndiffwidth; m++)
+		{
+			LwPolyline.Vertex vertex = polyline.Entity.Vertices[m];
+			vertex.StartWidth = reader.ReadBitDouble();
+			vertex.EndWidth = reader.ReadBitDouble();
+		}
+
+		// Read additional unknown data after regular LwPolyline Entity data
 
 		polyline.Unknown1 = stream.ReadByte();
 		polyline.Unknown2 = stream.ReadByte();
@@ -252,11 +330,13 @@ public class ProxyGeometry
 	private static IProxyGeometry readPolyline(StreamIO stream)
 	{
 		ProxyPolyline polyline = new ProxyPolyline();
+
 		int pointCount = stream.ReadInt();
 		for (int i = 0; i < pointCount; i++)
 		{
 			polyline.Points.Add(readPoint(stream));
 		}
+
 		return polyline;
 	}
 
@@ -313,6 +393,7 @@ public class ProxyGeometry
 		ProxyPushModelTransform modelTransform = new ProxyPushModelTransform();
 
 		modelTransform.TransformationMatrix = readMatrix(stream);
+
 		return modelTransform;
 	}
 
@@ -328,7 +409,6 @@ public class ProxyGeometry
 		ray.ConstructionLinePoint = readPoint(stream);
 		ray.Point2 = readPoint(stream);
 
-		Debugger.Break();    // TODO: VALIDATE
 		return ray;
 	}
 
@@ -336,14 +416,14 @@ public class ProxyGeometry
 	{
 		ProxyShell shell = new ProxyShell();
 
-		Func<int, bool> adHasPrimTraits = a => (a & 0xFFFFL) != 0;
-		Func<int, bool> adPrimsHaveColors = a => (a & 0x0001L) != 0;
-		Func<int, bool> adPrimsHaveLayers = a => (a & 0x0002L) != 0;
-		Func<int, bool> adPrimsHaveLinetypes = a => (a & 0x0004L) != 0;
-		Func<int, bool> adPrimsHaveMarkers = a => (a & 0x0020L) != 0;
-		Func<int, bool> adPrimsHaveVisibilities = a => (a & 0x0040L) != 0;
-		Func<int, bool> adPrimsHaveNormals = a => (a & 0x0080L) != 0;
-		Func<int, bool> adPrimsHaveOrientation = a => (a & 0x0400L) != 0;
+		static bool adHasPrimTraits(int a) => (a & 0xFFFFL) != 0;
+		static bool adPrimsHaveColors(int a) => (a & 0x0001L) != 0;
+		static bool adPrimsHaveLayers(int a) => (a & 0x0002L) != 0;
+		static bool adPrimsHaveLineTypes(int a) => (a & 0x0004L) != 0;
+		static bool adPrimsHaveMarkers(int a) => (a & 0x0020L) != 0;
+		static bool adPrimsHaveVisibilities(int a) => (a & 0x0040L) != 0;
+		static bool adPrimsHaveNormal(int a) => (a & 0x0080L) != 0;
+		static bool adPrimsHaveOrientation(int a) => (a & 0x0400L) != 0;
 
 		shell.PointCount = stream.ReadInt();
 		shell.Vertices = [];
@@ -352,79 +432,97 @@ public class ProxyGeometry
 		}
 		shell.FaceCount = stream.ReadInt();
 		shell.Faces = [];
-		List<int> face = [];
+		int faceCount = 0;
+		int edgeCount = 0;
 		for (int i = 0; i < shell.FaceCount; i++) {
-			int value = stream.ReadInt();
-			if (value < 0) {
-				int vertexCount = value * -1;
-				shell.Faces.Add(face);
-				face = [];
-				for (int j = 0; j < vertexCount; j++) {
-					face.Add(stream.ReadInt());
-				}
-				shell.Faces.Add(face);
-				face = [];
+			int count = Math.Abs(stream.ReadInt());
+			i += count + 1;
+
+			List<int> faceIndices = [];
+			for (int j = 0; j < count; j++) {
+				faceIndices.Add(stream.ReadInt());
 			}
-			else {
-				// TODO: Check if this ever happens and if so, if this is correct
-				face.Add(value);
+
+			List<XYZ> face = [];
+			foreach (int index in faceIndices) {
+				face.Add(shell.Vertices[index]);
 			}
-		}
-		if (face.Count > 0) {
 			shell.Faces.Add(face);
+			faceCount++;
+			edgeCount += count;
 		}
 
-		// TODO: Validate and fix the below logic
-
-		int edgePrimitiveFlags = stream.ReadInt();
-		if (adHasPrimTraits(edgePrimitiveFlags)) {
-			// TODO: Actually get edge count
-			if (adPrimsHaveColors(edgePrimitiveFlags)) {
-				int edgeColor = stream.ReadInt();		// color for each edge
+		// Parse traits for all edges
+		int edgeFlags = stream.ReadInt();
+		if (adHasPrimTraits(edgeFlags)) {
+			if (adPrimsHaveColors(edgeFlags)) {
+				for (int i = 0; i < edgeCount; i++) {
+					int edgeColor = stream.ReadInt();
+				}
 			}
-			if (adPrimsHaveLayers(edgePrimitiveFlags)) {
-				int layerIds = stream.ReadInt();		// layer ids, 1 for each edge
+			if (adPrimsHaveLayers(edgeFlags)) {
+				for (int i = 0; i < edgeCount; i++) {
+					int layerIds = stream.ReadInt();
+				}
 			}
-			if (adPrimsHaveLinetypes(edgePrimitiveFlags)) {
-				int linetypeIds = stream.ReadInt();		// linetype ids, 1 for each edge
+			if (adPrimsHaveLineTypes(edgeFlags)) {
+				for (int i = 0; i < edgeCount; i++) {
+					int lineTypeIds = stream.ReadInt();
+				}
 			}
-			if (adPrimsHaveMarkers(edgePrimitiveFlags)) {
-				int markerIndices = stream.ReadInt();	// marker indices, 1 for each edge
+			if (adPrimsHaveMarkers(edgeFlags)) {
+				for (int i = 0; i < edgeCount; i++) {
+					int markerIndices = stream.ReadInt();
+				}
 			}
-			if (adPrimsHaveVisibilities(edgePrimitiveFlags)) {
-				for (int i = 0; i < shell.Faces.SelectMany(x => x).Where(x => x >= 0 && x < shell.Vertices.Count).Distinct().Count(); i++) {
-					int visibilityIndicator = stream.ReadInt();		// visibility indicator, 1 for each edge
+			if (adPrimsHaveVisibilities(edgeFlags)) {
+				for (int i = 0; i < edgeCount; i++) {
+					int visibilityIndicator = stream.ReadInt();
 				}
 			}
 		}
 
-		int facePrimitiveFlags = stream.ReadInt();
-		if (adHasPrimTraits(facePrimitiveFlags)) {
-			if (adPrimsHaveColors(facePrimitiveFlags)) {
-				int edgeColor = stream.ReadInt();		// color for each face
+		// Parse traits for all faces
+		int faceFlags = stream.ReadInt();
+		if (adHasPrimTraits(faceFlags)) {
+			if (adPrimsHaveColors(faceFlags)) {
+				for (int i = 0; i < faceCount; i++) {
+					int edgeColor = stream.ReadInt();
+				}
 			}
-			if (adPrimsHaveLayers(facePrimitiveFlags)) {
-				int layerIds = stream.ReadInt();        // layer ids, 1 for each face
+			if (adPrimsHaveLayers(faceFlags)) {
+				for (int i = 0; i < faceCount; i++) {
+					int layerIds = stream.ReadInt();
+				}
 			}
-			if (adPrimsHaveLinetypes(facePrimitiveFlags)) {
-				int linetypeIds = stream.ReadInt();     // linetype ids, 1 for each face
+			if (adPrimsHaveMarkers(faceFlags)) {
+				for (int i = 0; i < faceCount; i++) {
+					int markerIndices = stream.ReadInt();
+				}
 			}
-			if (adPrimsHaveMarkers(facePrimitiveFlags)) {
-				int markerIndices = stream.ReadInt();   // marker indices, 1 for each face
+			if (adPrimsHaveNormal(faceFlags)) {
+				for (int i = 0; i < faceCount; i++) {
+					XYZ normal = readPoint(stream);
+				}
 			}
-			if (adPrimsHaveVisibilities(facePrimitiveFlags)) {
-				int visibilityIndicator = stream.ReadInt();     // visibility indicator, 1 for each face
+			if (adPrimsHaveVisibilities(faceFlags)) {
+				for (int i = 0; i < faceCount; i++) {
+					int visibilityIndicator = stream.ReadInt();
+				}
 			}
 		}
 
-		int vertexPrimitiveFlags = stream.ReadInt();
-		if (adHasPrimTraits(vertexPrimitiveFlags)) {
-			int vertexCount = /* TODO: rows * cols */ 0;
-			if (adPrimsHaveNormals(vertexPrimitiveFlags)) {
-				XYZ normal = readPoint(stream);			// normal, 1 for each vertex
+		// Parse traits for all vertices
+		int vertexFlags = stream.ReadInt();
+		if (adHasPrimTraits(vertexFlags)) {
+			if (adPrimsHaveNormal(vertexFlags)) {
+				// TODO: Check if this is the correct vertex count (As ODA stated "compute numvertices as rows * cols")
+				for (int i = 0; i < shell.Vertices.Count; i++) {
+					XYZ normal = readPoint(stream);
+				}
 			}
-			if (adPrimsHaveOrientation(vertexPrimitiveFlags)) {
-				int orientation = stream.ReadInt();		// orientation indicator, 1 ONLY
+			if (adPrimsHaveOrientation(vertexFlags)) {
+				int orientation = stream.ReadInt();
 			}
 		}
 
@@ -436,8 +534,6 @@ public class ProxyGeometry
 		ProxySubentColor color = new ProxySubentColor();
 
 		color.ColorIndex = stream.ReadInt();
-
-		if (color.ColorIndex > 256) Debugger.Break();	// seen 257
 
 		return color;
 	}
@@ -472,7 +568,6 @@ public class ProxyGeometry
 	{
 		ProxySubEntityMaterial material = new ProxySubEntityMaterial();
 
-		//material.MaterialHandle = new DwgStreamReaderAC24(stream.Stream, false).HandleReference();
 		material.MaterialHandle = (ulong) stream.ReadInt();
 		int unknown1 = stream.ReadInt();
 
