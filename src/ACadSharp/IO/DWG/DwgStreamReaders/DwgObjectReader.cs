@@ -2941,7 +2941,7 @@ namespace ACadSharp.IO.DWG
 					ndiffwidth = this._objectReader.ReadBitLong();
 				}
 
-				if (this._version == ACadVersion.AC1014 || this._version == ACadVersion.AC1012)
+				if (this.R13_14Only)
 				{
 					for (int i = 0; i < nvertices; i++)
 					{
@@ -2951,7 +2951,7 @@ namespace ACadSharp.IO.DWG
 					}
 				}
 
-				if (this._version >= ACadVersion.AC1015 && nvertices > 0)
+				if (this.R2000Plus && nvertices > 0)
 				{
 					XY loc = this._objectReader.Read2RawDouble();
 					lwPolyline.Vertices.Add(new LwPolyline.Vertex(loc));
