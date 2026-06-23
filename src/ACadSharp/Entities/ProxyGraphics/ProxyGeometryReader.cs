@@ -11,7 +11,7 @@ using System.Text;
 
 namespace ACadSharp.Entities.ProxyGraphics;
 
-public class ProxyGeometry
+public class ProxyGeometryReader
 {
 	internal static IEnumerable<IProxyGeometry> ReadGeometries(CadDocumentBuilder builder, byte[] arr)
 	{
@@ -574,21 +574,22 @@ public class ProxyGeometry
 
 		clip.Extrusion = readPoint(stream);
 		clip.ClipBoundaryOrigin = readPoint(stream);
-		clip.PointCount = stream.ReadInt();
-		clip.Points = [];
-		for (int i = 0; i < clip.PointCount; i++)
+		var npoint = stream.ReadInt();
+		clip.ClipBoundary = [];
+		for (int i = 0; i < npoint; i++)
 		{
-			clip.Points.Add(new XY(stream.ReadDouble(), stream.ReadDouble()));
+			clip.ClipBoundary.Add(new XY(stream.ReadDouble(), stream.ReadDouble()));
 		}
+
 		clip.ClipBoundaryTransformMatrix = readMatrix(stream);
 		clip.InverseBlockTransformMatrix = readMatrix(stream);
-		clip.FrontClipOn = stream.ReadInt();
-		clip.BackClipOn = stream.ReadInt();
+
+		clip.FrontClipOn = stream.ReadInt() != 0;
+		clip.BackClipOn = stream.ReadInt() != 0;
 		clip.FrontClip = stream.ReadDouble();
 		clip.BackClip = stream.ReadDouble();
-		clip.DrawBoundary = stream.ReadInt() == 1;
+		clip.DrawBoundary = stream.ReadInt() != 0;
 
-		Debugger.Break();    // TODO: VALIDATE
 		return clip;
 	}
 
@@ -606,9 +607,6 @@ public class ProxyGeometry
 		ProxyPushModelTransform2 modelTransform = new ProxyPushModelTransform2();
 
 		modelTransform.TransformationMatrix = readMatrix(stream);
-		// TODO: Unknown data according to ODA
-
-		Debugger.Break();    // TODO: VALIDATE
 
 		return modelTransform;
 	}
@@ -791,7 +789,6 @@ public class ProxyGeometry
 		mapper.AutoTransform = stream.ReadInt();
 		mapper.DummyValue3 = stream.ReadInt();
 
-		Debugger.Break();    // TODO: VALIDATE
 		return mapper;
 	}
 
@@ -1057,7 +1054,6 @@ public class ProxyGeometry
 
 	private static IProxyGeometry readUnknown37(StreamIO stream)
 	{
-		Debugger.Break();    // TODO: VALIDATE
 		return new ProxyUnknown37();
 	}
 

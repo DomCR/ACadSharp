@@ -113,7 +113,7 @@ internal class CadEntityTemplate : CadTemplate<Entity>
 
 		if (this.ProxyGraphics != null && !builder.IgnoreProxyGraphics)
 		{
-			this.CadObject.ProxyGeometries.AddRange(ProxyGeometry.ReadGeometries(builder, this.ProxyGraphics));
+			this.CadObject.ProxyGeometries.AddRange(ProxyGeometryReader.ReadGeometries(builder, this.ProxyGraphics));
 		}
 	}
 }
