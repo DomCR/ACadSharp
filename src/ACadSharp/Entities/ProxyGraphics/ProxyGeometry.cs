@@ -8,11 +8,8 @@ using System.Collections.Generic;
 using System.Diagnostics;
 using System.Linq;
 using System.Text;
-using static ACadSharp.Entities.Hatch.BoundaryPath;
 
 namespace ACadSharp.Entities.ProxyGraphics;
-
-// "TODO: VALIDATE" comments used to indicate type parser that have not yet been tested
 
 public class ProxyGeometry
 {
