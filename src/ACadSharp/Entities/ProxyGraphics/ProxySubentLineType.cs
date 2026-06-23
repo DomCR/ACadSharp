@@ -4,8 +4,6 @@ public class ProxySubentLineType : IProxyGeometry
 {
 	public GraphicsType GraphicsType { get { return GraphicsType.SubentLineType; } }
 
-	public uint LineTypeIndex { get; set; }
-
 	/// <summary>
 	/// Defines if the color is defined by block.
 	/// </summary>
@@ -21,4 +19,6 @@ public class ProxySubentLineType : IProxyGeometry
 	{
 		get { return this.LineTypeIndex == 0xFFFFFFFF; }
 	}
+
+	public uint LineTypeIndex { get; set; }
 }

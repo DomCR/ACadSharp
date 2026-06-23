@@ -2,10 +2,6 @@
 
 public class ProxySubentColor : IProxyGeometry
 {
-	public GraphicsType GraphicsType { get { return GraphicsType.SubentColor; } }
-
-	public int ColorIndex { get; set; }
-
 	public Color Color
 	{
 		get
@@ -13,4 +9,8 @@ public class ProxySubentColor : IProxyGeometry
 			return new Color((short)this.ColorIndex);
 		}
 	}
+
+	public int ColorIndex { get; set; }
+
+	public GraphicsType GraphicsType { get { return GraphicsType.SubentColor; } }
 }

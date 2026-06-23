@@ -38,8 +38,6 @@ public abstract class Entity : CadObject, IEntity
 	[DxfCodeValue(62, 420)]
 	public Color Color { get; set; } = Color.ByLayer;
 
-	public List<IProxyGeometry> ProxyGeometries { get; } = new();
-
 	/// <inheritdoc/>
 	[DxfCodeValue(60)]
 	public bool IsInvisible { get; set; } = false;
@@ -100,6 +98,11 @@ public abstract class Entity : CadObject, IEntity
 			this._material = updateCollection(value, this.Document?.Materials);
 		}
 	}
+
+	/// <summary>
+	/// Gets the list of proxy geometries for this entity.
+	/// </summary>
+	public List<IProxyGeometry> ProxyGeometries { get; } = new();
 
 	/// <inheritdoc/>
 	public override string SubclassMarker => DxfSubclassMarker.Entity;

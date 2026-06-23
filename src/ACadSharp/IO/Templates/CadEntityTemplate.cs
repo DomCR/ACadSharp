@@ -111,10 +111,8 @@ internal class CadEntityTemplate : CadTemplate<Entity>
 			this.CadObject.Material = material;
 		}
 
-		if (this.ProxyGraphics != null)
+		if (this.ProxyGraphics != null && !builder.IgnoreProxyGraphics)
 		{
-			//TO REMOVE
-			builder.Notify($"[{this.CadObject.ObjectName}] Proxy graphics found.");
 			this.CadObject.ProxyGeometries.AddRange(ProxyGeometry.ReadGeometries(builder, this.ProxyGraphics));
 		}
 	}

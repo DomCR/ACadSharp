@@ -6,6 +6,7 @@ public class ProxyExtents : IProxyGeometry
 {
 	public GraphicsType GraphicsType { get { return GraphicsType.Extents; } }
 
-	public XYZ Min { get; set; }
 	public XYZ Max { get; set; }
+
+	public XYZ Min { get; set; }
 }
