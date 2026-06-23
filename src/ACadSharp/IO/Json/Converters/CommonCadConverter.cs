@@ -63,7 +63,7 @@ public class CommonCadConverter<T> : JsonConverter<T>
 		{
 			value = Activator.CreateInstance(prop.PropertyType, reader.GetString());
 		}
-		else if(prop.PropertyType.IsAssignableFrom(typeof(IHandledCadObject)))
+		else if (prop.PropertyType.IsAssignableFrom(typeof(IHandledCadObject)))
 		{
 			return;
 		}
@@ -177,7 +177,7 @@ public class CommonCadConverter<T> : JsonConverter<T>
 			return;
 		}
 
-		if (pValue is INamedCadObject named)
+		if (pValue is INamedCadObject named && !prop.Name.Equals(nameof(CadObject.Owner), StringComparison.OrdinalIgnoreCase))
 		{
 			writer.WriteStringValue(prop.Name, named.Name);
 			return;

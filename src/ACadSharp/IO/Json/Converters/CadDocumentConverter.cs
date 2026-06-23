@@ -1,5 +1,6 @@
 ﻿using ACadSharp.Header;
 using System;
+using System.Reflection;
 
 #if NET
 
@@ -22,6 +23,13 @@ public class CadDocumentConverter : JsonConverter<CadDocument>
 #endif
 	{
 		writer.WriteStartObject();
+
+		writer.WritePropertyName(nameof(CadDocument.Header));
+#if NET
+		JsonSerializer.Serialize(writer, value.Header, options);
+#else
+		serializer.Serialize(writer, value.Header);
+#endif
 
 		writer.WritePropertyName(nameof(CadDocument.AppIds));
 #if NET
@@ -72,13 +80,6 @@ public class CadDocumentConverter : JsonConverter<CadDocument>
 		serializer.Serialize(writer, value.RootDictionary);
 #endif
 
-		writer.WritePropertyName(nameof(CadDocument.Header));
-#if NET
-		JsonSerializer.Serialize(writer, value.Header, options);
-#else
-		serializer.Serialize(writer, value.Header);
-#endif
-
 		writer.WriteEndObject();
 	}
 
@@ -86,7 +87,56 @@ public class CadDocumentConverter : JsonConverter<CadDocument>
 
 	public override CadDocument Read(ref Utf8JsonReader reader, Type typeToConvert, JsonSerializerOptions options)
 	{
-		throw new NotImplementedException();
+		CadDocument document = new CadDocument(false);
+		JsonDocumentBuilder builder = new JsonDocumentBuilder( document);
+
+		while (reader.Read())
+		{
+			if (reader.TokenType == JsonTokenType.PropertyName)
+			{
+				string propertyName = reader.GetString();
+				var prop = typeToConvert.GetProperty(propertyName);
+				this.readPropertyValue(document, prop, ref reader, options);
+			}
+			else if (reader.TokenType == JsonTokenType.EndObject)
+			{
+				return document;
+			}
+		}
+
+		throw new JsonException("Expected EndObject token.");
+	}
+
+	protected void readPropertyValue(CadDocument doc, PropertyInfo prop, ref Utf8JsonReader reader, JsonSerializerOptions options)
+	{
+		switch (prop.Name)
+		{
+			case nameof(CadDocument.Header):
+				doc.Header = this.readHeader(ref reader, options);
+				break;
+			default:
+				throw new InvalidOperationException();
+		}
+	}
+
+	private CadHeader readHeader(ref Utf8JsonReader reader, JsonSerializerOptions options)
+	{
+		CadHeader header = new CadHeader();
+
+		while (reader.Read())
+		{
+			if (reader.TokenType == JsonTokenType.PropertyName)
+			{
+				string variableName = reader.GetString();
+				header.SetValue(variableName, JsonSerializer.Deserialize(ref reader, header.GetValue(variableName).GetType(), options));
+			}
+			else if (reader.TokenType == JsonTokenType.EndObject)
+			{
+				return header;
+			}
+		}
+
+		throw new JsonException("Expected EndObject token.");
 	}
 
 #else

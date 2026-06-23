@@ -20,17 +20,25 @@ namespace ACadSharp.IO.Json;
 /// methods are static and can be used without creating an instance of JsonConverter.</remarks>
 public class CadJsonConverter
 {
-	public static CadDocument DeserializeDocument(string json)
-	{
-		throw new NotImplementedException();
-	}
-
+	/// <summary>
+	/// Deserializes a JSON string into an instance of the specified <see cref="CadObject"/> type.
+	/// </summary>
+	/// <typeparam name="T">The type of the <see cref="CadObject"/> to deserialize.</typeparam>
+	/// <param name="json">The JSON string to deserialize.</param>
+	/// <returns>An instance of the specified <see cref="CadObject"/> type.</returns>
 	public static T Deserialize<T>(string json)
 			where T : CadObject
 	{
 		return (T)deserialize(json, typeof(T));
 	}
 
+	/// <summary>
+	/// Deserializes a JSON string into an instance of the specified <see cref="CadObject"/> type.
+	/// </summary>
+	/// <param name="json">The JSON string to deserialize.</param>
+	/// <param name="type">The type of the <see cref="CadObject"/> to deserialize.</param>
+	/// <returns>An instance of the specified <see cref="CadObject"/> type.</returns>
+	/// <exception cref="ArgumentException">Thrown when the provided type is not a subclass of <see cref="CadObject"/>.</exception>
 	public static CadObject Deserialize(string json, Type type)
 	{
 		if (!type.IsSubclassOf(typeof(CadObject)))
@@ -39,6 +47,16 @@ public class CadJsonConverter
 		}
 
 		return (CadObject)deserialize(json, type);
+	}
+
+	/// <summary>
+	/// Deserializes a JSON string into a <see cref="CadDocument"/> instance.
+	/// </summary>
+	/// <param name="json">The JSON string to deserialize.</param>
+	/// <returns>An instance of <see cref="CadDocument"/>.</returns>
+	public static CadDocument DeserializeDocument(string json)
+	{
+		return (CadDocument)deserialize(json, typeof(CadDocument));
 	}
 
 	/// <summary>
@@ -59,6 +77,12 @@ public class CadJsonConverter
 		return serialize(obj, options);
 	}
 
+	/// <summary>
+	/// Serializes a <see cref="CadDocument"/> to a JSON string.
+	/// </summary>
+	/// <param name="doc">The <see cref="CadDocument"/> instance to serialize.</param>
+	/// <param name="options">The JSON serialization options.</param>
+	/// <returns>A JSON string representation of the <see cref="CadDocument"/>.</returns>
 	public static string Serialize(CadDocument doc,
 #if NET
 		JsonSerializerOptions options = null
