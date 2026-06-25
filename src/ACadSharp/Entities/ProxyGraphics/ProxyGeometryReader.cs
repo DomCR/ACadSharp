@@ -29,7 +29,6 @@ public class ProxyGeometryReader
 			GraphicsType type = (GraphicsType)stream.ReadInt();
 
 			var pos = stream.Position;
-
 			switch (type)
 			{
 				case GraphicsType.Extents:
@@ -154,20 +153,28 @@ public class ProxyGeometryReader
 		return geometries;
 	}
 
+	[Obsolete]
 	private static bool adHasPrimTraits(int a) => (a & 0xFFFFL) != 0;
 
+	[Obsolete]
 	private static bool adPrimsHaveColors(int a) => (a & 0x0001L) != 0;
 
+	[Obsolete]
 	private static bool adPrimsHaveLayers(int a) => (a & 0x0002L) != 0;
 
+	[Obsolete]
 	private static bool adPrimsHaveLineTypes(int a) => (a & 0x0004L) != 0;
 
+	[Obsolete]
 	private static bool adPrimsHaveMarkers(int a) => (a & 0x0020L) != 0;
 
+	[Obsolete]
 	private static bool adPrimsHaveNormal(int a) => (a & 0x0080L) != 0;
 
+	[Obsolete]
 	private static bool adPrimsHaveOrientation(int a) => (a & 0x0400L) != 0;
 
+	[Obsolete]
 	private static bool adPrimsHaveVisibilities(int a) => (a & 0x0040L) != 0;
 
 	private static IProxyGeometry readCircle(StreamIO stream)
@@ -216,6 +223,15 @@ public class ProxyGeometryReader
 		arc.ArcType = stream.ReadInt();
 
 		return arc;
+	}
+
+	private static void readCommonPolyline(StreamIO stream, ProxyPolyline polyline)
+	{
+		int pointCount = stream.ReadInt();
+		for (int i = 0; i < pointCount; i++)
+		{
+			polyline.Points.Add(readPoint(stream));
+		}
 	}
 
 	private static IProxyGeometry readExtents(StreamIO stream)
@@ -371,104 +387,121 @@ public class ProxyGeometryReader
 		}
 
 		// Parse traits for all edges
-		int edgeFlags = stream.ReadInt();
-		if (adHasPrimTraits(edgeFlags))
+		PrimitiveFlags edgeFlags = (PrimitiveFlags)stream.ReadInt();
+		if (edgeFlags != PrimitiveFlags.None)
 		{
+			mesh.EdgeTraits = new EdgeTraits();
+
 			int meshEdgeCount = ((mesh.RowCount - 1) * mesh.ColumnCount + (mesh.ColumnCount - 1) * mesh.RowCount);
-			if (adPrimsHaveColors(edgeFlags))
+			if (edgeFlags.HasFlag(PrimitiveFlags.HasColors))
 			{
+				mesh.EdgeTraits.Colors = new List<int>();
 				for (int i = 0; i < meshEdgeCount; i++)
 				{
-					int edgeColor = stream.ReadInt();
+					mesh.EdgeTraits.Colors.Add(stream.ReadInt());
 				}
 			}
-			if (adPrimsHaveLayers(edgeFlags))
+			if (edgeFlags.HasFlag(PrimitiveFlags.HasLayers))
 			{
+				mesh.EdgeTraits.LayerHandles = new List<ulong>();
 				for (int i = 0; i < meshEdgeCount; i++)
 				{
-					int layerIds = stream.ReadInt();
+					mesh.EdgeTraits.LayerHandles.Add((ulong)stream.ReadInt());
 				}
 			}
-			if (adPrimsHaveLineTypes(edgeFlags))
+			if (edgeFlags.HasFlag(PrimitiveFlags.HasLineTypes))
 			{
+				mesh.EdgeTraits.LineTypeHandles = new List<ulong>();
 				for (int i = 0; i < meshEdgeCount; i++)
 				{
-					int lineTypeIds = stream.ReadInt();
+					mesh.EdgeTraits.LineTypeHandles.Add((ulong)stream.ReadInt());
 				}
 			}
-			if (adPrimsHaveMarkers(edgeFlags))
+			if (edgeFlags.HasFlag(PrimitiveFlags.HasMarkers))
 			{
+				mesh.EdgeTraits.MakerIds = new List<int>();
 				for (int i = 0; i < meshEdgeCount; i++)
 				{
-					int markerIndices = stream.ReadInt();
+					mesh.EdgeTraits.MakerIds.Add(stream.ReadInt());
 				}
 			}
-			if (adPrimsHaveVisibilities(edgeFlags))
+			if (edgeFlags.HasFlag(PrimitiveFlags.HasVisibilities))
 			{
+				mesh.EdgeTraits.VisibilityIndicators = new List<int>();
 				for (int i = 0; i < meshEdgeCount; i++)
 				{
-					int visibilityIndicator = stream.ReadInt();
+					mesh.EdgeTraits.VisibilityIndicators.Add(stream.ReadInt());
 				}
 			}
 		}
 
 		// Parse traits for all faces
-		int faceFlags = stream.ReadInt();
-		if (adHasPrimTraits(faceFlags))
+		PrimitiveFlags faceFlags = (PrimitiveFlags)stream.ReadInt();
+		if (faceFlags != PrimitiveFlags.None)
 		{
+			mesh.FaceTraits = new FaceTraits();
+
 			int meshFaceCount = (mesh.RowCount - 1) * (mesh.ColumnCount - 1);
-			if (adPrimsHaveColors(faceFlags))
+			if (faceFlags.HasFlag(PrimitiveFlags.HasColors))
 			{
+				mesh.FaceTraits.Colors = new List<int>();
 				for (int i = 0; i < meshFaceCount; i++)
 				{
-					int edgeColor = stream.ReadInt();
+					mesh.FaceTraits.Colors.Add(stream.ReadInt());
 				}
 			}
-			if (adPrimsHaveLayers(faceFlags))
+			if (faceFlags.HasFlag(PrimitiveFlags.HasLayers))
 			{
+				mesh.FaceTraits.LayerHandles = new List<ulong>();
 				for (int i = 0; i < meshFaceCount; i++)
 				{
-					int layerIds = stream.ReadInt();
+					mesh.FaceTraits.LayerHandles.Add((ulong)stream.ReadInt());
 				}
 			}
-			if (adPrimsHaveMarkers(faceFlags))
+			if (faceFlags.HasFlag(PrimitiveFlags.HasMarkers))
 			{
+				mesh.FaceTraits.MakerIds = new List<int>();
 				for (int i = 0; i < meshFaceCount; i++)
 				{
-					int markerIndices = stream.ReadInt();
+					mesh.FaceTraits.MakerIds.Add(stream.ReadInt());
 				}
 			}
-			if (adPrimsHaveNormal(faceFlags))
+			if (faceFlags.HasFlag(PrimitiveFlags.HasNormals))
 			{
+				mesh.FaceTraits.Normals = new List<XYZ>();
 				for (int i = 0; i < meshFaceCount; i++)
 				{
-					XYZ normal = readPoint(stream);
+					mesh.FaceTraits.Normals.Add(readPoint(stream));
 				}
 			}
-			if (adPrimsHaveVisibilities(faceFlags))
+			if (faceFlags.HasFlag(PrimitiveFlags.HasVisibilities))
 			{
+				mesh.FaceTraits.VisibilityIndicators = new List<int>();
 				for (int i = 0; i < meshFaceCount; i++)
 				{
-					int visibilityIndicator = stream.ReadInt();
+					mesh.FaceTraits.VisibilityIndicators.Add(stream.ReadInt());
 				}
 			}
 		}
 
 		// Parse traits for all vertices
-		int vertexFlags = stream.ReadInt();
-		if (adHasPrimTraits(vertexFlags))
+		PrimitiveFlags vertexFlags = (PrimitiveFlags)stream.ReadInt();
+		if (vertexFlags != PrimitiveFlags.None)
 		{
+			mesh.VertexTraits = new VertexTraits();
+
 			int meshVertexCount = mesh.RowCount * mesh.ColumnCount;
-			if (adPrimsHaveNormal(vertexFlags))
+			if (vertexFlags.HasFlag(PrimitiveFlags.HasNormals))
 			{
+				mesh.VertexTraits.Normals = new List<XYZ>();
 				for (int i = 0; i < meshVertexCount; i++)
 				{
-					XYZ normal = readPoint(stream);
+					mesh.VertexTraits.Normals.Add(readPoint(stream));
 				}
 			}
-			if (adPrimsHaveOrientation(vertexFlags))
+			if (vertexFlags.HasFlag(PrimitiveFlags.HasOrientation))
 			{
-				int orientation = stream.ReadInt();
+				mesh.VertexTraits.Orientation = stream.ReadInt();
 			}
 		}
 
@@ -524,15 +557,6 @@ public class ProxyGeometryReader
 		}
 
 		return polygon;
-	}
-
-	private static void readCommonPolyline(StreamIO stream, ProxyPolyline polyline)
-	{
-		int pointCount = stream.ReadInt();
-		for (int i = 0; i < pointCount; i++)
-		{
-			polyline.Points.Add(readPoint(stream));
-		}
 	}
 
 	private static IProxyGeometry readPolyline(StreamIO stream)
@@ -622,7 +646,6 @@ public class ProxyGeometryReader
 		ProxyShell shell = new ProxyShell();
 
 		var nvertices = stream.ReadInt();
-		shell.Vertices = new List<XYZ>();
 		for (int i = 0; i < nvertices; i++)
 		{
 			shell.Vertices.Add(readPoint(stream));
@@ -648,6 +671,7 @@ public class ProxyGeometryReader
 			{
 				face.Add(shell.Vertices[index]);
 			}
+
 			shell.Faces.Add(face);
 			faceCount++;
 			edgeCount += count;

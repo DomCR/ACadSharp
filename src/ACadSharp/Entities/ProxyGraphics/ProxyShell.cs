@@ -3,14 +3,12 @@ using System.Collections.Generic;
 
 namespace ACadSharp.Entities.ProxyGraphics;
 
-public class ProxyShell : IProxyGeometry
+public class ProxyShell : ProxyMeshBase
 {
 	public int FaceCount { get; set; }
 
-	public List<List<XYZ>> Faces { get; set; }
+	public List<List<XYZ>> Faces { get; set; } = new ();
 
 	/// <inheritdoc/>
-	public GraphicsType GraphicsType { get { return GraphicsType.Shell; } }
-
-	public List<XYZ> Vertices { get; set; }
+	public override GraphicsType GraphicsType { get { return GraphicsType.Shell; } }
 }
