@@ -21,5 +21,13 @@
 		/// default: true
 		/// </value>
 		public bool ReadSummaryInfo { get; set; } = true;
+
+		/// <summary>
+		/// If set to true the reader will skip the proxy graphics section.
+		/// </summary>
+		/// <value>
+		/// default: true
+		/// </value>
+		public bool IgnoreProxyGraphics { get; set; } = true;
 	}
 }

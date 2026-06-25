@@ -1,4 +1,5 @@
 ﻿using ACadSharp.Attributes;
+using ACadSharp.Entities.ProxyGraphics;
 using ACadSharp.Objects;
 using ACadSharp.Tables;
 using CSMath;
@@ -97,6 +98,11 @@ public abstract class Entity : CadObject, IEntity
 			this._material = updateCollection(value, this.Document?.Materials);
 		}
 	}
+
+	/// <summary>
+	/// Gets the list of proxy geometries for this entity.
+	/// </summary>
+	public List<IProxyGeometry> ProxyGeometries { get; } = new();
 
 	/// <inheritdoc/>
 	public override string SubclassMarker => DxfSubclassMarker.Entity;
