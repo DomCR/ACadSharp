@@ -9,9 +9,8 @@ public class ProxyShell : IProxyGeometry
 
 	public List<List<XYZ>> Faces { get; set; }
 
+	/// <inheritdoc/>
 	public GraphicsType GraphicsType { get { return GraphicsType.Shell; } }
-
-	public int PointCount { get; set; }
 
 	public List<XYZ> Vertices { get; set; }
 }

@@ -7,10 +7,7 @@ namespace ACadSharp.Entities.ProxyGraphics;
 /// </summary>
 public class ProxyCirclePt3 : IProxyGeometry
 {
-	/// <summary>
-	/// Gets the type of graphics this proxy represents.
-	/// </summary>
-	/// <value>Always returns <see cref="GraphicsType.CirclePt3"/>.</value>
+	/// <inheritdoc/>
 	public GraphicsType GraphicsType { get { return GraphicsType.CirclePt3; } }
 
 	/// <summary>

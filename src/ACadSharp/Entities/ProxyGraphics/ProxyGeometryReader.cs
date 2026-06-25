@@ -5,7 +5,6 @@ using CSUtilities.Converters;
 using CSUtilities.IO;
 using System;
 using System.Collections.Generic;
-using System.Diagnostics;
 using System.Linq;
 using System.Text;
 
@@ -19,6 +18,8 @@ public class ProxyGeometryReader
 
 		StreamIO stream = new StreamIO(arr);
 		stream.EndianConverter = new LittleEndianConverter();
+		stream.Encoding = CadUtils.GetListedEncoding(builder.DocumentToBuild.Header.CodePage);
+
 		var size = stream.ReadInt();
 		var count = stream.ReadInt();
 
@@ -358,14 +359,14 @@ public class ProxyGeometryReader
 	{
 		ProxyMesh mesh = new ProxyMesh();
 
-		int rows = stream.ReadInt();
-		int columns = stream.ReadInt();
+		mesh.RowCount = stream.ReadInt();
+		mesh.ColumnCount = stream.ReadInt();
 
-		for (int y = 0; y < rows; y++)
+		for (int y = 0; y < mesh.RowCount; y++)
 		{
-			for (int x = 0; x < columns; x++)
+			for (int x = 0; x < mesh.ColumnCount; x++)
 			{
-				XYZ vertex = readPoint(stream);
+				mesh.Vertices.Add(readPoint(stream));
 			}
 		}
 
@@ -373,7 +374,7 @@ public class ProxyGeometryReader
 		int edgeFlags = stream.ReadInt();
 		if (adHasPrimTraits(edgeFlags))
 		{
-			int meshEdgeCount = (rows - 1) * columns + (columns - 1) * rows;
+			int meshEdgeCount = ((mesh.RowCount - 1) * mesh.ColumnCount + (mesh.ColumnCount - 1) * mesh.RowCount);
 			if (adPrimsHaveColors(edgeFlags))
 			{
 				for (int i = 0; i < meshEdgeCount; i++)
@@ -415,7 +416,7 @@ public class ProxyGeometryReader
 		int faceFlags = stream.ReadInt();
 		if (adHasPrimTraits(faceFlags))
 		{
-			int meshFaceCount = (rows - 1) * (columns - 1);
+			int meshFaceCount = (mesh.RowCount - 1) * (mesh.ColumnCount - 1);
 			if (adPrimsHaveColors(faceFlags))
 			{
 				for (int i = 0; i < meshFaceCount; i++)
@@ -457,7 +458,7 @@ public class ProxyGeometryReader
 		int vertexFlags = stream.ReadInt();
 		if (adHasPrimTraits(vertexFlags))
 		{
-			int meshVertexCount = rows * columns;
+			int meshVertexCount = mesh.RowCount * mesh.ColumnCount;
 			if (adPrimsHaveNormal(vertexFlags))
 			{
 				for (int i = 0; i < meshVertexCount; i++)
@@ -474,14 +475,11 @@ public class ProxyGeometryReader
 		return mesh;
 	}
 
-	/// <summary>
-	/// PS : Padded string. This is a string, terminated with a zero byte.
-	/// The file’s text encoding (code page) is used to encode / decode
-	/// the bytes into a string
-	/// </summary>
-	/// <returns></returns>
 	private static string readPaddedString(StreamIO stream)
 	{
+		// PS : Padded string. This is a string, terminated with a zero byte.
+		// The file’s text encoding (code page) is used to encode / decode
+		// the bytes into a string
 		List<byte> stringBytes = new List<byte>();
 		byte character;
 		while ((character = stream.ReadByte()) != 0)
@@ -491,13 +489,10 @@ public class ProxyGeometryReader
 		return stream.Encoding.GetString(stringBytes.ToArray());
 	}
 
-	/// <summary>
-	/// PUS : Padded Unicode string, The bytes are encoded using Unicode encoding.
-	/// The bytes consist of byte pairs and the string is terminated by 2 zero bytes.
-	/// </summary>
-	/// <returns></returns>
 	private static string readPaddedUnicodeString(StreamIO stream)
 	{
+		// PUS : Padded Unicode string, The bytes are encoded using Unicode encoding.
+		// The bytes consist of byte pairs and the string is terminated by 2 zero bytes.
 		byte[] nullTerminator = new byte[] { 0, 0 };
 
 		List<byte> stringBytes = new List<byte>();
@@ -531,15 +526,20 @@ public class ProxyGeometryReader
 		return polygon;
 	}
 
-	private static IProxyGeometry readPolyline(StreamIO stream)
+	private static void readCommonPolyline(StreamIO stream, ProxyPolyline polyline)
 	{
-		ProxyPolyline polyline = new ProxyPolyline();
-
 		int pointCount = stream.ReadInt();
 		for (int i = 0; i < pointCount; i++)
 		{
 			polyline.Points.Add(readPoint(stream));
 		}
+	}
+
+	private static IProxyGeometry readPolyline(StreamIO stream)
+	{
+		ProxyPolyline polyline = new ProxyPolyline();
+
+		readCommonPolyline(stream, polyline);
 
 		return polyline;
 	}
@@ -548,11 +548,7 @@ public class ProxyGeometryReader
 	{
 		ProxyPolylineWithNormal polyline = new ProxyPolylineWithNormal();
 
-		int pointCount = stream.ReadInt();
-		for (int i = 0; i < pointCount; i++)
-		{
-			polyline.Points.Add(readPoint(stream));
-		}
+		readCommonPolyline(stream, polyline);
 		polyline.Normal = readPoint(stream);
 
 		return polyline;
@@ -625,12 +621,13 @@ public class ProxyGeometryReader
 	{
 		ProxyShell shell = new ProxyShell();
 
-		shell.PointCount = stream.ReadInt();
-		shell.Vertices = [];
-		for (int i = 0; i < shell.PointCount; i++)
+		var nvertices = stream.ReadInt();
+		shell.Vertices = new List<XYZ>();
+		for (int i = 0; i < nvertices; i++)
 		{
 			shell.Vertices.Add(readPoint(stream));
 		}
+
 		shell.FaceCount = stream.ReadInt();
 		shell.Faces = [];
 		int faceCount = 0;

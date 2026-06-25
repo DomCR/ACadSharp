@@ -1,13 +1,24 @@
 ﻿using CSMath;
-using System.Collections.Generic;
 
 namespace ACadSharp.Entities.ProxyGraphics;
 
-public class ProxyPolylineWithNormal : IProxyGeometry
+/// <summary>
+/// Represents a proxy graphics polyline entity with an associated normal vector.
+/// </summary>
+/// <remarks>
+/// This class extends <see cref="ProxyPolyline"/> to include normal vector information,
+/// which defines the plane in which the polyline lies in 3D space.
+/// </remarks>
+public class ProxyPolylineWithNormal : ProxyPolyline
 {
-	public GraphicsType GraphicsType { get { return GraphicsType.PolylineWithNormal; } }
+	/// <inheritdoc/>
+	public override GraphicsType GraphicsType { get { return GraphicsType.PolylineWithNormal; } }
 
+	/// <summary>
+	/// Gets or sets the normal vector of the polyline.
+	/// </summary>
+	/// <remarks>
+	/// The normal vector is perpendicular to the plane in which the polyline is positioned.
+	/// </remarks>
 	public XYZ Normal { get; set; }
-
-	public List<XYZ> Points { get; set; } = new();
 }

@@ -1,6 +1,7 @@
 ﻿using ACadSharp.Blocks;
 using ACadSharp.Entities;
 using ACadSharp.Entities.AecObjects;
+using ACadSharp.Entities.Mechanical;
 using ACadSharp.Objects;
 using ACadSharp.Tables;
 using ACadSharp.Tables.Collections;
@@ -105,6 +106,9 @@ internal partial class DwgObjectWriter : DwgSectionIO
 			case Shape:
 				return this.WriteShapes;
 			case Wall:
+			case AcmBalloon:
+			case AcmPartList:
+			case AcmPartRef:
 			case TableEntity when !this.R2010Plus:
 			case ProxyEntity:
 			case Solid3D:

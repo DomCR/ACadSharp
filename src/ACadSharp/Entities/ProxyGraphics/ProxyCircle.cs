@@ -18,10 +18,7 @@ public class ProxyCircle : IProxyGeometry
 	/// <value>An <see cref="XYZ"/> coordinate representing the center of the circle.</value>
 	public XYZ Center { get; set; }
 
-	/// <summary>
-	/// Gets the graphics type of this proxy geometry.
-	/// </summary>
-	/// <value>Always returns <see cref="GraphicsType.Circle"/>.</value>
+	/// <inheritdoc/>
 	public GraphicsType GraphicsType { get { return GraphicsType.Circle; } }
 
 	/// <summary>
