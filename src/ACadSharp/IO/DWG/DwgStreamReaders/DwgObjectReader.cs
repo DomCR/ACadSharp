@@ -6254,21 +6254,16 @@ namespace ACadSharp.IO.DWG
 
 		private CadTemplate readAcmPartRef()
 		{
-			AcmPartRef proxy = new AcmPartRef();
-			CadEntityTemplate<AcmPartRef> template = new CadEntityTemplate<AcmPartRef>(proxy);
+			AcmPartRef partref = new AcmPartRef();
+			CadAcmPartRefTemplate template = new CadAcmPartRefTemplate(partref);
 
 			this.readCommonEntityData(template);
 
-			var unknown1 = this._mergedReaders.ReadBitLong();	// 212
+			this.readMechanicalEntity(template);
 
-			proxy.Position = this._mergedReaders.Read3BitDouble();
-
-			proxy.StandardDINHandle = this.handleReference();
-			proxy.BOMStandardDINHandle = this.handleReference();
-
-			proxy.LineResHandle = this.handleReference();
-			var unknownHandle1 = this.handleReference();		// 0x0
-			proxy.DataEntryPartHandle = this.handleReference();
+			template.LineResHandle = this.handleReference();
+			template.UnknownHandle1 = this.handleReference();        // 0x0
+			template.DataEntryPartHandle = this.handleReference();
 
 			template.LayerHandle = this.handleReference();
 
@@ -6277,65 +6272,63 @@ namespace ACadSharp.IO.DWG
 
 		private CadTemplate readAcmPartList()
 		{
-			AcmPartList proxy = new AcmPartList();
-			CadEntityTemplate<AcmPartList> template = new CadEntityTemplate<AcmPartList>(proxy);
+			AcmPartList partList = new AcmPartList();
+			CadAcmPartListTemplate template = new(partList);
 
 			this.readCommonEntityData(template);
 
-			var unknown1 = this._mergedReaders.ReadBitLong();   // 212
+			this.readMechanicalEntity(template);
 
-			proxy.Position = this._mergedReaders.Read3BitDouble();
-
-			proxy.StandardDINHandle = this.handleReference();
-			proxy.BOMStandardDINHandle = this.handleReference();
-
-			proxy.BomHandle = this.handleReference();			// ACMBOM:*A1 (AcmBom)
-			proxy.ItemFilterCustomHandle = this.handleReference();
+			template.BomHandle = this.handleReference();           // ACMBOM:*A1 (AcmBom)
+			template.ItemFilterCustomHandle = this.handleReference();
 
 			// Handles to each data row (excluding the headers) of the BOM table follow.
 			// Then seemingly always 3 handles of value 0x0 follow 
 
-			List<ulong> rowHandles = new List<ulong>();
 			ulong handle;
-			while (true) 
+			while (true)
 			{
 				handle = this.handleReference();
 				if (handle == 0)
 				{
 					break;
 				}
-				rowHandles.Add(handle);
+				template.RowHandles.Add(handle);
 			}
-			proxy.BomRowHandles = rowHandles;
 
 			// ulong handle: 0x0
-			var unknownHandle1 = this.handleReference();        // 0x0
-			var unknownHandle2 = this.handleReference();        // 0x0
+			template.UnknownHandle1 = this.handleReference();        // 0x0
+			template.UnknownHandle2 = this.handleReference();        // 0x0
 
 			return template;
 		}
 
+		private void readMechanicalEntity<T>(CadMechanicalEntityTemplate<T> template)
+			where T : MechanicalEntity, new()
+		{
+			var unknown1 = this._mergedReaders.ReadBitLong();   // 212
+			template.CadObject.Position = this._mergedReaders.Read3BitDouble();
+
+			template.StandardDINHandle = this.handleReference();
+			template.BOMStandardDINHandle = this.handleReference();
+		}
+
 		private CadTemplate readAcmBalloon()
 		{
-			AcmBalloon proxy = new AcmBalloon();
-			CadAcmBalloonTemplate template = new CadAcmBalloonTemplate(proxy);
+			AcmBalloon balloon = new AcmBalloon();
+			CadAcmBalloonTemplate template = new CadAcmBalloonTemplate(balloon);
 
 			this.readCommonEntityData(template);
 
-			var unknown1 = this._mergedReaders.ReadBitLong();   // 212
-
-			proxy.Position = this._mergedReaders.Read3BitDouble();
+			this.readMechanicalEntity(template);
 
 			var unknown_position1 = this._mergedReaders.Read3BitDouble();
 			var unknown_position2 = this._mergedReaders.Read3BitDouble();
 
-			proxy.StandardDINHandle = this.handleReference();
-			proxy.BOMStandardDINHandle = this.handleReference();
-
-			proxy.BomRowHandle = this.handleReference();
+			template.BomRowHandle = this.handleReference();
 			template.BlockHandle = this.handleReference();
 
-			var unknownHandle1 = this.handleReference();		// 0x0
+			var unknownHandle1 = this.handleReference();        // 0x0
 
 			return template;
 		}

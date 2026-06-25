@@ -12,24 +12,18 @@ namespace ACadSharp.Entities.Mechanical;
 /// </remarks>
 [DxfName(DxfFileToken.AcmPartRef)]
 [DxfSubClass(DxfSubclassMarker.PartRef)]
-public class AcmPartRef : Entity
+public class AcmPartRef : MechanicalEntity
 {
-	public override ObjectType ObjectType => ObjectType.UNLISTED;
-
+	/// <inheritdoc/>
 	public override string ObjectName => DxfFileToken.AcmPartRef;
 
+	/// <inheritdoc/>
+	public override ObjectType ObjectType => ObjectType.UNLISTED;
+
+	/// <inheritdoc/>
 	public override string SubclassMarker => DxfSubclassMarker.PartRef;
 
-	public XYZ Position { get; set; }
-
-	public ulong StandardDINHandle { get; set; }
-
-	public ulong BOMStandardDINHandle { get; set; }
-
-	public ulong LineResHandle { get; set; }
-
-	public ulong DataEntryPartHandle { get; set; }
-
+	/// <inheritdoc/>
 	public override void ApplyTransform(Transform transform)
 	{
 		this.Position = transform.ApplyTransform(this.Position);
@@ -37,6 +31,7 @@ public class AcmPartRef : Entity
 		// TODO: Would probably also require to transform proxy entity data
 	}
 
+	/// <inheritdoc/>
 	public override BoundingBox GetBoundingBox()
 	{
 		// TODO: Would probably require to get proxy entity data

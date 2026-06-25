@@ -1,28 +1,25 @@
 ﻿using ACadSharp.Entities.Mechanical;
 using ACadSharp.Tables;
 
-namespace ACadSharp.IO.Templates
+namespace ACadSharp.IO.Templates;
+
+internal class CadAcmBalloonTemplate : CadMechanicalEntityTemplate<AcmBalloon>
 {
-	internal class CadAcmBalloonTemplate : CadEntityTemplate<AcmBalloon>
+	public ulong? BlockHandle { get; set; }
+
+	public ulong? BomRowHandle { get; set; }
+
+	public CadAcmBalloonTemplate(AcmBalloon balloon) : base(balloon)
 	{
-		public ulong? BlockHandle { get; set; }
+	}
 
-		public CadAcmBalloonTemplate() : base(new AcmBalloon())
+	protected override void build(CadDocumentBuilder builder)
+	{
+		base.build(builder);
+
+		if (this.getTableReference(builder, this.BlockHandle, null, out BlockRecord record))
 		{
-		}
-
-		public CadAcmBalloonTemplate(AcmBalloon representation) : base(representation)
-		{
-		}
-
-		protected override void build(CadDocumentBuilder builder)
-		{
-			base.build(builder);
-
-			if (this.getTableReference(builder, this.BlockHandle, null, out BlockRecord record))
-			{
-				this.CadObject.Block = record;
-			}
+			this.CadObject.Block = record;
 		}
 	}
 }

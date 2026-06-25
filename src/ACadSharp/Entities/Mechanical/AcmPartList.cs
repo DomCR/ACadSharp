@@ -13,25 +13,16 @@ namespace ACadSharp.Entities.Mechanical;
 /// </remarks>
 [DxfName(DxfFileToken.AcmPartList)]
 [DxfSubClass(DxfSubclassMarker.PartList)]
-public class AcmPartList : Entity
+public class AcmPartList : MechanicalEntity
 {
-	public override ObjectType ObjectType => ObjectType.UNLISTED;
-
+	/// <inheritdoc/>
 	public override string ObjectName => DxfFileToken.AcmPartList;
 
+	/// <inheritdoc/>
+	public override ObjectType ObjectType => ObjectType.UNLISTED;
+
+	/// <inheritdoc/>
 	public override string SubclassMarker => DxfSubclassMarker.PartList;
-
-	public XYZ Position { get; set; }
-
-	public ulong StandardDINHandle { get; set; }
-
-	public ulong BOMStandardDINHandle { get; set; }
-
-	public ulong BomHandle { get; set; }
-
-	public ulong ItemFilterCustomHandle { get; set; }
-
-	public List<ulong> BomRowHandles { get; set; }
 
 	/// <inheritdoc/>
 	public override void ApplyTransform(Transform transform)
