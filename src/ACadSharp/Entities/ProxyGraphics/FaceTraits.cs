@@ -5,5 +5,5 @@ namespace ACadSharp.Entities.ProxyGraphics;
 
 public class FaceTraits : PrimitiveTraits
 {
-	public List<XYZ> Normals { get; set; }
+	public List<XYZ> Normals { get; } = new();
 }

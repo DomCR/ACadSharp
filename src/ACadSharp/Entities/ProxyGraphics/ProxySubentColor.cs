@@ -12,5 +12,6 @@ public class ProxySubentColor : IProxyGeometry
 
 	public int ColorIndex { get; set; }
 
+	/// <inheritdoc/>
 	public GraphicsType GraphicsType { get { return GraphicsType.SubentColor; } }
 }

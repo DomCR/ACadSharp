@@ -395,7 +395,6 @@ public class ProxyGeometryReader
 			int meshEdgeCount = ((mesh.RowCount - 1) * mesh.ColumnCount + (mesh.ColumnCount - 1) * mesh.RowCount);
 			if (edgeFlags.HasFlag(PrimitiveFlags.HasColors))
 			{
-				mesh.EdgeTraits.Colors = new List<int>();
 				for (int i = 0; i < meshEdgeCount; i++)
 				{
 					mesh.EdgeTraits.Colors.Add(stream.ReadInt());
@@ -403,7 +402,6 @@ public class ProxyGeometryReader
 			}
 			if (edgeFlags.HasFlag(PrimitiveFlags.HasLayers))
 			{
-				mesh.EdgeTraits.LayerHandles = new List<ulong>();
 				for (int i = 0; i < meshEdgeCount; i++)
 				{
 					mesh.EdgeTraits.LayerHandles.Add((ulong)stream.ReadInt());
@@ -411,7 +409,6 @@ public class ProxyGeometryReader
 			}
 			if (edgeFlags.HasFlag(PrimitiveFlags.HasLineTypes))
 			{
-				mesh.EdgeTraits.LineTypeHandles = new List<ulong>();
 				for (int i = 0; i < meshEdgeCount; i++)
 				{
 					mesh.EdgeTraits.LineTypeHandles.Add((ulong)stream.ReadInt());
@@ -419,7 +416,6 @@ public class ProxyGeometryReader
 			}
 			if (edgeFlags.HasFlag(PrimitiveFlags.HasMarkers))
 			{
-				mesh.EdgeTraits.MakerIds = new List<int>();
 				for (int i = 0; i < meshEdgeCount; i++)
 				{
 					mesh.EdgeTraits.MakerIds.Add(stream.ReadInt());
@@ -427,7 +423,6 @@ public class ProxyGeometryReader
 			}
 			if (edgeFlags.HasFlag(PrimitiveFlags.HasVisibilities))
 			{
-				mesh.EdgeTraits.VisibilityIndicators = new List<int>();
 				for (int i = 0; i < meshEdgeCount; i++)
 				{
 					mesh.EdgeTraits.VisibilityIndicators.Add(stream.ReadInt());
@@ -444,7 +439,6 @@ public class ProxyGeometryReader
 			int meshFaceCount = (mesh.RowCount - 1) * (mesh.ColumnCount - 1);
 			if (faceFlags.HasFlag(PrimitiveFlags.HasColors))
 			{
-				mesh.FaceTraits.Colors = new List<int>();
 				for (int i = 0; i < meshFaceCount; i++)
 				{
 					mesh.FaceTraits.Colors.Add(stream.ReadInt());
@@ -452,7 +446,6 @@ public class ProxyGeometryReader
 			}
 			if (faceFlags.HasFlag(PrimitiveFlags.HasLayers))
 			{
-				mesh.FaceTraits.LayerHandles = new List<ulong>();
 				for (int i = 0; i < meshFaceCount; i++)
 				{
 					mesh.FaceTraits.LayerHandles.Add((ulong)stream.ReadInt());
@@ -460,7 +453,6 @@ public class ProxyGeometryReader
 			}
 			if (faceFlags.HasFlag(PrimitiveFlags.HasMarkers))
 			{
-				mesh.FaceTraits.MakerIds = new List<int>();
 				for (int i = 0; i < meshFaceCount; i++)
 				{
 					mesh.FaceTraits.MakerIds.Add(stream.ReadInt());
@@ -468,7 +460,6 @@ public class ProxyGeometryReader
 			}
 			if (faceFlags.HasFlag(PrimitiveFlags.HasNormals))
 			{
-				mesh.FaceTraits.Normals = new List<XYZ>();
 				for (int i = 0; i < meshFaceCount; i++)
 				{
 					mesh.FaceTraits.Normals.Add(readPoint(stream));
@@ -476,7 +467,6 @@ public class ProxyGeometryReader
 			}
 			if (faceFlags.HasFlag(PrimitiveFlags.HasVisibilities))
 			{
-				mesh.FaceTraits.VisibilityIndicators = new List<int>();
 				for (int i = 0; i < meshFaceCount; i++)
 				{
 					mesh.FaceTraits.VisibilityIndicators.Add(stream.ReadInt());
@@ -651,11 +641,10 @@ public class ProxyGeometryReader
 			shell.Vertices.Add(readPoint(stream));
 		}
 
-		shell.FaceCount = stream.ReadInt();
-		shell.Faces = [];
+		var nfaces = stream.ReadInt();
 		int faceCount = 0;
 		int edgeCount = 0;
-		for (int i = 0; i < shell.FaceCount; i++)
+		for (int i = 0; i < nfaces; i++)
 		{
 			int count = Math.Abs(stream.ReadInt());
 			i += count + 1;
@@ -666,113 +655,110 @@ public class ProxyGeometryReader
 				faceIndices.Add(stream.ReadInt());
 			}
 
-			List<XYZ> face = [];
-			foreach (int index in faceIndices)
-			{
-				face.Add(shell.Vertices[index]);
-			}
-
-			shell.Faces.Add(face);
+			shell.Faces.Add(faceIndices.ToArray());
 			faceCount++;
 			edgeCount += count;
 		}
 
 		// Parse traits for all edges
-		int edgeFlags = stream.ReadInt();
-		if (adHasPrimTraits(edgeFlags))
+		PrimitiveFlags edgeFlags = (PrimitiveFlags)stream.ReadInt();
+		if (edgeFlags != 0)
 		{
-			if (adPrimsHaveColors(edgeFlags))
+			shell.EdgeTraits = new EdgeTraits();
+			if (edgeFlags.HasFlag(PrimitiveFlags.HasColors))
 			{
 				for (int i = 0; i < edgeCount; i++)
 				{
-					int edgeColor = stream.ReadInt();
+					shell.EdgeTraits.Colors.Add(stream.ReadInt());
 				}
 			}
-			if (adPrimsHaveLayers(edgeFlags))
+			if (edgeFlags.HasFlag(PrimitiveFlags.HasLayers))
 			{
 				for (int i = 0; i < edgeCount; i++)
 				{
-					int layerIds = stream.ReadInt();
+					shell.EdgeTraits.LayerHandles.Add((ulong)stream.ReadInt());
 				}
 			}
-			if (adPrimsHaveLineTypes(edgeFlags))
+			if (edgeFlags.HasFlag(PrimitiveFlags.HasLineTypes))
 			{
 				for (int i = 0; i < edgeCount; i++)
 				{
-					int lineTypeIds = stream.ReadInt();
+					shell.EdgeTraits.LineTypeHandles.Add((ulong)stream.ReadInt());
 				}
 			}
-			if (adPrimsHaveMarkers(edgeFlags))
+			if (edgeFlags.HasFlag(PrimitiveFlags.HasMarkers))
 			{
 				for (int i = 0; i < edgeCount; i++)
 				{
-					int markerIndices = stream.ReadInt();
+					shell.EdgeTraits.MakerIds.Add(stream.ReadInt());
 				}
 			}
-			if (adPrimsHaveVisibilities(edgeFlags))
+			if (edgeFlags.HasFlag(PrimitiveFlags.HasVisibilities))
 			{
 				for (int i = 0; i < edgeCount; i++)
 				{
-					int visibilityIndicator = stream.ReadInt();
+					shell.EdgeTraits.VisibilityIndicators.Add(stream.ReadInt());
 				}
 			}
 		}
 
 		// Parse traits for all faces
-		int faceFlags = stream.ReadInt();
-		if (adHasPrimTraits(faceFlags))
+		PrimitiveFlags faceFlags = (PrimitiveFlags)stream.ReadInt();
+		if (faceFlags != 0)
 		{
-			if (adPrimsHaveColors(faceFlags))
+			shell.FaceTraits = new FaceTraits();
+			if (faceFlags.HasFlag(PrimitiveFlags.HasColors))
 			{
 				for (int i = 0; i < faceCount; i++)
 				{
-					int edgeColor = stream.ReadInt();
+					shell.FaceTraits.Colors.Add(stream.ReadInt());
 				}
 			}
-			if (adPrimsHaveLayers(faceFlags))
+			if (faceFlags.HasFlag(PrimitiveFlags.HasLayers))
 			{
 				for (int i = 0; i < faceCount; i++)
 				{
-					int layerIds = stream.ReadInt();
+					shell.FaceTraits.LayerHandles.Add((ulong)stream.ReadInt());
 				}
 			}
-			if (adPrimsHaveMarkers(faceFlags))
+			if (faceFlags.HasFlag(PrimitiveFlags.HasMarkers))
 			{
 				for (int i = 0; i < faceCount; i++)
 				{
-					int markerIndices = stream.ReadInt();
+					shell.FaceTraits.MakerIds.Add(stream.ReadInt());
 				}
 			}
-			if (adPrimsHaveNormal(faceFlags))
+			if (faceFlags.HasFlag(PrimitiveFlags.HasNormals))
 			{
 				for (int i = 0; i < faceCount; i++)
 				{
-					XYZ normal = readPoint(stream);
+					shell.FaceTraits.Normals.Add(readPoint(stream));
 				}
 			}
-			if (adPrimsHaveVisibilities(faceFlags))
+			if (faceFlags.HasFlag(PrimitiveFlags.HasVisibilities))
 			{
 				for (int i = 0; i < faceCount; i++)
 				{
-					int visibilityIndicator = stream.ReadInt();
+					shell.FaceTraits.VisibilityIndicators.Add(stream.ReadInt());
 				}
 			}
 		}
 
 		// Parse traits for all vertices
-		int vertexFlags = stream.ReadInt();
-		if (adHasPrimTraits(vertexFlags))
+		PrimitiveFlags vertexFlags = (PrimitiveFlags)stream.ReadInt();
+		if (vertexFlags != 0)
 		{
-			if (adPrimsHaveNormal(vertexFlags))
+			shell.VertexTraits = new VertexTraits();
+			if (vertexFlags.HasFlag(PrimitiveFlags.HasNormals))
 			{
 				for (int i = 0; i < shell.Vertices.Count; i++)
 				{
-					XYZ normal = readPoint(stream);
+					shell.VertexTraits.Normals.Add(readPoint(stream));
 				}
 			}
-			if (adPrimsHaveOrientation(vertexFlags))
+			if (vertexFlags.HasFlag(PrimitiveFlags.HasOrientation))
 			{
-				int orientation = stream.ReadInt();
+				shell.VertexTraits.Orientation = stream.ReadInt();
 			}
 		}
 
@@ -792,8 +778,7 @@ public class ProxyGeometryReader
 	{
 		ProxySubentFillon fillOn = new ProxySubentFillon();
 
-		int fillValue = stream.ReadInt();
-		fillOn.IsOn = fillValue == 1;   // Also seen value 2 as well
+		fillOn.IsOn = stream.ReadInt() == 1;   // Also seen value 2 as well
 
 		return fillOn;
 	}
