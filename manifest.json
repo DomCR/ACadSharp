@@ -1566,6 +1566,76 @@
     },
     {
       "type": "ManagedReference",
+      "source_relative_path": "api/ACadSharp.Entities.Mechanical.AcmBalloon.yml",
+      "output": {
+        ".html": {
+          "relative_path": "api/ACadSharp.Entities.Mechanical.AcmBalloon.html"
+        }
+      },
+      "version": "",
+      "Uid": null,
+      "IsMRef": true,
+      "Title": "ACadSharp.Entities.Mechanical.AcmBalloon",
+      "Summary": "<p sourcefile=\"api/ACadSharp.Entities.Mechanical.AcmBalloon.yml\" sourcestartlinenumber=\"1\">Represents a <xref href=\"ACadSharp.Entities.Mechanical.AcmBalloon\" data-throw-if-not-resolved=\"false\"></xref> entity.</p>\n"
+    },
+    {
+      "type": "ManagedReference",
+      "source_relative_path": "api/ACadSharp.Entities.Mechanical.AcmPartList.yml",
+      "output": {
+        ".html": {
+          "relative_path": "api/ACadSharp.Entities.Mechanical.AcmPartList.html"
+        }
+      },
+      "version": "",
+      "Uid": null,
+      "IsMRef": true,
+      "Title": "ACadSharp.Entities.Mechanical.AcmPartList",
+      "Summary": "<p sourcefile=\"api/ACadSharp.Entities.Mechanical.AcmPartList.yml\" sourcestartlinenumber=\"1\">Represents a <xref href=\"ACadSharp.Entities.Mechanical.AcmPartList\" data-throw-if-not-resolved=\"false\"></xref> entity.</p>\n"
+    },
+    {
+      "type": "ManagedReference",
+      "source_relative_path": "api/ACadSharp.Entities.Mechanical.AcmPartRef.yml",
+      "output": {
+        ".html": {
+          "relative_path": "api/ACadSharp.Entities.Mechanical.AcmPartRef.html"
+        }
+      },
+      "version": "",
+      "Uid": null,
+      "IsMRef": true,
+      "Title": "ACadSharp.Entities.Mechanical.AcmPartRef",
+      "Summary": "<p sourcefile=\"api/ACadSharp.Entities.Mechanical.AcmPartRef.yml\" sourcestartlinenumber=\"1\">Represents a <xref href=\"ACadSharp.Entities.Mechanical.AcmPartRef\" data-throw-if-not-resolved=\"false\"></xref> entity.</p>\n"
+    },
+    {
+      "type": "ManagedReference",
+      "source_relative_path": "api/ACadSharp.Entities.Mechanical.MechanicalEntity.yml",
+      "output": {
+        ".html": {
+          "relative_path": "api/ACadSharp.Entities.Mechanical.MechanicalEntity.html"
+        }
+      },
+      "version": "",
+      "Uid": null,
+      "IsMRef": true,
+      "Title": "ACadSharp.Entities.Mechanical.MechanicalEntity",
+      "Summary": "<p sourcefile=\"api/ACadSharp.Entities.Mechanical.MechanicalEntity.yml\" sourcestartlinenumber=\"1\">Represents a mechanical entity.</p>\n"
+    },
+    {
+      "type": "ManagedReference",
+      "source_relative_path": "api/ACadSharp.Entities.Mechanical.yml",
+      "output": {
+        ".html": {
+          "relative_path": "api/ACadSharp.Entities.Mechanical.html"
+        }
+      },
+      "version": "",
+      "Uid": null,
+      "IsMRef": true,
+      "Title": "ACadSharp.Entities.Mechanical",
+      "Summary": null
+    },
+    {
+      "type": "ManagedReference",
       "source_relative_path": "api/ACadSharp.Entities.Mesh.Edge.yml",
       "output": {
         ".html": {
@@ -1843,6 +1913,678 @@
       "IsMRef": true,
       "Title": "ACadSharp.Entities.ProxyEntity",
       "Summary": "<p sourcefile=\"api/ACadSharp.Entities.ProxyEntity.yml\" sourcestartlinenumber=\"1\">Represents a <xref href=\"ACadSharp.Entities.ProxyEntity\" data-throw-if-not-resolved=\"false\"></xref> entity.</p>\n"
+    },
+    {
+      "type": "ManagedReference",
+      "source_relative_path": "api/ACadSharp.Entities.ProxyGraphics.EdgeTraits.yml",
+      "output": {
+        ".html": {
+          "relative_path": "api/ACadSharp.Entities.ProxyGraphics.EdgeTraits.html"
+        }
+      },
+      "version": "",
+      "Uid": null,
+      "IsMRef": true,
+      "Title": "ACadSharp.Entities.ProxyGraphics.EdgeTraits",
+      "Summary": "<p sourcefile=\"api/ACadSharp.Entities.ProxyGraphics.EdgeTraits.yml\" sourcestartlinenumber=\"1\">Represents the traits and properties of edges in proxy graphics.</p>\n"
+    },
+    {
+      "type": "ManagedReference",
+      "source_relative_path": "api/ACadSharp.Entities.ProxyGraphics.FaceTraits.yml",
+      "output": {
+        ".html": {
+          "relative_path": "api/ACadSharp.Entities.ProxyGraphics.FaceTraits.html"
+        }
+      },
+      "version": "",
+      "Uid": null,
+      "IsMRef": true,
+      "Title": "ACadSharp.Entities.ProxyGraphics.FaceTraits",
+      "Summary": "<p sourcefile=\"api/ACadSharp.Entities.ProxyGraphics.FaceTraits.yml\" sourcestartlinenumber=\"1\">Represents the traits of a face in proxy graphics, including its normals.</p>\n"
+    },
+    {
+      "type": "ManagedReference",
+      "source_relative_path": "api/ACadSharp.Entities.ProxyGraphics.GraphicsType.yml",
+      "output": {
+        ".html": {
+          "relative_path": "api/ACadSharp.Entities.ProxyGraphics.GraphicsType.html"
+        }
+      },
+      "version": "",
+      "Uid": null,
+      "IsMRef": true,
+      "Title": "ACadSharp.Entities.ProxyGraphics.GraphicsType",
+      "Summary": null
+    },
+    {
+      "type": "ManagedReference",
+      "source_relative_path": "api/ACadSharp.Entities.ProxyGraphics.IProxyGeometry.yml",
+      "output": {
+        ".html": {
+          "relative_path": "api/ACadSharp.Entities.ProxyGraphics.IProxyGeometry.html"
+        }
+      },
+      "version": "",
+      "Uid": null,
+      "IsMRef": true,
+      "Title": "ACadSharp.Entities.ProxyGraphics.IProxyGeometry",
+      "Summary": "<p sourcefile=\"api/ACadSharp.Entities.ProxyGraphics.IProxyGeometry.yml\" sourcestartlinenumber=\"1\">Represents a proxy geometry object.</p>\n"
+    },
+    {
+      "type": "ManagedReference",
+      "source_relative_path": "api/ACadSharp.Entities.ProxyGraphics.PrimitiveFlags.yml",
+      "output": {
+        ".html": {
+          "relative_path": "api/ACadSharp.Entities.ProxyGraphics.PrimitiveFlags.html"
+        }
+      },
+      "version": "",
+      "Uid": null,
+      "IsMRef": true,
+      "Title": "ACadSharp.Entities.ProxyGraphics.PrimitiveFlags",
+      "Summary": null
+    },
+    {
+      "type": "ManagedReference",
+      "source_relative_path": "api/ACadSharp.Entities.ProxyGraphics.PrimitiveTraits.yml",
+      "output": {
+        ".html": {
+          "relative_path": "api/ACadSharp.Entities.ProxyGraphics.PrimitiveTraits.html"
+        }
+      },
+      "version": "",
+      "Uid": null,
+      "IsMRef": true,
+      "Title": "ACadSharp.Entities.ProxyGraphics.PrimitiveTraits",
+      "Summary": "<p sourcefile=\"api/ACadSharp.Entities.ProxyGraphics.PrimitiveTraits.yml\" sourcestartlinenumber=\"1\">Represents the base class for traits associated with graphics primitives in proxy graphics.\nContains collections for colors, layer handles, marker identifiers, and visibility indicators.</p>\n"
+    },
+    {
+      "type": "ManagedReference",
+      "source_relative_path": "api/ACadSharp.Entities.ProxyGraphics.ProxyCircle.yml",
+      "output": {
+        ".html": {
+          "relative_path": "api/ACadSharp.Entities.ProxyGraphics.ProxyCircle.html"
+        }
+      },
+      "version": "",
+      "Uid": null,
+      "IsMRef": true,
+      "Title": "ACadSharp.Entities.ProxyGraphics.ProxyCircle",
+      "Summary": "<p sourcefile=\"api/ACadSharp.Entities.ProxyGraphics.ProxyCircle.yml\" sourcestartlinenumber=\"1\">Represents a proxy circle geometry entity.</p>\n"
+    },
+    {
+      "type": "ManagedReference",
+      "source_relative_path": "api/ACadSharp.Entities.ProxyGraphics.ProxyCirclePt3.yml",
+      "output": {
+        ".html": {
+          "relative_path": "api/ACadSharp.Entities.ProxyGraphics.ProxyCirclePt3.html"
+        }
+      },
+      "version": "",
+      "Uid": null,
+      "IsMRef": true,
+      "Title": "ACadSharp.Entities.ProxyGraphics.ProxyCirclePt3",
+      "Summary": "<p sourcefile=\"api/ACadSharp.Entities.ProxyGraphics.ProxyCirclePt3.yml\" sourcestartlinenumber=\"1\">Represents a proxy graphics circle defined by three points.</p>\n"
+    },
+    {
+      "type": "ManagedReference",
+      "source_relative_path": "api/ACadSharp.Entities.ProxyGraphics.ProxyCircularArc.yml",
+      "output": {
+        ".html": {
+          "relative_path": "api/ACadSharp.Entities.ProxyGraphics.ProxyCircularArc.html"
+        }
+      },
+      "version": "",
+      "Uid": null,
+      "IsMRef": true,
+      "Title": "ACadSharp.Entities.ProxyGraphics.ProxyCircularArc",
+      "Summary": "<p sourcefile=\"api/ACadSharp.Entities.ProxyGraphics.ProxyCircularArc.yml\" sourcestartlinenumber=\"1\">Represents a proxy circular arc graphic element.</p>\n"
+    },
+    {
+      "type": "ManagedReference",
+      "source_relative_path": "api/ACadSharp.Entities.ProxyGraphics.ProxyCircularArc3Pt.yml",
+      "output": {
+        ".html": {
+          "relative_path": "api/ACadSharp.Entities.ProxyGraphics.ProxyCircularArc3Pt.html"
+        }
+      },
+      "version": "",
+      "Uid": null,
+      "IsMRef": true,
+      "Title": "ACadSharp.Entities.ProxyGraphics.ProxyCircularArc3Pt",
+      "Summary": "<p sourcefile=\"api/ACadSharp.Entities.ProxyGraphics.ProxyCircularArc3Pt.yml\" sourcestartlinenumber=\"1\">Represents a proxy circular arc defined by three points in 3D space.</p>\n"
+    },
+    {
+      "type": "ManagedReference",
+      "source_relative_path": "api/ACadSharp.Entities.ProxyGraphics.ProxyColorMethod.yml",
+      "output": {
+        ".html": {
+          "relative_path": "api/ACadSharp.Entities.ProxyGraphics.ProxyColorMethod.html"
+        }
+      },
+      "version": "",
+      "Uid": null,
+      "IsMRef": true,
+      "Title": "ACadSharp.Entities.ProxyGraphics.ProxyColorMethod",
+      "Summary": null
+    },
+    {
+      "type": "ManagedReference",
+      "source_relative_path": "api/ACadSharp.Entities.ProxyGraphics.ProxyExtents.yml",
+      "output": {
+        ".html": {
+          "relative_path": "api/ACadSharp.Entities.ProxyGraphics.ProxyExtents.html"
+        }
+      },
+      "version": "",
+      "Uid": null,
+      "IsMRef": true,
+      "Title": "ACadSharp.Entities.ProxyGraphics.ProxyExtents",
+      "Summary": "<p sourcefile=\"api/ACadSharp.Entities.ProxyGraphics.ProxyExtents.yml\" sourcestartlinenumber=\"1\">Represents the extents (bounding box) of proxy graphics.</p>\n"
+    },
+    {
+      "type": "ManagedReference",
+      "source_relative_path": "api/ACadSharp.Entities.ProxyGraphics.ProxyGeometryReader.yml",
+      "output": {
+        ".html": {
+          "relative_path": "api/ACadSharp.Entities.ProxyGraphics.ProxyGeometryReader.html"
+        }
+      },
+      "version": "",
+      "Uid": null,
+      "IsMRef": true,
+      "Title": "ACadSharp.Entities.ProxyGraphics.ProxyGeometryReader",
+      "Summary": null
+    },
+    {
+      "type": "ManagedReference",
+      "source_relative_path": "api/ACadSharp.Entities.ProxyGraphics.ProxyLwPolyine.yml",
+      "output": {
+        ".html": {
+          "relative_path": "api/ACadSharp.Entities.ProxyGraphics.ProxyLwPolyine.html"
+        }
+      },
+      "version": "",
+      "Uid": null,
+      "IsMRef": true,
+      "Title": "ACadSharp.Entities.ProxyGraphics.ProxyLwPolyine",
+      "Summary": "<p sourcefile=\"api/ACadSharp.Entities.ProxyGraphics.ProxyLwPolyine.yml\" sourcestartlinenumber=\"1\">Represents proxy graphics for a lightweight polyline entity.</p>\n"
+    },
+    {
+      "type": "ManagedReference",
+      "source_relative_path": "api/ACadSharp.Entities.ProxyGraphics.ProxyMesh.yml",
+      "output": {
+        ".html": {
+          "relative_path": "api/ACadSharp.Entities.ProxyGraphics.ProxyMesh.html"
+        }
+      },
+      "version": "",
+      "Uid": null,
+      "IsMRef": true,
+      "Title": "ACadSharp.Entities.ProxyGraphics.ProxyMesh",
+      "Summary": "<p sourcefile=\"api/ACadSharp.Entities.ProxyGraphics.ProxyMesh.yml\" sourcestartlinenumber=\"1\">Represents a proxy mesh graphics entity in AutoCAD.</p>\n"
+    },
+    {
+      "type": "ManagedReference",
+      "source_relative_path": "api/ACadSharp.Entities.ProxyGraphics.ProxyMeshBase.yml",
+      "output": {
+        ".html": {
+          "relative_path": "api/ACadSharp.Entities.ProxyGraphics.ProxyMeshBase.html"
+        }
+      },
+      "version": "",
+      "Uid": null,
+      "IsMRef": true,
+      "Title": "ACadSharp.Entities.ProxyGraphics.ProxyMeshBase",
+      "Summary": "<p sourcefile=\"api/ACadSharp.Entities.ProxyGraphics.ProxyMeshBase.yml\" sourcestartlinenumber=\"1\">Represents a proxy mesh geometry in AutoCAD.</p>\n"
+    },
+    {
+      "type": "ManagedReference",
+      "source_relative_path": "api/ACadSharp.Entities.ProxyGraphics.ProxyPlotStyleType.yml",
+      "output": {
+        ".html": {
+          "relative_path": "api/ACadSharp.Entities.ProxyGraphics.ProxyPlotStyleType.html"
+        }
+      },
+      "version": "",
+      "Uid": null,
+      "IsMRef": true,
+      "Title": "ACadSharp.Entities.ProxyGraphics.ProxyPlotStyleType",
+      "Summary": null
+    },
+    {
+      "type": "ManagedReference",
+      "source_relative_path": "api/ACadSharp.Entities.ProxyGraphics.ProxyPolygon.yml",
+      "output": {
+        ".html": {
+          "relative_path": "api/ACadSharp.Entities.ProxyGraphics.ProxyPolygon.html"
+        }
+      },
+      "version": "",
+      "Uid": null,
+      "IsMRef": true,
+      "Title": "ACadSharp.Entities.ProxyGraphics.ProxyPolygon",
+      "Summary": "<p sourcefile=\"api/ACadSharp.Entities.ProxyGraphics.ProxyPolygon.yml\" sourcestartlinenumber=\"1\">Represents proxy graphics for a polygon entity.</p>\n"
+    },
+    {
+      "type": "ManagedReference",
+      "source_relative_path": "api/ACadSharp.Entities.ProxyGraphics.ProxyPolyline.yml",
+      "output": {
+        ".html": {
+          "relative_path": "api/ACadSharp.Entities.ProxyGraphics.ProxyPolyline.html"
+        }
+      },
+      "version": "",
+      "Uid": null,
+      "IsMRef": true,
+      "Title": "ACadSharp.Entities.ProxyGraphics.ProxyPolyline",
+      "Summary": "<p sourcefile=\"api/ACadSharp.Entities.ProxyGraphics.ProxyPolyline.yml\" sourcestartlinenumber=\"1\">Represents proxy graphics for a polyline entity.</p>\n"
+    },
+    {
+      "type": "ManagedReference",
+      "source_relative_path": "api/ACadSharp.Entities.ProxyGraphics.ProxyPolylineWithNormal.yml",
+      "output": {
+        ".html": {
+          "relative_path": "api/ACadSharp.Entities.ProxyGraphics.ProxyPolylineWithNormal.html"
+        }
+      },
+      "version": "",
+      "Uid": null,
+      "IsMRef": true,
+      "Title": "ACadSharp.Entities.ProxyGraphics.ProxyPolylineWithNormal",
+      "Summary": "<p sourcefile=\"api/ACadSharp.Entities.ProxyGraphics.ProxyPolylineWithNormal.yml\" sourcestartlinenumber=\"1\">Represents a proxy graphics polyline entity with an associated normal vector.</p>\n"
+    },
+    {
+      "type": "ManagedReference",
+      "source_relative_path": "api/ACadSharp.Entities.ProxyGraphics.ProxyPopClip.yml",
+      "output": {
+        ".html": {
+          "relative_path": "api/ACadSharp.Entities.ProxyGraphics.ProxyPopClip.html"
+        }
+      },
+      "version": "",
+      "Uid": null,
+      "IsMRef": true,
+      "Title": "ACadSharp.Entities.ProxyGraphics.ProxyPopClip",
+      "Summary": "<p sourcefile=\"api/ACadSharp.Entities.ProxyGraphics.ProxyPopClip.yml\" sourcestartlinenumber=\"1\">Represents a proxy graphics pop clip entity.</p>\n"
+    },
+    {
+      "type": "ManagedReference",
+      "source_relative_path": "api/ACadSharp.Entities.ProxyGraphics.ProxyPopModelTransform.yml",
+      "output": {
+        ".html": {
+          "relative_path": "api/ACadSharp.Entities.ProxyGraphics.ProxyPopModelTransform.html"
+        }
+      },
+      "version": "",
+      "Uid": null,
+      "IsMRef": true,
+      "Title": "ACadSharp.Entities.ProxyGraphics.ProxyPopModelTransform",
+      "Summary": "<p sourcefile=\"api/ACadSharp.Entities.ProxyGraphics.ProxyPopModelTransform.yml\" sourcestartlinenumber=\"1\">Represents a proxy graphics entity for a pop model transform in AutoCAD.</p>\n"
+    },
+    {
+      "type": "ManagedReference",
+      "source_relative_path": "api/ACadSharp.Entities.ProxyGraphics.ProxyPushClip.yml",
+      "output": {
+        ".html": {
+          "relative_path": "api/ACadSharp.Entities.ProxyGraphics.ProxyPushClip.html"
+        }
+      },
+      "version": "",
+      "Uid": null,
+      "IsMRef": true,
+      "Title": "ACadSharp.Entities.ProxyGraphics.ProxyPushClip",
+      "Summary": "<p sourcefile=\"api/ACadSharp.Entities.ProxyGraphics.ProxyPushClip.yml\" sourcestartlinenumber=\"1\">Represents a proxy push clip graphics object for CAD proxy graphics operations.</p>\n"
+    },
+    {
+      "type": "ManagedReference",
+      "source_relative_path": "api/ACadSharp.Entities.ProxyGraphics.ProxyPushModelTransform.yml",
+      "output": {
+        ".html": {
+          "relative_path": "api/ACadSharp.Entities.ProxyGraphics.ProxyPushModelTransform.html"
+        }
+      },
+      "version": "",
+      "Uid": null,
+      "IsMRef": true,
+      "Title": "ACadSharp.Entities.ProxyGraphics.ProxyPushModelTransform",
+      "Summary": "<p sourcefile=\"api/ACadSharp.Entities.ProxyGraphics.ProxyPushModelTransform.yml\" sourcestartlinenumber=\"1\">Represents a proxy graphics push model transform.</p>\n"
+    },
+    {
+      "type": "ManagedReference",
+      "source_relative_path": "api/ACadSharp.Entities.ProxyGraphics.ProxyPushModelTransform2.yml",
+      "output": {
+        ".html": {
+          "relative_path": "api/ACadSharp.Entities.ProxyGraphics.ProxyPushModelTransform2.html"
+        }
+      },
+      "version": "",
+      "Uid": null,
+      "IsMRef": true,
+      "Title": "ACadSharp.Entities.ProxyGraphics.ProxyPushModelTransform2",
+      "Summary": "<p sourcefile=\"api/ACadSharp.Entities.ProxyGraphics.ProxyPushModelTransform2.yml\" sourcestartlinenumber=\"1\">Represents a proxy graphics entity that pushes a model transformation matrix onto the stack.</p>\n"
+    },
+    {
+      "type": "ManagedReference",
+      "source_relative_path": "api/ACadSharp.Entities.ProxyGraphics.ProxyRay.yml",
+      "output": {
+        ".html": {
+          "relative_path": "api/ACadSharp.Entities.ProxyGraphics.ProxyRay.html"
+        }
+      },
+      "version": "",
+      "Uid": null,
+      "IsMRef": true,
+      "Title": "ACadSharp.Entities.ProxyGraphics.ProxyRay",
+      "Summary": "<p sourcefile=\"api/ACadSharp.Entities.ProxyGraphics.ProxyRay.yml\" sourcestartlinenumber=\"1\">Represents a proxy graphics ray entity.</p>\n"
+    },
+    {
+      "type": "ManagedReference",
+      "source_relative_path": "api/ACadSharp.Entities.ProxyGraphics.ProxyShell.yml",
+      "output": {
+        ".html": {
+          "relative_path": "api/ACadSharp.Entities.ProxyGraphics.ProxyShell.html"
+        }
+      },
+      "version": "",
+      "Uid": null,
+      "IsMRef": true,
+      "Title": "ACadSharp.Entities.ProxyGraphics.ProxyShell",
+      "Summary": "<p sourcefile=\"api/ACadSharp.Entities.ProxyGraphics.ProxyShell.yml\" sourcestartlinenumber=\"1\">Represents a proxy shell entity in a CAD drawing. A proxy shell is a 3D representation of a solid or surface that is not natively supported by the CAD software, allowing for visualization and interaction with the geometry.</p>\n"
+    },
+    {
+      "type": "ManagedReference",
+      "source_relative_path": "api/ACadSharp.Entities.ProxyGraphics.ProxySubEntityMapper.yml",
+      "output": {
+        ".html": {
+          "relative_path": "api/ACadSharp.Entities.ProxyGraphics.ProxySubEntityMapper.html"
+        }
+      },
+      "version": "",
+      "Uid": null,
+      "IsMRef": true,
+      "Title": "ACadSharp.Entities.ProxyGraphics.ProxySubEntityMapper",
+      "Summary": "<p sourcefile=\"api/ACadSharp.Entities.ProxyGraphics.ProxySubEntityMapper.yml\" sourcestartlinenumber=\"1\">Represents a proxy sub-entity mapper for handling proxy graphics geometry mapping.</p>\n"
+    },
+    {
+      "type": "ManagedReference",
+      "source_relative_path": "api/ACadSharp.Entities.ProxyGraphics.ProxySubEntityMaterial.yml",
+      "output": {
+        ".html": {
+          "relative_path": "api/ACadSharp.Entities.ProxyGraphics.ProxySubEntityMaterial.html"
+        }
+      },
+      "version": "",
+      "Uid": null,
+      "IsMRef": true,
+      "Title": "ACadSharp.Entities.ProxyGraphics.ProxySubEntityMaterial",
+      "Summary": "<p sourcefile=\"api/ACadSharp.Entities.ProxyGraphics.ProxySubEntityMaterial.yml\" sourcestartlinenumber=\"1\">Represents a proxy sub-entity material in a CAD drawing.</p>\n"
+    },
+    {
+      "type": "ManagedReference",
+      "source_relative_path": "api/ACadSharp.Entities.ProxyGraphics.ProxySubentColor.yml",
+      "output": {
+        ".html": {
+          "relative_path": "api/ACadSharp.Entities.ProxyGraphics.ProxySubentColor.html"
+        }
+      },
+      "version": "",
+      "Uid": null,
+      "IsMRef": true,
+      "Title": "ACadSharp.Entities.ProxyGraphics.ProxySubentColor",
+      "Summary": "<p sourcefile=\"api/ACadSharp.Entities.ProxyGraphics.ProxySubentColor.yml\" sourcestartlinenumber=\"1\">Represents a proxy subentity color in a CAD drawing.</p>\n"
+    },
+    {
+      "type": "ManagedReference",
+      "source_relative_path": "api/ACadSharp.Entities.ProxyGraphics.ProxySubentFillon.yml",
+      "output": {
+        ".html": {
+          "relative_path": "api/ACadSharp.Entities.ProxyGraphics.ProxySubentFillon.html"
+        }
+      },
+      "version": "",
+      "Uid": null,
+      "IsMRef": true,
+      "Title": "ACadSharp.Entities.ProxyGraphics.ProxySubentFillon",
+      "Summary": "<p sourcefile=\"api/ACadSharp.Entities.ProxyGraphics.ProxySubentFillon.yml\" sourcestartlinenumber=\"1\">Represents a proxy graphics subentity fillon.</p>\n"
+    },
+    {
+      "type": "ManagedReference",
+      "source_relative_path": "api/ACadSharp.Entities.ProxyGraphics.ProxySubentLayer.yml",
+      "output": {
+        ".html": {
+          "relative_path": "api/ACadSharp.Entities.ProxyGraphics.ProxySubentLayer.html"
+        }
+      },
+      "version": "",
+      "Uid": null,
+      "IsMRef": true,
+      "Title": "ACadSharp.Entities.ProxyGraphics.ProxySubentLayer",
+      "Summary": "<p sourcefile=\"api/ACadSharp.Entities.ProxyGraphics.ProxySubentLayer.yml\" sourcestartlinenumber=\"1\">Represents a proxy subentity layer in a CAD drawing.</p>\n"
+    },
+    {
+      "type": "ManagedReference",
+      "source_relative_path": "api/ACadSharp.Entities.ProxyGraphics.ProxySubentLineType.yml",
+      "output": {
+        ".html": {
+          "relative_path": "api/ACadSharp.Entities.ProxyGraphics.ProxySubentLineType.html"
+        }
+      },
+      "version": "",
+      "Uid": null,
+      "IsMRef": true,
+      "Title": "ACadSharp.Entities.ProxyGraphics.ProxySubentLineType",
+      "Summary": "<p sourcefile=\"api/ACadSharp.Entities.ProxyGraphics.ProxySubentLineType.yml\" sourcestartlinenumber=\"1\">Represents a proxy subentity line type.</p>\n"
+    },
+    {
+      "type": "ManagedReference",
+      "source_relative_path": "api/ACadSharp.Entities.ProxyGraphics.ProxySubentLineTypeScale.yml",
+      "output": {
+        ".html": {
+          "relative_path": "api/ACadSharp.Entities.ProxyGraphics.ProxySubentLineTypeScale.html"
+        }
+      },
+      "version": "",
+      "Uid": null,
+      "IsMRef": true,
+      "Title": "ACadSharp.Entities.ProxyGraphics.ProxySubentLineTypeScale",
+      "Summary": "<p sourcefile=\"api/ACadSharp.Entities.ProxyGraphics.ProxySubentLineTypeScale.yml\" sourcestartlinenumber=\"1\">Represents a proxy graphics entity that defines the line type scale for a subentity.</p>\n"
+    },
+    {
+      "type": "ManagedReference",
+      "source_relative_path": "api/ACadSharp.Entities.ProxyGraphics.ProxySubentLineWeight.yml",
+      "output": {
+        ".html": {
+          "relative_path": "api/ACadSharp.Entities.ProxyGraphics.ProxySubentLineWeight.html"
+        }
+      },
+      "version": "",
+      "Uid": null,
+      "IsMRef": true,
+      "Title": "ACadSharp.Entities.ProxyGraphics.ProxySubentLineWeight",
+      "Summary": "<p sourcefile=\"api/ACadSharp.Entities.ProxyGraphics.ProxySubentLineWeight.yml\" sourcestartlinenumber=\"1\">Represents a proxy subentity line weight.</p>\n"
+    },
+    {
+      "type": "ManagedReference",
+      "source_relative_path": "api/ACadSharp.Entities.ProxyGraphics.ProxySubentMarker.yml",
+      "output": {
+        ".html": {
+          "relative_path": "api/ACadSharp.Entities.ProxyGraphics.ProxySubentMarker.html"
+        }
+      },
+      "version": "",
+      "Uid": null,
+      "IsMRef": true,
+      "Title": "ACadSharp.Entities.ProxyGraphics.ProxySubentMarker",
+      "Summary": "<p sourcefile=\"api/ACadSharp.Entities.ProxyGraphics.ProxySubentMarker.yml\" sourcestartlinenumber=\"1\">Represents a proxy subentity marker in a CAD drawing.</p>\n"
+    },
+    {
+      "type": "ManagedReference",
+      "source_relative_path": "api/ACadSharp.Entities.ProxyGraphics.ProxySubentPlotStyleName.yml",
+      "output": {
+        ".html": {
+          "relative_path": "api/ACadSharp.Entities.ProxyGraphics.ProxySubentPlotStyleName.html"
+        }
+      },
+      "version": "",
+      "Uid": null,
+      "IsMRef": true,
+      "Title": "ACadSharp.Entities.ProxyGraphics.ProxySubentPlotStyleName",
+      "Summary": "<p sourcefile=\"api/ACadSharp.Entities.ProxyGraphics.ProxySubentPlotStyleName.yml\" sourcestartlinenumber=\"1\">Represents a proxy subentity plot style name.</p>\n"
+    },
+    {
+      "type": "ManagedReference",
+      "source_relative_path": "api/ACadSharp.Entities.ProxyGraphics.ProxySubentThickness.yml",
+      "output": {
+        ".html": {
+          "relative_path": "api/ACadSharp.Entities.ProxyGraphics.ProxySubentThickness.html"
+        }
+      },
+      "version": "",
+      "Uid": null,
+      "IsMRef": true,
+      "Title": "ACadSharp.Entities.ProxyGraphics.ProxySubentThickness",
+      "Summary": "<p sourcefile=\"api/ACadSharp.Entities.ProxyGraphics.ProxySubentThickness.yml\" sourcestartlinenumber=\"1\">Represents a proxy graphics subentity thickness.</p>\n"
+    },
+    {
+      "type": "ManagedReference",
+      "source_relative_path": "api/ACadSharp.Entities.ProxyGraphics.ProxySubentTrueColor.yml",
+      "output": {
+        ".html": {
+          "relative_path": "api/ACadSharp.Entities.ProxyGraphics.ProxySubentTrueColor.html"
+        }
+      },
+      "version": "",
+      "Uid": null,
+      "IsMRef": true,
+      "Title": "ACadSharp.Entities.ProxyGraphics.ProxySubentTrueColor",
+      "Summary": "<p sourcefile=\"api/ACadSharp.Entities.ProxyGraphics.ProxySubentTrueColor.yml\" sourcestartlinenumber=\"1\">Represents proxy graphics data for a subentity with true color information.</p>\n"
+    },
+    {
+      "type": "ManagedReference",
+      "source_relative_path": "api/ACadSharp.Entities.ProxyGraphics.ProxyText.yml",
+      "output": {
+        ".html": {
+          "relative_path": "api/ACadSharp.Entities.ProxyGraphics.ProxyText.html"
+        }
+      },
+      "version": "",
+      "Uid": null,
+      "IsMRef": true,
+      "Title": "ACadSharp.Entities.ProxyGraphics.ProxyText",
+      "Summary": "<p sourcefile=\"api/ACadSharp.Entities.ProxyGraphics.ProxyText.yml\" sourcestartlinenumber=\"1\">Represents proxy graphics for a text entity.</p>\n"
+    },
+    {
+      "type": "ManagedReference",
+      "source_relative_path": "api/ACadSharp.Entities.ProxyGraphics.ProxyText2.yml",
+      "output": {
+        ".html": {
+          "relative_path": "api/ACadSharp.Entities.ProxyGraphics.ProxyText2.html"
+        }
+      },
+      "version": "",
+      "Uid": null,
+      "IsMRef": true,
+      "Title": "ACadSharp.Entities.ProxyGraphics.ProxyText2",
+      "Summary": "<p sourcefile=\"api/ACadSharp.Entities.ProxyGraphics.ProxyText2.yml\" sourcestartlinenumber=\"1\">Represents text geometry information for proxy objects in AutoCAD drawings.</p>\n"
+    },
+    {
+      "type": "ManagedReference",
+      "source_relative_path": "api/ACadSharp.Entities.ProxyGraphics.ProxyUnicodeText.yml",
+      "output": {
+        ".html": {
+          "relative_path": "api/ACadSharp.Entities.ProxyGraphics.ProxyUnicodeText.html"
+        }
+      },
+      "version": "",
+      "Uid": null,
+      "IsMRef": true,
+      "Title": "ACadSharp.Entities.ProxyGraphics.ProxyUnicodeText",
+      "Summary": "<p sourcefile=\"api/ACadSharp.Entities.ProxyGraphics.ProxyUnicodeText.yml\" sourcestartlinenumber=\"1\">Represents Unicode text as a proxy graphics entity.</p>\n"
+    },
+    {
+      "type": "ManagedReference",
+      "source_relative_path": "api/ACadSharp.Entities.ProxyGraphics.ProxyUnicodeText2.yml",
+      "output": {
+        ".html": {
+          "relative_path": "api/ACadSharp.Entities.ProxyGraphics.ProxyUnicodeText2.html"
+        }
+      },
+      "version": "",
+      "Uid": null,
+      "IsMRef": true,
+      "Title": "ACadSharp.Entities.ProxyGraphics.ProxyUnicodeText2",
+      "Summary": "<p sourcefile=\"api/ACadSharp.Entities.ProxyGraphics.ProxyUnicodeText2.yml\" sourcestartlinenumber=\"1\">Represents proxy graphics for Unicode text rendering in AutoCAD graphics.\nThis class encapsulates all properties necessary to render and transform Unicode text geometry,\nincluding font information, styling attributes, positioning, and text-specific transformations.</p>\n"
+    },
+    {
+      "type": "ManagedReference",
+      "source_relative_path": "api/ACadSharp.Entities.ProxyGraphics.ProxyUnknown37.yml",
+      "output": {
+        ".html": {
+          "relative_path": "api/ACadSharp.Entities.ProxyGraphics.ProxyUnknown37.html"
+        }
+      },
+      "version": "",
+      "Uid": null,
+      "IsMRef": true,
+      "Title": "ACadSharp.Entities.ProxyGraphics.ProxyUnknown37",
+      "Summary": "<p sourcefile=\"api/ACadSharp.Entities.ProxyGraphics.ProxyUnknown37.yml\" sourcestartlinenumber=\"1\">Represents a proxy graphics entity of type 37.</p>\n"
+    },
+    {
+      "type": "ManagedReference",
+      "source_relative_path": "api/ACadSharp.Entities.ProxyGraphics.ProxyXLine.yml",
+      "output": {
+        ".html": {
+          "relative_path": "api/ACadSharp.Entities.ProxyGraphics.ProxyXLine.html"
+        }
+      },
+      "version": "",
+      "Uid": null,
+      "IsMRef": true,
+      "Title": "ACadSharp.Entities.ProxyGraphics.ProxyXLine",
+      "Summary": "<p sourcefile=\"api/ACadSharp.Entities.ProxyGraphics.ProxyXLine.yml\" sourcestartlinenumber=\"1\">Represents a proxy geometry element for an infinite line (X-line) in CAD graphics.</p>\n"
+    },
+    {
+      "type": "ManagedReference",
+      "source_relative_path": "api/ACadSharp.Entities.ProxyGraphics.TrueTypeFontDescriptor.yml",
+      "output": {
+        ".html": {
+          "relative_path": "api/ACadSharp.Entities.ProxyGraphics.TrueTypeFontDescriptor.html"
+        }
+      },
+      "version": "",
+      "Uid": null,
+      "IsMRef": true,
+      "Title": "ACadSharp.Entities.ProxyGraphics.TrueTypeFontDescriptor",
+      "Summary": "<p sourcefile=\"api/ACadSharp.Entities.ProxyGraphics.TrueTypeFontDescriptor.yml\" sourcestartlinenumber=\"1\">Represents a descriptor for TrueType font properties used in proxy graphics.</p>\n"
+    },
+    {
+      "type": "ManagedReference",
+      "source_relative_path": "api/ACadSharp.Entities.ProxyGraphics.VertexTraits.yml",
+      "output": {
+        ".html": {
+          "relative_path": "api/ACadSharp.Entities.ProxyGraphics.VertexTraits.html"
+        }
+      },
+      "version": "",
+      "Uid": null,
+      "IsMRef": true,
+      "Title": "ACadSharp.Entities.ProxyGraphics.VertexTraits",
+      "Summary": "<p sourcefile=\"api/ACadSharp.Entities.ProxyGraphics.VertexTraits.yml\" sourcestartlinenumber=\"1\">Represents the traits of a vertex in proxy graphics.</p>\n"
+    },
+    {
+      "type": "ManagedReference",
+      "source_relative_path": "api/ACadSharp.Entities.ProxyGraphics.yml",
+      "output": {
+        ".html": {
+          "relative_path": "api/ACadSharp.Entities.ProxyGraphics.html"
+        }
+      },
+      "version": "",
+      "Uid": null,
+      "IsMRef": true,
+      "Title": "ACadSharp.Entities.ProxyGraphics",
+      "Summary": null
     },
     {
       "type": "ManagedReference",
