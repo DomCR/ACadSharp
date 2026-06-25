@@ -1,5 +1,6 @@
 ﻿using ACadSharp.Entities;
 using ACadSharp.Entities.AecObjects;
+using ACadSharp.Entities.Mechanical;
 using ACadSharp.Objects;
 using CSMath;
 using System;
@@ -141,6 +142,8 @@ internal abstract partial class DxfSectionWriterBase
 		{
 			case Seqend://Manually assign at the end of the collections
 			case UnknownEntity:
+			case MechanicalEntity:
+			case Wall:
 				return false;
 			case Shape:
 				return this.Configuration.WriteShapes;
@@ -149,7 +152,6 @@ internal abstract partial class DxfSectionWriterBase
 			case Solid3D:
 			case CadBody:
 			case Region:
-			case Wall:
 				this.notify($"Entity type not implemented {entity.GetType().FullName}", NotificationType.NotImplemented);
 				return false;
 			default:
