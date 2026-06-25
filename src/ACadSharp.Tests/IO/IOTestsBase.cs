@@ -21,7 +21,8 @@ namespace ACadSharp.Tests.IO
 
 		protected readonly DwgReaderConfiguration _dwgConfiguration = new DwgReaderConfiguration
 		{
-			Failsafe = false
+			Failsafe = false,
+			IgnoreProxyGraphics = false,
 		};
 
 		protected readonly DxfReaderConfiguration _dxfConfiguration = new DxfReaderConfiguration

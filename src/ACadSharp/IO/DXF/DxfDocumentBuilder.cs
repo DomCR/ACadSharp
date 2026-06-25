@@ -11,6 +11,8 @@ internal class DxfDocumentBuilder : CadDocumentBuilder
 {
 	public DxfReaderConfiguration Configuration { get; }
 
+	public override bool IgnoreProxyGraphics => true;
+
 	public override bool KeepUnknownEntities => this.Configuration.KeepUnknownEntities;
 
 	public override bool KeepUnknownNonGraphicalObjects => this.Configuration.KeepUnknownNonGraphicalObjects;
