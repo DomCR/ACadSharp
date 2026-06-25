@@ -58,7 +58,7 @@ public enum GraphicsType
 
 	PushModelTransform2 = 30,
 
-	PophModelTransform = 31,
+	PopModelTransform = 31,
 
 	PolylineWithNormal = 32,
 

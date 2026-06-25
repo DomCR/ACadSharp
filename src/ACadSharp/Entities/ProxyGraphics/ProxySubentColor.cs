@@ -1,15 +1,13 @@
 ﻿namespace ACadSharp.Entities.ProxyGraphics;
 
+/// <summary>
+/// Represents a proxy subentity color in a CAD drawing.
+/// </summary>
 public class ProxySubentColor : IProxyGeometry
 {
-	public Color Color
-	{
-		get
-		{
-			return new Color((short)this.ColorIndex);
-		}
-	}
-
+	/// <summary>
+	/// Gets or sets the color index of the subentity.
+	/// </summary>
 	public int ColorIndex { get; set; }
 
 	/// <inheritdoc/>

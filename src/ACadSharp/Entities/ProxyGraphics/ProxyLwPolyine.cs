@@ -10,10 +10,7 @@ public class ProxyLwPolyine : IProxyGeometry
 	/// </summary>
 	public LwPolyline Entity { get; set; }
 
-	/// <summary>
-	/// Gets the type of graphics represented by this proxy object.
-	/// </summary>
-	/// <value>Always returns <see cref="GraphicsType.LwPolyine"/>.</value>
+	/// <inheritdoc/>
 	public GraphicsType GraphicsType { get { return GraphicsType.LwPolyine; } }
 
 	/// <summary>

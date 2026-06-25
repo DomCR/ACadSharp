@@ -12,10 +12,7 @@ namespace ACadSharp.Entities.ProxyGraphics;
 /// </remarks>
 public class ProxyXLine : IProxyGeometry
 {
-	/// <summary>
-	/// Gets the graphics type of this proxy geometry.
-	/// </summary>
-	/// <value>Always returns <see cref="GraphicsType.XLine"/>.</value>
+	/// <inheritdoc/>
 	public GraphicsType GraphicsType { get { return GraphicsType.XLine; } }
 
 	/// <summary>

@@ -60,10 +60,7 @@ public class ProxyPushClip : IProxyGeometry
 	/// <value><c>true</c> if front clipping is active; otherwise, <c>false</c>.</value>
 	public bool FrontClipOn { get; set; }
 
-	/// <summary>
-	/// Gets the graphics type of this proxy geometry.
-	/// </summary>
-	/// <value>Always returns <see cref="GraphicsType.PushClip"/>.</value>
+	/// <inheritdoc/>
 	public GraphicsType GraphicsType { get { return GraphicsType.PushClip; } }
 
 	/// <summary>

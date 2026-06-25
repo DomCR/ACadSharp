@@ -1,7 +1,11 @@
 ﻿namespace ACadSharp.Entities.ProxyGraphics;
 
+/// <summary>
+/// Represents a proxy subentity line type.
+/// </summary>
 public class ProxySubentLineType : IProxyGeometry
 {
+	/// <inheritdoc/>
 	public GraphicsType GraphicsType { get { return GraphicsType.SubentLineType; } }
 
 	/// <summary>

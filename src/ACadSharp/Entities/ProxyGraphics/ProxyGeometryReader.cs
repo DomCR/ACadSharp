@@ -112,7 +112,7 @@ public class ProxyGeometryReader
 				case GraphicsType.PushModelTransform2:
 					geometries.Add(readPushModelTransform2(stream));
 					break;
-				case GraphicsType.PophModelTransform:
+				case GraphicsType.PopModelTransform:
 					geometries.Add(readPopModelTransform(stream));
 					break;
 				case GraphicsType.PolylineWithNormal:
