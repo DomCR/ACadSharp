@@ -5622,6 +5622,9 @@ namespace ACadSharp.IO.DWG
 				case DxfFileToken.ObjectBlockVisibilityParameter:
 					template = this.readBlockVisibilityParameter();
 					break;
+				case DxfFileToken.ObjectBlockLookupParameter:
+					template = this.readBlockLookupParameter();
+					break;
 				case "BLOCKFLIPPARAMETER":
 					template = this.readBlockFlipParameter();
 					break;
