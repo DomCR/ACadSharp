@@ -43,7 +43,7 @@ internal class DxfObjectsSectionWriter : DxfSectionWriterBase
 			//Not compatible dictionaries
 			if (item.Name == CadDictionary.AcadMaterial)
 			{
-				return;
+				continue;
 			}
 
 			this._writer.Write(3, item.Name);
