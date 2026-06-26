@@ -2,6 +2,7 @@
 using ACadSharp.Objects;
 using ACadSharp.Objects.AEC;
 using ACadSharp.Objects.Evaluations;
+using ACadSharp.Tables;
 using CSMath;
 using System;
 using System.Linq;
@@ -609,7 +610,14 @@ internal class DxfObjectsSectionWriter : DxfSectionWriterBase
 
 	private void writeCellStyle(TableStyle.CellStyle cellStyle)
 	{
-		this._writer.WriteName(7, cellStyle.TextStyle);
+		if (cellStyle.TextStyle != null)
+		{
+			this._writer.WriteName(7, cellStyle.TextStyle);
+		}
+		else
+		{
+			this._writer.Write(7, TextStyle.DefaultName);
+		}
 
 		this._writer.Write(140, cellStyle.TextHeight);
 		this._writer.Write(170, cellStyle.CellAlignment);
