@@ -434,7 +434,7 @@ namespace ACadSharp.IO.DWG
 			{
 				//Common:
 				//Invisibility BS 60
-				entity.IsInvisible = (this._objectReader.ReadBitShort() & 1) == 0;
+				entity.IsInvisible = (this._objectReader.ReadBitShort() & 1) == 1;
 
 				return;
 			}
