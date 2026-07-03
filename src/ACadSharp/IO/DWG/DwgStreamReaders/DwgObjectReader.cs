@@ -2308,8 +2308,8 @@ namespace ACadSharp.IO.DWG
 				if (this._objectReader.ReadBit())
 					layer.Flags |= LayerFlags.Frozen;
 
-				//On B if on.
-				layer.IsOn = this._objectReader.ReadBit();
+				//On B 1 if off (bit set = off)
+				layer.IsOn = !this._objectReader.ReadBit();
 
 				//Frz in new B 70 if frozen by default in new viewports (2 bit)
 				if (this._objectReader.ReadBit())
