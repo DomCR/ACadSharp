@@ -728,6 +728,11 @@ internal abstract partial class DxfSectionWriterBase
 		this._writer.Write(90, polyline.Vertices.Count);
 		this._writer.Write(70, (short)polyline.Flags);
 
+		if (polyline.ConstantWidth != 0.0)
+		{
+			this._writer.Write(43, polyline.ConstantWidth);
+		}
+
 		this._writer.Write(38, polyline.Elevation);
 		this._writer.Write(39, polyline.Thickness);
 
