@@ -1,14 +1,7 @@
 ﻿using ACadSharp.IO.Json.Converters;
-using System.Linq;
 using System;
-
-#if NET
-
+using System.Linq;
 using System.Text.Json;
-
-#else
-using Newtonsoft.Json;
-#endif
 
 namespace ACadSharp.IO.Json;
 
@@ -66,13 +59,8 @@ public class CadJsonConverter
 	/// <param name="obj">The <see cref="CadObject"/> instance to serialize.</param>
 	/// <param name="options">The JSON serialization options.</param>
 	/// <returns>A JSON string representation of the <see cref="CadObject"/>.</returns>
-	public static string Serialize<T>(T obj,
-#if NET
-		JsonSerializerOptions options = null
-#else
-		JsonSerializerSettings options = null
-#endif
-		) where T : CadObject
+	public static string Serialize<T>(T obj, JsonSerializerOptions options = null)
+		where T : CadObject
 	{
 		return serialize(obj, options);
 	}
@@ -83,32 +71,16 @@ public class CadJsonConverter
 	/// <param name="doc">The <see cref="CadDocument"/> instance to serialize.</param>
 	/// <param name="options">The JSON serialization options.</param>
 	/// <returns>A JSON string representation of the <see cref="CadDocument"/>.</returns>
-	public static string Serialize(CadDocument doc,
-#if NET
-		JsonSerializerOptions options = null
-#else
-		JsonSerializerSettings options = null
-#endif
-		)
+	public static string Serialize(CadDocument doc, JsonSerializerOptions options = null)
 	{
 		return serialize(doc, options);
 	}
 
-	private static object deserialize(string json, Type type,
-#if NET
-		JsonSerializerOptions options = null
-#else
-		JsonSerializerSettings options = null
-#endif
-		)
+	private static object deserialize(string json, Type type, JsonSerializerOptions options = null)
 	{
 		if (options == null)
 		{
-#if NET
 			options = new JsonSerializerOptions();
-#else
-			options = new JsonSerializerSettings();
-#endif
 		}
 
 		if (!options.Converters.OfType<CadConverterFactory>().Any())
@@ -116,28 +88,14 @@ public class CadJsonConverter
 			options.Converters.Add(new CadConverterFactory());
 		}
 
-#if NET
 		return JsonSerializer.Deserialize(json, type, options);
-#else
-		return JsonConvert.DeserializeObject(json, type, options);
-#endif
 	}
 
-	private static string serialize(object doc,
-#if NET
-		JsonSerializerOptions options = null
-#else
-		JsonSerializerSettings options = null
-#endif
-		)
+	private static string serialize(object doc, JsonSerializerOptions options = null)
 	{
 		if (options == null)
 		{
-#if NET
 			options = new JsonSerializerOptions();
-#else
-			options = new JsonSerializerSettings();
-#endif
 		}
 
 		if (!options.Converters.OfType<CadConverterFactory>().Any())
@@ -145,10 +103,6 @@ public class CadJsonConverter
 			options.Converters.Add(new CadConverterFactory());
 		}
 
-#if NET
 		return JsonSerializer.Serialize(doc, doc.GetType(), options);
-#else
-		return JsonConvert.SerializeObject(doc, doc.GetType(), options);
-#endif
 	}
 }

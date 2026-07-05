@@ -4,16 +4,8 @@ using System;
 using System.Collections;
 using System.Linq;
 using System.Reflection;
-
-#if NET
-
 using System.Text.Json;
 using System.Text.Json.Serialization;
-
-#else
-using Newtonsoft.Json;
-using Newtonsoft.Json.Linq;
-#endif
 
 namespace ACadSharp.IO.Json.Converters;
 
@@ -26,8 +18,6 @@ public class CommonCadConverter<T> : JsonConverter<T>
 		nameof(CadObject.SubclassMarker),
 		nameof(CadObject.Document),
 	};
-
-#if NET
 
 	/// <inheritdoc/>
 	public override T Read(ref Utf8JsonReader reader, Type typeToConvert, JsonSerializerOptions options)
@@ -75,21 +65,8 @@ public class CommonCadConverter<T> : JsonConverter<T>
 		prop.SetValue(obj, value);
 	}
 
-#else
 	/// <inheritdoc/>
-	public override T ReadJson(JsonReader reader, Type objectType, T existingValue, bool hasExistingValue, JsonSerializer serializer)
-	{
-		throw new NotImplementedException();
-	}
-#endif
-
-	/// <inheritdoc/>
-#if NET
-
 	public override void Write(Utf8JsonWriter writer, T value, JsonSerializerOptions options)
-#else
-	public override void WriteJson(JsonWriter writer, T value, JsonSerializer serializer)
-#endif
 	{
 		writer.WriteStartObject();
 
@@ -98,32 +75,18 @@ public class CommonCadConverter<T> : JsonConverter<T>
 
 		foreach (var prop in value.GetType().GetProperties().DistinctBy(p => p.Name))
 		{
-#if NET
 			this.writeProperty(prop, writer, value, options);
-#else
-			this.writeProperty(prop, writer, value, serializer);
-#endif
 		}
 
 		if (value is IEnumerable arr)
 		{
-#if NET
 			this.writeEnumerable("Entries", arr, writer, value, options);
-#else
-			this.writeEnumerable("Entries", arr, writer, value, serializer);
-#endif
 		}
 
 		writer.WriteEndObject();
 	}
 
-	protected void writeEnumerable(string name, IEnumerable arr,
-#if NET
-	Utf8JsonWriter writer, T value, JsonSerializerOptions options
-#else
-		JsonWriter writer, T value, JsonSerializer serializer
-#endif
-	)
+	protected void writeEnumerable(string name, IEnumerable arr, Utf8JsonWriter writer, T value, JsonSerializerOptions options)
 	{
 		writer.WritePropertyName(name);
 
@@ -131,23 +94,13 @@ public class CommonCadConverter<T> : JsonConverter<T>
 
 		foreach (var item in arr)
 		{
-#if NET
 			JsonSerializer.Serialize(writer, item, item.GetType(), options);
-#else
-				serializer.Serialize(writer, item);
-#endif
 		}
 
 		writer.WriteEndArray();
 	}
 
-	protected virtual void writeProperty(PropertyInfo prop,
-#if NET
-		Utf8JsonWriter writer, T value, JsonSerializerOptions options
-#else
-		JsonWriter writer, T value, JsonSerializer serializer
-#endif
-		)
+	protected virtual void writeProperty(PropertyInfo prop, Utf8JsonWriter writer, T value, JsonSerializerOptions options)
 	{
 		if (!prop.CanRead || this._ignore.Contains(prop.Name))
 		{
@@ -162,18 +115,11 @@ public class CommonCadConverter<T> : JsonConverter<T>
 		var pValue = prop.GetValue(value);
 		if (pValue == null)
 		{
-#if NET
 			if (!options.DefaultIgnoreCondition.HasFlag(JsonIgnoreCondition.WhenWritingNull))
 			{
 				writer.WriteNull(prop.Name);
 			}
-#else
-				if (serializer.NullValueHandling == NullValueHandling.Include)
-				{
-					writer.WritePropertyName(prop.Name);
-					writer.WriteNull();
-				}
-#endif
+
 			return;
 		}
 
@@ -190,11 +136,8 @@ public class CommonCadConverter<T> : JsonConverter<T>
 		}
 
 		writer.WritePropertyName(prop.Name);
-#if NET
+
 		JsonSerializer.Serialize(writer, pValue, pValue.GetType(), options);
-#else
-		serializer.Serialize(writer, pValue);
-#endif
 	}
 }
 

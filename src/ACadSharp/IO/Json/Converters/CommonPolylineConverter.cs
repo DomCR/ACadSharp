@@ -2,16 +2,7 @@
 using System.Collections;
 using System.Collections.Generic;
 using System.Reflection;
-
-
-#if NET
-
 using System.Text.Json;
-
-#else
-using Newtonsoft.Json;
-using Newtonsoft.Json.Linq;
-#endif
 
 namespace ACadSharp.IO.Json.Converters;
 
@@ -29,44 +20,6 @@ public class CommonPolylineConverter<TPolyline, TVertex> : CommonCadConverter<TP
 	where TPolyline : Polyline<TVertex>
 	where TVertex : Entity, IVertex
 {
-	protected override void writeProperty(PropertyInfo prop,
-#if NET
-	Utf8JsonWriter writer, TPolyline value, JsonSerializerOptions options
-#else
-	JsonWriter writer, TPolyline value, JsonSerializer serializer
-#endif
-	)
-	{
-		if (prop.Name.Equals(nameof(Polyline<>.Vertices)))
-		{
-#if NET
-			this.writeEnumerable(nameof(Polyline<>.Vertices), value.Vertices, writer, value, options);
-#else
-			this.writeEnumerable(nameof(Polyline<>.Vertices), value.Vertices, writer, value, serializer);
-#endif
-		}
-
-#if NET
-		base.writeProperty(prop, writer, value, options);
-#else
-		base.writeProperty(prop, writer, value, serializer);
-#endif
-	}
-
-#if NET
-	protected override void readPropertyValue(TPolyline obj, PropertyInfo prop, ref Utf8JsonReader reader, JsonSerializerOptions options)
-	{
-		if (!prop.Name.Equals(nameof(Polyline<>.Vertices)))
-		{
-			base.readPropertyValue(obj, prop, ref reader, options);
-			return;
-		}
-
-		reader.Read();
-
-		obj.Vertices.AddRange(this.readArray<TVertex>(ref reader, options));
-	}
-
 	protected IEnumerable<T> readArray<T>(ref Utf8JsonReader reader, JsonSerializerOptions options)
 	{
 		List<T> lst = new List<T>();
@@ -88,5 +41,27 @@ public class CommonPolylineConverter<TPolyline, TVertex> : CommonCadConverter<TP
 
 		return lst;
 	}
-#endif
+
+	protected override void readPropertyValue(TPolyline obj, PropertyInfo prop, ref Utf8JsonReader reader, JsonSerializerOptions options)
+	{
+		if (!prop.Name.Equals(nameof(Polyline<>.Vertices)))
+		{
+			base.readPropertyValue(obj, prop, ref reader, options);
+			return;
+		}
+
+		reader.Read();
+
+		obj.Vertices.AddRange(this.readArray<TVertex>(ref reader, options));
+	}
+
+	protected override void writeProperty(PropertyInfo prop, Utf8JsonWriter writer, TPolyline value, JsonSerializerOptions options)
+	{
+		if (prop.Name.Equals(nameof(Polyline<>.Vertices)))
+		{
+			this.writeEnumerable(nameof(Polyline<>.Vertices), value.Vertices, writer, value, options);
+		}
+
+		base.writeProperty(prop, writer, value, options);
+	}
 }
