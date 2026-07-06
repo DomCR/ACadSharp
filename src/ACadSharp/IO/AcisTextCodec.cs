@@ -77,33 +77,9 @@ namespace ACadSharp.IO
 				return data;
 			}
 
-			//The marker spells "ACIS" or "ASM" depending on the kernel that wrote
-			//the payload, as plain ASCII (SAT text and single-tag SAB records) or
-			//as a compound SAB entity name split in tagged chunks:
-			//0x0E "End" 0x0E "of" 0x0E "ACIS" 0x0D "data"
-			byte[][] markers = new byte[][]
+			foreach (byte[] marker in _endMarkers)
 			{
-				Encoding.ASCII.GetBytes("End-of-ACIS-data"),
-				Encoding.ASCII.GetBytes("End-of-ASM-data"),
-				new byte[]
-				{
-					0x0E, 0x03, (byte)'E', (byte)'n', (byte)'d',
-					0x0E, 0x02, (byte)'o', (byte)'f',
-					0x0E, 0x04, (byte)'A', (byte)'C', (byte)'I', (byte)'S',
-					0x0D, 0x04, (byte)'d', (byte)'a', (byte)'t', (byte)'a'
-				},
-				new byte[]
-				{
-					0x0E, 0x03, (byte)'E', (byte)'n', (byte)'d',
-					0x0E, 0x02, (byte)'o', (byte)'f',
-					0x0E, 0x03, (byte)'A', (byte)'S', (byte)'M',
-					0x0D, 0x04, (byte)'d', (byte)'a', (byte)'t', (byte)'a'
-				}
-			};
-
-			foreach (byte[] marker in markers)
-			{
-				int index = indexOf(data, marker);
+				int index = indexOf(data, marker, 0);
 				if (index >= 0)
 				{
 					return cutAfter(data, index + marker.Length);
@@ -112,6 +88,29 @@ namespace ACadSharp.IO
 
 			return data;
 		}
+
+		//End-of-ACIS-data / End-of-ASM-data markers: the name depends on the kernel
+		//that wrote the payload, spelled as plain ASCII (SAT text and single-tag SAB
+		//records) or as a compound SAB entity name split in tagged chunks.
+		private static readonly byte[][] _endMarkers = new byte[][]
+		{
+			Encoding.ASCII.GetBytes("End-of-ACIS-data"),
+			Encoding.ASCII.GetBytes("End-of-ASM-data"),
+			new byte[]
+			{
+				0x0E, 0x03, (byte)'E', (byte)'n', (byte)'d',
+				0x0E, 0x02, (byte)'o', (byte)'f',
+				0x0E, 0x04, (byte)'A', (byte)'C', (byte)'I', (byte)'S',
+				0x0D, 0x04, (byte)'d', (byte)'a', (byte)'t', (byte)'a'
+			},
+			new byte[]
+			{
+				0x0E, 0x03, (byte)'E', (byte)'n', (byte)'d',
+				0x0E, 0x02, (byte)'o', (byte)'f',
+				0x0E, 0x03, (byte)'A', (byte)'S', (byte)'M',
+				0x0D, 0x04, (byte)'d', (byte)'a', (byte)'t', (byte)'a'
+			}
+		};
 
 		private static byte[] cutAfter(byte[] data, int end)
 		{
@@ -125,9 +124,9 @@ namespace ACadSharp.IO
 			return result;
 		}
 
-		private static int indexOf(byte[] haystack, byte[] needle)
+		private static int indexOf(byte[] haystack, byte[] needle, int start)
 		{
-			for (int i = 0; i <= haystack.Length - needle.Length; i++)
+			for (int i = start; i <= haystack.Length - needle.Length; i++)
 			{
 				bool match = true;
 				for (int j = 0; j < needle.Length; j++)
