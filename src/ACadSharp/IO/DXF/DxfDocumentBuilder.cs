@@ -9,6 +9,13 @@ namespace ACadSharp.IO.DXF;
 
 internal class DxfDocumentBuilder : CadDocumentBuilder
 {
+	/// <summary>
+	/// ACIS payloads read from the ACDSDATA section, keyed by the handle of the
+	/// owner entity. Applied to the matching <see cref="ModelerGeometry"/>
+	/// entities when the document is built.
+	/// </summary>
+	public Dictionary<ulong, byte[]> AcdsDataRecords { get; } = new();
+
 	public DxfReaderConfiguration Configuration { get; }
 
 	public override bool IgnoreProxyGraphics => true;
@@ -56,9 +63,26 @@ internal class DxfDocumentBuilder : CadDocumentBuilder
 
 		base.BuildDocument();
 
+		this.applyAcdsData();
+
 		if (this.Configuration.CreateDefaults)
 		{
 			this.DocumentToBuild.CreateDefaults();
+		}
+	}
+
+	private void applyAcdsData()
+	{
+		foreach (KeyValuePair<ulong, byte[]> record in this.AcdsDataRecords)
+		{
+			if (this.TryGetCadObject(record.Key, out ModelerGeometry geometry))
+			{
+				geometry.AcisData = record.Value;
+			}
+			else
+			{
+				this.Notify($"ACDSDATA record owner {record.Key} is not a ModelerGeometry entity in the document", NotificationType.Warning);
+			}
 		}
 	}
 
