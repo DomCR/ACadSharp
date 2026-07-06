@@ -48,4 +48,11 @@ public abstract class Block2PtParameter : BlockParameter
 
 	[DxfCodeValue(95)]
 	public int Value95 { get; set; }
+
+	/// <summary>
+	/// Custom property labels declared by this parameter (DWG codes 303/304).
+	/// Non-empty when the parameter publishes named properties to the Properties palette
+	/// (e.g. a linear "Displacement" parameter with a label).
+	/// </summary>
+	public System.Collections.Generic.List<string> PropertyLabels { get; } = new();
 }
