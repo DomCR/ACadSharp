@@ -3616,16 +3616,46 @@ namespace ACadSharp.IO.DWG
 				//to get the real character.If it's a tab, we
 				//convert to a space.
 				case 1:
+					using (MemoryStream stream = new MemoryStream())
+					{
+						int blockSize = this._mergedReaders.ReadBitLong();
+						while (blockSize > 0)
+						{
+							byte[] block = AcisTextCodec.Decode(this._mergedReaders.ReadBytes(blockSize));
+							stream.Write(block, 0, block.Length);
+
+							blockSize = this._mergedReaders.ReadBitLong();
+						}
+
+						if (stream.Length > 0)
+						{
+							template.CadObject.AcisData = stream.ToArray();
+						}
+					}
 					break;
 				//Version == 2:
 				//Immediately following will be an acis file.Header value of “ACIS BinaryFile” indicates
 				//SAB, otherwise it is a text SAT file. No length is given.SAB files will end with
 				//“End\x0E\x02of\x0E\x04ACIS\x0D\x04data”. SAT files must be parsed to find the end.
 				case 2:
+					//The stream gives no payload length: read up to the end of the
+					//object data and cut at the End-of-ACIS-data marker. Anything
+					//after the marker (wireframe data, handles) is discarded with
+					//the rest of the object, the caller returns right away.
+					long currentPos = this._mergedReaders.PositionInBits();
+					long endPos = this._objectInitialPos + (this._size * 8);
+					int remainingBytes = (int)((endPos - currentPos) / 8);
+
+					if (remainingBytes > 0)
+					{
+						byte[] data = this._mergedReaders.ReadBytes(remainingBytes);
+						template.CadObject.AcisData = AcisTextCodec.TrimAtAcisEnd(data);
+					}
+					break;
+				default:
+					this.notify($"Modeler geometry data version {version} not recognized for {template.CadObject.ObjectName}", NotificationType.Warning);
 					break;
 			}
-
-			this.notify($"Stream data reader hasn't been implemented for {template.CadObject.ObjectName}", NotificationType.NotImplemented);
 		}
 
 		private CadTemplate readMText()

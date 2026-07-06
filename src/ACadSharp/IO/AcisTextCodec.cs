@@ -40,6 +40,115 @@ namespace ACadSharp.IO
 		}
 
 		/// <summary>
+		/// Decodes (or encodes) a buffer of character-swapped SAT text.
+		/// </summary>
+		public static byte[] Decode(byte[] data)
+		{
+			if (data == null || data.Length == 0)
+			{
+				return data;
+			}
+
+			byte[] result = new byte[data.Length];
+			for (int i = 0; i < data.Length; i++)
+			{
+				byte b = data[i];
+				result[i] = b > 0x20 && b < 0x9F ? (byte)(0x9F - b) : b;
+			}
+
+			return result;
+		}
+
+		/// <summary>
+		/// Trims an ACIS payload at its end marker.
+		/// </summary>
+		/// <remarks>
+		/// The DWG entity stream gives no length for the payload, so the caller
+		/// reads up to the end of the object data and this method cuts the result
+		/// right after the End-of-ACIS-data marker. SAT text and single-tag SAB
+		/// records spell the marker as plain ASCII; older SAB writers emit it as a
+		/// compound entity name split in tagged chunks. The payload is returned
+		/// unchanged when no marker is found.
+		/// </remarks>
+		public static byte[] TrimAtAcisEnd(byte[] data)
+		{
+			if (data == null || data.Length == 0)
+			{
+				return data;
+			}
+
+			//The marker spells "ACIS" or "ASM" depending on the kernel that wrote
+			//the payload, as plain ASCII (SAT text and single-tag SAB records) or
+			//as a compound SAB entity name split in tagged chunks:
+			//0x0E "End" 0x0E "of" 0x0E "ACIS" 0x0D "data"
+			byte[][] markers = new byte[][]
+			{
+				Encoding.ASCII.GetBytes("End-of-ACIS-data"),
+				Encoding.ASCII.GetBytes("End-of-ASM-data"),
+				new byte[]
+				{
+					0x0E, 0x03, (byte)'E', (byte)'n', (byte)'d',
+					0x0E, 0x02, (byte)'o', (byte)'f',
+					0x0E, 0x04, (byte)'A', (byte)'C', (byte)'I', (byte)'S',
+					0x0D, 0x04, (byte)'d', (byte)'a', (byte)'t', (byte)'a'
+				},
+				new byte[]
+				{
+					0x0E, 0x03, (byte)'E', (byte)'n', (byte)'d',
+					0x0E, 0x02, (byte)'o', (byte)'f',
+					0x0E, 0x03, (byte)'A', (byte)'S', (byte)'M',
+					0x0D, 0x04, (byte)'d', (byte)'a', (byte)'t', (byte)'a'
+				}
+			};
+
+			foreach (byte[] marker in markers)
+			{
+				int index = indexOf(data, marker);
+				if (index >= 0)
+				{
+					return cutAfter(data, index + marker.Length);
+				}
+			}
+
+			return data;
+		}
+
+		private static byte[] cutAfter(byte[] data, int end)
+		{
+			if (end >= data.Length)
+			{
+				return data;
+			}
+
+			byte[] result = new byte[end];
+			System.Array.Copy(data, result, end);
+			return result;
+		}
+
+		private static int indexOf(byte[] haystack, byte[] needle)
+		{
+			for (int i = 0; i <= haystack.Length - needle.Length; i++)
+			{
+				bool match = true;
+				for (int j = 0; j < needle.Length; j++)
+				{
+					if (haystack[i + j] != needle[j])
+					{
+						match = false;
+						break;
+					}
+				}
+
+				if (match)
+				{
+					return i;
+				}
+			}
+
+			return -1;
+		}
+
+		/// <summary>
 		/// Detects if a SAT chunk is character-swapped.
 		/// </summary>
 		/// <remarks>
