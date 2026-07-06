@@ -763,8 +763,8 @@ internal partial class DwgObjectWriter : DwgSectionIO
 		{
 			//Frozen B 70 if frozen (1 bit)
 			this._writer.WriteBit(layer.Flags.HasFlag(LayerFlags.Frozen));
-			//On B if on.
-			this._writer.WriteBit(layer.IsOn);
+			//On B 1 if off (bit set = off)
+			this._writer.WriteBit(!layer.IsOn);
 			//Frz in new B 70 if frozen by default in new viewports (2 bit)
 			this._writer.WriteBit(layer.Flags.HasFlag(LayerFlags.FrozenNewViewports));
 			//Locked B 70 if locked (4 bit)
