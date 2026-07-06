@@ -5,6 +5,7 @@ using ACadSharp.Objects.Evaluations;
 using ACadSharp.Tables;
 using CSMath;
 using System;
+using System.Collections.Generic;
 using System.Linq;
 
 namespace ACadSharp.IO.DXF;
@@ -12,6 +13,8 @@ namespace ACadSharp.IO.DXF;
 internal class DxfObjectsSectionWriter : DxfSectionWriterBase
 {
 	public override string SectionName { get { return DxfFileToken.ObjectsSection; } }
+
+	private readonly HashSet<ulong> _writtenHandles = new();
 
 	public DxfObjectsSectionWriter(IDxfStreamWriter writer, CadDocument document, CadObjectHolder holder, DxfWriterConfiguration configuration)
 		: base(writer, document, holder, configuration)
@@ -545,6 +548,14 @@ internal class DxfObjectsSectionWriter : DxfSectionWriterBase
 		while (this.Holder.Objects.Any())
 		{
 			CadObject item = this.Holder.Objects.Dequeue();
+
+			//An object can be enqueued multiple times, by the dictionary
+			//that owns it and by the objects that reference it (e.g. fields
+			//in a field list), write it only once
+			if (!this._writtenHandles.Add(item.Handle))
+			{
+				continue;
+			}
 
 			this.writeObject(item);
 		}
