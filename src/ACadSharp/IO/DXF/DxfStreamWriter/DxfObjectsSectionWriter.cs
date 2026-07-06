@@ -47,6 +47,12 @@ internal class DxfObjectsSectionWriter : DxfSectionWriterBase
 				continue;
 			}
 
+			//Skip the entries that will not be written to avoid dangling references
+			if (!this.isObjectSupported(item))
+			{
+				continue;
+			}
+
 			this._writer.Write(3, item.Name);
 			this._writer.Write(350, item.Handle);
 
