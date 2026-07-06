@@ -88,23 +88,7 @@ namespace ACadSharp.Tests.IO
 			var config = getConfiguration(test);
 			var doc = this.readDocument(test, config);
 
-			switch (test.NoExtensionName)
-			{
-				case DxfFileToken.ObjectBlockVisibilityParameter:
-					this.assertVisibilityParameter(doc);
-					break;
-				case DxfFileToken.ObjectBlockRotationParameter:
-					this.assertRotationParameter(doc);
-					break;
-				case DxfFileToken.ObjectBlockPointParameter:
-					this.assertPointParameter(doc);
-					break;
-				case DxfFileToken.ObjectBlockLinearParameter:
-					this.assertLinearParameter(doc);
-					break;
-				default:
-					throw new System.NotImplementedException();
-			}
+			this.assertIsolatedDocument(test, doc, assertEvaluationGraph: true);
 		}
 
 		[Theory]
@@ -132,6 +116,48 @@ namespace ACadSharp.Tests.IO
 			this.rewriteDxfInMemory(doc, out List<NotificationEventArgs> notifications);
 
 			this.assertNoDanglingDictionaryEntries(notifications);
+		}
+
+		private void assertGraph<T>(CadDocument doc, string blockName)
+			where T : EvaluationExpression
+		{
+			BlockRecord original = doc.BlockRecords[blockName];
+
+			Assert.NotNull(original.EvaluationGraph);
+			Assert.NotEmpty(original.EvaluationGraph.Nodes.Select(n => n.Expression).OfType<T>());
+		}
+
+		private void assertIsolatedDocument(FileModel test, CadDocument doc, bool assertEvaluationGraph)
+		{
+			switch (test.NoExtensionName)
+			{
+				case DxfFileToken.ObjectBlockVisibilityParameter:
+					this.assertRepresentationChain(doc, "block_visibility_parameter", assertXRecordName: true);
+					if (assertEvaluationGraph)
+					{
+						this.assertGraph<BlockVisibilityParameter>(doc, "block_visibility_parameter");
+					}
+					break;
+				case DxfFileToken.ObjectBlockRotationParameter:
+					this.assertRepresentationChain(doc, "dynamic_block");
+					if (assertEvaluationGraph)
+					{
+						this.assertGraph<BlockRotationParameter>(doc, "dynamic_block");
+					}
+					break;
+				case DxfFileToken.ObjectBlockPointParameter:
+					//Point parameter not implemented
+					break;
+				case DxfFileToken.ObjectBlockLinearParameter:
+					this.assertRepresentationChain(doc, "LINEAR_PARAM");
+					if (assertEvaluationGraph)
+					{
+						this.assertGraph<BlockLinearParameter>(doc, "LINEAR_PARAM");
+					}
+					break;
+				default:
+					throw new System.NotImplementedException();
+			}
 		}
 
 		private void assertNoDanglingDictionaryEntries(List<NotificationEventArgs> notifications)
@@ -171,9 +197,9 @@ namespace ACadSharp.Tests.IO
 			});
 		}
 
-		private void assertLinearParameter(CadDocument doc)
+		private void assertRepresentationChain(CadDocument doc, string blockName, bool assertXRecordName = false)
 		{
-			var original = doc.BlockRecords["LINEAR_PARAM"];
+			var original = doc.BlockRecords[blockName];
 			foreach (BlockRecord record in doc.BlockRecords.Where(b => b.IsAnonymous))
 			{
 				Assert.Equal(original, record.Source);
@@ -189,81 +215,19 @@ namespace ACadSharp.Tests.IO
 				var dict = insert.XDictionary.GetEntry<CadDictionary>("AcDbBlockRepresentation");
 				var representation = dict.GetEntry<BlockRepresentationData>("AcDbRepData");
 
-				Assert.NotEmpty(insert.Block.Source.EvaluationGraph.Nodes.Select(n => n.Expression).OfType<BlockLinearParameter>());
-
 				Assert.NotNull(representation);
 				Assert.Equal(original, representation.Block);
 
-				XRecord record = insert.XDictionary
-					.GetEntry<CadDictionary>("AcDbBlockRepresentation")
+				XRecord record = dict
 					.GetEntry<CadDictionary>("AppDataCache")
 					.GetEntry<CadDictionary>("ACAD_ENHANCEDBLOCKDATA")
 					.OfType<XRecord>().First();
-			}
-		}
 
-		private void assertPointParameter(CadDocument doc)
-		{
-			//Not implemented in this PR
-		}
-
-		private void assertRotationParameter(CadDocument doc)
-		{
-			var original = doc.BlockRecords["dynamic_block"];
-			foreach (BlockRecord record in doc.BlockRecords.Where(b => b.IsAnonymous))
-			{
-				Assert.Equal(original, record.Source);
-			}
-
-			foreach (Insert insert in doc.Entities.OfType<Insert>())
-			{
-				if (insert.XDictionary == null)
+				if (assertXRecordName)
 				{
-					continue;
+					var name = record.Entries.FirstOrDefault(e => e.Code == 1).Value as string;
+					Assert.False(string.IsNullOrEmpty(name));
 				}
-
-				var dict = insert.XDictionary.GetEntry<CadDictionary>("AcDbBlockRepresentation");
-				var representation = dict.GetEntry<BlockRepresentationData>("AcDbRepData");
-
-				Assert.NotEmpty(insert.Block.Source.EvaluationGraph.Nodes.Select(n => n.Expression).OfType<BlockRotationParameter>());
-
-				Assert.NotNull(representation);
-				Assert.Equal(original, representation.Block);
-
-				XRecord record = insert.XDictionary
-					.GetEntry<CadDictionary>("AcDbBlockRepresentation")
-					.GetEntry<CadDictionary>("AppDataCache")
-					.GetEntry<CadDictionary>("ACAD_ENHANCEDBLOCKDATA")
-					.OfType<XRecord>().First();
-			}
-		}
-
-		private void assertVisibilityParameter(CadDocument doc)
-		{
-			var original = doc.BlockRecords["block_visibility_parameter"];
-			foreach (BlockRecord record in doc.BlockRecords.Where(b => b.IsAnonymous))
-			{
-				Assert.Equal(original, record.Source);
-			}
-
-			foreach (Insert insert in doc.Entities.OfType<Insert>())
-			{
-				var dict = insert.XDictionary.GetEntry<CadDictionary>("AcDbBlockRepresentation");
-				var representation = dict.GetEntry<BlockRepresentationData>("AcDbRepData");
-
-				Assert.NotEmpty(insert.Block.Source.EvaluationGraph.Nodes.Select(n => n.Expression).OfType<BlockVisibilityParameter>());
-
-				Assert.NotNull(representation);
-				Assert.Equal(original, representation.Block);
-
-				XRecord record = insert.XDictionary
-					.GetEntry<CadDictionary>("AcDbBlockRepresentation")
-					.GetEntry<CadDictionary>("AppDataCache")
-					.GetEntry<CadDictionary>("ACAD_ENHANCEDBLOCKDATA")
-					.OfType<XRecord>().First();
-
-				var name = record.Entries.FirstOrDefault(e => e.Code == 1).Value as string;
-				Assert.False(string.IsNullOrEmpty(name));
 			}
 		}
 	}
