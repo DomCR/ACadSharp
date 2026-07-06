@@ -21,6 +21,14 @@ internal class DxfObjectsSectionWriter : DxfSectionWriterBase
 	{
 	}
 
+	protected void writeBlockRepresentationData(BlockRepresentationData representation)
+	{
+		this._writer.Write(DxfCode.Subclass, DxfSubclassMarker.BlockRepresentationData);
+
+		this._writer.Write(70, representation.Value70);
+		this._writer.WriteHandle(340, representation.Block);
+	}
+
 	protected void writeBookColor(BookColor color)
 	{
 		this._writer.Write(DxfCode.Subclass, DxfSubclassMarker.DbColor);
@@ -395,6 +403,9 @@ internal class DxfObjectsSectionWriter : DxfSectionWriterBase
 			case AcdbPlaceHolder acdbPlaceHolder:
 				this.writeAcdbPlaceHolder(acdbPlaceHolder);
 				return;
+			case BlockRepresentationData blockRepresentationData:
+				this.writeBlockRepresentationData(blockRepresentationData);
+				break;
 			case BookColor bookColor:
 				this.writeBookColor(bookColor);
 				return;
@@ -611,7 +622,6 @@ internal class DxfObjectsSectionWriter : DxfSectionWriterBase
 			case MultiLeaderObjectContextData:
 			case VisualStyle:
 			case ProxyObject:
-			case BlockRepresentationData:
 			case MTextAttributeObjectContextData:
 			case BlockReferenceObjectContextData:
 				this.notify($"Object not implemented : {co.GetType().FullName}", NotificationType.NotImplemented);

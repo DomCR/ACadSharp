@@ -93,6 +93,37 @@ namespace ACadSharp.Tests.IO
 
 		[Theory]
 		[MemberData(nameof(IsolatedDynamicBlocksPaths))]
+		public void DwgRoundTripTest(FileModel test)
+		{
+			CadDocument doc = this.readDocument(test, this.getConfiguration(test));
+
+			if (!this.isSupportedVersion(doc.Header.Version))
+			{
+				return;
+			}
+
+			CadDocument rewritten = this.rewriteDwgInMemory(doc, out List<NotificationEventArgs> notifications);
+
+			//The evaluation graph is not written yet, only the representation chain survives the rewrite
+			this.assertIsolatedDocument(test, rewritten, assertEvaluationGraph: false);
+			this.assertNoDanglingDictionaryEntries(notifications);
+		}
+
+		[Theory]
+		[MemberData(nameof(IsolatedDynamicBlocksPaths))]
+		public void DxfRoundTripTest(FileModel test)
+		{
+			CadDocument doc = this.readDocument(test, this.getConfiguration(test));
+
+			CadDocument rewritten = this.rewriteDxfInMemory(doc, out List<NotificationEventArgs> notifications);
+
+			//The evaluation graph is not written yet, only the representation chain survives the rewrite
+			this.assertIsolatedDocument(test, rewritten, assertEvaluationGraph: false);
+			this.assertNoDanglingDictionaryEntries(notifications);
+		}
+
+		[Theory]
+		[MemberData(nameof(IsolatedDynamicBlocksPaths))]
 		public void DwgWriterNoDanglingDictionaryEntriesTest(FileModel test)
 		{
 			CadDocument doc = this.readDocument(test, this.getConfiguration(test));

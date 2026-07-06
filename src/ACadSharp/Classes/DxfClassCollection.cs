@@ -745,6 +745,20 @@ public class DxfClassCollection : ICollection<DxfClass>
 			WasZombie = false,
 			InstanceCount = this._document.GetInstanceCount(DxfFileToken.BlkRefObjectContextData),
 		});
+
+		//AcDbBlockRepresentationData
+		this.AddOrUpdate(new DxfClass
+		{
+			CppClassName = DxfSubclassMarker.BlockRepresentationData,
+			ClassNumber = (short)(500 + this.Count),
+			DwgVersion = ACadVersion.AC1018,
+			DxfName = DxfFileToken.ObjectBlockRepresentationData,
+			ItemClassId = 499,
+			MaintenanceVersion = 58,
+			ProxyFlags = ProxyFlags.EraseAllowed | ProxyFlags.CloningAllowed | ProxyFlags.DisablesProxyWarningDialog,
+			WasZombie = false,
+			InstanceCount = this._document.GetInstanceCount(DxfFileToken.ObjectBlockRepresentationData),
+		});
 	}
 
 	private void resetClassNumbers()
