@@ -4698,7 +4698,7 @@
       "Uid": null,
       "IsMRef": true,
       "Title": "ACadSharp.Objects.Evaluations.Block1PtParameter",
-      "Summary": null
+      "Summary": "<p sourcefile=\"api/ACadSharp.Objects.Evaluations.Block1PtParameter.yml\" sourcestartlinenumber=\"1\">Represents a dynamic block parameter that is defined by a single point in 3D space.</p>\n"
     },
     {
       "type": "ManagedReference",
@@ -4856,6 +4856,20 @@
     },
     {
       "type": "ManagedReference",
+      "source_relative_path": "api/ACadSharp.Objects.Evaluations.BlockLookupParameter.yml",
+      "output": {
+        ".html": {
+          "relative_path": "api/ACadSharp.Objects.Evaluations.BlockLookupParameter.html"
+        }
+      },
+      "version": "",
+      "Uid": null,
+      "IsMRef": true,
+      "Title": "ACadSharp.Objects.Evaluations.BlockLookupParameter",
+      "Summary": "<p sourcefile=\"api/ACadSharp.Objects.Evaluations.BlockLookupParameter.yml\" sourcestartlinenumber=\"1\">Represents a BLOCKLOOKUPPARAMETER object, used in AutoCAD to drive block geometry from\na lookup table in the Block Properties Table (the &quot;Lookup&quot; rows of the Customize tab of\na dynamic block).</p>\n"
+    },
+    {
+      "type": "ManagedReference",
       "source_relative_path": "api/ACadSharp.Objects.Evaluations.BlockParameter.yml",
       "output": {
         ".html": {
@@ -4951,6 +4965,34 @@
       "IsMRef": true,
       "Title": "ACadSharp.Objects.Evaluations.BlockVisibilityParameter",
       "Summary": "<p sourcefile=\"api/ACadSharp.Objects.Evaluations.BlockVisibilityParameter.yml\" sourcestartlinenumber=\"1\">Represents a BLOCKVISIBILITYPARAMETER object, in AutoCAD used to\ncontrol the visibility state of entities in a dynamic block.</p>\n"
+    },
+    {
+      "type": "ManagedReference",
+      "source_relative_path": "api/ACadSharp.Objects.Evaluations.EvalConnection.yml",
+      "output": {
+        ".html": {
+          "relative_path": "api/ACadSharp.Objects.Evaluations.EvalConnection.html"
+        }
+      },
+      "version": "",
+      "Uid": null,
+      "IsMRef": true,
+      "Title": "ACadSharp.Objects.Evaluations.EvalConnection",
+      "Summary": null
+    },
+    {
+      "type": "ManagedReference",
+      "source_relative_path": "api/ACadSharp.Objects.Evaluations.EvalParameterProperty.yml",
+      "output": {
+        ".html": {
+          "relative_path": "api/ACadSharp.Objects.Evaluations.EvalParameterProperty.html"
+        }
+      },
+      "version": "",
+      "Uid": null,
+      "IsMRef": true,
+      "Title": "ACadSharp.Objects.Evaluations.EvalParameterProperty",
+      "Summary": null
     },
     {
       "type": "ManagedReference",

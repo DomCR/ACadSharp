@@ -89,7 +89,7 @@
 
 
   <h1 id="ACadSharp_Objects_Evaluations_Block2PtParameter" data-uid="ACadSharp.Objects.Evaluations.Block2PtParameter" class="text-break">
-Class Block2PtParameter  <a class="header-action link-secondary" title="View source" href="https://github.com/DomCR/ACadSharp/blob/master/src/ACadSharp/Objects/Evaluations/Block2PtParameter.cs/#L6"><i class="bi bi-code-slash"></i></a>
+Class Block2PtParameter  <a class="header-action link-secondary" title="View source" href="https://github.com/DomCR/ACadSharp/blob/master/src/ACadSharp/Objects/Evaluations/Block2PtParameter.cs/#L7"><i class="bi bi-code-slash"></i></a>
   </h1>
 
   <div class="facts text-secondary">
@@ -140,10 +140,10 @@ public abstract class Block2PtParameter : BlockParameter, IHandledCadObject</cod
     <dt>Inherited Members</dt>
     <dd>
     <div>
-      <a class="xref" href="ACadSharp.Objects.Evaluations.BlockParameter.html#ACadSharp_Objects_Evaluations_BlockParameter_Value280">BlockParameter.Value280</a>
+      <a class="xref" href="ACadSharp.Objects.Evaluations.BlockParameter.html#ACadSharp_Objects_Evaluations_BlockParameter_ShowProperties">BlockParameter.ShowProperties</a>
     </div>
     <div>
-      <a class="xref" href="ACadSharp.Objects.Evaluations.BlockParameter.html#ACadSharp_Objects_Evaluations_BlockParameter_Value281">BlockParameter.Value281</a>
+      <a class="xref" href="ACadSharp.Objects.Evaluations.BlockParameter.html#ACadSharp_Objects_Evaluations_BlockParameter_ChainActions">BlockParameter.ChainActions</a>
     </div>
     <div>
       <a class="xref" href="ACadSharp.Objects.Evaluations.BlockElement.html#ACadSharp_Objects_Evaluations_BlockElement_ElementName">BlockElement.ElementName</a>
@@ -251,7 +251,7 @@ public abstract class Block2PtParameter : BlockParameter, IHandledCadObject</cod
 
   <h3 id="ACadSharp_Objects_Evaluations_Block2PtParameter_BaseLocation" data-uid="ACadSharp.Objects.Evaluations.Block2PtParameter.BaseLocation">
   BaseLocation
-  <a class="header-action link-secondary" title="View source" href="https://github.com/DomCR/ACadSharp/blob/master/src/ACadSharp/Objects/Evaluations/Block2PtParameter.cs/#L36"><i class="bi bi-code-slash"></i></a>
+  <a class="header-action link-secondary" title="View source" href="https://github.com/DomCR/ACadSharp/blob/master/src/ACadSharp/Objects/Evaluations/Block2PtParameter.cs/#L13"><i class="bi bi-code-slash"></i></a>
   </h3>
 
   <div class="markdown level1 summary"><p>Base point the distance is measured from (start point or middle point).</p>
@@ -284,10 +284,11 @@ public LinearParameterBaseLocation BaseLocation { get; set; }</code></pre>
 
   <h3 id="ACadSharp_Objects_Evaluations_Block2PtParameter_FirstPoint" data-uid="ACadSharp.Objects.Evaluations.Block2PtParameter.FirstPoint">
   FirstPoint
-  <a class="header-action link-secondary" title="View source" href="https://github.com/DomCR/ACadSharp/blob/master/src/ACadSharp/Objects/Evaluations/Block2PtParameter.cs/#L9"><i class="bi bi-code-slash"></i></a>
+  <a class="header-action link-secondary" title="View source" href="https://github.com/DomCR/ACadSharp/blob/master/src/ACadSharp/Objects/Evaluations/Block2PtParameter.cs/#L19"><i class="bi bi-code-slash"></i></a>
   </h3>
 
-  <div class="markdown level1 summary"></div>
+  <div class="markdown level1 summary"><p>Gets or sets the first point.</p>
+</div>
   <div class="markdown level1 conceptual"></div>
 
   <div class="codewrapper">
@@ -312,14 +313,83 @@ public XYZ FirstPoint { get; set; }</code></pre>
 
 
 
+  <a id="ACadSharp_Objects_Evaluations_Block2PtParameter_GripIds_" data-uid="ACadSharp.Objects.Evaluations.Block2PtParameter.GripIds*"></a>
+
+  <h3 id="ACadSharp_Objects_Evaluations_Block2PtParameter_GripIds" data-uid="ACadSharp.Objects.Evaluations.Block2PtParameter.GripIds">
+  GripIds
+  <a class="header-action link-secondary" title="View source" href="https://github.com/DomCR/ACadSharp/blob/master/src/ACadSharp/Objects/Evaluations/Block2PtParameter.cs/#L28"><i class="bi bi-code-slash"></i></a>
+  </h3>
+
+  <div class="markdown level1 summary"><p>Gets or sets the grip ids.</p>
+</div>
+  <div class="markdown level1 conceptual"></div>
+
+  <div class="codewrapper">
+    <pre><code class="lang-csharp hljs">[DxfCollectionCodeValue(new int[] { 91 })]
+public long[] GripIds { get; }</code></pre>
+  </div>
+
+
+
+
+
+  <h4 class="section">Property Value</h4>
+  <dl class="parameters">
+    <dt><a class="xref" href="https://learn.microsoft.com/dotnet/api/system.int64">long</a>[]</dt>
+    <dd></dd>
+  </dl>
+
+
+
+
+  <h4 class="section" id="ACadSharp_Objects_Evaluations_Block2PtParameter_GripIds_remarks">Remarks</h4>
+  <div class="markdown level1 remarks"><p>Size 4 array of grip ids.</p>
+</div>
+
+
+
+
+  <a id="ACadSharp_Objects_Evaluations_Block2PtParameter_Properties_" data-uid="ACadSharp.Objects.Evaluations.Block2PtParameter.Properties*"></a>
+
+  <h3 id="ACadSharp_Objects_Evaluations_Block2PtParameter_Properties" data-uid="ACadSharp.Objects.Evaluations.Block2PtParameter.Properties">
+  Properties
+  <a class="header-action link-secondary" title="View source" href="https://github.com/DomCR/ACadSharp/blob/master/src/ACadSharp/Objects/Evaluations/Block2PtParameter.cs/#L34"><i class="bi bi-code-slash"></i></a>
+  </h3>
+
+  <div class="markdown level1 summary"><p>Gets or sets the properties.</p>
+</div>
+  <div class="markdown level1 conceptual"></div>
+
+  <div class="codewrapper">
+    <pre><code class="lang-csharp hljs">public EvalParameterProperty[] Properties { get; }</code></pre>
+  </div>
+
+
+
+
+
+  <h4 class="section">Property Value</h4>
+  <dl class="parameters">
+    <dt><a class="xref" href="ACadSharp.Objects.Evaluations.EvalParameterProperty.html">EvalParameterProperty</a>[]</dt>
+    <dd></dd>
+  </dl>
+
+
+
+
+
+
+
+
   <a id="ACadSharp_Objects_Evaluations_Block2PtParameter_SecondPoint_" data-uid="ACadSharp.Objects.Evaluations.Block2PtParameter.SecondPoint*"></a>
 
   <h3 id="ACadSharp_Objects_Evaluations_Block2PtParameter_SecondPoint" data-uid="ACadSharp.Objects.Evaluations.Block2PtParameter.SecondPoint">
   SecondPoint
-  <a class="header-action link-secondary" title="View source" href="https://github.com/DomCR/ACadSharp/blob/master/src/ACadSharp/Objects/Evaluations/Block2PtParameter.cs/#L12"><i class="bi bi-code-slash"></i></a>
+  <a class="header-action link-secondary" title="View source" href="https://github.com/DomCR/ACadSharp/blob/master/src/ACadSharp/Objects/Evaluations/Block2PtParameter.cs/#L39"><i class="bi bi-code-slash"></i></a>
   </h3>
 
-  <div class="markdown level1 summary"></div>
+  <div class="markdown level1 summary"><p>Gets or sets the second point.</p>
+</div>
   <div class="markdown level1 conceptual"></div>
 
   <div class="codewrapper">
@@ -348,7 +418,7 @@ public XYZ SecondPoint { get; set; }</code></pre>
 
   <h3 id="ACadSharp_Objects_Evaluations_Block2PtParameter_SubclassMarker" data-uid="ACadSharp.Objects.Evaluations.Block2PtParameter.SubclassMarker">
   SubclassMarker
-  <a class="header-action link-secondary" title="View source" href="https://github.com/DomCR/ACadSharp/blob/master/src/ACadSharp/Objects/Evaluations/Block2PtParameter.cs/#L16"><i class="bi bi-code-slash"></i></a>
+  <a class="header-action link-secondary" title="View source" href="https://github.com/DomCR/ACadSharp/blob/master/src/ACadSharp/Objects/Evaluations/Block2PtParameter.cs/#L43"><i class="bi bi-code-slash"></i></a>
   </h3>
 
   <div class="markdown level1 summary"><p>Object Subclass marker.</p>
@@ -376,299 +446,11 @@ public XYZ SecondPoint { get; set; }</code></pre>
 
 
 
-  <a id="ACadSharp_Objects_Evaluations_Block2PtParameter_Value170_" data-uid="ACadSharp.Objects.Evaluations.Block2PtParameter.Value170*"></a>
-
-  <h3 id="ACadSharp_Objects_Evaluations_Block2PtParameter_Value170" data-uid="ACadSharp.Objects.Evaluations.Block2PtParameter.Value170">
-  Value170
-  <a class="header-action link-secondary" title="View source" href="https://github.com/DomCR/ACadSharp/blob/master/src/ACadSharp/Objects/Evaluations/Block2PtParameter.cs/#L18"><i class="bi bi-code-slash"></i></a>
-  </h3>
-
-  <div class="markdown level1 summary"></div>
-  <div class="markdown level1 conceptual"></div>
-
-  <div class="codewrapper">
-    <pre><code class="lang-csharp hljs">[DxfCodeValue(new int[] { 170 })]
-public short Value170 { get; set; }</code></pre>
-  </div>
-
-
-
-
-
-  <h4 class="section">Property Value</h4>
-  <dl class="parameters">
-    <dt><a class="xref" href="https://learn.microsoft.com/dotnet/api/system.int16">short</a></dt>
-    <dd></dd>
-  </dl>
-
-
-
-
-
-
-
-
-  <a id="ACadSharp_Objects_Evaluations_Block2PtParameter_Value171_" data-uid="ACadSharp.Objects.Evaluations.Block2PtParameter.Value171*"></a>
-
-  <h3 id="ACadSharp_Objects_Evaluations_Block2PtParameter_Value171" data-uid="ACadSharp.Objects.Evaluations.Block2PtParameter.Value171">
-  Value171
-  <a class="header-action link-secondary" title="View source" href="https://github.com/DomCR/ACadSharp/blob/master/src/ACadSharp/Objects/Evaluations/Block2PtParameter.cs/#L21"><i class="bi bi-code-slash"></i></a>
-  </h3>
-
-  <div class="markdown level1 summary"></div>
-  <div class="markdown level1 conceptual"></div>
-
-  <div class="codewrapper">
-    <pre><code class="lang-csharp hljs">[DxfCodeValue(new int[] { 171 })]
-public short Value171 { get; set; }</code></pre>
-  </div>
-
-
-
-
-
-  <h4 class="section">Property Value</h4>
-  <dl class="parameters">
-    <dt><a class="xref" href="https://learn.microsoft.com/dotnet/api/system.int16">short</a></dt>
-    <dd></dd>
-  </dl>
-
-
-
-
-
-
-
-
-  <a id="ACadSharp_Objects_Evaluations_Block2PtParameter_Value172_" data-uid="ACadSharp.Objects.Evaluations.Block2PtParameter.Value172*"></a>
-
-  <h3 id="ACadSharp_Objects_Evaluations_Block2PtParameter_Value172" data-uid="ACadSharp.Objects.Evaluations.Block2PtParameter.Value172">
-  Value172
-  <a class="header-action link-secondary" title="View source" href="https://github.com/DomCR/ACadSharp/blob/master/src/ACadSharp/Objects/Evaluations/Block2PtParameter.cs/#L24"><i class="bi bi-code-slash"></i></a>
-  </h3>
-
-  <div class="markdown level1 summary"></div>
-  <div class="markdown level1 conceptual"></div>
-
-  <div class="codewrapper">
-    <pre><code class="lang-csharp hljs">[DxfCodeValue(new int[] { 172 })]
-public short Value172 { get; set; }</code></pre>
-  </div>
-
-
-
-
-
-  <h4 class="section">Property Value</h4>
-  <dl class="parameters">
-    <dt><a class="xref" href="https://learn.microsoft.com/dotnet/api/system.int16">short</a></dt>
-    <dd></dd>
-  </dl>
-
-
-
-
-
-
-
-
-  <a id="ACadSharp_Objects_Evaluations_Block2PtParameter_Value173_" data-uid="ACadSharp.Objects.Evaluations.Block2PtParameter.Value173*"></a>
-
-  <h3 id="ACadSharp_Objects_Evaluations_Block2PtParameter_Value173" data-uid="ACadSharp.Objects.Evaluations.Block2PtParameter.Value173">
-  Value173
-  <a class="header-action link-secondary" title="View source" href="https://github.com/DomCR/ACadSharp/blob/master/src/ACadSharp/Objects/Evaluations/Block2PtParameter.cs/#L27"><i class="bi bi-code-slash"></i></a>
-  </h3>
-
-  <div class="markdown level1 summary"></div>
-  <div class="markdown level1 conceptual"></div>
-
-  <div class="codewrapper">
-    <pre><code class="lang-csharp hljs">[DxfCodeValue(new int[] { 173 })]
-public short Value173 { get; set; }</code></pre>
-  </div>
-
-
-
-
-
-  <h4 class="section">Property Value</h4>
-  <dl class="parameters">
-    <dt><a class="xref" href="https://learn.microsoft.com/dotnet/api/system.int16">short</a></dt>
-    <dd></dd>
-  </dl>
-
-
-
-
-
-
-
-
-  <a id="ACadSharp_Objects_Evaluations_Block2PtParameter_Value174_" data-uid="ACadSharp.Objects.Evaluations.Block2PtParameter.Value174*"></a>
-
-  <h3 id="ACadSharp_Objects_Evaluations_Block2PtParameter_Value174" data-uid="ACadSharp.Objects.Evaluations.Block2PtParameter.Value174">
-  Value174
-  <a class="header-action link-secondary" title="View source" href="https://github.com/DomCR/ACadSharp/blob/master/src/ACadSharp/Objects/Evaluations/Block2PtParameter.cs/#L30"><i class="bi bi-code-slash"></i></a>
-  </h3>
-
-  <div class="markdown level1 summary"></div>
-  <div class="markdown level1 conceptual"></div>
-
-  <div class="codewrapper">
-    <pre><code class="lang-csharp hljs">[DxfCodeValue(new int[] { 174 })]
-public short Value174 { get; set; }</code></pre>
-  </div>
-
-
-
-
-
-  <h4 class="section">Property Value</h4>
-  <dl class="parameters">
-    <dt><a class="xref" href="https://learn.microsoft.com/dotnet/api/system.int16">short</a></dt>
-    <dd></dd>
-  </dl>
-
-
-
-
-
-
-
-
-  <a id="ACadSharp_Objects_Evaluations_Block2PtParameter_Value303_" data-uid="ACadSharp.Objects.Evaluations.Block2PtParameter.Value303*"></a>
-
-  <h3 id="ACadSharp_Objects_Evaluations_Block2PtParameter_Value303" data-uid="ACadSharp.Objects.Evaluations.Block2PtParameter.Value303">
-  Value303
-  <a class="header-action link-secondary" title="View source" href="https://github.com/DomCR/ACadSharp/blob/master/src/ACadSharp/Objects/Evaluations/Block2PtParameter.cs/#L40"><i class="bi bi-code-slash"></i></a>
-  </h3>
-
-  <div class="markdown level1 summary"></div>
-  <div class="markdown level1 conceptual"></div>
-
-  <div class="codewrapper">
-    <pre><code class="lang-csharp hljs">[DxfCodeValue(new int[] { 303 })]
-public string Value303 { get; set; }</code></pre>
-  </div>
-
-
-
-
-
-  <h4 class="section">Property Value</h4>
-  <dl class="parameters">
-    <dt><a class="xref" href="https://learn.microsoft.com/dotnet/api/system.string">string</a></dt>
-    <dd></dd>
-  </dl>
-
-
-
-
-
-
-
-
-  <a id="ACadSharp_Objects_Evaluations_Block2PtParameter_Value304_" data-uid="ACadSharp.Objects.Evaluations.Block2PtParameter.Value304*"></a>
-
-  <h3 id="ACadSharp_Objects_Evaluations_Block2PtParameter_Value304" data-uid="ACadSharp.Objects.Evaluations.Block2PtParameter.Value304">
-  Value304
-  <a class="header-action link-secondary" title="View source" href="https://github.com/DomCR/ACadSharp/blob/master/src/ACadSharp/Objects/Evaluations/Block2PtParameter.cs/#L43"><i class="bi bi-code-slash"></i></a>
-  </h3>
-
-  <div class="markdown level1 summary"></div>
-  <div class="markdown level1 conceptual"></div>
-
-  <div class="codewrapper">
-    <pre><code class="lang-csharp hljs">[DxfCodeValue(new int[] { 304 })]
-public string Value304 { get; set; }</code></pre>
-  </div>
-
-
-
-
-
-  <h4 class="section">Property Value</h4>
-  <dl class="parameters">
-    <dt><a class="xref" href="https://learn.microsoft.com/dotnet/api/system.string">string</a></dt>
-    <dd></dd>
-  </dl>
-
-
-
-
-
-
-
-
-  <a id="ACadSharp_Objects_Evaluations_Block2PtParameter_Value94_" data-uid="ACadSharp.Objects.Evaluations.Block2PtParameter.Value94*"></a>
-
-  <h3 id="ACadSharp_Objects_Evaluations_Block2PtParameter_Value94" data-uid="ACadSharp.Objects.Evaluations.Block2PtParameter.Value94">
-  Value94
-  <a class="header-action link-secondary" title="View source" href="https://github.com/DomCR/ACadSharp/blob/master/src/ACadSharp/Objects/Evaluations/Block2PtParameter.cs/#L46"><i class="bi bi-code-slash"></i></a>
-  </h3>
-
-  <div class="markdown level1 summary"></div>
-  <div class="markdown level1 conceptual"></div>
-
-  <div class="codewrapper">
-    <pre><code class="lang-csharp hljs">[DxfCodeValue(new int[] { 94 })]
-public int Value94 { get; set; }</code></pre>
-  </div>
-
-
-
-
-
-  <h4 class="section">Property Value</h4>
-  <dl class="parameters">
-    <dt><a class="xref" href="https://learn.microsoft.com/dotnet/api/system.int32">int</a></dt>
-    <dd></dd>
-  </dl>
-
-
-
-
-
-
-
-
-  <a id="ACadSharp_Objects_Evaluations_Block2PtParameter_Value95_" data-uid="ACadSharp.Objects.Evaluations.Block2PtParameter.Value95*"></a>
-
-  <h3 id="ACadSharp_Objects_Evaluations_Block2PtParameter_Value95" data-uid="ACadSharp.Objects.Evaluations.Block2PtParameter.Value95">
-  Value95
-  <a class="header-action link-secondary" title="View source" href="https://github.com/DomCR/ACadSharp/blob/master/src/ACadSharp/Objects/Evaluations/Block2PtParameter.cs/#L49"><i class="bi bi-code-slash"></i></a>
-  </h3>
-
-  <div class="markdown level1 summary"></div>
-  <div class="markdown level1 conceptual"></div>
-
-  <div class="codewrapper">
-    <pre><code class="lang-csharp hljs">[DxfCodeValue(new int[] { 95 })]
-public int Value95 { get; set; }</code></pre>
-  </div>
-
-
-
-
-
-  <h4 class="section">Property Value</h4>
-  <dl class="parameters">
-    <dt><a class="xref" href="https://learn.microsoft.com/dotnet/api/system.int32">int</a></dt>
-    <dd></dd>
-  </dl>
-
-
-
-
-
-
-
-
 
 </article>
 
         <div class="contribution d-print-none">
-          <a href="https://github.com/DomCR/ACadSharp/blob/master/src/ACadSharp/Objects/Evaluations/Block2PtParameter.cs/#L6" class="edit-link">Edit this page</a>
+          <a href="https://github.com/DomCR/ACadSharp/blob/master/src/ACadSharp/Objects/Evaluations/Block2PtParameter.cs/#L7" class="edit-link">Edit this page</a>
         </div>
 
 
