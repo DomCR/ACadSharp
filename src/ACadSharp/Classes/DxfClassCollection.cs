@@ -5,6 +5,9 @@ using System.Linq;
 
 namespace ACadSharp.Classes;
 
+/// <summary>
+/// Represents a collection of <see cref="DxfClass"/> objects.
+/// </summary>
 public class DxfClassCollection : ICollection<DxfClass>
 {
 	/// <inheritdoc/>
@@ -17,29 +20,33 @@ public class DxfClassCollection : ICollection<DxfClass>
 
 	private readonly Dictionary<string, DxfClass> _entries = new Dictionary<string, DxfClass>(StringComparer.OrdinalIgnoreCase);
 
+	/// <summary>
+	/// Initializes a new instance of the <see cref="DxfClassCollection"/> class.
+	/// </summary>
+	/// <param name="document">The CAD document associated with this collection.</param>
 	public DxfClassCollection(CadDocument document)
 	{
 		this._document = document;
 	}
 
 	/// <summary>
-	/// Add a dxf class to the collection if the <see cref="DxfClass.DxfName"/> is not present
+	/// Add a dxf class to the collection if the <see cref="DxfClass.DxfName"/> is not present.
 	/// </summary>
-	/// <param name="item"></param>
+	/// <param name="item">The dxf class to add.</param>
 	public void Add(DxfClass item)
 	{
 		this._entries.Add(item.DxfName, item);
 	}
 
 	/// <summary>
-	/// Add a dxf class to the collection or updates the existing one if the <see cref="DxfClass.DxfName"/> is already in the collection
+	/// Add a dxf class to the collection or updates the existing one if the <see cref="DxfClass.DxfName"/> is already in the collection.
 	/// </summary>
-	/// <param name="item"></param>
+	/// <param name="item">The dxf class to add or update.</param>
 	public void AddOrUpdate(DxfClass item)
 	{
 		if (this._entries.TryGetValue(item.DxfName, out DxfClass result))
 		{
-			result.InstanceCount = result.InstanceCount;
+			result.InstanceCount = this._document.GetInstanceCount(item.DxfName);
 		}
 		else
 		{
@@ -50,14 +57,14 @@ public class DxfClassCollection : ICollection<DxfClass>
 	/// <inheritdoc/>
 	public void Clear()
 	{
-		_entries.Clear();
+		this._entries.Clear();
 	}
 
 	/// <summary>
 	/// Determines whether the Collection contains a specific <see cref="DxfClass.DxfName"/>.
 	/// </summary>
-	/// <param name="dxfname"></param>
-	/// <returns></returns>
+	/// <param name="dxfname">The name of the dxf class to check.</param>
+	/// <returns>true if the Collection contains an element with the specified name; otherwise, false.</returns>
 	public bool Contains(string dxfname)
 	{
 		return this._entries.ContainsKey(dxfname);
@@ -66,7 +73,7 @@ public class DxfClassCollection : ICollection<DxfClass>
 	/// <inheritdoc/>
 	public bool Contains(DxfClass item)
 	{
-		return _entries.Values.Contains(item);
+		return this._entries.Values.Contains(item);
 	}
 
 	/// <inheritdoc/>
@@ -105,7 +112,7 @@ public class DxfClassCollection : ICollection<DxfClass>
 	/// <inheritdoc/>
 	public IEnumerator<DxfClass> GetEnumerator()
 	{
-		return _entries.Values.GetEnumerator();
+		return this._entries.Values.GetEnumerator();
 	}
 
 	/// <inheritdoc/>
