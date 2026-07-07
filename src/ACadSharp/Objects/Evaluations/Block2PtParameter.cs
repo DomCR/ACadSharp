@@ -4,6 +4,9 @@ using System.Linq;
 
 namespace ACadSharp.Objects.Evaluations;
 
+/// <summary>
+/// Represents the dynamic block 2 point parameter.
+/// </summary>
 [DxfSubClass(DxfSubclassMarker.Block2PtParameter)]
 public abstract class Block2PtParameter : BlockParameter
 {
