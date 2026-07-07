@@ -36,7 +36,6 @@ public abstract class Block2PtParameter : BlockParameter
 	[DxfCodeValue(177)]
 	public LinearParameterBaseLocation BaseLocation { get; set; }
 
-
 	[DxfCodeValue(303)]
 	public string Value303 { get; set; }
 

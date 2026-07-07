@@ -62,6 +62,7 @@ internal partial class DwgObjectReader : DwgSectionIO
 			{
 				//94 95 (I guess 96 97)
 				var d = this._mergedReaders.ReadBitLong();
+
 				//303 304 : exposed custom property label
 				string label = this._mergedReaders.ReadVariableText();
 				template.Block2PtParameter.PropertyLabels.Add(label);
@@ -158,9 +159,9 @@ internal partial class DwgObjectReader : DwgSectionIO
 		this.readBlockElement(template);
 
 		//280
-		template.BlockParameter.Value280 = this._mergedReaders.ReadBit();
+		template.BlockParameter.ShowProperties = this._mergedReaders.ReadBit();
 		//281
-		template.BlockParameter.Value281 = this._mergedReaders.ReadBit();
+		template.BlockParameter.ChainActions = this._mergedReaders.ReadBit();
 	}
 
 	private CadTemplate readBlockRepresentationData()
@@ -255,16 +256,11 @@ internal partial class DwgObjectReader : DwgSectionIO
 		BlockLookupParameter blockLookupParameter = new BlockLookupParameter();
 		CadBlockLookupParameterTemplate template = new CadBlockLookupParameterTemplate(blockLookupParameter);
 
-		// Only the common block-element prefix is decoded. This is enough to capture the parameter
-		// Id (code 90, read in readEvaluationExpression) and ElementName (code 300, read in
-		// readBlockElement) - the readable lookup name. The lookup-specific tail (lookup table) is
-		// intentionally not decoded; the object is read from its own bounded stream so this is safe.
 		this.readBlock1PtParameter(template);
 
-		// The display name is the first variable text of the lookup-specific body.
-		// The rest of the lookup table is not decoded; the object is read from
-		// its own bounded stream so leaving it unread is safe.
-		blockLookupParameter.Name = this._mergedReaders.ReadVariableText();
+		blockLookupParameter.ActionId = this._mergedReaders.ReadBitLong();
+		blockLookupParameter.Label = this._mergedReaders.ReadVariableText();
+		blockLookupParameter.Description = this._mergedReaders.ReadVariableText();
 
 		return template;
 	}
@@ -277,7 +273,7 @@ internal partial class DwgObjectReader : DwgSectionIO
 		this.readBlock1PtParameter(template);
 
 		//281
-		blockVisibilityParameter.Value281 = this._mergedReaders.ReadBit();
+		blockVisibilityParameter.ChainActions = this._mergedReaders.ReadBit();
 		//301
 		blockVisibilityParameter.Name = this._mergedReaders.ReadVariableText();
 		//302

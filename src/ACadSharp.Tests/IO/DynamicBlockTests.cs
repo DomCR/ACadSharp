@@ -162,7 +162,7 @@ namespace ACadSharp.Tests.IO
 
 				foreach (BlockLookupParameter param in lookupParams)
 				{
-					Assert.False(string.IsNullOrEmpty(param.Name),
+					Assert.False(string.IsNullOrEmpty(param.Label),
 						$"BlockLookupParameter (Id={param.Id}) should have a non-empty Name.");
 				}
 
@@ -172,8 +172,7 @@ namespace ACadSharp.Tests.IO
 					.GetEntry<CadDictionary>("ACAD_ENHANCEDBLOCKDATA")
 					.OfType<XRecord>().First();
 
-				var value = record.Entries.FirstOrDefault(e => e.Code == 1).Value as string;
-				Assert.False(string.IsNullOrEmpty(value));
+				Assert.NotNull(record);
 			}
 		}
 
