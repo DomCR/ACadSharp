@@ -44,7 +44,6 @@ internal partial class DwgObjectWriter : DwgSectionIO
 			case UnknownNonGraphicalObject:
 			case VisualStyle:
 			case ProxyObject:
-			case BlockRepresentationData:
 			case BlockReferenceObjectContextData:
 			case MTextAttributeObjectContextData:
 				return true;
@@ -71,6 +70,15 @@ internal partial class DwgObjectWriter : DwgSectionIO
 	private void writeAnnotScaleObjectContextData(AnnotScaleObjectContextData annotScaleObjectContextData)
 	{
 		this._writer.HandleReference(DwgReferenceType.HardPointer, annotScaleObjectContextData.Scale);
+	}
+
+	private void writeBlockRepresentationData(BlockRepresentationData representation)
+	{
+		//BS	70
+		this._writer.WriteBitShort(representation.Value70);
+
+		//H	340	Source block record (hard pointer)
+		this._writer.HandleReference(DwgReferenceType.HardPointer, representation.Block);
 	}
 
 	private void writeBookColor(BookColor color)
@@ -1174,6 +1182,9 @@ internal partial class DwgObjectWriter : DwgSectionIO
 		{
 			case AcdbPlaceHolder acdbPlaceHolder:
 				this.writeAcdbPlaceHolder(acdbPlaceHolder);
+				break;
+			case BlockRepresentationData blockRepresentationData:
+				this.writeBlockRepresentationData(blockRepresentationData);
 				break;
 			case BookColor bookColor:
 				this.writeBookColor(bookColor);
