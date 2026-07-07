@@ -590,6 +590,9 @@ internal partial class DwgObjectWriter : DwgSectionIO
 			case Solid3D solid3d:
 				this.writeSolid3D(solid3d);
 				break;
+			case ModelerGeometry modelerGeometry:	//CadBody and Region
+				this.writeModelerGeometry(modelerGeometry);
+				break;
 			case Spline spline:
 				this.writeSpline(spline);
 				break;
@@ -2176,6 +2179,55 @@ internal partial class DwgObjectWriter : DwgSectionIO
 
 	private void writeSolid3D(Solid3D solid)
 	{
+		this.writeModelerGeometry(solid);
+
+		//R2007+:
+		if (this.R2007Plus)
+		{
+			//H 350 History ID
+			this._writer.HandleReference(DwgReferenceType.HardOwnership, 0);
+		}
+	}
+
+	private void writeModelerGeometry(ModelerGeometry geometry)
+	{
+		//Chapter 24 - Info
+		//ACIS Empty bit B X If 1, then no data follows: the payload is written
+		//through the same shortcut the reader takes, without wireframe data
+		this._writer.WriteBit(false);
+
+		this.writeModelerGeometryData(geometry);
+	}
+
+	private void writeModelerGeometryData(ModelerGeometry geometry)
+	{
+		//Unknown bit B X
+		this._writer.WriteBit(false);
+
+		//Version BS Can be 1 or 2.
+		if (this.R2004Plus)
+		{
+			//Version == 2: the raw ACIS file follows, no length is given; the
+			//readers find the end at the End-of-ACIS-data marker
+			this._writer.WriteBitShort(2);
+			this._writer.WriteBytes(geometry.AcisData);
+		}
+		else
+		{
+			//Version == 1: character-swapped SAT blocks, zero size terminates
+			this._writer.WriteBitShort(1);
+
+			const int BLOCK = 4096;
+			byte[] encoded = AcisTextCodec.Decode(geometry.AcisData);
+			for (int offset = 0; offset < encoded.Length; offset += BLOCK)
+			{
+				int size = Math.Min(BLOCK, encoded.Length - offset);
+				this._writer.WriteBitLong(size);
+				this._writer.WriteBytes(encoded, offset, size);
+			}
+
+			this._writer.WriteBitLong(0);
+		}
 	}
 
 	private void writeSpline(Spline spline)

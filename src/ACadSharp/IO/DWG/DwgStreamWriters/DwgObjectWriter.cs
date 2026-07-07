@@ -97,6 +97,20 @@ internal partial class DwgObjectWriter : DwgSectionIO
 		return entities.Where(e => this.isEntitySupported(e)).ToArray();
 	}
 
+	//Pre-2013 files carry the ACIS payload in the entity stream: version 1
+	//blocks (R2000-, character-swapped SAT only) or a version 2 raw file
+	//(R2004-R2010, SAT or SAB). 2013+ targets need the AcDs section, not
+	//written yet.
+	private bool canWriteModelerGeometry(ModelerGeometry geometry)
+	{
+		if (this.R2013Plus || geometry.AcisData == null || geometry.AcisData.Length == 0)
+		{
+			return false;
+		}
+
+		return this.R2004Plus || !geometry.IsBinaryAcisData;
+	}
+
 	private bool isEntitySupported(Entity entity)
 	{
 		switch (entity)
@@ -109,10 +123,15 @@ internal partial class DwgObjectWriter : DwgSectionIO
 			case Wall:
 			case MechanicalEntity:
 			case ProxyEntity:
-			case Solid3D:
-			case CadBody:
-			case Region:
 				this.notify($"Entity type not implemented {entity.GetType().FullName}", NotificationType.NotImplemented);
+				return false;
+			case ModelerGeometry modelerGeometry:	//Solid3D, CadBody and Region
+				if (this.canWriteModelerGeometry(modelerGeometry))
+				{
+					return true;
+				}
+
+				this.notify($"ACIS payload of {entity.GetType().FullName} cannot be written for this target version", NotificationType.NotImplemented);
 				return false;
 			default:
 				return true;
