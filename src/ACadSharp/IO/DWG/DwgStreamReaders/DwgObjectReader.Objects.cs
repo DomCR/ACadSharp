@@ -56,23 +56,28 @@ internal partial class DwgObjectReader : DwgSectionIO
 		//170 (always 4)
 		for (int i = 0; i < 4; i++)
 		{
+			EvalParameterProperty eprop = new EvalParameterProperty();
+
 			//171 172 173 174
 			short n = this._mergedReaders.ReadBitShort();
 			for (int j = 0; j < n; j++)
 			{
+				EvalConnection connection = new EvalConnection();
 				//94 95 (I guess 96 97)
-				var d = this._mergedReaders.ReadBitLong();
-
+				connection.Id = this._mergedReaders.ReadBitLong();
 				//303 304 : exposed custom property label
-				string label = this._mergedReaders.ReadVariableText();
-				template.Block2PtParameter.PropertyLabels.Add(label);
+				connection.Name = this._mergedReaders.ReadVariableText();
+
+				eprop.Connections.Add(connection);
 			}
+
+			template.Block2PtParameter.Properties[i] = eprop;
 		}
 
 		for (int k = 0; k < 4; k++)
 		{
 			//91 values
-			var f = this._mergedReaders.ReadBitLong();
+			template.Block2PtParameter.GripIds[k] = this._mergedReaders.ReadBitLong();
 		}
 
 		//177
