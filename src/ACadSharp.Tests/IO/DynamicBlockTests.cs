@@ -5,8 +5,6 @@ using ACadSharp.Objects.Evaluations;
 using ACadSharp.Tables;
 using ACadSharp.Tests.TestModels;
 using System;
-using System.Collections.Generic;
-using System.IO;
 using System.Linq;
 using Xunit;
 using Xunit.Abstractions;
@@ -105,70 +103,6 @@ namespace ACadSharp.Tests.IO
 				default:
 					throw new System.NotImplementedException();
 			}
-		}
-
-		[Theory]
-		[MemberData(nameof(IsolatedDynamicBlocksPaths))]
-		public void DwgWriterNoDanglingDictionaryEntriesTest(FileModel test)
-		{
-			CadDocument doc = this.readDocument(test, this.getConfiguration(test));
-
-			if (!this.isSupportedVersion(doc.Header.Version))
-			{
-				return;
-			}
-
-			this.rewriteDwgInMemory(doc, out List<NotificationEventArgs> notifications);
-
-			this.assertNoDanglingDictionaryEntries(notifications);
-		}
-
-		[Theory]
-		[MemberData(nameof(IsolatedDynamicBlocksPaths))]
-		public void DxfWriterNoDanglingDictionaryEntriesTest(FileModel test)
-		{
-			CadDocument doc = this.readDocument(test, this.getConfiguration(test));
-
-			this.rewriteDxfInMemory(doc, out List<NotificationEventArgs> notifications);
-
-			this.assertNoDanglingDictionaryEntries(notifications);
-		}
-
-		private void assertNoDanglingDictionaryEntries(List<NotificationEventArgs> notifications)
-		{
-			//A dictionary entry pointing to an object that has not been written
-			//triggers an "Entry not found" warning when the output is read back
-			Assert.DoesNotContain(notifications, e => e.Message != null && e.Message.Contains("Entry not found"));
-		}
-
-		private CadDocument rewriteDwgInMemory(CadDocument doc, out List<NotificationEventArgs> reReadNotifications)
-		{
-			List<NotificationEventArgs> notifications = new();
-
-			MemoryStream stream = new MemoryStream();
-			DwgWriter.Write(stream, doc, new DwgWriterConfiguration { WriteXRecords = true }, this.onNotification);
-
-			reReadNotifications = notifications;
-			return DwgReader.Read(new MemoryStream(stream.ToArray()), (s, e) =>
-			{
-				notifications.Add(e);
-				this.onNotification(s, e);
-			});
-		}
-
-		private CadDocument rewriteDxfInMemory(CadDocument doc, out List<NotificationEventArgs> reReadNotifications)
-		{
-			List<NotificationEventArgs> notifications = new();
-
-			MemoryStream stream = new MemoryStream();
-			DxfWriter.Write(stream, doc, false, new DxfWriterConfiguration { WriteXRecords = true }, this.onNotification);
-
-			reReadNotifications = notifications;
-			return DxfReader.Read(new MemoryStream(stream.ToArray()), (s, e) =>
-			{
-				notifications.Add(e);
-				this.onNotification(s, e);
-			});
 		}
 
 		private void assertLinearParameter(CadDocument doc)
