@@ -573,12 +573,16 @@ public class CadDocument : IHandledCadObject
 		this.Classes.UpdateDxfClasses();
 	}
 
+	/// <summary>
+	/// Gets the number of instances of a specific DXF object type in the document.
+	/// </summary>
+	/// <param name="dxfName">The name of the DXF object type.</param>
+	/// <returns>The number of instances of the specified DXF object type.</returns>
 	public int GetInstanceCount(string dxfName)
 	{
 		return this._cadObjects.Values
 			.OfType<CadObject>()
-			.Where(c => c.ObjectName == dxfName)
-			.Count();
+			.Count(c => c.ObjectName == dxfName);
 	}
 
 	/// <summary>
