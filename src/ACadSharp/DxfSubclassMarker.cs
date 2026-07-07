@@ -34,6 +34,8 @@
 
 		public const string Block2PtParameter = "AcDbBlock2PtParameter";
 
+		public const string BlockLookupParameter = "AcDbBlockLookUpParameter";
+
 		public const string BlockAction = "AcDbBlockAction";
 
 		public const string BlockActionBasePt = "AcDbBlockActionWithBasePt";

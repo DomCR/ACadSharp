@@ -168,6 +168,8 @@ public static class DxfFileToken
 
 	public const string ObjectBlockLinearParameter = "BLOCKLINEARPARAMETER";
 
+	public const string ObjectBlockLookupParameter = "BLOCKLOOKUPPARAMETER";
+
 	public const string ObjectBlockPointParameter = "BLOCKPOINTPARAMETER";
 
 	public const string ObjectBlockRepresentationData = "ACDB_BLOCKREPRESENTATION_DATA";

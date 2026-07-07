@@ -56,21 +56,28 @@ internal partial class DwgObjectReader : DwgSectionIO
 		//170 (always 4)
 		for (int i = 0; i < 4; i++)
 		{
+			EvalParameterProperty eprop = new EvalParameterProperty();
+
 			//171 172 173 174
 			short n = this._mergedReaders.ReadBitShort();
 			for (int j = 0; j < n; j++)
 			{
+				EvalConnection connection = new EvalConnection();
 				//94 95 (I guess 96 97)
-				var d = this._mergedReaders.ReadBitLong();
-				//303 304
-				var e = this._mergedReaders.ReadVariableText();
+				connection.Id = this._mergedReaders.ReadBitLong();
+				//303 304 : exposed custom property label
+				connection.Name = this._mergedReaders.ReadVariableText();
+
+				eprop.Connections.Add(connection);
 			}
+
+			template.Block2PtParameter.Properties[i] = eprop;
 		}
 
 		for (int k = 0; k < 4; k++)
 		{
 			//91 values
-			var f = this._mergedReaders.ReadBitLong();
+			template.Block2PtParameter.GripIds[k] = this._mergedReaders.ReadBitLong();
 		}
 
 		//177
@@ -157,9 +164,9 @@ internal partial class DwgObjectReader : DwgSectionIO
 		this.readBlockElement(template);
 
 		//280
-		template.BlockParameter.Value280 = this._mergedReaders.ReadBit();
+		template.BlockParameter.ShowProperties = this._mergedReaders.ReadBit();
 		//281
-		template.BlockParameter.Value281 = this._mergedReaders.ReadBit();
+		template.BlockParameter.ChainActions = this._mergedReaders.ReadBit();
 	}
 
 	private CadTemplate readBlockRepresentationData()
@@ -249,6 +256,20 @@ internal partial class DwgObjectReader : DwgSectionIO
 		return template;
 	}
 
+	private CadTemplate readBlockLookupParameter()
+	{
+		BlockLookupParameter blockLookupParameter = new BlockLookupParameter();
+		CadBlockLookupParameterTemplate template = new CadBlockLookupParameterTemplate(blockLookupParameter);
+
+		this.readBlock1PtParameter(template);
+
+		blockLookupParameter.ActionId = this._mergedReaders.ReadBitLong();
+		blockLookupParameter.Label = this._mergedReaders.ReadVariableText();
+		blockLookupParameter.Description = this._mergedReaders.ReadVariableText();
+
+		return template;
+	}
+
 	private CadTemplate readBlockVisibilityParameter()
 	{
 		BlockVisibilityParameter blockVisibilityParameter = new BlockVisibilityParameter();
@@ -257,7 +278,7 @@ internal partial class DwgObjectReader : DwgSectionIO
 		this.readBlock1PtParameter(template);
 
 		//281
-		blockVisibilityParameter.Value281 = this._mergedReaders.ReadBit();
+		blockVisibilityParameter.ChainActions = this._mergedReaders.ReadBit();
 		//301
 		blockVisibilityParameter.Name = this._mergedReaders.ReadVariableText();
 		//302

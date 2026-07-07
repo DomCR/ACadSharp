@@ -9,8 +9,8 @@ public abstract class BlockParameter : BlockElement
 	public override string SubclassMarker => DxfSubclassMarker.BlockParameter;
 
 	[DxfCodeValue(280)]
-	public bool Value280 { get; set; }
+	public bool ShowProperties { get; set; } = true;
 
 	[DxfCodeValue(281)]
-	public bool Value281 { get; set; }
+	public bool ChainActions { get; set; } = false;
 }

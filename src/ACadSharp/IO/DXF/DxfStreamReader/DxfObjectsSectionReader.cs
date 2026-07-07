@@ -130,6 +130,8 @@ internal class DxfObjectsSectionReader : DxfSectionReaderBase
 				return this.readObjectCodes<BlockRotationParameter>(new CadBlockRotationParameterTemplate(), this.readBlockRotationParameter);
 			case DxfFileToken.ObjectBlockLinearParameter:
 				return this.readObjectCodes<BlockLinearParameter>(new CadBlockLinearParameterTemplate(), this.readBlockLinearParameter);
+			case DxfFileToken.ObjectBlockLookupParameter:
+				return this.readObjectCodes<BlockLookupParameter>(new CadBlockLookupParameterTemplate(new BlockLookupParameter()), this.readBlockLookupParameter);
 			case DxfFileToken.ObjectBlockRotationGrip:
 				return this.readObjectCodes<BlockRotationGrip>(new CadBlockRotationGripTemplate(), this.readBlockRotationGrip);
 			case DxfFileToken.ObjectBlockRotateAction:
@@ -2058,8 +2060,25 @@ internal class DxfObjectsSectionReader : DxfSectionReaderBase
 
 		switch (this._reader.Code)
 		{
-			//Stores always 4 entries using this code
-			case 91:
+			case 170:
+				short n = this._reader.ValueAsShort;
+				for (int i = 0; i < n; i++)
+				{
+					this._reader.ReadNext();
+					tmp.Block2PtParameter.GripIds[i] = this._reader.ValueAsShort;
+				}
+				return true;
+			case 171:
+				this.readEvalParameterProperty(tmp.Block2PtParameter.Properties[0]);
+				return true;
+			case 172:
+				this.readEvalParameterProperty(tmp.Block2PtParameter.Properties[1]);
+				return true;
+			case 173:
+				this.readEvalParameterProperty(tmp.Block2PtParameter.Properties[2]);
+				return true;
+			case 174:
+				this.readEvalParameterProperty(tmp.Block2PtParameter.Properties[3]);
 				return true;
 			default:
 				if (!this.tryAssignCurrentValue(template.CadObject, map))
@@ -2067,6 +2086,22 @@ internal class DxfObjectsSectionReader : DxfSectionReaderBase
 					return this.readBlockParameter(template, map);
 				}
 				return true;
+		}
+	}
+
+	private void readEvalParameterProperty(EvalParameterProperty property)
+	{
+		short nconnections = this._reader.ValueAsShort;
+		for (; nconnections > 0; nconnections--)
+		{
+			EvalConnection connection = new EvalConnection();
+			// No dinamic reader for codes 9x and 30x
+			this._reader.ReadNext();
+			connection.Id = this._reader.ValueAsLong;
+			this._reader.ReadNext();
+			connection.Name = this._reader.ValueAsString;
+
+			property.Connections.Add(connection);
 		}
 	}
 
@@ -2111,6 +2146,19 @@ internal class DxfObjectsSectionReader : DxfSectionReaderBase
 				if (!this.tryAssignCurrentValue(template.CadObject, map))
 				{
 					return this.readBlock2PtParameter(template, map);
+				}
+				return true;
+		}
+	}
+
+	private bool readBlockLookupParameter(CadTemplate template, DxfMap map)
+	{
+		switch (this._reader.Code)
+		{
+			default:
+				if (!this.tryAssignCurrentValue(template.CadObject, map.SubClasses[DxfSubclassMarker.BlockLookupParameter]))
+				{
+					return this.readBlock1PtParameter(template, map);
 				}
 				return true;
 		}
