@@ -330,7 +330,7 @@
       "Uid": null,
       "IsMRef": true,
       "Title": "ACadSharp.Classes.DxfClassCollection",
-      "Summary": null
+      "Summary": "<p sourcefile=\"api/ACadSharp.Classes.DxfClassCollection.yml\" sourcestartlinenumber=\"1\">Represents a collection of <xref href=\"ACadSharp.Classes.DxfClass\" data-throw-if-not-resolved=\"false\"></xref> objects.</p>\n"
     },
     {
       "type": "ManagedReference",
