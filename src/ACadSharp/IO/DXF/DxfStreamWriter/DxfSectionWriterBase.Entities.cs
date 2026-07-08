@@ -1276,9 +1276,10 @@ internal abstract partial class DxfSectionWriterBase
 
 		this._writer.Write(DxfCode.Subclass, DxfSubclassMarker.Solid3D);
 
-		if (this.Version >= ACadVersion.AC1027)
+		//H 350 History ID: mandatory since the 2007 format, AutoCAD discards
+		//the whole DXF when it misses
+		if (this.Version >= ACadVersion.AC1021)
 		{
-			//H 350 History ID
 			this._writer.Write(350, (ulong)0);
 		}
 	}
