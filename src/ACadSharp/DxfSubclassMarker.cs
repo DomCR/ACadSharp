@@ -1,282 +1,284 @@
-﻿namespace ACadSharp
+﻿namespace ACadSharp;
+
+public static class DxfSubclassMarker
 {
-	public static class DxfSubclassMarker
-	{
-		public const string AecWall = "AecDbWall";
+	public const string AcDbPlaceHolder = "AcDbPlaceHolder";
 
-		public const string AecDbWallStyle = "AecDbWallStyle";
+	public const string AecDbCleanupGroupDef = "AecDbCleanupGroupDef";
 
-		public const string AecDbCleanupGroupDef = "AecDbCleanupGroupDef";
+	public const string AecDbWallStyle = "AecDbWallStyle";
 
-		public const string BinRecord = "BinRecord";
+	public const string AecWall = "AecDbWall";
 
-		public const string ApplicationId = "AcDbRegAppTableRecord";
+	public const string AlignedDimension = "AcDbAlignedDimension";
 
-		public const string AcDbPlaceHolder = "AcDbPlaceHolder";
+	public const string Angular2LineDimension = "AcDb2LineAngularDimension";
 
-		public const string AlignedDimension = "AcDbAlignedDimension";
+	public const string Angular3PointDimension = "AcDb3PointAngularDimension";
 
-		public const string Angular2LineDimension = "AcDb2LineAngularDimension";
+	public const string AnnotScaleObjectContextData = "AcDbAnnotScaleObjectContextData";
 
-		public const string Angular3PointDimension = "AcDb3PointAngularDimension";
+	public const string ApplicationId = "AcDbRegAppTableRecord";
 
-		public const string AnnotScaleObjectContextData = "AcDbAnnotScaleObjectContextData";
+	public const string Arc = "AcDbArc";
 
-		public const string Arc = "AcDbArc";
+	public const string Attribute = "AcDbAttribute";
 
-		public const string Attribute = "AcDbAttribute";
+	public const string AttributeDefinition = "AcDbAttributeDefinition";
 
-		public const string AttributeDefinition = "AcDbAttributeDefinition";
+	public const string Balloon = "AcmBalloon";
 
-		public const string BlkRefObjectContextData = "AcDbBlkRefObjectContextData";
+	public const string BinRecord = "BinRecord";
 
-		public const string Block1PtParameter = "AcDbBlock1PtParameter";
+	public const string BlkRefObjectContextData = "AcDbBlkRefObjectContextData";
 
-		public const string Block2PtParameter = "AcDbBlock2PtParameter";
+	public const string Block1PtParameter = "AcDbBlock1PtParameter";
 
-		public const string BlockLookupParameter = "AcDbBlockLookUpParameter";
+	public const string Block2PtParameter = "AcDbBlock2PtParameter";
 
-		public const string BlockAction = "AcDbBlockAction";
+	public const string BlockAction = "AcDbBlockAction";
 
-		public const string BlockActionBasePt = "AcDbBlockActionWithBasePt";
+	public const string BlockActionBasePt = "AcDbBlockActionWithBasePt";
 
-		public const string BlockBasePointParameter = "AcDbBlockBasePointParameter";
+	public const string BlockBasePointParameter = "AcDbBlockBasePointParameter";
 
-		public const string BlockBegin = "AcDbBlockBegin";
+	public const string BlockBegin = "AcDbBlockBegin";
 
-		public const string BlockElement = "AcDbBlockElement";
+	public const string BlockElement = "AcDbBlockElement";
 
-		public const string BlockEnd = "AcDbBlockEnd";
+	public const string BlockEnd = "AcDbBlockEnd";
 
-		public const string BlockFlipAction = "AcDbBlockFlipAction";
+	public const string BlockFlipAction = "AcDbBlockFlipAction";
 
-		public const string BlockFlipGrip = "AcDbBlockFlipGrip";
+	public const string BlockFlipGrip = "AcDbBlockFlipGrip";
 
-		public const string BlockFlipParameter = "AcDbBlockFlipParameter";
+	public const string BlockFlipParameter = "AcDbBlockFlipParameter";
 
-		public const string BlockGrip = "AcDbBlockGrip";
+	public const string BlockGrip = "AcDbBlockGrip";
 
-		public const string BlockGripExpression = "AcDbBlockGripExpr";
+	public const string BlockGripExpression = "AcDbBlockGripExpr";
 
-		public const string BlockLinearParameter = "AcDbBlockLinearParameter";
-		public const string BlockPointParameter = "AcDbBlockPointParameter";
+	public const string BlockLinearParameter = "AcDbBlockLinearParameter";
 
-		public const string BlockParameter = "AcDbBlockParameter";
+	public const string BlockLookupParameter = "AcDbBlockLookUpParameter";
 
-		public const string BlockRecord = "AcDbBlockTableRecord";
+	public const string BlockMoveAction = "AcDbBlockMoveAction";
 
-		public const string BlockRepresentationData = "AcDbBlockRepresentationData";
+	public const string BlockParameter = "AcDbBlockParameter";
 
-		public const string BlockRotationAction = "AcDbBlockRotationAction";
+	public const string BlockPointParameter = "AcDbBlockPointParameter";
 
-		public const string BlockRotationGrip = "AcDbBlockRotationGrip";
+	public const string BlockRecord = "AcDbBlockTableRecord";
 
-		public const string BlockRotationParameter = "AcDbBlockRotationParameter";
+	public const string BlockRepresentationData = "AcDbBlockRepresentationData";
 
-		public const string BlockVisibilityGrip = "AcDbBlockVisibilityGrip";
+	public const string BlockRotationAction = "AcDbBlockRotationAction";
 
-		public const string BlockVisibilityParameter = "AcDbBlockVisibilityParameter";
+	public const string BlockRotationGrip = "AcDbBlockRotationGrip";
 
-		public const string CellStyleMap = "AcDbCellStyleMap";
+	public const string BlockRotationParameter = "AcDbBlockRotationParameter";
 
-		public const string Circle = "AcDbCircle";
+	public const string BlockVisibilityGrip = "AcDbBlockVisibilityGrip";
 
-		public const string DbColor = "AcDbColor";
+	public const string BlockVisibilityParameter = "AcDbBlockVisibilityParameter";
 
-		public const string DiametricDimension = "AcDbDiametricDimension";
+	public const string CellStyleMap = "AcDbCellStyleMap";
 
-		public const string Dictionary = "AcDbDictionary";
+	public const string Circle = "AcDbCircle";
 
-		public const string DictionaryVar = "AcDbDictionaryVar";
+	public const string DbColor = "AcDbColor";
 
-		public const string DictionaryVariables = "DictionaryVariables";
+	public const string DiametricDimension = "AcDbDiametricDimension";
 
-		public const string DictionaryWithDefault = "AcDbDictionaryWithDefault";
+	public const string Dictionary = "AcDbDictionary";
 
-		public const string Dimension = "AcDbDimension";
+	public const string DictionaryVar = "AcDbDictionaryVar";
 
-		public const string DimensionStyle = "AcDbDimStyleTableRecord";
+	public const string DictionaryVariables = "DictionaryVariables";
 
-		public const string DimensionStyleTable = "AcDbDimStyleTable";
+	public const string DictionaryWithDefault = "AcDbDictionaryWithDefault";
 
-		public const string DimensionAssociation = "AcDbDimAssoc";
+	public const string Dimension = "AcDbDimension";
 
-		public const string Ellipse = "AcDbEllipse";
+	public const string DimensionAssociation = "AcDbDimAssoc";
 
-		public const string Entity = "AcDbEntity";
+	public const string DimensionStyle = "AcDbDimStyleTableRecord";
 
-		public const string EvalGraph = "AcDbEvalGraph";
+	public const string DimensionStyleTable = "AcDbDimStyleTable";
 
-		public const string EvalGraphExpr = "AcDbEvalExpr";
+	public const string Ellipse = "AcDbEllipse";
 
-		public const string Face3d = "AcDbFace";
+	public const string Entity = "AcDbEntity";
 
-		public const string Field = "AcDbField";
+	public const string EvalGraph = "AcDbEvalGraph";
 
-		public const string FieldList = "AcDbFieldList";
+	public const string EvalGraphExpr = "AcDbEvalExpr";
 
-		public const string Filter = "AcDbFilter";
+	public const string Face3d = "AcDbFace";
 
-		public const string FormattedTableData = "AcDbFormattedTableData";
+	public const string Field = "AcDbField";
 
-		public const string GeoData = "AcDbGeoData";
+	public const string FieldList = "AcDbFieldList";
 
-		public const string Group = "AcDbGroup";
+	public const string Filter = "AcDbFilter";
 
-		public const string Hatch = "AcDbHatch";
+	public const string FormattedTableData = "AcDbFormattedTableData";
 
-		public const string Helix = "AcDbHelix";
+	public const string GeoData = "AcDbGeoData";
 
-		public const string IdSet = "AcDbIdSet";
+	public const string Group = "AcDbGroup";
 
-		public const string Insert = "AcDbBlockReference";
+	public const string Hatch = "AcDbHatch";
 
-		public const string Layer = "AcDbLayerTableRecord";
+	public const string Helix = "AcDbHelix";
 
-		public const string Layout = "AcDbLayout";
+	public const string IdSet = "AcDbIdSet";
 
-		public const string Leader = "AcDbLeader";
+	public const string Insert = "AcDbBlockReference";
 
-		public const string Line = "AcDbLine";
+	public const string Layer = "AcDbLayerTableRecord";
 
-		public const string LinearDimension = "AcDbRotatedDimension";
+	public const string Layout = "AcDbLayout";
 
-		public const string Linetype = "AcDbLinetypeTableRecord";
+	public const string Leader = "AcDbLeader";
 
-		public const string LinkedData = "AcDbLinkedData";
+	public const string Line = "AcDbLine";
 
-		public const string LinkedTableData = "AcDbLinkedTableData";
+	public const string LinearDimension = "AcDbRotatedDimension";
 
-		public const string LwPolyline = "AcDbPolyline";
+	public const string Linetype = "AcDbLinetypeTableRecord";
 
-		public const string Material = "AcDbMaterial";
+	public const string LinkedData = "AcDbLinkedData";
 
-		public const string Mesh = "AcDbSubDMesh";
+	public const string LinkedTableData = "AcDbLinkedTableData";
 
-		public const string MInsert = "AcDbMInsertBlock";
+	public const string LwPolyline = "AcDbPolyline";
 
-		public const string MLeaderStyle = "AcDbMLeaderStyle";
+	public const string Material = "AcDbMaterial";
 
-		public const string MLine = "AcDbMline";
+	public const string Mesh = "AcDbSubDMesh";
 
-		public const string MLineStyle = "AcDbMlineStyle";
+	public const string MInsert = "AcDbMInsertBlock";
 
-		public const string ModelerGeometry = "AcDbModelerGeometry";
+	public const string MLeaderStyle = "AcDbMLeaderStyle";
 
-		public const string MText = "AcDbMText";
+	public const string MLine = "AcDbMline";
 
-		public const string MTextAttributeObjectContextData = "AcDbMTextAttributeObjectContextData";
+	public const string MLineStyle = "AcDbMlineStyle";
 
-		public const string MultiLeader = "AcDbMLeader";
+	public const string ModelerGeometry = "AcDbModelerGeometry";
 
-		public const string MultiLeaderObjectContextData = "AcDbMLeaderObjectContextData";
+	public const string MText = "AcDbMText";
 
-		public const string ObjectContextData = "AcDbObjectContextData";
+	public const string MTextAttributeObjectContextData = "AcDbMTextAttributeObjectContextData";
 
-		public const string Ole2Frame = "AcDbOle2Frame";
+	public const string MultiLeader = "AcDbMLeader";
 
-		public const string OrdinateDimension = "AcDbOrdinateDimension";
+	public const string MultiLeaderObjectContextData = "AcDbMLeaderObjectContextData";
 
-		public const string PdfDefinition = "AcDbPdfDefinition";
+	public const string ObjectContextData = "AcDbObjectContextData";
 
-		public const string PdfReference = "AcDbPdfReference";
+	public const string Ole2Frame = "AcDbOle2Frame";
 
-		public const string PlotSettings = "AcDbPlotSettings";
+	public const string OrdinateDimension = "AcDbOrdinateDimension";
 
-		public const string Point = "AcDbPoint";
+	public const string PartList = "AcmPartList";
 
-		public const string PolyfaceMesh = "AcDbPolyFaceMesh";
+	public const string PartRef = "AcmPartRef";
 
-		public const string PolyfaceMeshFace = "AcDbFaceRecord";
+	public const string PdfDefinition = "AcDbPdfDefinition";
 
-		public const string PolyfaceMeshVertex = "AcDbPolyFaceMeshVertex";
+	public const string PdfReference = "AcDbPdfReference";
 
-		public const string PolygonMesh = "AcDbPolygonMesh";
+	public const string PlotSettings = "AcDbPlotSettings";
 
-		public const string PolygonMeshVertex = "AcDbPolygonMeshVertex";
+	public const string Point = "AcDbPoint";
 
-		public const string Polyline = "AcDb2dPolyline";
+	public const string PolyfaceMesh = "AcDbPolyFaceMesh";
 
-		public const string Polyline3d = "AcDb3dPolyline";
+	public const string PolyfaceMeshFace = "AcDbFaceRecord";
 
-		public const string Polyline3dVertex = "AcDb3dPolylineVertex";
+	public const string PolyfaceMeshVertex = "AcDbPolyFaceMeshVertex";
 
-		public const string PolylineVertex = "AcDb2dVertex";
+	public const string PolygonMesh = "AcDbPolygonMesh";
 
-		public const string ProxyEntity = "AcDbProxyEntity";
+	public const string PolygonMeshVertex = "AcDbPolygonMeshVertex";
 
-		public const string ProxyObject = "AcDbProxyObject";
+	public const string Polyline = "AcDb2dPolyline";
 
-		public const string RadialDimension = "AcDbRadialDimension";
+	public const string Polyline3d = "AcDb3dPolyline";
 
-		public const string RasterImage = "AcDbRasterImage";
+	public const string Polyline3dVertex = "AcDb3dPolylineVertex";
 
-		public const string RasterImageDef = "AcDbRasterImageDef";
+	public const string PolylineVertex = "AcDb2dVertex";
 
-		public const string RasterImageDefReactor = "AcDbRasterImageDefReactor";
+	public const string ProxyEntity = "AcDbProxyEntity";
 
-		public const string RasterVariables = "AcDbRasterVariables";
+	public const string ProxyObject = "AcDbProxyObject";
 
-		public const string Ray = "AcDbRay";
+	public const string RadialDimension = "AcDbRadialDimension";
 
-		public const string Scale = "AcDbScale";
+	public const string RasterImage = "AcDbRasterImage";
 
-		public const string Shape = "AcDbShape";
+	public const string RasterImageDef = "AcDbRasterImageDef";
 
-		public const string Solid = "AcDbTrace";
+	public const string RasterImageDefReactor = "AcDbRasterImageDefReactor";
 
-		public const string Solid3D = "AcDb3dSolid";
+	public const string RasterVariables = "AcDbRasterVariables";
 
-		public const string SortentsTable = "AcDbSortentsTable";
+	public const string Ray = "AcDbRay";
 
-		public const string SpatialFilter = "AcDbSpatialFilter";
+	public const string Scale = "AcDbScale";
 
-		public const string Spline = "AcDbSpline";
+	public const string Shape = "AcDbShape";
 
-		public const string Table = "AcDbSymbolTable";
+	public const string Solid = "AcDbTrace";
 
-		public const string TableContent = "AcDbTableContent";
+	public const string Solid3D = "AcDb3dSolid";
 
-		public const string TableEntity = "AcDbTable";
+	public const string SortentsTable = "AcDbSortentsTable";
 
-		public const string TableRecord = "AcDbSymbolTableRecord";
+	public const string SpatialFilter = "AcDbSpatialFilter";
 
-		public const string TableStyle = "AcDbTableStyle";
+	public const string Spline = "AcDbSpline";
 
-		public const string Text = "AcDbText";
+	public const string Table = "AcDbSymbolTable";
 
-		public const string TextStyle = "AcDbTextStyleTableRecord";
+	public const string TableContent = "AcDbTableContent";
 
-		public const string Tolerance = "AcDbFcf";
+	public const string TableEntity = "AcDbTable";
 
-		public const string Trace = "AcDbTrace";
+	public const string TableRecord = "AcDbSymbolTableRecord";
 
-		public const string Ucs = "AcDbUCSTableRecord";
+	public const string TableStyle = "AcDbTableStyle";
 
-		public const string Underlay = "AcDbUnderlayReference";
+	public const string Text = "AcDbText";
 
-		public const string UnderlayDefinition = "AcDbUnderlayDefinition";
+	public const string TextStyle = "AcDbTextStyleTableRecord";
 
-		public const string Vertex = "AcDbVertex";
+	public const string Tolerance = "AcDbFcf";
 
-		public const string View = "AcDbViewTableRecord";
+	public const string Trace = "AcDbTrace";
 
-		public const string Viewport = "AcDbViewport";
+	public const string Ucs = "AcDbUCSTableRecord";
 
-		public const string VisualStyle = "AcDbVisualStyle";
+	public const string Underlay = "AcDbUnderlayReference";
 
-		public const string VPort = "AcDbViewportTableRecord";
+	public const string UnderlayDefinition = "AcDbUnderlayDefinition";
 
-		public const string Wipeout = "AcDbWipeout";
+	public const string Vertex = "AcDbVertex";
 
-		public const string XLine = "AcDbXline";
+	public const string View = "AcDbViewTableRecord";
 
-		public const string XRecord = "AcDbXrecord";
+	public const string Viewport = "AcDbViewport";
 
-		public const string PartList = "AcmPartList";
+	public const string VisualStyle = "AcDbVisualStyle";
 
-		public const string PartRef = "AcmPartRef";
+	public const string VPort = "AcDbViewportTableRecord";
 
-		public const string Balloon = "AcmBalloon";
-	}
+	public const string Wipeout = "AcDbWipeout";
+
+	public const string XLine = "AcDbXline";
+
+	public const string XRecord = "AcDbXrecord";
 }
