@@ -2192,6 +2192,41 @@ internal partial class DwgObjectWriter : DwgSectionIO
 	private void writeModelerGeometry(ModelerGeometry geometry)
 	{
 		//Chapter 24 - Info
+		if (this.R2013Plus)
+		{
+			//the payload lives in the AcDs data section, announced by the DS
+			//binary data bit of the common data; the entity stream carries the
+			//layout the CAD applications emit
+
+			//ACIS Empty bit B: 1, no inline data
+			this._writer.WriteBit(true);
+
+			//Wireframe data present B, with the empty block the CAD writers emit
+			this._writer.WriteBit(true);
+			//Point present B
+			this._writer.WriteBit(false);
+			//Num IsoLines BL
+			this._writer.WriteBitLong(0);
+			//IsoLines present B
+			this._writer.WriteBit(false);
+
+			//ACIS Empty bit2 B: normally 1
+			this._writer.WriteBit(true);
+
+			//Has revision guid B + revision fields
+			this._writer.WriteBit(true);
+			//Revision major BL
+			this._writer.WriteBitLong(1);
+			//Revision minor 1 and 2 BS
+			this._writer.WriteBitShort(0);
+			this._writer.WriteBitShort(0);
+			//Revision bytes RC[8]
+			this._writer.WriteBytes(new byte[8]);
+			//End marker BL
+			this._writer.WriteBitLong(0);
+			return;
+		}
+
 		//ACIS Empty bit B X If 1, then no data follows: the payload is written
 		//through the same shortcut the reader takes, without wireframe data
 		this._writer.WriteBit(false);

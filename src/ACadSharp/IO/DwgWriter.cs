@@ -117,7 +117,7 @@ public class DwgWriter : CadWriterBase<DwgWriterConfiguration>
 		this.writeObjects();
 		this.writeObjFreeSpace();
 		this.writeTemplate();
-		//this.writePrototype();
+		this.writeAcDsData();
 
 		//Write in the last place to avoid conflicts with versions < AC1018
 		this.writeHandles();
@@ -394,6 +394,42 @@ public class DwgWriter : CadWriterBase<DwgWriterConfiguration>
 		writer.WriteInt(0);
 
 		this._fileHeaderWriter.AddSection(DwgSectionDefinition.SummaryInfo, stream, false, 0x100);
+	}
+
+	private void writeAcDsData()
+	{
+		//R2013+ carries the binary ACIS payloads of the modeler geometry
+		//entities in the AcDs data store, paired by owner handle
+		if (this._document.Header.Version < ACadVersion.AC1027)
+		{
+			return;
+		}
+
+		Dictionary<ulong, byte[]> records = new Dictionary<ulong, byte[]>();
+		foreach (Tables.BlockRecord blockRecord in this._document.BlockRecords)
+		{
+			foreach (Entities.Entity entity in blockRecord.Entities)
+			{
+				if (entity is Entities.ModelerGeometry geometry
+					&& geometry.AcisData != null
+					&& geometry.AcisData.Length > 0
+					&& geometry.IsBinaryAcisData)
+				{
+					records[geometry.Handle] = geometry.AcisData;
+				}
+			}
+		}
+
+		if (records.Count == 0)
+		{
+			return;
+		}
+
+		byte[] section = DwgAcDsDataWriter.Write(records);
+		MemoryStream stream = new MemoryStream();
+		stream.Write(section, 0, section.Length);
+
+		this._fileHeaderWriter.AddSection(DwgSectionDefinition.AcDsPrototype, stream, true);
 	}
 
 	private void writeTemplate()
