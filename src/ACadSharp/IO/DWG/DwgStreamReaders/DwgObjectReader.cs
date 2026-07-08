@@ -3515,7 +3515,11 @@ namespace ACadSharp.IO.DWG
 			{
 				//R2013+ stores the ACIS payload in the AcDs data section: register
 				//the entity so the section reader can attach the matching blob.
+				//The entity stream has no ACIS empty bit: it goes straight to the
+				//wireframe block, the trailing int and the revision guid, none of
+				//which carries anything to expose.
 				this._builder.AcisDsEntities.Add(geometry);
+				return template;
 			}
 
 			//ACIS Empty bit B X If 1, then no data follows

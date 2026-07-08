@@ -2195,28 +2195,34 @@ internal partial class DwgObjectWriter : DwgSectionIO
 		if (this.R2013Plus)
 		{
 			//the payload lives in the AcDs data section, announced by the DS
-			//binary data bit of the common data; the entity stream carries the
-			//layout the CAD applications emit
+			//binary data bit of the common data. The entity stream has no ACIS
+			//empty bit here: it opens directly with the wireframe block, then
+			//the trailing int and the revision guid in its native layout.
 
-			//ACIS Empty bit B: 1, no inline data
-			this._writer.WriteBit(true);
-
-			//Wireframe data present B, with the empty block the CAD writers emit
-			this._writer.WriteBit(true);
-			//Point present B
+			//Wireframe data present B: no display cache, the CAD regenerates it
 			this._writer.WriteBit(false);
-			//Num IsoLines BL
+
+			//Trailing BL, zero in the files the CAD writers emit
 			this._writer.WriteBitLong(0);
-			//IsoLines present B
-			this._writer.WriteBit(false);
 
-			//ACIS Empty bit2 B: normally 1
+			//Has revision guid B + the guid as {BL, BS, BS, RC[8]}
 			this._writer.WriteBit(true);
 
-			//Has revision guid B: the reference writers emit 0 here, no revision
-			//fields follow. Writing 1 with placeholder fields makes the modeler
-			//reject the entity (eOutOfRange) even though our own reader tolerates it.
-			this._writer.WriteBit(false);
+			if (geometry.Guid == Guid.Empty)
+			{
+				geometry.Guid = Guid.NewGuid();
+			}
+
+			byte[] guid = geometry.Guid.ToByteArray();
+			this._writer.WriteBitLong(BitConverter.ToInt32(guid, 0));
+			this._writer.WriteBitShort(BitConverter.ToInt16(guid, 4));
+			this._writer.WriteBitShort(BitConverter.ToInt16(guid, 6));
+			byte[] tail = new byte[8];
+			Array.Copy(guid, 8, tail, 0, 8);
+			this._writer.WriteBytes(tail);
+
+			//End marker BL
+			this._writer.WriteBitLong(0);
 			return;
 		}
 
