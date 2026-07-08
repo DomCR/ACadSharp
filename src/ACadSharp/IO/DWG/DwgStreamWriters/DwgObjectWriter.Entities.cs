@@ -2227,11 +2227,21 @@ internal partial class DwgObjectWriter : DwgSectionIO
 			return;
 		}
 
-		//ACIS Empty bit B X If 1, then no data follows: the payload is written
-		//through the same shortcut the reader takes, without wireframe data
+		//ACIS Empty bit B X If 1, then no data follows
 		this._writer.WriteBit(false);
 
 		this.writeModelerGeometryData(geometry);
+
+		//Wireframe data present B: no display cache, the CAD regenerates it.
+		//The trailing fields are mandatory: without them the readers pick up
+		//garbage bits and run off the object data.
+		this._writer.WriteBit(false);
+
+		//R2007+: trailing BL, zero in the files the CAD writers emit
+		if (this.R2007Plus)
+		{
+			this._writer.WriteBitLong(0);
+		}
 	}
 
 	private void writeModelerGeometryData(ModelerGeometry geometry)
