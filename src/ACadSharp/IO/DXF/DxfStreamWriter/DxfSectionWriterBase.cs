@@ -236,6 +236,8 @@ internal abstract partial class DxfSectionWriterBase
 
 	protected void writeLongTextValue(int code, int subcode, string text)
 	{
+		text = text ?? string.Empty;
+
 		while (text.Length > 250)
 		{
 			this._writer.Write(subcode, text.Substring(0, 250));
