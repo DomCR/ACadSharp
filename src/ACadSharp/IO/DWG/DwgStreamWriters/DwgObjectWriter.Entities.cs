@@ -2195,34 +2195,18 @@ internal partial class DwgObjectWriter : DwgSectionIO
 		if (this.R2013Plus)
 		{
 			//the payload lives in the AcDs data section, announced by the DS
-			//binary data bit of the common data. The entity stream has no ACIS
-			//empty bit here: it opens directly with the wireframe block, then
-			//the trailing int and the revision guid in its native layout.
+			//binary data bit of the common data. The modeler block is just four
+			//bits, decoded from an Autodesk-written R2013 file of our own scene:
+			//ACIS empty, wireframe absent, ACIS empty again, no revision guid.
 
-			//Wireframe data present B: no display cache, the CAD regenerates it
-			this._writer.WriteBit(false);
-
-			//Trailing BL, zero in the files the CAD writers emit
-			this._writer.WriteBitLong(0);
-
-			//Has revision guid B + the guid as {BL, BS, BS, RC[8]}
+			//ACIS Empty bit B: 1, no inline data
 			this._writer.WriteBit(true);
-
-			if (geometry.Guid == Guid.Empty)
-			{
-				geometry.Guid = Guid.NewGuid();
-			}
-
-			byte[] guid = geometry.Guid.ToByteArray();
-			this._writer.WriteBitLong(BitConverter.ToInt32(guid, 0));
-			this._writer.WriteBitShort(BitConverter.ToInt16(guid, 4));
-			this._writer.WriteBitShort(BitConverter.ToInt16(guid, 6));
-			byte[] tail = new byte[8];
-			Array.Copy(guid, 8, tail, 0, 8);
-			this._writer.WriteBytes(tail);
-
-			//End marker BL
-			this._writer.WriteBitLong(0);
+			//Wireframe data present B: 0, no display cache
+			this._writer.WriteBit(false);
+			//ACIS Empty bit2 B: 1
+			this._writer.WriteBit(true);
+			//Has revision guid B: 0, no revision fields follow
+			this._writer.WriteBit(false);
 			return;
 		}
 
