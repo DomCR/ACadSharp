@@ -136,6 +136,8 @@ internal class DxfObjectsSectionReader : DxfSectionReaderBase
 				return this.readObjectCodes<BlockRotationGrip>(new CadBlockRotationGripTemplate(), this.readBlockRotationGrip);
 			case DxfFileToken.ObjectBlockRotateAction:
 				return this.readObjectCodes<BlockRotationAction>(new CadBlockRotationActionTemplate(), this.readBlockRotationAction);
+			case DxfFileToken.ObjectBlockPointParameter:
+				return this.readObjectCodes<BlockPointParameter>(new CadBlockPointParameterTemplate(), this.readBlockPointParameter);
 			case DxfFileToken.ObjectField:
 				return this.readObjectCodes<Field>(new CadFieldTemplate(new Field()), this.readField);
 			case DxfFileToken.ObjectFieldList:
@@ -2004,6 +2006,21 @@ internal class DxfObjectsSectionReader : DxfSectionReaderBase
 				if (!this.tryAssignCurrentValue(template.CadObject, map.SubClasses[DxfSubclassMarker.BlockActionBasePt]))
 				{
 					return this.readBlockAction(template, map);
+				}
+				return true;
+		}
+	}
+
+	private bool readBlockPointParameter(CadTemplate template, DxfMap map)
+	{
+		CadBlockPointParameterTemplate tmp = template as CadBlockPointParameterTemplate;
+
+		switch (this._reader.Code)
+		{
+			default:
+				if (!this.tryAssignCurrentValue(template.CadObject, map.SubClasses[DxfSubclassMarker.BlockPointParameter]))
+				{
+					return this.readBlock1PtParameter(template, map);
 				}
 				return true;
 		}

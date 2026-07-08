@@ -62,13 +62,7 @@ internal partial class DwgObjectReader : DwgSectionIO
 			short n = this._mergedReaders.ReadBitShort();
 			for (int j = 0; j < n; j++)
 			{
-				EvalConnection connection = new EvalConnection();
-				//94 95 (I guess 96 97)
-				connection.Id = this._mergedReaders.ReadBitLong();
-				//303 304 : exposed custom property label
-				connection.Name = this._mergedReaders.ReadVariableText();
-
-				eprop.Connections.Add(connection);
+				eprop.Connections.Add(this.readEvalConnection());
 			}
 
 			template.Block2PtParameter.Properties[i] = eprop;
@@ -117,11 +111,8 @@ internal partial class DwgObjectReader : DwgSectionIO
 
 		blockActionBasePt.BasePoint = this._mergedReaders.Read3BitDouble();
 
-		blockActionBasePt.Value92 = this._mergedReaders.ReadBitLong();
-		blockActionBasePt.Value301 = this._mergedReaders.ReadVariableText();
-
-		blockActionBasePt.Value93 = this._mergedReaders.ReadBitLong();
-		blockActionBasePt.Value302 = this._mergedReaders.ReadVariableText();
+		blockActionBasePt.Connections[0] = this.readEvalConnection();
+		blockActionBasePt.Connections[1] = this.readEvalConnection();
 
 		blockActionBasePt.Value280 = this._mergedReaders.ReadBit();
 		blockActionBasePt.Value1012 = this._mergedReaders.Read3BitDouble();
@@ -205,6 +196,20 @@ internal partial class DwgObjectReader : DwgSectionIO
 		template.BlockParameter.ShowProperties = this._mergedReaders.ReadBit();
 		//281
 		template.BlockParameter.ChainActions = this._mergedReaders.ReadBit();
+	}
+
+	private CadTemplate readBlockPointParameter()
+	{
+		BlockPointParameter blockPointParameter = new();
+		CadBlockPointParameterTemplate template = new(blockPointParameter);
+
+		this.readBlock1PtParameter(template);
+
+		blockPointParameter.Label = this._mergedReaders.ReadVariableText();
+		blockPointParameter.Description = this._mergedReaders.ReadVariableText();
+		blockPointParameter.LabelPosition = this._mergedReaders.Read3BitDouble();
+
+		return template;
 	}
 
 	private CadTemplate readBlockRepresentationData()
@@ -360,6 +365,18 @@ internal partial class DwgObjectReader : DwgSectionIO
 		}
 
 		return template;
+	}
+
+	private EvalConnection readEvalConnection()
+	{
+		EvalConnection connection = new EvalConnection();
+
+		//94 95 (I guess 96 97)
+		connection.Id = this._mergedReaders.ReadBitLong();
+		//303 304 : exposed custom property label
+		connection.Name = this._mergedReaders.ReadVariableText();
+
+		return connection;
 	}
 
 	private void readEvaluationExpression(CadEvaluationExpressionTemplate template)

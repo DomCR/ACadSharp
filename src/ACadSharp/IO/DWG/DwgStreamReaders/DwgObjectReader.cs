@@ -5648,6 +5648,9 @@ namespace ACadSharp.IO.DWG
 				case DxfFileToken.ObjectBlockRotateAction:
 					template = this.readBlockRotateAction();
 					break;
+				case DxfFileToken.ObjectBlockPointParameter:
+					template = this.readBlockPointParameter();
+					break;
 				case "SPATIAL_FILTER":
 					template = this.readSpatialFilter();
 					break;

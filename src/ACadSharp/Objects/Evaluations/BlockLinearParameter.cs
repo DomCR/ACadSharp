@@ -14,8 +14,6 @@ namespace ACadSharp.Objects.Evaluations;
 [DxfSubClass(DxfSubclassMarker.BlockLinearParameter)]
 public class BlockLinearParameter : Block2PtParameter
 {
-	public ParameterValueSet ValueSet { get; set; } = new ParameterValueSet();
-
 	/// <summary>
 	/// Gets or sets the description of the parameter.
 	/// </summary>
@@ -38,8 +36,7 @@ public class BlockLinearParameter : Block2PtParameter
 	public override string ObjectName => DxfFileToken.ObjectBlockLinearParameter;
 
 	/// <inheritdoc/>
-	public override ObjectType ObjectType => ObjectType.UNLISTED;
-
-	/// <inheritdoc/>
 	public override string SubclassMarker => DxfSubclassMarker.BlockLinearParameter;
+
+	public ParameterValueSet ValueSet { get; set; } = new ParameterValueSet();
 }

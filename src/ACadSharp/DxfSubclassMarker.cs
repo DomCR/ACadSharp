@@ -59,6 +59,7 @@
 		public const string BlockGripExpression = "AcDbBlockGripExpr";
 
 		public const string BlockLinearParameter = "AcDbBlockLinearParameter";
+		public const string BlockPointParameter = "AcDbBlockPointParameter";
 
 		public const string BlockParameter = "AcDbBlockParameter";
 
