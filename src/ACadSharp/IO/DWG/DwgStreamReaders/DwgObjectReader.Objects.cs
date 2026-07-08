@@ -91,10 +91,10 @@ internal partial class DwgObjectReader : DwgSectionIO
 		BlockAction blockAction = template.BlockAction;
 
 		// 1010, 1020, 1030
-		blockAction.ActionPoint = this._mergedReaders.Read3BitDouble();
+		blockAction.LabelPosition = this._mergedReaders.Read3BitDouble();
 
 		//71
-		short entityCount = this._objectReader.ReadBitShort();
+		int entityCount = this._objectReader.ReadBitLong();
 		for (int i = 0; i < entityCount; i++)
 		{
 			ulong entityHandle = this.handleReference();
@@ -102,7 +102,11 @@ internal partial class DwgObjectReader : DwgSectionIO
 		}
 
 		// 70
-		blockAction.Value70 = this._mergedReaders.ReadBitShort();
+		int nparameters = this._mergedReaders.ReadBitLong();
+		for (int i = 0; i < nparameters; i++)
+		{
+			long parameterId = this._mergedReaders.ReadBitLong();
+		}
 	}
 
 	private void readBlockActionBasePt(CadBlockActionBasePtTemplate template)
@@ -111,10 +115,11 @@ internal partial class DwgObjectReader : DwgSectionIO
 
 		BlockActionBasePt blockActionBasePt = template.CadObject as BlockActionBasePt;
 
-		blockActionBasePt.Value1011 = this._mergedReaders.Read3BitDouble();
+		blockActionBasePt.BasePoint = this._mergedReaders.Read3BitDouble();
 
 		blockActionBasePt.Value92 = this._mergedReaders.ReadBitLong();
 		blockActionBasePt.Value301 = this._mergedReaders.ReadVariableText();
+
 		blockActionBasePt.Value93 = this._mergedReaders.ReadBitLong();
 		blockActionBasePt.Value302 = this._mergedReaders.ReadVariableText();
 

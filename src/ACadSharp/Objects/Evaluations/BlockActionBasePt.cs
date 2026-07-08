@@ -10,7 +10,7 @@ public abstract class BlockActionBasePt : BlockAction
 	public override string SubclassMarker => DxfSubclassMarker.BlockActionBasePt;
 
 	[DxfCodeValue(1011, 1021, 1031)]
-	public XYZ Value1011 { get; set; }
+	public XYZ BasePoint { get; set; }
 
 	[DxfCodeValue(1012, 1022, 1032)]
 	public XYZ Value1012 { get; set; }
