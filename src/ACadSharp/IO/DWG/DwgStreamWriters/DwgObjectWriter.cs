@@ -99,13 +99,18 @@ internal partial class DwgObjectWriter : DwgSectionIO
 
 	//Pre-2013 files carry the ACIS payload in the entity stream: version 1
 	//blocks (R2000-, character-swapped SAT only) or a version 2 raw file
-	//(R2004-R2010, SAT or SAB). 2013+ targets need the AcDs section, not
-	//written yet.
+	//(R2004-R2010, SAT or SAB). The 2013+ targets store the binary payload
+	//in the AcDs data section instead.
 	private bool canWriteModelerGeometry(ModelerGeometry geometry)
 	{
-		if (this.R2013Plus || geometry.AcisData == null || geometry.AcisData.Length == 0)
+		if (geometry.AcisData == null || geometry.AcisData.Length == 0)
 		{
 			return false;
+		}
+
+		if (this.R2013Plus)
+		{
+			return geometry.IsBinaryAcisData;
 		}
 
 		return this.R2004Plus || !geometry.IsBinaryAcisData;

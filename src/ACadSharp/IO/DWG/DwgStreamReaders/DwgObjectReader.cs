@@ -3511,21 +3511,19 @@ namespace ACadSharp.IO.DWG
 			this.readCommonEntityData(template);
 
 			//Chapter 24 - Info
-			if (!this.R2013Plus)
-			{
-				//ACIS Empty bit B X If 1, then no data follows
-				var hasData = this._mergedReaders.ReadBit();
-				if (!hasData)
-				{
-					this.readModelerGeometryData(template);
-					return template;
-				}
-			}
-			else if (this._hasDsBinaryData)
+			if (this.R2013Plus && this._hasDsBinaryData)
 			{
 				//R2013+ stores the ACIS payload in the AcDs data section: register
 				//the entity so the section reader can attach the matching blob.
 				this._builder.AcisDsEntities.Add(geometry);
+			}
+
+			//ACIS Empty bit B X If 1, then no data follows
+			var isEmpty = this._mergedReaders.ReadBit();
+			if (!isEmpty)
+			{
+				this.readModelerGeometryData(template);
+				return template;
 			}
 
 			//Common:
@@ -3556,37 +3554,41 @@ namespace ACadSharp.IO.DWG
 					}
 				}
 
-				//Repeat “Num. silhouettes” times:
-				int nSilhouettes = this._mergedReaders.ReadBitLong();
-				for (int i = 0; i < nSilhouettes; i++)
+				//R2013+ has no silhouette block: the empty bit follows directly
+				if (!this.R2013Plus)
 				{
-					var silhouette = new ModelerGeometry.Silhouette();
-
-					//VP id BL X
-					silhouette.ViewportId = this._mergedReaders.ReadBitLongLong();
-					//VP Target 3BD X
-					silhouette.ViewportTarget = this._mergedReaders.Read3BitDouble();
-					//VP dir. From target 3BD X
-					silhouette.ViewportDirectionFromTarget = this._mergedReaders.Read3BitDouble();
-					//VP up dir. 3BD X
-					silhouette.ViewportUpDirection = this._mergedReaders.Read3BitDouble();
-					//VP perspective B X
-					silhouette.ViewportPerspective = this._mergedReaders.ReadBit();
-
-					//IsoLines present B X If true, isoline data is present.
-					if (this._mergedReaders.ReadBit())
+					//Repeat “Num. silhouettes” times:
+					int nSilhouettes = this._mergedReaders.ReadBitLong();
+					for (int i = 0; i < nSilhouettes; i++)
 					{
-						//Num Wires BL X
-						int nWires = this._mergedReaders.ReadBitLong();
-						for (int j = 0; j < nWires; j++)
-						{
-							ModelerGeometry.Wire wire = new ModelerGeometry.Wire();
-							this.readWire(wire);
-							silhouette.Wires.Add(wire);
-						}
-					}
+						var silhouette = new ModelerGeometry.Silhouette();
 
-					geometry.Silhouettes.Add(silhouette);
+						//VP id BL X
+						silhouette.ViewportId = this._mergedReaders.ReadBitLongLong();
+						//VP Target 3BD X
+						silhouette.ViewportTarget = this._mergedReaders.Read3BitDouble();
+						//VP dir. From target 3BD X
+						silhouette.ViewportDirectionFromTarget = this._mergedReaders.Read3BitDouble();
+						//VP up dir. 3BD X
+						silhouette.ViewportUpDirection = this._mergedReaders.Read3BitDouble();
+						//VP perspective B X
+						silhouette.ViewportPerspective = this._mergedReaders.ReadBit();
+
+						//IsoLines present B X If true, isoline data is present.
+						if (this._mergedReaders.ReadBit())
+						{
+							//Num Wires BL X
+							int nWires = this._mergedReaders.ReadBitLong();
+							for (int j = 0; j < nWires; j++)
+							{
+								ModelerGeometry.Wire wire = new ModelerGeometry.Wire();
+								this.readWire(wire);
+								silhouette.Wires.Add(wire);
+							}
+						}
+
+						geometry.Silhouettes.Add(silhouette);
+					}
 				}
 
 				//ACIS Empty bit B X Normally 1.If 0, then acis data follows in the
@@ -3598,6 +3600,12 @@ namespace ACadSharp.IO.DWG
 					this.readModelerGeometryData(template);
 					return template;
 				}
+			}
+
+			//R2013+: the revision fields close the entity, nothing to expose
+			if (this.R2013Plus)
+			{
+				return template;
 			}
 
 			//R2007 +:
