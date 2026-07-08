@@ -2213,17 +2213,10 @@ internal partial class DwgObjectWriter : DwgSectionIO
 			//ACIS Empty bit2 B: normally 1
 			this._writer.WriteBit(true);
 
-			//Has revision guid B + revision fields
-			this._writer.WriteBit(true);
-			//Revision major BL
-			this._writer.WriteBitLong(1);
-			//Revision minor 1 and 2 BS
-			this._writer.WriteBitShort(0);
-			this._writer.WriteBitShort(0);
-			//Revision bytes RC[8]
-			this._writer.WriteBytes(new byte[8]);
-			//End marker BL
-			this._writer.WriteBitLong(0);
+			//Has revision guid B: the reference writers emit 0 here, no revision
+			//fields follow. Writing 1 with placeholder fields makes the modeler
+			//reject the entity (eOutOfRange) even though our own reader tolerates it.
+			this._writer.WriteBit(false);
 			return;
 		}
 
