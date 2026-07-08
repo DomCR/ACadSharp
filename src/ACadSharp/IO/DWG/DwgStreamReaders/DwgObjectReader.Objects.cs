@@ -2,6 +2,7 @@
 using ACadSharp.Objects;
 using ACadSharp.Objects.Evaluations;
 using System;
+using System.Runtime.InteropServices;
 
 namespace ACadSharp.IO.DWG;
 
@@ -36,12 +37,12 @@ internal partial class DwgObjectReader : DwgSectionIO
 
 		//1010 1020 1030
 		template.Block1PtParameter.Location = this._mergedReaders.Read3BitDouble();
-		//170
-		template.Block1PtParameter.Value170 = this._mergedReaders.ReadBitShort();
-		//171
-		template.Block1PtParameter.Value171 = this._mergedReaders.ReadBitShort();
+
+		template.Block1PtParameter.DisplacementX = this.readEvalParameterProperty();
+		template.Block1PtParameter.DisplacementY = this.readEvalParameterProperty();
+
 		//93
-		template.Block1PtParameter.Value93 = this._mergedReaders.ReadBitLong();
+		template.Block1PtParameter.GripId = this._mergedReaders.ReadBitLong();
 	}
 
 	private void readBlock2PtParameter(CadBlock2PtParameterTemplate template)
@@ -53,20 +54,10 @@ internal partial class DwgObjectReader : DwgSectionIO
 		//1011 1021 1031
 		template.Block2PtParameter.SecondPoint = this._mergedReaders.Read3BitDouble();
 
-		//170 (always 4)
-		for (int i = 0; i < 4; i++)
-		{
-			EvalParameterProperty eprop = new EvalParameterProperty();
-
-			//171 172 173 174
-			short n = this._mergedReaders.ReadBitShort();
-			for (int j = 0; j < n; j++)
-			{
-				eprop.Connections.Add(this.readEvalConnection());
-			}
-
-			template.Block2PtParameter.Properties[i] = eprop;
-		}
+		template.Block2PtParameter.FirstPointDisplacementX = this.readEvalParameterProperty();
+		template.Block2PtParameter.FirstPointDisplacementY = this.readEvalParameterProperty();
+		template.Block2PtParameter.SecondPointDisplacementX = this.readEvalParameterProperty();
+		template.Block2PtParameter.SecondPointDisplacementY = this.readEvalParameterProperty();
 
 		for (int k = 0; k < 4; k++)
 		{
@@ -377,6 +368,20 @@ internal partial class DwgObjectReader : DwgSectionIO
 		connection.Name = this._mergedReaders.ReadVariableText();
 
 		return connection;
+	}
+
+	private EvalParameterProperty readEvalParameterProperty()
+	{
+		EvalParameterProperty eprop = new EvalParameterProperty();
+
+		//170 171
+		short n = this._mergedReaders.ReadBitShort();
+		for (int j = 0; j < n; j++)
+		{
+			eprop.Connections.Add(this.readEvalConnection());
+		}
+
+		return eprop;
 	}
 
 	private void readEvaluationExpression(CadEvaluationExpressionTemplate template)

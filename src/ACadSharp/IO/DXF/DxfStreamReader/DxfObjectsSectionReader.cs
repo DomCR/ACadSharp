@@ -2062,6 +2062,12 @@ internal class DxfObjectsSectionReader : DxfSectionReaderBase
 
 		switch (this._reader.Code)
 		{
+			case 170:
+				this.readEvalParameterProperty(tmp.Block1PtParameter.DisplacementX);
+				return true;
+			case 171:
+				this.readEvalParameterProperty(tmp.Block1PtParameter.DisplacementY);
+				return true;
 			default:
 				if (!this.tryAssignCurrentValue(template.CadObject, map.SubClasses[DxfSubclassMarker.Block1PtParameter]))
 				{
@@ -2086,16 +2092,16 @@ internal class DxfObjectsSectionReader : DxfSectionReaderBase
 				}
 				return true;
 			case 171:
-				this.readEvalParameterProperty(tmp.Block2PtParameter.Properties[0]);
+				this.readEvalParameterProperty(tmp.Block2PtParameter.FirstPointDisplacementX);
 				return true;
 			case 172:
-				this.readEvalParameterProperty(tmp.Block2PtParameter.Properties[1]);
+				this.readEvalParameterProperty(tmp.Block2PtParameter.FirstPointDisplacementY);
 				return true;
 			case 173:
-				this.readEvalParameterProperty(tmp.Block2PtParameter.Properties[2]);
+				this.readEvalParameterProperty(tmp.Block2PtParameter.SecondPointDisplacementX);
 				return true;
 			case 174:
-				this.readEvalParameterProperty(tmp.Block2PtParameter.Properties[3]);
+				this.readEvalParameterProperty(tmp.Block2PtParameter.SecondPointDisplacementY);
 				return true;
 			default:
 				if (!this.tryAssignCurrentValue(template.CadObject, map))
