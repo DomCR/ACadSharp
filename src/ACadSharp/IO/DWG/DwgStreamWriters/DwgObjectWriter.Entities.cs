@@ -2246,12 +2246,14 @@ internal partial class DwgObjectWriter : DwgSectionIO
 
 	private void writeModelerGeometryData(ModelerGeometry geometry)
 	{
-		//Unknown bit B X
-		this._writer.WriteBit(false);
-
-		//Version BS Can be 1 or 2.
-		if (this.R2004Plus)
+		//The version depends on the payload, not on the target file: the CAD
+		//writers emit text as version 1 blocks at every release and reserve
+		//version 2 for the raw SAB, with the unknown bit tracking the choice.
+		if (geometry.IsBinaryAcisData)
 		{
+			//Unknown bit B X: false in the binary files the CAD writers emit
+			this._writer.WriteBit(false);
+
 			//Version == 2: the raw ACIS file follows, no length is given; the
 			//readers find the end at the End-of-ACIS-data marker
 			this._writer.WriteBitShort(2);
@@ -2259,6 +2261,9 @@ internal partial class DwgObjectWriter : DwgSectionIO
 		}
 		else
 		{
+			//Unknown bit B X: true in the text files the CAD writers emit
+			this._writer.WriteBit(true);
+
 			//Version == 1: character-swapped SAT blocks, zero size terminates
 			this._writer.WriteBitShort(1);
 
