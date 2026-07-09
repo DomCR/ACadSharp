@@ -2,6 +2,12 @@
 
 public static class DxfFileToken
 {
+	public const string AcdsDataSection = "ACDSDATA";
+
+	public const string AcdsRecord = "ACDSRECORD";
+
+	public const string AcdsSchema = "ACDSSCHEMA";
+
 	public const string AcmBalloon = "ACMBALLOON";
 
 	public const string AcmPartList = "ACMPARTLIST";
