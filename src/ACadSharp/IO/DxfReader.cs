@@ -170,6 +170,9 @@ namespace ACadSharp.IO
 					case DxfFileToken.ObjectsSection:
 						this.readObjects();
 						break;
+					case DxfFileToken.AcdsDataSection:
+						this.readAcdsData();
+						break;
 					default:
 						this.triggerNotification(($"Section not implemented {this._reader.ValueAsString}"), NotificationType.NotImplemented);
 						break;
@@ -461,6 +464,24 @@ namespace ACadSharp.IO
 			this._reader = this.goToSection(DxfFileToken.ObjectsSection);
 
 			DxfObjectsSectionReader reader = new DxfObjectsSectionReader(this._reader, this._builder);
+
+			reader.Read();
+		}
+
+		/// <summary>
+		/// Read the ACDSDATA section of the DXF file.
+		/// </summary>
+		/// <remarks>
+		/// R2013+ files store the ACIS payload of the modeler geometry entities
+		/// (3DSOLID, REGION, BODY) in this section instead of embedding it in the
+		/// entity codes.
+		/// </remarks>
+		private void readAcdsData()
+		{
+			//Get the needed handler
+			this._reader = this.goToSection(DxfFileToken.AcdsDataSection);
+
+			DxfAcdsDataSectionReader reader = new DxfAcdsDataSectionReader(this._reader, this._builder);
 
 			reader.Read();
 		}

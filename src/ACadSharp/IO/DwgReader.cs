@@ -124,6 +124,9 @@ public class DwgReader : CadReaderBase<DwgReaderConfiguration>
 		//Read all the objects in the file
 		this.readObjects();
 
+		//Attach the ACIS payloads stored in the AcDs data section (R2013+)
+		this.readAcDsData();
+
 		//Build the document
 		this._builder.BuildDocument();
 
@@ -454,6 +457,54 @@ public class DwgReader : CadReaderBase<DwgReaderConfiguration>
 		memoryStream.Position = 0L;
 
 		return memoryStream;
+	}
+
+	/// <summary>
+	/// Read the AcDs data section and attach the ACIS payloads to the modeler
+	/// geometry entities that flagged their data as stored there.
+	/// </summary>
+	/// <remarks>
+	/// Refers to AcDb:AcDsPrototype_1b data section (R2013+).
+	/// </remarks>
+	private void readAcDsData()
+	{
+		if (this._builder.AcisDsEntities.Count == 0)
+		{
+			return;
+		}
+
+		IDwgStreamReader sreader = this.getSectionStream(DwgSectionDefinition.AcDsPrototype);
+		if (sreader == null)
+		{
+			this.triggerNotification($"AcDs data section not found, the ACIS payload of {this._builder.AcisDsEntities.Count} modeler geometry entities is not available", NotificationType.Warning);
+			return;
+		}
+
+		sreader.Stream.Position = 0;
+		byte[] buffer = new byte[sreader.Stream.Length];
+		sreader.Stream.Read(buffer, 0, buffer.Length);
+
+		Dictionary<ulong, byte[]> records = DwgAcDsDataReader.ReadRecords(
+			buffer,
+			message => this.triggerNotification(message, NotificationType.Warning));
+
+		int missing = 0;
+		foreach (Entities.ModelerGeometry entity in this._builder.AcisDsEntities)
+		{
+			if (records.TryGetValue(entity.Handle, out byte[] payload))
+			{
+				entity.AcisData = payload;
+			}
+			else
+			{
+				missing++;
+			}
+		}
+
+		if (missing > 0)
+		{
+			this.triggerNotification($"AcDs data section has no ACIS payload for {missing} of {this._builder.AcisDsEntities.Count} modeler geometry entities", NotificationType.Warning);
+		}
 	}
 
 	private IDwgStreamReader getSectionStream(string sectionName)

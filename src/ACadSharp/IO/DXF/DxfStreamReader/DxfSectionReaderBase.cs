@@ -161,7 +161,7 @@ internal abstract class DxfSectionReaderBase
 			case DxfFileToken.EntityArc:
 				return this.readEntityCodes<Arc>(new CadEntityTemplate<Arc>(), this.readArc);
 			case DxfFileToken.EntityBody:
-				return this.readEntityCodes<CadBody>(new CadEntityTemplate<CadBody>(), this.readEntitySubclassMap);
+				return this.readEntityCodes<CadBody>(new CadModelerGeometryTemplate<CadBody>(), this.readModelerGeometry);
 			case DxfFileToken.EntityCircle:
 				return this.readEntityCodes<Circle>(new CadEntityTemplate<Circle>(), this.readCircle);
 			case DxfFileToken.EntityDimension:
@@ -226,7 +226,7 @@ internal abstract class DxfSectionReaderBase
 			case DxfFileToken.Entity3DSolid:
 				return this.readEntityCodes<Solid3D>(new CadSolid3DTemplate(), this.readSolid3d);
 			case DxfFileToken.EntityRegion:
-				return this.readEntityCodes<Region>(new CadEntityTemplate<Region>(), this.readModelerGeometry);
+				return this.readEntityCodes<Region>(new CadModelerGeometryTemplate<Region>(), this.readModelerGeometry);
 			case DxfFileToken.EntityImage:
 				return this.readEntityCodes<RasterImage>(new CadWipeoutBaseTemplate(new RasterImage()), this.readWipeoutBase);
 			case DxfFileToken.EntityWipeout:
@@ -1560,7 +1560,14 @@ internal abstract class DxfSectionReaderBase
 		switch (this._reader.Code)
 		{
 			case 1:
+				//New SAT line: decoded into the template accumulator, raw into
+				//ProprietaryData to preserve the previous behavior.
+				(template as IAcisDataTemplate)?.AppendAcisLine(this._reader.ValueAsString);
+				geometry.ProprietaryData.AppendLine(this._reader.ValueAsString);
+				return true;
 			case 3:
+				//Continuation of the previous SAT line.
+				(template as IAcisDataTemplate)?.AppendAcisContinuation(this._reader.ValueAsString);
 				geometry.ProprietaryData.AppendLine(this._reader.ValueAsString);
 				return true;
 			case 2:
