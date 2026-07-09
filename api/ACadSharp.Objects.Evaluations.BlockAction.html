@@ -131,6 +131,7 @@ public abstract class BlockAction : BlockElement, IHandledCadObject</code></pre>
     <dd>
       <div><a class="xref" href="ACadSharp.Objects.Evaluations.BlockActionBasePt.html">BlockActionBasePt</a></div>
       <div><a class="xref" href="ACadSharp.Objects.Evaluations.BlockFlipAction.html">BlockFlipAction</a></div>
+      <div><a class="xref" href="ACadSharp.Objects.Evaluations.BlockMoveAction.html">BlockMoveAction</a></div>
     </dd>
   </dl>
 
@@ -239,44 +240,11 @@ public abstract class BlockAction : BlockElement, IHandledCadObject</code></pre>
 </h2>
 
 
-  <a id="ACadSharp_Objects_Evaluations_BlockAction_ActionPoint_" data-uid="ACadSharp.Objects.Evaluations.BlockAction.ActionPoint*"></a>
-
-  <h3 id="ACadSharp_Objects_Evaluations_BlockAction_ActionPoint" data-uid="ACadSharp.Objects.Evaluations.BlockAction.ActionPoint">
-  ActionPoint
-  <a class="header-action link-secondary" title="View source" href="https://github.com/DomCR/ACadSharp/blob/master/src/ACadSharp/Objects/Evaluations/BlockAction.cs/#L14"><i class="bi bi-code-slash"></i></a>
-  </h3>
-
-  <div class="markdown level1 summary"><p>Whatever this is?</p>
-</div>
-  <div class="markdown level1 conceptual"></div>
-
-  <div class="codewrapper">
-    <pre><code class="lang-csharp hljs">[DxfCodeValue(new int[] { 1010, 1020, 1030 })]
-public XYZ ActionPoint { get; set; }</code></pre>
-  </div>
-
-
-
-
-
-  <h4 class="section">Property Value</h4>
-  <dl class="parameters">
-    <dt><a class="xref" href="CSMath.XYZ.html">XYZ</a></dt>
-    <dd></dd>
-  </dl>
-
-
-
-
-
-
-
-
   <a id="ACadSharp_Objects_Evaluations_BlockAction_Entities_" data-uid="ACadSharp.Objects.Evaluations.BlockAction.Entities*"></a>
 
   <h3 id="ACadSharp_Objects_Evaluations_BlockAction_Entities" data-uid="ACadSharp.Objects.Evaluations.BlockAction.Entities">
   Entities
-  <a class="header-action link-secondary" title="View source" href="https://github.com/DomCR/ACadSharp/blob/master/src/ACadSharp/Objects/Evaluations/BlockAction.cs/#L20"><i class="bi bi-code-slash"></i></a>
+  <a class="header-action link-secondary" title="View source" href="https://github.com/DomCR/ACadSharp/blob/master/src/ACadSharp/Objects/Evaluations/BlockAction.cs/#L14"><i class="bi bi-code-slash"></i></a>
   </h3>
 
   <div class="markdown level1 summary"><p>Gets the list of <a class="xref" href="ACadSharp.Entities.Entity.html">Entity</a> objects affected by this <a class="xref" href="ACadSharp.Objects.Evaluations.BlockAction.html">BlockAction</a>.</p>
@@ -296,6 +264,39 @@ public List&lt;Entity&gt; Entities { get; }</code></pre>
   <h4 class="section">Property Value</h4>
   <dl class="parameters">
     <dt><a class="xref" href="https://learn.microsoft.com/dotnet/api/system.collections.generic.list-1">List</a>&lt;<a class="xref" href="ACadSharp.Entities.Entity.html">Entity</a>&gt;</dt>
+    <dd></dd>
+  </dl>
+
+
+
+
+
+
+
+
+  <a id="ACadSharp_Objects_Evaluations_BlockAction_LabelPosition_" data-uid="ACadSharp.Objects.Evaluations.BlockAction.LabelPosition*"></a>
+
+  <h3 id="ACadSharp_Objects_Evaluations_BlockAction_LabelPosition" data-uid="ACadSharp.Objects.Evaluations.BlockAction.LabelPosition">
+  LabelPosition
+  <a class="header-action link-secondary" title="View source" href="https://github.com/DomCR/ACadSharp/blob/master/src/ACadSharp/Objects/Evaluations/BlockAction.cs/#L21"><i class="bi bi-code-slash"></i></a>
+  </h3>
+
+  <div class="markdown level1 summary"><p>Gets or sets the position of the action label.</p>
+</div>
+  <div class="markdown level1 conceptual"></div>
+
+  <div class="codewrapper">
+    <pre><code class="lang-csharp hljs">[DxfCodeValue(new int[] { 1010, 1020, 1030 })]
+public XYZ LabelPosition { get; set; }</code></pre>
+  </div>
+
+
+
+
+
+  <h4 class="section">Property Value</h4>
+  <dl class="parameters">
+    <dt><a class="xref" href="CSMath.XYZ.html">XYZ</a></dt>
     <dd></dd>
   </dl>
 

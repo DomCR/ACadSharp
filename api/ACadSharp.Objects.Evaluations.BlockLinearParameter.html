@@ -89,7 +89,7 @@
 
 
   <h1 id="ACadSharp_Objects_Evaluations_BlockLinearParameter" data-uid="ACadSharp.Objects.Evaluations.BlockLinearParameter" class="text-break">
-Class BlockLinearParameter  <a class="header-action link-secondary" title="View source" href="https://github.com/DomCR/ACadSharp/blob/master/src/ACadSharp/Objects/Evaluations/BlockLinearParameter.cs/#L14"><i class="bi bi-code-slash"></i></a>
+Class BlockLinearParameter  <a class="header-action link-secondary" title="View source" href="https://github.com/DomCR/ACadSharp/blob/master/src/ACadSharp/Objects/Evaluations/BlockLinearParameter.cs/#L13"><i class="bi bi-code-slash"></i></a>
   </h1>
 
   <div class="facts text-secondary">
@@ -142,13 +142,22 @@ public class BlockLinearParameter : Block2PtParameter, IHandledCadObject</code><
       <a class="xref" href="ACadSharp.Objects.Evaluations.Block2PtParameter.html#ACadSharp_Objects_Evaluations_Block2PtParameter_FirstPoint">Block2PtParameter.FirstPoint</a>
     </div>
     <div>
+      <a class="xref" href="ACadSharp.Objects.Evaluations.Block2PtParameter.html#ACadSharp_Objects_Evaluations_Block2PtParameter_FirstPointDisplacementX">Block2PtParameter.FirstPointDisplacementX</a>
+    </div>
+    <div>
+      <a class="xref" href="ACadSharp.Objects.Evaluations.Block2PtParameter.html#ACadSharp_Objects_Evaluations_Block2PtParameter_FirstPointDisplacementY">Block2PtParameter.FirstPointDisplacementY</a>
+    </div>
+    <div>
       <a class="xref" href="ACadSharp.Objects.Evaluations.Block2PtParameter.html#ACadSharp_Objects_Evaluations_Block2PtParameter_GripIds">Block2PtParameter.GripIds</a>
     </div>
     <div>
-      <a class="xref" href="ACadSharp.Objects.Evaluations.Block2PtParameter.html#ACadSharp_Objects_Evaluations_Block2PtParameter_Properties">Block2PtParameter.Properties</a>
+      <a class="xref" href="ACadSharp.Objects.Evaluations.Block2PtParameter.html#ACadSharp_Objects_Evaluations_Block2PtParameter_SecondPoint">Block2PtParameter.SecondPoint</a>
     </div>
     <div>
-      <a class="xref" href="ACadSharp.Objects.Evaluations.Block2PtParameter.html#ACadSharp_Objects_Evaluations_Block2PtParameter_SecondPoint">Block2PtParameter.SecondPoint</a>
+      <a class="xref" href="ACadSharp.Objects.Evaluations.Block2PtParameter.html#ACadSharp_Objects_Evaluations_Block2PtParameter_SecondPointDisplacementX">Block2PtParameter.SecondPointDisplacementX</a>
+    </div>
+    <div>
+      <a class="xref" href="ACadSharp.Objects.Evaluations.Block2PtParameter.html#ACadSharp_Objects_Evaluations_Block2PtParameter_SecondPointDisplacementY">Block2PtParameter.SecondPointDisplacementY</a>
     </div>
     <div>
       <a class="xref" href="ACadSharp.Objects.Evaluations.BlockParameter.html#ACadSharp_Objects_Evaluations_BlockParameter_ShowProperties">BlockParameter.ShowProperties</a>
@@ -164,6 +173,9 @@ public class BlockLinearParameter : Block2PtParameter, IHandledCadObject</code><
     </div>
     <div>
       <a class="xref" href="ACadSharp.Objects.Evaluations.EvaluationExpression.html#ACadSharp_Objects_Evaluations_EvaluationExpression_Id">EvaluationExpression.Id</a>
+    </div>
+    <div>
+      <a class="xref" href="ACadSharp.Objects.Evaluations.EvaluationExpression.html#ACadSharp_Objects_Evaluations_EvaluationExpression_ObjectType">EvaluationExpression.ObjectType</a>
     </div>
     <div>
       <a class="xref" href="ACadSharp.Objects.Evaluations.EvaluationExpression.html#ACadSharp_Objects_Evaluations_EvaluationExpression_Value98">EvaluationExpression.Value98</a>
@@ -260,10 +272,11 @@ Dxf class name <a class="xref" href="ACadSharp.DxfSubclassMarker.html#ACadSharp_
 
   <h3 id="ACadSharp_Objects_Evaluations_BlockLinearParameter_Description" data-uid="ACadSharp.Objects.Evaluations.BlockLinearParameter.Description">
   Description
-  <a class="header-action link-secondary" title="View source" href="https://github.com/DomCR/ACadSharp/blob/master/src/ACadSharp/Objects/Evaluations/BlockLinearParameter.cs/#L18"><i class="bi bi-code-slash"></i></a>
+  <a class="header-action link-secondary" title="View source" href="https://github.com/DomCR/ACadSharp/blob/master/src/ACadSharp/Objects/Evaluations/BlockLinearParameter.cs/#L20"><i class="bi bi-code-slash"></i></a>
   </h3>
 
-  <div class="markdown level1 summary"></div>
+  <div class="markdown level1 summary"><p>Gets or sets the description of the parameter.</p>
+</div>
   <div class="markdown level1 conceptual"></div>
 
   <div class="codewrapper">
@@ -288,44 +301,11 @@ public string Description { get; set; }</code></pre>
 
 
 
-  <a id="ACadSharp_Objects_Evaluations_BlockLinearParameter_Increment_" data-uid="ACadSharp.Objects.Evaluations.BlockLinearParameter.Increment*"></a>
-
-  <h3 id="ACadSharp_Objects_Evaluations_BlockLinearParameter_Increment" data-uid="ACadSharp.Objects.Evaluations.BlockLinearParameter.Increment">
-  Increment
-  <a class="header-action link-secondary" title="View source" href="https://github.com/DomCR/ACadSharp/blob/master/src/ACadSharp/Objects/Evaluations/BlockLinearParameter.cs/#L24"><i class="bi bi-code-slash"></i></a>
-  </h3>
-
-  <div class="markdown level1 summary"><p>Distance increment between two allowed values.</p>
-</div>
-  <div class="markdown level1 conceptual"></div>
-
-  <div class="codewrapper">
-    <pre><code class="lang-csharp hljs">[DxfCodeValue(new int[] { 143 })]
-public double Increment { get; set; }</code></pre>
-  </div>
-
-
-
-
-
-  <h4 class="section">Property Value</h4>
-  <dl class="parameters">
-    <dt><a class="xref" href="https://learn.microsoft.com/dotnet/api/system.double">double</a></dt>
-    <dd></dd>
-  </dl>
-
-
-
-
-
-
-
-
   <a id="ACadSharp_Objects_Evaluations_BlockLinearParameter_Label_" data-uid="ACadSharp.Objects.Evaluations.BlockLinearParameter.Label*"></a>
 
   <h3 id="ACadSharp_Objects_Evaluations_BlockLinearParameter_Label" data-uid="ACadSharp.Objects.Evaluations.BlockLinearParameter.Label">
   Label
-  <a class="header-action link-secondary" title="View source" href="https://github.com/DomCR/ACadSharp/blob/master/src/ACadSharp/Objects/Evaluations/BlockLinearParameter.cs/#L30"><i class="bi bi-code-slash"></i></a>
+  <a class="header-action link-secondary" title="View source" href="https://github.com/DomCR/ACadSharp/blob/master/src/ACadSharp/Objects/Evaluations/BlockLinearParameter.cs/#L26"><i class="bi bi-code-slash"></i></a>
   </h3>
 
   <div class="markdown level1 summary"><p>Label text.</p>
@@ -358,10 +338,11 @@ public string Label { get; set; }</code></pre>
 
   <h3 id="ACadSharp_Objects_Evaluations_BlockLinearParameter_LabelOffset" data-uid="ACadSharp.Objects.Evaluations.BlockLinearParameter.LabelOffset">
   LabelOffset
-  <a class="header-action link-secondary" title="View source" href="https://github.com/DomCR/ACadSharp/blob/master/src/ACadSharp/Objects/Evaluations/BlockLinearParameter.cs/#L33"><i class="bi bi-code-slash"></i></a>
+  <a class="header-action link-secondary" title="View source" href="https://github.com/DomCR/ACadSharp/blob/master/src/ACadSharp/Objects/Evaluations/BlockLinearParameter.cs/#L32"><i class="bi bi-code-slash"></i></a>
   </h3>
 
-  <div class="markdown level1 summary"></div>
+  <div class="markdown level1 summary"><p>Gets or sets the label offset.</p>
+</div>
   <div class="markdown level1 conceptual"></div>
 
   <div class="codewrapper">
@@ -386,77 +367,11 @@ public double LabelOffset { get; set; }</code></pre>
 
 
 
-  <a id="ACadSharp_Objects_Evaluations_BlockLinearParameter_Maximum_" data-uid="ACadSharp.Objects.Evaluations.BlockLinearParameter.Maximum*"></a>
-
-  <h3 id="ACadSharp_Objects_Evaluations_BlockLinearParameter_Maximum" data-uid="ACadSharp.Objects.Evaluations.BlockLinearParameter.Maximum">
-  Maximum
-  <a class="header-action link-secondary" title="View source" href="https://github.com/DomCR/ACadSharp/blob/master/src/ACadSharp/Objects/Evaluations/BlockLinearParameter.cs/#L39"><i class="bi bi-code-slash"></i></a>
-  </h3>
-
-  <div class="markdown level1 summary"><p>Maximum allowed distance.</p>
-</div>
-  <div class="markdown level1 conceptual"></div>
-
-  <div class="codewrapper">
-    <pre><code class="lang-csharp hljs">[DxfCodeValue(new int[] { 142 })]
-public double Maximum { get; set; }</code></pre>
-  </div>
-
-
-
-
-
-  <h4 class="section">Property Value</h4>
-  <dl class="parameters">
-    <dt><a class="xref" href="https://learn.microsoft.com/dotnet/api/system.double">double</a></dt>
-    <dd></dd>
-  </dl>
-
-
-
-
-
-
-
-
-  <a id="ACadSharp_Objects_Evaluations_BlockLinearParameter_Minimum_" data-uid="ACadSharp.Objects.Evaluations.BlockLinearParameter.Minimum*"></a>
-
-  <h3 id="ACadSharp_Objects_Evaluations_BlockLinearParameter_Minimum" data-uid="ACadSharp.Objects.Evaluations.BlockLinearParameter.Minimum">
-  Minimum
-  <a class="header-action link-secondary" title="View source" href="https://github.com/DomCR/ACadSharp/blob/master/src/ACadSharp/Objects/Evaluations/BlockLinearParameter.cs/#L45"><i class="bi bi-code-slash"></i></a>
-  </h3>
-
-  <div class="markdown level1 summary"><p>Minimum allowed distance.</p>
-</div>
-  <div class="markdown level1 conceptual"></div>
-
-  <div class="codewrapper">
-    <pre><code class="lang-csharp hljs">[DxfCodeValue(new int[] { 141 })]
-public double Minimum { get; set; }</code></pre>
-  </div>
-
-
-
-
-
-  <h4 class="section">Property Value</h4>
-  <dl class="parameters">
-    <dt><a class="xref" href="https://learn.microsoft.com/dotnet/api/system.double">double</a></dt>
-    <dd></dd>
-  </dl>
-
-
-
-
-
-
-
-
   <a id="ACadSharp_Objects_Evaluations_BlockLinearParameter_ObjectName_" data-uid="ACadSharp.Objects.Evaluations.BlockLinearParameter.ObjectName*"></a>
 
   <h3 id="ACadSharp_Objects_Evaluations_BlockLinearParameter_ObjectName" data-uid="ACadSharp.Objects.Evaluations.BlockLinearParameter.ObjectName">
   ObjectName
-  <a class="header-action link-secondary" title="View source" href="https://github.com/DomCR/ACadSharp/blob/master/src/ACadSharp/Objects/Evaluations/BlockLinearParameter.cs/#L49"><i class="bi bi-code-slash"></i></a>
+  <a class="header-action link-secondary" title="View source" href="https://github.com/DomCR/ACadSharp/blob/master/src/ACadSharp/Objects/Evaluations/BlockLinearParameter.cs/#L36"><i class="bi bi-code-slash"></i></a>
   </h3>
 
   <div class="markdown level1 summary"><p>The CAD class name of an object.</p>
@@ -484,43 +399,11 @@ public double Minimum { get; set; }</code></pre>
 
 
 
-  <a id="ACadSharp_Objects_Evaluations_BlockLinearParameter_ObjectType_" data-uid="ACadSharp.Objects.Evaluations.BlockLinearParameter.ObjectType*"></a>
-
-  <h3 id="ACadSharp_Objects_Evaluations_BlockLinearParameter_ObjectType" data-uid="ACadSharp.Objects.Evaluations.BlockLinearParameter.ObjectType">
-  ObjectType
-  <a class="header-action link-secondary" title="View source" href="https://github.com/DomCR/ACadSharp/blob/master/src/ACadSharp/Objects/Evaluations/BlockLinearParameter.cs/#L52"><i class="bi bi-code-slash"></i></a>
-  </h3>
-
-  <div class="markdown level1 summary"><p>Get the object type.</p>
-</div>
-  <div class="markdown level1 conceptual"></div>
-
-  <div class="codewrapper">
-    <pre><code class="lang-csharp hljs">public override ObjectType ObjectType { get; }</code></pre>
-  </div>
-
-
-
-
-
-  <h4 class="section">Property Value</h4>
-  <dl class="parameters">
-    <dt><a class="xref" href="ACadSharp.ObjectType.html">ObjectType</a></dt>
-    <dd></dd>
-  </dl>
-
-
-
-
-
-
-
-
   <a id="ACadSharp_Objects_Evaluations_BlockLinearParameter_SubclassMarker_" data-uid="ACadSharp.Objects.Evaluations.BlockLinearParameter.SubclassMarker*"></a>
 
   <h3 id="ACadSharp_Objects_Evaluations_BlockLinearParameter_SubclassMarker" data-uid="ACadSharp.Objects.Evaluations.BlockLinearParameter.SubclassMarker">
   SubclassMarker
-  <a class="header-action link-secondary" title="View source" href="https://github.com/DomCR/ACadSharp/blob/master/src/ACadSharp/Objects/Evaluations/BlockLinearParameter.cs/#L55"><i class="bi bi-code-slash"></i></a>
+  <a class="header-action link-secondary" title="View source" href="https://github.com/DomCR/ACadSharp/blob/master/src/ACadSharp/Objects/Evaluations/BlockLinearParameter.cs/#L39"><i class="bi bi-code-slash"></i></a>
   </h3>
 
   <div class="markdown level1 summary"><p>Object Subclass marker.</p>
@@ -548,19 +431,18 @@ public double Minimum { get; set; }</code></pre>
 
 
 
-  <a id="ACadSharp_Objects_Evaluations_BlockLinearParameter_Values_" data-uid="ACadSharp.Objects.Evaluations.BlockLinearParameter.Values*"></a>
+  <a id="ACadSharp_Objects_Evaluations_BlockLinearParameter_ValueSet_" data-uid="ACadSharp.Objects.Evaluations.BlockLinearParameter.ValueSet*"></a>
 
-  <h3 id="ACadSharp_Objects_Evaluations_BlockLinearParameter_Values" data-uid="ACadSharp.Objects.Evaluations.BlockLinearParameter.Values">
-  Values
-  <a class="header-action link-secondary" title="View source" href="https://github.com/DomCR/ACadSharp/blob/master/src/ACadSharp/Objects/Evaluations/BlockLinearParameter.cs/#L60"><i class="bi bi-code-slash"></i></a>
+  <h3 id="ACadSharp_Objects_Evaluations_BlockLinearParameter_ValueSet" data-uid="ACadSharp.Objects.Evaluations.BlockLinearParameter.ValueSet">
+  ValueSet
+  <a class="header-action link-secondary" title="View source" href="https://github.com/DomCR/ACadSharp/blob/master/src/ACadSharp/Objects/Evaluations/BlockLinearParameter.cs/#L41"><i class="bi bi-code-slash"></i></a>
   </h3>
 
-  <div class="markdown level1 summary"><p>Discrete list of allowed distance values.</p>
-</div>
+  <div class="markdown level1 summary"></div>
   <div class="markdown level1 conceptual"></div>
 
   <div class="codewrapper">
-    <pre><code class="lang-csharp hljs">public List&lt;double&gt; Values { get; }</code></pre>
+    <pre><code class="lang-csharp hljs">public ParameterValueSet ValueSet { get; set; }</code></pre>
   </div>
 
 
@@ -569,7 +451,7 @@ public double Minimum { get; set; }</code></pre>
 
   <h4 class="section">Property Value</h4>
   <dl class="parameters">
-    <dt><a class="xref" href="https://learn.microsoft.com/dotnet/api/system.collections.generic.list-1">List</a>&lt;<a class="xref" href="https://learn.microsoft.com/dotnet/api/system.double">double</a>&gt;</dt>
+    <dt><a class="xref" href="ACadSharp.Objects.Evaluations.ParameterValueSet.html">ParameterValueSet</a></dt>
     <dd></dd>
   </dl>
 
@@ -584,7 +466,7 @@ public double Minimum { get; set; }</code></pre>
 </article>
 
         <div class="contribution d-print-none">
-          <a href="https://github.com/DomCR/ACadSharp/blob/master/src/ACadSharp/Objects/Evaluations/BlockLinearParameter.cs/#L14" class="edit-link">Edit this page</a>
+          <a href="https://github.com/DomCR/ACadSharp/blob/master/src/ACadSharp/Objects/Evaluations/BlockLinearParameter.cs/#L13" class="edit-link">Edit this page</a>
         </div>
 
 

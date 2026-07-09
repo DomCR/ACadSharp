@@ -138,10 +138,10 @@ public abstract class BlockActionBasePt : BlockAction, IHandledCadObject</code><
     <dt>Inherited Members</dt>
     <dd>
     <div>
-      <a class="xref" href="ACadSharp.Objects.Evaluations.BlockAction.html#ACadSharp_Objects_Evaluations_BlockAction_ActionPoint">BlockAction.ActionPoint</a>
+      <a class="xref" href="ACadSharp.Objects.Evaluations.BlockAction.html#ACadSharp_Objects_Evaluations_BlockAction_Entities">BlockAction.Entities</a>
     </div>
     <div>
-      <a class="xref" href="ACadSharp.Objects.Evaluations.BlockAction.html#ACadSharp_Objects_Evaluations_BlockAction_Entities">BlockAction.Entities</a>
+      <a class="xref" href="ACadSharp.Objects.Evaluations.BlockAction.html#ACadSharp_Objects_Evaluations_BlockAction_LabelPosition">BlockAction.LabelPosition</a>
     </div>
     <div>
       <a class="xref" href="ACadSharp.Objects.Evaluations.BlockAction.html#ACadSharp_Objects_Evaluations_BlockAction_Value70">BlockAction.Value70</a>
@@ -248,11 +248,76 @@ public abstract class BlockActionBasePt : BlockAction, IHandledCadObject</code><
 </h2>
 
 
+  <a id="ACadSharp_Objects_Evaluations_BlockActionBasePt_BasePoint_" data-uid="ACadSharp.Objects.Evaluations.BlockActionBasePt.BasePoint*"></a>
+
+  <h3 id="ACadSharp_Objects_Evaluations_BlockActionBasePt_BasePoint" data-uid="ACadSharp.Objects.Evaluations.BlockActionBasePt.BasePoint">
+  BasePoint
+  <a class="header-action link-secondary" title="View source" href="https://github.com/DomCR/ACadSharp/blob/master/src/ACadSharp/Objects/Evaluations/BlockActionBasePt.cs/#L12"><i class="bi bi-code-slash"></i></a>
+  </h3>
+
+  <div class="markdown level1 summary"><p>Gets or sets the base point of the action.</p>
+</div>
+  <div class="markdown level1 conceptual"></div>
+
+  <div class="codewrapper">
+    <pre><code class="lang-csharp hljs">[DxfCodeValue(new int[] { 1011, 1021, 1031 })]
+public XYZ BasePoint { get; set; }</code></pre>
+  </div>
+
+
+
+
+
+  <h4 class="section">Property Value</h4>
+  <dl class="parameters">
+    <dt><a class="xref" href="CSMath.XYZ.html">XYZ</a></dt>
+    <dd></dd>
+  </dl>
+
+
+
+
+
+
+
+
+  <a id="ACadSharp_Objects_Evaluations_BlockActionBasePt_Connections_" data-uid="ACadSharp.Objects.Evaluations.BlockActionBasePt.Connections*"></a>
+
+  <h3 id="ACadSharp_Objects_Evaluations_BlockActionBasePt_Connections" data-uid="ACadSharp.Objects.Evaluations.BlockActionBasePt.Connections">
+  Connections
+  <a class="header-action link-secondary" title="View source" href="https://github.com/DomCR/ACadSharp/blob/master/src/ACadSharp/Objects/Evaluations/BlockActionBasePt.cs/#L18"><i class="bi bi-code-slash"></i></a>
+  </h3>
+
+  <div class="markdown level1 summary"><p>Gets the list of <a class="xref" href="ACadSharp.Objects.Evaluations.EvalConnection.html">EvalConnection</a> objects that define the connections for this <a class="xref" href="ACadSharp.Objects.Evaluations.BlockActionBasePt.html">BlockActionBasePt</a>.</p>
+</div>
+  <div class="markdown level1 conceptual"></div>
+
+  <div class="codewrapper">
+    <pre><code class="lang-csharp hljs">public EvalConnection[] Connections { get; }</code></pre>
+  </div>
+
+
+
+
+
+  <h4 class="section">Property Value</h4>
+  <dl class="parameters">
+    <dt><a class="xref" href="ACadSharp.Objects.Evaluations.EvalConnection.html">EvalConnection</a>[]</dt>
+    <dd></dd>
+  </dl>
+
+
+
+
+
+
+
+
   <a id="ACadSharp_Objects_Evaluations_BlockActionBasePt_SubclassMarker_" data-uid="ACadSharp.Objects.Evaluations.BlockActionBasePt.SubclassMarker*"></a>
 
   <h3 id="ACadSharp_Objects_Evaluations_BlockActionBasePt_SubclassMarker" data-uid="ACadSharp.Objects.Evaluations.BlockActionBasePt.SubclassMarker">
   SubclassMarker
-  <a class="header-action link-secondary" title="View source" href="https://github.com/DomCR/ACadSharp/blob/master/src/ACadSharp/Objects/Evaluations/BlockActionBasePt.cs/#L10"><i class="bi bi-code-slash"></i></a>
+  <a class="header-action link-secondary" title="View source" href="https://github.com/DomCR/ACadSharp/blob/master/src/ACadSharp/Objects/Evaluations/BlockActionBasePt.cs/#L21"><i class="bi bi-code-slash"></i></a>
   </h3>
 
   <div class="markdown level1 summary"><p>Object Subclass marker.</p>
@@ -280,43 +345,11 @@ public abstract class BlockActionBasePt : BlockAction, IHandledCadObject</code><
 
 
 
-  <a id="ACadSharp_Objects_Evaluations_BlockActionBasePt_Value1011_" data-uid="ACadSharp.Objects.Evaluations.BlockActionBasePt.Value1011*"></a>
-
-  <h3 id="ACadSharp_Objects_Evaluations_BlockActionBasePt_Value1011" data-uid="ACadSharp.Objects.Evaluations.BlockActionBasePt.Value1011">
-  Value1011
-  <a class="header-action link-secondary" title="View source" href="https://github.com/DomCR/ACadSharp/blob/master/src/ACadSharp/Objects/Evaluations/BlockActionBasePt.cs/#L12"><i class="bi bi-code-slash"></i></a>
-  </h3>
-
-  <div class="markdown level1 summary"></div>
-  <div class="markdown level1 conceptual"></div>
-
-  <div class="codewrapper">
-    <pre><code class="lang-csharp hljs">[DxfCodeValue(new int[] { 1011, 1021, 1031 })]
-public XYZ Value1011 { get; set; }</code></pre>
-  </div>
-
-
-
-
-
-  <h4 class="section">Property Value</h4>
-  <dl class="parameters">
-    <dt><a class="xref" href="CSMath.XYZ.html">XYZ</a></dt>
-    <dd></dd>
-  </dl>
-
-
-
-
-
-
-
-
   <a id="ACadSharp_Objects_Evaluations_BlockActionBasePt_Value1012_" data-uid="ACadSharp.Objects.Evaluations.BlockActionBasePt.Value1012*"></a>
 
   <h3 id="ACadSharp_Objects_Evaluations_BlockActionBasePt_Value1012" data-uid="ACadSharp.Objects.Evaluations.BlockActionBasePt.Value1012">
   Value1012
-  <a class="header-action link-secondary" title="View source" href="https://github.com/DomCR/ACadSharp/blob/master/src/ACadSharp/Objects/Evaluations/BlockActionBasePt.cs/#L15"><i class="bi bi-code-slash"></i></a>
+  <a class="header-action link-secondary" title="View source" href="https://github.com/DomCR/ACadSharp/blob/master/src/ACadSharp/Objects/Evaluations/BlockActionBasePt.cs/#L23"><i class="bi bi-code-slash"></i></a>
   </h3>
 
   <div class="markdown level1 summary"></div>
@@ -348,7 +381,7 @@ public XYZ Value1012 { get; set; }</code></pre>
 
   <h3 id="ACadSharp_Objects_Evaluations_BlockActionBasePt_Value280" data-uid="ACadSharp.Objects.Evaluations.BlockActionBasePt.Value280">
   Value280
-  <a class="header-action link-secondary" title="View source" href="https://github.com/DomCR/ACadSharp/blob/master/src/ACadSharp/Objects/Evaluations/BlockActionBasePt.cs/#L18"><i class="bi bi-code-slash"></i></a>
+  <a class="header-action link-secondary" title="View source" href="https://github.com/DomCR/ACadSharp/blob/master/src/ACadSharp/Objects/Evaluations/BlockActionBasePt.cs/#L26"><i class="bi bi-code-slash"></i></a>
   </h3>
 
   <div class="markdown level1 summary"></div>
@@ -366,134 +399,6 @@ public bool Value280 { get; set; }</code></pre>
   <h4 class="section">Property Value</h4>
   <dl class="parameters">
     <dt><a class="xref" href="https://learn.microsoft.com/dotnet/api/system.boolean">bool</a></dt>
-    <dd></dd>
-  </dl>
-
-
-
-
-
-
-
-
-  <a id="ACadSharp_Objects_Evaluations_BlockActionBasePt_Value301_" data-uid="ACadSharp.Objects.Evaluations.BlockActionBasePt.Value301*"></a>
-
-  <h3 id="ACadSharp_Objects_Evaluations_BlockActionBasePt_Value301" data-uid="ACadSharp.Objects.Evaluations.BlockActionBasePt.Value301">
-  Value301
-  <a class="header-action link-secondary" title="View source" href="https://github.com/DomCR/ACadSharp/blob/master/src/ACadSharp/Objects/Evaluations/BlockActionBasePt.cs/#L21"><i class="bi bi-code-slash"></i></a>
-  </h3>
-
-  <div class="markdown level1 summary"></div>
-  <div class="markdown level1 conceptual"></div>
-
-  <div class="codewrapper">
-    <pre><code class="lang-csharp hljs">[DxfCodeValue(new int[] { 301 })]
-public string Value301 { get; set; }</code></pre>
-  </div>
-
-
-
-
-
-  <h4 class="section">Property Value</h4>
-  <dl class="parameters">
-    <dt><a class="xref" href="https://learn.microsoft.com/dotnet/api/system.string">string</a></dt>
-    <dd></dd>
-  </dl>
-
-
-
-
-
-
-
-
-  <a id="ACadSharp_Objects_Evaluations_BlockActionBasePt_Value302_" data-uid="ACadSharp.Objects.Evaluations.BlockActionBasePt.Value302*"></a>
-
-  <h3 id="ACadSharp_Objects_Evaluations_BlockActionBasePt_Value302" data-uid="ACadSharp.Objects.Evaluations.BlockActionBasePt.Value302">
-  Value302
-  <a class="header-action link-secondary" title="View source" href="https://github.com/DomCR/ACadSharp/blob/master/src/ACadSharp/Objects/Evaluations/BlockActionBasePt.cs/#L24"><i class="bi bi-code-slash"></i></a>
-  </h3>
-
-  <div class="markdown level1 summary"></div>
-  <div class="markdown level1 conceptual"></div>
-
-  <div class="codewrapper">
-    <pre><code class="lang-csharp hljs">[DxfCodeValue(new int[] { 302 })]
-public string Value302 { get; set; }</code></pre>
-  </div>
-
-
-
-
-
-  <h4 class="section">Property Value</h4>
-  <dl class="parameters">
-    <dt><a class="xref" href="https://learn.microsoft.com/dotnet/api/system.string">string</a></dt>
-    <dd></dd>
-  </dl>
-
-
-
-
-
-
-
-
-  <a id="ACadSharp_Objects_Evaluations_BlockActionBasePt_Value92_" data-uid="ACadSharp.Objects.Evaluations.BlockActionBasePt.Value92*"></a>
-
-  <h3 id="ACadSharp_Objects_Evaluations_BlockActionBasePt_Value92" data-uid="ACadSharp.Objects.Evaluations.BlockActionBasePt.Value92">
-  Value92
-  <a class="header-action link-secondary" title="View source" href="https://github.com/DomCR/ACadSharp/blob/master/src/ACadSharp/Objects/Evaluations/BlockActionBasePt.cs/#L27"><i class="bi bi-code-slash"></i></a>
-  </h3>
-
-  <div class="markdown level1 summary"></div>
-  <div class="markdown level1 conceptual"></div>
-
-  <div class="codewrapper">
-    <pre><code class="lang-csharp hljs">[DxfCodeValue(new int[] { 92 })]
-public int Value92 { get; set; }</code></pre>
-  </div>
-
-
-
-
-
-  <h4 class="section">Property Value</h4>
-  <dl class="parameters">
-    <dt><a class="xref" href="https://learn.microsoft.com/dotnet/api/system.int32">int</a></dt>
-    <dd></dd>
-  </dl>
-
-
-
-
-
-
-
-
-  <a id="ACadSharp_Objects_Evaluations_BlockActionBasePt_Value93_" data-uid="ACadSharp.Objects.Evaluations.BlockActionBasePt.Value93*"></a>
-
-  <h3 id="ACadSharp_Objects_Evaluations_BlockActionBasePt_Value93" data-uid="ACadSharp.Objects.Evaluations.BlockActionBasePt.Value93">
-  Value93
-  <a class="header-action link-secondary" title="View source" href="https://github.com/DomCR/ACadSharp/blob/master/src/ACadSharp/Objects/Evaluations/BlockActionBasePt.cs/#L30"><i class="bi bi-code-slash"></i></a>
-  </h3>
-
-  <div class="markdown level1 summary"></div>
-  <div class="markdown level1 conceptual"></div>
-
-  <div class="codewrapper">
-    <pre><code class="lang-csharp hljs">[DxfCodeValue(new int[] { 93 })]
-public int Value93 { get; set; }</code></pre>
-  </div>
-
-
-
-
-
-  <h4 class="section">Property Value</h4>
-  <dl class="parameters">
-    <dt><a class="xref" href="https://learn.microsoft.com/dotnet/api/system.int32">int</a></dt>
     <dd></dd>
   </dl>
 

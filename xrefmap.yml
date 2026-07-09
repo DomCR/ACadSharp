@@ -5386,6 +5386,12 @@ references:
   commentId: F:ACadSharp.DxfFileToken.ObjectBlockLookupParameter
   fullName: ACadSharp.DxfFileToken.ObjectBlockLookupParameter
   nameWithType: DxfFileToken.ObjectBlockLookupParameter
+- uid: ACadSharp.DxfFileToken.ObjectBlockMoveAction
+  name: ObjectBlockMoveAction
+  href: api/ACadSharp.DxfFileToken.html#ACadSharp_DxfFileToken_ObjectBlockMoveAction
+  commentId: F:ACadSharp.DxfFileToken.ObjectBlockMoveAction
+  fullName: ACadSharp.DxfFileToken.ObjectBlockMoveAction
+  nameWithType: DxfFileToken.ObjectBlockMoveAction
 - uid: ACadSharp.DxfFileToken.ObjectBlockPointParameter
   name: ObjectBlockPointParameter
   href: api/ACadSharp.DxfFileToken.html#ACadSharp_DxfFileToken_ObjectBlockPointParameter
@@ -5428,6 +5434,12 @@ references:
   commentId: F:ACadSharp.DxfFileToken.ObjectBlockVisibilityParameter
   fullName: ACadSharp.DxfFileToken.ObjectBlockVisibilityParameter
   nameWithType: DxfFileToken.ObjectBlockVisibilityParameter
+- uid: ACadSharp.DxfFileToken.ObjectBlockXYGrip
+  name: ObjectBlockXYGrip
+  href: api/ACadSharp.DxfFileToken.html#ACadSharp_DxfFileToken_ObjectBlockXYGrip
+  commentId: F:ACadSharp.DxfFileToken.ObjectBlockXYGrip
+  fullName: ACadSharp.DxfFileToken.ObjectBlockXYGrip
+  nameWithType: DxfFileToken.ObjectBlockXYGrip
 - uid: ACadSharp.DxfFileToken.ObjectCell
   name: ObjectCell
   href: api/ACadSharp.DxfFileToken.html#ACadSharp_DxfFileToken_ObjectCell
@@ -6458,12 +6470,24 @@ references:
   commentId: F:ACadSharp.DxfSubclassMarker.BlockLookupParameter
   fullName: ACadSharp.DxfSubclassMarker.BlockLookupParameter
   nameWithType: DxfSubclassMarker.BlockLookupParameter
+- uid: ACadSharp.DxfSubclassMarker.BlockMoveAction
+  name: BlockMoveAction
+  href: api/ACadSharp.DxfSubclassMarker.html#ACadSharp_DxfSubclassMarker_BlockMoveAction
+  commentId: F:ACadSharp.DxfSubclassMarker.BlockMoveAction
+  fullName: ACadSharp.DxfSubclassMarker.BlockMoveAction
+  nameWithType: DxfSubclassMarker.BlockMoveAction
 - uid: ACadSharp.DxfSubclassMarker.BlockParameter
   name: BlockParameter
   href: api/ACadSharp.DxfSubclassMarker.html#ACadSharp_DxfSubclassMarker_BlockParameter
   commentId: F:ACadSharp.DxfSubclassMarker.BlockParameter
   fullName: ACadSharp.DxfSubclassMarker.BlockParameter
   nameWithType: DxfSubclassMarker.BlockParameter
+- uid: ACadSharp.DxfSubclassMarker.BlockPointParameter
+  name: BlockPointParameter
+  href: api/ACadSharp.DxfSubclassMarker.html#ACadSharp_DxfSubclassMarker_BlockPointParameter
+  commentId: F:ACadSharp.DxfSubclassMarker.BlockPointParameter
+  fullName: ACadSharp.DxfSubclassMarker.BlockPointParameter
+  nameWithType: DxfSubclassMarker.BlockPointParameter
 - uid: ACadSharp.DxfSubclassMarker.BlockRecord
   name: BlockRecord
   href: api/ACadSharp.DxfSubclassMarker.html#ACadSharp_DxfSubclassMarker_BlockRecord
@@ -6506,6 +6530,12 @@ references:
   commentId: F:ACadSharp.DxfSubclassMarker.BlockVisibilityParameter
   fullName: ACadSharp.DxfSubclassMarker.BlockVisibilityParameter
   nameWithType: DxfSubclassMarker.BlockVisibilityParameter
+- uid: ACadSharp.DxfSubclassMarker.BlockXYGrip
+  name: BlockXYGrip
+  href: api/ACadSharp.DxfSubclassMarker.html#ACadSharp_DxfSubclassMarker_BlockXYGrip
+  commentId: F:ACadSharp.DxfSubclassMarker.BlockXYGrip
+  fullName: ACadSharp.DxfSubclassMarker.BlockXYGrip
+  nameWithType: DxfSubclassMarker.BlockXYGrip
 - uid: ACadSharp.DxfSubclassMarker.CellStyleMap
   name: CellStyleMap
   href: api/ACadSharp.DxfSubclassMarker.html#ACadSharp_DxfSubclassMarker_CellStyleMap
@@ -37190,6 +37220,45 @@ references:
   commentId: T:ACadSharp.Objects.Evaluations.Block1PtParameter
   fullName: ACadSharp.Objects.Evaluations.Block1PtParameter
   nameWithType: Block1PtParameter
+- uid: ACadSharp.Objects.Evaluations.Block1PtParameter.DisplacementX
+  name: DisplacementX
+  href: api/ACadSharp.Objects.Evaluations.Block1PtParameter.html#ACadSharp_Objects_Evaluations_Block1PtParameter_DisplacementX
+  commentId: P:ACadSharp.Objects.Evaluations.Block1PtParameter.DisplacementX
+  fullName: ACadSharp.Objects.Evaluations.Block1PtParameter.DisplacementX
+  nameWithType: Block1PtParameter.DisplacementX
+- uid: ACadSharp.Objects.Evaluations.Block1PtParameter.DisplacementX*
+  name: DisplacementX
+  href: api/ACadSharp.Objects.Evaluations.Block1PtParameter.html#ACadSharp_Objects_Evaluations_Block1PtParameter_DisplacementX_
+  commentId: Overload:ACadSharp.Objects.Evaluations.Block1PtParameter.DisplacementX
+  isSpec: "True"
+  fullName: ACadSharp.Objects.Evaluations.Block1PtParameter.DisplacementX
+  nameWithType: Block1PtParameter.DisplacementX
+- uid: ACadSharp.Objects.Evaluations.Block1PtParameter.DisplacementY
+  name: DisplacementY
+  href: api/ACadSharp.Objects.Evaluations.Block1PtParameter.html#ACadSharp_Objects_Evaluations_Block1PtParameter_DisplacementY
+  commentId: P:ACadSharp.Objects.Evaluations.Block1PtParameter.DisplacementY
+  fullName: ACadSharp.Objects.Evaluations.Block1PtParameter.DisplacementY
+  nameWithType: Block1PtParameter.DisplacementY
+- uid: ACadSharp.Objects.Evaluations.Block1PtParameter.DisplacementY*
+  name: DisplacementY
+  href: api/ACadSharp.Objects.Evaluations.Block1PtParameter.html#ACadSharp_Objects_Evaluations_Block1PtParameter_DisplacementY_
+  commentId: Overload:ACadSharp.Objects.Evaluations.Block1PtParameter.DisplacementY
+  isSpec: "True"
+  fullName: ACadSharp.Objects.Evaluations.Block1PtParameter.DisplacementY
+  nameWithType: Block1PtParameter.DisplacementY
+- uid: ACadSharp.Objects.Evaluations.Block1PtParameter.GripId
+  name: GripId
+  href: api/ACadSharp.Objects.Evaluations.Block1PtParameter.html#ACadSharp_Objects_Evaluations_Block1PtParameter_GripId
+  commentId: P:ACadSharp.Objects.Evaluations.Block1PtParameter.GripId
+  fullName: ACadSharp.Objects.Evaluations.Block1PtParameter.GripId
+  nameWithType: Block1PtParameter.GripId
+- uid: ACadSharp.Objects.Evaluations.Block1PtParameter.GripId*
+  name: GripId
+  href: api/ACadSharp.Objects.Evaluations.Block1PtParameter.html#ACadSharp_Objects_Evaluations_Block1PtParameter_GripId_
+  commentId: Overload:ACadSharp.Objects.Evaluations.Block1PtParameter.GripId
+  isSpec: "True"
+  fullName: ACadSharp.Objects.Evaluations.Block1PtParameter.GripId
+  nameWithType: Block1PtParameter.GripId
 - uid: ACadSharp.Objects.Evaluations.Block1PtParameter.Location
   name: Location
   href: api/ACadSharp.Objects.Evaluations.Block1PtParameter.html#ACadSharp_Objects_Evaluations_Block1PtParameter_Location
@@ -37216,45 +37285,6 @@ references:
   isSpec: "True"
   fullName: ACadSharp.Objects.Evaluations.Block1PtParameter.SubclassMarker
   nameWithType: Block1PtParameter.SubclassMarker
-- uid: ACadSharp.Objects.Evaluations.Block1PtParameter.Value170
-  name: Value170
-  href: api/ACadSharp.Objects.Evaluations.Block1PtParameter.html#ACadSharp_Objects_Evaluations_Block1PtParameter_Value170
-  commentId: P:ACadSharp.Objects.Evaluations.Block1PtParameter.Value170
-  fullName: ACadSharp.Objects.Evaluations.Block1PtParameter.Value170
-  nameWithType: Block1PtParameter.Value170
-- uid: ACadSharp.Objects.Evaluations.Block1PtParameter.Value170*
-  name: Value170
-  href: api/ACadSharp.Objects.Evaluations.Block1PtParameter.html#ACadSharp_Objects_Evaluations_Block1PtParameter_Value170_
-  commentId: Overload:ACadSharp.Objects.Evaluations.Block1PtParameter.Value170
-  isSpec: "True"
-  fullName: ACadSharp.Objects.Evaluations.Block1PtParameter.Value170
-  nameWithType: Block1PtParameter.Value170
-- uid: ACadSharp.Objects.Evaluations.Block1PtParameter.Value171
-  name: Value171
-  href: api/ACadSharp.Objects.Evaluations.Block1PtParameter.html#ACadSharp_Objects_Evaluations_Block1PtParameter_Value171
-  commentId: P:ACadSharp.Objects.Evaluations.Block1PtParameter.Value171
-  fullName: ACadSharp.Objects.Evaluations.Block1PtParameter.Value171
-  nameWithType: Block1PtParameter.Value171
-- uid: ACadSharp.Objects.Evaluations.Block1PtParameter.Value171*
-  name: Value171
-  href: api/ACadSharp.Objects.Evaluations.Block1PtParameter.html#ACadSharp_Objects_Evaluations_Block1PtParameter_Value171_
-  commentId: Overload:ACadSharp.Objects.Evaluations.Block1PtParameter.Value171
-  isSpec: "True"
-  fullName: ACadSharp.Objects.Evaluations.Block1PtParameter.Value171
-  nameWithType: Block1PtParameter.Value171
-- uid: ACadSharp.Objects.Evaluations.Block1PtParameter.Value93
-  name: Value93
-  href: api/ACadSharp.Objects.Evaluations.Block1PtParameter.html#ACadSharp_Objects_Evaluations_Block1PtParameter_Value93
-  commentId: P:ACadSharp.Objects.Evaluations.Block1PtParameter.Value93
-  fullName: ACadSharp.Objects.Evaluations.Block1PtParameter.Value93
-  nameWithType: Block1PtParameter.Value93
-- uid: ACadSharp.Objects.Evaluations.Block1PtParameter.Value93*
-  name: Value93
-  href: api/ACadSharp.Objects.Evaluations.Block1PtParameter.html#ACadSharp_Objects_Evaluations_Block1PtParameter_Value93_
-  commentId: Overload:ACadSharp.Objects.Evaluations.Block1PtParameter.Value93
-  isSpec: "True"
-  fullName: ACadSharp.Objects.Evaluations.Block1PtParameter.Value93
-  nameWithType: Block1PtParameter.Value93
 - uid: ACadSharp.Objects.Evaluations.Block2PtParameter
   name: Block2PtParameter
   href: api/ACadSharp.Objects.Evaluations.Block2PtParameter.html
@@ -37287,6 +37317,32 @@ references:
   isSpec: "True"
   fullName: ACadSharp.Objects.Evaluations.Block2PtParameter.FirstPoint
   nameWithType: Block2PtParameter.FirstPoint
+- uid: ACadSharp.Objects.Evaluations.Block2PtParameter.FirstPointDisplacementX
+  name: FirstPointDisplacementX
+  href: api/ACadSharp.Objects.Evaluations.Block2PtParameter.html#ACadSharp_Objects_Evaluations_Block2PtParameter_FirstPointDisplacementX
+  commentId: P:ACadSharp.Objects.Evaluations.Block2PtParameter.FirstPointDisplacementX
+  fullName: ACadSharp.Objects.Evaluations.Block2PtParameter.FirstPointDisplacementX
+  nameWithType: Block2PtParameter.FirstPointDisplacementX
+- uid: ACadSharp.Objects.Evaluations.Block2PtParameter.FirstPointDisplacementX*
+  name: FirstPointDisplacementX
+  href: api/ACadSharp.Objects.Evaluations.Block2PtParameter.html#ACadSharp_Objects_Evaluations_Block2PtParameter_FirstPointDisplacementX_
+  commentId: Overload:ACadSharp.Objects.Evaluations.Block2PtParameter.FirstPointDisplacementX
+  isSpec: "True"
+  fullName: ACadSharp.Objects.Evaluations.Block2PtParameter.FirstPointDisplacementX
+  nameWithType: Block2PtParameter.FirstPointDisplacementX
+- uid: ACadSharp.Objects.Evaluations.Block2PtParameter.FirstPointDisplacementY
+  name: FirstPointDisplacementY
+  href: api/ACadSharp.Objects.Evaluations.Block2PtParameter.html#ACadSharp_Objects_Evaluations_Block2PtParameter_FirstPointDisplacementY
+  commentId: P:ACadSharp.Objects.Evaluations.Block2PtParameter.FirstPointDisplacementY
+  fullName: ACadSharp.Objects.Evaluations.Block2PtParameter.FirstPointDisplacementY
+  nameWithType: Block2PtParameter.FirstPointDisplacementY
+- uid: ACadSharp.Objects.Evaluations.Block2PtParameter.FirstPointDisplacementY*
+  name: FirstPointDisplacementY
+  href: api/ACadSharp.Objects.Evaluations.Block2PtParameter.html#ACadSharp_Objects_Evaluations_Block2PtParameter_FirstPointDisplacementY_
+  commentId: Overload:ACadSharp.Objects.Evaluations.Block2PtParameter.FirstPointDisplacementY
+  isSpec: "True"
+  fullName: ACadSharp.Objects.Evaluations.Block2PtParameter.FirstPointDisplacementY
+  nameWithType: Block2PtParameter.FirstPointDisplacementY
 - uid: ACadSharp.Objects.Evaluations.Block2PtParameter.GripIds
   name: GripIds
   href: api/ACadSharp.Objects.Evaluations.Block2PtParameter.html#ACadSharp_Objects_Evaluations_Block2PtParameter_GripIds
@@ -37300,19 +37356,6 @@ references:
   isSpec: "True"
   fullName: ACadSharp.Objects.Evaluations.Block2PtParameter.GripIds
   nameWithType: Block2PtParameter.GripIds
-- uid: ACadSharp.Objects.Evaluations.Block2PtParameter.Properties
-  name: Properties
-  href: api/ACadSharp.Objects.Evaluations.Block2PtParameter.html#ACadSharp_Objects_Evaluations_Block2PtParameter_Properties
-  commentId: P:ACadSharp.Objects.Evaluations.Block2PtParameter.Properties
-  fullName: ACadSharp.Objects.Evaluations.Block2PtParameter.Properties
-  nameWithType: Block2PtParameter.Properties
-- uid: ACadSharp.Objects.Evaluations.Block2PtParameter.Properties*
-  name: Properties
-  href: api/ACadSharp.Objects.Evaluations.Block2PtParameter.html#ACadSharp_Objects_Evaluations_Block2PtParameter_Properties_
-  commentId: Overload:ACadSharp.Objects.Evaluations.Block2PtParameter.Properties
-  isSpec: "True"
-  fullName: ACadSharp.Objects.Evaluations.Block2PtParameter.Properties
-  nameWithType: Block2PtParameter.Properties
 - uid: ACadSharp.Objects.Evaluations.Block2PtParameter.SecondPoint
   name: SecondPoint
   href: api/ACadSharp.Objects.Evaluations.Block2PtParameter.html#ACadSharp_Objects_Evaluations_Block2PtParameter_SecondPoint
@@ -37326,6 +37369,32 @@ references:
   isSpec: "True"
   fullName: ACadSharp.Objects.Evaluations.Block2PtParameter.SecondPoint
   nameWithType: Block2PtParameter.SecondPoint
+- uid: ACadSharp.Objects.Evaluations.Block2PtParameter.SecondPointDisplacementX
+  name: SecondPointDisplacementX
+  href: api/ACadSharp.Objects.Evaluations.Block2PtParameter.html#ACadSharp_Objects_Evaluations_Block2PtParameter_SecondPointDisplacementX
+  commentId: P:ACadSharp.Objects.Evaluations.Block2PtParameter.SecondPointDisplacementX
+  fullName: ACadSharp.Objects.Evaluations.Block2PtParameter.SecondPointDisplacementX
+  nameWithType: Block2PtParameter.SecondPointDisplacementX
+- uid: ACadSharp.Objects.Evaluations.Block2PtParameter.SecondPointDisplacementX*
+  name: SecondPointDisplacementX
+  href: api/ACadSharp.Objects.Evaluations.Block2PtParameter.html#ACadSharp_Objects_Evaluations_Block2PtParameter_SecondPointDisplacementX_
+  commentId: Overload:ACadSharp.Objects.Evaluations.Block2PtParameter.SecondPointDisplacementX
+  isSpec: "True"
+  fullName: ACadSharp.Objects.Evaluations.Block2PtParameter.SecondPointDisplacementX
+  nameWithType: Block2PtParameter.SecondPointDisplacementX
+- uid: ACadSharp.Objects.Evaluations.Block2PtParameter.SecondPointDisplacementY
+  name: SecondPointDisplacementY
+  href: api/ACadSharp.Objects.Evaluations.Block2PtParameter.html#ACadSharp_Objects_Evaluations_Block2PtParameter_SecondPointDisplacementY
+  commentId: P:ACadSharp.Objects.Evaluations.Block2PtParameter.SecondPointDisplacementY
+  fullName: ACadSharp.Objects.Evaluations.Block2PtParameter.SecondPointDisplacementY
+  nameWithType: Block2PtParameter.SecondPointDisplacementY
+- uid: ACadSharp.Objects.Evaluations.Block2PtParameter.SecondPointDisplacementY*
+  name: SecondPointDisplacementY
+  href: api/ACadSharp.Objects.Evaluations.Block2PtParameter.html#ACadSharp_Objects_Evaluations_Block2PtParameter_SecondPointDisplacementY_
+  commentId: Overload:ACadSharp.Objects.Evaluations.Block2PtParameter.SecondPointDisplacementY
+  isSpec: "True"
+  fullName: ACadSharp.Objects.Evaluations.Block2PtParameter.SecondPointDisplacementY
+  nameWithType: Block2PtParameter.SecondPointDisplacementY
 - uid: ACadSharp.Objects.Evaluations.Block2PtParameter.SubclassMarker
   name: SubclassMarker
   href: api/ACadSharp.Objects.Evaluations.Block2PtParameter.html#ACadSharp_Objects_Evaluations_Block2PtParameter_SubclassMarker
@@ -37345,19 +37414,6 @@ references:
   commentId: T:ACadSharp.Objects.Evaluations.BlockAction
   fullName: ACadSharp.Objects.Evaluations.BlockAction
   nameWithType: BlockAction
-- uid: ACadSharp.Objects.Evaluations.BlockAction.ActionPoint
-  name: ActionPoint
-  href: api/ACadSharp.Objects.Evaluations.BlockAction.html#ACadSharp_Objects_Evaluations_BlockAction_ActionPoint
-  commentId: P:ACadSharp.Objects.Evaluations.BlockAction.ActionPoint
-  fullName: ACadSharp.Objects.Evaluations.BlockAction.ActionPoint
-  nameWithType: BlockAction.ActionPoint
-- uid: ACadSharp.Objects.Evaluations.BlockAction.ActionPoint*
-  name: ActionPoint
-  href: api/ACadSharp.Objects.Evaluations.BlockAction.html#ACadSharp_Objects_Evaluations_BlockAction_ActionPoint_
-  commentId: Overload:ACadSharp.Objects.Evaluations.BlockAction.ActionPoint
-  isSpec: "True"
-  fullName: ACadSharp.Objects.Evaluations.BlockAction.ActionPoint
-  nameWithType: BlockAction.ActionPoint
 - uid: ACadSharp.Objects.Evaluations.BlockAction.Entities
   name: Entities
   href: api/ACadSharp.Objects.Evaluations.BlockAction.html#ACadSharp_Objects_Evaluations_BlockAction_Entities
@@ -37371,6 +37427,19 @@ references:
   isSpec: "True"
   fullName: ACadSharp.Objects.Evaluations.BlockAction.Entities
   nameWithType: BlockAction.Entities
+- uid: ACadSharp.Objects.Evaluations.BlockAction.LabelPosition
+  name: LabelPosition
+  href: api/ACadSharp.Objects.Evaluations.BlockAction.html#ACadSharp_Objects_Evaluations_BlockAction_LabelPosition
+  commentId: P:ACadSharp.Objects.Evaluations.BlockAction.LabelPosition
+  fullName: ACadSharp.Objects.Evaluations.BlockAction.LabelPosition
+  nameWithType: BlockAction.LabelPosition
+- uid: ACadSharp.Objects.Evaluations.BlockAction.LabelPosition*
+  name: LabelPosition
+  href: api/ACadSharp.Objects.Evaluations.BlockAction.html#ACadSharp_Objects_Evaluations_BlockAction_LabelPosition_
+  commentId: Overload:ACadSharp.Objects.Evaluations.BlockAction.LabelPosition
+  isSpec: "True"
+  fullName: ACadSharp.Objects.Evaluations.BlockAction.LabelPosition
+  nameWithType: BlockAction.LabelPosition
 - uid: ACadSharp.Objects.Evaluations.BlockAction.SubclassMarker
   name: SubclassMarker
   href: api/ACadSharp.Objects.Evaluations.BlockAction.html#ACadSharp_Objects_Evaluations_BlockAction_SubclassMarker
@@ -37403,6 +37472,32 @@ references:
   commentId: T:ACadSharp.Objects.Evaluations.BlockActionBasePt
   fullName: ACadSharp.Objects.Evaluations.BlockActionBasePt
   nameWithType: BlockActionBasePt
+- uid: ACadSharp.Objects.Evaluations.BlockActionBasePt.BasePoint
+  name: BasePoint
+  href: api/ACadSharp.Objects.Evaluations.BlockActionBasePt.html#ACadSharp_Objects_Evaluations_BlockActionBasePt_BasePoint
+  commentId: P:ACadSharp.Objects.Evaluations.BlockActionBasePt.BasePoint
+  fullName: ACadSharp.Objects.Evaluations.BlockActionBasePt.BasePoint
+  nameWithType: BlockActionBasePt.BasePoint
+- uid: ACadSharp.Objects.Evaluations.BlockActionBasePt.BasePoint*
+  name: BasePoint
+  href: api/ACadSharp.Objects.Evaluations.BlockActionBasePt.html#ACadSharp_Objects_Evaluations_BlockActionBasePt_BasePoint_
+  commentId: Overload:ACadSharp.Objects.Evaluations.BlockActionBasePt.BasePoint
+  isSpec: "True"
+  fullName: ACadSharp.Objects.Evaluations.BlockActionBasePt.BasePoint
+  nameWithType: BlockActionBasePt.BasePoint
+- uid: ACadSharp.Objects.Evaluations.BlockActionBasePt.Connections
+  name: Connections
+  href: api/ACadSharp.Objects.Evaluations.BlockActionBasePt.html#ACadSharp_Objects_Evaluations_BlockActionBasePt_Connections
+  commentId: P:ACadSharp.Objects.Evaluations.BlockActionBasePt.Connections
+  fullName: ACadSharp.Objects.Evaluations.BlockActionBasePt.Connections
+  nameWithType: BlockActionBasePt.Connections
+- uid: ACadSharp.Objects.Evaluations.BlockActionBasePt.Connections*
+  name: Connections
+  href: api/ACadSharp.Objects.Evaluations.BlockActionBasePt.html#ACadSharp_Objects_Evaluations_BlockActionBasePt_Connections_
+  commentId: Overload:ACadSharp.Objects.Evaluations.BlockActionBasePt.Connections
+  isSpec: "True"
+  fullName: ACadSharp.Objects.Evaluations.BlockActionBasePt.Connections
+  nameWithType: BlockActionBasePt.Connections
 - uid: ACadSharp.Objects.Evaluations.BlockActionBasePt.SubclassMarker
   name: SubclassMarker
   href: api/ACadSharp.Objects.Evaluations.BlockActionBasePt.html#ACadSharp_Objects_Evaluations_BlockActionBasePt_SubclassMarker
@@ -37416,19 +37511,6 @@ references:
   isSpec: "True"
   fullName: ACadSharp.Objects.Evaluations.BlockActionBasePt.SubclassMarker
   nameWithType: BlockActionBasePt.SubclassMarker
-- uid: ACadSharp.Objects.Evaluations.BlockActionBasePt.Value1011
-  name: Value1011
-  href: api/ACadSharp.Objects.Evaluations.BlockActionBasePt.html#ACadSharp_Objects_Evaluations_BlockActionBasePt_Value1011
-  commentId: P:ACadSharp.Objects.Evaluations.BlockActionBasePt.Value1011
-  fullName: ACadSharp.Objects.Evaluations.BlockActionBasePt.Value1011
-  nameWithType: BlockActionBasePt.Value1011
-- uid: ACadSharp.Objects.Evaluations.BlockActionBasePt.Value1011*
-  name: Value1011
-  href: api/ACadSharp.Objects.Evaluations.BlockActionBasePt.html#ACadSharp_Objects_Evaluations_BlockActionBasePt_Value1011_
-  commentId: Overload:ACadSharp.Objects.Evaluations.BlockActionBasePt.Value1011
-  isSpec: "True"
-  fullName: ACadSharp.Objects.Evaluations.BlockActionBasePt.Value1011
-  nameWithType: BlockActionBasePt.Value1011
 - uid: ACadSharp.Objects.Evaluations.BlockActionBasePt.Value1012
   name: Value1012
   href: api/ACadSharp.Objects.Evaluations.BlockActionBasePt.html#ACadSharp_Objects_Evaluations_BlockActionBasePt_Value1012
@@ -37455,58 +37537,6 @@ references:
   isSpec: "True"
   fullName: ACadSharp.Objects.Evaluations.BlockActionBasePt.Value280
   nameWithType: BlockActionBasePt.Value280
-- uid: ACadSharp.Objects.Evaluations.BlockActionBasePt.Value301
-  name: Value301
-  href: api/ACadSharp.Objects.Evaluations.BlockActionBasePt.html#ACadSharp_Objects_Evaluations_BlockActionBasePt_Value301
-  commentId: P:ACadSharp.Objects.Evaluations.BlockActionBasePt.Value301
-  fullName: ACadSharp.Objects.Evaluations.BlockActionBasePt.Value301
-  nameWithType: BlockActionBasePt.Value301
-- uid: ACadSharp.Objects.Evaluations.BlockActionBasePt.Value301*
-  name: Value301
-  href: api/ACadSharp.Objects.Evaluations.BlockActionBasePt.html#ACadSharp_Objects_Evaluations_BlockActionBasePt_Value301_
-  commentId: Overload:ACadSharp.Objects.Evaluations.BlockActionBasePt.Value301
-  isSpec: "True"
-  fullName: ACadSharp.Objects.Evaluations.BlockActionBasePt.Value301
-  nameWithType: BlockActionBasePt.Value301
-- uid: ACadSharp.Objects.Evaluations.BlockActionBasePt.Value302
-  name: Value302
-  href: api/ACadSharp.Objects.Evaluations.BlockActionBasePt.html#ACadSharp_Objects_Evaluations_BlockActionBasePt_Value302
-  commentId: P:ACadSharp.Objects.Evaluations.BlockActionBasePt.Value302
-  fullName: ACadSharp.Objects.Evaluations.BlockActionBasePt.Value302
-  nameWithType: BlockActionBasePt.Value302
-- uid: ACadSharp.Objects.Evaluations.BlockActionBasePt.Value302*
-  name: Value302
-  href: api/ACadSharp.Objects.Evaluations.BlockActionBasePt.html#ACadSharp_Objects_Evaluations_BlockActionBasePt_Value302_
-  commentId: Overload:ACadSharp.Objects.Evaluations.BlockActionBasePt.Value302
-  isSpec: "True"
-  fullName: ACadSharp.Objects.Evaluations.BlockActionBasePt.Value302
-  nameWithType: BlockActionBasePt.Value302
-- uid: ACadSharp.Objects.Evaluations.BlockActionBasePt.Value92
-  name: Value92
-  href: api/ACadSharp.Objects.Evaluations.BlockActionBasePt.html#ACadSharp_Objects_Evaluations_BlockActionBasePt_Value92
-  commentId: P:ACadSharp.Objects.Evaluations.BlockActionBasePt.Value92
-  fullName: ACadSharp.Objects.Evaluations.BlockActionBasePt.Value92
-  nameWithType: BlockActionBasePt.Value92
-- uid: ACadSharp.Objects.Evaluations.BlockActionBasePt.Value92*
-  name: Value92
-  href: api/ACadSharp.Objects.Evaluations.BlockActionBasePt.html#ACadSharp_Objects_Evaluations_BlockActionBasePt_Value92_
-  commentId: Overload:ACadSharp.Objects.Evaluations.BlockActionBasePt.Value92
-  isSpec: "True"
-  fullName: ACadSharp.Objects.Evaluations.BlockActionBasePt.Value92
-  nameWithType: BlockActionBasePt.Value92
-- uid: ACadSharp.Objects.Evaluations.BlockActionBasePt.Value93
-  name: Value93
-  href: api/ACadSharp.Objects.Evaluations.BlockActionBasePt.html#ACadSharp_Objects_Evaluations_BlockActionBasePt_Value93
-  commentId: P:ACadSharp.Objects.Evaluations.BlockActionBasePt.Value93
-  fullName: ACadSharp.Objects.Evaluations.BlockActionBasePt.Value93
-  nameWithType: BlockActionBasePt.Value93
-- uid: ACadSharp.Objects.Evaluations.BlockActionBasePt.Value93*
-  name: Value93
-  href: api/ACadSharp.Objects.Evaluations.BlockActionBasePt.html#ACadSharp_Objects_Evaluations_BlockActionBasePt_Value93_
-  commentId: Overload:ACadSharp.Objects.Evaluations.BlockActionBasePt.Value93
-  isSpec: "True"
-  fullName: ACadSharp.Objects.Evaluations.BlockActionBasePt.Value93
-  nameWithType: BlockActionBasePt.Value93
 - uid: ACadSharp.Objects.Evaluations.BlockBasePointParameter
   name: BlockBasePointParameter
   href: api/ACadSharp.Objects.Evaluations.BlockBasePointParameter.html
@@ -37972,6 +38002,45 @@ references:
   commentId: T:ACadSharp.Objects.Evaluations.BlockGrip
   fullName: ACadSharp.Objects.Evaluations.BlockGrip
   nameWithType: BlockGrip
+- uid: ACadSharp.Objects.Evaluations.BlockGrip.Cycling
+  name: Cycling
+  href: api/ACadSharp.Objects.Evaluations.BlockGrip.html#ACadSharp_Objects_Evaluations_BlockGrip_Cycling
+  commentId: P:ACadSharp.Objects.Evaluations.BlockGrip.Cycling
+  fullName: ACadSharp.Objects.Evaluations.BlockGrip.Cycling
+  nameWithType: BlockGrip.Cycling
+- uid: ACadSharp.Objects.Evaluations.BlockGrip.Cycling*
+  name: Cycling
+  href: api/ACadSharp.Objects.Evaluations.BlockGrip.html#ACadSharp_Objects_Evaluations_BlockGrip_Cycling_
+  commentId: Overload:ACadSharp.Objects.Evaluations.BlockGrip.Cycling
+  isSpec: "True"
+  fullName: ACadSharp.Objects.Evaluations.BlockGrip.Cycling
+  nameWithType: BlockGrip.Cycling
+- uid: ACadSharp.Objects.Evaluations.BlockGrip.ExpressionId1
+  name: ExpressionId1
+  href: api/ACadSharp.Objects.Evaluations.BlockGrip.html#ACadSharp_Objects_Evaluations_BlockGrip_ExpressionId1
+  commentId: P:ACadSharp.Objects.Evaluations.BlockGrip.ExpressionId1
+  fullName: ACadSharp.Objects.Evaluations.BlockGrip.ExpressionId1
+  nameWithType: BlockGrip.ExpressionId1
+- uid: ACadSharp.Objects.Evaluations.BlockGrip.ExpressionId1*
+  name: ExpressionId1
+  href: api/ACadSharp.Objects.Evaluations.BlockGrip.html#ACadSharp_Objects_Evaluations_BlockGrip_ExpressionId1_
+  commentId: Overload:ACadSharp.Objects.Evaluations.BlockGrip.ExpressionId1
+  isSpec: "True"
+  fullName: ACadSharp.Objects.Evaluations.BlockGrip.ExpressionId1
+  nameWithType: BlockGrip.ExpressionId1
+- uid: ACadSharp.Objects.Evaluations.BlockGrip.ExpressionId2
+  name: ExpressionId2
+  href: api/ACadSharp.Objects.Evaluations.BlockGrip.html#ACadSharp_Objects_Evaluations_BlockGrip_ExpressionId2
+  commentId: P:ACadSharp.Objects.Evaluations.BlockGrip.ExpressionId2
+  fullName: ACadSharp.Objects.Evaluations.BlockGrip.ExpressionId2
+  nameWithType: BlockGrip.ExpressionId2
+- uid: ACadSharp.Objects.Evaluations.BlockGrip.ExpressionId2*
+  name: ExpressionId2
+  href: api/ACadSharp.Objects.Evaluations.BlockGrip.html#ACadSharp_Objects_Evaluations_BlockGrip_ExpressionId2_
+  commentId: Overload:ACadSharp.Objects.Evaluations.BlockGrip.ExpressionId2
+  isSpec: "True"
+  fullName: ACadSharp.Objects.Evaluations.BlockGrip.ExpressionId2
+  nameWithType: BlockGrip.ExpressionId2
 - uid: ACadSharp.Objects.Evaluations.BlockGrip.Location
   name: Location
   href: api/ACadSharp.Objects.Evaluations.BlockGrip.html#ACadSharp_Objects_Evaluations_BlockGrip_Location
@@ -37998,45 +38067,6 @@ references:
   isSpec: "True"
   fullName: ACadSharp.Objects.Evaluations.BlockGrip.SubclassMarker
   nameWithType: BlockGrip.SubclassMarker
-- uid: ACadSharp.Objects.Evaluations.BlockGrip.Value280
-  name: Value280
-  href: api/ACadSharp.Objects.Evaluations.BlockGrip.html#ACadSharp_Objects_Evaluations_BlockGrip_Value280
-  commentId: P:ACadSharp.Objects.Evaluations.BlockGrip.Value280
-  fullName: ACadSharp.Objects.Evaluations.BlockGrip.Value280
-  nameWithType: BlockGrip.Value280
-- uid: ACadSharp.Objects.Evaluations.BlockGrip.Value280*
-  name: Value280
-  href: api/ACadSharp.Objects.Evaluations.BlockGrip.html#ACadSharp_Objects_Evaluations_BlockGrip_Value280_
-  commentId: Overload:ACadSharp.Objects.Evaluations.BlockGrip.Value280
-  isSpec: "True"
-  fullName: ACadSharp.Objects.Evaluations.BlockGrip.Value280
-  nameWithType: BlockGrip.Value280
-- uid: ACadSharp.Objects.Evaluations.BlockGrip.Value91
-  name: Value91
-  href: api/ACadSharp.Objects.Evaluations.BlockGrip.html#ACadSharp_Objects_Evaluations_BlockGrip_Value91
-  commentId: P:ACadSharp.Objects.Evaluations.BlockGrip.Value91
-  fullName: ACadSharp.Objects.Evaluations.BlockGrip.Value91
-  nameWithType: BlockGrip.Value91
-- uid: ACadSharp.Objects.Evaluations.BlockGrip.Value91*
-  name: Value91
-  href: api/ACadSharp.Objects.Evaluations.BlockGrip.html#ACadSharp_Objects_Evaluations_BlockGrip_Value91_
-  commentId: Overload:ACadSharp.Objects.Evaluations.BlockGrip.Value91
-  isSpec: "True"
-  fullName: ACadSharp.Objects.Evaluations.BlockGrip.Value91
-  nameWithType: BlockGrip.Value91
-- uid: ACadSharp.Objects.Evaluations.BlockGrip.Value92
-  name: Value92
-  href: api/ACadSharp.Objects.Evaluations.BlockGrip.html#ACadSharp_Objects_Evaluations_BlockGrip_Value92
-  commentId: P:ACadSharp.Objects.Evaluations.BlockGrip.Value92
-  fullName: ACadSharp.Objects.Evaluations.BlockGrip.Value92
-  nameWithType: BlockGrip.Value92
-- uid: ACadSharp.Objects.Evaluations.BlockGrip.Value92*
-  name: Value92
-  href: api/ACadSharp.Objects.Evaluations.BlockGrip.html#ACadSharp_Objects_Evaluations_BlockGrip_Value92_
-  commentId: Overload:ACadSharp.Objects.Evaluations.BlockGrip.Value92
-  isSpec: "True"
-  fullName: ACadSharp.Objects.Evaluations.BlockGrip.Value92
-  nameWithType: BlockGrip.Value92
 - uid: ACadSharp.Objects.Evaluations.BlockGrip.Value93
   name: Value93
   href: api/ACadSharp.Objects.Evaluations.BlockGrip.html#ACadSharp_Objects_Evaluations_BlockGrip_Value93
@@ -38127,19 +38157,6 @@ references:
   isSpec: "True"
   fullName: ACadSharp.Objects.Evaluations.BlockLinearParameter.Description
   nameWithType: BlockLinearParameter.Description
-- uid: ACadSharp.Objects.Evaluations.BlockLinearParameter.Increment
-  name: Increment
-  href: api/ACadSharp.Objects.Evaluations.BlockLinearParameter.html#ACadSharp_Objects_Evaluations_BlockLinearParameter_Increment
-  commentId: P:ACadSharp.Objects.Evaluations.BlockLinearParameter.Increment
-  fullName: ACadSharp.Objects.Evaluations.BlockLinearParameter.Increment
-  nameWithType: BlockLinearParameter.Increment
-- uid: ACadSharp.Objects.Evaluations.BlockLinearParameter.Increment*
-  name: Increment
-  href: api/ACadSharp.Objects.Evaluations.BlockLinearParameter.html#ACadSharp_Objects_Evaluations_BlockLinearParameter_Increment_
-  commentId: Overload:ACadSharp.Objects.Evaluations.BlockLinearParameter.Increment
-  isSpec: "True"
-  fullName: ACadSharp.Objects.Evaluations.BlockLinearParameter.Increment
-  nameWithType: BlockLinearParameter.Increment
 - uid: ACadSharp.Objects.Evaluations.BlockLinearParameter.Label
   name: Label
   href: api/ACadSharp.Objects.Evaluations.BlockLinearParameter.html#ACadSharp_Objects_Evaluations_BlockLinearParameter_Label
@@ -38166,32 +38183,6 @@ references:
   isSpec: "True"
   fullName: ACadSharp.Objects.Evaluations.BlockLinearParameter.LabelOffset
   nameWithType: BlockLinearParameter.LabelOffset
-- uid: ACadSharp.Objects.Evaluations.BlockLinearParameter.Maximum
-  name: Maximum
-  href: api/ACadSharp.Objects.Evaluations.BlockLinearParameter.html#ACadSharp_Objects_Evaluations_BlockLinearParameter_Maximum
-  commentId: P:ACadSharp.Objects.Evaluations.BlockLinearParameter.Maximum
-  fullName: ACadSharp.Objects.Evaluations.BlockLinearParameter.Maximum
-  nameWithType: BlockLinearParameter.Maximum
-- uid: ACadSharp.Objects.Evaluations.BlockLinearParameter.Maximum*
-  name: Maximum
-  href: api/ACadSharp.Objects.Evaluations.BlockLinearParameter.html#ACadSharp_Objects_Evaluations_BlockLinearParameter_Maximum_
-  commentId: Overload:ACadSharp.Objects.Evaluations.BlockLinearParameter.Maximum
-  isSpec: "True"
-  fullName: ACadSharp.Objects.Evaluations.BlockLinearParameter.Maximum
-  nameWithType: BlockLinearParameter.Maximum
-- uid: ACadSharp.Objects.Evaluations.BlockLinearParameter.Minimum
-  name: Minimum
-  href: api/ACadSharp.Objects.Evaluations.BlockLinearParameter.html#ACadSharp_Objects_Evaluations_BlockLinearParameter_Minimum
-  commentId: P:ACadSharp.Objects.Evaluations.BlockLinearParameter.Minimum
-  fullName: ACadSharp.Objects.Evaluations.BlockLinearParameter.Minimum
-  nameWithType: BlockLinearParameter.Minimum
-- uid: ACadSharp.Objects.Evaluations.BlockLinearParameter.Minimum*
-  name: Minimum
-  href: api/ACadSharp.Objects.Evaluations.BlockLinearParameter.html#ACadSharp_Objects_Evaluations_BlockLinearParameter_Minimum_
-  commentId: Overload:ACadSharp.Objects.Evaluations.BlockLinearParameter.Minimum
-  isSpec: "True"
-  fullName: ACadSharp.Objects.Evaluations.BlockLinearParameter.Minimum
-  nameWithType: BlockLinearParameter.Minimum
 - uid: ACadSharp.Objects.Evaluations.BlockLinearParameter.ObjectName
   name: ObjectName
   href: api/ACadSharp.Objects.Evaluations.BlockLinearParameter.html#ACadSharp_Objects_Evaluations_BlockLinearParameter_ObjectName
@@ -38205,19 +38196,6 @@ references:
   isSpec: "True"
   fullName: ACadSharp.Objects.Evaluations.BlockLinearParameter.ObjectName
   nameWithType: BlockLinearParameter.ObjectName
-- uid: ACadSharp.Objects.Evaluations.BlockLinearParameter.ObjectType
-  name: ObjectType
-  href: api/ACadSharp.Objects.Evaluations.BlockLinearParameter.html#ACadSharp_Objects_Evaluations_BlockLinearParameter_ObjectType
-  commentId: P:ACadSharp.Objects.Evaluations.BlockLinearParameter.ObjectType
-  fullName: ACadSharp.Objects.Evaluations.BlockLinearParameter.ObjectType
-  nameWithType: BlockLinearParameter.ObjectType
-- uid: ACadSharp.Objects.Evaluations.BlockLinearParameter.ObjectType*
-  name: ObjectType
-  href: api/ACadSharp.Objects.Evaluations.BlockLinearParameter.html#ACadSharp_Objects_Evaluations_BlockLinearParameter_ObjectType_
-  commentId: Overload:ACadSharp.Objects.Evaluations.BlockLinearParameter.ObjectType
-  isSpec: "True"
-  fullName: ACadSharp.Objects.Evaluations.BlockLinearParameter.ObjectType
-  nameWithType: BlockLinearParameter.ObjectType
 - uid: ACadSharp.Objects.Evaluations.BlockLinearParameter.SubclassMarker
   name: SubclassMarker
   href: api/ACadSharp.Objects.Evaluations.BlockLinearParameter.html#ACadSharp_Objects_Evaluations_BlockLinearParameter_SubclassMarker
@@ -38231,19 +38209,19 @@ references:
   isSpec: "True"
   fullName: ACadSharp.Objects.Evaluations.BlockLinearParameter.SubclassMarker
   nameWithType: BlockLinearParameter.SubclassMarker
-- uid: ACadSharp.Objects.Evaluations.BlockLinearParameter.Values
-  name: Values
-  href: api/ACadSharp.Objects.Evaluations.BlockLinearParameter.html#ACadSharp_Objects_Evaluations_BlockLinearParameter_Values
-  commentId: P:ACadSharp.Objects.Evaluations.BlockLinearParameter.Values
-  fullName: ACadSharp.Objects.Evaluations.BlockLinearParameter.Values
-  nameWithType: BlockLinearParameter.Values
-- uid: ACadSharp.Objects.Evaluations.BlockLinearParameter.Values*
-  name: Values
-  href: api/ACadSharp.Objects.Evaluations.BlockLinearParameter.html#ACadSharp_Objects_Evaluations_BlockLinearParameter_Values_
-  commentId: Overload:ACadSharp.Objects.Evaluations.BlockLinearParameter.Values
+- uid: ACadSharp.Objects.Evaluations.BlockLinearParameter.ValueSet
+  name: ValueSet
+  href: api/ACadSharp.Objects.Evaluations.BlockLinearParameter.html#ACadSharp_Objects_Evaluations_BlockLinearParameter_ValueSet
+  commentId: P:ACadSharp.Objects.Evaluations.BlockLinearParameter.ValueSet
+  fullName: ACadSharp.Objects.Evaluations.BlockLinearParameter.ValueSet
+  nameWithType: BlockLinearParameter.ValueSet
+- uid: ACadSharp.Objects.Evaluations.BlockLinearParameter.ValueSet*
+  name: ValueSet
+  href: api/ACadSharp.Objects.Evaluations.BlockLinearParameter.html#ACadSharp_Objects_Evaluations_BlockLinearParameter_ValueSet_
+  commentId: Overload:ACadSharp.Objects.Evaluations.BlockLinearParameter.ValueSet
   isSpec: "True"
-  fullName: ACadSharp.Objects.Evaluations.BlockLinearParameter.Values
-  nameWithType: BlockLinearParameter.Values
+  fullName: ACadSharp.Objects.Evaluations.BlockLinearParameter.ValueSet
+  nameWithType: BlockLinearParameter.ValueSet
 - uid: ACadSharp.Objects.Evaluations.BlockLookupParameter
   name: BlockLookupParameter
   href: api/ACadSharp.Objects.Evaluations.BlockLookupParameter.html
@@ -38315,6 +38293,103 @@ references:
   isSpec: "True"
   fullName: ACadSharp.Objects.Evaluations.BlockLookupParameter.SubclassMarker
   nameWithType: BlockLookupParameter.SubclassMarker
+- uid: ACadSharp.Objects.Evaluations.BlockMoveAction
+  name: BlockMoveAction
+  href: api/ACadSharp.Objects.Evaluations.BlockMoveAction.html
+  commentId: T:ACadSharp.Objects.Evaluations.BlockMoveAction
+  fullName: ACadSharp.Objects.Evaluations.BlockMoveAction
+  nameWithType: BlockMoveAction
+- uid: ACadSharp.Objects.Evaluations.BlockMoveAction.AngleOffset
+  name: AngleOffset
+  href: api/ACadSharp.Objects.Evaluations.BlockMoveAction.html#ACadSharp_Objects_Evaluations_BlockMoveAction_AngleOffset
+  commentId: P:ACadSharp.Objects.Evaluations.BlockMoveAction.AngleOffset
+  fullName: ACadSharp.Objects.Evaluations.BlockMoveAction.AngleOffset
+  nameWithType: BlockMoveAction.AngleOffset
+- uid: ACadSharp.Objects.Evaluations.BlockMoveAction.AngleOffset*
+  name: AngleOffset
+  href: api/ACadSharp.Objects.Evaluations.BlockMoveAction.html#ACadSharp_Objects_Evaluations_BlockMoveAction_AngleOffset_
+  commentId: Overload:ACadSharp.Objects.Evaluations.BlockMoveAction.AngleOffset
+  isSpec: "True"
+  fullName: ACadSharp.Objects.Evaluations.BlockMoveAction.AngleOffset
+  nameWithType: BlockMoveAction.AngleOffset
+- uid: ACadSharp.Objects.Evaluations.BlockMoveAction.DistanceMultiplier
+  name: DistanceMultiplier
+  href: api/ACadSharp.Objects.Evaluations.BlockMoveAction.html#ACadSharp_Objects_Evaluations_BlockMoveAction_DistanceMultiplier
+  commentId: P:ACadSharp.Objects.Evaluations.BlockMoveAction.DistanceMultiplier
+  fullName: ACadSharp.Objects.Evaluations.BlockMoveAction.DistanceMultiplier
+  nameWithType: BlockMoveAction.DistanceMultiplier
+- uid: ACadSharp.Objects.Evaluations.BlockMoveAction.DistanceMultiplier*
+  name: DistanceMultiplier
+  href: api/ACadSharp.Objects.Evaluations.BlockMoveAction.html#ACadSharp_Objects_Evaluations_BlockMoveAction_DistanceMultiplier_
+  commentId: Overload:ACadSharp.Objects.Evaluations.BlockMoveAction.DistanceMultiplier
+  isSpec: "True"
+  fullName: ACadSharp.Objects.Evaluations.BlockMoveAction.DistanceMultiplier
+  nameWithType: BlockMoveAction.DistanceMultiplier
+- uid: ACadSharp.Objects.Evaluations.BlockMoveAction.ObjectName
+  name: ObjectName
+  href: api/ACadSharp.Objects.Evaluations.BlockMoveAction.html#ACadSharp_Objects_Evaluations_BlockMoveAction_ObjectName
+  commentId: P:ACadSharp.Objects.Evaluations.BlockMoveAction.ObjectName
+  fullName: ACadSharp.Objects.Evaluations.BlockMoveAction.ObjectName
+  nameWithType: BlockMoveAction.ObjectName
+- uid: ACadSharp.Objects.Evaluations.BlockMoveAction.ObjectName*
+  name: ObjectName
+  href: api/ACadSharp.Objects.Evaluations.BlockMoveAction.html#ACadSharp_Objects_Evaluations_BlockMoveAction_ObjectName_
+  commentId: Overload:ACadSharp.Objects.Evaluations.BlockMoveAction.ObjectName
+  isSpec: "True"
+  fullName: ACadSharp.Objects.Evaluations.BlockMoveAction.ObjectName
+  nameWithType: BlockMoveAction.ObjectName
+- uid: ACadSharp.Objects.Evaluations.BlockMoveAction.SubclassMarker
+  name: SubclassMarker
+  href: api/ACadSharp.Objects.Evaluations.BlockMoveAction.html#ACadSharp_Objects_Evaluations_BlockMoveAction_SubclassMarker
+  commentId: P:ACadSharp.Objects.Evaluations.BlockMoveAction.SubclassMarker
+  fullName: ACadSharp.Objects.Evaluations.BlockMoveAction.SubclassMarker
+  nameWithType: BlockMoveAction.SubclassMarker
+- uid: ACadSharp.Objects.Evaluations.BlockMoveAction.SubclassMarker*
+  name: SubclassMarker
+  href: api/ACadSharp.Objects.Evaluations.BlockMoveAction.html#ACadSharp_Objects_Evaluations_BlockMoveAction_SubclassMarker_
+  commentId: Overload:ACadSharp.Objects.Evaluations.BlockMoveAction.SubclassMarker
+  isSpec: "True"
+  fullName: ACadSharp.Objects.Evaluations.BlockMoveAction.SubclassMarker
+  nameWithType: BlockMoveAction.SubclassMarker
+- uid: ACadSharp.Objects.Evaluations.BlockMoveAction.UnknownFlag
+  name: UnknownFlag
+  href: api/ACadSharp.Objects.Evaluations.BlockMoveAction.html#ACadSharp_Objects_Evaluations_BlockMoveAction_UnknownFlag
+  commentId: P:ACadSharp.Objects.Evaluations.BlockMoveAction.UnknownFlag
+  fullName: ACadSharp.Objects.Evaluations.BlockMoveAction.UnknownFlag
+  nameWithType: BlockMoveAction.UnknownFlag
+- uid: ACadSharp.Objects.Evaluations.BlockMoveAction.UnknownFlag*
+  name: UnknownFlag
+  href: api/ACadSharp.Objects.Evaluations.BlockMoveAction.html#ACadSharp_Objects_Evaluations_BlockMoveAction_UnknownFlag_
+  commentId: Overload:ACadSharp.Objects.Evaluations.BlockMoveAction.UnknownFlag
+  isSpec: "True"
+  fullName: ACadSharp.Objects.Evaluations.BlockMoveAction.UnknownFlag
+  nameWithType: BlockMoveAction.UnknownFlag
+- uid: ACadSharp.Objects.Evaluations.BlockMoveAction.XDelta
+  name: XDelta
+  href: api/ACadSharp.Objects.Evaluations.BlockMoveAction.html#ACadSharp_Objects_Evaluations_BlockMoveAction_XDelta
+  commentId: P:ACadSharp.Objects.Evaluations.BlockMoveAction.XDelta
+  fullName: ACadSharp.Objects.Evaluations.BlockMoveAction.XDelta
+  nameWithType: BlockMoveAction.XDelta
+- uid: ACadSharp.Objects.Evaluations.BlockMoveAction.XDelta*
+  name: XDelta
+  href: api/ACadSharp.Objects.Evaluations.BlockMoveAction.html#ACadSharp_Objects_Evaluations_BlockMoveAction_XDelta_
+  commentId: Overload:ACadSharp.Objects.Evaluations.BlockMoveAction.XDelta
+  isSpec: "True"
+  fullName: ACadSharp.Objects.Evaluations.BlockMoveAction.XDelta
+  nameWithType: BlockMoveAction.XDelta
+- uid: ACadSharp.Objects.Evaluations.BlockMoveAction.YDelta
+  name: YDelta
+  href: api/ACadSharp.Objects.Evaluations.BlockMoveAction.html#ACadSharp_Objects_Evaluations_BlockMoveAction_YDelta
+  commentId: P:ACadSharp.Objects.Evaluations.BlockMoveAction.YDelta
+  fullName: ACadSharp.Objects.Evaluations.BlockMoveAction.YDelta
+  nameWithType: BlockMoveAction.YDelta
+- uid: ACadSharp.Objects.Evaluations.BlockMoveAction.YDelta*
+  name: YDelta
+  href: api/ACadSharp.Objects.Evaluations.BlockMoveAction.html#ACadSharp_Objects_Evaluations_BlockMoveAction_YDelta_
+  commentId: Overload:ACadSharp.Objects.Evaluations.BlockMoveAction.YDelta
+  isSpec: "True"
+  fullName: ACadSharp.Objects.Evaluations.BlockMoveAction.YDelta
+  nameWithType: BlockMoveAction.YDelta
 - uid: ACadSharp.Objects.Evaluations.BlockParameter
   name: BlockParameter
   href: api/ACadSharp.Objects.Evaluations.BlockParameter.html
@@ -38360,12 +38435,96 @@ references:
   isSpec: "True"
   fullName: ACadSharp.Objects.Evaluations.BlockParameter.SubclassMarker
   nameWithType: BlockParameter.SubclassMarker
+- uid: ACadSharp.Objects.Evaluations.BlockPointParameter
+  name: BlockPointParameter
+  href: api/ACadSharp.Objects.Evaluations.BlockPointParameter.html
+  commentId: T:ACadSharp.Objects.Evaluations.BlockPointParameter
+  fullName: ACadSharp.Objects.Evaluations.BlockPointParameter
+  nameWithType: BlockPointParameter
+- uid: ACadSharp.Objects.Evaluations.BlockPointParameter.Description
+  name: Description
+  href: api/ACadSharp.Objects.Evaluations.BlockPointParameter.html#ACadSharp_Objects_Evaluations_BlockPointParameter_Description
+  commentId: P:ACadSharp.Objects.Evaluations.BlockPointParameter.Description
+  fullName: ACadSharp.Objects.Evaluations.BlockPointParameter.Description
+  nameWithType: BlockPointParameter.Description
+- uid: ACadSharp.Objects.Evaluations.BlockPointParameter.Description*
+  name: Description
+  href: api/ACadSharp.Objects.Evaluations.BlockPointParameter.html#ACadSharp_Objects_Evaluations_BlockPointParameter_Description_
+  commentId: Overload:ACadSharp.Objects.Evaluations.BlockPointParameter.Description
+  isSpec: "True"
+  fullName: ACadSharp.Objects.Evaluations.BlockPointParameter.Description
+  nameWithType: BlockPointParameter.Description
+- uid: ACadSharp.Objects.Evaluations.BlockPointParameter.Label
+  name: Label
+  href: api/ACadSharp.Objects.Evaluations.BlockPointParameter.html#ACadSharp_Objects_Evaluations_BlockPointParameter_Label
+  commentId: P:ACadSharp.Objects.Evaluations.BlockPointParameter.Label
+  fullName: ACadSharp.Objects.Evaluations.BlockPointParameter.Label
+  nameWithType: BlockPointParameter.Label
+- uid: ACadSharp.Objects.Evaluations.BlockPointParameter.Label*
+  name: Label
+  href: api/ACadSharp.Objects.Evaluations.BlockPointParameter.html#ACadSharp_Objects_Evaluations_BlockPointParameter_Label_
+  commentId: Overload:ACadSharp.Objects.Evaluations.BlockPointParameter.Label
+  isSpec: "True"
+  fullName: ACadSharp.Objects.Evaluations.BlockPointParameter.Label
+  nameWithType: BlockPointParameter.Label
+- uid: ACadSharp.Objects.Evaluations.BlockPointParameter.LabelPosition
+  name: LabelPosition
+  href: api/ACadSharp.Objects.Evaluations.BlockPointParameter.html#ACadSharp_Objects_Evaluations_BlockPointParameter_LabelPosition
+  commentId: P:ACadSharp.Objects.Evaluations.BlockPointParameter.LabelPosition
+  fullName: ACadSharp.Objects.Evaluations.BlockPointParameter.LabelPosition
+  nameWithType: BlockPointParameter.LabelPosition
+- uid: ACadSharp.Objects.Evaluations.BlockPointParameter.LabelPosition*
+  name: LabelPosition
+  href: api/ACadSharp.Objects.Evaluations.BlockPointParameter.html#ACadSharp_Objects_Evaluations_BlockPointParameter_LabelPosition_
+  commentId: Overload:ACadSharp.Objects.Evaluations.BlockPointParameter.LabelPosition
+  isSpec: "True"
+  fullName: ACadSharp.Objects.Evaluations.BlockPointParameter.LabelPosition
+  nameWithType: BlockPointParameter.LabelPosition
+- uid: ACadSharp.Objects.Evaluations.BlockPointParameter.ObjectName
+  name: ObjectName
+  href: api/ACadSharp.Objects.Evaluations.BlockPointParameter.html#ACadSharp_Objects_Evaluations_BlockPointParameter_ObjectName
+  commentId: P:ACadSharp.Objects.Evaluations.BlockPointParameter.ObjectName
+  fullName: ACadSharp.Objects.Evaluations.BlockPointParameter.ObjectName
+  nameWithType: BlockPointParameter.ObjectName
+- uid: ACadSharp.Objects.Evaluations.BlockPointParameter.ObjectName*
+  name: ObjectName
+  href: api/ACadSharp.Objects.Evaluations.BlockPointParameter.html#ACadSharp_Objects_Evaluations_BlockPointParameter_ObjectName_
+  commentId: Overload:ACadSharp.Objects.Evaluations.BlockPointParameter.ObjectName
+  isSpec: "True"
+  fullName: ACadSharp.Objects.Evaluations.BlockPointParameter.ObjectName
+  nameWithType: BlockPointParameter.ObjectName
+- uid: ACadSharp.Objects.Evaluations.BlockPointParameter.SubclassMarker
+  name: SubclassMarker
+  href: api/ACadSharp.Objects.Evaluations.BlockPointParameter.html#ACadSharp_Objects_Evaluations_BlockPointParameter_SubclassMarker
+  commentId: P:ACadSharp.Objects.Evaluations.BlockPointParameter.SubclassMarker
+  fullName: ACadSharp.Objects.Evaluations.BlockPointParameter.SubclassMarker
+  nameWithType: BlockPointParameter.SubclassMarker
+- uid: ACadSharp.Objects.Evaluations.BlockPointParameter.SubclassMarker*
+  name: SubclassMarker
+  href: api/ACadSharp.Objects.Evaluations.BlockPointParameter.html#ACadSharp_Objects_Evaluations_BlockPointParameter_SubclassMarker_
+  commentId: Overload:ACadSharp.Objects.Evaluations.BlockPointParameter.SubclassMarker
+  isSpec: "True"
+  fullName: ACadSharp.Objects.Evaluations.BlockPointParameter.SubclassMarker
+  nameWithType: BlockPointParameter.SubclassMarker
 - uid: ACadSharp.Objects.Evaluations.BlockRotationAction
   name: BlockRotationAction
   href: api/ACadSharp.Objects.Evaluations.BlockRotationAction.html
   commentId: T:ACadSharp.Objects.Evaluations.BlockRotationAction
   fullName: ACadSharp.Objects.Evaluations.BlockRotationAction
   nameWithType: BlockRotationAction
+- uid: ACadSharp.Objects.Evaluations.BlockRotationAction.ObjectName
+  name: ObjectName
+  href: api/ACadSharp.Objects.Evaluations.BlockRotationAction.html#ACadSharp_Objects_Evaluations_BlockRotationAction_ObjectName
+  commentId: P:ACadSharp.Objects.Evaluations.BlockRotationAction.ObjectName
+  fullName: ACadSharp.Objects.Evaluations.BlockRotationAction.ObjectName
+  nameWithType: BlockRotationAction.ObjectName
+- uid: ACadSharp.Objects.Evaluations.BlockRotationAction.ObjectName*
+  name: ObjectName
+  href: api/ACadSharp.Objects.Evaluations.BlockRotationAction.html#ACadSharp_Objects_Evaluations_BlockRotationAction_ObjectName_
+  commentId: Overload:ACadSharp.Objects.Evaluations.BlockRotationAction.ObjectName
+  isSpec: "True"
+  fullName: ACadSharp.Objects.Evaluations.BlockRotationAction.ObjectName
+  nameWithType: BlockRotationAction.ObjectName
 - uid: ACadSharp.Objects.Evaluations.BlockRotationAction.SubclassMarker
   name: SubclassMarker
   href: api/ACadSharp.Objects.Evaluations.BlockRotationAction.html#ACadSharp_Objects_Evaluations_BlockRotationAction_SubclassMarker
@@ -38812,12 +38971,56 @@ references:
   isSpec: "True"
   fullName: ACadSharp.Objects.Evaluations.BlockVisibilityParameter.Value91
   nameWithType: BlockVisibilityParameter.Value91
+- uid: ACadSharp.Objects.Evaluations.BlockXYGrip
+  name: BlockXYGrip
+  href: api/ACadSharp.Objects.Evaluations.BlockXYGrip.html
+  commentId: T:ACadSharp.Objects.Evaluations.BlockXYGrip
+  fullName: ACadSharp.Objects.Evaluations.BlockXYGrip
+  nameWithType: BlockXYGrip
+- uid: ACadSharp.Objects.Evaluations.BlockXYGrip.ObjectName
+  name: ObjectName
+  href: api/ACadSharp.Objects.Evaluations.BlockXYGrip.html#ACadSharp_Objects_Evaluations_BlockXYGrip_ObjectName
+  commentId: P:ACadSharp.Objects.Evaluations.BlockXYGrip.ObjectName
+  fullName: ACadSharp.Objects.Evaluations.BlockXYGrip.ObjectName
+  nameWithType: BlockXYGrip.ObjectName
+- uid: ACadSharp.Objects.Evaluations.BlockXYGrip.ObjectName*
+  name: ObjectName
+  href: api/ACadSharp.Objects.Evaluations.BlockXYGrip.html#ACadSharp_Objects_Evaluations_BlockXYGrip_ObjectName_
+  commentId: Overload:ACadSharp.Objects.Evaluations.BlockXYGrip.ObjectName
+  isSpec: "True"
+  fullName: ACadSharp.Objects.Evaluations.BlockXYGrip.ObjectName
+  nameWithType: BlockXYGrip.ObjectName
+- uid: ACadSharp.Objects.Evaluations.BlockXYGrip.SubclassMarker
+  name: SubclassMarker
+  href: api/ACadSharp.Objects.Evaluations.BlockXYGrip.html#ACadSharp_Objects_Evaluations_BlockXYGrip_SubclassMarker
+  commentId: P:ACadSharp.Objects.Evaluations.BlockXYGrip.SubclassMarker
+  fullName: ACadSharp.Objects.Evaluations.BlockXYGrip.SubclassMarker
+  nameWithType: BlockXYGrip.SubclassMarker
+- uid: ACadSharp.Objects.Evaluations.BlockXYGrip.SubclassMarker*
+  name: SubclassMarker
+  href: api/ACadSharp.Objects.Evaluations.BlockXYGrip.html#ACadSharp_Objects_Evaluations_BlockXYGrip_SubclassMarker_
+  commentId: Overload:ACadSharp.Objects.Evaluations.BlockXYGrip.SubclassMarker
+  isSpec: "True"
+  fullName: ACadSharp.Objects.Evaluations.BlockXYGrip.SubclassMarker
+  nameWithType: BlockXYGrip.SubclassMarker
 - uid: ACadSharp.Objects.Evaluations.EvalConnection
   name: EvalConnection
   href: api/ACadSharp.Objects.Evaluations.EvalConnection.html
   commentId: T:ACadSharp.Objects.Evaluations.EvalConnection
   fullName: ACadSharp.Objects.Evaluations.EvalConnection
   nameWithType: EvalConnection
+- uid: ACadSharp.Objects.Evaluations.EvalConnection.DisplacementX
+  name: DisplacementX
+  href: api/ACadSharp.Objects.Evaluations.EvalConnection.html#ACadSharp_Objects_Evaluations_EvalConnection_DisplacementX
+  commentId: F:ACadSharp.Objects.Evaluations.EvalConnection.DisplacementX
+  fullName: ACadSharp.Objects.Evaluations.EvalConnection.DisplacementX
+  nameWithType: EvalConnection.DisplacementX
+- uid: ACadSharp.Objects.Evaluations.EvalConnection.DisplacementY
+  name: DisplacementY
+  href: api/ACadSharp.Objects.Evaluations.EvalConnection.html#ACadSharp_Objects_Evaluations_EvalConnection_DisplacementY
+  commentId: F:ACadSharp.Objects.Evaluations.EvalConnection.DisplacementY
+  fullName: ACadSharp.Objects.Evaluations.EvalConnection.DisplacementY
+  nameWithType: EvalConnection.DisplacementY
 - uid: ACadSharp.Objects.Evaluations.EvalConnection.Id
   name: Id
   href: api/ACadSharp.Objects.Evaluations.EvalConnection.html#ACadSharp_Objects_Evaluations_EvalConnection_Id
@@ -39216,6 +39419,107 @@ references:
   commentId: F:ACadSharp.Objects.Evaluations.LinearParameterBaseLocation.StartPoint
   fullName: ACadSharp.Objects.Evaluations.LinearParameterBaseLocation.StartPoint
   nameWithType: LinearParameterBaseLocation.StartPoint
+- uid: ACadSharp.Objects.Evaluations.ParameterValueSet
+  name: ParameterValueSet
+  href: api/ACadSharp.Objects.Evaluations.ParameterValueSet.html
+  commentId: T:ACadSharp.Objects.Evaluations.ParameterValueSet
+  fullName: ACadSharp.Objects.Evaluations.ParameterValueSet
+  nameWithType: ParameterValueSet
+- uid: ACadSharp.Objects.Evaluations.ParameterValueSet.AllowedValues
+  name: AllowedValues
+  href: api/ACadSharp.Objects.Evaluations.ParameterValueSet.html#ACadSharp_Objects_Evaluations_ParameterValueSet_AllowedValues
+  commentId: P:ACadSharp.Objects.Evaluations.ParameterValueSet.AllowedValues
+  fullName: ACadSharp.Objects.Evaluations.ParameterValueSet.AllowedValues
+  nameWithType: ParameterValueSet.AllowedValues
+- uid: ACadSharp.Objects.Evaluations.ParameterValueSet.AllowedValues*
+  name: AllowedValues
+  href: api/ACadSharp.Objects.Evaluations.ParameterValueSet.html#ACadSharp_Objects_Evaluations_ParameterValueSet_AllowedValues_
+  commentId: Overload:ACadSharp.Objects.Evaluations.ParameterValueSet.AllowedValues
+  isSpec: "True"
+  fullName: ACadSharp.Objects.Evaluations.ParameterValueSet.AllowedValues
+  nameWithType: ParameterValueSet.AllowedValues
+- uid: ACadSharp.Objects.Evaluations.ParameterValueSet.Increment
+  name: Increment
+  href: api/ACadSharp.Objects.Evaluations.ParameterValueSet.html#ACadSharp_Objects_Evaluations_ParameterValueSet_Increment
+  commentId: P:ACadSharp.Objects.Evaluations.ParameterValueSet.Increment
+  fullName: ACadSharp.Objects.Evaluations.ParameterValueSet.Increment
+  nameWithType: ParameterValueSet.Increment
+- uid: ACadSharp.Objects.Evaluations.ParameterValueSet.Increment*
+  name: Increment
+  href: api/ACadSharp.Objects.Evaluations.ParameterValueSet.html#ACadSharp_Objects_Evaluations_ParameterValueSet_Increment_
+  commentId: Overload:ACadSharp.Objects.Evaluations.ParameterValueSet.Increment
+  isSpec: "True"
+  fullName: ACadSharp.Objects.Evaluations.ParameterValueSet.Increment
+  nameWithType: ParameterValueSet.Increment
+- uid: ACadSharp.Objects.Evaluations.ParameterValueSet.Maximum
+  name: Maximum
+  href: api/ACadSharp.Objects.Evaluations.ParameterValueSet.html#ACadSharp_Objects_Evaluations_ParameterValueSet_Maximum
+  commentId: P:ACadSharp.Objects.Evaluations.ParameterValueSet.Maximum
+  fullName: ACadSharp.Objects.Evaluations.ParameterValueSet.Maximum
+  nameWithType: ParameterValueSet.Maximum
+- uid: ACadSharp.Objects.Evaluations.ParameterValueSet.Maximum*
+  name: Maximum
+  href: api/ACadSharp.Objects.Evaluations.ParameterValueSet.html#ACadSharp_Objects_Evaluations_ParameterValueSet_Maximum_
+  commentId: Overload:ACadSharp.Objects.Evaluations.ParameterValueSet.Maximum
+  isSpec: "True"
+  fullName: ACadSharp.Objects.Evaluations.ParameterValueSet.Maximum
+  nameWithType: ParameterValueSet.Maximum
+- uid: ACadSharp.Objects.Evaluations.ParameterValueSet.Minimum
+  name: Minimum
+  href: api/ACadSharp.Objects.Evaluations.ParameterValueSet.html#ACadSharp_Objects_Evaluations_ParameterValueSet_Minimum
+  commentId: P:ACadSharp.Objects.Evaluations.ParameterValueSet.Minimum
+  fullName: ACadSharp.Objects.Evaluations.ParameterValueSet.Minimum
+  nameWithType: ParameterValueSet.Minimum
+- uid: ACadSharp.Objects.Evaluations.ParameterValueSet.Minimum*
+  name: Minimum
+  href: api/ACadSharp.Objects.Evaluations.ParameterValueSet.html#ACadSharp_Objects_Evaluations_ParameterValueSet_Minimum_
+  commentId: Overload:ACadSharp.Objects.Evaluations.ParameterValueSet.Minimum
+  isSpec: "True"
+  fullName: ACadSharp.Objects.Evaluations.ParameterValueSet.Minimum
+  nameWithType: ParameterValueSet.Minimum
+- uid: ACadSharp.Objects.Evaluations.ParameterValueSet.Type
+  name: Type
+  href: api/ACadSharp.Objects.Evaluations.ParameterValueSet.html#ACadSharp_Objects_Evaluations_ParameterValueSet_Type
+  commentId: P:ACadSharp.Objects.Evaluations.ParameterValueSet.Type
+  fullName: ACadSharp.Objects.Evaluations.ParameterValueSet.Type
+  nameWithType: ParameterValueSet.Type
+- uid: ACadSharp.Objects.Evaluations.ParameterValueSet.Type*
+  name: Type
+  href: api/ACadSharp.Objects.Evaluations.ParameterValueSet.html#ACadSharp_Objects_Evaluations_ParameterValueSet_Type_
+  commentId: Overload:ACadSharp.Objects.Evaluations.ParameterValueSet.Type
+  isSpec: "True"
+  fullName: ACadSharp.Objects.Evaluations.ParameterValueSet.Type
+  nameWithType: ParameterValueSet.Type
+- uid: ACadSharp.Objects.Evaluations.ParameterValueSetType
+  name: ParameterValueSetType
+  href: api/ACadSharp.Objects.Evaluations.ParameterValueSetType.html
+  commentId: T:ACadSharp.Objects.Evaluations.ParameterValueSetType
+  fullName: ACadSharp.Objects.Evaluations.ParameterValueSetType
+  nameWithType: ParameterValueSetType
+- uid: ACadSharp.Objects.Evaluations.ParameterValueSetType.Increment
+  name: Increment
+  href: api/ACadSharp.Objects.Evaluations.ParameterValueSetType.html#ACadSharp_Objects_Evaluations_ParameterValueSetType_Increment
+  commentId: F:ACadSharp.Objects.Evaluations.ParameterValueSetType.Increment
+  fullName: ACadSharp.Objects.Evaluations.ParameterValueSetType.Increment
+  nameWithType: ParameterValueSetType.Increment
+- uid: ACadSharp.Objects.Evaluations.ParameterValueSetType.List
+  name: List
+  href: api/ACadSharp.Objects.Evaluations.ParameterValueSetType.html#ACadSharp_Objects_Evaluations_ParameterValueSetType_List
+  commentId: F:ACadSharp.Objects.Evaluations.ParameterValueSetType.List
+  fullName: ACadSharp.Objects.Evaluations.ParameterValueSetType.List
+  nameWithType: ParameterValueSetType.List
+- uid: ACadSharp.Objects.Evaluations.ParameterValueSetType.None
+  name: None
+  href: api/ACadSharp.Objects.Evaluations.ParameterValueSetType.html#ACadSharp_Objects_Evaluations_ParameterValueSetType_None
+  commentId: F:ACadSharp.Objects.Evaluations.ParameterValueSetType.None
+  fullName: ACadSharp.Objects.Evaluations.ParameterValueSetType.None
+  nameWithType: ParameterValueSetType.None
+- uid: ACadSharp.Objects.Evaluations.ParameterValueSetType.Unknown
+  name: Unknown
+  href: api/ACadSharp.Objects.Evaluations.ParameterValueSetType.html#ACadSharp_Objects_Evaluations_ParameterValueSetType_Unknown
+  commentId: F:ACadSharp.Objects.Evaluations.ParameterValueSetType.Unknown
+  fullName: ACadSharp.Objects.Evaluations.ParameterValueSetType.Unknown
+  nameWithType: ParameterValueSetType.Unknown
 - uid: ACadSharp.Objects.FaceColorMode
   name: FaceColorMode
   href: api/ACadSharp.Objects.FaceColorMode.html

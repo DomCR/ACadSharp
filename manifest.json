@@ -4712,7 +4712,7 @@
       "Uid": null,
       "IsMRef": true,
       "Title": "ACadSharp.Objects.Evaluations.Block2PtParameter",
-      "Summary": null
+      "Summary": "<p sourcefile=\"api/ACadSharp.Objects.Evaluations.Block2PtParameter.yml\" sourcestartlinenumber=\"1\">Represents the dynamic block 2 point parameter.</p>\n"
     },
     {
       "type": "ManagedReference",
@@ -4870,6 +4870,20 @@
     },
     {
       "type": "ManagedReference",
+      "source_relative_path": "api/ACadSharp.Objects.Evaluations.BlockMoveAction.yml",
+      "output": {
+        ".html": {
+          "relative_path": "api/ACadSharp.Objects.Evaluations.BlockMoveAction.html"
+        }
+      },
+      "version": "",
+      "Uid": null,
+      "IsMRef": true,
+      "Title": "ACadSharp.Objects.Evaluations.BlockMoveAction",
+      "Summary": "<p sourcefile=\"api/ACadSharp.Objects.Evaluations.BlockMoveAction.yml\" sourcestartlinenumber=\"1\">Represents a BLOCKMOVEACTION object, used in AutoCAD to control a\nmovement action in a dynamic block.</p>\n"
+    },
+    {
+      "type": "ManagedReference",
       "source_relative_path": "api/ACadSharp.Objects.Evaluations.BlockParameter.yml",
       "output": {
         ".html": {
@@ -4881,6 +4895,20 @@
       "IsMRef": true,
       "Title": "ACadSharp.Objects.Evaluations.BlockParameter",
       "Summary": null
+    },
+    {
+      "type": "ManagedReference",
+      "source_relative_path": "api/ACadSharp.Objects.Evaluations.BlockPointParameter.yml",
+      "output": {
+        ".html": {
+          "relative_path": "api/ACadSharp.Objects.Evaluations.BlockPointParameter.html"
+        }
+      },
+      "version": "",
+      "Uid": null,
+      "IsMRef": true,
+      "Title": "ACadSharp.Objects.Evaluations.BlockPointParameter",
+      "Summary": "<p sourcefile=\"api/ACadSharp.Objects.Evaluations.BlockPointParameter.yml\" sourcestartlinenumber=\"1\">Represents a BLOCKPOINTPARAMETER object, used in AutoCAD to control a\nposition of a point in a dynamic block.</p>\n"
     },
     {
       "type": "ManagedReference",
@@ -4965,6 +4993,20 @@
       "IsMRef": true,
       "Title": "ACadSharp.Objects.Evaluations.BlockVisibilityParameter",
       "Summary": "<p sourcefile=\"api/ACadSharp.Objects.Evaluations.BlockVisibilityParameter.yml\" sourcestartlinenumber=\"1\">Represents a BLOCKVISIBILITYPARAMETER object, in AutoCAD used to\ncontrol the visibility state of entities in a dynamic block.</p>\n"
+    },
+    {
+      "type": "ManagedReference",
+      "source_relative_path": "api/ACadSharp.Objects.Evaluations.BlockXYGrip.yml",
+      "output": {
+        ".html": {
+          "relative_path": "api/ACadSharp.Objects.Evaluations.BlockXYGrip.html"
+        }
+      },
+      "version": "",
+      "Uid": null,
+      "IsMRef": true,
+      "Title": "ACadSharp.Objects.Evaluations.BlockXYGrip",
+      "Summary": "<p sourcefile=\"api/ACadSharp.Objects.Evaluations.BlockXYGrip.yml\" sourcestartlinenumber=\"1\">Represents a BLOCKXYGRIP object.</p>\n"
     },
     {
       "type": "ManagedReference",
@@ -5063,6 +5105,34 @@
       "IsMRef": true,
       "Title": "ACadSharp.Objects.Evaluations.LinearParameterBaseLocation",
       "Summary": "<p sourcefile=\"api/ACadSharp.Objects.Evaluations.LinearParameterBaseLocation.yml\" sourcestartlinenumber=\"1\">Defines where the base point of a <xref href=\"ACadSharp.Objects.Evaluations.BlockLinearParameter\" data-throw-if-not-resolved=\"false\"></xref> is located.</p>\n"
+    },
+    {
+      "type": "ManagedReference",
+      "source_relative_path": "api/ACadSharp.Objects.Evaluations.ParameterValueSet.yml",
+      "output": {
+        ".html": {
+          "relative_path": "api/ACadSharp.Objects.Evaluations.ParameterValueSet.html"
+        }
+      },
+      "version": "",
+      "Uid": null,
+      "IsMRef": true,
+      "Title": "ACadSharp.Objects.Evaluations.ParameterValueSet",
+      "Summary": "<p sourcefile=\"api/ACadSharp.Objects.Evaluations.ParameterValueSet.yml\" sourcestartlinenumber=\"1\">Represents the value set of a dynamic block parameter, which defines the allowed values for the parameter.</p>\n"
+    },
+    {
+      "type": "ManagedReference",
+      "source_relative_path": "api/ACadSharp.Objects.Evaluations.ParameterValueSetType.yml",
+      "output": {
+        ".html": {
+          "relative_path": "api/ACadSharp.Objects.Evaluations.ParameterValueSetType.html"
+        }
+      },
+      "version": "",
+      "Uid": null,
+      "IsMRef": true,
+      "Title": "ACadSharp.Objects.Evaluations.ParameterValueSetType",
+      "Summary": null
     },
     {
       "type": "ManagedReference",

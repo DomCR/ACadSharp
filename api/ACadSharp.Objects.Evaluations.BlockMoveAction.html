@@ -2,11 +2,11 @@
 <html>
   <head>
     <meta charset="utf-8">
-      <title>Class BlockBasePointParameter | ACadSharp </title>
+      <title>Class BlockMoveAction | ACadSharp </title>
       <meta name="viewport" content="width=device-width, initial-scale=1.0">
-      <meta name="title" content="Class BlockBasePointParameter | ACadSharp ">
+      <meta name="title" content="Class BlockMoveAction | ACadSharp ">
       
-      
+      <meta name="description" content="Represents a BLOCKMOVEACTION object, used in AutoCAD to control a movement action in a dynamic block.">
       <link rel="icon" href="../favicon.ico">
       <link rel="stylesheet" href="../public/docfx.min.css">
       <link rel="stylesheet" href="../public/main.css">
@@ -16,7 +16,7 @@
       <meta name="docfx:rel" content="../">
       
       
-      <meta name="docfx:docurl" content="https://github.com/DomCR/ACadSharp/new/master/apiSpec/new?filename=ACadSharp_Objects_Evaluations_BlockBasePointParameter.md&amp;value=---%0Auid%3A%20ACadSharp.Objects.Evaluations.BlockBasePointParameter%0Asummary%3A%20&#39;*You%20can%20override%20summary%20for%20the%20API%20here%20using%20*MARKDOWN*%20syntax&#39;%0A---%0A%0A*Please%20type%20below%20more%20information%20about%20this%20API%3A*%0A%0A">
+      <meta name="docfx:docurl" content="https://github.com/DomCR/ACadSharp/new/master/apiSpec/new?filename=ACadSharp_Objects_Evaluations_BlockMoveAction.md&amp;value=---%0Auid%3A%20ACadSharp.Objects.Evaluations.BlockMoveAction%0Asummary%3A%20&#39;*You%20can%20override%20summary%20for%20the%20API%20here%20using%20*MARKDOWN*%20syntax&#39;%0A---%0A%0A*Please%20type%20below%20more%20information%20about%20this%20API%3A*%0A%0A">
       <meta name="loc:inThisArticle" content="In this article">
       <meta name="loc:searchResultsCount" content="{count} results for &quot;{query}&quot;">
       <meta name="loc:searchNoResults" content="No results for &quot;{query}&quot;">
@@ -84,12 +84,12 @@
           <nav id="breadcrumb"></nav>
         </div>
 
-        <article data-uid="ACadSharp.Objects.Evaluations.BlockBasePointParameter">
+        <article data-uid="ACadSharp.Objects.Evaluations.BlockMoveAction">
 
 
 
-  <h1 id="ACadSharp_Objects_Evaluations_BlockBasePointParameter" data-uid="ACadSharp.Objects.Evaluations.BlockBasePointParameter" class="text-break">
-Class BlockBasePointParameter  <a class="header-action link-secondary" title="View source" href="https://github.com/DomCR/ACadSharp/blob/master/src/ACadSharp/Objects/Evaluations/BlockBasePointParameter.cs/#L21"><i class="bi bi-code-slash"></i></a>
+  <h1 id="ACadSharp_Objects_Evaluations_BlockMoveAction" data-uid="ACadSharp.Objects.Evaluations.BlockMoveAction" class="text-break">
+Class BlockMoveAction  <a class="header-action link-secondary" title="View source" href="https://github.com/DomCR/ACadSharp/blob/master/src/ACadSharp/Objects/Evaluations/BlockMoveAction.cs/#L13"><i class="bi bi-code-slash"></i></a>
   </h1>
 
   <div class="facts text-secondary">
@@ -97,12 +97,15 @@ Class BlockBasePointParameter  <a class="header-action link-secondary" title="Vi
   <dl><dt>Assembly</dt><dd>ACadSharp.dll</dd></dl>
   </div>
 
-  <div class="markdown summary"></div>
+  <div class="markdown summary"><p>Represents a BLOCKMOVEACTION object, used in AutoCAD to control a
+movement action in a dynamic block.</p>
+</div>
   <div class="markdown conceptual"></div>
 
   <div class="codewrapper">
-    <pre><code class="lang-csharp hljs">[DxfSubClass(&quot;AcDbBlockBasePointParameter&quot;)]
-public class BlockBasePointParameter : Block1PtParameter, IHandledCadObject</code></pre>
+    <pre><code class="lang-csharp hljs">[DxfName(&quot;BLOCKMOVEACTION&quot;)]
+[DxfSubClass(&quot;AcDbBlockMoveAction&quot;)]
+public class BlockMoveAction : BlockAction, IHandledCadObject</code></pre>
   </div>
 
 
@@ -115,9 +118,8 @@ public class BlockBasePointParameter : Block1PtParameter, IHandledCadObject</cod
       <div><a class="xref" href="ACadSharp.CadObject.html">CadObject</a></div>
       <div><a class="xref" href="ACadSharp.Objects.Evaluations.EvaluationExpression.html">EvaluationExpression</a></div>
       <div><a class="xref" href="ACadSharp.Objects.Evaluations.BlockElement.html">BlockElement</a></div>
-      <div><a class="xref" href="ACadSharp.Objects.Evaluations.BlockParameter.html">BlockParameter</a></div>
-      <div><a class="xref" href="ACadSharp.Objects.Evaluations.Block1PtParameter.html">Block1PtParameter</a></div>
-      <div><span class="xref">BlockBasePointParameter</span></div>
+      <div><a class="xref" href="ACadSharp.Objects.Evaluations.BlockAction.html">BlockAction</a></div>
+      <div><span class="xref">BlockMoveAction</span></div>
     </dd>
   </dl>
 
@@ -133,22 +135,13 @@ public class BlockBasePointParameter : Block1PtParameter, IHandledCadObject</cod
     <dt>Inherited Members</dt>
     <dd>
     <div>
-      <a class="xref" href="ACadSharp.Objects.Evaluations.Block1PtParameter.html#ACadSharp_Objects_Evaluations_Block1PtParameter_DisplacementX">Block1PtParameter.DisplacementX</a>
+      <a class="xref" href="ACadSharp.Objects.Evaluations.BlockAction.html#ACadSharp_Objects_Evaluations_BlockAction_Entities">BlockAction.Entities</a>
     </div>
     <div>
-      <a class="xref" href="ACadSharp.Objects.Evaluations.Block1PtParameter.html#ACadSharp_Objects_Evaluations_Block1PtParameter_DisplacementY">Block1PtParameter.DisplacementY</a>
+      <a class="xref" href="ACadSharp.Objects.Evaluations.BlockAction.html#ACadSharp_Objects_Evaluations_BlockAction_LabelPosition">BlockAction.LabelPosition</a>
     </div>
     <div>
-      <a class="xref" href="ACadSharp.Objects.Evaluations.Block1PtParameter.html#ACadSharp_Objects_Evaluations_Block1PtParameter_GripId">Block1PtParameter.GripId</a>
-    </div>
-    <div>
-      <a class="xref" href="ACadSharp.Objects.Evaluations.Block1PtParameter.html#ACadSharp_Objects_Evaluations_Block1PtParameter_Location">Block1PtParameter.Location</a>
-    </div>
-    <div>
-      <a class="xref" href="ACadSharp.Objects.Evaluations.BlockParameter.html#ACadSharp_Objects_Evaluations_BlockParameter_ShowProperties">BlockParameter.ShowProperties</a>
-    </div>
-    <div>
-      <a class="xref" href="ACadSharp.Objects.Evaluations.BlockParameter.html#ACadSharp_Objects_Evaluations_BlockParameter_ChainActions">BlockParameter.ChainActions</a>
+      <a class="xref" href="ACadSharp.Objects.Evaluations.BlockAction.html#ACadSharp_Objects_Evaluations_BlockAction_Value70">BlockAction.Value70</a>
     </div>
     <div>
       <a class="xref" href="ACadSharp.Objects.Evaluations.BlockElement.html#ACadSharp_Objects_Evaluations_BlockElement_ElementName">BlockElement.ElementName</a>
@@ -243,17 +236,87 @@ public class BlockBasePointParameter : Block1PtParameter, IHandledCadObject</cod
 
 
 
+  <h2 id="ACadSharp_Objects_Evaluations_BlockMoveAction_remarks">Remarks</h2>
+  <div class="markdown level0 remarks"><p>Object name <a class="xref" href="ACadSharp.DxfFileToken.html#ACadSharp_DxfFileToken_ObjectBlockMoveAction">ObjectBlockMoveAction</a> <br>
+Dxf class name <a class="xref" href="ACadSharp.DxfSubclassMarker.html#ACadSharp_DxfSubclassMarker_BlockMoveAction">BlockMoveAction</a></p>
+</div>
 
 
   <h2 class="section" id="properties">Properties
 </h2>
 
 
-  <a id="ACadSharp_Objects_Evaluations_BlockBasePointParameter_ObjectName_" data-uid="ACadSharp.Objects.Evaluations.BlockBasePointParameter.ObjectName*"></a>
+  <a id="ACadSharp_Objects_Evaluations_BlockMoveAction_AngleOffset_" data-uid="ACadSharp.Objects.Evaluations.BlockMoveAction.AngleOffset*"></a>
 
-  <h3 id="ACadSharp_Objects_Evaluations_BlockBasePointParameter_ObjectName" data-uid="ACadSharp.Objects.Evaluations.BlockBasePointParameter.ObjectName">
+  <h3 id="ACadSharp_Objects_Evaluations_BlockMoveAction_AngleOffset" data-uid="ACadSharp.Objects.Evaluations.BlockMoveAction.AngleOffset">
+  AngleOffset
+  <a class="header-action link-secondary" title="View source" href="https://github.com/DomCR/ACadSharp/blob/master/src/ACadSharp/Objects/Evaluations/BlockMoveAction.cs/#L20"><i class="bi bi-code-slash"></i></a>
+  </h3>
+
+  <div class="markdown level1 summary"><p>Gets or sets the angle offset for the move action.</p>
+</div>
+  <div class="markdown level1 conceptual"></div>
+
+  <div class="codewrapper">
+    <pre><code class="lang-csharp hljs">[DxfCodeValue(new int[] { 141 })]
+public double AngleOffset { get; set; }</code></pre>
+  </div>
+
+
+
+
+
+  <h4 class="section">Property Value</h4>
+  <dl class="parameters">
+    <dt><a class="xref" href="https://learn.microsoft.com/dotnet/api/system.double">double</a></dt>
+    <dd></dd>
+  </dl>
+
+
+
+
+
+
+
+
+  <a id="ACadSharp_Objects_Evaluations_BlockMoveAction_DistanceMultiplier_" data-uid="ACadSharp.Objects.Evaluations.BlockMoveAction.DistanceMultiplier*"></a>
+
+  <h3 id="ACadSharp_Objects_Evaluations_BlockMoveAction_DistanceMultiplier" data-uid="ACadSharp.Objects.Evaluations.BlockMoveAction.DistanceMultiplier">
+  DistanceMultiplier
+  <a class="header-action link-secondary" title="View source" href="https://github.com/DomCR/ACadSharp/blob/master/src/ACadSharp/Objects/Evaluations/BlockMoveAction.cs/#L26"><i class="bi bi-code-slash"></i></a>
+  </h3>
+
+  <div class="markdown level1 summary"><p>Gets or sets the distance multiplier for the move action.</p>
+</div>
+  <div class="markdown level1 conceptual"></div>
+
+  <div class="codewrapper">
+    <pre><code class="lang-csharp hljs">[DxfCodeValue(new int[] { 140 })]
+public double DistanceMultiplier { get; set; }</code></pre>
+  </div>
+
+
+
+
+
+  <h4 class="section">Property Value</h4>
+  <dl class="parameters">
+    <dt><a class="xref" href="https://learn.microsoft.com/dotnet/api/system.double">double</a></dt>
+    <dd></dd>
+  </dl>
+
+
+
+
+
+
+
+
+  <a id="ACadSharp_Objects_Evaluations_BlockMoveAction_ObjectName_" data-uid="ACadSharp.Objects.Evaluations.BlockMoveAction.ObjectName*"></a>
+
+  <h3 id="ACadSharp_Objects_Evaluations_BlockMoveAction_ObjectName" data-uid="ACadSharp.Objects.Evaluations.BlockMoveAction.ObjectName">
   ObjectName
-  <a class="header-action link-secondary" title="View source" href="https://github.com/DomCR/ACadSharp/blob/master/src/ACadSharp/Objects/Evaluations/BlockBasePointParameter.cs/#L25"><i class="bi bi-code-slash"></i></a>
+  <a class="header-action link-secondary" title="View source" href="https://github.com/DomCR/ACadSharp/blob/master/src/ACadSharp/Objects/Evaluations/BlockMoveAction.cs/#L30"><i class="bi bi-code-slash"></i></a>
   </h3>
 
   <div class="markdown level1 summary"><p>The CAD class name of an object.</p>
@@ -281,75 +344,11 @@ public class BlockBasePointParameter : Block1PtParameter, IHandledCadObject</cod
 
 
 
-  <a id="ACadSharp_Objects_Evaluations_BlockBasePointParameter_Point1010_" data-uid="ACadSharp.Objects.Evaluations.BlockBasePointParameter.Point1010*"></a>
+  <a id="ACadSharp_Objects_Evaluations_BlockMoveAction_SubclassMarker_" data-uid="ACadSharp.Objects.Evaluations.BlockMoveAction.SubclassMarker*"></a>
 
-  <h3 id="ACadSharp_Objects_Evaluations_BlockBasePointParameter_Point1010" data-uid="ACadSharp.Objects.Evaluations.BlockBasePointParameter.Point1010">
-  Point1010
-  <a class="header-action link-secondary" title="View source" href="https://github.com/DomCR/ACadSharp/blob/master/src/ACadSharp/Objects/Evaluations/BlockBasePointParameter.cs/#L31"><i class="bi bi-code-slash"></i></a>
-  </h3>
-
-  <div class="markdown level1 summary"></div>
-  <div class="markdown level1 conceptual"></div>
-
-  <div class="codewrapper">
-    <pre><code class="lang-csharp hljs">[DxfCodeValue(new int[] { 1011, 1021, 1031 })]
-public XYZ Point1010 { get; set; }</code></pre>
-  </div>
-
-
-
-
-
-  <h4 class="section">Property Value</h4>
-  <dl class="parameters">
-    <dt><a class="xref" href="CSMath.XYZ.html">XYZ</a></dt>
-    <dd></dd>
-  </dl>
-
-
-
-
-
-
-
-
-  <a id="ACadSharp_Objects_Evaluations_BlockBasePointParameter_Point1012_" data-uid="ACadSharp.Objects.Evaluations.BlockBasePointParameter.Point1012*"></a>
-
-  <h3 id="ACadSharp_Objects_Evaluations_BlockBasePointParameter_Point1012" data-uid="ACadSharp.Objects.Evaluations.BlockBasePointParameter.Point1012">
-  Point1012
-  <a class="header-action link-secondary" title="View source" href="https://github.com/DomCR/ACadSharp/blob/master/src/ACadSharp/Objects/Evaluations/BlockBasePointParameter.cs/#L35"><i class="bi bi-code-slash"></i></a>
-  </h3>
-
-  <div class="markdown level1 summary"></div>
-  <div class="markdown level1 conceptual"></div>
-
-  <div class="codewrapper">
-    <pre><code class="lang-csharp hljs">[DxfCodeValue(new int[] { 1012, 1022, 1032 })]
-public XYZ Point1012 { get; set; }</code></pre>
-  </div>
-
-
-
-
-
-  <h4 class="section">Property Value</h4>
-  <dl class="parameters">
-    <dt><a class="xref" href="CSMath.XYZ.html">XYZ</a></dt>
-    <dd></dd>
-  </dl>
-
-
-
-
-
-
-
-
-  <a id="ACadSharp_Objects_Evaluations_BlockBasePointParameter_SubclassMarker_" data-uid="ACadSharp.Objects.Evaluations.BlockBasePointParameter.SubclassMarker*"></a>
-
-  <h3 id="ACadSharp_Objects_Evaluations_BlockBasePointParameter_SubclassMarker" data-uid="ACadSharp.Objects.Evaluations.BlockBasePointParameter.SubclassMarker">
+  <h3 id="ACadSharp_Objects_Evaluations_BlockMoveAction_SubclassMarker" data-uid="ACadSharp.Objects.Evaluations.BlockMoveAction.SubclassMarker">
   SubclassMarker
-  <a class="header-action link-secondary" title="View source" href="https://github.com/DomCR/ACadSharp/blob/master/src/ACadSharp/Objects/Evaluations/BlockBasePointParameter.cs/#L28"><i class="bi bi-code-slash"></i></a>
+  <a class="header-action link-secondary" title="View source" href="https://github.com/DomCR/ACadSharp/blob/master/src/ACadSharp/Objects/Evaluations/BlockMoveAction.cs/#L33"><i class="bi bi-code-slash"></i></a>
   </h3>
 
   <div class="markdown level1 summary"><p>Object Subclass marker.</p>
@@ -377,11 +376,108 @@ public XYZ Point1012 { get; set; }</code></pre>
 
 
 
+  <a id="ACadSharp_Objects_Evaluations_BlockMoveAction_UnknownFlag_" data-uid="ACadSharp.Objects.Evaluations.BlockMoveAction.UnknownFlag*"></a>
+
+  <h3 id="ACadSharp_Objects_Evaluations_BlockMoveAction_UnknownFlag" data-uid="ACadSharp.Objects.Evaluations.BlockMoveAction.UnknownFlag">
+  UnknownFlag
+  <a class="header-action link-secondary" title="View source" href="https://github.com/DomCR/ACadSharp/blob/master/src/ACadSharp/Objects/Evaluations/BlockMoveAction.cs/#L38"><i class="bi bi-code-slash"></i></a>
+  </h3>
+
+  <div class="markdown level1 summary"><p>Gets or sets an unknown flag value.</p>
+</div>
+  <div class="markdown level1 conceptual"></div>
+
+  <div class="codewrapper">
+    <pre><code class="lang-csharp hljs">[DxfCodeValue(new int[] { 280 })]
+public byte UnknownFlag { get; set; }</code></pre>
+  </div>
+
+
+
+
+
+  <h4 class="section">Property Value</h4>
+  <dl class="parameters">
+    <dt><a class="xref" href="https://learn.microsoft.com/dotnet/api/system.byte">byte</a></dt>
+    <dd></dd>
+  </dl>
+
+
+
+
+
+
+
+
+  <a id="ACadSharp_Objects_Evaluations_BlockMoveAction_XDelta_" data-uid="ACadSharp.Objects.Evaluations.BlockMoveAction.XDelta*"></a>
+
+  <h3 id="ACadSharp_Objects_Evaluations_BlockMoveAction_XDelta" data-uid="ACadSharp.Objects.Evaluations.BlockMoveAction.XDelta">
+  XDelta
+  <a class="header-action link-secondary" title="View source" href="https://github.com/DomCR/ACadSharp/blob/master/src/ACadSharp/Objects/Evaluations/BlockMoveAction.cs/#L44"><i class="bi bi-code-slash"></i></a>
+  </h3>
+
+  <div class="markdown level1 summary"><p>Gets or sets the evaluation connection for the X delta displacement.</p>
+</div>
+  <div class="markdown level1 conceptual"></div>
+
+  <div class="codewrapper">
+    <pre><code class="lang-csharp hljs">public EvalConnection XDelta { get; set; }</code></pre>
+  </div>
+
+
+
+
+
+  <h4 class="section">Property Value</h4>
+  <dl class="parameters">
+    <dt><a class="xref" href="ACadSharp.Objects.Evaluations.EvalConnection.html">EvalConnection</a></dt>
+    <dd></dd>
+  </dl>
+
+
+
+
+
+
+
+
+  <a id="ACadSharp_Objects_Evaluations_BlockMoveAction_YDelta_" data-uid="ACadSharp.Objects.Evaluations.BlockMoveAction.YDelta*"></a>
+
+  <h3 id="ACadSharp_Objects_Evaluations_BlockMoveAction_YDelta" data-uid="ACadSharp.Objects.Evaluations.BlockMoveAction.YDelta">
+  YDelta
+  <a class="header-action link-secondary" title="View source" href="https://github.com/DomCR/ACadSharp/blob/master/src/ACadSharp/Objects/Evaluations/BlockMoveAction.cs/#L49"><i class="bi bi-code-slash"></i></a>
+  </h3>
+
+  <div class="markdown level1 summary"><p>Gets or sets the evaluation connection for the Y delta displacement.</p>
+</div>
+  <div class="markdown level1 conceptual"></div>
+
+  <div class="codewrapper">
+    <pre><code class="lang-csharp hljs">public EvalConnection YDelta { get; set; }</code></pre>
+  </div>
+
+
+
+
+
+  <h4 class="section">Property Value</h4>
+  <dl class="parameters">
+    <dt><a class="xref" href="ACadSharp.Objects.Evaluations.EvalConnection.html">EvalConnection</a></dt>
+    <dd></dd>
+  </dl>
+
+
+
+
+
+
+
+
 
 </article>
 
         <div class="contribution d-print-none">
-          <a href="https://github.com/DomCR/ACadSharp/blob/master/src/ACadSharp/Objects/Evaluations/BlockBasePointParameter.cs/#L21" class="edit-link">Edit this page</a>
+          <a href="https://github.com/DomCR/ACadSharp/blob/master/src/ACadSharp/Objects/Evaluations/BlockMoveAction.cs/#L13" class="edit-link">Edit this page</a>
         </div>
 
 
