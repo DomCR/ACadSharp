@@ -101,8 +101,8 @@ namespace ACadSharp.IO.DXF
 					if (surp != 0)
 					{
 						byte[] array2 = new byte[surp];
-						ms.Read(array, 0, surp);
-						lines.Add(new string(array.SelectMany(b => string.Format("{0:X2}", b)).ToArray()));
+						ms.Read(array2, 0, surp);
+						lines.Add(new string(array2.SelectMany(b => string.Format("{0:X2}", b)).ToArray()));
 					}
 
 					this._stream.WriteLine(lines.First());
