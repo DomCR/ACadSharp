@@ -158,6 +158,15 @@ public class DxfReader : CadReaderBase<DxfReaderConfiguration>
 
 		while (this._reader.ValueAsString != DxfFileToken.EndOfFile)
 		{
+			if (this._reader.ValueAsString == DxfFileToken.TableEntry)
+			{
+				this.triggerNotification(
+					"Non-standard DXF: TABLE entry found outside of a TABLES section. Attempting recovery.",
+					NotificationType.Warning);
+				new DxfTablesSectionReader(this._reader, this._builder).ReadOrphaned();
+				continue;
+			}
+
 			if (this._reader.ValueAsString != DxfFileToken.BeginSection)
 			{
 				this._reader.ReadNext();
