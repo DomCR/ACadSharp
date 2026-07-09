@@ -2,7 +2,6 @@
 using ACadSharp.Objects;
 using ACadSharp.Objects.Evaluations;
 using System;
-using System.Runtime.InteropServices;
 
 namespace ACadSharp.IO.DWG;
 
@@ -373,6 +372,18 @@ internal partial class DwgObjectReader : DwgSectionIO
 			//Value String TV 302
 			value.FormattedValue = this._mergedReaders.ReadVariableText();
 		}
+
+		return template;
+	}
+
+	private CadTemplate readDynamicBlockPurgePreventer()
+	{
+		var purgePreventer = new DynamicBlockPurgePreventer();
+		var template = new CadNonGraphicalObjectTemplate(purgePreventer);
+
+		this.readCommonNonEntityData(template);
+
+		purgePreventer.Version = this._mergedReaders.ReadBitShort();
 
 		return template;
 	}

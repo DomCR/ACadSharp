@@ -118,6 +118,8 @@ internal class DxfObjectsSectionReader : DxfSectionReaderBase
 				return this.readObjectCodes<TableStyle>(new CadTableStyleTemplate(), this.readTableStyle);
 			case DxfFileToken.ObjectXRecord:
 				return this.readObjectCodes<XRecord>(new CadXRecordTemplate(), this.readXRecord);
+			case DxfFileToken.ObjectDynamicBlockPurgePreventer:
+				return this.readObjectCodes<DynamicBlockPurgePreventer>(new CadNonGraphicalObjectTemplate(new DynamicBlockPurgePreventer()), this.readObjectSubclassMap);
 			case DxfFileToken.ObjectBlockRepresentationData:
 				return this.readObjectCodes<BlockRepresentationData>(new CadBlockRepresentationDataTemplate(), this.readBlockRepresentationData);
 			case DxfFileToken.ObjectBlockGripLocationComponent:

@@ -5556,6 +5556,9 @@ namespace ACadSharp.IO.DWG
 				case DxfFileToken.AcmPartList:
 					template = this.readAcmPartList();
 					break;
+				case DxfFileToken.ObjectDynamicBlockPurgePreventer:
+					template = this.readDynamicBlockPurgePreventer();
+					break;
 				case DxfFileToken.EntityAecWall:
 					template = this.readAecWall();
 					break;
