@@ -2,6 +2,7 @@
 using ACadSharp.Objects;
 using ACadSharp.Objects.Evaluations;
 using System;
+using System.Runtime.InteropServices;
 
 namespace ACadSharp.IO.DWG;
 
@@ -36,12 +37,12 @@ internal partial class DwgObjectReader : DwgSectionIO
 
 		//1010 1020 1030
 		template.Block1PtParameter.Location = this._mergedReaders.Read3BitDouble();
-		//170
-		template.Block1PtParameter.Value170 = this._mergedReaders.ReadBitShort();
-		//171
-		template.Block1PtParameter.Value171 = this._mergedReaders.ReadBitShort();
+
+		template.Block1PtParameter.DisplacementX = this.readEvalParameterProperty();
+		template.Block1PtParameter.DisplacementY = this.readEvalParameterProperty();
+
 		//93
-		template.Block1PtParameter.Value93 = this._mergedReaders.ReadBitLong();
+		template.Block1PtParameter.GripId = this._mergedReaders.ReadBitLong();
 	}
 
 	private void readBlock2PtParameter(CadBlock2PtParameterTemplate template)
@@ -53,26 +54,10 @@ internal partial class DwgObjectReader : DwgSectionIO
 		//1011 1021 1031
 		template.Block2PtParameter.SecondPoint = this._mergedReaders.Read3BitDouble();
 
-		//170 (always 4)
-		for (int i = 0; i < 4; i++)
-		{
-			EvalParameterProperty eprop = new EvalParameterProperty();
-
-			//171 172 173 174
-			short n = this._mergedReaders.ReadBitShort();
-			for (int j = 0; j < n; j++)
-			{
-				EvalConnection connection = new EvalConnection();
-				//94 95 (I guess 96 97)
-				connection.Id = this._mergedReaders.ReadBitLong();
-				//303 304 : exposed custom property label
-				connection.Name = this._mergedReaders.ReadVariableText();
-
-				eprop.Connections.Add(connection);
-			}
-
-			template.Block2PtParameter.Properties[i] = eprop;
-		}
+		template.Block2PtParameter.FirstPointDisplacementX = this.readEvalParameterProperty();
+		template.Block2PtParameter.FirstPointDisplacementY = this.readEvalParameterProperty();
+		template.Block2PtParameter.SecondPointDisplacementX = this.readEvalParameterProperty();
+		template.Block2PtParameter.SecondPointDisplacementY = this.readEvalParameterProperty();
 
 		for (int k = 0; k < 4; k++)
 		{
@@ -91,10 +76,10 @@ internal partial class DwgObjectReader : DwgSectionIO
 		BlockAction blockAction = template.BlockAction;
 
 		// 1010, 1020, 1030
-		blockAction.ActionPoint = this._mergedReaders.Read3BitDouble();
+		blockAction.LabelPosition = this._mergedReaders.Read3BitDouble();
 
 		//71
-		short entityCount = this._objectReader.ReadBitShort();
+		int entityCount = this._objectReader.ReadBitLong();
 		for (int i = 0; i < entityCount; i++)
 		{
 			ulong entityHandle = this.handleReference();
@@ -102,7 +87,11 @@ internal partial class DwgObjectReader : DwgSectionIO
 		}
 
 		// 70
-		blockAction.Value70 = this._mergedReaders.ReadBitShort();
+		int nparameters = this._mergedReaders.ReadBitLong();
+		for (int i = 0; i < nparameters; i++)
+		{
+			long parameterId = this._mergedReaders.ReadBitLong();
+		}
 	}
 
 	private void readBlockActionBasePt(CadBlockActionBasePtTemplate template)
@@ -111,12 +100,10 @@ internal partial class DwgObjectReader : DwgSectionIO
 
 		BlockActionBasePt blockActionBasePt = template.CadObject as BlockActionBasePt;
 
-		blockActionBasePt.Value1011 = this._mergedReaders.Read3BitDouble();
+		blockActionBasePt.BasePoint = this._mergedReaders.Read3BitDouble();
 
-		blockActionBasePt.Value92 = this._mergedReaders.ReadBitLong();
-		blockActionBasePt.Value301 = this._mergedReaders.ReadVariableText();
-		blockActionBasePt.Value93 = this._mergedReaders.ReadBitLong();
-		blockActionBasePt.Value302 = this._mergedReaders.ReadVariableText();
+		blockActionBasePt.Connections[0] = this.readEvalConnection();
+		blockActionBasePt.Connections[1] = this.readEvalConnection();
 
 		blockActionBasePt.Value280 = this._mergedReaders.ReadBit();
 		blockActionBasePt.Value1012 = this._mergedReaders.Read3BitDouble();
@@ -142,10 +129,12 @@ internal partial class DwgObjectReader : DwgSectionIO
 
 		var blockGrip = template.CadObject as BlockGrip;
 
-		blockGrip.Value91 = this._mergedReaders.ReadBitLong();
-		blockGrip.Value92 = this._mergedReaders.ReadBitLong();
+		blockGrip.ExpressionId1 = this._mergedReaders.ReadBitLong();
+		blockGrip.ExpressionId2 = this._mergedReaders.ReadBitLong();
+
 		blockGrip.Location = this._mergedReaders.Read3BitDouble();
-		blockGrip.Value280 = this._mergedReaders.ReadBitAsShort();
+		blockGrip.Cycling = this._mergedReaders.ReadBit();
+
 		blockGrip.Value93 = this._mergedReaders.ReadBitLong();
 	}
 
@@ -159,6 +148,56 @@ internal partial class DwgObjectReader : DwgSectionIO
 		return template;
 	}
 
+	private CadTemplate readBlockLinearParameter()
+	{
+		BlockLinearParameter blockLinearParameter = new();
+		CadBlockLinearParameterTemplate template = new CadBlockLinearParameterTemplate(blockLinearParameter);
+
+		this.readBlock2PtParameter(template);
+
+		//305
+		blockLinearParameter.Label = this._mergedReaders.ReadVariableText();
+		//306
+		blockLinearParameter.Description = this._mergedReaders.ReadVariableText();
+		//140
+		blockLinearParameter.LabelOffset = this._mergedReaders.ReadBitDouble();
+
+		blockLinearParameter.ValueSet = this.readParameterValueSet();
+
+		return template;
+	}
+
+	private CadTemplate readBlockLookupParameter()
+	{
+		BlockLookupParameter blockLookupParameter = new BlockLookupParameter();
+		CadBlockLookupParameterTemplate template = new CadBlockLookupParameterTemplate(blockLookupParameter);
+
+		this.readBlock1PtParameter(template);
+
+		blockLookupParameter.ActionId = this._mergedReaders.ReadBitLong();
+		blockLookupParameter.Label = this._mergedReaders.ReadVariableText();
+		blockLookupParameter.Description = this._mergedReaders.ReadVariableText();
+
+		return template;
+	}
+
+	private CadTemplate readBlockMoveAction()
+	{
+		BlockMoveAction blockMoveAction = new();
+		CadBlockMoveActionTemplate template = new CadBlockMoveActionTemplate(blockMoveAction);
+
+		this.readBlockAction(template);
+
+		blockMoveAction.XDelta = this.readEvalConnection();
+		blockMoveAction.YDelta = this.readEvalConnection();
+
+		blockMoveAction.DistanceMultiplier = this._mergedReaders.ReadBitDouble();
+		blockMoveAction.AngleOffset = this._mergedReaders.ReadBitDouble();
+		blockMoveAction.UnknownFlag = this._mergedReaders.ReadByte();
+
+		return template;
+	}
+
 	private void readBlockParameter(CadBlockParameterTemplate template)
 	{
 		this.readBlockElement(template);
@@ -167,6 +206,20 @@ internal partial class DwgObjectReader : DwgSectionIO
 		template.BlockParameter.ShowProperties = this._mergedReaders.ReadBit();
 		//281
 		template.BlockParameter.ChainActions = this._mergedReaders.ReadBit();
+	}
+
+	private CadTemplate readBlockPointParameter()
+	{
+		BlockPointParameter blockPointParameter = new();
+		CadBlockPointParameterTemplate template = new(blockPointParameter);
+
+		this.readBlock1PtParameter(template);
+
+		blockPointParameter.Label = this._mergedReaders.ReadVariableText();
+		blockPointParameter.Description = this._mergedReaders.ReadVariableText();
+		blockPointParameter.LabelPosition = this._mergedReaders.Read3BitDouble();
+
+		return template;
 	}
 
 	private CadTemplate readBlockRepresentationData()
@@ -223,53 +276,6 @@ internal partial class DwgObjectReader : DwgSectionIO
 		return template;
 	}
 
-	private CadTemplate readBlockLinearParameter()
-	{
-		BlockLinearParameter blockLinearParameter = new();
-		CadBlockLinearParameterTemplate template = new CadBlockLinearParameterTemplate(blockLinearParameter);
-
-		this.readBlock2PtParameter(template);
-
-		//305
-		blockLinearParameter.Label = this._mergedReaders.ReadVariableText();
-		//306
-		blockLinearParameter.Description = this._mergedReaders.ReadVariableText();
-		//140
-		blockLinearParameter.LabelOffset = this._mergedReaders.ReadBitDouble();
-
-		//96
-		this._mergedReaders.ReadBitLong();
-		//141
-		blockLinearParameter.Minimum = this._mergedReaders.ReadBitDouble();
-		//142
-		blockLinearParameter.Maximum = this._mergedReaders.ReadBitDouble();
-		//143
-		blockLinearParameter.Increment = this._mergedReaders.ReadBitDouble();
-
-		//171 number of discrete values
-		short numberOfValues = this._mergedReaders.ReadBitShort();
-		for (int i = 0; i < numberOfValues; i++)
-		{
-			blockLinearParameter.Values.Add(this._mergedReaders.ReadBitDouble());
-		}
-
-		return template;
-	}
-
-	private CadTemplate readBlockLookupParameter()
-	{
-		BlockLookupParameter blockLookupParameter = new BlockLookupParameter();
-		CadBlockLookupParameterTemplate template = new CadBlockLookupParameterTemplate(blockLookupParameter);
-
-		this.readBlock1PtParameter(template);
-
-		blockLookupParameter.ActionId = this._mergedReaders.ReadBitLong();
-		blockLookupParameter.Label = this._mergedReaders.ReadVariableText();
-		blockLookupParameter.Description = this._mergedReaders.ReadVariableText();
-
-		return template;
-	}
-
 	private CadTemplate readBlockVisibilityParameter()
 	{
 		BlockVisibilityParameter blockVisibilityParameter = new BlockVisibilityParameter();
@@ -302,6 +308,99 @@ internal partial class DwgObjectReader : DwgSectionIO
 		}
 
 		return template;
+	}
+
+	private CadValueTemplate readCadValue(CadValue value)
+	{
+		CadValueTemplate template = new CadValueTemplate(value);
+
+		//R2007+:
+		if (this.R2007Plus)
+		{
+			//Flags BL 93 Flags & 0x01 => type is kGeneral
+			value.Flags = this._mergedReaders.ReadBitLong();
+		}
+
+		//Common:
+		//Data type BL 90
+		value.ValueType = (CadValueType)this._mergedReaders.ReadBitLong();
+		if (!this.R2007Plus || !value.IsEmpty)
+		{
+			//Varies by type: Not present in case bit 1 in Flags is set
+			switch (value.ValueType)
+			{
+				case CadValueType.Unknown:
+				case CadValueType.Long:
+					value.SetValue(this._mergedReaders.ReadBitLong());
+					break;
+				case CadValueType.Double:
+					value.SetValue(this._mergedReaders.ReadBitDouble());
+					break;
+				case CadValueType.General:
+				case CadValueType.String:
+					value.SetValue(this.readStringCadValue());
+					break;
+				case CadValueType.Date:
+					System.DateTime? dateTime = this.readDateCadValue();
+					if (dateTime.HasValue)
+					{
+						value.SetValue(dateTime.Value);
+					}
+					break;
+				case CadValueType.Point2D:
+					value.SetValue(this.readValueXY());
+					break;
+				case CadValueType.Point3D:
+					value.SetValue(this.readValueXYZ());
+					break;
+				case CadValueType.Handle:
+					template.ValueHandle = this.handleReference();
+					break;
+				case CadValueType.Buffer:
+				case CadValueType.ResultBuffer:
+				default:
+					throw new NotImplementedException();
+			}
+		}
+
+		//R2007+:
+		if (this.R2007Plus)
+		{
+			//Unit type BL 94 0 = no units, 1 = distance, 2 = angle, 4 = area, 8 = volume
+			value.Units = (CadValueUnitType)this._mergedReaders.ReadBitLong();
+			//Format String TV 300
+			value.Format = this._mergedReaders.ReadVariableText();
+			//Value String TV 302
+			value.FormattedValue = this._mergedReaders.ReadVariableText();
+		}
+
+		return template;
+	}
+
+	private EvalConnection readEvalConnection()
+	{
+		EvalConnection connection = new EvalConnection();
+
+		//94 95 (I guess 96 97)
+		connection.Id = this._mergedReaders.ReadBitLong();
+		//303 304 : exposed custom property label
+		connection.Name = this._mergedReaders.ReadVariableText();
+
+		return connection;
+	}
+
+	private EvalParameterProperty readEvalParameterProperty()
+	{
+		EvalParameterProperty eprop = new EvalParameterProperty();
+
+		//170 171
+		short n = this._mergedReaders.ReadBitShort();
+		for (int j = 0; j < n; j++)
+		{
+			eprop.Connections.Add(this.readEvalConnection());
+		}
+
+		return eprop;
 	}
 
 	private void readEvaluationExpression(CadEvaluationExpressionTemplate template)
@@ -407,73 +506,6 @@ internal partial class DwgObjectReader : DwgSectionIO
 		return template;
 	}
 
-	private CadValueTemplate readCadValue(CadValue value)
-	{
-		CadValueTemplate template = new CadValueTemplate(value);
-
-		//R2007+:
-		if (this.R2007Plus)
-		{
-			//Flags BL 93 Flags & 0x01 => type is kGeneral
-			value.Flags = this._mergedReaders.ReadBitLong();
-		}
-
-		//Common:
-		//Data type BL 90
-		value.ValueType = (CadValueType)this._mergedReaders.ReadBitLong();
-		if (!this.R2007Plus || !value.IsEmpty)
-		{
-			//Varies by type: Not present in case bit 1 in Flags is set
-			switch (value.ValueType)
-			{
-				case CadValueType.Unknown:
-				case CadValueType.Long:
-					value.SetValue(this._mergedReaders.ReadBitLong());
-					break;
-				case CadValueType.Double:
-					value.SetValue(this._mergedReaders.ReadBitDouble());
-					break;
-				case CadValueType.General:
-				case CadValueType.String:
-					value.SetValue(this.readStringCadValue());
-					break;
-				case CadValueType.Date:
-					System.DateTime? dateTime = this.readDateCadValue();
-					if (dateTime.HasValue)
-					{
-						value.SetValue(dateTime.Value);
-					}
-					break;
-				case CadValueType.Point2D:
-					value.SetValue(this.readValueXY());
-					break;
-				case CadValueType.Point3D:
-					value.SetValue(this.readValueXYZ());
-					break;
-				case CadValueType.Handle:
-					template.ValueHandle = this.handleReference();
-					break;
-				case CadValueType.Buffer:
-				case CadValueType.ResultBuffer:
-				default:
-					throw new NotImplementedException();
-			}
-		}
-
-		//R2007+:
-		if (this.R2007Plus)
-		{
-			//Unit type BL 94 0 = no units, 1 = distance, 2 = angle, 4 = area, 8 = volume
-			value.Units = (CadValueUnitType)this._mergedReaders.ReadBitLong();
-			//Format String TV 300
-			value.Format = this._mergedReaders.ReadVariableText();
-			//Value String TV 302
-			value.FormattedValue = this._mergedReaders.ReadVariableText();
-		}
-
-		return template;
-	}
-
 	private CadTemplate readFieldList()
 	{
 		FieldList fieldList = new FieldList();
@@ -515,6 +547,28 @@ internal partial class DwgObjectReader : DwgSectionIO
 		contextData.Version = _objectReader.ReadBitShort();
 		//B	290	Default flag (default value is false).
 		contextData.Default = _objectReader.ReadBit();
+	}
+
+	private ParameterValueSet readParameterValueSet()
+	{
+		ParameterValueSet valueSet = new ParameterValueSet();
+
+		//96
+		valueSet.Type = (ParameterValueSetType)this._mergedReaders.ReadBitLong();
+		//141
+		valueSet.Minimum = this._mergedReaders.ReadBitDouble();
+		//142
+		valueSet.Maximum = this._mergedReaders.ReadBitDouble();
+		//143
+		valueSet.Increment = this._mergedReaders.ReadBitDouble();
+
+		short numberOfValues = this._mergedReaders.ReadBitShort();
+		for (int i = 0; i < numberOfValues; i++)
+		{
+			valueSet.AllowedValues.Add(this._mergedReaders.ReadBitDouble());
+		}
+
+		return valueSet;
 	}
 
 	private CadBlockVisibilityParameterTemplate.StateTemplate readState()

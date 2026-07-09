@@ -5675,6 +5675,10 @@ namespace ACadSharp.IO.DWG
 				case DxfFileToken.ObjectBlockGripLocationComponent:
 					template = this.readBlockGripLocationComponent();
 					break;
+				case DxfFileToken.ObjectBlockXYGrip:
+					template = new CadBlockGripTemplate(new BlockXYGrip());
+					this.readBlockGrip(template as CadBlockGripTemplate);
+					break;
 				case DxfFileToken.ObjectBlockRotationGrip:
 					template = new CadBlockRotationGripTemplate();
 					this.readBlockGrip(template as CadBlockRotationGripTemplate);
@@ -5688,6 +5692,12 @@ namespace ACadSharp.IO.DWG
 					break;
 				case DxfFileToken.ObjectBlockRotateAction:
 					template = this.readBlockRotateAction();
+					break;
+				case DxfFileToken.ObjectBlockMoveAction:
+					template = this.readBlockMoveAction();
+					break;
+				case DxfFileToken.ObjectBlockPointParameter:
+					template = this.readBlockPointParameter();
 					break;
 				case "SPATIAL_FILTER":
 					template = this.readSpatialFilter();

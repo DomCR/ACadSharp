@@ -9,8 +9,21 @@ namespace ACadSharp.Objects.Evaluations;
 [DxfSubClass(DxfSubclassMarker.Block1PtParameter)]
 public abstract class Block1PtParameter : BlockParameter
 {
-	/// <inheritdoc/>
-	public override string SubclassMarker => DxfSubclassMarker.Block1PtParameter;
+	/// <summary>
+	/// Gets or sets the displacement in the X direction for the parameter.
+	/// </summary>
+	public EvalParameterProperty DisplacementX { get; set; } = new();
+
+	/// <summary>
+	/// Gets or sets the displacement in the Y direction for the parameter.
+	/// </summary>
+	public EvalParameterProperty DisplacementY { get; set; } = new();
+
+	/// <summary>
+	/// Gets or sets the grip id.
+	/// </summary>
+	[DxfCodeValue(93)]
+	public long GripId { get; set; }
 
 	/// <summary>
 	/// Location for parameter to be placed in the block.
@@ -18,12 +31,6 @@ public abstract class Block1PtParameter : BlockParameter
 	[DxfCodeValue(1010, 1020, 1030)]
 	public XYZ Location { get; set; }
 
-	[DxfCodeValue(93)]
-	public long Value93 { get; set; }
-
-	[DxfCodeValue(170)]
-	public short Value170 { get; set; }
-
-	[DxfCodeValue(171)]
-	public short Value171 { get; set; }
+	/// <inheritdoc/>
+	public override string SubclassMarker => DxfSubclassMarker.Block1PtParameter;
 }

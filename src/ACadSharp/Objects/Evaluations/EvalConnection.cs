@@ -2,7 +2,11 @@
 
 public class EvalConnection
 {
+	public long Id { get; set; }
+
 	public string Name { get; set; }
 
-	public long Id { get; set; }
+	public const string DisplacementX = "DisplacementX";
+
+	public const string DisplacementY = "DisplacementY";
 }

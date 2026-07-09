@@ -8,6 +8,12 @@ public static class DxfFileToken
 
 	public const string AcdsSchema = "ACDSSCHEMA";
 
+	public const string AcmBalloon = "ACMBALLOON";
+
+	public const string AcmPartList = "ACMPARTLIST";
+
+	public const string AcmPartRef = "ACMPARTREF";
+
 	public const string BeginSection = "SECTION";
 
 	public const string BlkRefObjectContextData = "ACDB_BLKREFOBJECTCONTEXTDATA_CLASS";
@@ -176,6 +182,8 @@ public static class DxfFileToken
 
 	public const string ObjectBlockLookupParameter = "BLOCKLOOKUPPARAMETER";
 
+	public const string ObjectBlockMoveAction = "BLOCKMOVEACTION";
+
 	public const string ObjectBlockPointParameter = "BLOCKPOINTPARAMETER";
 
 	public const string ObjectBlockRepresentationData = "ACDB_BLOCKREPRESENTATION_DATA";
@@ -189,6 +197,8 @@ public static class DxfFileToken
 	public const string ObjectBlockVisibilityGrip = "BLOCKVISIBILITYGRIP";
 
 	public const string ObjectBlockVisibilityParameter = "BLOCKVISIBILITYPARAMETER";
+
+	public const string ObjectBlockXYGrip = "BLOCKXYGRIP";
 
 	public const string ObjectCell = "CELL";
 
@@ -292,11 +302,5 @@ public static class DxfFileToken
 
 	public const string TableVport = "VPORT";
 
-	public const string AcmPartRef = "ACMPARTREF";
-
-	public const string AcmBalloon = "ACMBALLOON";
-
-	public const string AcmPartList = "ACMPARTLIST";
-	
 	public const string ValueEnd = "ACVALUE_END";
 }

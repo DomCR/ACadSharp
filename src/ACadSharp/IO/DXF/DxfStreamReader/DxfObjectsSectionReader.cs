@@ -124,6 +124,8 @@ internal class DxfObjectsSectionReader : DxfSectionReaderBase
 				return this.readObjectCodes<BlockGripExpression>(new CadBlockGripExpressionTemplate(), this.readBlockGripExpression);
 			case DxfFileToken.ObjectBlockVisibilityGrip:
 				return this.readObjectCodes<BlockVisibilityGrip>(new CadBlockVisibilityGripTemplate(), this.readBlockVisibilityGrip);
+			case DxfFileToken.ObjectBlockXYGrip:
+				return this.readObjectCodes<BlockXYGrip>(new CadBlockGripTemplate(new BlockXYGrip()), this.readBlockXYGrip);
 			case DxfFileToken.ObjectBlockVisibilityParameter:
 				return this.readObjectCodes<BlockVisibilityParameter>(new CadBlockVisibilityParameterTemplate(), this.readBlockVisibilityParameter);
 			case DxfFileToken.ObjectBlockRotationParameter:
@@ -134,8 +136,12 @@ internal class DxfObjectsSectionReader : DxfSectionReaderBase
 				return this.readObjectCodes<BlockLookupParameter>(new CadBlockLookupParameterTemplate(new BlockLookupParameter()), this.readBlockLookupParameter);
 			case DxfFileToken.ObjectBlockRotationGrip:
 				return this.readObjectCodes<BlockRotationGrip>(new CadBlockRotationGripTemplate(), this.readBlockRotationGrip);
+			case DxfFileToken.ObjectBlockMoveAction:
+				return this.readObjectCodes<BlockMoveAction>(new CadBlockMoveActionTemplate(), this.readBlockMoveAction);
 			case DxfFileToken.ObjectBlockRotateAction:
 				return this.readObjectCodes<BlockRotationAction>(new CadBlockRotationActionTemplate(), this.readBlockRotationAction);
+			case DxfFileToken.ObjectBlockPointParameter:
+				return this.readObjectCodes<BlockPointParameter>(new CadBlockPointParameterTemplate(), this.readBlockPointParameter);
 			case DxfFileToken.ObjectField:
 				return this.readObjectCodes<Field>(new CadFieldTemplate(new Field()), this.readField);
 			case DxfFileToken.ObjectFieldList:
@@ -2009,6 +2015,43 @@ internal class DxfObjectsSectionReader : DxfSectionReaderBase
 		}
 	}
 
+	private bool readBlockPointParameter(CadTemplate template, DxfMap map)
+	{
+		CadBlockPointParameterTemplate tmp = template as CadBlockPointParameterTemplate;
+
+		switch (this._reader.Code)
+		{
+			default:
+				if (!this.tryAssignCurrentValue(template.CadObject, map.SubClasses[DxfSubclassMarker.BlockPointParameter]))
+				{
+					return this.readBlock1PtParameter(template, map);
+				}
+				return true;
+		}
+	}
+
+	private bool readBlockMoveAction(CadTemplate template, DxfMap map)
+	{
+		CadBlockMoveActionTemplate tmp = template as CadBlockMoveActionTemplate;
+		BlockMoveAction action = tmp.CadObject as BlockMoveAction;
+
+		switch (this._reader.Code)
+		{
+			case 92:
+				action.XDelta = this.readEvalConnection();
+				return true;
+			case 93:
+				action.YDelta = this.readEvalConnection();
+				return true;
+			default:
+				if (!this.tryAssignCurrentValue(template.CadObject, map.SubClasses[DxfSubclassMarker.BlockMoveAction]))
+				{
+					return this.readBlockAction(template, map);
+				}
+				return true;
+		}
+	}
+
 	private bool readBlockRotationAction(CadTemplate template, DxfMap map)
 	{
 		CadBlockRotationActionTemplate tmp = template as CadBlockRotationActionTemplate;
@@ -2045,6 +2088,12 @@ internal class DxfObjectsSectionReader : DxfSectionReaderBase
 
 		switch (this._reader.Code)
 		{
+			case 170:
+				this.readEvalParameterProperty(tmp.Block1PtParameter.DisplacementX);
+				return true;
+			case 171:
+				this.readEvalParameterProperty(tmp.Block1PtParameter.DisplacementY);
+				return true;
 			default:
 				if (!this.tryAssignCurrentValue(template.CadObject, map.SubClasses[DxfSubclassMarker.Block1PtParameter]))
 				{
@@ -2069,16 +2118,16 @@ internal class DxfObjectsSectionReader : DxfSectionReaderBase
 				}
 				return true;
 			case 171:
-				this.readEvalParameterProperty(tmp.Block2PtParameter.Properties[0]);
+				this.readEvalParameterProperty(tmp.Block2PtParameter.FirstPointDisplacementX);
 				return true;
 			case 172:
-				this.readEvalParameterProperty(tmp.Block2PtParameter.Properties[1]);
+				this.readEvalParameterProperty(tmp.Block2PtParameter.FirstPointDisplacementY);
 				return true;
 			case 173:
-				this.readEvalParameterProperty(tmp.Block2PtParameter.Properties[2]);
+				this.readEvalParameterProperty(tmp.Block2PtParameter.SecondPointDisplacementX);
 				return true;
 			case 174:
-				this.readEvalParameterProperty(tmp.Block2PtParameter.Properties[3]);
+				this.readEvalParameterProperty(tmp.Block2PtParameter.SecondPointDisplacementY);
 				return true;
 			default:
 				if (!this.tryAssignCurrentValue(template.CadObject, map))
@@ -2094,15 +2143,20 @@ internal class DxfObjectsSectionReader : DxfSectionReaderBase
 		short nconnections = this._reader.ValueAsShort;
 		for (; nconnections > 0; nconnections--)
 		{
-			EvalConnection connection = new EvalConnection();
-			// No dinamic reader for codes 9x and 30x
 			this._reader.ReadNext();
-			connection.Id = this._reader.ValueAsLong;
-			this._reader.ReadNext();
-			connection.Name = this._reader.ValueAsString;
-
-			property.Connections.Add(connection);
+			property.Connections.Add(this.readEvalConnection());
 		}
+	}
+
+	private EvalConnection readEvalConnection()
+	{
+		EvalConnection connection = new EvalConnection();
+		// No dynamic reader for codes 9x and 30x
+		connection.Id = this._reader.ValueAsLong;
+		this._reader.ReadNext();
+		connection.Name = this._reader.ValueAsString;
+
+		return connection;
 	}
 
 	private bool readBlockVisibilityParameter(CadTemplate template, DxfMap map)
@@ -2252,6 +2306,21 @@ internal class DxfObjectsSectionReader : DxfSectionReaderBase
 		{
 			default:
 				if (!this.tryAssignCurrentValue(template.CadObject, map.SubClasses[DxfSubclassMarker.BlockRotationGrip]))
+				{
+					return this.readBlockGrip(template, map);
+				}
+				return true;
+		}
+	}
+
+	private bool readBlockXYGrip(CadTemplate template, DxfMap map)
+	{
+		CadBlockGripTemplate tmp = template as CadBlockGripTemplate;
+
+		switch (this._reader.Code)
+		{
+			default:
+				if (!this.tryAssignCurrentValue(template.CadObject, map.SubClasses[DxfSubclassMarker.BlockXYGrip]))
 				{
 					return this.readBlockGrip(template, map);
 				}
