@@ -82,6 +82,8 @@ public static class DxfSubclassMarker
 
 	public const string BlockVisibilityParameter = "AcDbBlockVisibilityParameter";
 
+	public const string BlockXYGrip = "AcDbBlockXYGrip";
+
 	public const string CellStyleMap = "AcDbCellStyleMap";
 
 	public const string Circle = "AcDbCircle";

@@ -129,10 +129,12 @@ internal partial class DwgObjectReader : DwgSectionIO
 
 		var blockGrip = template.CadObject as BlockGrip;
 
-		blockGrip.Value91 = this._mergedReaders.ReadBitLong();
-		blockGrip.Value92 = this._mergedReaders.ReadBitLong();
+		blockGrip.ExpressionId1 = this._mergedReaders.ReadBitLong();
+		blockGrip.ExpressionId2 = this._mergedReaders.ReadBitLong();
+
 		blockGrip.Location = this._mergedReaders.Read3BitDouble();
-		blockGrip.Value280 = this._mergedReaders.ReadBitAsShort();
+		blockGrip.Cycling = this._mergedReaders.ReadBitShortAsBool();
+
 		blockGrip.Value93 = this._mergedReaders.ReadBitLong();
 	}
 

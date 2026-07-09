@@ -124,6 +124,8 @@ internal class DxfObjectsSectionReader : DxfSectionReaderBase
 				return this.readObjectCodes<BlockGripExpression>(new CadBlockGripExpressionTemplate(), this.readBlockGripExpression);
 			case DxfFileToken.ObjectBlockVisibilityGrip:
 				return this.readObjectCodes<BlockVisibilityGrip>(new CadBlockVisibilityGripTemplate(), this.readBlockVisibilityGrip);
+			case DxfFileToken.ObjectBlockXYGrip:
+				return this.readObjectCodes<BlockXYGrip>(new CadBlockGripTemplate(new BlockXYGrip()), this.readBlockXYGrip);
 			case DxfFileToken.ObjectBlockVisibilityParameter:
 				return this.readObjectCodes<BlockVisibilityParameter>(new CadBlockVisibilityParameterTemplate(), this.readBlockVisibilityParameter);
 			case DxfFileToken.ObjectBlockRotationParameter:
@@ -2304,6 +2306,21 @@ internal class DxfObjectsSectionReader : DxfSectionReaderBase
 		{
 			default:
 				if (!this.tryAssignCurrentValue(template.CadObject, map.SubClasses[DxfSubclassMarker.BlockRotationGrip]))
+				{
+					return this.readBlockGrip(template, map);
+				}
+				return true;
+		}
+	}
+
+	private bool readBlockXYGrip(CadTemplate template, DxfMap map)
+	{
+		CadBlockGripTemplate tmp = template as CadBlockGripTemplate;
+
+		switch (this._reader.Code)
+		{
+			default:
+				if (!this.tryAssignCurrentValue(template.CadObject, map.SubClasses[DxfSubclassMarker.BlockXYGrip]))
 				{
 					return this.readBlockGrip(template, map);
 				}

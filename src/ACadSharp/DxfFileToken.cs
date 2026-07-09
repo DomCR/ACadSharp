@@ -192,6 +192,8 @@ public static class DxfFileToken
 
 	public const string ObjectBlockVisibilityParameter = "BLOCKVISIBILITYPARAMETER";
 
+	public const string ObjectBlockXYGrip = "BLOCKXYGRIP";
+
 	public const string ObjectCell = "CELL";
 
 	public const string ObjectCellStyleMap = "CELLSTYLEMAP";
