@@ -4846,6 +4846,24 @@ references:
   commentId: T:ACadSharp.DxfFileToken
   fullName: ACadSharp.DxfFileToken
   nameWithType: DxfFileToken
+- uid: ACadSharp.DxfFileToken.AcdsDataSection
+  name: AcdsDataSection
+  href: api/ACadSharp.DxfFileToken.html#ACadSharp_DxfFileToken_AcdsDataSection
+  commentId: F:ACadSharp.DxfFileToken.AcdsDataSection
+  fullName: ACadSharp.DxfFileToken.AcdsDataSection
+  nameWithType: DxfFileToken.AcdsDataSection
+- uid: ACadSharp.DxfFileToken.AcdsRecord
+  name: AcdsRecord
+  href: api/ACadSharp.DxfFileToken.html#ACadSharp_DxfFileToken_AcdsRecord
+  commentId: F:ACadSharp.DxfFileToken.AcdsRecord
+  fullName: ACadSharp.DxfFileToken.AcdsRecord
+  nameWithType: DxfFileToken.AcdsRecord
+- uid: ACadSharp.DxfFileToken.AcdsSchema
+  name: AcdsSchema
+  href: api/ACadSharp.DxfFileToken.html#ACadSharp_DxfFileToken_AcdsSchema
+  commentId: F:ACadSharp.DxfFileToken.AcdsSchema
+  fullName: ACadSharp.DxfFileToken.AcdsSchema
+  nameWithType: DxfFileToken.AcdsSchema
 - uid: ACadSharp.DxfFileToken.AcmBalloon
   name: AcmBalloon
   href: api/ACadSharp.DxfFileToken.html#ACadSharp_DxfFileToken_AcmBalloon
@@ -16639,6 +16657,19 @@ references:
   commentId: T:ACadSharp.Entities.ModelerGeometry
   fullName: ACadSharp.Entities.ModelerGeometry
   nameWithType: ModelerGeometry
+- uid: ACadSharp.Entities.ModelerGeometry.AcisData
+  name: AcisData
+  href: api/ACadSharp.Entities.ModelerGeometry.html#ACadSharp_Entities_ModelerGeometry_AcisData
+  commentId: P:ACadSharp.Entities.ModelerGeometry.AcisData
+  fullName: ACadSharp.Entities.ModelerGeometry.AcisData
+  nameWithType: ModelerGeometry.AcisData
+- uid: ACadSharp.Entities.ModelerGeometry.AcisData*
+  name: AcisData
+  href: api/ACadSharp.Entities.ModelerGeometry.html#ACadSharp_Entities_ModelerGeometry_AcisData_
+  commentId: Overload:ACadSharp.Entities.ModelerGeometry.AcisData
+  isSpec: "True"
+  fullName: ACadSharp.Entities.ModelerGeometry.AcisData
+  nameWithType: ModelerGeometry.AcisData
 - uid: ACadSharp.Entities.ModelerGeometry.ApplyTransform(CSMath.Transform)
   name: ApplyTransform(Transform)
   href: api/ACadSharp.Entities.ModelerGeometry.html#ACadSharp_Entities_ModelerGeometry_ApplyTransform_CSMath_Transform_
@@ -16652,6 +16683,19 @@ references:
   isSpec: "True"
   fullName: ACadSharp.Entities.ModelerGeometry.ApplyTransform
   nameWithType: ModelerGeometry.ApplyTransform
+- uid: ACadSharp.Entities.ModelerGeometry.GetAcisText
+  name: GetAcisText()
+  href: api/ACadSharp.Entities.ModelerGeometry.html#ACadSharp_Entities_ModelerGeometry_GetAcisText
+  commentId: M:ACadSharp.Entities.ModelerGeometry.GetAcisText
+  fullName: ACadSharp.Entities.ModelerGeometry.GetAcisText()
+  nameWithType: ModelerGeometry.GetAcisText()
+- uid: ACadSharp.Entities.ModelerGeometry.GetAcisText*
+  name: GetAcisText
+  href: api/ACadSharp.Entities.ModelerGeometry.html#ACadSharp_Entities_ModelerGeometry_GetAcisText_
+  commentId: Overload:ACadSharp.Entities.ModelerGeometry.GetAcisText
+  isSpec: "True"
+  fullName: ACadSharp.Entities.ModelerGeometry.GetAcisText
+  nameWithType: ModelerGeometry.GetAcisText
 - uid: ACadSharp.Entities.ModelerGeometry.GetBoundingBox
   name: GetBoundingBox()
   href: api/ACadSharp.Entities.ModelerGeometry.html#ACadSharp_Entities_ModelerGeometry_GetBoundingBox
@@ -16665,6 +16709,19 @@ references:
   isSpec: "True"
   fullName: ACadSharp.Entities.ModelerGeometry.GetBoundingBox
   nameWithType: ModelerGeometry.GetBoundingBox
+- uid: ACadSharp.Entities.ModelerGeometry.IsBinaryAcisData
+  name: IsBinaryAcisData
+  href: api/ACadSharp.Entities.ModelerGeometry.html#ACadSharp_Entities_ModelerGeometry_IsBinaryAcisData
+  commentId: P:ACadSharp.Entities.ModelerGeometry.IsBinaryAcisData
+  fullName: ACadSharp.Entities.ModelerGeometry.IsBinaryAcisData
+  nameWithType: ModelerGeometry.IsBinaryAcisData
+- uid: ACadSharp.Entities.ModelerGeometry.IsBinaryAcisData*
+  name: IsBinaryAcisData
+  href: api/ACadSharp.Entities.ModelerGeometry.html#ACadSharp_Entities_ModelerGeometry_IsBinaryAcisData_
+  commentId: Overload:ACadSharp.Entities.ModelerGeometry.IsBinaryAcisData
+  isSpec: "True"
+  fullName: ACadSharp.Entities.ModelerGeometry.IsBinaryAcisData
+  nameWithType: ModelerGeometry.IsBinaryAcisData
 - uid: ACadSharp.Entities.ModelerGeometry.ModelerFormatVersion
   name: ModelerFormatVersion
   href: api/ACadSharp.Entities.ModelerGeometry.html#ACadSharp_Entities_ModelerGeometry_ModelerFormatVersion
