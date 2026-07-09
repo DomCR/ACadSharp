@@ -4646,6 +4646,20 @@
     },
     {
       "type": "ManagedReference",
+      "source_relative_path": "api/ACadSharp.Objects.DynamicBlockPurgePreventer.yml",
+      "output": {
+        ".html": {
+          "relative_path": "api/ACadSharp.Objects.DynamicBlockPurgePreventer.html"
+        }
+      },
+      "version": "",
+      "Uid": null,
+      "IsMRef": true,
+      "Title": "ACadSharp.Objects.DynamicBlockPurgePreventer",
+      "Summary": "<p sourcefile=\"api/ACadSharp.Objects.DynamicBlockPurgePreventer.yml\" sourcestartlinenumber=\"1\">Represents a <xref href=\"ACadSharp.Objects.DynamicBlockPurgePreventer\" data-throw-if-not-resolved=\"false\"></xref> object.</p>\n"
+    },
+    {
+      "type": "ManagedReference",
       "source_relative_path": "api/ACadSharp.Objects.EdgeStyleModel.yml",
       "output": {
         ".html": {

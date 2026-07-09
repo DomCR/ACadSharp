@@ -5482,6 +5482,12 @@ references:
   commentId: F:ACadSharp.DxfFileToken.ObjectDimensionAssociation
   fullName: ACadSharp.DxfFileToken.ObjectDimensionAssociation
   nameWithType: DxfFileToken.ObjectDimensionAssociation
+- uid: ACadSharp.DxfFileToken.ObjectDynamicBlockPurgePreventer
+  name: ObjectDynamicBlockPurgePreventer
+  href: api/ACadSharp.DxfFileToken.html#ACadSharp_DxfFileToken_ObjectDynamicBlockPurgePreventer
+  commentId: F:ACadSharp.DxfFileToken.ObjectDynamicBlockPurgePreventer
+  fullName: ACadSharp.DxfFileToken.ObjectDynamicBlockPurgePreventer
+  nameWithType: DxfFileToken.ObjectDynamicBlockPurgePreventer
 - uid: ACadSharp.DxfFileToken.ObjectEvalGraph
   name: ObjectEvalGraph
   href: api/ACadSharp.DxfFileToken.html#ACadSharp_DxfFileToken_ObjectEvalGraph
@@ -6290,6 +6296,12 @@ references:
   commentId: T:ACadSharp.DxfSubclassMarker
   fullName: ACadSharp.DxfSubclassMarker
   nameWithType: DxfSubclassMarker
+- uid: ACadSharp.DxfSubclassMarker.AcDbDynamicBlockPurgePreventer
+  name: AcDbDynamicBlockPurgePreventer
+  href: api/ACadSharp.DxfSubclassMarker.html#ACadSharp_DxfSubclassMarker_AcDbDynamicBlockPurgePreventer
+  commentId: F:ACadSharp.DxfSubclassMarker.AcDbDynamicBlockPurgePreventer
+  fullName: ACadSharp.DxfSubclassMarker.AcDbDynamicBlockPurgePreventer
+  nameWithType: DxfSubclassMarker.AcDbDynamicBlockPurgePreventer
 - uid: ACadSharp.DxfSubclassMarker.AcDbPlaceHolder
   name: AcDbPlaceHolder
   href: api/ACadSharp.DxfSubclassMarker.html#ACadSharp_DxfSubclassMarker_AcDbPlaceHolder
@@ -37088,6 +37100,64 @@ references:
   isSpec: "True"
   fullName: ACadSharp.Objects.DimensionAssociation.ThirdPointRef
   nameWithType: DimensionAssociation.ThirdPointRef
+- uid: ACadSharp.Objects.DynamicBlockPurgePreventer
+  name: DynamicBlockPurgePreventer
+  href: api/ACadSharp.Objects.DynamicBlockPurgePreventer.html
+  commentId: T:ACadSharp.Objects.DynamicBlockPurgePreventer
+  fullName: ACadSharp.Objects.DynamicBlockPurgePreventer
+  nameWithType: DynamicBlockPurgePreventer
+- uid: ACadSharp.Objects.DynamicBlockPurgePreventer.ObjectName
+  name: ObjectName
+  href: api/ACadSharp.Objects.DynamicBlockPurgePreventer.html#ACadSharp_Objects_DynamicBlockPurgePreventer_ObjectName
+  commentId: P:ACadSharp.Objects.DynamicBlockPurgePreventer.ObjectName
+  fullName: ACadSharp.Objects.DynamicBlockPurgePreventer.ObjectName
+  nameWithType: DynamicBlockPurgePreventer.ObjectName
+- uid: ACadSharp.Objects.DynamicBlockPurgePreventer.ObjectName*
+  name: ObjectName
+  href: api/ACadSharp.Objects.DynamicBlockPurgePreventer.html#ACadSharp_Objects_DynamicBlockPurgePreventer_ObjectName_
+  commentId: Overload:ACadSharp.Objects.DynamicBlockPurgePreventer.ObjectName
+  isSpec: "True"
+  fullName: ACadSharp.Objects.DynamicBlockPurgePreventer.ObjectName
+  nameWithType: DynamicBlockPurgePreventer.ObjectName
+- uid: ACadSharp.Objects.DynamicBlockPurgePreventer.ObjectType
+  name: ObjectType
+  href: api/ACadSharp.Objects.DynamicBlockPurgePreventer.html#ACadSharp_Objects_DynamicBlockPurgePreventer_ObjectType
+  commentId: P:ACadSharp.Objects.DynamicBlockPurgePreventer.ObjectType
+  fullName: ACadSharp.Objects.DynamicBlockPurgePreventer.ObjectType
+  nameWithType: DynamicBlockPurgePreventer.ObjectType
+- uid: ACadSharp.Objects.DynamicBlockPurgePreventer.ObjectType*
+  name: ObjectType
+  href: api/ACadSharp.Objects.DynamicBlockPurgePreventer.html#ACadSharp_Objects_DynamicBlockPurgePreventer_ObjectType_
+  commentId: Overload:ACadSharp.Objects.DynamicBlockPurgePreventer.ObjectType
+  isSpec: "True"
+  fullName: ACadSharp.Objects.DynamicBlockPurgePreventer.ObjectType
+  nameWithType: DynamicBlockPurgePreventer.ObjectType
+- uid: ACadSharp.Objects.DynamicBlockPurgePreventer.SubclassMarker
+  name: SubclassMarker
+  href: api/ACadSharp.Objects.DynamicBlockPurgePreventer.html#ACadSharp_Objects_DynamicBlockPurgePreventer_SubclassMarker
+  commentId: P:ACadSharp.Objects.DynamicBlockPurgePreventer.SubclassMarker
+  fullName: ACadSharp.Objects.DynamicBlockPurgePreventer.SubclassMarker
+  nameWithType: DynamicBlockPurgePreventer.SubclassMarker
+- uid: ACadSharp.Objects.DynamicBlockPurgePreventer.SubclassMarker*
+  name: SubclassMarker
+  href: api/ACadSharp.Objects.DynamicBlockPurgePreventer.html#ACadSharp_Objects_DynamicBlockPurgePreventer_SubclassMarker_
+  commentId: Overload:ACadSharp.Objects.DynamicBlockPurgePreventer.SubclassMarker
+  isSpec: "True"
+  fullName: ACadSharp.Objects.DynamicBlockPurgePreventer.SubclassMarker
+  nameWithType: DynamicBlockPurgePreventer.SubclassMarker
+- uid: ACadSharp.Objects.DynamicBlockPurgePreventer.Version
+  name: Version
+  href: api/ACadSharp.Objects.DynamicBlockPurgePreventer.html#ACadSharp_Objects_DynamicBlockPurgePreventer_Version
+  commentId: P:ACadSharp.Objects.DynamicBlockPurgePreventer.Version
+  fullName: ACadSharp.Objects.DynamicBlockPurgePreventer.Version
+  nameWithType: DynamicBlockPurgePreventer.Version
+- uid: ACadSharp.Objects.DynamicBlockPurgePreventer.Version*
+  name: Version
+  href: api/ACadSharp.Objects.DynamicBlockPurgePreventer.html#ACadSharp_Objects_DynamicBlockPurgePreventer_Version_
+  commentId: Overload:ACadSharp.Objects.DynamicBlockPurgePreventer.Version
+  isSpec: "True"
+  fullName: ACadSharp.Objects.DynamicBlockPurgePreventer.Version
+  nameWithType: DynamicBlockPurgePreventer.Version
 - uid: ACadSharp.Objects.EdgeStyleModel
   name: EdgeStyleModel
   href: api/ACadSharp.Objects.EdgeStyleModel.html
