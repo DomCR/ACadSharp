@@ -2,6 +2,8 @@
 
 public static class DxfSubclassMarker
 {
+	public const string AcDbDynamicBlockPurgePreventer = "AcDbDynamicBlockPurgePreventer";
+
 	public const string AcDbPlaceHolder = "AcDbPlaceHolder";
 
 	public const string AecDbCleanupGroupDef = "AecDbCleanupGroupDef";

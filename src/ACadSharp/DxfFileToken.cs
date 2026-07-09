@@ -214,6 +214,8 @@ public static class DxfFileToken
 
 	public const string ObjectDimensionAssociation = "DIMASSOC";
 
+	public const string ObjectDynamicBlockPurgePreventer = "ACDB_DYNAMICBLOCKPURGEPREVENTER_VERSION";
+
 	public const string ObjectEvalGraph = "ACAD_EVALUATION_GRAPH";
 
 	public const string ObjectField = "FIELD";
