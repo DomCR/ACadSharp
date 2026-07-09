@@ -606,6 +606,7 @@ internal class DxfObjectsSectionWriter : DxfSectionWriterBase
 			case AecCleanupGroup:
 			case AecBinRecord:
 			case DimensionAssociation:
+			case DynamicBlockPurgePreventer:
 			case EvaluationGraph:
 			case Material:
 			case MultiLeaderObjectContextData:

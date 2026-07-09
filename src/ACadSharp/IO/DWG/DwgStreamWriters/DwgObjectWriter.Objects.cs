@@ -40,6 +40,7 @@ internal partial class DwgObjectWriter : DwgSectionIO
 			case AecCleanupGroup:
 			case AecBinRecord:
 			case DimensionAssociation:
+			case DynamicBlockPurgePreventer:
 			case EvaluationGraph:
 			case UnknownNonGraphicalObject:
 			case VisualStyle:
