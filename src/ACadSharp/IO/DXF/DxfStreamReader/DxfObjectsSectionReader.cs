@@ -134,6 +134,8 @@ internal class DxfObjectsSectionReader : DxfSectionReaderBase
 				return this.readObjectCodes<BlockLookupParameter>(new CadBlockLookupParameterTemplate(new BlockLookupParameter()), this.readBlockLookupParameter);
 			case DxfFileToken.ObjectBlockRotationGrip:
 				return this.readObjectCodes<BlockRotationGrip>(new CadBlockRotationGripTemplate(), this.readBlockRotationGrip);
+			case DxfFileToken.ObjectBlockMoveAction:
+				return this.readObjectCodes<BlockMoveAction>(new CadBlockMoveActionTemplate(), this.readBlockMoveAction);
 			case DxfFileToken.ObjectBlockRotateAction:
 				return this.readObjectCodes<BlockRotationAction>(new CadBlockRotationActionTemplate(), this.readBlockRotationAction);
 			case DxfFileToken.ObjectBlockPointParameter:
@@ -2026,6 +2028,28 @@ internal class DxfObjectsSectionReader : DxfSectionReaderBase
 		}
 	}
 
+	private bool readBlockMoveAction(CadTemplate template, DxfMap map)
+	{
+		CadBlockMoveActionTemplate tmp = template as CadBlockMoveActionTemplate;
+		BlockMoveAction action = tmp.CadObject as BlockMoveAction;
+
+		switch (this._reader.Code)
+		{
+			case 92:
+				action.XDelta = this.readEvalConnection();
+				return true;
+			case 93:
+				action.YDelta = this.readEvalConnection();
+				return true;
+			default:
+				if (!this.tryAssignCurrentValue(template.CadObject, map.SubClasses[DxfSubclassMarker.BlockMoveAction]))
+				{
+					return this.readBlockAction(template, map);
+				}
+				return true;
+		}
+	}
+
 	private bool readBlockRotationAction(CadTemplate template, DxfMap map)
 	{
 		CadBlockRotationActionTemplate tmp = template as CadBlockRotationActionTemplate;
@@ -2117,15 +2141,20 @@ internal class DxfObjectsSectionReader : DxfSectionReaderBase
 		short nconnections = this._reader.ValueAsShort;
 		for (; nconnections > 0; nconnections--)
 		{
-			EvalConnection connection = new EvalConnection();
-			// No dinamic reader for codes 9x and 30x
 			this._reader.ReadNext();
-			connection.Id = this._reader.ValueAsLong;
-			this._reader.ReadNext();
-			connection.Name = this._reader.ValueAsString;
-
-			property.Connections.Add(connection);
+			property.Connections.Add(this.readEvalConnection());
 		}
+	}
+
+	private EvalConnection readEvalConnection()
+	{
+		EvalConnection connection = new EvalConnection();
+		// No dynamic reader for codes 9x and 30x
+		connection.Id = this._reader.ValueAsLong;
+		this._reader.ReadNext();
+		connection.Name = this._reader.ValueAsString;
+
+		return connection;
 	}
 
 	private bool readBlockVisibilityParameter(CadTemplate template, DxfMap map)

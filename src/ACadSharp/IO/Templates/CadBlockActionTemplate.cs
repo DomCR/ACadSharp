@@ -10,8 +10,8 @@ internal class CadBlockActionTemplate : CadBlockElementTemplate
 
 	public HashSet<ulong> EntityHandles { get; } = new();
 
-	public CadBlockActionTemplate(BlockAction cadObject)
-		: base(cadObject)
+	public CadBlockActionTemplate(BlockAction blockAction)
+		: base(blockAction)
 	{
 	}
 

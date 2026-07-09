@@ -179,6 +179,23 @@ internal partial class DwgObjectReader : DwgSectionIO
 		return template;
 	}
 
+	private CadTemplate readBlockMoveAction()
+	{
+		BlockMoveAction blockMoveAction = new();
+		CadBlockMoveActionTemplate template = new CadBlockMoveActionTemplate(blockMoveAction);
+
+		this.readBlockAction(template);
+
+		blockMoveAction.XDelta = this.readEvalConnection();
+		blockMoveAction.YDelta = this.readEvalConnection();
+
+		blockMoveAction.DistanceMultiplier = this._mergedReaders.ReadBitDouble();
+		blockMoveAction.AngleOffset = this._mergedReaders.ReadBitDouble();
+		blockMoveAction.UnknownFlag = this._mergedReaders.ReadByte();
+
+		return template;
+	}
+
 	private void readBlockParameter(CadBlockParameterTemplate template)
 	{
 		this.readBlockElement(template);
