@@ -133,7 +133,7 @@ internal partial class DwgObjectReader : DwgSectionIO
 		blockGrip.ExpressionId2 = this._mergedReaders.ReadBitLong();
 
 		blockGrip.Location = this._mergedReaders.Read3BitDouble();
-		blockGrip.Cycling = this._mergedReaders.ReadBitShortAsBool();
+		blockGrip.Cycling = this._mergedReaders.ReadBit();
 
 		blockGrip.Value93 = this._mergedReaders.ReadBitLong();
 	}
