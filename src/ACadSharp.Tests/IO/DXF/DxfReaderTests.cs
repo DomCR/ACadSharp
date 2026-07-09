@@ -180,4 +180,26 @@ public class DxfReaderTests : CadReaderTestsBase<DxfReader>
 		Assert.NotNull(doc.Views);
 		Assert.NotNull(doc.VPorts);
 	}
+
+	[Fact]
+	public void ReadOrphanedTablesSectionTest()
+	{
+		string path = System.IO.Path.Combine(TestVariables.SamplesFolder, "orphaned_tables_AC1009.dxf");
+
+		bool notified = false;
+		CadDocument doc;
+		using (DxfReader reader = new DxfReader(path))
+		{
+			reader.OnNotification += (_, e) =>
+			{
+				if (e.NotificationType == NotificationType.Warning
+					&& e.Message.Contains("Non-standard DXF"))
+					notified = true;
+			};
+			doc = reader.Read();
+		}
+
+		Assert.True(notified, "Expected a warning notification about the orphaned TABLE section.");
+		Assert.True(doc.Layers.Contains("TestLayer"), "Layer 'TestLayer' should be imported from the orphaned TABLE section.");
+	}
 }

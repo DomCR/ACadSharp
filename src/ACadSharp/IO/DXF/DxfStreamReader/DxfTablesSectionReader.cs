@@ -44,6 +44,30 @@ internal class DxfTablesSectionReader : DxfSectionReaderBase
 		}
 	}
 
+	/// <summary>
+	/// Reads TABLE entries that appear without a SECTION/TABLES/ENDSEC wrapper (non-standard DXF).
+	/// The reader must be positioned at the first bare TABLE token on entry.
+	/// Returns with the reader positioned at the next SECTION, ENDSEC, or EOF token.
+	/// </summary>
+	internal void ReadOrphaned()
+	{
+		while (this._reader.ValueAsString != DxfFileToken.EndSection
+			&& this._reader.ValueAsString != DxfFileToken.BeginSection
+			&& this._reader.ValueAsString != DxfFileToken.EndOfFile)
+		{
+			if (this._reader.ValueAsString != DxfFileToken.TableEntry)
+			{
+				this._builder.Notify(
+					$"Unexpected token '{this._reader.ValueAsString}' while reading orphaned TABLE entries.",
+					NotificationType.Warning);
+				break;
+			}
+
+			this.readTable();
+			this._reader.ReadNext();
+		}
+	}
+
 	private void readTable()
 	{
 		Debug.Assert(this._reader.ValueAsString == DxfFileToken.TableEntry);
