@@ -222,7 +222,7 @@ namespace ACadSharp.IO
 				{
 					this._reader.ReadNext();
 
-					if (this._reader.DxfCode == DxfCode.CLShapeText)
+					if (this._reader.DxfCode == DxfCode.CLShapeText || this._reader.DxfCode == DxfCode.Start)
 					{
 						//Irregular dxf files may not follow the header type
 						int c = data.DxfCodes[i];
@@ -236,9 +236,11 @@ namespace ACadSharp.IO
 							case GroupCodeValueType.Int16:
 							case GroupCodeValueType.Int32:
 							case GroupCodeValueType.Int64:
+								parameters[i] = 0;
+								break;
 							case GroupCodeValueType.Double:
 							case GroupCodeValueType.Point3D:
-								parameters[i] = 0;
+								parameters[i] = 0d;
 								break;
 							case GroupCodeValueType.None:
 							case GroupCodeValueType.String:
@@ -263,7 +265,7 @@ namespace ACadSharp.IO
 					this.triggerNotification($"Invalid value for header variable {currVar} | {parameters.FirstOrDefault()}", NotificationType.Warning, ex);
 				}
 
-				if (this._reader.DxfCode != DxfCode.CLShapeText)
+				if (this._reader.DxfCode != DxfCode.CLShapeText && this._reader.DxfCode != DxfCode.Start)
 				{
 					this._reader.ReadNext();
 				}
