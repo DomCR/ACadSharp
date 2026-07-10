@@ -166,7 +166,12 @@ namespace ACadSharp.IO.DWG
 			using (MemoryStream stream = new MemoryStream())
 			using (BinaryWriter writer = new BinaryWriter(stream))
 			{
-				writeSegmentHeader(writer, "_data_", DATA_NUMBER, segmentSize, 0, 0xF);
+				//the last header field anchors the payload area: the offset from
+				//the segment header to the payload base in 16-byte units. The
+				//readers locate every payload from it, so it must track the
+				//directory size
+				int payloadUnit = (SEGMENT_HEADER_SIZE + payloadBase) / 16;
+				writeSegmentHeader(writer, "_data_", DATA_NUMBER, segmentSize, 0, payloadUnit);
 
 				for (int i = 0; i < records.Count; i++)
 				{
