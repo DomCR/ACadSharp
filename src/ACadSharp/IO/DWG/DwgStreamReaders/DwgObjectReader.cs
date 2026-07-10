@@ -5577,6 +5577,12 @@ namespace ACadSharp.IO.DWG
 				case DxfFileToken.ObjectAecCleanupGroupDef:
 					template = this.readAecCleanupGroup();
 					break;
+				case "AEC_MODI":
+					template = this.readProxyEntity();
+					break;
+				case "AEC_SYMB_SECTION":
+					template = this.readProxyEntity();
+					break;
 				case "ACDBDICTIONARYWDFLT":
 					template = this.readDictionaryWithDefault();
 					break;
