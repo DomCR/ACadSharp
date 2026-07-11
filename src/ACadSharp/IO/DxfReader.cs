@@ -236,8 +236,6 @@ namespace ACadSharp.IO
 							case GroupCodeValueType.Int16:
 							case GroupCodeValueType.Int32:
 							case GroupCodeValueType.Int64:
-								parameters[i] = 0;
-								break;
 							case GroupCodeValueType.Double:
 							case GroupCodeValueType.Point3D:
 								parameters[i] = 0d;
