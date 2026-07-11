@@ -41,6 +41,11 @@ namespace ACadSharp.IO.DWG.DwgStreamReaders
 			public long DirectoryEnd;
 
 			public long SegmentEnd;
+
+			//Absolute start of the payload area, read from the _data_ segment
+			//header (objdata alignment offset in 16 byte units); 0 when the header
+			//does not carry it, then the signature heuristic resolves the base.
+			public long PayloadArea;
 		}
 
 		/// <summary>
@@ -95,20 +100,29 @@ namespace ACadSharp.IO.DWG.DwgStreamReaders
 				return result;
 			}
 
-			//Resolve each segment group on its own: try the payload bases implied
-			//by pairing the first signatures of the segment with the smallest
-			//record offsets, keep the base that validates the most records
+			//Resolve each segment group on its own
 			foreach (IGrouping<long, DataRecord> group in records.GroupBy(r => r.DirectoryEnd))
 			{
 				List<DataRecord> pending = group.OrderBy(r => r.PayloadOffset).ToList();
 				long segmentEnd = pending[0].SegmentEnd;
 
+				//Preferred path: the _data_ segment header carries the payload-area
+				//anchor directly, so use it instead of guessing from the signatures
+				long directBase = pending[0].PayloadArea;
+				if (directBase > group.Key && directBase < segmentEnd
+					&& emitRecords(buffer, pending, directBase, segmentEnd, result))
+				{
+					continue;
+				}
+
+				//Fallback for producers that leave the anchor unset or spill the
+				//payloads into the blob01 segments: pair the first signatures of the
+				//segment with the smallest record offsets and keep the base that
+				//validates the most records
 				List<long> local = signatures
 					.Where(s => s >= group.Key && s < segmentEnd)
 					.ToList();
 
-				//Large payloads move to the blob01 segments: when the segment has
-				//no signatures of its own, anchor on the whole section instead
 				long limit = segmentEnd;
 				if (local.Count == 0)
 				{
@@ -120,6 +134,39 @@ namespace ACadSharp.IO.DWG.DwgStreamReaders
 			}
 
 			return result;
+		}
+
+		//Emits the ACIS payloads of a segment at a known payload base. Returns
+		//false without emitting when the base explains no ACIS payload, so a wrong
+		//anchor falls through to the signature heuristic instead of yielding garbage.
+		private static bool emitRecords(byte[] buffer, List<DataRecord> records, long payloadBase, long limit, Dictionary<ulong, byte[]> result)
+		{
+			bool any = false;
+			foreach (DataRecord record in records)
+			{
+				if (validate(buffer, payloadBase, record, limit, out _, out _, out bool isAcis) && isAcis)
+				{
+					any = true;
+					break;
+				}
+			}
+
+			if (!any)
+			{
+				return false;
+			}
+
+			foreach (DataRecord record in records)
+			{
+				if (validate(buffer, payloadBase, record, limit, out long dataStart, out long dataSize, out bool isAcis) && isAcis)
+				{
+					byte[] payload = new byte[dataSize];
+					Array.Copy(buffer, dataStart, payload, 0, dataSize);
+					result[record.Handle] = payload;
+				}
+			}
+
+			return true;
 		}
 
 		private static void resolveRecords(byte[] buffer, List<DataRecord> records, List<long> signatures, long limit, Dictionary<ulong, byte[]> result)
@@ -260,6 +307,11 @@ namespace ACadSharp.IO.DWG.DwgStreamReaders
 			uint segmentSize = readUInt(buffer, offset + 16);
 			long segmentEnd = Math.Min(offset + segmentSize, buffer.Length);
 
+			//The segment header's objdata alignment offset (16 byte units) anchors
+			//the payload area: base = segment start + field * 16. It sits after the
+			//two alignment fields, at header offset 36.
+			long payloadArea = offset + (long)readUInt(buffer, offset + 36) * 16;
+
 			//Record directory: fixed 20 byte entries with the owner handle and the
 			//offset of the record payload
 			long cursor = offset + 48;
@@ -271,6 +323,7 @@ namespace ACadSharp.IO.DWG.DwgStreamReaders
 					Handle = readULong(buffer, cursor + 8),
 					PayloadOffset = readUInt(buffer, cursor + 16),
 					SegmentEnd = segmentEnd,
+					PayloadArea = payloadArea,
 				});
 				cursor += RecordSize;
 			}
