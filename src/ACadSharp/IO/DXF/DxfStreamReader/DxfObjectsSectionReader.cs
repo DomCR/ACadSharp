@@ -409,7 +409,7 @@ internal class DxfObjectsSectionReader : DxfSectionReaderBase
 				{
 					EvaluationGraph.Edge edge = new EvaluationGraph.Edge();
 
-					edge.Id = this._reader.ValueAsInt;
+					edge.Index = this._reader.ValueAsInt;
 
 					this._reader.ExpectedCode(93);
 					edge.Flags = this._reader.ValueAsInt;

@@ -77,4 +77,6 @@ public class CadWriterConfiguration
 	/// default: true
 	/// </value>
 	public bool WriteXRecords { get; set; } = true;
+
+	public bool WriteDynamicBlockData { get; set; } = false;
 }

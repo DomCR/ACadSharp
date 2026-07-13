@@ -500,8 +500,8 @@ internal partial class DwgObjectReader : DwgSectionIO
 			//e3 BLd, DXF 91
 			//out_edge BLd
 
-			//92 id
-			edge.Id = this._objectReader.ReadBitLong();
+			//92 index
+			edge.Index = this._objectReader.ReadBitLong();
 			//93
 			edge.Flags = this._objectReader.ReadBitLong();
 			//94

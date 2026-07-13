@@ -407,6 +407,9 @@ internal class DxfObjectsSectionWriter : DxfSectionWriterBase
 			case DimensionAssociation dimAssociation:
 				this.writeDimensionAssociation(dimAssociation);
 				break;
+			case DynamicBlockPurgePreventer dynamicBlockPurgePreventer:
+				this.writeDynamicBlockPurge(dynamicBlockPurgePreventer);
+				break;
 			case GeoData geodata:
 				this.writeGeoData(geodata);
 				break;
@@ -421,6 +424,9 @@ internal class DxfObjectsSectionWriter : DxfSectionWriterBase
 				return;
 			case Layout layout:
 				this.writeLayout(layout);
+				break;
+			case EvaluationGraph evaluationGraph:
+				this.writeEvaluationGraph(evaluationGraph);
 				break;
 			case Field field:
 				this.writeField(field);
@@ -463,6 +469,55 @@ internal class DxfObjectsSectionWriter : DxfSectionWriterBase
 		}
 
 		this.writeExtendedData(co.ExtendedData);
+	}
+
+	private void writeDynamicBlockPurge(DynamicBlockPurgePreventer dynamicBlockPurgePreventer)
+	{
+		DxfClassMap map = DxfClassMap.Create<DynamicBlockPurgePreventer>();
+
+		this._writer.Write(100, DxfSubclassMarker.AcDbDynamicBlockPurgePreventer);
+
+		this._writer.Write(70, dynamicBlockPurgePreventer.Version);
+	}
+
+	private void writeEvaluationGraph(EvaluationGraph evaluationGraph)
+	{
+		DxfClassMap map = DxfClassMap.Create<EvaluationGraph>();
+
+		this._writer.Write(100, DxfSubclassMarker.EvalGraph);
+
+		this._writer.Write(96, evaluationGraph.Value96, map);
+		this._writer.Write(97, evaluationGraph.Value97, map);
+
+		for (int i = 0; i < evaluationGraph.Nodes.Count; i++)
+		{
+			var n = evaluationGraph.Nodes[i];
+
+			this._writer.Write(91, i);
+			this._writer.Write(93, n.Flags);
+			this._writer.Write(95, n.Id);
+			this._writer.WriteHandle(360, n.Expression);
+			this._writer.Write(92, n.Data1);
+			this._writer.Write(92, n.Data2);
+			this._writer.Write(92, n.Data3);
+			this._writer.Write(92, n.Data4);
+		}
+
+		for (int i = 0; i < evaluationGraph.Edges.Count; i++)
+		{
+			var e = evaluationGraph.Edges[i];
+
+			this._writer.Write(92, i);
+			this._writer.Write(93, e.Flags);
+			this._writer.Write(94, e.TrackedCount);
+			this._writer.Write(91, e.FromNodeIndex);
+			this._writer.Write(91, e.ToNodeIndex);
+			this._writer.Write(92, e.Data1);
+			this._writer.Write(92, e.Data2);
+			this._writer.Write(92, e.Data3);
+			this._writer.Write(92, e.Data4);
+			this._writer.Write(92, e.Data5);
+		}
 	}
 
 	protected void writePdfUnderlayDefinition(PdfUnderlayDefinition definition)
@@ -606,8 +661,6 @@ internal class DxfObjectsSectionWriter : DxfSectionWriterBase
 			case AecCleanupGroup:
 			case AecBinRecord:
 			case DimensionAssociation:
-			case DynamicBlockPurgePreventer:
-			case EvaluationGraph:
 			case Material:
 			case MultiLeaderObjectContextData:
 			case VisualStyle:
