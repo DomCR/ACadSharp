@@ -1,61 +1,66 @@
 ﻿using ACadSharp.Attributes;
 using System.Collections.Generic;
 
-namespace ACadSharp.Objects.Evaluations
+namespace ACadSharp.Objects.Evaluations;
+
+/// <summary>
+/// Represents an evaluation graph containing a list of <see cref="Node"/>.
+/// objects.
+/// </summary>
+[DxfName(DxfFileToken.ObjectEvalGraph)]
+[DxfSubClass(DxfSubclassMarker.EvalGraph)]
+public partial class EvaluationGraph : NonGraphicalObject
 {
+	public IList<Edge> Edges { get; private set; } = new List<Edge>();
+
 	/// <summary>
-	/// Represents an evaluation graph containing a list of <see cref="Node"/>.
-	/// objects.
+	/// Gets a list of <see cref="Node"/> objects.
 	/// </summary>
-	[DxfName(DxfFileToken.ObjectEvalGraph)]
-	[DxfSubClass(DxfSubclassMarker.EvalGraph)]
-	public partial class EvaluationGraph : NonGraphicalObject
+	public IList<Node> Nodes { get; private set; } = new List<Node>();
+
+	/// <inheritdoc/>
+	public override string ObjectName => DxfFileToken.ObjectEvalGraph;
+
+	/// <inheritdoc/>
+	public override ObjectType ObjectType => ObjectType.UNLISTED;
+
+	/// <inheritdoc/>
+	public override string SubclassMarker => DxfSubclassMarker.EvalGraph;
+
+	[DxfCodeValue(96)]
+	public int Value96 { get; set; }
+
+	[DxfCodeValue(97)]
+	public int Value97 { get; set; }
+
+	/// <summary>
+	/// Dictionary entry name for the object <see cref="EvaluationGraph"/>
+	/// </summary>
+	public const string DictionaryEntryName = "ACAD_ENHANCEDBLOCK";
+
+	/// <summary>
+	/// Initializes a new instance of the EvaluationGraph class.
+	/// </summary>
+	public EvaluationGraph()
+	{ }
+
+	/// <inheritdoc/>
+	public override CadObject Clone()
 	{
-		public IList<Edge> Edges { get; private set; } = new List<Edge>();
+		EvaluationGraph clone = (EvaluationGraph)base.Clone();
 
-		/// <summary>
-		/// Gets a list of <see cref="Node"/> objects.
-		/// </summary>
-		public IList<Node> Nodes { get; private set; } = new List<Node>();
-
-		/// <inheritdoc/>
-		public override string ObjectName => DxfFileToken.ObjectEvalGraph;
-
-		/// <inheritdoc/>
-		public override ObjectType ObjectType => ObjectType.UNLISTED;
-
-		/// <inheritdoc/>
-		public override string SubclassMarker => DxfSubclassMarker.EvalGraph;
-
-		[DxfCodeValue(96)]
-		public int Value96 { get; set; }
-
-		[DxfCodeValue(97)]
-		public int Value97 { get; set; }
-
-		/// <summary>
-		/// Dictionary entry name for the object <see cref="EvaluationGraph"/>
-		/// </summary>
-		public const string DictionaryEntryName = "ACAD_ENHANCEDBLOCK";
-
-		/// <summary>
-		/// Initializes a new instance of the EvaluationGraph class.
-		/// </summary>
-		public EvaluationGraph()
-		{ }
-
-		/// <inheritdoc/>
-		public override CadObject Clone()
+		clone.Nodes = new List<Node>();
+		foreach (var item in this.Nodes)
 		{
-			EvaluationGraph clone = (EvaluationGraph)base.Clone();
-
-			clone.Nodes = new List<Node>();
-			foreach (var item in this.Nodes)
-			{
-				clone.Nodes.Add((Node)item.Clone());
-			}
-
-			return clone;
+			clone.Nodes.Add((Node)item.Clone());
 		}
+
+		clone.Edges = new List<Edge>();
+		foreach (var item in this.Edges)
+		{
+			clone.Edges.Add((Edge)item.Clone());
+		}
+
+		return clone;
 	}
 }

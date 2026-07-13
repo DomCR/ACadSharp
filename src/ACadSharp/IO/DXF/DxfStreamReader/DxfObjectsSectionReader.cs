@@ -373,16 +373,16 @@ internal class DxfObjectsSectionReader : DxfSectionReaderBase
 			case 91:
 				while (this._reader.Code == 91)
 				{
-					GraphNodeTemplate nodeTemplate = new GraphNodeTemplate();
-					EvaluationGraph.Node node = nodeTemplate.Node;
+					EvaluationGraph.Node node = new EvaluationGraph.Node();
+					GraphNodeTemplate nodeTemplate = new GraphNodeTemplate(node);
 
 					node.Index = this._reader.ValueAsInt;
 
 					this._reader.ExpectedCode(93);
-					node.Flags = this._reader.ValueAsInt;
+					node.Flags = (EvaluationGraph.NodeFlags)this._reader.ValueAsInt;
 
 					this._reader.ExpectedCode(95);
-					node.NextNodeIndex = this._reader.ValueAsInt;
+					node.Id = this._reader.ValueAsInt;
 
 					this._reader.ExpectedCode(360);
 					nodeTemplate.ExpressionHandle = this._reader.ValueAsHandle;
@@ -407,17 +407,35 @@ internal class DxfObjectsSectionReader : DxfSectionReaderBase
 				//Edges
 				while (this._reader.Code == 92)
 				{
+					EvaluationGraph.Edge edge = new EvaluationGraph.Edge();
+
+					edge.Id = this._reader.ValueAsInt;
+
 					this._reader.ExpectedCode(93);
+					edge.Flags = this._reader.ValueAsInt;
+
 					this._reader.ExpectedCode(94);
+					edge.TrackedCount = this._reader.ValueAsInt;
+
 					this._reader.ExpectedCode(91);
+					edge.FromNodeIndex = this._reader.ValueAsInt;
 					this._reader.ExpectedCode(91);
+					edge.ToNodeIndex = this._reader.ValueAsInt;
+					
 					this._reader.ExpectedCode(92);
+					edge.Data1 = this._reader.ValueAsInt;
 					this._reader.ExpectedCode(92);
+					edge.Data2 = this._reader.ValueAsInt;
 					this._reader.ExpectedCode(92);
+					edge.Data3 = this._reader.ValueAsInt;
 					this._reader.ExpectedCode(92);
+					edge.Data4 = this._reader.ValueAsInt;
 					this._reader.ExpectedCode(92);
+					edge.Data5 = this._reader.ValueAsInt;
 
 					this._reader.ReadNext();
+
+					tmp.CadObject.Edges.Add(edge);
 				}
 
 				this.lockPointer = true;

@@ -450,6 +450,81 @@ internal partial class DwgObjectReader : DwgSectionIO
 		template.CadObject.Id = this._objectReader.ReadBitLong();
 	}
 
+	private CadTemplate readEvaluationGraph()
+	{
+		EvaluationGraph evaluationGraph = new EvaluationGraph();
+		CadEvaluationGraphTemplate template = new CadEvaluationGraphTemplate(evaluationGraph);
+
+		this.readCommonNonEntityData(template);
+
+		//DXF fields 96, 97 contain the value 5, here are three fields returning the same value 5
+		evaluationGraph.Value96 = this._objectReader.ReadBitLong();
+		evaluationGraph.Value97 = this._objectReader.ReadBitLong();
+
+		int nodeCount = this._objectReader.ReadBitLong();
+		for (int i = 0; i < nodeCount; i++)
+		{
+			var node = new EvaluationGraph.Node();
+			var nodeTemplate = new CadEvaluationGraphTemplate.GraphNodeTemplate(node);
+			template.NodeTemplates.Add(nodeTemplate);
+
+			//Code 91
+			node.Index = this._objectReader.ReadBitLong();
+			//Code 93
+			node.Flags = (EvaluationGraph.NodeFlags)this._objectReader.ReadBitLong();
+
+			//Code 95
+			node.Id = this._objectReader.ReadBitLong();
+
+			//Code 360
+			nodeTemplate.ExpressionHandle = this.handleReference();
+
+			//Codes 92, x4
+			node.Data1 = this._objectReader.ReadBitLong();
+			node.Data2 = this._objectReader.ReadBitLong();
+			node.Data3 = this._objectReader.ReadBitLong();
+			node.Data4 = this._objectReader.ReadBitLong();
+		}
+
+		//Last node has x5 92 with the last value as 0 instead of x4
+		//Followed by a 93
+		var edgeCount = this._objectReader.ReadBitLong();
+		for (int i = 0; i < edgeCount; i++)
+		{
+			var edge = new EvaluationGraph.Edge();
+
+			//id BL, DXF 92
+			//nextid BLd, DXF 93
+			//e1 BLd, DXF 94
+			//e2 BLd, DXF 91
+			//e3 BLd, DXF 91
+			//out_edge BLd
+
+			//92 id
+			edge.Id = this._objectReader.ReadBitLong();
+			//93
+			edge.Flags = this._objectReader.ReadBitLong();
+			//94
+			edge.TrackedCount = this._objectReader.ReadBitLong();
+
+			//91
+			edge.FromNodeIndex = this._objectReader.ReadBitLong();
+			//91
+			edge.ToNodeIndex = this._objectReader.ReadBitLong();
+
+			//92 x5
+			edge.Data1 = this._objectReader.ReadBitLong();
+			edge.Data2 = this._objectReader.ReadBitLong();
+			edge.Data3 = this._objectReader.ReadBitLong();
+			edge.Data4 = this._objectReader.ReadBitLong();
+			edge.Data5 = this._objectReader.ReadBitLong();
+
+			evaluationGraph.Edges.Add(edge);
+		}
+
+		return template;
+	}
+
 	private CadTemplate readField()
 	{
 		var field = new Field();
