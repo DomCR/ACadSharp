@@ -38,7 +38,7 @@ public partial class EvaluationGraph
 		/// Gets a <see cref="EvaluationExpression"/> associated with this <see cref="Node"/>.
 		/// </summary>
 		[DxfCodeValue(360)]
-		public EvaluationExpression Expression { get; internal set; }
+		public EvaluationExpression Expression { get; set; }
 
 		/// <summary>
 		/// Unknown
@@ -60,15 +60,17 @@ public partial class EvaluationGraph
 		[DxfCodeValue(91)]
 		public int Index { get; set; }
 
+		private EvaluationExpression _expression;
+
 		/// <summary>
 		/// Creates a deep copy of this <see cref="Node"/>.
 		/// </summary>
 		/// <returns>A deep copy of this <see cref="Node"/>.</returns>
 		public Node Clone()
 		{
-			Node clone = (Node)MemberwiseClone();
+			Node clone = (Node)this.MemberwiseClone();
 
-			clone.Expression = (EvaluationExpression)Expression?.Clone();
+			clone.Expression = (EvaluationExpression)this.Expression?.Clone();
 
 			return clone;
 		}

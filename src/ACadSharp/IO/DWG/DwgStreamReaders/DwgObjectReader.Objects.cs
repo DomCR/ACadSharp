@@ -228,7 +228,7 @@ internal partial class DwgObjectReader : DwgSectionIO
 
 		this.readCommonNonEntityData(template);
 
-		representation.Value70 = this._mergedReaders.ReadBitShort();
+		representation.Version = this._mergedReaders.ReadBitShort();
 		template.BlockHandle = this.handleReference();
 
 		return template;

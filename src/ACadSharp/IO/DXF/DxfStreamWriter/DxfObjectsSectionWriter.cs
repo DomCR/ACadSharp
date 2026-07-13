@@ -401,6 +401,9 @@ internal class DxfObjectsSectionWriter : DxfSectionWriterBase
 			case CadDictionary cadDictionary:
 				this.writeDictionary(cadDictionary);
 				return;
+			case BlockRepresentationData representationData:
+				this.writeBlockRepresentationData(representationData);
+				break;
 			case DictionaryVariable dictvar:
 				this.writeDictionaryVariable(dictvar);
 				break;
@@ -469,55 +472,6 @@ internal class DxfObjectsSectionWriter : DxfSectionWriterBase
 		}
 
 		this.writeExtendedData(co.ExtendedData);
-	}
-
-	private void writeDynamicBlockPurge(DynamicBlockPurgePreventer dynamicBlockPurgePreventer)
-	{
-		DxfClassMap map = DxfClassMap.Create<DynamicBlockPurgePreventer>();
-
-		this._writer.Write(100, DxfSubclassMarker.AcDbDynamicBlockPurgePreventer);
-
-		this._writer.Write(70, dynamicBlockPurgePreventer.Version);
-	}
-
-	private void writeEvaluationGraph(EvaluationGraph evaluationGraph)
-	{
-		DxfClassMap map = DxfClassMap.Create<EvaluationGraph>();
-
-		this._writer.Write(100, DxfSubclassMarker.EvalGraph);
-
-		this._writer.Write(96, evaluationGraph.Value96, map);
-		this._writer.Write(97, evaluationGraph.Value97, map);
-
-		for (int i = 0; i < evaluationGraph.Nodes.Count; i++)
-		{
-			var n = evaluationGraph.Nodes[i];
-
-			this._writer.Write(91, i);
-			this._writer.Write(93, n.Flags);
-			this._writer.Write(95, n.Id);
-			this._writer.WriteHandle(360, n.Expression);
-			this._writer.Write(92, n.Data1);
-			this._writer.Write(92, n.Data2);
-			this._writer.Write(92, n.Data3);
-			this._writer.Write(92, n.Data4);
-		}
-
-		for (int i = 0; i < evaluationGraph.Edges.Count; i++)
-		{
-			var e = evaluationGraph.Edges[i];
-
-			this._writer.Write(92, i);
-			this._writer.Write(93, e.Flags);
-			this._writer.Write(94, e.TrackedCount);
-			this._writer.Write(91, e.FromNodeIndex);
-			this._writer.Write(91, e.ToNodeIndex);
-			this._writer.Write(92, e.Data1);
-			this._writer.Write(92, e.Data2);
-			this._writer.Write(92, e.Data3);
-			this._writer.Write(92, e.Data4);
-			this._writer.Write(92, e.Data5);
-		}
 	}
 
 	protected void writePdfUnderlayDefinition(PdfUnderlayDefinition definition)
@@ -665,11 +619,13 @@ internal class DxfObjectsSectionWriter : DxfSectionWriterBase
 			case MultiLeaderObjectContextData:
 			case VisualStyle:
 			case ProxyObject:
-			case BlockRepresentationData:
 			case MTextAttributeObjectContextData:
 			case BlockReferenceObjectContextData:
 				this.notify($"Object not implemented : {co.GetType().FullName}", NotificationType.NotImplemented);
 				return false;
+			case EvaluationGraph when this.Configuration.WriteDynamicBlockData:
+			case BlockRepresentationData when this.Configuration.WriteDynamicBlockData:
+			case DynamicBlockPurgePreventer when this.Configuration.WriteDynamicBlockData:
 			default:
 				return true;
 		}
@@ -677,6 +633,17 @@ internal class DxfObjectsSectionWriter : DxfSectionWriterBase
 
 	private void writeAcdbPlaceHolder(AcdbPlaceHolder acdbPlaceHolder)
 	{
+	}
+
+	private void writeBlockRepresentationData(BlockRepresentationData representationData)
+	{
+		DxfClassMap map = DxfClassMap.Create<BlockRepresentationData>();
+
+		this._writer.Write(100, DxfSubclassMarker.BlockRepresentationData);
+
+		this._writer.Write(70, representationData.Version, map);
+
+		this._writer.WriteHandle(340, representationData.Block, map);
 	}
 
 	private void writeCellStyle(TableStyle.CellStyle cellStyle)
@@ -744,6 +711,55 @@ internal class DxfObjectsSectionWriter : DxfSectionWriterBase
 		if (dimAssociation.AssociativityFlags.HasFlag(AssociativityFlags.FourthPointReference))
 		{
 			this.writeOsnapPointRef(dimAssociation.FourthPointRef);
+		}
+	}
+
+	private void writeDynamicBlockPurge(DynamicBlockPurgePreventer dynamicBlockPurgePreventer)
+	{
+		DxfClassMap map = DxfClassMap.Create<DynamicBlockPurgePreventer>();
+
+		this._writer.Write(100, DxfSubclassMarker.AcDbDynamicBlockPurgePreventer);
+
+		this._writer.Write(70, dynamicBlockPurgePreventer.Version);
+	}
+
+	private void writeEvaluationGraph(EvaluationGraph evaluationGraph)
+	{
+		DxfClassMap map = DxfClassMap.Create<EvaluationGraph>();
+
+		this._writer.Write(100, DxfSubclassMarker.EvalGraph);
+
+		this._writer.Write(96, evaluationGraph.Value96, map);
+		this._writer.Write(97, evaluationGraph.Value97, map);
+
+		for (int i = 0; i < evaluationGraph.Nodes.Count; i++)
+		{
+			var n = evaluationGraph.Nodes[i];
+
+			this._writer.Write(91, i);
+			this._writer.Write(93, n.Flags);
+			this._writer.Write(95, n.Id);
+			this._writer.WriteHandle(360, n.Expression);
+			this._writer.Write(92, n.Data1);
+			this._writer.Write(92, n.Data2);
+			this._writer.Write(92, n.Data3);
+			this._writer.Write(92, n.Data4);
+		}
+
+		for (int i = 0; i < evaluationGraph.Edges.Count; i++)
+		{
+			var e = evaluationGraph.Edges[i];
+
+			this._writer.Write(92, i);
+			this._writer.Write(93, e.Flags);
+			this._writer.Write(94, e.TrackedCount);
+			this._writer.Write(91, e.FromNodeIndex);
+			this._writer.Write(91, e.ToNodeIndex);
+			this._writer.Write(92, e.Data1);
+			this._writer.Write(92, e.Data2);
+			this._writer.Write(92, e.Data3);
+			this._writer.Write(92, e.Data4);
+			this._writer.Write(92, e.Data5);
 		}
 	}
 

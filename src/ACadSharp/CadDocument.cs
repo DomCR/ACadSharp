@@ -374,6 +374,18 @@ public class CadDocument : IHandledCadObject
 	}
 
 	/// <summary>
+	/// Gets the number of instances of a specific DXF object type in the document.
+	/// </summary>
+	/// <param name="dxfName">The name of the DXF object type.</param>
+	/// <returns>The number of instances of the specified DXF object type.</returns>
+	public int GetInstanceCount(string dxfName)
+	{
+		return this._cadObjects.Values
+			.OfType<CadObject>()
+			.Count(c => c.ObjectName == dxfName);
+	}
+
+	/// <summary>
 	/// Reassign all the handles in the document to avoid the variable <see cref="CadHeader.HandleSeed"/> to grow past its limit.
 	/// </summary>
 	public void RestoreHandles()
@@ -574,18 +586,6 @@ public class CadDocument : IHandledCadObject
 	}
 
 	/// <summary>
-	/// Gets the number of instances of a specific DXF object type in the document.
-	/// </summary>
-	/// <param name="dxfName">The name of the DXF object type.</param>
-	/// <returns>The number of instances of the specified DXF object type.</returns>
-	public int GetInstanceCount(string dxfName)
-	{
-		return this._cadObjects.Values
-			.OfType<CadObject>()
-			.Count(c => c.ObjectName == dxfName);
-	}
-
-	/// <summary>
 	/// Updates the image definition reactors for all raster images in the current collection.
 	/// </summary>
 	/// <remarks>
@@ -611,7 +611,7 @@ public class CadDocument : IHandledCadObject
 	}
 
 	internal void RegisterCollection<T>(IObservableCadCollection<T> collection)
-				where T : CadObject
+		where T : CadObject
 	{
 		switch (collection)
 		{

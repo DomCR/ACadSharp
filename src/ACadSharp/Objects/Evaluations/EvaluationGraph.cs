@@ -11,6 +11,9 @@ namespace ACadSharp.Objects.Evaluations;
 [DxfSubClass(DxfSubclassMarker.EvalGraph)]
 public partial class EvaluationGraph : NonGraphicalObject
 {
+	/// <summary>
+	/// Gets a list of <see cref="Edge"/> objects.
+	/// </summary>
 	public IList<Edge> Edges { get; private set; } = new List<Edge>();
 
 	/// <summary>
@@ -62,5 +65,15 @@ public partial class EvaluationGraph : NonGraphicalObject
 		}
 
 		return clone;
+	}
+
+	internal override void AssignDocument(CadDocument doc)
+	{
+		base.AssignDocument(doc);
+	}
+
+	internal override void UnassignDocument()
+	{
+		base.UnassignDocument();
 	}
 }
