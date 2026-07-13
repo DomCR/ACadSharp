@@ -28,12 +28,12 @@ namespace ACadSharp.Tests.Entities
 		public LwPolylineTests()
 		{
 			//Square
-			_lines = new List<Line>
+			this._lines = new List<Line>
 			{
-				new Line{StartPoint = _points[0], EndPoint = _points[1]},
-				new Line{StartPoint = _points[1], EndPoint = _points[2]},
-				new Line{StartPoint = _points[2], EndPoint = _points[3]},
-				new Line{StartPoint = _points[3], EndPoint = _points[0]},
+				new Line{StartPoint = this._points[0], EndPoint = this._points[1]},
+				new Line{StartPoint = this._points[1], EndPoint = this._points[2]},
+				new Line{StartPoint = this._points[2], EndPoint = this._points[3]},
+				new Line{StartPoint = this._points[3], EndPoint = this._points[0]},
 			};
 		}
 
@@ -41,9 +41,9 @@ namespace ACadSharp.Tests.Entities
 		public void ExplodeInLines()
 		{
 			LwPolyline lwPolyline = new LwPolyline();
-			for (int i = 0; i < _points.Length; i++)
+			for (int i = 0; i < this._points.Length; i++)
 			{
-				lwPolyline.Vertices.Add(new LwPolyline.Vertex((XY)_points[i]));
+				lwPolyline.Vertices.Add(new LwPolyline.Vertex((XY)this._points[i]));
 			}
 
 			foreach (Entity item in lwPolyline.Explode())
@@ -51,7 +51,7 @@ namespace ACadSharp.Tests.Entities
 				Assert.IsType<Line>(item);
 
 				Line l = item as Line;
-				var result = _lines.FirstOrDefault(o =>
+				var result = this._lines.FirstOrDefault(o =>
 				o.StartPoint == l.StartPoint &&
 				o.EndPoint == l.EndPoint);
 
@@ -63,9 +63,9 @@ namespace ACadSharp.Tests.Entities
 		public void ExplodeInLinesAndArcs()
 		{
 			LwPolyline lwPolyline = new LwPolyline();
-			for (int i = 0; i < _points.Length; i++)
+			for (int i = 0; i < this._points.Length; i++)
 			{
-				lwPolyline.Vertices.Add(new LwPolyline.Vertex((XY)_points[i]));
+				lwPolyline.Vertices.Add(new LwPolyline.Vertex((XY)this._points[i]));
 			}
 
 			//Curve the last arc
@@ -76,7 +76,7 @@ namespace ACadSharp.Tests.Entities
 				Entity result = null;
 				if (item is Line l)
 				{
-					result = _lines.FirstOrDefault(o =>
+					result = this._lines.FirstOrDefault(o =>
 						o.StartPoint == l.StartPoint &&
 						o.EndPoint == l.EndPoint);
 				}
@@ -97,9 +97,9 @@ namespace ACadSharp.Tests.Entities
 			LwPolyline lwPolyline = new LwPolyline();
 			lwPolyline.Flags |= LwPolylineFlags.Closed;
 
-			for (int i = 0; i < _points.Length; i++)
+			for (int i = 0; i < this._points.Length; i++)
 			{
-				lwPolyline.Vertices.Add(new LwPolyline.Vertex((XY)_points[i]));
+				lwPolyline.Vertices.Add(new LwPolyline.Vertex((XY)this._points[i]));
 			}
 
 			foreach (Entity item in lwPolyline.Explode())
@@ -107,7 +107,7 @@ namespace ACadSharp.Tests.Entities
 				Assert.IsType<Line>(item);
 
 				Line l = item as Line;
-				var result = _lines.FirstOrDefault(o =>
+				var result = this._lines.FirstOrDefault(o =>
 				o.StartPoint == l.StartPoint &&
 				o.EndPoint == l.EndPoint);
 

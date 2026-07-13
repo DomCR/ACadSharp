@@ -10,7 +10,7 @@ namespace ACadSharp.Tests.Entities
 	{
 		public override void GetBoundingBoxTest()
 		{
-			XYZ pt = _random.NextXYZ();
+			XYZ pt = this._random.NextXYZ();
 			MText text = new MText("hello") { InsertPoint = pt };
 
 			var box = text.GetBoundingBox();

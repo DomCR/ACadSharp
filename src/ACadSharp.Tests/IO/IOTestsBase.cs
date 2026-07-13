@@ -5,208 +5,219 @@ using System.IO;
 using Xunit;
 using Xunit.Abstractions;
 
-namespace ACadSharp.Tests.IO
+namespace ACadSharp.Tests.IO;
+
+public abstract class IOTestsBase
 {
-	public abstract class IOTestsBase
+	public static TheoryData<FileModel> DwgFilePaths { get; } = new();
+
+	public static TheoryData<FileModel> DxfAsciiFiles { get; } = new();
+
+	public static TheoryData<FileModel> DxfBinaryFiles { get; } = new();
+
+	public static TheoryData<ACadVersion> Versions { get; }
+
+	protected readonly DocumentIntegrity _docIntegrity;
+
+	protected readonly DwgReaderConfiguration _dwgConfiguration = new DwgReaderConfiguration
 	{
-		public static TheoryData<FileModel> DwgFilePaths { get; } = new();
+		Failsafe = false,
+		IgnoreProxyGraphics = false,
+	};
 
-		public static TheoryData<FileModel> DxfAsciiFiles { get; } = new();
+	protected readonly DxfReaderConfiguration _dxfConfiguration = new DxfReaderConfiguration
+	{
+	};
 
-		public static TheoryData<FileModel> DxfBinaryFiles { get; } = new();
+	protected readonly ITestOutputHelper _output;
 
-		public static TheoryData<ACadVersion> Versions { get; }
+	protected readonly SvgConfiguration _svgConfiguration = new SvgConfiguration
+	{
+		DefaultLineWeight = 0.15,
+		LineWeightRatio = 50,
+	};
 
-		protected readonly DocumentIntegrity _docIntegrity;
+	static IOTestsBase()
+	{
+		loadSamples("", "dwg", DwgFilePaths);
+		loadSamples("", "_ascii", "dxf", DxfAsciiFiles);
+		loadSamples("", "_binary", "dxf", DxfBinaryFiles);
 
-		protected readonly DwgReaderConfiguration _dwgConfiguration = new DwgReaderConfiguration
+		Versions = new TheoryData<ACadVersion>
 		{
-			Failsafe = false,
-			IgnoreProxyGraphics = false,
+			ACadVersion.AC1012,
+			ACadVersion.AC1014,
+			ACadVersion.AC1015,
+			ACadVersion.AC1018,
+			ACadVersion.AC1021,
+			ACadVersion.AC1024,
+			ACadVersion.AC1027,
+			ACadVersion.AC1032
 		};
+	}
 
-		protected readonly DxfReaderConfiguration _dxfConfiguration = new DxfReaderConfiguration
+	public IOTestsBase(ITestOutputHelper output)
+	{
+		this._output = output;
+		this._docIntegrity = new DocumentIntegrity(output);
+	}
+
+	protected static void loadLocalSamples(string folder, string ext, TheoryData<FileModel> files)
+	{
+		string path = Path.Combine("local", folder);
+		loadSamples(path, ext, files);
+	}
+
+	protected static void loadSamples(string folder, string ext, TheoryData<FileModel> files)
+	{
+		loadSamples(folder, string.Empty, ext, files);
+	}
+
+	protected static void loadSamples(string folder, string prefix, string ext, TheoryData<FileModel> files)
+	{
+		string path = TestVariables.SamplesFolder;
+
+		if (!string.IsNullOrEmpty(folder))
 		{
-		};
-
-		protected readonly ITestOutputHelper _output;
-
-		protected readonly SvgConfiguration _svgConfiguration = new SvgConfiguration
-		{
-			DefaultLineWeight = 0.15,
-			LineWeightRatio = 50,
-		};
-
-		static IOTestsBase()
-		{
-			loadSamples("", "dwg", DwgFilePaths);
-			loadSamples("", "_ascii", "dxf", DxfAsciiFiles);
-			loadSamples("", "_binary", "dxf", DxfBinaryFiles);
-
-			Versions = new TheoryData<ACadVersion>
-			{
-				ACadVersion.AC1012,
-				ACadVersion.AC1014,
-				ACadVersion.AC1015,
-				ACadVersion.AC1018,
-				ACadVersion.AC1021,
-				ACadVersion.AC1024,
-				ACadVersion.AC1027,
-				ACadVersion.AC1032
-			};
+			path = Path.Combine(TestVariables.SamplesFolder, folder);
 		}
 
-		public IOTestsBase(ITestOutputHelper output)
+		if (!Directory.Exists(path))
 		{
-			this._output = output;
-			this._docIntegrity = new DocumentIntegrity(output);
+			files.Add(new FileModel());
+			return;
 		}
 
-		protected static void loadLocalSamples(string folder, string ext, TheoryData<FileModel> files)
+		foreach (string file in Directory.GetFiles(path, $"*{prefix}.{ext}"))
 		{
-			string path = Path.Combine("local", folder);
-			loadSamples(path, ext, files);
+			files.Add(new FileModel(file));
 		}
 
-		protected static void loadSamples(string folder, string ext, TheoryData<FileModel> files)
+		if (files.Count == 0)
 		{
-			loadSamples(folder, string.Empty, ext, files);
+			files.Add(new FileModel());
+		}
+	}
+
+	protected CadReaderConfiguration getReaderConfiguration(FileModel test)
+	{
+		if (test.IsDxf)
+		{
+			return new DxfReaderConfiguration();
+		}
+		else
+		{
+			return new DwgReaderConfiguration();
+		}
+	}
+
+	protected CadWriterConfiguration getWriterConfiguration(FileModel test)
+	{
+		if (test.IsDxf)
+		{
+			return new DxfWriterConfiguration();
+		}
+		else
+		{
+			return new DwgWriterConfiguration();
+		}
+	}
+
+	protected bool isSupportedVersion(ACadVersion version)
+	{
+		switch (version)
+		{
+			case ACadVersion.MC0_0:
+			case ACadVersion.AC1_2:
+			case ACadVersion.AC1_4:
+			case ACadVersion.AC1_50:
+			case ACadVersion.AC2_10:
+			case ACadVersion.AC1002:
+			case ACadVersion.AC1003:
+			case ACadVersion.AC1004:
+			case ACadVersion.AC1006:
+			case ACadVersion.AC1009:
+			case ACadVersion.AC1012:
+				return false;
+			case ACadVersion.AC1014:
+			case ACadVersion.AC1015:
+			case ACadVersion.AC1018:
+				return true;
+			case ACadVersion.AC1021:
+				return false;
+			case ACadVersion.AC1024:
+				return true;
+			case ACadVersion.AC1027:
+			case ACadVersion.AC1032:
+				return true;
+			case ACadVersion.Unknown:
+			default:
+				return false;
+		}
+	}
+
+	protected void onNotification(object sender, NotificationEventArgs e)
+	{
+		if (e.NotificationType == NotificationType.Error)
+		{
+			throw e.Exception;
 		}
 
-		protected static void loadSamples(string folder, string prefix, string ext, TheoryData<FileModel> files)
+		if (!TestVariables.LocalEnv)
 		{
-			string path = TestVariables.SamplesFolder;
-
-			if (!string.IsNullOrEmpty(folder))
-			{
-				path = Path.Combine(TestVariables.SamplesFolder, folder);
-			}
-
-			if (!Directory.Exists(path))
-			{
-				files.Add(new FileModel());
-				return;
-			}
-
-			foreach (string file in Directory.GetFiles(path, $"*{prefix}.{ext}"))
-			{
-				files.Add(new FileModel(file));
-			}
-
-			if (files.Count == 0)
-			{
-				files.Add(new FileModel());
-			}
+			return;
 		}
 
-		protected CadReaderConfiguration getConfiguration(FileModel test)
+		this._output.WriteLine(e.Message);
+		if (e.Exception != null)
 		{
-			if (test.IsDxf)
-			{
-				return new DxfReaderConfiguration();
-			}
-			else
-			{
-				return new DwgReaderConfiguration();
-			}
+			this._output.WriteLine(e.Exception.ToString());
+		}
+	}
+
+	protected void onProgress(object sender, ProgressEventArgs e)
+	{
+		if (e.Stage == ReadStage.Read)
+		{
+			Assert.True(e.Current.Handle != 0, "Current object handle is 0.");
 		}
 
-		protected bool isSupportedVersion(ACadVersion version)
+		if (e.Stage == ReadStage.Build && e.Current.EntityData.HasValue)
 		{
-			switch (version)
-			{
-				case ACadVersion.MC0_0:
-				case ACadVersion.AC1_2:
-				case ACadVersion.AC1_4:
-				case ACadVersion.AC1_50:
-				case ACadVersion.AC2_10:
-				case ACadVersion.AC1002:
-				case ACadVersion.AC1003:
-				case ACadVersion.AC1004:
-				case ACadVersion.AC1006:
-				case ACadVersion.AC1009:
-				case ACadVersion.AC1012:
-					return false;
-				case ACadVersion.AC1014:
-				case ACadVersion.AC1015:
-				case ACadVersion.AC1018:
-					return true;
-				case ACadVersion.AC1021:
-					return false;
-				case ACadVersion.AC1024:
-					return true;
-				case ACadVersion.AC1027:
-				case ACadVersion.AC1032:
-					return true;
-				case ACadVersion.Unknown:
-				default:
-					return false;
-			}
+			EntityData edata = e.Current.EntityData.Value;
+			Assert.True(edata.Layer.Handle != 0 || !string.IsNullOrEmpty(edata.Layer.Name));
+			Assert.True(edata.LineType.Handle != 0 || !string.IsNullOrEmpty(edata.LineType.Name));
 		}
+	}
 
-		protected void onProgress(object sender, ProgressEventArgs e)
+	protected CadDocument readDocument(FileModel test, CadReaderConfiguration configuration = null)
+	{
+		CadDocument doc;
+		if (test.IsDxf)
 		{
-			if (e.Stage == ReadStage.Read)
+			using (DxfReader dxfReader = new DxfReader(test.Path, this.onNotification))
 			{
-				Assert.True(e.Current.Handle != 0, "Current object handle is 0.");
-			}
-
-			if (e.Stage == ReadStage.Build && e.Current.EntityData.HasValue)
-			{
-				EntityData edata = e.Current.EntityData.Value;
-				Assert.True(edata.Layer.Handle != 0 || !string.IsNullOrEmpty(edata.Layer.Name));
-				Assert.True(edata.LineType.Handle != 0 || !string.IsNullOrEmpty(edata.LineType.Name));
-			}
-		}
-
-		protected void onNotification(object sender, NotificationEventArgs e)
-		{
-			if (e.NotificationType == NotificationType.Error)
-			{
-				throw e.Exception;
-			}
-
-			if (!TestVariables.LocalEnv)
-			{
-				return;
-			}
-
-			_output.WriteLine(e.Message);
-			if (e.Exception != null)
-			{
-				_output.WriteLine(e.Exception.ToString());
-			}
-		}
-
-		protected CadDocument readDocument(FileModel test, CadReaderConfiguration configuration = null)
-		{
-			CadDocument doc;
-			if (test.IsDxf)
-			{
-				using (DxfReader dxfReader = new DxfReader(test.Path, this.onNotification))
+				if (configuration != null)
 				{
-					if (configuration != null)
-					{
-						dxfReader.Configuration = (DxfReaderConfiguration)configuration;
-					}
-
-					doc = dxfReader.Read();
+					dxfReader.Configuration = (DxfReaderConfiguration)configuration;
 				}
-			}
-			else
-			{
-				using (DwgReader dxfReader = new DwgReader(test.Path, this.onNotification))
-				{
-					if (configuration != null)
-					{
-						dxfReader.Configuration = (DwgReaderConfiguration)configuration;
-					}
 
-					doc = dxfReader.Read();
-				}
+				doc = dxfReader.Read();
 			}
-
-			return doc;
 		}
+		else
+		{
+			using (DwgReader dxfReader = new DwgReader(test.Path, this.onNotification))
+			{
+				if (configuration != null)
+				{
+					dxfReader.Configuration = (DwgReaderConfiguration)configuration;
+				}
+
+				doc = dxfReader.Read();
+			}
+		}
+
+		return doc;
 	}
 }

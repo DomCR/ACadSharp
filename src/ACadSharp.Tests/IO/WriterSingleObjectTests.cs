@@ -843,7 +843,7 @@ public abstract class WriterSingleObjectTests : IOTestsBase
 
 			XRecord record = new XRecord("test");
 			record.CreateEntry(90, 1);
-			record.CreateEntry(330, Document.Layers);
+			record.CreateEntry(330, this.Document.Layers);
 			layerstates.Add(record);
 
 			this.Document.Layers.Add(lay);
@@ -1067,7 +1067,7 @@ public abstract class WriterSingleObjectTests : IOTestsBase
 			this.Document.Entities.Add(new Insert(record));
 
 			DimensionAligned c = (DimensionAligned)dim.Clone();
-			Document.Entities.Add(c);
+			this.Document.Entities.Add(c);
 
 			dim.UpdateBlock();
 			dim1.UpdateBlock();

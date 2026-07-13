@@ -100,7 +100,7 @@ public class HatchTests : CommonEntityTests<Hatch>
 	{
 		Hatch hatch = new Hatch();
 		Hatch.BoundaryPath path = new Hatch.BoundaryPath();
-		Hatch.BoundaryPath.Polyline pline = createPolylineBoundary();
+		Hatch.BoundaryPath.Polyline pline = this.createPolylineBoundary();
 
 		path.Edges.Add(pline);
 		hatch.Paths.Add(path);
@@ -180,7 +180,7 @@ public class HatchTests : CommonEntityTests<Hatch>
 	{
 		Hatch hatch = new Hatch();
 		Hatch.BoundaryPath path = new Hatch.BoundaryPath();
-		Hatch.BoundaryPath.Polyline pline = createPolylineBoundary();
+		Hatch.BoundaryPath.Polyline pline = this.createPolylineBoundary();
 
 		path.Edges.Add(pline);
 		hatch.Paths.Add(path);
@@ -208,7 +208,7 @@ public class HatchTests : CommonEntityTests<Hatch>
 	{
 		Hatch hatch = new Hatch();
 		Hatch.BoundaryPath path = new Hatch.BoundaryPath();
-		Hatch.BoundaryPath.Polyline pline = createPolylineBoundary();
+		Hatch.BoundaryPath.Polyline pline = this.createPolylineBoundary();
 
 		path.Edges.Add(pline);
 		hatch.Paths.Add(path);
@@ -242,7 +242,7 @@ public class HatchTests : CommonEntityTests<Hatch>
 	public void PolylineHatchNotAllowMoreEdges()
 	{
 		Hatch.BoundaryPath path = new Hatch.BoundaryPath();
-		Hatch.BoundaryPath.Polyline pline = createPolylineBoundary();
+		Hatch.BoundaryPath.Polyline pline = this.createPolylineBoundary();
 		path.Edges.Add(pline);
 
 		Assert.Throws<InvalidOperationException>(() =>

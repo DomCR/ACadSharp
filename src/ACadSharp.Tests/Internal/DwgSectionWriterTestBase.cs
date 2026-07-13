@@ -32,7 +32,7 @@ namespace ACadSharp.Tests.Internal
 
 		protected virtual void onNotification(object sender, NotificationEventArgs e)
 		{
-			_output.WriteLine(e.Message);
+			this._output.WriteLine(e.Message);
 		}
 	}
 }

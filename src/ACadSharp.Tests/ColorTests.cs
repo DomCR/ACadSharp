@@ -11,7 +11,7 @@ namespace ACadSharp.Tests
 
 		public ColorTests(ITestOutputHelper output)
 		{
-			_output = output;
+			this._output = output;
 		}
 
 		[Fact]

@@ -277,7 +277,7 @@ namespace ACadSharp.Tests.Common
 			switch (entity)
 			{
 				case Dimension dim:
-					assertDimensionProperties(dim, node);
+					this.assertDimensionProperties(dim, node);
 					break;
 				case IPolyline pline:
 					Assert.True(pline.Vertices.Any());
