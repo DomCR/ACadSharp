@@ -9,27 +9,27 @@ namespace ACadSharp.Objects.Evaluations;
 public class ParameterValueSet
 {
 	/// <summary>
+	/// Discrete list of allowed values.
+	/// </summary>
+	public List<double> AllowedValues { get; } = new List<double>();
+
+	/// <summary>
 	/// Distance increment between two allowed values.
 	/// </summary>
-	[DxfCodeValue(143)]
 	public double Increment { get; set; }
 
 	/// <summary>
 	/// Maximum allowed value.
 	/// </summary>
-	[DxfCodeValue(142)]
 	public double Maximum { get; set; }
 
 	/// <summary>
 	/// Minimum allowed value.
 	/// </summary>
-	[DxfCodeValue(141)]
 	public double Minimum { get; set; }
 
-	public ParameterValueSetType Type { get; set; }
-
 	/// <summary>
-	/// Discrete list of allowed values.
+	/// Gets or sets the type of the value set, which can be a discrete list, a range, or a combination of both.
 	/// </summary>
-	public List<double> AllowedValues { get; } = new List<double>();
+	public ParameterValueSetType Type { get; set; }
 }

@@ -85,7 +85,7 @@ public class DynamicBlockTests : IOTestsBase
 	public void IsolatedTest(FileModel test)
 	{
 		var config = this.getReaderConfiguration(test);
-		var doc = this.readDocument(test, config);
+		var doc = this.readDocument(test, true, config);
 
 		switch (test.NoExtensionName)
 		{
@@ -114,7 +114,7 @@ public class DynamicBlockTests : IOTestsBase
 	public void RewriteIsolatedTest(FileModel test)
 	{
 		var readerConfiguration = this.getReaderConfiguration(test);
-		var doc = this.readDocument(test, readerConfiguration);
+		var doc = this.readDocument(test, false, readerConfiguration);
 
 		string file = Path.GetFileName(test.Path);
 		string pathOut = Path.Combine(TestVariables.OutputSamplesFolder, file);

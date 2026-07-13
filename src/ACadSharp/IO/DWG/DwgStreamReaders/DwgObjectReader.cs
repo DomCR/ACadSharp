@@ -5669,7 +5669,7 @@ namespace ACadSharp.IO.DWG
 				case DxfFileToken.ObjectBlockLookupParameter:
 					template = this.readBlockLookupParameter();
 					break;
-				case "BLOCKFLIPPARAMETER":
+				case DxfFileToken.ObjectBlockFlipParameter:
 					template = this.readBlockFlipParameter();
 					break;
 				case DxfFileToken.ObjectBlockRepresentationData:
@@ -5683,12 +5683,12 @@ namespace ACadSharp.IO.DWG
 					this.readBlockGrip(template as CadBlockGripTemplate);
 					break;
 				case DxfFileToken.ObjectBlockRotationGrip:
-					template = new CadBlockRotationGripTemplate();
-					this.readBlockGrip(template as CadBlockRotationGripTemplate);
+					template = new CadBlockGripTemplate(new BlockRotationGrip());
+					this.readBlockGrip(template as CadBlockGripTemplate);
 					break;
 				case DxfFileToken.ObjectBlockVisibilityGrip:
-					template = new CadBlockVisibilityGripTemplate();
-					this.readBlockGrip(template as CadBlockVisibilityGripTemplate);
+					template = new CadBlockGripTemplate(new BlockVisibilityGrip());
+					this.readBlockGrip(template as CadBlockGripTemplate);
 					break;
 				case DxfFileToken.ObjectBlockFlipAction:
 					template = this.readBlockFlipAction();
@@ -5702,13 +5702,13 @@ namespace ACadSharp.IO.DWG
 				case DxfFileToken.ObjectBlockPointParameter:
 					template = this.readBlockPointParameter();
 					break;
-				case "SPATIAL_FILTER":
+				case DxfFileToken.ObjectSpatialFilter:
 					template = this.readSpatialFilter();
 					break;
-				case "ACAD_PROXY_ENTITY":
+				case DxfFileToken.EntityProxyEntity:
 					template = this.readProxyEntity();
 					break;
-				case "ACAD_PROXY_OBJECT":
+				case DxfFileToken.ObjectProxyObject:
 					template = this.readProxyObject();
 					break;
 				case DxfFileToken.ObjectVisualStyle:

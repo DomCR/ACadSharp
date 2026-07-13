@@ -60,6 +60,8 @@ public static class DxfSubclassMarker
 
 	public const string BlockGripExpression = "AcDbBlockGripExpr";
 
+	public const string BlockLinearGrip = "AcDbBlockLinearGrip";
+
 	public const string BlockLinearParameter = "AcDbBlockLinearParameter";
 
 	public const string BlockLookupParameter = "AcDbBlockLookUpParameter";

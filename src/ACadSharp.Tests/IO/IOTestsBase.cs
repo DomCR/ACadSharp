@@ -190,12 +190,12 @@ public abstract class IOTestsBase
 		}
 	}
 
-	protected CadDocument readDocument(FileModel test, CadReaderConfiguration configuration = null)
+	protected CadDocument readDocument(FileModel test, bool notification = true, CadReaderConfiguration configuration = null)
 	{
 		CadDocument doc;
 		if (test.IsDxf)
 		{
-			using (DxfReader dxfReader = new DxfReader(test.Path, this.onNotification))
+			using (DxfReader dxfReader = new DxfReader(test.Path, notification ? this.onNotification : null))
 			{
 				if (configuration != null)
 				{
@@ -207,7 +207,7 @@ public abstract class IOTestsBase
 		}
 		else
 		{
-			using (DwgReader dxfReader = new DwgReader(test.Path, this.onNotification))
+			using (DwgReader dxfReader = new DwgReader(test.Path, notification ? this.onNotification : null))
 			{
 				if (configuration != null)
 				{

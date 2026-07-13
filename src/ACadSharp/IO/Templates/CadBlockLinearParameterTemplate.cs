@@ -8,8 +8,8 @@ internal partial class CadBlockLinearParameterTemplate : CadBlock2PtParameterTem
 	{
 	}
 
-	public CadBlockLinearParameterTemplate(BlockLinearParameter cadObject)
-		: base(cadObject)
+	public CadBlockLinearParameterTemplate(BlockLinearParameter parameter)
+		: base(parameter)
 	{
 	}
 }
