@@ -375,7 +375,7 @@ internal class DxfObjectsSectionReader : DxfSectionReaderBase
 			case 91:
 				while (this._reader.Code == 91)
 				{
-					EvaluationGraph.Node node = new EvaluationGraph.Node();
+					EvaluationGraph.Node node = tmp.CadObject.CreateNode();
 					GraphNodeTemplate nodeTemplate = new GraphNodeTemplate(node);
 
 					node.Index = this._reader.ValueAsInt;
@@ -2235,7 +2235,8 @@ internal class DxfObjectsSectionReader : DxfSectionReaderBase
 	{
 		ParameterValueSet valueSet = new ParameterValueSet();
 
-		//First 3xx value unkown
+		//First 3xx value unknown
+		var unknown = this._reader.ValueAsString;
 
 		this._reader.ReadNext();
 		valueSet.Type = (ParameterValueSetType)this._reader.ValueAsInt;

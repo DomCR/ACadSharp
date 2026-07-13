@@ -21,8 +21,6 @@ internal partial class CadEvaluationGraphTemplate : CadTemplate<EvaluationGraph>
 		foreach (GraphNodeTemplate item in this.NodeTemplates)
 		{
 			item.Build(builder);
-
-			this.CadObject.Nodes.Add(item.Node);
 		}
 	}
 }

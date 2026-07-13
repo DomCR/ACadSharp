@@ -443,6 +443,15 @@ internal class DxfObjectsSectionWriter : DxfSectionWriterBase
 			case MultiLeaderStyle multiLeaderlStyle:
 				this.writeMultiLeaderStyle(multiLeaderlStyle);
 				break;
+			case BlockGripExpression blockGripExpression:
+				this.writeBlockGripExpression(blockGripExpression);
+				break;
+			case BlockLinearGrip blockLinearGrip:
+				this.writeBlockLinearGrip(blockLinearGrip);
+				break;
+			case BlockLinearParameter blockLinearParameter:
+				this.writeBlockLinearParameter(blockLinearParameter);
+				break;
 			case PlotSettings plotSettings:
 				this.writePlotSettings(plotSettings);
 				break;
@@ -635,6 +644,125 @@ internal class DxfObjectsSectionWriter : DxfSectionWriterBase
 	{
 	}
 
+	private void writeBlock2PtParameter(Block2PtParameter parameter)
+	{
+		DxfClassMap map = DxfClassMap.Create<Block2PtParameter>();
+
+		this.writeBlockParameter(parameter);
+
+		this._writer.Write(100, DxfSubclassMarker.Block2PtParameter);
+
+		this._writer.Write(1010, parameter.FirstPoint, map);
+		this._writer.Write(1011, parameter.SecondPoint, map);
+		this._writer.Write(170, (short)4, map);
+
+		foreach (var gripId in parameter.GripIds)
+		{
+			this._writer.Write(91, gripId, map);
+		}
+
+		this.writeEvalParameterProperty(parameter.FirstPointDisplacementX, 0);
+		this.writeEvalParameterProperty(parameter.FirstPointDisplacementY, 1);
+		this.writeEvalParameterProperty(parameter.SecondPointDisplacementX, 2);
+		this.writeEvalParameterProperty(parameter.SecondPointDisplacementY, 3);
+
+		this._writer.Write(177, (short)parameter.BaseLocation, map);
+	}
+
+	private void writeBlockElement(BlockElement element)
+	{
+		DxfClassMap map = DxfClassMap.Create<BlockElement>();
+
+		this.writeEvaluationExpression(element);
+
+		this._writer.Write(100, DxfSubclassMarker.BlockElement);
+
+		this._writer.Write(300, element.ElementName, map);
+
+		//Version?? (always the same, matches with AcDbEvalExpr)
+		this._writer.Write(98, 33, map);
+		this._writer.Write(99, 329, map);
+
+		this._writer.Write(1071, element.Value1071, map);
+	}
+
+	private void writeBlockGrip(BlockGrip grip)
+	{
+		DxfClassMap map = DxfClassMap.Create<BlockGrip>();
+
+		this.writeBlockElement(grip);
+
+		this._writer.Write(100, DxfSubclassMarker.BlockGrip);
+
+		this._writer.Write(91, grip.ExpressionId1, map);
+		this._writer.Write(92, grip.ExpressionId2, map);
+		this._writer.Write(1010, grip.Location, map);
+		this._writer.Write(280, (short)(grip.Cycling ? 1 : 0), map);
+		this._writer.Write(93, grip.Value93, map);
+	}
+
+	private void writeBlockGripExpression(BlockGripExpression blockGripExpression)
+	{
+		DxfClassMap map = DxfClassMap.Create<BlockGripExpression>();
+
+		this.writeEvaluationExpression(blockGripExpression);
+
+		this._writer.Write(100, DxfSubclassMarker.BlockGripExpression);
+
+		this._writer.Write(91, blockGripExpression.Value91, map);
+		this._writer.Write(300, blockGripExpression.Value300, map);
+	}
+
+	private void writeBlockLinearGrip(BlockLinearGrip grip)
+	{
+		DxfClassMap map = DxfClassMap.Create<BlockLinearGrip>();
+
+		this.writeBlockGrip(grip);
+
+		this._writer.Write(100, DxfSubclassMarker.BlockLinearGrip);
+
+		this._writer.Write(140, grip.XDistance, map);
+		this._writer.Write(141, grip.YDistance, map);
+		this._writer.Write(142, grip.ZDistance, map);
+	}
+
+	private void writeBlockLinearParameter(BlockLinearParameter parameter)
+	{
+		DxfClassMap map = DxfClassMap.Create<BlockLinearParameter>();
+
+		this.writeBlock2PtParameter(parameter);
+
+		this._writer.Write(100, DxfSubclassMarker.BlockLinearParameter);
+
+		this._writer.Write(305, parameter.Label, map);
+		this._writer.Write(306, parameter.Description, map);
+
+		this._writer.Write(140, parameter.LabelOffset, map);
+
+		this._writer.Write(307, string.Empty);
+		this._writer.Write(96, (int)parameter.ValueSet.Type);
+		this._writer.Write(141, parameter.ValueSet.Minimum);
+		this._writer.Write(142, parameter.ValueSet.Maximum);
+		this._writer.Write(143, parameter.ValueSet.Increment);
+		this._writer.Write(175, parameter.ValueSet.AllowedValues.Count);
+		foreach (var item in parameter.ValueSet.AllowedValues)
+		{
+			this._writer.Write(144, item);
+		}
+	}
+
+	private void writeBlockParameter(BlockParameter parameter)
+	{
+		DxfClassMap map = DxfClassMap.Create<BlockParameter>();
+
+		this.writeBlockElement(parameter);
+
+		this._writer.Write(100, DxfSubclassMarker.BlockParameter);
+
+		this._writer.Write(280, (byte)(parameter.ShowProperties ? 1 : 0), map);
+		this._writer.Write(281, (byte)(parameter.ChainActions ? 1 : 0), map);
+	}
+
 	private void writeBlockRepresentationData(BlockRepresentationData representationData)
 	{
 		DxfClassMap map = DxfClassMap.Create<BlockRepresentationData>();
@@ -723,6 +851,28 @@ internal class DxfObjectsSectionWriter : DxfSectionWriterBase
 		this._writer.Write(70, dynamicBlockPurgePreventer.Version);
 	}
 
+	private void writeEvalParameterProperty(EvalParameterProperty property, int code)
+	{
+		this._writer.Write(171 + code, (short)property.Connections.Count);
+
+		foreach (var conn in property.Connections)
+		{
+			this._writer.Write(92 + code, conn.Id);
+			this._writer.Write(301 + code, conn.Name);
+		}
+	}
+
+	private void writeEvaluationExpression(EvaluationExpression exp)
+	{
+		DxfClassMap map = DxfClassMap.Create<EvaluationExpression>();
+
+		this._writer.Write(100, DxfSubclassMarker.EvalGraphExpr);
+
+		this._writer.Write(90, exp.Id, map);
+		this._writer.Write(98, exp.Value98, map);
+		this._writer.Write(99, exp.Value99, map);
+	}
+
 	private void writeEvaluationGraph(EvaluationGraph evaluationGraph)
 	{
 		DxfClassMap map = DxfClassMap.Create<EvaluationGraph>();
@@ -732,9 +882,10 @@ internal class DxfObjectsSectionWriter : DxfSectionWriterBase
 		this._writer.Write(96, evaluationGraph.Value96, map);
 		this._writer.Write(97, evaluationGraph.Value97, map);
 
-		for (int i = 0; i < evaluationGraph.Nodes.Count; i++)
+		var nodes = evaluationGraph.Nodes.ToArray();
+		for (int i = 0; i < nodes.Length; i++)
 		{
-			var n = evaluationGraph.Nodes[i];
+			var n = nodes[i];
 
 			this._writer.Write(91, i);
 			this._writer.Write(93, n.Flags);
@@ -744,6 +895,11 @@ internal class DxfObjectsSectionWriter : DxfSectionWriterBase
 			this._writer.Write(92, n.Data2);
 			this._writer.Write(92, n.Data3);
 			this._writer.Write(92, n.Data4);
+
+			if (n.Expression != null)
+			{
+				this.Holder.Objects.Enqueue(n.Expression);
+			}
 		}
 
 		for (int i = 0; i < evaluationGraph.Edges.Count; i++)

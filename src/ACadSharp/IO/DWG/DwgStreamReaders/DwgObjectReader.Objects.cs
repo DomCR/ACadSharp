@@ -464,7 +464,7 @@ internal partial class DwgObjectReader : DwgSectionIO
 		int nodeCount = this._objectReader.ReadBitLong();
 		for (int i = 0; i < nodeCount; i++)
 		{
-			var node = new EvaluationGraph.Node();
+			var node = evaluationGraph.CreateNode();
 			var nodeTemplate = new CadEvaluationGraphTemplate.GraphNodeTemplate(node);
 			template.NodeTemplates.Add(nodeTemplate);
 

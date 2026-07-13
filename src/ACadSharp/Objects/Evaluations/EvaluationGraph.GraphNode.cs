@@ -38,7 +38,28 @@ public partial class EvaluationGraph
 		/// Gets a <see cref="EvaluationExpression"/> associated with this <see cref="Node"/>.
 		/// </summary>
 		[DxfCodeValue(360)]
-		public EvaluationExpression Expression { get; set; }
+		public EvaluationExpression Expression
+		{
+			get
+			{
+				return this._expression;
+			}
+			set
+			{
+				if (value != null)
+				{
+					this._evaluationGraph.Document?.AddCadObject(value);
+				}
+
+				if (this._expression != null)
+				{
+					this._evaluationGraph.Document?.RemoveCadObject(this._expression);
+				}
+
+				this._expression = value;
+				this._expression.Owner = this._evaluationGraph;
+			}
+		}
 
 		/// <summary>
 		/// Unknown
@@ -61,6 +82,13 @@ public partial class EvaluationGraph
 		public int Index { get; set; }
 
 		private EvaluationExpression _expression;
+
+		private EvaluationGraph _evaluationGraph;
+
+		public Node(EvaluationGraph evaluationGraph)
+		{
+			this._evaluationGraph = evaluationGraph;
+		}
 
 		/// <summary>
 		/// Creates a deep copy of this <see cref="Node"/>.
