@@ -49,6 +49,17 @@ public class CadWriterConfiguration
 	public bool UpdateDimensionsInModel { get; set; } = false;
 
 	/// <summary>
+	/// The writer will not ignore the <see cref="ACadSharp.Objects.Evaluations.EvaluationGraph"/> objects in the document.
+	/// </summary>
+	/// <remarks>
+	/// Evaluation graphs can cause corruption for some documents due the complexity of their data.
+	/// </remarks>
+	/// <value>
+	/// default: false
+	/// </value>
+	public bool WriteDynamicBlockData { get; set; } = false;
+
+	/// <summary>
 	/// The writer will not ignore the <see cref="ACadSharp.Entities.Shape"/> entities in the document.
 	/// </summary>
 	/// <remarks>
@@ -77,6 +88,4 @@ public class CadWriterConfiguration
 	/// default: true
 	/// </value>
 	public bool WriteXRecords { get; set; } = true;
-
-	public bool WriteDynamicBlockData { get; set; } = false;
 }

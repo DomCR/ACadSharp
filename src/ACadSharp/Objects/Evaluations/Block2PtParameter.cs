@@ -38,6 +38,7 @@ public abstract class Block2PtParameter : BlockParameter
 	/// Size 4 array of grip ids.
 	/// </remarks>
 	[DxfCollectionCodeValue(91)]
+	[DxfCodeValue(DxfReferenceType.Count, 170)]
 	public long[] GripIds { get; } = new long[4];
 
 	/// <summary>

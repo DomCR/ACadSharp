@@ -699,8 +699,8 @@ internal class DxfObjectsSectionWriter : DxfSectionWriterBase
 
 		this._writer.Write(1010, parameter.FirstPoint, map);
 		this._writer.Write(1011, parameter.SecondPoint, map);
+		
 		this._writer.Write(170, (short)4, map);
-
 		foreach (var gripId in parameter.GripIds)
 		{
 			this._writer.Write(91, gripId, map);

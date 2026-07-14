@@ -1,4 +1,3 @@
-using ACadSharp.Attributes;
 using System.Collections.Generic;
 
 namespace ACadSharp.Objects.Evaluations;

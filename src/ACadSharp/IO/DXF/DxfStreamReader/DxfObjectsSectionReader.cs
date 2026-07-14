@@ -12,7 +12,6 @@ using System.Linq;
 using static ACadSharp.IO.Templates.CadEvaluationGraphTemplate;
 using static ACadSharp.IO.Templates.CadTableEntityTemplate;
 using static ACadSharp.IO.Templates.CadTableStyleTemplate;
-using static System.Collections.Specialized.BitVector32;
 
 namespace ACadSharp.IO.DXF.DxfStreamReader;
 
@@ -2283,7 +2282,7 @@ internal class DxfObjectsSectionReader : DxfSectionReaderBase
 				linearPrameter.ValueSet = this.readParameterValueSet();
 				return true;
 			default:
-				if (!this.tryAssignCurrentValue(template.CadObject, map))
+				if (!this.tryAssignCurrentValue(template.CadObject, map.SubClasses[DxfSubclassMarker.BlockLinearParameter]))
 				{
 					return this.readBlock2PtParameter(template, map);
 				}

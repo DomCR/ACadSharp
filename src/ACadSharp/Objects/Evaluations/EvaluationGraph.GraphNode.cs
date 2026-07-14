@@ -1,5 +1,4 @@
-﻿using System;
-using ACadSharp.Attributes;
+﻿using ACadSharp.Attributes;
 
 namespace ACadSharp.Objects.Evaluations;
 
