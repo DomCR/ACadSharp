@@ -476,6 +476,9 @@ internal class DxfObjectsSectionWriter : DxfSectionWriterBase
 			case BlockLinearGrip blockLinearGrip:
 				this.writeBlockLinearGrip(blockLinearGrip);
 				break;
+			case BlockVisibilityGrip blockVisibilityGrip:
+				this.writeBlockVisibilityGrip(blockVisibilityGrip);
+				break;
 			case BlockLinearParameter blockLinearParameter:
 				this.writeBlockLinearParameter(blockLinearParameter);
 				break;
@@ -961,6 +964,15 @@ internal class DxfObjectsSectionWriter : DxfSectionWriterBase
 		this._writer.Write(305, scaleAction.YScaleConnection.Name);
 	}
 
+	private void writeBlockVisibilityGrip(BlockVisibilityGrip grip)
+	{
+		DxfClassMap map = DxfClassMap.Create<BlockVisibilityGrip>();
+
+		this.writeBlockGrip(grip);
+
+		this._writer.Write(100, DxfSubclassMarker.BlockVisibilityGrip);
+	}
+
 	private void writeBlockVisibilityParameter(BlockVisibilityParameter parameter)
 	{
 		DxfClassMap map = DxfClassMap.Create<BlockVisibilityParameter>();
@@ -969,7 +981,34 @@ internal class DxfObjectsSectionWriter : DxfSectionWriterBase
 
 		this._writer.Write(100, DxfSubclassMarker.BlockVisibilityParameter);
 
-		throw new NotImplementedException();
+		this._writer.Write(281, (byte)(parameter.Value281 ? 1 : 0));
+		this._writer.Write(301, parameter.Label);
+		this._writer.Write(302, parameter.Description);
+		this._writer.Write(91, parameter.Value91 ? 1 : 0);
+
+		this._writer.Write(93, parameter.Entities.Count);
+		foreach (var e in parameter.Entities)
+		{
+			this._writer.WriteHandle(331, e);
+		}
+
+		this._writer.Write(92, parameter.States.Count);
+		foreach (var state in parameter.States.Values)
+		{
+			this._writer.Write(303, state.Name);
+
+			this._writer.Write(94, state.Entities.Count);
+			foreach (var e in state.Entities)
+			{
+				this._writer.WriteHandle(332, e);
+			}
+
+			this._writer.Write(95, state.Expressions.Count);
+			foreach (var expression in state.Expressions)
+			{
+				this._writer.WriteHandle(333, expression);
+			}
+		}
 	}
 
 	private void writeBlockXYGrip(BlockXYGrip blockXYGrip)

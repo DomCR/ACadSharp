@@ -299,7 +299,7 @@ internal partial class DwgObjectReader : DwgSectionIO
 		//281
 		blockVisibilityParameter.ChainActions = this._mergedReaders.ReadBit();
 		//301
-		blockVisibilityParameter.Name = this._mergedReaders.ReadVariableText();
+		blockVisibilityParameter.Label = this._mergedReaders.ReadVariableText();
 		//302
 		blockVisibilityParameter.Description = this._mergedReaders.ReadVariableText();
 		//missing bit??	91 should be an int
