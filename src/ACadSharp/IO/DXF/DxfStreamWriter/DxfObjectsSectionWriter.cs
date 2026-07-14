@@ -407,8 +407,14 @@ internal class DxfObjectsSectionWriter : DxfSectionWriterBase
 			case BlockMoveAction moveAction:
 				this.writeBlockMoveAction(moveAction);
 				break;
+			case BlockRotationAction rotationAction:
+				this.writeBlockRotationAction(rotationAction);
+				break;
 			case BlockScaleAction scaleAction:
 				this.writeBlockScaleAction(scaleAction);
+				break;
+			case BlockRotationParameter blockRotationParameter:
+				this.writeBlockRotationParameter(blockRotationParameter);
 				break;
 			case BlockVisibilityParameter blockVisibilityParameter:
 				this.writeBlockVisibilityParameter(blockVisibilityParameter);
@@ -463,6 +469,9 @@ internal class DxfObjectsSectionWriter : DxfSectionWriterBase
 				break;
 			case BlockXYGrip blockXYGrip:
 				this.writeBlockXYGrip(blockXYGrip);
+				break;
+			case BlockRotationGrip blockRotationGrip:
+				this.writeBlockRotationGrip(blockRotationGrip);
 				break;
 			case BlockLinearGrip blockLinearGrip:
 				this.writeBlockLinearGrip(blockLinearGrip);
@@ -888,6 +897,51 @@ internal class DxfObjectsSectionWriter : DxfSectionWriterBase
 		this._writer.Write(70, representationData.Version, map);
 
 		this._writer.WriteHandle(340, representationData.Block, map);
+	}
+
+	private void writeBlockRotationAction(BlockRotationAction rotationAction)
+	{
+		DxfClassMap map = DxfClassMap.Create<BlockRotationAction>();
+
+		this.writeBlockActionBasePt(rotationAction);
+
+		this._writer.Write(100, DxfSubclassMarker.BlockRotationAction);
+
+		this._writer.Write(94, rotationAction.Value94, map);
+		this._writer.Write(303, rotationAction.Value303, map);
+	}
+
+	private void writeBlockRotationGrip(BlockRotationGrip blockRotationGrip)
+	{
+		DxfClassMap map = DxfClassMap.Create<BlockRotationGrip>();
+
+		this.writeBlockGrip(blockRotationGrip);
+
+		this._writer.Write(100, DxfSubclassMarker.BlockRotationGrip);
+	}
+
+	private void writeBlockRotationParameter(BlockRotationParameter parameter)
+	{
+		DxfClassMap map = DxfClassMap.Create<BlockRotationParameter>();
+
+		this.writeBlock2PtParameter(parameter);
+
+		this._writer.Write(100, DxfSubclassMarker.BlockRotationParameter);
+
+		this._writer.Write(305, parameter.Name, map);
+		this._writer.Write(306, parameter.Description, map);
+
+		this._writer.Write(1011, parameter.Point, map);
+
+		this._writer.Write(140, parameter.NameOffset, map);
+
+		this._writer.Write(307, parameter.Value307, map);
+
+		this._writer.Write(96, parameter.Value96, map);
+		this._writer.Write(141, parameter.Value141, map);
+		this._writer.Write(142, parameter.Value142, map);
+		this._writer.Write(143, parameter.Value143, map);
+		this._writer.Write(175, parameter.Value175, map);
 	}
 
 	private void writeBlockScaleAction(BlockScaleAction scaleAction)
