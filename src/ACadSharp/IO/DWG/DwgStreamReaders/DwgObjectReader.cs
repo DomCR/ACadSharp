@@ -5696,6 +5696,9 @@ namespace ACadSharp.IO.DWG
 				case DxfFileToken.ObjectBlockRotateAction:
 					template = this.readBlockRotateAction();
 					break;
+				case DxfFileToken.ObjectBlockScaleAction:
+					template = this.readBlockScaleAction();
+					break;
 				case DxfFileToken.ObjectBlockMoveAction:
 					template = this.readBlockMoveAction();
 					break;

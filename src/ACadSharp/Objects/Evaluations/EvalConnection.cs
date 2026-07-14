@@ -9,4 +9,16 @@ public class EvalConnection
 	public const string DisplacementX = "DisplacementX";
 
 	public const string DisplacementY = "DisplacementY";
+
+	public const string Scale = "Scale";
+
+	public const string XScale = "XScale";
+
+	public const string YScale = "YScale";
+
+	/// <inheritdoc/>
+	public override string ToString()
+	{
+		return $"{this.Id}:{this.Name}";
+	}
 }

@@ -82,6 +82,8 @@ public static class DxfSubclassMarker
 
 	public const string BlockRotationParameter = "AcDbBlockRotationParameter";
 
+	public const string BlockScaleAction = "AcDbBlockScaleAction";
+
 	public const string BlockVisibilityGrip = "AcDbBlockVisibilityGrip";
 
 	public const string BlockVisibilityParameter = "AcDbBlockVisibilityParameter";

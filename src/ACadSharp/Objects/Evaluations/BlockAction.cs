@@ -26,4 +26,8 @@ public abstract class BlockAction : BlockElement
 
 	[DxfCodeValue(70)]
 	public short Value70 { get; set; }
+
+	[DxfCodeValue(DxfReferenceType.Count, 70)]
+	[DxfCollectionCodeValue(91)]
+	public List<int> ParametersIds { get; } = new();
 }

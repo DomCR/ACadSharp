@@ -404,6 +404,9 @@ internal class DxfObjectsSectionWriter : DxfSectionWriterBase
 			case BlockRepresentationData representationData:
 				this.writeBlockRepresentationData(representationData);
 				break;
+			case BlockScaleAction scaleAction:
+				this.writeBlockScaleAction(scaleAction);
+				break;
 			case DictionaryVariable dictvar:
 				this.writeDictionaryVariable(dictvar);
 				break;
@@ -481,6 +484,64 @@ internal class DxfObjectsSectionWriter : DxfSectionWriterBase
 		}
 
 		this.writeExtendedData(co.ExtendedData);
+	}
+
+	private void writeBlockAction(BlockAction action)
+	{
+		DxfClassMap map = DxfClassMap.Create<BlockAction>();
+
+		this.writeBlockElement(action);
+
+		this._writer.Write(100, DxfSubclassMarker.BlockAction);
+
+		this._writer.Write(70, (short)action.ParametersIds.Count);
+		foreach (int parameterId in action.ParametersIds)
+		{
+			this._writer.Write(91, parameterId);
+		}
+
+		this._writer.Write(71, (short)action.Entities.Count);
+		foreach (Entity e in action.Entities)
+		{
+			this._writer.WriteHandle(330, e);
+		}
+
+		this._writer.Write(1010, action.LabelPosition, map);
+	}
+
+	private void writeBlockActionBasePt(BlockActionBasePt action)
+	{
+		DxfClassMap map = DxfClassMap.Create<BlockActionBasePt>();
+
+		this.writeBlockAction(action);
+
+		this._writer.Write(100, DxfSubclassMarker.BlockActionBasePt);
+
+		this._writer.Write(92, action.UpdateBaseX.Id);
+		this._writer.Write(93, action.UpdateBaseY.Id);
+		this._writer.Write(301, action.UpdateBaseX.Name);
+		this._writer.Write(302, action.UpdateBaseY.Name);
+
+		this._writer.Write(1011, action.BasePoint, map);
+		this._writer.Write(280, action.Value280 ? (short)1 : (short)0, map);
+		this._writer.Write(1012, action.Value1012, map);
+	}
+
+	private void writeBlockScaleAction(BlockScaleAction scaleAction)
+	{
+		DxfClassMap map = DxfClassMap.Create<BlockScaleAction>();
+
+		this.writeBlockActionBasePt(scaleAction);
+
+		this._writer.Write(100, DxfSubclassMarker.BlockScaleAction);
+
+		this._writer.Write(94, scaleAction.ScaleConnection.Id);
+		this._writer.Write(95, scaleAction.XScaleConnection.Id);
+		this._writer.Write(96, scaleAction.YScaleConnection.Id);
+
+		this._writer.Write(303, scaleAction.ScaleConnection.Name);
+		this._writer.Write(304, scaleAction.XScaleConnection.Name);
+		this._writer.Write(305, scaleAction.YScaleConnection.Name);
 	}
 
 	protected void writePdfUnderlayDefinition(PdfUnderlayDefinition definition)

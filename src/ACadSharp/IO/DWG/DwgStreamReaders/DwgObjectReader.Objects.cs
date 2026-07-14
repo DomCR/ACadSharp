@@ -89,7 +89,7 @@ internal partial class DwgObjectReader : DwgSectionIO
 		int nparameters = this._mergedReaders.ReadBitLong();
 		for (int i = 0; i < nparameters; i++)
 		{
-			long parameterId = this._mergedReaders.ReadBitLong();
+			blockAction.ParametersIds.Add(this._mergedReaders.ReadBitLong());
 		}
 	}
 
@@ -101,8 +101,8 @@ internal partial class DwgObjectReader : DwgSectionIO
 
 		blockActionBasePt.BasePoint = this._mergedReaders.Read3BitDouble();
 
-		blockActionBasePt.Connections[0] = this.readEvalConnection();
-		blockActionBasePt.Connections[1] = this.readEvalConnection();
+		blockActionBasePt.UpdateBaseX = this.readEvalConnection();
+		blockActionBasePt.UpdateBaseY = this.readEvalConnection();
 
 		blockActionBasePt.Value280 = this._mergedReaders.ReadBit();
 		blockActionBasePt.Value1012 = this._mergedReaders.Read3BitDouble();
@@ -230,6 +230,20 @@ internal partial class DwgObjectReader : DwgSectionIO
 
 		representation.Version = this._mergedReaders.ReadBitShort();
 		template.BlockHandle = this.handleReference();
+
+		return template;
+	}
+
+	private CadTemplate readBlockScaleAction()
+	{
+		BlockScaleAction scaleAction = new();
+		CadBlockScaleActionTemplate template = new(scaleAction);
+
+		this.readBlockActionBasePt(template);
+
+		scaleAction.ScaleConnection = this.readEvalConnection();
+		scaleAction.XScaleConnection = this.readEvalConnection();
+		scaleAction.YScaleConnection = this.readEvalConnection();
 
 		return template;
 	}

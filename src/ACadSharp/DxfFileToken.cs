@@ -196,6 +196,8 @@ public static class DxfFileToken
 
 	public const string ObjectBlockRotationParameter = "BLOCKROTATIONPARAMETER";
 
+	public const string ObjectBlockScaleAction = "BLOCKSCALEACTION";
+
 	public const string ObjectBlockVisibilityGrip = "BLOCKVISIBILITYGRIP";
 
 	public const string ObjectBlockVisibilityParameter = "BLOCKVISIBILITYPARAMETER";

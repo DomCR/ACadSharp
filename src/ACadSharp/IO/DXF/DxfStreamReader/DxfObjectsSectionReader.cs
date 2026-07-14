@@ -12,6 +12,7 @@ using System.Linq;
 using static ACadSharp.IO.Templates.CadEvaluationGraphTemplate;
 using static ACadSharp.IO.Templates.CadTableEntityTemplate;
 using static ACadSharp.IO.Templates.CadTableStyleTemplate;
+using static System.Collections.Specialized.BitVector32;
 
 namespace ACadSharp.IO.DXF.DxfStreamReader;
 
@@ -142,6 +143,8 @@ internal class DxfObjectsSectionReader : DxfSectionReaderBase
 				return this.readObjectCodes<BlockRotationGrip>(new CadBlockGripTemplate(new BlockRotationGrip()), this.readBlockGripSubclass);
 			case DxfFileToken.ObjectBlockMoveAction:
 				return this.readObjectCodes<BlockMoveAction>(new CadBlockMoveActionTemplate(), this.readBlockMoveAction);
+			case DxfFileToken.ObjectBlockScaleAction:
+				return this.readObjectCodes<BlockScaleAction>(new CadBlockScaleActionTemplate(), this.readBlockScaleAction);
 			case DxfFileToken.ObjectBlockRotateAction:
 				return this.readObjectCodes<BlockRotationAction>(new CadBlockRotationActionTemplate(), this.readBlockRotationAction);
 			case DxfFileToken.ObjectBlockPointParameter:
@@ -2025,9 +2028,22 @@ internal class DxfObjectsSectionReader : DxfSectionReaderBase
 	private bool readBlockActionBasePt(CadTemplate template, DxfMap map)
 	{
 		CadBlockActionBasePtTemplate tmp = template as CadBlockActionBasePtTemplate;
+		BlockActionBasePt action = tmp.CadObject as BlockActionBasePt;
 
 		switch (this._reader.Code)
 		{
+			case 92:
+				action.UpdateBaseX.Id = this._reader.ValueAsInt;
+				return true;
+			case 93:
+				action.UpdateBaseY.Id = this._reader.ValueAsInt;
+				return true;
+			case 301:
+				action.UpdateBaseX.Name = this._reader.ValueAsString;
+				return true;
+			case 302:
+				action.UpdateBaseY.Name = this._reader.ValueAsString;
+				return true;
 			default:
 				if (!this.tryAssignCurrentValue(template.CadObject, map.SubClasses[DxfSubclassMarker.BlockActionBasePt]))
 				{
@@ -2040,6 +2056,7 @@ internal class DxfObjectsSectionReader : DxfSectionReaderBase
 	private bool readBlockPointParameter(CadTemplate template, DxfMap map)
 	{
 		CadBlockPointParameterTemplate tmp = template as CadBlockPointParameterTemplate;
+		BlockPointParameter action = tmp.CadObject as BlockPointParameter;
 
 		switch (this._reader.Code)
 		{
@@ -2047,6 +2064,41 @@ internal class DxfObjectsSectionReader : DxfSectionReaderBase
 				if (!this.tryAssignCurrentValue(template.CadObject, map.SubClasses[DxfSubclassMarker.BlockPointParameter]))
 				{
 					return this.readBlock1PtParameter(template, map);
+				}
+				return true;
+		}
+	}
+
+	private bool readBlockScaleAction(CadTemplate template, DxfMap map)
+	{
+		CadBlockScaleActionTemplate tmp = template as CadBlockScaleActionTemplate;
+		BlockScaleAction action = tmp.CadObject as BlockScaleAction;
+
+		switch (this._reader.Code)
+		{
+			// Unsorted connections
+			case 94:
+				action.ScaleConnection.Id = this._reader.ValueAsInt;
+				return true;
+			case 95:
+				action.XScaleConnection.Id = this._reader.ValueAsInt;
+				return true;
+			case 96:
+				action.YScaleConnection.Id = this._reader.ValueAsInt;
+				return true;
+			case 303:
+				action.ScaleConnection.Name = this._reader.ValueAsString;
+				return true;
+			case 304:
+				action.XScaleConnection.Name = this._reader.ValueAsString;
+				return true;
+			case 305:
+				action.YScaleConnection.Name = this._reader.ValueAsString;
+				return true;
+			default:
+				if (!this.tryAssignCurrentValue(template.CadObject, map.SubClasses[DxfSubclassMarker.BlockScaleAction]))
+				{
+					return this.readBlockActionBasePt(template, map);
 				}
 				return true;
 		}
