@@ -57,7 +57,14 @@ internal class DxfObjectsSectionWriter : DxfSectionWriterBase
 			}
 
 			this._writer.Write(3, item.Name);
-			this._writer.Write(350, item.Handle);
+			if (dict.HardOwnerFlag)
+			{
+				this._writer.Write(360, item.Handle);
+			}
+			else
+			{
+				this._writer.Write(350, item.Handle);
+			}
 
 			this.Holder.Objects.Enqueue(item);
 		}
@@ -699,7 +706,7 @@ internal class DxfObjectsSectionWriter : DxfSectionWriterBase
 
 		this._writer.Write(1010, parameter.FirstPoint, map);
 		this._writer.Write(1011, parameter.SecondPoint, map);
-		
+
 		this._writer.Write(170, (short)4, map);
 		foreach (var gripId in parameter.GripIds)
 		{
