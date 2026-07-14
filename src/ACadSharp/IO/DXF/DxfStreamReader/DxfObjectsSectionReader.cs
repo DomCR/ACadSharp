@@ -2016,6 +2016,14 @@ internal class DxfObjectsSectionReader : DxfSectionReaderBase
 
 		switch (this._reader.Code)
 		{
+			case 71:
+		int nentities = this._reader.ValueAsInt;
+				for (int i = 0; i < nentities; i++)
+				{
+					this._reader.ReadNext();
+					tmp.EntityHandles.Add(this._reader.ValueAsHandle);
+				}
+				return true;
 			default:
 				if (!this.tryAssignCurrentValue(template.CadObject, map.SubClasses[DxfSubclassMarker.BlockAction]))
 				{

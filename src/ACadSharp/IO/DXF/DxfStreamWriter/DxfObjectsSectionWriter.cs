@@ -404,8 +404,14 @@ internal class DxfObjectsSectionWriter : DxfSectionWriterBase
 			case BlockRepresentationData representationData:
 				this.writeBlockRepresentationData(representationData);
 				break;
+			case BlockMoveAction moveAction:
+				this.writeBlockMoveAction(moveAction);
+				break;
 			case BlockScaleAction scaleAction:
 				this.writeBlockScaleAction(scaleAction);
+				break;
+			case BlockPointParameter blockPointParameter:
+				this.writeBlockPointParameter(blockPointParameter);
 				break;
 			case DictionaryVariable dictvar:
 				this.writeDictionaryVariable(dictvar);
@@ -449,6 +455,9 @@ internal class DxfObjectsSectionWriter : DxfSectionWriterBase
 			case BlockGripExpression blockGripExpression:
 				this.writeBlockGripExpression(blockGripExpression);
 				break;
+			case BlockXYGrip blockXYGrip:
+				this.writeBlockXYGrip(blockXYGrip);
+				break;
 			case BlockLinearGrip blockLinearGrip:
 				this.writeBlockLinearGrip(blockLinearGrip);
 				break;
@@ -484,64 +493,6 @@ internal class DxfObjectsSectionWriter : DxfSectionWriterBase
 		}
 
 		this.writeExtendedData(co.ExtendedData);
-	}
-
-	private void writeBlockAction(BlockAction action)
-	{
-		DxfClassMap map = DxfClassMap.Create<BlockAction>();
-
-		this.writeBlockElement(action);
-
-		this._writer.Write(100, DxfSubclassMarker.BlockAction);
-
-		this._writer.Write(70, (short)action.ParametersIds.Count);
-		foreach (int parameterId in action.ParametersIds)
-		{
-			this._writer.Write(91, parameterId);
-		}
-
-		this._writer.Write(71, (short)action.Entities.Count);
-		foreach (Entity e in action.Entities)
-		{
-			this._writer.WriteHandle(330, e);
-		}
-
-		this._writer.Write(1010, action.LabelPosition, map);
-	}
-
-	private void writeBlockActionBasePt(BlockActionBasePt action)
-	{
-		DxfClassMap map = DxfClassMap.Create<BlockActionBasePt>();
-
-		this.writeBlockAction(action);
-
-		this._writer.Write(100, DxfSubclassMarker.BlockActionBasePt);
-
-		this._writer.Write(92, action.UpdateBaseX.Id);
-		this._writer.Write(93, action.UpdateBaseY.Id);
-		this._writer.Write(301, action.UpdateBaseX.Name);
-		this._writer.Write(302, action.UpdateBaseY.Name);
-
-		this._writer.Write(1011, action.BasePoint, map);
-		this._writer.Write(280, action.Value280 ? (short)1 : (short)0, map);
-		this._writer.Write(1012, action.Value1012, map);
-	}
-
-	private void writeBlockScaleAction(BlockScaleAction scaleAction)
-	{
-		DxfClassMap map = DxfClassMap.Create<BlockScaleAction>();
-
-		this.writeBlockActionBasePt(scaleAction);
-
-		this._writer.Write(100, DxfSubclassMarker.BlockScaleAction);
-
-		this._writer.Write(94, scaleAction.ScaleConnection.Id);
-		this._writer.Write(95, scaleAction.XScaleConnection.Id);
-		this._writer.Write(96, scaleAction.YScaleConnection.Id);
-
-		this._writer.Write(303, scaleAction.ScaleConnection.Name);
-		this._writer.Write(304, scaleAction.XScaleConnection.Name);
-		this._writer.Write(305, scaleAction.YScaleConnection.Name);
 	}
 
 	protected void writePdfUnderlayDefinition(PdfUnderlayDefinition definition)
@@ -705,6 +656,21 @@ internal class DxfObjectsSectionWriter : DxfSectionWriterBase
 	{
 	}
 
+	private void writeBlock1PtParameter(Block1PtParameter parameter)
+	{
+		DxfClassMap map = DxfClassMap.Create<Block1PtParameter>();
+
+		this.writeBlockParameter(parameter);
+
+		this._writer.Write(100, DxfSubclassMarker.Block1PtParameter);
+
+		this._writer.Write(1010, parameter.Location, map);
+		this._writer.Write(93, parameter.GripId, map);
+
+		this.writeEvalParameterProperty(parameter.DisplacementX, 170, 91, 301);
+		this.writeEvalParameterProperty(parameter.DisplacementY, 171, 92, 302);
+	}
+
 	private void writeBlock2PtParameter(Block2PtParameter parameter)
 	{
 		DxfClassMap map = DxfClassMap.Create<Block2PtParameter>();
@@ -728,6 +694,47 @@ internal class DxfObjectsSectionWriter : DxfSectionWriterBase
 		this.writeEvalParameterProperty(parameter.SecondPointDisplacementY, 3);
 
 		this._writer.Write(177, (short)parameter.BaseLocation, map);
+	}
+
+	private void writeBlockAction(BlockAction action)
+	{
+		DxfClassMap map = DxfClassMap.Create<BlockAction>();
+
+		this.writeBlockElement(action);
+
+		this._writer.Write(100, DxfSubclassMarker.BlockAction);
+
+		this._writer.Write(70, (short)action.ParametersIds.Count);
+		foreach (int parameterId in action.ParametersIds)
+		{
+			this._writer.Write(91, parameterId);
+		}
+
+		this._writer.Write(71, (short)action.Entities.Count);
+		foreach (Entity e in action.Entities)
+		{
+			this._writer.WriteHandle(330, e);
+		}
+
+		this._writer.Write(1010, action.LabelPosition, map);
+	}
+
+	private void writeBlockActionBasePt(BlockActionBasePt action)
+	{
+		DxfClassMap map = DxfClassMap.Create<BlockActionBasePt>();
+
+		this.writeBlockAction(action);
+
+		this._writer.Write(100, DxfSubclassMarker.BlockActionBasePt);
+
+		this._writer.Write(92, action.UpdateBaseX.Id);
+		this._writer.Write(93, action.UpdateBaseY.Id);
+		this._writer.Write(301, action.UpdateBaseX.Name);
+		this._writer.Write(302, action.UpdateBaseY.Name);
+
+		this._writer.Write(1011, action.BasePoint, map);
+		this._writer.Write(280, action.Value280 ? (short)1 : (short)0, map);
+		this._writer.Write(1012, action.Value1012, map);
 	}
 
 	private void writeBlockElement(BlockElement element)
@@ -812,6 +819,22 @@ internal class DxfObjectsSectionWriter : DxfSectionWriterBase
 		}
 	}
 
+	private void writeBlockMoveAction(BlockMoveAction moveAction)
+	{
+		DxfClassMap map = DxfClassMap.Create<BlockMoveAction>();
+
+		this.writeBlockAction(moveAction);
+
+		this._writer.Write(100, DxfSubclassMarker.BlockMoveAction);
+
+		this.writeEvalConnection(moveAction.XDelta, 92, 301);
+		this.writeEvalConnection(moveAction.YDelta, 93, 302);
+
+		this._writer.Write(140, moveAction.DistanceMultiplier, map);
+		this._writer.Write(141, moveAction.AngleOffset, map);
+		this._writer.Write(280, (byte)moveAction.UnknownFlag, map);
+	}
+
 	private void writeBlockParameter(BlockParameter parameter)
 	{
 		DxfClassMap map = DxfClassMap.Create<BlockParameter>();
@@ -824,6 +847,19 @@ internal class DxfObjectsSectionWriter : DxfSectionWriterBase
 		this._writer.Write(281, (byte)(parameter.ChainActions ? 1 : 0), map);
 	}
 
+	private void writeBlockPointParameter(BlockPointParameter parameter)
+	{
+		DxfClassMap map = DxfClassMap.Create<BlockPointParameter>();
+
+		this.writeBlock1PtParameter(parameter);
+
+		this._writer.Write(100, DxfSubclassMarker.BlockPointParameter);
+
+		this._writer.Write(303, parameter.Label, map);
+		this._writer.Write(304, parameter.Description, map);
+		this._writer.Write(1011, parameter.LabelPosition, map);
+	}
+
 	private void writeBlockRepresentationData(BlockRepresentationData representationData)
 	{
 		DxfClassMap map = DxfClassMap.Create<BlockRepresentationData>();
@@ -833,6 +869,32 @@ internal class DxfObjectsSectionWriter : DxfSectionWriterBase
 		this._writer.Write(70, representationData.Version, map);
 
 		this._writer.WriteHandle(340, representationData.Block, map);
+	}
+
+	private void writeBlockScaleAction(BlockScaleAction scaleAction)
+	{
+		DxfClassMap map = DxfClassMap.Create<BlockScaleAction>();
+
+		this.writeBlockActionBasePt(scaleAction);
+
+		this._writer.Write(100, DxfSubclassMarker.BlockScaleAction);
+
+		this._writer.Write(94, scaleAction.ScaleConnection.Id);
+		this._writer.Write(95, scaleAction.XScaleConnection.Id);
+		this._writer.Write(96, scaleAction.YScaleConnection.Id);
+
+		this._writer.Write(303, scaleAction.ScaleConnection.Name);
+		this._writer.Write(304, scaleAction.XScaleConnection.Name);
+		this._writer.Write(305, scaleAction.YScaleConnection.Name);
+	}
+
+	private void writeBlockXYGrip(BlockXYGrip blockXYGrip)
+	{
+		DxfClassMap map = DxfClassMap.Create<BlockXYGrip>();
+
+		this.writeBlockGrip(blockXYGrip);
+
+		this._writer.Write(100, DxfSubclassMarker.BlockXYGrip);
 	}
 
 	private void writeCellStyle(TableStyle.CellStyle cellStyle)
@@ -912,6 +974,12 @@ internal class DxfObjectsSectionWriter : DxfSectionWriterBase
 		this._writer.Write(70, dynamicBlockPurgePreventer.Version);
 	}
 
+	private void writeEvalConnection(EvalConnection connection, int idCode, int nameCode)
+	{
+		this._writer.Write(idCode, connection.Id);
+		this._writer.Write(nameCode, connection.Name);
+	}
+
 	private void writeEvalParameterProperty(EvalParameterProperty property, int code)
 	{
 		this._writer.Write(171 + code, (short)property.Connections.Count);
@@ -920,6 +988,16 @@ internal class DxfObjectsSectionWriter : DxfSectionWriterBase
 		{
 			this._writer.Write(92 + code, conn.Id);
 			this._writer.Write(301 + code, conn.Name);
+		}
+	}
+
+	private void writeEvalParameterProperty(EvalParameterProperty property, int countCode, int idCode, int strCode)
+	{
+		this._writer.Write(countCode, (short)property.Connections.Count);
+		foreach (var conn in property.Connections)
+		{
+			this._writer.Write(idCode, conn.Id);
+			this._writer.Write(strCode, conn.Name);
 		}
 	}
 
