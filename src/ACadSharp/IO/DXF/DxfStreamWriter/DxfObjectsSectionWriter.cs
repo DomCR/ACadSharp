@@ -410,6 +410,12 @@ internal class DxfObjectsSectionWriter : DxfSectionWriterBase
 			case BlockScaleAction scaleAction:
 				this.writeBlockScaleAction(scaleAction);
 				break;
+			case BlockVisibilityParameter blockVisibilityParameter:
+				this.writeBlockVisibilityParameter(blockVisibilityParameter);
+				break;
+			case BlockLookupParameter blockLookupParameter:
+				this.writeBlockLookupParameter(blockLookupParameter);
+				break;
 			case BlockPointParameter blockPointParameter:
 				this.writeBlockPointParameter(blockPointParameter);
 				break;
@@ -819,6 +825,19 @@ internal class DxfObjectsSectionWriter : DxfSectionWriterBase
 		}
 	}
 
+	private void writeBlockLookupParameter(BlockLookupParameter parameter)
+	{
+		DxfClassMap map = DxfClassMap.Create<BlockLookupParameter>();
+
+		this.writeBlock1PtParameter(parameter);
+
+		this._writer.Write(100, DxfSubclassMarker.BlockLookupParameter);
+
+		this._writer.Write(303, parameter.Label, map);
+		this._writer.Write(304, parameter.Description, map);
+		this._writer.Write(94, parameter.ActionId, map);
+	}
+
 	private void writeBlockMoveAction(BlockMoveAction moveAction)
 	{
 		DxfClassMap map = DxfClassMap.Create<BlockMoveAction>();
@@ -886,6 +905,17 @@ internal class DxfObjectsSectionWriter : DxfSectionWriterBase
 		this._writer.Write(303, scaleAction.ScaleConnection.Name);
 		this._writer.Write(304, scaleAction.XScaleConnection.Name);
 		this._writer.Write(305, scaleAction.YScaleConnection.Name);
+	}
+
+	private void writeBlockVisibilityParameter(BlockVisibilityParameter parameter)
+	{
+		DxfClassMap map = DxfClassMap.Create<BlockVisibilityParameter>();
+
+		this.writeBlock1PtParameter(parameter);
+
+		this._writer.Write(100, DxfSubclassMarker.BlockVisibilityParameter);
+
+		throw new NotImplementedException();
 	}
 
 	private void writeBlockXYGrip(BlockXYGrip blockXYGrip)
