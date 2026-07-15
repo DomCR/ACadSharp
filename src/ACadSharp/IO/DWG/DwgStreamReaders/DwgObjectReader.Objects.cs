@@ -445,19 +445,34 @@ internal partial class DwgObjectReader : DwgSectionIO
 		if (code > 0)
 		{
 			var groupValue = GroupCodeValue.TransformValue(code);
+			object value = null;
 			switch (groupValue)
 			{
+				case GroupCodeValueType.String:
+				case GroupCodeValueType.ExtendedDataString:
+					value = this._mergedReaders.ReadVariableText();
+					break;
 				case GroupCodeValueType.Int16:
 				case GroupCodeValueType.ExtendedDataInt16:
-					this._mergedReaders.ReadBitShort();
+					value = this._mergedReaders.ReadBitShort();
 					break;
 				case GroupCodeValueType.Double:
 				case GroupCodeValueType.ExtendedDataDouble:
-					this._mergedReaders.ReadBitDouble();
+					value = this._mergedReaders.ReadBitDouble();
+					break;
+				case GroupCodeValueType.Int32:
+				case GroupCodeValueType.Int64:
+				case GroupCodeValueType.ExtendedDataInt32:
+					value = this._mergedReaders.ReadBitLong();
+					break;
+				case GroupCodeValueType.Point3D:
+					value = this._mergedReaders.Read3BitDouble();
 					break;
 				default:
 					throw new System.NotImplementedException($"[EvaluationExpression] Code not implemented {groupValue}");
 			}
+
+			template.CadObject.EvaluatedValue = new DxfValuePair((DxfCode)code, value);
 		}
 
 		//90
