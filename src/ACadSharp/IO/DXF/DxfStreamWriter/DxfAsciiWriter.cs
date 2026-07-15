@@ -61,7 +61,7 @@ namespace ACadSharp.IO.DXF
 				case GroupCodeValueType.Point3D:
 				case GroupCodeValueType.Double:
 				case GroupCodeValueType.ExtendedDataDouble:
-					this._stream.WriteLine(Convert.ToDouble(value).ToString("0.0###############", System.Globalization.CultureInfo.InvariantCulture));
+					this._stream.WriteLine(Convert.ToDouble(value).ToString("R", System.Globalization.CultureInfo.InvariantCulture));
 					return;
 				case GroupCodeValueType.Byte:
 				case GroupCodeValueType.Int16:

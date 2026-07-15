@@ -471,8 +471,8 @@ internal class DxfObjectsSectionWriter : DxfSectionWriterBase
 			case MultiLeaderStyle multiLeaderlStyle:
 				this.writeMultiLeaderStyle(multiLeaderlStyle);
 				break;
-			case BlockGripExpression blockGripExpression:
-				this.writeBlockGripExpression(blockGripExpression);
+			case BlockGripLocationComponent blockGripExpression:
+				this.writeBlockGripLocationComponent(blockGripExpression);
 				break;
 			case BlockXYGrip blockXYGrip:
 				this.writeBlockXYGrip(blockXYGrip);
@@ -794,16 +794,16 @@ internal class DxfObjectsSectionWriter : DxfSectionWriterBase
 		this._writer.Write(93, grip.Value93, map);
 	}
 
-	private void writeBlockGripExpression(BlockGripExpression blockGripExpression)
+	private void writeBlockGripLocationComponent(BlockGripLocationComponent blockGripExpression)
 	{
-		DxfClassMap map = DxfClassMap.Create<BlockGripExpression>();
+		DxfClassMap map = DxfClassMap.Create<BlockGripLocationComponent>();
 
 		this.writeEvaluationExpression(blockGripExpression);
 
 		this._writer.Write(100, DxfSubclassMarker.BlockGripExpression);
 
-		this._writer.Write(91, blockGripExpression.Value91, map);
-		this._writer.Write(300, blockGripExpression.Value300, map);
+		this._writer.Write(91, blockGripExpression.Connection.Id, map);
+		this._writer.Write(300, blockGripExpression.Connection.Name, map);
 	}
 
 	private void writeBlockLinearGrip(BlockLinearGrip grip)
@@ -1140,6 +1140,18 @@ internal class DxfObjectsSectionWriter : DxfSectionWriterBase
 		this._writer.Write(90, exp.Id, map);
 		this._writer.Write(98, exp.Value98, map);
 		this._writer.Write(99, exp.Value99, map);
+
+		if (exp.EvaluatedValue != null)
+		{
+			this._writer.Write(1, string.Empty);
+			this.writeDxfValuePair(exp.EvaluatedValue);
+		}
+	}
+
+	private void writeDxfValuePair(DxfValuePair pair)
+	{
+		this._writer.Write(70, pair.Code);
+		this._writer.Write(pair.Code, pair.Value);
 	}
 
 	private void writeEvaluationGraph(EvaluationGraph evaluationGraph)

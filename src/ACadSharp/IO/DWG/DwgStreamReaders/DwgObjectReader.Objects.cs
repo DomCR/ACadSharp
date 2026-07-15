@@ -139,8 +139,8 @@ internal partial class DwgObjectReader : DwgSectionIO
 
 	private CadTemplate readBlockGripLocationComponent()
 	{
-		BlockGripExpression gripExpression = new BlockGripExpression();
-		CadBlockGripExpressionTemplate template = new CadBlockGripExpressionTemplate(gripExpression);
+		BlockGripLocationComponent gripLocationComponent = new BlockGripLocationComponent();
+		CadBlockGripLocationComponentTemplate template = new CadBlockGripLocationComponentTemplate(gripLocationComponent);
 
 		this.readEvaluationExpression(template);
 

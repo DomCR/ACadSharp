@@ -123,7 +123,7 @@ internal class DxfObjectsSectionReader : DxfSectionReaderBase
 			case DxfFileToken.ObjectBlockRepresentationData:
 				return this.readObjectCodes<BlockRepresentationData>(new CadBlockRepresentationDataTemplate(), this.readBlockRepresentationData);
 			case DxfFileToken.ObjectBlockGripLocationComponent:
-				return this.readObjectCodes<BlockGripExpression>(new CadBlockGripExpressionTemplate(), this.readBlockGripExpression);
+				return this.readObjectCodes<BlockGripLocationComponent>(new CadBlockGripLocationComponentTemplate(), this.readBlockGripLocationComponent);
 			case DxfFileToken.ObjectBlockVisibilityGrip:
 				return this.readObjectCodes<BlockVisibilityGrip>(new CadBlockGripTemplate(new BlockVisibilityGrip()), this.readBlockGripSubclass);
 			case DxfFileToken.ObjectBlockXYGrip:
@@ -1982,12 +1982,17 @@ internal class DxfObjectsSectionReader : DxfSectionReaderBase
 	private bool readEvaluationExpression(CadTemplate template, DxfMap map)
 	{
 		CadEvaluationExpressionTemplate tmp = template as CadEvaluationExpressionTemplate;
+		EvaluationExpression expression = tmp.CadObject as EvaluationExpression;
 
 		switch (this._reader.Code)
 		{
 			case 1:
-				this._reader.ExpectedCode(70);
-				this._reader.ExpectedCode(140);
+				this._reader.ReadNext();
+				var code = (DxfCode)this._reader.ValueAsInt;
+				this._reader.ReadNext();
+				object value = this._reader.Value;
+
+				expression.EvaluatedValue = new DxfValuePair(code, value);
 				return true;
 			default:
 				return this.tryAssignCurrentValue(template.CadObject, map.SubClasses[DxfSubclassMarker.EvalGraphExpr]);
@@ -2016,7 +2021,7 @@ internal class DxfObjectsSectionReader : DxfSectionReaderBase
 		switch (this._reader.Code)
 		{
 			case 71:
-		int nentities = this._reader.ValueAsInt;
+				int nentities = this._reader.ValueAsInt;
 				for (int i = 0; i < nentities; i++)
 				{
 					this._reader.ReadNext();
@@ -2439,12 +2444,16 @@ internal class DxfObjectsSectionReader : DxfSectionReaderBase
 		}
 	}
 
-	private bool readBlockGripExpression(CadTemplate template, DxfMap map)
+	private bool readBlockGripLocationComponent(CadTemplate template, DxfMap map)
 	{
-		CadBlockGripExpressionTemplate tmp = template as CadBlockGripExpressionTemplate;
+		CadBlockGripLocationComponentTemplate tmp = template as CadBlockGripLocationComponentTemplate;
+		BlockGripLocationComponent component = tmp.CadObject as BlockGripLocationComponent;
 
 		switch (this._reader.Code)
 		{
+			case 91:
+				component.Connection = this.readEvalConnection();
+				return true;
 			default:
 				if (!this.tryAssignCurrentValue(template.CadObject, map.SubClasses[DxfSubclassMarker.BlockGripExpression]))
 				{

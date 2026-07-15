@@ -30,7 +30,7 @@ namespace ACadSharp.IO.DXF
 			where T : TableEntry
 		{
 			this._writer.Write(DxfCode.Start, DxfFileToken.TableEntry);
-			this._writer.Write(DxfCode.SymbolTableName, table.ObjectName);
+			this._writer.Write(DxfCode.Name, table.ObjectName);
 
 			this.writeCommonObjectData(table);
 
@@ -65,11 +65,11 @@ namespace ACadSharp.IO.DXF
 
 			if (entry is TextStyle ts && ts.IsShapeFile)
 			{
-				this._writer.Write(DxfCode.SymbolTableName, string.Empty);
+				this._writer.Write(DxfCode.Name, string.Empty);
 			}
 			else
 			{
-				this._writer.Write(DxfCode.SymbolTableName, entry.Name);
+				this._writer.Write(DxfCode.Name, entry.Name);
 			}
 
 			if (writeFlags)
