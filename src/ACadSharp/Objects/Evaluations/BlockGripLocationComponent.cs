@@ -13,11 +13,14 @@ namespace ACadSharp.Objects.Evaluations;
 [DxfSubClass(DxfSubclassMarker.BlockGripExpression)]
 public class BlockGripLocationComponent : EvaluationExpression
 {
+	/// <summary>
+	/// Gets or sets the connection of the block grip location component.
+	/// </summary>
+	public EvalConnection Connection { get; set; } = new EvalConnection();
+
 	/// <inheritdoc/>
 	public override string ObjectName => DxfFileToken.ObjectBlockGripLocationComponent;
 
 	/// <inheritdoc/>
 	public override string SubclassMarker => DxfSubclassMarker.BlockGripExpression;
-
-	public EvalConnection Connection { get; set; } = new EvalConnection();
 }
