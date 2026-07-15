@@ -197,16 +197,20 @@ namespace ACadSharp.IO.DWG
 			}
 		}
 
-		//The "search" segment: the record handles sorted, each mapped to its
-		//directory position.
+		//The "search" segment: the record handles sorted ascending, each mapped to
+		//its rank in that sorted order. The rank is the value the sorted index
+		//table also carries, so a handle whose payload sits anywhere in the
+		//directory still maps to its position among the sorted handles, not to its
+		//directory slot (AutoCAD writes the rank, verified against a native save
+		//where the directory order differs from the handle order).
 		private static byte[] buildSearchSegment(List<KeyValuePair<ulong, byte[]>> entries)
 		{
-			List<KeyValuePair<ulong, int>> sorted = entries
-				.Select((r, i) => new KeyValuePair<ulong, int>(r.Key, i))
-				.OrderBy(r => r.Key)
+			List<ulong> sortedHandles = entries
+				.Select(r => r.Key)
+				.OrderBy(h => h)
 				.ToList();
 
-			int count = sorted.Count;
+			int count = sortedHandles.Count;
 			int contentSize = 24 + (count - 1) * 8 + 12 + count * 24;
 			int segmentSize = alignSegment(SEGMENT_HEADER_SIZE + contentSize);
 
@@ -221,7 +225,8 @@ namespace ACadSharp.IO.DWG
 				writer.Write(0);
 				writer.Write(0L);
 
-				//index list: the ascending entry numbers, closed by a one
+				//sorted index table: the ascending ranks 0..count-1 (the first is
+				//the 0L above, the rest close the list)
 				for (int i = 1; i < count; i++)
 				{
 					writer.Write((long)i);
@@ -230,11 +235,11 @@ namespace ACadSharp.IO.DWG
 				writer.Write(1L);
 				writer.Write(count);
 
-				foreach (KeyValuePair<ulong, int> record in sorted)
+				for (int rank = 0; rank < count; rank++)
 				{
-					writer.Write(record.Key);
+					writer.Write(sortedHandles[rank]);
 					writer.Write(1L);
-					writer.Write((long)record.Value);
+					writer.Write((long)rank);
 				}
 
 				pad(writer, (int)(segmentSize - stream.Length), 0x70);
