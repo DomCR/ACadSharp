@@ -470,7 +470,7 @@ namespace ACadSharp.IO.DWG.DwgStreamReaders
 
             // Read headers
             List<DataHeader> headers = [];
-            long headerRefPosition = this._reader.Position;
+            uint headerEndPosition = (uint)this._reader.Position;
             if (!this.IndexPointers.DataIndex.Entries.TryGetValue(header.SegmentIndex, out DataIndexEntry entry)) {
                 return dataField;
             }
@@ -478,7 +478,7 @@ namespace ACadSharp.IO.DWG.DwgStreamReaders
             // As entries can be out of order, keep updating the max position to resume correctly after reading all entries
             long maxPos = 0;
             foreach (DataIndexEntryPointer pointer in entry.Pointers) {
-                this._reader.Position = headerRefPosition + pointer.Offset;
+                this._reader.Position = headerEndPosition + pointer.Offset;
                 headers.Add(new DataHeader {
                     EntrySize = this._reader.ReadUInt(),
                     Unknown1 = this._reader.ReadUInt(),
@@ -490,41 +490,27 @@ namespace ACadSharp.IO.DWG.DwgStreamReaders
             }
             this._reader.Position = maxPos;
 
-            // Sometimes additional entries are appended (which are already be present in other _data_ sections, but are repeated here again)
-            // not present in the entry.Pointers, but is actually in the list of definitions here and also present in the data list below
-            // TODO: Find out when this is the case and how many entries there are instead of the current unreliable while loop check
-            int countBefore = headers.Count;
-            uint entrysize;
-            while ((entrysize = this._reader.ReadUInt()) < 64 && entrysize > 19) {
-                headers.Add(new DataHeader {
-                    EntrySize = entrysize,
-                    Unknown1 = this._reader.ReadUInt(),
-                    Handle = this._reader.ReadRawULong(),
-                    DataOffset = this._reader.ReadUInt(),
-                    // SchemaIndex = /* ??? */
-                });
-            }
-            this._reader.SetPositionInBits(this._reader.PositionInBits() - 8 * sizeof(uint));
+			// Sort headers to get ascending offset values to prevent wrong offset calculations (TODO: Is this ok or should the order maybe be preserved?)
+			headers = headers.OrderBy(x => x.DataOffset).ToList();
 
-            // Align reader to the next 16 byte boundary
-            long boundaryOffset = this._reader.Position % 16;
-            if (boundaryOffset != 0) {
-                byte[] _ = this._reader.ReadBytes((int)(16 - boundaryOffset));
-            }
+			// Get the position to the beginning of the data content section and skip padding and unreferenced DataHeader entries
+			uint headerStartPosition = headerEndPosition - SegmentHeader.SIZE;
+			uint dataRefPosition = headerStartPosition + (uint)(header.ObjectDataAlignmentOffset << 4);
+            if (dataRefPosition != this._reader.Position) {
+				byte[] data = this._reader.ReadBytes((int)(dataRefPosition - this._reader.Position));
+				// Many unreferenced / seemingly dangling DataHeader entries might be defined here, they would
+				// also have valid file data in the next step, where file contents are being read. This can be a lot of entries, e.g.
+				// 10 - 20 valid DataHeader entries have been seen
+			}
 
-            var headers_original = new List<DataHeader>(headers);
-
-            // Sort headers to get ascending offset values to prevent wrong offset calculations (TODO: Is this ok?)
-            headers = headers.OrderBy(x => x.DataOffset).ToList();
-
-            // Read data associated with headers
-            long dataRefPosition = this._reader.Position;
-            for (int i = 0; i < headers.Count; i++) {
+			// Read data associated with headers
+			for (int i = 0; i < headers.Count; i++) {
                 DataValue value = new();
                 DataHeader dataHeader = headers[i];
-				// TODO: According to ODA the following shift should also be applied somewhere: "header.ObjectDataAlignmentOffset << 4 + header.SegmentSize ..."
-				uint maxRecordSize = (i + 1 < headers.Count ? headers[i + 1].DataOffset : (dataHeader.DataOffset + 0x40000)) - dataHeader.DataOffset;
-                this._reader.Position = dataRefPosition + dataHeader.DataOffset;
+                uint recordStreamOffset = dataRefPosition + dataHeader.DataOffset;
+                uint maxRecordSize = i + 1 < headers.Count ? (headers[i + 1].DataOffset - dataHeader.DataOffset) : (header.SegmentSize - (uint)(header.ObjectDataAlignmentOffset << 4) - dataHeader.DataOffset);
+
+				this._reader.Position = recordStreamOffset;
                 value.DataSize = this._reader.ReadUInt();
                 if ((value.DataSize + 4) <= maxRecordSize) {
                     value.Data = this._reader.ReadBytes((int)value.DataSize);
@@ -945,6 +931,12 @@ namespace ACadSharp.IO.DWG.DwgStreamReaders
 
     public class SegmentHeader
     {
+        /// <summary>
+        /// The size of the segment header. The <see cref="Name"/> is always 6 characters
+        /// long and the <see cref="AlignmentBytes"/> is always 8 bytes long.
+        /// </summary>
+        public const uint SIZE = 48;
+
         public short Signature { get; set; }
         public string Name { get; set; }
         public uint SegmentIndex { get; set; }
