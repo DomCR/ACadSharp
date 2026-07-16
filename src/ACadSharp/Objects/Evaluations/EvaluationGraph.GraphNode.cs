@@ -61,7 +61,7 @@ public partial class EvaluationGraph
 		}
 
 		/// <summary>
-		/// Unknown
+		/// Gets or sets the flags of this <see cref="Node"/>.
 		/// </summary>
 		[DxfCodeValue(93)]
 		public NodeFlags Flags { get; set; }

@@ -6,7 +6,7 @@ namespace ACadSharp.Objects.Evaluations;
 /// Represents an evaluation expression used in AutoCAD to define dynamic block parameters and constraints.
 /// </summary>
 [DxfSubClass(DxfSubclassMarker.EvalGraphExpr)]
-public abstract class EvaluationExpression : CadObject
+public abstract class EvaluationExpression : NonGraphicalObject
 {
 	/// <summary>
 	/// Gets or sets the evaluated value of the expression.

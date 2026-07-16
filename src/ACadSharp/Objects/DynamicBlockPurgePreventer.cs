@@ -1,4 +1,5 @@
 ﻿using ACadSharp.Attributes;
+using ACadSharp.Tables;
 
 namespace ACadSharp.Objects;
 
@@ -27,4 +28,7 @@ public class DynamicBlockPurgePreventer : NonGraphicalObject
 	/// </summary>
 	[DxfCodeValue(70)]
 	public short Version { get; set; }
+
+	// Not present in dxf
+	internal BlockRecord Block { get; set; }
 }

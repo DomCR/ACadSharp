@@ -10,14 +10,15 @@ using System.Collections.Generic;
 using System.Globalization;
 using System.IO;
 using System.Linq;
+using static System.Collections.Specialized.BitVector32;
 
 namespace ACadSharp.IO.DWG;
 
 internal partial class DwgObjectWriter : DwgSectionIO
 {
-	private void addEntriesToWriter(CadDictionary dictionary)
+	private void addObjectsToWriter(IEnumerable<NonGraphicalObject> entries)
 	{
-		foreach (NonGraphicalObject e in dictionary)
+		foreach (NonGraphicalObject e in entries)
 		{
 			this._objects.Enqueue(e);
 		}
@@ -33,6 +34,9 @@ internal partial class DwgObjectWriter : DwgSectionIO
 		notify = true;
 		switch (entry)
 		{
+			case EvaluationGraph when !this.WriteDynamicParameters:
+			case BlockRepresentationData when !this.WriteDynamicParameters:
+			case DynamicBlockPurgePreventer when !this.WriteDynamicParameters:
 			case XRecord when !this.WriteXRecords:
 				notify = false;
 				return true;
@@ -40,12 +44,9 @@ internal partial class DwgObjectWriter : DwgSectionIO
 			case AecCleanupGroup:
 			case AecBinRecord:
 			case DimensionAssociation:
-			case DynamicBlockPurgePreventer:
-			case EvaluationGraph:
 			case UnknownNonGraphicalObject:
 			case VisualStyle:
 			case ProxyObject:
-			case BlockRepresentationData:
 			case BlockReferenceObjectContextData:
 			case MTextAttributeObjectContextData:
 				return true;
@@ -72,6 +73,81 @@ internal partial class DwgObjectWriter : DwgSectionIO
 	private void writeAnnotScaleObjectContextData(AnnotScaleObjectContextData annotScaleObjectContextData)
 	{
 		this._writer.HandleReference(DwgReferenceType.HardPointer, annotScaleObjectContextData.Scale);
+	}
+
+	private void writeBlock2PtParameter(Block2PtParameter parameter)
+	{
+		this.writeBlockParameter(parameter);
+
+		this._writer.Write3BitDouble(parameter.FirstPoint);
+		this._writer.Write3BitDouble(parameter.SecondPoint);
+
+		this.writeEvalParameterProperty(parameter.FirstPointDisplacementX);
+		this.writeEvalParameterProperty(parameter.FirstPointDisplacementY);
+		this.writeEvalParameterProperty(parameter.SecondPointDisplacementX);
+		this.writeEvalParameterProperty(parameter.SecondPointDisplacementY);
+
+		foreach (var id in parameter.GripIds)
+		{
+			this._writer.WriteBitLong((int)id);
+		}
+
+		this._writer.WriteBitShort((short)parameter.BaseLocation);
+	}
+
+	private void writeBlockElement(BlockElement parameter)
+	{
+		this.writeEvaluationExpression(parameter);
+
+		this._writer.WriteVariableText(parameter.ElementName);
+		this._writer.WriteBitLong(parameter.Value98);
+		this._writer.WriteBitLong(parameter.Value99);
+		this._writer.WriteBitLong(parameter.Value1071);
+	}
+
+	private void writeBlockGrip(BlockGrip grip)
+	{
+		this.writeBlockElement(grip);
+
+		this._writer.WriteBitLong(grip.ExpressionId1);
+		this._writer.WriteBitLong(grip.ExpressionId2);
+
+		this._writer.Write3BitDouble(grip.Location);
+
+		this._writer.WriteBit(grip.Cycling);
+		this._writer.WriteBitLong(grip.Value93);
+	}
+
+	private void writeBlockLinearGrip(BlockLinearGrip grip)
+	{
+		this.writeBlockGrip(grip);
+
+		this._writer.WriteBitDouble(grip.XDistance);
+		this._writer.WriteBitDouble(grip.YDistance);
+		this._writer.WriteBitDouble(grip.ZDistance);
+	}
+
+	private void writeBlockLinearParameter(BlockLinearParameter parameter)
+	{
+		this.writeBlock2PtParameter(parameter);
+
+		this._writer.WriteVariableText(parameter.Label);
+		this._writer.WriteVariableText(parameter.Description);
+		this._writer.WriteBitDouble(parameter.LabelOffset);
+	}
+
+	private void writeBlockParameter(BlockParameter parameter)
+	{
+		this.writeBlockElement(parameter);
+
+		this._writer.WriteBit(parameter.ShowProperties);
+		this._writer.WriteBit(parameter.ChainActions);
+	}
+
+	private void writeBlockRepresentationData(BlockRepresentationData representation)
+	{
+		this._writer.WriteBitShort(representation.Version);
+		this._writer.HandleReference(DwgReferenceType.HardPointer, representation.Block);
 	}
 
 	private void writeBookColor(BookColor color)
@@ -461,7 +537,7 @@ internal partial class DwgObjectWriter : DwgSectionIO
 			this._writer.HandleReference(DwgReferenceType.SoftOwnership, item.Handle);
 		}
 
-		this.addEntriesToWriter(dictionary);
+		this.addObjectsToWriter(entries);
 	}
 
 	private void writeDictionaryVariable(DictionaryVariable dictionaryVariable)
@@ -503,6 +579,120 @@ internal partial class DwgObjectWriter : DwgSectionIO
 		{
 			this.writeOsnapPointRef(association.FourthPointRef);
 		}
+	}
+
+	private void writeDynamicBlockPurgePreventer(DynamicBlockPurgePreventer purge)
+	{
+		this._writer.WriteBitShort(purge.Version);
+		this._writer.HandleReference(DwgReferenceType.HardPointer, purge.Block);
+	}
+
+	private void writeEvalConnection(EvalConnection connection)
+	{
+		this._writer.WriteBitLong(connection.Id);
+		this._writer.WriteVariableText(connection.Name);
+	}
+
+	private void writeEvalParameterProperty(EvalParameterProperty property)
+	{
+		this._writer.WriteBitShort((short)property.Connections.Count);
+		foreach (var connection in property.Connections)
+		{
+			this.writeEvalConnection(connection);
+		}
+	}
+
+	private void writeEvaluationExpression(EvaluationExpression parameter)
+	{
+		this._writer.WriteBitLong(0);
+
+		this._writer.WriteBitLong(parameter.Value98);
+		this._writer.WriteBitLong(parameter.Value99);
+
+		if (parameter.EvaluatedValue == null)
+		{
+			this._writer.WriteBitShort((short)DxfCode.Invalid);
+		}
+		else
+		{
+			this._writer.WriteBitShort((short)parameter.EvaluatedValue.Code);
+
+			switch (parameter.EvaluatedValue.GroupCodeValueType)
+			{
+				case GroupCodeValueType.String:
+				case GroupCodeValueType.ExtendedDataString:
+					this._writer.WriteVariableText((string)parameter.EvaluatedValue.Value);
+					break;
+				case GroupCodeValueType.Int16:
+				case GroupCodeValueType.ExtendedDataInt16:
+					this._writer.WriteBitShort((short)parameter.EvaluatedValue.Value);
+					break;
+				case GroupCodeValueType.Double:
+				case GroupCodeValueType.ExtendedDataDouble:
+					this._writer.WriteBitDouble((double)parameter.EvaluatedValue.Value);
+					break;
+				case GroupCodeValueType.Int32:
+				case GroupCodeValueType.Int64:
+				case GroupCodeValueType.ExtendedDataInt32:
+					this._writer.WriteBitLong((int)parameter.EvaluatedValue.Value);
+					break;
+				case GroupCodeValueType.Point3D:
+					this._writer.Write3BitDouble((XYZ)parameter.EvaluatedValue.Value);
+					break;
+				default:
+					throw new System.NotImplementedException($"[EvaluationExpression] Code not implemented {parameter.EvaluatedValue.GroupCodeValueType}");
+			}
+		}
+
+		this._writer.WriteBitLong(parameter.Id);
+	}
+
+	private void writeEvaluationGraph(EvaluationGraph eval)
+	{
+		this._writer.WriteBitLong(eval.Value96);
+		this._writer.WriteBitLong(eval.Value97);
+
+		var nodesArr = eval.Nodes.ToArray();
+		this._writer.WriteBitLong(nodesArr.Length);
+		for (int i = 0; i < nodesArr.Length; i++)
+		{
+			var node = nodesArr[i];
+
+			this._writer.WriteBitLong(i);
+			this._writer.WriteBitLong((int)nodesArr[i].Flags);
+			this._writer.WriteBitLong(node.Id);
+
+			this._writer.HandleReference(DwgReferenceType.HardOwnership, node.Expression);
+
+			this._writer.WriteBitLong(node.Data1);
+			this._writer.WriteBitLong(node.Data2);
+			this._writer.WriteBitLong(node.Data3);
+			this._writer.WriteBitLong(node.Data4);
+		}
+
+		var edgesArr = eval.Edges.ToArray();
+		this._writer.WriteBitLong(edgesArr.Length);
+		for (int i = 0; i < edgesArr.Length; i++)
+		{
+			var edge = edgesArr[i];
+
+			this._writer.WriteBitLong(i);
+			this._writer.WriteBitLong(edge.Flags);
+			this._writer.WriteBitLong(edge.TrackedCount);
+
+			this._writer.WriteBitLong(edge.FromNodeIndex);
+			this._writer.WriteBitLong(edge.ToNodeIndex);
+
+			this._writer.WriteBitLong(edge.Data1);
+			this._writer.WriteBitLong(edge.Data2);
+			this._writer.WriteBitLong(edge.Data3);
+			this._writer.WriteBitLong(edge.Data4);
+			this._writer.WriteBitLong(edge.Data5);
+		}
+
+		this.addObjectsToWriter(eval.Nodes
+			.Where(n => n.Expression != null)
+			.Select(n => n.Expression));
 	}
 
 	private void writeField(Field field)
@@ -1176,6 +1366,21 @@ internal partial class DwgObjectWriter : DwgSectionIO
 			case AcdbPlaceHolder acdbPlaceHolder:
 				this.writeAcdbPlaceHolder(acdbPlaceHolder);
 				break;
+			case BlockLinearParameter blockLinearParameter:
+				this.writeBlockLinearParameter(blockLinearParameter);
+				break;
+			case BlockRepresentationData blockRepresentation:
+				this.writeBlockRepresentationData(blockRepresentation);
+				break;
+			case BlockLinearGrip blockLinearGrip:
+				this.writeBlockLinearGrip(blockLinearGrip);
+				break;
+			case BlockGripLocationComponent blockGripLocationComponent:
+				this.writeBlockGripLocationComponent(blockGripLocationComponent);
+				break;
+			case BlockScaleAction blockScaleAction:
+				this.writeBlockScaleAction(blockScaleAction);
+				break;
 			case BookColor bookColor:
 				this.writeBookColor(bookColor);
 				break;
@@ -1190,6 +1395,12 @@ internal partial class DwgObjectWriter : DwgSectionIO
 				break;
 			case DimensionAssociation dimAssoc:
 				this.writeDimensionAssociation(dimAssoc);
+				break;
+			case DynamicBlockPurgePreventer dynamicBlockPurge:
+				this.writeDynamicBlockPurgePreventer(dynamicBlockPurge);
+				break;
+			case EvaluationGraph evaluationGraph:
+				this.writeEvaluationGraph(evaluationGraph);
 				break;
 			case GeoData geodata:
 				this.writeGeoData(geodata);
@@ -1255,6 +1466,56 @@ internal partial class DwgObjectWriter : DwgSectionIO
 		}
 
 		this.registerObject(obj);
+	}
+
+	private void writeBlockScaleAction(BlockScaleAction action)
+	{
+		this.writeBlockActionBasePt(action);
+
+		this.writeEvalConnection(action.ScaleConnection);
+		this.writeEvalConnection(action.XScaleConnection);
+		this.writeEvalConnection(action.YScaleConnection);
+
+		this._writer.WriteByte(action.ScaleType);
+	}
+
+	private void writeBlockActionBasePt(BlockActionBasePt action)
+	{
+		this.writeBlockAction(action);
+
+		this._writer.Write3BitDouble(action.BasePoint);
+
+		this.writeEvalConnection(action.UpdateBaseX);
+		this.writeEvalConnection(action.UpdateBaseY);
+
+		this._writer.WriteBit(action.Value280);
+		this._writer.Write3BitDouble(action.Value1012);
+	}
+
+	private void writeBlockAction(BlockAction action)
+	{
+		this.writeBlockElement(action);
+
+		this._writer.Write3BitDouble(action.LabelPosition);
+		
+		this._writer.WriteBitLong(action.Entities.Count);
+		foreach (Entities.Entity entity in action.Entities)
+		{
+			this._writer.HandleReference(DwgReferenceType.SoftPointer, entity);
+		}
+
+		this._writer.WriteBitLong(action.ParametersIds.Count);
+		foreach (int id in action.ParametersIds)
+		{
+			this._writer.WriteBitLong(id);
+		}
+	}
+
+	private void writeBlockGripLocationComponent(BlockGripLocationComponent grip)
+	{
+		this.writeEvaluationExpression(grip);
+
+		this.writeEvalConnection(grip.Connection);
 	}
 
 	private void writeObjectContextData(ObjectContextData objectContextData)

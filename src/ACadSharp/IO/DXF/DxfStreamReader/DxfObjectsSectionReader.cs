@@ -2238,7 +2238,7 @@ internal class DxfObjectsSectionReader : DxfSectionReaderBase
 	{
 		EvalConnection connection = new EvalConnection();
 		// No dynamic reader for codes 9x and 30x
-		connection.Id = this._reader.ValueAsLong;
+		connection.Id = this._reader.ValueAsInt;
 		this._reader.ReadNext();
 		connection.Name = this._reader.ValueAsString;
 

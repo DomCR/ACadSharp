@@ -5678,6 +5678,9 @@ namespace ACadSharp.IO.DWG
 				case DxfFileToken.ObjectBlockGripLocationComponent:
 					template = this.readBlockGripLocationComponent();
 					break;
+				case DxfFileToken.ObjectBlockLinearGrip:
+				template = 	this.readLinearBlockGrip();
+					break;
 				case DxfFileToken.ObjectBlockXYGrip:
 					template = new CadBlockGripTemplate(new BlockXYGrip());
 					this.readBlockGrip(template as CadBlockGripTemplate);

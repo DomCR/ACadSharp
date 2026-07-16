@@ -11,6 +11,8 @@ public class BlockScaleAction : BlockActionBasePt
 
 	public EvalConnection ScaleConnection { get; set; } = new EvalConnection();
 
+	public byte ScaleType { get; set; }
+
 	/// <inheritdoc/>
 	public override string SubclassMarker => DxfSubclassMarker.BlockScaleAction;
 

@@ -139,10 +139,12 @@ internal partial class DwgObjectReader : DwgSectionIO
 
 	private CadTemplate readBlockGripLocationComponent()
 	{
-		BlockGripLocationComponent gripLocationComponent = new BlockGripLocationComponent();
-		CadBlockGripLocationComponentTemplate template = new CadBlockGripLocationComponentTemplate(gripLocationComponent);
+		BlockGripLocationComponent grip = new BlockGripLocationComponent();
+		CadBlockGripLocationComponentTemplate template = new CadBlockGripLocationComponentTemplate(grip);
 
 		this.readEvaluationExpression(template);
+
+		grip.Connection = this.readEvalConnection();
 
 		return template;
 	}
@@ -234,20 +236,6 @@ internal partial class DwgObjectReader : DwgSectionIO
 		return template;
 	}
 
-	private CadTemplate readBlockScaleAction()
-	{
-		BlockScaleAction scaleAction = new();
-		CadBlockScaleActionTemplate template = new(scaleAction);
-
-		this.readBlockActionBasePt(template);
-
-		scaleAction.ScaleConnection = this.readEvalConnection();
-		scaleAction.XScaleConnection = this.readEvalConnection();
-		scaleAction.YScaleConnection = this.readEvalConnection();
-
-		return template;
-	}
-
 	private CadTemplate readBlockRotateAction()
 	{
 		BlockRotationAction rotationAction = new();
@@ -285,6 +273,22 @@ internal partial class DwgObjectReader : DwgSectionIO
 		blockRotationParameter.Value143 = this._mergedReaders.ReadBitDouble();
 
 		blockRotationParameter.Value175 = this._mergedReaders.ReadBitLong();
+
+		return template;
+	}
+
+	private CadTemplate readBlockScaleAction()
+	{
+		BlockScaleAction scaleAction = new();
+		CadBlockScaleActionTemplate template = new(scaleAction);
+
+		this.readBlockActionBasePt(template);
+
+		scaleAction.ScaleConnection = this.readEvalConnection();
+		scaleAction.XScaleConnection = this.readEvalConnection();
+		scaleAction.YScaleConnection = this.readEvalConnection();
+
+		scaleAction.ScaleType = this._mergedReaders.ReadByte();
 
 		return template;
 	}
@@ -393,11 +397,13 @@ internal partial class DwgObjectReader : DwgSectionIO
 	private CadTemplate readDynamicBlockPurgePreventer()
 	{
 		var purgePreventer = new DynamicBlockPurgePreventer();
-		var template = new CadNonGraphicalObjectTemplate(purgePreventer);
+		var template = new DynamicBlockPurgePreventerTemplate(purgePreventer);
 
 		this.readCommonNonEntityData(template);
 
 		purgePreventer.Version = this._mergedReaders.ReadBitShort();
+
+		template.BlockHandle = this.handleReference();
 
 		return template;
 	}
@@ -637,6 +643,20 @@ internal partial class DwgObjectReader : DwgSectionIO
 			//H 330 Field handle (soft pointer)
 			template.OwnedObjectsHandlers.Add(this.handleReference());
 		}
+
+		return template;
+	}
+
+	private CadTemplate readLinearBlockGrip()
+	{
+		var grip = new BlockLinearGrip();
+		var template = new CadBlockGripTemplate(grip);
+
+		this.readBlockGrip(template);
+
+		grip.XDistance = this._mergedReaders.ReadBitDouble();
+		grip.YDistance = this._mergedReaders.ReadBitDouble();
+		grip.ZDistance = this._mergedReaders.ReadBitDouble();
 
 		return template;
 	}
