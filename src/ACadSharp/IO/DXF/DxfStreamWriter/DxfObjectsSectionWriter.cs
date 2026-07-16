@@ -1176,11 +1176,6 @@ internal class DxfObjectsSectionWriter : DxfSectionWriterBase
 			this._writer.Write(92, n.Data2);
 			this._writer.Write(92, n.Data3);
 			this._writer.Write(92, n.Data4);
-
-			if (n.Expression != null)
-			{
-				this.Holder.Objects.Enqueue(n.Expression);
-			}
 		}
 
 		for (int i = 0; i < evaluationGraph.Edges.Count; i++)

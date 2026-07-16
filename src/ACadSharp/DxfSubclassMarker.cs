@@ -84,6 +84,8 @@ public static class DxfSubclassMarker
 
 	public const string BlockScaleAction = "AcDbBlockScaleAction";
 
+	public const string BlockStretchAction = "AcDbBlockStretchAction";
+
 	public const string BlockVisibilityGrip = "AcDbBlockVisibilityGrip";
 
 	public const string BlockVisibilityParameter = "AcDbBlockVisibilityParameter";

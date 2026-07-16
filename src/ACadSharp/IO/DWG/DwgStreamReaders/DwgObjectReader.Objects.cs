@@ -439,7 +439,7 @@ internal partial class DwgObjectReader : DwgSectionIO
 		this.readCommonNonEntityData(template);
 
 		//AcDbEvalExpr
-		var unknown = this._objectReader.ReadBitLong();
+		template.CadObject.Unknown = this._objectReader.ReadBitLong();
 
 		//98
 		template.CadObject.Value98 = this._objectReader.ReadBitLong();

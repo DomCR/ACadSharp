@@ -198,6 +198,8 @@ public static class DxfFileToken
 
 	public const string ObjectBlockScaleAction = "BLOCKSCALEACTION";
 
+	public const string ObjectBlockStretchAction = "BLOCKSTRETCHACTION";
+
 	public const string ObjectBlockVisibilityGrip = "BLOCKVISIBILITYGRIP";
 
 	public const string ObjectBlockVisibilityParameter = "BLOCKVISIBILITYPARAMETER";

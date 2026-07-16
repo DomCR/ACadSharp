@@ -30,4 +30,6 @@ public abstract class EvaluationExpression : NonGraphicalObject
 
 	[DxfCodeValue(99)]
 	public int Value99 { get; set; }
+
+	internal int Unknown { get; set; } = -1;
 }
