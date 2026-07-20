@@ -74,7 +74,7 @@ internal partial class DwgObjectWriter : DwgSectionIO
 		this._writer.HandleReference(DwgReferenceType.HardPointer, annotScaleObjectContextData.Scale);
 	}
 
-	private void writeBlock1PtParameter(BlockPointParameter parameter)
+	private void writeBlock1PtParameter(Block1PtParameter parameter)
 	{
 		this.writeBlockParameter(parameter);
 
@@ -230,11 +230,6 @@ internal partial class DwgObjectWriter : DwgSectionIO
 		this.writeEvalConnection(action.Connection);
 	}
 
-	private void writeBlockRotationGrip(BlockRotationGrip grip)
-	{
-		this.writeBlockGrip(grip);
-	}
-
 	private void writeBlockRotationParameter(BlockRotationParameter parameter)
 	{
 		this.writeBlock2PtParameter(parameter);
@@ -258,9 +253,26 @@ internal partial class DwgObjectWriter : DwgSectionIO
 		this._writer.WriteByte(action.ScaleType);
 	}
 
-	private void writeBlockXYGrip(BlockXYGrip grip)
+	private void writeBlockVisibilityParameter(BlockVisibilityParameter parameter)
 	{
-		this.writeBlockGrip(grip);
+		this.writeBlock1PtParameter(parameter);
+
+		this._writer.WriteBit(parameter.ChainActions);
+		this._writer.WriteVariableText(parameter.Label);
+		this._writer.WriteVariableText(parameter.Description);
+		this._writer.WriteBit(parameter.Value91);
+
+		this._writer.WriteBitLong(parameter.Entities.Count);
+		foreach (Entities.Entity e in parameter.Entities)
+		{
+			this._writer.HandleReference(DwgReferenceType.SoftPointer, e);
+		}
+
+		this._writer.WriteBitLong(parameter.States.Count);
+		foreach (var state in parameter.States.Values)
+		{
+			this.writeState(state);
+		}
 	}
 
 	private void writeBookColor(BookColor color)
@@ -1484,6 +1496,12 @@ internal partial class DwgObjectWriter : DwgSectionIO
 			case BlockPointParameter blockPointParameter:
 				this.writeBlockPointParameter(blockPointParameter);
 				break;
+			case BlockVisibilityParameter blockVisibilityParameter:
+				this.writeBlockVisibilityParameter(blockVisibilityParameter);
+				break;
+			case BlockVisibilityGrip blockVisibilityGrip:
+				this.writeBlockGrip(blockVisibilityGrip);
+				break;
 			case BlockRepresentationData blockRepresentation:
 				this.writeBlockRepresentationData(blockRepresentation);
 				break;
@@ -1491,10 +1509,10 @@ internal partial class DwgObjectWriter : DwgSectionIO
 				this.writeBlockLinearGrip(blockLinearGrip);
 				break;
 			case BlockRotationGrip blockRotationGrip:
-				this.writeBlockRotationGrip(blockRotationGrip);
+				this.writeBlockGrip(blockRotationGrip);
 				break;
 			case BlockXYGrip blockXYGrip:
-				this.writeBlockXYGrip(blockXYGrip);
+				this.writeBlockGrip(blockXYGrip);
 				break;
 			case BlockGripLocationComponent blockGripLocationComponent:
 				this.writeBlockGripLocationComponent(blockGripLocationComponent);
@@ -1860,6 +1878,23 @@ internal partial class DwgObjectWriter : DwgSectionIO
 		//clipbdtr 12BD 40 clip bound transformation matrix
 		//(double[4][3], column major order)
 		this.write4x3Matrix(filter.InsertTransform);
+	}
+
+	private void writeState(BlockVisibilityParameter.State state)
+	{
+		this._writer.WriteVariableText(state.Name);
+
+		this._writer.WriteBitLong(state.Entities.Count);
+		foreach (Entities.Entity entity in state.Entities)
+		{
+			this._writer.HandleReference(DwgReferenceType.SoftPointer, entity);
+		}
+
+		this._writer.WriteBitLong(state.Expressions.Count);
+		foreach (EvaluationExpression expression in state.Expressions)
+		{
+			this._writer.HandleReference(DwgReferenceType.SoftPointer, expression);
+		}
 	}
 
 	private void writeStringCadValue(string value)
