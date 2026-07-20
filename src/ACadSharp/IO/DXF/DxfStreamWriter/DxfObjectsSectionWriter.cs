@@ -832,16 +832,7 @@ internal class DxfObjectsSectionWriter : DxfSectionWriterBase
 
 		this._writer.Write(140, parameter.LabelOffset, map);
 
-		this._writer.Write(307, string.Empty);
-		this._writer.Write(96, (int)parameter.ValueSet.Type);
-		this._writer.Write(141, parameter.ValueSet.Minimum);
-		this._writer.Write(142, parameter.ValueSet.Maximum);
-		this._writer.Write(143, parameter.ValueSet.Increment);
-		this._writer.Write(175, parameter.ValueSet.AllowedValues.Count);
-		foreach (var item in parameter.ValueSet.AllowedValues)
-		{
-			this._writer.Write(144, item);
-		}
+		this.writeParameterValueSet(parameter.ValueSet, 307, 96, 141, 175);
 	}
 
 	private void writeBlockLookupParameter(BlockLookupParameter parameter)
@@ -917,8 +908,7 @@ internal class DxfObjectsSectionWriter : DxfSectionWriterBase
 
 		this._writer.Write(100, DxfSubclassMarker.BlockRotationAction);
 
-		this._writer.Write(94, rotationAction.Value94, map);
-		this._writer.Write(303, rotationAction.Value303, map);
+		this.writeEvalConnection(rotationAction.Connection, 94, 303);
 	}
 
 	private void writeBlockRotationGrip(BlockRotationGrip blockRotationGrip)
@@ -938,20 +928,14 @@ internal class DxfObjectsSectionWriter : DxfSectionWriterBase
 
 		this._writer.Write(100, DxfSubclassMarker.BlockRotationParameter);
 
-		this._writer.Write(305, parameter.Name, map);
+		this._writer.Write(305, parameter.Label, map);
 		this._writer.Write(306, parameter.Description, map);
 
 		this._writer.Write(1011, parameter.Point, map);
 
-		this._writer.Write(140, parameter.NameOffset, map);
+		this._writer.Write(140, parameter.LabelOffset, map);
 
-		this._writer.Write(307, parameter.Value307, map);
-
-		this._writer.Write(96, parameter.Value96, map);
-		this._writer.Write(141, parameter.Value141, map);
-		this._writer.Write(142, parameter.Value142, map);
-		this._writer.Write(143, parameter.Value143, map);
-		this._writer.Write(175, parameter.Value175, map);
+		this.writeParameterValueSet(parameter.ValueSet, 307, 96, 141, 175);
 	}
 
 	private void writeBlockScaleAction(BlockScaleAction scaleAction)
@@ -1095,6 +1079,12 @@ internal class DxfObjectsSectionWriter : DxfSectionWriterBase
 		}
 	}
 
+	private void writeDxfValuePair(DxfValuePair pair)
+	{
+		this._writer.Write(70, pair.Code);
+		this._writer.Write(pair.Code, pair.Value);
+	}
+
 	private void writeDynamicBlockPurge(DynamicBlockPurgePreventer dynamicBlockPurgePreventer)
 	{
 		DxfClassMap map = DxfClassMap.Create<DynamicBlockPurgePreventer>();
@@ -1148,12 +1138,6 @@ internal class DxfObjectsSectionWriter : DxfSectionWriterBase
 		}
 	}
 
-	private void writeDxfValuePair(DxfValuePair pair)
-	{
-		this._writer.Write(70, pair.Code);
-		this._writer.Write(pair.Code, pair.Value);
-	}
-
 	private void writeEvaluationGraph(EvaluationGraph evaluationGraph)
 	{
 		DxfClassMap map = DxfClassMap.Create<EvaluationGraph>();
@@ -1176,6 +1160,11 @@ internal class DxfObjectsSectionWriter : DxfSectionWriterBase
 			this._writer.Write(92, n.Data2);
 			this._writer.Write(92, n.Data3);
 			this._writer.Write(92, n.Data4);
+
+			if (n.Expression != null)
+			{
+				this.Holder.Objects.Enqueue(n.Expression);
+			}
 		}
 
 		for (int i = 0; i < evaluationGraph.Edges.Count; i++)
@@ -1276,6 +1265,20 @@ internal class DxfObjectsSectionWriter : DxfSectionWriterBase
 		this._writer.Write(10, osnapPoint.OsnapPoint);
 
 		this._writer.Write(75, (short)(osnapPoint.HasLastPointRef ? 1 : 0));
+	}
+
+	private void writeParameterValueSet(ParameterValueSet valueSet, int startCode, int typeCode, int valueCode, int countCode)
+	{
+		this._writer.Write(startCode, string.Empty);
+		this._writer.Write(typeCode, (int)valueSet.Type);
+		this._writer.Write(valueCode, valueSet.Minimum);
+		this._writer.Write(valueCode + 1, valueSet.Maximum);
+		this._writer.Write(valueCode + 2, valueSet.Increment);
+		this._writer.Write(countCode, valueSet.AllowedValues.Count);
+		foreach (var item in valueSet.AllowedValues)
+		{
+			this._writer.Write(valueCode + 3, item);
+		}
 	}
 
 	private void writeSortentsTable(SortEntitiesTable e)

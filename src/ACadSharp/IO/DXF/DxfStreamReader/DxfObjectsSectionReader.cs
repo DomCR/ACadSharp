@@ -2159,9 +2159,13 @@ internal class DxfObjectsSectionReader : DxfSectionReaderBase
 	private bool readBlockRotationAction(CadTemplate template, DxfMap map)
 	{
 		CadBlockRotationActionTemplate tmp = template as CadBlockRotationActionTemplate;
+		BlockRotationAction action = tmp.CadObject as BlockRotationAction;
 
 		switch (this._reader.Code)
 		{
+			case 94:
+				action.Connection = this.readEvalConnection();
+				return true;
 			default:
 				if (!this.tryAssignCurrentValue(template.CadObject, map.SubClasses[DxfSubclassMarker.BlockRotationAction]))
 				{
@@ -2351,9 +2355,13 @@ internal class DxfObjectsSectionReader : DxfSectionReaderBase
 	private bool readBlockRotationParameter(CadTemplate template, DxfMap map)
 	{
 		var tmp = template as CadBlockRotationParameterTemplate;
+		BlockRotationParameter rotationPrameter = tmp.CadObject as BlockRotationParameter;
 
 		switch (this._reader.Code)
 		{
+			case 307:
+				rotationPrameter.ValueSet = this.readParameterValueSet();
+				return true;
 			default:
 				if (!this.tryAssignCurrentValue(template.CadObject, map))
 				{

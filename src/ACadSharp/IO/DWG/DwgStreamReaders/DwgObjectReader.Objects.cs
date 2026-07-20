@@ -243,8 +243,7 @@ internal partial class DwgObjectReader : DwgSectionIO
 
 		this.readBlockActionBasePt(template);
 
-		rotationAction.Value94 = this._mergedReaders.ReadBitLong();
-		rotationAction.Value303 = this._mergedReaders.ReadVariableText();
+		rotationAction.Connection = this.readEvalConnection();
 
 		return template;
 	}
@@ -259,20 +258,13 @@ internal partial class DwgObjectReader : DwgSectionIO
 		//1011 1021 1031
 		blockRotationParameter.Point = this._mergedReaders.Read3BitDouble();
 		//305
-		blockRotationParameter.Name = this._mergedReaders.ReadVariableText();
+		blockRotationParameter.Label = this._mergedReaders.ReadVariableText();
 		//306
 		blockRotationParameter.Description = this._mergedReaders.ReadVariableText();
 		//140
-		blockRotationParameter.NameOffset = this._mergedReaders.ReadBitDouble();
+		blockRotationParameter.LabelOffset = this._mergedReaders.ReadBitDouble();
 
-		//307 missing text?
-
-		blockRotationParameter.Value96 = this._mergedReaders.ReadBitLong();
-		blockRotationParameter.Value141 = this._mergedReaders.ReadBitDouble();
-		blockRotationParameter.Value142 = this._mergedReaders.ReadBitDouble();
-		blockRotationParameter.Value143 = this._mergedReaders.ReadBitDouble();
-
-		blockRotationParameter.Value175 = this._mergedReaders.ReadBitLong();
+		blockRotationParameter.ValueSet = this.readParameterValueSet();
 
 		return template;
 	}

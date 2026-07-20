@@ -18,10 +18,10 @@ public class BlockRotationParameter : Block2PtParameter
 	public string Description { get; set; }
 
 	[DxfCodeValue(305)]
-	public string Name { get; set; }
+	public string Label { get; set; }
 
 	[DxfCodeValue(140)]
-	public double NameOffset { get; set; }
+	public double LabelOffset { get; set; }
 
 	/// <inheritdoc/>
 	public override string ObjectName => DxfFileToken.ObjectBlockRotationParameter;
@@ -32,21 +32,5 @@ public class BlockRotationParameter : Block2PtParameter
 	/// <inheritdoc/>
 	public override string SubclassMarker => DxfSubclassMarker.BlockRotationParameter;
 
-	[DxfCodeValue(141)]
-	public double Value141 { get; set; }
-
-	[DxfCodeValue(142)]
-	public double Value142 { get; set; }
-
-	[DxfCodeValue(143)]
-	public double Value143 { get; set; }
-
-	[DxfCodeValue(175)]
-	public int Value175 { get; set; }
-
-	[DxfCodeValue(307)]
-	public string Value307 { get; set; }
-
-	[DxfCodeValue(96)]
-	public int Value96 { get; set; }
+	public ParameterValueSet ValueSet { get; set; }
 }

@@ -191,6 +191,23 @@ internal partial class DwgObjectWriter : DwgSectionIO
 		this._writer.HandleReference(DwgReferenceType.HardPointer, representation.Block);
 	}
 
+	private void writeBlockRotationGrip(BlockRotationGrip grip)
+	{
+		this.writeBlockGrip(grip);
+	}
+
+	private void writeBlockRotationParameter(BlockRotationParameter parameter)
+	{
+		this.writeBlock2PtParameter(parameter);
+
+		this._writer.Write3BitDouble(parameter.Point);
+		this._writer.WriteVariableText(parameter.Label);
+		this._writer.WriteVariableText(parameter.Description);
+		this._writer.WriteBitDouble(parameter.LabelOffset);
+
+		this.writeParameterValueSet(parameter.ValueSet);
+	}
+
 	private void writeBlockScaleAction(BlockScaleAction action)
 	{
 		this.writeBlockActionBasePt(action);
@@ -200,6 +217,11 @@ internal partial class DwgObjectWriter : DwgSectionIO
 		this.writeEvalConnection(action.YScaleConnection);
 
 		this._writer.WriteByte(action.ScaleType);
+	}
+
+	private void writeBlockXYGrip(BlockXYGrip grip)
+	{
+		this.writeBlockGrip(grip);
 	}
 
 	private void writeBookColor(BookColor color)
@@ -724,7 +746,6 @@ internal partial class DwgObjectWriter : DwgSectionIO
 		this._writer.WriteBitLong(edgesArr.Length);
 		for (int i = 0; i < edgesArr.Length; i++)
 		{
-
 			this._writer.WriteBitLong(i);
 			this._writer.WriteBitLong(edgesArr[i].Flags);
 			this._writer.WriteBitLong(edgesArr[i].TrackedCount);
@@ -1418,17 +1439,29 @@ internal partial class DwgObjectWriter : DwgSectionIO
 			case BlockLinearParameter blockLinearParameter:
 				this.writeBlockLinearParameter(blockLinearParameter);
 				break;
+			case BlockRotationParameter blockRotationParameter:
+				this.writeBlockRotationParameter(blockRotationParameter);
+				break;
 			case BlockRepresentationData blockRepresentation:
 				this.writeBlockRepresentationData(blockRepresentation);
 				break;
 			case BlockLinearGrip blockLinearGrip:
 				this.writeBlockLinearGrip(blockLinearGrip);
 				break;
+			case BlockRotationGrip blockRotationGrip:
+				this.writeBlockRotationGrip(blockRotationGrip);
+				break;
+			case BlockXYGrip blockXYGrip:
+				this.writeBlockXYGrip(blockXYGrip);
+				break;
 			case BlockGripLocationComponent blockGripLocationComponent:
 				this.writeBlockGripLocationComponent(blockGripLocationComponent);
 				break;
 			case BlockScaleAction blockScaleAction:
 				this.writeBlockScaleAction(blockScaleAction);
+				break;
+			case BlockRotationAction blockRotationAction:
+				this.writeBlockRotationAction(blockRotationAction);
 				break;
 			case BookColor bookColor:
 				this.writeBookColor(bookColor);
@@ -1515,6 +1548,13 @@ internal partial class DwgObjectWriter : DwgSectionIO
 		}
 
 		this.registerObject(obj);
+	}
+
+	private void writeBlockRotationAction(BlockRotationAction action)
+	{
+		this.writeBlockActionBasePt(action);
+
+		this.writeEvalConnection(action.Connection);
 	}
 
 	private void writeObjectContextData(ObjectContextData objectContextData)
