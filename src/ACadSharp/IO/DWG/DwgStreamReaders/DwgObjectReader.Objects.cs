@@ -58,11 +58,11 @@ internal partial class DwgObjectReader : DwgSectionIO
 		template.Block2PtParameter.SecondPointDisplacementX = this.readEvalParameterProperty();
 		template.Block2PtParameter.SecondPointDisplacementY = this.readEvalParameterProperty();
 
-		for (int k = 0; k < 4; k++)
-		{
-			//91 values
-			template.Block2PtParameter.GripIds[k] = this._mergedReaders.ReadBitLong();
-		}
+		//91 values
+		template.Block2PtParameter.GripIds.Add(this._mergedReaders.ReadBitLong());
+		template.Block2PtParameter.GripIds.Add(this._mergedReaders.ReadBitLong());
+		template.Block2PtParameter.GripIds.Add(this._mergedReaders.ReadBitLong());
+		template.Block2PtParameter.GripIds.Add(this._mergedReaders.ReadBitLong());
 
 		//177
 		template.Block2PtParameter.BaseLocation = (LinearParameterBaseLocation)this._mergedReaders.ReadBitShort();

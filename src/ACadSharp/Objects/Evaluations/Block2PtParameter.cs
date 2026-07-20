@@ -1,5 +1,6 @@
 ﻿using ACadSharp.Attributes;
 using CSMath;
+using System.Collections.Generic;
 
 namespace ACadSharp.Objects.Evaluations;
 
@@ -39,7 +40,7 @@ public abstract class Block2PtParameter : BlockParameter
 	/// </remarks>
 	[DxfCollectionCodeValue(91)]
 	[DxfCodeValue(DxfReferenceType.Count, 170)]
-	public long[] GripIds { get; } = new long[4];
+	public List<long> GripIds { get; } = new();
 
 	/// <summary>
 	/// Gets or sets the second point.

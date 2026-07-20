@@ -20,15 +20,3 @@ public class BlockScaleAction : BlockActionBasePt
 
 	public EvalConnection YScaleConnection { get; set; } = new EvalConnection();
 }
-
-[DxfName(DxfFileToken.ObjectBlockStretchAction)]
-[DxfSubClass(DxfSubclassMarker.BlockStretchAction)]
-public class BlockStretchAction : BlockActionBasePt
-{
-	/// <inheritdoc/>
-	public override string ObjectName => DxfFileToken.ObjectBlockStretchAction;
-
-	/// <inheritdoc/>
-	public override string SubclassMarker => DxfSubclassMarker.BlockStretchAction;
-
-}

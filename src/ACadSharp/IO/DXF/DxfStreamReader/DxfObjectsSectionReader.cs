@@ -144,6 +144,8 @@ internal class DxfObjectsSectionReader : DxfSectionReaderBase
 				return this.readObjectCodes<BlockMoveAction>(new CadBlockMoveActionTemplate(), this.readBlockMoveAction);
 			case DxfFileToken.ObjectBlockScaleAction:
 				return this.readObjectCodes<BlockScaleAction>(new CadBlockScaleActionTemplate(), this.readBlockScaleAction);
+			case DxfFileToken.ObjectBlockStretchAction:
+				return this.readObjectCodes<BlockStretchAction>(new CadBlockActionTemplate(new BlockStretchAction()), this.readBlockStretchAction);
 			case DxfFileToken.ObjectBlockRotateAction:
 				return this.readObjectCodes<BlockRotationAction>(new CadBlockRotationActionTemplate(), this.readBlockRotationAction);
 			case DxfFileToken.ObjectBlockPointParameter:
@@ -181,6 +183,22 @@ internal class DxfObjectsSectionReader : DxfSectionReaderBase
 				while (this._reader.DxfCode != DxfCode.Start);
 
 				return unknownEntityTemplate;
+		}
+	}
+
+	private bool readBlockStretchAction(CadTemplate template, DxfMap map)
+	{
+		CadBlockActionTemplate tmp = template as CadBlockActionTemplate;
+		BlockStretchAction action = tmp.CadObject as BlockStretchAction;
+
+		switch (this._reader.Code)
+		{
+			default:
+				if (!this.tryAssignCurrentValue(template.CadObject, map.SubClasses[DxfSubclassMarker.BlockStretchAction]))
+				{
+					return this.readBlockAction(template, map);
+				}
+				return true;
 		}
 	}
 
@@ -2195,13 +2213,8 @@ internal class DxfObjectsSectionReader : DxfSectionReaderBase
 
 		switch (this._reader.Code)
 		{
-			case 170:
-				short n = this._reader.ValueAsShort;
-				for (int i = 0; i < n; i++)
-				{
-					this._reader.ReadNext();
-					tmp.Block2PtParameter.GripIds[i] = this._reader.ValueAsShort;
-				}
+			case 91:
+				tmp.Block2PtParameter.GripIds.Add(this._reader.ValueAsLong);
 				return true;
 			case 171:
 				this.readEvalParameterProperty(tmp.Block2PtParameter.FirstPointDisplacementX);
