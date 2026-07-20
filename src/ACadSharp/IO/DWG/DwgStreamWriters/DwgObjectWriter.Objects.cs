@@ -10,7 +10,6 @@ using System.Collections.Generic;
 using System.Globalization;
 using System.IO;
 using System.Linq;
-using static System.Collections.Specialized.BitVector32;
 
 namespace ACadSharp.IO.DWG;
 
@@ -73,6 +72,18 @@ internal partial class DwgObjectWriter : DwgSectionIO
 	private void writeAnnotScaleObjectContextData(AnnotScaleObjectContextData annotScaleObjectContextData)
 	{
 		this._writer.HandleReference(DwgReferenceType.HardPointer, annotScaleObjectContextData.Scale);
+	}
+
+	private void writeBlock1PtParameter(BlockPointParameter parameter)
+	{
+		this.writeBlockParameter(parameter);
+
+		this._writer.Write3BitDouble(parameter.Location);
+
+		this.writeEvalParameterProperty(parameter.DisplacementX);
+		this.writeEvalParameterProperty(parameter.DisplacementY);
+
+		this._writer.WriteBitLong((int)parameter.GripId);
 	}
 
 	private void writeBlock2PtParameter(Block2PtParameter parameter)
@@ -177,6 +188,18 @@ internal partial class DwgObjectWriter : DwgSectionIO
 		this.writeParameterValueSet(parameter.ValueSet);
 	}
 
+	private void writeBlockMoveAction(BlockMoveAction action)
+	{
+		this.writeBlockAction(action);
+
+		this.writeEvalConnection(action.XDelta);
+		this.writeEvalConnection(action.YDelta);
+
+		this._writer.WriteBitDouble(action.DistanceMultiplier);
+		this._writer.WriteBitDouble(action.AngleOffset);
+		this._writer.WriteByte(action.UnknownFlag);
+	}
+
 	private void writeBlockParameter(BlockParameter parameter)
 	{
 		this.writeBlockElement(parameter);
@@ -185,10 +208,26 @@ internal partial class DwgObjectWriter : DwgSectionIO
 		this._writer.WriteBit(parameter.ChainActions);
 	}
 
+	private void writeBlockPointParameter(BlockPointParameter parameter)
+	{
+		this.writeBlock1PtParameter(parameter);
+
+		this._writer.WriteVariableText(parameter.Label);
+		this._writer.WriteVariableText(parameter.Description);
+		this._writer.Write3BitDouble(parameter.LabelPosition);
+	}
+
 	private void writeBlockRepresentationData(BlockRepresentationData representation)
 	{
 		this._writer.WriteBitShort(representation.Version);
 		this._writer.HandleReference(DwgReferenceType.HardPointer, representation.Block);
+	}
+
+	private void writeBlockRotationAction(BlockRotationAction action)
+	{
+		this.writeBlockActionBasePt(action);
+
+		this.writeEvalConnection(action.Connection);
 	}
 
 	private void writeBlockRotationGrip(BlockRotationGrip grip)
@@ -1442,6 +1481,9 @@ internal partial class DwgObjectWriter : DwgSectionIO
 			case BlockRotationParameter blockRotationParameter:
 				this.writeBlockRotationParameter(blockRotationParameter);
 				break;
+			case BlockPointParameter blockPointParameter:
+				this.writeBlockPointParameter(blockPointParameter);
+				break;
 			case BlockRepresentationData blockRepresentation:
 				this.writeBlockRepresentationData(blockRepresentation);
 				break;
@@ -1462,6 +1504,9 @@ internal partial class DwgObjectWriter : DwgSectionIO
 				break;
 			case BlockRotationAction blockRotationAction:
 				this.writeBlockRotationAction(blockRotationAction);
+				break;
+			case BlockMoveAction blockMoveAction:
+				this.writeBlockMoveAction(blockMoveAction);
 				break;
 			case BookColor bookColor:
 				this.writeBookColor(bookColor);
@@ -1548,13 +1593,6 @@ internal partial class DwgObjectWriter : DwgSectionIO
 		}
 
 		this.registerObject(obj);
-	}
-
-	private void writeBlockRotationAction(BlockRotationAction action)
-	{
-		this.writeBlockActionBasePt(action);
-
-		this.writeEvalConnection(action.Connection);
 	}
 
 	private void writeObjectContextData(ObjectContextData objectContextData)
