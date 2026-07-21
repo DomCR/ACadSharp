@@ -509,7 +509,7 @@ internal class DxfObjectsSectionReader : DxfSectionReaderBase
 				action.EndYDelta = this.readEvalConnection();
 				return true;
 			default:
-				if (!this.tryAssignCurrentValue(template.CadObject, map))
+				if (!this.tryAssignCurrentValue(template.CadObject, map.SubClasses[DxfSubclassMarker.BlockStretchAction]))
 				{
 					return this.readBlockAction(template, map);
 				}

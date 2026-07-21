@@ -423,6 +423,9 @@ internal class DxfObjectsSectionWriter : DxfSectionWriterBase
 			case BlockScaleAction scaleAction:
 				this.writeBlockScaleAction(scaleAction);
 				break;
+			case BlockLookupAction lookupAction:
+				this.writeBlockLookupAction(lookupAction);
+				break;
 			case BlockRotationParameter blockRotationParameter:
 				this.writeBlockRotationParameter(blockRotationParameter);
 				break;
@@ -524,6 +527,44 @@ internal class DxfObjectsSectionWriter : DxfSectionWriterBase
 		}
 
 		this.writeExtendedData(co.ExtendedData);
+	}
+
+	private void writeBlockLookupAction(BlockLookupAction lookupAction)
+	{
+		DxfClassMap map = DxfClassMap.Create<BlockLookupAction>();
+
+		this.writeBlockAction(lookupAction);
+
+		this._writer.Write(100, DxfSubclassMarker.BlockLookupAction);
+
+		int nrows = lookupAction.Columns.FirstOrDefault()?.Rows.Count ?? 0;
+		int ncols = lookupAction.Columns.Count;
+
+		this._writer.Write(92, nrows);
+		this._writer.Write(93, ncols);
+
+		this._writer.Write(301, string.Empty);
+		foreach (var col in lookupAction.Columns)
+		{
+			foreach (var row in col.Rows)
+			{
+				this._writer.Write(302, row);
+			}
+		}
+
+		foreach (var col in lookupAction.Columns)
+		{
+			this._writer.Write(303, string.Empty);
+			this._writer.Write(94, col.NodeId);
+			this._writer.Write(95, col.ValueType);
+			this._writer.Write(96, col.Type);
+			this._writer.Write(282, (byte)(col.IsLookupProperty ? 1 : 0));
+			this._writer.Write(305, col.UnmatchedName);
+			this._writer.Write(281, (byte)(col.IsReadOnly ? 0 : 1));
+			this._writer.Write(304, col.ConnectionName);
+		}
+
+		this._writer.Write(280, (byte)(lookupAction.UnknownFlag ? 1 : 0));
 	}
 
 	protected void writePdfUnderlayDefinition(PdfUnderlayDefinition definition)
@@ -977,7 +1018,7 @@ internal class DxfObjectsSectionWriter : DxfSectionWriterBase
 		this._writer.Write(100, DxfSubclassMarker.BlockStretchAction);
 
 		this.writeEvalConnection(stretchAction.EndXDelta, 92, 301);
-		this.writeEvalConnection(stretchAction.EndYDelta, 92, 301);
+		this.writeEvalConnection(stretchAction.EndYDelta, 93, 302);
 
 		this._writer.Write(72, stretchAction.Boundary.Count, map);
 		foreach (var pt in stretchAction.Boundary)
