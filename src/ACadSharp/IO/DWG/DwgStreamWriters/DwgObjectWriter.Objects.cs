@@ -10,6 +10,7 @@ using System.Collections.Generic;
 using System.Globalization;
 using System.IO;
 using System.Linq;
+using static System.Collections.Specialized.BitVector32;
 
 namespace ACadSharp.IO.DWG;
 
@@ -188,6 +189,15 @@ internal partial class DwgObjectWriter : DwgSectionIO
 		this.writeParameterValueSet(parameter.ValueSet);
 	}
 
+	private void writeBlockLookupParameter(BlockLookupParameter parameter)
+	{
+		this.writeBlock1PtParameter(parameter);
+
+		this._writer.WriteBitLong(parameter.ActionId);
+		this._writer.WriteVariableText(parameter.Label);
+		this._writer.WriteVariableText(parameter.Description);
+	}
+
 	private void writeBlockMoveAction(BlockMoveAction action)
 	{
 		this.writeBlockAction(action);
@@ -251,6 +261,46 @@ internal partial class DwgObjectWriter : DwgSectionIO
 		this.writeEvalConnection(action.YScaleConnection);
 
 		this._writer.WriteByte(action.ScaleType);
+	}
+
+	private void writeBlockStretchAction(BlockStretchAction stretchAction)
+	{
+		this.writeBlockAction(stretchAction);
+
+		this.writeEvalConnection(stretchAction.EndXDelta);
+		this.writeEvalConnection(stretchAction.EndYDelta);
+
+		this._writer.WriteBitLong(stretchAction.Boundary.Count);
+		foreach (XY pt in stretchAction.Boundary)
+		{
+			this._writer.Write2RawDouble(pt);
+		}
+
+		this._writer.WriteBitLong(stretchAction.StretchBindings.Count);
+		foreach (BlockStretchAction.StretchBind bind in stretchAction.StretchBindings)
+		{
+			this._writer.HandleReference(DwgReferenceType.SoftPointer, bind.Entity);
+			this._writer.WriteBitLong(bind.PointIndexes.Count);
+			foreach (int ptIndex in bind.PointIndexes)
+			{
+				this._writer.WriteBitLong(ptIndex);
+			}
+		}
+
+		this._writer.WriteBitLong(stretchAction.StretchNodes.Count);
+		foreach (BlockStretchAction.StretchNode stretchNode in stretchAction.StretchNodes)
+		{
+			this._writer.WriteBitLong(stretchNode.NodeId);
+			this._writer.WriteBitLong(stretchNode.PointIndexes.Count);
+			foreach (int ptIndex in stretchNode.PointIndexes)
+			{
+				this._writer.WriteBitLong(ptIndex);
+			}
+		}
+
+		this._writer.WriteBitDouble(stretchAction.DistanceMultiplier);
+		this._writer.WriteBitDouble(stretchAction.AngleOffset);
+		this._writer.WriteByte(stretchAction.UnknownFlag);
 	}
 
 	private void writeBlockVisibilityParameter(BlockVisibilityParameter parameter)
@@ -1499,6 +1549,9 @@ internal partial class DwgObjectWriter : DwgSectionIO
 			case BlockVisibilityParameter blockVisibilityParameter:
 				this.writeBlockVisibilityParameter(blockVisibilityParameter);
 				break;
+			case BlockLookupParameter blockLookupParameter:
+				this.writeBlockLookupParameter(blockLookupParameter);
+				break;
 			case BlockVisibilityGrip blockVisibilityGrip:
 				this.writeBlockGrip(blockVisibilityGrip);
 				break;
@@ -1514,6 +1567,9 @@ internal partial class DwgObjectWriter : DwgSectionIO
 			case BlockXYGrip blockXYGrip:
 				this.writeBlockGrip(blockXYGrip);
 				break;
+			case BlockLookupGrip blockLookupGrip:
+				this.writeBlockGrip(blockLookupGrip);
+				break;
 			case BlockGripLocationComponent blockGripLocationComponent:
 				this.writeBlockGripLocationComponent(blockGripLocationComponent);
 				break;
@@ -1525,6 +1581,12 @@ internal partial class DwgObjectWriter : DwgSectionIO
 				break;
 			case BlockMoveAction blockMoveAction:
 				this.writeBlockMoveAction(blockMoveAction);
+				break;
+			case BlockStretchAction blockStretchAction:
+				this.writeBlockStretchAction(blockStretchAction);
+				break;
+			case BlockLookupAction blockLookupAction:
+				this.writeBlockLookupAction(blockLookupAction);
 				break;
 			case BookColor bookColor:
 				this.writeBookColor(bookColor);
@@ -1611,6 +1673,43 @@ internal partial class DwgObjectWriter : DwgSectionIO
 		}
 
 		this.registerObject(obj);
+	}
+
+	private void writeBlockLookupAction(BlockLookupAction lookupAction)
+	{
+		this.writeBlockAction(lookupAction);
+
+		int nrows = lookupAction.Columns.FirstOrDefault()?.Rows.Count ?? 0;
+		int ncols = lookupAction.Columns.Count;
+
+		this._writer.WriteBitLong(nrows);
+		this._writer.WriteBitLong(ncols);
+
+		for (int i = 0; i < nrows; i++)
+		{
+			for (int j = 0; j < ncols; j++)
+			{
+				this._writer.WriteVariableText(lookupAction.Columns[j].Rows[i]);
+			}
+		}
+
+		foreach (var column in lookupAction.Columns)
+		{
+			this.writeLookupActionColumn(column);
+		}
+
+		this._writer.WriteBit(lookupAction.UnknownFlag);
+	}
+
+	private void writeLookupActionColumn(BlockLookupAction.ColumnData col)
+	{
+		this._writer.WriteBitLong(col.NodeId);
+		this._writer.WriteBitLong(col.ValueType);
+		this._writer.WriteBitLong(col.Type);
+		this._writer.WriteBit(col.IsLookupProperty);
+		this._writer.WriteVariableText(col.UnmatchedName);
+		this._writer.WriteBit(!col.IsReadOnly);
+		this._writer.WriteVariableText(col.ConnectionName);
 	}
 
 	private void writeObjectContextData(ObjectContextData objectContextData)

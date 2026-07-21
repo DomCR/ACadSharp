@@ -7,6 +7,7 @@ using CSMath;
 using System;
 using System.Collections.Generic;
 using System.Linq;
+using static ACadSharp.Entities.TableEntity;
 
 namespace ACadSharp.IO.DXF;
 
@@ -544,11 +545,11 @@ internal class DxfObjectsSectionWriter : DxfSectionWriterBase
 		this._writer.Write(93, ncols);
 
 		this._writer.Write(301, string.Empty);
-		foreach (var col in lookupAction.Columns)
+		for (int i = 0; i < nrows; i++)
 		{
-			foreach (var row in col.Rows)
+			for (int j = 0; j < ncols; j++)
 			{
-				this._writer.Write(302, row);
+				this._writer.Write(302, lookupAction.Columns[j].Rows[i]);
 			}
 		}
 
