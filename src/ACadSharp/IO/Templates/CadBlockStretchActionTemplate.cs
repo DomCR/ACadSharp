@@ -19,7 +19,7 @@ internal class CadBlockStretchActionTemplate : CadBlockActionTemplate
 
 		BlockStretchAction stretchAction = this.CadObject as BlockStretchAction;
 
-		foreach (var item in Bindings)
+		foreach (var item in this.Bindings)
 		{
 			if(builder.TryGetCadObject<Entity>(item.Key, out var entity))
 			{

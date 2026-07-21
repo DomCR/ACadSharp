@@ -1790,7 +1790,7 @@ internal class DxfObjectsSectionReader : DxfSectionReaderBase
 				this._reader.ExpectedCode(96);
 				col.Type = this._reader.ValueAsInt;
 				this._reader.ExpectedCode(282);
-				col.PropertyType = this._reader.ValueAsInt;
+				col.IsLookupProperty = this._reader.ValueAsShort == 1;
 				this._reader.ExpectedCode(305);
 				col.UnmatchedName = this._reader.ValueAsString;
 				this._reader.ExpectedCode(281);
@@ -2031,7 +2031,7 @@ internal class DxfObjectsSectionReader : DxfSectionReaderBase
 				return this.readObjectCodes<BlockLookupGrip>(new CadBlockGripTemplate(new BlockLookupGrip()), this.readBlockGripSubclass);
 			case DxfFileToken.ObjectBlockRotationGrip:
 				return this.readObjectCodes<BlockRotationGrip>(new CadBlockGripTemplate(new BlockRotationGrip()), this.readBlockGripSubclass);
-			case DxfFileToken.ObjectLookupAction:
+			case DxfFileToken.ObjectBlockLookupAction:
 				return this.readObjectCodes<BlockLookupAction>(new CadBlockLookupActionTemplate(), this.readLookupAction);
 			case DxfFileToken.ObjectBlockMoveAction:
 				return this.readObjectCodes<BlockMoveAction>(new CadBlockMoveActionTemplate(), this.readBlockMoveAction);

@@ -242,8 +242,6 @@ public static class DxfFileToken
 
 	public const string ObjectLayout = "LAYOUT";
 
-	public const string ObjectLookupAction = "BLOCKLOOKUPACTION";
-
 	public const string ObjectMaterial = "MATERIAL";
 
 	public const string ObjectMLeaderContextData = "ACDB_MLEADEROBJECTCONTEXTDATA_CLASS";

@@ -5693,6 +5693,10 @@ namespace ACadSharp.IO.DWG
 					template = new CadBlockGripTemplate(new BlockVisibilityGrip());
 					this.readBlockGrip(template as CadBlockGripTemplate);
 					break;
+				case DxfFileToken.ObjectBlockLookupGrip:
+					template = new CadBlockGripTemplate(new BlockLookupGrip());
+					this.readBlockGrip(template as CadBlockGripTemplate);
+					break;
 				case DxfFileToken.ObjectBlockFlipAction:
 					template = this.readBlockFlipAction();
 					break;
@@ -5704,6 +5708,12 @@ namespace ACadSharp.IO.DWG
 					break;
 				case DxfFileToken.ObjectBlockMoveAction:
 					template = this.readBlockMoveAction();
+					break;
+				case DxfFileToken.ObjectBlockLookupAction:
+					template = this.readBlockLookupAction();
+					break;
+				case DxfFileToken.ObjectBlockStretchAction:
+					template = this.readBlockStretchAction();
 					break;
 				case DxfFileToken.ObjectBlockPointParameter:
 					template = this.readBlockPointParameter();

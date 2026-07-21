@@ -8,11 +8,11 @@ public partial class BlockLookupAction
 	{
 		public string ConnectionName { get; set; }
 
+		public bool IsLookupProperty { get; set; }
+
 		public bool IsReadOnly { get; set; }
 
 		public int NodeId { get; set; }
-
-		public int PropertyType { get; set; }
 
 		public List<string> Rows { get; private set; } = new();
 

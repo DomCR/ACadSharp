@@ -168,6 +168,31 @@ internal partial class DwgObjectReader : DwgSectionIO
 		return template;
 	}
 
+	private CadTemplate readBlockLookupAction()
+	{
+		var lookupAction = new BlockLookupAction();
+		CadBlockLookupActionTemplate template = new CadBlockLookupActionTemplate(lookupAction);
+
+		this.readBlockAction(template);
+
+		template.NumberOfRows = this._mergedReaders.ReadBitLong();
+		template.NumberOfColumns = this._mergedReaders.ReadBitLong();
+
+		for (int i = 0; i < template.NumberOfRows * template.NumberOfColumns; i++)
+		{
+			template.RowValues.Add(this._mergedReaders.ReadVariableText());
+		}
+
+		for (int j = 0; j < template.NumberOfColumns; j++)
+		{
+			lookupAction.Columns.Add(this.readLookupActionColumn());
+		}
+
+		lookupAction.UnknownFlag = this._mergedReaders.ReadBit();
+
+		return template;
+	}
+
 	private CadTemplate readBlockLookupParameter()
 	{
 		BlockLookupParameter blockLookupParameter = new BlockLookupParameter();
@@ -281,6 +306,58 @@ internal partial class DwgObjectReader : DwgSectionIO
 		scaleAction.YScaleConnection = this.readEvalConnection();
 
 		scaleAction.ScaleType = this._mergedReaders.ReadByte();
+
+		return template;
+	}
+
+	private CadTemplate readBlockStretchAction()
+	{
+		BlockStretchAction stretchAction = new();
+		CadBlockStretchActionTemplate template = new CadBlockStretchActionTemplate(stretchAction);
+
+		this.readBlockAction(template);
+
+		stretchAction.EndXDelta = this.readEvalConnection();
+		stretchAction.EndYDelta = this.readEvalConnection();
+
+		int npts = this._mergedReaders.ReadBitLong();
+		for (int i = 0; i < npts; i++)
+		{
+			stretchAction.Boundary.Add(this._mergedReaders.Read2RawDouble());
+		}
+
+		int nbindings = this._mergedReaders.ReadBitLong();
+		for (int i = 0; i < nbindings; i++)
+		{
+			var h = this.handleReference();
+
+			BlockStretchAction.StretchBind bind = new BlockStretchAction.StretchBind();
+			int nindexes = this._mergedReaders.ReadBitLong();
+			for (int j = 0; j < nindexes; j++)
+			{
+				bind.PointIndexes.Add(this._mergedReaders.ReadBitLong());
+			}
+
+			template.Bindings.Add(h, bind);
+		}
+
+		int nnodes = this._mergedReaders.ReadBitLong();
+		for (int i = 0; i < nnodes; i++)
+		{
+			BlockStretchAction.StretchNode node = new BlockStretchAction.StretchNode();
+			node.NodeId = this._mergedReaders.ReadBitLong();
+			int nindexes = this._mergedReaders.ReadBitLong();
+			for (int j = 0; j < nindexes; j++)
+			{
+				node.PointIndexes.Add(this._mergedReaders.ReadBitLong());
+			}
+
+			stretchAction.StretchNodes.Add(node);
+		}
+
+		stretchAction.DistanceMultiplier = this._mergedReaders.ReadBitDouble();
+		stretchAction.AngleOffset = this._mergedReaders.ReadBitDouble();
+		stretchAction.UnknownFlag = this._mergedReaders.ReadByte();
 
 		return template;
 	}
@@ -651,6 +728,21 @@ internal partial class DwgObjectReader : DwgSectionIO
 		grip.ZDistance = this._mergedReaders.ReadBitDouble();
 
 		return template;
+	}
+
+	private BlockLookupAction.ColumnData readLookupActionColumn()
+	{
+		BlockLookupAction.ColumnData col = new BlockLookupAction.ColumnData();
+
+		col.NodeId = this._mergedReaders.ReadBitLong();
+		col.ValueType = this._mergedReaders.ReadBitLong();
+		col.Type = this._mergedReaders.ReadBitLong();
+		col.IsLookupProperty = this._mergedReaders.ReadBit();
+		col.UnmatchedName = this._mergedReaders.ReadVariableText();
+		col.IsReadOnly = !this._mergedReaders.ReadBit();
+		col.ConnectionName = this._mergedReaders.ReadVariableText();
+
+		return col;
 	}
 
 	private CadTemplate readMTextAttributeObjectContextData()
