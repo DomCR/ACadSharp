@@ -64,6 +64,10 @@ public static class DxfSubclassMarker
 
 	public const string BlockLinearParameter = "AcDbBlockLinearParameter";
 
+	public const string BlockLookupAction = "AcDbBlockLookupAction";
+
+	public const string BlockLookupGrip = "AcDbBlockLookUpGrip";
+
 	public const string BlockLookupParameter = "AcDbBlockLookUpParameter";
 
 	public const string BlockMoveAction = "AcDbBlockMoveAction";

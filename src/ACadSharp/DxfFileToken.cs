@@ -182,6 +182,10 @@ public static class DxfFileToken
 
 	public const string ObjectBlockLinearParameter = "BLOCKLINEARPARAMETER";
 
+	public const string ObjectBlockLookupAction = "BLOCKLOOKUPACTION";
+
+	public const string ObjectBlockLookupGrip = "BLOCKLOOKUPGRIP";
+
 	public const string ObjectBlockLookupParameter = "BLOCKLOOKUPPARAMETER";
 
 	public const string ObjectBlockMoveAction = "BLOCKMOVEACTION";
@@ -237,6 +241,8 @@ public static class DxfFileToken
 	public const string ObjectImageDefinitionReactor = "IMAGEDEF_REACTOR";
 
 	public const string ObjectLayout = "LAYOUT";
+
+	public const string ObjectLookupAction = "BLOCKLOOKUPACTION";
 
 	public const string ObjectMaterial = "MATERIAL";
 

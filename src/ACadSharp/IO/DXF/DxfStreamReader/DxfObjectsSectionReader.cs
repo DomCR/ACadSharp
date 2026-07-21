@@ -1762,6 +1762,53 @@ internal class DxfObjectsSectionReader : DxfSectionReaderBase
 		}
 	}
 
+	private bool readLookupAction(CadTemplate template, DxfMap map)
+	{
+		CadBlockLookupActionTemplate tmp = template as CadBlockLookupActionTemplate;
+		BlockLookupAction action = tmp.CadObject as BlockLookupAction;
+
+		switch (this._reader.Code)
+		{
+			case 92:
+				tmp.NumberOfRows = this._reader.ValueAsInt;
+				return true;
+			case 93:
+				tmp.NumberOfColumns = this._reader.ValueAsInt;
+				return true;
+			case 301:
+				return true;
+			case 302:
+				tmp.RowValues.Add(this._reader.ValueAsString);
+				return true;
+			case 303:
+				var col = new BlockLookupAction.ColumnData();
+
+				this._reader.ExpectedCode(94);
+				col.NodeId = this._reader.ValueAsInt;
+				this._reader.ExpectedCode(95);
+				col.ValueType = this._reader.ValueAsInt;
+				this._reader.ExpectedCode(96);
+				col.Type = this._reader.ValueAsInt;
+				this._reader.ExpectedCode(282);
+				col.PropertyType = this._reader.ValueAsInt;
+				this._reader.ExpectedCode(305);
+				col.UnmatchedName = this._reader.ValueAsString;
+				this._reader.ExpectedCode(281);
+				col.IsReadOnly = this._reader.ValueAsShort == 0;
+				this._reader.ExpectedCode(304);
+				col.ConnectionName = this._reader.ValueAsString;
+
+				action.Columns.Add(col);
+				return true;
+			default:
+				if (!this.tryAssignCurrentValue(template.CadObject, map.SubClasses[DxfSubclassMarker.BlockLookupAction]))
+				{
+					return this.readBlockAction(template, map);
+				}
+				return true;
+		}
+	}
+
 	private bool readMaterial(CadTemplate template, DxfMap map)
 	{
 		CadMaterialTemplate tmp = template as CadMaterialTemplate;
@@ -1980,8 +2027,12 @@ internal class DxfObjectsSectionReader : DxfSectionReaderBase
 				return this.readObjectCodes<BlockLookupParameter>(new CadBlockLookupParameterTemplate(new BlockLookupParameter()), this.readBlockLookupParameter);
 			case DxfFileToken.ObjectBlockLinearGrip:
 				return this.readObjectCodes<BlockLinearGrip>(new CadBlockGripTemplate(new BlockLinearGrip()), this.readBlockGripSubclass);
+			case DxfFileToken.ObjectBlockLookupGrip:
+				return this.readObjectCodes<BlockLookupGrip>(new CadBlockGripTemplate(new BlockLookupGrip()), this.readBlockGripSubclass);
 			case DxfFileToken.ObjectBlockRotationGrip:
 				return this.readObjectCodes<BlockRotationGrip>(new CadBlockGripTemplate(new BlockRotationGrip()), this.readBlockGripSubclass);
+			case DxfFileToken.ObjectLookupAction:
+				return this.readObjectCodes<BlockLookupAction>(new CadBlockLookupActionTemplate(), this.readLookupAction);
 			case DxfFileToken.ObjectBlockMoveAction:
 				return this.readObjectCodes<BlockMoveAction>(new CadBlockMoveActionTemplate(), this.readBlockMoveAction);
 			case DxfFileToken.ObjectBlockScaleAction:
