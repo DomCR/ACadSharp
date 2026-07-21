@@ -12,6 +12,7 @@ using System.Linq;
 using static ACadSharp.IO.Templates.CadEvaluationGraphTemplate;
 using static ACadSharp.IO.Templates.CadTableEntityTemplate;
 using static ACadSharp.IO.Templates.CadTableStyleTemplate;
+using static ACadSharp.Objects.Evaluations.BlockStretchAction;
 
 namespace ACadSharp.IO.DXF.DxfStreamReader;
 
@@ -448,15 +449,67 @@ internal class DxfObjectsSectionReader : DxfSectionReaderBase
 
 	private bool readBlockStretchAction(CadTemplate template, DxfMap map)
 	{
-		CadBlockActionTemplate tmp = template as CadBlockActionTemplate;
+		CadBlockStretchActionTemplate tmp = template as CadBlockStretchActionTemplate;
 		BlockStretchAction action = tmp.CadObject as BlockStretchAction;
 
 		switch (this._reader.Code)
 		{
 			case 72:
+				int n = this._reader.ValueAsInt;
+				for (int i = 0; i < n; i++)
+				{
+					this._reader.ReadNext();
+					var x = this._reader.ValueAsDouble;
+					this._reader.ReadNext();
+					var y = this._reader.ValueAsDouble;
+
+					action.Boundary.Add(new XY(x, y));
+				}
+				return true;
+			case 73:
+				n = this._reader.ValueAsInt;
+				for (int i = 0; i < n; i++)
+				{
+					this._reader.ReadNext();
+					var bind = new BlockStretchAction.StretchBind();
+					tmp.Bindings.Add(this._reader.ValueAsHandle, bind);
+
+					this._reader.ReadNext();
+					var nPts = this._reader.ValueAsInt;
+					for (int j = 0; j < nPts; j++)
+					{
+						this._reader.ReadNext();
+						bind.PointIndexes.Add(this._reader.ValueAsInt);
+					}
+				}
+				return true;
+			case 75:
+				n = this._reader.ValueAsInt;
+				for (int i = 0; i < n; i++)
+				{
+					var stretchNode = new BlockStretchAction.StretchNode();
+					action.StretchNodes.Add(stretchNode);
+
+					this._reader.ReadNext();
+					stretchNode.NodeId = this._reader.ValueAsInt;
+
+					this._reader.ReadNext();
+					var nPts = this._reader.ValueAsInt;
+					for (int j = 0; j < nPts; j++)
+					{
+						this._reader.ReadNext();
+						stretchNode.PointIndexes.Add(this._reader.ValueAsInt);
+					}
+				}
+				return true;
+			case 92:
+				action.EndXDelta = this.readEvalConnection();
+				return true;
+			case 93:
+				action.EndYDelta = this.readEvalConnection();
 				return true;
 			default:
-				if (!this.tryAssignCurrentValue(template.CadObject, map.SubClasses[DxfSubclassMarker.BlockStretchAction]))
+				if (!this.tryAssignCurrentValue(template.CadObject, map))
 				{
 					return this.readBlockAction(template, map);
 				}
@@ -1934,7 +1987,7 @@ internal class DxfObjectsSectionReader : DxfSectionReaderBase
 			case DxfFileToken.ObjectBlockScaleAction:
 				return this.readObjectCodes<BlockScaleAction>(new CadBlockScaleActionTemplate(), this.readBlockScaleAction);
 			case DxfFileToken.ObjectBlockStretchAction:
-				return this.readObjectCodes<BlockStretchAction>(new CadBlockActionTemplate(new BlockStretchAction()), this.readBlockStretchAction);
+				return this.readObjectCodes<BlockStretchAction>(new CadBlockStretchActionTemplate(new BlockStretchAction()), this.readBlockStretchAction);
 			case DxfFileToken.ObjectBlockRotateAction:
 				return this.readObjectCodes<BlockRotationAction>(new CadBlockRotationActionTemplate(), this.readBlockRotationAction);
 			case DxfFileToken.ObjectBlockPointParameter:

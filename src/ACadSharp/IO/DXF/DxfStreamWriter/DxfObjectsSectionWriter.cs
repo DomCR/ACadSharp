@@ -417,6 +417,9 @@ internal class DxfObjectsSectionWriter : DxfSectionWriterBase
 			case BlockRotationAction rotationAction:
 				this.writeBlockRotationAction(rotationAction);
 				break;
+			case BlockStretchAction stretchAction:
+				this.writeBlockStretchAction(stretchAction);
+				break;
 			case BlockScaleAction scaleAction:
 				this.writeBlockScaleAction(scaleAction);
 				break;
@@ -518,6 +521,21 @@ internal class DxfObjectsSectionWriter : DxfSectionWriterBase
 		}
 
 		this.writeExtendedData(co.ExtendedData);
+	}
+
+	private void writeBlockStretchAction(BlockStretchAction stretchAction)
+	{
+		DxfClassMap map = DxfClassMap.Create<BlockStretchAction>();
+
+		this.writeBlockAction(stretchAction);
+
+		this._writer.Write(100, DxfSubclassMarker.UnderlayDefinition);
+
+
+
+		//this._writer.Write(140, stretchAction.DistanceMultiplier, map);
+		//this._writer.Write(141, stretchAction.AngleOffset, map);
+		//this._writer.Write(280, (byte)stretchAction.UnknownFlag, map);
 	}
 
 	protected void writePdfUnderlayDefinition(PdfUnderlayDefinition definition)
