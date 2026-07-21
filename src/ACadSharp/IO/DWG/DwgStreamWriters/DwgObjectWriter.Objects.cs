@@ -189,6 +189,32 @@ internal partial class DwgObjectWriter : DwgSectionIO
 		this.writeParameterValueSet(parameter.ValueSet);
 	}
 
+	private void writeBlockLookupAction(BlockLookupAction lookupAction)
+	{
+		this.writeBlockAction(lookupAction);
+
+		int nrows = lookupAction.Columns.FirstOrDefault()?.Rows.Count ?? 0;
+		int ncols = lookupAction.Columns.Count;
+
+		this._writer.WriteBitLong(nrows);
+		this._writer.WriteBitLong(ncols);
+
+		for (int i = 0; i < nrows; i++)
+		{
+			for (int j = 0; j < ncols; j++)
+			{
+				this._writer.WriteVariableText(lookupAction.Columns[j].Rows[i]);
+			}
+		}
+
+		foreach (var column in lookupAction.Columns)
+		{
+			this.writeLookupActionColumn(column);
+		}
+
+		this._writer.WriteBit(lookupAction.UnknownFlag);
+	}
+
 	private void writeBlockLookupParameter(BlockLookupParameter parameter)
 	{
 		this.writeBlock1PtParameter(parameter);
@@ -1168,6 +1194,17 @@ internal partial class DwgObjectWriter : DwgSectionIO
 		}
 	}
 
+	private void writeLookupActionColumn(BlockLookupAction.ColumnData col)
+	{
+		this._writer.WriteBitLong(col.NodeId);
+		this._writer.WriteBitLong(col.ValueType);
+		this._writer.WriteBitLong(col.Type);
+		this._writer.WriteBit(col.IsLookupProperty);
+		this._writer.WriteVariableText(col.UnmatchedName);
+		this._writer.WriteBit(!col.IsReadOnly);
+		this._writer.WriteVariableText(col.ConnectionName);
+	}
+
 	private void writeMaterial(Material material)
 	{
 		// 1, 2 -- name + description as bit-text.
@@ -1673,43 +1710,6 @@ internal partial class DwgObjectWriter : DwgSectionIO
 		}
 
 		this.registerObject(obj);
-	}
-
-	private void writeBlockLookupAction(BlockLookupAction lookupAction)
-	{
-		this.writeBlockAction(lookupAction);
-
-		int nrows = lookupAction.Columns.FirstOrDefault()?.Rows.Count ?? 0;
-		int ncols = lookupAction.Columns.Count;
-
-		this._writer.WriteBitLong(nrows);
-		this._writer.WriteBitLong(ncols);
-
-		for (int i = 0; i < nrows; i++)
-		{
-			for (int j = 0; j < ncols; j++)
-			{
-				this._writer.WriteVariableText(lookupAction.Columns[j].Rows[i]);
-			}
-		}
-
-		foreach (var column in lookupAction.Columns)
-		{
-			this.writeLookupActionColumn(column);
-		}
-
-		this._writer.WriteBit(lookupAction.UnknownFlag);
-	}
-
-	private void writeLookupActionColumn(BlockLookupAction.ColumnData col)
-	{
-		this._writer.WriteBitLong(col.NodeId);
-		this._writer.WriteBitLong(col.ValueType);
-		this._writer.WriteBitLong(col.Type);
-		this._writer.WriteBit(col.IsLookupProperty);
-		this._writer.WriteVariableText(col.UnmatchedName);
-		this._writer.WriteBit(!col.IsReadOnly);
-		this._writer.WriteVariableText(col.ConnectionName);
 	}
 
 	private void writeObjectContextData(ObjectContextData objectContextData)
