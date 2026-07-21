@@ -478,13 +478,16 @@ internal class DxfObjectsSectionWriter : DxfSectionWriterBase
 				this.writeBlockGripLocationComponent(blockGripExpression);
 				break;
 			case BlockXYGrip blockXYGrip:
-				this.writeBlockXYGrip(blockXYGrip);
+				this.writeBlockGripBase(blockXYGrip, DxfSubclassMarker.BlockXYGrip);
 				break;
 			case BlockRotationGrip blockRotationGrip:
 				this.writeBlockRotationGrip(blockRotationGrip);
 				break;
 			case BlockLinearGrip blockLinearGrip:
 				this.writeBlockLinearGrip(blockLinearGrip);
+				break;
+			case BlockLookupGrip blockLookupGrip:
+				this.writeBlockGripBase(blockLookupGrip, DxfSubclassMarker.BlockLookupGrip);
 				break;
 			case BlockVisibilityGrip blockVisibilityGrip:
 				this.writeBlockVisibilityGrip(blockVisibilityGrip);
@@ -521,21 +524,6 @@ internal class DxfObjectsSectionWriter : DxfSectionWriterBase
 		}
 
 		this.writeExtendedData(co.ExtendedData);
-	}
-
-	private void writeBlockStretchAction(BlockStretchAction stretchAction)
-	{
-		DxfClassMap map = DxfClassMap.Create<BlockStretchAction>();
-
-		this.writeBlockAction(stretchAction);
-
-		this._writer.Write(100, DxfSubclassMarker.UnderlayDefinition);
-
-
-
-		//this._writer.Write(140, stretchAction.DistanceMultiplier, map);
-		//this._writer.Write(141, stretchAction.AngleOffset, map);
-		//this._writer.Write(280, (byte)stretchAction.UnknownFlag, map);
 	}
 
 	protected void writePdfUnderlayDefinition(PdfUnderlayDefinition definition)
@@ -812,6 +800,13 @@ internal class DxfObjectsSectionWriter : DxfSectionWriterBase
 		this._writer.Write(93, grip.Value93, map);
 	}
 
+	private void writeBlockGripBase(BlockGrip grip, string subclass)
+	{
+		this.writeBlockGrip(grip);
+
+		this._writer.Write(100, subclass);
+	}
+
 	private void writeBlockGripLocationComponent(BlockGripLocationComponent blockGripExpression)
 	{
 		DxfClassMap map = DxfClassMap.Create<BlockGripLocationComponent>();
@@ -973,6 +968,51 @@ internal class DxfObjectsSectionWriter : DxfSectionWriterBase
 		this._writer.Write(305, scaleAction.YScaleConnection.Name);
 	}
 
+	private void writeBlockStretchAction(BlockStretchAction stretchAction)
+	{
+		DxfClassMap map = DxfClassMap.Create<BlockStretchAction>();
+
+		this.writeBlockAction(stretchAction);
+
+		this._writer.Write(100, DxfSubclassMarker.BlockStretchAction);
+
+		this.writeEvalConnection(stretchAction.EndXDelta, 92, 301);
+		this.writeEvalConnection(stretchAction.EndYDelta, 92, 301);
+
+		this._writer.Write(72, stretchAction.Boundary.Count, map);
+		foreach (var pt in stretchAction.Boundary)
+		{
+			this._writer.Write(1011, pt);
+		}
+
+		this._writer.Write(73, stretchAction.StretchBindings.Count, map);
+		foreach (var binding in stretchAction.StretchBindings)
+		{
+			this._writer.WriteHandle(331, binding.Entity);
+
+			this._writer.Write(74, binding.PointIndexes.Count);
+			foreach (var index in binding.PointIndexes)
+			{
+				this._writer.Write(94, index);
+			}
+		}
+
+		this._writer.Write(75, stretchAction.StretchNodes.Count, map);
+		foreach (var node in stretchAction.StretchNodes)
+		{
+			this._writer.Write(95, node.NodeId);
+			this._writer.Write(76, node.PointIndexes.Count);
+			foreach (var index in node.PointIndexes)
+			{
+				this._writer.Write(94, index);
+			}
+		}
+
+		this._writer.Write(140, stretchAction.DistanceMultiplier, map);
+		this._writer.Write(141, stretchAction.AngleOffset, map);
+		this._writer.Write(280, (byte)stretchAction.UnknownFlag, map);
+	}
+
 	private void writeBlockVisibilityGrip(BlockVisibilityGrip grip)
 	{
 		DxfClassMap map = DxfClassMap.Create<BlockVisibilityGrip>();
@@ -1018,15 +1058,6 @@ internal class DxfObjectsSectionWriter : DxfSectionWriterBase
 				this._writer.WriteHandle(333, expression);
 			}
 		}
-	}
-
-	private void writeBlockXYGrip(BlockXYGrip blockXYGrip)
-	{
-		DxfClassMap map = DxfClassMap.Create<BlockXYGrip>();
-
-		this.writeBlockGrip(blockXYGrip);
-
-		this._writer.Write(100, DxfSubclassMarker.BlockXYGrip);
 	}
 
 	private void writeCellStyle(TableStyle.CellStyle cellStyle)

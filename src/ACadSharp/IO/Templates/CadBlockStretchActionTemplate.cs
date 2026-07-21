@@ -24,7 +24,7 @@ internal class CadBlockStretchActionTemplate : CadBlockActionTemplate
 			if(builder.TryGetCadObject<Entity>(item.Key, out var entity))
 			{
 				item.Value.Entity = entity;
-				stretchAction.StretchData.Add(item.Value);
+				stretchAction.StretchBindings.Add(item.Value);
 			}
 			else
 			{

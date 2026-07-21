@@ -31,7 +31,7 @@ public partial class BlockStretchAction : BlockAction
 	/// <inheritdoc/>
 	public override string ObjectName => DxfFileToken.ObjectBlockStretchAction;
 
-	public List<StretchBind> StretchData { get; private set; } = new();
+	public List<StretchBind> StretchBindings { get; private set; } = new();
 
 	public List<StretchNode> StretchNodes { get; private set; } = new();
 
