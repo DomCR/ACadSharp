@@ -1,9 +1,9 @@
 ﻿using ACadSharp.Classes;
 using ACadSharp.Entities;
 using ACadSharp.Header;
-using ACadSharp.IO.DWG.DwgStreamReaders;
 using ACadSharp.Objects;
 using ACadSharp.Objects.Collections;
+using ACadSharp.Prototype1b;
 using ACadSharp.Tables;
 using ACadSharp.Tables.Collections;
 using System;
