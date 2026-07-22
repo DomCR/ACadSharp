@@ -17,16 +17,22 @@ namespace ACadSharp.IO.DWG.DwgStreamReaders
 	/// ones that carry a SAB stream start with the "ACIS BinaryFile" signature
 	/// ("ASM BinaryFile" for the newer modeler versions), the other schemas
 	/// stored in the section are ignored. Small payloads sit in the same segment
-	/// after the directory, large ones move to the "blob01" segments; in both
-	/// cases the payload area starts at an aligned position that varies between
-	/// producers, so the base is anchored on the signatures themselves and every
-	/// record is validated against it before it is accepted.
+	/// after the directory; large ones are data blob reference records (their
+	/// size field carries a fixed marker) whose pages live in the "blob01"
+	/// segments addressed through the segment index. The payload area starts at
+	/// an aligned position that varies between producers, so the base is
+	/// anchored on the signatures themselves and every record is validated
+	/// against it before it is accepted.
 	/// </remarks>
 	internal static class DwgAcDsDataReader
 	{
 		private const uint SegmentSignature = 0xD5AC;
 
 		private const uint RecordSize = 0x14;
+
+		//Size-field value that marks a data blob reference record: the payload is
+		//paged into blob01 segments instead of following the size inline
+		private const uint BlobReferenceMarker = 0xBB106BB1;
 
 		private static readonly byte[] _acisSignature = Encoding.ASCII.GetBytes("ACIS BinaryFile");
 
@@ -73,17 +79,22 @@ namespace ACadSharp.IO.DWG.DwgStreamReaders
 
 			//Collect the record directories of all the _data_ segments. The
 			//segment index area starts with its own segment header (48 bytes),
-			//followed by an entry for each segment: offset (8) + size (4)
+			//followed by an entry for each segment: offset (8) + size (4). The
+			//offsets are kept by index: the blob reference records address their
+			//blob01 pages through this table
 			List<DataRecord> records = new List<DataRecord>();
+			List<long> segmentOffsets = new List<long>();
 			long entry = segidxOffset + 48;
 			for (int i = 0; i < numSegidx && entry + 12 <= buffer.Length; i++, entry += 12)
 			{
 				ulong segmentOffset = readULong(buffer, entry);
 				if (segmentOffset == 0 || segmentOffset + 48 > (ulong)buffer.Length)
 				{
+					segmentOffsets.Add(0);
 					continue;
 				}
 
+				segmentOffsets.Add((long)segmentOffset);
 				readDirectory(buffer, (long)segmentOffset, records);
 			}
 
@@ -110,7 +121,7 @@ namespace ACadSharp.IO.DWG.DwgStreamReaders
 				//anchor directly, so use it instead of guessing from the signatures
 				long directBase = pending[0].PayloadArea;
 				if (directBase > group.Key && directBase < segmentEnd
-					&& emitRecords(buffer, pending, directBase, segmentEnd, result))
+					&& emitRecords(buffer, pending, directBase, segmentEnd, segmentOffsets, result))
 				{
 					continue;
 				}
@@ -130,7 +141,7 @@ namespace ACadSharp.IO.DWG.DwgStreamReaders
 					limit = buffer.Length;
 				}
 
-				resolveRecords(buffer, pending, local, limit, result);
+				resolveRecords(buffer, pending, local, limit, segmentOffsets, result);
 			}
 
 			return result;
@@ -139,12 +150,12 @@ namespace ACadSharp.IO.DWG.DwgStreamReaders
 		//Emits the ACIS payloads of a segment at a known payload base. Returns
 		//false without emitting when the base explains no ACIS payload, so a wrong
 		//anchor falls through to the signature heuristic instead of yielding garbage.
-		private static bool emitRecords(byte[] buffer, List<DataRecord> records, long payloadBase, long limit, Dictionary<ulong, byte[]> result)
+		private static bool emitRecords(byte[] buffer, List<DataRecord> records, long payloadBase, long limit, List<long> segmentOffsets, Dictionary<ulong, byte[]> result)
 		{
 			bool any = false;
 			foreach (DataRecord record in records)
 			{
-				if (validate(buffer, payloadBase, record, limit, out _, out _, out bool isAcis) && isAcis)
+				if (validate(buffer, payloadBase, record, limit, segmentOffsets, out _, out _, out bool isAcis, out _) && isAcis)
 				{
 					any = true;
 					break;
@@ -158,10 +169,17 @@ namespace ACadSharp.IO.DWG.DwgStreamReaders
 
 			foreach (DataRecord record in records)
 			{
-				if (validate(buffer, payloadBase, record, limit, out long dataStart, out long dataSize, out bool isAcis) && isAcis)
+				if (!validate(buffer, payloadBase, record, limit, segmentOffsets, out long dataStart, out long dataSize, out bool isAcis, out bool isBlobReference)
+					|| !isAcis)
 				{
-					byte[] payload = new byte[dataSize];
-					Array.Copy(buffer, dataStart, payload, 0, dataSize);
+					continue;
+				}
+
+				byte[] payload = isBlobReference
+					? readBlobPages(buffer, dataStart, segmentOffsets)
+					: copyPayload(buffer, dataStart, dataSize);
+				if (payload != null)
+				{
 					result[record.Handle] = payload;
 				}
 			}
@@ -169,7 +187,14 @@ namespace ACadSharp.IO.DWG.DwgStreamReaders
 			return true;
 		}
 
-		private static void resolveRecords(byte[] buffer, List<DataRecord> records, List<long> signatures, long limit, Dictionary<ulong, byte[]> result)
+		private static byte[] copyPayload(byte[] buffer, long dataStart, long dataSize)
+		{
+			byte[] payload = new byte[dataSize];
+			Array.Copy(buffer, dataStart, payload, 0, dataSize);
+			return payload;
+		}
+
+		private static void resolveRecords(byte[] buffer, List<DataRecord> records, List<long> signatures, long limit, List<long> segmentOffsets, Dictionary<ulong, byte[]> result)
 		{
 			//Candidate bases from the first signatures paired with the smallest
 			//record offsets; the right pair anchors every record of the group.
@@ -197,7 +222,7 @@ namespace ACadSharp.IO.DWG.DwgStreamReaders
 				long score = 0;
 				foreach (DataRecord record in records)
 				{
-					if (validate(buffer, candidate, record, limit, out _, out _, out bool isAcis))
+					if (validate(buffer, candidate, record, limit, segmentOffsets, out _, out _, out bool isAcis, out _))
 					{
 						score += isAcis ? 1000 : 1;
 					}
@@ -220,23 +245,28 @@ namespace ACadSharp.IO.DWG.DwgStreamReaders
 
 			foreach (DataRecord record in records)
 			{
-				if (!validate(buffer, bestBase, record, limit, out long dataStart, out long dataSize, out bool isAcis)
+				if (!validate(buffer, bestBase, record, limit, segmentOffsets, out long dataStart, out long dataSize, out bool isAcis, out bool isBlobReference)
 					|| !isAcis)
 				{
 					continue;
 				}
 
-				byte[] payload = new byte[dataSize];
-				Array.Copy(buffer, dataStart, payload, 0, dataSize);
-				result[record.Handle] = payload;
+				byte[] payload = isBlobReference
+					? readBlobPages(buffer, dataStart, segmentOffsets)
+					: copyPayload(buffer, dataStart, dataSize);
+				if (payload != null)
+				{
+					result[record.Handle] = payload;
+				}
 			}
 		}
 
-		private static bool validate(byte[] buffer, long payloadBase, DataRecord record, long limit, out long dataStart, out long dataSize, out bool isAcis)
+		private static bool validate(byte[] buffer, long payloadBase, DataRecord record, long limit, List<long> segmentOffsets, out long dataStart, out long dataSize, out bool isAcis, out bool isBlobReference)
 		{
 			dataStart = 0;
 			dataSize = 0;
 			isAcis = false;
+			isBlobReference = false;
 
 			long position = payloadBase + record.PayloadOffset;
 			if (position < 0 || position + 12 > limit)
@@ -244,12 +274,23 @@ namespace ACadSharp.IO.DWG.DwgStreamReaders
 				return false;
 			}
 
+			//A record whose size field carries the blob marker is a data blob
+			//reference: the payload lives in the blob01 segments it points to
+			uint size = readUInt(buffer, position);
+			if (size == BlobReferenceMarker)
+			{
+				isBlobReference = true;
+				dataStart = position;
+				dataSize = (long)readULong(buffer, position + 4);
+				isAcis = blobStartsWithSignature(buffer, position, segmentOffsets);
+				return isAcis;
+			}
+
 			//Two payload layouts: inline records put a 4 byte size before the
 			//data, the ones stored in the blob01 segments a 4 byte marker plus an
 			//8 byte size. Check both and let the one that lands on an ACIS
 			//signature win, a small marker value reads as a plausible inline size
 			//and would shadow the blob01 layout otherwise.
-			uint size = readUInt(buffer, position);
 			bool inlinePlausible = size > 0 && position + 4 + size <= limit;
 
 			ulong longSize = readULong(buffer, position + 4);
@@ -286,6 +327,94 @@ namespace ACadSharp.IO.DWG.DwgStreamReaders
 			}
 
 			return false;
+		}
+
+		//True when the first page of a blob reference starts with the ACIS/ASM
+		//signature, without materializing the payload
+		private static bool blobStartsWithSignature(byte[] buffer, long position, List<long> segmentOffsets)
+		{
+			uint pageCount = readUInt(buffer, position + 12);
+			if (pageCount == 0 || position + 36 + pageCount * 8L > buffer.Length)
+			{
+				return false;
+			}
+
+			for (int i = 0; i < pageCount; i++)
+			{
+				long segmentOffset = pageSegmentOffset(buffer, position + 36 + i * 8L, segmentOffsets);
+				if (segmentOffset == 0)
+				{
+					continue;
+				}
+
+				//the page that starts the stream carries offset 0
+				if (readULong(buffer, segmentOffset + 56) == 0)
+				{
+					return matchesSignature(buffer, segmentOffset + 80);
+				}
+			}
+
+			return false;
+		}
+
+		//Assembles the payload of a data blob reference record from its blob01
+		//pages; null when a page is missing or the sizes do not add up
+		private static byte[] readBlobPages(byte[] buffer, long position, List<long> segmentOffsets)
+		{
+			ulong totalSize = readULong(buffer, position + 4);
+			uint pageCount = readUInt(buffer, position + 12);
+			if (totalSize == 0 || totalSize > (ulong)buffer.Length
+				|| pageCount == 0 || position + 36 + pageCount * 8L > buffer.Length)
+			{
+				return null;
+			}
+
+			byte[] payload = new byte[totalSize];
+			ulong covered = 0;
+			for (int i = 0; i < pageCount; i++)
+			{
+				long segmentOffset = pageSegmentOffset(buffer, position + 36 + i * 8L, segmentOffsets);
+				if (segmentOffset == 0)
+				{
+					return null;
+				}
+
+				//blob01 data: total size, page start offset, page index and count,
+				//page data size, then the page bytes
+				ulong pageStart = readULong(buffer, segmentOffset + 56);
+				ulong pageDataSize = readULong(buffer, segmentOffset + 72);
+				if (pageDataSize == 0 || pageStart + pageDataSize > totalSize
+					|| segmentOffset + 80 + (long)pageDataSize > buffer.Length)
+				{
+					return null;
+				}
+
+				Array.Copy(buffer, segmentOffset + 80, payload, (long)pageStart, (long)pageDataSize);
+				covered += pageDataSize;
+			}
+
+			return covered == totalSize ? payload : null;
+		}
+
+		//Resolves a page entry (segment index + size) of a blob reference to the
+		//stream offset of its blob01 segment; 0 when the entry does not point to one
+		private static long pageSegmentOffset(byte[] buffer, long entry, List<long> segmentOffsets)
+		{
+			uint segmentIndex = readUInt(buffer, entry);
+			if (segmentIndex >= segmentOffsets.Count)
+			{
+				return 0;
+			}
+
+			long segmentOffset = segmentOffsets[(int)segmentIndex];
+			if (segmentOffset == 0 || segmentOffset + 80 > buffer.Length
+				|| (readUInt(buffer, segmentOffset) & 0xFFFF) != SegmentSignature
+				|| Encoding.ASCII.GetString(buffer, (int)segmentOffset + 2, 6) != "blob01")
+			{
+				return 0;
+			}
+
+			return segmentOffset;
 		}
 
 		private static void readDirectory(byte[] buffer, long offset, List<DataRecord> records)
