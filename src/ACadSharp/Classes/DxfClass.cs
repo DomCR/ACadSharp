@@ -14,7 +14,7 @@ namespace ACadSharp.Classes
 		/// <summary>
 		/// Class number.
 		/// </summary>
-		public short ClassNumber { get; set; }
+		public short ClassNumber { get; set; } = 500;
 
 		/// <summary>
 		/// C++ class name.
@@ -35,7 +35,7 @@ namespace ACadSharp.Classes
 		/// Instance count for a custom class.
 		/// </summary>
 		[DxfCodeValue(91)]
-		public int InstanceCount { get; set; }
+		public int InstanceCount { get; set; } = 0;
 
 		/// <summary>
 		/// Is-an-entity flag.

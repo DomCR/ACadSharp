@@ -147,135 +147,28 @@ public class DxfClassCollection : ICollection<DxfClass>
 	/// Updates the DXF class collection in the document with a predefined set of class definitions and resets class
 	/// numbers.
 	/// </summary>
+	[Obsolete]
 	public void UpdateDxfClasses()
 	{
 		this.resetClassNumbers();
 
 		//AcDbDictionaryWithDefault
-		this.AddOrUpdate(new DxfClass
-		{
-			CppClassName = DxfSubclassMarker.DictionaryWithDefault,
-			ClassNumber = (short)(500 + this.Count),
-			DwgVersion = (ACadVersion)22,
-			DxfName = DxfFileToken.ObjectDictionaryWithDefault,
-			ItemClassId = 499,
-			MaintenanceVersion = 42,
-			ProxyFlags = ProxyFlags.R13FormatProxy,
-			WasZombie = false,
-			InstanceCount = this._document.GetInstanceCount(DxfFileToken.ObjectDictionaryWithDefault),
-		});
-
+		
 		//AcDbPlaceHolder
-		this.AddOrUpdate(new DxfClass
-		{
-			CppClassName = DxfSubclassMarker.AcDbPlaceHolder,
-			ClassNumber = (short)(500 + this.Count),
-			DwgVersion = (ACadVersion)0,
-			DxfName = DxfFileToken.ObjectPlaceholder,
-			ItemClassId = 499,
-			MaintenanceVersion = 0,
-			ProxyFlags = ProxyFlags.None,
-			WasZombie = false,
-			InstanceCount = this._document.GetInstanceCount(DxfFileToken.ObjectPlaceholder),
-		});
-
+	
 		//AcDbLayout
-		this.AddOrUpdate(new DxfClass
-		{
-			CppClassName = DxfSubclassMarker.Layout,
-			ClassNumber = (short)(500 + this.Count),
-			DwgVersion = (ACadVersion)0,
-			DxfName = DxfFileToken.ObjectLayout,
-			ItemClassId = 499,
-			MaintenanceVersion = 0,
-			ProxyFlags = ProxyFlags.None,
-			WasZombie = false,
-			InstanceCount = this._document.GetInstanceCount(DxfFileToken.ObjectLayout),
-		});
 
 		//AcDbDictionaryVar
-		this.AddOrUpdate(new DxfClass
-		{
-			CppClassName = DxfSubclassMarker.DictionaryVar,
-			ClassNumber = (short)(500 + this.Count),
-			DwgVersion = (ACadVersion)20,
-			DxfName = DxfFileToken.ObjectDictionaryVar,
-			ItemClassId = 499,
-			MaintenanceVersion = 0,
-			ProxyFlags = ProxyFlags.None,
-			WasZombie = false,
-			InstanceCount = this._document.GetInstanceCount(DxfFileToken.ObjectDictionaryVar),
-		});
 
 		//AcDbTableStyle
-		this.AddOrUpdate(new DxfClass
-		{
-			CppClassName = DxfSubclassMarker.TableStyle,
-			ClassNumber = (short)(500 + this.Count),
-			DwgVersion = ACadVersion.AC1018,
-			DxfName = DxfFileToken.ObjectTableStyle,
-			ItemClassId = 499,
-			MaintenanceVersion = 0,
-			ProxyFlags = (ProxyFlags)4095,
-			WasZombie = false,
-			InstanceCount = this._document.GetInstanceCount(DxfFileToken.ObjectTableStyle),
-		});
 
 		//AcDbMaterial
-		this.AddOrUpdate(new DxfClass
-		{
-			CppClassName = DxfSubclassMarker.Material,
-			ClassNumber = (short)(500 + this.Count),
-			DwgVersion = 0,
-			DxfName = DxfFileToken.ObjectMaterial,
-			ItemClassId = 499,
-			MaintenanceVersion = 0,
-			ProxyFlags = ProxyFlags.EraseAllowed | ProxyFlags.CloningAllowed | ProxyFlags.DisablesProxyWarningDialog,
-			WasZombie = false,
-			InstanceCount = this._document.GetInstanceCount(DxfFileToken.ObjectMaterial),
-		});
-
+	
 		//AcDbVisualStyle
-		this.AddOrUpdate(new DxfClass
-		{
-			CppClassName = DxfSubclassMarker.VisualStyle,
-			ClassNumber = (short)(500 + this.Count),
-			DwgVersion = ACadVersion.AC1021,
-			DxfName = DxfFileToken.ObjectVisualStyle,
-			ItemClassId = 499,
-			MaintenanceVersion = 0,
-			ProxyFlags = (ProxyFlags)4095,
-			WasZombie = false,
-			InstanceCount = this._document.GetInstanceCount(DxfFileToken.ObjectVisualStyle),
-		});
 
 		//AcDbScale
-		this.AddOrUpdate(new DxfClass
-		{
-			CppClassName = DxfSubclassMarker.Scale,
-			ClassNumber = (short)(500 + this.Count),
-			DwgVersion = ACadVersion.AC1021,
-			DxfName = DxfFileToken.ObjectScale,
-			ItemClassId = 499,
-			MaintenanceVersion = 1,
-			ProxyFlags = ProxyFlags.EraseAllowed | ProxyFlags.CloningAllowed | ProxyFlags.DisablesProxyWarningDialog,
-			WasZombie = false,
-			InstanceCount = this._document.GetInstanceCount(DxfFileToken.ObjectScale),
-		});
 
 		//AcDbMLeaderStyle
-		this.AddOrUpdate(new DxfClass
-		{
-			CppClassName = DxfSubclassMarker.MLeaderStyle,
-			ClassNumber = (short)(500 + this.Count),
-			DwgVersion = ACadVersion.AC1021,
-			DxfName = DxfFileToken.ObjectMLeaderStyle,
-			ItemClassId = 499,
-			MaintenanceVersion = 25,
-			ProxyFlags = (ProxyFlags)4095,
-			WasZombie = false,
-			InstanceCount = this._document.GetInstanceCount(DxfFileToken.ObjectMLeaderStyle),
-		});
 
 		//AcDbCellStyleMap
 		this.AddOrUpdate(new DxfClass
@@ -404,18 +297,6 @@ public class DxfClassCollection : ICollection<DxfClass>
 		});
 
 		//AcDbSortentsTable
-		this.AddOrUpdate(new DxfClass
-		{
-			CppClassName = DxfSubclassMarker.SortentsTable,
-			ClassNumber = (short)(500 + this.Count),
-			DwgVersion = ACadVersion.AC1014,
-			DxfName = DxfFileToken.ObjectSortEntsTable,
-			ItemClassId = 499,
-			MaintenanceVersion = 0,
-			ProxyFlags = ProxyFlags.None,
-			WasZombie = false,
-			InstanceCount = this._document.GetInstanceCount(DxfFileToken.ObjectSortEntsTable),
-		});
 
 		//AcDbTextObjectContextData
 		this.AddOrUpdate(new DxfClass
