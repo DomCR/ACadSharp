@@ -66,6 +66,8 @@ public static class DxfFileToken
 
 	public const string EntityEllipse = "ELLIPSE";
 
+	public const string EntityExtrudedSurface = "EXTRUDEDSURFACE";
+
 	public const string EntityHatch = "HATCH";
 
 	public const string EntityHelix = "HELIX";
@@ -80,6 +82,8 @@ public static class DxfFileToken
 
 	public const string EntityLine = "LINE";
 
+	public const string EntityLoftedSurface = "LOFTEDSURFACE";
+
 	public const string EntityLwPolyline = "LWPOLYLINE";
 
 	public const string EntityMesh = "MESH";
@@ -90,11 +94,15 @@ public static class DxfFileToken
 
 	public const string EntityMultiLeader = "MULTILEADER";
 
+	public const string EntityNurbSurface = "NURBSURFACE";
+
 	public const string EntityOle2Frame = "OLE2FRAME";
 
 	public const string EntityOleFrame = "OLEFRAME";
 
 	public const string EntityPdfUnderlay = "PDFUNDERLAY";
+
+	public const string EntityPlaneSurface = "PLANESURFACE";
 
 	public const string EntityPoint = "POINT";
 
@@ -107,6 +115,8 @@ public static class DxfFileToken
 	public const string EntityRay = "RAY";
 
 	public const string EntityRegion = "REGION";
+
+	public const string EntityRevolvedSurface = "REVOLVEDSURFACE";
 
 	public const string EntitySection = "SECTION";
 
@@ -121,6 +131,8 @@ public static class DxfFileToken
 	public const string EntitySun = "SUN";
 
 	public const string EntitySurface = "SURFACE";
+
+	public const string EntitySweptSurface = "SWEPTSURFACE";
 
 	public const string EntityTable = "ACAD_TABLE";
 
