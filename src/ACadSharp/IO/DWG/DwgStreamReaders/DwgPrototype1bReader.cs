@@ -14,12 +14,14 @@ namespace ACadSharp.IO.DWG.DwgStreamReaders
 		public static readonly uint[] TYPE_SIZES = new uint[] { 0, 0, 2, 1, 2, 4, 8, 1, 2, 4, 8, 4, 8, 0, 0, 0 };
 		private readonly IDwgStreamReader _reader;
 		private readonly DataStorage _storage = new DataStorage();
+		private readonly DwgDocumentBuilder _builder;
 
 		public override string SectionName => DwgSectionDefinition.AcDsPrototype;
 
-        public DwgPrototype1bReader(ACadVersion version, IDwgStreamReader reader) : base(version)
+        public DwgPrototype1bReader(ACadVersion version, DwgDocumentBuilder builder, IDwgStreamReader reader) : base(version)
         {
             this._reader = reader;
+			this._builder = builder;
         }
 
         public DataStorage Read()
@@ -57,6 +59,9 @@ namespace ACadSharp.IO.DWG.DwgStreamReaders
 			}
 			catch (Exception ex)
 			{
+				if (!this._builder.Configuration.Failsafe)
+					throw;
+
 				this.notify("An error occurred while reading the Prototype1b", NotificationType.Error, ex);
 			}
 
