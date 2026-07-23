@@ -85,19 +85,20 @@ namespace ACadSharp.IO.DXF
 					return;
 				case GroupCodeValueType.Chunk:
 				case GroupCodeValueType.ExtendedDataChunk:
+					const int maxChunkLength = 127;
 					byte[] arr = value as byte[];
 					MemoryStream ms = new MemoryStream(arr);
 					List<string> lines = new List<string>();
 
-					int nlines = arr.Length / 64;
-					byte[] array = new byte[64];
+					int nlines = arr.Length / maxChunkLength;
+					byte[] array = new byte[maxChunkLength];
 					for (int i = 0; i < nlines; i++)
 					{
-						ms.Read(array, 0, 64);
+						ms.Read(array, 0, maxChunkLength);
 						lines.Add(new string(array.SelectMany(b => string.Format("{0:X2}", b)).ToArray()));
 					}
 
-					int surp = arr.Length % 64;
+					int surp = arr.Length % maxChunkLength;
 					if (surp != 0)
 					{
 						byte[] array2 = new byte[surp];
