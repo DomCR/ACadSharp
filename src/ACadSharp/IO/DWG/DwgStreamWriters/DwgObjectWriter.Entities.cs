@@ -590,6 +590,9 @@ internal partial class DwgObjectWriter : DwgSectionIO
 			case Solid3D solid3d:
 				this.writeSolid3D(solid3d);
 				break;
+			case ModelerGeometry modelerGeometry:	//CadBody and Region
+				this.writeModelerGeometry(modelerGeometry);
+				break;
 			case Spline spline:
 				this.writeSpline(spline);
 				break;
@@ -2176,6 +2179,108 @@ internal partial class DwgObjectWriter : DwgSectionIO
 
 	private void writeSolid3D(Solid3D solid)
 	{
+		this.writeModelerGeometry(solid);
+
+		//R2007+: H 350 History ID
+		if (this.R2007Plus)
+		{
+			this._writer.HandleReference(DwgReferenceType.HardOwnership, 0);
+		}
+	}
+
+	private void writeModelerGeometry(ModelerGeometry geometry)
+	{
+		//Chapter 24 - Info
+		if (this.R2013Plus)
+		{
+			//the payload lives in the AcDs data section, announced by the DS
+			//binary data bit of the common data. The block replicates bit for
+			//bit the constant block every modeler entity of an Autodesk-written
+			//R2013 file carries: four flag bits, then the revision fields that
+			//follow the guid flag even when it announces no guid.
+
+			//ACIS Empty bit B: 1, no inline data
+			this._writer.WriteBit(true);
+			//Wireframe data present B: 0, no display cache
+			this._writer.WriteBit(false);
+			//ACIS Empty bit2 B: 1
+			this._writer.WriteBit(true);
+			//Has revision guid B: 0
+			this._writer.WriteBit(false);
+
+			//revision major BL: 101 in the reference files
+			this._writer.WriteBitLong(101);
+			//revision minor BS 0, in the byte form the reference files use
+			this._writer.WriteBit(false);
+			this._writer.WriteBit(true);
+			this._writer.WriteByte(0);
+			//revision minor BS 0, in the short form the reference files use
+			this._writer.WriteBit(false);
+			this._writer.WriteBit(false);
+			this._writer.WriteByte(0);
+			this._writer.WriteByte(0);
+			//39 zero bits and a short-form zero BL close the block; the exact
+			//field split is unknown, the raw bits come from the reference files
+			for (int i = 0; i < 39; i++)
+			{
+				this._writer.WriteBit(false);
+			}
+			this._writer.WriteBit(true);
+			this._writer.WriteBit(false);
+			return;
+		}
+
+		//ACIS Empty bit B X If 1, then no data follows
+		this._writer.WriteBit(false);
+
+		this.writeModelerGeometryData(geometry);
+
+		//Wireframe data present B: no display cache, the CAD regenerates it.
+		//The trailing fields are mandatory: without them the readers pick up
+		//garbage bits and run off the object data.
+		this._writer.WriteBit(false);
+
+		//R2007+: trailing BL, zero in the files the CAD writers emit
+		if (this.R2007Plus)
+		{
+			this._writer.WriteBitLong(0);
+		}
+	}
+
+	private void writeModelerGeometryData(ModelerGeometry geometry)
+	{
+		//The version depends on the payload, not on the target file: the CAD
+		//writers emit text as version 1 blocks at every release and reserve
+		//version 2 for the raw SAB, with the unknown bit tracking the choice.
+		if (geometry.IsBinaryAcisData)
+		{
+			//Unknown bit B X: false in the binary files the CAD writers emit
+			this._writer.WriteBit(false);
+
+			//Version == 2: the raw ACIS file follows, no length is given; the
+			//readers find the end at the End-of-ACIS-data marker
+			this._writer.WriteBitShort(2);
+			this._writer.WriteBytes(geometry.AcisData);
+		}
+		else
+		{
+			//Unknown bit B X: true in the text files the CAD writers emit
+			this._writer.WriteBit(true);
+
+			//Version == 1: character-swapped SAT blocks, zero size terminates
+			this._writer.WriteBitShort(1);
+
+			const int BLOCK = 4096;
+			byte[] encoded = AcisTextCodec.Decode(geometry.AcisData);
+			for (int offset = 0; offset < encoded.Length; offset += BLOCK)
+			{
+				int size = Math.Min(BLOCK, encoded.Length - offset);
+				this._writer.WriteBitLong(size);
+				this._writer.WriteBytes(encoded, offset, size);
+			}
+
+			this._writer.WriteBitLong(0);
+		}
 	}
 
 	private void writeSpline(Spline spline)

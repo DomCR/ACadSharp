@@ -1,5 +1,6 @@
 ﻿using ACadSharp.IO.DXF;
 using System.IO;
+using System.Linq;
 using System.Text;
 
 namespace ACadSharp.IO;
@@ -133,6 +134,17 @@ public class DxfWriter : CadWriterBase<DxfWriterConfiguration>
 
 	private void writeACDSData()
 	{
+		//R2013+ carries the binary ACIS payloads of the modeler geometry
+		//entities in their own section, paired by owner handle
+		if (this._document.Header.Version < ACadVersion.AC1027
+			|| !DxfAcdsDataSectionWriter.GetPayloadEntities(this._document).Any())
+		{
+			return;
+		}
+
+		var writer = new DxfAcdsDataSectionWriter(this._writer, this._document, this._objectHolder, this.Configuration);
+		writer.OnNotification += this.triggerNotification;
+		writer.Write();
 	}
 
 	private void writeBlocks()
