@@ -44,6 +44,9 @@ internal abstract partial class DxfSectionWriterBase
 			case Hatch hatch:
 				this.writeHatch(hatch);
 				break;
+			case TableEntity tableEntity:
+				this.writeTableEntity(tableEntity);
+				break;
 			case Insert insert:
 				this.writeInsert(insert);
 				break;
@@ -148,7 +151,6 @@ internal abstract partial class DxfSectionWriterBase
 			case Shape:
 				return this.Configuration.WriteShapes;
 			case ProxyEntity:
-			case TableEntity:
 			case Solid3D:
 			case CadBody:
 			case Region:
@@ -590,6 +592,242 @@ internal abstract partial class DxfSectionWriterBase
 				foreach (double dashLength in line.DashLengths)
 				{
 					this._writer.Write(49, dashLength);
+				}
+			}
+		}
+	}
+
+	private void writeTableEntity(TableEntity table)
+	{
+		// Emit the AcDbBlockReference (Insert) layer first. AutoCAD reads the block
+		// reference to instantiate the anonymous BlockRecord that holds the rendered
+		// table geometry, so it always has something to draw.
+		this._writer.Write(DxfCode.Subclass, DxfSubclassMarker.Insert);
+		if (table.Block != null)
+		{
+			this._writer.Write(2, table.Block.Name);
+		}
+		this._writer.Write(10, table.InsertPoint);
+		this._writer.Write(41, table.XScale);
+		this._writer.Write(42, table.YScale);
+		this._writer.Write(43, table.ZScale);
+		this._writer.Write(50, table.Rotation);
+		this._writer.Write(210, table.Normal);
+
+		// AcDbTable subclass with the full cell data so the table round-trips through
+		// a DxfReader without losing rows, columns or text content. AutoCAD prefers a
+		// proxy graphic preview (codes 160/310 in AcDbEntity) when one is present and
+		// ignores the cell data for layout; without a preview, AutoCAD also renders
+		// the cells on top of the BlockReference, producing a second offset copy of
+		// the table. That visual artifact is the cost of keeping the data
+		// round-trippable: callers that need a single rendering should provide a
+		// proxy graphic via Entity.PreviewGraphic.
+		//
+		// Field order mirrors what AutoCAD emits so the strict ODA-based reader does
+		// not bail with "Invalid index" partway through the entity.
+		this._writer.Write(DxfCode.Subclass, DxfSubclassMarker.TableEntity);
+
+		if (table.Style != null)
+		{
+			this._writer.Write(342, table.Style.Handle);
+		}
+		if (table.Block != null)
+		{
+			this._writer.Write(343, table.Block.Handle);
+		}
+
+		this._writer.Write(11, table.HorizontalDirection);
+
+		int flag = table.ValueFlag;
+		if (table.OverrideFlag)
+		{
+			flag |= 1;
+		}
+		this._writer.Write(90, flag);
+
+		this._writer.Write(91, table.Rows.Count);
+		this._writer.Write(92, table.Columns.Count);
+
+		// Override count placeholder. The exact semantics of code 93 at the table
+		// level are not documented in OpenDesign but AutoCAD-produced files always
+		// emit it. Emit 0 here; the reader does not error out on it.
+		this._writer.Write(93, 0);
+
+		this._writer.Write(94, table.OverrideBorderColor ? 1 : 0);
+		this._writer.Write(95, table.OverrideBorderLineWeight ? 1 : 0);
+		this._writer.Write(96, table.OverrideBorderVisibility ? 1 : 0);
+
+		// Flow direction is emitted only when set to bottom-to-top. Down-direction
+		// tables in AutoCAD-produced files omit the code entirely.
+		bool isFlowUp = table.CellStyleOverride != null
+			&& table.CellStyleOverride.TableCellStylePropertyFlags.HasFlag(ACadSharp.Objects.TableStyle.CellStylePropertyFlags.FlowDirectionBottomToTop);
+		if (isFlowUp)
+		{
+			this._writer.Write(70, (short)1);
+		}
+
+		// Table-level cell margins. AutoCAD reads these here even when the per-cell
+		// style override carries the same values; omitting them causes the strict
+		// ODA-based reader to abort with "Invalid index".
+		double horMargin = 0.06;
+		double verMargin = 0.06;
+		if (table.CellStyleOverride != null
+			&& table.CellStyleOverride.MarginOverrideFlags.HasFlag(ACadSharp.Objects.TableStyle.MarginFlags.Override))
+		{
+			horMargin = table.CellStyleOverride.HorizontalMargin;
+			verMargin = table.CellStyleOverride.VerticalMargin;
+		}
+		else if (table.Style != null)
+		{
+			horMargin = table.Style.HorizontalCellMargin;
+			verMargin = table.Style.VerticalCellMargin;
+		}
+		this._writer.Write(40, horMargin);
+		this._writer.Write(41, verMargin);
+
+		this.notify("TableEntity DXF writer emits cell data without a proxy graphic preview; AutoCAD may draw the table twice (once from the block reference, once from the cells with no transform applied).", NotificationType.Warning);
+
+		foreach (var row in table.Rows)
+		{
+			this._writer.Write(141, row.Height);
+		}
+
+		foreach (var col in table.Columns)
+		{
+			this._writer.Write(142, col.Width);
+		}
+
+		// Translate table-level MergedCellRanges into the per-cell flags AutoCAD reads:
+		// the top-left cell of each range carries the column/row span in BorderWidth and
+		// BorderHeight while the remaining cells in the range have MergedValue = 1.
+		int rowCount = table.Rows.Count;
+		int colCount = table.Columns.Count;
+		short[,] mergeBorderWidth = new short[rowCount, colCount];
+		short[,] mergeBorderHeight = new short[rowCount, colCount];
+		short[,] mergeFlag = new short[rowCount, colCount];
+		for (int i = 0; i < rowCount; i++)
+		{
+			for (int j = 0; j < colCount; j++)
+			{
+				mergeBorderWidth[i, j] = 1;
+				mergeBorderHeight[i, j] = 1;
+			}
+		}
+		foreach (var range in table.MergedCellRanges)
+		{
+			int top = System.Math.Max(0, range.TopRowIndex);
+			int bottom = System.Math.Min(rowCount - 1, range.BottomRowIndex);
+			int left = System.Math.Max(0, range.LeftColumnIndex);
+			int right = System.Math.Min(colCount - 1, range.RightColumnIndex);
+			int rowSpan = bottom - top + 1;
+			int colSpan = right - left + 1;
+			if (rowSpan < 1 || colSpan < 1)
+			{
+				continue;
+			}
+			mergeBorderWidth[top, left] = (short)colSpan;
+			mergeBorderHeight[top, left] = (short)rowSpan;
+			for (int i = top; i <= bottom; i++)
+			{
+				for (int j = left; j <= right; j++)
+				{
+					if (i == top && j == left)
+					{
+						continue;
+					}
+					mergeFlag[i, j] = 1;
+				}
+			}
+		}
+
+		for (int i = 0; i < rowCount; i++)
+		{
+			var row = table.Rows[i];
+			for (int j = 0; j < row.Cells.Count; j++)
+			{
+				var cell = row.Cells[j];
+				short borderWidth = j < colCount ? mergeBorderWidth[i, j] : (short)1;
+				short borderHeight = j < colCount ? mergeBorderHeight[i, j] : (short)1;
+				short mergedValue = j < colCount ? mergeFlag[i, j] : (short)cell.MergedValue;
+				this._writer.Write(171, (short)cell.Type);
+				this._writer.Write(172, (short)cell.EdgeFlags);
+				this._writer.Write(173, mergedValue);
+				this._writer.Write(174, cell.AutoFit);
+				this._writer.Write(175, (int)borderWidth);
+				this._writer.Write(176, (int)borderHeight);
+
+				// Cell flag (state + override bits). AutoCAD-produced files always emit
+				// 262192 baseline and set bit 0x01 when the cell-level CellAlignment
+				// override is present; code 170 with the alignment value follows when
+				// that bit is set. Without bit 0x01 the strict ODA-based reader falls
+				// back to the TableStyle default and per-cell alignments leak away.
+				const int baseCellFlag = 262192;
+				bool hasAlignmentOverride = cell.StyleOverride != null
+					&& cell.StyleOverride.HasData
+					&& cell.StyleOverride.CellAlignment != default(ACadSharp.Objects.TableStyle.CellAlignmentType);
+				int cellFlag = baseCellFlag;
+				if (hasAlignmentOverride)
+				{
+					cellFlag |= 0x01;
+				}
+				this._writer.Write(91, cellFlag);
+				this._writer.Write(178, (short)cell.VirtualEdgeFlag);
+
+				this._writer.Write(145, cell.Rotation);
+
+				if (hasAlignmentOverride)
+				{
+					this._writer.Write(170, (short)cell.StyleOverride.CellAlignment);
+				}
+
+				ACadSharp.Tables.TextStyle textStyle = cell.StyleOverride?.TextStyle
+					?? (cell.Contents.Count > 0 ? cell.Contents[0].Format?.TextStyle : null);
+				if (textStyle != null)
+				{
+					this._writer.Write(7, textStyle.Name);
+				}
+
+				double textHeight = 0.0;
+				if (cell.StyleOverride != null && cell.StyleOverride.TextHeight > 0)
+				{
+					textHeight = cell.StyleOverride.TextHeight;
+				}
+				else if (cell.Contents.Count > 0 && cell.Contents[0].Format != null && cell.Contents[0].Format.TextHeight > 0)
+				{
+					textHeight = cell.Contents[0].Format.TextHeight;
+				}
+				if (textHeight > 0)
+				{
+					this._writer.Write(140, textHeight);
+				}
+
+				// Cell value state flag. AutoCAD-produced files always emit this before the
+				// CELL_VALUE block; omitting it causes the strict ODA-based reader to bail
+				// with "Invalid index".
+				this._writer.Write(92, 0);
+
+				// Cell text content wrapped in the CELL_VALUE block. The reader keys on
+				// code 301 to enter readCadValue and exits at 304.
+				string textValue = null;
+				if (cell.Content != null && cell.Content.CadValue.Value is string s)
+				{
+					textValue = s;
+				}
+				else if (cell.Contents.Count > 0 && cell.Contents[0].CadValue.Value is string s2)
+				{
+					textValue = s2;
+				}
+
+				if (!string.IsNullOrEmpty(textValue))
+				{
+					this._writer.Write(301, "CELL_VALUE");
+					this._writer.Write(93, 6);
+					this._writer.Write(90, (int)ACadSharp.CadValueType.String);
+					this._writer.Write(1, textValue);
+					this._writer.Write(94, 0);
+					this._writer.Write(300, string.Empty);
+					this._writer.Write(302, textValue);
+					this._writer.Write(304, "ACVALUE_END");
 				}
 			}
 		}
