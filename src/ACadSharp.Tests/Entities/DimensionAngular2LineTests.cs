@@ -19,7 +19,7 @@ namespace ACadSharp.Tests.Entities
 
 		public override void GetBoundingBoxTest()
 		{
-			var dim = createDim();
+			var dim = this.createDim();
 			BoundingBox b = dim.GetBoundingBox();
 
 			Assert.Equal(new BoundingBox(XYZ.Zero, XYZ.AxisX), b);

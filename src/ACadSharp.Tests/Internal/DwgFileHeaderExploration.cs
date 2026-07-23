@@ -39,61 +39,61 @@ namespace ACadSharp.Tests.Internal
 				fh = reader.readFileHeader();
 			}
 
-			printHeader(fh);
+			this.printHeader(fh);
 		}
 
 		private void printHeader(DwgFileHeader fh)
 		{
-			printVar(nameof(fh.AcadVersion), fh.AcadVersion);
-			printVar(nameof(fh.AcadMaintenanceVersion), fh.AcadMaintenanceVersion);
+			this.printVar(nameof(fh.AcadVersion), fh.AcadVersion);
+			this.printVar(nameof(fh.AcadMaintenanceVersion), fh.AcadMaintenanceVersion);
 
 			if (fh is DwgFileHeaderAC15 fh15)
 			{
-				printVar(nameof(fh15.DrawingCodePage), fh15.DrawingCodePage);
+				this.printVar(nameof(fh15.DrawingCodePage), fh15.DrawingCodePage);
 				this._output.WriteLine("--- Records:");
 				foreach (DwgSectionLocatorRecord record in fh15.Records.Values)
 				{
-					printVar(nameof(record.Number), record.Number);
-					printVar(nameof(record.Seeker), record.Seeker);
-					printVar(nameof(record.Size), record.Size);
+					this.printVar(nameof(record.Number), record.Number);
+					this.printVar(nameof(record.Seeker), record.Seeker);
+					this.printVar(nameof(record.Size), record.Size);
 				}
 				this._output.WriteLine("--- end records");
 			}
 			if (fh is DwgFileHeaderAC18 fh18)
 			{
-				printVar(nameof(fh18.DwgVersion), fh18.DwgVersion);
-				printVar(nameof(fh18.AppReleaseVersion), fh18.AppReleaseVersion);
-				printVar(nameof(fh18.SummaryInfoAddr), fh18.SummaryInfoAddr);
-				printVar(nameof(fh18.SecurityType), fh18.SecurityType);
-				printVar(nameof(fh18.VbaProjectAddr), fh18.VbaProjectAddr);
-				printVar(nameof(fh18.RootTreeNodeGap), fh18.RootTreeNodeGap);
-				printVar(nameof(fh18.GapArraySize), fh18.GapArraySize);
-				printVar(nameof(fh18.CRCSeed), fh18.CRCSeed);
-				printVar(nameof(fh18.LastPageId), fh18.LastPageId);
-				printVar(nameof(fh18.LastSectionAddr), fh18.LastSectionAddr);
-				printVar(nameof(fh18.SecondHeaderAddr), fh18.SecondHeaderAddr);
-				printVar(nameof(fh18.GapAmount), fh18.GapAmount);
-				printVar(nameof(fh18.SectionAmount), fh18.SectionAmount);
-				printVar(nameof(fh18.SectionPageMapId), fh18.SectionPageMapId);
-				printVar(nameof(fh18.PageMapAddress), fh18.PageMapAddress);
-				printVar(nameof(fh18.SectionMapId), fh18.SectionMapId);
-				printVar(nameof(fh18.SectionArrayPageSize), fh18.SectionArrayPageSize);
-				printVar(nameof(fh18.RigthGap), fh18.RigthGap);
-				printVar(nameof(fh18.LeftGap), fh18.LeftGap);
+				this.printVar(nameof(fh18.DwgVersion), fh18.DwgVersion);
+				this.printVar(nameof(fh18.AppReleaseVersion), fh18.AppReleaseVersion);
+				this.printVar(nameof(fh18.SummaryInfoAddr), fh18.SummaryInfoAddr);
+				this.printVar(nameof(fh18.SecurityType), fh18.SecurityType);
+				this.printVar(nameof(fh18.VbaProjectAddr), fh18.VbaProjectAddr);
+				this.printVar(nameof(fh18.RootTreeNodeGap), fh18.RootTreeNodeGap);
+				this.printVar(nameof(fh18.GapArraySize), fh18.GapArraySize);
+				this.printVar(nameof(fh18.CRCSeed), fh18.CRCSeed);
+				this.printVar(nameof(fh18.LastPageId), fh18.LastPageId);
+				this.printVar(nameof(fh18.LastSectionAddr), fh18.LastSectionAddr);
+				this.printVar(nameof(fh18.SecondHeaderAddr), fh18.SecondHeaderAddr);
+				this.printVar(nameof(fh18.GapAmount), fh18.GapAmount);
+				this.printVar(nameof(fh18.SectionAmount), fh18.SectionAmount);
+				this.printVar(nameof(fh18.SectionPageMapId), fh18.SectionPageMapId);
+				this.printVar(nameof(fh18.PageMapAddress), fh18.PageMapAddress);
+				this.printVar(nameof(fh18.SectionMapId), fh18.SectionMapId);
+				this.printVar(nameof(fh18.SectionArrayPageSize), fh18.SectionArrayPageSize);
+				this.printVar(nameof(fh18.RigthGap), fh18.RigthGap);
+				this.printVar(nameof(fh18.LeftGap), fh18.LeftGap);
 				this._output.WriteLine("--- Descriptors:");
 				foreach (DwgSectionDescriptor descriptor in fh18.Descriptors.Values)
 				{
-					printVar(nameof(descriptor.Name), descriptor.Name);
-					printVar(nameof(descriptor.PageType), descriptor.PageType);
-					printVar(nameof(descriptor.CompressedSize), descriptor.CompressedSize);
-					printVar(nameof(descriptor.PageCount), descriptor.PageCount);
-					printVar(nameof(descriptor.DecompressedSize), descriptor.DecompressedSize);
-					printVar(nameof(descriptor.CompressedCode), descriptor.CompressedCode);
-					printVar(nameof(descriptor.IsCompressed), descriptor.IsCompressed);
-					printVar(nameof(descriptor.SectionId), descriptor.SectionId);
-					printVar(nameof(descriptor.Encrypted), descriptor.Encrypted);
-					printVar(nameof(descriptor.HashCode), descriptor.HashCode);
-					printVar(nameof(descriptor.Encoding), descriptor.Encoding);
+					this.printVar(nameof(descriptor.Name), descriptor.Name);
+					this.printVar(nameof(descriptor.PageType), descriptor.PageType);
+					this.printVar(nameof(descriptor.CompressedSize), descriptor.CompressedSize);
+					this.printVar(nameof(descriptor.PageCount), descriptor.PageCount);
+					this.printVar(nameof(descriptor.DecompressedSize), descriptor.DecompressedSize);
+					this.printVar(nameof(descriptor.CompressedCode), descriptor.CompressedCode);
+					this.printVar(nameof(descriptor.IsCompressed), descriptor.IsCompressed);
+					this.printVar(nameof(descriptor.SectionId), descriptor.SectionId);
+					this.printVar(nameof(descriptor.Encrypted), descriptor.Encrypted);
+					this.printVar(nameof(descriptor.HashCode), descriptor.HashCode);
+					this.printVar(nameof(descriptor.Encoding), descriptor.Encoding);
 				}
 				this._output.WriteLine("--- end Descriptors");
 			}

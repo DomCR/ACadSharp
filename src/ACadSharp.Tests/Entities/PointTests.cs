@@ -10,8 +10,8 @@ namespace ACadSharp.Tests.Entities
 		[Fact]
 		public void TranslateTest()
 		{
-			XYZ init = _random.Next<XYZ>();
-			XYZ transform = _random.Next<XYZ>();
+			XYZ init = this._random.Next<XYZ>();
+			XYZ transform = this._random.Next<XYZ>();
 			XYZ result = init + transform;
 
 			Point point = new Point(init);
@@ -40,7 +40,7 @@ namespace ACadSharp.Tests.Entities
 
 		public override void GetBoundingBoxTest()
 		{
-			XYZ pt = _random.NextXYZ();
+			XYZ pt = this._random.NextXYZ();
 			Point point = new Point(pt);
 
 			var box = point.GetBoundingBox();

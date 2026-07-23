@@ -12,13 +12,12 @@ public abstract class BlockActionBasePt : BlockAction
 	[DxfCodeValue(1011, 1021, 1031)]
 	public XYZ BasePoint { get; set; }
 
-	/// <summary>
-	/// Gets the list of <see cref="EvalConnection"/> objects that define the connections for this <see cref="BlockActionBasePt"/>.
-	/// </summary>
-	public EvalConnection[] Connections { get; } = new EvalConnection[2];
-
 	/// <inheritdoc/>
 	public override string SubclassMarker => DxfSubclassMarker.BlockActionBasePt;
+
+	public EvalConnection UpdateBaseX { get; set; } = new EvalConnection();
+
+	public EvalConnection UpdateBaseY { get; set; } = new EvalConnection();
 
 	[DxfCodeValue(1012, 1022, 1032)]
 	public XYZ Value1012 { get; set; }

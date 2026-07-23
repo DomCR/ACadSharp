@@ -3155,7 +3155,7 @@ namespace ACadSharp.Header
 		/// <remarks>
 		/// System variable ACADVER.
 		/// </remarks>
-		[CadSystemVariable("$ACADVER", DxfCode.Text)]
+		[CadSystemVariable("$ACADVER", DxfCode.PrimaryText)]
 		public string VersionString
 		{
 			get { return this.Version.ToString(); }

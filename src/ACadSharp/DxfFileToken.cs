@@ -178,7 +178,13 @@ public static class DxfFileToken
 
 	public const string ObjectBlockGripLocationComponent = "BLOCKGRIPLOCATIONCOMPONENT";
 
+	public const string ObjectBlockLinearGrip = "BLOCKLINEARGRIP";
+
 	public const string ObjectBlockLinearParameter = "BLOCKLINEARPARAMETER";
+
+	public const string ObjectBlockLookupAction = "BLOCKLOOKUPACTION";
+
+	public const string ObjectBlockLookupGrip = "BLOCKLOOKUPGRIP";
 
 	public const string ObjectBlockLookupParameter = "BLOCKLOOKUPPARAMETER";
 
@@ -193,6 +199,10 @@ public static class DxfFileToken
 	public const string ObjectBlockRotationGrip = "BLOCKROTATIONGRIP";
 
 	public const string ObjectBlockRotationParameter = "BLOCKROTATIONPARAMETER";
+
+	public const string ObjectBlockScaleAction = "BLOCKSCALEACTION";
+
+	public const string ObjectBlockStretchAction = "BLOCKSTRETCHACTION";
 
 	public const string ObjectBlockVisibilityGrip = "BLOCKVISIBILITYGRIP";
 

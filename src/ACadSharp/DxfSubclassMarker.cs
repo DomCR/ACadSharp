@@ -60,7 +60,13 @@ public static class DxfSubclassMarker
 
 	public const string BlockGripExpression = "AcDbBlockGripExpr";
 
+	public const string BlockLinearGrip = "AcDbBlockLinearGrip";
+
 	public const string BlockLinearParameter = "AcDbBlockLinearParameter";
+
+	public const string BlockLookupAction = "AcDbBlockLookupAction";
+
+	public const string BlockLookupGrip = "AcDbBlockLookUpGrip";
 
 	public const string BlockLookupParameter = "AcDbBlockLookUpParameter";
 
@@ -79,6 +85,10 @@ public static class DxfSubclassMarker
 	public const string BlockRotationGrip = "AcDbBlockRotationGrip";
 
 	public const string BlockRotationParameter = "AcDbBlockRotationParameter";
+
+	public const string BlockScaleAction = "AcDbBlockScaleAction";
+
+	public const string BlockStretchAction = "AcDbBlockStretchAction";
 
 	public const string BlockVisibilityGrip = "AcDbBlockVisibilityGrip";
 

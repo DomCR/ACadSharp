@@ -138,7 +138,7 @@ namespace ACadSharp.Tests.Internal
 			Stream stream = new MemoryStream();
 
 			DwgObjectWriter writer = new DwgObjectWriter(stream, docToWrite, Encoding.Default);
-			writer.OnNotification += onNotification;
+			writer.OnNotification += this.onNotification;
 			writer.Write();
 
 			var handles = new Queue<ulong>(writer.Map.Select(o => o.Key));

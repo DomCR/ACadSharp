@@ -6,15 +6,11 @@ namespace ACadSharp.Objects.Evaluations;
 [DxfSubClass(DxfSubclassMarker.BlockRotationAction)]
 public class BlockRotationAction : BlockActionBasePt
 {
+	public EvalConnection Connection { get; set; }
+
 	/// <inheritdoc/>
 	public override string ObjectName => DxfFileToken.ObjectBlockRotateAction;
 
 	/// <inheritdoc/>
 	public override string SubclassMarker => DxfSubclassMarker.BlockRotationAction;
-
-	[DxfCodeValue(303)]
-	public string Value303 { get; set; }
-
-	[DxfCodeValue(94)]
-	public int Value94 { get; set; }
 }

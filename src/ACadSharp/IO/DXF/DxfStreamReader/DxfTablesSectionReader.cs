@@ -297,6 +297,9 @@ internal class DxfTablesSectionReader : DxfSectionReaderBase
 
 		switch (this._reader.Code)
 		{
+			case 70:
+				tmp.CadObject.Units = (UnitsType)this._reader.ValueAsShort;
+				return true;
 			case 340:
 				tmp.LayoutHandle = this._reader.ValueAsHandle;
 				return true;

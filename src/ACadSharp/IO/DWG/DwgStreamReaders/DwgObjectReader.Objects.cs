@@ -58,11 +58,11 @@ internal partial class DwgObjectReader : DwgSectionIO
 		template.Block2PtParameter.SecondPointDisplacementX = this.readEvalParameterProperty();
 		template.Block2PtParameter.SecondPointDisplacementY = this.readEvalParameterProperty();
 
-		for (int k = 0; k < 4; k++)
-		{
-			//91 values
-			template.Block2PtParameter.GripIds[k] = this._mergedReaders.ReadBitLong();
-		}
+		//91 values
+		template.Block2PtParameter.GripIds.Add(this._mergedReaders.ReadBitLong());
+		template.Block2PtParameter.GripIds.Add(this._mergedReaders.ReadBitLong());
+		template.Block2PtParameter.GripIds.Add(this._mergedReaders.ReadBitLong());
+		template.Block2PtParameter.GripIds.Add(this._mergedReaders.ReadBitLong());
 
 		//177
 		template.Block2PtParameter.BaseLocation = (LinearParameterBaseLocation)this._mergedReaders.ReadBitShort();
@@ -89,7 +89,7 @@ internal partial class DwgObjectReader : DwgSectionIO
 		int nparameters = this._mergedReaders.ReadBitLong();
 		for (int i = 0; i < nparameters; i++)
 		{
-			long parameterId = this._mergedReaders.ReadBitLong();
+			blockAction.ParametersIds.Add(this._mergedReaders.ReadBitLong());
 		}
 	}
 
@@ -101,8 +101,8 @@ internal partial class DwgObjectReader : DwgSectionIO
 
 		blockActionBasePt.BasePoint = this._mergedReaders.Read3BitDouble();
 
-		blockActionBasePt.Connections[0] = this.readEvalConnection();
-		blockActionBasePt.Connections[1] = this.readEvalConnection();
+		blockActionBasePt.UpdateBaseX = this.readEvalConnection();
+		blockActionBasePt.UpdateBaseY = this.readEvalConnection();
 
 		blockActionBasePt.Value280 = this._mergedReaders.ReadBit();
 		blockActionBasePt.Value1012 = this._mergedReaders.Read3BitDouble();
@@ -139,10 +139,12 @@ internal partial class DwgObjectReader : DwgSectionIO
 
 	private CadTemplate readBlockGripLocationComponent()
 	{
-		BlockGripExpression gripExpression = new BlockGripExpression();
-		CadBlockGripExpressionTemplate template = new CadBlockGripExpressionTemplate(gripExpression);
+		BlockGripLocationComponent grip = new BlockGripLocationComponent();
+		CadBlockGripLocationComponentTemplate template = new CadBlockGripLocationComponentTemplate(grip);
 
 		this.readEvaluationExpression(template);
+
+		grip.Connection = this.readEvalConnection();
 
 		return template;
 	}
@@ -162,6 +164,31 @@ internal partial class DwgObjectReader : DwgSectionIO
 		blockLinearParameter.LabelOffset = this._mergedReaders.ReadBitDouble();
 
 		blockLinearParameter.ValueSet = this.readParameterValueSet();
+
+		return template;
+	}
+
+	private CadTemplate readBlockLookupAction()
+	{
+		var lookupAction = new BlockLookupAction();
+		CadBlockLookupActionTemplate template = new CadBlockLookupActionTemplate(lookupAction);
+
+		this.readBlockAction(template);
+
+		template.NumberOfRows = this._mergedReaders.ReadBitLong();
+		template.NumberOfColumns = this._mergedReaders.ReadBitLong();
+
+		for (int i = 0; i < template.NumberOfRows * template.NumberOfColumns; i++)
+		{
+			template.RowValues.Add(this._mergedReaders.ReadVariableText());
+		}
+
+		for (int j = 0; j < template.NumberOfColumns; j++)
+		{
+			lookupAction.Columns.Add(this.readLookupActionColumn());
+		}
+
+		lookupAction.UnknownFlag = this._mergedReaders.ReadBit();
 
 		return template;
 	}
@@ -228,7 +255,7 @@ internal partial class DwgObjectReader : DwgSectionIO
 
 		this.readCommonNonEntityData(template);
 
-		representation.Value70 = this._mergedReaders.ReadBitShort();
+		representation.Version = this._mergedReaders.ReadBitShort();
 		template.BlockHandle = this.handleReference();
 
 		return template;
@@ -241,8 +268,7 @@ internal partial class DwgObjectReader : DwgSectionIO
 
 		this.readBlockActionBasePt(template);
 
-		rotationAction.Value94 = this._mergedReaders.ReadBitLong();
-		rotationAction.Value303 = this._mergedReaders.ReadVariableText();
+		rotationAction.Connection = this.readEvalConnection();
 
 		return template;
 	}
@@ -257,20 +283,81 @@ internal partial class DwgObjectReader : DwgSectionIO
 		//1011 1021 1031
 		blockRotationParameter.Point = this._mergedReaders.Read3BitDouble();
 		//305
-		blockRotationParameter.Name = this._mergedReaders.ReadVariableText();
+		blockRotationParameter.Label = this._mergedReaders.ReadVariableText();
 		//306
 		blockRotationParameter.Description = this._mergedReaders.ReadVariableText();
 		//140
-		blockRotationParameter.NameOffset = this._mergedReaders.ReadBitDouble();
+		blockRotationParameter.LabelOffset = this._mergedReaders.ReadBitDouble();
 
-		//307 missing text?
+		blockRotationParameter.ValueSet = this.readParameterValueSet();
 
-		blockRotationParameter.Value96 = this._mergedReaders.ReadBitLong();
-		blockRotationParameter.Value141 = this._mergedReaders.ReadBitDouble();
-		blockRotationParameter.Value142 = this._mergedReaders.ReadBitDouble();
-		blockRotationParameter.Value143 = this._mergedReaders.ReadBitDouble();
+		return template;
+	}
 
-		blockRotationParameter.Value175 = this._mergedReaders.ReadBitLong();
+	private CadTemplate readBlockScaleAction()
+	{
+		BlockScaleAction scaleAction = new();
+		CadBlockScaleActionTemplate template = new(scaleAction);
+
+		this.readBlockActionBasePt(template);
+
+		scaleAction.ScaleConnection = this.readEvalConnection();
+		scaleAction.XScaleConnection = this.readEvalConnection();
+		scaleAction.YScaleConnection = this.readEvalConnection();
+
+		scaleAction.ScaleType = this._mergedReaders.ReadByte();
+
+		return template;
+	}
+
+	private CadTemplate readBlockStretchAction()
+	{
+		BlockStretchAction stretchAction = new();
+		CadBlockStretchActionTemplate template = new CadBlockStretchActionTemplate(stretchAction);
+
+		this.readBlockAction(template);
+
+		stretchAction.EndXDelta = this.readEvalConnection();
+		stretchAction.EndYDelta = this.readEvalConnection();
+
+		int npts = this._mergedReaders.ReadBitLong();
+		for (int i = 0; i < npts; i++)
+		{
+			stretchAction.Boundary.Add(this._mergedReaders.Read2RawDouble());
+		}
+
+		int nbindings = this._mergedReaders.ReadBitLong();
+		for (int i = 0; i < nbindings; i++)
+		{
+			var h = this.handleReference();
+
+			BlockStretchAction.StretchBind bind = new BlockStretchAction.StretchBind();
+			int nindexes = this._mergedReaders.ReadBitLong();
+			for (int j = 0; j < nindexes; j++)
+			{
+				bind.PointIndexes.Add(this._mergedReaders.ReadBitLong());
+			}
+
+			template.Bindings.Add(h, bind);
+		}
+
+		int nnodes = this._mergedReaders.ReadBitLong();
+		for (int i = 0; i < nnodes; i++)
+		{
+			BlockStretchAction.StretchNode node = new BlockStretchAction.StretchNode();
+			node.NodeId = this._mergedReaders.ReadBitLong();
+			int nindexes = this._mergedReaders.ReadBitLong();
+			for (int j = 0; j < nindexes; j++)
+			{
+				node.PointIndexes.Add(this._mergedReaders.ReadBitLong());
+			}
+
+			stretchAction.StretchNodes.Add(node);
+		}
+
+		stretchAction.DistanceMultiplier = this._mergedReaders.ReadBitDouble();
+		stretchAction.AngleOffset = this._mergedReaders.ReadBitDouble();
+		stretchAction.UnknownFlag = this._mergedReaders.ReadByte();
 
 		return template;
 	}
@@ -285,7 +372,7 @@ internal partial class DwgObjectReader : DwgSectionIO
 		//281
 		blockVisibilityParameter.ChainActions = this._mergedReaders.ReadBit();
 		//301
-		blockVisibilityParameter.Name = this._mergedReaders.ReadVariableText();
+		blockVisibilityParameter.Label = this._mergedReaders.ReadVariableText();
 		//302
 		blockVisibilityParameter.Description = this._mergedReaders.ReadVariableText();
 		//missing bit??	91 should be an int
@@ -379,11 +466,13 @@ internal partial class DwgObjectReader : DwgSectionIO
 	private CadTemplate readDynamicBlockPurgePreventer()
 	{
 		var purgePreventer = new DynamicBlockPurgePreventer();
-		var template = new CadNonGraphicalObjectTemplate(purgePreventer);
+		var template = new DynamicBlockPurgePreventerTemplate(purgePreventer);
 
 		this.readCommonNonEntityData(template);
 
 		purgePreventer.Version = this._mergedReaders.ReadBitShort();
+
+		template.BlockHandle = this.handleReference();
 
 		return template;
 	}
@@ -419,7 +508,7 @@ internal partial class DwgObjectReader : DwgSectionIO
 		this.readCommonNonEntityData(template);
 
 		//AcDbEvalExpr
-		var unknown = this._objectReader.ReadBitLong();
+		template.CadObject.Unknown = this._objectReader.ReadBitLong();
 
 		//98
 		template.CadObject.Value98 = this._objectReader.ReadBitLong();
@@ -431,23 +520,113 @@ internal partial class DwgObjectReader : DwgSectionIO
 		if (code > 0)
 		{
 			var groupValue = GroupCodeValue.TransformValue(code);
+			object value = null;
 			switch (groupValue)
 			{
+				case GroupCodeValueType.String:
+				case GroupCodeValueType.ExtendedDataString:
+					value = this._mergedReaders.ReadVariableText();
+					break;
 				case GroupCodeValueType.Int16:
 				case GroupCodeValueType.ExtendedDataInt16:
-					this._mergedReaders.ReadBitShort();
+					value = this._mergedReaders.ReadBitShort();
 					break;
 				case GroupCodeValueType.Double:
 				case GroupCodeValueType.ExtendedDataDouble:
-					this._mergedReaders.ReadBitDouble();
+					value = this._mergedReaders.ReadBitDouble();
+					break;
+				case GroupCodeValueType.Int32:
+				case GroupCodeValueType.Int64:
+				case GroupCodeValueType.ExtendedDataInt32:
+					value = this._mergedReaders.ReadBitLong();
+					break;
+				case GroupCodeValueType.Point3D:
+					value = this._mergedReaders.Read3BitDouble();
 					break;
 				default:
 					throw new System.NotImplementedException($"[EvaluationExpression] Code not implemented {groupValue}");
 			}
+
+			template.CadObject.EvaluatedValue = new DxfValuePair((DxfCode)code, value);
 		}
 
 		//90
 		template.CadObject.Id = this._objectReader.ReadBitLong();
+	}
+
+	private CadTemplate readEvaluationGraph()
+	{
+		EvaluationGraph evaluationGraph = new EvaluationGraph();
+		CadEvaluationGraphTemplate template = new CadEvaluationGraphTemplate(evaluationGraph);
+
+		this.readCommonNonEntityData(template);
+
+		//DXF fields 96, 97 contain the value 5, here are three fields returning the same value 5
+		evaluationGraph.Value96 = this._objectReader.ReadBitLong();
+		evaluationGraph.Value97 = this._objectReader.ReadBitLong();
+
+		int nodeCount = this._objectReader.ReadBitLong();
+		for (int i = 0; i < nodeCount; i++)
+		{
+			var node = evaluationGraph.CreateNode();
+			var nodeTemplate = new CadEvaluationGraphTemplate.GraphNodeTemplate(node);
+			template.NodeTemplates.Add(nodeTemplate);
+
+			//Code 91
+			node.Index = this._objectReader.ReadBitLong();
+			//Code 93
+			node.Flags = (EvaluationGraph.NodeFlags)this._objectReader.ReadBitLong();
+
+			//Code 95
+			node.Id = this._objectReader.ReadBitLong();
+
+			//Code 360
+			nodeTemplate.ExpressionHandle = this.handleReference();
+
+			//Codes 92, x4
+			node.Data1 = this._objectReader.ReadBitLong();
+			node.Data2 = this._objectReader.ReadBitLong();
+			node.Data3 = this._objectReader.ReadBitLong();
+			node.Data4 = this._objectReader.ReadBitLong();
+		}
+
+		//Last node has x5 92 with the last value as 0 instead of x4
+		//Followed by a 93
+		var edgeCount = this._objectReader.ReadBitLong();
+		for (int i = 0; i < edgeCount; i++)
+		{
+			var edge = new EvaluationGraph.Edge();
+
+			//id BL, DXF 92
+			//nextid BLd, DXF 93
+			//e1 BLd, DXF 94
+			//e2 BLd, DXF 91
+			//e3 BLd, DXF 91
+			//out_edge BLd
+
+			//92 index
+			edge.Index = this._objectReader.ReadBitLong();
+			//93
+			edge.Flags = this._objectReader.ReadBitLong();
+			//94
+			edge.TrackedCount = this._objectReader.ReadBitLong();
+
+			//91
+			edge.FromNodeIndex = this._objectReader.ReadBitLong();
+			//91
+			edge.ToNodeIndex = this._objectReader.ReadBitLong();
+
+			//92 x5
+			edge.Data1 = this._objectReader.ReadBitLong();
+			edge.Data2 = this._objectReader.ReadBitLong();
+			edge.Data3 = this._objectReader.ReadBitLong();
+			edge.Data4 = this._objectReader.ReadBitLong();
+			edge.Data5 = this._objectReader.ReadBitLong();
+
+			evaluationGraph.Edges.Add(edge);
+		}
+
+		return template;
 	}
 
 	private CadTemplate readField()
@@ -535,6 +714,35 @@ internal partial class DwgObjectReader : DwgSectionIO
 		}
 
 		return template;
+	}
+
+	private CadTemplate readLinearBlockGrip()
+	{
+		var grip = new BlockLinearGrip();
+		var template = new CadBlockGripTemplate(grip);
+
+		this.readBlockGrip(template);
+
+		grip.XDistance = this._mergedReaders.ReadBitDouble();
+		grip.YDistance = this._mergedReaders.ReadBitDouble();
+		grip.ZDistance = this._mergedReaders.ReadBitDouble();
+
+		return template;
+	}
+
+	private BlockLookupAction.ColumnData readLookupActionColumn()
+	{
+		BlockLookupAction.ColumnData col = new BlockLookupAction.ColumnData();
+
+		col.NodeId = this._mergedReaders.ReadBitLong();
+		col.ValueType = this._mergedReaders.ReadBitLong();
+		col.Type = this._mergedReaders.ReadBitLong();
+		col.IsLookupProperty = this._mergedReaders.ReadBit();
+		col.UnmatchedName = this._mergedReaders.ReadVariableText();
+		col.IsReadOnly = !this._mergedReaders.ReadBit();
+		col.ConnectionName = this._mergedReaders.ReadVariableText();
+
+		return col;
 	}
 
 	private CadTemplate readMTextAttributeObjectContextData()

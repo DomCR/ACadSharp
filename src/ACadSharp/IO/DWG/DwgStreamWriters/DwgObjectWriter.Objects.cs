@@ -10,14 +10,15 @@ using System.Collections.Generic;
 using System.Globalization;
 using System.IO;
 using System.Linq;
+using static System.Collections.Specialized.BitVector32;
 
 namespace ACadSharp.IO.DWG;
 
 internal partial class DwgObjectWriter : DwgSectionIO
 {
-	private void addEntriesToWriter(CadDictionary dictionary)
+	private void addObjectsToWriter(IEnumerable<NonGraphicalObject> entries)
 	{
-		foreach (NonGraphicalObject e in dictionary)
+		foreach (NonGraphicalObject e in entries)
 		{
 			this._objects.Enqueue(e);
 		}
@@ -33,6 +34,9 @@ internal partial class DwgObjectWriter : DwgSectionIO
 		notify = true;
 		switch (entry)
 		{
+			case EvaluationGraph when !this.WriteDynamicParameters:
+			case BlockRepresentationData when !this.WriteDynamicParameters:
+			case DynamicBlockPurgePreventer when !this.WriteDynamicParameters:
 			case XRecord when !this.WriteXRecords:
 				notify = false;
 				return true;
@@ -40,12 +44,9 @@ internal partial class DwgObjectWriter : DwgSectionIO
 			case AecCleanupGroup:
 			case AecBinRecord:
 			case DimensionAssociation:
-			case DynamicBlockPurgePreventer:
-			case EvaluationGraph:
 			case UnknownNonGraphicalObject:
 			case VisualStyle:
 			case ProxyObject:
-			case BlockRepresentationData:
 			case BlockReferenceObjectContextData:
 			case MTextAttributeObjectContextData:
 				return true;
@@ -72,6 +73,282 @@ internal partial class DwgObjectWriter : DwgSectionIO
 	private void writeAnnotScaleObjectContextData(AnnotScaleObjectContextData annotScaleObjectContextData)
 	{
 		this._writer.HandleReference(DwgReferenceType.HardPointer, annotScaleObjectContextData.Scale);
+	}
+
+	private void writeBlock1PtParameter(Block1PtParameter parameter)
+	{
+		this.writeBlockParameter(parameter);
+
+		this._writer.Write3BitDouble(parameter.Location);
+
+		this.writeEvalParameterProperty(parameter.DisplacementX);
+		this.writeEvalParameterProperty(parameter.DisplacementY);
+
+		this._writer.WriteBitLong((int)parameter.GripId);
+	}
+
+	private void writeBlock2PtParameter(Block2PtParameter parameter)
+	{
+		this.writeBlockParameter(parameter);
+
+		this._writer.Write3BitDouble(parameter.FirstPoint);
+		this._writer.Write3BitDouble(parameter.SecondPoint);
+
+		this.writeEvalParameterProperty(parameter.FirstPointDisplacementX);
+		this.writeEvalParameterProperty(parameter.FirstPointDisplacementY);
+		this.writeEvalParameterProperty(parameter.SecondPointDisplacementX);
+		this.writeEvalParameterProperty(parameter.SecondPointDisplacementY);
+
+		foreach (var id in parameter.GripIds)
+		{
+			this._writer.WriteBitLong((int)id);
+		}
+
+		this._writer.WriteBitShort((short)parameter.BaseLocation);
+	}
+
+	private void writeBlockAction(BlockAction action)
+	{
+		this.writeBlockElement(action);
+
+		this._writer.Write3BitDouble(action.LabelPosition);
+
+		this._writer.WriteBitLong(action.Entities.Count);
+		foreach (Entities.Entity entity in action.Entities)
+		{
+			this._writer.HandleReference(DwgReferenceType.SoftPointer, entity);
+		}
+
+		this._writer.WriteBitLong(action.ParametersIds.Count);
+		foreach (int id in action.ParametersIds)
+		{
+			this._writer.WriteBitLong(id);
+		}
+	}
+
+	private void writeBlockActionBasePt(BlockActionBasePt action)
+	{
+		this.writeBlockAction(action);
+
+		this._writer.Write3BitDouble(action.BasePoint);
+
+		this.writeEvalConnection(action.UpdateBaseX);
+		this.writeEvalConnection(action.UpdateBaseY);
+
+		this._writer.WriteBit(action.Value280);
+		this._writer.Write3BitDouble(action.Value1012);
+	}
+
+	private void writeBlockElement(BlockElement parameter)
+	{
+		this.writeEvaluationExpression(parameter);
+
+		this._writer.WriteVariableText(parameter.ElementName);
+		this._writer.WriteBitLong(parameter.Value98);
+		this._writer.WriteBitLong(parameter.Value99);
+		this._writer.WriteBitLong(parameter.Value1071);
+	}
+
+	private void writeBlockGrip(BlockGrip grip)
+	{
+		this.writeBlockElement(grip);
+
+		this._writer.WriteBitLong(grip.ExpressionId1);
+		this._writer.WriteBitLong(grip.ExpressionId2);
+
+		this._writer.Write3BitDouble(grip.Location);
+
+		this._writer.WriteBit(grip.Cycling);
+		this._writer.WriteBitLong(grip.Value93);
+	}
+
+	private void writeBlockGripLocationComponent(BlockGripLocationComponent grip)
+	{
+		this.writeEvaluationExpression(grip);
+
+		this.writeEvalConnection(grip.Connection);
+	}
+
+	private void writeBlockLinearGrip(BlockLinearGrip grip)
+	{
+		this.writeBlockGrip(grip);
+
+		this._writer.WriteBitDouble(grip.XDistance);
+		this._writer.WriteBitDouble(grip.YDistance);
+		this._writer.WriteBitDouble(grip.ZDistance);
+	}
+
+	private void writeBlockLinearParameter(BlockLinearParameter parameter)
+	{
+		this.writeBlock2PtParameter(parameter);
+
+		this._writer.WriteVariableText(parameter.Label);
+		this._writer.WriteVariableText(parameter.Description);
+		this._writer.WriteBitDouble(parameter.LabelOffset);
+
+		this.writeParameterValueSet(parameter.ValueSet);
+	}
+
+	private void writeBlockLookupAction(BlockLookupAction lookupAction)
+	{
+		this.writeBlockAction(lookupAction);
+
+		int nrows = lookupAction.Columns.FirstOrDefault()?.Rows.Count ?? 0;
+		int ncols = lookupAction.Columns.Count;
+
+		this._writer.WriteBitLong(nrows);
+		this._writer.WriteBitLong(ncols);
+
+		for (int i = 0; i < nrows; i++)
+		{
+			for (int j = 0; j < ncols; j++)
+			{
+				this._writer.WriteVariableText(lookupAction.Columns[j].Rows[i]);
+			}
+		}
+
+		foreach (var column in lookupAction.Columns)
+		{
+			this.writeLookupActionColumn(column);
+		}
+
+		this._writer.WriteBit(lookupAction.UnknownFlag);
+	}
+
+	private void writeBlockLookupParameter(BlockLookupParameter parameter)
+	{
+		this.writeBlock1PtParameter(parameter);
+
+		this._writer.WriteBitLong(parameter.ActionId);
+		this._writer.WriteVariableText(parameter.Label);
+		this._writer.WriteVariableText(parameter.Description);
+	}
+
+	private void writeBlockMoveAction(BlockMoveAction action)
+	{
+		this.writeBlockAction(action);
+
+		this.writeEvalConnection(action.XDelta);
+		this.writeEvalConnection(action.YDelta);
+
+		this._writer.WriteBitDouble(action.DistanceMultiplier);
+		this._writer.WriteBitDouble(action.AngleOffset);
+		this._writer.WriteByte(action.UnknownFlag);
+	}
+
+	private void writeBlockParameter(BlockParameter parameter)
+	{
+		this.writeBlockElement(parameter);
+
+		this._writer.WriteBit(parameter.ShowProperties);
+		this._writer.WriteBit(parameter.ChainActions);
+	}
+
+	private void writeBlockPointParameter(BlockPointParameter parameter)
+	{
+		this.writeBlock1PtParameter(parameter);
+
+		this._writer.WriteVariableText(parameter.Label);
+		this._writer.WriteVariableText(parameter.Description);
+		this._writer.Write3BitDouble(parameter.LabelPosition);
+	}
+
+	private void writeBlockRepresentationData(BlockRepresentationData representation)
+	{
+		this._writer.WriteBitShort(representation.Version);
+		this._writer.HandleReference(DwgReferenceType.HardPointer, representation.Block);
+	}
+
+	private void writeBlockRotationAction(BlockRotationAction action)
+	{
+		this.writeBlockActionBasePt(action);
+
+		this.writeEvalConnection(action.Connection);
+	}
+
+	private void writeBlockRotationParameter(BlockRotationParameter parameter)
+	{
+		this.writeBlock2PtParameter(parameter);
+
+		this._writer.Write3BitDouble(parameter.Point);
+		this._writer.WriteVariableText(parameter.Label);
+		this._writer.WriteVariableText(parameter.Description);
+		this._writer.WriteBitDouble(parameter.LabelOffset);
+
+		this.writeParameterValueSet(parameter.ValueSet);
+	}
+
+	private void writeBlockScaleAction(BlockScaleAction action)
+	{
+		this.writeBlockActionBasePt(action);
+
+		this.writeEvalConnection(action.ScaleConnection);
+		this.writeEvalConnection(action.XScaleConnection);
+		this.writeEvalConnection(action.YScaleConnection);
+
+		this._writer.WriteByte(action.ScaleType);
+	}
+
+	private void writeBlockStretchAction(BlockStretchAction stretchAction)
+	{
+		this.writeBlockAction(stretchAction);
+
+		this.writeEvalConnection(stretchAction.EndXDelta);
+		this.writeEvalConnection(stretchAction.EndYDelta);
+
+		this._writer.WriteBitLong(stretchAction.Boundary.Count);
+		foreach (XY pt in stretchAction.Boundary)
+		{
+			this._writer.Write2RawDouble(pt);
+		}
+
+		this._writer.WriteBitLong(stretchAction.StretchBindings.Count);
+		foreach (BlockStretchAction.StretchBind bind in stretchAction.StretchBindings)
+		{
+			this._writer.HandleReference(DwgReferenceType.SoftPointer, bind.Entity);
+			this._writer.WriteBitLong(bind.PointIndexes.Count);
+			foreach (int ptIndex in bind.PointIndexes)
+			{
+				this._writer.WriteBitLong(ptIndex);
+			}
+		}
+
+		this._writer.WriteBitLong(stretchAction.StretchNodes.Count);
+		foreach (BlockStretchAction.StretchNode stretchNode in stretchAction.StretchNodes)
+		{
+			this._writer.WriteBitLong(stretchNode.NodeId);
+			this._writer.WriteBitLong(stretchNode.PointIndexes.Count);
+			foreach (int ptIndex in stretchNode.PointIndexes)
+			{
+				this._writer.WriteBitLong(ptIndex);
+			}
+		}
+
+		this._writer.WriteBitDouble(stretchAction.DistanceMultiplier);
+		this._writer.WriteBitDouble(stretchAction.AngleOffset);
+		this._writer.WriteByte(stretchAction.UnknownFlag);
+	}
+
+	private void writeBlockVisibilityParameter(BlockVisibilityParameter parameter)
+	{
+		this.writeBlock1PtParameter(parameter);
+
+		this._writer.WriteBit(parameter.ChainActions);
+		this._writer.WriteVariableText(parameter.Label);
+		this._writer.WriteVariableText(parameter.Description);
+		this._writer.WriteBit(parameter.Value91);
+
+		this._writer.WriteBitLong(parameter.Entities.Count);
+		foreach (Entities.Entity e in parameter.Entities)
+		{
+			this._writer.HandleReference(DwgReferenceType.SoftPointer, e);
+		}
+
+		this._writer.WriteBitLong(parameter.States.Count);
+		foreach (var state in parameter.States.Values)
+		{
+			this.writeState(state);
+		}
 	}
 
 	private void writeBookColor(BookColor color)
@@ -461,7 +738,7 @@ internal partial class DwgObjectWriter : DwgSectionIO
 			this._writer.HandleReference(DwgReferenceType.SoftOwnership, item.Handle);
 		}
 
-		this.addEntriesToWriter(dictionary);
+		this.addObjectsToWriter(entries);
 	}
 
 	private void writeDictionaryVariable(DictionaryVariable dictionaryVariable)
@@ -503,6 +780,116 @@ internal partial class DwgObjectWriter : DwgSectionIO
 		{
 			this.writeOsnapPointRef(association.FourthPointRef);
 		}
+	}
+
+	private void writeDynamicBlockPurgePreventer(DynamicBlockPurgePreventer purge)
+	{
+		this._writer.WriteBitShort(purge.Version);
+		this._writer.HandleReference(DwgReferenceType.HardPointer, purge.Block);
+	}
+
+	private void writeEvalConnection(EvalConnection connection)
+	{
+		this._writer.WriteBitLong(connection.Id);
+		this._writer.WriteVariableText(connection.Name);
+	}
+
+	private void writeEvalParameterProperty(EvalParameterProperty property)
+	{
+		this._writer.WriteBitShort((short)property.Connections.Count);
+		foreach (var connection in property.Connections)
+		{
+			this.writeEvalConnection(connection);
+		}
+	}
+
+	private void writeEvaluationExpression(EvaluationExpression parameter)
+	{
+		this._writer.WriteBitLong(parameter.Unknown);
+
+		this._writer.WriteBitLong(parameter.Value98);
+		this._writer.WriteBitLong(parameter.Value99);
+
+		if (parameter.EvaluatedValue == null)
+		{
+			this._writer.WriteBitShort((short)DxfCode.Invalid);
+		}
+		else
+		{
+			this._writer.WriteBitShort((short)parameter.EvaluatedValue.Code);
+
+			switch (parameter.EvaluatedValue.GroupCodeValueType)
+			{
+				case GroupCodeValueType.String:
+				case GroupCodeValueType.ExtendedDataString:
+					this._writer.WriteVariableText((string)parameter.EvaluatedValue.Value);
+					break;
+				case GroupCodeValueType.Int16:
+				case GroupCodeValueType.ExtendedDataInt16:
+					this._writer.WriteBitShort((short)parameter.EvaluatedValue.Value);
+					break;
+				case GroupCodeValueType.Double:
+				case GroupCodeValueType.ExtendedDataDouble:
+					this._writer.WriteBitDouble((double)parameter.EvaluatedValue.Value);
+					break;
+				case GroupCodeValueType.Int32:
+				case GroupCodeValueType.Int64:
+				case GroupCodeValueType.ExtendedDataInt32:
+					this._writer.WriteBitLong((int)parameter.EvaluatedValue.Value);
+					break;
+				case GroupCodeValueType.Point3D:
+					this._writer.Write3BitDouble((XYZ)parameter.EvaluatedValue.Value);
+					break;
+				default:
+					throw new System.NotImplementedException($"[EvaluationExpression] Code not implemented {parameter.EvaluatedValue.GroupCodeValueType}");
+			}
+		}
+
+		this._writer.WriteBitLong(parameter.Id);
+	}
+
+	private void writeEvaluationGraph(EvaluationGraph eval)
+	{
+		this._writer.WriteBitLong(eval.Value96);
+		this._writer.WriteBitLong(eval.Value97);
+
+		var nodesArr = eval.Nodes.ToArray();
+		this._writer.WriteBitLong(nodesArr.Length);
+		for (int i = 0; i < nodesArr.Length; i++)
+		{
+			this._writer.WriteBitLong(i);
+			this._writer.WriteBitLong((int)nodesArr[i].Flags);
+			this._writer.WriteBitLong(nodesArr[i].Id);
+
+			this._writer.HandleReference(DwgReferenceType.HardOwnership, nodesArr[i].Expression);
+
+			this._writer.WriteBitLong(nodesArr[i].Data1);
+			this._writer.WriteBitLong(nodesArr[i].Data2);
+			this._writer.WriteBitLong(nodesArr[i].Data3);
+			this._writer.WriteBitLong(nodesArr[i].Data4);
+		}
+
+		var edgesArr = eval.Edges.ToArray();
+		this._writer.WriteBitLong(edgesArr.Length);
+		for (int i = 0; i < edgesArr.Length; i++)
+		{
+			this._writer.WriteBitLong(i);
+			this._writer.WriteBitLong(edgesArr[i].Flags);
+			this._writer.WriteBitLong(edgesArr[i].TrackedCount);
+
+			this._writer.WriteBitLong(edgesArr[i].FromNodeIndex);
+			this._writer.WriteBitLong(edgesArr[i].ToNodeIndex);
+
+			this._writer.WriteBitLong(edgesArr[i].Data1);
+			this._writer.WriteBitLong(edgesArr[i].Data2);
+			this._writer.WriteBitLong(edgesArr[i].Data3);
+			this._writer.WriteBitLong(edgesArr[i].Data4);
+			this._writer.WriteBitLong(edgesArr[i].Data5);
+		}
+
+		this.addObjectsToWriter(eval.Nodes
+			.Where(n => n.Expression != null)
+			.Select(n => n.Expression));
 	}
 
 	private void writeField(Field field)
@@ -805,6 +1192,17 @@ internal partial class DwgObjectWriter : DwgSectionIO
 				this._writer.HandleReference(DwgReferenceType.SoftPointer, viewport);
 			}
 		}
+	}
+
+	private void writeLookupActionColumn(BlockLookupAction.ColumnData col)
+	{
+		this._writer.WriteBitLong(col.NodeId);
+		this._writer.WriteBitLong(col.ValueType);
+		this._writer.WriteBitLong(col.Type);
+		this._writer.WriteBit(col.IsLookupProperty);
+		this._writer.WriteVariableText(col.UnmatchedName);
+		this._writer.WriteBit(!col.IsReadOnly);
+		this._writer.WriteVariableText(col.ConnectionName);
 	}
 
 	private void writeMaterial(Material material)
@@ -1176,6 +1574,57 @@ internal partial class DwgObjectWriter : DwgSectionIO
 			case AcdbPlaceHolder acdbPlaceHolder:
 				this.writeAcdbPlaceHolder(acdbPlaceHolder);
 				break;
+			case BlockLinearParameter blockLinearParameter:
+				this.writeBlockLinearParameter(blockLinearParameter);
+				break;
+			case BlockRotationParameter blockRotationParameter:
+				this.writeBlockRotationParameter(blockRotationParameter);
+				break;
+			case BlockPointParameter blockPointParameter:
+				this.writeBlockPointParameter(blockPointParameter);
+				break;
+			case BlockVisibilityParameter blockVisibilityParameter:
+				this.writeBlockVisibilityParameter(blockVisibilityParameter);
+				break;
+			case BlockLookupParameter blockLookupParameter:
+				this.writeBlockLookupParameter(blockLookupParameter);
+				break;
+			case BlockVisibilityGrip blockVisibilityGrip:
+				this.writeBlockGrip(blockVisibilityGrip);
+				break;
+			case BlockRepresentationData blockRepresentation:
+				this.writeBlockRepresentationData(blockRepresentation);
+				break;
+			case BlockLinearGrip blockLinearGrip:
+				this.writeBlockLinearGrip(blockLinearGrip);
+				break;
+			case BlockRotationGrip blockRotationGrip:
+				this.writeBlockGrip(blockRotationGrip);
+				break;
+			case BlockXYGrip blockXYGrip:
+				this.writeBlockGrip(blockXYGrip);
+				break;
+			case BlockLookupGrip blockLookupGrip:
+				this.writeBlockGrip(blockLookupGrip);
+				break;
+			case BlockGripLocationComponent blockGripLocationComponent:
+				this.writeBlockGripLocationComponent(blockGripLocationComponent);
+				break;
+			case BlockScaleAction blockScaleAction:
+				this.writeBlockScaleAction(blockScaleAction);
+				break;
+			case BlockRotationAction blockRotationAction:
+				this.writeBlockRotationAction(blockRotationAction);
+				break;
+			case BlockMoveAction blockMoveAction:
+				this.writeBlockMoveAction(blockMoveAction);
+				break;
+			case BlockStretchAction blockStretchAction:
+				this.writeBlockStretchAction(blockStretchAction);
+				break;
+			case BlockLookupAction blockLookupAction:
+				this.writeBlockLookupAction(blockLookupAction);
+				break;
 			case BookColor bookColor:
 				this.writeBookColor(bookColor);
 				break;
@@ -1190,6 +1639,12 @@ internal partial class DwgObjectWriter : DwgSectionIO
 				break;
 			case DimensionAssociation dimAssoc:
 				this.writeDimensionAssociation(dimAssoc);
+				break;
+			case DynamicBlockPurgePreventer dynamicBlockPurge:
+				this.writeDynamicBlockPurgePreventer(dynamicBlockPurge);
+				break;
+			case EvaluationGraph evaluationGraph:
+				this.writeEvaluationGraph(evaluationGraph);
 				break;
 			case GeoData geodata:
 				this.writeGeoData(geodata);
@@ -1286,6 +1741,20 @@ internal partial class DwgObjectWriter : DwgSectionIO
 		this._writer.WriteByte((byte)osnap.ObjectOsnapType);
 		//331
 		this._writer.HandleReference(DwgReferenceType.Undefined, osnap.Geometry);
+	}
+
+	private void writeParameterValueSet(ParameterValueSet valueSet)
+	{
+		_writer.WriteBitLong((int)valueSet.Type);
+		_writer.WriteBitDouble(valueSet.Minimum);
+		_writer.WriteBitDouble(valueSet.Maximum);
+		_writer.WriteBitDouble(valueSet.Increment);
+
+		_writer.WriteBitLong(valueSet.AllowedValues.Count);
+		foreach (double value in valueSet.AllowedValues)
+		{
+			_writer.WriteBitDouble(value);
+		}
 	}
 
 	private void writePdfDefinition(PdfUnderlayDefinition definition)
@@ -1508,6 +1977,23 @@ internal partial class DwgObjectWriter : DwgSectionIO
 		//clipbdtr 12BD 40 clip bound transformation matrix
 		//(double[4][3], column major order)
 		this.write4x3Matrix(filter.InsertTransform);
+	}
+
+	private void writeState(BlockVisibilityParameter.State state)
+	{
+		this._writer.WriteVariableText(state.Name);
+
+		this._writer.WriteBitLong(state.Entities.Count);
+		foreach (Entities.Entity entity in state.Entities)
+		{
+			this._writer.HandleReference(DwgReferenceType.SoftPointer, entity);
+		}
+
+		this._writer.WriteBitLong(state.Expressions.Count);
+		foreach (EvaluationExpression expression in state.Expressions)
+		{
+			this._writer.HandleReference(DwgReferenceType.SoftPointer, expression);
+		}
 	}
 
 	private void writeStringCadValue(string value)

@@ -18,17 +18,17 @@ namespace ACadSharp.Tests.IO
 
 			if (!File.Exists(path))
 			{
-				_output.WriteLine($"Sample file not found: {path}");
+				this._output.WriteLine($"Sample file not found: {path}");
 				return;
 			}
 
-			_testFileDocument = DwgReader.Read(path, this.onNotification);
+			this._testFileDocument = DwgReader.Read(path, this.onNotification);
 		}
 
 		[Fact]
 		public void ReadAecWall_HasAecWallClassDefinition()
 		{
-			bool hasAecWallClass = _testFileDocument.Classes.TryGetByName("AEC_WALL", out var wallClass);
+			bool hasAecWallClass = this._testFileDocument.Classes.TryGetByName("AEC_WALL", out var wallClass);
 
 			Assert.True(hasAecWallClass, "AEC_WALL class definition should be present in CLASSES section");
 			Assert.NotNull(wallClass);
@@ -37,12 +37,12 @@ namespace ACadSharp.Tests.IO
 		[Fact]
 		public void ReadAecWall_HasCorrectProperties()
 		{
-			Assert.True(_testFileDocument.Classes.TryGetByName("AEC_WALL", out var wallClass));
+			Assert.True(this._testFileDocument.Classes.TryGetByName("AEC_WALL", out var wallClass));
 
-			_output.WriteLine($"AEC_WALL class properties:");
-			_output.WriteLine($"  DxfName: {wallClass.DxfName}");
-			_output.WriteLine($"  CppClassName: {wallClass.CppClassName}");
-			_output.WriteLine($"  ApplicationName: {wallClass.ApplicationName}");
+			this._output.WriteLine($"AEC_WALL class properties:");
+			this._output.WriteLine($"  DxfName: {wallClass.DxfName}");
+			this._output.WriteLine($"  CppClassName: {wallClass.CppClassName}");
+			this._output.WriteLine($"  ApplicationName: {wallClass.ApplicationName}");
 
 			Assert.Equal("AEC_WALL", wallClass.DxfName);
 			Assert.True(wallClass.IsAnEntity, "AEC_WALL should be marked as an entity");
@@ -52,9 +52,9 @@ namespace ACadSharp.Tests.IO
 		[Fact]
 		public void ReadAecWall_NameAndMarkerCorrect()
 		{
-			var walls = _testFileDocument.Entities.OfType<Wall>().ToList();
+			var walls = this._testFileDocument.Entities.OfType<Wall>().ToList();
 
-			_output.WriteLine($"Wall entities found: {walls.Count}");
+			this._output.WriteLine($"Wall entities found: {walls.Count}");
 			Assert.NotEmpty(walls);
 
 			foreach (var wall in walls)

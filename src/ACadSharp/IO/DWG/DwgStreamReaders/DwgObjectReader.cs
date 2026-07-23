@@ -5669,7 +5669,7 @@ namespace ACadSharp.IO.DWG
 				case DxfFileToken.ObjectBlockLookupParameter:
 					template = this.readBlockLookupParameter();
 					break;
-				case "BLOCKFLIPPARAMETER":
+				case DxfFileToken.ObjectBlockFlipParameter:
 					template = this.readBlockFlipParameter();
 					break;
 				case DxfFileToken.ObjectBlockRepresentationData:
@@ -5678,17 +5678,24 @@ namespace ACadSharp.IO.DWG
 				case DxfFileToken.ObjectBlockGripLocationComponent:
 					template = this.readBlockGripLocationComponent();
 					break;
+				case DxfFileToken.ObjectBlockLinearGrip:
+				template = 	this.readLinearBlockGrip();
+					break;
 				case DxfFileToken.ObjectBlockXYGrip:
 					template = new CadBlockGripTemplate(new BlockXYGrip());
 					this.readBlockGrip(template as CadBlockGripTemplate);
 					break;
 				case DxfFileToken.ObjectBlockRotationGrip:
-					template = new CadBlockRotationGripTemplate();
-					this.readBlockGrip(template as CadBlockRotationGripTemplate);
+					template = new CadBlockGripTemplate(new BlockRotationGrip());
+					this.readBlockGrip(template as CadBlockGripTemplate);
 					break;
 				case DxfFileToken.ObjectBlockVisibilityGrip:
-					template = new CadBlockVisibilityGripTemplate();
-					this.readBlockGrip(template as CadBlockVisibilityGripTemplate);
+					template = new CadBlockGripTemplate(new BlockVisibilityGrip());
+					this.readBlockGrip(template as CadBlockGripTemplate);
+					break;
+				case DxfFileToken.ObjectBlockLookupGrip:
+					template = new CadBlockGripTemplate(new BlockLookupGrip());
+					this.readBlockGrip(template as CadBlockGripTemplate);
 					break;
 				case DxfFileToken.ObjectBlockFlipAction:
 					template = this.readBlockFlipAction();
@@ -5696,19 +5703,28 @@ namespace ACadSharp.IO.DWG
 				case DxfFileToken.ObjectBlockRotateAction:
 					template = this.readBlockRotateAction();
 					break;
+				case DxfFileToken.ObjectBlockScaleAction:
+					template = this.readBlockScaleAction();
+					break;
 				case DxfFileToken.ObjectBlockMoveAction:
 					template = this.readBlockMoveAction();
+					break;
+				case DxfFileToken.ObjectBlockLookupAction:
+					template = this.readBlockLookupAction();
+					break;
+				case DxfFileToken.ObjectBlockStretchAction:
+					template = this.readBlockStretchAction();
 					break;
 				case DxfFileToken.ObjectBlockPointParameter:
 					template = this.readBlockPointParameter();
 					break;
-				case "SPATIAL_FILTER":
+				case DxfFileToken.ObjectSpatialFilter:
 					template = this.readSpatialFilter();
 					break;
-				case "ACAD_PROXY_ENTITY":
+				case DxfFileToken.EntityProxyEntity:
 					template = this.readProxyEntity();
 					break;
-				case "ACAD_PROXY_OBJECT":
+				case DxfFileToken.ObjectProxyObject:
 					template = this.readProxyObject();
 					break;
 				case DxfFileToken.ObjectVisualStyle:
@@ -5817,74 +5833,6 @@ namespace ACadSharp.IO.DWG
 			//DwgAnalyseTool.Analyse03(_objectReader, _handlesReader, _textReader, "BD", null, 1000);
 			//blockFlipParameter.Caption1001 = this._mergedReaders.ReadVariableText();
 			//blockFlipParameter.Point1010 = this._mergedReaders.Read3BitDouble();
-
-			return template;
-		}
-
-		private CadTemplate readEvaluationGraph()
-		{
-			EvaluationGraph evaluationGraph = new EvaluationGraph();
-			CadEvaluationGraphTemplate template = new CadEvaluationGraphTemplate(evaluationGraph);
-
-			this.readCommonNonEntityData(template);
-
-			//DXF fields 96, 97 contain the value 5, here are three fields returning the same value 5
-			evaluationGraph.Value96 = this._objectReader.ReadBitLong();
-			evaluationGraph.Value97 = this._objectReader.ReadBitLong();
-
-			int nodeCount = this._objectReader.ReadBitLong();
-			for (int i = 0; i < nodeCount; i++)
-			{
-				var nodeTemplate = new CadEvaluationGraphTemplate.GraphNodeTemplate();
-				var node = new EvaluationGraph.Node();
-				template.NodeTemplates.Add(nodeTemplate);
-
-				//Code 91
-				node.Index = this._objectReader.ReadBitLong();
-				//Code 93
-				node.Flags = this._objectReader.ReadBitLong();
-				//Code 95
-				node.NextNodeIndex = this._objectReader.ReadBitLong();
-
-				//Code 360
-				nodeTemplate.ExpressionHandle = this.handleReference();
-
-				//Codes 92, x4
-				node.Data1 = this._objectReader.ReadBitLong();
-				node.Data2 = this._objectReader.ReadBitLong();
-				node.Data3 = this._objectReader.ReadBitLong();
-				node.Data4 = this._objectReader.ReadBitLong();
-			}
-
-			//Last node has x5 92 with the last value as 0 instead of x4
-			//Followed by a 93
-			var edgeCount = this._objectReader.ReadBitLong();
-			for (int i = 0; i < edgeCount; i++)
-			{
-				//id BL, DXF 92
-				//nextid BLd, DXF 93
-				//e1 BLd, DXF 94
-				//e2 BLd, DXF 91
-				//e3 BLd, DXF 91
-				//out_edge BLd
-
-				//92 id
-				this._objectReader.ReadBitLong();
-				//93
-				this._objectReader.ReadBitLong();
-				//94
-				this._objectReader.ReadBitLong();
-				//91
-				this._objectReader.ReadBitLong();
-				//91
-				this._objectReader.ReadBitLong();
-				//92 x6
-				this._objectReader.ReadBitLong();
-				this._objectReader.ReadBitLong();
-				this._objectReader.ReadBitLong();
-				this._objectReader.ReadBitLong();
-				this._objectReader.ReadBitLong();
-			}
 
 			return template;
 		}
