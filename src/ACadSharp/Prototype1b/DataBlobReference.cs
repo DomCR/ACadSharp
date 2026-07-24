@@ -11,6 +11,8 @@ namespace ACadSharp.Prototype1b
         public uint LastPageSize { get; set; }
         public uint Unknown1 { get; set; }
         public uint Unknown2 { get; set; }
-        public List<(uint, uint)> SegmentPointers { get; set; }		// Pointer (segment index, size) to blob01 segment containing the data
+
+		/// Pointer (segment index, size) to blob01 segments containing the data
+		public List<(uint, uint)> SegmentPointers { get; set; }
     }
 }
