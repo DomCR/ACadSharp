@@ -117,6 +117,8 @@ public class DwgReader : CadReaderBase<DwgReaderConfiguration>
 		this._document.Header = this.ReadHeader();
 		this._document.Header.Document = this._document;
 
+		this.readTemplate();
+
 		this.readClasses();
 
 		this.readAppInfo();
@@ -699,9 +701,27 @@ public class DwgReader : CadReaderBase<DwgReaderConfiguration>
 	{
 		this._fileHeader = this._fileHeader ?? this.readFileHeader();
 
-		IDwgStreamReader sreader = this.getSectionStream(DwgSectionDefinition.Template);
+		if (this._fileHeader.AcadVersion < ACadVersion.AC1018)
+			return;
 
-		throw new NotImplementedException();
+		IDwgStreamReader sreader = this.getSectionStream(DwgSectionDefinition.Template);
+		if (sreader == null || sreader.Stream.Length < 4) // The section is often empty
+			return;
+
+		// Template description string length in bytes (the ODA always writes 0 here)
+		short descriptionLength = sreader.ReadShort();
+		if (descriptionLength > 0)
+		{
+			if (sreader.Stream.Length < 4 + descriptionLength)
+				return;
+
+			//Skip the description string when present
+			sreader.ReadBytes(descriptionLength);
+		}
+
+		// MEASUREMENT system variable (0 = English, 1 = Metric)
+		short measurement = sreader.ReadShort();
+		this._document.Header.MeasurementUnits = (MeasurementUnits) measurement;
 	}
 
 	#region File Header reading methods
