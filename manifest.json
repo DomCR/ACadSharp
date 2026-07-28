@@ -6410,6 +6410,426 @@
     },
     {
       "type": "ManagedReference",
+      "source_relative_path": "api/ACadSharp.Prototype1b.DataBlobReference.yml",
+      "output": {
+        ".html": {
+          "relative_path": "api/ACadSharp.Prototype1b.DataBlobReference.html"
+        }
+      },
+      "version": "",
+      "Uid": null,
+      "IsMRef": true,
+      "Title": "ACadSharp.Prototype1b.DataBlobReference",
+      "Summary": null
+    },
+    {
+      "type": "ManagedReference",
+      "source_relative_path": "api/ACadSharp.Prototype1b.DataEntry.yml",
+      "output": {
+        ".html": {
+          "relative_path": "api/ACadSharp.Prototype1b.DataEntry.html"
+        }
+      },
+      "version": "",
+      "Uid": null,
+      "IsMRef": true,
+      "Title": "ACadSharp.Prototype1b.DataEntry",
+      "Summary": null
+    },
+    {
+      "type": "ManagedReference",
+      "source_relative_path": "api/ACadSharp.Prototype1b.DataField.yml",
+      "output": {
+        ".html": {
+          "relative_path": "api/ACadSharp.Prototype1b.DataField.html"
+        }
+      },
+      "version": "",
+      "Uid": null,
+      "IsMRef": true,
+      "Title": "ACadSharp.Prototype1b.DataField",
+      "Summary": null
+    },
+    {
+      "type": "ManagedReference",
+      "source_relative_path": "api/ACadSharp.Prototype1b.DataHeader.yml",
+      "output": {
+        ".html": {
+          "relative_path": "api/ACadSharp.Prototype1b.DataHeader.html"
+        }
+      },
+      "version": "",
+      "Uid": null,
+      "IsMRef": true,
+      "Title": "ACadSharp.Prototype1b.DataHeader",
+      "Summary": null
+    },
+    {
+      "type": "ManagedReference",
+      "source_relative_path": "api/ACadSharp.Prototype1b.DataIndex.yml",
+      "output": {
+        ".html": {
+          "relative_path": "api/ACadSharp.Prototype1b.DataIndex.html"
+        }
+      },
+      "version": "",
+      "Uid": null,
+      "IsMRef": true,
+      "Title": "ACadSharp.Prototype1b.DataIndex",
+      "Summary": null
+    },
+    {
+      "type": "ManagedReference",
+      "source_relative_path": "api/ACadSharp.Prototype1b.DataIndexEntry.yml",
+      "output": {
+        ".html": {
+          "relative_path": "api/ACadSharp.Prototype1b.DataIndexEntry.html"
+        }
+      },
+      "version": "",
+      "Uid": null,
+      "IsMRef": true,
+      "Title": "ACadSharp.Prototype1b.DataIndexEntry",
+      "Summary": null
+    },
+    {
+      "type": "ManagedReference",
+      "source_relative_path": "api/ACadSharp.Prototype1b.DataIndexEntryPointer.yml",
+      "output": {
+        ".html": {
+          "relative_path": "api/ACadSharp.Prototype1b.DataIndexEntryPointer.html"
+        }
+      },
+      "version": "",
+      "Uid": null,
+      "IsMRef": true,
+      "Title": "ACadSharp.Prototype1b.DataIndexEntryPointer",
+      "Summary": null
+    },
+    {
+      "type": "ManagedReference",
+      "source_relative_path": "api/ACadSharp.Prototype1b.DataStorage.yml",
+      "output": {
+        ".html": {
+          "relative_path": "api/ACadSharp.Prototype1b.DataStorage.html"
+        }
+      },
+      "version": "",
+      "Uid": null,
+      "IsMRef": true,
+      "Title": "ACadSharp.Prototype1b.DataStorage",
+      "Summary": null
+    },
+    {
+      "type": "ManagedReference",
+      "source_relative_path": "api/ACadSharp.Prototype1b.DataStoragePointers.yml",
+      "output": {
+        ".html": {
+          "relative_path": "api/ACadSharp.Prototype1b.DataStoragePointers.html"
+        }
+      },
+      "version": "",
+      "Uid": null,
+      "IsMRef": true,
+      "Title": "ACadSharp.Prototype1b.DataStoragePointers",
+      "Summary": null
+    },
+    {
+      "type": "ManagedReference",
+      "source_relative_path": "api/ACadSharp.Prototype1b.DataValue.yml",
+      "output": {
+        ".html": {
+          "relative_path": "api/ACadSharp.Prototype1b.DataValue.html"
+        }
+      },
+      "version": "",
+      "Uid": null,
+      "IsMRef": true,
+      "Title": "ACadSharp.Prototype1b.DataValue",
+      "Summary": null
+    },
+    {
+      "type": "ManagedReference",
+      "source_relative_path": "api/ACadSharp.Prototype1b.FileHeader.yml",
+      "output": {
+        ".html": {
+          "relative_path": "api/ACadSharp.Prototype1b.FileHeader.html"
+        }
+      },
+      "version": "",
+      "Uid": null,
+      "IsMRef": true,
+      "Title": "ACadSharp.Prototype1b.FileHeader",
+      "Summary": null
+    },
+    {
+      "type": "ManagedReference",
+      "source_relative_path": "api/ACadSharp.Prototype1b.FreeSpaceArea.yml",
+      "output": {
+        ".html": {
+          "relative_path": "api/ACadSharp.Prototype1b.FreeSpaceArea.html"
+        }
+      },
+      "version": "",
+      "Uid": null,
+      "IsMRef": true,
+      "Title": "ACadSharp.Prototype1b.FreeSpaceArea",
+      "Summary": null
+    },
+    {
+      "type": "ManagedReference",
+      "source_relative_path": "api/ACadSharp.Prototype1b.PreviousSave.yml",
+      "output": {
+        ".html": {
+          "relative_path": "api/ACadSharp.Prototype1b.PreviousSave.html"
+        }
+      },
+      "version": "",
+      "Uid": null,
+      "IsMRef": true,
+      "Title": "ACadSharp.Prototype1b.PreviousSave",
+      "Summary": null
+    },
+    {
+      "type": "ManagedReference",
+      "source_relative_path": "api/ACadSharp.Prototype1b.Schema.yml",
+      "output": {
+        ".html": {
+          "relative_path": "api/ACadSharp.Prototype1b.Schema.html"
+        }
+      },
+      "version": "",
+      "Uid": null,
+      "IsMRef": true,
+      "Title": "ACadSharp.Prototype1b.Schema",
+      "Summary": null
+    },
+    {
+      "type": "ManagedReference",
+      "source_relative_path": "api/ACadSharp.Prototype1b.SchemaIndex.yml",
+      "output": {
+        ".html": {
+          "relative_path": "api/ACadSharp.Prototype1b.SchemaIndex.html"
+        }
+      },
+      "version": "",
+      "Uid": null,
+      "IsMRef": true,
+      "Title": "ACadSharp.Prototype1b.SchemaIndex",
+      "Summary": null
+    },
+    {
+      "type": "ManagedReference",
+      "source_relative_path": "api/ACadSharp.Prototype1b.SchemaProperty.yml",
+      "output": {
+        ".html": {
+          "relative_path": "api/ACadSharp.Prototype1b.SchemaProperty.html"
+        }
+      },
+      "version": "",
+      "Uid": null,
+      "IsMRef": true,
+      "Title": "ACadSharp.Prototype1b.SchemaProperty",
+      "Summary": null
+    },
+    {
+      "type": "ManagedReference",
+      "source_relative_path": "api/ACadSharp.Prototype1b.SchemaPropertyPointer.yml",
+      "output": {
+        ".html": {
+          "relative_path": "api/ACadSharp.Prototype1b.SchemaPropertyPointer.html"
+        }
+      },
+      "version": "",
+      "Uid": null,
+      "IsMRef": true,
+      "Title": "ACadSharp.Prototype1b.SchemaPropertyPointer",
+      "Summary": null
+    },
+    {
+      "type": "ManagedReference",
+      "source_relative_path": "api/ACadSharp.Prototype1b.SchemaSearch.yml",
+      "output": {
+        ".html": {
+          "relative_path": "api/ACadSharp.Prototype1b.SchemaSearch.html"
+        }
+      },
+      "version": "",
+      "Uid": null,
+      "IsMRef": true,
+      "Title": "ACadSharp.Prototype1b.SchemaSearch",
+      "Summary": null
+    },
+    {
+      "type": "ManagedReference",
+      "source_relative_path": "api/ACadSharp.Prototype1b.SchemaSearchEntry.yml",
+      "output": {
+        ".html": {
+          "relative_path": "api/ACadSharp.Prototype1b.SchemaSearchEntry.html"
+        }
+      },
+      "version": "",
+      "Uid": null,
+      "IsMRef": true,
+      "Title": "ACadSharp.Prototype1b.SchemaSearchEntry",
+      "Summary": null
+    },
+    {
+      "type": "ManagedReference",
+      "source_relative_path": "api/ACadSharp.Prototype1b.SchemaUnknownProperty.yml",
+      "output": {
+        ".html": {
+          "relative_path": "api/ACadSharp.Prototype1b.SchemaUnknownProperty.html"
+        }
+      },
+      "version": "",
+      "Uid": null,
+      "IsMRef": true,
+      "Title": "ACadSharp.Prototype1b.SchemaUnknownProperty",
+      "Summary": null
+    },
+    {
+      "type": "ManagedReference",
+      "source_relative_path": "api/ACadSharp.Prototype1b.SearchEntryObject.yml",
+      "output": {
+        ".html": {
+          "relative_path": "api/ACadSharp.Prototype1b.SearchEntryObject.html"
+        }
+      },
+      "version": "",
+      "Uid": null,
+      "IsMRef": true,
+      "Title": "ACadSharp.Prototype1b.SearchEntryObject",
+      "Summary": null
+    },
+    {
+      "type": "ManagedReference",
+      "source_relative_path": "api/ACadSharp.Prototype1b.SegmentHeader.yml",
+      "output": {
+        ".html": {
+          "relative_path": "api/ACadSharp.Prototype1b.SegmentHeader.html"
+        }
+      },
+      "version": "",
+      "Uid": null,
+      "IsMRef": true,
+      "Title": "ACadSharp.Prototype1b.SegmentHeader",
+      "Summary": null
+    },
+    {
+      "type": "ManagedReference",
+      "source_relative_path": "api/ACadSharp.Prototype1b.SegmentIndexEntry.yml",
+      "output": {
+        ".html": {
+          "relative_path": "api/ACadSharp.Prototype1b.SegmentIndexEntry.html"
+        }
+      },
+      "version": "",
+      "Uid": null,
+      "IsMRef": true,
+      "Title": "ACadSharp.Prototype1b.SegmentIndexEntry",
+      "Summary": null
+    },
+    {
+      "type": "ManagedReference",
+      "source_relative_path": "api/ACadSharp.Prototype1b.Segments.Blob01.yml",
+      "output": {
+        ".html": {
+          "relative_path": "api/ACadSharp.Prototype1b.Segments.Blob01.html"
+        }
+      },
+      "version": "",
+      "Uid": null,
+      "IsMRef": true,
+      "Title": "ACadSharp.Prototype1b.Segments.Blob01",
+      "Summary": null
+    },
+    {
+      "type": "ManagedReference",
+      "source_relative_path": "api/ACadSharp.Prototype1b.Segments.FreeSpace.yml",
+      "output": {
+        ".html": {
+          "relative_path": "api/ACadSharp.Prototype1b.Segments.FreeSpace.html"
+        }
+      },
+      "version": "",
+      "Uid": null,
+      "IsMRef": true,
+      "Title": "ACadSharp.Prototype1b.Segments.FreeSpace",
+      "Summary": null
+    },
+    {
+      "type": "ManagedReference",
+      "source_relative_path": "api/ACadSharp.Prototype1b.Segments.IPrototype1bSegment.yml",
+      "output": {
+        ".html": {
+          "relative_path": "api/ACadSharp.Prototype1b.Segments.IPrototype1bSegment.html"
+        }
+      },
+      "version": "",
+      "Uid": null,
+      "IsMRef": true,
+      "Title": "ACadSharp.Prototype1b.Segments.IPrototype1bSegment",
+      "Summary": null
+    },
+    {
+      "type": "ManagedReference",
+      "source_relative_path": "api/ACadSharp.Prototype1b.Segments.SchemaData.yml",
+      "output": {
+        ".html": {
+          "relative_path": "api/ACadSharp.Prototype1b.Segments.SchemaData.html"
+        }
+      },
+      "version": "",
+      "Uid": null,
+      "IsMRef": true,
+      "Title": "ACadSharp.Prototype1b.Segments.SchemaData",
+      "Summary": null
+    },
+    {
+      "type": "ManagedReference",
+      "source_relative_path": "api/ACadSharp.Prototype1b.Segments.SegmentIndex.yml",
+      "output": {
+        ".html": {
+          "relative_path": "api/ACadSharp.Prototype1b.Segments.SegmentIndex.html"
+        }
+      },
+      "version": "",
+      "Uid": null,
+      "IsMRef": true,
+      "Title": "ACadSharp.Prototype1b.Segments.SegmentIndex",
+      "Summary": null
+    },
+    {
+      "type": "ManagedReference",
+      "source_relative_path": "api/ACadSharp.Prototype1b.Segments.yml",
+      "output": {
+        ".html": {
+          "relative_path": "api/ACadSharp.Prototype1b.Segments.html"
+        }
+      },
+      "version": "",
+      "Uid": null,
+      "IsMRef": true,
+      "Title": "ACadSharp.Prototype1b.Segments",
+      "Summary": null
+    },
+    {
+      "type": "ManagedReference",
+      "source_relative_path": "api/ACadSharp.Prototype1b.yml",
+      "output": {
+        ".html": {
+          "relative_path": "api/ACadSharp.Prototype1b.html"
+        }
+      },
+      "version": "",
+      "Uid": null,
+      "IsMRef": true,
+      "Title": "ACadSharp.Prototype1b",
+      "Summary": null
+    },
+    {
+      "type": "ManagedReference",
       "source_relative_path": "api/ACadSharp.RenderMode.yml",
       "output": {
         ".html": {
