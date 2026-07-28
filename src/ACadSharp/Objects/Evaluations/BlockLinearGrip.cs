@@ -1,5 +1,4 @@
 ﻿using ACadSharp.Attributes;
-using CSMath;
 
 namespace ACadSharp.Objects.Evaluations;
 

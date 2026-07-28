@@ -178,6 +178,8 @@ public static class DxfFileToken
 
 	public const string ObjectBlockFlipAction = "BLOCKFLIPACTION";
 
+	public const string ObjectBlockFlipGrip = "BLOCKFLIPGRIP";
+
 	public const string ObjectBlockFlipParameter = "BLOCKFLIPPARAMETER";
 
 	public const string ObjectBlockGripLocationComponent = "BLOCKGRIPLOCATIONCOMPONENT";

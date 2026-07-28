@@ -11,7 +11,6 @@ namespace ACadSharp.Objects.Evaluations;
 /// Object name <see cref="DxfFileToken.ObjectBlockBasePointParameter"/> <br/>
 /// Dxf class name <see cref="DxfSubclassMarker.BlockBasePointParameter"/>
 /// </remarks>
-
 [DxfName(DxfFileToken.ObjectBlockBasePointParameter)]
 [DxfSubClass(DxfSubclassMarker.BlockBasePointParameter)]
 public class BlockBasePointParameter : Block1PtParameter

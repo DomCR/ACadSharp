@@ -1,46 +1,58 @@
 ﻿using ACadSharp.Attributes;
-
 using CSMath;
 
 namespace ACadSharp.Objects.Evaluations;
 
+/// <summary>
+/// Represents a BLOCKFLIPPARAMETER object, used in AutoCAD to control a
+/// flip in a dynamic block.
+/// </summary>
+/// <remarks>
+/// Object name <see cref="DxfFileToken.ObjectBlockFlipParameter"/> <br/>
+/// Dxf class name <see cref="DxfSubclassMarker.BlockFlipParameter"/>
+/// </remarks>
+[DxfName(DxfFileToken.ObjectBlockFlipParameter)]
 [DxfSubClass(DxfSubclassMarker.BlockFlipParameter)]
 public class BlockFlipParameter : Block2PtParameter
 {
-	//307	S	Nicht umgekehrt
+	/// <summary>
+	/// Gets or sets the base state name.
+	/// </summary>
+	[DxfCodeValue(307)]
 	public string BaseStateName { get; set; }
 
-	//305	S	Umkehrstatus1
-	public string Caption { get; set; }
+	/// <summary>
+	/// Gets or sets the connection.
+	/// </summary>
+	public EvalConnection Connection { get; set; }
 
-	//1001	S	ACAUTHENVIRON
-	public string Caption1001 { get; set; }
-
-	//309	S	UpdatedFlip
-	public string Caption309 { get; set; }
-
-	//1012	BD	-17.54898980138068
-	//1022	BD	108.2007882010403
-	//1032	BD	0.0
-	public XYZ CaptionLocation { get; set; }
-
-	//306	S
+	/// <summary>
+	/// Gets or sets the description.
+	/// </summary>
+	[DxfCodeValue(306)]
 	public string Description { get; set; }
 
-	//308	S	Umgekehrt
+	/// <summary>
+	/// Gets or sets the flipped state name.
+	/// </summary>
+	[DxfCodeValue(308)]
 	public string FlippedStateName { get; set; }
+
+	/// <summary>
+	/// Gets or sets the label.
+	/// </summary>
+	[DxfCodeValue(305)]
+	public string Label { get; set; }
+
+	/// <summary>
+	/// Gets or sets the label position.
+	/// </summary>
+	[DxfCodeValue(1012, 1022, 1032)]
+	public XYZ LabelPosition { get; set; }
 
 	/// <inheritdoc/>
 	public override string ObjectName => DxfFileToken.ObjectBlockFlipParameter;
 
-	//1010	BD	23.1286989982713
-	//1020	BD	27.67408655057769
-	//1030	BD	0.0
-	public XYZ Point1010 { get; set; }
-
 	/// <inheritdoc/>
 	public override string SubclassMarker => DxfSubclassMarker.BlockFlipParameter;
-
-	//96	BL	7
-	public int Value96 { get; set; }
 }

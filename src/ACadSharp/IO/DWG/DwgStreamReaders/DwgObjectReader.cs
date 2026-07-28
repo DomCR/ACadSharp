@@ -5687,6 +5687,9 @@ namespace ACadSharp.IO.DWG
 				case DxfFileToken.ObjectBlockAlignmentGrip:
 					template = this.readAlignmentGrip();
 					break;
+				case DxfFileToken.ObjectBlockFlipGrip:
+					template = this.readFlipGrip();
+					break;
 				case DxfFileToken.ObjectBlockLinearGrip:
 					template = this.readLinearGrip();
 					break;
@@ -5786,64 +5789,6 @@ namespace ACadSharp.IO.DWG
 				}
 			}
 			return identity;
-		}
-
-		private CadTemplate readBlockFlipAction()
-		{
-			BlockFlipAction blockFlipAction = new BlockFlipAction();
-			CadBlockFlipActionTemplate template = new CadBlockFlipActionTemplate(blockFlipAction);
-
-			this.readBlockAction(template);
-
-			// 92
-			blockFlipAction.Value92 = this._mergedReaders.ReadBitLong();
-			// 93
-			blockFlipAction.Value93 = this._mergedReaders.ReadBitLong();
-			// 94
-			blockFlipAction.Value94 = this._mergedReaders.ReadBitLong();
-			// 95
-			blockFlipAction.Value95 = this._mergedReaders.ReadBitLong();
-
-			// 301
-			blockFlipAction.Caption301 = this._mergedReaders.ReadVariableText();
-			// 302
-			blockFlipAction.Caption302 = this._mergedReaders.ReadVariableText();
-			// 303
-			blockFlipAction.Caption303 = this._mergedReaders.ReadVariableText();
-			// 304
-			blockFlipAction.Caption304 = this._mergedReaders.ReadVariableText();
-
-			return template;
-		}
-
-		private CadBlockFlipParameterTemplate readBlockFlipParameter()
-		{
-			BlockFlipParameter blockFlipParameter = new BlockFlipParameter();
-			CadBlockFlipParameterTemplate template = new CadBlockFlipParameterTemplate(blockFlipParameter);
-
-			this.readBlock2PtParameter(template);
-
-			//	305
-			blockFlipParameter.Caption = this._mergedReaders.ReadVariableText();
-			//	306
-			blockFlipParameter.Description = this._mergedReaders.ReadVariableText();
-			//	307
-			blockFlipParameter.BaseStateName = this._mergedReaders.ReadVariableText();
-			//	308
-			blockFlipParameter.FlippedStateName = this._mergedReaders.ReadVariableText();
-			//	1012, 1022, 1032
-			blockFlipParameter.CaptionLocation = this._mergedReaders.Read3BitDouble();
-			//	309
-			blockFlipParameter.Caption309 = this._mergedReaders.ReadVariableText();
-			//	96
-			blockFlipParameter.Value96 = this._mergedReaders.ReadBitLong();
-
-			//	The remainder seen in DXF cannot be read
-			//DwgAnalyseTool.Analyse03(_objectReader, _handlesReader, _textReader, "BD", null, 1000);
-			//blockFlipParameter.Caption1001 = this._mergedReaders.ReadVariableText();
-			//blockFlipParameter.Point1010 = this._mergedReaders.Read3BitDouble();
-
-			return template;
 		}
 
 		private CadTemplate readSpatialFilter()

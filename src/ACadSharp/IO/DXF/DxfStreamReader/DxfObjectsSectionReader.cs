@@ -253,6 +253,73 @@ internal class DxfObjectsSectionReader : DxfSectionReaderBase
 		}
 	}
 
+	private bool readBlockFlipAction(CadTemplate template, DxfMap map)
+	{
+		CadBlockFlipActionTemplate tmp = template as CadBlockFlipActionTemplate;
+		BlockFlipAction flip = tmp.CadObject as BlockFlipAction;
+
+		switch (this._reader.Code)
+		{
+			case 92:
+				flip.Connection1 ??= new EvalConnection();
+				flip.Connection1.Id = this._reader.ValueAsInt;
+				return true;
+			case 93:
+				flip.Connection2 ??= new EvalConnection();
+				flip.Connection2.Id = this._reader.ValueAsInt;
+				return true;
+			case 94:
+				flip.Connection3 ??= new EvalConnection();
+				flip.Connection3.Id = this._reader.ValueAsInt;
+				return true;
+			case 95:
+				flip.Connection4 ??= new EvalConnection();
+				flip.Connection4.Id = this._reader.ValueAsInt;
+				return true;
+			case 301:
+				flip.Connection1 ??= new EvalConnection();
+				flip.Connection1.Name = this._reader.ValueAsString;
+				return true;
+			case 302:
+				flip.Connection2 ??= new EvalConnection();
+				flip.Connection2.Name = this._reader.ValueAsString;
+				return true;
+			case 303:
+				flip.Connection3 ??= new EvalConnection();
+				flip.Connection3.Name = this._reader.ValueAsString;
+				return true;
+			case 304:
+				flip.Connection4 ??= new EvalConnection();
+				flip.Connection4.Name = this._reader.ValueAsString;
+				return true;
+			default:
+				if (!this.tryAssignCurrentValue(template.CadObject, map.SubClasses[DxfSubclassMarker.BlockFlipAction]))
+				{
+					return this.readBlockAction(template, map);
+				}
+				return true;
+		}
+	}
+
+	private bool readBlockFlipParameter(CadTemplate template, DxfMap map)
+	{
+		CadBlockFlipParameterTemplate tmp = template as CadBlockFlipParameterTemplate;
+		BlockFlipParameter flip = tmp.CadObject as BlockFlipParameter;
+
+		switch (this._reader.Code)
+		{
+			case 309:
+				flip.Connection = this.readEvalConnection(true);
+				return true;
+			default:
+				if (!this.tryAssignCurrentValue(template.CadObject, map.SubClasses[DxfSubclassMarker.BlockFlipParameter]))
+				{
+					return this.readBlock2PtParameter(template, map);
+				}
+				return true;
+		}
+	}
+
 	private bool readBlockGrip(CadTemplate template, DxfMap map)
 	{
 		CadBlockGripTemplate tmp = template as CadBlockGripTemplate;
@@ -294,7 +361,7 @@ internal class DxfObjectsSectionReader : DxfSectionReaderBase
 		switch (this._reader.Code)
 		{
 			default:
-				if (!this.tryAssignCurrentValue(template.CadObject, map.SubClasses[tmp.CadObject.SubclassMarker]))
+				if (!this.tryAssignCurrentValue(template.CadObject, map))
 				{
 					return this.readBlockGrip(template, map);
 				}
@@ -1008,13 +1075,22 @@ internal class DxfObjectsSectionReader : DxfSectionReaderBase
 		}
 	}
 
-	private EvalConnection readEvalConnection()
+	private EvalConnection readEvalConnection(bool reversed = false)
 	{
 		EvalConnection connection = new EvalConnection();
 		// No dynamic reader for codes 9x and 30x
-		connection.Id = this._reader.ValueAsInt;
-		this._reader.ReadNext();
-		connection.Name = this._reader.ValueAsString;
+		if (reversed)
+		{
+			connection.Name = this._reader.ValueAsString;
+			this._reader.ReadNext();
+			connection.Id = this._reader.ValueAsInt;
+		}
+		else
+		{
+			connection.Id = this._reader.ValueAsInt;
+			this._reader.ReadNext();
+			connection.Name = this._reader.ValueAsString;
+		}
 
 		return connection;
 	}
@@ -2056,6 +2132,10 @@ internal class DxfObjectsSectionReader : DxfSectionReaderBase
 				return this.readObjectCodes<BlockLookupParameter>(new CadBlockLookupParameterTemplate(new BlockLookupParameter()), this.readBlockLookupParameter);
 			case DxfFileToken.ObjectBlockAlignmentParameter:
 				return this.readObjectCodes<BlockAlignmentParameter>(new CadBlock2PtParameterTemplate(new BlockAlignmentParameter()), this.readBlockAlignmentParameter);
+			case DxfFileToken.ObjectBlockFlipParameter:
+				return this.readObjectCodes<BlockFlipParameter>(new CadBlockFlipParameterTemplate(new BlockFlipParameter()), this.readBlockFlipParameter);
+			case DxfFileToken.ObjectBlockFlipGrip:
+				return this.readObjectCodes<BlockFlipGrip>(new CadBlockGripTemplate(new BlockFlipGrip()), this.readBlockGripSubclass);
 			case DxfFileToken.ObjectBlockLinearGrip:
 				return this.readObjectCodes<BlockLinearGrip>(new CadBlockGripTemplate(new BlockLinearGrip()), this.readBlockGripSubclass);
 			case DxfFileToken.ObjectBlockLookupGrip:
@@ -2066,6 +2146,8 @@ internal class DxfObjectsSectionReader : DxfSectionReaderBase
 				return this.readObjectCodes<BlockAlignmentGrip>(new CadBlockGripTemplate(new BlockAlignmentGrip()), this.readBlockGripSubclass);
 			case DxfFileToken.ObjectBlockLookupAction:
 				return this.readObjectCodes<BlockLookupAction>(new CadBlockLookupActionTemplate(), this.readLookupAction);
+			case DxfFileToken.ObjectBlockFlipAction:
+				return this.readObjectCodes<BlockFlipAction>(new CadBlockFlipActionTemplate(), this.readBlockFlipAction);
 			case DxfFileToken.ObjectBlockMoveAction:
 				return this.readObjectCodes<BlockMoveAction>(new CadBlockMoveActionTemplate(), this.readBlockMoveAction);
 			case DxfFileToken.ObjectBlockScaleAction:

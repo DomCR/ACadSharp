@@ -147,6 +147,21 @@ internal partial class DwgObjectReader : DwgSectionIO
 		return template;
 	}
 
+	private CadTemplate readBlockFlipAction()
+	{
+		BlockFlipAction flipAction = new BlockFlipAction();
+		CadBlockFlipActionTemplate template = new CadBlockFlipActionTemplate(flipAction);
+
+		this.readBlockAction(template);
+
+		flipAction.Connection1 = this.readEvalConnection();
+		flipAction.Connection2 = this.readEvalConnection();
+		flipAction.Connection3 = this.readEvalConnection();
+		flipAction.Connection4 = this.readEvalConnection();
+
+		return template;
+	}
+
 	private void readBlockElement(CadBlockElementTemplate template)
 	{
 		this.readEvaluationExpression(template);
@@ -159,6 +174,25 @@ internal partial class DwgObjectReader : DwgSectionIO
 		template.BlockElement.Value99 = this._mergedReaders.ReadBitLong();
 		//1071
 		template.BlockElement.Value1071 = this._mergedReaders.ReadBitLong();
+	}
+
+	private CadBlockFlipParameterTemplate readBlockFlipParameter()
+	{
+		BlockFlipParameter flip = new BlockFlipParameter();
+		CadBlockFlipParameterTemplate template = new CadBlockFlipParameterTemplate(flip);
+
+		this.readBlock2PtParameter(template);
+
+		flip.Label = this._mergedReaders.ReadVariableText();
+		flip.Description = this._mergedReaders.ReadVariableText();
+		flip.BaseStateName = this._mergedReaders.ReadVariableText();
+		flip.FlippedStateName = this._mergedReaders.ReadVariableText();
+
+		flip.LabelPosition = this._mergedReaders.Read3BitDouble();
+
+		flip.Connection = this.readEvalConnection();
+
+		return template;
 	}
 
 	private void readBlockGrip(CadBlockGripTemplate template)
@@ -751,6 +785,22 @@ internal partial class DwgObjectReader : DwgSectionIO
 			//H 330 Field handle (soft pointer)
 			template.OwnedObjectsHandlers.Add(this.handleReference());
 		}
+
+		return template;
+	}
+
+	private CadTemplate readFlipGrip()
+	{
+		var grip = new BlockFlipGrip();
+		var template = new CadBlockGripTemplate(grip);
+
+		this.readBlockGrip(template);
+
+		grip.FlipExpressionId = this._mergedReaders.ReadBitLong();
+
+		grip.DirectionX = this._mergedReaders.ReadBitDouble();
+		grip.DirectionY = this._mergedReaders.ReadBitDouble();
+		grip.DirectionZ = this._mergedReaders.ReadBitDouble();
 
 		return template;
 	}

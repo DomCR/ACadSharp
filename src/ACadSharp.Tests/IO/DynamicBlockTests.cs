@@ -90,25 +90,28 @@ public class DynamicBlockTests : IOTestsBase
 		switch (test.NoExtensionName)
 		{
 			case DxfFileToken.ObjectBlockBasePointParameter:
-				this.assertBasePointParameter(doc);
+				this.assertBlockParameter(doc, "BASE_POINT_PARAMETER", typeof(BlockBasePointParameter));
 				break;
 			case DxfFileToken.ObjectBlockVisibilityParameter:
-				this.assertVisibilityParameter(doc);
+				this.assertBlockParameter(doc, "block_visibility_parameter", typeof(BlockVisibilityParameter));
 				break;
 			case DxfFileToken.ObjectBlockRotationParameter:
-				this.assertRotationParameter(doc);
+				this.assertBlockParameter(doc, "dynamic_block", typeof(BlockRotationParameter));
 				break;
 			case DxfFileToken.ObjectBlockPointParameter:
-				this.assertPointParameter(doc);
+				this.assertBlockParameter(doc, "block_translation_parameter", typeof(BlockPointParameter));
 				break;
 			case DxfFileToken.ObjectBlockLinearParameter:
-				this.assertLinearParameter(doc);
+				this.assertBlockParameter(doc, "LINEAR_PARAM", typeof(BlockLinearParameter));
 				break;
 			case DxfFileToken.ObjectBlockLookupParameter:
-				this.assertLookupParameter(doc);
+				this.assertBlockParameter(doc, "My_Look_Block", typeof(BlockLookupParameter));
 				break;
 			case DxfFileToken.ObjectBlockAlignmentParameter:
-				this.assertAlignmentParameter(doc);
+				this.assertBlockParameter(doc, "ALIGNMENT_PARAMETER", typeof(BlockAlignmentParameter));
+				break;
+			case DxfFileToken.ObjectBlockFlipParameter:
+				this.assertBlockParameter(doc, "BLOCK_FLIP_PARAMETER", typeof(BlockFlipParameter));
 				break;
 			default:
 				throw new System.NotImplementedException();
@@ -138,193 +141,33 @@ public class DynamicBlockTests : IOTestsBase
 		}
 	}
 
-	private void assertAlignmentParameter(CadDocument doc)
+	private void assertBlockParameter(CadDocument doc, string blockName, Type parameterType)
 	{
-		var original = doc.BlockRecords["ALIGNMENT_PARAMETER"];
+		var original = doc.BlockRecords[blockName];
 		foreach (BlockRecord record in doc.BlockRecords.Where(b => b.IsAnonymous))
 		{
 			Assert.Equal(original, record.Source);
 		}
-
 		foreach (Insert insert in doc.Entities.OfType<Insert>())
 		{
 			if (insert.XDictionary == null)
 			{
 				continue;
 			}
-
 			var dict = insert.XDictionary.GetEntry<CadDictionary>("AcDbBlockRepresentation");
 			var representation = dict.GetEntry<BlockRepresentationData>("AcDbRepData");
 
-			Assert.NotEmpty(insert.Block.Source.EvaluationGraph.Nodes.Select(n => n.Expression).OfType<BlockLinearParameter>());
-
-			Assert.NotNull(representation);
-			Assert.Equal(original, representation.Block);
-
-			XRecord record = insert.XDictionary
-				.GetEntry<CadDictionary>("AcDbBlockRepresentation")
-				.GetEntry<CadDictionary>("AppDataCache")
-				.GetEntry<CadDictionary>("ACAD_ENHANCEDBLOCKDATA")
-				.OfType<XRecord>().First();
-		}
-	}
-
-	private void assertBasePointParameter(CadDocument doc)
-	{
-		var original = doc.BlockRecords["BASE_POINT_PARAMETER"];
-		foreach (BlockRecord record in doc.BlockRecords.Where(b => b.IsAnonymous))
-		{
-			Assert.Equal(original, record.Source);
-		}
-
-		foreach (Insert insert in doc.Entities.OfType<Insert>())
-		{
-			if (insert.XDictionary == null)
-			{
-				continue;
-			}
-
-			var dict = insert.XDictionary.GetEntry<CadDictionary>("AcDbBlockRepresentation");
-			var representation = dict.GetEntry<BlockRepresentationData>("AcDbRepData");
-
-			Assert.NotEmpty(insert.Block.Source.EvaluationGraph.Nodes.Select(n => n.Expression).OfType<BlockLinearParameter>());
-
-			Assert.NotNull(representation);
-			Assert.Equal(original, representation.Block);
-
-			XRecord record = insert.XDictionary
-				.GetEntry<CadDictionary>("AcDbBlockRepresentation")
-				.GetEntry<CadDictionary>("AppDataCache")
-				.GetEntry<CadDictionary>("ACAD_ENHANCEDBLOCKDATA")
-				.OfType<XRecord>().First();
-		}
-	}
-
-	private void assertLinearParameter(CadDocument doc)
-	{
-		var original = doc.BlockRecords["LINEAR_PARAM"];
-		foreach (BlockRecord record in doc.BlockRecords.Where(b => b.IsAnonymous))
-		{
-			Assert.Equal(original, record.Source);
-		}
-
-		foreach (Insert insert in doc.Entities.OfType<Insert>())
-		{
-			if (insert.XDictionary == null)
-			{
-				continue;
-			}
-
-			var dict = insert.XDictionary.GetEntry<CadDictionary>("AcDbBlockRepresentation");
-			var representation = dict.GetEntry<BlockRepresentationData>("AcDbRepData");
-
-			Assert.NotEmpty(insert.Block.Source.EvaluationGraph.Nodes.Select(n => n.Expression).OfType<BlockLinearParameter>());
-
-			Assert.NotNull(representation);
-			Assert.Equal(original, representation.Block);
-
-			XRecord record = insert.XDictionary
-				.GetEntry<CadDictionary>("AcDbBlockRepresentation")
-				.GetEntry<CadDictionary>("AppDataCache")
-				.GetEntry<CadDictionary>("ACAD_ENHANCEDBLOCKDATA")
-				.OfType<XRecord>().First();
-		}
-	}
-
-	private void assertLookupParameter(CadDocument doc)
-	{
-		foreach (Insert insert in doc.Entities.OfType<Insert>())
-		{
-			if (insert.XDictionary == null)
-			{
-				continue;
-			}
-
-			var lookupParams = insert.Block.Source.EvaluationGraph.Nodes
+			Assert.NotEmpty(insert.Block.Source.EvaluationGraph.Nodes
 				.Select(n => n.Expression)
-				.OfType<BlockLookupParameter>()
-				.ToList();
-
-			Assert.NotEmpty(lookupParams);
-
-			foreach (BlockLookupParameter param in lookupParams)
-			{
-				Assert.False(string.IsNullOrEmpty(param.Label),
-					$"BlockLookupParameter (Id={param.Id}) should have a non-empty Name.");
-			}
-
-			XRecord record = insert.XDictionary
-				.GetEntry<CadDictionary>("AcDbBlockRepresentation")
-				.GetEntry<CadDictionary>("AppDataCache")
-				.GetEntry<CadDictionary>("ACAD_ENHANCEDBLOCKDATA")
-				.OfType<XRecord>().First();
-
-			Assert.NotNull(record);
-		}
-	}
-
-	private void assertPointParameter(CadDocument doc)
-	{
-		//Not implemented in this PR
-	}
-
-	private void assertRotationParameter(CadDocument doc)
-	{
-		var original = doc.BlockRecords["dynamic_block"];
-		foreach (BlockRecord record in doc.BlockRecords.Where(b => b.IsAnonymous))
-		{
-			Assert.Equal(original, record.Source);
-		}
-
-		foreach (Insert insert in doc.Entities.OfType<Insert>())
-		{
-			if (insert.XDictionary == null)
-			{
-				continue;
-			}
-
-			var dict = insert.XDictionary.GetEntry<CadDictionary>("AcDbBlockRepresentation");
-			var representation = dict.GetEntry<BlockRepresentationData>("AcDbRepData");
-
-			Assert.NotEmpty(insert.Block.Source.EvaluationGraph.Nodes.Select(n => n.Expression).OfType<BlockRotationParameter>());
+				.Where(e => e.GetType() == parameterType));
 
 			Assert.NotNull(representation);
 			Assert.Equal(original, representation.Block);
-
 			XRecord record = insert.XDictionary
 				.GetEntry<CadDictionary>("AcDbBlockRepresentation")
 				.GetEntry<CadDictionary>("AppDataCache")
 				.GetEntry<CadDictionary>("ACAD_ENHANCEDBLOCKDATA")
 				.OfType<XRecord>().First();
-		}
-	}
-
-	private void assertVisibilityParameter(CadDocument doc)
-	{
-		var original = doc.BlockRecords["block_visibility_parameter"];
-		foreach (BlockRecord record in doc.BlockRecords.Where(b => b.IsAnonymous))
-		{
-			Assert.Equal(original, record.Source);
-		}
-
-		foreach (Insert insert in doc.Entities.OfType<Insert>())
-		{
-			var dict = insert.XDictionary.GetEntry<CadDictionary>("AcDbBlockRepresentation");
-			var representation = dict.GetEntry<BlockRepresentationData>("AcDbRepData");
-
-			Assert.NotEmpty(insert.Block.Source.EvaluationGraph.Nodes.Select(n => n.Expression).OfType<BlockVisibilityParameter>());
-
-			Assert.NotNull(representation);
-			Assert.Equal(original, representation.Block);
-
-			XRecord record = insert.XDictionary
-				.GetEntry<CadDictionary>("AcDbBlockRepresentation")
-				.GetEntry<CadDictionary>("AppDataCache")
-				.GetEntry<CadDictionary>("ACAD_ENHANCEDBLOCKDATA")
-				.OfType<XRecord>().First();
-
-			var name = record.Entries.FirstOrDefault(e => e.Code == 1).Value as string;
-			Assert.False(string.IsNullOrEmpty(name));
 		}
 	}
 }
