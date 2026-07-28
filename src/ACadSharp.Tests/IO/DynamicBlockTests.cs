@@ -107,6 +107,9 @@ public class DynamicBlockTests : IOTestsBase
 			case DxfFileToken.ObjectBlockLookupParameter:
 				this.assertLookupParameter(doc);
 				break;
+			case DxfFileToken.ObjectBlockAlignmentParameter:
+				this.assertAlignmentParameter(doc);
+				break;
 			default:
 				throw new System.NotImplementedException();
 		}
@@ -135,9 +138,40 @@ public class DynamicBlockTests : IOTestsBase
 		}
 	}
 
+	private void assertAlignmentParameter(CadDocument doc)
+	{
+		var original = doc.BlockRecords["ALIGNMENT_PARAMETER"];
+		foreach (BlockRecord record in doc.BlockRecords.Where(b => b.IsAnonymous))
+		{
+			Assert.Equal(original, record.Source);
+		}
+
+		foreach (Insert insert in doc.Entities.OfType<Insert>())
+		{
+			if (insert.XDictionary == null)
+			{
+				continue;
+			}
+
+			var dict = insert.XDictionary.GetEntry<CadDictionary>("AcDbBlockRepresentation");
+			var representation = dict.GetEntry<BlockRepresentationData>("AcDbRepData");
+
+			Assert.NotEmpty(insert.Block.Source.EvaluationGraph.Nodes.Select(n => n.Expression).OfType<BlockLinearParameter>());
+
+			Assert.NotNull(representation);
+			Assert.Equal(original, representation.Block);
+
+			XRecord record = insert.XDictionary
+				.GetEntry<CadDictionary>("AcDbBlockRepresentation")
+				.GetEntry<CadDictionary>("AppDataCache")
+				.GetEntry<CadDictionary>("ACAD_ENHANCEDBLOCKDATA")
+				.OfType<XRecord>().First();
+		}
+	}
+
 	private void assertBasePointParameter(CadDocument doc)
 	{
-		var original = doc.BlockRecords["dynamic_block"];
+		var original = doc.BlockRecords["BASE_POINT_PARAMETER"];
 		foreach (BlockRecord record in doc.BlockRecords.Where(b => b.IsAnonymous))
 		{
 			Assert.Equal(original, record.Source);

@@ -1,4 +1,5 @@
 ﻿using ACadSharp.Attributes;
+using CSMath;
 
 namespace ACadSharp.Objects.Evaluations;
 
@@ -23,17 +24,17 @@ public class BlockLinearGrip : BlockGrip
 	/// Gets or sets the distance in the X direction.
 	/// </summary>
 	[DxfCodeValue(140)]
-	public double XDistance { get; set; }
+	public double DistanceX { get; set; }
 
 	/// <summary>
 	/// Gets or sets the distance in the Y direction.
 	/// </summary>
 	[DxfCodeValue(141)]
-	public double YDistance { get; set; }
+	public double DistanceY { get; set; }
 
 	/// <summary>
 	/// Gets or sets the distance in the Z direction.
 	/// </summary>
 	[DxfCodeValue(142)]
-	public double ZDistance { get; set; }
+	public double DistanceZ { get; set; }
 }

@@ -42,7 +42,11 @@ public static class DxfSubclassMarker
 
 	public const string BlockActionBasePt = "AcDbBlockActionWithBasePt";
 
-	public const string BlockBasePointParameter = "AcDbBlockBasePointParameter";
+	public const string BlockAlignmentGrip = "AcDbBlockAlignmentGrip";
+
+	public const string BlockAlignmentParameter = "AcDbBlockAlignmentParameter";
+
+	public const string BlockBasePointParameter = "AcDbBlockBasepointParameter";
 
 	public const string BlockBegin = "AcDbBlockBegin";
 

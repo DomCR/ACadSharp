@@ -869,9 +869,9 @@ internal class DxfObjectsSectionWriter : DxfSectionWriterBase
 
 		this._writer.Write(100, DxfSubclassMarker.BlockLinearGrip);
 
-		this._writer.Write(140, grip.XDistance, map);
-		this._writer.Write(141, grip.YDistance, map);
-		this._writer.Write(142, grip.ZDistance, map);
+		this._writer.Write(140, grip.DistanceX, map);
+		this._writer.Write(141, grip.DistanceY, map);
+		this._writer.Write(142, grip.DistanceZ, map);
 	}
 
 	private void writeBlockLinearParameter(BlockLinearParameter parameter)

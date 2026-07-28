@@ -5672,14 +5672,23 @@ namespace ACadSharp.IO.DWG
 				case DxfFileToken.ObjectBlockFlipParameter:
 					template = this.readBlockFlipParameter();
 					break;
+				case DxfFileToken.ObjectBlockBasePointParameter:
+					template = this.readBlockBasePointParameter();
+					break;
+				case DxfFileToken.ObjectBlockAlignmentParameter:
+					template = this.readBlockAlignmentParameter();
+					break;
 				case DxfFileToken.ObjectBlockRepresentationData:
 					template = this.readBlockRepresentationData();
 					break;
 				case DxfFileToken.ObjectBlockGripLocationComponent:
 					template = this.readBlockGripLocationComponent();
 					break;
+				case DxfFileToken.ObjectBlockAlignmentGrip:
+					template = this.readAlignmentGrip();
+					break;
 				case DxfFileToken.ObjectBlockLinearGrip:
-				template = 	this.readLinearBlockGrip();
+					template = this.readLinearGrip();
 					break;
 				case DxfFileToken.ObjectBlockXYGrip:
 					template = new CadBlockGripTemplate(new BlockXYGrip());

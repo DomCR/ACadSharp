@@ -7,6 +7,20 @@ namespace ACadSharp.IO.DWG;
 
 internal partial class DwgObjectReader : DwgSectionIO
 {
+	private CadTemplate readAlignmentGrip()
+	{
+		var grip = new BlockAlignmentGrip();
+		var template = new CadBlockGripTemplate(grip);
+
+		this.readBlockGrip(template);
+
+		grip.AlignmentX = this._mergedReaders.ReadBitDouble();
+		grip.AlignmentY = this._mergedReaders.ReadBitDouble();
+		grip.AlignmentZ = this._mergedReaders.ReadBitDouble();
+
+		return template;
+	}
+
 	private void readAnnotScaleObjectContextData(CadAnnotScaleObjectContextDataTemplate template)
 	{
 		this.readObjectContextData(template);
@@ -106,6 +120,31 @@ internal partial class DwgObjectReader : DwgSectionIO
 
 		blockActionBasePt.Value280 = this._mergedReaders.ReadBit();
 		blockActionBasePt.Value1012 = this._mergedReaders.Read3BitDouble();
+	}
+
+	private CadTemplate readBlockAlignmentParameter()
+	{
+		BlockAlignmentParameter parameter = new();
+		CadBlock2PtParameterTemplate template = new(parameter);
+
+		this.readBlock2PtParameter(template);
+
+		parameter.IsPerpendicular = this._mergedReaders.ReadBit();
+
+		return template;
+	}
+
+	private CadTemplate readBlockBasePointParameter()
+	{
+		BlockBasePointParameter parameter = new();
+		CadBlock1PtParameterTemplate template = new(parameter);
+
+		this.readBlock1PtParameter(template);
+
+		parameter.Point1011 = this._mergedReaders.Read3BitDouble();
+		parameter.Point1012 = this._mergedReaders.Read3BitDouble();
+
+		return template;
 	}
 
 	private void readBlockElement(CadBlockElementTemplate template)
@@ -716,16 +755,16 @@ internal partial class DwgObjectReader : DwgSectionIO
 		return template;
 	}
 
-	private CadTemplate readLinearBlockGrip()
+	private CadTemplate readLinearGrip()
 	{
 		var grip = new BlockLinearGrip();
 		var template = new CadBlockGripTemplate(grip);
 
 		this.readBlockGrip(template);
 
-		grip.XDistance = this._mergedReaders.ReadBitDouble();
-		grip.YDistance = this._mergedReaders.ReadBitDouble();
-		grip.ZDistance = this._mergedReaders.ReadBitDouble();
+		grip.DistanceX = this._mergedReaders.ReadBitDouble();
+		grip.DistanceY = this._mergedReaders.ReadBitDouble();
+		grip.DistanceZ = this._mergedReaders.ReadBitDouble();
 
 		return template;
 	}

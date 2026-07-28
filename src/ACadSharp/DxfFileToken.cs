@@ -170,6 +170,10 @@ public static class DxfFileToken
 
 	public const string ObjectBinRecord = "BINRECORD";
 
+	public const string ObjectBlockAlignmentGrip = "BLOCKALIGNMENTGRIP";
+
+	public const string ObjectBlockAlignmentParameter = "BLOCKALIGNMENTPARAMETER";
+
 	public const string ObjectBlockBasePointParameter = "BLOCKBASEPOINTPARAMETER";
 
 	public const string ObjectBlockFlipAction = "BLOCKFLIPACTION";

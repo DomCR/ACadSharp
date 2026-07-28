@@ -12,7 +12,6 @@ using System.Linq;
 using static ACadSharp.IO.Templates.CadEvaluationGraphTemplate;
 using static ACadSharp.IO.Templates.CadTableEntityTemplate;
 using static ACadSharp.IO.Templates.CadTableStyleTemplate;
-using static ACadSharp.Objects.Evaluations.BlockStretchAction;
 
 namespace ACadSharp.IO.DXF.DxfStreamReader;
 
@@ -206,6 +205,34 @@ internal class DxfObjectsSectionReader : DxfSectionReaderBase
 				if (!this.tryAssignCurrentValue(template.CadObject, map.SubClasses[DxfSubclassMarker.BlockActionBasePt]))
 				{
 					return this.readBlockAction(template, map);
+				}
+				return true;
+		}
+	}
+
+	private bool readBlockAlignmentParameter(CadTemplate template, DxfMap map)
+	{
+		switch (this._reader.Code)
+		{
+			default:
+				if (!this.tryAssignCurrentValue(template.CadObject, map.SubClasses[DxfSubclassMarker.BlockAlignmentParameter]))
+				{
+					return this.readBlock2PtParameter(template, map);
+				}
+				return true;
+		}
+	}
+
+	private bool readBlockBasePointParameter(CadTemplate template, DxfMap map)
+	{
+		CadBlock1PtParameterTemplate tmp = template as CadBlock1PtParameterTemplate;
+
+		switch (this._reader.Code)
+		{
+			default:
+				if (!this.tryAssignCurrentValue(template.CadObject, map.SubClasses[DxfSubclassMarker.BlockBasePointParameter]))
+				{
+					return this.readBlock1PtParameter(template, map);
 				}
 				return true;
 		}
@@ -2011,6 +2038,8 @@ internal class DxfObjectsSectionReader : DxfSectionReaderBase
 				return this.readObjectCodes<DynamicBlockPurgePreventer>(new CadNonGraphicalObjectTemplate(new DynamicBlockPurgePreventer()), this.readObjectSubclassMap);
 			case DxfFileToken.ObjectBlockRepresentationData:
 				return this.readObjectCodes<BlockRepresentationData>(new CadBlockRepresentationDataTemplate(), this.readBlockRepresentationData);
+			case DxfFileToken.ObjectBlockBasePointParameter:
+				return this.readObjectCodes<BlockBasePointParameter>(new CadBlock1PtParameterTemplate(new BlockBasePointParameter()), this.readBlockBasePointParameter);
 			case DxfFileToken.ObjectBlockGripLocationComponent:
 				return this.readObjectCodes<BlockGripLocationComponent>(new CadBlockGripLocationComponentTemplate(), this.readBlockGripLocationComponent);
 			case DxfFileToken.ObjectBlockVisibilityGrip:
@@ -2025,12 +2054,16 @@ internal class DxfObjectsSectionReader : DxfSectionReaderBase
 				return this.readObjectCodes<BlockLinearParameter>(new CadBlockLinearParameterTemplate(), this.readBlockLinearParameter);
 			case DxfFileToken.ObjectBlockLookupParameter:
 				return this.readObjectCodes<BlockLookupParameter>(new CadBlockLookupParameterTemplate(new BlockLookupParameter()), this.readBlockLookupParameter);
+			case DxfFileToken.ObjectBlockAlignmentParameter:
+				return this.readObjectCodes<BlockAlignmentParameter>(new CadBlock2PtParameterTemplate(new BlockAlignmentParameter()), this.readBlockAlignmentParameter);
 			case DxfFileToken.ObjectBlockLinearGrip:
 				return this.readObjectCodes<BlockLinearGrip>(new CadBlockGripTemplate(new BlockLinearGrip()), this.readBlockGripSubclass);
 			case DxfFileToken.ObjectBlockLookupGrip:
 				return this.readObjectCodes<BlockLookupGrip>(new CadBlockGripTemplate(new BlockLookupGrip()), this.readBlockGripSubclass);
 			case DxfFileToken.ObjectBlockRotationGrip:
 				return this.readObjectCodes<BlockRotationGrip>(new CadBlockGripTemplate(new BlockRotationGrip()), this.readBlockGripSubclass);
+			case DxfFileToken.ObjectBlockAlignmentGrip:
+				return this.readObjectCodes<BlockAlignmentGrip>(new CadBlockGripTemplate(new BlockAlignmentGrip()), this.readBlockGripSubclass);
 			case DxfFileToken.ObjectBlockLookupAction:
 				return this.readObjectCodes<BlockLookupAction>(new CadBlockLookupActionTemplate(), this.readLookupAction);
 			case DxfFileToken.ObjectBlockMoveAction:

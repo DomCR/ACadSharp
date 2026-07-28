@@ -173,9 +173,9 @@ internal partial class DwgObjectWriter : DwgSectionIO
 	{
 		this.writeBlockGrip(grip);
 
-		this._writer.WriteBitDouble(grip.XDistance);
-		this._writer.WriteBitDouble(grip.YDistance);
-		this._writer.WriteBitDouble(grip.ZDistance);
+		this._writer.WriteBitDouble(grip.DistanceX);
+		this._writer.WriteBitDouble(grip.DistanceY);
+		this._writer.WriteBitDouble(grip.DistanceZ);
 	}
 
 	private void writeBlockLinearParameter(BlockLinearParameter parameter)
