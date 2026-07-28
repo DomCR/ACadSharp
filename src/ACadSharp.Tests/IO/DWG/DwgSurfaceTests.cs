@@ -14,8 +14,9 @@ public class DwgSurfaceTests
 	public void ReadSurfaceEntitiesWithAcisPayload(string fileName)
 	{
 		// Two loose extruded-sheet SURFACE entities: before R2013 the ACIS
-		// payload is embedded in the entity, from R2013 on it comes from the
-		// AcDs data section.
+		// payload is embedded in the entity and lands on AcisData, from R2013
+		// on it lives in the AcDs data section and is reached through the
+		// document DataStorage by entity handle.
 		string path = Path.Combine(TestVariables.SamplesFolder, fileName);
 
 		CadDocument doc;
@@ -29,8 +30,16 @@ public class DwgSurfaceTests
 		Assert.Equal(2, surfaces.Count);
 		foreach (Surface surface in surfaces)
 		{
-			Assert.NotNull(surface.AcisData);
-			Assert.True(surface.AcisData.Length > 0, "empty ACIS payload");
+			byte[] payload = surface.AcisData;
+			if (payload == null)
+			{
+				Assert.NotNull(doc.DataStorage);
+				Assert.True(doc.DataStorage.TryGetDataByHandle(surface.Handle, out payload),
+					"no ACIS payload in the DataStorage for the surface handle");
+			}
+
+			Assert.NotNull(payload);
+			Assert.True(payload.Length > 0, "empty ACIS payload");
 		}
 	}
 }
