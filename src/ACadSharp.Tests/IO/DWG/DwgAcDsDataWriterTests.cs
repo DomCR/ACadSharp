@@ -1,7 +1,11 @@
+using ACadSharp.IO;
 using ACadSharp.IO.DWG;
 using ACadSharp.IO.DWG.DwgStreamReaders;
+using ACadSharp.Prototype1b;
+using ACadSharp.Prototype1b.Segments;
 using System;
 using System.Collections.Generic;
+using System.IO;
 using System.Text;
 using Xunit;
 
@@ -20,7 +24,7 @@ public class DwgAcDsDataWriterTests
 		};
 
 		byte[] section = DwgAcDsDataWriter.Write(records);
-		Dictionary<ulong, byte[]> back = DwgAcDsDataReader.ReadRecords(section);
+		Dictionary<ulong, byte[]> back = readBack(section);
 
 		Assert.Equal(3, back.Count);
 		foreach (KeyValuePair<ulong, byte[]> record in records)
@@ -52,13 +56,34 @@ public class DwgAcDsDataWriterTests
 		Assert.Equal(2, handleToIndex[0x30]);
 
 		// the payloads still round trip
-		Dictionary<ulong, byte[]> back = DwgAcDsDataReader.ReadRecords(section);
+		Dictionary<ulong, byte[]> back = readBack(section);
 		Assert.Equal(3, back.Count);
 	}
 
 	private static byte[] acis(string tag)
 	{
 		return Encoding.ASCII.GetBytes("ACIS BinaryFile" + tag);
+	}
+
+	//Reads the written section back through the Prototype1b reader and returns
+	//the payloads keyed by handle, resolving any blob references.
+	private static Dictionary<ulong, byte[]> readBack(byte[] section)
+	{
+		using MemoryStream stream = new(section);
+		IDwgStreamReader sreader = DwgStreamReaderBase.GetStreamHandler(ACadVersion.AC1027, stream);
+		DwgDocumentBuilder builder = new(ACadVersion.AC1027, new CadDocument(), new DwgReaderConfiguration { Failsafe = false });
+		DataStorage storage = new DwgPrototype1bReader(ACadVersion.AC1027, builder, sreader).Read();
+
+		Dictionary<ulong, byte[]> records = new();
+		foreach (DataField field in storage.DataFields)
+		{
+			foreach (DataEntry entry in field.Entries)
+			{
+				records[entry.Header.Handle] = storage.ResolveDataEntry(entry);
+			}
+		}
+
+		return records;
 	}
 
 	//Walks the file header and segment index to the "search" segment and reads
