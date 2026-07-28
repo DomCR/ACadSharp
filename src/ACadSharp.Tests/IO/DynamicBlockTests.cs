@@ -89,6 +89,9 @@ public class DynamicBlockTests : IOTestsBase
 
 		switch (test.NoExtensionName)
 		{
+			case DxfFileToken.ObjectBlockBasePointParameter:
+				this.assertBasePointParameter(doc);
+				break;
 			case DxfFileToken.ObjectBlockVisibilityParameter:
 				this.assertVisibilityParameter(doc);
 				break;
@@ -129,6 +132,37 @@ public class DynamicBlockTests : IOTestsBase
 		else
 		{
 			DwgWriter.Write(pathOut, doc, configuration: writerConfiguration as DwgWriterConfiguration, notification: this.onNotification);
+		}
+	}
+
+	private void assertBasePointParameter(CadDocument doc)
+	{
+		var original = doc.BlockRecords["dynamic_block"];
+		foreach (BlockRecord record in doc.BlockRecords.Where(b => b.IsAnonymous))
+		{
+			Assert.Equal(original, record.Source);
+		}
+
+		foreach (Insert insert in doc.Entities.OfType<Insert>())
+		{
+			if (insert.XDictionary == null)
+			{
+				continue;
+			}
+
+			var dict = insert.XDictionary.GetEntry<CadDictionary>("AcDbBlockRepresentation");
+			var representation = dict.GetEntry<BlockRepresentationData>("AcDbRepData");
+
+			Assert.NotEmpty(insert.Block.Source.EvaluationGraph.Nodes.Select(n => n.Expression).OfType<BlockLinearParameter>());
+
+			Assert.NotNull(representation);
+			Assert.Equal(original, representation.Block);
+
+			XRecord record = insert.XDictionary
+				.GetEntry<CadDictionary>("AcDbBlockRepresentation")
+				.GetEntry<CadDictionary>("AppDataCache")
+				.GetEntry<CadDictionary>("ACAD_ENHANCEDBLOCKDATA")
+				.OfType<XRecord>().First();
 		}
 	}
 
