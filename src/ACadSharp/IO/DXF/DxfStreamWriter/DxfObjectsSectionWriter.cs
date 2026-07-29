@@ -800,10 +800,10 @@ internal class DxfObjectsSectionWriter : DxfSectionWriterBase
 
 		this._writer.Write(100, DxfSubclassMarker.BlockActionBasePt);
 
-		this._writer.Write(92, action.UpdateBaseX.Id);
-		this._writer.Write(93, action.UpdateBaseY.Id);
-		this._writer.Write(301, action.UpdateBaseX.Name);
-		this._writer.Write(302, action.UpdateBaseY.Name);
+		this._writer.Write(92, action.UpdateBaseXConnection.Id);
+		this._writer.Write(93, action.UpdateBaseYConnection.Id);
+		this._writer.Write(301, action.UpdateBaseXConnection.Name);
+		this._writer.Write(302, action.UpdateBaseYConnection.Name);
 
 		this._writer.Write(1011, action.BasePoint, map);
 		this._writer.Write(280, action.Value280 ? (short)1 : (short)0, map);
@@ -911,8 +911,8 @@ internal class DxfObjectsSectionWriter : DxfSectionWriterBase
 
 		this._writer.Write(100, DxfSubclassMarker.BlockMoveAction);
 
-		this.writeEvalConnection(moveAction.XDelta, 92, 301);
-		this.writeEvalConnection(moveAction.YDelta, 93, 302);
+		this.writeEvalConnection(moveAction.XDeltaConnection, 92, 301);
+		this.writeEvalConnection(moveAction.YDeltaConnection, 93, 302);
 
 		this._writer.Write(140, moveAction.DistanceMultiplier, map);
 		this._writer.Write(141, moveAction.AngleOffset, map);
@@ -963,7 +963,7 @@ internal class DxfObjectsSectionWriter : DxfSectionWriterBase
 
 		this._writer.Write(100, DxfSubclassMarker.BlockRotationAction);
 
-		this.writeEvalConnection(rotationAction.Connection, 94, 303);
+		this.writeEvalConnection(rotationAction.AngleDeltaConnection, 94, 303);
 	}
 
 	private void writeBlockRotationGrip(BlockRotationGrip blockRotationGrip)
@@ -1018,8 +1018,8 @@ internal class DxfObjectsSectionWriter : DxfSectionWriterBase
 
 		this._writer.Write(100, DxfSubclassMarker.BlockStretchAction);
 
-		this.writeEvalConnection(stretchAction.EndXDelta, 92, 301);
-		this.writeEvalConnection(stretchAction.EndYDelta, 93, 302);
+		this.writeEvalConnection(stretchAction.EndXDeltaConnection, 92, 301);
+		this.writeEvalConnection(stretchAction.EndYDeltaConnection, 93, 302);
 
 		this._writer.Write(72, stretchAction.Boundary.Count, map);
 		foreach (var pt in stretchAction.Boundary)

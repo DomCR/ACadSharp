@@ -41,10 +41,10 @@ public class BlockMoveAction : BlockAction
 	/// <summary>
 	/// Gets or sets the evaluation connection for the X delta displacement.
 	/// </summary>
-	public EvalConnection XDelta { get; set; }
+	public EvalConnection XDeltaConnection { get; set; }
 
 	/// <summary>
 	/// Gets or sets the evaluation connection for the Y delta displacement.
 	/// </summary>
-	public EvalConnection YDelta { get; set; }
+	public EvalConnection YDeltaConnection { get; set; }
 }

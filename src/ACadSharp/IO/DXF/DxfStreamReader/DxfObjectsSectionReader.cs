@@ -190,16 +190,16 @@ internal class DxfObjectsSectionReader : DxfSectionReaderBase
 		switch (this._reader.Code)
 		{
 			case 92:
-				action.UpdateBaseX.Id = this._reader.ValueAsInt;
+				action.UpdateBaseXConnection.Id = this._reader.ValueAsInt;
 				return true;
 			case 93:
-				action.UpdateBaseY.Id = this._reader.ValueAsInt;
+				action.UpdateBaseYConnection.Id = this._reader.ValueAsInt;
 				return true;
 			case 301:
-				action.UpdateBaseX.Name = this._reader.ValueAsString;
+				action.UpdateBaseXConnection.Name = this._reader.ValueAsString;
 				return true;
 			case 302:
-				action.UpdateBaseY.Name = this._reader.ValueAsString;
+				action.UpdateBaseYConnection.Name = this._reader.ValueAsString;
 				return true;
 			default:
 				if (!this.tryAssignCurrentValue(template.CadObject, map.SubClasses[DxfSubclassMarker.BlockActionBasePt]))
@@ -218,6 +218,46 @@ internal class DxfObjectsSectionReader : DxfSectionReaderBase
 				if (!this.tryAssignCurrentValue(template.CadObject, map.SubClasses[DxfSubclassMarker.BlockAlignmentParameter]))
 				{
 					return this.readBlock2PtParameter(template, map);
+				}
+				return true;
+		}
+	}
+
+	private bool readBlockArrayAction(CadTemplate template, DxfMap map)
+	{
+		CadBlockActionTemplate tmp = template as CadBlockActionTemplate;
+		BlockArrayAction action = tmp.CadObject as BlockArrayAction;
+
+		switch (this._reader.Code)
+		{
+			case 92:
+				action.BaseConnection.Id = this._reader.ValueAsInt;
+				return true;
+			case 93:
+				action.EndConnection.Id = this._reader.ValueAsInt;
+				return true;
+			case 94:
+				action.UpdatedBaseConnection.Id = this._reader.ValueAsInt;
+				return true;
+			case 95:
+				action.UpdatedEndConnection.Id = this._reader.ValueAsInt;
+				return true;
+			case 301:
+				action.BaseConnection.Name = this._reader.ValueAsString;
+				return true;
+			case 302:
+				action.EndConnection.Name = this._reader.ValueAsString;
+				return true;
+			case 303:
+				action.UpdatedBaseConnection.Name = this._reader.ValueAsString;
+				return true;
+			case 304:
+				action.UpdatedEndConnection.Name = this._reader.ValueAsString;
+				return true;
+			default:
+				if (!this.tryAssignCurrentValue(template.CadObject, map.SubClasses[DxfSubclassMarker.BlockArrayAction]))
+				{
+					return this.readBlockAction(template, map);
 				}
 				return true;
 		}
@@ -261,36 +301,36 @@ internal class DxfObjectsSectionReader : DxfSectionReaderBase
 		switch (this._reader.Code)
 		{
 			case 92:
-				flip.Flip ??= new EvalConnection();
-				flip.Flip.Id = this._reader.ValueAsInt;
+				flip.FlipConnection ??= new EvalConnection();
+				flip.FlipConnection.Id = this._reader.ValueAsInt;
 				return true;
 			case 93:
-				flip.UpdatedFlip ??= new EvalConnection();
-				flip.UpdatedFlip.Id = this._reader.ValueAsInt;
+				flip.UpdatedFlipConnection ??= new EvalConnection();
+				flip.UpdatedFlipConnection.Id = this._reader.ValueAsInt;
 				return true;
 			case 94:
-				flip.UpdatedBase ??= new EvalConnection();
-				flip.UpdatedBase.Id = this._reader.ValueAsInt;
+				flip.UpdatedBaseConnection ??= new EvalConnection();
+				flip.UpdatedBaseConnection.Id = this._reader.ValueAsInt;
 				return true;
 			case 95:
-				flip.UpdatedEnd ??= new EvalConnection();
-				flip.UpdatedEnd.Id = this._reader.ValueAsInt;
+				flip.UpdatedEndConnection ??= new EvalConnection();
+				flip.UpdatedEndConnection.Id = this._reader.ValueAsInt;
 				return true;
 			case 301:
-				flip.Flip ??= new EvalConnection();
-				flip.Flip.Name = this._reader.ValueAsString;
+				flip.FlipConnection ??= new EvalConnection();
+				flip.FlipConnection.Name = this._reader.ValueAsString;
 				return true;
 			case 302:
-				flip.UpdatedFlip ??= new EvalConnection();
-				flip.UpdatedFlip.Name = this._reader.ValueAsString;
+				flip.UpdatedFlipConnection ??= new EvalConnection();
+				flip.UpdatedFlipConnection.Name = this._reader.ValueAsString;
 				return true;
 			case 303:
-				flip.UpdatedBase ??= new EvalConnection();
-				flip.UpdatedBase.Name = this._reader.ValueAsString;
+				flip.UpdatedBaseConnection ??= new EvalConnection();
+				flip.UpdatedBaseConnection.Name = this._reader.ValueAsString;
 				return true;
 			case 304:
-				flip.UpdatedEnd ??= new EvalConnection();
-				flip.UpdatedEnd.Name = this._reader.ValueAsString;
+				flip.UpdatedEndConnection ??= new EvalConnection();
+				flip.UpdatedEndConnection.Name = this._reader.ValueAsString;
 				return true;
 			default:
 				if (!this.tryAssignCurrentValue(template.CadObject, map.SubClasses[DxfSubclassMarker.BlockFlipAction]))
@@ -309,7 +349,7 @@ internal class DxfObjectsSectionReader : DxfSectionReaderBase
 		switch (this._reader.Code)
 		{
 			case 309:
-				flip.Connection = this.readEvalConnection(true);
+				flip.UpdatedFlipConnection = this.readEvalConnection(true);
 				return true;
 			default:
 				if (!this.tryAssignCurrentValue(template.CadObject, map.SubClasses[DxfSubclassMarker.BlockFlipParameter]))
@@ -409,10 +449,10 @@ internal class DxfObjectsSectionReader : DxfSectionReaderBase
 		switch (this._reader.Code)
 		{
 			case 92:
-				action.XDelta = this.readEvalConnection();
+				action.XDeltaConnection = this.readEvalConnection();
 				return true;
 			case 93:
-				action.YDelta = this.readEvalConnection();
+				action.YDeltaConnection = this.readEvalConnection();
 				return true;
 			default:
 				if (!this.tryAssignCurrentValue(template.CadObject, map.SubClasses[DxfSubclassMarker.BlockMoveAction]))
@@ -454,39 +494,6 @@ internal class DxfObjectsSectionReader : DxfSectionReaderBase
 		}
 	}
 
-	private bool readBlockRepresentationData(CadTemplate template, DxfMap map)
-	{
-		CadBlockRepresentationDataTemplate tmp = template as CadBlockRepresentationDataTemplate;
-
-		switch (this._reader.Code)
-		{
-			case 340:
-				tmp.BlockHandle = this._reader.ValueAsHandle;
-				return true;
-			default:
-				return this.tryAssignCurrentValue(template.CadObject, map.SubClasses[tmp.CadObject.SubclassMarker]);
-		}
-	}
-
-	private bool readBlockRotationAction(CadTemplate template, DxfMap map)
-	{
-		CadBlockRotationActionTemplate tmp = template as CadBlockRotationActionTemplate;
-		BlockRotationAction action = tmp.CadObject as BlockRotationAction;
-
-		switch (this._reader.Code)
-		{
-			case 94:
-				action.Connection = this.readEvalConnection();
-				return true;
-			default:
-				if (!this.tryAssignCurrentValue(template.CadObject, map.SubClasses[DxfSubclassMarker.BlockRotationAction]))
-				{
-					return this.readBlockActionBasePt(template, map);
-				}
-				return true;
-		}
-	}
-
 	private bool readBlockPolarParameter(CadTemplate template, DxfMap map)
 	{
 		var tmp = template as CadBlock2PtParameterTemplate;
@@ -504,60 +511,6 @@ internal class DxfObjectsSectionReader : DxfSectionReaderBase
 				if (!this.tryAssignCurrentValue(template.CadObject, map))
 				{
 					return this.readBlock2PtParameter(template, map);
-				}
-				return true;
-		}
-	}
-
-	private bool readBlockRotationParameter(CadTemplate template, DxfMap map)
-	{
-		var tmp = template as CadBlockRotationParameterTemplate;
-		BlockRotationParameter rotationPrameter = tmp.CadObject as BlockRotationParameter;
-
-		switch (this._reader.Code)
-		{
-			case 307:
-				rotationPrameter.ValueSet = this.readParameterValueSet();
-				return true;
-			default:
-				if (!this.tryAssignCurrentValue(template.CadObject, map))
-				{
-					return this.readBlock2PtParameter(template, map);
-				}
-				return true;
-		}
-	}
-
-	private bool readBlockScaleAction(CadTemplate template, DxfMap map)
-	{
-		CadBlockScaleActionTemplate tmp = template as CadBlockScaleActionTemplate;
-		BlockScaleAction action = tmp.CadObject as BlockScaleAction;
-
-		switch (this._reader.Code)
-		{
-			// Unsorted connections
-			case 94:
-				action.ScaleConnection.Id = this._reader.ValueAsInt;
-				return true;
-			case 95:
-				action.XScaleConnection.Id = this._reader.ValueAsInt;
-				return true;
-			case 96:
-				action.YScaleConnection.Id = this._reader.ValueAsInt;
-				return true;
-			case 303:
-				action.ScaleConnection.Name = this._reader.ValueAsString;
-				return true;
-			case 304:
-				action.XScaleConnection.Name = this._reader.ValueAsString;
-				return true;
-			case 305:
-				action.YScaleConnection.Name = this._reader.ValueAsString;
-				return true;
-			default:
-				if (!this.tryAssignCurrentValue(template.CadObject, map.SubClasses[DxfSubclassMarker.BlockScaleAction]))
-				{
-					return this.readBlockActionBasePt(template, map);
 				}
 				return true;
 		}
@@ -631,27 +584,114 @@ internal class DxfObjectsSectionReader : DxfSectionReaderBase
 				}
 				return true;
 			case 92:
-				action.BaseXDelta = this.readEvalConnection();
+				action.BaseXDeltaConnection = this.readEvalConnection();
 				return true;
 			case 93:
-				action.BaseYDelta = this.readEvalConnection();
+				action.BaseYDeltaConnection = this.readEvalConnection();
 				return true;
 			case 94:
-				action.Base = this.readEvalConnection();
+				action.BaseConnection = this.readEvalConnection();
 				return true;
 			case 95:
-				action.End = this.readEvalConnection();
+				action.EndConnection = this.readEvalConnection();
 				return true;
 			case 96:
-				action.UpdatedBase = this.readEvalConnection();
+				action.UpdatedBaseConnection = this.readEvalConnection();
 				return true;
 			case 97:
-				action.UpdatedEnd = this.readEvalConnection();
+				action.UpdatedEndConnection = this.readEvalConnection();
 				return true;
 			default:
 				if (!this.tryAssignCurrentValue(template.CadObject, map.SubClasses[DxfSubclassMarker.BlockPolarStretchAction]))
 				{
 					return this.readBlockAction(template, map);
+				}
+				return true;
+		}
+	}
+
+	private bool readBlockRepresentationData(CadTemplate template, DxfMap map)
+	{
+		CadBlockRepresentationDataTemplate tmp = template as CadBlockRepresentationDataTemplate;
+
+		switch (this._reader.Code)
+		{
+			case 340:
+				tmp.BlockHandle = this._reader.ValueAsHandle;
+				return true;
+			default:
+				return this.tryAssignCurrentValue(template.CadObject, map.SubClasses[tmp.CadObject.SubclassMarker]);
+		}
+	}
+
+	private bool readBlockRotationAction(CadTemplate template, DxfMap map)
+	{
+		CadBlockRotationActionTemplate tmp = template as CadBlockRotationActionTemplate;
+		BlockRotationAction action = tmp.CadObject as BlockRotationAction;
+
+		switch (this._reader.Code)
+		{
+			case 94:
+				action.AngleDeltaConnection = this.readEvalConnection();
+				return true;
+			default:
+				if (!this.tryAssignCurrentValue(template.CadObject, map.SubClasses[DxfSubclassMarker.BlockRotationAction]))
+				{
+					return this.readBlockActionBasePt(template, map);
+				}
+				return true;
+		}
+	}
+
+	private bool readBlockRotationParameter(CadTemplate template, DxfMap map)
+	{
+		var tmp = template as CadBlockRotationParameterTemplate;
+		BlockRotationParameter rotationPrameter = tmp.CadObject as BlockRotationParameter;
+
+		switch (this._reader.Code)
+		{
+			case 307:
+				rotationPrameter.ValueSet = this.readParameterValueSet();
+				return true;
+			default:
+				if (!this.tryAssignCurrentValue(template.CadObject, map))
+				{
+					return this.readBlock2PtParameter(template, map);
+				}
+				return true;
+		}
+	}
+
+	private bool readBlockScaleAction(CadTemplate template, DxfMap map)
+	{
+		CadBlockScaleActionTemplate tmp = template as CadBlockScaleActionTemplate;
+		BlockScaleAction action = tmp.CadObject as BlockScaleAction;
+
+		switch (this._reader.Code)
+		{
+			// Unsorted connections
+			case 94:
+				action.ScaleConnection.Id = this._reader.ValueAsInt;
+				return true;
+			case 95:
+				action.XScaleConnection.Id = this._reader.ValueAsInt;
+				return true;
+			case 96:
+				action.YScaleConnection.Id = this._reader.ValueAsInt;
+				return true;
+			case 303:
+				action.ScaleConnection.Name = this._reader.ValueAsString;
+				return true;
+			case 304:
+				action.XScaleConnection.Name = this._reader.ValueAsString;
+				return true;
+			case 305:
+				action.YScaleConnection.Name = this._reader.ValueAsString;
+				return true;
+			default:
+				if (!this.tryAssignCurrentValue(template.CadObject, map.SubClasses[DxfSubclassMarker.BlockScaleAction]))
+				{
+					return this.readBlockActionBasePt(template, map);
 				}
 				return true;
 		}
@@ -714,10 +754,10 @@ internal class DxfObjectsSectionReader : DxfSectionReaderBase
 				}
 				return true;
 			case 92:
-				action.EndXDelta = this.readEvalConnection();
+				action.EndXDeltaConnection = this.readEvalConnection();
 				return true;
 			case 93:
-				action.EndYDelta = this.readEvalConnection();
+				action.EndYDeltaConnection = this.readEvalConnection();
 				return true;
 			default:
 				if (!this.tryAssignCurrentValue(template.CadObject, map.SubClasses[DxfSubclassMarker.BlockStretchAction]))
@@ -754,6 +794,28 @@ internal class DxfObjectsSectionReader : DxfSectionReaderBase
 				if (!this.tryAssignCurrentValue(template.CadObject, map.SubClasses[DxfSubclassMarker.BlockVisibilityParameter]))
 				{
 					return this.readBlock1PtParameter(template, map);
+				}
+				return true;
+		}
+	}
+
+	private bool readBlockXYParameter(CadTemplate template, DxfMap map)
+	{
+		CadBlock2PtParameterTemplate tmp = template as CadBlock2PtParameterTemplate;
+		BlockXYParameter parameter = tmp.CadObject as BlockXYParameter;
+
+		switch (this._reader.Code)
+		{
+			case 309:
+				parameter.ValueSetY = this.readParameterValueSet();
+				return true;
+			case 410:
+				parameter.ValueSetX = this.readParameterValueSet();
+				return true;
+			default:
+				if (!this.tryAssignCurrentValue(template.CadObject, map.SubClasses[DxfSubclassMarker.BlockXYParameter]))
+				{
+					return this.readBlock2PtParameter(template, map);
 				}
 				return true;
 		}
@@ -2253,6 +2315,10 @@ internal class DxfObjectsSectionReader : DxfSectionReaderBase
 				return this.readObjectCodes<BlockAlignmentParameter>(new CadBlock2PtParameterTemplate(new BlockAlignmentParameter()), this.readBlockAlignmentParameter);
 			case DxfFileToken.ObjectBlockFlipParameter:
 				return this.readObjectCodes<BlockFlipParameter>(new CadBlockFlipParameterTemplate(new BlockFlipParameter()), this.readBlockFlipParameter);
+			case DxfFileToken.ObjectBlockPointParameter:
+				return this.readObjectCodes<BlockPointParameter>(new CadBlockPointParameterTemplate(), this.readBlockPointParameter);
+			case DxfFileToken.ObjectBlockXYParameter:
+				return this.readObjectCodes<BlockXYParameter>(new CadBlock2PtParameterTemplate(new BlockXYParameter()), this.readBlockXYParameter);
 			case DxfFileToken.ObjectBlockFlipGrip:
 				return this.readObjectCodes<BlockFlipGrip>(new CadBlockGripTemplate(new BlockFlipGrip()), this.readBlockGripSubclass);
 			case DxfFileToken.ObjectBlockLinearGrip:
@@ -2279,8 +2345,8 @@ internal class DxfObjectsSectionReader : DxfSectionReaderBase
 				return this.readObjectCodes<BlockPolarStretchAction>(new CadPolarStretchActionTemplate(new BlockPolarStretchAction()), this.readBlockPolarStretchAction);
 			case DxfFileToken.ObjectBlockRotateAction:
 				return this.readObjectCodes<BlockRotationAction>(new CadBlockRotationActionTemplate(), this.readBlockRotationAction);
-			case DxfFileToken.ObjectBlockPointParameter:
-				return this.readObjectCodes<BlockPointParameter>(new CadBlockPointParameterTemplate(), this.readBlockPointParameter);
+			case DxfFileToken.ObjectBlockArrayAction:
+				return this.readObjectCodes<BlockArrayAction>(new CadBlockActionTemplate(new BlockArrayAction()), this.readBlockArrayAction);
 			case DxfFileToken.ObjectField:
 				return this.readObjectCodes<Field>(new CadFieldTemplate(new Field()), this.readField);
 			case DxfFileToken.ObjectFieldList:

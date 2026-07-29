@@ -64,6 +64,9 @@ public class DynamicBlockTests : IOTestsBase
 			case DxfFileToken.ObjectBlockFlipParameter:
 				this.assertBlockParameter(doc, "BLOCK_FLIP_PARAMETER", typeof(BlockFlipParameter));
 				break;
+			case DxfFileToken.ObjectBlockXYParameter:
+				this.assertBlockParameter(doc, "BLOCK_XY_PARAMETER", typeof(BlockXYParameter));
+				break;
 			case DxfFileToken.ObjectBlockPolarParameter:
 				this.assertBlockParameter(doc, "BLOCK_POLAR_PARAMETER", typeof(BlockPolarParameter));
 				break;

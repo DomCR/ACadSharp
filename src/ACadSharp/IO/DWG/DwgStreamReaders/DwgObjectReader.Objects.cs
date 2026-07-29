@@ -116,8 +116,8 @@ internal partial class DwgObjectReader : DwgSectionIO
 
 		blockActionBasePt.BasePoint = this._mergedReaders.Read3BitDouble();
 
-		blockActionBasePt.UpdateBaseX = this.readEvalConnection();
-		blockActionBasePt.UpdateBaseY = this.readEvalConnection();
+		blockActionBasePt.UpdateBaseXConnection = this.readEvalConnection();
+		blockActionBasePt.UpdateBaseYConnection = this.readEvalConnection();
 
 		blockActionBasePt.Value280 = this._mergedReaders.ReadBit();
 		blockActionBasePt.Value1012 = this._mergedReaders.Read3BitDouble();
@@ -131,6 +131,24 @@ internal partial class DwgObjectReader : DwgSectionIO
 		this.readBlock2PtParameter(template);
 
 		parameter.IsPerpendicular = this._mergedReaders.ReadBit();
+
+		return template;
+	}
+
+	private CadTemplate readBlockArrayAction()
+	{
+		var array = new BlockArrayAction();
+		CadBlockActionTemplate template = new CadBlockActionTemplate(array);
+
+		this.readBlockAction(template);
+
+		array.BaseConnection = this.readEvalConnection();
+		array.EndConnection = this.readEvalConnection();
+		array.UpdatedBaseConnection = this.readEvalConnection();
+		array.UpdatedEndConnection = this.readEvalConnection();
+
+		array.RowOffset = this._mergedReaders.ReadBitDouble();
+		array.ColumnOffset = this._mergedReaders.ReadBitDouble();
 
 		return template;
 	}
@@ -169,10 +187,10 @@ internal partial class DwgObjectReader : DwgSectionIO
 
 		this.readBlockAction(template);
 
-		flipAction.Flip = this.readEvalConnection();
-		flipAction.UpdatedFlip = this.readEvalConnection();
-		flipAction.UpdatedBase = this.readEvalConnection();
-		flipAction.UpdatedEnd = this.readEvalConnection();
+		flipAction.FlipConnection = this.readEvalConnection();
+		flipAction.UpdatedFlipConnection = this.readEvalConnection();
+		flipAction.UpdatedBaseConnection = this.readEvalConnection();
+		flipAction.UpdatedEndConnection = this.readEvalConnection();
 
 		return template;
 	}
@@ -191,7 +209,7 @@ internal partial class DwgObjectReader : DwgSectionIO
 
 		flip.LabelPosition = this._mergedReaders.Read3BitDouble();
 
-		flip.Connection = this.readEvalConnection();
+		flip.UpdatedFlipConnection = this.readEvalConnection();
 
 		return template;
 	}
@@ -288,8 +306,8 @@ internal partial class DwgObjectReader : DwgSectionIO
 
 		this.readBlockAction(template);
 
-		blockMoveAction.XDelta = this.readEvalConnection();
-		blockMoveAction.YDelta = this.readEvalConnection();
+		blockMoveAction.XDeltaConnection = this.readEvalConnection();
+		blockMoveAction.YDeltaConnection = this.readEvalConnection();
 
 		blockMoveAction.DistanceMultiplier = this._mergedReaders.ReadBitDouble();
 		blockMoveAction.AngleOffset = this._mergedReaders.ReadBitDouble();
@@ -349,12 +367,12 @@ internal partial class DwgObjectReader : DwgSectionIO
 
 		this.readBlockAction(template);
 
-		stretchAction.BaseXDelta = this.readEvalConnection();
-		stretchAction.BaseYDelta = this.readEvalConnection();
-		stretchAction.Base = this.readEvalConnection();
-		stretchAction.End = this.readEvalConnection();
-		stretchAction.UpdatedBase = this.readEvalConnection();
-		stretchAction.UpdatedEnd = this.readEvalConnection();
+		stretchAction.BaseXDeltaConnection = this.readEvalConnection();
+		stretchAction.BaseYDeltaConnection = this.readEvalConnection();
+		stretchAction.BaseConnection = this.readEvalConnection();
+		stretchAction.EndConnection = this.readEvalConnection();
+		stretchAction.UpdatedBaseConnection = this.readEvalConnection();
+		stretchAction.UpdatedEndConnection = this.readEvalConnection();
 
 		int npts = this._mergedReaders.ReadBitLong();
 		for (int i = 0; i < npts; i++)
@@ -429,7 +447,7 @@ internal partial class DwgObjectReader : DwgSectionIO
 
 		this.readBlockActionBasePt(template);
 
-		rotationAction.Connection = this.readEvalConnection();
+		rotationAction.AngleDeltaConnection = this.readEvalConnection();
 
 		return template;
 	}
@@ -478,8 +496,8 @@ internal partial class DwgObjectReader : DwgSectionIO
 
 		this.readBlockAction(template);
 
-		stretchAction.EndXDelta = this.readEvalConnection();
-		stretchAction.EndYDelta = this.readEvalConnection();
+		stretchAction.EndXDeltaConnection = this.readEvalConnection();
+		stretchAction.EndYDeltaConnection = this.readEvalConnection();
 
 		int npts = this._mergedReaders.ReadBitLong();
 		for (int i = 0; i < npts; i++)
@@ -553,6 +571,27 @@ internal partial class DwgObjectReader : DwgSectionIO
 		{
 			template.StateTemplates.Add(this.readState());
 		}
+
+		return template;
+	}
+
+	private CadTemplate readBlockXYParameter()
+	{
+		BlockXYParameter parameter = new();
+		CadBlock2PtParameterTemplate template = new CadBlock2PtParameterTemplate(parameter);
+
+		this.readBlock2PtParameter(template);
+
+		parameter.LabelY = this._mergedReaders.ReadVariableText();
+		parameter.LabelX = this._mergedReaders.ReadVariableText();
+		parameter.DescriptionY = this._mergedReaders.ReadVariableText();
+		parameter.DescriptionX = this._mergedReaders.ReadVariableText();
+
+		parameter.LabelOffsetX = this._mergedReaders.ReadBitDouble();
+		parameter.LabelOffsetY = this._mergedReaders.ReadBitDouble();
+
+		parameter.ValueSetX = this.readParameterValueSet();
+		parameter.ValueSetY = this.readParameterValueSet();
 
 		return template;
 	}

@@ -132,8 +132,8 @@ internal partial class DwgObjectWriter : DwgSectionIO
 
 		this._writer.Write3BitDouble(action.BasePoint);
 
-		this.writeEvalConnection(action.UpdateBaseX);
-		this.writeEvalConnection(action.UpdateBaseY);
+		this.writeEvalConnection(action.UpdateBaseXConnection);
+		this.writeEvalConnection(action.UpdateBaseYConnection);
 
 		this._writer.WriteBit(action.Value280);
 		this._writer.Write3BitDouble(action.Value1012);
@@ -228,8 +228,8 @@ internal partial class DwgObjectWriter : DwgSectionIO
 	{
 		this.writeBlockAction(action);
 
-		this.writeEvalConnection(action.XDelta);
-		this.writeEvalConnection(action.YDelta);
+		this.writeEvalConnection(action.XDeltaConnection);
+		this.writeEvalConnection(action.YDeltaConnection);
 
 		this._writer.WriteBitDouble(action.DistanceMultiplier);
 		this._writer.WriteBitDouble(action.AngleOffset);
@@ -263,7 +263,7 @@ internal partial class DwgObjectWriter : DwgSectionIO
 	{
 		this.writeBlockActionBasePt(action);
 
-		this.writeEvalConnection(action.Connection);
+		this.writeEvalConnection(action.AngleDeltaConnection);
 	}
 
 	private void writeBlockRotationParameter(BlockRotationParameter parameter)
@@ -293,8 +293,8 @@ internal partial class DwgObjectWriter : DwgSectionIO
 	{
 		this.writeBlockAction(stretchAction);
 
-		this.writeEvalConnection(stretchAction.EndXDelta);
-		this.writeEvalConnection(stretchAction.EndYDelta);
+		this.writeEvalConnection(stretchAction.EndXDeltaConnection);
+		this.writeEvalConnection(stretchAction.EndYDeltaConnection);
 
 		this._writer.WriteBitLong(stretchAction.Boundary.Count);
 		foreach (XY pt in stretchAction.Boundary)

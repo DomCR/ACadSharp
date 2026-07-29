@@ -14,7 +14,7 @@ namespace ACadSharp.Objects.Evaluations;
 /// </remarks>
 [DxfName(DxfFileToken.ObjectBlockStretchAction)]
 [DxfSubClass(DxfSubclassMarker.BlockStretchAction)]
-public partial class BlockStretchAction : StretchActionBase
+public class BlockStretchAction : StretchActionBase
 {
 	/// <inheritdoc/>
 	[DxfCodeValue(141)]
@@ -29,9 +29,9 @@ public partial class BlockStretchAction : StretchActionBase
 	[DxfCodeValue(140)]
 	public override double DistanceMultiplier { get; set; }
 
-	public EvalConnection EndXDelta { get; set; }
+	public EvalConnection EndXDeltaConnection { get; set; }
 
-	public EvalConnection EndYDelta { get; set; }
+	public EvalConnection EndYDeltaConnection { get; set; }
 
 	/// <inheritdoc/>
 	public override string ObjectName => DxfFileToken.ObjectBlockStretchAction;

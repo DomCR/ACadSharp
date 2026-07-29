@@ -46,6 +46,8 @@ public static class DxfSubclassMarker
 
 	public const string BlockAlignmentParameter = "AcDbBlockAlignmentParameter";
 
+	public const string BlockArrayAction = "AcDbBlockArrayAction";
+
 	public const string BlockBasePointParameter = "AcDbBlockBasepointParameter";
 
 	public const string BlockBegin = "AcDbBlockBegin";
@@ -105,6 +107,8 @@ public static class DxfSubclassMarker
 	public const string BlockVisibilityParameter = "AcDbBlockVisibilityParameter";
 
 	public const string BlockXYGrip = "AcDbBlockXYGrip";
+
+	public const string BlockXYParameter = "AcDbBlockXYParameter";
 
 	public const string CellStyleMap = "AcDbCellStyleMap";
 

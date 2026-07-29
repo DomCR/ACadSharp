@@ -5678,6 +5678,12 @@ namespace ACadSharp.IO.DWG
 				case DxfFileToken.ObjectBlockBasePointParameter:
 					template = this.readBlockBasePointParameter();
 					break;
+				case DxfFileToken.ObjectBlockPointParameter:
+					template = this.readBlockPointParameter();
+					break;
+				case DxfFileToken.ObjectBlockXYParameter:
+					template = this.readBlockXYParameter();
+					break;
 				case DxfFileToken.ObjectBlockAlignmentParameter:
 					template = this.readBlockAlignmentParameter();
 					break;
@@ -5734,11 +5740,11 @@ namespace ACadSharp.IO.DWG
 				case DxfFileToken.ObjectBlockLookupAction:
 					template = this.readBlockLookupAction();
 					break;
+				case DxfFileToken.ObjectBlockArrayAction:
+					template = this.readBlockArrayAction();
+					break;
 				case DxfFileToken.ObjectBlockStretchAction:
 					template = this.readBlockStretchAction();
-					break;
-				case DxfFileToken.ObjectBlockPointParameter:
-					template = this.readBlockPointParameter();
 					break;
 				case DxfFileToken.ObjectSpatialFilter:
 					template = this.readSpatialFilter();

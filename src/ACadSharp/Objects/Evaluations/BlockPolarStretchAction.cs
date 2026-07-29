@@ -21,11 +21,11 @@ public class BlockPolarStretchAction : StretchActionBase
 	[DxfCodeValue(140)]
 	public override double AngleOffset { get; set; }
 
-	public EvalConnection Base { get; set; }
+	public EvalConnection BaseConnection { get; set; }
 
-	public EvalConnection BaseXDelta { get; set; }
+	public EvalConnection BaseXDeltaConnection { get; set; }
 
-	public EvalConnection BaseYDelta { get; set; }
+	public EvalConnection BaseYDeltaConnection { get; set; }
 
 	/// <inheritdoc/>
 	[DxfCollectionCodeValue(1011, 1021)]
@@ -36,7 +36,7 @@ public class BlockPolarStretchAction : StretchActionBase
 	[DxfCodeValue(141)]
 	public override double DistanceMultiplier { get; set; }
 
-	public EvalConnection End { get; set; }
+	public EvalConnection EndConnection { get; set; }
 
 	/// <inheritdoc/>
 	public override string ObjectName => DxfFileToken.ObjectBlockPolarStretchAction;
@@ -46,7 +46,7 @@ public class BlockPolarStretchAction : StretchActionBase
 	/// <inheritdoc/>
 	public override string SubclassMarker => DxfSubclassMarker.BlockPolarStretchAction;
 
-	public EvalConnection UpdatedBase { get; set; }
+	public EvalConnection UpdatedBaseConnection { get; set; }
 
-	public EvalConnection UpdatedEnd { get; set; }
+	public EvalConnection UpdatedEndConnection { get; set; }
 }

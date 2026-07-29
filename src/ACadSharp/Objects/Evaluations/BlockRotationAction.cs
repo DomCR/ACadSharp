@@ -6,7 +6,7 @@ namespace ACadSharp.Objects.Evaluations;
 [DxfSubClass(DxfSubclassMarker.BlockRotationAction)]
 public class BlockRotationAction : BlockActionBasePt
 {
-	public EvalConnection Connection { get; set; }
+	public EvalConnection AngleDeltaConnection { get; set; }
 
 	/// <inheritdoc/>
 	public override string ObjectName => DxfFileToken.ObjectBlockRotateAction;

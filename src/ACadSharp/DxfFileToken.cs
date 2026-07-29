@@ -174,6 +174,8 @@ public static class DxfFileToken
 
 	public const string ObjectBlockAlignmentParameter = "BLOCKALIGNMENTPARAMETER";
 
+	public const string ObjectBlockArrayAction = "BLOCKARRAYACTION";
+
 	public const string ObjectBlockBasePointParameter = "BLOCKBASEPOINTPARAMETER";
 
 	public const string ObjectBlockFlipAction = "BLOCKFLIPACTION";
@@ -221,6 +223,8 @@ public static class DxfFileToken
 	public const string ObjectBlockVisibilityParameter = "BLOCKVISIBILITYPARAMETER";
 
 	public const string ObjectBlockXYGrip = "BLOCKXYGRIP";
+
+	public const string ObjectBlockXYParameter = "BLOCKXYPARAMETER";
 
 	public const string ObjectCell = "CELL";
 

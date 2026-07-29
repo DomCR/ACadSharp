@@ -24,7 +24,7 @@ public class BlockFlipParameter : Block2PtParameter
 	/// <summary>
 	/// Gets or sets the connection.
 	/// </summary>
-	public EvalConnection Connection { get; set; }
+	public EvalConnection UpdatedFlipConnection { get; set; }
 
 	/// <summary>
 	/// Gets or sets the description.
