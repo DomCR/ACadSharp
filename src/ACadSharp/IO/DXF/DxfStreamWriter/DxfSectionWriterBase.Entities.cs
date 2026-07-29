@@ -326,6 +326,9 @@ internal abstract partial class DxfSectionWriterBase
 			case DimensionAngular3Pt angular3Pt:
 				this.writeDimensionAngular3Pt(angular3Pt);
 				break;
+			case DimensionArc arc:
+				this.writeDimensionArc(arc);
+				break;
 			case DimensionOrdinate ordinate:
 				this.writeDimensionOrdinate(ordinate);
 				break;
@@ -370,6 +373,27 @@ internal abstract partial class DxfSectionWriterBase
 		this._writer.Write(13, angular3Pt.FirstPoint, map);
 		this._writer.Write(14, angular3Pt.SecondPoint, map);
 		this._writer.Write(15, angular3Pt.AngleVertex, map);
+	}
+
+	private void writeDimensionArc(DimensionArc arc)
+	{
+		DxfClassMap map = DxfClassMap.Create<DimensionArc>();
+
+		this._writer.Write(DxfCode.Subclass, DxfSubclassMarker.ArcDimension);
+
+		this._writer.Write(13, arc.FirstPoint, map);
+		this._writer.Write(14, arc.SecondPoint, map);
+		this._writer.Write(15, arc.Center, map);
+		this._writer.Write(70, (short)(arc.IsPartial ? 1 : 0), map);
+		this._writer.Write(40, arc.StartAngle, map);
+		this._writer.Write(41, arc.EndAngle, map);
+		this._writer.Write(71, (short)(arc.HasLeader ? 1 : 0), map);
+
+		if (arc.HasLeader)
+		{
+			this._writer.Write(16, arc.LeaderPoint1, map);
+			this._writer.Write(17, arc.LeaderPoint2, map);
+		}
 	}
 
 	private void writeDimensionDiameter(DimensionDiameter diameter)
