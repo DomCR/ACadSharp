@@ -198,6 +198,12 @@ public static class DxfFileToken
 
 	public const string ObjectBlockPointParameter = "BLOCKPOINTPARAMETER";
 
+	public const string ObjectBlockPolarGrip = "BLOCKPOLARGRIP";
+
+	public const string ObjectBlockPolarParameter = "BLOCKPOLARPARAMETER";
+
+	public const string ObjectBlockPolarStretchAction = "BLOCKPOLARSTRETCHACTION";
+
 	public const string ObjectBlockRepresentationData = "ACDB_BLOCKREPRESENTATION_DATA";
 
 	public const string ObjectBlockRotateAction = "BLOCKROTATEACTION";

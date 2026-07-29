@@ -4,25 +4,30 @@ using System.Collections.Generic;
 
 namespace ACadSharp.Objects.Evaluations;
 
+/// <summary>
+/// Represents a BLOCKSTRETCHACTION object, used in AutoCAD to control a
+/// stretch action in a dynamic block.
+/// </summary>
+/// <remarks>
+/// Object name <see cref="DxfFileToken.ObjectBlockStretchAction"/> <br/>
+/// Dxf class name <see cref="DxfSubclassMarker.BlockStretchAction"/>
+/// </remarks>
 [DxfName(DxfFileToken.ObjectBlockStretchAction)]
 [DxfSubClass(DxfSubclassMarker.BlockStretchAction)]
-public partial class BlockStretchAction : BlockAction
+public partial class BlockStretchAction : StretchActionBase
 {
-	/// <summary>
-	/// Gets or sets the angle offset for the move action.
-	/// </summary>
+	/// <inheritdoc/>
 	[DxfCodeValue(141)]
-	public double AngleOffset { get; set; }
+	public override double AngleOffset { get; set; }
 
+	/// <inheritdoc/>
 	[DxfCollectionCodeValue(1011, 1021)]
 	[DxfCodeValue(DxfReferenceType.Count, 72)]
-	public List<XY> Boundary { get; private set; } = new();
+	public override List<XY> Boundary { get; protected set; } = new();
 
-	/// <summary>
-	/// Gets or sets the distance multiplier for the move action.
-	/// </summary>
+	/// <inheritdoc/>
 	[DxfCodeValue(140)]
-	public double DistanceMultiplier { get; set; }
+	public override double DistanceMultiplier { get; set; }
 
 	public EvalConnection EndXDelta { get; set; }
 
@@ -31,16 +36,10 @@ public partial class BlockStretchAction : BlockAction
 	/// <inheritdoc/>
 	public override string ObjectName => DxfFileToken.ObjectBlockStretchAction;
 
-	public List<StretchBind> StretchBindings { get; private set; } = new();
-
-	public List<StretchNode> StretchNodes { get; private set; } = new();
-
 	/// <inheritdoc/>
 	public override string SubclassMarker => DxfSubclassMarker.BlockStretchAction;
 
-	/// <summary>
-	/// Gets or sets an unknown flag value.
-	/// </summary>
+	/// <inheritdoc/>
 	[DxfCodeValue(280)]
 	public byte UnknownFlag { get; set; }
 }

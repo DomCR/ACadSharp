@@ -80,6 +80,12 @@ public static class DxfSubclassMarker
 
 	public const string BlockPointParameter = "AcDbBlockPointParameter";
 
+	public const string BlockPolarGrip = "AcDbBlockPolarGrip";
+
+	public const string BlockPolarParameter = "AcDbBlockPolarParameter";
+
+	public const string BlockPolarStretchAction = "AcDbBlockPolarStretchAction";
+
 	public const string BlockRecord = "AcDbBlockTableRecord";
 
 	public const string BlockRepresentationData = "AcDbBlockRepresentationData";

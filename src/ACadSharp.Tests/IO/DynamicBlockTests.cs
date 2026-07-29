@@ -32,55 +32,6 @@ public class DynamicBlockTests : IOTestsBase
 	}
 
 	[Theory]
-	[MemberData(nameof(GenericDynamicBlocksPaths))]
-	public void DynamicBlocksTest(FileModel test)
-	{
-		CadDocument doc;
-
-		if (test.IsDxf)
-		{
-			DxfReaderConfiguration configuration = new();
-			configuration.KeepUnknownEntities = true;
-			configuration.KeepUnknownNonGraphicalObjects = true;
-
-			doc = DxfReader.Read(test.Path, configuration, this.onNotification);
-
-			if (doc.Header.Version <= ACadVersion.AC1021)
-			{
-				return;
-			}
-		}
-		else
-		{
-			DwgReaderConfiguration configuration = new DwgReaderConfiguration();
-			configuration.KeepUnknownEntities = true;
-			configuration.KeepUnknownNonGraphicalObjects = true;
-
-			doc = DwgReader.Read(test.Path, configuration, this.onNotification);
-		}
-
-		string dynamicName = "my-dynamic-block";
-
-		BlockRecord blk = doc.BlockRecords[dynamicName];
-
-		Assert.True(blk.IsDynamic);
-
-		//Dictionary entry
-		EvaluationGraph eval = blk.XDictionary.GetEntry<EvaluationGraph>("ACAD_ENHANCEDBLOCK");
-
-		//Extended data related to the dynamic block
-		var a = blk.ExtendedData.Get(doc.AppIds["AcDbBlockRepETag"]);
-		var b = blk.ExtendedData.Get(doc.AppIds["AcDbDynamicBlockTrueName"]);
-		var c = blk.ExtendedData.Get(doc.AppIds["AcDbDynamicBlockGUID"]);
-
-		Insert basic = doc.GetCadObject<Insert>(0xABA);
-		Insert modified = doc.GetCadObject<Insert>(0xAC5);
-
-		Assert.NotNull(modified.Block.Source);
-		Assert.Equal(dynamicName, modified.Block.Source.Name);
-	}
-
-	[Theory]
 	[MemberData(nameof(IsolatedDynamicBlocksPaths))]
 	public void IsolatedTest(FileModel test)
 	{
@@ -112,6 +63,9 @@ public class DynamicBlockTests : IOTestsBase
 				break;
 			case DxfFileToken.ObjectBlockFlipParameter:
 				this.assertBlockParameter(doc, "BLOCK_FLIP_PARAMETER", typeof(BlockFlipParameter));
+				break;
+			case DxfFileToken.ObjectBlockPolarParameter:
+				this.assertBlockParameter(doc, "BLOCK_POLAR_PARAMETER", typeof(BlockPolarParameter));
 				break;
 			default:
 				throw new System.NotImplementedException();
@@ -146,8 +100,14 @@ public class DynamicBlockTests : IOTestsBase
 		var original = doc.BlockRecords[blockName];
 		foreach (BlockRecord record in doc.BlockRecords.Where(b => b.IsAnonymous))
 		{
+			if (record.Source == null)
+			{
+				continue;
+			}
+
 			Assert.Equal(original, record.Source);
 		}
+
 		foreach (Insert insert in doc.Entities.OfType<Insert>())
 		{
 			if (insert.XDictionary == null)

@@ -1,0 +1,70 @@
+﻿using ACadSharp.Attributes;
+using ACadSharp.Entities;
+using CSMath;
+using System.Collections.Generic;
+
+namespace ACadSharp.Objects.Evaluations;
+
+/// <summary>
+/// Represents a BLOCKPOLARSTRETCHACTION object, used in AutoCAD to control a
+/// polar stretch action in a dynamic block.
+/// </summary>
+/// <remarks>
+/// Object name <see cref="DxfFileToken.ObjectBlockPolarStretchAction"/> <br/>
+/// Dxf class name <see cref="DxfSubclassMarker.BlockPolarStretchAction"/>
+/// </remarks>
+[DxfName(DxfFileToken.ObjectBlockPolarStretchAction)]
+[DxfSubClass(DxfSubclassMarker.BlockPolarStretchAction)]
+public class BlockPolarStretchAction : StretchActionBase
+{
+	[DxfCodeValue(140)]
+	public override double AngleOffset { get; set; }
+
+	public EvalConnection Base { get; set; }
+
+	public EvalConnection BaseXDelta { get; set; }
+
+	public EvalConnection BaseYDelta { get; set; }
+
+	/// <inheritdoc/>
+	[DxfCollectionCodeValue(1011, 1021)]
+	[DxfCodeValue(DxfReferenceType.Count, 73)]
+	public override List<XY> Boundary { get; protected set; } = new List<XY>();
+
+	[DxfCodeValue(141)]
+	public override double DistanceMultiplier { get; set; }
+
+	public EvalConnection End { get; set; }
+
+	/// <inheritdoc/>
+	public override string ObjectName => DxfFileToken.ObjectBlockPolarStretchAction;
+
+	public List<Entity> RotateBindings { get; private set; } = new List<Entity>();
+
+	/// <inheritdoc/>
+	public override string SubclassMarker => DxfSubclassMarker.BlockPolarStretchAction;
+
+	public EvalConnection UpdatedBase { get; set; }
+
+	public EvalConnection UpdatedEnd { get; set; }
+}
+
+[DxfSubClass(null, true)]
+public abstract class StretchActionBase : BlockAction
+{
+	/// <summary>
+	/// Gets or sets the angle offset for the stretch action.
+	/// </summary>
+	public virtual double AngleOffset { get; set; }
+
+	public virtual List<XY> Boundary { get; protected set; } = new();
+
+	/// <summary>
+	/// Gets or sets the distance multiplier for the stretch action.
+	/// </summary>
+	public virtual double DistanceMultiplier { get; set; }
+
+	public List<StretchEntityBind> StretchBindings { get; protected set; } = new();
+
+	public List<StretchNode> StretchNodes { get; protected set; } = new();
+}

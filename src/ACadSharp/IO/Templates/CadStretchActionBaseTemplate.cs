@@ -4,11 +4,11 @@ using System.Collections.Generic;
 
 namespace ACadSharp.IO.Templates;
 
-internal class CadBlockStretchActionTemplate : CadBlockActionTemplate
+internal class CadStretchActionBaseTemplate : CadBlockActionTemplate
 {
-	public Dictionary<ulong, BlockStretchAction.StretchBind> Bindings { get; set; } = new();
+	public Dictionary<ulong, StretchEntityBind> Bindings { get; set; } = new();
 
-	public CadBlockStretchActionTemplate(BlockStretchAction stretchAction)
+	public CadStretchActionBaseTemplate(StretchActionBase stretchAction)
 	: base(stretchAction)
 	{
 	}
@@ -17,11 +17,11 @@ internal class CadBlockStretchActionTemplate : CadBlockActionTemplate
 	{
 		base.build(builder);
 
-		BlockStretchAction stretchAction = this.CadObject as BlockStretchAction;
+		var stretchAction = this.CadObject as StretchActionBase;
 
 		foreach (var item in this.Bindings)
 		{
-			if(builder.TryGetCadObject<Entity>(item.Key, out var entity))
+			if (builder.TryGetCadObject<Entity>(item.Key, out var entity))
 			{
 				item.Value.Entity = entity;
 				stretchAction.StretchBindings.Add(item.Value);

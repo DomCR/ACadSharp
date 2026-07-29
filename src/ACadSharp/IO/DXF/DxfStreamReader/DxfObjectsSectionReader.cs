@@ -261,36 +261,36 @@ internal class DxfObjectsSectionReader : DxfSectionReaderBase
 		switch (this._reader.Code)
 		{
 			case 92:
-				flip.Connection1 ??= new EvalConnection();
-				flip.Connection1.Id = this._reader.ValueAsInt;
+				flip.Flip ??= new EvalConnection();
+				flip.Flip.Id = this._reader.ValueAsInt;
 				return true;
 			case 93:
-				flip.Connection2 ??= new EvalConnection();
-				flip.Connection2.Id = this._reader.ValueAsInt;
+				flip.UpdatedFlip ??= new EvalConnection();
+				flip.UpdatedFlip.Id = this._reader.ValueAsInt;
 				return true;
 			case 94:
-				flip.Connection3 ??= new EvalConnection();
-				flip.Connection3.Id = this._reader.ValueAsInt;
+				flip.UpdatedBase ??= new EvalConnection();
+				flip.UpdatedBase.Id = this._reader.ValueAsInt;
 				return true;
 			case 95:
-				flip.Connection4 ??= new EvalConnection();
-				flip.Connection4.Id = this._reader.ValueAsInt;
+				flip.UpdatedEnd ??= new EvalConnection();
+				flip.UpdatedEnd.Id = this._reader.ValueAsInt;
 				return true;
 			case 301:
-				flip.Connection1 ??= new EvalConnection();
-				flip.Connection1.Name = this._reader.ValueAsString;
+				flip.Flip ??= new EvalConnection();
+				flip.Flip.Name = this._reader.ValueAsString;
 				return true;
 			case 302:
-				flip.Connection2 ??= new EvalConnection();
-				flip.Connection2.Name = this._reader.ValueAsString;
+				flip.UpdatedFlip ??= new EvalConnection();
+				flip.UpdatedFlip.Name = this._reader.ValueAsString;
 				return true;
 			case 303:
-				flip.Connection3 ??= new EvalConnection();
-				flip.Connection3.Name = this._reader.ValueAsString;
+				flip.UpdatedBase ??= new EvalConnection();
+				flip.UpdatedBase.Name = this._reader.ValueAsString;
 				return true;
 			case 304:
-				flip.Connection4 ??= new EvalConnection();
-				flip.Connection4.Name = this._reader.ValueAsString;
+				flip.UpdatedEnd ??= new EvalConnection();
+				flip.UpdatedEnd.Name = this._reader.ValueAsString;
 				return true;
 			default:
 				if (!this.tryAssignCurrentValue(template.CadObject, map.SubClasses[DxfSubclassMarker.BlockFlipAction]))
@@ -487,6 +487,28 @@ internal class DxfObjectsSectionReader : DxfSectionReaderBase
 		}
 	}
 
+	private bool readBlockPolarParameter(CadTemplate template, DxfMap map)
+	{
+		var tmp = template as CadBlock2PtParameterTemplate;
+		BlockPolarParameter polar = tmp.CadObject as BlockPolarParameter;
+
+		switch (this._reader.Code)
+		{
+			case 309:
+				polar.DistanceValueSet = this.readParameterValueSet();
+				return true;
+			case 410:
+				polar.AngleValueSet = this.readParameterValueSet();
+				return true;
+			default:
+				if (!this.tryAssignCurrentValue(template.CadObject, map))
+				{
+					return this.readBlock2PtParameter(template, map);
+				}
+				return true;
+		}
+	}
+
 	private bool readBlockRotationParameter(CadTemplate template, DxfMap map)
 	{
 		var tmp = template as CadBlockRotationParameterTemplate;
@@ -541,9 +563,103 @@ internal class DxfObjectsSectionReader : DxfSectionReaderBase
 		}
 	}
 
+	private bool readBlockPolarStretchAction(CadTemplate template, DxfMap map)
+	{
+		CadPolarStretchActionTemplate tmp = template as CadPolarStretchActionTemplate;
+		BlockPolarStretchAction action = tmp.CadObject as BlockPolarStretchAction;
+
+		switch (this._reader.Code)
+		{
+			case 72:
+				var n = this._reader.ValueAsInt;
+
+				for (int i = 0; i < n; i++)
+				{
+					this._reader.ReadNext();
+					tmp.SelectionHandles.Add(this._reader.ValueAsHandle);
+				}
+				return true;
+			case 73:
+				n = this._reader.ValueAsInt;
+				for (int i = 0; i < n; i++)
+				{
+					this._reader.ReadNext();
+					var x = this._reader.ValueAsDouble;
+					this._reader.ReadNext();
+					var y = this._reader.ValueAsDouble;
+
+					action.Boundary.Add(new XY(x, y));
+				}
+				return true;
+			case 74:
+				n = this._reader.ValueAsInt;
+				for (int i = 0; i < n; i++)
+				{
+					this._reader.ReadNext();
+					var bind = new StretchEntityBind();
+					tmp.Bindings.Add(this._reader.ValueAsHandle, bind);
+
+					this._reader.ReadNext();
+					var nPts = this._reader.ValueAsInt;
+					for (int j = 0; j < nPts; j++)
+					{
+						this._reader.ReadNext();
+						bind.PointIndexes.Add(this._reader.ValueAsInt);
+					}
+				}
+				return true;
+			case 77:
+				return true;
+			case 78:
+				n = this._reader.ValueAsInt;
+				for (int i = 0; i < n; i++)
+				{
+					this._reader.ReadNext();
+					var nodeId = this._reader.ValueAsInt;
+
+					this._reader.ReadNext();
+					var indexes = new List<int>();
+					var nPts = this._reader.ValueAsInt;
+					for (int j = 0; j < nPts; j++)
+					{
+						this._reader.ReadNext();
+						indexes.Add(this._reader.ValueAsInt);
+					}
+
+					var stretchNode = new StretchNode(nodeId, indexes);
+					action.StretchNodes.Add(stretchNode);
+				}
+				return true;
+			case 92:
+				action.BaseXDelta = this.readEvalConnection();
+				return true;
+			case 93:
+				action.BaseYDelta = this.readEvalConnection();
+				return true;
+			case 94:
+				action.Base = this.readEvalConnection();
+				return true;
+			case 95:
+				action.End = this.readEvalConnection();
+				return true;
+			case 96:
+				action.UpdatedBase = this.readEvalConnection();
+				return true;
+			case 97:
+				action.UpdatedEnd = this.readEvalConnection();
+				return true;
+			default:
+				if (!this.tryAssignCurrentValue(template.CadObject, map.SubClasses[DxfSubclassMarker.BlockPolarStretchAction]))
+				{
+					return this.readBlockAction(template, map);
+				}
+				return true;
+		}
+	}
+
 	private bool readBlockStretchAction(CadTemplate template, DxfMap map)
 	{
-		CadBlockStretchActionTemplate tmp = template as CadBlockStretchActionTemplate;
+		CadStretchActionBaseTemplate tmp = template as CadStretchActionBaseTemplate;
 		BlockStretchAction action = tmp.CadObject as BlockStretchAction;
 
 		switch (this._reader.Code)
@@ -565,7 +681,7 @@ internal class DxfObjectsSectionReader : DxfSectionReaderBase
 				for (int i = 0; i < n; i++)
 				{
 					this._reader.ReadNext();
-					var bind = new BlockStretchAction.StretchBind();
+					var bind = new StretchEntityBind();
 					tmp.Bindings.Add(this._reader.ValueAsHandle, bind);
 
 					this._reader.ReadNext();
@@ -581,19 +697,20 @@ internal class DxfObjectsSectionReader : DxfSectionReaderBase
 				n = this._reader.ValueAsInt;
 				for (int i = 0; i < n; i++)
 				{
-					var stretchNode = new BlockStretchAction.StretchNode();
-					action.StretchNodes.Add(stretchNode);
+					this._reader.ReadNext();
+					var nodeId = this._reader.ValueAsInt;
 
 					this._reader.ReadNext();
-					stretchNode.NodeId = this._reader.ValueAsInt;
-
-					this._reader.ReadNext();
+					var indexes = new List<int>();
 					var nPts = this._reader.ValueAsInt;
 					for (int j = 0; j < nPts; j++)
 					{
 						this._reader.ReadNext();
-						stretchNode.PointIndexes.Add(this._reader.ValueAsInt);
+						indexes.Add(this._reader.ValueAsInt);
 					}
+
+					var stretchNode = new StretchNode(nodeId, indexes);
+					action.StretchNodes.Add(stretchNode);
 				}
 				return true;
 			case 92:
@@ -2124,6 +2241,8 @@ internal class DxfObjectsSectionReader : DxfSectionReaderBase
 				return this.readObjectCodes<BlockXYGrip>(new CadBlockGripTemplate(new BlockXYGrip()), this.readBlockGripSubclass);
 			case DxfFileToken.ObjectBlockVisibilityParameter:
 				return this.readObjectCodes<BlockVisibilityParameter>(new CadBlockVisibilityParameterTemplate(), this.readBlockVisibilityParameter);
+			case DxfFileToken.ObjectBlockPolarParameter:
+				return this.readObjectCodes<BlockPolarParameter>(new CadBlock2PtParameterTemplate(new BlockPolarParameter()), this.readBlockPolarParameter);
 			case DxfFileToken.ObjectBlockRotationParameter:
 				return this.readObjectCodes<BlockRotationParameter>(new CadBlockRotationParameterTemplate(), this.readBlockRotationParameter);
 			case DxfFileToken.ObjectBlockLinearParameter:
@@ -2142,6 +2261,8 @@ internal class DxfObjectsSectionReader : DxfSectionReaderBase
 				return this.readObjectCodes<BlockLookupGrip>(new CadBlockGripTemplate(new BlockLookupGrip()), this.readBlockGripSubclass);
 			case DxfFileToken.ObjectBlockRotationGrip:
 				return this.readObjectCodes<BlockRotationGrip>(new CadBlockGripTemplate(new BlockRotationGrip()), this.readBlockGripSubclass);
+			case DxfFileToken.ObjectBlockPolarGrip:
+				return this.readObjectCodes<BlockPolarGrip>(new CadBlockGripTemplate(new BlockPolarGrip()), this.readBlockGripSubclass);
 			case DxfFileToken.ObjectBlockAlignmentGrip:
 				return this.readObjectCodes<BlockAlignmentGrip>(new CadBlockGripTemplate(new BlockAlignmentGrip()), this.readBlockGripSubclass);
 			case DxfFileToken.ObjectBlockLookupAction:
@@ -2153,7 +2274,9 @@ internal class DxfObjectsSectionReader : DxfSectionReaderBase
 			case DxfFileToken.ObjectBlockScaleAction:
 				return this.readObjectCodes<BlockScaleAction>(new CadBlockScaleActionTemplate(), this.readBlockScaleAction);
 			case DxfFileToken.ObjectBlockStretchAction:
-				return this.readObjectCodes<BlockStretchAction>(new CadBlockStretchActionTemplate(new BlockStretchAction()), this.readBlockStretchAction);
+				return this.readObjectCodes<BlockStretchAction>(new CadStretchActionBaseTemplate(new BlockStretchAction()), this.readBlockStretchAction);
+			case DxfFileToken.ObjectBlockPolarStretchAction:
+				return this.readObjectCodes<BlockPolarStretchAction>(new CadPolarStretchActionTemplate(new BlockPolarStretchAction()), this.readBlockPolarStretchAction);
 			case DxfFileToken.ObjectBlockRotateAction:
 				return this.readObjectCodes<BlockRotationAction>(new CadBlockRotationActionTemplate(), this.readBlockRotationAction);
 			case DxfFileToken.ObjectBlockPointParameter:

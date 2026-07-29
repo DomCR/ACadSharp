@@ -5657,6 +5657,9 @@ namespace ACadSharp.IO.DWG
 				case DxfFileToken.ObjectEvalGraph:
 					template = this.readEvaluationGraph();
 					break;
+				case DxfFileToken.ObjectBlockPolarParameter:
+					template = this.readBlockPolarParameter();
+					break;
 				case DxfFileToken.ObjectBlockLinearParameter:
 					template = this.readBlockLinearParameter();
 					break;
@@ -5708,6 +5711,13 @@ namespace ACadSharp.IO.DWG
 				case DxfFileToken.ObjectBlockLookupGrip:
 					template = new CadBlockGripTemplate(new BlockLookupGrip());
 					this.readBlockGrip(template as CadBlockGripTemplate);
+					break;
+				case DxfFileToken.ObjectBlockPolarGrip:
+					template = new CadBlockGripTemplate(new BlockPolarGrip());
+					this.readBlockGrip(template as CadBlockGripTemplate);
+					break;
+				case DxfFileToken.ObjectBlockPolarStretchAction:
+					template = this.readBlockPolarStretchAction();
 					break;
 				case DxfFileToken.ObjectBlockFlipAction:
 					template = this.readBlockFlipAction();

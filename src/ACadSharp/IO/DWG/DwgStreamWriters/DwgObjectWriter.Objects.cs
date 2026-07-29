@@ -303,7 +303,7 @@ internal partial class DwgObjectWriter : DwgSectionIO
 		}
 
 		this._writer.WriteBitLong(stretchAction.StretchBindings.Count);
-		foreach (BlockStretchAction.StretchBind bind in stretchAction.StretchBindings)
+		foreach (StretchEntityBind bind in stretchAction.StretchBindings)
 		{
 			this._writer.HandleReference(DwgReferenceType.SoftPointer, bind.Entity);
 			this._writer.WriteBitLong(bind.PointIndexes.Count);
@@ -314,7 +314,7 @@ internal partial class DwgObjectWriter : DwgSectionIO
 		}
 
 		this._writer.WriteBitLong(stretchAction.StretchNodes.Count);
-		foreach (BlockStretchAction.StretchNode stretchNode in stretchAction.StretchNodes)
+		foreach (StretchNode stretchNode in stretchAction.StretchNodes)
 		{
 			this._writer.WriteBitLong(stretchNode.NodeId);
 			this._writer.WriteBitLong(stretchNode.PointIndexes.Count);

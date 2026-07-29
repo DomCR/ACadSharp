@@ -2,6 +2,7 @@
 using ACadSharp.Objects;
 using ACadSharp.Objects.Evaluations;
 using System;
+using System.Collections.Generic;
 
 namespace ACadSharp.IO.DWG;
 
@@ -147,21 +148,6 @@ internal partial class DwgObjectReader : DwgSectionIO
 		return template;
 	}
 
-	private CadTemplate readBlockFlipAction()
-	{
-		BlockFlipAction flipAction = new BlockFlipAction();
-		CadBlockFlipActionTemplate template = new CadBlockFlipActionTemplate(flipAction);
-
-		this.readBlockAction(template);
-
-		flipAction.Connection1 = this.readEvalConnection();
-		flipAction.Connection2 = this.readEvalConnection();
-		flipAction.Connection3 = this.readEvalConnection();
-		flipAction.Connection4 = this.readEvalConnection();
-
-		return template;
-	}
-
 	private void readBlockElement(CadBlockElementTemplate template)
 	{
 		this.readEvaluationExpression(template);
@@ -174,6 +160,21 @@ internal partial class DwgObjectReader : DwgSectionIO
 		template.BlockElement.Value99 = this._mergedReaders.ReadBitLong();
 		//1071
 		template.BlockElement.Value1071 = this._mergedReaders.ReadBitLong();
+	}
+
+	private CadTemplate readBlockFlipAction()
+	{
+		BlockFlipAction flipAction = new BlockFlipAction();
+		CadBlockFlipActionTemplate template = new CadBlockFlipActionTemplate(flipAction);
+
+		this.readBlockAction(template);
+
+		flipAction.Flip = this.readEvalConnection();
+		flipAction.UpdatedFlip = this.readEvalConnection();
+		flipAction.UpdatedBase = this.readEvalConnection();
+		flipAction.UpdatedEnd = this.readEvalConnection();
+
+		return template;
 	}
 
 	private CadBlockFlipParameterTemplate readBlockFlipParameter()
@@ -321,6 +322,93 @@ internal partial class DwgObjectReader : DwgSectionIO
 		return template;
 	}
 
+	private CadTemplate readBlockPolarParameter()
+	{
+		BlockPolarParameter polar = new();
+		CadBlock2PtParameterTemplate template = new CadBlock2PtParameterTemplate(polar);
+
+		this.readBlock2PtParameter(template);
+
+		polar.Label = this._mergedReaders.ReadVariableText();
+		polar.Description = this._mergedReaders.ReadVariableText();
+		polar.AngleName = this._mergedReaders.ReadVariableText();
+		polar.AngleDescription = this._mergedReaders.ReadVariableText();
+
+		polar.LabelOffset = this._mergedReaders.ReadBitDouble();
+
+		polar.DistanceValueSet = this.readParameterValueSet();
+		polar.AngleValueSet = this.readParameterValueSet();
+
+		return template;
+	}
+
+	private CadTemplate readBlockPolarStretchAction()
+	{
+		BlockPolarStretchAction stretchAction = new BlockPolarStretchAction();
+		CadPolarStretchActionTemplate template = new CadPolarStretchActionTemplate(stretchAction);
+
+		this.readBlockAction(template);
+
+		stretchAction.BaseXDelta = this.readEvalConnection();
+		stretchAction.BaseYDelta = this.readEvalConnection();
+		stretchAction.Base = this.readEvalConnection();
+		stretchAction.End = this.readEvalConnection();
+		stretchAction.UpdatedBase = this.readEvalConnection();
+		stretchAction.UpdatedEnd = this.readEvalConnection();
+
+		int npts = this._mergedReaders.ReadBitLong();
+		for (int i = 0; i < npts; i++)
+		{
+			stretchAction.Boundary.Add(this._mergedReaders.Read2RawDouble());
+		}
+
+		var selection = this._mergedReaders.ReadBitLong();
+		for (int j = 0; j < selection; j++)
+		{
+			template.SelectionHandles.Add(this.handleReference());
+		}
+
+		int nbindings = this._mergedReaders.ReadBitLong();
+		for (int i = 0; i < nbindings; i++)
+		{
+			var h = this.handleReference();
+
+			StretchEntityBind bind = new StretchEntityBind();
+			int nindexes = this._mergedReaders.ReadBitLong();
+			for (int j = 0; j < nindexes; j++)
+			{
+				bind.PointIndexes.Add(this._mergedReaders.ReadBitLong());
+			}
+
+			template.Bindings.Add(h, bind);
+		}
+
+		int nnodes = this._mergedReaders.ReadBitLong();
+		for (int i = 0; i < nnodes; i++)
+		{
+			var nodeId = this._mergedReaders.ReadBitLong();
+			int nindexes = this._mergedReaders.ReadBitLong();
+			List<int> indexes = new List<int>();
+			for (int j = 0; j < nindexes; j++)
+			{
+				indexes.Add(this._mergedReaders.ReadBitLong());
+			}
+
+			stretchAction.StretchNodes.Add(new StretchNode(nodeId, indexes));
+		}
+
+		stretchAction.DistanceMultiplier = this._mergedReaders.ReadBitDouble();
+		stretchAction.AngleOffset = this._mergedReaders.ReadBitDouble();
+
+		var unknown = this._mergedReaders.ReadBitLong();
+		for (int i = 0; i < unknown; i++)
+		{
+			var tmp = this._mergedReaders.ReadBitLong();
+		}
+
+		return template;
+	}
+
 	private CadTemplate readBlockRepresentationData()
 	{
 		BlockRepresentationData representation = new BlockRepresentationData();
@@ -386,7 +474,7 @@ internal partial class DwgObjectReader : DwgSectionIO
 	private CadTemplate readBlockStretchAction()
 	{
 		BlockStretchAction stretchAction = new();
-		CadBlockStretchActionTemplate template = new CadBlockStretchActionTemplate(stretchAction);
+		CadStretchActionBaseTemplate template = new CadStretchActionBaseTemplate(stretchAction);
 
 		this.readBlockAction(template);
 
@@ -404,7 +492,7 @@ internal partial class DwgObjectReader : DwgSectionIO
 		{
 			var h = this.handleReference();
 
-			BlockStretchAction.StretchBind bind = new BlockStretchAction.StretchBind();
+			StretchEntityBind bind = new StretchEntityBind();
 			int nindexes = this._mergedReaders.ReadBitLong();
 			for (int j = 0; j < nindexes; j++)
 			{
@@ -417,15 +505,15 @@ internal partial class DwgObjectReader : DwgSectionIO
 		int nnodes = this._mergedReaders.ReadBitLong();
 		for (int i = 0; i < nnodes; i++)
 		{
-			BlockStretchAction.StretchNode node = new BlockStretchAction.StretchNode();
-			node.NodeId = this._mergedReaders.ReadBitLong();
+			var nodeId = this._mergedReaders.ReadBitLong();
 			int nindexes = this._mergedReaders.ReadBitLong();
+			List<int> indexes = new List<int>();
 			for (int j = 0; j < nindexes; j++)
 			{
-				node.PointIndexes.Add(this._mergedReaders.ReadBitLong());
+				indexes.Add(this._mergedReaders.ReadBitLong());
 			}
 
-			stretchAction.StretchNodes.Add(node);
+			stretchAction.StretchNodes.Add(new StretchNode(nodeId, indexes));
 		}
 
 		stretchAction.DistanceMultiplier = this._mergedReaders.ReadBitDouble();
