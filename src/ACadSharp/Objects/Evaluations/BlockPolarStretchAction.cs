@@ -17,6 +17,7 @@ namespace ACadSharp.Objects.Evaluations;
 [DxfSubClass(DxfSubclassMarker.BlockPolarStretchAction)]
 public class BlockPolarStretchAction : StretchActionBase
 {
+	/// <inheritdoc/>
 	[DxfCodeValue(140)]
 	public override double AngleOffset { get; set; }
 
@@ -31,6 +32,7 @@ public class BlockPolarStretchAction : StretchActionBase
 	[DxfCodeValue(DxfReferenceType.Count, 73)]
 	public override List<XY> Boundary { get; protected set; } = new List<XY>();
 
+	/// <inheritdoc/>
 	[DxfCodeValue(141)]
 	public override double DistanceMultiplier { get; set; }
 
@@ -47,24 +49,4 @@ public class BlockPolarStretchAction : StretchActionBase
 	public EvalConnection UpdatedBase { get; set; }
 
 	public EvalConnection UpdatedEnd { get; set; }
-}
-
-[DxfSubClass(null, true)]
-public abstract class StretchActionBase : BlockAction
-{
-	/// <summary>
-	/// Gets or sets the angle offset for the stretch action.
-	/// </summary>
-	public virtual double AngleOffset { get; set; }
-
-	public virtual List<XY> Boundary { get; protected set; } = new();
-
-	/// <summary>
-	/// Gets or sets the distance multiplier for the stretch action.
-	/// </summary>
-	public virtual double DistanceMultiplier { get; set; }
-
-	public List<StretchEntityBind> StretchBindings { get; protected set; } = new();
-
-	public List<StretchNode> StretchNodes { get; protected set; } = new();
 }
