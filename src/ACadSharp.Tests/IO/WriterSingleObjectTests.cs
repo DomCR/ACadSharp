@@ -79,6 +79,7 @@ public abstract class WriterSingleObjectTests : IOTestsBase
 		Data.Add(new(nameof(SingleCaseGenerator.DimensionOrdinate)));
 		Data.Add(new(nameof(SingleCaseGenerator.DimensionAngular2Line)));
 		Data.Add(new(nameof(SingleCaseGenerator.DimensionAngular3Pt)));
+		Data.Add(new(nameof(SingleCaseGenerator.DimensionArc)));
 		Data.Add(new(nameof(SingleCaseGenerator.DimensionDiameter)));
 		Data.Add(new(nameof(SingleCaseGenerator.DimensionRadius)));
 		Data.Add(new(nameof(SingleCaseGenerator.Dimensions)));
@@ -940,6 +941,22 @@ public abstract class WriterSingleObjectTests : IOTestsBase
 			this.Document.Entities.Add(dim);
 
 			dim.UpdateBlock();
+		}
+
+		public void DimensionArc()
+		{
+			DimensionArc dim = new DimensionArc
+			{
+				Center = XYZ.Zero,
+				FirstPoint = new XYZ(10, 0, 0),
+				SecondPoint = new XYZ(0, 10, 0),
+				DefinitionPoint = new XYZ(7.07, 7.07, 0),
+				TextMiddlePoint = new XYZ(8, 8, 0),
+				StartAngle = 0.0,
+				EndAngle = Math.PI / 2.0,
+			};
+
+			this.Document.Entities.Add(dim);
 		}
 
 		public void DimensionDiameter()

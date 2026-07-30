@@ -164,9 +164,8 @@ internal abstract class DxfSectionReaderBase
 				return this.readEntityCodes<CadBody>(new CadModelerGeometryTemplate<CadBody>(), this.readModelerGeometry);
 			case DxfFileToken.EntityCircle:
 				return this.readEntityCodes<Circle>(new CadEntityTemplate<Circle>(), this.readCircle);
-			case DxfFileToken.EntityArcDimension:
-				return this.readEntityCodes<Dimension>(new CadDimensionTemplate(new DimensionArc()), this.readDimension);
 			case DxfFileToken.EntityDimension:
+			case DxfFileToken.EntityArcDimension:
 				var dimTemplate = this.readEntityCodes<Dimension>(new CadDimensionTemplate(), this.readDimension);
 				if (dimTemplate.CadObject is CadDimensionTemplate.DimensionPlaceholder)
 				{
@@ -775,17 +774,8 @@ internal abstract class DxfSectionReaderBase
 				dim.Rotation = this._reader.ValueAsAngle;
 				map.SubClasses.TryAdd(DxfSubclassMarker.LinearDimension, DxfClassMap.Create<DimensionLinear>());
 				return true;
-			case 40 when tmp.CadObject is DimensionArc arcStart && this.currentSubclass == DxfSubclassMarker.ArcDimension:
-				arcStart.StartAngle = this._reader.ValueAsDouble;
-				return true;
-			case 41 when tmp.CadObject is DimensionArc arcEnd && this.currentSubclass == DxfSubclassMarker.ArcDimension:
-				arcEnd.EndAngle = this._reader.ValueAsDouble;
-				return true;
-			case 70 when tmp.CadObject is DimensionArc arcPartial && this.currentSubclass == DxfSubclassMarker.ArcDimension:
-				arcPartial.IsPartial = this._reader.ValueAsBool;
-				return true;
-			case 71 when tmp.CadObject is DimensionArc arcLeader && this.currentSubclass == DxfSubclassMarker.ArcDimension:
-				arcLeader.HasLeader = this._reader.ValueAsBool;
+			case 70 when tmp.CadObject is DimensionArc arc && this.currentSubclass == DxfSubclassMarker.ArcDimension:
+				arc.IsPartial = this._reader.ValueAsBool;
 				return true;
 			case 70:
 				//Flags do not have set
@@ -885,18 +875,13 @@ internal abstract class DxfSectionReaderBase
 						return false;
 				}
 			default:
-				if (!string.IsNullOrEmpty(this.currentSubclass)
-					&& map.SubClasses.TryGetValue(this.currentSubclass, out DxfClassMap currentMap)
-					&& this.tryAssignCurrentValue(template.CadObject, currentMap))
+				if (string.IsNullOrEmpty(this.currentSubclass))
 				{
-					return true;
+					//Pre R13 files do not have the subclass markers
+					this.currentSubclass = tmp.CadObject.SubclassMarker;
 				}
 
-				if (map.SubClasses.TryGetValue(tmp.CadObject.SubclassMarker, out DxfClassMap dimensionMap))
-				{
-					return this.tryAssignCurrentValue(template.CadObject, dimensionMap);
-				}
-				return false;
+				return this.tryAssignCurrentValue(template.CadObject, map);
 		}
 	}
 
