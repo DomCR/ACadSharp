@@ -10,7 +10,6 @@ using System.Collections.Generic;
 using System.Globalization;
 using System.IO;
 using System.Linq;
-using static System.Collections.Specialized.BitVector32;
 
 namespace ACadSharp.IO.DWG;
 
@@ -139,6 +138,42 @@ internal partial class DwgObjectWriter : DwgSectionIO
 		this._writer.Write3BitDouble(action.Value1012);
 	}
 
+	private void writeBlockAlignmentGrip(BlockAlignmentGrip grip)
+	{
+		this.writeBlockGrip(grip);
+		this._writer.WriteBitDouble(grip.AlignmentX);
+		this._writer.WriteBitDouble(grip.AlignmentY);
+		this._writer.WriteBitDouble(grip.AlignmentZ);
+	}
+
+	private void writeBlockAlignmentParameter(BlockAlignmentParameter parameter)
+	{
+		this.writeBlock2PtParameter(parameter);
+
+		this._writer.WriteBit(parameter.IsPerpendicular);
+	}
+
+	private void writeBlockArrayAction(BlockArrayAction action)
+	{
+		this.writeBlockAction(action);
+
+		this.writeEvalConnection(action.BaseConnection);
+		this.writeEvalConnection(action.EndConnection);
+		this.writeEvalConnection(action.UpdatedBaseConnection);
+		this.writeEvalConnection(action.UpdatedEndConnection);
+
+		this._writer.WriteBitDouble(action.RowOffset);
+		this._writer.WriteBitDouble(action.ColumnOffset);
+	}
+
+	private void writeBlockBasePointParameter(BlockBasePointParameter parameter)
+	{
+		this.writeBlock1PtParameter(parameter);
+
+		this._writer.Write3BitDouble(parameter.Point1011);
+		this._writer.Write3BitDouble(parameter.Point1012);
+	}
+
 	private void writeBlockElement(BlockElement parameter)
 	{
 		this.writeEvaluationExpression(parameter);
@@ -147,6 +182,41 @@ internal partial class DwgObjectWriter : DwgSectionIO
 		this._writer.WriteBitLong(parameter.Value98);
 		this._writer.WriteBitLong(parameter.Value99);
 		this._writer.WriteBitLong(parameter.Value1071);
+	}
+
+	private void writeBlockFlipAction(BlockFlipAction action)
+	{
+		this.writeBlockAction(action);
+
+		this.writeEvalConnection(action.FlipConnection);
+		this.writeEvalConnection(action.UpdatedFlipConnection);
+		this.writeEvalConnection(action.UpdatedBaseConnection);
+		this.writeEvalConnection(action.UpdatedEndConnection);
+	}
+
+	private void writeBlockFlipGrip(BlockFlipGrip grip)
+	{
+		this.writeBlockGrip(grip);
+
+		this._writer.WriteBitLong(grip.FlipExpressionId);
+
+		this._writer.WriteBitDouble(grip.DirectionX);
+		this._writer.WriteBitDouble(grip.DirectionY);
+		this._writer.WriteBitDouble(grip.DirectionZ);
+	}
+
+	private void writeBlockFlipParameter(BlockFlipParameter parameter)
+	{
+		this.writeBlock2PtParameter(parameter);
+
+		this._writer.WriteVariableText(parameter.Label);
+		this._writer.WriteVariableText(parameter.Description);
+		this._writer.WriteVariableText(parameter.BaseStateName);
+		this._writer.WriteVariableText(parameter.FlippedStateName);
+
+		this._writer.Write3BitDouble(parameter.LabelPosition);
+
+		this.writeEvalConnection(parameter.UpdatedFlipConnection);
 	}
 
 	private void writeBlockGrip(BlockGrip grip)
@@ -253,6 +323,74 @@ internal partial class DwgObjectWriter : DwgSectionIO
 		this._writer.Write3BitDouble(parameter.LabelPosition);
 	}
 
+	private void writeBlockPolarParameter(BlockPolarParameter parameter)
+	{
+		this.writeBlock2PtParameter(parameter);
+
+		this._writer.WriteVariableText(parameter.Label);
+		this._writer.WriteVariableText(parameter.Description);
+		this._writer.WriteVariableText(parameter.AngleName);
+		this._writer.WriteVariableText(parameter.AngleDescription);
+		this._writer.WriteBitDouble(parameter.LabelOffset);
+
+		this.writeParameterValueSet(parameter.DistanceValueSet);
+		this.writeParameterValueSet(parameter.AngleValueSet);
+	}
+
+	private void writeBlockPolarStretchAction(BlockPolarStretchAction action)
+	{
+		this.writeBlockAction(action);
+
+		this.writeEvalConnection(action.BaseXDeltaConnection);
+		this.writeEvalConnection(action.BaseYDeltaConnection);
+		this.writeEvalConnection(action.BaseConnection);
+		this.writeEvalConnection(action.EndConnection);
+		this.writeEvalConnection(action.UpdatedBaseConnection);
+		this.writeEvalConnection(action.UpdatedEndConnection);
+
+		this._writer.WriteBitLong(action.Boundary.Count);
+		foreach (XY pt in action.Boundary)
+		{
+			this._writer.Write2RawDouble(pt);
+		}
+
+		this._writer.WriteBitLong(action.RotateBindings.Count);
+		foreach (var rbind in action.RotateBindings)
+		{
+			this._writer.HandleReference(DwgReferenceType.SoftPointer, rbind);
+		}
+
+		this._writer.WriteBitLong(action.StretchBindings.Count);
+		foreach (StretchEntityBind sbind in action.StretchBindings)
+		{
+			this._writer.HandleReference(DwgReferenceType.SoftPointer, sbind.Entity);
+
+			this._writer.WriteBitLong(sbind.PointIndexes.Count);
+			foreach (int index in sbind.PointIndexes)
+			{
+				this._writer.WriteBitLong(index);
+			}
+		}
+
+		this._writer.WriteBitLong(action.StretchNodes.Count);
+		foreach (StretchNode node in action.StretchNodes)
+		{
+			this._writer.WriteBitLong(node.NodeId);
+
+			this._writer.WriteBitLong(node.PointIndexes.Count);
+			foreach (int index in node.PointIndexes)
+			{
+				this._writer.WriteBitLong(index);
+			}
+		}
+
+		this._writer.WriteBitDouble(action.DistanceMultiplier);
+		this._writer.WriteBitDouble(action.AngleOffset);
+
+		//unknown
+		this._writer.WriteBitLong(0);
+	}
+
 	private void writeBlockRepresentationData(BlockRepresentationData representation)
 	{
 		this._writer.WriteBitShort(representation.Version);
@@ -349,6 +487,21 @@ internal partial class DwgObjectWriter : DwgSectionIO
 		{
 			this.writeState(state);
 		}
+	}
+
+	private void writeBlockXYParameter(BlockXYParameter parameter)
+	{
+		this.writeBlock2PtParameter(parameter);
+
+		this._writer.WriteVariableText(parameter.LabelY);
+		this._writer.WriteVariableText(parameter.LabelX);
+		this._writer.WriteVariableText(parameter.DescriptionY);
+		this._writer.WriteVariableText(parameter.DescriptionX);
+		this._writer.WriteBitDouble(parameter.LabelOffsetX);
+		this._writer.WriteBitDouble(parameter.LabelOffsetY);
+
+		this.writeParameterValueSet(parameter.ValueSetX);
+		this.writeParameterValueSet(parameter.ValueSetY);
 	}
 
 	private void writeBookColor(BookColor color)
@@ -1589,11 +1742,35 @@ internal partial class DwgObjectWriter : DwgSectionIO
 			case BlockLookupParameter blockLookupParameter:
 				this.writeBlockLookupParameter(blockLookupParameter);
 				break;
+			case BlockAlignmentParameter blockAlignmentParameter:
+				this.writeBlockAlignmentParameter(blockAlignmentParameter);
+				break;
+			case BlockBasePointParameter blockBasePointParameter:
+				this.writeBlockBasePointParameter(blockBasePointParameter);
+				break;
+			case BlockFlipParameter blockFlipParameter:
+				this.writeBlockFlipParameter(blockFlipParameter);
+				break;
+			case BlockXYParameter blockXYParameter:
+				this.writeBlockXYParameter(blockXYParameter);
+				break;
+			case BlockPolarParameter blockPolarParameter:
+				this.writeBlockPolarParameter(blockPolarParameter);
+				break;
 			case BlockVisibilityGrip blockVisibilityGrip:
 				this.writeBlockGrip(blockVisibilityGrip);
 				break;
 			case BlockRepresentationData blockRepresentation:
 				this.writeBlockRepresentationData(blockRepresentation);
+				break;
+			case BlockAlignmentGrip blockAlignmentGrip:
+				this.writeBlockAlignmentGrip(blockAlignmentGrip);
+				break;
+			case BlockFlipGrip blockFlipGrip:
+				this.writeBlockFlipGrip(blockFlipGrip);
+				break;
+			case BlockPolarGrip blockPolarGrip:
+				this.writeBlockGrip(blockPolarGrip);
 				break;
 			case BlockLinearGrip blockLinearGrip:
 				this.writeBlockLinearGrip(blockLinearGrip);
@@ -1609,6 +1786,15 @@ internal partial class DwgObjectWriter : DwgSectionIO
 				break;
 			case BlockGripLocationComponent blockGripLocationComponent:
 				this.writeBlockGripLocationComponent(blockGripLocationComponent);
+				break;
+			case BlockPolarStretchAction blockPolarStretchAction:
+				this.writeBlockPolarStretchAction(blockPolarStretchAction);
+				break;
+			case BlockFlipAction blockFlipAction:
+				this.writeBlockFlipAction(blockFlipAction);
+				break;
+			case BlockArrayAction blockArrayAction:
+				this.writeBlockArrayAction(blockArrayAction);
 				break;
 			case BlockScaleAction blockScaleAction:
 				this.writeBlockScaleAction(blockScaleAction);

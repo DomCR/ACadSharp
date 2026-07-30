@@ -301,35 +301,27 @@ internal class DxfObjectsSectionReader : DxfSectionReaderBase
 		switch (this._reader.Code)
 		{
 			case 92:
-				flip.FlipConnection ??= new EvalConnection();
 				flip.FlipConnection.Id = this._reader.ValueAsInt;
 				return true;
 			case 93:
-				flip.UpdatedFlipConnection ??= new EvalConnection();
 				flip.UpdatedFlipConnection.Id = this._reader.ValueAsInt;
 				return true;
 			case 94:
-				flip.UpdatedBaseConnection ??= new EvalConnection();
 				flip.UpdatedBaseConnection.Id = this._reader.ValueAsInt;
 				return true;
 			case 95:
-				flip.UpdatedEndConnection ??= new EvalConnection();
 				flip.UpdatedEndConnection.Id = this._reader.ValueAsInt;
 				return true;
 			case 301:
-				flip.FlipConnection ??= new EvalConnection();
 				flip.FlipConnection.Name = this._reader.ValueAsString;
 				return true;
 			case 302:
-				flip.UpdatedFlipConnection ??= new EvalConnection();
 				flip.UpdatedFlipConnection.Name = this._reader.ValueAsString;
 				return true;
 			case 303:
-				flip.UpdatedBaseConnection ??= new EvalConnection();
 				flip.UpdatedBaseConnection.Name = this._reader.ValueAsString;
 				return true;
 			case 304:
-				flip.UpdatedEndConnection ??= new EvalConnection();
 				flip.UpdatedEndConnection.Name = this._reader.ValueAsString;
 				return true;
 			default:

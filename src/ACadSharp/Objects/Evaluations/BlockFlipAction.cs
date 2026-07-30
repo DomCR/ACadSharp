@@ -14,13 +14,13 @@ namespace ACadSharp.Objects.Evaluations;
 [DxfSubClass(DxfSubclassMarker.BlockFlipAction)]
 public class BlockFlipAction : BlockAction
 {
-	public EvalConnection FlipConnection { get; set; }
+	public EvalConnection FlipConnection { get; set; } = new();
 
-	public EvalConnection UpdatedFlipConnection { get; set; }
+	public EvalConnection UpdatedFlipConnection { get; set; } = new();
 
-	public EvalConnection UpdatedBaseConnection { get; set; }
+	public EvalConnection UpdatedBaseConnection { get; set; } = new();
 
-	public EvalConnection UpdatedEndConnection { get; set; }
+	public EvalConnection UpdatedEndConnection { get; set; } = new();
 
 	/// <inheritdoc/>
 	public override string ObjectName => DxfFileToken.ObjectBlockFlipAction;
