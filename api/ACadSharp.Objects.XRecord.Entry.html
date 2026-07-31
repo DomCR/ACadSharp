@@ -6,7 +6,7 @@
       <meta name="viewport" content="width=device-width, initial-scale=1.0">
       <meta name="title" content="Class XRecord.Entry | ACadSharp ">
       
-      <meta name="description" content="Represents a single data entry containing a group code, value, and associated owner within a .">
+      <meta name="description" content="Represents a single entry in an  object, consisting of a group code and its associated value.">
       <link rel="icon" href="../favicon.ico">
       <link rel="stylesheet" href="../public/docfx.min.css">
       <link rel="stylesheet" href="../public/main.css">
@@ -89,7 +89,7 @@
 
 
   <h1 id="ACadSharp_Objects_XRecord_Entry" data-uid="ACadSharp.Objects.XRecord.Entry" class="text-break">
-Class XRecord.Entry  <a class="header-action link-secondary" title="View source" href="https://github.com/DomCR/ACadSharp/blob/master/src/ACadSharp/Objects/XRecord.Entry.cs/#L12"><i class="bi bi-code-slash"></i></a>
+Class XRecord.Entry  <a class="header-action link-secondary" title="View source" href="https://github.com/DomCR/ACadSharp/blob/master/src/ACadSharp/Objects/XRecord.Entry.cs/#L8"><i class="bi bi-code-slash"></i></a>
   </h1>
 
   <div class="facts text-secondary">
@@ -97,7 +97,7 @@ Class XRecord.Entry  <a class="header-action link-secondary" title="View source"
   <dl><dt>Assembly</dt><dd>ACadSharp.dll</dd></dl>
   </div>
 
-  <div class="markdown summary"><p>Represents a single data entry containing a group code, value, and associated owner within a <a class="xref" href="ACadSharp.Objects.XRecord.html">XRecord</a>.</p>
+  <div class="markdown summary"><p>Represents a single entry in an <a class="xref" href="ACadSharp.Objects.XRecord.html">XRecord</a> object, consisting of a group code and its associated value.</p>
 </div>
   <div class="markdown conceptual"></div>
 
@@ -151,12 +151,6 @@ Class XRecord.Entry  <a class="header-action link-secondary" title="View source"
 
 
 
-  <h2 id="ACadSharp_Objects_XRecord_Entry_remarks">Remarks</h2>
-  <div class="markdown level0 remarks"><p>The <a class="xref" href="ACadSharp.Objects.XRecord.Entry.html">XRecord.Entry</a> class encapsulates a code-value pair, commonly used in CAD data
-structures to represent individual fields or properties. Each entry is associated with a group code that
-determines the type and interpretation of its value. The <a class="xref" href="ACadSharp.Objects.XRecord.Entry.html#ACadSharp_Objects_XRecord_Entry_Owner">Owner</a> property links the entry to its
-parent <a class="xref" href="ACadSharp.Objects.XRecord.html">XRecord</a>.</p>
-</div>
 
 
   <h2 class="section" id="properties">Properties
@@ -167,7 +161,7 @@ parent <a class="xref" href="ACadSharp.Objects.XRecord.html">XRecord</a>.</p>
 
   <h3 id="ACadSharp_Objects_XRecord_Entry_Code" data-uid="ACadSharp.Objects.XRecord.Entry.Code">
   Code
-  <a class="header-action link-secondary" title="View source" href="https://github.com/DomCR/ACadSharp/blob/master/src/ACadSharp/Objects/XRecord.Entry.cs/#L17"><i class="bi bi-code-slash"></i></a>
+  <a class="header-action link-secondary" title="View source" href="https://github.com/DomCR/ACadSharp/blob/master/src/ACadSharp/Objects/XRecord.Entry.cs/#L13"><i class="bi bi-code-slash"></i></a>
   </h3>
 
   <div class="markdown level1 summary"><p>Gets the numeric code associated with the current instance.</p>
@@ -199,7 +193,7 @@ parent <a class="xref" href="ACadSharp.Objects.XRecord.html">XRecord</a>.</p>
 
   <h3 id="ACadSharp_Objects_XRecord_Entry_GroupCode" data-uid="ACadSharp.Objects.XRecord.Entry.GroupCode">
   GroupCode
-  <a class="header-action link-secondary" title="View source" href="https://github.com/DomCR/ACadSharp/blob/master/src/ACadSharp/Objects/XRecord.Entry.cs/#L24"><i class="bi bi-code-slash"></i></a>
+  <a class="header-action link-secondary" title="View source" href="https://github.com/DomCR/ACadSharp/blob/master/src/ACadSharp/Objects/XRecord.Entry.cs/#L15"><i class="bi bi-code-slash"></i></a>
   </h3>
 
   <div class="markdown level1 summary"></div>
@@ -230,7 +224,7 @@ parent <a class="xref" href="ACadSharp.Objects.XRecord.html">XRecord</a>.</p>
 
   <h3 id="ACadSharp_Objects_XRecord_Entry_HasLinkedObject" data-uid="ACadSharp.Objects.XRecord.Entry.HasLinkedObject">
   HasLinkedObject
-  <a class="header-action link-secondary" title="View source" href="https://github.com/DomCR/ACadSharp/blob/master/src/ACadSharp/Objects/XRecord.Entry.cs/#L36"><i class="bi bi-code-slash"></i></a>
+  <a class="header-action link-secondary" title="View source" href="https://github.com/DomCR/ACadSharp/blob/master/src/ACadSharp/Objects/XRecord.Entry.cs/#L27"><i class="bi bi-code-slash"></i></a>
   </h3>
 
   <div class="markdown level1 summary"><p>Gets a value indicating whether this group code is associated with a linked object, such as a handle or object
@@ -259,43 +253,11 @@ ID.</p>
 
 
 
-  <a id="ACadSharp_Objects_XRecord_Entry_Owner_" data-uid="ACadSharp.Objects.XRecord.Entry.Owner*"></a>
-
-  <h3 id="ACadSharp_Objects_XRecord_Entry_Owner" data-uid="ACadSharp.Objects.XRecord.Entry.Owner">
-  Owner
-  <a class="header-action link-secondary" title="View source" href="https://github.com/DomCR/ACadSharp/blob/master/src/ACadSharp/Objects/XRecord.Entry.cs/#L55"><i class="bi bi-code-slash"></i></a>
-  </h3>
-
-  <div class="markdown level1 summary"><p>Gets or sets the owner of the current record.</p>
-</div>
-  <div class="markdown level1 conceptual"></div>
-
-  <div class="codewrapper">
-    <pre><code class="lang-csharp hljs">public XRecord Owner { get; set; }</code></pre>
-  </div>
-
-
-
-
-
-  <h4 class="section">Property Value</h4>
-  <dl class="parameters">
-    <dt><a class="xref" href="ACadSharp.Objects.XRecord.html">XRecord</a></dt>
-    <dd></dd>
-  </dl>
-
-
-
-
-
-
-
-
   <a id="ACadSharp_Objects_XRecord_Entry_Value_" data-uid="ACadSharp.Objects.XRecord.Entry.Value*"></a>
 
   <h3 id="ACadSharp_Objects_XRecord_Entry_Value" data-uid="ACadSharp.Objects.XRecord.Entry.Value">
   Value
-  <a class="header-action link-secondary" title="View source" href="https://github.com/DomCR/ACadSharp/blob/master/src/ACadSharp/Objects/XRecord.Entry.cs/#L22"><i class="bi bi-code-slash"></i></a>
+  <a class="header-action link-secondary" title="View source" href="https://github.com/DomCR/ACadSharp/blob/master/src/ACadSharp/Objects/XRecord.Entry.cs/#L46"><i class="bi bi-code-slash"></i></a>
   </h3>
 
   <div class="markdown level1 summary"><p>Gets or sets the value associated with the current instance.</p>
@@ -331,7 +293,7 @@ ID.</p>
 
   <h3 id="ACadSharp_Objects_XRecord_Entry_GetReference" data-uid="ACadSharp.Objects.XRecord.Entry.GetReference">
   GetReference()
-  <a class="header-action link-secondary" title="View source" href="https://github.com/DomCR/ACadSharp/blob/master/src/ACadSharp/Objects/XRecord.Entry.cs/#L69"><i class="bi bi-code-slash"></i></a>
+  <a class="header-action link-secondary" title="View source" href="https://github.com/DomCR/ACadSharp/blob/master/src/ACadSharp/Objects/XRecord.Entry.cs/#L62"><i class="bi bi-code-slash"></i></a>
   </h3>
 
   <div class="markdown level1 summary"><p>Gets the referenced <a class="xref" href="ACadSharp.CadObject.html">CadObject</a> if one is linked and belongs to the same document as the owner.</p>
@@ -365,7 +327,7 @@ owner; otherwise, <a href="https://learn.microsoft.com/dotnet/csharp/language-re
 
   <h3 id="ACadSharp_Objects_XRecord_Entry_ToString" data-uid="ACadSharp.Objects.XRecord.Entry.ToString">
   ToString()
-  <a class="header-action link-secondary" title="View source" href="https://github.com/DomCR/ACadSharp/blob/master/src/ACadSharp/Objects/XRecord.Entry.cs/#L90"><i class="bi bi-code-slash"></i></a>
+  <a class="header-action link-secondary" title="View source" href="https://github.com/DomCR/ACadSharp/blob/master/src/ACadSharp/Objects/XRecord.Entry.cs/#L83"><i class="bi bi-code-slash"></i></a>
   </h3>
 
   <div class="markdown level1 summary"><p>Returns a string that represents the current object.</p>
@@ -398,7 +360,7 @@ owner; otherwise, <a href="https://learn.microsoft.com/dotnet/csharp/language-re
 </article>
 
         <div class="contribution d-print-none">
-          <a href="https://github.com/DomCR/ACadSharp/blob/master/src/ACadSharp/Objects/XRecord.Entry.cs/#L12" class="edit-link">Edit this page</a>
+          <a href="https://github.com/DomCR/ACadSharp/blob/master/src/ACadSharp/Objects/XRecord.Entry.cs/#L8" class="edit-link">Edit this page</a>
         </div>
 
 

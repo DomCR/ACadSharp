@@ -105,7 +105,7 @@ control the visibility state of entities in a dynamic block.</p>
   <div class="codewrapper">
     <pre><code class="lang-csharp hljs">[DxfName(&quot;BLOCKVISIBILITYPARAMETER&quot;)]
 [DxfSubClass(&quot;AcDbBlockVisibilityParameter&quot;)]
-public class BlockVisibilityParameter : Block1PtParameter, IHandledCadObject</code></pre>
+public class BlockVisibilityParameter : Block1PtParameter, IHandledCadObject, INamedCadObject</code></pre>
   </div>
 
 
@@ -116,6 +116,7 @@ public class BlockVisibilityParameter : Block1PtParameter, IHandledCadObject</co
     <dd>
       <div><a class="xref" href="https://learn.microsoft.com/dotnet/api/system.object">object</a></div>
       <div><a class="xref" href="ACadSharp.CadObject.html">CadObject</a></div>
+      <div><a class="xref" href="ACadSharp.Objects.NonGraphicalObject.html">NonGraphicalObject</a></div>
       <div><a class="xref" href="ACadSharp.Objects.Evaluations.EvaluationExpression.html">EvaluationExpression</a></div>
       <div><a class="xref" href="ACadSharp.Objects.Evaluations.BlockElement.html">BlockElement</a></div>
       <div><a class="xref" href="ACadSharp.Objects.Evaluations.BlockParameter.html">BlockParameter</a></div>
@@ -128,6 +129,7 @@ public class BlockVisibilityParameter : Block1PtParameter, IHandledCadObject</co
     <dt>Implements</dt>
     <dd>
       <div><a class="xref" href="ACadSharp.IHandledCadObject.html">IHandledCadObject</a></div>
+      <div><a class="xref" href="ACadSharp.INamedCadObject.html">INamedCadObject</a></div>
     </dd>
   </dl>
 
@@ -160,6 +162,9 @@ public class BlockVisibilityParameter : Block1PtParameter, IHandledCadObject</co
       <a class="xref" href="ACadSharp.Objects.Evaluations.BlockElement.html#ACadSharp_Objects_Evaluations_BlockElement_Value1071">BlockElement.Value1071</a>
     </div>
     <div>
+      <a class="xref" href="ACadSharp.Objects.Evaluations.EvaluationExpression.html#ACadSharp_Objects_Evaluations_EvaluationExpression_EvaluatedValue">EvaluationExpression.EvaluatedValue</a>
+    </div>
+    <div>
       <a class="xref" href="ACadSharp.Objects.Evaluations.EvaluationExpression.html#ACadSharp_Objects_Evaluations_EvaluationExpression_Id">EvaluationExpression.Id</a>
     </div>
     <div>
@@ -170,6 +175,15 @@ public class BlockVisibilityParameter : Block1PtParameter, IHandledCadObject</co
     </div>
     <div>
       <a class="xref" href="ACadSharp.Objects.Evaluations.EvaluationExpression.html#ACadSharp_Objects_Evaluations_EvaluationExpression_Value99">EvaluationExpression.Value99</a>
+    </div>
+    <div>
+      <a class="xref" href="ACadSharp.Objects.NonGraphicalObject.html#ACadSharp_Objects_NonGraphicalObject_OnNameChanged">NonGraphicalObject.OnNameChanged</a>
+    </div>
+    <div>
+      <a class="xref" href="ACadSharp.Objects.NonGraphicalObject.html#ACadSharp_Objects_NonGraphicalObject_Name">NonGraphicalObject.Name</a>
+    </div>
+    <div>
+      <a class="xref" href="ACadSharp.Objects.NonGraphicalObject.html#ACadSharp_Objects_NonGraphicalObject_ToString">NonGraphicalObject.ToString()</a>
     </div>
     <div>
       <a class="xref" href="ACadSharp.CadObject.html#ACadSharp_CadObject_Document">CadObject.Document</a>
@@ -205,9 +219,6 @@ public class BlockVisibilityParameter : Block1PtParameter, IHandledCadObject</co
       <a class="xref" href="ACadSharp.CadObject.html#ACadSharp_CadObject_RemoveReactor_ACadSharp_CadObject_">CadObject.RemoveReactor(CadObject)</a>
     </div>
     <div>
-      <a class="xref" href="ACadSharp.CadObject.html#ACadSharp_CadObject_ToString">CadObject.ToString()</a>
-    </div>
-    <div>
       <a class="xref" href="ACadSharp.CadObject.html#ACadSharp_CadObject_updateCollection__1___0_ACadSharp_ICadCollection___0__">CadObject.updateCollection&lt;T&gt;(T, ICadCollection&lt;T&gt;)</a>
     </div>
     <div>
@@ -233,6 +244,9 @@ public class BlockVisibilityParameter : Block1PtParameter, IHandledCadObject</co
   <dl class="typelist extensionMethods">
     <dt>Extension Methods</dt>
     <dd>
+  <div>
+      <a class="xref" href="ACadSharp.Extensions.INamedCadObjectExtensions.html#ACadSharp_Extensions_INamedCadObjectExtensions_IsValidDxfName_ACadSharp_INamedCadObject_ACadSharp_ACadVersion_">INamedCadObjectExtensions.IsValidDxfName(INamedCadObject, ACadVersion)</a>
+  </div>
   <div>
       <a class="xref" href="ACadSharp.Extensions.CadObjectExtensions.html#ACadSharp_Extensions_CadObjectExtensions_CloneTyped__1___0_">CadObjectExtensions.CloneTyped&lt;T&gt;(T)</a>
   </div>
@@ -321,20 +335,20 @@ public List&lt;Entity&gt; Entities { get; }</code></pre>
 
 
 
-  <a id="ACadSharp_Objects_Evaluations_BlockVisibilityParameter_Name_" data-uid="ACadSharp.Objects.Evaluations.BlockVisibilityParameter.Name*"></a>
+  <a id="ACadSharp_Objects_Evaluations_BlockVisibilityParameter_Label_" data-uid="ACadSharp.Objects.Evaluations.BlockVisibilityParameter.Label*"></a>
 
-  <h3 id="ACadSharp_Objects_Evaluations_BlockVisibilityParameter_Name" data-uid="ACadSharp.Objects.Evaluations.BlockVisibilityParameter.Name">
-  Name
+  <h3 id="ACadSharp_Objects_Evaluations_BlockVisibilityParameter_Label" data-uid="ACadSharp.Objects.Evaluations.BlockVisibilityParameter.Label">
+  Label
   <a class="header-action link-secondary" title="View source" href="https://github.com/DomCR/ACadSharp/blob/master/src/ACadSharp/Objects/Evaluations/BlockVisibilityParameter.cs/#L37"><i class="bi bi-code-slash"></i></a>
   </h3>
 
-  <div class="markdown level1 summary"><p>Visibility parameter name.</p>
+  <div class="markdown level1 summary"><p>Visibility parameter label.</p>
 </div>
   <div class="markdown level1 conceptual"></div>
 
   <div class="codewrapper">
     <pre><code class="lang-csharp hljs">[DxfCodeValue(new int[] { 301 })]
-public string Name { get; set; }</code></pre>
+public string Label { get; set; }</code></pre>
   </div>
 
 
@@ -452,11 +466,43 @@ public IReadOnlyDictionary&lt;string, BlockVisibilityParameter.State&gt; States 
 
 
 
+  <a id="ACadSharp_Objects_Evaluations_BlockVisibilityParameter_Value281_" data-uid="ACadSharp.Objects.Evaluations.BlockVisibilityParameter.Value281*"></a>
+
+  <h3 id="ACadSharp_Objects_Evaluations_BlockVisibilityParameter_Value281" data-uid="ACadSharp.Objects.Evaluations.BlockVisibilityParameter.Value281">
+  Value281
+  <a class="header-action link-secondary" title="View source" href="https://github.com/DomCR/ACadSharp/blob/master/src/ACadSharp/Objects/Evaluations/BlockVisibilityParameter.cs/#L53"><i class="bi bi-code-slash"></i></a>
+  </h3>
+
+  <div class="markdown level1 summary"></div>
+  <div class="markdown level1 conceptual"></div>
+
+  <div class="codewrapper">
+    <pre><code class="lang-csharp hljs">[DxfCodeValue(new int[] { 281 })]
+public bool Value281 { get; set; }</code></pre>
+  </div>
+
+
+
+
+
+  <h4 class="section">Property Value</h4>
+  <dl class="parameters">
+    <dt><a class="xref" href="https://learn.microsoft.com/dotnet/api/system.boolean">bool</a></dt>
+    <dd></dd>
+  </dl>
+
+
+
+
+
+
+
+
   <a id="ACadSharp_Objects_Evaluations_BlockVisibilityParameter_Value91_" data-uid="ACadSharp.Objects.Evaluations.BlockVisibilityParameter.Value91*"></a>
 
   <h3 id="ACadSharp_Objects_Evaluations_BlockVisibilityParameter_Value91" data-uid="ACadSharp.Objects.Evaluations.BlockVisibilityParameter.Value91">
   Value91
-  <a class="header-action link-secondary" title="View source" href="https://github.com/DomCR/ACadSharp/blob/master/src/ACadSharp/Objects/Evaluations/BlockVisibilityParameter.cs/#L53"><i class="bi bi-code-slash"></i></a>
+  <a class="header-action link-secondary" title="View source" href="https://github.com/DomCR/ACadSharp/blob/master/src/ACadSharp/Objects/Evaluations/BlockVisibilityParameter.cs/#L56"><i class="bi bi-code-slash"></i></a>
   </h3>
 
   <div class="markdown level1 summary"></div>
@@ -492,7 +538,7 @@ public bool Value91 { get; set; }</code></pre>
 
   <h3 id="ACadSharp_Objects_Evaluations_BlockVisibilityParameter_AddState_ACadSharp_Objects_Evaluations_BlockVisibilityParameter_State_" data-uid="ACadSharp.Objects.Evaluations.BlockVisibilityParameter.AddState(ACadSharp.Objects.Evaluations.BlockVisibilityParameter.State)">
   AddState(State)
-  <a class="header-action link-secondary" title="View source" href="https://github.com/DomCR/ACadSharp/blob/master/src/ACadSharp/Objects/Evaluations/BlockVisibilityParameter.cs/#L62"><i class="bi bi-code-slash"></i></a>
+  <a class="header-action link-secondary" title="View source" href="https://github.com/DomCR/ACadSharp/blob/master/src/ACadSharp/Objects/Evaluations/BlockVisibilityParameter.cs/#L65"><i class="bi bi-code-slash"></i></a>
   </h3>
 
   <div class="markdown level1 summary"><p>Adds a state to the collection using the state's name as the key.</p>
@@ -525,7 +571,7 @@ public bool Value91 { get; set; }</code></pre>
 
   <h3 id="ACadSharp_Objects_Evaluations_BlockVisibilityParameter_Clone" data-uid="ACadSharp.Objects.Evaluations.BlockVisibilityParameter.Clone">
   Clone()
-  <a class="header-action link-secondary" title="View source" href="https://github.com/DomCR/ACadSharp/blob/master/src/ACadSharp/Objects/Evaluations/BlockVisibilityParameter.cs/#L68"><i class="bi bi-code-slash"></i></a>
+  <a class="header-action link-secondary" title="View source" href="https://github.com/DomCR/ACadSharp/blob/master/src/ACadSharp/Objects/Evaluations/BlockVisibilityParameter.cs/#L71"><i class="bi bi-code-slash"></i></a>
   </h3>
 
   <div class="markdown level1 summary"><p>Creates a new object that is a copy of the current instance.</p>

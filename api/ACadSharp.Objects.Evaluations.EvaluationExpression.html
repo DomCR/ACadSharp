@@ -103,7 +103,7 @@ Class EvaluationExpression  <a class="header-action link-secondary" title="View 
 
   <div class="codewrapper">
     <pre><code class="lang-csharp hljs">[DxfSubClass(&quot;AcDbEvalExpr&quot;)]
-public abstract class EvaluationExpression : CadObject, IHandledCadObject</code></pre>
+public abstract class EvaluationExpression : NonGraphicalObject, IHandledCadObject, INamedCadObject</code></pre>
   </div>
 
 
@@ -114,6 +114,7 @@ public abstract class EvaluationExpression : CadObject, IHandledCadObject</code>
     <dd>
       <div><a class="xref" href="https://learn.microsoft.com/dotnet/api/system.object">object</a></div>
       <div><a class="xref" href="ACadSharp.CadObject.html">CadObject</a></div>
+      <div><a class="xref" href="ACadSharp.Objects.NonGraphicalObject.html">NonGraphicalObject</a></div>
       <div><span class="xref">EvaluationExpression</span></div>
     </dd>
   </dl>
@@ -122,6 +123,7 @@ public abstract class EvaluationExpression : CadObject, IHandledCadObject</code>
     <dt>Implements</dt>
     <dd>
       <div><a class="xref" href="ACadSharp.IHandledCadObject.html">IHandledCadObject</a></div>
+      <div><a class="xref" href="ACadSharp.INamedCadObject.html">INamedCadObject</a></div>
     </dd>
   </dl>
 
@@ -129,13 +131,25 @@ public abstract class EvaluationExpression : CadObject, IHandledCadObject</code>
     <dt>Derived</dt>
     <dd>
       <div><a class="xref" href="ACadSharp.Objects.Evaluations.BlockElement.html">BlockElement</a></div>
-      <div><a class="xref" href="ACadSharp.Objects.Evaluations.BlockGripExpression.html">BlockGripExpression</a></div>
+      <div><a class="xref" href="ACadSharp.Objects.Evaluations.BlockGripLocationComponent.html">BlockGripLocationComponent</a></div>
     </dd>
   </dl>
 
   <dl class="typelist inheritedMembers">
     <dt>Inherited Members</dt>
     <dd>
+    <div>
+      <a class="xref" href="ACadSharp.Objects.NonGraphicalObject.html#ACadSharp_Objects_NonGraphicalObject_OnNameChanged">NonGraphicalObject.OnNameChanged</a>
+    </div>
+    <div>
+      <a class="xref" href="ACadSharp.Objects.NonGraphicalObject.html#ACadSharp_Objects_NonGraphicalObject_Name">NonGraphicalObject.Name</a>
+    </div>
+    <div>
+      <a class="xref" href="ACadSharp.Objects.NonGraphicalObject.html#ACadSharp_Objects_NonGraphicalObject_Clone">NonGraphicalObject.Clone()</a>
+    </div>
+    <div>
+      <a class="xref" href="ACadSharp.Objects.NonGraphicalObject.html#ACadSharp_Objects_NonGraphicalObject_ToString">NonGraphicalObject.ToString()</a>
+    </div>
     <div>
       <a class="xref" href="ACadSharp.CadObject.html#ACadSharp_CadObject_Document">CadObject.Document</a>
     </div>
@@ -167,16 +181,10 @@ public abstract class EvaluationExpression : CadObject, IHandledCadObject</code>
       <a class="xref" href="ACadSharp.CadObject.html#ACadSharp_CadObject_CleanReactors">CadObject.CleanReactors()</a>
     </div>
     <div>
-      <a class="xref" href="ACadSharp.CadObject.html#ACadSharp_CadObject_Clone">CadObject.Clone()</a>
-    </div>
-    <div>
       <a class="xref" href="ACadSharp.CadObject.html#ACadSharp_CadObject_CreateExtendedDictionary">CadObject.CreateExtendedDictionary()</a>
     </div>
     <div>
       <a class="xref" href="ACadSharp.CadObject.html#ACadSharp_CadObject_RemoveReactor_ACadSharp_CadObject_">CadObject.RemoveReactor(CadObject)</a>
-    </div>
-    <div>
-      <a class="xref" href="ACadSharp.CadObject.html#ACadSharp_CadObject_ToString">CadObject.ToString()</a>
     </div>
     <div>
       <a class="xref" href="ACadSharp.CadObject.html#ACadSharp_CadObject_updateCollection__1___0_ACadSharp_ICadCollection___0__">CadObject.updateCollection&lt;T&gt;(T, ICadCollection&lt;T&gt;)</a>
@@ -205,6 +213,9 @@ public abstract class EvaluationExpression : CadObject, IHandledCadObject</code>
     <dt>Extension Methods</dt>
     <dd>
   <div>
+      <a class="xref" href="ACadSharp.Extensions.INamedCadObjectExtensions.html#ACadSharp_Extensions_INamedCadObjectExtensions_IsValidDxfName_ACadSharp_INamedCadObject_ACadSharp_ACadVersion_">INamedCadObjectExtensions.IsValidDxfName(INamedCadObject, ACadVersion)</a>
+  </div>
+  <div>
       <a class="xref" href="ACadSharp.Extensions.CadObjectExtensions.html#ACadSharp_Extensions_CadObjectExtensions_CloneTyped__1___0_">CadObjectExtensions.CloneTyped&lt;T&gt;(T)</a>
   </div>
   <div>
@@ -220,11 +231,43 @@ public abstract class EvaluationExpression : CadObject, IHandledCadObject</code>
 </h2>
 
 
+  <a id="ACadSharp_Objects_Evaluations_EvaluationExpression_EvaluatedValue_" data-uid="ACadSharp.Objects.Evaluations.EvaluationExpression.EvaluatedValue*"></a>
+
+  <h3 id="ACadSharp_Objects_Evaluations_EvaluationExpression_EvaluatedValue" data-uid="ACadSharp.Objects.Evaluations.EvaluationExpression.EvaluatedValue">
+  EvaluatedValue
+  <a class="header-action link-secondary" title="View source" href="https://github.com/DomCR/ACadSharp/blob/master/src/ACadSharp/Objects/Evaluations/EvaluationExpression.cs/#L14"><i class="bi bi-code-slash"></i></a>
+  </h3>
+
+  <div class="markdown level1 summary"><p>Gets or sets the evaluated value of the expression.</p>
+</div>
+  <div class="markdown level1 conceptual"></div>
+
+  <div class="codewrapper">
+    <pre><code class="lang-csharp hljs">public DxfValuePair EvaluatedValue { get; set; }</code></pre>
+  </div>
+
+
+
+
+
+  <h4 class="section">Property Value</h4>
+  <dl class="parameters">
+    <dt><a class="xref" href="ACadSharp.Objects.Evaluations.DxfValuePair.html">DxfValuePair</a></dt>
+    <dd></dd>
+  </dl>
+
+
+
+
+
+
+
+
   <a id="ACadSharp_Objects_Evaluations_EvaluationExpression_Id_" data-uid="ACadSharp.Objects.Evaluations.EvaluationExpression.Id*"></a>
 
   <h3 id="ACadSharp_Objects_Evaluations_EvaluationExpression_Id" data-uid="ACadSharp.Objects.Evaluations.EvaluationExpression.Id">
   Id
-  <a class="header-action link-secondary" title="View source" href="https://github.com/DomCR/ACadSharp/blob/master/src/ACadSharp/Objects/Evaluations/EvaluationExpression.cs/#L14"><i class="bi bi-code-slash"></i></a>
+  <a class="header-action link-secondary" title="View source" href="https://github.com/DomCR/ACadSharp/blob/master/src/ACadSharp/Objects/Evaluations/EvaluationExpression.cs/#L19"><i class="bi bi-code-slash"></i></a>
   </h3>
 
   <div class="markdown level1 summary"><p>Gets or sets the unique identifier for the evaluation expression.</p>
@@ -257,7 +300,7 @@ public int Id { get; set; }</code></pre>
 
   <h3 id="ACadSharp_Objects_Evaluations_EvaluationExpression_ObjectType" data-uid="ACadSharp.Objects.Evaluations.EvaluationExpression.ObjectType">
   ObjectType
-  <a class="header-action link-secondary" title="View source" href="https://github.com/DomCR/ACadSharp/blob/master/src/ACadSharp/Objects/Evaluations/EvaluationExpression.cs/#L18"><i class="bi bi-code-slash"></i></a>
+  <a class="header-action link-secondary" title="View source" href="https://github.com/DomCR/ACadSharp/blob/master/src/ACadSharp/Objects/Evaluations/EvaluationExpression.cs/#L23"><i class="bi bi-code-slash"></i></a>
   </h3>
 
   <div class="markdown level1 summary"><p>Get the object type.</p>
@@ -289,7 +332,7 @@ public int Id { get; set; }</code></pre>
 
   <h3 id="ACadSharp_Objects_Evaluations_EvaluationExpression_SubclassMarker" data-uid="ACadSharp.Objects.Evaluations.EvaluationExpression.SubclassMarker">
   SubclassMarker
-  <a class="header-action link-secondary" title="View source" href="https://github.com/DomCR/ACadSharp/blob/master/src/ACadSharp/Objects/Evaluations/EvaluationExpression.cs/#L21"><i class="bi bi-code-slash"></i></a>
+  <a class="header-action link-secondary" title="View source" href="https://github.com/DomCR/ACadSharp/blob/master/src/ACadSharp/Objects/Evaluations/EvaluationExpression.cs/#L26"><i class="bi bi-code-slash"></i></a>
   </h3>
 
   <div class="markdown level1 summary"><p>Object Subclass marker.</p>
@@ -321,7 +364,7 @@ public int Id { get; set; }</code></pre>
 
   <h3 id="ACadSharp_Objects_Evaluations_EvaluationExpression_Value98" data-uid="ACadSharp.Objects.Evaluations.EvaluationExpression.Value98">
   Value98
-  <a class="header-action link-secondary" title="View source" href="https://github.com/DomCR/ACadSharp/blob/master/src/ACadSharp/Objects/Evaluations/EvaluationExpression.cs/#L23"><i class="bi bi-code-slash"></i></a>
+  <a class="header-action link-secondary" title="View source" href="https://github.com/DomCR/ACadSharp/blob/master/src/ACadSharp/Objects/Evaluations/EvaluationExpression.cs/#L28"><i class="bi bi-code-slash"></i></a>
   </h3>
 
   <div class="markdown level1 summary"></div>
@@ -353,7 +396,7 @@ public int Value98 { get; set; }</code></pre>
 
   <h3 id="ACadSharp_Objects_Evaluations_EvaluationExpression_Value99" data-uid="ACadSharp.Objects.Evaluations.EvaluationExpression.Value99">
   Value99
-  <a class="header-action link-secondary" title="View source" href="https://github.com/DomCR/ACadSharp/blob/master/src/ACadSharp/Objects/Evaluations/EvaluationExpression.cs/#L26"><i class="bi bi-code-slash"></i></a>
+  <a class="header-action link-secondary" title="View source" href="https://github.com/DomCR/ACadSharp/blob/master/src/ACadSharp/Objects/Evaluations/EvaluationExpression.cs/#L31"><i class="bi bi-code-slash"></i></a>
   </h3>
 
   <div class="markdown level1 summary"></div>

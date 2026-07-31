@@ -6,7 +6,7 @@
       <meta name="viewport" content="width=device-width, initial-scale=1.0">
       <meta name="title" content="Class BlockFlipAction | ACadSharp ">
       
-      
+      <meta name="description" content="Represents a BLOCKFLIPACTION object, used in AutoCAD to control a flip action in a dynamic block.">
       <link rel="icon" href="../favicon.ico">
       <link rel="stylesheet" href="../public/docfx.min.css">
       <link rel="stylesheet" href="../public/main.css">
@@ -89,7 +89,7 @@
 
 
   <h1 id="ACadSharp_Objects_Evaluations_BlockFlipAction" data-uid="ACadSharp.Objects.Evaluations.BlockFlipAction" class="text-break">
-Class BlockFlipAction  <a class="header-action link-secondary" title="View source" href="https://github.com/DomCR/ACadSharp/blob/master/src/ACadSharp/Objects/Evaluations/BlockFlipAction.cs/#L20"><i class="bi bi-code-slash"></i></a>
+Class BlockFlipAction  <a class="header-action link-secondary" title="View source" href="https://github.com/DomCR/ACadSharp/blob/master/src/ACadSharp/Objects/Evaluations/BlockFlipAction.cs/#L13"><i class="bi bi-code-slash"></i></a>
   </h1>
 
   <div class="facts text-secondary">
@@ -97,13 +97,15 @@ Class BlockFlipAction  <a class="header-action link-secondary" title="View sourc
   <dl><dt>Assembly</dt><dd>ACadSharp.dll</dd></dl>
   </div>
 
-  <div class="markdown summary"></div>
+  <div class="markdown summary"><p>Represents a BLOCKFLIPACTION object, used in AutoCAD to control a
+flip action in a dynamic block.</p>
+</div>
   <div class="markdown conceptual"></div>
 
   <div class="codewrapper">
     <pre><code class="lang-csharp hljs">[DxfName(&quot;BLOCKFLIPACTION&quot;)]
 [DxfSubClass(&quot;AcDbBlockFlipAction&quot;)]
-public class BlockFlipAction : BlockAction, IHandledCadObject</code></pre>
+public class BlockFlipAction : BlockAction, IHandledCadObject, INamedCadObject</code></pre>
   </div>
 
 
@@ -114,6 +116,7 @@ public class BlockFlipAction : BlockAction, IHandledCadObject</code></pre>
     <dd>
       <div><a class="xref" href="https://learn.microsoft.com/dotnet/api/system.object">object</a></div>
       <div><a class="xref" href="ACadSharp.CadObject.html">CadObject</a></div>
+      <div><a class="xref" href="ACadSharp.Objects.NonGraphicalObject.html">NonGraphicalObject</a></div>
       <div><a class="xref" href="ACadSharp.Objects.Evaluations.EvaluationExpression.html">EvaluationExpression</a></div>
       <div><a class="xref" href="ACadSharp.Objects.Evaluations.BlockElement.html">BlockElement</a></div>
       <div><a class="xref" href="ACadSharp.Objects.Evaluations.BlockAction.html">BlockAction</a></div>
@@ -125,6 +128,7 @@ public class BlockFlipAction : BlockAction, IHandledCadObject</code></pre>
     <dt>Implements</dt>
     <dd>
       <div><a class="xref" href="ACadSharp.IHandledCadObject.html">IHandledCadObject</a></div>
+      <div><a class="xref" href="ACadSharp.INamedCadObject.html">INamedCadObject</a></div>
     </dd>
   </dl>
 
@@ -139,13 +143,16 @@ public class BlockFlipAction : BlockAction, IHandledCadObject</code></pre>
       <a class="xref" href="ACadSharp.Objects.Evaluations.BlockAction.html#ACadSharp_Objects_Evaluations_BlockAction_LabelPosition">BlockAction.LabelPosition</a>
     </div>
     <div>
-      <a class="xref" href="ACadSharp.Objects.Evaluations.BlockAction.html#ACadSharp_Objects_Evaluations_BlockAction_Value70">BlockAction.Value70</a>
+      <a class="xref" href="ACadSharp.Objects.Evaluations.BlockAction.html#ACadSharp_Objects_Evaluations_BlockAction_ParametersIds">BlockAction.ParametersIds</a>
     </div>
     <div>
       <a class="xref" href="ACadSharp.Objects.Evaluations.BlockElement.html#ACadSharp_Objects_Evaluations_BlockElement_ElementName">BlockElement.ElementName</a>
     </div>
     <div>
       <a class="xref" href="ACadSharp.Objects.Evaluations.BlockElement.html#ACadSharp_Objects_Evaluations_BlockElement_Value1071">BlockElement.Value1071</a>
+    </div>
+    <div>
+      <a class="xref" href="ACadSharp.Objects.Evaluations.EvaluationExpression.html#ACadSharp_Objects_Evaluations_EvaluationExpression_EvaluatedValue">EvaluationExpression.EvaluatedValue</a>
     </div>
     <div>
       <a class="xref" href="ACadSharp.Objects.Evaluations.EvaluationExpression.html#ACadSharp_Objects_Evaluations_EvaluationExpression_Id">EvaluationExpression.Id</a>
@@ -158,6 +165,18 @@ public class BlockFlipAction : BlockAction, IHandledCadObject</code></pre>
     </div>
     <div>
       <a class="xref" href="ACadSharp.Objects.Evaluations.EvaluationExpression.html#ACadSharp_Objects_Evaluations_EvaluationExpression_Value99">EvaluationExpression.Value99</a>
+    </div>
+    <div>
+      <a class="xref" href="ACadSharp.Objects.NonGraphicalObject.html#ACadSharp_Objects_NonGraphicalObject_OnNameChanged">NonGraphicalObject.OnNameChanged</a>
+    </div>
+    <div>
+      <a class="xref" href="ACadSharp.Objects.NonGraphicalObject.html#ACadSharp_Objects_NonGraphicalObject_Name">NonGraphicalObject.Name</a>
+    </div>
+    <div>
+      <a class="xref" href="ACadSharp.Objects.NonGraphicalObject.html#ACadSharp_Objects_NonGraphicalObject_Clone">NonGraphicalObject.Clone()</a>
+    </div>
+    <div>
+      <a class="xref" href="ACadSharp.Objects.NonGraphicalObject.html#ACadSharp_Objects_NonGraphicalObject_ToString">NonGraphicalObject.ToString()</a>
     </div>
     <div>
       <a class="xref" href="ACadSharp.CadObject.html#ACadSharp_CadObject_Document">CadObject.Document</a>
@@ -187,16 +206,10 @@ public class BlockFlipAction : BlockAction, IHandledCadObject</code></pre>
       <a class="xref" href="ACadSharp.CadObject.html#ACadSharp_CadObject_CleanReactors">CadObject.CleanReactors()</a>
     </div>
     <div>
-      <a class="xref" href="ACadSharp.CadObject.html#ACadSharp_CadObject_Clone">CadObject.Clone()</a>
-    </div>
-    <div>
       <a class="xref" href="ACadSharp.CadObject.html#ACadSharp_CadObject_CreateExtendedDictionary">CadObject.CreateExtendedDictionary()</a>
     </div>
     <div>
       <a class="xref" href="ACadSharp.CadObject.html#ACadSharp_CadObject_RemoveReactor_ACadSharp_CadObject_">CadObject.RemoveReactor(CadObject)</a>
-    </div>
-    <div>
-      <a class="xref" href="ACadSharp.CadObject.html#ACadSharp_CadObject_ToString">CadObject.ToString()</a>
     </div>
     <div>
       <a class="xref" href="ACadSharp.CadObject.html#ACadSharp_CadObject_updateCollection__1___0_ACadSharp_ICadCollection___0__">CadObject.updateCollection&lt;T&gt;(T, ICadCollection&lt;T&gt;)</a>
@@ -225,6 +238,9 @@ public class BlockFlipAction : BlockAction, IHandledCadObject</code></pre>
     <dt>Extension Methods</dt>
     <dd>
   <div>
+      <a class="xref" href="ACadSharp.Extensions.INamedCadObjectExtensions.html#ACadSharp_Extensions_INamedCadObjectExtensions_IsValidDxfName_ACadSharp_INamedCadObject_ACadSharp_ACadVersion_">INamedCadObjectExtensions.IsValidDxfName(INamedCadObject, ACadVersion)</a>
+  </div>
+  <div>
       <a class="xref" href="ACadSharp.Extensions.CadObjectExtensions.html#ACadSharp_Extensions_CadObjectExtensions_CloneTyped__1___0_">CadObjectExtensions.CloneTyped&lt;T&gt;(T)</a>
   </div>
   <div>
@@ -234,25 +250,28 @@ public class BlockFlipAction : BlockAction, IHandledCadObject</code></pre>
 
 
 
+  <h2 id="ACadSharp_Objects_Evaluations_BlockFlipAction_remarks">Remarks</h2>
+  <div class="markdown level0 remarks"><p>Object name <a class="xref" href="ACadSharp.DxfFileToken.html#ACadSharp_DxfFileToken_ObjectBlockFlipAction">ObjectBlockFlipAction</a> <br>
+Dxf class name <a class="xref" href="ACadSharp.DxfSubclassMarker.html#ACadSharp_DxfSubclassMarker_BlockFlipAction">BlockFlipAction</a></p>
+</div>
 
 
   <h2 class="section" id="properties">Properties
 </h2>
 
 
-  <a id="ACadSharp_Objects_Evaluations_BlockFlipAction_Caption301_" data-uid="ACadSharp.Objects.Evaluations.BlockFlipAction.Caption301*"></a>
+  <a id="ACadSharp_Objects_Evaluations_BlockFlipAction_FlipConnection_" data-uid="ACadSharp.Objects.Evaluations.BlockFlipAction.FlipConnection*"></a>
 
-  <h3 id="ACadSharp_Objects_Evaluations_BlockFlipAction_Caption301" data-uid="ACadSharp.Objects.Evaluations.BlockFlipAction.Caption301">
-  Caption301
-  <a class="header-action link-secondary" title="View source" href="https://github.com/DomCR/ACadSharp/blob/master/src/ACadSharp/Objects/Evaluations/BlockFlipAction.cs/#L24"><i class="bi bi-code-slash"></i></a>
+  <h3 id="ACadSharp_Objects_Evaluations_BlockFlipAction_FlipConnection" data-uid="ACadSharp.Objects.Evaluations.BlockFlipAction.FlipConnection">
+  FlipConnection
+  <a class="header-action link-secondary" title="View source" href="https://github.com/DomCR/ACadSharp/blob/master/src/ACadSharp/Objects/Evaluations/BlockFlipAction.cs/#L17"><i class="bi bi-code-slash"></i></a>
   </h3>
 
   <div class="markdown level1 summary"></div>
   <div class="markdown level1 conceptual"></div>
 
   <div class="codewrapper">
-    <pre><code class="lang-csharp hljs">[DxfCodeValue(new int[] { 301 })]
-public string Caption301 { get; set; }</code></pre>
+    <pre><code class="lang-csharp hljs">public EvalConnection FlipConnection { get; set; }</code></pre>
   </div>
 
 
@@ -261,103 +280,7 @@ public string Caption301 { get; set; }</code></pre>
 
   <h4 class="section">Property Value</h4>
   <dl class="parameters">
-    <dt><a class="xref" href="https://learn.microsoft.com/dotnet/api/system.string">string</a></dt>
-    <dd></dd>
-  </dl>
-
-
-
-
-
-
-
-
-  <a id="ACadSharp_Objects_Evaluations_BlockFlipAction_Caption302_" data-uid="ACadSharp.Objects.Evaluations.BlockFlipAction.Caption302*"></a>
-
-  <h3 id="ACadSharp_Objects_Evaluations_BlockFlipAction_Caption302" data-uid="ACadSharp.Objects.Evaluations.BlockFlipAction.Caption302">
-  Caption302
-  <a class="header-action link-secondary" title="View source" href="https://github.com/DomCR/ACadSharp/blob/master/src/ACadSharp/Objects/Evaluations/BlockFlipAction.cs/#L27"><i class="bi bi-code-slash"></i></a>
-  </h3>
-
-  <div class="markdown level1 summary"></div>
-  <div class="markdown level1 conceptual"></div>
-
-  <div class="codewrapper">
-    <pre><code class="lang-csharp hljs">[DxfCodeValue(new int[] { 302 })]
-public string Caption302 { get; set; }</code></pre>
-  </div>
-
-
-
-
-
-  <h4 class="section">Property Value</h4>
-  <dl class="parameters">
-    <dt><a class="xref" href="https://learn.microsoft.com/dotnet/api/system.string">string</a></dt>
-    <dd></dd>
-  </dl>
-
-
-
-
-
-
-
-
-  <a id="ACadSharp_Objects_Evaluations_BlockFlipAction_Caption303_" data-uid="ACadSharp.Objects.Evaluations.BlockFlipAction.Caption303*"></a>
-
-  <h3 id="ACadSharp_Objects_Evaluations_BlockFlipAction_Caption303" data-uid="ACadSharp.Objects.Evaluations.BlockFlipAction.Caption303">
-  Caption303
-  <a class="header-action link-secondary" title="View source" href="https://github.com/DomCR/ACadSharp/blob/master/src/ACadSharp/Objects/Evaluations/BlockFlipAction.cs/#L30"><i class="bi bi-code-slash"></i></a>
-  </h3>
-
-  <div class="markdown level1 summary"></div>
-  <div class="markdown level1 conceptual"></div>
-
-  <div class="codewrapper">
-    <pre><code class="lang-csharp hljs">[DxfCodeValue(new int[] { 303 })]
-public string Caption303 { get; set; }</code></pre>
-  </div>
-
-
-
-
-
-  <h4 class="section">Property Value</h4>
-  <dl class="parameters">
-    <dt><a class="xref" href="https://learn.microsoft.com/dotnet/api/system.string">string</a></dt>
-    <dd></dd>
-  </dl>
-
-
-
-
-
-
-
-
-  <a id="ACadSharp_Objects_Evaluations_BlockFlipAction_Caption304_" data-uid="ACadSharp.Objects.Evaluations.BlockFlipAction.Caption304*"></a>
-
-  <h3 id="ACadSharp_Objects_Evaluations_BlockFlipAction_Caption304" data-uid="ACadSharp.Objects.Evaluations.BlockFlipAction.Caption304">
-  Caption304
-  <a class="header-action link-secondary" title="View source" href="https://github.com/DomCR/ACadSharp/blob/master/src/ACadSharp/Objects/Evaluations/BlockFlipAction.cs/#L33"><i class="bi bi-code-slash"></i></a>
-  </h3>
-
-  <div class="markdown level1 summary"></div>
-  <div class="markdown level1 conceptual"></div>
-
-  <div class="codewrapper">
-    <pre><code class="lang-csharp hljs">[DxfCodeValue(new int[] { 304 })]
-public string Caption304 { get; set; }</code></pre>
-  </div>
-
-
-
-
-
-  <h4 class="section">Property Value</h4>
-  <dl class="parameters">
-    <dt><a class="xref" href="https://learn.microsoft.com/dotnet/api/system.string">string</a></dt>
+    <dt><a class="xref" href="ACadSharp.Objects.Evaluations.EvalConnection.html">EvalConnection</a></dt>
     <dd></dd>
   </dl>
 
@@ -372,7 +295,7 @@ public string Caption304 { get; set; }</code></pre>
 
   <h3 id="ACadSharp_Objects_Evaluations_BlockFlipAction_ObjectName" data-uid="ACadSharp.Objects.Evaluations.BlockFlipAction.ObjectName">
   ObjectName
-  <a class="header-action link-secondary" title="View source" href="https://github.com/DomCR/ACadSharp/blob/master/src/ACadSharp/Objects/Evaluations/BlockFlipAction.cs/#L37"><i class="bi bi-code-slash"></i></a>
+  <a class="header-action link-secondary" title="View source" href="https://github.com/DomCR/ACadSharp/blob/master/src/ACadSharp/Objects/Evaluations/BlockFlipAction.cs/#L26"><i class="bi bi-code-slash"></i></a>
   </h3>
 
   <div class="markdown level1 summary"><p>The CAD class name of an object.</p>
@@ -404,7 +327,7 @@ public string Caption304 { get; set; }</code></pre>
 
   <h3 id="ACadSharp_Objects_Evaluations_BlockFlipAction_SubclassMarker" data-uid="ACadSharp.Objects.Evaluations.BlockFlipAction.SubclassMarker">
   SubclassMarker
-  <a class="header-action link-secondary" title="View source" href="https://github.com/DomCR/ACadSharp/blob/master/src/ACadSharp/Objects/Evaluations/BlockFlipAction.cs/#L40"><i class="bi bi-code-slash"></i></a>
+  <a class="header-action link-secondary" title="View source" href="https://github.com/DomCR/ACadSharp/blob/master/src/ACadSharp/Objects/Evaluations/BlockFlipAction.cs/#L29"><i class="bi bi-code-slash"></i></a>
   </h3>
 
   <div class="markdown level1 summary"><p>Object Subclass marker.</p>
@@ -432,19 +355,18 @@ public string Caption304 { get; set; }</code></pre>
 
 
 
-  <a id="ACadSharp_Objects_Evaluations_BlockFlipAction_Value92_" data-uid="ACadSharp.Objects.Evaluations.BlockFlipAction.Value92*"></a>
+  <a id="ACadSharp_Objects_Evaluations_BlockFlipAction_UpdatedBaseConnection_" data-uid="ACadSharp.Objects.Evaluations.BlockFlipAction.UpdatedBaseConnection*"></a>
 
-  <h3 id="ACadSharp_Objects_Evaluations_BlockFlipAction_Value92" data-uid="ACadSharp.Objects.Evaluations.BlockFlipAction.Value92">
-  Value92
-  <a class="header-action link-secondary" title="View source" href="https://github.com/DomCR/ACadSharp/blob/master/src/ACadSharp/Objects/Evaluations/BlockFlipAction.cs/#L42"><i class="bi bi-code-slash"></i></a>
+  <h3 id="ACadSharp_Objects_Evaluations_BlockFlipAction_UpdatedBaseConnection" data-uid="ACadSharp.Objects.Evaluations.BlockFlipAction.UpdatedBaseConnection">
+  UpdatedBaseConnection
+  <a class="header-action link-secondary" title="View source" href="https://github.com/DomCR/ACadSharp/blob/master/src/ACadSharp/Objects/Evaluations/BlockFlipAction.cs/#L21"><i class="bi bi-code-slash"></i></a>
   </h3>
 
   <div class="markdown level1 summary"></div>
   <div class="markdown level1 conceptual"></div>
 
   <div class="codewrapper">
-    <pre><code class="lang-csharp hljs">[DxfCodeValue(new int[] { 92 })]
-public int Value92 { get; set; }</code></pre>
+    <pre><code class="lang-csharp hljs">public EvalConnection UpdatedBaseConnection { get; set; }</code></pre>
   </div>
 
 
@@ -453,7 +375,7 @@ public int Value92 { get; set; }</code></pre>
 
   <h4 class="section">Property Value</h4>
   <dl class="parameters">
-    <dt><a class="xref" href="https://learn.microsoft.com/dotnet/api/system.int32">int</a></dt>
+    <dt><a class="xref" href="ACadSharp.Objects.Evaluations.EvalConnection.html">EvalConnection</a></dt>
     <dd></dd>
   </dl>
 
@@ -464,19 +386,18 @@ public int Value92 { get; set; }</code></pre>
 
 
 
-  <a id="ACadSharp_Objects_Evaluations_BlockFlipAction_Value93_" data-uid="ACadSharp.Objects.Evaluations.BlockFlipAction.Value93*"></a>
+  <a id="ACadSharp_Objects_Evaluations_BlockFlipAction_UpdatedEndConnection_" data-uid="ACadSharp.Objects.Evaluations.BlockFlipAction.UpdatedEndConnection*"></a>
 
-  <h3 id="ACadSharp_Objects_Evaluations_BlockFlipAction_Value93" data-uid="ACadSharp.Objects.Evaluations.BlockFlipAction.Value93">
-  Value93
-  <a class="header-action link-secondary" title="View source" href="https://github.com/DomCR/ACadSharp/blob/master/src/ACadSharp/Objects/Evaluations/BlockFlipAction.cs/#L45"><i class="bi bi-code-slash"></i></a>
+  <h3 id="ACadSharp_Objects_Evaluations_BlockFlipAction_UpdatedEndConnection" data-uid="ACadSharp.Objects.Evaluations.BlockFlipAction.UpdatedEndConnection">
+  UpdatedEndConnection
+  <a class="header-action link-secondary" title="View source" href="https://github.com/DomCR/ACadSharp/blob/master/src/ACadSharp/Objects/Evaluations/BlockFlipAction.cs/#L23"><i class="bi bi-code-slash"></i></a>
   </h3>
 
   <div class="markdown level1 summary"></div>
   <div class="markdown level1 conceptual"></div>
 
   <div class="codewrapper">
-    <pre><code class="lang-csharp hljs">[DxfCodeValue(new int[] { 93 })]
-public int Value93 { get; set; }</code></pre>
+    <pre><code class="lang-csharp hljs">public EvalConnection UpdatedEndConnection { get; set; }</code></pre>
   </div>
 
 
@@ -485,7 +406,7 @@ public int Value93 { get; set; }</code></pre>
 
   <h4 class="section">Property Value</h4>
   <dl class="parameters">
-    <dt><a class="xref" href="https://learn.microsoft.com/dotnet/api/system.int32">int</a></dt>
+    <dt><a class="xref" href="ACadSharp.Objects.Evaluations.EvalConnection.html">EvalConnection</a></dt>
     <dd></dd>
   </dl>
 
@@ -496,19 +417,18 @@ public int Value93 { get; set; }</code></pre>
 
 
 
-  <a id="ACadSharp_Objects_Evaluations_BlockFlipAction_Value94_" data-uid="ACadSharp.Objects.Evaluations.BlockFlipAction.Value94*"></a>
+  <a id="ACadSharp_Objects_Evaluations_BlockFlipAction_UpdatedFlipConnection_" data-uid="ACadSharp.Objects.Evaluations.BlockFlipAction.UpdatedFlipConnection*"></a>
 
-  <h3 id="ACadSharp_Objects_Evaluations_BlockFlipAction_Value94" data-uid="ACadSharp.Objects.Evaluations.BlockFlipAction.Value94">
-  Value94
-  <a class="header-action link-secondary" title="View source" href="https://github.com/DomCR/ACadSharp/blob/master/src/ACadSharp/Objects/Evaluations/BlockFlipAction.cs/#L48"><i class="bi bi-code-slash"></i></a>
+  <h3 id="ACadSharp_Objects_Evaluations_BlockFlipAction_UpdatedFlipConnection" data-uid="ACadSharp.Objects.Evaluations.BlockFlipAction.UpdatedFlipConnection">
+  UpdatedFlipConnection
+  <a class="header-action link-secondary" title="View source" href="https://github.com/DomCR/ACadSharp/blob/master/src/ACadSharp/Objects/Evaluations/BlockFlipAction.cs/#L19"><i class="bi bi-code-slash"></i></a>
   </h3>
 
   <div class="markdown level1 summary"></div>
   <div class="markdown level1 conceptual"></div>
 
   <div class="codewrapper">
-    <pre><code class="lang-csharp hljs">[DxfCodeValue(new int[] { 94 })]
-public int Value94 { get; set; }</code></pre>
+    <pre><code class="lang-csharp hljs">public EvalConnection UpdatedFlipConnection { get; set; }</code></pre>
   </div>
 
 
@@ -517,39 +437,7 @@ public int Value94 { get; set; }</code></pre>
 
   <h4 class="section">Property Value</h4>
   <dl class="parameters">
-    <dt><a class="xref" href="https://learn.microsoft.com/dotnet/api/system.int32">int</a></dt>
-    <dd></dd>
-  </dl>
-
-
-
-
-
-
-
-
-  <a id="ACadSharp_Objects_Evaluations_BlockFlipAction_Value95_" data-uid="ACadSharp.Objects.Evaluations.BlockFlipAction.Value95*"></a>
-
-  <h3 id="ACadSharp_Objects_Evaluations_BlockFlipAction_Value95" data-uid="ACadSharp.Objects.Evaluations.BlockFlipAction.Value95">
-  Value95
-  <a class="header-action link-secondary" title="View source" href="https://github.com/DomCR/ACadSharp/blob/master/src/ACadSharp/Objects/Evaluations/BlockFlipAction.cs/#L51"><i class="bi bi-code-slash"></i></a>
-  </h3>
-
-  <div class="markdown level1 summary"></div>
-  <div class="markdown level1 conceptual"></div>
-
-  <div class="codewrapper">
-    <pre><code class="lang-csharp hljs">[DxfCodeValue(new int[] { 95 })]
-public int Value95 { get; set; }</code></pre>
-  </div>
-
-
-
-
-
-  <h4 class="section">Property Value</h4>
-  <dl class="parameters">
-    <dt><a class="xref" href="https://learn.microsoft.com/dotnet/api/system.int32">int</a></dt>
+    <dt><a class="xref" href="ACadSharp.Objects.Evaluations.EvalConnection.html">EvalConnection</a></dt>
     <dd></dd>
   </dl>
 
@@ -564,7 +452,7 @@ public int Value95 { get; set; }</code></pre>
 </article>
 
         <div class="contribution d-print-none">
-          <a href="https://github.com/DomCR/ACadSharp/blob/master/src/ACadSharp/Objects/Evaluations/BlockFlipAction.cs/#L20" class="edit-link">Edit this page</a>
+          <a href="https://github.com/DomCR/ACadSharp/blob/master/src/ACadSharp/Objects/Evaluations/BlockFlipAction.cs/#L13" class="edit-link">Edit this page</a>
         </div>
 
 

@@ -103,7 +103,7 @@ Class Block1PtParameter  <a class="header-action link-secondary" title="View sou
 
   <div class="codewrapper">
     <pre><code class="lang-csharp hljs">[DxfSubClass(&quot;AcDbBlock1PtParameter&quot;)]
-public abstract class Block1PtParameter : BlockParameter, IHandledCadObject</code></pre>
+public abstract class Block1PtParameter : BlockParameter, IHandledCadObject, INamedCadObject</code></pre>
   </div>
 
 
@@ -114,6 +114,7 @@ public abstract class Block1PtParameter : BlockParameter, IHandledCadObject</cod
     <dd>
       <div><a class="xref" href="https://learn.microsoft.com/dotnet/api/system.object">object</a></div>
       <div><a class="xref" href="ACadSharp.CadObject.html">CadObject</a></div>
+      <div><a class="xref" href="ACadSharp.Objects.NonGraphicalObject.html">NonGraphicalObject</a></div>
       <div><a class="xref" href="ACadSharp.Objects.Evaluations.EvaluationExpression.html">EvaluationExpression</a></div>
       <div><a class="xref" href="ACadSharp.Objects.Evaluations.BlockElement.html">BlockElement</a></div>
       <div><a class="xref" href="ACadSharp.Objects.Evaluations.BlockParameter.html">BlockParameter</a></div>
@@ -125,6 +126,7 @@ public abstract class Block1PtParameter : BlockParameter, IHandledCadObject</cod
     <dt>Implements</dt>
     <dd>
       <div><a class="xref" href="ACadSharp.IHandledCadObject.html">IHandledCadObject</a></div>
+      <div><a class="xref" href="ACadSharp.INamedCadObject.html">INamedCadObject</a></div>
     </dd>
   </dl>
 
@@ -154,6 +156,9 @@ public abstract class Block1PtParameter : BlockParameter, IHandledCadObject</cod
       <a class="xref" href="ACadSharp.Objects.Evaluations.BlockElement.html#ACadSharp_Objects_Evaluations_BlockElement_Value1071">BlockElement.Value1071</a>
     </div>
     <div>
+      <a class="xref" href="ACadSharp.Objects.Evaluations.EvaluationExpression.html#ACadSharp_Objects_Evaluations_EvaluationExpression_EvaluatedValue">EvaluationExpression.EvaluatedValue</a>
+    </div>
+    <div>
       <a class="xref" href="ACadSharp.Objects.Evaluations.EvaluationExpression.html#ACadSharp_Objects_Evaluations_EvaluationExpression_Id">EvaluationExpression.Id</a>
     </div>
     <div>
@@ -164,6 +169,18 @@ public abstract class Block1PtParameter : BlockParameter, IHandledCadObject</cod
     </div>
     <div>
       <a class="xref" href="ACadSharp.Objects.Evaluations.EvaluationExpression.html#ACadSharp_Objects_Evaluations_EvaluationExpression_Value99">EvaluationExpression.Value99</a>
+    </div>
+    <div>
+      <a class="xref" href="ACadSharp.Objects.NonGraphicalObject.html#ACadSharp_Objects_NonGraphicalObject_OnNameChanged">NonGraphicalObject.OnNameChanged</a>
+    </div>
+    <div>
+      <a class="xref" href="ACadSharp.Objects.NonGraphicalObject.html#ACadSharp_Objects_NonGraphicalObject_Name">NonGraphicalObject.Name</a>
+    </div>
+    <div>
+      <a class="xref" href="ACadSharp.Objects.NonGraphicalObject.html#ACadSharp_Objects_NonGraphicalObject_Clone">NonGraphicalObject.Clone()</a>
+    </div>
+    <div>
+      <a class="xref" href="ACadSharp.Objects.NonGraphicalObject.html#ACadSharp_Objects_NonGraphicalObject_ToString">NonGraphicalObject.ToString()</a>
     </div>
     <div>
       <a class="xref" href="ACadSharp.CadObject.html#ACadSharp_CadObject_Document">CadObject.Document</a>
@@ -196,16 +213,10 @@ public abstract class Block1PtParameter : BlockParameter, IHandledCadObject</cod
       <a class="xref" href="ACadSharp.CadObject.html#ACadSharp_CadObject_CleanReactors">CadObject.CleanReactors()</a>
     </div>
     <div>
-      <a class="xref" href="ACadSharp.CadObject.html#ACadSharp_CadObject_Clone">CadObject.Clone()</a>
-    </div>
-    <div>
       <a class="xref" href="ACadSharp.CadObject.html#ACadSharp_CadObject_CreateExtendedDictionary">CadObject.CreateExtendedDictionary()</a>
     </div>
     <div>
       <a class="xref" href="ACadSharp.CadObject.html#ACadSharp_CadObject_RemoveReactor_ACadSharp_CadObject_">CadObject.RemoveReactor(CadObject)</a>
-    </div>
-    <div>
-      <a class="xref" href="ACadSharp.CadObject.html#ACadSharp_CadObject_ToString">CadObject.ToString()</a>
     </div>
     <div>
       <a class="xref" href="ACadSharp.CadObject.html#ACadSharp_CadObject_updateCollection__1___0_ACadSharp_ICadCollection___0__">CadObject.updateCollection&lt;T&gt;(T, ICadCollection&lt;T&gt;)</a>
@@ -233,6 +244,9 @@ public abstract class Block1PtParameter : BlockParameter, IHandledCadObject</cod
   <dl class="typelist extensionMethods">
     <dt>Extension Methods</dt>
     <dd>
+  <div>
+      <a class="xref" href="ACadSharp.Extensions.INamedCadObjectExtensions.html#ACadSharp_Extensions_INamedCadObjectExtensions_IsValidDxfName_ACadSharp_INamedCadObject_ACadSharp_ACadVersion_">INamedCadObjectExtensions.IsValidDxfName(INamedCadObject, ACadVersion)</a>
+  </div>
   <div>
       <a class="xref" href="ACadSharp.Extensions.CadObjectExtensions.html#ACadSharp_Extensions_CadObjectExtensions_CloneTyped__1___0_">CadObjectExtensions.CloneTyped&lt;T&gt;(T)</a>
   </div>

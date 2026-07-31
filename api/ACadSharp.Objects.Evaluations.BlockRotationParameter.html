@@ -104,7 +104,7 @@ Class BlockRotationParameter  <a class="header-action link-secondary" title="Vie
   <div class="codewrapper">
     <pre><code class="lang-csharp hljs">[DxfName(&quot;BLOCKROTATIONPARAMETER&quot;)]
 [DxfSubClass(&quot;AcDbBlockRotationParameter&quot;)]
-public class BlockRotationParameter : Block2PtParameter, IHandledCadObject</code></pre>
+public class BlockRotationParameter : Block2PtParameter, IHandledCadObject, INamedCadObject</code></pre>
   </div>
 
 
@@ -115,6 +115,7 @@ public class BlockRotationParameter : Block2PtParameter, IHandledCadObject</code
     <dd>
       <div><a class="xref" href="https://learn.microsoft.com/dotnet/api/system.object">object</a></div>
       <div><a class="xref" href="ACadSharp.CadObject.html">CadObject</a></div>
+      <div><a class="xref" href="ACadSharp.Objects.NonGraphicalObject.html">NonGraphicalObject</a></div>
       <div><a class="xref" href="ACadSharp.Objects.Evaluations.EvaluationExpression.html">EvaluationExpression</a></div>
       <div><a class="xref" href="ACadSharp.Objects.Evaluations.BlockElement.html">BlockElement</a></div>
       <div><a class="xref" href="ACadSharp.Objects.Evaluations.BlockParameter.html">BlockParameter</a></div>
@@ -127,6 +128,7 @@ public class BlockRotationParameter : Block2PtParameter, IHandledCadObject</code
     <dt>Implements</dt>
     <dd>
       <div><a class="xref" href="ACadSharp.IHandledCadObject.html">IHandledCadObject</a></div>
+      <div><a class="xref" href="ACadSharp.INamedCadObject.html">INamedCadObject</a></div>
     </dd>
   </dl>
 
@@ -171,6 +173,9 @@ public class BlockRotationParameter : Block2PtParameter, IHandledCadObject</code
       <a class="xref" href="ACadSharp.Objects.Evaluations.BlockElement.html#ACadSharp_Objects_Evaluations_BlockElement_Value1071">BlockElement.Value1071</a>
     </div>
     <div>
+      <a class="xref" href="ACadSharp.Objects.Evaluations.EvaluationExpression.html#ACadSharp_Objects_Evaluations_EvaluationExpression_EvaluatedValue">EvaluationExpression.EvaluatedValue</a>
+    </div>
+    <div>
       <a class="xref" href="ACadSharp.Objects.Evaluations.EvaluationExpression.html#ACadSharp_Objects_Evaluations_EvaluationExpression_Id">EvaluationExpression.Id</a>
     </div>
     <div>
@@ -181,6 +186,18 @@ public class BlockRotationParameter : Block2PtParameter, IHandledCadObject</code
     </div>
     <div>
       <a class="xref" href="ACadSharp.Objects.Evaluations.EvaluationExpression.html#ACadSharp_Objects_Evaluations_EvaluationExpression_Value99">EvaluationExpression.Value99</a>
+    </div>
+    <div>
+      <a class="xref" href="ACadSharp.Objects.NonGraphicalObject.html#ACadSharp_Objects_NonGraphicalObject_OnNameChanged">NonGraphicalObject.OnNameChanged</a>
+    </div>
+    <div>
+      <a class="xref" href="ACadSharp.Objects.NonGraphicalObject.html#ACadSharp_Objects_NonGraphicalObject_Name">NonGraphicalObject.Name</a>
+    </div>
+    <div>
+      <a class="xref" href="ACadSharp.Objects.NonGraphicalObject.html#ACadSharp_Objects_NonGraphicalObject_Clone">NonGraphicalObject.Clone()</a>
+    </div>
+    <div>
+      <a class="xref" href="ACadSharp.Objects.NonGraphicalObject.html#ACadSharp_Objects_NonGraphicalObject_ToString">NonGraphicalObject.ToString()</a>
     </div>
     <div>
       <a class="xref" href="ACadSharp.CadObject.html#ACadSharp_CadObject_Document">CadObject.Document</a>
@@ -210,16 +227,10 @@ public class BlockRotationParameter : Block2PtParameter, IHandledCadObject</code
       <a class="xref" href="ACadSharp.CadObject.html#ACadSharp_CadObject_CleanReactors">CadObject.CleanReactors()</a>
     </div>
     <div>
-      <a class="xref" href="ACadSharp.CadObject.html#ACadSharp_CadObject_Clone">CadObject.Clone()</a>
-    </div>
-    <div>
       <a class="xref" href="ACadSharp.CadObject.html#ACadSharp_CadObject_CreateExtendedDictionary">CadObject.CreateExtendedDictionary()</a>
     </div>
     <div>
       <a class="xref" href="ACadSharp.CadObject.html#ACadSharp_CadObject_RemoveReactor_ACadSharp_CadObject_">CadObject.RemoveReactor(CadObject)</a>
-    </div>
-    <div>
-      <a class="xref" href="ACadSharp.CadObject.html#ACadSharp_CadObject_ToString">CadObject.ToString()</a>
     </div>
     <div>
       <a class="xref" href="ACadSharp.CadObject.html#ACadSharp_CadObject_updateCollection__1___0_ACadSharp_ICadCollection___0__">CadObject.updateCollection&lt;T&gt;(T, ICadCollection&lt;T&gt;)</a>
@@ -247,6 +258,9 @@ public class BlockRotationParameter : Block2PtParameter, IHandledCadObject</code
   <dl class="typelist extensionMethods">
     <dt>Extension Methods</dt>
     <dd>
+  <div>
+      <a class="xref" href="ACadSharp.Extensions.INamedCadObjectExtensions.html#ACadSharp_Extensions_INamedCadObjectExtensions_IsValidDxfName_ACadSharp_INamedCadObject_ACadSharp_ACadVersion_">INamedCadObjectExtensions.IsValidDxfName(INamedCadObject, ACadVersion)</a>
+  </div>
   <div>
       <a class="xref" href="ACadSharp.Extensions.CadObjectExtensions.html#ACadSharp_Extensions_CadObjectExtensions_CloneTyped__1___0_">CadObjectExtensions.CloneTyped&lt;T&gt;(T)</a>
   </div>
@@ -299,10 +313,10 @@ public string Description { get; set; }</code></pre>
 
 
 
-  <a id="ACadSharp_Objects_Evaluations_BlockRotationParameter_Name_" data-uid="ACadSharp.Objects.Evaluations.BlockRotationParameter.Name*"></a>
+  <a id="ACadSharp_Objects_Evaluations_BlockRotationParameter_Label_" data-uid="ACadSharp.Objects.Evaluations.BlockRotationParameter.Label*"></a>
 
-  <h3 id="ACadSharp_Objects_Evaluations_BlockRotationParameter_Name" data-uid="ACadSharp.Objects.Evaluations.BlockRotationParameter.Name">
-  Name
+  <h3 id="ACadSharp_Objects_Evaluations_BlockRotationParameter_Label" data-uid="ACadSharp.Objects.Evaluations.BlockRotationParameter.Label">
+  Label
   <a class="header-action link-secondary" title="View source" href="https://github.com/DomCR/ACadSharp/blob/master/src/ACadSharp/Objects/Evaluations/BlockRotationParameter.cs/#L20"><i class="bi bi-code-slash"></i></a>
   </h3>
 
@@ -311,7 +325,7 @@ public string Description { get; set; }</code></pre>
 
   <div class="codewrapper">
     <pre><code class="lang-csharp hljs">[DxfCodeValue(new int[] { 305 })]
-public string Name { get; set; }</code></pre>
+public string Label { get; set; }</code></pre>
   </div>
 
 
@@ -331,10 +345,10 @@ public string Name { get; set; }</code></pre>
 
 
 
-  <a id="ACadSharp_Objects_Evaluations_BlockRotationParameter_NameOffset_" data-uid="ACadSharp.Objects.Evaluations.BlockRotationParameter.NameOffset*"></a>
+  <a id="ACadSharp_Objects_Evaluations_BlockRotationParameter_LabelOffset_" data-uid="ACadSharp.Objects.Evaluations.BlockRotationParameter.LabelOffset*"></a>
 
-  <h3 id="ACadSharp_Objects_Evaluations_BlockRotationParameter_NameOffset" data-uid="ACadSharp.Objects.Evaluations.BlockRotationParameter.NameOffset">
-  NameOffset
+  <h3 id="ACadSharp_Objects_Evaluations_BlockRotationParameter_LabelOffset" data-uid="ACadSharp.Objects.Evaluations.BlockRotationParameter.LabelOffset">
+  LabelOffset
   <a class="header-action link-secondary" title="View source" href="https://github.com/DomCR/ACadSharp/blob/master/src/ACadSharp/Objects/Evaluations/BlockRotationParameter.cs/#L23"><i class="bi bi-code-slash"></i></a>
   </h3>
 
@@ -343,7 +357,7 @@ public string Name { get; set; }</code></pre>
 
   <div class="codewrapper">
     <pre><code class="lang-csharp hljs">[DxfCodeValue(new int[] { 140 })]
-public double NameOffset { get; set; }</code></pre>
+public double LabelOffset { get; set; }</code></pre>
   </div>
 
 
@@ -459,10 +473,10 @@ public XYZ Point { get; set; }</code></pre>
 
 
 
-  <a id="ACadSharp_Objects_Evaluations_BlockRotationParameter_Value141_" data-uid="ACadSharp.Objects.Evaluations.BlockRotationParameter.Value141*"></a>
+  <a id="ACadSharp_Objects_Evaluations_BlockRotationParameter_ValueSet_" data-uid="ACadSharp.Objects.Evaluations.BlockRotationParameter.ValueSet*"></a>
 
-  <h3 id="ACadSharp_Objects_Evaluations_BlockRotationParameter_Value141" data-uid="ACadSharp.Objects.Evaluations.BlockRotationParameter.Value141">
-  Value141
+  <h3 id="ACadSharp_Objects_Evaluations_BlockRotationParameter_ValueSet" data-uid="ACadSharp.Objects.Evaluations.BlockRotationParameter.ValueSet">
+  ValueSet
   <a class="header-action link-secondary" title="View source" href="https://github.com/DomCR/ACadSharp/blob/master/src/ACadSharp/Objects/Evaluations/BlockRotationParameter.cs/#L35"><i class="bi bi-code-slash"></i></a>
   </h3>
 
@@ -470,8 +484,7 @@ public XYZ Point { get; set; }</code></pre>
   <div class="markdown level1 conceptual"></div>
 
   <div class="codewrapper">
-    <pre><code class="lang-csharp hljs">[DxfCodeValue(new int[] { 141 })]
-public double Value141 { get; set; }</code></pre>
+    <pre><code class="lang-csharp hljs">public ParameterValueSet ValueSet { get; set; }</code></pre>
   </div>
 
 
@@ -480,167 +493,7 @@ public double Value141 { get; set; }</code></pre>
 
   <h4 class="section">Property Value</h4>
   <dl class="parameters">
-    <dt><a class="xref" href="https://learn.microsoft.com/dotnet/api/system.double">double</a></dt>
-    <dd></dd>
-  </dl>
-
-
-
-
-
-
-
-
-  <a id="ACadSharp_Objects_Evaluations_BlockRotationParameter_Value142_" data-uid="ACadSharp.Objects.Evaluations.BlockRotationParameter.Value142*"></a>
-
-  <h3 id="ACadSharp_Objects_Evaluations_BlockRotationParameter_Value142" data-uid="ACadSharp.Objects.Evaluations.BlockRotationParameter.Value142">
-  Value142
-  <a class="header-action link-secondary" title="View source" href="https://github.com/DomCR/ACadSharp/blob/master/src/ACadSharp/Objects/Evaluations/BlockRotationParameter.cs/#L38"><i class="bi bi-code-slash"></i></a>
-  </h3>
-
-  <div class="markdown level1 summary"></div>
-  <div class="markdown level1 conceptual"></div>
-
-  <div class="codewrapper">
-    <pre><code class="lang-csharp hljs">[DxfCodeValue(new int[] { 142 })]
-public double Value142 { get; set; }</code></pre>
-  </div>
-
-
-
-
-
-  <h4 class="section">Property Value</h4>
-  <dl class="parameters">
-    <dt><a class="xref" href="https://learn.microsoft.com/dotnet/api/system.double">double</a></dt>
-    <dd></dd>
-  </dl>
-
-
-
-
-
-
-
-
-  <a id="ACadSharp_Objects_Evaluations_BlockRotationParameter_Value143_" data-uid="ACadSharp.Objects.Evaluations.BlockRotationParameter.Value143*"></a>
-
-  <h3 id="ACadSharp_Objects_Evaluations_BlockRotationParameter_Value143" data-uid="ACadSharp.Objects.Evaluations.BlockRotationParameter.Value143">
-  Value143
-  <a class="header-action link-secondary" title="View source" href="https://github.com/DomCR/ACadSharp/blob/master/src/ACadSharp/Objects/Evaluations/BlockRotationParameter.cs/#L41"><i class="bi bi-code-slash"></i></a>
-  </h3>
-
-  <div class="markdown level1 summary"></div>
-  <div class="markdown level1 conceptual"></div>
-
-  <div class="codewrapper">
-    <pre><code class="lang-csharp hljs">[DxfCodeValue(new int[] { 143 })]
-public double Value143 { get; set; }</code></pre>
-  </div>
-
-
-
-
-
-  <h4 class="section">Property Value</h4>
-  <dl class="parameters">
-    <dt><a class="xref" href="https://learn.microsoft.com/dotnet/api/system.double">double</a></dt>
-    <dd></dd>
-  </dl>
-
-
-
-
-
-
-
-
-  <a id="ACadSharp_Objects_Evaluations_BlockRotationParameter_Value175_" data-uid="ACadSharp.Objects.Evaluations.BlockRotationParameter.Value175*"></a>
-
-  <h3 id="ACadSharp_Objects_Evaluations_BlockRotationParameter_Value175" data-uid="ACadSharp.Objects.Evaluations.BlockRotationParameter.Value175">
-  Value175
-  <a class="header-action link-secondary" title="View source" href="https://github.com/DomCR/ACadSharp/blob/master/src/ACadSharp/Objects/Evaluations/BlockRotationParameter.cs/#L44"><i class="bi bi-code-slash"></i></a>
-  </h3>
-
-  <div class="markdown level1 summary"></div>
-  <div class="markdown level1 conceptual"></div>
-
-  <div class="codewrapper">
-    <pre><code class="lang-csharp hljs">[DxfCodeValue(new int[] { 175 })]
-public int Value175 { get; set; }</code></pre>
-  </div>
-
-
-
-
-
-  <h4 class="section">Property Value</h4>
-  <dl class="parameters">
-    <dt><a class="xref" href="https://learn.microsoft.com/dotnet/api/system.int32">int</a></dt>
-    <dd></dd>
-  </dl>
-
-
-
-
-
-
-
-
-  <a id="ACadSharp_Objects_Evaluations_BlockRotationParameter_Value307_" data-uid="ACadSharp.Objects.Evaluations.BlockRotationParameter.Value307*"></a>
-
-  <h3 id="ACadSharp_Objects_Evaluations_BlockRotationParameter_Value307" data-uid="ACadSharp.Objects.Evaluations.BlockRotationParameter.Value307">
-  Value307
-  <a class="header-action link-secondary" title="View source" href="https://github.com/DomCR/ACadSharp/blob/master/src/ACadSharp/Objects/Evaluations/BlockRotationParameter.cs/#L47"><i class="bi bi-code-slash"></i></a>
-  </h3>
-
-  <div class="markdown level1 summary"></div>
-  <div class="markdown level1 conceptual"></div>
-
-  <div class="codewrapper">
-    <pre><code class="lang-csharp hljs">[DxfCodeValue(new int[] { 307 })]
-public string Value307 { get; set; }</code></pre>
-  </div>
-
-
-
-
-
-  <h4 class="section">Property Value</h4>
-  <dl class="parameters">
-    <dt><a class="xref" href="https://learn.microsoft.com/dotnet/api/system.string">string</a></dt>
-    <dd></dd>
-  </dl>
-
-
-
-
-
-
-
-
-  <a id="ACadSharp_Objects_Evaluations_BlockRotationParameter_Value96_" data-uid="ACadSharp.Objects.Evaluations.BlockRotationParameter.Value96*"></a>
-
-  <h3 id="ACadSharp_Objects_Evaluations_BlockRotationParameter_Value96" data-uid="ACadSharp.Objects.Evaluations.BlockRotationParameter.Value96">
-  Value96
-  <a class="header-action link-secondary" title="View source" href="https://github.com/DomCR/ACadSharp/blob/master/src/ACadSharp/Objects/Evaluations/BlockRotationParameter.cs/#L50"><i class="bi bi-code-slash"></i></a>
-  </h3>
-
-  <div class="markdown level1 summary"></div>
-  <div class="markdown level1 conceptual"></div>
-
-  <div class="codewrapper">
-    <pre><code class="lang-csharp hljs">[DxfCodeValue(new int[] { 96 })]
-public int Value96 { get; set; }</code></pre>
-  </div>
-
-
-
-
-
-  <h4 class="section">Property Value</h4>
-  <dl class="parameters">
-    <dt><a class="xref" href="https://learn.microsoft.com/dotnet/api/system.int32">int</a></dt>
+    <dt><a class="xref" href="ACadSharp.Objects.Evaluations.ParameterValueSet.html">ParameterValueSet</a></dt>
     <dd></dd>
   </dl>
 

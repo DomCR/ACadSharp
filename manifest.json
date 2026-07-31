@@ -4772,6 +4772,48 @@
     },
     {
       "type": "ManagedReference",
+      "source_relative_path": "api/ACadSharp.Objects.Evaluations.BlockAlignmentGrip.yml",
+      "output": {
+        ".html": {
+          "relative_path": "api/ACadSharp.Objects.Evaluations.BlockAlignmentGrip.html"
+        }
+      },
+      "version": "",
+      "Uid": null,
+      "IsMRef": true,
+      "Title": "ACadSharp.Objects.Evaluations.BlockAlignmentGrip",
+      "Summary": "<p sourcefile=\"api/ACadSharp.Objects.Evaluations.BlockAlignmentGrip.yml\" sourcestartlinenumber=\"1\">Represents a BLOCKALIGNMENTGRIP object.</p>\n"
+    },
+    {
+      "type": "ManagedReference",
+      "source_relative_path": "api/ACadSharp.Objects.Evaluations.BlockAlignmentParameter.yml",
+      "output": {
+        ".html": {
+          "relative_path": "api/ACadSharp.Objects.Evaluations.BlockAlignmentParameter.html"
+        }
+      },
+      "version": "",
+      "Uid": null,
+      "IsMRef": true,
+      "Title": "ACadSharp.Objects.Evaluations.BlockAlignmentParameter",
+      "Summary": "<p sourcefile=\"api/ACadSharp.Objects.Evaluations.BlockAlignmentParameter.yml\" sourcestartlinenumber=\"1\">Represents a BLOCKALIGNMENTPARAMETER object, used in AutoCAD to control the\nalignment in a dynamic block.</p>\n"
+    },
+    {
+      "type": "ManagedReference",
+      "source_relative_path": "api/ACadSharp.Objects.Evaluations.BlockArrayAction.yml",
+      "output": {
+        ".html": {
+          "relative_path": "api/ACadSharp.Objects.Evaluations.BlockArrayAction.html"
+        }
+      },
+      "version": "",
+      "Uid": null,
+      "IsMRef": true,
+      "Title": "ACadSharp.Objects.Evaluations.BlockArrayAction",
+      "Summary": "<p sourcefile=\"api/ACadSharp.Objects.Evaluations.BlockArrayAction.yml\" sourcestartlinenumber=\"1\">Represents a BLOCKARRAYACTION object, used in AutoCAD to control a\narray action in a dynamic block.</p>\n"
+    },
+    {
+      "type": "ManagedReference",
       "source_relative_path": "api/ACadSharp.Objects.Evaluations.BlockBasePointParameter.yml",
       "output": {
         ".html": {
@@ -4782,7 +4824,7 @@
       "Uid": null,
       "IsMRef": true,
       "Title": "ACadSharp.Objects.Evaluations.BlockBasePointParameter",
-      "Summary": null
+      "Summary": "<p sourcefile=\"api/ACadSharp.Objects.Evaluations.BlockBasePointParameter.yml\" sourcestartlinenumber=\"1\">Represents a BLOCKBASEPOINTPARAMETER object, used in AutoCAD to control a\nposition of a point in a dynamic block.</p>\n"
     },
     {
       "type": "ManagedReference",
@@ -4810,7 +4852,7 @@
       "Uid": null,
       "IsMRef": true,
       "Title": "ACadSharp.Objects.Evaluations.BlockFlipAction",
-      "Summary": null
+      "Summary": "<p sourcefile=\"api/ACadSharp.Objects.Evaluations.BlockFlipAction.yml\" sourcestartlinenumber=\"1\">Represents a BLOCKFLIPACTION object, used in AutoCAD to control a\nflip action in a dynamic block.</p>\n"
     },
     {
       "type": "ManagedReference",
@@ -4824,7 +4866,7 @@
       "Uid": null,
       "IsMRef": true,
       "Title": "ACadSharp.Objects.Evaluations.BlockFlipGrip",
-      "Summary": null
+      "Summary": "<p sourcefile=\"api/ACadSharp.Objects.Evaluations.BlockFlipGrip.yml\" sourcestartlinenumber=\"1\">Represents a BLOCKFLIPGRIP object.</p>\n"
     },
     {
       "type": "ManagedReference",
@@ -4838,7 +4880,7 @@
       "Uid": null,
       "IsMRef": true,
       "Title": "ACadSharp.Objects.Evaluations.BlockFlipParameter",
-      "Summary": null
+      "Summary": "<p sourcefile=\"api/ACadSharp.Objects.Evaluations.BlockFlipParameter.yml\" sourcestartlinenumber=\"1\">Represents a BLOCKFLIPPARAMETER object, used in AutoCAD to control a\nflip in a dynamic block.</p>\n"
     },
     {
       "type": "ManagedReference",
@@ -4856,17 +4898,31 @@
     },
     {
       "type": "ManagedReference",
-      "source_relative_path": "api/ACadSharp.Objects.Evaluations.BlockGripExpression.yml",
+      "source_relative_path": "api/ACadSharp.Objects.Evaluations.BlockGripLocationComponent.yml",
       "output": {
         ".html": {
-          "relative_path": "api/ACadSharp.Objects.Evaluations.BlockGripExpression.html"
+          "relative_path": "api/ACadSharp.Objects.Evaluations.BlockGripLocationComponent.html"
         }
       },
       "version": "",
       "Uid": null,
       "IsMRef": true,
-      "Title": "ACadSharp.Objects.Evaluations.BlockGripExpression",
-      "Summary": "<p sourcefile=\"api/ACadSharp.Objects.Evaluations.BlockGripExpression.yml\" sourcestartlinenumber=\"1\">Represents a BLOCKGRIPLOCATIONCOMPONENT object.</p>\n"
+      "Title": "ACadSharp.Objects.Evaluations.BlockGripLocationComponent",
+      "Summary": "<p sourcefile=\"api/ACadSharp.Objects.Evaluations.BlockGripLocationComponent.yml\" sourcestartlinenumber=\"1\">Represents a BLOCKGRIPLOCATIONCOMPONENT object.</p>\n"
+    },
+    {
+      "type": "ManagedReference",
+      "source_relative_path": "api/ACadSharp.Objects.Evaluations.BlockLinearGrip.yml",
+      "output": {
+        ".html": {
+          "relative_path": "api/ACadSharp.Objects.Evaluations.BlockLinearGrip.html"
+        }
+      },
+      "version": "",
+      "Uid": null,
+      "IsMRef": true,
+      "Title": "ACadSharp.Objects.Evaluations.BlockLinearGrip",
+      "Summary": "<p sourcefile=\"api/ACadSharp.Objects.Evaluations.BlockLinearGrip.yml\" sourcestartlinenumber=\"1\">Represents a BLOCKLINEARGRIP object.</p>\n"
     },
     {
       "type": "ManagedReference",
@@ -4881,6 +4937,48 @@
       "IsMRef": true,
       "Title": "ACadSharp.Objects.Evaluations.BlockLinearParameter",
       "Summary": "<p sourcefile=\"api/ACadSharp.Objects.Evaluations.BlockLinearParameter.yml\" sourcestartlinenumber=\"1\">Represents a BLOCKLINEARPARAMETER object, used in AutoCAD to control a\ndistance between two points in a dynamic block.</p>\n"
+    },
+    {
+      "type": "ManagedReference",
+      "source_relative_path": "api/ACadSharp.Objects.Evaluations.BlockLookupAction.ColumnData.yml",
+      "output": {
+        ".html": {
+          "relative_path": "api/ACadSharp.Objects.Evaluations.BlockLookupAction.ColumnData.html"
+        }
+      },
+      "version": "",
+      "Uid": null,
+      "IsMRef": true,
+      "Title": "ACadSharp.Objects.Evaluations.BlockLookupAction.ColumnData",
+      "Summary": null
+    },
+    {
+      "type": "ManagedReference",
+      "source_relative_path": "api/ACadSharp.Objects.Evaluations.BlockLookupAction.yml",
+      "output": {
+        ".html": {
+          "relative_path": "api/ACadSharp.Objects.Evaluations.BlockLookupAction.html"
+        }
+      },
+      "version": "",
+      "Uid": null,
+      "IsMRef": true,
+      "Title": "ACadSharp.Objects.Evaluations.BlockLookupAction",
+      "Summary": "<p sourcefile=\"api/ACadSharp.Objects.Evaluations.BlockLookupAction.yml\" sourcestartlinenumber=\"1\">Represents a BLOCKLOOKUPACTION object, used in AutoCAD to control a\nlookup action in a dynamic block.</p>\n"
+    },
+    {
+      "type": "ManagedReference",
+      "source_relative_path": "api/ACadSharp.Objects.Evaluations.BlockLookupGrip.yml",
+      "output": {
+        ".html": {
+          "relative_path": "api/ACadSharp.Objects.Evaluations.BlockLookupGrip.html"
+        }
+      },
+      "version": "",
+      "Uid": null,
+      "IsMRef": true,
+      "Title": "ACadSharp.Objects.Evaluations.BlockLookupGrip",
+      "Summary": "<p sourcefile=\"api/ACadSharp.Objects.Evaluations.BlockLookupGrip.yml\" sourcestartlinenumber=\"1\">Represents a BLOCKLOOKUPGRIP object.</p>\n"
     },
     {
       "type": "ManagedReference",
@@ -4940,6 +5038,48 @@
     },
     {
       "type": "ManagedReference",
+      "source_relative_path": "api/ACadSharp.Objects.Evaluations.BlockPolarGrip.yml",
+      "output": {
+        ".html": {
+          "relative_path": "api/ACadSharp.Objects.Evaluations.BlockPolarGrip.html"
+        }
+      },
+      "version": "",
+      "Uid": null,
+      "IsMRef": true,
+      "Title": "ACadSharp.Objects.Evaluations.BlockPolarGrip",
+      "Summary": "<p sourcefile=\"api/ACadSharp.Objects.Evaluations.BlockPolarGrip.yml\" sourcestartlinenumber=\"1\">Represents a BLOCKPOLARGRIP object.</p>\n"
+    },
+    {
+      "type": "ManagedReference",
+      "source_relative_path": "api/ACadSharp.Objects.Evaluations.BlockPolarParameter.yml",
+      "output": {
+        ".html": {
+          "relative_path": "api/ACadSharp.Objects.Evaluations.BlockPolarParameter.html"
+        }
+      },
+      "version": "",
+      "Uid": null,
+      "IsMRef": true,
+      "Title": "ACadSharp.Objects.Evaluations.BlockPolarParameter",
+      "Summary": "<p sourcefile=\"api/ACadSharp.Objects.Evaluations.BlockPolarParameter.yml\" sourcestartlinenumber=\"1\">Represents a BLOCKPOLARPARAMETER object, used in AutoCAD to control a\npolar parameter in a dynamic block.</p>\n"
+    },
+    {
+      "type": "ManagedReference",
+      "source_relative_path": "api/ACadSharp.Objects.Evaluations.BlockPolarStretchAction.yml",
+      "output": {
+        ".html": {
+          "relative_path": "api/ACadSharp.Objects.Evaluations.BlockPolarStretchAction.html"
+        }
+      },
+      "version": "",
+      "Uid": null,
+      "IsMRef": true,
+      "Title": "ACadSharp.Objects.Evaluations.BlockPolarStretchAction",
+      "Summary": "<p sourcefile=\"api/ACadSharp.Objects.Evaluations.BlockPolarStretchAction.yml\" sourcestartlinenumber=\"1\">Represents a BLOCKPOLARSTRETCHACTION object, used in AutoCAD to control a\npolar stretch action in a dynamic block.</p>\n"
+    },
+    {
+      "type": "ManagedReference",
       "source_relative_path": "api/ACadSharp.Objects.Evaluations.BlockRotationAction.yml",
       "output": {
         ".html": {
@@ -4979,6 +5119,34 @@
       "IsMRef": true,
       "Title": "ACadSharp.Objects.Evaluations.BlockRotationParameter",
       "Summary": "<p sourcefile=\"api/ACadSharp.Objects.Evaluations.BlockRotationParameter.yml\" sourcestartlinenumber=\"1\">Represents a BLOCKROTATIONPARAMETER object.</p>\n"
+    },
+    {
+      "type": "ManagedReference",
+      "source_relative_path": "api/ACadSharp.Objects.Evaluations.BlockScaleAction.yml",
+      "output": {
+        ".html": {
+          "relative_path": "api/ACadSharp.Objects.Evaluations.BlockScaleAction.html"
+        }
+      },
+      "version": "",
+      "Uid": null,
+      "IsMRef": true,
+      "Title": "ACadSharp.Objects.Evaluations.BlockScaleAction",
+      "Summary": null
+    },
+    {
+      "type": "ManagedReference",
+      "source_relative_path": "api/ACadSharp.Objects.Evaluations.BlockStretchAction.yml",
+      "output": {
+        ".html": {
+          "relative_path": "api/ACadSharp.Objects.Evaluations.BlockStretchAction.html"
+        }
+      },
+      "version": "",
+      "Uid": null,
+      "IsMRef": true,
+      "Title": "ACadSharp.Objects.Evaluations.BlockStretchAction",
+      "Summary": "<p sourcefile=\"api/ACadSharp.Objects.Evaluations.BlockStretchAction.yml\" sourcestartlinenumber=\"1\">Represents a BLOCKSTRETCHACTION object, used in AutoCAD to control a\nstretch action in a dynamic block.</p>\n"
     },
     {
       "type": "ManagedReference",
@@ -5035,6 +5203,34 @@
       "IsMRef": true,
       "Title": "ACadSharp.Objects.Evaluations.BlockXYGrip",
       "Summary": "<p sourcefile=\"api/ACadSharp.Objects.Evaluations.BlockXYGrip.yml\" sourcestartlinenumber=\"1\">Represents a BLOCKXYGRIP object.</p>\n"
+    },
+    {
+      "type": "ManagedReference",
+      "source_relative_path": "api/ACadSharp.Objects.Evaluations.BlockXYParameter.yml",
+      "output": {
+        ".html": {
+          "relative_path": "api/ACadSharp.Objects.Evaluations.BlockXYParameter.html"
+        }
+      },
+      "version": "",
+      "Uid": null,
+      "IsMRef": true,
+      "Title": "ACadSharp.Objects.Evaluations.BlockXYParameter",
+      "Summary": "<p sourcefile=\"api/ACadSharp.Objects.Evaluations.BlockXYParameter.yml\" sourcestartlinenumber=\"1\">Represents a BLOCKXYPARAMETER object, used in AutoCAD to control a\nx y in a dynamic block.</p>\n"
+    },
+    {
+      "type": "ManagedReference",
+      "source_relative_path": "api/ACadSharp.Objects.Evaluations.DxfValuePair.yml",
+      "output": {
+        ".html": {
+          "relative_path": "api/ACadSharp.Objects.Evaluations.DxfValuePair.html"
+        }
+      },
+      "version": "",
+      "Uid": null,
+      "IsMRef": true,
+      "Title": "ACadSharp.Objects.Evaluations.DxfValuePair",
+      "Summary": "<p sourcefile=\"api/ACadSharp.Objects.Evaluations.DxfValuePair.yml\" sourcestartlinenumber=\"1\">Represents a pair of values used in evaluation expressions, consisting of a code and its corresponding value.</p>\n"
     },
     {
       "type": "ManagedReference",
@@ -5108,6 +5304,20 @@
     },
     {
       "type": "ManagedReference",
+      "source_relative_path": "api/ACadSharp.Objects.Evaluations.EvaluationGraph.NodeFlags.yml",
+      "output": {
+        ".html": {
+          "relative_path": "api/ACadSharp.Objects.Evaluations.EvaluationGraph.NodeFlags.html"
+        }
+      },
+      "version": "",
+      "Uid": null,
+      "IsMRef": true,
+      "Title": "ACadSharp.Objects.Evaluations.EvaluationGraph.NodeFlags",
+      "Summary": null
+    },
+    {
+      "type": "ManagedReference",
       "source_relative_path": "api/ACadSharp.Objects.Evaluations.EvaluationGraph.yml",
       "output": {
         ".html": {
@@ -5160,6 +5370,48 @@
       "Uid": null,
       "IsMRef": true,
       "Title": "ACadSharp.Objects.Evaluations.ParameterValueSetType",
+      "Summary": null
+    },
+    {
+      "type": "ManagedReference",
+      "source_relative_path": "api/ACadSharp.Objects.Evaluations.StretchActionBase.yml",
+      "output": {
+        ".html": {
+          "relative_path": "api/ACadSharp.Objects.Evaluations.StretchActionBase.html"
+        }
+      },
+      "version": "",
+      "Uid": null,
+      "IsMRef": true,
+      "Title": "ACadSharp.Objects.Evaluations.StretchActionBase",
+      "Summary": null
+    },
+    {
+      "type": "ManagedReference",
+      "source_relative_path": "api/ACadSharp.Objects.Evaluations.StretchEntityBind.yml",
+      "output": {
+        ".html": {
+          "relative_path": "api/ACadSharp.Objects.Evaluations.StretchEntityBind.html"
+        }
+      },
+      "version": "",
+      "Uid": null,
+      "IsMRef": true,
+      "Title": "ACadSharp.Objects.Evaluations.StretchEntityBind",
+      "Summary": null
+    },
+    {
+      "type": "ManagedReference",
+      "source_relative_path": "api/ACadSharp.Objects.Evaluations.StretchNode.yml",
+      "output": {
+        ".html": {
+          "relative_path": "api/ACadSharp.Objects.Evaluations.StretchNode.html"
+        }
+      },
+      "version": "",
+      "Uid": null,
+      "IsMRef": true,
+      "Title": "ACadSharp.Objects.Evaluations.StretchNode",
       "Summary": null
     },
     {
@@ -6364,7 +6616,7 @@
       "Uid": null,
       "IsMRef": true,
       "Title": "ACadSharp.Objects.XRecord.Entry",
-      "Summary": "<p sourcefile=\"api/ACadSharp.Objects.XRecord.Entry.yml\" sourcestartlinenumber=\"1\">Represents a single data entry containing a group code, value, and associated owner within a <xref href=\"ACadSharp.Objects.XRecord\" data-throw-if-not-resolved=\"false\"></xref>.</p>\n"
+      "Summary": "<p sourcefile=\"api/ACadSharp.Objects.XRecord.Entry.yml\" sourcestartlinenumber=\"1\">Represents a single entry in an <xref href=\"ACadSharp.Objects.XRecord\" data-throw-if-not-resolved=\"false\"></xref> object, consisting of a group code and its associated value.</p>\n"
     },
     {
       "type": "ManagedReference",

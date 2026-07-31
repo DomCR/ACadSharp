@@ -6,7 +6,7 @@
       <meta name="viewport" content="width=device-width, initial-scale=1.0">
       <meta name="title" content="Class BlockBasePointParameter | ACadSharp ">
       
-      
+      <meta name="description" content="Represents a BLOCKBASEPOINTPARAMETER object, used in AutoCAD to control a position of a point in a dynamic block.">
       <link rel="icon" href="../favicon.ico">
       <link rel="stylesheet" href="../public/docfx.min.css">
       <link rel="stylesheet" href="../public/main.css">
@@ -89,7 +89,7 @@
 
 
   <h1 id="ACadSharp_Objects_Evaluations_BlockBasePointParameter" data-uid="ACadSharp.Objects.Evaluations.BlockBasePointParameter" class="text-break">
-Class BlockBasePointParameter  <a class="header-action link-secondary" title="View source" href="https://github.com/DomCR/ACadSharp/blob/master/src/ACadSharp/Objects/Evaluations/BlockBasePointParameter.cs/#L21"><i class="bi bi-code-slash"></i></a>
+Class BlockBasePointParameter  <a class="header-action link-secondary" title="View source" href="https://github.com/DomCR/ACadSharp/blob/master/src/ACadSharp/Objects/Evaluations/BlockBasePointParameter.cs/#L14"><i class="bi bi-code-slash"></i></a>
   </h1>
 
   <div class="facts text-secondary">
@@ -97,12 +97,15 @@ Class BlockBasePointParameter  <a class="header-action link-secondary" title="Vi
   <dl><dt>Assembly</dt><dd>ACadSharp.dll</dd></dl>
   </div>
 
-  <div class="markdown summary"></div>
+  <div class="markdown summary"><p>Represents a BLOCKBASEPOINTPARAMETER object, used in AutoCAD to control a
+position of a point in a dynamic block.</p>
+</div>
   <div class="markdown conceptual"></div>
 
   <div class="codewrapper">
-    <pre><code class="lang-csharp hljs">[DxfSubClass(&quot;AcDbBlockBasePointParameter&quot;)]
-public class BlockBasePointParameter : Block1PtParameter, IHandledCadObject</code></pre>
+    <pre><code class="lang-csharp hljs">[DxfName(&quot;BLOCKBASEPOINTPARAMETER&quot;)]
+[DxfSubClass(&quot;AcDbBlockBasepointParameter&quot;)]
+public class BlockBasePointParameter : Block1PtParameter, IHandledCadObject, INamedCadObject</code></pre>
   </div>
 
 
@@ -113,6 +116,7 @@ public class BlockBasePointParameter : Block1PtParameter, IHandledCadObject</cod
     <dd>
       <div><a class="xref" href="https://learn.microsoft.com/dotnet/api/system.object">object</a></div>
       <div><a class="xref" href="ACadSharp.CadObject.html">CadObject</a></div>
+      <div><a class="xref" href="ACadSharp.Objects.NonGraphicalObject.html">NonGraphicalObject</a></div>
       <div><a class="xref" href="ACadSharp.Objects.Evaluations.EvaluationExpression.html">EvaluationExpression</a></div>
       <div><a class="xref" href="ACadSharp.Objects.Evaluations.BlockElement.html">BlockElement</a></div>
       <div><a class="xref" href="ACadSharp.Objects.Evaluations.BlockParameter.html">BlockParameter</a></div>
@@ -125,6 +129,7 @@ public class BlockBasePointParameter : Block1PtParameter, IHandledCadObject</cod
     <dt>Implements</dt>
     <dd>
       <div><a class="xref" href="ACadSharp.IHandledCadObject.html">IHandledCadObject</a></div>
+      <div><a class="xref" href="ACadSharp.INamedCadObject.html">INamedCadObject</a></div>
     </dd>
   </dl>
 
@@ -157,6 +162,9 @@ public class BlockBasePointParameter : Block1PtParameter, IHandledCadObject</cod
       <a class="xref" href="ACadSharp.Objects.Evaluations.BlockElement.html#ACadSharp_Objects_Evaluations_BlockElement_Value1071">BlockElement.Value1071</a>
     </div>
     <div>
+      <a class="xref" href="ACadSharp.Objects.Evaluations.EvaluationExpression.html#ACadSharp_Objects_Evaluations_EvaluationExpression_EvaluatedValue">EvaluationExpression.EvaluatedValue</a>
+    </div>
+    <div>
       <a class="xref" href="ACadSharp.Objects.Evaluations.EvaluationExpression.html#ACadSharp_Objects_Evaluations_EvaluationExpression_Id">EvaluationExpression.Id</a>
     </div>
     <div>
@@ -167,6 +175,18 @@ public class BlockBasePointParameter : Block1PtParameter, IHandledCadObject</cod
     </div>
     <div>
       <a class="xref" href="ACadSharp.Objects.Evaluations.EvaluationExpression.html#ACadSharp_Objects_Evaluations_EvaluationExpression_Value99">EvaluationExpression.Value99</a>
+    </div>
+    <div>
+      <a class="xref" href="ACadSharp.Objects.NonGraphicalObject.html#ACadSharp_Objects_NonGraphicalObject_OnNameChanged">NonGraphicalObject.OnNameChanged</a>
+    </div>
+    <div>
+      <a class="xref" href="ACadSharp.Objects.NonGraphicalObject.html#ACadSharp_Objects_NonGraphicalObject_Name">NonGraphicalObject.Name</a>
+    </div>
+    <div>
+      <a class="xref" href="ACadSharp.Objects.NonGraphicalObject.html#ACadSharp_Objects_NonGraphicalObject_Clone">NonGraphicalObject.Clone()</a>
+    </div>
+    <div>
+      <a class="xref" href="ACadSharp.Objects.NonGraphicalObject.html#ACadSharp_Objects_NonGraphicalObject_ToString">NonGraphicalObject.ToString()</a>
     </div>
     <div>
       <a class="xref" href="ACadSharp.CadObject.html#ACadSharp_CadObject_Document">CadObject.Document</a>
@@ -196,16 +216,10 @@ public class BlockBasePointParameter : Block1PtParameter, IHandledCadObject</cod
       <a class="xref" href="ACadSharp.CadObject.html#ACadSharp_CadObject_CleanReactors">CadObject.CleanReactors()</a>
     </div>
     <div>
-      <a class="xref" href="ACadSharp.CadObject.html#ACadSharp_CadObject_Clone">CadObject.Clone()</a>
-    </div>
-    <div>
       <a class="xref" href="ACadSharp.CadObject.html#ACadSharp_CadObject_CreateExtendedDictionary">CadObject.CreateExtendedDictionary()</a>
     </div>
     <div>
       <a class="xref" href="ACadSharp.CadObject.html#ACadSharp_CadObject_RemoveReactor_ACadSharp_CadObject_">CadObject.RemoveReactor(CadObject)</a>
-    </div>
-    <div>
-      <a class="xref" href="ACadSharp.CadObject.html#ACadSharp_CadObject_ToString">CadObject.ToString()</a>
     </div>
     <div>
       <a class="xref" href="ACadSharp.CadObject.html#ACadSharp_CadObject_updateCollection__1___0_ACadSharp_ICadCollection___0__">CadObject.updateCollection&lt;T&gt;(T, ICadCollection&lt;T&gt;)</a>
@@ -234,6 +248,9 @@ public class BlockBasePointParameter : Block1PtParameter, IHandledCadObject</cod
     <dt>Extension Methods</dt>
     <dd>
   <div>
+      <a class="xref" href="ACadSharp.Extensions.INamedCadObjectExtensions.html#ACadSharp_Extensions_INamedCadObjectExtensions_IsValidDxfName_ACadSharp_INamedCadObject_ACadSharp_ACadVersion_">INamedCadObjectExtensions.IsValidDxfName(INamedCadObject, ACadVersion)</a>
+  </div>
+  <div>
       <a class="xref" href="ACadSharp.Extensions.CadObjectExtensions.html#ACadSharp_Extensions_CadObjectExtensions_CloneTyped__1___0_">CadObjectExtensions.CloneTyped&lt;T&gt;(T)</a>
   </div>
   <div>
@@ -243,6 +260,10 @@ public class BlockBasePointParameter : Block1PtParameter, IHandledCadObject</cod
 
 
 
+  <h2 id="ACadSharp_Objects_Evaluations_BlockBasePointParameter_remarks">Remarks</h2>
+  <div class="markdown level0 remarks"><p>Object name <a class="xref" href="ACadSharp.DxfFileToken.html#ACadSharp_DxfFileToken_ObjectBlockBasePointParameter">ObjectBlockBasePointParameter</a> <br>
+Dxf class name <a class="xref" href="ACadSharp.DxfSubclassMarker.html#ACadSharp_DxfSubclassMarker_BlockBasePointParameter">BlockBasePointParameter</a></p>
+</div>
 
 
   <h2 class="section" id="properties">Properties
@@ -253,7 +274,7 @@ public class BlockBasePointParameter : Block1PtParameter, IHandledCadObject</cod
 
   <h3 id="ACadSharp_Objects_Evaluations_BlockBasePointParameter_ObjectName" data-uid="ACadSharp.Objects.Evaluations.BlockBasePointParameter.ObjectName">
   ObjectName
-  <a class="header-action link-secondary" title="View source" href="https://github.com/DomCR/ACadSharp/blob/master/src/ACadSharp/Objects/Evaluations/BlockBasePointParameter.cs/#L25"><i class="bi bi-code-slash"></i></a>
+  <a class="header-action link-secondary" title="View source" href="https://github.com/DomCR/ACadSharp/blob/master/src/ACadSharp/Objects/Evaluations/BlockBasePointParameter.cs/#L19"><i class="bi bi-code-slash"></i></a>
   </h3>
 
   <div class="markdown level1 summary"><p>The CAD class name of an object.</p>
@@ -281,11 +302,11 @@ public class BlockBasePointParameter : Block1PtParameter, IHandledCadObject</cod
 
 
 
-  <a id="ACadSharp_Objects_Evaluations_BlockBasePointParameter_Point1010_" data-uid="ACadSharp.Objects.Evaluations.BlockBasePointParameter.Point1010*"></a>
+  <a id="ACadSharp_Objects_Evaluations_BlockBasePointParameter_Point1011_" data-uid="ACadSharp.Objects.Evaluations.BlockBasePointParameter.Point1011*"></a>
 
-  <h3 id="ACadSharp_Objects_Evaluations_BlockBasePointParameter_Point1010" data-uid="ACadSharp.Objects.Evaluations.BlockBasePointParameter.Point1010">
-  Point1010
-  <a class="header-action link-secondary" title="View source" href="https://github.com/DomCR/ACadSharp/blob/master/src/ACadSharp/Objects/Evaluations/BlockBasePointParameter.cs/#L31"><i class="bi bi-code-slash"></i></a>
+  <h3 id="ACadSharp_Objects_Evaluations_BlockBasePointParameter_Point1011" data-uid="ACadSharp.Objects.Evaluations.BlockBasePointParameter.Point1011">
+  Point1011
+  <a class="header-action link-secondary" title="View source" href="https://github.com/DomCR/ACadSharp/blob/master/src/ACadSharp/Objects/Evaluations/BlockBasePointParameter.cs/#L21"><i class="bi bi-code-slash"></i></a>
   </h3>
 
   <div class="markdown level1 summary"></div>
@@ -293,7 +314,7 @@ public class BlockBasePointParameter : Block1PtParameter, IHandledCadObject</cod
 
   <div class="codewrapper">
     <pre><code class="lang-csharp hljs">[DxfCodeValue(new int[] { 1011, 1021, 1031 })]
-public XYZ Point1010 { get; set; }</code></pre>
+public XYZ Point1011 { get; set; }</code></pre>
   </div>
 
 
@@ -317,7 +338,7 @@ public XYZ Point1010 { get; set; }</code></pre>
 
   <h3 id="ACadSharp_Objects_Evaluations_BlockBasePointParameter_Point1012" data-uid="ACadSharp.Objects.Evaluations.BlockBasePointParameter.Point1012">
   Point1012
-  <a class="header-action link-secondary" title="View source" href="https://github.com/DomCR/ACadSharp/blob/master/src/ACadSharp/Objects/Evaluations/BlockBasePointParameter.cs/#L35"><i class="bi bi-code-slash"></i></a>
+  <a class="header-action link-secondary" title="View source" href="https://github.com/DomCR/ACadSharp/blob/master/src/ACadSharp/Objects/Evaluations/BlockBasePointParameter.cs/#L24"><i class="bi bi-code-slash"></i></a>
   </h3>
 
   <div class="markdown level1 summary"></div>
@@ -381,7 +402,7 @@ public XYZ Point1012 { get; set; }</code></pre>
 </article>
 
         <div class="contribution d-print-none">
-          <a href="https://github.com/DomCR/ACadSharp/blob/master/src/ACadSharp/Objects/Evaluations/BlockBasePointParameter.cs/#L21" class="edit-link">Edit this page</a>
+          <a href="https://github.com/DomCR/ACadSharp/blob/master/src/ACadSharp/Objects/Evaluations/BlockBasePointParameter.cs/#L14" class="edit-link">Edit this page</a>
         </div>
 
 

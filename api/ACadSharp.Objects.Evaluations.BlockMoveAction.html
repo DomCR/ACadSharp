@@ -105,7 +105,7 @@ movement action in a dynamic block.</p>
   <div class="codewrapper">
     <pre><code class="lang-csharp hljs">[DxfName(&quot;BLOCKMOVEACTION&quot;)]
 [DxfSubClass(&quot;AcDbBlockMoveAction&quot;)]
-public class BlockMoveAction : BlockAction, IHandledCadObject</code></pre>
+public class BlockMoveAction : BlockAction, IHandledCadObject, INamedCadObject</code></pre>
   </div>
 
 
@@ -116,6 +116,7 @@ public class BlockMoveAction : BlockAction, IHandledCadObject</code></pre>
     <dd>
       <div><a class="xref" href="https://learn.microsoft.com/dotnet/api/system.object">object</a></div>
       <div><a class="xref" href="ACadSharp.CadObject.html">CadObject</a></div>
+      <div><a class="xref" href="ACadSharp.Objects.NonGraphicalObject.html">NonGraphicalObject</a></div>
       <div><a class="xref" href="ACadSharp.Objects.Evaluations.EvaluationExpression.html">EvaluationExpression</a></div>
       <div><a class="xref" href="ACadSharp.Objects.Evaluations.BlockElement.html">BlockElement</a></div>
       <div><a class="xref" href="ACadSharp.Objects.Evaluations.BlockAction.html">BlockAction</a></div>
@@ -127,6 +128,7 @@ public class BlockMoveAction : BlockAction, IHandledCadObject</code></pre>
     <dt>Implements</dt>
     <dd>
       <div><a class="xref" href="ACadSharp.IHandledCadObject.html">IHandledCadObject</a></div>
+      <div><a class="xref" href="ACadSharp.INamedCadObject.html">INamedCadObject</a></div>
     </dd>
   </dl>
 
@@ -141,13 +143,16 @@ public class BlockMoveAction : BlockAction, IHandledCadObject</code></pre>
       <a class="xref" href="ACadSharp.Objects.Evaluations.BlockAction.html#ACadSharp_Objects_Evaluations_BlockAction_LabelPosition">BlockAction.LabelPosition</a>
     </div>
     <div>
-      <a class="xref" href="ACadSharp.Objects.Evaluations.BlockAction.html#ACadSharp_Objects_Evaluations_BlockAction_Value70">BlockAction.Value70</a>
+      <a class="xref" href="ACadSharp.Objects.Evaluations.BlockAction.html#ACadSharp_Objects_Evaluations_BlockAction_ParametersIds">BlockAction.ParametersIds</a>
     </div>
     <div>
       <a class="xref" href="ACadSharp.Objects.Evaluations.BlockElement.html#ACadSharp_Objects_Evaluations_BlockElement_ElementName">BlockElement.ElementName</a>
     </div>
     <div>
       <a class="xref" href="ACadSharp.Objects.Evaluations.BlockElement.html#ACadSharp_Objects_Evaluations_BlockElement_Value1071">BlockElement.Value1071</a>
+    </div>
+    <div>
+      <a class="xref" href="ACadSharp.Objects.Evaluations.EvaluationExpression.html#ACadSharp_Objects_Evaluations_EvaluationExpression_EvaluatedValue">EvaluationExpression.EvaluatedValue</a>
     </div>
     <div>
       <a class="xref" href="ACadSharp.Objects.Evaluations.EvaluationExpression.html#ACadSharp_Objects_Evaluations_EvaluationExpression_Id">EvaluationExpression.Id</a>
@@ -160,6 +165,18 @@ public class BlockMoveAction : BlockAction, IHandledCadObject</code></pre>
     </div>
     <div>
       <a class="xref" href="ACadSharp.Objects.Evaluations.EvaluationExpression.html#ACadSharp_Objects_Evaluations_EvaluationExpression_Value99">EvaluationExpression.Value99</a>
+    </div>
+    <div>
+      <a class="xref" href="ACadSharp.Objects.NonGraphicalObject.html#ACadSharp_Objects_NonGraphicalObject_OnNameChanged">NonGraphicalObject.OnNameChanged</a>
+    </div>
+    <div>
+      <a class="xref" href="ACadSharp.Objects.NonGraphicalObject.html#ACadSharp_Objects_NonGraphicalObject_Name">NonGraphicalObject.Name</a>
+    </div>
+    <div>
+      <a class="xref" href="ACadSharp.Objects.NonGraphicalObject.html#ACadSharp_Objects_NonGraphicalObject_Clone">NonGraphicalObject.Clone()</a>
+    </div>
+    <div>
+      <a class="xref" href="ACadSharp.Objects.NonGraphicalObject.html#ACadSharp_Objects_NonGraphicalObject_ToString">NonGraphicalObject.ToString()</a>
     </div>
     <div>
       <a class="xref" href="ACadSharp.CadObject.html#ACadSharp_CadObject_Document">CadObject.Document</a>
@@ -189,16 +206,10 @@ public class BlockMoveAction : BlockAction, IHandledCadObject</code></pre>
       <a class="xref" href="ACadSharp.CadObject.html#ACadSharp_CadObject_CleanReactors">CadObject.CleanReactors()</a>
     </div>
     <div>
-      <a class="xref" href="ACadSharp.CadObject.html#ACadSharp_CadObject_Clone">CadObject.Clone()</a>
-    </div>
-    <div>
       <a class="xref" href="ACadSharp.CadObject.html#ACadSharp_CadObject_CreateExtendedDictionary">CadObject.CreateExtendedDictionary()</a>
     </div>
     <div>
       <a class="xref" href="ACadSharp.CadObject.html#ACadSharp_CadObject_RemoveReactor_ACadSharp_CadObject_">CadObject.RemoveReactor(CadObject)</a>
-    </div>
-    <div>
-      <a class="xref" href="ACadSharp.CadObject.html#ACadSharp_CadObject_ToString">CadObject.ToString()</a>
     </div>
     <div>
       <a class="xref" href="ACadSharp.CadObject.html#ACadSharp_CadObject_updateCollection__1___0_ACadSharp_ICadCollection___0__">CadObject.updateCollection&lt;T&gt;(T, ICadCollection&lt;T&gt;)</a>
@@ -226,6 +237,9 @@ public class BlockMoveAction : BlockAction, IHandledCadObject</code></pre>
   <dl class="typelist extensionMethods">
     <dt>Extension Methods</dt>
     <dd>
+  <div>
+      <a class="xref" href="ACadSharp.Extensions.INamedCadObjectExtensions.html#ACadSharp_Extensions_INamedCadObjectExtensions_IsValidDxfName_ACadSharp_INamedCadObject_ACadSharp_ACadVersion_">INamedCadObjectExtensions.IsValidDxfName(INamedCadObject, ACadVersion)</a>
+  </div>
   <div>
       <a class="xref" href="ACadSharp.Extensions.CadObjectExtensions.html#ACadSharp_Extensions_CadObjectExtensions_CloneTyped__1___0_">CadObjectExtensions.CloneTyped&lt;T&gt;(T)</a>
   </div>
@@ -409,10 +423,10 @@ public byte UnknownFlag { get; set; }</code></pre>
 
 
 
-  <a id="ACadSharp_Objects_Evaluations_BlockMoveAction_XDelta_" data-uid="ACadSharp.Objects.Evaluations.BlockMoveAction.XDelta*"></a>
+  <a id="ACadSharp_Objects_Evaluations_BlockMoveAction_XDeltaConnection_" data-uid="ACadSharp.Objects.Evaluations.BlockMoveAction.XDeltaConnection*"></a>
 
-  <h3 id="ACadSharp_Objects_Evaluations_BlockMoveAction_XDelta" data-uid="ACadSharp.Objects.Evaluations.BlockMoveAction.XDelta">
-  XDelta
+  <h3 id="ACadSharp_Objects_Evaluations_BlockMoveAction_XDeltaConnection" data-uid="ACadSharp.Objects.Evaluations.BlockMoveAction.XDeltaConnection">
+  XDeltaConnection
   <a class="header-action link-secondary" title="View source" href="https://github.com/DomCR/ACadSharp/blob/master/src/ACadSharp/Objects/Evaluations/BlockMoveAction.cs/#L44"><i class="bi bi-code-slash"></i></a>
   </h3>
 
@@ -421,7 +435,7 @@ public byte UnknownFlag { get; set; }</code></pre>
   <div class="markdown level1 conceptual"></div>
 
   <div class="codewrapper">
-    <pre><code class="lang-csharp hljs">public EvalConnection XDelta { get; set; }</code></pre>
+    <pre><code class="lang-csharp hljs">public EvalConnection XDeltaConnection { get; set; }</code></pre>
   </div>
 
 
@@ -441,10 +455,10 @@ public byte UnknownFlag { get; set; }</code></pre>
 
 
 
-  <a id="ACadSharp_Objects_Evaluations_BlockMoveAction_YDelta_" data-uid="ACadSharp.Objects.Evaluations.BlockMoveAction.YDelta*"></a>
+  <a id="ACadSharp_Objects_Evaluations_BlockMoveAction_YDeltaConnection_" data-uid="ACadSharp.Objects.Evaluations.BlockMoveAction.YDeltaConnection*"></a>
 
-  <h3 id="ACadSharp_Objects_Evaluations_BlockMoveAction_YDelta" data-uid="ACadSharp.Objects.Evaluations.BlockMoveAction.YDelta">
-  YDelta
+  <h3 id="ACadSharp_Objects_Evaluations_BlockMoveAction_YDeltaConnection" data-uid="ACadSharp.Objects.Evaluations.BlockMoveAction.YDeltaConnection">
+  YDeltaConnection
   <a class="header-action link-secondary" title="View source" href="https://github.com/DomCR/ACadSharp/blob/master/src/ACadSharp/Objects/Evaluations/BlockMoveAction.cs/#L49"><i class="bi bi-code-slash"></i></a>
   </h3>
 
@@ -453,7 +467,7 @@ public byte UnknownFlag { get; set; }</code></pre>
   <div class="markdown level1 conceptual"></div>
 
   <div class="codewrapper">
-    <pre><code class="lang-csharp hljs">public EvalConnection YDelta { get; set; }</code></pre>
+    <pre><code class="lang-csharp hljs">public EvalConnection YDeltaConnection { get; set; }</code></pre>
   </div>
 
 
