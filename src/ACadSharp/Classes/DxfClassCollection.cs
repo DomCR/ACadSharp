@@ -483,6 +483,20 @@ public class DxfClassCollection : ICollection<DxfClass>
 			InstanceCount = this._document.GetInstanceCount("DIMASSOC"),
 		});
 
+		//AcDbArcDimension
+		this.AddOrUpdate(new DxfClass
+		{
+			CppClassName = DxfSubclassMarker.ArcDimension,
+			ClassNumber = (short)(500 + this.Count),
+			DwgVersion = ACadVersion.AC1018,
+			DxfName = DxfFileToken.EntityArcDimension,
+			ItemClassId = 498,
+			MaintenanceVersion = 0,
+			ProxyFlags = ProxyFlags.EraseAllowed | ProxyFlags.DisablesProxyWarningDialog,
+			WasZombie = false,
+			InstanceCount = this._document.GetInstanceCount(DxfFileToken.EntityArcDimension),
+		});
+
 		//AcDbTable
 		this.AddOrUpdate(new DxfClass
 		{

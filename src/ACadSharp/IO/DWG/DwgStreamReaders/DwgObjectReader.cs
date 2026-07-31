@@ -5562,6 +5562,9 @@ namespace ACadSharp.IO.DWG
 				case DxfFileToken.EntityAecWall:
 					template = this.readAecWall();
 					break;
+				case DxfFileToken.EntityArcDimension:
+					template = this.readDimArc();
+					break;
 				case DxfFileToken.ObjectBinRecord:  // Add this variant
 					template = this.readBinRecord();
 					break;
@@ -6555,6 +6558,40 @@ namespace ACadSharp.IO.DWG
 			template.StyleHandle = this.handleReference();
 			//H 2 anonymous BLOCK(hard pointer)
 			template.BlockHandle = this.handleReference();
+		}
+
+		private CadTemplate readDimArc()
+		{
+			DimensionArc dimension = new DimensionArc();
+			CadDimensionTemplate template = new CadDimensionTemplate(dimension);
+
+			this.readCommonDimensionData(template);
+
+			//Common:
+			//Dim line arc point 3BD 10
+			dimension.DefinitionPoint = this._objectReader.Read3BitDouble();
+			//Extension line 1 point 3BD 13
+			dimension.FirstPoint = this._objectReader.Read3BitDouble();
+			//Extension line 2 point 3BD 14
+			dimension.SecondPoint = this._objectReader.Read3BitDouble();
+			//Arc center 3BD 15
+			dimension.Center = this._objectReader.Read3BitDouble();
+			//Is partial? B 70
+			dimension.IsPartial = this._objectReader.ReadBit();
+			//Start angle (radians) BD 40
+			dimension.StartAngle = this._objectReader.ReadBitDouble();
+			//End angle (radians) BD 41
+			dimension.EndAngle = this._objectReader.ReadBitDouble();
+			//Has leader? B 71
+			dimension.HasLeader = this._objectReader.ReadBit();
+			//Leader point 1 3BD 16
+			dimension.LeaderPoint1 = this._objectReader.Read3BitDouble();
+			//Leader point 2 3BD 17
+			dimension.LeaderPoint2 = this._objectReader.Read3BitDouble();
+
+			this.readCommonDimensionHandles(template);
+
+			return template;
 		}
 
 		private CadTemplate readDimAligned()

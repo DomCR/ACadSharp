@@ -56,6 +56,8 @@ public static class DxfFileToken
 
 	public const string EntityAttributeDefinition = "ATTDEF";
 
+	public const string EntityArcDimension = "ARC_DIMENSION";
+
 	public const string EntityBody = "BODY";
 
 	public const string EntityCircle = "CIRCLE";

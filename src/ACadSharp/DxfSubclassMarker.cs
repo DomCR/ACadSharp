@@ -16,6 +16,8 @@ public static class DxfSubclassMarker
 
 	public const string Angular2LineDimension = "AcDb2LineAngularDimension";
 
+	public const string ArcDimension = "AcDbArcDimension";
+
 	public const string Angular3PointDimension = "AcDb3PointAngularDimension";
 
 	public const string AnnotScaleObjectContextData = "AcDbAnnotScaleObjectContextData";
