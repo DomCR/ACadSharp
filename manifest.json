@@ -866,6 +866,20 @@
     },
     {
       "type": "ManagedReference",
+      "source_relative_path": "api/ACadSharp.Entities.DimensionArc.yml",
+      "output": {
+        ".html": {
+          "relative_path": "api/ACadSharp.Entities.DimensionArc.html"
+        }
+      },
+      "version": "",
+      "Uid": null,
+      "IsMRef": true,
+      "Title": "ACadSharp.Entities.DimensionArc",
+      "Summary": "<p sourcefile=\"api/ACadSharp.Entities.DimensionArc.yml\" sourcestartlinenumber=\"1\">Represents a <xref href=\"ACadSharp.Entities.DimensionArc\" data-throw-if-not-resolved=\"false\"></xref> entity.</p>\n"
+    },
+    {
+      "type": "ManagedReference",
       "source_relative_path": "api/ACadSharp.Entities.DimensionDiameter.yml",
       "output": {
         ".html": {
