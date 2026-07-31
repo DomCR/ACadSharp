@@ -1,4 +1,5 @@
-﻿using System;
+﻿using CSUtilities.Extensions;
+using System;
 using System.Collections;
 using System.Collections.Generic;
 using System.Linq;
@@ -36,6 +37,24 @@ public class DxfClassCollection : ICollection<DxfClass>
 	public void Add(DxfClass item)
 	{
 		this._entries.Add(item.DxfName, item);
+	}
+
+	public bool TryAdd(DxfClass item)
+	{
+		return this._entries.TryAdd(item.DxfName, item);
+	}
+
+	public void IncreaseInstanceCount(DxfClass dxfClass)
+	{
+		if (this._entries.TryGetValue(dxfClass.DxfName, out DxfClass result))
+		{
+			result.InstanceCount++;
+		}
+		else
+		{
+			this.Add(dxfClass);
+			dxfClass.InstanceCount = 1;
+		}
 	}
 
 	/// <summary>
@@ -157,7 +176,7 @@ public class DxfClassCollection : ICollection<DxfClass>
 	[Obsolete]
 	public void UpdateDxfClasses()
 	{
-		this.resetClassNumbers();
+		this.ResetClassNumbers();
 
 		//AcDbDictionaryWithDefault
 
@@ -392,7 +411,7 @@ public class DxfClassCollection : ICollection<DxfClass>
 		//AcDbBlkRefObjectContextData
 	}
 
-	private void resetClassNumbers()
+	public void ResetClassNumbers()
 	{
 		var arr = this._entries.Values.ToArray();
 		for (int i = 0; i < arr.Length; i++)
