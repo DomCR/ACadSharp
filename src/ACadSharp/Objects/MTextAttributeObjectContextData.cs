@@ -1,4 +1,5 @@
 ﻿using ACadSharp.Attributes;
+using ACadSharp.Classes;
 using ACadSharp.Entities;
 using CSMath;
 
@@ -6,7 +7,7 @@ namespace ACadSharp.Objects;
 
 [DxfName(DxfFileToken.MTextAttributeObjectContextData)]
 [DxfSubClass(DxfSubclassMarker.AnnotScaleObjectContextData)]
-public class MTextAttributeObjectContextData : AnnotScaleObjectContextData
+public class MTextAttributeObjectContextData : AnnotScaleObjectContextData, IDxfClassDefined
 {
 	[DxfCodeValue(11, 21, 31)]
 	public XYZ AlignmentPoint { get; set; } = XYZ.AxisX;
@@ -25,4 +26,19 @@ public class MTextAttributeObjectContextData : AnnotScaleObjectContextData
 
 	[DxfCodeValue(290)]
 	public bool Value290 { get; set; }
+
+	/// <inheritdoc/>
+	public DxfClass GetDxfClass()
+	{
+		return new DxfClass
+		{
+			CppClassName = DxfSubclassMarker.MTextAttributeObjectContextData,
+			DwgVersion = ACadVersion.AC1021,
+			DxfName = DxfFileToken.MTextAttributeObjectContextData,
+			ItemClassId = 499,
+			MaintenanceVersion = 0,
+			ProxyFlags = ProxyFlags.EraseAllowed | ProxyFlags.CloningAllowed | ProxyFlags.DisablesProxyWarningDialog,
+			WasZombie = false,
+		};
+	}
 }
