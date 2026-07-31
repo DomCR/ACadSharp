@@ -485,7 +485,10 @@ namespace ACadSharp.IO.DWG
 			if (this.R2013Plus)
 			{
 				//Has DS binary data B If 1 then this object has associated binary data stored in the data store
-				this._writer.WriteBit(false);
+				this._writer.WriteBit(cadObject is ModelerGeometry geometry
+					&& geometry.AcisData != null
+					&& geometry.AcisData.Length > 0
+					&& geometry.IsBinaryAcisData);
 			}
 
 			if (!noDictionary)
