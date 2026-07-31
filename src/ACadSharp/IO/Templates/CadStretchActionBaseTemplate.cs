@@ -23,8 +23,7 @@ internal class CadStretchActionBaseTemplate : CadBlockActionTemplate
 		{
 			if (builder.TryGetCadObject<Entity>(item.Key, out var entity))
 			{
-				item.Value.Entity = entity;
-				stretchAction.StretchBindings.Add(item.Value);
+				stretchAction.StretchBindings.Add(new StretchEntityBind(entity, item.Value.PointIndexes));
 			}
 			else
 			{
