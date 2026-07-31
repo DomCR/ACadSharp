@@ -37,7 +37,7 @@ internal abstract partial class DxfSectionWriterBase
 	public void Write()
 	{
 		this._writer.Write(DxfCode.Start, DxfFileToken.BeginSection);
-		this._writer.Write(DxfCode.SymbolTableName, this.SectionName);
+		this._writer.Write(DxfCode.Name, this.SectionName);
 
 		this.writeSection();
 

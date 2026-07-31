@@ -1,43 +1,62 @@
 ﻿using ACadSharp.Attributes;
 
-namespace ACadSharp.Objects
+namespace ACadSharp.Objects;
+
+/// <summary>
+/// Represents a <see cref="CadDictionaryWithDefault"/> object.
+/// </summary>
+/// <remarks>
+/// Object name <see cref="DxfFileToken.ObjectDictionaryWithDefault"/> <br/>
+/// Dxf class name <see cref="DxfSubclassMarker.DictionaryWithDefault"/>
+/// </remarks>
+[DxfName(DxfFileToken.ObjectDictionaryWithDefault)]
+[DxfSubClass(DxfSubclassMarker.DictionaryWithDefault)]
+public class CadDictionaryWithDefault : CadDictionary
 {
 	/// <summary>
-	/// Represents a <see cref="CadDictionaryWithDefault"/> object.
+	/// Default entry.
 	/// </summary>
-	/// <remarks>
-	/// Object name <see cref="DxfFileToken.ObjectDictionaryWithDefault"/> <br/>
-	/// Dxf class name <see cref="DxfSubclassMarker.DictionaryWithDefault"/>
-	/// </remarks>
-	[DxfName(DxfFileToken.ObjectDictionaryWithDefault)]
-	[DxfSubClass(DxfSubclassMarker.DictionaryWithDefault)]
-	public class CadDictionaryWithDefault : CadDictionary
+	[DxfCodeValue(DxfReferenceType.Handle, 340)]
+	public CadObject DefaultEntry
 	{
-		/// <summary>
-		/// Default entry.
-		/// </summary>
-		/// <remarks>
-		/// Currently only used for plot style dictionary's default entry, named “Normal”.
-		/// </remarks>
-		[DxfCodeValue(DxfReferenceType.Handle, 340)]
-		public CadObject DefaultEntry { get; set; }
-
-		/// <inheritdoc/>
-		public override string ObjectName => DxfFileToken.ObjectDictionaryWithDefault;
-
-		/// <inheritdoc/>
-		public override ObjectType ObjectType { get { return ObjectType.UNLISTED; } }
-
-		/// <inheritdoc/>
-		public override string SubclassMarker => DxfSubclassMarker.DictionaryWithDefault;
-
-		public CadDictionaryWithDefault() : base()
+		get
 		{
+			return _defaultEntry;
 		}
 
-		public CadDictionaryWithDefault(string name, CadObject defaultEntry) : base(name)
+		set
 		{
-			this.DefaultEntry = defaultEntry;
+			if (value == null)
+			{
+				this.Document?.AddCadObject(value);
+			}
+
+			if (this._defaultEntry != null)
+			{
+				this.Document?.RemoveCadObject(this._defaultEntry);
+			}
+
+			this._defaultEntry = value;
 		}
+	}
+
+	/// <inheritdoc/>
+	public override string ObjectName => DxfFileToken.ObjectDictionaryWithDefault;
+
+	/// <inheritdoc/>
+	public override ObjectType ObjectType { get { return ObjectType.UNLISTED; } }
+
+	/// <inheritdoc/>
+	public override string SubclassMarker => DxfSubclassMarker.DictionaryWithDefault;
+
+	private CadObject _defaultEntry;
+
+	public CadDictionaryWithDefault() : base()
+	{
+	}
+
+	public CadDictionaryWithDefault(string name, CadObject defaultEntry) : base(name)
+	{
+		this.DefaultEntry = defaultEntry;
 	}
 }

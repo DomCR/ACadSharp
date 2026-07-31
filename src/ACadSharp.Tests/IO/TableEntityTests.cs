@@ -38,7 +38,7 @@ namespace ACadSharp.Tests.IO
 
 			configuration.KeepUnknownNonGraphicalObjects = true;
 
-			CadDocument doc = this.readDocument(test, configuration);
+			CadDocument doc = this.readDocument(test, configuration: configuration);
 
 			if (doc.Header.Version < ACadVersion.AC1012)
 			{

@@ -23,7 +23,9 @@ internal partial class DwgObjectWriter : DwgSectionIO
 
 	public override string SectionName => DwgSectionDefinition.AcDbObjects;
 
-	public bool WriteShapes { get; } = true;
+	public bool WriteDynamicParameters { get; }
+
+	public bool WriteShapes { get; }
 
 	public bool WriteXData { get; }
 
@@ -48,7 +50,8 @@ internal partial class DwgObjectWriter : DwgSectionIO
 	public DwgObjectWriter(Stream stream, CadDocument document, Encoding encoding,
 		bool writeXRecords = true,
 		bool writeXData = true,
-		bool writeShapes = true) : base(document.Header.Version)
+		bool writeShapes = true,
+		bool writeDynamicParameters = true) : base(document.Header.Version)
 	{
 		this._stream = stream;
 		this._document = document;
@@ -58,6 +61,7 @@ internal partial class DwgObjectWriter : DwgSectionIO
 		this.WriteXRecords = writeXRecords;
 		this.WriteXData = writeXData;
 		this.WriteShapes = writeShapes;
+		this.WriteDynamicParameters = writeDynamicParameters;
 	}
 
 	public void Write()

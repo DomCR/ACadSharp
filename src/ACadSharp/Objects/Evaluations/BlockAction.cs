@@ -24,6 +24,7 @@ public abstract class BlockAction : BlockElement
 	/// <inheritdoc/>
 	public override string SubclassMarker => DxfSubclassMarker.BlockAction;
 
-	[DxfCodeValue(70)]
-	public short Value70 { get; set; }
+	[DxfCodeValue(DxfReferenceType.Count, 70)]
+	[DxfCollectionCodeValue(91)]
+	public List<int> ParametersIds { get; } = new();
 }

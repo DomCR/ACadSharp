@@ -13,19 +13,19 @@ namespace ACadSharp.Tests.Common
 
 		public short NextShort()
 		{
-			return NextShort(short.MinValue, short.MaxValue);
+			return this.NextShort(short.MinValue, short.MaxValue);
 		}
 
 		public short NextShort(short min, short max)
 		{
-			return (short)Next(min, max);
+			return (short)this.Next(min, max);
 		}
 
 		public object Next(Type t)
 		{
 			object value = Activator.CreateInstance(t);
 
-			return setValue(value);
+			return this.setValue(value);
 		}
 
 		public T Next<T>()
@@ -91,13 +91,13 @@ namespace ACadSharp.Tests.Common
 				case ulong:
 					return (T)Convert.ChangeType(this.Next(0, int.MaxValue), typeof(ulong));
 				case string:
-					return (T)Convert.ChangeType(RandomString(10), typeof(string));
+					return (T)Convert.ChangeType(this.RandomString(10), typeof(string));
 				case XY:
-					return (T)Convert.ChangeType(NextXY(), typeof(XY));
+					return (T)Convert.ChangeType(this.NextXY(), typeof(XY));
 				case XYZ:
-					return (T)Convert.ChangeType(NextXYZ(), typeof(XYZ));
+					return (T)Convert.ChangeType(this.NextXYZ(), typeof(XYZ));
 				case Color:
-					return (T)Convert.ChangeType(NextColor(), typeof(Color));
+					return (T)Convert.ChangeType(this.NextColor(), typeof(Color));
 				case Transparency:
 					return (T)Convert.ChangeType(new Transparency(), typeof(Transparency));
 				case PaperMargin:

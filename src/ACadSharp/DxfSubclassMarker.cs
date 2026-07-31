@@ -44,7 +44,13 @@ public static class DxfSubclassMarker
 
 	public const string BlockActionBasePt = "AcDbBlockActionWithBasePt";
 
-	public const string BlockBasePointParameter = "AcDbBlockBasePointParameter";
+	public const string BlockAlignmentGrip = "AcDbBlockAlignmentGrip";
+
+	public const string BlockAlignmentParameter = "AcDbBlockAlignmentParameter";
+
+	public const string BlockArrayAction = "AcDbBlockArrayAction";
+
+	public const string BlockBasePointParameter = "AcDbBlockBasepointParameter";
 
 	public const string BlockBegin = "AcDbBlockBegin";
 
@@ -62,7 +68,13 @@ public static class DxfSubclassMarker
 
 	public const string BlockGripExpression = "AcDbBlockGripExpr";
 
+	public const string BlockLinearGrip = "AcDbBlockLinearGrip";
+
 	public const string BlockLinearParameter = "AcDbBlockLinearParameter";
+
+	public const string BlockLookupAction = "AcDbBlockLookupAction";
+
+	public const string BlockLookupGrip = "AcDbBlockLookUpGrip";
 
 	public const string BlockLookupParameter = "AcDbBlockLookUpParameter";
 
@@ -71,6 +83,12 @@ public static class DxfSubclassMarker
 	public const string BlockParameter = "AcDbBlockParameter";
 
 	public const string BlockPointParameter = "AcDbBlockPointParameter";
+
+	public const string BlockPolarGrip = "AcDbBlockPolarGrip";
+
+	public const string BlockPolarParameter = "AcDbBlockPolarParameter";
+
+	public const string BlockPolarStretchAction = "AcDbBlockPolarStretchAction";
 
 	public const string BlockRecord = "AcDbBlockTableRecord";
 
@@ -82,11 +100,17 @@ public static class DxfSubclassMarker
 
 	public const string BlockRotationParameter = "AcDbBlockRotationParameter";
 
+	public const string BlockScaleAction = "AcDbBlockScaleAction";
+
+	public const string BlockStretchAction = "AcDbBlockStretchAction";
+
 	public const string BlockVisibilityGrip = "AcDbBlockVisibilityGrip";
 
 	public const string BlockVisibilityParameter = "AcDbBlockVisibilityParameter";
 
 	public const string BlockXYGrip = "AcDbBlockXYGrip";
+
+	public const string BlockXYParameter = "AcDbBlockXYParameter";
 
 	public const string CellStyleMap = "AcDbCellStyleMap";
 

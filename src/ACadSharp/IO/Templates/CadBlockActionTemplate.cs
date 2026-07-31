@@ -23,11 +23,11 @@ internal class CadBlockActionTemplate : CadBlockElementTemplate
 		{
 			if (builder.TryGetCadObject(handle, out Entity entity))
 			{
-				BlockAction.Entities.Add(entity);
+				this.BlockAction.Entities.Add(entity);
 			}
 			else
 			{
-				builder.Notify($"[{BlockAction.ToString()}] entity with handle {handle} not found.");
+				builder.Notify($"[{this.BlockAction.ToString()}] entity with handle {handle} not found.");
 			}
 		}
 	}
