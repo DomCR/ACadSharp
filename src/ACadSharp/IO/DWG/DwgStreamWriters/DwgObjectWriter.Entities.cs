@@ -2086,8 +2086,18 @@ internal partial class DwgObjectWriter : DwgSectionIO
 		//Flags RC 70 NOT DIRECTLY THE 75. Bit-coded (76543210):
 		//75 0 : Splined(75 value is 5)
 		//1 : Splined(75 value is 6)
-		//Should assign pline.SmoothSurface ??
-		this._writer.WriteByte(0);
+		byte smoothSurface = 0;
+		switch (pline.SmoothSurface)
+		{
+			case SmoothSurfaceType.Quadratic:
+				smoothSurface = 0b1;
+				break;
+			case SmoothSurfaceType.Cubic:
+				smoothSurface = 0b10;
+				break;
+		}
+
+		this._writer.WriteByte(smoothSurface);
 
 		//Flags RC 70 NOT DIRECTLY THE 70. Bit-coded (76543210):
 		//0 : Closed(70 bit 0(1))
