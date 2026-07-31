@@ -9,9 +9,15 @@ public struct StretchEntityBind
 
 	public List<int> PointIndexes { get; set; } = new();
 
+	public StretchEntityBind()
+	{
+		this.Entity = null;
+		this.PointIndexes = new();
+	}
+
 	public StretchEntityBind(Entity entity, List<int> pointIndexes)
 	{
-		Entity = entity;
-		PointIndexes = pointIndexes;
+		this.Entity = entity;
+		this.PointIndexes = pointIndexes;
 	}
 }
