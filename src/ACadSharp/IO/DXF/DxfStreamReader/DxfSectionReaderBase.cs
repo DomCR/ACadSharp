@@ -161,10 +161,11 @@ internal abstract class DxfSectionReaderBase
 			case DxfFileToken.EntityArc:
 				return this.readEntityCodes<Arc>(new CadEntityTemplate<Arc>(), this.readArc);
 			case DxfFileToken.EntityBody:
-				return this.readEntityCodes<CadBody>(new CadEntityTemplate<CadBody>(), this.readEntitySubclassMap);
+				return this.readEntityCodes<CadBody>(new CadModelerGeometryTemplate<CadBody>(), this.readModelerGeometry);
 			case DxfFileToken.EntityCircle:
 				return this.readEntityCodes<Circle>(new CadEntityTemplate<Circle>(), this.readCircle);
 			case DxfFileToken.EntityDimension:
+			case DxfFileToken.EntityArcDimension:
 				var dimTemplate = this.readEntityCodes<Dimension>(new CadDimensionTemplate(), this.readDimension);
 				if (dimTemplate.CadObject is CadDimensionTemplate.DimensionPlaceholder)
 				{
@@ -226,7 +227,7 @@ internal abstract class DxfSectionReaderBase
 			case DxfFileToken.Entity3DSolid:
 				return this.readEntityCodes<Solid3D>(new CadSolid3DTemplate(), this.readSolid3d);
 			case DxfFileToken.EntityRegion:
-				return this.readEntityCodes<Region>(new CadEntityTemplate<Region>(), this.readModelerGeometry);
+				return this.readEntityCodes<Region>(new CadModelerGeometryTemplate<Region>(), this.readModelerGeometry);
 			case DxfFileToken.EntityImage:
 				return this.readEntityCodes<RasterImage>(new CadWipeoutBaseTemplate(new RasterImage()), this.readWipeoutBase);
 			case DxfFileToken.EntityWipeout:
@@ -773,6 +774,9 @@ internal abstract class DxfSectionReaderBase
 				dim.Rotation = this._reader.ValueAsAngle;
 				map.SubClasses.TryAdd(DxfSubclassMarker.LinearDimension, DxfClassMap.Create<DimensionLinear>());
 				return true;
+			case 70 when tmp.CadObject is DimensionArc arc && this.currentSubclass == DxfSubclassMarker.ArcDimension:
+				arc.IsPartial = this._reader.ValueAsBool;
+				return true;
 			case 70:
 				//Flags do not have set
 				tmp.SetDimensionFlags((DimensionType)this._reader.ValueAsShort);
@@ -830,6 +834,7 @@ internal abstract class DxfSectionReaderBase
 			case 361:
 				return true;
 			case 100:
+				this.currentSubclass = this._reader.ValueAsString;
 				switch (this._reader.ValueAsString)
 				{
 					case DxfSubclassMarker.Dimension:
@@ -850,6 +855,10 @@ internal abstract class DxfSectionReaderBase
 						tmp.SetDimensionObject(new DimensionAngular3Pt());
 						map.SubClasses.TryAdd(this._reader.ValueAsString, DxfClassMap.Create<DimensionAngular3Pt>());
 						return true;
+					case DxfSubclassMarker.ArcDimension:
+						tmp.SetDimensionObject(new DimensionArc());
+						map.SubClasses.TryAdd(this._reader.ValueAsString, DxfClassMap.Create<DimensionArc>());
+						return true;
 					case DxfSubclassMarker.RadialDimension:
 						tmp.SetDimensionObject(new DimensionRadius());
 						map.SubClasses.TryAdd(this._reader.ValueAsString, DxfClassMap.Create<DimensionRadius>());
@@ -866,7 +875,13 @@ internal abstract class DxfSectionReaderBase
 						return false;
 				}
 			default:
-				return this.tryAssignCurrentValue(template.CadObject, map.SubClasses[tmp.CadObject.SubclassMarker]);
+				if (string.IsNullOrEmpty(this.currentSubclass))
+				{
+					//Pre R13 files do not have the subclass markers
+					this.currentSubclass = tmp.CadObject.SubclassMarker;
+				}
+
+				return this.tryAssignCurrentValue(template.CadObject, map);
 		}
 	}
 
@@ -1560,7 +1575,14 @@ internal abstract class DxfSectionReaderBase
 		switch (this._reader.Code)
 		{
 			case 1:
+				//New SAT line: decoded into the template accumulator, raw into
+				//ProprietaryData to preserve the previous behavior.
+				(template as IAcisDataTemplate)?.AppendAcisLine(this._reader.ValueAsString);
+				geometry.ProprietaryData.AppendLine(this._reader.ValueAsString);
+				return true;
 			case 3:
+				//Continuation of the previous SAT line.
+				(template as IAcisDataTemplate)?.AppendAcisContinuation(this._reader.ValueAsString);
 				geometry.ProprietaryData.AppendLine(this._reader.ValueAsString);
 				return true;
 			case 2:

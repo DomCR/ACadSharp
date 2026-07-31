@@ -37,9 +37,9 @@ namespace ACadSharp.Tests.TestModels
 		public void Serialize(IXunitSerializationInfo info)
 		{
 #if !NETFRAMEWORK
-			info.AddValue(nameof(Dimension), System.Text.Json.JsonSerializer.Serialize(Dimension));
-			info.AddValue(nameof(Style), System.Text.Json.JsonSerializer.Serialize(Style));
-			info.AddValue(nameof(Expected), Expected);
+			info.AddValue(nameof(this.Dimension), System.Text.Json.JsonSerializer.Serialize(this.Dimension));
+			info.AddValue(nameof(this.Style), System.Text.Json.JsonSerializer.Serialize(this.Style));
+			info.AddValue(nameof(this.Expected), this.Expected);
 #endif
 		}
 

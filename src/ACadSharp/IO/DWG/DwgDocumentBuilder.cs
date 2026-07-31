@@ -6,6 +6,13 @@ namespace ACadSharp.IO.DWG;
 
 internal class DwgDocumentBuilder : CadDocumentBuilder
 {
+	/// <summary>
+	/// Modeler geometry entities (R2013+) whose "has DS binary data" flag is set:
+	/// their ACIS payload lives in the AcDs data section and is attached to them
+	/// once that section is read.
+	/// </summary>
+	public List<ModelerGeometry> AcisDsEntities { get; } = new();
+
 	public DwgReaderConfiguration Configuration { get; }
 
 	public DwgHeaderHandlesCollection HeaderHandles { get; set; } = new();

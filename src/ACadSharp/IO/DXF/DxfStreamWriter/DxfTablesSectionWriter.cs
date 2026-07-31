@@ -1,5 +1,4 @@
-﻿using ACadSharp.Entities;
-using ACadSharp.Tables;
+﻿using ACadSharp.Tables;
 using ACadSharp.Tables.Collections;
 using CSMath;
 using System;
@@ -24,14 +23,14 @@ namespace ACadSharp.IO.DXF
 			this.writeTable(this._document.UCSs);
 			this.writeTable(this._document.AppIds);
 			this.writeTable(this._document.DimensionStyles, DxfSubclassMarker.DimensionStyleTable);
-			this.writeTable(this._document.BlockRecords);
+			this.writeTable(this._document.BlockRecords, writeFlags: false);
 		}
 
-		private void writeTable<T>(Table<T> table, string subclass = null)
+		private void writeTable<T>(Table<T> table, string subclass = null, bool writeFlags = true)
 			where T : TableEntry
 		{
 			this._writer.Write(DxfCode.Start, DxfFileToken.TableEntry);
-			this._writer.Write(DxfCode.SymbolTableName, table.ObjectName);
+			this._writer.Write(DxfCode.Name, table.ObjectName);
 
 			this.writeCommonObjectData(table);
 
@@ -46,13 +45,13 @@ namespace ACadSharp.IO.DXF
 
 			foreach (T entry in table)
 			{
-				writeEntry(entry);
+				writeEntry(entry, writeFlags);
 			}
 
 			this._writer.Write(DxfCode.Start, DxfFileToken.EndTable);
 		}
 
-		private void writeEntry<T>(T entry)
+		private void writeEntry<T>(T entry, bool writeFlags = true)
 			where T : TableEntry
 		{
 			DxfMap map = DxfMap.Create<T>();
@@ -66,14 +65,17 @@ namespace ACadSharp.IO.DXF
 
 			if (entry is TextStyle ts && ts.IsShapeFile)
 			{
-				this._writer.Write(DxfCode.SymbolTableName, string.Empty);
+				this._writer.Write(DxfCode.Name, string.Empty);
 			}
 			else
 			{
-				this._writer.Write(DxfCode.SymbolTableName, entry.Name);
+				this._writer.Write(DxfCode.Name, entry.Name);
 			}
 
-			this._writer.Write(70, entry.Flags);
+			if (writeFlags)
+			{
+				this._writer.Write(70, entry.Flags);
+			}
 
 			switch (entry)
 			{

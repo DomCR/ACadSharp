@@ -121,6 +121,8 @@ public class DwgReader : CadReaderBase<DwgReaderConfiguration>
 
 		this.readAppInfo();
 
+		this.readDsPrototype_1b();
+
 		//Read all the objects in the file
 		this.readObjects();
 
@@ -529,6 +531,22 @@ public class DwgReader : CadReaderBase<DwgReaderConfiguration>
 		//Optional section, only for testing
 		return;
 #endif
+	}
+
+	private void readDsPrototype_1b()
+	{
+		this._fileHeader = this._fileHeader ?? this.readFileHeader();
+
+		IDwgStreamReader sreader = this.getSectionStream(DwgSectionDefinition.AcDsPrototype);
+		if (sreader is null)
+		{
+			return;
+		}
+
+		var reader = new DwgPrototype1bReader(this._fileHeader.AcadVersion, this._builder, sreader);
+		reader.OnNotification += onNotificationEvent;
+
+		this._document.DataStorage = reader.Read();
 	}
 
 	/// <summary>

@@ -60,7 +60,11 @@ public partial class XRecord : NonGraphicalObject
 	{
 		XRecord clone = (XRecord)base.Clone();
 
-		clone._entries = new List<Entry>(this._entries);
+		clone._entries = new List<Entry>();
+		foreach (var item in this._entries)
+		{
+			clone._entries.Add(new Entry(item.Code, item.Value, clone));
+		}
 
 		return clone;
 	}

@@ -150,7 +150,7 @@ namespace ACadSharp.Tests.IO
 			if (!TestVariables.LocalEnv)
 				return;
 
-			if (!isSupportedVersion(doc.Header.Version))
+			if (!this.isSupportedVersion(doc.Header.Version))
 				return;
 
 			using (DwgWriter writer = new DwgWriter(file, doc))

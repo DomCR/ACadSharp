@@ -75,6 +75,11 @@ namespace ACadSharp.IO.DWG
 		/// <summary>
 		/// Needed to handle some items like colors or some text data that may not be present.
 		/// </summary>
+		//Has DS binary data flag of the object being read (R2013+): set while the
+		//common data is processed, consumed by the modeler geometry reader to
+		//register the entities whose ACIS payload lives in the AcDs data section.
+		private bool _hasDsBinaryData;
+
 		private IDwgStreamReader _mergedReaders;
 
 		private long _objectInitialPos = 0;
@@ -677,7 +682,7 @@ namespace ACadSharp.IO.DWG
 			if (this.R2013Plus)
 			{
 				//Has DS binary data B If 1 then this object has associated binary data stored in the data store
-				this._objectReader.ReadBit();
+				this._hasDsBinaryData = this._objectReader.ReadBit();
 			}
 		}
 
@@ -3516,6 +3521,12 @@ namespace ACadSharp.IO.DWG
 					return template;
 				}
 			}
+			else if (this._hasDsBinaryData)
+			{
+				//R2013+ stores the ACIS payload in the AcDs data section: register
+				//the entity so the section reader can attach the matching blob.
+				this._builder.AcisDsEntities.Add(geometry);
+			}
 
 			//Common:
 			//Wireframe data present B X True if wireframe data is present
@@ -3616,16 +3627,46 @@ namespace ACadSharp.IO.DWG
 				//to get the real character.If it's a tab, we
 				//convert to a space.
 				case 1:
+					using (MemoryStream stream = new MemoryStream())
+					{
+						int blockSize = this._mergedReaders.ReadBitLong();
+						while (blockSize > 0)
+						{
+							byte[] block = AcisTextCodec.Decode(this._mergedReaders.ReadBytes(blockSize));
+							stream.Write(block, 0, block.Length);
+
+							blockSize = this._mergedReaders.ReadBitLong();
+						}
+
+						if (stream.Length > 0)
+						{
+							template.CadObject.AcisData = stream.ToArray();
+						}
+					}
 					break;
 				//Version == 2:
 				//Immediately following will be an acis file.Header value of “ACIS BinaryFile” indicates
 				//SAB, otherwise it is a text SAT file. No length is given.SAB files will end with
 				//“End\x0E\x02of\x0E\x04ACIS\x0D\x04data”. SAT files must be parsed to find the end.
 				case 2:
+					//The stream gives no payload length: read up to the end of the
+					//object data and cut at the End-of-ACIS-data marker. Anything
+					//after the marker (wireframe data, handles) is discarded with
+					//the rest of the object, the caller returns right away.
+					long currentPos = this._mergedReaders.PositionInBits();
+					long endPos = this._objectInitialPos + (this._size * 8);
+					int remainingBytes = (int)((endPos - currentPos) / 8);
+
+					if (remainingBytes > 0)
+					{
+						byte[] data = this._mergedReaders.ReadBytes(remainingBytes);
+						template.CadObject.AcisData = AcisTextCodec.TrimAtAcisEnd(data);
+					}
+					break;
+				default:
+					this.notify($"Modeler geometry data version {version} not recognized for {template.CadObject.ObjectName}", NotificationType.Warning);
 					break;
 			}
-
-			this.notify($"Stream data reader hasn't been implemented for {template.CadObject.ObjectName}", NotificationType.NotImplemented);
 		}
 
 		private CadTemplate readMText()
@@ -5515,8 +5556,14 @@ namespace ACadSharp.IO.DWG
 				case DxfFileToken.AcmPartList:
 					template = this.readAcmPartList();
 					break;
+				case DxfFileToken.ObjectDynamicBlockPurgePreventer:
+					template = this.readDynamicBlockPurgePreventer();
+					break;
 				case DxfFileToken.EntityAecWall:
 					template = this.readAecWall();
+					break;
+				case DxfFileToken.EntityArcDimension:
+					template = this.readDimArc();
 					break;
 				case DxfFileToken.ObjectBinRecord:  // Add this variant
 					template = this.readBinRecord();
@@ -5613,6 +5660,9 @@ namespace ACadSharp.IO.DWG
 				case DxfFileToken.ObjectEvalGraph:
 					template = this.readEvaluationGraph();
 					break;
+				case DxfFileToken.ObjectBlockPolarParameter:
+					template = this.readBlockPolarParameter();
+					break;
 				case DxfFileToken.ObjectBlockLinearParameter:
 					template = this.readBlockLinearParameter();
 					break;
@@ -5622,8 +5672,23 @@ namespace ACadSharp.IO.DWG
 				case DxfFileToken.ObjectBlockVisibilityParameter:
 					template = this.readBlockVisibilityParameter();
 					break;
-				case "BLOCKFLIPPARAMETER":
+				case DxfFileToken.ObjectBlockLookupParameter:
+					template = this.readBlockLookupParameter();
+					break;
+				case DxfFileToken.ObjectBlockFlipParameter:
 					template = this.readBlockFlipParameter();
+					break;
+				case DxfFileToken.ObjectBlockBasePointParameter:
+					template = this.readBlockBasePointParameter();
+					break;
+				case DxfFileToken.ObjectBlockPointParameter:
+					template = this.readBlockPointParameter();
+					break;
+				case DxfFileToken.ObjectBlockXYParameter:
+					template = this.readBlockXYParameter();
+					break;
+				case DxfFileToken.ObjectBlockAlignmentParameter:
+					template = this.readBlockAlignmentParameter();
 					break;
 				case DxfFileToken.ObjectBlockRepresentationData:
 					template = this.readBlockRepresentationData();
@@ -5631,13 +5696,37 @@ namespace ACadSharp.IO.DWG
 				case DxfFileToken.ObjectBlockGripLocationComponent:
 					template = this.readBlockGripLocationComponent();
 					break;
+				case DxfFileToken.ObjectBlockAlignmentGrip:
+					template = this.readAlignmentGrip();
+					break;
+				case DxfFileToken.ObjectBlockFlipGrip:
+					template = this.readFlipGrip();
+					break;
+				case DxfFileToken.ObjectBlockLinearGrip:
+					template = this.readLinearGrip();
+					break;
+				case DxfFileToken.ObjectBlockXYGrip:
+					template = new CadBlockGripTemplate(new BlockXYGrip());
+					this.readBlockGrip(template as CadBlockGripTemplate);
+					break;
 				case DxfFileToken.ObjectBlockRotationGrip:
-					template = new CadBlockRotationGripTemplate();
-					this.readBlockGrip(template as CadBlockRotationGripTemplate);
+					template = new CadBlockGripTemplate(new BlockRotationGrip());
+					this.readBlockGrip(template as CadBlockGripTemplate);
 					break;
 				case DxfFileToken.ObjectBlockVisibilityGrip:
-					template = new CadBlockVisibilityGripTemplate();
-					this.readBlockGrip(template as CadBlockVisibilityGripTemplate);
+					template = new CadBlockGripTemplate(new BlockVisibilityGrip());
+					this.readBlockGrip(template as CadBlockGripTemplate);
+					break;
+				case DxfFileToken.ObjectBlockLookupGrip:
+					template = new CadBlockGripTemplate(new BlockLookupGrip());
+					this.readBlockGrip(template as CadBlockGripTemplate);
+					break;
+				case DxfFileToken.ObjectBlockPolarGrip:
+					template = new CadBlockGripTemplate(new BlockPolarGrip());
+					this.readBlockGrip(template as CadBlockGripTemplate);
+					break;
+				case DxfFileToken.ObjectBlockPolarStretchAction:
+					template = this.readBlockPolarStretchAction();
 					break;
 				case DxfFileToken.ObjectBlockFlipAction:
 					template = this.readBlockFlipAction();
@@ -5645,13 +5734,28 @@ namespace ACadSharp.IO.DWG
 				case DxfFileToken.ObjectBlockRotateAction:
 					template = this.readBlockRotateAction();
 					break;
-				case "SPATIAL_FILTER":
+				case DxfFileToken.ObjectBlockScaleAction:
+					template = this.readBlockScaleAction();
+					break;
+				case DxfFileToken.ObjectBlockMoveAction:
+					template = this.readBlockMoveAction();
+					break;
+				case DxfFileToken.ObjectBlockLookupAction:
+					template = this.readBlockLookupAction();
+					break;
+				case DxfFileToken.ObjectBlockArrayAction:
+					template = this.readBlockArrayAction();
+					break;
+				case DxfFileToken.ObjectBlockStretchAction:
+					template = this.readBlockStretchAction();
+					break;
+				case DxfFileToken.ObjectSpatialFilter:
 					template = this.readSpatialFilter();
 					break;
-				case "ACAD_PROXY_ENTITY":
+				case DxfFileToken.EntityProxyEntity:
 					template = this.readProxyEntity();
 					break;
-				case "ACAD_PROXY_OBJECT":
+				case DxfFileToken.ObjectProxyObject:
 					template = this.readProxyObject();
 					break;
 				case DxfFileToken.ObjectVisualStyle:
@@ -5704,132 +5808,6 @@ namespace ACadSharp.IO.DWG
 				}
 			}
 			return identity;
-		}
-
-		private CadTemplate readBlockFlipAction()
-		{
-			BlockFlipAction blockFlipAction = new BlockFlipAction();
-			CadBlockFlipActionTemplate template = new CadBlockFlipActionTemplate(blockFlipAction);
-
-			this.readBlockAction(template);
-
-			// 92
-			blockFlipAction.Value92 = this._mergedReaders.ReadBitLong();
-			// 93
-			blockFlipAction.Value93 = this._mergedReaders.ReadBitLong();
-			// 94
-			blockFlipAction.Value94 = this._mergedReaders.ReadBitLong();
-			// 95
-			blockFlipAction.Value95 = this._mergedReaders.ReadBitLong();
-
-			// 301
-			blockFlipAction.Caption301 = this._mergedReaders.ReadVariableText();
-			// 302
-			blockFlipAction.Caption302 = this._mergedReaders.ReadVariableText();
-			// 303
-			blockFlipAction.Caption303 = this._mergedReaders.ReadVariableText();
-			// 304
-			blockFlipAction.Caption304 = this._mergedReaders.ReadVariableText();
-
-			return template;
-		}
-
-		private CadBlockFlipParameterTemplate readBlockFlipParameter()
-		{
-			BlockFlipParameter blockFlipParameter = new BlockFlipParameter();
-			CadBlockFlipParameterTemplate template = new CadBlockFlipParameterTemplate(blockFlipParameter);
-
-			this.readBlock2PtParameter(template);
-
-			//	305
-			blockFlipParameter.Caption = this._mergedReaders.ReadVariableText();
-			//	306
-			blockFlipParameter.Description = this._mergedReaders.ReadVariableText();
-			//	307
-			blockFlipParameter.BaseStateName = this._mergedReaders.ReadVariableText();
-			//	308
-			blockFlipParameter.FlippedStateName = this._mergedReaders.ReadVariableText();
-			//	1012, 1022, 1032
-			blockFlipParameter.CaptionLocation = this._mergedReaders.Read3BitDouble();
-			//	309
-			blockFlipParameter.Caption309 = this._mergedReaders.ReadVariableText();
-			//	96
-			blockFlipParameter.Value96 = this._mergedReaders.ReadBitLong();
-
-			//	The remainder seen in DXF cannot be read
-			//DwgAnalyseTool.Analyse03(_objectReader, _handlesReader, _textReader, "BD", null, 1000);
-			//blockFlipParameter.Caption1001 = this._mergedReaders.ReadVariableText();
-			//blockFlipParameter.Point1010 = this._mergedReaders.Read3BitDouble();
-
-			return template;
-		}
-
-		private CadTemplate readEvaluationGraph()
-		{
-			EvaluationGraph evaluationGraph = new EvaluationGraph();
-			CadEvaluationGraphTemplate template = new CadEvaluationGraphTemplate(evaluationGraph);
-
-			this.readCommonNonEntityData(template);
-
-			//DXF fields 96, 97 contain the value 5, here are three fields returning the same value 5
-			evaluationGraph.Value96 = this._objectReader.ReadBitLong();
-			evaluationGraph.Value97 = this._objectReader.ReadBitLong();
-
-			int nodeCount = this._objectReader.ReadBitLong();
-			for (int i = 0; i < nodeCount; i++)
-			{
-				var nodeTemplate = new CadEvaluationGraphTemplate.GraphNodeTemplate();
-				var node = new EvaluationGraph.Node();
-				template.NodeTemplates.Add(nodeTemplate);
-
-				//Code 91
-				node.Index = this._objectReader.ReadBitLong();
-				//Code 93
-				node.Flags = this._objectReader.ReadBitLong();
-				//Code 95
-				node.NextNodeIndex = this._objectReader.ReadBitLong();
-
-				//Code 360
-				nodeTemplate.ExpressionHandle = this.handleReference();
-
-				//Codes 92, x4
-				node.Data1 = this._objectReader.ReadBitLong();
-				node.Data2 = this._objectReader.ReadBitLong();
-				node.Data3 = this._objectReader.ReadBitLong();
-				node.Data4 = this._objectReader.ReadBitLong();
-			}
-
-			//Last node has x5 92 with the last value as 0 instead of x4
-			//Followed by a 93
-			var edgeCount = this._objectReader.ReadBitLong();
-			for (int i = 0; i < edgeCount; i++)
-			{
-				//id BL, DXF 92
-				//nextid BLd, DXF 93
-				//e1 BLd, DXF 94
-				//e2 BLd, DXF 91
-				//e3 BLd, DXF 91
-				//out_edge BLd
-
-				//92 id
-				this._objectReader.ReadBitLong();
-				//93
-				this._objectReader.ReadBitLong();
-				//94
-				this._objectReader.ReadBitLong();
-				//91
-				this._objectReader.ReadBitLong();
-				//91
-				this._objectReader.ReadBitLong();
-				//92 x6
-				this._objectReader.ReadBitLong();
-				this._objectReader.ReadBitLong();
-				this._objectReader.ReadBitLong();
-				this._objectReader.ReadBitLong();
-				this._objectReader.ReadBitLong();
-			}
-
-			return template;
 		}
 
 		private CadTemplate readSpatialFilter()
@@ -6498,6 +6476,40 @@ namespace ACadSharp.IO.DWG
 			template.StyleHandle = this.handleReference();
 			//H 2 anonymous BLOCK(hard pointer)
 			template.BlockHandle = this.handleReference();
+		}
+
+		private CadTemplate readDimArc()
+		{
+			DimensionArc dimension = new DimensionArc();
+			CadDimensionTemplate template = new CadDimensionTemplate(dimension);
+
+			this.readCommonDimensionData(template);
+
+			//Common:
+			//Dim line arc point 3BD 10
+			dimension.DefinitionPoint = this._objectReader.Read3BitDouble();
+			//Extension line 1 point 3BD 13
+			dimension.FirstPoint = this._objectReader.Read3BitDouble();
+			//Extension line 2 point 3BD 14
+			dimension.SecondPoint = this._objectReader.Read3BitDouble();
+			//Arc center 3BD 15
+			dimension.Center = this._objectReader.Read3BitDouble();
+			//Is partial? B 70
+			dimension.IsPartial = this._objectReader.ReadBit();
+			//Start angle (radians) BD 40
+			dimension.StartAngle = this._objectReader.ReadBitDouble();
+			//End angle (radians) BD 41
+			dimension.EndAngle = this._objectReader.ReadBitDouble();
+			//Has leader? B 71
+			dimension.HasLeader = this._objectReader.ReadBit();
+			//Leader point 1 3BD 16
+			dimension.LeaderPoint1 = this._objectReader.Read3BitDouble();
+			//Leader point 2 3BD 17
+			dimension.LeaderPoint2 = this._objectReader.Read3BitDouble();
+
+			this.readCommonDimensionHandles(template);
+
+			return template;
 		}
 
 		private CadTemplate readDimAligned()

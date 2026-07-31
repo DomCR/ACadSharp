@@ -12,16 +12,34 @@ namespace ACadSharp.Objects;
 /// </remarks>
 [DxfName(DxfFileToken.ObjectDictionaryWithDefault)]
 [DxfSubClass(DxfSubclassMarker.DictionaryWithDefault)]
-public class CadDictionaryWithDefault : CadDictionary , IDxfClassDefined
+public class CadDictionaryWithDefault : CadDictionary, IDxfClassDefined
 {
 	/// <summary>
 	/// Default entry.
 	/// </summary>
-	/// <remarks>
-	/// Currently only used for plot style dictionary's default entry, named “Normal”.
-	/// </remarks>
 	[DxfCodeValue(DxfReferenceType.Handle, 340)]
-	public CadObject DefaultEntry { get; set; }
+	public CadObject DefaultEntry
+	{
+		get
+		{
+			return _defaultEntry;
+		}
+
+		set
+		{
+			if (value == null)
+			{
+				this.Document?.AddCadObject(value);
+			}
+
+			if (this._defaultEntry != null)
+			{
+				this.Document?.RemoveCadObject(this._defaultEntry);
+			}
+
+			this._defaultEntry = value;
+		}
+	}
 
 	/// <inheritdoc/>
 	public override string ObjectName => DxfFileToken.ObjectDictionaryWithDefault;
@@ -31,6 +49,8 @@ public class CadDictionaryWithDefault : CadDictionary , IDxfClassDefined
 
 	/// <inheritdoc/>
 	public override string SubclassMarker => DxfSubclassMarker.DictionaryWithDefault;
+
+	private CadObject _defaultEntry;
 
 	public CadDictionaryWithDefault() : base()
 	{

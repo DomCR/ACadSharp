@@ -1,87 +1,105 @@
-﻿using System;
-using ACadSharp.Attributes;
+﻿using ACadSharp.Attributes;
 
+namespace ACadSharp.Objects.Evaluations;
 
-namespace ACadSharp.Objects.Evaluations
+public partial class EvaluationGraph
 {
-	public partial class EvaluationGraph
+	/// <summary>
+	/// Represents a graph node of a <see cref="EvaluationGraph"/>.
+	/// </summary>
+	public class Node
 	{
-		public class Edge
-		{
+		/// <summary>
+		/// Unknown
+		/// </summary>
+		[DxfCodeValue(92)]
+		public int Data1 { get; internal set; }
 
+		/// <summary>
+		/// Unknown
+		/// </summary>
+		[DxfCodeValue(92)]
+		public int Data2 { get; internal set; }
+
+		/// <summary>
+		/// Unknown
+		/// </summary>
+		[DxfCodeValue(92)]
+		public int Data3 { get; internal set; }
+
+		/// <summary>
+		/// Unknown
+		/// </summary>
+		[DxfCodeValue(92)]
+		public int Data4 { get; internal set; }
+
+		/// <summary>
+		/// Gets a <see cref="EvaluationExpression"/> associated with this <see cref="Node"/>.
+		/// </summary>
+		[DxfCodeValue(360)]
+		public EvaluationExpression Expression
+		{
+			get
+			{
+				return this._expression;
+			}
+			set
+			{
+				if (value != null)
+				{
+					this._evaluationGraph.Document?.AddCadObject(value);
+				}
+
+				if (this._expression != null)
+				{
+					this._evaluationGraph.Document?.RemoveCadObject(this._expression);
+				}
+
+				this._expression = value;
+				this._expression.Owner = this._evaluationGraph;
+			}
 		}
 
 		/// <summary>
-		/// Represents a graph node of a <see cref="EvaluationGraph"/>.
+		/// Gets or sets the flags of this <see cref="Node"/>.
 		/// </summary>
-		public class Node : ICloneable
+		[DxfCodeValue(93)]
+		public NodeFlags Flags { get; set; }
+
+		/// <summary>
+		/// Gets or sets the index of the next <see cref="Node"/> in the list of
+		/// graph nodes in the owning <see cref="EvaluationGraph"/>.
+		/// </summary>
+		[DxfCodeValue(95)]
+		public int Id { get; set; }
+
+		/// <summary>
+		/// Gets or sets the index of this <see cref="Node"/> in the list of
+		/// graph nodes in the owning <see cref="EvaluationGraph"/>.
+		/// </summary>
+		[DxfCodeValue(91)]
+		public int Index { get; set; }
+
+		private EvaluationExpression _expression;
+
+		private EvaluationGraph _evaluationGraph;
+
+		public Node(EvaluationGraph evaluationGraph)
 		{
-			/// <summary>
-			/// Gets or sets the index of this <see cref="Node"/> in the list of
-			/// graph nodes in the owning <see cref="EvaluationGraph"/>.
-			/// </summary>
-			[DxfCodeValue(91)]
-			public int Index { get; set; }
+			this._evaluationGraph = evaluationGraph;
+		}
 
-			/// <summary>
-			/// Gets or sets the index of the next <see cref="Node"/> in the list of
-			/// graph nodes in the owning <see cref="EvaluationGraph"/>.
-			/// </summary>
-			[DxfCodeValue(95)]
-			internal int NextNodeIndex { get; set; }
+		/// <summary>
+		/// Creates a deep copy of this <see cref="Node"/>.
+		/// </summary>
+		/// <returns>A deep copy of this <see cref="Node"/>.</returns>
+		public Node Clone()
+		{
+			Node clone = (Node)this.MemberwiseClone();
 
-			/// <summary>
-			/// Gets the next <see cref="Node"/> in the list of
-			/// graph nodes in the owning <see cref="EvaluationGraph"/>.
-			/// </summary>
-			[Obsolete("Next reference may not be needed if the reference is the index.")]
-			public Node Next { get; internal set; }
+			clone.Expression = (EvaluationExpression)this.Expression?.Clone();
 
-			/// <summary>
-			/// Unknown
-			/// </summary>
-			[DxfCodeValue(93)]
-			public int Flags { get; set; }
-
-			/// <summary>
-			/// Unknown
-			/// </summary>
-			[DxfCodeValue(92)]
-			public int Data1 { get; internal set; }
-
-			/// <summary>
-			/// Unknown
-			/// </summary>
-			[DxfCodeValue(92)]
-			public int Data2 { get; internal set; }
-
-			/// <summary>
-			/// Unknown
-			/// </summary>
-			[DxfCodeValue(92)]
-			public int Data3 { get; internal set; }
-
-			/// <summary>
-			/// Unknown
-			/// </summary>
-			[DxfCodeValue(92)]
-			public int Data4 { get; internal set; }
-
-			/// <summary>
-			/// Gets a <see cref="EvaluationExpression"/> associated with this <see cref="Node"/>.
-			/// </summary>
-			[DxfCodeValue(360)]
-			public EvaluationExpression Expression { get; internal set; }
-
-			public object Clone()
-			{
-				Node clone = (Node)MemberwiseClone();
-
-				clone.Next = (Node)Next?.Clone();
-				clone.Expression = (EvaluationExpression)Expression?.Clone();
-
-				return clone;
-			}
+			return clone;
 		}
 	}
 }

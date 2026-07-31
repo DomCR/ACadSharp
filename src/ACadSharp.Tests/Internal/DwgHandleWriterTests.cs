@@ -24,7 +24,7 @@ namespace ACadSharp.Tests.Internal
 
 			IDwgStreamReader sreader = DwgStreamReaderBase.GetStreamHandler(version, stream, resetPositon: true);
 			DwgHandleReader reader = new DwgHandleReader(version, sreader);
-			reader.OnNotification += onNotification;
+			reader.OnNotification += this.onNotification;
 
 			var outmap = reader.Read();
 

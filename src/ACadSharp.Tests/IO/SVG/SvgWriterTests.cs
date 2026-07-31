@@ -38,7 +38,7 @@ namespace ACadSharp.Tests.IO.SVG
 		{
 			Layout layout = Document.Layouts[name];
 
-			using (SvgWriter writer = createWriter($"{name}.svg", Document))
+			using (SvgWriter writer = this.createWriter($"{name}.svg", Document))
 			{
 				writer.Write(layout);
 			}
@@ -47,7 +47,7 @@ namespace ACadSharp.Tests.IO.SVG
 		[Fact]
 		public void WriteModel()
 		{
-			using (SvgWriter writer = createWriter($"model.svg", Document))
+			using (SvgWriter writer = this.createWriter($"model.svg", Document))
 			{
 				writer.Write();
 			}

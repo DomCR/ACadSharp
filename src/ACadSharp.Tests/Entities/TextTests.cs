@@ -19,7 +19,7 @@ namespace ACadSharp.Tests.Entities
 		[Fact]
 		public void TranslationTest()
 		{
-			XYZ newLocation = _random.NextXYZ();
+			XYZ newLocation = this._random.NextXYZ();
 			TextEntity text = new TextEntity();
 			Transform transform = Transform.CreateTranslation(newLocation);
 

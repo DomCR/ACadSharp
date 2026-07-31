@@ -2,6 +2,18 @@
 
 public static class DxfFileToken
 {
+	public const string AcdsDataSection = "ACDSDATA";
+
+	public const string AcdsRecord = "ACDSRECORD";
+
+	public const string AcdsSchema = "ACDSSCHEMA";
+
+	public const string AcmBalloon = "ACMBALLOON";
+
+	public const string AcmPartList = "ACMPARTLIST";
+
+	public const string AcmPartRef = "ACMPARTREF";
+
 	public const string BeginSection = "SECTION";
 
 	public const string BlkRefObjectContextData = "ACDB_BLKREFOBJECTCONTEXTDATA_CLASS";
@@ -43,6 +55,8 @@ public static class DxfFileToken
 	public const string EntityAttribute = "ATTRIB";
 
 	public const string EntityAttributeDefinition = "ATTDEF";
+
+	public const string EntityArcDimension = "ARC_DIMENSION";
 
 	public const string EntityBody = "BODY";
 
@@ -158,17 +172,41 @@ public static class DxfFileToken
 
 	public const string ObjectBinRecord = "BINRECORD";
 
+	public const string ObjectBlockAlignmentGrip = "BLOCKALIGNMENTGRIP";
+
+	public const string ObjectBlockAlignmentParameter = "BLOCKALIGNMENTPARAMETER";
+
+	public const string ObjectBlockArrayAction = "BLOCKARRAYACTION";
+
 	public const string ObjectBlockBasePointParameter = "BLOCKBASEPOINTPARAMETER";
 
 	public const string ObjectBlockFlipAction = "BLOCKFLIPACTION";
+
+	public const string ObjectBlockFlipGrip = "BLOCKFLIPGRIP";
 
 	public const string ObjectBlockFlipParameter = "BLOCKFLIPPARAMETER";
 
 	public const string ObjectBlockGripLocationComponent = "BLOCKGRIPLOCATIONCOMPONENT";
 
+	public const string ObjectBlockLinearGrip = "BLOCKLINEARGRIP";
+
 	public const string ObjectBlockLinearParameter = "BLOCKLINEARPARAMETER";
 
+	public const string ObjectBlockLookupAction = "BLOCKLOOKUPACTION";
+
+	public const string ObjectBlockLookupGrip = "BLOCKLOOKUPGRIP";
+
+	public const string ObjectBlockLookupParameter = "BLOCKLOOKUPPARAMETER";
+
+	public const string ObjectBlockMoveAction = "BLOCKMOVEACTION";
+
 	public const string ObjectBlockPointParameter = "BLOCKPOINTPARAMETER";
+
+	public const string ObjectBlockPolarGrip = "BLOCKPOLARGRIP";
+
+	public const string ObjectBlockPolarParameter = "BLOCKPOLARPARAMETER";
+
+	public const string ObjectBlockPolarStretchAction = "BLOCKPOLARSTRETCHACTION";
 
 	public const string ObjectBlockRepresentationData = "ACDB_BLOCKREPRESENTATION_DATA";
 
@@ -178,9 +216,17 @@ public static class DxfFileToken
 
 	public const string ObjectBlockRotationParameter = "BLOCKROTATIONPARAMETER";
 
+	public const string ObjectBlockScaleAction = "BLOCKSCALEACTION";
+
+	public const string ObjectBlockStretchAction = "BLOCKSTRETCHACTION";
+
 	public const string ObjectBlockVisibilityGrip = "BLOCKVISIBILITYGRIP";
 
 	public const string ObjectBlockVisibilityParameter = "BLOCKVISIBILITYPARAMETER";
+
+	public const string ObjectBlockXYGrip = "BLOCKXYGRIP";
+
+	public const string ObjectBlockXYParameter = "BLOCKXYPARAMETER";
 
 	public const string ObjectCell = "CELL";
 
@@ -195,6 +241,8 @@ public static class DxfFileToken
 	public const string ObjectDictionaryWithDefault = "ACDBDICTIONARYWDFLT";
 
 	public const string ObjectDimensionAssociation = "DIMASSOC";
+
+	public const string ObjectDynamicBlockPurgePreventer = "ACDB_DYNAMICBLOCKPURGEPREVENTER_VERSION";
 
 	public const string ObjectEvalGraph = "ACAD_EVALUATION_GRAPH";
 
@@ -284,11 +332,5 @@ public static class DxfFileToken
 
 	public const string TableVport = "VPORT";
 
-	public const string AcmPartRef = "ACMPARTREF";
-
-	public const string AcmBalloon = "ACMBALLOON";
-
-	public const string AcmPartList = "ACMPARTLIST";
-	
 	public const string ValueEnd = "ACVALUE_END";
 }

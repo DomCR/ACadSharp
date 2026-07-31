@@ -1,5 +1,4 @@
 using ACadSharp.Attributes;
-using System.Collections.Generic;
 
 namespace ACadSharp.Objects.Evaluations;
 
@@ -15,14 +14,11 @@ namespace ACadSharp.Objects.Evaluations;
 [DxfSubClass(DxfSubclassMarker.BlockLinearParameter)]
 public class BlockLinearParameter : Block2PtParameter
 {
+	/// <summary>
+	/// Gets or sets the description of the parameter.
+	/// </summary>
 	[DxfCodeValue(306)]
 	public string Description { get; set; }
-
-	/// <summary>
-	/// Distance increment between two allowed values.
-	/// </summary>
-	[DxfCodeValue(143)]
-	public double Increment { get; set; }
 
 	/// <summary>
 	/// Label text.
@@ -30,32 +26,17 @@ public class BlockLinearParameter : Block2PtParameter
 	[DxfCodeValue(305)]
 	public string Label { get; set; }
 
+	/// <summary>
+	/// Gets or sets the label offset.
+	/// </summary>
 	[DxfCodeValue(140)]
 	public double LabelOffset { get; set; }
-
-	/// <summary>
-	/// Maximum allowed distance.
-	/// </summary>
-	[DxfCodeValue(142)]
-	public double Maximum { get; set; }
-
-	/// <summary>
-	/// Minimum allowed distance.
-	/// </summary>
-	[DxfCodeValue(141)]
-	public double Minimum { get; set; }
 
 	/// <inheritdoc/>
 	public override string ObjectName => DxfFileToken.ObjectBlockLinearParameter;
 
 	/// <inheritdoc/>
-	public override ObjectType ObjectType => ObjectType.UNLISTED;
-
-	/// <inheritdoc/>
 	public override string SubclassMarker => DxfSubclassMarker.BlockLinearParameter;
 
-	/// <summary>
-	/// Discrete list of allowed distance values.
-	/// </summary>
-	public List<double> Values { get; } = new List<double>();
+	public ParameterValueSet ValueSet { get; set; } = new ParameterValueSet();
 }

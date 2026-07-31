@@ -61,7 +61,7 @@ namespace ACadSharp.IO.DXF
 				case GroupCodeValueType.Point3D:
 				case GroupCodeValueType.Double:
 				case GroupCodeValueType.ExtendedDataDouble:
-					this._stream.WriteLine(Convert.ToDouble(value).ToString("0.0###############", System.Globalization.CultureInfo.InvariantCulture));
+					this._stream.WriteLine(Convert.ToDouble(value).ToString("R", System.Globalization.CultureInfo.InvariantCulture));
 					return;
 				case GroupCodeValueType.Byte:
 				case GroupCodeValueType.Int16:
@@ -85,24 +85,25 @@ namespace ACadSharp.IO.DXF
 					return;
 				case GroupCodeValueType.Chunk:
 				case GroupCodeValueType.ExtendedDataChunk:
+					const int maxChunkLength = 127;
 					byte[] arr = value as byte[];
 					MemoryStream ms = new MemoryStream(arr);
 					List<string> lines = new List<string>();
 
-					int nlines = arr.Length / 64;
-					byte[] array = new byte[64];
+					int nlines = arr.Length / maxChunkLength;
+					byte[] array = new byte[maxChunkLength];
 					for (int i = 0; i < nlines; i++)
 					{
-						ms.Read(array, 0, 64);
+						ms.Read(array, 0, maxChunkLength);
 						lines.Add(new string(array.SelectMany(b => string.Format("{0:X2}", b)).ToArray()));
 					}
 
-					int surp = arr.Length % 64;
+					int surp = arr.Length % maxChunkLength;
 					if (surp != 0)
 					{
 						byte[] array2 = new byte[surp];
-						ms.Read(array, 0, surp);
-						lines.Add(new string(array.SelectMany(b => string.Format("{0:X2}", b)).ToArray()));
+						ms.Read(array2, 0, surp);
+						lines.Add(new string(array2.SelectMany(b => string.Format("{0:X2}", b)).ToArray()));
 					}
 
 					this._stream.WriteLine(lines.First());

@@ -3,23 +3,14 @@
 public partial class XRecord
 {
 	/// <summary>
-	/// Represents a single data entry containing a group code, value, and associated owner within a <see cref="XRecord"/>.
+	/// Represents a single entry in an <see cref="XRecord"/> object, consisting of a group code and its associated value.
 	/// </summary>
-	/// <remarks>The <see cref="Entry"/> class encapsulates a code-value pair, commonly used in CAD data
-	/// structures to represent individual fields or properties. Each entry is associated with a group code that
-	/// determines the type and interpretation of its value. The <see cref="Owner"/> property links the entry to its
-	/// parent <see cref="XRecord"/>.</remarks>
 	public class Entry
 	{
 		/// <summary>
 		/// Gets the numeric code associated with the current instance.
 		/// </summary>
 		public int Code { get; }
-
-		/// <summary>
-		/// Gets or sets the value associated with the current instance.
-		/// </summary>
-		public object Value { get; set; }
 
 		public GroupCodeValueType GroupCode
 		{
@@ -50,15 +41,17 @@ public partial class XRecord
 		}
 
 		/// <summary>
-		/// Gets or sets the owner of the current record.
+		/// Gets or sets the value associated with the current instance.
 		/// </summary>
-		public XRecord Owner { get; set; }
+		public object Value { get; set; }
+
+		private XRecord _owner;
 
 		internal Entry(int code, object value, XRecord owner)
 		{
 			this.Code = code;
 			this.Value = value;
-			this.Owner = owner;
+			this._owner = owner;
 		}
 
 		/// <summary>
@@ -73,7 +66,7 @@ public partial class XRecord
 
 			if (this.Value is CadObject cadObject)
 			{
-				if (cadObject.Document != this.Owner.Document)
+				if (cadObject.Document != this._owner.Document)
 				{
 					return null;
 				}

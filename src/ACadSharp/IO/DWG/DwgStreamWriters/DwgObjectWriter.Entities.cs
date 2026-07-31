@@ -403,6 +403,31 @@ internal partial class DwgObjectWriter : DwgSectionIO
 		this._writer.Write3BitDouble(dimension.AngleVertex);
 	}
 
+	private void writeDimensionArc(DimensionArc dimension)
+	{
+		//Common:
+		//Dim line arc point 3BD 10
+		this._writer.Write3BitDouble(dimension.DefinitionPoint);
+		//Extension line 1 point 3BD 13
+		this._writer.Write3BitDouble(dimension.FirstPoint);
+		//Extension line 2 point 3BD 14
+		this._writer.Write3BitDouble(dimension.SecondPoint);
+		//Arc center 3BD 15
+		this._writer.Write3BitDouble(dimension.Center);
+		//Is partial? B 70
+		this._writer.WriteBit(dimension.IsPartial);
+		//Start angle (radians) BD 40
+		this._writer.WriteBitDouble(dimension.StartAngle);
+		//End angle (radians) BD 41
+		this._writer.WriteBitDouble(dimension.EndAngle);
+		//Has leader? B 71
+		this._writer.WriteBit(dimension.HasLeader);
+		//Leader point 1 3BD 16
+		this._writer.Write3BitDouble(dimension.LeaderPoint1);
+		//Leader point 2 3BD 17
+		this._writer.Write3BitDouble(dimension.LeaderPoint2);
+	}
+
 	private void writeDimensionDiameter(DimensionDiameter dimension)
 	{
 		//Common:
@@ -490,6 +515,9 @@ internal partial class DwgObjectWriter : DwgSectionIO
 						break;
 					case DimensionAngular3Pt angular3pt:
 						this.writeDimensionAngular3Pt(angular3pt);
+						break;
+					case DimensionArc arc:
+						this.writeDimensionArc(arc);
 						break;
 					case DimensionDiameter diamenter:
 						this.writeDimensionDiameter(diamenter);
