@@ -209,7 +209,7 @@ public class CadDocument : IHandledCadObject
 	/// <summary>
 	/// The data stored in the Prototype1b header section. This primarily contains ACIS and thumbnail data
 	/// </summary>
-	public DataStorage DataStorage { get; set; }
+	public Prototype1b.DataStorage DataStorage { get; set; }
 
 	//Contains all the objects in the document
 	private readonly Dictionary<ulong, IHandledCadObject> _cadObjects = new Dictionary<ulong, IHandledCadObject>();

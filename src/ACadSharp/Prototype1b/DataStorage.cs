@@ -23,7 +23,7 @@ namespace ACadSharp.Prototype1b
         public DataStoragePointers IndexPointers { get; set; }
 
         /// <summary>
-		/// All registered Schemas
+		/// All registered Schemes
 		/// </summary>
         public List<SchemaData> SchemaFields { get; set; }
 

@@ -1,4 +1,5 @@
-﻿using ACadSharp.Entities;
+﻿using ACadSharp.DataStorage;
+using ACadSharp.Entities;
 using ACadSharp.IO.Templates;
 using ACadSharp.Objects;
 using ACadSharp.Tables;
@@ -18,6 +19,8 @@ internal abstract class CadDocumentBuilder
 	public AppIdsTable AppIds { get; set; } = new AppIdsTable();
 
 	public BlockRecordsTable BlockRecords { get; set; } = new BlockRecordsTable();
+
+	public CadFileDataStorage DataStorage { get; set; }
 
 	public DimensionStylesTable DimensionStyles { get; set; } = new DimensionStylesTable();
 
