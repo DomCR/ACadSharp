@@ -121,10 +121,10 @@ public class DwgReader : CadReaderBase<DwgReaderConfiguration>
 
 		this.readAppInfo();
 
-		this.readDsPrototype_1b();
-
 		//Read all the objects in the file
 		this.readObjects();
+
+		this.readDsPrototype_1b();
 
 		//Build the document
 		this._builder.BuildDocument();
@@ -536,6 +536,12 @@ public class DwgReader : CadReaderBase<DwgReaderConfiguration>
 	private void readDsPrototype_1b()
 	{
 		this._fileHeader = this._fileHeader ?? this.readFileHeader();
+
+		if (this._fileHeader.AcadVersion <= ACadVersion.AC1024)
+		{
+			// Introduced in R2013
+			return;
+		}
 
 		IDwgStreamReader sreader = this.getSectionStream(DwgSectionDefinition.AcDsPrototype);
 		if (sreader is null)

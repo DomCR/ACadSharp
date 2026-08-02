@@ -5,7 +5,7 @@ namespace ACadSharp.Prototype1b
 {
 	public class SchemaSearch : IPrototype1bSegment
     {
-        public SegmentHeader Header { get; set; }
+        public FileSegmentHeader Header { get; set; }
         public List<SchemaSearchEntry> Entries { get; set; }
     }
 }
