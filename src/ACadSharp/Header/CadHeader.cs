@@ -3320,15 +3320,27 @@ namespace ACadSharp.Header
 			}
 			else if (prop.Property.PropertyType.IsEquivalentTo(typeof(DateTime)))
 			{
-				double jvalue = (double)values.First();
-
-				prop.Setter(this, CadUtils.FromJulianCalendar((double)values.First()));
+				object value = values.First();
+				if (value is double jvalue)
+				{
+					prop.Setter(this, CadUtils.FromJulianCalendar((double)values.First()));
+				}
+				else if (value is DateTime dt)
+				{
+					prop.Setter(this, dt);
+				}
 			}
 			else if (prop.Property.PropertyType.IsEquivalentTo(typeof(TimeSpan)))
 			{
-				double jvalue = (double)values.First();
-
-				prop.Setter(this, CadUtils.EditingTime((double)values.First()));
+				object value = values.First();
+				if (value is double jvalue)
+				{
+					prop.Setter(this, CadUtils.EditingTime((double)values.First()));
+				}
+				else if (value is TimeSpan dt)
+				{
+					prop.Setter(this, dt);
+				}
 			}
 			else if (constr == null)
 			{

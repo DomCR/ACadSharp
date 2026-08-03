@@ -113,8 +113,8 @@ public partial class LwPolyline : Entity, IPolyline
 	/// objects.</remarks>
 	/// <param name="vertices">A collection of <see cref="XY"/> points representing the vertices of the polyline. Each point defines a vertex in
 	/// the order it appears in the collection.</param>
-	public LwPolyline(params IEnumerable<XY> vertices)
-		: this(vertices.Select(v => new Vertex(v))) { }
+	public LwPolyline(params IEnumerable<IVector> vertices)
+		: this(vertices.Select(v => new Vertex(v.Convert<XY>()))) { }
 
 	/// <inheritdoc/>
 	public override void ApplyTransform(Transform transform)
