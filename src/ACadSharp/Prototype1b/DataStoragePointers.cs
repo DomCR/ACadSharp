@@ -4,7 +4,7 @@ namespace ACadSharp.Prototype1b
 {
 	public class DataStoragePointers
 	{
-		// Indices for reading Segments, Schemas and Data
+		// Indices for reading Segments, Schemes and Data
 		public SegmentIndex SegmentIndex { get; set; }
 		public DataIndex DataIndex { get; set; }
 		public SchemaIndex SchemaIndex { get; set; }

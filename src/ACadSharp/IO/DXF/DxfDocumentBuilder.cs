@@ -2,6 +2,7 @@
 using ACadSharp.IO.Templates;
 using ACadSharp.Objects;
 using ACadSharp.Tables;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 
@@ -9,11 +10,7 @@ namespace ACadSharp.IO.DXF;
 
 internal class DxfDocumentBuilder : CadDocumentBuilder
 {
-	/// <summary>
-	/// ACIS payloads read from the ACDSDATA section, keyed by the handle of the
-	/// owner entity. Applied to the matching <see cref="ModelerGeometry"/>
-	/// entities when the document is built.
-	/// </summary>
+	[Obsolete]
 	public Dictionary<ulong, byte[]> AcdsDataRecords { get; } = new();
 
 	public DxfReaderConfiguration Configuration { get; }
