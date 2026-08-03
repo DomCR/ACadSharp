@@ -81,9 +81,9 @@ internal class DxfAcdsDataSectionReader : DxfSectionReaderBase
 				case 90:
 					schema.Index = (uint)this._reader.ValueAsInt;
 					break;
-				case 101:
-					var propertyDescriptor = this.readPropertyDescriptor();
-					schema.PropertyDescriptors.Add(propertyDescriptor);
+				case 101 when this._reader.ValueAsString == RecordToken:
+					var record = this.readEmbeddedRecord();
+					schema.EmbeddedRecords.Add(record);
 					continue;
 			}
 
@@ -93,9 +93,38 @@ internal class DxfAcdsDataSectionReader : DxfSectionReaderBase
 		return schema;
 	}
 
-	private AcdsPropertyDescriptor readPropertyDescriptor()
+	private AcdsRecord readEmbeddedRecord()
 	{
-		throw new NotImplementedException();
+		var record = new AcdsRecord();
+
+		this._reader.ReadNext();
+
+		while (this._reader.DxfCode != DxfCode.Start
+			&& this._reader.DxfCode != DxfCode.EmbeddedObjectStart)
+		{
+			switch (this._reader.Code)
+			{
+				case 2:
+					record.Name = this._reader.ValueAsString;
+					break;
+				case 90:
+					record.Index = (int)this._reader.ValueAsInt;
+					break;
+				case 95:
+					record.Id = (int)this._reader.ValueAsShort;
+					break;
+				case 280:
+					record.Value280 = this._reader.ValueAsShort;
+					break;
+				case 291:
+					record.Value291 = this._reader.ValueAsShort;
+					break;
+			}
+
+			this._reader.ReadNext();
+		}
+
+		return record;
 	}
 
 	private SchemaProperty readProperty()
