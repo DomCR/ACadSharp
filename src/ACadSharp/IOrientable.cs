@@ -10,5 +10,5 @@ public interface IOrientable
 	/// <summary>
 	/// Specifies the three-dimensional normal unit vector for the object.
 	/// </summary>
-	XYZ Normal { get; }
+	XYZ Normal { get; set; }
 }

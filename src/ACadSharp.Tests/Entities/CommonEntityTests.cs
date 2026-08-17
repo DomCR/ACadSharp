@@ -2,6 +2,7 @@
 using ACadSharp.Extensions;
 using ACadSharp.Tables;
 using ACadSharp.Tests.Common;
+using CSMath;
 using Xunit;
 
 namespace ACadSharp.Tests.Entities;
@@ -101,4 +102,25 @@ public abstract class CommonEntityTests<T>
 
 	[Fact]
 	public abstract void GetBoundingBoxTest();
+
+	[Fact]
+	public void InvalidEntityTest()
+	{
+		var e = new T();
+
+		if (e is IOrientable orientable)
+		{
+			orientable.Normal = new XYZ();
+		}
+
+		Assert.False(e.IsValid());
+	}
+
+	[Fact]
+	public void ValidEntityTest()
+	{
+		//By default all entities must be valid on creation
+		var e = new T();
+		Assert.True(e.IsValid());
+	}
 }
