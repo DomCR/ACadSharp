@@ -200,15 +200,6 @@ public abstract class CadObject : IHandledCadObject
 			}
 		}
 
-		if (format == CadFileFormat.DXF && this is INamedCadObject named)
-		{
-			if (!named.HasValidDxfName())
-			{
-				errors.Add($"{named.GetType().FullName}: {nameof(named.Name)} has an invalid name for a DXF file.");
-				result = false;
-			}
-		}
-
 		return result;
 	}
 
