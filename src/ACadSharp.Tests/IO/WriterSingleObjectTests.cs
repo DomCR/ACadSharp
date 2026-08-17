@@ -1361,6 +1361,10 @@ public abstract class WriterSingleObjectTests : IOTestsBase
 				this.Document.Layers.Add(l);
 			}
 
+			//Valid name for a layer but is not shown in the layer list in AutoCAD
+			l = new Layer("*hello");
+			this.Document.Layers.Add(l);
+
 			//Empty file
 		}
 

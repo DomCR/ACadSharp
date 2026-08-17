@@ -45,6 +45,12 @@ namespace ACadSharp.IO.DXF
 
 			foreach (T entry in table)
 			{
+				if (!entry.IsValid(CadFileFormat.DXF, this.Version))
+				{
+					this.notify($"{entry.GetType().FullName} with name {entry.Name} is not valid for version {this.Version}.", NotificationType.Warning);
+					continue;
+				}
+
 				writeEntry(entry, writeFlags);
 			}
 

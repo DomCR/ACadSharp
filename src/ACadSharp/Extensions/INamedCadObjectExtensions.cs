@@ -1,8 +1,10 @@
-﻿namespace ACadSharp.Extensions;
+﻿using System.Linq;
+
+namespace ACadSharp.Extensions;
 
 public static class INamedCadObjectExtensions
 {
-	public static readonly char[] InvalidCharacters = { '\\', '/', ':', '*', '?', '"', '<', '>', '|', ';', ',', '=', '`' };
+	public static readonly char[] InvalidCharacters = { '*', '\\', '/', ':', '?', '"', '<', '>', '|', ';', ',', '=', '`' };
 
 	/// <summary>
 	/// Check if the name of the object is valid for dxf format.
@@ -26,6 +28,11 @@ public static class INamedCadObjectExtensions
 			return false;
 		}
 
-		return namedCadObject.Name.IndexOfAny(InvalidCharacters) == -1;
+		if (namedCadObject.Name.IndexOf(InvalidCharacters[0]) > 0)
+		{
+			return false;
+		}
+
+		return namedCadObject.Name.IndexOfAny(InvalidCharacters.Skip(1).ToArray()) == -1;
 	}
 }

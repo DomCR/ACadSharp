@@ -1011,8 +1011,14 @@ internal partial class DwgObjectWriter : DwgSectionIO
 	private void writeEntries<T>(Table<T> table)
 		where T : TableEntry
 	{
-		foreach (var entry in table)
+		foreach (T entry in table)
 		{
+			if (!entry.IsValid(CadFileFormat.DWG, this._version))
+			{
+				this.notify($"{entry.GetType().FullName} with name {entry.Name} is not valid for version {this._version}.", NotificationType.Warning);
+				continue;
+			}
+
 			switch (entry)
 			{
 				case AppId app:
