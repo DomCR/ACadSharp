@@ -104,7 +104,7 @@ Class Spline  <a class="header-action link-secondary" title="View source" href="
   <div class="codewrapper">
     <pre><code class="lang-csharp hljs">[DxfName(&quot;SPLINE&quot;)]
 [DxfSubClass(&quot;AcDbSpline&quot;)]
-public class Spline : Entity, IEntity, IHandledCadObject, IGeometricEntity</code></pre>
+public class Spline : Entity, IEntity, IHandledCadObject, IGeometricEntity, IOrientable</code></pre>
   </div>
 
 
@@ -126,6 +126,7 @@ public class Spline : Entity, IEntity, IHandledCadObject, IGeometricEntity</code
       <div><a class="xref" href="ACadSharp.Entities.IEntity.html">IEntity</a></div>
       <div><a class="xref" href="ACadSharp.IHandledCadObject.html">IHandledCadObject</a></div>
       <div><a class="xref" href="ACadSharp.Entities.IGeometricEntity.html">IGeometricEntity</a></div>
+      <div><a class="xref" href="ACadSharp.IOrientable.html">IOrientable</a></div>
     </dd>
   </dl>
 
@@ -233,6 +234,12 @@ public class Spline : Entity, IEntity, IHandledCadObject, IGeometricEntity</code
       <a class="xref" href="ACadSharp.CadObject.html#ACadSharp_CadObject_CreateExtendedDictionary">CadObject.CreateExtendedDictionary()</a>
     </div>
     <div>
+      <a class="xref" href="ACadSharp.CadObject.html#ACadSharp_CadObject_IsValid_ACadSharp_IO_CadFileFormat_ACadSharp_ACadVersion_">CadObject.IsValid(CadFileFormat, ACadVersion)</a>
+    </div>
+    <div>
+      <a class="xref" href="ACadSharp.CadObject.html#ACadSharp_CadObject_IsValid_ACadSharp_IO_CadFileFormat_ACadSharp_ACadVersion_System_Collections_Generic_IList_System_String___">CadObject.IsValid(CadFileFormat, ACadVersion, out IList&lt;string&gt;)</a>
+    </div>
+    <div>
       <a class="xref" href="ACadSharp.CadObject.html#ACadSharp_CadObject_RemoveReactor_ACadSharp_CadObject_">CadObject.RemoveReactor(CadObject)</a>
     </div>
     <div>
@@ -288,7 +295,7 @@ Dxf class name <a class="xref" href="ACadSharp.DxfSubclassMarker.html#ACadSharp_
 
   <h3 id="ACadSharp_Entities_Spline__ctor" data-uid="ACadSharp.Entities.Spline.#ctor">
   Spline()
-  <a class="header-action link-secondary" title="View source" href="https://github.com/DomCR/ACadSharp/blob/master/src/ACadSharp/Entities/Spline.cs/#L201"><i class="bi bi-code-slash"></i></a>
+  <a class="header-action link-secondary" title="View source" href="https://github.com/DomCR/ACadSharp/blob/master/src/ACadSharp/Entities/Spline.cs/#L199"><i class="bi bi-code-slash"></i></a>
   </h3>
 
   <div class="markdown level1 summary"><p>Default constructor.</p>
@@ -318,7 +325,7 @@ Dxf class name <a class="xref" href="ACadSharp.DxfSubclassMarker.html#ACadSharp_
 
   <h3 id="ACadSharp_Entities_Spline_MaxDegree" data-uid="ACadSharp.Entities.Spline.MaxDegree">
   MaxDegree
-  <a class="header-action link-secondary" title="View source" href="https://github.com/DomCR/ACadSharp/blob/master/src/ACadSharp/Entities/Spline.cs/#L194"><i class="bi bi-code-slash"></i></a>
+  <a class="header-action link-secondary" title="View source" href="https://github.com/DomCR/ACadSharp/blob/master/src/ACadSharp/Entities/Spline.cs/#L192"><i class="bi bi-code-slash"></i></a>
   </h3>
 
   <div class="markdown level1 summary"></div>
@@ -828,7 +835,7 @@ public List&lt;double&gt; Knots { get; }</code></pre>
 
   <h3 id="ACadSharp_Entities_Spline_Normal" data-uid="ACadSharp.Entities.Spline.Normal">
   Normal
-  <a class="header-action link-secondary" title="View source" href="https://github.com/DomCR/ACadSharp/blob/master/src/ACadSharp/Entities/Spline.cs/#L170"><i class="bi bi-code-slash"></i></a>
+  <a class="header-action link-secondary" title="View source" href="https://github.com/DomCR/ACadSharp/blob/master/src/ACadSharp/Entities/Spline.cs/#L168"><i class="bi bi-code-slash"></i></a>
   </h3>
 
   <div class="markdown level1 summary"><p>Specifies the three-dimensional normal unit vector for the object.</p>
@@ -864,7 +871,7 @@ public XYZ Normal { get; set; }</code></pre>
 
   <h3 id="ACadSharp_Entities_Spline_ObjectName" data-uid="ACadSharp.Entities.Spline.ObjectName">
   ObjectName
-  <a class="header-action link-secondary" title="View source" href="https://github.com/DomCR/ACadSharp/blob/master/src/ACadSharp/Entities/Spline.cs/#L174"><i class="bi bi-code-slash"></i></a>
+  <a class="header-action link-secondary" title="View source" href="https://github.com/DomCR/ACadSharp/blob/master/src/ACadSharp/Entities/Spline.cs/#L172"><i class="bi bi-code-slash"></i></a>
   </h3>
 
   <div class="markdown level1 summary"><p>The CAD class name of an object.</p>
@@ -896,7 +903,7 @@ public XYZ Normal { get; set; }</code></pre>
 
   <h3 id="ACadSharp_Entities_Spline_ObjectType" data-uid="ACadSharp.Entities.Spline.ObjectType">
   ObjectType
-  <a class="header-action link-secondary" title="View source" href="https://github.com/DomCR/ACadSharp/blob/master/src/ACadSharp/Entities/Spline.cs/#L177"><i class="bi bi-code-slash"></i></a>
+  <a class="header-action link-secondary" title="View source" href="https://github.com/DomCR/ACadSharp/blob/master/src/ACadSharp/Entities/Spline.cs/#L175"><i class="bi bi-code-slash"></i></a>
   </h3>
 
   <div class="markdown level1 summary"><p>Get the object type.</p>
@@ -928,7 +935,7 @@ public XYZ Normal { get; set; }</code></pre>
 
   <h3 id="ACadSharp_Entities_Spline_StartTangent" data-uid="ACadSharp.Entities.Spline.StartTangent">
   StartTangent
-  <a class="header-action link-secondary" title="View source" href="https://github.com/DomCR/ACadSharp/blob/master/src/ACadSharp/Entities/Spline.cs/#L182"><i class="bi bi-code-slash"></i></a>
+  <a class="header-action link-secondary" title="View source" href="https://github.com/DomCR/ACadSharp/blob/master/src/ACadSharp/Entities/Spline.cs/#L180"><i class="bi bi-code-slash"></i></a>
   </h3>
 
   <div class="markdown level1 summary"><p>Start tangent—may be omitted in WCS.</p>
@@ -961,7 +968,7 @@ public XYZ StartTangent { get; set; }</code></pre>
 
   <h3 id="ACadSharp_Entities_Spline_SubclassMarker" data-uid="ACadSharp.Entities.Spline.SubclassMarker">
   SubclassMarker
-  <a class="header-action link-secondary" title="View source" href="https://github.com/DomCR/ACadSharp/blob/master/src/ACadSharp/Entities/Spline.cs/#L186"><i class="bi bi-code-slash"></i></a>
+  <a class="header-action link-secondary" title="View source" href="https://github.com/DomCR/ACadSharp/blob/master/src/ACadSharp/Entities/Spline.cs/#L184"><i class="bi bi-code-slash"></i></a>
   </h3>
 
   <div class="markdown level1 summary"><p>Object Subclass marker.</p>
@@ -993,7 +1000,7 @@ public XYZ StartTangent { get; set; }</code></pre>
 
   <h3 id="ACadSharp_Entities_Spline_Weights" data-uid="ACadSharp.Entities.Spline.Weights">
   Weights
-  <a class="header-action link-secondary" title="View source" href="https://github.com/DomCR/ACadSharp/blob/master/src/ACadSharp/Entities/Spline.cs/#L191"><i class="bi bi-code-slash"></i></a>
+  <a class="header-action link-secondary" title="View source" href="https://github.com/DomCR/ACadSharp/blob/master/src/ACadSharp/Entities/Spline.cs/#L189"><i class="bi bi-code-slash"></i></a>
   </h3>
 
   <div class="markdown level1 summary"><p>Weight(if not 1); with multiple group pairs, they are present if all are not 1.</p>
@@ -1030,7 +1037,7 @@ public List&lt;double&gt; Weights { get; }</code></pre>
 
   <h3 id="ACadSharp_Entities_Spline_ApplyTransform_CSMath_Transform_" data-uid="ACadSharp.Entities.Spline.ApplyTransform(CSMath.Transform)">
   ApplyTransform(Transform)
-  <a class="header-action link-secondary" title="View source" href="https://github.com/DomCR/ACadSharp/blob/master/src/ACadSharp/Entities/Spline.cs/#L204"><i class="bi bi-code-slash"></i></a>
+  <a class="header-action link-secondary" title="View source" href="https://github.com/DomCR/ACadSharp/blob/master/src/ACadSharp/Entities/Spline.cs/#L202"><i class="bi bi-code-slash"></i></a>
   </h3>
 
   <div class="markdown level1 summary"><p>Apply a transform matrix to this entity.</p>
@@ -1062,7 +1069,7 @@ public List&lt;double&gt; Weights { get; }</code></pre>
 
   <h3 id="ACadSharp_Entities_Spline_Clone" data-uid="ACadSharp.Entities.Spline.Clone">
   Clone()
-  <a class="header-action link-secondary" title="View source" href="https://github.com/DomCR/ACadSharp/blob/master/src/ACadSharp/Entities/Spline.cs/#L223"><i class="bi bi-code-slash"></i></a>
+  <a class="header-action link-secondary" title="View source" href="https://github.com/DomCR/ACadSharp/blob/master/src/ACadSharp/Entities/Spline.cs/#L221"><i class="bi bi-code-slash"></i></a>
   </h3>
 
   <div class="markdown level1 summary"><p>Creates a new object that is a copy of the current instance.</p>
@@ -1098,7 +1105,7 @@ public List&lt;double&gt; Weights { get; }</code></pre>
 
   <h3 id="ACadSharp_Entities_Spline_GetBoundingBox" data-uid="ACadSharp.Entities.Spline.GetBoundingBox">
   GetBoundingBox()
-  <a class="header-action link-secondary" title="View source" href="https://github.com/DomCR/ACadSharp/blob/master/src/ACadSharp/Entities/Spline.cs/#L236"><i class="bi bi-code-slash"></i></a>
+  <a class="header-action link-secondary" title="View source" href="https://github.com/DomCR/ACadSharp/blob/master/src/ACadSharp/Entities/Spline.cs/#L234"><i class="bi bi-code-slash"></i></a>
   </h3>
 
   <div class="markdown level1 summary"><p>Gets the bounding box aligned with the axis XYZ that occupies this entity.</p>
@@ -1131,7 +1138,7 @@ public List&lt;double&gt; Weights { get; }</code></pre>
 
   <h3 id="ACadSharp_Entities_Spline_PointOnSpline_System_Double_" data-uid="ACadSharp.Entities.Spline.PointOnSpline(System.Double)">
   PointOnSpline(double)
-  <a class="header-action link-secondary" title="View source" href="https://github.com/DomCR/ACadSharp/blob/master/src/ACadSharp/Entities/Spline.cs/#L254"><i class="bi bi-code-slash"></i></a>
+  <a class="header-action link-secondary" title="View source" href="https://github.com/DomCR/ACadSharp/blob/master/src/ACadSharp/Entities/Spline.cs/#L252"><i class="bi bi-code-slash"></i></a>
   </h3>
 
   <div class="markdown level1 summary"><p>Calculates the point on the spline at the specified parametric position.</p>
@@ -1176,7 +1183,7 @@ public List&lt;double&gt; Weights { get; }</code></pre>
 
   <h3 id="ACadSharp_Entities_Spline_PolygonalVertexes_System_Int32_" data-uid="ACadSharp.Entities.Spline.PolygonalVertexes(System.Int32)">
   PolygonalVertexes(int)
-  <a class="header-action link-secondary" title="View source" href="https://github.com/DomCR/ACadSharp/blob/master/src/ACadSharp/Entities/Spline.cs/#L283"><i class="bi bi-code-slash"></i></a>
+  <a class="header-action link-secondary" title="View source" href="https://github.com/DomCR/ACadSharp/blob/master/src/ACadSharp/Entities/Spline.cs/#L281"><i class="bi bi-code-slash"></i></a>
   </h3>
 
   <div class="markdown level1 summary"><p>Generates a list of vertex points representing a polygonal approximation of the curve.</p>
@@ -1226,7 +1233,7 @@ result.</p>
 
   <h3 id="ACadSharp_Entities_Spline_TryPointOnSpline_System_Double_CSMath_XYZ__" data-uid="ACadSharp.Entities.Spline.TryPointOnSpline(System.Double,CSMath.XYZ@)">
   TryPointOnSpline(double, out XYZ)
-  <a class="header-action link-secondary" title="View source" href="https://github.com/DomCR/ACadSharp/blob/master/src/ACadSharp/Entities/Spline.cs/#L326"><i class="bi bi-code-slash"></i></a>
+  <a class="header-action link-secondary" title="View source" href="https://github.com/DomCR/ACadSharp/blob/master/src/ACadSharp/Entities/Spline.cs/#L324"><i class="bi bi-code-slash"></i></a>
   </h3>
 
   <div class="markdown level1 summary"><p>Attempts to calculate a point on the spline at the specified parameter value.</p>
@@ -1272,7 +1279,7 @@ spline to avoid errors.</p>
 
   <h3 id="ACadSharp_Entities_Spline_TryPolygonalVertexes_System_Int32_System_Collections_Generic_List_CSMath_XYZ___" data-uid="ACadSharp.Entities.Spline.TryPolygonalVertexes(System.Int32,System.Collections.Generic.List{CSMath.XYZ}@)">
   TryPolygonalVertexes(int, out List&lt;XYZ&gt;)
-  <a class="header-action link-secondary" title="View source" href="https://github.com/DomCR/ACadSharp/blob/master/src/ACadSharp/Entities/Spline.cs/#L351"><i class="bi bi-code-slash"></i></a>
+  <a class="header-action link-secondary" title="View source" href="https://github.com/DomCR/ACadSharp/blob/master/src/ACadSharp/Entities/Spline.cs/#L349"><i class="bi bi-code-slash"></i></a>
   </h3>
 
   <div class="markdown level1 summary"><p>Attempts to calculate the polygonal vertexes of the current object with the specified precision.</p>
@@ -1320,7 +1327,7 @@ the operation fails.</p>
 
   <h3 id="ACadSharp_Entities_Spline_UpdateFromFitPoints_System_UInt32_" data-uid="ACadSharp.Entities.Spline.UpdateFromFitPoints(System.UInt32)">
   UpdateFromFitPoints(uint)
-  <a class="header-action link-secondary" title="View source" href="https://github.com/DomCR/ACadSharp/blob/master/src/ACadSharp/Entities/Spline.cs/#L377"><i class="bi bi-code-slash"></i></a>
+  <a class="header-action link-secondary" title="View source" href="https://github.com/DomCR/ACadSharp/blob/master/src/ACadSharp/Entities/Spline.cs/#L375"><i class="bi bi-code-slash"></i></a>
   </h3>
 
   <div class="markdown level1 summary"><p>Updates the spline's control points, knots, and weights based on the current fit points and tangents.</p>

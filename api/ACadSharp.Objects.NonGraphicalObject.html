@@ -89,7 +89,7 @@
 
 
   <h1 id="ACadSharp_Objects_NonGraphicalObject" data-uid="ACadSharp.Objects.NonGraphicalObject" class="text-break">
-Class NonGraphicalObject  <a class="header-action link-secondary" title="View source" href="https://github.com/DomCR/ACadSharp/blob/master/src/ACadSharp/Objects/NonGraphicalObject.cs/#L9"><i class="bi bi-code-slash"></i></a>
+Class NonGraphicalObject  <a class="header-action link-secondary" title="View source" href="https://github.com/DomCR/ACadSharp/blob/master/src/ACadSharp/Objects/NonGraphicalObject.cs/#L12"><i class="bi bi-code-slash"></i></a>
   </h1>
 
   <div class="facts text-secondary">
@@ -206,6 +206,12 @@ public abstract class NonGraphicalObject : CadObject, IHandledCadObject, INamedC
       <a class="xref" href="ACadSharp.CadObject.html#ACadSharp_CadObject_CreateExtendedDictionary">CadObject.CreateExtendedDictionary()</a>
     </div>
     <div>
+      <a class="xref" href="ACadSharp.CadObject.html#ACadSharp_CadObject_IsValid_ACadSharp_IO_CadFileFormat_ACadSharp_ACadVersion_">CadObject.IsValid(CadFileFormat, ACadVersion)</a>
+    </div>
+    <div>
+      <a class="xref" href="ACadSharp.CadObject.html#ACadSharp_CadObject_IsValid_ACadSharp_IO_CadFileFormat_ACadSharp_ACadVersion_System_Collections_Generic_IList_System_String___">CadObject.IsValid(CadFileFormat, ACadVersion, out IList&lt;string&gt;)</a>
+    </div>
+    <div>
       <a class="xref" href="ACadSharp.CadObject.html#ACadSharp_CadObject_RemoveReactor_ACadSharp_CadObject_">CadObject.RemoveReactor(CadObject)</a>
     </div>
     <div>
@@ -235,7 +241,7 @@ public abstract class NonGraphicalObject : CadObject, IHandledCadObject, INamedC
     <dt>Extension Methods</dt>
     <dd>
   <div>
-      <a class="xref" href="ACadSharp.Extensions.INamedCadObjectExtensions.html#ACadSharp_Extensions_INamedCadObjectExtensions_IsValidDxfName_ACadSharp_INamedCadObject_ACadSharp_ACadVersion_">INamedCadObjectExtensions.IsValidDxfName(INamedCadObject, ACadVersion)</a>
+      <a class="xref" href="ACadSharp.Extensions.INamedCadObjectExtensions.html#ACadSharp_Extensions_INamedCadObjectExtensions_HasValidDxfName_ACadSharp_INamedCadObject_ACadSharp_ACadVersion_">INamedCadObjectExtensions.HasValidDxfName(INamedCadObject, ACadVersion)</a>
   </div>
   <div>
       <a class="xref" href="ACadSharp.Extensions.CadObjectExtensions.html#ACadSharp_Extensions_CadObjectExtensions_CloneTyped__1___0_">CadObjectExtensions.CloneTyped&lt;T&gt;(T)</a>
@@ -257,7 +263,7 @@ public abstract class NonGraphicalObject : CadObject, IHandledCadObject, INamedC
 
   <h3 id="ACadSharp_Objects_NonGraphicalObject__ctor" data-uid="ACadSharp.Objects.NonGraphicalObject.#ctor">
   NonGraphicalObject()
-  <a class="header-action link-secondary" title="View source" href="https://github.com/DomCR/ACadSharp/blob/master/src/ACadSharp/Objects/NonGraphicalObject.cs/#L37"><i class="bi bi-code-slash"></i></a>
+  <a class="header-action link-secondary" title="View source" href="https://github.com/DomCR/ACadSharp/blob/master/src/ACadSharp/Objects/NonGraphicalObject.cs/#L40"><i class="bi bi-code-slash"></i></a>
   </h3>
 
   <div class="markdown level1 summary"><p>Default constructor.</p>
@@ -284,7 +290,7 @@ public abstract class NonGraphicalObject : CadObject, IHandledCadObject, INamedC
 
   <h3 id="ACadSharp_Objects_NonGraphicalObject__ctor_System_String_" data-uid="ACadSharp.Objects.NonGraphicalObject.#ctor(System.String)">
   NonGraphicalObject(string)
-  <a class="header-action link-secondary" title="View source" href="https://github.com/DomCR/ACadSharp/blob/master/src/ACadSharp/Objects/NonGraphicalObject.cs/#L44"><i class="bi bi-code-slash"></i></a>
+  <a class="header-action link-secondary" title="View source" href="https://github.com/DomCR/ACadSharp/blob/master/src/ACadSharp/Objects/NonGraphicalObject.cs/#L47"><i class="bi bi-code-slash"></i></a>
   </h3>
 
   <div class="markdown level1 summary"><p>Initialize a <a class="xref" href="ACadSharp.Objects.NonGraphicalObject.html">NonGraphicalObject</a> with an specific name.</p>
@@ -320,7 +326,7 @@ public abstract class NonGraphicalObject : CadObject, IHandledCadObject, INamedC
 
   <h3 id="ACadSharp_Objects_NonGraphicalObject_Name" data-uid="ACadSharp.Objects.NonGraphicalObject.Name">
   Name
-  <a class="header-action link-secondary" title="View source" href="https://github.com/DomCR/ACadSharp/blob/master/src/ACadSharp/Objects/NonGraphicalObject.cs/#L19"><i class="bi bi-code-slash"></i></a>
+  <a class="header-action link-secondary" title="View source" href="https://github.com/DomCR/ACadSharp/blob/master/src/ACadSharp/Objects/NonGraphicalObject.cs/#L22"><i class="bi bi-code-slash"></i></a>
   </h3>
 
   <div class="markdown level1 summary"><p>Name identifier for this object.</p>
@@ -355,7 +361,7 @@ public abstract class NonGraphicalObject : CadObject, IHandledCadObject, INamedC
 
   <h3 id="ACadSharp_Objects_NonGraphicalObject_ObjectType" data-uid="ACadSharp.Objects.NonGraphicalObject.ObjectType">
   ObjectType
-  <a class="header-action link-secondary" title="View source" href="https://github.com/DomCR/ACadSharp/blob/master/src/ACadSharp/Objects/NonGraphicalObject.cs/#L30"><i class="bi bi-code-slash"></i></a>
+  <a class="header-action link-secondary" title="View source" href="https://github.com/DomCR/ACadSharp/blob/master/src/ACadSharp/Objects/NonGraphicalObject.cs/#L33"><i class="bi bi-code-slash"></i></a>
   </h3>
 
   <div class="markdown level1 summary"><p>Get the object type.</p>
@@ -391,7 +397,7 @@ public abstract class NonGraphicalObject : CadObject, IHandledCadObject, INamedC
 
   <h3 id="ACadSharp_Objects_NonGraphicalObject_Clone" data-uid="ACadSharp.Objects.NonGraphicalObject.Clone">
   Clone()
-  <a class="header-action link-secondary" title="View source" href="https://github.com/DomCR/ACadSharp/blob/master/src/ACadSharp/Objects/NonGraphicalObject.cs/#L50"><i class="bi bi-code-slash"></i></a>
+  <a class="header-action link-secondary" title="View source" href="https://github.com/DomCR/ACadSharp/blob/master/src/ACadSharp/Objects/NonGraphicalObject.cs/#L53"><i class="bi bi-code-slash"></i></a>
   </h3>
 
   <div class="markdown level1 summary"><p>Creates a new object that is a copy of the current instance.</p>
@@ -427,7 +433,7 @@ public abstract class NonGraphicalObject : CadObject, IHandledCadObject, INamedC
 
   <h3 id="ACadSharp_Objects_NonGraphicalObject_ToString" data-uid="ACadSharp.Objects.NonGraphicalObject.ToString">
   ToString()
-  <a class="header-action link-secondary" title="View source" href="https://github.com/DomCR/ACadSharp/blob/master/src/ACadSharp/Objects/NonGraphicalObject.cs/#L58"><i class="bi bi-code-slash"></i></a>
+  <a class="header-action link-secondary" title="View source" href="https://github.com/DomCR/ACadSharp/blob/master/src/ACadSharp/Objects/NonGraphicalObject.cs/#L61"><i class="bi bi-code-slash"></i></a>
   </h3>
 
   <div class="markdown level1 summary"><p>Returns a string that represents the current object.</p>
@@ -463,7 +469,7 @@ public abstract class NonGraphicalObject : CadObject, IHandledCadObject, INamedC
 
   <h3 id="ACadSharp_Objects_NonGraphicalObject_OnNameChanged" data-uid="ACadSharp.Objects.NonGraphicalObject.OnNameChanged">
   OnNameChanged
-  <a class="header-action link-secondary" title="View source" href="https://github.com/DomCR/ACadSharp/blob/master/src/ACadSharp/Objects/NonGraphicalObject.cs/#L12"><i class="bi bi-code-slash"></i></a>
+  <a class="header-action link-secondary" title="View source" href="https://github.com/DomCR/ACadSharp/blob/master/src/ACadSharp/Objects/NonGraphicalObject.cs/#L15"><i class="bi bi-code-slash"></i></a>
   </h3>
 
   <div class="markdown level1 summary"></div>
@@ -494,7 +500,7 @@ public abstract class NonGraphicalObject : CadObject, IHandledCadObject, INamedC
 </article>
 
         <div class="contribution d-print-none">
-          <a href="https://github.com/DomCR/ACadSharp/blob/master/src/ACadSharp/Objects/NonGraphicalObject.cs/#L9" class="edit-link">Edit this page</a>
+          <a href="https://github.com/DomCR/ACadSharp/blob/master/src/ACadSharp/Objects/NonGraphicalObject.cs/#L12" class="edit-link">Edit this page</a>
         </div>
 
 

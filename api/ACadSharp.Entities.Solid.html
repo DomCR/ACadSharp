@@ -104,7 +104,7 @@ Class Solid  <a class="header-action link-secondary" title="View source" href="h
   <div class="codewrapper">
     <pre><code class="lang-csharp hljs">[DxfName(&quot;SOLID&quot;)]
 [DxfSubClass(&quot;AcDbTrace&quot;)]
-public class Solid : Entity, IEntity, IHandledCadObject, IGeometricEntity</code></pre>
+public class Solid : Entity, IEntity, IHandledCadObject, IGeometricEntity, IOrientable</code></pre>
   </div>
 
 
@@ -126,6 +126,7 @@ public class Solid : Entity, IEntity, IHandledCadObject, IGeometricEntity</code>
       <div><a class="xref" href="ACadSharp.Entities.IEntity.html">IEntity</a></div>
       <div><a class="xref" href="ACadSharp.IHandledCadObject.html">IHandledCadObject</a></div>
       <div><a class="xref" href="ACadSharp.Entities.IGeometricEntity.html">IGeometricEntity</a></div>
+      <div><a class="xref" href="ACadSharp.IOrientable.html">IOrientable</a></div>
     </dd>
   </dl>
 
@@ -236,6 +237,12 @@ public class Solid : Entity, IEntity, IHandledCadObject, IGeometricEntity</code>
       <a class="xref" href="ACadSharp.CadObject.html#ACadSharp_CadObject_CreateExtendedDictionary">CadObject.CreateExtendedDictionary()</a>
     </div>
     <div>
+      <a class="xref" href="ACadSharp.CadObject.html#ACadSharp_CadObject_IsValid_ACadSharp_IO_CadFileFormat_ACadSharp_ACadVersion_">CadObject.IsValid(CadFileFormat, ACadVersion)</a>
+    </div>
+    <div>
+      <a class="xref" href="ACadSharp.CadObject.html#ACadSharp_CadObject_IsValid_ACadSharp_IO_CadFileFormat_ACadSharp_ACadVersion_System_Collections_Generic_IList_System_String___">CadObject.IsValid(CadFileFormat, ACadVersion, out IList&lt;string&gt;)</a>
+    </div>
+    <div>
       <a class="xref" href="ACadSharp.CadObject.html#ACadSharp_CadObject_RemoveReactor_ACadSharp_CadObject_">CadObject.RemoveReactor(CadObject)</a>
     </div>
     <div>
@@ -291,7 +298,7 @@ Dxf class name <a class="xref" href="ACadSharp.DxfSubclassMarker.html#ACadSharp_
 
   <h3 id="ACadSharp_Entities_Solid__ctor" data-uid="ACadSharp.Entities.Solid.#ctor">
   Solid()
-  <a class="header-action link-secondary" title="View source" href="https://github.com/DomCR/ACadSharp/blob/master/src/ACadSharp/Entities/Solid.cs/#L69"><i class="bi bi-code-slash"></i></a>
+  <a class="header-action link-secondary" title="View source" href="https://github.com/DomCR/ACadSharp/blob/master/src/ACadSharp/Entities/Solid.cs/#L67"><i class="bi bi-code-slash"></i></a>
   </h3>
 
   <div class="markdown level1 summary"><p>Initializes a new instance of the <a class="xref" href="ACadSharp.Entities.Solid.html">Solid</a> class.</p>
@@ -318,7 +325,7 @@ Dxf class name <a class="xref" href="ACadSharp.DxfSubclassMarker.html#ACadSharp_
 
   <h3 id="ACadSharp_Entities_Solid__ctor_CSMath_XYZ_CSMath_XYZ_CSMath_XYZ_" data-uid="ACadSharp.Entities.Solid.#ctor(CSMath.XYZ,CSMath.XYZ,CSMath.XYZ)">
   Solid(XYZ, XYZ, XYZ)
-  <a class="header-action link-secondary" title="View source" href="https://github.com/DomCR/ACadSharp/blob/master/src/ACadSharp/Entities/Solid.cs/#L97"><i class="bi bi-code-slash"></i></a>
+  <a class="header-action link-secondary" title="View source" href="https://github.com/DomCR/ACadSharp/blob/master/src/ACadSharp/Entities/Solid.cs/#L95"><i class="bi bi-code-slash"></i></a>
   </h3>
 
   <div class="markdown level1 summary"><p>Initializes a new instance of the Solid class using the specified three corner points.</p>
@@ -361,7 +368,7 @@ of the points affect the orientation and shape of the resulting solid.</p>
 
   <h3 id="ACadSharp_Entities_Solid__ctor_CSMath_XYZ_CSMath_XYZ_CSMath_XYZ_CSMath_XYZ_" data-uid="ACadSharp.Entities.Solid.#ctor(CSMath.XYZ,CSMath.XYZ,CSMath.XYZ,CSMath.XYZ)">
   Solid(XYZ, XYZ, XYZ, XYZ)
-  <a class="header-action link-secondary" title="View source" href="https://github.com/DomCR/ACadSharp/blob/master/src/ACadSharp/Entities/Solid.cs/#L81"><i class="bi bi-code-slash"></i></a>
+  <a class="header-action link-secondary" title="View source" href="https://github.com/DomCR/ACadSharp/blob/master/src/ACadSharp/Entities/Solid.cs/#L79"><i class="bi bi-code-slash"></i></a>
   </h3>
 
   <div class="markdown level1 summary"><p>Initializes a new instance of the Solid class using the specified corner points.</p>
@@ -480,7 +487,7 @@ public XYZ FourthCorner { get; set; }</code></pre>
 
   <h3 id="ACadSharp_Entities_Solid_Normal" data-uid="ACadSharp.Entities.Solid.Normal">
   Normal
-  <a class="header-action link-secondary" title="View source" href="https://github.com/DomCR/ACadSharp/blob/master/src/ACadSharp/Entities/Solid.cs/#L35"><i class="bi bi-code-slash"></i></a>
+  <a class="header-action link-secondary" title="View source" href="https://github.com/DomCR/ACadSharp/blob/master/src/ACadSharp/Entities/Solid.cs/#L33"><i class="bi bi-code-slash"></i></a>
   </h3>
 
   <div class="markdown level1 summary"><p>Specifies the three-dimensional normal unit vector for the object.</p>
@@ -513,7 +520,7 @@ public XYZ Normal { get; set; }</code></pre>
 
   <h3 id="ACadSharp_Entities_Solid_ObjectName" data-uid="ACadSharp.Entities.Solid.ObjectName">
   ObjectName
-  <a class="header-action link-secondary" title="View source" href="https://github.com/DomCR/ACadSharp/blob/master/src/ACadSharp/Entities/Solid.cs/#L39"><i class="bi bi-code-slash"></i></a>
+  <a class="header-action link-secondary" title="View source" href="https://github.com/DomCR/ACadSharp/blob/master/src/ACadSharp/Entities/Solid.cs/#L37"><i class="bi bi-code-slash"></i></a>
   </h3>
 
   <div class="markdown level1 summary"><p>The CAD class name of an object.</p>
@@ -545,7 +552,7 @@ public XYZ Normal { get; set; }</code></pre>
 
   <h3 id="ACadSharp_Entities_Solid_ObjectType" data-uid="ACadSharp.Entities.Solid.ObjectType">
   ObjectType
-  <a class="header-action link-secondary" title="View source" href="https://github.com/DomCR/ACadSharp/blob/master/src/ACadSharp/Entities/Solid.cs/#L42"><i class="bi bi-code-slash"></i></a>
+  <a class="header-action link-secondary" title="View source" href="https://github.com/DomCR/ACadSharp/blob/master/src/ACadSharp/Entities/Solid.cs/#L40"><i class="bi bi-code-slash"></i></a>
   </h3>
 
   <div class="markdown level1 summary"><p>Get the object type.</p>
@@ -577,7 +584,7 @@ public XYZ Normal { get; set; }</code></pre>
 
   <h3 id="ACadSharp_Entities_Solid_SecondCorner" data-uid="ACadSharp.Entities.Solid.SecondCorner">
   SecondCorner
-  <a class="header-action link-secondary" title="View source" href="https://github.com/DomCR/ACadSharp/blob/master/src/ACadSharp/Entities/Solid.cs/#L47"><i class="bi bi-code-slash"></i></a>
+  <a class="header-action link-secondary" title="View source" href="https://github.com/DomCR/ACadSharp/blob/master/src/ACadSharp/Entities/Solid.cs/#L45"><i class="bi bi-code-slash"></i></a>
   </h3>
 
   <div class="markdown level1 summary"><p>Second corner.</p>
@@ -610,7 +617,7 @@ public XYZ SecondCorner { get; set; }</code></pre>
 
   <h3 id="ACadSharp_Entities_Solid_SubclassMarker" data-uid="ACadSharp.Entities.Solid.SubclassMarker">
   SubclassMarker
-  <a class="header-action link-secondary" title="View source" href="https://github.com/DomCR/ACadSharp/blob/master/src/ACadSharp/Entities/Solid.cs/#L52"><i class="bi bi-code-slash"></i></a>
+  <a class="header-action link-secondary" title="View source" href="https://github.com/DomCR/ACadSharp/blob/master/src/ACadSharp/Entities/Solid.cs/#L50"><i class="bi bi-code-slash"></i></a>
   </h3>
 
   <div class="markdown level1 summary"><p>Object Subclass marker.</p>
@@ -642,7 +649,7 @@ public XYZ SecondCorner { get; set; }</code></pre>
 
   <h3 id="ACadSharp_Entities_Solid_Thickness" data-uid="ACadSharp.Entities.Solid.Thickness">
   Thickness
-  <a class="header-action link-secondary" title="View source" href="https://github.com/DomCR/ACadSharp/blob/master/src/ACadSharp/Entities/Solid.cs/#L57"><i class="bi bi-code-slash"></i></a>
+  <a class="header-action link-secondary" title="View source" href="https://github.com/DomCR/ACadSharp/blob/master/src/ACadSharp/Entities/Solid.cs/#L55"><i class="bi bi-code-slash"></i></a>
   </h3>
 
   <div class="markdown level1 summary"><p>Specifies the distance a 2D object is extruded above or below its elevation.</p>
@@ -675,7 +682,7 @@ public double Thickness { get; set; }</code></pre>
 
   <h3 id="ACadSharp_Entities_Solid_ThirdCorner" data-uid="ACadSharp.Entities.Solid.ThirdCorner">
   ThirdCorner
-  <a class="header-action link-secondary" title="View source" href="https://github.com/DomCR/ACadSharp/blob/master/src/ACadSharp/Entities/Solid.cs/#L63"><i class="bi bi-code-slash"></i></a>
+  <a class="header-action link-secondary" title="View source" href="https://github.com/DomCR/ACadSharp/blob/master/src/ACadSharp/Entities/Solid.cs/#L61"><i class="bi bi-code-slash"></i></a>
   </h3>
 
   <div class="markdown level1 summary"><p>Third corner.</p>
@@ -712,7 +719,7 @@ public XYZ ThirdCorner { get; set; }</code></pre>
 
   <h3 id="ACadSharp_Entities_Solid_ApplyTransform_CSMath_Transform_" data-uid="ACadSharp.Entities.Solid.ApplyTransform(CSMath.Transform)">
   ApplyTransform(Transform)
-  <a class="header-action link-secondary" title="View source" href="https://github.com/DomCR/ACadSharp/blob/master/src/ACadSharp/Entities/Solid.cs/#L103"><i class="bi bi-code-slash"></i></a>
+  <a class="header-action link-secondary" title="View source" href="https://github.com/DomCR/ACadSharp/blob/master/src/ACadSharp/Entities/Solid.cs/#L101"><i class="bi bi-code-slash"></i></a>
   </h3>
 
   <div class="markdown level1 summary"><p>Apply a transform matrix to this entity.</p>
@@ -744,7 +751,7 @@ public XYZ ThirdCorner { get; set; }</code></pre>
 
   <h3 id="ACadSharp_Entities_Solid_GetBoundingBox" data-uid="ACadSharp.Entities.Solid.GetBoundingBox">
   GetBoundingBox()
-  <a class="header-action link-secondary" title="View source" href="https://github.com/DomCR/ACadSharp/blob/master/src/ACadSharp/Entities/Solid.cs/#L112"><i class="bi bi-code-slash"></i></a>
+  <a class="header-action link-secondary" title="View source" href="https://github.com/DomCR/ACadSharp/blob/master/src/ACadSharp/Entities/Solid.cs/#L110"><i class="bi bi-code-slash"></i></a>
   </h3>
 
   <div class="markdown level1 summary"><p>Gets the bounding box aligned with the axis XYZ that occupies this entity.</p>

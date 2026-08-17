@@ -104,7 +104,7 @@ Class TextEntity  <a class="header-action link-secondary" title="View source" hr
   <div class="codewrapper">
     <pre><code class="lang-csharp hljs">[DxfName(&quot;TEXT&quot;)]
 [DxfSubClass(&quot;AcDbText&quot;)]
-public class TextEntity : Entity, IText, IEntity, IHandledCadObject, IGeometricEntity</code></pre>
+public class TextEntity : Entity, IText, IEntity, IHandledCadObject, IGeometricEntity, IOrientable</code></pre>
   </div>
 
 
@@ -127,6 +127,7 @@ public class TextEntity : Entity, IText, IEntity, IHandledCadObject, IGeometricE
       <div><a class="xref" href="ACadSharp.Entities.IEntity.html">IEntity</a></div>
       <div><a class="xref" href="ACadSharp.IHandledCadObject.html">IHandledCadObject</a></div>
       <div><a class="xref" href="ACadSharp.Entities.IGeometricEntity.html">IGeometricEntity</a></div>
+      <div><a class="xref" href="ACadSharp.IOrientable.html">IOrientable</a></div>
     </dd>
   </dl>
 
@@ -237,6 +238,12 @@ public class TextEntity : Entity, IText, IEntity, IHandledCadObject, IGeometricE
       <a class="xref" href="ACadSharp.CadObject.html#ACadSharp_CadObject_CreateExtendedDictionary">CadObject.CreateExtendedDictionary()</a>
     </div>
     <div>
+      <a class="xref" href="ACadSharp.CadObject.html#ACadSharp_CadObject_IsValid_ACadSharp_IO_CadFileFormat_ACadSharp_ACadVersion_">CadObject.IsValid(CadFileFormat, ACadVersion)</a>
+    </div>
+    <div>
+      <a class="xref" href="ACadSharp.CadObject.html#ACadSharp_CadObject_IsValid_ACadSharp_IO_CadFileFormat_ACadSharp_ACadVersion_System_Collections_Generic_IList_System_String___">CadObject.IsValid(CadFileFormat, ACadVersion, out IList&lt;string&gt;)</a>
+    </div>
+    <div>
       <a class="xref" href="ACadSharp.CadObject.html#ACadSharp_CadObject_RemoveReactor_ACadSharp_CadObject_">CadObject.RemoveReactor(CadObject)</a>
     </div>
     <div>
@@ -292,7 +299,7 @@ Dxf class name <a class="xref" href="ACadSharp.DxfSubclassMarker.html#ACadSharp_
 
   <h3 id="ACadSharp_Entities_TextEntity__ctor" data-uid="ACadSharp.Entities.TextEntity.#ctor">
   TextEntity()
-  <a class="header-action link-secondary" title="View source" href="https://github.com/DomCR/ACadSharp/blob/master/src/ACadSharp/Entities/TextEntity.cs/#L156"><i class="bi bi-code-slash"></i></a>
+  <a class="header-action link-secondary" title="View source" href="https://github.com/DomCR/ACadSharp/blob/master/src/ACadSharp/Entities/TextEntity.cs/#L154"><i class="bi bi-code-slash"></i></a>
   </h3>
 
   <div class="markdown level1 summary"></div>
@@ -491,7 +498,7 @@ public TextMirrorFlag Mirror { get; set; }</code></pre>
 
   <h3 id="ACadSharp_Entities_TextEntity_Normal" data-uid="ACadSharp.Entities.TextEntity.Normal">
   Normal
-  <a class="header-action link-secondary" title="View source" href="https://github.com/DomCR/ACadSharp/blob/master/src/ACadSharp/Entities/TextEntity.cs/#L65"><i class="bi bi-code-slash"></i></a>
+  <a class="header-action link-secondary" title="View source" href="https://github.com/DomCR/ACadSharp/blob/master/src/ACadSharp/Entities/TextEntity.cs/#L63"><i class="bi bi-code-slash"></i></a>
   </h3>
 
   <div class="markdown level1 summary"><p>Specifies the three-dimensional normal unit vector for the object.</p>
@@ -524,7 +531,7 @@ public XYZ Normal { get; set; }</code></pre>
 
   <h3 id="ACadSharp_Entities_TextEntity_ObjectName" data-uid="ACadSharp.Entities.TextEntity.ObjectName">
   ObjectName
-  <a class="header-action link-secondary" title="View source" href="https://github.com/DomCR/ACadSharp/blob/master/src/ACadSharp/Entities/TextEntity.cs/#L69"><i class="bi bi-code-slash"></i></a>
+  <a class="header-action link-secondary" title="View source" href="https://github.com/DomCR/ACadSharp/blob/master/src/ACadSharp/Entities/TextEntity.cs/#L67"><i class="bi bi-code-slash"></i></a>
   </h3>
 
   <div class="markdown level1 summary"><p>The CAD class name of an object.</p>
@@ -556,7 +563,7 @@ public XYZ Normal { get; set; }</code></pre>
 
   <h3 id="ACadSharp_Entities_TextEntity_ObjectType" data-uid="ACadSharp.Entities.TextEntity.ObjectType">
   ObjectType
-  <a class="header-action link-secondary" title="View source" href="https://github.com/DomCR/ACadSharp/blob/master/src/ACadSharp/Entities/TextEntity.cs/#L72"><i class="bi bi-code-slash"></i></a>
+  <a class="header-action link-secondary" title="View source" href="https://github.com/DomCR/ACadSharp/blob/master/src/ACadSharp/Entities/TextEntity.cs/#L70"><i class="bi bi-code-slash"></i></a>
   </h3>
 
   <div class="markdown level1 summary"><p>Get the object type.</p>
@@ -588,7 +595,7 @@ public XYZ Normal { get; set; }</code></pre>
 
   <h3 id="ACadSharp_Entities_TextEntity_ObliqueAngle" data-uid="ACadSharp.Entities.TextEntity.ObliqueAngle">
   ObliqueAngle
-  <a class="header-action link-secondary" title="View source" href="https://github.com/DomCR/ACadSharp/blob/master/src/ACadSharp/Entities/TextEntity.cs/#L80"><i class="bi bi-code-slash"></i></a>
+  <a class="header-action link-secondary" title="View source" href="https://github.com/DomCR/ACadSharp/blob/master/src/ACadSharp/Entities/TextEntity.cs/#L78"><i class="bi bi-code-slash"></i></a>
   </h3>
 
   <div class="markdown level1 summary"><p>Specifies the oblique angle of the object.</p>
@@ -622,7 +629,7 @@ public double ObliqueAngle { get; set; }</code></pre>
 
   <h3 id="ACadSharp_Entities_TextEntity_Rotation" data-uid="ACadSharp.Entities.TextEntity.Rotation">
   Rotation
-  <a class="header-action link-secondary" title="View source" href="https://github.com/DomCR/ACadSharp/blob/master/src/ACadSharp/Entities/TextEntity.cs/#L84"><i class="bi bi-code-slash"></i></a>
+  <a class="header-action link-secondary" title="View source" href="https://github.com/DomCR/ACadSharp/blob/master/src/ACadSharp/Entities/TextEntity.cs/#L82"><i class="bi bi-code-slash"></i></a>
   </h3>
 
   <div class="markdown level1 summary"><p>Specifies the rotation angle for the object.</p>
@@ -656,7 +663,7 @@ public double Rotation { get; set; }</code></pre>
 
   <h3 id="ACadSharp_Entities_TextEntity_Style" data-uid="ACadSharp.Entities.TextEntity.Style">
   Style
-  <a class="header-action link-secondary" title="View source" href="https://github.com/DomCR/ACadSharp/blob/master/src/ACadSharp/Entities/TextEntity.cs/#L88"><i class="bi bi-code-slash"></i></a>
+  <a class="header-action link-secondary" title="View source" href="https://github.com/DomCR/ACadSharp/blob/master/src/ACadSharp/Entities/TextEntity.cs/#L86"><i class="bi bi-code-slash"></i></a>
   </h3>
 
   <div class="markdown level1 summary"><p>Style of this text entity.</p>
@@ -689,7 +696,7 @@ public TextStyle Style { get; set; }</code></pre>
 
   <h3 id="ACadSharp_Entities_TextEntity_SubclassMarker" data-uid="ACadSharp.Entities.TextEntity.SubclassMarker">
   SubclassMarker
-  <a class="header-action link-secondary" title="View source" href="https://github.com/DomCR/ACadSharp/blob/master/src/ACadSharp/Entities/TextEntity.cs/#L111"><i class="bi bi-code-slash"></i></a>
+  <a class="header-action link-secondary" title="View source" href="https://github.com/DomCR/ACadSharp/blob/master/src/ACadSharp/Entities/TextEntity.cs/#L109"><i class="bi bi-code-slash"></i></a>
   </h3>
 
   <div class="markdown level1 summary"><p>Object Subclass marker.</p>
@@ -721,7 +728,7 @@ public TextStyle Style { get; set; }</code></pre>
 
   <h3 id="ACadSharp_Entities_TextEntity_Thickness" data-uid="ACadSharp.Entities.TextEntity.Thickness">
   Thickness
-  <a class="header-action link-secondary" title="View source" href="https://github.com/DomCR/ACadSharp/blob/master/src/ACadSharp/Entities/TextEntity.cs/#L116"><i class="bi bi-code-slash"></i></a>
+  <a class="header-action link-secondary" title="View source" href="https://github.com/DomCR/ACadSharp/blob/master/src/ACadSharp/Entities/TextEntity.cs/#L114"><i class="bi bi-code-slash"></i></a>
   </h3>
 
   <div class="markdown level1 summary"><p>Specifies the distance a 2D object is extruded above or below its elevation.</p>
@@ -754,7 +761,7 @@ public double Thickness { get; set; }</code></pre>
 
   <h3 id="ACadSharp_Entities_TextEntity_Value" data-uid="ACadSharp.Entities.TextEntity.Value">
   Value
-  <a class="header-action link-secondary" title="View source" href="https://github.com/DomCR/ACadSharp/blob/master/src/ACadSharp/Entities/TextEntity.cs/#L120"><i class="bi bi-code-slash"></i></a>
+  <a class="header-action link-secondary" title="View source" href="https://github.com/DomCR/ACadSharp/blob/master/src/ACadSharp/Entities/TextEntity.cs/#L118"><i class="bi bi-code-slash"></i></a>
   </h3>
 
   <div class="markdown level1 summary"><p>Specifies the text string for the entity.</p>
@@ -787,7 +794,7 @@ public string Value { get; set; }</code></pre>
 
   <h3 id="ACadSharp_Entities_TextEntity_VerticalAlignment" data-uid="ACadSharp.Entities.TextEntity.VerticalAlignment">
   VerticalAlignment
-  <a class="header-action link-secondary" title="View source" href="https://github.com/DomCR/ACadSharp/blob/master/src/ACadSharp/Entities/TextEntity.cs/#L136"><i class="bi bi-code-slash"></i></a>
+  <a class="header-action link-secondary" title="View source" href="https://github.com/DomCR/ACadSharp/blob/master/src/ACadSharp/Entities/TextEntity.cs/#L134"><i class="bi bi-code-slash"></i></a>
   </h3>
 
   <div class="markdown level1 summary"><p>Vertical text justification type.</p>
@@ -820,7 +827,7 @@ public virtual TextVerticalAlignmentType VerticalAlignment { get; set; }</code><
 
   <h3 id="ACadSharp_Entities_TextEntity_WidthFactor" data-uid="ACadSharp.Entities.TextEntity.WidthFactor">
   WidthFactor
-  <a class="header-action link-secondary" title="View source" href="https://github.com/DomCR/ACadSharp/blob/master/src/ACadSharp/Entities/TextEntity.cs/#L145"><i class="bi bi-code-slash"></i></a>
+  <a class="header-action link-secondary" title="View source" href="https://github.com/DomCR/ACadSharp/blob/master/src/ACadSharp/Entities/TextEntity.cs/#L143"><i class="bi bi-code-slash"></i></a>
   </h3>
 
   <div class="markdown level1 summary"><p>Relative X scale factor—widt</p>
@@ -860,7 +867,7 @@ public double WidthFactor { get; set; }</code></pre>
 
   <h3 id="ACadSharp_Entities_TextEntity_ApplyTransform_CSMath_Transform_" data-uid="ACadSharp.Entities.TextEntity.ApplyTransform(CSMath.Transform)">
   ApplyTransform(Transform)
-  <a class="header-action link-secondary" title="View source" href="https://github.com/DomCR/ACadSharp/blob/master/src/ACadSharp/Entities/TextEntity.cs/#L161"><i class="bi bi-code-slash"></i></a>
+  <a class="header-action link-secondary" title="View source" href="https://github.com/DomCR/ACadSharp/blob/master/src/ACadSharp/Entities/TextEntity.cs/#L159"><i class="bi bi-code-slash"></i></a>
   </h3>
 
   <div class="markdown level1 summary"><p>Apply a transform matrix to this entity.</p>
@@ -892,7 +899,7 @@ public double WidthFactor { get; set; }</code></pre>
 
   <h3 id="ACadSharp_Entities_TextEntity_Clone" data-uid="ACadSharp.Entities.TextEntity.Clone">
   Clone()
-  <a class="header-action link-secondary" title="View source" href="https://github.com/DomCR/ACadSharp/blob/master/src/ACadSharp/Entities/TextEntity.cs/#L290"><i class="bi bi-code-slash"></i></a>
+  <a class="header-action link-secondary" title="View source" href="https://github.com/DomCR/ACadSharp/blob/master/src/ACadSharp/Entities/TextEntity.cs/#L288"><i class="bi bi-code-slash"></i></a>
   </h3>
 
   <div class="markdown level1 summary"><p>Creates a new object that is a copy of the current instance.</p>
@@ -928,7 +935,7 @@ public double WidthFactor { get; set; }</code></pre>
 
   <h3 id="ACadSharp_Entities_TextEntity_GetBoundingBox" data-uid="ACadSharp.Entities.TextEntity.GetBoundingBox">
   GetBoundingBox()
-  <a class="header-action link-secondary" title="View source" href="https://github.com/DomCR/ACadSharp/blob/master/src/ACadSharp/Entities/TextEntity.cs/#L298"><i class="bi bi-code-slash"></i></a>
+  <a class="header-action link-secondary" title="View source" href="https://github.com/DomCR/ACadSharp/blob/master/src/ACadSharp/Entities/TextEntity.cs/#L296"><i class="bi bi-code-slash"></i></a>
   </h3>
 
   <div class="markdown level1 summary"><p>Gets the bounding box aligned with the axis XYZ that occupies this entity.</p>
@@ -961,7 +968,7 @@ public double WidthFactor { get; set; }</code></pre>
 
   <h3 id="ACadSharp_Entities_TextEntity_tableOnRemove_System_Object_ACadSharp_CollectionChangedEventArgs_" data-uid="ACadSharp.Entities.TextEntity.tableOnRemove(System.Object,ACadSharp.CollectionChangedEventArgs)">
   tableOnRemove(object, CollectionChangedEventArgs)
-  <a class="header-action link-secondary" title="View source" href="https://github.com/DomCR/ACadSharp/blob/master/src/ACadSharp/Entities/TextEntity.cs/#L321"><i class="bi bi-code-slash"></i></a>
+  <a class="header-action link-secondary" title="View source" href="https://github.com/DomCR/ACadSharp/blob/master/src/ACadSharp/Entities/TextEntity.cs/#L319"><i class="bi bi-code-slash"></i></a>
   </h3>
 
   <div class="markdown level1 summary"></div>

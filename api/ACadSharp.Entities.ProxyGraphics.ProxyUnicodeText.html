@@ -102,7 +102,7 @@ Class ProxyUnicodeText  <a class="header-action link-secondary" title="View sour
   <div class="markdown conceptual"></div>
 
   <div class="codewrapper">
-    <pre><code class="lang-csharp hljs">public class ProxyUnicodeText : IProxyGeometry</code></pre>
+    <pre><code class="lang-csharp hljs">public class ProxyUnicodeText : IProxyGeometry, IOrientable</code></pre>
   </div>
 
 
@@ -120,6 +120,7 @@ Class ProxyUnicodeText  <a class="header-action link-secondary" title="View sour
     <dt>Implements</dt>
     <dd>
       <div><a class="xref" href="ACadSharp.Entities.ProxyGraphics.IProxyGeometry.html">IProxyGeometry</a></div>
+      <div><a class="xref" href="ACadSharp.IOrientable.html">IOrientable</a></div>
     </dd>
   </dl>
 
@@ -239,10 +240,10 @@ including positioning, orientation, sizing, and the actual text content.</p>
 
   <h3 id="ACadSharp_Entities_ProxyGraphics_ProxyUnicodeText_Normal" data-uid="ACadSharp.Entities.ProxyGraphics.ProxyUnicodeText.Normal">
   Normal
-  <a class="header-action link-secondary" title="View source" href="https://github.com/DomCR/ACadSharp/blob/master/src/ACadSharp/Entities/ProxyGraphics/ProxyUnicodeText.cs/#L27"><i class="bi bi-code-slash"></i></a>
+  <a class="header-action link-secondary" title="View source" href="https://github.com/DomCR/ACadSharp/blob/master/src/ACadSharp/Entities/ProxyGraphics/ProxyUnicodeText.cs/#L24"><i class="bi bi-code-slash"></i></a>
   </h3>
 
-  <div class="markdown level1 summary"><p>Gets or sets the normal vector of the text plane.</p>
+  <div class="markdown level1 summary"><p>Specifies the three-dimensional normal unit vector for the object.</p>
 </div>
   <div class="markdown level1 conceptual"></div>
 
@@ -257,8 +258,7 @@ including positioning, orientation, sizing, and the actual text content.</p>
   <h4 class="section">Property Value</h4>
   <dl class="parameters">
     <dt><a class="xref" href="CSMath.XYZ.html">XYZ</a></dt>
-    <dd><p>An <a class="xref" href="CSMath.XYZ.html">XYZ</a> vector representing the normal direction.</p>
-</dd>
+    <dd></dd>
   </dl>
 
 
@@ -272,7 +272,7 @@ including positioning, orientation, sizing, and the actual text content.</p>
 
   <h3 id="ACadSharp_Entities_ProxyGraphics_ProxyUnicodeText_ObliqueAngle" data-uid="ACadSharp.Entities.ProxyGraphics.ProxyUnicodeText.ObliqueAngle">
   ObliqueAngle
-  <a class="header-action link-secondary" title="View source" href="https://github.com/DomCR/ACadSharp/blob/master/src/ACadSharp/Entities/ProxyGraphics/ProxyUnicodeText.cs/#L33"><i class="bi bi-code-slash"></i></a>
+  <a class="header-action link-secondary" title="View source" href="https://github.com/DomCR/ACadSharp/blob/master/src/ACadSharp/Entities/ProxyGraphics/ProxyUnicodeText.cs/#L30"><i class="bi bi-code-slash"></i></a>
   </h3>
 
   <div class="markdown level1 summary"><p>Gets or sets the oblique angle of the text in radians.</p>
@@ -305,7 +305,7 @@ including positioning, orientation, sizing, and the actual text content.</p>
 
   <h3 id="ACadSharp_Entities_ProxyGraphics_ProxyUnicodeText_StartPoint" data-uid="ACadSharp.Entities.ProxyGraphics.ProxyUnicodeText.StartPoint">
   StartPoint
-  <a class="header-action link-secondary" title="View source" href="https://github.com/DomCR/ACadSharp/blob/master/src/ACadSharp/Entities/ProxyGraphics/ProxyUnicodeText.cs/#L39"><i class="bi bi-code-slash"></i></a>
+  <a class="header-action link-secondary" title="View source" href="https://github.com/DomCR/ACadSharp/blob/master/src/ACadSharp/Entities/ProxyGraphics/ProxyUnicodeText.cs/#L36"><i class="bi bi-code-slash"></i></a>
   </h3>
 
   <div class="markdown level1 summary"><p>Gets or sets the starting point of the text.</p>
@@ -338,7 +338,7 @@ including positioning, orientation, sizing, and the actual text content.</p>
 
   <h3 id="ACadSharp_Entities_ProxyGraphics_ProxyUnicodeText_Text" data-uid="ACadSharp.Entities.ProxyGraphics.ProxyUnicodeText.Text">
   Text
-  <a class="header-action link-secondary" title="View source" href="https://github.com/DomCR/ACadSharp/blob/master/src/ACadSharp/Entities/ProxyGraphics/ProxyUnicodeText.cs/#L45"><i class="bi bi-code-slash"></i></a>
+  <a class="header-action link-secondary" title="View source" href="https://github.com/DomCR/ACadSharp/blob/master/src/ACadSharp/Entities/ProxyGraphics/ProxyUnicodeText.cs/#L42"><i class="bi bi-code-slash"></i></a>
   </h3>
 
   <div class="markdown level1 summary"><p>Gets or sets the text content.</p>
@@ -371,7 +371,7 @@ including positioning, orientation, sizing, and the actual text content.</p>
 
   <h3 id="ACadSharp_Entities_ProxyGraphics_ProxyUnicodeText_TextDirection" data-uid="ACadSharp.Entities.ProxyGraphics.ProxyUnicodeText.TextDirection">
   TextDirection
-  <a class="header-action link-secondary" title="View source" href="https://github.com/DomCR/ACadSharp/blob/master/src/ACadSharp/Entities/ProxyGraphics/ProxyUnicodeText.cs/#L51"><i class="bi bi-code-slash"></i></a>
+  <a class="header-action link-secondary" title="View source" href="https://github.com/DomCR/ACadSharp/blob/master/src/ACadSharp/Entities/ProxyGraphics/ProxyUnicodeText.cs/#L48"><i class="bi bi-code-slash"></i></a>
   </h3>
 
   <div class="markdown level1 summary"><p>Gets or sets the text direction vector.</p>
@@ -404,7 +404,7 @@ including positioning, orientation, sizing, and the actual text content.</p>
 
   <h3 id="ACadSharp_Entities_ProxyGraphics_ProxyUnicodeText_WidthFactor" data-uid="ACadSharp.Entities.ProxyGraphics.ProxyUnicodeText.WidthFactor">
   WidthFactor
-  <a class="header-action link-secondary" title="View source" href="https://github.com/DomCR/ACadSharp/blob/master/src/ACadSharp/Entities/ProxyGraphics/ProxyUnicodeText.cs/#L57"><i class="bi bi-code-slash"></i></a>
+  <a class="header-action link-secondary" title="View source" href="https://github.com/DomCR/ACadSharp/blob/master/src/ACadSharp/Entities/ProxyGraphics/ProxyUnicodeText.cs/#L54"><i class="bi bi-code-slash"></i></a>
   </h3>
 
   <div class="markdown level1 summary"><p>Gets or sets the width factor of the text.</p>

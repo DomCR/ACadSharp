@@ -104,7 +104,7 @@ Class MLine  <a class="header-action link-secondary" title="View source" href="h
   <div class="codewrapper">
     <pre><code class="lang-csharp hljs">[DxfName(&quot;MLINE&quot;)]
 [DxfSubClass(&quot;AcDbMline&quot;)]
-public class MLine : Entity, IEntity, IHandledCadObject, IGeometricEntity</code></pre>
+public class MLine : Entity, IEntity, IHandledCadObject, IGeometricEntity, IOrientable</code></pre>
   </div>
 
 
@@ -126,6 +126,7 @@ public class MLine : Entity, IEntity, IHandledCadObject, IGeometricEntity</code>
       <div><a class="xref" href="ACadSharp.Entities.IEntity.html">IEntity</a></div>
       <div><a class="xref" href="ACadSharp.IHandledCadObject.html">IHandledCadObject</a></div>
       <div><a class="xref" href="ACadSharp.Entities.IGeometricEntity.html">IGeometricEntity</a></div>
+      <div><a class="xref" href="ACadSharp.IOrientable.html">IOrientable</a></div>
     </dd>
   </dl>
 
@@ -231,6 +232,12 @@ public class MLine : Entity, IEntity, IHandledCadObject, IGeometricEntity</code>
     </div>
     <div>
       <a class="xref" href="ACadSharp.CadObject.html#ACadSharp_CadObject_CreateExtendedDictionary">CadObject.CreateExtendedDictionary()</a>
+    </div>
+    <div>
+      <a class="xref" href="ACadSharp.CadObject.html#ACadSharp_CadObject_IsValid_ACadSharp_IO_CadFileFormat_ACadSharp_ACadVersion_">CadObject.IsValid(CadFileFormat, ACadVersion)</a>
+    </div>
+    <div>
+      <a class="xref" href="ACadSharp.CadObject.html#ACadSharp_CadObject_IsValid_ACadSharp_IO_CadFileFormat_ACadSharp_ACadVersion_System_Collections_Generic_IList_System_String___">CadObject.IsValid(CadFileFormat, ACadVersion, out IList&lt;string&gt;)</a>
     </div>
     <div>
       <a class="xref" href="ACadSharp.CadObject.html#ACadSharp_CadObject_RemoveReactor_ACadSharp_CadObject_">CadObject.RemoveReactor(CadObject)</a>
@@ -354,10 +361,10 @@ public MLineJustification Justification { get; set; }</code></pre>
 
   <h3 id="ACadSharp_Entities_MLine_Normal" data-uid="ACadSharp.Entities.MLine.Normal">
   Normal
-  <a class="header-action link-secondary" title="View source" href="https://github.com/DomCR/ACadSharp/blob/master/src/ACadSharp/Entities/MLine.cs/#L35"><i class="bi bi-code-slash"></i></a>
+  <a class="header-action link-secondary" title="View source" href="https://github.com/DomCR/ACadSharp/blob/master/src/ACadSharp/Entities/MLine.cs/#L33"><i class="bi bi-code-slash"></i></a>
   </h3>
 
-  <div class="markdown level1 summary"><p>Extrusion direction.</p>
+  <div class="markdown level1 summary"><p>Specifies the three-dimensional normal unit vector for the object.</p>
 </div>
   <div class="markdown level1 conceptual"></div>
 
@@ -387,7 +394,7 @@ public XYZ Normal { get; set; }</code></pre>
 
   <h3 id="ACadSharp_Entities_MLine_ObjectName" data-uid="ACadSharp.Entities.MLine.ObjectName">
   ObjectName
-  <a class="header-action link-secondary" title="View source" href="https://github.com/DomCR/ACadSharp/blob/master/src/ACadSharp/Entities/MLine.cs/#L39"><i class="bi bi-code-slash"></i></a>
+  <a class="header-action link-secondary" title="View source" href="https://github.com/DomCR/ACadSharp/blob/master/src/ACadSharp/Entities/MLine.cs/#L37"><i class="bi bi-code-slash"></i></a>
   </h3>
 
   <div class="markdown level1 summary"><p>The CAD class name of an object.</p>
@@ -419,7 +426,7 @@ public XYZ Normal { get; set; }</code></pre>
 
   <h3 id="ACadSharp_Entities_MLine_ObjectType" data-uid="ACadSharp.Entities.MLine.ObjectType">
   ObjectType
-  <a class="header-action link-secondary" title="View source" href="https://github.com/DomCR/ACadSharp/blob/master/src/ACadSharp/Entities/MLine.cs/#L42"><i class="bi bi-code-slash"></i></a>
+  <a class="header-action link-secondary" title="View source" href="https://github.com/DomCR/ACadSharp/blob/master/src/ACadSharp/Entities/MLine.cs/#L40"><i class="bi bi-code-slash"></i></a>
   </h3>
 
   <div class="markdown level1 summary"><p>Get the object type.</p>
@@ -451,7 +458,7 @@ public XYZ Normal { get; set; }</code></pre>
 
   <h3 id="ACadSharp_Entities_MLine_ScaleFactor" data-uid="ACadSharp.Entities.MLine.ScaleFactor">
   ScaleFactor
-  <a class="header-action link-secondary" title="View source" href="https://github.com/DomCR/ACadSharp/blob/master/src/ACadSharp/Entities/MLine.cs/#L47"><i class="bi bi-code-slash"></i></a>
+  <a class="header-action link-secondary" title="View source" href="https://github.com/DomCR/ACadSharp/blob/master/src/ACadSharp/Entities/MLine.cs/#L45"><i class="bi bi-code-slash"></i></a>
   </h3>
 
   <div class="markdown level1 summary"><p>Scale factor.</p>
@@ -484,7 +491,7 @@ public double ScaleFactor { get; set; }</code></pre>
 
   <h3 id="ACadSharp_Entities_MLine_StartPoint" data-uid="ACadSharp.Entities.MLine.StartPoint">
   StartPoint
-  <a class="header-action link-secondary" title="View source" href="https://github.com/DomCR/ACadSharp/blob/master/src/ACadSharp/Entities/MLine.cs/#L53"><i class="bi bi-code-slash"></i></a>
+  <a class="header-action link-secondary" title="View source" href="https://github.com/DomCR/ACadSharp/blob/master/src/ACadSharp/Entities/MLine.cs/#L51"><i class="bi bi-code-slash"></i></a>
   </h3>
 
   <div class="markdown level1 summary"><p>Start point(in WCS).</p>
@@ -517,7 +524,7 @@ public XYZ StartPoint { get; set; }</code></pre>
 
   <h3 id="ACadSharp_Entities_MLine_Style" data-uid="ACadSharp.Entities.MLine.Style">
   Style
-  <a class="header-action link-secondary" title="View source" href="https://github.com/DomCR/ACadSharp/blob/master/src/ACadSharp/Entities/MLine.cs/#L64"><i class="bi bi-code-slash"></i></a>
+  <a class="header-action link-secondary" title="View source" href="https://github.com/DomCR/ACadSharp/blob/master/src/ACadSharp/Entities/MLine.cs/#L62"><i class="bi bi-code-slash"></i></a>
   </h3>
 
   <div class="markdown level1 summary"><p>MLine Style.</p>
@@ -555,7 +562,7 @@ Do not modify this field without also updating the associated entry in the MLINE
 
   <h3 id="ACadSharp_Entities_MLine_SubclassMarker" data-uid="ACadSharp.Entities.MLine.SubclassMarker">
   SubclassMarker
-  <a class="header-action link-secondary" title="View source" href="https://github.com/DomCR/ACadSharp/blob/master/src/ACadSharp/Entities/MLine.cs/#L87"><i class="bi bi-code-slash"></i></a>
+  <a class="header-action link-secondary" title="View source" href="https://github.com/DomCR/ACadSharp/blob/master/src/ACadSharp/Entities/MLine.cs/#L85"><i class="bi bi-code-slash"></i></a>
   </h3>
 
   <div class="markdown level1 summary"><p>Object Subclass marker.</p>
@@ -587,7 +594,7 @@ Do not modify this field without also updating the associated entry in the MLINE
 
   <h3 id="ACadSharp_Entities_MLine_Vertices" data-uid="ACadSharp.Entities.MLine.Vertices">
   Vertices
-  <a class="header-action link-secondary" title="View source" href="https://github.com/DomCR/ACadSharp/blob/master/src/ACadSharp/Entities/MLine.cs/#L92"><i class="bi bi-code-slash"></i></a>
+  <a class="header-action link-secondary" title="View source" href="https://github.com/DomCR/ACadSharp/blob/master/src/ACadSharp/Entities/MLine.cs/#L90"><i class="bi bi-code-slash"></i></a>
   </h3>
 
   <div class="markdown level1 summary"><p>Vertices in the MLine.</p>
@@ -624,7 +631,7 @@ public List&lt;MLine.Vertex&gt; Vertices { get; set; }</code></pre>
 
   <h3 id="ACadSharp_Entities_MLine_ApplyTransform_CSMath_Transform_" data-uid="ACadSharp.Entities.MLine.ApplyTransform(CSMath.Transform)">
   ApplyTransform(Transform)
-  <a class="header-action link-secondary" title="View source" href="https://github.com/DomCR/ACadSharp/blob/master/src/ACadSharp/Entities/MLine.cs/#L98"><i class="bi bi-code-slash"></i></a>
+  <a class="header-action link-secondary" title="View source" href="https://github.com/DomCR/ACadSharp/blob/master/src/ACadSharp/Entities/MLine.cs/#L96"><i class="bi bi-code-slash"></i></a>
   </h3>
 
   <div class="markdown level1 summary"><p>Apply a transform matrix to this entity.</p>
@@ -656,7 +663,7 @@ public List&lt;MLine.Vertex&gt; Vertices { get; set; }</code></pre>
 
   <h3 id="ACadSharp_Entities_MLine_Clone" data-uid="ACadSharp.Entities.MLine.Clone">
   Clone()
-  <a class="header-action link-secondary" title="View source" href="https://github.com/DomCR/ACadSharp/blob/master/src/ACadSharp/Entities/MLine.cs/#L110"><i class="bi bi-code-slash"></i></a>
+  <a class="header-action link-secondary" title="View source" href="https://github.com/DomCR/ACadSharp/blob/master/src/ACadSharp/Entities/MLine.cs/#L108"><i class="bi bi-code-slash"></i></a>
   </h3>
 
   <div class="markdown level1 summary"><p>Creates a new object that is a copy of the current instance.</p>
@@ -692,7 +699,7 @@ public List&lt;MLine.Vertex&gt; Vertices { get; set; }</code></pre>
 
   <h3 id="ACadSharp_Entities_MLine_GetBoundingBox" data-uid="ACadSharp.Entities.MLine.GetBoundingBox">
   GetBoundingBox()
-  <a class="header-action link-secondary" title="View source" href="https://github.com/DomCR/ACadSharp/blob/master/src/ACadSharp/Entities/MLine.cs/#L126"><i class="bi bi-code-slash"></i></a>
+  <a class="header-action link-secondary" title="View source" href="https://github.com/DomCR/ACadSharp/blob/master/src/ACadSharp/Entities/MLine.cs/#L124"><i class="bi bi-code-slash"></i></a>
   </h3>
 
   <div class="markdown level1 summary"><p>Gets the bounding box aligned with the axis XYZ that occupies this entity.</p>

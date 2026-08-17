@@ -104,7 +104,7 @@ Class LwPolyline  <a class="header-action link-secondary" title="View source" hr
   <div class="codewrapper">
     <pre><code class="lang-csharp hljs">[DxfName(&quot;LWPOLYLINE&quot;)]
 [DxfSubClass(&quot;AcDbPolyline&quot;)]
-public class LwPolyline : Entity, IPolyline, IEntity, IHandledCadObject, IGeometricEntity</code></pre>
+public class LwPolyline : Entity, IPolyline, IEntity, IHandledCadObject, IGeometricEntity, IOrientable</code></pre>
   </div>
 
 
@@ -127,6 +127,7 @@ public class LwPolyline : Entity, IPolyline, IEntity, IHandledCadObject, IGeomet
       <div><a class="xref" href="ACadSharp.Entities.IEntity.html">IEntity</a></div>
       <div><a class="xref" href="ACadSharp.IHandledCadObject.html">IHandledCadObject</a></div>
       <div><a class="xref" href="ACadSharp.Entities.IGeometricEntity.html">IGeometricEntity</a></div>
+      <div><a class="xref" href="ACadSharp.IOrientable.html">IOrientable</a></div>
     </dd>
   </dl>
 
@@ -234,6 +235,12 @@ public class LwPolyline : Entity, IPolyline, IEntity, IHandledCadObject, IGeomet
       <a class="xref" href="ACadSharp.CadObject.html#ACadSharp_CadObject_CreateExtendedDictionary">CadObject.CreateExtendedDictionary()</a>
     </div>
     <div>
+      <a class="xref" href="ACadSharp.CadObject.html#ACadSharp_CadObject_IsValid_ACadSharp_IO_CadFileFormat_ACadSharp_ACadVersion_">CadObject.IsValid(CadFileFormat, ACadVersion)</a>
+    </div>
+    <div>
+      <a class="xref" href="ACadSharp.CadObject.html#ACadSharp_CadObject_IsValid_ACadSharp_IO_CadFileFormat_ACadSharp_ACadVersion_System_Collections_Generic_IList_System_String___">CadObject.IsValid(CadFileFormat, ACadVersion, out IList&lt;string&gt;)</a>
+    </div>
+    <div>
       <a class="xref" href="ACadSharp.CadObject.html#ACadSharp_CadObject_RemoveReactor_ACadSharp_CadObject_">CadObject.RemoveReactor(CadObject)</a>
     </div>
     <div>
@@ -298,7 +305,7 @@ Dxf class name <a class="xref" href="ACadSharp.DxfSubclassMarker.html#ACadSharp_
 
   <h3 id="ACadSharp_Entities_LwPolyline__ctor" data-uid="ACadSharp.Entities.LwPolyline.#ctor">
   LwPolyline()
-  <a class="header-action link-secondary" title="View source" href="https://github.com/DomCR/ACadSharp/blob/master/src/ACadSharp/Entities/LwPolyLine.cs/#L95"><i class="bi bi-code-slash"></i></a>
+  <a class="header-action link-secondary" title="View source" href="https://github.com/DomCR/ACadSharp/blob/master/src/ACadSharp/Entities/LwPolyLine.cs/#L93"><i class="bi bi-code-slash"></i></a>
   </h3>
 
   <div class="markdown level1 summary"><p>Default constructor.</p>
@@ -325,7 +332,7 @@ Dxf class name <a class="xref" href="ACadSharp.DxfSubclassMarker.html#ACadSharp_
 
   <h3 id="ACadSharp_Entities_LwPolyline__ctor_System_Collections_Generic_IEnumerable_ACadSharp_Entities_LwPolyline_Vertex__" data-uid="ACadSharp.Entities.LwPolyline.#ctor(System.Collections.Generic.IEnumerable{ACadSharp.Entities.LwPolyline.Vertex})">
   LwPolyline(params IEnumerable&lt;Vertex&gt;)
-  <a class="header-action link-secondary" title="View source" href="https://github.com/DomCR/ACadSharp/blob/master/src/ACadSharp/Entities/LwPolyLine.cs/#L103"><i class="bi bi-code-slash"></i></a>
+  <a class="header-action link-secondary" title="View source" href="https://github.com/DomCR/ACadSharp/blob/master/src/ACadSharp/Entities/LwPolyLine.cs/#L101"><i class="bi bi-code-slash"></i></a>
   </h3>
 
   <div class="markdown level1 summary"><p>Initializes a new instance of the <a class="xref" href="ACadSharp.Entities.LwPolyline.html">LwPolyline</a> class with the specified vertices.</p>
@@ -362,7 +369,7 @@ the collection.</p>
 
   <h3 id="ACadSharp_Entities_LwPolyline__ctor_System_Collections_Generic_IEnumerable_CSMath_XY__" data-uid="ACadSharp.Entities.LwPolyline.#ctor(System.Collections.Generic.IEnumerable{CSMath.XY})">
   LwPolyline(params IEnumerable&lt;XY&gt;)
-  <a class="header-action link-secondary" title="View source" href="https://github.com/DomCR/ACadSharp/blob/master/src/ACadSharp/Entities/LwPolyLine.cs/#L116"><i class="bi bi-code-slash"></i></a>
+  <a class="header-action link-secondary" title="View source" href="https://github.com/DomCR/ACadSharp/blob/master/src/ACadSharp/Entities/LwPolyLine.cs/#L114"><i class="bi bi-code-slash"></i></a>
   </h3>
 
   <div class="markdown level1 summary"><p>Initializes a new instance of the <a class="xref" href="ACadSharp.Entities.LwPolyline.html">LwPolyline</a> class with the specified vertices.</p>
@@ -539,7 +546,7 @@ public LwPolylineFlags Flags { get; set; }</code></pre>
 
   <h3 id="ACadSharp_Entities_LwPolyline_Normal" data-uid="ACadSharp.Entities.LwPolyline.Normal">
   Normal
-  <a class="header-action link-secondary" title="View source" href="https://github.com/DomCR/ACadSharp/blob/master/src/ACadSharp/Entities/LwPolyLine.cs/#L65"><i class="bi bi-code-slash"></i></a>
+  <a class="header-action link-secondary" title="View source" href="https://github.com/DomCR/ACadSharp/blob/master/src/ACadSharp/Entities/LwPolyLine.cs/#L63"><i class="bi bi-code-slash"></i></a>
   </h3>
 
   <div class="markdown level1 summary"><p>Specifies the three-dimensional normal unit vector for the object.</p>
@@ -572,7 +579,7 @@ public XYZ Normal { get; set; }</code></pre>
 
   <h3 id="ACadSharp_Entities_LwPolyline_ObjectName" data-uid="ACadSharp.Entities.LwPolyline.ObjectName">
   ObjectName
-  <a class="header-action link-secondary" title="View source" href="https://github.com/DomCR/ACadSharp/blob/master/src/ACadSharp/Entities/LwPolyLine.cs/#L69"><i class="bi bi-code-slash"></i></a>
+  <a class="header-action link-secondary" title="View source" href="https://github.com/DomCR/ACadSharp/blob/master/src/ACadSharp/Entities/LwPolyLine.cs/#L67"><i class="bi bi-code-slash"></i></a>
   </h3>
 
   <div class="markdown level1 summary"><p>The CAD class name of an object.</p>
@@ -604,7 +611,7 @@ public XYZ Normal { get; set; }</code></pre>
 
   <h3 id="ACadSharp_Entities_LwPolyline_ObjectType" data-uid="ACadSharp.Entities.LwPolyline.ObjectType">
   ObjectType
-  <a class="header-action link-secondary" title="View source" href="https://github.com/DomCR/ACadSharp/blob/master/src/ACadSharp/Entities/LwPolyLine.cs/#L72"><i class="bi bi-code-slash"></i></a>
+  <a class="header-action link-secondary" title="View source" href="https://github.com/DomCR/ACadSharp/blob/master/src/ACadSharp/Entities/LwPolyLine.cs/#L70"><i class="bi bi-code-slash"></i></a>
   </h3>
 
   <div class="markdown level1 summary"><p>Get the object type.</p>
@@ -636,7 +643,7 @@ public XYZ Normal { get; set; }</code></pre>
 
   <h3 id="ACadSharp_Entities_LwPolyline_SubclassMarker" data-uid="ACadSharp.Entities.LwPolyline.SubclassMarker">
   SubclassMarker
-  <a class="header-action link-secondary" title="View source" href="https://github.com/DomCR/ACadSharp/blob/master/src/ACadSharp/Entities/LwPolyLine.cs/#L75"><i class="bi bi-code-slash"></i></a>
+  <a class="header-action link-secondary" title="View source" href="https://github.com/DomCR/ACadSharp/blob/master/src/ACadSharp/Entities/LwPolyLine.cs/#L73"><i class="bi bi-code-slash"></i></a>
   </h3>
 
   <div class="markdown level1 summary"><p>Object Subclass marker.</p>
@@ -668,7 +675,7 @@ public XYZ Normal { get; set; }</code></pre>
 
   <h3 id="ACadSharp_Entities_LwPolyline_Thickness" data-uid="ACadSharp.Entities.LwPolyline.Thickness">
   Thickness
-  <a class="header-action link-secondary" title="View source" href="https://github.com/DomCR/ACadSharp/blob/master/src/ACadSharp/Entities/LwPolyLine.cs/#L80"><i class="bi bi-code-slash"></i></a>
+  <a class="header-action link-secondary" title="View source" href="https://github.com/DomCR/ACadSharp/blob/master/src/ACadSharp/Entities/LwPolyLine.cs/#L78"><i class="bi bi-code-slash"></i></a>
   </h3>
 
   <div class="markdown level1 summary"><p>Specifies the distance a 2D object is extruded above or below its elevation.</p>
@@ -701,7 +708,7 @@ public double Thickness { get; set; }</code></pre>
 
   <h3 id="ACadSharp_Entities_LwPolyline_Vertices" data-uid="ACadSharp.Entities.LwPolyline.Vertices">
   Vertices
-  <a class="header-action link-secondary" title="View source" href="https://github.com/DomCR/ACadSharp/blob/master/src/ACadSharp/Entities/LwPolyLine.cs/#L86"><i class="bi bi-code-slash"></i></a>
+  <a class="header-action link-secondary" title="View source" href="https://github.com/DomCR/ACadSharp/blob/master/src/ACadSharp/Entities/LwPolyLine.cs/#L84"><i class="bi bi-code-slash"></i></a>
   </h3>
 
   <div class="markdown level1 summary"><p>Vertices that form this LwPolyline</p>
@@ -738,7 +745,7 @@ public List&lt;LwPolyline.Vertex&gt; Vertices { get; }</code></pre>
 
   <h3 id="ACadSharp_Entities_LwPolyline_ApplyTransform_CSMath_Transform_" data-uid="ACadSharp.Entities.LwPolyline.ApplyTransform(CSMath.Transform)">
   ApplyTransform(Transform)
-  <a class="header-action link-secondary" title="View source" href="https://github.com/DomCR/ACadSharp/blob/master/src/ACadSharp/Entities/LwPolyLine.cs/#L120"><i class="bi bi-code-slash"></i></a>
+  <a class="header-action link-secondary" title="View source" href="https://github.com/DomCR/ACadSharp/blob/master/src/ACadSharp/Entities/LwPolyLine.cs/#L118"><i class="bi bi-code-slash"></i></a>
   </h3>
 
   <div class="markdown level1 summary"><p>Apply a transform matrix to this entity.</p>
@@ -770,7 +777,7 @@ public List&lt;LwPolyline.Vertex&gt; Vertices { get; }</code></pre>
 
   <h3 id="ACadSharp_Entities_LwPolyline_Clone" data-uid="ACadSharp.Entities.LwPolyline.Clone">
   Clone()
-  <a class="header-action link-secondary" title="View source" href="https://github.com/DomCR/ACadSharp/blob/master/src/ACadSharp/Entities/LwPolyLine.cs/#L138"><i class="bi bi-code-slash"></i></a>
+  <a class="header-action link-secondary" title="View source" href="https://github.com/DomCR/ACadSharp/blob/master/src/ACadSharp/Entities/LwPolyLine.cs/#L136"><i class="bi bi-code-slash"></i></a>
   </h3>
 
   <div class="markdown level1 summary"><p>Creates a new object that is a copy of the current instance.</p>
@@ -806,7 +813,7 @@ public List&lt;LwPolyline.Vertex&gt; Vertices { get; }</code></pre>
 
   <h3 id="ACadSharp_Entities_LwPolyline_GetBoundingBox" data-uid="ACadSharp.Entities.LwPolyline.GetBoundingBox">
   GetBoundingBox()
-  <a class="header-action link-secondary" title="View source" href="https://github.com/DomCR/ACadSharp/blob/master/src/ACadSharp/Entities/LwPolyLine.cs/#L151"><i class="bi bi-code-slash"></i></a>
+  <a class="header-action link-secondary" title="View source" href="https://github.com/DomCR/ACadSharp/blob/master/src/ACadSharp/Entities/LwPolyLine.cs/#L149"><i class="bi bi-code-slash"></i></a>
   </h3>
 
   <div class="markdown level1 summary"><p>Gets the bounding box aligned with the axis XYZ that occupies this entity.</p>

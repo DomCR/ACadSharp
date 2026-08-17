@@ -104,7 +104,7 @@ Class Leader  <a class="header-action link-secondary" title="View source" href="
   <div class="codewrapper">
     <pre><code class="lang-csharp hljs">[DxfName(&quot;LEADER&quot;)]
 [DxfSubClass(&quot;AcDbLeader&quot;)]
-public class Leader : Entity, IEntity, IHandledCadObject, IGeometricEntity</code></pre>
+public class Leader : Entity, IEntity, IHandledCadObject, IGeometricEntity, IOrientable</code></pre>
   </div>
 
 
@@ -126,6 +126,7 @@ public class Leader : Entity, IEntity, IHandledCadObject, IGeometricEntity</code
       <div><a class="xref" href="ACadSharp.Entities.IEntity.html">IEntity</a></div>
       <div><a class="xref" href="ACadSharp.IHandledCadObject.html">IHandledCadObject</a></div>
       <div><a class="xref" href="ACadSharp.Entities.IGeometricEntity.html">IGeometricEntity</a></div>
+      <div><a class="xref" href="ACadSharp.IOrientable.html">IOrientable</a></div>
     </dd>
   </dl>
 
@@ -228,6 +229,12 @@ public class Leader : Entity, IEntity, IHandledCadObject, IGeometricEntity</code
     </div>
     <div>
       <a class="xref" href="ACadSharp.CadObject.html#ACadSharp_CadObject_CreateExtendedDictionary">CadObject.CreateExtendedDictionary()</a>
+    </div>
+    <div>
+      <a class="xref" href="ACadSharp.CadObject.html#ACadSharp_CadObject_IsValid_ACadSharp_IO_CadFileFormat_ACadSharp_ACadVersion_">CadObject.IsValid(CadFileFormat, ACadVersion)</a>
+    </div>
+    <div>
+      <a class="xref" href="ACadSharp.CadObject.html#ACadSharp_CadObject_IsValid_ACadSharp_IO_CadFileFormat_ACadSharp_ACadVersion_System_Collections_Generic_IList_System_String___">CadObject.IsValid(CadFileFormat, ACadVersion, out IList&lt;string&gt;)</a>
     </div>
     <div>
       <a class="xref" href="ACadSharp.CadObject.html#ACadSharp_CadObject_RemoveReactor_ACadSharp_CadObject_">CadObject.RemoveReactor(CadObject)</a>
@@ -553,10 +560,10 @@ public XYZ HorizontalDirection { get; set; }</code></pre>
 
   <h3 id="ACadSharp_Entities_Leader_Normal" data-uid="ACadSharp.Entities.Leader.Normal">
   Normal
-  <a class="header-action link-secondary" title="View source" href="https://github.com/DomCR/ACadSharp/blob/master/src/ACadSharp/Entities/Leader.cs/#L92"><i class="bi bi-code-slash"></i></a>
+  <a class="header-action link-secondary" title="View source" href="https://github.com/DomCR/ACadSharp/blob/master/src/ACadSharp/Entities/Leader.cs/#L90"><i class="bi bi-code-slash"></i></a>
   </h3>
 
-  <div class="markdown level1 summary"><p>Normal vector.</p>
+  <div class="markdown level1 summary"><p>Specifies the three-dimensional normal unit vector for the object.</p>
 </div>
   <div class="markdown level1 conceptual"></div>
 
@@ -586,7 +593,7 @@ public XYZ Normal { get; set; }</code></pre>
 
   <h3 id="ACadSharp_Entities_Leader_ObjectName" data-uid="ACadSharp.Entities.Leader.ObjectName">
   ObjectName
-  <a class="header-action link-secondary" title="View source" href="https://github.com/DomCR/ACadSharp/blob/master/src/ACadSharp/Entities/Leader.cs/#L96"><i class="bi bi-code-slash"></i></a>
+  <a class="header-action link-secondary" title="View source" href="https://github.com/DomCR/ACadSharp/blob/master/src/ACadSharp/Entities/Leader.cs/#L94"><i class="bi bi-code-slash"></i></a>
   </h3>
 
   <div class="markdown level1 summary"><p>The CAD class name of an object.</p>
@@ -618,7 +625,7 @@ public XYZ Normal { get; set; }</code></pre>
 
   <h3 id="ACadSharp_Entities_Leader_ObjectType" data-uid="ACadSharp.Entities.Leader.ObjectType">
   ObjectType
-  <a class="header-action link-secondary" title="View source" href="https://github.com/DomCR/ACadSharp/blob/master/src/ACadSharp/Entities/Leader.cs/#L99"><i class="bi bi-code-slash"></i></a>
+  <a class="header-action link-secondary" title="View source" href="https://github.com/DomCR/ACadSharp/blob/master/src/ACadSharp/Entities/Leader.cs/#L97"><i class="bi bi-code-slash"></i></a>
   </h3>
 
   <div class="markdown level1 summary"><p>Get the object type.</p>
@@ -650,7 +657,7 @@ public XYZ Normal { get; set; }</code></pre>
 
   <h3 id="ACadSharp_Entities_Leader_PathType" data-uid="ACadSharp.Entities.Leader.PathType">
   PathType
-  <a class="header-action link-secondary" title="View source" href="https://github.com/DomCR/ACadSharp/blob/master/src/ACadSharp/Entities/Leader.cs/#L108"><i class="bi bi-code-slash"></i></a>
+  <a class="header-action link-secondary" title="View source" href="https://github.com/DomCR/ACadSharp/blob/master/src/ACadSharp/Entities/Leader.cs/#L106"><i class="bi bi-code-slash"></i></a>
   </h3>
 
   <div class="markdown level1 summary"><p>Leader Path Type.</p>
@@ -685,7 +692,7 @@ public LeaderPathType PathType { get; set; }</code></pre>
 
   <h3 id="ACadSharp_Entities_Leader_Style" data-uid="ACadSharp.Entities.Leader.Style">
   Style
-  <a class="header-action link-secondary" title="View source" href="https://github.com/DomCR/ACadSharp/blob/master/src/ACadSharp/Entities/Leader.cs/#L114"><i class="bi bi-code-slash"></i></a>
+  <a class="header-action link-secondary" title="View source" href="https://github.com/DomCR/ACadSharp/blob/master/src/ACadSharp/Entities/Leader.cs/#L112"><i class="bi bi-code-slash"></i></a>
   </h3>
 
   <div class="markdown level1 summary"><p>Dimension Style.</p>
@@ -718,7 +725,7 @@ public DimensionStyle Style { get; set; }</code></pre>
 
   <h3 id="ACadSharp_Entities_Leader_SubclassMarker" data-uid="ACadSharp.Entities.Leader.SubclassMarker">
   SubclassMarker
-  <a class="header-action link-secondary" title="View source" href="https://github.com/DomCR/ACadSharp/blob/master/src/ACadSharp/Entities/Leader.cs/#L137"><i class="bi bi-code-slash"></i></a>
+  <a class="header-action link-secondary" title="View source" href="https://github.com/DomCR/ACadSharp/blob/master/src/ACadSharp/Entities/Leader.cs/#L135"><i class="bi bi-code-slash"></i></a>
   </h3>
 
   <div class="markdown level1 summary"><p>Object Subclass marker.</p>
@@ -750,7 +757,7 @@ public DimensionStyle Style { get; set; }</code></pre>
 
   <h3 id="ACadSharp_Entities_Leader_TextHeight" data-uid="ACadSharp.Entities.Leader.TextHeight">
   TextHeight
-  <a class="header-action link-secondary" title="View source" href="https://github.com/DomCR/ACadSharp/blob/master/src/ACadSharp/Entities/Leader.cs/#L142"><i class="bi bi-code-slash"></i></a>
+  <a class="header-action link-secondary" title="View source" href="https://github.com/DomCR/ACadSharp/blob/master/src/ACadSharp/Entities/Leader.cs/#L140"><i class="bi bi-code-slash"></i></a>
   </h3>
 
   <div class="markdown level1 summary"><p>Text annotation height.</p>
@@ -783,7 +790,7 @@ public double TextHeight { get; set; }</code></pre>
 
   <h3 id="ACadSharp_Entities_Leader_TextWidth" data-uid="ACadSharp.Entities.Leader.TextWidth">
   TextWidth
-  <a class="header-action link-secondary" title="View source" href="https://github.com/DomCR/ACadSharp/blob/master/src/ACadSharp/Entities/Leader.cs/#L148"><i class="bi bi-code-slash"></i></a>
+  <a class="header-action link-secondary" title="View source" href="https://github.com/DomCR/ACadSharp/blob/master/src/ACadSharp/Entities/Leader.cs/#L146"><i class="bi bi-code-slash"></i></a>
   </h3>
 
   <div class="markdown level1 summary"><p>Text annotation width.</p>
@@ -816,7 +823,7 @@ public double TextWidth { get; set; }</code></pre>
 
   <h3 id="ACadSharp_Entities_Leader_Vertices" data-uid="ACadSharp.Entities.Leader.Vertices">
   Vertices
-  <a class="header-action link-secondary" title="View source" href="https://github.com/DomCR/ACadSharp/blob/master/src/ACadSharp/Entities/Leader.cs/#L154"><i class="bi bi-code-slash"></i></a>
+  <a class="header-action link-secondary" title="View source" href="https://github.com/DomCR/ACadSharp/blob/master/src/ACadSharp/Entities/Leader.cs/#L152"><i class="bi bi-code-slash"></i></a>
   </h3>
 
   <div class="markdown level1 summary"><p>Vertices in leader.</p>
@@ -854,7 +861,7 @@ public List&lt;XYZ&gt; Vertices { get; set; }</code></pre>
 
   <h3 id="ACadSharp_Entities_Leader_ApplyTransform_CSMath_Transform_" data-uid="ACadSharp.Entities.Leader.ApplyTransform(CSMath.Transform)">
   ApplyTransform(Transform)
-  <a class="header-action link-secondary" title="View source" href="https://github.com/DomCR/ACadSharp/blob/master/src/ACadSharp/Entities/Leader.cs/#L161"><i class="bi bi-code-slash"></i></a>
+  <a class="header-action link-secondary" title="View source" href="https://github.com/DomCR/ACadSharp/blob/master/src/ACadSharp/Entities/Leader.cs/#L159"><i class="bi bi-code-slash"></i></a>
   </h3>
 
   <div class="markdown level1 summary"><p>Apply a transform matrix to this entity.</p>
@@ -886,7 +893,7 @@ public List&lt;XYZ&gt; Vertices { get; set; }</code></pre>
 
   <h3 id="ACadSharp_Entities_Leader_Clone" data-uid="ACadSharp.Entities.Leader.Clone">
   Clone()
-  <a class="header-action link-secondary" title="View source" href="https://github.com/DomCR/ACadSharp/blob/master/src/ACadSharp/Entities/Leader.cs/#L174"><i class="bi bi-code-slash"></i></a>
+  <a class="header-action link-secondary" title="View source" href="https://github.com/DomCR/ACadSharp/blob/master/src/ACadSharp/Entities/Leader.cs/#L172"><i class="bi bi-code-slash"></i></a>
   </h3>
 
   <div class="markdown level1 summary"><p>Creates a new object that is a copy of the current instance.</p>
@@ -922,7 +929,7 @@ public List&lt;XYZ&gt; Vertices { get; set; }</code></pre>
 
   <h3 id="ACadSharp_Entities_Leader_GetBoundingBox" data-uid="ACadSharp.Entities.Leader.GetBoundingBox">
   GetBoundingBox()
-  <a class="header-action link-secondary" title="View source" href="https://github.com/DomCR/ACadSharp/blob/master/src/ACadSharp/Entities/Leader.cs/#L182"><i class="bi bi-code-slash"></i></a>
+  <a class="header-action link-secondary" title="View source" href="https://github.com/DomCR/ACadSharp/blob/master/src/ACadSharp/Entities/Leader.cs/#L180"><i class="bi bi-code-slash"></i></a>
   </h3>
 
   <div class="markdown level1 summary"><p>Gets the bounding box aligned with the axis XYZ that occupies this entity.</p>
@@ -955,7 +962,7 @@ public List&lt;XYZ&gt; Vertices { get; set; }</code></pre>
 
   <h3 id="ACadSharp_Entities_Leader_SetDimensionOverride_ACadSharp_Tables_DimensionStyle_" data-uid="ACadSharp.Entities.Leader.SetDimensionOverride(ACadSharp.Tables.DimensionStyle)">
   SetDimensionOverride(DimensionStyle)
-  <a class="header-action link-secondary" title="View source" href="https://github.com/DomCR/ACadSharp/blob/master/src/ACadSharp/Entities/Leader.cs/#L228"><i class="bi bi-code-slash"></i></a>
+  <a class="header-action link-secondary" title="View source" href="https://github.com/DomCR/ACadSharp/blob/master/src/ACadSharp/Entities/Leader.cs/#L226"><i class="bi bi-code-slash"></i></a>
   </h3>
 
   <div class="markdown level1 summary"><p>Applies the specified dimension style override to the current leader, updating its extended data
@@ -995,7 +1002,7 @@ are serialised into the DSTYLE XDATA block, mirroring the behaviour of
 
   <h3 id="ACadSharp_Entities_Leader_SetStyleOverrideMap_ACadSharp_DxfClassMap_" data-uid="ACadSharp.Entities.Leader.SetStyleOverrideMap(ACadSharp.DxfClassMap)">
   SetStyleOverrideMap(DxfClassMap)
-  <a class="header-action link-secondary" title="View source" href="https://github.com/DomCR/ACadSharp/blob/master/src/ACadSharp/Entities/Leader.cs/#L264"><i class="bi bi-code-slash"></i></a>
+  <a class="header-action link-secondary" title="View source" href="https://github.com/DomCR/ACadSharp/blob/master/src/ACadSharp/Entities/Leader.cs/#L262"><i class="bi bi-code-slash"></i></a>
   </h3>
 
   <div class="markdown level1 summary"><p>Sets the style override mapping for the current leader using the specified DXF class map,
@@ -1029,7 +1036,7 @@ writing the entries as <code>ACAD / DSTYLE / { … }</code> extended data.</p>
 
   <h3 id="ACadSharp_Entities_Leader_tableOnRemove_System_Object_ACadSharp_CollectionChangedEventArgs_" data-uid="ACadSharp.Entities.Leader.tableOnRemove(System.Object,ACadSharp.CollectionChangedEventArgs)">
   tableOnRemove(object, CollectionChangedEventArgs)
-  <a class="header-action link-secondary" title="View source" href="https://github.com/DomCR/ACadSharp/blob/master/src/ACadSharp/Entities/Leader.cs/#L205"><i class="bi bi-code-slash"></i></a>
+  <a class="header-action link-secondary" title="View source" href="https://github.com/DomCR/ACadSharp/blob/master/src/ACadSharp/Entities/Leader.cs/#L203"><i class="bi bi-code-slash"></i></a>
   </h3>
 
   <div class="markdown level1 summary"></div>

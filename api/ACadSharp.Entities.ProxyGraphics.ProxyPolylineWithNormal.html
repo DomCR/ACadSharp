@@ -102,7 +102,7 @@ Class ProxyPolylineWithNormal  <a class="header-action link-secondary" title="Vi
   <div class="markdown conceptual"></div>
 
   <div class="codewrapper">
-    <pre><code class="lang-csharp hljs">public class ProxyPolylineWithNormal : ProxyPolyline, IProxyGeometry</code></pre>
+    <pre><code class="lang-csharp hljs">public class ProxyPolylineWithNormal : ProxyPolyline, IProxyGeometry, IOrientable</code></pre>
   </div>
 
 
@@ -121,6 +121,7 @@ Class ProxyPolylineWithNormal  <a class="header-action link-secondary" title="Vi
     <dt>Implements</dt>
     <dd>
       <div><a class="xref" href="ACadSharp.Entities.ProxyGraphics.IProxyGeometry.html">IProxyGeometry</a></div>
+      <div><a class="xref" href="ACadSharp.IOrientable.html">IOrientable</a></div>
     </dd>
   </dl>
 
@@ -210,10 +211,10 @@ which defines the plane in which the polyline lies in 3D space.</p>
 
   <h3 id="ACadSharp_Entities_ProxyGraphics_ProxyPolylineWithNormal_Normal" data-uid="ACadSharp.Entities.ProxyGraphics.ProxyPolylineWithNormal.Normal">
   Normal
-  <a class="header-action link-secondary" title="View source" href="https://github.com/DomCR/ACadSharp/blob/master/src/ACadSharp/Entities/ProxyGraphics/ProxyPolylineWithNormal.cs/#L23"><i class="bi bi-code-slash"></i></a>
+  <a class="header-action link-secondary" title="View source" href="https://github.com/DomCR/ACadSharp/blob/master/src/ACadSharp/Entities/ProxyGraphics/ProxyPolylineWithNormal.cs/#L18"><i class="bi bi-code-slash"></i></a>
   </h3>
 
-  <div class="markdown level1 summary"><p>Gets or sets the normal vector of the polyline.</p>
+  <div class="markdown level1 summary"><p>Specifies the three-dimensional normal unit vector for the object.</p>
 </div>
   <div class="markdown level1 conceptual"></div>
 
@@ -234,9 +235,6 @@ which defines the plane in which the polyline lies in 3D space.</p>
 
 
 
-  <h4 class="section" id="ACadSharp_Entities_ProxyGraphics_ProxyPolylineWithNormal_Normal_remarks">Remarks</h4>
-  <div class="markdown level1 remarks"><p>The normal vector is perpendicular to the plane in which the polyline is positioned.</p>
-</div>
 
 
 

@@ -4128,6 +4128,20 @@
     },
     {
       "type": "ManagedReference",
+      "source_relative_path": "api/ACadSharp.IOrientable.yml",
+      "output": {
+        ".html": {
+          "relative_path": "api/ACadSharp.IOrientable.html"
+        }
+      },
+      "version": "",
+      "Uid": null,
+      "IsMRef": true,
+      "Title": "ACadSharp.IOrientable",
+      "Summary": "<p sourcefile=\"api/ACadSharp.IOrientable.yml\" sourcestartlinenumber=\"1\">Represents an object that has a three-dimensional orientation.</p>\n"
+    },
+    {
+      "type": "ManagedReference",
       "source_relative_path": "api/ACadSharp.IProxy.yml",
       "output": {
         ".html": {

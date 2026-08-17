@@ -89,7 +89,7 @@
 
 
   <h1 id="ACadSharp_Entities_Ellipse" data-uid="ACadSharp.Entities.Ellipse" class="text-break">
-Class Ellipse  <a class="header-action link-secondary" title="View source" href="https://github.com/DomCR/ACadSharp/blob/master/src/ACadSharp/Entities/Ellipse.cs/#L16"><i class="bi bi-code-slash"></i></a>
+Class Ellipse  <a class="header-action link-secondary" title="View source" href="https://github.com/DomCR/ACadSharp/blob/master/src/ACadSharp/Entities/Ellipse.cs/#L17"><i class="bi bi-code-slash"></i></a>
   </h1>
 
   <div class="facts text-secondary">
@@ -104,7 +104,7 @@ Class Ellipse  <a class="header-action link-secondary" title="View source" href=
   <div class="codewrapper">
     <pre><code class="lang-csharp hljs">[DxfName(&quot;ELLIPSE&quot;)]
 [DxfSubClass(&quot;AcDbEllipse&quot;)]
-public class Ellipse : Entity, IEntity, IHandledCadObject, IGeometricEntity, ICurve</code></pre>
+public class Ellipse : Entity, IEntity, IHandledCadObject, IGeometricEntity, ICurve, IOrientable</code></pre>
   </div>
 
 
@@ -127,6 +127,7 @@ public class Ellipse : Entity, IEntity, IHandledCadObject, IGeometricEntity, ICu
       <div><a class="xref" href="ACadSharp.IHandledCadObject.html">IHandledCadObject</a></div>
       <div><a class="xref" href="ACadSharp.Entities.IGeometricEntity.html">IGeometricEntity</a></div>
       <div><a class="xref" href="CSMath.Geometry.ICurve.html">ICurve</a></div>
+      <div><a class="xref" href="ACadSharp.IOrientable.html">IOrientable</a></div>
     </dd>
   </dl>
 
@@ -237,6 +238,9 @@ public class Ellipse : Entity, IEntity, IHandledCadObject, IGeometricEntity, ICu
       <a class="xref" href="ACadSharp.CadObject.html#ACadSharp_CadObject_CreateExtendedDictionary">CadObject.CreateExtendedDictionary()</a>
     </div>
     <div>
+      <a class="xref" href="ACadSharp.CadObject.html#ACadSharp_CadObject_IsValid_ACadSharp_IO_CadFileFormat_ACadSharp_ACadVersion_">CadObject.IsValid(CadFileFormat, ACadVersion)</a>
+    </div>
+    <div>
       <a class="xref" href="ACadSharp.CadObject.html#ACadSharp_CadObject_RemoveReactor_ACadSharp_CadObject_">CadObject.RemoveReactor(CadObject)</a>
     </div>
     <div>
@@ -292,7 +296,7 @@ Dxf class name <a class="xref" href="ACadSharp.DxfSubclassMarker.html#ACadSharp_
 
   <h3 id="ACadSharp_Entities_Ellipse_Center" data-uid="ACadSharp.Entities.Ellipse.Center">
   Center
-  <a class="header-action link-secondary" title="View source" href="https://github.com/DomCR/ACadSharp/blob/master/src/ACadSharp/Entities/Ellipse.cs/#L23"><i class="bi bi-code-slash"></i></a>
+  <a class="header-action link-secondary" title="View source" href="https://github.com/DomCR/ACadSharp/blob/master/src/ACadSharp/Entities/Ellipse.cs/#L24"><i class="bi bi-code-slash"></i></a>
   </h3>
 
   <div class="markdown level1 summary"><p>Center point (in WCS).</p>
@@ -325,7 +329,7 @@ public XYZ Center { get; set; }</code></pre>
 
   <h3 id="ACadSharp_Entities_Ellipse_EndParameter" data-uid="ACadSharp.Entities.Ellipse.EndParameter">
   EndParameter
-  <a class="header-action link-secondary" title="View source" href="https://github.com/DomCR/ACadSharp/blob/master/src/ACadSharp/Entities/Ellipse.cs/#L32"><i class="bi bi-code-slash"></i></a>
+  <a class="header-action link-secondary" title="View source" href="https://github.com/DomCR/ACadSharp/blob/master/src/ACadSharp/Entities/Ellipse.cs/#L33"><i class="bi bi-code-slash"></i></a>
   </h3>
 
   <div class="markdown level1 summary"><p>End parameter.</p>
@@ -359,7 +363,7 @@ public double EndParameter { get; set; }</code></pre>
 
   <h3 id="ACadSharp_Entities_Ellipse_IsFullEllipse" data-uid="ACadSharp.Entities.Ellipse.IsFullEllipse">
   IsFullEllipse
-  <a class="header-action link-secondary" title="View source" href="https://github.com/DomCR/ACadSharp/blob/master/src/ACadSharp/Entities/Ellipse.cs/#L38"><i class="bi bi-code-slash"></i></a>
+  <a class="header-action link-secondary" title="View source" href="https://github.com/DomCR/ACadSharp/blob/master/src/ACadSharp/Entities/Ellipse.cs/#L39"><i class="bi bi-code-slash"></i></a>
   </h3>
 
   <div class="markdown level1 summary"><p>Flag that indicates weather this ellipse is closed or not.</p>
@@ -391,7 +395,7 @@ public double EndParameter { get; set; }</code></pre>
 
   <h3 id="ACadSharp_Entities_Ellipse_MajorAxis" data-uid="ACadSharp.Entities.Ellipse.MajorAxis">
   MajorAxis
-  <a class="header-action link-secondary" title="View source" href="https://github.com/DomCR/ACadSharp/blob/master/src/ACadSharp/Entities/Ellipse.cs/#L43"><i class="bi bi-code-slash"></i></a>
+  <a class="header-action link-secondary" title="View source" href="https://github.com/DomCR/ACadSharp/blob/master/src/ACadSharp/Entities/Ellipse.cs/#L44"><i class="bi bi-code-slash"></i></a>
   </h3>
 
   <div class="markdown level1 summary"><p>Length of the major axis.</p>
@@ -423,7 +427,7 @@ public double EndParameter { get; set; }</code></pre>
 
   <h3 id="ACadSharp_Entities_Ellipse_MajorAxisEndPoint" data-uid="ACadSharp.Entities.Ellipse.MajorAxisEndPoint">
   MajorAxisEndPoint
-  <a class="header-action link-secondary" title="View source" href="https://github.com/DomCR/ACadSharp/blob/master/src/ACadSharp/Entities/Ellipse.cs/#L51"><i class="bi bi-code-slash"></i></a>
+  <a class="header-action link-secondary" title="View source" href="https://github.com/DomCR/ACadSharp/blob/master/src/ACadSharp/Entities/Ellipse.cs/#L52"><i class="bi bi-code-slash"></i></a>
   </h3>
 
   <div class="markdown level1 summary"><p>Endpoint of major axis, relative to the center (in WCS).</p>
@@ -459,7 +463,7 @@ public XYZ MajorAxisEndPoint { get; set; }</code></pre>
 
   <h3 id="ACadSharp_Entities_Ellipse_MinorAxis" data-uid="ACadSharp.Entities.Ellipse.MinorAxis">
   MinorAxis
-  <a class="header-action link-secondary" title="View source" href="https://github.com/DomCR/ACadSharp/blob/master/src/ACadSharp/Entities/Ellipse.cs/#L57"><i class="bi bi-code-slash"></i></a>
+  <a class="header-action link-secondary" title="View source" href="https://github.com/DomCR/ACadSharp/blob/master/src/ACadSharp/Entities/Ellipse.cs/#L58"><i class="bi bi-code-slash"></i></a>
   </h3>
 
   <div class="markdown level1 summary"><p>Length of the minor axis.</p>
@@ -487,11 +491,11 @@ public XYZ MajorAxisEndPoint { get; set; }</code></pre>
 
 
 
-  <a id="ACadSharp_Entities_Ellipse_MinorAxisEndpoint_" data-uid="ACadSharp.Entities.Ellipse.MinorAxisEndpoint*"></a>
+  <a id="ACadSharp_Entities_Ellipse_MinorAxisEndPoint_" data-uid="ACadSharp.Entities.Ellipse.MinorAxisEndPoint*"></a>
 
-  <h3 id="ACadSharp_Entities_Ellipse_MinorAxisEndpoint" data-uid="ACadSharp.Entities.Ellipse.MinorAxisEndpoint">
-  MinorAxisEndpoint
-  <a class="header-action link-secondary" title="View source" href="https://github.com/DomCR/ACadSharp/blob/master/src/ACadSharp/Entities/Ellipse.cs/#L62"><i class="bi bi-code-slash"></i></a>
+  <h3 id="ACadSharp_Entities_Ellipse_MinorAxisEndPoint" data-uid="ACadSharp.Entities.Ellipse.MinorAxisEndPoint">
+  MinorAxisEndPoint
+  <a class="header-action link-secondary" title="View source" href="https://github.com/DomCR/ACadSharp/blob/master/src/ACadSharp/Entities/Ellipse.cs/#L63"><i class="bi bi-code-slash"></i></a>
   </h3>
 
   <div class="markdown level1 summary"><p>Endpoint of minor axis, relative to the center (in WCS).</p>
@@ -499,7 +503,7 @@ public XYZ MajorAxisEndPoint { get; set; }</code></pre>
   <div class="markdown level1 conceptual"></div>
 
   <div class="codewrapper">
-    <pre><code class="lang-csharp hljs">public XYZ MinorAxisEndpoint { get; }</code></pre>
+    <pre><code class="lang-csharp hljs">public XYZ MinorAxisEndPoint { get; }</code></pre>
   </div>
 
 
@@ -523,10 +527,10 @@ public XYZ MajorAxisEndPoint { get; set; }</code></pre>
 
   <h3 id="ACadSharp_Entities_Ellipse_Normal" data-uid="ACadSharp.Entities.Ellipse.Normal">
   Normal
-  <a class="header-action link-secondary" title="View source" href="https://github.com/DomCR/ACadSharp/blob/master/src/ACadSharp/Entities/Ellipse.cs/#L75"><i class="bi bi-code-slash"></i></a>
+  <a class="header-action link-secondary" title="View source" href="https://github.com/DomCR/ACadSharp/blob/master/src/ACadSharp/Entities/Ellipse.cs/#L74"><i class="bi bi-code-slash"></i></a>
   </h3>
 
-  <div class="markdown level1 summary"><p>Extrusion direction.</p>
+  <div class="markdown level1 summary"><p>Specifies the three-dimensional normal unit vector for the object.</p>
 </div>
   <div class="markdown level1 conceptual"></div>
 
@@ -556,7 +560,7 @@ public XYZ Normal { get; set; }</code></pre>
 
   <h3 id="ACadSharp_Entities_Ellipse_ObjectName" data-uid="ACadSharp.Entities.Ellipse.ObjectName">
   ObjectName
-  <a class="header-action link-secondary" title="View source" href="https://github.com/DomCR/ACadSharp/blob/master/src/ACadSharp/Entities/Ellipse.cs/#L79"><i class="bi bi-code-slash"></i></a>
+  <a class="header-action link-secondary" title="View source" href="https://github.com/DomCR/ACadSharp/blob/master/src/ACadSharp/Entities/Ellipse.cs/#L78"><i class="bi bi-code-slash"></i></a>
   </h3>
 
   <div class="markdown level1 summary"><p>The CAD class name of an object.</p>
@@ -588,7 +592,7 @@ public XYZ Normal { get; set; }</code></pre>
 
   <h3 id="ACadSharp_Entities_Ellipse_ObjectType" data-uid="ACadSharp.Entities.Ellipse.ObjectType">
   ObjectType
-  <a class="header-action link-secondary" title="View source" href="https://github.com/DomCR/ACadSharp/blob/master/src/ACadSharp/Entities/Ellipse.cs/#L82"><i class="bi bi-code-slash"></i></a>
+  <a class="header-action link-secondary" title="View source" href="https://github.com/DomCR/ACadSharp/blob/master/src/ACadSharp/Entities/Ellipse.cs/#L81"><i class="bi bi-code-slash"></i></a>
   </h3>
 
   <div class="markdown level1 summary"><p>Get the object type.</p>
@@ -620,7 +624,7 @@ public XYZ Normal { get; set; }</code></pre>
 
   <h3 id="ACadSharp_Entities_Ellipse_RadiusRatio" data-uid="ACadSharp.Entities.Ellipse.RadiusRatio">
   RadiusRatio
-  <a class="header-action link-secondary" title="View source" href="https://github.com/DomCR/ACadSharp/blob/master/src/ACadSharp/Entities/Ellipse.cs/#L87"><i class="bi bi-code-slash"></i></a>
+  <a class="header-action link-secondary" title="View source" href="https://github.com/DomCR/ACadSharp/blob/master/src/ACadSharp/Entities/Ellipse.cs/#L86"><i class="bi bi-code-slash"></i></a>
   </h3>
 
   <div class="markdown level1 summary"><p>Ratio of minor axis to major axis.</p>
@@ -653,7 +657,7 @@ public double RadiusRatio { get; set; }</code></pre>
 
   <h3 id="ACadSharp_Entities_Ellipse_Rotation" data-uid="ACadSharp.Entities.Ellipse.Rotation">
   Rotation
-  <a class="header-action link-secondary" title="View source" href="https://github.com/DomCR/ACadSharp/blob/master/src/ACadSharp/Entities/Ellipse.cs/#L103"><i class="bi bi-code-slash"></i></a>
+  <a class="header-action link-secondary" title="View source" href="https://github.com/DomCR/ACadSharp/blob/master/src/ACadSharp/Entities/Ellipse.cs/#L102"><i class="bi bi-code-slash"></i></a>
   </h3>
 
   <div class="markdown level1 summary"><p>Rotation of the major axis from the world X axis.</p>
@@ -685,7 +689,7 @@ public double RadiusRatio { get; set; }</code></pre>
 
   <h3 id="ACadSharp_Entities_Ellipse_StartParameter" data-uid="ACadSharp.Entities.Ellipse.StartParameter">
   StartParameter
-  <a class="header-action link-secondary" title="View source" href="https://github.com/DomCR/ACadSharp/blob/master/src/ACadSharp/Entities/Ellipse.cs/#L117"><i class="bi bi-code-slash"></i></a>
+  <a class="header-action link-secondary" title="View source" href="https://github.com/DomCR/ACadSharp/blob/master/src/ACadSharp/Entities/Ellipse.cs/#L116"><i class="bi bi-code-slash"></i></a>
   </h3>
 
   <div class="markdown level1 summary"><p>Start parameter.</p>
@@ -719,7 +723,7 @@ public double StartParameter { get; set; }</code></pre>
 
   <h3 id="ACadSharp_Entities_Ellipse_SubclassMarker" data-uid="ACadSharp.Entities.Ellipse.SubclassMarker">
   SubclassMarker
-  <a class="header-action link-secondary" title="View source" href="https://github.com/DomCR/ACadSharp/blob/master/src/ACadSharp/Entities/Ellipse.cs/#L121"><i class="bi bi-code-slash"></i></a>
+  <a class="header-action link-secondary" title="View source" href="https://github.com/DomCR/ACadSharp/blob/master/src/ACadSharp/Entities/Ellipse.cs/#L120"><i class="bi bi-code-slash"></i></a>
   </h3>
 
   <div class="markdown level1 summary"><p>Object Subclass marker.</p>
@@ -751,7 +755,7 @@ public double StartParameter { get; set; }</code></pre>
 
   <h3 id="ACadSharp_Entities_Ellipse_Thickness" data-uid="ACadSharp.Entities.Ellipse.Thickness">
   Thickness
-  <a class="header-action link-secondary" title="View source" href="https://github.com/DomCR/ACadSharp/blob/master/src/ACadSharp/Entities/Ellipse.cs/#L126"><i class="bi bi-code-slash"></i></a>
+  <a class="header-action link-secondary" title="View source" href="https://github.com/DomCR/ACadSharp/blob/master/src/ACadSharp/Entities/Ellipse.cs/#L125"><i class="bi bi-code-slash"></i></a>
   </h3>
 
   <div class="markdown level1 summary"><p>Specifies the distance a 2D object is extruded above or below its elevation.</p>
@@ -788,7 +792,7 @@ public double Thickness { get; set; }</code></pre>
 
   <h3 id="ACadSharp_Entities_Ellipse_ApplyTransform_CSMath_Transform_" data-uid="ACadSharp.Entities.Ellipse.ApplyTransform(CSMath.Transform)">
   ApplyTransform(Transform)
-  <a class="header-action link-secondary" title="View source" href="https://github.com/DomCR/ACadSharp/blob/master/src/ACadSharp/Entities/Ellipse.cs/#L132"><i class="bi bi-code-slash"></i></a>
+  <a class="header-action link-secondary" title="View source" href="https://github.com/DomCR/ACadSharp/blob/master/src/ACadSharp/Entities/Ellipse.cs/#L131"><i class="bi bi-code-slash"></i></a>
   </h3>
 
   <div class="markdown level1 summary"><p>Apply a transform matrix to this entity.</p>
@@ -820,7 +824,7 @@ public double Thickness { get; set; }</code></pre>
 
   <h3 id="ACadSharp_Entities_Ellipse_GetBoundingBox" data-uid="ACadSharp.Entities.Ellipse.GetBoundingBox">
   GetBoundingBox()
-  <a class="header-action link-secondary" title="View source" href="https://github.com/DomCR/ACadSharp/blob/master/src/ACadSharp/Entities/Ellipse.cs/#L161"><i class="bi bi-code-slash"></i></a>
+  <a class="header-action link-secondary" title="View source" href="https://github.com/DomCR/ACadSharp/blob/master/src/ACadSharp/Entities/Ellipse.cs/#L160"><i class="bi bi-code-slash"></i></a>
   </h3>
 
   <div class="markdown level1 summary"><p>Gets the bounding box aligned with the axis XYZ that occupies this entity.</p>
@@ -853,7 +857,7 @@ public double Thickness { get; set; }</code></pre>
 
   <h3 id="ACadSharp_Entities_Ellipse_GetEndVertices_CSMath_XYZ__CSMath_XYZ__" data-uid="ACadSharp.Entities.Ellipse.GetEndVertices(CSMath.XYZ@,CSMath.XYZ@)">
   GetEndVertices(out XYZ, out XYZ)
-  <a class="header-action link-secondary" title="View source" href="https://github.com/DomCR/ACadSharp/blob/master/src/ACadSharp/Entities/Ellipse.cs/#L172"><i class="bi bi-code-slash"></i></a>
+  <a class="header-action link-secondary" title="View source" href="https://github.com/DomCR/ACadSharp/blob/master/src/ACadSharp/Entities/Ellipse.cs/#L171"><i class="bi bi-code-slash"></i></a>
   </h3>
 
   <div class="markdown level1 summary"><p>Get end vertices of the ellipse, if <a class="xref" href="ACadSharp.Entities.Ellipse.html#ACadSharp_Entities_Ellipse_IsFullEllipse">IsFullEllipse</a> is set, the point will be the same.</p>
@@ -883,11 +887,56 @@ public double Thickness { get; set; }</code></pre>
 
 
 
+  <a id="ACadSharp_Entities_Ellipse_IsValid_" data-uid="ACadSharp.Entities.Ellipse.IsValid*"></a>
+
+  <h3 id="ACadSharp_Entities_Ellipse_IsValid_ACadSharp_IO_CadFileFormat_ACadSharp_ACadVersion_System_Collections_Generic_IList_System_String___" data-uid="ACadSharp.Entities.Ellipse.IsValid(ACadSharp.IO.CadFileFormat,ACadSharp.ACadVersion,System.Collections.Generic.IList{System.String}@)">
+  IsValid(CadFileFormat, ACadVersion, out IList&lt;string&gt;)
+  <a class="header-action link-secondary" title="View source" href="https://github.com/DomCR/ACadSharp/blob/master/src/ACadSharp/Entities/Ellipse.cs/#L178"><i class="bi bi-code-slash"></i></a>
+  </h3>
+
+  <div class="markdown level1 summary"><p>Determines whether the object is valid and can be written in a CAD file.</p>
+</div>
+  <div class="markdown level1 conceptual"></div>
+
+  <div class="codewrapper">
+    <pre><code class="lang-csharp hljs">public override bool IsValid(CadFileFormat format, ACadVersion version, out IList&lt;string&gt; errors)</code></pre>
+  </div>
+
+  <h4 class="section">Parameters</h4>
+  <dl class="parameters">
+    <dt><code>format</code> <a class="xref" href="ACadSharp.IO.CadFileFormat.html">CadFileFormat</a></dt>
+    <dd><p>The CAD file format.</p>
+</dd>
+    <dt><code>version</code> <a class="xref" href="ACadSharp.ACadVersion.html">ACadVersion</a></dt>
+    <dd><p>The CAD version.</p>
+</dd>
+    <dt><code>errors</code> <a class="xref" href="https://learn.microsoft.com/dotnet/api/system.collections.generic.ilist-1">IList</a>&lt;<a class="xref" href="https://learn.microsoft.com/dotnet/api/system.string">string</a>&gt;</dt>
+    <dd><p>A list of errors found during the validation.</p>
+</dd>
+  </dl>
+
+  <h4 class="section">Returns</h4>
+  <dl class="parameters">
+    <dt><a class="xref" href="https://learn.microsoft.com/dotnet/api/system.boolean">bool</a></dt>
+    <dd><p>True if the object is valid; otherwise, false.</p>
+</dd>
+  </dl>
+
+
+
+
+
+
+
+
+
+
+
   <a id="ACadSharp_Entities_Ellipse_PolarCoordinateRelativeToCenter_" data-uid="ACadSharp.Entities.Ellipse.PolarCoordinateRelativeToCenter*"></a>
 
   <h3 id="ACadSharp_Entities_Ellipse_PolarCoordinateRelativeToCenter_System_Double_" data-uid="ACadSharp.Entities.Ellipse.PolarCoordinateRelativeToCenter(System.Double)">
   PolarCoordinateRelativeToCenter(double)
-  <a class="header-action link-secondary" title="View source" href="https://github.com/DomCR/ACadSharp/blob/master/src/ACadSharp/Entities/Ellipse.cs/#L179"><i class="bi bi-code-slash"></i></a>
+  <a class="header-action link-secondary" title="View source" href="https://github.com/DomCR/ACadSharp/blob/master/src/ACadSharp/Entities/Ellipse.cs/#L192"><i class="bi bi-code-slash"></i></a>
   </h3>
 
   <div class="markdown level1 summary"><p>Calculate the local point on the curve for a given angle relative to the center.</p>
@@ -926,7 +975,7 @@ public double Thickness { get; set; }</code></pre>
 
   <h3 id="ACadSharp_Entities_Ellipse_PolygonalVertexes_System_Int32_" data-uid="ACadSharp.Entities.Ellipse.PolygonalVertexes(System.Int32)">
   PolygonalVertexes(int)
-  <a class="header-action link-secondary" title="View source" href="https://github.com/DomCR/ACadSharp/blob/master/src/ACadSharp/Entities/Ellipse.cs/#L191"><i class="bi bi-code-slash"></i></a>
+  <a class="header-action link-secondary" title="View source" href="https://github.com/DomCR/ACadSharp/blob/master/src/ACadSharp/Entities/Ellipse.cs/#L204"><i class="bi bi-code-slash"></i></a>
   </h3>
 
   <div class="markdown level1 summary"><p>Converts the curve in a list of vertexes.</p>
@@ -965,7 +1014,7 @@ public double Thickness { get; set; }</code></pre>
 </article>
 
         <div class="contribution d-print-none">
-          <a href="https://github.com/DomCR/ACadSharp/blob/master/src/ACadSharp/Entities/Ellipse.cs/#L16" class="edit-link">Edit this page</a>
+          <a href="https://github.com/DomCR/ACadSharp/blob/master/src/ACadSharp/Entities/Ellipse.cs/#L17" class="edit-link">Edit this page</a>
         </div>
 
 

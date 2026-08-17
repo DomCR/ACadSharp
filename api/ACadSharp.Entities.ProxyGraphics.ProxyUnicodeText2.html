@@ -104,7 +104,7 @@ including font information, styling attributes, positioning, and text-specific t
   <div class="markdown conceptual"></div>
 
   <div class="codewrapper">
-    <pre><code class="lang-csharp hljs">public class ProxyUnicodeText2 : IProxyGeometry</code></pre>
+    <pre><code class="lang-csharp hljs">public class ProxyUnicodeText2 : IProxyGeometry, IOrientable</code></pre>
   </div>
 
 
@@ -122,6 +122,7 @@ including font information, styling attributes, positioning, and text-specific t
     <dt>Implements</dt>
     <dd>
       <div><a class="xref" href="ACadSharp.Entities.ProxyGraphics.IProxyGeometry.html">IProxyGeometry</a></div>
+      <div><a class="xref" href="ACadSharp.IOrientable.html">IOrientable</a></div>
     </dd>
   </dl>
 
@@ -493,10 +494,10 @@ If <a href="https://learn.microsoft.com/dotnet/csharp/language-reference/builtin
 
   <h3 id="ACadSharp_Entities_ProxyGraphics_ProxyUnicodeText2_Normal" data-uid="ACadSharp.Entities.ProxyGraphics.ProxyUnicodeText2.Normal">
   Normal
-  <a class="header-action link-secondary" title="View source" href="https://github.com/DomCR/ACadSharp/blob/master/src/ACadSharp/Entities/ProxyGraphics/ProxyUnicodeText2.cs/#L64"><i class="bi bi-code-slash"></i></a>
+  <a class="header-action link-secondary" title="View source" href="https://github.com/DomCR/ACadSharp/blob/master/src/ACadSharp/Entities/ProxyGraphics/ProxyUnicodeText2.cs/#L62"><i class="bi bi-code-slash"></i></a>
   </h3>
 
-  <div class="markdown level1 summary"><p>Gets or sets the normal vector defining the plane in which the text is oriented.</p>
+  <div class="markdown level1 summary"><p>Specifies the three-dimensional normal unit vector for the object.</p>
 </div>
   <div class="markdown level1 conceptual"></div>
 
@@ -525,7 +526,7 @@ If <a href="https://learn.microsoft.com/dotnet/csharp/language-reference/builtin
 
   <h3 id="ACadSharp_Entities_ProxyGraphics_ProxyUnicodeText2_ObliqueAngle" data-uid="ACadSharp.Entities.ProxyGraphics.ProxyUnicodeText2.ObliqueAngle">
   ObliqueAngle
-  <a class="header-action link-secondary" title="View source" href="https://github.com/DomCR/ACadSharp/blob/master/src/ACadSharp/Entities/ProxyGraphics/ProxyUnicodeText2.cs/#L69"><i class="bi bi-code-slash"></i></a>
+  <a class="header-action link-secondary" title="View source" href="https://github.com/DomCR/ACadSharp/blob/master/src/ACadSharp/Entities/ProxyGraphics/ProxyUnicodeText2.cs/#L67"><i class="bi bi-code-slash"></i></a>
   </h3>
 
   <div class="markdown level1 summary"><p>Gets or sets the oblique angle in degrees, creating an italic-like slant effect on the text.</p>
@@ -557,7 +558,7 @@ If <a href="https://learn.microsoft.com/dotnet/csharp/language-reference/builtin
 
   <h3 id="ACadSharp_Entities_ProxyGraphics_ProxyUnicodeText2_StartPoint" data-uid="ACadSharp.Entities.ProxyGraphics.ProxyUnicodeText2.StartPoint">
   StartPoint
-  <a class="header-action link-secondary" title="View source" href="https://github.com/DomCR/ACadSharp/blob/master/src/ACadSharp/Entities/ProxyGraphics/ProxyUnicodeText2.cs/#L74"><i class="bi bi-code-slash"></i></a>
+  <a class="header-action link-secondary" title="View source" href="https://github.com/DomCR/ACadSharp/blob/master/src/ACadSharp/Entities/ProxyGraphics/ProxyUnicodeText2.cs/#L72"><i class="bi bi-code-slash"></i></a>
   </h3>
 
   <div class="markdown level1 summary"><p>Gets or sets the starting point (insertion point) of the text in drawing coordinates.</p>
@@ -589,7 +590,7 @@ If <a href="https://learn.microsoft.com/dotnet/csharp/language-reference/builtin
 
   <h3 id="ACadSharp_Entities_ProxyGraphics_ProxyUnicodeText2_Text" data-uid="ACadSharp.Entities.ProxyGraphics.ProxyUnicodeText2.Text">
   Text
-  <a class="header-action link-secondary" title="View source" href="https://github.com/DomCR/ACadSharp/blob/master/src/ACadSharp/Entities/ProxyGraphics/ProxyUnicodeText2.cs/#L79"><i class="bi bi-code-slash"></i></a>
+  <a class="header-action link-secondary" title="View source" href="https://github.com/DomCR/ACadSharp/blob/master/src/ACadSharp/Entities/ProxyGraphics/ProxyUnicodeText2.cs/#L77"><i class="bi bi-code-slash"></i></a>
   </h3>
 
   <div class="markdown level1 summary"><p>Gets or sets the text string to be rendered.</p>
@@ -621,7 +622,7 @@ If <a href="https://learn.microsoft.com/dotnet/csharp/language-reference/builtin
 
   <h3 id="ACadSharp_Entities_ProxyGraphics_ProxyUnicodeText2_TextDirection" data-uid="ACadSharp.Entities.ProxyGraphics.ProxyUnicodeText2.TextDirection">
   TextDirection
-  <a class="header-action link-secondary" title="View source" href="https://github.com/DomCR/ACadSharp/blob/master/src/ACadSharp/Entities/ProxyGraphics/ProxyUnicodeText2.cs/#L84"><i class="bi bi-code-slash"></i></a>
+  <a class="header-action link-secondary" title="View source" href="https://github.com/DomCR/ACadSharp/blob/master/src/ACadSharp/Entities/ProxyGraphics/ProxyUnicodeText2.cs/#L82"><i class="bi bi-code-slash"></i></a>
   </h3>
 
   <div class="markdown level1 summary"><p>Gets or sets the direction vector in which the text flows, defining the text's horizontal orientation.</p>
@@ -653,7 +654,7 @@ If <a href="https://learn.microsoft.com/dotnet/csharp/language-reference/builtin
 
   <h3 id="ACadSharp_Entities_ProxyGraphics_ProxyUnicodeText2_TextLength" data-uid="ACadSharp.Entities.ProxyGraphics.ProxyUnicodeText2.TextLength">
   TextLength
-  <a class="header-action link-secondary" title="View source" href="https://github.com/DomCR/ACadSharp/blob/master/src/ACadSharp/Entities/ProxyGraphics/ProxyUnicodeText2.cs/#L89"><i class="bi bi-code-slash"></i></a>
+  <a class="header-action link-secondary" title="View source" href="https://github.com/DomCR/ACadSharp/blob/master/src/ACadSharp/Entities/ProxyGraphics/ProxyUnicodeText2.cs/#L87"><i class="bi bi-code-slash"></i></a>
   </h3>
 
   <div class="markdown level1 summary"><p>Gets or sets the length of the text in characters. A value of -1 indicates the text is zero-terminated.</p>
@@ -685,7 +686,7 @@ If <a href="https://learn.microsoft.com/dotnet/csharp/language-reference/builtin
 
   <h3 id="ACadSharp_Entities_ProxyGraphics_ProxyUnicodeText2_TrackingPercentage" data-uid="ACadSharp.Entities.ProxyGraphics.ProxyUnicodeText2.TrackingPercentage">
   TrackingPercentage
-  <a class="header-action link-secondary" title="View source" href="https://github.com/DomCR/ACadSharp/blob/master/src/ACadSharp/Entities/ProxyGraphics/ProxyUnicodeText2.cs/#L94"><i class="bi bi-code-slash"></i></a>
+  <a class="header-action link-secondary" title="View source" href="https://github.com/DomCR/ACadSharp/blob/master/src/ACadSharp/Entities/ProxyGraphics/ProxyUnicodeText2.cs/#L92"><i class="bi bi-code-slash"></i></a>
   </h3>
 
   <div class="markdown level1 summary"><p>Gets or sets the tracking percentage, which controls the spacing between characters as a percentage of the text height.</p>
@@ -717,7 +718,7 @@ If <a href="https://learn.microsoft.com/dotnet/csharp/language-reference/builtin
 
   <h3 id="ACadSharp_Entities_ProxyGraphics_ProxyUnicodeText2_WidthFactor" data-uid="ACadSharp.Entities.ProxyGraphics.ProxyUnicodeText2.WidthFactor">
   WidthFactor
-  <a class="header-action link-secondary" title="View source" href="https://github.com/DomCR/ACadSharp/blob/master/src/ACadSharp/Entities/ProxyGraphics/ProxyUnicodeText2.cs/#L99"><i class="bi bi-code-slash"></i></a>
+  <a class="header-action link-secondary" title="View source" href="https://github.com/DomCR/ACadSharp/blob/master/src/ACadSharp/Entities/ProxyGraphics/ProxyUnicodeText2.cs/#L97"><i class="bi bi-code-slash"></i></a>
   </h3>
 
   <div class="markdown level1 summary"><p>Gets or sets the width factor that scales the text horizontally. A value of 1.0 represents normal width.</p>

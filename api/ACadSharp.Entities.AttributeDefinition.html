@@ -104,7 +104,7 @@ Class AttributeDefinition  <a class="header-action link-secondary" title="View s
   <div class="codewrapper">
     <pre><code class="lang-csharp hljs">[DxfName(&quot;ATTDEF&quot;)]
 [DxfSubClass(&quot;AcDbAttributeDefinition&quot;)]
-public class AttributeDefinition : AttributeBase, IText, IEntity, IHandledCadObject, IGeometricEntity</code></pre>
+public class AttributeDefinition : AttributeBase, IText, IEntity, IHandledCadObject, IGeometricEntity, IOrientable</code></pre>
   </div>
 
 
@@ -129,6 +129,7 @@ public class AttributeDefinition : AttributeBase, IText, IEntity, IHandledCadObj
       <div><a class="xref" href="ACadSharp.Entities.IEntity.html">IEntity</a></div>
       <div><a class="xref" href="ACadSharp.IHandledCadObject.html">IHandledCadObject</a></div>
       <div><a class="xref" href="ACadSharp.Entities.IGeometricEntity.html">IGeometricEntity</a></div>
+      <div><a class="xref" href="ACadSharp.IOrientable.html">IOrientable</a></div>
     </dd>
   </dl>
 
@@ -303,6 +304,12 @@ public class AttributeDefinition : AttributeBase, IText, IEntity, IHandledCadObj
     </div>
     <div>
       <a class="xref" href="ACadSharp.CadObject.html#ACadSharp_CadObject_CreateExtendedDictionary">CadObject.CreateExtendedDictionary()</a>
+    </div>
+    <div>
+      <a class="xref" href="ACadSharp.CadObject.html#ACadSharp_CadObject_IsValid_ACadSharp_IO_CadFileFormat_ACadSharp_ACadVersion_">CadObject.IsValid(CadFileFormat, ACadVersion)</a>
+    </div>
+    <div>
+      <a class="xref" href="ACadSharp.CadObject.html#ACadSharp_CadObject_IsValid_ACadSharp_IO_CadFileFormat_ACadSharp_ACadVersion_System_Collections_Generic_IList_System_String___">CadObject.IsValid(CadFileFormat, ACadVersion, out IList&lt;string&gt;)</a>
     </div>
     <div>
       <a class="xref" href="ACadSharp.CadObject.html#ACadSharp_CadObject_RemoveReactor_ACadSharp_CadObject_">CadObject.RemoveReactor(CadObject)</a>

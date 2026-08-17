@@ -103,7 +103,7 @@ Class UnderlayEntity&lt;T&gt;  <a class="header-action link-secondary" title="Vi
 
   <div class="codewrapper">
     <pre><code class="lang-csharp hljs">[DxfSubClass(null, true)]
-public abstract class UnderlayEntity&lt;T&gt; : Entity, IEntity, IHandledCadObject, IGeometricEntity where T : UnderlayDefinition</code></pre>
+public abstract class UnderlayEntity&lt;T&gt; : Entity, IEntity, IHandledCadObject, IGeometricEntity, IOrientable where T : UnderlayDefinition</code></pre>
   </div>
 
 
@@ -130,6 +130,7 @@ public abstract class UnderlayEntity&lt;T&gt; : Entity, IEntity, IHandledCadObje
       <div><a class="xref" href="ACadSharp.Entities.IEntity.html">IEntity</a></div>
       <div><a class="xref" href="ACadSharp.IHandledCadObject.html">IHandledCadObject</a></div>
       <div><a class="xref" href="ACadSharp.Entities.IGeometricEntity.html">IGeometricEntity</a></div>
+      <div><a class="xref" href="ACadSharp.IOrientable.html">IOrientable</a></div>
     </dd>
   </dl>
 
@@ -249,6 +250,12 @@ public abstract class UnderlayEntity&lt;T&gt; : Entity, IEntity, IHandledCadObje
       <a class="xref" href="ACadSharp.CadObject.html#ACadSharp_CadObject_CreateExtendedDictionary">CadObject.CreateExtendedDictionary()</a>
     </div>
     <div>
+      <a class="xref" href="ACadSharp.CadObject.html#ACadSharp_CadObject_IsValid_ACadSharp_IO_CadFileFormat_ACadSharp_ACadVersion_">CadObject.IsValid(CadFileFormat, ACadVersion)</a>
+    </div>
+    <div>
+      <a class="xref" href="ACadSharp.CadObject.html#ACadSharp_CadObject_IsValid_ACadSharp_IO_CadFileFormat_ACadSharp_ACadVersion_System_Collections_Generic_IList_System_String___">CadObject.IsValid(CadFileFormat, ACadVersion, out IList&lt;string&gt;)</a>
+    </div>
+    <div>
       <a class="xref" href="ACadSharp.CadObject.html#ACadSharp_CadObject_RemoveReactor_ACadSharp_CadObject_">CadObject.RemoveReactor(CadObject)</a>
     </div>
     <div>
@@ -300,7 +307,7 @@ public abstract class UnderlayEntity&lt;T&gt; : Entity, IEntity, IHandledCadObje
 
   <h3 id="ACadSharp_Entities_UnderlayEntity_1__ctor__0_" data-uid="ACadSharp.Entities.UnderlayEntity`1.#ctor(`0)">
   UnderlayEntity(T)
-  <a class="header-action link-secondary" title="View source" href="https://github.com/DomCR/ACadSharp/blob/master/src/ACadSharp/Entities/UnderlayEntity.cs/#L205"><i class="bi bi-code-slash"></i></a>
+  <a class="header-action link-secondary" title="View source" href="https://github.com/DomCR/ACadSharp/blob/master/src/ACadSharp/Entities/UnderlayEntity.cs/#L203"><i class="bi bi-code-slash"></i></a>
   </h3>
 
   <div class="markdown level1 summary"><p>Initializes a new instance of the <a class="xref" href="ACadSharp.Entities.UnderlayEntity-1.html">UnderlayEntity&lt;T&gt;</a> class.</p>
@@ -543,7 +550,7 @@ public XYZ InsertPoint { get; set; }</code></pre>
 
   <h3 id="ACadSharp_Entities_UnderlayEntity_1_Normal" data-uid="ACadSharp.Entities.UnderlayEntity`1.Normal">
   Normal
-  <a class="header-action link-secondary" title="View source" href="https://github.com/DomCR/ACadSharp/blob/master/src/ACadSharp/Entities/UnderlayEntity.cs/#L111"><i class="bi bi-code-slash"></i></a>
+  <a class="header-action link-secondary" title="View source" href="https://github.com/DomCR/ACadSharp/blob/master/src/ACadSharp/Entities/UnderlayEntity.cs/#L109"><i class="bi bi-code-slash"></i></a>
   </h3>
 
   <div class="markdown level1 summary"><p>Specifies the three-dimensional normal unit vector for the object.</p>
@@ -576,7 +583,7 @@ public XYZ Normal { get; set; }</code></pre>
 
   <h3 id="ACadSharp_Entities_UnderlayEntity_1_Rotation" data-uid="ACadSharp.Entities.UnderlayEntity`1.Rotation">
   Rotation
-  <a class="header-action link-secondary" title="View source" href="https://github.com/DomCR/ACadSharp/blob/master/src/ACadSharp/Entities/UnderlayEntity.cs/#L120"><i class="bi bi-code-slash"></i></a>
+  <a class="header-action link-secondary" title="View source" href="https://github.com/DomCR/ACadSharp/blob/master/src/ACadSharp/Entities/UnderlayEntity.cs/#L118"><i class="bi bi-code-slash"></i></a>
   </h3>
 
   <div class="markdown level1 summary"><p>Specifies the rotation angle for the object.</p>
@@ -610,7 +617,7 @@ public double Rotation { get; set; }</code></pre>
 
   <h3 id="ACadSharp_Entities_UnderlayEntity_1_SubclassMarker" data-uid="ACadSharp.Entities.UnderlayEntity`1.SubclassMarker">
   SubclassMarker
-  <a class="header-action link-secondary" title="View source" href="https://github.com/DomCR/ACadSharp/blob/master/src/ACadSharp/Entities/UnderlayEntity.cs/#L124"><i class="bi bi-code-slash"></i></a>
+  <a class="header-action link-secondary" title="View source" href="https://github.com/DomCR/ACadSharp/blob/master/src/ACadSharp/Entities/UnderlayEntity.cs/#L122"><i class="bi bi-code-slash"></i></a>
   </h3>
 
   <div class="markdown level1 summary"><p>Object Subclass marker.</p>
@@ -642,7 +649,7 @@ public double Rotation { get; set; }</code></pre>
 
   <h3 id="ACadSharp_Entities_UnderlayEntity_1_XScale" data-uid="ACadSharp.Entities.UnderlayEntity`1.XScale">
   XScale
-  <a class="header-action link-secondary" title="View source" href="https://github.com/DomCR/ACadSharp/blob/master/src/ACadSharp/Entities/UnderlayEntity.cs/#L129"><i class="bi bi-code-slash"></i></a>
+  <a class="header-action link-secondary" title="View source" href="https://github.com/DomCR/ACadSharp/blob/master/src/ACadSharp/Entities/UnderlayEntity.cs/#L127"><i class="bi bi-code-slash"></i></a>
   </h3>
 
   <div class="markdown level1 summary"><p>X scale factor.</p>
@@ -675,7 +682,7 @@ public double XScale { get; set; }</code></pre>
 
   <h3 id="ACadSharp_Entities_UnderlayEntity_1_YScale" data-uid="ACadSharp.Entities.UnderlayEntity`1.YScale">
   YScale
-  <a class="header-action link-secondary" title="View source" href="https://github.com/DomCR/ACadSharp/blob/master/src/ACadSharp/Entities/UnderlayEntity.cs/#L150"><i class="bi bi-code-slash"></i></a>
+  <a class="header-action link-secondary" title="View source" href="https://github.com/DomCR/ACadSharp/blob/master/src/ACadSharp/Entities/UnderlayEntity.cs/#L148"><i class="bi bi-code-slash"></i></a>
   </h3>
 
   <div class="markdown level1 summary"><p>Y scale factor.</p>
@@ -708,7 +715,7 @@ public double YScale { get; set; }</code></pre>
 
   <h3 id="ACadSharp_Entities_UnderlayEntity_1_ZScale" data-uid="ACadSharp.Entities.UnderlayEntity`1.ZScale">
   ZScale
-  <a class="header-action link-secondary" title="View source" href="https://github.com/DomCR/ACadSharp/blob/master/src/ACadSharp/Entities/UnderlayEntity.cs/#L171"><i class="bi bi-code-slash"></i></a>
+  <a class="header-action link-secondary" title="View source" href="https://github.com/DomCR/ACadSharp/blob/master/src/ACadSharp/Entities/UnderlayEntity.cs/#L169"><i class="bi bi-code-slash"></i></a>
   </h3>
 
   <div class="markdown level1 summary"><p>Z scale factor.</p>
@@ -745,7 +752,7 @@ public double ZScale { get; set; }</code></pre>
 
   <h3 id="ACadSharp_Entities_UnderlayEntity_1_ApplyTransform_CSMath_Transform_" data-uid="ACadSharp.Entities.UnderlayEntity`1.ApplyTransform(CSMath.Transform)">
   ApplyTransform(Transform)
-  <a class="header-action link-secondary" title="View source" href="https://github.com/DomCR/ACadSharp/blob/master/src/ACadSharp/Entities/UnderlayEntity.cs/#L215"><i class="bi bi-code-slash"></i></a>
+  <a class="header-action link-secondary" title="View source" href="https://github.com/DomCR/ACadSharp/blob/master/src/ACadSharp/Entities/UnderlayEntity.cs/#L213"><i class="bi bi-code-slash"></i></a>
   </h3>
 
   <div class="markdown level1 summary"><p>Apply a transform matrix to this entity.</p>
@@ -777,7 +784,7 @@ public double ZScale { get; set; }</code></pre>
 
   <h3 id="ACadSharp_Entities_UnderlayEntity_1_Clone" data-uid="ACadSharp.Entities.UnderlayEntity`1.Clone">
   Clone()
-  <a class="header-action link-secondary" title="View source" href="https://github.com/DomCR/ACadSharp/blob/master/src/ACadSharp/Entities/UnderlayEntity.cs/#L253"><i class="bi bi-code-slash"></i></a>
+  <a class="header-action link-secondary" title="View source" href="https://github.com/DomCR/ACadSharp/blob/master/src/ACadSharp/Entities/UnderlayEntity.cs/#L251"><i class="bi bi-code-slash"></i></a>
   </h3>
 
   <div class="markdown level1 summary"><p>Creates a new object that is a copy of the current instance.</p>
@@ -813,7 +820,7 @@ public double ZScale { get; set; }</code></pre>
 
   <h3 id="ACadSharp_Entities_UnderlayEntity_1_GetBoundingBox" data-uid="ACadSharp.Entities.UnderlayEntity`1.GetBoundingBox">
   GetBoundingBox()
-  <a class="header-action link-secondary" title="View source" href="https://github.com/DomCR/ACadSharp/blob/master/src/ACadSharp/Entities/UnderlayEntity.cs/#L264"><i class="bi bi-code-slash"></i></a>
+  <a class="header-action link-secondary" title="View source" href="https://github.com/DomCR/ACadSharp/blob/master/src/ACadSharp/Entities/UnderlayEntity.cs/#L262"><i class="bi bi-code-slash"></i></a>
   </h3>
 
   <div class="markdown level1 summary"><p>Gets the bounding box aligned with the axis XYZ that occupies this entity.</p>
@@ -846,7 +853,7 @@ public double ZScale { get; set; }</code></pre>
 
   <h3 id="ACadSharp_Entities_UnderlayEntity_1_getDocumentCollection_ACadSharp_CadDocument_" data-uid="ACadSharp.Entities.UnderlayEntity`1.getDocumentCollection(ACadSharp.CadDocument)">
   getDocumentCollection(CadDocument)
-  <a class="header-action link-secondary" title="View source" href="https://github.com/DomCR/ACadSharp/blob/master/src/ACadSharp/Entities/UnderlayEntity.cs/#L287"><i class="bi bi-code-slash"></i></a>
+  <a class="header-action link-secondary" title="View source" href="https://github.com/DomCR/ACadSharp/blob/master/src/ACadSharp/Entities/UnderlayEntity.cs/#L285"><i class="bi bi-code-slash"></i></a>
   </h3>
 
   <div class="markdown level1 summary"></div>

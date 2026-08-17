@@ -1471,6 +1471,19 @@ references:
   isSpec: "True"
   fullName: ACadSharp.CadDocument.ImageDefinitions
   nameWithType: CadDocument.ImageDefinitions
+- uid: ACadSharp.CadDocument.IsValid
+  name: IsValid()
+  href: api/ACadSharp.CadDocument.html#ACadSharp_CadDocument_IsValid
+  commentId: M:ACadSharp.CadDocument.IsValid
+  fullName: ACadSharp.CadDocument.IsValid()
+  nameWithType: CadDocument.IsValid()
+- uid: ACadSharp.CadDocument.IsValid*
+  name: IsValid
+  href: api/ACadSharp.CadDocument.html#ACadSharp_CadDocument_IsValid_
+  commentId: Overload:ACadSharp.CadDocument.IsValid
+  isSpec: "True"
+  fullName: ACadSharp.CadDocument.IsValid
+  nameWithType: CadDocument.IsValid
 - uid: ACadSharp.CadDocument.Layers
   name: Layers
   href: api/ACadSharp.CadDocument.html#ACadSharp_CadDocument_Layers
@@ -1924,6 +1937,28 @@ references:
   isSpec: "True"
   fullName: ACadSharp.CadObject.HasDynamicSubclass
   nameWithType: CadObject.HasDynamicSubclass
+- uid: ACadSharp.CadObject.IsValid(ACadSharp.IO.CadFileFormat,ACadSharp.ACadVersion)
+  name: IsValid(CadFileFormat, ACadVersion)
+  href: api/ACadSharp.CadObject.html#ACadSharp_CadObject_IsValid_ACadSharp_IO_CadFileFormat_ACadSharp_ACadVersion_
+  commentId: M:ACadSharp.CadObject.IsValid(ACadSharp.IO.CadFileFormat,ACadSharp.ACadVersion)
+  fullName: ACadSharp.CadObject.IsValid(ACadSharp.IO.CadFileFormat, ACadSharp.ACadVersion)
+  nameWithType: CadObject.IsValid(CadFileFormat, ACadVersion)
+- uid: ACadSharp.CadObject.IsValid(ACadSharp.IO.CadFileFormat,ACadSharp.ACadVersion,System.Collections.Generic.IList{System.String}@)
+  name: IsValid(CadFileFormat, ACadVersion, out IList<string>)
+  href: api/ACadSharp.CadObject.html#ACadSharp_CadObject_IsValid_ACadSharp_IO_CadFileFormat_ACadSharp_ACadVersion_System_Collections_Generic_IList_System_String___
+  commentId: M:ACadSharp.CadObject.IsValid(ACadSharp.IO.CadFileFormat,ACadSharp.ACadVersion,System.Collections.Generic.IList{System.String}@)
+  name.vb: IsValid(CadFileFormat, ACadVersion, IList(Of String))
+  fullName: ACadSharp.CadObject.IsValid(ACadSharp.IO.CadFileFormat, ACadSharp.ACadVersion, out System.Collections.Generic.IList<string>)
+  fullName.vb: ACadSharp.CadObject.IsValid(ACadSharp.IO.CadFileFormat, ACadSharp.ACadVersion, System.Collections.Generic.IList(Of String))
+  nameWithType: CadObject.IsValid(CadFileFormat, ACadVersion, out IList<string>)
+  nameWithType.vb: CadObject.IsValid(CadFileFormat, ACadVersion, IList(Of String))
+- uid: ACadSharp.CadObject.IsValid*
+  name: IsValid
+  href: api/ACadSharp.CadObject.html#ACadSharp_CadObject_IsValid_
+  commentId: Overload:ACadSharp.CadObject.IsValid
+  isSpec: "True"
+  fullName: ACadSharp.CadObject.IsValid
+  nameWithType: CadObject.IsValid
 - uid: ACadSharp.CadObject.ObjectName
   name: ObjectName
   href: api/ACadSharp.CadObject.html#ACadSharp_CadObject_ObjectName
@@ -8423,6 +8458,22 @@ references:
   isSpec: "True"
   fullName: ACadSharp.Entities.CadWipeoutBase.InsertPoint
   nameWithType: CadWipeoutBase.InsertPoint
+- uid: ACadSharp.Entities.CadWipeoutBase.IsValid(ACadSharp.IO.CadFileFormat,ACadSharp.ACadVersion,System.Collections.Generic.IList{System.String}@)
+  name: IsValid(CadFileFormat, ACadVersion, out IList<string>)
+  href: api/ACadSharp.Entities.CadWipeoutBase.html#ACadSharp_Entities_CadWipeoutBase_IsValid_ACadSharp_IO_CadFileFormat_ACadSharp_ACadVersion_System_Collections_Generic_IList_System_String___
+  commentId: M:ACadSharp.Entities.CadWipeoutBase.IsValid(ACadSharp.IO.CadFileFormat,ACadSharp.ACadVersion,System.Collections.Generic.IList{System.String}@)
+  name.vb: IsValid(CadFileFormat, ACadVersion, IList(Of String))
+  fullName: ACadSharp.Entities.CadWipeoutBase.IsValid(ACadSharp.IO.CadFileFormat, ACadSharp.ACadVersion, out System.Collections.Generic.IList<string>)
+  fullName.vb: ACadSharp.Entities.CadWipeoutBase.IsValid(ACadSharp.IO.CadFileFormat, ACadSharp.ACadVersion, System.Collections.Generic.IList(Of String))
+  nameWithType: CadWipeoutBase.IsValid(CadFileFormat, ACadVersion, out IList<string>)
+  nameWithType.vb: CadWipeoutBase.IsValid(CadFileFormat, ACadVersion, IList(Of String))
+- uid: ACadSharp.Entities.CadWipeoutBase.IsValid*
+  name: IsValid
+  href: api/ACadSharp.Entities.CadWipeoutBase.html#ACadSharp_Entities_CadWipeoutBase_IsValid_
+  commentId: Overload:ACadSharp.Entities.CadWipeoutBase.IsValid
+  isSpec: "True"
+  fullName: ACadSharp.Entities.CadWipeoutBase.IsValid
+  nameWithType: CadWipeoutBase.IsValid
 - uid: ACadSharp.Entities.CadWipeoutBase.ShowImage
   name: ShowImage
   href: api/ACadSharp.Entities.CadWipeoutBase.html#ACadSharp_Entities_CadWipeoutBase_ShowImage
@@ -10821,6 +10872,22 @@ references:
   isSpec: "True"
   fullName: ACadSharp.Entities.Ellipse.IsFullEllipse
   nameWithType: Ellipse.IsFullEllipse
+- uid: ACadSharp.Entities.Ellipse.IsValid(ACadSharp.IO.CadFileFormat,ACadSharp.ACadVersion,System.Collections.Generic.IList{System.String}@)
+  name: IsValid(CadFileFormat, ACadVersion, out IList<string>)
+  href: api/ACadSharp.Entities.Ellipse.html#ACadSharp_Entities_Ellipse_IsValid_ACadSharp_IO_CadFileFormat_ACadSharp_ACadVersion_System_Collections_Generic_IList_System_String___
+  commentId: M:ACadSharp.Entities.Ellipse.IsValid(ACadSharp.IO.CadFileFormat,ACadSharp.ACadVersion,System.Collections.Generic.IList{System.String}@)
+  name.vb: IsValid(CadFileFormat, ACadVersion, IList(Of String))
+  fullName: ACadSharp.Entities.Ellipse.IsValid(ACadSharp.IO.CadFileFormat, ACadSharp.ACadVersion, out System.Collections.Generic.IList<string>)
+  fullName.vb: ACadSharp.Entities.Ellipse.IsValid(ACadSharp.IO.CadFileFormat, ACadSharp.ACadVersion, System.Collections.Generic.IList(Of String))
+  nameWithType: Ellipse.IsValid(CadFileFormat, ACadVersion, out IList<string>)
+  nameWithType.vb: Ellipse.IsValid(CadFileFormat, ACadVersion, IList(Of String))
+- uid: ACadSharp.Entities.Ellipse.IsValid*
+  name: IsValid
+  href: api/ACadSharp.Entities.Ellipse.html#ACadSharp_Entities_Ellipse_IsValid_
+  commentId: Overload:ACadSharp.Entities.Ellipse.IsValid
+  isSpec: "True"
+  fullName: ACadSharp.Entities.Ellipse.IsValid
+  nameWithType: Ellipse.IsValid
 - uid: ACadSharp.Entities.Ellipse.MajorAxis
   name: MajorAxis
   href: api/ACadSharp.Entities.Ellipse.html#ACadSharp_Entities_Ellipse_MajorAxis
@@ -10860,19 +10927,19 @@ references:
   isSpec: "True"
   fullName: ACadSharp.Entities.Ellipse.MinorAxis
   nameWithType: Ellipse.MinorAxis
-- uid: ACadSharp.Entities.Ellipse.MinorAxisEndpoint
-  name: MinorAxisEndpoint
-  href: api/ACadSharp.Entities.Ellipse.html#ACadSharp_Entities_Ellipse_MinorAxisEndpoint
-  commentId: P:ACadSharp.Entities.Ellipse.MinorAxisEndpoint
-  fullName: ACadSharp.Entities.Ellipse.MinorAxisEndpoint
-  nameWithType: Ellipse.MinorAxisEndpoint
-- uid: ACadSharp.Entities.Ellipse.MinorAxisEndpoint*
-  name: MinorAxisEndpoint
-  href: api/ACadSharp.Entities.Ellipse.html#ACadSharp_Entities_Ellipse_MinorAxisEndpoint_
-  commentId: Overload:ACadSharp.Entities.Ellipse.MinorAxisEndpoint
+- uid: ACadSharp.Entities.Ellipse.MinorAxisEndPoint
+  name: MinorAxisEndPoint
+  href: api/ACadSharp.Entities.Ellipse.html#ACadSharp_Entities_Ellipse_MinorAxisEndPoint
+  commentId: P:ACadSharp.Entities.Ellipse.MinorAxisEndPoint
+  fullName: ACadSharp.Entities.Ellipse.MinorAxisEndPoint
+  nameWithType: Ellipse.MinorAxisEndPoint
+- uid: ACadSharp.Entities.Ellipse.MinorAxisEndPoint*
+  name: MinorAxisEndPoint
+  href: api/ACadSharp.Entities.Ellipse.html#ACadSharp_Entities_Ellipse_MinorAxisEndPoint_
+  commentId: Overload:ACadSharp.Entities.Ellipse.MinorAxisEndPoint
   isSpec: "True"
-  fullName: ACadSharp.Entities.Ellipse.MinorAxisEndpoint
-  nameWithType: Ellipse.MinorAxisEndpoint
+  fullName: ACadSharp.Entities.Ellipse.MinorAxisEndPoint
+  nameWithType: Ellipse.MinorAxisEndPoint
 - uid: ACadSharp.Entities.Ellipse.Normal
   name: Normal
   href: api/ACadSharp.Entities.Ellipse.html#ACadSharp_Entities_Ellipse_Normal
@@ -13895,19 +13962,6 @@ references:
   isSpec: "True"
   fullName: ACadSharp.Entities.IPolyline.IsClosed
   nameWithType: IPolyline.IsClosed
-- uid: ACadSharp.Entities.IPolyline.Normal
-  name: Normal
-  href: api/ACadSharp.Entities.IPolyline.html#ACadSharp_Entities_IPolyline_Normal
-  commentId: P:ACadSharp.Entities.IPolyline.Normal
-  fullName: ACadSharp.Entities.IPolyline.Normal
-  nameWithType: IPolyline.Normal
-- uid: ACadSharp.Entities.IPolyline.Normal*
-  name: Normal
-  href: api/ACadSharp.Entities.IPolyline.html#ACadSharp_Entities_IPolyline_Normal_
-  commentId: Overload:ACadSharp.Entities.IPolyline.Normal
-  isSpec: "True"
-  fullName: ACadSharp.Entities.IPolyline.Normal
-  nameWithType: IPolyline.Normal
 - uid: ACadSharp.Entities.IPolyline.Thickness
   name: Thickness
   href: api/ACadSharp.Entities.IPolyline.html#ACadSharp_Entities_IPolyline_Thickness
@@ -14280,6 +14334,22 @@ references:
   isSpec: "True"
   fullName: ACadSharp.Entities.Insert.IsMultiple
   nameWithType: Insert.IsMultiple
+- uid: ACadSharp.Entities.Insert.IsValid(ACadSharp.IO.CadFileFormat,ACadSharp.ACadVersion,System.Collections.Generic.IList{System.String}@)
+  name: IsValid(CadFileFormat, ACadVersion, out IList<string>)
+  href: api/ACadSharp.Entities.Insert.html#ACadSharp_Entities_Insert_IsValid_ACadSharp_IO_CadFileFormat_ACadSharp_ACadVersion_System_Collections_Generic_IList_System_String___
+  commentId: M:ACadSharp.Entities.Insert.IsValid(ACadSharp.IO.CadFileFormat,ACadSharp.ACadVersion,System.Collections.Generic.IList{System.String}@)
+  name.vb: IsValid(CadFileFormat, ACadVersion, IList(Of String))
+  fullName: ACadSharp.Entities.Insert.IsValid(ACadSharp.IO.CadFileFormat, ACadSharp.ACadVersion, out System.Collections.Generic.IList<string>)
+  fullName.vb: ACadSharp.Entities.Insert.IsValid(ACadSharp.IO.CadFileFormat, ACadSharp.ACadVersion, System.Collections.Generic.IList(Of String))
+  nameWithType: Insert.IsValid(CadFileFormat, ACadVersion, out IList<string>)
+  nameWithType.vb: Insert.IsValid(CadFileFormat, ACadVersion, IList(Of String))
+- uid: ACadSharp.Entities.Insert.IsValid*
+  name: IsValid
+  href: api/ACadSharp.Entities.Insert.html#ACadSharp_Entities_Insert_IsValid_
+  commentId: Overload:ACadSharp.Entities.Insert.IsValid
+  isSpec: "True"
+  fullName: ACadSharp.Entities.Insert.IsValid
+  nameWithType: Insert.IsValid
 - uid: ACadSharp.Entities.Insert.Normal
   name: Normal
   href: api/ACadSharp.Entities.Insert.html#ACadSharp_Entities_Insert_Normal
@@ -27631,25 +27701,25 @@ references:
   commentId: T:ACadSharp.Extensions.INamedCadObjectExtensions
   fullName: ACadSharp.Extensions.INamedCadObjectExtensions
   nameWithType: INamedCadObjectExtensions
+- uid: ACadSharp.Extensions.INamedCadObjectExtensions.HasValidDxfName(ACadSharp.INamedCadObject,ACadSharp.ACadVersion)
+  name: HasValidDxfName(INamedCadObject, ACadVersion)
+  href: api/ACadSharp.Extensions.INamedCadObjectExtensions.html#ACadSharp_Extensions_INamedCadObjectExtensions_HasValidDxfName_ACadSharp_INamedCadObject_ACadSharp_ACadVersion_
+  commentId: M:ACadSharp.Extensions.INamedCadObjectExtensions.HasValidDxfName(ACadSharp.INamedCadObject,ACadSharp.ACadVersion)
+  fullName: ACadSharp.Extensions.INamedCadObjectExtensions.HasValidDxfName(ACadSharp.INamedCadObject, ACadSharp.ACadVersion)
+  nameWithType: INamedCadObjectExtensions.HasValidDxfName(INamedCadObject, ACadVersion)
+- uid: ACadSharp.Extensions.INamedCadObjectExtensions.HasValidDxfName*
+  name: HasValidDxfName
+  href: api/ACadSharp.Extensions.INamedCadObjectExtensions.html#ACadSharp_Extensions_INamedCadObjectExtensions_HasValidDxfName_
+  commentId: Overload:ACadSharp.Extensions.INamedCadObjectExtensions.HasValidDxfName
+  isSpec: "True"
+  fullName: ACadSharp.Extensions.INamedCadObjectExtensions.HasValidDxfName
+  nameWithType: INamedCadObjectExtensions.HasValidDxfName
 - uid: ACadSharp.Extensions.INamedCadObjectExtensions.InvalidCharacters
   name: InvalidCharacters
   href: api/ACadSharp.Extensions.INamedCadObjectExtensions.html#ACadSharp_Extensions_INamedCadObjectExtensions_InvalidCharacters
   commentId: F:ACadSharp.Extensions.INamedCadObjectExtensions.InvalidCharacters
   fullName: ACadSharp.Extensions.INamedCadObjectExtensions.InvalidCharacters
   nameWithType: INamedCadObjectExtensions.InvalidCharacters
-- uid: ACadSharp.Extensions.INamedCadObjectExtensions.IsValidDxfName(ACadSharp.INamedCadObject,ACadSharp.ACadVersion)
-  name: IsValidDxfName(INamedCadObject, ACadVersion)
-  href: api/ACadSharp.Extensions.INamedCadObjectExtensions.html#ACadSharp_Extensions_INamedCadObjectExtensions_IsValidDxfName_ACadSharp_INamedCadObject_ACadSharp_ACadVersion_
-  commentId: M:ACadSharp.Extensions.INamedCadObjectExtensions.IsValidDxfName(ACadSharp.INamedCadObject,ACadSharp.ACadVersion)
-  fullName: ACadSharp.Extensions.INamedCadObjectExtensions.IsValidDxfName(ACadSharp.INamedCadObject, ACadSharp.ACadVersion)
-  nameWithType: INamedCadObjectExtensions.IsValidDxfName(INamedCadObject, ACadVersion)
-- uid: ACadSharp.Extensions.INamedCadObjectExtensions.IsValidDxfName*
-  name: IsValidDxfName
-  href: api/ACadSharp.Extensions.INamedCadObjectExtensions.html#ACadSharp_Extensions_INamedCadObjectExtensions_IsValidDxfName_
-  commentId: Overload:ACadSharp.Extensions.INamedCadObjectExtensions.IsValidDxfName
-  isSpec: "True"
-  fullName: ACadSharp.Extensions.INamedCadObjectExtensions.IsValidDxfName
-  nameWithType: INamedCadObjectExtensions.IsValidDxfName
 - uid: ACadSharp.Extensions.LineWeightTypeExtensions
   name: LineWeightTypeExtensions
   href: api/ACadSharp.Extensions.LineWeightTypeExtensions.html
@@ -34031,6 +34101,25 @@ references:
   fullName.vb: ACadSharp.IObservableCadCollection(Of T).OnRemove
   nameWithType: IObservableCadCollection<T>.OnRemove
   nameWithType.vb: IObservableCadCollection(Of T).OnRemove
+- uid: ACadSharp.IOrientable
+  name: IOrientable
+  href: api/ACadSharp.IOrientable.html
+  commentId: T:ACadSharp.IOrientable
+  fullName: ACadSharp.IOrientable
+  nameWithType: IOrientable
+- uid: ACadSharp.IOrientable.Normal
+  name: Normal
+  href: api/ACadSharp.IOrientable.html#ACadSharp_IOrientable_Normal
+  commentId: P:ACadSharp.IOrientable.Normal
+  fullName: ACadSharp.IOrientable.Normal
+  nameWithType: IOrientable.Normal
+- uid: ACadSharp.IOrientable.Normal*
+  name: Normal
+  href: api/ACadSharp.IOrientable.html#ACadSharp_IOrientable_Normal_
+  commentId: Overload:ACadSharp.IOrientable.Normal
+  isSpec: "True"
+  fullName: ACadSharp.IOrientable.Normal
+  nameWithType: IOrientable.Normal
 - uid: ACadSharp.IProxy
   name: IProxy
   href: api/ACadSharp.IProxy.html
@@ -57410,6 +57499,22 @@ references:
   isSpec: "True"
   fullName: ACadSharp.Tables.TableEntry.Flags
   nameWithType: TableEntry.Flags
+- uid: ACadSharp.Tables.TableEntry.IsValid(ACadSharp.IO.CadFileFormat,ACadSharp.ACadVersion,System.Collections.Generic.IList{System.String}@)
+  name: IsValid(CadFileFormat, ACadVersion, out IList<string>)
+  href: api/ACadSharp.Tables.TableEntry.html#ACadSharp_Tables_TableEntry_IsValid_ACadSharp_IO_CadFileFormat_ACadSharp_ACadVersion_System_Collections_Generic_IList_System_String___
+  commentId: M:ACadSharp.Tables.TableEntry.IsValid(ACadSharp.IO.CadFileFormat,ACadSharp.ACadVersion,System.Collections.Generic.IList{System.String}@)
+  name.vb: IsValid(CadFileFormat, ACadVersion, IList(Of String))
+  fullName: ACadSharp.Tables.TableEntry.IsValid(ACadSharp.IO.CadFileFormat, ACadSharp.ACadVersion, out System.Collections.Generic.IList<string>)
+  fullName.vb: ACadSharp.Tables.TableEntry.IsValid(ACadSharp.IO.CadFileFormat, ACadSharp.ACadVersion, System.Collections.Generic.IList(Of String))
+  nameWithType: TableEntry.IsValid(CadFileFormat, ACadVersion, out IList<string>)
+  nameWithType.vb: TableEntry.IsValid(CadFileFormat, ACadVersion, IList(Of String))
+- uid: ACadSharp.Tables.TableEntry.IsValid*
+  name: IsValid
+  href: api/ACadSharp.Tables.TableEntry.html#ACadSharp_Tables_TableEntry_IsValid_
+  commentId: Overload:ACadSharp.Tables.TableEntry.IsValid
+  isSpec: "True"
+  fullName: ACadSharp.Tables.TableEntry.IsValid
+  nameWithType: TableEntry.IsValid
 - uid: ACadSharp.Tables.TableEntry.Name
   name: Name
   href: api/ACadSharp.Tables.TableEntry.html#ACadSharp_Tables_TableEntry_Name
