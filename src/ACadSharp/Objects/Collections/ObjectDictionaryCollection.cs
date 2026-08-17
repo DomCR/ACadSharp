@@ -125,10 +125,5 @@ public abstract class ObjectDictionaryCollection<T> : ICadCollection<T>, IObserv
 		return this._dictionary.TryGetEntry(name, out entry);
 	}
 
-	public bool IsValid()
-	{
-		throw new NotImplementedException();
-	}
-
 	public T this[string key] { get { return (T)this._dictionary[key]; } }
 }
