@@ -18,7 +18,7 @@ namespace ACadSharp.Entities;
 /// </remarks>
 [DxfName(DxfFileToken.EntityInsert)]
 [DxfSubClass(DxfSubclassMarker.Insert)]
-public class Insert : Entity
+public class Insert : Entity, IOrientable
 {
 	/// <summary>
 	/// Attributes from the block reference
@@ -67,9 +67,7 @@ public class Insert : Entity
 	/// </summary>
 	public bool IsMultiple { get { return this.RowCount > 1 || this.ColumnCount > 1; } }
 
-	/// <summary>
-	/// Specifies the three-dimensional normal unit vector for the object.
-	/// </summary>
+	/// <inheritdoc/>
 	[DxfCodeValue(210, 220, 230)]
 	public XYZ Normal { get; set; } = XYZ.AxisZ;
 

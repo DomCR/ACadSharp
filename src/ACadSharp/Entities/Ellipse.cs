@@ -15,7 +15,7 @@ namespace ACadSharp.Entities;
 /// </remarks>
 [DxfName(DxfFileToken.EntityEllipse)]
 [DxfSubClass(DxfSubclassMarker.Ellipse)]
-public class Ellipse : Entity, ICurve
+public class Ellipse : Entity, ICurve, IOrientable
 {
 	/// <summary>
 	/// Center point (in WCS).
@@ -59,7 +59,7 @@ public class Ellipse : Entity, ICurve
 	/// <summary>
 	/// Endpoint of minor axis, relative to the center (in WCS).
 	/// </summary>
-	public XYZ MinorAxisEndpoint
+	public XYZ MinorAxisEndPoint
 	{
 		get
 		{
@@ -69,9 +69,7 @@ public class Ellipse : Entity, ICurve
 		}
 	}
 
-	/// <summary>
-	/// Extrusion direction.
-	/// </summary>
+	/// <inheritdoc/>
 	[DxfCodeValue(210, 220, 230)]
 	public XYZ Normal { get; set; } = XYZ.AxisZ;
 
@@ -173,6 +171,20 @@ public class Ellipse : Entity, ICurve
 	{
 		start = this.PolarCoordinateRelativeToCenter(this.StartParameter);
 		end = this.PolarCoordinateRelativeToCenter(this.EndParameter);
+	}
+
+	/// <inheritdoc/>
+	public override bool IsValid(out IList<string> errors)
+	{
+		var result = base.IsValid(out errors);
+
+		if (!this.Normal.IsPerpendicular(this.MajorAxisEndPoint))
+		{
+			errors.Add($"{nameof(this.Normal)} and {nameof(this.MajorAxisEndPoint)} must be perpendicular.");
+			result = false;
+		}
+
+		return result;
 	}
 
 	/// <inheritdoc/>

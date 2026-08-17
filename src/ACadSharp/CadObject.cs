@@ -3,6 +3,7 @@ using ACadSharp.Extensions;
 using ACadSharp.Objects;
 using ACadSharp.Tables;
 using ACadSharp.XData;
+using CSMath;
 using System.Collections.Generic;
 using System.Linq;
 
@@ -164,6 +165,35 @@ public abstract class CadObject : IHandledCadObject
 		}
 
 		return this._xdictionary;
+	}
+
+	/// <summary>
+	/// Determines whether the object is valid and can be written in a CAD file.
+	/// </summary>
+	/// <returns>True if the object is valid; otherwise, false.</returns>
+	public bool IsValid()
+	{
+		return this.IsValid(out _);
+	}
+
+	/// <summary>
+	/// Determines whether the object is valid and can be written in a CAD file.
+	/// </summary>
+	/// <param name="errors">A list of errors found during the validation.</param>
+	/// <returns>True if the object is valid; otherwise, false.</returns>
+	public virtual bool IsValid(out IList<string> errors)
+	{
+		errors = new List<string>();
+
+		if (this is IOrientable orientable)
+		{
+			if (orientable.Normal.IsZero())
+			{
+				errors.Add($"{nameof(orientable.Normal)} vector cannot be zero.");
+			}
+		}
+
+		return this.IsValid();
 	}
 
 	/// <summary>

@@ -59,9 +59,7 @@ public class TextEntity : Entity, IText
 	[DxfCodeValue(71)]
 	public TextMirrorFlag Mirror { get => this._mirror; set => this._mirror = value; }
 
-	/// <summary>
-	/// Specifies the three-dimensional normal unit vector for the object.
-	/// </summary>
+	/// <inheritdoc/>
 	[DxfCodeValue(210, 220, 230)]
 	public XYZ Normal { get; set; } = XYZ.AxisZ;
 

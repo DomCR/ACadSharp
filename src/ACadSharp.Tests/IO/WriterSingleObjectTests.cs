@@ -90,6 +90,7 @@ public abstract class WriterSingleObjectTests : IOTestsBase
 		Data.Add(new(nameof(SingleCaseGenerator.XRef)));
 		Data.Add(new(nameof(SingleCaseGenerator.SPlineCreation)));
 		Data.Add(new(nameof(SingleCaseGenerator.TextAlignment)));
+		Data.Add(new(nameof(SingleCaseGenerator.InvalidEntities)));
 		Data.Add(new(nameof(SingleCaseGenerator.CreateXRecords)));
 		Data.Add(new(nameof(SingleCaseGenerator.SingleTableEntity)));
 		Data.Add(new(nameof(SingleCaseGenerator.SingleMesh)));
@@ -1339,6 +1340,17 @@ public abstract class WriterSingleObjectTests : IOTestsBase
 				Radius = 20
 			};
 			blockRecord.Entities.Add(circle);
+		}
+
+		public void InvalidEntities()
+		{
+			Ellipse e = new Ellipse();
+			e.Normal = new XYZ(1, 1, 0);
+			this.Document.Entities.Add(e);
+
+			e = new Ellipse();
+			e.Normal = new XYZ();
+			//this.Document.Entities.Add(e);
 		}
 
 		public void LayerTrueColor()
