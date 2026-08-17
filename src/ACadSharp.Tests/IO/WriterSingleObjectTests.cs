@@ -1350,7 +1350,9 @@ public abstract class WriterSingleObjectTests : IOTestsBase
 
 			e = new Ellipse();
 			e.Normal = new XYZ();
-			//this.Document.Entities.Add(e);
+			this.Document.Entities.Add(e);
+
+			//Empty file
 		}
 
 		public void LayerTrueColor()

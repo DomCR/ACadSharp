@@ -134,6 +134,12 @@ internal partial class DwgObjectWriter : DwgSectionIO
 
 	private bool isEntitySupported(Entity entity)
 	{
+		if (!entity.IsValid())
+		{
+			this.notify($"Invalid entity {entity.GetType().FullName} with handle {entity.Handle}", NotificationType.Warning);
+			return false;
+		}
+
 		switch (entity)
 		{
 			case UnknownEntity:
@@ -276,7 +282,7 @@ internal partial class DwgObjectWriter : DwgSectionIO
 
 	private void writeBlockHeader(BlockRecord record)
 	{
-		Entity[] entities = getCompatibleEntities(record.Entities);
+		Entity[] entities = this.getCompatibleEntities(record.Entities);
 
 		this.writeCommonNonEntityData(record);
 
@@ -324,7 +330,7 @@ internal partial class DwgObjectWriter : DwgSectionIO
 			&& !record.Flags.HasFlag(BlockTypeFlags.XRefOverlay))
 		{
 			//Owned Object Count BL Number of objects owned by this object.
-			_writer.WriteBitLong(entities.Length);
+			this._writer.WriteBitLong(entities.Length);
 		}
 
 		//Common:
