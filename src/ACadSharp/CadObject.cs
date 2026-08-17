@@ -183,6 +183,7 @@ public abstract class CadObject : IHandledCadObject
 	/// <returns>True if the object is valid; otherwise, false.</returns>
 	public virtual bool IsValid(out IList<string> errors)
 	{
+		bool result = true;
 		errors = new List<string>();
 
 		if (this is IOrientable orientable)
@@ -190,10 +191,11 @@ public abstract class CadObject : IHandledCadObject
 			if (orientable.Normal.IsZero())
 			{
 				errors.Add($"{nameof(orientable.Normal)} vector cannot be zero.");
+				result = false;
 			}
 		}
 
-		return this.IsValid();
+		return result;
 	}
 
 	/// <summary>

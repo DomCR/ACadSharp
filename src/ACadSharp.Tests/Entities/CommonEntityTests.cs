@@ -111,9 +111,8 @@ public abstract class CommonEntityTests<T>
 		if (e is IOrientable orientable)
 		{
 			orientable.Normal = new XYZ();
+			Assert.False(e.IsValid());
 		}
-
-		Assert.False(e.IsValid());
 	}
 
 	[Fact]
