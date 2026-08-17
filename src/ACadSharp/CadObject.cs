@@ -1,5 +1,6 @@
 ﻿using ACadSharp.Attributes;
 using ACadSharp.Extensions;
+using ACadSharp.IO;
 using ACadSharp.Objects;
 using ACadSharp.Tables;
 using ACadSharp.XData;
@@ -170,18 +171,22 @@ public abstract class CadObject : IHandledCadObject
 	/// <summary>
 	/// Determines whether the object is valid and can be written in a CAD file.
 	/// </summary>
+	/// <param name="format">The CAD file format.</param>
+	/// <param name="version">The CAD version.</param>
 	/// <returns>True if the object is valid; otherwise, false.</returns>
-	public bool IsValid()
+	public bool IsValid(CadFileFormat format, ACadVersion version)
 	{
-		return this.IsValid(out _);
+		return this.IsValid(format, version, out _);
 	}
 
 	/// <summary>
 	/// Determines whether the object is valid and can be written in a CAD file.
 	/// </summary>
+	/// <param name="format">The CAD file format.</param>
+	/// <param name="version">The CAD version.</param>
 	/// <param name="errors">A list of errors found during the validation.</param>
 	/// <returns>True if the object is valid; otherwise, false.</returns>
-	public virtual bool IsValid(out IList<string> errors)
+	public virtual bool IsValid(CadFileFormat format, ACadVersion version, out IList<string> errors)
 	{
 		bool result = true;
 		errors = new List<string>();
@@ -191,6 +196,15 @@ public abstract class CadObject : IHandledCadObject
 			if (orientable.Normal.IsZero())
 			{
 				errors.Add($"{nameof(orientable.Normal)} vector cannot be zero.");
+				result = false;
+			}
+		}
+
+		if (format == CadFileFormat.DXF && this is INamedCadObject named)
+		{
+			if (!named.HasValidDxfName())
+			{
+				errors.Add($"{named.GetType().FullName}: {nameof(named.Name)} has an invalid name for a DXF file.");
 				result = false;
 			}
 		}

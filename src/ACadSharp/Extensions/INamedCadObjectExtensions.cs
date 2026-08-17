@@ -10,7 +10,7 @@
 		/// <param name="namedCadObject"></param>
 		/// <param name="version"></param>
 		/// <returns></returns>
-		public static bool IsValidDxfName(this INamedCadObject namedCadObject, ACadVersion version = ACadVersion.AC1032)
+		public static bool HasValidDxfName(this INamedCadObject namedCadObject, ACadVersion version = ACadVersion.AC1032)
 		{
 			if (string.IsNullOrEmpty(namedCadObject.Name))
 			{

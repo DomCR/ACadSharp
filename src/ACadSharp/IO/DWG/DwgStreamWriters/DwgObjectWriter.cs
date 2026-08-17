@@ -130,7 +130,7 @@ internal partial class DwgObjectWriter : DwgSectionIO
 
 	private bool isEntitySupported(Entity entity)
 	{
-		if (!entity.IsValid())
+		if (!entity.IsValid(CadFileFormat.DWG, this._version))
 		{
 			this.notify($"Invalid entity {entity.GetType().FullName} with handle {entity.Handle}", NotificationType.Warning);
 			return false;

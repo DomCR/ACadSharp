@@ -1,5 +1,6 @@
 ﻿using ACadSharp.Attributes;
 using ACadSharp.Extensions;
+using ACadSharp.IO;
 using ACadSharp.Objects;
 using ACadSharp.Tables;
 using CSMath;
@@ -388,9 +389,9 @@ public class Insert : Entity, IOrientable
 	}
 
 	/// <inheritdoc/>
-	public override bool IsValid(out IList<string> errors)
+	public override bool IsValid(CadFileFormat format, ACadVersion version, out IList<string> errors)
 	{
-		var result = base.IsValid(out errors);
+		var result = base.IsValid(format, version, out errors);
 
 		if (this.Block == null)
 		{

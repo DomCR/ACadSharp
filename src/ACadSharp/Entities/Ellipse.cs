@@ -1,4 +1,5 @@
 ﻿using ACadSharp.Attributes;
+using ACadSharp.IO;
 using CSMath;
 using CSMath.Geometry;
 using System;
@@ -174,9 +175,9 @@ public class Ellipse : Entity, ICurve, IOrientable
 	}
 
 	/// <inheritdoc/>
-	public override bool IsValid(out IList<string> errors)
+	public override bool IsValid(CadFileFormat format, ACadVersion version, out IList<string> errors)
 	{
-		var result = base.IsValid(out errors);
+		var result = base.IsValid(format, version, out errors);
 
 		if (!this.Normal.IsPerpendicular(this.MajorAxisEndPoint))
 		{

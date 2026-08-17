@@ -5,6 +5,7 @@ using System;
 using ACadSharp.Objects;
 using System.Linq;
 using CSUtilities.Extensions;
+using ACadSharp.IO;
 
 namespace ACadSharp.Entities;
 
@@ -250,9 +251,9 @@ public abstract class CadWipeoutBase : Entity
 	}
 
 	/// <inheritdoc/>
-	public override bool IsValid(out IList<string> errors)
+	public override bool IsValid(CadFileFormat format, ACadVersion version, out IList<string> errors)
 	{
-		var result = base.IsValid(out errors);
+		var result = base.IsValid(format, version, out errors);
 
 		if (this.DefinitionReactor == null)
 		{

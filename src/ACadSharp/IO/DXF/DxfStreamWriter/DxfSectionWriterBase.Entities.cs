@@ -138,7 +138,7 @@ internal abstract partial class DxfSectionWriterBase
 
 	private bool isEntitySupported(Entity entity)
 	{
-		if (!entity.IsValid())
+		if (!entity.IsValid(CadFileFormat.DXF, this.Version))
 		{
 			this.notify($"Invalid entity {entity.GetType().FullName} with handle {entity.Handle}", NotificationType.Warning);
 			return false;

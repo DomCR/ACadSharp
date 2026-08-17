@@ -1352,6 +1352,15 @@ public abstract class WriterSingleObjectTests : IOTestsBase
 			e.Normal = new XYZ();
 			this.Document.Entities.Add(e);
 
+			Layer l = new Layer("Lorem ipsum dolor sit amet, consectetuer adipiscing elit. Aenean commodo ligula eget dolor. Aenean massa. Cum sociis natoque penatibus et magnis dis parturient montes, nascetur ridiculus mus. Donec quam felis, ultricies nec, pellentesque eu, pretium quis, sem. Nulla consequat massa quis enim. Donec.");
+			this.Document.Layers.Add(l);
+
+			foreach (var item in INamedCadObjectExtensions.InvalidCharacters)
+			{
+				l = new Layer($"invalid_character_{item}");
+				this.Document.Layers.Add(l);
+			}
+
 			//Empty file
 		}
 

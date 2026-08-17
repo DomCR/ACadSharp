@@ -695,7 +695,7 @@ internal class DxfObjectsSectionWriter : DxfSectionWriterBase
 
 	private bool isObjectSupported(CadObject co)
 	{
-		if (!co.IsValid())
+		if (!co.IsValid(CadFileFormat.DXF, this.Version))
 		{
 			return false;
 		}

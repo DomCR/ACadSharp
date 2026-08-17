@@ -30,7 +30,7 @@ internal partial class DwgObjectWriter : DwgSectionIO
 
 	private bool skipEntry(NonGraphicalObject entry, out bool notify)
 	{
-		if (!entry.IsValid())
+		if (!entry.IsValid(CadFileFormat.DWG, this._version))
 		{
 			notify = false;
 			this.notify($"Invalid object {entry.GetType().FullName} with handle {entry.Handle}", NotificationType.Warning);
