@@ -387,6 +387,20 @@ public class Insert : Entity, IOrientable
 		return new Transform(world * translation.Matrix * rotation.Matrix * scale.Matrix);
 	}
 
+	/// <inheritdoc/>
+	public override bool IsValid(out IList<string> errors)
+	{
+		var result = base.IsValid(out errors);
+
+		if (this.Block == null)
+		{
+			errors.Add($"Insert entity has no block reference.");
+			result = false;
+		}
+
+		return result;
+	}
+
 	/// <summary>
 	/// Updates all attribute definitions contained in the block reference as <see cref="AttributeDefinition"/> entities in the insert.
 	/// </summary>
