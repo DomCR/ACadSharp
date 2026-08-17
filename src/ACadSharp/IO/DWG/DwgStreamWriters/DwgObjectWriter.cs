@@ -33,6 +33,8 @@ internal partial class DwgObjectWriter : DwgSectionIO
 
 	public bool WriteXRecords { get; }
 
+	private readonly Dictionary<BlockRecord, Entity[]> _blockCompatibleEntities = new();
+
 	private CadDocument _document;
 
 	private MemoryStream _msmain;
@@ -98,12 +100,6 @@ internal partial class DwgObjectWriter : DwgSectionIO
 
 	private void enqueueValidObject(NonGraphicalObject obj)
 	{
-		if (!obj.IsValid())
-		{
-			this.notify($"Invalid object {obj.GetType().FullName} with handle {obj.Handle}", NotificationType.Warning);
-			return;
-		}
-
 		this._objects.Enqueue(obj);
 	}
 
@@ -263,7 +259,7 @@ internal partial class DwgObjectWriter : DwgSectionIO
 
 			this._prev = null;
 			this._next = null;
-			Entity[] arr = getCompatibleEntities(blkRecord.Entities);
+			Entity[] arr = this._blockCompatibleEntities[blkRecord];
 			for (int i = 0; i < arr.Length; i++)
 			{
 				this._prev = arr.ElementAtOrDefault(i - 1);
@@ -280,9 +276,9 @@ internal partial class DwgObjectWriter : DwgSectionIO
 		}
 	}
 
-	private void writeBlockHeader(BlockRecord record)
+	private void writeBlockHeader(BlockRecord record, out Entity[] entities)
 	{
-		Entity[] entities = this.getCompatibleEntities(record.Entities);
+		entities = this.getCompatibleEntities(record.Entities);
 
 		this.writeCommonNonEntityData(record);
 
@@ -427,7 +423,8 @@ internal partial class DwgObjectWriter : DwgSectionIO
 
 	private void writeBlockRecord(BlockRecord blkRecord)
 	{
-		this.writeBlockHeader(blkRecord);
+		this.writeBlockHeader(blkRecord, out Entity[] entities);
+		this._blockCompatibleEntities.Add(blkRecord, entities);
 	}
 
 	private void writeCommonData(CadObject cadObject)

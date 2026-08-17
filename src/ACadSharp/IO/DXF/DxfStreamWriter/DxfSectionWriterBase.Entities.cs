@@ -138,6 +138,12 @@ internal abstract partial class DxfSectionWriterBase
 
 	private bool isEntitySupported(Entity entity)
 	{
+		if (!entity.IsValid())
+		{
+			this.notify($"Invalid entity {entity.GetType().FullName} with handle {entity.Handle}", NotificationType.Warning);
+			return false;
+		}
+
 		switch (entity)
 		{
 			case Seqend://Manually assign at the end of the collections

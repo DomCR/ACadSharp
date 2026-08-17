@@ -695,6 +695,11 @@ internal class DxfObjectsSectionWriter : DxfSectionWriterBase
 
 	private bool isObjectSupported(CadObject co)
 	{
+		if (!co.IsValid())
+		{
+			return false;
+		}
+
 		switch (co)
 		{
 			case UnknownNonGraphicalObject:
