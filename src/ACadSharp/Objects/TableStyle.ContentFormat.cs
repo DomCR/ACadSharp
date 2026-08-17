@@ -67,7 +67,7 @@ public partial class TableStyle
 		/// </summary>
 		//[DxfCodeValue(DxfReferenceType.Handle, 340)]
 		[DxfCodeValue(DxfReferenceType.Name, 7)]
-		public TextStyle TextStyle { get; set; }
+		public TextStyle TextStyle { get; set; } = TextStyle.Default;
 
 		/// <summary>
 		/// Gets or sets the value data type.

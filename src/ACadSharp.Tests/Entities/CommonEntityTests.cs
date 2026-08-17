@@ -1,7 +1,9 @@
 ﻿using ACadSharp.Entities;
 using ACadSharp.Extensions;
+using ACadSharp.IO;
 using ACadSharp.Tables;
 using ACadSharp.Tests.Common;
+using CSMath;
 using Xunit;
 
 namespace ACadSharp.Tests.Entities;
@@ -101,4 +103,30 @@ public abstract class CommonEntityTests<T>
 
 	[Fact]
 	public abstract void GetBoundingBoxTest();
+
+	[Theory]
+	[InlineData(CadFileFormat.DXF, ACadVersion.AC1014)]
+	[InlineData(CadFileFormat.DXF, ACadVersion.AC1032)]
+	[InlineData(CadFileFormat.DWG, ACadVersion.AC1032)]
+	public void InvalidEntityTest(CadFileFormat format, ACadVersion version)
+	{
+		var e = new T();
+
+		if (e is IOrientable orientable)
+		{
+			orientable.Normal = new XYZ();
+			Assert.False(e.IsValid(format, version));
+		}
+	}
+
+	[Theory]
+	[InlineData(CadFileFormat.DXF, ACadVersion.AC1014)]
+	[InlineData(CadFileFormat.DXF, ACadVersion.AC1032)]
+	[InlineData(CadFileFormat.DWG, ACadVersion.AC1032)]
+	public void ValidEntityTest(CadFileFormat format, ACadVersion version)
+	{
+		//By default all entities must be valid on creation
+		var e = new T();
+		Assert.True(e.IsValid(format, version));
+	}
 }

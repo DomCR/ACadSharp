@@ -12,7 +12,7 @@ namespace ACadSharp.Entities;
 /// </remarks>
 [DxfName(DxfFileToken.EntitySolid)]
 [DxfSubClass(DxfSubclassMarker.Solid)]
-public class Solid : Entity
+public class Solid : Entity, IOrientable
 {
 	/// <summary>
 	/// First corner.
@@ -29,9 +29,7 @@ public class Solid : Entity
 	[DxfCodeValue(13, 23, 33)]
 	public XYZ FourthCorner { get; set; }
 
-	/// <summary>
-	/// Specifies the three-dimensional normal unit vector for the object.
-	/// </summary>
+	/// <inheritdoc/>
 	[DxfCodeValue(210, 220, 230)]
 	public XYZ Normal { get; set; } = XYZ.AxisZ;
 

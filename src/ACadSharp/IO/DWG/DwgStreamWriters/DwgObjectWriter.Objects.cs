@@ -19,7 +19,7 @@ internal partial class DwgObjectWriter : DwgSectionIO
 	{
 		foreach (NonGraphicalObject e in entries)
 		{
-			this._objects.Enqueue(e);
+			this.enqueueValidObject(e);
 		}
 	}
 
@@ -30,6 +30,13 @@ internal partial class DwgObjectWriter : DwgSectionIO
 
 	private bool skipEntry(NonGraphicalObject entry, out bool notify)
 	{
+		if (!entry.IsValid(CadFileFormat.DWG, this._version))
+		{
+			notify = false;
+			this.notify($"Invalid object {entry.GetType().FullName} with handle {entry.Handle}", NotificationType.Warning);
+			return false;
+		}
+
 		notify = true;
 		switch (entry)
 		{
@@ -1105,7 +1112,7 @@ internal partial class DwgObjectWriter : DwgSectionIO
 
 		foreach (Field c in field.Children)
 		{
-			this._objects.Enqueue(c);
+			this.enqueueValidObject(c);
 		}
 	}
 

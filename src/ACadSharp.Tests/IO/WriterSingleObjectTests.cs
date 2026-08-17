@@ -90,6 +90,7 @@ public abstract class WriterSingleObjectTests : IOTestsBase
 		Data.Add(new(nameof(SingleCaseGenerator.XRef)));
 		Data.Add(new(nameof(SingleCaseGenerator.SPlineCreation)));
 		Data.Add(new(nameof(SingleCaseGenerator.TextAlignment)));
+		Data.Add(new(nameof(SingleCaseGenerator.InvalidEntities)));
 		Data.Add(new(nameof(SingleCaseGenerator.CreateXRecords)));
 		Data.Add(new(nameof(SingleCaseGenerator.SingleTableEntity)));
 		Data.Add(new(nameof(SingleCaseGenerator.SingleMesh)));
@@ -1339,6 +1340,32 @@ public abstract class WriterSingleObjectTests : IOTestsBase
 				Radius = 20
 			};
 			blockRecord.Entities.Add(circle);
+		}
+
+		public void InvalidEntities()
+		{
+			Ellipse e = new Ellipse();
+			e.Normal = new XYZ(1, 1, 0);
+			this.Document.Entities.Add(e);
+
+			e = new Ellipse();
+			e.Normal = new XYZ();
+			this.Document.Entities.Add(e);
+
+			Layer l = new Layer("Lorem ipsum dolor sit amet, consectetuer adipiscing elit. Aenean commodo ligula eget dolor. Aenean massa. Cum sociis natoque penatibus et magnis dis parturient montes, nascetur ridiculus mus. Donec quam felis, ultricies nec, pellentesque eu, pretium quis, sem. Nulla consequat massa quis enim. Donec.");
+			this.Document.Layers.Add(l);
+
+			foreach (var item in INamedCadObjectExtensions.InvalidCharacters)
+			{
+				l = new Layer($"invalid_character_{item}");
+				this.Document.Layers.Add(l);
+			}
+
+			//Valid name for a layer but is not shown in the layer list in AutoCAD
+			l = new Layer("*hello");
+			this.Document.Layers.Add(l);
+
+			//Empty file
 		}
 
 		public void LayerTrueColor()

@@ -7,6 +7,7 @@ using CSMath;
 using System;
 using System.Collections.Generic;
 using System.Linq;
+using static ACadSharp.Objects.XRecord;
 
 namespace ACadSharp.IO.DXF;
 
@@ -695,6 +696,12 @@ internal class DxfObjectsSectionWriter : DxfSectionWriterBase
 
 	private bool isObjectSupported(CadObject co)
 	{
+		if (!co.IsValid(CadFileFormat.DXF, this.Version, out IList<string> errors))
+		{
+			this.notify($"Invalid object {co.GetType().FullName} with handle {co.Handle}", NotificationType.Warning);
+			return false;
+		}
+
 		switch (co)
 		{
 			case UnknownNonGraphicalObject:

@@ -1,13 +1,14 @@
-﻿namespace ACadSharp
+﻿using System;
+
+namespace ACadSharp;
+
+/// <summary>
+/// Defines a CadObject with a unique handle
+/// </summary>
+public interface IHandledCadObject
 {
 	/// <summary>
-	/// Defines a CadObject with a unique handle
+	/// Unique handle for this object in a <see cref="CadDocument"/>.
 	/// </summary>
-	public interface IHandledCadObject
-	{
-		/// <summary>
-		/// Unique handle for this object in a <see cref="CadDocument"/>.
-		/// </summary>
-		ulong Handle { get; }
-	}
+	ulong Handle { get; }
 }

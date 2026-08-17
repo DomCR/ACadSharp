@@ -14,7 +14,7 @@ namespace ACadSharp.Entities.AecObjects;
 /// </remarks>
 [DxfName(DxfFileToken.EntityAecWall)]
 [DxfSubClass(DxfSubclassMarker.AecWall)]
-public class Wall : Entity
+public class Wall : Entity, IOrientable
 {
 	/// <summary>
 	/// Base height of the wall.
@@ -62,7 +62,8 @@ public class Wall : Entity
 	/// </summary>
 	public double Length { get; set; }
 
-	public XYZ Normal { get; set; }
+	/// <inheritdoc/>
+	public XYZ Normal { get; set; } = XYZ.AxisZ;
 
 	/// <inheritdoc/>
 	public override string ObjectName => DxfFileToken.EntityAecWall;
