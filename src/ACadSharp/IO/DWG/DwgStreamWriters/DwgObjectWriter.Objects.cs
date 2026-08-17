@@ -19,7 +19,7 @@ internal partial class DwgObjectWriter : DwgSectionIO
 	{
 		foreach (NonGraphicalObject e in entries)
 		{
-			this._objects.Enqueue(e);
+			this.enqueueValidObject(e);
 		}
 	}
 
@@ -1105,7 +1105,7 @@ internal partial class DwgObjectWriter : DwgSectionIO
 
 		foreach (Field c in field.Children)
 		{
-			this._objects.Enqueue(c);
+			this.enqueueValidObject(c);
 		}
 	}
 
