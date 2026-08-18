@@ -7367,7 +7367,7 @@ namespace ACadSharp.IO.DWG
 						string hex = this._objectReader.ReadTextUnicode();
 						if (ulong.TryParse(hex, NumberStyles.HexNumber, CultureInfo.InvariantCulture, out ulong result))
 						{
-							template.AddHandleReference(code, result);
+							template.AddHandleReference(code, result, xRecord.CreateEntry(code, null));
 						}
 						else
 						{
@@ -7383,7 +7383,10 @@ namespace ACadSharp.IO.DWG
 						break;
 					case GroupCodeValueType.ObjectId:
 					case GroupCodeValueType.ExtendedDataHandle:
-						template.AddHandleReference(code, this._objectReader.ReadRawULong());
+						//The entry is created here, in the position it has in the file, and its value is
+						//filled in when the template is built; adding it afterwards would move every
+						//handle to the end of the record and change the order AutoCAD expects.
+						template.AddHandleReference(code, this._objectReader.ReadRawULong(), xRecord.CreateEntry(code, null));
 						break;
 					default:
 						this.notify($"Unidentified GroupCodeValueType {code} for XRecord [{xRecord.Handle}]", NotificationType.Warning);
