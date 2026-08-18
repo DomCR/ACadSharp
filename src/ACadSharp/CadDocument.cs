@@ -47,6 +47,11 @@ public class CadDocument : IHandledCadObject
 	public ColorCollection Colors { get; private set; }
 
 	/// <summary>
+	/// The data stored in the Prototype1b header section. This primarily contains ACIS and thumbnail data
+	/// </summary>
+	public DataStorage DataStorage { get; set; }
+
+	/// <summary>
 	/// The collection of the system variables in the drawing.
 	/// </summary>
 	/// <remarks>
@@ -207,16 +212,10 @@ public class CadDocument : IHandledCadObject
 
 	internal ViewportEntityControl VEntityControl { get; set; }
 
-	/// <summary>
-	/// The data stored in the Prototype1b header section. This primarily contains ACIS and thumbnail data
-	/// </summary>
-	public DataStorage DataStorage { get; set; }
-
 	//Contains all the objects in the document
 	private readonly Dictionary<ulong, IHandledCadObject> _cadObjects = new Dictionary<ulong, IHandledCadObject>();
 
 	private CadDictionary _rootDictionary = null;
-
 
 	/// <summary>
 	/// Creates a document with the default objects
@@ -389,6 +388,11 @@ public class CadDocument : IHandledCadObject
 		return this._cadObjects.Values
 			.OfType<CadObject>()
 			.Count(c => c.ObjectName == dxfName);
+	}
+
+	public bool IsValid()
+	{
+		throw new NotImplementedException();
 	}
 
 	/// <summary>

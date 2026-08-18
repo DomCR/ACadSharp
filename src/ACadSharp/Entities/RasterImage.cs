@@ -1,7 +1,9 @@
 ﻿using ACadSharp.Attributes;
 using ACadSharp.Classes;
+using ACadSharp.IO;
 using ACadSharp.Objects;
 using System;
+using System.Collections.Generic;
 
 namespace ACadSharp.Entities;
 
@@ -57,6 +59,27 @@ public class RasterImage : CadWipeoutBase, IDxfClassDefined
 	{
 	}
 
+	/// <inheritdoc/>
+	public override bool IsValid(CadFileFormat format, ACadVersion version, out IList<string> errors)
+	{
+		var result = base.IsValid(format, version, out errors);
+
+		if (this.DefinitionReactor == null)
+		{
+			errors.Add($"The {nameof(this.DefinitionReactor)} property is null.");
+			result = false;
+		}
+
+		if (this.Definition == null)
+		{
+			errors.Add($"The {nameof(this.Definition)} property is null.");
+			result = false;
+		}
+
+		return result;
+	}
+
+	/// <inheritdoc/>
 	public DxfClass GetDxfClass()
 	{
 		return new DxfClass

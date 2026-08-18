@@ -1,4 +1,5 @@
 ﻿using ACadSharp.IO.DXF;
+using ACadSharp.IO.DXF.DxfStreamWriter;
 using System.IO;
 using System.Text;
 
@@ -125,7 +126,10 @@ public class DxfWriter : CadWriterBase<DxfWriterConfiguration>
 		}
 		else
 		{
-			this._writer = new DxfAsciiWriter(new StreamWriter(this._stream, encoding));
+			this._writer = new DxfAsciiWriter(new StreamWriter(this._stream, encoding))
+			{
+				DecimalPrecision = this.Configuration.DecimalPrecision,
+			};
 		}
 
 		this._writer.WriteOptional = this.Configuration.WriteOptionalValues;

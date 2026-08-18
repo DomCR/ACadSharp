@@ -1239,8 +1239,8 @@ namespace ACadSharp.IO.DWG
 				image.ClipMode = this._objectReader.ReadBit() ? ClipMode.Inside : ClipMode.Outside;
 			}
 
-			image.ClipType = (ClipType)this._objectReader.ReadBitShort();
-			switch (image.ClipType)
+			var clipType = (ClipType)this._objectReader.ReadBitShort();
+			switch (clipType)
 			{
 				case ClipType.Rectangular:
 					image.ClipBoundaryVertices.Add(this._objectReader.Read2RawDouble());

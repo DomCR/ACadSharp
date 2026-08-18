@@ -50,7 +50,7 @@ namespace ACadSharp.Tests.Tables
 			{
 				var entry = this.createEntry($"{DefaultName}{INamedCadObjectExtensions.InvalidCharacters[i]}");
 
-				Assert.False(entry.IsValidDxfName());
+				Assert.False(entry.HasValidDxfName());
 			}
 		}
 

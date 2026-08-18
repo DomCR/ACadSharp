@@ -14,7 +14,7 @@ namespace ACadSharp.Objects;
 /// </remarks>
 [DxfName(DxfFileToken.ObjectSpatialFilter)]
 [DxfSubClass(DxfSubclassMarker.SpatialFilter)]
-public class SpatialFilter : Filter, IDxfClassDefined
+public class SpatialFilter : Filter, IOrientable, IDxfClassDefined
 {
 	/// <summary>
 	/// Back clipping plane distance.
@@ -69,9 +69,7 @@ public class SpatialFilter : Filter, IDxfClassDefined
 	/// </summary>
 	public Matrix4 InverseInsertTransform { get; set; } = Matrix4.Identity;
 
-	/// <summary>
-	/// Specifies the three-dimensional normal unit vector for the object.
-	/// </summary>
+	/// <inheritdoc/>
 	[DxfCodeValue(210, 220, 230)]
 	public XYZ Normal { get; set; } = XYZ.AxisZ;
 

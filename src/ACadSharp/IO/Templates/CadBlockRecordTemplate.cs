@@ -4,6 +4,7 @@ using ACadSharp.Objects;
 using ACadSharp.Tables;
 using CSUtilities.Extensions;
 using System.Collections.Generic;
+using System.Linq;
 
 namespace ACadSharp.IO.Templates;
 

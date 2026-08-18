@@ -79,7 +79,7 @@ internal partial class DwgObjectWriter : DwgSectionIO
 
 		if (image.DefinitionReactor != null)
 		{
-			this._objects.Enqueue(image.DefinitionReactor);
+			this.enqueueValidObject(image.DefinitionReactor);
 		}
 	}
 

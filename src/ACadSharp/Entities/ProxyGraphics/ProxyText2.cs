@@ -5,7 +5,7 @@ namespace ACadSharp.Entities.ProxyGraphics;
 /// <summary>
 /// Represents text geometry information for proxy objects in AutoCAD drawings.
 /// </summary>
-public class ProxyText2 : IProxyGeometry
+public class ProxyText2 : IProxyGeometry, IOrientable
 {
 	/// <summary>
 	/// Gets or sets the filename of the big font file used for the text.
@@ -58,7 +58,7 @@ public class ProxyText2 : IProxyGeometry
 	/// <summary>
 	/// Gets or sets the normal vector of the text plane.
 	/// </summary>
-	public XYZ Normal { get; set; }
+	public XYZ Normal { get; set; } = XYZ.AxisZ;
 
 	/// <summary>
 	/// Gets or sets the oblique angle of the text in degrees.
