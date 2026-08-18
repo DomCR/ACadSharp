@@ -1,4 +1,5 @@
 ﻿using ACadSharp.Entities;
+using ACadSharp.IO.DXF.DxfStreamWriter;
 using ACadSharp.Objects;
 using ACadSharp.Objects.AEC;
 using ACadSharp.Objects.Evaluations;
