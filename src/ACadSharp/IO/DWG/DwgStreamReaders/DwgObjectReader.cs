@@ -3794,6 +3794,7 @@ namespace ACadSharp.IO.DWG
 				{
 					//Column height count BL 72
 					int count = this._objectReader.ReadBitLong();
+					mtext.ColumnData.ColumnCount = count;
 					//Columnn width BD 44
 					mtext.ColumnData.Width = this._objectReader.ReadBitDouble();
 					//Gutter BD 45
