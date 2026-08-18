@@ -148,6 +148,9 @@ internal partial class DwgObjectWriter : DwgSectionIO
 			case Shape:
 				return this.WriteShapes;
 			case TableEntity when !this.R2010Plus:
+			//MULTILEADER was introduced with AutoCAD 2008 (AC1021) and the writer only implements
+			//the R2010 layout; writing one into an older file leaves AutoCAD unable to open it.
+			case MultiLeader when !this.R2010Plus:
 			case Wall:
 			case MechanicalEntity:
 			case ProxyEntity:

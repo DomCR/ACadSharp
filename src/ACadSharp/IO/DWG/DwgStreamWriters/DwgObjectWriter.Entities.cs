@@ -583,8 +583,12 @@ internal partial class DwgObjectWriter : DwgSectionIO
 				{
 					case PolyfaceMesh faceMesh:
 						this.writePolyfaceMesh(faceMesh);
-						children.AddRange(faceMesh.Faces);
+						//The vertices come first and the faces after them, which is the order the
+						//owned object list and the first/last vertex handles of writePolyfaceMesh
+						//describe; writing the faces first leaves those handles pointing at the
+						//wrong ends of the sequence and AutoCAD cannot walk it.
 						children.AddRange(faceMesh.Vertices);
+						children.AddRange(faceMesh.Faces);
 						seqend = faceMesh.Vertices.Seqend;
 						break;
 					case Polyline2D pline2d:
@@ -1995,7 +1999,7 @@ internal partial class DwgObjectWriter : DwgSectionIO
 
 		//Common:
 		//H SEQEND(hard owner)
-		this._writer.HandleReference(DwgReferenceType.SoftPointer, fm.Vertices.Seqend);
+		this._writer.HandleReference(DwgReferenceType.HardOwnership, fm.Vertices.Seqend);
 	}
 
 	private void writePolygonMesh(PolygonMesh pline)
@@ -2232,10 +2236,18 @@ internal partial class DwgObjectWriter : DwgSectionIO
 		}
 		else
 		{
-			scenario = (spline.FitPoints.Count <= 0) ? 1 : 2;
-			if (scenario == 2 && spline.KnotParametrization != 0)
+			//Before R2013 the knot parameterization is not stored, so a spline that is defined by fit
+			//points and uses one cannot keep it. It still has to be written as fit points: falling
+			//back to the control point scenario writes a spline with no knots and no control points,
+			//which leaves AutoCAD unable to open the file.
+			bool hasControlPoints = spline.ControlPoints.Count > 0 && spline.Knots.Count > 0;
+			if (hasControlPoints)
 			{
 				scenario = 1;
+			}
+			else
+			{
+				scenario = spline.FitPoints.Count > 0 ? 2 : 1;
 			}
 
 			//Scenario BL a flag which is 2 for fitpts only, 1 for ctrlpts/knots.
