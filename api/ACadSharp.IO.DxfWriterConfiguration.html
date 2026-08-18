@@ -189,7 +189,7 @@ Class DxfWriterConfiguration  <a class="header-action link-secondary" title="Vie
 
   <h3 id="ACadSharp_IO_DxfWriterConfiguration__ctor" data-uid="ACadSharp.IO.DxfWriterConfiguration.#ctor">
   DxfWriterConfiguration()
-  <a class="header-action link-secondary" title="View source" href="https://github.com/DomCR/ACadSharp/blob/master/src/ACadSharp/IO/DxfWriterConfiguration.cs/#L90"><i class="bi bi-code-slash"></i></a>
+  <a class="header-action link-secondary" title="View source" href="https://github.com/DomCR/ACadSharp/blob/master/src/ACadSharp/IO/DxfWriterConfiguration.cs/#L96"><i class="bi bi-code-slash"></i></a>
   </h3>
 
   <div class="markdown level1 summary"></div>
@@ -218,7 +218,7 @@ Class DxfWriterConfiguration  <a class="header-action link-secondary" title="Vie
 
   <h3 id="ACadSharp_IO_DxfWriterConfiguration_Variables" data-uid="ACadSharp.IO.DxfWriterConfiguration.Variables">
   Variables
-  <a class="header-action link-secondary" title="View source" href="https://github.com/DomCR/ACadSharp/blob/master/src/ACadSharp/IO/DxfWriterConfiguration.cs/#L16"><i class="bi bi-code-slash"></i></a>
+  <a class="header-action link-secondary" title="View source" href="https://github.com/DomCR/ACadSharp/blob/master/src/ACadSharp/IO/DxfWriterConfiguration.cs/#L49"><i class="bi bi-code-slash"></i></a>
   </h3>
 
   <div class="markdown level1 summary"><p>Variables that must be writen in a dxf file</p>
@@ -250,11 +250,44 @@ Class DxfWriterConfiguration  <a class="header-action link-secondary" title="Vie
 </h2>
 
 
+  <a id="ACadSharp_IO_DxfWriterConfiguration_DecimalPrecision_" data-uid="ACadSharp.IO.DxfWriterConfiguration.DecimalPrecision*"></a>
+
+  <h3 id="ACadSharp_IO_DxfWriterConfiguration_DecimalPrecision" data-uid="ACadSharp.IO.DxfWriterConfiguration.DecimalPrecision">
+  DecimalPrecision
+  <a class="header-action link-secondary" title="View source" href="https://github.com/DomCR/ACadSharp/blob/master/src/ACadSharp/IO/DxfWriterConfiguration.cs/#L17"><i class="bi bi-code-slash"></i></a>
+  </h3>
+
+  <div class="markdown level1 summary"><p>Gets or sets the double precision for writing the DXF file.
+If set to null, the default &quot;R&quot; format precision will be used.</p>
+</div>
+  <div class="markdown level1 conceptual"></div>
+
+  <div class="codewrapper">
+    <pre><code class="lang-csharp hljs">public int? DecimalPrecision { get; set; }</code></pre>
+  </div>
+
+
+
+
+
+  <h4 class="section">Property Value</h4>
+  <dl class="parameters">
+    <dt><a class="xref" href="https://learn.microsoft.com/dotnet/api/system.int32">int</a>?</dt>
+    <dd></dd>
+  </dl>
+
+
+
+
+
+
+
+
   <a id="ACadSharp_IO_DxfWriterConfiguration_HeaderVariables_" data-uid="ACadSharp.IO.DxfWriterConfiguration.HeaderVariables*"></a>
 
   <h3 id="ACadSharp_IO_DxfWriterConfiguration_HeaderVariables" data-uid="ACadSharp.IO.DxfWriterConfiguration.HeaderVariables">
   HeaderVariables
-  <a class="header-action link-secondary" title="View source" href="https://github.com/DomCR/ACadSharp/blob/master/src/ACadSharp/IO/DxfWriterConfiguration.cs/#L86"><i class="bi bi-code-slash"></i></a>
+  <a class="header-action link-secondary" title="View source" href="https://github.com/DomCR/ACadSharp/blob/master/src/ACadSharp/IO/DxfWriterConfiguration.cs/#L22"><i class="bi bi-code-slash"></i></a>
   </h3>
 
   <div class="markdown level1 summary"><p>Header variables to write in the dxf file</p>
@@ -286,7 +319,7 @@ Class DxfWriterConfiguration  <a class="header-action link-secondary" title="Vie
 
   <h3 id="ACadSharp_IO_DxfWriterConfiguration_WriteAllHeaderVariables" data-uid="ACadSharp.IO.DxfWriterConfiguration.WriteAllHeaderVariables">
   WriteAllHeaderVariables
-  <a class="header-action link-secondary" title="View source" href="https://github.com/DomCR/ACadSharp/blob/master/src/ACadSharp/IO/DxfWriterConfiguration.cs/#L70"><i class="bi bi-code-slash"></i></a>
+  <a class="header-action link-secondary" title="View source" href="https://github.com/DomCR/ACadSharp/blob/master/src/ACadSharp/IO/DxfWriterConfiguration.cs/#L33"><i class="bi bi-code-slash"></i></a>
   </h3>
 
   <div class="markdown level1 summary"><p>Flag to write all the header variables in the dxf file</p>
@@ -322,7 +355,7 @@ Class DxfWriterConfiguration  <a class="header-action link-secondary" title="Vie
 
   <h3 id="ACadSharp_IO_DxfWriterConfiguration_WriteOptionalValues" data-uid="ACadSharp.IO.DxfWriterConfiguration.WriteOptionalValues">
   WriteOptionalValues
-  <a class="header-action link-secondary" title="View source" href="https://github.com/DomCR/ACadSharp/blob/master/src/ACadSharp/IO/DxfWriterConfiguration.cs/#L81"><i class="bi bi-code-slash"></i></a>
+  <a class="header-action link-secondary" title="View source" href="https://github.com/DomCR/ACadSharp/blob/master/src/ACadSharp/IO/DxfWriterConfiguration.cs/#L44"><i class="bi bi-code-slash"></i></a>
   </h3>
 
   <div class="markdown level1 summary"><p>Write the Dxf optional values.</p>
@@ -362,7 +395,7 @@ Class DxfWriterConfiguration  <a class="header-action link-secondary" title="Vie
 
   <h3 id="ACadSharp_IO_DxfWriterConfiguration_AddHeaderVariable_System_String_" data-uid="ACadSharp.IO.DxfWriterConfiguration.AddHeaderVariable(System.String)">
   AddHeaderVariable(string)
-  <a class="header-action link-secondary" title="View source" href="https://github.com/DomCR/ACadSharp/blob/master/src/ACadSharp/IO/DxfWriterConfiguration.cs/#L103"><i class="bi bi-code-slash"></i></a>
+  <a class="header-action link-secondary" title="View source" href="https://github.com/DomCR/ACadSharp/blob/master/src/ACadSharp/IO/DxfWriterConfiguration.cs/#L109"><i class="bi bi-code-slash"></i></a>
   </h3>
 
   <div class="markdown level1 summary"><p>Add a Header variable name to be added in the dxf document</p>
@@ -402,7 +435,7 @@ Class DxfWriterConfiguration  <a class="header-action link-secondary" title="Vie
 
   <h3 id="ACadSharp_IO_DxfWriterConfiguration_RemoveHeaderVariable_System_String_" data-uid="ACadSharp.IO.DxfWriterConfiguration.RemoveHeaderVariable(System.String)">
   RemoveHeaderVariable(string)
-  <a class="header-action link-secondary" title="View source" href="https://github.com/DomCR/ACadSharp/blob/master/src/ACadSharp/IO/DxfWriterConfiguration.cs/#L124"><i class="bi bi-code-slash"></i></a>
+  <a class="header-action link-secondary" title="View source" href="https://github.com/DomCR/ACadSharp/blob/master/src/ACadSharp/IO/DxfWriterConfiguration.cs/#L130"><i class="bi bi-code-slash"></i></a>
   </h3>
 
   <div class="markdown level1 summary"><p>Remove a Header variable name so is not added in the dxf document</p>

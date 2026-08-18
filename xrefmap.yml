@@ -33437,6 +33437,19 @@ references:
   isSpec: "True"
   fullName: ACadSharp.IO.DxfWriterConfiguration.AddHeaderVariable
   nameWithType: DxfWriterConfiguration.AddHeaderVariable
+- uid: ACadSharp.IO.DxfWriterConfiguration.DecimalPrecision
+  name: DecimalPrecision
+  href: api/ACadSharp.IO.DxfWriterConfiguration.html#ACadSharp_IO_DxfWriterConfiguration_DecimalPrecision
+  commentId: P:ACadSharp.IO.DxfWriterConfiguration.DecimalPrecision
+  fullName: ACadSharp.IO.DxfWriterConfiguration.DecimalPrecision
+  nameWithType: DxfWriterConfiguration.DecimalPrecision
+- uid: ACadSharp.IO.DxfWriterConfiguration.DecimalPrecision*
+  name: DecimalPrecision
+  href: api/ACadSharp.IO.DxfWriterConfiguration.html#ACadSharp_IO_DxfWriterConfiguration_DecimalPrecision_
+  commentId: Overload:ACadSharp.IO.DxfWriterConfiguration.DecimalPrecision
+  isSpec: "True"
+  fullName: ACadSharp.IO.DxfWriterConfiguration.DecimalPrecision
+  nameWithType: DxfWriterConfiguration.DecimalPrecision
 - uid: ACadSharp.IO.DxfWriterConfiguration.HeaderVariables
   name: HeaderVariables
   href: api/ACadSharp.IO.DxfWriterConfiguration.html#ACadSharp_IO_DxfWriterConfiguration_HeaderVariables
