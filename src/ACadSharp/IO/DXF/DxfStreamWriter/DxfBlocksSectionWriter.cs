@@ -1,5 +1,6 @@
 ﻿using ACadSharp.Blocks;
 using ACadSharp.Entities;
+using ACadSharp.IO.DXF.DxfStreamWriter;
 using ACadSharp.Tables;
 
 namespace ACadSharp.IO.DXF

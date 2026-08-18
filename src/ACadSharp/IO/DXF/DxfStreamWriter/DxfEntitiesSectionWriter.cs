@@ -1,4 +1,5 @@
 ﻿using ACadSharp.Entities;
+using ACadSharp.IO.DXF.DxfStreamWriter;
 using System.Linq;
 
 namespace ACadSharp.IO.DXF;
