@@ -1,4 +1,5 @@
-﻿using ACadSharp.Blocks;
+﻿using System;
+using ACadSharp.Blocks;
 using ACadSharp.Entities;
 using ACadSharp.IO.DXF.DxfStreamWriter;
 using ACadSharp.Tables;
@@ -54,7 +55,12 @@ namespace ACadSharp.IO.DXF
 
 		private void processEntities(BlockRecord b)
 		{
-			if (b.Name == BlockRecord.ModelSpaceName || b.Name == BlockRecord.PaperSpaceName)
+			//The name is matched without case: AutoCAD does, and real drawings carry *MODEL_SPACE
+			//in upper case. Comparing exactly wrote every model entity of such a drawing into the
+			//BLOCKS section as an ordinary block and left the ENTITIES section empty - AutoCAD
+			//still draws it, but a consumer that reads the entities section sees nothing.
+			if (b.Name.Equals(BlockRecord.ModelSpaceName, StringComparison.OrdinalIgnoreCase) ||
+				b.Name.Equals(BlockRecord.PaperSpaceName, StringComparison.OrdinalIgnoreCase))
 			{
 				foreach (Entity e in b.Entities)
 				{
