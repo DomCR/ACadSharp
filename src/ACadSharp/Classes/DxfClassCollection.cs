@@ -40,33 +40,6 @@ public class DxfClassCollection : ICollection<DxfClass>
 	}
 
 	/// <summary>
-	/// Attempts to add a dxf class to the collection if the <see cref="DxfClass.DxfName"/> is not present.
-	/// </summary>
-	/// <param name="item">The dxf class to add.</param>
-	/// <returns>true if the dxf class was added successfully; otherwise, false.</returns>
-	public bool TryAdd(DxfClass item)
-	{
-		return this._entries.TryAdd(item.DxfName, item);
-	}
-
-	/// <summary>
-	/// Increases the instance count of a dxf class in the collection. If the dxf class is not present, it adds it to the collection with an initial instance count of 1.
-	/// </summary>
-	/// <param name="dxfClass">The dxf class whose instance count is to be increased.</param>
-	public void IncreaseInstanceCount(DxfClass dxfClass)
-	{
-		if (this._entries.TryGetValue(dxfClass.DxfName, out DxfClass result))
-		{
-			result.InstanceCount++;
-		}
-		else
-		{
-			this.Add(dxfClass);
-			dxfClass.InstanceCount = 1;
-		}
-	}
-
-	/// <summary>
 	/// Add a dxf class to the collection or updates the existing one if the <see cref="DxfClass.DxfName"/> is already in the collection.
 	/// </summary>
 	/// <param name="item">The dxf class to add or update.</param>
@@ -149,10 +122,49 @@ public class DxfClassCollection : ICollection<DxfClass>
 		return this._entries.Values.GetEnumerator();
 	}
 
+	/// <summary>
+	/// Increases the instance count of a dxf class in the collection. If the dxf class is not present, it adds it to the collection with an initial instance count of 1.
+	/// </summary>
+	/// <param name="dxfClass">The dxf class whose instance count is to be increased.</param>
+	public void IncreaseInstanceCount(DxfClass dxfClass)
+	{
+		if (this._entries.TryGetValue(dxfClass.DxfName, out DxfClass result))
+		{
+			result.InstanceCount++;
+		}
+		else
+		{
+			this.Add(dxfClass);
+			dxfClass.InstanceCount = 1;
+		}
+	}
+
 	/// <inheritdoc/>
 	public bool Remove(DxfClass item)
 	{
 		return this._entries.Remove(item.DxfName);
+	}
+
+	/// <summary>
+	/// Resets the class numbers of all <see cref="DxfClass"/> objects in the collection to a default value starting from 500.
+	/// </summary>
+	public void ResetClassNumbers()
+	{
+		var arr = this._entries.Values.ToArray();
+		for (int i = 0; i < arr.Length; i++)
+		{
+			arr[i].ClassNumber = (short)(500 + i);
+		}
+	}
+
+	/// <summary>
+	/// Attempts to add a dxf class to the collection if the <see cref="DxfClass.DxfName"/> is not present.
+	/// </summary>
+	/// <param name="item">The dxf class to add.</param>
+	/// <returns>true if the dxf class was added successfully; otherwise, false.</returns>
+	public bool TryAdd(DxfClass item)
+	{
+		return this._entries.TryAdd(item.DxfName, item);
 	}
 
 	/// <summary>
@@ -342,29 +354,5 @@ public class DxfClassCollection : ICollection<DxfClass>
 			WasZombie = false,
 			InstanceCount = this._document.GetInstanceCount("TABLEGEOMETRY"),
 		});
-
-		//AcDbRasterVariables
-		this.AddOrUpdate(new DxfClass
-		{
-			ApplicationName = "ISM",
-			CppClassName = DxfSubclassMarker.RasterVariables,
-			ClassNumber = (short)(500 + this.Count),
-			DwgVersion = (ACadVersion)20,
-			DxfName = DxfFileToken.ObjectRasterVariables,
-			ItemClassId = 499,
-			MaintenanceVersion = 0,
-			ProxyFlags = ProxyFlags.None,
-			WasZombie = false,
-			InstanceCount = this._document.GetInstanceCount(DxfFileToken.ObjectRasterVariables),
-		});
-	}
-
-	public void ResetClassNumbers()
-	{
-		var arr = this._entries.Values.ToArray();
-		for (int i = 0; i < arr.Length; i++)
-		{
-			arr[i].ClassNumber = (short)(500 + i);
-		}
 	}
 }
