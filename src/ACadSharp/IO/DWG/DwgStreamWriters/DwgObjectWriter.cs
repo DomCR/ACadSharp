@@ -33,9 +33,14 @@ internal partial class DwgObjectWriter : DwgSectionIO
 
 	public bool WriteXRecords { get; }
 
+	private ILookup<string, Insert> InsertsByBlockName =>
+		this._insertsByBlockName ??= this._document.Entities.OfType<Insert>().ToLookup(i => i.Block?.Name);
+
 	private readonly Dictionary<BlockRecord, Entity[]> _blockCompatibleEntities = new();
 
 	private CadDocument _document;
+
+	private ILookup<string, Insert> _insertsByBlockName;
 
 	private MemoryStream _msmain;
 
@@ -340,8 +345,7 @@ internal partial class DwgObjectWriter : DwgSectionIO
 		if (this.R2000Plus)
 		{
 			//Insert Count RC A sequence of zero or more non-zero RC’s, followed by a terminating 0 RC.The total number of these indicates how many insert handles will be present.
-			foreach (var item in this._document.Entities.OfType<Insert>()
-				.Where(i => i.Block?.Name == record?.Name))
+			foreach (var item in this.InsertsByBlockName[record.Name])
 			{
 				this._writer.WriteByte(1);
 			}
@@ -408,8 +412,7 @@ internal partial class DwgObjectWriter : DwgSectionIO
 		//R2000+:
 		if (this.R2000Plus)
 		{
-			foreach (var item in this._document.Entities.OfType<Insert>()
-				.Where(i => i.Block?.Name == record.Name))
+			foreach (var item in this.InsertsByBlockName[record.Name])
 			{
 				this._writer.HandleReference(DwgReferenceType.SoftPointer, item);
 			}
