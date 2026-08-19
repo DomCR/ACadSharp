@@ -344,7 +344,7 @@
       "Uid": null,
       "IsMRef": true,
       "Title": "ACadSharp.Classes.IDxfClassDefined",
-      "Summary": null
+      "Summary": "<p sourcefile=\"api/ACadSharp.Classes.IDxfClassDefined.yml\" sourcestartlinenumber=\"1\">Defines a contract for classes that can provide a <xref href=\"ACadSharp.Classes.DxfClass\" data-throw-if-not-resolved=\"false\"></xref> instance.</p>\n"
     },
     {
       "type": "ManagedReference",
