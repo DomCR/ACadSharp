@@ -1,4 +1,5 @@
 ﻿using ACadSharp.Attributes;
+using ACadSharp.Classes;
 
 namespace ACadSharp.Objects.Evaluations;
 
@@ -12,7 +13,7 @@ namespace ACadSharp.Objects.Evaluations;
 /// </remarks>
 [DxfName(DxfFileToken.ObjectBlockMoveAction)]
 [DxfSubClass(DxfSubclassMarker.BlockMoveAction)]
-public class BlockMoveAction : BlockAction
+public class BlockMoveAction : BlockAction, IDxfClassDefined
 {
 	/// <summary>
 	/// Gets or sets the angle offset for the move action.
@@ -47,4 +48,19 @@ public class BlockMoveAction : BlockAction
 	/// Gets or sets the evaluation connection for the Y delta displacement.
 	/// </summary>
 	public EvalConnection YDeltaConnection { get; set; }
+
+	/// <inheritdoc/>
+	public DxfClass GetDxfClass()
+	{
+		return new DxfClass
+		{
+			CppClassName = DxfSubclassMarker.BlockMoveAction,
+			DwgVersion = ACadVersion.AC1018,
+			DxfName = DxfFileToken.ObjectBlockMoveAction,
+			ItemClassId = 499,
+			MaintenanceVersion = 55,
+			ProxyFlags = ACadSharp.Classes.ProxyFlags.EraseAllowed | ACadSharp.Classes.ProxyFlags.CloningAllowed | ACadSharp.Classes.ProxyFlags.DisablesProxyWarningDialog,
+			WasZombie = false,
+		};
+	}
 }

@@ -1,7 +1,9 @@
-﻿using ACadSharp.Entities;
+﻿using ACadSharp.Classes;
+using ACadSharp.Entities;
 using ACadSharp.Objects;
 using ACadSharp.Tables;
 using ACadSharp.XData;
+using System;
 using System.Collections.Generic;
 
 namespace ACadSharp.IO.Templates;
@@ -9,6 +11,8 @@ namespace ACadSharp.IO.Templates;
 internal abstract class CadTemplate : ICadObjectTemplate
 {
 	public CadObject CadObject { get; set; }
+
+	public DxfClass DxfClass { get; set; }
 
 	public Dictionary<ulong, List<ExtendedDataRecord>> EDataTemplate { get; set; } = new();
 
@@ -39,6 +43,20 @@ internal abstract class CadTemplate : ICadObjectTemplate
 		}
 
 		this.build(builder);
+
+		if (this.DxfClass != null && this.CadObject is not IDxfClassDefined)
+		{
+			switch (this.CadObject)
+			{
+				case ProxyEntity:
+				case UnknownEntity:
+				case UnknownNonGraphicalObject:
+					break;
+				default:
+					builder.Notify($"{this.CadObject.GetType().FullName} does not implement {nameof(IDxfClassDefined)}", NotificationType.Warning);
+					break;
+			}
+		}
 
 		builder.NotifyProgress(ReadStage.Build, this);
 	}

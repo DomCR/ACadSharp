@@ -601,7 +601,6 @@ public class DwgReader : CadReaderBase<DwgReaderConfiguration>
 	private void readObjects()
 	{
 		Dictionary<ulong, long> handles = this.readHandles();
-		this.readClasses();
 
 		IDwgStreamReader sreader = null;
 		if (this._fileHeader.AcadVersion <= ACadVersion.AC1015)

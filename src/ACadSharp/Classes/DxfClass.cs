@@ -9,7 +9,7 @@ namespace ACadSharp.Classes
 		/// Posted in Alert box when a class definition listed in this section is not currently loaded.
 		/// </summary>
 		[DxfCodeValue(3)]
-		public string ApplicationName { get; set; } = "ObjectDBX Classes";
+		public string ApplicationName { get; set; } = DefaultApplicationName;
 
 		/// <summary>
 		/// Class number.
@@ -100,6 +100,8 @@ namespace ACadSharp.Classes
 		public bool WasZombie { get; set; }
 
 		internal short MaintenanceVersion { get; set; }
+
+		public const string DefaultApplicationName = "ObjectDBX Classes";
 
 		private bool _isAnEntity;
 

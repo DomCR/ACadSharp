@@ -71,13 +71,14 @@ public class DwgWriterSingleObjectTests : WriterSingleObjectTests
 		{
 			this._output.WriteLine("--- starting read ---");
 
+			CadDocument doc = null;
 			if (TestVariables.SaveOutputInStream)
 			{
-				DwgReader.Read(data.Stream, this.onNotification);
+				doc = DwgReader.Read(data.Stream, this.onNotification);
 			}
 			else
 			{
-				DwgReader.Read(path, this.onNotification);
+				doc = DwgReader.Read(path, this.onNotification);
 			}
 		}
 	}

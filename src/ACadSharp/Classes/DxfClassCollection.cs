@@ -39,11 +39,20 @@ public class DxfClassCollection : ICollection<DxfClass>
 		this._entries.Add(item.DxfName, item);
 	}
 
+	/// <summary>
+	/// Attempts to add a dxf class to the collection if the <see cref="DxfClass.DxfName"/> is not present.
+	/// </summary>
+	/// <param name="item">The dxf class to add.</param>
+	/// <returns>true if the dxf class was added successfully; otherwise, false.</returns>
 	public bool TryAdd(DxfClass item)
 	{
 		return this._entries.TryAdd(item.DxfName, item);
 	}
 
+	/// <summary>
+	/// Increases the instance count of a dxf class in the collection. If the dxf class is not present, it adds it to the collection with an initial instance count of 1.
+	/// </summary>
+	/// <param name="dxfClass">The dxf class whose instance count is to be increased.</param>
 	public void IncreaseInstanceCount(DxfClass dxfClass)
 	{
 		if (this._entries.TryGetValue(dxfClass.DxfName, out DxfClass result))
@@ -176,25 +185,8 @@ public class DxfClassCollection : ICollection<DxfClass>
 	[Obsolete]
 	public void UpdateDxfClasses()
 	{
+		//Kept for dummy classes (future implementation)
 		this.ResetClassNumbers();
-
-		//AcDbDictionaryWithDefault
-
-		//AcDbPlaceHolder
-
-		//AcDbLayout
-
-		//AcDbDictionaryVar
-
-		//AcDbTableStyle
-
-		//AcDbMaterial
-
-		//AcDbVisualStyle
-
-		//AcDbScale
-
-		//AcDbMLeaderStyle
 
 		//AcDbCellStyleMap
 		this.AddOrUpdate(new DxfClass
@@ -308,10 +300,6 @@ public class DxfClassCollection : ICollection<DxfClass>
 			InstanceCount = this._document.GetInstanceCount("ACDBDETAILVIEWSTYLE"),
 		});
 
-		//AcDbSubDMesh
-
-		//AcDbSortentsTable
-
 		//AcDbTextObjectContextData
 		this.AddOrUpdate(new DxfClass
 		{
@@ -325,8 +313,6 @@ public class DxfClassCollection : ICollection<DxfClass>
 			WasZombie = false,
 			InstanceCount = this._document.GetInstanceCount("ACDB_TEXTOBJECTCONTEXTDATA_CLASS"),
 		});
-
-		//AcDbWipeout
 
 		//AcDbWipeoutVariables
 		this.AddOrUpdate(new DxfClass
@@ -343,14 +329,6 @@ public class DxfClassCollection : ICollection<DxfClass>
 			InstanceCount = this._document.GetInstanceCount("WIPEOUTVARIABLES"),
 		});
 
-		//AcDbDimAssoc
-
-		//AcDbArcDimension
-
-		//AcDbTable
-
-		//AcDbTableContent
-
 		//AcDbTableGeometry
 		this.AddOrUpdate(new DxfClass
 		{
@@ -364,22 +342,6 @@ public class DxfClassCollection : ICollection<DxfClass>
 			WasZombie = false,
 			InstanceCount = this._document.GetInstanceCount("TABLEGEOMETRY"),
 		});
-
-		//AcDbRasterImage
-
-		//AcDbRasterImageDef
-
-		////AcDbRasterImageDefReactor
-
-		//AcDbColor
-
-		//AcDbGeoData
-
-		//AcDbMLeader
-
-		//AcDbPdfReference
-
-		//AcDbPdfDefinition
 
 		//AcDbRasterVariables
 		this.AddOrUpdate(new DxfClass
@@ -395,20 +357,6 @@ public class DxfClassCollection : ICollection<DxfClass>
 			WasZombie = false,
 			InstanceCount = this._document.GetInstanceCount(DxfFileToken.ObjectRasterVariables),
 		});
-
-		//AcDbSpatialFilter
-
-		//AcDbMLeaderObjectContextData
-
-		//AcDbPlotSettings
-
-		//AcDbField
-
-		//AcDbFieldList
-
-		//AcDbMTextAttributeObjectContextData
-
-		//AcDbBlkRefObjectContextData
 	}
 
 	public void ResetClassNumbers()

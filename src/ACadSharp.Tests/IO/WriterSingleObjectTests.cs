@@ -1365,6 +1365,10 @@ public abstract class WriterSingleObjectTests : IOTestsBase
 			l = new Layer("*hello");
 			this.Document.Layers.Add(l);
 
+			Wipeout w = new Wipeout();
+			w.ClipBoundaryVertices.Clear();
+			this.Document.Entities.Add(w);
+
 			//Empty file
 		}
 

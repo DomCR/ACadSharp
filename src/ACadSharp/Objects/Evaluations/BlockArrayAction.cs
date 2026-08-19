@@ -1,4 +1,5 @@
 ﻿using ACadSharp.Attributes;
+using ACadSharp.Classes;
 
 namespace ACadSharp.Objects.Evaluations;
 
@@ -12,7 +13,7 @@ namespace ACadSharp.Objects.Evaluations;
 /// </remarks>
 [DxfName(DxfFileToken.ObjectBlockArrayAction)]
 [DxfSubClass(DxfSubclassMarker.BlockArrayAction)]
-public class BlockArrayAction : BlockAction
+public class BlockArrayAction : BlockAction, IDxfClassDefined
 {
 	public EvalConnection BaseConnection { get; set; } = new EvalConnection();
 
@@ -33,4 +34,19 @@ public class BlockArrayAction : BlockAction
 	public EvalConnection UpdatedBaseConnection { get; set; } = new EvalConnection();
 
 	public EvalConnection UpdatedEndConnection { get; set; } = new EvalConnection();
+
+	/// <inheritdoc/>
+	public DxfClass GetDxfClass()
+	{
+		return new DxfClass
+		{
+			CppClassName = DxfSubclassMarker.BlockArrayAction,
+			DwgVersion = ACadVersion.AC1018,
+			DxfName = DxfFileToken.ObjectBlockArrayAction,
+			ItemClassId = 499,
+			MaintenanceVersion = 55,
+			ProxyFlags = ACadSharp.Classes.ProxyFlags.EraseAllowed | ACadSharp.Classes.ProxyFlags.CloningAllowed | ACadSharp.Classes.ProxyFlags.DisablesProxyWarningDialog,
+			WasZombie = false,
+		};
+	}
 }

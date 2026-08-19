@@ -1,4 +1,5 @@
 ﻿using ACadSharp.Attributes;
+using ACadSharp.Classes;
 using ACadSharp.Tables;
 
 namespace ACadSharp.Objects;
@@ -12,7 +13,7 @@ namespace ACadSharp.Objects;
 /// </remarks>
 [DxfName(DxfFileToken.ObjectBlockRepresentationData)]
 [DxfSubClass(DxfSubclassMarker.BlockRepresentationData)]
-public class BlockRepresentationData : NonGraphicalObject
+public class BlockRepresentationData : NonGraphicalObject, IDxfClassDefined
 {
 	[DxfCodeValue(DxfReferenceType.Handle, 340)]
 	public BlockRecord Block { get; set; }
@@ -25,4 +26,19 @@ public class BlockRepresentationData : NonGraphicalObject
 
 	[DxfCodeValue(70)]
 	public short Version { get; set; }
+
+	/// <inheritdoc/>
+	public DxfClass GetDxfClass()
+	{
+		return new DxfClass
+		{
+			CppClassName = DxfSubclassMarker.BlockRepresentationData,
+			DwgVersion = ACadVersion.AC1018,
+			DxfName = DxfFileToken.ObjectBlockRepresentationData,
+			ItemClassId = 499,
+			MaintenanceVersion = 58,
+			ProxyFlags = ACadSharp.Classes.ProxyFlags.EraseAllowed | ACadSharp.Classes.ProxyFlags.CloningAllowed | ACadSharp.Classes.ProxyFlags.DisablesProxyWarningDialog,
+			WasZombie = false,
+		};
+	}
 }
