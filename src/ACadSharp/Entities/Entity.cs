@@ -102,7 +102,14 @@ public abstract class Entity : CadObject, IEntity
 	/// <summary>
 	/// Gets the list of proxy geometries for this entity.
 	/// </summary>
-	public List<IProxyGeometry> ProxyGeometries { get; } = new();
+	//Created on first use: a production drawing had 615400 entities each holding an empty list,
+	//19 MB of the 548 MB the document needed.
+	public List<IProxyGeometry> ProxyGeometries
+	{
+		get { return this._proxyGeometries ?? (this._proxyGeometries = new List<IProxyGeometry>()); }
+	}
+
+	private List<IProxyGeometry> _proxyGeometries;
 
 	/// <inheritdoc/>
 	public override string SubclassMarker => DxfSubclassMarker.Entity;
