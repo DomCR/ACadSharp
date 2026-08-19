@@ -61,10 +61,13 @@ public class CadObjectCollection<T> : IObservableCadCollection<T>
 		if (item.Owner != null)
 			throw new ArgumentException($"Item {item.GetType().FullName} already has an owner", nameof(item));
 
-		if (this._entries.Contains(item))
+		//HashSet.Add already reports whether the item was there, and leaves the set untouched when
+		//it was, so the separate Contains costs a second reference hash of every object added.
+		//Reading a 17.6 MB drawing adds about half a million entities to these collections, and
+		//RuntimeHelpers.GetHashCode was 463 ms of that read.
+		if (!this._entries.Add(item))
 			throw new ArgumentException($"Item {item.GetType().FullName} is already in the collection", nameof(item));
 
-		this._entries.Add(item);
 		item.Owner = this.Owner;
 
 		OnAdd?.Invoke(this, new CollectionChangedEventArgs(item));
