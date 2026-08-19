@@ -373,6 +373,13 @@ namespace ACadSharp.IO.DWG
 
 		public long SetPositionByFlag(long position)
 		{
+			//Whether a string stream is present is a property of the object this reader is being
+			//placed on, so it is decided again here. It used to be latched: once an object without
+			//one had set it, every later object read by the same reader was taken for empty as
+			//well. A reader built per object never noticed; a reader moved from one object to the
+			//next silently read the wrong values.
+			this.IsEmpty = false;
+
 			this.SetPositionInBits(position);
 
 			//String stream present bit (last bit in pre-handles section).
