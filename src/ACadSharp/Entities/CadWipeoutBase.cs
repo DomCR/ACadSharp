@@ -53,6 +53,33 @@ public abstract class CadWipeoutBase : Entity
 	public List<XY> ClipBoundaryVertices { get; set; } = new List<XY>();
 
 	/// <summary>
+	/// The clip boundary as a file has to carry it: the vertices given, or, when there are none,
+	/// the default rectangle that covers the whole image.
+	/// </summary>
+	/// <remarks>
+	/// AutoCAD writes an image that is not clipped with a rectangular boundary of two vertices,
+	/// (-0.5, -0.5) and (Size.X - 0.5, Size.Y - 0.5) in pixel space, and refuses a file whose
+	/// image carries no boundary at all: "in IMAGE ... Xdata wasn't read. Invalid or incomplete
+	/// DXF input -- drawing discarded." Checked on six unclipped images of a production drawing
+	/// AutoCAD 2027 saved as DXF, all six identical in that respect. Nothing in this library
+	/// stopped a caller writing an image with an empty list, and one application did, and worked
+	/// around the discard by adding those two points itself.
+	/// </remarks>
+	public IReadOnlyList<XY> GetEffectiveClipBoundary()
+	{
+		if (this.ClipBoundaryVertices.Count > 0)
+		{
+			return this.ClipBoundaryVertices;
+		}
+
+		return new[]
+		{
+			new XY(-0.5, -0.5),
+			new XY(this.Size.X - 0.5, this.Size.Y - 0.5),
+		};
+	}
+
+	/// <summary>
 	/// Clipping state.
 	/// </summary>
 	[DxfCodeValue(290)]
@@ -255,9 +282,12 @@ public abstract class CadWipeoutBase : Entity
 	{
 		var result = base.IsValid(format, version, out errors);
 
-		if (this.ClipBoundaryVertices.Count < 2)
+		//An empty list is not an error: it means the image is not clipped, and both writers put
+		//the whole-image rectangle of GetEffectiveClipBoundary in the file, which is what AutoCAD
+		//itself writes for an unclipped image. A single vertex is not a boundary either way.
+		if (this.ClipBoundaryVertices.Count == 1)
 		{
-			errors.Add($"Invalid {nameof(ClipBoundaryVertices)} count: {this.ClipBoundaryVertices.Count}, must be at least 2.");
+			errors.Add($"Invalid {nameof(ClipBoundaryVertices)} count: {this.ClipBoundaryVertices.Count}, must be 0 for an unclipped image or at least 2.");
 			result = false;
 		}
 

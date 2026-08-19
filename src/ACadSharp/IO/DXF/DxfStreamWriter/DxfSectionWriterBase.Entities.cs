@@ -4,6 +4,7 @@ using ACadSharp.Entities.Mechanical;
 using ACadSharp.Objects;
 using CSMath;
 using System;
+using System.Collections.Generic;
 using System.Linq;
 
 namespace ACadSharp.IO.DXF;
@@ -253,22 +254,27 @@ internal abstract partial class DxfSectionWriterBase
 			this.Holder.Objects.Enqueue(image.DefinitionReactor);
 		}
 
-		this._writer.Write(71, (short)image.ClipType, map);
+		//An image with no boundary vertices is written with the default rectangle that covers it,
+		//and as rectangular whatever the type says: a polygon of nothing is not a boundary, and a
+		//record with no boundary at all is one AutoCAD refuses to read.
+		IReadOnlyList<XY> boundary = image.GetEffectiveClipBoundary();
+		ClipType clipType = image.ClipBoundaryVertices.Count == 0 ? ClipType.Rectangular : image.ClipType;
+		this._writer.Write(71, (short)clipType, map);
 
-		if (image.ClipType == ClipType.Polygonal)
+		if (clipType == ClipType.Polygonal)
 		{
-			this._writer.Write(91, image.ClipBoundaryVertices.Count + 1, map);
-			foreach (XY bv in image.ClipBoundaryVertices)
+			this._writer.Write(91, boundary.Count + 1, map);
+			foreach (XY bv in boundary)
 			{
 				this._writer.Write(14, bv, map);
 			}
 
-			this._writer.Write(14, image.ClipBoundaryVertices.First(), map);
+			this._writer.Write(14, boundary[0], map);
 		}
 		else
 		{
-			this._writer.Write(91, image.ClipBoundaryVertices.Count, map);
-			foreach (XY bv in image.ClipBoundaryVertices)
+			this._writer.Write(91, boundary.Count, map);
+			foreach (XY bv in boundary)
 			{
 				this._writer.Write(14, bv, map);
 			}

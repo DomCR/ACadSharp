@@ -57,19 +57,23 @@ internal partial class DwgObjectWriter : DwgSectionIO
 			this._writer.WriteBit(image.ClipMode == ClipMode.Inside);
 		}
 
-		this._writer.WriteBitShort((short)image.ClipType);
+		//See CadWipeoutBase.GetEffectiveClipBoundary: no vertices means the default rectangle. This
+		//writer used to index [0] and [1] on the empty list and throw.
+		IReadOnlyList<XY> boundary = image.GetEffectiveClipBoundary();
+		ClipType clipType = image.ClipBoundaryVertices.Count == 0 ? ClipType.Rectangular : image.ClipType;
+		this._writer.WriteBitShort((short)clipType);
 
-		switch (image.ClipType)
+		switch (clipType)
 		{
 			case ClipType.Rectangular:
-				this._writer.Write2RawDouble(image.ClipBoundaryVertices[0]);
-				this._writer.Write2RawDouble(image.ClipBoundaryVertices[1]);
+				this._writer.Write2RawDouble(boundary[0]);
+				this._writer.Write2RawDouble(boundary[1]);
 				break;
 			case ClipType.Polygonal:
-				this._writer.WriteBitLong(image.ClipBoundaryVertices.Count);
-				for (int i = 0; i < image.ClipBoundaryVertices.Count; i++)
+				this._writer.WriteBitLong(boundary.Count);
+				for (int i = 0; i < boundary.Count; i++)
 				{
-					this._writer.Write2RawDouble(image.ClipBoundaryVertices[i]);
+					this._writer.Write2RawDouble(boundary[i]);
 				}
 				break;
 		}
