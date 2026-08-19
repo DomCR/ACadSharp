@@ -87,6 +87,17 @@ public class DxfWriter : CadWriterBase<DxfWriterConfiguration>
 	{
 		base.Write();
 
+		//The DWG writer says the same of AC1014, and a DXF written as that version is refused just
+		//as firmly: AutoCAD reports "Premature end of object" on the DIMSTYLE table header, and
+		//removing that group only moves the refusal to the next object. Writing it in silence hands
+		//back a file that looks fine and cannot be opened, so say so.
+		if (this._document.Header.Version <= ACadVersion.AC1014)
+		{
+			this.triggerNotification(
+				$"A DXF written as {this._document.Header.Version} is not accepted by AutoCAD; the oldest version that opens is {ACadVersion.AC1015}",
+				NotificationType.Warning);
+		}
+
 		this.createStreamWriter();
 
 		this._objectHolder.Objects.Enqueue(this._document.RootDictionary);
