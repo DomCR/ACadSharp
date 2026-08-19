@@ -1519,6 +1519,8 @@ internal abstract class DxfSectionReaderBase
 
 		switch (this._reader.Code)
 		{
+			case 71:
+				return true;
 			case 91:
 				var nvertices = this._reader.ValueAsInt;
 				for (int i = 0; i < nvertices; i++)

@@ -1365,6 +1365,10 @@ public abstract class WriterSingleObjectTests : IOTestsBase
 			l = new Layer("*hello");
 			this.Document.Layers.Add(l);
 
+			Wipeout w = new Wipeout();
+			w.ClipBoundaryVertices.Clear();
+			this.Document.Entities.Add(w);
+
 			//Empty file
 		}
 
@@ -1852,13 +1856,13 @@ public abstract class WriterSingleObjectTests : IOTestsBase
 		{
 			Wipeout wipeout = new Wipeout();
 
-			wipeout.Size = new XY(1, 1);
+			wipeout.Size = new XY(10, 10);
 			wipeout.ClippingState = true;
 
 			wipeout.ClipBoundaryVertices.Add(new XY(0, 0));
-			wipeout.ClipBoundaryVertices.Add(new XY(0, 1));
-			wipeout.ClipBoundaryVertices.Add(new XY(1, 1));
 			wipeout.ClipBoundaryVertices.Add(new XY(1, 0));
+			wipeout.ClipBoundaryVertices.Add(new XY(1, 1));
+			wipeout.ClipBoundaryVertices.Add(new XY(0, 1));
 
 			this.Document.Entities.Add(wipeout);
 		}

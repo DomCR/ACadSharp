@@ -73,13 +73,14 @@ namespace ACadSharp.Tests.IO.DXF
 			{
 				this._output.WriteLine("--- starting read ---");
 
+				CadDocument doc = null;
 				if (TestVariables.SaveOutputInStream)
 				{
-					DxfReader.Read(data.Stream, this.onNotification);
+					doc = DxfReader.Read(data.Stream, this.onNotification);
 				}
 				else
 				{
-					DxfReader.Read(path, this.onNotification);
+					doc = DxfReader.Read(path, this.onNotification);
 				}
 			}
 		}

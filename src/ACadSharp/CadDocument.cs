@@ -6,6 +6,7 @@ using ACadSharp.Objects.Collections;
 using ACadSharp.Prototype1b;
 using ACadSharp.Tables;
 using ACadSharp.Tables.Collections;
+using CSUtilities.Extensions;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -249,8 +250,6 @@ public class CadDocument : IHandledCadObject
 	/// </summary>
 	public void CreateDefaults()
 	{
-		this.Classes.UpdateDxfClasses();
-
 		//Header and summary
 		if (this.Header is null)
 		{
@@ -592,8 +591,17 @@ public class CadDocument : IHandledCadObject
 		{
 			this.Classes.Clear();
 		}
+		else
+		{
+			this.Classes.ForEach(c => c.InstanceCount = 0);
+		}
 
-		this.Classes.UpdateDxfClasses();
+		foreach (IDxfClassDefined item in this._cadObjects.Values.OfType<IDxfClassDefined>())
+		{
+			this.Classes.IncreaseInstanceCount(item.GetDxfClass());
+		}
+
+		this.Classes.ResetClassNumbers();
 	}
 
 	/// <summary>

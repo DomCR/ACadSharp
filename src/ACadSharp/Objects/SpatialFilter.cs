@@ -1,4 +1,5 @@
 ﻿using ACadSharp.Attributes;
+using ACadSharp.Classes;
 using CSMath;
 using System.Collections.Generic;
 
@@ -13,7 +14,7 @@ namespace ACadSharp.Objects;
 /// </remarks>
 [DxfName(DxfFileToken.ObjectSpatialFilter)]
 [DxfSubClass(DxfSubclassMarker.SpatialFilter)]
-public class SpatialFilter : Filter, IOrientable
+public class SpatialFilter : Filter, IOrientable, IDxfClassDefined
 {
 	/// <summary>
 	/// Back clipping plane distance.
@@ -97,5 +98,20 @@ public class SpatialFilter : Filter, IOrientable
 	/// <inheritdoc/>
 	public SpatialFilter(string name) : base(name)
 	{
+	}
+
+	/// <inheritdoc/>
+	public DxfClass GetDxfClass()
+	{
+		return new DxfClass
+		{
+			CppClassName = DxfSubclassMarker.SpatialFilter,
+			DwgVersion = (ACadVersion)20,
+			DxfName = DxfFileToken.ObjectSpatialFilter,
+			ItemClassId = 499,
+			MaintenanceVersion = 0,
+			ProxyFlags = ProxyFlags.None,
+			WasZombie = false,
+		};
 	}
 }

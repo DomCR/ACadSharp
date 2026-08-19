@@ -1,4 +1,5 @@
 ﻿using ACadSharp.Attributes;
+using ACadSharp.Classes;
 using ACadSharp.Entities;
 using CSMath;
 using System.Collections.Generic;
@@ -15,7 +16,7 @@ namespace ACadSharp.Objects.Evaluations;
 /// </remarks>
 [DxfName(DxfFileToken.ObjectBlockPolarStretchAction)]
 [DxfSubClass(DxfSubclassMarker.BlockPolarStretchAction)]
-public class BlockPolarStretchAction : StretchActionBase
+public class BlockPolarStretchAction : StretchActionBase, IDxfClassDefined
 {
 	/// <inheritdoc/>
 	[DxfCodeValue(140)]
@@ -49,4 +50,19 @@ public class BlockPolarStretchAction : StretchActionBase
 	public EvalConnection UpdatedBaseConnection { get; set; }
 
 	public EvalConnection UpdatedEndConnection { get; set; }
+
+	/// <inheritdoc/>
+	public DxfClass GetDxfClass()
+	{
+		return new DxfClass
+		{
+			CppClassName = DxfSubclassMarker.BlockPolarStretchAction,
+			DwgVersion = ACadVersion.AC1018,
+			DxfName = DxfFileToken.ObjectBlockPolarStretchAction,
+			ItemClassId = 499,
+			MaintenanceVersion = 55,
+			ProxyFlags = ACadSharp.Classes.ProxyFlags.EraseAllowed | ACadSharp.Classes.ProxyFlags.CloningAllowed | ACadSharp.Classes.ProxyFlags.DisablesProxyWarningDialog,
+			WasZombie = false,
+		};
+	}
 }

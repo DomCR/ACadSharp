@@ -1239,8 +1239,8 @@ namespace ACadSharp.IO.DWG
 				image.ClipMode = this._objectReader.ReadBit() ? ClipMode.Inside : ClipMode.Outside;
 			}
 
-			image.ClipType = (ClipType)this._objectReader.ReadBitShort();
-			switch (image.ClipType)
+			var clipType = (ClipType)this._objectReader.ReadBitShort();
+			switch (clipType)
 			{
 				case ClipType.Rectangular:
 					image.ClipBoundaryVertices.Add(this._objectReader.Read2RawDouble());
@@ -1335,7 +1335,7 @@ namespace ACadSharp.IO.DWG
 		{
 			//Class ID BL 91
 			//It seems to be the same for all versions
-			int classId = this._mergedReaders.ReadBitLong(); ;
+			int classId = this._mergedReaders.ReadBitLong();
 
 			if (this._classes.TryGetValue((short)classId, out DxfClass dxfClass))
 			{
@@ -5541,7 +5541,10 @@ namespace ACadSharp.IO.DWG
 		private CadTemplate readUnlistedType(short classNumber)
 		{
 			if (!this._classes.TryGetValue(classNumber, out DxfClass c))
+			{
+				this.notify($"Class number {classNumber} not found in classes dictionary.", NotificationType.Warning);
 				return null;
+			}
 
 			CadTemplate template = null;
 
@@ -5790,6 +5793,11 @@ namespace ACadSharp.IO.DWG
 			{
 				template = this.readUnknownNonGraphicalObject(c);
 				this._builder.Notify($"Unlisted object with DXF name {c.DxfName} has been read as an UnknownNonGraphicalObject", NotificationType.Warning);
+			}
+
+			if (template != null)
+			{
+				template.DxfClass = c;
 			}
 
 			return template;

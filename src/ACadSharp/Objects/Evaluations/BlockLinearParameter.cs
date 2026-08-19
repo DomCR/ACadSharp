@@ -1,4 +1,5 @@
 using ACadSharp.Attributes;
+using ACadSharp.Classes;
 
 namespace ACadSharp.Objects.Evaluations;
 
@@ -12,7 +13,7 @@ namespace ACadSharp.Objects.Evaluations;
 /// </remarks>
 [DxfName(DxfFileToken.ObjectBlockLinearParameter)]
 [DxfSubClass(DxfSubclassMarker.BlockLinearParameter)]
-public class BlockLinearParameter : Block2PtParameter
+public class BlockLinearParameter : Block2PtParameter, IDxfClassDefined
 {
 	/// <summary>
 	/// Gets or sets the description of the parameter.
@@ -39,4 +40,19 @@ public class BlockLinearParameter : Block2PtParameter
 	public override string SubclassMarker => DxfSubclassMarker.BlockLinearParameter;
 
 	public ParameterValueSet ValueSet { get; set; } = new ParameterValueSet();
+
+	/// <inheritdoc/>
+	public DxfClass GetDxfClass()
+	{
+		return new DxfClass
+		{
+			CppClassName = DxfSubclassMarker.BlockLinearParameter,
+			DwgVersion = ACadVersion.AC1018,
+			DxfName = DxfFileToken.ObjectBlockLinearParameter,
+			ItemClassId = 499,
+			MaintenanceVersion = 55,
+			ProxyFlags = ACadSharp.Classes.ProxyFlags.EraseAllowed | ACadSharp.Classes.ProxyFlags.CloningAllowed | ACadSharp.Classes.ProxyFlags.DisablesProxyWarningDialog,
+			WasZombie = false,
+		};
+	}
 }

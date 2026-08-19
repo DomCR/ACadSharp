@@ -1,4 +1,5 @@
 ﻿using ACadSharp.Attributes;
+using ACadSharp.Classes;
 
 namespace ACadSharp.Objects;
 
@@ -11,7 +12,7 @@ namespace ACadSharp.Objects;
 /// </remarks>
 [DxfName(DxfFileToken.ObjectPlaceholder)]
 [DxfSubClass(DxfSubclassMarker.AcDbPlaceHolder)]
-public class AcdbPlaceHolder : NonGraphicalObject
+public class AcdbPlaceHolder : NonGraphicalObject, IDxfClassDefined
 {
 	/// <inheritdoc/>
 	public override string ObjectName => DxfFileToken.ObjectPlaceholder;
@@ -21,4 +22,19 @@ public class AcdbPlaceHolder : NonGraphicalObject
 
 	/// <inheritdoc/>
 	public override string SubclassMarker => DxfSubclassMarker.AcDbPlaceHolder;
+
+	/// <inheritdoc/>
+	public DxfClass GetDxfClass()
+	{
+		return new DxfClass
+		{
+			CppClassName = DxfSubclassMarker.AcDbPlaceHolder,
+			DwgVersion = (ACadVersion)0,
+			DxfName = DxfFileToken.ObjectPlaceholder,
+			ItemClassId = 499,
+			MaintenanceVersion = 0,
+			ProxyFlags = ProxyFlags.None,
+			WasZombie = false,
+		};
+	}
 }

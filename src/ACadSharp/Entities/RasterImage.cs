@@ -1,6 +1,9 @@
 ﻿using ACadSharp.Attributes;
+using ACadSharp.Classes;
+using ACadSharp.IO;
 using ACadSharp.Objects;
 using System;
+using System.Collections.Generic;
 
 namespace ACadSharp.Entities;
 
@@ -13,7 +16,7 @@ namespace ACadSharp.Entities;
 /// </remarks>
 [DxfName(DxfFileToken.EntityImage)]
 [DxfSubClass(DxfSubclassMarker.RasterImage)]
-public class RasterImage : CadWipeoutBase
+public class RasterImage : CadWipeoutBase, IDxfClassDefined
 {
 	/// <inheritdoc/>
 	public override ImageDefinition Definition
@@ -54,5 +57,41 @@ public class RasterImage : CadWipeoutBase
 
 	internal RasterImage() : base()
 	{
+	}
+
+	/// <inheritdoc/>
+	public override bool IsValid(CadFileFormat format, ACadVersion version, out IList<string> errors)
+	{
+		var result = base.IsValid(format, version, out errors);
+
+		if (this.DefinitionReactor == null)
+		{
+			errors.Add($"The {nameof(this.DefinitionReactor)} property is null.");
+			result = false;
+		}
+
+		if (this.Definition == null)
+		{
+			errors.Add($"The {nameof(this.Definition)} property is null.");
+			result = false;
+		}
+
+		return result;
+	}
+
+	/// <inheritdoc/>
+	public DxfClass GetDxfClass()
+	{
+		return new DxfClass
+		{
+			ApplicationName = "ISM",
+			CppClassName = DxfSubclassMarker.RasterImage,
+			DwgVersion = (ACadVersion)20,
+			DxfName = DxfFileToken.EntityImage,
+			ItemClassId = 498,
+			MaintenanceVersion = 0,
+			ProxyFlags = ProxyFlags.EraseAllowed | ProxyFlags.TransformAllowed | ProxyFlags.ColorChangeAllowed | ProxyFlags.LayerChangeAllowed | ProxyFlags.LinetypeChangeAllowed | ProxyFlags.LinetypeScaleChangeAllowed | ProxyFlags.VisibilityChangeAllowed | ProxyFlags.R13FormatProxy,
+			WasZombie = false,
+		};
 	}
 }
