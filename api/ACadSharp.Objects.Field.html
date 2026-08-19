@@ -89,7 +89,7 @@
 
 
   <h1 id="ACadSharp_Objects_Field" data-uid="ACadSharp.Objects.Field" class="text-break">
-Class Field  <a class="header-action link-secondary" title="View source" href="https://github.com/DomCR/ACadSharp/blob/master/src/ACadSharp/Objects/Field.cs/#L14"><i class="bi bi-code-slash"></i></a>
+Class Field  <a class="header-action link-secondary" title="View source" href="https://github.com/DomCR/ACadSharp/blob/master/src/ACadSharp/Objects/Field.cs/#L15"><i class="bi bi-code-slash"></i></a>
   </h1>
 
   <div class="facts text-secondary">
@@ -104,7 +104,7 @@ Class Field  <a class="header-action link-secondary" title="View source" href="h
   <div class="codewrapper">
     <pre><code class="lang-csharp hljs">[DxfName(&quot;FIELD&quot;)]
 [DxfSubClass(&quot;AcDbField&quot;)]
-public class Field : NonGraphicalObject, IHandledCadObject, INamedCadObject</code></pre>
+public class Field : NonGraphicalObject, IHandledCadObject, INamedCadObject, IDxfClassDefined</code></pre>
   </div>
 
 
@@ -125,6 +125,7 @@ public class Field : NonGraphicalObject, IHandledCadObject, INamedCadObject</cod
     <dd>
       <div><a class="xref" href="ACadSharp.IHandledCadObject.html">IHandledCadObject</a></div>
       <div><a class="xref" href="ACadSharp.INamedCadObject.html">INamedCadObject</a></div>
+      <div><a class="xref" href="ACadSharp.Classes.IDxfClassDefined.html">IDxfClassDefined</a></div>
     </dd>
   </dl>
 
@@ -239,7 +240,7 @@ Dxf class name <a class="xref" href="ACadSharp.DxfSubclassMarker.html#ACadSharp_
 
   <h3 id="ACadSharp_Objects_Field__ctor" data-uid="ACadSharp.Objects.Field.#ctor">
   Field()
-  <a class="header-action link-secondary" title="View source" href="https://github.com/DomCR/ACadSharp/blob/master/src/ACadSharp/Objects/Field.cs/#L114"><i class="bi bi-code-slash"></i></a>
+  <a class="header-action link-secondary" title="View source" href="https://github.com/DomCR/ACadSharp/blob/master/src/ACadSharp/Objects/Field.cs/#L115"><i class="bi bi-code-slash"></i></a>
   </h3>
 
   <div class="markdown level1 summary"><p>Default constructor.</p>
@@ -270,7 +271,7 @@ Dxf class name <a class="xref" href="ACadSharp.DxfSubclassMarker.html#ACadSharp_
 
   <h3 id="ACadSharp_Objects_Field_CadObjects" data-uid="ACadSharp.Objects.Field.CadObjects">
   CadObjects
-  <a class="header-action link-secondary" title="View source" href="https://github.com/DomCR/ACadSharp/blob/master/src/ACadSharp/Objects/Field.cs/#L21"><i class="bi bi-code-slash"></i></a>
+  <a class="header-action link-secondary" title="View source" href="https://github.com/DomCR/ACadSharp/blob/master/src/ACadSharp/Objects/Field.cs/#L22"><i class="bi bi-code-slash"></i></a>
   </h3>
 
   <div class="markdown level1 summary"><p>Gets or sets the collection of CAD objects associated with this entity.</p>
@@ -304,7 +305,7 @@ public List&lt;CadObject&gt; CadObjects { get; set; }</code></pre>
 
   <h3 id="ACadSharp_Objects_Field_Children" data-uid="ACadSharp.Objects.Field.Children">
   Children
-  <a class="header-action link-secondary" title="View source" href="https://github.com/DomCR/ACadSharp/blob/master/src/ACadSharp/Objects/Field.cs/#L28"><i class="bi bi-code-slash"></i></a>
+  <a class="header-action link-secondary" title="View source" href="https://github.com/DomCR/ACadSharp/blob/master/src/ACadSharp/Objects/Field.cs/#L29"><i class="bi bi-code-slash"></i></a>
   </h3>
 
   <div class="markdown level1 summary"><p>Gets the collection of child fields associated with this object.</p>
@@ -338,7 +339,7 @@ public CadObjectCollection&lt;Field&gt; Children { get; }</code></pre>
 
   <h3 id="ACadSharp_Objects_Field_EvaluationErrorCode" data-uid="ACadSharp.Objects.Field.EvaluationErrorCode">
   EvaluationErrorCode
-  <a class="header-action link-secondary" title="View source" href="https://github.com/DomCR/ACadSharp/blob/master/src/ACadSharp/Objects/Field.cs/#L35"><i class="bi bi-code-slash"></i></a>
+  <a class="header-action link-secondary" title="View source" href="https://github.com/DomCR/ACadSharp/blob/master/src/ACadSharp/Objects/Field.cs/#L36"><i class="bi bi-code-slash"></i></a>
   </h3>
 
   <div class="markdown level1 summary"><p>Gets or sets the error code resulting from the evaluation process.</p>
@@ -371,7 +372,7 @@ public int EvaluationErrorCode { get; set; }</code></pre>
 
   <h3 id="ACadSharp_Objects_Field_EvaluationErrorMessage" data-uid="ACadSharp.Objects.Field.EvaluationErrorMessage">
   EvaluationErrorMessage
-  <a class="header-action link-secondary" title="View source" href="https://github.com/DomCR/ACadSharp/blob/master/src/ACadSharp/Objects/Field.cs/#L41"><i class="bi bi-code-slash"></i></a>
+  <a class="header-action link-secondary" title="View source" href="https://github.com/DomCR/ACadSharp/blob/master/src/ACadSharp/Objects/Field.cs/#L42"><i class="bi bi-code-slash"></i></a>
   </h3>
 
   <div class="markdown level1 summary"><p>Gets or sets the error message generated during evaluation.</p>
@@ -404,7 +405,7 @@ public string EvaluationErrorMessage { get; set; }</code></pre>
 
   <h3 id="ACadSharp_Objects_Field_EvaluationOptionFlags" data-uid="ACadSharp.Objects.Field.EvaluationOptionFlags">
   EvaluationOptionFlags
-  <a class="header-action link-secondary" title="View source" href="https://github.com/DomCR/ACadSharp/blob/master/src/ACadSharp/Objects/Field.cs/#L47"><i class="bi bi-code-slash"></i></a>
+  <a class="header-action link-secondary" title="View source" href="https://github.com/DomCR/ACadSharp/blob/master/src/ACadSharp/Objects/Field.cs/#L48"><i class="bi bi-code-slash"></i></a>
   </h3>
 
   <div class="markdown level1 summary"><p>Gets or sets the evaluation option flags that control how the associated expression is evaluated.</p>
@@ -437,7 +438,7 @@ public EvaluationOptionFlags EvaluationOptionFlags { get; set; }</code></pre>
 
   <h3 id="ACadSharp_Objects_Field_EvaluationStatusFlags" data-uid="ACadSharp.Objects.Field.EvaluationStatusFlags">
   EvaluationStatusFlags
-  <a class="header-action link-secondary" title="View source" href="https://github.com/DomCR/ACadSharp/blob/master/src/ACadSharp/Objects/Field.cs/#L56"><i class="bi bi-code-slash"></i></a>
+  <a class="header-action link-secondary" title="View source" href="https://github.com/DomCR/ACadSharp/blob/master/src/ACadSharp/Objects/Field.cs/#L57"><i class="bi bi-code-slash"></i></a>
   </h3>
 
   <div class="markdown level1 summary"><p>Gets or sets the evaluation status flags that indicate the current state of the object evaluation process.</p>
@@ -475,7 +476,7 @@ EvaluationStatusFlags enumeration.</p>
 
   <h3 id="ACadSharp_Objects_Field_EvaluatorId" data-uid="ACadSharp.Objects.Field.EvaluatorId">
   EvaluatorId
-  <a class="header-action link-secondary" title="View source" href="https://github.com/DomCR/ACadSharp/blob/master/src/ACadSharp/Objects/Field.cs/#L62"><i class="bi bi-code-slash"></i></a>
+  <a class="header-action link-secondary" title="View source" href="https://github.com/DomCR/ACadSharp/blob/master/src/ACadSharp/Objects/Field.cs/#L63"><i class="bi bi-code-slash"></i></a>
   </h3>
 
   <div class="markdown level1 summary"><p>Gets or sets the identifier of the evaluator associated with this entity.</p>
@@ -508,7 +509,7 @@ public string EvaluatorId { get; set; }</code></pre>
 
   <h3 id="ACadSharp_Objects_Field_FieldCode" data-uid="ACadSharp.Objects.Field.FieldCode">
   FieldCode
-  <a class="header-action link-secondary" title="View source" href="https://github.com/DomCR/ACadSharp/blob/master/src/ACadSharp/Objects/Field.cs/#L70"><i class="bi bi-code-slash"></i></a>
+  <a class="header-action link-secondary" title="View source" href="https://github.com/DomCR/ACadSharp/blob/master/src/ACadSharp/Objects/Field.cs/#L71"><i class="bi bi-code-slash"></i></a>
   </h3>
 
   <div class="markdown level1 summary"><p>Gets or sets the code string representing the field definition in the DXF file.</p>
@@ -545,7 +546,7 @@ be used for parsing or evaluating the field within DXF processing workflows.</p>
 
   <h3 id="ACadSharp_Objects_Field_FieldStateFlags" data-uid="ACadSharp.Objects.Field.FieldStateFlags">
   FieldStateFlags
-  <a class="header-action link-secondary" title="View source" href="https://github.com/DomCR/ACadSharp/blob/master/src/ACadSharp/Objects/Field.cs/#L76"><i class="bi bi-code-slash"></i></a>
+  <a class="header-action link-secondary" title="View source" href="https://github.com/DomCR/ACadSharp/blob/master/src/ACadSharp/Objects/Field.cs/#L77"><i class="bi bi-code-slash"></i></a>
   </h3>
 
   <div class="markdown level1 summary"><p>Gets or sets the flags that indicate the current state of the field.</p>
@@ -578,7 +579,7 @@ public FieldStateFlags FieldStateFlags { get; set; }</code></pre>
 
   <h3 id="ACadSharp_Objects_Field_FilingOptionFlags" data-uid="ACadSharp.Objects.Field.FilingOptionFlags">
   FilingOptionFlags
-  <a class="header-action link-secondary" title="View source" href="https://github.com/DomCR/ACadSharp/blob/master/src/ACadSharp/Objects/Field.cs/#L85"><i class="bi bi-code-slash"></i></a>
+  <a class="header-action link-secondary" title="View source" href="https://github.com/DomCR/ACadSharp/blob/master/src/ACadSharp/Objects/Field.cs/#L86"><i class="bi bi-code-slash"></i></a>
   </h3>
 
   <div class="markdown level1 summary"><p>Gets or sets the set of flags that specify filing options for the associated entity.</p>
@@ -616,7 +617,7 @@ the FilingOptionFlags enumeration for details on available options.</p>
 
   <h3 id="ACadSharp_Objects_Field_FormatString" data-uid="ACadSharp.Objects.Field.FormatString">
   FormatString
-  <a class="header-action link-secondary" title="View source" href="https://github.com/DomCR/ACadSharp/blob/master/src/ACadSharp/Objects/Field.cs/#L94"><i class="bi bi-code-slash"></i></a>
+  <a class="header-action link-secondary" title="View source" href="https://github.com/DomCR/ACadSharp/blob/master/src/ACadSharp/Objects/Field.cs/#L95"><i class="bi bi-code-slash"></i></a>
   </h3>
 
   <div class="markdown level1 summary"><p>Gets or sets the format string used to control how values are displayed or serialized.</p>
@@ -654,7 +655,7 @@ output may not be formatted as intended.</p>
 
   <h3 id="ACadSharp_Objects_Field_ObjectName" data-uid="ACadSharp.Objects.Field.ObjectName">
   ObjectName
-  <a class="header-action link-secondary" title="View source" href="https://github.com/DomCR/ACadSharp/blob/master/src/ACadSharp/Objects/Field.cs/#L98"><i class="bi bi-code-slash"></i></a>
+  <a class="header-action link-secondary" title="View source" href="https://github.com/DomCR/ACadSharp/blob/master/src/ACadSharp/Objects/Field.cs/#L99"><i class="bi bi-code-slash"></i></a>
   </h3>
 
   <div class="markdown level1 summary"><p>The CAD class name of an object.</p>
@@ -686,7 +687,7 @@ output may not be formatted as intended.</p>
 
   <h3 id="ACadSharp_Objects_Field_SubclassMarker" data-uid="ACadSharp.Objects.Field.SubclassMarker">
   SubclassMarker
-  <a class="header-action link-secondary" title="View source" href="https://github.com/DomCR/ACadSharp/blob/master/src/ACadSharp/Objects/Field.cs/#L101"><i class="bi bi-code-slash"></i></a>
+  <a class="header-action link-secondary" title="View source" href="https://github.com/DomCR/ACadSharp/blob/master/src/ACadSharp/Objects/Field.cs/#L102"><i class="bi bi-code-slash"></i></a>
   </h3>
 
   <div class="markdown level1 summary"><p>Object Subclass marker.</p>
@@ -718,7 +719,7 @@ output may not be formatted as intended.</p>
 
   <h3 id="ACadSharp_Objects_Field_Value" data-uid="ACadSharp.Objects.Field.Value">
   Value
-  <a class="header-action link-secondary" title="View source" href="https://github.com/DomCR/ACadSharp/blob/master/src/ACadSharp/Objects/Field.cs/#L103"><i class="bi bi-code-slash"></i></a>
+  <a class="header-action link-secondary" title="View source" href="https://github.com/DomCR/ACadSharp/blob/master/src/ACadSharp/Objects/Field.cs/#L104"><i class="bi bi-code-slash"></i></a>
   </h3>
 
   <div class="markdown level1 summary"></div>
@@ -750,7 +751,7 @@ public CadValue Value { get; set; }</code></pre>
 
   <h3 id="ACadSharp_Objects_Field_Values" data-uid="ACadSharp.Objects.Field.Values">
   Values
-  <a class="header-action link-secondary" title="View source" href="https://github.com/DomCR/ACadSharp/blob/master/src/ACadSharp/Objects/Field.cs/#L109"><i class="bi bi-code-slash"></i></a>
+  <a class="header-action link-secondary" title="View source" href="https://github.com/DomCR/ACadSharp/blob/master/src/ACadSharp/Objects/Field.cs/#L110"><i class="bi bi-code-slash"></i></a>
   </h3>
 
   <div class="markdown level1 summary"><p>Gets or sets the collection of CAD values associated with the field.</p>
@@ -780,11 +781,46 @@ public Dictionary&lt;string, CadValue&gt; Values { get; }</code></pre>
 
 
 
+  <h2 class="section" id="methods">Methods
+</h2>
+
+
+  <a id="ACadSharp_Objects_Field_GetDxfClass_" data-uid="ACadSharp.Objects.Field.GetDxfClass*"></a>
+
+  <h3 id="ACadSharp_Objects_Field_GetDxfClass" data-uid="ACadSharp.Objects.Field.GetDxfClass">
+  GetDxfClass()
+  <a class="header-action link-secondary" title="View source" href="https://github.com/DomCR/ACadSharp/blob/master/src/ACadSharp/Objects/Field.cs/#L121"><i class="bi bi-code-slash"></i></a>
+  </h3>
+
+  <div class="markdown level1 summary"></div>
+  <div class="markdown level1 conceptual"></div>
+
+  <div class="codewrapper">
+    <pre><code class="lang-csharp hljs">public DxfClass GetDxfClass()</code></pre>
+  </div>
+
+
+  <h4 class="section">Returns</h4>
+  <dl class="parameters">
+    <dt><a class="xref" href="ACadSharp.Classes.DxfClass.html">DxfClass</a></dt>
+    <dd></dd>
+  </dl>
+
+
+
+
+
+
+
+
+
+
+
 
 </article>
 
         <div class="contribution d-print-none">
-          <a href="https://github.com/DomCR/ACadSharp/blob/master/src/ACadSharp/Objects/Field.cs/#L14" class="edit-link">Edit this page</a>
+          <a href="https://github.com/DomCR/ACadSharp/blob/master/src/ACadSharp/Objects/Field.cs/#L15" class="edit-link">Edit this page</a>
         </div>
 
 

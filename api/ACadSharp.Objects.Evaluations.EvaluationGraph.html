@@ -105,7 +105,7 @@ objects.</p>
   <div class="codewrapper">
     <pre><code class="lang-csharp hljs">[DxfName(&quot;ACAD_EVALUATION_GRAPH&quot;)]
 [DxfSubClass(&quot;AcDbEvalGraph&quot;)]
-public class EvaluationGraph : NonGraphicalObject, IHandledCadObject, INamedCadObject</code></pre>
+public class EvaluationGraph : NonGraphicalObject, IHandledCadObject, INamedCadObject, IDxfClassDefined</code></pre>
   </div>
 
 
@@ -126,6 +126,7 @@ public class EvaluationGraph : NonGraphicalObject, IHandledCadObject, INamedCadO
     <dd>
       <div><a class="xref" href="ACadSharp.IHandledCadObject.html">IHandledCadObject</a></div>
       <div><a class="xref" href="ACadSharp.INamedCadObject.html">INamedCadObject</a></div>
+      <div><a class="xref" href="ACadSharp.Classes.IDxfClassDefined.html">IDxfClassDefined</a></div>
     </dd>
   </dl>
 
@@ -230,7 +231,7 @@ public class EvaluationGraph : NonGraphicalObject, IHandledCadObject, INamedCadO
 
   <h3 id="ACadSharp_Objects_Evaluations_EvaluationGraph__ctor" data-uid="ACadSharp.Objects.Evaluations.EvaluationGraph.#ctor">
   EvaluationGraph()
-  <a class="header-action link-secondary" title="View source" href="https://github.com/DomCR/ACadSharp/blob/master/src/ACadSharp/Objects/Evaluations/EvaluationGraph.cs/#L50"><i class="bi bi-code-slash"></i></a>
+  <a class="header-action link-secondary" title="View source" href="https://github.com/DomCR/ACadSharp/blob/master/src/ACadSharp/Objects/Evaluations/EvaluationGraph.cs/#L51"><i class="bi bi-code-slash"></i></a>
   </h3>
 
   <div class="markdown level1 summary"><p>Initializes a new instance of the EvaluationGraph class.</p>
@@ -260,7 +261,7 @@ public class EvaluationGraph : NonGraphicalObject, IHandledCadObject, INamedCadO
 
   <h3 id="ACadSharp_Objects_Evaluations_EvaluationGraph_DictionaryEntryName" data-uid="ACadSharp.Objects.Evaluations.EvaluationGraph.DictionaryEntryName">
   DictionaryEntryName
-  <a class="header-action link-secondary" title="View source" href="https://github.com/DomCR/ACadSharp/blob/master/src/ACadSharp/Objects/Evaluations/EvaluationGraph.cs/#L43"><i class="bi bi-code-slash"></i></a>
+  <a class="header-action link-secondary" title="View source" href="https://github.com/DomCR/ACadSharp/blob/master/src/ACadSharp/Objects/Evaluations/EvaluationGraph.cs/#L44"><i class="bi bi-code-slash"></i></a>
   </h3>
 
   <div class="markdown level1 summary"><p>Dictionary entry name for the object <a class="xref" href="ACadSharp.Objects.Evaluations.EvaluationGraph.html">EvaluationGraph</a></p>
@@ -296,7 +297,7 @@ public class EvaluationGraph : NonGraphicalObject, IHandledCadObject, INamedCadO
 
   <h3 id="ACadSharp_Objects_Evaluations_EvaluationGraph_Edges" data-uid="ACadSharp.Objects.Evaluations.EvaluationGraph.Edges">
   Edges
-  <a class="header-action link-secondary" title="View source" href="https://github.com/DomCR/ACadSharp/blob/master/src/ACadSharp/Objects/Evaluations/EvaluationGraph.cs/#L18"><i class="bi bi-code-slash"></i></a>
+  <a class="header-action link-secondary" title="View source" href="https://github.com/DomCR/ACadSharp/blob/master/src/ACadSharp/Objects/Evaluations/EvaluationGraph.cs/#L19"><i class="bi bi-code-slash"></i></a>
   </h3>
 
   <div class="markdown level1 summary"><p>Gets a list of <a class="xref" href="ACadSharp.Objects.Evaluations.EvaluationGraph.Edge.html">EvaluationGraph.Edge</a> objects.</p>
@@ -328,7 +329,7 @@ public class EvaluationGraph : NonGraphicalObject, IHandledCadObject, INamedCadO
 
   <h3 id="ACadSharp_Objects_Evaluations_EvaluationGraph_Nodes" data-uid="ACadSharp.Objects.Evaluations.EvaluationGraph.Nodes">
   Nodes
-  <a class="header-action link-secondary" title="View source" href="https://github.com/DomCR/ACadSharp/blob/master/src/ACadSharp/Objects/Evaluations/EvaluationGraph.cs/#L23"><i class="bi bi-code-slash"></i></a>
+  <a class="header-action link-secondary" title="View source" href="https://github.com/DomCR/ACadSharp/blob/master/src/ACadSharp/Objects/Evaluations/EvaluationGraph.cs/#L24"><i class="bi bi-code-slash"></i></a>
   </h3>
 
   <div class="markdown level1 summary"><p>Gets a list of <a class="xref" href="ACadSharp.Objects.Evaluations.EvaluationGraph.Node.html">EvaluationGraph.Node</a> objects.</p>
@@ -360,7 +361,7 @@ public class EvaluationGraph : NonGraphicalObject, IHandledCadObject, INamedCadO
 
   <h3 id="ACadSharp_Objects_Evaluations_EvaluationGraph_ObjectName" data-uid="ACadSharp.Objects.Evaluations.EvaluationGraph.ObjectName">
   ObjectName
-  <a class="header-action link-secondary" title="View source" href="https://github.com/DomCR/ACadSharp/blob/master/src/ACadSharp/Objects/Evaluations/EvaluationGraph.cs/#L26"><i class="bi bi-code-slash"></i></a>
+  <a class="header-action link-secondary" title="View source" href="https://github.com/DomCR/ACadSharp/blob/master/src/ACadSharp/Objects/Evaluations/EvaluationGraph.cs/#L27"><i class="bi bi-code-slash"></i></a>
   </h3>
 
   <div class="markdown level1 summary"><p>The CAD class name of an object.</p>
@@ -392,7 +393,7 @@ public class EvaluationGraph : NonGraphicalObject, IHandledCadObject, INamedCadO
 
   <h3 id="ACadSharp_Objects_Evaluations_EvaluationGraph_ObjectType" data-uid="ACadSharp.Objects.Evaluations.EvaluationGraph.ObjectType">
   ObjectType
-  <a class="header-action link-secondary" title="View source" href="https://github.com/DomCR/ACadSharp/blob/master/src/ACadSharp/Objects/Evaluations/EvaluationGraph.cs/#L29"><i class="bi bi-code-slash"></i></a>
+  <a class="header-action link-secondary" title="View source" href="https://github.com/DomCR/ACadSharp/blob/master/src/ACadSharp/Objects/Evaluations/EvaluationGraph.cs/#L30"><i class="bi bi-code-slash"></i></a>
   </h3>
 
   <div class="markdown level1 summary"><p>Get the object type.</p>
@@ -424,7 +425,7 @@ public class EvaluationGraph : NonGraphicalObject, IHandledCadObject, INamedCadO
 
   <h3 id="ACadSharp_Objects_Evaluations_EvaluationGraph_SubclassMarker" data-uid="ACadSharp.Objects.Evaluations.EvaluationGraph.SubclassMarker">
   SubclassMarker
-  <a class="header-action link-secondary" title="View source" href="https://github.com/DomCR/ACadSharp/blob/master/src/ACadSharp/Objects/Evaluations/EvaluationGraph.cs/#L32"><i class="bi bi-code-slash"></i></a>
+  <a class="header-action link-secondary" title="View source" href="https://github.com/DomCR/ACadSharp/blob/master/src/ACadSharp/Objects/Evaluations/EvaluationGraph.cs/#L33"><i class="bi bi-code-slash"></i></a>
   </h3>
 
   <div class="markdown level1 summary"><p>Object Subclass marker.</p>
@@ -456,7 +457,7 @@ public class EvaluationGraph : NonGraphicalObject, IHandledCadObject, INamedCadO
 
   <h3 id="ACadSharp_Objects_Evaluations_EvaluationGraph_Value96" data-uid="ACadSharp.Objects.Evaluations.EvaluationGraph.Value96">
   Value96
-  <a class="header-action link-secondary" title="View source" href="https://github.com/DomCR/ACadSharp/blob/master/src/ACadSharp/Objects/Evaluations/EvaluationGraph.cs/#L34"><i class="bi bi-code-slash"></i></a>
+  <a class="header-action link-secondary" title="View source" href="https://github.com/DomCR/ACadSharp/blob/master/src/ACadSharp/Objects/Evaluations/EvaluationGraph.cs/#L35"><i class="bi bi-code-slash"></i></a>
   </h3>
 
   <div class="markdown level1 summary"></div>
@@ -488,7 +489,7 @@ public int Value96 { get; set; }</code></pre>
 
   <h3 id="ACadSharp_Objects_Evaluations_EvaluationGraph_Value97" data-uid="ACadSharp.Objects.Evaluations.EvaluationGraph.Value97">
   Value97
-  <a class="header-action link-secondary" title="View source" href="https://github.com/DomCR/ACadSharp/blob/master/src/ACadSharp/Objects/Evaluations/EvaluationGraph.cs/#L37"><i class="bi bi-code-slash"></i></a>
+  <a class="header-action link-secondary" title="View source" href="https://github.com/DomCR/ACadSharp/blob/master/src/ACadSharp/Objects/Evaluations/EvaluationGraph.cs/#L38"><i class="bi bi-code-slash"></i></a>
   </h3>
 
   <div class="markdown level1 summary"></div>
@@ -524,7 +525,7 @@ public int Value97 { get; set; }</code></pre>
 
   <h3 id="ACadSharp_Objects_Evaluations_EvaluationGraph_Clone" data-uid="ACadSharp.Objects.Evaluations.EvaluationGraph.Clone">
   Clone()
-  <a class="header-action link-secondary" title="View source" href="https://github.com/DomCR/ACadSharp/blob/master/src/ACadSharp/Objects/Evaluations/EvaluationGraph.cs/#L54"><i class="bi bi-code-slash"></i></a>
+  <a class="header-action link-secondary" title="View source" href="https://github.com/DomCR/ACadSharp/blob/master/src/ACadSharp/Objects/Evaluations/EvaluationGraph.cs/#L55"><i class="bi bi-code-slash"></i></a>
   </h3>
 
   <div class="markdown level1 summary"><p>Creates a new object that is a copy of the current instance.</p>
@@ -560,10 +561,11 @@ public int Value97 { get; set; }</code></pre>
 
   <h3 id="ACadSharp_Objects_Evaluations_EvaluationGraph_CreateNode" data-uid="ACadSharp.Objects.Evaluations.EvaluationGraph.CreateNode">
   CreateNode()
-  <a class="header-action link-secondary" title="View source" href="https://github.com/DomCR/ACadSharp/blob/master/src/ACadSharp/Objects/Evaluations/EvaluationGraph.cs/#L73"><i class="bi bi-code-slash"></i></a>
+  <a class="header-action link-secondary" title="View source" href="https://github.com/DomCR/ACadSharp/blob/master/src/ACadSharp/Objects/Evaluations/EvaluationGraph.cs/#L78"><i class="bi bi-code-slash"></i></a>
   </h3>
 
-  <div class="markdown level1 summary"></div>
+  <div class="markdown level1 summary"><p>Creates a new <a class="xref" href="ACadSharp.Objects.Evaluations.EvaluationGraph.Node.html">EvaluationGraph.Node</a> object and adds it to the list of nodes.</p>
+</div>
   <div class="markdown level1 conceptual"></div>
 
   <div class="codewrapper">
@@ -574,6 +576,38 @@ public int Value97 { get; set; }</code></pre>
   <h4 class="section">Returns</h4>
   <dl class="parameters">
     <dt><a class="xref" href="ACadSharp.Objects.Evaluations.EvaluationGraph.html">EvaluationGraph</a>.<a class="xref" href="ACadSharp.Objects.Evaluations.EvaluationGraph.Node.html">Node</a></dt>
+    <dd><p>The newly created <a class="xref" href="ACadSharp.Objects.Evaluations.EvaluationGraph.Node.html">EvaluationGraph.Node</a> object.</p>
+</dd>
+  </dl>
+
+
+
+
+
+
+
+
+
+
+
+  <a id="ACadSharp_Objects_Evaluations_EvaluationGraph_GetDxfClass_" data-uid="ACadSharp.Objects.Evaluations.EvaluationGraph.GetDxfClass*"></a>
+
+  <h3 id="ACadSharp_Objects_Evaluations_EvaluationGraph_GetDxfClass" data-uid="ACadSharp.Objects.Evaluations.EvaluationGraph.GetDxfClass">
+  GetDxfClass()
+  <a class="header-action link-secondary" title="View source" href="https://github.com/DomCR/ACadSharp/blob/master/src/ACadSharp/Objects/Evaluations/EvaluationGraph.cs/#L88"><i class="bi bi-code-slash"></i></a>
+  </h3>
+
+  <div class="markdown level1 summary"></div>
+  <div class="markdown level1 conceptual"></div>
+
+  <div class="codewrapper">
+    <pre><code class="lang-csharp hljs">public DxfClass GetDxfClass()</code></pre>
+  </div>
+
+
+  <h4 class="section">Returns</h4>
+  <dl class="parameters">
+    <dt><a class="xref" href="ACadSharp.Classes.DxfClass.html">DxfClass</a></dt>
     <dd></dd>
   </dl>
 
@@ -591,10 +625,11 @@ public int Value97 { get; set; }</code></pre>
 
   <h3 id="ACadSharp_Objects_Evaluations_EvaluationGraph_RemoveNode_System_Int32_" data-uid="ACadSharp.Objects.Evaluations.EvaluationGraph.RemoveNode(System.Int32)">
   RemoveNode(int)
-  <a class="header-action link-secondary" title="View source" href="https://github.com/DomCR/ACadSharp/blob/master/src/ACadSharp/Objects/Evaluations/EvaluationGraph.cs/#L82"><i class="bi bi-code-slash"></i></a>
+  <a class="header-action link-secondary" title="View source" href="https://github.com/DomCR/ACadSharp/blob/master/src/ACadSharp/Objects/Evaluations/EvaluationGraph.cs/#L107"><i class="bi bi-code-slash"></i></a>
   </h3>
 
-  <div class="markdown level1 summary"></div>
+  <div class="markdown level1 summary"><p>Removes a <a class="xref" href="ACadSharp.Objects.Evaluations.EvaluationGraph.Node.html">EvaluationGraph.Node</a> object from the list of nodes by its ID.</p>
+</div>
   <div class="markdown level1 conceptual"></div>
 
   <div class="codewrapper">
@@ -604,13 +639,15 @@ public int Value97 { get; set; }</code></pre>
   <h4 class="section">Parameters</h4>
   <dl class="parameters">
     <dt><code>id</code> <a class="xref" href="https://learn.microsoft.com/dotnet/api/system.int32">int</a></dt>
-    <dd></dd>
+    <dd><p>The ID of the <a class="xref" href="ACadSharp.Objects.Evaluations.EvaluationGraph.Node.html">EvaluationGraph.Node</a> to remove.</p>
+</dd>
   </dl>
 
   <h4 class="section">Returns</h4>
   <dl class="parameters">
     <dt><a class="xref" href="https://learn.microsoft.com/dotnet/api/system.boolean">bool</a></dt>
-    <dd></dd>
+    <dd><p>True if the node was found and removed; otherwise, false.</p>
+</dd>
   </dl>
 
 

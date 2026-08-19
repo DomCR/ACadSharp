@@ -89,7 +89,7 @@
 
 
   <h1 id="ACadSharp_Entities_Wipeout" data-uid="ACadSharp.Entities.Wipeout" class="text-break">
-Class Wipeout  <a class="header-action link-secondary" title="View source" href="https://github.com/DomCR/ACadSharp/blob/master/src/ACadSharp/Entities/Wipeout.cs/#L12"><i class="bi bi-code-slash"></i></a>
+Class Wipeout  <a class="header-action link-secondary" title="View source" href="https://github.com/DomCR/ACadSharp/blob/master/src/ACadSharp/Entities/Wipeout.cs/#L13"><i class="bi bi-code-slash"></i></a>
   </h1>
 
   <div class="facts text-secondary">
@@ -104,7 +104,7 @@ Class Wipeout  <a class="header-action link-secondary" title="View source" href=
   <div class="codewrapper">
     <pre><code class="lang-csharp hljs">[DxfName(&quot;WIPEOUT&quot;)]
 [DxfSubClass(&quot;AcDbWipeout&quot;)]
-public class Wipeout : CadWipeoutBase, IEntity, IHandledCadObject, IGeometricEntity</code></pre>
+public class Wipeout : CadWipeoutBase, IEntity, IHandledCadObject, IGeometricEntity, IDxfClassDefined</code></pre>
   </div>
 
 
@@ -127,6 +127,7 @@ public class Wipeout : CadWipeoutBase, IEntity, IHandledCadObject, IGeometricEnt
       <div><a class="xref" href="ACadSharp.Entities.IEntity.html">IEntity</a></div>
       <div><a class="xref" href="ACadSharp.IHandledCadObject.html">IHandledCadObject</a></div>
       <div><a class="xref" href="ACadSharp.Entities.IGeometricEntity.html">IGeometricEntity</a></div>
+      <div><a class="xref" href="ACadSharp.Classes.IDxfClassDefined.html">IDxfClassDefined</a></div>
     </dd>
   </dl>
 
@@ -349,7 +350,7 @@ Dxf class name <a class="xref" href="ACadSharp.DxfSubclassMarker.html#ACadSharp_
 
   <h3 id="ACadSharp_Entities_Wipeout__ctor" data-uid="ACadSharp.Entities.Wipeout.#ctor">
   Wipeout()
-  <a class="header-action link-secondary" title="View source" href="https://github.com/DomCR/ACadSharp/blob/master/src/ACadSharp/Entities/Wipeout.cs/#L28"><i class="bi bi-code-slash"></i></a>
+  <a class="header-action link-secondary" title="View source" href="https://github.com/DomCR/ACadSharp/blob/master/src/ACadSharp/Entities/Wipeout.cs/#L29"><i class="bi bi-code-slash"></i></a>
   </h3>
 
   <div class="markdown level1 summary"><p>Default constructor.</p>
@@ -380,7 +381,7 @@ Dxf class name <a class="xref" href="ACadSharp.DxfSubclassMarker.html#ACadSharp_
 
   <h3 id="ACadSharp_Entities_Wipeout_ObjectName" data-uid="ACadSharp.Entities.Wipeout.ObjectName">
   ObjectName
-  <a class="header-action link-secondary" title="View source" href="https://github.com/DomCR/ACadSharp/blob/master/src/ACadSharp/Entities/Wipeout.cs/#L20"><i class="bi bi-code-slash"></i></a>
+  <a class="header-action link-secondary" title="View source" href="https://github.com/DomCR/ACadSharp/blob/master/src/ACadSharp/Entities/Wipeout.cs/#L18"><i class="bi bi-code-slash"></i></a>
   </h3>
 
   <div class="markdown level1 summary"><p>The CAD class name of an object.</p>
@@ -412,7 +413,7 @@ Dxf class name <a class="xref" href="ACadSharp.DxfSubclassMarker.html#ACadSharp_
 
   <h3 id="ACadSharp_Entities_Wipeout_ObjectType" data-uid="ACadSharp.Entities.Wipeout.ObjectType">
   ObjectType
-  <a class="header-action link-secondary" title="View source" href="https://github.com/DomCR/ACadSharp/blob/master/src/ACadSharp/Entities/Wipeout.cs/#L17"><i class="bi bi-code-slash"></i></a>
+  <a class="header-action link-secondary" title="View source" href="https://github.com/DomCR/ACadSharp/blob/master/src/ACadSharp/Entities/Wipeout.cs/#L21"><i class="bi bi-code-slash"></i></a>
   </h3>
 
   <div class="markdown level1 summary"><p>Get the object type.</p>
@@ -444,7 +445,7 @@ Dxf class name <a class="xref" href="ACadSharp.DxfSubclassMarker.html#ACadSharp_
 
   <h3 id="ACadSharp_Entities_Wipeout_SubclassMarker" data-uid="ACadSharp.Entities.Wipeout.SubclassMarker">
   SubclassMarker
-  <a class="header-action link-secondary" title="View source" href="https://github.com/DomCR/ACadSharp/blob/master/src/ACadSharp/Entities/Wipeout.cs/#L23"><i class="bi bi-code-slash"></i></a>
+  <a class="header-action link-secondary" title="View source" href="https://github.com/DomCR/ACadSharp/blob/master/src/ACadSharp/Entities/Wipeout.cs/#L24"><i class="bi bi-code-slash"></i></a>
   </h3>
 
   <div class="markdown level1 summary"><p>Object Subclass marker.</p>
@@ -472,11 +473,46 @@ Dxf class name <a class="xref" href="ACadSharp.DxfSubclassMarker.html#ACadSharp_
 
 
 
+  <h2 class="section" id="methods">Methods
+</h2>
+
+
+  <a id="ACadSharp_Entities_Wipeout_GetDxfClass_" data-uid="ACadSharp.Entities.Wipeout.GetDxfClass*"></a>
+
+  <h3 id="ACadSharp_Entities_Wipeout_GetDxfClass" data-uid="ACadSharp.Entities.Wipeout.GetDxfClass">
+  GetDxfClass()
+  <a class="header-action link-secondary" title="View source" href="https://github.com/DomCR/ACadSharp/blob/master/src/ACadSharp/Entities/Wipeout.cs/#L35"><i class="bi bi-code-slash"></i></a>
+  </h3>
+
+  <div class="markdown level1 summary"></div>
+  <div class="markdown level1 conceptual"></div>
+
+  <div class="codewrapper">
+    <pre><code class="lang-csharp hljs">public DxfClass GetDxfClass()</code></pre>
+  </div>
+
+
+  <h4 class="section">Returns</h4>
+  <dl class="parameters">
+    <dt><a class="xref" href="ACadSharp.Classes.DxfClass.html">DxfClass</a></dt>
+    <dd></dd>
+  </dl>
+
+
+
+
+
+
+
+
+
+
+
 
 </article>
 
         <div class="contribution d-print-none">
-          <a href="https://github.com/DomCR/ACadSharp/blob/master/src/ACadSharp/Entities/Wipeout.cs/#L12" class="edit-link">Edit this page</a>
+          <a href="https://github.com/DomCR/ACadSharp/blob/master/src/ACadSharp/Entities/Wipeout.cs/#L13" class="edit-link">Edit this page</a>
         </div>
 
 

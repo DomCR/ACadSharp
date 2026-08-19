@@ -89,7 +89,7 @@
 
 
   <h1 id="ACadSharp_Objects_RasterVariables" data-uid="ACadSharp.Objects.RasterVariables" class="text-break">
-Class RasterVariables  <a class="header-action link-secondary" title="View source" href="https://github.com/DomCR/ACadSharp/blob/master/src/ACadSharp/Objects/RasterVariables.cs/#L13"><i class="bi bi-code-slash"></i></a>
+Class RasterVariables  <a class="header-action link-secondary" title="View source" href="https://github.com/DomCR/ACadSharp/blob/master/src/ACadSharp/Objects/RasterVariables.cs/#L14"><i class="bi bi-code-slash"></i></a>
   </h1>
 
   <div class="facts text-secondary">
@@ -104,7 +104,7 @@ Class RasterVariables  <a class="header-action link-secondary" title="View sourc
   <div class="codewrapper">
     <pre><code class="lang-csharp hljs">[DxfName(&quot;RASTERVARIABLES&quot;)]
 [DxfSubClass(&quot;AcDbRasterVariables&quot;)]
-public class RasterVariables : NonGraphicalObject, IHandledCadObject, INamedCadObject</code></pre>
+public class RasterVariables : NonGraphicalObject, IHandledCadObject, INamedCadObject, IDxfClassDefined</code></pre>
   </div>
 
 
@@ -125,6 +125,7 @@ public class RasterVariables : NonGraphicalObject, IHandledCadObject, INamedCadO
     <dd>
       <div><a class="xref" href="ACadSharp.IHandledCadObject.html">IHandledCadObject</a></div>
       <div><a class="xref" href="ACadSharp.INamedCadObject.html">INamedCadObject</a></div>
+      <div><a class="xref" href="ACadSharp.Classes.IDxfClassDefined.html">IDxfClassDefined</a></div>
     </dd>
   </dl>
 
@@ -239,7 +240,7 @@ Dxf class name <a class="xref" href="ACadSharp.DxfSubclassMarker.html#ACadSharp_
 
   <h3 id="ACadSharp_Objects_RasterVariables__ctor" data-uid="ACadSharp.Objects.RasterVariables.#ctor">
   RasterVariables()
-  <a class="header-action link-secondary" title="View source" href="https://github.com/DomCR/ACadSharp/blob/master/src/ACadSharp/Objects/RasterVariables.cs/#L49"><i class="bi bi-code-slash"></i></a>
+  <a class="header-action link-secondary" title="View source" href="https://github.com/DomCR/ACadSharp/blob/master/src/ACadSharp/Objects/RasterVariables.cs/#L50"><i class="bi bi-code-slash"></i></a>
   </h3>
 
   <div class="markdown level1 summary"><p>Default constructor.</p>
@@ -270,7 +271,7 @@ Dxf class name <a class="xref" href="ACadSharp.DxfSubclassMarker.html#ACadSharp_
 
   <h3 id="ACadSharp_Objects_RasterVariables_ClassVersion" data-uid="ACadSharp.Objects.RasterVariables.ClassVersion">
   ClassVersion
-  <a class="header-action link-secondary" title="View source" href="https://github.com/DomCR/ACadSharp/blob/master/src/ACadSharp/Objects/RasterVariables.cs/#L20"><i class="bi bi-code-slash"></i></a>
+  <a class="header-action link-secondary" title="View source" href="https://github.com/DomCR/ACadSharp/blob/master/src/ACadSharp/Objects/RasterVariables.cs/#L21"><i class="bi bi-code-slash"></i></a>
   </h3>
 
   <div class="markdown level1 summary"><p>Class version 0.</p>
@@ -303,7 +304,7 @@ public int ClassVersion { get; }</code></pre>
 
   <h3 id="ACadSharp_Objects_RasterVariables_DisplayQuality" data-uid="ACadSharp.Objects.RasterVariables.DisplayQuality">
   DisplayQuality
-  <a class="header-action link-secondary" title="View source" href="https://github.com/DomCR/ACadSharp/blob/master/src/ACadSharp/Objects/RasterVariables.cs/#L26"><i class="bi bi-code-slash"></i></a>
+  <a class="header-action link-secondary" title="View source" href="https://github.com/DomCR/ACadSharp/blob/master/src/ACadSharp/Objects/RasterVariables.cs/#L27"><i class="bi bi-code-slash"></i></a>
   </h3>
 
   <div class="markdown level1 summary"><p>Gets or sets the image display quality (screen only).</p>
@@ -336,7 +337,7 @@ public ImageDisplayQuality DisplayQuality { get; set; }</code></pre>
 
   <h3 id="ACadSharp_Objects_RasterVariables_IsDisplayFrameShown" data-uid="ACadSharp.Objects.RasterVariables.IsDisplayFrameShown">
   IsDisplayFrameShown
-  <a class="header-action link-secondary" title="View source" href="https://github.com/DomCR/ACadSharp/blob/master/src/ACadSharp/Objects/RasterVariables.cs/#L32"><i class="bi bi-code-slash"></i></a>
+  <a class="header-action link-secondary" title="View source" href="https://github.com/DomCR/ACadSharp/blob/master/src/ACadSharp/Objects/RasterVariables.cs/#L33"><i class="bi bi-code-slash"></i></a>
   </h3>
 
   <div class="markdown level1 summary"><p>Gets or sets if the image frame is shown.</p>
@@ -369,7 +370,7 @@ public bool IsDisplayFrameShown { get; set; }</code></pre>
 
   <h3 id="ACadSharp_Objects_RasterVariables_ObjectName" data-uid="ACadSharp.Objects.RasterVariables.ObjectName">
   ObjectName
-  <a class="header-action link-secondary" title="View source" href="https://github.com/DomCR/ACadSharp/blob/master/src/ACadSharp/Objects/RasterVariables.cs/#L36"><i class="bi bi-code-slash"></i></a>
+  <a class="header-action link-secondary" title="View source" href="https://github.com/DomCR/ACadSharp/blob/master/src/ACadSharp/Objects/RasterVariables.cs/#L37"><i class="bi bi-code-slash"></i></a>
   </h3>
 
   <div class="markdown level1 summary"><p>The CAD class name of an object.</p>
@@ -401,7 +402,7 @@ public bool IsDisplayFrameShown { get; set; }</code></pre>
 
   <h3 id="ACadSharp_Objects_RasterVariables_SubclassMarker" data-uid="ACadSharp.Objects.RasterVariables.SubclassMarker">
   SubclassMarker
-  <a class="header-action link-secondary" title="View source" href="https://github.com/DomCR/ACadSharp/blob/master/src/ACadSharp/Objects/RasterVariables.cs/#L39"><i class="bi bi-code-slash"></i></a>
+  <a class="header-action link-secondary" title="View source" href="https://github.com/DomCR/ACadSharp/blob/master/src/ACadSharp/Objects/RasterVariables.cs/#L40"><i class="bi bi-code-slash"></i></a>
   </h3>
 
   <div class="markdown level1 summary"><p>Object Subclass marker.</p>
@@ -433,7 +434,7 @@ public bool IsDisplayFrameShown { get; set; }</code></pre>
 
   <h3 id="ACadSharp_Objects_RasterVariables_Units" data-uid="ACadSharp.Objects.RasterVariables.Units">
   Units
-  <a class="header-action link-secondary" title="View source" href="https://github.com/DomCR/ACadSharp/blob/master/src/ACadSharp/Objects/RasterVariables.cs/#L45"><i class="bi bi-code-slash"></i></a>
+  <a class="header-action link-secondary" title="View source" href="https://github.com/DomCR/ACadSharp/blob/master/src/ACadSharp/Objects/RasterVariables.cs/#L46"><i class="bi bi-code-slash"></i></a>
   </h3>
 
   <div class="markdown level1 summary"><p>AutoCAD units for inserting images. <br>
@@ -463,11 +464,46 @@ public ImageUnits Units { get; set; }</code></pre>
 
 
 
+  <h2 class="section" id="methods">Methods
+</h2>
+
+
+  <a id="ACadSharp_Objects_RasterVariables_GetDxfClass_" data-uid="ACadSharp.Objects.RasterVariables.GetDxfClass*"></a>
+
+  <h3 id="ACadSharp_Objects_RasterVariables_GetDxfClass" data-uid="ACadSharp.Objects.RasterVariables.GetDxfClass">
+  GetDxfClass()
+  <a class="header-action link-secondary" title="View source" href="https://github.com/DomCR/ACadSharp/blob/master/src/ACadSharp/Objects/RasterVariables.cs/#L55"><i class="bi bi-code-slash"></i></a>
+  </h3>
+
+  <div class="markdown level1 summary"></div>
+  <div class="markdown level1 conceptual"></div>
+
+  <div class="codewrapper">
+    <pre><code class="lang-csharp hljs">public DxfClass GetDxfClass()</code></pre>
+  </div>
+
+
+  <h4 class="section">Returns</h4>
+  <dl class="parameters">
+    <dt><a class="xref" href="ACadSharp.Classes.DxfClass.html">DxfClass</a></dt>
+    <dd></dd>
+  </dl>
+
+
+
+
+
+
+
+
+
+
+
 
 </article>
 
         <div class="contribution d-print-none">
-          <a href="https://github.com/DomCR/ACadSharp/blob/master/src/ACadSharp/Objects/RasterVariables.cs/#L13" class="edit-link">Edit this page</a>
+          <a href="https://github.com/DomCR/ACadSharp/blob/master/src/ACadSharp/Objects/RasterVariables.cs/#L14" class="edit-link">Edit this page</a>
         </div>
 
 

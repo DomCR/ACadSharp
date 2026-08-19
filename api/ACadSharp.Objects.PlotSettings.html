@@ -89,7 +89,7 @@
 
 
   <h1 id="ACadSharp_Objects_PlotSettings" data-uid="ACadSharp.Objects.PlotSettings" class="text-break">
-Class PlotSettings  <a class="header-action link-secondary" title="View source" href="https://github.com/DomCR/ACadSharp/blob/master/src/ACadSharp/Objects/PlotSettings.cs/#L14"><i class="bi bi-code-slash"></i></a>
+Class PlotSettings  <a class="header-action link-secondary" title="View source" href="https://github.com/DomCR/ACadSharp/blob/master/src/ACadSharp/Objects/PlotSettings.cs/#L15"><i class="bi bi-code-slash"></i></a>
   </h1>
 
   <div class="facts text-secondary">
@@ -104,7 +104,7 @@ Class PlotSettings  <a class="header-action link-secondary" title="View source" 
   <div class="codewrapper">
     <pre><code class="lang-csharp hljs">[DxfName(&quot;PLOTSETTINGS&quot;)]
 [DxfSubClass(&quot;AcDbPlotSettings&quot;)]
-public class PlotSettings : NonGraphicalObject, IHandledCadObject, INamedCadObject</code></pre>
+public class PlotSettings : NonGraphicalObject, IHandledCadObject, INamedCadObject, IDxfClassDefined</code></pre>
   </div>
 
 
@@ -125,6 +125,7 @@ public class PlotSettings : NonGraphicalObject, IHandledCadObject, INamedCadObje
     <dd>
       <div><a class="xref" href="ACadSharp.IHandledCadObject.html">IHandledCadObject</a></div>
       <div><a class="xref" href="ACadSharp.INamedCadObject.html">INamedCadObject</a></div>
+      <div><a class="xref" href="ACadSharp.Classes.IDxfClassDefined.html">IDxfClassDefined</a></div>
     </dd>
   </dl>
 
@@ -242,7 +243,7 @@ Dxf class name <a class="xref" href="ACadSharp.DxfSubclassMarker.html#ACadSharp_
 
   <h3 id="ACadSharp_Objects_PlotSettings__ctor" data-uid="ACadSharp.Objects.PlotSettings.#ctor">
   PlotSettings()
-  <a class="header-action link-secondary" title="View source" href="https://github.com/DomCR/ACadSharp/blob/master/src/ACadSharp/Objects/PlotSettings.cs/#L253"><i class="bi bi-code-slash"></i></a>
+  <a class="header-action link-secondary" title="View source" href="https://github.com/DomCR/ACadSharp/blob/master/src/ACadSharp/Objects/PlotSettings.cs/#L254"><i class="bi bi-code-slash"></i></a>
   </h3>
 
   <div class="markdown level1 summary"></div>
@@ -268,7 +269,7 @@ Dxf class name <a class="xref" href="ACadSharp.DxfSubclassMarker.html#ACadSharp_
 
   <h3 id="ACadSharp_Objects_PlotSettings__ctor_System_String_" data-uid="ACadSharp.Objects.PlotSettings.#ctor(System.String)">
   PlotSettings(string)
-  <a class="header-action link-secondary" title="View source" href="https://github.com/DomCR/ACadSharp/blob/master/src/ACadSharp/Objects/PlotSettings.cs/#L257"><i class="bi bi-code-slash"></i></a>
+  <a class="header-action link-secondary" title="View source" href="https://github.com/DomCR/ACadSharp/blob/master/src/ACadSharp/Objects/PlotSettings.cs/#L258"><i class="bi bi-code-slash"></i></a>
   </h3>
 
   <div class="markdown level1 summary"></div>
@@ -303,7 +304,7 @@ Dxf class name <a class="xref" href="ACadSharp.DxfSubclassMarker.html#ACadSharp_
 
   <h3 id="ACadSharp_Objects_PlotSettings_DenominatorScale" data-uid="ACadSharp.Objects.PlotSettings.DenominatorScale">
   DenominatorScale
-  <a class="header-action link-secondary" title="View source" href="https://github.com/DomCR/ACadSharp/blob/master/src/ACadSharp/Objects/PlotSettings.cs/#L21"><i class="bi bi-code-slash"></i></a>
+  <a class="header-action link-secondary" title="View source" href="https://github.com/DomCR/ACadSharp/blob/master/src/ACadSharp/Objects/PlotSettings.cs/#L22"><i class="bi bi-code-slash"></i></a>
   </h3>
 
   <div class="markdown level1 summary"><p>Denominator of custom print scale: drawing units</p>
@@ -336,7 +337,7 @@ public double DenominatorScale { get; set; }</code></pre>
 
   <h3 id="ACadSharp_Objects_PlotSettings_Flags" data-uid="ACadSharp.Objects.PlotSettings.Flags">
   Flags
-  <a class="header-action link-secondary" title="View source" href="https://github.com/DomCR/ACadSharp/blob/master/src/ACadSharp/Objects/PlotSettings.cs/#L39"><i class="bi bi-code-slash"></i></a>
+  <a class="header-action link-secondary" title="View source" href="https://github.com/DomCR/ACadSharp/blob/master/src/ACadSharp/Objects/PlotSettings.cs/#L40"><i class="bi bi-code-slash"></i></a>
   </h3>
 
   <div class="markdown level1 summary"><p>Plot layout flags</p>
@@ -369,7 +370,7 @@ public PlotFlags Flags { get; set; }</code></pre>
 
   <h3 id="ACadSharp_Objects_PlotSettings_NumeratorScale" data-uid="ACadSharp.Objects.PlotSettings.NumeratorScale">
   NumeratorScale
-  <a class="header-action link-secondary" title="View source" href="https://github.com/DomCR/ACadSharp/blob/master/src/ACadSharp/Objects/PlotSettings.cs/#L45"><i class="bi bi-code-slash"></i></a>
+  <a class="header-action link-secondary" title="View source" href="https://github.com/DomCR/ACadSharp/blob/master/src/ACadSharp/Objects/PlotSettings.cs/#L46"><i class="bi bi-code-slash"></i></a>
   </h3>
 
   <div class="markdown level1 summary"><p>Numerator of custom print scale: real world(paper) units</p>
@@ -402,7 +403,7 @@ public double NumeratorScale { get; set; }</code></pre>
 
   <h3 id="ACadSharp_Objects_PlotSettings_ObjectName" data-uid="ACadSharp.Objects.PlotSettings.ObjectName">
   ObjectName
-  <a class="header-action link-secondary" title="View source" href="https://github.com/DomCR/ACadSharp/blob/master/src/ACadSharp/Objects/PlotSettings.cs/#L61"><i class="bi bi-code-slash"></i></a>
+  <a class="header-action link-secondary" title="View source" href="https://github.com/DomCR/ACadSharp/blob/master/src/ACadSharp/Objects/PlotSettings.cs/#L62"><i class="bi bi-code-slash"></i></a>
   </h3>
 
   <div class="markdown level1 summary"><p>The CAD class name of an object.</p>
@@ -434,7 +435,7 @@ public double NumeratorScale { get; set; }</code></pre>
 
   <h3 id="ACadSharp_Objects_PlotSettings_ObjectType" data-uid="ACadSharp.Objects.PlotSettings.ObjectType">
   ObjectType
-  <a class="header-action link-secondary" title="View source" href="https://github.com/DomCR/ACadSharp/blob/master/src/ACadSharp/Objects/PlotSettings.cs/#L64"><i class="bi bi-code-slash"></i></a>
+  <a class="header-action link-secondary" title="View source" href="https://github.com/DomCR/ACadSharp/blob/master/src/ACadSharp/Objects/PlotSettings.cs/#L65"><i class="bi bi-code-slash"></i></a>
   </h3>
 
   <div class="markdown level1 summary"><p>Get the object type.</p>
@@ -466,7 +467,7 @@ public double NumeratorScale { get; set; }</code></pre>
 
   <h3 id="ACadSharp_Objects_PlotSettings_PageName" data-uid="ACadSharp.Objects.PlotSettings.PageName">
   PageName
-  <a class="header-action link-secondary" title="View source" href="https://github.com/DomCR/ACadSharp/blob/master/src/ACadSharp/Objects/PlotSettings.cs/#L69"><i class="bi bi-code-slash"></i></a>
+  <a class="header-action link-secondary" title="View source" href="https://github.com/DomCR/ACadSharp/blob/master/src/ACadSharp/Objects/PlotSettings.cs/#L70"><i class="bi bi-code-slash"></i></a>
   </h3>
 
   <div class="markdown level1 summary"><p>Page Setup name</p>
@@ -499,7 +500,7 @@ public string PageName { get; set; }</code></pre>
 
   <h3 id="ACadSharp_Objects_PlotSettings_PaperHeight" data-uid="ACadSharp.Objects.PlotSettings.PaperHeight">
   PaperHeight
-  <a class="header-action link-secondary" title="View source" href="https://github.com/DomCR/ACadSharp/blob/master/src/ACadSharp/Objects/PlotSettings.cs/#L75"><i class="bi bi-code-slash"></i></a>
+  <a class="header-action link-secondary" title="View source" href="https://github.com/DomCR/ACadSharp/blob/master/src/ACadSharp/Objects/PlotSettings.cs/#L76"><i class="bi bi-code-slash"></i></a>
   </h3>
 
   <div class="markdown level1 summary"><p>Physical paper height in millimeters.</p>
@@ -532,7 +533,7 @@ public double PaperHeight { get; set; }</code></pre>
 
   <h3 id="ACadSharp_Objects_PlotSettings_PaperImageOrigin" data-uid="ACadSharp.Objects.PlotSettings.PaperImageOrigin">
   PaperImageOrigin
-  <a class="header-action link-secondary" title="View source" href="https://github.com/DomCR/ACadSharp/blob/master/src/ACadSharp/Objects/PlotSettings.cs/#L81"><i class="bi bi-code-slash"></i></a>
+  <a class="header-action link-secondary" title="View source" href="https://github.com/DomCR/ACadSharp/blob/master/src/ACadSharp/Objects/PlotSettings.cs/#L82"><i class="bi bi-code-slash"></i></a>
   </h3>
 
   <div class="markdown level1 summary"><p>Paper image origin</p>
@@ -564,7 +565,7 @@ public double PaperHeight { get; set; }</code></pre>
 
   <h3 id="ACadSharp_Objects_PlotSettings_PaperImageOriginX" data-uid="ACadSharp.Objects.PlotSettings.PaperImageOriginX">
   PaperImageOriginX
-  <a class="header-action link-secondary" title="View source" href="https://github.com/DomCR/ACadSharp/blob/master/src/ACadSharp/Objects/PlotSettings.cs/#L86"><i class="bi bi-code-slash"></i></a>
+  <a class="header-action link-secondary" title="View source" href="https://github.com/DomCR/ACadSharp/blob/master/src/ACadSharp/Objects/PlotSettings.cs/#L87"><i class="bi bi-code-slash"></i></a>
   </h3>
 
   <div class="markdown level1 summary"><p>Paper image origin: X value</p>
@@ -597,7 +598,7 @@ public double PaperImageOriginX { get; set; }</code></pre>
 
   <h3 id="ACadSharp_Objects_PlotSettings_PaperImageOriginY" data-uid="ACadSharp.Objects.PlotSettings.PaperImageOriginY">
   PaperImageOriginY
-  <a class="header-action link-secondary" title="View source" href="https://github.com/DomCR/ACadSharp/blob/master/src/ACadSharp/Objects/PlotSettings.cs/#L92"><i class="bi bi-code-slash"></i></a>
+  <a class="header-action link-secondary" title="View source" href="https://github.com/DomCR/ACadSharp/blob/master/src/ACadSharp/Objects/PlotSettings.cs/#L93"><i class="bi bi-code-slash"></i></a>
   </h3>
 
   <div class="markdown level1 summary"><p>Paper image origin: Y value</p>
@@ -630,7 +631,7 @@ public double PaperImageOriginY { get; set; }</code></pre>
 
   <h3 id="ACadSharp_Objects_PlotSettings_PaperRotation" data-uid="ACadSharp.Objects.PlotSettings.PaperRotation">
   PaperRotation
-  <a class="header-action link-secondary" title="View source" href="https://github.com/DomCR/ACadSharp/blob/master/src/ACadSharp/Objects/PlotSettings.cs/#L98"><i class="bi bi-code-slash"></i></a>
+  <a class="header-action link-secondary" title="View source" href="https://github.com/DomCR/ACadSharp/blob/master/src/ACadSharp/Objects/PlotSettings.cs/#L99"><i class="bi bi-code-slash"></i></a>
   </h3>
 
   <div class="markdown level1 summary"><p>Plot paper rotation.</p>
@@ -663,7 +664,7 @@ public PlotRotation PaperRotation { get; set; }</code></pre>
 
   <h3 id="ACadSharp_Objects_PlotSettings_PaperSize" data-uid="ACadSharp.Objects.PlotSettings.PaperSize">
   PaperSize
-  <a class="header-action link-secondary" title="View source" href="https://github.com/DomCR/ACadSharp/blob/master/src/ACadSharp/Objects/PlotSettings.cs/#L104"><i class="bi bi-code-slash"></i></a>
+  <a class="header-action link-secondary" title="View source" href="https://github.com/DomCR/ACadSharp/blob/master/src/ACadSharp/Objects/PlotSettings.cs/#L105"><i class="bi bi-code-slash"></i></a>
   </h3>
 
   <div class="markdown level1 summary"><p>Paper size</p>
@@ -696,7 +697,7 @@ public string PaperSize { get; set; }</code></pre>
 
   <h3 id="ACadSharp_Objects_PlotSettings_PaperUnits" data-uid="ACadSharp.Objects.PlotSettings.PaperUnits">
   PaperUnits
-  <a class="header-action link-secondary" title="View source" href="https://github.com/DomCR/ACadSharp/blob/master/src/ACadSharp/Objects/PlotSettings.cs/#L110"><i class="bi bi-code-slash"></i></a>
+  <a class="header-action link-secondary" title="View source" href="https://github.com/DomCR/ACadSharp/blob/master/src/ACadSharp/Objects/PlotSettings.cs/#L111"><i class="bi bi-code-slash"></i></a>
   </h3>
 
   <div class="markdown level1 summary"><p>Plot paper units.</p>
@@ -729,7 +730,7 @@ public PlotPaperUnits PaperUnits { get; set; }</code></pre>
 
   <h3 id="ACadSharp_Objects_PlotSettings_PaperWidth" data-uid="ACadSharp.Objects.PlotSettings.PaperWidth">
   PaperWidth
-  <a class="header-action link-secondary" title="View source" href="https://github.com/DomCR/ACadSharp/blob/master/src/ACadSharp/Objects/PlotSettings.cs/#L116"><i class="bi bi-code-slash"></i></a>
+  <a class="header-action link-secondary" title="View source" href="https://github.com/DomCR/ACadSharp/blob/master/src/ACadSharp/Objects/PlotSettings.cs/#L117"><i class="bi bi-code-slash"></i></a>
   </h3>
 
   <div class="markdown level1 summary"><p>Physical paper width in millimeters.</p>
@@ -762,7 +763,7 @@ public double PaperWidth { get; set; }</code></pre>
 
   <h3 id="ACadSharp_Objects_PlotSettings_PlotOriginX" data-uid="ACadSharp.Objects.PlotSettings.PlotOriginX">
   PlotOriginX
-  <a class="header-action link-secondary" title="View source" href="https://github.com/DomCR/ACadSharp/blob/master/src/ACadSharp/Objects/PlotSettings.cs/#L122"><i class="bi bi-code-slash"></i></a>
+  <a class="header-action link-secondary" title="View source" href="https://github.com/DomCR/ACadSharp/blob/master/src/ACadSharp/Objects/PlotSettings.cs/#L123"><i class="bi bi-code-slash"></i></a>
   </h3>
 
   <div class="markdown level1 summary"><p>Plot origin: X value of origin offset in millimeters</p>
@@ -795,7 +796,7 @@ public double PlotOriginX { get; set; }</code></pre>
 
   <h3 id="ACadSharp_Objects_PlotSettings_PlotOriginY" data-uid="ACadSharp.Objects.PlotSettings.PlotOriginY">
   PlotOriginY
-  <a class="header-action link-secondary" title="View source" href="https://github.com/DomCR/ACadSharp/blob/master/src/ACadSharp/Objects/PlotSettings.cs/#L128"><i class="bi bi-code-slash"></i></a>
+  <a class="header-action link-secondary" title="View source" href="https://github.com/DomCR/ACadSharp/blob/master/src/ACadSharp/Objects/PlotSettings.cs/#L129"><i class="bi bi-code-slash"></i></a>
   </h3>
 
   <div class="markdown level1 summary"><p>Plot origin: Y value of origin offset in millimeters</p>
@@ -828,7 +829,7 @@ public double PlotOriginY { get; set; }</code></pre>
 
   <h3 id="ACadSharp_Objects_PlotSettings_PlotType" data-uid="ACadSharp.Objects.PlotSettings.PlotType">
   PlotType
-  <a class="header-action link-secondary" title="View source" href="https://github.com/DomCR/ACadSharp/blob/master/src/ACadSharp/Objects/PlotSettings.cs/#L134"><i class="bi bi-code-slash"></i></a>
+  <a class="header-action link-secondary" title="View source" href="https://github.com/DomCR/ACadSharp/blob/master/src/ACadSharp/Objects/PlotSettings.cs/#L135"><i class="bi bi-code-slash"></i></a>
   </h3>
 
   <div class="markdown level1 summary"><p>Portion of paper space to output to the media</p>
@@ -861,7 +862,7 @@ public PlotType PlotType { get; set; }</code></pre>
 
   <h3 id="ACadSharp_Objects_PlotSettings_PlotViewName" data-uid="ACadSharp.Objects.PlotSettings.PlotViewName">
   PlotViewName
-  <a class="header-action link-secondary" title="View source" href="https://github.com/DomCR/ACadSharp/blob/master/src/ACadSharp/Objects/PlotSettings.cs/#L140"><i class="bi bi-code-slash"></i></a>
+  <a class="header-action link-secondary" title="View source" href="https://github.com/DomCR/ACadSharp/blob/master/src/ACadSharp/Objects/PlotSettings.cs/#L141"><i class="bi bi-code-slash"></i></a>
   </h3>
 
   <div class="markdown level1 summary"><p>Plot view name</p>
@@ -894,7 +895,7 @@ public string PlotViewName { get; set; }</code></pre>
 
   <h3 id="ACadSharp_Objects_PlotSettings_PrintScale" data-uid="ACadSharp.Objects.PlotSettings.PrintScale">
   PrintScale
-  <a class="header-action link-secondary" title="View source" href="https://github.com/DomCR/ACadSharp/blob/master/src/ACadSharp/Objects/PlotSettings.cs/#L146"><i class="bi bi-code-slash"></i></a>
+  <a class="header-action link-secondary" title="View source" href="https://github.com/DomCR/ACadSharp/blob/master/src/ACadSharp/Objects/PlotSettings.cs/#L147"><i class="bi bi-code-slash"></i></a>
   </h3>
 
   <div class="markdown level1 summary"><p>Gets the scale factor.</p>
@@ -926,7 +927,7 @@ public string PlotViewName { get; set; }</code></pre>
 
   <h3 id="ACadSharp_Objects_PlotSettings_ScaledFit" data-uid="ACadSharp.Objects.PlotSettings.ScaledFit">
   ScaledFit
-  <a class="header-action link-secondary" title="View source" href="https://github.com/DomCR/ACadSharp/blob/master/src/ACadSharp/Objects/PlotSettings.cs/#L154"><i class="bi bi-code-slash"></i></a>
+  <a class="header-action link-secondary" title="View source" href="https://github.com/DomCR/ACadSharp/blob/master/src/ACadSharp/Objects/PlotSettings.cs/#L155"><i class="bi bi-code-slash"></i></a>
   </h3>
 
   <div class="markdown level1 summary"><p>Standard scale type</p>
@@ -959,7 +960,7 @@ public ScaledType ScaledFit { get; set; }</code></pre>
 
   <h3 id="ACadSharp_Objects_PlotSettings_ShadePlotDPI" data-uid="ACadSharp.Objects.PlotSettings.ShadePlotDPI">
   ShadePlotDPI
-  <a class="header-action link-secondary" title="View source" href="https://github.com/DomCR/ACadSharp/blob/master/src/ACadSharp/Objects/PlotSettings.cs/#L166"><i class="bi bi-code-slash"></i></a>
+  <a class="header-action link-secondary" title="View source" href="https://github.com/DomCR/ACadSharp/blob/master/src/ACadSharp/Objects/PlotSettings.cs/#L167"><i class="bi bi-code-slash"></i></a>
   </h3>
 
   <div class="markdown level1 summary"><p>Shade plot custom DPI.</p>
@@ -996,7 +997,7 @@ public short ShadePlotDPI { get; set; }</code></pre>
 
   <h3 id="ACadSharp_Objects_PlotSettings_ShadePlotIDHandle" data-uid="ACadSharp.Objects.PlotSettings.ShadePlotIDHandle">
   ShadePlotIDHandle
-  <a class="header-action link-secondary" title="View source" href="https://github.com/DomCR/ACadSharp/blob/master/src/ACadSharp/Objects/PlotSettings.cs/#L181"><i class="bi bi-code-slash"></i></a>
+  <a class="header-action link-secondary" title="View source" href="https://github.com/DomCR/ACadSharp/blob/master/src/ACadSharp/Objects/PlotSettings.cs/#L182"><i class="bi bi-code-slash"></i></a>
   </h3>
 
   <div class="markdown level1 summary"><p>ShadePlot ID/Handle(optional)</p>
@@ -1029,7 +1030,7 @@ public ulong ShadePlotIDHandle { get; set; }</code></pre>
 
   <h3 id="ACadSharp_Objects_PlotSettings_ShadePlotMode" data-uid="ACadSharp.Objects.PlotSettings.ShadePlotMode">
   ShadePlotMode
-  <a class="header-action link-secondary" title="View source" href="https://github.com/DomCR/ACadSharp/blob/master/src/ACadSharp/Objects/PlotSettings.cs/#L187"><i class="bi bi-code-slash"></i></a>
+  <a class="header-action link-secondary" title="View source" href="https://github.com/DomCR/ACadSharp/blob/master/src/ACadSharp/Objects/PlotSettings.cs/#L188"><i class="bi bi-code-slash"></i></a>
   </h3>
 
   <div class="markdown level1 summary"><p>Plot shade mode.</p>
@@ -1062,7 +1063,7 @@ public ShadePlotMode ShadePlotMode { get; set; }</code></pre>
 
   <h3 id="ACadSharp_Objects_PlotSettings_ShadePlotResolutionMode" data-uid="ACadSharp.Objects.PlotSettings.ShadePlotResolutionMode">
   ShadePlotResolutionMode
-  <a class="header-action link-secondary" title="View source" href="https://github.com/DomCR/ACadSharp/blob/master/src/ACadSharp/Objects/PlotSettings.cs/#L193"><i class="bi bi-code-slash"></i></a>
+  <a class="header-action link-secondary" title="View source" href="https://github.com/DomCR/ACadSharp/blob/master/src/ACadSharp/Objects/PlotSettings.cs/#L194"><i class="bi bi-code-slash"></i></a>
   </h3>
 
   <div class="markdown level1 summary"><p>Plot resolution.</p>
@@ -1095,7 +1096,7 @@ public ShadePlotResolutionMode ShadePlotResolutionMode { get; set; }</code></pre
 
   <h3 id="ACadSharp_Objects_PlotSettings_StandardScale" data-uid="ACadSharp.Objects.PlotSettings.StandardScale">
   StandardScale
-  <a class="header-action link-secondary" title="View source" href="https://github.com/DomCR/ACadSharp/blob/master/src/ACadSharp/Objects/PlotSettings.cs/#L199"><i class="bi bi-code-slash"></i></a>
+  <a class="header-action link-secondary" title="View source" href="https://github.com/DomCR/ACadSharp/blob/master/src/ACadSharp/Objects/PlotSettings.cs/#L200"><i class="bi bi-code-slash"></i></a>
   </h3>
 
   <div class="markdown level1 summary"><p>A floating point scale factor that represents the standard scale value specified in code 75.</p>
@@ -1128,7 +1129,7 @@ public double StandardScale { get; set; }</code></pre>
 
   <h3 id="ACadSharp_Objects_PlotSettings_StyleSheet" data-uid="ACadSharp.Objects.PlotSettings.StyleSheet">
   StyleSheet
-  <a class="header-action link-secondary" title="View source" href="https://github.com/DomCR/ACadSharp/blob/master/src/ACadSharp/Objects/PlotSettings.cs/#L205"><i class="bi bi-code-slash"></i></a>
+  <a class="header-action link-secondary" title="View source" href="https://github.com/DomCR/ACadSharp/blob/master/src/ACadSharp/Objects/PlotSettings.cs/#L206"><i class="bi bi-code-slash"></i></a>
   </h3>
 
   <div class="markdown level1 summary"><p>Current style sheet</p>
@@ -1161,7 +1162,7 @@ public string StyleSheet { get; set; }</code></pre>
 
   <h3 id="ACadSharp_Objects_PlotSettings_SubclassMarker" data-uid="ACadSharp.Objects.PlotSettings.SubclassMarker">
   SubclassMarker
-  <a class="header-action link-secondary" title="View source" href="https://github.com/DomCR/ACadSharp/blob/master/src/ACadSharp/Objects/PlotSettings.cs/#L209"><i class="bi bi-code-slash"></i></a>
+  <a class="header-action link-secondary" title="View source" href="https://github.com/DomCR/ACadSharp/blob/master/src/ACadSharp/Objects/PlotSettings.cs/#L210"><i class="bi bi-code-slash"></i></a>
   </h3>
 
   <div class="markdown level1 summary"><p>Object Subclass marker.</p>
@@ -1193,7 +1194,7 @@ public string StyleSheet { get; set; }</code></pre>
 
   <h3 id="ACadSharp_Objects_PlotSettings_SystemPrinterName" data-uid="ACadSharp.Objects.PlotSettings.SystemPrinterName">
   SystemPrinterName
-  <a class="header-action link-secondary" title="View source" href="https://github.com/DomCR/ACadSharp/blob/master/src/ACadSharp/Objects/PlotSettings.cs/#L214"><i class="bi bi-code-slash"></i></a>
+  <a class="header-action link-secondary" title="View source" href="https://github.com/DomCR/ACadSharp/blob/master/src/ACadSharp/Objects/PlotSettings.cs/#L215"><i class="bi bi-code-slash"></i></a>
   </h3>
 
   <div class="markdown level1 summary"><p>Name of system printer or plot configuration file</p>
@@ -1226,7 +1227,7 @@ public string SystemPrinterName { get; set; }</code></pre>
 
   <h3 id="ACadSharp_Objects_PlotSettings_UnprintableMargin" data-uid="ACadSharp.Objects.PlotSettings.UnprintableMargin">
   UnprintableMargin
-  <a class="header-action link-secondary" title="View source" href="https://github.com/DomCR/ACadSharp/blob/master/src/ACadSharp/Objects/PlotSettings.cs/#L220"><i class="bi bi-code-slash"></i></a>
+  <a class="header-action link-secondary" title="View source" href="https://github.com/DomCR/ACadSharp/blob/master/src/ACadSharp/Objects/PlotSettings.cs/#L221"><i class="bi bi-code-slash"></i></a>
   </h3>
 
   <div class="markdown level1 summary"><p>Size, in millimeters, of unprintable margins of paper</p>
@@ -1259,7 +1260,7 @@ public PaperMargin UnprintableMargin { get; set; }</code></pre>
 
   <h3 id="ACadSharp_Objects_PlotSettings_WindowLowerLeftX" data-uid="ACadSharp.Objects.PlotSettings.WindowLowerLeftX">
   WindowLowerLeftX
-  <a class="header-action link-secondary" title="View source" href="https://github.com/DomCR/ACadSharp/blob/master/src/ACadSharp/Objects/PlotSettings.cs/#L226"><i class="bi bi-code-slash"></i></a>
+  <a class="header-action link-secondary" title="View source" href="https://github.com/DomCR/ACadSharp/blob/master/src/ACadSharp/Objects/PlotSettings.cs/#L227"><i class="bi bi-code-slash"></i></a>
   </h3>
 
   <div class="markdown level1 summary"><p>Plot window area: X value of lower-left window corner</p>
@@ -1292,7 +1293,7 @@ public double WindowLowerLeftX { get; set; }</code></pre>
 
   <h3 id="ACadSharp_Objects_PlotSettings_WindowLowerLeftY" data-uid="ACadSharp.Objects.PlotSettings.WindowLowerLeftY">
   WindowLowerLeftY
-  <a class="header-action link-secondary" title="View source" href="https://github.com/DomCR/ACadSharp/blob/master/src/ACadSharp/Objects/PlotSettings.cs/#L232"><i class="bi bi-code-slash"></i></a>
+  <a class="header-action link-secondary" title="View source" href="https://github.com/DomCR/ACadSharp/blob/master/src/ACadSharp/Objects/PlotSettings.cs/#L233"><i class="bi bi-code-slash"></i></a>
   </h3>
 
   <div class="markdown level1 summary"><p>Plot window area: Y value of upper-right window corner</p>
@@ -1325,7 +1326,7 @@ public double WindowLowerLeftY { get; set; }</code></pre>
 
   <h3 id="ACadSharp_Objects_PlotSettings_WindowUpperLeftX" data-uid="ACadSharp.Objects.PlotSettings.WindowUpperLeftX">
   WindowUpperLeftX
-  <a class="header-action link-secondary" title="View source" href="https://github.com/DomCR/ACadSharp/blob/master/src/ACadSharp/Objects/PlotSettings.cs/#L238"><i class="bi bi-code-slash"></i></a>
+  <a class="header-action link-secondary" title="View source" href="https://github.com/DomCR/ACadSharp/blob/master/src/ACadSharp/Objects/PlotSettings.cs/#L239"><i class="bi bi-code-slash"></i></a>
   </h3>
 
   <div class="markdown level1 summary"><p>Plot window area: X value of lower-left window corner</p>
@@ -1358,7 +1359,7 @@ public double WindowUpperLeftX { get; set; }</code></pre>
 
   <h3 id="ACadSharp_Objects_PlotSettings_WindowUpperLeftY" data-uid="ACadSharp.Objects.PlotSettings.WindowUpperLeftY">
   WindowUpperLeftY
-  <a class="header-action link-secondary" title="View source" href="https://github.com/DomCR/ACadSharp/blob/master/src/ACadSharp/Objects/PlotSettings.cs/#L244"><i class="bi bi-code-slash"></i></a>
+  <a class="header-action link-secondary" title="View source" href="https://github.com/DomCR/ACadSharp/blob/master/src/ACadSharp/Objects/PlotSettings.cs/#L245"><i class="bi bi-code-slash"></i></a>
   </h3>
 
   <div class="markdown level1 summary"><p>Plot window area: Y value of upper-right window corner</p>
@@ -1387,11 +1388,46 @@ public double WindowUpperLeftY { get; set; }</code></pre>
 
 
 
+  <h2 class="section" id="methods">Methods
+</h2>
+
+
+  <a id="ACadSharp_Objects_PlotSettings_GetDxfClass_" data-uid="ACadSharp.Objects.PlotSettings.GetDxfClass*"></a>
+
+  <h3 id="ACadSharp_Objects_PlotSettings_GetDxfClass" data-uid="ACadSharp.Objects.PlotSettings.GetDxfClass">
+  GetDxfClass()
+  <a class="header-action link-secondary" title="View source" href="https://github.com/DomCR/ACadSharp/blob/master/src/ACadSharp/Objects/PlotSettings.cs/#L263"><i class="bi bi-code-slash"></i></a>
+  </h3>
+
+  <div class="markdown level1 summary"></div>
+  <div class="markdown level1 conceptual"></div>
+
+  <div class="codewrapper">
+    <pre><code class="lang-csharp hljs">public DxfClass GetDxfClass()</code></pre>
+  </div>
+
+
+  <h4 class="section">Returns</h4>
+  <dl class="parameters">
+    <dt><a class="xref" href="ACadSharp.Classes.DxfClass.html">DxfClass</a></dt>
+    <dd></dd>
+  </dl>
+
+
+
+
+
+
+
+
+
+
+
 
 </article>
 
         <div class="contribution d-print-none">
-          <a href="https://github.com/DomCR/ACadSharp/blob/master/src/ACadSharp/Objects/PlotSettings.cs/#L14" class="edit-link">Edit this page</a>
+          <a href="https://github.com/DomCR/ACadSharp/blob/master/src/ACadSharp/Objects/PlotSettings.cs/#L15" class="edit-link">Edit this page</a>
         </div>
 
 

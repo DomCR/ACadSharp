@@ -89,7 +89,7 @@
 
 
   <h1 id="ACadSharp_Objects_Evaluations_BlockLookupAction" data-uid="ACadSharp.Objects.Evaluations.BlockLookupAction" class="text-break">
-Class BlockLookupAction  <a class="header-action link-secondary" title="View source" href="https://github.com/DomCR/ACadSharp/blob/master/src/ACadSharp/Objects/Evaluations/BlockLookupAction.cs/#L14"><i class="bi bi-code-slash"></i></a>
+Class BlockLookupAction  <a class="header-action link-secondary" title="View source" href="https://github.com/DomCR/ACadSharp/blob/master/src/ACadSharp/Objects/Evaluations/BlockLookupAction.cs/#L15"><i class="bi bi-code-slash"></i></a>
   </h1>
 
   <div class="facts text-secondary">
@@ -105,7 +105,7 @@ lookup action in a dynamic block.</p>
   <div class="codewrapper">
     <pre><code class="lang-csharp hljs">[DxfName(&quot;BLOCKLOOKUPACTION&quot;)]
 [DxfSubClass(&quot;AcDbBlockLookupAction&quot;)]
-public class BlockLookupAction : BlockAction, IHandledCadObject, INamedCadObject</code></pre>
+public class BlockLookupAction : BlockAction, IHandledCadObject, INamedCadObject, IDxfClassDefined</code></pre>
   </div>
 
 
@@ -129,6 +129,7 @@ public class BlockLookupAction : BlockAction, IHandledCadObject, INamedCadObject
     <dd>
       <div><a class="xref" href="ACadSharp.IHandledCadObject.html">IHandledCadObject</a></div>
       <div><a class="xref" href="ACadSharp.INamedCadObject.html">INamedCadObject</a></div>
+      <div><a class="xref" href="ACadSharp.Classes.IDxfClassDefined.html">IDxfClassDefined</a></div>
     </dd>
   </dl>
 
@@ -270,7 +271,7 @@ Dxf class name <a class="xref" href="ACadSharp.DxfSubclassMarker.html#ACadSharp_
 
   <h3 id="ACadSharp_Objects_Evaluations_BlockLookupAction_Columns" data-uid="ACadSharp.Objects.Evaluations.BlockLookupAction.Columns">
   Columns
-  <a class="header-action link-secondary" title="View source" href="https://github.com/DomCR/ACadSharp/blob/master/src/ACadSharp/Objects/Evaluations/BlockLookupAction.cs/#L18"><i class="bi bi-code-slash"></i></a>
+  <a class="header-action link-secondary" title="View source" href="https://github.com/DomCR/ACadSharp/blob/master/src/ACadSharp/Objects/Evaluations/BlockLookupAction.cs/#L19"><i class="bi bi-code-slash"></i></a>
   </h3>
 
   <div class="markdown level1 summary"></div>
@@ -301,7 +302,7 @@ Dxf class name <a class="xref" href="ACadSharp.DxfSubclassMarker.html#ACadSharp_
 
   <h3 id="ACadSharp_Objects_Evaluations_BlockLookupAction_ObjectName" data-uid="ACadSharp.Objects.Evaluations.BlockLookupAction.ObjectName">
   ObjectName
-  <a class="header-action link-secondary" title="View source" href="https://github.com/DomCR/ACadSharp/blob/master/src/ACadSharp/Objects/Evaluations/BlockLookupAction.cs/#L21"><i class="bi bi-code-slash"></i></a>
+  <a class="header-action link-secondary" title="View source" href="https://github.com/DomCR/ACadSharp/blob/master/src/ACadSharp/Objects/Evaluations/BlockLookupAction.cs/#L22"><i class="bi bi-code-slash"></i></a>
   </h3>
 
   <div class="markdown level1 summary"><p>The CAD class name of an object.</p>
@@ -333,7 +334,7 @@ Dxf class name <a class="xref" href="ACadSharp.DxfSubclassMarker.html#ACadSharp_
 
   <h3 id="ACadSharp_Objects_Evaluations_BlockLookupAction_SubclassMarker" data-uid="ACadSharp.Objects.Evaluations.BlockLookupAction.SubclassMarker">
   SubclassMarker
-  <a class="header-action link-secondary" title="View source" href="https://github.com/DomCR/ACadSharp/blob/master/src/ACadSharp/Objects/Evaluations/BlockLookupAction.cs/#L24"><i class="bi bi-code-slash"></i></a>
+  <a class="header-action link-secondary" title="View source" href="https://github.com/DomCR/ACadSharp/blob/master/src/ACadSharp/Objects/Evaluations/BlockLookupAction.cs/#L25"><i class="bi bi-code-slash"></i></a>
   </h3>
 
   <div class="markdown level1 summary"><p>Object Subclass marker.</p>
@@ -365,7 +366,7 @@ Dxf class name <a class="xref" href="ACadSharp.DxfSubclassMarker.html#ACadSharp_
 
   <h3 id="ACadSharp_Objects_Evaluations_BlockLookupAction_UnknownFlag" data-uid="ACadSharp.Objects.Evaluations.BlockLookupAction.UnknownFlag">
   UnknownFlag
-  <a class="header-action link-secondary" title="View source" href="https://github.com/DomCR/ACadSharp/blob/master/src/ACadSharp/Objects/Evaluations/BlockLookupAction.cs/#L26"><i class="bi bi-code-slash"></i></a>
+  <a class="header-action link-secondary" title="View source" href="https://github.com/DomCR/ACadSharp/blob/master/src/ACadSharp/Objects/Evaluations/BlockLookupAction.cs/#L27"><i class="bi bi-code-slash"></i></a>
   </h3>
 
   <div class="markdown level1 summary"></div>
@@ -393,11 +394,46 @@ public bool UnknownFlag { get; set; }</code></pre>
 
 
 
+  <h2 class="section" id="methods">Methods
+</h2>
+
+
+  <a id="ACadSharp_Objects_Evaluations_BlockLookupAction_GetDxfClass_" data-uid="ACadSharp.Objects.Evaluations.BlockLookupAction.GetDxfClass*"></a>
+
+  <h3 id="ACadSharp_Objects_Evaluations_BlockLookupAction_GetDxfClass" data-uid="ACadSharp.Objects.Evaluations.BlockLookupAction.GetDxfClass">
+  GetDxfClass()
+  <a class="header-action link-secondary" title="View source" href="https://github.com/DomCR/ACadSharp/blob/master/src/ACadSharp/Objects/Evaluations/BlockLookupAction.cs/#L31"><i class="bi bi-code-slash"></i></a>
+  </h3>
+
+  <div class="markdown level1 summary"></div>
+  <div class="markdown level1 conceptual"></div>
+
+  <div class="codewrapper">
+    <pre><code class="lang-csharp hljs">public DxfClass GetDxfClass()</code></pre>
+  </div>
+
+
+  <h4 class="section">Returns</h4>
+  <dl class="parameters">
+    <dt><a class="xref" href="ACadSharp.Classes.DxfClass.html">DxfClass</a></dt>
+    <dd></dd>
+  </dl>
+
+
+
+
+
+
+
+
+
+
+
 
 </article>
 
         <div class="contribution d-print-none">
-          <a href="https://github.com/DomCR/ACadSharp/blob/master/src/ACadSharp/Objects/Evaluations/BlockLookupAction.cs/#L14" class="edit-link">Edit this page</a>
+          <a href="https://github.com/DomCR/ACadSharp/blob/master/src/ACadSharp/Objects/Evaluations/BlockLookupAction.cs/#L15" class="edit-link">Edit this page</a>
         </div>
 
 

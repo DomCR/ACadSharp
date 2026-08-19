@@ -89,7 +89,7 @@
 
 
   <h1 id="ACadSharp_Objects_ImageDefinition" data-uid="ACadSharp.Objects.ImageDefinition" class="text-break">
-Class ImageDefinition  <a class="header-action link-secondary" title="View source" href="https://github.com/DomCR/ACadSharp/blob/master/src/ACadSharp/Objects/ImageDefinition.cs/#L13"><i class="bi bi-code-slash"></i></a>
+Class ImageDefinition  <a class="header-action link-secondary" title="View source" href="https://github.com/DomCR/ACadSharp/blob/master/src/ACadSharp/Objects/ImageDefinition.cs/#L14"><i class="bi bi-code-slash"></i></a>
   </h1>
 
   <div class="facts text-secondary">
@@ -104,7 +104,7 @@ Class ImageDefinition  <a class="header-action link-secondary" title="View sourc
   <div class="codewrapper">
     <pre><code class="lang-csharp hljs">[DxfName(&quot;IMAGEDEF&quot;)]
 [DxfSubClass(&quot;AcDbRasterImageDef&quot;)]
-public class ImageDefinition : NonGraphicalObject, IHandledCadObject, INamedCadObject</code></pre>
+public class ImageDefinition : NonGraphicalObject, IHandledCadObject, INamedCadObject, IDxfClassDefined</code></pre>
   </div>
 
 
@@ -125,6 +125,7 @@ public class ImageDefinition : NonGraphicalObject, IHandledCadObject, INamedCadO
     <dd>
       <div><a class="xref" href="ACadSharp.IHandledCadObject.html">IHandledCadObject</a></div>
       <div><a class="xref" href="ACadSharp.INamedCadObject.html">INamedCadObject</a></div>
+      <div><a class="xref" href="ACadSharp.Classes.IDxfClassDefined.html">IDxfClassDefined</a></div>
     </dd>
   </dl>
 
@@ -236,7 +237,7 @@ Dxf class name <a class="xref" href="ACadSharp.DxfSubclassMarker.html#ACadSharp_
 
   <h3 id="ACadSharp_Objects_ImageDefinition_ClassVersion" data-uid="ACadSharp.Objects.ImageDefinition.ClassVersion">
   ClassVersion
-  <a class="header-action link-secondary" title="View source" href="https://github.com/DomCR/ACadSharp/blob/master/src/ACadSharp/Objects/ImageDefinition.cs/#L29"><i class="bi bi-code-slash"></i></a>
+  <a class="header-action link-secondary" title="View source" href="https://github.com/DomCR/ACadSharp/blob/master/src/ACadSharp/Objects/ImageDefinition.cs/#L21"><i class="bi bi-code-slash"></i></a>
   </h3>
 
   <div class="markdown level1 summary"><p>Class version</p>
@@ -269,7 +270,7 @@ public int ClassVersion { get; }</code></pre>
 
   <h3 id="ACadSharp_Objects_ImageDefinition_DefaultSize" data-uid="ACadSharp.Objects.ImageDefinition.DefaultSize">
   DefaultSize
-  <a class="header-action link-secondary" title="View source" href="https://github.com/DomCR/ACadSharp/blob/master/src/ACadSharp/Objects/ImageDefinition.cs/#L47"><i class="bi bi-code-slash"></i></a>
+  <a class="header-action link-secondary" title="View source" href="https://github.com/DomCR/ACadSharp/blob/master/src/ACadSharp/Objects/ImageDefinition.cs/#L27"><i class="bi bi-code-slash"></i></a>
   </h3>
 
   <div class="markdown level1 summary"><p>Default size of one pixel in AutoCAD units</p>
@@ -302,7 +303,7 @@ public XY DefaultSize { get; set; }</code></pre>
 
   <h3 id="ACadSharp_Objects_ImageDefinition_FileName" data-uid="ACadSharp.Objects.ImageDefinition.FileName">
   FileName
-  <a class="header-action link-secondary" title="View source" href="https://github.com/DomCR/ACadSharp/blob/master/src/ACadSharp/Objects/ImageDefinition.cs/#L35"><i class="bi bi-code-slash"></i></a>
+  <a class="header-action link-secondary" title="View source" href="https://github.com/DomCR/ACadSharp/blob/master/src/ACadSharp/Objects/ImageDefinition.cs/#L33"><i class="bi bi-code-slash"></i></a>
   </h3>
 
   <div class="markdown level1 summary"><p>File name of image</p>
@@ -335,7 +336,7 @@ public string FileName { get; set; }</code></pre>
 
   <h3 id="ACadSharp_Objects_ImageDefinition_IsLoaded" data-uid="ACadSharp.Objects.ImageDefinition.IsLoaded">
   IsLoaded
-  <a class="header-action link-secondary" title="View source" href="https://github.com/DomCR/ACadSharp/blob/master/src/ACadSharp/Objects/ImageDefinition.cs/#L53"><i class="bi bi-code-slash"></i></a>
+  <a class="header-action link-secondary" title="View source" href="https://github.com/DomCR/ACadSharp/blob/master/src/ACadSharp/Objects/ImageDefinition.cs/#L39"><i class="bi bi-code-slash"></i></a>
   </h3>
 
   <div class="markdown level1 summary"><p>Image-is-loaded flag.</p>
@@ -368,7 +369,7 @@ public bool IsLoaded { get; set; }</code></pre>
 
   <h3 id="ACadSharp_Objects_ImageDefinition_ObjectName" data-uid="ACadSharp.Objects.ImageDefinition.ObjectName">
   ObjectName
-  <a class="header-action link-secondary" title="View source" href="https://github.com/DomCR/ACadSharp/blob/master/src/ACadSharp/Objects/ImageDefinition.cs/#L21"><i class="bi bi-code-slash"></i></a>
+  <a class="header-action link-secondary" title="View source" href="https://github.com/DomCR/ACadSharp/blob/master/src/ACadSharp/Objects/ImageDefinition.cs/#L43"><i class="bi bi-code-slash"></i></a>
   </h3>
 
   <div class="markdown level1 summary"><p>The CAD class name of an object.</p>
@@ -400,7 +401,7 @@ public bool IsLoaded { get; set; }</code></pre>
 
   <h3 id="ACadSharp_Objects_ImageDefinition_ObjectType" data-uid="ACadSharp.Objects.ImageDefinition.ObjectType">
   ObjectType
-  <a class="header-action link-secondary" title="View source" href="https://github.com/DomCR/ACadSharp/blob/master/src/ACadSharp/Objects/ImageDefinition.cs/#L18"><i class="bi bi-code-slash"></i></a>
+  <a class="header-action link-secondary" title="View source" href="https://github.com/DomCR/ACadSharp/blob/master/src/ACadSharp/Objects/ImageDefinition.cs/#L46"><i class="bi bi-code-slash"></i></a>
   </h3>
 
   <div class="markdown level1 summary"><p>Get the object type.</p>
@@ -432,7 +433,7 @@ public bool IsLoaded { get; set; }</code></pre>
 
   <h3 id="ACadSharp_Objects_ImageDefinition_Size" data-uid="ACadSharp.Objects.ImageDefinition.Size">
   Size
-  <a class="header-action link-secondary" title="View source" href="https://github.com/DomCR/ACadSharp/blob/master/src/ACadSharp/Objects/ImageDefinition.cs/#L41"><i class="bi bi-code-slash"></i></a>
+  <a class="header-action link-secondary" title="View source" href="https://github.com/DomCR/ACadSharp/blob/master/src/ACadSharp/Objects/ImageDefinition.cs/#L51"><i class="bi bi-code-slash"></i></a>
   </h3>
 
   <div class="markdown level1 summary"><p>Image size in pixels</p>
@@ -465,7 +466,7 @@ public XY Size { get; set; }</code></pre>
 
   <h3 id="ACadSharp_Objects_ImageDefinition_SubclassMarker" data-uid="ACadSharp.Objects.ImageDefinition.SubclassMarker">
   SubclassMarker
-  <a class="header-action link-secondary" title="View source" href="https://github.com/DomCR/ACadSharp/blob/master/src/ACadSharp/Objects/ImageDefinition.cs/#L24"><i class="bi bi-code-slash"></i></a>
+  <a class="header-action link-secondary" title="View source" href="https://github.com/DomCR/ACadSharp/blob/master/src/ACadSharp/Objects/ImageDefinition.cs/#L55"><i class="bi bi-code-slash"></i></a>
   </h3>
 
   <div class="markdown level1 summary"><p>Object Subclass marker.</p>
@@ -497,7 +498,7 @@ public XY Size { get; set; }</code></pre>
 
   <h3 id="ACadSharp_Objects_ImageDefinition_Units" data-uid="ACadSharp.Objects.ImageDefinition.Units">
   Units
-  <a class="header-action link-secondary" title="View source" href="https://github.com/DomCR/ACadSharp/blob/master/src/ACadSharp/Objects/ImageDefinition.cs/#L59"><i class="bi bi-code-slash"></i></a>
+  <a class="header-action link-secondary" title="View source" href="https://github.com/DomCR/ACadSharp/blob/master/src/ACadSharp/Objects/ImageDefinition.cs/#L60"><i class="bi bi-code-slash"></i></a>
   </h3>
 
   <div class="markdown level1 summary"><p>Resolution units.</p>
@@ -526,11 +527,46 @@ public ResolutionUnit Units { get; set; }</code></pre>
 
 
 
+  <h2 class="section" id="methods">Methods
+</h2>
+
+
+  <a id="ACadSharp_Objects_ImageDefinition_GetDxfClass_" data-uid="ACadSharp.Objects.ImageDefinition.GetDxfClass*"></a>
+
+  <h3 id="ACadSharp_Objects_ImageDefinition_GetDxfClass" data-uid="ACadSharp.Objects.ImageDefinition.GetDxfClass">
+  GetDxfClass()
+  <a class="header-action link-secondary" title="View source" href="https://github.com/DomCR/ACadSharp/blob/master/src/ACadSharp/Objects/ImageDefinition.cs/#L64"><i class="bi bi-code-slash"></i></a>
+  </h3>
+
+  <div class="markdown level1 summary"></div>
+  <div class="markdown level1 conceptual"></div>
+
+  <div class="codewrapper">
+    <pre><code class="lang-csharp hljs">public DxfClass GetDxfClass()</code></pre>
+  </div>
+
+
+  <h4 class="section">Returns</h4>
+  <dl class="parameters">
+    <dt><a class="xref" href="ACadSharp.Classes.DxfClass.html">DxfClass</a></dt>
+    <dd></dd>
+  </dl>
+
+
+
+
+
+
+
+
+
+
+
 
 </article>
 
         <div class="contribution d-print-none">
-          <a href="https://github.com/DomCR/ACadSharp/blob/master/src/ACadSharp/Objects/ImageDefinition.cs/#L13" class="edit-link">Edit this page</a>
+          <a href="https://github.com/DomCR/ACadSharp/blob/master/src/ACadSharp/Objects/ImageDefinition.cs/#L14" class="edit-link">Edit this page</a>
         </div>
 
 

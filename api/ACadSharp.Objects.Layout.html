@@ -89,7 +89,7 @@
 
 
   <h1 id="ACadSharp_Objects_Layout" data-uid="ACadSharp.Objects.Layout" class="text-break">
-Class Layout  <a class="header-action link-secondary" title="View source" href="https://github.com/DomCR/ACadSharp/blob/master/src/ACadSharp/Objects/Layout.cs/#L18"><i class="bi bi-code-slash"></i></a>
+Class Layout  <a class="header-action link-secondary" title="View source" href="https://github.com/DomCR/ACadSharp/blob/master/src/ACadSharp/Objects/Layout.cs/#L19"><i class="bi bi-code-slash"></i></a>
   </h1>
 
   <div class="facts text-secondary">
@@ -104,7 +104,7 @@ Class Layout  <a class="header-action link-secondary" title="View source" href="
   <div class="codewrapper">
     <pre><code class="lang-csharp hljs">[DxfName(&quot;LAYOUT&quot;)]
 [DxfSubClass(&quot;AcDbLayout&quot;)]
-public class Layout : PlotSettings, IHandledCadObject, INamedCadObject</code></pre>
+public class Layout : PlotSettings, IHandledCadObject, INamedCadObject, IDxfClassDefined</code></pre>
   </div>
 
 
@@ -126,6 +126,7 @@ public class Layout : PlotSettings, IHandledCadObject, INamedCadObject</code></p
     <dd>
       <div><a class="xref" href="ACadSharp.IHandledCadObject.html">IHandledCadObject</a></div>
       <div><a class="xref" href="ACadSharp.INamedCadObject.html">INamedCadObject</a></div>
+      <div><a class="xref" href="ACadSharp.Classes.IDxfClassDefined.html">IDxfClassDefined</a></div>
     </dd>
   </dl>
 
@@ -318,7 +319,7 @@ Dxf class name <a class="xref" href="ACadSharp.DxfSubclassMarker.html#ACadSharp_
 
   <h3 id="ACadSharp_Objects_Layout__ctor_System_String_" data-uid="ACadSharp.Objects.Layout.#ctor(System.String)">
   Layout(string)
-  <a class="header-action link-secondary" title="View source" href="https://github.com/DomCR/ACadSharp/blob/master/src/ACadSharp/Objects/Layout.cs/#L225"><i class="bi bi-code-slash"></i></a>
+  <a class="header-action link-secondary" title="View source" href="https://github.com/DomCR/ACadSharp/blob/master/src/ACadSharp/Objects/Layout.cs/#L226"><i class="bi bi-code-slash"></i></a>
   </h3>
 
   <div class="markdown level1 summary"><p>Initializes a new instance of the Layout class using the specified name for both the layout's name and display
@@ -352,7 +353,7 @@ name.</p>
 
   <h3 id="ACadSharp_Objects_Layout__ctor_System_String_System_String_" data-uid="ACadSharp.Objects.Layout.#ctor(System.String,System.String)">
   Layout(string, string)
-  <a class="header-action link-secondary" title="View source" href="https://github.com/DomCR/ACadSharp/blob/master/src/ACadSharp/Objects/Layout.cs/#L234"><i class="bi bi-code-slash"></i></a>
+  <a class="header-action link-secondary" title="View source" href="https://github.com/DomCR/ACadSharp/blob/master/src/ACadSharp/Objects/Layout.cs/#L235"><i class="bi bi-code-slash"></i></a>
   </h3>
 
   <div class="markdown level1 summary"><p>Initializes a new instance of the Layout class with the specified layout name and associated block record name.</p>
@@ -391,7 +392,7 @@ name.</p>
 
   <h3 id="ACadSharp_Objects_Layout_ModelLayoutName" data-uid="ACadSharp.Objects.Layout.ModelLayoutName">
   ModelLayoutName
-  <a class="header-action link-secondary" title="View source" href="https://github.com/DomCR/ACadSharp/blob/master/src/ACadSharp/Objects/Layout.cs/#L208"><i class="bi bi-code-slash"></i></a>
+  <a class="header-action link-secondary" title="View source" href="https://github.com/DomCR/ACadSharp/blob/master/src/ACadSharp/Objects/Layout.cs/#L209"><i class="bi bi-code-slash"></i></a>
   </h3>
 
   <div class="markdown level1 summary"><p>Represents the name of the model layout used in view rendering.</p>
@@ -422,7 +423,7 @@ name.</p>
 
   <h3 id="ACadSharp_Objects_Layout_PaperLayoutName" data-uid="ACadSharp.Objects.Layout.PaperLayoutName">
   PaperLayoutName
-  <a class="header-action link-secondary" title="View source" href="https://github.com/DomCR/ACadSharp/blob/master/src/ACadSharp/Objects/Layout.cs/#L213"><i class="bi bi-code-slash"></i></a>
+  <a class="header-action link-secondary" title="View source" href="https://github.com/DomCR/ACadSharp/blob/master/src/ACadSharp/Objects/Layout.cs/#L214"><i class="bi bi-code-slash"></i></a>
   </h3>
 
   <div class="markdown level1 summary"><p>Specifies the default name for the paper layout used in document generation.</p>
@@ -458,7 +459,7 @@ name.</p>
 
   <h3 id="ACadSharp_Objects_Layout_AssociatedBlock" data-uid="ACadSharp.Objects.Layout.AssociatedBlock">
   AssociatedBlock
-  <a class="header-action link-secondary" title="View source" href="https://github.com/DomCR/ACadSharp/blob/master/src/ACadSharp/Objects/Layout.cs/#L25"><i class="bi bi-code-slash"></i></a>
+  <a class="header-action link-secondary" title="View source" href="https://github.com/DomCR/ACadSharp/blob/master/src/ACadSharp/Objects/Layout.cs/#L26"><i class="bi bi-code-slash"></i></a>
   </h3>
 
   <div class="markdown level1 summary"><p>The associated paper space block table record.</p>
@@ -491,7 +492,7 @@ public BlockRecord AssociatedBlock { get; }</code></pre>
 
   <h3 id="ACadSharp_Objects_Layout_BaseUCS" data-uid="ACadSharp.Objects.Layout.BaseUCS">
   BaseUCS
-  <a class="header-action link-secondary" title="View source" href="https://github.com/DomCR/ACadSharp/blob/master/src/ACadSharp/Objects/Layout.cs/#L47"><i class="bi bi-code-slash"></i></a>
+  <a class="header-action link-secondary" title="View source" href="https://github.com/DomCR/ACadSharp/blob/master/src/ACadSharp/Objects/Layout.cs/#L48"><i class="bi bi-code-slash"></i></a>
   </h3>
 
   <div class="markdown level1 summary"><p>UCSTableRecord of base UCS if UCS is orthographic (<a class="xref" href="ACadSharp.Objects.Layout.html#ACadSharp_Objects_Layout_UcsOrthographicType">UcsOrthographicType</a> is non-zero).</p>
@@ -527,7 +528,7 @@ public UCS BaseUCS { get; set; }</code></pre>
 
   <h3 id="ACadSharp_Objects_Layout_Elevation" data-uid="ACadSharp.Objects.Layout.Elevation">
   Elevation
-  <a class="header-action link-secondary" title="View source" href="https://github.com/DomCR/ACadSharp/blob/master/src/ACadSharp/Objects/Layout.cs/#L53"><i class="bi bi-code-slash"></i></a>
+  <a class="header-action link-secondary" title="View source" href="https://github.com/DomCR/ACadSharp/blob/master/src/ACadSharp/Objects/Layout.cs/#L54"><i class="bi bi-code-slash"></i></a>
   </h3>
 
   <div class="markdown level1 summary"><p>Layout elevation.</p>
@@ -560,7 +561,7 @@ public double Elevation { get; set; }</code></pre>
 
   <h3 id="ACadSharp_Objects_Layout_InsertionBasePoint" data-uid="ACadSharp.Objects.Layout.InsertionBasePoint">
   InsertionBasePoint
-  <a class="header-action link-secondary" title="View source" href="https://github.com/DomCR/ACadSharp/blob/master/src/ACadSharp/Objects/Layout.cs/#L59"><i class="bi bi-code-slash"></i></a>
+  <a class="header-action link-secondary" title="View source" href="https://github.com/DomCR/ACadSharp/blob/master/src/ACadSharp/Objects/Layout.cs/#L60"><i class="bi bi-code-slash"></i></a>
   </h3>
 
   <div class="markdown level1 summary"><p>Insertion base point for this layout(defined by INSBASE while this layout is current).</p>
@@ -593,7 +594,7 @@ public XYZ InsertionBasePoint { get; set; }</code></pre>
 
   <h3 id="ACadSharp_Objects_Layout_IsPaperSpace" data-uid="ACadSharp.Objects.Layout.IsPaperSpace">
   IsPaperSpace
-  <a class="header-action link-secondary" title="View source" href="https://github.com/DomCR/ACadSharp/blob/master/src/ACadSharp/Objects/Layout.cs/#L65"><i class="bi bi-code-slash"></i></a>
+  <a class="header-action link-secondary" title="View source" href="https://github.com/DomCR/ACadSharp/blob/master/src/ACadSharp/Objects/Layout.cs/#L66"><i class="bi bi-code-slash"></i></a>
   </h3>
 
   <div class="markdown level1 summary"><p>If true, the layout is a paper space.</p>
@@ -625,7 +626,7 @@ public XYZ InsertionBasePoint { get; set; }</code></pre>
 
   <h3 id="ACadSharp_Objects_Layout_LastActiveViewport" data-uid="ACadSharp.Objects.Layout.LastActiveViewport">
   LastActiveViewport
-  <a class="header-action link-secondary" title="View source" href="https://github.com/DomCR/ACadSharp/blob/master/src/ACadSharp/Objects/Layout.cs/#L76"><i class="bi bi-code-slash"></i></a>
+  <a class="header-action link-secondary" title="View source" href="https://github.com/DomCR/ACadSharp/blob/master/src/ACadSharp/Objects/Layout.cs/#L77"><i class="bi bi-code-slash"></i></a>
   </h3>
 
   <div class="markdown level1 summary"><p>Viewport that was last active in this layout when the layout was current.</p>
@@ -658,7 +659,7 @@ public Viewport LastActiveViewport { get; }</code></pre>
 
   <h3 id="ACadSharp_Objects_Layout_LayoutFlags" data-uid="ACadSharp.Objects.Layout.LayoutFlags">
   LayoutFlags
-  <a class="header-action link-secondary" title="View source" href="https://github.com/DomCR/ACadSharp/blob/master/src/ACadSharp/Objects/Layout.cs/#L92"><i class="bi bi-code-slash"></i></a>
+  <a class="header-action link-secondary" title="View source" href="https://github.com/DomCR/ACadSharp/blob/master/src/ACadSharp/Objects/Layout.cs/#L93"><i class="bi bi-code-slash"></i></a>
   </h3>
 
   <div class="markdown level1 summary"><p>Layout flags.</p>
@@ -691,7 +692,7 @@ public LayoutFlags LayoutFlags { get; set; }</code></pre>
 
   <h3 id="ACadSharp_Objects_Layout_MaxExtents" data-uid="ACadSharp.Objects.Layout.MaxExtents">
   MaxExtents
-  <a class="header-action link-secondary" title="View source" href="https://github.com/DomCR/ACadSharp/blob/master/src/ACadSharp/Objects/Layout.cs/#L98"><i class="bi bi-code-slash"></i></a>
+  <a class="header-action link-secondary" title="View source" href="https://github.com/DomCR/ACadSharp/blob/master/src/ACadSharp/Objects/Layout.cs/#L99"><i class="bi bi-code-slash"></i></a>
   </h3>
 
   <div class="markdown level1 summary"><p>Maximum extents for this layout(defined by EXTMAX while this layout is current).</p>
@@ -724,7 +725,7 @@ public XYZ MaxExtents { get; set; }</code></pre>
 
   <h3 id="ACadSharp_Objects_Layout_MaxLimits" data-uid="ACadSharp.Objects.Layout.MaxLimits">
   MaxLimits
-  <a class="header-action link-secondary" title="View source" href="https://github.com/DomCR/ACadSharp/blob/master/src/ACadSharp/Objects/Layout.cs/#L104"><i class="bi bi-code-slash"></i></a>
+  <a class="header-action link-secondary" title="View source" href="https://github.com/DomCR/ACadSharp/blob/master/src/ACadSharp/Objects/Layout.cs/#L105"><i class="bi bi-code-slash"></i></a>
   </h3>
 
   <div class="markdown level1 summary"><p>Maximum limits for this layout(defined by LIMMAX while this layout is current).</p>
@@ -757,7 +758,7 @@ public XY MaxLimits { get; set; }</code></pre>
 
   <h3 id="ACadSharp_Objects_Layout_MinExtents" data-uid="ACadSharp.Objects.Layout.MinExtents">
   MinExtents
-  <a class="header-action link-secondary" title="View source" href="https://github.com/DomCR/ACadSharp/blob/master/src/ACadSharp/Objects/Layout.cs/#L110"><i class="bi bi-code-slash"></i></a>
+  <a class="header-action link-secondary" title="View source" href="https://github.com/DomCR/ACadSharp/blob/master/src/ACadSharp/Objects/Layout.cs/#L111"><i class="bi bi-code-slash"></i></a>
   </h3>
 
   <div class="markdown level1 summary"><p>Minimum extents for this layout(defined by EXTMIN while this layout is current).</p>
@@ -790,7 +791,7 @@ public XYZ MinExtents { get; set; }</code></pre>
 
   <h3 id="ACadSharp_Objects_Layout_MinLimits" data-uid="ACadSharp.Objects.Layout.MinLimits">
   MinLimits
-  <a class="header-action link-secondary" title="View source" href="https://github.com/DomCR/ACadSharp/blob/master/src/ACadSharp/Objects/Layout.cs/#L116"><i class="bi bi-code-slash"></i></a>
+  <a class="header-action link-secondary" title="View source" href="https://github.com/DomCR/ACadSharp/blob/master/src/ACadSharp/Objects/Layout.cs/#L117"><i class="bi bi-code-slash"></i></a>
   </h3>
 
   <div class="markdown level1 summary"><p>Minimum limits for this layout (defined by LIMMIN while this layout is current).</p>
@@ -823,7 +824,7 @@ public XY MinLimits { get; set; }</code></pre>
 
   <h3 id="ACadSharp_Objects_Layout_Name" data-uid="ACadSharp.Objects.Layout.Name">
   Name
-  <a class="header-action link-secondary" title="View source" href="https://github.com/DomCR/ACadSharp/blob/master/src/ACadSharp/Objects/Layout.cs/#L122"><i class="bi bi-code-slash"></i></a>
+  <a class="header-action link-secondary" title="View source" href="https://github.com/DomCR/ACadSharp/blob/master/src/ACadSharp/Objects/Layout.cs/#L123"><i class="bi bi-code-slash"></i></a>
   </h3>
 
   <div class="markdown level1 summary"><p>Layout name.</p>
@@ -856,7 +857,7 @@ public override string Name { get; set; }</code></pre>
 
   <h3 id="ACadSharp_Objects_Layout_ObjectName" data-uid="ACadSharp.Objects.Layout.ObjectName">
   ObjectName
-  <a class="header-action link-secondary" title="View source" href="https://github.com/DomCR/ACadSharp/blob/master/src/ACadSharp/Objects/Layout.cs/#L136"><i class="bi bi-code-slash"></i></a>
+  <a class="header-action link-secondary" title="View source" href="https://github.com/DomCR/ACadSharp/blob/master/src/ACadSharp/Objects/Layout.cs/#L137"><i class="bi bi-code-slash"></i></a>
   </h3>
 
   <div class="markdown level1 summary"><p>The CAD class name of an object.</p>
@@ -888,7 +889,7 @@ public override string Name { get; set; }</code></pre>
 
   <h3 id="ACadSharp_Objects_Layout_ObjectType" data-uid="ACadSharp.Objects.Layout.ObjectType">
   ObjectType
-  <a class="header-action link-secondary" title="View source" href="https://github.com/DomCR/ACadSharp/blob/master/src/ACadSharp/Objects/Layout.cs/#L139"><i class="bi bi-code-slash"></i></a>
+  <a class="header-action link-secondary" title="View source" href="https://github.com/DomCR/ACadSharp/blob/master/src/ACadSharp/Objects/Layout.cs/#L140"><i class="bi bi-code-slash"></i></a>
   </h3>
 
   <div class="markdown level1 summary"><p>Get the object type.</p>
@@ -920,7 +921,7 @@ public override string Name { get; set; }</code></pre>
 
   <h3 id="ACadSharp_Objects_Layout_Origin" data-uid="ACadSharp.Objects.Layout.Origin">
   Origin
-  <a class="header-action link-secondary" title="View source" href="https://github.com/DomCR/ACadSharp/blob/master/src/ACadSharp/Objects/Layout.cs/#L144"><i class="bi bi-code-slash"></i></a>
+  <a class="header-action link-secondary" title="View source" href="https://github.com/DomCR/ACadSharp/blob/master/src/ACadSharp/Objects/Layout.cs/#L145"><i class="bi bi-code-slash"></i></a>
   </h3>
 
   <div class="markdown level1 summary"><p>UCS origin.</p>
@@ -953,7 +954,7 @@ public XYZ Origin { get; set; }</code></pre>
 
   <h3 id="ACadSharp_Objects_Layout_PaperViewport" data-uid="ACadSharp.Objects.Layout.PaperViewport">
   PaperViewport
-  <a class="header-action link-secondary" title="View source" href="https://github.com/DomCR/ACadSharp/blob/master/src/ACadSharp/Objects/Layout.cs/#L150"><i class="bi bi-code-slash"></i></a>
+  <a class="header-action link-secondary" title="View source" href="https://github.com/DomCR/ACadSharp/blob/master/src/ACadSharp/Objects/Layout.cs/#L151"><i class="bi bi-code-slash"></i></a>
   </h3>
 
   <div class="markdown level1 summary"><p>Gets the paper viewport associated with this layout. If there are multiple viewports, this property returns the first one found. If no viewports are associated with the layout, this property returns null.</p>
@@ -985,7 +986,7 @@ public XYZ Origin { get; set; }</code></pre>
 
   <h3 id="ACadSharp_Objects_Layout_SubclassMarker" data-uid="ACadSharp.Objects.Layout.SubclassMarker">
   SubclassMarker
-  <a class="header-action link-secondary" title="View source" href="https://github.com/DomCR/ACadSharp/blob/master/src/ACadSharp/Objects/Layout.cs/#L159"><i class="bi bi-code-slash"></i></a>
+  <a class="header-action link-secondary" title="View source" href="https://github.com/DomCR/ACadSharp/blob/master/src/ACadSharp/Objects/Layout.cs/#L160"><i class="bi bi-code-slash"></i></a>
   </h3>
 
   <div class="markdown level1 summary"><p>Object Subclass marker.</p>
@@ -1017,7 +1018,7 @@ public XYZ Origin { get; set; }</code></pre>
 
   <h3 id="ACadSharp_Objects_Layout_TabOrder" data-uid="ACadSharp.Objects.Layout.TabOrder">
   TabOrder
-  <a class="header-action link-secondary" title="View source" href="https://github.com/DomCR/ACadSharp/blob/master/src/ACadSharp/Objects/Layout.cs/#L164"><i class="bi bi-code-slash"></i></a>
+  <a class="header-action link-secondary" title="View source" href="https://github.com/DomCR/ACadSharp/blob/master/src/ACadSharp/Objects/Layout.cs/#L165"><i class="bi bi-code-slash"></i></a>
   </h3>
 
   <div class="markdown level1 summary"><p>Tab order. This number is an ordinal indicating this layout's ordering in the tab control that is attached to the drawing window. Note that the “Model” tab always appears as the first tab regardless of its tab order.</p>
@@ -1050,7 +1051,7 @@ public int TabOrder { get; set; }</code></pre>
 
   <h3 id="ACadSharp_Objects_Layout_UCS" data-uid="ACadSharp.Objects.Layout.UCS">
   UCS
-  <a class="header-action link-secondary" title="View source" href="https://github.com/DomCR/ACadSharp/blob/master/src/ACadSharp/Objects/Layout.cs/#L173"><i class="bi bi-code-slash"></i></a>
+  <a class="header-action link-secondary" title="View source" href="https://github.com/DomCR/ACadSharp/blob/master/src/ACadSharp/Objects/Layout.cs/#L174"><i class="bi bi-code-slash"></i></a>
   </h3>
 
   <div class="markdown level1 summary"><p>UCS Table Record if UCS is a named UCS.</p>
@@ -1086,7 +1087,7 @@ public UCS UCS { get; set; }</code></pre>
 
   <h3 id="ACadSharp_Objects_Layout_UcsOrthographicType" data-uid="ACadSharp.Objects.Layout.UcsOrthographicType">
   UcsOrthographicType
-  <a class="header-action link-secondary" title="View source" href="https://github.com/DomCR/ACadSharp/blob/master/src/ACadSharp/Objects/Layout.cs/#L179"><i class="bi bi-code-slash"></i></a>
+  <a class="header-action link-secondary" title="View source" href="https://github.com/DomCR/ACadSharp/blob/master/src/ACadSharp/Objects/Layout.cs/#L180"><i class="bi bi-code-slash"></i></a>
   </h3>
 
   <div class="markdown level1 summary"><p>Orthographic type of UCS.</p>
@@ -1119,7 +1120,7 @@ public OrthographicType UcsOrthographicType { get; set; }</code></pre>
 
   <h3 id="ACadSharp_Objects_Layout_Viewports" data-uid="ACadSharp.Objects.Layout.Viewports">
   Viewports
-  <a class="header-action link-secondary" title="View source" href="https://github.com/DomCR/ACadSharp/blob/master/src/ACadSharp/Objects/Layout.cs/#L185"><i class="bi bi-code-slash"></i></a>
+  <a class="header-action link-secondary" title="View source" href="https://github.com/DomCR/ACadSharp/blob/master/src/ACadSharp/Objects/Layout.cs/#L186"><i class="bi bi-code-slash"></i></a>
   </h3>
 
   <div class="markdown level1 summary"><p>Gets the collection of viewports associated with this instance.</p>
@@ -1151,7 +1152,7 @@ public OrthographicType UcsOrthographicType { get; set; }</code></pre>
 
   <h3 id="ACadSharp_Objects_Layout_XAxis" data-uid="ACadSharp.Objects.Layout.XAxis">
   XAxis
-  <a class="header-action link-secondary" title="View source" href="https://github.com/DomCR/ACadSharp/blob/master/src/ACadSharp/Objects/Layout.cs/#L196"><i class="bi bi-code-slash"></i></a>
+  <a class="header-action link-secondary" title="View source" href="https://github.com/DomCR/ACadSharp/blob/master/src/ACadSharp/Objects/Layout.cs/#L197"><i class="bi bi-code-slash"></i></a>
   </h3>
 
   <div class="markdown level1 summary"><p>UCS X-axis.</p>
@@ -1184,7 +1185,7 @@ public XYZ XAxis { get; set; }</code></pre>
 
   <h3 id="ACadSharp_Objects_Layout_YAxis" data-uid="ACadSharp.Objects.Layout.YAxis">
   YAxis
-  <a class="header-action link-secondary" title="View source" href="https://github.com/DomCR/ACadSharp/blob/master/src/ACadSharp/Objects/Layout.cs/#L202"><i class="bi bi-code-slash"></i></a>
+  <a class="header-action link-secondary" title="View source" href="https://github.com/DomCR/ACadSharp/blob/master/src/ACadSharp/Objects/Layout.cs/#L203"><i class="bi bi-code-slash"></i></a>
   </h3>
 
   <div class="markdown level1 summary"><p>UCS Y-axis.</p>
@@ -1221,7 +1222,7 @@ public XYZ YAxis { get; set; }</code></pre>
 
   <h3 id="ACadSharp_Objects_Layout_AddViewport_ACadSharp_Entities_Viewport_" data-uid="ACadSharp.Objects.Layout.AddViewport(ACadSharp.Entities.Viewport)">
   AddViewport(Viewport)
-  <a class="header-action link-secondary" title="View source" href="https://github.com/DomCR/ACadSharp/blob/master/src/ACadSharp/Objects/Layout.cs/#L253"><i class="bi bi-code-slash"></i></a>
+  <a class="header-action link-secondary" title="View source" href="https://github.com/DomCR/ACadSharp/blob/master/src/ACadSharp/Objects/Layout.cs/#L254"><i class="bi bi-code-slash"></i></a>
   </h3>
 
   <div class="markdown level1 summary"><p>Adds the specified viewport to the collection of entities associated with this block.</p>
@@ -1254,7 +1255,7 @@ public XYZ YAxis { get; set; }</code></pre>
 
   <h3 id="ACadSharp_Objects_Layout_Clone" data-uid="ACadSharp.Objects.Layout.Clone">
   Clone()
-  <a class="header-action link-secondary" title="View source" href="https://github.com/DomCR/ACadSharp/blob/master/src/ACadSharp/Objects/Layout.cs/#L259"><i class="bi bi-code-slash"></i></a>
+  <a class="header-action link-secondary" title="View source" href="https://github.com/DomCR/ACadSharp/blob/master/src/ACadSharp/Objects/Layout.cs/#L260"><i class="bi bi-code-slash"></i></a>
   </h3>
 
   <div class="markdown level1 summary"><p>Creates a new object that is a copy of the current instance.</p>
@@ -1286,11 +1287,42 @@ public XYZ YAxis { get; set; }</code></pre>
 
 
 
+  <a id="ACadSharp_Objects_Layout_GetDxfClass_" data-uid="ACadSharp.Objects.Layout.GetDxfClass*"></a>
+
+  <h3 id="ACadSharp_Objects_Layout_GetDxfClass" data-uid="ACadSharp.Objects.Layout.GetDxfClass">
+  GetDxfClass()
+  <a class="header-action link-secondary" title="View source" href="https://github.com/DomCR/ACadSharp/blob/master/src/ACadSharp/Objects/Layout.cs/#L270"><i class="bi bi-code-slash"></i></a>
+  </h3>
+
+  <div class="markdown level1 summary"></div>
+  <div class="markdown level1 conceptual"></div>
+
+  <div class="codewrapper">
+    <pre><code class="lang-csharp hljs">public DxfClass GetDxfClass()</code></pre>
+  </div>
+
+
+  <h4 class="section">Returns</h4>
+  <dl class="parameters">
+    <dt><a class="xref" href="ACadSharp.Classes.DxfClass.html">DxfClass</a></dt>
+    <dd></dd>
+  </dl>
+
+
+
+
+
+
+
+
+
+
+
   <a id="ACadSharp_Objects_Layout_ToString_" data-uid="ACadSharp.Objects.Layout.ToString*"></a>
 
   <h3 id="ACadSharp_Objects_Layout_ToString" data-uid="ACadSharp.Objects.Layout.ToString">
   ToString()
-  <a class="header-action link-secondary" title="View source" href="https://github.com/DomCR/ACadSharp/blob/master/src/ACadSharp/Objects/Layout.cs/#L269"><i class="bi bi-code-slash"></i></a>
+  <a class="header-action link-secondary" title="View source" href="https://github.com/DomCR/ACadSharp/blob/master/src/ACadSharp/Objects/Layout.cs/#L285"><i class="bi bi-code-slash"></i></a>
   </h3>
 
   <div class="markdown level1 summary"><p>Returns a string that represents the current object.</p>
@@ -1323,7 +1355,7 @@ public XYZ YAxis { get; set; }</code></pre>
 
   <h3 id="ACadSharp_Objects_Layout_UpdatePaperViewport" data-uid="ACadSharp.Objects.Layout.UpdatePaperViewport">
   UpdatePaperViewport()
-  <a class="header-action link-secondary" title="View source" href="https://github.com/DomCR/ACadSharp/blob/master/src/ACadSharp/Objects/Layout.cs/#L279"><i class="bi bi-code-slash"></i></a>
+  <a class="header-action link-secondary" title="View source" href="https://github.com/DomCR/ACadSharp/blob/master/src/ACadSharp/Objects/Layout.cs/#L295"><i class="bi bi-code-slash"></i></a>
   </h3>
 
   <div class="markdown level1 summary"><p>Ensures that the paper <a class="xref" href="ACadSharp.Entities.Viewport.html">Viewport</a> exists and updates its dimensions to match the current paper size.</p>
@@ -1354,7 +1386,7 @@ has no effect if the object is not a paper space.</p>
 </article>
 
         <div class="contribution d-print-none">
-          <a href="https://github.com/DomCR/ACadSharp/blob/master/src/ACadSharp/Objects/Layout.cs/#L18" class="edit-link">Edit this page</a>
+          <a href="https://github.com/DomCR/ACadSharp/blob/master/src/ACadSharp/Objects/Layout.cs/#L19" class="edit-link">Edit this page</a>
         </div>
 
 

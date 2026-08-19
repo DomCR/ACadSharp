@@ -89,7 +89,7 @@
 
 
   <h1 id="ACadSharp_Objects_Evaluations_BlockArrayAction" data-uid="ACadSharp.Objects.Evaluations.BlockArrayAction" class="text-break">
-Class BlockArrayAction  <a class="header-action link-secondary" title="View source" href="https://github.com/DomCR/ACadSharp/blob/master/src/ACadSharp/Objects/Evaluations/BlockArrayAction.cs/#L13"><i class="bi bi-code-slash"></i></a>
+Class BlockArrayAction  <a class="header-action link-secondary" title="View source" href="https://github.com/DomCR/ACadSharp/blob/master/src/ACadSharp/Objects/Evaluations/BlockArrayAction.cs/#L14"><i class="bi bi-code-slash"></i></a>
   </h1>
 
   <div class="facts text-secondary">
@@ -105,7 +105,7 @@ array action in a dynamic block.</p>
   <div class="codewrapper">
     <pre><code class="lang-csharp hljs">[DxfName(&quot;BLOCKARRAYACTION&quot;)]
 [DxfSubClass(&quot;AcDbBlockArrayAction&quot;)]
-public class BlockArrayAction : BlockAction, IHandledCadObject, INamedCadObject</code></pre>
+public class BlockArrayAction : BlockAction, IHandledCadObject, INamedCadObject, IDxfClassDefined</code></pre>
   </div>
 
 
@@ -129,6 +129,7 @@ public class BlockArrayAction : BlockAction, IHandledCadObject, INamedCadObject<
     <dd>
       <div><a class="xref" href="ACadSharp.IHandledCadObject.html">IHandledCadObject</a></div>
       <div><a class="xref" href="ACadSharp.INamedCadObject.html">INamedCadObject</a></div>
+      <div><a class="xref" href="ACadSharp.Classes.IDxfClassDefined.html">IDxfClassDefined</a></div>
     </dd>
   </dl>
 
@@ -270,7 +271,7 @@ Dxf class name <a class="xref" href="ACadSharp.DxfSubclassMarker.html#ACadSharp_
 
   <h3 id="ACadSharp_Objects_Evaluations_BlockArrayAction_BaseConnection" data-uid="ACadSharp.Objects.Evaluations.BlockArrayAction.BaseConnection">
   BaseConnection
-  <a class="header-action link-secondary" title="View source" href="https://github.com/DomCR/ACadSharp/blob/master/src/ACadSharp/Objects/Evaluations/BlockArrayAction.cs/#L17"><i class="bi bi-code-slash"></i></a>
+  <a class="header-action link-secondary" title="View source" href="https://github.com/DomCR/ACadSharp/blob/master/src/ACadSharp/Objects/Evaluations/BlockArrayAction.cs/#L18"><i class="bi bi-code-slash"></i></a>
   </h3>
 
   <div class="markdown level1 summary"></div>
@@ -301,7 +302,7 @@ Dxf class name <a class="xref" href="ACadSharp.DxfSubclassMarker.html#ACadSharp_
 
   <h3 id="ACadSharp_Objects_Evaluations_BlockArrayAction_ColumnOffset" data-uid="ACadSharp.Objects.Evaluations.BlockArrayAction.ColumnOffset">
   ColumnOffset
-  <a class="header-action link-secondary" title="View source" href="https://github.com/DomCR/ACadSharp/blob/master/src/ACadSharp/Objects/Evaluations/BlockArrayAction.cs/#L19"><i class="bi bi-code-slash"></i></a>
+  <a class="header-action link-secondary" title="View source" href="https://github.com/DomCR/ACadSharp/blob/master/src/ACadSharp/Objects/Evaluations/BlockArrayAction.cs/#L20"><i class="bi bi-code-slash"></i></a>
   </h3>
 
   <div class="markdown level1 summary"></div>
@@ -333,7 +334,7 @@ public double ColumnOffset { get; set; }</code></pre>
 
   <h3 id="ACadSharp_Objects_Evaluations_BlockArrayAction_EndConnection" data-uid="ACadSharp.Objects.Evaluations.BlockArrayAction.EndConnection">
   EndConnection
-  <a class="header-action link-secondary" title="View source" href="https://github.com/DomCR/ACadSharp/blob/master/src/ACadSharp/Objects/Evaluations/BlockArrayAction.cs/#L22"><i class="bi bi-code-slash"></i></a>
+  <a class="header-action link-secondary" title="View source" href="https://github.com/DomCR/ACadSharp/blob/master/src/ACadSharp/Objects/Evaluations/BlockArrayAction.cs/#L23"><i class="bi bi-code-slash"></i></a>
   </h3>
 
   <div class="markdown level1 summary"></div>
@@ -364,7 +365,7 @@ public double ColumnOffset { get; set; }</code></pre>
 
   <h3 id="ACadSharp_Objects_Evaluations_BlockArrayAction_ObjectName" data-uid="ACadSharp.Objects.Evaluations.BlockArrayAction.ObjectName">
   ObjectName
-  <a class="header-action link-secondary" title="View source" href="https://github.com/DomCR/ACadSharp/blob/master/src/ACadSharp/Objects/Evaluations/BlockArrayAction.cs/#L25"><i class="bi bi-code-slash"></i></a>
+  <a class="header-action link-secondary" title="View source" href="https://github.com/DomCR/ACadSharp/blob/master/src/ACadSharp/Objects/Evaluations/BlockArrayAction.cs/#L26"><i class="bi bi-code-slash"></i></a>
   </h3>
 
   <div class="markdown level1 summary"><p>The CAD class name of an object.</p>
@@ -396,7 +397,7 @@ public double ColumnOffset { get; set; }</code></pre>
 
   <h3 id="ACadSharp_Objects_Evaluations_BlockArrayAction_RowOffset" data-uid="ACadSharp.Objects.Evaluations.BlockArrayAction.RowOffset">
   RowOffset
-  <a class="header-action link-secondary" title="View source" href="https://github.com/DomCR/ACadSharp/blob/master/src/ACadSharp/Objects/Evaluations/BlockArrayAction.cs/#L27"><i class="bi bi-code-slash"></i></a>
+  <a class="header-action link-secondary" title="View source" href="https://github.com/DomCR/ACadSharp/blob/master/src/ACadSharp/Objects/Evaluations/BlockArrayAction.cs/#L28"><i class="bi bi-code-slash"></i></a>
   </h3>
 
   <div class="markdown level1 summary"></div>
@@ -428,7 +429,7 @@ public double RowOffset { get; set; }</code></pre>
 
   <h3 id="ACadSharp_Objects_Evaluations_BlockArrayAction_SubclassMarker" data-uid="ACadSharp.Objects.Evaluations.BlockArrayAction.SubclassMarker">
   SubclassMarker
-  <a class="header-action link-secondary" title="View source" href="https://github.com/DomCR/ACadSharp/blob/master/src/ACadSharp/Objects/Evaluations/BlockArrayAction.cs/#L31"><i class="bi bi-code-slash"></i></a>
+  <a class="header-action link-secondary" title="View source" href="https://github.com/DomCR/ACadSharp/blob/master/src/ACadSharp/Objects/Evaluations/BlockArrayAction.cs/#L32"><i class="bi bi-code-slash"></i></a>
   </h3>
 
   <div class="markdown level1 summary"><p>Object Subclass marker.</p>
@@ -460,7 +461,7 @@ public double RowOffset { get; set; }</code></pre>
 
   <h3 id="ACadSharp_Objects_Evaluations_BlockArrayAction_UpdatedBaseConnection" data-uid="ACadSharp.Objects.Evaluations.BlockArrayAction.UpdatedBaseConnection">
   UpdatedBaseConnection
-  <a class="header-action link-secondary" title="View source" href="https://github.com/DomCR/ACadSharp/blob/master/src/ACadSharp/Objects/Evaluations/BlockArrayAction.cs/#L33"><i class="bi bi-code-slash"></i></a>
+  <a class="header-action link-secondary" title="View source" href="https://github.com/DomCR/ACadSharp/blob/master/src/ACadSharp/Objects/Evaluations/BlockArrayAction.cs/#L34"><i class="bi bi-code-slash"></i></a>
   </h3>
 
   <div class="markdown level1 summary"></div>
@@ -491,7 +492,7 @@ public double RowOffset { get; set; }</code></pre>
 
   <h3 id="ACadSharp_Objects_Evaluations_BlockArrayAction_UpdatedEndConnection" data-uid="ACadSharp.Objects.Evaluations.BlockArrayAction.UpdatedEndConnection">
   UpdatedEndConnection
-  <a class="header-action link-secondary" title="View source" href="https://github.com/DomCR/ACadSharp/blob/master/src/ACadSharp/Objects/Evaluations/BlockArrayAction.cs/#L35"><i class="bi bi-code-slash"></i></a>
+  <a class="header-action link-secondary" title="View source" href="https://github.com/DomCR/ACadSharp/blob/master/src/ACadSharp/Objects/Evaluations/BlockArrayAction.cs/#L36"><i class="bi bi-code-slash"></i></a>
   </h3>
 
   <div class="markdown level1 summary"></div>
@@ -518,11 +519,46 @@ public double RowOffset { get; set; }</code></pre>
 
 
 
+  <h2 class="section" id="methods">Methods
+</h2>
+
+
+  <a id="ACadSharp_Objects_Evaluations_BlockArrayAction_GetDxfClass_" data-uid="ACadSharp.Objects.Evaluations.BlockArrayAction.GetDxfClass*"></a>
+
+  <h3 id="ACadSharp_Objects_Evaluations_BlockArrayAction_GetDxfClass" data-uid="ACadSharp.Objects.Evaluations.BlockArrayAction.GetDxfClass">
+  GetDxfClass()
+  <a class="header-action link-secondary" title="View source" href="https://github.com/DomCR/ACadSharp/blob/master/src/ACadSharp/Objects/Evaluations/BlockArrayAction.cs/#L39"><i class="bi bi-code-slash"></i></a>
+  </h3>
+
+  <div class="markdown level1 summary"></div>
+  <div class="markdown level1 conceptual"></div>
+
+  <div class="codewrapper">
+    <pre><code class="lang-csharp hljs">public DxfClass GetDxfClass()</code></pre>
+  </div>
+
+
+  <h4 class="section">Returns</h4>
+  <dl class="parameters">
+    <dt><a class="xref" href="ACadSharp.Classes.DxfClass.html">DxfClass</a></dt>
+    <dd></dd>
+  </dl>
+
+
+
+
+
+
+
+
+
+
+
 
 </article>
 
         <div class="contribution d-print-none">
-          <a href="https://github.com/DomCR/ACadSharp/blob/master/src/ACadSharp/Objects/Evaluations/BlockArrayAction.cs/#L13" class="edit-link">Edit this page</a>
+          <a href="https://github.com/DomCR/ACadSharp/blob/master/src/ACadSharp/Objects/Evaluations/BlockArrayAction.cs/#L14" class="edit-link">Edit this page</a>
         </div>
 
 

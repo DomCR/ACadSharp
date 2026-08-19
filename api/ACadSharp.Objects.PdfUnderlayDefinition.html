@@ -89,7 +89,7 @@
 
 
   <h1 id="ACadSharp_Objects_PdfUnderlayDefinition" data-uid="ACadSharp.Objects.PdfUnderlayDefinition" class="text-break">
-Class PdfUnderlayDefinition  <a class="header-action link-secondary" title="View source" href="https://github.com/DomCR/ACadSharp/blob/master/src/ACadSharp/Objects/PdfUnderlayDefinition.cs/#L12"><i class="bi bi-code-slash"></i></a>
+Class PdfUnderlayDefinition  <a class="header-action link-secondary" title="View source" href="https://github.com/DomCR/ACadSharp/blob/master/src/ACadSharp/Objects/PdfUnderlayDefinition.cs/#L13"><i class="bi bi-code-slash"></i></a>
   </h1>
 
   <div class="facts text-secondary">
@@ -104,7 +104,7 @@ Class PdfUnderlayDefinition  <a class="header-action link-secondary" title="View
   <div class="codewrapper">
     <pre><code class="lang-csharp hljs">[DxfName(&quot;PDFDEFINITION&quot;)]
 [DxfSubClass(&quot;AcDbUnderlayDefinition&quot;)]
-public class PdfUnderlayDefinition : UnderlayDefinition, IHandledCadObject, INamedCadObject</code></pre>
+public class PdfUnderlayDefinition : UnderlayDefinition, IHandledCadObject, INamedCadObject, IDxfClassDefined</code></pre>
   </div>
 
 
@@ -126,6 +126,7 @@ public class PdfUnderlayDefinition : UnderlayDefinition, IHandledCadObject, INam
     <dd>
       <div><a class="xref" href="ACadSharp.IHandledCadObject.html">IHandledCadObject</a></div>
       <div><a class="xref" href="ACadSharp.INamedCadObject.html">INamedCadObject</a></div>
+      <div><a class="xref" href="ACadSharp.Classes.IDxfClassDefined.html">IDxfClassDefined</a></div>
     </dd>
   </dl>
 
@@ -246,7 +247,7 @@ Dxf class name <a class="xref" href="ACadSharp.DxfSubclassMarker.html#ACadSharp_
 
   <h3 id="ACadSharp_Objects_PdfUnderlayDefinition__ctor" data-uid="ACadSharp.Objects.PdfUnderlayDefinition.#ctor">
   PdfUnderlayDefinition()
-  <a class="header-action link-secondary" title="View source" href="https://github.com/DomCR/ACadSharp/blob/master/src/ACadSharp/Objects/PdfUnderlayDefinition.cs/#L32"><i class="bi bi-code-slash"></i></a>
+  <a class="header-action link-secondary" title="View source" href="https://github.com/DomCR/ACadSharp/blob/master/src/ACadSharp/Objects/PdfUnderlayDefinition.cs/#L33"><i class="bi bi-code-slash"></i></a>
   </h3>
 
   <div class="markdown level1 summary"></div>
@@ -276,7 +277,7 @@ Dxf class name <a class="xref" href="ACadSharp.DxfSubclassMarker.html#ACadSharp_
 
   <h3 id="ACadSharp_Objects_PdfUnderlayDefinition_ObjectName" data-uid="ACadSharp.Objects.PdfUnderlayDefinition.ObjectName">
   ObjectName
-  <a class="header-action link-secondary" title="View source" href="https://github.com/DomCR/ACadSharp/blob/master/src/ACadSharp/Objects/PdfUnderlayDefinition.cs/#L17"><i class="bi bi-code-slash"></i></a>
+  <a class="header-action link-secondary" title="View source" href="https://github.com/DomCR/ACadSharp/blob/master/src/ACadSharp/Objects/PdfUnderlayDefinition.cs/#L18"><i class="bi bi-code-slash"></i></a>
   </h3>
 
   <div class="markdown level1 summary"><p>The CAD class name of an object.</p>
@@ -308,7 +309,7 @@ Dxf class name <a class="xref" href="ACadSharp.DxfSubclassMarker.html#ACadSharp_
 
   <h3 id="ACadSharp_Objects_PdfUnderlayDefinition_Page" data-uid="ACadSharp.Objects.PdfUnderlayDefinition.Page">
   Page
-  <a class="header-action link-secondary" title="View source" href="https://github.com/DomCR/ACadSharp/blob/master/src/ACadSharp/Objects/PdfUnderlayDefinition.cs/#L22"><i class="bi bi-code-slash"></i></a>
+  <a class="header-action link-secondary" title="View source" href="https://github.com/DomCR/ACadSharp/blob/master/src/ACadSharp/Objects/PdfUnderlayDefinition.cs/#L23"><i class="bi bi-code-slash"></i></a>
   </h3>
 
   <div class="markdown level1 summary"><p>Gets or sets the PDF page to show.</p>
@@ -337,11 +338,46 @@ public string Page { get; set; }</code></pre>
 
 
 
+  <h2 class="section" id="methods">Methods
+</h2>
+
+
+  <a id="ACadSharp_Objects_PdfUnderlayDefinition_GetDxfClass_" data-uid="ACadSharp.Objects.PdfUnderlayDefinition.GetDxfClass*"></a>
+
+  <h3 id="ACadSharp_Objects_PdfUnderlayDefinition_GetDxfClass" data-uid="ACadSharp.Objects.PdfUnderlayDefinition.GetDxfClass">
+  GetDxfClass()
+  <a class="header-action link-secondary" title="View source" href="https://github.com/DomCR/ACadSharp/blob/master/src/ACadSharp/Objects/PdfUnderlayDefinition.cs/#L38"><i class="bi bi-code-slash"></i></a>
+  </h3>
+
+  <div class="markdown level1 summary"></div>
+  <div class="markdown level1 conceptual"></div>
+
+  <div class="codewrapper">
+    <pre><code class="lang-csharp hljs">public DxfClass GetDxfClass()</code></pre>
+  </div>
+
+
+  <h4 class="section">Returns</h4>
+  <dl class="parameters">
+    <dt><a class="xref" href="ACadSharp.Classes.DxfClass.html">DxfClass</a></dt>
+    <dd></dd>
+  </dl>
+
+
+
+
+
+
+
+
+
+
+
 
 </article>
 
         <div class="contribution d-print-none">
-          <a href="https://github.com/DomCR/ACadSharp/blob/master/src/ACadSharp/Objects/PdfUnderlayDefinition.cs/#L12" class="edit-link">Edit this page</a>
+          <a href="https://github.com/DomCR/ACadSharp/blob/master/src/ACadSharp/Objects/PdfUnderlayDefinition.cs/#L13" class="edit-link">Edit this page</a>
         </div>
 
 

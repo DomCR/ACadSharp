@@ -89,7 +89,7 @@
 
 
   <h1 id="ACadSharp_Objects_FieldList" data-uid="ACadSharp.Objects.FieldList" class="text-break">
-Class FieldList  <a class="header-action link-secondary" title="View source" href="https://github.com/DomCR/ACadSharp/blob/master/src/ACadSharp/Objects/FieldList.cs/#L13"><i class="bi bi-code-slash"></i></a>
+Class FieldList  <a class="header-action link-secondary" title="View source" href="https://github.com/DomCR/ACadSharp/blob/master/src/ACadSharp/Objects/FieldList.cs/#L14"><i class="bi bi-code-slash"></i></a>
   </h1>
 
   <div class="facts text-secondary">
@@ -104,7 +104,7 @@ Class FieldList  <a class="header-action link-secondary" title="View source" hre
   <div class="codewrapper">
     <pre><code class="lang-csharp hljs">[DxfName(&quot;FIELDLIST&quot;)]
 [DxfSubClass(&quot;AcDbFieldList&quot;)]
-public class FieldList : NonGraphicalObject, IHandledCadObject, INamedCadObject</code></pre>
+public class FieldList : NonGraphicalObject, IHandledCadObject, INamedCadObject, IDxfClassDefined</code></pre>
   </div>
 
 
@@ -125,6 +125,7 @@ public class FieldList : NonGraphicalObject, IHandledCadObject, INamedCadObject<
     <dd>
       <div><a class="xref" href="ACadSharp.IHandledCadObject.html">IHandledCadObject</a></div>
       <div><a class="xref" href="ACadSharp.INamedCadObject.html">INamedCadObject</a></div>
+      <div><a class="xref" href="ACadSharp.Classes.IDxfClassDefined.html">IDxfClassDefined</a></div>
     </dd>
   </dl>
 
@@ -233,7 +234,7 @@ Dxf class name <a class="xref" href="ACadSharp.DxfSubclassMarker.html#ACadSharp_
 
   <h3 id="ACadSharp_Objects_FieldList_Fields" data-uid="ACadSharp.Objects.FieldList.Fields">
   Fields
-  <a class="header-action link-secondary" title="View source" href="https://github.com/DomCR/ACadSharp/blob/master/src/ACadSharp/Objects/FieldList.cs/#L22"><i class="bi bi-code-slash"></i></a>
+  <a class="header-action link-secondary" title="View source" href="https://github.com/DomCR/ACadSharp/blob/master/src/ACadSharp/Objects/FieldList.cs/#L23"><i class="bi bi-code-slash"></i></a>
   </h3>
 
   <div class="markdown level1 summary"><p>Gets the collection of fields associated with this instance.</p>
@@ -269,7 +270,7 @@ methods of the containing class, if available.</p>
 
   <h3 id="ACadSharp_Objects_FieldList_ObjectName" data-uid="ACadSharp.Objects.FieldList.ObjectName">
   ObjectName
-  <a class="header-action link-secondary" title="View source" href="https://github.com/DomCR/ACadSharp/blob/master/src/ACadSharp/Objects/FieldList.cs/#L25"><i class="bi bi-code-slash"></i></a>
+  <a class="header-action link-secondary" title="View source" href="https://github.com/DomCR/ACadSharp/blob/master/src/ACadSharp/Objects/FieldList.cs/#L26"><i class="bi bi-code-slash"></i></a>
   </h3>
 
   <div class="markdown level1 summary"><p>The CAD class name of an object.</p>
@@ -301,7 +302,7 @@ methods of the containing class, if available.</p>
 
   <h3 id="ACadSharp_Objects_FieldList_ObjectType" data-uid="ACadSharp.Objects.FieldList.ObjectType">
   ObjectType
-  <a class="header-action link-secondary" title="View source" href="https://github.com/DomCR/ACadSharp/blob/master/src/ACadSharp/Objects/FieldList.cs/#L28"><i class="bi bi-code-slash"></i></a>
+  <a class="header-action link-secondary" title="View source" href="https://github.com/DomCR/ACadSharp/blob/master/src/ACadSharp/Objects/FieldList.cs/#L29"><i class="bi bi-code-slash"></i></a>
   </h3>
 
   <div class="markdown level1 summary"><p>Get the object type.</p>
@@ -333,7 +334,7 @@ methods of the containing class, if available.</p>
 
   <h3 id="ACadSharp_Objects_FieldList_SubclassMarker" data-uid="ACadSharp.Objects.FieldList.SubclassMarker">
   SubclassMarker
-  <a class="header-action link-secondary" title="View source" href="https://github.com/DomCR/ACadSharp/blob/master/src/ACadSharp/Objects/FieldList.cs/#L31"><i class="bi bi-code-slash"></i></a>
+  <a class="header-action link-secondary" title="View source" href="https://github.com/DomCR/ACadSharp/blob/master/src/ACadSharp/Objects/FieldList.cs/#L32"><i class="bi bi-code-slash"></i></a>
   </h3>
 
   <div class="markdown level1 summary"><p>Object Subclass marker.</p>
@@ -369,7 +370,7 @@ methods of the containing class, if available.</p>
 
   <h3 id="ACadSharp_Objects_FieldList_Clone" data-uid="ACadSharp.Objects.FieldList.Clone">
   Clone()
-  <a class="header-action link-secondary" title="View source" href="https://github.com/DomCR/ACadSharp/blob/master/src/ACadSharp/Objects/FieldList.cs/#L34"><i class="bi bi-code-slash"></i></a>
+  <a class="header-action link-secondary" title="View source" href="https://github.com/DomCR/ACadSharp/blob/master/src/ACadSharp/Objects/FieldList.cs/#L35"><i class="bi bi-code-slash"></i></a>
   </h3>
 
   <div class="markdown level1 summary"><p>Creates a new object that is a copy of the current instance.</p>
@@ -401,11 +402,42 @@ methods of the containing class, if available.</p>
 
 
 
+  <a id="ACadSharp_Objects_FieldList_GetDxfClass_" data-uid="ACadSharp.Objects.FieldList.GetDxfClass*"></a>
+
+  <h3 id="ACadSharp_Objects_FieldList_GetDxfClass" data-uid="ACadSharp.Objects.FieldList.GetDxfClass">
+  GetDxfClass()
+  <a class="header-action link-secondary" title="View source" href="https://github.com/DomCR/ACadSharp/blob/master/src/ACadSharp/Objects/FieldList.cs/#L49"><i class="bi bi-code-slash"></i></a>
+  </h3>
+
+  <div class="markdown level1 summary"></div>
+  <div class="markdown level1 conceptual"></div>
+
+  <div class="codewrapper">
+    <pre><code class="lang-csharp hljs">public DxfClass GetDxfClass()</code></pre>
+  </div>
+
+
+  <h4 class="section">Returns</h4>
+  <dl class="parameters">
+    <dt><a class="xref" href="ACadSharp.Classes.DxfClass.html">DxfClass</a></dt>
+    <dd></dd>
+  </dl>
+
+
+
+
+
+
+
+
+
+
+
 
 </article>
 
         <div class="contribution d-print-none">
-          <a href="https://github.com/DomCR/ACadSharp/blob/master/src/ACadSharp/Objects/FieldList.cs/#L13" class="edit-link">Edit this page</a>
+          <a href="https://github.com/DomCR/ACadSharp/blob/master/src/ACadSharp/Objects/FieldList.cs/#L14" class="edit-link">Edit this page</a>
         </div>
 
 

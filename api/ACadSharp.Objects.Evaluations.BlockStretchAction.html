@@ -89,7 +89,7 @@
 
 
   <h1 id="ACadSharp_Objects_Evaluations_BlockStretchAction" data-uid="ACadSharp.Objects.Evaluations.BlockStretchAction" class="text-break">
-Class BlockStretchAction  <a class="header-action link-secondary" title="View source" href="https://github.com/DomCR/ACadSharp/blob/master/src/ACadSharp/Objects/Evaluations/BlockStretchAction.cs/#L15"><i class="bi bi-code-slash"></i></a>
+Class BlockStretchAction  <a class="header-action link-secondary" title="View source" href="https://github.com/DomCR/ACadSharp/blob/master/src/ACadSharp/Objects/Evaluations/BlockStretchAction.cs/#L16"><i class="bi bi-code-slash"></i></a>
   </h1>
 
   <div class="facts text-secondary">
@@ -105,7 +105,7 @@ stretch action in a dynamic block.</p>
   <div class="codewrapper">
     <pre><code class="lang-csharp hljs">[DxfName(&quot;BLOCKSTRETCHACTION&quot;)]
 [DxfSubClass(&quot;AcDbBlockStretchAction&quot;)]
-public class BlockStretchAction : StretchActionBase, IHandledCadObject, INamedCadObject</code></pre>
+public class BlockStretchAction : StretchActionBase, IHandledCadObject, INamedCadObject, IDxfClassDefined</code></pre>
   </div>
 
 
@@ -130,6 +130,7 @@ public class BlockStretchAction : StretchActionBase, IHandledCadObject, INamedCa
     <dd>
       <div><a class="xref" href="ACadSharp.IHandledCadObject.html">IHandledCadObject</a></div>
       <div><a class="xref" href="ACadSharp.INamedCadObject.html">INamedCadObject</a></div>
+      <div><a class="xref" href="ACadSharp.Classes.IDxfClassDefined.html">IDxfClassDefined</a></div>
     </dd>
   </dl>
 
@@ -277,7 +278,7 @@ Dxf class name <a class="xref" href="ACadSharp.DxfSubclassMarker.html#ACadSharp_
 
   <h3 id="ACadSharp_Objects_Evaluations_BlockStretchAction_AngleOffset" data-uid="ACadSharp.Objects.Evaluations.BlockStretchAction.AngleOffset">
   AngleOffset
-  <a class="header-action link-secondary" title="View source" href="https://github.com/DomCR/ACadSharp/blob/master/src/ACadSharp/Objects/Evaluations/BlockStretchAction.cs/#L20"><i class="bi bi-code-slash"></i></a>
+  <a class="header-action link-secondary" title="View source" href="https://github.com/DomCR/ACadSharp/blob/master/src/ACadSharp/Objects/Evaluations/BlockStretchAction.cs/#L21"><i class="bi bi-code-slash"></i></a>
   </h3>
 
   <div class="markdown level1 summary"><p>Gets or sets the angle offset for the stretch action.</p>
@@ -310,7 +311,7 @@ public override double AngleOffset { get; set; }</code></pre>
 
   <h3 id="ACadSharp_Objects_Evaluations_BlockStretchAction_Boundary" data-uid="ACadSharp.Objects.Evaluations.BlockStretchAction.Boundary">
   Boundary
-  <a class="header-action link-secondary" title="View source" href="https://github.com/DomCR/ACadSharp/blob/master/src/ACadSharp/Objects/Evaluations/BlockStretchAction.cs/#L24"><i class="bi bi-code-slash"></i></a>
+  <a class="header-action link-secondary" title="View source" href="https://github.com/DomCR/ACadSharp/blob/master/src/ACadSharp/Objects/Evaluations/BlockStretchAction.cs/#L25"><i class="bi bi-code-slash"></i></a>
   </h3>
 
   <div class="markdown level1 summary"></div>
@@ -343,7 +344,7 @@ public override List&lt;XY&gt; Boundary { get; protected set; }</code></pre>
 
   <h3 id="ACadSharp_Objects_Evaluations_BlockStretchAction_DistanceMultiplier" data-uid="ACadSharp.Objects.Evaluations.BlockStretchAction.DistanceMultiplier">
   DistanceMultiplier
-  <a class="header-action link-secondary" title="View source" href="https://github.com/DomCR/ACadSharp/blob/master/src/ACadSharp/Objects/Evaluations/BlockStretchAction.cs/#L29"><i class="bi bi-code-slash"></i></a>
+  <a class="header-action link-secondary" title="View source" href="https://github.com/DomCR/ACadSharp/blob/master/src/ACadSharp/Objects/Evaluations/BlockStretchAction.cs/#L30"><i class="bi bi-code-slash"></i></a>
   </h3>
 
   <div class="markdown level1 summary"><p>Gets or sets the distance multiplier for the stretch action.</p>
@@ -376,7 +377,7 @@ public override double DistanceMultiplier { get; set; }</code></pre>
 
   <h3 id="ACadSharp_Objects_Evaluations_BlockStretchAction_EndXDeltaConnection" data-uid="ACadSharp.Objects.Evaluations.BlockStretchAction.EndXDeltaConnection">
   EndXDeltaConnection
-  <a class="header-action link-secondary" title="View source" href="https://github.com/DomCR/ACadSharp/blob/master/src/ACadSharp/Objects/Evaluations/BlockStretchAction.cs/#L32"><i class="bi bi-code-slash"></i></a>
+  <a class="header-action link-secondary" title="View source" href="https://github.com/DomCR/ACadSharp/blob/master/src/ACadSharp/Objects/Evaluations/BlockStretchAction.cs/#L33"><i class="bi bi-code-slash"></i></a>
   </h3>
 
   <div class="markdown level1 summary"></div>
@@ -407,7 +408,7 @@ public override double DistanceMultiplier { get; set; }</code></pre>
 
   <h3 id="ACadSharp_Objects_Evaluations_BlockStretchAction_EndYDeltaConnection" data-uid="ACadSharp.Objects.Evaluations.BlockStretchAction.EndYDeltaConnection">
   EndYDeltaConnection
-  <a class="header-action link-secondary" title="View source" href="https://github.com/DomCR/ACadSharp/blob/master/src/ACadSharp/Objects/Evaluations/BlockStretchAction.cs/#L34"><i class="bi bi-code-slash"></i></a>
+  <a class="header-action link-secondary" title="View source" href="https://github.com/DomCR/ACadSharp/blob/master/src/ACadSharp/Objects/Evaluations/BlockStretchAction.cs/#L35"><i class="bi bi-code-slash"></i></a>
   </h3>
 
   <div class="markdown level1 summary"></div>
@@ -438,7 +439,7 @@ public override double DistanceMultiplier { get; set; }</code></pre>
 
   <h3 id="ACadSharp_Objects_Evaluations_BlockStretchAction_ObjectName" data-uid="ACadSharp.Objects.Evaluations.BlockStretchAction.ObjectName">
   ObjectName
-  <a class="header-action link-secondary" title="View source" href="https://github.com/DomCR/ACadSharp/blob/master/src/ACadSharp/Objects/Evaluations/BlockStretchAction.cs/#L37"><i class="bi bi-code-slash"></i></a>
+  <a class="header-action link-secondary" title="View source" href="https://github.com/DomCR/ACadSharp/blob/master/src/ACadSharp/Objects/Evaluations/BlockStretchAction.cs/#L38"><i class="bi bi-code-slash"></i></a>
   </h3>
 
   <div class="markdown level1 summary"><p>The CAD class name of an object.</p>
@@ -470,7 +471,7 @@ public override double DistanceMultiplier { get; set; }</code></pre>
 
   <h3 id="ACadSharp_Objects_Evaluations_BlockStretchAction_SubclassMarker" data-uid="ACadSharp.Objects.Evaluations.BlockStretchAction.SubclassMarker">
   SubclassMarker
-  <a class="header-action link-secondary" title="View source" href="https://github.com/DomCR/ACadSharp/blob/master/src/ACadSharp/Objects/Evaluations/BlockStretchAction.cs/#L40"><i class="bi bi-code-slash"></i></a>
+  <a class="header-action link-secondary" title="View source" href="https://github.com/DomCR/ACadSharp/blob/master/src/ACadSharp/Objects/Evaluations/BlockStretchAction.cs/#L41"><i class="bi bi-code-slash"></i></a>
   </h3>
 
   <div class="markdown level1 summary"><p>Object Subclass marker.</p>
@@ -502,7 +503,7 @@ public override double DistanceMultiplier { get; set; }</code></pre>
 
   <h3 id="ACadSharp_Objects_Evaluations_BlockStretchAction_UnknownFlag" data-uid="ACadSharp.Objects.Evaluations.BlockStretchAction.UnknownFlag">
   UnknownFlag
-  <a class="header-action link-secondary" title="View source" href="https://github.com/DomCR/ACadSharp/blob/master/src/ACadSharp/Objects/Evaluations/BlockStretchAction.cs/#L43"><i class="bi bi-code-slash"></i></a>
+  <a class="header-action link-secondary" title="View source" href="https://github.com/DomCR/ACadSharp/blob/master/src/ACadSharp/Objects/Evaluations/BlockStretchAction.cs/#L44"><i class="bi bi-code-slash"></i></a>
   </h3>
 
   <div class="markdown level1 summary"></div>
@@ -530,11 +531,46 @@ public byte UnknownFlag { get; set; }</code></pre>
 
 
 
+  <h2 class="section" id="methods">Methods
+</h2>
+
+
+  <a id="ACadSharp_Objects_Evaluations_BlockStretchAction_GetDxfClass_" data-uid="ACadSharp.Objects.Evaluations.BlockStretchAction.GetDxfClass*"></a>
+
+  <h3 id="ACadSharp_Objects_Evaluations_BlockStretchAction_GetDxfClass" data-uid="ACadSharp.Objects.Evaluations.BlockStretchAction.GetDxfClass">
+  GetDxfClass()
+  <a class="header-action link-secondary" title="View source" href="https://github.com/DomCR/ACadSharp/blob/master/src/ACadSharp/Objects/Evaluations/BlockStretchAction.cs/#L48"><i class="bi bi-code-slash"></i></a>
+  </h3>
+
+  <div class="markdown level1 summary"></div>
+  <div class="markdown level1 conceptual"></div>
+
+  <div class="codewrapper">
+    <pre><code class="lang-csharp hljs">public DxfClass GetDxfClass()</code></pre>
+  </div>
+
+
+  <h4 class="section">Returns</h4>
+  <dl class="parameters">
+    <dt><a class="xref" href="ACadSharp.Classes.DxfClass.html">DxfClass</a></dt>
+    <dd></dd>
+  </dl>
+
+
+
+
+
+
+
+
+
+
+
 
 </article>
 
         <div class="contribution d-print-none">
-          <a href="https://github.com/DomCR/ACadSharp/blob/master/src/ACadSharp/Objects/Evaluations/BlockStretchAction.cs/#L15" class="edit-link">Edit this page</a>
+          <a href="https://github.com/DomCR/ACadSharp/blob/master/src/ACadSharp/Objects/Evaluations/BlockStretchAction.cs/#L16" class="edit-link">Edit this page</a>
         </div>
 
 

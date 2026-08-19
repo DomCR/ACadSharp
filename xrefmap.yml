@@ -2800,6 +2800,12 @@ references:
   isSpec: "True"
   fullName: ACadSharp.Classes.DxfClass.CppClassName
   nameWithType: DxfClass.CppClassName
+- uid: ACadSharp.Classes.DxfClass.DefaultApplicationName
+  name: DefaultApplicationName
+  href: api/ACadSharp.Classes.DxfClass.html#ACadSharp_Classes_DxfClass_DefaultApplicationName
+  commentId: F:ACadSharp.Classes.DxfClass.DefaultApplicationName
+  fullName: ACadSharp.Classes.DxfClass.DefaultApplicationName
+  nameWithType: DxfClass.DefaultApplicationName
 - uid: ACadSharp.Classes.DxfClass.DwgVersion
   name: DwgVersion
   href: api/ACadSharp.Classes.DxfClass.html#ACadSharp_Classes_DxfClass_DwgVersion
@@ -3064,6 +3070,19 @@ references:
   isSpec: "True"
   fullName: ACadSharp.Classes.DxfClassCollection.GetEnumerator
   nameWithType: DxfClassCollection.GetEnumerator
+- uid: ACadSharp.Classes.DxfClassCollection.IncreaseInstanceCount(ACadSharp.Classes.DxfClass)
+  name: IncreaseInstanceCount(DxfClass)
+  href: api/ACadSharp.Classes.DxfClassCollection.html#ACadSharp_Classes_DxfClassCollection_IncreaseInstanceCount_ACadSharp_Classes_DxfClass_
+  commentId: M:ACadSharp.Classes.DxfClassCollection.IncreaseInstanceCount(ACadSharp.Classes.DxfClass)
+  fullName: ACadSharp.Classes.DxfClassCollection.IncreaseInstanceCount(ACadSharp.Classes.DxfClass)
+  nameWithType: DxfClassCollection.IncreaseInstanceCount(DxfClass)
+- uid: ACadSharp.Classes.DxfClassCollection.IncreaseInstanceCount*
+  name: IncreaseInstanceCount
+  href: api/ACadSharp.Classes.DxfClassCollection.html#ACadSharp_Classes_DxfClassCollection_IncreaseInstanceCount_
+  commentId: Overload:ACadSharp.Classes.DxfClassCollection.IncreaseInstanceCount
+  isSpec: "True"
+  fullName: ACadSharp.Classes.DxfClassCollection.IncreaseInstanceCount
+  nameWithType: DxfClassCollection.IncreaseInstanceCount
 - uid: ACadSharp.Classes.DxfClassCollection.IsReadOnly
   name: IsReadOnly
   href: api/ACadSharp.Classes.DxfClassCollection.html#ACadSharp_Classes_DxfClassCollection_IsReadOnly
@@ -3090,6 +3109,32 @@ references:
   isSpec: "True"
   fullName: ACadSharp.Classes.DxfClassCollection.Remove
   nameWithType: DxfClassCollection.Remove
+- uid: ACadSharp.Classes.DxfClassCollection.ResetClassNumbers
+  name: ResetClassNumbers()
+  href: api/ACadSharp.Classes.DxfClassCollection.html#ACadSharp_Classes_DxfClassCollection_ResetClassNumbers
+  commentId: M:ACadSharp.Classes.DxfClassCollection.ResetClassNumbers
+  fullName: ACadSharp.Classes.DxfClassCollection.ResetClassNumbers()
+  nameWithType: DxfClassCollection.ResetClassNumbers()
+- uid: ACadSharp.Classes.DxfClassCollection.ResetClassNumbers*
+  name: ResetClassNumbers
+  href: api/ACadSharp.Classes.DxfClassCollection.html#ACadSharp_Classes_DxfClassCollection_ResetClassNumbers_
+  commentId: Overload:ACadSharp.Classes.DxfClassCollection.ResetClassNumbers
+  isSpec: "True"
+  fullName: ACadSharp.Classes.DxfClassCollection.ResetClassNumbers
+  nameWithType: DxfClassCollection.ResetClassNumbers
+- uid: ACadSharp.Classes.DxfClassCollection.TryAdd(ACadSharp.Classes.DxfClass)
+  name: TryAdd(DxfClass)
+  href: api/ACadSharp.Classes.DxfClassCollection.html#ACadSharp_Classes_DxfClassCollection_TryAdd_ACadSharp_Classes_DxfClass_
+  commentId: M:ACadSharp.Classes.DxfClassCollection.TryAdd(ACadSharp.Classes.DxfClass)
+  fullName: ACadSharp.Classes.DxfClassCollection.TryAdd(ACadSharp.Classes.DxfClass)
+  nameWithType: DxfClassCollection.TryAdd(DxfClass)
+- uid: ACadSharp.Classes.DxfClassCollection.TryAdd*
+  name: TryAdd
+  href: api/ACadSharp.Classes.DxfClassCollection.html#ACadSharp_Classes_DxfClassCollection_TryAdd_
+  commentId: Overload:ACadSharp.Classes.DxfClassCollection.TryAdd
+  isSpec: "True"
+  fullName: ACadSharp.Classes.DxfClassCollection.TryAdd
+  nameWithType: DxfClassCollection.TryAdd
 - uid: ACadSharp.Classes.DxfClassCollection.TryGetByClassNumber(System.Int16,ACadSharp.Classes.DxfClass@)
   name: TryGetByClassNumber(short, out DxfClass)
   href: api/ACadSharp.Classes.DxfClassCollection.html#ACadSharp_Classes_DxfClassCollection_TryGetByClassNumber_System_Int16_ACadSharp_Classes_DxfClass__
@@ -3135,6 +3180,25 @@ references:
   isSpec: "True"
   fullName: ACadSharp.Classes.DxfClassCollection.UpdateDxfClasses
   nameWithType: DxfClassCollection.UpdateDxfClasses
+- uid: ACadSharp.Classes.IDxfClassDefined
+  name: IDxfClassDefined
+  href: api/ACadSharp.Classes.IDxfClassDefined.html
+  commentId: T:ACadSharp.Classes.IDxfClassDefined
+  fullName: ACadSharp.Classes.IDxfClassDefined
+  nameWithType: IDxfClassDefined
+- uid: ACadSharp.Classes.IDxfClassDefined.GetDxfClass
+  name: GetDxfClass()
+  href: api/ACadSharp.Classes.IDxfClassDefined.html#ACadSharp_Classes_IDxfClassDefined_GetDxfClass
+  commentId: M:ACadSharp.Classes.IDxfClassDefined.GetDxfClass
+  fullName: ACadSharp.Classes.IDxfClassDefined.GetDxfClass()
+  nameWithType: IDxfClassDefined.GetDxfClass()
+- uid: ACadSharp.Classes.IDxfClassDefined.GetDxfClass*
+  name: GetDxfClass
+  href: api/ACadSharp.Classes.IDxfClassDefined.html#ACadSharp_Classes_IDxfClassDefined_GetDxfClass_
+  commentId: Overload:ACadSharp.Classes.IDxfClassDefined.GetDxfClass
+  isSpec: "True"
+  fullName: ACadSharp.Classes.IDxfClassDefined.GetDxfClass
+  nameWithType: IDxfClassDefined.GetDxfClass
 - uid: ACadSharp.Classes.ProxyFlags
   name: ProxyFlags
   href: api/ACadSharp.Classes.ProxyFlags.html
@@ -9972,6 +10036,19 @@ references:
   isSpec: "True"
   fullName: ACadSharp.Entities.DimensionArc.GetBoundingBox
   nameWithType: DimensionArc.GetBoundingBox
+- uid: ACadSharp.Entities.DimensionArc.GetDxfClass
+  name: GetDxfClass()
+  href: api/ACadSharp.Entities.DimensionArc.html#ACadSharp_Entities_DimensionArc_GetDxfClass
+  commentId: M:ACadSharp.Entities.DimensionArc.GetDxfClass
+  fullName: ACadSharp.Entities.DimensionArc.GetDxfClass()
+  nameWithType: DimensionArc.GetDxfClass()
+- uid: ACadSharp.Entities.DimensionArc.GetDxfClass*
+  name: GetDxfClass
+  href: api/ACadSharp.Entities.DimensionArc.html#ACadSharp_Entities_DimensionArc_GetDxfClass_
+  commentId: Overload:ACadSharp.Entities.DimensionArc.GetDxfClass
+  isSpec: "True"
+  fullName: ACadSharp.Entities.DimensionArc.GetDxfClass
+  nameWithType: DimensionArc.GetDxfClass
 - uid: ACadSharp.Entities.DimensionArc.HasLeader
   name: HasLeader
   href: api/ACadSharp.Entities.DimensionArc.html#ACadSharp_Entities_DimensionArc_HasLeader
@@ -16888,6 +16965,19 @@ references:
   isSpec: "True"
   fullName: ACadSharp.Entities.Mesh.GetBoundingBox
   nameWithType: Mesh.GetBoundingBox
+- uid: ACadSharp.Entities.Mesh.GetDxfClass
+  name: GetDxfClass()
+  href: api/ACadSharp.Entities.Mesh.html#ACadSharp_Entities_Mesh_GetDxfClass
+  commentId: M:ACadSharp.Entities.Mesh.GetDxfClass
+  fullName: ACadSharp.Entities.Mesh.GetDxfClass()
+  nameWithType: Mesh.GetDxfClass()
+- uid: ACadSharp.Entities.Mesh.GetDxfClass*
+  name: GetDxfClass
+  href: api/ACadSharp.Entities.Mesh.html#ACadSharp_Entities_Mesh_GetDxfClass_
+  commentId: Overload:ACadSharp.Entities.Mesh.GetDxfClass
+  isSpec: "True"
+  fullName: ACadSharp.Entities.Mesh.GetDxfClass
+  nameWithType: Mesh.GetDxfClass
 - uid: ACadSharp.Entities.Mesh.ObjectName
   name: ObjectName
   href: api/ACadSharp.Entities.Mesh.html#ACadSharp_Entities_Mesh_ObjectName
@@ -17685,6 +17775,19 @@ references:
   isSpec: "True"
   fullName: ACadSharp.Entities.MultiLeader.GetBoundingBox
   nameWithType: MultiLeader.GetBoundingBox
+- uid: ACadSharp.Entities.MultiLeader.GetDxfClass
+  name: GetDxfClass()
+  href: api/ACadSharp.Entities.MultiLeader.html#ACadSharp_Entities_MultiLeader_GetDxfClass
+  commentId: M:ACadSharp.Entities.MultiLeader.GetDxfClass
+  fullName: ACadSharp.Entities.MultiLeader.GetDxfClass()
+  nameWithType: MultiLeader.GetDxfClass()
+- uid: ACadSharp.Entities.MultiLeader.GetDxfClass*
+  name: GetDxfClass
+  href: api/ACadSharp.Entities.MultiLeader.html#ACadSharp_Entities_MultiLeader_GetDxfClass_
+  commentId: Overload:ACadSharp.Entities.MultiLeader.GetDxfClass
+  isSpec: "True"
+  fullName: ACadSharp.Entities.MultiLeader.GetDxfClass
+  nameWithType: MultiLeader.GetDxfClass
 - uid: ACadSharp.Entities.MultiLeader.LandingDistance
   name: LandingDistance
   href: api/ACadSharp.Entities.MultiLeader.html#ACadSharp_Entities_MultiLeader_LandingDistance
@@ -18416,6 +18519,19 @@ references:
   fullName.vb: ACadSharp.Entities.PdfUnderlay.New
   nameWithType: PdfUnderlay.PdfUnderlay
   nameWithType.vb: PdfUnderlay.New
+- uid: ACadSharp.Entities.PdfUnderlay.GetDxfClass
+  name: GetDxfClass()
+  href: api/ACadSharp.Entities.PdfUnderlay.html#ACadSharp_Entities_PdfUnderlay_GetDxfClass
+  commentId: M:ACadSharp.Entities.PdfUnderlay.GetDxfClass
+  fullName: ACadSharp.Entities.PdfUnderlay.GetDxfClass()
+  nameWithType: PdfUnderlay.GetDxfClass()
+- uid: ACadSharp.Entities.PdfUnderlay.GetDxfClass*
+  name: GetDxfClass
+  href: api/ACadSharp.Entities.PdfUnderlay.html#ACadSharp_Entities_PdfUnderlay_GetDxfClass_
+  commentId: Overload:ACadSharp.Entities.PdfUnderlay.GetDxfClass
+  isSpec: "True"
+  fullName: ACadSharp.Entities.PdfUnderlay.GetDxfClass
+  nameWithType: PdfUnderlay.GetDxfClass
 - uid: ACadSharp.Entities.PdfUnderlay.ObjectName
   name: ObjectName
   href: api/ACadSharp.Entities.PdfUnderlay.html#ACadSharp_Entities_PdfUnderlay_ObjectName
@@ -22456,6 +22572,35 @@ references:
   isSpec: "True"
   fullName: ACadSharp.Entities.RasterImage.Definition
   nameWithType: RasterImage.Definition
+- uid: ACadSharp.Entities.RasterImage.GetDxfClass
+  name: GetDxfClass()
+  href: api/ACadSharp.Entities.RasterImage.html#ACadSharp_Entities_RasterImage_GetDxfClass
+  commentId: M:ACadSharp.Entities.RasterImage.GetDxfClass
+  fullName: ACadSharp.Entities.RasterImage.GetDxfClass()
+  nameWithType: RasterImage.GetDxfClass()
+- uid: ACadSharp.Entities.RasterImage.GetDxfClass*
+  name: GetDxfClass
+  href: api/ACadSharp.Entities.RasterImage.html#ACadSharp_Entities_RasterImage_GetDxfClass_
+  commentId: Overload:ACadSharp.Entities.RasterImage.GetDxfClass
+  isSpec: "True"
+  fullName: ACadSharp.Entities.RasterImage.GetDxfClass
+  nameWithType: RasterImage.GetDxfClass
+- uid: ACadSharp.Entities.RasterImage.IsValid(ACadSharp.IO.CadFileFormat,ACadSharp.ACadVersion,System.Collections.Generic.IList{System.String}@)
+  name: IsValid(CadFileFormat, ACadVersion, out IList<string>)
+  href: api/ACadSharp.Entities.RasterImage.html#ACadSharp_Entities_RasterImage_IsValid_ACadSharp_IO_CadFileFormat_ACadSharp_ACadVersion_System_Collections_Generic_IList_System_String___
+  commentId: M:ACadSharp.Entities.RasterImage.IsValid(ACadSharp.IO.CadFileFormat,ACadSharp.ACadVersion,System.Collections.Generic.IList{System.String}@)
+  name.vb: IsValid(CadFileFormat, ACadVersion, IList(Of String))
+  fullName: ACadSharp.Entities.RasterImage.IsValid(ACadSharp.IO.CadFileFormat, ACadSharp.ACadVersion, out System.Collections.Generic.IList<string>)
+  fullName.vb: ACadSharp.Entities.RasterImage.IsValid(ACadSharp.IO.CadFileFormat, ACadSharp.ACadVersion, System.Collections.Generic.IList(Of String))
+  nameWithType: RasterImage.IsValid(CadFileFormat, ACadVersion, out IList<string>)
+  nameWithType.vb: RasterImage.IsValid(CadFileFormat, ACadVersion, IList(Of String))
+- uid: ACadSharp.Entities.RasterImage.IsValid*
+  name: IsValid
+  href: api/ACadSharp.Entities.RasterImage.html#ACadSharp_Entities_RasterImage_IsValid_
+  commentId: Overload:ACadSharp.Entities.RasterImage.IsValid
+  isSpec: "True"
+  fullName: ACadSharp.Entities.RasterImage.IsValid
+  nameWithType: RasterImage.IsValid
 - uid: ACadSharp.Entities.RasterImage.ObjectName
   name: ObjectName
   href: api/ACadSharp.Entities.RasterImage.html#ACadSharp_Entities_RasterImage_ObjectName
@@ -24468,6 +24613,19 @@ references:
   isSpec: "True"
   fullName: ACadSharp.Entities.TableEntity.GetCell
   nameWithType: TableEntity.GetCell
+- uid: ACadSharp.Entities.TableEntity.GetDxfClass
+  name: GetDxfClass()
+  href: api/ACadSharp.Entities.TableEntity.html#ACadSharp_Entities_TableEntity_GetDxfClass
+  commentId: M:ACadSharp.Entities.TableEntity.GetDxfClass
+  fullName: ACadSharp.Entities.TableEntity.GetDxfClass()
+  nameWithType: TableEntity.GetDxfClass()
+- uid: ACadSharp.Entities.TableEntity.GetDxfClass*
+  name: GetDxfClass
+  href: api/ACadSharp.Entities.TableEntity.html#ACadSharp_Entities_TableEntity_GetDxfClass_
+  commentId: Overload:ACadSharp.Entities.TableEntity.GetDxfClass
+  isSpec: "True"
+  fullName: ACadSharp.Entities.TableEntity.GetDxfClass
+  nameWithType: TableEntity.GetDxfClass
 - uid: ACadSharp.Entities.TableEntity.HasBreadData
   name: HasBreadData
   href: api/ACadSharp.Entities.TableEntity.html#ACadSharp_Entities_TableEntity_HasBreadData
@@ -27405,6 +27563,19 @@ references:
   fullName.vb: ACadSharp.Entities.Wipeout.New
   nameWithType: Wipeout.Wipeout
   nameWithType.vb: Wipeout.New
+- uid: ACadSharp.Entities.Wipeout.GetDxfClass
+  name: GetDxfClass()
+  href: api/ACadSharp.Entities.Wipeout.html#ACadSharp_Entities_Wipeout_GetDxfClass
+  commentId: M:ACadSharp.Entities.Wipeout.GetDxfClass
+  fullName: ACadSharp.Entities.Wipeout.GetDxfClass()
+  nameWithType: Wipeout.GetDxfClass()
+- uid: ACadSharp.Entities.Wipeout.GetDxfClass*
+  name: GetDxfClass
+  href: api/ACadSharp.Entities.Wipeout.html#ACadSharp_Entities_Wipeout_GetDxfClass_
+  commentId: Overload:ACadSharp.Entities.Wipeout.GetDxfClass
+  isSpec: "True"
+  fullName: ACadSharp.Entities.Wipeout.GetDxfClass
+  nameWithType: Wipeout.GetDxfClass
 - uid: ACadSharp.Entities.Wipeout.ObjectName
   name: ObjectName
   href: api/ACadSharp.Entities.Wipeout.html#ACadSharp_Entities_Wipeout_ObjectName
@@ -35094,6 +35265,19 @@ references:
   commentId: T:ACadSharp.Objects.AcdbPlaceHolder
   fullName: ACadSharp.Objects.AcdbPlaceHolder
   nameWithType: AcdbPlaceHolder
+- uid: ACadSharp.Objects.AcdbPlaceHolder.GetDxfClass
+  name: GetDxfClass()
+  href: api/ACadSharp.Objects.AcdbPlaceHolder.html#ACadSharp_Objects_AcdbPlaceHolder_GetDxfClass
+  commentId: M:ACadSharp.Objects.AcdbPlaceHolder.GetDxfClass
+  fullName: ACadSharp.Objects.AcdbPlaceHolder.GetDxfClass()
+  nameWithType: AcdbPlaceHolder.GetDxfClass()
+- uid: ACadSharp.Objects.AcdbPlaceHolder.GetDxfClass*
+  name: GetDxfClass
+  href: api/ACadSharp.Objects.AcdbPlaceHolder.html#ACadSharp_Objects_AcdbPlaceHolder_GetDxfClass_
+  commentId: Overload:ACadSharp.Objects.AcdbPlaceHolder.GetDxfClass
+  isSpec: "True"
+  fullName: ACadSharp.Objects.AcdbPlaceHolder.GetDxfClass
+  nameWithType: AcdbPlaceHolder.GetDxfClass
 - uid: ACadSharp.Objects.AcdbPlaceHolder.ObjectName
   name: ObjectName
   href: api/ACadSharp.Objects.AcdbPlaceHolder.html#ACadSharp_Objects_AcdbPlaceHolder_ObjectName
@@ -35467,6 +35651,19 @@ references:
   commentId: T:ACadSharp.Objects.BlockReferenceObjectContextData
   fullName: ACadSharp.Objects.BlockReferenceObjectContextData
   nameWithType: BlockReferenceObjectContextData
+- uid: ACadSharp.Objects.BlockReferenceObjectContextData.GetDxfClass
+  name: GetDxfClass()
+  href: api/ACadSharp.Objects.BlockReferenceObjectContextData.html#ACadSharp_Objects_BlockReferenceObjectContextData_GetDxfClass
+  commentId: M:ACadSharp.Objects.BlockReferenceObjectContextData.GetDxfClass
+  fullName: ACadSharp.Objects.BlockReferenceObjectContextData.GetDxfClass()
+  nameWithType: BlockReferenceObjectContextData.GetDxfClass()
+- uid: ACadSharp.Objects.BlockReferenceObjectContextData.GetDxfClass*
+  name: GetDxfClass
+  href: api/ACadSharp.Objects.BlockReferenceObjectContextData.html#ACadSharp_Objects_BlockReferenceObjectContextData_GetDxfClass_
+  commentId: Overload:ACadSharp.Objects.BlockReferenceObjectContextData.GetDxfClass
+  isSpec: "True"
+  fullName: ACadSharp.Objects.BlockReferenceObjectContextData.GetDxfClass
+  nameWithType: BlockReferenceObjectContextData.GetDxfClass
 - uid: ACadSharp.Objects.BlockReferenceObjectContextData.InsertionPoint
   name: InsertionPoint
   href: api/ACadSharp.Objects.BlockReferenceObjectContextData.html#ACadSharp_Objects_BlockReferenceObjectContextData_InsertionPoint
@@ -35564,6 +35761,19 @@ references:
   isSpec: "True"
   fullName: ACadSharp.Objects.BlockRepresentationData.Block
   nameWithType: BlockRepresentationData.Block
+- uid: ACadSharp.Objects.BlockRepresentationData.GetDxfClass
+  name: GetDxfClass()
+  href: api/ACadSharp.Objects.BlockRepresentationData.html#ACadSharp_Objects_BlockRepresentationData_GetDxfClass
+  commentId: M:ACadSharp.Objects.BlockRepresentationData.GetDxfClass
+  fullName: ACadSharp.Objects.BlockRepresentationData.GetDxfClass()
+  nameWithType: BlockRepresentationData.GetDxfClass()
+- uid: ACadSharp.Objects.BlockRepresentationData.GetDxfClass*
+  name: GetDxfClass
+  href: api/ACadSharp.Objects.BlockRepresentationData.html#ACadSharp_Objects_BlockRepresentationData_GetDxfClass_
+  commentId: Overload:ACadSharp.Objects.BlockRepresentationData.GetDxfClass
+  isSpec: "True"
+  fullName: ACadSharp.Objects.BlockRepresentationData.GetDxfClass
+  nameWithType: BlockRepresentationData.GetDxfClass
 - uid: ACadSharp.Objects.BlockRepresentationData.ObjectName
   name: ObjectName
   href: api/ACadSharp.Objects.BlockRepresentationData.html#ACadSharp_Objects_BlockRepresentationData_ObjectName
@@ -35685,6 +35895,19 @@ references:
   isSpec: "True"
   fullName: ACadSharp.Objects.BookColor.ColorName
   nameWithType: BookColor.ColorName
+- uid: ACadSharp.Objects.BookColor.GetDxfClass
+  name: GetDxfClass()
+  href: api/ACadSharp.Objects.BookColor.html#ACadSharp_Objects_BookColor_GetDxfClass
+  commentId: M:ACadSharp.Objects.BookColor.GetDxfClass
+  fullName: ACadSharp.Objects.BookColor.GetDxfClass()
+  nameWithType: BookColor.GetDxfClass()
+- uid: ACadSharp.Objects.BookColor.GetDxfClass*
+  name: GetDxfClass
+  href: api/ACadSharp.Objects.BookColor.html#ACadSharp_Objects_BookColor_GetDxfClass_
+  commentId: Overload:ACadSharp.Objects.BookColor.GetDxfClass
+  isSpec: "True"
+  fullName: ACadSharp.Objects.BookColor.GetDxfClass
+  nameWithType: BookColor.GetDxfClass
 - uid: ACadSharp.Objects.BookColor.Name
   name: Name
   href: api/ACadSharp.Objects.BookColor.html#ACadSharp_Objects_BookColor_Name
@@ -36208,6 +36431,19 @@ references:
   isSpec: "True"
   fullName: ACadSharp.Objects.CadDictionaryWithDefault.DefaultEntry
   nameWithType: CadDictionaryWithDefault.DefaultEntry
+- uid: ACadSharp.Objects.CadDictionaryWithDefault.GetDxfClass
+  name: GetDxfClass()
+  href: api/ACadSharp.Objects.CadDictionaryWithDefault.html#ACadSharp_Objects_CadDictionaryWithDefault_GetDxfClass
+  commentId: M:ACadSharp.Objects.CadDictionaryWithDefault.GetDxfClass
+  fullName: ACadSharp.Objects.CadDictionaryWithDefault.GetDxfClass()
+  nameWithType: CadDictionaryWithDefault.GetDxfClass()
+- uid: ACadSharp.Objects.CadDictionaryWithDefault.GetDxfClass*
+  name: GetDxfClass
+  href: api/ACadSharp.Objects.CadDictionaryWithDefault.html#ACadSharp_Objects_CadDictionaryWithDefault_GetDxfClass_
+  commentId: Overload:ACadSharp.Objects.CadDictionaryWithDefault.GetDxfClass
+  isSpec: "True"
+  fullName: ACadSharp.Objects.CadDictionaryWithDefault.GetDxfClass
+  nameWithType: CadDictionaryWithDefault.GetDxfClass
 - uid: ACadSharp.Objects.CadDictionaryWithDefault.ObjectName
   name: ObjectName
   href: api/ACadSharp.Objects.CadDictionaryWithDefault.html#ACadSharp_Objects_CadDictionaryWithDefault_ObjectName
@@ -37069,6 +37305,19 @@ references:
   commentId: F:ACadSharp.Objects.DictionaryVariable.CurrentTableStyle
   fullName: ACadSharp.Objects.DictionaryVariable.CurrentTableStyle
   nameWithType: DictionaryVariable.CurrentTableStyle
+- uid: ACadSharp.Objects.DictionaryVariable.GetDxfClass
+  name: GetDxfClass()
+  href: api/ACadSharp.Objects.DictionaryVariable.html#ACadSharp_Objects_DictionaryVariable_GetDxfClass
+  commentId: M:ACadSharp.Objects.DictionaryVariable.GetDxfClass
+  fullName: ACadSharp.Objects.DictionaryVariable.GetDxfClass()
+  nameWithType: DictionaryVariable.GetDxfClass()
+- uid: ACadSharp.Objects.DictionaryVariable.GetDxfClass*
+  name: GetDxfClass
+  href: api/ACadSharp.Objects.DictionaryVariable.html#ACadSharp_Objects_DictionaryVariable_GetDxfClass_
+  commentId: Overload:ACadSharp.Objects.DictionaryVariable.GetDxfClass
+  isSpec: "True"
+  fullName: ACadSharp.Objects.DictionaryVariable.GetDxfClass
+  nameWithType: DictionaryVariable.GetDxfClass
 - uid: ACadSharp.Objects.DictionaryVariable.ObjectName
   name: ObjectName
   href: api/ACadSharp.Objects.DictionaryVariable.html#ACadSharp_Objects_DictionaryVariable_ObjectName
@@ -37217,6 +37466,19 @@ references:
   isSpec: "True"
   fullName: ACadSharp.Objects.DimensionAssociation.FourthPointRef
   nameWithType: DimensionAssociation.FourthPointRef
+- uid: ACadSharp.Objects.DimensionAssociation.GetDxfClass
+  name: GetDxfClass()
+  href: api/ACadSharp.Objects.DimensionAssociation.html#ACadSharp_Objects_DimensionAssociation_GetDxfClass
+  commentId: M:ACadSharp.Objects.DimensionAssociation.GetDxfClass
+  fullName: ACadSharp.Objects.DimensionAssociation.GetDxfClass()
+  nameWithType: DimensionAssociation.GetDxfClass()
+- uid: ACadSharp.Objects.DimensionAssociation.GetDxfClass*
+  name: GetDxfClass
+  href: api/ACadSharp.Objects.DimensionAssociation.html#ACadSharp_Objects_DimensionAssociation_GetDxfClass_
+  commentId: Overload:ACadSharp.Objects.DimensionAssociation.GetDxfClass
+  isSpec: "True"
+  fullName: ACadSharp.Objects.DimensionAssociation.GetDxfClass
+  nameWithType: DimensionAssociation.GetDxfClass
 - uid: ACadSharp.Objects.DimensionAssociation.IsTransSpace
   name: IsTransSpace
   href: api/ACadSharp.Objects.DimensionAssociation.html#ACadSharp_Objects_DimensionAssociation_IsTransSpace
@@ -37443,6 +37705,19 @@ references:
   commentId: T:ACadSharp.Objects.DynamicBlockPurgePreventer
   fullName: ACadSharp.Objects.DynamicBlockPurgePreventer
   nameWithType: DynamicBlockPurgePreventer
+- uid: ACadSharp.Objects.DynamicBlockPurgePreventer.GetDxfClass
+  name: GetDxfClass()
+  href: api/ACadSharp.Objects.DynamicBlockPurgePreventer.html#ACadSharp_Objects_DynamicBlockPurgePreventer_GetDxfClass
+  commentId: M:ACadSharp.Objects.DynamicBlockPurgePreventer.GetDxfClass
+  fullName: ACadSharp.Objects.DynamicBlockPurgePreventer.GetDxfClass()
+  nameWithType: DynamicBlockPurgePreventer.GetDxfClass()
+- uid: ACadSharp.Objects.DynamicBlockPurgePreventer.GetDxfClass*
+  name: GetDxfClass
+  href: api/ACadSharp.Objects.DynamicBlockPurgePreventer.html#ACadSharp_Objects_DynamicBlockPurgePreventer_GetDxfClass_
+  commentId: Overload:ACadSharp.Objects.DynamicBlockPurgePreventer.GetDxfClass
+  isSpec: "True"
+  fullName: ACadSharp.Objects.DynamicBlockPurgePreventer.GetDxfClass
+  nameWithType: DynamicBlockPurgePreventer.GetDxfClass
 - uid: ACadSharp.Objects.DynamicBlockPurgePreventer.ObjectName
   name: ObjectName
   href: api/ACadSharp.Objects.DynamicBlockPurgePreventer.html#ACadSharp_Objects_DynamicBlockPurgePreventer_ObjectName
@@ -38002,6 +38277,19 @@ references:
   isSpec: "True"
   fullName: ACadSharp.Objects.Evaluations.BlockAlignmentGrip.AlignmentZ
   nameWithType: BlockAlignmentGrip.AlignmentZ
+- uid: ACadSharp.Objects.Evaluations.BlockAlignmentGrip.GetDxfClass
+  name: GetDxfClass()
+  href: api/ACadSharp.Objects.Evaluations.BlockAlignmentGrip.html#ACadSharp_Objects_Evaluations_BlockAlignmentGrip_GetDxfClass
+  commentId: M:ACadSharp.Objects.Evaluations.BlockAlignmentGrip.GetDxfClass
+  fullName: ACadSharp.Objects.Evaluations.BlockAlignmentGrip.GetDxfClass()
+  nameWithType: BlockAlignmentGrip.GetDxfClass()
+- uid: ACadSharp.Objects.Evaluations.BlockAlignmentGrip.GetDxfClass*
+  name: GetDxfClass
+  href: api/ACadSharp.Objects.Evaluations.BlockAlignmentGrip.html#ACadSharp_Objects_Evaluations_BlockAlignmentGrip_GetDxfClass_
+  commentId: Overload:ACadSharp.Objects.Evaluations.BlockAlignmentGrip.GetDxfClass
+  isSpec: "True"
+  fullName: ACadSharp.Objects.Evaluations.BlockAlignmentGrip.GetDxfClass
+  nameWithType: BlockAlignmentGrip.GetDxfClass
 - uid: ACadSharp.Objects.Evaluations.BlockAlignmentGrip.ObjectName
   name: ObjectName
   href: api/ACadSharp.Objects.Evaluations.BlockAlignmentGrip.html#ACadSharp_Objects_Evaluations_BlockAlignmentGrip_ObjectName
@@ -38034,6 +38322,19 @@ references:
   commentId: T:ACadSharp.Objects.Evaluations.BlockAlignmentParameter
   fullName: ACadSharp.Objects.Evaluations.BlockAlignmentParameter
   nameWithType: BlockAlignmentParameter
+- uid: ACadSharp.Objects.Evaluations.BlockAlignmentParameter.GetDxfClass
+  name: GetDxfClass()
+  href: api/ACadSharp.Objects.Evaluations.BlockAlignmentParameter.html#ACadSharp_Objects_Evaluations_BlockAlignmentParameter_GetDxfClass
+  commentId: M:ACadSharp.Objects.Evaluations.BlockAlignmentParameter.GetDxfClass
+  fullName: ACadSharp.Objects.Evaluations.BlockAlignmentParameter.GetDxfClass()
+  nameWithType: BlockAlignmentParameter.GetDxfClass()
+- uid: ACadSharp.Objects.Evaluations.BlockAlignmentParameter.GetDxfClass*
+  name: GetDxfClass
+  href: api/ACadSharp.Objects.Evaluations.BlockAlignmentParameter.html#ACadSharp_Objects_Evaluations_BlockAlignmentParameter_GetDxfClass_
+  commentId: Overload:ACadSharp.Objects.Evaluations.BlockAlignmentParameter.GetDxfClass
+  isSpec: "True"
+  fullName: ACadSharp.Objects.Evaluations.BlockAlignmentParameter.GetDxfClass
+  nameWithType: BlockAlignmentParameter.GetDxfClass
 - uid: ACadSharp.Objects.Evaluations.BlockAlignmentParameter.IsPerpendicular
   name: IsPerpendicular
   href: api/ACadSharp.Objects.Evaluations.BlockAlignmentParameter.html#ACadSharp_Objects_Evaluations_BlockAlignmentParameter_IsPerpendicular
@@ -38118,6 +38419,19 @@ references:
   isSpec: "True"
   fullName: ACadSharp.Objects.Evaluations.BlockArrayAction.EndConnection
   nameWithType: BlockArrayAction.EndConnection
+- uid: ACadSharp.Objects.Evaluations.BlockArrayAction.GetDxfClass
+  name: GetDxfClass()
+  href: api/ACadSharp.Objects.Evaluations.BlockArrayAction.html#ACadSharp_Objects_Evaluations_BlockArrayAction_GetDxfClass
+  commentId: M:ACadSharp.Objects.Evaluations.BlockArrayAction.GetDxfClass
+  fullName: ACadSharp.Objects.Evaluations.BlockArrayAction.GetDxfClass()
+  nameWithType: BlockArrayAction.GetDxfClass()
+- uid: ACadSharp.Objects.Evaluations.BlockArrayAction.GetDxfClass*
+  name: GetDxfClass
+  href: api/ACadSharp.Objects.Evaluations.BlockArrayAction.html#ACadSharp_Objects_Evaluations_BlockArrayAction_GetDxfClass_
+  commentId: Overload:ACadSharp.Objects.Evaluations.BlockArrayAction.GetDxfClass
+  isSpec: "True"
+  fullName: ACadSharp.Objects.Evaluations.BlockArrayAction.GetDxfClass
+  nameWithType: BlockArrayAction.GetDxfClass
 - uid: ACadSharp.Objects.Evaluations.BlockArrayAction.ObjectName
   name: ObjectName
   href: api/ACadSharp.Objects.Evaluations.BlockArrayAction.html#ACadSharp_Objects_Evaluations_BlockArrayAction_ObjectName
@@ -38189,6 +38503,19 @@ references:
   commentId: T:ACadSharp.Objects.Evaluations.BlockBasePointParameter
   fullName: ACadSharp.Objects.Evaluations.BlockBasePointParameter
   nameWithType: BlockBasePointParameter
+- uid: ACadSharp.Objects.Evaluations.BlockBasePointParameter.GetDxfClass
+  name: GetDxfClass()
+  href: api/ACadSharp.Objects.Evaluations.BlockBasePointParameter.html#ACadSharp_Objects_Evaluations_BlockBasePointParameter_GetDxfClass
+  commentId: M:ACadSharp.Objects.Evaluations.BlockBasePointParameter.GetDxfClass
+  fullName: ACadSharp.Objects.Evaluations.BlockBasePointParameter.GetDxfClass()
+  nameWithType: BlockBasePointParameter.GetDxfClass()
+- uid: ACadSharp.Objects.Evaluations.BlockBasePointParameter.GetDxfClass*
+  name: GetDxfClass
+  href: api/ACadSharp.Objects.Evaluations.BlockBasePointParameter.html#ACadSharp_Objects_Evaluations_BlockBasePointParameter_GetDxfClass_
+  commentId: Overload:ACadSharp.Objects.Evaluations.BlockBasePointParameter.GetDxfClass
+  isSpec: "True"
+  fullName: ACadSharp.Objects.Evaluations.BlockBasePointParameter.GetDxfClass
+  nameWithType: BlockBasePointParameter.GetDxfClass
 - uid: ACadSharp.Objects.Evaluations.BlockBasePointParameter.ObjectName
   name: ObjectName
   href: api/ACadSharp.Objects.Evaluations.BlockBasePointParameter.html#ACadSharp_Objects_Evaluations_BlockBasePointParameter_ObjectName
@@ -38305,6 +38632,19 @@ references:
   isSpec: "True"
   fullName: ACadSharp.Objects.Evaluations.BlockFlipAction.FlipConnection
   nameWithType: BlockFlipAction.FlipConnection
+- uid: ACadSharp.Objects.Evaluations.BlockFlipAction.GetDxfClass
+  name: GetDxfClass()
+  href: api/ACadSharp.Objects.Evaluations.BlockFlipAction.html#ACadSharp_Objects_Evaluations_BlockFlipAction_GetDxfClass
+  commentId: M:ACadSharp.Objects.Evaluations.BlockFlipAction.GetDxfClass
+  fullName: ACadSharp.Objects.Evaluations.BlockFlipAction.GetDxfClass()
+  nameWithType: BlockFlipAction.GetDxfClass()
+- uid: ACadSharp.Objects.Evaluations.BlockFlipAction.GetDxfClass*
+  name: GetDxfClass
+  href: api/ACadSharp.Objects.Evaluations.BlockFlipAction.html#ACadSharp_Objects_Evaluations_BlockFlipAction_GetDxfClass_
+  commentId: Overload:ACadSharp.Objects.Evaluations.BlockFlipAction.GetDxfClass
+  isSpec: "True"
+  fullName: ACadSharp.Objects.Evaluations.BlockFlipAction.GetDxfClass
+  nameWithType: BlockFlipAction.GetDxfClass
 - uid: ACadSharp.Objects.Evaluations.BlockFlipAction.ObjectName
   name: ObjectName
   href: api/ACadSharp.Objects.Evaluations.BlockFlipAction.html#ACadSharp_Objects_Evaluations_BlockFlipAction_ObjectName
@@ -38428,6 +38768,19 @@ references:
   isSpec: "True"
   fullName: ACadSharp.Objects.Evaluations.BlockFlipGrip.FlipExpressionId
   nameWithType: BlockFlipGrip.FlipExpressionId
+- uid: ACadSharp.Objects.Evaluations.BlockFlipGrip.GetDxfClass
+  name: GetDxfClass()
+  href: api/ACadSharp.Objects.Evaluations.BlockFlipGrip.html#ACadSharp_Objects_Evaluations_BlockFlipGrip_GetDxfClass
+  commentId: M:ACadSharp.Objects.Evaluations.BlockFlipGrip.GetDxfClass
+  fullName: ACadSharp.Objects.Evaluations.BlockFlipGrip.GetDxfClass()
+  nameWithType: BlockFlipGrip.GetDxfClass()
+- uid: ACadSharp.Objects.Evaluations.BlockFlipGrip.GetDxfClass*
+  name: GetDxfClass
+  href: api/ACadSharp.Objects.Evaluations.BlockFlipGrip.html#ACadSharp_Objects_Evaluations_BlockFlipGrip_GetDxfClass_
+  commentId: Overload:ACadSharp.Objects.Evaluations.BlockFlipGrip.GetDxfClass
+  isSpec: "True"
+  fullName: ACadSharp.Objects.Evaluations.BlockFlipGrip.GetDxfClass
+  nameWithType: BlockFlipGrip.GetDxfClass
 - uid: ACadSharp.Objects.Evaluations.BlockFlipGrip.ObjectName
   name: ObjectName
   href: api/ACadSharp.Objects.Evaluations.BlockFlipGrip.html#ACadSharp_Objects_Evaluations_BlockFlipGrip_ObjectName
@@ -38499,6 +38852,19 @@ references:
   isSpec: "True"
   fullName: ACadSharp.Objects.Evaluations.BlockFlipParameter.FlippedStateName
   nameWithType: BlockFlipParameter.FlippedStateName
+- uid: ACadSharp.Objects.Evaluations.BlockFlipParameter.GetDxfClass
+  name: GetDxfClass()
+  href: api/ACadSharp.Objects.Evaluations.BlockFlipParameter.html#ACadSharp_Objects_Evaluations_BlockFlipParameter_GetDxfClass
+  commentId: M:ACadSharp.Objects.Evaluations.BlockFlipParameter.GetDxfClass
+  fullName: ACadSharp.Objects.Evaluations.BlockFlipParameter.GetDxfClass()
+  nameWithType: BlockFlipParameter.GetDxfClass()
+- uid: ACadSharp.Objects.Evaluations.BlockFlipParameter.GetDxfClass*
+  name: GetDxfClass
+  href: api/ACadSharp.Objects.Evaluations.BlockFlipParameter.html#ACadSharp_Objects_Evaluations_BlockFlipParameter_GetDxfClass_
+  commentId: Overload:ACadSharp.Objects.Evaluations.BlockFlipParameter.GetDxfClass
+  isSpec: "True"
+  fullName: ACadSharp.Objects.Evaluations.BlockFlipParameter.GetDxfClass
+  nameWithType: BlockFlipParameter.GetDxfClass
 - uid: ACadSharp.Objects.Evaluations.BlockFlipParameter.Label
   name: Label
   href: api/ACadSharp.Objects.Evaluations.BlockFlipParameter.html#ACadSharp_Objects_Evaluations_BlockFlipParameter_Label
@@ -38667,6 +39033,19 @@ references:
   isSpec: "True"
   fullName: ACadSharp.Objects.Evaluations.BlockGripLocationComponent.Connection
   nameWithType: BlockGripLocationComponent.Connection
+- uid: ACadSharp.Objects.Evaluations.BlockGripLocationComponent.GetDxfClass
+  name: GetDxfClass()
+  href: api/ACadSharp.Objects.Evaluations.BlockGripLocationComponent.html#ACadSharp_Objects_Evaluations_BlockGripLocationComponent_GetDxfClass
+  commentId: M:ACadSharp.Objects.Evaluations.BlockGripLocationComponent.GetDxfClass
+  fullName: ACadSharp.Objects.Evaluations.BlockGripLocationComponent.GetDxfClass()
+  nameWithType: BlockGripLocationComponent.GetDxfClass()
+- uid: ACadSharp.Objects.Evaluations.BlockGripLocationComponent.GetDxfClass*
+  name: GetDxfClass
+  href: api/ACadSharp.Objects.Evaluations.BlockGripLocationComponent.html#ACadSharp_Objects_Evaluations_BlockGripLocationComponent_GetDxfClass_
+  commentId: Overload:ACadSharp.Objects.Evaluations.BlockGripLocationComponent.GetDxfClass
+  isSpec: "True"
+  fullName: ACadSharp.Objects.Evaluations.BlockGripLocationComponent.GetDxfClass
+  nameWithType: BlockGripLocationComponent.GetDxfClass
 - uid: ACadSharp.Objects.Evaluations.BlockGripLocationComponent.ObjectName
   name: ObjectName
   href: api/ACadSharp.Objects.Evaluations.BlockGripLocationComponent.html#ACadSharp_Objects_Evaluations_BlockGripLocationComponent_ObjectName
@@ -38738,6 +39117,19 @@ references:
   isSpec: "True"
   fullName: ACadSharp.Objects.Evaluations.BlockLinearGrip.DistanceZ
   nameWithType: BlockLinearGrip.DistanceZ
+- uid: ACadSharp.Objects.Evaluations.BlockLinearGrip.GetDxfClass
+  name: GetDxfClass()
+  href: api/ACadSharp.Objects.Evaluations.BlockLinearGrip.html#ACadSharp_Objects_Evaluations_BlockLinearGrip_GetDxfClass
+  commentId: M:ACadSharp.Objects.Evaluations.BlockLinearGrip.GetDxfClass
+  fullName: ACadSharp.Objects.Evaluations.BlockLinearGrip.GetDxfClass()
+  nameWithType: BlockLinearGrip.GetDxfClass()
+- uid: ACadSharp.Objects.Evaluations.BlockLinearGrip.GetDxfClass*
+  name: GetDxfClass
+  href: api/ACadSharp.Objects.Evaluations.BlockLinearGrip.html#ACadSharp_Objects_Evaluations_BlockLinearGrip_GetDxfClass_
+  commentId: Overload:ACadSharp.Objects.Evaluations.BlockLinearGrip.GetDxfClass
+  isSpec: "True"
+  fullName: ACadSharp.Objects.Evaluations.BlockLinearGrip.GetDxfClass
+  nameWithType: BlockLinearGrip.GetDxfClass
 - uid: ACadSharp.Objects.Evaluations.BlockLinearGrip.ObjectName
   name: ObjectName
   href: api/ACadSharp.Objects.Evaluations.BlockLinearGrip.html#ACadSharp_Objects_Evaluations_BlockLinearGrip_ObjectName
@@ -38783,6 +39175,19 @@ references:
   isSpec: "True"
   fullName: ACadSharp.Objects.Evaluations.BlockLinearParameter.Description
   nameWithType: BlockLinearParameter.Description
+- uid: ACadSharp.Objects.Evaluations.BlockLinearParameter.GetDxfClass
+  name: GetDxfClass()
+  href: api/ACadSharp.Objects.Evaluations.BlockLinearParameter.html#ACadSharp_Objects_Evaluations_BlockLinearParameter_GetDxfClass
+  commentId: M:ACadSharp.Objects.Evaluations.BlockLinearParameter.GetDxfClass
+  fullName: ACadSharp.Objects.Evaluations.BlockLinearParameter.GetDxfClass()
+  nameWithType: BlockLinearParameter.GetDxfClass()
+- uid: ACadSharp.Objects.Evaluations.BlockLinearParameter.GetDxfClass*
+  name: GetDxfClass
+  href: api/ACadSharp.Objects.Evaluations.BlockLinearParameter.html#ACadSharp_Objects_Evaluations_BlockLinearParameter_GetDxfClass_
+  commentId: Overload:ACadSharp.Objects.Evaluations.BlockLinearParameter.GetDxfClass
+  isSpec: "True"
+  fullName: ACadSharp.Objects.Evaluations.BlockLinearParameter.GetDxfClass
+  nameWithType: BlockLinearParameter.GetDxfClass
 - uid: ACadSharp.Objects.Evaluations.BlockLinearParameter.Label
   name: Label
   href: api/ACadSharp.Objects.Evaluations.BlockLinearParameter.html#ACadSharp_Objects_Evaluations_BlockLinearParameter_Label
@@ -38977,6 +39382,19 @@ references:
   isSpec: "True"
   fullName: ACadSharp.Objects.Evaluations.BlockLookupAction.Columns
   nameWithType: BlockLookupAction.Columns
+- uid: ACadSharp.Objects.Evaluations.BlockLookupAction.GetDxfClass
+  name: GetDxfClass()
+  href: api/ACadSharp.Objects.Evaluations.BlockLookupAction.html#ACadSharp_Objects_Evaluations_BlockLookupAction_GetDxfClass
+  commentId: M:ACadSharp.Objects.Evaluations.BlockLookupAction.GetDxfClass
+  fullName: ACadSharp.Objects.Evaluations.BlockLookupAction.GetDxfClass()
+  nameWithType: BlockLookupAction.GetDxfClass()
+- uid: ACadSharp.Objects.Evaluations.BlockLookupAction.GetDxfClass*
+  name: GetDxfClass
+  href: api/ACadSharp.Objects.Evaluations.BlockLookupAction.html#ACadSharp_Objects_Evaluations_BlockLookupAction_GetDxfClass_
+  commentId: Overload:ACadSharp.Objects.Evaluations.BlockLookupAction.GetDxfClass
+  isSpec: "True"
+  fullName: ACadSharp.Objects.Evaluations.BlockLookupAction.GetDxfClass
+  nameWithType: BlockLookupAction.GetDxfClass
 - uid: ACadSharp.Objects.Evaluations.BlockLookupAction.ObjectName
   name: ObjectName
   href: api/ACadSharp.Objects.Evaluations.BlockLookupAction.html#ACadSharp_Objects_Evaluations_BlockLookupAction_ObjectName
@@ -39022,6 +39440,19 @@ references:
   commentId: T:ACadSharp.Objects.Evaluations.BlockLookupGrip
   fullName: ACadSharp.Objects.Evaluations.BlockLookupGrip
   nameWithType: BlockLookupGrip
+- uid: ACadSharp.Objects.Evaluations.BlockLookupGrip.GetDxfClass
+  name: GetDxfClass()
+  href: api/ACadSharp.Objects.Evaluations.BlockLookupGrip.html#ACadSharp_Objects_Evaluations_BlockLookupGrip_GetDxfClass
+  commentId: M:ACadSharp.Objects.Evaluations.BlockLookupGrip.GetDxfClass
+  fullName: ACadSharp.Objects.Evaluations.BlockLookupGrip.GetDxfClass()
+  nameWithType: BlockLookupGrip.GetDxfClass()
+- uid: ACadSharp.Objects.Evaluations.BlockLookupGrip.GetDxfClass*
+  name: GetDxfClass
+  href: api/ACadSharp.Objects.Evaluations.BlockLookupGrip.html#ACadSharp_Objects_Evaluations_BlockLookupGrip_GetDxfClass_
+  commentId: Overload:ACadSharp.Objects.Evaluations.BlockLookupGrip.GetDxfClass
+  isSpec: "True"
+  fullName: ACadSharp.Objects.Evaluations.BlockLookupGrip.GetDxfClass
+  nameWithType: BlockLookupGrip.GetDxfClass
 - uid: ACadSharp.Objects.Evaluations.BlockLookupGrip.ObjectName
   name: ObjectName
   href: api/ACadSharp.Objects.Evaluations.BlockLookupGrip.html#ACadSharp_Objects_Evaluations_BlockLookupGrip_ObjectName
@@ -39080,6 +39511,19 @@ references:
   isSpec: "True"
   fullName: ACadSharp.Objects.Evaluations.BlockLookupParameter.Description
   nameWithType: BlockLookupParameter.Description
+- uid: ACadSharp.Objects.Evaluations.BlockLookupParameter.GetDxfClass
+  name: GetDxfClass()
+  href: api/ACadSharp.Objects.Evaluations.BlockLookupParameter.html#ACadSharp_Objects_Evaluations_BlockLookupParameter_GetDxfClass
+  commentId: M:ACadSharp.Objects.Evaluations.BlockLookupParameter.GetDxfClass
+  fullName: ACadSharp.Objects.Evaluations.BlockLookupParameter.GetDxfClass()
+  nameWithType: BlockLookupParameter.GetDxfClass()
+- uid: ACadSharp.Objects.Evaluations.BlockLookupParameter.GetDxfClass*
+  name: GetDxfClass
+  href: api/ACadSharp.Objects.Evaluations.BlockLookupParameter.html#ACadSharp_Objects_Evaluations_BlockLookupParameter_GetDxfClass_
+  commentId: Overload:ACadSharp.Objects.Evaluations.BlockLookupParameter.GetDxfClass
+  isSpec: "True"
+  fullName: ACadSharp.Objects.Evaluations.BlockLookupParameter.GetDxfClass
+  nameWithType: BlockLookupParameter.GetDxfClass
 - uid: ACadSharp.Objects.Evaluations.BlockLookupParameter.Label
   name: Label
   href: api/ACadSharp.Objects.Evaluations.BlockLookupParameter.html#ACadSharp_Objects_Evaluations_BlockLookupParameter_Label
@@ -39151,6 +39595,19 @@ references:
   isSpec: "True"
   fullName: ACadSharp.Objects.Evaluations.BlockMoveAction.DistanceMultiplier
   nameWithType: BlockMoveAction.DistanceMultiplier
+- uid: ACadSharp.Objects.Evaluations.BlockMoveAction.GetDxfClass
+  name: GetDxfClass()
+  href: api/ACadSharp.Objects.Evaluations.BlockMoveAction.html#ACadSharp_Objects_Evaluations_BlockMoveAction_GetDxfClass
+  commentId: M:ACadSharp.Objects.Evaluations.BlockMoveAction.GetDxfClass
+  fullName: ACadSharp.Objects.Evaluations.BlockMoveAction.GetDxfClass()
+  nameWithType: BlockMoveAction.GetDxfClass()
+- uid: ACadSharp.Objects.Evaluations.BlockMoveAction.GetDxfClass*
+  name: GetDxfClass
+  href: api/ACadSharp.Objects.Evaluations.BlockMoveAction.html#ACadSharp_Objects_Evaluations_BlockMoveAction_GetDxfClass_
+  commentId: Overload:ACadSharp.Objects.Evaluations.BlockMoveAction.GetDxfClass
+  isSpec: "True"
+  fullName: ACadSharp.Objects.Evaluations.BlockMoveAction.GetDxfClass
+  nameWithType: BlockMoveAction.GetDxfClass
 - uid: ACadSharp.Objects.Evaluations.BlockMoveAction.ObjectName
   name: ObjectName
   href: api/ACadSharp.Objects.Evaluations.BlockMoveAction.html#ACadSharp_Objects_Evaluations_BlockMoveAction_ObjectName
@@ -39280,6 +39737,19 @@ references:
   isSpec: "True"
   fullName: ACadSharp.Objects.Evaluations.BlockPointParameter.Description
   nameWithType: BlockPointParameter.Description
+- uid: ACadSharp.Objects.Evaluations.BlockPointParameter.GetDxfClass
+  name: GetDxfClass()
+  href: api/ACadSharp.Objects.Evaluations.BlockPointParameter.html#ACadSharp_Objects_Evaluations_BlockPointParameter_GetDxfClass
+  commentId: M:ACadSharp.Objects.Evaluations.BlockPointParameter.GetDxfClass
+  fullName: ACadSharp.Objects.Evaluations.BlockPointParameter.GetDxfClass()
+  nameWithType: BlockPointParameter.GetDxfClass()
+- uid: ACadSharp.Objects.Evaluations.BlockPointParameter.GetDxfClass*
+  name: GetDxfClass
+  href: api/ACadSharp.Objects.Evaluations.BlockPointParameter.html#ACadSharp_Objects_Evaluations_BlockPointParameter_GetDxfClass_
+  commentId: Overload:ACadSharp.Objects.Evaluations.BlockPointParameter.GetDxfClass
+  isSpec: "True"
+  fullName: ACadSharp.Objects.Evaluations.BlockPointParameter.GetDxfClass
+  nameWithType: BlockPointParameter.GetDxfClass
 - uid: ACadSharp.Objects.Evaluations.BlockPointParameter.Label
   name: Label
   href: api/ACadSharp.Objects.Evaluations.BlockPointParameter.html#ACadSharp_Objects_Evaluations_BlockPointParameter_Label
@@ -39338,6 +39808,19 @@ references:
   commentId: T:ACadSharp.Objects.Evaluations.BlockPolarGrip
   fullName: ACadSharp.Objects.Evaluations.BlockPolarGrip
   nameWithType: BlockPolarGrip
+- uid: ACadSharp.Objects.Evaluations.BlockPolarGrip.GetDxfClass
+  name: GetDxfClass()
+  href: api/ACadSharp.Objects.Evaluations.BlockPolarGrip.html#ACadSharp_Objects_Evaluations_BlockPolarGrip_GetDxfClass
+  commentId: M:ACadSharp.Objects.Evaluations.BlockPolarGrip.GetDxfClass
+  fullName: ACadSharp.Objects.Evaluations.BlockPolarGrip.GetDxfClass()
+  nameWithType: BlockPolarGrip.GetDxfClass()
+- uid: ACadSharp.Objects.Evaluations.BlockPolarGrip.GetDxfClass*
+  name: GetDxfClass
+  href: api/ACadSharp.Objects.Evaluations.BlockPolarGrip.html#ACadSharp_Objects_Evaluations_BlockPolarGrip_GetDxfClass_
+  commentId: Overload:ACadSharp.Objects.Evaluations.BlockPolarGrip.GetDxfClass
+  isSpec: "True"
+  fullName: ACadSharp.Objects.Evaluations.BlockPolarGrip.GetDxfClass
+  nameWithType: BlockPolarGrip.GetDxfClass
 - uid: ACadSharp.Objects.Evaluations.BlockPolarGrip.ObjectName
   name: ObjectName
   href: api/ACadSharp.Objects.Evaluations.BlockPolarGrip.html#ACadSharp_Objects_Evaluations_BlockPolarGrip_ObjectName
@@ -39435,6 +39918,19 @@ references:
   isSpec: "True"
   fullName: ACadSharp.Objects.Evaluations.BlockPolarParameter.DistanceValueSet
   nameWithType: BlockPolarParameter.DistanceValueSet
+- uid: ACadSharp.Objects.Evaluations.BlockPolarParameter.GetDxfClass
+  name: GetDxfClass()
+  href: api/ACadSharp.Objects.Evaluations.BlockPolarParameter.html#ACadSharp_Objects_Evaluations_BlockPolarParameter_GetDxfClass
+  commentId: M:ACadSharp.Objects.Evaluations.BlockPolarParameter.GetDxfClass
+  fullName: ACadSharp.Objects.Evaluations.BlockPolarParameter.GetDxfClass()
+  nameWithType: BlockPolarParameter.GetDxfClass()
+- uid: ACadSharp.Objects.Evaluations.BlockPolarParameter.GetDxfClass*
+  name: GetDxfClass
+  href: api/ACadSharp.Objects.Evaluations.BlockPolarParameter.html#ACadSharp_Objects_Evaluations_BlockPolarParameter_GetDxfClass_
+  commentId: Overload:ACadSharp.Objects.Evaluations.BlockPolarParameter.GetDxfClass
+  isSpec: "True"
+  fullName: ACadSharp.Objects.Evaluations.BlockPolarParameter.GetDxfClass
+  nameWithType: BlockPolarParameter.GetDxfClass
 - uid: ACadSharp.Objects.Evaluations.BlockPolarParameter.Label
   name: Label
   href: api/ACadSharp.Objects.Evaluations.BlockPolarParameter.html#ACadSharp_Objects_Evaluations_BlockPolarParameter_Label
@@ -39584,6 +40080,19 @@ references:
   isSpec: "True"
   fullName: ACadSharp.Objects.Evaluations.BlockPolarStretchAction.EndConnection
   nameWithType: BlockPolarStretchAction.EndConnection
+- uid: ACadSharp.Objects.Evaluations.BlockPolarStretchAction.GetDxfClass
+  name: GetDxfClass()
+  href: api/ACadSharp.Objects.Evaluations.BlockPolarStretchAction.html#ACadSharp_Objects_Evaluations_BlockPolarStretchAction_GetDxfClass
+  commentId: M:ACadSharp.Objects.Evaluations.BlockPolarStretchAction.GetDxfClass
+  fullName: ACadSharp.Objects.Evaluations.BlockPolarStretchAction.GetDxfClass()
+  nameWithType: BlockPolarStretchAction.GetDxfClass()
+- uid: ACadSharp.Objects.Evaluations.BlockPolarStretchAction.GetDxfClass*
+  name: GetDxfClass
+  href: api/ACadSharp.Objects.Evaluations.BlockPolarStretchAction.html#ACadSharp_Objects_Evaluations_BlockPolarStretchAction_GetDxfClass_
+  commentId: Overload:ACadSharp.Objects.Evaluations.BlockPolarStretchAction.GetDxfClass
+  isSpec: "True"
+  fullName: ACadSharp.Objects.Evaluations.BlockPolarStretchAction.GetDxfClass
+  nameWithType: BlockPolarStretchAction.GetDxfClass
 - uid: ACadSharp.Objects.Evaluations.BlockPolarStretchAction.ObjectName
   name: ObjectName
   href: api/ACadSharp.Objects.Evaluations.BlockPolarStretchAction.html#ACadSharp_Objects_Evaluations_BlockPolarStretchAction_ObjectName
@@ -39668,6 +40177,19 @@ references:
   isSpec: "True"
   fullName: ACadSharp.Objects.Evaluations.BlockRotationAction.AngleDeltaConnection
   nameWithType: BlockRotationAction.AngleDeltaConnection
+- uid: ACadSharp.Objects.Evaluations.BlockRotationAction.GetDxfClass
+  name: GetDxfClass()
+  href: api/ACadSharp.Objects.Evaluations.BlockRotationAction.html#ACadSharp_Objects_Evaluations_BlockRotationAction_GetDxfClass
+  commentId: M:ACadSharp.Objects.Evaluations.BlockRotationAction.GetDxfClass
+  fullName: ACadSharp.Objects.Evaluations.BlockRotationAction.GetDxfClass()
+  nameWithType: BlockRotationAction.GetDxfClass()
+- uid: ACadSharp.Objects.Evaluations.BlockRotationAction.GetDxfClass*
+  name: GetDxfClass
+  href: api/ACadSharp.Objects.Evaluations.BlockRotationAction.html#ACadSharp_Objects_Evaluations_BlockRotationAction_GetDxfClass_
+  commentId: Overload:ACadSharp.Objects.Evaluations.BlockRotationAction.GetDxfClass
+  isSpec: "True"
+  fullName: ACadSharp.Objects.Evaluations.BlockRotationAction.GetDxfClass
+  nameWithType: BlockRotationAction.GetDxfClass
 - uid: ACadSharp.Objects.Evaluations.BlockRotationAction.ObjectName
   name: ObjectName
   href: api/ACadSharp.Objects.Evaluations.BlockRotationAction.html#ACadSharp_Objects_Evaluations_BlockRotationAction_ObjectName
@@ -39700,6 +40222,19 @@ references:
   commentId: T:ACadSharp.Objects.Evaluations.BlockRotationGrip
   fullName: ACadSharp.Objects.Evaluations.BlockRotationGrip
   nameWithType: BlockRotationGrip
+- uid: ACadSharp.Objects.Evaluations.BlockRotationGrip.GetDxfClass
+  name: GetDxfClass()
+  href: api/ACadSharp.Objects.Evaluations.BlockRotationGrip.html#ACadSharp_Objects_Evaluations_BlockRotationGrip_GetDxfClass
+  commentId: M:ACadSharp.Objects.Evaluations.BlockRotationGrip.GetDxfClass
+  fullName: ACadSharp.Objects.Evaluations.BlockRotationGrip.GetDxfClass()
+  nameWithType: BlockRotationGrip.GetDxfClass()
+- uid: ACadSharp.Objects.Evaluations.BlockRotationGrip.GetDxfClass*
+  name: GetDxfClass
+  href: api/ACadSharp.Objects.Evaluations.BlockRotationGrip.html#ACadSharp_Objects_Evaluations_BlockRotationGrip_GetDxfClass_
+  commentId: Overload:ACadSharp.Objects.Evaluations.BlockRotationGrip.GetDxfClass
+  isSpec: "True"
+  fullName: ACadSharp.Objects.Evaluations.BlockRotationGrip.GetDxfClass
+  nameWithType: BlockRotationGrip.GetDxfClass
 - uid: ACadSharp.Objects.Evaluations.BlockRotationGrip.ObjectName
   name: ObjectName
   href: api/ACadSharp.Objects.Evaluations.BlockRotationGrip.html#ACadSharp_Objects_Evaluations_BlockRotationGrip_ObjectName
@@ -39745,6 +40280,19 @@ references:
   isSpec: "True"
   fullName: ACadSharp.Objects.Evaluations.BlockRotationParameter.Description
   nameWithType: BlockRotationParameter.Description
+- uid: ACadSharp.Objects.Evaluations.BlockRotationParameter.GetDxfClass
+  name: GetDxfClass()
+  href: api/ACadSharp.Objects.Evaluations.BlockRotationParameter.html#ACadSharp_Objects_Evaluations_BlockRotationParameter_GetDxfClass
+  commentId: M:ACadSharp.Objects.Evaluations.BlockRotationParameter.GetDxfClass
+  fullName: ACadSharp.Objects.Evaluations.BlockRotationParameter.GetDxfClass()
+  nameWithType: BlockRotationParameter.GetDxfClass()
+- uid: ACadSharp.Objects.Evaluations.BlockRotationParameter.GetDxfClass*
+  name: GetDxfClass
+  href: api/ACadSharp.Objects.Evaluations.BlockRotationParameter.html#ACadSharp_Objects_Evaluations_BlockRotationParameter_GetDxfClass_
+  commentId: Overload:ACadSharp.Objects.Evaluations.BlockRotationParameter.GetDxfClass
+  isSpec: "True"
+  fullName: ACadSharp.Objects.Evaluations.BlockRotationParameter.GetDxfClass
+  nameWithType: BlockRotationParameter.GetDxfClass
 - uid: ACadSharp.Objects.Evaluations.BlockRotationParameter.Label
   name: Label
   href: api/ACadSharp.Objects.Evaluations.BlockRotationParameter.html#ACadSharp_Objects_Evaluations_BlockRotationParameter_Label
@@ -39829,6 +40377,19 @@ references:
   commentId: T:ACadSharp.Objects.Evaluations.BlockScaleAction
   fullName: ACadSharp.Objects.Evaluations.BlockScaleAction
   nameWithType: BlockScaleAction
+- uid: ACadSharp.Objects.Evaluations.BlockScaleAction.GetDxfClass
+  name: GetDxfClass()
+  href: api/ACadSharp.Objects.Evaluations.BlockScaleAction.html#ACadSharp_Objects_Evaluations_BlockScaleAction_GetDxfClass
+  commentId: M:ACadSharp.Objects.Evaluations.BlockScaleAction.GetDxfClass
+  fullName: ACadSharp.Objects.Evaluations.BlockScaleAction.GetDxfClass()
+  nameWithType: BlockScaleAction.GetDxfClass()
+- uid: ACadSharp.Objects.Evaluations.BlockScaleAction.GetDxfClass*
+  name: GetDxfClass
+  href: api/ACadSharp.Objects.Evaluations.BlockScaleAction.html#ACadSharp_Objects_Evaluations_BlockScaleAction_GetDxfClass_
+  commentId: Overload:ACadSharp.Objects.Evaluations.BlockScaleAction.GetDxfClass
+  isSpec: "True"
+  fullName: ACadSharp.Objects.Evaluations.BlockScaleAction.GetDxfClass
+  nameWithType: BlockScaleAction.GetDxfClass
 - uid: ACadSharp.Objects.Evaluations.BlockScaleAction.ObjectName
   name: ObjectName
   href: api/ACadSharp.Objects.Evaluations.BlockScaleAction.html#ACadSharp_Objects_Evaluations_BlockScaleAction_ObjectName
@@ -39978,6 +40539,19 @@ references:
   isSpec: "True"
   fullName: ACadSharp.Objects.Evaluations.BlockStretchAction.EndYDeltaConnection
   nameWithType: BlockStretchAction.EndYDeltaConnection
+- uid: ACadSharp.Objects.Evaluations.BlockStretchAction.GetDxfClass
+  name: GetDxfClass()
+  href: api/ACadSharp.Objects.Evaluations.BlockStretchAction.html#ACadSharp_Objects_Evaluations_BlockStretchAction_GetDxfClass
+  commentId: M:ACadSharp.Objects.Evaluations.BlockStretchAction.GetDxfClass
+  fullName: ACadSharp.Objects.Evaluations.BlockStretchAction.GetDxfClass()
+  nameWithType: BlockStretchAction.GetDxfClass()
+- uid: ACadSharp.Objects.Evaluations.BlockStretchAction.GetDxfClass*
+  name: GetDxfClass
+  href: api/ACadSharp.Objects.Evaluations.BlockStretchAction.html#ACadSharp_Objects_Evaluations_BlockStretchAction_GetDxfClass_
+  commentId: Overload:ACadSharp.Objects.Evaluations.BlockStretchAction.GetDxfClass
+  isSpec: "True"
+  fullName: ACadSharp.Objects.Evaluations.BlockStretchAction.GetDxfClass
+  nameWithType: BlockStretchAction.GetDxfClass
 - uid: ACadSharp.Objects.Evaluations.BlockStretchAction.ObjectName
   name: ObjectName
   href: api/ACadSharp.Objects.Evaluations.BlockStretchAction.html#ACadSharp_Objects_Evaluations_BlockStretchAction_ObjectName
@@ -40023,6 +40597,19 @@ references:
   commentId: T:ACadSharp.Objects.Evaluations.BlockVisibilityGrip
   fullName: ACadSharp.Objects.Evaluations.BlockVisibilityGrip
   nameWithType: BlockVisibilityGrip
+- uid: ACadSharp.Objects.Evaluations.BlockVisibilityGrip.GetDxfClass
+  name: GetDxfClass()
+  href: api/ACadSharp.Objects.Evaluations.BlockVisibilityGrip.html#ACadSharp_Objects_Evaluations_BlockVisibilityGrip_GetDxfClass
+  commentId: M:ACadSharp.Objects.Evaluations.BlockVisibilityGrip.GetDxfClass
+  fullName: ACadSharp.Objects.Evaluations.BlockVisibilityGrip.GetDxfClass()
+  nameWithType: BlockVisibilityGrip.GetDxfClass()
+- uid: ACadSharp.Objects.Evaluations.BlockVisibilityGrip.GetDxfClass*
+  name: GetDxfClass
+  href: api/ACadSharp.Objects.Evaluations.BlockVisibilityGrip.html#ACadSharp_Objects_Evaluations_BlockVisibilityGrip_GetDxfClass_
+  commentId: Overload:ACadSharp.Objects.Evaluations.BlockVisibilityGrip.GetDxfClass
+  isSpec: "True"
+  fullName: ACadSharp.Objects.Evaluations.BlockVisibilityGrip.GetDxfClass
+  nameWithType: BlockVisibilityGrip.GetDxfClass
 - uid: ACadSharp.Objects.Evaluations.BlockVisibilityGrip.ObjectName
   name: ObjectName
   href: api/ACadSharp.Objects.Evaluations.BlockVisibilityGrip.html#ACadSharp_Objects_Evaluations_BlockVisibilityGrip_ObjectName
@@ -40107,6 +40694,19 @@ references:
   isSpec: "True"
   fullName: ACadSharp.Objects.Evaluations.BlockVisibilityParameter.Entities
   nameWithType: BlockVisibilityParameter.Entities
+- uid: ACadSharp.Objects.Evaluations.BlockVisibilityParameter.GetDxfClass
+  name: GetDxfClass()
+  href: api/ACadSharp.Objects.Evaluations.BlockVisibilityParameter.html#ACadSharp_Objects_Evaluations_BlockVisibilityParameter_GetDxfClass
+  commentId: M:ACadSharp.Objects.Evaluations.BlockVisibilityParameter.GetDxfClass
+  fullName: ACadSharp.Objects.Evaluations.BlockVisibilityParameter.GetDxfClass()
+  nameWithType: BlockVisibilityParameter.GetDxfClass()
+- uid: ACadSharp.Objects.Evaluations.BlockVisibilityParameter.GetDxfClass*
+  name: GetDxfClass
+  href: api/ACadSharp.Objects.Evaluations.BlockVisibilityParameter.html#ACadSharp_Objects_Evaluations_BlockVisibilityParameter_GetDxfClass_
+  commentId: Overload:ACadSharp.Objects.Evaluations.BlockVisibilityParameter.GetDxfClass
+  isSpec: "True"
+  fullName: ACadSharp.Objects.Evaluations.BlockVisibilityParameter.GetDxfClass
+  nameWithType: BlockVisibilityParameter.GetDxfClass
 - uid: ACadSharp.Objects.Evaluations.BlockVisibilityParameter.Label
   name: Label
   href: api/ACadSharp.Objects.Evaluations.BlockVisibilityParameter.html#ACadSharp_Objects_Evaluations_BlockVisibilityParameter_Label
@@ -40249,6 +40849,19 @@ references:
   commentId: T:ACadSharp.Objects.Evaluations.BlockXYGrip
   fullName: ACadSharp.Objects.Evaluations.BlockXYGrip
   nameWithType: BlockXYGrip
+- uid: ACadSharp.Objects.Evaluations.BlockXYGrip.GetDxfClass
+  name: GetDxfClass()
+  href: api/ACadSharp.Objects.Evaluations.BlockXYGrip.html#ACadSharp_Objects_Evaluations_BlockXYGrip_GetDxfClass
+  commentId: M:ACadSharp.Objects.Evaluations.BlockXYGrip.GetDxfClass
+  fullName: ACadSharp.Objects.Evaluations.BlockXYGrip.GetDxfClass()
+  nameWithType: BlockXYGrip.GetDxfClass()
+- uid: ACadSharp.Objects.Evaluations.BlockXYGrip.GetDxfClass*
+  name: GetDxfClass
+  href: api/ACadSharp.Objects.Evaluations.BlockXYGrip.html#ACadSharp_Objects_Evaluations_BlockXYGrip_GetDxfClass_
+  commentId: Overload:ACadSharp.Objects.Evaluations.BlockXYGrip.GetDxfClass
+  isSpec: "True"
+  fullName: ACadSharp.Objects.Evaluations.BlockXYGrip.GetDxfClass
+  nameWithType: BlockXYGrip.GetDxfClass
 - uid: ACadSharp.Objects.Evaluations.BlockXYGrip.ObjectName
   name: ObjectName
   href: api/ACadSharp.Objects.Evaluations.BlockXYGrip.html#ACadSharp_Objects_Evaluations_BlockXYGrip_ObjectName
@@ -40307,6 +40920,19 @@ references:
   isSpec: "True"
   fullName: ACadSharp.Objects.Evaluations.BlockXYParameter.DescriptionY
   nameWithType: BlockXYParameter.DescriptionY
+- uid: ACadSharp.Objects.Evaluations.BlockXYParameter.GetDxfClass
+  name: GetDxfClass()
+  href: api/ACadSharp.Objects.Evaluations.BlockXYParameter.html#ACadSharp_Objects_Evaluations_BlockXYParameter_GetDxfClass
+  commentId: M:ACadSharp.Objects.Evaluations.BlockXYParameter.GetDxfClass
+  fullName: ACadSharp.Objects.Evaluations.BlockXYParameter.GetDxfClass()
+  nameWithType: BlockXYParameter.GetDxfClass()
+- uid: ACadSharp.Objects.Evaluations.BlockXYParameter.GetDxfClass*
+  name: GetDxfClass
+  href: api/ACadSharp.Objects.Evaluations.BlockXYParameter.html#ACadSharp_Objects_Evaluations_BlockXYParameter_GetDxfClass_
+  commentId: Overload:ACadSharp.Objects.Evaluations.BlockXYParameter.GetDxfClass
+  isSpec: "True"
+  fullName: ACadSharp.Objects.Evaluations.BlockXYParameter.GetDxfClass
+  nameWithType: BlockXYParameter.GetDxfClass
 - uid: ACadSharp.Objects.Evaluations.BlockXYParameter.LabelOffsetX
   name: LabelOffsetX
   href: api/ACadSharp.Objects.Evaluations.BlockXYParameter.html#ACadSharp_Objects_Evaluations_BlockXYParameter_LabelOffsetX
@@ -40872,6 +41498,19 @@ references:
   isSpec: "True"
   fullName: ACadSharp.Objects.Evaluations.EvaluationGraph.Edges
   nameWithType: EvaluationGraph.Edges
+- uid: ACadSharp.Objects.Evaluations.EvaluationGraph.GetDxfClass
+  name: GetDxfClass()
+  href: api/ACadSharp.Objects.Evaluations.EvaluationGraph.html#ACadSharp_Objects_Evaluations_EvaluationGraph_GetDxfClass
+  commentId: M:ACadSharp.Objects.Evaluations.EvaluationGraph.GetDxfClass
+  fullName: ACadSharp.Objects.Evaluations.EvaluationGraph.GetDxfClass()
+  nameWithType: EvaluationGraph.GetDxfClass()
+- uid: ACadSharp.Objects.Evaluations.EvaluationGraph.GetDxfClass*
+  name: GetDxfClass
+  href: api/ACadSharp.Objects.Evaluations.EvaluationGraph.html#ACadSharp_Objects_Evaluations_EvaluationGraph_GetDxfClass_
+  commentId: Overload:ACadSharp.Objects.Evaluations.EvaluationGraph.GetDxfClass
+  isSpec: "True"
+  fullName: ACadSharp.Objects.Evaluations.EvaluationGraph.GetDxfClass
+  nameWithType: EvaluationGraph.GetDxfClass
 - uid: ACadSharp.Objects.Evaluations.EvaluationGraph.Node
   name: EvaluationGraph.Node
   href: api/ACadSharp.Objects.Evaluations.EvaluationGraph.Node.html
@@ -41763,6 +42402,19 @@ references:
   isSpec: "True"
   fullName: ACadSharp.Objects.Field.FormatString
   nameWithType: Field.FormatString
+- uid: ACadSharp.Objects.Field.GetDxfClass
+  name: GetDxfClass()
+  href: api/ACadSharp.Objects.Field.html#ACadSharp_Objects_Field_GetDxfClass
+  commentId: M:ACadSharp.Objects.Field.GetDxfClass
+  fullName: ACadSharp.Objects.Field.GetDxfClass()
+  nameWithType: Field.GetDxfClass()
+- uid: ACadSharp.Objects.Field.GetDxfClass*
+  name: GetDxfClass
+  href: api/ACadSharp.Objects.Field.html#ACadSharp_Objects_Field_GetDxfClass_
+  commentId: Overload:ACadSharp.Objects.Field.GetDxfClass
+  isSpec: "True"
+  fullName: ACadSharp.Objects.Field.GetDxfClass
+  nameWithType: Field.GetDxfClass
 - uid: ACadSharp.Objects.Field.ObjectName
   name: ObjectName
   href: api/ACadSharp.Objects.Field.html#ACadSharp_Objects_Field_ObjectName
@@ -41847,6 +42499,19 @@ references:
   isSpec: "True"
   fullName: ACadSharp.Objects.FieldList.Fields
   nameWithType: FieldList.Fields
+- uid: ACadSharp.Objects.FieldList.GetDxfClass
+  name: GetDxfClass()
+  href: api/ACadSharp.Objects.FieldList.html#ACadSharp_Objects_FieldList_GetDxfClass
+  commentId: M:ACadSharp.Objects.FieldList.GetDxfClass
+  fullName: ACadSharp.Objects.FieldList.GetDxfClass()
+  nameWithType: FieldList.GetDxfClass()
+- uid: ACadSharp.Objects.FieldList.GetDxfClass*
+  name: GetDxfClass
+  href: api/ACadSharp.Objects.FieldList.html#ACadSharp_Objects_FieldList_GetDxfClass_
+  commentId: Overload:ACadSharp.Objects.FieldList.GetDxfClass
+  isSpec: "True"
+  fullName: ACadSharp.Objects.FieldList.GetDxfClass
+  nameWithType: FieldList.GetDxfClass
 - uid: ACadSharp.Objects.FieldList.ObjectName
   name: ObjectName
   href: api/ACadSharp.Objects.FieldList.html#ACadSharp_Objects_FieldList_ObjectName
@@ -42244,6 +42909,19 @@ references:
   isSpec: "True"
   fullName: ACadSharp.Objects.GeoData.GeoRssTag
   nameWithType: GeoData.GeoRssTag
+- uid: ACadSharp.Objects.GeoData.GetDxfClass
+  name: GetDxfClass()
+  href: api/ACadSharp.Objects.GeoData.html#ACadSharp_Objects_GeoData_GetDxfClass
+  commentId: M:ACadSharp.Objects.GeoData.GetDxfClass
+  fullName: ACadSharp.Objects.GeoData.GetDxfClass()
+  nameWithType: GeoData.GetDxfClass()
+- uid: ACadSharp.Objects.GeoData.GetDxfClass*
+  name: GetDxfClass
+  href: api/ACadSharp.Objects.GeoData.html#ACadSharp_Objects_GeoData_GetDxfClass_
+  commentId: Overload:ACadSharp.Objects.GeoData.GetDxfClass
+  isSpec: "True"
+  fullName: ACadSharp.Objects.GeoData.GetDxfClass
+  nameWithType: GeoData.GetDxfClass
 - uid: ACadSharp.Objects.GeoData.HorizontalUnitScale
   name: HorizontalUnitScale
   href: api/ACadSharp.Objects.GeoData.html#ACadSharp_Objects_GeoData_HorizontalUnitScale
@@ -42753,6 +43431,19 @@ references:
   isSpec: "True"
   fullName: ACadSharp.Objects.ImageDefinition.FileName
   nameWithType: ImageDefinition.FileName
+- uid: ACadSharp.Objects.ImageDefinition.GetDxfClass
+  name: GetDxfClass()
+  href: api/ACadSharp.Objects.ImageDefinition.html#ACadSharp_Objects_ImageDefinition_GetDxfClass
+  commentId: M:ACadSharp.Objects.ImageDefinition.GetDxfClass
+  fullName: ACadSharp.Objects.ImageDefinition.GetDxfClass()
+  nameWithType: ImageDefinition.GetDxfClass()
+- uid: ACadSharp.Objects.ImageDefinition.GetDxfClass*
+  name: GetDxfClass
+  href: api/ACadSharp.Objects.ImageDefinition.html#ACadSharp_Objects_ImageDefinition_GetDxfClass_
+  commentId: Overload:ACadSharp.Objects.ImageDefinition.GetDxfClass
+  isSpec: "True"
+  fullName: ACadSharp.Objects.ImageDefinition.GetDxfClass
+  nameWithType: ImageDefinition.GetDxfClass
 - uid: ACadSharp.Objects.ImageDefinition.IsLoaded
   name: IsLoaded
   href: api/ACadSharp.Objects.ImageDefinition.html#ACadSharp_Objects_ImageDefinition_IsLoaded
@@ -42850,6 +43541,19 @@ references:
   isSpec: "True"
   fullName: ACadSharp.Objects.ImageDefinitionReactor.ClassVersion
   nameWithType: ImageDefinitionReactor.ClassVersion
+- uid: ACadSharp.Objects.ImageDefinitionReactor.GetDxfClass
+  name: GetDxfClass()
+  href: api/ACadSharp.Objects.ImageDefinitionReactor.html#ACadSharp_Objects_ImageDefinitionReactor_GetDxfClass
+  commentId: M:ACadSharp.Objects.ImageDefinitionReactor.GetDxfClass
+  fullName: ACadSharp.Objects.ImageDefinitionReactor.GetDxfClass()
+  nameWithType: ImageDefinitionReactor.GetDxfClass()
+- uid: ACadSharp.Objects.ImageDefinitionReactor.GetDxfClass*
+  name: GetDxfClass
+  href: api/ACadSharp.Objects.ImageDefinitionReactor.html#ACadSharp_Objects_ImageDefinitionReactor_GetDxfClass_
+  commentId: Overload:ACadSharp.Objects.ImageDefinitionReactor.GetDxfClass
+  isSpec: "True"
+  fullName: ACadSharp.Objects.ImageDefinitionReactor.GetDxfClass
+  nameWithType: ImageDefinitionReactor.GetDxfClass
 - uid: ACadSharp.Objects.ImageDefinitionReactor.Image
   name: Image
   href: api/ACadSharp.Objects.ImageDefinitionReactor.html#ACadSharp_Objects_ImageDefinitionReactor_Image
@@ -43019,6 +43723,19 @@ references:
   isSpec: "True"
   fullName: ACadSharp.Objects.Layout.Elevation
   nameWithType: Layout.Elevation
+- uid: ACadSharp.Objects.Layout.GetDxfClass
+  name: GetDxfClass()
+  href: api/ACadSharp.Objects.Layout.html#ACadSharp_Objects_Layout_GetDxfClass
+  commentId: M:ACadSharp.Objects.Layout.GetDxfClass
+  fullName: ACadSharp.Objects.Layout.GetDxfClass()
+  nameWithType: Layout.GetDxfClass()
+- uid: ACadSharp.Objects.Layout.GetDxfClass*
+  name: GetDxfClass
+  href: api/ACadSharp.Objects.Layout.html#ACadSharp_Objects_Layout_GetDxfClass_
+  commentId: Overload:ACadSharp.Objects.Layout.GetDxfClass
+  isSpec: "True"
+  fullName: ACadSharp.Objects.Layout.GetDxfClass
+  nameWithType: Layout.GetDxfClass
 - uid: ACadSharp.Objects.Layout.InsertionBasePoint
   name: InsertionBasePoint
   href: api/ACadSharp.Objects.Layout.html#ACadSharp_Objects_Layout_InsertionBasePoint
@@ -43906,6 +44623,19 @@ references:
   isSpec: "True"
   fullName: ACadSharp.Objects.MTextAttributeObjectContextData.AttachmentPoint
   nameWithType: MTextAttributeObjectContextData.AttachmentPoint
+- uid: ACadSharp.Objects.MTextAttributeObjectContextData.GetDxfClass
+  name: GetDxfClass()
+  href: api/ACadSharp.Objects.MTextAttributeObjectContextData.html#ACadSharp_Objects_MTextAttributeObjectContextData_GetDxfClass
+  commentId: M:ACadSharp.Objects.MTextAttributeObjectContextData.GetDxfClass
+  fullName: ACadSharp.Objects.MTextAttributeObjectContextData.GetDxfClass()
+  nameWithType: MTextAttributeObjectContextData.GetDxfClass()
+- uid: ACadSharp.Objects.MTextAttributeObjectContextData.GetDxfClass*
+  name: GetDxfClass
+  href: api/ACadSharp.Objects.MTextAttributeObjectContextData.html#ACadSharp_Objects_MTextAttributeObjectContextData_GetDxfClass_
+  commentId: Overload:ACadSharp.Objects.MTextAttributeObjectContextData.GetDxfClass
+  isSpec: "True"
+  fullName: ACadSharp.Objects.MTextAttributeObjectContextData.GetDxfClass
+  nameWithType: MTextAttributeObjectContextData.GetDxfClass
 - uid: ACadSharp.Objects.MTextAttributeObjectContextData.InsertPoint
   name: InsertPoint
   href: api/ACadSharp.Objects.MTextAttributeObjectContextData.html#ACadSharp_Objects_MTextAttributeObjectContextData_InsertPoint
@@ -44305,6 +45035,19 @@ references:
   isSpec: "True"
   fullName: ACadSharp.Objects.Material.DiffuseTilingMethod
   nameWithType: Material.DiffuseTilingMethod
+- uid: ACadSharp.Objects.Material.GetDxfClass
+  name: GetDxfClass()
+  href: api/ACadSharp.Objects.Material.html#ACadSharp_Objects_Material_GetDxfClass
+  commentId: M:ACadSharp.Objects.Material.GetDxfClass
+  fullName: ACadSharp.Objects.Material.GetDxfClass()
+  nameWithType: Material.GetDxfClass()
+- uid: ACadSharp.Objects.Material.GetDxfClass*
+  name: GetDxfClass
+  href: api/ACadSharp.Objects.Material.html#ACadSharp_Objects_Material_GetDxfClass_
+  commentId: Overload:ACadSharp.Objects.Material.GetDxfClass
+  isSpec: "True"
+  fullName: ACadSharp.Objects.Material.GetDxfClass
+  nameWithType: Material.GetDxfClass
 - uid: ACadSharp.Objects.Material.GlobalName
   name: GlobalName
   href: api/ACadSharp.Objects.Material.html#ACadSharp_Objects_Material_GlobalName
@@ -45360,6 +46103,19 @@ references:
   isSpec: "True"
   fullName: ACadSharp.Objects.MultiLeaderObjectContextData.FlowDirection
   nameWithType: MultiLeaderObjectContextData.FlowDirection
+- uid: ACadSharp.Objects.MultiLeaderObjectContextData.GetDxfClass
+  name: GetDxfClass()
+  href: api/ACadSharp.Objects.MultiLeaderObjectContextData.html#ACadSharp_Objects_MultiLeaderObjectContextData_GetDxfClass
+  commentId: M:ACadSharp.Objects.MultiLeaderObjectContextData.GetDxfClass
+  fullName: ACadSharp.Objects.MultiLeaderObjectContextData.GetDxfClass()
+  nameWithType: MultiLeaderObjectContextData.GetDxfClass()
+- uid: ACadSharp.Objects.MultiLeaderObjectContextData.GetDxfClass*
+  name: GetDxfClass
+  href: api/ACadSharp.Objects.MultiLeaderObjectContextData.html#ACadSharp_Objects_MultiLeaderObjectContextData_GetDxfClass_
+  commentId: Overload:ACadSharp.Objects.MultiLeaderObjectContextData.GetDxfClass
+  isSpec: "True"
+  fullName: ACadSharp.Objects.MultiLeaderObjectContextData.GetDxfClass
+  nameWithType: MultiLeaderObjectContextData.GetDxfClass
 - uid: ACadSharp.Objects.MultiLeaderObjectContextData.HasContentsBlock
   name: HasContentsBlock
   href: api/ACadSharp.Objects.MultiLeaderObjectContextData.html#ACadSharp_Objects_MultiLeaderObjectContextData_HasContentsBlock
@@ -46476,6 +47232,19 @@ references:
   isSpec: "True"
   fullName: ACadSharp.Objects.MultiLeaderStyle.FirstSegmentAngleConstraint
   nameWithType: MultiLeaderStyle.FirstSegmentAngleConstraint
+- uid: ACadSharp.Objects.MultiLeaderStyle.GetDxfClass
+  name: GetDxfClass()
+  href: api/ACadSharp.Objects.MultiLeaderStyle.html#ACadSharp_Objects_MultiLeaderStyle_GetDxfClass
+  commentId: M:ACadSharp.Objects.MultiLeaderStyle.GetDxfClass
+  fullName: ACadSharp.Objects.MultiLeaderStyle.GetDxfClass()
+  nameWithType: MultiLeaderStyle.GetDxfClass()
+- uid: ACadSharp.Objects.MultiLeaderStyle.GetDxfClass*
+  name: GetDxfClass
+  href: api/ACadSharp.Objects.MultiLeaderStyle.html#ACadSharp_Objects_MultiLeaderStyle_GetDxfClass_
+  commentId: Overload:ACadSharp.Objects.MultiLeaderStyle.GetDxfClass
+  isSpec: "True"
+  fullName: ACadSharp.Objects.MultiLeaderStyle.GetDxfClass
+  nameWithType: MultiLeaderStyle.GetDxfClass
 - uid: ACadSharp.Objects.MultiLeaderStyle.IsAnnotative
   name: IsAnnotative
   href: api/ACadSharp.Objects.MultiLeaderStyle.html#ACadSharp_Objects_MultiLeaderStyle_IsAnnotative
@@ -47237,6 +48006,19 @@ references:
   fullName.vb: ACadSharp.Objects.PdfUnderlayDefinition.New
   nameWithType: PdfUnderlayDefinition.PdfUnderlayDefinition
   nameWithType.vb: PdfUnderlayDefinition.New
+- uid: ACadSharp.Objects.PdfUnderlayDefinition.GetDxfClass
+  name: GetDxfClass()
+  href: api/ACadSharp.Objects.PdfUnderlayDefinition.html#ACadSharp_Objects_PdfUnderlayDefinition_GetDxfClass
+  commentId: M:ACadSharp.Objects.PdfUnderlayDefinition.GetDxfClass
+  fullName: ACadSharp.Objects.PdfUnderlayDefinition.GetDxfClass()
+  nameWithType: PdfUnderlayDefinition.GetDxfClass()
+- uid: ACadSharp.Objects.PdfUnderlayDefinition.GetDxfClass*
+  name: GetDxfClass
+  href: api/ACadSharp.Objects.PdfUnderlayDefinition.html#ACadSharp_Objects_PdfUnderlayDefinition_GetDxfClass_
+  commentId: Overload:ACadSharp.Objects.PdfUnderlayDefinition.GetDxfClass
+  isSpec: "True"
+  fullName: ACadSharp.Objects.PdfUnderlayDefinition.GetDxfClass
+  nameWithType: PdfUnderlayDefinition.GetDxfClass
 - uid: ACadSharp.Objects.PdfUnderlayDefinition.ObjectName
   name: ObjectName
   href: api/ACadSharp.Objects.PdfUnderlayDefinition.html#ACadSharp_Objects_PdfUnderlayDefinition_ObjectName
@@ -47473,6 +48255,19 @@ references:
   isSpec: "True"
   fullName: ACadSharp.Objects.PlotSettings.Flags
   nameWithType: PlotSettings.Flags
+- uid: ACadSharp.Objects.PlotSettings.GetDxfClass
+  name: GetDxfClass()
+  href: api/ACadSharp.Objects.PlotSettings.html#ACadSharp_Objects_PlotSettings_GetDxfClass
+  commentId: M:ACadSharp.Objects.PlotSettings.GetDxfClass
+  fullName: ACadSharp.Objects.PlotSettings.GetDxfClass()
+  nameWithType: PlotSettings.GetDxfClass()
+- uid: ACadSharp.Objects.PlotSettings.GetDxfClass*
+  name: GetDxfClass
+  href: api/ACadSharp.Objects.PlotSettings.html#ACadSharp_Objects_PlotSettings_GetDxfClass_
+  commentId: Overload:ACadSharp.Objects.PlotSettings.GetDxfClass
+  isSpec: "True"
+  fullName: ACadSharp.Objects.PlotSettings.GetDxfClass
+  nameWithType: PlotSettings.GetDxfClass
 - uid: ACadSharp.Objects.PlotSettings.NumeratorScale
   name: NumeratorScale
   href: api/ACadSharp.Objects.PlotSettings.html#ACadSharp_Objects_PlotSettings_NumeratorScale
@@ -48154,6 +48949,19 @@ references:
   isSpec: "True"
   fullName: ACadSharp.Objects.RasterVariables.DisplayQuality
   nameWithType: RasterVariables.DisplayQuality
+- uid: ACadSharp.Objects.RasterVariables.GetDxfClass
+  name: GetDxfClass()
+  href: api/ACadSharp.Objects.RasterVariables.html#ACadSharp_Objects_RasterVariables_GetDxfClass
+  commentId: M:ACadSharp.Objects.RasterVariables.GetDxfClass
+  fullName: ACadSharp.Objects.RasterVariables.GetDxfClass()
+  nameWithType: RasterVariables.GetDxfClass()
+- uid: ACadSharp.Objects.RasterVariables.GetDxfClass*
+  name: GetDxfClass
+  href: api/ACadSharp.Objects.RasterVariables.html#ACadSharp_Objects_RasterVariables_GetDxfClass_
+  commentId: Overload:ACadSharp.Objects.RasterVariables.GetDxfClass
+  isSpec: "True"
+  fullName: ACadSharp.Objects.RasterVariables.GetDxfClass
+  nameWithType: RasterVariables.GetDxfClass
 - uid: ACadSharp.Objects.RasterVariables.IsDisplayFrameShown
   name: IsDisplayFrameShown
   href: api/ACadSharp.Objects.RasterVariables.html#ACadSharp_Objects_RasterVariables_IsDisplayFrameShown
@@ -48345,6 +49153,19 @@ references:
   isSpec: "True"
   fullName: ACadSharp.Objects.Scale.DrawingUnits
   nameWithType: Scale.DrawingUnits
+- uid: ACadSharp.Objects.Scale.GetDxfClass
+  name: GetDxfClass()
+  href: api/ACadSharp.Objects.Scale.html#ACadSharp_Objects_Scale_GetDxfClass
+  commentId: M:ACadSharp.Objects.Scale.GetDxfClass
+  fullName: ACadSharp.Objects.Scale.GetDxfClass()
+  nameWithType: Scale.GetDxfClass()
+- uid: ACadSharp.Objects.Scale.GetDxfClass*
+  name: GetDxfClass
+  href: api/ACadSharp.Objects.Scale.html#ACadSharp_Objects_Scale_GetDxfClass_
+  commentId: Overload:ACadSharp.Objects.Scale.GetDxfClass
+  isSpec: "True"
+  fullName: ACadSharp.Objects.Scale.GetDxfClass
+  nameWithType: Scale.GetDxfClass
 - uid: ACadSharp.Objects.Scale.IsUnitScale
   name: IsUnitScale
   href: api/ACadSharp.Objects.Scale.html#ACadSharp_Objects_Scale_IsUnitScale
@@ -48809,6 +49630,19 @@ references:
   commentId: F:ACadSharp.Objects.SortEntitiesTable.DictionaryEntryName
   fullName: ACadSharp.Objects.SortEntitiesTable.DictionaryEntryName
   nameWithType: SortEntitiesTable.DictionaryEntryName
+- uid: ACadSharp.Objects.SortEntitiesTable.GetDxfClass
+  name: GetDxfClass()
+  href: api/ACadSharp.Objects.SortEntitiesTable.html#ACadSharp_Objects_SortEntitiesTable_GetDxfClass
+  commentId: M:ACadSharp.Objects.SortEntitiesTable.GetDxfClass
+  fullName: ACadSharp.Objects.SortEntitiesTable.GetDxfClass()
+  nameWithType: SortEntitiesTable.GetDxfClass()
+- uid: ACadSharp.Objects.SortEntitiesTable.GetDxfClass*
+  name: GetDxfClass
+  href: api/ACadSharp.Objects.SortEntitiesTable.html#ACadSharp_Objects_SortEntitiesTable_GetDxfClass_
+  commentId: Overload:ACadSharp.Objects.SortEntitiesTable.GetDxfClass
+  isSpec: "True"
+  fullName: ACadSharp.Objects.SortEntitiesTable.GetDxfClass
+  nameWithType: SortEntitiesTable.GetDxfClass
 - uid: ACadSharp.Objects.SortEntitiesTable.GetEnumerator
   name: GetEnumerator()
   href: api/ACadSharp.Objects.SortEntitiesTable.html#ACadSharp_Objects_SortEntitiesTable_GetEnumerator
@@ -49128,6 +49962,19 @@ references:
   isSpec: "True"
   fullName: ACadSharp.Objects.SpatialFilter.FrontDistance
   nameWithType: SpatialFilter.FrontDistance
+- uid: ACadSharp.Objects.SpatialFilter.GetDxfClass
+  name: GetDxfClass()
+  href: api/ACadSharp.Objects.SpatialFilter.html#ACadSharp_Objects_SpatialFilter_GetDxfClass
+  commentId: M:ACadSharp.Objects.SpatialFilter.GetDxfClass
+  fullName: ACadSharp.Objects.SpatialFilter.GetDxfClass()
+  nameWithType: SpatialFilter.GetDxfClass()
+- uid: ACadSharp.Objects.SpatialFilter.GetDxfClass*
+  name: GetDxfClass
+  href: api/ACadSharp.Objects.SpatialFilter.html#ACadSharp_Objects_SpatialFilter_GetDxfClass_
+  commentId: Overload:ACadSharp.Objects.SpatialFilter.GetDxfClass
+  isSpec: "True"
+  fullName: ACadSharp.Objects.SpatialFilter.GetDxfClass
+  nameWithType: SpatialFilter.GetDxfClass
 - uid: ACadSharp.Objects.SpatialFilter.InsertTransform
   name: InsertTransform
   href: api/ACadSharp.Objects.SpatialFilter.html#ACadSharp_Objects_SpatialFilter_InsertTransform
@@ -49255,6 +50102,19 @@ references:
   commentId: T:ACadSharp.Objects.TableContent
   fullName: ACadSharp.Objects.TableContent
   nameWithType: TableContent
+- uid: ACadSharp.Objects.TableContent.GetDxfClass
+  name: GetDxfClass()
+  href: api/ACadSharp.Objects.TableContent.html#ACadSharp_Objects_TableContent_GetDxfClass
+  commentId: M:ACadSharp.Objects.TableContent.GetDxfClass
+  fullName: ACadSharp.Objects.TableContent.GetDxfClass()
+  nameWithType: TableContent.GetDxfClass()
+- uid: ACadSharp.Objects.TableContent.GetDxfClass*
+  name: GetDxfClass
+  href: api/ACadSharp.Objects.TableContent.html#ACadSharp_Objects_TableContent_GetDxfClass_
+  commentId: Overload:ACadSharp.Objects.TableContent.GetDxfClass
+  isSpec: "True"
+  fullName: ACadSharp.Objects.TableContent.GetDxfClass
+  nameWithType: TableContent.GetDxfClass
 - uid: ACadSharp.Objects.TableContent.ObjectName
   name: ObjectName
   href: api/ACadSharp.Objects.TableContent.html#ACadSharp_Objects_TableContent_ObjectName
@@ -50543,6 +51403,19 @@ references:
   isSpec: "True"
   fullName: ACadSharp.Objects.TableStyle.FlowDirection
   nameWithType: TableStyle.FlowDirection
+- uid: ACadSharp.Objects.TableStyle.GetDxfClass
+  name: GetDxfClass()
+  href: api/ACadSharp.Objects.TableStyle.html#ACadSharp_Objects_TableStyle_GetDxfClass
+  commentId: M:ACadSharp.Objects.TableStyle.GetDxfClass
+  fullName: ACadSharp.Objects.TableStyle.GetDxfClass()
+  nameWithType: TableStyle.GetDxfClass()
+- uid: ACadSharp.Objects.TableStyle.GetDxfClass*
+  name: GetDxfClass
+  href: api/ACadSharp.Objects.TableStyle.html#ACadSharp_Objects_TableStyle_GetDxfClass_
+  commentId: Overload:ACadSharp.Objects.TableStyle.GetDxfClass
+  isSpec: "True"
+  fullName: ACadSharp.Objects.TableStyle.GetDxfClass
+  nameWithType: TableStyle.GetDxfClass
 - uid: ACadSharp.Objects.TableStyle.HeaderCellStyle
   name: HeaderCellStyle
   href: api/ACadSharp.Objects.TableStyle.html#ACadSharp_Objects_TableStyle_HeaderCellStyle
@@ -51187,6 +52060,19 @@ references:
   isSpec: "True"
   fullName: ACadSharp.Objects.VisualStyle.FaceStyleMonoColor
   nameWithType: VisualStyle.FaceStyleMonoColor
+- uid: ACadSharp.Objects.VisualStyle.GetDxfClass
+  name: GetDxfClass()
+  href: api/ACadSharp.Objects.VisualStyle.html#ACadSharp_Objects_VisualStyle_GetDxfClass
+  commentId: M:ACadSharp.Objects.VisualStyle.GetDxfClass
+  fullName: ACadSharp.Objects.VisualStyle.GetDxfClass()
+  nameWithType: VisualStyle.GetDxfClass()
+- uid: ACadSharp.Objects.VisualStyle.GetDxfClass*
+  name: GetDxfClass
+  href: api/ACadSharp.Objects.VisualStyle.html#ACadSharp_Objects_VisualStyle_GetDxfClass_
+  commentId: Overload:ACadSharp.Objects.VisualStyle.GetDxfClass
+  isSpec: "True"
+  fullName: ACadSharp.Objects.VisualStyle.GetDxfClass
+  nameWithType: VisualStyle.GetDxfClass
 - uid: ACadSharp.Objects.VisualStyle.HaloGap
   name: HaloGap
   href: api/ACadSharp.Objects.VisualStyle.html#ACadSharp_Objects_VisualStyle_HaloGap

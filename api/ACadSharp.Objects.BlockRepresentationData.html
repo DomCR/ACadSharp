@@ -89,7 +89,7 @@
 
 
   <h1 id="ACadSharp_Objects_BlockRepresentationData" data-uid="ACadSharp.Objects.BlockRepresentationData" class="text-break">
-Class BlockRepresentationData  <a class="header-action link-secondary" title="View source" href="https://github.com/DomCR/ACadSharp/blob/master/src/ACadSharp/Objects/BlockRepresentationData.cs/#L13"><i class="bi bi-code-slash"></i></a>
+Class BlockRepresentationData  <a class="header-action link-secondary" title="View source" href="https://github.com/DomCR/ACadSharp/blob/master/src/ACadSharp/Objects/BlockRepresentationData.cs/#L14"><i class="bi bi-code-slash"></i></a>
   </h1>
 
   <div class="facts text-secondary">
@@ -104,7 +104,7 @@ Class BlockRepresentationData  <a class="header-action link-secondary" title="Vi
   <div class="codewrapper">
     <pre><code class="lang-csharp hljs">[DxfName(&quot;ACDB_BLOCKREPRESENTATION_DATA&quot;)]
 [DxfSubClass(&quot;AcDbBlockRepresentationData&quot;)]
-public class BlockRepresentationData : NonGraphicalObject, IHandledCadObject, INamedCadObject</code></pre>
+public class BlockRepresentationData : NonGraphicalObject, IHandledCadObject, INamedCadObject, IDxfClassDefined</code></pre>
   </div>
 
 
@@ -125,6 +125,7 @@ public class BlockRepresentationData : NonGraphicalObject, IHandledCadObject, IN
     <dd>
       <div><a class="xref" href="ACadSharp.IHandledCadObject.html">IHandledCadObject</a></div>
       <div><a class="xref" href="ACadSharp.INamedCadObject.html">INamedCadObject</a></div>
+      <div><a class="xref" href="ACadSharp.Classes.IDxfClassDefined.html">IDxfClassDefined</a></div>
     </dd>
   </dl>
 
@@ -239,7 +240,7 @@ Dxf class name <a class="xref" href="ACadSharp.DxfSubclassMarker.html#ACadSharp_
 
   <h3 id="ACadSharp_Objects_BlockRepresentationData_Block" data-uid="ACadSharp.Objects.BlockRepresentationData.Block">
   Block
-  <a class="header-action link-secondary" title="View source" href="https://github.com/DomCR/ACadSharp/blob/master/src/ACadSharp/Objects/BlockRepresentationData.cs/#L17"><i class="bi bi-code-slash"></i></a>
+  <a class="header-action link-secondary" title="View source" href="https://github.com/DomCR/ACadSharp/blob/master/src/ACadSharp/Objects/BlockRepresentationData.cs/#L18"><i class="bi bi-code-slash"></i></a>
   </h3>
 
   <div class="markdown level1 summary"></div>
@@ -271,7 +272,7 @@ public BlockRecord Block { get; set; }</code></pre>
 
   <h3 id="ACadSharp_Objects_BlockRepresentationData_ObjectName" data-uid="ACadSharp.Objects.BlockRepresentationData.ObjectName">
   ObjectName
-  <a class="header-action link-secondary" title="View source" href="https://github.com/DomCR/ACadSharp/blob/master/src/ACadSharp/Objects/BlockRepresentationData.cs/#L21"><i class="bi bi-code-slash"></i></a>
+  <a class="header-action link-secondary" title="View source" href="https://github.com/DomCR/ACadSharp/blob/master/src/ACadSharp/Objects/BlockRepresentationData.cs/#L22"><i class="bi bi-code-slash"></i></a>
   </h3>
 
   <div class="markdown level1 summary"><p>The CAD class name of an object.</p>
@@ -303,7 +304,7 @@ public BlockRecord Block { get; set; }</code></pre>
 
   <h3 id="ACadSharp_Objects_BlockRepresentationData_SubclassMarker" data-uid="ACadSharp.Objects.BlockRepresentationData.SubclassMarker">
   SubclassMarker
-  <a class="header-action link-secondary" title="View source" href="https://github.com/DomCR/ACadSharp/blob/master/src/ACadSharp/Objects/BlockRepresentationData.cs/#L24"><i class="bi bi-code-slash"></i></a>
+  <a class="header-action link-secondary" title="View source" href="https://github.com/DomCR/ACadSharp/blob/master/src/ACadSharp/Objects/BlockRepresentationData.cs/#L25"><i class="bi bi-code-slash"></i></a>
   </h3>
 
   <div class="markdown level1 summary"><p>Object Subclass marker.</p>
@@ -335,7 +336,7 @@ public BlockRecord Block { get; set; }</code></pre>
 
   <h3 id="ACadSharp_Objects_BlockRepresentationData_Version" data-uid="ACadSharp.Objects.BlockRepresentationData.Version">
   Version
-  <a class="header-action link-secondary" title="View source" href="https://github.com/DomCR/ACadSharp/blob/master/src/ACadSharp/Objects/BlockRepresentationData.cs/#L26"><i class="bi bi-code-slash"></i></a>
+  <a class="header-action link-secondary" title="View source" href="https://github.com/DomCR/ACadSharp/blob/master/src/ACadSharp/Objects/BlockRepresentationData.cs/#L27"><i class="bi bi-code-slash"></i></a>
   </h3>
 
   <div class="markdown level1 summary"></div>
@@ -363,11 +364,46 @@ public short Version { get; set; }</code></pre>
 
 
 
+  <h2 class="section" id="methods">Methods
+</h2>
+
+
+  <a id="ACadSharp_Objects_BlockRepresentationData_GetDxfClass_" data-uid="ACadSharp.Objects.BlockRepresentationData.GetDxfClass*"></a>
+
+  <h3 id="ACadSharp_Objects_BlockRepresentationData_GetDxfClass" data-uid="ACadSharp.Objects.BlockRepresentationData.GetDxfClass">
+  GetDxfClass()
+  <a class="header-action link-secondary" title="View source" href="https://github.com/DomCR/ACadSharp/blob/master/src/ACadSharp/Objects/BlockRepresentationData.cs/#L31"><i class="bi bi-code-slash"></i></a>
+  </h3>
+
+  <div class="markdown level1 summary"></div>
+  <div class="markdown level1 conceptual"></div>
+
+  <div class="codewrapper">
+    <pre><code class="lang-csharp hljs">public DxfClass GetDxfClass()</code></pre>
+  </div>
+
+
+  <h4 class="section">Returns</h4>
+  <dl class="parameters">
+    <dt><a class="xref" href="ACadSharp.Classes.DxfClass.html">DxfClass</a></dt>
+    <dd></dd>
+  </dl>
+
+
+
+
+
+
+
+
+
+
+
 
 </article>
 
         <div class="contribution d-print-none">
-          <a href="https://github.com/DomCR/ACadSharp/blob/master/src/ACadSharp/Objects/BlockRepresentationData.cs/#L13" class="edit-link">Edit this page</a>
+          <a href="https://github.com/DomCR/ACadSharp/blob/master/src/ACadSharp/Objects/BlockRepresentationData.cs/#L14" class="edit-link">Edit this page</a>
         </div>
 
 

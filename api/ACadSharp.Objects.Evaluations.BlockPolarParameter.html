@@ -89,7 +89,7 @@
 
 
   <h1 id="ACadSharp_Objects_Evaluations_BlockPolarParameter" data-uid="ACadSharp.Objects.Evaluations.BlockPolarParameter" class="text-break">
-Class BlockPolarParameter  <a class="header-action link-secondary" title="View source" href="https://github.com/DomCR/ACadSharp/blob/master/src/ACadSharp/Objects/Evaluations/BlockPolarParameter.cs/#L13"><i class="bi bi-code-slash"></i></a>
+Class BlockPolarParameter  <a class="header-action link-secondary" title="View source" href="https://github.com/DomCR/ACadSharp/blob/master/src/ACadSharp/Objects/Evaluations/BlockPolarParameter.cs/#L14"><i class="bi bi-code-slash"></i></a>
   </h1>
 
   <div class="facts text-secondary">
@@ -105,7 +105,7 @@ polar parameter in a dynamic block.</p>
   <div class="codewrapper">
     <pre><code class="lang-csharp hljs">[DxfName(&quot;BLOCKPOLARPARAMETER&quot;)]
 [DxfSubClass(&quot;AcDbBlockPolarParameter&quot;)]
-public class BlockPolarParameter : Block2PtParameter, IHandledCadObject, INamedCadObject</code></pre>
+public class BlockPolarParameter : Block2PtParameter, IHandledCadObject, INamedCadObject, IDxfClassDefined</code></pre>
   </div>
 
 
@@ -130,6 +130,7 @@ public class BlockPolarParameter : Block2PtParameter, IHandledCadObject, INamedC
     <dd>
       <div><a class="xref" href="ACadSharp.IHandledCadObject.html">IHandledCadObject</a></div>
       <div><a class="xref" href="ACadSharp.INamedCadObject.html">INamedCadObject</a></div>
+      <div><a class="xref" href="ACadSharp.Classes.IDxfClassDefined.html">IDxfClassDefined</a></div>
     </dd>
   </dl>
 
@@ -292,7 +293,7 @@ Dxf class name <a class="xref" href="ACadSharp.DxfSubclassMarker.html#ACadSharp_
 
   <h3 id="ACadSharp_Objects_Evaluations_BlockPolarParameter_AngleDescription" data-uid="ACadSharp.Objects.Evaluations.BlockPolarParameter.AngleDescription">
   AngleDescription
-  <a class="header-action link-secondary" title="View source" href="https://github.com/DomCR/ACadSharp/blob/master/src/ACadSharp/Objects/Evaluations/BlockPolarParameter.cs/#L25"><i class="bi bi-code-slash"></i></a>
+  <a class="header-action link-secondary" title="View source" href="https://github.com/DomCR/ACadSharp/blob/master/src/ACadSharp/Objects/Evaluations/BlockPolarParameter.cs/#L21"><i class="bi bi-code-slash"></i></a>
   </h3>
 
   <div class="markdown level1 summary"><p>Gets or sets the description of the angle.</p>
@@ -325,7 +326,7 @@ public string AngleDescription { get; set; }</code></pre>
 
   <h3 id="ACadSharp_Objects_Evaluations_BlockPolarParameter_AngleName" data-uid="ACadSharp.Objects.Evaluations.BlockPolarParameter.AngleName">
   AngleName
-  <a class="header-action link-secondary" title="View source" href="https://github.com/DomCR/ACadSharp/blob/master/src/ACadSharp/Objects/Evaluations/BlockPolarParameter.cs/#L31"><i class="bi bi-code-slash"></i></a>
+  <a class="header-action link-secondary" title="View source" href="https://github.com/DomCR/ACadSharp/blob/master/src/ACadSharp/Objects/Evaluations/BlockPolarParameter.cs/#L27"><i class="bi bi-code-slash"></i></a>
   </h3>
 
   <div class="markdown level1 summary"><p>Gets or sets the name of the angle.</p>
@@ -358,7 +359,7 @@ public string AngleName { get; set; }</code></pre>
 
   <h3 id="ACadSharp_Objects_Evaluations_BlockPolarParameter_AngleValueSet" data-uid="ACadSharp.Objects.Evaluations.BlockPolarParameter.AngleValueSet">
   AngleValueSet
-  <a class="header-action link-secondary" title="View source" href="https://github.com/DomCR/ACadSharp/blob/master/src/ACadSharp/Objects/Evaluations/BlockPolarParameter.cs/#L20"><i class="bi bi-code-slash"></i></a>
+  <a class="header-action link-secondary" title="View source" href="https://github.com/DomCR/ACadSharp/blob/master/src/ACadSharp/Objects/Evaluations/BlockPolarParameter.cs/#L33"><i class="bi bi-code-slash"></i></a>
   </h3>
 
   <div class="markdown level1 summary"><p>Gets or sets the angle of the polar parameter.</p>
@@ -390,7 +391,7 @@ public string AngleName { get; set; }</code></pre>
 
   <h3 id="ACadSharp_Objects_Evaluations_BlockPolarParameter_Description" data-uid="ACadSharp.Objects.Evaluations.BlockPolarParameter.Description">
   Description
-  <a class="header-action link-secondary" title="View source" href="https://github.com/DomCR/ACadSharp/blob/master/src/ACadSharp/Objects/Evaluations/BlockPolarParameter.cs/#L37"><i class="bi bi-code-slash"></i></a>
+  <a class="header-action link-secondary" title="View source" href="https://github.com/DomCR/ACadSharp/blob/master/src/ACadSharp/Objects/Evaluations/BlockPolarParameter.cs/#L38"><i class="bi bi-code-slash"></i></a>
   </h3>
 
   <div class="markdown level1 summary"><p>Gets or sets the description of the polar parameter.</p>
@@ -423,7 +424,7 @@ public string Description { get; set; }</code></pre>
 
   <h3 id="ACadSharp_Objects_Evaluations_BlockPolarParameter_DistanceValueSet" data-uid="ACadSharp.Objects.Evaluations.BlockPolarParameter.DistanceValueSet">
   DistanceValueSet
-  <a class="header-action link-secondary" title="View source" href="https://github.com/DomCR/ACadSharp/blob/master/src/ACadSharp/Objects/Evaluations/BlockPolarParameter.cs/#L43"><i class="bi bi-code-slash"></i></a>
+  <a class="header-action link-secondary" title="View source" href="https://github.com/DomCR/ACadSharp/blob/master/src/ACadSharp/Objects/Evaluations/BlockPolarParameter.cs/#L44"><i class="bi bi-code-slash"></i></a>
   </h3>
 
   <div class="markdown level1 summary"><p>Gets or sets the distance of the polar parameter.</p>
@@ -455,7 +456,7 @@ public string Description { get; set; }</code></pre>
 
   <h3 id="ACadSharp_Objects_Evaluations_BlockPolarParameter_Label" data-uid="ACadSharp.Objects.Evaluations.BlockPolarParameter.Label">
   Label
-  <a class="header-action link-secondary" title="View source" href="https://github.com/DomCR/ACadSharp/blob/master/src/ACadSharp/Objects/Evaluations/BlockPolarParameter.cs/#L48"><i class="bi bi-code-slash"></i></a>
+  <a class="header-action link-secondary" title="View source" href="https://github.com/DomCR/ACadSharp/blob/master/src/ACadSharp/Objects/Evaluations/BlockPolarParameter.cs/#L49"><i class="bi bi-code-slash"></i></a>
   </h3>
 
   <div class="markdown level1 summary"><p>Gets or sets the label text of the polar parameter.</p>
@@ -488,7 +489,7 @@ public string Label { get; set; }</code></pre>
 
   <h3 id="ACadSharp_Objects_Evaluations_BlockPolarParameter_LabelOffset" data-uid="ACadSharp.Objects.Evaluations.BlockPolarParameter.LabelOffset">
   LabelOffset
-  <a class="header-action link-secondary" title="View source" href="https://github.com/DomCR/ACadSharp/blob/master/src/ACadSharp/Objects/Evaluations/BlockPolarParameter.cs/#L54"><i class="bi bi-code-slash"></i></a>
+  <a class="header-action link-secondary" title="View source" href="https://github.com/DomCR/ACadSharp/blob/master/src/ACadSharp/Objects/Evaluations/BlockPolarParameter.cs/#L55"><i class="bi bi-code-slash"></i></a>
   </h3>
 
   <div class="markdown level1 summary"><p>Gets or sets the position of the label text of the polar parameter.</p>
@@ -521,7 +522,7 @@ public double LabelOffset { get; set; }</code></pre>
 
   <h3 id="ACadSharp_Objects_Evaluations_BlockPolarParameter_ObjectName" data-uid="ACadSharp.Objects.Evaluations.BlockPolarParameter.ObjectName">
   ObjectName
-  <a class="header-action link-secondary" title="View source" href="https://github.com/DomCR/ACadSharp/blob/master/src/ACadSharp/Objects/Evaluations/BlockPolarParameter.cs/#L58"><i class="bi bi-code-slash"></i></a>
+  <a class="header-action link-secondary" title="View source" href="https://github.com/DomCR/ACadSharp/blob/master/src/ACadSharp/Objects/Evaluations/BlockPolarParameter.cs/#L59"><i class="bi bi-code-slash"></i></a>
   </h3>
 
   <div class="markdown level1 summary"><p>The CAD class name of an object.</p>
@@ -553,7 +554,7 @@ public double LabelOffset { get; set; }</code></pre>
 
   <h3 id="ACadSharp_Objects_Evaluations_BlockPolarParameter_SubclassMarker" data-uid="ACadSharp.Objects.Evaluations.BlockPolarParameter.SubclassMarker">
   SubclassMarker
-  <a class="header-action link-secondary" title="View source" href="https://github.com/DomCR/ACadSharp/blob/master/src/ACadSharp/Objects/Evaluations/BlockPolarParameter.cs/#L61"><i class="bi bi-code-slash"></i></a>
+  <a class="header-action link-secondary" title="View source" href="https://github.com/DomCR/ACadSharp/blob/master/src/ACadSharp/Objects/Evaluations/BlockPolarParameter.cs/#L62"><i class="bi bi-code-slash"></i></a>
   </h3>
 
   <div class="markdown level1 summary"><p>Object Subclass marker.</p>
@@ -581,11 +582,46 @@ public double LabelOffset { get; set; }</code></pre>
 
 
 
+  <h2 class="section" id="methods">Methods
+</h2>
+
+
+  <a id="ACadSharp_Objects_Evaluations_BlockPolarParameter_GetDxfClass_" data-uid="ACadSharp.Objects.Evaluations.BlockPolarParameter.GetDxfClass*"></a>
+
+  <h3 id="ACadSharp_Objects_Evaluations_BlockPolarParameter_GetDxfClass" data-uid="ACadSharp.Objects.Evaluations.BlockPolarParameter.GetDxfClass">
+  GetDxfClass()
+  <a class="header-action link-secondary" title="View source" href="https://github.com/DomCR/ACadSharp/blob/master/src/ACadSharp/Objects/Evaluations/BlockPolarParameter.cs/#L65"><i class="bi bi-code-slash"></i></a>
+  </h3>
+
+  <div class="markdown level1 summary"></div>
+  <div class="markdown level1 conceptual"></div>
+
+  <div class="codewrapper">
+    <pre><code class="lang-csharp hljs">public DxfClass GetDxfClass()</code></pre>
+  </div>
+
+
+  <h4 class="section">Returns</h4>
+  <dl class="parameters">
+    <dt><a class="xref" href="ACadSharp.Classes.DxfClass.html">DxfClass</a></dt>
+    <dd></dd>
+  </dl>
+
+
+
+
+
+
+
+
+
+
+
 
 </article>
 
         <div class="contribution d-print-none">
-          <a href="https://github.com/DomCR/ACadSharp/blob/master/src/ACadSharp/Objects/Evaluations/BlockPolarParameter.cs/#L13" class="edit-link">Edit this page</a>
+          <a href="https://github.com/DomCR/ACadSharp/blob/master/src/ACadSharp/Objects/Evaluations/BlockPolarParameter.cs/#L14" class="edit-link">Edit this page</a>
         </div>
 
 

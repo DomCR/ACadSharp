@@ -89,7 +89,7 @@
 
 
   <h1 id="ACadSharp_Entities_PdfUnderlay" data-uid="ACadSharp.Entities.PdfUnderlay" class="text-break">
-Class PdfUnderlay  <a class="header-action link-secondary" title="View source" href="https://github.com/DomCR/ACadSharp/blob/master/src/ACadSharp/Entities/PdfUnderlay.cs/#L14"><i class="bi bi-code-slash"></i></a>
+Class PdfUnderlay  <a class="header-action link-secondary" title="View source" href="https://github.com/DomCR/ACadSharp/blob/master/src/ACadSharp/Entities/PdfUnderlay.cs/#L15"><i class="bi bi-code-slash"></i></a>
   </h1>
 
   <div class="facts text-secondary">
@@ -104,7 +104,7 @@ Class PdfUnderlay  <a class="header-action link-secondary" title="View source" h
   <div class="codewrapper">
     <pre><code class="lang-csharp hljs">[DxfName(&quot;PDFUNDERLAY&quot;)]
 [DxfSubClass(&quot;AcDbUnderlayReference&quot;)]
-public class PdfUnderlay : UnderlayEntity&lt;PdfUnderlayDefinition&gt;, IEntity, IHandledCadObject, IGeometricEntity, IOrientable</code></pre>
+public class PdfUnderlay : UnderlayEntity&lt;PdfUnderlayDefinition&gt;, IEntity, IHandledCadObject, IGeometricEntity, IOrientable, IDxfClassDefined</code></pre>
   </div>
 
 
@@ -128,6 +128,7 @@ public class PdfUnderlay : UnderlayEntity&lt;PdfUnderlayDefinition&gt;, IEntity,
       <div><a class="xref" href="ACadSharp.IHandledCadObject.html">IHandledCadObject</a></div>
       <div><a class="xref" href="ACadSharp.Entities.IGeometricEntity.html">IGeometricEntity</a></div>
       <div><a class="xref" href="ACadSharp.IOrientable.html">IOrientable</a></div>
+      <div><a class="xref" href="ACadSharp.Classes.IDxfClassDefined.html">IDxfClassDefined</a></div>
     </dd>
   </dl>
 
@@ -341,7 +342,7 @@ Dxf class name <a class="xref" href="ACadSharp.DxfSubclassMarker.html#ACadSharp_
 
   <h3 id="ACadSharp_Entities_PdfUnderlay__ctor_ACadSharp_Objects_PdfUnderlayDefinition_" data-uid="ACadSharp.Entities.PdfUnderlay.#ctor(ACadSharp.Objects.PdfUnderlayDefinition)">
   PdfUnderlay(PdfUnderlayDefinition)
-  <a class="header-action link-secondary" title="View source" href="https://github.com/DomCR/ACadSharp/blob/master/src/ACadSharp/Entities/PdfUnderlay.cs/#L25"><i class="bi bi-code-slash"></i></a>
+  <a class="header-action link-secondary" title="View source" href="https://github.com/DomCR/ACadSharp/blob/master/src/ACadSharp/Entities/PdfUnderlay.cs/#L26"><i class="bi bi-code-slash"></i></a>
   </h3>
 
   <div class="markdown level1 summary"><p>Initializes a new instance of the <a class="xref" href="ACadSharp.Entities.UnderlayEntity-1.html">UnderlayEntity&lt;T&gt;</a> class.</p>
@@ -377,7 +378,7 @@ Dxf class name <a class="xref" href="ACadSharp.DxfSubclassMarker.html#ACadSharp_
 
   <h3 id="ACadSharp_Entities_PdfUnderlay_ObjectName" data-uid="ACadSharp.Entities.PdfUnderlay.ObjectName">
   ObjectName
-  <a class="header-action link-secondary" title="View source" href="https://github.com/DomCR/ACadSharp/blob/master/src/ACadSharp/Entities/PdfUnderlay.cs/#L19"><i class="bi bi-code-slash"></i></a>
+  <a class="header-action link-secondary" title="View source" href="https://github.com/DomCR/ACadSharp/blob/master/src/ACadSharp/Entities/PdfUnderlay.cs/#L20"><i class="bi bi-code-slash"></i></a>
   </h3>
 
   <div class="markdown level1 summary"><p>The CAD class name of an object.</p>
@@ -409,7 +410,7 @@ Dxf class name <a class="xref" href="ACadSharp.DxfSubclassMarker.html#ACadSharp_
 
   <h3 id="ACadSharp_Entities_PdfUnderlay_ObjectType" data-uid="ACadSharp.Entities.PdfUnderlay.ObjectType">
   ObjectType
-  <a class="header-action link-secondary" title="View source" href="https://github.com/DomCR/ACadSharp/blob/master/src/ACadSharp/Entities/PdfUnderlay.cs/#L22"><i class="bi bi-code-slash"></i></a>
+  <a class="header-action link-secondary" title="View source" href="https://github.com/DomCR/ACadSharp/blob/master/src/ACadSharp/Entities/PdfUnderlay.cs/#L23"><i class="bi bi-code-slash"></i></a>
   </h3>
 
   <div class="markdown level1 summary"><p>Get the object type.</p>
@@ -441,11 +442,42 @@ Dxf class name <a class="xref" href="ACadSharp.DxfSubclassMarker.html#ACadSharp_
 </h2>
 
 
+  <a id="ACadSharp_Entities_PdfUnderlay_GetDxfClass_" data-uid="ACadSharp.Entities.PdfUnderlay.GetDxfClass*"></a>
+
+  <h3 id="ACadSharp_Entities_PdfUnderlay_GetDxfClass" data-uid="ACadSharp.Entities.PdfUnderlay.GetDxfClass">
+  GetDxfClass()
+  <a class="header-action link-secondary" title="View source" href="https://github.com/DomCR/ACadSharp/blob/master/src/ACadSharp/Entities/PdfUnderlay.cs/#L33"><i class="bi bi-code-slash"></i></a>
+  </h3>
+
+  <div class="markdown level1 summary"></div>
+  <div class="markdown level1 conceptual"></div>
+
+  <div class="codewrapper">
+    <pre><code class="lang-csharp hljs">public DxfClass GetDxfClass()</code></pre>
+  </div>
+
+
+  <h4 class="section">Returns</h4>
+  <dl class="parameters">
+    <dt><a class="xref" href="ACadSharp.Classes.DxfClass.html">DxfClass</a></dt>
+    <dd></dd>
+  </dl>
+
+
+
+
+
+
+
+
+
+
+
   <a id="ACadSharp_Entities_PdfUnderlay_getDocumentCollection_" data-uid="ACadSharp.Entities.PdfUnderlay.getDocumentCollection*"></a>
 
   <h3 id="ACadSharp_Entities_PdfUnderlay_getDocumentCollection_ACadSharp_CadDocument_" data-uid="ACadSharp.Entities.PdfUnderlay.getDocumentCollection(ACadSharp.CadDocument)">
   getDocumentCollection(CadDocument)
-  <a class="header-action link-secondary" title="View source" href="https://github.com/DomCR/ACadSharp/blob/master/src/ACadSharp/Entities/PdfUnderlay.cs/#L31"><i class="bi bi-code-slash"></i></a>
+  <a class="header-action link-secondary" title="View source" href="https://github.com/DomCR/ACadSharp/blob/master/src/ACadSharp/Entities/PdfUnderlay.cs/#L47"><i class="bi bi-code-slash"></i></a>
   </h3>
 
   <div class="markdown level1 summary"></div>
@@ -481,7 +513,7 @@ Dxf class name <a class="xref" href="ACadSharp.DxfSubclassMarker.html#ACadSharp_
 </article>
 
         <div class="contribution d-print-none">
-          <a href="https://github.com/DomCR/ACadSharp/blob/master/src/ACadSharp/Entities/PdfUnderlay.cs/#L14" class="edit-link">Edit this page</a>
+          <a href="https://github.com/DomCR/ACadSharp/blob/master/src/ACadSharp/Entities/PdfUnderlay.cs/#L15" class="edit-link">Edit this page</a>
         </div>
 
 

@@ -89,7 +89,7 @@
 
 
   <h1 id="ACadSharp_Objects_Evaluations_BlockRotationAction" data-uid="ACadSharp.Objects.Evaluations.BlockRotationAction" class="text-break">
-Class BlockRotationAction  <a class="header-action link-secondary" title="View source" href="https://github.com/DomCR/ACadSharp/blob/master/src/ACadSharp/Objects/Evaluations/BlockRotationAction.cs/#L5"><i class="bi bi-code-slash"></i></a>
+Class BlockRotationAction  <a class="header-action link-secondary" title="View source" href="https://github.com/DomCR/ACadSharp/blob/master/src/ACadSharp/Objects/Evaluations/BlockRotationAction.cs/#L6"><i class="bi bi-code-slash"></i></a>
   </h1>
 
   <div class="facts text-secondary">
@@ -103,7 +103,7 @@ Class BlockRotationAction  <a class="header-action link-secondary" title="View s
   <div class="codewrapper">
     <pre><code class="lang-csharp hljs">[DxfName(&quot;BLOCKROTATEACTION&quot;)]
 [DxfSubClass(&quot;AcDbBlockRotationAction&quot;)]
-public class BlockRotationAction : BlockActionBasePt, IHandledCadObject, INamedCadObject</code></pre>
+public class BlockRotationAction : BlockActionBasePt, IHandledCadObject, INamedCadObject, IDxfClassDefined</code></pre>
   </div>
 
 
@@ -128,6 +128,7 @@ public class BlockRotationAction : BlockActionBasePt, IHandledCadObject, INamedC
     <dd>
       <div><a class="xref" href="ACadSharp.IHandledCadObject.html">IHandledCadObject</a></div>
       <div><a class="xref" href="ACadSharp.INamedCadObject.html">INamedCadObject</a></div>
+      <div><a class="xref" href="ACadSharp.Classes.IDxfClassDefined.html">IDxfClassDefined</a></div>
     </dd>
   </dl>
 
@@ -280,7 +281,7 @@ public class BlockRotationAction : BlockActionBasePt, IHandledCadObject, INamedC
 
   <h3 id="ACadSharp_Objects_Evaluations_BlockRotationAction_AngleDeltaConnection" data-uid="ACadSharp.Objects.Evaluations.BlockRotationAction.AngleDeltaConnection">
   AngleDeltaConnection
-  <a class="header-action link-secondary" title="View source" href="https://github.com/DomCR/ACadSharp/blob/master/src/ACadSharp/Objects/Evaluations/BlockRotationAction.cs/#L9"><i class="bi bi-code-slash"></i></a>
+  <a class="header-action link-secondary" title="View source" href="https://github.com/DomCR/ACadSharp/blob/master/src/ACadSharp/Objects/Evaluations/BlockRotationAction.cs/#L10"><i class="bi bi-code-slash"></i></a>
   </h3>
 
   <div class="markdown level1 summary"></div>
@@ -311,7 +312,7 @@ public class BlockRotationAction : BlockActionBasePt, IHandledCadObject, INamedC
 
   <h3 id="ACadSharp_Objects_Evaluations_BlockRotationAction_ObjectName" data-uid="ACadSharp.Objects.Evaluations.BlockRotationAction.ObjectName">
   ObjectName
-  <a class="header-action link-secondary" title="View source" href="https://github.com/DomCR/ACadSharp/blob/master/src/ACadSharp/Objects/Evaluations/BlockRotationAction.cs/#L12"><i class="bi bi-code-slash"></i></a>
+  <a class="header-action link-secondary" title="View source" href="https://github.com/DomCR/ACadSharp/blob/master/src/ACadSharp/Objects/Evaluations/BlockRotationAction.cs/#L13"><i class="bi bi-code-slash"></i></a>
   </h3>
 
   <div class="markdown level1 summary"><p>The CAD class name of an object.</p>
@@ -343,7 +344,7 @@ public class BlockRotationAction : BlockActionBasePt, IHandledCadObject, INamedC
 
   <h3 id="ACadSharp_Objects_Evaluations_BlockRotationAction_SubclassMarker" data-uid="ACadSharp.Objects.Evaluations.BlockRotationAction.SubclassMarker">
   SubclassMarker
-  <a class="header-action link-secondary" title="View source" href="https://github.com/DomCR/ACadSharp/blob/master/src/ACadSharp/Objects/Evaluations/BlockRotationAction.cs/#L15"><i class="bi bi-code-slash"></i></a>
+  <a class="header-action link-secondary" title="View source" href="https://github.com/DomCR/ACadSharp/blob/master/src/ACadSharp/Objects/Evaluations/BlockRotationAction.cs/#L16"><i class="bi bi-code-slash"></i></a>
   </h3>
 
   <div class="markdown level1 summary"><p>Object Subclass marker.</p>
@@ -371,11 +372,46 @@ public class BlockRotationAction : BlockActionBasePt, IHandledCadObject, INamedC
 
 
 
+  <h2 class="section" id="methods">Methods
+</h2>
+
+
+  <a id="ACadSharp_Objects_Evaluations_BlockRotationAction_GetDxfClass_" data-uid="ACadSharp.Objects.Evaluations.BlockRotationAction.GetDxfClass*"></a>
+
+  <h3 id="ACadSharp_Objects_Evaluations_BlockRotationAction_GetDxfClass" data-uid="ACadSharp.Objects.Evaluations.BlockRotationAction.GetDxfClass">
+  GetDxfClass()
+  <a class="header-action link-secondary" title="View source" href="https://github.com/DomCR/ACadSharp/blob/master/src/ACadSharp/Objects/Evaluations/BlockRotationAction.cs/#L19"><i class="bi bi-code-slash"></i></a>
+  </h3>
+
+  <div class="markdown level1 summary"></div>
+  <div class="markdown level1 conceptual"></div>
+
+  <div class="codewrapper">
+    <pre><code class="lang-csharp hljs">public DxfClass GetDxfClass()</code></pre>
+  </div>
+
+
+  <h4 class="section">Returns</h4>
+  <dl class="parameters">
+    <dt><a class="xref" href="ACadSharp.Classes.DxfClass.html">DxfClass</a></dt>
+    <dd></dd>
+  </dl>
+
+
+
+
+
+
+
+
+
+
+
 
 </article>
 
         <div class="contribution d-print-none">
-          <a href="https://github.com/DomCR/ACadSharp/blob/master/src/ACadSharp/Objects/Evaluations/BlockRotationAction.cs/#L5" class="edit-link">Edit this page</a>
+          <a href="https://github.com/DomCR/ACadSharp/blob/master/src/ACadSharp/Objects/Evaluations/BlockRotationAction.cs/#L6" class="edit-link">Edit this page</a>
         </div>
 
 

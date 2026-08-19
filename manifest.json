@@ -334,6 +334,20 @@
     },
     {
       "type": "ManagedReference",
+      "source_relative_path": "api/ACadSharp.Classes.IDxfClassDefined.yml",
+      "output": {
+        ".html": {
+          "relative_path": "api/ACadSharp.Classes.IDxfClassDefined.html"
+        }
+      },
+      "version": "",
+      "Uid": null,
+      "IsMRef": true,
+      "Title": "ACadSharp.Classes.IDxfClassDefined",
+      "Summary": null
+    },
+    {
+      "type": "ManagedReference",
       "source_relative_path": "api/ACadSharp.Classes.ProxyFlags.yml",
       "output": {
         ".html": {

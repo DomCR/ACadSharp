@@ -89,7 +89,7 @@
 
 
   <h1 id="ACadSharp_Objects_MTextAttributeObjectContextData" data-uid="ACadSharp.Objects.MTextAttributeObjectContextData" class="text-break">
-Class MTextAttributeObjectContextData  <a class="header-action link-secondary" title="View source" href="https://github.com/DomCR/ACadSharp/blob/master/src/ACadSharp/Objects/MTextAttributeObjectContextData.cs/#L7"><i class="bi bi-code-slash"></i></a>
+Class MTextAttributeObjectContextData  <a class="header-action link-secondary" title="View source" href="https://github.com/DomCR/ACadSharp/blob/master/src/ACadSharp/Objects/MTextAttributeObjectContextData.cs/#L8"><i class="bi bi-code-slash"></i></a>
   </h1>
 
   <div class="facts text-secondary">
@@ -103,7 +103,7 @@ Class MTextAttributeObjectContextData  <a class="header-action link-secondary" t
   <div class="codewrapper">
     <pre><code class="lang-csharp hljs">[DxfName(&quot;ACDB_MTEXTATTRIBUTEOBJECTCONTEXTDATA_CLASS&quot;)]
 [DxfSubClass(&quot;AcDbAnnotScaleObjectContextData&quot;)]
-public class MTextAttributeObjectContextData : AnnotScaleObjectContextData, IHandledCadObject, INamedCadObject</code></pre>
+public class MTextAttributeObjectContextData : AnnotScaleObjectContextData, IHandledCadObject, INamedCadObject, IDxfClassDefined</code></pre>
   </div>
 
 
@@ -126,6 +126,7 @@ public class MTextAttributeObjectContextData : AnnotScaleObjectContextData, IHan
     <dd>
       <div><a class="xref" href="ACadSharp.IHandledCadObject.html">IHandledCadObject</a></div>
       <div><a class="xref" href="ACadSharp.INamedCadObject.html">INamedCadObject</a></div>
+      <div><a class="xref" href="ACadSharp.Classes.IDxfClassDefined.html">IDxfClassDefined</a></div>
     </dd>
   </dl>
 
@@ -251,7 +252,7 @@ public class MTextAttributeObjectContextData : AnnotScaleObjectContextData, IHan
 
   <h3 id="ACadSharp_Objects_MTextAttributeObjectContextData_AlignmentPoint" data-uid="ACadSharp.Objects.MTextAttributeObjectContextData.AlignmentPoint">
   AlignmentPoint
-  <a class="header-action link-secondary" title="View source" href="https://github.com/DomCR/ACadSharp/blob/master/src/ACadSharp/Objects/MTextAttributeObjectContextData.cs/#L11"><i class="bi bi-code-slash"></i></a>
+  <a class="header-action link-secondary" title="View source" href="https://github.com/DomCR/ACadSharp/blob/master/src/ACadSharp/Objects/MTextAttributeObjectContextData.cs/#L12"><i class="bi bi-code-slash"></i></a>
   </h3>
 
   <div class="markdown level1 summary"></div>
@@ -283,7 +284,7 @@ public XYZ AlignmentPoint { get; set; }</code></pre>
 
   <h3 id="ACadSharp_Objects_MTextAttributeObjectContextData_AttachmentPoint" data-uid="ACadSharp.Objects.MTextAttributeObjectContextData.AttachmentPoint">
   AttachmentPoint
-  <a class="header-action link-secondary" title="View source" href="https://github.com/DomCR/ACadSharp/blob/master/src/ACadSharp/Objects/MTextAttributeObjectContextData.cs/#L14"><i class="bi bi-code-slash"></i></a>
+  <a class="header-action link-secondary" title="View source" href="https://github.com/DomCR/ACadSharp/blob/master/src/ACadSharp/Objects/MTextAttributeObjectContextData.cs/#L15"><i class="bi bi-code-slash"></i></a>
   </h3>
 
   <div class="markdown level1 summary"></div>
@@ -315,7 +316,7 @@ public AttachmentPointType AttachmentPoint { get; set; }</code></pre>
 
   <h3 id="ACadSharp_Objects_MTextAttributeObjectContextData_InsertPoint" data-uid="ACadSharp.Objects.MTextAttributeObjectContextData.InsertPoint">
   InsertPoint
-  <a class="header-action link-secondary" title="View source" href="https://github.com/DomCR/ACadSharp/blob/master/src/ACadSharp/Objects/MTextAttributeObjectContextData.cs/#L17"><i class="bi bi-code-slash"></i></a>
+  <a class="header-action link-secondary" title="View source" href="https://github.com/DomCR/ACadSharp/blob/master/src/ACadSharp/Objects/MTextAttributeObjectContextData.cs/#L18"><i class="bi bi-code-slash"></i></a>
   </h3>
 
   <div class="markdown level1 summary"></div>
@@ -347,7 +348,7 @@ public XYZ InsertPoint { get; set; }</code></pre>
 
   <h3 id="ACadSharp_Objects_MTextAttributeObjectContextData_ObjectName" data-uid="ACadSharp.Objects.MTextAttributeObjectContextData.ObjectName">
   ObjectName
-  <a class="header-action link-secondary" title="View source" href="https://github.com/DomCR/ACadSharp/blob/master/src/ACadSharp/Objects/MTextAttributeObjectContextData.cs/#L21"><i class="bi bi-code-slash"></i></a>
+  <a class="header-action link-secondary" title="View source" href="https://github.com/DomCR/ACadSharp/blob/master/src/ACadSharp/Objects/MTextAttributeObjectContextData.cs/#L22"><i class="bi bi-code-slash"></i></a>
   </h3>
 
   <div class="markdown level1 summary"><p>The CAD class name of an object.</p>
@@ -379,7 +380,7 @@ public XYZ InsertPoint { get; set; }</code></pre>
 
   <h3 id="ACadSharp_Objects_MTextAttributeObjectContextData_Rotation" data-uid="ACadSharp.Objects.MTextAttributeObjectContextData.Rotation">
   Rotation
-  <a class="header-action link-secondary" title="View source" href="https://github.com/DomCR/ACadSharp/blob/master/src/ACadSharp/Objects/MTextAttributeObjectContextData.cs/#L23"><i class="bi bi-code-slash"></i></a>
+  <a class="header-action link-secondary" title="View source" href="https://github.com/DomCR/ACadSharp/blob/master/src/ACadSharp/Objects/MTextAttributeObjectContextData.cs/#L24"><i class="bi bi-code-slash"></i></a>
   </h3>
 
   <div class="markdown level1 summary"></div>
@@ -411,7 +412,7 @@ public double Rotation { get; set; }</code></pre>
 
   <h3 id="ACadSharp_Objects_MTextAttributeObjectContextData_Value290" data-uid="ACadSharp.Objects.MTextAttributeObjectContextData.Value290">
   Value290
-  <a class="header-action link-secondary" title="View source" href="https://github.com/DomCR/ACadSharp/blob/master/src/ACadSharp/Objects/MTextAttributeObjectContextData.cs/#L26"><i class="bi bi-code-slash"></i></a>
+  <a class="header-action link-secondary" title="View source" href="https://github.com/DomCR/ACadSharp/blob/master/src/ACadSharp/Objects/MTextAttributeObjectContextData.cs/#L27"><i class="bi bi-code-slash"></i></a>
   </h3>
 
   <div class="markdown level1 summary"></div>
@@ -439,11 +440,46 @@ public bool Value290 { get; set; }</code></pre>
 
 
 
+  <h2 class="section" id="methods">Methods
+</h2>
+
+
+  <a id="ACadSharp_Objects_MTextAttributeObjectContextData_GetDxfClass_" data-uid="ACadSharp.Objects.MTextAttributeObjectContextData.GetDxfClass*"></a>
+
+  <h3 id="ACadSharp_Objects_MTextAttributeObjectContextData_GetDxfClass" data-uid="ACadSharp.Objects.MTextAttributeObjectContextData.GetDxfClass">
+  GetDxfClass()
+  <a class="header-action link-secondary" title="View source" href="https://github.com/DomCR/ACadSharp/blob/master/src/ACadSharp/Objects/MTextAttributeObjectContextData.cs/#L31"><i class="bi bi-code-slash"></i></a>
+  </h3>
+
+  <div class="markdown level1 summary"></div>
+  <div class="markdown level1 conceptual"></div>
+
+  <div class="codewrapper">
+    <pre><code class="lang-csharp hljs">public DxfClass GetDxfClass()</code></pre>
+  </div>
+
+
+  <h4 class="section">Returns</h4>
+  <dl class="parameters">
+    <dt><a class="xref" href="ACadSharp.Classes.DxfClass.html">DxfClass</a></dt>
+    <dd></dd>
+  </dl>
+
+
+
+
+
+
+
+
+
+
+
 
 </article>
 
         <div class="contribution d-print-none">
-          <a href="https://github.com/DomCR/ACadSharp/blob/master/src/ACadSharp/Objects/MTextAttributeObjectContextData.cs/#L7" class="edit-link">Edit this page</a>
+          <a href="https://github.com/DomCR/ACadSharp/blob/master/src/ACadSharp/Objects/MTextAttributeObjectContextData.cs/#L8" class="edit-link">Edit this page</a>
         </div>
 
 

@@ -89,7 +89,7 @@
 
 
   <h1 id="ACadSharp_Objects_Evaluations_BlockLinearParameter" data-uid="ACadSharp.Objects.Evaluations.BlockLinearParameter" class="text-break">
-Class BlockLinearParameter  <a class="header-action link-secondary" title="View source" href="https://github.com/DomCR/ACadSharp/blob/master/src/ACadSharp/Objects/Evaluations/BlockLinearParameter.cs/#L13"><i class="bi bi-code-slash"></i></a>
+Class BlockLinearParameter  <a class="header-action link-secondary" title="View source" href="https://github.com/DomCR/ACadSharp/blob/master/src/ACadSharp/Objects/Evaluations/BlockLinearParameter.cs/#L14"><i class="bi bi-code-slash"></i></a>
   </h1>
 
   <div class="facts text-secondary">
@@ -105,7 +105,7 @@ distance between two points in a dynamic block.</p>
   <div class="codewrapper">
     <pre><code class="lang-csharp hljs">[DxfName(&quot;BLOCKLINEARPARAMETER&quot;)]
 [DxfSubClass(&quot;AcDbBlockLinearParameter&quot;)]
-public class BlockLinearParameter : Block2PtParameter, IHandledCadObject, INamedCadObject</code></pre>
+public class BlockLinearParameter : Block2PtParameter, IHandledCadObject, INamedCadObject, IDxfClassDefined</code></pre>
   </div>
 
 
@@ -130,6 +130,7 @@ public class BlockLinearParameter : Block2PtParameter, IHandledCadObject, INamed
     <dd>
       <div><a class="xref" href="ACadSharp.IHandledCadObject.html">IHandledCadObject</a></div>
       <div><a class="xref" href="ACadSharp.INamedCadObject.html">INamedCadObject</a></div>
+      <div><a class="xref" href="ACadSharp.Classes.IDxfClassDefined.html">IDxfClassDefined</a></div>
     </dd>
   </dl>
 
@@ -292,7 +293,7 @@ Dxf class name <a class="xref" href="ACadSharp.DxfSubclassMarker.html#ACadSharp_
 
   <h3 id="ACadSharp_Objects_Evaluations_BlockLinearParameter_Description" data-uid="ACadSharp.Objects.Evaluations.BlockLinearParameter.Description">
   Description
-  <a class="header-action link-secondary" title="View source" href="https://github.com/DomCR/ACadSharp/blob/master/src/ACadSharp/Objects/Evaluations/BlockLinearParameter.cs/#L20"><i class="bi bi-code-slash"></i></a>
+  <a class="header-action link-secondary" title="View source" href="https://github.com/DomCR/ACadSharp/blob/master/src/ACadSharp/Objects/Evaluations/BlockLinearParameter.cs/#L21"><i class="bi bi-code-slash"></i></a>
   </h3>
 
   <div class="markdown level1 summary"><p>Gets or sets the description of the parameter.</p>
@@ -325,7 +326,7 @@ public string Description { get; set; }</code></pre>
 
   <h3 id="ACadSharp_Objects_Evaluations_BlockLinearParameter_Label" data-uid="ACadSharp.Objects.Evaluations.BlockLinearParameter.Label">
   Label
-  <a class="header-action link-secondary" title="View source" href="https://github.com/DomCR/ACadSharp/blob/master/src/ACadSharp/Objects/Evaluations/BlockLinearParameter.cs/#L26"><i class="bi bi-code-slash"></i></a>
+  <a class="header-action link-secondary" title="View source" href="https://github.com/DomCR/ACadSharp/blob/master/src/ACadSharp/Objects/Evaluations/BlockLinearParameter.cs/#L27"><i class="bi bi-code-slash"></i></a>
   </h3>
 
   <div class="markdown level1 summary"><p>Label text.</p>
@@ -358,7 +359,7 @@ public string Label { get; set; }</code></pre>
 
   <h3 id="ACadSharp_Objects_Evaluations_BlockLinearParameter_LabelOffset" data-uid="ACadSharp.Objects.Evaluations.BlockLinearParameter.LabelOffset">
   LabelOffset
-  <a class="header-action link-secondary" title="View source" href="https://github.com/DomCR/ACadSharp/blob/master/src/ACadSharp/Objects/Evaluations/BlockLinearParameter.cs/#L32"><i class="bi bi-code-slash"></i></a>
+  <a class="header-action link-secondary" title="View source" href="https://github.com/DomCR/ACadSharp/blob/master/src/ACadSharp/Objects/Evaluations/BlockLinearParameter.cs/#L33"><i class="bi bi-code-slash"></i></a>
   </h3>
 
   <div class="markdown level1 summary"><p>Gets or sets the label offset.</p>
@@ -391,7 +392,7 @@ public double LabelOffset { get; set; }</code></pre>
 
   <h3 id="ACadSharp_Objects_Evaluations_BlockLinearParameter_ObjectName" data-uid="ACadSharp.Objects.Evaluations.BlockLinearParameter.ObjectName">
   ObjectName
-  <a class="header-action link-secondary" title="View source" href="https://github.com/DomCR/ACadSharp/blob/master/src/ACadSharp/Objects/Evaluations/BlockLinearParameter.cs/#L36"><i class="bi bi-code-slash"></i></a>
+  <a class="header-action link-secondary" title="View source" href="https://github.com/DomCR/ACadSharp/blob/master/src/ACadSharp/Objects/Evaluations/BlockLinearParameter.cs/#L37"><i class="bi bi-code-slash"></i></a>
   </h3>
 
   <div class="markdown level1 summary"><p>The CAD class name of an object.</p>
@@ -423,7 +424,7 @@ public double LabelOffset { get; set; }</code></pre>
 
   <h3 id="ACadSharp_Objects_Evaluations_BlockLinearParameter_SubclassMarker" data-uid="ACadSharp.Objects.Evaluations.BlockLinearParameter.SubclassMarker">
   SubclassMarker
-  <a class="header-action link-secondary" title="View source" href="https://github.com/DomCR/ACadSharp/blob/master/src/ACadSharp/Objects/Evaluations/BlockLinearParameter.cs/#L39"><i class="bi bi-code-slash"></i></a>
+  <a class="header-action link-secondary" title="View source" href="https://github.com/DomCR/ACadSharp/blob/master/src/ACadSharp/Objects/Evaluations/BlockLinearParameter.cs/#L40"><i class="bi bi-code-slash"></i></a>
   </h3>
 
   <div class="markdown level1 summary"><p>Object Subclass marker.</p>
@@ -455,7 +456,7 @@ public double LabelOffset { get; set; }</code></pre>
 
   <h3 id="ACadSharp_Objects_Evaluations_BlockLinearParameter_ValueSet" data-uid="ACadSharp.Objects.Evaluations.BlockLinearParameter.ValueSet">
   ValueSet
-  <a class="header-action link-secondary" title="View source" href="https://github.com/DomCR/ACadSharp/blob/master/src/ACadSharp/Objects/Evaluations/BlockLinearParameter.cs/#L41"><i class="bi bi-code-slash"></i></a>
+  <a class="header-action link-secondary" title="View source" href="https://github.com/DomCR/ACadSharp/blob/master/src/ACadSharp/Objects/Evaluations/BlockLinearParameter.cs/#L42"><i class="bi bi-code-slash"></i></a>
   </h3>
 
   <div class="markdown level1 summary"></div>
@@ -482,11 +483,46 @@ public double LabelOffset { get; set; }</code></pre>
 
 
 
+  <h2 class="section" id="methods">Methods
+</h2>
+
+
+  <a id="ACadSharp_Objects_Evaluations_BlockLinearParameter_GetDxfClass_" data-uid="ACadSharp.Objects.Evaluations.BlockLinearParameter.GetDxfClass*"></a>
+
+  <h3 id="ACadSharp_Objects_Evaluations_BlockLinearParameter_GetDxfClass" data-uid="ACadSharp.Objects.Evaluations.BlockLinearParameter.GetDxfClass">
+  GetDxfClass()
+  <a class="header-action link-secondary" title="View source" href="https://github.com/DomCR/ACadSharp/blob/master/src/ACadSharp/Objects/Evaluations/BlockLinearParameter.cs/#L45"><i class="bi bi-code-slash"></i></a>
+  </h3>
+
+  <div class="markdown level1 summary"></div>
+  <div class="markdown level1 conceptual"></div>
+
+  <div class="codewrapper">
+    <pre><code class="lang-csharp hljs">public DxfClass GetDxfClass()</code></pre>
+  </div>
+
+
+  <h4 class="section">Returns</h4>
+  <dl class="parameters">
+    <dt><a class="xref" href="ACadSharp.Classes.DxfClass.html">DxfClass</a></dt>
+    <dd></dd>
+  </dl>
+
+
+
+
+
+
+
+
+
+
+
 
 </article>
 
         <div class="contribution d-print-none">
-          <a href="https://github.com/DomCR/ACadSharp/blob/master/src/ACadSharp/Objects/Evaluations/BlockLinearParameter.cs/#L13" class="edit-link">Edit this page</a>
+          <a href="https://github.com/DomCR/ACadSharp/blob/master/src/ACadSharp/Objects/Evaluations/BlockLinearParameter.cs/#L14" class="edit-link">Edit this page</a>
         </div>
 
 

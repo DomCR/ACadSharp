@@ -104,7 +104,7 @@ Class TableStyle  <a class="header-action link-secondary" title="View source" hr
   <div class="codewrapper">
     <pre><code class="lang-csharp hljs">[DxfName(&quot;TABLESTYLE&quot;)]
 [DxfSubClass(&quot;AcDbTableStyle&quot;)]
-public class TableStyle : NonGraphicalObject, IHandledCadObject, INamedCadObject</code></pre>
+public class TableStyle : NonGraphicalObject, IHandledCadObject, INamedCadObject, IDxfClassDefined</code></pre>
   </div>
 
 
@@ -125,6 +125,7 @@ public class TableStyle : NonGraphicalObject, IHandledCadObject, INamedCadObject
     <dd>
       <div><a class="xref" href="ACadSharp.IHandledCadObject.html">IHandledCadObject</a></div>
       <div><a class="xref" href="ACadSharp.INamedCadObject.html">INamedCadObject</a></div>
+      <div><a class="xref" href="ACadSharp.Classes.IDxfClassDefined.html">IDxfClassDefined</a></div>
     </dd>
   </dl>
 
@@ -236,7 +237,7 @@ Dxf class name <a class="xref" href="ACadSharp.DxfSubclassMarker.html#ACadSharp_
 
   <h3 id="ACadSharp_Objects_TableStyle__ctor" data-uid="ACadSharp.Objects.TableStyle.#ctor">
   TableStyle()
-  <a class="header-action link-secondary" title="View source" href="https://github.com/DomCR/ACadSharp/blob/master/src/ACadSharp/Objects/TableStyle.cs/#L100"><i class="bi bi-code-slash"></i></a>
+  <a class="header-action link-secondary" title="View source" href="https://github.com/DomCR/ACadSharp/blob/master/src/ACadSharp/Objects/TableStyle.cs/#L101"><i class="bi bi-code-slash"></i></a>
   </h3>
 
   <div class="markdown level1 summary"><p>Initializes a new instance of the <a class="xref" href="ACadSharp.Objects.TableStyle.html">TableStyle</a> class.</p>
@@ -263,7 +264,7 @@ Dxf class name <a class="xref" href="ACadSharp.DxfSubclassMarker.html#ACadSharp_
 
   <h3 id="ACadSharp_Objects_TableStyle__ctor_System_String_" data-uid="ACadSharp.Objects.TableStyle.#ctor(System.String)">
   TableStyle(string)
-  <a class="header-action link-secondary" title="View source" href="https://github.com/DomCR/ACadSharp/blob/master/src/ACadSharp/Objects/TableStyle.cs/#L106"><i class="bi bi-code-slash"></i></a>
+  <a class="header-action link-secondary" title="View source" href="https://github.com/DomCR/ACadSharp/blob/master/src/ACadSharp/Objects/TableStyle.cs/#L107"><i class="bi bi-code-slash"></i></a>
   </h3>
 
   <div class="markdown level1 summary"><p>Initializes a new instance of the <a class="xref" href="ACadSharp.Objects.TableStyle.html">TableStyle</a> class
@@ -299,7 +300,7 @@ and sets the name of this style.</p>
 
   <h3 id="ACadSharp_Objects_TableStyle_DefaultName" data-uid="ACadSharp.Objects.TableStyle.DefaultName">
   DefaultName
-  <a class="header-action link-secondary" title="View source" href="https://github.com/DomCR/ACadSharp/blob/master/src/ACadSharp/Objects/TableStyle.cs/#L95"><i class="bi bi-code-slash"></i></a>
+  <a class="header-action link-secondary" title="View source" href="https://github.com/DomCR/ACadSharp/blob/master/src/ACadSharp/Objects/TableStyle.cs/#L96"><i class="bi bi-code-slash"></i></a>
   </h3>
 
   <div class="markdown level1 summary"><p>Represents the default name used when no specific name is provided.</p>
@@ -335,7 +336,7 @@ and sets the name of this style.</p>
 
   <h3 id="ACadSharp_Objects_TableStyle_CellStyles" data-uid="ACadSharp.Objects.TableStyle.CellStyles">
   CellStyles
-  <a class="header-action link-secondary" title="View source" href="https://github.com/DomCR/ACadSharp/blob/master/src/ACadSharp/Objects/TableStyle.cs/#L25"><i class="bi bi-code-slash"></i></a>
+  <a class="header-action link-secondary" title="View source" href="https://github.com/DomCR/ACadSharp/blob/master/src/ACadSharp/Objects/TableStyle.cs/#L26"><i class="bi bi-code-slash"></i></a>
   </h3>
 
   <div class="markdown level1 summary"><p>Gets the collection of cell styles applied to the table entity.</p>
@@ -367,7 +368,7 @@ and sets the name of this style.</p>
 
   <h3 id="ACadSharp_Objects_TableStyle_DataCellStyle" data-uid="ACadSharp.Objects.TableStyle.DataCellStyle">
   DataCellStyle
-  <a class="header-action link-secondary" title="View source" href="https://github.com/DomCR/ACadSharp/blob/master/src/ACadSharp/Objects/TableStyle.cs/#L30"><i class="bi bi-code-slash"></i></a>
+  <a class="header-action link-secondary" title="View source" href="https://github.com/DomCR/ACadSharp/blob/master/src/ACadSharp/Objects/TableStyle.cs/#L31"><i class="bi bi-code-slash"></i></a>
   </h3>
 
   <div class="markdown level1 summary"><p>Gets the style settings applied to data cells within the table entity.</p>
@@ -399,7 +400,7 @@ and sets the name of this style.</p>
 
   <h3 id="ACadSharp_Objects_TableStyle_Default" data-uid="ACadSharp.Objects.TableStyle.Default">
   Default
-  <a class="header-action link-secondary" title="View source" href="https://github.com/DomCR/ACadSharp/blob/master/src/ACadSharp/Objects/TableStyle.cs/#L20"><i class="bi bi-code-slash"></i></a>
+  <a class="header-action link-secondary" title="View source" href="https://github.com/DomCR/ACadSharp/blob/master/src/ACadSharp/Objects/TableStyle.cs/#L21"><i class="bi bi-code-slash"></i></a>
   </h3>
 
   <div class="markdown level1 summary"><p>Gets the default TableStyle.</p>
@@ -431,7 +432,7 @@ and sets the name of this style.</p>
 
   <h3 id="ACadSharp_Objects_TableStyle_Description" data-uid="ACadSharp.Objects.TableStyle.Description">
   Description
-  <a class="header-action link-secondary" title="View source" href="https://github.com/DomCR/ACadSharp/blob/master/src/ACadSharp/Objects/TableStyle.cs/#L38"><i class="bi bi-code-slash"></i></a>
+  <a class="header-action link-secondary" title="View source" href="https://github.com/DomCR/ACadSharp/blob/master/src/ACadSharp/Objects/TableStyle.cs/#L39"><i class="bi bi-code-slash"></i></a>
   </h3>
 
   <div class="markdown level1 summary"><p>Table style description.</p>
@@ -467,7 +468,7 @@ public string Description { get; set; }</code></pre>
 
   <h3 id="ACadSharp_Objects_TableStyle_Flags" data-uid="ACadSharp.Objects.TableStyle.Flags">
   Flags
-  <a class="header-action link-secondary" title="View source" href="https://github.com/DomCR/ACadSharp/blob/master/src/ACadSharp/Objects/TableStyle.cs/#L44"><i class="bi bi-code-slash"></i></a>
+  <a class="header-action link-secondary" title="View source" href="https://github.com/DomCR/ACadSharp/blob/master/src/ACadSharp/Objects/TableStyle.cs/#L45"><i class="bi bi-code-slash"></i></a>
   </h3>
 
   <div class="markdown level1 summary"><p>Meaning unknown.</p>
@@ -500,7 +501,7 @@ public short Flags { get; set; }</code></pre>
 
   <h3 id="ACadSharp_Objects_TableStyle_FlowDirection" data-uid="ACadSharp.Objects.TableStyle.FlowDirection">
   FlowDirection
-  <a class="header-action link-secondary" title="View source" href="https://github.com/DomCR/ACadSharp/blob/master/src/ACadSharp/Objects/TableStyle.cs/#L50"><i class="bi bi-code-slash"></i></a>
+  <a class="header-action link-secondary" title="View source" href="https://github.com/DomCR/ACadSharp/blob/master/src/ACadSharp/Objects/TableStyle.cs/#L51"><i class="bi bi-code-slash"></i></a>
   </h3>
 
   <div class="markdown level1 summary"><p>Gets or sets the direction in which table rows and columns are arranged.</p>
@@ -533,7 +534,7 @@ public TableFlowDirectionType FlowDirection { get; set; }</code></pre>
 
   <h3 id="ACadSharp_Objects_TableStyle_HeaderCellStyle" data-uid="ACadSharp.Objects.TableStyle.HeaderCellStyle">
   HeaderCellStyle
-  <a class="header-action link-secondary" title="View source" href="https://github.com/DomCR/ACadSharp/blob/master/src/ACadSharp/Objects/TableStyle.cs/#L56"><i class="bi bi-code-slash"></i></a>
+  <a class="header-action link-secondary" title="View source" href="https://github.com/DomCR/ACadSharp/blob/master/src/ACadSharp/Objects/TableStyle.cs/#L57"><i class="bi bi-code-slash"></i></a>
   </h3>
 
   <div class="markdown level1 summary"><p>Gets the style settings applied to the header cells of the table.</p>
@@ -565,7 +566,7 @@ public TableFlowDirectionType FlowDirection { get; set; }</code></pre>
 
   <h3 id="ACadSharp_Objects_TableStyle_HorizontalCellMargin" data-uid="ACadSharp.Objects.TableStyle.HorizontalCellMargin">
   HorizontalCellMargin
-  <a class="header-action link-secondary" title="View source" href="https://github.com/DomCR/ACadSharp/blob/master/src/ACadSharp/Objects/TableStyle.cs/#L61"><i class="bi bi-code-slash"></i></a>
+  <a class="header-action link-secondary" title="View source" href="https://github.com/DomCR/ACadSharp/blob/master/src/ACadSharp/Objects/TableStyle.cs/#L62"><i class="bi bi-code-slash"></i></a>
   </h3>
 
   <div class="markdown level1 summary"><p>Gets or sets the horizontal margin, in drawing units, applied to the content within each cell.</p>
@@ -598,7 +599,7 @@ public double HorizontalCellMargin { get; set; }</code></pre>
 
   <h3 id="ACadSharp_Objects_TableStyle_ObjectName" data-uid="ACadSharp.Objects.TableStyle.ObjectName">
   ObjectName
-  <a class="header-action link-secondary" title="View source" href="https://github.com/DomCR/ACadSharp/blob/master/src/ACadSharp/Objects/TableStyle.cs/#L65"><i class="bi bi-code-slash"></i></a>
+  <a class="header-action link-secondary" title="View source" href="https://github.com/DomCR/ACadSharp/blob/master/src/ACadSharp/Objects/TableStyle.cs/#L66"><i class="bi bi-code-slash"></i></a>
   </h3>
 
   <div class="markdown level1 summary"><p>The CAD class name of an object.</p>
@@ -630,7 +631,7 @@ public double HorizontalCellMargin { get; set; }</code></pre>
 
   <h3 id="ACadSharp_Objects_TableStyle_ObjectType" data-uid="ACadSharp.Objects.TableStyle.ObjectType">
   ObjectType
-  <a class="header-action link-secondary" title="View source" href="https://github.com/DomCR/ACadSharp/blob/master/src/ACadSharp/Objects/TableStyle.cs/#L68"><i class="bi bi-code-slash"></i></a>
+  <a class="header-action link-secondary" title="View source" href="https://github.com/DomCR/ACadSharp/blob/master/src/ACadSharp/Objects/TableStyle.cs/#L69"><i class="bi bi-code-slash"></i></a>
   </h3>
 
   <div class="markdown level1 summary"><p>Get the object type.</p>
@@ -662,7 +663,7 @@ public double HorizontalCellMargin { get; set; }</code></pre>
 
   <h3 id="ACadSharp_Objects_TableStyle_SubclassMarker" data-uid="ACadSharp.Objects.TableStyle.SubclassMarker">
   SubclassMarker
-  <a class="header-action link-secondary" title="View source" href="https://github.com/DomCR/ACadSharp/blob/master/src/ACadSharp/Objects/TableStyle.cs/#L71"><i class="bi bi-code-slash"></i></a>
+  <a class="header-action link-secondary" title="View source" href="https://github.com/DomCR/ACadSharp/blob/master/src/ACadSharp/Objects/TableStyle.cs/#L72"><i class="bi bi-code-slash"></i></a>
   </h3>
 
   <div class="markdown level1 summary"><p>Object Subclass marker.</p>
@@ -694,7 +695,7 @@ public double HorizontalCellMargin { get; set; }</code></pre>
 
   <h3 id="ACadSharp_Objects_TableStyle_SuppressHeaderRow" data-uid="ACadSharp.Objects.TableStyle.SuppressHeaderRow">
   SuppressHeaderRow
-  <a class="header-action link-secondary" title="View source" href="https://github.com/DomCR/ACadSharp/blob/master/src/ACadSharp/Objects/TableStyle.cs/#L73"><i class="bi bi-code-slash"></i></a>
+  <a class="header-action link-secondary" title="View source" href="https://github.com/DomCR/ACadSharp/blob/master/src/ACadSharp/Objects/TableStyle.cs/#L74"><i class="bi bi-code-slash"></i></a>
   </h3>
 
   <div class="markdown level1 summary"></div>
@@ -726,7 +727,7 @@ public bool SuppressHeaderRow { get; set; }</code></pre>
 
   <h3 id="ACadSharp_Objects_TableStyle_SuppressTitle" data-uid="ACadSharp.Objects.TableStyle.SuppressTitle">
   SuppressTitle
-  <a class="header-action link-secondary" title="View source" href="https://github.com/DomCR/ACadSharp/blob/master/src/ACadSharp/Objects/TableStyle.cs/#L79"><i class="bi bi-code-slash"></i></a>
+  <a class="header-action link-secondary" title="View source" href="https://github.com/DomCR/ACadSharp/blob/master/src/ACadSharp/Objects/TableStyle.cs/#L80"><i class="bi bi-code-slash"></i></a>
   </h3>
 
   <div class="markdown level1 summary"><p>Gets or sets a value indicating whether the title should be suppressed.</p>
@@ -759,7 +760,7 @@ public bool SuppressTitle { get; set; }</code></pre>
 
   <h3 id="ACadSharp_Objects_TableStyle_TableCellStyle" data-uid="ACadSharp.Objects.TableStyle.TableCellStyle">
   TableCellStyle
-  <a class="header-action link-secondary" title="View source" href="https://github.com/DomCR/ACadSharp/blob/master/src/ACadSharp/Objects/TableStyle.cs/#L82"><i class="bi bi-code-slash"></i></a>
+  <a class="header-action link-secondary" title="View source" href="https://github.com/DomCR/ACadSharp/blob/master/src/ACadSharp/Objects/TableStyle.cs/#L83"><i class="bi bi-code-slash"></i></a>
   </h3>
 
   <div class="markdown level1 summary"></div>
@@ -790,7 +791,7 @@ public bool SuppressTitle { get; set; }</code></pre>
 
   <h3 id="ACadSharp_Objects_TableStyle_TitleCellStyle" data-uid="ACadSharp.Objects.TableStyle.TitleCellStyle">
   TitleCellStyle
-  <a class="header-action link-secondary" title="View source" href="https://github.com/DomCR/ACadSharp/blob/master/src/ACadSharp/Objects/TableStyle.cs/#L84"><i class="bi bi-code-slash"></i></a>
+  <a class="header-action link-secondary" title="View source" href="https://github.com/DomCR/ACadSharp/blob/master/src/ACadSharp/Objects/TableStyle.cs/#L85"><i class="bi bi-code-slash"></i></a>
   </h3>
 
   <div class="markdown level1 summary"></div>
@@ -821,7 +822,7 @@ public bool SuppressTitle { get; set; }</code></pre>
 
   <h3 id="ACadSharp_Objects_TableStyle_VerticalCellMargin" data-uid="ACadSharp.Objects.TableStyle.VerticalCellMargin">
   VerticalCellMargin
-  <a class="header-action link-secondary" title="View source" href="https://github.com/DomCR/ACadSharp/blob/master/src/ACadSharp/Objects/TableStyle.cs/#L89"><i class="bi bi-code-slash"></i></a>
+  <a class="header-action link-secondary" title="View source" href="https://github.com/DomCR/ACadSharp/blob/master/src/ACadSharp/Objects/TableStyle.cs/#L90"><i class="bi bi-code-slash"></i></a>
   </h3>
 
   <div class="markdown level1 summary"><p>Gets or sets the vertical margin, in drawing units, applied to the content within a cell.</p>
@@ -842,6 +843,41 @@ public double VerticalCellMargin { get; set; }</code></pre>
     <dt><a class="xref" href="https://learn.microsoft.com/dotnet/api/system.double">double</a></dt>
     <dd></dd>
   </dl>
+
+
+
+
+
+
+
+
+  <h2 class="section" id="methods">Methods
+</h2>
+
+
+  <a id="ACadSharp_Objects_TableStyle_GetDxfClass_" data-uid="ACadSharp.Objects.TableStyle.GetDxfClass*"></a>
+
+  <h3 id="ACadSharp_Objects_TableStyle_GetDxfClass" data-uid="ACadSharp.Objects.TableStyle.GetDxfClass">
+  GetDxfClass()
+  <a class="header-action link-secondary" title="View source" href="https://github.com/DomCR/ACadSharp/blob/master/src/ACadSharp/Objects/TableStyle.cs/#L112"><i class="bi bi-code-slash"></i></a>
+  </h3>
+
+  <div class="markdown level1 summary"></div>
+  <div class="markdown level1 conceptual"></div>
+
+  <div class="codewrapper">
+    <pre><code class="lang-csharp hljs">public DxfClass GetDxfClass()</code></pre>
+  </div>
+
+
+  <h4 class="section">Returns</h4>
+  <dl class="parameters">
+    <dt><a class="xref" href="ACadSharp.Classes.DxfClass.html">DxfClass</a></dt>
+    <dd></dd>
+  </dl>
+
+
+
 
 
 

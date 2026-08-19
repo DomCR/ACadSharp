@@ -89,7 +89,7 @@
 
 
   <h1 id="ACadSharp_Objects_SpatialFilter" data-uid="ACadSharp.Objects.SpatialFilter" class="text-break">
-Class SpatialFilter  <a class="header-action link-secondary" title="View source" href="https://github.com/DomCR/ACadSharp/blob/master/src/ACadSharp/Objects/SpatialFilter.cs/#L14"><i class="bi bi-code-slash"></i></a>
+Class SpatialFilter  <a class="header-action link-secondary" title="View source" href="https://github.com/DomCR/ACadSharp/blob/master/src/ACadSharp/Objects/SpatialFilter.cs/#L15"><i class="bi bi-code-slash"></i></a>
   </h1>
 
   <div class="facts text-secondary">
@@ -104,7 +104,7 @@ Class SpatialFilter  <a class="header-action link-secondary" title="View source"
   <div class="codewrapper">
     <pre><code class="lang-csharp hljs">[DxfName(&quot;SPATIAL_FILTER&quot;)]
 [DxfSubClass(&quot;AcDbSpatialFilter&quot;)]
-public class SpatialFilter : Filter, IHandledCadObject, INamedCadObject, IOrientable</code></pre>
+public class SpatialFilter : Filter, IHandledCadObject, INamedCadObject, IOrientable, IDxfClassDefined</code></pre>
   </div>
 
 
@@ -127,6 +127,7 @@ public class SpatialFilter : Filter, IHandledCadObject, INamedCadObject, IOrient
       <div><a class="xref" href="ACadSharp.IHandledCadObject.html">IHandledCadObject</a></div>
       <div><a class="xref" href="ACadSharp.INamedCadObject.html">INamedCadObject</a></div>
       <div><a class="xref" href="ACadSharp.IOrientable.html">IOrientable</a></div>
+      <div><a class="xref" href="ACadSharp.Classes.IDxfClassDefined.html">IDxfClassDefined</a></div>
     </dd>
   </dl>
 
@@ -241,7 +242,7 @@ Dxf class name <a class="xref" href="ACadSharp.DxfSubclassMarker.html#ACadSharp_
 
   <h3 id="ACadSharp_Objects_SpatialFilter__ctor" data-uid="ACadSharp.Objects.SpatialFilter.#ctor">
   SpatialFilter()
-  <a class="header-action link-secondary" title="View source" href="https://github.com/DomCR/ACadSharp/blob/master/src/ACadSharp/Objects/SpatialFilter.cs/#L93"><i class="bi bi-code-slash"></i></a>
+  <a class="header-action link-secondary" title="View source" href="https://github.com/DomCR/ACadSharp/blob/master/src/ACadSharp/Objects/SpatialFilter.cs/#L94"><i class="bi bi-code-slash"></i></a>
   </h3>
 
   <div class="markdown level1 summary"><p>Default constructor.</p>
@@ -268,7 +269,7 @@ Dxf class name <a class="xref" href="ACadSharp.DxfSubclassMarker.html#ACadSharp_
 
   <h3 id="ACadSharp_Objects_SpatialFilter__ctor_System_String_" data-uid="ACadSharp.Objects.SpatialFilter.#ctor(System.String)">
   SpatialFilter(string)
-  <a class="header-action link-secondary" title="View source" href="https://github.com/DomCR/ACadSharp/blob/master/src/ACadSharp/Objects/SpatialFilter.cs/#L98"><i class="bi bi-code-slash"></i></a>
+  <a class="header-action link-secondary" title="View source" href="https://github.com/DomCR/ACadSharp/blob/master/src/ACadSharp/Objects/SpatialFilter.cs/#L99"><i class="bi bi-code-slash"></i></a>
   </h3>
 
   <div class="markdown level1 summary"><p>Initialize a <a class="xref" href="ACadSharp.Objects.NonGraphicalObject.html">NonGraphicalObject</a> with an specific name.</p>
@@ -303,7 +304,7 @@ Dxf class name <a class="xref" href="ACadSharp.DxfSubclassMarker.html#ACadSharp_
 
   <h3 id="ACadSharp_Objects_SpatialFilter_SpatialFilterEntryName" data-uid="ACadSharp.Objects.SpatialFilter.SpatialFilterEntryName">
   SpatialFilterEntryName
-  <a class="header-action link-secondary" title="View source" href="https://github.com/DomCR/ACadSharp/blob/master/src/ACadSharp/Objects/SpatialFilter.cs/#L90"><i class="bi bi-code-slash"></i></a>
+  <a class="header-action link-secondary" title="View source" href="https://github.com/DomCR/ACadSharp/blob/master/src/ACadSharp/Objects/SpatialFilter.cs/#L91"><i class="bi bi-code-slash"></i></a>
   </h3>
 
   <div class="markdown level1 summary"></div>
@@ -338,7 +339,7 @@ Dxf class name <a class="xref" href="ACadSharp.DxfSubclassMarker.html#ACadSharp_
 
   <h3 id="ACadSharp_Objects_SpatialFilter_BackDistance" data-uid="ACadSharp.Objects.SpatialFilter.BackDistance">
   BackDistance
-  <a class="header-action link-secondary" title="View source" href="https://github.com/DomCR/ACadSharp/blob/master/src/ACadSharp/Objects/SpatialFilter.cs/#L21"><i class="bi bi-code-slash"></i></a>
+  <a class="header-action link-secondary" title="View source" href="https://github.com/DomCR/ACadSharp/blob/master/src/ACadSharp/Objects/SpatialFilter.cs/#L22"><i class="bi bi-code-slash"></i></a>
   </h3>
 
   <div class="markdown level1 summary"><p>Back clipping plane distance.</p>
@@ -371,7 +372,7 @@ public double BackDistance { get; set; }</code></pre>
 
   <h3 id="ACadSharp_Objects_SpatialFilter_BoundaryPoints" data-uid="ACadSharp.Objects.SpatialFilter.BoundaryPoints">
   BoundaryPoints
-  <a class="header-action link-secondary" title="View source" href="https://github.com/DomCR/ACadSharp/blob/master/src/ACadSharp/Objects/SpatialFilter.cs/#L32"><i class="bi bi-code-slash"></i></a>
+  <a class="header-action link-secondary" title="View source" href="https://github.com/DomCR/ACadSharp/blob/master/src/ACadSharp/Objects/SpatialFilter.cs/#L33"><i class="bi bi-code-slash"></i></a>
   </h3>
 
   <div class="markdown level1 summary"><p>Clip boundary definition point (in OCS). <br>
@@ -410,7 +411,7 @@ greater than 2 points = Polyline clip boundary</p>
 
   <h3 id="ACadSharp_Objects_SpatialFilter_ClipBackPlane" data-uid="ACadSharp.Objects.SpatialFilter.ClipBackPlane">
   ClipBackPlane
-  <a class="header-action link-secondary" title="View source" href="https://github.com/DomCR/ACadSharp/blob/master/src/ACadSharp/Objects/SpatialFilter.cs/#L39"><i class="bi bi-code-slash"></i></a>
+  <a class="header-action link-secondary" title="View source" href="https://github.com/DomCR/ACadSharp/blob/master/src/ACadSharp/Objects/SpatialFilter.cs/#L40"><i class="bi bi-code-slash"></i></a>
   </h3>
 
   <div class="markdown level1 summary"><p>Back clipping plane flag.</p>
@@ -443,7 +444,7 @@ public bool ClipBackPlane { get; set; }</code></pre>
 
   <h3 id="ACadSharp_Objects_SpatialFilter_ClipFrontPlane" data-uid="ACadSharp.Objects.SpatialFilter.ClipFrontPlane">
   ClipFrontPlane
-  <a class="header-action link-secondary" title="View source" href="https://github.com/DomCR/ACadSharp/blob/master/src/ACadSharp/Objects/SpatialFilter.cs/#L45"><i class="bi bi-code-slash"></i></a>
+  <a class="header-action link-secondary" title="View source" href="https://github.com/DomCR/ACadSharp/blob/master/src/ACadSharp/Objects/SpatialFilter.cs/#L46"><i class="bi bi-code-slash"></i></a>
   </h3>
 
   <div class="markdown level1 summary"><p>Front clipping plane flag.</p>
@@ -476,7 +477,7 @@ public bool ClipFrontPlane { get; set; }</code></pre>
 
   <h3 id="ACadSharp_Objects_SpatialFilter_DisplayBoundary" data-uid="ACadSharp.Objects.SpatialFilter.DisplayBoundary">
   DisplayBoundary
-  <a class="header-action link-secondary" title="View source" href="https://github.com/DomCR/ACadSharp/blob/master/src/ACadSharp/Objects/SpatialFilter.cs/#L51"><i class="bi bi-code-slash"></i></a>
+  <a class="header-action link-secondary" title="View source" href="https://github.com/DomCR/ACadSharp/blob/master/src/ACadSharp/Objects/SpatialFilter.cs/#L52"><i class="bi bi-code-slash"></i></a>
   </h3>
 
   <div class="markdown level1 summary"><p>Clip boundary display enabled flag.</p>
@@ -509,7 +510,7 @@ public bool DisplayBoundary { get; set; }</code></pre>
 
   <h3 id="ACadSharp_Objects_SpatialFilter_FrontDistance" data-uid="ACadSharp.Objects.SpatialFilter.FrontDistance">
   FrontDistance
-  <a class="header-action link-secondary" title="View source" href="https://github.com/DomCR/ACadSharp/blob/master/src/ACadSharp/Objects/SpatialFilter.cs/#L57"><i class="bi bi-code-slash"></i></a>
+  <a class="header-action link-secondary" title="View source" href="https://github.com/DomCR/ACadSharp/blob/master/src/ACadSharp/Objects/SpatialFilter.cs/#L58"><i class="bi bi-code-slash"></i></a>
   </h3>
 
   <div class="markdown level1 summary"><p>Front clipping plane distance.</p>
@@ -542,7 +543,7 @@ public double FrontDistance { get; set; }</code></pre>
 
   <h3 id="ACadSharp_Objects_SpatialFilter_InsertTransform" data-uid="ACadSharp.Objects.SpatialFilter.InsertTransform">
   InsertTransform
-  <a class="header-action link-secondary" title="View source" href="https://github.com/DomCR/ACadSharp/blob/master/src/ACadSharp/Objects/SpatialFilter.cs/#L63"><i class="bi bi-code-slash"></i></a>
+  <a class="header-action link-secondary" title="View source" href="https://github.com/DomCR/ACadSharp/blob/master/src/ACadSharp/Objects/SpatialFilter.cs/#L64"><i class="bi bi-code-slash"></i></a>
   </h3>
 
   <div class="markdown level1 summary"><p>This matrix transforms points into the coordinate system of the clip boundary.</p>
@@ -574,7 +575,7 @@ public double FrontDistance { get; set; }</code></pre>
 
   <h3 id="ACadSharp_Objects_SpatialFilter_InverseInsertTransform" data-uid="ACadSharp.Objects.SpatialFilter.InverseInsertTransform">
   InverseInsertTransform
-  <a class="header-action link-secondary" title="View source" href="https://github.com/DomCR/ACadSharp/blob/master/src/ACadSharp/Objects/SpatialFilter.cs/#L69"><i class="bi bi-code-slash"></i></a>
+  <a class="header-action link-secondary" title="View source" href="https://github.com/DomCR/ACadSharp/blob/master/src/ACadSharp/Objects/SpatialFilter.cs/#L70"><i class="bi bi-code-slash"></i></a>
   </h3>
 
   <div class="markdown level1 summary"><p>This matrix is the inverse of the original block reference (insert entity) transformation.
@@ -607,7 +608,7 @@ The original block reference transformation is the one that is applied to all en
 
   <h3 id="ACadSharp_Objects_SpatialFilter_Normal" data-uid="ACadSharp.Objects.SpatialFilter.Normal">
   Normal
-  <a class="header-action link-secondary" title="View source" href="https://github.com/DomCR/ACadSharp/blob/master/src/ACadSharp/Objects/SpatialFilter.cs/#L72"><i class="bi bi-code-slash"></i></a>
+  <a class="header-action link-secondary" title="View source" href="https://github.com/DomCR/ACadSharp/blob/master/src/ACadSharp/Objects/SpatialFilter.cs/#L73"><i class="bi bi-code-slash"></i></a>
   </h3>
 
   <div class="markdown level1 summary"><p>Specifies the three-dimensional normal unit vector for the object.</p>
@@ -640,7 +641,7 @@ public XYZ Normal { get; set; }</code></pre>
 
   <h3 id="ACadSharp_Objects_SpatialFilter_ObjectName" data-uid="ACadSharp.Objects.SpatialFilter.ObjectName">
   ObjectName
-  <a class="header-action link-secondary" title="View source" href="https://github.com/DomCR/ACadSharp/blob/master/src/ACadSharp/Objects/SpatialFilter.cs/#L76"><i class="bi bi-code-slash"></i></a>
+  <a class="header-action link-secondary" title="View source" href="https://github.com/DomCR/ACadSharp/blob/master/src/ACadSharp/Objects/SpatialFilter.cs/#L77"><i class="bi bi-code-slash"></i></a>
   </h3>
 
   <div class="markdown level1 summary"><p>The CAD class name of an object.</p>
@@ -672,7 +673,7 @@ public XYZ Normal { get; set; }</code></pre>
 
   <h3 id="ACadSharp_Objects_SpatialFilter_ObjectType" data-uid="ACadSharp.Objects.SpatialFilter.ObjectType">
   ObjectType
-  <a class="header-action link-secondary" title="View source" href="https://github.com/DomCR/ACadSharp/blob/master/src/ACadSharp/Objects/SpatialFilter.cs/#L79"><i class="bi bi-code-slash"></i></a>
+  <a class="header-action link-secondary" title="View source" href="https://github.com/DomCR/ACadSharp/blob/master/src/ACadSharp/Objects/SpatialFilter.cs/#L80"><i class="bi bi-code-slash"></i></a>
   </h3>
 
   <div class="markdown level1 summary"><p>Get the object type.</p>
@@ -704,7 +705,7 @@ public XYZ Normal { get; set; }</code></pre>
 
   <h3 id="ACadSharp_Objects_SpatialFilter_Origin" data-uid="ACadSharp.Objects.SpatialFilter.Origin">
   Origin
-  <a class="header-action link-secondary" title="View source" href="https://github.com/DomCR/ACadSharp/blob/master/src/ACadSharp/Objects/SpatialFilter.cs/#L84"><i class="bi bi-code-slash"></i></a>
+  <a class="header-action link-secondary" title="View source" href="https://github.com/DomCR/ACadSharp/blob/master/src/ACadSharp/Objects/SpatialFilter.cs/#L85"><i class="bi bi-code-slash"></i></a>
   </h3>
 
   <div class="markdown level1 summary"><p>Origin used to define the local coordinate system of the clip boundary.</p>
@@ -737,7 +738,7 @@ public XYZ Origin { get; set; }</code></pre>
 
   <h3 id="ACadSharp_Objects_SpatialFilter_SubclassMarker" data-uid="ACadSharp.Objects.SpatialFilter.SubclassMarker">
   SubclassMarker
-  <a class="header-action link-secondary" title="View source" href="https://github.com/DomCR/ACadSharp/blob/master/src/ACadSharp/Objects/SpatialFilter.cs/#L88"><i class="bi bi-code-slash"></i></a>
+  <a class="header-action link-secondary" title="View source" href="https://github.com/DomCR/ACadSharp/blob/master/src/ACadSharp/Objects/SpatialFilter.cs/#L89"><i class="bi bi-code-slash"></i></a>
   </h3>
 
   <div class="markdown level1 summary"><p>Object Subclass marker.</p>
@@ -765,11 +766,46 @@ public XYZ Origin { get; set; }</code></pre>
 
 
 
+  <h2 class="section" id="methods">Methods
+</h2>
+
+
+  <a id="ACadSharp_Objects_SpatialFilter_GetDxfClass_" data-uid="ACadSharp.Objects.SpatialFilter.GetDxfClass*"></a>
+
+  <h3 id="ACadSharp_Objects_SpatialFilter_GetDxfClass" data-uid="ACadSharp.Objects.SpatialFilter.GetDxfClass">
+  GetDxfClass()
+  <a class="header-action link-secondary" title="View source" href="https://github.com/DomCR/ACadSharp/blob/master/src/ACadSharp/Objects/SpatialFilter.cs/#L104"><i class="bi bi-code-slash"></i></a>
+  </h3>
+
+  <div class="markdown level1 summary"></div>
+  <div class="markdown level1 conceptual"></div>
+
+  <div class="codewrapper">
+    <pre><code class="lang-csharp hljs">public DxfClass GetDxfClass()</code></pre>
+  </div>
+
+
+  <h4 class="section">Returns</h4>
+  <dl class="parameters">
+    <dt><a class="xref" href="ACadSharp.Classes.DxfClass.html">DxfClass</a></dt>
+    <dd></dd>
+  </dl>
+
+
+
+
+
+
+
+
+
+
+
 
 </article>
 
         <div class="contribution d-print-none">
-          <a href="https://github.com/DomCR/ACadSharp/blob/master/src/ACadSharp/Objects/SpatialFilter.cs/#L14" class="edit-link">Edit this page</a>
+          <a href="https://github.com/DomCR/ACadSharp/blob/master/src/ACadSharp/Objects/SpatialFilter.cs/#L15" class="edit-link">Edit this page</a>
         </div>
 
 

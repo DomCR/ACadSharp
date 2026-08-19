@@ -89,7 +89,7 @@
 
 
   <h1 id="ACadSharp_Entities_RasterImage" data-uid="ACadSharp.Entities.RasterImage" class="text-break">
-Class RasterImage  <a class="header-action link-secondary" title="View source" href="https://github.com/DomCR/ACadSharp/blob/master/src/ACadSharp/Entities/RasterImage.cs/#L14"><i class="bi bi-code-slash"></i></a>
+Class RasterImage  <a class="header-action link-secondary" title="View source" href="https://github.com/DomCR/ACadSharp/blob/master/src/ACadSharp/Entities/RasterImage.cs/#L17"><i class="bi bi-code-slash"></i></a>
   </h1>
 
   <div class="facts text-secondary">
@@ -104,7 +104,7 @@ Class RasterImage  <a class="header-action link-secondary" title="View source" h
   <div class="codewrapper">
     <pre><code class="lang-csharp hljs">[DxfName(&quot;IMAGE&quot;)]
 [DxfSubClass(&quot;AcDbRasterImage&quot;)]
-public class RasterImage : CadWipeoutBase, IEntity, IHandledCadObject, IGeometricEntity</code></pre>
+public class RasterImage : CadWipeoutBase, IEntity, IHandledCadObject, IGeometricEntity, IDxfClassDefined</code></pre>
   </div>
 
 
@@ -127,6 +127,7 @@ public class RasterImage : CadWipeoutBase, IEntity, IHandledCadObject, IGeometri
       <div><a class="xref" href="ACadSharp.Entities.IEntity.html">IEntity</a></div>
       <div><a class="xref" href="ACadSharp.IHandledCadObject.html">IHandledCadObject</a></div>
       <div><a class="xref" href="ACadSharp.Entities.IGeometricEntity.html">IGeometricEntity</a></div>
+      <div><a class="xref" href="ACadSharp.Classes.IDxfClassDefined.html">IDxfClassDefined</a></div>
     </dd>
   </dl>
 
@@ -184,9 +185,6 @@ public class RasterImage : CadWipeoutBase, IEntity, IHandledCadObject, IGeometri
     </div>
     <div>
       <a class="xref" href="ACadSharp.Entities.CadWipeoutBase.html#ACadSharp_Entities_CadWipeoutBase_GetBoundingBox">CadWipeoutBase.GetBoundingBox()</a>
-    </div>
-    <div>
-      <a class="xref" href="ACadSharp.Entities.CadWipeoutBase.html#ACadSharp_Entities_CadWipeoutBase_IsValid_ACadSharp_IO_CadFileFormat_ACadSharp_ACadVersion_System_Collections_Generic_IList_System_String___">CadWipeoutBase.IsValid(CadFileFormat, ACadVersion, out IList&lt;string&gt;)</a>
     </div>
     <div>
       <a class="xref" href="ACadSharp.Entities.Entity.html#ACadSharp_Entities_Entity_BookColor">Entity.BookColor</a>
@@ -346,7 +344,7 @@ Dxf class name <a class="xref" href="ACadSharp.DxfSubclassMarker.html#ACadSharp_
 
   <h3 id="ACadSharp_Entities_RasterImage__ctor_ACadSharp_Objects_ImageDefinition_" data-uid="ACadSharp.Entities.RasterImage.#ctor(ACadSharp.Objects.ImageDefinition)">
   RasterImage(ImageDefinition)
-  <a class="header-action link-secondary" title="View source" href="https://github.com/DomCR/ACadSharp/blob/master/src/ACadSharp/Entities/RasterImage.cs/#L50"><i class="bi bi-code-slash"></i></a>
+  <a class="header-action link-secondary" title="View source" href="https://github.com/DomCR/ACadSharp/blob/master/src/ACadSharp/Entities/RasterImage.cs/#L53"><i class="bi bi-code-slash"></i></a>
   </h3>
 
   <div class="markdown level1 summary"><p>Initializes a new instance of the <a class="xref" href="ACadSharp.Entities.RasterImage.html">RasterImage</a> class.</p>
@@ -382,7 +380,7 @@ Dxf class name <a class="xref" href="ACadSharp.DxfSubclassMarker.html#ACadSharp_
 
   <h3 id="ACadSharp_Entities_RasterImage_Definition" data-uid="ACadSharp.Entities.RasterImage.Definition">
   Definition
-  <a class="header-action link-secondary" title="View source" href="https://github.com/DomCR/ACadSharp/blob/master/src/ACadSharp/Entities/RasterImage.cs/#L19"><i class="bi bi-code-slash"></i></a>
+  <a class="header-action link-secondary" title="View source" href="https://github.com/DomCR/ACadSharp/blob/master/src/ACadSharp/Entities/RasterImage.cs/#L22"><i class="bi bi-code-slash"></i></a>
   </h3>
 
   <div class="markdown level1 summary"><p>Image definition.</p>
@@ -414,7 +412,7 @@ Dxf class name <a class="xref" href="ACadSharp.DxfSubclassMarker.html#ACadSharp_
 
   <h3 id="ACadSharp_Entities_RasterImage_ObjectName" data-uid="ACadSharp.Entities.RasterImage.ObjectName">
   ObjectName
-  <a class="header-action link-secondary" title="View source" href="https://github.com/DomCR/ACadSharp/blob/master/src/ACadSharp/Entities/RasterImage.cs/#L38"><i class="bi bi-code-slash"></i></a>
+  <a class="header-action link-secondary" title="View source" href="https://github.com/DomCR/ACadSharp/blob/master/src/ACadSharp/Entities/RasterImage.cs/#L41"><i class="bi bi-code-slash"></i></a>
   </h3>
 
   <div class="markdown level1 summary"><p>The CAD class name of an object.</p>
@@ -446,7 +444,7 @@ Dxf class name <a class="xref" href="ACadSharp.DxfSubclassMarker.html#ACadSharp_
 
   <h3 id="ACadSharp_Entities_RasterImage_ObjectType" data-uid="ACadSharp.Entities.RasterImage.ObjectType">
   ObjectType
-  <a class="header-action link-secondary" title="View source" href="https://github.com/DomCR/ACadSharp/blob/master/src/ACadSharp/Entities/RasterImage.cs/#L41"><i class="bi bi-code-slash"></i></a>
+  <a class="header-action link-secondary" title="View source" href="https://github.com/DomCR/ACadSharp/blob/master/src/ACadSharp/Entities/RasterImage.cs/#L44"><i class="bi bi-code-slash"></i></a>
   </h3>
 
   <div class="markdown level1 summary"><p>Get the object type.</p>
@@ -478,7 +476,7 @@ Dxf class name <a class="xref" href="ACadSharp.DxfSubclassMarker.html#ACadSharp_
 
   <h3 id="ACadSharp_Entities_RasterImage_SubclassMarker" data-uid="ACadSharp.Entities.RasterImage.SubclassMarker">
   SubclassMarker
-  <a class="header-action link-secondary" title="View source" href="https://github.com/DomCR/ACadSharp/blob/master/src/ACadSharp/Entities/RasterImage.cs/#L44"><i class="bi bi-code-slash"></i></a>
+  <a class="header-action link-secondary" title="View source" href="https://github.com/DomCR/ACadSharp/blob/master/src/ACadSharp/Entities/RasterImage.cs/#L47"><i class="bi bi-code-slash"></i></a>
   </h3>
 
   <div class="markdown level1 summary"><p>Object Subclass marker.</p>
@@ -506,11 +504,91 @@ Dxf class name <a class="xref" href="ACadSharp.DxfSubclassMarker.html#ACadSharp_
 
 
 
+  <h2 class="section" id="methods">Methods
+</h2>
+
+
+  <a id="ACadSharp_Entities_RasterImage_GetDxfClass_" data-uid="ACadSharp.Entities.RasterImage.GetDxfClass*"></a>
+
+  <h3 id="ACadSharp_Entities_RasterImage_GetDxfClass" data-uid="ACadSharp.Entities.RasterImage.GetDxfClass">
+  GetDxfClass()
+  <a class="header-action link-secondary" title="View source" href="https://github.com/DomCR/ACadSharp/blob/master/src/ACadSharp/Entities/RasterImage.cs/#L83"><i class="bi bi-code-slash"></i></a>
+  </h3>
+
+  <div class="markdown level1 summary"></div>
+  <div class="markdown level1 conceptual"></div>
+
+  <div class="codewrapper">
+    <pre><code class="lang-csharp hljs">public DxfClass GetDxfClass()</code></pre>
+  </div>
+
+
+  <h4 class="section">Returns</h4>
+  <dl class="parameters">
+    <dt><a class="xref" href="ACadSharp.Classes.DxfClass.html">DxfClass</a></dt>
+    <dd></dd>
+  </dl>
+
+
+
+
+
+
+
+
+
+
+
+  <a id="ACadSharp_Entities_RasterImage_IsValid_" data-uid="ACadSharp.Entities.RasterImage.IsValid*"></a>
+
+  <h3 id="ACadSharp_Entities_RasterImage_IsValid_ACadSharp_IO_CadFileFormat_ACadSharp_ACadVersion_System_Collections_Generic_IList_System_String___" data-uid="ACadSharp.Entities.RasterImage.IsValid(ACadSharp.IO.CadFileFormat,ACadSharp.ACadVersion,System.Collections.Generic.IList{System.String}@)">
+  IsValid(CadFileFormat, ACadVersion, out IList&lt;string&gt;)
+  <a class="header-action link-secondary" title="View source" href="https://github.com/DomCR/ACadSharp/blob/master/src/ACadSharp/Entities/RasterImage.cs/#L63"><i class="bi bi-code-slash"></i></a>
+  </h3>
+
+  <div class="markdown level1 summary"><p>Determines whether the object is valid and can be written in a CAD file.</p>
+</div>
+  <div class="markdown level1 conceptual"></div>
+
+  <div class="codewrapper">
+    <pre><code class="lang-csharp hljs">public override bool IsValid(CadFileFormat format, ACadVersion version, out IList&lt;string&gt; errors)</code></pre>
+  </div>
+
+  <h4 class="section">Parameters</h4>
+  <dl class="parameters">
+    <dt><code>format</code> <a class="xref" href="ACadSharp.IO.CadFileFormat.html">CadFileFormat</a></dt>
+    <dd><p>The CAD file format.</p>
+</dd>
+    <dt><code>version</code> <a class="xref" href="ACadSharp.ACadVersion.html">ACadVersion</a></dt>
+    <dd><p>The CAD version.</p>
+</dd>
+    <dt><code>errors</code> <a class="xref" href="https://learn.microsoft.com/dotnet/api/system.collections.generic.ilist-1">IList</a>&lt;<a class="xref" href="https://learn.microsoft.com/dotnet/api/system.string">string</a>&gt;</dt>
+    <dd><p>A list of errors found during the validation.</p>
+</dd>
+  </dl>
+
+  <h4 class="section">Returns</h4>
+  <dl class="parameters">
+    <dt><a class="xref" href="https://learn.microsoft.com/dotnet/api/system.boolean">bool</a></dt>
+    <dd><p>True if the object is valid; otherwise, false.</p>
+</dd>
+  </dl>
+
+
+
+
+
+
+
+
+
+
+
 
 </article>
 
         <div class="contribution d-print-none">
-          <a href="https://github.com/DomCR/ACadSharp/blob/master/src/ACadSharp/Entities/RasterImage.cs/#L14" class="edit-link">Edit this page</a>
+          <a href="https://github.com/DomCR/ACadSharp/blob/master/src/ACadSharp/Entities/RasterImage.cs/#L17" class="edit-link">Edit this page</a>
         </div>
 
 
