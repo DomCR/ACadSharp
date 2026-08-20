@@ -1122,7 +1122,7 @@ namespace ACadSharp.IO.DWG
 		/// <inheritdoc/>
 		public void AdvanceByte()
 		{
-			this._lastByte = base.ReadByte();
+			this._lastByte = this.readStreamByte();
 		}
 
 		/// <inheritdoc/>
