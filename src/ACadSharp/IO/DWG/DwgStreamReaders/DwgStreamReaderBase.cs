@@ -351,7 +351,7 @@ namespace ACadSharp.IO.DWG
 			if (this.BitShift == 0)
 			{
 				//No need to apply the shift
-				_lastByte = base.ReadByte();
+				_lastByte = this.readStreamByte();
 
 				return _lastByte;
 			}
@@ -359,9 +359,23 @@ namespace ACadSharp.IO.DWG
 			//Get the last bits from the last readed byte
 			byte lastValues = (byte)((uint)_lastByte << BitShift);
 
-			_lastByte = base.ReadByte();
+			_lastByte = this.readStreamByte();
 
 			return (byte)(lastValues | (uint)(byte)((uint)_lastByte >> 8 - BitShift));
+		}
+
+		//StreamIO.ReadByte allocates a one byte array on every call. Every bit level read in the
+		//object section pulls its bytes through here, so that array is allocated tens of millions
+		//of times for a single drawing. Reading the stream directly returns the same byte and
+		//throws the same exception at the end of the stream, and allocates nothing.
+		private byte readStreamByte()
+		{
+			int value = this._stream.ReadByte();
+
+			if (value < 0)
+				throw new EndOfStreamException();
+
+			return (byte)value;
 		}
 
 		public override byte[] ReadBytes(int length)
