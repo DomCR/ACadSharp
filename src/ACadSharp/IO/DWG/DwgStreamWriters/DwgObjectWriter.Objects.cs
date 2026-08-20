@@ -858,10 +858,13 @@ internal partial class DwgObjectWriter : DwgSectionIO
 	{
 		//Common:
 		//Numitems L number of dictionary items
-		List<NonGraphicalObject> entries = new List<NonGraphicalObject>();
-		foreach (var item in dictionary)
+		//The key, not the entry's own name: two entries can carry the same name - every
+		//SortEntitiesTable is called ACAD_SORTENTS - and writing the name twice produces a file
+		//whose dictionary cannot be read back.
+		List<KeyValuePair<string, NonGraphicalObject>> entries = new List<KeyValuePair<string, NonGraphicalObject>>();
+		foreach (var item in dictionary.KeyedEntries)
 		{
-			if (this.skipEntry(item))
+			if (this.skipEntry(item.Value))
 			{
 				continue;
 			}
@@ -889,16 +892,11 @@ internal partial class DwgObjectWriter : DwgSectionIO
 		//Common:
 		foreach (var item in entries)
 		{
-			if (this.skipEntry(item))
-			{
-				continue;
-			}
-
-			this._writer.WriteVariableText(item.Name);
-			this._writer.HandleReference(DwgReferenceType.SoftOwnership, item.Handle);
+			this._writer.WriteVariableText(item.Key);
+			this._writer.HandleReference(DwgReferenceType.SoftOwnership, item.Value.Handle);
 		}
 
-		this.addObjectsToWriter(entries);
+		this.addObjectsToWriter(entries.Select(e => e.Value));
 	}
 
 	private void writeDictionaryVariable(DictionaryVariable dictionaryVariable)
