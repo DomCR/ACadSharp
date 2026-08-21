@@ -12,8 +12,9 @@ namespace ACadSharp.Tests.IO;
 /// written - a Region, say, which neither writer implements - the file must not claim otherwise,
 /// or AutoCAD reads the boundary as undefined and repairs the drawing.
 ///
-/// DWG only. The same change in the DXF writer was measured on real drawings and made two of them
-/// worse (one by 6 audit errors, one by 2), so it is not made there; see T64.
+/// Both writers. The DXF half was once withdrawn because a single audit run read 8 errors worse on
+/// one drawing; that audit turned out to wander by 11 between runs of the same file, and measured
+/// three times each way it is neutral. The file tells the truth in both formats.
 /// </summary>
 public class HatchAssociativityTests
 {
@@ -37,6 +38,21 @@ public class HatchAssociativityTests
 		}
 
 		this.assertNotAssociative(DwgReader.Read(new MemoryStream(ms.ToArray())));
+	}
+
+	[Theory]
+	[MemberData(nameof(Versions))]
+	public void DxfDropsAnAssociativityItCannotWrite(ACadVersion version)
+	{
+		CadDocument doc = this.document(version);
+
+		MemoryStream ms = new MemoryStream();
+		using (DxfWriter writer = new DxfWriter(ms, doc, false))
+		{
+			writer.Write();
+		}
+
+		this.assertNotAssociative(DxfReader.Read(new MemoryStream(ms.ToArray())));
 	}
 
 	[Theory]
