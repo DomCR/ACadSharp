@@ -11,9 +11,6 @@ public interface IText : IEntity, IOrientable
 	/// <summary>
 	/// Changes the height of the object.
 	/// </summary>
-	/// <value>
-	/// Valid values must be greater than zero. Default: 1.0
-	/// </value>
 	double Height { get; set; }
 
 	/// <summary>
