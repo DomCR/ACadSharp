@@ -96,11 +96,21 @@ public partial class SortEntitiesTable : NonGraphicalObject, IDxfClassDefined, I
 		};
 	}
 
+	//The order the file gives this table is not the order it enumerates in, and it is worth keeping:
+	//a table whose keys collide - AutoCAD reports 15 such entries in one production drawing - is read
+	//by whichever entry comes first, so rewriting it in another order changes what the drawing means.
+	//Sorting inside GetEnumerator did exactly that: reading the table reordered it, and the writer
+	//then wrote that order back out. It cost that drawing an audit error it did not arrive with.
+	internal IReadOnlyList<Sorter> StoredOrder
+	{
+		get { return this._sorters; }
+	}
+
 	/// <inheritdoc/>
 	public IEnumerator<Sorter> GetEnumerator()
 	{
-		this._sorters.Sort();
-		return this._sorters.GetEnumerator();
+		//Sorted, as before - but without reordering what is stored.
+		return this._sorters.OrderBy(s => s.SortHandle).GetEnumerator();
 	}
 
 	/// <inheritdoc/>

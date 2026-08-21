@@ -1642,7 +1642,8 @@ internal class DxfObjectsSectionWriter : DxfSectionWriterBase
 
 		this._writer.WriteHandle(330, e.BlockOwner);
 
-		foreach (SortEntitiesTable.Sorter item in e)
+		//StoredOrder, not the enumerator: see the DWG writer and SortEntitiesTable.StoredOrder.
+		foreach (SortEntitiesTable.Sorter item in e.StoredOrder)
 		{
 			this._writer.WriteHandle(331, item.Entity);
 			this._writer.Write(5, item.SortHandle);
