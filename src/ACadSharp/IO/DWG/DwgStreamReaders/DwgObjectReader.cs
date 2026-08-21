@@ -6181,9 +6181,17 @@ namespace ACadSharp.IO.DWG
 				{
 					//00 – 41 value stored as a RD, followed by a 42 value stored as DD (use 41 for default value), and a 43 value stored as a DD(use 41 value for default value).
 					case 0:
-						insert.XScale = this.insertScaleOrOne(this._objectReader.ReadDouble(), "X scale", insert);
-						insert.YScale = this.insertScaleOrOne(this._objectReader.ReadBitDoubleWithDefault(insert.XScale), "Y scale", insert);
-						insert.ZScale = this.insertScaleOrOne(this._objectReader.ReadBitDoubleWithDefault(insert.XScale), "Z scale", insert);
+						{
+							//The 42 and 43 values are DD-encoded against the raw 41 value: codes 01 and
+							//10 patch bytes INTO the default, so the default has to be the file's X,
+							//not the repaired one. Read all three raw, repair after.
+							double rawX = this._objectReader.ReadDouble();
+							double rawY = this._objectReader.ReadBitDoubleWithDefault(rawX);
+							double rawZ = this._objectReader.ReadBitDoubleWithDefault(rawX);
+							insert.XScale = this.insertScaleOrOne(rawX, "X scale", insert);
+							insert.YScale = this.insertScaleOrOne(rawY, "Y scale", insert);
+							insert.ZScale = this.insertScaleOrOne(rawZ, "Z scale", insert);
+						}
 						break;
 					//01 – 41 value is 1.0, 2 DD’s are present, each using 1.0 as the default value, representing the 42 and 43 values.
 					case 1:
