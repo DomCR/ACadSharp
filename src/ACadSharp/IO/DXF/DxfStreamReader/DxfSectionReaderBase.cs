@@ -997,6 +997,34 @@ internal abstract class DxfSectionReaderBase
 				return true;
 			case 66:
 				return true;
+			case 41:
+			case 42:
+			case 43:
+				//A scale of 0 is refused by the model, and refusing it here costs the whole block
+				//reference. AutoCAD repairs the scale and keeps the reference, so this does too.
+				double scale = this._reader.ValueAsDouble;
+				Insert insert = (Insert)template.CadObject;
+				if (scale.Equals(0))
+				{
+					this._builder.Notify(
+						$"Insert with handle {insert.Handle} carries a scale of 0 in group {this._reader.Code} and is read with 1; the block reference would be lost otherwise",
+						NotificationType.Warning);
+					scale = 1;
+				}
+
+				switch (this._reader.Code)
+				{
+					case 41:
+						insert.XScale = scale;
+						break;
+					case 42:
+						insert.YScale = scale;
+						break;
+					default:
+						insert.ZScale = scale;
+						break;
+				}
+				return true;
 			default:
 				return this.tryAssignCurrentValue(template.CadObject, map.SubClasses[DxfSubclassMarker.Insert]);
 		}
