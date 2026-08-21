@@ -719,6 +719,13 @@ internal class DxfObjectsSectionWriter : DxfSectionWriterBase
 		{
 			case UnknownNonGraphicalObject:
 				return false;
+			//The switch is honoured here as it is in the DWG writer. Before, these three cases shared
+			//the default branch and were written whatever the configuration said - so the DXF kept
+			//the dynamic blocks that the DWG, with the same document and the same settings, dropped.
+			case EvaluationGraph when !this.Configuration.WriteDynamicBlockData:
+			case BlockRepresentationData when !this.Configuration.WriteDynamicBlockData:
+			case DynamicBlockPurgePreventer when !this.Configuration.WriteDynamicBlockData:
+				return false;
 			case AecWallStyle:
 			case AecCleanupGroup:
 			case AecBinRecord:
@@ -731,9 +738,6 @@ internal class DxfObjectsSectionWriter : DxfSectionWriterBase
 			case BlockReferenceObjectContextData:
 				this.notify($"Object not implemented : {co.GetType().FullName}", NotificationType.NotImplemented);
 				return false;
-			case EvaluationGraph when this.Configuration.WriteDynamicBlockData:
-			case BlockRepresentationData when this.Configuration.WriteDynamicBlockData:
-			case DynamicBlockPurgePreventer when this.Configuration.WriteDynamicBlockData:
 			default:
 				return true;
 		}
