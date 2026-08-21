@@ -1030,4 +1030,16 @@ internal partial class DwgObjectReader : DwgSectionIO
 
 		return template;
 	}
+
+	private CadTemplate readWipeoutVariables()
+	{
+		WipeoutVariables wipeoutVariables = new WipeoutVariables();
+		CadNonGraphicalObjectTemplate template = new CadNonGraphicalObjectTemplate(wipeoutVariables);
+
+		this.readCommonNonEntityData(template);
+
+		wipeoutVariables.DisplayImageFrame = this._mergedReaders.ReadBitShort() != 0;
+
+		return template;
+	}
 }

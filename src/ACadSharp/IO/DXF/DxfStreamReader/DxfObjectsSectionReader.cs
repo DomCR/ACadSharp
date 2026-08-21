@@ -2259,6 +2259,8 @@ internal class DxfObjectsSectionReader : DxfSectionReaderBase
 				return this.readObjectCodes<ProxyObject>(new CadProxyObjectTemplate(), this.readProxyObject);
 			case DxfFileToken.ObjectRasterVariables:
 				return this.readObjectCodes<RasterVariables>(new CadNonGraphicalObjectTemplate(new RasterVariables()), this.readObjectSubclassMap);
+			case DxfFileToken.ObjectWipeoutVariables:
+				return this.readObjectCodes<WipeoutVariables>(new CadNonGraphicalObjectTemplate(new WipeoutVariables()), this.readObjectSubclassMap);
 			case DxfFileToken.ObjectGroup:
 				return this.readObjectCodes<Group>(new CadGroupTemplate(), this.readGroup);
 			case DxfFileToken.ObjectGeoData:

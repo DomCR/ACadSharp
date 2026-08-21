@@ -554,6 +554,9 @@ internal class DxfObjectsSectionWriter : DxfSectionWriterBase
 			case TableStyle tableStyle:
 				this.writeTableStyle(tableStyle);
 				break;
+			case WipeoutVariables wipeoutVariables:
+				this.writeWipeoutVariables(wipeoutVariables);
+				break;
 			case XRecord record:
 				this.writeXRecord(record);
 				break;
@@ -658,6 +661,15 @@ internal class DxfObjectsSectionWriter : DxfSectionWriterBase
 
 			this.writeObject(item);
 		}
+	}
+
+	protected void writeWipeoutVariables(WipeoutVariables variables)
+	{
+		DxfClassMap map = DxfClassMap.Create<WipeoutVariables>();
+
+		this._writer.Write(100, DxfSubclassMarker.WipeoutVariables);
+
+		this._writer.Write(70, variables.DisplayImageFrame ? 1 : 0, map);
 	}
 
 	protected void writeXRecord(XRecord record)

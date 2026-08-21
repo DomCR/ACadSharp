@@ -1889,6 +1889,9 @@ internal partial class DwgObjectWriter : DwgSectionIO
 			case TableStyle tableStyle:
 				this.writeTableStyle(tableStyle);
 				break;
+			case WipeoutVariables wipeoutVariables:
+				this.writeWipeoutVariables(wipeoutVariables);
+				break;
 			case Field field:
 				this.writeField(field);
 				break;
@@ -2332,6 +2335,13 @@ internal partial class DwgObjectWriter : DwgSectionIO
 				index++;
 			}
 		}
+	}
+
+	private void writeWipeoutVariables(WipeoutVariables wipeoutVariables)
+	{
+		//Common:
+		//Dispfrm BS 70 display image frame
+		this._writer.WriteBitShort(wipeoutVariables.DisplayImageFrame ? (short)1 : (short)0);
 	}
 
 	private void writeXRecord(XRecord xrecord)

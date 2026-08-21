@@ -5782,6 +5782,9 @@ namespace ACadSharp.IO.DWG
 				case DxfFileToken.ObjectField:
 					template = this.readField();
 					break;
+				case DxfFileToken.ObjectWipeoutVariables:
+					template = this.readWipeoutVariables();
+					break;
 			}
 
 			if (template == null && c.IsAnEntity)
