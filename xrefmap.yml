@@ -25206,6 +25206,15 @@ references:
   fullName.vb: ACadSharp.Entities.TextEntity.New()
   nameWithType: TextEntity.TextEntity()
   nameWithType.vb: TextEntity.New()
+- uid: ACadSharp.Entities.TextEntity.#ctor(System.String)
+  name: TextEntity(string)
+  href: api/ACadSharp.Entities.TextEntity.html#ACadSharp_Entities_TextEntity__ctor_System_String_
+  commentId: M:ACadSharp.Entities.TextEntity.#ctor(System.String)
+  name.vb: New(String)
+  fullName: ACadSharp.Entities.TextEntity.TextEntity(string)
+  fullName.vb: ACadSharp.Entities.TextEntity.New(String)
+  nameWithType: TextEntity.TextEntity(string)
+  nameWithType.vb: TextEntity.New(String)
 - uid: ACadSharp.Entities.TextEntity.#ctor*
   name: TextEntity
   href: api/ACadSharp.Entities.TextEntity.html#ACadSharp_Entities_TextEntity__ctor_
