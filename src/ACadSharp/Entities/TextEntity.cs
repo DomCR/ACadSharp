@@ -29,17 +29,7 @@ public class TextEntity : Entity, IText
 
 	/// <inheritdoc/>
 	[DxfCodeValue(40)]
-	public double Height
-	{
-		get => this._height;
-		set
-		{
-			if (value <= 0)
-				throw new ArgumentOutOfRangeException(nameof(value), value, "The Text height must be greater than zero.");
-			else
-				this._height = value;
-		}
-	}
+	public double Height { get; set; } = 1.0d;
 
 	/// <summary>
 	/// Horizontal text justification type.
@@ -143,16 +133,26 @@ public class TextEntity : Entity, IText
 	[DxfCodeValue(DxfReferenceType.Optional, 41)]
 	public double WidthFactor { get; set; } = 1.0;
 
-	private double _height = 1.0d;
-
 	private TextMirrorFlag _mirror = TextMirrorFlag.None;
 
 	private TextStyle _style = TextStyle.Default;
 
 	private string _value = string.Empty;
 
+	/// <summary>
+	/// Initializes a new instance of the <see cref="TextEntity"/> class.
+	/// </summary>
 	public TextEntity() : base()
 	{
+	}
+
+	/// <summary>
+	/// Initializes a new instance of the <see cref="TextEntity"/> class with the specified text value.
+	/// </summary>
+	/// <param name="value">The text value.</param>
+	public TextEntity(string value) : this()
+	{
+		this.Value = value;
 	}
 
 	/// <inheritdoc/>

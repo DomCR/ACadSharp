@@ -79,19 +79,7 @@ public partial class MText : Entity, IText
 
 	/// <inheritdoc/>
 	[DxfCodeValue(40)]
-	public double Height
-	{
-		get => this._height;
-		set
-		{
-			if (value <= 0)
-			{
-				throw new ArgumentOutOfRangeException(nameof(value), value, "The MText height must be greater than zero.");
-			}
-			else
-				this._height = value;
-		}
-	}
+	public double Height { get; set; } = 1.0d;
 
 	/// <summary>
 	/// Horizontal width of the characters that make up the mtext entity.
@@ -213,8 +201,6 @@ public partial class MText : Entity, IText
 	[DxfCodeValue(DxfReferenceType.Ignored, 43)]
 	public double VerticalHeight { get; set; } = 0.2;
 
-	private double _height = 1.0d;
-
 	private TextStyle _style = TextStyle.Default;
 
 	/// <inheritdoc/>
@@ -224,7 +210,7 @@ public partial class MText : Entity, IText
 	/// Initializes a new instance of the <see cref="MText"/> class with the specified text value.
 	/// </summary>
 	/// <param name="value">The text value to initialize the instance with. Cannot be <see langword="null"/>.</param>
-	public MText(string value) : base()
+	public MText(string value) : this()
 	{
 		this.Value = value;
 	}
