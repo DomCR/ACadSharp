@@ -5666,6 +5666,12 @@ references:
   commentId: F:ACadSharp.DxfFileToken.ObjectVisualStyle
   fullName: ACadSharp.DxfFileToken.ObjectVisualStyle
   nameWithType: DxfFileToken.ObjectVisualStyle
+- uid: ACadSharp.DxfFileToken.ObjectWipeoutVariables
+  name: ObjectWipeoutVariables
+  href: api/ACadSharp.DxfFileToken.html#ACadSharp_DxfFileToken_ObjectWipeoutVariables
+  commentId: F:ACadSharp.DxfFileToken.ObjectWipeoutVariables
+  fullName: ACadSharp.DxfFileToken.ObjectWipeoutVariables
+  nameWithType: DxfFileToken.ObjectWipeoutVariables
 - uid: ACadSharp.DxfFileToken.ObjectXRecord
   name: ObjectXRecord
   href: api/ACadSharp.DxfFileToken.html#ACadSharp_DxfFileToken_ObjectXRecord
@@ -7218,6 +7224,12 @@ references:
   commentId: F:ACadSharp.DxfSubclassMarker.Wipeout
   fullName: ACadSharp.DxfSubclassMarker.Wipeout
   nameWithType: DxfSubclassMarker.Wipeout
+- uid: ACadSharp.DxfSubclassMarker.WipeoutVariables
+  name: WipeoutVariables
+  href: api/ACadSharp.DxfSubclassMarker.html#ACadSharp_DxfSubclassMarker_WipeoutVariables
+  commentId: F:ACadSharp.DxfSubclassMarker.WipeoutVariables
+  fullName: ACadSharp.DxfSubclassMarker.WipeoutVariables
+  nameWithType: DxfSubclassMarker.WipeoutVariables
 - uid: ACadSharp.DxfSubclassMarker.XLine
   name: XLine
   href: api/ACadSharp.DxfSubclassMarker.html#ACadSharp_DxfSubclassMarker_XLine
@@ -52236,6 +52248,77 @@ references:
   commentId: F:ACadSharp.Objects.WipeoutFrameType.NoDisplayOrPlotted
   fullName: ACadSharp.Objects.WipeoutFrameType.NoDisplayOrPlotted
   nameWithType: WipeoutFrameType.NoDisplayOrPlotted
+- uid: ACadSharp.Objects.WipeoutVariables
+  name: WipeoutVariables
+  href: api/ACadSharp.Objects.WipeoutVariables.html
+  commentId: T:ACadSharp.Objects.WipeoutVariables
+  fullName: ACadSharp.Objects.WipeoutVariables
+  nameWithType: WipeoutVariables
+- uid: ACadSharp.Objects.WipeoutVariables.DisplayImageFrame
+  name: DisplayImageFrame
+  href: api/ACadSharp.Objects.WipeoutVariables.html#ACadSharp_Objects_WipeoutVariables_DisplayImageFrame
+  commentId: P:ACadSharp.Objects.WipeoutVariables.DisplayImageFrame
+  fullName: ACadSharp.Objects.WipeoutVariables.DisplayImageFrame
+  nameWithType: WipeoutVariables.DisplayImageFrame
+- uid: ACadSharp.Objects.WipeoutVariables.DisplayImageFrame*
+  name: DisplayImageFrame
+  href: api/ACadSharp.Objects.WipeoutVariables.html#ACadSharp_Objects_WipeoutVariables_DisplayImageFrame_
+  commentId: Overload:ACadSharp.Objects.WipeoutVariables.DisplayImageFrame
+  isSpec: "True"
+  fullName: ACadSharp.Objects.WipeoutVariables.DisplayImageFrame
+  nameWithType: WipeoutVariables.DisplayImageFrame
+- uid: ACadSharp.Objects.WipeoutVariables.GetDxfClass
+  name: GetDxfClass()
+  href: api/ACadSharp.Objects.WipeoutVariables.html#ACadSharp_Objects_WipeoutVariables_GetDxfClass
+  commentId: M:ACadSharp.Objects.WipeoutVariables.GetDxfClass
+  fullName: ACadSharp.Objects.WipeoutVariables.GetDxfClass()
+  nameWithType: WipeoutVariables.GetDxfClass()
+- uid: ACadSharp.Objects.WipeoutVariables.GetDxfClass*
+  name: GetDxfClass
+  href: api/ACadSharp.Objects.WipeoutVariables.html#ACadSharp_Objects_WipeoutVariables_GetDxfClass_
+  commentId: Overload:ACadSharp.Objects.WipeoutVariables.GetDxfClass
+  isSpec: "True"
+  fullName: ACadSharp.Objects.WipeoutVariables.GetDxfClass
+  nameWithType: WipeoutVariables.GetDxfClass
+- uid: ACadSharp.Objects.WipeoutVariables.ObjectName
+  name: ObjectName
+  href: api/ACadSharp.Objects.WipeoutVariables.html#ACadSharp_Objects_WipeoutVariables_ObjectName
+  commentId: P:ACadSharp.Objects.WipeoutVariables.ObjectName
+  fullName: ACadSharp.Objects.WipeoutVariables.ObjectName
+  nameWithType: WipeoutVariables.ObjectName
+- uid: ACadSharp.Objects.WipeoutVariables.ObjectName*
+  name: ObjectName
+  href: api/ACadSharp.Objects.WipeoutVariables.html#ACadSharp_Objects_WipeoutVariables_ObjectName_
+  commentId: Overload:ACadSharp.Objects.WipeoutVariables.ObjectName
+  isSpec: "True"
+  fullName: ACadSharp.Objects.WipeoutVariables.ObjectName
+  nameWithType: WipeoutVariables.ObjectName
+- uid: ACadSharp.Objects.WipeoutVariables.ObjectType
+  name: ObjectType
+  href: api/ACadSharp.Objects.WipeoutVariables.html#ACadSharp_Objects_WipeoutVariables_ObjectType
+  commentId: P:ACadSharp.Objects.WipeoutVariables.ObjectType
+  fullName: ACadSharp.Objects.WipeoutVariables.ObjectType
+  nameWithType: WipeoutVariables.ObjectType
+- uid: ACadSharp.Objects.WipeoutVariables.ObjectType*
+  name: ObjectType
+  href: api/ACadSharp.Objects.WipeoutVariables.html#ACadSharp_Objects_WipeoutVariables_ObjectType_
+  commentId: Overload:ACadSharp.Objects.WipeoutVariables.ObjectType
+  isSpec: "True"
+  fullName: ACadSharp.Objects.WipeoutVariables.ObjectType
+  nameWithType: WipeoutVariables.ObjectType
+- uid: ACadSharp.Objects.WipeoutVariables.SubclassMarker
+  name: SubclassMarker
+  href: api/ACadSharp.Objects.WipeoutVariables.html#ACadSharp_Objects_WipeoutVariables_SubclassMarker
+  commentId: P:ACadSharp.Objects.WipeoutVariables.SubclassMarker
+  fullName: ACadSharp.Objects.WipeoutVariables.SubclassMarker
+  nameWithType: WipeoutVariables.SubclassMarker
+- uid: ACadSharp.Objects.WipeoutVariables.SubclassMarker*
+  name: SubclassMarker
+  href: api/ACadSharp.Objects.WipeoutVariables.html#ACadSharp_Objects_WipeoutVariables_SubclassMarker_
+  commentId: Overload:ACadSharp.Objects.WipeoutVariables.SubclassMarker
+  isSpec: "True"
+  fullName: ACadSharp.Objects.WipeoutVariables.SubclassMarker
+  nameWithType: WipeoutVariables.SubclassMarker
 - uid: ACadSharp.Objects.XRecord
   name: XRecord
   href: api/ACadSharp.Objects.XRecord.html

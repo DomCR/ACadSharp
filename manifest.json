@@ -6634,6 +6634,20 @@
     },
     {
       "type": "ManagedReference",
+      "source_relative_path": "api/ACadSharp.Objects.WipeoutVariables.yml",
+      "output": {
+        ".html": {
+          "relative_path": "api/ACadSharp.Objects.WipeoutVariables.html"
+        }
+      },
+      "version": "",
+      "Uid": null,
+      "IsMRef": true,
+      "Title": "ACadSharp.Objects.WipeoutVariables",
+      "Summary": "<p sourcefile=\"api/ACadSharp.Objects.WipeoutVariables.yml\" sourcestartlinenumber=\"1\">Represents a <xref href=\"ACadSharp.Objects.WipeoutVariables\" data-throw-if-not-resolved=\"false\"></xref> object.</p>\n"
+    },
+    {
+      "type": "ManagedReference",
       "source_relative_path": "api/ACadSharp.Objects.XRecord.Entry.yml",
       "output": {
         ".html": {
