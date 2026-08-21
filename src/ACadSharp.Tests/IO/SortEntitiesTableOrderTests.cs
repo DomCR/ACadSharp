@@ -63,6 +63,52 @@ public class SortEntitiesTableOrderTests
 		Assert.Equal(written, back.StoredOrder.Select(x => x.SortHandle).ToArray());
 	}
 
+	[Fact]
+	public void OneStepUpWorksWhenTheStoredOrderIsNotSorted()
+	{
+		//OneStepUp looked the entity up in the sorted view and then took its neighbour from the
+		//stored list - two different indexings. They agreed while enumeration happened to sort the
+		//list in place, and a reversed list still agrees by symmetry, so the stored order here is
+		//a permutation that is neither: A(0x200), B(0x100), C(0x300), sorted B, A, C.
+		CadDocument doc = new CadDocument();
+		SortEntitiesTable table = this.scrambled(doc, out Entity a, out Entity b, out Entity c);
+
+		table.OneStepUp(c);
+
+		//C's sorted neighbour above is A, not B.
+		Assert.Equal(new[] { b, c, a }, table.Select(s => s.Entity).ToArray());
+	}
+
+	[Fact]
+	public void OneStepDownWorksWhenTheStoredOrderIsNotSorted()
+	{
+		CadDocument doc = new CadDocument();
+		SortEntitiesTable table = this.scrambled(doc, out Entity a, out Entity b, out Entity c);
+
+		table.OneStepDown(b);
+
+		//B's sorted neighbour below is A.
+		Assert.Equal(new[] { a, b, c }, table.Select(s => s.Entity).ToArray());
+	}
+
+	private SortEntitiesTable scrambled(CadDocument doc, out Entity a, out Entity b, out Entity c)
+	{
+		a = new Line(new XYZ(0, 0, 0), new XYZ(1, 0, 0));
+		b = new Line(new XYZ(0, 1, 0), new XYZ(1, 1, 0));
+		c = new Line(new XYZ(0, 2, 0), new XYZ(1, 2, 0));
+		doc.Entities.Add(a);
+		doc.Entities.Add(b);
+		doc.Entities.Add(c);
+
+		SortEntitiesTable table = new SortEntitiesTable(doc.ModelSpace);
+		table.Add(a, 0x200);
+		table.Add(b, 0x100);
+		table.Add(c, 0x300);
+		doc.ModelSpace.CreateExtendedDictionary().Add(SortEntitiesTable.DictionaryEntryName, table);
+
+		return table;
+	}
+
 	private SortEntitiesTable table(CadDocument doc, out Entity[] entities)
 	{
 		entities = new Entity[]
