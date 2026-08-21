@@ -16,8 +16,6 @@ public static class DxfSubclassMarker
 
 	public const string Angular2LineDimension = "AcDb2LineAngularDimension";
 
-	public const string ArcDimension = "AcDbArcDimension";
-
 	public const string Angular3PointDimension = "AcDb3PointAngularDimension";
 
 	public const string AnnotScaleObjectContextData = "AcDbAnnotScaleObjectContextData";
@@ -25,6 +23,8 @@ public static class DxfSubclassMarker
 	public const string ApplicationId = "AcDbRegAppTableRecord";
 
 	public const string Arc = "AcDbArc";
+
+	public const string ArcDimension = "AcDbArcDimension";
 
 	public const string Attribute = "AcDbAttribute";
 
@@ -307,6 +307,8 @@ public static class DxfSubclassMarker
 	public const string VPort = "AcDbViewportTableRecord";
 
 	public const string Wipeout = "AcDbWipeout";
+
+	public const string WipeoutVariables = "AcDbWipeoutVariables";
 
 	public const string XLine = "AcDbXline";
 
