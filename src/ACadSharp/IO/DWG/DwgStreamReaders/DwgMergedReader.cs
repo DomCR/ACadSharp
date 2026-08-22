@@ -180,6 +180,12 @@ namespace ACadSharp.IO.DWG
 			{
 				color = Color.ByLayer;
 			}
+			else if ((rgb & 0xFF000000) == 0xC8000000)
+			{
+				//AutoCAD marks "none" (index 257, ByEntity) with 0xC8; without this branch the value
+				//decodes as the true colour black and the original color cannot be written back.
+				color = Color.ByEntity;
+			}
 			else if ((rgb & 0b0000_0001_0000_0000_0000_0000_0000_0000) != 0)
 			{
 				//Indexed color
