@@ -172,6 +172,16 @@ public class RegionWriteTests
 		Assert.Empty(this.regions(DwgReader.Read(new MemoryStream(stream.ToArray()))));
 	}
 
+	[Fact]
+	public void ARegionWithNoGeometryIsNotWrittenToADxfEither()
+	{
+		CadDocument doc = DxfReader.Read(sampleR2018);
+		Region region = this.regions(doc).First();
+		region.AcisData = null;
+
+		Assert.Empty(this.regions(this.roundTrip(doc)));
+	}
+
 	private Region[] regions(CadDocument doc)
 	{
 		return doc.BlockRecords
