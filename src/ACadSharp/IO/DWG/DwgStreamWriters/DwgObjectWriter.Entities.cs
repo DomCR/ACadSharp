@@ -1586,7 +1586,11 @@ internal partial class DwgObjectWriter : DwgSectionIO
 		if (mtext.ColumnData.ColumnType != ColumnType.NoColumns)
 		{
 			//Column height count BL 72
-			this._writer.WriteBitLong(mtext.ColumnData.ColumnCount);
+			//The heights that follow are written one per count, so the count has to match the list;
+			//writing ColumnCount while writing Heights.Count values shifts every following bit and
+			//produces a file that AutoCAD refuses to open.
+			bool writeHeights = !mtext.ColumnData.AutoHeight && mtext.ColumnData.ColumnType == ColumnType.DynamicColumns;
+			this._writer.WriteBitLong(writeHeights ? mtext.ColumnData.Heights.Count : mtext.ColumnData.ColumnCount);
 			//Columnn width BD 44
 			this._writer.WriteBitDouble(mtext.ColumnData.Width);
 			//Gutter BD 45
@@ -1597,7 +1601,7 @@ internal partial class DwgObjectWriter : DwgSectionIO
 			this._writer.WriteBit(mtext.ColumnData.FlowReversed);
 
 			//IF not auto height and column type is dynamic columns
-			if (!mtext.ColumnData.AutoHeight && mtext.ColumnData.ColumnType == ColumnType.DynamicColumns)
+			if (writeHeights)
 			{
 				foreach (double h in mtext.ColumnData.Heights)
 				{
