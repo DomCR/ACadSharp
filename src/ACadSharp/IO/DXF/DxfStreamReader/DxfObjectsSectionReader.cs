@@ -1205,7 +1205,9 @@ internal class DxfObjectsSectionReader : DxfSectionReaderBase
 					&& dimassoc.FirstPointRef == null)
 				{
 					dimassoc.FirstPointRef = new DimensionAssociation.OsnapPointRef();
-					this.readOsnapPointRef(dimassoc.FirstPointRef);
+					//The template carries the 331 handle; dropping it left every geometry reference
+					//read from a DXF unresolved, which nothing noticed while the writer was disabled.
+					tmp.FirstPointRef = this.readOsnapPointRef(dimassoc.FirstPointRef);
 					this.lockPointer = true;
 					return true;
 				}
@@ -1214,7 +1216,9 @@ internal class DxfObjectsSectionReader : DxfSectionReaderBase
 					&& dimassoc.SecondPointRef == null)
 				{
 					dimassoc.SecondPointRef = new DimensionAssociation.OsnapPointRef();
-					this.readOsnapPointRef(dimassoc.SecondPointRef);
+					//The template carries the 331 handle; dropping it left every geometry reference
+					//read from a DXF unresolved, which nothing noticed while the writer was disabled.
+					tmp.SecondPointRef = this.readOsnapPointRef(dimassoc.SecondPointRef);
 					this.lockPointer = true;
 					return true;
 				}
@@ -1223,7 +1227,9 @@ internal class DxfObjectsSectionReader : DxfSectionReaderBase
 					&& dimassoc.ThirdPointRef == null)
 				{
 					dimassoc.ThirdPointRef = new DimensionAssociation.OsnapPointRef();
-					this.readOsnapPointRef(dimassoc.ThirdPointRef);
+					//The template carries the 331 handle; dropping it left every geometry reference
+					//read from a DXF unresolved, which nothing noticed while the writer was disabled.
+					tmp.ThirdPointRef = this.readOsnapPointRef(dimassoc.ThirdPointRef);
 					this.lockPointer = true;
 					return true;
 				}
@@ -1232,7 +1238,9 @@ internal class DxfObjectsSectionReader : DxfSectionReaderBase
 					&& dimassoc.FourthPointRef == null)
 				{
 					dimassoc.FourthPointRef = new DimensionAssociation.OsnapPointRef();
-					this.readOsnapPointRef(dimassoc.FourthPointRef);
+					//The template carries the 331 handle; dropping it left every geometry reference
+					//read from a DXF unresolved, which nothing noticed while the writer was disabled.
+					tmp.FourthPointRef = this.readOsnapPointRef(dimassoc.FourthPointRef);
 					this.lockPointer = true;
 					return true;
 				}
