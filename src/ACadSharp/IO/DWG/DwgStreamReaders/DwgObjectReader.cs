@@ -7290,6 +7290,44 @@ namespace ACadSharp.IO.DWG
 			//331
 			template.ObjectHandle = this.handleReference();
 
+			//Everything below this point used to be left unread. A DWG object stream is length
+			//delimited, so the reader simply stopped and the rest was skipped without a word - which
+			//is why the model came back with the osnap point at the origin and no geometry parameter.
+			//The layout was read off the bits against AutoCAD's own DXF export of the same objects
+			//(oracle/corpus/D_acad.dxf, objects 53DDAD7 and 53DDCA5, which differ in 91 and 40 and so
+			//pin down which field is which).
+
+			//The main object arrives as a subentity path: a count of object ids, then the ids
+			//themselves, then the subentity that is being pointed at. Every reference in the corpus
+			//names exactly one object - the handle already read above. A count other than one would
+			//mean further handles follow and everything after this would be misread, so say so rather
+			//than carry on quietly.
+			int mainPathIdCount = this._mergedReaders.ReadBitLong();
+			if (mainPathIdCount != 1)
+			{
+				this.notify($"Osnap point reference with {mainPathIdCount} object ids in its subentity path; only a single id is understood, the reference is read as far as it can be", NotificationType.Warning);
+			}
+
+			//73
+			osnap.SubentType = (SubentType)this._mergedReaders.ReadBitShort();
+			//91
+			osnap.GsMarker = this._mergedReaders.ReadBitLong();
+
+			//The intersection object arrives the same way, and in every sample the count is zero: no
+			//intersection object, so no handle and no 74/92/332/302 to go with it.
+			int intersectPathIdCount = this._mergedReaders.ReadBitLong();
+			if (intersectPathIdCount != 0)
+			{
+				this.notify($"Osnap point reference names {intersectPathIdCount} intersection object ids; no drawing measured so far has any, so the intersection fields are not read", NotificationType.Warning);
+			}
+
+			//40
+			osnap.GeometryParameter = this._mergedReaders.ReadBitDouble();
+			//10, 20, 30
+			osnap.OsnapPoint = this._mergedReaders.Read3BitDouble();
+			//75
+			osnap.HasLastPointRef = this._mergedReaders.ReadBit();
+
 			return template;
 		}
 
