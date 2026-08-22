@@ -74,8 +74,10 @@ public partial class XRecord : NonGraphicalObject
 	/// </summary>
 	/// <param name="code">The integer code that identifies the entry. The value should be unique within the collection.</param>
 	/// <param name="value">The value to associate with the entry. Can be any object, including <see langword="null"/>.</param>
-	public void CreateEntry(int code, object value)
+	public Entry CreateEntry(int code, object value)
 	{
-		this._entries.Add(new Entry(code, value, this));
+		Entry entry = new Entry(code, value, this);
+		this._entries.Add(entry);
+		return entry;
 	}
 }
