@@ -418,6 +418,12 @@ internal partial class DwgObjectReader : DwgSectionIO
 				//Text string TV 1 Present only if 344 value below is 0
 				var content = new CellContent();
 				content.CadValue.SetValue(this._mergedReaders.ReadVariableText(), CadValueType.String);
+
+				//The content type is not in this older layout - it is implied by the cell type, and the
+				//R2010 layout the writer produces states it. Left at its default the cell says it holds
+				//nothing, so the writer skips the very value just read: the text is lost, and AutoCAD
+				//refuses the whole drawing rather than the one table. Measured on sample_AC1018.
+				content.ContentType = TableCellContentType.Value;
 				cell.Contents.Add(content);
 				break;
 			case CellType.Block:
