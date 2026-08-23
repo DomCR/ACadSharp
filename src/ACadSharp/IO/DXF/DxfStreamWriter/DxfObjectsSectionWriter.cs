@@ -403,13 +403,19 @@ internal class DxfObjectsSectionWriter : DxfSectionWriterBase
 		{
 			case AcdbPlaceHolder acdbPlaceHolder:
 				this.writeAcdbPlaceHolder(acdbPlaceHolder);
-				return;
+				break;
+			case BlockReferenceObjectContextData blockContextData:
+				this.writeBlockReferenceObjectContextData(blockContextData);
+				break;
+			case MTextAttributeObjectContextData mtextContextData:
+				this.writeMTextAttributeObjectContextData(mtextContextData);
+				break;
 			case BookColor bookColor:
 				this.writeBookColor(bookColor);
-				return;
+				break;
 			case CadDictionary cadDictionary:
 				this.writeDictionary(cadDictionary);
-				return;
+				break;
 			case BlockRepresentationData representationData:
 				this.writeBlockRepresentationData(representationData);
 				break;
@@ -481,10 +487,10 @@ internal class DxfObjectsSectionWriter : DxfSectionWriterBase
 				break;
 			case ImageDefinition imageDefinition:
 				this.writeImageDefinition(imageDefinition);
-				return;
+				break;
 			case ImageDefinitionReactor reactor:
 				this.writeImageDefinitionReactor(reactor);
-				return;
+				break;
 			case Layout layout:
 				this.writeLayout(layout);
 				break;
@@ -727,8 +733,6 @@ internal class DxfObjectsSectionWriter : DxfSectionWriterBase
 			case MultiLeaderObjectContextData:
 			case VisualStyle:
 			case ProxyObject:
-			case MTextAttributeObjectContextData:
-			case BlockReferenceObjectContextData:
 				this.notify($"Object not implemented : {co.GetType().FullName}", NotificationType.NotImplemented);
 				return false;
 			case EvaluationGraph when this.Configuration.WriteDynamicBlockData:
@@ -741,6 +745,13 @@ internal class DxfObjectsSectionWriter : DxfSectionWriterBase
 
 	private void writeAcdbPlaceHolder(AcdbPlaceHolder acdbPlaceHolder)
 	{
+	}
+
+	private void writeAnnotScaleObjectContextData(AnnotScaleObjectContextData contextData)
+	{
+		this._writer.Write(100, DxfSubclassMarker.AnnotScaleObjectContextData);
+
+		this._writer.WriteHandle(340, contextData.Scale);
 	}
 
 	private void writeBlock1PtParameter(Block1PtParameter parameter)
@@ -1180,6 +1191,21 @@ internal class DxfObjectsSectionWriter : DxfSectionWriterBase
 		this._writer.Write(77, 0, map);
 	}
 
+	private void writeBlockReferenceObjectContextData(BlockReferenceObjectContextData contextData)
+	{
+		DxfClassMap map = DxfClassMap.Create<BlockReferenceObjectContextData>();
+
+		this.writeAnnotScaleObjectContextData(contextData);
+
+		this._writer.Write(50, contextData.Rotation, map);
+
+		this._writer.Write(10, contextData.InsertionPoint, map);
+
+		this._writer.Write(41, contextData.XScale, map);
+		this._writer.Write(42, contextData.YScale, map);
+		this._writer.Write(43, contextData.ZScale, map);
+	}
+
 	private void writeBlockRepresentationData(BlockRepresentationData representationData)
 	{
 		DxfClassMap map = DxfClassMap.Create<BlockRepresentationData>();
@@ -1600,6 +1626,22 @@ internal class DxfObjectsSectionWriter : DxfSectionWriterBase
 
 		this._writer.Write(90, reactor.ClassVersion);
 		this._writer.WriteHandle(330, reactor.Image);
+	}
+
+	private void writeMTextAttributeObjectContextData(MTextAttributeObjectContextData contextData)
+	{
+		DxfClassMap map = DxfClassMap.Create<MTextAttributeObjectContextData>();
+
+		this.writeAnnotScaleObjectContextData(contextData);
+
+		this._writer.Write(70, contextData.AttachmentPoint, map);
+
+		this._writer.Write(50, contextData.Rotation, map);
+
+		this._writer.Write(10, contextData.AlignmentPoint, map);
+		this._writer.Write(11, contextData.InsertPoint, map);
+
+		this._writer.Write(290, contextData.Value290, map);
 	}
 
 	private void writeOsnapPointRef(DimensionAssociation.OsnapPointRef osnapPoint)
