@@ -234,9 +234,9 @@ namespace ACadSharp.IO.SVG
 				this.WriteValue(" ");
 				this.WriteValue(vb.Min.Y.ToPixelSize(units));
 				this.WriteValue(" ");
-				this.WriteValue((vb.Width).ToPixelSize(units));
+				this.WriteValue(vb.LengthX.ToPixelSize(units));
 				this.WriteValue(" ");
-				this.WriteValue((vb.Height).ToPixelSize(units));
+				this.WriteValue(vb.LengthY.ToPixelSize(units));
 				this.WriteEndAttribute();
 			}
 
@@ -561,8 +561,8 @@ namespace ACadSharp.IO.SVG
 				//Add BasePoint
 				this.WriteAttributeString("x1", 0.0d.ToSvg(this.Units));
 				this.WriteAttributeString("y1", 0.0d.ToSvg(this.Units));
-				this.WriteAttributeString("x2", (x).ToSvg(this.Units));
-				this.WriteAttributeString("y2", (y).ToSvg(this.Units));
+				this.WriteAttributeString("x2", x.ToSvg(this.Units));
+				this.WriteAttributeString("y2", y.ToSvg(this.Units));
 
 				//Rotate the pattern after line
 				//this.WriteAttributeString("x1", 0.0d.ToSvg(this.Units));
@@ -584,8 +584,8 @@ namespace ACadSharp.IO.SVG
 				if (false)
 				{
 					this.WriteStartElement("rect");
-					this.WriteAttributeString("width", (item.LineOffset).ToSvg(this.Units));
-					this.WriteAttributeString("height", (item.LineOffset).ToSvg(this.Units));
+					this.WriteAttributeString("width", item.LineOffset.ToSvg(this.Units));
+					this.WriteAttributeString("height", item.LineOffset.ToSvg(this.Units));
 					this.WriteAttributeString("fill", $"none");
 					this.WriteAttributeString("stroke", $"red");
 					this.WriteEndElement();
@@ -596,8 +596,8 @@ namespace ACadSharp.IO.SVG
 			}
 
 			string id = this.writePatternHeader(hatch);
-			var width = patterns.Values.Max(w => w.Width);
-			var height = patterns.Values.Max(w => w.Height);
+			var width = patterns.Values.Max(w => w.LengthX);
+			var height = patterns.Values.Max(w => w.LengthY);
 
 			this.WriteAttributeString("width", width.ToSvg(this.Units));
 			this.WriteAttributeString("height", height.ToSvg(this.Units));
@@ -605,8 +605,8 @@ namespace ACadSharp.IO.SVG
 			foreach (var item in patterns)
 			{
 				this.WriteStartElement("rect");
-				this.WriteAttributeString("width", (item.Value.Width).ToSvg(this.Units));
-				this.WriteAttributeString("height", (item.Value.Height).ToSvg(this.Units));
+				this.WriteAttributeString("width", item.Value.LengthX.ToSvg(this.Units));
+				this.WriteAttributeString("height", item.Value.LengthY.ToSvg(this.Units));
 				this.WriteAttributeString("fill", $"url(#{item.Key})");
 				this.WriteEndElement();
 			}

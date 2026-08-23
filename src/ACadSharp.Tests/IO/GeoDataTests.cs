@@ -1,5 +1,4 @@
-﻿using ACadSharp.IO;
-using ACadSharp.Objects;
+﻿using ACadSharp.Objects;
 using ACadSharp.Tests.TestModels;
 using Xunit;
 using Xunit.Abstractions;

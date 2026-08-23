@@ -1,7 +1,6 @@
 ﻿using ACadSharp.Objects;
 using ACadSharp.Tables;
 using System.Linq;
-using System.Xml.Linq;
 
 namespace ACadSharp.IO.Templates
 {

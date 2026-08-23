@@ -1,68 +1,85 @@
 ﻿using ACadSharp.Entities;
+using ACadSharp.Tables;
 using System;
 using Xunit;
 
-namespace ACadSharp.Tests.Entities
+namespace ACadSharp.Tests.Entities;
+
+public abstract class CommonDimensionTests<T> : CommonEntityTests<T>
+	where T : Dimension, new()
 {
-	public abstract class CommonDimensionTests<T> : CommonEntityTests<T>
-		where T : Dimension, new()
+	public abstract DimensionType Type { get; }
+
+	[Fact]
+	public void DimensionStyleOverride()
 	{
-		public abstract DimensionType Type { get; }
+		T dim = new T();
+		DimensionStyle style = new DimensionStyle();
+		style.ScaleFactor = 2.0;
+		style.ToleranceZeroHandling = ZeroHandling.ShowZeroFeetSuppressZeroInches;
 
-		[Fact]
-		public void DimensionTypeTest()
-		{
-			T dim = new T();
+		dim.SetDimensionOverride(style);
 
-			Assert.True(dim.Flags.HasFlag(this.Type));
-			Assert.True(dim.Flags.HasFlag(DimensionType.BlockReference));
-		}
+		var current = dim.GetActiveDimensionStyle();
 
-		[Fact]
-		public void DimStyleNotNull()
-		{
-			T dim = new T();
+		Assert.NotNull(current);
+		Assert.Equal("override", current.Name);
+		Assert.Equal(style.ScaleFactor, current.ScaleFactor);
+	}
 
-			Assert.NotNull(dim.Style);
-			Assert.Throws<ArgumentNullException>(() => dim.Style = null);
-		}
+	[Fact]
+	public void DimensionTypeTest()
+	{
+		T dim = new T();
 
-		[Fact]
-		public void IsAngularTest()
-		{
-			T dim = this.createDim();
+		Assert.True(dim.Flags.HasFlag(this.Type));
+		Assert.True(dim.Flags.HasFlag(DimensionType.BlockReference));
+	}
 
-			Assert.Equal(dim.Flags.HasFlag(DimensionType.Angular) || dim.Flags.HasFlag(DimensionType.Angular3Point), dim.IsAngular);
-		}
+	[Fact]
+	public void DimStyleNotNull()
+	{
+		T dim = new T();
 
-		[Fact]
-		public void IsTextUserDefinedLocationTest()
-		{
-			T dim = new T();
+		Assert.NotNull(dim.Style);
+		Assert.Throws<ArgumentNullException>(() => dim.Style = null);
+	}
 
-			Assert.False(dim.Flags.HasFlag(DimensionType.TextUserDefinedLocation));
+	[Fact]
+	public void IsAngularTest()
+	{
+		T dim = this.createDim();
 
-			dim.IsTextUserDefinedLocation = true;
+		Assert.Equal(dim.Flags.HasFlag(DimensionType.Angular) || dim.Flags.HasFlag(DimensionType.Angular3Point), dim.IsAngular);
+	}
 
-			Assert.True(dim.Flags.HasFlag(DimensionType.TextUserDefinedLocation));
-		}
+	[Fact]
+	public void IsTextUserDefinedLocationTest()
+	{
+		T dim = new T();
 
-		[Fact]
-		public virtual void UpdateBlockTests()
-		{
-			T dim = this.createDim();
+		Assert.False(dim.Flags.HasFlag(DimensionType.TextUserDefinedLocation));
 
-			Assert.Null(dim.Block);
+		dim.IsTextUserDefinedLocation = true;
 
-			dim.UpdateBlock();
+		Assert.True(dim.Flags.HasFlag(DimensionType.TextUserDefinedLocation));
+	}
 
-			Assert.NotNull(dim.Block);
-			Assert.True(dim.Block.IsAnonymous);
-		}
+	[Fact]
+	public virtual void UpdateBlockTests()
+	{
+		T dim = this.createDim();
 
-		protected virtual T createDim()
-		{
-			return new T();
-		}
+		Assert.Null(dim.Block);
+
+		dim.UpdateBlock();
+
+		Assert.NotNull(dim.Block);
+		Assert.True(dim.Block.IsAnonymous);
+	}
+
+	protected virtual T createDim()
+	{
+		return new T();
 	}
 }

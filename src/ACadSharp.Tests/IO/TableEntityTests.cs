@@ -38,7 +38,7 @@ namespace ACadSharp.Tests.IO
 
 			configuration.KeepUnknownNonGraphicalObjects = true;
 
-			CadDocument doc = this.readDocument(test, configuration);
+			CadDocument doc = this.readDocument(test, configuration: configuration);
 
 			if (doc.Header.Version < ACadVersion.AC1012)
 			{
@@ -66,7 +66,7 @@ namespace ACadSharp.Tests.IO
 			//First row
 			TableEntity.Cell titleCell = table.GetCell(0, 0);
 			Assert.False(titleCell.HasMultipleContent);
-			Assert.Equal("Hello this is a title", titleCell.Content.Value.Value);
+			Assert.Equal("Hello this is a title", titleCell.Content.CadValue.Value);
 
 			TableEntity.Cell next = table.GetCell(0, 1);
 		}

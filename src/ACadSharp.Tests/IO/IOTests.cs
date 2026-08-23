@@ -3,7 +3,6 @@ using ACadSharp.IO;
 using ACadSharp.Tests.TestModels;
 using System.Collections.Generic;
 using System.IO;
-using System.Linq;
 using Xunit;
 using Xunit.Abstractions;
 
@@ -27,8 +26,10 @@ namespace ACadSharp.Tests.IO
 			List<Entity> entities = new List<Entity>(doc.Entities);
 			foreach (var item in entities)
 			{
-				Entity e = doc.Entities.Remove(item);
-				transfer.Entities.Add(e);
+				if (doc.Entities.Remove(item))
+				{
+					transfer.Entities.Add(item);
+				}
 			}
 
 			string file = Path.GetFileNameWithoutExtension(test.Path);
@@ -48,8 +49,10 @@ namespace ACadSharp.Tests.IO
 			List<Entity> entities = new List<Entity>(doc.Entities);
 			foreach (var item in entities)
 			{
-				Entity e = doc.Entities.Remove(item);
-				transfer.Entities.Add(e);
+				if (doc.Entities.Remove(item))
+				{
+					transfer.Entities.Add(item);
+				}
 			}
 
 			string file = Path.GetFileNameWithoutExtension(test.Path);
@@ -92,8 +95,10 @@ namespace ACadSharp.Tests.IO
 			List<Entity> entities = new List<Entity>(doc.Entities);
 			foreach (var item in entities)
 			{
-				Entity e = doc.Entities.Remove(item);
-				transfer.Entities.Add(e);
+				if (doc.Entities.Remove(item))
+				{
+					transfer.Entities.Add(item);
+				}
 			}
 
 			string file = Path.GetFileNameWithoutExtension(test.Path);
@@ -145,7 +150,7 @@ namespace ACadSharp.Tests.IO
 			if (!TestVariables.LocalEnv)
 				return;
 
-			if (!isSupportedVersion(doc.Header.Version))
+			if (!this.isSupportedVersion(doc.Header.Version))
 				return;
 
 			using (DwgWriter writer = new DwgWriter(file, doc))

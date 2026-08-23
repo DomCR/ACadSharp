@@ -3,7 +3,6 @@ using ACadSharp.Tables;
 using CSMath;
 using CSUtilities.Extensions;
 using System;
-using System.Collections.Generic;
 
 namespace ACadSharp.Entities
 {

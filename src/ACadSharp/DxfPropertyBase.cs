@@ -444,6 +444,9 @@ namespace ACadSharp
 				{
 					case 62:
 					case 70:
+					case 176:
+					case 177:
+					case 178:
 						return color.Index;
 					case 420:
 						// true color

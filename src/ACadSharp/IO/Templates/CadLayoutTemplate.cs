@@ -34,7 +34,7 @@ namespace ACadSharp.IO.Templates
 
 			if (builder.TryGetCadObject(this.ActiveViewportHandle, out Viewport viewport))
 			{
-				this.CadObject.Viewport = viewport;
+				this.CadObject.LastActiveViewport = viewport;
 			}
 
 			if (builder.TryGetCadObject(this.BaseUcsHandle, out UCS ucs))

@@ -79,6 +79,7 @@ namespace ACadSharp.Entities
 		/// <returns></returns>
 		Color GetActiveColor();
 
+		/// <summary>
 		/// Get the active line type for the entity, process the line types like <see cref="LineType.ByBlock"/> and <see cref="LineType.ByLayer"/>.
 		/// </summary>
 		/// <returns></returns>

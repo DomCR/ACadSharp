@@ -6,7 +6,7 @@
 		{
 			public string Name { get; set; }
 
-			public CellValue Value { get; set; } = new CellValue();
+			public CadValue Value { get; set; } = new();
 		}
 	}
 }

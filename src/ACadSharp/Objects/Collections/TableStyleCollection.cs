@@ -1,6 +1,4 @@
-﻿using System;
-
-namespace ACadSharp.Objects.Collections
+﻿namespace ACadSharp.Objects.Collections
 {
 	/// <summary>
 	/// Represents a collection of named <see cref="TableStyle"/> definitions stored in a CAD dictionary.

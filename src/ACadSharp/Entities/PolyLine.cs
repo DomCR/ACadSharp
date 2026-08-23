@@ -6,261 +6,265 @@ using CSUtilities.Extensions;
 using System.Collections.Generic;
 using System.Linq;
 
-namespace ACadSharp.Entities
+namespace ACadSharp.Entities;
+
+/// <summary>
+/// Represents a <see cref="Polyline{T}"/> entity.
+/// </summary>
+[DxfName(DxfFileToken.EntityPolyline)]
+[DxfSubClass(null, true)]
+public abstract class Polyline<T> : Entity, IPolyline
+	where T : Entity, IVertex
 {
+	/// <inheritdoc/>
+	[DxfCodeValue(30)]
+	public double Elevation { get; set; } = 0.0;
+
 	/// <summary>
-	/// Represents a <see cref="Polyline{T}"/> entity.
+	/// End width.
 	/// </summary>
-	[DxfName(DxfFileToken.EntityPolyline)]
-	[DxfSubClass(null, true)]
-	public abstract class Polyline<T> : Entity, IPolyline
-		where T : Entity, IVertex
+	[DxfCodeValue(41)]
+	public double EndWidth { get; set; } = 0.0;
+
+	/// <summary>
+	/// Polyline flags.
+	/// </summary>
+	[DxfCodeValue(70)]
+	public virtual PolylineFlags Flags { get => this._flags; set => this._flags = value; }
+
+	/// <inheritdoc/>
+	public bool IsClosed
 	{
-		/// <inheritdoc/>
-		[DxfCodeValue(30)]
-		public double Elevation { get; set; } = 0.0;
-
-		/// <summary>
-		/// End width.
-		/// </summary>
-		[DxfCodeValue(41)]
-		public double EndWidth { get; set; } = 0.0;
-
-		/// <summary>
-		/// Polyline flags.
-		/// </summary>
-		[DxfCodeValue(70)]
-		public virtual PolylineFlags Flags { get => this._flags; set => this._flags = value; }
-
-		/// <inheritdoc/>
-		public bool IsClosed
+		get
 		{
-			get
+			return this.Flags.HasFlag(PolylineFlags.ClosedPolylineOrClosedPolygonMeshInM) || this.Flags.HasFlag(PolylineFlags.ClosedPolygonMeshInN);
+		}
+		set
+		{
+			if (value)
 			{
-				return this.Flags.HasFlag(PolylineFlags.ClosedPolylineOrClosedPolygonMeshInM) || this.Flags.HasFlag(PolylineFlags.ClosedPolygonMeshInN);
+				this._flags.AddFlag(PolylineFlags.ClosedPolylineOrClosedPolygonMeshInM);
+				this._flags.AddFlag(PolylineFlags.ClosedPolygonMeshInN);
 			}
-			set
+			else
 			{
-				if (value)
-				{
-					this._flags.AddFlag(PolylineFlags.ClosedPolylineOrClosedPolygonMeshInM);
-					this._flags.AddFlag(PolylineFlags.ClosedPolygonMeshInN);
-				}
-				else
-				{
-					this._flags.RemoveFlag(PolylineFlags.ClosedPolylineOrClosedPolygonMeshInM);
-					this._flags.RemoveFlag(PolylineFlags.ClosedPolygonMeshInN);
-				}
+				this._flags.RemoveFlag(PolylineFlags.ClosedPolylineOrClosedPolygonMeshInM);
+				this._flags.RemoveFlag(PolylineFlags.ClosedPolygonMeshInN);
 			}
 		}
+	}
 
-		/// <inheritdoc/>
-		public override Layer Layer
+	/// <inheritdoc/>
+	public override Layer Layer
+	{
+		get => base.Layer;
+		set
 		{
-			get => base.Layer;
-			set
-			{
-				base.Layer = value;
-				if (this.MatchVerticesEntityProperties)
-				{
-					this.Vertices.ForEach(v => v.Layer = this.Layer);
-				}
-			}
-		}
-
-		/// <inheritdoc/>
-		public override LineType LineType
-		{
-			get => base.LineType;
-			set
-			{
-				base.LineType = value;
-				if (this.MatchVerticesEntityProperties)
-				{
-					this.Vertices.ForEach(v => v.Layer = this.Layer);
-				}
-			}
-		}
-
-		/// <summary>
-		/// Gets or sets a value indicating whether entity properties in the <see cref="Vertex"/> should be equals to the polyline
-		/// when adding vertices or modifying the polyline properties.
-		/// </summary>
-		public bool MatchVerticesEntityProperties { get; set; } = true;
-
-		/// <inheritdoc/>
-		[DxfCodeValue(210, 220, 230)]
-		public XYZ Normal { get; set; } = XYZ.AxisZ;
-
-		/// <inheritdoc/>
-		public override string ObjectName => DxfFileToken.EntityPolyline;
-
-		/// <summary>
-		/// Curves and smooth surface type.
-		/// </summary>
-		[DxfCodeValue(75)]
-		public SmoothSurfaceType SmoothSurface { get; set; }
-
-		/// <summary>
-		/// Start width.
-		/// </summary>
-		[DxfCodeValue(40)]
-		public double StartWidth { get; set; } = 0.0;
-
-		/// <inheritdoc/>
-		[DxfCodeValue(39)]
-		public double Thickness { get; set; } = 0.0;
-
-		/// <summary>
-		/// Vertices that form this polyline.
-		/// </summary>
-		/// <remarks>
-		/// Each <see cref="Vertex"/> has it's own unique handle.
-		/// </remarks>
-		public SeqendCollection<T> Vertices { get; private set; }
-
-		/// <inheritdoc/>
-		IEnumerable<IVertex> IPolyline.Vertices { get { return this.Vertices; } }
-
-		private PolylineFlags _flags;
-
-		/// <summary>
-		/// Default constructor.
-		/// </summary>
-		public Polyline() : base()
-		{
-			this.Vertices = new SeqendCollection<T>(this);
-			this.Vertices.OnAdd += this.onAddVertices;
-		}
-
-		public Polyline(IEnumerable<T> vertices, bool isClosed) : this()
-		{
-			if (vertices == null)
-				throw new System.ArgumentException("The vertices enumerable cannot be null or empty", nameof(vertices));
-
-			this.Vertices.AddRange(vertices);
-			this.IsClosed = isClosed;
-		}
-
-		/// <inheritdoc/>
-		public override void ApplyTransform(Transform transform)
-		{
-			var newNormal = this.transformNormal(transform, this.Normal);
-
-			this.getWorldMatrix(transform, this.Normal, newNormal, out Matrix3 transOW, out Matrix3 transWO);
-
-			foreach (var vertex in this.Vertices)
-			{
-				XYZ v = transOW * vertex.Location.Convert<XYZ>();
-				v = transform.ApplyTransform(v);
-				v = transWO * v;
-				vertex.Location = v;
-			}
-
-			this.Normal = newNormal;
-		}
-
-		/// <inheritdoc/>
-		public override CadObject Clone()
-		{
-			Polyline<T> clone = (Polyline<T>)base.Clone();
-
-			clone.Vertices = new SeqendCollection<T>(clone);
-			foreach (T v in this.Vertices)
-			{
-				clone.Vertices.Add((T)v.Clone());
-			}
-
-			return clone;
-		}
-
-		/// <inheritdoc/>
-		public override BoundingBox GetBoundingBox()
-		{
-			if (this.Vertices.Any(v => v.Bulge != 0))
-			{
-				return BoundingBox.FromPoints(this.GetPoints<XYZ>(byte.MaxValue));
-			}
-
-			return BoundingBox.FromPoints(this.Vertices.Select(v => v.Location.Convert<XYZ>()));
-		}
-
-		internal static IEnumerable<Entity> Explode(IPolyline polyline)
-		{
-			//Generic explode method for Polyline2D and LwPolyline
-			List<Entity> entities = new List<Entity>();
-
-			for (int i = 0; i < polyline.Vertices.Count(); i++)
-			{
-				IVertex curr = polyline.Vertices.ElementAt(i);
-				IVertex next = polyline.Vertices.ElementAtOrDefault(i + 1);
-
-				if (next == null && polyline.IsClosed)
-				{
-					next = polyline.Vertices.First();
-				}
-				else if (next == null)
-				{
-					break;
-				}
-
-				Entity e = null;
-				if (curr.Bulge == 0)
-				{
-					//Is a line
-					e = new Line
-					{
-						StartPoint = curr.Location.Convert<XYZ>(),
-						EndPoint = next.Location.Convert<XYZ>(),
-						Normal = polyline.Normal,
-						Thickness = polyline.Thickness,
-					};
-				}
-				else
-				{
-					XY p1 = curr.Location.Convert<XY>();
-					XY p2 = next.Location.Convert<XY>();
-
-					//Is an arc
-					Arc arc = Arc.CreateFromBulge(p1, p2, curr.Bulge);
-					arc.Center = new XYZ(arc.Center.X, arc.Center.Y, polyline.Elevation);
-					arc.Normal = polyline.Normal;
-					arc.Thickness = polyline.Thickness;
-
-					e = arc;
-				}
-
-				e.MatchProperties(polyline);
-
-				entities.Add(e);
-			}
-
-			return entities;
-		}
-
-		internal override void AssignDocument(CadDocument doc)
-		{
-			base.AssignDocument(doc);
-			doc.RegisterCollection(this.Vertices);
-		}
-
-		internal override void UnassignDocument()
-		{
-			this.Document.UnregisterCollection(this.Vertices);
-			base.UnassignDocument();
-		}
-
-		private void onAddVertices(object sender, CollectionChangedEventArgs e)
-		{
-			if (!(e.Item is Entity entity))
-			{
-				return;
-			}
-
+			base.Layer = value;
 			if (this.MatchVerticesEntityProperties)
 			{
-				entity.MatchProperties(this);
+				this.Vertices.ForEach(v => v.Layer = this.Layer);
 			}
+		}
+	}
+
+	/// <inheritdoc/>
+	public override LineType LineType
+	{
+		get => base.LineType;
+		set
+		{
+			base.LineType = value;
+			if (this.MatchVerticesEntityProperties)
+			{
+				this.Vertices.ForEach(v => v.Layer = this.Layer);
+			}
+		}
+	}
+
+	/// <summary>
+	/// Gets or sets a value indicating whether entity properties in the <see cref="Vertex"/> should be equals to the polyline
+	/// when adding vertices or modifying the polyline properties.
+	/// </summary>
+	public bool MatchVerticesEntityProperties { get; set; } = true;
+
+	/// <inheritdoc/>
+	[DxfCodeValue(210, 220, 230)]
+	public XYZ Normal { get; set; } = XYZ.AxisZ;
+
+	/// <inheritdoc/>
+	public override string ObjectName => DxfFileToken.EntityPolyline;
+
+	/// <summary>
+	/// Curves and smooth surface type.
+	/// </summary>
+	[DxfCodeValue(75)]
+	public SmoothSurfaceType SmoothSurface { get; set; }
+
+	/// <summary>
+	/// Start width.
+	/// </summary>
+	[DxfCodeValue(40)]
+	public double StartWidth { get; set; } = 0.0;
+
+	/// <inheritdoc/>
+	[DxfCodeValue(39)]
+	public double Thickness { get; set; } = 0.0;
+
+	/// <summary>
+	/// Vertices that form this polyline.
+	/// </summary>
+	/// <remarks>
+	/// Each <see cref="Vertex"/> has it's own unique handle.
+	/// </remarks>
+	public SeqendCollection<T> Vertices { get; private set; }
+
+	/// <inheritdoc/>
+	IEnumerable<IVertex> IPolyline.Vertices { get { return this.Vertices; } }
+
+	private PolylineFlags _flags;
+
+	/// <summary>
+	/// Default constructor.
+	/// </summary>
+	public Polyline() : base()
+	{
+		this.initCollections();
+	}
+
+	public Polyline(IEnumerable<T> vertices, bool isClosed) : this()
+	{
+		if (vertices == null)
+			throw new System.ArgumentException("The vertices enumerable cannot be null or empty", nameof(vertices));
+
+		this.Vertices.AddRange(vertices);
+		this.IsClosed = isClosed;
+	}
+
+	/// <inheritdoc/>
+	public override void ApplyTransform(Transform transform)
+	{
+		var newNormal = this.transformNormal(transform, this.Normal);
+
+		this.getWorldMatrix(transform, this.Normal, newNormal, out Matrix3 transOW, out Matrix3 transWO);
+
+		foreach (var vertex in this.Vertices)
+		{
+			XYZ v = transOW * vertex.Location.Convert<XYZ>();
+			v = transform.ApplyTransform(v);
+			v = transWO * v;
+			vertex.Location = v;
+		}
+
+		this.Normal = newNormal;
+	}
+
+	/// <inheritdoc/>
+	public override CadObject Clone()
+	{
+		Polyline<T> clone = (Polyline<T>)base.Clone();
+
+		clone.initCollections();
+		foreach (T v in this.Vertices)
+		{
+			clone.Vertices.Add((T)v.Clone());
+		}
+
+		return clone;
+	}
+
+	/// <inheritdoc/>
+	public override BoundingBox GetBoundingBox()
+	{
+		if (this.Vertices.Any(v => v.Bulge != 0))
+		{
+			return BoundingBox.FromPoints(this.GetPoints<XYZ>(byte.MaxValue));
+		}
+
+		return BoundingBox.FromPoints(this.Vertices.Select(v => v.Location.Convert<XYZ>()));
+	}
+
+	internal static IEnumerable<Entity> Explode(IPolyline polyline)
+	{
+		//Generic explode method for Polyline2D and LwPolyline
+		List<Entity> entities = new List<Entity>();
+
+		for (int i = 0; i < polyline.Vertices.Count(); i++)
+		{
+			IVertex curr = polyline.Vertices.ElementAt(i);
+			IVertex next = polyline.Vertices.ElementAtOrDefault(i + 1);
+
+			if (next == null && polyline.IsClosed)
+			{
+				next = polyline.Vertices.First();
+			}
+			else if (next == null)
+			{
+				break;
+			}
+
+			Entity e = null;
+			if (curr.Bulge == 0)
+			{
+				//Is a line
+				e = new Line
+				{
+					StartPoint = curr.Location.Convert<XYZ>(),
+					EndPoint = next.Location.Convert<XYZ>(),
+					Normal = polyline.Normal,
+					Thickness = polyline.Thickness,
+				};
+			}
+			else
+			{
+				XY p1 = curr.Location.Convert<XY>();
+				XY p2 = next.Location.Convert<XY>();
+
+				//Is an arc
+				Arc arc = Arc.CreateFromBulge(p1, p2, curr.Bulge);
+				arc.Center = new XYZ(arc.Center.X, arc.Center.Y, polyline.Elevation);
+				arc.Normal = polyline.Normal;
+				arc.Thickness = polyline.Thickness;
+
+				e = arc;
+			}
+
+			e.MatchProperties(polyline);
+
+			entities.Add(e);
+		}
+
+		return entities;
+	}
+
+	internal override void AssignDocument(CadDocument doc)
+	{
+		base.AssignDocument(doc);
+		doc.RegisterCollection(this.Vertices);
+	}
+
+	internal override void UnassignDocument()
+	{
+		this.Document.UnregisterCollection(this.Vertices);
+		base.UnassignDocument();
+	}
+
+	protected virtual void initCollections()
+	{
+		this.Vertices = new SeqendCollection<T>(this);
+		this.Vertices.OnAdd += this.onAddVertices;
+	}
+
+	protected void onAddVertices(object sender, CollectionChangedEventArgs e)
+	{
+		if (!(e.Item is Entity entity))
+		{
+			return;
+		}
+
+		if (this.MatchVerticesEntityProperties)
+		{
+			entity.MatchProperties(this);
 		}
 	}
 }

@@ -1,5 +1,4 @@
 ﻿using ACadSharp.Tables;
-using CSUtilities.Extensions;
 using Xunit;
 
 namespace ACadSharp.Tests.Tables.Collections

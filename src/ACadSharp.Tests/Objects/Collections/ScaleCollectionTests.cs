@@ -1,6 +1,5 @@
 ﻿using ACadSharp.Objects;
 using ACadSharp.Objects.Collections;
-using Xunit;
 
 namespace ACadSharp.Tests.Objects.Collections
 {

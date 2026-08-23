@@ -1,5 +1,6 @@
 ﻿using ACadSharp.Blocks;
 using ACadSharp.Exceptions;
+using ACadSharp.IO.DXF.DxfStreamReader;
 using ACadSharp.IO.Templates;
 using ACadSharp.Tables;
 using System;
@@ -158,7 +159,7 @@ namespace ACadSharp.IO.DXF
 
 				if (entityTemplate.OwnerHandle == null)
 				{
-					recordTemplate.OwnedObjectsHandlers.Add(entityTemplate.CadObject.Handle);
+					recordTemplate.ReferenceTemplates.Add(entityTemplate);
 				}
 				else if (this._builder.TryGetObjectTemplate(entityTemplate.OwnerHandle, out ICadOwnerTemplate owner))
 				{
@@ -166,7 +167,7 @@ namespace ACadSharp.IO.DXF
 				}
 				else
 				{
-					_builder.OrphanTemplates.Add(entityTemplate);
+					this._builder.OrphanTemplates.Add(entityTemplate);
 				}
 			}
 

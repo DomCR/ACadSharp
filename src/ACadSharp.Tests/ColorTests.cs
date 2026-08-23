@@ -1,6 +1,5 @@
 ﻿using ACadSharp.Tests.Common;
 using System;
-using System.Drawing;
 using Xunit;
 using Xunit.Abstractions;
 
@@ -12,7 +11,7 @@ namespace ACadSharp.Tests
 
 		public ColorTests(ITestOutputHelper output)
 		{
-			_output = output;
+			this._output = output;
 		}
 
 		[Fact]

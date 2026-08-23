@@ -8,14 +8,14 @@ internal class CadValueTemplate : ICadTemplate
 
 	public CadValueTemplate(CadValue value)
 	{
-		this.CadValue = new CadValue();
+		this.CadValue = value;
 	}
 
 	public void Build(CadDocumentBuilder builder)
 	{
 		if (builder.TryGetCadObject<CadObject>(this.ValueHandle, out var cadObject))
 		{
-			this.CadValue.Value = cadObject;
+			this.CadValue.SetValue(cadObject, CadValueType.Handle);
 		}
 	}
 }

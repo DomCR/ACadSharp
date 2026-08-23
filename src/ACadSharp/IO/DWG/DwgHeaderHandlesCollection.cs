@@ -1,5 +1,4 @@
 ﻿using ACadSharp.Header;
-using ACadSharp.Objects;
 using ACadSharp.Tables;
 using System.Collections.Generic;
 using System.Runtime.CompilerServices;

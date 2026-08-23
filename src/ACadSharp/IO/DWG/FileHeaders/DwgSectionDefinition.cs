@@ -6,6 +6,8 @@ namespace ACadSharp.IO.DWG
 	{
 		public const string AcDbObjects = "AcDb:AcDbObjects";
 
+		public const string AcDsPrototype = "AcDb:AcDsPrototype_1b";
+
 		public const string AppInfo = "AcDb:AppInfo";
 
 		public const string AuxHeader = "AcDb:AuxHeader";

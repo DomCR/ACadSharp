@@ -1,5 +1,4 @@
-﻿using ACadSharp.Entities;
-using CSMath;
+﻿using CSMath;
 using System;
 using System.IO;
 using System.Text;
@@ -55,7 +54,7 @@ namespace ACadSharp.IO.DWG
 
 		void WriteTimeSpan(TimeSpan value);
 
-		void WriteCmColor(Color value);
+		void WriteCmColor(Color value, bool useTextStream = false);
 
 		void WriteEnColor(Color color, Transparency transparency);
 

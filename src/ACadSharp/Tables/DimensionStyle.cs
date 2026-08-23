@@ -737,7 +737,7 @@ namespace ACadSharp.Tables
 		/// <b>false</b> if arrowhead block set by <see cref="ArrowBlock"/> shall be used.
 		/// </value>
 		[DxfCodeValue(173)]
-		public bool SeparateArrowBlocks { get; set; } = true;
+		public bool SeparateArrowBlocks { get; set; }
 
 		/// <summary>
 		/// Specifies the text style of the dimension

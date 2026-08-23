@@ -1,5 +1,4 @@
 ﻿using CSUtilities.Converters;
-using System.Drawing;
 using System.IO;
 
 namespace ACadSharp.IO.DWG

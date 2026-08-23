@@ -1,6 +1,6 @@
 ﻿using ACadSharp.Attributes;
+using ACadSharp.Classes;
 using ACadSharp.Entities;
-using CSMath;
 
 namespace ACadSharp.Objects;
 
@@ -13,7 +13,7 @@ namespace ACadSharp.Objects;
 /// </remarks>
 [DxfName(DxfFileToken.ObjectDimensionAssociation)]
 [DxfSubClass(DxfSubclassMarker.DimensionAssociation)]
-public partial class DimensionAssociation : NonGraphicalObject
+public partial class DimensionAssociation : NonGraphicalObject, IDxfClassDefined
 {
 	/// <summary>
 	/// Gets or sets the associativity flags that define the reference points for an entity.
@@ -61,5 +61,21 @@ public partial class DimensionAssociation : NonGraphicalObject
 	/// <inheritdoc/>
 	public DimensionAssociation() : base()
 	{
+	}
+
+	/// <inheritdoc/>
+	public DxfClass GetDxfClass()
+	{
+		return new DxfClass
+		{
+			ApplicationName = "AcDbDimAssoc",
+			CppClassName = DxfSubclassMarker.DimensionAssociation,
+			DwgVersion = 0,
+			DxfName = DxfFileToken.ObjectDimensionAssociation,
+			ItemClassId = 499,
+			MaintenanceVersion = 0,
+			ProxyFlags = ProxyFlags.None,
+			WasZombie = false,
+		};
 	}
 }

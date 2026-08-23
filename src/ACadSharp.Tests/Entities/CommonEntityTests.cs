@@ -1,105 +1,132 @@
 ﻿using ACadSharp.Entities;
 using ACadSharp.Extensions;
+using ACadSharp.IO;
 using ACadSharp.Tables;
 using ACadSharp.Tests.Common;
+using CSMath;
 using Xunit;
 
-namespace ACadSharp.Tests.Entities
+namespace ACadSharp.Tests.Entities;
+
+public abstract class CommonEntityTests<T>
+	where T : Entity, new()
 {
-	public abstract class CommonEntityTests<T>
-		where T : Entity, new()
+	protected CSMathRandom _random = new CSMathRandom();
+
+	[Fact]
+	public virtual void CloneTest()
 	{
-		protected CSMathRandom _random = new CSMathRandom();
+		T e = EntityFactory.Create<T>();
 
-		[Fact]
-		public virtual void CloneTest()
+		var clone = e.CloneTyped();
+
+		Assert.NotNull(clone);
+
+		CadObjectTestUtils.AssertEntityClone(e, clone);
+	}
+
+	[Fact]
+	public void DefaultConstructor()
+	{
+		T entity = new T();
+
+		Assert.NotNull(entity);
+		Assert.True(0 == entity.Handle);
+
+		Assert.NotEqual(ObjectType.UNDEFINED, entity.ObjectType);
+
+		Assert.False(string.IsNullOrEmpty(entity.ObjectName));
+		Assert.False(string.IsNullOrEmpty(entity.SubclassMarker));
+
+		Assert.Null(entity.XDictionary);
+	}
+
+	[Fact]
+	public void GetActiveColorTest()
+	{
+		BlockRecord owner = new BlockRecord("owner");
+		owner.BlockEntity.Color = new Color(20);
+
+		Entity entity = EntityFactory.Create(typeof(T), false);
+		entity.Layer.Color = new Color(30);
+
+		owner.Entities.Add(entity);
+
+		Assert.Equal(entity.Layer.Color, entity.GetActiveColor());
+
+		entity.Color = Color.ByBlock;
+		Assert.Equal(owner.BlockEntity.Color, entity.GetActiveColor());
+
+		entity.Color = new Color(40);
+		Assert.Equal(entity.Color, entity.GetActiveColor());
+	}
+
+	[Fact]
+	public void GetActiveLineTypeTest()
+	{
+		BlockRecord owner = new BlockRecord("owner");
+		owner.BlockEntity.LineType = new LineType("block_linetype");
+
+		Entity entity = EntityFactory.Create(typeof(T), false);
+		entity.Layer.LineType = new LineType("layer_linetype");
+
+		owner.Entities.Add(entity);
+
+		Assert.Equal(entity.Layer.LineType, entity.GetActiveLineType());
+
+		entity.LineType = LineType.ByBlock;
+		Assert.Equal(owner.BlockEntity.LineType, entity.GetActiveLineType());
+
+		entity.LineType = new LineType("entity_linetype");
+		Assert.Equal(entity.LineType, entity.GetActiveLineType());
+	}
+
+	[Fact]
+	public void GetActiveLineWeightTypeTest()
+	{
+		BlockRecord owner = new BlockRecord("owner");
+		owner.BlockEntity.LineWeight = LineWeightType.W20;
+
+		Entity entity = EntityFactory.Create(typeof(T), false);
+		entity.Layer.LineWeight = LineWeightType.W50;
+
+		owner.Entities.Add(entity);
+
+		Assert.Equal(entity.Layer.LineWeight, entity.GetActiveLineWeightType());
+
+		entity.LineWeight = LineWeightType.ByBlock;
+		Assert.Equal(owner.BlockEntity.LineWeight, entity.GetActiveLineWeightType());
+
+		entity.LineWeight = LineWeightType.W70;
+		Assert.Equal(entity.LineWeight, entity.GetActiveLineWeightType());
+	}
+
+	[Fact]
+	public abstract void GetBoundingBoxTest();
+
+	[Theory]
+	[InlineData(CadFileFormat.DXF, ACadVersion.AC1014)]
+	[InlineData(CadFileFormat.DXF, ACadVersion.AC1032)]
+	[InlineData(CadFileFormat.DWG, ACadVersion.AC1032)]
+	public void InvalidEntityTest(CadFileFormat format, ACadVersion version)
+	{
+		var e = new T();
+
+		if (e is IOrientable orientable)
 		{
-			T e = EntityFactory.Create<T>();
-
-			var clone = e.CloneTyped();
-
-			Assert.NotNull(clone);
-
-			CadObjectTestUtils.AssertEntityClone(e, clone);
+			orientable.Normal = new XYZ();
+			Assert.False(e.IsValid(format, version));
 		}
+	}
 
-		[Fact]
-		public void DefaultConstructor()
-		{
-			T entity = new T();
-
-			Assert.NotNull(entity);
-			Assert.True(0 == entity.Handle);
-
-			Assert.NotEqual(ObjectType.UNDEFINED, entity.ObjectType);
-
-			Assert.False(string.IsNullOrEmpty(entity.ObjectName));
-			Assert.False(string.IsNullOrEmpty(entity.SubclassMarker));
-
-			Assert.Null(entity.XDictionary);
-		}
-
-		[Fact]
-		public void GetActiveColorTest()
-		{
-			BlockRecord owner = new BlockRecord("owner");
-			owner.BlockEntity.Color = new Color(20);
-
-			Entity entity = EntityFactory.Create(typeof(T), false);
-			entity.Layer.Color = new Color(30);
-
-			owner.Entities.Add(entity);
-
-			Assert.Equal(entity.Layer.Color, entity.GetActiveColor());
-
-			entity.Color = Color.ByBlock;
-			Assert.Equal(owner.BlockEntity.Color, entity.GetActiveColor());
-
-			entity.Color = new Color(40);
-			Assert.Equal(entity.Color, entity.GetActiveColor());
-		}
-
-		[Fact]
-		public void GetActiveLineTypeTest()
-		{
-			BlockRecord owner = new BlockRecord("owner");
-			owner.BlockEntity.LineType = new LineType("block_linetype");
-
-			Entity entity = EntityFactory.Create(typeof(T), false);
-			entity.Layer.LineType = new LineType("layer_linetype");
-
-			owner.Entities.Add(entity);
-
-			Assert.Equal(entity.Layer.LineType, entity.GetActiveLineType());
-
-			entity.LineType = LineType.ByBlock;
-			Assert.Equal(owner.BlockEntity.LineType, entity.GetActiveLineType());
-
-			entity.LineType = new LineType("entity_linetype");
-			Assert.Equal(entity.LineType, entity.GetActiveLineType());
-		}
-
-		[Fact]
-		public void GetActiveLineWeightTypeTest()
-		{
-			BlockRecord owner = new BlockRecord("owner");
-			owner.BlockEntity.LineWeight = LineWeightType.W20;
-
-			Entity entity = EntityFactory.Create(typeof(T), false);
-			entity.Layer.LineWeight = LineWeightType.W50;
-
-			owner.Entities.Add(entity);
-
-			Assert.Equal(entity.Layer.LineWeight, entity.GetActiveLineWeightType());
-
-			entity.LineWeight = LineWeightType.ByBlock;
-			Assert.Equal(owner.BlockEntity.LineWeight, entity.GetActiveLineWeightType());
-
-			entity.LineWeight = LineWeightType.W70;
-			Assert.Equal(entity.LineWeight, entity.GetActiveLineWeightType());
-		}
-
-		[Fact]
-		public abstract void GetBoundingBoxTest();
+	[Theory]
+	[InlineData(CadFileFormat.DXF, ACadVersion.AC1014)]
+	[InlineData(CadFileFormat.DXF, ACadVersion.AC1032)]
+	[InlineData(CadFileFormat.DWG, ACadVersion.AC1032)]
+	public void ValidEntityTest(CadFileFormat format, ACadVersion version)
+	{
+		//By default all entities must be valid on creation
+		var e = new T();
+		Assert.True(e.IsValid(format, version));
 	}
 }
