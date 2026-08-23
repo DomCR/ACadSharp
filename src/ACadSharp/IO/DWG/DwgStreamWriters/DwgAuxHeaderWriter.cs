@@ -51,7 +51,7 @@ internal class DwgAuxHeaderWriter : DwgSectionIO
 		this._writer.WriteRawShort((short)this._version);
 
 		//RS: Maintenance version
-		this._writer.WriteRawShort(this._header.MaintenanceVersion);
+		this.writeMaintenanceVersion();
 
 		//RL: Number of saves (starts at 1)
 		this._writer.WriteRawLong(1);
@@ -68,11 +68,11 @@ internal class DwgAuxHeaderWriter : DwgSectionIO
 		//RS: DWG version string
 		this._writer.WriteRawShort((short)this._version);
 		//RS : Maintenance version
-		this._writer.WriteRawShort((short)this._header.MaintenanceVersion);
+		this.writeMaintenanceVersion();
 		//RS: DWG version string
 		this._writer.WriteRawShort((short)this._version);
 		//RS : Maintenance version
-		this._writer.WriteRawShort((short)this._header.MaintenanceVersion);
+		this.writeMaintenanceVersion();
 
 		//RS: 0x0005
 		this._writer.WriteRawShort(0x5);
@@ -143,6 +143,20 @@ internal class DwgAuxHeaderWriter : DwgSectionIO
 			this._writer.WriteRawShort(0);
 			//RS : 0
 			this._writer.WriteRawShort(0);
+		}
+	}
+
+	private void writeMaintenanceVersion()
+	{
+		if (this._version > ACadVersion.AC1027)
+		{
+			//RS: Maintenance version
+			this._writer.WriteRawLong(this._header.MaintenanceVersion);
+		}
+		else
+		{
+			//RS: Maintenance version
+			this._writer.WriteRawShort((short)this._header.MaintenanceVersion);
 		}
 	}
 }
