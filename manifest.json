@@ -5860,7 +5860,7 @@
       "Uid": null,
       "IsMRef": true,
       "Title": "ACadSharp.Objects.MTextAttributeObjectContextData",
-      "Summary": null
+      "Summary": "<p sourcefile=\"api/ACadSharp.Objects.MTextAttributeObjectContextData.yml\" sourcestartlinenumber=\"1\">Represents the context data for the multiline text of an <xref href=\"ACadSharp.Entities.AttributeEntity\" data-throw-if-not-resolved=\"false\"></xref> in a specific annotation scale.</p>\n"
     },
     {
       "type": "ManagedReference",
