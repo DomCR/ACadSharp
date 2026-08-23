@@ -53,8 +53,6 @@ internal partial class DwgObjectWriter : DwgSectionIO
 			case UnknownNonGraphicalObject:
 			case VisualStyle:
 			case ProxyObject:
-			case BlockReferenceObjectContextData:
-			case MTextAttributeObjectContextData:
 				return true;
 		}
 
@@ -78,6 +76,8 @@ internal partial class DwgObjectWriter : DwgSectionIO
 
 	private void writeAnnotScaleObjectContextData(AnnotScaleObjectContextData annotScaleObjectContextData)
 	{
+		this.writeObjectContextData(annotScaleObjectContextData);
+
 		this._writer.HandleReference(DwgReferenceType.HardPointer, annotScaleObjectContextData.Scale);
 	}
 
@@ -396,6 +396,17 @@ internal partial class DwgObjectWriter : DwgSectionIO
 
 		//unknown
 		this._writer.WriteBitLong(0);
+	}
+
+	private void writeBlockReferenceObjectContextData(BlockReferenceObjectContextData contextData)
+	{
+		this.writeAnnotScaleObjectContextData(contextData);
+
+		this._writer.WriteBitDouble(contextData.Rotation);
+		this._writer.Write3BitDouble(contextData.InsertionPoint);
+		this._writer.WriteBitDouble(contextData.XScale);
+		this._writer.WriteBitDouble(contextData.YScale);
+		this._writer.WriteBitDouble(contextData.ZScale);
 	}
 
 	private void writeBlockRepresentationData(BlockRepresentationData representation)
@@ -1596,9 +1607,16 @@ internal partial class DwgObjectWriter : DwgSectionIO
 		}
 	}
 
+	private void writeMTextAttributeObjectContextData(MTextAttributeObjectContextData mtextContextData)
+	{
+		throw new NotImplementedException();
+	}
+
 	private void writeMultiLeaderAnnotContext(MultiLeaderObjectContextData multiLeaderAnnotContext)
 	{
-		writeMultiLeaderAnnotContextSubObject(false, multiLeaderAnnotContext);
+		this.writeAnnotScaleObjectContextData(multiLeaderAnnotContext);
+
+		this.writeMultiLeaderAnnotContextSubObject(false, multiLeaderAnnotContext);
 	}
 
 	private void writeMultiLeaderStyle(MultiLeaderStyle mLeaderStyle)
@@ -1821,6 +1839,9 @@ internal partial class DwgObjectWriter : DwgSectionIO
 			case BookColor bookColor:
 				this.writeBookColor(bookColor);
 				break;
+			case BlockReferenceObjectContextData blockContextData:
+				this.writeBlockReferenceObjectContextData(blockContextData);
+				break;
 			case CadDictionaryWithDefault dictionarydef:
 				this.writeCadDictionaryWithDefault(dictionarydef);
 				break;
@@ -1864,8 +1885,6 @@ internal partial class DwgObjectWriter : DwgSectionIO
 				this.writeMultiLeaderStyle(multiLeaderStyle);
 				break;
 			case MultiLeaderObjectContextData multiLeaderObjectContextData:
-				this.writeObjectContextData(multiLeaderObjectContextData);
-				this.writeAnnotScaleObjectContextData(multiLeaderObjectContextData);
 				this.writeMultiLeaderAnnotContext(multiLeaderObjectContextData);
 				break;
 			case PdfUnderlayDefinition pdfDefinition:
@@ -1888,6 +1907,9 @@ internal partial class DwgObjectWriter : DwgSectionIO
 				break;
 			case TableStyle tableStyle:
 				this.writeTableStyle(tableStyle);
+				break;
+			case MTextAttributeObjectContextData mtextContextData:
+				this.writeMTextAttributeObjectContextData(mtextContextData);
 				break;
 			case WipeoutVariables wipeoutVariables:
 				this.writeWipeoutVariables(wipeoutVariables);
