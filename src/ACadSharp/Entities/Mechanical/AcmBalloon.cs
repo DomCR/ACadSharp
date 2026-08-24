@@ -1,4 +1,5 @@
 ﻿using ACadSharp.Attributes;
+using ACadSharp.Objects.Mechanical;
 using ACadSharp.Tables;
 using CSMath;
 
@@ -16,6 +17,11 @@ namespace ACadSharp.Entities.Mechanical;
 public class AcmBalloon : MechanicalEntity
 {
 	public BlockRecord Block { get; set; }
+
+	/// <summary>
+	/// Gets the BOM row referenced by this balloon.
+	/// </summary>
+	public AcmBomRow BomRow { get; internal set; }
 
 	/// <inheritdoc/>
 	public override string ObjectName => DxfFileToken.AcmBalloon;

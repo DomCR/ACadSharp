@@ -7,6 +7,7 @@ using ACadSharp.IO.Templates;
 using ACadSharp.Objects;
 using ACadSharp.Objects.AEC;
 using ACadSharp.Objects.Evaluations;
+using ACadSharp.Objects.Mechanical;
 using ACadSharp.Tables;
 using ACadSharp.Tables.Collections;
 using ACadSharp.Types.Units;
@@ -5550,6 +5551,18 @@ namespace ACadSharp.IO.DWG
 
 			switch (c.DxfName)
 			{
+				case DxfFileToken.AcmBom:
+					template = this.readAcmBom();
+					break;
+				case DxfFileToken.AcmBomRow:
+					template = this.readAcmBomRow();
+					break;
+				case DxfFileToken.AcmDataEntryBlock:
+					template = this.readAcmDataEntryBlock();
+					break;
+				case DxfFileToken.AcmDataEntryPart:
+					template = this.readAcmDataEntryPart();
+					break;
 				case DxfFileToken.AcmPartRef:
 					template = this.readAcmPartRef();
 					break;
@@ -6238,6 +6251,166 @@ namespace ACadSharp.IO.DWG
 
 		#endregion Insert methods
 
+		private List<ulong> readRemainingHandleReferences()
+		{
+			List<ulong> handles = new();
+			long endPosition = this._objectInitialPos + (long)(this._size * 8U) - 7L;
+
+			while (this._handlesReader.PositionInBits() < endPosition)
+			{
+				handles.Add(this.handleReference());
+			}
+
+			return handles;
+		}
+
+		private CadTemplate readAcmBom()
+		{
+			AcmBom bom = new AcmBom();
+			CadAcmBomTemplate template = new CadAcmBomTemplate(bom);
+
+			this.readCommonNonEntityData(template);
+
+			int rowCount = this._mergedReaders.ReadBitLong();
+			if (rowCount < 0)
+			{
+				throw new InvalidDataException($"Invalid ACMBOM row count: {rowCount}.");
+			}
+
+			bom.ItemNumberStep = this._mergedReaders.ReadBitLong();
+			bom.IsExpanded = this._mergedReaders.ReadBit();
+
+			for (int i = 0; i < rowCount; i++)
+			{
+				bom.RowNames.Add(this._textReader.ReadVariableText());
+			}
+
+			bom.Name = this._textReader.ReadVariableText();
+			bom.ItemNumberSeparator = this._textReader.ReadVariableText();
+			bom.ItemNumberStart = this._textReader.ReadVariableText();
+
+			for (int i = 0; i < rowCount; i++)
+			{
+				template.RowHandles.Add(this.handleReference());
+			}
+
+			template.PartListHandle = this.handleReference();
+			template.DataEntryHandle = this.handleReference();
+			template.UnknownHandle = this.handleReference();
+
+			return template;
+		}
+
+		private CadTemplate readAcmBomRow()
+		{
+			AcmBomRow row = new AcmBomRow();
+			CadAcmBomRowTemplate template = new CadAcmBomRowTemplate(row);
+
+			this.readCommonNonEntityData(template);
+
+			row.Version = this._mergedReaders.ReadBitLong();
+			row.SortPriority = this._mergedReaders.ReadBitLong();
+			for (int i = 0; i < 6; i++)
+			{
+				row.RawValues.Add(this._mergedReaders.ReadBitLong());
+			}
+
+			row.ItemName = this._textReader.ReadVariableText();
+
+			template.DataEntryHandle = this.handleReference();
+			template.PartReferenceHandles.Add(this.handleReference());
+			template.PartReferenceHandles.Add(this.handleReference());
+			template.BalloonHandles.Add(this.handleReference());
+			template.BalloonHandles.Add(this.handleReference());
+			template.UnknownHandles.Add(this.handleReference());
+			template.UnknownHandles.Add(this.handleReference());
+
+			return template;
+		}
+
+		private CadTemplate readAcmDataEntryPart()
+		{
+			AcmDataEntryPart dataEntry = new AcmDataEntryPart();
+			CadAcmDataEntryPartTemplate template = new CadAcmDataEntryPartTemplate(dataEntry);
+
+			this.readCommonNonEntityData(template);
+
+			dataEntry.Signature = this._mergedReaders.ReadBitLong();
+			dataEntry.Version = this._mergedReaders.ReadBitLong();
+			dataEntry.EntryId = this._mergedReaders.ReadBitLong();
+			int attributeCount = this._mergedReaders.ReadBitLong();
+			if (attributeCount < 0)
+			{
+				throw new InvalidDataException($"Invalid ACMDATAENTRYPART attribute count: {attributeCount}.");
+			}
+
+			int rawAttributeValueCount = 1 + attributeCount * 3;
+			for (int i = 0; i < rawAttributeValueCount; i++)
+			{
+				dataEntry.RawAttributeValues.Add(this._mergedReaders.ReadBitLong());
+			}
+
+			for (int i = 0; i < attributeCount; i++)
+			{
+				dataEntry.Attributes.Add(new AcmDataEntryAttribute
+				{
+					Name = this._textReader.ReadVariableText(),
+					Value = this._textReader.ReadVariableText(),
+					Metadata = this._textReader.ReadVariableText(),
+				});
+			}
+
+			template.PartReferenceHandles.Add(this.handleReference());
+			template.BomRowHandles.Add(this.handleReference());
+			template.PartReferenceHandles.Add(this.handleReference());
+			template.UnknownHandles.Add(this.handleReference());
+			template.UnknownHandles.Add(this.handleReference());
+
+			return template;
+		}
+
+		private CadTemplate readAcmDataEntryBlock()
+		{
+			AcmDataEntryBlock dataEntry = new AcmDataEntryBlock();
+			CadAcmDataEntryBlockTemplate template = new CadAcmDataEntryBlockTemplate(dataEntry);
+
+			this.readCommonNonEntityData(template);
+
+			dataEntry.Signature = this._mergedReaders.ReadBitLong();
+			dataEntry.Version = this._mergedReaders.ReadBitLong();
+			dataEntry.EntryId = this._mergedReaders.ReadBitLong();
+			int attributeCount = this._mergedReaders.ReadBitLong();
+			if (attributeCount < 0)
+			{
+				throw new InvalidDataException($"Invalid ACMDATAENTRYBLOCK attribute count: {attributeCount}.");
+			}
+
+			int rawValueCount = 1 + attributeCount * 3;
+			for (int i = 0; i < rawValueCount; i++)
+			{
+				dataEntry.RawValues.Add(this._mergedReaders.ReadBitLong());
+			}
+
+			for (int i = 0; i < attributeCount; i++)
+			{
+				dataEntry.Attributes.Add(new AcmDataEntryAttribute
+				{
+					Name = this._textReader.ReadVariableText(),
+					Value = this._textReader.ReadVariableText(),
+					Metadata = this._textReader.ReadVariableText(),
+				});
+			}
+
+			dataEntry.DisplayName = this._textReader.ReadVariableText();
+
+			for (int i = 0; i < 3; i++)
+			{
+				template.ReferenceHandles.Add(this.handleReference());
+			}
+
+			return template;
+		}
+
 		private CadTemplate readAcmPartRef()
 		{
 			AcmPartRef partref = new AcmPartRef();
@@ -6247,11 +6420,18 @@ namespace ACadSharp.IO.DWG
 
 			this.readMechanicalEntity(template);
 
-			template.LineResHandle = this.handleReference();
-			template.UnknownHandle1 = this.handleReference();        // 0x0
-			template.DataEntryPartHandle = this.handleReference();
+			List<ulong> handles = this.readRemainingHandleReferences();
+			if (handles.Count >= 2)
+			{
+				template.DataEntryPartHandle = handles[handles.Count - 2];
+				template.LayerHandle = handles[handles.Count - 1];
+			}
 
-			template.LayerHandle = this.handleReference();
+			if (handles.Count >= 4)
+			{
+				template.LineResHandle = handles[0];
+				template.UnknownHandle1 = handles[1];
+			}
 
 			return template;
 		}
@@ -6265,26 +6445,21 @@ namespace ACadSharp.IO.DWG
 
 			this.readMechanicalEntity(template);
 
-			template.BomHandle = this.handleReference();           // ACMBOM:*A1 (AcmBom)
-			template.ItemFilterCustomHandle = this.handleReference();
-
-			// Handles to each data row (excluding the headers) of the BOM table follow.
-			// Then seemingly always 3 handles of value 0x0 follow 
-
-			ulong handle;
-			while (true)
+			List<ulong> handles = this.readRemainingHandleReferences();
+			if (handles.Count > 0)
 			{
-				handle = this.handleReference();
-				if (handle == 0)
-				{
-					break;
-				}
-				template.RowHandles.Add(handle);
+				template.BomHandle = handles[0];
 			}
 
-			// ulong handle: 0x0
-			template.UnknownHandle1 = this.handleReference();        // 0x0
-			template.UnknownHandle2 = this.handleReference();        // 0x0
+			if (handles.Count > 1)
+			{
+				template.ItemFilterCustomHandle = handles[1];
+			}
+
+			for (int i = 2; i < handles.Count; i++)
+			{
+				template.RelatedHandles.Add(handles[i]);
+			}
 
 			return template;
 		}
@@ -6311,10 +6486,17 @@ namespace ACadSharp.IO.DWG
 			var unknown_position1 = this._mergedReaders.Read3BitDouble();
 			var unknown_position2 = this._mergedReaders.Read3BitDouble();
 
-			template.BomRowHandle = this.handleReference();
-			template.BlockHandle = this.handleReference();
-
-			var unknownHandle1 = this.handleReference();        // 0x0
+			List<ulong> handles = this.readRemainingHandleReferences();
+			if (handles.Count >= 4)
+			{
+				template.BomRowHandle = handles[1];
+				template.BlockHandle = handles[2];
+			}
+			else if (handles.Count >= 2)
+			{
+				template.BomRowHandle = handles[0];
+				template.BlockHandle = handles[1];
+			}
 
 			return template;
 		}

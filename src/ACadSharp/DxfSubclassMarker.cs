@@ -32,6 +32,14 @@ public static class DxfSubclassMarker
 
 	public const string Balloon = "AcmBalloon";
 
+	public const string Bom = "AcmBom";
+
+	public const string BomRow = "AcmBomRow";
+
+	public const string DataEntryBlock = "AcmDataEntryBlock";
+
+	public const string DataEntryPart = "AcmDataEntryPart";
+
 	public const string BinRecord = "BinRecord";
 
 	public const string BlkRefObjectContextData = "AcDbBlkRefObjectContextData";
