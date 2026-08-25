@@ -147,20 +147,30 @@ internal partial class DwgObjectWriter : DwgSectionIO
 				return false;
 			case Shape:
 				return this.WriteShapes;
-			//The other half of that same version limit, and the one that costs a whole drawing rather
-			//than one entity. A table is stored one way up to R2007 and another from R2010; the reader
-			//reads both, but what the older layout gives it is not what the R2010 layout needs, and
-			//writing it anyway makes AutoCAD reject the file (ErrorStatus 53 at R2010) or work on it for
-			//as long as it is given (still going after ten minutes at R2018). Measured on sample_AC1018:
-			//with its two tables left out the same write opens and audits 0 in two seconds.
-			//ValueFlag is the marker - the older layout carries the field, the R2010 one does not, and no
-			//writer here writes it back.
-			case TableEntity legacyTable when legacyTable.ValueFlag != 0:
+			case TableEntity when !this.R2010Plus:
+				//Only the R2010 layout of a table is implemented: writeTableEntity throws at its
+				//own "Until R2007" branch, where the older inline cell layout would go. It is a
+				//limit of this writer, not of the format - AutoCAD's own AC1015 and AC1018 files
+				//carry tables - so say which limit it is, and which version keeps the object.
+				this.notify(
+					$"{entity.GetType().Name} {entity.Handle} is not written to a {this._version} file: only the {ACadVersion.AC1024} layout of it is implemented. {ACadVersion.AC1024} is the oldest version that keeps it.",
+					NotificationType.NotImplemented);
+
+				return false;
+			//The other half of that same limit, and the one that cost a whole drawing rather than one
+			//entity. The reader does read the older layout - that part works - but what it produces is
+			//not what the R2010 layout needs, and writing it anyway makes AutoCAD reject the file
+			//(ErrorStatus 53 at R2010) or work on it for as long as it is given (still going after ten
+			//minutes at R2018). The marker is provenance recorded by the reader, not a property of the
+			//table: inferring it from ValueFlag being non-zero was wrong, because that flag is public
+			//and documented, and normally carries 0x06, so a caller building a table faithfully would
+			//have had it silently dropped.
+			case TableEntity legacyTable when legacyTable.ContentIsPreR2010Layout:
 				this.notify(
 					$"{entity.GetType().Name} {entity.Handle} is not written to a {this._version} file: its content was read from the pre-{ACadVersion.AC1024} layout, which this writer cannot re-express as the {ACadVersion.AC1024} one. Written as it is, AutoCAD refuses the whole drawing.",
 					NotificationType.NotImplemented);
-			return false;
-			case TableEntity when !this.R2010Plus:
+
+				return false;
 			case Wall:
 			case MechanicalEntity:
 			case ProxyEntity:

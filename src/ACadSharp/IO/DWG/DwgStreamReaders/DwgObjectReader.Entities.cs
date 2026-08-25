@@ -808,6 +808,10 @@ internal partial class DwgObjectReader : DwgSectionIO
 
 		//Until R2007
 
+		//Everything below reads the older layout. Record that, because the writer produces only the
+		//R2010 one and needs to know this content cannot be re-expressed as it.
+		table.ContentIsPreR2010Layout = true;
+
 		//Common:
 		//Flag for table value BS 90
 		//	Bit flags, 0x06(0x02 + 0x04): has block,

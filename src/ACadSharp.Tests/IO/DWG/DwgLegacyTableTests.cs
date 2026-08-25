@@ -135,6 +135,33 @@ public class DwgLegacyTableTests
 			.Count(e => !(e is TableEntity));
 	}
 
+	[Fact]
+	public void ATableBuiltByACallerIsNotDroppedForSettingValueFlag()
+	{
+		//The guard was first keyed on ValueFlag being non-zero, which reads like provenance and is
+		//not: the flag is public, DXF-mapped and documented as normally carrying 0x06, so a caller
+		//building a table faithfully had it silently dropped from every DWG. It is keyed on
+		//provenance recorded by the reader now, and a caller-built table survives whatever it sets.
+		CadDocument doc = DwgReader.Read(sampleR2018);
+		TableEntity table = this.tables(doc).First();
+		int before = this.tables(doc).Length;
+		Assert.True(before > 0);
+
+		foreach (TableEntity each in this.tables(doc))
+		{
+			each.ValueFlag = 0x06;
+		}
+
+		doc.Header.Version = ACadVersion.AC1032;
+		using MemoryStream stream = new();
+		using (DwgWriter writer = new(stream, doc))
+		{
+			writer.Write();
+		}
+
+		Assert.Equal(before, this.tables(DwgReader.Read(new MemoryStream(stream.ToArray()))).Length);
+	}
+
 	private TableEntity[] tables(CadDocument doc)
 	{
 		return doc.BlockRecords
