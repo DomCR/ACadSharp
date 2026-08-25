@@ -55,10 +55,6 @@ namespace ACadSharp.IO.DXF
 
 		private void processEntities(BlockRecord b)
 		{
-			//The name is matched without case: AutoCAD does, and real drawings carry *MODEL_SPACE
-			//in upper case. Comparing exactly wrote every model entity of such a drawing into the
-			//BLOCKS section as an ordinary block and left the ENTITIES section empty - AutoCAD
-			//still draws it, but a consumer that reads the entities section sees nothing.
 			if (b.Name.Equals(BlockRecord.ModelSpaceName, StringComparison.OrdinalIgnoreCase) ||
 				b.Name.Equals(BlockRecord.PaperSpaceName, StringComparison.OrdinalIgnoreCase))
 			{
