@@ -49,22 +49,15 @@ public class CadWriterConfiguration
 	public bool UpdateDimensionsInModel { get; set; } = false;
 
 	/// <summary>
-	/// The writer keeps the dynamic block data: the <see cref="ACadSharp.Objects.Evaluations.EvaluationGraph"/>
-	/// of each dynamic block, the representation data of its references and the purge preventer.
+	/// The writer will not ignore the <see cref="ACadSharp.Objects.Evaluations.EvaluationGraph"/> objects in the document.
 	/// </summary>
 	/// <remarks>
-	/// Off, every dynamic block in the file is saved as a static block: its parameters, actions and
-	/// grips are gone and AutoCAD shows a plain block in their place. Seventeen production drawings
-	/// taken at random each held between 2 and 25 dynamic blocks, so the default is on. The former
-	/// default was off, out of a worry that the graph could corrupt some documents; written on, the
-	/// ten dynamic-block samples and all seventeen production drawings audit in AutoCAD exactly as
-	/// they did with it off, and AutoCAD keeps the blocks dynamic. Switch it off to get the old
-	/// behaviour back for a document that turns out to need it.
+	/// Evaluation graphs can cause corruption for some documents due the complexity of their data.
 	/// </remarks>
 	/// <value>
-	/// default: true
+	/// default: false
 	/// </value>
-	public bool WriteDynamicBlockData { get; set; } = true;
+	public bool WriteDynamicBlockData { get; set; } = false;
 
 	/// <summary>
 	/// The writer will not ignore the <see cref="ACadSharp.Entities.Shape"/> entities in the document.
