@@ -157,20 +157,15 @@ internal partial class DwgObjectWriter : DwgSectionIO
 					NotificationType.NotImplemented);
 
 				return false;
-			//The other half of that same limit, and the one that cost a whole drawing rather than one
-			//entity. The reader does read the older layout - that part works - but what it produces is
-			//not what the R2010 layout needs, and writing it anyway makes AutoCAD reject the file
-			//(ErrorStatus 53 at R2010) or work on it for as long as it is given (still going after ten
-			//minutes at R2018). The marker is provenance recorded by the reader, not a property of the
-			//table: inferring it from ValueFlag being non-zero was wrong, because that flag is public
-			//and documented, and normally carries 0x06, so a caller building a table faithfully would
-			//have had it silently dropped.
-			case TableEntity legacyTable when legacyTable.ContentIsPreR2010Layout:
-				this.notify(
-					$"{entity.GetType().Name} {entity.Handle} is not written to a {this._version} file: its content was read from the pre-{ACadVersion.AC1024} layout, which this writer cannot re-express as the {ACadVersion.AC1024} one. Written as it is, AutoCAD refuses the whole drawing.",
-					NotificationType.NotImplemented);
-
-				return false;
+			//A table whose content was read from the pre-R2010 layout used to be dropped here,
+			//because writing it unconverted makes AutoCAD reject the file (ErrorStatus 53 at
+			//R2010) or work on it for as long as it is given. It is now CONVERTED on write - see
+			//writeTableEntity - because the wall turned out not to be the missing R2010-only
+			//structures at all: stripping cell styles, content formats, cell geometry and custom
+			//data from an R2018-authored table still audits 0, and the real failure was
+			//writeStringCadValue writing a double length for an empty string, which only a
+			//converted table ever carries. With that fixed, the converted file opens and audits 0
+			//at AC1024, AC1027 and AC1032, and AutoCAD's own DXF export carries both tables.
 			case Wall:
 			case MechanicalEntity:
 			case ProxyEntity:

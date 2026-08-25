@@ -244,11 +244,20 @@ internal partial class DwgObjectReader : DwgSectionIO
 		//NOTE: It also seems to be valid for the string values
 
 		int length = this._mergedReaders.ReadBitLong();
+		if (length <= 0)
+		{
+			//A length of zero carries no bytes at all - not even the terminator the R2007+ form
+			//counts. Files this library wrote before the writeStringCadValue fix contain exactly
+			//that for an empty value, so reading it as empty instead of throwing keeps them
+			//readable.
+			return string.Empty;
+		}
+
 		byte[] arr = this._mergedReaders.ReadBytes(length);
 
 		if (this.R2007Plus)
 		{
-			return System.Text.Encoding.Unicode.GetString(arr, 0, length - 2);
+			return System.Text.Encoding.Unicode.GetString(arr, 0, Math.Max(0, length - 2));
 		}
 		else
 		{

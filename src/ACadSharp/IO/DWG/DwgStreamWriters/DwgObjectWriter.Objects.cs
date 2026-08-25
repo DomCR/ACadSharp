@@ -2194,10 +2194,14 @@ internal partial class DwgObjectWriter : DwgSectionIO
 
 	private void writeStringCadValue(string value)
 	{
-		if (string.IsNullOrEmpty(value))
-		{
-			this._writer.WriteBitLong(0);
-		}
+		//An empty string is written the same way as any other: its terminator and the length that
+		//counts it. The branch that used to live here wrote a bare zero length AND then fell
+		//through to the full write, so every field after an empty cell value was shifted by one
+		//bit long plus two bytes - our own reader threw reading it back, and AutoCAD worked on
+		//such a file for as long as it was given. No real R2010 table ever hit this: only a
+		//converted pre-R2010 one carries an empty string value, which is why T84's conversion
+		//experiments kept failing while ordinary round trips stayed green.
+		value ??= string.Empty;
 
 		byte[] bytes;
 		if (this.R2007Plus)

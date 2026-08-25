@@ -8,11 +8,13 @@ namespace ACadSharp.Tests.IO.DWG;
 
 /// <summary>
 /// A table is stored one way up to R2007 and another from R2010, and this library reads both but
-/// writes only the second. That was known and recorded as a limit; what was not known is what it
-/// costs. Writing a table read from the older layout into an R2010+ file does not lose the table -
-/// it loses the drawing: AutoCAD 2027 rejects the file outright at R2010 (ErrorStatus 53) and was
-/// still working on it after ten minutes at R2018. With the two tables of `sample_AC1018` left out,
-/// the same write opens and audits 0 in two seconds.
+/// writes only the second. Writing a table read from the older layout into an R2010+ file
+/// unconverted did not lose the table - it lost the drawing: AutoCAD 2027 rejected the file
+/// outright at R2010 (ErrorStatus 53) and was still working on it after ten minutes at R2018. For
+/// a while such tables were dropped with a notification; they are now converted on write, because
+/// the real wall was never the missing R2010-only structures (all optional, measured by stripping
+/// them from an R2018-authored table) but an empty-string cell value that writeStringCadValue
+/// wrote with two lengths, shifting every field after it (T84).
 /// </summary>
 public class DwgLegacyTableTests
 {
@@ -54,24 +56,32 @@ public class DwgLegacyTableTests
 	[InlineData(ACadVersion.AC1024)]
 	[InlineData(ACadVersion.AC1027)]
 	[InlineData(ACadVersion.AC1032)]
-	public void ATableFromTheOlderLayoutIsLeftOutOfAnR2010PlusFileAndSaidSo(ACadVersion version)
+	public void ATableFromTheOlderLayoutIsConvertedOnWriteAndSurvives(ACadVersion version)
 	{
-		//One entity reported is the whole point: written instead, the drawing does not open.
+		//This used to assert the drop-with-a-notification, because written unconverted the
+		//drawing did not open. The wall fell with the writeStringCadValue fix: the conversion
+		//needs only the merge ranges and the merged-away cells' content, everything else the
+		//R2010 layout carries is optional, and the converted file opens and audits 0 in AutoCAD
+		//at all three versions (T84).
 		CadDocument doc = DwgReader.Read(sampleR2004);
-		Assert.NotEmpty(this.tables(doc));
+		int before = this.tables(doc).Length;
+		Assert.NotEqual(0, before);
 
 		doc.Header.Version = version;
-		string reported = null;
+		string converted = null;
 		using MemoryStream stream = new();
 		using (DwgWriter writer = new(stream, doc))
 		{
-			writer.OnNotification += (s, e) => { if (e.Message.Contains("is not written to a")) reported = e.Message; };
+			writer.OnNotification += (s, e) => { if (e.Message.Contains("was converted")) converted = e.Message; };
 			writer.Write();
 		}
 
-		Assert.NotNull(reported);
-		Assert.Contains("layout", reported);
-		Assert.Empty(this.tables(DwgReader.Read(new MemoryStream(stream.ToArray()))));
+		Assert.NotNull(converted);
+		TableEntity[] after = this.tables(DwgReader.Read(new MemoryStream(stream.ToArray())));
+		Assert.Equal(before, after.Length);
+		Assert.Contains(after.SelectMany(t => t.Rows).SelectMany(r => r.Cells).SelectMany(c => c.Contents),
+			c => c.CadValue?.Value?.ToString() == "Table sample");
+		Assert.Contains(after, t => t.MergedCellRanges.Count > 0);
 	}
 
 	[Theory]
@@ -95,6 +105,38 @@ public class DwgLegacyTableTests
 		}
 
 		Assert.Equal(before.Length, this.tables(DwgReader.Read(new MemoryStream(stream.ToArray()))).Length);
+	}
+
+	[Fact]
+	public void AnEmptyStringCellValueRoundTripsWithoutShiftingTheStream()
+	{
+		//writeStringCadValue used to write a bare zero length for an empty string AND then fall
+		//through to the full write, so every field after the empty value was shifted by one bit
+		//long plus two bytes: this library's own reader threw reading the file back and the
+		//failsafe dropped the table, and AutoCAD worked on such a file for as long as it was
+		//given. No R2010-authored table carries an empty String value - only one converted from
+		//the pre-R2010 layout does - which is why T84's conversion experiments kept failing
+		//while every ordinary round trip stayed green.
+		CadDocument doc = DwgReader.Read(sampleR2018);
+		TableEntity table = this.tables(doc).First();
+		TableEntity.CellContent content = table.Rows.SelectMany(r => r.Cells)
+			.SelectMany(c => c.Contents).First();
+		content.CadValue.ValueType = CadValueType.String;
+		content.CadValue.SetValue(string.Empty);
+		content.CadValue.IsEmpty = false;
+		int countBefore = this.tables(doc).Length;
+
+		doc.Header.Version = ACadVersion.AC1032;
+		using MemoryStream stream = new();
+		using (DwgWriter writer = new(stream, doc))
+		{
+			writer.Write();
+		}
+
+		TableEntity[] after = this.tables(DwgReader.Read(new MemoryStream(stream.ToArray())));
+		Assert.Equal(countBefore, after.Length);
+		Assert.Equal(string.Empty, after.First().Rows.SelectMany(r => r.Cells)
+			.SelectMany(c => c.Contents).First().CadValue.Value);
 	}
 
 	[Fact]

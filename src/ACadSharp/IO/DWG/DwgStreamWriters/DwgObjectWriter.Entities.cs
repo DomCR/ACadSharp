@@ -2310,12 +2310,59 @@ internal partial class DwgObjectWriter : DwgSectionIO
 		}
 	}
 
+	//A table read from the pre-R2010 layout, being converted for the duration of one
+	//writeTableEntity call. The document itself is never touched: the merge ranges live here and
+	//the merged-away cells are written without their content, instead of mutating entities the
+	//caller may still be using (the DXF writer, for one, still writes the older fields).
+	private List<TableEntity.CellRange> _legacyMergedRanges;
+	private HashSet<TableEntity.Cell> _legacySuppressedCells;
+
 	private void writeTableEntity(TableEntity table)
 	{
 		this.writeCommonInsertData(table);
 
 		if (this.R2010Plus)
 		{
+			//Converting the older layout needs exactly two translations, measured rather than
+			//assumed (T84): the per-cell merge spans become merged cell ranges, and a cell merged
+			//into another loses the empty content the older layout gave it. Everything else the
+			//R2010 layout can carry - cell styles, content formats, cell geometry, custom data -
+			//is optional: stripped from an R2018-authored table, AutoCAD still audits 0 and its
+			//own export keeps every cell.
+			if (table.ContentIsPreR2010Layout)
+			{
+				this._legacyMergedRanges = new List<TableEntity.CellRange>();
+				this._legacySuppressedCells = new HashSet<TableEntity.Cell>();
+				for (int r = 0; r < table.Content.Rows.Count; r++)
+				{
+					TableEntity.Row row = table.Content.Rows[r];
+					for (int c = 0; c < row.Cells.Count; c++)
+					{
+						TableEntity.Cell cell = row.Cells[c];
+						if (cell.MergedValue != 0)
+						{
+							this._legacySuppressedCells.Add(cell);
+							continue;
+						}
+
+						if (cell.BorderWidth > 1 || cell.BorderHeight > 1)
+						{
+							this._legacyMergedRanges.Add(new TableEntity.CellRange
+							{
+								TopRowIndex = r,
+								LeftColumnIndex = c,
+								BottomRowIndex = r + Math.Max(1, cell.BorderHeight) - 1,
+								RightColumnIndex = c + Math.Max(1, cell.BorderWidth) - 1,
+							});
+						}
+					}
+				}
+
+				this.notify(
+					$"TableEntity {table.Handle}: content read from the pre-{ACadVersion.AC1024} layout was converted to the {ACadVersion.AC1024} one on write - {this._legacyMergedRanges.Count} merge ranges rebuilt from the per-cell spans, {this._legacySuppressedCells.Count} merged-away cells written without their empty content.",
+					NotificationType.None);
+			}
+
 			//RC Unknown (default 0)
 			this._writer.WriteByte(0);
 			//H Unknown (soft pointer, default NULL)
@@ -2339,7 +2386,15 @@ internal partial class DwgObjectWriter : DwgSectionIO
 			//Here the table content is present (see TABLECONTENT object),
 			//without the common OBJECT data.
 			//See paragraph 20.4.97.
-			this.writeTableContent(table.Content);
+			try
+			{
+				this.writeTableContent(table.Content);
+			}
+			finally
+			{
+				this._legacyMergedRanges = null;
+				this._legacySuppressedCells = null;
+			}
 
 			//BS Unknown (default 38)
 			this._writer.WriteBitShort(38);
@@ -2487,8 +2542,9 @@ internal partial class DwgObjectWriter : DwgSectionIO
 		this.writeCellStyle(content.CellStyleOverride);
 
 		//Bl 90 Number of merged cell ranges
-		this._writer.WriteBitLong(content.MergedCellRanges.Count);
-		foreach (var cellRange in content.MergedCellRanges)
+		List<TableEntity.CellRange> mergedCellRanges = this._legacyMergedRanges ?? content.MergedCellRanges;
+		this._writer.WriteBitLong(mergedCellRanges.Count);
+		foreach (var cellRange in mergedCellRanges)
 		{
 			//BL 91 Top row index
 			this._writer.WriteBitLong(cellRange.TopRowIndex);
@@ -2536,11 +2592,17 @@ internal partial class DwgObjectWriter : DwgSectionIO
 			throw new Exception();
 		}
 
-		//BL 95 Number of cell contents
-		this._writer.WriteBitLong(cell.Contents.Count);
-		foreach (TableEntity.CellContent cellContent in cell.Contents)
+		//BL 95 Number of cell contents. A cell merged into another under the pre-R2010 layout is
+		//written without the empty content that layout gave it - in the R2010 layout such a cell
+		//carries none.
+		bool suppressContents = this._legacySuppressedCells != null && this._legacySuppressedCells.Contains(cell);
+		this._writer.WriteBitLong(suppressContents ? 0 : cell.Contents.Count);
+		if (!suppressContents)
 		{
-			this.writeTableCellContent(cellContent);
+			foreach (TableEntity.CellContent cellContent in cell.Contents)
+			{
+				this.writeTableCellContent(cellContent);
+			}
 		}
 
 		this.writeCellStyle(cell.StyleOverride);
