@@ -1,17 +1,29 @@
-﻿namespace ACadSharp.Tables.Collections
+﻿namespace ACadSharp.Tables.Collections;
+
+/// <summary>
+/// Represents a collection of <see cref="UCS"/> entries.
+/// </summary>
+public class UCSTable : Table<UCS>
 {
-	public class UCSTable : Table<UCS>
+	/// <inheritdoc/>
+	public override string ObjectName => DxfFileToken.TableUcs;
+
+	/// <inheritdoc/>
+	public override ObjectType ObjectType => ObjectType.UCS_CONTROL_OBJ;
+
+	internal UCSTable() : base()
 	{
-		/// <inheritdoc/>
-		public override ObjectType ObjectType => ObjectType.UCS_CONTROL_OBJ;
+	}
 
-		/// <inheritdoc/>
-		public override string ObjectName => DxfFileToken.TableUcs;
+	internal UCSTable(CadDocument document) : base(document)
+	{
+	}
 
-		protected override string[] defaultEntries { get { return new string[] { }; } }
+	protected override string[] getDefaultEntries()
+	{ return new string[] { }; }
 
-		internal UCSTable() : base() { }
-
-		internal UCSTable(CadDocument document) : base(document) { }
+	protected override UCS getDefaultEntry()
+	{
+		return null;
 	}
 }

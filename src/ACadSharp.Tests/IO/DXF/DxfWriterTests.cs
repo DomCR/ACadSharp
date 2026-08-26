@@ -6,98 +6,97 @@ using System.IO;
 using Xunit;
 using Xunit.Abstractions;
 
-namespace ACadSharp.Tests.IO.DXF
+namespace ACadSharp.Tests.IO.DXF;
+
+public class DxfWriterTests : IOTestsBase
 {
-	public class DxfWriterTests : IOTestsBase
+	public DxfWriterTests(ITestOutputHelper output) : base(output) { }
+
+	[Theory]
+	[MemberData(nameof(Versions))]
+	public void WriteEmptyAsciiTest(ACadVersion version)
 	{
-		public DxfWriterTests(ITestOutputHelper output) : base(output) { }
+		if (version < ACadVersion.AC1015)
+			// Not implemented
+			return;
 
-		[Theory]
-		[MemberData(nameof(Versions))]
-		public void WriteEmptyAsciiTest(ACadVersion version)
+		CadDocument doc = new CadDocument();
+		doc.Header.Version = version;
+
+		string path = Path.Combine(TestVariables.OutputSamplesFolder, $"out_empty_sample_{version}_ascii.dxf");
+
+		using (var wr = new DxfWriter(path, doc, false))
 		{
-			if (version < ACadVersion.AC1015)
-				// Not implemented
-				return;
-
-			CadDocument doc = new CadDocument();
-			doc.Header.Version = version;
-
-			string path = Path.Combine(TestVariables.OutputSamplesFolder, $"out_empty_sample_{version}_ascii.dxf");
-
-			using (var wr = new DxfWriter(path, doc, false))
-			{
-				wr.OnNotification += this.onNotification;
-				wr.Write();
-			}
-
-			this._output.WriteLine("Writer successful");
-
-			using (var re = new DxfReader(path, this.onNotification))
-			{
-				CadDocument readed = re.Read();
-			}
+			wr.OnNotification += this.onNotification;
+			wr.Write();
 		}
 
-		[Theory]
-		[MemberData(nameof(Versions))]
-		public void WriteEmptyBinaryTest(ACadVersion version)
+		this._output.WriteLine("Writer successful");
+
+		using (var re = new DxfReader(path, this.onNotification))
 		{
-			if (version < ACadVersion.AC1015)
-				// Not implemented
-				return;
+			CadDocument readed = re.Read();
+		}
+	}
 
-			CadDocument doc = new CadDocument();
-			doc.Header.Version = version;
+	[Theory]
+	[MemberData(nameof(Versions))]
+	public void WriteEmptyBinaryTest(ACadVersion version)
+	{
+		if (version < ACadVersion.AC1015)
+			// Not implemented
+			return;
 
-			string path = Path.Combine(TestVariables.OutputSamplesFolder, $"out_empty_sample_{version}_binary.dxf");
+		CadDocument doc = new CadDocument();
+		doc.Header.Version = version;
 
-			using (var wr = new DxfWriter(path, doc, true))
-			{
-				wr.OnNotification += this.onNotification;
-				wr.Write();
-			}
+		string path = Path.Combine(TestVariables.OutputSamplesFolder, $"out_empty_sample_{version}_binary.dxf");
 
-			this._output.WriteLine("Writer successful");
-
-			using (var re = new DxfReader(path, this.onNotification))
-			{
-				CadDocument readed = re.Read();
-			}
+		using (var wr = new DxfWriter(path, doc, true))
+		{
+			wr.OnNotification += this.onNotification;
+			wr.Write();
 		}
 
-		[Theory]
-		[MemberData(nameof(Versions))]
-		public void WriteDocumentWithEntitiesTest(ACadVersion version)
+		this._output.WriteLine("Writer successful");
+
+		using (var re = new DxfReader(path, this.onNotification))
 		{
-			if (version < ACadVersion.AC1015)
-				// Not implemented
-				return;
+			CadDocument readed = re.Read();
+		}
+	}
 
-			CadDocument doc = new CadDocument();
-			doc.Header.Version = version;
+	[Theory]
+	[MemberData(nameof(Versions))]
+	public void WriteDocumentWithEntitiesTest(ACadVersion version)
+	{
+		if (version < ACadVersion.AC1015)
+			// Not implemented
+			return;
 
-			List<Entity> entities = new List<Entity>
-			{
-				EntityFactory.Create<Point>(),
-				EntityFactory.Create<Line>(),
-				EntityFactory.Create<Polyline2D>(),
-				EntityFactory.Create<Polyline3D>(),
-				EntityFactory.Create<Line>(),
-				EntityFactory.Create<Arc>(),
-				EntityFactory.Create<LwPolyline>(),
-			};
+		CadDocument doc = new CadDocument();
+		doc.Header.Version = version;
+
+		List<Entity> entities = new List<Entity>
+		{
+			EntityFactory.Create<Point>(),
+			EntityFactory.Create<Line>(),
+			EntityFactory.Create<Polyline2D>(),
+			EntityFactory.Create<Polyline3D>(),
+			EntityFactory.Create<Line>(),
+			EntityFactory.Create<Arc>(),
+			EntityFactory.Create<LwPolyline>(),
+		};
 
 
-			doc.Entities.AddRange(entities);
+		doc.Entities.AddRange(entities);
 
-			string path = Path.Combine(TestVariables.OutputSamplesFolder, $"out_sample_{version}_ascii.dxf");
+		string path = Path.Combine(TestVariables.OutputSamplesFolder, $"out_sample_{version}_ascii.dxf");
 
-			using (var wr = new DxfWriter(path, doc, false))
-			{
-				wr.OnNotification += this.onNotification;
-				wr.Write();
-			}
+		using (var wr = new DxfWriter(path, doc, false))
+		{
+			wr.OnNotification += this.onNotification;
+			wr.Write();
 		}
 	}
 }

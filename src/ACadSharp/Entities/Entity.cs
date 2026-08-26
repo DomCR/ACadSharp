@@ -54,7 +54,19 @@ public abstract class Entity : CadObject, IEntity
 				throw new ArgumentNullException(nameof(value));
 			}
 
-			this._layer = updateCollection(value, this.Document?.Layers);
+			this.updateLayerReference(value);
+		}
+	}
+
+	private void updateLayerReference(Layer entry)
+	{
+		if (this.Document != null)
+		{
+			this.Document.Layers.UpdateReference(this, entry, l => this._layer = l);
+		}
+		else
+		{
+			this._layer = entry;
 		}
 	}
 
@@ -275,28 +287,24 @@ public abstract class Entity : CadObject, IEntity
 	{
 		base.AssignDocument(doc);
 
-		this._layer = CadObject.updateCollection(this.Layer, doc.Layers);
+		this.updateLayerReference(this.Layer);
 		this._lineType = CadObject.updateCollection(this.LineType, doc.LineTypes);
 
-		doc.Layers.OnRemove += this.tableOnRemove;
 		doc.LineTypes.OnRemove += this.tableOnRemove;
-
-		//TODO: Ensure the event is set after the document is read or modified
 		doc.Materials?.OnRemove += this.tableOnRemove;
 	}
 
 	internal override void UnassignDocument()
 	{
-		this.Document.Layers.OnRemove -= this.tableOnRemove;
+		this.Document.Layers.RemoveReference(this, this.Layer.Name);
 		this.Document.LineTypes.OnRemove -= this.tableOnRemove;
-
 		this.Document.Materials?.OnRemove -= this.tableOnRemove;
 
 		base.UnassignDocument();
 
-		this.Layer = (Layer)this.Layer.Clone();
-		this.LineType = (LineType)this.LineType.Clone();
-		this.Material = (Material)this.Material?.Clone();
+		this._layer = (Layer)this.Layer.Clone();
+		this._lineType = (LineType)this.LineType.Clone();
+		this._material = (Material)this.Material?.Clone();
 	}
 
 	protected List<XY> applyRotation(IEnumerable<XY> points, double rotation)

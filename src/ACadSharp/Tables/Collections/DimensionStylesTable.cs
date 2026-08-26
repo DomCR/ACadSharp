@@ -1,17 +1,29 @@
-﻿namespace ACadSharp.Tables.Collections
+﻿namespace ACadSharp.Tables.Collections;
+
+/// <summary>
+/// Represents a collection of <see cref="DimensionStyle"/> entries.
+/// </summary>
+public class DimensionStylesTable : Table<DimensionStyle>
 {
-	public class DimensionStylesTable : Table<DimensionStyle>
+	/// <inheritdoc/>
+	public override string ObjectName => DxfFileToken.TableDimstyle;
+
+	/// <inheritdoc/>
+	public override ObjectType ObjectType => ObjectType.DIMSTYLE_CONTROL_OBJ;
+
+	internal DimensionStylesTable() : base()
 	{
-		/// <inheritdoc/>
-		public override ObjectType ObjectType => ObjectType.DIMSTYLE_CONTROL_OBJ;
+	}
 
-		/// <inheritdoc/>
-		public override string ObjectName => DxfFileToken.TableDimstyle;
+	internal DimensionStylesTable(CadDocument document) : base(document)
+	{
+	}
 
-		protected override string[] defaultEntries { get { return new string[] { DimensionStyle.DefaultName }; } }
+	protected override string[] getDefaultEntries()
+	{ return new string[] { DimensionStyle.DefaultName }; }
 
-		internal DimensionStylesTable() : base() { }
-
-		internal DimensionStylesTable(CadDocument document) : base(document) { }
+	protected override DimensionStyle getDefaultEntry()
+	{
+		return this[DimensionStyle.DefaultName];
 	}
 }

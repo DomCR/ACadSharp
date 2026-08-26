@@ -5,205 +5,325 @@ using System.Collections;
 using System.Collections.Generic;
 using System.Linq;
 
-namespace ACadSharp.Tables.Collections
+namespace ACadSharp.Tables.Collections;
+
+[DxfSubClass(DxfSubclassMarker.Table)]
+public abstract class Table<T> : CadObject, ITable, ICadCollection<T>, IObservableCadCollection<T>
+	where T : TableEntry
 {
-	[DxfSubClass(DxfSubclassMarker.Table)]
-	public abstract class Table<T> : CadObject, ITable, ICadCollection<T>, IObservableCadCollection<T>
-		where T : TableEntry
+	public event EventHandler<CollectionChangedEventArgs> OnAdd;
+
+	public event EventHandler<CollectionChangedEventArgs> OnRemove;
+
+	/// <summary>
+	/// Gets the number of entries in this table
+	/// </summary>
+	[DxfCodeValue(DxfReferenceType.Count, 70)]
+	public int Count => this.entries.Count;
+
+	/// <inheritdoc/>
+	public override string ObjectName => DxfFileToken.TableEntry;
+
+	/// <inheritdoc/>
+	public override string SubclassMarker => DxfSubclassMarker.Table;
+
+	protected readonly Dictionary<string, T> entries = new Dictionary<string, T>(StringComparer.OrdinalIgnoreCase);
+
+	private readonly Dictionary<string, List<ReferenceHolder>> _references = new();
+
+	protected Table()
+	{ }
+
+	protected Table(CadDocument document)
 	{
-		public event EventHandler<CollectionChangedEventArgs> OnAdd;
+		this.Owner = document;
+		document.RegisterCollection(this);
+	}
 
-		public event EventHandler<CollectionChangedEventArgs> OnRemove;
-
-		/// <summary>
-		/// Gets the number of entries in this table
-		/// </summary>
-		[DxfCodeValue(DxfReferenceType.Count, 70)]
-		public int Count => this.entries.Count;
-
-		/// <inheritdoc/>
-		public override string ObjectName => DxfFileToken.TableEntry;
-
-		/// <inheritdoc/>
-		public override string SubclassMarker => DxfSubclassMarker.Table;
-
-		protected abstract string[] defaultEntries { get; }
-
-		protected readonly Dictionary<string, T> entries = new Dictionary<string, T>(StringComparer.OrdinalIgnoreCase);
-
-		protected Table()
-		{ }
-
-		protected Table(CadDocument document)
+	/// <summary>
+	/// Add a <see cref="TableEntry"/> to the collection, this method triggers <see cref="OnAdd"/>
+	/// </summary>
+	/// <param name="item"></param>
+	public virtual void Add(T item)
+	{
+		if (string.IsNullOrEmpty(item.Name))
 		{
-			this.Owner = document;
-			document.RegisterCollection(this);
+			item.Name = this.createName("unnamed");
 		}
 
-		/// <summary>
-		/// Add a <see cref="TableEntry"/> to the collection, this method triggers <see cref="OnAdd"/>
-		/// </summary>
-		/// <param name="item"></param>
-		public virtual void Add(T item)
-		{
-			if (string.IsNullOrEmpty(item.Name))
-			{
-				item.Name = this.createName("unnamed");
-			}
+		this.add(item.Name, item);
+	}
 
-			this.add(item.Name, item);
+	/// <summary>
+	/// Add multiple <see cref="TableEntry"/> to the collection, this method triggers <see cref="OnAdd"/>
+	/// </summary>
+	/// <param name="items"></param>
+	public void AddRange(IEnumerable<T> items)
+	{
+		foreach (var item in items)
+		{
+			this.Add(item);
+		}
+	}
+
+	/// <summary>
+	/// Determines whether the <see cref="Table{T}"/> contains the specified key.
+	/// </summary>
+	/// <param name="key"></param>
+	/// <returns></returns>
+	public bool Contains(string key)
+	{
+		return this.entries.ContainsKey(key);
+	}
+
+	/// <summary>
+	/// Create the default entries for the table if they don't exist
+	/// </summary>
+	public void CreateDefaultEntries()
+	{
+		foreach (string entry in this.getDefaultEntries())
+		{
+			if (this.Contains(entry))
+				continue;
+
+			this.Add((T)Activator.CreateInstance(typeof(T), new object[] { entry }));
+		}
+	}
+
+	/// <inheritdoc/>
+	public IEnumerator<T> GetEnumerator()
+	{
+		return this.entries.Values.GetEnumerator();
+	}
+
+	/// <inheritdoc/>
+	IEnumerator IEnumerable.GetEnumerator()
+	{
+		return this.entries.Values.GetEnumerator();
+	}
+
+	public IEnumerable<CadObject> GetReferences(string name)
+	{
+		if (this._references.TryGetValue(name, out List<ReferenceHolder> holders))
+		{
+			return holders.Select(h => h.Owner);
 		}
 
-		/// <summary>
-		/// Add multiple <see cref="TableEntry"/> to the collection, this method triggers <see cref="OnAdd"/>
-		/// </summary>
-		/// <param name="items"></param>
-		public void AddRange(IEnumerable<T> items)
-		{
-			foreach (var item in items)
-			{
-				this.Add(item);
-			}
-		}
+		return Enumerable.Empty<CadObject>();
+	}
 
-		/// <summary>
-		/// Tries to add the item to the collection, if an item with the same name already exists it returns the existing item.
-		/// </summary>
-		/// <param name="item"></param>
-		/// <returns></returns>
-		public T TryAdd(T item)
-		{
-			if (this.TryGetValue(item.Name, out T existing))
-			{
-				return existing;
-			}
-			else
-			{
-				this.Add(item);
-				return item;
-			}
-		}
-
-		/// <summary>
-		/// Determines whether the <see cref="Table{T}"/> contains the specified key.
-		/// </summary>
-		/// <param name="key"></param>
-		/// <returns></returns>
-		public bool Contains(string key)
-		{
-			return this.entries.ContainsKey(key);
-		}
-
-		/// <summary>
-		/// Create the default entries for the table if they don't exist
-		/// </summary>
-		public void CreateDefaultEntries()
-		{
-			foreach (string entry in this.defaultEntries)
-			{
-				if (this.Contains(entry))
-					continue;
-
-				this.Add((T)Activator.CreateInstance(typeof(T), new object[] { entry }));
-			}
-		}
-
-		/// <inheritdoc/>
-		public IEnumerator<T> GetEnumerator()
-		{
-			return this.entries.Values.GetEnumerator();
-		}
-
-		/// <inheritdoc/>
-		IEnumerator IEnumerable.GetEnumerator()
-		{
-			return this.entries.Values.GetEnumerator();
-		}
-
-		/// <summary>
-		/// Removes a <see cref="TableEntry"/> from the collection, this method triggers <see cref="OnRemove"/>
-		/// </summary>
-		/// <param name="key">key in the table</param>
-		/// <returns>The removed <see cref="TableEntry"/></returns>
-		public T Remove(string key)
-		{
-			if (this.defaultEntries.Contains(key))
-				return null;
-
-			if (this.entries.Remove(key, out T item))
-			{
-				item.Owner = null;
-				OnRemove?.Invoke(this, new CollectionChangedEventArgs(item));
-				item.OnNameChanged -= this.onEntryNameChanged;
-				return item;
-			}
-
+	/// <summary>
+	/// Removes a <see cref="TableEntry"/> from the collection, this method triggers <see cref="OnRemove"/>
+	/// </summary>
+	/// <param name="key">key in the table</param>
+	/// <returns>The removed <see cref="TableEntry"/></returns>
+	public T Remove(string key)
+	{
+		if (this.getDefaultEntries().Contains(key))
 			return null;
+
+		if (this.entries.Remove(key, out T item))
+		{
+			item.Owner = null;
+			OnRemove?.Invoke(this, new CollectionChangedEventArgs(item));
+			item.OnNameChanged -= this.onEntryNameChanged;
+
+			this.removeReferences(item.Name);
+
+			return item;
 		}
 
-		/// <summary>
-		/// Gets the value associated with the specified key.
-		/// </summary>
-		/// <param name="key">The key of the value to get.</param>
-		/// <param name="item"></param>
-		/// <returns>true if the <see cref="Table{T}"/> contains an element with the specified key; otherwise, false.</returns>
-		public bool TryGetValue(string key, out T item)
+		return null;
+	}
+
+	/// <summary>
+	/// Tries to add the item to the collection, if an item with the same name already exists it returns the existing item.
+	/// </summary>
+	/// <param name="item"></param>
+	/// <returns></returns>
+	public T TryAdd(T item)
+	{
+		if (this.TryGetValue(item.Name, out T existing))
 		{
-			return this.entries.TryGetValue(key, out item);
+			return existing;
 		}
-
-		protected void add(string key, T item)
+		else
 		{
-			this.entries.Add(key, item);
-			item.Owner = this;
-
-			item.OnNameChanged += this.onEntryNameChanged;
-
-			OnAdd?.Invoke(this, new CollectionChangedEventArgs(item));
+			this.Add(item);
+			return item;
 		}
+	}
 
-		protected void addHandlePrefix(T item)
+	/// <summary>
+	/// Gets the value associated with the specified key.
+	/// </summary>
+	/// <param name="key">The key of the value to get.</param>
+	/// <param name="item"></param>
+	/// <returns>true if the <see cref="Table{T}"/> contains an element with the specified key; otherwise, false.</returns>
+	public bool TryGetValue(string key, out T item)
+	{
+		return this.entries.TryGetValue(key, out item);
+	}
+
+	internal void RemoveReference(CadObject item, string name)
+	{
+		if (this._references.TryGetValue(name, out List<ReferenceHolder> holders))
 		{
-			item.Owner = this;
-			item.OnNameChanged += this.onEntryNameChanged;
-
-			OnAdd?.Invoke(this, new CollectionChangedEventArgs(item));
-
-			string key = $"{item.Handle}:{item.Name}";
-
-			this.entries.Add(key, item);
-		}
-
-		protected string createName(string prefix)
-		{
-			string name = prefix;
-			int i = 0;
-			while (this.entries.ContainsKey($"{prefix}{i}"))
+			ReferenceHolder holder = holders.FirstOrDefault(h => h.Owner == item);
+			if (holder != null)
 			{
-				i++;
+				holders.Remove(holder);
+				if (holders.Count == 0)
+				{
+					this._references.Remove(name);
+				}
 			}
+		}
+	}
 
-			return $"{prefix}{i}";
+	internal void UpdateReference(CadObject item, T newEntry, ref T reference)
+	{
+		if (item == null)
+		{
+			throw new ArgumentNullException(nameof(item), "The reference cannot be null.");
 		}
 
-		private void onEntryNameChanged(object sender, OnNameChangedArgs e)
+		if (item.Document != this.Document)
 		{
-			if (this.defaultEntries.Contains(e.OldName, StringComparer.InvariantCultureIgnoreCase))
-			{
-				throw new ArgumentException($"The name {e.OldName} belongs to a default entry.");
-			}
-
-			var entry = this.entries[e.OldName];
-			this.entries.Add(e.NewName, entry);
-			this.entries.Remove(e.OldName);
+			throw new ArgumentException("The reference must belong to the same document as the table.", nameof(item));
 		}
 
-		public T this[string name]
+		this.RemoveReference(item, reference.Name);
+
+		if (!this._references.TryGetValue(newEntry.Name, out List<ReferenceHolder> holders))
 		{
-			get
+			holders = new List<ReferenceHolder>();
+			this._references.Add(newEntry.Name, holders);
+		}
+	}
+
+	internal void UpdateReference(CadObject owner, T entry, Action<T> assignValue)
+	{
+		if (owner == null)
+		{
+			throw new ArgumentNullException(nameof(owner), "The reference cannot be null.");
+		}
+
+		if (entry == null)
+		{
+			throw new ArgumentNullException(nameof(entry));
+		}
+
+		if (assignValue == null)
+		{
+			throw new ArgumentNullException(nameof(assignValue));
+		}
+
+		if (owner.Document != this.Document)
+		{
+			throw new ArgumentException("The reference must belong to the same document as the table.", nameof(owner));
+		}
+
+		var existing = this.TryAdd(entry);
+
+		this.RemoveReference(owner, existing.Name);
+
+		if (!this._references.TryGetValue(existing.Name, out List<ReferenceHolder> holders))
+		{
+			holders = new List<ReferenceHolder>();
+			this._references.Add(existing.Name, holders);
+		}
+
+		assignValue(existing);
+
+		ReferenceHolder holder = new ReferenceHolder(owner, assignValue);
+		holders.Add(holder);
+	}
+
+	protected void add(string key, T item)
+	{
+		this.entries.Add(key, item);
+		item.Owner = this;
+
+		item.OnNameChanged += this.onEntryNameChanged;
+
+		OnAdd?.Invoke(this, new CollectionChangedEventArgs(item));
+	}
+
+	protected void addHandlePrefix(T item)
+	{
+		item.Owner = this;
+		item.OnNameChanged += this.onEntryNameChanged;
+
+		OnAdd?.Invoke(this, new CollectionChangedEventArgs(item));
+
+		string key = $"{item.Handle}:{item.Name}";
+
+		this.entries.Add(key, item);
+	}
+
+	protected string createName(string prefix)
+	{
+		string name = prefix;
+		int i = 0;
+		while (this.entries.ContainsKey($"{prefix}{i}"))
+		{
+			i++;
+		}
+
+		return $"{prefix}{i}";
+	}
+
+	protected abstract string[] getDefaultEntries();
+
+	protected abstract T getDefaultEntry();
+
+	private void onEntryNameChanged(object sender, OnNameChangedArgs e)
+	{
+		if (this.getDefaultEntries().Contains(e.OldName, StringComparer.InvariantCultureIgnoreCase))
+		{
+			throw new ArgumentException($"The name {e.OldName} belongs to a default entry.");
+		}
+
+		var entry = this.entries[e.OldName];
+		this.entries.Add(e.NewName, entry);
+		this.entries.Remove(e.OldName);
+
+		if (this._references.Remove(e.OldName, out List<ReferenceHolder> holders))
+		{
+			this._references.Add(e.NewName, holders);
+		}
+	}
+
+	private void removeReferences(string name)
+	{
+		if (this._references.Remove(name, out List<ReferenceHolder> holders))
+		{
+			foreach (var holder in holders)
 			{
-				return this.entries[name];
+				holder.Reset(this.getDefaultEntry());
 			}
+		}
+	}
+
+	public T this[string name]
+	{
+		get
+		{
+			return this.entries[name];
+		}
+	}
+
+	private sealed class ReferenceHolder
+	{
+		public CadObject Owner { get; }
+
+		public Action<T> Reset { get; }
+
+		public ReferenceHolder(CadObject owner, Action<T> reset)
+		{
+			this.Owner = owner;
+			this.Reset = reset;
 		}
 	}
 }

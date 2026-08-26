@@ -1,19 +1,18 @@
 ﻿using ACadSharp.Tables;
 using Xunit;
 
-namespace ACadSharp.Tests.Tables.Collections
+namespace ACadSharp.Tests.Tables.Collections;
+
+public class TextStylesTableTests
 {
-	public class TextStylesTableTests
+	[Fact()]
+	public void AddIsShapeTextStyleTest()
 	{
-		[Fact()]
-		public void AddIsShapeTextStyleTest()
-		{
-			CadDocument doc = new CadDocument();
+		CadDocument doc = new CadDocument();
 
-			TextStyle style = new TextStyle("custom_text_00");
-			style.Flags |= StyleFlags.IsShape;
+		TextStyle style = new TextStyle("custom_text_00");
+		style.Flags |= StyleFlags.IsShape;
 
-			doc.TextStyles.Add(style);
-		}
+		doc.TextStyles.Add(style);
 	}
 }
