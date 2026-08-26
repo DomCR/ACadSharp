@@ -54,19 +54,7 @@ public abstract class Entity : CadObject, IEntity
 				throw new ArgumentNullException(nameof(value));
 			}
 
-			this.updateLayerReference(value);
-		}
-	}
-
-	private void updateLayerReference(Layer entry)
-	{
-		if (this.Document != null)
-		{
-			this.Document.Layers.UpdateReference(this, entry, l => this._layer = l);
-		}
-		else
-		{
-			this._layer = entry;
+			this.updateTableEntry(value, l => this._layer = l, this.Document?.Layers);
 		}
 	}
 
@@ -287,7 +275,7 @@ public abstract class Entity : CadObject, IEntity
 	{
 		base.AssignDocument(doc);
 
-		this.updateLayerReference(this.Layer);
+		this.updateTableEntry(this._layer, l => this._layer = l, this.Document?.Layers);
 		this._lineType = CadObject.updateCollection(this.LineType, doc.LineTypes);
 
 		doc.LineTypes.OnRemove += this.tableOnRemove;

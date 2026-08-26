@@ -3,8 +3,10 @@ using ACadSharp.Extensions;
 using ACadSharp.IO;
 using ACadSharp.Objects;
 using ACadSharp.Tables;
+using ACadSharp.Tables.Collections;
 using ACadSharp.XData;
 using CSMath;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 
@@ -275,5 +277,18 @@ public abstract class CadObject : IHandledCadObject
 		}
 
 		return table.TryAdd(entry);
+	}
+
+	protected T updateTableEntry<T>(T entry, Action<T> assignValue, Table<T> table)
+		where T : TableEntry
+	{
+		if (table == null || entry == null)
+		{
+			return entry;
+		}
+
+		table.UpdateReference(this, entry, assignValue);
+
+		return entry;
 	}
 }
