@@ -135,6 +135,18 @@ public class CadObjectCollection<T> : IObservableCadCollection<T>
 
 		return true;
 	}
+	
+	/// <summary>
+	/// Removes multiple items from the collection.
+	/// </summary>
+	/// <param name="items">The items to remove.</param>
+	public void Remove(IEnumerable<T> items)
+	{
+		foreach (var item in items)
+		{
+			this.Remove(item);
+		}
+	}
 
 	public T this[int index]
 	{

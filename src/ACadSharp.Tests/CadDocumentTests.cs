@@ -1,13 +1,15 @@
-﻿using System;
-using ACadSharp.Tables;
-using Xunit;
-using ACadSharp.Tests.Common;
+﻿using ACadSharp.Blocks;
 using ACadSharp.Entities;
-using Xunit.Abstractions;
-using ACadSharp.Blocks;
-using System.Linq;
-using System.Diagnostics;
 using ACadSharp.Objects;
+using ACadSharp.Tables;
+using ACadSharp.Tests.Common;
+using ACadSharp.Tests.TestModels;
+using System;
+using System.Collections.Generic;
+using System.Diagnostics;
+using System.Linq;
+using Xunit;
+using Xunit.Abstractions;
 
 namespace ACadSharp.Tests;
 
@@ -92,11 +94,17 @@ public class CadDocumentTests
 
 		string layerName = "test_layer";
 		Layer layer = new Layer(layerName);
+		List<Entity> toRemove = new List<Entity>();
 		for (int i = 0; i < 10000 / 2; i++)
 		{
 			var item = doc.Entities[i];
 			item.Layer = layer;
+			toRemove.Add(item);
 		}
+
+		doc.Layers.Remove(layerName);
+
+		doc.Entities.Remove(toRemove);
 
 		stopwatch.Stop();
 		this._output.WriteLine(stopwatch.Elapsed.TotalSeconds.ToString());
@@ -129,11 +137,12 @@ public class CadDocumentTests
 
 		string lineTypeName = "test_linetype";
 		LineType lineType = new LineType(lineTypeName);
-		for (int i = 0; i < 10000 / 2; i++)
+		foreach (var item in doc.Entities)
 		{
-			var item = doc.Entities[i];
 			item.LineType = lineType;
 		}
+
+		doc.LineTypes.Remove(lineTypeName);
 
 		stopwatch.Stop();
 		this._output.WriteLine(stopwatch.Elapsed.TotalSeconds.ToString());
