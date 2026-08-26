@@ -29,9 +29,7 @@ public abstract class Table<T> : CadObject, ITable, ICadCollection<T>, IObservab
 
 	protected readonly Dictionary<string, T> entries = new Dictionary<string, T>(StringComparer.OrdinalIgnoreCase);
 
-	private readonly Dictionary<string, HashSet<ReferenceHolder>> _references = new();
-
-	private readonly Dictionary<CadObject, ReferenceHolder> _referencesByOwner = new();
+	private readonly CadObjectReferenceHandler<string, T> _referenceHandler = new();
 
 	protected Table()
 	{ }
@@ -106,12 +104,7 @@ public abstract class Table<T> : CadObject, ITable, ICadCollection<T>, IObservab
 
 	public IEnumerable<CadObject> GetReferences(string name)
 	{
-		if (this._references.TryGetValue(name, out HashSet<ReferenceHolder> holders))
-		{
-			return holders.Select(h => h.Owner);
-		}
-
-		return Enumerable.Empty<CadObject>();
+		return this._referenceHandler.GetReferences(name);
 	}
 
 	/// <summary>
@@ -130,7 +123,7 @@ public abstract class Table<T> : CadObject, ITable, ICadCollection<T>, IObservab
 			OnRemove?.Invoke(this, new CollectionChangedEventArgs(item));
 			item.OnNameChanged -= this.onEntryNameChanged;
 
-			this.removeReferences(item.Name);
+			this.assignToDefault(item.Name);
 
 			return item;
 		}
@@ -167,38 +160,9 @@ public abstract class Table<T> : CadObject, ITable, ICadCollection<T>, IObservab
 		return this.entries.TryGetValue(key, out item);
 	}
 
-	internal void RemoveReference(CadObject item, string name)
+	internal void RemoveReference(string name, CadObject owner)
 	{
-		if (this._references.TryGetValue(name, out HashSet<ReferenceHolder> holders) 
-			&& this._referencesByOwner.TryGetValue(item, out ReferenceHolder holder))
-		{
-			holders.Remove(holder);
-			if (holders.Count == 0)
-			{
-				this._references.Remove(name);
-			}
-		}
-	}
-
-	internal void UpdateReference(CadObject item, T newEntry, ref T reference)
-	{
-		if (item == null)
-		{
-			throw new ArgumentNullException(nameof(item), "The reference cannot be null.");
-		}
-
-		if (item.Document != this.Document)
-		{
-			throw new ArgumentException("The reference must belong to the same document as the table.", nameof(item));
-		}
-
-		this.RemoveReference(item, reference.Name);
-
-		if (!this._references.TryGetValue(newEntry.Name, out HashSet<ReferenceHolder> holders))
-		{
-			holders = new HashSet<ReferenceHolder>();
-			this._references.Add(newEntry.Name, holders);
-		}
+		this._referenceHandler.RemoveReference(name, owner);
 	}
 
 	internal void UpdateReference(CadObject owner, T entry, Action<T> assignValue)
@@ -225,19 +189,9 @@ public abstract class Table<T> : CadObject, ITable, ICadCollection<T>, IObservab
 
 		var existing = this.TryAdd(entry);
 
-		this.RemoveReference(owner, existing.Name);
-
-		if (!this._references.TryGetValue(existing.Name, out HashSet<ReferenceHolder> holders))
-		{
-			holders = new HashSet<ReferenceHolder>();
-			this._references.Add(existing.Name, holders);
-		}
-
+		this.RemoveReference(existing.Name, owner);
+		this._referenceHandler.AddReference(existing.Name, owner, assignValue);
 		assignValue(existing);
-
-		ReferenceHolder holder = new ReferenceHolder(owner, assignValue);
-		holders.Add(holder);
-		this._referencesByOwner[owner] = holder;
 	}
 
 	protected void add(string key, T item)
@@ -288,22 +242,12 @@ public abstract class Table<T> : CadObject, ITable, ICadCollection<T>, IObservab
 		var entry = this.entries[e.OldName];
 		this.entries.Add(e.NewName, entry);
 		this.entries.Remove(e.OldName);
-
-		if (this._references.Remove(e.OldName, out HashSet<ReferenceHolder> holders))
-		{
-			this._references.Add(e.NewName, holders);
-		}
+		this._referenceHandler.ChangeKey(e.OldName, e.NewName);
 	}
 
-	private void removeReferences(string name)
+	private void assignToDefault(string name)
 	{
-		if (this._references.Remove(name, out HashSet<ReferenceHolder> holders))
-		{
-			foreach (var holder in holders)
-			{
-				holder.Reset(this.getDefaultEntry());
-			}
-		}
+		this._referenceHandler.RemoveReference(name, this.getDefaultEntry());
 	}
 
 	public T this[string name]

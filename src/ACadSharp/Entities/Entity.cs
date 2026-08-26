@@ -291,14 +291,14 @@ public abstract class Entity : CadObject, IEntity
 		this._lineType = CadObject.updateCollection(this.LineType, doc.LineTypes);
 
 		doc.LineTypes.OnRemove += this.tableOnRemove;
-		doc.Materials?.OnRemove += this.tableOnRemove;
+		//doc.Materials?.OnRemove += this.tableOnRemove;
 	}
 
 	internal override void UnassignDocument()
 	{
-		this.Document.Layers.RemoveReference(this, this.Layer.Name);
-		this.Document.LineTypes.OnRemove -= this.tableOnRemove;
-		this.Document.Materials?.OnRemove -= this.tableOnRemove;
+		this.Document.Layers.RemoveReference(this.Layer.Name, this);
+		//this.Document.LineTypes.OnRemove -= this.tableOnRemove;
+		//this.Document.Materials?.OnRemove -= this.tableOnRemove;
 
 		base.UnassignDocument();
 
