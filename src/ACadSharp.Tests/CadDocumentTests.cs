@@ -71,6 +71,80 @@ public class CadDocumentTests
 	}
 
 	[Fact]
+	public void AssignLayerStressTest()
+	{
+		CadDocument doc = new CadDocument();
+		for (int i = 0; i < 10000; i++)
+		{
+			Polyline3D polyline = new Polyline3D();
+			for (int j = 0; j < 50; j++)
+			{
+				polyline.Vertices.Add(new Vertex3D() { Location = new CSMath.XYZ(i, j, 0) });
+			}
+
+			doc.Entities.Add(polyline);
+		}
+
+
+		Stopwatch stopwatch = new Stopwatch();
+		this._output.WriteLine("StopWatch start");
+		stopwatch.Start();
+
+		string layerName = "test_layer";
+		Layer layer = new Layer(layerName);
+		for (int i = 0; i < 10000 / 2; i++)
+		{
+			var item = doc.Entities[i];
+			item.Layer = layer;
+		}
+
+		stopwatch.Stop();
+		this._output.WriteLine(stopwatch.Elapsed.TotalSeconds.ToString());
+
+		if (TestVariables.LocalEnv)
+		{
+			//Assert.True(stopwatch.Elapsed.TotalSeconds < 5);
+		}
+	}
+
+	[Fact]
+	public void AssignLineTypeStressTest()
+	{
+		CadDocument doc = new CadDocument();
+
+		for (int i = 0; i < 10000; i++)
+		{
+			Polyline3D polyline = new Polyline3D();
+			for (int j = 0; j < 50; j++)
+			{
+				polyline.Vertices.Add(new Vertex3D() { Location = new CSMath.XYZ(i, j, 0) });
+			}
+
+			doc.Entities.Add(polyline);
+		}
+
+		Stopwatch stopwatch = new Stopwatch();
+		this._output.WriteLine("StopWatch start");
+		stopwatch.Start();
+
+		string lineTypeName = "test_linetype";
+		LineType lineType = new LineType(lineTypeName);
+		for (int i = 0; i < 10000 / 2; i++)
+		{
+			var item = doc.Entities[i];
+			item.LineType = lineType;
+		}
+
+		stopwatch.Stop();
+		this._output.WriteLine(stopwatch.Elapsed.TotalSeconds.ToString());
+
+		if (TestVariables.LocalEnv)
+		{
+			//Assert.True(stopwatch.Elapsed.TotalSeconds < 5);
+		}
+	}
+
+	[Fact]
 	public void AddCadObjectTest()
 	{
 		Line line = new Line();

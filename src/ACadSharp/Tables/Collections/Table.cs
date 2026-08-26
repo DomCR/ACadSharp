@@ -29,7 +29,7 @@ public abstract class Table<T> : CadObject, ITable, ICadCollection<T>, IObservab
 
 	protected readonly Dictionary<string, T> entries = new Dictionary<string, T>(StringComparer.OrdinalIgnoreCase);
 
-	private readonly Dictionary<string, List<ReferenceHolder>> _references = new();
+	private readonly Dictionary<string, HashSet<ReferenceHolder>> _references = new();
 
 	private readonly Dictionary<CadObject, ReferenceHolder> _referencesByOwner = new();
 
@@ -106,7 +106,7 @@ public abstract class Table<T> : CadObject, ITable, ICadCollection<T>, IObservab
 
 	public IEnumerable<CadObject> GetReferences(string name)
 	{
-		if (this._references.TryGetValue(name, out List<ReferenceHolder> holders))
+		if (this._references.TryGetValue(name, out HashSet<ReferenceHolder> holders))
 		{
 			return holders.Select(h => h.Owner);
 		}
@@ -169,7 +169,8 @@ public abstract class Table<T> : CadObject, ITable, ICadCollection<T>, IObservab
 
 	internal void RemoveReference(CadObject item, string name)
 	{
-		if (this._references.TryGetValue(name, out List<ReferenceHolder> holders) && this._referencesByOwner.TryGetValue(item, out ReferenceHolder holder))
+		if (this._references.TryGetValue(name, out HashSet<ReferenceHolder> holders) 
+			&& this._referencesByOwner.TryGetValue(item, out ReferenceHolder holder))
 		{
 			holders.Remove(holder);
 			if (holders.Count == 0)
@@ -193,9 +194,9 @@ public abstract class Table<T> : CadObject, ITable, ICadCollection<T>, IObservab
 
 		this.RemoveReference(item, reference.Name);
 
-		if (!this._references.TryGetValue(newEntry.Name, out List<ReferenceHolder> holders))
+		if (!this._references.TryGetValue(newEntry.Name, out HashSet<ReferenceHolder> holders))
 		{
-			holders = new List<ReferenceHolder>();
+			holders = new HashSet<ReferenceHolder>();
 			this._references.Add(newEntry.Name, holders);
 		}
 	}
@@ -226,9 +227,9 @@ public abstract class Table<T> : CadObject, ITable, ICadCollection<T>, IObservab
 
 		this.RemoveReference(owner, existing.Name);
 
-		if (!this._references.TryGetValue(existing.Name, out List<ReferenceHolder> holders))
+		if (!this._references.TryGetValue(existing.Name, out HashSet<ReferenceHolder> holders))
 		{
-			holders = new List<ReferenceHolder>();
+			holders = new HashSet<ReferenceHolder>();
 			this._references.Add(existing.Name, holders);
 		}
 
@@ -236,7 +237,7 @@ public abstract class Table<T> : CadObject, ITable, ICadCollection<T>, IObservab
 
 		ReferenceHolder holder = new ReferenceHolder(owner, assignValue);
 		holders.Add(holder);
-		this._referencesByOwner.Add(owner, holder);
+		this._referencesByOwner[owner] = holder;
 	}
 
 	protected void add(string key, T item)
@@ -288,7 +289,7 @@ public abstract class Table<T> : CadObject, ITable, ICadCollection<T>, IObservab
 		this.entries.Add(e.NewName, entry);
 		this.entries.Remove(e.OldName);
 
-		if (this._references.Remove(e.OldName, out List<ReferenceHolder> holders))
+		if (this._references.Remove(e.OldName, out HashSet<ReferenceHolder> holders))
 		{
 			this._references.Add(e.NewName, holders);
 		}
@@ -296,7 +297,7 @@ public abstract class Table<T> : CadObject, ITable, ICadCollection<T>, IObservab
 
 	private void removeReferences(string name)
 	{
-		if (this._references.Remove(name, out List<ReferenceHolder> holders))
+		if (this._references.Remove(name, out HashSet<ReferenceHolder> holders))
 		{
 			foreach (var holder in holders)
 			{
