@@ -31,6 +31,8 @@ public abstract class Table<T> : CadObject, ITable, ICadCollection<T>, IObservab
 
 	private readonly Dictionary<string, List<ReferenceHolder>> _references = new();
 
+	private readonly Dictionary<CadObject, ReferenceHolder> _referencesByOwner = new();
+
 	protected Table()
 	{ }
 
@@ -167,16 +169,12 @@ public abstract class Table<T> : CadObject, ITable, ICadCollection<T>, IObservab
 
 	internal void RemoveReference(CadObject item, string name)
 	{
-		if (this._references.TryGetValue(name, out List<ReferenceHolder> holders))
+		if (this._references.TryGetValue(name, out List<ReferenceHolder> holders) && this._referencesByOwner.TryGetValue(item, out ReferenceHolder holder))
 		{
-			ReferenceHolder holder = holders.FirstOrDefault(h => h.Owner == item);
-			if (holder != null)
+			holders.Remove(holder);
+			if (holders.Count == 0)
 			{
-				holders.Remove(holder);
-				if (holders.Count == 0)
-				{
-					this._references.Remove(name);
-				}
+				this._references.Remove(name);
 			}
 		}
 	}
@@ -238,6 +236,7 @@ public abstract class Table<T> : CadObject, ITable, ICadCollection<T>, IObservab
 
 		ReferenceHolder holder = new ReferenceHolder(owner, assignValue);
 		holders.Add(holder);
+		this._referencesByOwner.Add(owner, holder);
 	}
 
 	protected void add(string key, T item)
