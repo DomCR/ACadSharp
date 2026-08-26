@@ -1,8 +1,6 @@
 ﻿using ACadSharp.Attributes;
-using ACadSharp.Entities;
 using ACadSharp.Objects;
 using System;
-using System.Collections.Generic;
 
 namespace ACadSharp.Tables;
 
@@ -72,14 +70,7 @@ public class Layer : TableEntry
 				throw new ArgumentNullException(nameof(value));
 			}
 
-			if (this.Document != null)
-			{
-				this._lineType = CadObject.updateCollection(value, this.Document.LineTypes);
-			}
-			else
-			{
-				this._lineType = value;
-			}
+			this._lineType = updateTableEntry(value, l => this._lineType = l, this.Document?.LineTypes);
 		}
 	}
 
@@ -93,7 +84,17 @@ public class Layer : TableEntry
 	/// Hard-pointer ID/handle to Material object
 	/// </summary>
 	[DxfCodeValue(DxfReferenceType.Handle, 347)]
-	public Material Material { get; set; }
+	public Material Material
+	{
+		get
+		{
+			return _material;
+		}
+		set
+		{
+			_material = value;
+		}
+	}
 
 	/// <inheritdoc/>
 	public override string ObjectName => DxfFileToken.TableLayer;
@@ -145,6 +146,8 @@ public class Layer : TableEntry
 
 	private LineType _lineType = LineType.Continuous;
 
+	private Material _material;
+
 	private bool _plotFlag = true;
 
 	public Layer(string name) : base(name)
@@ -160,8 +163,8 @@ public class Layer : TableEntry
 	{
 		Layer clone = (Layer)base.Clone();
 
-		clone.LineType = (LineType)this.LineType.Clone();
-		clone.Material = (Material)(this.Material?.Clone());
+		clone._lineType = (LineType)this.LineType.Clone();
+		clone._material = (Material)(this.Material?.Clone());
 
 		return clone;
 	}
@@ -170,25 +173,15 @@ public class Layer : TableEntry
 	{
 		base.AssignDocument(doc);
 
-		this._lineType = CadObject.updateCollection(this.LineType, doc.LineTypes);
-
-		doc.LineTypes.OnRemove += this.tableOnRemove;
+		this.updateTableEntry(this._lineType, l => this._lineType = l, doc.LineTypes);
 	}
 
 	internal override void UnassignDocument()
 	{
-		this.Document.LineTypes.OnRemove -= this.tableOnRemove;
+		this.Document.LineTypes.RemoveReference(this.LineType.Name, this);
 
 		base.UnassignDocument();
 
-		this.LineType = (LineType)this.LineType.Clone();
-	}
-
-	protected virtual void tableOnRemove(object sender, CollectionChangedEventArgs e)
-	{
-		if (e.Item.Equals(this.LineType))
-		{
-			this.LineType = this.Document.LineTypes[LineType.ContinuousName];
-		}
+		this._lineType = (LineType)this.LineType.Clone();
 	}
 }

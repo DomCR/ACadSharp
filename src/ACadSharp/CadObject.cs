@@ -268,6 +268,7 @@ public abstract class CadObject : IHandledCadObject
 		this._reactors.Clear();
 	}
 
+	[Obsolete]
 	protected static T updateCollection<T>(T entry, ICadCollection<T> table)
 		where T : CadObject, INamedCadObject
 	{

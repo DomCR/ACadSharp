@@ -102,6 +102,11 @@ public abstract class Table<T> : CadObject, ITable, ICadCollection<T>, IObservab
 		return this.entries.Values.GetEnumerator();
 	}
 
+	/// <summary>
+	/// Gets the references to a <see cref="TableEntry"/> by name.
+	/// </summary>
+	/// <param name="name">The name of the table entry.</param>
+	/// <returns>An enumerable of <see cref="CadObject"/> that reference the specified table entry.</returns>
 	public IEnumerable<CadObject> GetReferences(string name)
 	{
 		return this._referenceHandler.GetReferences(name);
@@ -162,6 +167,11 @@ public abstract class Table<T> : CadObject, ITable, ICadCollection<T>, IObservab
 
 	internal void RemoveReference(string name, CadObject owner)
 	{
+		if(string.IsNullOrEmpty(name))
+		{
+			return;
+		}
+
 		this._referenceHandler.RemoveReference(name, owner);
 	}
 
@@ -255,19 +265,6 @@ public abstract class Table<T> : CadObject, ITable, ICadCollection<T>, IObservab
 		get
 		{
 			return this.entries[name];
-		}
-	}
-
-	private sealed class ReferenceHolder
-	{
-		public CadObject Owner { get; }
-
-		public Action<T> Reset { get; }
-
-		public ReferenceHolder(CadObject owner, Action<T> reset)
-		{
-			this.Owner = owner;
-			this.Reset = reset;
 		}
 	}
 }

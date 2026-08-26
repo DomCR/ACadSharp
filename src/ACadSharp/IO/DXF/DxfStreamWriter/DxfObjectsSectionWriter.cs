@@ -8,7 +8,6 @@ using CSMath;
 using System;
 using System.Collections.Generic;
 using System.Linq;
-using static ACadSharp.Objects.XRecord;
 
 namespace ACadSharp.IO.DXF;
 

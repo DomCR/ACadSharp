@@ -46,6 +46,6 @@ public class LineTypesTable : Table<LineType>
 
 	protected override LineType getDefaultEntry()
 	{
-		return this[LineType.ContinuousName];
+		return this[LineType.ByLayerName];
 	}
 }

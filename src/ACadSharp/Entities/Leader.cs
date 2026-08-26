@@ -120,14 +120,7 @@ public class Leader : Entity, IOrientable
 				throw new ArgumentNullException(nameof(value));
 			}
 
-			if (this.Document != null)
-			{
-				this._style = CadObject.updateCollection(value, this.Document.DimensionStyles);
-			}
-			else
-			{
-				this._style = value;
-			}
+			this._style = this.updateTableEntry(value, s => this._style = s, this.Document?.DimensionStyles);
 		}
 	}
 
@@ -180,34 +173,6 @@ public class Leader : Entity, IOrientable
 	public override BoundingBox GetBoundingBox()
 	{
 		return BoundingBox.FromPoints(this.Vertices);
-	}
-
-	internal override void AssignDocument(CadDocument doc)
-	{
-		base.AssignDocument(doc);
-
-		this._style = CadObject.updateCollection(this.Style, doc.DimensionStyles);
-
-		doc.DimensionStyles.OnRemove += this.tableOnRemove;
-	}
-
-	internal override void UnassignDocument()
-	{
-		this.Document.DimensionStyles.OnRemove -= this.tableOnRemove;
-
-		base.UnassignDocument();
-
-		this.Style = (DimensionStyle)this.Style.Clone();
-	}
-
-	protected override void tableOnRemove(object sender, CollectionChangedEventArgs e)
-	{
-		base.tableOnRemove(sender, e);
-
-		if (e.Item.Equals(this.Style))
-		{
-			this.Style = this.Document.DimensionStyles[DimensionStyle.DefaultName];
-		}
 	}
 
 	/// <summary>
@@ -271,5 +236,21 @@ public class Leader : Entity, IOrientable
 			edata.Records.AddRange(p.ToXDataRecords());
 		}
 		edata.Records.Add(new ExtendedDataControlString(true));
+	}
+
+	internal override void AssignDocument(CadDocument doc)
+	{
+		base.AssignDocument(doc);
+
+		this.updateTableEntry(this._style, s => this._style = s, doc.DimensionStyles);
+	}
+
+	internal override void UnassignDocument()
+	{
+		this.Document.DimensionStyles.RemoveReference(this.Style.Name, this);
+
+		base.UnassignDocument();
+
+		this._style = (DimensionStyle)this.Style?.Clone();
 	}
 }

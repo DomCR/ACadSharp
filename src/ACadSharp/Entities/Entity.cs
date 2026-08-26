@@ -23,14 +23,7 @@ public abstract class Entity : CadObject, IEntity
 		get { return this._bookColor; }
 		set
 		{
-			if (this.Document != null)
-			{
-				this._bookColor = updateCollection(value, this.Document.Colors);
-			}
-			else
-			{
-				this._bookColor = value;
-			}
+			this._bookColor = updateCollection(value, this.Document?.Colors);
 		}
 	}
 
@@ -54,7 +47,7 @@ public abstract class Entity : CadObject, IEntity
 				throw new ArgumentNullException(nameof(value));
 			}
 
-			this.updateTableEntry(value, l => this._layer = l, this.Document?.Layers);
+			this._layer = updateTableEntry(value, l => this._layer = l, this.Document?.Layers);
 		}
 	}
 
@@ -70,7 +63,7 @@ public abstract class Entity : CadObject, IEntity
 				throw new ArgumentNullException(nameof(value));
 			}
 
-			this._lineType = updateCollection(value, this.Document?.LineTypes);
+			this._lineType = updateTableEntry(value, l => this._lineType = l, this.Document?.LineTypes);
 		}
 	}
 
@@ -89,12 +82,6 @@ public abstract class Entity : CadObject, IEntity
 		get { return this._material; }
 		set
 		{
-			if (value == null)
-			{
-				this._material = null;
-				return;
-			}
-
 			this._material = updateCollection(value, this.Document?.Materials);
 		}
 	}
@@ -117,7 +104,7 @@ public abstract class Entity : CadObject, IEntity
 
 	private LineType _lineType = LineType.ByLayer;
 
-	private Material _material;
+	private Material _material = null;
 
 	/// <inheritdoc/>
 	public Entity() : base() { }
@@ -275,18 +262,14 @@ public abstract class Entity : CadObject, IEntity
 	{
 		base.AssignDocument(doc);
 
-		this.updateTableEntry(this._layer, l => this._layer = l, this.Document?.Layers);
-		this._lineType = CadObject.updateCollection(this.LineType, doc.LineTypes);
-
-		doc.LineTypes.OnRemove += this.tableOnRemove;
-		//doc.Materials?.OnRemove += this.tableOnRemove;
+		this.updateTableEntry(this._layer, l => this._layer = l, doc.Layers);
+		this.updateTableEntry(this._lineType, l => this._lineType = l, doc.LineTypes);
 	}
 
 	internal override void UnassignDocument()
 	{
 		this.Document.Layers.RemoveReference(this.Layer.Name, this);
-		//this.Document.LineTypes.OnRemove -= this.tableOnRemove;
-		//this.Document.Materials?.OnRemove -= this.tableOnRemove;
+		this.Document.LineTypes.RemoveReference(this.LineType.Name, this);
 
 		base.UnassignDocument();
 
@@ -333,24 +316,6 @@ public abstract class Entity : CadObject, IEntity
 		transOW = Matrix3.ArbitraryAxis(normal);
 		transWO = Matrix3.ArbitraryAxis(newNormal).Transpose();
 		return new Matrix3(transform.Matrix);
-	}
-
-	protected virtual void tableOnRemove(object sender, CollectionChangedEventArgs e)
-	{
-		if (e.Item.Equals(this.Layer))
-		{
-			this.Layer = this.Document.Layers[Layer.DefaultName];
-		}
-
-		if (e.Item.Equals(this.LineType))
-		{
-			this.LineType = this.Document.LineTypes.ByLayer;
-		}
-
-		if (e.Item.Equals(this.Material))
-		{
-			this.Material = null;
-		}
 	}
 
 	protected XYZ transformNormal(Transform transform, XYZ normal)
