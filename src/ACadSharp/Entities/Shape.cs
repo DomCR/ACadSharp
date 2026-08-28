@@ -133,10 +133,10 @@ public class Shape : Entity, IOrientable
 
 	internal override void UnassignDocument()
 	{
-		this.Document.TextStyles.RemoveReference(this._style.Name, this);
+		this.Document.TextStyles.RemoveReference(this._style?.Name, this);
 
 		base.UnassignDocument();
 
-		this._style = this._style.CloneTyped();
+		this._style = this._style?.CloneTyped();
 	}
 }
