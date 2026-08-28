@@ -86,14 +86,7 @@ public partial class GeoData : NonGraphicalObject, IDxfClassDefined
 				throw new ArgumentNullException(nameof(value));
 			}
 
-			if (this.Document != null)
-			{
-				this._hostBlock = CadObject.updateCollection(value, this.Document.BlockRecords);
-			}
-			else
-			{
-				this._hostBlock = value;
-			}
+			this._hostBlock = this.updateTableEntry(value, b => this._hostBlock = b, this.Document?.BlockRecords);
 		}
 	}
 
@@ -208,12 +201,15 @@ public partial class GeoData : NonGraphicalObject, IDxfClassDefined
 
 	internal override void AssignDocument(CadDocument doc)
 	{
-		//TODO: the assigned block is always the owner of the dictionary??
 		base.AssignDocument(doc);
+
+		this._hostBlock = this.updateTableEntry(this._hostBlock, b => this._hostBlock = b, this.Document.BlockRecords);
 	}
 
 	internal override void UnassignDocument()
 	{
+		this.Document.BlockRecords.RemoveReference(this.HostBlock?.Name, this);
+
 		base.UnassignDocument();
 	}
 }

@@ -340,14 +340,7 @@ public partial class MultiLeader : Entity, IDxfClassDefined
 				throw new ArgumentNullException(nameof(value));
 			}
 
-			if (this.Document != null)
-			{
-				this._style = updateCollection(value, this.Document.MLeaderStyles);
-			}
-			else
-			{
-				this._style = value;
-			}
+			this._style = this.updateCollectionEntry(value, s => this._style = s, this.Document?.MLeaderStyles);
 		}
 	}
 
@@ -637,11 +630,11 @@ public partial class MultiLeader : Entity, IDxfClassDefined
 	{
 		base.AssignDocument(doc);
 
-		this._style = updateCollection(this._style, doc.MLeaderStyles);
-		this.updateTableEntry(this._textStyle, s => this._textStyle = s, doc.TextStyles);
-		this.updateTableEntry(this._leaderLineType, l => this._leaderLineType = l, doc.LineTypes);
-		this.updateTableEntry(this._arrowhead, b => this._arrowhead = b, doc.BlockRecords);
-		this.updateTableEntry(this._blockContent, b => this._blockContent = b, doc.BlockRecords);
+		this._style = this.updateCollectionEntry(this._style, s => this._style = s, doc.MLeaderStyles);
+		this._textStyle = this.updateTableEntry(this._textStyle, s => this._textStyle = s, doc.TextStyles);
+		this._leaderLineType = this.updateTableEntry(this._leaderLineType, l => this._leaderLineType = l, doc.LineTypes);
+		this._arrowhead = this.updateTableEntry(this._arrowhead, b => this._arrowhead = b, doc.BlockRecords);
+		this._blockContent = this.updateTableEntry(this._blockContent, b => this._blockContent = b, doc.BlockRecords);
 
 		this.ContextData.AssignDocument(doc);
 	}

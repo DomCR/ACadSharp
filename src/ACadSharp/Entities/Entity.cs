@@ -23,7 +23,7 @@ public abstract class Entity : CadObject, IEntity
 		get { return this._bookColor; }
 		set
 		{
-			this._bookColor = updateCollection(value, this.Document?.Colors);
+			this._bookColor = this.updateCollectionEntry(this._bookColor, c => this._bookColor = c, this.Document?.Colors);
 		}
 	}
 
@@ -82,7 +82,7 @@ public abstract class Entity : CadObject, IEntity
 		get { return this._material; }
 		set
 		{
-			this._material = updateCollection(value, this.Document?.Materials);
+			this._material = this.updateCollectionEntry(this._material, m => this._material = m, this.Document?.Materials);
 		}
 	}
 
@@ -262,12 +262,18 @@ public abstract class Entity : CadObject, IEntity
 	{
 		base.AssignDocument(doc);
 
-		this.updateTableEntry(this._layer, l => this._layer = l, doc.Layers);
-		this.updateTableEntry(this._lineType, l => this._lineType = l, doc.LineTypes);
+		this._bookColor = this.updateCollectionEntry(this._bookColor, c => this._bookColor = c, doc.Colors);
+		this._material = this.updateCollectionEntry(this._material, m => this._material = m, doc.Materials);
+
+		this._layer = this.updateTableEntry(this._layer, l => this._layer = l, doc.Layers);
+		this._lineType = this.updateTableEntry(this._lineType, l => this._lineType = l, doc.LineTypes);
 	}
 
 	internal override void UnassignDocument()
 	{
+		this.Document.Colors.RemoveReference(this._bookColor?.Name, this);
+		this.Document.Materials.RemoveReference(this._material?.Name, this);
+
 		this.Document.Layers.RemoveReference(this.Layer.Name, this);
 		this.Document.LineTypes.RemoveReference(this.LineType.Name, this);
 
@@ -275,6 +281,8 @@ public abstract class Entity : CadObject, IEntity
 
 		this._layer = (Layer)this.Layer.Clone();
 		this._lineType = (LineType)this.LineType.Clone();
+
+		this._bookColor = (BookColor)this.BookColor?.Clone();
 		this._material = (Material)this.Material?.Clone();
 	}
 

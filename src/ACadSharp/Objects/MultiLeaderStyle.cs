@@ -52,7 +52,7 @@ public class MultiLeaderStyle : NonGraphicalObject, IDxfClassDefined
 		get { return this._arrowhead; }
 		set
 		{
-			this._arrowhead = CadObject.updateCollection(value, this.Document?.BlockRecords);
+			this._arrowhead = this.updateTableEntry(value, b => this._arrowhead = b, this.Document?.BlockRecords);
 		}
 	}
 
@@ -91,7 +91,7 @@ public class MultiLeaderStyle : NonGraphicalObject, IDxfClassDefined
 		get { return this._blockContent; }
 		set
 		{
-			this._blockContent = CadObject.updateCollection(value, this.Document?.BlockRecords);
+			this._blockContent = this.updateTableEntry(value, b => this._blockContent = b, this.Document?.BlockRecords);
 		}
 	}
 
@@ -359,7 +359,7 @@ public class MultiLeaderStyle : NonGraphicalObject, IDxfClassDefined
 
 			if (this.Document != null)
 			{
-				this._leaderLineType = CadObject.updateCollection(value, this.Document.LineTypes);
+				this._leaderLineType = this.updateTableEntry(value, l => this._leaderLineType = l, this.Document.LineTypes);
 			}
 			else
 			{
@@ -685,7 +685,7 @@ public class MultiLeaderStyle : NonGraphicalObject, IDxfClassDefined
 
 			if (this.Document != null)
 			{
-				this._textStyle = CadObject.updateCollection(value, this.Document.TextStyles);
+				this._textStyle = this.updateTableEntry(value, s => this._textStyle = s, this.Document.TextStyles);
 			}
 			else
 			{
@@ -785,10 +785,10 @@ public class MultiLeaderStyle : NonGraphicalObject, IDxfClassDefined
 	{
 		base.AssignDocument(doc);
 
-		this._textStyle = CadObject.updateCollection(this._textStyle, doc.TextStyles);
-		this._leaderLineType = CadObject.updateCollection(this._leaderLineType, doc.LineTypes);
-		this._arrowhead = CadObject.updateCollection(this._arrowhead, doc.BlockRecords);
-		this._blockContent = CadObject.updateCollection(this._blockContent, doc.BlockRecords);
+		this._textStyle = this.updateTableEntry(this._textStyle, s => this._textStyle = s, doc.TextStyles);
+		this._leaderLineType = this.updateTableEntry(this._leaderLineType, l => this._leaderLineType = l, doc.LineTypes);
+		this._arrowhead = this.updateTableEntry(this._arrowhead, b => this._arrowhead = b, doc.BlockRecords);
+		this._blockContent = this.updateTableEntry(this._blockContent, b => this._blockContent = b, doc.BlockRecords);
 
 		doc.TextStyles.OnRemove += this.tableOnRemove;
 		doc.LineTypes.OnRemove += this.tableOnRemove;

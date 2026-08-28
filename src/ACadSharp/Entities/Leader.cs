@@ -242,7 +242,7 @@ public class Leader : Entity, IOrientable
 	{
 		base.AssignDocument(doc);
 
-		this.updateTableEntry(this._style, s => this._style = s, doc.DimensionStyles);
+		this._style = this.updateTableEntry(this._style, s => this._style = s, doc.DimensionStyles);
 	}
 
 	internal override void UnassignDocument()

@@ -72,7 +72,7 @@ public partial class MLine : Entity, IOrientable
 
 			if (this.Document != null)
 			{
-				this._style = updateCollection(value, this.Document.MLineStyles);
+				this._style = this.updateCollectionEntry(value, s => this._style = s, this.Document.MLineStyles);
 			}
 			else
 			{
@@ -88,7 +88,7 @@ public partial class MLine : Entity, IOrientable
 	/// Vertices in the MLine.
 	/// </summary>
 	[DxfCodeValue(DxfReferenceType.Count, 72)]
-	public List<Vertex> Vertices { get; set; } = new List<Vertex>();
+	public List<Vertex> Vertices { get; private set; } = new List<Vertex>();
 
 	private MLineStyle _style = MLineStyle.Default;
 
@@ -111,7 +111,7 @@ public partial class MLine : Entity, IOrientable
 
 		clone.Style = (MLineStyle)(this.Style?.Clone());
 
-		clone.Vertices.Clear();
+		clone.Vertices = new List<Vertex>();
 		foreach (var item in this.Vertices)
 		{
 			clone.Vertices.Add(item.Clone());
@@ -130,25 +130,13 @@ public partial class MLine : Entity, IOrientable
 	{
 		base.AssignDocument(doc);
 
-		this._style = updateCollection(this.Style, doc.MLineStyles);
-
-		this.Document.MLineStyles.OnRemove += this.mLineStylesOnRemove;
+		this._style = this.updateCollectionEntry(this.Style, s => this._style = s, doc.MLineStyles);
 	}
 
 	internal override void UnassignDocument()
 	{
-		this.Document.MLineStyles.OnRemove -= this.mLineStylesOnRemove;
-
 		base.UnassignDocument();
 
 		this._style = (MLineStyle)this.Style.Clone();
-	}
-
-	private void mLineStylesOnRemove(object sender, CollectionChangedEventArgs e)
-	{
-		if (e.Item.Equals(this.Style))
-		{
-			this.Style = this.Document.MLineStyles[MLineStyle.DefaultName];
-		}
 	}
 }

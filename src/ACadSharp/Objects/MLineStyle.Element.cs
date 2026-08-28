@@ -23,7 +23,14 @@ namespace ACadSharp.Objects
 				get => _lineType;
 				set
 				{
-					this._lineType = CadObject.updateCollection(value, this.Owner?.Document?.LineTypes);
+					if (this.Owner == null)
+					{
+						this._lineType = value;
+					}
+					else
+					{
+						this._lineType = this.Owner.updateTableEntry(value, l => this._lineType = l, this.Owner.Document?.LineTypes);
+					}
 				}
 			}
 
@@ -54,7 +61,7 @@ namespace ACadSharp.Objects
 
 			internal void AssignDocument(CadDocument doc)
 			{
-				this._lineType = CadObject.updateCollection(this._lineType, doc.LineTypes);
+				this._lineType = this.Owner.updateTableEntry(this._lineType, l => this._lineType = l, doc.LineTypes);
 			}
 
 			internal void UnassignDocument()

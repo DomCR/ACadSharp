@@ -104,7 +104,7 @@ public partial class MultiLeaderObjectContextData : AnnotScaleObjectContextData,
 		get { return this._blockContent; }
 		set
 		{
-			this._blockContent = CadObject.updateCollection(value, this.Document?.BlockRecords);
+			this._blockContent = this.updateTableEntry(value, b => this._blockContent = b, this.Document?.BlockRecords);
 		}
 	}
 
@@ -509,7 +509,7 @@ public partial class MultiLeaderObjectContextData : AnnotScaleObjectContextData,
 
 			if (this.Document != null)
 			{
-				this._textStyle = CadObject.updateCollection(value, this.Document.TextStyles);
+				this._textStyle = this.updateTableEntry(value, s => this._textStyle = s, this.Document.TextStyles);
 			}
 			else
 			{
@@ -608,8 +608,8 @@ public partial class MultiLeaderObjectContextData : AnnotScaleObjectContextData,
 	{
 		base.AssignDocument(doc);
 
-		this._textStyle = CadObject.updateCollection(this._textStyle, doc.TextStyles);
-		this._blockContent = CadObject.updateCollection(this._blockContent, doc.BlockRecords);
+		this._textStyle = this.updateTableEntry(this._textStyle, s => this._textStyle = s, doc.TextStyles);
+		this._blockContent = this.updateTableEntry(this._blockContent, b => this._blockContent = b, doc.BlockRecords);
 
 		foreach (LeaderRoot leaderRoot in this.LeaderRoots)
 		{

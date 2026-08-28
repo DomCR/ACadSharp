@@ -2,6 +2,7 @@
 using ACadSharp.Extensions;
 using ACadSharp.IO;
 using ACadSharp.Objects;
+using ACadSharp.Objects.Collections;
 using ACadSharp.Tables;
 using ACadSharp.Tables.Collections;
 using ACadSharp.XData;
@@ -278,6 +279,19 @@ public abstract class CadObject : IHandledCadObject
 		}
 
 		return table.TryAdd(entry);
+	}
+
+	protected T updateCollectionEntry<T>(T entry, Action<T> assignValue, ObjectDictionaryCollection<T> collection)
+		where T : NonGraphicalObject
+	{
+		if (collection == null || entry == null)
+		{
+			return entry;
+		}
+
+		collection.UpdateReference(this, entry, assignValue);
+
+		return entry;
 	}
 
 	protected T updateTableEntry<T>(T entry, Action<T> assignValue, Table<T> table)

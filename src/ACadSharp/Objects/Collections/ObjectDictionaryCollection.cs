@@ -18,10 +18,14 @@ public abstract class ObjectDictionaryCollection<T> : ICadCollection<T>, IObserv
 	public event EventHandler<CollectionChangedEventArgs> OnRemove
 	{ add { this._dictionary.OnRemove += value; } remove { this._dictionary.OnRemove -= value; } }
 
+	public CadDocument Document { get { return this._dictionary.Document; } }
+
 	/// <inheritdoc/>
 	public ulong Handle { get { return this._dictionary.Handle; } }
 
 	protected CadDictionary _dictionary;
+
+	private readonly CadObjectReferenceHandler<string, T> _referenceHandler = new();
 
 	/// <summary>
 	/// Initializes a new instance of the ObjectDictionaryCollection class with the specified CAD dictionary.
@@ -64,6 +68,16 @@ public abstract class ObjectDictionaryCollection<T> : ICadCollection<T>, IObserv
 		return this._dictionary.ContainsKey(key);
 	}
 
+	/// <summary>
+	/// Retrieves the entry associated with the specified name.
+	/// </summary>
+	/// <param name="name">The name of the entry to locate. Cannot be null.</param>
+	/// <returns>The entry associated with the specified name.</returns>
+	public T GetEntry(string name)
+	{
+		return this._dictionary.GetEntry<T>(name);
+	}
+
 	/// <inheritdoc/>
 	public IEnumerator<T> GetEnumerator()
 	{
@@ -74,6 +88,11 @@ public abstract class ObjectDictionaryCollection<T> : ICadCollection<T>, IObserv
 	IEnumerator IEnumerable.GetEnumerator()
 	{
 		return this._dictionary.OfType<T>().GetEnumerator();
+	}
+
+	public IEnumerable<CadObject> GetReferences(string name)
+	{
+		return this._referenceHandler.GetReferences(name);
 	}
 
 	/// <summary>
@@ -94,9 +113,17 @@ public abstract class ObjectDictionaryCollection<T> : ICadCollection<T>, IObserv
 	/// <returns></returns>
 	public virtual bool Remove(string name, out T entry)
 	{
-		bool result = this._dictionary.Remove(name, out NonGraphicalObject n);
-		entry = (T)n;
-		return result;
+		if (this._dictionary.Remove(name, out NonGraphicalObject n))
+		{
+			entry = (T)n;
+			this.assignToDefault(entry.Name);
+			return true;
+		}
+		else
+		{
+			entry = null;
+			return false;
+		}
 	}
 
 	/// <inheritdoc/>
@@ -123,6 +150,55 @@ public abstract class ObjectDictionaryCollection<T> : ICadCollection<T>, IObserv
 	public bool TryGet(string name, out T entry)
 	{
 		return this._dictionary.TryGetEntry(name, out entry);
+	}
+
+	internal void RemoveReference(string name, CadObject owner)
+	{
+		if (string.IsNullOrEmpty(name))
+		{
+			return;
+		}
+
+		this._referenceHandler.RemoveReference(name, owner);
+	}
+
+	internal void UpdateReference(CadObject owner, T entry, Action<T> assignValue)
+	{
+		if (owner == null)
+		{
+			throw new ArgumentNullException(nameof(owner), "The reference cannot be null.");
+		}
+
+		if (entry == null)
+		{
+			throw new ArgumentNullException(nameof(entry));
+		}
+
+		if (assignValue == null)
+		{
+			throw new ArgumentNullException(nameof(assignValue));
+		}
+
+		if (owner.Document != this.Document)
+		{
+			throw new ArgumentException("The reference must belong to the same document as the table.", nameof(owner));
+		}
+
+		var existing = this.TryAdd(entry);
+
+		this.RemoveReference(existing.Name, owner);
+		this._referenceHandler.AddReference(existing.Name, owner, assignValue);
+		assignValue(existing);
+	}
+
+	protected virtual T getDefaultEntry()
+	{
+		return null;
+	}
+
+	private void assignToDefault(string name)
+	{
+		this._referenceHandler.RemoveReference(name, this.getDefaultEntry());
 	}
 
 	public T this[string key] { get { return (T)this._dictionary[key]; } }

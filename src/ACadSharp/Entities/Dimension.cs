@@ -536,8 +536,8 @@ public abstract class Dimension : Entity, IOrientable
 	{
 		base.AssignDocument(doc);
 
-		this.updateTableEntry(this._style, l => this._style = l, doc.DimensionStyles);
-		this.updateTableEntry(this._block, b => this._block = b, doc.BlockRecords);
+		this._style = this.updateTableEntry(this._style, l => this._style = l, doc.DimensionStyles);
+		this._block = this.updateTableEntry(this._block, b => this._block = b, doc.BlockRecords);
 
 		if (this._block != null)
 		{
@@ -719,7 +719,7 @@ public abstract class Dimension : Entity, IOrientable
 
 		if (this.Document != null)
 		{
-			this._block = CadObject.updateCollection(this._block, this.Document.BlockRecords);
+			this._block = this.updateTableEntry(this._block, b => this._block = b, this.Document.BlockRecords);
 		}
 
 		this._block.Entities.Clear();
