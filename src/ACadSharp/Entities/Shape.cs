@@ -1,4 +1,5 @@
 ﻿using ACadSharp.Attributes;
+using ACadSharp.Extensions;
 using ACadSharp.Tables;
 using CSMath;
 using System;
@@ -135,5 +136,7 @@ public class Shape : Entity, IOrientable
 		this.Document.TextStyles.RemoveReference(this._style.Name, this);
 
 		base.UnassignDocument();
+
+		this._style = this._style.CloneTyped();
 	}
 }
