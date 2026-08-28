@@ -23,7 +23,7 @@ public abstract class Entity : CadObject, IEntity
 		get { return this._bookColor; }
 		set
 		{
-			this._bookColor = this.updateCollectionEntry(this._bookColor, c => this._bookColor = c, this.Document?.Colors);
+			this._bookColor = this.updateCollectionEntry(value, c => this._bookColor = c, this.Document?.Colors);
 		}
 	}
 
