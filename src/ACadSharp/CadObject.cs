@@ -289,9 +289,7 @@ public abstract class CadObject : IHandledCadObject
 			return entry;
 		}
 
-		collection.UpdateReference(this, entry, assignValue);
-
-		return entry;
+		return collection.UpdateReference(this, entry, assignValue);
 	}
 
 	protected T updateTableEntry<T>(T entry, Action<T> assignValue, Table<T> table)
@@ -302,8 +300,6 @@ public abstract class CadObject : IHandledCadObject
 			return entry;
 		}
 
-		table.UpdateReference(this, entry, assignValue);
-
-		return entry;
+		return table.UpdateReference(this, entry, assignValue);
 	}
 }

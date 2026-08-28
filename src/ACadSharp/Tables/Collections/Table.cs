@@ -175,7 +175,7 @@ public abstract class Table<T> : CadObject, ITable, ICadCollection<T>, IObservab
 		this._referenceHandler.RemoveReference(name, owner);
 	}
 
-	internal void UpdateReference(CadObject owner, T entry, Action<T> assignValue)
+	internal T UpdateReference(CadObject owner, T entry, Action<T> assignValue)
 	{
 		if (owner == null)
 		{
@@ -202,6 +202,8 @@ public abstract class Table<T> : CadObject, ITable, ICadCollection<T>, IObservab
 		this.RemoveReference(existing.Name, owner);
 		this._referenceHandler.AddReference(existing.Name, owner, assignValue);
 		assignValue(existing);
+
+		return existing;
 	}
 
 	protected void add(string key, T item)
