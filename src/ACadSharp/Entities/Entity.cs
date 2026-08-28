@@ -82,7 +82,7 @@ public abstract class Entity : CadObject, IEntity
 		get { return this._material; }
 		set
 		{
-			this._material = this.updateCollectionEntry(this._material, m => this._material = m, this.Document?.Materials);
+			this._material = this.updateCollectionEntry(value, m => this._material = m, this.Document?.Materials);
 		}
 	}
 
