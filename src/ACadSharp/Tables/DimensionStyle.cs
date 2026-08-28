@@ -557,7 +557,7 @@ public class DimensionStyle : TableEntry
 		get { return this._lineType; }
 		set
 		{
-			this._lineType = this.updateTableEntry(value, l => this._lineType = l, this.Document?.LineTypes);
+			this._lineType = this.updateTableEntry(value, l => this._lineType = null, this.Document?.LineTypes);
 		}
 	}
 
@@ -570,7 +570,7 @@ public class DimensionStyle : TableEntry
 		get { return this._lineTypeExt1; }
 		set
 		{
-			this._lineTypeExt1 = this.updateTableEntry(value, l => this._lineTypeExt1 = l, this.Document?.LineTypes);
+			this._lineTypeExt1 = this.updateTableEntry(value, l => this._lineTypeExt1 = null, this.Document?.LineTypes);
 		}
 	}
 
@@ -583,7 +583,7 @@ public class DimensionStyle : TableEntry
 		get { return this._lineTypeExt2; }
 		set
 		{
-			this._lineTypeExt2 = this.updateTableEntry(value, l => this._lineTypeExt2 = l, this.Document?.LineTypes);
+			this._lineTypeExt2 = this.updateTableEntry(value, l => this._lineTypeExt2 = null, this.Document?.LineTypes);
 		}
 	}
 
@@ -1162,14 +1162,14 @@ public class DimensionStyle : TableEntry
 
 		this._style = this.updateTableEntry(this.Style, s => this._style = s, doc.TextStyles);
 
-		this._lineType = this.updateTableEntry(this.LineType, l => this._lineType = l, doc.LineTypes);
-		this._lineTypeExt1 = this.updateTableEntry(this.LineTypeExt1, l => this._lineTypeExt1 = l, doc.LineTypes);
-		this._lineTypeExt2 = this.updateTableEntry(this.LineTypeExt2, l => this._lineTypeExt2 = l, doc.LineTypes);
+		this._lineType = this.updateTableEntry(this.LineType, l => this._lineType = null, doc.LineTypes);
+		this._lineTypeExt1 = this.updateTableEntry(this.LineTypeExt1, l => this._lineTypeExt1 = null, doc.LineTypes);
+		this._lineTypeExt2 = this.updateTableEntry(this.LineTypeExt2, l => this._lineTypeExt2 = null, doc.LineTypes);
 
-		this._leaderArrow = this.updateTableEntry(this.LeaderArrow, b => this._leaderArrow = b, doc.BlockRecords);
-		this._dimArrow1 = this.updateTableEntry(this.DimArrow1, b => this._dimArrow1 = b, doc.BlockRecords);
-		this._dimArrow2 = this.updateTableEntry(this.DimArrow2, b => this._dimArrow2 = b, doc.BlockRecords);
-		this._dimArrowBlock = this.updateTableEntry(this.ArrowBlock, b => this._dimArrowBlock = b, doc.BlockRecords);
+		this._leaderArrow = this.updateTableEntry(this.LeaderArrow, b => this._leaderArrow = null, doc.BlockRecords);
+		this._dimArrow1 = this.updateTableEntry(this.DimArrow1, b => this._dimArrow1 = null, doc.BlockRecords);
+		this._dimArrow2 = this.updateTableEntry(this.DimArrow2, b => this._dimArrow2 = null, doc.BlockRecords);
+		this._dimArrowBlock = this.updateTableEntry(this.ArrowBlock, b => this._dimArrowBlock = null, doc.BlockRecords);
 	}
 
 	internal override void UnassignDocument()
