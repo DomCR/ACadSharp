@@ -5577,12 +5577,6 @@ namespace ACadSharp.IO.DWG
 				case DxfFileToken.ObjectAecCleanupGroupDef:
 					template = this.readAecCleanupGroup();
 					break;
-				case "AEC_MODI":
-					template = this.readProxyEntity();
-					break;
-				case "AEC_SYMB_SECTION":
-					template = this.readProxyEntity();
-					break;
 				case "ACDBDICTIONARYWDFLT":
 					template = this.readDictionaryWithDefault();
 					break;
@@ -5793,6 +5787,11 @@ namespace ACadSharp.IO.DWG
 					break;
 			}
 
+			if (template == null && IsAecClass(c))
+			{
+				template = this.readAecProxy(c);
+			}
+
 			if (template == null && c.IsAnEntity)
 			{
 				template = this.readUnknownEntity(c);
@@ -5810,6 +5809,94 @@ namespace ACadSharp.IO.DWG
 			}
 
 			return template;
+		}
+
+		/// <summary>
+		/// Reads an unlisted AEC object as a proxy object keeping the proxy graphics and the class definition.
+		/// </summary>
+		/// <remarks>
+		/// AEC objects saved without their application are stored in proxy format and can be parsed by the
+		/// proxy readers. If the object is stored in its native format the proxy readers fail, in that case
+		/// the object is read by the unknown object readers instead.
+		/// </remarks>
+		private CadTemplate readAecProxy(DxfClass c)
+		{
+			//Read the object on a copy of the readers, if the object is stored in its native format the
+			//proxy readers fail and the original readers remain untouched for the unknown object readers
+			IDwgStreamReader objectReader = this._objectReader;
+			IDwgStreamReader textReader = this._textReader;
+			IDwgStreamReader handlesReader = this._handlesReader;
+			IDwgStreamReader mergedReaders = this._mergedReaders;
+
+			this._objectReader = DwgStreamReaderBase.GetStreamHandler(this._version, HugeMemoryStream.Clone(this._memoryStream), this._reader.Encoding);
+			this._objectReader.SetPositionInBits(objectReader.PositionInBits());
+			this._textReader = DwgStreamReaderBase.GetStreamHandler(this._version, HugeMemoryStream.Clone(this._memoryStream), this._reader.Encoding);
+			this._textReader.SetPositionInBits(textReader.PositionInBits());
+			this._handlesReader = DwgStreamReaderBase.GetStreamHandler(this._version, HugeMemoryStream.Clone(this._memoryStream), this._reader.Encoding);
+			this._handlesReader.SetPositionInBits(handlesReader.PositionInBits());
+			this._mergedReaders = new DwgMergedReader(this._objectReader, this._textReader, this._handlesReader);
+
+			try
+			{
+				if (c.IsAnEntity)
+				{
+					CadTemplate template = this.readProxyEntity();
+					((ProxyEntity)template.CadObject).DxfClass = c;
+					this._builder.Notify($"Unlisted AEC entity with DXF name {c.DxfName} has been read as a ProxyEntity", NotificationType.Warning);
+					return template;
+				}
+				else
+				{
+					CadTemplate template = this.readProxyObject();
+					((ProxyObject)template.CadObject).DxfClass = c;
+					this._builder.Notify($"Unlisted AEC object with DXF name {c.DxfName} has been read as a ProxyObject", NotificationType.Warning);
+					return template;
+				}
+			}
+			catch (Exception)
+			{
+				//The object is stored in its native format, restore the original readers so the
+				//unknown object readers can read its common data
+				this._objectReader = objectReader;
+				this._textReader = textReader;
+				this._handlesReader = handlesReader;
+				this._mergedReaders = mergedReaders;
+
+				if (!this._builder.Configuration.Failsafe)
+					throw;
+
+				return null;
+			}
+		}
+
+		/// <summary>
+		/// Checks if a dxf class belongs to an AEC (Architecture, Engineering and Construction) application
+		/// based on the naming of its dxf, application and cpp class names.
+		/// </summary>
+		/// <remarks>
+		/// AEC class names are not limited to the <c>AEC_*</c> dxf name, structural members use <c>AECS_*</c>
+		/// and the MEP family uses <c>AECB_*</c>. The application name uses the <c>Aec*</c> prefix and the
+		/// cpp class name is used as a secondary signal for the Autodesk <c>AecDb*</c>/<c>AecsDb*</c> families
+		/// and for the Tianzheng/Revit <c>TDb*</c> family.
+		/// </remarks>
+		internal static bool IsAecClass(DxfClass c)
+		{
+			if (c == null)
+				return false;
+
+			if (c.DxfName?.StartsWith("AEC", StringComparison.OrdinalIgnoreCase) == true)
+				return true;
+
+			if (c.ApplicationName?.StartsWith("AEC", StringComparison.OrdinalIgnoreCase) == true)
+				return true;
+
+			if (c.CppClassName?.StartsWith("Aec", StringComparison.OrdinalIgnoreCase) == true)
+				return true;
+
+			if (c.CppClassName?.StartsWith("TDb", StringComparison.OrdinalIgnoreCase) == true)
+				return true;
+
+			return false;
 		}
 
 		#region Evaluation Graph, Enhanced Block etc.
