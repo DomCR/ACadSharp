@@ -67,7 +67,12 @@ namespace ACadSharp.Entities
 		/// <inheritdoc/>
 		public override BoundingBox GetBoundingBox()
 		{
-			return new BoundingBox(this.InsertionPoint - this.AngleVertex, this.InsertionPoint + this.AngleVertex);
+			//AngleVertex is a point on the curve, not a half-size, and InsertionPoint is the group 12
+			//slot AutoCAD leaves at the origin unless the dimension was cloned by Baseline/Continue.
+			//Subtracting one from the other produced a box that straddled the origin and was as wide as
+			//the drawing is far from it - one such dimension puts a drawing's extents out by millions of
+			//units, which is what a viewer's zoom-extents then has to cope with.
+			return BoundingBox.FromPoints(new[] { this.DefinitionPoint, this.AngleVertex, this.TextMiddlePoint });
 		}
 
 		/// <inheritdoc/>
