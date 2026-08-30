@@ -128,6 +128,22 @@ namespace ACadSharp.Extensions
 					XY p1 = curr.Location.Convert<XY>();
 					XY p2 = next.Location.Convert<XY>();
 
+					//A repeated vertex that still carries a bulge describes an arc over a chord of
+					//zero length: there is no radius to recover, and Arc refuses the zero its own
+					//maths produces. The segment covers no ground, so it contributes its endpoints
+					//and nothing else - throwing here would discard the whole polyline over one
+					//degenerate vertex, and real exports are full of them.
+					if (p1.Equals(p2))
+					{
+						if (i == 0)
+						{
+							points.Add(curr.Location.Convert<T>());
+						}
+
+						points.Add(next.Location.Convert<T>());
+						continue;
+					}
+
 					IEnumerable<T> lst = Arc.CreateFromBulge(p1, p2, curr.Bulge)
 						.PolygonalVertexes(precision)
 						.Select(p => p.Convert<T>());
