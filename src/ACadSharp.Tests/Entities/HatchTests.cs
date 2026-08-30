@@ -10,7 +10,31 @@ namespace ACadSharp.Tests.Entities;
 
 public class HatchTests : CommonEntityTests<Hatch>
 {
-	[Fact]
+[Fact]
+	public void APolylineBoundaryIsBoxedFlatAndFollowsItsBulge()
+	{
+		//Z on a polyline boundary's vertices is the BULGE, not a height - the remark on the
+		//property says so. Handing them to FromPoints as points gave the box a Z range that was a
+		//range of bulges, and ignored the arc the bulge describes, which bows outside its chord.
+		Hatch.BoundaryPath.Polyline edge = new Hatch.BoundaryPath.Polyline();
+		edge.Vertices.Add(new XYZ(0, 0, 1));
+		edge.Vertices.Add(new XYZ(10, 0, 0));
+
+		BoundingBox box = edge.GetBoundingBox();
+
+		//A boundary is planar. Before the fix this box ran from Z 0 to Z 1.
+		Assert.Equal(0.0, box.Min.Z, 9);
+		Assert.Equal(0.0, box.Max.Z, 9);
+
+		//Bulge 1 over a chord of 10 is a semicircle of radius 5, so the arc reaches 5 off the
+		//chord. Taken from the two vertices alone the box would be flat in Y as well.
+		//Measured through Arc, which samples the curve at 256 points, so the apex is approached
+		//rather than hit exactly - the same approximation Arc.GetBoundingBox itself makes.
+		Assert.Equal(10.0, box.Max.X - box.Min.X, 6);
+		Assert.Equal(5.0, box.Max.Y - box.Min.Y, 3);
+	}
+
+		[Fact]
 	public void BoundaryPathToEntityTest()
 	{
 		var a = new Hatch.BoundaryPath.Arc
