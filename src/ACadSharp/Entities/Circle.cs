@@ -101,8 +101,14 @@ public class Circle : Entity, ICurve, IOrientable
 	/// <inheritdoc/>
 	public override BoundingBox GetBoundingBox()
 	{
-		XYZ min = new XYZ(Math.Min(this.Center.X - this.Radius, this.Center.X + this.Radius), Math.Min(this.Center.Y - this.Radius, this.Center.Y + this.Radius), Math.Min(this.Center.Z, this.Center.Z));
-		XYZ max = new XYZ(Math.Max(this.Center.X - this.Radius, this.Center.X + this.Radius), Math.Max(this.Center.Y - this.Radius, this.Center.Y + this.Radius), Math.Max(this.Center.Z, this.Center.Z));
+		//The centre is in the circle's own object coordinate system. Read straight out it puts a
+		//mirrored circle - the (0,0,-1) normal AutoCAD writes for mirrored geometry - on the wrong
+		//side of the drawing, far enough to ruin the extents of everything around it.
+		XYZ center = Matrix4.GetArbitraryAxis(this.Normal) * this.Center;
+
+		XYZ min = new XYZ(center.X - this.Radius, center.Y - this.Radius, center.Z);
+		XYZ max = new XYZ(center.X + this.Radius, center.Y + this.Radius, center.Z);
+
 		return new BoundingBox(min, max);
 	}
 

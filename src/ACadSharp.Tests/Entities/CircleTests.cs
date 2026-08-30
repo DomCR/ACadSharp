@@ -18,6 +18,16 @@ public class CircleTests : CommonEntityTests<Circle>
 
 		Assert.Equal(new XYZ(-5, -5, 0), boundingBox.Min);
 		Assert.Equal(new XYZ(5, 5, 0), boundingBox.Max);
+
+		//The centre is stored in the circle's own object coordinate system, so the (0,0,-1)
+		//normal AutoCAD writes for mirrored geometry puts the circle at the negated X.
+		circle.Center = new XYZ(100, 50, 0);
+		circle.Normal = -XYZ.AxisZ;
+
+		boundingBox = circle.GetBoundingBox();
+
+		Assert.Equal(new XYZ(-105, 45, 0), boundingBox.Min);
+		Assert.Equal(new XYZ(-95, 55, 0), boundingBox.Max);
 	}
 
 	[Fact]
