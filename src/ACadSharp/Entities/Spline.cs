@@ -1,4 +1,4 @@
-using ACadSharp.Attributes;
+﻿using ACadSharp.Attributes;
 using CSMath;
 using CSUtilities.Extensions;
 using System;
@@ -729,15 +729,19 @@ public class Spline : Entity, IOrientable
 
 	private void getStartAndEndKnots(double[] knots, out double uStart, out double uEnd)
 	{
-		if (this.IsClosed)
-		{
-			uStart = knots[0];
-			uEnd = knots[knots.Length - 1];
-		}
-		else if (this.IsPeriodic)
+		//Periodic first. A periodic spline forms a closed loop and so carries the closed flag as
+		//well, which meant this branch never ran: the domain of an unclamped knot vector starts at
+		//knots[degree], and evaluating below it makes every basis function vanish, so the first
+		//sampled point came back as the zero vector and dragged the bounding box to the origin.
+		if (this.IsPeriodic)
 		{
 			uStart = knots[this.Degree];
 			uEnd = knots[knots.Length - this.Degree - 1];
+		}
+		else if (this.IsClosed)
+		{
+			uStart = knots[0];
+			uEnd = knots[knots.Length - 1];
 		}
 		else
 		{
