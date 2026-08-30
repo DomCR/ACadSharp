@@ -336,11 +336,39 @@ public partial class Hatch : Entity, IOrientable
 	/// <inheritdoc/>
 	public override BoundingBox GetBoundingBox()
 	{
+		//The boundary is recorded flat in the hatch's own object coordinate system, with the height
+		//of its plane carried apart in Elevation. Only the arbitrary-axis mapping puts it in the
+		//world, and for the (0,0,-1) normal AutoCAD writes for mirrored geometry that flips the
+		//sign of X - enough to box a hatch on the far side of the drawing from where it draws.
+		Matrix4 toWorld = Matrix4.GetArbitraryAxis(this.Normal);
+
 		BoundingBox box = BoundingBox.Null;
 
 		foreach (BoundaryPath bp in this.Paths)
 		{
-			box = box.Merge(bp.GetBoundingBox());
+			foreach (BoundaryPath.Edge edge in bp.Edges)
+			{
+				BoundingBox eb = edge.GetBoundingBox();
+				if (eb.Extent == BoundingBoxExtent.Null)
+				{
+					continue;
+				}
+
+				box = box.Merge(BoundingBox.FromPoints(new[]
+				{
+					toWorld * new XYZ(eb.Min.X, eb.Min.Y, this.Elevation),
+					toWorld * new XYZ(eb.Max.X, eb.Min.Y, this.Elevation),
+					toWorld * new XYZ(eb.Min.X, eb.Max.Y, this.Elevation),
+					toWorld * new XYZ(eb.Max.X, eb.Max.Y, this.Elevation)
+				}));
+			}
+
+			//A derived boundary holds whole entities, each carrying its own extrusion, so those are
+			//already in world coordinates and must not be mapped a second time.
+			foreach (Entity entity in bp.Entities)
+			{
+				box = box.Merge(entity.GetBoundingBox());
+			}
 		}
 
 		return box;
