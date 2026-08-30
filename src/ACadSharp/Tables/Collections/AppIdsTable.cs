@@ -19,11 +19,12 @@ public class AppIdsTable : Table<AppId>
 	{
 	}
 
-	protected override string[] getDefaultEntries()
-	{ return new string[] { AppId.DefaultName }; }
-
-	protected override AppId getDefaultEntry()
+	/// <inheritdoc/>
+	public override AppId GetDefaultEntry()
 	{
 		return this[AppId.DefaultName];
 	}
+
+	protected override string[] getDefaultEntries()
+	{ return new string[] { AppId.DefaultName }; }
 }

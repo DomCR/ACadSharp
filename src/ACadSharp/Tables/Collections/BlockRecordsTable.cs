@@ -34,11 +34,12 @@ public class BlockRecordsTable : Table<BlockRecord>
 		base.Add(item);
 	}
 
-	protected override string[] getDefaultEntries()
-	{ return new string[] { BlockRecord.ModelSpaceName, BlockRecord.PaperSpaceName }; }
-
-	protected override BlockRecord getDefaultEntry()
+	/// <inheritdoc/>
+	public override BlockRecord GetDefaultEntry()
 	{
 		return null;
 	}
+
+	protected override string[] getDefaultEntries()
+	{ return new string[] { BlockRecord.ModelSpaceName, BlockRecord.PaperSpaceName }; }
 }

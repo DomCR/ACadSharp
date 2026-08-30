@@ -18,11 +18,12 @@ public class LayersTable : Table<Layer>
 	{
 	}
 
-	protected override string[] getDefaultEntries()
-	{ return new string[] { Layer.DefaultName }; }
-
-	protected override Layer getDefaultEntry()
+	/// <inheritdoc/>
+	public override Layer GetDefaultEntry()
 	{
 		return this[Layer.DefaultName];
 	}
+
+	protected override string[] getDefaultEntries()
+	{ return new string[] { Layer.DefaultName }; }
 }

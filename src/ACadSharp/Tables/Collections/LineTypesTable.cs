@@ -34,6 +34,12 @@ public class LineTypesTable : Table<LineType>
 	{
 	}
 
+	/// <inheritdoc/>
+	public override LineType GetDefaultEntry()
+	{
+		return this[LineType.ByLayerName];
+	}
+
 	protected override string[] getDefaultEntries()
 	{
 		return new string[]
@@ -42,10 +48,5 @@ public class LineTypesTable : Table<LineType>
 				LineType.ByBlockName,
 				LineType.ContinuousName
 		};
-	}
-
-	protected override LineType getDefaultEntry()
-	{
-		return this[LineType.ByLayerName];
 	}
 }

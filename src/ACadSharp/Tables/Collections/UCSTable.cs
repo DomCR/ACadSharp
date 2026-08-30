@@ -19,11 +19,12 @@ public class UCSTable : Table<UCS>
 	{
 	}
 
-	protected override string[] getDefaultEntries()
-	{ return new string[] { }; }
-
-	protected override UCS getDefaultEntry()
+	/// <inheritdoc/>
+	public override UCS GetDefaultEntry()
 	{
 		return null;
 	}
+
+	protected override string[] getDefaultEntries()
+	{ return new string[] { }; }
 }

@@ -13,7 +13,7 @@ internal class ViewportEntityControl : Table<ViewportEntityHeader>
 		return new string[] { };
 	}
 
-	protected override ViewportEntityHeader getDefaultEntry()
+	public override ViewportEntityHeader GetDefaultEntry()
 	{
 		return null;
 	}

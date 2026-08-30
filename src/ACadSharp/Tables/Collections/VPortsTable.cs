@@ -35,11 +35,12 @@ public class VPortsTable : Table<VPort>
 		}
 	}
 
-	protected override string[] getDefaultEntries()
-	{ return new string[] { VPort.DefaultName }; }
-
-	protected override VPort getDefaultEntry()
+	/// <inheritdoc/>
+	public override VPort GetDefaultEntry()
 	{
 		return this[VPort.DefaultName];
 	}
+
+	protected override string[] getDefaultEntries()
+	{ return new string[] { VPort.DefaultName }; }
 }

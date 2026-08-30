@@ -19,11 +19,12 @@ public class TextStylesTable : Table<TextStyle>
 	{
 	}
 
-	protected override string[] getDefaultEntries()
-	{ return new string[] { TextStyle.DefaultName }; }
-
-	protected override TextStyle getDefaultEntry()
+	/// <inheritdoc/>
+	public override TextStyle GetDefaultEntry()
 	{
 		return this[TextStyle.DefaultName];
 	}
+
+	protected override string[] getDefaultEntries()
+	{ return new string[] { TextStyle.DefaultName }; }
 }

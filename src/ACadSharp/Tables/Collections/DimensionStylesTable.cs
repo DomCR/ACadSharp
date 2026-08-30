@@ -19,11 +19,12 @@ public class DimensionStylesTable : Table<DimensionStyle>
 	{
 	}
 
-	protected override string[] getDefaultEntries()
-	{ return new string[] { DimensionStyle.DefaultName }; }
-
-	protected override DimensionStyle getDefaultEntry()
+	/// <inheritdoc/>
+	public override DimensionStyle GetDefaultEntry()
 	{
 		return this[DimensionStyle.DefaultName];
 	}
+
+	protected override string[] getDefaultEntries()
+	{ return new string[] { DimensionStyle.DefaultName }; }
 }

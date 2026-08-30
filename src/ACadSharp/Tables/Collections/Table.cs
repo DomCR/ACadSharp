@@ -90,6 +90,12 @@ public abstract class Table<T> : CadObject, ITable, ICadCollection<T>, IObservab
 		}
 	}
 
+	/// <summary>
+	/// Gets the default entry for the table.
+	/// </summary>
+	/// <returns>The default <see cref="TableEntry"/>.</returns>
+	public abstract T GetDefaultEntry();
+
 	/// <inheritdoc/>
 	public IEnumerator<T> GetEnumerator()
 	{
@@ -167,7 +173,7 @@ public abstract class Table<T> : CadObject, ITable, ICadCollection<T>, IObservab
 
 	internal void RemoveReference(string name, CadObject owner)
 	{
-		if(string.IsNullOrEmpty(name))
+		if (string.IsNullOrEmpty(name))
 		{
 			return;
 		}
@@ -242,7 +248,10 @@ public abstract class Table<T> : CadObject, ITable, ICadCollection<T>, IObservab
 
 	protected abstract string[] getDefaultEntries();
 
-	protected abstract T getDefaultEntry();
+	private void assignToDefault(string name)
+	{
+		this._referenceHandler.RemoveReference(name, this.GetDefaultEntry());
+	}
 
 	private void onEntryNameChanged(object sender, OnNameChangedArgs e)
 	{
@@ -255,11 +264,6 @@ public abstract class Table<T> : CadObject, ITable, ICadCollection<T>, IObservab
 		this.entries.Add(e.NewName, entry);
 		this.entries.Remove(e.OldName);
 		this._referenceHandler.ChangeKey(e.OldName, e.NewName);
-	}
-
-	private void assignToDefault(string name)
-	{
-		this._referenceHandler.RemoveReference(name, this.getDefaultEntry());
 	}
 
 	public T this[string name]

@@ -19,11 +19,12 @@ public class ViewsTable : Table<View>
 	{
 	}
 
-	protected override string[] getDefaultEntries()
-	{ return new string[] { }; }
-
-	protected override View getDefaultEntry()
+	/// <inheritdoc/>
+	public override View GetDefaultEntry()
 	{
 		return null;
 	}
+
+	protected override string[] getDefaultEntries()
+	{ return new string[] { }; }
 }
