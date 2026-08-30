@@ -90,6 +90,11 @@ public abstract class ObjectDictionaryCollection<T> : ICadCollection<T>, IObserv
 		return this._dictionary.OfType<T>().GetEnumerator();
 	}
 
+	/// <summary>
+	/// Retrieves the references associated with the specified name.
+	/// </summary>
+	/// <param name="name">The name of the entry whose references are to be retrieved.</param>
+	/// <returns>An enumerable collection of CAD objects that reference the specified entry.</returns>
 	public IEnumerable<CadObject> GetReferences(string name)
 	{
 		return this._referenceHandler.GetReferences(name);
@@ -98,8 +103,8 @@ public abstract class ObjectDictionaryCollection<T> : ICadCollection<T>, IObserv
 	/// <summary>
 	/// Remove an entry from the collection.
 	/// </summary>
-	/// <param name="name"></param>
-	/// <returns></returns>
+	/// <param name="name">The name of the entry to remove.</param>
+	/// <returns>true if the entry was successfully removed; otherwise, false.</returns>
 	public bool Remove(string name)
 	{
 		return this.Remove(name, out _);
@@ -108,9 +113,9 @@ public abstract class ObjectDictionaryCollection<T> : ICadCollection<T>, IObserv
 	/// <summary>
 	/// Remove an entry from the collection.
 	/// </summary>
-	/// <param name="name"></param>
-	/// <param name="entry"></param>
-	/// <returns></returns>
+	/// <param name="name">The name of the entry to remove.</param>
+	/// <param name="entry">When this method returns, contains the entry that was removed, if the removal was successful; otherwise, the default value for the type of the entry parameter.</param>
+	/// <returns>true if the entry was successfully removed; otherwise, false.</returns>
 	public virtual bool Remove(string name, out T entry)
 	{
 		if (this._dictionary.Remove(name, out NonGraphicalObject n))
