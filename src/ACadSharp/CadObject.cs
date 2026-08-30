@@ -269,18 +269,6 @@ public abstract class CadObject : IHandledCadObject
 		this._reactors.Clear();
 	}
 
-	[Obsolete]
-	protected static T updateCollection<T>(T entry, ICadCollection<T> table)
-		where T : CadObject, INamedCadObject
-	{
-		if (table == null || entry == null)
-		{
-			return entry;
-		}
-
-		return table.TryAdd(entry);
-	}
-
 	protected T updateCollectionEntry<T>(T entry, Action<T> assignValue, ObjectDictionaryCollection<T> collection)
 		where T : NonGraphicalObject
 	{
