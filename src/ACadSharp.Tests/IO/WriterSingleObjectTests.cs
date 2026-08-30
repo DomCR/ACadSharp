@@ -1331,6 +1331,14 @@ public abstract class WriterSingleObjectTests : IOTestsBase
 			filter.BoundaryPoints.Add(new XY(50, 50));
 			filter.DisplayBoundary = true;
 
+			//Not identity, deliberately. Both formats record these two matrices transposed with
+			//respect to how the library holds them, and an identity survives being transposed - so
+			//a fixture built from identities cannot tell a correct writer from one that drops the
+			//translation entirely, which is what this case used to do.
+			filter.InverseInsertTransform = Matrix4.CreateTranslation(new XYZ(-7, 11, 3))
+				* Matrix4.CreateScale(new XYZ(25.4, 25.4, 25.4));
+			filter.InsertTransform = Matrix4.CreateTranslation(new XYZ(2, -4, 6));
+
 			insert.SpatialFilter = filter;
 
 			this.Document.Entities.Add(insert);
