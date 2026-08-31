@@ -1,13 +1,15 @@
-﻿using System;
-using ACadSharp.Tables;
-using Xunit;
-using ACadSharp.Tests.Common;
+﻿using ACadSharp.Blocks;
 using ACadSharp.Entities;
-using Xunit.Abstractions;
-using ACadSharp.Blocks;
-using System.Linq;
-using System.Diagnostics;
 using ACadSharp.Objects;
+using ACadSharp.Tables;
+using ACadSharp.Tests.Common;
+using ACadSharp.Tests.TestModels;
+using System;
+using System.Collections.Generic;
+using System.Diagnostics;
+using System.Linq;
+using Xunit;
+using Xunit.Abstractions;
 
 namespace ACadSharp.Tests;
 
@@ -63,11 +65,7 @@ public class CadDocumentTests
 
 		stopwatch.Stop();
 		this._output.WriteLine(stopwatch.Elapsed.TotalSeconds.ToString());
-
-		if (TestVariables.LocalEnv)
-		{
-			Assert.True(stopwatch.Elapsed.TotalSeconds < 5);
-		}
+		Assert.True(stopwatch.Elapsed.TotalSeconds < 5);
 	}
 
 	[Fact]
@@ -340,10 +338,11 @@ public class CadDocumentTests
 		stopwatch.Restart();
 		this._output.WriteLine("Start removing process");
 
-		//Execution took more than 20 minutes
 		doc.Entities.Clear();
 
 		this._output.WriteLine($"Removing {nObjects} objects: {stopwatch.Elapsed.TotalSeconds} seconds.");
+
+		Assert.True(stopwatch.Elapsed.TotalSeconds < 5);
 	}
 
 	[Fact]
@@ -378,7 +377,7 @@ public class CadDocumentTests
 		LineType ltype = doc.LineTypes.Remove(ltypeName);
 
 		//Assert removed element
-		Assert.False(doc.Layers.Contains(ltypeName));
+		Assert.False(doc.LineTypes.Contains(ltypeName));
 		Assert.Null(ltype.Document);
 		Assert.True(ltype.Handle == 0);
 		Assert.Equal(doc.LineTypes[LineType.ByLayerName], line.LineType);

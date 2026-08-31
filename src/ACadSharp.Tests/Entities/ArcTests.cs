@@ -5,413 +5,412 @@ using CSMath;
 using System;
 using Xunit;
 
-namespace ACadSharp.Tests.Entities
+namespace ACadSharp.Tests.Entities;
+
+public class ArcTests : CommonEntityTests<Arc>
 {
-	public class ArcTests : CommonEntityTests<Arc>
+	public override void CloneTest()
 	{
-		public override void CloneTest()
-		{
-			Arc arc = new Arc();
-			arc.Radius = 5;
-			arc.EndAngle = Math.PI / 2;
+		Arc arc = new Arc();
+		arc.Radius = 5;
+		arc.EndAngle = Math.PI / 2;
 
-			Arc clone = arc.CloneTyped();
+		Arc clone = arc.CloneTyped();
 
-			Assert.NotNull(clone);
-			EntityComparator.IsEqual(arc, clone);
+		Assert.NotNull(clone);
+		EntityComparator.IsEqual(arc, clone);
 
-			Assert.Equal(arc.Radius, clone.Radius);
-			Assert.Equal(arc.StartAngle, clone.StartAngle);
-			Assert.Equal(arc.EndAngle, clone.EndAngle);
-		}
+		Assert.Equal(arc.Radius, clone.Radius);
+		Assert.Equal(arc.StartAngle, clone.StartAngle);
+		Assert.Equal(arc.EndAngle, clone.EndAngle);
+	}
 
-		[Fact]
-		public void CreateFromBulgeTest()
-		{
-			XY start = new XY(1, 0);
-			XY end = new XY(0, 1);
-			// 90 degree bulge
-			double bulge = Math.Tan(Math.PI / (2 * 4));
+	[Fact]
+	public void CreateFromBulgeTest()
+	{
+		XY start = new XY(1, 0);
+		XY end = new XY(0, 1);
+		// 90 degree bulge
+		double bulge = Math.Tan(Math.PI / (2 * 4));
 
-			XY center = Arc.GetCenter(start, end, bulge, out double radius);
+		XY center = Arc.GetCenter(start, end, bulge, out double radius);
 
 #if NETFRAMEWORK
-			center = MathHelper.FixZero(center);
+		center = MathHelper.FixZero(center);
 #endif
 
-			Assert.Equal(XY.Zero, center);
-			Assert.Equal(1, radius, TestVariables.DecimalPrecision);
+		Assert.Equal(XY.Zero, center);
+		Assert.Equal(1, radius, TestVariables.DecimalPrecision);
 
-			Arc arc = Arc.CreateFromBulge(start, end, bulge);
+		Arc arc = Arc.CreateFromBulge(start, end, bulge);
 
 #if NETFRAMEWORK
-			arc.Center = MathHelper.FixZero(arc.Center);
+		arc.Center = MathHelper.FixZero(arc.Center);
 #endif
 
-			Assert.Equal(XYZ.Zero, arc.Center);
-			Assert.Equal(1, arc.Radius, TestVariables.DecimalPrecision);
-			Assert.Equal(0, arc.StartAngle, TestVariables.DecimalPrecision);
-			Assert.Equal(Math.PI / 2, arc.EndAngle, TestVariables.DecimalPrecision);
-		}
+		Assert.Equal(XYZ.Zero, arc.Center);
+		Assert.Equal(1, arc.Radius, TestVariables.DecimalPrecision);
+		Assert.Equal(0, arc.StartAngle, TestVariables.DecimalPrecision);
+		Assert.Equal(Math.PI / 2, arc.EndAngle, TestVariables.DecimalPrecision);
+	}
 
-		[Fact]
-		public override void GetBoundingBoxTest()
-		{
-			Arc arc = new Arc();
-			arc.Radius = 5;
-			arc.EndAngle = Math.PI / 2;
+	[Fact]
+	public override void GetBoundingBoxTest()
+	{
+		Arc arc = new Arc();
+		arc.Radius = 5;
+		arc.EndAngle = Math.PI / 2;
 
-			BoundingBox boundingBox = arc.GetBoundingBox();
+		BoundingBox boundingBox = arc.GetBoundingBox();
 
-			arc.GetEndVertices(out XYZ s1, out XYZ e2);
+		arc.GetEndVertices(out XYZ s1, out XYZ e2);
 
-			Assert.Equal(new XYZ(5, 0, 0), s1);
-			Assert.Equal(new XYZ(0, 5, 0), e2);
+		Assert.Equal(new XYZ(5, 0, 0), s1);
+		Assert.Equal(new XYZ(0, 5, 0), e2);
 
-			AssertUtils.Equals(new XYZ(0, 0, 0), boundingBox.Min);
-			AssertUtils.Equals(new XYZ(5, 5, 0), boundingBox.Max);
+		AssertUtils.Equals(new XYZ(0, 0, 0), boundingBox.Min);
+		AssertUtils.Equals(new XYZ(5, 5, 0), boundingBox.Max);
 
-			arc.Center = new XYZ(200.0, 200.0, 0.0);
-			boundingBox = arc.GetBoundingBox();
+		arc.Center = new XYZ(200.0, 200.0, 0.0);
+		boundingBox = arc.GetBoundingBox();
 
-			AssertUtils.Equals(new XYZ(200, 200, 0), boundingBox.Min);
-			AssertUtils.Equals(new XYZ(205, 205, 0), boundingBox.Max);
-		}
+		AssertUtils.Equals(new XYZ(200, 200, 0), boundingBox.Min);
+		AssertUtils.Equals(new XYZ(205, 205, 0), boundingBox.Max);
+	}
 
-		[Fact]
-		public void GetCenter()
-		{
-			XY start = new XY(1, 0);
-			XY end = new XY(0, 1);
-			// 90 degree bulge
-			double bulge = Math.Tan(Math.PI / (2 * 4));
+	[Fact]
+	public void GetCenter()
+	{
+		XY start = new XY(1, 0);
+		XY end = new XY(0, 1);
+		// 90 degree bulge
+		double bulge = Math.Tan(Math.PI / (2 * 4));
 
-			XY center = Arc.GetCenter(start, end, bulge);
+		XY center = Arc.GetCenter(start, end, bulge);
 
 #if NETFRAMEWORK
-			center = MathHelper.FixZero(center);
+		center = MathHelper.FixZero(center);
 #endif
 
-			Assert.Equal(XY.Zero, center);
+		Assert.Equal(XY.Zero, center);
 
-			Arc arc = Arc.CreateFromBulge(start, end, bulge);
+		Arc arc = Arc.CreateFromBulge(start, end, bulge);
 
 #if NETFRAMEWORK
-			arc.Center = MathHelper.FixZero(arc.Center);
+		arc.Center = MathHelper.FixZero(arc.Center);
 #endif
 
-			Assert.Equal(XYZ.Zero, arc.Center);
-			Assert.Equal(1, arc.Radius, TestVariables.DecimalPrecision);
-			Assert.Equal(0, arc.StartAngle, TestVariables.DecimalPrecision);
-			Assert.Equal(Math.PI / 2, arc.EndAngle, TestVariables.DecimalPrecision);
-		}
+		Assert.Equal(XYZ.Zero, arc.Center);
+		Assert.Equal(1, arc.Radius, TestVariables.DecimalPrecision);
+		Assert.Equal(0, arc.StartAngle, TestVariables.DecimalPrecision);
+		Assert.Equal(Math.PI / 2, arc.EndAngle, TestVariables.DecimalPrecision);
+	}
 
-		[Fact]
-		public void GetEndVerticesTest()
+	[Fact]
+	public void GetEndVerticesTest()
+	{
+		var start = new XYZ(1, 0, 0);
+		var end = new XYZ(0, 1, 0);
+		// 90 degree bulge
+		double bulge = Math.Tan(Math.PI / (2 * 4));
+
+		Arc arc = Arc.CreateFromBulge(start.Convert<XY>(), end.Convert<XY>(), bulge);
+
+		arc.GetEndVertices(out XYZ s1, out XYZ e2);
+
+		AssertUtils.AreEqual<XYZ>(start, s1, "start point");
+		AssertUtils.AreEqual<XYZ>(end, e2, "end point");
+
+		arc = new Arc()
 		{
-			var start = new XYZ(1, 0, 0);
-			var end = new XYZ(0, 1, 0);
-			// 90 degree bulge
-			double bulge = Math.Tan(Math.PI / (2 * 4));
+			StartAngle = 0,
+			EndAngle = Math.PI / 2,
+			Normal = XYZ.AxisX
+		};
 
-			Arc arc = Arc.CreateFromBulge(start.Convert<XY>(), end.Convert<XY>(), bulge);
+		start = new XYZ(0, 1, 0);
+		end = new XYZ(0, 0, 1);
 
-			arc.GetEndVertices(out XYZ s1, out XYZ e2);
+		arc.GetEndVertices(out s1, out e2);
 
-			AssertUtils.AreEqual<XYZ>(start, s1, "start point");
-			AssertUtils.AreEqual<XYZ>(end, e2, "end point");
+		AssertUtils.AreEqual<XYZ>(start, s1, "start point");
+		AssertUtils.AreEqual<XYZ>(end, e2, "end point");
 
-			arc = new Arc()
-			{
-				StartAngle = 0,
-				EndAngle = Math.PI / 2,
-				Normal = XYZ.AxisX
-			};
-
-			start = new XYZ(0, 1, 0);
-			end = new XYZ(0, 0, 1);
-
-			arc.GetEndVertices(out s1, out e2);
-
-			AssertUtils.AreEqual<XYZ>(start, s1, "start point");
-			AssertUtils.AreEqual<XYZ>(end, e2, "end point");
-
-			arc = new Arc()
-			{
-				Center = new XYZ(100, 0, 0),
-				Radius = 50,
-				StartAngle = MathHelper.HalfPI,
-				EndAngle = Math.PI,
-			};
-
-			start = new XYZ(100, 50, 0);
-			end = new XYZ(50, 0, 0);
-
-			arc.GetEndVertices(out s1, out e2);
-
-			AssertUtils.AreEqual<XYZ>(start, s1, "start point");
-			AssertUtils.AreEqual<XYZ>(end, e2, "end point");
-		}
-
-		[Fact]
-		public void PolarCoordinateRelativeToCenterTest()
+		arc = new Arc()
 		{
-			var mid = new XYZ(Math.Sqrt(2) / 2, Math.Sqrt(2) / 2, 0);
-			Arc arc = new Arc()
-			{
-				StartAngle = 0,
-				Radius = 1,
-				EndAngle = Math.PI / 2,
-			};
+			Center = new XYZ(100, 0, 0),
+			Radius = 50,
+			StartAngle = MathHelper.HalfPI,
+			EndAngle = Math.PI,
+		};
 
-			var v = arc.PolarCoordinateRelativeToCenter(Math.PI / 4);
+		start = new XYZ(100, 50, 0);
+		end = new XYZ(50, 0, 0);
 
-			AssertUtils.AreEqual<XYZ>(mid, v, "mid point");
+		arc.GetEndVertices(out s1, out e2);
 
-			arc = new Arc()
-			{
-				StartAngle = 0,
-				Radius = 1,
-				Center = new XYZ(20, 20, 0),
-				EndAngle = Math.PI / 2,
-			};
+		AssertUtils.AreEqual<XYZ>(start, s1, "start point");
+		AssertUtils.AreEqual<XYZ>(end, e2, "end point");
+	}
 
-			mid += arc.Center;
-
-			v = arc.PolarCoordinateRelativeToCenter(Math.PI / 4);
-
-			AssertUtils.AreEqual<XYZ>(mid, v, "mid point");
-		}
-
-		[Fact]
-		public void PolygonalVertexesIrregularNormalTest()
+	[Fact]
+	public void PolarCoordinateRelativeToCenterTest()
+	{
+		var mid = new XYZ(Math.Sqrt(2) / 2, Math.Sqrt(2) / 2, 0);
+		Arc arc = new Arc()
 		{
-			var arc = new Arc()
-			{
-				StartAngle = 0,
-				EndAngle = Math.PI / (2),
-				Radius = 20,
-				Normal = XYZ.AxisX
-			};
+			StartAngle = 0,
+			Radius = 1,
+			EndAngle = Math.PI / 2,
+		};
 
-			arc.GetEndVertices(out XYZ start, out XYZ end);
-			var vertices = arc.PolygonalVertexes(3);
+		var v = arc.PolarCoordinateRelativeToCenter(Math.PI / 4);
 
-			AssertUtils.AreEqual(start, vertices[0]);
-			AssertUtils.AreEqual(end, vertices[2]);
-			AssertUtils.AreEqual(new XYZ(0, 20, 0), vertices[0]);
-			AssertUtils.AreEqual(new XYZ(0, 0, 20), vertices[2]);
+		AssertUtils.AreEqual<XYZ>(mid, v, "mid point");
 
-			arc = new Arc()
-			{
-				StartAngle = 0,
-				EndAngle = Math.PI / (2),
-				Radius = 20,
-				Normal = XYZ.AxisY
-			};
-
-			arc.GetEndVertices(out start, out end);
-			vertices = arc.PolygonalVertexes(3);
-
-			AssertUtils.AreEqual(start, vertices[0]);
-			AssertUtils.AreEqual(end, vertices[2]);
-			AssertUtils.AreEqual(new XYZ(-20, 0, 0), vertices[0]);
-			AssertUtils.AreEqual(new XYZ(0, 0, 20), vertices[2]);
-
-			arc = new Arc()
-			{
-				StartAngle = 0,
-				EndAngle = Math.PI / (2),
-				Radius = 20,
-				Normal = -XYZ.AxisX
-			};
-
-			arc.GetEndVertices(out start, out end);
-			vertices = arc.PolygonalVertexes(3);
-
-			AssertUtils.AreEqual(start, vertices[0]);
-			AssertUtils.AreEqual(end, vertices[2]);
-			AssertUtils.AreEqual(new XYZ(0, -20, 0), vertices[0]);
-			AssertUtils.AreEqual(new XYZ(0, 0, 20), vertices[2]);
-
-			arc = new Arc()
-			{
-				StartAngle = 0,
-				EndAngle = Math.PI / (2),
-				Radius = 20,
-				Normal = -XYZ.AxisY
-			};
-
-			arc.GetEndVertices(out start, out end);
-			vertices = arc.PolygonalVertexes(3);
-
-			AssertUtils.AreEqual(start, vertices[0]);
-			AssertUtils.AreEqual(end, vertices[2]);
-			AssertUtils.AreEqual(new XYZ(20, 0, 0), vertices[0]);
-			AssertUtils.AreEqual(new XYZ(0, 0, 20), vertices[2]);
-
-			arc = new Arc()
-			{
-				StartAngle = 0,
-				EndAngle = Math.PI / (2),
-				Radius = 20,
-				Normal = -XYZ.AxisZ
-			};
-
-			arc.GetEndVertices(out start, out end);
-			vertices = arc.PolygonalVertexes(3);
-
-			AssertUtils.AreEqual(start, vertices[0]);
-			AssertUtils.AreEqual(end, vertices[2]);
-			AssertUtils.AreEqual(new XYZ(-20, 0, 0), vertices[0]);
-			AssertUtils.AreEqual(new XYZ(0, 20, 0), vertices[2]);
-		}
-
-		[Fact]
-		public void PolygonalVertexesTest()
+		arc = new Arc()
 		{
-			var start = new XYZ(1, 0, 0);
-			var mid = new XYZ(Math.Sqrt(2) / 2, Math.Sqrt(2) / 2, 0);
-			var end = new XYZ(0, 1, 0);
-			Arc arc = new Arc()
-			{
-				StartAngle = 0,
-				Radius = 1,
-				EndAngle = Math.PI / 2,
-			};
+			StartAngle = 0,
+			Radius = 1,
+			Center = new XYZ(20, 20, 0),
+			EndAngle = Math.PI / 2,
+		};
 
-			var v = arc.PolygonalVertexes(3);
+		mid += arc.Center;
 
-			AssertUtils.AreEqual<XYZ>(start, v[0], "start point");
-			AssertUtils.AreEqual<XYZ>(mid, v[1], "mid point");
-			AssertUtils.AreEqual<XYZ>(end, v[2], "end point");
+		v = arc.PolarCoordinateRelativeToCenter(Math.PI / 4);
 
-			arc = new Arc()
-			{
-				StartAngle = 0,
-				Radius = 1,
-				Center = new XYZ(20, 20, 0),
-				EndAngle = Math.PI / 2,
-			};
+		AssertUtils.AreEqual<XYZ>(mid, v, "mid point");
+	}
 
-			start += arc.Center;
-			mid += arc.Center;
-			end += arc.Center;
-
-			v = arc.PolygonalVertexes(3);
-
-			AssertUtils.AreEqual<XYZ>(start, v[0], "start point");
-			AssertUtils.AreEqual<XYZ>(mid, v[1], "mid point");
-			AssertUtils.AreEqual<XYZ>(end, v[2], "end point");
-
-			arc = new Arc()
-			{
-				Center = new XYZ(100, 0, 0),
-				Radius = 50,
-				StartAngle = MathHelper.HalfPI,
-				EndAngle = Math.PI,
-			};
-
-			start = new XYZ(100, 50, 0);
-			end = new XYZ(50, 0, 0);
-
-			v = arc.PolygonalVertexes(3);
-
-			arc.GetEndVertices(out XYZ s, out XYZ e);
-
-			AssertUtils.AreEqual<XYZ>(start, v[0], "start point");
-			AssertUtils.AreEqual<XYZ>(end, v[2], "end point");
-		}
-
-		[Fact]
-		public void InitStartEndTest()
+	[Fact]
+	public void PolygonalVertexesIrregularNormalTest()
+	{
+		var arc = new Arc()
 		{
-			var start = XYZ.AxisX;
-			var end = XYZ.AxisY;
-			var center = XYZ.Zero;
-			Arc arc = new Arc(center, start, end);
+			StartAngle = 0,
+			EndAngle = Math.PI / (2),
+			Radius = 20,
+			Normal = XYZ.AxisX
+		};
 
-			Assert.Equal(0, arc.StartAngle);
-			Assert.Equal(MathHelper.HalfPI, arc.EndAngle);
+		arc.GetEndVertices(out XYZ start, out XYZ end);
+		var vertices = arc.PolygonalVertexes(3);
 
-			arc.GetEndVertices(out XYZ s, out XYZ e);
-			AssertUtils.AreEqual(start, s);
-			AssertUtils.AreEqual(end, e);
+		AssertUtils.AreEqual(start, vertices[0]);
+		AssertUtils.AreEqual(end, vertices[2]);
+		AssertUtils.AreEqual(new XYZ(0, 20, 0), vertices[0]);
+		AssertUtils.AreEqual(new XYZ(0, 0, 20), vertices[2]);
 
-			arc = new Arc(center, end, start);
-
-			Assert.Equal(0, arc.EndAngle);
-			Assert.Equal(MathHelper.HalfPI, arc.StartAngle);
-
-			arc.GetEndVertices(out s, out e);
-			AssertUtils.AreEqual(start, e);
-			AssertUtils.AreEqual(end, s);
-			AssertUtils.AreEqual(end, s);
-		}
-
-		[Fact]
-		public void RotationTest()
+		arc = new Arc()
 		{
-			double radius = 5;
-			XYZ center = new XYZ(1, 1, 0);
-			Arc arc = new Arc
-			{
-				Radius = radius,
-				Center = center
-			};
+			StartAngle = 0,
+			EndAngle = Math.PI / (2),
+			Radius = 20,
+			Normal = XYZ.AxisY
+		};
 
-			Transform transform = Transform.CreateRotation(XYZ.AxisX, MathHelper.DegToRad(90));
-			arc.ApplyTransform(transform);
+		arc.GetEndVertices(out start, out end);
+		vertices = arc.PolygonalVertexes(3);
 
-			AssertUtils.AreEqual(new XYZ(1, 0, 1), arc.Center);
-			Assert.Equal(radius, arc.Radius);
-			Assert.Equal(Math.PI, arc.StartAngle);
-			Assert.Equal(0, arc.EndAngle);
-			AssertUtils.AreEqual(XYZ.AxisY, arc.Normal);
-		}
+		AssertUtils.AreEqual(start, vertices[0]);
+		AssertUtils.AreEqual(end, vertices[2]);
+		AssertUtils.AreEqual(new XYZ(-20, 0, 0), vertices[0]);
+		AssertUtils.AreEqual(new XYZ(0, 0, 20), vertices[2]);
 
-		[Fact]
-		public void ScalingTest()
+		arc = new Arc()
 		{
-			double radius = 5;
-			XYZ center = new XYZ(1, 1, 0);
-			Arc arc = new Arc
-			{
-				Radius = radius,
-				Center = center
-			};
+			StartAngle = 0,
+			EndAngle = Math.PI / (2),
+			Radius = 20,
+			Normal = -XYZ.AxisX
+		};
 
-			XYZ scale = new XYZ(2, 2, 1);
-			Transform transform = Transform.CreateScaling(scale, center);
-			arc.ApplyTransform(transform);
+		arc.GetEndVertices(out start, out end);
+		vertices = arc.PolygonalVertexes(3);
 
-			AssertUtils.AreEqual(XYZ.AxisZ, arc.Normal);
-			AssertUtils.AreEqual(center, arc.Center);
-			Assert.Equal(10, arc.Radius);
-			Assert.Equal(0, arc.StartAngle);
-			Assert.Equal(Math.PI, arc.EndAngle);
-		}
+		AssertUtils.AreEqual(start, vertices[0]);
+		AssertUtils.AreEqual(end, vertices[2]);
+		AssertUtils.AreEqual(new XYZ(0, -20, 0), vertices[0]);
+		AssertUtils.AreEqual(new XYZ(0, 0, 20), vertices[2]);
 
-		[Fact]
-		public void TranslationTest()
+		arc = new Arc()
 		{
-			double radius = 5;
-			XYZ center = new XYZ(1, 1, 0);
-			Arc arc = new Arc
-			{
-				Radius = radius,
-				Center = center,
-			};
+			StartAngle = 0,
+			EndAngle = Math.PI / (2),
+			Radius = 20,
+			Normal = -XYZ.AxisY
+		};
 
-			XYZ move = new XYZ(5, 5, 0);
-			Transform transform = Transform.CreateTranslation(move);
-			arc.ApplyTransform(transform);
+		arc.GetEndVertices(out start, out end);
+		vertices = arc.PolygonalVertexes(3);
 
-			AssertUtils.AreEqual(XYZ.AxisZ, arc.Normal);
-			AssertUtils.AreEqual(center.Add(move), arc.Center);
-			Assert.Equal(radius, arc.Radius);
-			Assert.Equal(0, arc.StartAngle);
-			Assert.Equal(Math.PI, arc.EndAngle);
-		}
+		AssertUtils.AreEqual(start, vertices[0]);
+		AssertUtils.AreEqual(end, vertices[2]);
+		AssertUtils.AreEqual(new XYZ(20, 0, 0), vertices[0]);
+		AssertUtils.AreEqual(new XYZ(0, 0, 20), vertices[2]);
+
+		arc = new Arc()
+		{
+			StartAngle = 0,
+			EndAngle = Math.PI / (2),
+			Radius = 20,
+			Normal = -XYZ.AxisZ
+		};
+
+		arc.GetEndVertices(out start, out end);
+		vertices = arc.PolygonalVertexes(3);
+
+		AssertUtils.AreEqual(start, vertices[0]);
+		AssertUtils.AreEqual(end, vertices[2]);
+		AssertUtils.AreEqual(new XYZ(-20, 0, 0), vertices[0]);
+		AssertUtils.AreEqual(new XYZ(0, 20, 0), vertices[2]);
+	}
+
+	[Fact]
+	public void PolygonalVertexesTest()
+	{
+		var start = new XYZ(1, 0, 0);
+		var mid = new XYZ(Math.Sqrt(2) / 2, Math.Sqrt(2) / 2, 0);
+		var end = new XYZ(0, 1, 0);
+		Arc arc = new Arc()
+		{
+			StartAngle = 0,
+			Radius = 1,
+			EndAngle = Math.PI / 2,
+		};
+
+		var v = arc.PolygonalVertexes(3);
+
+		AssertUtils.AreEqual<XYZ>(start, v[0], "start point");
+		AssertUtils.AreEqual<XYZ>(mid, v[1], "mid point");
+		AssertUtils.AreEqual<XYZ>(end, v[2], "end point");
+
+		arc = new Arc()
+		{
+			StartAngle = 0,
+			Radius = 1,
+			Center = new XYZ(20, 20, 0),
+			EndAngle = Math.PI / 2,
+		};
+
+		start += arc.Center;
+		mid += arc.Center;
+		end += arc.Center;
+
+		v = arc.PolygonalVertexes(3);
+
+		AssertUtils.AreEqual<XYZ>(start, v[0], "start point");
+		AssertUtils.AreEqual<XYZ>(mid, v[1], "mid point");
+		AssertUtils.AreEqual<XYZ>(end, v[2], "end point");
+
+		arc = new Arc()
+		{
+			Center = new XYZ(100, 0, 0),
+			Radius = 50,
+			StartAngle = MathHelper.HalfPI,
+			EndAngle = Math.PI,
+		};
+
+		start = new XYZ(100, 50, 0);
+		end = new XYZ(50, 0, 0);
+
+		v = arc.PolygonalVertexes(3);
+
+		arc.GetEndVertices(out XYZ s, out XYZ e);
+
+		AssertUtils.AreEqual<XYZ>(start, v[0], "start point");
+		AssertUtils.AreEqual<XYZ>(end, v[2], "end point");
+	}
+
+	[Fact]
+	public void InitStartEndTest()
+	{
+		var start = XYZ.AxisX;
+		var end = XYZ.AxisY;
+		var center = XYZ.Zero;
+		Arc arc = new Arc(center, start, end);
+
+		Assert.Equal(0, arc.StartAngle);
+		Assert.Equal(MathHelper.HalfPI, arc.EndAngle);
+
+		arc.GetEndVertices(out XYZ s, out XYZ e);
+		AssertUtils.AreEqual(start, s);
+		AssertUtils.AreEqual(end, e);
+
+		arc = new Arc(center, end, start);
+
+		Assert.Equal(0, arc.EndAngle);
+		Assert.Equal(MathHelper.HalfPI, arc.StartAngle);
+
+		arc.GetEndVertices(out s, out e);
+		AssertUtils.AreEqual(start, e);
+		AssertUtils.AreEqual(end, s);
+		AssertUtils.AreEqual(end, s);
+	}
+
+	[Fact]
+	public void RotationTest()
+	{
+		double radius = 5;
+		XYZ center = new XYZ(1, 1, 0);
+		Arc arc = new Arc
+		{
+			Radius = radius,
+			Center = center
+		};
+
+		Transform transform = Transform.CreateRotation(XYZ.AxisX, MathHelper.DegToRad(90));
+		arc.ApplyTransform(transform);
+
+		AssertUtils.AreEqual(new XYZ(1, 0, 1), arc.Center);
+		Assert.Equal(radius, arc.Radius);
+		Assert.Equal(Math.PI, arc.StartAngle);
+		Assert.Equal(0, arc.EndAngle);
+		AssertUtils.AreEqual(XYZ.AxisY, arc.Normal);
+	}
+
+	[Fact]
+	public void ScalingTest()
+	{
+		double radius = 5;
+		XYZ center = new XYZ(1, 1, 0);
+		Arc arc = new Arc
+		{
+			Radius = radius,
+			Center = center
+		};
+
+		XYZ scale = new XYZ(2, 2, 1);
+		Transform transform = Transform.CreateScaling(scale, center);
+		arc.ApplyTransform(transform);
+
+		AssertUtils.AreEqual(XYZ.AxisZ, arc.Normal);
+		AssertUtils.AreEqual(center, arc.Center);
+		Assert.Equal(10, arc.Radius);
+		Assert.Equal(0, arc.StartAngle);
+		Assert.Equal(Math.PI, arc.EndAngle);
+	}
+
+	[Fact]
+	public void TranslationTest()
+	{
+		double radius = 5;
+		XYZ center = new XYZ(1, 1, 0);
+		Arc arc = new Arc
+		{
+			Radius = radius,
+			Center = center,
+		};
+
+		XYZ move = new XYZ(5, 5, 0);
+		Transform transform = Transform.CreateTranslation(move);
+		arc.ApplyTransform(transform);
+
+		AssertUtils.AreEqual(XYZ.AxisZ, arc.Normal);
+		AssertUtils.AreEqual(center.Add(move), arc.Center);
+		Assert.Equal(radius, arc.Radius);
+		Assert.Equal(0, arc.StartAngle);
+		Assert.Equal(Math.PI, arc.EndAngle);
 	}
 }

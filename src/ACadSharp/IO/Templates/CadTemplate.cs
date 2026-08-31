@@ -3,7 +3,6 @@ using ACadSharp.Entities;
 using ACadSharp.Objects;
 using ACadSharp.Tables;
 using ACadSharp.XData;
-using System;
 using System.Collections.Generic;
 
 namespace ACadSharp.IO.Templates;

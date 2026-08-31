@@ -19,14 +19,7 @@ public abstract class AnnotScaleObjectContextData : ObjectContextData
 				throw new ArgumentNullException(nameof(value));
 			}
 
-			if (this.Document != null)
-			{
-				this._scale = CadObject.updateCollection(value, this.Document.Scales);
-			}
-			else
-			{
-				this._scale = value;
-			}
+			this._scale = this.updateCollectionEntry(value, s => this._scale = s, this.Document?.Scales);
 		}
 	}
 
@@ -49,25 +42,15 @@ public abstract class AnnotScaleObjectContextData : ObjectContextData
 	{
 		base.AssignDocument(doc);
 
-		this._scale = CadObject.updateCollection(this._scale, this.Document?.Scales);
-
-		this.Document.Scales.OnRemove += tableOnRemove;
+		this._scale = this.updateCollectionEntry(this._scale, s => this._scale = s, this.Document.Scales);
 	}
 
 	internal override void UnassignDocument()
 	{
-		this.Document.Scales.OnRemove -= tableOnRemove;
+		this.Document.Scales.RemoveReference(this.Scale?.Name, this);
 
 		base.UnassignDocument();
 
 		this._scale = (Scale)this._scale.Clone();
-	}
-
-	private void tableOnRemove(object sender, CollectionChangedEventArgs e)
-	{
-		if (e.Item.Equals(this._scale))
-		{
-			this._scale = this.Document.Scales[Scale.Default.Name];
-		}
 	}
 }

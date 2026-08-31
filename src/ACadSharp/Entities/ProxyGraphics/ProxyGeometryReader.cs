@@ -153,30 +153,6 @@ public class ProxyGeometryReader
 		return geometries;
 	}
 
-	[Obsolete]
-	private static bool adHasPrimTraits(int a) => (a & 0xFFFFL) != 0;
-
-	[Obsolete]
-	private static bool adPrimsHaveColors(int a) => (a & 0x0001L) != 0;
-
-	[Obsolete]
-	private static bool adPrimsHaveLayers(int a) => (a & 0x0002L) != 0;
-
-	[Obsolete]
-	private static bool adPrimsHaveLineTypes(int a) => (a & 0x0004L) != 0;
-
-	[Obsolete]
-	private static bool adPrimsHaveMarkers(int a) => (a & 0x0020L) != 0;
-
-	[Obsolete]
-	private static bool adPrimsHaveNormal(int a) => (a & 0x0080L) != 0;
-
-	[Obsolete]
-	private static bool adPrimsHaveOrientation(int a) => (a & 0x0400L) != 0;
-
-	[Obsolete]
-	private static bool adPrimsHaveVisibilities(int a) => (a & 0x0040L) != 0;
-
 	private static IProxyGeometry readCircle(StreamIO stream)
 	{
 		ProxyCircle circle = new ProxyCircle();

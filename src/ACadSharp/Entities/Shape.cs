@@ -1,4 +1,5 @@
 ﻿using ACadSharp.Attributes;
+using ACadSharp.Extensions;
 using ACadSharp.Tables;
 using CSMath;
 using System;
@@ -64,14 +65,7 @@ public class Shape : Entity, IOrientable
 				throw new ArgumentNullException(nameof(value));
 			}
 
-			if (this.Document != null)
-			{
-				this._style = CadObject.updateCollection(value, this.Document.TextStyles);
-			}
-			else
-			{
-				this._style = value;
-			}
+			this._style = this.updateTableEntry(value, s => this._style = s, this.Document?.TextStyles);
 		}
 	}
 
@@ -128,5 +122,21 @@ public class Shape : Entity, IOrientable
 	public override BoundingBox GetBoundingBox()
 	{
 		return new BoundingBox(this.InsertionPoint);
+	}
+
+	internal override void AssignDocument(CadDocument doc)
+	{
+		base.AssignDocument(doc);
+
+		this._style = this.updateTableEntry(this._style, s => this._style = s, doc?.TextStyles);
+	}
+
+	internal override void UnassignDocument()
+	{
+		this.Document.TextStyles.RemoveReference(this._style?.Name, this);
+
+		base.UnassignDocument();
+
+		this._style = this._style?.CloneTyped();
 	}
 }

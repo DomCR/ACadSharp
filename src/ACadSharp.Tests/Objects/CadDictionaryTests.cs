@@ -2,39 +2,38 @@
 using System;
 using Xunit;
 
-namespace ACadSharp.Tests.Objects
+namespace ACadSharp.Tests.Objects;
+
+public class CadDictionaryTests : NonGraphicalObjectTests<CadDictionary>
 {
-	public class CadDictionaryTests : NonGraphicalObjectTests<CadDictionary>
+	[Fact]
+	public void AvoidDuplicatedEntries()
 	{
-		[Fact]
-		public void AvoidDuplicatedEntries()
-		{
-			CadDictionary cadDictionary = new CadDictionary();
-			Scale scale = new Scale();
-			scale.Name = "scale_test";
+		CadDictionary cadDictionary = new CadDictionary();
+		Scale scale = new Scale();
+		scale.Name = "scale_test";
 
-			cadDictionary.Add(scale);
+		cadDictionary.Add(scale);
 
-			Scale scale1 = new Scale();
-			scale1.Name = "scale_test";
+		Scale scale1 = new Scale();
+		scale1.Name = "scale_test";
 
-			Assert.Throws<ArgumentException>(() => cadDictionary.Add(scale1));
+		Assert.Throws<ArgumentException>(() => cadDictionary.Add(scale1));
 
-			scale.Name = "changed_name";
-			scale1.Name = "changed_name";
+		scale.Name = "changed_name";
+		scale1.Name = "changed_name";
 
-			Assert.Throws<ArgumentException>(() => cadDictionary.Add(scale1));
-		}
+		Assert.Throws<ArgumentException>(() => cadDictionary.Add(scale1));
+	}
 
-		[Fact]
-		public void TryAddTest()
-		{
-			CadDictionary cadDictionary = new CadDictionary();
-			Scale scale = new Scale();
-			scale.Name = "scale_test";
+	[Fact]
+	public void TryAddTest()
+	{
+		CadDictionary cadDictionary = new CadDictionary();
+		Scale scale = new Scale();
+		scale.Name = "scale_test";
 
-			Assert.True(cadDictionary.TryAdd(scale));
-			Assert.False(cadDictionary.TryAdd(scale));
-		}
+		Assert.True(cadDictionary.TryAdd(scale));
+		Assert.False(cadDictionary.TryAdd(scale));
 	}
 }
