@@ -317,20 +317,29 @@ public class Layout : PlotSettings, IDxfClassDefined
 		if (this.AssociatedBlock != null)
 		{
 			doc.BlockRecords.Add(this.AssociatedBlock);
-			this._blockRecord = this.updateTableEntry(this.AssociatedBlock, m => this.AssociatedBlock = m, doc.BlockRecords);
+			doc.BlockRecords.OnRemove += this.onRemoveBlockRecord;
 		}
 	}
 
 	internal override void UnassignDocument()
 	{
-		this.Document.BlockRecords.RemoveReference(this.AssociatedBlock?.Name, this);
+		this.Document.BlockRecords.OnRemove -= this.onRemoveBlockRecord;
 
 		if (this.AssociatedBlock != null)
 		{
 			this.AssociatedBlock.Layout = null;
+			this.Document.BlockRecords.OnRemove -= this.onRemoveBlockRecord;
 			this._blockRecord = (BlockRecord)this._blockRecord?.Clone();
 		}
 
 		base.UnassignDocument();
+	}
+
+	private void onRemoveBlockRecord(object sender, CollectionChangedEventArgs e)
+	{
+		if (this.AssociatedBlock.Equals(e.Item))
+		{
+			this.Document.Layouts.Remove(this.Name);
+		}
 	}
 }
