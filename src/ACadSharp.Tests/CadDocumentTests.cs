@@ -65,11 +65,7 @@ public class CadDocumentTests
 
 		stopwatch.Stop();
 		this._output.WriteLine(stopwatch.Elapsed.TotalSeconds.ToString());
-
-		if (TestVariables.LocalEnv)
-		{
-			Assert.True(stopwatch.Elapsed.TotalSeconds < 5);
-		}
+		Assert.True(stopwatch.Elapsed.TotalSeconds < 5);
 	}
 
 	[Fact]
@@ -342,10 +338,11 @@ public class CadDocumentTests
 		stopwatch.Restart();
 		this._output.WriteLine("Start removing process");
 
-		//Execution took more than 20 minutes
 		doc.Entities.Clear();
 
 		this._output.WriteLine($"Removing {nObjects} objects: {stopwatch.Elapsed.TotalSeconds} seconds.");
+
+		Assert.True(stopwatch.Elapsed.TotalSeconds < 5);
 	}
 
 	[Fact]
