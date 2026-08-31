@@ -164,33 +164,15 @@ public partial class MLineStyle : NonGraphicalObject
 		{
 			item.AssignDocument(doc);
 		}
-
-		doc.TextStyles.OnRemove += this.tableOnRemove;
 	}
 
 	internal override void UnassignDocument()
 	{
-		this.Document.TextStyles.OnRemove -= this.tableOnRemove;
-
 		foreach (var item in this._elements.Where(s => s.LineType != null))
 		{
 			item.UnassignDocument();
 		}
 
 		base.UnassignDocument();
-	}
-
-	protected void tableOnRemove(object sender, CollectionChangedEventArgs e)
-	{
-		if (e.Item is LineType style)
-		{
-			foreach (var item in this._elements.Where(s => s.LineType != null))
-			{
-				if (item.LineType == style)
-				{
-					item.LineType = null;
-				}
-			}
-		}
 	}
 }
