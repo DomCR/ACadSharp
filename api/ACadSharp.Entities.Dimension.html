@@ -264,7 +264,10 @@ public abstract class Dimension : Entity, IEntity, IHandledCadObject, IGeometric
       <a class="xref" href="ACadSharp.CadObject.html#ACadSharp_CadObject_ToString">CadObject.ToString()</a>
     </div>
     <div>
-      <a class="xref" href="ACadSharp.CadObject.html#ACadSharp_CadObject_updateCollection__1___0_ACadSharp_ICadCollection___0__">CadObject.updateCollection&lt;T&gt;(T, ICadCollection&lt;T&gt;)</a>
+      <a class="xref" href="ACadSharp.CadObject.html#ACadSharp_CadObject_updateCollectionEntry__1___0_System_Action___0__ACadSharp_Objects_Collections_ObjectDictionaryCollection___0__">CadObject.updateCollectionEntry&lt;T&gt;(T, Action&lt;T&gt;, ObjectDictionaryCollection&lt;T&gt;)</a>
+    </div>
+    <div>
+      <a class="xref" href="ACadSharp.CadObject.html#ACadSharp_CadObject_updateTableEntry__1___0_System_Action___0__ACadSharp_Tables_Collections_Table___0__">CadObject.updateTableEntry&lt;T&gt;(T, Action&lt;T&gt;, Table&lt;T&gt;)</a>
     </div>
     <div>
       <a class="xref" href="https://learn.microsoft.com/dotnet/api/system.object.equals#system-object-equals(system-object)">object.Equals(object)</a>
@@ -1458,7 +1461,7 @@ dimension style overrides in the object's extended data.</p>
 
   <h3 id="ACadSharp_Entities_Dimension_angularBlock_System_Double_CSMath_XY_CSMath_XY_System_Double_System_Boolean_" data-uid="ACadSharp.Entities.Dimension.angularBlock(System.Double,CSMath.XY,CSMath.XY,System.Double,System.Boolean)">
   angularBlock(double, XY, XY, double, bool)
-  <a class="header-action link-secondary" title="View source" href="https://github.com/DomCR/ACadSharp/blob/master/src/ACadSharp/Entities/Dimension.cs/#L584"><i class="bi bi-code-slash"></i></a>
+  <a class="header-action link-secondary" title="View source" href="https://github.com/DomCR/ACadSharp/blob/master/src/ACadSharp/Entities/Dimension.cs/#L579"><i class="bi bi-code-slash"></i></a>
   </h3>
 
   <div class="markdown level1 summary"></div>
@@ -1497,7 +1500,7 @@ dimension style overrides in the object's extended data.</p>
 
   <h3 id="ACadSharp_Entities_Dimension_centerCross_CSMath_XYZ_System_Double_ACadSharp_Tables_DimensionStyle_" data-uid="ACadSharp.Entities.Dimension.centerCross(CSMath.XYZ,System.Double,ACadSharp.Tables.DimensionStyle)">
   centerCross(XYZ, double, DimensionStyle)
-  <a class="header-action link-secondary" title="View source" href="https://github.com/DomCR/ACadSharp/blob/master/src/ACadSharp/Entities/Dimension.cs/#L675"><i class="bi bi-code-slash"></i></a>
+  <a class="header-action link-secondary" title="View source" href="https://github.com/DomCR/ACadSharp/blob/master/src/ACadSharp/Entities/Dimension.cs/#L670"><i class="bi bi-code-slash"></i></a>
   </h3>
 
   <div class="markdown level1 summary"></div>
@@ -1537,7 +1540,7 @@ dimension style overrides in the object's extended data.</p>
 
   <h3 id="ACadSharp_Entities_Dimension_createBlock" data-uid="ACadSharp.Entities.Dimension.createBlock">
   createBlock()
-  <a class="header-action link-secondary" title="View source" href="https://github.com/DomCR/ACadSharp/blob/master/src/ACadSharp/Entities/Dimension.cs/#L717"><i class="bi bi-code-slash"></i></a>
+  <a class="header-action link-secondary" title="View source" href="https://github.com/DomCR/ACadSharp/blob/master/src/ACadSharp/Entities/Dimension.cs/#L712"><i class="bi bi-code-slash"></i></a>
   </h3>
 
   <div class="markdown level1 summary"></div>
@@ -1563,7 +1566,7 @@ dimension style overrides in the object's extended data.</p>
 
   <h3 id="ACadSharp_Entities_Dimension_createDefinitionPoint_CSMath_XYZ_" data-uid="ACadSharp.Entities.Dimension.createDefinitionPoint(CSMath.XYZ)">
   createDefinitionPoint(XYZ)
-  <a class="header-action link-secondary" title="View source" href="https://github.com/DomCR/ACadSharp/blob/master/src/ACadSharp/Entities/Dimension.cs/#L733"><i class="bi bi-code-slash"></i></a>
+  <a class="header-action link-secondary" title="View source" href="https://github.com/DomCR/ACadSharp/blob/master/src/ACadSharp/Entities/Dimension.cs/#L728"><i class="bi bi-code-slash"></i></a>
   </h3>
 
   <div class="markdown level1 summary"></div>
@@ -1599,7 +1602,7 @@ dimension style overrides in the object's extended data.</p>
 
   <h3 id="ACadSharp_Entities_Dimension_createTextEntity_CSMath_XYZ_System_String_" data-uid="ACadSharp.Entities.Dimension.createTextEntity(CSMath.XYZ,System.String)">
   createTextEntity(XYZ, string)
-  <a class="header-action link-secondary" title="View source" href="https://github.com/DomCR/ACadSharp/blob/master/src/ACadSharp/Entities/Dimension.cs/#L738"><i class="bi bi-code-slash"></i></a>
+  <a class="header-action link-secondary" title="View source" href="https://github.com/DomCR/ACadSharp/blob/master/src/ACadSharp/Entities/Dimension.cs/#L733"><i class="bi bi-code-slash"></i></a>
   </h3>
 
   <div class="markdown level1 summary"></div>
@@ -1637,7 +1640,7 @@ dimension style overrides in the object's extended data.</p>
 
   <h3 id="ACadSharp_Entities_Dimension_dimensionArrow_CSMath_XYZ_CSMath_XYZ_ACadSharp_Tables_DimensionStyle_ACadSharp_Tables_BlockRecord_" data-uid="ACadSharp.Entities.Dimension.dimensionArrow(CSMath.XYZ,CSMath.XYZ,ACadSharp.Tables.DimensionStyle,ACadSharp.Tables.BlockRecord)">
   dimensionArrow(XYZ, XYZ, DimensionStyle, BlockRecord)
-  <a class="header-action link-secondary" title="View source" href="https://github.com/DomCR/ACadSharp/blob/master/src/ACadSharp/Entities/Dimension.cs/#L751"><i class="bi bi-code-slash"></i></a>
+  <a class="header-action link-secondary" title="View source" href="https://github.com/DomCR/ACadSharp/blob/master/src/ACadSharp/Entities/Dimension.cs/#L746"><i class="bi bi-code-slash"></i></a>
   </h3>
 
   <div class="markdown level1 summary"></div>
@@ -1679,7 +1682,7 @@ dimension style overrides in the object's extended data.</p>
 
   <h3 id="ACadSharp_Entities_Dimension_dimensionLine_CSMath_XYZ_CSMath_XYZ_ACadSharp_Tables_DimensionStyle_" data-uid="ACadSharp.Entities.Dimension.dimensionLine(CSMath.XYZ,CSMath.XYZ,ACadSharp.Tables.DimensionStyle)">
   dimensionLine(XYZ, XYZ, DimensionStyle)
-  <a class="header-action link-secondary" title="View source" href="https://github.com/DomCR/ACadSharp/blob/master/src/ACadSharp/Entities/Dimension.cs/#L564"><i class="bi bi-code-slash"></i></a>
+  <a class="header-action link-secondary" title="View source" href="https://github.com/DomCR/ACadSharp/blob/master/src/ACadSharp/Entities/Dimension.cs/#L559"><i class="bi bi-code-slash"></i></a>
   </h3>
 
   <div class="markdown level1 summary"></div>
@@ -1719,7 +1722,7 @@ dimension style overrides in the object's extended data.</p>
 
   <h3 id="ACadSharp_Entities_Dimension_dimensionRadialLine_CSMath_XY_CSMath_XY_System_Double_System_Int16_" data-uid="ACadSharp.Entities.Dimension.dimensionRadialLine(CSMath.XY,CSMath.XY,System.Double,System.Int16)">
   dimensionRadialLine(XY, XY, double, short)
-  <a class="header-action link-secondary" title="View source" href="https://github.com/DomCR/ACadSharp/blob/master/src/ACadSharp/Entities/Dimension.cs/#L785"><i class="bi bi-code-slash"></i></a>
+  <a class="header-action link-secondary" title="View source" href="https://github.com/DomCR/ACadSharp/blob/master/src/ACadSharp/Entities/Dimension.cs/#L780"><i class="bi bi-code-slash"></i></a>
   </h3>
 
   <div class="markdown level1 summary"></div>
@@ -1761,7 +1764,7 @@ dimension style overrides in the object's extended data.</p>
 
   <h3 id="ACadSharp_Entities_Dimension_extensionLine_CSMath_XYZ_CSMath_XYZ_ACadSharp_Tables_DimensionStyle_ACadSharp_Tables_LineType_" data-uid="ACadSharp.Entities.Dimension.extensionLine(CSMath.XYZ,CSMath.XYZ,ACadSharp.Tables.DimensionStyle,ACadSharp.Tables.LineType)">
   extensionLine(XYZ, XYZ, DimensionStyle, LineType)
-  <a class="header-action link-secondary" title="View source" href="https://github.com/DomCR/ACadSharp/blob/master/src/ACadSharp/Entities/Dimension.cs/#L574"><i class="bi bi-code-slash"></i></a>
+  <a class="header-action link-secondary" title="View source" href="https://github.com/DomCR/ACadSharp/blob/master/src/ACadSharp/Entities/Dimension.cs/#L569"><i class="bi bi-code-slash"></i></a>
   </h3>
 
   <div class="markdown level1 summary"></div>
@@ -1788,39 +1791,6 @@ dimension style overrides in the object's extended data.</p>
     <dt><a class="xref" href="ACadSharp.Entities.Line.html">Line</a></dt>
     <dd></dd>
   </dl>
-
-
-
-
-
-
-
-
-
-
-
-  <a id="ACadSharp_Entities_Dimension_tableOnRemove_" data-uid="ACadSharp.Entities.Dimension.tableOnRemove*"></a>
-
-  <h3 id="ACadSharp_Entities_Dimension_tableOnRemove_System_Object_ACadSharp_CollectionChangedEventArgs_" data-uid="ACadSharp.Entities.Dimension.tableOnRemove(System.Object,ACadSharp.CollectionChangedEventArgs)">
-  tableOnRemove(object, CollectionChangedEventArgs)
-  <a class="header-action link-secondary" title="View source" href="https://github.com/DomCR/ACadSharp/blob/master/src/ACadSharp/Entities/Dimension.cs/#L800"><i class="bi bi-code-slash"></i></a>
-  </h3>
-
-  <div class="markdown level1 summary"></div>
-  <div class="markdown level1 conceptual"></div>
-
-  <div class="codewrapper">
-    <pre><code class="lang-csharp hljs">protected override void tableOnRemove(object sender, CollectionChangedEventArgs e)</code></pre>
-  </div>
-
-  <h4 class="section">Parameters</h4>
-  <dl class="parameters">
-    <dt><code>sender</code> <a class="xref" href="https://learn.microsoft.com/dotnet/api/system.object">object</a></dt>
-    <dd></dd>
-    <dt><code>e</code> <a class="xref" href="ACadSharp.CollectionChangedEventArgs.html">CollectionChangedEventArgs</a></dt>
-    <dd></dd>
-  </dl>
-
 
 
 

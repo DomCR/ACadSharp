@@ -243,7 +243,10 @@ public class Leader : Entity, IEntity, IHandledCadObject, IGeometricEntity, IOri
       <a class="xref" href="ACadSharp.CadObject.html#ACadSharp_CadObject_ToString">CadObject.ToString()</a>
     </div>
     <div>
-      <a class="xref" href="ACadSharp.CadObject.html#ACadSharp_CadObject_updateCollection__1___0_ACadSharp_ICadCollection___0__">CadObject.updateCollection&lt;T&gt;(T, ICadCollection&lt;T&gt;)</a>
+      <a class="xref" href="ACadSharp.CadObject.html#ACadSharp_CadObject_updateCollectionEntry__1___0_System_Action___0__ACadSharp_Objects_Collections_ObjectDictionaryCollection___0__">CadObject.updateCollectionEntry&lt;T&gt;(T, Action&lt;T&gt;, ObjectDictionaryCollection&lt;T&gt;)</a>
+    </div>
+    <div>
+      <a class="xref" href="ACadSharp.CadObject.html#ACadSharp_CadObject_updateTableEntry__1___0_System_Action___0__ACadSharp_Tables_Collections_Table___0__">CadObject.updateTableEntry&lt;T&gt;(T, Action&lt;T&gt;, Table&lt;T&gt;)</a>
     </div>
     <div>
       <a class="xref" href="https://learn.microsoft.com/dotnet/api/system.object.equals#system-object-equals(system-object)">object.Equals(object)</a>
@@ -725,7 +728,7 @@ public DimensionStyle Style { get; set; }</code></pre>
 
   <h3 id="ACadSharp_Entities_Leader_SubclassMarker" data-uid="ACadSharp.Entities.Leader.SubclassMarker">
   SubclassMarker
-  <a class="header-action link-secondary" title="View source" href="https://github.com/DomCR/ACadSharp/blob/master/src/ACadSharp/Entities/Leader.cs/#L135"><i class="bi bi-code-slash"></i></a>
+  <a class="header-action link-secondary" title="View source" href="https://github.com/DomCR/ACadSharp/blob/master/src/ACadSharp/Entities/Leader.cs/#L128"><i class="bi bi-code-slash"></i></a>
   </h3>
 
   <div class="markdown level1 summary"><p>Object Subclass marker.</p>
@@ -757,7 +760,7 @@ public DimensionStyle Style { get; set; }</code></pre>
 
   <h3 id="ACadSharp_Entities_Leader_TextHeight" data-uid="ACadSharp.Entities.Leader.TextHeight">
   TextHeight
-  <a class="header-action link-secondary" title="View source" href="https://github.com/DomCR/ACadSharp/blob/master/src/ACadSharp/Entities/Leader.cs/#L140"><i class="bi bi-code-slash"></i></a>
+  <a class="header-action link-secondary" title="View source" href="https://github.com/DomCR/ACadSharp/blob/master/src/ACadSharp/Entities/Leader.cs/#L133"><i class="bi bi-code-slash"></i></a>
   </h3>
 
   <div class="markdown level1 summary"><p>Text annotation height.</p>
@@ -790,7 +793,7 @@ public double TextHeight { get; set; }</code></pre>
 
   <h3 id="ACadSharp_Entities_Leader_TextWidth" data-uid="ACadSharp.Entities.Leader.TextWidth">
   TextWidth
-  <a class="header-action link-secondary" title="View source" href="https://github.com/DomCR/ACadSharp/blob/master/src/ACadSharp/Entities/Leader.cs/#L146"><i class="bi bi-code-slash"></i></a>
+  <a class="header-action link-secondary" title="View source" href="https://github.com/DomCR/ACadSharp/blob/master/src/ACadSharp/Entities/Leader.cs/#L139"><i class="bi bi-code-slash"></i></a>
   </h3>
 
   <div class="markdown level1 summary"><p>Text annotation width.</p>
@@ -823,7 +826,7 @@ public double TextWidth { get; set; }</code></pre>
 
   <h3 id="ACadSharp_Entities_Leader_Vertices" data-uid="ACadSharp.Entities.Leader.Vertices">
   Vertices
-  <a class="header-action link-secondary" title="View source" href="https://github.com/DomCR/ACadSharp/blob/master/src/ACadSharp/Entities/Leader.cs/#L152"><i class="bi bi-code-slash"></i></a>
+  <a class="header-action link-secondary" title="View source" href="https://github.com/DomCR/ACadSharp/blob/master/src/ACadSharp/Entities/Leader.cs/#L145"><i class="bi bi-code-slash"></i></a>
   </h3>
 
   <div class="markdown level1 summary"><p>Vertices in leader.</p>
@@ -861,7 +864,7 @@ public List&lt;XYZ&gt; Vertices { get; set; }</code></pre>
 
   <h3 id="ACadSharp_Entities_Leader_ApplyTransform_CSMath_Transform_" data-uid="ACadSharp.Entities.Leader.ApplyTransform(CSMath.Transform)">
   ApplyTransform(Transform)
-  <a class="header-action link-secondary" title="View source" href="https://github.com/DomCR/ACadSharp/blob/master/src/ACadSharp/Entities/Leader.cs/#L159"><i class="bi bi-code-slash"></i></a>
+  <a class="header-action link-secondary" title="View source" href="https://github.com/DomCR/ACadSharp/blob/master/src/ACadSharp/Entities/Leader.cs/#L152"><i class="bi bi-code-slash"></i></a>
   </h3>
 
   <div class="markdown level1 summary"><p>Apply a transform matrix to this entity.</p>
@@ -893,7 +896,7 @@ public List&lt;XYZ&gt; Vertices { get; set; }</code></pre>
 
   <h3 id="ACadSharp_Entities_Leader_Clone" data-uid="ACadSharp.Entities.Leader.Clone">
   Clone()
-  <a class="header-action link-secondary" title="View source" href="https://github.com/DomCR/ACadSharp/blob/master/src/ACadSharp/Entities/Leader.cs/#L172"><i class="bi bi-code-slash"></i></a>
+  <a class="header-action link-secondary" title="View source" href="https://github.com/DomCR/ACadSharp/blob/master/src/ACadSharp/Entities/Leader.cs/#L165"><i class="bi bi-code-slash"></i></a>
   </h3>
 
   <div class="markdown level1 summary"><p>Creates a new object that is a copy of the current instance.</p>
@@ -929,7 +932,7 @@ public List&lt;XYZ&gt; Vertices { get; set; }</code></pre>
 
   <h3 id="ACadSharp_Entities_Leader_GetBoundingBox" data-uid="ACadSharp.Entities.Leader.GetBoundingBox">
   GetBoundingBox()
-  <a class="header-action link-secondary" title="View source" href="https://github.com/DomCR/ACadSharp/blob/master/src/ACadSharp/Entities/Leader.cs/#L180"><i class="bi bi-code-slash"></i></a>
+  <a class="header-action link-secondary" title="View source" href="https://github.com/DomCR/ACadSharp/blob/master/src/ACadSharp/Entities/Leader.cs/#L173"><i class="bi bi-code-slash"></i></a>
   </h3>
 
   <div class="markdown level1 summary"><p>Gets the bounding box aligned with the axis XYZ that occupies this entity.</p>
@@ -962,7 +965,7 @@ public List&lt;XYZ&gt; Vertices { get; set; }</code></pre>
 
   <h3 id="ACadSharp_Entities_Leader_SetDimensionOverride_ACadSharp_Tables_DimensionStyle_" data-uid="ACadSharp.Entities.Leader.SetDimensionOverride(ACadSharp.Tables.DimensionStyle)">
   SetDimensionOverride(DimensionStyle)
-  <a class="header-action link-secondary" title="View source" href="https://github.com/DomCR/ACadSharp/blob/master/src/ACadSharp/Entities/Leader.cs/#L226"><i class="bi bi-code-slash"></i></a>
+  <a class="header-action link-secondary" title="View source" href="https://github.com/DomCR/ACadSharp/blob/master/src/ACadSharp/Entities/Leader.cs/#L191"><i class="bi bi-code-slash"></i></a>
   </h3>
 
   <div class="markdown level1 summary"><p>Applies the specified dimension style override to the current leader, updating its extended data
@@ -1002,7 +1005,7 @@ are serialised into the DSTYLE XDATA block, mirroring the behaviour of
 
   <h3 id="ACadSharp_Entities_Leader_SetStyleOverrideMap_ACadSharp_DxfClassMap_" data-uid="ACadSharp.Entities.Leader.SetStyleOverrideMap(ACadSharp.DxfClassMap)">
   SetStyleOverrideMap(DxfClassMap)
-  <a class="header-action link-secondary" title="View source" href="https://github.com/DomCR/ACadSharp/blob/master/src/ACadSharp/Entities/Leader.cs/#L262"><i class="bi bi-code-slash"></i></a>
+  <a class="header-action link-secondary" title="View source" href="https://github.com/DomCR/ACadSharp/blob/master/src/ACadSharp/Entities/Leader.cs/#L227"><i class="bi bi-code-slash"></i></a>
   </h3>
 
   <div class="markdown level1 summary"><p>Sets the style override mapping for the current leader using the specified DXF class map,
@@ -1019,39 +1022,6 @@ writing the entries as <code>ACAD / DSTYLE / { … }</code> extended data.</p>
     <dt><code>map</code> <a class="xref" href="ACadSharp.DxfClassMap.html">DxfClassMap</a></dt>
     <dd><p>A DXF class map containing the property overrides to apply.</p>
 </dd>
-  </dl>
-
-
-
-
-
-
-
-
-
-
-
-
-  <a id="ACadSharp_Entities_Leader_tableOnRemove_" data-uid="ACadSharp.Entities.Leader.tableOnRemove*"></a>
-
-  <h3 id="ACadSharp_Entities_Leader_tableOnRemove_System_Object_ACadSharp_CollectionChangedEventArgs_" data-uid="ACadSharp.Entities.Leader.tableOnRemove(System.Object,ACadSharp.CollectionChangedEventArgs)">
-  tableOnRemove(object, CollectionChangedEventArgs)
-  <a class="header-action link-secondary" title="View source" href="https://github.com/DomCR/ACadSharp/blob/master/src/ACadSharp/Entities/Leader.cs/#L203"><i class="bi bi-code-slash"></i></a>
-  </h3>
-
-  <div class="markdown level1 summary"></div>
-  <div class="markdown level1 conceptual"></div>
-
-  <div class="codewrapper">
-    <pre><code class="lang-csharp hljs">protected override void tableOnRemove(object sender, CollectionChangedEventArgs e)</code></pre>
-  </div>
-
-  <h4 class="section">Parameters</h4>
-  <dl class="parameters">
-    <dt><code>sender</code> <a class="xref" href="https://learn.microsoft.com/dotnet/api/system.object">object</a></dt>
-    <dd></dd>
-    <dt><code>e</code> <a class="xref" href="ACadSharp.CollectionChangedEventArgs.html">CollectionChangedEventArgs</a></dt>
-    <dd></dd>
   </dl>
 
 

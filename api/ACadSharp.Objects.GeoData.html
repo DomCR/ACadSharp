@@ -185,7 +185,10 @@ public class GeoData : NonGraphicalObject, IHandledCadObject, INamedCadObject, I
       <a class="xref" href="ACadSharp.CadObject.html#ACadSharp_CadObject_RemoveReactor_ACadSharp_CadObject_">CadObject.RemoveReactor(CadObject)</a>
     </div>
     <div>
-      <a class="xref" href="ACadSharp.CadObject.html#ACadSharp_CadObject_updateCollection__1___0_ACadSharp_ICadCollection___0__">CadObject.updateCollection&lt;T&gt;(T, ICadCollection&lt;T&gt;)</a>
+      <a class="xref" href="ACadSharp.CadObject.html#ACadSharp_CadObject_updateCollectionEntry__1___0_System_Action___0__ACadSharp_Objects_Collections_ObjectDictionaryCollection___0__">CadObject.updateCollectionEntry&lt;T&gt;(T, Action&lt;T&gt;, ObjectDictionaryCollection&lt;T&gt;)</a>
+    </div>
+    <div>
+      <a class="xref" href="ACadSharp.CadObject.html#ACadSharp_CadObject_updateTableEntry__1___0_System_Action___0__ACadSharp_Tables_Collections_Table___0__">CadObject.updateTableEntry&lt;T&gt;(T, Action&lt;T&gt;, Table&lt;T&gt;)</a>
     </div>
     <div>
       <a class="xref" href="https://learn.microsoft.com/dotnet/api/system.object.equals#system-object-equals(system-object)">object.Equals(object)</a>
@@ -566,7 +569,7 @@ public UnitsType HorizontalUnits { get; set; }</code></pre>
 
   <h3 id="ACadSharp_Objects_GeoData_NorthDirection" data-uid="ACadSharp.Objects.GeoData.NorthDirection">
   NorthDirection
-  <a class="header-action link-secondary" title="View source" href="https://github.com/DomCR/ACadSharp/blob/master/src/ACadSharp/Objects/GeoData.cs/#L103"><i class="bi bi-code-slash"></i></a>
+  <a class="header-action link-secondary" title="View source" href="https://github.com/DomCR/ACadSharp/blob/master/src/ACadSharp/Objects/GeoData.cs/#L96"><i class="bi bi-code-slash"></i></a>
   </h3>
 
   <div class="markdown level1 summary"><p>North direction vector.</p>
@@ -599,7 +602,7 @@ public XY NorthDirection { get; set; }</code></pre>
 
   <h3 id="ACadSharp_Objects_GeoData_ObjectName" data-uid="ACadSharp.Objects.GeoData.ObjectName">
   ObjectName
-  <a class="header-action link-secondary" title="View source" href="https://github.com/DomCR/ACadSharp/blob/master/src/ACadSharp/Objects/GeoData.cs/#L107"><i class="bi bi-code-slash"></i></a>
+  <a class="header-action link-secondary" title="View source" href="https://github.com/DomCR/ACadSharp/blob/master/src/ACadSharp/Objects/GeoData.cs/#L100"><i class="bi bi-code-slash"></i></a>
   </h3>
 
   <div class="markdown level1 summary"><p>The CAD class name of an object.</p>
@@ -631,7 +634,7 @@ public XY NorthDirection { get; set; }</code></pre>
 
   <h3 id="ACadSharp_Objects_GeoData_ObjectType" data-uid="ACadSharp.Objects.GeoData.ObjectType">
   ObjectType
-  <a class="header-action link-secondary" title="View source" href="https://github.com/DomCR/ACadSharp/blob/master/src/ACadSharp/Objects/GeoData.cs/#L110"><i class="bi bi-code-slash"></i></a>
+  <a class="header-action link-secondary" title="View source" href="https://github.com/DomCR/ACadSharp/blob/master/src/ACadSharp/Objects/GeoData.cs/#L103"><i class="bi bi-code-slash"></i></a>
   </h3>
 
   <div class="markdown level1 summary"><p>Get the object type.</p>
@@ -663,7 +666,7 @@ public XY NorthDirection { get; set; }</code></pre>
 
   <h3 id="ACadSharp_Objects_GeoData_ObservationCoverageTag" data-uid="ACadSharp.Objects.GeoData.ObservationCoverageTag">
   ObservationCoverageTag
-  <a class="header-action link-secondary" title="View source" href="https://github.com/DomCR/ACadSharp/blob/master/src/ACadSharp/Objects/GeoData.cs/#L115"><i class="bi bi-code-slash"></i></a>
+  <a class="header-action link-secondary" title="View source" href="https://github.com/DomCR/ACadSharp/blob/master/src/ACadSharp/Objects/GeoData.cs/#L108"><i class="bi bi-code-slash"></i></a>
   </h3>
 
   <div class="markdown level1 summary"><p>Observation coverage tag.</p>
@@ -696,7 +699,7 @@ public string ObservationCoverageTag { get; set; }</code></pre>
 
   <h3 id="ACadSharp_Objects_GeoData_ObservationFromTag" data-uid="ACadSharp.Objects.GeoData.ObservationFromTag">
   ObservationFromTag
-  <a class="header-action link-secondary" title="View source" href="https://github.com/DomCR/ACadSharp/blob/master/src/ACadSharp/Objects/GeoData.cs/#L121"><i class="bi bi-code-slash"></i></a>
+  <a class="header-action link-secondary" title="View source" href="https://github.com/DomCR/ACadSharp/blob/master/src/ACadSharp/Objects/GeoData.cs/#L114"><i class="bi bi-code-slash"></i></a>
   </h3>
 
   <div class="markdown level1 summary"><p>Observation from tag.</p>
@@ -729,7 +732,7 @@ public string ObservationFromTag { get; set; }</code></pre>
 
   <h3 id="ACadSharp_Objects_GeoData_ObservationToTag" data-uid="ACadSharp.Objects.GeoData.ObservationToTag">
   ObservationToTag
-  <a class="header-action link-secondary" title="View source" href="https://github.com/DomCR/ACadSharp/blob/master/src/ACadSharp/Objects/GeoData.cs/#L127"><i class="bi bi-code-slash"></i></a>
+  <a class="header-action link-secondary" title="View source" href="https://github.com/DomCR/ACadSharp/blob/master/src/ACadSharp/Objects/GeoData.cs/#L120"><i class="bi bi-code-slash"></i></a>
   </h3>
 
   <div class="markdown level1 summary"><p>Observation to tag.</p>
@@ -762,7 +765,7 @@ public string ObservationToTag { get; set; }</code></pre>
 
   <h3 id="ACadSharp_Objects_GeoData_Points" data-uid="ACadSharp.Objects.GeoData.Points">
   Points
-  <a class="header-action link-secondary" title="View source" href="https://github.com/DomCR/ACadSharp/blob/master/src/ACadSharp/Objects/GeoData.cs/#L133"><i class="bi bi-code-slash"></i></a>
+  <a class="header-action link-secondary" title="View source" href="https://github.com/DomCR/ACadSharp/blob/master/src/ACadSharp/Objects/GeoData.cs/#L126"><i class="bi bi-code-slash"></i></a>
   </h3>
 
   <div class="markdown level1 summary"><p>Geo-Mesh points.</p>
@@ -795,7 +798,7 @@ public List&lt;GeoData.GeoMeshPoint&gt; Points { get; }</code></pre>
 
   <h3 id="ACadSharp_Objects_GeoData_ReferencePoint" data-uid="ACadSharp.Objects.GeoData.ReferencePoint">
   ReferencePoint
-  <a class="header-action link-secondary" title="View source" href="https://github.com/DomCR/ACadSharp/blob/master/src/ACadSharp/Objects/GeoData.cs/#L139"><i class="bi bi-code-slash"></i></a>
+  <a class="header-action link-secondary" title="View source" href="https://github.com/DomCR/ACadSharp/blob/master/src/ACadSharp/Objects/GeoData.cs/#L132"><i class="bi bi-code-slash"></i></a>
   </h3>
 
   <div class="markdown level1 summary"><p>Reference point in coordinate system coordinates, valid only when coordinate type is Local Grid.</p>
@@ -828,7 +831,7 @@ public XYZ ReferencePoint { get; set; }</code></pre>
 
   <h3 id="ACadSharp_Objects_GeoData_ScaleEstimationMethod" data-uid="ACadSharp.Objects.GeoData.ScaleEstimationMethod">
   ScaleEstimationMethod
-  <a class="header-action link-secondary" title="View source" href="https://github.com/DomCR/ACadSharp/blob/master/src/ACadSharp/Objects/GeoData.cs/#L145"><i class="bi bi-code-slash"></i></a>
+  <a class="header-action link-secondary" title="View source" href="https://github.com/DomCR/ACadSharp/blob/master/src/ACadSharp/Objects/GeoData.cs/#L138"><i class="bi bi-code-slash"></i></a>
   </h3>
 
   <div class="markdown level1 summary"><p>Scale estimation method.</p>
@@ -861,7 +864,7 @@ public ScaleEstimationType ScaleEstimationMethod { get; set; }</code></pre>
 
   <h3 id="ACadSharp_Objects_GeoData_SeaLevelElevation" data-uid="ACadSharp.Objects.GeoData.SeaLevelElevation">
   SeaLevelElevation
-  <a class="header-action link-secondary" title="View source" href="https://github.com/DomCR/ACadSharp/blob/master/src/ACadSharp/Objects/GeoData.cs/#L151"><i class="bi bi-code-slash"></i></a>
+  <a class="header-action link-secondary" title="View source" href="https://github.com/DomCR/ACadSharp/blob/master/src/ACadSharp/Objects/GeoData.cs/#L144"><i class="bi bi-code-slash"></i></a>
   </h3>
 
   <div class="markdown level1 summary"><p>Sea level elevation.</p>
@@ -894,7 +897,7 @@ public double SeaLevelElevation { get; set; }</code></pre>
 
   <h3 id="ACadSharp_Objects_GeoData_SubclassMarker" data-uid="ACadSharp.Objects.GeoData.SubclassMarker">
   SubclassMarker
-  <a class="header-action link-secondary" title="View source" href="https://github.com/DomCR/ACadSharp/blob/master/src/ACadSharp/Objects/GeoData.cs/#L155"><i class="bi bi-code-slash"></i></a>
+  <a class="header-action link-secondary" title="View source" href="https://github.com/DomCR/ACadSharp/blob/master/src/ACadSharp/Objects/GeoData.cs/#L148"><i class="bi bi-code-slash"></i></a>
   </h3>
 
   <div class="markdown level1 summary"><p>Object Subclass marker.</p>
@@ -926,7 +929,7 @@ public double SeaLevelElevation { get; set; }</code></pre>
 
   <h3 id="ACadSharp_Objects_GeoData_UpDirection" data-uid="ACadSharp.Objects.GeoData.UpDirection">
   UpDirection
-  <a class="header-action link-secondary" title="View source" href="https://github.com/DomCR/ACadSharp/blob/master/src/ACadSharp/Objects/GeoData.cs/#L160"><i class="bi bi-code-slash"></i></a>
+  <a class="header-action link-secondary" title="View source" href="https://github.com/DomCR/ACadSharp/blob/master/src/ACadSharp/Objects/GeoData.cs/#L153"><i class="bi bi-code-slash"></i></a>
   </h3>
 
   <div class="markdown level1 summary"><p>Up direction.</p>
@@ -959,7 +962,7 @@ public XYZ UpDirection { get; set; }</code></pre>
 
   <h3 id="ACadSharp_Objects_GeoData_UserSpecifiedScaleFactor" data-uid="ACadSharp.Objects.GeoData.UserSpecifiedScaleFactor">
   UserSpecifiedScaleFactor
-  <a class="header-action link-secondary" title="View source" href="https://github.com/DomCR/ACadSharp/blob/master/src/ACadSharp/Objects/GeoData.cs/#L166"><i class="bi bi-code-slash"></i></a>
+  <a class="header-action link-secondary" title="View source" href="https://github.com/DomCR/ACadSharp/blob/master/src/ACadSharp/Objects/GeoData.cs/#L159"><i class="bi bi-code-slash"></i></a>
   </h3>
 
   <div class="markdown level1 summary"><p>User specified scale factor.</p>
@@ -992,7 +995,7 @@ public double UserSpecifiedScaleFactor { get; set; }</code></pre>
 
   <h3 id="ACadSharp_Objects_GeoData_Version" data-uid="ACadSharp.Objects.GeoData.Version">
   Version
-  <a class="header-action link-secondary" title="View source" href="https://github.com/DomCR/ACadSharp/blob/master/src/ACadSharp/Objects/GeoData.cs/#L177"><i class="bi bi-code-slash"></i></a>
+  <a class="header-action link-secondary" title="View source" href="https://github.com/DomCR/ACadSharp/blob/master/src/ACadSharp/Objects/GeoData.cs/#L170"><i class="bi bi-code-slash"></i></a>
   </h3>
 
   <div class="markdown level1 summary"><p>AcDbGeoData Object version.</p>
@@ -1030,7 +1033,7 @@ public GeoDataVersion Version { get; set; }</code></pre>
 
   <h3 id="ACadSharp_Objects_GeoData_VerticalUnitScale" data-uid="ACadSharp.Objects.GeoData.VerticalUnitScale">
   VerticalUnitScale
-  <a class="header-action link-secondary" title="View source" href="https://github.com/DomCR/ACadSharp/blob/master/src/ACadSharp/Objects/GeoData.cs/#L189"><i class="bi bi-code-slash"></i></a>
+  <a class="header-action link-secondary" title="View source" href="https://github.com/DomCR/ACadSharp/blob/master/src/ACadSharp/Objects/GeoData.cs/#L182"><i class="bi bi-code-slash"></i></a>
   </h3>
 
   <div class="markdown level1 summary"><p>Vertical unit scale, factor which converts vertical design coordinates to meters by multiplication.</p>
@@ -1063,7 +1066,7 @@ public double VerticalUnitScale { get; set; }</code></pre>
 
   <h3 id="ACadSharp_Objects_GeoData_VerticalUnits" data-uid="ACadSharp.Objects.GeoData.VerticalUnits">
   VerticalUnits
-  <a class="header-action link-secondary" title="View source" href="https://github.com/DomCR/ACadSharp/blob/master/src/ACadSharp/Objects/GeoData.cs/#L183"><i class="bi bi-code-slash"></i></a>
+  <a class="header-action link-secondary" title="View source" href="https://github.com/DomCR/ACadSharp/blob/master/src/ACadSharp/Objects/GeoData.cs/#L176"><i class="bi bi-code-slash"></i></a>
   </h3>
 
   <div class="markdown level1 summary"><p>Vertical units.</p>
@@ -1100,7 +1103,7 @@ public UnitsType VerticalUnits { get; set; }</code></pre>
 
   <h3 id="ACadSharp_Objects_GeoData_GetDxfClass" data-uid="ACadSharp.Objects.GeoData.GetDxfClass">
   GetDxfClass()
-  <a class="header-action link-secondary" title="View source" href="https://github.com/DomCR/ACadSharp/blob/master/src/ACadSharp/Objects/GeoData.cs/#L195"><i class="bi bi-code-slash"></i></a>
+  <a class="header-action link-secondary" title="View source" href="https://github.com/DomCR/ACadSharp/blob/master/src/ACadSharp/Objects/GeoData.cs/#L188"><i class="bi bi-code-slash"></i></a>
   </h3>
 
   <div class="markdown level1 summary"><p>Gets the <a class="xref" href="ACadSharp.Classes.DxfClass.html">DxfClass</a> instance associated with this class.</p>

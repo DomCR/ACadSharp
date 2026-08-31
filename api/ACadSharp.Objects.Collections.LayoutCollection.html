@@ -139,6 +139,9 @@ Class LayoutCollection  <a class="header-action link-secondary" title="View sour
       <a class="xref" href="ACadSharp.Objects.Collections.ObjectDictionaryCollection-1.html#ACadSharp_Objects_Collections_ObjectDictionaryCollection_1_OnRemove">ObjectDictionaryCollection&lt;Layout&gt;.OnRemove</a>
     </div>
     <div>
+      <a class="xref" href="ACadSharp.Objects.Collections.ObjectDictionaryCollection-1.html#ACadSharp_Objects_Collections_ObjectDictionaryCollection_1_Document">ObjectDictionaryCollection&lt;Layout&gt;.Document</a>
+    </div>
+    <div>
       <a class="xref" href="ACadSharp.Objects.Collections.ObjectDictionaryCollection-1.html#ACadSharp_Objects_Collections_ObjectDictionaryCollection_1_Handle">ObjectDictionaryCollection&lt;Layout&gt;.Handle</a>
     </div>
     <div>
@@ -154,7 +157,13 @@ Class LayoutCollection  <a class="header-action link-secondary" title="View sour
       <a class="xref" href="ACadSharp.Objects.Collections.ObjectDictionaryCollection-1.html#ACadSharp_Objects_Collections_ObjectDictionaryCollection_1_ContainsKey_System_String_">ObjectDictionaryCollection&lt;Layout&gt;.ContainsKey(string)</a>
     </div>
     <div>
+      <a class="xref" href="ACadSharp.Objects.Collections.ObjectDictionaryCollection-1.html#ACadSharp_Objects_Collections_ObjectDictionaryCollection_1_GetEntry_System_String_">ObjectDictionaryCollection&lt;Layout&gt;.GetEntry(string)</a>
+    </div>
+    <div>
       <a class="xref" href="ACadSharp.Objects.Collections.ObjectDictionaryCollection-1.html#ACadSharp_Objects_Collections_ObjectDictionaryCollection_1_GetEnumerator">ObjectDictionaryCollection&lt;Layout&gt;.GetEnumerator()</a>
+    </div>
+    <div>
+      <a class="xref" href="ACadSharp.Objects.Collections.ObjectDictionaryCollection-1.html#ACadSharp_Objects_Collections_ObjectDictionaryCollection_1_GetReferences_System_String_">ObjectDictionaryCollection&lt;Layout&gt;.GetReferences(string)</a>
     </div>
     <div>
       <a class="xref" href="ACadSharp.Objects.Collections.ObjectDictionaryCollection-1.html#ACadSharp_Objects_Collections_ObjectDictionaryCollection_1_Remove_System_String_">ObjectDictionaryCollection&lt;Layout&gt;.Remove(string)</a>
@@ -164,6 +173,9 @@ Class LayoutCollection  <a class="header-action link-secondary" title="View sour
     </div>
     <div>
       <a class="xref" href="ACadSharp.Objects.Collections.ObjectDictionaryCollection-1.html#ACadSharp_Objects_Collections_ObjectDictionaryCollection_1_TryGet_System_String__0__">ObjectDictionaryCollection&lt;Layout&gt;.TryGet(string, out Layout)</a>
+    </div>
+    <div>
+      <a class="xref" href="ACadSharp.Objects.Collections.ObjectDictionaryCollection-1.html#ACadSharp_Objects_Collections_ObjectDictionaryCollection_1_getDefaultEntry">ObjectDictionaryCollection&lt;Layout&gt;.getDefaultEntry()</a>
     </div>
     <div>
       <a class="xref" href="ACadSharp.Objects.Collections.ObjectDictionaryCollection-1.html#ACadSharp_Objects_Collections_ObjectDictionaryCollection_1_Item_System_String_">ObjectDictionaryCollection&lt;Layout&gt;.this[string]</a>
@@ -267,15 +279,18 @@ dictionary.</p>
   <h4 class="section">Parameters</h4>
   <dl class="parameters">
     <dt><code>name</code> <a class="xref" href="https://learn.microsoft.com/dotnet/api/system.string">string</a></dt>
-    <dd></dd>
+    <dd><p>The name of the entry to remove.</p>
+</dd>
     <dt><code>entry</code> <a class="xref" href="ACadSharp.Objects.Layout.html">Layout</a></dt>
-    <dd></dd>
+    <dd><p>When this method returns, contains the entry that was removed, if the removal was successful; otherwise, the default value for the type of the entry parameter.</p>
+</dd>
   </dl>
 
   <h4 class="section">Returns</h4>
   <dl class="parameters">
     <dt><a class="xref" href="https://learn.microsoft.com/dotnet/api/system.boolean">bool</a></dt>
-    <dd></dd>
+    <dd><p>true if the entry was successfully removed; otherwise, false.</p>
+</dd>
   </dl>
 
 

@@ -206,9 +206,6 @@ public abstract class CadWipeoutBase : Entity, IEntity, IHandledCadObject, IGeom
       <a class="xref" href="ACadSharp.Entities.Entity.html#ACadSharp_Entities_Entity_getWorldMatrix_CSMath_Transform_CSMath_XYZ_CSMath_XYZ_CSMath_Matrix3__CSMath_Matrix3__">Entity.getWorldMatrix(Transform, XYZ, XYZ, out Matrix3, out Matrix3)</a>
     </div>
     <div>
-      <a class="xref" href="ACadSharp.Entities.Entity.html#ACadSharp_Entities_Entity_tableOnRemove_System_Object_ACadSharp_CollectionChangedEventArgs_">Entity.tableOnRemove(object, CollectionChangedEventArgs)</a>
-    </div>
-    <div>
       <a class="xref" href="ACadSharp.Entities.Entity.html#ACadSharp_Entities_Entity_transformNormal_CSMath_Transform_CSMath_XYZ_">Entity.transformNormal(Transform, XYZ)</a>
     </div>
     <div>
@@ -257,7 +254,10 @@ public abstract class CadWipeoutBase : Entity, IEntity, IHandledCadObject, IGeom
       <a class="xref" href="ACadSharp.CadObject.html#ACadSharp_CadObject_ToString">CadObject.ToString()</a>
     </div>
     <div>
-      <a class="xref" href="ACadSharp.CadObject.html#ACadSharp_CadObject_updateCollection__1___0_ACadSharp_ICadCollection___0__">CadObject.updateCollection&lt;T&gt;(T, ICadCollection&lt;T&gt;)</a>
+      <a class="xref" href="ACadSharp.CadObject.html#ACadSharp_CadObject_updateCollectionEntry__1___0_System_Action___0__ACadSharp_Objects_Collections_ObjectDictionaryCollection___0__">CadObject.updateCollectionEntry&lt;T&gt;(T, Action&lt;T&gt;, ObjectDictionaryCollection&lt;T&gt;)</a>
+    </div>
+    <div>
+      <a class="xref" href="ACadSharp.CadObject.html#ACadSharp_CadObject_updateTableEntry__1___0_System_Action___0__ACadSharp_Tables_Collections_Table___0__">CadObject.updateTableEntry&lt;T&gt;(T, Action&lt;T&gt;, Table&lt;T&gt;)</a>
     </div>
     <div>
       <a class="xref" href="https://learn.microsoft.com/dotnet/api/system.object.equals#system-object-equals(system-object)">object.Equals(object)</a>
@@ -576,7 +576,7 @@ public virtual ImageDefinition Definition { get; set; }</code></pre>
 
   <h3 id="ACadSharp_Entities_CadWipeoutBase_Fade" data-uid="ACadSharp.Entities.CadWipeoutBase.Fade">
   Fade
-  <a class="header-action link-secondary" title="View source" href="https://github.com/DomCR/ACadSharp/blob/master/src/ACadSharp/Entities/CadWipeoutBase.cs/#L120"><i class="bi bi-code-slash"></i></a>
+  <a class="header-action link-secondary" title="View source" href="https://github.com/DomCR/ACadSharp/blob/master/src/ACadSharp/Entities/CadWipeoutBase.cs/#L113"><i class="bi bi-code-slash"></i></a>
   </h3>
 
   <div class="markdown level1 summary"><p>Fade</p>
@@ -612,7 +612,7 @@ public byte Fade { get; set; }</code></pre>
 
   <h3 id="ACadSharp_Entities_CadWipeoutBase_Flags" data-uid="ACadSharp.Entities.CadWipeoutBase.Flags">
   Flags
-  <a class="header-action link-secondary" title="View source" href="https://github.com/DomCR/ACadSharp/blob/master/src/ACadSharp/Entities/CadWipeoutBase.cs/#L138"><i class="bi bi-code-slash"></i></a>
+  <a class="header-action link-secondary" title="View source" href="https://github.com/DomCR/ACadSharp/blob/master/src/ACadSharp/Entities/CadWipeoutBase.cs/#L131"><i class="bi bi-code-slash"></i></a>
   </h3>
 
   <div class="markdown level1 summary"><p>Image display properties.</p>
@@ -645,7 +645,7 @@ public ImageDisplayFlags Flags { get; set; }</code></pre>
 
   <h3 id="ACadSharp_Entities_CadWipeoutBase_InsertPoint" data-uid="ACadSharp.Entities.CadWipeoutBase.InsertPoint">
   InsertPoint
-  <a class="header-action link-secondary" title="View source" href="https://github.com/DomCR/ACadSharp/blob/master/src/ACadSharp/Entities/CadWipeoutBase.cs/#L144"><i class="bi bi-code-slash"></i></a>
+  <a class="header-action link-secondary" title="View source" href="https://github.com/DomCR/ACadSharp/blob/master/src/ACadSharp/Entities/CadWipeoutBase.cs/#L137"><i class="bi bi-code-slash"></i></a>
   </h3>
 
   <div class="markdown level1 summary"><p>Insertion point(in WCS)</p>
@@ -678,7 +678,7 @@ public XYZ InsertPoint { get; set; }</code></pre>
 
   <h3 id="ACadSharp_Entities_CadWipeoutBase_ShowImage" data-uid="ACadSharp.Entities.CadWipeoutBase.ShowImage">
   ShowImage
-  <a class="header-action link-secondary" title="View source" href="https://github.com/DomCR/ACadSharp/blob/master/src/ACadSharp/Entities/CadWipeoutBase.cs/#L150"><i class="bi bi-code-slash"></i></a>
+  <a class="header-action link-secondary" title="View source" href="https://github.com/DomCR/ACadSharp/blob/master/src/ACadSharp/Entities/CadWipeoutBase.cs/#L143"><i class="bi bi-code-slash"></i></a>
   </h3>
 
   <div class="markdown level1 summary"><p>Add the ShowImage flag to the display flags property.</p>
@@ -710,7 +710,7 @@ public XYZ InsertPoint { get; set; }</code></pre>
 
   <h3 id="ACadSharp_Entities_CadWipeoutBase_Size" data-uid="ACadSharp.Entities.CadWipeoutBase.Size">
   Size
-  <a class="header-action link-secondary" title="View source" href="https://github.com/DomCR/ACadSharp/blob/master/src/ACadSharp/Entities/CadWipeoutBase.cs/#L172"><i class="bi bi-code-slash"></i></a>
+  <a class="header-action link-secondary" title="View source" href="https://github.com/DomCR/ACadSharp/blob/master/src/ACadSharp/Entities/CadWipeoutBase.cs/#L165"><i class="bi bi-code-slash"></i></a>
   </h3>
 
   <div class="markdown level1 summary"><p>Image size in pixels.</p>
@@ -746,7 +746,7 @@ public XY Size { get; set; }</code></pre>
 
   <h3 id="ACadSharp_Entities_CadWipeoutBase_UVector" data-uid="ACadSharp.Entities.CadWipeoutBase.UVector">
   UVector
-  <a class="header-action link-secondary" title="View source" href="https://github.com/DomCR/ACadSharp/blob/master/src/ACadSharp/Entities/CadWipeoutBase.cs/#L178"><i class="bi bi-code-slash"></i></a>
+  <a class="header-action link-secondary" title="View source" href="https://github.com/DomCR/ACadSharp/blob/master/src/ACadSharp/Entities/CadWipeoutBase.cs/#L171"><i class="bi bi-code-slash"></i></a>
   </h3>
 
   <div class="markdown level1 summary"><p>U-vector of a single pixel(points along the visual bottom of the image, starting at the insertion point) (in WCS)</p>
@@ -779,7 +779,7 @@ public XYZ UVector { get; set; }</code></pre>
 
   <h3 id="ACadSharp_Entities_CadWipeoutBase_VVector" data-uid="ACadSharp.Entities.CadWipeoutBase.VVector">
   VVector
-  <a class="header-action link-secondary" title="View source" href="https://github.com/DomCR/ACadSharp/blob/master/src/ACadSharp/Entities/CadWipeoutBase.cs/#L184"><i class="bi bi-code-slash"></i></a>
+  <a class="header-action link-secondary" title="View source" href="https://github.com/DomCR/ACadSharp/blob/master/src/ACadSharp/Entities/CadWipeoutBase.cs/#L177"><i class="bi bi-code-slash"></i></a>
   </h3>
 
   <div class="markdown level1 summary"><p>V-vector of a single pixel(points along the visual left side of the image, starting at the insertion point) (in WCS)</p>
@@ -816,7 +816,7 @@ public XYZ VVector { get; set; }</code></pre>
 
   <h3 id="ACadSharp_Entities_CadWipeoutBase_ApplyTransform_CSMath_Transform_" data-uid="ACadSharp.Entities.CadWipeoutBase.ApplyTransform(CSMath.Transform)">
   ApplyTransform(Transform)
-  <a class="header-action link-secondary" title="View source" href="https://github.com/DomCR/ACadSharp/blob/master/src/ACadSharp/Entities/CadWipeoutBase.cs/#L215"><i class="bi bi-code-slash"></i></a>
+  <a class="header-action link-secondary" title="View source" href="https://github.com/DomCR/ACadSharp/blob/master/src/ACadSharp/Entities/CadWipeoutBase.cs/#L208"><i class="bi bi-code-slash"></i></a>
   </h3>
 
   <div class="markdown level1 summary"><p>Apply a transform matrix to this entity.</p>
@@ -848,7 +848,7 @@ public XYZ VVector { get; set; }</code></pre>
 
   <h3 id="ACadSharp_Entities_CadWipeoutBase_Clone" data-uid="ACadSharp.Entities.CadWipeoutBase.Clone">
   Clone()
-  <a class="header-action link-secondary" title="View source" href="https://github.com/DomCR/ACadSharp/blob/master/src/ACadSharp/Entities/CadWipeoutBase.cs/#L223"><i class="bi bi-code-slash"></i></a>
+  <a class="header-action link-secondary" title="View source" href="https://github.com/DomCR/ACadSharp/blob/master/src/ACadSharp/Entities/CadWipeoutBase.cs/#L216"><i class="bi bi-code-slash"></i></a>
   </h3>
 
   <div class="markdown level1 summary"><p>Creates a new object that is a copy of the current instance.</p>
@@ -884,7 +884,7 @@ public XYZ VVector { get; set; }</code></pre>
 
   <h3 id="ACadSharp_Entities_CadWipeoutBase_GetBoundingBox" data-uid="ACadSharp.Entities.CadWipeoutBase.GetBoundingBox">
   GetBoundingBox()
-  <a class="header-action link-secondary" title="View source" href="https://github.com/DomCR/ACadSharp/blob/master/src/ACadSharp/Entities/CadWipeoutBase.cs/#L233"><i class="bi bi-code-slash"></i></a>
+  <a class="header-action link-secondary" title="View source" href="https://github.com/DomCR/ACadSharp/blob/master/src/ACadSharp/Entities/CadWipeoutBase.cs/#L226"><i class="bi bi-code-slash"></i></a>
   </h3>
 
   <div class="markdown level1 summary"><p>Gets the bounding box aligned with the axis XYZ that occupies this entity.</p>
@@ -917,7 +917,7 @@ public XYZ VVector { get; set; }</code></pre>
 
   <h3 id="ACadSharp_Entities_CadWipeoutBase_IsValid_ACadSharp_IO_CadFileFormat_ACadSharp_ACadVersion_System_Collections_Generic_IList_System_String___" data-uid="ACadSharp.Entities.CadWipeoutBase.IsValid(ACadSharp.IO.CadFileFormat,ACadSharp.ACadVersion,System.Collections.Generic.IList{System.String}@)">
   IsValid(CadFileFormat, ACadVersion, out IList&lt;string&gt;)
-  <a class="header-action link-secondary" title="View source" href="https://github.com/DomCR/ACadSharp/blob/master/src/ACadSharp/Entities/CadWipeoutBase.cs/#L254"><i class="bi bi-code-slash"></i></a>
+  <a class="header-action link-secondary" title="View source" href="https://github.com/DomCR/ACadSharp/blob/master/src/ACadSharp/Entities/CadWipeoutBase.cs/#L247"><i class="bi bi-code-slash"></i></a>
   </h3>
 
   <div class="markdown level1 summary"><p>Determines whether the object is valid and can be written in a CAD file.</p>

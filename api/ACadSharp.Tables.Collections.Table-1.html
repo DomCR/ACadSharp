@@ -201,7 +201,10 @@ public abstract class Table&lt;T&gt; : CadObject, IHandledCadObject, ITable, ICa
       <a class="xref" href="ACadSharp.CadObject.html#ACadSharp_CadObject_ToString">CadObject.ToString()</a>
     </div>
     <div>
-      <a class="xref" href="ACadSharp.CadObject.html#ACadSharp_CadObject_updateCollection__1___0_ACadSharp_ICadCollection___0__">CadObject.updateCollection&lt;T&gt;(T, ICadCollection&lt;T&gt;)</a>
+      <a class="xref" href="ACadSharp.CadObject.html#ACadSharp_CadObject_updateCollectionEntry__1___0_System_Action___0__ACadSharp_Objects_Collections_ObjectDictionaryCollection___0__">CadObject.updateCollectionEntry&lt;T&gt;(T, Action&lt;T&gt;, ObjectDictionaryCollection&lt;T&gt;)</a>
+    </div>
+    <div>
+      <a class="xref" href="ACadSharp.CadObject.html#ACadSharp_CadObject_updateTableEntry__1___0_System_Action___0__ACadSharp_Tables_Collections_Table___0__">CadObject.updateTableEntry&lt;T&gt;(T, Action&lt;T&gt;, Table&lt;T&gt;)</a>
     </div>
     <div>
       <a class="xref" href="https://learn.microsoft.com/dotnet/api/system.object.equals#system-object-equals(system-object)">object.Equals(object)</a>
@@ -306,7 +309,7 @@ public abstract class Table&lt;T&gt; : CadObject, IHandledCadObject, ITable, ICa
 
   <h3 id="ACadSharp_Tables_Collections_Table_1_entries" data-uid="ACadSharp.Tables.Collections.Table`1.entries">
   entries
-  <a class="header-action link-secondary" title="View source" href="https://github.com/DomCR/ACadSharp/blob/master/src/ACadSharp/Tables/Collections/Table.cs/#L32"><i class="bi bi-code-slash"></i></a>
+  <a class="header-action link-secondary" title="View source" href="https://github.com/DomCR/ACadSharp/blob/master/src/ACadSharp/Tables/Collections/Table.cs/#L30"><i class="bi bi-code-slash"></i></a>
   </h3>
 
   <div class="markdown level1 summary"></div>
@@ -374,7 +377,7 @@ public int Count { get; }</code></pre>
 
   <h3 id="ACadSharp_Tables_Collections_Table_1_Item_System_String_" data-uid="ACadSharp.Tables.Collections.Table`1.Item(System.String)">
   this[string]
-  <a class="header-action link-secondary" title="View source" href="https://github.com/DomCR/ACadSharp/blob/master/src/ACadSharp/Tables/Collections/Table.cs/#L201"><i class="bi bi-code-slash"></i></a>
+  <a class="header-action link-secondary" title="View source" href="https://github.com/DomCR/ACadSharp/blob/master/src/ACadSharp/Tables/Collections/Table.cs/#L269"><i class="bi bi-code-slash"></i></a>
   </h3>
 
   <div class="markdown level1 summary"></div>
@@ -470,37 +473,6 @@ public int Count { get; }</code></pre>
 
 
 
-  <a id="ACadSharp_Tables_Collections_Table_1_defaultEntries_" data-uid="ACadSharp.Tables.Collections.Table`1.defaultEntries*"></a>
-
-  <h3 id="ACadSharp_Tables_Collections_Table_1_defaultEntries" data-uid="ACadSharp.Tables.Collections.Table`1.defaultEntries">
-  defaultEntries
-  <a class="header-action link-secondary" title="View source" href="https://github.com/DomCR/ACadSharp/blob/master/src/ACadSharp/Tables/Collections/Table.cs/#L30"><i class="bi bi-code-slash"></i></a>
-  </h3>
-
-  <div class="markdown level1 summary"></div>
-  <div class="markdown level1 conceptual"></div>
-
-  <div class="codewrapper">
-    <pre><code class="lang-csharp hljs">protected abstract string[] defaultEntries { get; }</code></pre>
-  </div>
-
-
-
-
-
-  <h4 class="section">Property Value</h4>
-  <dl class="parameters">
-    <dt><a class="xref" href="https://learn.microsoft.com/dotnet/api/system.string">string</a>[]</dt>
-    <dd></dd>
-  </dl>
-
-
-
-
-
-
-
-
   <h2 class="section" id="methods">Methods
 </h2>
 
@@ -573,7 +545,7 @@ public int Count { get; }</code></pre>
 
   <h3 id="ACadSharp_Tables_Collections_Table_1_Contains_System_String_" data-uid="ACadSharp.Tables.Collections.Table`1.Contains(System.String)">
   Contains(string)
-  <a class="header-action link-secondary" title="View source" href="https://github.com/DomCR/ACadSharp/blob/master/src/ACadSharp/Tables/Collections/Table.cs/#L92"><i class="bi bi-code-slash"></i></a>
+  <a class="header-action link-secondary" title="View source" href="https://github.com/DomCR/ACadSharp/blob/master/src/ACadSharp/Tables/Collections/Table.cs/#L74"><i class="bi bi-code-slash"></i></a>
   </h3>
 
   <div class="markdown level1 summary"><p>Determines whether the <a class="xref" href="ACadSharp.Tables.Collections.Table-1.html">Table&lt;T&gt;</a> contains the specified key.</p>
@@ -610,7 +582,7 @@ public int Count { get; }</code></pre>
 
   <h3 id="ACadSharp_Tables_Collections_Table_1_CreateDefaultEntries" data-uid="ACadSharp.Tables.Collections.Table`1.CreateDefaultEntries">
   CreateDefaultEntries()
-  <a class="header-action link-secondary" title="View source" href="https://github.com/DomCR/ACadSharp/blob/master/src/ACadSharp/Tables/Collections/Table.cs/#L100"><i class="bi bi-code-slash"></i></a>
+  <a class="header-action link-secondary" title="View source" href="https://github.com/DomCR/ACadSharp/blob/master/src/ACadSharp/Tables/Collections/Table.cs/#L82"><i class="bi bi-code-slash"></i></a>
   </h3>
 
   <div class="markdown level1 summary"><p>Create the default entries for the table if they don't exist</p>
@@ -633,11 +605,44 @@ public int Count { get; }</code></pre>
 
 
 
+  <a id="ACadSharp_Tables_Collections_Table_1_GetDefaultEntry_" data-uid="ACadSharp.Tables.Collections.Table`1.GetDefaultEntry*"></a>
+
+  <h3 id="ACadSharp_Tables_Collections_Table_1_GetDefaultEntry" data-uid="ACadSharp.Tables.Collections.Table`1.GetDefaultEntry">
+  GetDefaultEntry()
+  <a class="header-action link-secondary" title="View source" href="https://github.com/DomCR/ACadSharp/blob/master/src/ACadSharp/Tables/Collections/Table.cs/#L97"><i class="bi bi-code-slash"></i></a>
+  </h3>
+
+  <div class="markdown level1 summary"><p>Gets the default entry for the table.</p>
+</div>
+  <div class="markdown level1 conceptual"></div>
+
+  <div class="codewrapper">
+    <pre><code class="lang-csharp hljs">public abstract T GetDefaultEntry()</code></pre>
+  </div>
+
+
+  <h4 class="section">Returns</h4>
+  <dl class="parameters">
+    <dt><span class="xref">T</span></dt>
+    <dd><p>The default <a class="xref" href="ACadSharp.Tables.TableEntry.html">TableEntry</a>.</p>
+</dd>
+  </dl>
+
+
+
+
+
+
+
+
+
+
+
   <a id="ACadSharp_Tables_Collections_Table_1_GetEnumerator_" data-uid="ACadSharp.Tables.Collections.Table`1.GetEnumerator*"></a>
 
   <h3 id="ACadSharp_Tables_Collections_Table_1_GetEnumerator" data-uid="ACadSharp.Tables.Collections.Table`1.GetEnumerator">
   GetEnumerator()
-  <a class="header-action link-secondary" title="View source" href="https://github.com/DomCR/ACadSharp/blob/master/src/ACadSharp/Tables/Collections/Table.cs/#L112"><i class="bi bi-code-slash"></i></a>
+  <a class="header-action link-secondary" title="View source" href="https://github.com/DomCR/ACadSharp/blob/master/src/ACadSharp/Tables/Collections/Table.cs/#L100"><i class="bi bi-code-slash"></i></a>
   </h3>
 
   <div class="markdown level1 summary"><p>Returns an enumerator that iterates through the collection.</p>
@@ -666,11 +671,50 @@ public int Count { get; }</code></pre>
 
 
 
+  <a id="ACadSharp_Tables_Collections_Table_1_GetReferences_" data-uid="ACadSharp.Tables.Collections.Table`1.GetReferences*"></a>
+
+  <h3 id="ACadSharp_Tables_Collections_Table_1_GetReferences_System_String_" data-uid="ACadSharp.Tables.Collections.Table`1.GetReferences(System.String)">
+  GetReferences(string)
+  <a class="header-action link-secondary" title="View source" href="https://github.com/DomCR/ACadSharp/blob/master/src/ACadSharp/Tables/Collections/Table.cs/#L116"><i class="bi bi-code-slash"></i></a>
+  </h3>
+
+  <div class="markdown level1 summary"><p>Gets the references to a <a class="xref" href="ACadSharp.Tables.TableEntry.html">TableEntry</a> by name.</p>
+</div>
+  <div class="markdown level1 conceptual"></div>
+
+  <div class="codewrapper">
+    <pre><code class="lang-csharp hljs">public IEnumerable&lt;CadObject&gt; GetReferences(string name)</code></pre>
+  </div>
+
+  <h4 class="section">Parameters</h4>
+  <dl class="parameters">
+    <dt><code>name</code> <a class="xref" href="https://learn.microsoft.com/dotnet/api/system.string">string</a></dt>
+    <dd><p>The name of the table entry.</p>
+</dd>
+  </dl>
+
+  <h4 class="section">Returns</h4>
+  <dl class="parameters">
+    <dt><a class="xref" href="https://learn.microsoft.com/dotnet/api/system.collections.generic.ienumerable-1">IEnumerable</a>&lt;<a class="xref" href="ACadSharp.CadObject.html">CadObject</a>&gt;</dt>
+    <dd><p>An enumerable of <a class="xref" href="ACadSharp.CadObject.html">CadObject</a> that reference the specified table entry.</p>
+</dd>
+  </dl>
+
+
+
+
+
+
+
+
+
+
+
   <a id="ACadSharp_Tables_Collections_Table_1_Remove_" data-uid="ACadSharp.Tables.Collections.Table`1.Remove*"></a>
 
   <h3 id="ACadSharp_Tables_Collections_Table_1_Remove_System_String_" data-uid="ACadSharp.Tables.Collections.Table`1.Remove(System.String)">
   Remove(string)
-  <a class="header-action link-secondary" title="View source" href="https://github.com/DomCR/ACadSharp/blob/master/src/ACadSharp/Tables/Collections/Table.cs/#L128"><i class="bi bi-code-slash"></i></a>
+  <a class="header-action link-secondary" title="View source" href="https://github.com/DomCR/ACadSharp/blob/master/src/ACadSharp/Tables/Collections/Table.cs/#L126"><i class="bi bi-code-slash"></i></a>
   </h3>
 
   <div class="markdown level1 summary"><p>Removes a <a class="xref" href="ACadSharp.Tables.TableEntry.html">TableEntry</a> from the collection, this method triggers <a class="xref" href="ACadSharp.Tables.Collections.Table-1.html#ACadSharp_Tables_Collections_Table_1_OnRemove">OnRemove</a></p>
@@ -709,7 +753,7 @@ public int Count { get; }</code></pre>
 
   <h3 id="ACadSharp_Tables_Collections_Table_1_TryAdd__0_" data-uid="ACadSharp.Tables.Collections.Table`1.TryAdd(`0)">
   TryAdd(T)
-  <a class="header-action link-secondary" title="View source" href="https://github.com/DomCR/ACadSharp/blob/master/src/ACadSharp/Tables/Collections/Table.cs/#L74"><i class="bi bi-code-slash"></i></a>
+  <a class="header-action link-secondary" title="View source" href="https://github.com/DomCR/ACadSharp/blob/master/src/ACadSharp/Tables/Collections/Table.cs/#L150"><i class="bi bi-code-slash"></i></a>
   </h3>
 
   <div class="markdown level1 summary"><p>Tries to add the item to the collection, if an item with the same name already exists it returns the existing item.</p>
@@ -746,7 +790,7 @@ public int Count { get; }</code></pre>
 
   <h3 id="ACadSharp_Tables_Collections_Table_1_TryGetValue_System_String__0__" data-uid="ACadSharp.Tables.Collections.Table`1.TryGetValue(System.String,`0@)">
   TryGetValue(string, out T)
-  <a class="header-action link-secondary" title="View source" href="https://github.com/DomCR/ACadSharp/blob/master/src/ACadSharp/Tables/Collections/Table.cs/#L150"><i class="bi bi-code-slash"></i></a>
+  <a class="header-action link-secondary" title="View source" href="https://github.com/DomCR/ACadSharp/blob/master/src/ACadSharp/Tables/Collections/Table.cs/#L169"><i class="bi bi-code-slash"></i></a>
   </h3>
 
   <div class="markdown level1 summary"><p>Gets the value associated with the specified key.</p>
@@ -787,7 +831,7 @@ public int Count { get; }</code></pre>
 
   <h3 id="ACadSharp_Tables_Collections_Table_1_add_System_String__0_" data-uid="ACadSharp.Tables.Collections.Table`1.add(System.String,`0)">
   add(string, T)
-  <a class="header-action link-secondary" title="View source" href="https://github.com/DomCR/ACadSharp/blob/master/src/ACadSharp/Tables/Collections/Table.cs/#L155"><i class="bi bi-code-slash"></i></a>
+  <a class="header-action link-secondary" title="View source" href="https://github.com/DomCR/ACadSharp/blob/master/src/ACadSharp/Tables/Collections/Table.cs/#L215"><i class="bi bi-code-slash"></i></a>
   </h3>
 
   <div class="markdown level1 summary"></div>
@@ -820,7 +864,7 @@ public int Count { get; }</code></pre>
 
   <h3 id="ACadSharp_Tables_Collections_Table_1_addHandlePrefix__0_" data-uid="ACadSharp.Tables.Collections.Table`1.addHandlePrefix(`0)">
   addHandlePrefix(T)
-  <a class="header-action link-secondary" title="View source" href="https://github.com/DomCR/ACadSharp/blob/master/src/ACadSharp/Tables/Collections/Table.cs/#L165"><i class="bi bi-code-slash"></i></a>
+  <a class="header-action link-secondary" title="View source" href="https://github.com/DomCR/ACadSharp/blob/master/src/ACadSharp/Tables/Collections/Table.cs/#L225"><i class="bi bi-code-slash"></i></a>
   </h3>
 
   <div class="markdown level1 summary"></div>
@@ -851,7 +895,7 @@ public int Count { get; }</code></pre>
 
   <h3 id="ACadSharp_Tables_Collections_Table_1_createName_System_String_" data-uid="ACadSharp.Tables.Collections.Table`1.createName(System.String)">
   createName(string)
-  <a class="header-action link-secondary" title="View source" href="https://github.com/DomCR/ACadSharp/blob/master/src/ACadSharp/Tables/Collections/Table.cs/#L177"><i class="bi bi-code-slash"></i></a>
+  <a class="header-action link-secondary" title="View source" href="https://github.com/DomCR/ACadSharp/blob/master/src/ACadSharp/Tables/Collections/Table.cs/#L237"><i class="bi bi-code-slash"></i></a>
   </h3>
 
   <div class="markdown level1 summary"></div>
@@ -870,6 +914,37 @@ public int Count { get; }</code></pre>
   <h4 class="section">Returns</h4>
   <dl class="parameters">
     <dt><a class="xref" href="https://learn.microsoft.com/dotnet/api/system.string">string</a></dt>
+    <dd></dd>
+  </dl>
+
+
+
+
+
+
+
+
+
+
+
+  <a id="ACadSharp_Tables_Collections_Table_1_getDefaultEntries_" data-uid="ACadSharp.Tables.Collections.Table`1.getDefaultEntries*"></a>
+
+  <h3 id="ACadSharp_Tables_Collections_Table_1_getDefaultEntries" data-uid="ACadSharp.Tables.Collections.Table`1.getDefaultEntries">
+  getDefaultEntries()
+  <a class="header-action link-secondary" title="View source" href="https://github.com/DomCR/ACadSharp/blob/master/src/ACadSharp/Tables/Collections/Table.cs/#L249"><i class="bi bi-code-slash"></i></a>
+  </h3>
+
+  <div class="markdown level1 summary"></div>
+  <div class="markdown level1 conceptual"></div>
+
+  <div class="codewrapper">
+    <pre><code class="lang-csharp hljs">protected abstract string[] getDefaultEntries()</code></pre>
+  </div>
+
+
+  <h4 class="section">Returns</h4>
+  <dl class="parameters">
+    <dt><a class="xref" href="https://learn.microsoft.com/dotnet/api/system.string">string</a>[]</dt>
     <dd></dd>
   </dl>
 

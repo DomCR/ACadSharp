@@ -187,7 +187,10 @@ public class LineType : TableEntry, IHandledCadObject, INamedCadObject</code></p
       <a class="xref" href="ACadSharp.CadObject.html#ACadSharp_CadObject_RemoveReactor_ACadSharp_CadObject_">CadObject.RemoveReactor(CadObject)</a>
     </div>
     <div>
-      <a class="xref" href="ACadSharp.CadObject.html#ACadSharp_CadObject_updateCollection__1___0_ACadSharp_ICadCollection___0__">CadObject.updateCollection&lt;T&gt;(T, ICadCollection&lt;T&gt;)</a>
+      <a class="xref" href="ACadSharp.CadObject.html#ACadSharp_CadObject_updateCollectionEntry__1___0_System_Action___0__ACadSharp_Objects_Collections_ObjectDictionaryCollection___0__">CadObject.updateCollectionEntry&lt;T&gt;(T, Action&lt;T&gt;, ObjectDictionaryCollection&lt;T&gt;)</a>
+    </div>
+    <div>
+      <a class="xref" href="ACadSharp.CadObject.html#ACadSharp_CadObject_updateTableEntry__1___0_System_Action___0__ACadSharp_Tables_Collections_Table___0__">CadObject.updateTableEntry&lt;T&gt;(T, Action&lt;T&gt;, Table&lt;T&gt;)</a>
     </div>
     <div>
       <a class="xref" href="https://learn.microsoft.com/dotnet/api/system.object.equals#system-object-equals(system-object)">object.Equals(object)</a>
@@ -802,7 +805,7 @@ public IEnumerable&lt;LineType.Segment&gt; Segments { get; }</code></pre>
 
   <h3 id="ACadSharp_Tables_LineType_Clone" data-uid="ACadSharp.Tables.LineType.Clone">
   Clone()
-  <a class="header-action link-secondary" title="View source" href="https://github.com/DomCR/ACadSharp/blob/master/src/ACadSharp/Tables/LineType.cs/#L111"><i class="bi bi-code-slash"></i></a>
+  <a class="header-action link-secondary" title="View source" href="https://github.com/DomCR/ACadSharp/blob/master/src/ACadSharp/Tables/LineType.cs/#L113"><i class="bi bi-code-slash"></i></a>
   </h3>
 
   <div class="markdown level1 summary"><p>Creates a new object that is a copy of the current instance.</p>
@@ -838,7 +841,7 @@ public IEnumerable&lt;LineType.Segment&gt; Segments { get; }</code></pre>
 
   <h3 id="ACadSharp_Tables_LineType_CreateLineTypeShape_ACadSharp_Entities_IPolyline_System_Nullable_System_Double__" data-uid="ACadSharp.Tables.LineType.CreateLineTypeShape(ACadSharp.Entities.IPolyline,System.Nullable{System.Double})">
   CreateLineTypeShape(IPolyline, double?)
-  <a class="header-action link-secondary" title="View source" href="https://github.com/DomCR/ACadSharp/blob/master/src/ACadSharp/Tables/LineType.cs/#L158"><i class="bi bi-code-slash"></i></a>
+  <a class="header-action link-secondary" title="View source" href="https://github.com/DomCR/ACadSharp/blob/master/src/ACadSharp/Tables/LineType.cs/#L160"><i class="bi bi-code-slash"></i></a>
   </h3>
 
   <div class="markdown level1 summary"><p>Converts a <a class="xref" href="ACadSharp.Entities.IPolyline.html">IPolyline</a> to a series of <a class="xref" href="ACadSharp.Entities.Polyline3D.html">Polyline3D</a> in line type shape.</p>
@@ -877,7 +880,7 @@ public IEnumerable&lt;LineType.Segment&gt; Segments { get; }</code></pre>
 
   <h3 id="ACadSharp_Tables_LineType_CreateLineTypeShape__1_System_Collections_Generic_IEnumerable___0__" data-uid="ACadSharp.Tables.LineType.CreateLineTypeShape``1(System.Collections.Generic.IEnumerable{``0})">
   CreateLineTypeShape&lt;T&gt;(params IEnumerable&lt;T&gt;)
-  <a class="header-action link-secondary" title="View source" href="https://github.com/DomCR/ACadSharp/blob/master/src/ACadSharp/Tables/LineType.cs/#L129"><i class="bi bi-code-slash"></i></a>
+  <a class="header-action link-secondary" title="View source" href="https://github.com/DomCR/ACadSharp/blob/master/src/ACadSharp/Tables/LineType.cs/#L131"><i class="bi bi-code-slash"></i></a>
   </h3>
 
   <div class="markdown level1 summary"><p>Converts a collection of <a class="xref" href="CSMath.IVector.html">IVector</a> to a series of <a class="xref" href="ACadSharp.Entities.Polyline3D.html">Polyline3D</a> in the line type shape.</p>
@@ -919,7 +922,7 @@ public IEnumerable&lt;LineType.Segment&gt; Segments { get; }</code></pre>
 
   <h3 id="ACadSharp_Tables_LineType_CreateLineTypeShape__1_System_Nullable_System_Double__System_Collections_Generic_IEnumerable___0__" data-uid="ACadSharp.Tables.LineType.CreateLineTypeShape``1(System.Nullable{System.Double},System.Collections.Generic.IEnumerable{``0})">
   CreateLineTypeShape&lt;T&gt;(double?, params IEnumerable&lt;T&gt;)
-  <a class="header-action link-secondary" title="View source" href="https://github.com/DomCR/ACadSharp/blob/master/src/ACadSharp/Tables/LineType.cs/#L141"><i class="bi bi-code-slash"></i></a>
+  <a class="header-action link-secondary" title="View source" href="https://github.com/DomCR/ACadSharp/blob/master/src/ACadSharp/Tables/LineType.cs/#L143"><i class="bi bi-code-slash"></i></a>
   </h3>
 
   <div class="markdown level1 summary"><p>Converts a collection of <a class="xref" href="CSMath.IVector.html">IVector</a> to a series of <a class="xref" href="ACadSharp.Entities.Polyline3D.html">Polyline3D</a> in the line type shape.</p>
@@ -949,39 +952,6 @@ public IEnumerable&lt;LineType.Segment&gt; Segments { get; }</code></pre>
     <dt><code>T</code></dt>
     <dd></dd>
   </dl>
-
-
-
-
-
-
-
-
-
-
-  <a id="ACadSharp_Tables_LineType_tableOnRemove_" data-uid="ACadSharp.Tables.LineType.tableOnRemove*"></a>
-
-  <h3 id="ACadSharp_Tables_LineType_tableOnRemove_System_Object_ACadSharp_CollectionChangedEventArgs_" data-uid="ACadSharp.Tables.LineType.tableOnRemove(System.Object,ACadSharp.CollectionChangedEventArgs)">
-  tableOnRemove(object, CollectionChangedEventArgs)
-  <a class="header-action link-secondary" title="View source" href="https://github.com/DomCR/ACadSharp/blob/master/src/ACadSharp/Tables/LineType.cs/#L213"><i class="bi bi-code-slash"></i></a>
-  </h3>
-
-  <div class="markdown level1 summary"></div>
-  <div class="markdown level1 conceptual"></div>
-
-  <div class="codewrapper">
-    <pre><code class="lang-csharp hljs">protected void tableOnRemove(object sender, CollectionChangedEventArgs e)</code></pre>
-  </div>
-
-  <h4 class="section">Parameters</h4>
-  <dl class="parameters">
-    <dt><code>sender</code> <a class="xref" href="https://learn.microsoft.com/dotnet/api/system.object">object</a></dt>
-    <dd></dd>
-    <dt><code>e</code> <a class="xref" href="ACadSharp.CollectionChangedEventArgs.html">CollectionChangedEventArgs</a></dt>
-    <dd></dd>
-  </dl>
-
-
 
 
 

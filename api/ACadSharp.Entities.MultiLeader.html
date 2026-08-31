@@ -243,7 +243,10 @@ public class MultiLeader : Entity, IEntity, IHandledCadObject, IGeometricEntity,
       <a class="xref" href="ACadSharp.CadObject.html#ACadSharp_CadObject_ToString">CadObject.ToString()</a>
     </div>
     <div>
-      <a class="xref" href="ACadSharp.CadObject.html#ACadSharp_CadObject_updateCollection__1___0_ACadSharp_ICadCollection___0__">CadObject.updateCollection&lt;T&gt;(T, ICadCollection&lt;T&gt;)</a>
+      <a class="xref" href="ACadSharp.CadObject.html#ACadSharp_CadObject_updateCollectionEntry__1___0_System_Action___0__ACadSharp_Objects_Collections_ObjectDictionaryCollection___0__">CadObject.updateCollectionEntry&lt;T&gt;(T, Action&lt;T&gt;, ObjectDictionaryCollection&lt;T&gt;)</a>
+    </div>
+    <div>
+      <a class="xref" href="ACadSharp.CadObject.html#ACadSharp_CadObject_updateTableEntry__1___0_System_Action___0__ACadSharp_Tables_Collections_Table___0__">CadObject.updateTableEntry&lt;T&gt;(T, Action&lt;T&gt;, Table&lt;T&gt;)</a>
     </div>
     <div>
       <a class="xref" href="https://learn.microsoft.com/dotnet/api/system.object.equals#system-object-equals(system-object)">object.Equals(object)</a>
@@ -414,7 +417,7 @@ assumed to be used.
 
   <h3 id="ACadSharp_Entities_MultiLeader_BlockContent" data-uid="ACadSharp.Entities.MultiLeader.BlockContent">
   BlockContent
-  <a class="header-action link-secondary" title="View source" href="https://github.com/DomCR/ACadSharp/blob/master/src/ACadSharp/Entities/MultiLeader.cs/#L545"><i class="bi bi-code-slash"></i></a>
+  <a class="header-action link-secondary" title="View source" href="https://github.com/DomCR/ACadSharp/blob/master/src/ACadSharp/Entities/MultiLeader.cs/#L85"><i class="bi bi-code-slash"></i></a>
   </h3>
 
   <div class="markdown level1 summary"><p>Gets a <a class="xref" href="ACadSharp.Tables.BlockRecord.html">BlockRecord</a> containing elements
@@ -456,7 +459,7 @@ assumed to be used.</p>
 
   <h3 id="ACadSharp_Entities_MultiLeader_BlockContentColor" data-uid="ACadSharp.Entities.MultiLeader.BlockContentColor">
   BlockContentColor
-  <a class="header-action link-secondary" title="View source" href="https://github.com/DomCR/ACadSharp/blob/master/src/ACadSharp/Entities/MultiLeader.cs/#L566"><i class="bi bi-code-slash"></i></a>
+  <a class="header-action link-secondary" title="View source" href="https://github.com/DomCR/ACadSharp/blob/master/src/ACadSharp/Entities/MultiLeader.cs/#L106"><i class="bi bi-code-slash"></i></a>
   </h3>
 
   <div class="markdown level1 summary"><p>Gets or sets the block-content color.
@@ -497,7 +500,7 @@ assumed to be used.</p>
 
   <h3 id="ACadSharp_Entities_MultiLeader_BlockContentConnection" data-uid="ACadSharp.Entities.MultiLeader.BlockContentConnection">
   BlockContentConnection
-  <a class="header-action link-secondary" title="View source" href="https://github.com/DomCR/ACadSharp/blob/master/src/ACadSharp/Entities/MultiLeader.cs/#L580"><i class="bi bi-code-slash"></i></a>
+  <a class="header-action link-secondary" title="View source" href="https://github.com/DomCR/ACadSharp/blob/master/src/ACadSharp/Entities/MultiLeader.cs/#L120"><i class="bi bi-code-slash"></i></a>
   </h3>
 
   <div class="markdown level1 summary"><p>Gets or sets a value indicating whether the multileader connects to the content-block extents
@@ -538,7 +541,7 @@ assumed to be used.</p>
 
   <h3 id="ACadSharp_Entities_MultiLeader_BlockContentRotation" data-uid="ACadSharp.Entities.MultiLeader.BlockContentRotation">
   BlockContentRotation
-  <a class="header-action link-secondary" title="View source" href="https://github.com/DomCR/ACadSharp/blob/master/src/ACadSharp/Entities/MultiLeader.cs/#L591"><i class="bi bi-code-slash"></i></a>
+  <a class="header-action link-secondary" title="View source" href="https://github.com/DomCR/ACadSharp/blob/master/src/ACadSharp/Entities/MultiLeader.cs/#L131"><i class="bi bi-code-slash"></i></a>
   </h3>
 
   <div class="markdown level1 summary"><p>Gets or sets the rotation of the block content of the multileader.</p>
@@ -576,7 +579,7 @@ assumed to be used.</p>
 
   <h3 id="ACadSharp_Entities_MultiLeader_BlockContentScale" data-uid="ACadSharp.Entities.MultiLeader.BlockContentScale">
   BlockContentScale
-  <a class="header-action link-secondary" title="View source" href="https://github.com/DomCR/ACadSharp/blob/master/src/ACadSharp/Entities/MultiLeader.cs/#L605"><i class="bi bi-code-slash"></i></a>
+  <a class="header-action link-secondary" title="View source" href="https://github.com/DomCR/ACadSharp/blob/master/src/ACadSharp/Entities/MultiLeader.cs/#L145"><i class="bi bi-code-slash"></i></a>
   </h3>
 
   <div class="markdown level1 summary"><p>Gets or sets the scale factor for block content.
@@ -617,7 +620,7 @@ assumed to be used.</p>
 
   <h3 id="ACadSharp_Entities_MultiLeader_ContentType" data-uid="ACadSharp.Entities.MultiLeader.ContentType">
   ContentType
-  <a class="header-action link-secondary" title="View source" href="https://github.com/DomCR/ACadSharp/blob/master/src/ACadSharp/Entities/MultiLeader.cs/#L77"><i class="bi bi-code-slash"></i></a>
+  <a class="header-action link-secondary" title="View source" href="https://github.com/DomCR/ACadSharp/blob/master/src/ACadSharp/Entities/MultiLeader.cs/#L152"><i class="bi bi-code-slash"></i></a>
   </h3>
 
   <div class="markdown level1 summary"><p>Gets or sets a value indicating whether the content of this <a class="xref" href="ACadSharp.Entities.MultiLeader.html">MultiLeader</a>
@@ -651,7 +654,7 @@ public LeaderContentType ContentType { get; set; }</code></pre>
 
   <h3 id="ACadSharp_Entities_MultiLeader_ContextData" data-uid="ACadSharp.Entities.MultiLeader.ContextData">
   ContextData
-  <a class="header-action link-secondary" title="View source" href="https://github.com/DomCR/ACadSharp/blob/master/src/ACadSharp/Entities/MultiLeader.cs/#L96"><i class="bi bi-code-slash"></i></a>
+  <a class="header-action link-secondary" title="View source" href="https://github.com/DomCR/ACadSharp/blob/master/src/ACadSharp/Entities/MultiLeader.cs/#L171"><i class="bi bi-code-slash"></i></a>
   </h3>
 
   <div class="markdown level1 summary"><p>Gets the embedded <a class="xref" href="ACadSharp.Objects.MultiLeaderObjectContextData.html">MultiLeaderObjectContextData</a> object
@@ -697,7 +700,7 @@ contains the multileader content (block/text) and the leaders.</p>
 
   <h3 id="ACadSharp_Entities_MultiLeader_EnableAnnotationScale" data-uid="ACadSharp.Entities.MultiLeader.EnableAnnotationScale">
   EnableAnnotationScale
-  <a class="header-action link-secondary" title="View source" href="https://github.com/DomCR/ACadSharp/blob/master/src/ACadSharp/Entities/MultiLeader.cs/#L107"><i class="bi bi-code-slash"></i></a>
+  <a class="header-action link-secondary" title="View source" href="https://github.com/DomCR/ACadSharp/blob/master/src/ACadSharp/Entities/MultiLeader.cs/#L182"><i class="bi bi-code-slash"></i></a>
   </h3>
 
   <div class="markdown level1 summary"><p>Enable Annotation Scale</p>
@@ -730,7 +733,7 @@ public bool EnableAnnotationScale { get; set; }</code></pre>
 
   <h3 id="ACadSharp_Entities_MultiLeader_EnableDogleg" data-uid="ACadSharp.Entities.MultiLeader.EnableDogleg">
   EnableDogleg
-  <a class="header-action link-secondary" title="View source" href="https://github.com/DomCR/ACadSharp/blob/master/src/ACadSharp/Entities/MultiLeader.cs/#L117"><i class="bi bi-code-slash"></i></a>
+  <a class="header-action link-secondary" title="View source" href="https://github.com/DomCR/ACadSharp/blob/master/src/ACadSharp/Entities/MultiLeader.cs/#L192"><i class="bi bi-code-slash"></i></a>
   </h3>
 
   <div class="markdown level1 summary"><p>Gets or sets a value indicating that leader lines of this <a class="xref" href="ACadSharp.Entities.MultiLeader.html">MultiLeader</a>
@@ -767,7 +770,7 @@ public bool EnableDogleg { get; set; }</code></pre>
 
   <h3 id="ACadSharp_Entities_MultiLeader_EnableLanding" data-uid="ACadSharp.Entities.MultiLeader.EnableLanding">
   EnableLanding
-  <a class="header-action link-secondary" title="View source" href="https://github.com/DomCR/ACadSharp/blob/master/src/ACadSharp/Entities/MultiLeader.cs/#L126"><i class="bi bi-code-slash"></i></a>
+  <a class="header-action link-secondary" title="View source" href="https://github.com/DomCR/ACadSharp/blob/master/src/ACadSharp/Entities/MultiLeader.cs/#L201"><i class="bi bi-code-slash"></i></a>
   </h3>
 
   <div class="markdown level1 summary"><p>Gets or sets a value indicating whether landing is enabled.
@@ -803,7 +806,7 @@ public bool EnableLanding { get; set; }</code></pre>
 
   <h3 id="ACadSharp_Entities_MultiLeader_ExtendedToText" data-uid="ACadSharp.Entities.MultiLeader.ExtendedToText">
   ExtendedToText
-  <a class="header-action link-secondary" title="View source" href="https://github.com/DomCR/ACadSharp/blob/master/src/ACadSharp/Entities/MultiLeader.cs/#L132"><i class="bi bi-code-slash"></i></a>
+  <a class="header-action link-secondary" title="View source" href="https://github.com/DomCR/ACadSharp/blob/master/src/ACadSharp/Entities/MultiLeader.cs/#L207"><i class="bi bi-code-slash"></i></a>
   </h3>
 
   <div class="markdown level1 summary"><p>Leader extended to text</p>
@@ -836,7 +839,7 @@ public bool ExtendedToText { get; set; }</code></pre>
 
   <h3 id="ACadSharp_Entities_MultiLeader_LandingDistance" data-uid="ACadSharp.Entities.MultiLeader.LandingDistance">
   LandingDistance
-  <a class="header-action link-secondary" title="View source" href="https://github.com/DomCR/ACadSharp/blob/master/src/ACadSharp/Entities/MultiLeader.cs/#L148"><i class="bi bi-code-slash"></i></a>
+  <a class="header-action link-secondary" title="View source" href="https://github.com/DomCR/ACadSharp/blob/master/src/ACadSharp/Entities/MultiLeader.cs/#L223"><i class="bi bi-code-slash"></i></a>
   </h3>
 
   <div class="markdown level1 summary"><p>Gets or sets the landing distance, i.e. the length of the dogleg, for this <a class="xref" href="ACadSharp.Entities.MultiLeader.html">MultiLeader</a>.
@@ -880,7 +883,7 @@ public double LandingDistance { get; set; }</code></pre>
 
   <h3 id="ACadSharp_Entities_MultiLeader_LeaderLineType" data-uid="ACadSharp.Entities.MultiLeader.LeaderLineType">
   LeaderLineType
-  <a class="header-action link-secondary" title="View source" href="https://github.com/DomCR/ACadSharp/blob/master/src/ACadSharp/Entities/MultiLeader.cs/#L165"><i class="bi bi-code-slash"></i></a>
+  <a class="header-action link-secondary" title="View source" href="https://github.com/DomCR/ACadSharp/blob/master/src/ACadSharp/Entities/MultiLeader.cs/#L240"><i class="bi bi-code-slash"></i></a>
   </h3>
 
   <div class="markdown level1 summary"><p>Gets or sets <a class="xref" href="ACadSharp.Tables.LineType.html">LineType</a> of the leader lines of this <a class="xref" href="ACadSharp.Entities.MultiLeader.html">MultiLeader</a>
@@ -923,7 +926,7 @@ public LineType LeaderLineType { get; set; }</code></pre>
 
   <h3 id="ACadSharp_Entities_MultiLeader_LeaderLineWeight" data-uid="ACadSharp.Entities.MultiLeader.LeaderLineWeight">
   LeaderLineWeight
-  <a class="header-action link-secondary" title="View source" href="https://github.com/DomCR/ACadSharp/blob/master/src/ACadSharp/Entities/MultiLeader.cs/#L201"><i class="bi bi-code-slash"></i></a>
+  <a class="header-action link-secondary" title="View source" href="https://github.com/DomCR/ACadSharp/blob/master/src/ACadSharp/Entities/MultiLeader.cs/#L269"><i class="bi bi-code-slash"></i></a>
   </h3>
 
   <div class="markdown level1 summary"><p>Gets or sets a value specifying the line weight to be applied to all leader lines of this
@@ -966,7 +969,7 @@ public LineWeightType LeaderLineWeight { get; set; }</code></pre>
 
   <h3 id="ACadSharp_Entities_MultiLeader_LineColor" data-uid="ACadSharp.Entities.MultiLeader.LineColor">
   LineColor
-  <a class="header-action link-secondary" title="View source" href="https://github.com/DomCR/ACadSharp/blob/master/src/ACadSharp/Entities/MultiLeader.cs/#L217"><i class="bi bi-code-slash"></i></a>
+  <a class="header-action link-secondary" title="View source" href="https://github.com/DomCR/ACadSharp/blob/master/src/ACadSharp/Entities/MultiLeader.cs/#L285"><i class="bi bi-code-slash"></i></a>
   </h3>
 
   <div class="markdown level1 summary"><p>Gets or sets color of the leader lines of this <a class="xref" href="ACadSharp.Entities.MultiLeader.html">MultiLeader</a>
@@ -1009,7 +1012,7 @@ public Color LineColor { get; set; }</code></pre>
 
   <h3 id="ACadSharp_Entities_MultiLeader_ObjectName" data-uid="ACadSharp.Entities.MultiLeader.ObjectName">
   ObjectName
-  <a class="header-action link-secondary" title="View source" href="https://github.com/DomCR/ACadSharp/blob/master/src/ACadSharp/Entities/MultiLeader.cs/#L221"><i class="bi bi-code-slash"></i></a>
+  <a class="header-action link-secondary" title="View source" href="https://github.com/DomCR/ACadSharp/blob/master/src/ACadSharp/Entities/MultiLeader.cs/#L289"><i class="bi bi-code-slash"></i></a>
   </h3>
 
   <div class="markdown level1 summary"><p>The CAD class name of an object.</p>
@@ -1041,7 +1044,7 @@ public Color LineColor { get; set; }</code></pre>
 
   <h3 id="ACadSharp_Entities_MultiLeader_ObjectType" data-uid="ACadSharp.Entities.MultiLeader.ObjectType">
   ObjectType
-  <a class="header-action link-secondary" title="View source" href="https://github.com/DomCR/ACadSharp/blob/master/src/ACadSharp/Entities/MultiLeader.cs/#L224"><i class="bi bi-code-slash"></i></a>
+  <a class="header-action link-secondary" title="View source" href="https://github.com/DomCR/ACadSharp/blob/master/src/ACadSharp/Entities/MultiLeader.cs/#L292"><i class="bi bi-code-slash"></i></a>
   </h3>
 
   <div class="markdown level1 summary"><p>Get the object type.</p>
@@ -1073,7 +1076,7 @@ public Color LineColor { get; set; }</code></pre>
 
   <h3 id="ACadSharp_Entities_MultiLeader_PathType" data-uid="ACadSharp.Entities.MultiLeader.PathType">
   PathType
-  <a class="header-action link-secondary" title="View source" href="https://github.com/DomCR/ACadSharp/blob/master/src/ACadSharp/Entities/MultiLeader.cs/#L233"><i class="bi bi-code-slash"></i></a>
+  <a class="header-action link-secondary" title="View source" href="https://github.com/DomCR/ACadSharp/blob/master/src/ACadSharp/Entities/MultiLeader.cs/#L301"><i class="bi bi-code-slash"></i></a>
   </h3>
 
   <div class="markdown level1 summary"><p>Gets or sets a value indicating the path type of this <a class="xref" href="ACadSharp.Entities.MultiLeader.html">MultiLeader</a>
@@ -1110,7 +1113,7 @@ public MultiLeaderPathType PathType { get; set; }</code></pre>
 
   <h3 id="ACadSharp_Entities_MultiLeader_PropertyOverrideFlags" data-uid="ACadSharp.Entities.MultiLeader.PropertyOverrideFlags">
   PropertyOverrideFlags
-  <a class="header-action link-secondary" title="View source" href="https://github.com/DomCR/ACadSharp/blob/master/src/ACadSharp/Entities/MultiLeader.cs/#L242"><i class="bi bi-code-slash"></i></a>
+  <a class="header-action link-secondary" title="View source" href="https://github.com/DomCR/ACadSharp/blob/master/src/ACadSharp/Entities/MultiLeader.cs/#L310"><i class="bi bi-code-slash"></i></a>
   </h3>
 
   <div class="markdown level1 summary"><p>Gets or sets a value containing a list of flags indicating which multileader
@@ -1146,7 +1149,7 @@ public MultiLeaderPropertyOverrideFlags PropertyOverrideFlags { get; set; }</cod
 
   <h3 id="ACadSharp_Entities_MultiLeader_ScaleFactor" data-uid="ACadSharp.Entities.MultiLeader.ScaleFactor">
   ScaleFactor
-  <a class="header-action link-secondary" title="View source" href="https://github.com/DomCR/ACadSharp/blob/master/src/ACadSharp/Entities/MultiLeader.cs/#L257"><i class="bi bi-code-slash"></i></a>
+  <a class="header-action link-secondary" title="View source" href="https://github.com/DomCR/ACadSharp/blob/master/src/ACadSharp/Entities/MultiLeader.cs/#L325"><i class="bi bi-code-slash"></i></a>
   </h3>
 
   <div class="markdown level1 summary"><p>Gets or sets a scale factor (see <a class="xref" href="ACadSharp.Objects.MultiLeaderStyle.html#ACadSharp_Objects_MultiLeaderStyle_ScaleFactor">ScaleFactor</a>).
@@ -1188,7 +1191,7 @@ assumed to be relevant.</p>
 
   <h3 id="ACadSharp_Entities_MultiLeader_Style" data-uid="ACadSharp.Entities.MultiLeader.Style">
   Style
-  <a class="header-action link-secondary" title="View source" href="https://github.com/DomCR/ACadSharp/blob/master/src/ACadSharp/Entities/MultiLeader.cs/#L264"><i class="bi bi-code-slash"></i></a>
+  <a class="header-action link-secondary" title="View source" href="https://github.com/DomCR/ACadSharp/blob/master/src/ACadSharp/Entities/MultiLeader.cs/#L332"><i class="bi bi-code-slash"></i></a>
   </h3>
 
   <div class="markdown level1 summary"><p>Gets a <a class="xref" href="ACadSharp.Objects.MultiLeaderStyle.html">MultiLeaderStyle</a> providing reusable style information
@@ -1222,7 +1225,7 @@ public MultiLeaderStyle Style { get; set; }</code></pre>
 
   <h3 id="ACadSharp_Entities_MultiLeader_SubclassMarker" data-uid="ACadSharp.Entities.MultiLeader.SubclassMarker">
   SubclassMarker
-  <a class="header-action link-secondary" title="View source" href="https://github.com/DomCR/ACadSharp/blob/master/src/ACadSharp/Entities/MultiLeader.cs/#L287"><i class="bi bi-code-slash"></i></a>
+  <a class="header-action link-secondary" title="View source" href="https://github.com/DomCR/ACadSharp/blob/master/src/ACadSharp/Entities/MultiLeader.cs/#L348"><i class="bi bi-code-slash"></i></a>
   </h3>
 
   <div class="markdown level1 summary"><p>Object Subclass marker.</p>
@@ -1254,7 +1257,7 @@ public MultiLeaderStyle Style { get; set; }</code></pre>
 
   <h3 id="ACadSharp_Entities_MultiLeader_TextAligninIPE" data-uid="ACadSharp.Entities.MultiLeader.TextAligninIPE">
   TextAligninIPE
-  <a class="header-action link-secondary" title="View source" href="https://github.com/DomCR/ACadSharp/blob/master/src/ACadSharp/Entities/MultiLeader.cs/#L292"><i class="bi bi-code-slash"></i></a>
+  <a class="header-action link-secondary" title="View source" href="https://github.com/DomCR/ACadSharp/blob/master/src/ACadSharp/Entities/MultiLeader.cs/#L353"><i class="bi bi-code-slash"></i></a>
   </h3>
 
   <div class="markdown level1 summary"><p>Text Align in IPE (meaning unknown)</p>
@@ -1287,7 +1290,7 @@ public short TextAligninIPE { get; set; }</code></pre>
 
   <h3 id="ACadSharp_Entities_MultiLeader_TextAlignment" data-uid="ACadSharp.Entities.MultiLeader.TextAlignment">
   TextAlignment
-  <a class="header-action link-secondary" title="View source" href="https://github.com/DomCR/ACadSharp/blob/master/src/ACadSharp/Entities/MultiLeader.cs/#L422"><i class="bi bi-code-slash"></i></a>
+  <a class="header-action link-secondary" title="View source" href="https://github.com/DomCR/ACadSharp/blob/master/src/ACadSharp/Entities/MultiLeader.cs/#L369"><i class="bi bi-code-slash"></i></a>
   </h3>
 
   <div class="markdown level1 summary"><p>Gets or sets the text alignement type.</p>
@@ -1331,7 +1334,7 @@ public TextAlignmentType TextAlignment { get; set; }</code></pre>
 
   <h3 id="ACadSharp_Entities_MultiLeader_TextAngle" data-uid="ACadSharp.Entities.MultiLeader.TextAngle">
   TextAngle
-  <a class="header-action link-secondary" title="View source" href="https://github.com/DomCR/ACadSharp/blob/master/src/ACadSharp/Entities/MultiLeader.cs/#L432"><i class="bi bi-code-slash"></i></a>
+  <a class="header-action link-secondary" title="View source" href="https://github.com/DomCR/ACadSharp/blob/master/src/ACadSharp/Entities/MultiLeader.cs/#L379"><i class="bi bi-code-slash"></i></a>
   </h3>
 
   <div class="markdown level1 summary"><p>Gets or sets a value indicating the text angle.
@@ -1367,7 +1370,7 @@ public TextAngleType TextAngle { get; set; }</code></pre>
 
   <h3 id="ACadSharp_Entities_MultiLeader_TextAttachmentDirection" data-uid="ACadSharp.Entities.MultiLeader.TextAttachmentDirection">
   TextAttachmentDirection
-  <a class="header-action link-secondary" title="View source" href="https://github.com/DomCR/ACadSharp/blob/master/src/ACadSharp/Entities/MultiLeader.cs/#L328"><i class="bi bi-code-slash"></i></a>
+  <a class="header-action link-secondary" title="View source" href="https://github.com/DomCR/ACadSharp/blob/master/src/ACadSharp/Entities/MultiLeader.cs/#L415"><i class="bi bi-code-slash"></i></a>
   </h3>
 
   <div class="markdown level1 summary"><p>Gets or sets the Text attachment direction for text or block contents.
@@ -1415,7 +1418,7 @@ The value for all leader lines can be overridden for each individual leader line
 
   <h3 id="ACadSharp_Entities_MultiLeader_TextAttachmentPoint" data-uid="ACadSharp.Entities.MultiLeader.TextAttachmentPoint">
   TextAttachmentPoint
-  <a class="header-action link-secondary" title="View source" href="https://github.com/DomCR/ACadSharp/blob/master/src/ACadSharp/Entities/MultiLeader.cs/#L345"><i class="bi bi-code-slash"></i></a>
+  <a class="header-action link-secondary" title="View source" href="https://github.com/DomCR/ACadSharp/blob/master/src/ACadSharp/Entities/MultiLeader.cs/#L432"><i class="bi bi-code-slash"></i></a>
   </h3>
 
   <div class="markdown level1 summary"><p>Gets or sets a value indicating the text attachment point.</p>
@@ -1460,7 +1463,7 @@ public TextAttachmentPointType TextAttachmentPoint { get; set; }</code></pre>
 
   <h3 id="ACadSharp_Entities_MultiLeader_TextBottomAttachment" data-uid="ACadSharp.Entities.MultiLeader.TextBottomAttachment">
   TextBottomAttachment
-  <a class="header-action link-secondary" title="View source" href="https://github.com/DomCR/ACadSharp/blob/master/src/ACadSharp/Entities/MultiLeader.cs/#L365"><i class="bi bi-code-slash"></i></a>
+  <a class="header-action link-secondary" title="View source" href="https://github.com/DomCR/ACadSharp/blob/master/src/ACadSharp/Entities/MultiLeader.cs/#L452"><i class="bi bi-code-slash"></i></a>
   </h3>
 
   <div class="markdown level1 summary"><p>Gets or sets the text bottom attachment type (see <a class="xref" href="ACadSharp.Objects.MultiLeaderStyle.html#ACadSharp_Objects_MultiLeaderStyle_TextBottomAttachment">TextBottomAttachment</a>).
@@ -1505,7 +1508,7 @@ assumed to be used.</p>
 
   <h3 id="ACadSharp_Entities_MultiLeader_TextColor" data-uid="ACadSharp.Entities.MultiLeader.TextColor">
   TextColor
-  <a class="header-action link-secondary" title="View source" href="https://github.com/DomCR/ACadSharp/blob/master/src/ACadSharp/Entities/MultiLeader.cs/#L446"><i class="bi bi-code-slash"></i></a>
+  <a class="header-action link-secondary" title="View source" href="https://github.com/DomCR/ACadSharp/blob/master/src/ACadSharp/Entities/MultiLeader.cs/#L466"><i class="bi bi-code-slash"></i></a>
   </h3>
 
   <div class="markdown level1 summary"><p>Gets or sets the color for the display of the text label.
@@ -1546,7 +1549,7 @@ assumed to be used.</p>
 
   <h3 id="ACadSharp_Entities_MultiLeader_TextDirectionNegative" data-uid="ACadSharp.Entities.MultiLeader.TextDirectionNegative">
   TextDirectionNegative
-  <a class="header-action link-secondary" title="View source" href="https://github.com/DomCR/ACadSharp/blob/master/src/ACadSharp/Entities/MultiLeader.cs/#L372"><i class="bi bi-code-slash"></i></a>
+  <a class="header-action link-secondary" title="View source" href="https://github.com/DomCR/ACadSharp/blob/master/src/ACadSharp/Entities/MultiLeader.cs/#L473"><i class="bi bi-code-slash"></i></a>
   </h3>
 
   <div class="markdown level1 summary"><p>Text Direction Negative</p>
@@ -1579,7 +1582,7 @@ public bool TextDirectionNegative { get; set; }</code></pre>
 
   <h3 id="ACadSharp_Entities_MultiLeader_TextFrame" data-uid="ACadSharp.Entities.MultiLeader.TextFrame">
   TextFrame
-  <a class="header-action link-secondary" title="View source" href="https://github.com/DomCR/ACadSharp/blob/master/src/ACadSharp/Entities/MultiLeader.cs/#L455"><i class="bi bi-code-slash"></i></a>
+  <a class="header-action link-secondary" title="View source" href="https://github.com/DomCR/ACadSharp/blob/master/src/ACadSharp/Entities/MultiLeader.cs/#L482"><i class="bi bi-code-slash"></i></a>
   </h3>
 
   <div class="markdown level1 summary"><p>Gets or sets a value indicating that the text label is to be drawn with a frame.
@@ -1615,7 +1618,7 @@ public bool TextFrame { get; set; }</code></pre>
 
   <h3 id="ACadSharp_Entities_MultiLeader_TextLeftAttachment" data-uid="ACadSharp.Entities.MultiLeader.TextLeftAttachment">
   TextLeftAttachment
-  <a class="header-action link-secondary" title="View source" href="https://github.com/DomCR/ACadSharp/blob/master/src/ACadSharp/Entities/MultiLeader.cs/#L473"><i class="bi bi-code-slash"></i></a>
+  <a class="header-action link-secondary" title="View source" href="https://github.com/DomCR/ACadSharp/blob/master/src/ACadSharp/Entities/MultiLeader.cs/#L500"><i class="bi bi-code-slash"></i></a>
   </h3>
 
   <div class="markdown level1 summary"><p>Gets or sets the text left attachment type (see <a class="xref" href="ACadSharp.Objects.MultiLeaderStyle.html#ACadSharp_Objects_MultiLeaderStyle_TextLeftAttachment">TextLeftAttachment</a>).
@@ -1658,7 +1661,7 @@ assumed to be used.</p>
 
   <h3 id="ACadSharp_Entities_MultiLeader_TextRightAttachment" data-uid="ACadSharp.Entities.MultiLeader.TextRightAttachment">
   TextRightAttachment
-  <a class="header-action link-secondary" title="View source" href="https://github.com/DomCR/ACadSharp/blob/master/src/ACadSharp/Entities/MultiLeader.cs/#L491"><i class="bi bi-code-slash"></i></a>
+  <a class="header-action link-secondary" title="View source" href="https://github.com/DomCR/ACadSharp/blob/master/src/ACadSharp/Entities/MultiLeader.cs/#L518"><i class="bi bi-code-slash"></i></a>
   </h3>
 
   <div class="markdown level1 summary"><p>Gets or sets the text right attachment type (see <a class="xref" href="ACadSharp.Objects.MultiLeaderStyle.html#ACadSharp_Objects_MultiLeaderStyle_TextRightAttachment">TextRightAttachment</a>).
@@ -1701,7 +1704,7 @@ assumed to be used.</p>
 
   <h3 id="ACadSharp_Entities_MultiLeader_TextStyle" data-uid="ACadSharp.Entities.MultiLeader.TextStyle">
   TextStyle
-  <a class="header-action link-secondary" title="View source" href="https://github.com/DomCR/ACadSharp/blob/master/src/ACadSharp/Entities/MultiLeader.cs/#L507"><i class="bi bi-code-slash"></i></a>
+  <a class="header-action link-secondary" title="View source" href="https://github.com/DomCR/ACadSharp/blob/master/src/ACadSharp/Entities/MultiLeader.cs/#L534"><i class="bi bi-code-slash"></i></a>
   </h3>
 
   <div class="markdown level1 summary"><p>Gets or sets the <a class="xref" href="ACadSharp.Entities.MultiLeader.html#ACadSharp_Entities_MultiLeader_TextStyle">TextStyle</a> to be used to display the text label of this
@@ -1744,7 +1747,7 @@ is assumed to be used.</p>
 
   <h3 id="ACadSharp_Entities_MultiLeader_TextTopAttachment" data-uid="ACadSharp.Entities.MultiLeader.TextTopAttachment">
   TextTopAttachment
-  <a class="header-action link-secondary" title="View source" href="https://github.com/DomCR/ACadSharp/blob/master/src/ACadSharp/Entities/MultiLeader.cs/#L392"><i class="bi bi-code-slash"></i></a>
+  <a class="header-action link-secondary" title="View source" href="https://github.com/DomCR/ACadSharp/blob/master/src/ACadSharp/Entities/MultiLeader.cs/#L566"><i class="bi bi-code-slash"></i></a>
   </h3>
 
   <div class="markdown level1 summary"><p>Gets or sets the text top attachment type (see <a class="xref" href="ACadSharp.Objects.MultiLeaderStyle.html#ACadSharp_Objects_MultiLeaderStyle_TextTopAttachment">TextTopAttachment</a>).
@@ -1793,7 +1796,7 @@ assumed to be used.</p>
 
   <h3 id="ACadSharp_Entities_MultiLeader_ApplyTransform_CSMath_Transform_" data-uid="ACadSharp.Entities.MultiLeader.ApplyTransform(CSMath.Transform)">
   ApplyTransform(Transform)
-  <a class="header-action link-secondary" title="View source" href="https://github.com/DomCR/ACadSharp/blob/master/src/ACadSharp/Entities/MultiLeader.cs/#L611"><i class="bi bi-code-slash"></i></a>
+  <a class="header-action link-secondary" title="View source" href="https://github.com/DomCR/ACadSharp/blob/master/src/ACadSharp/Entities/MultiLeader.cs/#L582"><i class="bi bi-code-slash"></i></a>
   </h3>
 
   <div class="markdown level1 summary"><p>Apply a transform matrix to this entity.</p>
@@ -1825,7 +1828,7 @@ assumed to be used.</p>
 
   <h3 id="ACadSharp_Entities_MultiLeader_Clone" data-uid="ACadSharp.Entities.MultiLeader.Clone">
   Clone()
-  <a class="header-action link-secondary" title="View source" href="https://github.com/DomCR/ACadSharp/blob/master/src/ACadSharp/Entities/MultiLeader.cs/#L616"><i class="bi bi-code-slash"></i></a>
+  <a class="header-action link-secondary" title="View source" href="https://github.com/DomCR/ACadSharp/blob/master/src/ACadSharp/Entities/MultiLeader.cs/#L587"><i class="bi bi-code-slash"></i></a>
   </h3>
 
   <div class="markdown level1 summary"><p>Creates a new object that is a copy of the current instance.</p>
@@ -1861,7 +1864,7 @@ assumed to be used.</p>
 
   <h3 id="ACadSharp_Entities_MultiLeader_GetBoundingBox" data-uid="ACadSharp.Entities.MultiLeader.GetBoundingBox">
   GetBoundingBox()
-  <a class="header-action link-secondary" title="View source" href="https://github.com/DomCR/ACadSharp/blob/master/src/ACadSharp/Entities/MultiLeader.cs/#L638"><i class="bi bi-code-slash"></i></a>
+  <a class="header-action link-secondary" title="View source" href="https://github.com/DomCR/ACadSharp/blob/master/src/ACadSharp/Entities/MultiLeader.cs/#L609"><i class="bi bi-code-slash"></i></a>
   </h3>
 
   <div class="markdown level1 summary"><p>Gets the bounding box aligned with the axis XYZ that occupies this entity.</p>
@@ -1894,7 +1897,7 @@ assumed to be used.</p>
 
   <h3 id="ACadSharp_Entities_MultiLeader_GetDxfClass" data-uid="ACadSharp.Entities.MultiLeader.GetDxfClass">
   GetDxfClass()
-  <a class="header-action link-secondary" title="View source" href="https://github.com/DomCR/ACadSharp/blob/master/src/ACadSharp/Entities/MultiLeader.cs/#L644"><i class="bi bi-code-slash"></i></a>
+  <a class="header-action link-secondary" title="View source" href="https://github.com/DomCR/ACadSharp/blob/master/src/ACadSharp/Entities/MultiLeader.cs/#L615"><i class="bi bi-code-slash"></i></a>
   </h3>
 
   <div class="markdown level1 summary"><p>Gets the <a class="xref" href="ACadSharp.Classes.DxfClass.html">DxfClass</a> instance associated with this class.</p>
@@ -1912,39 +1915,6 @@ assumed to be used.</p>
     <dd><p>The <a class="xref" href="ACadSharp.Classes.DxfClass.html">DxfClass</a> instance associated with this class.</p>
 </dd>
   </dl>
-
-
-
-
-
-
-
-
-
-
-
-  <a id="ACadSharp_Entities_MultiLeader_tableOnRemove_" data-uid="ACadSharp.Entities.MultiLeader.tableOnRemove*"></a>
-
-  <h3 id="ACadSharp_Entities_MultiLeader_tableOnRemove_System_Object_ACadSharp_CollectionChangedEventArgs_" data-uid="ACadSharp.Entities.MultiLeader.tableOnRemove(System.Object,ACadSharp.CollectionChangedEventArgs)">
-  tableOnRemove(object, CollectionChangedEventArgs)
-  <a class="header-action link-secondary" title="View source" href="https://github.com/DomCR/ACadSharp/blob/master/src/ACadSharp/Entities/MultiLeader.cs/#L694"><i class="bi bi-code-slash"></i></a>
-  </h3>
-
-  <div class="markdown level1 summary"></div>
-  <div class="markdown level1 conceptual"></div>
-
-  <div class="codewrapper">
-    <pre><code class="lang-csharp hljs">protected override void tableOnRemove(object sender, CollectionChangedEventArgs e)</code></pre>
-  </div>
-
-  <h4 class="section">Parameters</h4>
-  <dl class="parameters">
-    <dt><code>sender</code> <a class="xref" href="https://learn.microsoft.com/dotnet/api/system.object">object</a></dt>
-    <dd></dd>
-    <dt><code>e</code> <a class="xref" href="ACadSharp.CollectionChangedEventArgs.html">CollectionChangedEventArgs</a></dt>
-    <dd></dd>
-  </dl>
-
 
 
 

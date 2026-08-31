@@ -7232,7 +7232,7 @@
       "Uid": null,
       "IsMRef": true,
       "Title": "ACadSharp.Tables.Collections.AppIdsTable",
-      "Summary": null
+      "Summary": "<p sourcefile=\"api/ACadSharp.Tables.Collections.AppIdsTable.yml\" sourcestartlinenumber=\"1\">Represents a collection of <xref href=\"ACadSharp.Tables.AppId\" data-throw-if-not-resolved=\"false\"></xref> entries.</p>\n"
     },
     {
       "type": "ManagedReference",
@@ -7246,7 +7246,7 @@
       "Uid": null,
       "IsMRef": true,
       "Title": "ACadSharp.Tables.Collections.BlockRecordsTable",
-      "Summary": null
+      "Summary": "<p sourcefile=\"api/ACadSharp.Tables.Collections.BlockRecordsTable.yml\" sourcestartlinenumber=\"1\">Represents a collection of <xref href=\"ACadSharp.Tables.BlockRecord\" data-throw-if-not-resolved=\"false\"></xref> entries.</p>\n"
     },
     {
       "type": "ManagedReference",
@@ -7260,7 +7260,7 @@
       "Uid": null,
       "IsMRef": true,
       "Title": "ACadSharp.Tables.Collections.DimensionStylesTable",
-      "Summary": null
+      "Summary": "<p sourcefile=\"api/ACadSharp.Tables.Collections.DimensionStylesTable.yml\" sourcestartlinenumber=\"1\">Represents a collection of <xref href=\"ACadSharp.Tables.DimensionStyle\" data-throw-if-not-resolved=\"false\"></xref> entries.</p>\n"
     },
     {
       "type": "ManagedReference",
@@ -7288,7 +7288,7 @@
       "Uid": null,
       "IsMRef": true,
       "Title": "ACadSharp.Tables.Collections.LayersTable",
-      "Summary": null
+      "Summary": "<p sourcefile=\"api/ACadSharp.Tables.Collections.LayersTable.yml\" sourcestartlinenumber=\"1\">Represents a collection of <xref href=\"ACadSharp.Tables.Layer\" data-throw-if-not-resolved=\"false\"></xref> entries.</p>\n"
     },
     {
       "type": "ManagedReference",
@@ -7302,7 +7302,7 @@
       "Uid": null,
       "IsMRef": true,
       "Title": "ACadSharp.Tables.Collections.LineTypesTable",
-      "Summary": null
+      "Summary": "<p sourcefile=\"api/ACadSharp.Tables.Collections.LineTypesTable.yml\" sourcestartlinenumber=\"1\">Represents a collection of <xref href=\"ACadSharp.Tables.LineType\" data-throw-if-not-resolved=\"false\"></xref> entries.</p>\n"
     },
     {
       "type": "ManagedReference",
@@ -7330,7 +7330,7 @@
       "Uid": null,
       "IsMRef": true,
       "Title": "ACadSharp.Tables.Collections.TextStylesTable",
-      "Summary": null
+      "Summary": "<p sourcefile=\"api/ACadSharp.Tables.Collections.TextStylesTable.yml\" sourcestartlinenumber=\"1\">Represents a collection of <xref href=\"ACadSharp.Tables.TextStyle\" data-throw-if-not-resolved=\"false\"></xref> entries.</p>\n"
     },
     {
       "type": "ManagedReference",
@@ -7344,7 +7344,7 @@
       "Uid": null,
       "IsMRef": true,
       "Title": "ACadSharp.Tables.Collections.UCSTable",
-      "Summary": null
+      "Summary": "<p sourcefile=\"api/ACadSharp.Tables.Collections.UCSTable.yml\" sourcestartlinenumber=\"1\">Represents a collection of <xref href=\"ACadSharp.Tables.UCS\" data-throw-if-not-resolved=\"false\"></xref> entries.</p>\n"
     },
     {
       "type": "ManagedReference",
@@ -7358,7 +7358,7 @@
       "Uid": null,
       "IsMRef": true,
       "Title": "ACadSharp.Tables.Collections.VPortsTable",
-      "Summary": null
+      "Summary": "<p sourcefile=\"api/ACadSharp.Tables.Collections.VPortsTable.yml\" sourcestartlinenumber=\"1\">Represents a collection of <xref href=\"ACadSharp.Tables.VPort\" data-throw-if-not-resolved=\"false\"></xref> entries.</p>\n"
     },
     {
       "type": "ManagedReference",
@@ -7372,7 +7372,7 @@
       "Uid": null,
       "IsMRef": true,
       "Title": "ACadSharp.Tables.Collections.ViewsTable",
-      "Summary": null
+      "Summary": "<p sourcefile=\"api/ACadSharp.Tables.Collections.ViewsTable.yml\" sourcestartlinenumber=\"1\">Represents a collection of <xref href=\"ACadSharp.Tables.View\" data-throw-if-not-resolved=\"false\"></xref> entries.</p>\n"
     },
     {
       "type": "ManagedReference",

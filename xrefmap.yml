@@ -2063,22 +2063,38 @@ references:
   isSpec: "True"
   fullName: ACadSharp.CadObject.XDictionary
   nameWithType: CadObject.XDictionary
-- uid: ACadSharp.CadObject.updateCollection*
-  name: updateCollection
-  href: api/ACadSharp.CadObject.html#ACadSharp_CadObject_updateCollection_
-  commentId: Overload:ACadSharp.CadObject.updateCollection
+- uid: ACadSharp.CadObject.updateCollectionEntry*
+  name: updateCollectionEntry
+  href: api/ACadSharp.CadObject.html#ACadSharp_CadObject_updateCollectionEntry_
+  commentId: Overload:ACadSharp.CadObject.updateCollectionEntry
   isSpec: "True"
-  fullName: ACadSharp.CadObject.updateCollection
-  nameWithType: CadObject.updateCollection
-- uid: ACadSharp.CadObject.updateCollection``1(``0,ACadSharp.ICadCollection{``0})
-  name: updateCollection<T>(T, ICadCollection<T>)
-  href: api/ACadSharp.CadObject.html#ACadSharp_CadObject_updateCollection__1___0_ACadSharp_ICadCollection___0__
-  commentId: M:ACadSharp.CadObject.updateCollection``1(``0,ACadSharp.ICadCollection{``0})
-  name.vb: updateCollection(Of T)(T, ICadCollection(Of T))
-  fullName: ACadSharp.CadObject.updateCollection<T>(T, ACadSharp.ICadCollection<T>)
-  fullName.vb: ACadSharp.CadObject.updateCollection(Of T)(T, ACadSharp.ICadCollection(Of T))
-  nameWithType: CadObject.updateCollection<T>(T, ICadCollection<T>)
-  nameWithType.vb: CadObject.updateCollection(Of T)(T, ICadCollection(Of T))
+  fullName: ACadSharp.CadObject.updateCollectionEntry
+  nameWithType: CadObject.updateCollectionEntry
+- uid: ACadSharp.CadObject.updateCollectionEntry``1(``0,System.Action{``0},ACadSharp.Objects.Collections.ObjectDictionaryCollection{``0})
+  name: updateCollectionEntry<T>(T, Action<T>, ObjectDictionaryCollection<T>)
+  href: api/ACadSharp.CadObject.html#ACadSharp_CadObject_updateCollectionEntry__1___0_System_Action___0__ACadSharp_Objects_Collections_ObjectDictionaryCollection___0__
+  commentId: M:ACadSharp.CadObject.updateCollectionEntry``1(``0,System.Action{``0},ACadSharp.Objects.Collections.ObjectDictionaryCollection{``0})
+  name.vb: updateCollectionEntry(Of T)(T, Action(Of T), ObjectDictionaryCollection(Of T))
+  fullName: ACadSharp.CadObject.updateCollectionEntry<T>(T, System.Action<T>, ACadSharp.Objects.Collections.ObjectDictionaryCollection<T>)
+  fullName.vb: ACadSharp.CadObject.updateCollectionEntry(Of T)(T, System.Action(Of T), ACadSharp.Objects.Collections.ObjectDictionaryCollection(Of T))
+  nameWithType: CadObject.updateCollectionEntry<T>(T, Action<T>, ObjectDictionaryCollection<T>)
+  nameWithType.vb: CadObject.updateCollectionEntry(Of T)(T, Action(Of T), ObjectDictionaryCollection(Of T))
+- uid: ACadSharp.CadObject.updateTableEntry*
+  name: updateTableEntry
+  href: api/ACadSharp.CadObject.html#ACadSharp_CadObject_updateTableEntry_
+  commentId: Overload:ACadSharp.CadObject.updateTableEntry
+  isSpec: "True"
+  fullName: ACadSharp.CadObject.updateTableEntry
+  nameWithType: CadObject.updateTableEntry
+- uid: ACadSharp.CadObject.updateTableEntry``1(``0,System.Action{``0},ACadSharp.Tables.Collections.Table{``0})
+  name: updateTableEntry<T>(T, Action<T>, Table<T>)
+  href: api/ACadSharp.CadObject.html#ACadSharp_CadObject_updateTableEntry__1___0_System_Action___0__ACadSharp_Tables_Collections_Table___0__
+  commentId: M:ACadSharp.CadObject.updateTableEntry``1(``0,System.Action{``0},ACadSharp.Tables.Collections.Table{``0})
+  name.vb: updateTableEntry(Of T)(T, Action(Of T), Table(Of T))
+  fullName: ACadSharp.CadObject.updateTableEntry<T>(T, System.Action<T>, ACadSharp.Tables.Collections.Table<T>)
+  fullName.vb: ACadSharp.CadObject.updateTableEntry(Of T)(T, System.Action(Of T), ACadSharp.Tables.Collections.Table(Of T))
+  nameWithType: CadObject.updateTableEntry<T>(T, Action<T>, Table<T>)
+  nameWithType.vb: CadObject.updateTableEntry(Of T)(T, Action(Of T), Table(Of T))
 - uid: ACadSharp.CadObjectCollection`1
   name: CadObjectCollection<T>
   href: api/ACadSharp.CadObjectCollection-1.html
@@ -2253,6 +2269,15 @@ references:
   fullName.vb: ACadSharp.CadObjectCollection(Of T).Owner
   nameWithType: CadObjectCollection<T>.Owner
   nameWithType.vb: CadObjectCollection(Of T).Owner
+- uid: ACadSharp.CadObjectCollection`1.Remove(System.Collections.Generic.IEnumerable{`0})
+  name: Remove(IEnumerable<T>)
+  href: api/ACadSharp.CadObjectCollection-1.html#ACadSharp_CadObjectCollection_1_Remove_System_Collections_Generic_IEnumerable__0__
+  commentId: M:ACadSharp.CadObjectCollection`1.Remove(System.Collections.Generic.IEnumerable{`0})
+  name.vb: Remove(IEnumerable(Of T))
+  fullName: ACadSharp.CadObjectCollection<T>.Remove(System.Collections.Generic.IEnumerable<T>)
+  fullName.vb: ACadSharp.CadObjectCollection(Of T).Remove(System.Collections.Generic.IEnumerable(Of T))
+  nameWithType: CadObjectCollection<T>.Remove(IEnumerable<T>)
+  nameWithType.vb: CadObjectCollection(Of T).Remove(IEnumerable(Of T))
 - uid: ACadSharp.CadObjectCollection`1.Remove(`0)
   name: Remove(T)
   href: api/ACadSharp.CadObjectCollection-1.html#ACadSharp_CadObjectCollection_1_Remove__0_
@@ -9407,22 +9432,6 @@ references:
   isSpec: "True"
   fullName: ACadSharp.Entities.Dimension.extensionLine
   nameWithType: Dimension.extensionLine
-- uid: ACadSharp.Entities.Dimension.tableOnRemove(System.Object,ACadSharp.CollectionChangedEventArgs)
-  name: tableOnRemove(object, CollectionChangedEventArgs)
-  href: api/ACadSharp.Entities.Dimension.html#ACadSharp_Entities_Dimension_tableOnRemove_System_Object_ACadSharp_CollectionChangedEventArgs_
-  commentId: M:ACadSharp.Entities.Dimension.tableOnRemove(System.Object,ACadSharp.CollectionChangedEventArgs)
-  name.vb: tableOnRemove(Object, CollectionChangedEventArgs)
-  fullName: ACadSharp.Entities.Dimension.tableOnRemove(object, ACadSharp.CollectionChangedEventArgs)
-  fullName.vb: ACadSharp.Entities.Dimension.tableOnRemove(Object, ACadSharp.CollectionChangedEventArgs)
-  nameWithType: Dimension.tableOnRemove(object, CollectionChangedEventArgs)
-  nameWithType.vb: Dimension.tableOnRemove(Object, CollectionChangedEventArgs)
-- uid: ACadSharp.Entities.Dimension.tableOnRemove*
-  name: tableOnRemove
-  href: api/ACadSharp.Entities.Dimension.html#ACadSharp_Entities_Dimension_tableOnRemove_
-  commentId: Overload:ACadSharp.Entities.Dimension.tableOnRemove
-  isSpec: "True"
-  fullName: ACadSharp.Entities.Dimension.tableOnRemove
-  nameWithType: Dimension.tableOnRemove
 - uid: ACadSharp.Entities.DimensionAligned
   name: DimensionAligned
   href: api/ACadSharp.Entities.DimensionAligned.html
@@ -11517,22 +11526,6 @@ references:
   isSpec: "True"
   fullName: ACadSharp.Entities.Entity.getWorldMatrix
   nameWithType: Entity.getWorldMatrix
-- uid: ACadSharp.Entities.Entity.tableOnRemove(System.Object,ACadSharp.CollectionChangedEventArgs)
-  name: tableOnRemove(object, CollectionChangedEventArgs)
-  href: api/ACadSharp.Entities.Entity.html#ACadSharp_Entities_Entity_tableOnRemove_System_Object_ACadSharp_CollectionChangedEventArgs_
-  commentId: M:ACadSharp.Entities.Entity.tableOnRemove(System.Object,ACadSharp.CollectionChangedEventArgs)
-  name.vb: tableOnRemove(Object, CollectionChangedEventArgs)
-  fullName: ACadSharp.Entities.Entity.tableOnRemove(object, ACadSharp.CollectionChangedEventArgs)
-  fullName.vb: ACadSharp.Entities.Entity.tableOnRemove(Object, ACadSharp.CollectionChangedEventArgs)
-  nameWithType: Entity.tableOnRemove(object, CollectionChangedEventArgs)
-  nameWithType.vb: Entity.tableOnRemove(Object, CollectionChangedEventArgs)
-- uid: ACadSharp.Entities.Entity.tableOnRemove*
-  name: tableOnRemove
-  href: api/ACadSharp.Entities.Entity.html#ACadSharp_Entities_Entity_tableOnRemove_
-  commentId: Overload:ACadSharp.Entities.Entity.tableOnRemove
-  isSpec: "True"
-  fullName: ACadSharp.Entities.Entity.tableOnRemove
-  nameWithType: Entity.tableOnRemove
 - uid: ACadSharp.Entities.Entity.transformNormal(CSMath.Transform,CSMath.XYZ)
   name: transformNormal(Transform, XYZ)
   href: api/ACadSharp.Entities.Entity.html#ACadSharp_Entities_Entity_transformNormal_CSMath_Transform_CSMath_XYZ_
@@ -14953,22 +14946,6 @@ references:
   isSpec: "True"
   fullName: ACadSharp.Entities.Leader.Vertices
   nameWithType: Leader.Vertices
-- uid: ACadSharp.Entities.Leader.tableOnRemove(System.Object,ACadSharp.CollectionChangedEventArgs)
-  name: tableOnRemove(object, CollectionChangedEventArgs)
-  href: api/ACadSharp.Entities.Leader.html#ACadSharp_Entities_Leader_tableOnRemove_System_Object_ACadSharp_CollectionChangedEventArgs_
-  commentId: M:ACadSharp.Entities.Leader.tableOnRemove(System.Object,ACadSharp.CollectionChangedEventArgs)
-  name.vb: tableOnRemove(Object, CollectionChangedEventArgs)
-  fullName: ACadSharp.Entities.Leader.tableOnRemove(object, ACadSharp.CollectionChangedEventArgs)
-  fullName.vb: ACadSharp.Entities.Leader.tableOnRemove(Object, ACadSharp.CollectionChangedEventArgs)
-  nameWithType: Leader.tableOnRemove(object, CollectionChangedEventArgs)
-  nameWithType.vb: Leader.tableOnRemove(Object, CollectionChangedEventArgs)
-- uid: ACadSharp.Entities.Leader.tableOnRemove*
-  name: tableOnRemove
-  href: api/ACadSharp.Entities.Leader.html#ACadSharp_Entities_Leader_tableOnRemove_
-  commentId: Overload:ACadSharp.Entities.Leader.tableOnRemove
-  isSpec: "True"
-  fullName: ACadSharp.Entities.Leader.tableOnRemove
-  nameWithType: Leader.tableOnRemove
 - uid: ACadSharp.Entities.LeaderCreationType
   name: LeaderCreationType
   href: api/ACadSharp.Entities.LeaderCreationType.html
@@ -16536,22 +16513,6 @@ references:
   isSpec: "True"
   fullName: ACadSharp.Entities.MText.VerticalHeight
   nameWithType: MText.VerticalHeight
-- uid: ACadSharp.Entities.MText.tableOnRemove(System.Object,ACadSharp.CollectionChangedEventArgs)
-  name: tableOnRemove(object, CollectionChangedEventArgs)
-  href: api/ACadSharp.Entities.MText.html#ACadSharp_Entities_MText_tableOnRemove_System_Object_ACadSharp_CollectionChangedEventArgs_
-  commentId: M:ACadSharp.Entities.MText.tableOnRemove(System.Object,ACadSharp.CollectionChangedEventArgs)
-  name.vb: tableOnRemove(Object, CollectionChangedEventArgs)
-  fullName: ACadSharp.Entities.MText.tableOnRemove(object, ACadSharp.CollectionChangedEventArgs)
-  fullName.vb: ACadSharp.Entities.MText.tableOnRemove(Object, ACadSharp.CollectionChangedEventArgs)
-  nameWithType: MText.tableOnRemove(object, CollectionChangedEventArgs)
-  nameWithType.vb: MText.tableOnRemove(Object, CollectionChangedEventArgs)
-- uid: ACadSharp.Entities.MText.tableOnRemove*
-  name: tableOnRemove
-  href: api/ACadSharp.Entities.MText.html#ACadSharp_Entities_MText_tableOnRemove_
-  commentId: Overload:ACadSharp.Entities.MText.tableOnRemove
-  isSpec: "True"
-  fullName: ACadSharp.Entities.MText.tableOnRemove
-  nameWithType: MText.tableOnRemove
 - uid: ACadSharp.Entities.Mechanical
   name: ACadSharp.Entities.Mechanical
   href: api/ACadSharp.Entities.Mechanical.html
@@ -18112,22 +18073,6 @@ references:
   isSpec: "True"
   fullName: ACadSharp.Entities.MultiLeader.TextTopAttachment
   nameWithType: MultiLeader.TextTopAttachment
-- uid: ACadSharp.Entities.MultiLeader.tableOnRemove(System.Object,ACadSharp.CollectionChangedEventArgs)
-  name: tableOnRemove(object, CollectionChangedEventArgs)
-  href: api/ACadSharp.Entities.MultiLeader.html#ACadSharp_Entities_MultiLeader_tableOnRemove_System_Object_ACadSharp_CollectionChangedEventArgs_
-  commentId: M:ACadSharp.Entities.MultiLeader.tableOnRemove(System.Object,ACadSharp.CollectionChangedEventArgs)
-  name.vb: tableOnRemove(Object, CollectionChangedEventArgs)
-  fullName: ACadSharp.Entities.MultiLeader.tableOnRemove(object, ACadSharp.CollectionChangedEventArgs)
-  fullName.vb: ACadSharp.Entities.MultiLeader.tableOnRemove(Object, ACadSharp.CollectionChangedEventArgs)
-  nameWithType: MultiLeader.tableOnRemove(object, CollectionChangedEventArgs)
-  nameWithType.vb: MultiLeader.tableOnRemove(Object, CollectionChangedEventArgs)
-- uid: ACadSharp.Entities.MultiLeader.tableOnRemove*
-  name: tableOnRemove
-  href: api/ACadSharp.Entities.MultiLeader.html#ACadSharp_Entities_MultiLeader_tableOnRemove_
-  commentId: Overload:ACadSharp.Entities.MultiLeader.tableOnRemove
-  isSpec: "True"
-  fullName: ACadSharp.Entities.MultiLeader.tableOnRemove
-  nameWithType: MultiLeader.tableOnRemove
 - uid: ACadSharp.Entities.MultiLeaderPropertyOverrideFlags
   name: MultiLeaderPropertyOverrideFlags
   href: api/ACadSharp.Entities.MultiLeaderPropertyOverrideFlags.html
@@ -25484,22 +25429,6 @@ references:
   isSpec: "True"
   fullName: ACadSharp.Entities.TextEntity.WidthFactor
   nameWithType: TextEntity.WidthFactor
-- uid: ACadSharp.Entities.TextEntity.tableOnRemove(System.Object,ACadSharp.CollectionChangedEventArgs)
-  name: tableOnRemove(object, CollectionChangedEventArgs)
-  href: api/ACadSharp.Entities.TextEntity.html#ACadSharp_Entities_TextEntity_tableOnRemove_System_Object_ACadSharp_CollectionChangedEventArgs_
-  commentId: M:ACadSharp.Entities.TextEntity.tableOnRemove(System.Object,ACadSharp.CollectionChangedEventArgs)
-  name.vb: tableOnRemove(Object, CollectionChangedEventArgs)
-  fullName: ACadSharp.Entities.TextEntity.tableOnRemove(object, ACadSharp.CollectionChangedEventArgs)
-  fullName.vb: ACadSharp.Entities.TextEntity.tableOnRemove(Object, ACadSharp.CollectionChangedEventArgs)
-  nameWithType: TextEntity.tableOnRemove(object, CollectionChangedEventArgs)
-  nameWithType.vb: TextEntity.tableOnRemove(Object, CollectionChangedEventArgs)
-- uid: ACadSharp.Entities.TextEntity.tableOnRemove*
-  name: tableOnRemove
-  href: api/ACadSharp.Entities.TextEntity.html#ACadSharp_Entities_TextEntity_tableOnRemove_
-  commentId: Overload:ACadSharp.Entities.TextEntity.tableOnRemove
-  isSpec: "True"
-  fullName: ACadSharp.Entities.TextEntity.tableOnRemove
-  nameWithType: TextEntity.tableOnRemove
 - uid: ACadSharp.Entities.TextHorizontalAlignment
   name: TextHorizontalAlignment
   href: api/ACadSharp.Entities.TextHorizontalAlignment.html
@@ -36788,6 +36717,19 @@ references:
   isSpec: "True"
   fullName: ACadSharp.Objects.Collections.MLeaderStyleCollection.CreateDefaults
   nameWithType: MLeaderStyleCollection.CreateDefaults
+- uid: ACadSharp.Objects.Collections.MLeaderStyleCollection.getDefaultEntry
+  name: getDefaultEntry()
+  href: api/ACadSharp.Objects.Collections.MLeaderStyleCollection.html#ACadSharp_Objects_Collections_MLeaderStyleCollection_getDefaultEntry
+  commentId: M:ACadSharp.Objects.Collections.MLeaderStyleCollection.getDefaultEntry
+  fullName: ACadSharp.Objects.Collections.MLeaderStyleCollection.getDefaultEntry()
+  nameWithType: MLeaderStyleCollection.getDefaultEntry()
+- uid: ACadSharp.Objects.Collections.MLeaderStyleCollection.getDefaultEntry*
+  name: getDefaultEntry
+  href: api/ACadSharp.Objects.Collections.MLeaderStyleCollection.html#ACadSharp_Objects_Collections_MLeaderStyleCollection_getDefaultEntry_
+  commentId: Overload:ACadSharp.Objects.Collections.MLeaderStyleCollection.getDefaultEntry
+  isSpec: "True"
+  fullName: ACadSharp.Objects.Collections.MLeaderStyleCollection.getDefaultEntry
+  nameWithType: MLeaderStyleCollection.getDefaultEntry
 - uid: ACadSharp.Objects.Collections.MLineStyleCollection
   name: MLineStyleCollection
   href: api/ACadSharp.Objects.Collections.MLineStyleCollection.html
@@ -36826,6 +36768,19 @@ references:
   isSpec: "True"
   fullName: ACadSharp.Objects.Collections.MLineStyleCollection.CreateDefaults
   nameWithType: MLineStyleCollection.CreateDefaults
+- uid: ACadSharp.Objects.Collections.MLineStyleCollection.getDefaultEntry
+  name: getDefaultEntry()
+  href: api/ACadSharp.Objects.Collections.MLineStyleCollection.html#ACadSharp_Objects_Collections_MLineStyleCollection_getDefaultEntry
+  commentId: M:ACadSharp.Objects.Collections.MLineStyleCollection.getDefaultEntry
+  fullName: ACadSharp.Objects.Collections.MLineStyleCollection.getDefaultEntry()
+  nameWithType: MLineStyleCollection.getDefaultEntry()
+- uid: ACadSharp.Objects.Collections.MLineStyleCollection.getDefaultEntry*
+  name: getDefaultEntry
+  href: api/ACadSharp.Objects.Collections.MLineStyleCollection.html#ACadSharp_Objects_Collections_MLineStyleCollection_getDefaultEntry_
+  commentId: Overload:ACadSharp.Objects.Collections.MLineStyleCollection.getDefaultEntry
+  isSpec: "True"
+  fullName: ACadSharp.Objects.Collections.MLineStyleCollection.getDefaultEntry
+  nameWithType: MLineStyleCollection.getDefaultEntry
 - uid: ACadSharp.Objects.Collections.MaterialCollection
   name: MaterialCollection
   href: api/ACadSharp.Objects.Collections.MaterialCollection.html
@@ -36944,6 +36899,41 @@ references:
   fullName.vb: ACadSharp.Objects.Collections.ObjectDictionaryCollection(Of T).ContainsKey
   nameWithType: ObjectDictionaryCollection<T>.ContainsKey
   nameWithType.vb: ObjectDictionaryCollection(Of T).ContainsKey
+- uid: ACadSharp.Objects.Collections.ObjectDictionaryCollection`1.Document
+  name: Document
+  href: api/ACadSharp.Objects.Collections.ObjectDictionaryCollection-1.html#ACadSharp_Objects_Collections_ObjectDictionaryCollection_1_Document
+  commentId: P:ACadSharp.Objects.Collections.ObjectDictionaryCollection`1.Document
+  fullName: ACadSharp.Objects.Collections.ObjectDictionaryCollection<T>.Document
+  fullName.vb: ACadSharp.Objects.Collections.ObjectDictionaryCollection(Of T).Document
+  nameWithType: ObjectDictionaryCollection<T>.Document
+  nameWithType.vb: ObjectDictionaryCollection(Of T).Document
+- uid: ACadSharp.Objects.Collections.ObjectDictionaryCollection`1.Document*
+  name: Document
+  href: api/ACadSharp.Objects.Collections.ObjectDictionaryCollection-1.html#ACadSharp_Objects_Collections_ObjectDictionaryCollection_1_Document_
+  commentId: Overload:ACadSharp.Objects.Collections.ObjectDictionaryCollection`1.Document
+  isSpec: "True"
+  fullName: ACadSharp.Objects.Collections.ObjectDictionaryCollection<T>.Document
+  fullName.vb: ACadSharp.Objects.Collections.ObjectDictionaryCollection(Of T).Document
+  nameWithType: ObjectDictionaryCollection<T>.Document
+  nameWithType.vb: ObjectDictionaryCollection(Of T).Document
+- uid: ACadSharp.Objects.Collections.ObjectDictionaryCollection`1.GetEntry(System.String)
+  name: GetEntry(string)
+  href: api/ACadSharp.Objects.Collections.ObjectDictionaryCollection-1.html#ACadSharp_Objects_Collections_ObjectDictionaryCollection_1_GetEntry_System_String_
+  commentId: M:ACadSharp.Objects.Collections.ObjectDictionaryCollection`1.GetEntry(System.String)
+  name.vb: GetEntry(String)
+  fullName: ACadSharp.Objects.Collections.ObjectDictionaryCollection<T>.GetEntry(string)
+  fullName.vb: ACadSharp.Objects.Collections.ObjectDictionaryCollection(Of T).GetEntry(String)
+  nameWithType: ObjectDictionaryCollection<T>.GetEntry(string)
+  nameWithType.vb: ObjectDictionaryCollection(Of T).GetEntry(String)
+- uid: ACadSharp.Objects.Collections.ObjectDictionaryCollection`1.GetEntry*
+  name: GetEntry
+  href: api/ACadSharp.Objects.Collections.ObjectDictionaryCollection-1.html#ACadSharp_Objects_Collections_ObjectDictionaryCollection_1_GetEntry_
+  commentId: Overload:ACadSharp.Objects.Collections.ObjectDictionaryCollection`1.GetEntry
+  isSpec: "True"
+  fullName: ACadSharp.Objects.Collections.ObjectDictionaryCollection<T>.GetEntry
+  fullName.vb: ACadSharp.Objects.Collections.ObjectDictionaryCollection(Of T).GetEntry
+  nameWithType: ObjectDictionaryCollection<T>.GetEntry
+  nameWithType.vb: ObjectDictionaryCollection(Of T).GetEntry
 - uid: ACadSharp.Objects.Collections.ObjectDictionaryCollection`1.GetEnumerator
   name: GetEnumerator()
   href: api/ACadSharp.Objects.Collections.ObjectDictionaryCollection-1.html#ACadSharp_Objects_Collections_ObjectDictionaryCollection_1_GetEnumerator
@@ -36961,6 +36951,24 @@ references:
   fullName.vb: ACadSharp.Objects.Collections.ObjectDictionaryCollection(Of T).GetEnumerator
   nameWithType: ObjectDictionaryCollection<T>.GetEnumerator
   nameWithType.vb: ObjectDictionaryCollection(Of T).GetEnumerator
+- uid: ACadSharp.Objects.Collections.ObjectDictionaryCollection`1.GetReferences(System.String)
+  name: GetReferences(string)
+  href: api/ACadSharp.Objects.Collections.ObjectDictionaryCollection-1.html#ACadSharp_Objects_Collections_ObjectDictionaryCollection_1_GetReferences_System_String_
+  commentId: M:ACadSharp.Objects.Collections.ObjectDictionaryCollection`1.GetReferences(System.String)
+  name.vb: GetReferences(String)
+  fullName: ACadSharp.Objects.Collections.ObjectDictionaryCollection<T>.GetReferences(string)
+  fullName.vb: ACadSharp.Objects.Collections.ObjectDictionaryCollection(Of T).GetReferences(String)
+  nameWithType: ObjectDictionaryCollection<T>.GetReferences(string)
+  nameWithType.vb: ObjectDictionaryCollection(Of T).GetReferences(String)
+- uid: ACadSharp.Objects.Collections.ObjectDictionaryCollection`1.GetReferences*
+  name: GetReferences
+  href: api/ACadSharp.Objects.Collections.ObjectDictionaryCollection-1.html#ACadSharp_Objects_Collections_ObjectDictionaryCollection_1_GetReferences_
+  commentId: Overload:ACadSharp.Objects.Collections.ObjectDictionaryCollection`1.GetReferences
+  isSpec: "True"
+  fullName: ACadSharp.Objects.Collections.ObjectDictionaryCollection<T>.GetReferences
+  fullName.vb: ACadSharp.Objects.Collections.ObjectDictionaryCollection(Of T).GetReferences
+  nameWithType: ObjectDictionaryCollection<T>.GetReferences
+  nameWithType.vb: ObjectDictionaryCollection(Of T).GetReferences
 - uid: ACadSharp.Objects.Collections.ObjectDictionaryCollection`1.Handle
   name: Handle
   href: api/ACadSharp.Objects.Collections.ObjectDictionaryCollection-1.html#ACadSharp_Objects_Collections_ObjectDictionaryCollection_1_Handle
@@ -37083,6 +37091,23 @@ references:
   fullName.vb: ACadSharp.Objects.Collections.ObjectDictionaryCollection(Of T)._dictionary
   nameWithType: ObjectDictionaryCollection<T>._dictionary
   nameWithType.vb: ObjectDictionaryCollection(Of T)._dictionary
+- uid: ACadSharp.Objects.Collections.ObjectDictionaryCollection`1.getDefaultEntry
+  name: getDefaultEntry()
+  href: api/ACadSharp.Objects.Collections.ObjectDictionaryCollection-1.html#ACadSharp_Objects_Collections_ObjectDictionaryCollection_1_getDefaultEntry
+  commentId: M:ACadSharp.Objects.Collections.ObjectDictionaryCollection`1.getDefaultEntry
+  fullName: ACadSharp.Objects.Collections.ObjectDictionaryCollection<T>.getDefaultEntry()
+  fullName.vb: ACadSharp.Objects.Collections.ObjectDictionaryCollection(Of T).getDefaultEntry()
+  nameWithType: ObjectDictionaryCollection<T>.getDefaultEntry()
+  nameWithType.vb: ObjectDictionaryCollection(Of T).getDefaultEntry()
+- uid: ACadSharp.Objects.Collections.ObjectDictionaryCollection`1.getDefaultEntry*
+  name: getDefaultEntry
+  href: api/ACadSharp.Objects.Collections.ObjectDictionaryCollection-1.html#ACadSharp_Objects_Collections_ObjectDictionaryCollection_1_getDefaultEntry_
+  commentId: Overload:ACadSharp.Objects.Collections.ObjectDictionaryCollection`1.getDefaultEntry
+  isSpec: "True"
+  fullName: ACadSharp.Objects.Collections.ObjectDictionaryCollection<T>.getDefaultEntry
+  fullName.vb: ACadSharp.Objects.Collections.ObjectDictionaryCollection(Of T).getDefaultEntry
+  nameWithType: ObjectDictionaryCollection<T>.getDefaultEntry
+  nameWithType.vb: ObjectDictionaryCollection(Of T).getDefaultEntry
 - uid: ACadSharp.Objects.Collections.PdfDefinitionCollection
   name: PdfDefinitionCollection
   href: api/ACadSharp.Objects.Collections.PdfDefinitionCollection.html
@@ -37146,6 +37171,19 @@ references:
   isSpec: "True"
   fullName: ACadSharp.Objects.Collections.ScaleCollection.CreateDefaults
   nameWithType: ScaleCollection.CreateDefaults
+- uid: ACadSharp.Objects.Collections.ScaleCollection.getDefaultEntry
+  name: getDefaultEntry()
+  href: api/ACadSharp.Objects.Collections.ScaleCollection.html#ACadSharp_Objects_Collections_ScaleCollection_getDefaultEntry
+  commentId: M:ACadSharp.Objects.Collections.ScaleCollection.getDefaultEntry
+  fullName: ACadSharp.Objects.Collections.ScaleCollection.getDefaultEntry()
+  nameWithType: ScaleCollection.getDefaultEntry()
+- uid: ACadSharp.Objects.Collections.ScaleCollection.getDefaultEntry*
+  name: getDefaultEntry
+  href: api/ACadSharp.Objects.Collections.ScaleCollection.html#ACadSharp_Objects_Collections_ScaleCollection_getDefaultEntry_
+  commentId: Overload:ACadSharp.Objects.Collections.ScaleCollection.getDefaultEntry
+  isSpec: "True"
+  fullName: ACadSharp.Objects.Collections.ScaleCollection.getDefaultEntry
+  nameWithType: ScaleCollection.getDefaultEntry
 - uid: ACadSharp.Objects.Collections.TableStyleCollection
   name: TableStyleCollection
   href: api/ACadSharp.Objects.Collections.TableStyleCollection.html
@@ -37184,6 +37222,19 @@ references:
   isSpec: "True"
   fullName: ACadSharp.Objects.Collections.TableStyleCollection.CreateDefaults
   nameWithType: TableStyleCollection.CreateDefaults
+- uid: ACadSharp.Objects.Collections.TableStyleCollection.getDefaultEntry
+  name: getDefaultEntry()
+  href: api/ACadSharp.Objects.Collections.TableStyleCollection.html#ACadSharp_Objects_Collections_TableStyleCollection_getDefaultEntry
+  commentId: M:ACadSharp.Objects.Collections.TableStyleCollection.getDefaultEntry
+  fullName: ACadSharp.Objects.Collections.TableStyleCollection.getDefaultEntry()
+  nameWithType: TableStyleCollection.getDefaultEntry()
+- uid: ACadSharp.Objects.Collections.TableStyleCollection.getDefaultEntry*
+  name: getDefaultEntry
+  href: api/ACadSharp.Objects.Collections.TableStyleCollection.html#ACadSharp_Objects_Collections_TableStyleCollection_getDefaultEntry_
+  commentId: Overload:ACadSharp.Objects.Collections.TableStyleCollection.getDefaultEntry
+  isSpec: "True"
+  fullName: ACadSharp.Objects.Collections.TableStyleCollection.getDefaultEntry
+  nameWithType: TableStyleCollection.getDefaultEntry
 - uid: ACadSharp.Objects.ColorMethod
   name: ColorMethod
   href: api/ACadSharp.Objects.ColorMethod.html
@@ -44536,22 +44587,6 @@ references:
   isSpec: "True"
   fullName: ACadSharp.Objects.MLineStyle.SubclassMarker
   nameWithType: MLineStyle.SubclassMarker
-- uid: ACadSharp.Objects.MLineStyle.tableOnRemove(System.Object,ACadSharp.CollectionChangedEventArgs)
-  name: tableOnRemove(object, CollectionChangedEventArgs)
-  href: api/ACadSharp.Objects.MLineStyle.html#ACadSharp_Objects_MLineStyle_tableOnRemove_System_Object_ACadSharp_CollectionChangedEventArgs_
-  commentId: M:ACadSharp.Objects.MLineStyle.tableOnRemove(System.Object,ACadSharp.CollectionChangedEventArgs)
-  name.vb: tableOnRemove(Object, CollectionChangedEventArgs)
-  fullName: ACadSharp.Objects.MLineStyle.tableOnRemove(object, ACadSharp.CollectionChangedEventArgs)
-  fullName.vb: ACadSharp.Objects.MLineStyle.tableOnRemove(Object, ACadSharp.CollectionChangedEventArgs)
-  nameWithType: MLineStyle.tableOnRemove(object, CollectionChangedEventArgs)
-  nameWithType.vb: MLineStyle.tableOnRemove(Object, CollectionChangedEventArgs)
-- uid: ACadSharp.Objects.MLineStyle.tableOnRemove*
-  name: tableOnRemove
-  href: api/ACadSharp.Objects.MLineStyle.html#ACadSharp_Objects_MLineStyle_tableOnRemove_
-  commentId: Overload:ACadSharp.Objects.MLineStyle.tableOnRemove
-  isSpec: "True"
-  fullName: ACadSharp.Objects.MLineStyle.tableOnRemove
-  nameWithType: MLineStyle.tableOnRemove
 - uid: ACadSharp.Objects.MLineStyleFlags
   name: MLineStyleFlags
   href: api/ACadSharp.Objects.MLineStyleFlags.html
@@ -47643,22 +47678,6 @@ references:
   isSpec: "True"
   fullName: ACadSharp.Objects.MultiLeaderStyle.UnknownFlag298
   nameWithType: MultiLeaderStyle.UnknownFlag298
-- uid: ACadSharp.Objects.MultiLeaderStyle.tableOnRemove(System.Object,ACadSharp.CollectionChangedEventArgs)
-  name: tableOnRemove(object, CollectionChangedEventArgs)
-  href: api/ACadSharp.Objects.MultiLeaderStyle.html#ACadSharp_Objects_MultiLeaderStyle_tableOnRemove_System_Object_ACadSharp_CollectionChangedEventArgs_
-  commentId: M:ACadSharp.Objects.MultiLeaderStyle.tableOnRemove(System.Object,ACadSharp.CollectionChangedEventArgs)
-  name.vb: tableOnRemove(Object, CollectionChangedEventArgs)
-  fullName: ACadSharp.Objects.MultiLeaderStyle.tableOnRemove(object, ACadSharp.CollectionChangedEventArgs)
-  fullName.vb: ACadSharp.Objects.MultiLeaderStyle.tableOnRemove(Object, ACadSharp.CollectionChangedEventArgs)
-  nameWithType: MultiLeaderStyle.tableOnRemove(object, CollectionChangedEventArgs)
-  nameWithType.vb: MultiLeaderStyle.tableOnRemove(Object, CollectionChangedEventArgs)
-- uid: ACadSharp.Objects.MultiLeaderStyle.tableOnRemove*
-  name: tableOnRemove
-  href: api/ACadSharp.Objects.MultiLeaderStyle.html#ACadSharp_Objects_MultiLeaderStyle_tableOnRemove_
-  commentId: Overload:ACadSharp.Objects.MultiLeaderStyle.tableOnRemove
-  isSpec: "True"
-  fullName: ACadSharp.Objects.MultiLeaderStyle.tableOnRemove
-  nameWithType: MultiLeaderStyle.tableOnRemove
 - uid: ACadSharp.Objects.NonGraphicalObject
   name: NonGraphicalObject
   href: api/ACadSharp.Objects.NonGraphicalObject.html
@@ -55365,6 +55384,19 @@ references:
   commentId: T:ACadSharp.Tables.Collections.AppIdsTable
   fullName: ACadSharp.Tables.Collections.AppIdsTable
   nameWithType: AppIdsTable
+- uid: ACadSharp.Tables.Collections.AppIdsTable.GetDefaultEntry
+  name: GetDefaultEntry()
+  href: api/ACadSharp.Tables.Collections.AppIdsTable.html#ACadSharp_Tables_Collections_AppIdsTable_GetDefaultEntry
+  commentId: M:ACadSharp.Tables.Collections.AppIdsTable.GetDefaultEntry
+  fullName: ACadSharp.Tables.Collections.AppIdsTable.GetDefaultEntry()
+  nameWithType: AppIdsTable.GetDefaultEntry()
+- uid: ACadSharp.Tables.Collections.AppIdsTable.GetDefaultEntry*
+  name: GetDefaultEntry
+  href: api/ACadSharp.Tables.Collections.AppIdsTable.html#ACadSharp_Tables_Collections_AppIdsTable_GetDefaultEntry_
+  commentId: Overload:ACadSharp.Tables.Collections.AppIdsTable.GetDefaultEntry
+  isSpec: "True"
+  fullName: ACadSharp.Tables.Collections.AppIdsTable.GetDefaultEntry
+  nameWithType: AppIdsTable.GetDefaultEntry
 - uid: ACadSharp.Tables.Collections.AppIdsTable.ObjectName
   name: ObjectName
   href: api/ACadSharp.Tables.Collections.AppIdsTable.html#ACadSharp_Tables_Collections_AppIdsTable_ObjectName
@@ -55391,19 +55423,19 @@ references:
   isSpec: "True"
   fullName: ACadSharp.Tables.Collections.AppIdsTable.ObjectType
   nameWithType: AppIdsTable.ObjectType
-- uid: ACadSharp.Tables.Collections.AppIdsTable.defaultEntries
-  name: defaultEntries
-  href: api/ACadSharp.Tables.Collections.AppIdsTable.html#ACadSharp_Tables_Collections_AppIdsTable_defaultEntries
-  commentId: P:ACadSharp.Tables.Collections.AppIdsTable.defaultEntries
-  fullName: ACadSharp.Tables.Collections.AppIdsTable.defaultEntries
-  nameWithType: AppIdsTable.defaultEntries
-- uid: ACadSharp.Tables.Collections.AppIdsTable.defaultEntries*
-  name: defaultEntries
-  href: api/ACadSharp.Tables.Collections.AppIdsTable.html#ACadSharp_Tables_Collections_AppIdsTable_defaultEntries_
-  commentId: Overload:ACadSharp.Tables.Collections.AppIdsTable.defaultEntries
+- uid: ACadSharp.Tables.Collections.AppIdsTable.getDefaultEntries
+  name: getDefaultEntries()
+  href: api/ACadSharp.Tables.Collections.AppIdsTable.html#ACadSharp_Tables_Collections_AppIdsTable_getDefaultEntries
+  commentId: M:ACadSharp.Tables.Collections.AppIdsTable.getDefaultEntries
+  fullName: ACadSharp.Tables.Collections.AppIdsTable.getDefaultEntries()
+  nameWithType: AppIdsTable.getDefaultEntries()
+- uid: ACadSharp.Tables.Collections.AppIdsTable.getDefaultEntries*
+  name: getDefaultEntries
+  href: api/ACadSharp.Tables.Collections.AppIdsTable.html#ACadSharp_Tables_Collections_AppIdsTable_getDefaultEntries_
+  commentId: Overload:ACadSharp.Tables.Collections.AppIdsTable.getDefaultEntries
   isSpec: "True"
-  fullName: ACadSharp.Tables.Collections.AppIdsTable.defaultEntries
-  nameWithType: AppIdsTable.defaultEntries
+  fullName: ACadSharp.Tables.Collections.AppIdsTable.getDefaultEntries
+  nameWithType: AppIdsTable.getDefaultEntries
 - uid: ACadSharp.Tables.Collections.BlockRecordsTable
   name: BlockRecordsTable
   href: api/ACadSharp.Tables.Collections.BlockRecordsTable.html
@@ -55423,6 +55455,19 @@ references:
   isSpec: "True"
   fullName: ACadSharp.Tables.Collections.BlockRecordsTable.Add
   nameWithType: BlockRecordsTable.Add
+- uid: ACadSharp.Tables.Collections.BlockRecordsTable.GetDefaultEntry
+  name: GetDefaultEntry()
+  href: api/ACadSharp.Tables.Collections.BlockRecordsTable.html#ACadSharp_Tables_Collections_BlockRecordsTable_GetDefaultEntry
+  commentId: M:ACadSharp.Tables.Collections.BlockRecordsTable.GetDefaultEntry
+  fullName: ACadSharp.Tables.Collections.BlockRecordsTable.GetDefaultEntry()
+  nameWithType: BlockRecordsTable.GetDefaultEntry()
+- uid: ACadSharp.Tables.Collections.BlockRecordsTable.GetDefaultEntry*
+  name: GetDefaultEntry
+  href: api/ACadSharp.Tables.Collections.BlockRecordsTable.html#ACadSharp_Tables_Collections_BlockRecordsTable_GetDefaultEntry_
+  commentId: Overload:ACadSharp.Tables.Collections.BlockRecordsTable.GetDefaultEntry
+  isSpec: "True"
+  fullName: ACadSharp.Tables.Collections.BlockRecordsTable.GetDefaultEntry
+  nameWithType: BlockRecordsTable.GetDefaultEntry
 - uid: ACadSharp.Tables.Collections.BlockRecordsTable.ObjectName
   name: ObjectName
   href: api/ACadSharp.Tables.Collections.BlockRecordsTable.html#ACadSharp_Tables_Collections_BlockRecordsTable_ObjectName
@@ -55449,25 +55494,38 @@ references:
   isSpec: "True"
   fullName: ACadSharp.Tables.Collections.BlockRecordsTable.ObjectType
   nameWithType: BlockRecordsTable.ObjectType
-- uid: ACadSharp.Tables.Collections.BlockRecordsTable.defaultEntries
-  name: defaultEntries
-  href: api/ACadSharp.Tables.Collections.BlockRecordsTable.html#ACadSharp_Tables_Collections_BlockRecordsTable_defaultEntries
-  commentId: P:ACadSharp.Tables.Collections.BlockRecordsTable.defaultEntries
-  fullName: ACadSharp.Tables.Collections.BlockRecordsTable.defaultEntries
-  nameWithType: BlockRecordsTable.defaultEntries
-- uid: ACadSharp.Tables.Collections.BlockRecordsTable.defaultEntries*
-  name: defaultEntries
-  href: api/ACadSharp.Tables.Collections.BlockRecordsTable.html#ACadSharp_Tables_Collections_BlockRecordsTable_defaultEntries_
-  commentId: Overload:ACadSharp.Tables.Collections.BlockRecordsTable.defaultEntries
+- uid: ACadSharp.Tables.Collections.BlockRecordsTable.getDefaultEntries
+  name: getDefaultEntries()
+  href: api/ACadSharp.Tables.Collections.BlockRecordsTable.html#ACadSharp_Tables_Collections_BlockRecordsTable_getDefaultEntries
+  commentId: M:ACadSharp.Tables.Collections.BlockRecordsTable.getDefaultEntries
+  fullName: ACadSharp.Tables.Collections.BlockRecordsTable.getDefaultEntries()
+  nameWithType: BlockRecordsTable.getDefaultEntries()
+- uid: ACadSharp.Tables.Collections.BlockRecordsTable.getDefaultEntries*
+  name: getDefaultEntries
+  href: api/ACadSharp.Tables.Collections.BlockRecordsTable.html#ACadSharp_Tables_Collections_BlockRecordsTable_getDefaultEntries_
+  commentId: Overload:ACadSharp.Tables.Collections.BlockRecordsTable.getDefaultEntries
   isSpec: "True"
-  fullName: ACadSharp.Tables.Collections.BlockRecordsTable.defaultEntries
-  nameWithType: BlockRecordsTable.defaultEntries
+  fullName: ACadSharp.Tables.Collections.BlockRecordsTable.getDefaultEntries
+  nameWithType: BlockRecordsTable.getDefaultEntries
 - uid: ACadSharp.Tables.Collections.DimensionStylesTable
   name: DimensionStylesTable
   href: api/ACadSharp.Tables.Collections.DimensionStylesTable.html
   commentId: T:ACadSharp.Tables.Collections.DimensionStylesTable
   fullName: ACadSharp.Tables.Collections.DimensionStylesTable
   nameWithType: DimensionStylesTable
+- uid: ACadSharp.Tables.Collections.DimensionStylesTable.GetDefaultEntry
+  name: GetDefaultEntry()
+  href: api/ACadSharp.Tables.Collections.DimensionStylesTable.html#ACadSharp_Tables_Collections_DimensionStylesTable_GetDefaultEntry
+  commentId: M:ACadSharp.Tables.Collections.DimensionStylesTable.GetDefaultEntry
+  fullName: ACadSharp.Tables.Collections.DimensionStylesTable.GetDefaultEntry()
+  nameWithType: DimensionStylesTable.GetDefaultEntry()
+- uid: ACadSharp.Tables.Collections.DimensionStylesTable.GetDefaultEntry*
+  name: GetDefaultEntry
+  href: api/ACadSharp.Tables.Collections.DimensionStylesTable.html#ACadSharp_Tables_Collections_DimensionStylesTable_GetDefaultEntry_
+  commentId: Overload:ACadSharp.Tables.Collections.DimensionStylesTable.GetDefaultEntry
+  isSpec: "True"
+  fullName: ACadSharp.Tables.Collections.DimensionStylesTable.GetDefaultEntry
+  nameWithType: DimensionStylesTable.GetDefaultEntry
 - uid: ACadSharp.Tables.Collections.DimensionStylesTable.ObjectName
   name: ObjectName
   href: api/ACadSharp.Tables.Collections.DimensionStylesTable.html#ACadSharp_Tables_Collections_DimensionStylesTable_ObjectName
@@ -55494,19 +55552,19 @@ references:
   isSpec: "True"
   fullName: ACadSharp.Tables.Collections.DimensionStylesTable.ObjectType
   nameWithType: DimensionStylesTable.ObjectType
-- uid: ACadSharp.Tables.Collections.DimensionStylesTable.defaultEntries
-  name: defaultEntries
-  href: api/ACadSharp.Tables.Collections.DimensionStylesTable.html#ACadSharp_Tables_Collections_DimensionStylesTable_defaultEntries
-  commentId: P:ACadSharp.Tables.Collections.DimensionStylesTable.defaultEntries
-  fullName: ACadSharp.Tables.Collections.DimensionStylesTable.defaultEntries
-  nameWithType: DimensionStylesTable.defaultEntries
-- uid: ACadSharp.Tables.Collections.DimensionStylesTable.defaultEntries*
-  name: defaultEntries
-  href: api/ACadSharp.Tables.Collections.DimensionStylesTable.html#ACadSharp_Tables_Collections_DimensionStylesTable_defaultEntries_
-  commentId: Overload:ACadSharp.Tables.Collections.DimensionStylesTable.defaultEntries
+- uid: ACadSharp.Tables.Collections.DimensionStylesTable.getDefaultEntries
+  name: getDefaultEntries()
+  href: api/ACadSharp.Tables.Collections.DimensionStylesTable.html#ACadSharp_Tables_Collections_DimensionStylesTable_getDefaultEntries
+  commentId: M:ACadSharp.Tables.Collections.DimensionStylesTable.getDefaultEntries
+  fullName: ACadSharp.Tables.Collections.DimensionStylesTable.getDefaultEntries()
+  nameWithType: DimensionStylesTable.getDefaultEntries()
+- uid: ACadSharp.Tables.Collections.DimensionStylesTable.getDefaultEntries*
+  name: getDefaultEntries
+  href: api/ACadSharp.Tables.Collections.DimensionStylesTable.html#ACadSharp_Tables_Collections_DimensionStylesTable_getDefaultEntries_
+  commentId: Overload:ACadSharp.Tables.Collections.DimensionStylesTable.getDefaultEntries
   isSpec: "True"
-  fullName: ACadSharp.Tables.Collections.DimensionStylesTable.defaultEntries
-  nameWithType: DimensionStylesTable.defaultEntries
+  fullName: ACadSharp.Tables.Collections.DimensionStylesTable.getDefaultEntries
+  nameWithType: DimensionStylesTable.getDefaultEntries
 - uid: ACadSharp.Tables.Collections.ITable
   name: ITable
   href: api/ACadSharp.Tables.Collections.ITable.html
@@ -55519,6 +55577,19 @@ references:
   commentId: T:ACadSharp.Tables.Collections.LayersTable
   fullName: ACadSharp.Tables.Collections.LayersTable
   nameWithType: LayersTable
+- uid: ACadSharp.Tables.Collections.LayersTable.GetDefaultEntry
+  name: GetDefaultEntry()
+  href: api/ACadSharp.Tables.Collections.LayersTable.html#ACadSharp_Tables_Collections_LayersTable_GetDefaultEntry
+  commentId: M:ACadSharp.Tables.Collections.LayersTable.GetDefaultEntry
+  fullName: ACadSharp.Tables.Collections.LayersTable.GetDefaultEntry()
+  nameWithType: LayersTable.GetDefaultEntry()
+- uid: ACadSharp.Tables.Collections.LayersTable.GetDefaultEntry*
+  name: GetDefaultEntry
+  href: api/ACadSharp.Tables.Collections.LayersTable.html#ACadSharp_Tables_Collections_LayersTable_GetDefaultEntry_
+  commentId: Overload:ACadSharp.Tables.Collections.LayersTable.GetDefaultEntry
+  isSpec: "True"
+  fullName: ACadSharp.Tables.Collections.LayersTable.GetDefaultEntry
+  nameWithType: LayersTable.GetDefaultEntry
 - uid: ACadSharp.Tables.Collections.LayersTable.ObjectName
   name: ObjectName
   href: api/ACadSharp.Tables.Collections.LayersTable.html#ACadSharp_Tables_Collections_LayersTable_ObjectName
@@ -55545,19 +55616,19 @@ references:
   isSpec: "True"
   fullName: ACadSharp.Tables.Collections.LayersTable.ObjectType
   nameWithType: LayersTable.ObjectType
-- uid: ACadSharp.Tables.Collections.LayersTable.defaultEntries
-  name: defaultEntries
-  href: api/ACadSharp.Tables.Collections.LayersTable.html#ACadSharp_Tables_Collections_LayersTable_defaultEntries
-  commentId: P:ACadSharp.Tables.Collections.LayersTable.defaultEntries
-  fullName: ACadSharp.Tables.Collections.LayersTable.defaultEntries
-  nameWithType: LayersTable.defaultEntries
-- uid: ACadSharp.Tables.Collections.LayersTable.defaultEntries*
-  name: defaultEntries
-  href: api/ACadSharp.Tables.Collections.LayersTable.html#ACadSharp_Tables_Collections_LayersTable_defaultEntries_
-  commentId: Overload:ACadSharp.Tables.Collections.LayersTable.defaultEntries
+- uid: ACadSharp.Tables.Collections.LayersTable.getDefaultEntries
+  name: getDefaultEntries()
+  href: api/ACadSharp.Tables.Collections.LayersTable.html#ACadSharp_Tables_Collections_LayersTable_getDefaultEntries
+  commentId: M:ACadSharp.Tables.Collections.LayersTable.getDefaultEntries
+  fullName: ACadSharp.Tables.Collections.LayersTable.getDefaultEntries()
+  nameWithType: LayersTable.getDefaultEntries()
+- uid: ACadSharp.Tables.Collections.LayersTable.getDefaultEntries*
+  name: getDefaultEntries
+  href: api/ACadSharp.Tables.Collections.LayersTable.html#ACadSharp_Tables_Collections_LayersTable_getDefaultEntries_
+  commentId: Overload:ACadSharp.Tables.Collections.LayersTable.getDefaultEntries
   isSpec: "True"
-  fullName: ACadSharp.Tables.Collections.LayersTable.defaultEntries
-  nameWithType: LayersTable.defaultEntries
+  fullName: ACadSharp.Tables.Collections.LayersTable.getDefaultEntries
+  nameWithType: LayersTable.getDefaultEntries
 - uid: ACadSharp.Tables.Collections.LineTypesTable
   name: LineTypesTable
   href: api/ACadSharp.Tables.Collections.LineTypesTable.html
@@ -55603,6 +55674,19 @@ references:
   isSpec: "True"
   fullName: ACadSharp.Tables.Collections.LineTypesTable.Continuous
   nameWithType: LineTypesTable.Continuous
+- uid: ACadSharp.Tables.Collections.LineTypesTable.GetDefaultEntry
+  name: GetDefaultEntry()
+  href: api/ACadSharp.Tables.Collections.LineTypesTable.html#ACadSharp_Tables_Collections_LineTypesTable_GetDefaultEntry
+  commentId: M:ACadSharp.Tables.Collections.LineTypesTable.GetDefaultEntry
+  fullName: ACadSharp.Tables.Collections.LineTypesTable.GetDefaultEntry()
+  nameWithType: LineTypesTable.GetDefaultEntry()
+- uid: ACadSharp.Tables.Collections.LineTypesTable.GetDefaultEntry*
+  name: GetDefaultEntry
+  href: api/ACadSharp.Tables.Collections.LineTypesTable.html#ACadSharp_Tables_Collections_LineTypesTable_GetDefaultEntry_
+  commentId: Overload:ACadSharp.Tables.Collections.LineTypesTable.GetDefaultEntry
+  isSpec: "True"
+  fullName: ACadSharp.Tables.Collections.LineTypesTable.GetDefaultEntry
+  nameWithType: LineTypesTable.GetDefaultEntry
 - uid: ACadSharp.Tables.Collections.LineTypesTable.ObjectName
   name: ObjectName
   href: api/ACadSharp.Tables.Collections.LineTypesTable.html#ACadSharp_Tables_Collections_LineTypesTable_ObjectName
@@ -55629,19 +55713,19 @@ references:
   isSpec: "True"
   fullName: ACadSharp.Tables.Collections.LineTypesTable.ObjectType
   nameWithType: LineTypesTable.ObjectType
-- uid: ACadSharp.Tables.Collections.LineTypesTable.defaultEntries
-  name: defaultEntries
-  href: api/ACadSharp.Tables.Collections.LineTypesTable.html#ACadSharp_Tables_Collections_LineTypesTable_defaultEntries
-  commentId: P:ACadSharp.Tables.Collections.LineTypesTable.defaultEntries
-  fullName: ACadSharp.Tables.Collections.LineTypesTable.defaultEntries
-  nameWithType: LineTypesTable.defaultEntries
-- uid: ACadSharp.Tables.Collections.LineTypesTable.defaultEntries*
-  name: defaultEntries
-  href: api/ACadSharp.Tables.Collections.LineTypesTable.html#ACadSharp_Tables_Collections_LineTypesTable_defaultEntries_
-  commentId: Overload:ACadSharp.Tables.Collections.LineTypesTable.defaultEntries
+- uid: ACadSharp.Tables.Collections.LineTypesTable.getDefaultEntries
+  name: getDefaultEntries()
+  href: api/ACadSharp.Tables.Collections.LineTypesTable.html#ACadSharp_Tables_Collections_LineTypesTable_getDefaultEntries
+  commentId: M:ACadSharp.Tables.Collections.LineTypesTable.getDefaultEntries
+  fullName: ACadSharp.Tables.Collections.LineTypesTable.getDefaultEntries()
+  nameWithType: LineTypesTable.getDefaultEntries()
+- uid: ACadSharp.Tables.Collections.LineTypesTable.getDefaultEntries*
+  name: getDefaultEntries
+  href: api/ACadSharp.Tables.Collections.LineTypesTable.html#ACadSharp_Tables_Collections_LineTypesTable_getDefaultEntries_
+  commentId: Overload:ACadSharp.Tables.Collections.LineTypesTable.getDefaultEntries
   isSpec: "True"
-  fullName: ACadSharp.Tables.Collections.LineTypesTable.defaultEntries
-  nameWithType: LineTypesTable.defaultEntries
+  fullName: ACadSharp.Tables.Collections.LineTypesTable.getDefaultEntries
+  nameWithType: LineTypesTable.getDefaultEntries
 - uid: ACadSharp.Tables.Collections.Table`1
   name: Table<T>
   href: api/ACadSharp.Tables.Collections.Table-1.html
@@ -55766,6 +55850,23 @@ references:
   fullName.vb: ACadSharp.Tables.Collections.Table(Of T).CreateDefaultEntries
   nameWithType: Table<T>.CreateDefaultEntries
   nameWithType.vb: Table(Of T).CreateDefaultEntries
+- uid: ACadSharp.Tables.Collections.Table`1.GetDefaultEntry
+  name: GetDefaultEntry()
+  href: api/ACadSharp.Tables.Collections.Table-1.html#ACadSharp_Tables_Collections_Table_1_GetDefaultEntry
+  commentId: M:ACadSharp.Tables.Collections.Table`1.GetDefaultEntry
+  fullName: ACadSharp.Tables.Collections.Table<T>.GetDefaultEntry()
+  fullName.vb: ACadSharp.Tables.Collections.Table(Of T).GetDefaultEntry()
+  nameWithType: Table<T>.GetDefaultEntry()
+  nameWithType.vb: Table(Of T).GetDefaultEntry()
+- uid: ACadSharp.Tables.Collections.Table`1.GetDefaultEntry*
+  name: GetDefaultEntry
+  href: api/ACadSharp.Tables.Collections.Table-1.html#ACadSharp_Tables_Collections_Table_1_GetDefaultEntry_
+  commentId: Overload:ACadSharp.Tables.Collections.Table`1.GetDefaultEntry
+  isSpec: "True"
+  fullName: ACadSharp.Tables.Collections.Table<T>.GetDefaultEntry
+  fullName.vb: ACadSharp.Tables.Collections.Table(Of T).GetDefaultEntry
+  nameWithType: Table<T>.GetDefaultEntry
+  nameWithType.vb: Table(Of T).GetDefaultEntry
 - uid: ACadSharp.Tables.Collections.Table`1.GetEnumerator
   name: GetEnumerator()
   href: api/ACadSharp.Tables.Collections.Table-1.html#ACadSharp_Tables_Collections_Table_1_GetEnumerator
@@ -55783,6 +55884,24 @@ references:
   fullName.vb: ACadSharp.Tables.Collections.Table(Of T).GetEnumerator
   nameWithType: Table<T>.GetEnumerator
   nameWithType.vb: Table(Of T).GetEnumerator
+- uid: ACadSharp.Tables.Collections.Table`1.GetReferences(System.String)
+  name: GetReferences(string)
+  href: api/ACadSharp.Tables.Collections.Table-1.html#ACadSharp_Tables_Collections_Table_1_GetReferences_System_String_
+  commentId: M:ACadSharp.Tables.Collections.Table`1.GetReferences(System.String)
+  name.vb: GetReferences(String)
+  fullName: ACadSharp.Tables.Collections.Table<T>.GetReferences(string)
+  fullName.vb: ACadSharp.Tables.Collections.Table(Of T).GetReferences(String)
+  nameWithType: Table<T>.GetReferences(string)
+  nameWithType.vb: Table(Of T).GetReferences(String)
+- uid: ACadSharp.Tables.Collections.Table`1.GetReferences*
+  name: GetReferences
+  href: api/ACadSharp.Tables.Collections.Table-1.html#ACadSharp_Tables_Collections_Table_1_GetReferences_
+  commentId: Overload:ACadSharp.Tables.Collections.Table`1.GetReferences
+  isSpec: "True"
+  fullName: ACadSharp.Tables.Collections.Table<T>.GetReferences
+  fullName.vb: ACadSharp.Tables.Collections.Table(Of T).GetReferences
+  nameWithType: Table<T>.GetReferences
+  nameWithType.vb: Table(Of T).GetReferences
 - uid: ACadSharp.Tables.Collections.Table`1.Item(System.String)
   name: this[string]
   href: api/ACadSharp.Tables.Collections.Table-1.html#ACadSharp_Tables_Collections_Table_1_Item_System_String_
@@ -55958,23 +56077,6 @@ references:
   fullName.vb: ACadSharp.Tables.Collections.Table(Of T).createName
   nameWithType: Table<T>.createName
   nameWithType.vb: Table(Of T).createName
-- uid: ACadSharp.Tables.Collections.Table`1.defaultEntries
-  name: defaultEntries
-  href: api/ACadSharp.Tables.Collections.Table-1.html#ACadSharp_Tables_Collections_Table_1_defaultEntries
-  commentId: P:ACadSharp.Tables.Collections.Table`1.defaultEntries
-  fullName: ACadSharp.Tables.Collections.Table<T>.defaultEntries
-  fullName.vb: ACadSharp.Tables.Collections.Table(Of T).defaultEntries
-  nameWithType: Table<T>.defaultEntries
-  nameWithType.vb: Table(Of T).defaultEntries
-- uid: ACadSharp.Tables.Collections.Table`1.defaultEntries*
-  name: defaultEntries
-  href: api/ACadSharp.Tables.Collections.Table-1.html#ACadSharp_Tables_Collections_Table_1_defaultEntries_
-  commentId: Overload:ACadSharp.Tables.Collections.Table`1.defaultEntries
-  isSpec: "True"
-  fullName: ACadSharp.Tables.Collections.Table<T>.defaultEntries
-  fullName.vb: ACadSharp.Tables.Collections.Table(Of T).defaultEntries
-  nameWithType: Table<T>.defaultEntries
-  nameWithType.vb: Table(Of T).defaultEntries
 - uid: ACadSharp.Tables.Collections.Table`1.entries
   name: entries
   href: api/ACadSharp.Tables.Collections.Table-1.html#ACadSharp_Tables_Collections_Table_1_entries
@@ -55983,12 +56085,42 @@ references:
   fullName.vb: ACadSharp.Tables.Collections.Table(Of T).entries
   nameWithType: Table<T>.entries
   nameWithType.vb: Table(Of T).entries
+- uid: ACadSharp.Tables.Collections.Table`1.getDefaultEntries
+  name: getDefaultEntries()
+  href: api/ACadSharp.Tables.Collections.Table-1.html#ACadSharp_Tables_Collections_Table_1_getDefaultEntries
+  commentId: M:ACadSharp.Tables.Collections.Table`1.getDefaultEntries
+  fullName: ACadSharp.Tables.Collections.Table<T>.getDefaultEntries()
+  fullName.vb: ACadSharp.Tables.Collections.Table(Of T).getDefaultEntries()
+  nameWithType: Table<T>.getDefaultEntries()
+  nameWithType.vb: Table(Of T).getDefaultEntries()
+- uid: ACadSharp.Tables.Collections.Table`1.getDefaultEntries*
+  name: getDefaultEntries
+  href: api/ACadSharp.Tables.Collections.Table-1.html#ACadSharp_Tables_Collections_Table_1_getDefaultEntries_
+  commentId: Overload:ACadSharp.Tables.Collections.Table`1.getDefaultEntries
+  isSpec: "True"
+  fullName: ACadSharp.Tables.Collections.Table<T>.getDefaultEntries
+  fullName.vb: ACadSharp.Tables.Collections.Table(Of T).getDefaultEntries
+  nameWithType: Table<T>.getDefaultEntries
+  nameWithType.vb: Table(Of T).getDefaultEntries
 - uid: ACadSharp.Tables.Collections.TextStylesTable
   name: TextStylesTable
   href: api/ACadSharp.Tables.Collections.TextStylesTable.html
   commentId: T:ACadSharp.Tables.Collections.TextStylesTable
   fullName: ACadSharp.Tables.Collections.TextStylesTable
   nameWithType: TextStylesTable
+- uid: ACadSharp.Tables.Collections.TextStylesTable.GetDefaultEntry
+  name: GetDefaultEntry()
+  href: api/ACadSharp.Tables.Collections.TextStylesTable.html#ACadSharp_Tables_Collections_TextStylesTable_GetDefaultEntry
+  commentId: M:ACadSharp.Tables.Collections.TextStylesTable.GetDefaultEntry
+  fullName: ACadSharp.Tables.Collections.TextStylesTable.GetDefaultEntry()
+  nameWithType: TextStylesTable.GetDefaultEntry()
+- uid: ACadSharp.Tables.Collections.TextStylesTable.GetDefaultEntry*
+  name: GetDefaultEntry
+  href: api/ACadSharp.Tables.Collections.TextStylesTable.html#ACadSharp_Tables_Collections_TextStylesTable_GetDefaultEntry_
+  commentId: Overload:ACadSharp.Tables.Collections.TextStylesTable.GetDefaultEntry
+  isSpec: "True"
+  fullName: ACadSharp.Tables.Collections.TextStylesTable.GetDefaultEntry
+  nameWithType: TextStylesTable.GetDefaultEntry
 - uid: ACadSharp.Tables.Collections.TextStylesTable.ObjectName
   name: ObjectName
   href: api/ACadSharp.Tables.Collections.TextStylesTable.html#ACadSharp_Tables_Collections_TextStylesTable_ObjectName
@@ -56015,25 +56147,38 @@ references:
   isSpec: "True"
   fullName: ACadSharp.Tables.Collections.TextStylesTable.ObjectType
   nameWithType: TextStylesTable.ObjectType
-- uid: ACadSharp.Tables.Collections.TextStylesTable.defaultEntries
-  name: defaultEntries
-  href: api/ACadSharp.Tables.Collections.TextStylesTable.html#ACadSharp_Tables_Collections_TextStylesTable_defaultEntries
-  commentId: P:ACadSharp.Tables.Collections.TextStylesTable.defaultEntries
-  fullName: ACadSharp.Tables.Collections.TextStylesTable.defaultEntries
-  nameWithType: TextStylesTable.defaultEntries
-- uid: ACadSharp.Tables.Collections.TextStylesTable.defaultEntries*
-  name: defaultEntries
-  href: api/ACadSharp.Tables.Collections.TextStylesTable.html#ACadSharp_Tables_Collections_TextStylesTable_defaultEntries_
-  commentId: Overload:ACadSharp.Tables.Collections.TextStylesTable.defaultEntries
+- uid: ACadSharp.Tables.Collections.TextStylesTable.getDefaultEntries
+  name: getDefaultEntries()
+  href: api/ACadSharp.Tables.Collections.TextStylesTable.html#ACadSharp_Tables_Collections_TextStylesTable_getDefaultEntries
+  commentId: M:ACadSharp.Tables.Collections.TextStylesTable.getDefaultEntries
+  fullName: ACadSharp.Tables.Collections.TextStylesTable.getDefaultEntries()
+  nameWithType: TextStylesTable.getDefaultEntries()
+- uid: ACadSharp.Tables.Collections.TextStylesTable.getDefaultEntries*
+  name: getDefaultEntries
+  href: api/ACadSharp.Tables.Collections.TextStylesTable.html#ACadSharp_Tables_Collections_TextStylesTable_getDefaultEntries_
+  commentId: Overload:ACadSharp.Tables.Collections.TextStylesTable.getDefaultEntries
   isSpec: "True"
-  fullName: ACadSharp.Tables.Collections.TextStylesTable.defaultEntries
-  nameWithType: TextStylesTable.defaultEntries
+  fullName: ACadSharp.Tables.Collections.TextStylesTable.getDefaultEntries
+  nameWithType: TextStylesTable.getDefaultEntries
 - uid: ACadSharp.Tables.Collections.UCSTable
   name: UCSTable
   href: api/ACadSharp.Tables.Collections.UCSTable.html
   commentId: T:ACadSharp.Tables.Collections.UCSTable
   fullName: ACadSharp.Tables.Collections.UCSTable
   nameWithType: UCSTable
+- uid: ACadSharp.Tables.Collections.UCSTable.GetDefaultEntry
+  name: GetDefaultEntry()
+  href: api/ACadSharp.Tables.Collections.UCSTable.html#ACadSharp_Tables_Collections_UCSTable_GetDefaultEntry
+  commentId: M:ACadSharp.Tables.Collections.UCSTable.GetDefaultEntry
+  fullName: ACadSharp.Tables.Collections.UCSTable.GetDefaultEntry()
+  nameWithType: UCSTable.GetDefaultEntry()
+- uid: ACadSharp.Tables.Collections.UCSTable.GetDefaultEntry*
+  name: GetDefaultEntry
+  href: api/ACadSharp.Tables.Collections.UCSTable.html#ACadSharp_Tables_Collections_UCSTable_GetDefaultEntry_
+  commentId: Overload:ACadSharp.Tables.Collections.UCSTable.GetDefaultEntry
+  isSpec: "True"
+  fullName: ACadSharp.Tables.Collections.UCSTable.GetDefaultEntry
+  nameWithType: UCSTable.GetDefaultEntry
 - uid: ACadSharp.Tables.Collections.UCSTable.ObjectName
   name: ObjectName
   href: api/ACadSharp.Tables.Collections.UCSTable.html#ACadSharp_Tables_Collections_UCSTable_ObjectName
@@ -56060,19 +56205,19 @@ references:
   isSpec: "True"
   fullName: ACadSharp.Tables.Collections.UCSTable.ObjectType
   nameWithType: UCSTable.ObjectType
-- uid: ACadSharp.Tables.Collections.UCSTable.defaultEntries
-  name: defaultEntries
-  href: api/ACadSharp.Tables.Collections.UCSTable.html#ACadSharp_Tables_Collections_UCSTable_defaultEntries
-  commentId: P:ACadSharp.Tables.Collections.UCSTable.defaultEntries
-  fullName: ACadSharp.Tables.Collections.UCSTable.defaultEntries
-  nameWithType: UCSTable.defaultEntries
-- uid: ACadSharp.Tables.Collections.UCSTable.defaultEntries*
-  name: defaultEntries
-  href: api/ACadSharp.Tables.Collections.UCSTable.html#ACadSharp_Tables_Collections_UCSTable_defaultEntries_
-  commentId: Overload:ACadSharp.Tables.Collections.UCSTable.defaultEntries
+- uid: ACadSharp.Tables.Collections.UCSTable.getDefaultEntries
+  name: getDefaultEntries()
+  href: api/ACadSharp.Tables.Collections.UCSTable.html#ACadSharp_Tables_Collections_UCSTable_getDefaultEntries
+  commentId: M:ACadSharp.Tables.Collections.UCSTable.getDefaultEntries
+  fullName: ACadSharp.Tables.Collections.UCSTable.getDefaultEntries()
+  nameWithType: UCSTable.getDefaultEntries()
+- uid: ACadSharp.Tables.Collections.UCSTable.getDefaultEntries*
+  name: getDefaultEntries
+  href: api/ACadSharp.Tables.Collections.UCSTable.html#ACadSharp_Tables_Collections_UCSTable_getDefaultEntries_
+  commentId: Overload:ACadSharp.Tables.Collections.UCSTable.getDefaultEntries
   isSpec: "True"
-  fullName: ACadSharp.Tables.Collections.UCSTable.defaultEntries
-  nameWithType: UCSTable.defaultEntries
+  fullName: ACadSharp.Tables.Collections.UCSTable.getDefaultEntries
+  nameWithType: UCSTable.getDefaultEntries
 - uid: ACadSharp.Tables.Collections.VPortsTable
   name: VPortsTable
   href: api/ACadSharp.Tables.Collections.VPortsTable.html
@@ -56092,6 +56237,19 @@ references:
   isSpec: "True"
   fullName: ACadSharp.Tables.Collections.VPortsTable.Add
   nameWithType: VPortsTable.Add
+- uid: ACadSharp.Tables.Collections.VPortsTable.GetDefaultEntry
+  name: GetDefaultEntry()
+  href: api/ACadSharp.Tables.Collections.VPortsTable.html#ACadSharp_Tables_Collections_VPortsTable_GetDefaultEntry
+  commentId: M:ACadSharp.Tables.Collections.VPortsTable.GetDefaultEntry
+  fullName: ACadSharp.Tables.Collections.VPortsTable.GetDefaultEntry()
+  nameWithType: VPortsTable.GetDefaultEntry()
+- uid: ACadSharp.Tables.Collections.VPortsTable.GetDefaultEntry*
+  name: GetDefaultEntry
+  href: api/ACadSharp.Tables.Collections.VPortsTable.html#ACadSharp_Tables_Collections_VPortsTable_GetDefaultEntry_
+  commentId: Overload:ACadSharp.Tables.Collections.VPortsTable.GetDefaultEntry
+  isSpec: "True"
+  fullName: ACadSharp.Tables.Collections.VPortsTable.GetDefaultEntry
+  nameWithType: VPortsTable.GetDefaultEntry
 - uid: ACadSharp.Tables.Collections.VPortsTable.ObjectName
   name: ObjectName
   href: api/ACadSharp.Tables.Collections.VPortsTable.html#ACadSharp_Tables_Collections_VPortsTable_ObjectName
@@ -56118,25 +56276,38 @@ references:
   isSpec: "True"
   fullName: ACadSharp.Tables.Collections.VPortsTable.ObjectType
   nameWithType: VPortsTable.ObjectType
-- uid: ACadSharp.Tables.Collections.VPortsTable.defaultEntries
-  name: defaultEntries
-  href: api/ACadSharp.Tables.Collections.VPortsTable.html#ACadSharp_Tables_Collections_VPortsTable_defaultEntries
-  commentId: P:ACadSharp.Tables.Collections.VPortsTable.defaultEntries
-  fullName: ACadSharp.Tables.Collections.VPortsTable.defaultEntries
-  nameWithType: VPortsTable.defaultEntries
-- uid: ACadSharp.Tables.Collections.VPortsTable.defaultEntries*
-  name: defaultEntries
-  href: api/ACadSharp.Tables.Collections.VPortsTable.html#ACadSharp_Tables_Collections_VPortsTable_defaultEntries_
-  commentId: Overload:ACadSharp.Tables.Collections.VPortsTable.defaultEntries
+- uid: ACadSharp.Tables.Collections.VPortsTable.getDefaultEntries
+  name: getDefaultEntries()
+  href: api/ACadSharp.Tables.Collections.VPortsTable.html#ACadSharp_Tables_Collections_VPortsTable_getDefaultEntries
+  commentId: M:ACadSharp.Tables.Collections.VPortsTable.getDefaultEntries
+  fullName: ACadSharp.Tables.Collections.VPortsTable.getDefaultEntries()
+  nameWithType: VPortsTable.getDefaultEntries()
+- uid: ACadSharp.Tables.Collections.VPortsTable.getDefaultEntries*
+  name: getDefaultEntries
+  href: api/ACadSharp.Tables.Collections.VPortsTable.html#ACadSharp_Tables_Collections_VPortsTable_getDefaultEntries_
+  commentId: Overload:ACadSharp.Tables.Collections.VPortsTable.getDefaultEntries
   isSpec: "True"
-  fullName: ACadSharp.Tables.Collections.VPortsTable.defaultEntries
-  nameWithType: VPortsTable.defaultEntries
+  fullName: ACadSharp.Tables.Collections.VPortsTable.getDefaultEntries
+  nameWithType: VPortsTable.getDefaultEntries
 - uid: ACadSharp.Tables.Collections.ViewsTable
   name: ViewsTable
   href: api/ACadSharp.Tables.Collections.ViewsTable.html
   commentId: T:ACadSharp.Tables.Collections.ViewsTable
   fullName: ACadSharp.Tables.Collections.ViewsTable
   nameWithType: ViewsTable
+- uid: ACadSharp.Tables.Collections.ViewsTable.GetDefaultEntry
+  name: GetDefaultEntry()
+  href: api/ACadSharp.Tables.Collections.ViewsTable.html#ACadSharp_Tables_Collections_ViewsTable_GetDefaultEntry
+  commentId: M:ACadSharp.Tables.Collections.ViewsTable.GetDefaultEntry
+  fullName: ACadSharp.Tables.Collections.ViewsTable.GetDefaultEntry()
+  nameWithType: ViewsTable.GetDefaultEntry()
+- uid: ACadSharp.Tables.Collections.ViewsTable.GetDefaultEntry*
+  name: GetDefaultEntry
+  href: api/ACadSharp.Tables.Collections.ViewsTable.html#ACadSharp_Tables_Collections_ViewsTable_GetDefaultEntry_
+  commentId: Overload:ACadSharp.Tables.Collections.ViewsTable.GetDefaultEntry
+  isSpec: "True"
+  fullName: ACadSharp.Tables.Collections.ViewsTable.GetDefaultEntry
+  nameWithType: ViewsTable.GetDefaultEntry
 - uid: ACadSharp.Tables.Collections.ViewsTable.ObjectName
   name: ObjectName
   href: api/ACadSharp.Tables.Collections.ViewsTable.html#ACadSharp_Tables_Collections_ViewsTable_ObjectName
@@ -56163,19 +56334,19 @@ references:
   isSpec: "True"
   fullName: ACadSharp.Tables.Collections.ViewsTable.ObjectType
   nameWithType: ViewsTable.ObjectType
-- uid: ACadSharp.Tables.Collections.ViewsTable.defaultEntries
-  name: defaultEntries
-  href: api/ACadSharp.Tables.Collections.ViewsTable.html#ACadSharp_Tables_Collections_ViewsTable_defaultEntries
-  commentId: P:ACadSharp.Tables.Collections.ViewsTable.defaultEntries
-  fullName: ACadSharp.Tables.Collections.ViewsTable.defaultEntries
-  nameWithType: ViewsTable.defaultEntries
-- uid: ACadSharp.Tables.Collections.ViewsTable.defaultEntries*
-  name: defaultEntries
-  href: api/ACadSharp.Tables.Collections.ViewsTable.html#ACadSharp_Tables_Collections_ViewsTable_defaultEntries_
-  commentId: Overload:ACadSharp.Tables.Collections.ViewsTable.defaultEntries
+- uid: ACadSharp.Tables.Collections.ViewsTable.getDefaultEntries
+  name: getDefaultEntries()
+  href: api/ACadSharp.Tables.Collections.ViewsTable.html#ACadSharp_Tables_Collections_ViewsTable_getDefaultEntries
+  commentId: M:ACadSharp.Tables.Collections.ViewsTable.getDefaultEntries
+  fullName: ACadSharp.Tables.Collections.ViewsTable.getDefaultEntries()
+  nameWithType: ViewsTable.getDefaultEntries()
+- uid: ACadSharp.Tables.Collections.ViewsTable.getDefaultEntries*
+  name: getDefaultEntries
+  href: api/ACadSharp.Tables.Collections.ViewsTable.html#ACadSharp_Tables_Collections_ViewsTable_getDefaultEntries_
+  commentId: Overload:ACadSharp.Tables.Collections.ViewsTable.getDefaultEntries
   isSpec: "True"
-  fullName: ACadSharp.Tables.Collections.ViewsTable.defaultEntries
-  nameWithType: ViewsTable.defaultEntries
+  fullName: ACadSharp.Tables.Collections.ViewsTable.getDefaultEntries
+  nameWithType: ViewsTable.getDefaultEntries
 - uid: ACadSharp.Tables.DefaultLightingType
   name: DefaultLightingType
   href: api/ACadSharp.Tables.DefaultLightingType.html
@@ -57352,22 +57523,6 @@ references:
   isSpec: "True"
   fullName: ACadSharp.Tables.DimensionStyle.ZeroHandling
   nameWithType: DimensionStyle.ZeroHandling
-- uid: ACadSharp.Tables.DimensionStyle.tableOnRemove(System.Object,ACadSharp.CollectionChangedEventArgs)
-  name: tableOnRemove(object, CollectionChangedEventArgs)
-  href: api/ACadSharp.Tables.DimensionStyle.html#ACadSharp_Tables_DimensionStyle_tableOnRemove_System_Object_ACadSharp_CollectionChangedEventArgs_
-  commentId: M:ACadSharp.Tables.DimensionStyle.tableOnRemove(System.Object,ACadSharp.CollectionChangedEventArgs)
-  name.vb: tableOnRemove(Object, CollectionChangedEventArgs)
-  fullName: ACadSharp.Tables.DimensionStyle.tableOnRemove(object, ACadSharp.CollectionChangedEventArgs)
-  fullName.vb: ACadSharp.Tables.DimensionStyle.tableOnRemove(Object, ACadSharp.CollectionChangedEventArgs)
-  nameWithType: DimensionStyle.tableOnRemove(object, CollectionChangedEventArgs)
-  nameWithType.vb: DimensionStyle.tableOnRemove(Object, CollectionChangedEventArgs)
-- uid: ACadSharp.Tables.DimensionStyle.tableOnRemove*
-  name: tableOnRemove
-  href: api/ACadSharp.Tables.DimensionStyle.html#ACadSharp_Tables_DimensionStyle_tableOnRemove_
-  commentId: Overload:ACadSharp.Tables.DimensionStyle.tableOnRemove
-  isSpec: "True"
-  fullName: ACadSharp.Tables.DimensionStyle.tableOnRemove
-  nameWithType: DimensionStyle.tableOnRemove
 - uid: ACadSharp.Tables.DimensionTextBackgroundFillMode
   name: DimensionTextBackgroundFillMode
   href: api/ACadSharp.Tables.DimensionTextBackgroundFillMode.html
@@ -57797,22 +57952,6 @@ references:
   isSpec: "True"
   fullName: ACadSharp.Tables.Layer.SubclassMarker
   nameWithType: Layer.SubclassMarker
-- uid: ACadSharp.Tables.Layer.tableOnRemove(System.Object,ACadSharp.CollectionChangedEventArgs)
-  name: tableOnRemove(object, CollectionChangedEventArgs)
-  href: api/ACadSharp.Tables.Layer.html#ACadSharp_Tables_Layer_tableOnRemove_System_Object_ACadSharp_CollectionChangedEventArgs_
-  commentId: M:ACadSharp.Tables.Layer.tableOnRemove(System.Object,ACadSharp.CollectionChangedEventArgs)
-  name.vb: tableOnRemove(Object, CollectionChangedEventArgs)
-  fullName: ACadSharp.Tables.Layer.tableOnRemove(object, ACadSharp.CollectionChangedEventArgs)
-  fullName.vb: ACadSharp.Tables.Layer.tableOnRemove(Object, ACadSharp.CollectionChangedEventArgs)
-  nameWithType: Layer.tableOnRemove(object, CollectionChangedEventArgs)
-  nameWithType.vb: Layer.tableOnRemove(Object, CollectionChangedEventArgs)
-- uid: ACadSharp.Tables.Layer.tableOnRemove*
-  name: tableOnRemove
-  href: api/ACadSharp.Tables.Layer.html#ACadSharp_Tables_Layer_tableOnRemove_
-  commentId: Overload:ACadSharp.Tables.Layer.tableOnRemove
-  isSpec: "True"
-  fullName: ACadSharp.Tables.Layer.tableOnRemove
-  nameWithType: Layer.tableOnRemove
 - uid: ACadSharp.Tables.LayerFlags
   name: LayerFlags
   href: api/ACadSharp.Tables.LayerFlags.html
@@ -58321,22 +58460,6 @@ references:
   isSpec: "True"
   fullName: ACadSharp.Tables.LineType.SubclassMarker
   nameWithType: LineType.SubclassMarker
-- uid: ACadSharp.Tables.LineType.tableOnRemove(System.Object,ACadSharp.CollectionChangedEventArgs)
-  name: tableOnRemove(object, CollectionChangedEventArgs)
-  href: api/ACadSharp.Tables.LineType.html#ACadSharp_Tables_LineType_tableOnRemove_System_Object_ACadSharp_CollectionChangedEventArgs_
-  commentId: M:ACadSharp.Tables.LineType.tableOnRemove(System.Object,ACadSharp.CollectionChangedEventArgs)
-  name.vb: tableOnRemove(Object, CollectionChangedEventArgs)
-  fullName: ACadSharp.Tables.LineType.tableOnRemove(object, ACadSharp.CollectionChangedEventArgs)
-  fullName.vb: ACadSharp.Tables.LineType.tableOnRemove(Object, ACadSharp.CollectionChangedEventArgs)
-  nameWithType: LineType.tableOnRemove(object, CollectionChangedEventArgs)
-  nameWithType.vb: LineType.tableOnRemove(Object, CollectionChangedEventArgs)
-- uid: ACadSharp.Tables.LineType.tableOnRemove*
-  name: tableOnRemove
-  href: api/ACadSharp.Tables.LineType.html#ACadSharp_Tables_LineType_tableOnRemove_
-  commentId: Overload:ACadSharp.Tables.LineType.tableOnRemove
-  isSpec: "True"
-  fullName: ACadSharp.Tables.LineType.tableOnRemove
-  nameWithType: LineType.tableOnRemove
 - uid: ACadSharp.Tables.LineTypeShapeFlags
   name: LineTypeShapeFlags
   href: api/ACadSharp.Tables.LineTypeShapeFlags.html

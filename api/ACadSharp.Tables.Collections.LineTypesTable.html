@@ -6,7 +6,7 @@
       <meta name="viewport" content="width=device-width, initial-scale=1.0">
       <meta name="title" content="Class LineTypesTable | ACadSharp ">
       
-      
+      <meta name="description" content="Represents a collection of  entries.">
       <link rel="icon" href="../favicon.ico">
       <link rel="stylesheet" href="../public/docfx.min.css">
       <link rel="stylesheet" href="../public/main.css">
@@ -89,7 +89,7 @@
 
 
   <h1 id="ACadSharp_Tables_Collections_LineTypesTable" data-uid="ACadSharp.Tables.Collections.LineTypesTable" class="text-break">
-Class LineTypesTable  <a class="header-action link-secondary" title="View source" href="https://github.com/DomCR/ACadSharp/blob/master/src/ACadSharp/Tables/Collections/LineTypesTable.cs/#L3"><i class="bi bi-code-slash"></i></a>
+Class LineTypesTable  <a class="header-action link-secondary" title="View source" href="https://github.com/DomCR/ACadSharp/blob/master/src/ACadSharp/Tables/Collections/LineTypesTable.cs/#L6"><i class="bi bi-code-slash"></i></a>
   </h1>
 
   <div class="facts text-secondary">
@@ -97,7 +97,8 @@ Class LineTypesTable  <a class="header-action link-secondary" title="View source
   <dl><dt>Assembly</dt><dd>ACadSharp.dll</dd></dl>
   </div>
 
-  <div class="markdown summary"></div>
+  <div class="markdown summary"><p>Represents a collection of <a class="xref" href="ACadSharp.Tables.LineType.html">LineType</a> entries.</p>
+</div>
   <div class="markdown conceptual"></div>
 
   <div class="codewrapper">
@@ -155,9 +156,6 @@ Class LineTypesTable  <a class="header-action link-secondary" title="View source
       <a class="xref" href="ACadSharp.Tables.Collections.Table-1.html#ACadSharp_Tables_Collections_Table_1_AddRange_System_Collections_Generic_IEnumerable__0__">Table&lt;LineType&gt;.AddRange(IEnumerable&lt;LineType&gt;)</a>
     </div>
     <div>
-      <a class="xref" href="ACadSharp.Tables.Collections.Table-1.html#ACadSharp_Tables_Collections_Table_1_TryAdd__0_">Table&lt;LineType&gt;.TryAdd(LineType)</a>
-    </div>
-    <div>
       <a class="xref" href="ACadSharp.Tables.Collections.Table-1.html#ACadSharp_Tables_Collections_Table_1_Contains_System_String_">Table&lt;LineType&gt;.Contains(string)</a>
     </div>
     <div>
@@ -167,7 +165,13 @@ Class LineTypesTable  <a class="header-action link-secondary" title="View source
       <a class="xref" href="ACadSharp.Tables.Collections.Table-1.html#ACadSharp_Tables_Collections_Table_1_GetEnumerator">Table&lt;LineType&gt;.GetEnumerator()</a>
     </div>
     <div>
+      <a class="xref" href="ACadSharp.Tables.Collections.Table-1.html#ACadSharp_Tables_Collections_Table_1_GetReferences_System_String_">Table&lt;LineType&gt;.GetReferences(string)</a>
+    </div>
+    <div>
       <a class="xref" href="ACadSharp.Tables.Collections.Table-1.html#ACadSharp_Tables_Collections_Table_1_Remove_System_String_">Table&lt;LineType&gt;.Remove(string)</a>
+    </div>
+    <div>
+      <a class="xref" href="ACadSharp.Tables.Collections.Table-1.html#ACadSharp_Tables_Collections_Table_1_TryAdd__0_">Table&lt;LineType&gt;.TryAdd(LineType)</a>
     </div>
     <div>
       <a class="xref" href="ACadSharp.Tables.Collections.Table-1.html#ACadSharp_Tables_Collections_Table_1_TryGetValue_System_String__0__">Table&lt;LineType&gt;.TryGetValue(string, out LineType)</a>
@@ -230,7 +234,10 @@ Class LineTypesTable  <a class="header-action link-secondary" title="View source
       <a class="xref" href="ACadSharp.CadObject.html#ACadSharp_CadObject_ToString">CadObject.ToString()</a>
     </div>
     <div>
-      <a class="xref" href="ACadSharp.CadObject.html#ACadSharp_CadObject_updateCollection__1___0_ACadSharp_ICadCollection___0__">CadObject.updateCollection&lt;T&gt;(T, ICadCollection&lt;T&gt;)</a>
+      <a class="xref" href="ACadSharp.CadObject.html#ACadSharp_CadObject_updateCollectionEntry__1___0_System_Action___0__ACadSharp_Objects_Collections_ObjectDictionaryCollection___0__">CadObject.updateCollectionEntry&lt;T&gt;(T, Action&lt;T&gt;, ObjectDictionaryCollection&lt;T&gt;)</a>
+    </div>
+    <div>
+      <a class="xref" href="ACadSharp.CadObject.html#ACadSharp_CadObject_updateTableEntry__1___0_System_Action___0__ACadSharp_Tables_Collections_Table___0__">CadObject.updateTableEntry&lt;T&gt;(T, Action&lt;T&gt;, Table&lt;T&gt;)</a>
     </div>
     <div>
       <a class="xref" href="https://learn.microsoft.com/dotnet/api/system.object.equals#system-object-equals(system-object)">object.Equals(object)</a>
@@ -275,7 +282,7 @@ Class LineTypesTable  <a class="header-action link-secondary" title="View source
 
   <h3 id="ACadSharp_Tables_Collections_LineTypesTable_ByBlock" data-uid="ACadSharp.Tables.Collections.LineTypesTable.ByBlock">
   ByBlock
-  <a class="header-action link-secondary" title="View source" href="https://github.com/DomCR/ACadSharp/blob/master/src/ACadSharp/Tables/Collections/LineTypesTable.cs/#L19"><i class="bi bi-code-slash"></i></a>
+  <a class="header-action link-secondary" title="View source" href="https://github.com/DomCR/ACadSharp/blob/master/src/ACadSharp/Tables/Collections/LineTypesTable.cs/#L11"><i class="bi bi-code-slash"></i></a>
   </h3>
 
   <div class="markdown level1 summary"><p>Get the ByBlock entry in the table</p>
@@ -307,7 +314,7 @@ Class LineTypesTable  <a class="header-action link-secondary" title="View source
 
   <h3 id="ACadSharp_Tables_Collections_LineTypesTable_ByLayer" data-uid="ACadSharp.Tables.Collections.LineTypesTable.ByLayer">
   ByLayer
-  <a class="header-action link-secondary" title="View source" href="https://github.com/DomCR/ACadSharp/blob/master/src/ACadSharp/Tables/Collections/LineTypesTable.cs/#L14"><i class="bi bi-code-slash"></i></a>
+  <a class="header-action link-secondary" title="View source" href="https://github.com/DomCR/ACadSharp/blob/master/src/ACadSharp/Tables/Collections/LineTypesTable.cs/#L16"><i class="bi bi-code-slash"></i></a>
   </h3>
 
   <div class="markdown level1 summary"><p>Get the ByLayer entry in the table</p>
@@ -339,7 +346,7 @@ Class LineTypesTable  <a class="header-action link-secondary" title="View source
 
   <h3 id="ACadSharp_Tables_Collections_LineTypesTable_Continuous" data-uid="ACadSharp.Tables.Collections.LineTypesTable.Continuous">
   Continuous
-  <a class="header-action link-secondary" title="View source" href="https://github.com/DomCR/ACadSharp/blob/master/src/ACadSharp/Tables/Collections/LineTypesTable.cs/#L24"><i class="bi bi-code-slash"></i></a>
+  <a class="header-action link-secondary" title="View source" href="https://github.com/DomCR/ACadSharp/blob/master/src/ACadSharp/Tables/Collections/LineTypesTable.cs/#L21"><i class="bi bi-code-slash"></i></a>
   </h3>
 
   <div class="markdown level1 summary"><p>Get the Continuous entry in the table</p>
@@ -371,7 +378,7 @@ Class LineTypesTable  <a class="header-action link-secondary" title="View source
 
   <h3 id="ACadSharp_Tables_Collections_LineTypesTable_ObjectName" data-uid="ACadSharp.Tables.Collections.LineTypesTable.ObjectName">
   ObjectName
-  <a class="header-action link-secondary" title="View source" href="https://github.com/DomCR/ACadSharp/blob/master/src/ACadSharp/Tables/Collections/LineTypesTable.cs/#L9"><i class="bi bi-code-slash"></i></a>
+  <a class="header-action link-secondary" title="View source" href="https://github.com/DomCR/ACadSharp/blob/master/src/ACadSharp/Tables/Collections/LineTypesTable.cs/#L24"><i class="bi bi-code-slash"></i></a>
   </h3>
 
   <div class="markdown level1 summary"><p>The CAD class name of an object.</p>
@@ -403,7 +410,7 @@ Class LineTypesTable  <a class="header-action link-secondary" title="View source
 
   <h3 id="ACadSharp_Tables_Collections_LineTypesTable_ObjectType" data-uid="ACadSharp.Tables.Collections.LineTypesTable.ObjectType">
   ObjectType
-  <a class="header-action link-secondary" title="View source" href="https://github.com/DomCR/ACadSharp/blob/master/src/ACadSharp/Tables/Collections/LineTypesTable.cs/#L6"><i class="bi bi-code-slash"></i></a>
+  <a class="header-action link-secondary" title="View source" href="https://github.com/DomCR/ACadSharp/blob/master/src/ACadSharp/Tables/Collections/LineTypesTable.cs/#L27"><i class="bi bi-code-slash"></i></a>
   </h3>
 
   <div class="markdown level1 summary"><p>Get the object type.</p>
@@ -431,25 +438,59 @@ Class LineTypesTable  <a class="header-action link-secondary" title="View source
 
 
 
-  <a id="ACadSharp_Tables_Collections_LineTypesTable_defaultEntries_" data-uid="ACadSharp.Tables.Collections.LineTypesTable.defaultEntries*"></a>
+  <h2 class="section" id="methods">Methods
+</h2>
 
-  <h3 id="ACadSharp_Tables_Collections_LineTypesTable_defaultEntries" data-uid="ACadSharp.Tables.Collections.LineTypesTable.defaultEntries">
-  defaultEntries
-  <a class="header-action link-secondary" title="View source" href="https://github.com/DomCR/ACadSharp/blob/master/src/ACadSharp/Tables/Collections/LineTypesTable.cs/#L26"><i class="bi bi-code-slash"></i></a>
+
+  <a id="ACadSharp_Tables_Collections_LineTypesTable_GetDefaultEntry_" data-uid="ACadSharp.Tables.Collections.LineTypesTable.GetDefaultEntry*"></a>
+
+  <h3 id="ACadSharp_Tables_Collections_LineTypesTable_GetDefaultEntry" data-uid="ACadSharp.Tables.Collections.LineTypesTable.GetDefaultEntry">
+  GetDefaultEntry()
+  <a class="header-action link-secondary" title="View source" href="https://github.com/DomCR/ACadSharp/blob/master/src/ACadSharp/Tables/Collections/LineTypesTable.cs/#L38"><i class="bi bi-code-slash"></i></a>
+  </h3>
+
+  <div class="markdown level1 summary"><p>Gets the default entry for the table.</p>
+</div>
+  <div class="markdown level1 conceptual"></div>
+
+  <div class="codewrapper">
+    <pre><code class="lang-csharp hljs">public override LineType GetDefaultEntry()</code></pre>
+  </div>
+
+
+  <h4 class="section">Returns</h4>
+  <dl class="parameters">
+    <dt><a class="xref" href="ACadSharp.Tables.LineType.html">LineType</a></dt>
+    <dd><p>The default <a class="xref" href="ACadSharp.Tables.TableEntry.html">TableEntry</a>.</p>
+</dd>
+  </dl>
+
+
+
+
+
+
+
+
+
+
+
+  <a id="ACadSharp_Tables_Collections_LineTypesTable_getDefaultEntries_" data-uid="ACadSharp.Tables.Collections.LineTypesTable.getDefaultEntries*"></a>
+
+  <h3 id="ACadSharp_Tables_Collections_LineTypesTable_getDefaultEntries" data-uid="ACadSharp.Tables.Collections.LineTypesTable.getDefaultEntries">
+  getDefaultEntries()
+  <a class="header-action link-secondary" title="View source" href="https://github.com/DomCR/ACadSharp/blob/master/src/ACadSharp/Tables/Collections/LineTypesTable.cs/#L43"><i class="bi bi-code-slash"></i></a>
   </h3>
 
   <div class="markdown level1 summary"></div>
   <div class="markdown level1 conceptual"></div>
 
   <div class="codewrapper">
-    <pre><code class="lang-csharp hljs">protected override string[] defaultEntries { get; }</code></pre>
+    <pre><code class="lang-csharp hljs">protected override string[] getDefaultEntries()</code></pre>
   </div>
 
 
-
-
-
-  <h4 class="section">Property Value</h4>
+  <h4 class="section">Returns</h4>
   <dl class="parameters">
     <dt><a class="xref" href="https://learn.microsoft.com/dotnet/api/system.string">string</a>[]</dt>
     <dd></dd>
@@ -463,10 +504,13 @@ Class LineTypesTable  <a class="header-action link-secondary" title="View source
 
 
 
+
+
+
 </article>
 
         <div class="contribution d-print-none">
-          <a href="https://github.com/DomCR/ACadSharp/blob/master/src/ACadSharp/Tables/Collections/LineTypesTable.cs/#L3" class="edit-link">Edit this page</a>
+          <a href="https://github.com/DomCR/ACadSharp/blob/master/src/ACadSharp/Tables/Collections/LineTypesTable.cs/#L6" class="edit-link">Edit this page</a>
         </div>
 
 
