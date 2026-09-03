@@ -493,8 +493,16 @@ internal partial class DwgObjectWriter : DwgSectionIO
 
 		//Common:
 		//Wireframe data present B X True if wireframe data is present
-		//TODO: implement wireframe data
-		this._writer.WriteBit(false);
+		this._writer.WriteBit(true);
+		if (geometry.Point.IsZero())
+		{
+			this._writer.WriteBit(false);
+		}
+		else
+		{
+			this._writer.WriteBit(true);
+			this._writer.Write3BitDouble(geometry.Point);
+		}
 
 		//R2007 +:
 		if (this.R2007Plus)
