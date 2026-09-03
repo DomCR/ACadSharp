@@ -482,6 +482,28 @@ internal partial class DwgObjectWriter : DwgSectionIO
 		this._writer.WriteBitDouble(ellipse.EndParameter);
 	}
 
+	private void writeModelerGeometry(ModelerGeometry geometry)
+	{
+		if (!this.R2013Plus)
+		{
+			//TODO: Implement modeler ACIS data
+			//ACIS Empty bit B X If 1, then no data follows
+			this._writer.WriteBit(false);
+		}
+
+		//Common:
+		//Wireframe data present B X True if wireframe data is present
+		//TODO: implement wireframe data
+		this._writer.WriteBit(false);
+
+		//R2007 +:
+		if (this.R2007Plus)
+		{
+			//Unknown BL
+			this._writer.WriteBitLong(0);
+		}
+	}
+
 	private void writeEntity(Entity entity)
 	{
 		List<Entity> children = new List<Entity>();
@@ -620,6 +642,12 @@ internal partial class DwgObjectWriter : DwgSectionIO
 				break;
 			case Spline spline:
 				this.writeSpline(spline);
+				break;
+			case Region region:
+				this.writeModelerGeometry(region);
+				break;
+			case CadBody body:
+				this.writeModelerGeometry(body);
 				break;
 			case CadWipeoutBase image:
 				this.writeCadImage(image);
