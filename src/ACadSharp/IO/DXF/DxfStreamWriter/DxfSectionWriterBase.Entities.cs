@@ -1282,7 +1282,9 @@ internal abstract partial class DxfSectionWriterBase
 		this._writer.Write(70, geometry.ModelerFormatVersion != 0 ? geometry.ModelerFormatVersion : (short)1);
 
 		//one group per SAT line, character-swapped: code 1 opens the line, code 3
-		//continues it when it exceeds the group size
+		//continues it when it exceeds the group size. A line is cut at the last
+		//space that fits, so a token never spans two groups: the restore reads
+		//the tokens group by group and rejects one split in the middle
 		const int CHUNK = 255;
 		foreach (string line in geometry.GetAcisText().Split('\n'))
 		{
@@ -1293,10 +1295,23 @@ internal abstract partial class DxfSectionWriterBase
 			}
 
 			string encoded = AcisTextCodec.Decode(trimmed);
-			for (int offset = 0; offset < encoded.Length; offset += CHUNK)
+			int offset = 0;
+			while (offset < encoded.Length)
 			{
-				string chunk = encoded.Substring(offset, Math.Min(CHUNK, encoded.Length - offset));
-				this._writer.Write(offset == 0 ? 1 : 3, chunk);
+				int length = Math.Min(CHUNK, encoded.Length - offset);
+				if (offset + length < encoded.Length)
+				{
+					//the space itself stays at the end of the chunk, the swap
+					//leaves it untouched
+					int space = encoded.LastIndexOf(' ', offset + length - 1, length);
+					if (space > offset)
+					{
+						length = space - offset + 1;
+					}
+				}
+
+				this._writer.Write(offset == 0 ? 1 : 3, encoded.Substring(offset, length));
+				offset += length;
 			}
 		}
 	}

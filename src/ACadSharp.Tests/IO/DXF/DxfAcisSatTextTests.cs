@@ -71,6 +71,69 @@ public class DxfAcisSatTextTests
 		Assert.Equal(line1 + "\n" + line2, region.GetAcisText());
 	}
 
+	[Fact]
+	public void WriteLongSatLineCutsGroupsAtSpaces()
+	{
+		// A SAT line longer than a group value (255 characters) continues in
+		// code 3 groups; every cut must fall on a space, never inside a token,
+		// because the restore reads the tokens group by group.
+		StringBuilder longLine = new StringBuilder("intcurve-curve $-1 forward { exactcur nurbs 3 open 3");
+		for (int i = 0; i < 40; i++)
+		{
+			longLine.Append(' ').Append((0.123456789 * i).ToString("R", System.Globalization.CultureInfo.InvariantCulture));
+		}
+		longLine.Append(" null_surface null_surface nullbs nullbs I I 0 0 0 I I } I I #");
+
+		string sat = string.Join("\n", "400 1 1 0", "body $-1 $1 $-1 $-1 #", longLine.ToString(), "End-of-ACIS-data ");
+
+		CadDocument doc = new CadDocument();
+		doc.Header.Version = ACadVersion.AC1024;
+		Region region = new Region();
+		region.AcisData = Encoding.ASCII.GetBytes(sat);
+		region.ModelerFormatVersion = 1;
+		doc.Entities.Add(region);
+
+		string dxf;
+		using (MemoryStream stream = new MemoryStream())
+		{
+			DxfWriter.Write(stream, doc);
+			dxf = Encoding.ASCII.GetString(stream.ToArray());
+		}
+
+		// collect the code 1/3 values of the region in order
+		string[] lines = dxf.Split('\n');
+		System.Collections.Generic.List<(int code, string value)> groups = new System.Collections.Generic.List<(int, string)>();
+		bool inRegion = false;
+		for (int i = 0; i + 1 < lines.Length; i += 2)
+		{
+			string code = lines[i].Trim();
+			string value = lines[i + 1].TrimEnd('\r');
+			if (code == "0")
+			{
+				inRegion = value == "REGION";
+			}
+			else if (inRegion && (code == "1" || code == "3"))
+			{
+				groups.Add((int.Parse(code), value));
+			}
+		}
+
+		Assert.Contains(groups, g => g.code == 3);
+		Assert.All(groups, g => Assert.True(g.value.Length <= 255));
+
+		// a continuation follows a chunk that ends on a space
+		for (int i = 0; i < groups.Count; i++)
+		{
+			if (groups[i].code == 3)
+			{
+				Assert.EndsWith(" ", groups[i - 1].value);
+			}
+		}
+
+		// the reader joins the groups back to the original text
+		Assert.Equal(sat, readSingleRegion(dxf).GetAcisText());
+	}
+
 	private static Region readSingleRegion(string dxf)
 	{
 		CadDocument doc;
