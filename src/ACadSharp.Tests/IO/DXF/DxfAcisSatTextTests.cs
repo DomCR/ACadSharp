@@ -134,6 +134,61 @@ public class DxfAcisSatTextTests
 		Assert.Equal(sat, readSingleRegion(dxf).GetAcisText());
 	}
 
+	[Fact]
+	public void WriteSolid3DSubclassOnlySince2007()
+	{
+		// The AcDb3dSolid subclass and its History ID field (350) exist since
+		// the 2007 format: the older formats stop at AcDbModelerGeometry, and a
+		// subclass marker without its field makes AutoCAD discard the DXF.
+		string sat = string.Join("\n", "400 1 1 0", "body $-1 $1 $-1 $-1 #", "End-of-ACIS-data ");
+
+		System.Collections.Generic.List<(string code, string value)> older = writeSolid3D(ACadVersion.AC1015, sat);
+		Assert.DoesNotContain(older, g => g.code == "100" && g.value == DxfSubclassMarker.Solid3D);
+		Assert.DoesNotContain(older, g => g.code == "350");
+
+		System.Collections.Generic.List<(string code, string value)> newer = writeSolid3D(ACadVersion.AC1024, sat);
+		int marker = newer.FindIndex(g => g.code == "100" && g.value == DxfSubclassMarker.Solid3D);
+		Assert.True(marker >= 0);
+		Assert.Equal("350", newer[marker + 1].code);
+	}
+
+	// writes a single 3DSOLID and returns its groups in order
+	private static System.Collections.Generic.List<(string code, string value)> writeSolid3D(ACadVersion version, string sat)
+	{
+		CadDocument doc = new CadDocument();
+		doc.Header.Version = version;
+		Solid3D solid = new Solid3D();
+		solid.AcisData = Encoding.ASCII.GetBytes(sat);
+		solid.ModelerFormatVersion = 1;
+		doc.Entities.Add(solid);
+
+		string dxf;
+		using (MemoryStream stream = new MemoryStream())
+		{
+			DxfWriter.Write(stream, doc);
+			dxf = Encoding.ASCII.GetString(stream.ToArray());
+		}
+
+		string[] lines = dxf.Split('\n');
+		System.Collections.Generic.List<(string code, string value)> groups = new System.Collections.Generic.List<(string, string)>();
+		bool inSolid = false;
+		for (int i = 0; i + 1 < lines.Length; i += 2)
+		{
+			string code = lines[i].Trim();
+			string value = lines[i + 1].TrimEnd('\r');
+			if (code == "0")
+			{
+				inSolid = value == "3DSOLID";
+			}
+			else if (inSolid)
+			{
+				groups.Add((code, value));
+			}
+		}
+
+		return groups;
+	}
+
 	private static Region readSingleRegion(string dxf)
 	{
 		CadDocument doc;

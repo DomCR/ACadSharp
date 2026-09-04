@@ -1320,12 +1320,13 @@ internal abstract partial class DxfSectionWriterBase
 	{
 		this.writeModelerGeometry(solid);
 
-		this._writer.Write(DxfCode.Subclass, DxfSubclassMarker.Solid3D);
-
-		//H 350 History ID: mandatory since the 2007 format, AutoCAD discards
-		//the whole DXF when it misses
+		//the AcDb3dSolid subclass exists since the 2007 format, together with its
+		//only field, the H 350 History ID: the older formats stop the entity at
+		//AcDbModelerGeometry, and AutoCAD discards the whole DXF both when the
+		//subclass marker comes without the field and when the field misses
 		if (this.Version >= ACadVersion.AC1021)
 		{
+			this._writer.Write(DxfCode.Subclass, DxfSubclassMarker.Solid3D);
 			this._writer.Write(350, (ulong)0);
 		}
 	}
