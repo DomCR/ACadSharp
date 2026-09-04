@@ -875,9 +875,24 @@ internal abstract class DxfSectionReaderBase
 						return false;
 				}
 			default:
+				if (this._builder.Version < ACadVersion.AC1012)
+				{
+					//Pre R13 files do not have the subclass markers, the dimension type is only known after the code 70
+					//so the value can belong to any of the subclasses of the current dimension type
+					this.currentSubclass = tmp.CadObject.SubclassMarker;
+					foreach (DxfClassMap classMap in map.SubClasses.Values)
+					{
+						if (this.tryAssignCurrentValue(template.CadObject, classMap))
+						{
+							return true;
+						}
+					}
+
+					return false;
+				}
+
 				if (string.IsNullOrEmpty(this.currentSubclass))
 				{
-					//Pre R13 files do not have the subclass markers
 					this.currentSubclass = tmp.CadObject.SubclassMarker;
 				}
 
