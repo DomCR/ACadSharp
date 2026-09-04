@@ -250,6 +250,12 @@ public abstract class Table<T> : CadObject, ITable, ICadCollection<T>, IObservab
 
 	private void assignToDefault(string name)
 	{
+		//While the table is being read the default entries may not exist yet, there is nothing to reassign to
+		if (!this.getDefaultEntries().All(this.entries.ContainsKey))
+		{
+			return;
+		}
+
 		this._referenceHandler.RemoveReference(name, this.GetDefaultEntry());
 	}
 
