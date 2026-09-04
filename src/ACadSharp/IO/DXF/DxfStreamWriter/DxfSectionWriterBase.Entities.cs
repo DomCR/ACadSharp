@@ -108,6 +108,12 @@ internal abstract partial class DxfSectionWriterBase
 			case Solid solid:
 				this.writeSolid(solid);
 				break;
+			case Solid3D solid3D:
+				this.writeSolid3D(solid3D);
+				break;
+			case ModelerGeometry modelerGeometry:	//CadBody and Region
+				this.writeModelerGeometry(modelerGeometry);
+				break;
 			case Spline spline:
 				this.writeSpline(spline);
 				break;
@@ -155,10 +161,15 @@ internal abstract partial class DxfSectionWriterBase
 				return this.Configuration.WriteShapes;
 			case ProxyEntity:
 			case TableEntity:
-			case Solid3D:
-			case CadBody:
-			case Region:
 				this.notify($"Entity type not implemented {entity.GetType().FullName}", NotificationType.NotImplemented);
+				return false;
+			case ModelerGeometry modelerGeometry:	//Solid3D, CadBody and Region
+				if (this.canWriteModelerGeometry(modelerGeometry))
+				{
+					return true;
+				}
+
+				this.notify($"ACIS payload of {entity.GetType().FullName} cannot be written for this target version", NotificationType.NotImplemented);
 				return false;
 			default:
 				return true;
@@ -1233,6 +1244,91 @@ internal abstract partial class DxfSectionWriterBase
 		this._writer.Write(39, solid.Thickness, map);
 
 		this._writer.Write(210, solid.Normal, map);
+	}
+
+	//Pre-2013 files carry the ACIS payload as character-swapped SAT text in the
+	//entity codes 1/3; the 2013+ targets store the binary payload in the
+	//ACDSDATA section instead.
+	private bool canWriteModelerGeometry(ModelerGeometry geometry)
+	{
+		if (geometry.AcisData == null || geometry.AcisData.Length == 0)
+		{
+			return false;
+		}
+
+		return this.Version < ACadVersion.AC1027
+			? !geometry.IsBinaryAcisData
+			: geometry.IsBinaryAcisData;
+	}
+
+	private void writeModelerGeometry(ModelerGeometry geometry)
+	{
+		this._writer.Write(DxfCode.Subclass, DxfSubclassMarker.ModelerGeometry);
+
+		if (this.Version >= ACadVersion.AC1027)
+		{
+			//the payload lives in the ACDSDATA section, paired by owner handle;
+			//the entity only carries the presence flag and its uid
+			if (geometry.Guid == Guid.Empty)
+			{
+				geometry.Guid = Guid.NewGuid();
+			}
+
+			this._writer.Write(290, true);
+			this._writer.Write(2, geometry.Guid.ToString("B"));
+			return;
+		}
+
+		this._writer.Write(70, geometry.ModelerFormatVersion != 0 ? geometry.ModelerFormatVersion : (short)1);
+
+		//one group per SAT line, character-swapped: code 1 opens the line, code 3
+		//continues it when it exceeds the group size. A line is cut at the last
+		//space that fits, so a token never spans two groups: the restore reads
+		//the tokens group by group and rejects one split in the middle
+		const int CHUNK = 255;
+		foreach (string line in geometry.GetAcisText().Split('\n'))
+		{
+			string trimmed = line.TrimEnd('\r');
+			if (trimmed.Length == 0)
+			{
+				continue;
+			}
+
+			string encoded = AcisTextCodec.Decode(trimmed);
+			int offset = 0;
+			while (offset < encoded.Length)
+			{
+				int length = Math.Min(CHUNK, encoded.Length - offset);
+				if (offset + length < encoded.Length)
+				{
+					//the space itself stays at the end of the chunk, the swap
+					//leaves it untouched
+					int space = encoded.LastIndexOf(' ', offset + length - 1, length);
+					if (space > offset)
+					{
+						length = space - offset + 1;
+					}
+				}
+
+				this._writer.Write(offset == 0 ? 1 : 3, encoded.Substring(offset, length));
+				offset += length;
+			}
+		}
+	}
+
+	private void writeSolid3D(Solid3D solid)
+	{
+		this.writeModelerGeometry(solid);
+
+		//the AcDb3dSolid subclass exists since the 2007 format, together with its
+		//only field, the H 350 History ID: the older formats stop the entity at
+		//AcDbModelerGeometry, and AutoCAD discards the whole DXF both when the
+		//subclass marker comes without the field and when the field misses
+		if (this.Version >= ACadVersion.AC1021)
+		{
+			this._writer.Write(DxfCode.Subclass, DxfSubclassMarker.Solid3D);
+			this._writer.Write(350, (ulong)0);
+		}
 	}
 
 	private void writeSpline(Spline spline)
