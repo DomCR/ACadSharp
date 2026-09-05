@@ -364,6 +364,33 @@ public class Insert : Entity, IOrientable
 	{
 		BoundingBox box = this.Block.GetBoundingBox();
 
+		//An XCLIP boundary takes everything outside it out of the drawing, and AutoCAD's own extents
+		//are measured from what survives - so a box that ignores the clip claims the insert covers
+		//ground the drawing does not. The boundary is recorded in the space it was defined in;
+		//InverseInsertTransform brings it back into the block's own, which is where it can meet the
+		//block's box. An empty intersection is left alone rather than trusted.
+		SpatialFilter filter = this.SpatialFilter;
+		if (filter != null && filter.BoundaryPoints.Count > 1)
+		{
+			//Both DWG and DXF record this matrix as three rows of four with the translation in the
+			//fourth column, and the readers store it exactly so. Matrix4 multiplies a point with the
+			//translation read from the fourth ROW, so the stored matrix has to be transposed before
+			//it means anything - applied as it stands it silently drops the translation, which is
+			//the whole of what this particular matrix carries.
+			Matrix4 toBlock = filter.InverseInsertTransform.Transpose();
+
+			BoundingBox clip = BoundingBox.FromPoints(
+				filter.BoundaryPoints.Select(p => toBlock * new XYZ(p.X, p.Y, 0)));
+
+			XYZ clipMin = new XYZ(Math.Max(box.Min.X, clip.Min.X), Math.Max(box.Min.Y, clip.Min.Y), box.Min.Z);
+			XYZ clipMax = new XYZ(Math.Min(box.Max.X, clip.Max.X), Math.Min(box.Max.Y, clip.Max.Y), box.Max.Z);
+
+			if (clipMin.X <= clipMax.X && clipMin.Y <= clipMax.Y)
+			{
+				box = new BoundingBox(clipMin, clipMax);
+			}
+		}
+
 		var t = this.GetTransform();
 
 		var min = t.ApplyTransform(box.Min);
