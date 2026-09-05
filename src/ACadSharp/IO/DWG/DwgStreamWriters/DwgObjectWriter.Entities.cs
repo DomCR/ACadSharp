@@ -615,6 +615,9 @@ internal partial class DwgObjectWriter : DwgSectionIO
 			case Solid solid:
 				this.writeSolid(solid);
 				break;
+			case Region region:
+				this.writeModelerGeometry(region);
+				break;
 			case Solid3D solid3d:
 				this.writeSolid3D(solid3d);
 				break;
@@ -2200,6 +2203,48 @@ internal partial class DwgObjectWriter : DwgSectionIO
 
 		//Extrusion BE 210
 		this._writer.WriteBitExtrusion(solid.Normal);
+	}
+
+	private void writeModelerGeometry(ModelerGeometry geometry)
+	{
+		//Before R2013 the ACIS payload sits in the entity itself. The bit says whether it is
+		//*absent*: 0 means the data follows right here and the entity ends with it, which is the
+		//shape the reader expects and the shortest one that carries the geometry. Wireframe and
+		//silhouette data - isolines AutoCAD regenerates on open - are not written.
+		bool hasPayload = geometry.AcisData != null && geometry.AcisData.Length > 0;
+		if (!this.R2013Plus)
+		{
+			this._writer.WriteBit(!hasPayload);
+			if (hasPayload)
+			{
+				this.writeModelerGeometryData(geometry);
+			}
+		}
+
+		//Wireframe data present. This follows the payload rather than ending the entity: the reader
+		//here stops at the end-of-ACIS marker and does not care what comes after, but AutoCAD reads
+		//on, and a file that stopped short of this bit was refused before it finished loading.
+		this._writer.WriteBit(false);
+
+		if (this.R2007Plus)
+		{
+			//Unknown BL
+			this._writer.WriteBitLong(0);
+		}
+	}
+
+	private void writeModelerGeometryData(ModelerGeometry geometry)
+	{
+		//Unknown bit
+		this._writer.WriteBit(false);
+
+		//Version 2: the payload follows raw, and the reader finds its end by the end-of-ACIS marker
+		//inside it. Version 1 - the character-swapped SAT text in length-prefixed blocks, which is
+		//what R2000 files carry - is not written: written that way, in one block or one block per
+		//line, AutoCAD refuses to open the drawing at all, and a region no one can open is worse
+		//than a region that says it was left out. isEntitySupported keeps those entities out.
+		this._writer.WriteBitShort(2);
+		this._writer.WriteBytes(geometry.AcisData);
 	}
 
 	private void writeSolid3D(Solid3D solid)
