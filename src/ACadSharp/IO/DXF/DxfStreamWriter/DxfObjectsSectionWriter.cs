@@ -685,6 +685,13 @@ internal class DxfObjectsSectionWriter : DxfSectionWriterBase
 
 		foreach (var e in record.Entries)
 		{
+			//An entry whose handle could not be resolved when the file was read keeps its place in
+			//the record with a null value; there is nothing to write for it.
+			if (e.Value == null)
+			{
+				continue;
+			}
+
 			switch (e.GroupCode)
 			{
 				case GroupCodeValueType.None:
