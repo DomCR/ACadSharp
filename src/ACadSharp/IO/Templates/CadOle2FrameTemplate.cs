@@ -24,18 +24,8 @@ namespace ACadSharp.IO.Templates
 			{
 				this.CadObject.BinaryData = this.Chunks.SelectMany(c => c).ToArray();
 			}
-
-			//The four corners are recovered from the OLE2 payload itself, so with no payload there is
-			//nothing to recover - and AutoCAD's own DXF export of an OLE2FRAME does not always carry
-			//one. Reading on from a null buffer threw ArgumentNullException out of BuildDocument,
-			//which loses the ENTIRE document over one frame: a drawing of 32,571 entities carrying
-			//twenty OLE frames could not be read back from AutoCAD's DXF at all.
-			//
-			//Two bytes of header and four points of three doubles is what the block below consumes.
-			const int required = 2 + (4 * 3 * 8);
-			if (this.CadObject.BinaryData == null || this.CadObject.BinaryData.Length < required)
+			else if (this.CadObject.BinaryData == null)
 			{
-				builder.Notify($"OLE2FRAME {this.CadObject.Handle} carries no readable OLE2 payload, its corners are left at their defaults", NotificationType.Warning);
 				return;
 			}
 
