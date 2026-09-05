@@ -1,0 +1,52 @@
+  0
+SECTION
+  2
+HEADER
+  9
+$ACADVER
+  1
+AC1009
+  0
+ENDSEC
+  0
+TABLE
+  2
+LAYER
+ 70
+     1
+  0
+LAYER
+  2
+TestLayer
+ 70
+     0
+ 62
+     3
+  6
+CONTINUOUS
+  0
+ENDTAB
+  0
+SECTION
+  2
+ENTITIES
+  0
+LINE
+  8
+TestLayer
+ 10
+0.0
+ 20
+0.0
+ 30
+0.0
+ 11
+100.0
+ 21
+100.0
+ 31
+0.0
+  0
+ENDSEC
+  0
+EOF
