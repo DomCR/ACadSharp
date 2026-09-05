@@ -48,6 +48,7 @@ internal abstract class CadTemplate : ICadObjectTemplate
 			switch (this.CadObject)
 			{
 				case ProxyEntity:
+				case ProxyObject:
 				case UnknownEntity:
 				case UnknownNonGraphicalObject:
 					break;
