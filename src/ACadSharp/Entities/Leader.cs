@@ -62,14 +62,24 @@ public class Leader : Entity, IOrientable
 	{
 		get
 		{
-			bool result = false;
 			if (this.Vertices.Count <= 1)
 			{
-				return result;
+				return false;
 			}
 
-			double angle = (this.Vertices[this.Vertices.Count - 2] - this.Vertices[this.Vertices.Count - 1]).AngleBetweenVectors(this.HorizontalDirection);
-			return MathHelper.IsZero(angle);
+			//A hook line is the last segment lying along the horizontal direction, either way. The
+			//test used to accept only the segment pointing the same way as that direction, so a hook
+			//that runs against it - which is exactly what HookLineDirection.Opposite describes, and
+			//what AutoCAD writes for a leader whose text sits to the right of it - was read as no
+			//hook at all: leader 512 of samples/sample_AC1032.dxf says 75 = 1 and came back false.
+			XYZ last = this.Vertices[this.Vertices.Count - 2] - this.Vertices[this.Vertices.Count - 1];
+			if (last.IsZero() || this.HorizontalDirection.IsZero())
+			{
+				return false;
+			}
+
+			double angle = last.AngleBetweenVectors(this.HorizontalDirection);
+			return MathHelper.IsZero(angle) || MathHelper.IsZero(angle - System.Math.PI);
 		}
 	}
 
