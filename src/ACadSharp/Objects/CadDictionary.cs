@@ -225,6 +225,16 @@ public class CadDictionary : NonGraphicalObject, IObservableCadCollection<NonGra
 			throw new ArgumentNullException(nameof(value), $"NonGraphicalObject [{this.GetType().FullName}] must have a name");
 		}
 
+		//An entry added under a key of its own carries no name, and both writers put the name into
+		//the file: a DXF round trip of such an entry came back with an empty group 3 and the
+		//document could not be read. The reader already fills a missing name from the key when it
+		//builds a dictionary, so this is the same rule on the way in. A name that is already set is
+		//left alone - some collections, scales among them, use a key that differs from the name.
+		if (string.IsNullOrEmpty(value.Name))
+		{
+			value.Name = key;
+		}
+
 		this._entries.Add(key, value);
 		value.Owner = this;
 
