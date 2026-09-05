@@ -148,6 +148,24 @@ internal partial class DwgObjectWriter : DwgSectionIO
 			case Shape:
 				return this.WriteShapes;
 			case TableEntity when !this.R2010Plus:
+				//Only the R2010 layout of a table is implemented: writeTableEntity throws at its
+				//own "Until R2007" branch, where the older inline cell layout would go. It is a
+				//limit of this writer, not of the format - AutoCAD's own AC1015 and AC1018 files
+				//carry tables - so say which limit it is, and which version keeps the object.
+				this.notify(
+					$"{entity.GetType().Name} {entity.Handle} is not written to a {this._version} file: only the {ACadVersion.AC1024} layout of it is implemented. {ACadVersion.AC1024} is the oldest version that keeps it.",
+					NotificationType.NotImplemented);
+
+				return false;
+			//A table whose content was read from the pre-R2010 layout used to be dropped here,
+			//because writing it unconverted makes AutoCAD reject the file (ErrorStatus 53 at
+			//R2010) or work on it for as long as it is given. It is now CONVERTED on write - see
+			//writeTableEntity - because the wall turned out not to be the missing R2010-only
+			//structures at all: stripping cell styles, content formats, cell geometry and custom
+			//data from an R2018-authored table still audits 0, and the real failure was
+			//writeStringCadValue writing a double length for an empty string, which only a
+			//converted table ever carries. With that fixed, the converted file opens and audits 0
+			//at AC1024, AC1027 and AC1032, and AutoCAD's own DXF export carries both tables.
 			case Wall:
 			case MechanicalEntity:
 			case ProxyEntity:

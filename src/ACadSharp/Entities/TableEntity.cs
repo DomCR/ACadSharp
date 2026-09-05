@@ -100,6 +100,19 @@ public partial class TableEntity : Insert, IDxfClassDefined
 	public int ValueFlag { get; set; }
 
 	/// <summary>
+	/// Set by the DWG reader when this table's content came from the layout used up to R2007, which
+	/// this library reads but cannot re-express as the layout it writes from R2010 on.
+	/// </summary>
+	/// <remarks>
+	/// Provenance, not a property of the table, so it is deliberately not public and not a DXF
+	/// value. The writer needs it because writing such content into an R2010+ file does not lose
+	/// the table, it loses the whole drawing. It was briefly inferred from <see cref="ValueFlag"/>
+	/// being non-zero, which is wrong: that flag is public, documented, and normally has 0x06 set,
+	/// so any caller building a table faithfully would have had it silently dropped.
+	/// </remarks>
+	internal bool ContentIsPreR2010Layout { get; set; }
+
+	/// <summary>
 	/// Table data version
 	/// </summary>
 	[DxfCodeValue(280)]
