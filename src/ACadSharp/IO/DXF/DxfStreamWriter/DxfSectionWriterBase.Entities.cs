@@ -18,6 +18,24 @@ internal abstract partial class DxfSectionWriterBase
 			return;
 		}
 
+		if (entity is TableEntity table)
+		{
+			//A table is a block reference of the anonymous *T block that holds its drawn geometry,
+			//with the cell data on top of it. The cell data is not written here, and an ACAD_TABLE
+			//record without its AcDbTable subclass is one AutoCAD refuses, so the table goes out as
+			//the INSERT it derives from: the drawn table survives - the *T block is already written
+			//- instead of the whole entity disappearing from the file.
+			this.notify(
+				$"Table {table.Handle} is written as the block reference of {table.Block?.Name}; cell values, styles and merges are not written to DXF.",
+				NotificationType.NotImplemented);
+
+			this._writer.Write(DxfCode.Start, DxfFileToken.EntityInsert);
+			this.writeCommonObjectData(table);
+			this.writeCommonEntityData(table);
+			this.writeInsert(table, DxfSubclassMarker.Insert);
+			return;
+		}
+
 		this._writer.Write(DxfCode.Start, entity.ObjectName);
 
 		this.writeCommonObjectData(entity);
@@ -154,7 +172,6 @@ internal abstract partial class DxfSectionWriterBase
 			case Shape:
 				return this.Configuration.WriteShapes;
 			case ProxyEntity:
-			case TableEntity:
 			case Solid3D:
 			case CadBody:
 			case Region:
@@ -626,11 +643,13 @@ internal abstract partial class DxfSectionWriterBase
 		}
 	}
 
-	private void writeInsert(Insert insert)
+	private void writeInsert(Insert insert, string subclassMarker = null)
 	{
 		DxfClassMap map = DxfClassMap.Create<Insert>();
 
-		this._writer.Write(DxfCode.Subclass, insert.SubclassMarker);
+		//A table writes the block-reference body under the block-reference marker; its own marker
+		//names AcDbTable, which is not what these groups are.
+		this._writer.Write(DxfCode.Subclass, subclassMarker ?? insert.SubclassMarker);
 
 		this._writer.WriteName(2, insert.Block, map);
 
