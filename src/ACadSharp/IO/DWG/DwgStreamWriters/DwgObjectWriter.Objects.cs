@@ -2142,8 +2142,10 @@ internal partial class DwgObjectWriter : DwgSectionIO
 
 		//Common:
 		//Numentries BL number of entries
-		this._writer.WriteBitLong(sortEntitiesTable.Count());
-		foreach (var item in sortEntitiesTable)
+		//StoredOrder, not the enumerator: the file's own order is what this table means when two
+		//entries share a key, and enumerating sorts.
+		this._writer.WriteBitLong(sortEntitiesTable.StoredOrder.Count);
+		foreach (var item in sortEntitiesTable.StoredOrder)
 		{
 			//Sort handle(numentries of these, CODE 0, i.e.part of the main bit stream, not of the handle bit stream!).
 			//The sort handle does not have to point to an entity (but it can).

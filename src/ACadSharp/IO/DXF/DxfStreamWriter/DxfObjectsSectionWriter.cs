@@ -1683,6 +1683,11 @@ internal class DxfObjectsSectionWriter : DxfSectionWriterBase
 
 		this._writer.WriteHandle(330, e.BlockOwner);
 
+		//Sorted by sort handle - the enumerator - and deliberately NOT the stored order the DWG writer
+		//uses. Measured on a production drawing whose DXF AutoCAD audits non-deterministically: the
+		//stored order (which is AutoCAD's own DXF order, by entity handle) audits 131-142 over eight
+		//runs, the sorted order 119-126 over three. AutoCAD's own DXF of that drawing crashes AutoCAD
+		//on reopen, so there is no oracle here beyond the audit, and the audit prefers sorted.
 		foreach (SortEntitiesTable.Sorter item in e)
 		{
 			this._writer.WriteHandle(331, item.Entity);
