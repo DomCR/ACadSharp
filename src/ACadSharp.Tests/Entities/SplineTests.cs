@@ -37,6 +37,49 @@ public class SplineTests : CommonEntityTests<Spline>
 	}
 
 	[Fact]
+	public void GetBoundingBoxOfAPeriodicSplineStaysOnTheCurve()
+	{
+		//A periodic spline is flagged closed as well, and the domain of its unclamped knot vector
+		//starts at knots[degree] - not at knots[0], which lies outside it. Sampling below the
+		//domain makes every basis function vanish, and the zero vector that comes back used to
+		//drag the bounding box all the way to the origin.
+		Spline spline = new Spline();
+		spline.Degree = 3;
+
+		foreach (XYZ pt in new[]
+		{
+			new XYZ(1000, 2000, 0),
+			new XYZ(1010, 2000, 0),
+			new XYZ(1015, 2009, 0),
+			new XYZ(1010, 2017, 0),
+			new XYZ(1000, 2017, 0),
+			new XYZ(995, 2009, 0),
+			new XYZ(1000, 2000, 0),
+		})
+		{
+			spline.ControlPoints.Add(pt);
+		}
+
+		for (int i = 0; i < 11; i++)
+		{
+			spline.Knots.Add(i);
+		}
+
+		spline.IsClosed = true;
+		spline.IsPeriodic = true;
+
+		BoundingBox hull = BoundingBox.FromPoints(spline.ControlPoints);
+		BoundingBox box = spline.GetBoundingBox();
+
+		//A B-spline lies inside the convex hull of its control points, so the box cannot reach
+		//further out than they do - and certainly not back to (0,0).
+		Assert.True(box.Min.X >= hull.Min.X - 1, $"min X {box.Min.X} escaped the control hull {hull.Min.X}");
+		Assert.True(box.Min.Y >= hull.Min.Y - 1, $"min Y {box.Min.Y} escaped the control hull {hull.Min.Y}");
+		Assert.True(box.Max.X <= hull.Max.X + 1, $"max X {box.Max.X} escaped the control hull {hull.Max.X}");
+		Assert.True(box.Max.Y <= hull.Max.Y + 1, $"max Y {box.Max.Y} escaped the control hull {hull.Max.Y}");
+	}
+
+	[Fact]
 	public void CheckIsCloseFlag()
 	{
 		Spline spline = new Spline();
