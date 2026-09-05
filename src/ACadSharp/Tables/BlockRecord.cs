@@ -447,8 +447,6 @@ public class BlockRecord : TableEntry, IGeometricEntity
 		BoundingBox box = BoundingBox.Null;
 		foreach (var item in this.Entities)
 		{
-			//Once per entity. Asking twice - once to test the extent, once to merge - doubles the
-			//work at every level of nesting, so a block three deep was measured eight times over.
 			BoundingBox itemBox = item.GetBoundingBox();
 
 			if (itemBox.Extent == BoundingBoxExtent.Infinite && ignoreInfinite)
