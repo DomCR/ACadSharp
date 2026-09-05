@@ -288,7 +288,10 @@ public class TextEntity : Entity, IText
 	/// <inheritdoc/>
 	public override BoundingBox GetBoundingBox()
 	{
-		return new BoundingBox(this.InsertPoint);
+		//The insertion point is in the text's own object coordinate system - the DWG stream carries
+		//it as a 2D point plus an elevation about the extrusion - so a mirrored text, which AutoCAD
+		//records with a (0,0,-1) normal, sits at the negated X of the stored value.
+		return new BoundingBox(Matrix4.GetArbitraryAxis(this.Normal) * this.InsertPoint);
 	}
 
 	internal override void AssignDocument(CadDocument doc)

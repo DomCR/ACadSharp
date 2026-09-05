@@ -10,7 +10,32 @@ namespace ACadSharp.Tests.Entities;
 
 public class HatchTests : CommonEntityTests<Hatch>
 {
-	[Fact]
+[Fact]
+	public void MirroredHatchIsBoxedThroughItsNormal()
+	{
+		//The boundary is flat in the hatch's own object coordinate system and the height of its
+		//plane is carried apart in Elevation, so the (0,0,-1) normal AutoCAD writes for mirrored
+		//geometry puts the boundary at the negated X - and the plane at the negated elevation.
+		Hatch hatch = new Hatch
+		{
+			Normal = new XYZ(0, 0, -1),
+			Elevation = 3.0,
+		};
+
+		Hatch.BoundaryPath path = new Hatch.BoundaryPath();
+		path.Edges.Add(new Hatch.BoundaryPath.Line { Start = new XY(9, 0), End = new XY(11, 4) });
+		hatch.Paths.Add(path);
+
+		BoundingBox box = hatch.GetBoundingBox();
+
+		Assert.Equal(-11.0, box.Min.X, 6);
+		Assert.Equal(-9.0, box.Max.X, 6);
+		Assert.Equal(0.0, box.Min.Y, 6);
+		Assert.Equal(4.0, box.Max.Y, 6);
+		Assert.Equal(-3.0, box.Min.Z, 6);
+	}
+
+		[Fact]
 	public void BoundaryPathToEntityTest()
 	{
 		var a = new Hatch.BoundaryPath.Arc
