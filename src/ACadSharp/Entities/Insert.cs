@@ -362,14 +362,37 @@ public class Insert : Entity, IOrientable
 	/// <inheritdoc/>
 	public override BoundingBox GetBoundingBox()
 	{
+		//A file can name a block the reader failed to resolve; CadInsertTemplate warns and leaves
+		//Block null rather than refuse the file, so this has to survive the same way.
+		if (this.Block == null)
+		{
+			return new BoundingBox(this.InsertPoint);
+		}
+
 		BoundingBox box = this.Block.GetBoundingBox();
+
+		if (box.Extent == BoundingBoxExtent.Null)
+		{
+			return box;
+		}
 
 		var t = this.GetTransform();
 
-		var min = t.ApplyTransform(box.Min);
-		var max = t.ApplyTransform(box.Max);
-
-		return new BoundingBox(min, max);
+		//Rotation, and any normal other than +Z, mix the axes - so the images of two opposite
+		//corners no longer span the transformed box. At 45 degrees they collapse onto a diagonal
+		//and the box is reported with zero width. All eight corners have to travel; the extremes
+		//are taken afterwards.
+		return BoundingBox.FromPoints(new[]
+		{
+			t.ApplyTransform(new XYZ(box.Min.X, box.Min.Y, box.Min.Z)),
+			t.ApplyTransform(new XYZ(box.Max.X, box.Min.Y, box.Min.Z)),
+			t.ApplyTransform(new XYZ(box.Min.X, box.Max.Y, box.Min.Z)),
+			t.ApplyTransform(new XYZ(box.Max.X, box.Max.Y, box.Min.Z)),
+			t.ApplyTransform(new XYZ(box.Min.X, box.Min.Y, box.Max.Z)),
+			t.ApplyTransform(new XYZ(box.Max.X, box.Min.Y, box.Max.Z)),
+			t.ApplyTransform(new XYZ(box.Min.X, box.Max.Y, box.Max.Z)),
+			t.ApplyTransform(new XYZ(box.Max.X, box.Max.Y, box.Max.Z)),
+		});
 	}
 
 	/// <summary>
@@ -381,11 +404,18 @@ public class Insert : Entity, IOrientable
 	{
 		var world = Matrix4.GetArbitraryAxis(this.Normal);
 		XYZ basePoint = this.Block?.BlockEntity?.BasePoint ?? XYZ.Zero;
-		var translation = Transform.CreateTranslation(this.InsertPoint - basePoint);
+		var translation = Transform.CreateTranslation(this.InsertPoint);
 		var rotation = Transform.CreateRotation(XYZ.AxisZ, this.Rotation);
 		var scale = Transform.CreateScaling(new XYZ(this.XScale, this.YScale, this.ZScale));
 
-		return new Transform(world * translation.Matrix * rotation.Matrix * scale.Matrix);
+		//The base point is expressed in block space, so it has to come off BEFORE rotation and
+		//scale act on the point: p = insert + R*S*(p - base). Folding it into the outer
+		//translation instead computes (insert - base) + R*S*p, which differs by (R*S - I)*base -
+		//zero for a base point at the origin or an insert with no rotation and unit scale, which
+		//is why it survives most drawings, and wrong for every other one.
+		var toOrigin = Transform.CreateTranslation(-basePoint);
+
+		return new Transform(world * translation.Matrix * rotation.Matrix * scale.Matrix * toOrigin.Matrix);
 	}
 
 	/// <inheritdoc/>
