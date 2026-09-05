@@ -807,10 +807,12 @@ internal class DxfObjectsSectionWriter : DxfSectionWriterBase
 			this._writer.Write(91, parameterId);
 		}
 
-		this._writer.Write(71, (short)action.Entities.Count);
-		foreach (Entity e in action.Entities)
+		//Elements, not Entities: see the DWG writer and BlockAction.Elements.
+		List<CadObject> referenced = action.GetReferencedObjects().ToList();
+		this._writer.Write(71, (short)referenced.Count);
+		foreach (CadObject obj in referenced)
 		{
-			this._writer.WriteHandle(330, e);
+			this._writer.WriteHandle(330, obj);
 		}
 
 		this._writer.Write(1010, action.LabelPosition, map);
