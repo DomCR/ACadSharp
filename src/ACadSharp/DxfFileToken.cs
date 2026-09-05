@@ -10,6 +10,14 @@ public static class DxfFileToken
 
 	public const string AcmBalloon = "ACMBALLOON";
 
+	public const string AcmBom = "ACMBOM";
+
+	public const string AcmBomRow = "ACMBOMROW";
+
+	public const string AcmDataEntryBlock = "ACMDATAENTRYBLOCK";
+
+	public const string AcmDataEntryPart = "ACMDATAENTRYPART";
+
 	public const string AcmPartList = "ACMPARTLIST";
 
 	public const string AcmPartRef = "ACMPARTREF";
