@@ -63,7 +63,7 @@ public abstract class CadObject : IHandledCadObject
 	{
 		get
 		{
-			return this._reactors;
+			return (IEnumerable<CadObject>)this._reactors ?? Enumerable.Empty<CadObject>();
 		}
 	}
 
@@ -94,7 +94,14 @@ public abstract class CadObject : IHandledCadObject
 		}
 	}
 
-	private List<CadObject> _reactors = new List<CadObject>();
+	//Created with the first reactor. Hardly any object of a real drawing has one, and giving each
+	//of them an empty list cost 28 MB of the 548 MB a 17 MB production drawing needed.
+	private List<CadObject> _reactors;
+
+	private List<CadObject> reactors
+	{
+		get { return this._reactors ?? (this._reactors = new List<CadObject>()); }
+	}
 
 	private CadDictionary _xdictionary = null;
 
@@ -115,7 +122,7 @@ public abstract class CadObject : IHandledCadObject
 	/// <param name="reactor"></param>
 	public void AddReactor(CadObject reactor)
 	{
-		this._reactors.Add(reactor);
+		this.reactors.Add(reactor);
 	}
 
 	/// <summary>
@@ -123,12 +130,12 @@ public abstract class CadObject : IHandledCadObject
 	/// </summary>
 	public void CleanReactors()
 	{
-		var reactors = this._reactors.ToList();
+		var reactors = this.Reactors.ToList();
 		foreach (var reactor in reactors)
 		{
 			if (reactor.Document != this.Document)
 			{
-				this._reactors.Remove(reactor);
+				this._reactors?.Remove(reactor);
 			}
 		}
 	}
@@ -150,7 +157,7 @@ public abstract class CadObject : IHandledCadObject
 		clone.Owner = null;
 
 		//Collections
-		clone._reactors = new List<CadObject>();
+		clone._reactors = null;
 		clone.ExtendedData = new ExtendedDataDictionary(clone);
 		clone.XDictionary = this._xdictionary?.CloneTyped();
 
@@ -213,7 +220,7 @@ public abstract class CadObject : IHandledCadObject
 	/// <returns></returns>
 	public bool RemoveReactor(CadObject reactor)
 	{
-		return this._reactors.Remove(reactor);
+		return this._reactors != null && this._reactors.Remove(reactor);
 	}
 
 	/// <inheritdoc/>
@@ -266,7 +273,7 @@ public abstract class CadObject : IHandledCadObject
 			}
 		}
 
-		this._reactors.Clear();
+		this._reactors?.Clear();
 	}
 
 	protected T updateCollectionEntry<T>(T entry, Action<T> assignValue, ObjectDictionaryCollection<T> collection)
