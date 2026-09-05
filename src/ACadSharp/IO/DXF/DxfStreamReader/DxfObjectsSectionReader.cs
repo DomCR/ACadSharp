@@ -2654,14 +2654,18 @@ internal class DxfObjectsSectionReader : DxfSectionReaderBase
 					}
 				}
 
+				//The writer emits the inverse first and the transform second, and this flag is what
+				//tells the two apart. It was being set inside the branch that already required it to
+				//be true, so it never became true: both matrices went into InverseInsertTransform,
+				//the second overwriting the first, and InsertTransform was never assigned at all.
 				if (tmp.InsertTransformRead)
 				{
 					filter.InsertTransform = new Matrix4(array);
-					tmp.InsertTransformRead = true;
 				}
 				else
 				{
 					filter.InverseInsertTransform = new Matrix4(array);
+					tmp.InsertTransformRead = true;
 				}
 
 				return true;
