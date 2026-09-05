@@ -49,7 +49,6 @@ internal partial class DwgObjectWriter : DwgSectionIO
 			case AecWallStyle:
 			case AecCleanupGroup:
 			case AecBinRecord:
-			case DimensionAssociation:
 			case UnknownNonGraphicalObject:
 			case VisualStyle:
 			case ProxyObject:
@@ -925,32 +924,63 @@ internal partial class DwgObjectWriter : DwgSectionIO
 	{
 		this._writer.HandleReference(DwgReferenceType.SoftPointer, association.Dimension);
 
+		//The flags say which references follow, so a flag set with no reference behind it would
+		//promise data that is not there and leave everything after this object misaligned. Write the
+		//flags the references actually support.
+		AssociativityFlags flags = this.presentPointReferences(association);
+
 		//90
-		this._writer.WriteBitLong((int)association.AssociativityFlags);
+		this._writer.WriteBitLong((int)flags);
 		//70
 		this._writer.WriteBit(association.IsTransSpace);
 		//71
 		this._writer.WriteByte((byte)association.RotatedDimensionType);
 
-		if (association.AssociativityFlags.HasFlag(AssociativityFlags.FirstPointReference))
+		if (flags.HasFlag(AssociativityFlags.FirstPointReference))
 		{
 			this.writeOsnapPointRef(association.FirstPointRef);
 		}
 
-		if (association.AssociativityFlags.HasFlag(AssociativityFlags.SecondPointReference))
+		if (flags.HasFlag(AssociativityFlags.SecondPointReference))
 		{
 			this.writeOsnapPointRef(association.SecondPointRef);
 		}
 
-		if (association.AssociativityFlags.HasFlag(AssociativityFlags.ThirdPointReference))
+		if (flags.HasFlag(AssociativityFlags.ThirdPointReference))
 		{
 			this.writeOsnapPointRef(association.ThirdPointRef);
 		}
 
-		if (association.AssociativityFlags.HasFlag(AssociativityFlags.FourthPointReference))
+		if (flags.HasFlag(AssociativityFlags.FourthPointReference))
 		{
 			this.writeOsnapPointRef(association.FourthPointRef);
 		}
+	}
+
+	/// <summary>
+	/// The associativity flags of <paramref name="association"/> narrowed to the point references it
+	/// actually carries, so a file never claims a reference it does not go on to write.
+	/// </summary>
+	private AssociativityFlags presentPointReferences(DimensionAssociation association)
+	{
+		AssociativityFlags flags = association.AssociativityFlags;
+
+		void drop(AssociativityFlags flag, DimensionAssociation.OsnapPointRef pointRef)
+		{
+			if (!flags.HasFlag(flag) || pointRef != null)
+			{
+				return;
+			}
+
+			flags &= ~flag;
+			this.notify($"Dimension association {association.Handle} is flagged {flag} but carries no reference for it; the flag is left out so the file stays readable", NotificationType.Warning);
+		}
+
+		drop(AssociativityFlags.FirstPointReference, association.FirstPointRef);
+		drop(AssociativityFlags.SecondPointReference, association.SecondPointRef);
+		drop(AssociativityFlags.ThirdPointReference, association.ThirdPointRef);
+		drop(AssociativityFlags.FourthPointReference, association.FourthPointRef);
+		return flags;
 	}
 
 	private void writeDynamicBlockPurgePreventer(DynamicBlockPurgePreventer purge)
@@ -1959,6 +1989,28 @@ internal partial class DwgObjectWriter : DwgSectionIO
 		this._writer.WriteByte((byte)osnap.ObjectOsnapType);
 		//331
 		this._writer.HandleReference(DwgReferenceType.Undefined, osnap.Geometry);
+
+		//The rest of the reference, in the order the reader now reads it back - see
+		//DwgObjectReader.readOsnapPointRef, where the layout and how it was measured are written down.
+
+		//The main object is named by a subentity path: how many object ids, then the subentity. The
+		//single id is the geometry handle written just above.
+		this._writer.WriteBitLong(1);
+
+		//73
+		this._writer.WriteBitShort((short)osnap.SubentType);
+		//91
+		this._writer.WriteBitLong(osnap.GsMarker);
+
+		//No intersection object: zero ids in that path, so no handle and no 74/92/332/302 follow.
+		this._writer.WriteBitLong(0);
+
+		//40
+		this._writer.WriteBitDouble(osnap.GeometryParameter);
+		//10, 20, 30
+		this._writer.Write3BitDouble(osnap.OsnapPoint);
+		//75
+		this._writer.WriteBit(osnap.HasLastPointRef);
 	}
 
 	private void writeParameterValueSet(ParameterValueSet valueSet)

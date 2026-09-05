@@ -730,7 +730,6 @@ internal class DxfObjectsSectionWriter : DxfSectionWriterBase
 			case AecWallStyle:
 			case AecCleanupGroup:
 			case AecBinRecord:
-			case DimensionAssociation:
 			case Material:
 			case MultiLeaderObjectContextData:
 			case VisualStyle:
@@ -1425,30 +1424,60 @@ internal class DxfObjectsSectionWriter : DxfSectionWriterBase
 
 		this._writer.Write(100, DxfSubclassMarker.DimensionAssociation);
 
+		//A flag set with no reference behind it would promise a reference the file never writes, so
+		//the flags written are the ones the references actually support.
+		AssociativityFlags flags = this.presentPointReferences(dimAssociation);
+
 		this._writer.WriteHandle(330, dimAssociation.Dimension, map);
-		this._writer.Write(90, (int)dimAssociation.AssociativityFlags, map);
+		this._writer.Write(90, (int)flags, map);
 		this._writer.Write(70, dimAssociation.IsTransSpace, map);
 		this._writer.Write(71, (short)dimAssociation.RotatedDimensionType, map);
 
-		if (dimAssociation.AssociativityFlags.HasFlag(AssociativityFlags.FirstPointReference))
+		if (flags.HasFlag(AssociativityFlags.FirstPointReference))
 		{
 			this.writeOsnapPointRef(dimAssociation.FirstPointRef);
 		}
 
-		if (dimAssociation.AssociativityFlags.HasFlag(AssociativityFlags.SecondPointReference))
+		if (flags.HasFlag(AssociativityFlags.SecondPointReference))
 		{
 			this.writeOsnapPointRef(dimAssociation.SecondPointRef);
 		}
 
-		if (dimAssociation.AssociativityFlags.HasFlag(AssociativityFlags.ThirdPointReference))
+		if (flags.HasFlag(AssociativityFlags.ThirdPointReference))
 		{
 			this.writeOsnapPointRef(dimAssociation.ThirdPointRef);
 		}
 
-		if (dimAssociation.AssociativityFlags.HasFlag(AssociativityFlags.FourthPointReference))
+		if (flags.HasFlag(AssociativityFlags.FourthPointReference))
 		{
 			this.writeOsnapPointRef(dimAssociation.FourthPointRef);
 		}
+	}
+
+	/// <summary>
+	/// The associativity flags of <paramref name="association"/> narrowed to the point references it
+	/// actually carries, so a file never claims a reference it does not go on to write.
+	/// </summary>
+	private AssociativityFlags presentPointReferences(DimensionAssociation association)
+	{
+		AssociativityFlags flags = association.AssociativityFlags;
+
+		void drop(AssociativityFlags flag, DimensionAssociation.OsnapPointRef pointRef)
+		{
+			if (!flags.HasFlag(flag) || pointRef != null)
+			{
+				return;
+			}
+
+			flags &= ~flag;
+			this.notify($"Dimension association {association.Handle} is flagged {flag} but carries no reference for it; the flag is left out so the file stays readable", NotificationType.Warning);
+		}
+
+		drop(AssociativityFlags.FirstPointReference, association.FirstPointRef);
+		drop(AssociativityFlags.SecondPointReference, association.SecondPointRef);
+		drop(AssociativityFlags.ThirdPointReference, association.ThirdPointRef);
+		drop(AssociativityFlags.FourthPointReference, association.FourthPointRef);
+		return flags;
 	}
 
 	private void writeDxfValuePair(DxfValuePair pair)
