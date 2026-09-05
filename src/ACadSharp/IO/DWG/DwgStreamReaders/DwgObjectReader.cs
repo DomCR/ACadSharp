@@ -4865,11 +4865,19 @@ namespace ACadSharp.IO.DWG
 
 			//75 0 : Splined(75 value is 5)
 			//1 : Splined(75 value is 6)
-			bool splined = ((uint)flags & 0b1) > 0;
-			//Should assign pline.SmoothSurface ??
-
 			//(If either is set, set 70 bit 2(4) to indicate splined.)
+			bool splined = ((uint)flags & 0b1) > 0;
+
 			bool splined1 = ((uint)flags & 0b10) > 0;
+
+			if (splined)
+			{
+				pline.SmoothSurface = SmoothSurfaceType.Quadratic;
+			}
+			else if (splined1)
+			{
+				pline.SmoothSurface = SmoothSurfaceType.Cubic;
+			}
 
 			if (splined | splined1)
 			{
