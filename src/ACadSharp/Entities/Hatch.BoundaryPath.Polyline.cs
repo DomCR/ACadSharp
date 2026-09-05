@@ -136,7 +136,77 @@ public partial class Hatch
 			/// <inheritdoc/>
 			public override BoundingBox GetBoundingBox()
 			{
-				return BoundingBox.FromPoints(this.Vertices);
+				//"The vertex bulge is stored in the Z component" - the remark on Vertices, a few
+				//lines up. Handing them to FromPoints as if they were points built a box whose Z
+				//range was a range of BULGES, so a hatch with a polyline boundary reported a height
+				//it does not have. The spline edge carried the identical fault with its weights and
+				//was fixed; this one was missed. Measured on the client corpus: 2,106 of 17,315
+				//polyline boundary edges reported such a range.
+				//
+				//The bulges are not merely discarded either: a bulged segment bows outside its own
+				//chord, so a box taken from the vertices alone is too small in X and Y as well. Each
+				//one is measured through Arc, which is how the rest of the library measures an arc.
+				BoundingBox box = BoundingBox.FromPoints(this.Vertices.Select(v => new XYZ(v.X, v.Y, 0)));
+
+				for (int i = 0; i < this.Vertices.Count; i++)
+				{
+					XYZ curr = this.Vertices[i];
+					bool last = i == this.Vertices.Count - 1;
+					if (last && !this.IsClosed)
+					{
+						break;
+					}
+
+					XYZ next = this.Vertices[last ? 0 : i + 1];
+
+					//A repeated vertex leaves no chord for an arc to span, and Arc refuses the zero
+					//radius its own maths then produces.
+					if (curr.Z == 0 || (curr.X == next.X && curr.Y == next.Y))
+					{
+						continue;
+					}
+
+					BoundingBox arc = ACadSharp.Entities.Arc
+						.CreateFromBulge(new XY(curr.X, curr.Y), new XY(next.X, next.Y), curr.Z)
+						.GetBoundingBox();
+
+					box = box.Merge(new BoundingBox(
+						new XYZ(arc.Min.X, arc.Min.Y, 0),
+						new XYZ(arc.Max.X, arc.Max.Y, 0)));
+				}
+
+				return box;
+			}
+
+			private IEnumerable<XYZ> arcAwarePoints()
+			{
+				for (int i = 0; i < this.Vertices.Count; i++)
+				{
+					XYZ curr = this.Vertices[i];
+					yield return new XYZ(curr.X, curr.Y, 0);
+
+					bool last = i == this.Vertices.Count - 1;
+					if (last && !this.IsClosed)
+					{
+						continue;
+					}
+
+					XYZ next = this.Vertices[last ? 0 : i + 1];
+
+					//A repeated vertex leaves no chord for an arc to span, and Arc refuses the zero
+					//radius its own maths then produces.
+					if (curr.Z == 0 || (curr.X == next.X && curr.Y == next.Y))
+					{
+						continue;
+					}
+
+					foreach (XYZ p in ACadSharp.Entities.Arc
+						.CreateFromBulge(new XY(curr.X, curr.Y), new XY(next.X, next.Y), curr.Z)
+						.PolygonalVertexes(16))
+					{
+						yield return new XYZ(p.X, p.Y, 0);
+					}
+				}
 			}
 
 			/// <inheritdoc/>
