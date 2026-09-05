@@ -3746,7 +3746,24 @@ namespace ACadSharp.IO.DWG
 					//Background color CMC 63
 					mtext.BackgroundColor = this._mergedReaders.ReadCmColor();
 					//Background transparency BL 441
-					mtext.BackgroundTransparency = new Transparency((short)this._objectReader.ReadBitLong());
+					//The field is a raw 32 bit value, not the 0-90 percentage the model holds:
+					//AutoCAD writes 843012 for one MTEXT of a real drawing, which cast to a short
+					//is -8956 and cost the whole entity. What cannot be represented is dropped -
+					//the text is worth more than a background transparency AutoCAD does not
+					//implement anyway. The DXF reader already keeps such an MTEXT.
+					int backgroundTransparency = this._objectReader.ReadBitLong();
+					if (backgroundTransparency == -1
+						|| backgroundTransparency == 100
+						|| (backgroundTransparency >= 0 && backgroundTransparency <= 90))
+					{
+						mtext.BackgroundTransparency = new Transparency((short)backgroundTransparency);
+					}
+					else
+					{
+						this._builder.Notify(
+							$"MText with handle {mtext.Handle} carries a background transparency of {backgroundTransparency}, which the model cannot represent; the value is dropped and the entity kept",
+							NotificationType.Warning);
+					}
 				}
 			}
 
@@ -6116,6 +6133,24 @@ namespace ACadSharp.IO.DWG
 			return template;
 		}
 
+		//A scale of 0 is not something the model accepts, and a drawing that carries one loses the
+		//whole block reference on the way in - 110 of them in one drawing AutoCAD opens. AutoCAD
+		//repairs the scale and keeps the reference (its own DXF of that drawing has no 43 = 0
+		//anywhere), so the reader does the same and says so.
+		private double insertScaleOrOne(double value, string axis, Insert insert)
+		{
+			if (!value.Equals(0))
+			{
+				return value;
+			}
+
+			this._builder.Notify(
+				$"Insert with handle {insert.Handle} carries a {axis} of 0 and is read with 1; the block reference would be lost otherwise",
+				NotificationType.Warning);
+
+			return 1;
+		}
+
 		private void readInsertCommonData(CadInsertTemplate template)
 		{
 			Insert insert = template.CadObject as Insert;
@@ -6130,11 +6165,11 @@ namespace ACadSharp.IO.DWG
 			{
 				XYZ scale = this._objectReader.Read3BitDouble();
 				//X Scale BD 41
-				insert.XScale = scale.X;
+				insert.XScale = this.insertScaleOrOne(scale.X, "X scale", insert);
 				//Y Scale BD 42
-				insert.YScale = scale.Y;
+				insert.YScale = this.insertScaleOrOne(scale.Y, "Y scale", insert);
 				//Z Scale BD 43
-				insert.ZScale = scale.Z;
+				insert.ZScale = this.insertScaleOrOne(scale.Z, "Z scale", insert);
 			}
 
 			//R2000 + Only:
@@ -6146,18 +6181,26 @@ namespace ACadSharp.IO.DWG
 				{
 					//00 – 41 value stored as a RD, followed by a 42 value stored as DD (use 41 for default value), and a 43 value stored as a DD(use 41 value for default value).
 					case 0:
-						insert.XScale = this._objectReader.ReadDouble();
-						insert.YScale = this._objectReader.ReadBitDoubleWithDefault(insert.XScale);
-						insert.ZScale = this._objectReader.ReadBitDoubleWithDefault(insert.XScale);
+						{
+							//The 42 and 43 values are DD-encoded against the raw 41 value: codes 01 and
+							//10 patch bytes INTO the default, so the default has to be the file's X,
+							//not the repaired one. Read all three raw, repair after.
+							double rawX = this._objectReader.ReadDouble();
+							double rawY = this._objectReader.ReadBitDoubleWithDefault(rawX);
+							double rawZ = this._objectReader.ReadBitDoubleWithDefault(rawX);
+							insert.XScale = this.insertScaleOrOne(rawX, "X scale", insert);
+							insert.YScale = this.insertScaleOrOne(rawY, "Y scale", insert);
+							insert.ZScale = this.insertScaleOrOne(rawZ, "Z scale", insert);
+						}
 						break;
 					//01 – 41 value is 1.0, 2 DD’s are present, each using 1.0 as the default value, representing the 42 and 43 values.
 					case 1:
-						insert.YScale = this._objectReader.ReadBitDoubleWithDefault(insert.XScale);
-						insert.ZScale = this._objectReader.ReadBitDoubleWithDefault(insert.XScale);
+						insert.YScale = this.insertScaleOrOne(this._objectReader.ReadBitDoubleWithDefault(insert.XScale), "Y scale", insert);
+						insert.ZScale = this.insertScaleOrOne(this._objectReader.ReadBitDoubleWithDefault(insert.XScale), "Z scale", insert);
 						break;
 					//10 – 41 value stored as a RD, and 42 & 43 values are not stored, assumed equal to 41 value.
 					case 2:
-						double xyz = this._objectReader.ReadDouble();
+						double xyz = this.insertScaleOrOne(this._objectReader.ReadDouble(), "scale", insert);
 						insert.XScale = xyz;
 						insert.YScale = xyz;
 						insert.ZScale = xyz;
