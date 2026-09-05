@@ -44,9 +44,21 @@ namespace ACadSharp.IO.Templates
 						entry.Name = item.Key;
 					}
 
+					//The entry goes in under its own name, which is what the collections built on
+					//top of a dictionary look it up by. Some names are constants, though - every
+					//SortEntitiesTable is called ACAD_SORTENTS - so when that name is already
+					//taken the file's own key is used instead. Without this, a drawing that keeps
+					//several such objects in one dictionary loses all but the first: one customer
+					//drawing lost 447 draw order tables that way.
+					string key = string.IsNullOrEmpty(entry.Name) ? item.Key : entry.Name;
+					if (this.CadObject.ContainsKey(key))
+					{
+						key = item.Key;
+					}
+
 					try
 					{
-						this.CadObject.Add(entry.Name, entry);
+						this.CadObject.Add(key, entry);
 					}
 					catch (System.Exception ex)
 					{

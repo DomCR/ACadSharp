@@ -42,6 +42,16 @@ public class CadDictionary : NonGraphicalObject, IObservableCadCollection<NonGra
 	public string[] EntryNames { get { return this._entries.Keys.ToArray(); } }
 
 	/// <summary>
+	/// The entries with the key each one is stored under.
+	/// </summary>
+	/// <remarks>
+	/// The key is what the file carries and what a reader looks an entry up by; it is usually the
+	/// entry's own name, but not always - an object whose name is a constant, such as a
+	/// <see cref="SortEntitiesTable"/>, is stored under a key of the file's choosing.
+	/// </remarks>
+	public IEnumerable<KeyValuePair<string, NonGraphicalObject>> KeyedEntries { get { return this._entries; } }
+
+	/// <summary>
 	/// Indicates that elements of the dictionary are to be treated as hard-owned.
 	/// </summary>
 	[DxfCodeValue(280)]

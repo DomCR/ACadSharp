@@ -38,8 +38,12 @@ internal class DxfObjectsSectionWriter : DxfSectionWriterBase
 		this._writer.Write(280, dict.HardOwnerFlag);
 		this._writer.Write(281, (int)dict.ClonningFlags);
 
-		foreach (NonGraphicalObject item in dict)
+		//Group 3 carries the key the entry is stored under, which is not always the entry's own
+		//name: every SortEntitiesTable is called ACAD_SORTENTS, and a dictionary holding more than
+		//one of them would otherwise write the same name twice.
+		foreach (KeyValuePair<string, NonGraphicalObject> entry in dict.KeyedEntries)
 		{
+			NonGraphicalObject item = entry.Value;
 			if (item is XRecord && !this.Configuration.WriteXRecords)
 			{
 				continue;
@@ -57,7 +61,7 @@ internal class DxfObjectsSectionWriter : DxfSectionWriterBase
 				continue;
 			}
 
-			this._writer.Write(3, item.Name);
+			this._writer.Write(3, entry.Key);
 			if (dict.HardOwnerFlag)
 			{
 				this._writer.Write(360, item.Handle);
