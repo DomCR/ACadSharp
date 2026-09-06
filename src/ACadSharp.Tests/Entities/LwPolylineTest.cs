@@ -138,4 +138,53 @@ public class LwPolylineTests : CommonEntityTests<LwPolyline>
 		Assert.Equal(new XYZ(-1, 0, 0), box.Min);
 		Assert.Equal(new XYZ(0, 1, 0), box.Max);
 	}
+
+	[Fact]
+	public void GetBoundingBoxIncludesAConstantWidth()
+	{
+		//A width is drawn half on each side of the centre line, and AutoCAD's extents include it:
+		//asked for this square of width 150, AutoCAD reports (-75,-75)..(1075,1075). Measuring the
+		//centre line alone left one real drawing's extents short by exactly 75 on all four sides.
+		LwPolyline polyline = new LwPolyline { ConstantWidth = 150, IsClosed = true };
+		polyline.Vertices.Add(new LwPolyline.Vertex(new XY(0, 0)));
+		polyline.Vertices.Add(new LwPolyline.Vertex(new XY(1000, 0)));
+		polyline.Vertices.Add(new LwPolyline.Vertex(new XY(1000, 1000)));
+		polyline.Vertices.Add(new LwPolyline.Vertex(new XY(0, 1000)));
+
+		BoundingBox box = polyline.GetBoundingBox();
+
+		Assert.Equal(new XYZ(-75, -75, 0), box.Min);
+		Assert.Equal(new XYZ(1075, 1075, 0), box.Max);
+	}
+
+	[Fact]
+	public void GetBoundingBoxCarriesAWidthAcrossTheSegmentAndNotBeyondItsEnds()
+	{
+		//The width goes perpendicular to the segment; the ends are flat caps. AutoCAD agrees: for
+		//these two segments tapering 0-200-400 it reports (0,-108.9)..(1200,1000), so the open ends
+		//stay at their vertexes and only the joint fill reaches slightly further than measured here.
+		LwPolyline polyline = new LwPolyline();
+		polyline.Vertices.Add(new LwPolyline.Vertex(new XY(0, 0)) { StartWidth = 0, EndWidth = 200 });
+		polyline.Vertices.Add(new LwPolyline.Vertex(new XY(1000, 0)) { StartWidth = 200, EndWidth = 400 });
+		polyline.Vertices.Add(new LwPolyline.Vertex(new XY(1000, 1000)) { StartWidth = 400, EndWidth = 0 });
+
+		BoundingBox box = polyline.GetBoundingBox();
+
+		Assert.Equal(new XYZ(0, -100, 0), box.Min);
+		Assert.Equal(new XYZ(1200, 1000, 0), box.Max);
+	}
+
+	[Fact]
+	public void GetBoundingBoxKeepsTheCentreLineWithoutAWidth()
+	{
+		LwPolyline polyline = new LwPolyline();
+		polyline.Vertices.Add(new LwPolyline.Vertex(new XY(0, 0)));
+		polyline.Vertices.Add(new LwPolyline.Vertex(new XY(1000, 500)));
+
+		BoundingBox box = polyline.GetBoundingBox();
+
+		Assert.Equal(new XYZ(0, 0, 0), box.Min);
+		Assert.Equal(new XYZ(1000, 500, 0), box.Max);
+	}
+
 }
