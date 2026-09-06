@@ -223,24 +223,45 @@ public abstract class CadWipeoutBase : Entity
 	}
 
 	/// <inheritdoc/>
+	/// <remarks>
+	/// The boundary is in the image's OWN pixel space, measured from pixel centres - which is why an
+	/// unclipped image stores (-0.5, -0.5) to (Size - 0.5) - and <see cref="UVector"/> and
+	/// <see cref="VVector"/> are what map one pixel into the world. Adding those pixel coordinates
+	/// straight to the insertion point describes a rectangle the image does not occupy as soon as
+	/// the vectors are not the world axes: on a client drawing an image placed with U and V rotated
+	/// 45 degrees, 10.6 units to the pixel, was reported as a 500x500 square at the insertion point
+	/// while AutoCAD measures a 10,591 x 10,591 diamond hanging below it.
+	/// </remarks>
 	public override BoundingBox GetBoundingBox()
 	{
-		if (!this.ClipBoundaryVertices.Any())
+		IReadOnlyList<XY> boundary = this.GetEffectiveClipBoundary();
+		if (boundary.Count < 2)
 		{
 			return BoundingBox.Null;
 		}
 
-		double minX = this.ClipBoundaryVertices.Select(v => v.X).Min();
-		double minY = this.ClipBoundaryVertices.Select(v => v.Y).Min();
-		XYZ min = new XYZ(minX, minY, 0) + this.InsertPoint;
+		//Two vertices are the opposite corners of a rectangle, and the other two have to be built
+		//before the mapping: mapping only the diagonal measures a rotated image along that diagonal
+		//instead of around its edges.
+		IEnumerable<XY> corners = boundary.Count == 2
+			? new[]
+			{
+				boundary[0],
+				new XY(boundary[1].X, boundary[0].Y),
+				boundary[1],
+				new XY(boundary[0].X, boundary[1].Y),
+			}
+			: boundary;
 
-		double maxX = this.ClipBoundaryVertices.Select(v => v.X).Max();
-		double maxY = this.ClipBoundaryVertices.Select(v => v.Y).Max();
-		XYZ max = new XYZ(maxX, maxY, 0) + this.InsertPoint;
-
-		BoundingBox box = new BoundingBox(min, max);
-
-		return box;
+		//X counts rightwards from the left edge and Y DOWNWARDS from the top, which is why an
+		//unclipped image - whose boundary is the whole rectangle either way - cannot tell the two
+		//apart, and a wipeout can: its boundary sits at the top of a 1x1 image, and AutoCAD draws it
+		//at the insertion point rather than a whole V below it. Measured on both, to 1e-3 of what
+		//AutoCAD reports for the same entity.
+		return BoundingBox.FromPoints(corners.Select(vertex =>
+			this.InsertPoint
+			+ ((vertex.X + 0.5) * this.UVector)
+			+ ((this.Size.Y - 0.5 - vertex.Y) * this.VVector)));
 	}
 
 	/// <inheritdoc/>
