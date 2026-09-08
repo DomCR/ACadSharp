@@ -24,4 +24,20 @@ public class ViewportTests : IOTestsBase
 			Assert.NotNull(v.Scale);
 		}
 	}
+
+	[Theory]
+	[MemberData(nameof(DwgFilePaths))]
+	[MemberData(nameof(DxfAsciiFiles))]
+	public void VisualStyleInViewport(FileModel test)
+	{
+		CadDocument doc = this.readDocument(test);
+
+		if (doc.Header.Version < ACadVersion.AC1021)
+		{
+			return;
+		}
+
+		ACadSharp.Tables.BlockRecord paper = doc.PaperSpace;
+		Assert.Contains(paper.Viewports, v => v.VisualStyle != null);
+	}
 }
