@@ -8,7 +8,6 @@ using CSMath;
 using System;
 using System.Collections.Generic;
 using System.Linq;
-using static ACadSharp.Objects.XRecord;
 
 namespace ACadSharp.IO.DXF;
 
@@ -724,6 +723,9 @@ internal class DxfObjectsSectionWriter : DxfSectionWriterBase
 		switch (co)
 		{
 			case UnknownNonGraphicalObject:
+			case EvaluationGraph when !this.Configuration.WriteDynamicBlockData:
+			case BlockRepresentationData when !this.Configuration.WriteDynamicBlockData:
+			case DynamicBlockPurgePreventer when !this.Configuration.WriteDynamicBlockData:
 				return false;
 			case AecWallStyle:
 			case AecCleanupGroup:
@@ -735,9 +737,6 @@ internal class DxfObjectsSectionWriter : DxfSectionWriterBase
 			case ProxyObject:
 				this.notify($"Object not implemented : {co.GetType().FullName}", NotificationType.NotImplemented);
 				return false;
-			case EvaluationGraph when this.Configuration.WriteDynamicBlockData:
-			case BlockRepresentationData when this.Configuration.WriteDynamicBlockData:
-			case DynamicBlockPurgePreventer when this.Configuration.WriteDynamicBlockData:
 			default:
 				return true;
 		}

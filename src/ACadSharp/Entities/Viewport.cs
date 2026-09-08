@@ -184,7 +184,7 @@ public class Viewport : Entity
 	{
 		get
 		{
-			if(this.Owner is BlockRecord record && record.Layout != null)
+			if (this.Owner is BlockRecord record && record.Layout != null)
 			{
 				return record.Layout.IsPaperSpace && this.Id == PaperViewId;
 			}
@@ -222,15 +222,7 @@ public class Viewport : Entity
 		}
 		set
 		{
-			if (this.Document != null)
-			{
-				this._scale = updateCollection(value, this.Document.Scales);
-			}
-			else
-			{
-				this._scale = value;
-			}
-
+			this._scale = this.updateCollectionEntry(value, s => this._scale = s, this.Document?.Scales);
 			this.updateScaleXRecord();
 		}
 	}
@@ -470,7 +462,7 @@ public class Viewport : Entity
 	{
 		base.AssignDocument(doc);
 
-		this._scale = updateCollection(this._scale, doc.Scales);
+		this._scale = this.updateCollectionEntry(this._scale, s => this._scale = s, doc.Scales);
 
 		if (this._scale != null)
 		{

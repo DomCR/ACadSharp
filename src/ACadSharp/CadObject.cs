@@ -2,9 +2,12 @@
 using ACadSharp.Extensions;
 using ACadSharp.IO;
 using ACadSharp.Objects;
+using ACadSharp.Objects.Collections;
 using ACadSharp.Tables;
+using ACadSharp.Tables.Collections;
 using ACadSharp.XData;
 using CSMath;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 
@@ -266,14 +269,25 @@ public abstract class CadObject : IHandledCadObject
 		this._reactors.Clear();
 	}
 
-	protected static T updateCollection<T>(T entry, ICadCollection<T> table)
-		where T : CadObject, INamedCadObject
+	protected T updateCollectionEntry<T>(T entry, Action<T> assignValue, ObjectDictionaryCollection<T> collection)
+		where T : NonGraphicalObject
+	{
+		if (collection == null || entry == null)
+		{
+			return entry;
+		}
+
+		return collection.UpdateReference(this, entry, assignValue);
+	}
+
+	protected T updateTableEntry<T>(T entry, Action<T> assignValue, Table<T> table)
+		where T : TableEntry
 	{
 		if (table == null || entry == null)
 		{
 			return entry;
 		}
 
-		return table.TryAdd(entry);
+		return table.UpdateReference(this, entry, assignValue);
 	}
 }

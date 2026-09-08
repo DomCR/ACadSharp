@@ -5,64 +5,63 @@ using System.Linq;
 using Xunit;
 using Xunit.Abstractions;
 
-namespace ACadSharp.Tests.IO
+namespace ACadSharp.Tests.IO;
+
+public class AecWallsTests : IOTestsBase
 {
-	public class AecWallsTests : IOTestsBase
+	private const string _aecObjectsFileName = "aec_objects/AecObjects.dwg";
+	private CadDocument _testFileDocument;
+
+	public AecWallsTests(ITestOutputHelper output) : base(output)
 	{
-		private const string _aecObjectsFileName = "aec_objects/AecObjects.dwg";
-		private CadDocument _testFileDocument;
+		string path = Path.Combine(TestVariables.SamplesFolder, _aecObjectsFileName);
 
-		public AecWallsTests(ITestOutputHelper output) : base(output)
+		if (!File.Exists(path))
 		{
-			string path = Path.Combine(TestVariables.SamplesFolder, _aecObjectsFileName);
-
-			if (!File.Exists(path))
-			{
-				this._output.WriteLine($"Sample file not found: {path}");
-				return;
-			}
-
-			this._testFileDocument = DwgReader.Read(path, this.onNotification);
+			this._output.WriteLine($"Sample file not found: {path}");
+			return;
 		}
 
-		[Fact]
-		public void ReadAecWall_HasAecWallClassDefinition()
+		this._testFileDocument = DwgReader.Read(path, this.onNotification);
+	}
+
+	[Fact]
+	public void ReadAecWall_HasAecWallClassDefinition()
+	{
+		bool hasAecWallClass = this._testFileDocument.Classes.TryGetByName("AEC_WALL", out var wallClass);
+
+		Assert.True(hasAecWallClass, "AEC_WALL class definition should be present in CLASSES section");
+		Assert.NotNull(wallClass);
+	}
+
+	[Fact]
+	public void ReadAecWall_HasCorrectProperties()
+	{
+		Assert.True(this._testFileDocument.Classes.TryGetByName("AEC_WALL", out var wallClass));
+
+		this._output.WriteLine($"AEC_WALL class properties:");
+		this._output.WriteLine($"  DxfName: {wallClass.DxfName}");
+		this._output.WriteLine($"  CppClassName: {wallClass.CppClassName}");
+		this._output.WriteLine($"  ApplicationName: {wallClass.ApplicationName}");
+
+		Assert.Equal("AEC_WALL", wallClass.DxfName);
+		Assert.True(wallClass.IsAnEntity, "AEC_WALL should be marked as an entity");
+		Assert.StartsWith("AecDb", wallClass.CppClassName);
+	}
+
+	[Fact]
+	public void ReadAecWall_NameAndMarkerCorrect()
+	{
+		var walls = this._testFileDocument.Entities.OfType<Wall>().ToList();
+
+		this._output.WriteLine($"Wall entities found: {walls.Count}");
+		Assert.NotEmpty(walls);
+
+		foreach (var wall in walls)
 		{
-			bool hasAecWallClass = this._testFileDocument.Classes.TryGetByName("AEC_WALL", out var wallClass);
-
-			Assert.True(hasAecWallClass, "AEC_WALL class definition should be present in CLASSES section");
-			Assert.NotNull(wallClass);
-		}
-
-		[Fact]
-		public void ReadAecWall_HasCorrectProperties()
-		{
-			Assert.True(this._testFileDocument.Classes.TryGetByName("AEC_WALL", out var wallClass));
-
-			this._output.WriteLine($"AEC_WALL class properties:");
-			this._output.WriteLine($"  DxfName: {wallClass.DxfName}");
-			this._output.WriteLine($"  CppClassName: {wallClass.CppClassName}");
-			this._output.WriteLine($"  ApplicationName: {wallClass.ApplicationName}");
-
-			Assert.Equal("AEC_WALL", wallClass.DxfName);
-			Assert.True(wallClass.IsAnEntity, "AEC_WALL should be marked as an entity");
-			Assert.StartsWith("AecDb", wallClass.CppClassName);
-		}
-
-		[Fact]
-		public void ReadAecWall_NameAndMarkerCorrect()
-		{
-			var walls = this._testFileDocument.Entities.OfType<Wall>().ToList();
-
-			this._output.WriteLine($"Wall entities found: {walls.Count}");
-			Assert.NotEmpty(walls);
-
-			foreach (var wall in walls)
-			{
-				Assert.NotEqual(0ul, wall.Handle);
-				Assert.Equal(DxfFileToken.EntityAecWall, wall.ObjectName);
-				Assert.Equal(DxfSubclassMarker.AecWall, wall.SubclassMarker);
-			}
+			Assert.NotEqual(0ul, wall.Handle);
+			Assert.Equal(DxfFileToken.EntityAecWall, wall.ObjectName);
+			Assert.Equal(DxfSubclassMarker.AecWall, wall.SubclassMarker);
 		}
 	}
 }

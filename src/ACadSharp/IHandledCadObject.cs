@@ -1,6 +1,4 @@
-﻿using System;
-
-namespace ACadSharp;
+﻿namespace ACadSharp;
 
 /// <summary>
 /// Defines a CadObject with a unique handle

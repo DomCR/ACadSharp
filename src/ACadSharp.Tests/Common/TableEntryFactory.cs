@@ -1,67 +1,66 @@
 ﻿using ACadSharp.Tables;
 using System;
 
-namespace ACadSharp.Tests.Common
+namespace ACadSharp.Tests.Common;
+
+public class TableEntryFactory : Factory
 {
-	public class TableEntryFactory : Factory
+	/// <summary>
+	/// Create a default entity
+	/// </summary>
+	/// <typeparam name="T"></typeparam>
+	/// <param name="randomize">Populate the entity with random values and fields</param>
+	/// <returns></returns>
+	public static T Create<T>(string name = null, bool randomize = true)
+		where T : TableEntry
 	{
-		/// <summary>
-		/// Create a default entity
-		/// </summary>
-		/// <typeparam name="T"></typeparam>
-		/// <param name="randomize">Populate the entity with random values and fields</param>
-		/// <returns></returns>
-		public static T Create<T>(string name = null, bool randomize = true)
-			where T : TableEntry
-		{
-			return (T)Create(typeof(T), name, randomize);
+		return (T)Create(typeof(T), name, randomize);
 
+	}
+
+	public static TableEntry Create(Type type, string name = null, bool randomize = true)
+	{
+		if (string.IsNullOrEmpty(name))
+		{
+			name = _random.RandomString(10);
 		}
 
-		public static TableEntry Create(Type type, string name = null, bool randomize = true)
-		{
-			if (string.IsNullOrEmpty(name))
-			{
-				name = _random.RandomString(10);
-			}
+		object entry = Activator.CreateInstance(type, name);
 
-			object entry = Activator.CreateInstance(type, name);
-
-			if (!randomize)
-				return (TableEntry)entry;
-
-			map(entry);
-
+		if (!randomize)
 			return (TableEntry)entry;
-		}
 
-		//private static void map(TableEntry entry)
-		//{
-		//	switch (entry)
-		//	{
-		//		case AppId app:
-		//			break;
-		//		case DimensionStyle dimensionStyle:
-		//			RandomizeDimensionStyle(dimensionStyle);
-		//			break;
-		//		case BlockRecord record:
-		//			RandomizeBlockRecord(record);
-		//			break;
-		//		default:
-		//			throw new NotImplementedException();
-		//	}
-		//}
+		map(entry);
 
-		public static void RandomizeBlockRecord(BlockRecord record)
-		{
-			record.IsExplodable = _random.Next<bool>();
-			record.CanScale = _random.Next<bool>();
-		}
+		return (TableEntry)entry;
+	}
 
-		public static void RandomizeDimensionStyle(DimensionStyle dimStyle)
-		{
-			dimStyle.PostFix = _random.RandomString(2);
-			dimStyle.AlternateDimensioningSuffix = _random.RandomString(2);
-		}
+	//private static void map(TableEntry entry)
+	//{
+	//	switch (entry)
+	//	{
+	//		case AppId app:
+	//			break;
+	//		case DimensionStyle dimensionStyle:
+	//			RandomizeDimensionStyle(dimensionStyle);
+	//			break;
+	//		case BlockRecord record:
+	//			RandomizeBlockRecord(record);
+	//			break;
+	//		default:
+	//			throw new NotImplementedException();
+	//	}
+	//}
+
+	public static void RandomizeBlockRecord(BlockRecord record)
+	{
+		record.IsExplodable = _random.Next<bool>();
+		record.CanScale = _random.Next<bool>();
+	}
+
+	public static void RandomizeDimensionStyle(DimensionStyle dimStyle)
+	{
+		dimStyle.PostFix = _random.RandomString(2);
+		dimStyle.AlternateDimensioningSuffix = _random.RandomString(2);
 	}
 }

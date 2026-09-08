@@ -41,35 +41,30 @@ public partial class MultiLeaderObjectContextData : AnnotScaleObjectContextData,
 	[DxfCodeValue(140)]
 	public double ArrowheadSize { get; set; }
 
-	//	TODO Create test cases
 	/// <summary>
 	/// Background fill color
 	/// </summary>
 	[DxfCodeValue(91)]
 	public Color BackgroundFillColor { get; set; }
 
-	//	TODO Create test cases
 	/// <summary>
 	/// Is background fill enabled
 	/// </summary>
 	[DxfCodeValue(291)]
 	public bool BackgroundFillEnabled { get; set; }
 
-	//	TODO Create test cases
 	/// <summary>
 	/// Is background mask fill on
 	/// </summary>
 	[DxfCodeValue(292)]
 	public bool BackgroundMaskFillOn { get; set; }
 
-	//	TODO Create test cases
 	/// <summary>
 	/// Background scale factor
 	/// </summary>
 	[DxfCodeValue(141)]
 	public double BackgroundScaleFactor { get; set; }
 
-	//	TODO Create test cases
 	/// <summary>
 	/// Background transparency
 	/// </summary>
@@ -104,7 +99,7 @@ public partial class MultiLeaderObjectContextData : AnnotScaleObjectContextData,
 		get { return this._blockContent; }
 		set
 		{
-			this._blockContent = CadObject.updateCollection(value, this.Document?.BlockRecords);
+			this._blockContent = this.updateTableEntry(value, b => this._blockContent = b, this.Document?.BlockRecords);
 		}
 	}
 
@@ -180,7 +175,6 @@ public partial class MultiLeaderObjectContextData : AnnotScaleObjectContextData,
 	[DxfCodeValue(16, 26, 36)]
 	public XYZ BlockContentScale { get; set; }
 
-	//	TODO
 	/// <summary>
 	/// Boundary height (DXF Reference: TextHeight)
 	/// Value seems to be always zero.
@@ -188,7 +182,6 @@ public partial class MultiLeaderObjectContextData : AnnotScaleObjectContextData,
 	[DxfCodeValue(44)]
 	public double BoundaryHeight { get; set; }
 
-	//	TODO
 	/// <summary>
 	/// Boundary width (DXF Reference: TextWidth)
 	/// Value seems to be always zero.
@@ -196,42 +189,36 @@ public partial class MultiLeaderObjectContextData : AnnotScaleObjectContextData,
 	[DxfCodeValue(43)]
 	public double BoundaryWidth { get; set; }
 
-	//	TODO Create test cases
 	/// <summary>
 	/// Column flow reversed
 	/// </summary>
 	[DxfCodeValue(294)]
 	public bool ColumnFlowReversed { get; set; }
 
-	//	TODO Create test cases
 	/// <summary>
 	/// Column gutter
 	/// </summary>
 	[DxfCodeValue(143)]
 	public double ColumnGutter { get; set; }
 
-	//	TODO Create test cases
 	/// <summary>
 	/// Get a list of column sizes
 	/// </summary>
 	[DxfCodeValue(144)]
 	public IList<double> ColumnSizes { get; } = new List<double>();
 
-	//	TODO Create test cases
 	/// <summary>
 	/// Column type (ODA writes 0)
 	/// </summary>
 	[DxfCodeValue(173)]
 	public short ColumnType { get; set; }
 
-	//	TODO Create test cases
 	/// <summary>
 	/// Column width
 	/// </summary>
 	[DxfCodeValue(142)]
 	public double ColumnWidth { get; set; }
 
-	//	TODO
 	/// <summary>
 	/// Gets or sets the content base point. This point is identical with the landing end
 	/// point of the first leader.
@@ -248,23 +235,18 @@ public partial class MultiLeaderObjectContextData : AnnotScaleObjectContextData,
 	[DxfCodeValue(13, 23, 33)]
 	public XYZ Direction { get; set; }
 
-	//	TODO What is exactly ment by "flow direction"?
-	//		 When the value is not Horizontal line breaks in text label have to be ignored.
-	//	     The value returned by AutoCAD is normally 5. This not a valid enum value.
 	/// <summary>
 	/// Gets or sets a value indicating the flow direction.
 	/// </summary>
 	[DxfCodeValue(172)]
 	public FlowDirectionType FlowDirection { get; set; }
 
-	//	TODO Check dependency of HasTextContent, HasContentBlock and MultiLeader.ContentType
 	/// <summary>
 	/// Gets or sets a value indicating that the multileader has a content block.
 	/// </summary>
 	[DxfCodeValue(296)]
 	public bool HasContentsBlock { get; set; }
 
-	//	TODO Check dependency of HasTextContent, HasContentBlock and MultiLeader.ContentType
 	/// <summary>
 	/// Gets or sets a value indicating that the mutileader has a text label.
 	/// </summary>
@@ -410,7 +392,6 @@ public partial class MultiLeaderObjectContextData : AnnotScaleObjectContextData,
 	[DxfCodeValue(41)]
 	public double TextHeight { get; set; }
 
-	//	TODO Create test cases
 	/// <summary>
 	/// Is text height automatic?
 	/// </summary>
@@ -509,7 +490,7 @@ public partial class MultiLeaderObjectContextData : AnnotScaleObjectContextData,
 
 			if (this.Document != null)
 			{
-				this._textStyle = CadObject.updateCollection(value, this.Document.TextStyles);
+				this._textStyle = this.updateTableEntry(value, s => this._textStyle = s, this.Document.TextStyles);
 			}
 			else
 			{
@@ -556,7 +537,6 @@ public partial class MultiLeaderObjectContextData : AnnotScaleObjectContextData,
 	//[DxfCodeValue(93)]
 	public Matrix4 TransformationMatrix { get; set; }
 
-	//	TODO Create test cases
 	/// <summary>
 	/// Word break
 	/// </summary>
@@ -608,8 +588,8 @@ public partial class MultiLeaderObjectContextData : AnnotScaleObjectContextData,
 	{
 		base.AssignDocument(doc);
 
-		this._textStyle = CadObject.updateCollection(this._textStyle, doc.TextStyles);
-		this._blockContent = CadObject.updateCollection(this._blockContent, doc.BlockRecords);
+		this._textStyle = this.updateTableEntry(this._textStyle, s => this._textStyle = s, doc.TextStyles);
+		this._blockContent = this.updateTableEntry(this._blockContent, b => this._blockContent = b, doc.BlockRecords);
 
 		foreach (LeaderRoot leaderRoot in this.LeaderRoots)
 		{
@@ -618,15 +598,13 @@ public partial class MultiLeaderObjectContextData : AnnotScaleObjectContextData,
 				leaderLine.AssignDocument(doc);
 			}
 		}
-
-		this.Document.TextStyles.OnRemove += tableOnRemove;
-		this.Document.BlockRecords.OnRemove += tableOnRemove;
 	}
 
 	internal override void UnassignDocument()
 	{
-		this.Document.TextStyles.OnRemove -= tableOnRemove;
-		this.Document.BlockRecords.OnRemove -= tableOnRemove;
+		this.Document.TextStyles.RemoveReference(this._textStyle?.Name, this);
+		this.Document.BlockRecords.RemoveReference(this._blockContent?.Name, this);
+
 
 		base.UnassignDocument();
 
@@ -639,18 +617,6 @@ public partial class MultiLeaderObjectContextData : AnnotScaleObjectContextData,
 			{
 				leaderLine.UassignDocument();
 			}
-		}
-	}
-
-	private void tableOnRemove(object sender, CollectionChangedEventArgs e)
-	{
-		if (e.Item.Equals(this._textStyle))
-		{
-			this._textStyle = this.Document.TextStyles[TextStyle.DefaultName];
-		}
-		if (e.Item == this._blockContent)
-		{
-			this._blockContent = null;
 		}
 	}
 }

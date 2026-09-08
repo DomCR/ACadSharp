@@ -1,6 +1,5 @@
 ﻿using ACadSharp.Attributes;
 using ACadSharp.Classes;
-using System.Xml.Linq;
 
 namespace ACadSharp.Objects;
 
