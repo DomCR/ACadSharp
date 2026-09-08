@@ -1085,6 +1085,82 @@ public class DimensionStyle : TableEntry
 	{
 	}
 
+	internal void CopyVariables(DimensionStyle source)
+	{
+		if (source == null)
+		{
+			return;
+		}
+
+		this.AlternateDimensioningSuffix = source.AlternateDimensioningSuffix;
+		this.AlternateUnitDecimalPlaces = source.AlternateUnitDecimalPlaces;
+		this.AlternateUnitDimensioning = source.AlternateUnitDimensioning;
+		this.AlternateUnitFormat = source.AlternateUnitFormat;
+		this.AlternateUnitRounding = source.AlternateUnitRounding;
+		this.AlternateUnitScaleFactor = source.AlternateUnitScaleFactor;
+		this.AlternateUnitToleranceDecimalPlaces = source.AlternateUnitToleranceDecimalPlaces;
+		this.AlternateUnitToleranceZeroHandling = source.AlternateUnitToleranceZeroHandling;
+		this.AlternateUnitZeroHandling = source.AlternateUnitZeroHandling;
+		this.AngularDecimalPlaces = source.AngularDecimalPlaces;
+		this.AngularUnit = source.AngularUnit;
+		this.AngularZeroHandling = source.AngularZeroHandling;
+		this.ArcLengthSymbolPosition = source.ArcLengthSymbolPosition;
+		this.ArrowSize = source.ArrowSize;
+		this.CenterMarkSize = source.CenterMarkSize;
+		this.CursorUpdate = source.CursorUpdate;
+		this.DecimalPlaces = source.DecimalPlaces;
+		this.DecimalSeparator = source.DecimalSeparator;
+		this.DimensionFit = source.DimensionFit;
+		this.DimensionLineColor = source.DimensionLineColor;
+		this.DimensionLineExtension = source.DimensionLineExtension;
+		this.DimensionLineGap = source.DimensionLineGap;
+		this.DimensionLineIncrement = source.DimensionLineIncrement;
+		this.DimensionLineWeight = source.DimensionLineWeight;
+		this.DimensionTextArrowFit = source.DimensionTextArrowFit;
+		this.DimensionUnit = source.DimensionUnit;
+		this.ExtensionLineColor = source.ExtensionLineColor;
+		this.ExtensionLineExtension = source.ExtensionLineExtension;
+		this.ExtensionLineOffset = source.ExtensionLineOffset;
+		this.ExtensionLineWeight = source.ExtensionLineWeight;
+		this.FixedExtensionLineLength = source.FixedExtensionLineLength;
+		this.FractionFormat = source.FractionFormat;
+		this.GenerateTolerances = source.GenerateTolerances;
+		this.IsExtensionLineLengthFixed = source.IsExtensionLineLengthFixed;
+		this.JoggedRadiusDimensionTransverseSegmentAngle = source.JoggedRadiusDimensionTransverseSegmentAngle;
+		this.LimitsGeneration = source.LimitsGeneration;
+		this.LinearScaleFactor = source.LinearScaleFactor;
+		this.LinearUnitFormat = source.LinearUnitFormat;
+		this.MinusTolerance = source.MinusTolerance;
+		this.PlusTolerance = source.PlusTolerance;
+		this.PostFix = source.PostFix;
+		this.Rounding = source.Rounding;
+		this.ScaleFactor = source.ScaleFactor;
+		this.SeparateArrowBlocks = source.SeparateArrowBlocks;
+		this.SuppressFirstDimensionLine = source.SuppressFirstDimensionLine;
+		this.SuppressFirstExtensionLine = source.SuppressFirstExtensionLine;
+		this.SuppressOutsideExtensions = source.SuppressOutsideExtensions;
+		this.SuppressSecondDimensionLine = source.SuppressSecondDimensionLine;
+		this.SuppressSecondExtensionLine = source.SuppressSecondExtensionLine;
+		this.TextBackgroundFillMode = source.TextBackgroundFillMode;
+		this.TextColor = source.TextColor;
+		this.TextDirection = source.TextDirection;
+		this.TextHeight = source.TextHeight;
+		this.TextHorizontalAlignment = source.TextHorizontalAlignment;
+		this.TextInsideExtensions = source.TextInsideExtensions;
+		this.TextInsideHorizontal = source.TextInsideHorizontal;
+		this.TextMovement = source.TextMovement;
+		this.TextOutsideExtensions = source.TextOutsideExtensions;
+		this.TextOutsideHorizontal = source.TextOutsideHorizontal;
+		this.TextVerticalAlignment = source.TextVerticalAlignment;
+		this.TextVerticalPosition = source.TextVerticalPosition;
+		this.TickSize = source.TickSize;
+		this.ToleranceAlignment = source.ToleranceAlignment;
+		this.ToleranceDecimalPlaces = source.ToleranceDecimalPlaces;
+		this.ToleranceScaleFactor = source.ToleranceScaleFactor;
+		this.ToleranceZeroHandling = source.ToleranceZeroHandling;
+		this.ZeroHandling = source.ZeroHandling;
+	}
+
 	/// <summary>
 	/// Apply the rounding of the style to the value.
 	/// </summary>
