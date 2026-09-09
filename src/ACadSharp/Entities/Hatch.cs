@@ -1,5 +1,6 @@
 ﻿using ACadSharp.Attributes;
 using CSMath;
+using CSMath.Extensions;
 using CSMath.Geometry;
 using System.Collections.Generic;
 using System.Linq;
@@ -177,7 +178,7 @@ public partial class Hatch : Entity, IOrientable
 		this._patternAngle = axis.GetAngle();
 
 		double patScale = axis.GetLength();
-		this._patternScale = MathHelper.IsZero(patScale) ? MathHelper.Epsilon : patScale;
+		this._patternScale = patScale.IsZero() ? MathHelper.Epsilon : patScale;
 
 		this.Pattern?.Update(transform.Translation.Convert<XY>(), this._patternAngle, this._patternScale);
 		this.Normal = newNormal;

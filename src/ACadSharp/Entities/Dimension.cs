@@ -4,6 +4,7 @@ using ACadSharp.Tables;
 using ACadSharp.Types.Units;
 using ACadSharp.XData;
 using CSMath;
+using CSMath.Extensions;
 using CSUtilities.Extensions;
 using System;
 using System.Collections.Generic;
@@ -638,7 +639,7 @@ public abstract class Dimension : Entity, IOrientable
 		}
 
 		// center cross
-		if (!MathHelper.IsZero(this.Style.CenterMarkSize))
+		if (!this.Style.CenterMarkSize.IsZero())
 		{
 			this._block.Entities.AddRange(centerCross(centerRef.Convert<XYZ>(), radius, this.Style));
 		}
@@ -670,7 +671,7 @@ public abstract class Dimension : Entity, IOrientable
 	protected List<Entity> centerCross(XYZ center, double radius, DimensionStyle style)
 	{
 		List<Entity> lines = new();
-		if (MathHelper.IsZero(style.CenterMarkSize))
+		if (style.CenterMarkSize.IsZero())
 		{
 			return lines;
 		}

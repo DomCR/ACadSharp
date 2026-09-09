@@ -4,6 +4,7 @@ using ACadSharp.IO;
 using ACadSharp.Objects;
 using ACadSharp.Tables;
 using CSMath;
+using CSMath.Extensions;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -275,9 +276,9 @@ public class Insert : Entity, IOrientable
 		s = transformation * s;
 		s = transWO * s;
 		XYZ newScale = new XYZ(
-			MathHelper.IsZero(s.X) ? MathHelper.Epsilon : s.X,
-			MathHelper.IsZero(s.Y) ? MathHelper.Epsilon : s.Y,
-			MathHelper.IsZero(s.Z) ? MathHelper.Epsilon : s.Z);
+			s.X.IsZero() ? MathHelper.Epsilon : s.X,
+			s.Y.IsZero() ? MathHelper.Epsilon : s.Y,
+			s.Z.IsZero() ? MathHelper.Epsilon : s.Z);
 
 		this.Normal = newNormal;
 		this.InsertPoint = newPosition;

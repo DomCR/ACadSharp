@@ -3,6 +3,7 @@ using ACadSharp.Entities.AecObjects;
 using ACadSharp.Entities.Mechanical;
 using ACadSharp.Objects;
 using CSMath;
+using CSMath.Extensions;
 using System;
 using System.Linq;
 
