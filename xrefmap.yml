@@ -62459,6 +62459,491 @@ references:
   commentId: F:CSMath.BoundingBoxExtent.Point
   fullName: CSMath.BoundingBoxExtent.Point
   nameWithType: BoundingBoxExtent.Point
+- uid: CSMath.Extensions
+  name: CSMath.Extensions
+  href: api/CSMath.Extensions.html
+  commentId: N:CSMath.Extensions
+  fullName: CSMath.Extensions
+  nameWithType: CSMath.Extensions
+- uid: CSMath.Extensions.DoubleExtensions
+  name: DoubleExtensions
+  href: api/CSMath.Extensions.DoubleExtensions.html
+  commentId: T:CSMath.Extensions.DoubleExtensions
+  fullName: CSMath.Extensions.DoubleExtensions
+  nameWithType: DoubleExtensions
+- uid: CSMath.Extensions.DoubleExtensions.IsZero(System.Double)
+  name: IsZero(double)
+  href: api/CSMath.Extensions.DoubleExtensions.html#CSMath_Extensions_DoubleExtensions_IsZero_System_Double_
+  commentId: M:CSMath.Extensions.DoubleExtensions.IsZero(System.Double)
+  name.vb: IsZero(Double)
+  fullName: CSMath.Extensions.DoubleExtensions.IsZero(double)
+  fullName.vb: CSMath.Extensions.DoubleExtensions.IsZero(Double)
+  nameWithType: DoubleExtensions.IsZero(double)
+  nameWithType.vb: DoubleExtensions.IsZero(Double)
+- uid: CSMath.Extensions.DoubleExtensions.IsZero(System.Double,System.Double)
+  name: IsZero(double, double)
+  href: api/CSMath.Extensions.DoubleExtensions.html#CSMath_Extensions_DoubleExtensions_IsZero_System_Double_System_Double_
+  commentId: M:CSMath.Extensions.DoubleExtensions.IsZero(System.Double,System.Double)
+  name.vb: IsZero(Double, Double)
+  fullName: CSMath.Extensions.DoubleExtensions.IsZero(double, double)
+  fullName.vb: CSMath.Extensions.DoubleExtensions.IsZero(Double, Double)
+  nameWithType: DoubleExtensions.IsZero(double, double)
+  nameWithType.vb: DoubleExtensions.IsZero(Double, Double)
+- uid: CSMath.Extensions.DoubleExtensions.IsZero*
+  name: IsZero
+  href: api/CSMath.Extensions.DoubleExtensions.html#CSMath_Extensions_DoubleExtensions_IsZero_
+  commentId: Overload:CSMath.Extensions.DoubleExtensions.IsZero
+  isSpec: "True"
+  fullName: CSMath.Extensions.DoubleExtensions.IsZero
+  nameWithType: DoubleExtensions.IsZero
+- uid: CSMath.Extensions.IntExtensions
+  name: IntExtensions
+  href: api/CSMath.Extensions.IntExtensions.html
+  commentId: T:CSMath.Extensions.IntExtensions
+  fullName: CSMath.Extensions.IntExtensions
+  nameWithType: IntExtensions
+- uid: CSMath.Extensions.IntExtensions.IsEven(System.Int32)
+  name: IsEven(int)
+  href: api/CSMath.Extensions.IntExtensions.html#CSMath_Extensions_IntExtensions_IsEven_System_Int32_
+  commentId: M:CSMath.Extensions.IntExtensions.IsEven(System.Int32)
+  name.vb: IsEven(Integer)
+  fullName: CSMath.Extensions.IntExtensions.IsEven(int)
+  fullName.vb: CSMath.Extensions.IntExtensions.IsEven(Integer)
+  nameWithType: IntExtensions.IsEven(int)
+  nameWithType.vb: IntExtensions.IsEven(Integer)
+- uid: CSMath.Extensions.IntExtensions.IsEven*
+  name: IsEven
+  href: api/CSMath.Extensions.IntExtensions.html#CSMath_Extensions_IntExtensions_IsEven_
+  commentId: Overload:CSMath.Extensions.IntExtensions.IsEven
+  isSpec: "True"
+  fullName: CSMath.Extensions.IntExtensions.IsEven
+  nameWithType: IntExtensions.IsEven
+- uid: CSMath.Extensions.IntExtensions.IsNegative(System.Int32)
+  name: IsNegative(int)
+  href: api/CSMath.Extensions.IntExtensions.html#CSMath_Extensions_IntExtensions_IsNegative_System_Int32_
+  commentId: M:CSMath.Extensions.IntExtensions.IsNegative(System.Int32)
+  name.vb: IsNegative(Integer)
+  fullName: CSMath.Extensions.IntExtensions.IsNegative(int)
+  fullName.vb: CSMath.Extensions.IntExtensions.IsNegative(Integer)
+  nameWithType: IntExtensions.IsNegative(int)
+  nameWithType.vb: IntExtensions.IsNegative(Integer)
+- uid: CSMath.Extensions.IntExtensions.IsNegative*
+  name: IsNegative
+  href: api/CSMath.Extensions.IntExtensions.html#CSMath_Extensions_IntExtensions_IsNegative_
+  commentId: Overload:CSMath.Extensions.IntExtensions.IsNegative
+  isSpec: "True"
+  fullName: CSMath.Extensions.IntExtensions.IsNegative
+  nameWithType: IntExtensions.IsNegative
+- uid: CSMath.Extensions.IntExtensions.IsOdd(System.Int32)
+  name: IsOdd(int)
+  href: api/CSMath.Extensions.IntExtensions.html#CSMath_Extensions_IntExtensions_IsOdd_System_Int32_
+  commentId: M:CSMath.Extensions.IntExtensions.IsOdd(System.Int32)
+  name.vb: IsOdd(Integer)
+  fullName: CSMath.Extensions.IntExtensions.IsOdd(int)
+  fullName.vb: CSMath.Extensions.IntExtensions.IsOdd(Integer)
+  nameWithType: IntExtensions.IsOdd(int)
+  nameWithType.vb: IntExtensions.IsOdd(Integer)
+- uid: CSMath.Extensions.IntExtensions.IsOdd*
+  name: IsOdd
+  href: api/CSMath.Extensions.IntExtensions.html#CSMath_Extensions_IntExtensions_IsOdd_
+  commentId: Overload:CSMath.Extensions.IntExtensions.IsOdd
+  isSpec: "True"
+  fullName: CSMath.Extensions.IntExtensions.IsOdd
+  nameWithType: IntExtensions.IsOdd
+- uid: CSMath.Extensions.VectorExtensions
+  name: VectorExtensions
+  href: api/CSMath.Extensions.VectorExtensions.html
+  commentId: T:CSMath.Extensions.VectorExtensions
+  fullName: CSMath.Extensions.VectorExtensions
+  nameWithType: VectorExtensions
+- uid: CSMath.Extensions.VectorExtensions.Add*
+  name: Add
+  href: api/CSMath.Extensions.VectorExtensions.html#CSMath_Extensions_VectorExtensions_Add_
+  commentId: Overload:CSMath.Extensions.VectorExtensions.Add
+  isSpec: "True"
+  fullName: CSMath.Extensions.VectorExtensions.Add
+  nameWithType: VectorExtensions.Add
+- uid: CSMath.Extensions.VectorExtensions.Add``1(``0,``0)
+  name: Add<T>(T, T)
+  href: api/CSMath.Extensions.VectorExtensions.html#CSMath_Extensions_VectorExtensions_Add__1___0___0_
+  commentId: M:CSMath.Extensions.VectorExtensions.Add``1(``0,``0)
+  name.vb: Add(Of T)(T, T)
+  fullName: CSMath.Extensions.VectorExtensions.Add<T>(T, T)
+  fullName.vb: CSMath.Extensions.VectorExtensions.Add(Of T)(T, T)
+  nameWithType: VectorExtensions.Add<T>(T, T)
+  nameWithType.vb: VectorExtensions.Add(Of T)(T, T)
+- uid: CSMath.Extensions.VectorExtensions.AngleBetweenVectors*
+  name: AngleBetweenVectors
+  href: api/CSMath.Extensions.VectorExtensions.html#CSMath_Extensions_VectorExtensions_AngleBetweenVectors_
+  commentId: Overload:CSMath.Extensions.VectorExtensions.AngleBetweenVectors
+  isSpec: "True"
+  fullName: CSMath.Extensions.VectorExtensions.AngleBetweenVectors
+  nameWithType: VectorExtensions.AngleBetweenVectors
+- uid: CSMath.Extensions.VectorExtensions.AngleBetweenVectors``1(``0,``0)
+  name: AngleBetweenVectors<T>(T, T)
+  href: api/CSMath.Extensions.VectorExtensions.html#CSMath_Extensions_VectorExtensions_AngleBetweenVectors__1___0___0_
+  commentId: M:CSMath.Extensions.VectorExtensions.AngleBetweenVectors``1(``0,``0)
+  name.vb: AngleBetweenVectors(Of T)(T, T)
+  fullName: CSMath.Extensions.VectorExtensions.AngleBetweenVectors<T>(T, T)
+  fullName.vb: CSMath.Extensions.VectorExtensions.AngleBetweenVectors(Of T)(T, T)
+  nameWithType: VectorExtensions.AngleBetweenVectors<T>(T, T)
+  nameWithType.vb: VectorExtensions.AngleBetweenVectors(Of T)(T, T)
+- uid: CSMath.Extensions.VectorExtensions.Convert*
+  name: Convert
+  href: api/CSMath.Extensions.VectorExtensions.html#CSMath_Extensions_VectorExtensions_Convert_
+  commentId: Overload:CSMath.Extensions.VectorExtensions.Convert
+  isSpec: "True"
+  fullName: CSMath.Extensions.VectorExtensions.Convert
+  nameWithType: VectorExtensions.Convert
+- uid: CSMath.Extensions.VectorExtensions.Convert``1(CSMath.IVector)
+  name: Convert<T>(IVector)
+  href: api/CSMath.Extensions.VectorExtensions.html#CSMath_Extensions_VectorExtensions_Convert__1_CSMath_IVector_
+  commentId: M:CSMath.Extensions.VectorExtensions.Convert``1(CSMath.IVector)
+  name.vb: Convert(Of T)(IVector)
+  fullName: CSMath.Extensions.VectorExtensions.Convert<T>(CSMath.IVector)
+  fullName.vb: CSMath.Extensions.VectorExtensions.Convert(Of T)(CSMath.IVector)
+  nameWithType: VectorExtensions.Convert<T>(IVector)
+  nameWithType.vb: VectorExtensions.Convert(Of T)(IVector)
+- uid: CSMath.Extensions.VectorExtensions.CopyValues*
+  name: CopyValues
+  href: api/CSMath.Extensions.VectorExtensions.html#CSMath_Extensions_VectorExtensions_CopyValues_
+  commentId: Overload:CSMath.Extensions.VectorExtensions.CopyValues
+  isSpec: "True"
+  fullName: CSMath.Extensions.VectorExtensions.CopyValues
+  nameWithType: VectorExtensions.CopyValues
+- uid: CSMath.Extensions.VectorExtensions.CopyValues``1(``0,CSMath.IVector)
+  name: CopyValues<T>(T, IVector)
+  href: api/CSMath.Extensions.VectorExtensions.html#CSMath_Extensions_VectorExtensions_CopyValues__1___0_CSMath_IVector_
+  commentId: M:CSMath.Extensions.VectorExtensions.CopyValues``1(``0,CSMath.IVector)
+  name.vb: CopyValues(Of T)(T, IVector)
+  fullName: CSMath.Extensions.VectorExtensions.CopyValues<T>(T, CSMath.IVector)
+  fullName.vb: CSMath.Extensions.VectorExtensions.CopyValues(Of T)(T, CSMath.IVector)
+  nameWithType: VectorExtensions.CopyValues<T>(T, IVector)
+  nameWithType.vb: VectorExtensions.CopyValues(Of T)(T, IVector)
+- uid: CSMath.Extensions.VectorExtensions.DistanceFrom*
+  name: DistanceFrom
+  href: api/CSMath.Extensions.VectorExtensions.html#CSMath_Extensions_VectorExtensions_DistanceFrom_
+  commentId: Overload:CSMath.Extensions.VectorExtensions.DistanceFrom
+  isSpec: "True"
+  fullName: CSMath.Extensions.VectorExtensions.DistanceFrom
+  nameWithType: VectorExtensions.DistanceFrom
+- uid: CSMath.Extensions.VectorExtensions.DistanceFrom``1(``0,``0)
+  name: DistanceFrom<T>(T, T)
+  href: api/CSMath.Extensions.VectorExtensions.html#CSMath_Extensions_VectorExtensions_DistanceFrom__1___0___0_
+  commentId: M:CSMath.Extensions.VectorExtensions.DistanceFrom``1(``0,``0)
+  name.vb: DistanceFrom(Of T)(T, T)
+  fullName: CSMath.Extensions.VectorExtensions.DistanceFrom<T>(T, T)
+  fullName.vb: CSMath.Extensions.VectorExtensions.DistanceFrom(Of T)(T, T)
+  nameWithType: VectorExtensions.DistanceFrom<T>(T, T)
+  nameWithType.vb: VectorExtensions.DistanceFrom(Of T)(T, T)
+- uid: CSMath.Extensions.VectorExtensions.Divide*
+  name: Divide
+  href: api/CSMath.Extensions.VectorExtensions.html#CSMath_Extensions_VectorExtensions_Divide_
+  commentId: Overload:CSMath.Extensions.VectorExtensions.Divide
+  isSpec: "True"
+  fullName: CSMath.Extensions.VectorExtensions.Divide
+  nameWithType: VectorExtensions.Divide
+- uid: CSMath.Extensions.VectorExtensions.Divide``1(``0,System.Double)
+  name: Divide<T>(T, double)
+  href: api/CSMath.Extensions.VectorExtensions.html#CSMath_Extensions_VectorExtensions_Divide__1___0_System_Double_
+  commentId: M:CSMath.Extensions.VectorExtensions.Divide``1(``0,System.Double)
+  name.vb: Divide(Of T)(T, Double)
+  fullName: CSMath.Extensions.VectorExtensions.Divide<T>(T, double)
+  fullName.vb: CSMath.Extensions.VectorExtensions.Divide(Of T)(T, Double)
+  nameWithType: VectorExtensions.Divide<T>(T, double)
+  nameWithType.vb: VectorExtensions.Divide(Of T)(T, Double)
+- uid: CSMath.Extensions.VectorExtensions.Divide``1(``0,``0)
+  name: Divide<T>(T, T)
+  href: api/CSMath.Extensions.VectorExtensions.html#CSMath_Extensions_VectorExtensions_Divide__1___0___0_
+  commentId: M:CSMath.Extensions.VectorExtensions.Divide``1(``0,``0)
+  name.vb: Divide(Of T)(T, T)
+  fullName: CSMath.Extensions.VectorExtensions.Divide<T>(T, T)
+  fullName.vb: CSMath.Extensions.VectorExtensions.Divide(Of T)(T, T)
+  nameWithType: VectorExtensions.Divide<T>(T, T)
+  nameWithType.vb: VectorExtensions.Divide(Of T)(T, T)
+- uid: CSMath.Extensions.VectorExtensions.Dot*
+  name: Dot
+  href: api/CSMath.Extensions.VectorExtensions.html#CSMath_Extensions_VectorExtensions_Dot_
+  commentId: Overload:CSMath.Extensions.VectorExtensions.Dot
+  isSpec: "True"
+  fullName: CSMath.Extensions.VectorExtensions.Dot
+  nameWithType: VectorExtensions.Dot
+- uid: CSMath.Extensions.VectorExtensions.Dot``1(``0,``0)
+  name: Dot<T>(T, T)
+  href: api/CSMath.Extensions.VectorExtensions.html#CSMath_Extensions_VectorExtensions_Dot__1___0___0_
+  commentId: M:CSMath.Extensions.VectorExtensions.Dot``1(``0,``0)
+  name.vb: Dot(Of T)(T, T)
+  fullName: CSMath.Extensions.VectorExtensions.Dot<T>(T, T)
+  fullName.vb: CSMath.Extensions.VectorExtensions.Dot(Of T)(T, T)
+  nameWithType: VectorExtensions.Dot<T>(T, T)
+  nameWithType.vb: VectorExtensions.Dot(Of T)(T, T)
+- uid: CSMath.Extensions.VectorExtensions.GetLength*
+  name: GetLength
+  href: api/CSMath.Extensions.VectorExtensions.html#CSMath_Extensions_VectorExtensions_GetLength_
+  commentId: Overload:CSMath.Extensions.VectorExtensions.GetLength
+  isSpec: "True"
+  fullName: CSMath.Extensions.VectorExtensions.GetLength
+  nameWithType: VectorExtensions.GetLength
+- uid: CSMath.Extensions.VectorExtensions.GetLengthSquared*
+  name: GetLengthSquared
+  href: api/CSMath.Extensions.VectorExtensions.html#CSMath_Extensions_VectorExtensions_GetLengthSquared_
+  commentId: Overload:CSMath.Extensions.VectorExtensions.GetLengthSquared
+  isSpec: "True"
+  fullName: CSMath.Extensions.VectorExtensions.GetLengthSquared
+  nameWithType: VectorExtensions.GetLengthSquared
+- uid: CSMath.Extensions.VectorExtensions.GetLengthSquared``1(``0)
+  name: GetLengthSquared<T>(T)
+  href: api/CSMath.Extensions.VectorExtensions.html#CSMath_Extensions_VectorExtensions_GetLengthSquared__1___0_
+  commentId: M:CSMath.Extensions.VectorExtensions.GetLengthSquared``1(``0)
+  name.vb: GetLengthSquared(Of T)(T)
+  fullName: CSMath.Extensions.VectorExtensions.GetLengthSquared<T>(T)
+  fullName.vb: CSMath.Extensions.VectorExtensions.GetLengthSquared(Of T)(T)
+  nameWithType: VectorExtensions.GetLengthSquared<T>(T)
+  nameWithType.vb: VectorExtensions.GetLengthSquared(Of T)(T)
+- uid: CSMath.Extensions.VectorExtensions.GetLength``1(``0)
+  name: GetLength<T>(T)
+  href: api/CSMath.Extensions.VectorExtensions.html#CSMath_Extensions_VectorExtensions_GetLength__1___0_
+  commentId: M:CSMath.Extensions.VectorExtensions.GetLength``1(``0)
+  name.vb: GetLength(Of T)(T)
+  fullName: CSMath.Extensions.VectorExtensions.GetLength<T>(T)
+  fullName.vb: CSMath.Extensions.VectorExtensions.GetLength(Of T)(T)
+  nameWithType: VectorExtensions.GetLength<T>(T)
+  nameWithType.vb: VectorExtensions.GetLength(Of T)(T)
+- uid: CSMath.Extensions.VectorExtensions.IsEqual*
+  name: IsEqual
+  href: api/CSMath.Extensions.VectorExtensions.html#CSMath_Extensions_VectorExtensions_IsEqual_
+  commentId: Overload:CSMath.Extensions.VectorExtensions.IsEqual
+  isSpec: "True"
+  fullName: CSMath.Extensions.VectorExtensions.IsEqual
+  nameWithType: VectorExtensions.IsEqual
+- uid: CSMath.Extensions.VectorExtensions.IsEqual``1(``0,``0)
+  name: IsEqual<T>(T, T)
+  href: api/CSMath.Extensions.VectorExtensions.html#CSMath_Extensions_VectorExtensions_IsEqual__1___0___0_
+  commentId: M:CSMath.Extensions.VectorExtensions.IsEqual``1(``0,``0)
+  name.vb: IsEqual(Of T)(T, T)
+  fullName: CSMath.Extensions.VectorExtensions.IsEqual<T>(T, T)
+  fullName.vb: CSMath.Extensions.VectorExtensions.IsEqual(Of T)(T, T)
+  nameWithType: VectorExtensions.IsEqual<T>(T, T)
+  nameWithType.vb: VectorExtensions.IsEqual(Of T)(T, T)
+- uid: CSMath.Extensions.VectorExtensions.IsEqual``1(``0,``0,System.Int32)
+  name: IsEqual<T>(T, T, int)
+  href: api/CSMath.Extensions.VectorExtensions.html#CSMath_Extensions_VectorExtensions_IsEqual__1___0___0_System_Int32_
+  commentId: M:CSMath.Extensions.VectorExtensions.IsEqual``1(``0,``0,System.Int32)
+  name.vb: IsEqual(Of T)(T, T, Integer)
+  fullName: CSMath.Extensions.VectorExtensions.IsEqual<T>(T, T, int)
+  fullName.vb: CSMath.Extensions.VectorExtensions.IsEqual(Of T)(T, T, Integer)
+  nameWithType: VectorExtensions.IsEqual<T>(T, T, int)
+  nameWithType.vb: VectorExtensions.IsEqual(Of T)(T, T, Integer)
+- uid: CSMath.Extensions.VectorExtensions.IsNaN*
+  name: IsNaN
+  href: api/CSMath.Extensions.VectorExtensions.html#CSMath_Extensions_VectorExtensions_IsNaN_
+  commentId: Overload:CSMath.Extensions.VectorExtensions.IsNaN
+  isSpec: "True"
+  fullName: CSMath.Extensions.VectorExtensions.IsNaN
+  nameWithType: VectorExtensions.IsNaN
+- uid: CSMath.Extensions.VectorExtensions.IsNaN``1(``0)
+  name: IsNaN<T>(T)
+  href: api/CSMath.Extensions.VectorExtensions.html#CSMath_Extensions_VectorExtensions_IsNaN__1___0_
+  commentId: M:CSMath.Extensions.VectorExtensions.IsNaN``1(``0)
+  name.vb: IsNaN(Of T)(T)
+  fullName: CSMath.Extensions.VectorExtensions.IsNaN<T>(T)
+  fullName.vb: CSMath.Extensions.VectorExtensions.IsNaN(Of T)(T)
+  nameWithType: VectorExtensions.IsNaN<T>(T)
+  nameWithType.vb: VectorExtensions.IsNaN(Of T)(T)
+- uid: CSMath.Extensions.VectorExtensions.IsNormalized*
+  name: IsNormalized
+  href: api/CSMath.Extensions.VectorExtensions.html#CSMath_Extensions_VectorExtensions_IsNormalized_
+  commentId: Overload:CSMath.Extensions.VectorExtensions.IsNormalized
+  isSpec: "True"
+  fullName: CSMath.Extensions.VectorExtensions.IsNormalized
+  nameWithType: VectorExtensions.IsNormalized
+- uid: CSMath.Extensions.VectorExtensions.IsNormalized``1(``0)
+  name: IsNormalized<T>(T)
+  href: api/CSMath.Extensions.VectorExtensions.html#CSMath_Extensions_VectorExtensions_IsNormalized__1___0_
+  commentId: M:CSMath.Extensions.VectorExtensions.IsNormalized``1(``0)
+  name.vb: IsNormalized(Of T)(T)
+  fullName: CSMath.Extensions.VectorExtensions.IsNormalized<T>(T)
+  fullName.vb: CSMath.Extensions.VectorExtensions.IsNormalized(Of T)(T)
+  nameWithType: VectorExtensions.IsNormalized<T>(T)
+  nameWithType.vb: VectorExtensions.IsNormalized(Of T)(T)
+- uid: CSMath.Extensions.VectorExtensions.IsParallel*
+  name: IsParallel
+  href: api/CSMath.Extensions.VectorExtensions.html#CSMath_Extensions_VectorExtensions_IsParallel_
+  commentId: Overload:CSMath.Extensions.VectorExtensions.IsParallel
+  isSpec: "True"
+  fullName: CSMath.Extensions.VectorExtensions.IsParallel
+  nameWithType: VectorExtensions.IsParallel
+- uid: CSMath.Extensions.VectorExtensions.IsParallel``1(``0,``0)
+  name: IsParallel<T>(T, T)
+  href: api/CSMath.Extensions.VectorExtensions.html#CSMath_Extensions_VectorExtensions_IsParallel__1___0___0_
+  commentId: M:CSMath.Extensions.VectorExtensions.IsParallel``1(``0,``0)
+  name.vb: IsParallel(Of T)(T, T)
+  fullName: CSMath.Extensions.VectorExtensions.IsParallel<T>(T, T)
+  fullName.vb: CSMath.Extensions.VectorExtensions.IsParallel(Of T)(T, T)
+  nameWithType: VectorExtensions.IsParallel<T>(T, T)
+  nameWithType.vb: VectorExtensions.IsParallel(Of T)(T, T)
+- uid: CSMath.Extensions.VectorExtensions.IsPerpendicular*
+  name: IsPerpendicular
+  href: api/CSMath.Extensions.VectorExtensions.html#CSMath_Extensions_VectorExtensions_IsPerpendicular_
+  commentId: Overload:CSMath.Extensions.VectorExtensions.IsPerpendicular
+  isSpec: "True"
+  fullName: CSMath.Extensions.VectorExtensions.IsPerpendicular
+  nameWithType: VectorExtensions.IsPerpendicular
+- uid: CSMath.Extensions.VectorExtensions.IsPerpendicular``1(``0,``0)
+  name: IsPerpendicular<T>(T, T)
+  href: api/CSMath.Extensions.VectorExtensions.html#CSMath_Extensions_VectorExtensions_IsPerpendicular__1___0___0_
+  commentId: M:CSMath.Extensions.VectorExtensions.IsPerpendicular``1(``0,``0)
+  name.vb: IsPerpendicular(Of T)(T, T)
+  fullName: CSMath.Extensions.VectorExtensions.IsPerpendicular<T>(T, T)
+  fullName.vb: CSMath.Extensions.VectorExtensions.IsPerpendicular(Of T)(T, T)
+  nameWithType: VectorExtensions.IsPerpendicular<T>(T, T)
+  nameWithType.vb: VectorExtensions.IsPerpendicular(Of T)(T, T)
+- uid: CSMath.Extensions.VectorExtensions.IsZero*
+  name: IsZero
+  href: api/CSMath.Extensions.VectorExtensions.html#CSMath_Extensions_VectorExtensions_IsZero_
+  commentId: Overload:CSMath.Extensions.VectorExtensions.IsZero
+  isSpec: "True"
+  fullName: CSMath.Extensions.VectorExtensions.IsZero
+  nameWithType: VectorExtensions.IsZero
+- uid: CSMath.Extensions.VectorExtensions.IsZero``1(``0)
+  name: IsZero<T>(T)
+  href: api/CSMath.Extensions.VectorExtensions.html#CSMath_Extensions_VectorExtensions_IsZero__1___0_
+  commentId: M:CSMath.Extensions.VectorExtensions.IsZero``1(``0)
+  name.vb: IsZero(Of T)(T)
+  fullName: CSMath.Extensions.VectorExtensions.IsZero<T>(T)
+  fullName.vb: CSMath.Extensions.VectorExtensions.IsZero(Of T)(T)
+  nameWithType: VectorExtensions.IsZero<T>(T)
+  nameWithType.vb: VectorExtensions.IsZero(Of T)(T)
+- uid: CSMath.Extensions.VectorExtensions.Mid*
+  name: Mid
+  href: api/CSMath.Extensions.VectorExtensions.html#CSMath_Extensions_VectorExtensions_Mid_
+  commentId: Overload:CSMath.Extensions.VectorExtensions.Mid
+  isSpec: "True"
+  fullName: CSMath.Extensions.VectorExtensions.Mid
+  nameWithType: VectorExtensions.Mid
+- uid: CSMath.Extensions.VectorExtensions.Mid``1(``0,``0)
+  name: Mid<T>(T, T)
+  href: api/CSMath.Extensions.VectorExtensions.html#CSMath_Extensions_VectorExtensions_Mid__1___0___0_
+  commentId: M:CSMath.Extensions.VectorExtensions.Mid``1(``0,``0)
+  name.vb: Mid(Of T)(T, T)
+  fullName: CSMath.Extensions.VectorExtensions.Mid<T>(T, T)
+  fullName.vb: CSMath.Extensions.VectorExtensions.Mid(Of T)(T, T)
+  nameWithType: VectorExtensions.Mid<T>(T, T)
+  nameWithType.vb: VectorExtensions.Mid(Of T)(T, T)
+- uid: CSMath.Extensions.VectorExtensions.Multiply*
+  name: Multiply
+  href: api/CSMath.Extensions.VectorExtensions.html#CSMath_Extensions_VectorExtensions_Multiply_
+  commentId: Overload:CSMath.Extensions.VectorExtensions.Multiply
+  isSpec: "True"
+  fullName: CSMath.Extensions.VectorExtensions.Multiply
+  nameWithType: VectorExtensions.Multiply
+- uid: CSMath.Extensions.VectorExtensions.Multiply``1(``0,System.Double)
+  name: Multiply<T>(T, double)
+  href: api/CSMath.Extensions.VectorExtensions.html#CSMath_Extensions_VectorExtensions_Multiply__1___0_System_Double_
+  commentId: M:CSMath.Extensions.VectorExtensions.Multiply``1(``0,System.Double)
+  name.vb: Multiply(Of T)(T, Double)
+  fullName: CSMath.Extensions.VectorExtensions.Multiply<T>(T, double)
+  fullName.vb: CSMath.Extensions.VectorExtensions.Multiply(Of T)(T, Double)
+  nameWithType: VectorExtensions.Multiply<T>(T, double)
+  nameWithType.vb: VectorExtensions.Multiply(Of T)(T, Double)
+- uid: CSMath.Extensions.VectorExtensions.Multiply``1(``0,``0)
+  name: Multiply<T>(T, T)
+  href: api/CSMath.Extensions.VectorExtensions.html#CSMath_Extensions_VectorExtensions_Multiply__1___0___0_
+  commentId: M:CSMath.Extensions.VectorExtensions.Multiply``1(``0,``0)
+  name.vb: Multiply(Of T)(T, T)
+  fullName: CSMath.Extensions.VectorExtensions.Multiply<T>(T, T)
+  fullName.vb: CSMath.Extensions.VectorExtensions.Multiply(Of T)(T, T)
+  nameWithType: VectorExtensions.Multiply<T>(T, T)
+  nameWithType.vb: VectorExtensions.Multiply(Of T)(T, T)
+- uid: CSMath.Extensions.VectorExtensions.Normalize*
+  name: Normalize
+  href: api/CSMath.Extensions.VectorExtensions.html#CSMath_Extensions_VectorExtensions_Normalize_
+  commentId: Overload:CSMath.Extensions.VectorExtensions.Normalize
+  isSpec: "True"
+  fullName: CSMath.Extensions.VectorExtensions.Normalize
+  nameWithType: VectorExtensions.Normalize
+- uid: CSMath.Extensions.VectorExtensions.Normalize``1(``0)
+  name: Normalize<T>(T)
+  href: api/CSMath.Extensions.VectorExtensions.html#CSMath_Extensions_VectorExtensions_Normalize__1___0_
+  commentId: M:CSMath.Extensions.VectorExtensions.Normalize``1(``0)
+  name.vb: Normalize(Of T)(T)
+  fullName: CSMath.Extensions.VectorExtensions.Normalize<T>(T)
+  fullName.vb: CSMath.Extensions.VectorExtensions.Normalize(Of T)(T)
+  nameWithType: VectorExtensions.Normalize<T>(T)
+  nameWithType.vb: VectorExtensions.Normalize(Of T)(T)
+- uid: CSMath.Extensions.VectorExtensions.Round*
+  name: Round
+  href: api/CSMath.Extensions.VectorExtensions.html#CSMath_Extensions_VectorExtensions_Round_
+  commentId: Overload:CSMath.Extensions.VectorExtensions.Round
+  isSpec: "True"
+  fullName: CSMath.Extensions.VectorExtensions.Round
+  nameWithType: VectorExtensions.Round
+- uid: CSMath.Extensions.VectorExtensions.RoundZero*
+  name: RoundZero
+  href: api/CSMath.Extensions.VectorExtensions.html#CSMath_Extensions_VectorExtensions_RoundZero_
+  commentId: Overload:CSMath.Extensions.VectorExtensions.RoundZero
+  isSpec: "True"
+  fullName: CSMath.Extensions.VectorExtensions.RoundZero
+  nameWithType: VectorExtensions.RoundZero
+- uid: CSMath.Extensions.VectorExtensions.RoundZero``1(``0,System.Double)
+  name: RoundZero<T>(T, double)
+  href: api/CSMath.Extensions.VectorExtensions.html#CSMath_Extensions_VectorExtensions_RoundZero__1___0_System_Double_
+  commentId: M:CSMath.Extensions.VectorExtensions.RoundZero``1(``0,System.Double)
+  name.vb: RoundZero(Of T)(T, Double)
+  fullName: CSMath.Extensions.VectorExtensions.RoundZero<T>(T, double)
+  fullName.vb: CSMath.Extensions.VectorExtensions.RoundZero(Of T)(T, Double)
+  nameWithType: VectorExtensions.RoundZero<T>(T, double)
+  nameWithType.vb: VectorExtensions.RoundZero(Of T)(T, Double)
+- uid: CSMath.Extensions.VectorExtensions.Round``1(``0)
+  name: Round<T>(T)
+  href: api/CSMath.Extensions.VectorExtensions.html#CSMath_Extensions_VectorExtensions_Round__1___0_
+  commentId: M:CSMath.Extensions.VectorExtensions.Round``1(``0)
+  name.vb: Round(Of T)(T)
+  fullName: CSMath.Extensions.VectorExtensions.Round<T>(T)
+  fullName.vb: CSMath.Extensions.VectorExtensions.Round(Of T)(T)
+  nameWithType: VectorExtensions.Round<T>(T)
+  nameWithType.vb: VectorExtensions.Round(Of T)(T)
+- uid: CSMath.Extensions.VectorExtensions.Round``1(``0,System.Int32)
+  name: Round<T>(T, int)
+  href: api/CSMath.Extensions.VectorExtensions.html#CSMath_Extensions_VectorExtensions_Round__1___0_System_Int32_
+  commentId: M:CSMath.Extensions.VectorExtensions.Round``1(``0,System.Int32)
+  name.vb: Round(Of T)(T, Integer)
+  fullName: CSMath.Extensions.VectorExtensions.Round<T>(T, int)
+  fullName.vb: CSMath.Extensions.VectorExtensions.Round(Of T)(T, Integer)
+  nameWithType: VectorExtensions.Round<T>(T, int)
+  nameWithType.vb: VectorExtensions.Round(Of T)(T, Integer)
+- uid: CSMath.Extensions.VectorExtensions.Subtract*
+  name: Subtract
+  href: api/CSMath.Extensions.VectorExtensions.html#CSMath_Extensions_VectorExtensions_Subtract_
+  commentId: Overload:CSMath.Extensions.VectorExtensions.Subtract
+  isSpec: "True"
+  fullName: CSMath.Extensions.VectorExtensions.Subtract
+  nameWithType: VectorExtensions.Subtract
+- uid: CSMath.Extensions.VectorExtensions.Subtract``1(``0,``0)
+  name: Subtract<T>(T, T)
+  href: api/CSMath.Extensions.VectorExtensions.html#CSMath_Extensions_VectorExtensions_Subtract__1___0___0_
+  commentId: M:CSMath.Extensions.VectorExtensions.Subtract``1(``0,``0)
+  name.vb: Subtract(Of T)(T, T)
+  fullName: CSMath.Extensions.VectorExtensions.Subtract<T>(T, T)
+  fullName.vb: CSMath.Extensions.VectorExtensions.Subtract(Of T)(T, T)
+  nameWithType: VectorExtensions.Subtract<T>(T, T)
+  nameWithType.vb: VectorExtensions.Subtract(Of T)(T, T)
+- uid: CSMath.Extensions.VectorExtensions.ToEnumerable*
+  name: ToEnumerable
+  href: api/CSMath.Extensions.VectorExtensions.html#CSMath_Extensions_VectorExtensions_ToEnumerable_
+  commentId: Overload:CSMath.Extensions.VectorExtensions.ToEnumerable
+  isSpec: "True"
+  fullName: CSMath.Extensions.VectorExtensions.ToEnumerable
+  nameWithType: VectorExtensions.ToEnumerable
+- uid: CSMath.Extensions.VectorExtensions.ToEnumerable``1(``0)
+  name: ToEnumerable<T>(T)
+  href: api/CSMath.Extensions.VectorExtensions.html#CSMath_Extensions_VectorExtensions_ToEnumerable__1___0_
+  commentId: M:CSMath.Extensions.VectorExtensions.ToEnumerable``1(``0)
+  name.vb: ToEnumerable(Of T)(T)
+  fullName: CSMath.Extensions.VectorExtensions.ToEnumerable<T>(T)
+  fullName.vb: CSMath.Extensions.VectorExtensions.ToEnumerable(Of T)(T)
+  nameWithType: VectorExtensions.ToEnumerable<T>(T)
+  nameWithType.vb: VectorExtensions.ToEnumerable(Of T)(T)
 - uid: CSMath.Geometry
   name: CSMath.Geometry
   href: api/CSMath.Geometry.html
@@ -63588,22 +64073,6 @@ references:
   commentId: F:CSMath.MathHelper.HalfPI
   fullName: CSMath.MathHelper.HalfPI
   nameWithType: MathHelper.HalfPI
-- uid: CSMath.MathHelper.IsAlmostZero(System.Double)
-  name: IsAlmostZero(double)
-  href: api/CSMath.MathHelper.html#CSMath_MathHelper_IsAlmostZero_System_Double_
-  commentId: M:CSMath.MathHelper.IsAlmostZero(System.Double)
-  name.vb: IsAlmostZero(Double)
-  fullName: CSMath.MathHelper.IsAlmostZero(double)
-  fullName.vb: CSMath.MathHelper.IsAlmostZero(Double)
-  nameWithType: MathHelper.IsAlmostZero(double)
-  nameWithType.vb: MathHelper.IsAlmostZero(Double)
-- uid: CSMath.MathHelper.IsAlmostZero*
-  name: IsAlmostZero
-  href: api/CSMath.MathHelper.html#CSMath_MathHelper_IsAlmostZero_
-  commentId: Overload:CSMath.MathHelper.IsAlmostZero
-  isSpec: "True"
-  fullName: CSMath.MathHelper.IsAlmostZero
-  nameWithType: MathHelper.IsAlmostZero
 - uid: CSMath.MathHelper.IsAngleInRange(System.Double,System.Double,System.Double,System.Double)
   name: IsAngleInRange(double, double, double, double)
   href: api/CSMath.MathHelper.html#CSMath_MathHelper_IsAngleInRange_System_Double_System_Double_System_Double_System_Double_
@@ -63645,72 +64114,15 @@ references:
   isSpec: "True"
   fullName: CSMath.MathHelper.IsEqual
   nameWithType: MathHelper.IsEqual
-- uid: CSMath.MathHelper.IsEven(System.Int32)
-  name: IsEven(int)
-  href: api/CSMath.MathHelper.html#CSMath_MathHelper_IsEven_System_Int32_
-  commentId: M:CSMath.MathHelper.IsEven(System.Int32)
-  name.vb: IsEven(Integer)
-  fullName: CSMath.MathHelper.IsEven(int)
-  fullName.vb: CSMath.MathHelper.IsEven(Integer)
-  nameWithType: MathHelper.IsEven(int)
-  nameWithType.vb: MathHelper.IsEven(Integer)
-- uid: CSMath.MathHelper.IsEven*
-  name: IsEven
-  href: api/CSMath.MathHelper.html#CSMath_MathHelper_IsEven_
-  commentId: Overload:CSMath.MathHelper.IsEven
-  isSpec: "True"
-  fullName: CSMath.MathHelper.IsEven
-  nameWithType: MathHelper.IsEven
-- uid: CSMath.MathHelper.IsOdd(System.Int32)
-  name: IsOdd(int)
-  href: api/CSMath.MathHelper.html#CSMath_MathHelper_IsOdd_System_Int32_
-  commentId: M:CSMath.MathHelper.IsOdd(System.Int32)
-  name.vb: IsOdd(Integer)
-  fullName: CSMath.MathHelper.IsOdd(int)
-  fullName.vb: CSMath.MathHelper.IsOdd(Integer)
-  nameWithType: MathHelper.IsOdd(int)
-  nameWithType.vb: MathHelper.IsOdd(Integer)
-- uid: CSMath.MathHelper.IsOdd*
-  name: IsOdd
-  href: api/CSMath.MathHelper.html#CSMath_MathHelper_IsOdd_
-  commentId: Overload:CSMath.MathHelper.IsOdd
-  isSpec: "True"
-  fullName: CSMath.MathHelper.IsOdd
-  nameWithType: MathHelper.IsOdd
-- uid: CSMath.MathHelper.IsZero(System.Double)
-  name: IsZero(double)
-  href: api/CSMath.MathHelper.html#CSMath_MathHelper_IsZero_System_Double_
-  commentId: M:CSMath.MathHelper.IsZero(System.Double)
-  name.vb: IsZero(Double)
-  fullName: CSMath.MathHelper.IsZero(double)
-  fullName.vb: CSMath.MathHelper.IsZero(Double)
-  nameWithType: MathHelper.IsZero(double)
-  nameWithType.vb: MathHelper.IsZero(Double)
-- uid: CSMath.MathHelper.IsZero(System.Double,System.Double)
-  name: IsZero(double, double)
-  href: api/CSMath.MathHelper.html#CSMath_MathHelper_IsZero_System_Double_System_Double_
-  commentId: M:CSMath.MathHelper.IsZero(System.Double,System.Double)
-  name.vb: IsZero(Double, Double)
-  fullName: CSMath.MathHelper.IsZero(double, double)
-  fullName.vb: CSMath.MathHelper.IsZero(Double, Double)
-  nameWithType: MathHelper.IsZero(double, double)
-  nameWithType.vb: MathHelper.IsZero(Double, Double)
-- uid: CSMath.MathHelper.IsZero*
-  name: IsZero
-  href: api/CSMath.MathHelper.html#CSMath_MathHelper_IsZero_
-  commentId: Overload:CSMath.MathHelper.IsZero
-  isSpec: "True"
-  fullName: CSMath.MathHelper.IsZero
-  nameWithType: MathHelper.IsZero
-- uid: CSMath.MathHelper.NormalizeAngle(System.Double)
-  name: NormalizeAngle(double)
-  href: api/CSMath.MathHelper.html#CSMath_MathHelper_NormalizeAngle_System_Double_
-  commentId: M:CSMath.MathHelper.NormalizeAngle(System.Double)
-  name.vb: NormalizeAngle(Double)
-  fullName: CSMath.MathHelper.NormalizeAngle(double)
-  fullName.vb: CSMath.MathHelper.NormalizeAngle(Double)
-  nameWithType: MathHelper.NormalizeAngle(double)
-  nameWithType.vb: MathHelper.NormalizeAngle(Double)
+- uid: CSMath.MathHelper.NormalizeAngle(System.Double,System.Boolean)
+  name: NormalizeAngle(double, bool)
+  href: api/CSMath.MathHelper.html#CSMath_MathHelper_NormalizeAngle_System_Double_System_Boolean_
+  commentId: M:CSMath.MathHelper.NormalizeAngle(System.Double,System.Boolean)
+  name.vb: NormalizeAngle(Double, Boolean)
+  fullName: CSMath.MathHelper.NormalizeAngle(double, bool)
+  fullName.vb: CSMath.MathHelper.NormalizeAngle(Double, Boolean)
+  nameWithType: MathHelper.NormalizeAngle(double, bool)
+  nameWithType.vb: MathHelper.NormalizeAngle(Double, Boolean)
 - uid: CSMath.MathHelper.NormalizeAngle*
   name: NormalizeAngle
   href: api/CSMath.MathHelper.html#CSMath_MathHelper_NormalizeAngle_
@@ -63718,15 +64130,15 @@ references:
   isSpec: "True"
   fullName: CSMath.MathHelper.NormalizeAngle
   nameWithType: MathHelper.NormalizeAngle
-- uid: CSMath.MathHelper.NormalizeAngleRadians(System.Double)
-  name: NormalizeAngleRadians(double)
-  href: api/CSMath.MathHelper.html#CSMath_MathHelper_NormalizeAngleRadians_System_Double_
-  commentId: M:CSMath.MathHelper.NormalizeAngleRadians(System.Double)
-  name.vb: NormalizeAngleRadians(Double)
-  fullName: CSMath.MathHelper.NormalizeAngleRadians(double)
-  fullName.vb: CSMath.MathHelper.NormalizeAngleRadians(Double)
-  nameWithType: MathHelper.NormalizeAngleRadians(double)
-  nameWithType.vb: MathHelper.NormalizeAngleRadians(Double)
+- uid: CSMath.MathHelper.NormalizeAngleRadians(System.Double,System.Boolean)
+  name: NormalizeAngleRadians(double, bool)
+  href: api/CSMath.MathHelper.html#CSMath_MathHelper_NormalizeAngleRadians_System_Double_System_Boolean_
+  commentId: M:CSMath.MathHelper.NormalizeAngleRadians(System.Double,System.Boolean)
+  name.vb: NormalizeAngleRadians(Double, Boolean)
+  fullName: CSMath.MathHelper.NormalizeAngleRadians(double, bool)
+  fullName.vb: CSMath.MathHelper.NormalizeAngleRadians(Double, Boolean)
+  nameWithType: MathHelper.NormalizeAngleRadians(double, bool)
+  nameWithType.vb: MathHelper.NormalizeAngleRadians(Double, Boolean)
 - uid: CSMath.MathHelper.NormalizeAngleRadians*
   name: NormalizeAngleRadians
   href: api/CSMath.MathHelper.html#CSMath_MathHelper_NormalizeAngleRadians_
@@ -63740,15 +64152,15 @@ references:
   commentId: F:CSMath.MathHelper.PI
   fullName: CSMath.MathHelper.PI
   nameWithType: MathHelper.PI
-- uid: CSMath.MathHelper.RadToDeg(System.Double,System.Boolean)
-  name: RadToDeg(double, bool)
-  href: api/CSMath.MathHelper.html#CSMath_MathHelper_RadToDeg_System_Double_System_Boolean_
-  commentId: M:CSMath.MathHelper.RadToDeg(System.Double,System.Boolean)
-  name.vb: RadToDeg(Double, Boolean)
-  fullName: CSMath.MathHelper.RadToDeg(double, bool)
-  fullName.vb: CSMath.MathHelper.RadToDeg(Double, Boolean)
-  nameWithType: MathHelper.RadToDeg(double, bool)
-  nameWithType.vb: MathHelper.RadToDeg(Double, Boolean)
+- uid: CSMath.MathHelper.RadToDeg(System.Double,System.Boolean,System.Boolean)
+  name: RadToDeg(double, bool, bool)
+  href: api/CSMath.MathHelper.html#CSMath_MathHelper_RadToDeg_System_Double_System_Boolean_System_Boolean_
+  commentId: M:CSMath.MathHelper.RadToDeg(System.Double,System.Boolean,System.Boolean)
+  name.vb: RadToDeg(Double, Boolean, Boolean)
+  fullName: CSMath.MathHelper.RadToDeg(double, bool, bool)
+  fullName.vb: CSMath.MathHelper.RadToDeg(Double, Boolean, Boolean)
+  nameWithType: MathHelper.RadToDeg(double, bool, bool)
+  nameWithType.vb: MathHelper.RadToDeg(Double, Boolean, Boolean)
 - uid: CSMath.MathHelper.RadToDeg*
   name: RadToDeg
   href: api/CSMath.MathHelper.html#CSMath_MathHelper_RadToDeg_
@@ -65022,400 +65434,6 @@ references:
   isSpec: "True"
   fullName: CSMath.Transform.TryDecompose
   nameWithType: Transform.TryDecompose
-- uid: CSMath.VectorExtensions
-  name: VectorExtensions
-  href: api/CSMath.VectorExtensions.html
-  commentId: T:CSMath.VectorExtensions
-  fullName: CSMath.VectorExtensions
-  nameWithType: VectorExtensions
-- uid: CSMath.VectorExtensions.Add*
-  name: Add
-  href: api/CSMath.VectorExtensions.html#CSMath_VectorExtensions_Add_
-  commentId: Overload:CSMath.VectorExtensions.Add
-  isSpec: "True"
-  fullName: CSMath.VectorExtensions.Add
-  nameWithType: VectorExtensions.Add
-- uid: CSMath.VectorExtensions.Add``1(``0,``0)
-  name: Add<T>(T, T)
-  href: api/CSMath.VectorExtensions.html#CSMath_VectorExtensions_Add__1___0___0_
-  commentId: M:CSMath.VectorExtensions.Add``1(``0,``0)
-  name.vb: Add(Of T)(T, T)
-  fullName: CSMath.VectorExtensions.Add<T>(T, T)
-  fullName.vb: CSMath.VectorExtensions.Add(Of T)(T, T)
-  nameWithType: VectorExtensions.Add<T>(T, T)
-  nameWithType.vb: VectorExtensions.Add(Of T)(T, T)
-- uid: CSMath.VectorExtensions.AngleBetweenVectors*
-  name: AngleBetweenVectors
-  href: api/CSMath.VectorExtensions.html#CSMath_VectorExtensions_AngleBetweenVectors_
-  commentId: Overload:CSMath.VectorExtensions.AngleBetweenVectors
-  isSpec: "True"
-  fullName: CSMath.VectorExtensions.AngleBetweenVectors
-  nameWithType: VectorExtensions.AngleBetweenVectors
-- uid: CSMath.VectorExtensions.AngleBetweenVectors``1(``0,``0)
-  name: AngleBetweenVectors<T>(T, T)
-  href: api/CSMath.VectorExtensions.html#CSMath_VectorExtensions_AngleBetweenVectors__1___0___0_
-  commentId: M:CSMath.VectorExtensions.AngleBetweenVectors``1(``0,``0)
-  name.vb: AngleBetweenVectors(Of T)(T, T)
-  fullName: CSMath.VectorExtensions.AngleBetweenVectors<T>(T, T)
-  fullName.vb: CSMath.VectorExtensions.AngleBetweenVectors(Of T)(T, T)
-  nameWithType: VectorExtensions.AngleBetweenVectors<T>(T, T)
-  nameWithType.vb: VectorExtensions.AngleBetweenVectors(Of T)(T, T)
-- uid: CSMath.VectorExtensions.Convert*
-  name: Convert
-  href: api/CSMath.VectorExtensions.html#CSMath_VectorExtensions_Convert_
-  commentId: Overload:CSMath.VectorExtensions.Convert
-  isSpec: "True"
-  fullName: CSMath.VectorExtensions.Convert
-  nameWithType: VectorExtensions.Convert
-- uid: CSMath.VectorExtensions.Convert``1(CSMath.IVector)
-  name: Convert<T>(IVector)
-  href: api/CSMath.VectorExtensions.html#CSMath_VectorExtensions_Convert__1_CSMath_IVector_
-  commentId: M:CSMath.VectorExtensions.Convert``1(CSMath.IVector)
-  name.vb: Convert(Of T)(IVector)
-  fullName: CSMath.VectorExtensions.Convert<T>(CSMath.IVector)
-  fullName.vb: CSMath.VectorExtensions.Convert(Of T)(CSMath.IVector)
-  nameWithType: VectorExtensions.Convert<T>(IVector)
-  nameWithType.vb: VectorExtensions.Convert(Of T)(IVector)
-- uid: CSMath.VectorExtensions.CopyValues*
-  name: CopyValues
-  href: api/CSMath.VectorExtensions.html#CSMath_VectorExtensions_CopyValues_
-  commentId: Overload:CSMath.VectorExtensions.CopyValues
-  isSpec: "True"
-  fullName: CSMath.VectorExtensions.CopyValues
-  nameWithType: VectorExtensions.CopyValues
-- uid: CSMath.VectorExtensions.CopyValues``1(``0,CSMath.IVector)
-  name: CopyValues<T>(T, IVector)
-  href: api/CSMath.VectorExtensions.html#CSMath_VectorExtensions_CopyValues__1___0_CSMath_IVector_
-  commentId: M:CSMath.VectorExtensions.CopyValues``1(``0,CSMath.IVector)
-  name.vb: CopyValues(Of T)(T, IVector)
-  fullName: CSMath.VectorExtensions.CopyValues<T>(T, CSMath.IVector)
-  fullName.vb: CSMath.VectorExtensions.CopyValues(Of T)(T, CSMath.IVector)
-  nameWithType: VectorExtensions.CopyValues<T>(T, IVector)
-  nameWithType.vb: VectorExtensions.CopyValues(Of T)(T, IVector)
-- uid: CSMath.VectorExtensions.DistanceFrom*
-  name: DistanceFrom
-  href: api/CSMath.VectorExtensions.html#CSMath_VectorExtensions_DistanceFrom_
-  commentId: Overload:CSMath.VectorExtensions.DistanceFrom
-  isSpec: "True"
-  fullName: CSMath.VectorExtensions.DistanceFrom
-  nameWithType: VectorExtensions.DistanceFrom
-- uid: CSMath.VectorExtensions.DistanceFrom``1(``0,``0)
-  name: DistanceFrom<T>(T, T)
-  href: api/CSMath.VectorExtensions.html#CSMath_VectorExtensions_DistanceFrom__1___0___0_
-  commentId: M:CSMath.VectorExtensions.DistanceFrom``1(``0,``0)
-  name.vb: DistanceFrom(Of T)(T, T)
-  fullName: CSMath.VectorExtensions.DistanceFrom<T>(T, T)
-  fullName.vb: CSMath.VectorExtensions.DistanceFrom(Of T)(T, T)
-  nameWithType: VectorExtensions.DistanceFrom<T>(T, T)
-  nameWithType.vb: VectorExtensions.DistanceFrom(Of T)(T, T)
-- uid: CSMath.VectorExtensions.Divide*
-  name: Divide
-  href: api/CSMath.VectorExtensions.html#CSMath_VectorExtensions_Divide_
-  commentId: Overload:CSMath.VectorExtensions.Divide
-  isSpec: "True"
-  fullName: CSMath.VectorExtensions.Divide
-  nameWithType: VectorExtensions.Divide
-- uid: CSMath.VectorExtensions.Divide``1(``0,System.Double)
-  name: Divide<T>(T, double)
-  href: api/CSMath.VectorExtensions.html#CSMath_VectorExtensions_Divide__1___0_System_Double_
-  commentId: M:CSMath.VectorExtensions.Divide``1(``0,System.Double)
-  name.vb: Divide(Of T)(T, Double)
-  fullName: CSMath.VectorExtensions.Divide<T>(T, double)
-  fullName.vb: CSMath.VectorExtensions.Divide(Of T)(T, Double)
-  nameWithType: VectorExtensions.Divide<T>(T, double)
-  nameWithType.vb: VectorExtensions.Divide(Of T)(T, Double)
-- uid: CSMath.VectorExtensions.Divide``1(``0,``0)
-  name: Divide<T>(T, T)
-  href: api/CSMath.VectorExtensions.html#CSMath_VectorExtensions_Divide__1___0___0_
-  commentId: M:CSMath.VectorExtensions.Divide``1(``0,``0)
-  name.vb: Divide(Of T)(T, T)
-  fullName: CSMath.VectorExtensions.Divide<T>(T, T)
-  fullName.vb: CSMath.VectorExtensions.Divide(Of T)(T, T)
-  nameWithType: VectorExtensions.Divide<T>(T, T)
-  nameWithType.vb: VectorExtensions.Divide(Of T)(T, T)
-- uid: CSMath.VectorExtensions.Dot*
-  name: Dot
-  href: api/CSMath.VectorExtensions.html#CSMath_VectorExtensions_Dot_
-  commentId: Overload:CSMath.VectorExtensions.Dot
-  isSpec: "True"
-  fullName: CSMath.VectorExtensions.Dot
-  nameWithType: VectorExtensions.Dot
-- uid: CSMath.VectorExtensions.Dot``1(``0,``0)
-  name: Dot<T>(T, T)
-  href: api/CSMath.VectorExtensions.html#CSMath_VectorExtensions_Dot__1___0___0_
-  commentId: M:CSMath.VectorExtensions.Dot``1(``0,``0)
-  name.vb: Dot(Of T)(T, T)
-  fullName: CSMath.VectorExtensions.Dot<T>(T, T)
-  fullName.vb: CSMath.VectorExtensions.Dot(Of T)(T, T)
-  nameWithType: VectorExtensions.Dot<T>(T, T)
-  nameWithType.vb: VectorExtensions.Dot(Of T)(T, T)
-- uid: CSMath.VectorExtensions.GetLength*
-  name: GetLength
-  href: api/CSMath.VectorExtensions.html#CSMath_VectorExtensions_GetLength_
-  commentId: Overload:CSMath.VectorExtensions.GetLength
-  isSpec: "True"
-  fullName: CSMath.VectorExtensions.GetLength
-  nameWithType: VectorExtensions.GetLength
-- uid: CSMath.VectorExtensions.GetLengthSquared*
-  name: GetLengthSquared
-  href: api/CSMath.VectorExtensions.html#CSMath_VectorExtensions_GetLengthSquared_
-  commentId: Overload:CSMath.VectorExtensions.GetLengthSquared
-  isSpec: "True"
-  fullName: CSMath.VectorExtensions.GetLengthSquared
-  nameWithType: VectorExtensions.GetLengthSquared
-- uid: CSMath.VectorExtensions.GetLengthSquared``1(``0)
-  name: GetLengthSquared<T>(T)
-  href: api/CSMath.VectorExtensions.html#CSMath_VectorExtensions_GetLengthSquared__1___0_
-  commentId: M:CSMath.VectorExtensions.GetLengthSquared``1(``0)
-  name.vb: GetLengthSquared(Of T)(T)
-  fullName: CSMath.VectorExtensions.GetLengthSquared<T>(T)
-  fullName.vb: CSMath.VectorExtensions.GetLengthSquared(Of T)(T)
-  nameWithType: VectorExtensions.GetLengthSquared<T>(T)
-  nameWithType.vb: VectorExtensions.GetLengthSquared(Of T)(T)
-- uid: CSMath.VectorExtensions.GetLength``1(``0)
-  name: GetLength<T>(T)
-  href: api/CSMath.VectorExtensions.html#CSMath_VectorExtensions_GetLength__1___0_
-  commentId: M:CSMath.VectorExtensions.GetLength``1(``0)
-  name.vb: GetLength(Of T)(T)
-  fullName: CSMath.VectorExtensions.GetLength<T>(T)
-  fullName.vb: CSMath.VectorExtensions.GetLength(Of T)(T)
-  nameWithType: VectorExtensions.GetLength<T>(T)
-  nameWithType.vb: VectorExtensions.GetLength(Of T)(T)
-- uid: CSMath.VectorExtensions.IsEqual*
-  name: IsEqual
-  href: api/CSMath.VectorExtensions.html#CSMath_VectorExtensions_IsEqual_
-  commentId: Overload:CSMath.VectorExtensions.IsEqual
-  isSpec: "True"
-  fullName: CSMath.VectorExtensions.IsEqual
-  nameWithType: VectorExtensions.IsEqual
-- uid: CSMath.VectorExtensions.IsEqual``1(``0,``0)
-  name: IsEqual<T>(T, T)
-  href: api/CSMath.VectorExtensions.html#CSMath_VectorExtensions_IsEqual__1___0___0_
-  commentId: M:CSMath.VectorExtensions.IsEqual``1(``0,``0)
-  name.vb: IsEqual(Of T)(T, T)
-  fullName: CSMath.VectorExtensions.IsEqual<T>(T, T)
-  fullName.vb: CSMath.VectorExtensions.IsEqual(Of T)(T, T)
-  nameWithType: VectorExtensions.IsEqual<T>(T, T)
-  nameWithType.vb: VectorExtensions.IsEqual(Of T)(T, T)
-- uid: CSMath.VectorExtensions.IsEqual``1(``0,``0,System.Int32)
-  name: IsEqual<T>(T, T, int)
-  href: api/CSMath.VectorExtensions.html#CSMath_VectorExtensions_IsEqual__1___0___0_System_Int32_
-  commentId: M:CSMath.VectorExtensions.IsEqual``1(``0,``0,System.Int32)
-  name.vb: IsEqual(Of T)(T, T, Integer)
-  fullName: CSMath.VectorExtensions.IsEqual<T>(T, T, int)
-  fullName.vb: CSMath.VectorExtensions.IsEqual(Of T)(T, T, Integer)
-  nameWithType: VectorExtensions.IsEqual<T>(T, T, int)
-  nameWithType.vb: VectorExtensions.IsEqual(Of T)(T, T, Integer)
-- uid: CSMath.VectorExtensions.IsNaN*
-  name: IsNaN
-  href: api/CSMath.VectorExtensions.html#CSMath_VectorExtensions_IsNaN_
-  commentId: Overload:CSMath.VectorExtensions.IsNaN
-  isSpec: "True"
-  fullName: CSMath.VectorExtensions.IsNaN
-  nameWithType: VectorExtensions.IsNaN
-- uid: CSMath.VectorExtensions.IsNaN``1(``0)
-  name: IsNaN<T>(T)
-  href: api/CSMath.VectorExtensions.html#CSMath_VectorExtensions_IsNaN__1___0_
-  commentId: M:CSMath.VectorExtensions.IsNaN``1(``0)
-  name.vb: IsNaN(Of T)(T)
-  fullName: CSMath.VectorExtensions.IsNaN<T>(T)
-  fullName.vb: CSMath.VectorExtensions.IsNaN(Of T)(T)
-  nameWithType: VectorExtensions.IsNaN<T>(T)
-  nameWithType.vb: VectorExtensions.IsNaN(Of T)(T)
-- uid: CSMath.VectorExtensions.IsNormalized*
-  name: IsNormalized
-  href: api/CSMath.VectorExtensions.html#CSMath_VectorExtensions_IsNormalized_
-  commentId: Overload:CSMath.VectorExtensions.IsNormalized
-  isSpec: "True"
-  fullName: CSMath.VectorExtensions.IsNormalized
-  nameWithType: VectorExtensions.IsNormalized
-- uid: CSMath.VectorExtensions.IsNormalized``1(``0)
-  name: IsNormalized<T>(T)
-  href: api/CSMath.VectorExtensions.html#CSMath_VectorExtensions_IsNormalized__1___0_
-  commentId: M:CSMath.VectorExtensions.IsNormalized``1(``0)
-  name.vb: IsNormalized(Of T)(T)
-  fullName: CSMath.VectorExtensions.IsNormalized<T>(T)
-  fullName.vb: CSMath.VectorExtensions.IsNormalized(Of T)(T)
-  nameWithType: VectorExtensions.IsNormalized<T>(T)
-  nameWithType.vb: VectorExtensions.IsNormalized(Of T)(T)
-- uid: CSMath.VectorExtensions.IsParallel*
-  name: IsParallel
-  href: api/CSMath.VectorExtensions.html#CSMath_VectorExtensions_IsParallel_
-  commentId: Overload:CSMath.VectorExtensions.IsParallel
-  isSpec: "True"
-  fullName: CSMath.VectorExtensions.IsParallel
-  nameWithType: VectorExtensions.IsParallel
-- uid: CSMath.VectorExtensions.IsParallel``1(``0,``0)
-  name: IsParallel<T>(T, T)
-  href: api/CSMath.VectorExtensions.html#CSMath_VectorExtensions_IsParallel__1___0___0_
-  commentId: M:CSMath.VectorExtensions.IsParallel``1(``0,``0)
-  name.vb: IsParallel(Of T)(T, T)
-  fullName: CSMath.VectorExtensions.IsParallel<T>(T, T)
-  fullName.vb: CSMath.VectorExtensions.IsParallel(Of T)(T, T)
-  nameWithType: VectorExtensions.IsParallel<T>(T, T)
-  nameWithType.vb: VectorExtensions.IsParallel(Of T)(T, T)
-- uid: CSMath.VectorExtensions.IsPerpendicular*
-  name: IsPerpendicular
-  href: api/CSMath.VectorExtensions.html#CSMath_VectorExtensions_IsPerpendicular_
-  commentId: Overload:CSMath.VectorExtensions.IsPerpendicular
-  isSpec: "True"
-  fullName: CSMath.VectorExtensions.IsPerpendicular
-  nameWithType: VectorExtensions.IsPerpendicular
-- uid: CSMath.VectorExtensions.IsPerpendicular``1(``0,``0)
-  name: IsPerpendicular<T>(T, T)
-  href: api/CSMath.VectorExtensions.html#CSMath_VectorExtensions_IsPerpendicular__1___0___0_
-  commentId: M:CSMath.VectorExtensions.IsPerpendicular``1(``0,``0)
-  name.vb: IsPerpendicular(Of T)(T, T)
-  fullName: CSMath.VectorExtensions.IsPerpendicular<T>(T, T)
-  fullName.vb: CSMath.VectorExtensions.IsPerpendicular(Of T)(T, T)
-  nameWithType: VectorExtensions.IsPerpendicular<T>(T, T)
-  nameWithType.vb: VectorExtensions.IsPerpendicular(Of T)(T, T)
-- uid: CSMath.VectorExtensions.IsZero*
-  name: IsZero
-  href: api/CSMath.VectorExtensions.html#CSMath_VectorExtensions_IsZero_
-  commentId: Overload:CSMath.VectorExtensions.IsZero
-  isSpec: "True"
-  fullName: CSMath.VectorExtensions.IsZero
-  nameWithType: VectorExtensions.IsZero
-- uid: CSMath.VectorExtensions.IsZero``1(``0)
-  name: IsZero<T>(T)
-  href: api/CSMath.VectorExtensions.html#CSMath_VectorExtensions_IsZero__1___0_
-  commentId: M:CSMath.VectorExtensions.IsZero``1(``0)
-  name.vb: IsZero(Of T)(T)
-  fullName: CSMath.VectorExtensions.IsZero<T>(T)
-  fullName.vb: CSMath.VectorExtensions.IsZero(Of T)(T)
-  nameWithType: VectorExtensions.IsZero<T>(T)
-  nameWithType.vb: VectorExtensions.IsZero(Of T)(T)
-- uid: CSMath.VectorExtensions.Mid*
-  name: Mid
-  href: api/CSMath.VectorExtensions.html#CSMath_VectorExtensions_Mid_
-  commentId: Overload:CSMath.VectorExtensions.Mid
-  isSpec: "True"
-  fullName: CSMath.VectorExtensions.Mid
-  nameWithType: VectorExtensions.Mid
-- uid: CSMath.VectorExtensions.Mid``1(``0,``0)
-  name: Mid<T>(T, T)
-  href: api/CSMath.VectorExtensions.html#CSMath_VectorExtensions_Mid__1___0___0_
-  commentId: M:CSMath.VectorExtensions.Mid``1(``0,``0)
-  name.vb: Mid(Of T)(T, T)
-  fullName: CSMath.VectorExtensions.Mid<T>(T, T)
-  fullName.vb: CSMath.VectorExtensions.Mid(Of T)(T, T)
-  nameWithType: VectorExtensions.Mid<T>(T, T)
-  nameWithType.vb: VectorExtensions.Mid(Of T)(T, T)
-- uid: CSMath.VectorExtensions.Multiply*
-  name: Multiply
-  href: api/CSMath.VectorExtensions.html#CSMath_VectorExtensions_Multiply_
-  commentId: Overload:CSMath.VectorExtensions.Multiply
-  isSpec: "True"
-  fullName: CSMath.VectorExtensions.Multiply
-  nameWithType: VectorExtensions.Multiply
-- uid: CSMath.VectorExtensions.Multiply``1(``0,System.Double)
-  name: Multiply<T>(T, double)
-  href: api/CSMath.VectorExtensions.html#CSMath_VectorExtensions_Multiply__1___0_System_Double_
-  commentId: M:CSMath.VectorExtensions.Multiply``1(``0,System.Double)
-  name.vb: Multiply(Of T)(T, Double)
-  fullName: CSMath.VectorExtensions.Multiply<T>(T, double)
-  fullName.vb: CSMath.VectorExtensions.Multiply(Of T)(T, Double)
-  nameWithType: VectorExtensions.Multiply<T>(T, double)
-  nameWithType.vb: VectorExtensions.Multiply(Of T)(T, Double)
-- uid: CSMath.VectorExtensions.Multiply``1(``0,``0)
-  name: Multiply<T>(T, T)
-  href: api/CSMath.VectorExtensions.html#CSMath_VectorExtensions_Multiply__1___0___0_
-  commentId: M:CSMath.VectorExtensions.Multiply``1(``0,``0)
-  name.vb: Multiply(Of T)(T, T)
-  fullName: CSMath.VectorExtensions.Multiply<T>(T, T)
-  fullName.vb: CSMath.VectorExtensions.Multiply(Of T)(T, T)
-  nameWithType: VectorExtensions.Multiply<T>(T, T)
-  nameWithType.vb: VectorExtensions.Multiply(Of T)(T, T)
-- uid: CSMath.VectorExtensions.Normalize*
-  name: Normalize
-  href: api/CSMath.VectorExtensions.html#CSMath_VectorExtensions_Normalize_
-  commentId: Overload:CSMath.VectorExtensions.Normalize
-  isSpec: "True"
-  fullName: CSMath.VectorExtensions.Normalize
-  nameWithType: VectorExtensions.Normalize
-- uid: CSMath.VectorExtensions.Normalize``1(``0)
-  name: Normalize<T>(T)
-  href: api/CSMath.VectorExtensions.html#CSMath_VectorExtensions_Normalize__1___0_
-  commentId: M:CSMath.VectorExtensions.Normalize``1(``0)
-  name.vb: Normalize(Of T)(T)
-  fullName: CSMath.VectorExtensions.Normalize<T>(T)
-  fullName.vb: CSMath.VectorExtensions.Normalize(Of T)(T)
-  nameWithType: VectorExtensions.Normalize<T>(T)
-  nameWithType.vb: VectorExtensions.Normalize(Of T)(T)
-- uid: CSMath.VectorExtensions.Round*
-  name: Round
-  href: api/CSMath.VectorExtensions.html#CSMath_VectorExtensions_Round_
-  commentId: Overload:CSMath.VectorExtensions.Round
-  isSpec: "True"
-  fullName: CSMath.VectorExtensions.Round
-  nameWithType: VectorExtensions.Round
-- uid: CSMath.VectorExtensions.RoundZero*
-  name: RoundZero
-  href: api/CSMath.VectorExtensions.html#CSMath_VectorExtensions_RoundZero_
-  commentId: Overload:CSMath.VectorExtensions.RoundZero
-  isSpec: "True"
-  fullName: CSMath.VectorExtensions.RoundZero
-  nameWithType: VectorExtensions.RoundZero
-- uid: CSMath.VectorExtensions.RoundZero``1(``0,System.Double)
-  name: RoundZero<T>(T, double)
-  href: api/CSMath.VectorExtensions.html#CSMath_VectorExtensions_RoundZero__1___0_System_Double_
-  commentId: M:CSMath.VectorExtensions.RoundZero``1(``0,System.Double)
-  name.vb: RoundZero(Of T)(T, Double)
-  fullName: CSMath.VectorExtensions.RoundZero<T>(T, double)
-  fullName.vb: CSMath.VectorExtensions.RoundZero(Of T)(T, Double)
-  nameWithType: VectorExtensions.RoundZero<T>(T, double)
-  nameWithType.vb: VectorExtensions.RoundZero(Of T)(T, Double)
-- uid: CSMath.VectorExtensions.Round``1(``0)
-  name: Round<T>(T)
-  href: api/CSMath.VectorExtensions.html#CSMath_VectorExtensions_Round__1___0_
-  commentId: M:CSMath.VectorExtensions.Round``1(``0)
-  name.vb: Round(Of T)(T)
-  fullName: CSMath.VectorExtensions.Round<T>(T)
-  fullName.vb: CSMath.VectorExtensions.Round(Of T)(T)
-  nameWithType: VectorExtensions.Round<T>(T)
-  nameWithType.vb: VectorExtensions.Round(Of T)(T)
-- uid: CSMath.VectorExtensions.Round``1(``0,System.Int32)
-  name: Round<T>(T, int)
-  href: api/CSMath.VectorExtensions.html#CSMath_VectorExtensions_Round__1___0_System_Int32_
-  commentId: M:CSMath.VectorExtensions.Round``1(``0,System.Int32)
-  name.vb: Round(Of T)(T, Integer)
-  fullName: CSMath.VectorExtensions.Round<T>(T, int)
-  fullName.vb: CSMath.VectorExtensions.Round(Of T)(T, Integer)
-  nameWithType: VectorExtensions.Round<T>(T, int)
-  nameWithType.vb: VectorExtensions.Round(Of T)(T, Integer)
-- uid: CSMath.VectorExtensions.Subtract*
-  name: Subtract
-  href: api/CSMath.VectorExtensions.html#CSMath_VectorExtensions_Subtract_
-  commentId: Overload:CSMath.VectorExtensions.Subtract
-  isSpec: "True"
-  fullName: CSMath.VectorExtensions.Subtract
-  nameWithType: VectorExtensions.Subtract
-- uid: CSMath.VectorExtensions.Subtract``1(``0,``0)
-  name: Subtract<T>(T, T)
-  href: api/CSMath.VectorExtensions.html#CSMath_VectorExtensions_Subtract__1___0___0_
-  commentId: M:CSMath.VectorExtensions.Subtract``1(``0,``0)
-  name.vb: Subtract(Of T)(T, T)
-  fullName: CSMath.VectorExtensions.Subtract<T>(T, T)
-  fullName.vb: CSMath.VectorExtensions.Subtract(Of T)(T, T)
-  nameWithType: VectorExtensions.Subtract<T>(T, T)
-  nameWithType.vb: VectorExtensions.Subtract(Of T)(T, T)
-- uid: CSMath.VectorExtensions.ToEnumerable*
-  name: ToEnumerable
-  href: api/CSMath.VectorExtensions.html#CSMath_VectorExtensions_ToEnumerable_
-  commentId: Overload:CSMath.VectorExtensions.ToEnumerable
-  isSpec: "True"
-  fullName: CSMath.VectorExtensions.ToEnumerable
-  nameWithType: VectorExtensions.ToEnumerable
-- uid: CSMath.VectorExtensions.ToEnumerable``1(``0)
-  name: ToEnumerable<T>(T)
-  href: api/CSMath.VectorExtensions.html#CSMath_VectorExtensions_ToEnumerable__1___0_
-  commentId: M:CSMath.VectorExtensions.ToEnumerable``1(``0)
-  name.vb: ToEnumerable(Of T)(T)
-  fullName: CSMath.VectorExtensions.ToEnumerable<T>(T)
-  fullName.vb: CSMath.VectorExtensions.ToEnumerable(Of T)(T)
-  nameWithType: VectorExtensions.ToEnumerable<T>(T)
-  nameWithType.vb: VectorExtensions.ToEnumerable(Of T)(T)
 - uid: CSMath.XY
   name: XY
   href: api/CSMath.XY.html

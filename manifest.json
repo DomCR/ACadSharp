@@ -8342,6 +8342,62 @@
     },
     {
       "type": "ManagedReference",
+      "source_relative_path": "api/CSMath.Extensions.DoubleExtensions.yml",
+      "output": {
+        ".html": {
+          "relative_path": "api/CSMath.Extensions.DoubleExtensions.html"
+        }
+      },
+      "version": "",
+      "Uid": null,
+      "IsMRef": true,
+      "Title": "CSMath.Extensions.DoubleExtensions",
+      "Summary": null
+    },
+    {
+      "type": "ManagedReference",
+      "source_relative_path": "api/CSMath.Extensions.IntExtensions.yml",
+      "output": {
+        ".html": {
+          "relative_path": "api/CSMath.Extensions.IntExtensions.html"
+        }
+      },
+      "version": "",
+      "Uid": null,
+      "IsMRef": true,
+      "Title": "CSMath.Extensions.IntExtensions",
+      "Summary": null
+    },
+    {
+      "type": "ManagedReference",
+      "source_relative_path": "api/CSMath.Extensions.VectorExtensions.yml",
+      "output": {
+        ".html": {
+          "relative_path": "api/CSMath.Extensions.VectorExtensions.html"
+        }
+      },
+      "version": "",
+      "Uid": null,
+      "IsMRef": true,
+      "Title": "CSMath.Extensions.VectorExtensions",
+      "Summary": null
+    },
+    {
+      "type": "ManagedReference",
+      "source_relative_path": "api/CSMath.Extensions.yml",
+      "output": {
+        ".html": {
+          "relative_path": "api/CSMath.Extensions.html"
+        }
+      },
+      "version": "",
+      "Uid": null,
+      "IsMRef": true,
+      "Title": "CSMath.Extensions",
+      "Summary": null
+    },
+    {
+      "type": "ManagedReference",
       "source_relative_path": "api/CSMath.Geometry.Arc2D.yml",
       "output": {
         ".html": {
@@ -8577,20 +8633,6 @@
       "IsMRef": true,
       "Title": "CSMath.Transform",
       "Summary": "<p sourcefile=\"api/CSMath.Transform.yml\" sourcestartlinenumber=\"1\">Contains the information for translate/scale/rotation or transform matrix to apply to a geometric shape.</p>\n"
-    },
-    {
-      "type": "ManagedReference",
-      "source_relative_path": "api/CSMath.VectorExtensions.yml",
-      "output": {
-        ".html": {
-          "relative_path": "api/CSMath.VectorExtensions.html"
-        }
-      },
-      "version": "",
-      "Uid": null,
-      "IsMRef": true,
-      "Title": "CSMath.VectorExtensions",
-      "Summary": null
     },
     {
       "type": "ManagedReference",
