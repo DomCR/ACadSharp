@@ -2,6 +2,7 @@
 using ACadSharp.Tables;
 using ACadSharp.Text;
 using CSMath;
+using CSMath.Extensions;
 using System;
 using System.Collections.Generic;
 
@@ -296,7 +297,7 @@ public partial class MText : Entity, IText
 		}
 
 		double newHeight = this.Height * scale;
-		newHeight = MathHelper.IsZero(newHeight) ? MathHelper.Epsilon : newHeight;
+		newHeight = newHeight.IsZero() ? MathHelper.Epsilon : newHeight;
 
 		this.InsertPoint = newInsert;
 		this.Normal = newNormal;
