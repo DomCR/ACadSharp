@@ -762,8 +762,8 @@ public abstract class WriterSingleObjectTests : IOTestsBase
 				Center = new XY(5, 0),
 				MajorAxisEndPoint = new XY(2, 0),
 				RadiusRatio = 0.5,
-				StartAngle = -MathHelper.HalfPI,
-				EndAngle = MathHelper.ThreeHalfPI,
+				StartAngle = Math.PI,
+				EndAngle = 3 * Math.PI,
 				CounterClockWise = true,
 			});
 			hatch.Paths.Add(ellipsePath);

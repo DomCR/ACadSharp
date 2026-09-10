@@ -1,7 +1,6 @@
 ﻿using ACadSharp.Entities;
 using ACadSharp.IO;
 using CSMath;
-using System;
 using System.IO;
 using System.Linq;
 using Xunit;
@@ -56,11 +55,25 @@ public class DxfWriterSingleObjectTests : WriterSingleObjectTests
 	}
 
 	[Theory]
-	[InlineData(-MathHelper.HalfPI, MathHelper.ThreeHalfPI)]
-	[InlineData(Math.PI, 3 * Math.PI)]
-	[InlineData(0, MathHelper.HalfPI)]
-	public void WriteHatchPreservesBoundaryAngles(double startAngle, double endAngle)
+	[InlineData(-90, 270, -90, 270)]
+	[InlineData(180, 540, -180, 180)]
+	[InlineData(-540, -180, -180, 180)]
+	[InlineData(540, 180, 180, -180)]
+	[InlineData(-180, -540, 180, -180)]
+	[InlineData(0, 360, 0, 360)]
+	[InlineData(0, -360, 0, -360)]
+	[InlineData(360, 720, 0, 360)]
+	[InlineData(90, 90, 90, 90)]
+	[InlineData(0, 90, 0, 90)]
+	[InlineData(450, 540, 90, 180)]
+	[InlineData(-540, -450, -180, -90)]
+	public void WriteHatchNormalizesBoundaryAngles(double startDegrees, double endDegrees, double expectedStartDegrees, double expectedEndDegrees)
 	{
+		double startAngle = MathHelper.DegToRad(startDegrees);
+		double endAngle = MathHelper.DegToRad(endDegrees);
+		double expectedStartAngle = MathHelper.DegToRad(expectedStartDegrees);
+		double expectedEndAngle = MathHelper.DegToRad(expectedEndDegrees);
+
 		SingleCaseGenerator data = new SingleCaseGenerator();
 		data.CreateHatchFullSweeps();
 
@@ -71,6 +84,7 @@ public class DxfWriterSingleObjectTests : WriterSingleObjectTests
 			hatch.Paths.SelectMany(p => p.Edges).OfType<Hatch.BoundaryPath.Ellipse>());
 		arc.StartAngle = ellipse.StartAngle = startAngle;
 		arc.EndAngle = ellipse.EndAngle = endAngle;
+		ellipse.CounterClockWise = false;
 
 		using MemoryStream output = new MemoryStream();
 		DxfWriter.Write(output, data.Document);
@@ -81,10 +95,16 @@ public class DxfWriterSingleObjectTests : WriterSingleObjectTests
 		arc = Assert.Single(writtenHatch.Paths.SelectMany(p => p.Edges).OfType<Hatch.BoundaryPath.Arc>());
 		ellipse = Assert.Single(writtenHatch.Paths.SelectMany(p => p.Edges).OfType<Hatch.BoundaryPath.Ellipse>());
 
-		Assert.Equal(startAngle, arc.StartAngle, 12);
-		Assert.Equal(endAngle, arc.EndAngle, 12);
-		Assert.Equal(startAngle, ellipse.StartAngle, 12);
-		Assert.Equal(endAngle, ellipse.EndAngle, 12);
+		Assert.Equal(expectedStartAngle, arc.StartAngle, 12);
+		Assert.Equal(expectedEndAngle, arc.EndAngle, 12);
+		Assert.Equal(expectedStartAngle, ellipse.StartAngle, 12);
+		Assert.Equal(expectedEndAngle, ellipse.EndAngle, 12);
+		Assert.InRange(arc.StartAngle, -MathHelper.TwoPI, MathHelper.TwoPI);
+		Assert.InRange(arc.EndAngle, -MathHelper.TwoPI, MathHelper.TwoPI);
+		Assert.InRange(ellipse.StartAngle, -MathHelper.TwoPI, MathHelper.TwoPI);
+		Assert.InRange(ellipse.EndAngle, -MathHelper.TwoPI, MathHelper.TwoPI);
+		Assert.True(arc.CounterClockWise);
+		Assert.False(ellipse.CounterClockWise);
 	}
 
 	protected void writeDxfFile(SingleCaseGenerator data, ACadVersion version)
