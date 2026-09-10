@@ -620,7 +620,8 @@ public class CadDocument : IHandledCadObject
 			this._cadObjects.Remove(item.Handle);
 		}
 
-		foreach (RasterImage image in this._cadObjects.Values.OfType<RasterImage>())
+		var values = this._cadObjects.Values.OfType<RasterImage>().ToList();
+		foreach (RasterImage image in values)
 		{
 			if (image.Definition == null)
 			{
