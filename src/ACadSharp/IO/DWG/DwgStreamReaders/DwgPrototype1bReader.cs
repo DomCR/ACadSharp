@@ -273,7 +273,7 @@ namespace ACadSharp.IO.DWG.DwgStreamReaders
                 for (int i = 0; i < prop.PropertyValueCount; i++) {
                     byte[] propertyValue = this._reader.ReadBytes((int)prop.TypeSize);
                     for (int j = 0; j < propertyValue.Length; j++) {
-                        prop.Values[0,j] = propertyValue[j];
+                        prop.Values[i,j] = propertyValue[j];
                     }
                 }
             }
