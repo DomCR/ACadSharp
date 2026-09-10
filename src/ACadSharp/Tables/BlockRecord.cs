@@ -447,13 +447,14 @@ public class BlockRecord : TableEntry, IGeometricEntity
 		BoundingBox box = BoundingBox.Null;
 		foreach (var item in this.Entities)
 		{
-			if (item.GetBoundingBox().Extent == BoundingBoxExtent.Infinite
-				&& ignoreInfinite)
+			BoundingBox itemBox = item.GetBoundingBox();
+
+			if (itemBox.Extent == BoundingBoxExtent.Infinite && ignoreInfinite)
 			{
 				continue;
 			}
 
-			box = box.Merge(item.GetBoundingBox());
+			box = box.Merge(itemBox);
 		}
 
 		return box;

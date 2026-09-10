@@ -3,6 +3,7 @@ using ACadSharp.Entities.AecObjects;
 using ACadSharp.Entities.Mechanical;
 using ACadSharp.Objects;
 using CSMath;
+using CSMath.Extensions;
 using System;
 using System.Linq;
 
@@ -299,6 +300,7 @@ internal abstract partial class DxfSectionWriterBase
 
 		this._writer.Write(10, dim.DefinitionPoint, map);
 		this._writer.Write(11, dim.TextMiddlePoint, map);
+		this._writer.Write(12, dim.InsertionPoint, map);
 
 		this._writer.Write(53, dim.TextRotation, map);
 		this._writer.Write(70, (short)dim.Flags, map);

@@ -623,7 +623,7 @@ public class ProxyGeometryReader
 		for (int i = 0; i < nfaces; i++)
 		{
 			int count = Math.Abs(stream.ReadInt());
-			i += count + 1;
+			i += count;
 
 			List<int> faceIndices = [];
 			for (int j = 0; j < count; j++)
