@@ -620,9 +620,13 @@ public class CadDocument : IHandledCadObject
 			this._cadObjects.Remove(item.Handle);
 		}
 
-		var rasterImages = this._cadObjects.Values.OfType<RasterImage>().ToList();
-		foreach (RasterImage image in rasterImages)
+		foreach (RasterImage image in this._cadObjects.Values.OfType<RasterImage>())
 		{
+			if (image.Definition == null)
+			{
+				continue;
+			}
+
 			image.DefinitionReactor = new ImageDefinitionReactor(image);
 			this.AddCadObject(image.DefinitionReactor);
 			image.Definition.AddReactor(image.DefinitionReactor);
