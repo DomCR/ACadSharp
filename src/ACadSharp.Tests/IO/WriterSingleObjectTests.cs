@@ -68,6 +68,7 @@ public abstract class WriterSingleObjectTests : IOTestsBase
 		Data.Add(new(nameof(SingleCaseGenerator.CreateHatchPolyline)));
 		Data.Add(new(nameof(SingleCaseGenerator.CreateHatch)));
 		Data.Add(new(nameof(SingleCaseGenerator.CreateCircleHatch)));
+		Data.Add(new(nameof(SingleCaseGenerator.CreateHatchFullSweeps)));
 		Data.Add(new(nameof(SingleCaseGenerator.HatchWithEntities)));
 		Data.Add(new(nameof(SingleCaseGenerator.ChangedEncoding)));
 		Data.Add(new(nameof(SingleCaseGenerator.AddBlockWithAttributes)));
@@ -735,6 +736,37 @@ public abstract class WriterSingleObjectTests : IOTestsBase
 			}
 
 			hatch.Paths.Add(path);
+
+			this.Document.Entities.Add(hatch);
+		}
+
+		public void CreateHatchFullSweeps()
+		{
+			Hatch hatch = new Hatch { IsSolid = true };
+			hatch.SeedPoints.Add(XY.Zero);
+
+			Hatch.BoundaryPath arcPath = new Hatch.BoundaryPath();
+			arcPath.Edges.Add(new Hatch.BoundaryPath.Arc
+			{
+				Center = XY.Zero,
+				Radius = 2,
+				StartAngle = -MathHelper.HalfPI,
+				EndAngle = MathHelper.ThreeHalfPI,
+				CounterClockWise = true,
+			});
+			hatch.Paths.Add(arcPath);
+
+			Hatch.BoundaryPath ellipsePath = new Hatch.BoundaryPath();
+			ellipsePath.Edges.Add(new Hatch.BoundaryPath.Ellipse
+			{
+				Center = new XY(5, 0),
+				MajorAxisEndPoint = new XY(2, 0),
+				RadiusRatio = 0.5,
+				StartAngle = Math.PI,
+				EndAngle = 3 * Math.PI,
+				CounterClockWise = true,
+			});
+			hatch.Paths.Add(ellipsePath);
 
 			this.Document.Entities.Add(hatch);
 		}
