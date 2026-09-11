@@ -117,5 +117,25 @@ public class LwPolylineTests : CommonEntityTests<LwPolyline>
 
 	public override void GetBoundingBoxTest()
 	{
+		LwPolyline lwPolyline = new LwPolyline();
+		foreach (XYZ p in this._points)
+		{
+			lwPolyline.Vertices.Add(new LwPolyline.Vertex((XY)p));
+		}
+
+		BoundingBox box = lwPolyline.GetBoundingBox();
+
+		Assert.Equal(new XYZ(0, 0, 0), box.Min);
+		Assert.Equal(new XYZ(1, 1, 0), box.Max);
+
+		//The vertices are stored in the polyline's own object coordinate system. AutoCAD writes a
+		//(0,0,-1) normal whenever geometry is mirrored, and the world position is then the negated X -
+		//not the stored one, which would place the polyline on the wrong side of the drawing.
+		lwPolyline.Normal = -XYZ.AxisZ;
+
+		box = lwPolyline.GetBoundingBox();
+
+		Assert.Equal(new XYZ(-1, 0, 0), box.Min);
+		Assert.Equal(new XYZ(0, 1, 0), box.Max);
 	}
 }
