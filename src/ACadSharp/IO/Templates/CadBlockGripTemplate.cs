@@ -1,11 +1,10 @@
 ﻿using ACadSharp.Objects.Evaluations;
 
-namespace ACadSharp.IO.Templates
+namespace ACadSharp.IO.Templates;
+
+internal class CadBlockGripTemplate : CadBlockElementTemplate
 {
-	internal abstract class CadBlockGripTemplate : CadBlockElementTemplate
+	public CadBlockGripTemplate(BlockGrip grip) : base(grip)
 	{
-		public CadBlockGripTemplate(BlockGrip grip) : base(grip)
-		{
-		}
 	}
 }

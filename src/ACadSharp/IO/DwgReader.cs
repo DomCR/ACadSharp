@@ -121,8 +121,12 @@ public class DwgReader : CadReaderBase<DwgReaderConfiguration>
 
 		this.readAppInfo();
 
+		this.readDsPrototype_1b();
+
 		//Read all the objects in the file
 		this.readObjects();
+
+		this.readAuxHeader();
 
 		//Build the document
 		this._builder.BuildDocument();
@@ -531,6 +535,20 @@ public class DwgReader : CadReaderBase<DwgReaderConfiguration>
 #endif
 	}
 
+	private void readAuxHeader()
+	{
+		this._fileHeader = this._fileHeader ?? this.readFileHeader();
+		IDwgStreamReader sreader = this.getSectionStream(DwgSectionDefinition.AuxHeader);
+		if (sreader is null)
+		{
+			return;
+		}
+
+		var reader = new DwgAuxHeaderReader(this._fileHeader.AcadVersion, sreader);
+		reader.OnNotification += onNotificationEvent;
+		reader.Read();
+	}
+
 	/// <summary>
 	/// Read the classes section of the file.
 	/// </summary>
@@ -552,6 +570,22 @@ public class DwgReader : CadReaderBase<DwgReaderConfiguration>
 		reader.OnNotification += onNotificationEvent;
 
 		reader.Read();
+	}
+
+	private void readDsPrototype_1b()
+	{
+		this._fileHeader = this._fileHeader ?? this.readFileHeader();
+
+		IDwgStreamReader sreader = this.getSectionStream(DwgSectionDefinition.AcDsPrototype);
+		if (sreader is null)
+		{
+			return;
+		}
+
+		var reader = new DwgPrototype1bReader(this._fileHeader.AcadVersion, this._builder, sreader);
+		reader.OnNotification += onNotificationEvent;
+
+		this._document.DataStorage = reader.Read();
 	}
 
 	/// <summary>
@@ -583,7 +617,6 @@ public class DwgReader : CadReaderBase<DwgReaderConfiguration>
 	private void readObjects()
 	{
 		Dictionary<ulong, long> handles = this.readHandles();
-		this.readClasses();
 
 		IDwgStreamReader sreader = null;
 		if (this._fileHeader.AcadVersion <= ACadVersion.AC1015)

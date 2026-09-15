@@ -1,5 +1,6 @@
 ﻿using ACadSharp.Entities;
 using CSMath;
+using CSMath.Extensions;
 using System;
 using System.Collections.Generic;
 using System.Linq;

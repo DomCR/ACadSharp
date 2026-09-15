@@ -10,7 +10,7 @@ namespace ACadSharp.Entities.ProxyGraphics;
 /// radius, and normal vector. It implements the <see cref="IProxyGeometry"/> interface 
 /// to provide geometry information for proxy graphics objects.
 /// </remarks>
-public class ProxyCircle : IProxyGeometry
+public class ProxyCircle : IProxyGeometry, IOrientable
 {
 	/// <summary>
 	/// Gets or sets the center point of the circle in 3D space.
@@ -21,11 +21,8 @@ public class ProxyCircle : IProxyGeometry
 	/// <inheritdoc/>
 	public GraphicsType GraphicsType { get { return GraphicsType.Circle; } }
 
-	/// <summary>
-	/// Gets or sets the normal vector of the circle's plane.
-	/// </summary>
-	/// <value>An <see cref="XYZ"/> vector perpendicular to the plane in which the circle lies.</value>
-	public XYZ Normal { get; set; }
+	/// <inheritdoc/>
+	public XYZ Normal { get; set; } = XYZ.AxisZ;
 
 	/// <summary>
 	/// Gets or sets the radius of the circle.

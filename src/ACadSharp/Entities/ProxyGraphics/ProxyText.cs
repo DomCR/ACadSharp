@@ -9,7 +9,7 @@ namespace ACadSharp.Entities.ProxyGraphics;
 /// This class implements the <see cref="IProxyGeometry"/> interface to provide geometric information
 /// for text objects in a proxy graphics representation.
 /// </remarks>
-public class ProxyText : IProxyGeometry
+public class ProxyText : IProxyGeometry, IOrientable
 {
 	/// <inheritdoc/>
 	public GraphicsType GraphicsType { get { return GraphicsType.Text; } }
@@ -19,10 +19,8 @@ public class ProxyText : IProxyGeometry
 	/// </summary>
 	public double Height { get; set; }
 
-	/// <summary>
-	/// Gets or sets the normal vector of the text plane.
-	/// </summary>
-	public XYZ Normal { get; set; }
+	/// <inheritdoc/>
+	public XYZ Normal { get; set; } = XYZ.AxisZ;
 
 	/// <summary>
 	/// Gets or sets the oblique angle of the text in radians.

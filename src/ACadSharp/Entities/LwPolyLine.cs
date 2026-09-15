@@ -1,6 +1,7 @@
 ﻿using ACadSharp.Attributes;
 using ACadSharp.Extensions;
 using CSMath;
+using CSMath.Extensions;
 using CSUtilities.Extensions;
 using System.Collections.Generic;
 using System.Linq;
@@ -59,9 +60,7 @@ public partial class LwPolyline : Entity, IPolyline
 		}
 	}
 
-	/// <summary>
-	/// Specifies the three-dimensional normal unit vector for the object.
-	/// </summary>
+	/// <inheritdoc/>
 	[DxfCodeValue(210, 220, 230)]
 	public XYZ Normal { get; set; } = XYZ.AxisZ;
 
