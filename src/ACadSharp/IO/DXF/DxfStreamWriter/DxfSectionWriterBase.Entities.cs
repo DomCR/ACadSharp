@@ -1,7 +1,9 @@
 ﻿using ACadSharp.Entities;
 using ACadSharp.Entities.AecObjects;
+using ACadSharp.Entities.Mechanical;
 using ACadSharp.Objects;
 using CSMath;
+using CSMath.Extensions;
 using System;
 using System.Linq;
 
@@ -137,10 +139,18 @@ internal abstract partial class DxfSectionWriterBase
 
 	private bool isEntitySupported(Entity entity)
 	{
+		if (!entity.IsValid(CadFileFormat.DXF, this.Version))
+		{
+			this.notify($"Invalid entity {entity.GetType().FullName} with handle {entity.Handle}", NotificationType.Warning);
+			return false;
+		}
+
 		switch (entity)
 		{
 			case Seqend://Manually assign at the end of the collections
 			case UnknownEntity:
+			case MechanicalEntity:
+			case Wall:
 				return false;
 			case Shape:
 				return this.Configuration.WriteShapes;
@@ -149,7 +159,6 @@ internal abstract partial class DxfSectionWriterBase
 			case Solid3D:
 			case CadBody:
 			case Region:
-			case Wall:
 				this.notify($"Entity type not implemented {entity.GetType().FullName}", NotificationType.NotImplemented);
 				return false;
 			default:
@@ -291,6 +300,7 @@ internal abstract partial class DxfSectionWriterBase
 
 		this._writer.Write(10, dim.DefinitionPoint, map);
 		this._writer.Write(11, dim.TextMiddlePoint, map);
+		this._writer.Write(12, dim.InsertionPoint, map);
 
 		this._writer.Write(53, dim.TextRotation, map);
 		this._writer.Write(70, (short)dim.Flags, map);
@@ -323,6 +333,9 @@ internal abstract partial class DxfSectionWriterBase
 				break;
 			case DimensionAngular3Pt angular3Pt:
 				this.writeDimensionAngular3Pt(angular3Pt);
+				break;
+			case DimensionArc arc:
+				this.writeDimensionArc(arc);
 				break;
 			case DimensionOrdinate ordinate:
 				this.writeDimensionOrdinate(ordinate);
@@ -368,6 +381,27 @@ internal abstract partial class DxfSectionWriterBase
 		this._writer.Write(13, angular3Pt.FirstPoint, map);
 		this._writer.Write(14, angular3Pt.SecondPoint, map);
 		this._writer.Write(15, angular3Pt.AngleVertex, map);
+	}
+
+	private void writeDimensionArc(DimensionArc arc)
+	{
+		DxfClassMap map = DxfClassMap.Create<DimensionArc>();
+
+		this._writer.Write(DxfCode.Subclass, DxfSubclassMarker.ArcDimension);
+
+		this._writer.Write(13, arc.FirstPoint, map);
+		this._writer.Write(14, arc.SecondPoint, map);
+		this._writer.Write(15, arc.Center, map);
+		this._writer.Write(70, (short)(arc.IsPartial ? 1 : 0), map);
+		this._writer.Write(40, arc.StartAngle, map);
+		this._writer.Write(41, arc.EndAngle, map);
+		this._writer.Write(71, (short)(arc.HasLeader ? 1 : 0), map);
+
+		if (arc.HasLeader)
+		{
+			this._writer.Write(16, arc.LeaderPoint1, map);
+			this._writer.Write(17, arc.LeaderPoint2, map);
+		}
 	}
 
 	private void writeDimensionDiameter(DimensionDiameter diameter)
@@ -482,6 +516,26 @@ internal abstract partial class DxfSectionWriterBase
 		//TODO: Implement HatchGradientPattern
 	}
 
+	private void writeHatchBoundaryAngles(double startAngle, double endAngle)
+	{
+		double start = MathHelper.RadToDeg(startAngle, normalize: true, absolute: false);
+		double end = MathHelper.RadToDeg(endAngle, normalize: true, absolute: false);
+
+		if (MathHelper.IsEqual(Math.Abs(endAngle - startAngle), MathHelper.TwoPI))
+		{
+			// Keep a full sweep distinct without writing angles outside -360 to 360.
+			double sweep = endAngle > startAngle ? 360.0 : -360.0;
+			if (Math.Abs(start + sweep) > 360.0)
+			{
+				start -= sweep;
+			}
+			end = start + sweep;
+		}
+
+		this._writer.Write(50, start);
+		this._writer.Write(51, end);
+	}
+
 	private void writeHatchBoundaryPathEdge(Hatch.BoundaryPath.Edge edge)
 	{
 		if (edge is not Hatch.BoundaryPath.Polyline)
@@ -494,16 +548,14 @@ internal abstract partial class DxfSectionWriterBase
 			case Hatch.BoundaryPath.Arc arc:
 				this._writer.Write(10, arc.Center);
 				this._writer.Write(40, arc.Radius);
-				this._writer.Write(50, MathHelper.RadToDeg(arc.StartAngle));
-				this._writer.Write(51, MathHelper.RadToDeg(arc.EndAngle));
+				this.writeHatchBoundaryAngles(arc.StartAngle, arc.EndAngle);
 				this._writer.Write(73, arc.CounterClockWise ? (short)1 : (short)0);
 				break;
 			case Hatch.BoundaryPath.Ellipse ellipse:
 				this._writer.Write(10, ellipse.Center);
 				this._writer.Write(11, ellipse.MajorAxisEndPoint);
 				this._writer.Write(40, ellipse.RadiusRatio);
-				this._writer.Write(50, MathHelper.RadToDeg(ellipse.StartAngle));
-				this._writer.Write(51, MathHelper.RadToDeg(ellipse.EndAngle));
+				this.writeHatchBoundaryAngles(ellipse.StartAngle, ellipse.EndAngle);
 				this._writer.Write(73, ellipse.CounterClockWise ? (short)1 : (short)0);
 				break;
 			case Hatch.BoundaryPath.Line line:
@@ -725,6 +777,11 @@ internal abstract partial class DxfSectionWriterBase
 
 		this._writer.Write(90, polyline.Vertices.Count);
 		this._writer.Write(70, (short)polyline.Flags);
+
+		if (polyline.ConstantWidth != 0.0)
+		{
+			this._writer.Write(43, polyline.ConstantWidth);
+		}
 
 		this._writer.Write(38, polyline.Elevation);
 		this._writer.Write(39, polyline.Thickness);

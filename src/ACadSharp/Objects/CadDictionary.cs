@@ -42,10 +42,10 @@ public class CadDictionary : NonGraphicalObject, IObservableCadCollection<NonGra
 	public string[] EntryNames { get { return this._entries.Keys.ToArray(); } }
 
 	/// <summary>
-	/// indicates that elements of the dictionary are to be treated as hard-owned.
+	/// Indicates that elements of the dictionary are to be treated as hard-owned.
 	/// </summary>
 	[DxfCodeValue(280)]
-	public bool HardOwnerFlag { get; set; }
+	public bool HardOwnerFlag { get; set; } = false;
 
 	/// <inheritdoc/>
 	public override string ObjectName => DxfFileToken.ObjectDictionary;

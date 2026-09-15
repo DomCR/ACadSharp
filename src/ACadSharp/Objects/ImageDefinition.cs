@@ -1,4 +1,5 @@
 ﻿using ACadSharp.Attributes;
+using ACadSharp.Classes;
 using CSMath;
 
 namespace ACadSharp.Objects;
@@ -12,7 +13,7 @@ namespace ACadSharp.Objects;
 /// </remarks>
 [DxfName(DxfFileToken.ObjectImageDefinition)]
 [DxfSubClass(DxfSubclassMarker.RasterImageDef)]
-public class ImageDefinition : NonGraphicalObject
+public class ImageDefinition : NonGraphicalObject, IDxfClassDefined
 {
 	/// <summary>
 	/// Class version
@@ -60,12 +61,18 @@ public class ImageDefinition : NonGraphicalObject
 	public ResolutionUnit Units { get; set; }
 
 	/// <inheritdoc/>
-	public ImageDefinition()
+	public DxfClass GetDxfClass()
 	{
-	}
-
-	/// <inheritdoc/>
-	public ImageDefinition(string name) : base(name)
-	{
+		return new DxfClass
+		{
+			ApplicationName = "ISM",
+			CppClassName = DxfSubclassMarker.RasterImageDef,
+			DwgVersion = (ACadVersion)20,
+			DxfName = DxfFileToken.ObjectImageDefinition,
+			ItemClassId = 499,
+			MaintenanceVersion = 0,
+			ProxyFlags = ProxyFlags.None,
+			WasZombie = false,
+		};
 	}
 }

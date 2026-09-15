@@ -1,53 +1,69 @@
 ﻿using ACadSharp.Attributes;
+using ACadSharp.Classes;
 using ACadSharp.Types.Units;
 
-namespace ACadSharp.Objects
+namespace ACadSharp.Objects;
+
+/// <summary>
+/// Represents a <see cref="RasterVariables"/> object.
+/// </summary>
+/// <remarks>
+/// Object name <see cref="DxfFileToken.ObjectRasterVariables"/> <br/>
+/// Dxf class name <see cref="DxfSubclassMarker.RasterVariables"/>
+/// </remarks>
+[DxfName(DxfFileToken.ObjectRasterVariables)]
+[DxfSubClass(DxfSubclassMarker.RasterVariables)]
+public class RasterVariables : NonGraphicalObject, IDxfClassDefined
 {
 	/// <summary>
-	/// Represents a <see cref="RasterVariables"/> object.
+	/// Class version 0.
 	/// </summary>
-	/// <remarks>
-	/// Object name <see cref="DxfFileToken.ObjectRasterVariables"/> <br/>
-	/// Dxf class name <see cref="DxfSubclassMarker.RasterVariables"/>
-	/// </remarks>
-	[DxfName(DxfFileToken.ObjectRasterVariables)]
-	[DxfSubClass(DxfSubclassMarker.RasterVariables)]
-	public class RasterVariables : NonGraphicalObject
+	[DxfCodeValue(90)]
+	public int ClassVersion { get; internal set; }
+
+	/// <summary>
+	/// Gets or sets the image display quality (screen only).
+	/// </summary>
+	[DxfCodeValue(71)]
+	public ImageDisplayQuality DisplayQuality { get; set; } = ImageDisplayQuality.High;
+
+	/// <summary>
+	/// Gets or sets if the image frame is shown.
+	/// </summary>
+	[DxfCodeValue(70)]
+	public bool IsDisplayFrameShown { get; set; }
+
+	/// <inheritdoc/>
+	public override string ObjectName => DxfFileToken.ObjectRasterVariables;
+
+	/// <inheritdoc/>
+	public override string SubclassMarker => DxfSubclassMarker.RasterVariables;
+
+	/// <summary>
+	/// AutoCAD units for inserting images. <br/>
+	/// This is what one AutoCAD unit is equal to for the purpose of inserting and scaling images with an associated resolution.
+	/// </summary>
+	[DxfCodeValue(72)]
+	public ImageUnits Units { get; set; }
+
+	/// <inheritdoc/>
+	public RasterVariables() : base()
 	{
-		/// <summary>
-		/// Class version 0.
-		/// </summary>
-		[DxfCodeValue(90)]
-		public int ClassVersion { get; internal set; }
+	}
 
-		/// <summary>
-		/// Gets or sets the image display quality (screen only).
-		/// </summary>
-		[DxfCodeValue(71)]
-		public ImageDisplayQuality DisplayQuality { get; set; } = ImageDisplayQuality.High;
-
-		/// <summary>
-		/// Gets or sets if the image frame is shown.
-		/// </summary>
-		[DxfCodeValue(70)]
-		public bool IsDisplayFrameShown { get; set; }
-
-		/// <inheritdoc/>
-		public override string ObjectName => DxfFileToken.ObjectRasterVariables;
-
-		/// <inheritdoc/>
-		public override string SubclassMarker => DxfSubclassMarker.RasterVariables;
-
-		/// <summary>
-		/// AutoCAD units for inserting images. <br/>
-		/// This is what one AutoCAD unit is equal to for the purpose of inserting and scaling images with an associated resolution.
-		/// </summary>
-		[DxfCodeValue(72)]
-		public ImageUnits Units { get; set; }
-
-		/// <inheritdoc/>
-		public RasterVariables() : base()
+	/// <inheritdoc/>
+	public DxfClass GetDxfClass()
+	{
+		return new DxfClass
 		{
-		}
+			ApplicationName = "ISM",
+			CppClassName = DxfSubclassMarker.RasterVariables,
+			DwgVersion = (ACadVersion)20,
+			DxfName = DxfFileToken.ObjectRasterVariables,
+			ItemClassId = 499,
+			MaintenanceVersion = 0,
+			ProxyFlags = ProxyFlags.None,
+			WasZombie = false,
+		};
 	}
 }

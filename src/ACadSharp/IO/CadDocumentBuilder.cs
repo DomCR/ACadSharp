@@ -23,6 +23,8 @@ internal abstract class CadDocumentBuilder
 
 	public CadDocument DocumentToBuild { get; }
 
+	public abstract bool IgnoreProxyGraphics { get; }
+
 	public ulong InitialHandSeed { get; set; } = 0;
 
 	public abstract bool KeepUnknownEntities { get; }

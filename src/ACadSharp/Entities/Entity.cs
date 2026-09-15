@@ -1,7 +1,9 @@
 ﻿using ACadSharp.Attributes;
+using ACadSharp.Entities.ProxyGraphics;
 using ACadSharp.Objects;
 using ACadSharp.Tables;
 using CSMath;
+using CSMath.Extensions;
 using System;
 using System.Collections.Generic;
 
@@ -22,14 +24,7 @@ public abstract class Entity : CadObject, IEntity
 		get { return this._bookColor; }
 		set
 		{
-			if (this.Document != null)
-			{
-				this._bookColor = updateCollection(value, this.Document.Colors);
-			}
-			else
-			{
-				this._bookColor = value;
-			}
+			this._bookColor = this.updateCollectionEntry(value, c => this._bookColor = c, this.Document?.Colors);
 		}
 	}
 
@@ -53,7 +48,7 @@ public abstract class Entity : CadObject, IEntity
 				throw new ArgumentNullException(nameof(value));
 			}
 
-			this._layer = updateCollection(value, this.Document?.Layers);
+			this._layer = updateTableEntry(value, l => this._layer = l, this.Document?.Layers);
 		}
 	}
 
@@ -69,7 +64,7 @@ public abstract class Entity : CadObject, IEntity
 				throw new ArgumentNullException(nameof(value));
 			}
 
-			this._lineType = updateCollection(value, this.Document?.LineTypes);
+			this._lineType = updateTableEntry(value, l => this._lineType = l, this.Document?.LineTypes);
 		}
 	}
 
@@ -88,15 +83,14 @@ public abstract class Entity : CadObject, IEntity
 		get { return this._material; }
 		set
 		{
-			if (value == null)
-			{
-				this._material = null;
-				return;
-			}
-
-			this._material = updateCollection(value, this.Document?.Materials);
+			this._material = this.updateCollectionEntry(value, m => this._material = m, this.Document?.Materials);
 		}
 	}
+
+	/// <summary>
+	/// Gets the list of proxy geometries for this entity.
+	/// </summary>
+	public List<IProxyGeometry> ProxyGeometries { get; } = new();
 
 	/// <inheritdoc/>
 	public override string SubclassMarker => DxfSubclassMarker.Entity;
@@ -111,7 +105,7 @@ public abstract class Entity : CadObject, IEntity
 
 	private LineType _lineType = LineType.ByLayer;
 
-	private Material _material;
+	private Material _material = null;
 
 	/// <inheritdoc/>
 	public Entity() : base() { }
@@ -269,28 +263,28 @@ public abstract class Entity : CadObject, IEntity
 	{
 		base.AssignDocument(doc);
 
-		this._layer = CadObject.updateCollection(this.Layer, doc.Layers);
-		this._lineType = CadObject.updateCollection(this.LineType, doc.LineTypes);
+		this._bookColor = this.updateCollectionEntry(this._bookColor, c => this._bookColor = c, doc.Colors);
+		this._material = this.updateCollectionEntry(this._material, m => this._material = m, doc.Materials);
 
-		doc.Layers.OnRemove += this.tableOnRemove;
-		doc.LineTypes.OnRemove += this.tableOnRemove;
-
-		//TODO: Ensure the event is set after the document is read or modified
-		doc.Materials?.OnRemove += this.tableOnRemove;
+		this._layer = this.updateTableEntry(this._layer, l => this._layer = l, doc.Layers);
+		this._lineType = this.updateTableEntry(this._lineType, l => this._lineType = l, doc.LineTypes);
 	}
 
 	internal override void UnassignDocument()
 	{
-		this.Document.Layers.OnRemove -= this.tableOnRemove;
-		this.Document.LineTypes.OnRemove -= this.tableOnRemove;
+		this.Document.Colors.RemoveReference(this._bookColor?.Name, this);
+		this.Document.Materials.RemoveReference(this._material?.Name, this);
 
-		this.Document.Materials?.OnRemove -= this.tableOnRemove;
+		this.Document.Layers.RemoveReference(this.Layer.Name, this);
+		this.Document.LineTypes.RemoveReference(this.LineType.Name, this);
 
 		base.UnassignDocument();
 
-		this.Layer = (Layer)this.Layer.Clone();
-		this.LineType = (LineType)this.LineType.Clone();
-		this.Material = (Material)this.Material?.Clone();
+		this._layer = (Layer)this.Layer.Clone();
+		this._lineType = (LineType)this.LineType.Clone();
+
+		this._bookColor = (BookColor)this.BookColor?.Clone();
+		this._material = (Material)this.Material?.Clone();
 	}
 
 	protected List<XY> applyRotation(IEnumerable<XY> points, double rotation)
@@ -300,7 +294,7 @@ public abstract class Entity : CadObject, IEntity
 			throw new ArgumentNullException(nameof(points));
 		}
 
-		if (MathHelper.IsZero(rotation))
+		if (rotation.IsZero())
 		{
 			return new List<XY>(points);
 		}
@@ -331,24 +325,6 @@ public abstract class Entity : CadObject, IEntity
 		transOW = Matrix3.ArbitraryAxis(normal);
 		transWO = Matrix3.ArbitraryAxis(newNormal).Transpose();
 		return new Matrix3(transform.Matrix);
-	}
-
-	protected virtual void tableOnRemove(object sender, CollectionChangedEventArgs e)
-	{
-		if (e.Item.Equals(this.Layer))
-		{
-			this.Layer = this.Document.Layers[Layer.DefaultName];
-		}
-
-		if (e.Item.Equals(this.LineType))
-		{
-			this.LineType = this.Document.LineTypes.ByLayer;
-		}
-
-		if (e.Item.Equals(this.Material))
-		{
-			this.Material = null;
-		}
 	}
 
 	protected XYZ transformNormal(Transform transform, XYZ normal)

@@ -1,4 +1,5 @@
 ﻿using ACadSharp.Entities;
+using ACadSharp.IO.DXF.DxfStreamWriter;
 using ACadSharp.Tables;
 using ACadSharp.XData;
 using CSMath;
@@ -37,7 +38,7 @@ internal abstract partial class DxfSectionWriterBase
 	public void Write()
 	{
 		this._writer.Write(DxfCode.Start, DxfFileToken.BeginSection);
-		this._writer.Write(DxfCode.SymbolTableName, this.SectionName);
+		this._writer.Write(DxfCode.Name, this.SectionName);
 
 		this.writeSection();
 
@@ -236,6 +237,8 @@ internal abstract partial class DxfSectionWriterBase
 
 	protected void writeLongTextValue(int code, int subcode, string text)
 	{
+		text = text ?? string.Empty;
+
 		while (text.Length > 250)
 		{
 			this._writer.Write(subcode, text.Substring(0, 250));

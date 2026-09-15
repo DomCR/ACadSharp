@@ -1,4 +1,5 @@
 ﻿using ACadSharp.Attributes;
+using ACadSharp.Classes;
 
 namespace ACadSharp.Objects;
 
@@ -11,7 +12,7 @@ namespace ACadSharp.Objects;
 /// </remarks>
 [DxfName(DxfFileToken.ObjectVisualStyle)]
 [DxfSubClass(DxfSubclassMarker.VisualStyle)]
-public class VisualStyle : NonGraphicalObject
+public class VisualStyle : NonGraphicalObject, IDxfClassDefined
 {
 	[DxfCodeValue(44)]
 	public double Brightness { get; set; }
@@ -162,11 +163,17 @@ public class VisualStyle : NonGraphicalObject
 	public const string DefaultName = "2dWireframe";
 
 	/// <inheritdoc/>
-	public VisualStyle()
-	{ }
-
-	/// <inheritdoc/>
-	public VisualStyle(string name) : base(name)
+	public DxfClass GetDxfClass()
 	{
+		return new DxfClass
+		{
+			CppClassName = DxfSubclassMarker.VisualStyle,
+			DwgVersion = ACadVersion.AC1021,
+			DxfName = DxfFileToken.ObjectVisualStyle,
+			ItemClassId = 499,
+			MaintenanceVersion = 0,
+			ProxyFlags = (ProxyFlags)4095,
+			WasZombie = false,
+		};
 	}
 }

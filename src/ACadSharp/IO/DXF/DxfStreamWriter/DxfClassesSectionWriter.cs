@@ -1,4 +1,6 @@
-﻿namespace ACadSharp.IO.DXF
+﻿using ACadSharp.IO.DXF.DxfStreamWriter;
+
+namespace ACadSharp.IO.DXF
 {
 	internal class DxfClassesSectionWriter : DxfSectionWriterBase
 	{

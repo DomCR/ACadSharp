@@ -38,16 +38,10 @@ public class LocalSampleTests : IOTestsBase
 
 		CadDocument doc = DwgReader.Read(test.Path, this._dwgConfiguration, this.onNotification);
 
-		var h = doc.GetCadObject<Hatch>(0x421);
-
-		doc.Entities.AddRange(h.ExplodePattern());
-
-		//List<Entity> entities = new List<Entity>();
-		//foreach (var entity in doc.Entities.OfType<Hatch>())
-		//{
-		//	entities.AddRange(entity.ExplodePattern());
-		//}
-		//doc.Entities.AddRange(entities);
+		if (doc.Header.Version == ACadVersion.AC1021)
+		{
+			doc.Header.Version = ACadVersion.AC1032;
+		}
 
 		if (!TestVariables.SaveOutputInStream)
 		{
