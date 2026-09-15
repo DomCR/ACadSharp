@@ -2,6 +2,7 @@
 using ACadSharp.Extensions;
 using ACadSharp.Tests.Common;
 using CSMath;
+using CSMath.Extensions;
 using System;
 using Xunit;
 

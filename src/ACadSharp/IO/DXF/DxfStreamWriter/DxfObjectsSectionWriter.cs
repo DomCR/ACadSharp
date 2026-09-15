@@ -5,6 +5,7 @@ using ACadSharp.Objects.AEC;
 using ACadSharp.Objects.Evaluations;
 using ACadSharp.Tables;
 using CSMath;
+using CSMath.Extensions;
 using System;
 using System.Collections.Generic;
 using System.Linq;

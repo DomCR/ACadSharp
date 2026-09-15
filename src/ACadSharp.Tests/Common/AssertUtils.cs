@@ -1,4 +1,5 @@
 ﻿using CSMath;
+using CSMath.Extensions;
 using Xunit;
 
 namespace ACadSharp.Tests.Common;

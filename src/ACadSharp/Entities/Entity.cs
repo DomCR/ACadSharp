@@ -3,6 +3,7 @@ using ACadSharp.Entities.ProxyGraphics;
 using ACadSharp.Objects;
 using ACadSharp.Tables;
 using CSMath;
+using CSMath.Extensions;
 using System;
 using System.Collections.Generic;
 
@@ -293,7 +294,7 @@ public abstract class Entity : CadObject, IEntity
 			throw new ArgumentNullException(nameof(points));
 		}
 
-		if (MathHelper.IsZero(rotation))
+		if (rotation.IsZero())
 		{
 			return new List<XY>(points);
 		}
