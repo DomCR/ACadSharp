@@ -14,11 +14,17 @@ namespace ACadSharp.Objects.AEC;
 [DxfSubClass(DxfSubclassMarker.BinRecord)]
 public class AecBinRecord : NonGraphicalObject
 {
-	/// <inheritdoc/>
-	public override ObjectType ObjectType => ObjectType.UNLISTED;
+	/// <summary>
+	/// Binary data containing the actual AEC object properties.
+	/// The format is proprietary and undocumented.
+	/// </summary>
+	public byte[] BinaryData { get; set; } = new byte[0];
 
 	/// <inheritdoc/>
 	public override string ObjectName => DxfFileToken.ObjectBinRecord;
+
+	/// <inheritdoc/>
+	public override ObjectType ObjectType => ObjectType.UNLISTED;
 
 	public override string SubclassMarker => DxfSubclassMarker.BinRecord;
 
@@ -27,14 +33,13 @@ public class AecBinRecord : NonGraphicalObject
 	/// </summary>
 	public int Version { get; set; }
 
-	/// <summary>
-	/// Binary data containing the actual AEC object properties.
-	/// The format is proprietary and undocumented.
-	/// </summary>
-	public byte[] BinaryData { get; set; } = new byte[0];
+	/// <inheritdoc/>
+	public AecBinRecord()
+	{
+	}
 
-	/// <summary>
-	/// Optional name/identifier for this binary record.
-	/// </summary>
-	public string Name { get; set; }
+	/// <inheritdoc/>
+	public AecBinRecord(string name) : base(name)
+	{
+	}
 }
