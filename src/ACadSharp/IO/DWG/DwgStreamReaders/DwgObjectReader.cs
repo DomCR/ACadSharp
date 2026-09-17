@@ -2350,7 +2350,7 @@ namespace ACadSharp.IO.DWG
 			//Common:
 			//Color CMC 62
 			var color = this._mergedReaders.ReadCmColor();
-			layer.Color = color.IsByBlock || color.IsByLayer ? new(30) : color;
+			layer.Color = color.IsByBlock || color.IsByLayer ? Color.Default : color;
 
 			//TODO: This is not the Layer control handle
 			template.LayerControlHandle = this.handleReference();
