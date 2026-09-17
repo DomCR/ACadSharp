@@ -5815,7 +5815,7 @@ namespace ACadSharp.IO.DWG
 			{
 				for (int j = 0; j < 4; j++)
 				{
-					identity[i, j] = this._mergedReaders.ReadBitDouble();
+					identity[j, i] = this._mergedReaders.ReadBitDouble();
 				}
 			}
 			return identity;
