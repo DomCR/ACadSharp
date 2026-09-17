@@ -1,5 +1,6 @@
 ﻿using ACadSharp.Attributes;
 using CSMath;
+using CSMath.Extensions;
 using CSMath.Geometry;
 using System.Collections.Generic;
 using System.Linq;
@@ -15,7 +16,7 @@ namespace ACadSharp.Entities;
 /// </remarks>
 [DxfName(DxfFileToken.EntityHatch)]
 [DxfSubClass(DxfSubclassMarker.Hatch)]
-public partial class Hatch : Entity
+public partial class Hatch : Entity, IOrientable
 {
 	/// <summary>
 	/// The current elevation of the object.
@@ -47,9 +48,7 @@ public partial class Hatch : Entity
 	[DxfCodeValue(70)]
 	public bool IsSolid { get; set; }
 
-	/// <summary>
-	/// Specifies the three-dimensional normal unit vector for the object.
-	/// </summary>
+	/// <inheritdoc/>
 	[DxfCodeValue(210, 220, 230)]
 	public XYZ Normal { get; set; } = XYZ.AxisZ;
 
@@ -179,7 +178,7 @@ public partial class Hatch : Entity
 		this._patternAngle = axis.GetAngle();
 
 		double patScale = axis.GetLength();
-		this._patternScale = MathHelper.IsZero(patScale) ? MathHelper.Epsilon : patScale;
+		this._patternScale = patScale.IsZero() ? MathHelper.Epsilon : patScale;
 
 		this.Pattern?.Update(transform.Translation.Convert<XY>(), this._patternAngle, this._patternScale);
 		this.Normal = newNormal;

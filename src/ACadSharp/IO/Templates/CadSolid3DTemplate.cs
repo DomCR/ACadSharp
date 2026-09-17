@@ -2,7 +2,7 @@
 
 namespace ACadSharp.IO.Templates
 {
-	internal class CadSolid3DTemplate : CadEntityTemplate<Solid3D>
+	internal class CadSolid3DTemplate : CadModelerGeometryTemplate<Solid3D>
 	{
 		public ulong? HistoryHandle { get; set; }
 

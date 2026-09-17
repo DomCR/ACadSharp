@@ -1,13 +1,15 @@
-﻿using System;
-using ACadSharp.Tables;
-using Xunit;
-using ACadSharp.Tests.Common;
+﻿using ACadSharp.Blocks;
 using ACadSharp.Entities;
-using Xunit.Abstractions;
-using ACadSharp.Blocks;
-using System.Linq;
-using System.Diagnostics;
 using ACadSharp.Objects;
+using ACadSharp.Tables;
+using ACadSharp.Tests.Common;
+using ACadSharp.Tests.TestModels;
+using System;
+using System.Collections.Generic;
+using System.Diagnostics;
+using System.Linq;
+using Xunit;
+using Xunit.Abstractions;
 
 namespace ACadSharp.Tests;
 
@@ -63,11 +65,7 @@ public class CadDocumentTests
 
 		stopwatch.Stop();
 		this._output.WriteLine(stopwatch.Elapsed.TotalSeconds.ToString());
-
-		if (TestVariables.LocalEnv)
-		{
-			Assert.True(stopwatch.Elapsed.TotalSeconds < 5);
-		}
+		Assert.True(stopwatch.Elapsed.TotalSeconds < 5);
 	}
 
 	[Fact]
@@ -309,6 +307,45 @@ public class CadDocumentTests
 	}
 
 	[Fact]
+	public void RemoveCadObjectStressTest()
+	{
+		if (!TestVariables.LocalEnv)
+		{
+			return;
+		}
+
+		CadDocument doc = new CadDocument();
+
+		Stopwatch stopwatch = new Stopwatch();
+		this._output.WriteLine("Start adding process");
+		stopwatch.Start();
+
+		int nObjects = 10000;
+		for (int i = 0; i < nObjects; i++)
+		{
+			Polyline3D polyline = new Polyline3D();
+			for (int j = 0; j < 50; j++)
+			{
+				polyline.Vertices.Add(new Vertex3D() { Location = new CSMath.XYZ(i, j, 0) });
+			}
+
+			doc.Entities.Add(polyline);
+		}
+
+		stopwatch.Stop();
+		this._output.WriteLine($"Adding {nObjects} objects: {stopwatch.Elapsed.TotalSeconds} seconds.");
+
+		stopwatch.Restart();
+		this._output.WriteLine("Start removing process");
+
+		doc.Entities.Clear();
+
+		this._output.WriteLine($"Removing {nObjects} objects: {stopwatch.Elapsed.TotalSeconds} seconds.");
+
+		Assert.True(stopwatch.Elapsed.TotalSeconds < 5);
+	}
+
+	[Fact]
 	public void RemoveLayer()
 	{
 		string layerName = "custom_layer";
@@ -340,7 +377,7 @@ public class CadDocumentTests
 		LineType ltype = doc.LineTypes.Remove(ltypeName);
 
 		//Assert removed element
-		Assert.False(doc.Layers.Contains(ltypeName));
+		Assert.False(doc.LineTypes.Contains(ltypeName));
 		Assert.Null(ltype.Document);
 		Assert.True(ltype.Handle == 0);
 		Assert.Equal(doc.LineTypes[LineType.ByLayerName], line.LineType);

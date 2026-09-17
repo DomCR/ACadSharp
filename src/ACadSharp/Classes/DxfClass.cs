@@ -9,12 +9,12 @@ namespace ACadSharp.Classes
 		/// Posted in Alert box when a class definition listed in this section is not currently loaded.
 		/// </summary>
 		[DxfCodeValue(3)]
-		public string ApplicationName { get; set; } = "ObjectDBX Classes";
+		public string ApplicationName { get; set; } = DefaultApplicationName;
 
 		/// <summary>
 		/// Class number.
 		/// </summary>
-		public short ClassNumber { get; set; }
+		public short ClassNumber { get; set; } = 500;
 
 		/// <summary>
 		/// C++ class name.
@@ -35,7 +35,7 @@ namespace ACadSharp.Classes
 		/// Instance count for a custom class.
 		/// </summary>
 		[DxfCodeValue(91)]
-		public int InstanceCount { get; set; }
+		public int InstanceCount { get; set; } = 0;
 
 		/// <summary>
 		/// Is-an-entity flag.
@@ -100,6 +100,8 @@ namespace ACadSharp.Classes
 		public bool WasZombie { get; set; }
 
 		internal short MaintenanceVersion { get; set; }
+
+		public const string DefaultApplicationName = "ObjectDBX Classes";
 
 		private bool _isAnEntity;
 

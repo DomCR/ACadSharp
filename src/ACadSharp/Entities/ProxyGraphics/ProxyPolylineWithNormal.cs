@@ -9,16 +9,11 @@ namespace ACadSharp.Entities.ProxyGraphics;
 /// This class extends <see cref="ProxyPolyline"/> to include normal vector information,
 /// which defines the plane in which the polyline lies in 3D space.
 /// </remarks>
-public class ProxyPolylineWithNormal : ProxyPolyline
+public class ProxyPolylineWithNormal : ProxyPolyline, IOrientable
 {
 	/// <inheritdoc/>
 	public override GraphicsType GraphicsType { get { return GraphicsType.PolylineWithNormal; } }
 
-	/// <summary>
-	/// Gets or sets the normal vector of the polyline.
-	/// </summary>
-	/// <remarks>
-	/// The normal vector is perpendicular to the plane in which the polyline is positioned.
-	/// </remarks>
-	public XYZ Normal { get; set; }
+	/// <inheritdoc/>
+	public XYZ Normal { get; set; } = XYZ.AxisZ;
 }

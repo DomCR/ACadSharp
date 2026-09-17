@@ -1,17 +1,32 @@
 ﻿using ACadSharp.Attributes;
+using ACadSharp.Classes;
 
 namespace ACadSharp.Objects.Evaluations;
 
 [DxfName(DxfFileToken.ObjectBlockRotateAction)]
 [DxfSubClass(DxfSubclassMarker.BlockRotationAction)]
-public class BlockRotationAction : BlockActionBasePt
+public class BlockRotationAction : BlockActionBasePt, IDxfClassDefined
 {
+	public EvalConnection AngleDeltaConnection { get; set; }
+
+	/// <inheritdoc/>
+	public override string ObjectName => DxfFileToken.ObjectBlockRotateAction;
+
 	/// <inheritdoc/>
 	public override string SubclassMarker => DxfSubclassMarker.BlockRotationAction;
 
-	[DxfCodeValue(303)]
-	public string Value303 { get; set; }
-
-	[DxfCodeValue(94)]
-	public int Value94 { get; set; }
+	/// <inheritdoc/>
+	public DxfClass GetDxfClass()
+	{
+		return new DxfClass
+		{
+			CppClassName = DxfSubclassMarker.BlockRotationAction,
+			DwgVersion = ACadVersion.AC1018,
+			DxfName = DxfFileToken.ObjectBlockRotateAction,
+			ItemClassId = 499,
+			MaintenanceVersion = 55,
+			ProxyFlags = ACadSharp.Classes.ProxyFlags.EraseAllowed | ACadSharp.Classes.ProxyFlags.CloningAllowed | ACadSharp.Classes.ProxyFlags.DisablesProxyWarningDialog,
+			WasZombie = false,
+		};
+	}
 }

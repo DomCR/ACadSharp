@@ -1,4 +1,5 @@
 ﻿using ACadSharp.Attributes;
+using ACadSharp.Classes;
 using CSMath;
 using CSUtilities.Extensions;
 
@@ -13,7 +14,7 @@ namespace ACadSharp.Objects;
 /// </remarks>
 [DxfName(DxfFileToken.ObjectMaterial)]
 [DxfSubClass(DxfSubclassMarker.Material)]
-public class Material : NonGraphicalObject
+public class Material : NonGraphicalObject, IDxfClassDefined
 {
 	/// <summary>
 	/// Ambient color value.
@@ -502,41 +503,18 @@ public class Material : NonGraphicalObject
 	internal Material()
 	{ }
 
-	//460
-	//Color Bleed Scale
-
-	//461	Indirect Dump Scale
-	//462	Reflectance Scale
-	//463
-
-	//Transmittance Scale
-	//290	Two-sided Material
-	//464	Luminance
-	//270	Luminance Mode
-	//271
-
-	//Normal Map Method
-	//465	Normal Map Strength
-	//42	Normal Map Blend Factor
-	//72
-
-	//Normal Map Source
-	//3	Normal Map Source File Name
-	//73	Normal Mapper Projection
-	//74	Normal Mapper Tiling
-	//75	Normal Mapper Auto Transform
-	//43	Normal Mapper Transform
-	//293	Materials Anonymous
-	//272	Global Illumination Mode
-	//273	Final Gather Mode
-	//300	GenProcName
-	//291	GenProcValBool
-	//271	GenProcValInt
-	//469	GenProcValReal
-	//301	GenProcValText
-	//292	GenProcTableEnd
-	//62	GenProcValColorIndex
-	//420	GenProcValColorRGB
-	//430	GenProcValColorName
-	//270	Map UTile
+	/// <inheritdoc/>
+	public DxfClass GetDxfClass()
+	{
+		return new DxfClass
+		{
+			CppClassName = DxfSubclassMarker.Material,
+			DwgVersion = 0,
+			DxfName = DxfFileToken.ObjectMaterial,
+			ItemClassId = 499,
+			MaintenanceVersion = 0,
+			ProxyFlags = ProxyFlags.EraseAllowed | ProxyFlags.CloningAllowed | ProxyFlags.DisablesProxyWarningDialog,
+			WasZombie = false,
+		};
+	}
 }

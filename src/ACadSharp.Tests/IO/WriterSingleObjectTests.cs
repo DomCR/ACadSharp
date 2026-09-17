@@ -68,6 +68,7 @@ public abstract class WriterSingleObjectTests : IOTestsBase
 		Data.Add(new(nameof(SingleCaseGenerator.CreateHatchPolyline)));
 		Data.Add(new(nameof(SingleCaseGenerator.CreateHatch)));
 		Data.Add(new(nameof(SingleCaseGenerator.CreateCircleHatch)));
+		Data.Add(new(nameof(SingleCaseGenerator.CreateHatchFullSweeps)));
 		Data.Add(new(nameof(SingleCaseGenerator.HatchWithEntities)));
 		Data.Add(new(nameof(SingleCaseGenerator.ChangedEncoding)));
 		Data.Add(new(nameof(SingleCaseGenerator.AddBlockWithAttributes)));
@@ -79,6 +80,7 @@ public abstract class WriterSingleObjectTests : IOTestsBase
 		Data.Add(new(nameof(SingleCaseGenerator.DimensionOrdinate)));
 		Data.Add(new(nameof(SingleCaseGenerator.DimensionAngular2Line)));
 		Data.Add(new(nameof(SingleCaseGenerator.DimensionAngular3Pt)));
+		Data.Add(new(nameof(SingleCaseGenerator.DimensionArc)));
 		Data.Add(new(nameof(SingleCaseGenerator.DimensionDiameter)));
 		Data.Add(new(nameof(SingleCaseGenerator.DimensionRadius)));
 		Data.Add(new(nameof(SingleCaseGenerator.Dimensions)));
@@ -89,6 +91,7 @@ public abstract class WriterSingleObjectTests : IOTestsBase
 		Data.Add(new(nameof(SingleCaseGenerator.XRef)));
 		Data.Add(new(nameof(SingleCaseGenerator.SPlineCreation)));
 		Data.Add(new(nameof(SingleCaseGenerator.TextAlignment)));
+		Data.Add(new(nameof(SingleCaseGenerator.InvalidEntities)));
 		Data.Add(new(nameof(SingleCaseGenerator.CreateXRecords)));
 		Data.Add(new(nameof(SingleCaseGenerator.SingleTableEntity)));
 		Data.Add(new(nameof(SingleCaseGenerator.SingleMesh)));
@@ -737,6 +740,37 @@ public abstract class WriterSingleObjectTests : IOTestsBase
 			this.Document.Entities.Add(hatch);
 		}
 
+		public void CreateHatchFullSweeps()
+		{
+			Hatch hatch = new Hatch { IsSolid = true };
+			hatch.SeedPoints.Add(XY.Zero);
+
+			Hatch.BoundaryPath arcPath = new Hatch.BoundaryPath();
+			arcPath.Edges.Add(new Hatch.BoundaryPath.Arc
+			{
+				Center = XY.Zero,
+				Radius = 2,
+				StartAngle = -MathHelper.HalfPI,
+				EndAngle = MathHelper.ThreeHalfPI,
+				CounterClockWise = true,
+			});
+			hatch.Paths.Add(arcPath);
+
+			Hatch.BoundaryPath ellipsePath = new Hatch.BoundaryPath();
+			ellipsePath.Edges.Add(new Hatch.BoundaryPath.Ellipse
+			{
+				Center = new XY(5, 0),
+				MajorAxisEndPoint = new XY(2, 0),
+				RadiusRatio = 0.5,
+				StartAngle = Math.PI,
+				EndAngle = 3 * Math.PI,
+				CounterClockWise = true,
+			});
+			hatch.Paths.Add(ellipsePath);
+
+			this.Document.Entities.Add(hatch);
+		}
+
 		public void CreateHatchPolyline()
 		{
 			Hatch hatch = new Hatch();
@@ -843,7 +877,7 @@ public abstract class WriterSingleObjectTests : IOTestsBase
 
 			XRecord record = new XRecord("test");
 			record.CreateEntry(90, 1);
-			record.CreateEntry(330, Document.Layers);
+			record.CreateEntry(330, this.Document.Layers);
 			layerstates.Add(record);
 
 			this.Document.Layers.Add(lay);
@@ -940,6 +974,22 @@ public abstract class WriterSingleObjectTests : IOTestsBase
 			this.Document.Entities.Add(dim);
 
 			dim.UpdateBlock();
+		}
+
+		public void DimensionArc()
+		{
+			DimensionArc dim = new DimensionArc
+			{
+				Center = XYZ.Zero,
+				FirstPoint = new XYZ(10, 0, 0),
+				SecondPoint = new XYZ(0, 10, 0),
+				DefinitionPoint = new XYZ(7.07, 7.07, 0),
+				TextMiddlePoint = new XYZ(8, 8, 0),
+				StartAngle = 0.0,
+				EndAngle = Math.PI / 2.0,
+			};
+
+			this.Document.Entities.Add(dim);
 		}
 
 		public void DimensionDiameter()
@@ -1067,7 +1117,7 @@ public abstract class WriterSingleObjectTests : IOTestsBase
 			this.Document.Entities.Add(new Insert(record));
 
 			DimensionAligned c = (DimensionAligned)dim.Clone();
-			Document.Entities.Add(c);
+			this.Document.Entities.Add(c);
 
 			dim.UpdateBlock();
 			dim1.UpdateBlock();
@@ -1322,6 +1372,36 @@ public abstract class WriterSingleObjectTests : IOTestsBase
 				Radius = 20
 			};
 			blockRecord.Entities.Add(circle);
+		}
+
+		public void InvalidEntities()
+		{
+			Ellipse e = new Ellipse();
+			e.Normal = new XYZ(1, 1, 0);
+			this.Document.Entities.Add(e);
+
+			e = new Ellipse();
+			e.Normal = new XYZ();
+			this.Document.Entities.Add(e);
+
+			Layer l = new Layer("Lorem ipsum dolor sit amet, consectetuer adipiscing elit. Aenean commodo ligula eget dolor. Aenean massa. Cum sociis natoque penatibus et magnis dis parturient montes, nascetur ridiculus mus. Donec quam felis, ultricies nec, pellentesque eu, pretium quis, sem. Nulla consequat massa quis enim. Donec.");
+			this.Document.Layers.Add(l);
+
+			foreach (var item in INamedCadObjectExtensions.InvalidCharacters)
+			{
+				l = new Layer($"invalid_character_{item}");
+				this.Document.Layers.Add(l);
+			}
+
+			//Valid name for a layer but is not shown in the layer list in AutoCAD
+			l = new Layer("*hello");
+			this.Document.Layers.Add(l);
+
+			Wipeout w = new Wipeout();
+			w.ClipBoundaryVertices.Clear();
+			this.Document.Entities.Add(w);
+
+			//Empty file
 		}
 
 		public void LayerTrueColor()
@@ -1808,13 +1888,13 @@ public abstract class WriterSingleObjectTests : IOTestsBase
 		{
 			Wipeout wipeout = new Wipeout();
 
-			wipeout.Size = new XY(1, 1);
+			wipeout.Size = new XY(10, 10);
 			wipeout.ClippingState = true;
 
 			wipeout.ClipBoundaryVertices.Add(new XY(0, 0));
-			wipeout.ClipBoundaryVertices.Add(new XY(0, 1));
-			wipeout.ClipBoundaryVertices.Add(new XY(1, 1));
 			wipeout.ClipBoundaryVertices.Add(new XY(1, 0));
+			wipeout.ClipBoundaryVertices.Add(new XY(1, 1));
+			wipeout.ClipBoundaryVertices.Add(new XY(0, 1));
 
 			this.Document.Entities.Add(wipeout);
 		}

@@ -3,6 +3,9 @@
 # CS1591: Missing XML comment for publicly visible type or member
 dotnet_diagnostic.CS1591.severity = none
 
+# Namespace rules
+csharp_style_namespace_declarations = file_scoped:warning
+
 [*.cs]
 #### Naming styles ####
 
