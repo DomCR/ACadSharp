@@ -1,4 +1,4 @@
-# ACadSharp local patches — change log (upstream report)
+# ACadSharp local patches — change log (AI-generated fixes for upstream-reported issues)
 
 All local modifications are marked in source with `[PATCH]` comments (English).
 Base: ACadSharp v3.7.16 vendored into `ACadSharp/` (net10.0 only).
