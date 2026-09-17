@@ -1,4 +1,4 @@
-﻿using ACadSharp.Header;
+using ACadSharp.Header;
 using CSUtilities.IO;
 using CSUtilities.Converters;
 using CSUtilities.Text;
@@ -118,6 +118,17 @@ public class DwgReader : CadReaderBase<DwgReaderConfiguration>
 		this._document.Header.Document = this._document;
 
 		this.readClasses();
+
+		// [PATCH] Template section: $MEASUREMENT (0=English, 1=Metric).
+		// Non-critical section — on any read failure keep the default and continue.
+		try
+		{
+			this.readTemplate();
+		}
+		catch (Exception ex)
+		{
+			this._builder?.Notify($"[Template] {ex.Message}", NotificationType.Warning);
+		}
 
 		this.readAppInfo();
 
@@ -683,7 +694,14 @@ public class DwgReader : CadReaderBase<DwgReaderConfiguration>
 
 		IDwgStreamReader sreader = this.getSectionStream(DwgSectionDefinition.Template);
 
-		throw new NotImplementedException();
+		// [PATCH] Read the Template data section (R2000/R2004).
+		// Layout (mirrors DwgWriter.writeTemplate):
+		//   Int16  template description string length (AutoCAD always writes 0)
+		//   UInt16 MEASUREMENT system variable (0 = English, 1 = Metric)
+		// The previous implementation threw NotImplementedException, so Header.MeasurementUnits
+		// stayed at its default (Metric) even for English-unit drawings.
+		sreader.ReadShort();
+		this._document.Header.MeasurementUnits = (MeasurementUnits)sreader.ReadUInt();
 	}
 
 	#region File Header reading methods

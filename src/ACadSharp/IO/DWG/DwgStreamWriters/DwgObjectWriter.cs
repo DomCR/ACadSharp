@@ -1,4 +1,4 @@
-﻿using ACadSharp.Blocks;
+using ACadSharp.Blocks;
 using ACadSharp.Classes;
 using ACadSharp.Entities;
 using ACadSharp.Entities.AecObjects;
@@ -426,6 +426,14 @@ internal partial class DwgObjectWriter : DwgSectionIO
 
 	private void writeBlockRecord(BlockRecord blkRecord)
 	{
+		if (this._streaming)
+		{
+			// [PATCH] Streaming mode: the block record header uses the pre-collected handle lists
+			// (owned/insert); at this point all entities and INSERTs have been written, so the
+			// lists are complete. The non-streaming path is unaffected.
+			this.writeBlockHeaderStreaming(blkRecord);
+			return;
+		}
 		this.writeBlockHeader(blkRecord, out Entity[] entities);
 		this._blockCompatibleEntities.Add(blkRecord, entities);
 	}
@@ -1149,7 +1157,15 @@ internal partial class DwgObjectWriter : DwgSectionIO
 							var encodingIndex = CadUtils.GetCodeIndex((CSUtilities.Text.CodePage)this._writer.Encoding.CodePage);
 							byte[] bytes = this._writer.Encoding.GetBytes(string.IsNullOrEmpty(str.Value) ? string.Empty : str.Value);
 
-							mstream.Write(LittleEndianConverter.Instance.GetBytes((ushort)str.Value.Length), 0, 2);
+							// [PATCH] Write the BYTES length, not the characters length.
+							// Pre-R2007 XData strings are stored as N single-byte (codepage) characters
+							// preceded by a 2-byte length in BYTES (see DwgStreamReaderBase.ReadTextUnicode,
+							// which feeds this length straight into ReadString(length, encoding)).
+							// For multi-byte code pages (e.g. ANSI_936/GBK, 2 bytes per CJK char) the old
+							// code wrote str.Value.Length (char count), so the reader consumed half the
+							// bytes: CJK XData values came back truncated/garbled and the leftover bytes
+							// desynchronized the rest of the app entry (closing control string lost).
+							mstream.Write(LittleEndianConverter.Instance.GetBytes((ushort)bytes.Length), 0, 2);
 							mstream.WriteByte((byte)encodingIndex);
 							mstream.Write(bytes, 0, bytes.Length);
 						}
@@ -1264,6 +1280,11 @@ internal partial class DwgObjectWriter : DwgSectionIO
 
 		this.writeXrefDependantBit(ltype);
 
+		//Xref block handle (hard pointer) - part of the common table flags,
+		//written right after the xref-dependent bits and before the description.
+		//NULLHDL when the entry is not xref-dependent.
+		this._writer.HandleReference(DwgReferenceType.HardPointer, 0);
+
 		//Description TV 3
 		this._writer.WriteVariableText(ltype.Description);
 		//Pattern Len BD 40
@@ -1334,6 +1355,10 @@ internal partial class DwgObjectWriter : DwgSectionIO
 			//Complex shapecode BS 75 Shape number if shapeflag is 2, or index into the string area if shapeflag is 4.
 			this._writer.WriteBitShort(segment.ShapeNumber);
 
+			//340 shapefile for dash/shape (hard pointer) - written INSIDE the
+			//dash loop, right after the complex shapecode and before the offsets.
+			this._writer.HandleReference(DwgReferenceType.HardPointer, segment.Style);
+
 			//X - offset RD 44 (0.0 for a simple dash.)
 			//Y - offset RD 45(0.0 for a simple dash.)
 			this._writer.WriteRawDouble(segment.Offset.X);
@@ -1367,15 +1392,9 @@ internal partial class DwgObjectWriter : DwgSectionIO
 			}
 		}
 
-		//Common:
-		//External reference block handle(hard pointer)
-		this._writer.HandleReference(DwgReferenceType.HardPointer, 0);
-
-		foreach (var segment in ltype.Segments)
-		{
-			//340 shapefile for dash/shape (1 each) (hard pointer)
-			this._writer.HandleReference(DwgReferenceType.HardPointer, segment.Style);
-		}
+		//Note: the xref block handle is written in the common table flags (before
+		//the description) and the per-dash shape style handles are written inside
+		//the dash loop. Nothing follows the strings area.
 
 		this.registerObject(ltype);
 	}

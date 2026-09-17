@@ -1,4 +1,4 @@
-﻿using System.IO;
+using System.IO;
 using System.Text;
 
 namespace ACadSharp.IO.DWG.DwgStreamWriters;
@@ -15,7 +15,9 @@ internal class DwgFileHeaderWriterAC21 : DwgFileHeaderWriterAC18
 
 	protected override void craeteLocalSection(DwgSectionDescriptor descriptor, byte[] buffer, int decompressedSize, ulong offset, int totalSize, bool isCompressed)
 	{
-		MemoryStream descriptorStream = this.applyCompression(buffer, decompressedSize, offset, totalSize, isCompressed);
+		// [PATCH] Same as AC18: offset is the page's Start Offset inside the whole decompressed
+		// section buffer; buffer is the totalSize-byte tail chunk just read, always starting at 0.
+		MemoryStream descriptorStream = this.applyCompression(buffer, decompressedSize, 0, totalSize, isCompressed);
 
 		this.writeMagicNumber();
 

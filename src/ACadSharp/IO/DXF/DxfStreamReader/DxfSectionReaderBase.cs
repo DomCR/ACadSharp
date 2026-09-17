@@ -1,4 +1,4 @@
-﻿using ACadSharp.Entities;
+using ACadSharp.Entities;
 using ACadSharp.IO.Templates;
 using ACadSharp.Objects;
 using ACadSharp.Tables;
@@ -142,7 +142,15 @@ internal abstract class DxfSectionReaderBase
 				break;
 			case 1001:
 				isExtendedData = true;
-				this.readExtendedData(template.EDataTemplateByAppName);
+				// [PATCH] Skip XData parsing when ReadXData=false (only advance the reader, save memory)
+				if (this._builder.Configuration.ReadXData)
+				{
+					this.readExtendedData(template.EDataTemplateByAppName);
+				}
+				else
+				{
+					this.skipExtendedData();
+				}
 				break;
 			default:
 				this._builder.Notify($"[{this.currentSubclass}] Unhandled dxf code {this._reader.Code} with value {this._reader.ValueAsString}", NotificationType.None);
@@ -1753,10 +1761,47 @@ internal abstract class DxfSectionReaderBase
 		}
 	}
 
+	// [PATCH] Mirrors readExtendedData's group-code consumption pattern but only advances the
+	// reader without building any record. Used to skip XData when ReadXData=false: coordinate/
+	// direction/displacement group codes each consume 3 ReadNext calls (X/Y/Z), the others 1;
+	// the next 1001 (RegAppName) is handled recursively, exactly like readExtendedData, so after
+	// skipping the reader still lands at the correct position after the XData.
+	protected void skipExtendedData()
+	{
+		this._reader.ReadNext();
+
+		while (this._reader.DxfCode >= DxfCode.ExtendedDataAsciiString)
+		{
+			if (this._reader.DxfCode == DxfCode.ExtendedDataRegAppName)
+			{
+				this.skipExtendedData();
+				break;
+			}
+
+			switch (this._reader.DxfCode)
+			{
+				case DxfCode.ExtendedDataXCoordinate:
+				case DxfCode.ExtendedDataWorldXCoordinate:
+				case DxfCode.ExtendedDataWorldXDisp:
+				case DxfCode.ExtendedDataWorldXDir:
+					this._reader.ReadNext();
+					this._reader.ReadNext();
+					break;
+			}
+
+			this._reader.ReadNext();
+		}
+	}
+
+	// [PATCH] XData string interning (see DxfXDataInterning): in GIS attribute export the same
+	// key name / coded value / layer name repeats millions of times; sharing string instances
+	// compresses ~100M string objects down to a few million unique instances.
 	protected void readExtendedData(Dictionary<string, List<ExtendedDataRecord>> edata)
 	{
+		bool intern = this._builder.Configuration.InternXDataStrings;
+
 		List<ExtendedDataRecord> records = new();
-		edata.Add(this._reader.ValueAsString, records);
+		edata.Add(intern ? DxfXDataInterning.Intern(this._reader.ValueAsString) : this._reader.ValueAsString, records);
 
 		this._reader.ReadNext();
 
@@ -1777,7 +1822,8 @@ internal abstract class DxfSectionReaderBase
 			{
 				case DxfCode.ExtendedDataAsciiString:
 				case DxfCode.ExtendedDataRegAppName:
-					record = new ExtendedDataString(this._reader.ValueAsString);
+					// [PATCH] intern the string value (duplicate values share one instance, saving memory)
+					record = new ExtendedDataString(intern ? DxfXDataInterning.Intern(this._reader.ValueAsString) : this._reader.ValueAsString);
 					break;
 				case DxfCode.ExtendedDataControlString:
 					record = new ExtendedDataControlString(this._reader.ValueAsString == "}");

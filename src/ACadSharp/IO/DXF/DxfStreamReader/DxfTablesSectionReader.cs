@@ -1,4 +1,4 @@
-﻿using ACadSharp.Exceptions;
+using ACadSharp.Exceptions;
 using ACadSharp.IO.Templates;
 using ACadSharp.Tables;
 using ACadSharp.Tables.Collections;
@@ -79,7 +79,15 @@ internal class DxfTablesSectionReader : DxfSectionReaderBase
 						Debug.Assert(this._reader.ValueAsString == DxfSubclassMarker.Table);
 						break;
 					case 1001:
-						this.readExtendedData(edata);
+						// [PATCH] Skip table-level XData parsing when ReadXData=false
+						if (this._builder.Configuration.ReadXData)
+						{
+							this.readExtendedData(edata);
+						}
+						else
+						{
+							this.skipExtendedData();
+						}
 						break;
 					default:
 						this._builder.Notify($"[AcDbSymbolTable] Unhandeled dxf code {this._reader.Code} at line {this._reader.Position}.");
@@ -205,6 +213,31 @@ internal class DxfTablesSectionReader : DxfSectionReaderBase
 					break;
 				case DxfFileToken.TableStyle:
 					template = this.readTableEntry(new CadTableEntryTemplate<TextStyle>(new TextStyle()), this.readTextStyle);
+					// [PATCH] For TTF text styles the DXF code 3 (font) is empty; the real TTF font
+					// name lives in the ACAD xdata (1001=ACAD / 1000=<TTF name>). Upstream does not
+					// restore it -> TextStyle.Filename is empty -> the DWG is written with an empty
+					// font -> AutoCAD substitutes the missing font on open, the character widths do
+					// not match, and model-space text is squeezed/overlapping (most visible in the
+					// title-block text; in the block editor AutoCAD renders with the design metrics,
+					// so it looks fine there). Restore the font name from the first string record of
+					// the ACAD xdata, only effective when code 3 is empty (SHX font names are never
+					// overwritten).
+					if (template is CadTableEntryTemplate<TextStyle> styleEntry)
+					{
+						TextStyle style = styleEntry.CadObject;
+						if (string.IsNullOrEmpty(style.Filename) &&
+							styleEntry.EDataTemplateByAppName.TryGetValue("ACAD", out List<ExtendedDataRecord> acadXData))
+						{
+							foreach (ExtendedDataRecord rec in acadXData)
+							{
+								if (rec is ExtendedDataString s && !string.IsNullOrEmpty(s.Value))
+								{
+									style.Filename = s.Value;
+									break;
+								}
+							}
+						}
+					}
 					break;
 				case DxfFileToken.TableUcs:
 					template = this.readTableEntry(new CadUcsTemplate(), this.readUcs);
@@ -688,6 +721,11 @@ internal class DxfTablesSectionReader : DxfSectionReaderBase
 					template.Segment.ShapeNumber = (short)this._reader.ValueAsInt;
 					break;
 				case 340:
+					// [PATCH] Read the style handle (code 340) into the segment template.
+					// Without this, Segment.Style stays null and the DWG writer emits NULLHDL
+					// for the 340 hard pointer, causing AutoCAD to render shape/text linetype
+					// segments as solid (custom linetype patterns lost).
+					template.StyleHandle = this._reader.ValueAsHandle;
 					break;
 				default:
 					this._builder.Notify($"[LineTypeSegment] Unhandeled dxf code {this._reader.Code} with value {this._reader.ValueAsString}, positon {this._reader.Position}", NotificationType.None);
@@ -711,6 +749,22 @@ internal class DxfTablesSectionReader : DxfSectionReaderBase
 				{
 					//In some files the TextStyle is an empty string
 					template.CadObject.Name = this._reader.ValueAsString;
+				}
+				return true;
+			case 70:
+				// [PATCH] Group 70 carries the style state flags; upstream silently
+				// dropped them because no property maps code 70. Bit 1 marks a SHAPE
+				// style (e.g. the CASS template entries AAA.SHX / ltypeshp.shx used by
+				// complex linetype shape segments). Without the flag the DWG writer
+				// emits the style as a plain named text style (shape bit = 0), and
+				// AutoCAD loses the shape-font association — complex-linetype symbols
+				// (e.g. CASS terrain linetypes 10422/914C) render missing/garbled.
+				{
+					int raw = this._reader.ValueAsShort;
+					if ((raw & (int)StyleFlags.IsShape) != 0)
+						template.CadObject.Flags |= StyleFlags.IsShape;
+					if ((raw & (int)StyleFlags.VerticalText) != 0)
+						template.CadObject.Flags |= StyleFlags.VerticalText;
 				}
 				return true;
 			default:

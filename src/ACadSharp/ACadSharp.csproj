@@ -1,46 +1,34 @@
-﻿<Project Sdk="Microsoft.NET.Sdk">
+<Project Sdk="Microsoft.NET.Sdk">
 
+	<!-- 本地源码版（vendor 自 https://github.com/DomCR/ACadSharp v3.7.16，MIT License）。
+	     仅保留 net10.0 目标，去掉签名/打包，供 SQLite2Dxf 输出 DWG 使用。
+	     （上游 v3.7.16 新增的 SignAssembly/GeneratePackageOnBuild/PackageOutputPath 在 vendor 构建中
+	       有意移除：1) 强签名会破坏 InternalsVisibleTo("SQLite2Dxf") 简单名授权；
+	       2) 本构建仅以项目引用方式被消费，不需要 NuGet 打包。）
+	     已打补丁（相对上游，完整清单见 PATCHES-CHANGELOG.md）：
+	     1. DwgWriter.writeObjects：AcDbObjects 段写入临时文件而非内存 MemoryStream（大文件低内存）
+	     2. DwgFileHeaderWriterBase.AddSection / DwgSectionLocatorRecord：支持任意 Stream + 长度
+	     3. CadUtils.GetCodeIndex：静态缓存，避免每条 XData 字符串记录都 ToList()（XData 写加速）
+	     4. DWG R2004 区表/页偏移修复（AutoCAD 报 corrupted）、Template/$MEASUREMENT 修复
+	     5. 单遍流式 DWG 导出（DwgWriter.Streaming / DwgObjectWriter.Streaming）
+	     6. XData 字符串按活动代码页字节长度编码（ANSI_936 等多字节代码页）
+	     7. DWG 读回修复：ByLayer/ByBlock 颜色、编码表索引（GBK 乱码）
+	     8. DXF 读取：XData 跳过/字符串驻留/周期 GC、TTF 字体名还原、TEXTSTYLE 70 标志
+	     9. InternalsVisibleTo("SQLite2Dxf") -->
 	<PropertyGroup>
-		<TargetFrameworks>net8.0;net9.0;net10.0;net48;netstandard2.1;netstandard2.0</TargetFrameworks>
+		<TargetFramework>net10.0</TargetFramework>
 		<Authors>DomCr</Authors>
 		<PackageId>ACadSharp</PackageId>
-		<PackageTags>C# Dwg Dxf</PackageTags>
 		<RepositoryUrl>https://github.com/DomCR/ACadSharp</RepositoryUrl>
 		<PackageLicenseExpression>MIT</PackageLicenseExpression>
-		<RepositoryType>git</RepositoryType>
-		<PackageProjectUrl>https://github.com/DomCR/ACadSharp</PackageProjectUrl>
-		<Copyright>Copyright (c) 2026 Albert Domenech</Copyright>
 		<Description>C# library to read/write cad files like dxf/dwg.</Description>
-		<GeneratePackageOnBuild Condition="'$(Configuration)' == 'Release'">True</GeneratePackageOnBuild>
-	</PropertyGroup>
-
-	<PropertyGroup>
-		<GenerateDocumentationFile>true</GenerateDocumentationFile>
-		<PackageReadmeFile>README.md</PackageReadmeFile>
+		<GenerateDocumentationFile>false</GenerateDocumentationFile>
 		<Version>3.7.16</Version>
-		<PackageOutputPath>../nupkg</PackageOutputPath>
-		<SignAssembly>True</SignAssembly>
-		<AssemblyOriginatorKeyFile>../ACadSharp.snk</AssemblyOriginatorKeyFile>
+		<NoWarn>$(NoWarn);CS1591</NoWarn>
 	</PropertyGroup>
 
 	<Import Project="..\CSUtilities\CSMath\CSMath.projitems" Label="Shared" />
 
 	<Import Project="..\CSUtilities\CSUtilities\CSUtilities.projitems" Label="Shared" />
-
-	<ItemGroup>
-		<None Include="..\..\README.md">
-			<Pack>True</Pack>
-			<PackagePath>\</PackagePath>
-		</None>
-	</ItemGroup>
-
-	<ItemGroup Condition="'$(TargetFramework)' == 'net48'">
-		<PackageReference Include="System.Memory" Version="4.6.3" />
-	</ItemGroup>
-
-	<ItemGroup Condition="'$(TargetFramework)' == 'netstandard2.1' OR '$(TargetFramework)' == 'netstandard2.0'">
-		<PackageReference Include="System.Memory" Version="4.6.3" />
-		<PackageReference Include="System.Text.Encoding.CodePages" Version="9.0.6" />
-	</ItemGroup>
 
 </Project>

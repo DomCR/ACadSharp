@@ -1,4 +1,4 @@
-﻿using ACadSharp.Objects;
+using ACadSharp.Objects;
 using ACadSharp.Objects.AEC;
 using ACadSharp.Objects.Evaluations;
 using CSMath;
@@ -2249,6 +2249,7 @@ internal partial class DwgObjectWriter : DwgSectionIO
 				return;
 			}
 
+			// R2007+: length is in 2-byte Unicode chars, so text.Length is correct here.
 			ms.Write<short>((short)text.Length);
 			ms.Write(text, System.Text.Encoding.Unicode);
 		}
@@ -2259,9 +2260,16 @@ internal partial class DwgObjectWriter : DwgSectionIO
 		}
 		else
 		{
-			ms.Write<short>((short)text.Length);
+			// [PATCH] Write the BYTES length, not the characters length — same bug as the
+			// pre-R2007 XData string writer. The reader (DwgStreamReaderBase.ReadTextUnicode)
+			// feeds this length straight into ReadString(length, encoding), which consumes
+			// that many BYTES. With multi-byte code pages (e.g. ANSI_936/GBK) the char count
+			// is too small: CJK XRecord strings came back truncated/garbled and the leftover
+			// bytes desynchronized the following XRecord entries.
+			byte[] bytes = this._writer.Encoding.GetBytes(text);
+			ms.Write<short>((short)bytes.Length);
 			ms.Write((byte)CadUtils.GetCodeIndex((CodePage)this._writer.Encoding.CodePage));
-			ms.Write(text, this._writer.Encoding);
+			ms.WriteBytes(bytes);
 		}
 	}
 

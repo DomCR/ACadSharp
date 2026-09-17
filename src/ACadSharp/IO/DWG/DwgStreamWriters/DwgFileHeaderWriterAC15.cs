@@ -1,4 +1,4 @@
-﻿using ACadSharp.IO.DWG.FileHeaders;
+using ACadSharp.IO.DWG.FileHeaders;
 using CSUtilities.Converters;
 using System.Collections.Generic;
 using System.IO;
@@ -50,7 +50,8 @@ internal class DwgFileHeaderWriterAC15 : DwgFileHeaderWriterBase<DwgFileHeaderAC
 		};
 	}
 
-	public override void AddSection(string name, MemoryStream stream, bool isCompressed, int decompsize = 29696)
+	// [PATCH] MemoryStream -> Stream (supports a temp file for the AcDbObjects section)
+	public override void AddSection(string name, Stream stream, bool isCompressed, int decompsize = 29696)
 	{
 		this._records[name].Stream = stream;
 	}
@@ -129,7 +130,11 @@ internal class DwgFileHeaderWriterAC15 : DwgFileHeaderWriterBase<DwgFileHeaderAC
 			if (item.Stream == null)
 				continue;
 
-			this._stream.Write(item.Stream.GetBuffer(), 0, (int)item.Stream.Length);
+			// [PATCH] Upstream uses GetBuffer() (MemoryStream only); Seek(0)+CopyTo works with any
+			// Stream (the AcDbObjects section may come from a temp file, whose Position is at the
+			// end after writing, so it must be rewound to 0 first)
+			item.Stream.Seek(0, SeekOrigin.Begin);
+			item.Stream.CopyTo(this._stream);
 		}
 	}
 }

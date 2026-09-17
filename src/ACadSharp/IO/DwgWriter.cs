@@ -1,9 +1,11 @@
-﻿using ACadSharp.Exceptions;
+using ACadSharp.Exceptions;
+using ACadSharp.Header;
 using ACadSharp.IO.DWG;
 using ACadSharp.IO.DWG.DwgStreamWriters;
 using ACadSharp.Tables.Collections;
 using CSUtilities.IO;
 using CSUtilities.Text;
+using System;
 using System.Collections.Generic;
 using System.IO;
 
@@ -12,7 +14,7 @@ namespace ACadSharp.IO;
 /// <summary>
 /// Class for writing a DWG from a <see cref="CadDocument"/>.
 /// </summary>
-public class DwgWriter : CadWriterBase<DwgWriterConfiguration>
+public partial class DwgWriter : CadWriterBase<DwgWriterConfiguration>
 {
 	public DwgPreview Preview { get; set; }
 
@@ -88,6 +90,9 @@ public class DwgWriter : CadWriterBase<DwgWriterConfiguration>
 	/// <inheritdoc/>
 	public override void Dispose()
 	{
+		// [PATCH] Release the AcDbObjects section temp file (DeleteOnClose removes it)
+		this._objectsSectionStream?.Dispose();
+		this._objectsSectionStream = null;
 		this._stream.Dispose();
 	}
 
@@ -254,9 +259,19 @@ public class DwgWriter : CadWriterBase<DwgWriterConfiguration>
 		this._fileHeaderWriter.AddSection(DwgSectionDefinition.Header, stream, true);
 	}
 
+	// [PATCH] Upstream writes the AcDbObjects section (the largest section in the file, hundreds of
+	// MB for big drawings) entirely into a MemoryStream and flushes it all at once with the file
+	// header in WriteFile() — the memory peak of a large drawing equals the entire object data.
+	// Write it to a temp file instead (DeleteOnClose, 1MB buffer); memory use stays constant.
+	// AC15 CopyTo's it into the output stream at WriteFile(); AC18 reads it page by page in
+	// AddSection() and compresses it out.
+	private Stream _objectsSectionStream;
+
 	private void writeObjects()
 	{
-		MemoryStream stream = new MemoryStream();
+		string tmpPath = Path.Combine(Path.GetTempPath(), $"acaddwg_{Guid.NewGuid():N}.tmp");
+		var stream = new FileStream(tmpPath, FileMode.Create, FileAccess.ReadWrite, FileShare.None, 1 << 20, FileOptions.DeleteOnClose);
+		this._objectsSectionStream = stream;
 		DwgObjectWriter writer = new DwgObjectWriter(
 			stream,
 			this._document,
@@ -406,6 +421,18 @@ public class DwgWriter : CadWriterBase<DwgWriterConfiguration>
 		writer.Write<short>(0);
 		//UInt16	2	MEASUREMENT system variable(0 = English, 1 = Metric).
 		writer.Write<ushort>((ushort)this._document.Header.MeasurementUnits);
+
+		// [PATCH] The section payload is only 4 bytes. When MEASUREMENT is 0 (English) the whole
+		// payload is zero bytes, and AddSection's "skip all-zero partial pages" rule then drops the
+		// page entirely, leaving an EMPTY Template section in the section map. Readers cannot
+		// distinguish "explicitly 0/English" from "section absent" (they fall back to the Metric
+		// default), so English-unit drawings came back as Metric. Pad the stream to a full page
+		// (decompsize = 0x7400): full pages are always written, and the reader reconstructs the
+		// zero padding transparently.
+		if (this._document.Header.MeasurementUnits == MeasurementUnits.English)
+		{
+			stream.SetLength(0x7400);
+		}
 
 		this._fileHeaderWriter.AddSection(DwgSectionDefinition.Template, stream, true);
 	}

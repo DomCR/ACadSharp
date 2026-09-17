@@ -1,4 +1,4 @@
-﻿using CSUtilities.Converters;
+using CSUtilities.Converters;
 using CSUtilities.IO;
 using CSUtilities.Text;
 using System;
@@ -27,9 +27,55 @@ internal class DwgFileHeaderWriterAC18 : DwgFileHeaderWriterBase<DwgFileHeaderAC
 		{
 			this._stream.WriteByte(0);
 		}
+
+		// [PATCH] The empty section (section id 0) must exist and be first in the section table —
+		// DWGs written by AutoCAD always start the section table with an empty section
+		// (comp=0/pages=0). Upstream omits it and leaves every SectionId at the default 0, so
+		// the section table does not match the AutoCAD standard layout and AutoCAD reports
+		// "file is corrupted". Reference: the AutoCAD-saved DWG — section table = empty (0) +
+		// the real sections (1..n), with unique SectionIds.
+		var emptyDesc = new DwgSectionDescriptor("")
+		{
+			SectionId = 0,
+			CompressedSize = 0,
+			PageCount = 0,
+			DecompressedSize = 0x7400,
+			CompressedCode = 2
+		};
+		this.FileHeader.AddSection(emptyDesc);
 	}
 
-	public override void AddSection(string name, MemoryStream stream, bool isCompressed, int decompsize = 0x7400)
+	// [PATCH] Standard section ID mapping (matches the section table of DWGs written by
+	// AutoCAD): empty section = 0, the other sections 1..13 in a fixed order. Upstream never
+	// assigns SectionId (always 0), which AutoCAD's strict parser treats as file corruption.
+	private static int GetSectionId(string name)
+	{
+		switch (name)
+		{
+			case DwgSectionDefinition.Header: return 1;
+			case DwgSectionDefinition.AuxHeader: return 2;
+			case DwgSectionDefinition.Classes: return 3;
+			case DwgSectionDefinition.Handles: return 4;
+			case DwgSectionDefinition.Template: return 5;
+			case DwgSectionDefinition.ObjFreeSpace: return 6;
+			case DwgSectionDefinition.AcDbObjects: return 7;
+			case DwgSectionDefinition.RevHistory: return 8;
+			case DwgSectionDefinition.SummaryInfo: return 9;
+			case DwgSectionDefinition.Preview: return 10;
+			case DwgSectionDefinition.AppInfo: return 11;
+			case "AcDb:AppInfoHistory": return 12;
+			case DwgSectionDefinition.FileDepList: return 13;
+			default: return 0;
+		}
+	}
+
+	// [PATCH] Upstream grabs the whole section buffer at once with stream.GetBuffer()
+	// (MemoryStream only), so a large section (AcDbObjects) must stay fully in memory.
+	// Read the section sequentially page by page (decompsize bytes/page) from the Stream
+	// instead — the section may come from a temp file and memory use stays constant
+	// (one page ~29KB). Behavior matches upstream: full pages are always written; a
+	// trailing partial page is written only when it contains non-zero bytes.
+	public override void AddSection(string name, Stream stream, bool isCompressed, int decompsize = 0x7400)
 	{
 		DwgSectionDescriptor descriptor = new DwgSectionDescriptor(name);
 		this.FileHeader.AddSection(descriptor);
@@ -37,33 +83,53 @@ internal class DwgFileHeaderWriterAC18 : DwgFileHeaderWriterBase<DwgFileHeaderAC
 
 		descriptor.CompressedSize = (ulong)stream.Length;
 		descriptor.CompressedCode = !isCompressed ? 1 : 2;
+		// [PATCH] Assign a unique section ID (upstream always 0, which AutoCAD treats as corruption)
+		descriptor.SectionId = GetSectionId(name);
 
-		int nlocalSections = (int)(stream.Length / (int)descriptor.DecompressedSize);
-
-		byte[] buffer = stream.GetBuffer();
-		ulong offset = 0uL;
-		for (int i = 0; i < nlocalSections; i++)
+		long length = stream.Length;
+		long originalPosition = stream.Position;
+		stream.Seek(0, SeekOrigin.Begin);
+		try
 		{
-			this.craeteLocalSection(
-				descriptor,
-				buffer,
-				(int)descriptor.DecompressedSize,
-				offset,
-				(int)descriptor.DecompressedSize,
-				isCompressed);
-			offset += descriptor.DecompressedSize;
+			int pageSize = (int)descriptor.DecompressedSize;
+			long offset = 0L;
+			while (offset < length)
+			{
+				int totalSize = (int)Math.Min(pageSize, length - offset);
+				byte[] buffer = new byte[totalSize];
+				int read = 0;
+				while (read < totalSize)
+				{
+					int r = stream.Read(buffer, read, totalSize - read);
+					if (r <= 0)
+					{
+						break;
+					}
+					read += r;
+				}
+
+				if (totalSize == pageSize)
+				{
+					//整页：上游无条件写出
+					// [PATCH] The 4th parameter is the page's Start Offset (cumulative offset)
+					// inside the decompressed section buffer. Upstream always passes 0: for a
+					// multi-page section (e.g. AcDbObjects > 29696 bytes) every page gets Start
+					// Offset 0, so the reader decompresses later pages over offset 0, clobbering
+					// earlier pages' data — AutoCAD/libredwg report file corruption.
+					this.craeteLocalSection(descriptor, buffer, pageSize, (ulong)offset, totalSize, isCompressed);
+				}
+				else if (!checkEmptyBytes(buffer, 0, (ulong)totalSize))
+				{
+					//末尾残页：仅当含非零字节时写出（与上游一致）
+					this.craeteLocalSection(descriptor, buffer, pageSize, (ulong)offset, totalSize, isCompressed);
+				}
+
+				offset += totalSize;
+			}
 		}
-
-		int spearBytes = (int)(stream.Length % (int)descriptor.DecompressedSize);
-		if (spearBytes > 0 && !checkEmptyBytes(buffer, offset, (ulong)spearBytes))
+		finally
 		{
-			this.craeteLocalSection(
-				descriptor,
-				buffer,
-				(int)descriptor.DecompressedSize,
-				offset,
-				spearBytes,
-				isCompressed);
+			stream.Seek(originalPosition, SeekOrigin.Begin);
 		}
 	}
 
@@ -110,7 +176,12 @@ internal class DwgFileHeaderWriterAC18 : DwgFileHeaderWriterBase<DwgFileHeaderAC
 
 	protected virtual void craeteLocalSection(DwgSectionDescriptor descriptor, byte[] buffer, int decompressedSize, ulong offset, int totalSize, bool isCompressed)
 	{
-		MemoryStream descriptorStream = this.applyCompression(buffer, decompressedSize, offset, totalSize, isCompressed);
+		// [PATCH] offset now denotes the page's Start Offset inside the whole decompressed
+		// section buffer (written to localMap.Offset, i.e. the "Start Offset" in the page
+		// header and the section descriptor). buffer is the totalSize-byte tail chunk just
+		// read; its start inside buffer is always 0, so it must not be used as the in-buffer
+		// offset (multi-page sections would go out of bounds / be misaligned).
+		MemoryStream descriptorStream = this.applyCompression(buffer, decompressedSize, 0, totalSize, isCompressed);
 
 		this.writeMagicNumber();
 
@@ -490,7 +561,12 @@ internal class DwgFileHeaderWriterAC18 : DwgFileHeaderWriterBase<DwgFileHeaderAC
 		this.FileHeader.GapAmount = 0u;
 		this.FileHeader.LastPageId = last.PageNumber;
 		this.FileHeader.LastSectionAddr = (ulong)(last.Seeker + size - 256);
-		this.FileHeader.SectionAmount = (uint)(this._localSectionsMaps.Count - 1);
+		// [PATCH] numsections must equal the total number of section table entries
+		// (data pages + section map + section page map). Upstream writes Count-1, one short,
+		// which fails the AutoCAD/libredwg check "num_sections != numgaps + numsections" and
+		// makes the reader read all subsequent sections (classes/objects/handles) from the
+		// wrong offset, reporting "file is corrupted". libredwg encode.c: numsections = si (all entries).
+		this.FileHeader.SectionAmount = (uint)(this._localSectionsMaps.Count);
 		this.FileHeader.PageMapAddress = (ulong)section.Seeker;
 	}
 }

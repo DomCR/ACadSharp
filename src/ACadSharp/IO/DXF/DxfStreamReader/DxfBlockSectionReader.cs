@@ -1,4 +1,4 @@
-﻿using ACadSharp.Blocks;
+using ACadSharp.Blocks;
 using ACadSharp.Exceptions;
 using ACadSharp.IO.DXF.DxfStreamReader;
 using ACadSharp.IO.Templates;
@@ -132,6 +132,10 @@ namespace ACadSharp.IO.DXF
 			//Add the entity template for owner information
 			recordTemplate.BlockEntityTemplate = template;
 
+			// [PATCH] Periodic full GC (same as DxfEntitiesSectionReader) to bound the working set
+			int gcEvery = this._builder.Configuration.GCEveryNEntities;
+			int gcCounter = 0;
+
 			while (this._reader.ValueAsString != DxfFileToken.EndBlock)
 			{
 				CadEntityTemplate entityTemplate = null;
@@ -153,6 +157,13 @@ namespace ACadSharp.IO.DXF
 
 				if (entityTemplate == null)
 					continue;
+
+				// [PATCH] Periodic GC + working-set trim (see gcEvery above)
+				if (gcEvery > 0 && ++gcCounter >= gcEvery)
+				{
+					gcCounter = 0;
+					MemoryTrimmer.Trim();
+				}
 
 				//Add the object and the template to the builder
 				this._builder.AddTemplate(entityTemplate);

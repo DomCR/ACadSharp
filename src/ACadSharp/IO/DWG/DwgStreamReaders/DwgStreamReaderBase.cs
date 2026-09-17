@@ -1,4 +1,4 @@
-﻿using ACadSharp.Exceptions;
+using ACadSharp.Exceptions;
 using CSMath;
 using CSUtilities.Converters;
 using CSUtilities.IO;
@@ -870,7 +870,32 @@ namespace ACadSharp.IO.DWG
 			}
 			else
 			{
-				value = this.ReadString(textLength, TextEncoding.GetListedEncoding((CodePage)encodingKey));
+				// [PATCH] encodingKey is an INDEX into the fixed DWG encoding table
+				// (CadUtils._pageCodes, see DwgObjectWriter XData string writing via
+				// CadUtils.GetCodeIndex), NOT a CSUtilities CodePage enum value.
+				// The old code cast it straight to CodePage, so e.g. GBK (index 31) hit the
+				// switch default and fell back to Encoding.Default: XData strings written
+				// in multi-byte code pages (ANSI_936, ...) were decoded with the wrong
+				// code page and came back garbled.
+				// Resolve index -> CodePage -> Encoding the same way the writer resolves
+				// the code page name (Encoding.GetEncoding with CodePagesEncodingProvider).
+				var code = CadUtils.GetCodePage(encodingKey);
+				Encoding enc = TextEncoding.GetListedEncoding(code);
+				if (enc == null)
+				{
+					try
+					{
+#if !NET48
+						Encoding.RegisterProvider(System.Text.CodePagesEncodingProvider.Instance);
+#endif
+						enc = Encoding.GetEncoding((int)code);
+					}
+					catch
+					{
+						enc = Encoding.Default;
+					}
+				}
+				value = this.ReadString(textLength, enc);
 			}
 
 			return value;
