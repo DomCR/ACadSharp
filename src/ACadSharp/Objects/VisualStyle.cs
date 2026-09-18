@@ -163,6 +163,15 @@ public class VisualStyle : NonGraphicalObject, IDxfClassDefined
 	public const string DefaultName = "2dWireframe";
 
 	/// <inheritdoc/>
+	public VisualStyle()
+	{ }
+
+	/// <inheritdoc/>
+	public VisualStyle(string name) : base(name)
+	{
+	}
+
+	/// <inheritdoc/>
 	public DxfClass GetDxfClass()
 	{
 		return new DxfClass

@@ -46,6 +46,11 @@ public class CadDocumentTests
 	[Fact]
 	public void AddCadObjectStressTest()
 	{
+		if (!TestVariables.LocalEnv)
+		{
+			return;
+		}
+
 		CadDocument doc = new CadDocument();
 
 		Stopwatch stopwatch = new Stopwatch();

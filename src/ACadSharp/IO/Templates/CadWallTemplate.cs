@@ -1,4 +1,4 @@
-using ACadSharp.Entities.AecObjects;
+using ACadSharp.Entities.AecEntities;
 using ACadSharp.Objects;
 using ACadSharp.Objects.AEC;
 
