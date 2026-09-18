@@ -1528,7 +1528,15 @@ internal abstract partial class DxfSectionWriterBase
 
 		this._writer.Write(7, text.Style.Name);
 
-		this._writer.Write(11, text.AlignmentPoint, map);
+		//Group 11 only positions the text when it is not left/baseline aligned; groups 72/73
+		//decide whether group 10 or group 11 applies. AutoCAD omits group 11 in the default
+		//case, and readers that treat its mere presence as authoritative would otherwise put
+		//every default-aligned text at the origin.
+		if (text.HorizontalAlignment != TextHorizontalAlignment.Left
+			|| text.VerticalAlignment != TextVerticalAlignmentType.Baseline)
+		{
+			this._writer.Write(11, text.AlignmentPoint, map);
+		}
 
 		this._writer.Write(210, text.Normal, map);
 
