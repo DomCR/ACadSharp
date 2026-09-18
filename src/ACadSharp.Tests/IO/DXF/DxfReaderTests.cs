@@ -1,7 +1,10 @@
 ﻿using ACadSharp.Entities;
 using ACadSharp.IO;
+using ACadSharp.Tests.Common;
 using ACadSharp.Tests.TestModels;
+using CSMath;
 using System.Collections.Generic;
+using System.Linq;
 using Xunit;
 using Xunit.Abstractions;
 
@@ -179,5 +182,30 @@ public class DxfReaderTests : CadReaderTestsBase<DxfReader>
 		Assert.NotNull(doc.UCSs);
 		Assert.NotNull(doc.Views);
 		Assert.NotNull(doc.VPorts);
+	}
+
+	[Fact]
+	public void ReadPreR13DimensionPointsTest()
+	{
+		//https://github.com/DomCR/ACadSharp/issues/1246
+		string path = System.IO.Path.Combine(TestVariables.SamplesFolder, "r12_dimension_points.dxf");
+
+		CadDocument doc;
+		using (DxfReader reader = new DxfReader(path))
+		{
+			doc = reader.Read();
+		}
+
+		DimensionLinear linear = doc.Entities.OfType<DimensionLinear>().Single();
+		Assert.Equal("*D0", linear.Block.Name);
+		Assert.Equal(new XYZ(0, 10, 0), linear.DefinitionPoint);
+		Assert.Equal(new XYZ(50, 10, 0), linear.TextMiddlePoint);
+		Assert.Equal(new XYZ(0, 0, 0), linear.FirstPoint);
+		Assert.Equal(new XYZ(100, 0, 0), linear.SecondPoint);
+
+		DimensionRadius radius = doc.Entities.OfType<DimensionRadius>().Single();
+		Assert.Equal(new XYZ(0, 0, 0), radius.DefinitionPoint);
+		Assert.Equal(new XYZ(30, 30, 0), radius.TextMiddlePoint);
+		AssertUtils.AreEqual(new XYZ(70.7106781186548, 70.7106781186548, 0), radius.AngleVertex);
 	}
 }
