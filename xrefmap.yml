@@ -7189,12 +7189,6 @@ references:
   commentId: F:ACadSharp.DxfSubclassMarker.Tolerance
   fullName: ACadSharp.DxfSubclassMarker.Tolerance
   nameWithType: DxfSubclassMarker.Tolerance
-- uid: ACadSharp.DxfSubclassMarker.Trace
-  name: Trace
-  href: api/ACadSharp.DxfSubclassMarker.html#ACadSharp_DxfSubclassMarker_Trace
-  commentId: F:ACadSharp.DxfSubclassMarker.Trace
-  fullName: ACadSharp.DxfSubclassMarker.Trace
-  nameWithType: DxfSubclassMarker.Trace
 - uid: ACadSharp.DxfSubclassMarker.Ucs
   name: Ucs
   href: api/ACadSharp.DxfSubclassMarker.html#ACadSharp_DxfSubclassMarker_Ucs
@@ -7273,278 +7267,314 @@ references:
   commentId: N:ACadSharp.Entities
   fullName: ACadSharp.Entities
   nameWithType: ACadSharp.Entities
-- uid: ACadSharp.Entities.AecObjects
-  name: ACadSharp.Entities.AecObjects
-  href: api/ACadSharp.Entities.AecObjects.html
-  commentId: N:ACadSharp.Entities.AecObjects
-  fullName: ACadSharp.Entities.AecObjects
-  nameWithType: ACadSharp.Entities.AecObjects
-- uid: ACadSharp.Entities.AecObjects.Wall
+- uid: ACadSharp.Entities.AecEntities
+  name: ACadSharp.Entities.AecEntities
+  href: api/ACadSharp.Entities.AecEntities.html
+  commentId: N:ACadSharp.Entities.AecEntities
+  fullName: ACadSharp.Entities.AecEntities
+  nameWithType: ACadSharp.Entities.AecEntities
+- uid: ACadSharp.Entities.AecEntities.AecEntity
+  name: AecEntity
+  href: api/ACadSharp.Entities.AecEntities.AecEntity.html
+  commentId: T:ACadSharp.Entities.AecEntities.AecEntity
+  fullName: ACadSharp.Entities.AecEntities.AecEntity
+  nameWithType: AecEntity
+- uid: ACadSharp.Entities.AecEntities.Wall
   name: Wall
-  href: api/ACadSharp.Entities.AecObjects.Wall.html
-  commentId: T:ACadSharp.Entities.AecObjects.Wall
-  fullName: ACadSharp.Entities.AecObjects.Wall
+  href: api/ACadSharp.Entities.AecEntities.Wall.html
+  commentId: T:ACadSharp.Entities.AecEntities.Wall
+  fullName: ACadSharp.Entities.AecEntities.Wall
   nameWithType: Wall
-- uid: ACadSharp.Entities.AecObjects.Wall.ApplyTransform(CSMath.Transform)
+- uid: ACadSharp.Entities.AecEntities.Wall.ApplyTransform(CSMath.Transform)
   name: ApplyTransform(Transform)
-  href: api/ACadSharp.Entities.AecObjects.Wall.html#ACadSharp_Entities_AecObjects_Wall_ApplyTransform_CSMath_Transform_
-  commentId: M:ACadSharp.Entities.AecObjects.Wall.ApplyTransform(CSMath.Transform)
-  fullName: ACadSharp.Entities.AecObjects.Wall.ApplyTransform(CSMath.Transform)
+  href: api/ACadSharp.Entities.AecEntities.Wall.html#ACadSharp_Entities_AecEntities_Wall_ApplyTransform_CSMath_Transform_
+  commentId: M:ACadSharp.Entities.AecEntities.Wall.ApplyTransform(CSMath.Transform)
+  fullName: ACadSharp.Entities.AecEntities.Wall.ApplyTransform(CSMath.Transform)
   nameWithType: Wall.ApplyTransform(Transform)
-- uid: ACadSharp.Entities.AecObjects.Wall.ApplyTransform*
+- uid: ACadSharp.Entities.AecEntities.Wall.ApplyTransform*
   name: ApplyTransform
-  href: api/ACadSharp.Entities.AecObjects.Wall.html#ACadSharp_Entities_AecObjects_Wall_ApplyTransform_
-  commentId: Overload:ACadSharp.Entities.AecObjects.Wall.ApplyTransform
+  href: api/ACadSharp.Entities.AecEntities.Wall.html#ACadSharp_Entities_AecEntities_Wall_ApplyTransform_
+  commentId: Overload:ACadSharp.Entities.AecEntities.Wall.ApplyTransform
   isSpec: "True"
-  fullName: ACadSharp.Entities.AecObjects.Wall.ApplyTransform
+  fullName: ACadSharp.Entities.AecEntities.Wall.ApplyTransform
   nameWithType: Wall.ApplyTransform
-- uid: ACadSharp.Entities.AecObjects.Wall.BaseHeight
+- uid: ACadSharp.Entities.AecEntities.Wall.BaseHeight
   name: BaseHeight
-  href: api/ACadSharp.Entities.AecObjects.Wall.html#ACadSharp_Entities_AecObjects_Wall_BaseHeight
-  commentId: P:ACadSharp.Entities.AecObjects.Wall.BaseHeight
-  fullName: ACadSharp.Entities.AecObjects.Wall.BaseHeight
+  href: api/ACadSharp.Entities.AecEntities.Wall.html#ACadSharp_Entities_AecEntities_Wall_BaseHeight
+  commentId: P:ACadSharp.Entities.AecEntities.Wall.BaseHeight
+  fullName: ACadSharp.Entities.AecEntities.Wall.BaseHeight
   nameWithType: Wall.BaseHeight
-- uid: ACadSharp.Entities.AecObjects.Wall.BaseHeight*
+- uid: ACadSharp.Entities.AecEntities.Wall.BaseHeight*
   name: BaseHeight
-  href: api/ACadSharp.Entities.AecObjects.Wall.html#ACadSharp_Entities_AecObjects_Wall_BaseHeight_
-  commentId: Overload:ACadSharp.Entities.AecObjects.Wall.BaseHeight
+  href: api/ACadSharp.Entities.AecEntities.Wall.html#ACadSharp_Entities_AecEntities_Wall_BaseHeight_
+  commentId: Overload:ACadSharp.Entities.AecEntities.Wall.BaseHeight
   isSpec: "True"
-  fullName: ACadSharp.Entities.AecObjects.Wall.BaseHeight
+  fullName: ACadSharp.Entities.AecEntities.Wall.BaseHeight
   nameWithType: Wall.BaseHeight
-- uid: ACadSharp.Entities.AecObjects.Wall.BinRecord
+- uid: ACadSharp.Entities.AecEntities.Wall.BinRecord
   name: BinRecord
-  href: api/ACadSharp.Entities.AecObjects.Wall.html#ACadSharp_Entities_AecObjects_Wall_BinRecord
-  commentId: P:ACadSharp.Entities.AecObjects.Wall.BinRecord
-  fullName: ACadSharp.Entities.AecObjects.Wall.BinRecord
+  href: api/ACadSharp.Entities.AecEntities.Wall.html#ACadSharp_Entities_AecEntities_Wall_BinRecord
+  commentId: P:ACadSharp.Entities.AecEntities.Wall.BinRecord
+  fullName: ACadSharp.Entities.AecEntities.Wall.BinRecord
   nameWithType: Wall.BinRecord
-- uid: ACadSharp.Entities.AecObjects.Wall.BinRecord*
+- uid: ACadSharp.Entities.AecEntities.Wall.BinRecord*
   name: BinRecord
-  href: api/ACadSharp.Entities.AecObjects.Wall.html#ACadSharp_Entities_AecObjects_Wall_BinRecord_
-  commentId: Overload:ACadSharp.Entities.AecObjects.Wall.BinRecord
+  href: api/ACadSharp.Entities.AecEntities.Wall.html#ACadSharp_Entities_AecEntities_Wall_BinRecord_
+  commentId: Overload:ACadSharp.Entities.AecEntities.Wall.BinRecord
   isSpec: "True"
-  fullName: ACadSharp.Entities.AecObjects.Wall.BinRecord
+  fullName: ACadSharp.Entities.AecEntities.Wall.BinRecord
   nameWithType: Wall.BinRecord
-- uid: ACadSharp.Entities.AecObjects.Wall.BinRecordHandle
+- uid: ACadSharp.Entities.AecEntities.Wall.BinRecordHandle
   name: BinRecordHandle
-  href: api/ACadSharp.Entities.AecObjects.Wall.html#ACadSharp_Entities_AecObjects_Wall_BinRecordHandle
-  commentId: P:ACadSharp.Entities.AecObjects.Wall.BinRecordHandle
-  fullName: ACadSharp.Entities.AecObjects.Wall.BinRecordHandle
+  href: api/ACadSharp.Entities.AecEntities.Wall.html#ACadSharp_Entities_AecEntities_Wall_BinRecordHandle
+  commentId: P:ACadSharp.Entities.AecEntities.Wall.BinRecordHandle
+  fullName: ACadSharp.Entities.AecEntities.Wall.BinRecordHandle
   nameWithType: Wall.BinRecordHandle
-- uid: ACadSharp.Entities.AecObjects.Wall.BinRecordHandle*
+- uid: ACadSharp.Entities.AecEntities.Wall.BinRecordHandle*
   name: BinRecordHandle
-  href: api/ACadSharp.Entities.AecObjects.Wall.html#ACadSharp_Entities_AecObjects_Wall_BinRecordHandle_
-  commentId: Overload:ACadSharp.Entities.AecObjects.Wall.BinRecordHandle
+  href: api/ACadSharp.Entities.AecEntities.Wall.html#ACadSharp_Entities_AecEntities_Wall_BinRecordHandle_
+  commentId: Overload:ACadSharp.Entities.AecEntities.Wall.BinRecordHandle
   isSpec: "True"
-  fullName: ACadSharp.Entities.AecObjects.Wall.BinRecordHandle
+  fullName: ACadSharp.Entities.AecEntities.Wall.BinRecordHandle
   nameWithType: Wall.BinRecordHandle
-- uid: ACadSharp.Entities.AecObjects.Wall.CleanupGroup
+- uid: ACadSharp.Entities.AecEntities.Wall.CleanupGroup
   name: CleanupGroup
-  href: api/ACadSharp.Entities.AecObjects.Wall.html#ACadSharp_Entities_AecObjects_Wall_CleanupGroup
-  commentId: P:ACadSharp.Entities.AecObjects.Wall.CleanupGroup
-  fullName: ACadSharp.Entities.AecObjects.Wall.CleanupGroup
+  href: api/ACadSharp.Entities.AecEntities.Wall.html#ACadSharp_Entities_AecEntities_Wall_CleanupGroup
+  commentId: P:ACadSharp.Entities.AecEntities.Wall.CleanupGroup
+  fullName: ACadSharp.Entities.AecEntities.Wall.CleanupGroup
   nameWithType: Wall.CleanupGroup
-- uid: ACadSharp.Entities.AecObjects.Wall.CleanupGroup*
+- uid: ACadSharp.Entities.AecEntities.Wall.CleanupGroup*
   name: CleanupGroup
-  href: api/ACadSharp.Entities.AecObjects.Wall.html#ACadSharp_Entities_AecObjects_Wall_CleanupGroup_
-  commentId: Overload:ACadSharp.Entities.AecObjects.Wall.CleanupGroup
+  href: api/ACadSharp.Entities.AecEntities.Wall.html#ACadSharp_Entities_AecEntities_Wall_CleanupGroup_
+  commentId: Overload:ACadSharp.Entities.AecEntities.Wall.CleanupGroup
   isSpec: "True"
-  fullName: ACadSharp.Entities.AecObjects.Wall.CleanupGroup
+  fullName: ACadSharp.Entities.AecEntities.Wall.CleanupGroup
   nameWithType: Wall.CleanupGroup
-- uid: ACadSharp.Entities.AecObjects.Wall.CleanupGroupHandle
+- uid: ACadSharp.Entities.AecEntities.Wall.CleanupGroupHandle
   name: CleanupGroupHandle
-  href: api/ACadSharp.Entities.AecObjects.Wall.html#ACadSharp_Entities_AecObjects_Wall_CleanupGroupHandle
-  commentId: P:ACadSharp.Entities.AecObjects.Wall.CleanupGroupHandle
-  fullName: ACadSharp.Entities.AecObjects.Wall.CleanupGroupHandle
+  href: api/ACadSharp.Entities.AecEntities.Wall.html#ACadSharp_Entities_AecEntities_Wall_CleanupGroupHandle
+  commentId: P:ACadSharp.Entities.AecEntities.Wall.CleanupGroupHandle
+  fullName: ACadSharp.Entities.AecEntities.Wall.CleanupGroupHandle
   nameWithType: Wall.CleanupGroupHandle
-- uid: ACadSharp.Entities.AecObjects.Wall.CleanupGroupHandle*
+- uid: ACadSharp.Entities.AecEntities.Wall.CleanupGroupHandle*
   name: CleanupGroupHandle
-  href: api/ACadSharp.Entities.AecObjects.Wall.html#ACadSharp_Entities_AecObjects_Wall_CleanupGroupHandle_
-  commentId: Overload:ACadSharp.Entities.AecObjects.Wall.CleanupGroupHandle
+  href: api/ACadSharp.Entities.AecEntities.Wall.html#ACadSharp_Entities_AecEntities_Wall_CleanupGroupHandle_
+  commentId: Overload:ACadSharp.Entities.AecEntities.Wall.CleanupGroupHandle
   isSpec: "True"
-  fullName: ACadSharp.Entities.AecObjects.Wall.CleanupGroupHandle
+  fullName: ACadSharp.Entities.AecEntities.Wall.CleanupGroupHandle
   nameWithType: Wall.CleanupGroupHandle
-- uid: ACadSharp.Entities.AecObjects.Wall.EndPoint
+- uid: ACadSharp.Entities.AecEntities.Wall.EndPoint
   name: EndPoint
-  href: api/ACadSharp.Entities.AecObjects.Wall.html#ACadSharp_Entities_AecObjects_Wall_EndPoint
-  commentId: P:ACadSharp.Entities.AecObjects.Wall.EndPoint
-  fullName: ACadSharp.Entities.AecObjects.Wall.EndPoint
+  href: api/ACadSharp.Entities.AecEntities.Wall.html#ACadSharp_Entities_AecEntities_Wall_EndPoint
+  commentId: P:ACadSharp.Entities.AecEntities.Wall.EndPoint
+  fullName: ACadSharp.Entities.AecEntities.Wall.EndPoint
   nameWithType: Wall.EndPoint
-- uid: ACadSharp.Entities.AecObjects.Wall.EndPoint*
+- uid: ACadSharp.Entities.AecEntities.Wall.EndPoint*
   name: EndPoint
-  href: api/ACadSharp.Entities.AecObjects.Wall.html#ACadSharp_Entities_AecObjects_Wall_EndPoint_
-  commentId: Overload:ACadSharp.Entities.AecObjects.Wall.EndPoint
+  href: api/ACadSharp.Entities.AecEntities.Wall.html#ACadSharp_Entities_AecEntities_Wall_EndPoint_
+  commentId: Overload:ACadSharp.Entities.AecEntities.Wall.EndPoint
   isSpec: "True"
-  fullName: ACadSharp.Entities.AecObjects.Wall.EndPoint
+  fullName: ACadSharp.Entities.AecEntities.Wall.EndPoint
   nameWithType: Wall.EndPoint
-- uid: ACadSharp.Entities.AecObjects.Wall.GetBoundingBox
+- uid: ACadSharp.Entities.AecEntities.Wall.GetBoundingBox
   name: GetBoundingBox()
-  href: api/ACadSharp.Entities.AecObjects.Wall.html#ACadSharp_Entities_AecObjects_Wall_GetBoundingBox
-  commentId: M:ACadSharp.Entities.AecObjects.Wall.GetBoundingBox
-  fullName: ACadSharp.Entities.AecObjects.Wall.GetBoundingBox()
+  href: api/ACadSharp.Entities.AecEntities.Wall.html#ACadSharp_Entities_AecEntities_Wall_GetBoundingBox
+  commentId: M:ACadSharp.Entities.AecEntities.Wall.GetBoundingBox
+  fullName: ACadSharp.Entities.AecEntities.Wall.GetBoundingBox()
   nameWithType: Wall.GetBoundingBox()
-- uid: ACadSharp.Entities.AecObjects.Wall.GetBoundingBox*
+- uid: ACadSharp.Entities.AecEntities.Wall.GetBoundingBox*
   name: GetBoundingBox
-  href: api/ACadSharp.Entities.AecObjects.Wall.html#ACadSharp_Entities_AecObjects_Wall_GetBoundingBox_
-  commentId: Overload:ACadSharp.Entities.AecObjects.Wall.GetBoundingBox
+  href: api/ACadSharp.Entities.AecEntities.Wall.html#ACadSharp_Entities_AecEntities_Wall_GetBoundingBox_
+  commentId: Overload:ACadSharp.Entities.AecEntities.Wall.GetBoundingBox
   isSpec: "True"
-  fullName: ACadSharp.Entities.AecObjects.Wall.GetBoundingBox
+  fullName: ACadSharp.Entities.AecEntities.Wall.GetBoundingBox
   nameWithType: Wall.GetBoundingBox
-- uid: ACadSharp.Entities.AecObjects.Wall.Height
+- uid: ACadSharp.Entities.AecEntities.Wall.Height
   name: Height
-  href: api/ACadSharp.Entities.AecObjects.Wall.html#ACadSharp_Entities_AecObjects_Wall_Height
-  commentId: P:ACadSharp.Entities.AecObjects.Wall.Height
-  fullName: ACadSharp.Entities.AecObjects.Wall.Height
+  href: api/ACadSharp.Entities.AecEntities.Wall.html#ACadSharp_Entities_AecEntities_Wall_Height
+  commentId: P:ACadSharp.Entities.AecEntities.Wall.Height
+  fullName: ACadSharp.Entities.AecEntities.Wall.Height
   nameWithType: Wall.Height
-- uid: ACadSharp.Entities.AecObjects.Wall.Height*
+- uid: ACadSharp.Entities.AecEntities.Wall.Height*
   name: Height
-  href: api/ACadSharp.Entities.AecObjects.Wall.html#ACadSharp_Entities_AecObjects_Wall_Height_
-  commentId: Overload:ACadSharp.Entities.AecObjects.Wall.Height
+  href: api/ACadSharp.Entities.AecEntities.Wall.html#ACadSharp_Entities_AecEntities_Wall_Height_
+  commentId: Overload:ACadSharp.Entities.AecEntities.Wall.Height
   isSpec: "True"
-  fullName: ACadSharp.Entities.AecObjects.Wall.Height
+  fullName: ACadSharp.Entities.AecEntities.Wall.Height
   nameWithType: Wall.Height
-- uid: ACadSharp.Entities.AecObjects.Wall.Justification
+- uid: ACadSharp.Entities.AecEntities.Wall.Justification
   name: Justification
-  href: api/ACadSharp.Entities.AecObjects.Wall.html#ACadSharp_Entities_AecObjects_Wall_Justification
-  commentId: P:ACadSharp.Entities.AecObjects.Wall.Justification
-  fullName: ACadSharp.Entities.AecObjects.Wall.Justification
+  href: api/ACadSharp.Entities.AecEntities.Wall.html#ACadSharp_Entities_AecEntities_Wall_Justification
+  commentId: P:ACadSharp.Entities.AecEntities.Wall.Justification
+  fullName: ACadSharp.Entities.AecEntities.Wall.Justification
   nameWithType: Wall.Justification
-- uid: ACadSharp.Entities.AecObjects.Wall.Justification*
+- uid: ACadSharp.Entities.AecEntities.Wall.Justification*
   name: Justification
-  href: api/ACadSharp.Entities.AecObjects.Wall.html#ACadSharp_Entities_AecObjects_Wall_Justification_
-  commentId: Overload:ACadSharp.Entities.AecObjects.Wall.Justification
+  href: api/ACadSharp.Entities.AecEntities.Wall.html#ACadSharp_Entities_AecEntities_Wall_Justification_
+  commentId: Overload:ACadSharp.Entities.AecEntities.Wall.Justification
   isSpec: "True"
-  fullName: ACadSharp.Entities.AecObjects.Wall.Justification
+  fullName: ACadSharp.Entities.AecEntities.Wall.Justification
   nameWithType: Wall.Justification
-- uid: ACadSharp.Entities.AecObjects.Wall.Length
+- uid: ACadSharp.Entities.AecEntities.Wall.Length
   name: Length
-  href: api/ACadSharp.Entities.AecObjects.Wall.html#ACadSharp_Entities_AecObjects_Wall_Length
-  commentId: P:ACadSharp.Entities.AecObjects.Wall.Length
-  fullName: ACadSharp.Entities.AecObjects.Wall.Length
+  href: api/ACadSharp.Entities.AecEntities.Wall.html#ACadSharp_Entities_AecEntities_Wall_Length
+  commentId: P:ACadSharp.Entities.AecEntities.Wall.Length
+  fullName: ACadSharp.Entities.AecEntities.Wall.Length
   nameWithType: Wall.Length
-- uid: ACadSharp.Entities.AecObjects.Wall.Length*
+- uid: ACadSharp.Entities.AecEntities.Wall.Length*
   name: Length
-  href: api/ACadSharp.Entities.AecObjects.Wall.html#ACadSharp_Entities_AecObjects_Wall_Length_
-  commentId: Overload:ACadSharp.Entities.AecObjects.Wall.Length
+  href: api/ACadSharp.Entities.AecEntities.Wall.html#ACadSharp_Entities_AecEntities_Wall_Length_
+  commentId: Overload:ACadSharp.Entities.AecEntities.Wall.Length
   isSpec: "True"
-  fullName: ACadSharp.Entities.AecObjects.Wall.Length
+  fullName: ACadSharp.Entities.AecEntities.Wall.Length
   nameWithType: Wall.Length
-- uid: ACadSharp.Entities.AecObjects.Wall.Normal
+- uid: ACadSharp.Entities.AecEntities.Wall.Normal
   name: Normal
-  href: api/ACadSharp.Entities.AecObjects.Wall.html#ACadSharp_Entities_AecObjects_Wall_Normal
-  commentId: P:ACadSharp.Entities.AecObjects.Wall.Normal
-  fullName: ACadSharp.Entities.AecObjects.Wall.Normal
+  href: api/ACadSharp.Entities.AecEntities.Wall.html#ACadSharp_Entities_AecEntities_Wall_Normal
+  commentId: P:ACadSharp.Entities.AecEntities.Wall.Normal
+  fullName: ACadSharp.Entities.AecEntities.Wall.Normal
   nameWithType: Wall.Normal
-- uid: ACadSharp.Entities.AecObjects.Wall.Normal*
+- uid: ACadSharp.Entities.AecEntities.Wall.Normal*
   name: Normal
-  href: api/ACadSharp.Entities.AecObjects.Wall.html#ACadSharp_Entities_AecObjects_Wall_Normal_
-  commentId: Overload:ACadSharp.Entities.AecObjects.Wall.Normal
+  href: api/ACadSharp.Entities.AecEntities.Wall.html#ACadSharp_Entities_AecEntities_Wall_Normal_
+  commentId: Overload:ACadSharp.Entities.AecEntities.Wall.Normal
   isSpec: "True"
-  fullName: ACadSharp.Entities.AecObjects.Wall.Normal
+  fullName: ACadSharp.Entities.AecEntities.Wall.Normal
   nameWithType: Wall.Normal
-- uid: ACadSharp.Entities.AecObjects.Wall.ObjectName
+- uid: ACadSharp.Entities.AecEntities.Wall.ObjectName
   name: ObjectName
-  href: api/ACadSharp.Entities.AecObjects.Wall.html#ACadSharp_Entities_AecObjects_Wall_ObjectName
-  commentId: P:ACadSharp.Entities.AecObjects.Wall.ObjectName
-  fullName: ACadSharp.Entities.AecObjects.Wall.ObjectName
+  href: api/ACadSharp.Entities.AecEntities.Wall.html#ACadSharp_Entities_AecEntities_Wall_ObjectName
+  commentId: P:ACadSharp.Entities.AecEntities.Wall.ObjectName
+  fullName: ACadSharp.Entities.AecEntities.Wall.ObjectName
   nameWithType: Wall.ObjectName
-- uid: ACadSharp.Entities.AecObjects.Wall.ObjectName*
+- uid: ACadSharp.Entities.AecEntities.Wall.ObjectName*
   name: ObjectName
-  href: api/ACadSharp.Entities.AecObjects.Wall.html#ACadSharp_Entities_AecObjects_Wall_ObjectName_
-  commentId: Overload:ACadSharp.Entities.AecObjects.Wall.ObjectName
+  href: api/ACadSharp.Entities.AecEntities.Wall.html#ACadSharp_Entities_AecEntities_Wall_ObjectName_
+  commentId: Overload:ACadSharp.Entities.AecEntities.Wall.ObjectName
   isSpec: "True"
-  fullName: ACadSharp.Entities.AecObjects.Wall.ObjectName
+  fullName: ACadSharp.Entities.AecEntities.Wall.ObjectName
   nameWithType: Wall.ObjectName
-- uid: ACadSharp.Entities.AecObjects.Wall.ObjectType
+- uid: ACadSharp.Entities.AecEntities.Wall.ObjectType
   name: ObjectType
-  href: api/ACadSharp.Entities.AecObjects.Wall.html#ACadSharp_Entities_AecObjects_Wall_ObjectType
-  commentId: P:ACadSharp.Entities.AecObjects.Wall.ObjectType
-  fullName: ACadSharp.Entities.AecObjects.Wall.ObjectType
+  href: api/ACadSharp.Entities.AecEntities.Wall.html#ACadSharp_Entities_AecEntities_Wall_ObjectType
+  commentId: P:ACadSharp.Entities.AecEntities.Wall.ObjectType
+  fullName: ACadSharp.Entities.AecEntities.Wall.ObjectType
   nameWithType: Wall.ObjectType
-- uid: ACadSharp.Entities.AecObjects.Wall.ObjectType*
+- uid: ACadSharp.Entities.AecEntities.Wall.ObjectType*
   name: ObjectType
-  href: api/ACadSharp.Entities.AecObjects.Wall.html#ACadSharp_Entities_AecObjects_Wall_ObjectType_
-  commentId: Overload:ACadSharp.Entities.AecObjects.Wall.ObjectType
+  href: api/ACadSharp.Entities.AecEntities.Wall.html#ACadSharp_Entities_AecEntities_Wall_ObjectType_
+  commentId: Overload:ACadSharp.Entities.AecEntities.Wall.ObjectType
   isSpec: "True"
-  fullName: ACadSharp.Entities.AecObjects.Wall.ObjectType
+  fullName: ACadSharp.Entities.AecEntities.Wall.ObjectType
   nameWithType: Wall.ObjectType
-- uid: ACadSharp.Entities.AecObjects.Wall.RawData
+- uid: ACadSharp.Entities.AecEntities.Wall.RawData
   name: RawData
-  href: api/ACadSharp.Entities.AecObjects.Wall.html#ACadSharp_Entities_AecObjects_Wall_RawData
-  commentId: P:ACadSharp.Entities.AecObjects.Wall.RawData
-  fullName: ACadSharp.Entities.AecObjects.Wall.RawData
+  href: api/ACadSharp.Entities.AecEntities.Wall.html#ACadSharp_Entities_AecEntities_Wall_RawData
+  commentId: P:ACadSharp.Entities.AecEntities.Wall.RawData
+  fullName: ACadSharp.Entities.AecEntities.Wall.RawData
   nameWithType: Wall.RawData
-- uid: ACadSharp.Entities.AecObjects.Wall.RawData*
+- uid: ACadSharp.Entities.AecEntities.Wall.RawData*
   name: RawData
-  href: api/ACadSharp.Entities.AecObjects.Wall.html#ACadSharp_Entities_AecObjects_Wall_RawData_
-  commentId: Overload:ACadSharp.Entities.AecObjects.Wall.RawData
+  href: api/ACadSharp.Entities.AecEntities.Wall.html#ACadSharp_Entities_AecEntities_Wall_RawData_
+  commentId: Overload:ACadSharp.Entities.AecEntities.Wall.RawData
   isSpec: "True"
-  fullName: ACadSharp.Entities.AecObjects.Wall.RawData
+  fullName: ACadSharp.Entities.AecEntities.Wall.RawData
   nameWithType: Wall.RawData
-- uid: ACadSharp.Entities.AecObjects.Wall.StartPoint
+- uid: ACadSharp.Entities.AecEntities.Wall.StartPoint
   name: StartPoint
-  href: api/ACadSharp.Entities.AecObjects.Wall.html#ACadSharp_Entities_AecObjects_Wall_StartPoint
-  commentId: P:ACadSharp.Entities.AecObjects.Wall.StartPoint
-  fullName: ACadSharp.Entities.AecObjects.Wall.StartPoint
+  href: api/ACadSharp.Entities.AecEntities.Wall.html#ACadSharp_Entities_AecEntities_Wall_StartPoint
+  commentId: P:ACadSharp.Entities.AecEntities.Wall.StartPoint
+  fullName: ACadSharp.Entities.AecEntities.Wall.StartPoint
   nameWithType: Wall.StartPoint
-- uid: ACadSharp.Entities.AecObjects.Wall.StartPoint*
+- uid: ACadSharp.Entities.AecEntities.Wall.StartPoint*
   name: StartPoint
-  href: api/ACadSharp.Entities.AecObjects.Wall.html#ACadSharp_Entities_AecObjects_Wall_StartPoint_
-  commentId: Overload:ACadSharp.Entities.AecObjects.Wall.StartPoint
+  href: api/ACadSharp.Entities.AecEntities.Wall.html#ACadSharp_Entities_AecEntities_Wall_StartPoint_
+  commentId: Overload:ACadSharp.Entities.AecEntities.Wall.StartPoint
   isSpec: "True"
-  fullName: ACadSharp.Entities.AecObjects.Wall.StartPoint
+  fullName: ACadSharp.Entities.AecEntities.Wall.StartPoint
   nameWithType: Wall.StartPoint
-- uid: ACadSharp.Entities.AecObjects.Wall.Style
+- uid: ACadSharp.Entities.AecEntities.Wall.Style
   name: Style
-  href: api/ACadSharp.Entities.AecObjects.Wall.html#ACadSharp_Entities_AecObjects_Wall_Style
-  commentId: P:ACadSharp.Entities.AecObjects.Wall.Style
-  fullName: ACadSharp.Entities.AecObjects.Wall.Style
+  href: api/ACadSharp.Entities.AecEntities.Wall.html#ACadSharp_Entities_AecEntities_Wall_Style
+  commentId: P:ACadSharp.Entities.AecEntities.Wall.Style
+  fullName: ACadSharp.Entities.AecEntities.Wall.Style
   nameWithType: Wall.Style
-- uid: ACadSharp.Entities.AecObjects.Wall.Style*
+- uid: ACadSharp.Entities.AecEntities.Wall.Style*
   name: Style
-  href: api/ACadSharp.Entities.AecObjects.Wall.html#ACadSharp_Entities_AecObjects_Wall_Style_
-  commentId: Overload:ACadSharp.Entities.AecObjects.Wall.Style
+  href: api/ACadSharp.Entities.AecEntities.Wall.html#ACadSharp_Entities_AecEntities_Wall_Style_
+  commentId: Overload:ACadSharp.Entities.AecEntities.Wall.Style
   isSpec: "True"
-  fullName: ACadSharp.Entities.AecObjects.Wall.Style
+  fullName: ACadSharp.Entities.AecEntities.Wall.Style
   nameWithType: Wall.Style
-- uid: ACadSharp.Entities.AecObjects.Wall.SubclassMarker
+- uid: ACadSharp.Entities.AecEntities.Wall.SubclassMarker
   name: SubclassMarker
-  href: api/ACadSharp.Entities.AecObjects.Wall.html#ACadSharp_Entities_AecObjects_Wall_SubclassMarker
-  commentId: P:ACadSharp.Entities.AecObjects.Wall.SubclassMarker
-  fullName: ACadSharp.Entities.AecObjects.Wall.SubclassMarker
+  href: api/ACadSharp.Entities.AecEntities.Wall.html#ACadSharp_Entities_AecEntities_Wall_SubclassMarker
+  commentId: P:ACadSharp.Entities.AecEntities.Wall.SubclassMarker
+  fullName: ACadSharp.Entities.AecEntities.Wall.SubclassMarker
   nameWithType: Wall.SubclassMarker
-- uid: ACadSharp.Entities.AecObjects.Wall.SubclassMarker*
+- uid: ACadSharp.Entities.AecEntities.Wall.SubclassMarker*
   name: SubclassMarker
-  href: api/ACadSharp.Entities.AecObjects.Wall.html#ACadSharp_Entities_AecObjects_Wall_SubclassMarker_
-  commentId: Overload:ACadSharp.Entities.AecObjects.Wall.SubclassMarker
+  href: api/ACadSharp.Entities.AecEntities.Wall.html#ACadSharp_Entities_AecEntities_Wall_SubclassMarker_
+  commentId: Overload:ACadSharp.Entities.AecEntities.Wall.SubclassMarker
   isSpec: "True"
-  fullName: ACadSharp.Entities.AecObjects.Wall.SubclassMarker
+  fullName: ACadSharp.Entities.AecEntities.Wall.SubclassMarker
   nameWithType: Wall.SubclassMarker
-- uid: ACadSharp.Entities.AecObjects.Wall.Version
+- uid: ACadSharp.Entities.AecEntities.Wall.Version
   name: Version
-  href: api/ACadSharp.Entities.AecObjects.Wall.html#ACadSharp_Entities_AecObjects_Wall_Version
-  commentId: P:ACadSharp.Entities.AecObjects.Wall.Version
-  fullName: ACadSharp.Entities.AecObjects.Wall.Version
+  href: api/ACadSharp.Entities.AecEntities.Wall.html#ACadSharp_Entities_AecEntities_Wall_Version
+  commentId: P:ACadSharp.Entities.AecEntities.Wall.Version
+  fullName: ACadSharp.Entities.AecEntities.Wall.Version
   nameWithType: Wall.Version
-- uid: ACadSharp.Entities.AecObjects.Wall.Version*
+- uid: ACadSharp.Entities.AecEntities.Wall.Version*
   name: Version
-  href: api/ACadSharp.Entities.AecObjects.Wall.html#ACadSharp_Entities_AecObjects_Wall_Version_
-  commentId: Overload:ACadSharp.Entities.AecObjects.Wall.Version
+  href: api/ACadSharp.Entities.AecEntities.Wall.html#ACadSharp_Entities_AecEntities_Wall_Version_
+  commentId: Overload:ACadSharp.Entities.AecEntities.Wall.Version
   isSpec: "True"
-  fullName: ACadSharp.Entities.AecObjects.Wall.Version
+  fullName: ACadSharp.Entities.AecEntities.Wall.Version
   nameWithType: Wall.Version
-- uid: ACadSharp.Entities.AecObjects.Wall.Width
+- uid: ACadSharp.Entities.AecEntities.Wall.Width
   name: Width
-  href: api/ACadSharp.Entities.AecObjects.Wall.html#ACadSharp_Entities_AecObjects_Wall_Width
-  commentId: P:ACadSharp.Entities.AecObjects.Wall.Width
-  fullName: ACadSharp.Entities.AecObjects.Wall.Width
+  href: api/ACadSharp.Entities.AecEntities.Wall.html#ACadSharp_Entities_AecEntities_Wall_Width
+  commentId: P:ACadSharp.Entities.AecEntities.Wall.Width
+  fullName: ACadSharp.Entities.AecEntities.Wall.Width
   nameWithType: Wall.Width
-- uid: ACadSharp.Entities.AecObjects.Wall.Width*
+- uid: ACadSharp.Entities.AecEntities.Wall.Width*
   name: Width
-  href: api/ACadSharp.Entities.AecObjects.Wall.html#ACadSharp_Entities_AecObjects_Wall_Width_
-  commentId: Overload:ACadSharp.Entities.AecObjects.Wall.Width
+  href: api/ACadSharp.Entities.AecEntities.Wall.html#ACadSharp_Entities_AecEntities_Wall_Width_
+  commentId: Overload:ACadSharp.Entities.AecEntities.Wall.Width
   isSpec: "True"
-  fullName: ACadSharp.Entities.AecObjects.Wall.Width
+  fullName: ACadSharp.Entities.AecEntities.Wall.Width
   nameWithType: Wall.Width
+- uid: ACadSharp.Entities.AecEntities.WallJustification
+  name: WallJustification
+  href: api/ACadSharp.Entities.AecEntities.WallJustification.html
+  commentId: T:ACadSharp.Entities.AecEntities.WallJustification
+  fullName: ACadSharp.Entities.AecEntities.WallJustification
+  nameWithType: WallJustification
+- uid: ACadSharp.Entities.AecEntities.WallJustification.Baseline
+  name: Baseline
+  href: api/ACadSharp.Entities.AecEntities.WallJustification.html#ACadSharp_Entities_AecEntities_WallJustification_Baseline
+  commentId: F:ACadSharp.Entities.AecEntities.WallJustification.Baseline
+  fullName: ACadSharp.Entities.AecEntities.WallJustification.Baseline
+  nameWithType: WallJustification.Baseline
+- uid: ACadSharp.Entities.AecEntities.WallJustification.Center
+  name: Center
+  href: api/ACadSharp.Entities.AecEntities.WallJustification.html#ACadSharp_Entities_AecEntities_WallJustification_Center
+  commentId: F:ACadSharp.Entities.AecEntities.WallJustification.Center
+  fullName: ACadSharp.Entities.AecEntities.WallJustification.Center
+  nameWithType: WallJustification.Center
+- uid: ACadSharp.Entities.AecEntities.WallJustification.Left
+  name: Left
+  href: api/ACadSharp.Entities.AecEntities.WallJustification.html#ACadSharp_Entities_AecEntities_WallJustification_Left
+  commentId: F:ACadSharp.Entities.AecEntities.WallJustification.Left
+  fullName: ACadSharp.Entities.AecEntities.WallJustification.Left
+  nameWithType: WallJustification.Left
+- uid: ACadSharp.Entities.AecEntities.WallJustification.Right
+  name: Right
+  href: api/ACadSharp.Entities.AecEntities.WallJustification.html#ACadSharp_Entities_AecEntities_WallJustification_Right
+  commentId: F:ACadSharp.Entities.AecEntities.WallJustification.Right
+  fullName: ACadSharp.Entities.AecEntities.WallJustification.Right
+  nameWithType: WallJustification.Right
 - uid: ACadSharp.Entities.Arc
   name: Arc
   href: api/ACadSharp.Entities.Arc.html
@@ -15233,15 +15263,15 @@ references:
   fullName.vb: ACadSharp.Entities.LwPolyline.New(System.Collections.Generic.IEnumerable(Of ACadSharp.Entities.LwPolyline.Vertex))
   nameWithType: LwPolyline.LwPolyline(params IEnumerable<LwPolyline.Vertex>)
   nameWithType.vb: LwPolyline.New(IEnumerable(Of LwPolyline.Vertex))
-- uid: ACadSharp.Entities.LwPolyline.#ctor(System.Collections.Generic.IEnumerable{CSMath.XY})
-  name: LwPolyline(params IEnumerable<XY>)
-  href: api/ACadSharp.Entities.LwPolyline.html#ACadSharp_Entities_LwPolyline__ctor_System_Collections_Generic_IEnumerable_CSMath_XY__
-  commentId: M:ACadSharp.Entities.LwPolyline.#ctor(System.Collections.Generic.IEnumerable{CSMath.XY})
-  name.vb: New(IEnumerable(Of XY))
-  fullName: ACadSharp.Entities.LwPolyline.LwPolyline(params System.Collections.Generic.IEnumerable<CSMath.XY>)
-  fullName.vb: ACadSharp.Entities.LwPolyline.New(System.Collections.Generic.IEnumerable(Of CSMath.XY))
-  nameWithType: LwPolyline.LwPolyline(params IEnumerable<XY>)
-  nameWithType.vb: LwPolyline.New(IEnumerable(Of XY))
+- uid: ACadSharp.Entities.LwPolyline.#ctor(System.Collections.Generic.IEnumerable{CSMath.IVector})
+  name: LwPolyline(params IEnumerable<IVector>)
+  href: api/ACadSharp.Entities.LwPolyline.html#ACadSharp_Entities_LwPolyline__ctor_System_Collections_Generic_IEnumerable_CSMath_IVector__
+  commentId: M:ACadSharp.Entities.LwPolyline.#ctor(System.Collections.Generic.IEnumerable{CSMath.IVector})
+  name.vb: New(IEnumerable(Of IVector))
+  fullName: ACadSharp.Entities.LwPolyline.LwPolyline(params System.Collections.Generic.IEnumerable<CSMath.IVector>)
+  fullName.vb: ACadSharp.Entities.LwPolyline.New(System.Collections.Generic.IEnumerable(Of CSMath.IVector))
+  nameWithType: LwPolyline.LwPolyline(params IEnumerable<IVector>)
+  nameWithType.vb: LwPolyline.New(IEnumerable(Of IVector))
 - uid: ACadSharp.Entities.LwPolyline.#ctor*
   name: LwPolyline
   href: api/ACadSharp.Entities.LwPolyline.html#ACadSharp_Entities_LwPolyline__ctor_
@@ -43464,6 +43494,34 @@ references:
   commentId: T:ACadSharp.Objects.ImageDefinition
   fullName: ACadSharp.Objects.ImageDefinition
   nameWithType: ImageDefinition
+- uid: ACadSharp.Objects.ImageDefinition.#ctor
+  name: ImageDefinition()
+  href: api/ACadSharp.Objects.ImageDefinition.html#ACadSharp_Objects_ImageDefinition__ctor
+  commentId: M:ACadSharp.Objects.ImageDefinition.#ctor
+  name.vb: New()
+  fullName: ACadSharp.Objects.ImageDefinition.ImageDefinition()
+  fullName.vb: ACadSharp.Objects.ImageDefinition.New()
+  nameWithType: ImageDefinition.ImageDefinition()
+  nameWithType.vb: ImageDefinition.New()
+- uid: ACadSharp.Objects.ImageDefinition.#ctor(System.String)
+  name: ImageDefinition(string)
+  href: api/ACadSharp.Objects.ImageDefinition.html#ACadSharp_Objects_ImageDefinition__ctor_System_String_
+  commentId: M:ACadSharp.Objects.ImageDefinition.#ctor(System.String)
+  name.vb: New(String)
+  fullName: ACadSharp.Objects.ImageDefinition.ImageDefinition(string)
+  fullName.vb: ACadSharp.Objects.ImageDefinition.New(String)
+  nameWithType: ImageDefinition.ImageDefinition(string)
+  nameWithType.vb: ImageDefinition.New(String)
+- uid: ACadSharp.Objects.ImageDefinition.#ctor*
+  name: ImageDefinition
+  href: api/ACadSharp.Objects.ImageDefinition.html#ACadSharp_Objects_ImageDefinition__ctor_
+  commentId: Overload:ACadSharp.Objects.ImageDefinition.#ctor
+  isSpec: "True"
+  name.vb: New
+  fullName: ACadSharp.Objects.ImageDefinition.ImageDefinition
+  fullName.vb: ACadSharp.Objects.ImageDefinition.New
+  nameWithType: ImageDefinition.ImageDefinition
+  nameWithType.vb: ImageDefinition.New
 - uid: ACadSharp.Objects.ImageDefinition.ClassVersion
   name: ClassVersion
   href: api/ACadSharp.Objects.ImageDefinition.html#ACadSharp_Objects_ImageDefinition_ClassVersion
@@ -51743,6 +51801,34 @@ references:
   commentId: T:ACadSharp.Objects.VisualStyle
   fullName: ACadSharp.Objects.VisualStyle
   nameWithType: VisualStyle
+- uid: ACadSharp.Objects.VisualStyle.#ctor
+  name: VisualStyle()
+  href: api/ACadSharp.Objects.VisualStyle.html#ACadSharp_Objects_VisualStyle__ctor
+  commentId: M:ACadSharp.Objects.VisualStyle.#ctor
+  name.vb: New()
+  fullName: ACadSharp.Objects.VisualStyle.VisualStyle()
+  fullName.vb: ACadSharp.Objects.VisualStyle.New()
+  nameWithType: VisualStyle.VisualStyle()
+  nameWithType.vb: VisualStyle.New()
+- uid: ACadSharp.Objects.VisualStyle.#ctor(System.String)
+  name: VisualStyle(string)
+  href: api/ACadSharp.Objects.VisualStyle.html#ACadSharp_Objects_VisualStyle__ctor_System_String_
+  commentId: M:ACadSharp.Objects.VisualStyle.#ctor(System.String)
+  name.vb: New(String)
+  fullName: ACadSharp.Objects.VisualStyle.VisualStyle(string)
+  fullName.vb: ACadSharp.Objects.VisualStyle.New(String)
+  nameWithType: VisualStyle.VisualStyle(string)
+  nameWithType.vb: VisualStyle.New(String)
+- uid: ACadSharp.Objects.VisualStyle.#ctor*
+  name: VisualStyle
+  href: api/ACadSharp.Objects.VisualStyle.html#ACadSharp_Objects_VisualStyle__ctor_
+  commentId: Overload:ACadSharp.Objects.VisualStyle.#ctor
+  isSpec: "True"
+  name.vb: New
+  fullName: ACadSharp.Objects.VisualStyle.VisualStyle
+  fullName.vb: ACadSharp.Objects.VisualStyle.New
+  nameWithType: VisualStyle.VisualStyle
+  nameWithType.vb: VisualStyle.New
 - uid: ACadSharp.Objects.VisualStyle.Brightness
   name: Brightness
   href: api/ACadSharp.Objects.VisualStyle.html#ACadSharp_Objects_VisualStyle_Brightness

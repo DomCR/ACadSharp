@@ -367,9 +367,9 @@ the collection.</p>
 
   <a id="ACadSharp_Entities_LwPolyline__ctor_" data-uid="ACadSharp.Entities.LwPolyline.#ctor*"></a>
 
-  <h3 id="ACadSharp_Entities_LwPolyline__ctor_System_Collections_Generic_IEnumerable_CSMath_XY__" data-uid="ACadSharp.Entities.LwPolyline.#ctor(System.Collections.Generic.IEnumerable{CSMath.XY})">
-  LwPolyline(params IEnumerable&lt;XY&gt;)
-  <a class="header-action link-secondary" title="View source" href="https://github.com/DomCR/ACadSharp/blob/master/src/ACadSharp/Entities/LwPolyLine.cs/#L115"><i class="bi bi-code-slash"></i></a>
+  <h3 id="ACadSharp_Entities_LwPolyline__ctor_System_Collections_Generic_IEnumerable_CSMath_IVector__" data-uid="ACadSharp.Entities.LwPolyline.#ctor(System.Collections.Generic.IEnumerable{CSMath.IVector})">
+  LwPolyline(params IEnumerable&lt;IVector&gt;)
+  <a class="header-action link-secondary" title="View source" href="https://github.com/DomCR/ACadSharp/blob/master/src/ACadSharp/Entities/LwPolyLine.cs/#L114"><i class="bi bi-code-slash"></i></a>
   </h3>
 
   <div class="markdown level1 summary"><p>Initializes a new instance of the <a class="xref" href="ACadSharp.Entities.LwPolyline.html">LwPolyline</a> class with the specified vertices.</p>
@@ -377,14 +377,13 @@ the collection.</p>
   <div class="markdown level1 conceptual"></div>
 
   <div class="codewrapper">
-    <pre><code class="lang-csharp hljs">public LwPolyline(params IEnumerable&lt;XY&gt; vertices)</code></pre>
+    <pre><code class="lang-csharp hljs">public LwPolyline(params IEnumerable&lt;IVector&gt; vertices)</code></pre>
   </div>
 
   <h4 class="section">Parameters</h4>
   <dl class="parameters">
-    <dt><code>vertices</code> <a class="xref" href="https://learn.microsoft.com/dotnet/api/system.collections.generic.ienumerable-1">IEnumerable</a>&lt;<a class="xref" href="CSMath.XY.html">XY</a>&gt;</dt>
-    <dd><p>A collection of <a class="xref" href="CSMath.XY.html">XY</a> points representing the vertices of the polyline. Each point defines a vertex in
-the order it appears in the collection.</p>
+    <dt><code>vertices</code> <a class="xref" href="https://learn.microsoft.com/dotnet/api/system.collections.generic.ienumerable-1">IEnumerable</a>&lt;<a class="xref" href="CSMath.IVector.html">IVector</a>&gt;</dt>
+    <dd><p>A collection of <a class="xref" href="CSMath.IVector.html">IVector</a> objects that define the vertices of the polyline.</p>
 </dd>
   </dl>
 
@@ -395,9 +394,9 @@ the order it appears in the collection.</p>
 
 
 
-  <h4 class="section" id="ACadSharp_Entities_LwPolyline__ctor_System_Collections_Generic_IEnumerable_CSMath_XY___remarks">Remarks</h4>
+  <h4 class="section" id="ACadSharp_Entities_LwPolyline__ctor_System_Collections_Generic_IEnumerable_CSMath_IVector___remarks">Remarks</h4>
   <div class="markdown level1 remarks"><p>This constructor allows you to create a lightweight polyline by specifying its vertices as a
-collection of <a class="xref" href="CSMath.XY.html">XY</a> points. The vertices are internally converted to <a class="xref" href="ACadSharp.Entities.LwPolyline.Vertex.html">LwPolyline.Vertex</a>
+collection of <a class="xref" href="CSMath.IVector.html">IVector</a> points. The vertices are internally converted to <a class="xref" href="ACadSharp.Entities.LwPolyline.Vertex.html">LwPolyline.Vertex</a>
 objects.</p>
 </div>
 
@@ -745,7 +744,7 @@ public List&lt;LwPolyline.Vertex&gt; Vertices { get; }</code></pre>
 
   <h3 id="ACadSharp_Entities_LwPolyline_ApplyTransform_CSMath_Transform_" data-uid="ACadSharp.Entities.LwPolyline.ApplyTransform(CSMath.Transform)">
   ApplyTransform(Transform)
-  <a class="header-action link-secondary" title="View source" href="https://github.com/DomCR/ACadSharp/blob/master/src/ACadSharp/Entities/LwPolyLine.cs/#L119"><i class="bi bi-code-slash"></i></a>
+  <a class="header-action link-secondary" title="View source" href="https://github.com/DomCR/ACadSharp/blob/master/src/ACadSharp/Entities/LwPolyLine.cs/#L118"><i class="bi bi-code-slash"></i></a>
   </h3>
 
   <div class="markdown level1 summary"><p>Apply a transform matrix to this entity.</p>
@@ -777,7 +776,7 @@ public List&lt;LwPolyline.Vertex&gt; Vertices { get; }</code></pre>
 
   <h3 id="ACadSharp_Entities_LwPolyline_Clone" data-uid="ACadSharp.Entities.LwPolyline.Clone">
   Clone()
-  <a class="header-action link-secondary" title="View source" href="https://github.com/DomCR/ACadSharp/blob/master/src/ACadSharp/Entities/LwPolyLine.cs/#L137"><i class="bi bi-code-slash"></i></a>
+  <a class="header-action link-secondary" title="View source" href="https://github.com/DomCR/ACadSharp/blob/master/src/ACadSharp/Entities/LwPolyLine.cs/#L136"><i class="bi bi-code-slash"></i></a>
   </h3>
 
   <div class="markdown level1 summary"><p>Creates a new object that is a copy of the current instance.</p>
@@ -813,7 +812,7 @@ public List&lt;LwPolyline.Vertex&gt; Vertices { get; }</code></pre>
 
   <h3 id="ACadSharp_Entities_LwPolyline_GetBoundingBox" data-uid="ACadSharp.Entities.LwPolyline.GetBoundingBox">
   GetBoundingBox()
-  <a class="header-action link-secondary" title="View source" href="https://github.com/DomCR/ACadSharp/blob/master/src/ACadSharp/Entities/LwPolyLine.cs/#L150"><i class="bi bi-code-slash"></i></a>
+  <a class="header-action link-secondary" title="View source" href="https://github.com/DomCR/ACadSharp/blob/master/src/ACadSharp/Entities/LwPolyLine.cs/#L149"><i class="bi bi-code-slash"></i></a>
   </h3>
 
   <div class="markdown level1 summary"><p>Gets the bounding box aligned with the axis XYZ that occupies this entity.</p>

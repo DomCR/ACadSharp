@@ -102,7 +102,8 @@ Class SvgWriter  <a class="header-action link-secondary" title="View source" hre
   <div class="markdown conceptual"></div>
 
   <div class="codewrapper">
-    <pre><code class="lang-csharp hljs">public class SvgWriter : CadWriterBase&lt;SvgConfiguration&gt;, ICadWriter, IDisposable</code></pre>
+    <pre><code class="lang-csharp hljs">[Obsolete(&quot;This feature will be migrated to ACadSharp.Formats.&quot;)]
+public class SvgWriter : CadWriterBase&lt;SvgConfiguration&gt;, ICadWriter, IDisposable</code></pre>
   </div>
 
 
@@ -196,7 +197,7 @@ Class SvgWriter  <a class="header-action link-secondary" title="View source" hre
 
   <h3 id="ACadSharp_IO_SvgWriter__ctor_System_IO_Stream_" data-uid="ACadSharp.IO.SvgWriter.#ctor(System.IO.Stream)">
   SvgWriter(Stream)
-  <a class="header-action link-secondary" title="View source" href="https://github.com/DomCR/ACadSharp/blob/master/src/ACadSharp/IO/SvgWriter.cs/#L20"><i class="bi bi-code-slash"></i></a>
+  <a class="header-action link-secondary" title="View source" href="https://github.com/DomCR/ACadSharp/blob/master/src/ACadSharp/IO/SvgWriter.cs/#L21"><i class="bi bi-code-slash"></i></a>
   </h3>
 
   <div class="markdown level1 summary"><p>Initialize an instance of <a class="xref" href="ACadSharp.IO.SvgWriter.html">SvgWriter</a> with a default document as a reference.</p>
@@ -228,7 +229,7 @@ Class SvgWriter  <a class="header-action link-secondary" title="View source" hre
 
   <h3 id="ACadSharp_IO_SvgWriter__ctor_System_IO_Stream_ACadSharp_CadDocument_" data-uid="ACadSharp.IO.SvgWriter.#ctor(System.IO.Stream,ACadSharp.CadDocument)">
   SvgWriter(Stream, CadDocument)
-  <a class="header-action link-secondary" title="View source" href="https://github.com/DomCR/ACadSharp/blob/master/src/ACadSharp/IO/SvgWriter.cs/#L43"><i class="bi bi-code-slash"></i></a>
+  <a class="header-action link-secondary" title="View source" href="https://github.com/DomCR/ACadSharp/blob/master/src/ACadSharp/IO/SvgWriter.cs/#L44"><i class="bi bi-code-slash"></i></a>
   </h3>
 
   <div class="markdown level1 summary"></div>
@@ -261,7 +262,7 @@ Class SvgWriter  <a class="header-action link-secondary" title="View source" hre
 
   <h3 id="ACadSharp_IO_SvgWriter__ctor_System_String_" data-uid="ACadSharp.IO.SvgWriter.#ctor(System.String)">
   SvgWriter(string)
-  <a class="header-action link-secondary" title="View source" href="https://github.com/DomCR/ACadSharp/blob/master/src/ACadSharp/IO/SvgWriter.cs/#L28"><i class="bi bi-code-slash"></i></a>
+  <a class="header-action link-secondary" title="View source" href="https://github.com/DomCR/ACadSharp/blob/master/src/ACadSharp/IO/SvgWriter.cs/#L29"><i class="bi bi-code-slash"></i></a>
   </h3>
 
   <div class="markdown level1 summary"><p>Initialize an instance of <a class="xref" href="ACadSharp.IO.SvgWriter.html">SvgWriter</a> with a default document as a reference.</p>
@@ -293,7 +294,7 @@ Class SvgWriter  <a class="header-action link-secondary" title="View source" hre
 
   <h3 id="ACadSharp_IO_SvgWriter__ctor_System_String_ACadSharp_CadDocument_" data-uid="ACadSharp.IO.SvgWriter.#ctor(System.String,ACadSharp.CadDocument)">
   SvgWriter(string, CadDocument)
-  <a class="header-action link-secondary" title="View source" href="https://github.com/DomCR/ACadSharp/blob/master/src/ACadSharp/IO/SvgWriter.cs/#L38"><i class="bi bi-code-slash"></i></a>
+  <a class="header-action link-secondary" title="View source" href="https://github.com/DomCR/ACadSharp/blob/master/src/ACadSharp/IO/SvgWriter.cs/#L39"><i class="bi bi-code-slash"></i></a>
   </h3>
 
   <div class="markdown level1 summary"></div>
@@ -331,7 +332,7 @@ Class SvgWriter  <a class="header-action link-secondary" title="View source" hre
 
   <h3 id="ACadSharp_IO_SvgWriter_Dispose" data-uid="ACadSharp.IO.SvgWriter.Dispose">
   Dispose()
-  <a class="header-action link-secondary" title="View source" href="https://github.com/DomCR/ACadSharp/blob/master/src/ACadSharp/IO/SvgWriter.cs/#L48"><i class="bi bi-code-slash"></i></a>
+  <a class="header-action link-secondary" title="View source" href="https://github.com/DomCR/ACadSharp/blob/master/src/ACadSharp/IO/SvgWriter.cs/#L49"><i class="bi bi-code-slash"></i></a>
   </h3>
 
   <div class="markdown level1 summary"><p>Performs application-defined tasks associated with freeing, releasing, or resetting unmanaged resources.</p>
@@ -358,7 +359,7 @@ Class SvgWriter  <a class="header-action link-secondary" title="View source" hre
 
   <h3 id="ACadSharp_IO_SvgWriter_Write" data-uid="ACadSharp.IO.SvgWriter.Write">
   Write()
-  <a class="header-action link-secondary" title="View source" href="https://github.com/DomCR/ACadSharp/blob/master/src/ACadSharp/IO/SvgWriter.cs/#L58"><i class="bi bi-code-slash"></i></a>
+  <a class="header-action link-secondary" title="View source" href="https://github.com/DomCR/ACadSharp/blob/master/src/ACadSharp/IO/SvgWriter.cs/#L59"><i class="bi bi-code-slash"></i></a>
   </h3>
 
   <div class="markdown level1 summary"><p>Write the <a class="xref" href="ACadSharp.CadDocument.html">CadDocument</a> into the stream.</p>
@@ -389,7 +390,7 @@ The writer must be initialized with a none null <a class="xref" href="ACadSharp.
 
   <h3 id="ACadSharp_IO_SvgWriter_Write_ACadSharp_Objects_Layout_" data-uid="ACadSharp.IO.SvgWriter.Write(ACadSharp.Objects.Layout)">
   Write(Layout)
-  <a class="header-action link-secondary" title="View source" href="https://github.com/DomCR/ACadSharp/blob/master/src/ACadSharp/IO/SvgWriter.cs/#L74"><i class="bi bi-code-slash"></i></a>
+  <a class="header-action link-secondary" title="View source" href="https://github.com/DomCR/ACadSharp/blob/master/src/ACadSharp/IO/SvgWriter.cs/#L75"><i class="bi bi-code-slash"></i></a>
   </h3>
 
   <div class="markdown level1 summary"><p>Write the selected layout into a SVG.</p>
@@ -421,7 +422,7 @@ The writer must be initialized with a none null <a class="xref" href="ACadSharp.
 
   <h3 id="ACadSharp_IO_SvgWriter_Write_ACadSharp_Tables_BlockRecord_" data-uid="ACadSharp.IO.SvgWriter.Write(ACadSharp.Tables.BlockRecord)">
   Write(BlockRecord)
-  <a class="header-action link-secondary" title="View source" href="https://github.com/DomCR/ACadSharp/blob/master/src/ACadSharp/IO/SvgWriter.cs/#L63"><i class="bi bi-code-slash"></i></a>
+  <a class="header-action link-secondary" title="View source" href="https://github.com/DomCR/ACadSharp/blob/master/src/ACadSharp/IO/SvgWriter.cs/#L64"><i class="bi bi-code-slash"></i></a>
   </h3>
 
   <div class="markdown level1 summary"></div>

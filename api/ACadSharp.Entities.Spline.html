@@ -1360,12 +1360,13 @@ the operation fails.</p>
 
   <h4 class="section" id="ACadSharp_Entities_Spline_UpdateFromFitPoints_System_UInt32__remarks">Remarks</h4>
   <div class="markdown level1 remarks"><p>This method performs the following operations:</p>
-<ul><li>Validates the spline's
-    degree, fit points, and knot parametrization.</li><li>Generates knots and control points based on the fit
-    points and tangents.</li><li>Refines the tangents iteratively if necessary, up to the specified iteration
-    limit.</li><li>Assigns uniform weights to the control points.</li></ul>
- The method returns <a href="https://learn.microsoft.com/dotnet/csharp/language-reference/builtin-types/bool">false</a> if the spline's degree is not 3, if there are fewer than two fit points, if the knot
-    parametrization is set to <a class="xref" href="ACadSharp.Entities.KnotParametrization.html#ACadSharp_Entities_KnotParametrization_Custom">Custom</a>, or if tangent refinement fails.
+<pre><code>&lt;ul&gt;&lt;li&gt;Validates the spline's
+degree, fit points, and knot parametrization.&lt;/li&gt;&lt;li&gt;Generates knots and control points based on the fit
+points and tangents.&lt;/li&gt;&lt;li&gt;Refines the tangents iteratively if necessary, up to the specified iteration
+limit.&lt;/li&gt;&lt;li&gt;Assigns uniform weights to the control points.&lt;/li&gt;&lt;/ul&gt;
+</code></pre>
+<p>The method returns <a href="https://learn.microsoft.com/dotnet/csharp/language-reference/builtin-types/bool">false</a> if the spline's degree is not 3, if there are fewer than two fit points, if the knot
+parametrization is set to <a class="xref" href="ACadSharp.Entities.KnotParametrization.html#ACadSharp_Entities_KnotParametrization_Custom">Custom</a>, or if tangent refinement fails.</p>
 </div>
 
 

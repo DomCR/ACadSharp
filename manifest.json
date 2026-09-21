@@ -572,30 +572,58 @@
     },
     {
       "type": "ManagedReference",
-      "source_relative_path": "api/ACadSharp.Entities.AecObjects.Wall.yml",
+      "source_relative_path": "api/ACadSharp.Entities.AecEntities.AecEntity.yml",
       "output": {
         ".html": {
-          "relative_path": "api/ACadSharp.Entities.AecObjects.Wall.html"
+          "relative_path": "api/ACadSharp.Entities.AecEntities.AecEntity.html"
         }
       },
       "version": "",
       "Uid": null,
       "IsMRef": true,
-      "Title": "ACadSharp.Entities.AecObjects.Wall",
-      "Summary": "<p sourcefile=\"api/ACadSharp.Entities.AecObjects.Wall.yml\" sourcestartlinenumber=\"1\">Represents an AEC (Architecture, Engineering and Construction) Wall entity.</p>\n"
+      "Title": "ACadSharp.Entities.AecEntities.AecEntity",
+      "Summary": "<p sourcefile=\"api/ACadSharp.Entities.AecEntities.AecEntity.yml\" sourcestartlinenumber=\"1\">Represents an AEC (Architecture, Engineering and Construction) entity.</p>\n"
     },
     {
       "type": "ManagedReference",
-      "source_relative_path": "api/ACadSharp.Entities.AecObjects.yml",
+      "source_relative_path": "api/ACadSharp.Entities.AecEntities.Wall.yml",
       "output": {
         ".html": {
-          "relative_path": "api/ACadSharp.Entities.AecObjects.html"
+          "relative_path": "api/ACadSharp.Entities.AecEntities.Wall.html"
         }
       },
       "version": "",
       "Uid": null,
       "IsMRef": true,
-      "Title": "ACadSharp.Entities.AecObjects",
+      "Title": "ACadSharp.Entities.AecEntities.Wall",
+      "Summary": "<p sourcefile=\"api/ACadSharp.Entities.AecEntities.Wall.yml\" sourcestartlinenumber=\"1\">Represents a wall entity in an AEC context.</p>\n"
+    },
+    {
+      "type": "ManagedReference",
+      "source_relative_path": "api/ACadSharp.Entities.AecEntities.WallJustification.yml",
+      "output": {
+        ".html": {
+          "relative_path": "api/ACadSharp.Entities.AecEntities.WallJustification.html"
+        }
+      },
+      "version": "",
+      "Uid": null,
+      "IsMRef": true,
+      "Title": "ACadSharp.Entities.AecEntities.WallJustification",
+      "Summary": "<p sourcefile=\"api/ACadSharp.Entities.AecEntities.WallJustification.yml\" sourcestartlinenumber=\"1\">Defines the justification of a wall.</p>\n"
+    },
+    {
+      "type": "ManagedReference",
+      "source_relative_path": "api/ACadSharp.Entities.AecEntities.yml",
+      "output": {
+        ".html": {
+          "relative_path": "api/ACadSharp.Entities.AecEntities.html"
+        }
+      },
+      "version": "",
+      "Uid": null,
+      "IsMRef": true,
+      "Title": "ACadSharp.Entities.AecEntities",
       "Summary": null
     },
     {
