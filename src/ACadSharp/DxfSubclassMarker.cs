@@ -288,8 +288,6 @@ public static class DxfSubclassMarker
 
 	public const string Tolerance = "AcDbFcf";
 
-	public const string Trace = "AcDbTrace";
-
 	public const string Ucs = "AcDbUCSTableRecord";
 
 	public const string Underlay = "AcDbUnderlayReference";
