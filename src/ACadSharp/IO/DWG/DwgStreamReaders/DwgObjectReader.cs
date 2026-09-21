@@ -41,6 +41,7 @@ namespace ACadSharp.IO.DWG;
  * name clash. To complicate matters more, files also exist with table records with duplicate
  * names. This is incorrect, and the software should rename the record to be unique upon reading.
  */
+
 internal partial class DwgObjectReader : DwgSectionIO
 {
 	public override string SectionName { get { return DwgSectionDefinition.AcDbObjects; } }
@@ -822,6 +823,27 @@ internal partial class DwgObjectReader : DwgSectionIO
 		border.IsInvisible = !this._mergedReaders.ReadBit();
 		//Border color CMC 64-69
 		border.Color = this._mergedReaders.ReadCmColor(this.R2004Pre);
+	}
+
+	private BreakInfo readBreakInfo()
+	{
+		BreakInfo breakInfo = new BreakInfo();
+
+		//BL	90	Segment index
+		breakInfo.SegmentIndex = this._objectReader.ReadBitLong();
+
+		//Start/end point pairs
+		int startEndPointCount = this._objectReader.ReadBitLong();
+		for (int sep = 0; sep < startEndPointCount; sep++)
+		{
+			breakInfo.StartEndPoints.Add(new StartEndPointPair(
+				//3BD	11	Start Point
+				this._objectReader.Read3BitDouble(),
+				//3BD	12	End point
+				this._objectReader.Read3BitDouble()));
+		}
+
+		return breakInfo;
 	}
 
 	private CadTemplate readCadImage(CadWipeoutBase image)
@@ -2921,22 +2943,10 @@ internal partial class DwgObjectReader : DwgSectionIO
 
 		//	Add optional Break Info (one or more)
 		//	BL	Break info count
-		leaderLine.BreakInfoCount = this._objectReader.ReadBitLong();
-		if (leaderLine.BreakInfoCount > 0)
+		var breakInfoCount = this._objectReader.ReadBitLong();
+		for (int i = 0; i < breakInfoCount; i++)
 		{
-			//	BL	90		Segment index
-			leaderLine.SegmentIndex = this._objectReader.ReadBitLong();
-
-			//	Start/end point pairs
-			int startEndPointCount = this._objectReader.ReadBitLong();
-			for (int sep = 0; sep < startEndPointCount; sep++)
-			{
-				leaderLine.StartEndPoints.Add(new StartEndPointPair(
-					//	3BD	11	Start Point
-					this._objectReader.Read3BitDouble(),
-					//	3BD	12	End point
-					this._objectReader.Read3BitDouble()));
-			}
+			leaderLine.BreakInfoEntries.Add(this.readBreakInfo());
 		}
 
 		//	BL	91	Leader line index
@@ -2967,34 +2977,34 @@ internal partial class DwgObjectReader : DwgSectionIO
 	{
 		LeaderRoot leaderRoot = new LeaderRoot();
 
-		//	B		290		Is content valid(ODA writes true)/DXF: Has Set Last Leader Line Point
+		//	B	290	Is content valid(ODA writes true)/DXF: Has Set Last Leader Line Point
 		leaderRoot.ContentValid = this._objectReader.ReadBit();
-		//	B		291		Unknown(ODA writes true)/DXF: Has Set Dogleg Vector
+		//	B	291	Unknown(ODA writes true)/DXF: Has Set Dogleg Vector
 		leaderRoot.Unknown = this._objectReader.ReadBit();
-		//	3BD		10		Connection point/DXF: Last Leader Line Point
+		//	3BD	10	Connection point/DXF: Last Leader Line Point
 		leaderRoot.ConnectionPoint = this._objectReader.Read3BitDouble();
-		//	3BD		11		Direction/DXF: Dogleg vector
+		//	3BD	11	Direction/DXF: Dogleg vector
 		leaderRoot.Direction = this._objectReader.Read3BitDouble();
 
 		//	Break start/end point pairs
-		//	BL		Number of break start / end point pairs
-		//	3BD		12		Break start point
-		//	3BD		13		Break end point
+		//	BL	Number of break start / end point pairs
 		int breakStartEndPointCount = this._objectReader.ReadBitLong();
 		for (int bsep = 0; bsep < breakStartEndPointCount; bsep++)
 		{
 			leaderRoot.BreakStartEndPointsPairs.Add(new StartEndPointPair(
+				//3BD	12	Break start point
 				this._objectReader.Read3BitDouble(),
+				//3BD	13	Break end point
 				this._objectReader.Read3BitDouble()));
 		}
 
-		//	BL		90		Leader index
+		//BL	90	Leader index
 		leaderRoot.LeaderIndex = this._objectReader.ReadBitLong();
-		//	BD		40		Landing distance
+		//BD	40	Landing distance
 		leaderRoot.LandingDistance = this._objectReader.ReadBitDouble();
 
-		//	Leader lines
-		//	BL		Number of leader lines
+		//Leader lines
+		//BL	Number of leader lines
 		int leaderLineCount = this._objectReader.ReadBitLong();
 		for (int ll = 0; ll < leaderLineCount; ll++)
 		{
@@ -3003,7 +3013,7 @@ internal partial class DwgObjectReader : DwgSectionIO
 
 		if (this.R2010Plus)
 		{
-			//	BS	271	Attachment direction(0 = horizontal, 1 = vertical, default is 0)
+			//BS	271	Attachment direction(0 = horizontal, 1 = vertical, default is 0)
 			leaderRoot.TextAttachmentDirection = (TextAttachmentDirectionType)this._objectReader.ReadBitShort();
 		}
 
@@ -4351,6 +4361,7 @@ internal partial class DwgObjectReader : DwgSectionIO
 		annotContext.TextAlignment = (TextAlignmentType)this._objectReader.ReadBitShort();
 		//	BS	177	Attachment type (0 = content extents, 1 = insertion point).
 		annotContext.BlockContentConnection = (BlockContentConnectionType)this._objectReader.ReadBitShort();
+
 		//	B	290	Has text contents
 		annotContext.HasTextContents = this._objectReader.ReadBit();
 		if (annotContext.HasTextContents)

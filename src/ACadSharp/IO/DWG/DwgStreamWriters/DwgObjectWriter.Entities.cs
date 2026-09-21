@@ -1095,21 +1095,22 @@ internal partial class DwgObjectWriter : DwgSectionIO
 			this._writer.Write3BitDouble(point);
 		}
 
-		//	Add optional Break Info (one or more)
-		//	BL	Break info count
-		this._writer.WriteBitLong(leaderLine.BreakInfoCount);
-		if (leaderLine.BreakInfoCount > 0)
+		//Add optional Break Info (one or more)
+		//BL	Break info count
+		this._writer.WriteBitLong(leaderLine.BreakInfoEntries.Count);
+		foreach (var item in leaderLine.BreakInfoEntries)
 		{
-			//	BL	90		Segment index
-			this._writer.WriteBitLong(leaderLine.SegmentIndex);
+			//BL	90		Segment index
+			this._writer.WriteBitLong(item.SegmentIndex);
 
-			//	Start/end point pairs
-			//	3BD	12	End point
-			this._writer.WriteBitLong(leaderLine.StartEndPoints.Count);
-			foreach (MultiLeaderObjectContextData.StartEndPointPair sep in leaderLine.StartEndPoints)
+			//Start/end point pairs
+			//3BD	12	End point
+			this._writer.WriteBitLong(item.StartEndPoints.Count);
+			foreach (MultiLeaderObjectContextData.StartEndPointPair sep in item.StartEndPoints)
 			{
-				//	3BD	11	Start Point
+				//3BD	11	Start Point
 				this._writer.Write3BitDouble(sep.StartPoint);
+				//3BD	12	End point
 				this._writer.Write3BitDouble(sep.EndPoint);
 			}
 		}
@@ -1123,12 +1124,15 @@ internal partial class DwgObjectWriter : DwgSectionIO
 			this._writer.WriteBitShort((short)leaderLine.PathType);
 			//	CMC	92	Line color
 			this._writer.WriteCmColor(leaderLine.LineColor);
+
 			//	H	340	Line type handle(hard pointer)
 			this._writer.HandleReference(DwgReferenceType.HardPointer, leaderLine.LineType);
+
 			//	BL	171	Line weight
 			this._writer.WriteBitLong((short)leaderLine.LineWeight);
 			//	BD	40	Arrow size
 			this._writer.WriteBitDouble(leaderLine.ArrowheadSize);
+
 			//	H	341	Arrow symbol handle(hard pointer)
 			this._writer.HandleReference(DwgReferenceType.HardPointer, leaderLine.Arrowhead);
 

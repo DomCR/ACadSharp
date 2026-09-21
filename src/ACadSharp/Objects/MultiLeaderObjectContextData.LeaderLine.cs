@@ -9,13 +9,12 @@ namespace ACadSharp.Objects;
 public partial class MultiLeaderObjectContextData
 {
 	/// <summary>
-	///	Represents a leader line
+	/// Represents a leader line of a <see cref="MultiLeaderObjectContextData"/> object.
 	/// </summary>
-	/// <remarks>
-	/// Appears as 304	DXF: “LEADER_LINE“
-	/// </remarks>
-	public class LeaderLine : ICloneable
+	public class LeaderLine
 	{
+		public List<BreakInfo> BreakInfoEntries { get; private set; } = new();
+
 		/// <summary>
 		/// Gets or sets a <see cref="BlockRecord"/> containig elements
 		/// to be dawn as arrow symbol.
@@ -28,11 +27,6 @@ public partial class MultiLeaderObjectContextData
 		/// </summary>
 		[DxfCodeValue(40)]
 		public double ArrowheadSize { get; set; }
-
-		/// <summary>
-		/// Break info count
-		/// </summary>
-		public int BreakInfoCount { get; set; }
 
 		/// <summary>
 		/// Leader line index.
@@ -100,17 +94,6 @@ public partial class MultiLeaderObjectContextData
 		/// </summary>
 		public IList<XYZ> Points { get; private set; } = new List<XYZ>();
 
-		/// <summary>
-		/// Segment index
-		/// </summary>
-		[DxfCodeValue(90)]
-		public int SegmentIndex { get; set; }
-
-		/// <summary>
-		/// Start/end point pairs
-		/// </summary>
-		public IList<StartEndPointPair> StartEndPoints { get; private set; } = new List<StartEndPointPair>();
-
 		internal CadDocument Document { get; set; }
 
 		private LineType _lineType;
@@ -118,7 +101,7 @@ public partial class MultiLeaderObjectContextData
 		public LeaderLine()
 		{ }
 
-		public void AssignDocument(CadDocument doc)
+		internal void AssignDocument(CadDocument doc)
 		{
 			this.Document = doc;
 
@@ -137,7 +120,7 @@ public partial class MultiLeaderObjectContextData
 			doc.LineTypes.OnRemove += this.tableOnRemove;
 		}
 
-		public object Clone()
+		public LeaderLine Clone()
 		{
 			LeaderLine clone = (LeaderLine)this.MemberwiseClone();
 
@@ -150,16 +133,10 @@ public partial class MultiLeaderObjectContextData
 				clone.Points.Add(point);
 			}
 
-			clone.StartEndPoints = new List<StartEndPointPair>();
-			foreach (var startEndPoint in this.StartEndPoints)
-			{
-				clone.StartEndPoints.Add((StartEndPointPair)startEndPoint.Clone());
-			}
-
 			return clone;
 		}
 
-		public void UassignDocument()
+		internal void UassignDocument()
 		{
 			this.Document.LineTypes.OnRemove -= this.tableOnRemove;
 
