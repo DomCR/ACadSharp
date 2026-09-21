@@ -1,3 +1,5 @@
+namespace ACadSharp.Entities.AecEntities;
+
 /// <summary>
 /// Defines the justification of a wall.
 /// </summary>

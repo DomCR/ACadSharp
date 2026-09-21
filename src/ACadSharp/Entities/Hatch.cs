@@ -128,12 +128,11 @@ public partial class Hatch : Entity, IOrientable
 	[DxfCollectionCodeValue(10, 20)]
 	public List<XY> SeedPoints { get; set; } = new List<XY>();
 
-	//63	For MPolygon, pattern fill color as the ACI
 	/// <summary>
 	/// Hatch style.
 	/// </summary>
 	[DxfCodeValue(75)]
-	public HatchStyleType Style { get; set; }
+	public HatchStyleType Style { get; set; } = HatchStyleType.Normal;
 
 	/// <inheritdoc/>
 	public override string SubclassMarker => DxfSubclassMarker.Hatch;
@@ -142,14 +141,6 @@ public partial class Hatch : Entity, IOrientable
 
 	private double _patternScale;
 
-	//73	For MPolygon, boundary annotation flag:
-	//0 = boundary is not an annotated boundary
-	//1 = boundary is an annotated boundary
-	//78	Number of pattern definition lines
-	//varies
-	//Pattern line data.Repeats number of times specified by code 78. See Pattern Data
-	//11	For MPolygon, offset vector
-	//99	For MPolygon, number of degenerate boundary paths(loops), where a degenerate boundary path is a border that is ignored by the hatch
 	/// <inheritdoc/>
 	public Hatch() : base() { }
 
@@ -224,15 +215,15 @@ public partial class Hatch : Entity, IOrientable
 	/// Explode the hatch pattern into the equivalent entities.
 	/// </summary>
 	/// <returns>A collection of entities representing the exploded hatch pattern.</returns>
-	public IEnumerable<Entity> ExplodePattern()
+	public IEnumerable<Line> ExplodePattern()
 	{
-		List<Entity> entities = new();
+		List<Line> lines = new();
 
 		if (this.Pattern == null
 			|| this.Pattern.Lines.Count == 0
 			|| this.Paths.Count == 0)
 		{
-			return entities;
+			return lines;
 		}
 
 		BoundingBox box = this.GetBoundingBox();
@@ -326,12 +317,12 @@ public partial class Hatch : Entity, IOrientable
 						continue;
 					}
 
-					entities.AddRange(emitDashedSegment(geomLine, tA, tB, patLine.DashLengths));
+					lines.AddRange(emitDashedSegment(geomLine, tA, tB, patLine.DashLengths));
 				}
 			}
 		}
 
-		return entities;
+		return lines;
 	}
 
 	/// <inheritdoc/>
@@ -371,20 +362,20 @@ public partial class Hatch : Entity, IOrientable
 		return merged;
 	}
 
-	private IEnumerable<Entity> emitDashedSegment(Line2D line, double tStart, double tEnd, List<double> dashLengths)
+	private IEnumerable<Line> emitDashedSegment(Line2D line, double tStart, double tEnd, List<double> dashLengths)
 	{
 		if (dashLengths == null || dashLengths.Count == 0)
 		{
 			var solid = new Line(line.PointInLine(tStart), line.PointInLine(tEnd));
 			solid.MatchProperties(this);
 			solid.LineType = Tables.LineType.Continuous;
-			return new Entity[] { solid };
+			return new Line[] { solid };
 		}
 
 		double cycle = dashLengths.Sum(d => System.Math.Abs(d));
 		if (cycle <= MathHelper.Epsilon)
 		{
-			return Enumerable.Empty<Entity>();
+			return Enumerable.Empty<Line>();
 		}
 
 		double pos = tStart % cycle;
@@ -408,7 +399,7 @@ public partial class Hatch : Entity, IOrientable
 			pos = 0.0;
 		}
 
-		var result = new List<Entity>();
+		var result = new List<Line>();
 		double cursor = tStart;
 		double remaining = System.Math.Abs(dashLengths[idx]) - (pos - acc);
 

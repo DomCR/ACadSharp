@@ -1,5 +1,5 @@
 ﻿using ACadSharp.Entities;
-using ACadSharp.Entities.AecObjects;
+using ACadSharp.Entities.AecEntities;
 using ACadSharp.Entities.Mechanical;
 using ACadSharp.Objects;
 using CSMath;
