@@ -224,15 +224,15 @@ public partial class Hatch : Entity, IOrientable
 	/// Explode the hatch pattern into the equivalent entities.
 	/// </summary>
 	/// <returns>A collection of entities representing the exploded hatch pattern.</returns>
-	public IEnumerable<Entity> ExplodePattern()
+	public IEnumerable<Line> ExplodePattern()
 	{
-		List<Entity> entities = new();
+		List<Line> lines = new();
 
 		if (this.Pattern == null
 			|| this.Pattern.Lines.Count == 0
 			|| this.Paths.Count == 0)
 		{
-			return entities;
+			return lines;
 		}
 
 		BoundingBox box = this.GetBoundingBox();
@@ -326,12 +326,12 @@ public partial class Hatch : Entity, IOrientable
 						continue;
 					}
 
-					entities.AddRange(emitDashedSegment(geomLine, tA, tB, patLine.DashLengths));
+					lines.AddRange(emitDashedSegment(geomLine, tA, tB, patLine.DashLengths));
 				}
 			}
 		}
 
-		return entities;
+		return lines;
 	}
 
 	/// <inheritdoc/>
@@ -371,20 +371,20 @@ public partial class Hatch : Entity, IOrientable
 		return merged;
 	}
 
-	private IEnumerable<Entity> emitDashedSegment(Line2D line, double tStart, double tEnd, List<double> dashLengths)
+	private IEnumerable<Line> emitDashedSegment(Line2D line, double tStart, double tEnd, List<double> dashLengths)
 	{
 		if (dashLengths == null || dashLengths.Count == 0)
 		{
 			var solid = new Line(line.PointInLine(tStart), line.PointInLine(tEnd));
 			solid.MatchProperties(this);
 			solid.LineType = Tables.LineType.Continuous;
-			return new Entity[] { solid };
+			return new Line[] { solid };
 		}
 
 		double cycle = dashLengths.Sum(d => System.Math.Abs(d));
 		if (cycle <= MathHelper.Epsilon)
 		{
-			return Enumerable.Empty<Entity>();
+			return Enumerable.Empty<Line>();
 		}
 
 		double pos = tStart % cycle;
@@ -408,7 +408,7 @@ public partial class Hatch : Entity, IOrientable
 			pos = 0.0;
 		}
 
-		var result = new List<Entity>();
+		var result = new List<Line>();
 		double cursor = tStart;
 		double remaining = System.Math.Abs(dashLengths[idx]) - (pos - acc);
 
