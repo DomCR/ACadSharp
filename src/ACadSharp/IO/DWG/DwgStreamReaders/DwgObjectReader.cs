@@ -3371,7 +3371,7 @@ namespace ACadSharp.IO.DWG
 			mline.Normal = this._objectReader.Read3BitDouble();
 
 			//Openclosed BS open (1), closed(3)
-			mline.Flags |= this._objectReader.ReadBitShort() == 3 ? MLineFlags.Closed : MLineFlags.Has;
+			mline.Flags |= this._objectReader.ReadBitShort() == 3 ? MLineFlags.Closed : MLineFlags.HasVertices;
 
 			//Linesinstyle RC 73
 			int nlines = (int)this._objectReader.ReadByte();
