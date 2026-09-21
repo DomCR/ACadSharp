@@ -250,6 +250,13 @@ public abstract class Table<T> : CadObject, ITable, ICadCollection<T>, IObservab
 
 	private void assignToDefault(string name)
 	{
+		string[] defaultEntries = this.getDefaultEntries();
+		if (defaultEntries.Length > 0 && !defaultEntries.Any(this.Contains))
+		{
+			//The default entry is not in the table yet, as it happens while a file is being read
+			return;
+		}
+
 		this._referenceHandler.RemoveReference(name, this.GetDefaultEntry());
 	}
 
