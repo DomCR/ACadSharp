@@ -1678,6 +1678,21 @@ internal partial class DwgObjectWriter : DwgSectionIO
 		this._writer.WriteBit(multiLeader.EnableAnnotationScale);
 
 		//	R2007pre not supported
+		if (this.R2007Pre)
+		{
+			//	BL number of arrow  heads
+			this._writer.WriteBitLong(0);
+			//for (int ah = 0; ah < arrowHeadCount; ah++)
+			//{
+			//	//	//  DXF:	94  BL Arrowhead Index (DXF)
+			//	//	//	ODA:	94 B Is Default
+			//	//	int arrowheadIndex = _objectReader.ReadBitLong();
+			//	bool isDefault = this._objectReader.ReadBit();
+
+			//	//  345 Arrowhead ID
+			//	template.ArrowheadHandles.Add(this.handleReference(), isDefault);
+			//}
+		}
 
 		//	BL Number of Block Labels
 		int blockLabelCount = multiLeader.BlockAttributes.Count;
