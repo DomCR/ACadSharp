@@ -15954,12 +15954,12 @@ references:
   commentId: F:ACadSharp.Entities.MLineFlags.Closed
   fullName: ACadSharp.Entities.MLineFlags.Closed
   nameWithType: MLineFlags.Closed
-- uid: ACadSharp.Entities.MLineFlags.Has
-  name: Has
-  href: api/ACadSharp.Entities.MLineFlags.html#ACadSharp_Entities_MLineFlags_Has
-  commentId: F:ACadSharp.Entities.MLineFlags.Has
-  fullName: ACadSharp.Entities.MLineFlags.Has
-  nameWithType: MLineFlags.Has
+- uid: ACadSharp.Entities.MLineFlags.HasVertices
+  name: HasVertices
+  href: api/ACadSharp.Entities.MLineFlags.html#ACadSharp_Entities_MLineFlags_HasVertices
+  commentId: F:ACadSharp.Entities.MLineFlags.HasVertices
+  fullName: ACadSharp.Entities.MLineFlags.HasVertices
+  nameWithType: MLineFlags.HasVertices
 - uid: ACadSharp.Entities.MLineFlags.NoEndCaps
   name: NoEndCaps
   href: api/ACadSharp.Entities.MLineFlags.html#ACadSharp_Entities_MLineFlags_NoEndCaps
@@ -15972,6 +15972,12 @@ references:
   commentId: F:ACadSharp.Entities.MLineFlags.NoStartCaps
   fullName: ACadSharp.Entities.MLineFlags.NoStartCaps
   nameWithType: MLineFlags.NoStartCaps
+- uid: ACadSharp.Entities.MLineFlags.None
+  name: None
+  href: api/ACadSharp.Entities.MLineFlags.html#ACadSharp_Entities_MLineFlags_None
+  commentId: F:ACadSharp.Entities.MLineFlags.None
+  fullName: ACadSharp.Entities.MLineFlags.None
+  nameWithType: MLineFlags.None
 - uid: ACadSharp.Entities.MLineJustification
   name: MLineJustification
   href: api/ACadSharp.Entities.MLineJustification.html

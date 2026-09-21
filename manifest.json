@@ -1576,7 +1576,7 @@
       "Uid": null,
       "IsMRef": true,
       "Title": "ACadSharp.Entities.MLineFlags",
-      "Summary": "<p sourcefile=\"api/ACadSharp.Entities.MLineFlags.yml\" sourcestartlinenumber=\"1\">Flags (bit-coded values)</p>\n"
+      "Summary": "<p sourcefile=\"api/ACadSharp.Entities.MLineFlags.yml\" sourcestartlinenumber=\"1\">Flags (bit-coded values).</p>\n"
     },
     {
       "type": "ManagedReference",
