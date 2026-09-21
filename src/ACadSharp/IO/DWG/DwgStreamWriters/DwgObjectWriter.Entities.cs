@@ -1146,7 +1146,7 @@ internal partial class DwgObjectWriter : DwgSectionIO
 		//	B		290		Is content valid(ODA writes true)/DXF: Has Set Last Leader Line Point
 		this._writer.WriteBit(leaderRoot.ContentValid);
 		//	B		291		Unknown(ODA writes true)/DXF: Has Set Dogleg Vector
-		this._writer.WriteBit(true);
+		this._writer.WriteBit(leaderRoot.Unknown);
 		//	3BD		10		Connection point/DXF: Last Leader Line Point
 		this._writer.Write3BitDouble(leaderRoot.ConnectionPoint);
 		//	3BD		11		Direction/DXF: Dogleg vector
@@ -1620,7 +1620,7 @@ internal partial class DwgObjectWriter : DwgSectionIO
 			this._writer.WriteBitShort(2);
 		}
 
-		writeMultiLeaderAnnotContextSubObject(true, multiLeader.ContextData);
+		this.writeMultiLeaderAnnotContextSubObject(multiLeader.ContextData);
 
 		//	Multileader Common data
 		//	340 Leader StyleId (handle)
@@ -1721,26 +1721,12 @@ internal partial class DwgObjectWriter : DwgSectionIO
 		}
 	}
 
-	private void writeMultiLeaderAnnotContextSubObject(bool writeLeaderRootsCount, MultiLeaderObjectContextData annotContext)
+	private void writeMultiLeaderAnnotContextSubObject(MultiLeaderObjectContextData annotContext)
 	{
 		int leaderRootCount = annotContext.LeaderRoots.Count;
-		if (writeLeaderRootsCount)
-		{
-			//	BL	-	Number of leader roots
-			this._writer.WriteBitLong(leaderRootCount);
-		}
-		else
-		{
-			this._writer.WriteBitLong(0);
-			this._writer.WriteBit(false);    // b0
-			this._writer.WriteBit(false);    // b1
-			this._writer.WriteBit(false);    // b2
-			this._writer.WriteBit(false);    // b3
-			this._writer.WriteBit(false);    // b4
-			this._writer.WriteBit(leaderRootCount == 2);    // b5
-			this._writer.WriteBit(leaderRootCount == 1);    // b6
-		}
 
+		//	BL	-	Number of leader roots
+		this._writer.WriteBitLong(leaderRootCount);
 		for (int i = 0; i < leaderRootCount; i++)
 		{
 			this.writeLeaderRoot(annotContext.LeaderRoots[i]);
@@ -1830,50 +1816,53 @@ internal partial class DwgObjectWriter : DwgSectionIO
 			//	B	Unknown
 			this._writer.WriteBit(false);
 		}
-		else if (annotContext.HasContentsBlock)
+		else
 		{
+			//B	296	Has contents block
 			this._writer.WriteBit(annotContext.HasContentsBlock);
 
-			//B	296	Has contents block
 			//IF Has contents block
-			//	H	341	AcDbBlockTableRecord handle (soft pointer)
-			this._writer.HandleReference(DwgReferenceType.SoftPointer, annotContext.BlockContent);
-			//	3BD	14	Normal vector
-			this._writer.Write3BitDouble(annotContext.BlockContentNormal);
-			//	3BD	15	Location
-			this._writer.Write3BitDouble(annotContext.BlockContentLocation);
-			//	3BD	16	Scale vector
-			this._writer.Write3BitDouble(annotContext.BlockContentScale);
-			//	BD	46	Rotation (radians)
-			this._writer.WriteBitDouble(annotContext.BlockContentRotation);
-			//  CMC	93	Block color
-			this._writer.WriteCmColor(annotContext.BlockContentColor);
-			//	BD (16)	47	16 doubles containing the complete transformation
-			//	matrix. Order of transformation is:
-			//	- Rotation,
-			//	- OCS to WCS (using normal vector),
-			//	- Scaling (using scale vector)
-			//	- Translation (using location)
-			var m4 = annotContext.TransformationMatrix;
-			this._writer.WriteBitDouble(m4.M00);
-			this._writer.WriteBitDouble(m4.M10);
-			this._writer.WriteBitDouble(m4.M20);
-			this._writer.WriteBitDouble(m4.M30);
+			if (annotContext.HasContentsBlock)
+			{
+				//	H	341	AcDbBlockTableRecord handle (soft pointer)
+				this._writer.HandleReference(DwgReferenceType.SoftPointer, annotContext.BlockContent);
+				//	3BD	14	Normal vector
+				this._writer.Write3BitDouble(annotContext.BlockContentNormal);
+				//	3BD	15	Location
+				this._writer.Write3BitDouble(annotContext.BlockContentLocation);
+				//	3BD	16	Scale vector
+				this._writer.Write3BitDouble(annotContext.BlockContentScale);
+				//	BD	46	Rotation (radians)
+				this._writer.WriteBitDouble(annotContext.BlockContentRotation);
+				//  CMC	93	Block color
+				this._writer.WriteCmColor(annotContext.BlockContentColor);
+				//	BD (16)	47	16 doubles containing the complete transformation
+				//	matrix. Order of transformation is:
+				//	- Rotation,
+				//	- OCS to WCS (using normal vector),
+				//	- Scaling (using scale vector)
+				//	- Translation (using location)
+				var m4 = annotContext.TransformationMatrix;
+				this._writer.WriteBitDouble(m4.M00);
+				this._writer.WriteBitDouble(m4.M10);
+				this._writer.WriteBitDouble(m4.M20);
+				this._writer.WriteBitDouble(m4.M30);
 
-			this._writer.WriteBitDouble(m4.M01);
-			this._writer.WriteBitDouble(m4.M11);
-			this._writer.WriteBitDouble(m4.M21);
-			this._writer.WriteBitDouble(m4.M31);
+				this._writer.WriteBitDouble(m4.M01);
+				this._writer.WriteBitDouble(m4.M11);
+				this._writer.WriteBitDouble(m4.M21);
+				this._writer.WriteBitDouble(m4.M31);
 
-			this._writer.WriteBitDouble(m4.M02);
-			this._writer.WriteBitDouble(m4.M12);
-			this._writer.WriteBitDouble(m4.M22);
-			this._writer.WriteBitDouble(m4.M32);
+				this._writer.WriteBitDouble(m4.M02);
+				this._writer.WriteBitDouble(m4.M12);
+				this._writer.WriteBitDouble(m4.M22);
+				this._writer.WriteBitDouble(m4.M32);
 
-			this._writer.WriteBitDouble(m4.M03);
-			this._writer.WriteBitDouble(m4.M13);
-			this._writer.WriteBitDouble(m4.M23);
-			this._writer.WriteBitDouble(m4.M33);
+				this._writer.WriteBitDouble(m4.M03);
+				this._writer.WriteBitDouble(m4.M13);
+				this._writer.WriteBitDouble(m4.M23);
+				this._writer.WriteBitDouble(m4.M33);
+			}
 		}
 		//END IF Has contents block
 		//END IF Has text contents

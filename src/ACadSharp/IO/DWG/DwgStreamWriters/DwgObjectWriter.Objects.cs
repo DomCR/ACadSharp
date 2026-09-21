@@ -1616,7 +1616,7 @@ internal partial class DwgObjectWriter : DwgSectionIO
 	{
 		this.writeAnnotScaleObjectContextData(multiLeaderAnnotContext);
 
-		this.writeMultiLeaderAnnotContextSubObject(false, multiLeaderAnnotContext);
+		this.writeMultiLeaderAnnotContextSubObject(multiLeaderAnnotContext);
 	}
 
 	private void writeMultiLeaderStyle(MultiLeaderStyle mLeaderStyle)

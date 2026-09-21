@@ -2957,7 +2957,7 @@ internal partial class DwgObjectReader : DwgSectionIO
 			//	BS	170	Leader type(0 = invisible leader, 1 = straight leader, 2 = spline leader)
 			leaderLine.PathType = (MultiLeaderPathType)this._objectReader.ReadBitShort();
 			//	CMC	92	Line color
-			leaderLine.LineColor = this._objectReader.ReadCmColor();
+			leaderLine.LineColor = this._mergedReaders.ReadCmColor();
 			//	H	340	Line type handle(hard pointer)
 			leaderLineSubTemplate.LineTypeHandle = this.handleReference();
 			//	BL	171	Line weight
@@ -4387,13 +4387,13 @@ internal partial class DwgObjectReader : DwgSectionIO
 			//	BS	170	Line spacing style (1 = at least, 2 = exactly)
 			annotContext.LineSpacing = (LineSpacingStyle)this._objectReader.ReadBitShort();
 			//	CMC	90	Text color
-			annotContext.TextColor = this._objectReader.ReadCmColor();
+			annotContext.TextColor = this._mergedReaders.ReadCmColor();
 			//	BS	171	Alignment (1 = left, 2 = center, 3 = right)
 			annotContext.TextAttachmentPoint = (TextAttachmentPointType)this._objectReader.ReadBitShort();
 			//	BS	172	Flow direction (1 = horizontal, 3 = vertical, 6 = by style)
 			annotContext.FlowDirection = (FlowDirectionType)this._objectReader.ReadBitShort();
 			//	CMC	91	Background fill color
-			annotContext.BackgroundFillColor = this._objectReader.ReadCmColor();
+			annotContext.BackgroundFillColor = this._mergedReaders.ReadCmColor();
 			//	BD	141	Background scale factor
 			annotContext.BackgroundScaleFactor = this._objectReader.ReadBitDouble();
 			//	BL	92	Background transparency
@@ -4442,7 +4442,7 @@ internal partial class DwgObjectReader : DwgSectionIO
 			//	BD	46	Rotation (radians)
 			annotContext.BlockContentRotation = this._objectReader.ReadBitDouble();
 			//  CMC	93	Block color
-			annotContext.BlockContentColor = this._objectReader.ReadCmColor();
+			annotContext.BlockContentColor = this._mergedReaders.ReadCmColor();
 			//	BD (16)	47	16 doubles containing the complete transformation
 			//	matrix. Order of transformation is:
 			//	- Rotation,
