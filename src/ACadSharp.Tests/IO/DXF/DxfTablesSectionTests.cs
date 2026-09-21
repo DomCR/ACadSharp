@@ -25,6 +25,21 @@ public class DxfTablesSectionTests
 		Assert.Equal(2, doc.Layers.Count);
 	}
 
+	[Fact]
+	public void ReadDuplicatedDefaultEntry()
+	{
+		// LAYER table with the layer 0 twice: the default entry cannot be replaced,
+		// the first one is kept and the reading goes on.
+		string dxf = layerTableDxf(Layer.DefaultName, Layer.DefaultName);
+
+		List<NotificationEventArgs> notifications = new();
+		CadDocument doc = read(dxf, notifications);
+
+		Assert.Contains(notifications, n => n.NotificationType == NotificationType.Warning && n.Message.Contains("Duplicated entry"));
+		Assert.True(doc.Layers.Contains(Layer.DefaultName));
+		Assert.Equal(1, doc.Layers.Count);
+	}
+
 	private static string layerTableDxf(params string[] names)
 	{
 		List<string> lines = new()
