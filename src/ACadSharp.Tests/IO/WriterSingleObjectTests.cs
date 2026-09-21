@@ -1312,6 +1312,7 @@ public abstract class WriterSingleObjectTests : IOTestsBase
 			this.Document.ModelSpace.CreateExtendedDictionary();
 
 			var geodata = new GeoData();
+			geodata.Name = CadDictionary.GeographicData;
 			geodata.HostBlock = this.Document.ModelSpace;
 
 			this.Document.ModelSpace.XDictionary.Add(CadDictionary.GeographicData, geodata);
