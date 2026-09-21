@@ -80,6 +80,8 @@ public class DwgWriterSingleObjectTests : WriterSingleObjectTests
 			{
 				doc = DwgReader.Read(path, this.onNotification);
 			}
+
+			data.AssertRoundtrip?.Invoke(doc);
 		}
 	}
 }

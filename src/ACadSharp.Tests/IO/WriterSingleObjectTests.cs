@@ -3,6 +3,7 @@ using ACadSharp.Entities;
 using ACadSharp.Extensions;
 using ACadSharp.Objects;
 using ACadSharp.Tables;
+using ACadSharp.Tests.Common;
 using ACadSharp.XData;
 using CSMath;
 using System;
@@ -111,6 +112,8 @@ public abstract class WriterSingleObjectTests : IOTestsBase
 
 	public class SingleCaseGenerator : IXunitSerializable
 	{
+		public Action<CadDocument> AssertRoundtrip { get; private set; }
+
 		public CadDocument Document { get; private set; } = new CadDocument();
 
 		/// <summary>
@@ -1622,6 +1625,14 @@ public abstract class WriterSingleObjectTests : IOTestsBase
 			Line line = new Line(XYZ.Zero, new XYZ(100, 100, 0));
 
 			this.Document.Entities.Add(line);
+
+			this.AssertRoundtrip = (doc) =>
+			{
+				Line result = doc.GetCadObject<Line>(line.Handle);
+
+				Assert.NotNull(result);
+				EntityComparator.IsEqual(line, result);
+			};
 		}
 
 		public void SingleLineInPaperSpace()
