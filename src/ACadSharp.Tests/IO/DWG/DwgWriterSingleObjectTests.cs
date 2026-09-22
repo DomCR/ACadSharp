@@ -81,6 +81,7 @@ public class DwgWriterSingleObjectTests : WriterSingleObjectTests
 				doc = DwgReader.Read(path, this.onNotification);
 			}
 
+			data.Format = CadFileFormat.DWG;
 			data.AssertRoundtrip?.Invoke(doc);
 		}
 	}

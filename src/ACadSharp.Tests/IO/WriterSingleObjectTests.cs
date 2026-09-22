@@ -1,6 +1,7 @@
 ﻿using ACadSharp.Blocks;
 using ACadSharp.Entities;
 using ACadSharp.Extensions;
+using ACadSharp.IO;
 using ACadSharp.Objects;
 using ACadSharp.Tables;
 using ACadSharp.Tests.Common;
@@ -116,6 +117,8 @@ public abstract class WriterSingleObjectTests : IOTestsBase
 		public Action<CadDocument> AssertRoundtrip { get; private set; }
 
 		public CadDocument Document { get; private set; } = new CadDocument();
+
+		public CadFileFormat Format { get; set; } = CadFileFormat.Unknown;
 
 		/// <summary>
 		/// Gets a value indicating whether the operation has been executed.
@@ -1117,7 +1120,7 @@ public abstract class WriterSingleObjectTests : IOTestsBase
 
 			this.AssertRoundtrip = (doc) =>
 			{
-				if (doc.Header.Version <= ACadVersion.AC1015)
+				if (doc.Header.Version <= ACadVersion.AC1015 || this.Format == CadFileFormat.DXF)
 				{
 					//Not supported in R2000 and earlier, will be converted to index color
 					return;
@@ -1658,6 +1661,12 @@ public abstract class WriterSingleObjectTests : IOTestsBase
 
 			this.AssertRoundtrip = (doc) =>
 			{
+				if (doc.Header.Version <= ACadVersion.AC1015)
+				{
+					//Not supported in R2000 and earlier, will be converted to index color
+					return;
+				}
+
 				Circle result = doc.GetCadObject<Circle>(c.Handle);
 
 				Assert.NotNull(result);
