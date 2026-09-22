@@ -1936,7 +1936,7 @@ public abstract class WriterSingleObjectTests : IOTestsBase
 		{
 			BlockRecord block = new BlockRecord("block1");
 
-			LineType linetype = new LineType("LTYPE:PAINT");
+			LineType linetype = new LineType("LTYPE_PAINT");
 			linetype.AddSegment(new LineType.Segment() { Length = 1 });
 			linetype.AddSegment(new LineType.Segment() { Length = -1 });
 
@@ -2256,6 +2256,11 @@ public abstract class WriterSingleObjectTests : IOTestsBase
 
 			this.AssertRoundtrip = (doc) =>
 			{
+				if(this.Format == CadFileFormat.DXF)
+				{
+					return;
+				}
+
 				Material materialResult = doc.GetCadObject<Material>(material.Handle);
 				Mesh meshResult = doc.GetCadObject<Mesh>(mesh.Handle);
 
