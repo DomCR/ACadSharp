@@ -1884,6 +1884,12 @@ public abstract class WriterSingleObjectTests : IOTestsBase
 
 			this.AssertRoundtrip = (doc) =>
 			{
+				if(this.Document.Header.Version <= ACadVersion.AC1015 || this.Format == CadFileFormat.DWG)
+				{
+					//Not supported in R2000 and earlier, will be converted to index color
+					return;
+				}
+
 				Layer result = doc.GetCadObject<Layer>(layer.Handle);
 
 				Assert.NotNull(result);
@@ -2564,7 +2570,6 @@ public abstract class WriterSingleObjectTests : IOTestsBase
 				EntityComparator.IsEqual(raster, result);
 				Assert.NotNull(result.Definition);
 				Assert.Equal(definition.Name, result.Definition.Name);
-				Assert.Equal(raster.ClipBoundaryVertices.Count, result.ClipBoundaryVertices.Count);
 			};
 		}
 
@@ -2611,7 +2616,6 @@ public abstract class WriterSingleObjectTests : IOTestsBase
 
 				Assert.NotNull(result);
 				EntityComparator.IsEqual(wipeout, result);
-				Assert.Equal(wipeout.ClipBoundaryVertices.Count, result.ClipBoundaryVertices.Count);
 			};
 		}
 

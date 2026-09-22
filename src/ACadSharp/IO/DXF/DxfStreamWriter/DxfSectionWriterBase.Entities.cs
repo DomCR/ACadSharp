@@ -255,7 +255,6 @@ internal abstract partial class DxfSectionWriterBase
 		}
 
 		this._writer.Write(71, (short)image.ClipType, map);
-
 		if (image.ClipType == ClipType.Polygonal)
 		{
 			this._writer.Write(91, image.ClipBoundaryVertices.Count + 1, map);
