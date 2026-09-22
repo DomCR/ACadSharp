@@ -999,7 +999,7 @@ public abstract class WriterSingleObjectTests : IOTestsBase
 			CadDocument doc = this.Document;
 			var modelSpace = doc.ModelSpace;
 
-			string blockName = Guid.NewGuid().ToString();
+			string blockName = "my_block";
 			var blockRecord = new BlockRecord(blockName);
 			var insert = new Insert(blockRecord);
 			modelSpace.Entities.Add(insert);
