@@ -2177,7 +2177,8 @@ public abstract class WriterSingleObjectTests : IOTestsBase
 
 				Assert.NotNull(result);
 				EntityComparator.IsEqual(line, result);
-				Assert.Single(doc.PaperSpace.Entities);
+				Assert.True(result.Owner == doc.PaperSpace);
+				Assert.Equal(this.Document.PaperSpace.Entities.Count, doc.PaperSpace.Entities.Count);
 			};
 		}
 
