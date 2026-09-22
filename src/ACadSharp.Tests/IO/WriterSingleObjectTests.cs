@@ -1458,7 +1458,7 @@ public abstract class WriterSingleObjectTests : IOTestsBase
 
 		public void DimensionWithLineType()
 		{
-			LineType linetype = new LineType("LTYPE:PAINT");
+			LineType linetype = new LineType("LTYPE_PAINT");
 			linetype.AddSegment(new LineType.Segment() { Length = 1 });
 			linetype.AddSegment(new LineType.Segment() { Length = -1 });
 
