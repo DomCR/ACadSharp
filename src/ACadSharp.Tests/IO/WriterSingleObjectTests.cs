@@ -187,6 +187,16 @@ public abstract class WriterSingleObjectTests : IOTestsBase
 			});
 
 			this.Document.Entities.Add(insert);
+
+			this.AssertRoundtrip = (doc) =>
+			{
+				Insert result = doc.GetCadObject<Insert>(insert.Handle);
+
+				Assert.NotNull(result);
+				EntityComparator.IsEqual(insert, result);
+				Assert.Equal(insert.Attributes.Count, result.Attributes.Count);
+				Assert.NotNull(doc.GetCadObject<BlockRecord>(record.Handle));
+			};
 		}
 
 		public void AddBlockWithMTextAttributes()
@@ -242,6 +252,16 @@ public abstract class WriterSingleObjectTests : IOTestsBase
 			});
 
 			this.Document.Entities.Add(insert);
+
+			this.AssertRoundtrip = (doc) =>
+			{
+				Insert result = doc.GetCadObject<Insert>(insert.Handle);
+
+				Assert.NotNull(result);
+				EntityComparator.IsEqual(insert, result);
+				Assert.Equal(insert.Attributes.Count, result.Attributes.Count);
+				Assert.NotNull(doc.GetCadObject<BlockRecord>(record.Handle));
+			};
 		}
 
 		public void AddCustomBookColor()
@@ -266,11 +286,30 @@ public abstract class WriterSingleObjectTests : IOTestsBase
 
 			this.Document.Colors.Add(color);
 			this.Document.Entities.Add(line);
+
+			this.AssertRoundtrip = (doc) =>
+			{
+				Line result = doc.GetCadObject<Line>(line.Handle);
+
+				Assert.NotNull(result);
+				EntityComparator.IsEqual(line, result);
+				Assert.NotNull(doc.GetCadObject<BookColor>(color.Handle));
+			};
 		}
 
 		public void AddCustomScale()
 		{
-			this.Document.Scales.Add(new Scale("Hello"));
+			Scale scale = new Scale("Hello");
+
+			this.Document.Scales.Add(scale);
+
+			this.AssertRoundtrip = (doc) =>
+			{
+				Scale result = doc.GetCadObject<Scale>(scale.Handle);
+
+				Assert.NotNull(result);
+				Assert.Equal(scale.Name, result.Name);
+			};
 		}
 
 		public void AddViewport()
@@ -297,6 +336,17 @@ public abstract class WriterSingleObjectTests : IOTestsBase
 
 			this.Document.PaperSpace.Layout.AddViewport(vp1);
 			this.Document.PaperSpace.Layout.AddViewport(vp2);
+
+			this.AssertRoundtrip = (doc) =>
+			{
+				Viewport result1 = doc.GetCadObject<Viewport>(vp1.Handle);
+				Viewport result2 = doc.GetCadObject<Viewport>(vp2.Handle);
+
+				Assert.NotNull(result1);
+				Assert.NotNull(result2);
+				Assert.Equal(vp1.Width, result1.Width);
+				Assert.Equal(vp2.Height, result2.Height);
+			};
 		}
 
 		public void ArcSegments()
@@ -419,6 +469,15 @@ public abstract class WriterSingleObjectTests : IOTestsBase
 			this.Document.Entities.Add(arc);
 			this.Document.Entities.Add(polyline);
 			this.Document.Entities.Add(l);
+
+			this.AssertRoundtrip = (doc) =>
+			{
+				Arc result = doc.GetCadObject<Arc>(arc.Handle);
+
+				Assert.NotNull(result);
+				EntityComparator.IsEqual(arc, result);
+				Assert.Equal(this.Document.ModelSpace.Entities.Count, doc.ModelSpace.Entities.Count);
+			};
 		}
 
 		public void ArrowBlocks()
@@ -553,12 +612,31 @@ public abstract class WriterSingleObjectTests : IOTestsBase
 			this.Document.Entities.Add(dim8);
 			this.Document.Entities.Add(dim9);
 			this.Document.Entities.Add(dim10);
+
+			this.AssertRoundtrip = (doc) =>
+			{
+				DimensionLinear result = doc.GetCadObject<DimensionLinear>(dim1.Handle);
+
+				Assert.NotNull(result);
+				EntityComparator.IsEqual(dim1, result);
+				Assert.Equal(this.Document.ModelSpace.Entities.Count, doc.ModelSpace.Entities.Count);
+			};
 		}
 
 		public void ChangedEncoding()
 		{
+			Layer layer = new Layer("我的自定义层");
+
 			this.Document.Header.CodePage = "gb2312";
-			this.Document.Layers.Add(new Layer("我的自定义层"));
+			this.Document.Layers.Add(layer);
+
+			this.AssertRoundtrip = (doc) =>
+			{
+				Layer result = doc.GetCadObject<Layer>(layer.Handle);
+
+				Assert.NotNull(result);
+				Assert.Equal(layer.Name, result.Name);
+			};
 		}
 
 		public void ClosedLwPolyline()
@@ -580,6 +658,16 @@ public abstract class WriterSingleObjectTests : IOTestsBase
 
 			lwPline.Vertices[2].Bulge = -0.5;
 			this.Document.Entities.Add(lwPline);
+
+			this.AssertRoundtrip = (doc) =>
+			{
+				LwPolyline result = doc.GetCadObject<LwPolyline>(lwPline.Handle);
+
+				Assert.NotNull(result);
+				EntityComparator.IsEqual(lwPline, result);
+				Assert.Equal(lwPline.IsClosed, result.IsClosed);
+				Assert.Equal(lwPline.Vertices.Count, result.Vertices.Count);
+			};
 		}
 
 		public void ClosedPolyline2DTest()
@@ -599,6 +687,16 @@ public abstract class WriterSingleObjectTests : IOTestsBase
 			pline.Vertices.ElementAt(3).Bulge = 1;
 
 			this.Document.Entities.Add(pline);
+
+			this.AssertRoundtrip = (doc) =>
+			{
+				Polyline2D result = doc.GetCadObject<Polyline2D>(pline.Handle);
+
+				Assert.NotNull(result);
+				EntityComparator.IsEqual(pline, result);
+				Assert.Equal(pline.IsClosed, result.IsClosed);
+				Assert.Equal(pline.Vertices.Count(), result.Vertices.Count());
+			};
 		}
 
 		public void ClosedPolyline3DTest()
@@ -618,6 +716,16 @@ public abstract class WriterSingleObjectTests : IOTestsBase
 			pline.Vertices.ElementAt(3).Bulge = 1;
 
 			this.Document.Entities.Add(pline);
+
+			this.AssertRoundtrip = (doc) =>
+			{
+				Polyline3D result = doc.GetCadObject<Polyline3D>(pline.Handle);
+
+				Assert.NotNull(result);
+				EntityComparator.IsEqual(pline, result);
+				Assert.Equal(pline.IsClosed, result.IsClosed);
+				Assert.Equal(pline.Vertices.Count(), result.Vertices.Count());
+			};
 		}
 
 		public void CreateCircleHatch()
@@ -653,6 +761,16 @@ public abstract class WriterSingleObjectTests : IOTestsBase
 			hatch.Paths.Add(path1);
 
 			this.Document.Entities.Add(hatch);
+
+			this.AssertRoundtrip = (doc) =>
+			{
+				Hatch result = doc.GetCadObject<Hatch>(hatch.Handle);
+
+				Assert.NotNull(result);
+				EntityComparator.IsEqual(hatch, result);
+				Assert.Equal(hatch.IsSolid, result.IsSolid);
+				Assert.Equal(hatch.Paths.Count, result.Paths.Count);
+			};
 		}
 
 		public void CreateGroup()
@@ -692,6 +810,23 @@ public abstract class WriterSingleObjectTests : IOTestsBase
 			text.AlignmentPoint = new CSMath.XYZ(10, 10, 0);
 
 			this.Document.Entities.Add(text);
+
+			this.AssertRoundtrip = (doc) =>
+			{
+				Circle circleResult = doc.GetCadObject<Circle>(circle.Handle);
+				Line lineResult = doc.GetCadObject<Line>(line.Handle);
+				TextEntity textResult = doc.GetCadObject<TextEntity>(text.Handle);
+
+				Assert.NotNull(circleResult);
+				Assert.NotNull(lineResult);
+				Assert.NotNull(textResult);
+
+				EntityComparator.IsEqual(circle, circleResult);
+				EntityComparator.IsEqual(line, lineResult);
+				EntityComparator.IsEqual(text, textResult);
+
+				Assert.NotNull(doc.GetCadObject<Layer>(layer.Handle));
+			};
 		}
 
 		public void CreateHatch()
@@ -741,6 +876,16 @@ public abstract class WriterSingleObjectTests : IOTestsBase
 			hatch.Paths.Add(path);
 
 			this.Document.Entities.Add(hatch);
+
+			this.AssertRoundtrip = (doc) =>
+			{
+				Hatch result = doc.GetCadObject<Hatch>(hatch.Handle);
+
+				Assert.NotNull(result);
+				EntityComparator.IsEqual(hatch, result);
+				Assert.Equal(hatch.Paths.Count, result.Paths.Count);
+				Assert.Equal(hatch.Paths.First().Edges.Count, result.Paths.First().Edges.Count);
+			};
 		}
 
 		public void CreateHatchFullSweeps()
@@ -772,6 +917,15 @@ public abstract class WriterSingleObjectTests : IOTestsBase
 			hatch.Paths.Add(ellipsePath);
 
 			this.Document.Entities.Add(hatch);
+
+			this.AssertRoundtrip = (doc) =>
+			{
+				Hatch result = doc.GetCadObject<Hatch>(hatch.Handle);
+
+				Assert.NotNull(result);
+				EntityComparator.IsEqual(hatch, result);
+				Assert.Equal(hatch.Paths.Count, result.Paths.Count);
+			};
 		}
 
 		public void CreateHatchPolyline()
@@ -823,6 +977,17 @@ public abstract class WriterSingleObjectTests : IOTestsBase
 			multiplePoly.Paths.Add(path2);
 
 			this.Document.Entities.Add(multiplePoly);
+
+			this.AssertRoundtrip = (doc) =>
+			{
+				Hatch result = doc.GetCadObject<Hatch>(hatch.Handle);
+				Hatch multipleResult = doc.GetCadObject<Hatch>(multiplePoly.Handle);
+
+				Assert.NotNull(result);
+				Assert.NotNull(multipleResult);
+				Assert.Equal(hatch.Paths.Count, result.Paths.Count);
+				Assert.Equal(multiplePoly.Paths.Count, multipleResult.Paths.Count);
+			};
 		}
 
 		public void CreateInsertWithHatch()
@@ -856,6 +1021,17 @@ public abstract class WriterSingleObjectTests : IOTestsBase
 			hatch.Paths.Add(path);
 
 			blockRecord.Entities.Add(hatch);
+
+			this.AssertRoundtrip = (doc) =>
+			{
+				Insert insertResult = doc.GetCadObject<Insert>(insert.Handle);
+				Hatch hatchResult = doc.GetCadObject<Hatch>(hatch.Handle);
+
+				Assert.NotNull(insertResult);
+				Assert.NotNull(hatchResult);
+				Assert.Equal(hatch.Paths.Count, hatchResult.Paths.Count);
+				Assert.NotNull(doc.GetCadObject<BlockRecord>(blockRecord.Handle));
+			};
 		}
 
 		public void CreateLayout()
@@ -867,6 +1043,14 @@ public abstract class WriterSingleObjectTests : IOTestsBase
 			Layout layout = new Layout("my_layout");
 
 			this.Document.Layouts.Add(layout);
+
+			this.AssertRoundtrip = (doc) =>
+			{
+				Layout result = doc.GetCadObject<Layout>(layout.Handle);
+
+				Assert.NotNull(result);
+				Assert.Equal(layout.Name, result.Name);
+			};
 		}
 
 		public void CreateXRecords()
@@ -884,31 +1068,71 @@ public abstract class WriterSingleObjectTests : IOTestsBase
 			layerstates.Add(record);
 
 			this.Document.Layers.Add(lay);
+
+			this.AssertRoundtrip = (doc) =>
+			{
+				Layer layerResult = doc.GetCadObject<Layer>(lay.Handle);
+				XRecord recordResult = doc.GetCadObject<XRecord>(record.Handle);
+
+				Assert.NotNull(layerResult);
+				Assert.NotNull(recordResult);
+				Assert.Equal(record.Entries.Count(), recordResult.Entries.Count());
+			};
 		}
 
 		public void CurrentEntityByBlock()
 		{
 			this.Document.Header.CurrentEntityColor = Color.ByBlock;
+
+			this.AssertRoundtrip = (doc) =>
+			{
+				Assert.Equal(this.Document.Header.CurrentEntityColor, doc.Header.CurrentEntityColor);
+			};
 		}
 
 		public void CurrentEntityByIndex()
 		{
 			this.Document.Header.CurrentEntityColor = new Color(11);
+
+			this.AssertRoundtrip = (doc) =>
+			{
+				Assert.Equal(this.Document.Header.CurrentEntityColor, doc.Header.CurrentEntityColor);
+			};
 		}
 
 		public void CurrentEntityByLayer()
 		{
 			this.Document.Header.CurrentEntityColor = Color.ByLayer;
+
+			this.AssertRoundtrip = (doc) =>
+			{
+				Assert.Equal(this.Document.Header.CurrentEntityColor, doc.Header.CurrentEntityColor);
+			};
 		}
 
 		public void CurrentEntityColorTrueColor()
 		{
 			this.Document.Header.CurrentEntityColor = Color.FromTrueColor(1151726);
+
+			this.AssertRoundtrip = (doc) =>
+			{
+				Assert.Equal(this.Document.Header.CurrentEntityColor, doc.Header.CurrentEntityColor);
+			};
 		}
 
 		public void DefaultLayer()
 		{
-			this.Document.Layers.Add(new Layer("default_layer"));
+			Layer layer = new Layer("default_layer");
+
+			this.Document.Layers.Add(layer);
+
+			this.AssertRoundtrip = (doc) =>
+			{
+				Layer result = doc.GetCadObject<Layer>(layer.Handle);
+
+				Assert.NotNull(result);
+				Assert.Equal(layer.Name, result.Name);
+			};
 		}
 
 		public void Deserialize(IXunitSerializationInfo info)
@@ -947,6 +1171,15 @@ public abstract class WriterSingleObjectTests : IOTestsBase
 
 			//dim.UpdateBlock();
 			dim1.UpdateBlock();
+
+			this.AssertRoundtrip = (doc) =>
+			{
+				DimensionAligned result = doc.GetCadObject<DimensionAligned>(dim1.Handle);
+
+				Assert.NotNull(result);
+				EntityComparator.IsEqual(dim1, result);
+				Assert.Equal(dim1.SecondPoint, result.SecondPoint);
+			};
 		}
 
 		public void DimensionAngular2Line()
@@ -961,10 +1194,25 @@ public abstract class WriterSingleObjectTests : IOTestsBase
 			this.Document.Entities.Add(dim);
 
 			dim.UpdateBlock();
+
+			this.AssertRoundtrip = (doc) =>
+			{
+				DimensionAngular2Line result = doc.GetCadObject<DimensionAngular2Line>(dim.Handle);
+
+				Assert.NotNull(result);
+				EntityComparator.IsEqual(dim, result);
+				Assert.Equal(dim.FirstPoint, result.FirstPoint);
+				Assert.Equal(dim.SecondPoint, result.SecondPoint);
+			};
 		}
 
 		public void DimensionAngular3Pt()
 		{
+			this.AssertRoundtrip = (doc) =>
+			{
+				Assert.Equal(this.Document.ModelSpace.Entities.Count, doc.ModelSpace.Entities.Count);
+			};
+
 			return;
 
 			DimensionAngular3Pt dim = new DimensionAngular3Pt();
@@ -993,6 +1241,15 @@ public abstract class WriterSingleObjectTests : IOTestsBase
 			};
 
 			this.Document.Entities.Add(dim);
+
+			this.AssertRoundtrip = (doc) =>
+			{
+				DimensionArc result = doc.GetCadObject<DimensionArc>(dim.Handle);
+
+				Assert.NotNull(result);
+				EntityComparator.IsEqual(dim, result);
+				Assert.Equal(dim.Center, result.Center);
+			};
 		}
 
 		public void DimensionDiameter()
@@ -1015,6 +1272,15 @@ public abstract class WriterSingleObjectTests : IOTestsBase
 			this.Document.Entities.Add(dim);
 
 			dim.UpdateBlock();
+
+			this.AssertRoundtrip = (doc) =>
+			{
+				DimensionDiameter result = doc.GetCadObject<DimensionDiameter>(dim.Handle);
+
+				Assert.NotNull(result);
+				EntityComparator.IsEqual(dim, result);
+				Assert.Equal(this.Document.ModelSpace.Entities.Count, doc.ModelSpace.Entities.Count);
+			};
 		}
 
 		public void DimensionLinear()
@@ -1039,6 +1305,18 @@ public abstract class WriterSingleObjectTests : IOTestsBase
 
 			dim.UpdateBlock();
 			dim1.UpdateBlock();
+
+			this.AssertRoundtrip = (doc) =>
+			{
+				DimensionLinear result = doc.GetCadObject<DimensionLinear>(dim.Handle);
+				DimensionLinear result1 = doc.GetCadObject<DimensionLinear>(dim1.Handle);
+
+				Assert.NotNull(result);
+				Assert.NotNull(result1);
+				EntityComparator.IsEqual(dim, result);
+				EntityComparator.IsEqual(dim1, result1);
+				Assert.Equal(dim.SecondPoint, result.SecondPoint);
+			};
 		}
 
 		public void DimensionOrdinate()
@@ -1051,6 +1329,15 @@ public abstract class WriterSingleObjectTests : IOTestsBase
 			this.Document.Entities.Add(dim);
 
 			dim.UpdateBlock();
+
+			this.AssertRoundtrip = (doc) =>
+			{
+				DimensionOrdinate result = doc.GetCadObject<DimensionOrdinate>(dim.Handle);
+
+				Assert.NotNull(result);
+				EntityComparator.IsEqual(dim, result);
+				Assert.Equal(dim.FeatureLocation, result.FeatureLocation);
+			};
 		}
 
 		public void DimensionRadius()
@@ -1063,6 +1350,15 @@ public abstract class WriterSingleObjectTests : IOTestsBase
 			this.Document.Entities.Add(dim);
 
 			dim.UpdateBlock();
+
+			this.AssertRoundtrip = (doc) =>
+			{
+				DimensionRadius result = doc.GetCadObject<DimensionRadius>(dim.Handle);
+
+				Assert.NotNull(result);
+				EntityComparator.IsEqual(dim, result);
+				Assert.Equal(dim.AngleVertex, result.AngleVertex);
+			};
 		}
 
 		public void Dimensions()
@@ -1091,6 +1387,18 @@ public abstract class WriterSingleObjectTests : IOTestsBase
 			dim1.SecondPoint = new XYZ(10, 0, 0);
 
 			this.Document.Entities.Add(dim1);
+
+			this.AssertRoundtrip = (doc) =>
+			{
+				DimensionAligned result = doc.GetCadObject<DimensionAligned>(dim.Handle);
+				DimensionAligned result1 = doc.GetCadObject<DimensionAligned>(dim1.Handle);
+
+				Assert.NotNull(result);
+				Assert.NotNull(result1);
+				EntityComparator.IsEqual(dim, result);
+				EntityComparator.IsEqual(dim1, result1);
+				Assert.Equal(dim.Text, result.Text);
+			};
 		}
 
 		public void DimensionsInBlock()
@@ -1125,6 +1433,17 @@ public abstract class WriterSingleObjectTests : IOTestsBase
 			dim.UpdateBlock();
 			dim1.UpdateBlock();
 			c.UpdateBlock();
+
+			this.AssertRoundtrip = (doc) =>
+			{
+				DimensionAligned result = doc.GetCadObject<DimensionAligned>(c.Handle);
+
+				Assert.NotNull(result);
+				EntityComparator.IsEqual(c, result);
+				Assert.NotNull(doc.GetCadObject<BlockRecord>(record.Handle));
+				Assert.NotNull(doc.GetCadObject<DimensionAligned>(dim.Handle));
+				Assert.NotNull(doc.GetCadObject<DimensionLinear>(dim1.Handle));
+			};
 		}
 
 		public void DimensionWithLineType()
@@ -1142,6 +1461,16 @@ public abstract class WriterSingleObjectTests : IOTestsBase
 			dim.SecondPoint = new XYZ(10);
 
 			this.Document.Entities.Add(dim);
+
+			this.AssertRoundtrip = (doc) =>
+			{
+				DimensionAligned result = doc.GetCadObject<DimensionAligned>(dim.Handle);
+
+				Assert.NotNull(result);
+				EntityComparator.IsEqual(dim, result);
+				Assert.NotNull(doc.GetCadObject<LineType>(linetype.Handle));
+				Assert.NotNull(doc.GetCadObject<DimensionStyle>(style.Handle));
+			};
 		}
 
 		public void EllipseSegments()
@@ -1200,10 +1529,26 @@ public abstract class WriterSingleObjectTests : IOTestsBase
 
 			this.Document.Entities.Add(pline);
 			this.Document.Entities.Add(ellipse);
+
+			this.AssertRoundtrip = (doc) =>
+			{
+				Ellipse result = doc.GetCadObject<Ellipse>(ellipse.Handle);
+
+				Assert.NotNull(result);
+				EntityComparator.IsEqual(ellipse, result);
+				Assert.Equal(ellipse.Center, result.Center);
+				Assert.Equal(this.Document.ModelSpace.Entities.Count, doc.ModelSpace.Entities.Count);
+			};
 		}
 
 		public void Empty()
-		{ }
+		{
+			this.AssertRoundtrip = (doc) =>
+			{
+				Assert.NotNull(doc.ModelSpace);
+				Assert.Empty(doc.ModelSpace.Entities);
+			};
+		}
 
 		public void EntityChangeNormal()
 		{
@@ -1237,6 +1582,18 @@ public abstract class WriterSingleObjectTests : IOTestsBase
 
 			this.Document.Entities.Add(arc);
 			this.Document.Entities.Add(pline);
+
+			this.AssertRoundtrip = (doc) =>
+			{
+				Circle circleResult = doc.GetCadObject<Circle>(c.Handle);
+				Arc arcResult = doc.GetCadObject<Arc>(arc.Handle);
+
+				Assert.NotNull(circleResult);
+				Assert.NotNull(arcResult);
+				EntityComparator.IsEqual(c, circleResult);
+				EntityComparator.IsEqual(arc, arcResult);
+				Assert.Equal(this.Document.ModelSpace.Entities.Count, doc.ModelSpace.Entities.Count);
+			};
 		}
 
 		public void EntityColorByIndex()
@@ -1247,6 +1604,15 @@ public abstract class WriterSingleObjectTests : IOTestsBase
 			c.Color = new Color(11);
 
 			this.Document.Entities.Add(c);
+
+			this.AssertRoundtrip = (doc) =>
+			{
+				Circle result = doc.GetCadObject<Circle>(c.Handle);
+
+				Assert.NotNull(result);
+				EntityComparator.IsEqual(c, result);
+				Assert.Equal(c.Color, result.Color);
+			};
 		}
 
 		public void EntityColorByLayer()
@@ -1262,6 +1628,16 @@ public abstract class WriterSingleObjectTests : IOTestsBase
 			c.Color = Color.ByLayer;
 
 			this.Document.Entities.Add(c);
+
+			this.AssertRoundtrip = (doc) =>
+			{
+				Circle result = doc.GetCadObject<Circle>(c.Handle);
+
+				Assert.NotNull(result);
+				EntityComparator.IsEqual(c, result);
+				Assert.Equal(c.Color, result.Color);
+				Assert.Equal(layer.Name, result.Layer.Name);
+			};
 		}
 
 		public void EntityColorTrueColor()
@@ -1272,6 +1648,15 @@ public abstract class WriterSingleObjectTests : IOTestsBase
 			c.Color = Color.FromTrueColor(1151726);
 
 			this.Document.Entities.Add(c);
+
+			this.AssertRoundtrip = (doc) =>
+			{
+				Circle result = doc.GetCadObject<Circle>(c.Handle);
+
+				Assert.NotNull(result);
+				EntityComparator.IsEqual(c, result);
+				Assert.Equal(c.Color, result.Color);
+			};
 		}
 
 		public void EntityTransparency()
@@ -1281,6 +1666,15 @@ public abstract class WriterSingleObjectTests : IOTestsBase
 			line.Transparency = new Transparency(50);
 
 			this.Document.Entities.Add(line);
+
+			this.AssertRoundtrip = (doc) =>
+			{
+				Line result = doc.GetCadObject<Line>(line.Handle);
+
+				Assert.NotNull(result);
+				EntityComparator.IsEqual(line, result);
+				Assert.Equal(line.Transparency, result.Transparency);
+			};
 		}
 
 		public void GenerateExampleDxf()
@@ -1305,6 +1699,17 @@ public abstract class WriterSingleObjectTests : IOTestsBase
 
 			this.Document.Entities.Add(line);
 			this.Document.Entities.Add(anotherLine);
+
+			this.AssertRoundtrip = (doc) =>
+			{
+				Polyline2D result = doc.GetCadObject<Polyline2D>(line.Handle);
+
+				Assert.NotNull(result);
+				EntityComparator.IsEqual(line, result);
+				Assert.NotNull(doc.GetCadObject<Polyline2D>(anotherLine.Handle));
+				Assert.NotNull(doc.GetCadObject<Layer>(dxfLayer.Handle));
+				Assert.NotNull(doc.GetCadObject<Layer>(anotherDxfLayer.Handle));
+			};
 		}
 
 		public void GeoData()
@@ -1316,6 +1721,14 @@ public abstract class WriterSingleObjectTests : IOTestsBase
 			geodata.HostBlock = this.Document.ModelSpace;
 
 			this.Document.ModelSpace.XDictionary.Add(CadDictionary.GeographicData, geodata);
+
+			this.AssertRoundtrip = (doc) =>
+			{
+				GeoData result = doc.GetCadObject<GeoData>(geodata.Handle);
+
+				Assert.NotNull(result);
+				Assert.Equal(geodata.Name, result.Name);
+			};
 		}
 
 		public void HatchWithEntities()
@@ -1354,6 +1767,17 @@ public abstract class WriterSingleObjectTests : IOTestsBase
 			}));
 
 			this.Document.Entities.Add(hatch);
+
+			this.AssertRoundtrip = (doc) =>
+			{
+				Hatch result = doc.GetCadObject<Hatch>(hatch.Handle);
+				Circle circleResult = doc.GetCadObject<Circle>(c.Handle);
+
+				Assert.NotNull(result);
+				Assert.NotNull(circleResult);
+				EntityComparator.IsEqual(c, circleResult);
+				Assert.Equal(this.Document.ModelSpace.Entities.Count, doc.ModelSpace.Entities.Count);
+			};
 		}
 
 		public void InsertWithSpatialFilter()
@@ -1376,6 +1800,17 @@ public abstract class WriterSingleObjectTests : IOTestsBase
 				Radius = 20
 			};
 			blockRecord.Entities.Add(circle);
+
+			this.AssertRoundtrip = (doc) =>
+			{
+				Insert result = doc.GetCadObject<Insert>(insert.Handle);
+
+				Assert.NotNull(result);
+				EntityComparator.IsEqual(insert, result);
+				Assert.NotNull(result.SpatialFilter);
+				Assert.Equal(filter.BoundaryPoints.Count, result.SpatialFilter.BoundaryPoints.Count);
+				Assert.NotNull(doc.GetCadObject<Circle>(circle.Handle));
+			};
 		}
 
 		public void InvalidEntities()
@@ -1406,6 +1841,12 @@ public abstract class WriterSingleObjectTests : IOTestsBase
 			this.Document.Entities.Add(w);
 
 			//Empty file
+
+			this.AssertRoundtrip = (doc) =>
+			{
+				Assert.NotNull(doc.ModelSpace);
+				Assert.NotNull(doc.Layers);
+			};
 		}
 
 		public void LayerTrueColor()
@@ -1414,6 +1855,15 @@ public abstract class WriterSingleObjectTests : IOTestsBase
 			layer.Color = Color.FromTrueColor(1151726);
 
 			this.Document.Layers.Add(layer);
+
+			this.AssertRoundtrip = (doc) =>
+			{
+				Layer result = doc.GetCadObject<Layer>(layer.Handle);
+
+				Assert.NotNull(result);
+				Assert.Equal(layer.Name, result.Name);
+				Assert.Equal(layer.Color, result.Color);
+			};
 		}
 
 		public void LeaderWithArrowHead()
@@ -1437,6 +1887,17 @@ public abstract class WriterSingleObjectTests : IOTestsBase
 			leader.ArrowHeadEnabled = true;
 
 			this.Document.Entities.Add(leader);
+
+			this.AssertRoundtrip = (doc) =>
+			{
+				Leader result = doc.GetCadObject<Leader>(leader.Handle);
+
+				Assert.NotNull(result);
+				EntityComparator.IsEqual(leader, result);
+				Assert.Equal(leader.ArrowHeadEnabled, result.ArrowHeadEnabled);
+				Assert.NotNull(doc.GetCadObject<BlockRecord>(arrowHead.Handle));
+				Assert.NotNull(doc.GetCadObject<DimensionStyle>(style.Handle));
+			};
 		}
 
 		public void LineTypeInBlock()
@@ -1472,6 +1933,17 @@ public abstract class WriterSingleObjectTests : IOTestsBase
 			};
 
 			this.Document.Entities.Add(blockinsert);
+
+			this.AssertRoundtrip = (doc) =>
+			{
+				Insert result = doc.GetCadObject<Insert>(blockinsert.Handle);
+
+				Assert.NotNull(result);
+				EntityComparator.IsEqual(blockinsert, result);
+				Assert.NotNull(doc.GetCadObject<LineType>(linetype.Handle));
+				Assert.NotNull(doc.GetCadObject<Line>(line.Handle));
+				Assert.NotNull(doc.GetCadObject<Line>(line1.Handle));
+			};
 		}
 
 		public void LineTypeWithSegments()
@@ -1495,6 +1967,15 @@ public abstract class WriterSingleObjectTests : IOTestsBase
 			lt.AddSegment(s2);
 
 			this.Document.LineTypes.Add(lt);
+
+			this.AssertRoundtrip = (doc) =>
+			{
+				LineType result = doc.GetCadObject<LineType>(lt.Handle);
+
+				Assert.NotNull(result);
+				Assert.Equal(lt.Name, result.Name);
+				Assert.Equal(lt.Segments.Count(), result.Segments.Count());
+			};
 		}
 
 		public void LineTypeWithTextSegment()
@@ -1581,6 +2062,18 @@ public abstract class WriterSingleObjectTests : IOTestsBase
 			};
 			this.Document.Entities.Add(line1);
 			this.Document.Entities.Add(line2);
+
+			this.AssertRoundtrip = (doc) =>
+			{
+				LineType result1 = doc.GetCadObject<LineType>(lt1.Handle);
+				LineType result2 = doc.GetCadObject<LineType>(lt2.Handle);
+
+				Assert.NotNull(result1);
+				Assert.NotNull(result2);
+				Assert.Equal(lt1.Segments.Count(), result1.Segments.Count());
+				Assert.Equal(lt2.Segments.Count(), result2.Segments.Count());
+				Assert.NotNull(doc.GetCadObject<TextStyle>(style.Handle));
+			};
 		}
 
 		public void PolylineVertexLayer()
@@ -1604,6 +2097,16 @@ public abstract class WriterSingleObjectTests : IOTestsBase
 
 			this.Document.Entities.Add(line);
 			this.Document.Entities.Add(anotherLine);
+
+			this.AssertRoundtrip = (doc) =>
+			{
+				Polyline2D result = doc.GetCadObject<Polyline2D>(line.Handle);
+
+				Assert.NotNull(result);
+				EntityComparator.IsEqual(line, result);
+				Assert.Equal(dxfLayer.Name, result.Layer.Name);
+				Assert.NotNull(doc.GetCadObject<Polyline2D>(anotherLine.Handle));
+			};
 		}
 
 		public void Serialize(IXunitSerializationInfo info)
@@ -1619,6 +2122,15 @@ public abstract class WriterSingleObjectTests : IOTestsBase
 			ellipse.EndParameter = Math.PI * 2;
 
 			this.Document.Entities.Add(ellipse);
+
+			this.AssertRoundtrip = (doc) =>
+			{
+				Ellipse result = doc.GetCadObject<Ellipse>(ellipse.Handle);
+
+				Assert.NotNull(result);
+				EntityComparator.IsEqual(ellipse, result);
+				Assert.Equal(ellipse.RadiusRatio, result.RadiusRatio);
+			};
 		}
 
 		public void SingleLine()
@@ -1641,6 +2153,15 @@ public abstract class WriterSingleObjectTests : IOTestsBase
 			Line line = new Line(XYZ.Zero, new XYZ(100, 100, 0));
 
 			this.Document.PaperSpace.Entities.Add(line);
+
+			this.AssertRoundtrip = (doc) =>
+			{
+				Line result = doc.GetCadObject<Line>(line.Handle);
+
+				Assert.NotNull(result);
+				EntityComparator.IsEqual(line, result);
+				Assert.Single(doc.PaperSpace.Entities);
+			};
 		}
 
 		public void SingleLongMText()
@@ -1651,6 +2172,15 @@ public abstract class WriterSingleObjectTests : IOTestsBase
 				"Lorem ipsum dolor sit amet, consectetur adipiscing elit. Cras accumsan erat velit, nec sagittis felis convallis id. Morbi ac metus at purus tempor ornare quis vel mi. Phasellus iaculis molestie neque eu ultrices. Praesent in interdum mauris. Nulla in mi non eros aliquam tempus ut at metus. Sed vel ligula vitae ante facilisis malesuada id sit amet elit. Praesent fringilla enim at ipsum posuere blandit. Aliquam id magna metus. Aenean at ex mi. Etiam auctor elit lectus, at eleifend urna feugiat sed. Vivamus vitae tortor vel enim consectetur venenatis. Nulla gravida tellus id fermentum feugiat. Pellentesque laoreet elit a mi.\n";
 
 			this.Document.Entities.Add(mtext);
+
+			this.AssertRoundtrip = (doc) =>
+			{
+				MText result = doc.GetCadObject<MText>(mtext.Handle);
+
+				Assert.NotNull(result);
+				EntityComparator.IsEqual(mtext, result);
+				Assert.Equal(mtext.Value, result.Value);
+			};
 		}
 
 		public void SingleMaterial()
@@ -1690,6 +2220,17 @@ public abstract class WriterSingleObjectTests : IOTestsBase
 			mesh.Faces.Add([0, 1, 2]);
 
 			this.Document.Entities.Add(mesh);
+
+			this.AssertRoundtrip = (doc) =>
+			{
+				Material materialResult = doc.GetCadObject<Material>(material.Handle);
+				Mesh meshResult = doc.GetCadObject<Mesh>(mesh.Handle);
+
+				Assert.NotNull(materialResult);
+				Assert.NotNull(meshResult);
+				Assert.Equal(material.Name, materialResult.Name);
+				Assert.Equal(material.Description, materialResult.Description);
+			};
 		}
 
 		public void SingleMesh()
@@ -1708,6 +2249,16 @@ public abstract class WriterSingleObjectTests : IOTestsBase
 			//mesh.Edges.Add(new Mesh.Edge { Start = 0, End = 3 });
 
 			this.Document.Entities.Add(mesh);
+
+			this.AssertRoundtrip = (doc) =>
+			{
+				Mesh result = doc.GetCadObject<Mesh>(mesh.Handle);
+
+				Assert.NotNull(result);
+				EntityComparator.IsEqual(mesh, result);
+				Assert.Equal(mesh.Vertices.Count, result.Vertices.Count);
+				Assert.Equal(mesh.Faces.Count, result.Faces.Count);
+			};
 		}
 
 		public void SingleMeshWithTextureCoordinates()
@@ -1733,6 +2284,16 @@ public abstract class WriterSingleObjectTests : IOTestsBase
 			mesh.AddTextureCoordinate(new XYZ(0, 1, 0));
 
 			this.Document.Entities.Add(mesh);
+
+			this.AssertRoundtrip = (doc) =>
+			{
+				Mesh result = doc.GetCadObject<Mesh>(mesh.Handle);
+
+				Assert.NotNull(result);
+				EntityComparator.IsEqual(mesh, result);
+				Assert.Equal(mesh.Vertices.Count, result.Vertices.Count);
+				Assert.Equal(mesh.Faces.Count, result.Faces.Count);
+			};
 		}
 
 		public void SingleMLeader()
@@ -1759,6 +2320,16 @@ public abstract class WriterSingleObjectTests : IOTestsBase
 			mleader.ContextData.LeaderRoots.Add(root);
 
 			this.Document.Entities.Add(mleader);
+
+			this.AssertRoundtrip = (doc) =>
+			{
+				MultiLeader result = doc.GetCadObject<MultiLeader>(mleader.Handle);
+
+				Assert.NotNull(result);
+				EntityComparator.IsEqual(mleader, result);
+				Assert.Equal(mleader.ContextData.TextLabel, result.ContextData.TextLabel);
+				Assert.Equal(mleader.ContextData.LeaderRoots.Count, result.ContextData.LeaderRoots.Count);
+			};
 		}
 
 		public void SingleMLine()
@@ -1787,6 +2358,15 @@ public abstract class WriterSingleObjectTests : IOTestsBase
 			line.Vertices.Add(v2);
 
 			this.Document.Entities.Add(line);
+
+			this.AssertRoundtrip = (doc) =>
+			{
+				MLine result = doc.GetCadObject<MLine>(line.Handle);
+
+				Assert.NotNull(result);
+				EntityComparator.IsEqual(line, result);
+				Assert.Equal(line.Vertices.Count, result.Vertices.Count);
+			};
 		}
 
 		public void SingleMText()
@@ -1796,6 +2376,15 @@ public abstract class WriterSingleObjectTests : IOTestsBase
 			mtext.Value = "HELLO I'm an MTEXT";
 
 			this.Document.Entities.Add(mtext);
+
+			this.AssertRoundtrip = (doc) =>
+			{
+				MText result = doc.GetCadObject<MText>(mtext.Handle);
+
+				Assert.NotNull(result);
+				EntityComparator.IsEqual(mtext, result);
+				Assert.Equal(mtext.Value, result.Value);
+			};
 		}
 
 		public void SingleMTextMultiline()
@@ -1805,6 +2394,15 @@ public abstract class WriterSingleObjectTests : IOTestsBase
 			mtext.Value = "HELLO I'm an MTEXT\n and I have multiple lines";
 
 			this.Document.Entities.Add(mtext);
+
+			this.AssertRoundtrip = (doc) =>
+			{
+				MText result = doc.GetCadObject<MText>(mtext.Handle);
+
+				Assert.NotNull(result);
+				EntityComparator.IsEqual(mtext, result);
+				Assert.Equal(mtext.Value, result.Value);
+			};
 		}
 
 		public void SingleMTextRotation()
@@ -1827,6 +2425,15 @@ public abstract class WriterSingleObjectTests : IOTestsBase
 			mtext.ApplyRotation(XYZ.AxisZ, Math.PI / 4);
 
 			this.Document.Entities.Add(mtext);
+
+			this.AssertRoundtrip = (doc) =>
+			{
+				MText result = doc.GetCadObject<MText>(mtext.Handle);
+
+				Assert.NotNull(result);
+				EntityComparator.IsEqual(mtext, result);
+				Assert.Equal(this.Document.ModelSpace.Entities.Count, doc.ModelSpace.Entities.Count);
+			};
 		}
 
 		public void SingleMTextSpecialCharacter()
@@ -1836,6 +2443,15 @@ public abstract class WriterSingleObjectTests : IOTestsBase
 			mtext.Value = "∅45,6";
 
 			this.Document.Entities.Add(mtext);
+
+			this.AssertRoundtrip = (doc) =>
+			{
+				MText result = doc.GetCadObject<MText>(mtext.Handle);
+
+				Assert.NotNull(result);
+				EntityComparator.IsEqual(mtext, result);
+				Assert.Equal(mtext.Value, result.Value);
+			};
 		}
 
 		public void SinglePdfUnderlay()
@@ -1857,11 +2473,32 @@ public abstract class WriterSingleObjectTests : IOTestsBase
 			clone.InsertPoint = new XYZ(10, 10, 0);
 
 			this.Document.Entities.Add(clone);
+
+			this.AssertRoundtrip = (doc) =>
+			{
+				PdfUnderlay result = doc.GetCadObject<PdfUnderlay>(raster.Handle);
+
+				Assert.NotNull(result);
+				EntityComparator.IsEqual(raster, result);
+				Assert.NotNull(result.Definition);
+				Assert.Equal(definition.Page, result.Definition.Page);
+				Assert.NotNull(doc.GetCadObject<PdfUnderlay>(clone.Handle));
+			};
 		}
 
 		public void SinglePoint()
 		{
-			this.Document.Entities.Add(new Point(XYZ.Zero));
+			Point point = new Point(XYZ.Zero);
+
+			this.Document.Entities.Add(point);
+
+			this.AssertRoundtrip = (doc) =>
+			{
+				Point result = doc.GetCadObject<Point>(point.Handle);
+
+				Assert.NotNull(result);
+				EntityComparator.IsEqual(point, result);
+			};
 		}
 
 		public void SingleRasterImage()
@@ -1883,6 +2520,17 @@ public abstract class WriterSingleObjectTests : IOTestsBase
 			raster.ClipBoundaryVertices.Add(new XY(1, 0));
 
 			this.Document.Entities.Add(raster);
+
+			this.AssertRoundtrip = (doc) =>
+			{
+				RasterImage result = doc.GetCadObject<RasterImage>(raster.Handle);
+
+				Assert.NotNull(result);
+				EntityComparator.IsEqual(raster, result);
+				Assert.NotNull(result.Definition);
+				Assert.Equal(definition.Name, result.Definition.Name);
+				Assert.Equal(raster.ClipBoundaryVertices.Count, result.ClipBoundaryVertices.Count);
+			};
 		}
 
 		public void SingleTableEntity()
@@ -1894,6 +2542,16 @@ public abstract class WriterSingleObjectTests : IOTestsBase
 			t.Rows.Add(new TableEntity.Row() { Height = 5 });
 
 			this.Document.Entities.Add(t);
+
+			this.AssertRoundtrip = (doc) =>
+			{
+				TableEntity result = doc.GetCadObject<TableEntity>(t.Handle);
+
+				Assert.NotNull(result);
+				EntityComparator.IsEqual(t, result);
+				Assert.Equal(t.Columns.Count, result.Columns.Count);
+				Assert.Equal(t.Rows.Count, result.Rows.Count);
+			};
 		}
 
 		public void SingleWipeout()
@@ -1909,6 +2567,15 @@ public abstract class WriterSingleObjectTests : IOTestsBase
 			wipeout.ClipBoundaryVertices.Add(new XY(0, 1));
 
 			this.Document.Entities.Add(wipeout);
+
+			this.AssertRoundtrip = (doc) =>
+			{
+				Wipeout result = doc.GetCadObject<Wipeout>(wipeout.Handle);
+
+				Assert.NotNull(result);
+				EntityComparator.IsEqual(wipeout, result);
+				Assert.Equal(wipeout.ClipBoundaryVertices.Count, result.ClipBoundaryVertices.Count);
+			};
 		}
 
 		public void SPlineCreation()
@@ -1952,11 +2619,21 @@ public abstract class WriterSingleObjectTests : IOTestsBase
 			spline.UpdateFromFitPoints();
 
 			this.Document.Entities.Add(spline);
+
+			this.AssertRoundtrip = (doc) =>
+			{
+				Spline result = doc.GetCadObject<Spline>(spline.Handle);
+
+				Assert.NotNull(result);
+				EntityComparator.IsEqual(spline, result);
+				Assert.Equal(this.Document.ModelSpace.Entities.Count, doc.ModelSpace.Entities.Count);
+			};
 		}
 
 		public void TextAlignment()
 		{
 			XYZ insert = new XYZ(0, 0, 0);
+			List<TextEntity> texts = new();
 
 			foreach (var item in Enum.GetValues(typeof(TextHorizontalAlignment)).Cast<TextHorizontalAlignment>())
 			{
@@ -1967,9 +2644,21 @@ public abstract class WriterSingleObjectTests : IOTestsBase
 				textEntity.Height = 0.5;
 
 				this.Document.Entities.Add(textEntity);
+				texts.Add(textEntity);
 
 				insert = new XYZ(insert.X + 2, 0, 0);
 			}
+
+			this.AssertRoundtrip = (doc) =>
+			{
+				foreach (TextEntity text in texts)
+				{
+					TextEntity result = doc.GetCadObject<TextEntity>(text.Handle);
+
+					Assert.NotNull(result);
+					EntityComparator.IsEqual(text, result);
+				}
+			};
 		}
 
 		public void TextWithChineseCharacters()
@@ -1992,6 +2681,17 @@ public abstract class WriterSingleObjectTests : IOTestsBase
 
 			this.Document.Entities.Add(mtext);
 			this.Document.Entities.Add(text);
+
+			this.AssertRoundtrip = (doc) =>
+			{
+				MText mtextResult = doc.GetCadObject<MText>(mtext.Handle);
+				TextEntity textResult = doc.GetCadObject<TextEntity>(text.Handle);
+
+				Assert.NotNull(mtextResult);
+				Assert.NotNull(textResult);
+				Assert.Equal(mtext.Value, mtextResult.Value);
+				EntityComparator.IsEqual(text, textResult);
+			};
 		}
 
 		public override string ToString()
@@ -2014,6 +2714,17 @@ public abstract class WriterSingleObjectTests : IOTestsBase
 			//active.BottomLeft = (XY)box.Min;
 			//active.TopRight = (XY)box.Max;
 			active.ViewHeight = 100;
+
+			this.AssertRoundtrip = (doc) =>
+			{
+				VPort result = doc.VPorts[VPort.DefaultName];
+
+				Assert.NotNull(result);
+				Assert.Equal(active.Center, result.Center);
+				Assert.Equal(active.ViewHeight, result.ViewHeight);
+				Assert.NotNull(doc.GetCadObject<Line>(line.Handle));
+				Assert.NotNull(doc.GetCadObject<Line>(line1.Handle));
+			};
 		}
 
 		public void XData()
@@ -2044,6 +2755,17 @@ public abstract class WriterSingleObjectTests : IOTestsBase
 			line.ExtendedData.Add(app, records);
 
 			this.Document.Entities.Add(line);
+
+			this.AssertRoundtrip = (doc) =>
+			{
+				Line result = doc.GetCadObject<Line>(line.Handle);
+
+				Assert.NotNull(result);
+				EntityComparator.IsEqual(line, result);
+				Assert.NotEmpty(result.ExtendedData);
+				Assert.NotNull(doc.GetCadObject<AppId>(app.Handle));
+				Assert.NotNull(doc.GetCadObject<Layer>(layer.Handle));
+			};
 		}
 
 		public void XRef()
@@ -2056,6 +2778,16 @@ public abstract class WriterSingleObjectTests : IOTestsBase
 			record.IsUnloaded = true;
 			this.Document.BlockRecords.Add(record);
 			this.Document.Entities.Add(new Insert(record));
+
+			this.AssertRoundtrip = (doc) =>
+			{
+				BlockRecord result = doc.GetCadObject<BlockRecord>(record.Handle);
+
+				Assert.NotNull(result);
+				Assert.Equal(record.Name, result.Name);
+				Assert.Equal(record.IsUnloaded, result.IsUnloaded);
+				Assert.Equal(this.Document.ModelSpace.Entities.Count, doc.ModelSpace.Entities.Count);
+			};
 		}
 	}
 }
