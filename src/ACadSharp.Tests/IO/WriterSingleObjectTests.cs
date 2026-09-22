@@ -1116,6 +1116,12 @@ public abstract class WriterSingleObjectTests : IOTestsBase
 
 			this.AssertRoundtrip = (doc) =>
 			{
+				if(doc.Header.Version <= ACadVersion.AC1015)
+				{
+					//Not supported in R2000 and earlier, will be converted to index color
+					return;
+				}
+
 				Assert.Equal(this.Document.Header.CurrentEntityColor, doc.Header.CurrentEntityColor);
 			};
 		}
@@ -1669,6 +1675,12 @@ public abstract class WriterSingleObjectTests : IOTestsBase
 
 			this.AssertRoundtrip = (doc) =>
 			{
+				if(doc.Header.Version <= ACadVersion.AC1015)
+				{
+					//Not supported in R2000 and earlier, will be converted to index color
+					return;
+				}
+
 				Line result = doc.GetCadObject<Line>(line.Handle);
 
 				Assert.NotNull(result);
@@ -2663,15 +2675,13 @@ public abstract class WriterSingleObjectTests : IOTestsBase
 
 		public void TextWithChineseCharacters()
 		{
-			//this.Document.Header.CodePage = "GB2312";
+			this.Document.Header.CodePage = "GB2312";
 
 			TextStyle style = new TextStyle("custom");
 			style.Filename = "romans.shx";
 			style.BigFontFilename = "chineset.shx";
 
 			MText mtext = new MText();
-			//mtext.AlignmentPoint = XYZ.Zero;
-			//mtext.HorizontalWidth = 1;
 			mtext.Value = "我的短信";
 			mtext.Style = style;
 
