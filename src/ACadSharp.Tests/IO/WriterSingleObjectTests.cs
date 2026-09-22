@@ -1816,9 +1816,13 @@ public abstract class WriterSingleObjectTests : IOTestsBase
 			this.AssertRoundtrip = (doc) =>
 			{
 				Insert result = doc.GetCadObject<Insert>(insert.Handle);
+				SpatialFilter filterResult = doc.GetCadObject<SpatialFilter>(filter.Handle);
+
+				Assert.NotNull(filterResult);
 
 				Assert.NotNull(result);
 				EntityComparator.IsEqual(insert, result);
+
 				Assert.NotNull(result.SpatialFilter);
 				Assert.Equal(filter.BoundaryPoints.Count, result.SpatialFilter.BoundaryPoints.Count);
 				Assert.NotNull(doc.GetCadObject<Circle>(circle.Handle));
