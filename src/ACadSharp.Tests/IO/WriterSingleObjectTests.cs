@@ -2317,6 +2317,7 @@ public abstract class WriterSingleObjectTests : IOTestsBase
 			mleader.ContextData.ContentBasePoint = new XYZ(1.8599999999999999, 1.5, 0);
 			mleader.ContextData.BasePoint = new XYZ(0, 0, 0);
 			mleader.ContextData.TextLabel = "This is my test MLEader";
+			mleader.ContextData.HasTextContents = true;
 
 			var root = new MultiLeaderObjectContextData.LeaderRoot
 			{
@@ -2325,6 +2326,7 @@ public abstract class WriterSingleObjectTests : IOTestsBase
 				Direction = XYZ.AxisX,
 				LandingDistance = 0.36,
 			};
+
 			MultiLeaderObjectContextData.LeaderLine leaderLine = new MultiLeaderObjectContextData.LeaderLine();
 			leaderLine.PathType = MultiLeaderPathType.StraightLineSegments;
 			leaderLine.Points.Add(XYZ.Zero);
