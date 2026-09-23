@@ -5,6 +5,7 @@ using ACadSharp.Tables;
 using ACadSharp.XData;
 using CSMath;
 using CSMath.Extensions;
+using CSUtilities.Converters;
 using CSUtilities.Extensions;
 using System;
 using System.Collections.Generic;
@@ -657,11 +658,30 @@ internal abstract class DxfSectionReaderBase
 				case 91:
 					value.SetValue(this._reader.ValueAsInt);
 					break;
+				case 92:
+					//Size of the date data in 310
+					break;
 				case 93:
 					value.Flags = this._reader.ValueAsInt;
 					break;
 				case 140:
 					value.SetValue(this._reader.ValueAsDouble);
+					break;
+				case 310 when value.ValueType == CadValueType.Date:
+					{
+						byte[] array = this._reader.ValueAsBinaryChunk;
+						if (array.Length == 16)
+						{
+							int year = LittleEndianConverter.Instance.ToInt16(array, 0);
+							int month = LittleEndianConverter.Instance.ToInt16(array, 2);
+							int day = LittleEndianConverter.Instance.ToInt16(array, 6);
+							int hour = LittleEndianConverter.Instance.ToInt16(array, 8);
+							int minute = LittleEndianConverter.Instance.ToInt16(array, 10);
+							int second = LittleEndianConverter.Instance.ToInt16(array, 12);
+							int millisecond = LittleEndianConverter.Instance.ToInt16(array, 14);
+							value.SetValue(new DateTime(year, month, day, hour, minute, second, millisecond));
+						}
+					}
 					break;
 				case 330:
 					template.ValueHandle = this._reader.ValueAsHandle;

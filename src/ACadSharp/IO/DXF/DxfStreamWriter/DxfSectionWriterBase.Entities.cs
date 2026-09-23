@@ -856,28 +856,21 @@ internal abstract partial class DxfSectionWriterBase
 				// "Invalid index".
 				this._writer.Write(92, 0);
 
-				// Cell text content wrapped in the CELL_VALUE block. The reader keys on
-				// code 301 to enter readCadValue and exits at 304.
-				string textValue = null;
-				if (cell.Content != null && cell.Content.CadValue.Value is string s)
+				// Cell value wrapped in the CELL_VALUE block. The reader keys on code 301 to
+				// enter readCadValue and exits at 304. Only the value types found in AutoCAD
+				// files are written, the encoding of the others is not known.
+				CadValue value = cell.Contents.Count > 0 ? cell.Contents[0].CadValue : null;
+				switch (value?.ValueType)
 				{
-					textValue = s;
-				}
-				else if (cell.Contents.Count > 0 && cell.Contents[0].CadValue.Value is string s2)
-				{
-					textValue = s2;
-				}
-
-				if (!string.IsNullOrEmpty(textValue))
-				{
-					this._writer.Write(301, "CELL_VALUE");
-					this._writer.Write(93, 6);
-					this._writer.Write(90, (int)ACadSharp.CadValueType.String);
-					this._writer.Write(1, textValue);
-					this._writer.Write(94, 0);
-					this._writer.Write(300, string.Empty);
-					this._writer.Write(302, textValue);
-					this._writer.Write(304, "ACVALUE_END");
+					case CadValueType.Unknown:
+					case CadValueType.Long:
+					case CadValueType.Double:
+					case CadValueType.String:
+					case CadValueType.Date:
+					case CadValueType.Point3D:
+						this._writer.Write(301, "CELL_VALUE");
+						this.writeCadValue(value);
+						break;
 				}
 			}
 		}
