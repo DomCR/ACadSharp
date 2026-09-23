@@ -13,8 +13,6 @@ public partial class MultiLeaderObjectContextData
 	/// </summary>
 	public class LeaderLine
 	{
-		public List<BreakInfo> BreakInfoEntries { get; private set; } = new();
-
 		/// <summary>
 		/// Gets or sets a <see cref="BlockRecord"/> containig elements
 		/// to be dawn as arrow symbol.
@@ -27,6 +25,11 @@ public partial class MultiLeaderObjectContextData
 		/// </summary>
 		[DxfCodeValue(40)]
 		public double ArrowheadSize { get; set; }
+
+		/// <summary>
+		/// Gets or sets the list of <see cref="BreakInfo"/> entries for this <see cref="LeaderLine"/>.
+		/// </summary>
+		public List<BreakInfo> BreakInfoEntries { get; private set; } = new();
 
 		/// <summary>
 		/// Leader line index.
@@ -98,8 +101,33 @@ public partial class MultiLeaderObjectContextData
 
 		private LineType _lineType;
 
+		/// <summary>
+		/// Creates a new instance of the <see cref="LeaderLine"/> class.
+		/// </summary>
 		public LeaderLine()
 		{ }
+
+		/// <summary>
+		/// Creates a new instance of <see cref="LeaderLine"/> with the specified index.
+		/// </summary>
+		/// <returns>A new <see cref="LeaderLine"/> instance with the same properties.</returns>
+		public LeaderLine Clone()
+		{
+			LeaderLine clone = (LeaderLine)this.MemberwiseClone();
+
+			clone.LineType = (LineType)this.LineType?.Clone();
+			clone.Arrowhead = (BlockRecord)this.Arrowhead?.Clone();
+
+			clone.Points = new List<XYZ>(this.Points);
+
+			clone.BreakInfoEntries = new List<BreakInfo>();
+			foreach (var item in this.BreakInfoEntries)
+			{
+				clone.BreakInfoEntries.Add(item.Clone());
+			}
+
+			return clone;
+		}
 
 		internal void AssignDocument(CadDocument doc)
 		{
@@ -118,22 +146,6 @@ public partial class MultiLeaderObjectContextData
 			}
 
 			doc.LineTypes.OnRemove += this.tableOnRemove;
-		}
-
-		public LeaderLine Clone()
-		{
-			LeaderLine clone = (LeaderLine)this.MemberwiseClone();
-
-			clone.LineType = (LineType)this.LineType?.Clone();
-			clone.Arrowhead = (BlockRecord)this.Arrowhead?.Clone();
-
-			clone.Points = new List<XYZ>();
-			foreach (var point in this.Points)
-			{
-				clone.Points.Add(point);
-			}
-
-			return clone;
 		}
 
 		internal void UassignDocument()
