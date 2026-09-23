@@ -5976,6 +5976,20 @@
     },
     {
       "type": "ManagedReference",
+      "source_relative_path": "api/ACadSharp.Objects.MultiLeaderObjectContextData.BreakInfo.yml",
+      "output": {
+        ".html": {
+          "relative_path": "api/ACadSharp.Objects.MultiLeaderObjectContextData.BreakInfo.html"
+        }
+      },
+      "version": "",
+      "Uid": null,
+      "IsMRef": true,
+      "Title": "ACadSharp.Objects.MultiLeaderObjectContextData.BreakInfo",
+      "Summary": "<p sourcefile=\"api/ACadSharp.Objects.MultiLeaderObjectContextData.BreakInfo.yml\" sourcestartlinenumber=\"1\">Information about a break in a <xref href=\"ACadSharp.Objects.MultiLeaderObjectContextData\" data-throw-if-not-resolved=\"false\"></xref> object.</p>\n"
+    },
+    {
+      "type": "ManagedReference",
       "source_relative_path": "api/ACadSharp.Objects.MultiLeaderObjectContextData.LeaderLine.yml",
       "output": {
         ".html": {
@@ -5986,7 +6000,7 @@
       "Uid": null,
       "IsMRef": true,
       "Title": "ACadSharp.Objects.MultiLeaderObjectContextData.LeaderLine",
-      "Summary": "<p sourcefile=\"api/ACadSharp.Objects.MultiLeaderObjectContextData.LeaderLine.yml\" sourcestartlinenumber=\"1\">Represents a leader line</p>\n"
+      "Summary": "<p sourcefile=\"api/ACadSharp.Objects.MultiLeaderObjectContextData.LeaderLine.yml\" sourcestartlinenumber=\"1\">Represents a leader line of a <xref href=\"ACadSharp.Objects.MultiLeaderObjectContextData\" data-throw-if-not-resolved=\"false\"></xref> object.</p>\n"
     },
     {
       "type": "ManagedReference",

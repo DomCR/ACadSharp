@@ -46106,6 +46106,51 @@ references:
   isSpec: "True"
   fullName: ACadSharp.Objects.MultiLeaderObjectContextData.BoundaryWidth
   nameWithType: MultiLeaderObjectContextData.BoundaryWidth
+- uid: ACadSharp.Objects.MultiLeaderObjectContextData.BreakInfo
+  name: MultiLeaderObjectContextData.BreakInfo
+  href: api/ACadSharp.Objects.MultiLeaderObjectContextData.BreakInfo.html
+  commentId: T:ACadSharp.Objects.MultiLeaderObjectContextData.BreakInfo
+  fullName: ACadSharp.Objects.MultiLeaderObjectContextData.BreakInfo
+  nameWithType: MultiLeaderObjectContextData.BreakInfo
+- uid: ACadSharp.Objects.MultiLeaderObjectContextData.BreakInfo.Clone
+  name: Clone()
+  href: api/ACadSharp.Objects.MultiLeaderObjectContextData.BreakInfo.html#ACadSharp_Objects_MultiLeaderObjectContextData_BreakInfo_Clone
+  commentId: M:ACadSharp.Objects.MultiLeaderObjectContextData.BreakInfo.Clone
+  fullName: ACadSharp.Objects.MultiLeaderObjectContextData.BreakInfo.Clone()
+  nameWithType: MultiLeaderObjectContextData.BreakInfo.Clone()
+- uid: ACadSharp.Objects.MultiLeaderObjectContextData.BreakInfo.Clone*
+  name: Clone
+  href: api/ACadSharp.Objects.MultiLeaderObjectContextData.BreakInfo.html#ACadSharp_Objects_MultiLeaderObjectContextData_BreakInfo_Clone_
+  commentId: Overload:ACadSharp.Objects.MultiLeaderObjectContextData.BreakInfo.Clone
+  isSpec: "True"
+  fullName: ACadSharp.Objects.MultiLeaderObjectContextData.BreakInfo.Clone
+  nameWithType: MultiLeaderObjectContextData.BreakInfo.Clone
+- uid: ACadSharp.Objects.MultiLeaderObjectContextData.BreakInfo.SegmentIndex
+  name: SegmentIndex
+  href: api/ACadSharp.Objects.MultiLeaderObjectContextData.BreakInfo.html#ACadSharp_Objects_MultiLeaderObjectContextData_BreakInfo_SegmentIndex
+  commentId: P:ACadSharp.Objects.MultiLeaderObjectContextData.BreakInfo.SegmentIndex
+  fullName: ACadSharp.Objects.MultiLeaderObjectContextData.BreakInfo.SegmentIndex
+  nameWithType: MultiLeaderObjectContextData.BreakInfo.SegmentIndex
+- uid: ACadSharp.Objects.MultiLeaderObjectContextData.BreakInfo.SegmentIndex*
+  name: SegmentIndex
+  href: api/ACadSharp.Objects.MultiLeaderObjectContextData.BreakInfo.html#ACadSharp_Objects_MultiLeaderObjectContextData_BreakInfo_SegmentIndex_
+  commentId: Overload:ACadSharp.Objects.MultiLeaderObjectContextData.BreakInfo.SegmentIndex
+  isSpec: "True"
+  fullName: ACadSharp.Objects.MultiLeaderObjectContextData.BreakInfo.SegmentIndex
+  nameWithType: MultiLeaderObjectContextData.BreakInfo.SegmentIndex
+- uid: ACadSharp.Objects.MultiLeaderObjectContextData.BreakInfo.StartEndPoints
+  name: StartEndPoints
+  href: api/ACadSharp.Objects.MultiLeaderObjectContextData.BreakInfo.html#ACadSharp_Objects_MultiLeaderObjectContextData_BreakInfo_StartEndPoints
+  commentId: P:ACadSharp.Objects.MultiLeaderObjectContextData.BreakInfo.StartEndPoints
+  fullName: ACadSharp.Objects.MultiLeaderObjectContextData.BreakInfo.StartEndPoints
+  nameWithType: MultiLeaderObjectContextData.BreakInfo.StartEndPoints
+- uid: ACadSharp.Objects.MultiLeaderObjectContextData.BreakInfo.StartEndPoints*
+  name: StartEndPoints
+  href: api/ACadSharp.Objects.MultiLeaderObjectContextData.BreakInfo.html#ACadSharp_Objects_MultiLeaderObjectContextData_BreakInfo_StartEndPoints_
+  commentId: Overload:ACadSharp.Objects.MultiLeaderObjectContextData.BreakInfo.StartEndPoints
+  isSpec: "True"
+  fullName: ACadSharp.Objects.MultiLeaderObjectContextData.BreakInfo.StartEndPoints
+  nameWithType: MultiLeaderObjectContextData.BreakInfo.StartEndPoints
 - uid: ACadSharp.Objects.MultiLeaderObjectContextData.Clone
   name: Clone()
   href: api/ACadSharp.Objects.MultiLeaderObjectContextData.html#ACadSharp_Objects_MultiLeaderObjectContextData_Clone
@@ -46326,32 +46371,19 @@ references:
   isSpec: "True"
   fullName: ACadSharp.Objects.MultiLeaderObjectContextData.LeaderLine.ArrowheadSize
   nameWithType: MultiLeaderObjectContextData.LeaderLine.ArrowheadSize
-- uid: ACadSharp.Objects.MultiLeaderObjectContextData.LeaderLine.AssignDocument(ACadSharp.CadDocument)
-  name: AssignDocument(CadDocument)
-  href: api/ACadSharp.Objects.MultiLeaderObjectContextData.LeaderLine.html#ACadSharp_Objects_MultiLeaderObjectContextData_LeaderLine_AssignDocument_ACadSharp_CadDocument_
-  commentId: M:ACadSharp.Objects.MultiLeaderObjectContextData.LeaderLine.AssignDocument(ACadSharp.CadDocument)
-  fullName: ACadSharp.Objects.MultiLeaderObjectContextData.LeaderLine.AssignDocument(ACadSharp.CadDocument)
-  nameWithType: MultiLeaderObjectContextData.LeaderLine.AssignDocument(CadDocument)
-- uid: ACadSharp.Objects.MultiLeaderObjectContextData.LeaderLine.AssignDocument*
-  name: AssignDocument
-  href: api/ACadSharp.Objects.MultiLeaderObjectContextData.LeaderLine.html#ACadSharp_Objects_MultiLeaderObjectContextData_LeaderLine_AssignDocument_
-  commentId: Overload:ACadSharp.Objects.MultiLeaderObjectContextData.LeaderLine.AssignDocument
+- uid: ACadSharp.Objects.MultiLeaderObjectContextData.LeaderLine.BreakInfoEntries
+  name: BreakInfoEntries
+  href: api/ACadSharp.Objects.MultiLeaderObjectContextData.LeaderLine.html#ACadSharp_Objects_MultiLeaderObjectContextData_LeaderLine_BreakInfoEntries
+  commentId: P:ACadSharp.Objects.MultiLeaderObjectContextData.LeaderLine.BreakInfoEntries
+  fullName: ACadSharp.Objects.MultiLeaderObjectContextData.LeaderLine.BreakInfoEntries
+  nameWithType: MultiLeaderObjectContextData.LeaderLine.BreakInfoEntries
+- uid: ACadSharp.Objects.MultiLeaderObjectContextData.LeaderLine.BreakInfoEntries*
+  name: BreakInfoEntries
+  href: api/ACadSharp.Objects.MultiLeaderObjectContextData.LeaderLine.html#ACadSharp_Objects_MultiLeaderObjectContextData_LeaderLine_BreakInfoEntries_
+  commentId: Overload:ACadSharp.Objects.MultiLeaderObjectContextData.LeaderLine.BreakInfoEntries
   isSpec: "True"
-  fullName: ACadSharp.Objects.MultiLeaderObjectContextData.LeaderLine.AssignDocument
-  nameWithType: MultiLeaderObjectContextData.LeaderLine.AssignDocument
-- uid: ACadSharp.Objects.MultiLeaderObjectContextData.LeaderLine.BreakInfoCount
-  name: BreakInfoCount
-  href: api/ACadSharp.Objects.MultiLeaderObjectContextData.LeaderLine.html#ACadSharp_Objects_MultiLeaderObjectContextData_LeaderLine_BreakInfoCount
-  commentId: P:ACadSharp.Objects.MultiLeaderObjectContextData.LeaderLine.BreakInfoCount
-  fullName: ACadSharp.Objects.MultiLeaderObjectContextData.LeaderLine.BreakInfoCount
-  nameWithType: MultiLeaderObjectContextData.LeaderLine.BreakInfoCount
-- uid: ACadSharp.Objects.MultiLeaderObjectContextData.LeaderLine.BreakInfoCount*
-  name: BreakInfoCount
-  href: api/ACadSharp.Objects.MultiLeaderObjectContextData.LeaderLine.html#ACadSharp_Objects_MultiLeaderObjectContextData_LeaderLine_BreakInfoCount_
-  commentId: Overload:ACadSharp.Objects.MultiLeaderObjectContextData.LeaderLine.BreakInfoCount
-  isSpec: "True"
-  fullName: ACadSharp.Objects.MultiLeaderObjectContextData.LeaderLine.BreakInfoCount
-  nameWithType: MultiLeaderObjectContextData.LeaderLine.BreakInfoCount
+  fullName: ACadSharp.Objects.MultiLeaderObjectContextData.LeaderLine.BreakInfoEntries
+  nameWithType: MultiLeaderObjectContextData.LeaderLine.BreakInfoEntries
 - uid: ACadSharp.Objects.MultiLeaderObjectContextData.LeaderLine.Clone
   name: Clone()
   href: api/ACadSharp.Objects.MultiLeaderObjectContextData.LeaderLine.html#ACadSharp_Objects_MultiLeaderObjectContextData_LeaderLine_Clone
@@ -46456,45 +46488,6 @@ references:
   isSpec: "True"
   fullName: ACadSharp.Objects.MultiLeaderObjectContextData.LeaderLine.Points
   nameWithType: MultiLeaderObjectContextData.LeaderLine.Points
-- uid: ACadSharp.Objects.MultiLeaderObjectContextData.LeaderLine.SegmentIndex
-  name: SegmentIndex
-  href: api/ACadSharp.Objects.MultiLeaderObjectContextData.LeaderLine.html#ACadSharp_Objects_MultiLeaderObjectContextData_LeaderLine_SegmentIndex
-  commentId: P:ACadSharp.Objects.MultiLeaderObjectContextData.LeaderLine.SegmentIndex
-  fullName: ACadSharp.Objects.MultiLeaderObjectContextData.LeaderLine.SegmentIndex
-  nameWithType: MultiLeaderObjectContextData.LeaderLine.SegmentIndex
-- uid: ACadSharp.Objects.MultiLeaderObjectContextData.LeaderLine.SegmentIndex*
-  name: SegmentIndex
-  href: api/ACadSharp.Objects.MultiLeaderObjectContextData.LeaderLine.html#ACadSharp_Objects_MultiLeaderObjectContextData_LeaderLine_SegmentIndex_
-  commentId: Overload:ACadSharp.Objects.MultiLeaderObjectContextData.LeaderLine.SegmentIndex
-  isSpec: "True"
-  fullName: ACadSharp.Objects.MultiLeaderObjectContextData.LeaderLine.SegmentIndex
-  nameWithType: MultiLeaderObjectContextData.LeaderLine.SegmentIndex
-- uid: ACadSharp.Objects.MultiLeaderObjectContextData.LeaderLine.StartEndPoints
-  name: StartEndPoints
-  href: api/ACadSharp.Objects.MultiLeaderObjectContextData.LeaderLine.html#ACadSharp_Objects_MultiLeaderObjectContextData_LeaderLine_StartEndPoints
-  commentId: P:ACadSharp.Objects.MultiLeaderObjectContextData.LeaderLine.StartEndPoints
-  fullName: ACadSharp.Objects.MultiLeaderObjectContextData.LeaderLine.StartEndPoints
-  nameWithType: MultiLeaderObjectContextData.LeaderLine.StartEndPoints
-- uid: ACadSharp.Objects.MultiLeaderObjectContextData.LeaderLine.StartEndPoints*
-  name: StartEndPoints
-  href: api/ACadSharp.Objects.MultiLeaderObjectContextData.LeaderLine.html#ACadSharp_Objects_MultiLeaderObjectContextData_LeaderLine_StartEndPoints_
-  commentId: Overload:ACadSharp.Objects.MultiLeaderObjectContextData.LeaderLine.StartEndPoints
-  isSpec: "True"
-  fullName: ACadSharp.Objects.MultiLeaderObjectContextData.LeaderLine.StartEndPoints
-  nameWithType: MultiLeaderObjectContextData.LeaderLine.StartEndPoints
-- uid: ACadSharp.Objects.MultiLeaderObjectContextData.LeaderLine.UassignDocument
-  name: UassignDocument()
-  href: api/ACadSharp.Objects.MultiLeaderObjectContextData.LeaderLine.html#ACadSharp_Objects_MultiLeaderObjectContextData_LeaderLine_UassignDocument
-  commentId: M:ACadSharp.Objects.MultiLeaderObjectContextData.LeaderLine.UassignDocument
-  fullName: ACadSharp.Objects.MultiLeaderObjectContextData.LeaderLine.UassignDocument()
-  nameWithType: MultiLeaderObjectContextData.LeaderLine.UassignDocument()
-- uid: ACadSharp.Objects.MultiLeaderObjectContextData.LeaderLine.UassignDocument*
-  name: UassignDocument
-  href: api/ACadSharp.Objects.MultiLeaderObjectContextData.LeaderLine.html#ACadSharp_Objects_MultiLeaderObjectContextData_LeaderLine_UassignDocument_
-  commentId: Overload:ACadSharp.Objects.MultiLeaderObjectContextData.LeaderLine.UassignDocument
-  isSpec: "True"
-  fullName: ACadSharp.Objects.MultiLeaderObjectContextData.LeaderLine.UassignDocument
-  nameWithType: MultiLeaderObjectContextData.LeaderLine.UassignDocument
 - uid: ACadSharp.Objects.MultiLeaderObjectContextData.LeaderRoot
   name: MultiLeaderObjectContextData.LeaderRoot
   href: api/ACadSharp.Objects.MultiLeaderObjectContextData.LeaderRoot.html
