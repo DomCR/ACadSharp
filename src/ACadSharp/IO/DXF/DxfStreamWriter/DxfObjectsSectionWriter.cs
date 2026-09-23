@@ -39,36 +39,40 @@ internal class DxfObjectsSectionWriter : DxfSectionWriterBase
 		this._writer.Write(280, dict.HardOwnerFlag);
 		this._writer.Write(281, (int)dict.ClonningFlags);
 
-		foreach (NonGraphicalObject item in dict)
+		for (int i = 0; i < dict.EntryHandles.Length; i++)
 		{
-			if (item is XRecord && !this.Configuration.WriteXRecords)
+			var handle = dict.EntryHandles[i];
+			var entryName = dict.EntryNames[i];
+			var entry = dict.GetEntry<NonGraphicalObject>(entryName);
+
+			if (entry is XRecord && !this.Configuration.WriteXRecords)
 			{
 				continue;
 			}
 
 			//Not compatible dictionaries
-			if (item.Name == CadDictionary.AcadMaterial)
+			if (entryName == CadDictionary.AcadMaterial)
 			{
 				continue;
 			}
 
 			//Skip the entries that will not be written to avoid dangling references
-			if (!this.isObjectSupported(item))
+			if (!this.isObjectSupported(entry))
 			{
 				continue;
 			}
 
-			this._writer.Write(3, item.Name);
+			this._writer.Write(3, entryName);
 			if (dict.HardOwnerFlag)
 			{
-				this._writer.Write(360, item.Handle);
+				this._writer.Write(360, handle);
 			}
 			else
 			{
-				this._writer.Write(350, item.Handle);
+				this._writer.Write(350, handle);
 			}
 
-			this.Holder.Objects.Enqueue(item);
+			this.Holder.Objects.Enqueue(entry);
 		}
 
 		if (dict is CadDictionaryWithDefault withDefault)

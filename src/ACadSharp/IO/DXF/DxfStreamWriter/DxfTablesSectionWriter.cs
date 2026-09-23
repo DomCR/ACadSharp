@@ -219,6 +219,9 @@ namespace ACadSharp.IO.DXF
 			this._writer.WriteHandle(342, style.ArrowBlock, map);
 			this._writer.WriteHandle(343, style.DimArrow1, map);
 			this._writer.WriteHandle(344, style.DimArrow2, map);
+			this._writer.WriteHandle(345, style.LineType, map);
+			this._writer.WriteHandle(346, style.LineTypeExt1, map);
+			this._writer.WriteHandle(347, style.LineTypeExt2, map);
 
 			this._writer.Write(371, style.DimensionLineWeight);
 			this._writer.Write(372, style.ExtensionLineWeight);

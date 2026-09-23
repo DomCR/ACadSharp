@@ -7,6 +7,7 @@ using CSUtilities.IO;
 using CSUtilities.Text;
 using System;
 using System.Collections.Generic;
+using System.ComponentModel;
 using System.Globalization;
 using System.IO;
 using System.Linq;
@@ -870,14 +871,20 @@ internal partial class DwgObjectWriter : DwgSectionIO
 		//Common:
 		//Numitems L number of dictionary items
 		List<NonGraphicalObject> entries = new List<NonGraphicalObject>();
-		foreach (var item in dictionary)
+		List<(string, ulong)> handleNamePair = new();
+		for (int i = 0; i < dictionary.EntryHandles.Length; i++)
 		{
+			var handle = dictionary.EntryHandles[i];
+			var name = dictionary.EntryNames[i];
+			var item = dictionary.GetEntry<NonGraphicalObject>(name);
+
 			if (this.skipEntry(item))
 			{
 				continue;
 			}
 
 			entries.Add(item);
+			handleNamePair.Add((name, handle));
 		}
 
 		this._writer.WriteBitLong(entries.Count);
@@ -898,15 +905,10 @@ internal partial class DwgObjectWriter : DwgSectionIO
 		}
 
 		//Common:
-		foreach (var item in entries)
+		foreach (var item in handleNamePair)
 		{
-			if (this.skipEntry(item))
-			{
-				continue;
-			}
-
-			this._writer.WriteVariableText(item.Name);
-			this._writer.HandleReference(DwgReferenceType.SoftOwnership, item.Handle);
+			this._writer.WriteVariableText(item.Item1);
+			this._writer.HandleReference(DwgReferenceType.SoftOwnership, item.Item2);
 		}
 
 		this.addObjectsToWriter(entries);
@@ -1616,7 +1618,7 @@ internal partial class DwgObjectWriter : DwgSectionIO
 	{
 		this.writeAnnotScaleObjectContextData(multiLeaderAnnotContext);
 
-		this.writeMultiLeaderAnnotContextSubObject(false, multiLeaderAnnotContext);
+		this.writeMultiLeaderAnnotContextSubObject(multiLeaderAnnotContext);
 	}
 
 	private void writeMultiLeaderStyle(MultiLeaderStyle mLeaderStyle)

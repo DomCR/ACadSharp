@@ -138,6 +138,9 @@ public class DxfWriterSingleObjectTests : WriterSingleObjectTests
 			{
 				doc = DxfReader.Read(path, this.onNotification);
 			}
+
+			data.Format = CadFileFormat.DXF;
+			data.AssertRoundtrip?.Invoke(doc);
 		}
 	}
 }
