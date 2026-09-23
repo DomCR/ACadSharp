@@ -673,8 +673,8 @@ internal abstract partial class DxfSectionWriterBase
 		// round-trippable: callers that need a single rendering should provide a
 		// proxy graphic via Entity.PreviewGraphic.
 		//
-		// Field order mirrors what AutoCAD emits so the strict ODA-based reader does
-		// not bail with "Invalid index" partway through the entity.
+		// Field order mirrors what AutoCAD emits so stricter readers do not bail with
+		// "Invalid index" partway through the entity.
 		this._writer.Write(DxfCode.Subclass, DxfSubclassMarker.TableEntity);
 
 		if (table.Style != null)
@@ -699,7 +699,7 @@ internal abstract partial class DxfSectionWriterBase
 		this._writer.Write(92, table.Columns.Count);
 
 		// Override count placeholder. The exact semantics of code 93 at the table
-		// level are not documented in OpenDesign but AutoCAD-produced files always
+		// level are not documented but AutoCAD-produced files always
 		// emit it. Emit 0 here; the reader does not error out on it.
 		this._writer.Write(93, 0);
 
@@ -717,8 +717,8 @@ internal abstract partial class DxfSectionWriterBase
 		}
 
 		// Table-level cell margins. AutoCAD reads these here even when the per-cell
-		// style override carries the same values; omitting them causes the strict
-		// ODA-based reader to abort with "Invalid index".
+		// style override carries the same values; omitting them causes stricter
+		// readers to abort with "Invalid index".
 		double horMargin = 0.06;
 		double verMargin = 0.06;
 		if (table.CellStyleOverride != null
@@ -809,8 +809,8 @@ internal abstract partial class DxfSectionWriterBase
 				// Cell flag (state + override bits). AutoCAD-produced files always emit
 				// 262192 baseline and set bit 0x01 when the cell-level CellAlignment
 				// override is present; code 170 with the alignment value follows when
-				// that bit is set. Without bit 0x01 the strict ODA-based reader falls
-				// back to the TableStyle default and per-cell alignments leak away.
+				// that bit is set. Without bit 0x01 stricter readers fall back to the
+				// TableStyle default and per-cell alignments leak away.
 				const int baseCellFlag = 262192;
 				bool hasAlignmentOverride = cell.StyleOverride != null
 					&& cell.StyleOverride.HasData
@@ -852,8 +852,8 @@ internal abstract partial class DxfSectionWriterBase
 				}
 
 				// Cell value state flag. AutoCAD-produced files always emit this before the
-				// CELL_VALUE block; omitting it causes the strict ODA-based reader to bail
-				// with "Invalid index".
+				// CELL_VALUE block; omitting it causes stricter readers to bail with
+				// "Invalid index".
 				this._writer.Write(92, 0);
 
 				// Cell text content wrapped in the CELL_VALUE block. The reader keys on
