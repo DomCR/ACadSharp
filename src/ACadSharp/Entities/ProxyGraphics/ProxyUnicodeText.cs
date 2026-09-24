@@ -1,4 +1,4 @@
-﻿using CSMath;
+using CSMath;
 
 namespace ACadSharp.Entities.ProxyGraphics;
 
@@ -52,4 +52,10 @@ public class ProxyUnicodeText : IProxyGeometry, IOrientable
 	/// </summary>
 	/// <value>The width factor as a double value, where 1.0 is normal width.</value>
 	public double WidthFactor { get; set; }
+
+	/// <inheritdoc/>
+	public IProxyGeometry Clone()
+	{
+		return (IProxyGeometry)this.MemberwiseClone();
+	}
 }

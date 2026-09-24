@@ -14,4 +14,12 @@ public class ProxyShell : ProxyMeshBase
 
 	/// <inheritdoc/>
 	public override GraphicsType GraphicsType { get { return GraphicsType.Shell; } }
+
+	/// <inheritdoc/>
+	public override IProxyGeometry Clone()
+	{
+		ProxyShell clone = (ProxyShell)base.Clone();
+		clone.Faces = this.Faces?.ConvertAll(f => (int[])f?.Clone());
+		return clone;
+	}
 }

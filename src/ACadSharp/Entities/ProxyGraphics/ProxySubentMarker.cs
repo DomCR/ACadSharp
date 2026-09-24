@@ -1,4 +1,4 @@
-﻿namespace ACadSharp.Entities.ProxyGraphics;
+namespace ACadSharp.Entities.ProxyGraphics;
 
 /// <summary>
 /// Represents a proxy subentity marker in a CAD drawing.
@@ -12,4 +12,10 @@ public class ProxySubentMarker : IProxyGeometry
 	/// Gets or sets the index of the marker.
 	/// </summary>
 	public int MarkerIndex { get; set; }
+
+	/// <inheritdoc/>
+	public IProxyGeometry Clone()
+	{
+		return (IProxyGeometry)this.MemberwiseClone();
+	}
 }

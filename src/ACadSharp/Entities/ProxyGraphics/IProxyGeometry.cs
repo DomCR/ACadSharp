@@ -9,4 +9,10 @@ public interface IProxyGeometry
 	/// Gets the type of graphics represented by this proxy geometry.
 	/// </summary>
 	public GraphicsType GraphicsType { get; }
+
+	/// <summary>
+	/// Creates a deep copy of the current proxy geometry object.
+	/// </summary>
+	/// <returns>A deep copy of the current proxy geometry object.</returns>
+	IProxyGeometry Clone();
 }

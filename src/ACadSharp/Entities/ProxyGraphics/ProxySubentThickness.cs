@@ -1,4 +1,4 @@
-﻿namespace ACadSharp.Entities.ProxyGraphics;
+namespace ACadSharp.Entities.ProxyGraphics;
 
 /// <summary>
 /// Represents a proxy graphics subentity thickness.
@@ -12,4 +12,10 @@ public class ProxySubentThickness : IProxyGeometry
 	/// Gets or sets the thickness of the subentity.
 	/// </summary>
 	public double Thickness { get; set; }
+
+	/// <inheritdoc/>
+	public IProxyGeometry Clone()
+	{
+		return (IProxyGeometry)this.MemberwiseClone();
+	}
 }

@@ -1,4 +1,4 @@
-﻿namespace ACadSharp.Entities.ProxyGraphics;
+namespace ACadSharp.Entities.ProxyGraphics;
 
 /// <summary>
 /// Represents proxy graphics data for a subentity with true color information.
@@ -27,4 +27,10 @@ public class ProxySubentTrueColor : IProxyGeometry
 	/// A <see cref="ProxyColorMethod"/> value that specifies how the color should be applied.
 	/// </value>
 	public ProxyColorMethod ColorMethod { get; set; } = ProxyColorMethod.None;
+
+	/// <inheritdoc/>
+	public IProxyGeometry Clone()
+	{
+		return (IProxyGeometry)this.MemberwiseClone();
+	}
 }

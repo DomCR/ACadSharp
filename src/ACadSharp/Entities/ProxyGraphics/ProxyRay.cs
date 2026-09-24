@@ -1,4 +1,4 @@
-﻿using CSMath;
+using CSMath;
 
 namespace ACadSharp.Entities.ProxyGraphics;
 
@@ -19,4 +19,10 @@ public class ProxyRay : IProxyGeometry
 	/// Gets or sets the second point of the ray.
 	/// </summary>
 	public XYZ Point2 { get; set; }
+
+	/// <inheritdoc/>
+	public IProxyGeometry Clone()
+	{
+		return (IProxyGeometry)this.MemberwiseClone();
+	}
 }

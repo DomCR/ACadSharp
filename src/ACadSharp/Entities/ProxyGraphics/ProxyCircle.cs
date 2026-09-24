@@ -1,4 +1,4 @@
-﻿using CSMath;
+using CSMath;
 
 namespace ACadSharp.Entities.ProxyGraphics;
 
@@ -29,4 +29,10 @@ public class ProxyCircle : IProxyGeometry, IOrientable
 	/// </summary>
 	/// <value>A double value representing the distance from the center to the circle's edge. Must be a positive value.</value>
 	public double Radius { get; set; }
+
+	/// <inheritdoc/>
+	public IProxyGeometry Clone()
+	{
+		return (IProxyGeometry)this.MemberwiseClone();
+	}
 }

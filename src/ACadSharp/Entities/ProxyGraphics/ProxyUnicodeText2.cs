@@ -95,4 +95,23 @@ public class ProxyUnicodeText2 : IProxyGeometry, IOrientable
 	/// Gets or sets the width factor that scales the text horizontally. A value of 1.0 represents normal width.
 	/// </summary>
 	public double WidthFactor { get; set; }
+
+	/// <inheritdoc/>
+	public IProxyGeometry Clone()
+	{
+		ProxyUnicodeText2 clone = (ProxyUnicodeText2)this.MemberwiseClone();
+		if (this.FontDescriptor != null)
+		{
+			clone.FontDescriptor = new TrueTypeFontDescriptor
+			{
+				Charset = this.FontDescriptor.Charset,
+				FontFilename = this.FontDescriptor.FontFilename,
+				IsBold = this.FontDescriptor.IsBold,
+				IsItalic = this.FontDescriptor.IsItalic,
+				PitchAndFamily = this.FontDescriptor.PitchAndFamily,
+				Typeface = this.FontDescriptor.Typeface
+			};
+		}
+		return clone;
+	}
 }
