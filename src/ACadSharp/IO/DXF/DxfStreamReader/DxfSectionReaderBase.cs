@@ -5,6 +5,7 @@ using ACadSharp.Tables;
 using ACadSharp.XData;
 using CSMath;
 using CSMath.Extensions;
+using CSUtilities.Converters;
 using CSUtilities.Extensions;
 using System;
 using System.Collections.Generic;
@@ -546,7 +547,18 @@ internal abstract class DxfSectionReaderBase
 				tmp.CurrentCell.Rotation = this._reader.ValueAsDouble;
 				return true;
 			case 170:
-				//Has data flag
+				// Per-cell alignment (set when the cell flag at code 91 has the
+				// CellAlignment override bit). Capture it on the cell-level
+				// StyleOverride so callers reading the table back via DXF can
+				// resolve alignment exactly like they do through DWG.
+				if (tmp.CurrentCell != null)
+				{
+					tmp.CurrentCell.StyleOverride.HasData = true;
+					tmp.CurrentCell.StyleOverride.CellAlignment =
+						(ACadSharp.Objects.TableStyle.CellAlignmentType)this._reader.ValueAsShort;
+					tmp.CurrentCell.StyleOverride.PropertyOverrideFlags |=
+						ACadSharp.Objects.TableStyle.CellStylePropertyFlags.Alignment;
+				}
 				return true;
 			case 171:
 				tmp.CreateCell((TableEntity.CellType)this._reader.ValueAsInt);
@@ -571,6 +583,18 @@ internal abstract class DxfSectionReaderBase
 				return true;
 			case 179:
 				//Unknown value
+				return true;
+			case 70:
+				// Table-level flow direction (0 = top to bottom, 1 = bottom to top).
+				// Stored on the table-level CellStyleOverride so callers can read it
+				// through the same API used for round-tripping the rest of the
+				// override flags.
+				if (this._reader.ValueAsShort == 1)
+				{
+					table.CellStyleOverride.HasData = true;
+					table.CellStyleOverride.TableCellStylePropertyFlags |=
+						ACadSharp.Objects.TableStyle.CellStylePropertyFlags.FlowDirectionBottomToTop;
+				}
 				return true;
 			case 301:
 				content = new TableEntity.CellContent();
@@ -634,11 +658,30 @@ internal abstract class DxfSectionReaderBase
 				case 91:
 					value.SetValue(this._reader.ValueAsInt);
 					break;
+				case 92:
+					//Size of the date data in 310
+					break;
 				case 93:
 					value.Flags = this._reader.ValueAsInt;
 					break;
 				case 140:
 					value.SetValue(this._reader.ValueAsDouble);
+					break;
+				case 310 when value.ValueType == CadValueType.Date:
+					{
+						byte[] array = this._reader.ValueAsBinaryChunk;
+						if (array.Length == 16)
+						{
+							int year = LittleEndianConverter.Instance.ToInt16(array, 0);
+							int month = LittleEndianConverter.Instance.ToInt16(array, 2);
+							int day = LittleEndianConverter.Instance.ToInt16(array, 6);
+							int hour = LittleEndianConverter.Instance.ToInt16(array, 8);
+							int minute = LittleEndianConverter.Instance.ToInt16(array, 10);
+							int second = LittleEndianConverter.Instance.ToInt16(array, 12);
+							int millisecond = LittleEndianConverter.Instance.ToInt16(array, 14);
+							value.SetValue(new DateTime(year, month, day, hour, minute, second, millisecond));
+						}
+					}
 					break;
 				case 330:
 					template.ValueHandle = this._reader.ValueAsHandle;

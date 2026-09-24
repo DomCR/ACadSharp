@@ -3,7 +3,9 @@ using ACadSharp.IO.DXF.DxfStreamWriter;
 using ACadSharp.Tables;
 using ACadSharp.XData;
 using CSMath;
+using CSUtilities.Converters;
 using System;
+using System.IO;
 using System.Linq;
 
 namespace ACadSharp.IO.DXF;
@@ -50,43 +52,63 @@ internal abstract partial class DxfSectionWriterBase
 		this._writer.Write(93, value.Flags);
 
 		this._writer.Write(90, (int)value.ValueType);
-		switch (value.ValueType)
+		if (!value.IsEmpty)
 		{
-			case CadValueType.Unknown:
-				this._writer.Write(91, 0);
-				break;
-			case CadValueType.Double:
-				this._writer.Write(140, Convert.ToDouble(value.Value));
-				break;
-			case CadValueType.Date:
-				//TODO: Implement date for dxf
-				this._writer.Write(91, 0);
-				break;
-			case CadValueType.General:
-			case CadValueType.String:
-				this.writeLongTextValue(1, 2, (string)value.Value);
-				break;
-			case CadValueType.Point2D:
-			case CadValueType.Point3D:
-				this._writer.Write(11, (XYZ)value.Value);
-				break;
-			case CadValueType.Long:
-				this._writer.Write(91, Convert.ToInt32(value.Value));
-				break;
-			case CadValueType.Handle:
-				var handleObj = value.Value as IHandledCadObject;
-				if (handleObj != null)
-				{
-					this._writer.WriteHandle(330, handleObj);
-				}
-				break;
-			case CadValueType.Buffer:
-			case CadValueType.ResultBuffer:
-				//TODO: Implement date for dxf
-				this._writer.Write(91, 0);
-				break;
+			switch (value.ValueType)
+			{
+				case CadValueType.Unknown:
+					break;
+				case CadValueType.Double:
+					this._writer.Write(140, Convert.ToDouble(value.Value));
+					break;
+				case CadValueType.Date:
+					if (value.Value is DateTime date)
+					{
+						byte[] array = new byte[16];
+						var stream = new MemoryStream(array);
+
+						stream.Write(LittleEndianConverter.Instance.GetBytes((short)date.Year), 0, 2);
+						stream.Write(LittleEndianConverter.Instance.GetBytes((short)date.Month), 0, 2);
+						stream.Write(LittleEndianConverter.Instance.GetBytes((short)date.DayOfWeek), 0, 2);
+						stream.Write(LittleEndianConverter.Instance.GetBytes((short)date.Day), 0, 2);
+						stream.Write(LittleEndianConverter.Instance.GetBytes((short)date.Hour), 0, 2);
+						stream.Write(LittleEndianConverter.Instance.GetBytes((short)date.Minute), 0, 2);
+						stream.Write(LittleEndianConverter.Instance.GetBytes((short)date.Second), 0, 2);
+						stream.Write(LittleEndianConverter.Instance.GetBytes((short)date.Millisecond), 0, 2);
+
+						this._writer.Write(92, array.Length);
+						this._writer.Write(310, array);
+					}
+					break;
+				case CadValueType.General:
+				case CadValueType.String:
+					this.writeLongTextValue(1, 2, (string)value.Value);
+					break;
+				case CadValueType.Point2D:
+				case CadValueType.Point3D:
+					this._writer.Write(11, (XYZ)value.Value);
+					break;
+				case CadValueType.Long:
+					this._writer.Write(91, Convert.ToInt32(value.Value));
+					break;
+				case CadValueType.Handle:
+					var handleObj = value.Value as IHandledCadObject;
+					if (handleObj != null)
+					{
+						this._writer.WriteHandle(330, handleObj);
+					}
+					break;
+				case CadValueType.Buffer:
+				case CadValueType.ResultBuffer:
+					//TODO: Implement date for dxf
+					this._writer.Write(91, 0);
+					break;
+			}
 		}
 
+		this._writer.Write(94, (int)value.Units);
+		this._writer.Write(300, value.Format ?? string.Empty);
+		this._writer.Write(302, value.FormattedValue ?? string.Empty);
 		this._writer.Write(304, DxfFileToken.ValueEnd);
 	}
 
