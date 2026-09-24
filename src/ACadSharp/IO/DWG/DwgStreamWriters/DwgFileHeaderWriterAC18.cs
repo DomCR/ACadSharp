@@ -20,6 +20,12 @@ internal class DwgFileHeaderWriterAC18 : DwgFileHeaderWriterBase<DwgFileHeaderAC
 
 	private List<DwgLocalSectionMap> _localSectionsMaps = new List<DwgLocalSectionMap>();
 
+	//Section ids run from 1 upward as sections are added; the empty section
+	//written first in the descriptor map keeps id 0. Leaving every id at 0
+	//makes the R2013+ AcDs data store unresolvable (the modeler drops the
+	//payloads with eOutOfRange).
+	private int _sectionIdCounter;
+
 	public DwgFileHeaderWriterAC18(Stream stream, Encoding encoding, CadDocument document) : base(stream, encoding, document)
 	{
 		// File header info
@@ -37,6 +43,10 @@ internal class DwgFileHeaderWriterAC18 : DwgFileHeaderWriterBase<DwgFileHeaderAC
 
 		descriptor.CompressedSize = (ulong)stream.Length;
 		descriptor.CompressedCode = !isCompressed ? 1 : 2;
+
+		//assign the id before the pages are written: the page headers and the
+		//descriptor map must carry the same value
+		descriptor.SectionId = ++this._sectionIdCounter;
 
 		int nlocalSections = (int)(stream.Length / (int)descriptor.DecompressedSize);
 
@@ -290,8 +300,14 @@ internal class DwgFileHeaderWriterAC18 : DwgFileHeaderWriterBase<DwgFileHeaderAC
 		MemoryStream stream = new MemoryStream();
 		var swriter = DwgStreamWriterBase.GetStreamWriter(_version, stream, _encoding);
 
+		//The format expects an empty section (id 0, no pages, no name) as the
+		//first descriptor, followed by the real sections. It is a reference the
+		//readers rely on, and the AcDs data store needs it to resolve records.
+		List<DwgSectionDescriptor> descriptorList = new List<DwgSectionDescriptor> { new DwgSectionDescriptor(string.Empty) };
+		descriptorList.AddRange(this._descriptors.Values);
+
 		//0x00	4	Number of section descriptions(NumDescriptions)
-		swriter.WriteInt(this._descriptors.Count);
+		swriter.WriteInt(descriptorList.Count);
 
 		//0x04	4	0x02 (long)
 		swriter.WriteInt(2);
@@ -301,8 +317,8 @@ internal class DwgFileHeaderWriterAC18 : DwgFileHeaderWriterBase<DwgFileHeaderAC
 		swriter.WriteInt(0);
 
 		//0x10	4	Unknown (long), ODA writes NumDescriptions here.
-		swriter.WriteInt(this._descriptors.Count);
-		foreach (var descriptors in this._descriptors.Values)
+		swriter.WriteInt(descriptorList.Count);
+		foreach (var descriptors in descriptorList)
 		{
 			//0x00	8	Size of section(OdUInt64)
 			swriter.WriteBytes(LittleEndianConverter.Instance.GetBytes(descriptors.CompressedSize));
