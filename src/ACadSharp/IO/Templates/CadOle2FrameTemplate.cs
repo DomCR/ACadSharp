@@ -24,6 +24,10 @@ namespace ACadSharp.IO.Templates
 			{
 				this.CadObject.BinaryData = this.Chunks.SelectMany(c => c).ToArray();
 			}
+			else if (this.CadObject.BinaryData == null)
+			{
+				return;
+			}
 
 			StreamIO reader = new StreamIO(CadObject.BinaryData);
 
