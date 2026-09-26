@@ -20,7 +20,22 @@ public class ExtendedDataDictionary : IEnumerable<KeyValuePair<AppId, ExtendedDa
 	/// </summary>
 	public CadObject Owner { get; }
 
-	private Dictionary<AppId, ExtendedData> _data = new Dictionary<AppId, ExtendedData>();
+	//Almost every object of a drawing carries no extended data at all. A 17 MB production drawing
+	//holds 909016 objects, and giving each of them an empty dictionary cost 99 MB of the 548 MB the
+	//document needed to be read. The dictionary is created on the first write instead.
+	private Dictionary<AppId, ExtendedData> _data;
+
+	private static readonly Dictionary<AppId, ExtendedData> _empty = new Dictionary<AppId, ExtendedData>();
+
+	private Dictionary<AppId, ExtendedData> data
+	{
+		get { return this._data ?? (this._data = new Dictionary<AppId, ExtendedData>()); }
+	}
+
+	private Dictionary<AppId, ExtendedData> readable
+	{
+		get { return this._data ?? _empty; }
+	}
 
 	/// <summary>
 	/// Default constructor.
@@ -70,17 +85,17 @@ public class ExtendedDataDictionary : IEnumerable<KeyValuePair<AppId, ExtendedDa
 		{
 			if (this.Document.AppIds.TryGetValue(app.Name, out AppId existing))
 			{
-				this._data.Add(existing, extendedData);
+				this.data.Add(existing, extendedData);
 			}
 			else
 			{
 				this.Document.AppIds.Add(app);
-				this._data.Add(app, extendedData);
+				this.data.Add(app, extendedData);
 			}
 		}
 		else
 		{
-			this._data.Add(app, extendedData);
+			this.data.Add(app, extendedData);
 		}
 	}
 
@@ -91,7 +106,7 @@ public class ExtendedDataDictionary : IEnumerable<KeyValuePair<AppId, ExtendedDa
 	/// <param name="records">The ExtendedData records.</param>
 	public void Add(AppId app, IEnumerable<ExtendedDataRecord> records)
 	{
-		this._data.Add(app, new ExtendedData(records));
+		this.data.Add(app, new ExtendedData(records));
 	}
 
 	/// <summary>
@@ -99,7 +114,7 @@ public class ExtendedDataDictionary : IEnumerable<KeyValuePair<AppId, ExtendedDa
 	/// </summary>
 	public void Clear()
 	{
-		this._data.Clear();
+		this._data?.Clear();
 	}
 
 	/// <summary>
@@ -108,7 +123,7 @@ public class ExtendedDataDictionary : IEnumerable<KeyValuePair<AppId, ExtendedDa
 	/// <param name="app">The AppId object.</param>
 	public bool ContainsKey(AppId app)
 	{
-		return this._data.ContainsKey(app);
+		return this._data != null && this._data.ContainsKey(app);
 	}
 
 	/// <summary>
@@ -117,7 +132,7 @@ public class ExtendedDataDictionary : IEnumerable<KeyValuePair<AppId, ExtendedDa
 	/// <param name="name">The AppId name.</param>
 	public bool ContainsKeyName(string name)
 	{
-		return this._data.Keys.Select(k => k.Name).Contains(name);
+		return this.readable.Keys.Select(k => k.Name).Contains(name);
 	}
 
 	/// <summary>
@@ -136,19 +151,19 @@ public class ExtendedDataDictionary : IEnumerable<KeyValuePair<AppId, ExtendedDa
 	/// <param name="app">The AppId object.</param>
 	public ExtendedData Get(AppId app)
 	{
-		return this._data[app];
+		return this.readable[app];
 	}
 
 	/// <inheritdoc/>
 	public IEnumerator<KeyValuePair<AppId, ExtendedData>> GetEnumerator()
 	{
-		return this._data.GetEnumerator();
+		return this.readable.GetEnumerator();
 	}
 
 	/// <inheritdoc/>
 	IEnumerator IEnumerable.GetEnumerator()
 	{
-		return this._data.GetEnumerator();
+		return this.readable.GetEnumerator();
 	}
 
 	/// <summary>
@@ -157,7 +172,7 @@ public class ExtendedDataDictionary : IEnumerable<KeyValuePair<AppId, ExtendedDa
 	/// <returns></returns>
 	public IDictionary<string, ExtendedData> GetExtendedDataByName()
 	{
-		return this._data.ToDictionary(x => x.Key.Name, x => x.Value, StringComparer.OrdinalIgnoreCase);
+		return this.readable.ToDictionary(x => x.Key.Name, x => x.Value, StringComparer.OrdinalIgnoreCase);
 	}
 
 	/// <summary>
@@ -191,7 +206,7 @@ public class ExtendedDataDictionary : IEnumerable<KeyValuePair<AppId, ExtendedDa
 	/// <param name="value">ExtendedData object.</param>
 	public bool TryGet(AppId app, out ExtendedData value)
 	{
-		return this._data.TryGetValue(app, out value);
+		return this.readable.TryGetValue(app, out value);
 	}
 
 	/// <summary>
