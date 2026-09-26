@@ -137,6 +137,23 @@ public class DxfWriter : CadWriterBase<DxfWriterConfiguration>
 
 	private void writeACDSData()
 	{
+		//R2013+ only: this is where the ACIS payload of a region or a solid lives from that version
+		//on. Older files carry it inside the entity, so there is no section to write.
+		if (this._document.Header.Version < ACadVersion.AC1027)
+		{
+			return;
+		}
+
+		var entities = DxfAcdsDataSectionWriter.CollectEntities(this._document);
+		if (entities.Count == 0)
+		{
+			return;
+		}
+
+		var writer = new DxfAcdsDataSectionWriter(this._writer, this._document, this._objectHolder, this.Configuration, entities);
+		writer.OnNotification += this.triggerNotification;
+
+		writer.Write();
 	}
 
 	private void writeBlocks()
