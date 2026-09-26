@@ -1,0 +1,128 @@
+  0
+SECTION
+  2
+HEADER
+  9
+$ACADVER
+  1
+AC1009
+  0
+ENDSEC
+  0
+SECTION
+  2
+TABLES
+  0
+TABLE
+  2
+LAYER
+ 70
+2
+  0
+LAYER
+  2
+0
+ 70
+0
+ 62
+7
+  6
+CONTINUOUS
+  0
+LAYER
+  2
+0
+ 70
+0
+ 62
+7
+  6
+CONTINUOUS
+  0
+ENDTAB
+  0
+ENDSEC
+  0
+SECTION
+  2
+BLOCKS
+  0
+BLOCK
+  8
+0
+  2
+*D0
+ 70
+65
+ 10
+0.0
+ 20
+0.0
+  0
+LINE
+  5
+1
+  8
+Bemassung
+ 10
+0.0
+ 20
+5.0
+ 11
+100.0
+ 21
+5.0
+  0
+ENDBLK
+  8
+0
+  0
+ENDSEC
+  0
+SECTION
+  2
+ENTITIES
+  0
+LINE
+  5
+10
+  8
+Kanten
+ 10
+0.0
+ 20
+0.0
+ 11
+100.0
+ 21
+0.0
+  0
+DIMENSION
+  5
+11
+  8
+Konstruktion
+  2
+*D0
+ 10
+0.0
+ 20
+5.0
+ 11
+50.0
+ 21
+5.0
+ 70
+0
+ 13
+0.0
+ 23
+0.0
+ 14
+100.0
+ 24
+0.0
+  0
+ENDSEC
+  0
+EOF

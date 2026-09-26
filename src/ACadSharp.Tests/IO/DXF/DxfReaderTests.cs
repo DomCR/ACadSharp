@@ -2,6 +2,7 @@
 using ACadSharp.IO;
 using ACadSharp.Tests.TestModels;
 using System.Collections.Generic;
+using System.Linq;
 using Xunit;
 using Xunit.Abstractions;
 
@@ -179,5 +180,40 @@ public class DxfReaderTests : CadReaderTestsBase<DxfReader>
 		Assert.NotNull(doc.UCSs);
 		Assert.NotNull(doc.Views);
 		Assert.NotNull(doc.VPorts);
+	}
+
+	[Fact]
+	public void ReadDuplicatedDefaultLayerTest()
+	{
+		//https://github.com/DomCR/ACadSharp/issues/1242
+		string path = System.IO.Path.Combine(TestVariables.SamplesFolder, "duplicated_default_entries_AC1009.dxf");
+
+		CadDocument doc;
+		using (DxfReader reader = new DxfReader(path))
+		{
+			doc = reader.Read();
+		}
+
+		Assert.True(doc.Layers.Contains("0"));
+		Assert.Single(doc.Layers.Where(l => l.Name == "0"));
+		Assert.Single(doc.Entities.OfType<Line>());
+		Assert.Single(doc.Entities.OfType<Dimension>());
+	}
+
+	[Fact]
+	public void ReadDuplicatedEntryWithoutDefaultTest()
+	{
+		//https://github.com/DomCR/ACadSharp/issues/1239
+		string path = System.IO.Path.Combine(TestVariables.SamplesFolder, "duplicated_entry_no_default_AC1009.dxf");
+
+		CadDocument doc;
+		using (DxfReader reader = new DxfReader(path))
+		{
+			doc = reader.Read();
+		}
+
+		Assert.True(doc.Layers.Contains("A"));
+		Assert.Single(doc.Layers.Where(l => l.Name == "A"));
+		Assert.Equal("A", doc.Entities.OfType<Line>().Single().Layer.Name);
 	}
 }
