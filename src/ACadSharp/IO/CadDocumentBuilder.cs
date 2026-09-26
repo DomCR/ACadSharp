@@ -102,6 +102,8 @@ internal abstract class CadDocumentBuilder
 		{
 			template.Build(this);
 		}
+
+		this.ensureReservedBlockRecords();
 	}
 
 	public void BuildTable<T>(Table<T> table)
@@ -303,6 +305,32 @@ internal abstract class CadDocumentBuilder
 		this.DocumentToBuild.UpdateCollections(true, false);
 	}
 
+	//A malformed file may not reference the reserved block records in the block
+	//control object, backfill them so the document model/paper space are always
+	//resolvable after a read.
+	protected void ensureReservedBlockRecords()
+	{
+		BlockRecordsTable blockRecords = this.DocumentToBuild.BlockRecords;
+		if (blockRecords == null)
+		{
+			return;
+		}
+
+		if (!blockRecords.Contains(BlockRecord.ModelSpaceName))
+		{
+			this.Notify($"{BlockRecord.ModelSpaceName} block record is missing, a default one will be created", NotificationType.Warning);
+			this.addReservedBlockRecord(BlockRecord.ModelSpace);
+		}
+
+		if (!blockRecords.Contains(BlockRecord.PaperSpaceName))
+		{
+			this.Notify($"{BlockRecord.PaperSpaceName} block record is missing, a default one will be created", NotificationType.Warning);
+			BlockRecord pspace = BlockRecord.PaperSpace;
+			pspace.Layout.TabOrder = 1;
+			this.addReservedBlockRecord(pspace);
+		}
+	}
+
 	protected void createMissingHandles()
 	{
 		foreach (var template in this.unassignedObjects)
@@ -325,6 +353,21 @@ internal abstract class CadDocumentBuilder
 		else
 		{
 			this.DocumentToBuild.RegisterCollection(table);
+		}
+	}
+
+	private void addReservedBlockRecord(BlockRecord record)
+	{
+		//Register through the layout, as CadDocument.CreateDefaults does, so the
+		//associated layout is added to the document with its block record
+		var layouts = this.DocumentToBuild.Layouts;
+		if (layouts != null && !layouts.ContainsKey(record.Layout.Name))
+		{
+			layouts.Add(record.Layout);
+		}
+		else
+		{
+			this.DocumentToBuild.BlockRecords.Add(record);
 		}
 	}
 
