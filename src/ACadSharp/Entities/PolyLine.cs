@@ -93,6 +93,14 @@ public abstract class Polyline<T> : Entity, IPolyline
 	[DxfCodeValue(210, 220, 230)]
 	public XYZ Normal { get; set; } = XYZ.AxisZ;
 
+	/// <summary>
+	/// Whether the vertexes of this polyline are expressed in the entity's own object coordinate
+	/// system, in which case <see cref="Normal"/> is needed to place them in the world. True for
+	/// the 2D form, which is how AutoCAD records mirrored geometry; false for the 3D form, whose
+	/// vertexes are already world coordinates.
+	/// </summary>
+	protected virtual bool VertexesAreInObjectCoordinates { get; } = true;
+
 	/// <inheritdoc/>
 	public override string ObjectName => DxfFileToken.EntityPolyline;
 
@@ -177,12 +185,80 @@ public abstract class Polyline<T> : Entity, IPolyline
 	/// <inheritdoc/>
 	public override BoundingBox GetBoundingBox()
 	{
-		if (this.Vertices.Any(v => v.Bulge != 0))
+		//The vertices are stored in the entity's own object coordinate system. A caller asking for a
+		//bounding box is asking where the thing sits in the world, and for the (0,0,-1) normal AutoCAD
+		//writes whenever geometry is mirrored the two differ by the sign of X - which is enough to put
+		//a drawing's extents out by millions of units and make a viewer's zoom-extents useless.
+		Matrix4 toWorld = this.VertexesAreInObjectCoordinates
+			? Matrix4.GetArbitraryAxis(this.Normal)
+			: Matrix4.Identity;
+
+		//A width is drawn half on each side of the centre line and AutoCAD's extents include it. It
+		//only means anything for a polyline that lies in a plane; a 3D polyline carries the fields
+		//but no width, so it keeps the centre line.
+		if (this.VertexesAreInObjectCoordinates)
 		{
-			return BoundingBox.FromPoints(this.GetPoints<XYZ>(byte.MaxValue));
+			BoundingBox widened = PolylineWidthBounds.InPlane(this.widthSegments());
+			if (widened.Extent != BoundingBoxExtent.Null)
+			{
+				return BoundingBox.FromPoints(corners(widened).Select(p => toWorld * p));
+			}
 		}
 
-		return BoundingBox.FromPoints(this.Vertices.Select(v => v.Location.Convert<XYZ>()));
+		IEnumerable<XYZ> points = this.Vertices.Any(v => v.Bulge != 0)
+			? this.GetPoints<XYZ>(byte.MaxValue)
+			: this.Vertices.Select(v => v.Location.Convert<XYZ>());
+
+		return BoundingBox.FromPoints(points.Select(p => toWorld * p));
+
+		static IEnumerable<XYZ> corners(BoundingBox box)
+		{
+			yield return new XYZ(box.Min.X, box.Min.Y, box.Min.Z);
+			yield return new XYZ(box.Max.X, box.Min.Y, box.Min.Z);
+			yield return new XYZ(box.Min.X, box.Max.Y, box.Min.Z);
+			yield return new XYZ(box.Max.X, box.Max.Y, box.Min.Z);
+			yield return new XYZ(box.Min.X, box.Min.Y, box.Max.Z);
+			yield return new XYZ(box.Max.X, box.Min.Y, box.Max.Z);
+			yield return new XYZ(box.Min.X, box.Max.Y, box.Max.Z);
+			yield return new XYZ(box.Max.X, box.Max.Y, box.Max.Z);
+		}
+	}
+
+	//The polyline's own start and end width (codes 40 and 41) are the default for a vertex that
+	//does not carry one, which is how AutoCAD writes a uniformly wide POLYLINE.
+	private IEnumerable<PolylineWidthBounds.Segment> widthSegments()
+	{
+		for (int i = 0; i < this.Vertices.Count; i++)
+		{
+			T current = this.Vertices[i];
+			T next;
+			if (i + 1 < this.Vertices.Count)
+			{
+				next = this.Vertices[i + 1];
+			}
+			else if (this.IsClosed && this.Vertices.Count > 1)
+			{
+				next = this.Vertices[0];
+			}
+			else
+			{
+				yield break;
+			}
+
+			//IVertex carries no width; only the concrete vertex does, and a 3D one leaves it at zero.
+			Vertex vertex = current as Vertex;
+			double startWidth = vertex != null && vertex.StartWidth != 0 ? vertex.StartWidth : this.StartWidth;
+			double endWidth = vertex != null && vertex.EndWidth != 0 ? vertex.EndWidth : this.EndWidth;
+
+			yield return new PolylineWidthBounds.Segment(
+				current.Location.Convert<XY>(),
+				next.Location.Convert<XY>(),
+				current.Bulge,
+				startWidth,
+				endWidth,
+				current.Location.Convert<XYZ>().Z,
+				next.Location.Convert<XYZ>().Z);
+		}
 	}
 
 	internal static IEnumerable<Entity> Explode(IPolyline polyline)
