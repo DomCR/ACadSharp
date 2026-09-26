@@ -109,6 +109,16 @@ public class Solid : Entity, IOrientable
 	/// <inheritdoc/>
 	public override BoundingBox GetBoundingBox()
 	{
-		return BoundingBox.FromPoints(new[] { this.FirstCorner, this.SecondCorner, this.ThirdCorner, this.FourthCorner });
+		//The corners are in the solid's own object coordinate system; without the arbitrary-axis
+		//mapping a mirrored solid - normal (0,0,-1) - is boxed at the negated X of where it draws.
+		Matrix4 toWorld = Matrix4.GetArbitraryAxis(this.Normal);
+
+		return BoundingBox.FromPoints(new[]
+		{
+			toWorld * this.FirstCorner,
+			toWorld * this.SecondCorner,
+			toWorld * this.ThirdCorner,
+			toWorld * this.FourthCorner
+		});
 	}
 }
