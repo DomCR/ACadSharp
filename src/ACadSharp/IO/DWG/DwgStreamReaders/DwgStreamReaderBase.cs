@@ -351,7 +351,7 @@ namespace ACadSharp.IO.DWG
 			if (this.BitShift == 0)
 			{
 				//No need to apply the shift
-				_lastByte = base.ReadByte();
+				_lastByte = this.readStreamByte();
 
 				return _lastByte;
 			}
@@ -359,9 +359,23 @@ namespace ACadSharp.IO.DWG
 			//Get the last bits from the last readed byte
 			byte lastValues = (byte)((uint)_lastByte << BitShift);
 
-			_lastByte = base.ReadByte();
+			_lastByte = this.readStreamByte();
 
 			return (byte)(lastValues | (uint)(byte)((uint)_lastByte >> 8 - BitShift));
+		}
+
+		//StreamIO.ReadByte allocates a one byte array on every call. Every bit level read in the
+		//object section pulls its bytes through here, so that array is allocated tens of millions
+		//of times for a single drawing. Reading the stream directly returns the same byte and
+		//throws the same exception at the end of the stream, and allocates nothing.
+		private byte readStreamByte()
+		{
+			int value = this._stream.ReadByte();
+
+			if (value < 0)
+				throw new EndOfStreamException();
+
+			return (byte)value;
 		}
 
 		public override byte[] ReadBytes(int length)
@@ -820,39 +834,38 @@ namespace ACadSharp.IO.DWG
 
 		private ulong readHandle(int length)
 		{
-			byte[] raw = new byte[length];
-			byte[] arr = new byte[8];
-
-			if (this.Stream.Read(raw, 0, length) < length)
-				throw new EndOfStreamException();
+			//A handle is at most eight bytes and the value is assembled most significant byte
+			//first, which is a shift and an or - the two byte arrays this used to fill, and the
+			//conversion at the end, produced the same number. Every object in a drawing carries
+			//several handle references, so the arrays were worth removing rather than reusing:
+			//a buffer held in a field measured slower than the fresh one it replaced, because the
+			//bounds checks a local array of known length lets the compiler drop come back.
+			ulong value = 0;
 
 			if (this.BitShift == 0)
 			{
-				//Set the array backwards
-				for (int i = 0; i < length; ++i)
-					arr[length - 1 - i] = raw[i];
-			}
-			else
-			{
-				int shift = 8 - this.BitShift;
+				//The last byte is deliberately not tracked here: with no bit shift nothing reads
+				//it before the next byte read overwrites it, which is what the array version did.
 				for (int i = 0; i < length; ++i)
 				{
-					//Get the last byte value
-					byte lastByteValue = (byte)((uint)this._lastByte << this.BitShift);
-					//Save the last byte
-					this._lastByte = raw[i];
-					//Add the value of the next byte to the current
-					byte value = (byte)(lastByteValue | (uint)(byte)((uint)this._lastByte >> shift));
-					//Save the value into the array
-					arr[length - 1 - i] = value;
+					value = value << 8 | this.readStreamByte();
 				}
+
+				return value;
 			}
 
-			//Set the left bytes to 0
-			for (int index = length; index < 8; ++index)
-				arr[index] = 0;
+			int shift = 8 - this.BitShift;
+			for (int i = 0; i < length; ++i)
+			{
+				//Get the last byte value
+				byte lastByteValue = (byte)((uint)this._lastByte << this.BitShift);
+				//Save the last byte
+				this._lastByte = this.readStreamByte();
+				//Add the value of the next byte to the current
+				value = value << 8 | (byte)(lastByteValue | (uint)(byte)((uint)this._lastByte >> shift));
+			}
 
-			return LittleEndianConverter.Instance.ToUInt64(arr);
+			return value;
 		}
 
 		#endregion Handle reference
@@ -1108,7 +1121,7 @@ namespace ACadSharp.IO.DWG
 		/// <inheritdoc/>
 		public void AdvanceByte()
 		{
-			this._lastByte = base.ReadByte();
+			this._lastByte = this.readStreamByte();
 		}
 
 		/// <inheritdoc/>
