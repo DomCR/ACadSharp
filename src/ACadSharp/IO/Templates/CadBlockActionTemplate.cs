@@ -19,16 +19,39 @@ internal class CadBlockActionTemplate : CadBlockElementTemplate
 	{
 		base.build(builder);
 
+		//The file does not restrict these to entities. Checked against AutoCAD's own DXF of a
+		//production drawing: all 184 handles this used to report as "entity not found" were
+		//objects - stretch actions, linear parameters, flip grips - and the writers then wrote 385
+		//fewer references than the file held. Keep every object, in file order, and the entities
+		//among them in the typed list as well.
+		int stale = 0;
+		ulong firstStale = 0;
 		foreach (var handle in this.EntityHandles)
 		{
-			if (builder.TryGetCadObject(handle, out Entity entity))
+			if (builder.TryGetCadObject(handle, out CadObject obj))
 			{
-				this.BlockAction.Entities.Add(entity);
+				this.BlockAction.Elements.Add(obj);
+				if (obj is Entity entity)
+				{
+					this.BlockAction.Entities.Add(entity);
+				}
 			}
 			else
 			{
-				builder.Notify($"[{this.BlockAction.ToString()}] entity with handle {handle} not found.");
+				if (stale == 0)
+				{
+					firstStale = handle;
+				}
+
+				stale++;
 			}
+		}
+
+		if (stale > 0)
+		{
+			builder.Notify(
+				$"{this.BlockAction}: {stale} of {this.EntityHandles.Count} references point at objects that are not in the drawing (first: {firstStale}); dropped",
+				NotificationType.Warning);
 		}
 	}
 }
