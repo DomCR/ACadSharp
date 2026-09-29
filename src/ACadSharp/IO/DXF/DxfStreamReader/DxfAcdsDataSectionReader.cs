@@ -61,6 +61,8 @@ internal class DxfAcdsDataSectionReader : DxfSectionReaderBase
 	{
 		AcdsRecord record = new();
 
+		this._reader.ReadNext();
+
 		while (this._reader.DxfCode != DxfCode.Start
 			&& this._reader.DxfCode != DxfCode.EmbeddedObjectStart)
 		{
