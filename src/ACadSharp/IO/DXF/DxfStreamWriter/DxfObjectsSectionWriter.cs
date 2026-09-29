@@ -50,7 +50,12 @@ internal class DxfObjectsSectionWriter : DxfSectionWriterBase
 				continue;
 			}
 
-			//Not compatible dictionaries
+			if (entry is CadDictionary dictionary && !dictionary.Any())
+			{
+				continue;
+			}
+
+			//TODO: Not compatible dictionaries
 			if (entryName == CadDictionary.AcadMaterial)
 			{
 				continue;
