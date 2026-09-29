@@ -49,11 +49,6 @@ public class CadDocument : IHandledCadObject
 	/// <summary>
 	/// The data stored in the Prototype1b header section. This primarily contains ACIS and thumbnail data
 	/// </summary>
-	public DataStorage DataStorage { get; set; }
-
-	/// <summary>
-	/// The data stored in the Prototype1b header section. This primarily contains ACIS and thumbnail data
-	/// </summary>
 	public Prototype1b.DataStorage DataStorage { get; set; }
 
 	/// <summary>

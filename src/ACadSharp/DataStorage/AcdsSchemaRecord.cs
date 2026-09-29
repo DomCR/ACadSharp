@@ -1,6 +1,6 @@
 ﻿namespace ACadSharp.DataStorage;
 
-internal class AcdsRecord
+internal class AcdsSchemaRecord
 {
 	public int Id { get; set; }
 

@@ -1,4 +1,5 @@
 using ACadSharp.DataStorage;
+using ACadSharp.Prototype1b;
 using System;
 using System.Collections.Generic;
 using System.IO;
@@ -11,7 +12,7 @@ internal class DxfAcdsDataSectionReader : DxfSectionReaderBase
 
 	public const string RecordToken = "ACDSRECORD";
 
-	private List<Schema> _schemas = new List<Schema>();
+	private List<AcdsSchema> _schemas = new List<AcdsSchema>();
 
 	public DxfAcdsDataSectionReader(IDxfStreamReader reader, DxfDocumentBuilder builder)
 		: base(reader, builder)
@@ -56,14 +57,38 @@ internal class DxfAcdsDataSectionReader : DxfSectionReaderBase
 		}
 	}
 
-	private void readAcdsRecord()
+	private AcdsRecord readAcdsRecord()
+	{
+		AcdsRecord record = new();
+
+		while (this._reader.DxfCode != DxfCode.Start
+			&& this._reader.DxfCode != DxfCode.EmbeddedObjectStart)
+		{
+			switch (this._reader.Code)
+			{
+				case 2:
+					AcdsRecordColumn column = this.readAcdsRecordColumn();
+					record.Columns.Add(column);
+					continue;
+				case 90:
+					record.Index = (uint)this._reader.ValueAsInt;
+					break;
+			}
+
+			this._reader.ReadNext();
+		}
+
+		return record;
+	}
+
+	private AcdsRecordColumn readAcdsRecordColumn()
 	{
 		throw new NotImplementedException();
 	}
 
-	private Schema readAcdsSchema()
+	private AcdsSchema readAcdsSchema()
 	{
-		Schema schema = new Schema();
+		AcdsSchema schema = new AcdsSchema();
 
 		this._reader.ReadNext();
 
@@ -93,9 +118,9 @@ internal class DxfAcdsDataSectionReader : DxfSectionReaderBase
 		return schema;
 	}
 
-	private AcdsRecord readEmbeddedRecord()
+	private AcdsSchemaRecord readEmbeddedRecord()
 	{
-		var record = new AcdsRecord();
+		var record = new AcdsSchemaRecord();
 
 		this._reader.ReadNext();
 
@@ -127,9 +152,9 @@ internal class DxfAcdsDataSectionReader : DxfSectionReaderBase
 		return record;
 	}
 
-	private SchemaProperty readProperty()
+	private AcdsSchemaProperty readProperty()
 	{
-		var property = new SchemaProperty();
+		var property = new AcdsSchemaProperty();
 		property.Name = this._reader.ValueAsString;
 
 		while (this._reader.DxfCode != DxfCode.Start
@@ -141,7 +166,7 @@ internal class DxfAcdsDataSectionReader : DxfSectionReaderBase
 					property.Type = (byte)this._reader.ValueAsShort;
 					break;
 				case 280:
-					property.PropertyFlags = (SchemaPropertyFlags)this._reader.ValueAsShort;
+					property.PropertyFlags = (AcdsSchemaPropertyFlags)this._reader.ValueAsShort;
 					break;
 			}
 

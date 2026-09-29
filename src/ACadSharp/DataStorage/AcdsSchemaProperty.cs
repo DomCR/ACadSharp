@@ -1,6 +1,6 @@
 ﻿namespace ACadSharp.DataStorage;
 
-internal class SchemaProperty
+internal class AcdsSchemaProperty
 {
 	public static readonly uint[] TypeSizes = new uint[] { 0, 0, 2, 1, 2, 4, 8, 1, 2, 4, 8, 4, 8, 0, 0, 0 };
 
@@ -8,7 +8,7 @@ internal class SchemaProperty
 
 	public uint NameIndex { get; set; }
 
-	public SchemaPropertyFlags PropertyFlags { get; set; }
+	public AcdsSchemaPropertyFlags PropertyFlags { get; set; }
 
 	public uint PropertyValueCount { get; set; }
 

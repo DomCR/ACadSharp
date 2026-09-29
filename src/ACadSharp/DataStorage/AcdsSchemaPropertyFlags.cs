@@ -3,10 +3,13 @@
 namespace ACadSharp.DataStorage;
 
 [Flags]
-internal enum SchemaPropertyFlags
+internal enum AcdsSchemaPropertyFlags
 {
 	None = 0,
+
 	Unknown1 = 1,
+
 	NoType = 2,
+
 	Unknown2 = 8
 }

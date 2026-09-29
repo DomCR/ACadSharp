@@ -5,5 +5,5 @@ namespace ACadSharp.DataStorage;
 
 internal class CadFileDataStorage
 {
-	public List<Schema> Schemes { get; } = new();
+	public List<AcdsSchema> Schemes { get; } = new();
 }
