@@ -39,7 +39,7 @@ public class DimensionStyle : TableEntry
 	/// </para>
 	/// </remarks>
 	[DxfCodeValue(4)]
-	public string AlternateDimensioningSuffix { get; set; } = "[]";
+	public string AlternateDimensioningSuffix { get; set; } = string.Empty;
 
 	/// <summary>
 	/// Controls the number of decimal places in alternate units
@@ -642,7 +642,7 @@ public class DimensionStyle : TableEntry
 	/// </para>
 	/// </remarks>
 	[DxfCodeValue(3)]
-	public string PostFix { get; set; } = "<>";
+	public string PostFix { get; set; } = string.Empty;
 
 	/// <summary>
 	/// Gets or sets the prefix based on the <see cref="PostFix"/> value.
@@ -657,7 +657,9 @@ public class DimensionStyle : TableEntry
 		set
 		{
 			this.getDimStylePrefixAndSuffix(this.PostFix, '<', '>', out _, out string suffix);
-			this.PostFix = $"{value}{this.PostFix}{suffix}";
+			this.PostFix = string.IsNullOrEmpty(value) && string.IsNullOrEmpty(suffix)
+				? string.Empty
+				: $"{value}<>{suffix}";
 		}
 	}
 
@@ -774,7 +776,9 @@ public class DimensionStyle : TableEntry
 		set
 		{
 			this.getDimStylePrefixAndSuffix(this.PostFix, '<', '>', out string prefix, out _);
-			this.PostFix = $"{prefix}{this.PostFix}{value}";
+			this.PostFix = string.IsNullOrEmpty(prefix) && string.IsNullOrEmpty(value)
+				? string.Empty
+				: $"{prefix}<>{value}";
 		}
 	}
 
