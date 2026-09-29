@@ -1,8 +1,10 @@
 ﻿using ACadSharp.Attributes;
 using ACadSharp.Extensions;
+using ACadSharp.IO;
 using ACadSharp.Objects;
 using ACadSharp.Tables;
 using CSMath;
+using CSMath.Extensions;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -18,7 +20,7 @@ namespace ACadSharp.Entities;
 /// </remarks>
 [DxfName(DxfFileToken.EntityInsert)]
 [DxfSubClass(DxfSubclassMarker.Insert)]
-public class Insert : Entity
+public class Insert : Entity, IOrientable
 {
 	/// <summary>
 	/// Attributes from the block reference
@@ -67,9 +69,7 @@ public class Insert : Entity
 	/// </summary>
 	public bool IsMultiple { get { return this.RowCount > 1 || this.ColumnCount > 1; } }
 
-	/// <summary>
-	/// Specifies the three-dimensional normal unit vector for the object.
-	/// </summary>
+	/// <inheritdoc/>
 	[DxfCodeValue(210, 220, 230)]
 	public XYZ Normal { get; set; } = XYZ.AxisZ;
 
@@ -276,9 +276,9 @@ public class Insert : Entity
 		s = transformation * s;
 		s = transWO * s;
 		XYZ newScale = new XYZ(
-			MathHelper.IsZero(s.X) ? MathHelper.Epsilon : s.X,
-			MathHelper.IsZero(s.Y) ? MathHelper.Epsilon : s.Y,
-			MathHelper.IsZero(s.Z) ? MathHelper.Epsilon : s.Z);
+			s.X.IsZero() ? MathHelper.Epsilon : s.X,
+			s.Y.IsZero() ? MathHelper.Epsilon : s.Y,
+			s.Z.IsZero() ? MathHelper.Epsilon : s.Z);
 
 		this.Normal = newNormal;
 		this.InsertPoint = newPosition;
@@ -387,6 +387,20 @@ public class Insert : Entity
 		var scale = Transform.CreateScaling(new XYZ(this.XScale, this.YScale, this.ZScale));
 
 		return new Transform(world * translation.Matrix * rotation.Matrix * scale.Matrix);
+	}
+
+	/// <inheritdoc/>
+	public override bool IsValid(CadFileFormat format, ACadVersion version, out IList<string> errors)
+	{
+		var result = base.IsValid(format, version, out errors);
+
+		if (this.Block == null)
+		{
+			errors.Add($"Insert entity has no block reference.");
+			result = false;
+		}
+
+		return result;
 	}
 
 	/// <summary>

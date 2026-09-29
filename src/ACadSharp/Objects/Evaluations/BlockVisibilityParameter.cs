@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using ACadSharp.Attributes;
+using ACadSharp.Classes;
 using ACadSharp.Entities;
 
 namespace ACadSharp.Objects.Evaluations;
@@ -15,7 +16,7 @@ namespace ACadSharp.Objects.Evaluations;
 /// </remarks>
 [DxfName(DxfFileToken.ObjectBlockVisibilityParameter)]
 [DxfSubClass(DxfSubclassMarker.BlockVisibilityParameter)]
-public partial class BlockVisibilityParameter : Block1PtParameter
+public partial class BlockVisibilityParameter : Block1PtParameter, IDxfClassDefined
 {
 	/// <summary>
 	/// Visibility parameter description.
@@ -86,5 +87,20 @@ public partial class BlockVisibilityParameter : Block1PtParameter
 		}
 
 		return clone;
+	}
+
+	/// <inheritdoc/>
+	public DxfClass GetDxfClass()
+	{
+		return new DxfClass
+		{
+			CppClassName = DxfSubclassMarker.BlockVisibilityParameter,
+			DwgVersion = ACadVersion.AC1018,
+			DxfName = DxfFileToken.ObjectBlockVisibilityParameter,
+			ItemClassId = 499,
+			MaintenanceVersion = 55,
+			ProxyFlags = ACadSharp.Classes.ProxyFlags.EraseAllowed | ACadSharp.Classes.ProxyFlags.CloningAllowed | ACadSharp.Classes.ProxyFlags.DisablesProxyWarningDialog,
+			WasZombie = false,
+		};
 	}
 }

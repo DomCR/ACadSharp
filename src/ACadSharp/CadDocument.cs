@@ -6,6 +6,7 @@ using ACadSharp.Objects.Collections;
 using ACadSharp.Prototype1b;
 using ACadSharp.Tables;
 using ACadSharp.Tables.Collections;
+using CSUtilities.Extensions;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -44,6 +45,11 @@ public class CadDocument : IHandledCadObject
 	/// The collection is null if the <see cref="CadDictionary.AcadColor"/> doesn't exist in the root dictionary.
 	/// </remarks>
 	public ColorCollection Colors { get; private set; }
+
+	/// <summary>
+	/// The data stored in the Prototype1b header section. This primarily contains ACIS and thumbnail data
+	/// </summary>
+	public DataStorage DataStorage { get; set; }
 
 	/// <summary>
 	/// The collection of the system variables in the drawing.
@@ -216,7 +222,6 @@ public class CadDocument : IHandledCadObject
 
 	private CadDictionary _rootDictionary = null;
 
-
 	/// <summary>
 	/// Creates a document with the default objects
 	/// </summary>
@@ -250,8 +255,6 @@ public class CadDocument : IHandledCadObject
 	/// </summary>
 	public void CreateDefaults()
 	{
-		this.Classes.UpdateDxfClasses();
-
 		//Header and summary
 		if (this.Header is null)
 		{
@@ -390,6 +393,11 @@ public class CadDocument : IHandledCadObject
 		return this._cadObjects.Values
 			.OfType<CadObject>()
 			.Count(c => c.ObjectName == dxfName);
+	}
+
+	public bool IsValid()
+	{
+		throw new NotImplementedException();
 	}
 
 	/// <summary>
@@ -588,8 +596,17 @@ public class CadDocument : IHandledCadObject
 		{
 			this.Classes.Clear();
 		}
+		else
+		{
+			this.Classes.ForEach(c => c.InstanceCount = 0);
+		}
 
-		this.Classes.UpdateDxfClasses();
+		foreach (IDxfClassDefined item in this._cadObjects.Values.OfType<IDxfClassDefined>())
+		{
+			this.Classes.IncreaseInstanceCount(item.GetDxfClass());
+		}
+
+		this.Classes.ResetClassNumbers();
 	}
 
 	/// <summary>
@@ -608,9 +625,14 @@ public class CadDocument : IHandledCadObject
 			this._cadObjects.Remove(item.Handle);
 		}
 
-		var rasterImages = this._cadObjects.Values.OfType<RasterImage>().ToList();
-		foreach (RasterImage image in rasterImages)
+		var values = this._cadObjects.Values.OfType<RasterImage>().ToList();
+		foreach (RasterImage image in values)
 		{
+			if (image.Definition == null)
+			{
+				continue;
+			}
+
 			image.DefinitionReactor = new ImageDefinitionReactor(image);
 			this.AddCadObject(image.DefinitionReactor);
 			image.Definition.AddReactor(image.DefinitionReactor);

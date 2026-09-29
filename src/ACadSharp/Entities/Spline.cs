@@ -1,5 +1,6 @@
 using ACadSharp.Attributes;
 using CSMath;
+using CSMath.Extensions;
 using CSUtilities.Extensions;
 using System;
 using System.Collections.Generic;
@@ -16,7 +17,7 @@ namespace ACadSharp.Entities;
 /// </remarks>
 [DxfName(DxfFileToken.EntitySpline)]
 [DxfSubClass(DxfSubclassMarker.Spline)]
-public class Spline : Entity
+public class Spline : Entity, IOrientable
 {
 	/// <summary>
 	/// Number of control points (in WCS).
@@ -161,9 +162,7 @@ public class Spline : Entity
 	[DxfCodeValue(42)]
 	public double KnotTolerance { get; set; } = 0.0000001;
 
-	/// <summary>
-	/// Specifies the three-dimensional normal unit vector for the object.
-	/// </summary>
+	/// <inheritdoc/>
 	/// <remarks>
 	/// Omitted if the spline is non-planar.
 	/// </remarks>

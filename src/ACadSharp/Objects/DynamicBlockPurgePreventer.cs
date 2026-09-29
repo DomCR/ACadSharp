@@ -1,4 +1,5 @@
 ﻿using ACadSharp.Attributes;
+using ACadSharp.Classes;
 using ACadSharp.Tables;
 
 namespace ACadSharp.Objects;
@@ -12,7 +13,7 @@ namespace ACadSharp.Objects;
 /// </remarks>
 [DxfName(DxfFileToken.ObjectDynamicBlockPurgePreventer)]
 [DxfSubClass(DxfSubclassMarker.AcDbDynamicBlockPurgePreventer)]
-public class DynamicBlockPurgePreventer : NonGraphicalObject
+public class DynamicBlockPurgePreventer : NonGraphicalObject, IDxfClassDefined
 {
 	/// <inheritdoc/>
 	public override string ObjectName => DxfFileToken.ObjectDynamicBlockPurgePreventer;
@@ -31,4 +32,19 @@ public class DynamicBlockPurgePreventer : NonGraphicalObject
 
 	// Not present in dxf
 	internal BlockRecord Block { get; set; }
+
+	/// <inheritdoc/>
+	public DxfClass GetDxfClass()
+	{
+		return new DxfClass
+		{
+			CppClassName = DxfSubclassMarker.AcDbDynamicBlockPurgePreventer,
+			DwgVersion = ACadVersion.AC1018,
+			DxfName = DxfFileToken.ObjectDynamicBlockPurgePreventer,
+			ItemClassId = 499,
+			MaintenanceVersion = 61,
+			ProxyFlags = ACadSharp.Classes.ProxyFlags.EraseAllowed | ACadSharp.Classes.ProxyFlags.CloningAllowed | ACadSharp.Classes.ProxyFlags.DisablesProxyWarningDialog,
+			WasZombie = false,
+		};
+	}
 }

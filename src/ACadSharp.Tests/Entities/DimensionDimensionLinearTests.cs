@@ -3,51 +3,50 @@ using ACadSharp.Tests.Common;
 using CSMath;
 using Xunit;
 
-namespace ACadSharp.Tests.Entities
+namespace ACadSharp.Tests.Entities;
+
+public class DimensionDimensionLinearTests : CommonDimensionTests<DimensionLinear>
 {
-	public class DimensionDimensionLinearTests : CommonDimensionTests<DimensionLinear>
+	public override DimensionType Type => DimensionType.Linear;
+
+	[Fact]
+	public void DefinitionPointRecalculation()
 	{
-		public override DimensionType Type => DimensionType.Linear;
-
-		[Fact]
-		public void DefinitionPointRecalculation()
+		DimensionLinear aligned = new DimensionLinear
 		{
-			DimensionLinear aligned = new DimensionLinear
-			{
-				FirstPoint = XYZ.Zero,
-				SecondPoint = new XYZ(10, 10, 0),
-			};
+			FirstPoint = XYZ.Zero,
+			SecondPoint = new XYZ(10, 10, 0),
+		};
 
-			aligned.Offset = 5;
+		aligned.Offset = 5;
 
-			AssertUtils.AreEqual(new XYZ(10, 15, 0), aligned.DefinitionPoint);
+		AssertUtils.AreEqual(new XYZ(10, 15, 0), aligned.DefinitionPoint);
 
-			aligned = new DimensionLinear
-			{
-				FirstPoint = XYZ.Zero,
-				SecondPoint = new XYZ(10, 10, 0),
-				Rotation = MathHelper.DegToRad(45),
-			};
-
-			aligned.Offset = 5;
-
-			AssertUtils.AreEqual(new XYZ(6.464466, 13.535533, 0), aligned.DefinitionPoint);
-		}
-
-		public override void GetBoundingBoxTest()
+		aligned = new DimensionLinear
 		{
-		}
+			FirstPoint = XYZ.Zero,
+			SecondPoint = new XYZ(10, 10, 0),
+			Rotation = MathHelper.DegToRad(45),
+		};
 
-		protected override DimensionLinear createDim()
+		aligned.Offset = 5;
+
+		AssertUtils.AreEqual(new XYZ(6.464466, 13.535533, 0), aligned.DefinitionPoint);
+	}
+
+	public override void GetBoundingBoxTest()
+	{
+	}
+
+	protected override DimensionLinear createDim()
+	{
+		DimensionLinear dim = new DimensionLinear
 		{
-			DimensionLinear dim = new DimensionLinear
-			{
-				FirstPoint = XYZ.Zero,
-				SecondPoint = new XYZ(10, 10, 0),
-				DefinitionPoint = new XYZ(10, 15, 0),
-			};
+			FirstPoint = XYZ.Zero,
+			SecondPoint = new XYZ(10, 10, 0),
+			DefinitionPoint = new XYZ(10, 15, 0),
+		};
 
-			return dim;
-		}
+		return dim;
 	}
 }

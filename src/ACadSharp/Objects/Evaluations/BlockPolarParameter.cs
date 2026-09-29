@@ -1,4 +1,5 @@
 ﻿using ACadSharp.Attributes;
+using ACadSharp.Classes;
 
 namespace ACadSharp.Objects.Evaluations;
 
@@ -12,13 +13,8 @@ namespace ACadSharp.Objects.Evaluations;
 /// </remarks>
 [DxfName(DxfFileToken.ObjectBlockPolarParameter)]
 [DxfSubClass(DxfSubclassMarker.BlockPolarParameter)]
-public class BlockPolarParameter : Block2PtParameter
+public class BlockPolarParameter : Block2PtParameter, IDxfClassDefined
 {
-	/// <summary>
-	/// Gets or sets the angle of the polar parameter.
-	/// </summary>
-	public ParameterValueSet AngleValueSet { get; set; }
-
 	/// <summary>
 	/// Gets or sets the description of the angle.
 	/// </summary>
@@ -30,6 +26,11 @@ public class BlockPolarParameter : Block2PtParameter
 	/// </summary>
 	[DxfCodeValue(307)]
 	public string AngleName { get; set; }
+
+	/// <summary>
+	/// Gets or sets the angle of the polar parameter.
+	/// </summary>
+	public ParameterValueSet AngleValueSet { get; set; }
 
 	/// <summary>
 	/// Gets or sets the description of the polar parameter.
@@ -59,4 +60,19 @@ public class BlockPolarParameter : Block2PtParameter
 
 	/// <inheritdoc/>
 	public override string SubclassMarker => DxfSubclassMarker.BlockPolarParameter;
+
+	/// <inheritdoc/>
+	public DxfClass GetDxfClass()
+	{
+		return new DxfClass
+		{
+			CppClassName = DxfSubclassMarker.BlockPolarParameter,
+			DwgVersion = ACadVersion.AC1018,
+			DxfName = DxfFileToken.ObjectBlockPolarParameter,
+			ItemClassId = 499,
+			MaintenanceVersion = 55,
+			ProxyFlags = ACadSharp.Classes.ProxyFlags.EraseAllowed | ACadSharp.Classes.ProxyFlags.CloningAllowed | ACadSharp.Classes.ProxyFlags.DisablesProxyWarningDialog,
+			WasZombie = false,
+		};
+	}
 }

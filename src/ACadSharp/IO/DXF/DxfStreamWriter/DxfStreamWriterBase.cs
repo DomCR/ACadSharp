@@ -2,140 +2,139 @@
 using CSUtilities.Converters;
 using System;
 
-namespace ACadSharp.IO.DXF
+namespace ACadSharp.IO.DXF.DxfStreamWriter;
+
+internal abstract class DxfStreamWriterBase : IDxfStreamWriter
 {
-	internal abstract class DxfStreamWriterBase : IDxfStreamWriter
+	public bool WriteOptional { get; set; } = false;
+
+	public abstract void Close();
+
+	/// <inheritdoc/>
+	public abstract void Dispose();
+
+	public abstract void Flush();
+
+	public void Write(DxfCode code, object value, DxfClassMap map = null)
 	{
-		public bool WriteOptional { get; set; } = false;
+		this.Write((int)code, value, map);
+	}
 
-		public abstract void Close();
+	public void Write(DxfCode code, CSMath.IVector value, DxfClassMap map = null)
+	{
+		this.Write((int)code, value, map);
+	}
 
-		/// <inheritdoc/>
-		public abstract void Dispose();
-
-		public abstract void Flush();
-
-		public void Write(DxfCode code, object value, DxfClassMap map = null)
+	public void Write(int code, CSMath.IVector value, DxfClassMap map = null)
+	{
+		for (int i = 0; i < value.Dimension; i++)
 		{
-			this.Write((int)code, value, map);
+			this.Write(code + i * 10, value[i], map);
+		}
+	}
+
+	public void Write(int code, object value, DxfClassMap map = null)
+	{
+		if (value == null)
+		{
+			return;
 		}
 
-		public void Write(DxfCode code, CSMath.IVector value, DxfClassMap map = null)
+		if (map != null && map.DxfProperties.TryGetValue(code, out DxfProperty prop))
 		{
-			this.Write((int)code, value, map);
-		}
-
-		public void Write(int code, CSMath.IVector value, DxfClassMap map = null)
-		{
-			for (int i = 0; i < value.Dimension; i++)
-			{
-				this.Write(code + i * 10, value[i], map);
-			}
-		}
-
-		public void Write(int code, object value, DxfClassMap map = null)
-		{
-			if (value == null)
+			if (prop.ReferenceType.HasFlag(DxfReferenceType.Optional) && !WriteOptional)
 			{
 				return;
 			}
 
-			if (map != null && map.DxfProperties.TryGetValue(code, out DxfProperty prop))
+			if (prop.ReferenceType.HasFlag(DxfReferenceType.IsAngle))
 			{
-				if (prop.ReferenceType.HasFlag(DxfReferenceType.Optional) && !WriteOptional)
-				{
-					return;
-				}
-
-				if (prop.ReferenceType.HasFlag(DxfReferenceType.IsAngle))
-				{
-					value = MathHelper.RadToDeg((double)value);
-				}
-			}
-
-			this.writeDxfCode(code);
-
-			if (value is string s)
-			{
-				s = s
-					.Replace("^", "^ ")
-					.Replace("\n", "^J")
-					.Replace("\r", "^M")
-					.Replace("\t", "^I");
-				this.writeValue(code, s);
-			}
-			else
-			{
-				this.writeValue(code, value);
+				value = MathHelper.RadToDeg((double)value);
 			}
 		}
 
-		public void WriteCmColor(int code, Color color, DxfClassMap map = null)
+		this.writeDxfCode(code);
+
+		if (value is string s)
 		{
-			if (GroupCodeValue.TransformValue(code) == GroupCodeValueType.Int16)
-			{
-				//BS: Color Index
-				this.Write(code, Convert.ToInt16(color.GetApproxIndex()));
-			}
-			else
-			{
-				byte[] arr = new byte[4];
-
-				if (color.IsTrueColor)
-				{
-					arr[0] = (byte)color.B;
-					arr[1] = (byte)color.G;
-					arr[2] = (byte)color.R;
-					arr[3] = 0b1100_0010;   //	0xC2
-				}
-				else
-				{
-					arr[3] = 0b1100_0001;
-					arr[0] = (byte)color.Index;
-				}
-
-				//BL: RGB value
-				this.Write(code, LittleEndianConverter.Instance.ToInt32(arr), map);
-			}
+			s = s
+				.Replace("^", "^ ")
+				.Replace("\n", "^J")
+				.Replace("\r", "^M")
+				.Replace("\t", "^I");
+			this.writeValue(code, s);
 		}
-
-		public void WriteHandle(int code, IHandledCadObject value, DxfClassMap map = null)
+		else
 		{
-			if (value != null)
-			{
-				this.Write(code, value.Handle, map);
-			}
+			this.writeValue(code, value);
 		}
+	}
 
-		public void WriteIfNotDefault<T>(int code, T value, T defaultValue, DxfClassMap map = null)
+	public void WriteCmColor(int code, Color color, DxfClassMap map = null)
+	{
+		if (GroupCodeValue.TransformValue(code) == GroupCodeValueType.Int16)
 		{
-			if (!value.Equals(defaultValue))
-			{
-				this.Write(code, value, map);
-			}
+			//BS: Color Index
+			this.Write(code, Convert.ToInt16(color.GetApproxIndex()));
 		}
-
-		public void WriteName(int code, INamedCadObject value, DxfClassMap map = null)
-		{
-			if (value != null)
-			{
-				this.Write(code, value.Name, map);
-			}
-		}
-
-		public void WriteTrueColor(int code, Color color, DxfClassMap map = null)
+		else
 		{
 			byte[] arr = new byte[4];
-			arr[0] = (byte)color.B;
-			arr[1] = (byte)color.G;
-			arr[2] = (byte)color.R;
-			arr[3] = 0;
 
+			if (color.IsTrueColor)
+			{
+				arr[0] = (byte)color.B;
+				arr[1] = (byte)color.G;
+				arr[2] = (byte)color.R;
+				arr[3] = 0b1100_0010;   //	0xC2
+			}
+			else
+			{
+				arr[3] = 0b1100_0001;
+				arr[0] = (byte)color.Index;
+			}
+
+			//BL: RGB value
 			this.Write(code, LittleEndianConverter.Instance.ToInt32(arr), map);
 		}
-
-		protected abstract void writeDxfCode(int code);
-
-		protected abstract void writeValue(int code, object value);
 	}
+
+	public void WriteHandle(int code, IHandledCadObject value, DxfClassMap map = null)
+	{
+		if (value != null)
+		{
+			this.Write(code, value.Handle, map);
+		}
+	}
+
+	public void WriteIfNotDefault<T>(int code, T value, T defaultValue, DxfClassMap map = null)
+	{
+		if (!value.Equals(defaultValue))
+		{
+			this.Write(code, value, map);
+		}
+	}
+
+	public void WriteName(int code, INamedCadObject value, DxfClassMap map = null)
+	{
+		if (value != null)
+		{
+			this.Write(code, value.Name, map);
+		}
+	}
+
+	public void WriteTrueColor(int code, Color color, DxfClassMap map = null)
+	{
+		byte[] arr = new byte[4];
+		arr[0] = (byte)color.B;
+		arr[1] = (byte)color.G;
+		arr[2] = (byte)color.R;
+		arr[3] = 0;
+
+		this.Write(code, LittleEndianConverter.Instance.ToInt32(arr), map);
+	}
+
+	protected abstract void writeDxfCode(int code);
+
+	protected abstract void writeValue(int code, object value);
 }

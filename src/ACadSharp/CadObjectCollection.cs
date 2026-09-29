@@ -61,10 +61,9 @@ public class CadObjectCollection<T> : IObservableCadCollection<T>
 		if (item.Owner != null)
 			throw new ArgumentException($"Item {item.GetType().FullName} already has an owner", nameof(item));
 
-		if (this._entries.Contains(item))
+		if (!this._entries.Add(item))
 			throw new ArgumentException($"Item {item.GetType().FullName} is already in the collection", nameof(item));
 
-		this._entries.Add(item);
 		item.Owner = this.Owner;
 
 		OnAdd?.Invoke(this, new CollectionChangedEventArgs(item));
@@ -135,6 +134,18 @@ public class CadObjectCollection<T> : IObservableCadCollection<T>
 		OnRemove?.Invoke(this, new CollectionChangedEventArgs(item));
 
 		return true;
+	}
+	
+	/// <summary>
+	/// Removes multiple items from the collection.
+	/// </summary>
+	/// <param name="items">The items to remove.</param>
+	public void Remove(IEnumerable<T> items)
+	{
+		foreach (var item in items)
+		{
+			this.Remove(item);
+		}
 	}
 
 	public T this[int index]

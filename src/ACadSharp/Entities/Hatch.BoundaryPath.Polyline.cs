@@ -1,6 +1,7 @@
 ﻿using ACadSharp.Attributes;
 using ACadSharp.Extensions;
 using CSMath;
+using CSMath.Extensions;
 using CSMath.Geometry;
 using System.Collections.Generic;
 using System.Linq;

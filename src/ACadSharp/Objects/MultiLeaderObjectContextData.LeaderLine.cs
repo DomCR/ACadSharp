@@ -4,176 +4,164 @@ using ACadSharp.Attributes;
 using ACadSharp.Tables;
 using CSMath;
 
-namespace ACadSharp.Objects
+namespace ACadSharp.Objects;
+
+public partial class MultiLeaderObjectContextData
 {
-	public partial class MultiLeaderObjectContextData
+	/// <summary>
+	/// Represents a leader line of a <see cref="MultiLeaderObjectContextData"/> object.
+	/// </summary>
+	public class LeaderLine
 	{
 		/// <summary>
-		///	Represents a leader line
+		/// Gets or sets a <see cref="BlockRecord"/> containig elements
+		/// to be dawn as arrow symbol.
 		/// </summary>
-		/// <remarks>
-		/// Appears as 304	DXF: “LEADER_LINE“
-		/// </remarks>
-		public class LeaderLine : ICloneable
+		[DxfCodeValue(DxfReferenceType.Handle, 341)]
+		public BlockRecord Arrowhead { get; set; }
+
+		/// <summary>
+		/// Arrowhead size
+		/// </summary>
+		[DxfCodeValue(40)]
+		public double ArrowheadSize { get; set; }
+
+		/// <summary>
+		/// Gets or sets the list of <see cref="BreakInfo"/> entries for this <see cref="LeaderLine"/>.
+		/// </summary>
+		public List<BreakInfo> BreakInfoEntries { get; private set; } = new();
+
+		/// <summary>
+		/// Leader line index.
+		/// </summary>
+		[DxfCodeValue(91)]
+		public int Index { get; set; }
+
+		/// <summary>
+		/// Line color
+		/// </summary>
+		[DxfCodeValue(92)]
+		public Color LineColor { get; set; }
+
+		/// <summary>
+		/// Line type
+		/// </summary>
+		[DxfCodeValue(DxfReferenceType.Handle, 340)]
+		public LineType LineType
 		{
-			/// <summary>
-			/// Gets or sets a <see cref="BlockRecord"/> containig elements
-			/// to be dawn as arrow symbol.
-			/// </summary>
-			[DxfCodeValue(DxfReferenceType.Handle, 341)]
-			public BlockRecord Arrowhead { get; set; }
-
-			/// <summary>
-			/// Arrowhead size
-			/// </summary>
-			[DxfCodeValue(40)]
-			public double ArrowheadSize { get; set; }
-
-			/// <summary>
-			/// Break info count
-			/// </summary>
-			public int BreakInfoCount { get; set; }
-
-			/// <summary>
-			/// Leader line index.
-			/// </summary>
-			[DxfCodeValue(91)]
-			public int Index { get; set; }
-
-			/// <summary>
-			/// Line color
-			/// </summary>
-			[DxfCodeValue(92)]
-			public Color LineColor { get; set; }
-
-			/// <summary>
-			/// Line type
-			/// </summary>
-			[DxfCodeValue(DxfReferenceType.Handle, 340)]
-			public LineType LineType
+			get { return this._lineType; }
+			set
 			{
-				get { return this._lineType; }
-				set
+				if (value == null)
 				{
-					if (value == null)
-					{
-						_lineType = null;
-						return;
-					}
-
-					if (this.Document != null)
-					{
-						if (this.Document.LineTypes.TryGetValue(((LineType)value).Name, out LineType lt))
-						{
-							this._lineType = lt;
-						}
-						else
-						{
-							this._lineType = value;
-							this.Document.LineTypes.Add(this._lineType);
-						}
-					}
+					_lineType = null;
+					return;
 				}
-			}
 
-			/// <summary>
-			/// Line weight
-			/// </summary>
-			[DxfCodeValue(171)]
-			public LineWeightType LineWeight { get; set; }
-
-			/// <summary>
-			/// Override flags
-			/// </summary>
-			[DxfCodeValue(93)]
-			public LeaderLinePropertOverrideFlags OverrideFlags { get; set; }
-
-			//R2010
-			/// <summary>
-			/// Leader type
-			/// </summary>
-			[DxfCodeValue(170)]
-			public MultiLeaderPathType PathType { get; set; }
-
-			/// <summary>
-			/// Get the list of points of this <see cref="LeaderLine"/>.
-			/// </summary>
-			public IList<XYZ> Points { get; private set; } = new List<XYZ>();
-
-			/// <summary>
-			/// Segment index
-			/// </summary>
-			[DxfCodeValue(90)]
-			public int SegmentIndex { get; set; }
-
-			/// <summary>
-			/// Start/end point pairs
-			/// </summary>
-			public IList<StartEndPointPair> StartEndPoints { get; private set; } = new List<StartEndPointPair>();
-
-			internal CadDocument Document { get; set; }
-
-			private LineType _lineType;
-
-			public LeaderLine()
-			{ }
-
-			public void AssignDocument(CadDocument doc)
-			{
-				this.Document = doc;
-
-				if (_lineType != null)
+				if (this.Document != null)
 				{
-					if (doc.LineTypes.TryGetValue(_lineType.Name, out LineType existing))
+					if (this.Document.LineTypes.TryGetValue(((LineType)value).Name, out LineType lt))
 					{
-						this._lineType = existing;
+						this._lineType = lt;
 					}
 					else
 					{
-						doc.LineTypes.Add(_lineType);
+						this._lineType = value;
+						this.Document.LineTypes.Add(this._lineType);
 					}
 				}
+			}
+		}
 
-				doc.LineTypes.OnRemove += this.tableOnRemove;
+		/// <summary>
+		/// Line weight
+		/// </summary>
+		[DxfCodeValue(171)]
+		public LineWeightType LineWeight { get; set; }
+
+		/// <summary>
+		/// Override flags
+		/// </summary>
+		[DxfCodeValue(93)]
+		public LeaderLinePropertOverrideFlags OverrideFlags { get; set; }
+
+		//R2010
+		/// <summary>
+		/// Leader type
+		/// </summary>
+		[DxfCodeValue(170)]
+		public MultiLeaderPathType PathType { get; set; }
+
+		/// <summary>
+		/// Get the list of points of this <see cref="LeaderLine"/>.
+		/// </summary>
+		public IList<XYZ> Points { get; private set; } = new List<XYZ>();
+
+		internal CadDocument Document { get; set; }
+
+		private LineType _lineType;
+
+		/// <summary>
+		/// Creates a new instance of the <see cref="LeaderLine"/> class.
+		/// </summary>
+		public LeaderLine()
+		{ }
+
+		/// <summary>
+		/// Creates a new instance of <see cref="LeaderLine"/> with the specified index.
+		/// </summary>
+		/// <returns>A new <see cref="LeaderLine"/> instance with the same properties.</returns>
+		public LeaderLine Clone()
+		{
+			LeaderLine clone = (LeaderLine)this.MemberwiseClone();
+
+			clone.LineType = (LineType)this.LineType?.Clone();
+			clone.Arrowhead = (BlockRecord)this.Arrowhead?.Clone();
+
+			clone.Points = new List<XYZ>(this.Points);
+
+			clone.BreakInfoEntries = new List<BreakInfo>();
+			foreach (var item in this.BreakInfoEntries)
+			{
+				clone.BreakInfoEntries.Add(item.Clone());
 			}
 
-			public object Clone()
+			return clone;
+		}
+
+		internal void AssignDocument(CadDocument doc)
+		{
+			this.Document = doc;
+
+			if (_lineType != null)
 			{
-				LeaderLine clone = (LeaderLine)this.MemberwiseClone();
-
-				clone.LineType = (LineType)this.LineType?.Clone();
-				clone.Arrowhead = (BlockRecord)this.Arrowhead?.Clone();
-
-				clone.Points = new List<XYZ>();
-				foreach (var point in this.Points)
+				if (doc.LineTypes.TryGetValue(_lineType.Name, out LineType existing))
 				{
-					clone.Points.Add(point);
+					this._lineType = existing;
 				}
-
-				clone.StartEndPoints = new List<StartEndPointPair>();
-				foreach (var startEndPoint in this.StartEndPoints)
+				else
 				{
-					clone.StartEndPoints.Add((StartEndPointPair)startEndPoint.Clone());
+					doc.LineTypes.Add(_lineType);
 				}
-
-				return clone;
 			}
 
-			public void UassignDocument()
+			doc.LineTypes.OnRemove += this.tableOnRemove;
+		}
+
+		internal void UassignDocument()
+		{
+			this.Document.LineTypes.OnRemove -= this.tableOnRemove;
+
+			this.Document = null;
+
+			this._lineType = (LineType)this._lineType?.Clone();
+		}
+
+		private void tableOnRemove(object sender, CollectionChangedEventArgs e)
+		{
+			if (e.Item.Equals(this._lineType))
 			{
-				this.Document.LineTypes.OnRemove -= this.tableOnRemove;
-
-				this.Document = null;
-
-				this._lineType = (LineType)this._lineType?.Clone();
-			}
-
-			private void tableOnRemove(object sender, CollectionChangedEventArgs e)
-			{
-				if (e.Item.Equals(this._lineType))
-				{
-					this._lineType = null;
-				}
+				this._lineType = null;
 			}
 		}
 	}

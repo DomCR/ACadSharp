@@ -1,4 +1,5 @@
 ﻿using ACadSharp.Attributes;
+using ACadSharp.Classes;
 using CSMath;
 using System;
 
@@ -15,7 +16,7 @@ namespace ACadSharp.Objects;
 /// exception.</remarks>
 [DxfName(DxfFileToken.BlkRefObjectContextData)]
 [DxfSubClass(DxfSubclassMarker.AnnotScaleObjectContextData)]
-public class BlockReferenceObjectContextData : AnnotScaleObjectContextData
+public class BlockReferenceObjectContextData : AnnotScaleObjectContextData, IDxfClassDefined
 {
 	/// <summary>
 	/// Gets or sets the insertion point of the entity in world coordinates.
@@ -100,4 +101,19 @@ public class BlockReferenceObjectContextData : AnnotScaleObjectContextData
 	private double _yscale = 1;
 
 	private double _zscale = 1;
+
+	/// <inheritdoc/>
+	public DxfClass GetDxfClass()
+	{
+		return new DxfClass
+		{
+			CppClassName = DxfSubclassMarker.BlkRefObjectContextData,
+			DwgVersion = ACadVersion.AC1021,
+			DxfName = DxfFileToken.BlkRefObjectContextData,
+			ItemClassId = 499,
+			MaintenanceVersion = 0,
+			ProxyFlags = ProxyFlags.EraseAllowed | ProxyFlags.CloningAllowed | ProxyFlags.DisablesProxyWarningDialog,
+			WasZombie = false,
+		};
+	}
 }

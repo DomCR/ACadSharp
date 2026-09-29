@@ -3,10 +3,10 @@ using ACadSharp.Objects;
 using ACadSharp.Objects.AEC;
 using CSMath;
 
-namespace ACadSharp.Entities.AecObjects;
+namespace ACadSharp.Entities.AecEntities;
 
 /// <summary>
-/// Represents an AEC (Architecture, Engineering and Construction) Wall entity.
+/// Represents a wall entity in an AEC context.
 /// </summary>
 /// <remarks>
 /// AEC Wall entities can only be stored in DWG files, not in DXF files.
@@ -14,7 +14,7 @@ namespace ACadSharp.Entities.AecObjects;
 /// </remarks>
 [DxfName(DxfFileToken.EntityAecWall)]
 [DxfSubClass(DxfSubclassMarker.AecWall)]
-public class Wall : Entity
+public class Wall : AecEntity, IOrientable
 {
 	/// <summary>
 	/// Base height of the wall.
@@ -62,7 +62,8 @@ public class Wall : Entity
 	/// </summary>
 	public double Length { get; set; }
 
-	public XYZ Normal { get; set; }
+	/// <inheritdoc/>
+	public XYZ Normal { get; set; } = XYZ.AxisZ;
 
 	/// <inheritdoc/>
 	public override string ObjectName => DxfFileToken.EntityAecWall;
