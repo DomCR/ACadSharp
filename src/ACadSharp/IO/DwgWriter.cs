@@ -1,4 +1,5 @@
 ﻿using ACadSharp.Exceptions;
+using ACadSharp.Header;
 using ACadSharp.IO.DWG;
 using ACadSharp.IO.DWG.DwgStreamWriters;
 using ACadSharp.Tables.Collections;
@@ -420,6 +421,18 @@ public class DwgWriter : CadWriterBase<DwgWriterConfiguration>
 		writer.Write<short>(0);
 		//UInt16	2	MEASUREMENT system variable(0 = English, 1 = Metric).
 		writer.Write<ushort>((ushort)this._document.Header.MeasurementUnits);
+
+		// [PATCH] The section payload is only 4 bytes. When MEASUREMENT is 0 (English) the whole
+		// payload is zero bytes, and AddSection's "skip all-zero partial pages" rule then drops the
+		// page entirely, leaving an EMPTY Template section in the section map. Readers cannot
+		// distinguish "explicitly 0/English" from "section absent" (they fall back to the Metric
+		// default), so English-unit drawings came back as Metric. Pad the stream to a full page
+		// (decompsize = 0x7400): full pages are always written, and the reader reconstructs the
+		// zero padding transparently.
+		if (this._document.Header.MeasurementUnits == MeasurementUnits.English)
+		{
+			stream.SetLength(0x7400);
+		}
 
 		this._fileHeaderWriter.AddSection(DwgSectionDefinition.Template, stream, true);
 	}
