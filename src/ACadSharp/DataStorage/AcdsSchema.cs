@@ -1,14 +1,6 @@
-﻿using ACadSharp.Objects.Evaluations;
-using System.Collections.Generic;
+﻿using System.Collections.Generic;
 
 namespace ACadSharp.DataStorage;
-
-internal class AcdsRecord
-{
-	public List<AcdsRecordColumn> Columns { get; } = new();
-
-	public uint Index { get; set; }
-}
 
 internal class AcdsSchema
 {
@@ -21,13 +13,9 @@ internal class AcdsSchema
 	public string Name { get; set; }
 
 	public List<AcdsSchemaProperty> Properties { get; } = new();
-}
 
-internal class AcdsRecordColumn
-{
-	public short DataType { get; set; }
-
-	public string Name { get; set; } = string.Empty;
-
-	public KeyValuePair<int, object> CodeValuePair { get; set; }
+	public override string ToString()
+	{
+		return $"{this.Index} : {this.Name}";
+	}
 }

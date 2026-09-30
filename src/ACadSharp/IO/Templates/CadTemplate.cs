@@ -19,6 +19,8 @@ internal abstract class CadTemplate : ICadObjectTemplate
 
 	public bool HasBeenBuilt { get; private set; } = false;
 
+	public bool HasDsBinaryData { get; set; }
+
 	public ulong? OwnerHandle { get; set; }
 
 	public HashSet<ulong> ReactorsHandles { get; set; } = new();

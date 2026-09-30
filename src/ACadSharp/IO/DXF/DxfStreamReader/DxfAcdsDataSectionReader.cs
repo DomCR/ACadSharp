@@ -65,7 +65,14 @@ internal class DxfAcdsDataSectionReader : DxfSectionReaderBase
 			{
 				case 2:
 					AcdsRecordColumn column = this.readAcdsRecordColumn();
-					record.Columns.Add(column);
+					if (!record.Columns.ContainsKey(column.Name))
+					{
+						record.Columns.Add(column.Name, column);
+					}
+					else
+					{
+						this._builder.Notify($"Duplicate column name '{column.Name}' found in ACDS record.", NotificationType.Warning);
+					}
 					continue;
 				case 90:
 					record.Index = (uint)this._reader.ValueAsInt;

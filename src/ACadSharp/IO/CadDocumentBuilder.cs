@@ -94,6 +94,43 @@ internal abstract class CadDocumentBuilder
 		}
 	}
 
+	public void BuildDataStorage()
+	{
+		if (this.DataStorage == null)
+		{
+			return;
+		}
+
+		//TODO: Shemes needed?
+		//foreach (var schema in this.DataStorage.Schemes)
+		//{
+		//}
+
+		foreach (var record in this.DataStorage.Records)
+		{
+			if (!record.Columns.TryGetValue(CadFileDataStorage.Id, out var idColumn))
+			{
+				continue;
+			}
+
+			if (!record.Columns.TryGetValue(CadFileDataStorage.AsmData, out var dataColumn))
+			{
+				continue;
+			}
+
+			ulong handle = (ulong)idColumn.CodeValuePair.Value;
+			byte[] bytes = (byte[])dataColumn.CodeValuePair.Value;
+
+			if (!this.DocumentToBuild.TryGetCadObject<ModelerGeometry>(handle, out var geometry))
+			{
+				this.Notify($"ModelerGeometry with handle {handle} not found in the document", NotificationType.Warning);
+				continue;
+			}
+
+			geometry.AcisData = bytes;
+		}
+	}
+
 	public virtual void BuildDocument()
 	{
 		foreach (ICadTableEntryTemplate template in this.tableEntryTemplates.Values)

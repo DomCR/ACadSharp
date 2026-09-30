@@ -54,6 +54,7 @@ public class LocalSampleTests : IOTestsBase
 		if (string.IsNullOrEmpty(test.Path))
 			return;
 
+
 		CadDocument doc = DxfReader.Read(test.Path, this.onNotification);
 
 		if (doc.Header.Version < ACadVersion.AC1012)

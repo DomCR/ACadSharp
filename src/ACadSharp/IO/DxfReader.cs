@@ -188,6 +188,8 @@ namespace ACadSharp.IO
 
 			this._builder.BuildDocument();
 
+			this._builder.BuildDataStorage();
+
 			return this._document;
 		}
 
