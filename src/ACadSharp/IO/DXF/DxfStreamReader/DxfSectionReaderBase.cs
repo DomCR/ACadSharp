@@ -142,7 +142,15 @@ internal abstract class DxfSectionReaderBase
 				break;
 			case 1001:
 				isExtendedData = true;
-				this.readExtendedData(template.EDataTemplateByAppName);
+				// [PATCH] Skip XData parsing when ReadXData=false (only advance the reader, save memory)
+				if (this._builder.Configuration.ReadXData)
+				{
+					this.readExtendedData(template.EDataTemplateByAppName);
+				}
+				else
+				{
+					this.skipExtendedData();
+				}
 				break;
 			default:
 				this._builder.Notify($"[{this.currentSubclass}] Unhandled dxf code {this._reader.Code} with value {this._reader.ValueAsString}", NotificationType.None);
@@ -1750,6 +1758,38 @@ internal abstract class DxfSectionReaderBase
 		{
 			default:
 				return this.tryAssignCurrentValue(template.CadObject, map.SubClasses[mapName]);
+		}
+	}
+
+	// [PATCH] Mirrors readExtendedData's group-code consumption pattern but only advances the
+	// reader without building any record. Used to skip XData when ReadXData=false: coordinate/
+	// direction/displacement group codes each consume 3 ReadNext calls (X/Y/Z), the others 1;
+	// the next 1001 (RegAppName) is handled recursively, exactly like readExtendedData, so after
+	// skipping the reader still lands at the correct position after the XData.
+	protected void skipExtendedData()
+	{
+		this._reader.ReadNext();
+
+		while (this._reader.DxfCode >= DxfCode.ExtendedDataAsciiString)
+		{
+			if (this._reader.DxfCode == DxfCode.ExtendedDataRegAppName)
+			{
+				this.skipExtendedData();
+				break;
+			}
+
+			switch (this._reader.DxfCode)
+			{
+				case DxfCode.ExtendedDataXCoordinate:
+				case DxfCode.ExtendedDataWorldXCoordinate:
+				case DxfCode.ExtendedDataWorldXDisp:
+				case DxfCode.ExtendedDataWorldXDir:
+					this._reader.ReadNext();
+					this._reader.ReadNext();
+					break;
+			}
+
+			this._reader.ReadNext();
 		}
 	}
 

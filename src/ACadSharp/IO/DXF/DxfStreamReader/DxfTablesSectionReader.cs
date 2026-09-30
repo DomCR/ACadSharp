@@ -79,7 +79,15 @@ internal class DxfTablesSectionReader : DxfSectionReaderBase
 						Debug.Assert(this._reader.ValueAsString == DxfSubclassMarker.Table);
 						break;
 					case 1001:
-						this.readExtendedData(edata);
+						// [PATCH] Skip table-level XData parsing when ReadXData=false
+						if (this._builder.Configuration.ReadXData)
+						{
+							this.readExtendedData(edata);
+						}
+						else
+						{
+							this.skipExtendedData();
+						}
 						break;
 					default:
 						this._builder.Notify($"[AcDbSymbolTable] Unhandeled dxf code {this._reader.Code} at line {this._reader.Position}.");
