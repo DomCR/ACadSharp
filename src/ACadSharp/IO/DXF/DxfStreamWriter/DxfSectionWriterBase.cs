@@ -57,6 +57,7 @@ internal abstract partial class DxfSectionWriterBase
 			switch (value.ValueType)
 			{
 				case CadValueType.Unknown:
+					this._writer.Write(91, 0);
 					break;
 				case CadValueType.Double:
 					this._writer.Write(140, Convert.ToDouble(value.Value));
