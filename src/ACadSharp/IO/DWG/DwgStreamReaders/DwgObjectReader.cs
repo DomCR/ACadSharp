@@ -2355,7 +2355,11 @@ namespace ACadSharp.IO.DWG
 			//Common:
 			//Color CMC 62
 			var color = this._mergedReaders.ReadCmColor();
-			layer.Color = color.IsByBlock || color.IsByLayer ? new(30) : color;
+			// [PATCH] Keep the layer color exactly as read, including ByLayer/ByBlock.
+			// The original code coerced ByLayer/ByBlock to ACI 30 (a dark-blue shade), which
+			// corrupted every ByLayer layer's color on DWG read-back (e.g. a white ByLayer
+			// layer came back dark blue). ReadCmColor already returns proper ByLayer/ByBlock values.
+			layer.Color = color;
 
 			//TODO: This is not the Layer control handle
 			template.LayerControlHandle = this.handleReference();
