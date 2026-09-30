@@ -567,13 +567,6 @@ public class DwgReader : CadReaderBase<DwgReaderConfiguration>
 		reader.Read();
 	}
 
-	/// <summary>
-	/// Read the classes section of the file.
-	/// </summary>
-	/// <remarks>
-	/// Refers to AcDb:Classes data section.
-	/// </remarks>
-	/// <returns></returns>
 	private void readClasses()
 	{
 		this._fileHeader = this._fileHeader ?? this.readFileHeader();

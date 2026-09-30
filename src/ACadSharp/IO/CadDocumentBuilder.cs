@@ -101,11 +101,6 @@ internal abstract class CadDocumentBuilder
 			return;
 		}
 
-		//TODO: Shemes needed?
-		//foreach (var schema in this.DataStorage.Schemes)
-		//{
-		//}
-
 		foreach (var record in this.DataStorage.Records)
 		{
 			if (!record.Columns.TryGetValue(CadFileDataStorage.Id, out var idColumn))
