@@ -31,7 +31,7 @@ Legend: **F** = bug fix (output was invalid/corrupt), **M** = memory, **P** = pe
 | 15 | `d9ed21cd` | E/M | DWG reader: lazy partial-read API |
 | 16 | `63b648f7` | E | DWG writer: one-pass streaming export |
 | 17 | `71d29036` | P | DWG reader: buffered byte reads + exact-size/parallel page decompression |
-| 18 | `45a9a856` | F | Build on all upstream TFMs (net48 / netstandard2.0) |
+| 18 | `9fbb74e7` | F | Build on all upstream TFMs (net48 / netstandard2.0) |
 
 ## 1. `a30678db` — DWG writer: R2004 section table layout (F)
 
@@ -261,7 +261,7 @@ New `src/ACadSharp/IO/DwgWriter.Streaming.cs`,
   full Read 0 errors, exactly 1,894,593 model-space entities; object-section
   decompression 4.6s sequential -> ~1.6s parallel (4 cores).
 
-## 18. `45a9a856` — Multi-TFM build fixes (F)
+## 18. `9fbb74e7` — Multi-TFM build fixes (F)
 
 Verified with `dotnet build` against the **upstream** `ACadSharp.csproj`
 (net8.0; net9.0; net10.0; net48; netstandard2.1; netstandard2.0):
