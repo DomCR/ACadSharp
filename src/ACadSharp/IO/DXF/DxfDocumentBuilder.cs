@@ -2,7 +2,6 @@
 using ACadSharp.IO.Templates;
 using ACadSharp.Objects;
 using ACadSharp.Tables;
-using System;
 using System.Collections.Generic;
 using System.Linq;
 
@@ -10,9 +9,6 @@ namespace ACadSharp.IO.DXF;
 
 internal class DxfDocumentBuilder : CadDocumentBuilder
 {
-	[Obsolete]
-	public Dictionary<ulong, byte[]> AcdsDataRecords { get; } = new();
-
 	public DxfReaderConfiguration Configuration { get; }
 
 	public override bool IgnoreProxyGraphics => true;
@@ -60,26 +56,9 @@ internal class DxfDocumentBuilder : CadDocumentBuilder
 
 		base.BuildDocument();
 
-		this.applyAcdsData();
-
 		if (this.Configuration.CreateDefaults)
 		{
 			this.DocumentToBuild.CreateDefaults();
-		}
-	}
-
-	private void applyAcdsData()
-	{
-		foreach (KeyValuePair<ulong, byte[]> record in this.AcdsDataRecords)
-		{
-			if (this.TryGetCadObject(record.Key, out ModelerGeometry geometry))
-			{
-				geometry.AcisData = record.Value;
-			}
-			else
-			{
-				this.Notify($"ACDSDATA record owner {record.Key} is not a ModelerGeometry entity in the document", NotificationType.Warning);
-			}
 		}
 	}
 
