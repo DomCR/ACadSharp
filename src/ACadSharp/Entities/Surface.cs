@@ -1,4 +1,5 @@
 using ACadSharp.Attributes;
+using ACadSharp.Classes;
 
 namespace ACadSharp.Entities;
 
@@ -11,7 +12,7 @@ namespace ACadSharp.Entities;
 /// </remarks>
 [DxfName(DxfFileToken.EntitySurface)]
 [DxfSubClass(DxfSubclassMarker.Surface)]
-public class Surface : ModelerGeometry
+public class Surface : ModelerGeometry, IDxfClassDefined
 {
 	/// <inheritdoc/>
 	public override ObjectType ObjectType => ObjectType.UNLISTED;
@@ -33,4 +34,19 @@ public class Surface : ModelerGeometry
 	/// </summary>
 	[DxfCodeValue(72)]
 	public short VIsolines { get; set; }
+
+	/// <inheritdoc/>
+	public virtual DxfClass GetDxfClass()
+	{
+		return new DxfClass
+		{
+			CppClassName = DxfSubclassMarker.Surface,
+			DwgVersion = (ACadVersion)26,
+			DxfName = DxfFileToken.EntitySurface,
+			ItemClassId = 498,
+			MaintenanceVersion = 0,
+			ProxyFlags = (ProxyFlags)4095,
+			WasZombie = false,
+		};
+	}
 }

@@ -1,4 +1,5 @@
 using ACadSharp.Attributes;
+using ACadSharp.Classes;
 
 namespace ACadSharp.Entities;
 
@@ -18,4 +19,19 @@ public class NurbSurface : Surface
 
 	/// <inheritdoc/>
 	public override string SubclassMarker => DxfSubclassMarker.NurbSurface;
+
+	/// <inheritdoc/>
+	public override DxfClass GetDxfClass()
+	{
+		return new DxfClass
+		{
+			CppClassName = DxfSubclassMarker.NurbSurface,
+			DwgVersion = (ACadVersion)26,
+			DxfName = DxfFileToken.EntityNurbSurface,
+			ItemClassId = 498,
+			MaintenanceVersion = 0,
+			ProxyFlags = (ProxyFlags)4095,
+			WasZombie = false,
+		};
+	}
 }

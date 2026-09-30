@@ -1,4 +1,5 @@
 using ACadSharp.Attributes;
+using ACadSharp.Classes;
 
 namespace ACadSharp.Entities;
 
@@ -18,4 +19,19 @@ public class SweptSurface : Surface
 
 	/// <inheritdoc/>
 	public override string SubclassMarker => DxfSubclassMarker.SweptSurface;
+
+	/// <inheritdoc/>
+	public override DxfClass GetDxfClass()
+	{
+		return new DxfClass
+		{
+			CppClassName = DxfSubclassMarker.SweptSurface,
+			DwgVersion = (ACadVersion)26,
+			DxfName = DxfFileToken.EntitySweptSurface,
+			ItemClassId = 498,
+			MaintenanceVersion = 0,
+			ProxyFlags = ProxyFlags.None,
+			WasZombie = false,
+		};
+	}
 }
