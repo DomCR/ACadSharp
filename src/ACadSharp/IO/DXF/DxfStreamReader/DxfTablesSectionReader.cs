@@ -205,6 +205,31 @@ internal class DxfTablesSectionReader : DxfSectionReaderBase
 					break;
 				case DxfFileToken.TableStyle:
 					template = this.readTableEntry(new CadTableEntryTemplate<TextStyle>(new TextStyle()), this.readTextStyle);
+					// [PATCH] For TTF text styles the DXF code 3 (font) is empty; the real TTF font
+					// name lives in the ACAD xdata (1001=ACAD / 1000=<TTF name>). Upstream does not
+					// restore it -> TextStyle.Filename is empty -> the DWG is written with an empty
+					// font -> AutoCAD substitutes the missing font on open, the character widths do
+					// not match, and model-space text is squeezed/overlapping (most visible in the
+					// title-block text; in the block editor AutoCAD renders with the design metrics,
+					// so it looks fine there). Restore the font name from the first string record of
+					// the ACAD xdata, only effective when code 3 is empty (SHX font names are never
+					// overwritten).
+					if (template is CadTableEntryTemplate<TextStyle> styleEntry)
+					{
+						TextStyle style = styleEntry.CadObject;
+						if (string.IsNullOrEmpty(style.Filename) &&
+							styleEntry.EDataTemplateByAppName.TryGetValue("ACAD", out List<ExtendedDataRecord> acadXData))
+						{
+							foreach (ExtendedDataRecord rec in acadXData)
+							{
+								if (rec is ExtendedDataString s && !string.IsNullOrEmpty(s.Value))
+								{
+									style.Filename = s.Value;
+									break;
+								}
+							}
+						}
+					}
 					break;
 				case DxfFileToken.TableUcs:
 					template = this.readTableEntry(new CadUcsTemplate(), this.readUcs);
@@ -688,6 +713,11 @@ internal class DxfTablesSectionReader : DxfSectionReaderBase
 					template.Segment.ShapeNumber = (short)this._reader.ValueAsInt;
 					break;
 				case 340:
+					// [PATCH] Read the style handle (code 340) into the segment template.
+					// Without this, Segment.Style stays null and the DWG writer emits NULLHDL
+					// for the 340 hard pointer, causing AutoCAD to render shape/text linetype
+					// segments as solid (custom linetype patterns lost).
+					template.StyleHandle = this._reader.ValueAsHandle;
 					break;
 				default:
 					this._builder.Notify($"[LineTypeSegment] Unhandeled dxf code {this._reader.Code} with value {this._reader.ValueAsString}, positon {this._reader.Position}", NotificationType.None);
