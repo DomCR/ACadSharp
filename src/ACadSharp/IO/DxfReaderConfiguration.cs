@@ -23,5 +23,16 @@
 		/// memory for drawings with heavy XData (e.g. millions of attribute records).
 		/// </summary>
 		public bool ReadXData { get; set; } = true;
+
+		/// <summary>
+		/// [PATCH] Intern (share by reference) the string values of XData records (group codes
+		/// 1000/1001) while reading. Strings are immutable, so sharing is semantically invisible.
+		/// For drawings where XData values repeat heavily (GIS attribute exports: the same keys /
+		/// coded values / layer names appear millions of times), this collapses ~100M string
+		/// objects into a few million shared instances, cutting XData memory by several GB.
+		/// Default true. Call <see cref="DxfXDataInterning.Clear"/> after reading to release
+		/// the intern table itself.
+		/// </summary>
+		public bool InternXDataStrings { get; set; } = true;
 	}
 }

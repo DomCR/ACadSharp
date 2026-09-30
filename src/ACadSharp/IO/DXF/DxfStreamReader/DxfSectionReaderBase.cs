@@ -1793,10 +1793,15 @@ internal abstract class DxfSectionReaderBase
 		}
 	}
 
+	// [PATCH] XData string interning (see DxfXDataInterning): in GIS attribute export the same
+	// key name / coded value / layer name repeats millions of times; sharing string instances
+	// compresses ~100M string objects down to a few million unique instances.
 	protected void readExtendedData(Dictionary<string, List<ExtendedDataRecord>> edata)
 	{
+		bool intern = this._builder.Configuration.InternXDataStrings;
+
 		List<ExtendedDataRecord> records = new();
-		edata.Add(this._reader.ValueAsString, records);
+		edata.Add(intern ? DxfXDataInterning.Intern(this._reader.ValueAsString) : this._reader.ValueAsString, records);
 
 		this._reader.ReadNext();
 
@@ -1817,7 +1822,8 @@ internal abstract class DxfSectionReaderBase
 			{
 				case DxfCode.ExtendedDataAsciiString:
 				case DxfCode.ExtendedDataRegAppName:
-					record = new ExtendedDataString(this._reader.ValueAsString);
+					// [PATCH] intern the string value (duplicate values share one instance, saving memory)
+					record = new ExtendedDataString(intern ? DxfXDataInterning.Intern(this._reader.ValueAsString) : this._reader.ValueAsString);
 					break;
 				case DxfCode.ExtendedDataControlString:
 					record = new ExtendedDataControlString(this._reader.ValueAsString == "}");
