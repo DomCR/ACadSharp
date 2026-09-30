@@ -1272,6 +1272,11 @@ internal partial class DwgObjectWriter : DwgSectionIO
 
 		this.writeXrefDependantBit(ltype);
 
+		//Xref block handle (hard pointer) - part of the common table flags,
+		//written right after the xref-dependent bits and before the description.
+		//NULLHDL when the entry is not xref-dependent.
+		this._writer.HandleReference(DwgReferenceType.HardPointer, 0);
+
 		//Description TV 3
 		this._writer.WriteVariableText(ltype.Description);
 		//Pattern Len BD 40
@@ -1342,6 +1347,10 @@ internal partial class DwgObjectWriter : DwgSectionIO
 			//Complex shapecode BS 75 Shape number if shapeflag is 2, or index into the string area if shapeflag is 4.
 			this._writer.WriteBitShort(segment.ShapeNumber);
 
+			//340 shapefile for dash/shape (hard pointer) - written INSIDE the
+			//dash loop, right after the complex shapecode and before the offsets.
+			this._writer.HandleReference(DwgReferenceType.HardPointer, segment.Style);
+
 			//X - offset RD 44 (0.0 for a simple dash.)
 			//Y - offset RD 45(0.0 for a simple dash.)
 			this._writer.WriteRawDouble(segment.Offset.X);
@@ -1375,15 +1384,9 @@ internal partial class DwgObjectWriter : DwgSectionIO
 			}
 		}
 
-		//Common:
-		//External reference block handle(hard pointer)
-		this._writer.HandleReference(DwgReferenceType.HardPointer, 0);
-
-		foreach (var segment in ltype.Segments)
-		{
-			//340 shapefile for dash/shape (1 each) (hard pointer)
-			this._writer.HandleReference(DwgReferenceType.HardPointer, segment.Style);
-		}
+		//Note: the xref block handle is written in the common table flags (before
+		//the description) and the per-dash shape style handles are written inside
+		//the dash loop. Nothing follows the strings area.
 
 		this.registerObject(ltype);
 	}

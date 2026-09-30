@@ -2797,6 +2797,10 @@ namespace ACadSharp.IO.DWG
 
 			this.readXrefDependantBit(template.CadObject);
 
+			//Xref block handle (hard pointer) - part of the common table flags,
+			//written right after the xref-dependent bits and before the description.
+			this.handleReference();
+
 			//Description TV 3
 			ltype.Description = this._textReader.ReadVariableText();
 			//Pattern Len BD 40
@@ -2816,6 +2820,10 @@ namespace ACadSharp.IO.DWG
 				segment.Segment.Length = this._objectReader.ReadBitDouble();
 				//Complex shapecode BS 75 Shape number if shapeflag is 2, or index into the string area if shapeflag is 4.
 				segment.Segment.ShapeNumber = this._objectReader.ReadBitShort();
+
+				//340 shapefile for dash/shape (hard pointer) - read INSIDE the
+				//dash loop, right after the complex shapecode and before the offsets.
+				segment.StyleHandle = this.handleReference();
 
 				//X - offset RD 44 (0.0 for a simple dash.)
 				//Y - offset RD 45(0.0 for a simple dash.)
@@ -2855,18 +2863,9 @@ namespace ACadSharp.IO.DWG
 				this.readLineTypeSegmentTexts(template.SegmentTemplates, textarea);
 			}
 
-			//Common:
-			//Handle refs H Ltype control(soft pointer)
-			//[Reactors (soft pointer)]
-			//xdicobjhandle(hard owner)
-			//External reference block handle(hard pointer)
-			template.LtypeControlHandle = this.handleReference();
-
-			//340 shapefile for dash/shape (1 each) (hard pointer)
-			for (int i = 0; i < ndashes; i++)
-			{
-				template.SegmentTemplates[i].StyleHandle = this.handleReference();
-			}
+			//Note: the xref block handle is read in the common table flags (before
+			//the description) and the per-dash shape style handles are read inside
+			//the dash loop. Nothing follows the strings area.
 
 			return template;
 		}
