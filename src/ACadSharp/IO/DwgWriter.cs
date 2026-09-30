@@ -378,7 +378,10 @@ public class DwgWriter : CadWriterBase<DwgWriterConfiguration>
 			return;
 
 		MemoryStream stream = new MemoryStream();
-		var writer = DwgStreamWriterBase.GetStreamWriter(this._version, stream, TextEncoding.Windows1252());
+		// [PATCH] SummaryInfo section strings are written with the document's graphics code page (AutoCAD/Teigha behavior,
+		// e.g. ANSI_936 to GBK): a fixed Windows-1252 would write every CJK custom property (frame info) as '?'
+		var summaryEncoding = CadUtils.GetListedEncoding(this._document.Header.CodePage);
+		var writer = DwgStreamWriterBase.GetStreamWriter(this._version, stream, summaryEncoding);
 
 		CadSummaryInfo info = this._document.SummaryInfo;
 

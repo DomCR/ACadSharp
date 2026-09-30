@@ -1,6 +1,7 @@
 ﻿using CSUtilities.Converters;
 using CSUtilities.IO;
 using CSUtilities.Text;
+using System.Text;
 
 namespace ACadSharp.IO.DWG
 {
@@ -16,10 +17,14 @@ namespace ACadSharp.IO.DWG
 
 		private StreamIO _sreader;
 
-		public DwgSummaryInfoReader(ACadVersion version, IDwgStreamReader reader) : base(version)
+		// [PATCH] The decoding Encoding for the file's graphics code page (SummaryInfo section strings are encoded with the document's code page, e.g. ANSI_936 to GBK)
+		private readonly System.Text.Encoding _encoding;
+
+		public DwgSummaryInfoReader(ACadVersion version, IDwgStreamReader reader, CodePage codePage = CodePage.Windows1252) : base(version)
 		{
 			this._reader = reader;
 			this._sreader = new StreamIO(reader.Stream);
+			this._encoding = ResolveEncoding(codePage);
 
 			if (version < ACadVersion.AC1021)
 			{
@@ -113,12 +118,31 @@ namespace ACadSharp.IO.DWG
 			else
 			{
 				//Read the string and get rid of the empty bytes
-				value = this._sreader.ReadString(textLength,
-					TextEncoding.GetListedEncoding(CodePage.Windows1252))
+				// [PATCH] Decode with the file's code page (the original implementation was fixed to Windows-1252, CJK properties were read as garbage)
+				value = this._sreader.ReadString(textLength, this._encoding)
 					.Replace("\0", "");
 			}
 
 			return value;
+		}
+
+		// [PATCH] TextEncoding.GetListedEncoding returns null for most code pages (e.g. Gb2312):
+		// fall back to Encoding.GetEncoding with CodePagesEncodingProvider (same strategy as CadUtils.GetListedEncoding).
+		private static Encoding ResolveEncoding(CodePage codePage)
+		{
+			var e = TextEncoding.GetListedEncoding(codePage);
+			if (e != null) return e;
+			try
+			{
+#if !NET48
+				Encoding.RegisterProvider(System.Text.CodePagesEncodingProvider.Instance);
+#endif
+				return Encoding.GetEncoding((int)codePage);
+			}
+			catch
+			{
+				return TextEncoding.Windows1252();
+			}
 		}
 	}
 }

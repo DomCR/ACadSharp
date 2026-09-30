@@ -217,7 +217,8 @@ public class DwgReader : CadReaderBase<DwgReaderConfiguration>
 		if (reader == null)
 			return new CadSummaryInfo();
 
-		DwgSummaryInfoReader summaryReader = new DwgSummaryInfoReader(this._fileHeader.AcadVersion, reader);
+		// [PATCH] Pass the file's code page: SummaryInfo custom properties are encoded with the drawing's code page (e.g. ANSI_936).
+		DwgSummaryInfoReader summaryReader = new DwgSummaryInfoReader(this._fileHeader.AcadVersion, reader, this._fileHeader.DrawingCodePage);
 		return summaryReader.Read();
 	}
 
