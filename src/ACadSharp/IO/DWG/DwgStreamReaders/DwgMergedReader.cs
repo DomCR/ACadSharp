@@ -56,6 +56,22 @@ namespace ACadSharp.IO.DWG
 			throw new InvalidOperationException();
 		}
 
+		/// <summary>
+		/// [PATCH] Forwards to the main reader (the only reader holding the internal byte buffer).
+		/// </summary>
+		public void SyncStreamPosition()
+		{
+			this._mainReader.SyncStreamPosition();
+		}
+
+		/// <summary>
+		/// [PATCH] Forwards to the main reader (the only reader holding the internal byte buffer).
+		/// </summary>
+		public void MarkStreamAdvanced()
+		{
+			this._mainReader.MarkStreamAdvanced();
+		}
+
 		public ulong HandleReference()
 		{
 			return this._handleReader.HandleReference();

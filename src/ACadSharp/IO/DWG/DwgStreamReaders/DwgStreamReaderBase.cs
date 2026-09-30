@@ -16,13 +16,17 @@ namespace ACadSharp.IO.DWG
 		public int BitShift { get; set; }
 
 		/// <inheritdoc/>
+		/// <remarks>
+		/// [PATCH] Has an internal byte buffer: logical position = physical stream position - unconsumed bytes in the buffer.
+		/// </remarks>
 		public override long Position
 		{
-			get => this._stream.Position;
+			get => this._stream.Position - (this._bufLen - this._bufPos);
 			set
 			{
 				this._stream.Position = value;
 				this.BitShift = 0;
+				this._bufPos = this._bufLen; // invalidate the buffer, refill on the next read
 			}
 		}
 
@@ -30,8 +34,96 @@ namespace ACadSharp.IO.DWG
 
 		protected byte _lastByte;
 
+		// [PATCH] Internal byte buffer: removes the per-byte new byte[1] + Stream.Read virtual calls
+		// (StreamIO.ReadByte allocated a 1-byte array on every call). Filled in whole Stream.Read blocks;
+		// bit/byte reads serve from the buffer; Position semantics are unchanged.
+		// Enabled only for non-memory streams (file streams): the object scan creates 2 temporary readers per object on the memory stream
+		// (2.3M objects x 2 x 64KB buffers = ~300GB of allocations), which causes GC churn and makes the scan slower
+		// (measured 53.9s -> 107.9s). Direct reads on a memory stream are already at full speed; no buffer needed.
+		private byte[] _buf;
+		private int _bufPos;
+		private int _bufLen;
+
+		private byte ReadByteFast()
+		{
+			if (this._buf == null)
+				return (byte)this._stream.ReadByte();
+			if (this._bufPos >= this._bufLen)
+			{
+				int n = this._stream.Read(this._buf, 0, this._buf.Length);
+				if (n <= 0)
+					throw new EndOfStreamException();
+				this._bufLen = n;
+				this._bufPos = 0;
+			}
+			return this._buf[this._bufPos++];
+		}
+
+		private void FillBuffered(byte[] arr, int offset, int length)
+		{
+			if (this._buf == null)
+			{
+				// memory stream: direct read (original path), with short-read protection added
+				int dpos = offset;
+				int dneed = length;
+				while (dneed > 0)
+				{
+					int r = this._stream.Read(arr, dpos, dneed);
+					if (r <= 0)
+						throw new EndOfStreamException();
+					dpos += r;
+					dneed -= r;
+				}
+				return;
+			}
+			int need = length;
+			int pos = offset;
+			while (need > 0)
+			{
+				if (this._bufPos >= this._bufLen)
+				{
+					int n = this._stream.Read(this._buf, 0, this._buf.Length);
+					if (n <= 0)
+						throw new EndOfStreamException();
+					this._bufLen = n;
+					this._bufPos = 0;
+				}
+				int take = Math.Min(need, this._bufLen - this._bufPos);
+				Buffer.BlockCopy(this._buf, this._bufPos, arr, pos, take);
+				this._bufPos += take;
+				pos += take;
+				need -= take;
+			}
+		}
+
+		/// <summary>
+		/// [PATCH] Call before reading <c>Stream</c> directly (bypassing this reader):
+		/// writes the logical position (including the byte-buffer correction) back to the underlying stream,
+		/// restoring the original "stream position = logical position" invariant (the unbuffered version held it naturally).
+		/// BitShift/_lastByte are unchanged.
+		/// </summary>
+		public void SyncStreamPosition()
+		{
+			long pos = this.Position; // logical position (buffer correction already applied)
+			this._stream.Position = pos;
+			this._bufPos = this._bufLen; // invalidate the buffer
+		}
+
+		/// <summary>
+		/// [PATCH] Call after external code (another reader) has read <c>Stream</c> directly:
+		/// the underlying stream has passed this reader's buffer, so invalidate the buffer (refill on the next read).
+		/// BitShift/_lastByte are unchanged.
+		/// </summary>
+		public void MarkStreamAdvanced()
+		{
+			this._bufPos = this._bufLen; // invalidate the buffer
+		}
+
 		public DwgStreamReaderBase(Stream stream, bool resetPosition) : base(stream, resetPosition)
 		{
+			// [PATCH] Byte buffer only for file streams; memory streams (the per-object temporary readers of the object scan) keep the original direct-read path
+			if (!(stream is MemoryStream))
+				this._buf = new byte[65536];
 		}
 
 		public static IDwgStreamReader GetStreamHandler(ACadVersion version, Stream stream, Encoding encoding = null, bool resetPositon = false)
@@ -351,7 +443,8 @@ namespace ACadSharp.IO.DWG
 			if (this.BitShift == 0)
 			{
 				//No need to apply the shift
-				_lastByte = base.ReadByte();
+				// [PATCH] Served from the internal byte buffer (the old base.ReadByte() allocated byte[1] per byte)
+				_lastByte = ReadByteFast();
 
 				return _lastByte;
 			}
@@ -359,7 +452,7 @@ namespace ACadSharp.IO.DWG
 			//Get the last bits from the last readed byte
 			byte lastValues = (byte)((uint)_lastByte << BitShift);
 
-			_lastByte = base.ReadByte();
+			_lastByte = ReadByteFast();
 
 			return (byte)(lastValues | (uint)(byte)((uint)_lastByte >> 8 - BitShift));
 		}
@@ -823,8 +916,8 @@ namespace ACadSharp.IO.DWG
 			byte[] raw = new byte[length];
 			byte[] arr = new byte[8];
 
-			if (this.Stream.Read(raw, 0, length) < length)
-				throw new EndOfStreamException();
+			// [PATCH] Filled through the byte buffer (a direct Stream.Read would skip the unconsumed bytes in the buffer)
+			FillBuffered(raw, 0, length);
 
 			if (this.BitShift == 0)
 			{
@@ -1110,7 +1203,8 @@ namespace ACadSharp.IO.DWG
 		/// <inheritdoc/>
 		public long PositionInBits()
 		{
-			long bitPosition = this.Stream.Position * 8L;
+			// [PATCH] Logical position (including the byte-buffer correction)
+			long bitPosition = this.Position * 8L;
 
 			if ((uint)this.BitShift > 0U)
 				bitPosition += this.BitShift - 8;
@@ -1133,14 +1227,16 @@ namespace ACadSharp.IO.DWG
 		/// <inheritdoc/>
 		public void AdvanceByte()
 		{
-			this._lastByte = base.ReadByte();
+			// [PATCH] Served from the internal byte buffer
+			this._lastByte = ReadByteFast();
 		}
 
 		/// <inheritdoc/>
 		public void Advance(int offset)
 		{
 			if (offset > 1)
-				this.Stream.Position += offset - 1;
+				// [PATCH] Via the Position property (which also invalidates the byte buffer)
+				this.Position += offset - 1;
 
 			this.ReadByte();
 		}
@@ -1211,8 +1307,8 @@ namespace ACadSharp.IO.DWG
 		private void applyShiftToArr(int length, byte[] arr)
 		{
 			//Empty Stream
-			if (this.Stream.Read(arr, 0, length) != length)
-				throw new EndOfStreamException();
+			// [PATCH] Filled through the byte buffer (a direct Stream.Read would skip the unconsumed bytes in the buffer)
+			FillBuffered(arr, 0, length);
 
 			if ((uint)this.BitShift <= 0U)
 				return;

@@ -17,7 +17,7 @@ namespace ACadSharp.IO.DWG
 
 		private StreamIO _sreader;
 
-		// [PATCH] The decoding Encoding for the file's graphics code page (SummaryInfo section strings are encoded with the document's code page, e.g. ANSI_936 to GBK)
+		// [PATCH] Decode encoding for the file's graphics code page (SummaryInfo strings are encoded in the document code page, e.g. ANSI_936->GBK)
 		private readonly System.Text.Encoding _encoding;
 
 		public DwgSummaryInfoReader(ACadVersion version, IDwgStreamReader reader, CodePage codePage = CodePage.Windows1252) : base(version)
@@ -109,6 +109,9 @@ namespace ACadSharp.IO.DWG
 
 		private string readUnicodeString()
 		{
+			// [PATCH] _sreader and _reader share the same underlying stream:
+			// the bit reader has an internal byte buffer - sync the stream position before a direct read, invalidate the buffer afterwards.
+			this._reader.SyncStreamPosition();
 			short textLength = this._sreader.ReadShort<LittleEndianConverter>();
 			string value;
 			if (textLength == 0)
@@ -118,16 +121,17 @@ namespace ACadSharp.IO.DWG
 			else
 			{
 				//Read the string and get rid of the empty bytes
-				// [PATCH] Decode with the file's code page (the original implementation was fixed to Windows-1252, CJK properties were read as garbage)
+				// [PATCH] Decode with the file code page (the original fixed Windows-1252 read CJK attributes as garbage)
 				value = this._sreader.ReadString(textLength, this._encoding)
 					.Replace("\0", "");
 			}
 
+			this._reader.MarkStreamAdvanced();
 			return value;
 		}
 
-		// [PATCH] TextEncoding.GetListedEncoding returns null for most code pages (e.g. Gb2312):
-		// fall back to Encoding.GetEncoding with CodePagesEncodingProvider (same strategy as CadUtils.GetListedEncoding).
+		// [PATCH] TextEncoding.GetListedEncoding returns null for most enum values (e.g. Gb2312):
+		// fall back to CodePagesEncodingProvider with the Windows code page number (same strategy as CadUtils.GetListedEncoding)
 		private static Encoding ResolveEncoding(CodePage codePage)
 		{
 			var e = TextEncoding.GetListedEncoding(codePage);

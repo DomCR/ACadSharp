@@ -84,6 +84,21 @@ namespace ACadSharp.IO.DWG
 		void AdvanceByte();
 
 		/// <summary>
+		/// [PATCH] Call before reading <see cref="Stream"/> directly (bypassing this reader):
+		/// writes the logical position (including the correction for unconsumed bytes in the internal byte buffer) back to the underlying stream,
+		/// restoring the "stream position = logical position" invariant. BitShift is unchanged.
+		/// No-op for implementations without an internal buffer.
+		/// </summary>
+		void SyncStreamPosition();
+
+		/// <summary>
+		/// [PATCH] Call after external code (another reader) has read <see cref="Stream"/> directly:
+		/// invalidates the internal byte buffer (if any). BitShift is unchanged.
+		/// No-op for implementations without an internal buffer.
+		/// </summary>
+		void MarkStreamAdvanced();
+
+		/// <summary>
 		/// H : handle reference(see the HANDLE REFERENCES section)
 		/// </summary>
 		/// <returns></returns>
