@@ -426,6 +426,14 @@ internal partial class DwgObjectWriter : DwgSectionIO
 
 	private void writeBlockRecord(BlockRecord blkRecord)
 	{
+		if (this._streaming)
+		{
+			// [PATCH] Streaming mode: the block record header uses the pre-collected handle lists
+			// (owned/insert); at this point all entities and INSERTs have been written, so the
+			// lists are complete. The non-streaming path is unaffected.
+			this.writeBlockHeaderStreaming(blkRecord);
+			return;
+		}
 		this.writeBlockHeader(blkRecord, out Entity[] entities);
 		this._blockCompatibleEntities.Add(blkRecord, entities);
 	}

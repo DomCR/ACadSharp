@@ -14,7 +14,7 @@ namespace ACadSharp.IO;
 /// <summary>
 /// Class for writing a DWG from a <see cref="CadDocument"/>.
 /// </summary>
-public class DwgWriter : CadWriterBase<DwgWriterConfiguration>
+public partial class DwgWriter : CadWriterBase<DwgWriterConfiguration>
 {
 	public DwgPreview Preview { get; set; }
 
