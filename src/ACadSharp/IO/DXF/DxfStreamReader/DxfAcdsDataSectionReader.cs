@@ -1,8 +1,6 @@
 using ACadSharp.DataStorage;
-using ACadSharp.Prototype1b;
 using System;
 using System.Collections.Generic;
-using System.IO;
 
 namespace ACadSharp.IO.DXF.DxfStreamReader;
 
@@ -11,8 +9,6 @@ internal class DxfAcdsDataSectionReader : DxfSectionReaderBase
 	public const string RecordToken = "ACDSRECORD";
 
 	public const string SchemaToken = "ACDSSCHEMA";
-
-	private List<AcdsSchema> _schemas = new List<AcdsSchema>();
 
 	public DxfAcdsDataSectionReader(IDxfStreamReader reader, DxfDocumentBuilder builder)
 		: base(reader, builder)
@@ -40,11 +36,10 @@ internal class DxfAcdsDataSectionReader : DxfSectionReaderBase
 				switch (this._reader.ValueAsString.ToUpper())
 				{
 					case SchemaToken:
-						var s = this.readAcdsSchema();
-						this._schemas.Add(s);
+						this._builder.DataStorage.Schemes.Add(this.readAcdsSchema());
 						continue;
 					case RecordToken:
-						this.readAcdsRecord();
+						this._builder.DataStorage.Records.Add(this.readAcdsRecord());
 						continue;
 				}
 
