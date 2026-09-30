@@ -1149,7 +1149,15 @@ internal partial class DwgObjectWriter : DwgSectionIO
 							var encodingIndex = CadUtils.GetCodeIndex((CSUtilities.Text.CodePage)this._writer.Encoding.CodePage);
 							byte[] bytes = this._writer.Encoding.GetBytes(string.IsNullOrEmpty(str.Value) ? string.Empty : str.Value);
 
-							mstream.Write(LittleEndianConverter.Instance.GetBytes((ushort)str.Value.Length), 0, 2);
+							// [PATCH] Write the BYTES length, not the characters length.
+							// Pre-R2007 XData strings are stored as N single-byte (codepage) characters
+							// preceded by a 2-byte length in BYTES (see DwgStreamReaderBase.ReadTextUnicode,
+							// which feeds this length straight into ReadString(length, encoding)).
+							// For multi-byte code pages (e.g. ANSI_936/GBK, 2 bytes per CJK char) the old
+							// code wrote str.Value.Length (char count), so the reader consumed half the
+							// bytes: CJK XData values came back truncated/garbled and the leftover bytes
+							// desynchronized the rest of the app entry (closing control string lost).
+							mstream.Write(LittleEndianConverter.Instance.GetBytes((ushort)bytes.Length), 0, 2);
 							mstream.WriteByte((byte)encodingIndex);
 							mstream.Write(bytes, 0, bytes.Length);
 						}
