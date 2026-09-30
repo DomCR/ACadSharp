@@ -48,6 +48,7 @@ internal class DxfAcdsDataSectionReader : DxfSectionReaderBase
 		}
 		catch (Exception ex)
 		{
+			this._builder.DataStorage = null;
 			this._builder.Notify("An error occurred while reading the ACDSDATA", NotificationType.Error, ex);
 		}
 	}
