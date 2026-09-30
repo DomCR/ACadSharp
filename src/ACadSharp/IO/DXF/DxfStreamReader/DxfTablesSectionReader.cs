@@ -713,6 +713,22 @@ internal class DxfTablesSectionReader : DxfSectionReaderBase
 					template.CadObject.Name = this._reader.ValueAsString;
 				}
 				return true;
+			case 70:
+				// [PATCH] Group 70 carries the style state flags; upstream silently
+				// dropped them because no property maps code 70. Bit 1 marks a SHAPE
+				// style (e.g. the CASS template entries AAA.SHX / ltypeshp.shx used by
+				// complex linetype shape segments). Without the flag the DWG writer
+				// emits the style as a plain named text style (shape bit = 0), and
+				// AutoCAD loses the shape-font association — complex-linetype symbols
+				// (e.g. CASS terrain linetypes 10422/914C) render missing/garbled.
+				{
+					int raw = this._reader.ValueAsShort;
+					if ((raw & (int)StyleFlags.IsShape) != 0)
+						template.CadObject.Flags |= StyleFlags.IsShape;
+					if ((raw & (int)StyleFlags.VerticalText) != 0)
+						template.CadObject.Flags |= StyleFlags.VerticalText;
+				}
+				return true;
 			default:
 				return this.tryAssignCurrentValue(template.CadObject, map);
 		}
