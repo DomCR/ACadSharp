@@ -8,9 +8,9 @@ namespace ACadSharp.IO.DXF.DxfStreamReader;
 
 internal class DxfAcdsDataSectionReader : DxfSectionReaderBase
 {
-	public const string SchemaToken = "ACDSSCHEMA";
-
 	public const string RecordToken = "ACDSRECORD";
+
+	public const string SchemaToken = "ACDSSCHEMA";
 
 	private List<AcdsSchema> _schemas = new List<AcdsSchema>();
 
@@ -85,7 +85,29 @@ internal class DxfAcdsDataSectionReader : DxfSectionReaderBase
 
 	private AcdsRecordColumn readAcdsRecordColumn()
 	{
-		throw new NotImplementedException();
+		AcdsRecordColumn column = new();
+		column.Name = this._reader.ValueAsString;
+
+		this._reader.ReadNext();
+
+		while (this._reader.DxfCode != DxfCode.Start
+			&& this._reader.DxfCode != DxfCode.Name
+			&& this._reader.DxfCode != DxfCode.EmbeddedObjectStart)
+		{
+			switch (this._reader.Code)
+			{
+				case 280:
+					column.DataType = this._reader.ValueAsShort;
+					break;
+				default:
+					column.CodeValuePair = new KeyValuePair<int, object>(this._reader.Code, this._reader.Value);
+					break;
+			}
+
+			this._reader.ReadNext();
+		}
+
+		return column;
 	}
 
 	private AcdsSchema readAcdsSchema()
