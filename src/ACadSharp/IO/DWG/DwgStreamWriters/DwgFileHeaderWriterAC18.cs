@@ -111,10 +111,11 @@ internal class DwgFileHeaderWriterAC18 : DwgFileHeaderWriterBase<DwgFileHeaderAC
 				if (totalSize == pageSize)
 				{
 					// full page: always written (upstream behavior)
-				// [PATCH] 4th parameter = the page's Start Offset (cumulative offset) inside
-				// the decompressed section buffer; it is stored in localMap.Offset (the page
-				// header and the section descriptor). The reader needs it to place each page's
-				// data at the right offset when reassembling the section.
+					// [PATCH] The 4th parameter is the page's Start Offset (cumulative offset)
+					// inside the decompressed section buffer. Upstream always passes 0: for a
+					// multi-page section (e.g. AcDbObjects > 29696 bytes) every page gets Start
+					// Offset 0, so the reader decompresses later pages over offset 0, clobbering
+					// earlier pages' data — AutoCAD/libredwg report file corruption.
 					this.craeteLocalSection(descriptor, buffer, pageSize, (ulong)offset, totalSize, isCompressed);
 				}
 				else if (!checkEmptyBytes(buffer, 0, (ulong)totalSize))
