@@ -65,6 +65,24 @@ internal abstract class CadDocumentBuilder
 		this.DocumentToBuild = document;
 	}
 
+	/// <summary>
+	/// [PATCH] Release a single object template (streaming scan): removes it from all builder maps so the
+	/// GC can reclaim it once the caller has extracted what it needs. After pruning, TryGetObjectTemplate/
+	/// TryGetCadObject for that handle report "object not found" (the object is gone from the builder's view).
+	/// Only prune templates that are no longer needed (e.g. after field extraction in a streaming scan);
+	/// objects that BuildDocument still has to assemble must not be pruned.
+	/// </summary>
+	public void PruneTemplate(ICadObjectTemplate template)
+	{
+		var h = template.CadObject.Handle;
+		this.templatesMap.Remove(h);
+		this.cadObjects.Remove(h);
+		this.cadObjectsTemplates.Remove(h);
+		this.tableEntryTemplates.Remove(h);
+		this.tableTemplates.Remove(h);
+		this.dictionaryTemplates.Remove(h);
+	}
+
 	public void AddTemplate(ICadObjectTemplate template)
 	{
 		this.NotifyProgress(ReadStage.Read, template);

@@ -11,6 +11,7 @@ using ACadSharp.Exceptions;
 using ACadSharp.IO.DWG;
 using ACadSharp.IO.DWG.DwgStreamReaders;
 using ACadSharp.IO.DWG.FileHeaders;
+using ACadSharp.IO.Templates;
 
 namespace ACadSharp.IO;
 
@@ -143,6 +144,214 @@ public class DwgReader : CadReaderBase<DwgReaderConfiguration>
 		this._builder.BuildDocument();
 
 		return this._document;
+	}
+
+	/// <summary>
+	/// [PATCH] Lazy (partial) read, step 1: reads only the file header / section map / class table /
+	/// header section / handles section (KB~MB cost) without decoding any object. Produces the
+	/// <see cref="DwgPartialReadContext"/> for <see cref="ReadObjectsPartial"/> to decode objects on demand from a seed handle set. Only R2004 (AC1018) and above are supported.
+	/// </summary>
+	/// <returns>The partial-read context (holds the decompressed object-section stream; keep it alive until the read finishes).</returns>
+	public DwgPartialReadContext PreparePartialRead()
+	{
+		//Read the file header
+		this._fileHeader = this._fileHeader ?? this.readFileHeader();
+
+		if (this._fileHeader.AcadVersion < ACadVersion.AC1018)
+		{
+			throw new NotSupportedException($"DWG lazy reading only supports R2004 (AC1018) and above; current version is {this._fileHeader.AcadVersion}");
+		}
+
+		this._builder = new DwgDocumentBuilder(this._fileHeader.AcadVersion, this._document, this.Configuration);
+		this._builder.OnNotification += this.onNotificationEvent;
+		if (this.onProgressEventEnabled())
+		{
+			this._builder.OnProgress += this.onProgressEvent;
+		}
+
+		this._document.Header = this.ReadHeader();
+		this._document.Header.Document = this._document;
+
+		this.readClasses();
+
+		// Template section: non-critical — on any read failure keep the default and continue
+		try
+		{
+			this.readTemplate();
+		}
+		catch (Exception ex)
+		{
+			this._builder?.Notify($"[Template] {ex.Message}", NotificationType.Warning);
+		}
+
+		this.readAppInfo();
+
+		//Handles section: handle -> offset in the object section (the random-access primitive)
+		Dictionary<ulong, long> handles = this.readHandles();
+
+		IDwgStreamReader objectsStream = this.getSectionStream(DwgSectionDefinition.AcDbObjects);
+		if (objectsStream == null)
+		{
+			throw new InvalidDataException("The DWG file has no object section (AcDbObjects)");
+		}
+
+		return new DwgPartialReadContext(
+			this._fileHeader.AcadVersion,
+			handles,
+			this._document.Classes,
+			this._builder.HeaderHandles,
+			this._document.Header,
+			objectsStream.Stream);
+	}
+
+	/// <summary>
+	/// [PATCH] Lazy (partial) read, step 2: decodes objects and assembles the document from a seed handle set (BFS
+	/// expands along references; noExpand can suppress the expansion of specific handles — the *MODEL_SPACE/*PAPER_SPACE
+	/// block records —). Objects not in the expansion graph are never decoded, so memory is proportional to the seed set size, not the file size.
+	/// </summary>
+	/// <param name="ctx">The output of PreparePartialRead.</param>
+	/// <param name="document">The target document to assemble (a CadDocument created by the caller).</param>
+	/// <param name="seedHandles">Seed handles (usually = all header handles + the needed entity handles).</param>
+	/// <param name="noExpand">Owned objects of references to these handles are not expanded (nullable).</param>
+	/// <returns>The assembled document.</returns>
+	public CadDocument ReadObjectsPartial(
+		DwgPartialReadContext ctx,
+		CadDocument document,
+		Queue<ulong> seedHandles,
+		HashSet<ulong> noExpand = null)
+	{
+		// [PATCH] Reuse the this._builder / this._document created by PreparePartialRead (same path as the
+		// full-read readObjects: the same builder already read the header/classes, its state is complete).
+		// A fresh builder here lost that state and broke the table handle matching ("Table X not found"). The document argument is ignored; this._document is returned.
+		var builder = this._builder;
+
+		//Raw object-section stream -> the version-specific bit reader (same path as getSectionStream/readObjects)
+		IDwgStreamReader sreader = DwgStreamReaderBase.GetStreamHandler(ctx.Version, ctx.ObjectsStream);
+		sreader.Encoding = this._encoding;
+
+		DwgObjectReader sectionReader = new DwgObjectReader(
+			ctx.Version,
+			builder,
+			sreader,
+			seedHandles,
+			ctx.HandleMap,
+			ctx.Classes,
+			noExpand);
+
+		sectionReader.Read();
+
+		builder.BuildDocument();
+
+		return this._document;
+	}
+
+	/// <summary>
+	/// [PATCH] Streaming scan of all *MODEL_SPACE entities (dedicated to spatial-index build): BFS-decodes from the
+	/// header handle set (tables/styles/linetypes/block records/dictionaries + model-space entities); suppressBlockExpand
+	/// keeps block-definition entities unexpanded (the index only needs model-space entities and block insertion points,
+	/// not block contents). After each object template is read, the <paramref name="onObject"/> callback fires (the caller
+	/// extracts fields and releases the template via builder.PruneTemplate, so memory stays proportional to one object,
+	/// not the file size). BuildDocument is not called and no usable document is produced; call PreparePartialRead first (R2004+ only).
+	/// </summary>
+	/// <param name="ctx">The output of PreparePartialRead.</param>
+	/// <param name="onObject">Per-object callback (builder + template).</param>
+	internal void ScanModelSpaceEntities(
+		DwgPartialReadContext ctx,
+		Action<DwgDocumentBuilder, CadTemplate> onObject)
+	{
+		var builder = this._builder;
+		builder.SkipEntityTracking = true;
+
+		//Raw object-section stream -> the version-specific bit reader (same path as getSectionStream/readObjects)
+		IDwgStreamReader sreader = DwgStreamReaderBase.GetStreamHandler(ctx.Version, ctx.ObjectsStream);
+		sreader.Encoding = this._encoding;
+
+		var seed = new Queue<ulong>(ctx.HeaderHandles.GetHandles()
+			.Where(o => o.HasValue)
+			.Select(a => a.Value));
+
+		var sectionReader = new DwgObjectReader(
+			ctx.Version,
+			builder,
+			sreader,
+			seed,
+			ctx.HandleMap,
+			ctx.Classes,
+			suppressBlockExpand: true,
+			onObjectRead: t => onObject(builder, t));
+
+		sectionReader.Read();
+	}
+
+	/// <summary>
+	/// [PATCH] Phased-timing version of <see cref="PreparePartialRead"/>: runs exactly the same preparation
+	/// sequence (file header -> Header section -> class table -> Template/AppInfo -> handles section ->
+	/// object-section decompressed stream), invoking <paramref name="onPhase"/> (phase name, milliseconds,
+	/// extra info) after each phase. Used for read-speed diagnostics and optimization verification;
+	/// phase names: FileHeader / Header / Classes / TemplateAppInfo / Handles / ObjectsStream.
+	/// </summary>
+	internal DwgPartialReadContext PreparePartialReadPhased(Action<string, long, string?> onPhase)
+	{
+		var sw = System.Diagnostics.Stopwatch.StartNew();
+		long last = 0;
+		void Phase(string name, string? info = null)
+		{
+			long now = sw.ElapsedMilliseconds;
+			onPhase(name, now - last, info);
+			last = now;
+		}
+
+		// Same sequence as PreparePartialRead
+		this._fileHeader = this._fileHeader ?? this.readFileHeader();
+		Phase("FileHeader", $"version={this._fileHeader.AcadVersion}");
+
+		if (this._fileHeader.AcadVersion < ACadVersion.AC1018)
+		{
+			throw new NotSupportedException($"DWG lazy reading only supports R2004 (AC1018) and above; current version is {this._fileHeader.AcadVersion}");
+		}
+
+		this._builder = new DwgDocumentBuilder(this._fileHeader.AcadVersion, this._document, this.Configuration);
+		this._builder.OnNotification += this.onNotificationEvent;
+		if (this.onProgressEventEnabled())
+		{
+			this._builder.OnProgress += this.onProgressEvent;
+		}
+
+		this._document.Header = this.ReadHeader();
+		this._document.Header.Document = this._document;
+		Phase("Header");
+
+		this.readClasses();
+		Phase("Classes", $"classes={this._document.Classes.Count}");
+
+		try
+		{
+			this.readTemplate();
+		}
+		catch (Exception ex)
+		{
+			this._builder?.Notify($"[Template] {ex.Message}", NotificationType.Warning);
+		}
+		this.readAppInfo();
+		Phase("TemplateAppInfo");
+
+		Dictionary<ulong, long> handles = this.readHandles();
+		Phase("Handles", $"handles={handles.Count:N0}");
+
+		IDwgStreamReader objectsStream = this.getSectionStream(DwgSectionDefinition.AcDbObjects);
+		if (objectsStream == null)
+		{
+			throw new InvalidDataException("The DWG file has no object section (AcDbObjects)");
+		}
+		Phase("ObjectsStream", $"streamLen={objectsStream.Stream.Length:N0}");
+
+		return new DwgPartialReadContext(
+			this._fileHeader.AcadVersion,
+			handles,
+			this._document.Classes,
+			this._builder.HeaderHandles,
+			this._document.Header,
+			objectsStream.Stream);
 	}
 
 	/// <inheritdoc/>

@@ -23,6 +23,13 @@ internal class DwgDocumentBuilder : CadDocumentBuilder
 
 	public List<Entity> ModelSpaceEntities { get; } = new();
 
+	/// <summary>
+	/// [PATCH] Streaming-scan mode: decoded entities are not added to the ModelSpaceEntities/PaperSpaceEntities
+	/// lists (dead storage in the DWG path, they would only pin memory); the caller releases the
+	/// templates via PruneTemplate. Default false: full/lazy read behavior is unchanged.
+	/// </summary>
+	public bool SkipEntityTracking { get; set; }
+
 	public override bool KeepUnknownEntities => this.Configuration.KeepUnknownEntities;
 
 	public override bool KeepUnknownNonGraphicalObjects => this.Configuration.KeepUnknownNonGraphicalObjects;
@@ -35,6 +42,8 @@ internal class DwgDocumentBuilder : CadDocumentBuilder
 		this.Configuration = configuration;
 	}
 
+
+
 	public override void BuildDocument()
 	{
 		this.createMissingHandles();
@@ -45,6 +54,23 @@ internal class DwgDocumentBuilder : CadDocumentBuilder
 			item.SetBlockToRecord(this, this.HeaderHandles);
 		}
 
+
+		// [PATCH] After a partial read, table templates may have been assigned auto-generated handles
+		// (InitialHandSeed+N) by createMissingHandles, while the tableTemplates dictionary keys are still
+		// the file's original handles (the header CONTROL_OBJECT handles). BuildTables looks up the
+		// templates by the builder table handles, so the auto values do not match —> "Table X not found".
+		// Realign the builder table handles with the header CONTROL_OBJECT handles here
+		// (idempotent: in a full read the two are already equal).
+		var hh = this.HeaderHandles;
+		if (hh.APPID_CONTROL_OBJECT.HasValue) this.AppIds.Handle = hh.APPID_CONTROL_OBJECT.Value;
+		if (hh.STYLE_CONTROL_OBJECT.HasValue) this.TextStyles.Handle = hh.STYLE_CONTROL_OBJECT.Value;
+		if (hh.LINETYPE_CONTROL_OBJECT.HasValue) this.LineTypesTable.Handle = hh.LINETYPE_CONTROL_OBJECT.Value;
+		if (hh.LAYER_CONTROL_OBJECT.HasValue) this.Layers.Handle = hh.LAYER_CONTROL_OBJECT.Value;
+		if (hh.UCS_CONTROL_OBJECT.HasValue) this.UCSs.Handle = hh.UCS_CONTROL_OBJECT.Value;
+		if (hh.VIEW_CONTROL_OBJECT.HasValue) this.Views.Handle = hh.VIEW_CONTROL_OBJECT.Value;
+		if (hh.BLOCK_CONTROL_OBJECT.HasValue) this.BlockRecords.Handle = hh.BLOCK_CONTROL_OBJECT.Value;
+		if (hh.DIMSTYLE_CONTROL_OBJECT.HasValue) this.DimensionStyles.Handle = hh.DIMSTYLE_CONTROL_OBJECT.Value;
+		if (hh.VPORT_CONTROL_OBJECT.HasValue) this.VPorts.Handle = hh.VPORT_CONTROL_OBJECT.Value;
 		this.RegisterTables();
 
 		this.BuildTables();

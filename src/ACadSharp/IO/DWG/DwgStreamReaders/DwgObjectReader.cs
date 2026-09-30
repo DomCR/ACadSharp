@@ -96,13 +96,30 @@ namespace ACadSharp.IO.DWG
 		/// </summary>
 		private IDwgStreamReader _textReader;
 
+		// [PATCH] Lazy reading: references to these handles only resolve the reference value and do not enqueue
+		// the owned child objects for expansion (used for *MODEL_SPACE/*PAPER_SPACE block records, so the BFS
+		// never walks into all model-space entities).
+		private readonly HashSet<ulong> _noExpand;
+
+		// [PATCH] Streaming scan (spatial index build): owned entities of every block record (except *MODEL_SPACE)
+		// are not enqueued — the index only needs model-space entities + block insertion points, not block contents.
+		private readonly bool _suppressBlockExpand;
+
+		// [PATCH] Streaming scan: callback after each object template has been read into the builder; the caller
+		// extracts fields and releases the template via PruneTemplate, so memory stays proportional to one object,
+		// not the file size.
+		private readonly Action<CadTemplate> _onObjectRead;
+
 		public DwgObjectReader(
 			ACadVersion version,
 			DwgDocumentBuilder builder,
 			IDwgStreamReader reader,
 			Queue<ulong> handles,
 			Dictionary<ulong, long> handleMap,
-			DxfClassCollection classes) : base(version)
+			DxfClassCollection classes,
+			HashSet<ulong> noExpand = null,
+			bool suppressBlockExpand = false,
+			Action<CadTemplate> onObjectRead = null) : base(version)
 		{
 			this._builder = builder;
 
@@ -111,6 +128,9 @@ namespace ACadSharp.IO.DWG
 			this._handles = new Queue<ulong>(handles);
 			this._map = new Dictionary<ulong, long>(handleMap);
 			this._classes = classes.ToDictionary(x => x.ClassNumber, x => x);
+			this._noExpand = noExpand;
+			this._suppressBlockExpand = suppressBlockExpand;
+			this._onObjectRead = onObjectRead;
 
 			if (this._reader.Stream is MemoryStream memoryStream)
 			{
@@ -189,6 +209,9 @@ namespace ACadSharp.IO.DWG
 					continue;
 
 				this._builder.AddTemplate(template);
+
+				// [PATCH] Streaming scan: post-read callback (field extraction / PruneTemplate release)
+				this._onObjectRead?.Invoke(template);
 			}
 		}
 
@@ -274,7 +297,10 @@ namespace ACadSharp.IO.DWG
 
 			if (value != 0 &&
 				!this._builder.TryGetObjectTemplate(value, out CadTemplate _) &&
-				!this._readedObjects.ContainsKey(value))
+				!this._readedObjects.ContainsKey(value) &&
+				// [PATCH] Lazy reading: with noExpand == null (full read) behavior is unchanged;
+				// otherwise references hitting the noExpand set (model/paperspace block records, etc.) are not expanded.
+				(this._noExpand == null || !this._noExpand.Contains(value)))
 			{
 				//Add the value to the handles queue to be processed
 				this._handles.Enqueue(value);
@@ -379,11 +405,14 @@ namespace ACadSharp.IO.DWG
 			}
 			else if (template.EntityMode == 1)
 			{
-				this._builder.PaperSpaceEntities.Add(entity);
+				// [PATCH] Streaming scan: skip the dead-storage list (the caller releases via PruneTemplate)
+				if (!this._builder.SkipEntityTracking)
+					this._builder.PaperSpaceEntities.Add(entity);
 			}
 			else if (template.EntityMode == 2)
 			{
-				this._builder.ModelSpaceEntities.Add(entity);
+				if (!this._builder.SkipEntityTracking)
+					this._builder.ModelSpaceEntities.Add(entity);
 			}
 
 			//Numreactors BL number of persistent reactors attached to this object
@@ -1179,9 +1208,25 @@ namespace ACadSharp.IO.DWG
 			//R2004+:
 			if (this.R2004Plus)
 			{
+				// [PATCH] Lazy reading: when the block record itself is in the noExpand set (e.g. *MODEL_SPACE/*PAPER_SPACE),
+				// its owned entity handles are still read and recorded one by one (already-decoded entities — e.g. window
+				// candidates — are attached to the block at build time via OwnedObjectsHandlers+TryGetCadObject), but they
+				// are not enqueued for the BFS, avoiding decoding every entity of that block (model space can reach tens of thousands).
+				// [PATCH] Streaming scan (suppressBlockExpand, spatial index build): *MODEL_SPACE is the index target and must be
+				// expanded; for every other block record (block definitions / paperspace) owned entities are never enqueued —
+				// the index only needs model-space entities (INSERT provides the insertion point, block contents are not needed).
+				bool suppressOwnedExpand = (this._noExpand != null && this._noExpand.Contains(template.CadObject.Handle))
+					|| (this._suppressBlockExpand
+						&& this._builder.HeaderHandles.MODEL_SPACE != template.CadObject.Handle
+						&& this._builder.HeaderHandles.PAPER_SPACE != template.CadObject.Handle);
 				for (int i = 0; i < nownedObjects; ++i)
+				{
 					//H[ENTITY(hard owner)] Repeats “Owned Object Count” times.
-					template.OwnedObjectsHandlers.Add(this.handleReference());
+					if (suppressOwnedExpand)
+						template.OwnedObjectsHandlers.Add(this._handlesReader.HandleReference());
+					else
+						template.OwnedObjectsHandlers.Add(this.handleReference());
+				}
 			}
 
 			//Common:
