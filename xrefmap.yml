@@ -1471,19 +1471,6 @@ references:
   isSpec: "True"
   fullName: ACadSharp.CadDocument.ImageDefinitions
   nameWithType: CadDocument.ImageDefinitions
-- uid: ACadSharp.CadDocument.IsValid
-  name: IsValid()
-  href: api/ACadSharp.CadDocument.html#ACadSharp_CadDocument_IsValid
-  commentId: M:ACadSharp.CadDocument.IsValid
-  fullName: ACadSharp.CadDocument.IsValid()
-  nameWithType: CadDocument.IsValid()
-- uid: ACadSharp.CadDocument.IsValid*
-  name: IsValid
-  href: api/ACadSharp.CadDocument.html#ACadSharp_CadDocument_IsValid_
-  commentId: Overload:ACadSharp.CadDocument.IsValid
-  isSpec: "True"
-  fullName: ACadSharp.CadDocument.IsValid
-  nameWithType: CadDocument.IsValid
 - uid: ACadSharp.CadDocument.Layers
   name: Layers
   href: api/ACadSharp.CadDocument.html#ACadSharp_CadDocument_Layers
