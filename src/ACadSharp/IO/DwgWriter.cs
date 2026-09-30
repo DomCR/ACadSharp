@@ -4,6 +4,7 @@ using ACadSharp.IO.DWG.DwgStreamWriters;
 using ACadSharp.Tables.Collections;
 using CSUtilities.IO;
 using CSUtilities.Text;
+using System;
 using System.Collections.Generic;
 using System.IO;
 
@@ -88,6 +89,9 @@ public class DwgWriter : CadWriterBase<DwgWriterConfiguration>
 	/// <inheritdoc/>
 	public override void Dispose()
 	{
+		// [PATCH] Release the AcDbObjects section temp file (DeleteOnClose removes it)
+		this._objectsSectionStream?.Dispose();
+		this._objectsSectionStream = null;
 		this._stream.Dispose();
 	}
 
@@ -254,9 +258,19 @@ public class DwgWriter : CadWriterBase<DwgWriterConfiguration>
 		this._fileHeaderWriter.AddSection(DwgSectionDefinition.Header, stream, true);
 	}
 
+	// [PATCH] Upstream writes the AcDbObjects section (the largest section in the file, hundreds of
+	// MB for big drawings) entirely into a MemoryStream and flushes it all at once with the file
+	// header in WriteFile() — the memory peak of a large drawing equals the entire object data.
+	// Write it to a temp file instead (DeleteOnClose, 1MB buffer); memory use stays constant.
+	// AC15 CopyTo's it into the output stream at WriteFile(); AC18 reads it page by page in
+	// AddSection() and compresses it out.
+	private Stream _objectsSectionStream;
+
 	private void writeObjects()
 	{
-		MemoryStream stream = new MemoryStream();
+		string tmpPath = Path.Combine(Path.GetTempPath(), $"acaddwg_{Guid.NewGuid():N}.tmp");
+		var stream = new FileStream(tmpPath, FileMode.Create, FileAccess.ReadWrite, FileShare.None, 1 << 20, FileOptions.DeleteOnClose);
+		this._objectsSectionStream = stream;
 		DwgObjectWriter writer = new DwgObjectWriter(
 			stream,
 			this._document,

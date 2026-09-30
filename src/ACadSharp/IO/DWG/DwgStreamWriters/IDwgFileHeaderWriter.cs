@@ -4,7 +4,8 @@
 	{
 		int HandleSectionOffset { get; }
 
-		void AddSection(string name, System.IO.MemoryStream stream, bool isCompressed, int decompsize = 0x7400);
+		// [PATCH] MemoryStream -> Stream (supports a temp file for the AcDbObjects section, low memory)
+		void AddSection(string name, System.IO.Stream stream, bool isCompressed, int decompsize = 0x7400);
 
 		void WriteFile();
 	}

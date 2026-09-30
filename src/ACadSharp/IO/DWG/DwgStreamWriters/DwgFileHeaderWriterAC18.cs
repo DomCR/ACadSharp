@@ -69,7 +69,13 @@ internal class DwgFileHeaderWriterAC18 : DwgFileHeaderWriterBase<DwgFileHeaderAC
 		}
 	}
 
-	public override void AddSection(string name, MemoryStream stream, bool isCompressed, int decompsize = 0x7400)
+	// [PATCH] Upstream grabs the whole section buffer at once with stream.GetBuffer()
+	// (MemoryStream only), so a large section (AcDbObjects) must stay fully in memory.
+	// Read the section sequentially page by page (decompsize bytes/page) from the Stream
+	// instead — the section may come from a temp file and memory use stays constant
+	// (one page ~29KB). Behavior matches upstream: full pages are always written; a
+	// trailing partial page is written only when it contains non-zero bytes.
+	public override void AddSection(string name, Stream stream, bool isCompressed, int decompsize = 0x7400)
 	{
 		DwgSectionDescriptor descriptor = new DwgSectionDescriptor(name);
 		this.FileHeader.AddSection(descriptor);
@@ -80,32 +86,49 @@ internal class DwgFileHeaderWriterAC18 : DwgFileHeaderWriterBase<DwgFileHeaderAC
 		// [PATCH] Assign a unique section ID (upstream always 0, which AutoCAD treats as corruption)
 		descriptor.SectionId = GetSectionId(name);
 
-		int nlocalSections = (int)(stream.Length / (int)descriptor.DecompressedSize);
-
-		byte[] buffer = stream.GetBuffer();
-		ulong offset = 0uL;
-		for (int i = 0; i < nlocalSections; i++)
+		long length = stream.Length;
+		long originalPosition = stream.Position;
+		stream.Seek(0, SeekOrigin.Begin);
+		try
 		{
-			this.craeteLocalSection(
-				descriptor,
-				buffer,
-				(int)descriptor.DecompressedSize,
-				offset,
-				(int)descriptor.DecompressedSize,
-				isCompressed);
-			offset += descriptor.DecompressedSize;
+			int pageSize = (int)descriptor.DecompressedSize;
+			long offset = 0L;
+			while (offset < length)
+			{
+				int totalSize = (int)Math.Min(pageSize, length - offset);
+				byte[] buffer = new byte[totalSize];
+				int read = 0;
+				while (read < totalSize)
+				{
+					int r = stream.Read(buffer, read, totalSize - read);
+					if (r <= 0)
+					{
+						break;
+					}
+					read += r;
+				}
+
+				if (totalSize == pageSize)
+				{
+					// full page: always written (upstream behavior)
+				// [PATCH] 4th parameter = the page's Start Offset (cumulative offset) inside
+				// the decompressed section buffer; it is stored in localMap.Offset (the page
+				// header and the section descriptor). The reader needs it to place each page's
+				// data at the right offset when reassembling the section.
+					this.craeteLocalSection(descriptor, buffer, pageSize, (ulong)offset, totalSize, isCompressed);
+				}
+				else if (!checkEmptyBytes(buffer, 0, (ulong)totalSize))
+				{
+					// trailing partial page: written only when it contains non-zero bytes (matches upstream)
+					this.craeteLocalSection(descriptor, buffer, pageSize, (ulong)offset, totalSize, isCompressed);
+				}
+
+				offset += totalSize;
+			}
 		}
-
-		int spearBytes = (int)(stream.Length % (int)descriptor.DecompressedSize);
-		if (spearBytes > 0 && !checkEmptyBytes(buffer, offset, (ulong)spearBytes))
+		finally
 		{
-			this.craeteLocalSection(
-				descriptor,
-				buffer,
-				(int)descriptor.DecompressedSize,
-				offset,
-				spearBytes,
-				isCompressed);
+			stream.Seek(originalPosition, SeekOrigin.Begin);
 		}
 	}
 
@@ -152,7 +175,12 @@ internal class DwgFileHeaderWriterAC18 : DwgFileHeaderWriterBase<DwgFileHeaderAC
 
 	protected virtual void craeteLocalSection(DwgSectionDescriptor descriptor, byte[] buffer, int decompressedSize, ulong offset, int totalSize, bool isCompressed)
 	{
-		MemoryStream descriptorStream = this.applyCompression(buffer, decompressedSize, offset, totalSize, isCompressed);
+		// [PATCH] offset now denotes the page's Start Offset inside the whole decompressed
+		// section buffer (written to localMap.Offset, i.e. the "Start Offset" in the page
+		// header and the section descriptor). buffer is the totalSize-byte tail chunk just
+		// read; its start inside buffer is always 0, so it must not be used as the in-buffer
+		// offset (multi-page sections would go out of bounds / be misaligned).
+		MemoryStream descriptorStream = this.applyCompression(buffer, decompressedSize, 0, totalSize, isCompressed);
 
 		this.writeMagicNumber();
 
