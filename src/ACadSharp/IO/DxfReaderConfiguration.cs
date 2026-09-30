@@ -34,5 +34,16 @@
 		/// the intern table itself.
 		/// </summary>
 		public bool InternXDataStrings { get; set; } = true;
+
+		/// <summary>
+		/// [PATCH] Trim the working set (light gen0+gen1 GC + EmptyWorkingSet) every N entities
+		/// while reading the ENTITIES / BLOCKS sections. Reading a huge DXF allocates a lot of
+		/// transient garbage (templates, maps, parsed strings); without periodic trims the
+		/// working set grows far beyond the live object graph (measured: ~24GB WS vs ~12.5GB
+		/// live for a 1.9M-entity file with XData). A light trim every 100K entities keeps the
+		/// working set close to the live size at a modest time cost. 0 disables periodic trims
+		/// (upstream behavior).
+		/// </summary>
+		public int GCEveryNEntities { get; set; } = 100000;
 	}
 }
