@@ -248,7 +248,7 @@ internal static class CadUtils
 	// (O(n) materialization + linear search), and DwgObjectWriter calls it once per XData string
 	// record — extremely slow when writing XData for large files. Build a dictionary cache once
 	// instead. Note: _pageCodes contains duplicate values and IndexOf returns the first
-	// occurrence, so the cache must keep the same semantics (TryAdd keeps only the first index).
+	// occurrence, so the cache must keep the same semantics (only the first index is stored).
 	public static int GetCodeIndex(CodePage code)
 	{
 		if (_codeIndexCache is null)
@@ -256,7 +256,9 @@ internal static class CadUtils
 			_codeIndexCache = new Dictionary<CodePage, int>();
 			for (int i = 0; i < _pageCodes.Length; i++)
 			{
-				_codeIndexCache.TryAdd(_pageCodes[i], i);
+				// ContainsKey/Add instead of TryAdd: TryAdd does not exist on net48/netstandard2.0
+				if (!_codeIndexCache.ContainsKey(_pageCodes[i]))
+					_codeIndexCache.Add(_pageCodes[i], i);
 			}
 		}
 

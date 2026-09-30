@@ -290,11 +290,11 @@ public class DwgReader : CadReaderBase<DwgReaderConfiguration>
 	/// extra info) after each phase. Used for read-speed diagnostics and optimization verification;
 	/// phase names: FileHeader / Header / Classes / TemplateAppInfo / Handles / ObjectsStream.
 	/// </summary>
-	internal DwgPartialReadContext PreparePartialReadPhased(Action<string, long, string?> onPhase)
+	internal DwgPartialReadContext PreparePartialReadPhased(Action<string, long, string> onPhase)
 	{
 		var sw = System.Diagnostics.Stopwatch.StartNew();
 		long last = 0;
-		void Phase(string name, string? info = null)
+		void Phase(string name, string info = null)
 		{
 			long now = sw.ElapsedMilliseconds;
 			onPhase(name, now - last, info);
