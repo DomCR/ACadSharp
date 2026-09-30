@@ -641,6 +641,12 @@ public class CadDocument : IHandledCadObject
 		{
 			var nextHandle = this.Header.HandleSeed;
 
+			//The seed read from a file may point to a used handle, e.g. $HANDSEED 0 collides with the document itself
+			while (this._cadObjects.ContainsKey(nextHandle))
+			{
+				nextHandle++;
+			}
+
 			cadObject.Handle = nextHandle;
 			this.Header.HandleSeed = nextHandle + 1;
 		}
