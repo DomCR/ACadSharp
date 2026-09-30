@@ -2259,6 +2259,8 @@ internal class DxfObjectsSectionReader : DxfSectionReaderBase
 				return this.readObjectCodes<ProxyObject>(new CadProxyObjectTemplate(), this.readProxyObject);
 			case DxfFileToken.ObjectRasterVariables:
 				return this.readObjectCodes<RasterVariables>(new CadNonGraphicalObjectTemplate(new RasterVariables()), this.readObjectSubclassMap);
+			case DxfFileToken.ObjectWipeoutVariables:
+				return this.readObjectCodes<WipeoutVariables>(new CadNonGraphicalObjectTemplate(new WipeoutVariables()), this.readObjectSubclassMap);
 			case DxfFileToken.ObjectGroup:
 				return this.readObjectCodes<Group>(new CadGroupTemplate(), this.readGroup);
 			case DxfFileToken.ObjectGeoData:
@@ -3131,6 +3133,12 @@ internal class DxfObjectsSectionReader : DxfSectionReaderBase
 	private void readXRecordEntries(CadXRecordTemplate template)
 	{
 		this._reader.ReadNext();
+
+		if (this._reader.Code == 280)
+		{
+			template.CadObject.CloningFlags = (DictionaryCloningFlags)this._reader.ValueAsShort;
+			this._reader.ReadNext();
+		}
 
 		while (this._reader.DxfCode != DxfCode.Start)
 		{

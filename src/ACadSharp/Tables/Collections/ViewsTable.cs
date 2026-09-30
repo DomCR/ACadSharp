@@ -1,17 +1,30 @@
-﻿namespace ACadSharp.Tables.Collections
+﻿namespace ACadSharp.Tables.Collections;
+
+/// <summary>
+/// Represents a collection of <see cref="View"/> entries.
+/// </summary>
+public class ViewsTable : Table<View>
 {
-	public class ViewsTable : Table<View>
+	/// <inheritdoc/>
+	public override string ObjectName => DxfFileToken.TableView;
+
+	/// <inheritdoc/>
+	public override ObjectType ObjectType => ObjectType.VIEW_CONTROL_OBJ;
+
+	internal ViewsTable() : base()
 	{
-		/// <inheritdoc/>
-		public override ObjectType ObjectType => ObjectType.VIEW_CONTROL_OBJ;
-
-		/// <inheritdoc/>
-		public override string ObjectName => DxfFileToken.TableView;
-
-		protected override string[] defaultEntries { get { return new string[] { }; } }
-
-		internal ViewsTable() : base() { }
-
-		internal ViewsTable(CadDocument document) : base(document) { }
 	}
+
+	internal ViewsTable(CadDocument document) : base(document)
+	{
+	}
+
+	/// <inheritdoc/>
+	public override View GetDefaultEntry()
+	{
+		return null;
+	}
+
+	protected override string[] getDefaultEntries()
+	{ return new string[] { }; }
 }

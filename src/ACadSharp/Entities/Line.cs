@@ -1,5 +1,6 @@
 ﻿using ACadSharp.Attributes;
 using CSMath;
+using CSMath.Extensions;
 using CSMath.Geometry;
 
 namespace ACadSharp.Entities;
@@ -13,7 +14,7 @@ namespace ACadSharp.Entities;
 /// </remarks>
 [DxfName(DxfFileToken.EntityLine)]
 [DxfSubClass(DxfSubclassMarker.Line)]
-public class Line : Entity
+public class Line : Entity, IOrientable
 {
 	/// <summary>
 	/// A 3D coordinate representing the end point of the object.
@@ -21,9 +22,7 @@ public class Line : Entity
 	[DxfCodeValue(11, 21, 31)]
 	public XYZ EndPoint { get; set; } = XYZ.Zero;
 
-	/// <summary>
-	/// Specifies the three-dimensional normal unit vector for the object.
-	/// </summary>
+	/// <inheritdoc/>
 	[DxfCodeValue(210, 220, 230)]
 	public XYZ Normal { get; set; } = XYZ.AxisZ;
 

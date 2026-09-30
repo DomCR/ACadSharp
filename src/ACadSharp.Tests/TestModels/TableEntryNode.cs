@@ -1,12 +1,11 @@
-﻿namespace ACadSharp.Tests.TestModels
-{
-	public class TableEntryNode : Node
-	{
-		public string Name { get; set; }
+﻿namespace ACadSharp.Tests.TestModels;
 
-		public override string ToString()
-		{
-			return $"{this.ACadName}:{this.Name}";
-		}
+public class TableEntryNode : Node
+{
+	public string Name { get; set; }
+
+	public override string ToString()
+	{
+		return $"{this.ACadName}:{this.Name}";
 	}
 }

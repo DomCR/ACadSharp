@@ -1,4 +1,5 @@
-﻿using ACadSharp.Tables;
+﻿using ACadSharp.IO.DXF.DxfStreamWriter;
+using ACadSharp.Tables;
 using ACadSharp.Tables.Collections;
 using CSMath;
 using System;
@@ -36,7 +37,7 @@ namespace ACadSharp.IO.DXF
 
 			this._writer.Write(DxfCode.Subclass, DxfSubclassMarker.Table);
 
-			this._writer.Write(70, table.Count);
+			this._writer.Write(70, table.Count > short.MaxValue ? (short)0 : (short)table.Count);
 
 			if (!string.IsNullOrEmpty(subclass))
 			{
@@ -45,6 +46,12 @@ namespace ACadSharp.IO.DXF
 
 			foreach (T entry in table)
 			{
+				if (!entry.IsValid(CadFileFormat.DXF, this.Version))
+				{
+					this.notify($"{entry.GetType().FullName} with name {entry.Name} is not valid for version {this.Version}.", NotificationType.Warning);
+					continue;
+				}
+
 				writeEntry(entry, writeFlags);
 			}
 
@@ -212,6 +219,9 @@ namespace ACadSharp.IO.DXF
 			this._writer.WriteHandle(342, style.ArrowBlock, map);
 			this._writer.WriteHandle(343, style.DimArrow1, map);
 			this._writer.WriteHandle(344, style.DimArrow2, map);
+			this._writer.WriteHandle(345, style.LineType, map);
+			this._writer.WriteHandle(346, style.LineTypeExt1, map);
+			this._writer.WriteHandle(347, style.LineTypeExt2, map);
 
 			this._writer.Write(371, style.DimensionLineWeight);
 			this._writer.Write(372, style.ExtensionLineWeight);

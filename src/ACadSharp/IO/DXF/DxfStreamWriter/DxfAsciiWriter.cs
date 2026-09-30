@@ -3,119 +3,131 @@ using System.Collections.Generic;
 using System.IO;
 using System.Linq;
 
-namespace ACadSharp.IO.DXF
+namespace ACadSharp.IO.DXF.DxfStreamWriter;
+
+internal class DxfAsciiWriter : DxfStreamWriterBase
 {
-	internal class DxfAsciiWriter : DxfStreamWriterBase
+	public int? DecimalPrecision { get; set; } = null;
+
+	private TextWriter _stream;
+
+	public DxfAsciiWriter(StreamWriter stream)
 	{
-		private TextWriter _stream;
+		this._stream = stream;
+	}
 
-		public DxfAsciiWriter(StreamWriter stream)
+	public override void Close()
+	{
+		this._stream.Close();
+	}
+
+	public override void Dispose()
+	{
+		this._stream.Dispose();
+	}
+
+	public override void Flush()
+	{
+		this._stream.Flush();
+	}
+
+	protected override void writeDxfCode(int code)
+	{
+		if (code < 10)
 		{
-			this._stream = stream;
+			this._stream.WriteLine("  {0}", code.ToString(System.Globalization.CultureInfo.InvariantCulture));
+		}
+		else if (code < 100)
+		{
+			this._stream.WriteLine(" {0}", code.ToString(System.Globalization.CultureInfo.InvariantCulture));
+		}
+		else
+		{
+			this._stream.WriteLine(code.ToString(System.Globalization.CultureInfo.InvariantCulture));
+		}
+	}
+
+	protected override void writeValue(int code, object value)
+	{
+		GroupCodeValueType groupCode = GroupCodeValue.TransformValue(code);
+
+		switch (groupCode)
+		{
+			case GroupCodeValueType.None:
+				break;
+			case GroupCodeValueType.String:
+			case GroupCodeValueType.Comment:
+			case GroupCodeValueType.ExtendedDataString:
+				this._stream.WriteLine(value.ToString());
+				return;
+			case GroupCodeValueType.Point3D:
+			case GroupCodeValueType.Double:
+			case GroupCodeValueType.ExtendedDataDouble:
+				if (this.DecimalPrecision.HasValue)
+				{
+					string format = "0." + new string('#', this.DecimalPrecision.Value);
+					this._stream.WriteLine(Convert.ToDouble(value)
+						.ToString(format, System.Globalization.CultureInfo.InvariantCulture));
+							return;
+				}
+				else
+				{
+					this._stream.WriteLine(Convert.ToDouble(value)
+						.ToString("R", System.Globalization.CultureInfo.InvariantCulture));
+					return;
+				}
+			case GroupCodeValueType.Byte:
+			case GroupCodeValueType.Int16:
+			case GroupCodeValueType.ExtendedDataInt16:
+				this._stream.WriteLine(Convert.ToInt16(value).ToString(System.Globalization.CultureInfo.InvariantCulture));
+				return;
+			case GroupCodeValueType.Int32:
+			case GroupCodeValueType.ExtendedDataInt32:
+				this._stream.WriteLine(Convert.ToInt32(value).ToString(System.Globalization.CultureInfo.InvariantCulture));
+				return;
+			case GroupCodeValueType.Int64:
+				this._stream.WriteLine(Convert.ToInt64(value).ToString(System.Globalization.CultureInfo.InvariantCulture));
+				return;
+			case GroupCodeValueType.Handle:
+			case GroupCodeValueType.ObjectId:
+			case GroupCodeValueType.ExtendedDataHandle:
+				this._stream.WriteLine(((ulong)value).ToString("X", System.Globalization.CultureInfo.InvariantCulture));
+				return;
+			case GroupCodeValueType.Bool:
+				this._stream.WriteLine(Convert.ToInt16(value).ToString(System.Globalization.CultureInfo.InvariantCulture));
+				return;
+			case GroupCodeValueType.Chunk:
+			case GroupCodeValueType.ExtendedDataChunk:
+				const int maxChunkLength = 127;
+				byte[] arr = value as byte[];
+				MemoryStream ms = new MemoryStream(arr);
+				List<string> lines = new List<string>();
+
+				int nlines = arr.Length / maxChunkLength;
+				byte[] array = new byte[maxChunkLength];
+				for (int i = 0; i < nlines; i++)
+				{
+					ms.Read(array, 0, maxChunkLength);
+					lines.Add(new string(array.SelectMany(b => string.Format("{0:X2}", b)).ToArray()));
+				}
+
+				int surp = arr.Length % maxChunkLength;
+				if (surp != 0)
+				{
+					byte[] array2 = new byte[surp];
+					ms.Read(array2, 0, surp);
+					lines.Add(new string(array2.SelectMany(b => string.Format("{0:X2}", b)).ToArray()));
+				}
+
+				this._stream.WriteLine(lines.First());
+				foreach (string l in lines.Skip(1))
+				{
+					this._stream.WriteLine(code);
+					this._stream.WriteLine(l);
+				}
+				return;
 		}
 
-		public override void Dispose()
-		{
-			this._stream.Dispose();
-		}
-
-		public override void Flush()
-		{
-			this._stream.Flush();
-		}
-
-		public override void Close()
-		{
-			this._stream.Close();
-		}
-
-		protected override void writeDxfCode(int code)
-		{
-			if (code < 10)
-			{
-				this._stream.WriteLine("  {0}", code.ToString(System.Globalization.CultureInfo.InvariantCulture));
-			}
-			else if (code < 100)
-			{
-				this._stream.WriteLine(" {0}", code.ToString(System.Globalization.CultureInfo.InvariantCulture));
-			}
-			else
-			{
-				this._stream.WriteLine(code.ToString(System.Globalization.CultureInfo.InvariantCulture));
-			}
-		}
-
-		protected override void writeValue(int code, object value)
-		{
-			GroupCodeValueType groupCode = GroupCodeValue.TransformValue(code);
-
-			switch (groupCode)
-			{
-				case GroupCodeValueType.None:
-					break;
-				case GroupCodeValueType.String:
-				case GroupCodeValueType.Comment:
-				case GroupCodeValueType.ExtendedDataString:
-					this._stream.WriteLine(value.ToString());
-					return;
-				case GroupCodeValueType.Point3D:
-				case GroupCodeValueType.Double:
-				case GroupCodeValueType.ExtendedDataDouble:
-					this._stream.WriteLine(Convert.ToDouble(value).ToString("R", System.Globalization.CultureInfo.InvariantCulture));
-					return;
-				case GroupCodeValueType.Byte:
-				case GroupCodeValueType.Int16:
-				case GroupCodeValueType.ExtendedDataInt16:
-					this._stream.WriteLine(Convert.ToInt16(value).ToString(System.Globalization.CultureInfo.InvariantCulture));
-					return;
-				case GroupCodeValueType.Int32:
-				case GroupCodeValueType.ExtendedDataInt32:
-					this._stream.WriteLine(Convert.ToInt32(value).ToString(System.Globalization.CultureInfo.InvariantCulture));
-					return;
-				case GroupCodeValueType.Int64:
-					this._stream.WriteLine(Convert.ToInt64(value).ToString(System.Globalization.CultureInfo.InvariantCulture));
-					return;
-				case GroupCodeValueType.Handle:
-				case GroupCodeValueType.ObjectId:
-				case GroupCodeValueType.ExtendedDataHandle:
-					this._stream.WriteLine(((ulong)value).ToString("X", System.Globalization.CultureInfo.InvariantCulture));
-					return;
-				case GroupCodeValueType.Bool:
-					this._stream.WriteLine(Convert.ToInt16(value).ToString(System.Globalization.CultureInfo.InvariantCulture));
-					return;
-				case GroupCodeValueType.Chunk:
-				case GroupCodeValueType.ExtendedDataChunk:
-					const int maxChunkLength = 127;
-					byte[] arr = value as byte[];
-					MemoryStream ms = new MemoryStream(arr);
-					List<string> lines = new List<string>();
-
-					int nlines = arr.Length / maxChunkLength;
-					byte[] array = new byte[maxChunkLength];
-					for (int i = 0; i < nlines; i++)
-					{
-						ms.Read(array, 0, maxChunkLength);
-						lines.Add(new string(array.SelectMany(b => string.Format("{0:X2}", b)).ToArray()));
-					}
-
-					int surp = arr.Length % maxChunkLength;
-					if (surp != 0)
-					{
-						byte[] array2 = new byte[surp];
-						ms.Read(array2, 0, surp);
-						lines.Add(new string(array2.SelectMany(b => string.Format("{0:X2}", b)).ToArray()));
-					}
-
-					this._stream.WriteLine(lines.First());
-					foreach (string l in lines.Skip(1))
-					{
-						this._stream.WriteLine(code);
-						this._stream.WriteLine(l);
-					}
-					return;
-			}
-
-			this._stream.WriteLine(value.ToString());
-		}
+		this._stream.WriteLine(value.ToString());
 	}
 }

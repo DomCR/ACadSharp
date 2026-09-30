@@ -1,4 +1,5 @@
 ﻿using ACadSharp.Entities;
+using ACadSharp.IO.DXF.DxfStreamWriter;
 using ACadSharp.Tables;
 using ACadSharp.XData;
 using CSMath;

@@ -1,4 +1,5 @@
 ﻿using ACadSharp.Attributes;
+using ACadSharp.Classes;
 using ACadSharp.Objects;
 using ACadSharp.Tables;
 using CSMath;
@@ -16,7 +17,7 @@ namespace ACadSharp.Entities;
 /// </remarks>
 [DxfName(DxfFileToken.EntityTable)]
 [DxfSubClass(DxfSubclassMarker.TableEntity)]
-public partial class TableEntity : Insert
+public partial class TableEntity : Insert, IDxfClassDefined
 {
 	/// <summary>
 	/// Gets the table break data that defines how the table should be divided across breaks, including spacing, flow direction,
@@ -153,6 +154,21 @@ public partial class TableEntity : Insert
 	public Cell GetCell(int row, int column)
 	{
 		return this.Rows[row].Cells[column];
+	}
+
+	/// <inheritdoc/>
+	public DxfClass GetDxfClass()
+	{
+		return new DxfClass
+		{
+			CppClassName = DxfSubclassMarker.TableEntity,
+			DwgVersion = ACadVersion.AC1018,
+			DxfName = DxfFileToken.EntityTable,
+			ItemClassId = 498,
+			MaintenanceVersion = 0,
+			ProxyFlags = ProxyFlags.EraseAllowed | ProxyFlags.DisablesProxyWarningDialog,
+			WasZombie = false,
+		};
 	}
 
 	/// <summary>

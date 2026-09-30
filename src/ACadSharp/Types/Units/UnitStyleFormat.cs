@@ -1,5 +1,6 @@
 ﻿using ACadSharp.Tables;
 using CSMath;
+using CSMath.Extensions;
 using System;
 using System.Globalization;
 using System.Text;
@@ -278,7 +279,7 @@ namespace ACadSharp.Types.Units
 			double inchesDec = value - 12 * feet;
 			int inches = (int)inchesDec;
 
-			if (MathHelper.IsZero(inchesDec))
+			if (inchesDec.IsZero())
 			{
 				if (feet == 0)
 				{
@@ -453,7 +454,7 @@ namespace ACadSharp.Types.Units
 			int feet = (int)(value / 12);
 			double inches = value - 12 * feet;
 
-			if (MathHelper.IsZero(inches))
+			if (inches.IsZero())
 			{
 				if (feet == 0)
 				{

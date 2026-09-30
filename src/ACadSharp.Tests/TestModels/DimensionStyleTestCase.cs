@@ -2,50 +2,49 @@
 using ACadSharp.Tables;
 using Xunit.Abstractions;
 
-namespace ACadSharp.Tests.TestModels
+namespace ACadSharp.Tests.TestModels;
+
+//Json serialization needs to be fixed for the XUnit serialization to work
+public class DimensionStyleTestCase : IXunitSerializable
 {
-	//Json serialization needs to be fixed for the XUnit serialization to work
-	public class DimensionStyleTestCase : IXunitSerializable
+	public Dimension Dimension { get; private set; }
+
+	public string Expected { get; private set; }
+
+	public DimensionStyle Style { get; private set; }
+
+	public DimensionStyleTestCase()
+	{ }
+
+	public DimensionStyleTestCase(DimensionStyle style, Dimension dimension, string expected)
 	{
-		public Dimension Dimension { get; private set; }
+		this.Style = style;
+		this.Dimension = dimension;
+		this.Expected = expected;
+	}
 
-		public string Expected { get; private set; }
-
-		public DimensionStyle Style { get; private set; }
-
-		public DimensionStyleTestCase()
-		{ }
-
-		public DimensionStyleTestCase(DimensionStyle style, Dimension dimension, string expected)
-		{
-			this.Style = style;
-			this.Dimension = dimension;
-			this.Expected = expected;
-		}
-
-		public void Deserialize(IXunitSerializationInfo info)
-		{
+	public void Deserialize(IXunitSerializationInfo info)
+	{
 #if !NETFRAMEWORK
-			this.Dimension = System.Text.Json.JsonSerializer.Deserialize<Dimension>(
-				info.GetValue<string>(nameof(this.Dimension)));
-			this.Style = System.Text.Json.JsonSerializer.Deserialize<DimensionStyle>(
-				info.GetValue<string>(nameof(this.Style)));
-			this.Expected = info.GetValue<string>(nameof(this.Expected));
+		this.Dimension = System.Text.Json.JsonSerializer.Deserialize<Dimension>(
+			info.GetValue<string>(nameof(this.Dimension)));
+		this.Style = System.Text.Json.JsonSerializer.Deserialize<DimensionStyle>(
+			info.GetValue<string>(nameof(this.Style)));
+		this.Expected = info.GetValue<string>(nameof(this.Expected));
 #endif
-		}
+	}
 
-		public void Serialize(IXunitSerializationInfo info)
-		{
+	public void Serialize(IXunitSerializationInfo info)
+	{
 #if !NETFRAMEWORK
-			info.AddValue(nameof(this.Dimension), System.Text.Json.JsonSerializer.Serialize(this.Dimension));
-			info.AddValue(nameof(this.Style), System.Text.Json.JsonSerializer.Serialize(this.Style));
-			info.AddValue(nameof(this.Expected), this.Expected);
+		info.AddValue(nameof(this.Dimension), System.Text.Json.JsonSerializer.Serialize(this.Dimension));
+		info.AddValue(nameof(this.Style), System.Text.Json.JsonSerializer.Serialize(this.Style));
+		info.AddValue(nameof(this.Expected), this.Expected);
 #endif
-		}
+	}
 
-		public override string ToString()
-		{
-			return $"{this.Dimension}|{this.Expected}";
-		}
+	public override string ToString()
+	{
+		return $"{this.Dimension}|{this.Expected}";
 	}
 }

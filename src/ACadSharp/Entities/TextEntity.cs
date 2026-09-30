@@ -1,6 +1,7 @@
 ﻿using ACadSharp.Attributes;
 using ACadSharp.Tables;
 using CSMath;
+using CSMath.Extensions;
 using CSUtilities.Extensions;
 using System;
 using System.Collections.Generic;
@@ -29,17 +30,7 @@ public class TextEntity : Entity, IText
 
 	/// <inheritdoc/>
 	[DxfCodeValue(40)]
-	public double Height
-	{
-		get => this._height;
-		set
-		{
-			if (value <= 0)
-				throw new ArgumentOutOfRangeException(nameof(value), value, "The Text height must be greater than zero.");
-			else
-				this._height = value;
-		}
-	}
+	public double Height { get; set; } = 1.0d;
 
 	/// <summary>
 	/// Horizontal text justification type.
@@ -59,9 +50,7 @@ public class TextEntity : Entity, IText
 	[DxfCodeValue(71)]
 	public TextMirrorFlag Mirror { get => this._mirror; set => this._mirror = value; }
 
-	/// <summary>
-	/// Specifies the three-dimensional normal unit vector for the object.
-	/// </summary>
+	/// <inheritdoc/>
 	[DxfCodeValue(210, 220, 230)]
 	public XYZ Normal { get; set; } = XYZ.AxisZ;
 
@@ -96,14 +85,7 @@ public class TextEntity : Entity, IText
 				throw new ArgumentNullException(nameof(value));
 			}
 
-			if (this.Document != null)
-			{
-				this._style = CadObject.updateCollection(value, this.Document.TextStyles);
-			}
-			else
-			{
-				this._style = value;
-			}
+			this._style = this.updateTableEntry(value, s => this._style = s, this.Document?.TextStyles);
 		}
 	}
 
@@ -145,16 +127,26 @@ public class TextEntity : Entity, IText
 	[DxfCodeValue(DxfReferenceType.Optional, 41)]
 	public double WidthFactor { get; set; } = 1.0;
 
-	private double _height = 1.0d;
-
 	private TextMirrorFlag _mirror = TextMirrorFlag.None;
 
 	private TextStyle _style = TextStyle.Default;
 
 	private string _value = string.Empty;
 
+	/// <summary>
+	/// Initializes a new instance of the <see cref="TextEntity"/> class.
+	/// </summary>
 	public TextEntity() : base()
 	{
+	}
+
+	/// <summary>
+	/// Initializes a new instance of the <see cref="TextEntity"/> class with the specified text value.
+	/// </summary>
+	/// <param name="value">The text value.</param>
+	public TextEntity(string value) : this()
+	{
+		this.Value = value;
 	}
 
 	/// <inheritdoc/>
@@ -265,7 +257,7 @@ public class TextEntity : Entity, IText
 
 		// the height must be greater than zero, the cos is always positive between -85 and 85
 		double newHeight = newVvector.GetLength() * Math.Cos(newObliqueAngle);
-		newHeight = MathHelper.IsZero(newHeight) ? MathHelper.Epsilon : newHeight;
+		newHeight = newHeight.IsZero() ? MathHelper.Epsilon : newHeight;
 
 		// the width factor is defined between 0.01 and 100
 		double newWidthFactor = newUvector.GetLength() / newHeight;
@@ -290,7 +282,7 @@ public class TextEntity : Entity, IText
 	public override CadObject Clone()
 	{
 		TextEntity clone = (TextEntity)base.Clone();
-		clone.Style = (TextStyle)this.Style.Clone();
+		clone._style = (TextStyle)this.Style.Clone();
 		return clone;
 	}
 
@@ -304,27 +296,15 @@ public class TextEntity : Entity, IText
 	{
 		base.AssignDocument(doc);
 
-		this._style = CadObject.updateCollection(this.Style, doc.TextStyles);
-
-		doc.DimensionStyles.OnRemove += this.tableOnRemove;
+		this.updateTableEntry(this._style, s => this._style = s, doc.TextStyles);
 	}
 
 	internal override void UnassignDocument()
 	{
-		this.Document.DimensionStyles.OnRemove -= this.tableOnRemove;
+		this.Document.TextStyles.RemoveReference(this.Style.Name, this);
 
 		base.UnassignDocument();
 
-		this.Style = (TextStyle)this.Style.Clone();
-	}
-
-	protected override void tableOnRemove(object sender, CollectionChangedEventArgs e)
-	{
-		base.tableOnRemove(sender, e);
-
-		if (e.Item.Equals(this.Style))
-		{
-			this.Style = this.Document.TextStyles[TextStyle.DefaultName];
-		}
+		this._style = (TextStyle)this.Style?.Clone();
 	}
 }

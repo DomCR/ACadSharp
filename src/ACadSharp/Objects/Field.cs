@@ -1,4 +1,5 @@
 ﻿using ACadSharp.Attributes;
+using ACadSharp.Classes;
 using System;
 using System.Collections.Generic;
 
@@ -13,7 +14,7 @@ namespace ACadSharp.Objects;
 /// </remarks>
 [DxfName(DxfFileToken.ObjectField)]
 [DxfSubClass(DxfSubclassMarker.Field)]
-public class Field : NonGraphicalObject
+public class Field : NonGraphicalObject, IDxfClassDefined
 {
 	/// <summary>
 	/// Gets or sets the collection of CAD objects associated with this entity.
@@ -116,20 +117,20 @@ public class Field : NonGraphicalObject
 		this.Children = new(this);
 	}
 
-	//90
-	//Data type of field value
-
-	//140
-	//Double value(if data type of field value is double)
-
-	//330
-	//ID value, AcDbSoftPointerId (if data type of field value is ID)
-
-	//92
-	//Binary data buffer size(if data type of field value is binary)
-
-	//310
-	//Binary data(if data type of field value is binary)
+	/// <inheritdoc/>
+	public DxfClass GetDxfClass()
+	{
+		return new DxfClass
+		{
+			CppClassName = DxfSubclassMarker.Field,
+			DwgVersion = ACadVersion.AC1018,
+			DxfName = DxfFileToken.ObjectField,
+			ItemClassId = 499,
+			MaintenanceVersion = 0,
+			ProxyFlags = ProxyFlags.CloningAllowed | ProxyFlags.DisablesProxyWarningDialog,
+			WasZombie = false,
+		};
+	}
 
 	internal override void AssignDocument(CadDocument doc)
 	{

@@ -1,6 +1,7 @@
 ﻿using ACadSharp.Attributes;
 using ACadSharp.Tables;
 using CSMath;
+using CSMath.Extensions;
 using System;
 
 namespace ACadSharp.Entities
@@ -130,7 +131,7 @@ namespace ACadSharp.Entities
 			}
 
 			// center cross
-			if (!MathHelper.IsZero(this.Style.CenterMarkSize))
+			if (!this.Style.CenterMarkSize.IsZero())
 			{
 				this._block.Entities.AddRange(centerCross(this.Center, radius, this.Style));
 			}
