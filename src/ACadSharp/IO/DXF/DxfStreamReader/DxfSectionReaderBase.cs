@@ -5,7 +5,6 @@ using ACadSharp.Tables;
 using ACadSharp.XData;
 using CSMath;
 using CSMath.Extensions;
-using CSUtilities.Converters;
 using CSUtilities.Extensions;
 using System;
 using System.Collections.Generic;
@@ -649,14 +648,7 @@ internal abstract class DxfSectionReaderBase
 						byte[] array = this._reader.ValueAsBinaryChunk;
 						if (array.Length == 16)
 						{
-							int year = LittleEndianConverter.Instance.ToInt16(array, 0);
-							int month = LittleEndianConverter.Instance.ToInt16(array, 2);
-							int day = LittleEndianConverter.Instance.ToInt16(array, 6);
-							int hour = LittleEndianConverter.Instance.ToInt16(array, 8);
-							int minute = LittleEndianConverter.Instance.ToInt16(array, 10);
-							int second = LittleEndianConverter.Instance.ToInt16(array, 12);
-							int millisecond = LittleEndianConverter.Instance.ToInt16(array, 14);
-							value.SetValue(new DateTime(year, month, day, hour, minute, second, millisecond));
+							value.SetValue(CadUtils.FromSystemTime(array));
 						}
 					}
 					break;

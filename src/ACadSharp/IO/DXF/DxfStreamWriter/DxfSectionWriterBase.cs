@@ -3,9 +3,7 @@ using ACadSharp.IO.DXF.DxfStreamWriter;
 using ACadSharp.Tables;
 using ACadSharp.XData;
 using CSMath;
-using CSUtilities.Converters;
 using System;
-using System.IO;
 using System.Linq;
 
 namespace ACadSharp.IO.DXF;
@@ -65,17 +63,7 @@ internal abstract partial class DxfSectionWriterBase
 				case CadValueType.Date:
 					if (value.Value is DateTime date)
 					{
-						byte[] array = new byte[16];
-						var stream = new MemoryStream(array);
-
-						stream.Write(LittleEndianConverter.Instance.GetBytes((short)date.Year), 0, 2);
-						stream.Write(LittleEndianConverter.Instance.GetBytes((short)date.Month), 0, 2);
-						stream.Write(LittleEndianConverter.Instance.GetBytes((short)date.DayOfWeek), 0, 2);
-						stream.Write(LittleEndianConverter.Instance.GetBytes((short)date.Day), 0, 2);
-						stream.Write(LittleEndianConverter.Instance.GetBytes((short)date.Hour), 0, 2);
-						stream.Write(LittleEndianConverter.Instance.GetBytes((short)date.Minute), 0, 2);
-						stream.Write(LittleEndianConverter.Instance.GetBytes((short)date.Second), 0, 2);
-						stream.Write(LittleEndianConverter.Instance.GetBytes((short)date.Millisecond), 0, 2);
+						byte[] array = CadUtils.ToSystemTime(date);
 
 						this._writer.Write(92, array.Length);
 						this._writer.Write(310, array);

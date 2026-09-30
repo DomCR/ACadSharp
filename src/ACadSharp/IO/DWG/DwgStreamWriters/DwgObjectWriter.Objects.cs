@@ -829,17 +829,7 @@ internal partial class DwgObjectWriter : DwgSectionIO
 			byte[] array;
 			if (this.R2007Plus)
 			{
-				array = new byte[16];
-				var stream = new MemoryStream(array);
-
-				stream.Write(LittleEndianConverter.Instance.GetBytes((short)date.Value.Year), 0, 2);
-				stream.Write(LittleEndianConverter.Instance.GetBytes((short)date.Value.Month), 0, 2);
-				stream.Write(LittleEndianConverter.Instance.GetBytes((short)date.Value.DayOfWeek), 0, 2);
-				stream.Write(LittleEndianConverter.Instance.GetBytes((short)date.Value.Day), 0, 2);
-				stream.Write(LittleEndianConverter.Instance.GetBytes((short)date.Value.Hour), 0, 2);
-				stream.Write(LittleEndianConverter.Instance.GetBytes((short)date.Value.Minute), 0, 2);
-				stream.Write(LittleEndianConverter.Instance.GetBytes((short)date.Value.Second), 0, 2);
-				stream.Write(LittleEndianConverter.Instance.GetBytes((short)date.Value.Millisecond), 0, 2);
+				array = CadUtils.ToSystemTime(date.Value);
 			}
 			else
 			{
