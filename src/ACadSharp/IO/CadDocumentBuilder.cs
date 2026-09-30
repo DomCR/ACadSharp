@@ -1,4 +1,5 @@
-﻿using ACadSharp.Entities;
+﻿using ACadSharp.DataStorage;
+using ACadSharp.Entities;
 using ACadSharp.IO.Templates;
 using ACadSharp.Objects;
 using ACadSharp.Tables;
@@ -18,6 +19,8 @@ internal abstract class CadDocumentBuilder
 	public AppIdsTable AppIds { get; set; } = new AppIdsTable();
 
 	public BlockRecordsTable BlockRecords { get; set; } = new BlockRecordsTable();
+
+	public CadFileDataStorage DataStorage { get; set; }
 
 	public DimensionStylesTable DimensionStyles { get; set; } = new DimensionStylesTable();
 
@@ -88,6 +91,38 @@ internal abstract class CadDocumentBuilder
 			default:
 				this.cadObjectsTemplates.Add(template.CadObject.Handle, template);
 				break;
+		}
+	}
+
+	public void BuildDataStorage()
+	{
+		if (this.DataStorage == null)
+		{
+			return;
+		}
+
+		foreach (var record in this.DataStorage.Records)
+		{
+			if (!record.Columns.TryGetValue(CadFileDataStorage.Id, out var idColumn))
+			{
+				continue;
+			}
+
+			if (!record.Columns.TryGetValue(CadFileDataStorage.AsmData, out var dataColumn))
+			{
+				continue;
+			}
+
+			ulong handle = (ulong)idColumn.CodeValuePair.Value;
+			byte[] bytes = (byte[])dataColumn.CodeValuePair.Value;
+
+			if (!this.DocumentToBuild.TryGetCadObject<ModelerGeometry>(handle, out var geometry))
+			{
+				this.Notify($"ModelerGeometry with handle {handle} not found in the document", NotificationType.Warning);
+				continue;
+			}
+
+			geometry.AcisData = bytes;
 		}
 	}
 
