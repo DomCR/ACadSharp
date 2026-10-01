@@ -93,6 +93,7 @@ public abstract class WriterSingleObjectTests : IOTestsBase
 		Data.Add(new(nameof(SingleCaseGenerator.XData)));
 		Data.Add(new(nameof(SingleCaseGenerator.XRef)));
 		Data.Add(new(nameof(SingleCaseGenerator.SPlineCreation)));
+		Data.Add(new(nameof(SingleCaseGenerator.SurfaceEntities)));
 		Data.Add(new(nameof(SingleCaseGenerator.TextAlignment)));
 		Data.Add(new(nameof(SingleCaseGenerator.InvalidEntities)));
 		Data.Add(new(nameof(SingleCaseGenerator.CreateXRecords)));
@@ -2673,6 +2674,27 @@ public abstract class WriterSingleObjectTests : IOTestsBase
 				Assert.NotNull(result);
 				EntityComparator.IsEqual(spline, result);
 				Assert.Equal(this.Document.ModelSpace.Entities.Count, doc.ModelSpace.Entities.Count);
+			};
+		}
+
+		public void SurfaceEntities()
+		{
+			Line line = new Line(XYZ.Zero, new XYZ(10, 10, 0));
+			this.Document.Entities.Add(line);
+
+			//Surfaces are not written yet, the writers skip them
+			this.Document.Entities.Add(new Surface());
+			this.Document.Entities.Add(new ExtrudedSurface());
+			this.Document.Entities.Add(new LoftedSurface());
+			this.Document.Entities.Add(new NurbSurface());
+			this.Document.Entities.Add(new PlaneSurface());
+			this.Document.Entities.Add(new RevolvedSurface());
+			this.Document.Entities.Add(new SweptSurface());
+
+			this.AssertRoundtrip = (doc) =>
+			{
+				Assert.NotNull(doc.GetCadObject<Line>(line.Handle));
+				Assert.Empty(doc.Entities.OfType<Surface>());
 			};
 		}
 
