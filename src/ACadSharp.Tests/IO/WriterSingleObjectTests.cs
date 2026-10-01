@@ -12,8 +12,10 @@ using System.Collections.Generic;
 using System.Diagnostics;
 using System.IO;
 using System.Linq;
+using System.Xml.Linq;
 using Xunit;
 using Xunit.Abstractions;
+using static System.Net.Mime.MediaTypeNames;
 
 namespace ACadSharp.Tests.IO;
 
@@ -51,6 +53,7 @@ public abstract class WriterSingleObjectTests : IOTestsBase
 		Data.Add(new(nameof(SingleCaseGenerator.SingleLongMText)));
 		Data.Add(new(nameof(SingleCaseGenerator.SingleMTextRotation)));
 		Data.Add(new(nameof(SingleCaseGenerator.SingleMTextSpecialCharacter)));
+		Data.Add(new(nameof(SingleCaseGenerator.TextWithKoreanCharacters)));
 		Data.Add(new(nameof(SingleCaseGenerator.TextWithChineseCharacters)));
 		Data.Add(new(nameof(SingleCaseGenerator.CreateGroup)));
 		Data.Add(new(nameof(SingleCaseGenerator.SingleMTextMultiline)));
@@ -1884,7 +1887,7 @@ public abstract class WriterSingleObjectTests : IOTestsBase
 
 			this.AssertRoundtrip = (doc) =>
 			{
-				if(this.Document.Header.Version <= ACadVersion.AC1015 || this.Format == CadFileFormat.DWG)
+				if (this.Document.Header.Version <= ACadVersion.AC1015 || this.Format == CadFileFormat.DWG)
 				{
 					//Not supported in R2000 and earlier, will be converted to index color
 					return;
@@ -2256,7 +2259,7 @@ public abstract class WriterSingleObjectTests : IOTestsBase
 
 			this.AssertRoundtrip = (doc) =>
 			{
-				if(this.Format == CadFileFormat.DXF)
+				if (this.Format == CadFileFormat.DXF)
 				{
 					return;
 				}
@@ -2733,7 +2736,29 @@ public abstract class WriterSingleObjectTests : IOTestsBase
 
 				Assert.NotNull(mtextResult);
 				Assert.NotNull(textResult);
+
 				Assert.Equal(mtext.Value, mtextResult.Value);
+				Assert.Equal(text.Value, textResult.Value);
+
+				EntityComparator.IsEqual(text, textResult);
+				EntityComparator.IsEqual(mtext, mtextResult);
+			};
+		}
+
+		public void TextWithKoreanCharacters()
+		{
+			this.Document.Header.CodePage = "kcs5601";
+
+			//this.Document.Header.CodePage = "ANSI_949";//Invalid
+
+			var text = new TextEntity { Value = "안녕하세요 도면", Height = 2.5 };
+			this.Document.Entities.Add(text);
+
+			this.AssertRoundtrip = (doc) =>
+			{
+				TextEntity textResult = doc.GetCadObject<TextEntity>(text.Handle);
+				Assert.NotNull(textResult);
+				Assert.Equal(text.Value, textResult.Value);
 				EntityComparator.IsEqual(text, textResult);
 			};
 		}
