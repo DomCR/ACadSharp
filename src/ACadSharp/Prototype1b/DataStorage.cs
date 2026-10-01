@@ -39,10 +39,10 @@ public class DataStorage
 	/// </summary>
 	public PreviousSave PreviousSave { get; set; }
 
-	/// <summary>
-	/// All registered Schemas
-	/// </summary>
-	public List<SchemaData> SchemaFields { get; set; }
+        /// <summary>
+		/// All registered Schemes
+		/// </summary>
+        public List<SchemaData> SchemaFields { get; set; }
 
 	/// <summary>
 	/// The search object to get the data entries associated with schema entries

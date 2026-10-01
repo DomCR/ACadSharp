@@ -49,7 +49,8 @@ public class CadDocument : IHandledCadObject
 	/// <summary>
 	/// The data stored in the Prototype1b header section. This primarily contains ACIS and thumbnail data
 	/// </summary>
-	public DataStorage DataStorage { get; set; }
+	[Obsolete("This property is obsolete and will be removed in future versions.")]
+	public Prototype1b.DataStorage DataStorage { get; set; }
 
 	/// <summary>
 	/// The collection of the system variables in the drawing.
@@ -388,11 +389,6 @@ public class CadDocument : IHandledCadObject
 		return this._cadObjects.Values
 			.OfType<CadObject>()
 			.Count(c => c.ObjectName == dxfName);
-	}
-
-	public bool IsValid()
-	{
-		throw new NotImplementedException();
 	}
 
 	/// <summary>

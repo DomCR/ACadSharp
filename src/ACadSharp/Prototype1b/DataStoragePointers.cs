@@ -6,6 +6,8 @@ namespace ACadSharp.Prototype1b
 	[Obsolete("Redundant class")]
 	public class DataStoragePointers
 	{
+		// Indices for reading Segments, Schemes and Data
+		public SegmentIndex SegmentIndex { get; set; }
 		public DataIndex DataIndex { get; set; }
 
 		/// <summary>
