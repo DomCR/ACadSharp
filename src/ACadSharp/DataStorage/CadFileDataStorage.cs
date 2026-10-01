@@ -16,22 +16,61 @@ internal class CadFileDataStorage
 internal class FileSegment
 {
 	public FileSegmentHeader Header { get; set; }
+
+	public override string ToString()
+	{
+		return $"{this.Header.Name}";
+	}
 }
 
 internal class FileSegmentIndex : FileSegment
 {
 	public List<Entry> Entries { get; } = new();
 
+	public void AddEntry(ulong offset, uint size)
+	{
+		this.Entries.Add(new Entry { Offset = offset, Size = size });
+	}
+
 	public class Entry
 	{
 		public ulong Offset { get; set; }
 
 		public uint Size { get; set; }
-	}
 
-	public void AddEntry(ulong offset, uint size)
+		public override string ToString()
+		{
+			return $"Offset: {this.Offset} | Size: {this.Size}";
+		}
+	}
+}
+
+internal class SchemaIndex : FileSegment
+{
+	public List<Pointer> PropertyPointers { get; set; } = new();
+
+	public List<string> SchemaNames { get; set; } = new();
+
+	public List<Pointer> SchemaUnknownPropertyPointer { get; set; } = new();
+
+	public uint UnknownIndex1 { get; set; }
+
+	public long UnknownMagic { get; set; }
+
+	public List<Pointer> UnknownPropertyPointers { get; set; } = new();
+
+	public class Pointer
 	{
-		this.Entries.Add(new Entry { Offset = offset, Size = size });
+		public uint Index { get; set; }
+
+		public uint Offset { get; set; }
+
+		public uint SchemaIndex { get; set; }
+
+		public override string ToString()
+		{
+			return $"Index: {this.Index} | SchemaIndex: {this.SchemaIndex} | Offset: {this.Offset}";
+		}
 	}
 }
 

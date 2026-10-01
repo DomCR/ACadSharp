@@ -30,6 +30,6 @@ internal class FileSegmentHeader
 
 	public override string ToString()
 	{
-		return Name;
+		return this.Name;
 	}
 }
