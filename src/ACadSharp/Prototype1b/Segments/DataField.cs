@@ -5,7 +5,7 @@ namespace ACadSharp.Prototype1b
 {
 	public class DataField : IPrototype1bSegment
     {
-        public SegmentHeader Header { get; set; }
+        public FileSegmentHeader Header { get; set; }
         public List<DataEntry> Entries { get; set; }
     }
 }

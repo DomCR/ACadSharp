@@ -1,5 +1,8 @@
 ﻿using ACadSharp.Prototype1b;
 using ACadSharp.Prototype1b.Segments;
+using CSUtilities.Converters;
+using CSUtilities.IO;
+using CSUtilities.Text;
 using System;
 using System.Collections.Generic;
 using System.Diagnostics;
@@ -16,7 +19,7 @@ namespace ACadSharp.IO.DWG.DwgStreamReaders
 		private readonly Prototype1b.DataStorage _storage = new Prototype1b.DataStorage();
 		private readonly DwgDocumentBuilder _builder;
 
-		public override string SectionName => DwgSectionDefinition.AcDsPrototype;
+	private readonly Encoding _encoding = TextEncoding.Windows1252();
 
 		public DwgPrototype1bReader(ACadVersion version, DwgDocumentBuilder builder, IDwgStreamReader reader) : base(version)
 		{
@@ -37,8 +40,11 @@ namespace ACadSharp.IO.DWG.DwgStreamReaders
 				this._storage.IndexPointers.SchemaIndex = this.readSchemaIndex();
 				this._storage.IndexPointers.FreeSpace = this.readFreeSpace();       // Index to empty spaces (padding or so) within the file
 
-				// Probably the file state before the last save
-				this._storage.PreviousSave = this.readPreviousSave();
+			// Index to empty spaces (padding or so) within the file
+			this._storage.FreeSpace = this.readFreeSpace();
+
+			// Probably the file state before the last save
+			this._storage.PreviousSave = this.readPreviousSave();
 
 				// Schema data lookup
 				this._storage.SchemaSearch = this.readSchemaSearch();
@@ -47,27 +53,27 @@ namespace ACadSharp.IO.DWG.DwgStreamReaders
 					search.SchemaName = this._storage.IndexPointers.SchemaIndex.SchemaNames[search.SchemaNameIndex];
 				}
 
-				this._storage.SchemaFields = [];
-				this._storage.DataFields = [];
-				this._storage.Blobs = [];
+			this._storage.SchemaFields = [];
+			this._storage.DataFields = [];
+			this._storage.Blobs = [];
 
-				// From this point on it should be possible to read storage entries sequentially
-				// The issue is that sometimes there seemingly are empty padding sections (which should be
-				// referenced by the FreeSpace entry) that are missing from the FreeSpace definition or are larger
-				// than specified in the FreeSpace definition.
+			// From this point on it should be possible to read storage entries sequentially
+			// The issue is that sometimes there seemingly are empty padding sections (which should be
+			// referenced by the FreeSpace entry) that are missing from the FreeSpace definition or are larger
+			// than specified in the FreeSpace definition.
 
-				this.ReadSegments();
-			}
-			catch (Exception ex)
-			{
-				if (!this._builder.Configuration.Failsafe)
-					throw;
-
-				this.notify("An error occurred while reading the Prototype1b", NotificationType.Error, ex);
-			}
-
-			return this._storage;
+			this.readSegments();
 		}
+		catch (Exception ex)
+		{
+			if (!this._builder.Configuration.Failsafe)
+				throw;
+
+			this.notify("An error occurred while reading the Prototype1b", NotificationType.Error, ex);
+		}
+
+		return this._storage;
+	}
 
 		internal IPrototype1bSegment ReadSegmentAt(ulong offset)
 		{
@@ -467,8 +473,8 @@ namespace ACadSharp.IO.DWG.DwgStreamReaders
 			}
 			this._reader.Position = maxPos;
 
-			// Sort headers to get ascending offset values to prevent wrong offset calculations (TODO: Is this ok or should the order maybe be preserved?)
-			headers = headers.OrderBy(x => x.DataOffset).ToList();
+		// Sort headers to get ascending offset values to prevent wrong offset calculations (TODO: Is this ok or should the order maybe be preserved?)
+		headers = headers.OrderBy(x => x.DataOffset).ToList();
 
 			// Get the position to the beginning of the data content section and skip padding and unreferenced DataHeader entries
 			uint headerStartPosition = headerEndPosition - SegmentHeader.SIZE;
