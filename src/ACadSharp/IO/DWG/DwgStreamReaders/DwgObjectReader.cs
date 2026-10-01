@@ -5593,8 +5593,6 @@ namespace ACadSharp.IO.DWG
 		private CadTemplate readSurface<T>(CadEntityTemplate<T> template)
 			where T : Surface, new()
 		{
-			//AcDbModelerGeometry: the common modeler data carries the ACIS payload
-			//(embedded in the entity before R2013, AcDs data section from R2013 on)
 			this.readModelerGeometry(template);
 
 			//The AcDbSurface data (isoline counts) and the surface subclass data
