@@ -170,34 +170,18 @@ public class CadDictionary : NonGraphicalObject, IObservableCadCollection<NonGra
 	{
 		root.TryAdd(new CadDictionary(AcadColor));
 		root.TryAdd(new CadDictionary(AcadGroup));
-
 		root.TryAdd(new CadDictionary(AcadLayout));
-
 		root.TryAdd(new CadDictionary(AcadMaterial));
 		root.TryAdd(new CadDictionary(AcadSortEnts));
-
 		root.TryAdd(new CadDictionary(AcadMLeaderStyle));
-
 		root.TryAdd(new CadDictionary(AcadMLineStyle));
-
 		root.TryAdd(new CadDictionary(AcadTableStyle));
 		root.TryAdd(new CadDictionary(AcadPlotSettings));
-
-		//root.TryAdd(new CadDictionaryWithDefault(AcadPlotStyleName, new PlotSettings("Normal")));
-
-		// { AcadPlotStyleName, new CadDictionaryWithDefault() },	//Add default entry "Normal"	PlaceHolder	??
-
 		root.TryAdd(new CadDictionary(VariableDictionary));
-
-		//DictionaryVars Entry DIMASSOC and HIDETEXT ??
-
 		root.TryAdd(new CadDictionary(AcadScaleList));
-
 		root.TryAdd(new CadDictionary(AcadVisualStyle));
-		root.TryAdd(new CadDictionary(AcadFieldList));
 		root.TryAdd(new CadDictionary(AcadImageDict));
-
-		root.TryAdd(new CadDictionary(AcadMaterial));
+		root.TryAdd(new CadDictionary(AcadFieldList));
 	}
 
 	/// <summary>
