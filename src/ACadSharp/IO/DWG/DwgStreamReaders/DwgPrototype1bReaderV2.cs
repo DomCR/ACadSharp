@@ -40,6 +40,8 @@ internal class DwgPrototype1bReaderV2 : DwgSectionIO
 			var schemes = this.readSchemaDataEntries();
 			storage.Schemes.AddRange(schemes.SelectMany(s => s.Schemes));
 
+			this.readDataIndex();
+
 			this._builder.DataStorage = storage;
 		}
 		catch (Exception ex)
@@ -114,6 +116,42 @@ internal class DwgPrototype1bReaderV2 : DwgSectionIO
 		}
 
 		return record;
+	}
+
+	private void readDataIndex()
+	{
+		this._reader.Position = (long)this._fileSegmentIndex.Entries[(int)this._fileHeader.DataIndexSegmentIndex].Offset;
+
+		DataIndexSegment dataIndex = new();
+
+		this.readDataStorageFileSegment(dataIndex);
+
+		//UInt32 Unknown property count
+		int entryCount = this._reader.ReadInt();
+		//UInt32 Unknown (0)
+		var unknown1 = this._reader.ReadInt();
+		for (int i = 0; i < entryCount; i++)
+		{
+			//UInt32 Segment index (0 means stub entry and can be ignored).
+			uint segmentIndex = this._reader.ReadUInt();
+			//UInt32 Local offset. This is a local offset in the stream, relative to the file segment’s
+			//stream start position.This points to a data file segment, see paragraph 24.2.2.3.
+			uint localOffset = this._reader.ReadUInt();
+			//UInt32 Schema index
+			uint schemaIndex = this._reader.ReadUInt();
+
+			if (segmentIndex == 0)
+			{
+				continue;
+			}
+
+			dataIndex.Entries.Add(new DataIndexSegment.Entry
+			{
+				SegmentIndex = segmentIndex,
+				LocalOffset = localOffset,
+				SchemaIndex = schemaIndex,
+			});
+		}
 	}
 
 	private void readDataStorageFileSegment(FileSegment segment)
