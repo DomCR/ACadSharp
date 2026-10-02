@@ -131,30 +131,15 @@ public class Ellipse : Entity, ICurve, IOrientable
 	/// <inheritdoc/>
 	public override void ApplyTransform(Transform transform)
 	{
-		XYZ perp = XYZ.Cross(this.Normal, this.MajorAxisEndPoint);
-		perp = perp.Normalize();
-		perp *= this.MajorAxisEndPoint.GetLength() * this.RadiusRatio;
-
+		// Center is a point -> full transform (scale + rotation + translation)
 		this.Center = transform.ApplyTransform(this.Center);
-		this.MajorAxisEndPoint = transform.ApplyScale(this.MajorAxisEndPoint);
 
-		XYZ newPrep = transform.ApplyTransform(perp);
-		if (newPrep != XYZ.Zero && this.MajorAxisEndPoint != XYZ.Zero)
-		{
-			var ratio = newPrep.GetLength() / this.MajorAxisEndPoint.GetLength();
-			if (ratio > 1)
-			{
-				ratio = this.RadiusRatio;
-			}
+		// MajorAxisEndPoint is a vector relative to the center -> apply only the
+		// linear part (scale then rotation), without the translation.
+		this.MajorAxisEndPoint = transform.ApplyRotation(transform.ApplyScale(this.MajorAxisEndPoint));
 
-			this.RadiusRatio = ratio;
-
-			this.Normal = XYZ.Cross(newPrep, this.MajorAxisEndPoint).Normalize();
-		}
-		else
-		{
-			this.Normal = this.transformNormal(transform, this.Normal);
-		}
+		// Normal is a direction -> rotate only (no scale, no translation).
+		this.Normal = this.transformNormal(transform, this.Normal);
 	}
 
 	/// <inheritdoc/>

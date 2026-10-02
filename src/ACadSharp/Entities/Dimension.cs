@@ -264,10 +264,10 @@ public abstract class Dimension : Entity, IOrientable
 
 		this.DefinitionPoint = this.applyWorldMatrix(this.DefinitionPoint, transform, transOW, transWO);
 
-		if (this.IsTextUserDefinedLocation)
-		{
-			this.TextMiddlePoint = this.applyWorldMatrix(this.TextMiddlePoint, transform, transOW, transWO);
-		}
+		// The text middle point (group 11) is always stored as the actual text
+		// position and must follow the same transformation as the rest of the
+		// dimension geometry, regardless of the user-defined-location flag.
+		this.TextMiddlePoint = this.applyWorldMatrix(this.TextMiddlePoint, transform, transOW, transWO);
 
 		this.Normal = newNormal;
 	}

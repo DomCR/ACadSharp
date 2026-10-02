@@ -2,6 +2,7 @@
 using ACadSharp.Extensions;
 using ACadSharp.Tables;
 using CSMath;
+using CSMath.Extensions;
 using System;
 
 namespace ACadSharp.Entities;
@@ -104,8 +105,38 @@ public class Shape : Entity, IOrientable
 	/// <inheritdoc/>
 	public override void ApplyTransform(Transform transform)
 	{
-		this.Normal = this.transformNormal(transform, this.Normal);
-		this.InsertionPoint = transform.ApplyTranslation(this.InsertionPoint);
+		XYZ newPosition = transform.ApplyTransform(this.InsertionPoint);
+		XYZ newNormal = this.transformNormal(transform, this.Normal);
+
+		Matrix3 transOW = Matrix3.ArbitraryAxis(this.Normal);
+		transOW *= Matrix3.RotationZ(this.Rotation);
+
+		Matrix3 transWO = Matrix3.ArbitraryAxis(newNormal);
+		transWO = transWO.Transpose();
+
+		var transformation = new Matrix3(transform.Matrix);
+		XYZ v = transOW * XYZ.AxisX;
+		v = transformation * v;
+		v = transWO * v;
+		double newRotation = new XY(v.X, v.Y).GetAngle();
+
+		transWO = Matrix3.RotationZ(newRotation).Transpose() * transWO;
+
+		// Effective scales: X = Size * RelativeXScale, Y = Size, Z = Size
+		XYZ s = transOW * new XYZ(this.Size * this.RelativeXScale, this.Size, this.Size);
+		s = transformation * s;
+		s = transWO * s;
+		XYZ newScale = new XYZ(
+			s.X.IsZero() ? MathHelper.Epsilon : s.X,
+			s.Y.IsZero() ? MathHelper.Epsilon : s.Y,
+			s.Z.IsZero() ? MathHelper.Epsilon : s.Z);
+
+		this.Size = newScale.Y;
+		this.RelativeXScale = newScale.X / newScale.Y;
+
+		this.Normal = newNormal;
+		this.InsertionPoint = newPosition;
+		this.Rotation = newRotation;
 	}
 
 	/// <inheritdoc/>
