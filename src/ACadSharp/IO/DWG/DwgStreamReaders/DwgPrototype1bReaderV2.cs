@@ -2,6 +2,7 @@
 using CSUtilities.Text;
 using System;
 using System.Collections.Generic;
+using System.Linq;
 using System.Text;
 
 namespace ACadSharp.IO.DWG.DwgStreamReaders;
@@ -18,6 +19,8 @@ internal class DwgPrototype1bReaderV2 : DwgSectionIO
 
 	private FileSegmentIndex _fileSegmentIndex;
 
+	private SchemaIndex _schemaIndex;
+
 	public DwgPrototype1bReaderV2(ACadVersion version, DwgDocumentBuilder builder, IDwgStreamReader reader) : base(version)
 	{
 		this._reader = reader;
@@ -32,7 +35,10 @@ internal class DwgPrototype1bReaderV2 : DwgSectionIO
 		{
 			this._fileHeader = this.readFileHeader();
 			this._fileSegmentIndex = this.readFileSegmentIndex();
-			this.readSchemaIndex();
+			this._schemaIndex = this.readSchemaIndex();
+
+			var schemes = this.readSchemaDataEntries();
+			storage.Schemes.AddRange(schemes.SelectMany(s => s.Schemes));
 
 			this._builder.DataStorage = storage;
 		}
@@ -43,6 +49,71 @@ internal class DwgPrototype1bReaderV2 : DwgSectionIO
 
 			this.notify("An error occurred while reading the Prototype1b", NotificationType.Error, ex);
 		}
+	}
+
+	private AcdsSchema readAcdsSchema()
+	{
+		AcdsSchema schema = new();
+
+		ushort indexCount = BitConverter.ToUInt16(this._reader.ReadBytes(2), 0);
+		for (int i = 0; i < indexCount; i++)
+		{
+			schema.Indices.Add(this._reader.ReadRawULong());
+		}
+
+		ushort propCount = BitConverter.ToUInt16(this._reader.ReadBytes(2), 0);
+		for (int i = 0; i < propCount; i++)
+		{
+			schema.EmbeddedRecords.Add(this.readAcdsSchemaRecord());
+		}
+
+		return schema;
+	}
+
+	private AcdsSchemaRecord readAcdsSchemaRecord()
+	{
+		AcdsSchemaRecord record = new();
+
+		record.Flags = (SchemaRecordFlags)this._reader.ReadInt();
+		record.NameIndex = this._reader.ReadUInt();
+
+		// Get type size
+		if ((record.Flags & SchemaRecordFlags.NoType) == 0)
+		{
+			record.Type = this._reader.ReadUInt();
+			if (record.Type == 0xE)
+			{
+				record.TypeSize = this._reader.ReadUInt();
+			}
+			else
+			{
+				record.TypeSize = AcdsSchemaRecord.TypeSizes[record.Type];
+			}
+		}
+
+		// Read unknown fields
+		if (record.Flags == SchemaRecordFlags.Unknown0)
+		{
+			record.Unknown1 = this._reader.ReadUInt();
+		}
+		else if (record.Flags == SchemaRecordFlags.Unknown1)
+		{
+			record.Unknown2 = this._reader.ReadUInt();
+		}
+
+		// Read values
+		var valuesCount = BitConverter.ToUInt16(this._reader.ReadBytes(2), 0);
+		if (record.TypeSize == 0)
+		{
+			return record;
+		}
+
+		for (int i = 0; i < valuesCount; i++)
+		{
+			record.Values.Add(this._reader.ReadBytes((int)record.TypeSize));
+		}
+
+		return record;
 	}
 
 	private void readDataStorageFileSegment(FileSegment segment)
@@ -119,6 +190,76 @@ internal class DwgPrototype1bReaderV2 : DwgSectionIO
 		return this._reader.Encoding.GetString(bytes.ToArray());
 	}
 
+	private SchemaData readSchemaData(long offset)
+	{
+		this._reader.Position = offset;
+
+		var schemaData = new SchemaData();
+
+		this.readDataStorageFileSegment(schemaData);
+
+		long start = this._reader.Position;
+
+		// Begin repeat schema unknown properties in the associated schema index file
+		//segment(paragraph 24.2.2.4), where the property’s segment index is equal to
+		//this file segment’s segment index(found in the header).
+		var unknownPropertyCount = this._schemaIndex.PropertyPointers.Count(p => p.SegmentIndex == schemaData.Header.SegmentIndex);
+		for (int i = 0; i < unknownPropertyCount; i++)
+		{
+			var dataSize = this._reader.ReadUInt();
+			var unknownFlags = this._reader.ReadUInt();
+		}
+
+		// Read schemas
+		foreach (var pointer in this._schemaIndex.SchemaPointers.Where(p => p.SegmentIndex == schemaData.Header.SegmentIndex))
+		{
+			AcdsSchema schema = this.readAcdsSchema();
+
+			schema.Index = pointer.Index;
+			schema.Name = this._schemaIndex.SchemaNames[(int)pointer.Index];
+			schemaData.Schemes.Add(schema);
+		}
+
+		// Align to the next 16 byte boundary
+		long boundary = this._reader.Position % 16;
+		if (boundary != 0)
+		{
+			byte[] _ = this._reader.ReadBytes((int)(16 - boundary));
+		}
+
+		// Read schema property names
+		uint propertyNameCount = this._reader.ReadUInt();
+		string[] propertyNames = new string[propertyNameCount];
+		for (int i = 0; i < propertyNameCount; i++)
+		{
+			propertyNames[i] = this.readNullTerminatedString();
+		}
+
+		// Assign schema Property names
+		foreach (AcdsSchema schema in schemaData.Schemes)
+		{
+			foreach (AcdsSchemaRecord property in schema.EmbeddedRecords)
+			{
+				property.Name = propertyNames[(int)property.NameIndex];
+			}
+		}
+
+		return schemaData;
+	}
+
+	private List<SchemaData> readSchemaDataEntries()
+	{
+		List<SchemaData> schemes = new();
+
+		foreach (var item in this._schemaIndex.GetAllPointers())
+		{
+			var schema = this.readSchemaData((long)this._fileSegmentIndex.Entries[(int)item.SegmentIndex].Offset);
+			schemes.Add(schema);
+		}
+
+		return schemes;
+	}
+
 	private SchemaIndex readSchemaIndex()
 	{
 		var startOffset = (long)this._fileSegmentIndex.Entries[(int)this._fileHeader.SchemaIndexSegmentIndex].Offset;
@@ -142,11 +283,11 @@ internal class DwgPrototype1bReaderV2 : DwgSectionIO
 			//UInt32 Local offset of the unknown schema property. This is a local offset in the
 			//stream, relative to the schema data file segment’s stream start position.
 			var offset = this._reader.ReadUInt();
-			schema.UnknownPropertyPointers.Add(new SchemaIndex.Pointer
+			schema.SchemaPointers.Add(new SchemaIndex.Pointer
 			{
 				Index = index,
-				SchemaIndex = schemaIndex,
-				Offset = offset,
+				SegmentIndex = schemaIndex,
+				LocalOffset = offset,
 			});
 		}
 
@@ -168,8 +309,8 @@ internal class DwgPrototype1bReaderV2 : DwgSectionIO
 			var index = this._reader.ReadUInt();
 			schema.PropertyPointers.Add(new SchemaIndex.Pointer
 			{
-				SchemaIndex = schemaIndex,
-				Offset = offset,
+				SegmentIndex = schemaIndex,
+				LocalOffset = offset,
 				Index = index,
 			});
 		}

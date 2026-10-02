@@ -162,11 +162,14 @@ internal class DxfAcdsDataSectionReader : DxfSectionReaderBase
 				case 90:
 					record.Index = (int)this._reader.ValueAsInt;
 					break;
+				case 91:
+					record.Flags = (SchemaRecordFlags)this._reader.ValueAsInt;
+					break;
 				case 95:
 					record.Id = (int)this._reader.ValueAsShort;
 					break;
 				case 280:
-					record.Value280 = this._reader.ValueAsShort;
+					record.Type = (uint)this._reader.ValueAsInt;
 					break;
 				case 291:
 					record.Value291 = this._reader.ValueAsShort;
