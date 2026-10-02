@@ -55,6 +55,15 @@ public abstract class TableEntryCommonTests<T>
 	}
 
 	[Fact]
+	public void XrefDependentNameAllowsPipe()
+	{
+		T entry = this.createEntry("xref|name");
+		entry.Flags |= StandardFlags.XrefDependent;
+
+		Assert.True(entry.HasValidDxfName());
+	}
+
+	[Fact]
 	public void SetFlagUsingMapper()
 	{
 		T entry = this.createEntry();
