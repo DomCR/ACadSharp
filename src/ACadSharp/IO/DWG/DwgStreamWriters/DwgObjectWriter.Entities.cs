@@ -1,5 +1,6 @@
 ﻿using ACadSharp.Entities;
 using ACadSharp.Objects;
+using ACadSharp.Types;
 using CSMath;
 using System;
 using System.Collections.Generic;
@@ -2415,9 +2416,114 @@ internal partial class DwgObjectWriter : DwgSectionIO
 		//	0x10: table direction, 0 = up, 1 = down,
 		//	0x20: title suppressed.
 		//	Normally 0x06 is always set.
-
-		throw new NotImplementedException();
+		//
+		// R2004 (AC1018) 及更早版本：表格数据内联在实体中（无独立 TABLECONTENT 对象）。
+		// 字段序列与读取端 readTableEntity() 的 "Until R2007" 分支严格对称。
+		this.writeTableEntityR2004(table);
 	}
+
+	/// <summary>
+	/// 写出 R2004 (AC1018) 及更早版本的 ACAD_TABLE 实体数据（内联表格内容）。
+	/// 字段顺序与 <see cref="DwgObjectReader"/> 中 readTableEntity 的 R2007 之前分支一致。
+	/// </summary>
+	private void writeTableEntityR2004(TableEntity table)
+	{
+		//BS 90 Flag for table value
+		this._writer.WriteBitShort((short)table.ValueFlag);
+
+		//3BD 11 Horizontal direction
+		this._writer.Write3BitDouble(table.HorizontalDirection);
+
+		//BL 92 Number of columns
+		this._writer.WriteBitLong(table.Columns.Count);
+		//BL 91 Number of rows
+		this._writer.WriteBitLong(table.Rows.Count);
+
+		//BD 142 Column widths, repeats "# of columns" times
+		foreach (var column in table.Columns)
+		{
+			this._writer.WriteBitDouble(column.Width);
+		}
+
+		//BD 141 Row heights, repeats "# of rows" times
+		foreach (var row in table.Rows)
+		{
+			this._writer.WriteBitDouble(row.Height);
+		}
+
+		//H 342 Table Style ID (hard pointer)
+		this._writer.HandleReference(table.Style);
+
+		//Cell data, repeats for all cells in n x m table
+		foreach (var row in table.Rows)
+		{
+			foreach (var cell in row.Cells)
+			{
+				this.writeTableCellR2004(cell);
+			}
+		}
+
+		//B Has table overrides
+		// 本写出版本不产生覆盖数据，统一写 false，与读取端保持位流一致。
+		this._writer.WriteBit(false);
+
+		//B Has border color overrides
+		this._writer.WriteBit(false);
+
+		//B Has border lineweight overrides
+		this._writer.WriteBit(false);
+	}
+
+	/// <summary>
+	/// 写出 R2004 表格单元格数据，字段顺序与读取端 readTableCellData 的 R2007 之前分支严格对称。
+	/// </summary>
+	private void writeTableCellR2004(TableEntity.Cell cell)
+	{
+		//BS 171 Cell type, 1 = text, 2 = block
+		this._writer.WriteBitShort((short)cell.Type);
+
+		//RC 172 Cell edge flags
+		this._writer.WriteByte((byte)cell.EdgeFlags);
+
+		//B 173 Cell merged value
+		this._writer.WriteBit(cell.MergedValue != 0);
+
+		//B 174 Cell autofit flag
+		this._writer.WriteBit(cell.AutoFit);
+
+		//BL 175 Merged width flag (horizontal number of merged cells)
+		this._writer.WriteBitLong(cell.BorderWidth);
+
+		//BL 176 Merged height flag (vertical number of merged cells)
+		this._writer.WriteBitLong(cell.BorderHeight);
+
+		//BD 145 Cell rotation
+		this._writer.WriteBitDouble(cell.Rotation);
+
+		//H 344 (text cell) / 340 (block cell) value handle
+		// 文本单元格直接内联字符串时该 handle 为 0（读取端据此走 TV 1 分支）
+		this._writer.HandleReference(0UL);
+
+		if (cell.Type == TableEntity.CellType.Block)
+		{
+			//BD 144 Block scale
+			this._writer.WriteBitDouble(cell.BlockScale);
+
+			//B Has attributes flag
+			this._writer.WriteBit(false);
+		}
+		else
+		{
+			//TV 1 Text string（R2004 之前的文本单元格，值为内联字符串）
+			var content = cell.Contents.Count > 0 ? cell.Contents[0] : null;
+			string text = content != null ? Convert.ToString(content.CadValue?.Value) : string.Empty;
+			this._writer.WriteVariableText(text ?? string.Empty);
+		}
+
+		//B Has cell flag override
+		this._writer.WriteBit(false);
+	}
+
 
 	private void writeTableContent(TableContent content)
 	{

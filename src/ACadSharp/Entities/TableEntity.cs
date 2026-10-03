@@ -3,6 +3,7 @@ using ACadSharp.Classes;
 using ACadSharp.Objects;
 using ACadSharp.Tables;
 using CSMath;
+using CSMath.Extensions;
 using System;
 using System.Collections.Generic;
 
@@ -181,4 +182,40 @@ public partial class TableEntity : Insert, IDxfClassDefined
 	/// Use this to set table-level overrides such as flow direction (FlowDirectionBottomToTop).
 	/// </summary>
 	public TableStyle.CellStyle CellStyleOverride { get { return this.Content.CellStyleOverride; } }
+
+	/// <inheritdoc/>
+	/// <remarks>
+	/// AutoCAD 语义（已用 sample_VBAtransformed.dwg 基准逐值核实）：
+	/// 除块参照本身的插入点/旋转/缩放外，表格的水平方向向量需随变换旋转，
+	/// 列宽与行高需按缩放因子缩放（60 → 59.88 即 60 × 0.998）。
+	/// </remarks>
+	public override void ApplyTransform(Transform transform)
+	{
+		base.ApplyTransform(transform);
+
+		// 水平方向向量：只旋转，不受平移影响
+		XYZ dir = this.HorizontalDirection;
+		if (dir != XYZ.Zero)
+		{
+			this.HorizontalDirection = transform.ApplyRotation(dir);
+		}
+
+		// 缩放因子：取各轴的平均缩放
+		XYZ sc = transform.Scale;
+		double uniform = (Math.Abs(sc.X) + Math.Abs(sc.Y) + Math.Abs(sc.Z)) / 3.0;
+		if (uniform.IsZero())
+		{
+			uniform = MathHelper.Epsilon;
+		}
+
+		// 列宽与行高按缩放因子缩放
+		foreach (var column in this.Columns)
+		{
+			column.Width *= uniform;
+		}
+		foreach (var row in this.Rows)
+		{
+			row.Height *= uniform;
+		}
+	}
 }
