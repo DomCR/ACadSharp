@@ -258,33 +258,33 @@ public class Insert : Entity, IOrientable
 		XYZ newPosition = transform.ApplyTransform(this.InsertPoint);
 		XYZ newNormal = this.transformNormal(transform, this.Normal);
 
-		Matrix3 transOW = Matrix3.ArbitraryAxis(this.Normal);
-		transOW *= Matrix3.RotationZ(this.Rotation);
+		// AutoCAD 语义（已用 VBA 基准 sample_VBAtransformed.dwg 核实）：
+		// 块参照的 Scale 属于块定义坐标系，只按缩放因子放大，不被旋转污染；
+		// Rotation 直接叠加变换的绕法线旋转角，并归一化到 [0, 2π)。
+		// 原实现用 OCS 矩阵把缩放向量一起旋转，导致 Scale 出现负值分量、
+		// Rotation 取到错误的角度基准（块参照显示为旋转错乱）。
+		XYZ scaleVec = transform.Scale;
+		double uniformScale = (Math.Abs(scaleVec.X) + Math.Abs(scaleVec.Y) + Math.Abs(scaleVec.Z)) / 3.0;
+		if (uniformScale.IsZero())
+		{
+			uniformScale = MathHelper.Epsilon;
+		}
 
-		Matrix3 transWO = Matrix3.ArbitraryAxis(newNormal);
-		transWO = transWO.Transpose();
-
-		var transformation = new Matrix3(transform.Matrix);
-		XYZ v = transOW * XYZ.AxisX;
-		v = transformation * v;
-		v = transWO * v;
-		double newRotation = new XY(v.X, v.Y).GetAngle();
-
-		transWO = Matrix3.RotationZ(newRotation).Transpose() * transWO;
-
-		XYZ s = transOW * new XYZ(this.XScale, this.YScale, this.ZScale);
-		s = transformation * s;
-		s = transWO * s;
-		XYZ newScale = new XYZ(
-			s.X.IsZero() ? MathHelper.Epsilon : s.X,
-			s.Y.IsZero() ? MathHelper.Epsilon : s.Y,
-			s.Z.IsZero() ? MathHelper.Epsilon : s.Z);
+		// 绕块参照法线的旋转角，归一化到 [0, 2π)
+		// 变换的旋转施加在 Z 轴上（与 AutoCAD/VBA 基准一致），取 Z 分量作为绕法线旋转角。
+		double rotationDelta = transform.EulerRotation.Z;
+		double newRotation = this.Rotation + rotationDelta;
+		newRotation %= Math.PI * 2.0;
+		if (newRotation < 0)
+		{
+			newRotation += Math.PI * 2.0;
+		}
 
 		this.Normal = newNormal;
 		this.InsertPoint = newPosition;
-		this.XScale = newScale.X;
-		this.YScale = newScale.Y;
-		this.ZScale = newScale.Z;
+		this.XScale = this.XScale * uniformScale;
+		this.YScale = this.YScale * uniformScale;
+		this.ZScale = this.ZScale * uniformScale;
 		this.Rotation = newRotation;
 
 		foreach (AttributeEntity att in this.Attributes)
