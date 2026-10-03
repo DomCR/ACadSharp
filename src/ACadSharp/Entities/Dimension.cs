@@ -270,6 +270,17 @@ public abstract class Dimension : Entity, IOrientable
 		this.TextMiddlePoint = this.applyWorldMatrix(this.TextMiddlePoint, transform, transOW, transWO);
 
 		this.Normal = newNormal;
+
+		// 标注几何（尺寸线箭头、文字、连接线等）存放在 Dimension 自己的 Block 里，
+		// 必须一并变换，否则标注图形会停留在原位而只有基准点/文本点移动
+		// （见 issue #854 "not move: Dimension*"）。
+		if (this.Block != null)
+		{
+			foreach (var e in this.Block.Entities.ToList())
+			{
+				e.ApplyTransform(transform);
+			}
+		}
 	}
 
 	/// <inheritdoc/>
