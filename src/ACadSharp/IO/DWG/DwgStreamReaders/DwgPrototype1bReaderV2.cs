@@ -42,6 +42,9 @@ internal class DwgPrototype1bReaderV2 : DwgSectionIO
 
 			this.readDataIndex();
 
+			//TODO: the reader doesn't need the rest of the sections
+			//test if they are needed for the data storage
+
 			this._builder.DataStorage = storage;
 		}
 		catch (Exception ex)
