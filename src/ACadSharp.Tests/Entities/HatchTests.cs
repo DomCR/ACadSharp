@@ -45,6 +45,36 @@ public class HatchTests : CommonEntityTests<Hatch>
 	}
 
 	[Fact]
+	public void BoundaryPathSplineToEntityTest()
+	{
+		var s = new Hatch.BoundaryPath.Spline
+		{
+			Degree = 2,
+			IsRational = false,
+		};
+		//Non-rational edges may store 0 as weight
+		s.ControlPoints.Add(new XYZ(0, 0, 0));
+		s.ControlPoints.Add(new XYZ(5, 5, 0));
+		s.ControlPoints.Add(new XYZ(10, 0, 0));
+		s.Knots.AddRange(new double[] { 0, 0, 0, 1, 1, 1 });
+
+		Spline spline = (Spline)s.ToEntity();
+
+		Assert.False(spline.IsClosed);
+		Assert.Equal(new double[] { 1, 1, 1 }, spline.Weights);
+		Assert.Equal(new XYZ(5, 2.5, 0), spline.PointOnSpline(0.5));
+
+		s.IsRational = true;
+		s.ControlPoints[0] = new XYZ(0, 0, 1);
+		s.ControlPoints[1] = new XYZ(5, 5, 0.5);
+		s.ControlPoints[2] = new XYZ(10, 0, 1);
+
+		spline = (Spline)s.ToEntity();
+
+		Assert.Equal(new double[] { 1, 0.5, 1 }, spline.Weights);
+	}
+
+	[Fact]
 	public void CreateHatch()
 	{
 		Hatch hatch = new Hatch();
