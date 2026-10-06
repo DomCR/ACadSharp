@@ -741,6 +741,7 @@ internal class DxfObjectsSectionWriter : DxfSectionWriterBase
 			case AecCleanupGroup:
 			case AecBinRecord:
 			case DimensionAssociation:
+			case DimensionObjectContextData:
 			case Material:
 			case MultiLeaderObjectContextData:
 			case VisualStyle:
