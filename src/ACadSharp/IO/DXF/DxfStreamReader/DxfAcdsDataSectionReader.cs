@@ -1,6 +1,7 @@
 using ACadSharp.DataStorage;
 using System;
 using System.Collections.Generic;
+using System.IO;
 
 namespace ACadSharp.IO.DXF.DxfStreamReader;
 
@@ -90,6 +91,7 @@ internal class DxfAcdsDataSectionReader : DxfSectionReaderBase
 	{
 		AcdsRecordColumn column = new();
 		column.Name = this._reader.ValueAsString;
+		MemoryStream binaryData = null;
 
 		this._reader.ReadNext();
 
@@ -102,12 +104,21 @@ internal class DxfAcdsDataSectionReader : DxfSectionReaderBase
 				case 280:
 					column.DataType = this._reader.ValueAsShort;
 					break;
+				case 310:
+					binaryData ??= new();
+					binaryData.Write(this._reader.ValueAsBinaryChunk, 0, this._reader.ValueAsBinaryChunk.Length);
+					break;
 				default:
 					column.CodeValuePair = new KeyValuePair<int, object>(this._reader.Code, this._reader.Value);
 					break;
 			}
 
 			this._reader.ReadNext();
+		}
+
+		if (binaryData != null)
+		{
+			column.CodeValuePair = new KeyValuePair<int, object>(310, binaryData.ToArray());
 		}
 
 		return column;
