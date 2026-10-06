@@ -4095,7 +4095,11 @@ namespace ACadSharp.IO.DWG
 					//Background color CMC 63
 					mtext.BackgroundColor = this._mergedReaders.ReadCmColor();
 					//Background transparency BL 441
-					mtext.BackgroundTransparency = new Transparency((short)this._objectReader.ReadBitLong());
+					//Stored like an entity transparency (type in the high byte, alpha in the low byte); AutoCAD
+					//leaves stale bits in it when the type byte is 0 (ByLayer), so never reject the entity over it.
+					int transparency = this._objectReader.ReadBitLong();
+					mtext.BackgroundTransparency = transparency >= 0 && transparency <= 90 ? new Transparency((short)transparency)
+						: (transparency >> 24) != 0 ? Transparency.FromAlphaValue(transparency) : Transparency.ByLayer;
 				}
 			}
 
