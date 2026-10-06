@@ -76,6 +76,17 @@ public abstract class Entity : CadObject, IEntity
 	[DxfCodeValue(370)]
 	public LineWeightType LineWeight { get; set; } = LineWeightType.ByLayer;
 
+	/// <summary>
+	/// Plot style source of the entity (named plot style drawings), as stored in DWG: 0 = by layer,
+	/// 1 = by block, 3 = the style in <see cref="PlotStyleHandle"/>.
+	/// </summary>
+	public byte PlotStyleFlags { get; set; }
+
+	/// <summary>
+	/// Handle of the entity's plot style name (an entry of the ACAD_PLOTSTYLENAME dictionary) when <see cref="PlotStyleFlags"/> is 3.
+	/// </summary>
+	public ulong PlotStyleHandle { get; set; }
+
 	/// <inheritdoc/>
 	[DxfCodeValue(DxfReferenceType.Handle, 347)]
 	public Material Material

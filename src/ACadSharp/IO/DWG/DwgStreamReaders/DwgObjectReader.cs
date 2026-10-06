@@ -2000,10 +2000,11 @@ namespace ACadSharp.IO.DWG
 
 			//R2000 +:
 			//Plotstyle flags	BB	00 = bylayer, 01 = byblock, 11 = plotstyle handle present at end of object
-			if (this._objectReader.Read2Bits() == 3)
+			template.CadObject.PlotStyleFlags = this._objectReader.Read2Bits();
+			if (template.CadObject.PlotStyleFlags == 3)
 			{
 				//PLOTSTYLE (hard pointer) present if plotstyle flags were 11
-				long plotstyleFlags = (long)this.handleReference();
+				template.CadObject.PlotStyleHandle = this.handleReference();
 			}
 
 			//R2007 +:
@@ -2714,12 +2715,10 @@ namespace ACadSharp.IO.DWG
 			var color = this._mergedReaders.ReadCmColor();
 			layer.Color = color.IsByBlock || color.IsByLayer ? Color.Default : color;
 
-			//TODO: This is not the Layer control handle
-			template.LayerControlHandle = this.handleReference();
-			//Handle refs H Layer control (soft pointer)
-			//[Reactors(soft pointer)]
-			//xdicobjhandle(hard owner)
-			//External reference block handle(hard pointer)
+			//Handle refs H Layer control (soft pointer), [Reactors (soft pointer)] and xdicobjhandle
+			//(hard owner) are read with the common data; this one is the
+			//External reference block handle (hard pointer): the xref a dependent layer comes from
+			layer.XrefBlockHandle = this.handleReference();
 
 			//R2000+:
 			if (this.R2000Plus)
@@ -5091,7 +5090,7 @@ namespace ACadSharp.IO.DWG
 				plot.ShadePlotDPI = this._objectReader.ReadBitShort();
 
 				//6 plot view handle(hard pointer)
-				ulong plotViewHandle = this.handleReference();
+				plot.PlotViewHandle = this.handleReference();
 			}
 
 			//R2007 +:
