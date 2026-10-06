@@ -7294,6 +7294,26 @@ namespace ACadSharp.IO.DWG
 
 			this.readCommonEntityData(template);
 
+			if (dxfClass?.DxfName == "RTEXT")
+			{
+				try
+				{
+					var rt = new UnknownEntity.RemoteText();
+					rt.InsertPoint = this._objectReader.Read3BitDouble();
+					rt.Normal = this._objectReader.Read3BitDouble();
+					rt.Rotation = this._objectReader.ReadBitDouble();
+					rt.Height = this._objectReader.ReadBitDouble();
+					rt.Flags = this._objectReader.ReadBitShort();
+					rt.Contents = this._textReader.ReadVariableText();
+					rt.StyleHandle = this.handleReference();
+					entity.RText = rt;
+				}
+				catch (System.Exception ex)
+				{
+					this._builder.Notify($"RTEXT could not be read: {ex.Message}", NotificationType.Warning);
+				}
+			}
+
 			return template;
 		}
 
