@@ -6181,6 +6181,11 @@ namespace ACadSharp.IO.DWG
 					break;
 			}
 
+			if (template == null && c.DxfName.EndsWith("DIMOBJECTCONTEXTDATA_CLASS"))
+			{
+				template = this.readDimensionObjectContextData();
+			}
+
 			if (template == null && c.IsAnEntity)
 			{
 				template = this.readUnknownEntity(c);
