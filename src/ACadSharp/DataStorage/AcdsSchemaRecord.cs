@@ -1,6 +1,4 @@
-﻿using System;
-
-namespace ACadSharp.DataStorage;
+﻿namespace ACadSharp.DataStorage;
 
 internal class AcdsSchemaRecord
 {
@@ -14,8 +12,6 @@ internal class AcdsSchemaRecord
 
 	public uint NameIndex { get; set; }
 
-	public System.Collections.Generic.List<byte[]> Values { get; } = new System.Collections.Generic.List<byte[]>();
-
 	public uint Type { get; set; }
 
 	public uint TypeSize { get; set; }
@@ -26,5 +22,12 @@ internal class AcdsSchemaRecord
 
 	public short Value291 { get; set; }
 
+	public System.Collections.Generic.List<byte[]> Values { get; } = new System.Collections.Generic.List<byte[]>();
+
 	public static readonly uint[] TypeSizes = new uint[] { 0, 0, 2, 1, 2, 4, 8, 1, 2, 4, 8, 4, 8, 0, 0, 0 };
+
+	public override string ToString()
+	{
+		return $"{this.Id} | {this.Name}";
+	}
 }

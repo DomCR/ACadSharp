@@ -1,5 +1,4 @@
-﻿using ACadSharp.Entities;
-using ACadSharp.Tables;
+﻿using ACadSharp.Tables;
 using ACadSharp.Tables.Collections;
 
 namespace ACadSharp.Tests.Tables.Collections;

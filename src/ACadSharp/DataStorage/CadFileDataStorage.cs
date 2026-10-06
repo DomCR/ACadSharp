@@ -1,5 +1,4 @@
-﻿using ACadSharp.Tables;
-using System.Collections.Generic;
+﻿using System.Collections.Generic;
 
 namespace ACadSharp.DataStorage;
 

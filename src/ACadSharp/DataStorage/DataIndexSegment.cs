@@ -13,5 +13,23 @@ internal class DataIndexSegment : FileSegment
 		public uint LocalOffset { get; set; }
 
 		public uint SegmentIndex { get; set; }
+
+		public override string ToString()
+		{
+			return $"SchemaIndex {this.SchemaIndex} | SegmentIndex {this.SegmentIndex} | LocalOffset: {this.LocalOffset}";
+		}
+	}
+
+	public List<Entry> GetEntriesBySchemaIndex(uint segmentIndex)
+	{
+		List<Entry> result = new();
+		foreach (Entry entry in this.Entries)
+		{
+			if (entry.SegmentIndex == segmentIndex)
+			{
+				result.Add(entry);
+			}
+		}
+		return result;
 	}
 }

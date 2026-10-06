@@ -6,7 +6,6 @@ using ACadSharp.Objects.Collections;
 using ACadSharp.Tables;
 using ACadSharp.Tables.Collections;
 using ACadSharp.XData;
-using CSMath;
 using CSMath.Extensions;
 using System;
 using System.Collections.Generic;

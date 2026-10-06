@@ -1,5 +1,4 @@
 ﻿using ACadSharp.DataStorage;
-using CSUtilities.Text;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -14,6 +13,8 @@ internal class DwgPrototype1bReaderV2 : DwgSectionIO
 	private readonly DwgDocumentBuilder _builder;
 
 	private readonly IDwgStreamReader _reader;
+
+	private DataIndexSegment _dataIndex;
 
 	private FileHeader _fileHeader;
 
@@ -40,10 +41,8 @@ internal class DwgPrototype1bReaderV2 : DwgSectionIO
 			var schemes = this.readSchemaDataEntries();
 			storage.Schemes.AddRange(schemes.SelectMany(s => s.Schemes));
 
-			this.readDataIndex();
-
-			//TODO: the reader doesn't need the rest of the sections
-			//test if they are needed for the data storage
+			this._dataIndex = this.readDataIndex();
+			this.readDataFields(storage);
 
 			this._builder.DataStorage = storage;
 		}
@@ -54,6 +53,37 @@ internal class DwgPrototype1bReaderV2 : DwgSectionIO
 
 			this.notify("An error occurred while reading the Prototype1b", NotificationType.Error, ex);
 		}
+	}
+
+	private void processDataValue(CadFileDataStorage storage, DataField.DataEntry data, DataIndexSegment.Entry shemaIndex)
+	{
+		AcdsRecord record = new();
+		record.Index = shemaIndex.SchemaIndex;
+
+		var schema = storage.Schemes.FirstOrDefault(s => s.Index == shemaIndex.SchemaIndex);
+
+		foreach (var item in schema.EmbeddedRecords)
+		{
+			AcdsRecordColumn column = new AcdsRecordColumn();
+			column.Name = item.Name;
+			column.DataType = (short)item.Type;
+
+			switch (item.Name)
+			{
+				case CadFileDataStorage.Id:
+					column.CodeValuePair = new KeyValuePair<int, object>(320, data.Header.Handle);
+					break;
+				case CadFileDataStorage.AsmData:
+					column.CodeValuePair = new KeyValuePair<int, object>(310, data.GetData());
+					break;
+				default:
+					break;
+			}
+
+			record.Columns.Add(item.Name, column);
+		}
+
+		storage.Records.Add(record);
 	}
 
 	private AcdsSchema readAcdsSchema()
@@ -121,7 +151,108 @@ internal class DwgPrototype1bReaderV2 : DwgSectionIO
 		return record;
 	}
 
-	private void readDataIndex()
+	private void readDataFields(CadFileDataStorage storage)
+	{
+		foreach (var index in this._dataIndex.Entries.Select(e => e.SegmentIndex).Distinct())
+		{
+			this._reader.Position = (long)this._fileSegmentIndex.Entries[(int)index].Offset;
+
+			var field = new DataField();
+
+			var headerStartPosition = this._reader.Position;
+
+			this.readDataStorageFileSegment(field);
+
+			if (field.Header.SegmentSize == 0)
+			{
+				continue;
+			}
+
+			var headerEndPosition = this._reader.Position;
+			List<DataIndexSegment.Entry> shemaIndexes = this._dataIndex.GetEntriesBySchemaIndex(index);
+			if (shemaIndexes.Count == 0)
+			{
+				continue;
+			}
+
+			List<DataField.DataHeader> headers = new();
+			foreach (var e in shemaIndexes)
+			{
+				this._reader.Position = headerEndPosition + e.LocalOffset;
+				DataField.DataHeader entry = new();
+
+				entry.Size = this._reader.ReadUInt();
+				var unknown1 = this._reader.ReadUInt();
+				entry.Handle = this._reader.ReadRawULong();
+				entry.LocalOffset = this._reader.ReadUInt();
+
+				headers.Add(entry);
+			}
+
+			var dataRefPosition = headerStartPosition + ((long)field.Header.ObjectDataAlignmentOffset << 4);
+			if (dataRefPosition != this._reader.Position)
+			{
+				// Many unreferenced / seemingly dangling DataHeader entries might be defined here, they would
+				// also have valid file data in the next step, where file contents are being read. This can be a lot of entries, e.g.
+				// 10 - 20 valid DataHeader entries have been seen
+				byte[] data = this._reader.ReadBytes((int)(dataRefPosition - this._reader.Position));
+			}
+
+			for (int i = 0; i < headers.Count; i++)
+			{
+				DataField.DataHeader dataHeader = headers[i];
+				var recordStreamOffset = dataRefPosition + dataHeader.LocalOffset;
+				this._reader.Position = recordStreamOffset;
+
+				uint maxRecordSize = i + 1 < headers.Count ?
+					(headers[i + 1].LocalOffset - dataHeader.LocalOffset)
+					: (field.Header.SegmentSize - (uint)(field.Header.ObjectDataAlignmentOffset << 4) - dataHeader.LocalOffset);
+
+				DataField.DataEntry value = new();
+				value.Header = dataHeader;
+				value.DataSize = this._reader.ReadUInt();
+				if ((value.DataSize + 4) <= maxRecordSize)
+				{
+					value.Data = this._reader.ReadBytes((int)value.DataSize);
+				}
+				else if (value.DataSize == 0xbb106bb1)
+				{
+					var totalDataSize = this._reader.ReadRawULong();
+					var pageCount = this._reader.ReadUInt();
+					var recordSize = this._reader.ReadUInt();
+					var pageSize = this._reader.ReadUInt();
+					var lastPageSize = this._reader.ReadUInt();
+					var unknown1 = this._reader.ReadUInt();
+					var unknown2 = this._reader.ReadUInt();
+
+					value.BlobReference = new DataField.DataBlobReference()
+					{
+						TotalDataSize = totalDataSize,
+						PageCount = pageCount,
+						RecordSize = recordSize,
+						PageSize = pageSize,
+						LastPageSize = lastPageSize,
+						Unknown1 = unknown1,
+						Unknown2 = unknown2,
+						SegmentPointers = new List<(uint, uint)>()
+					};
+
+					for (int j = 0; j < value.BlobReference.PageCount; j++)
+					{
+						var segmentIndex = this._reader.ReadUInt();
+						var size = this._reader.ReadUInt();
+
+						value.BlobReference.SegmentPointers.Add((segmentIndex, size));
+					}
+				}
+
+				field.DataEntries.Add(value);
+				processDataValue(storage, value, shemaIndexes[i]);
+			}
+		}
+	}
+
+	private DataIndexSegment readDataIndex()
 	{
 		this._reader.Position = (long)this._fileSegmentIndex.Entries[(int)this._fileHeader.DataIndexSegmentIndex].Offset;
 
@@ -155,6 +286,8 @@ internal class DwgPrototype1bReaderV2 : DwgSectionIO
 				SchemaIndex = schemaIndex,
 			});
 		}
+
+		return dataIndex;
 	}
 
 	private void readDataStorageFileSegment(FileSegment segment)
@@ -291,10 +424,9 @@ internal class DwgPrototype1bReaderV2 : DwgSectionIO
 	private List<SchemaData> readSchemaDataEntries()
 	{
 		List<SchemaData> schemes = new();
-
-		foreach (var item in this._schemaIndex.GetAllPointers())
+		foreach (var index in this._schemaIndex.GetSchemaIndexes())
 		{
-			var schema = this.readSchemaData((long)this._fileSegmentIndex.Entries[(int)item.SegmentIndex].Offset);
+			var schema = this.readSchemaData((long)this._fileSegmentIndex.Entries[(int)index].Offset);
 			schemes.Add(schema);
 		}
 

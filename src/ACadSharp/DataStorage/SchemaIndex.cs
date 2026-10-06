@@ -16,6 +16,11 @@ internal class SchemaIndex : FileSegment
 		return this.PropertyPointers.Concat(this.SchemaPointers);
 	}
 
+	public IEnumerable<uint> GetSchemaIndexes()
+	{
+		return this.SchemaPointers.Select(p => p.SegmentIndex).Distinct();
+	}	
+
 	public class Pointer
 	{
 		public uint Index { get; set; }
