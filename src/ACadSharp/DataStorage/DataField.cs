@@ -1,4 +1,5 @@
 ﻿using System.Collections.Generic;
+using System.IO;
 
 namespace ACadSharp.DataStorage;
 
@@ -16,13 +17,13 @@ internal class DataField : FileSegment
 
 		public uint RecordSize { get; set; }
 
-		public List<(uint, uint)> SegmentPointers { get; set; }
-
 		public ulong TotalDataSize { get; set; }
 
 		public uint Unknown1 { get; set; }
 
 		public uint Unknown2 { get; set; }
+
+		public List<Blob01> Blobs { get; set; } = new();
 	}
 
 	public class DataEntry
@@ -43,7 +44,13 @@ internal class DataField : FileSegment
 			}
 			else if (this.BlobReference != null)
 			{
-				return null;
+				MemoryStream stream = new MemoryStream();
+				foreach (Blob01 blob in this.BlobReference.Blobs)
+				{
+					stream.Write(blob.Data, 0, blob.Data.Length);
+				}
+
+				return stream.ToArray();
 			}
 			else
 			{

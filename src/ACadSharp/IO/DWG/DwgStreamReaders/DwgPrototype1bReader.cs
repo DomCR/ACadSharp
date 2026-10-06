@@ -235,8 +235,7 @@ internal class DwgPrototype1bReader : DwgSectionIO
 						PageSize = pageSize,
 						LastPageSize = lastPageSize,
 						Unknown1 = unknown1,
-						Unknown2 = unknown2,
-						SegmentPointers = new List<(uint, uint)>()
+						Unknown2 = unknown2
 					};
 
 					for (int j = 0; j < value.BlobReference.PageCount; j++)
@@ -244,12 +243,24 @@ internal class DwgPrototype1bReader : DwgSectionIO
 						var segmentIndex = this._reader.ReadUInt();
 						var size = this._reader.ReadUInt();
 
-						value.BlobReference.SegmentPointers.Add((segmentIndex, size));
+						this._reader.Position = (long)this._fileSegmentIndex.Entries[(int)segmentIndex].Offset;
+
+						Blob01 blob = new();
+						this.readDataStorageFileSegment(blob);
+
+						blob.TotalDataSize = this._reader.ReadRawULong();
+						blob.PageStartOffset = this._reader.ReadRawULong();
+						blob.PageIndex = this._reader.ReadUInt();
+						blob.PageCount = this._reader.ReadUInt();
+						blob.PageDataSize = this._reader.ReadRawULong();
+
+						blob.Data = this._reader.ReadBytes((int)blob.PageDataSize);
+						value.BlobReference.Blobs.Add(blob);
 					}
 				}
 
 				field.DataEntries.Add(value);
-				processDataValue(storage, value, shemaIndexes[i]);
+				this.processDataValue(storage, value, shemaIndexes[i]);
 			}
 		}
 	}
