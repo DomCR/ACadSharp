@@ -594,9 +594,16 @@ public class DwgReader : CadReaderBase<DwgReaderConfiguration>
 			return;
 		}
 
-		var reader = new DwgPrototype1bReaderV2(this._fileHeader.AcadVersion, this._builder, sreader);
+		var reader = new DwgPrototype1bReader(this._fileHeader.AcadVersion, this._builder, sreader);
 		reader.OnNotification += this.onNotificationEvent;
 		reader.Read();
+
+		//Backwards compatibility with older versions of the library
+		//Remove on 3.9.0
+		sreader.Position = 0;
+		var obs = new DwgPrototype1bReader_obsolete(this._fileHeader.AcadVersion, this._builder, sreader);
+		obs.OnNotification += onNotificationEvent;
+		this._document.DataStorage = obs.Read();
 	}
 
 	/// <summary>

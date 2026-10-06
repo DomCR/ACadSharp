@@ -91,7 +91,6 @@ internal class DxfAcdsDataSectionReader : DxfSectionReaderBase
 	{
 		AcdsRecordColumn column = new();
 		column.Name = this._reader.ValueAsString;
-		MemoryStream binaryData = null;
 
 		this._reader.ReadNext();
 
@@ -101,24 +100,25 @@ internal class DxfAcdsDataSectionReader : DxfSectionReaderBase
 		{
 			switch (this._reader.Code)
 			{
+				case 94:
+					//Bin data length
+					break;
 				case 280:
 					column.DataType = this._reader.ValueAsShort;
 					break;
 				case 310:
-					binaryData ??= new();
-					binaryData.Write(this._reader.ValueAsBinaryChunk, 0, this._reader.ValueAsBinaryChunk.Length);
+					column.Data ??= new MemoryStream();
+					column.Data.Write(this._reader.ValueAsBinaryChunk, 0, this._reader.ValueAsBinaryChunk.Length);
+					break;
+				case 320:
+					column.Handle = this._reader.ValueAsHandle;
 					break;
 				default:
-					column.CodeValuePair = new KeyValuePair<int, object>(this._reader.Code, this._reader.Value);
+					this._builder.Notify($"Unexpected code {this._reader.Code} in ACDS record column.", NotificationType.Warning);
 					break;
 			}
 
 			this._reader.ReadNext();
-		}
-
-		if (binaryData != null)
-		{
-			column.CodeValuePair = new KeyValuePair<int, object>(310, binaryData.ToArray());
 		}
 
 		return column;
