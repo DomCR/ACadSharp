@@ -405,6 +405,34 @@
     },
     {
       "type": "ManagedReference",
+      "source_relative_path": "api/ACadSharp.DataStorage.SchemaRecordFlags.yml",
+      "output": {
+        ".html": {
+          "relative_path": "api/ACadSharp.DataStorage.SchemaRecordFlags.html"
+        }
+      },
+      "version": "",
+      "Uid": null,
+      "IsMRef": true,
+      "Title": "ACadSharp.DataStorage.SchemaRecordFlags",
+      "Summary": null
+    },
+    {
+      "type": "ManagedReference",
+      "source_relative_path": "api/ACadSharp.DataStorage.yml",
+      "output": {
+        ".html": {
+          "relative_path": "api/ACadSharp.DataStorage.html"
+        }
+      },
+      "version": "",
+      "Uid": null,
+      "IsMRef": true,
+      "Title": "ACadSharp.DataStorage",
+      "Summary": null
+    },
+    {
+      "type": "ManagedReference",
       "source_relative_path": "api/ACadSharp.DwgPreview.PreviewType.yml",
       "output": {
         ".html": {
@@ -6789,20 +6817,6 @@
     },
     {
       "type": "ManagedReference",
-      "source_relative_path": "api/ACadSharp.Prototype1b.DataField.yml",
-      "output": {
-        ".html": {
-          "relative_path": "api/ACadSharp.Prototype1b.DataField.html"
-        }
-      },
-      "version": "",
-      "Uid": null,
-      "IsMRef": true,
-      "Title": "ACadSharp.Prototype1b.DataField",
-      "Summary": null
-    },
-    {
-      "type": "ManagedReference",
       "source_relative_path": "api/ACadSharp.Prototype1b.DataHeader.yml",
       "output": {
         ".html": {
@@ -7093,6 +7107,20 @@
       "Uid": null,
       "IsMRef": true,
       "Title": "ACadSharp.Prototype1b.Segments.Blob01",
+      "Summary": null
+    },
+    {
+      "type": "ManagedReference",
+      "source_relative_path": "api/ACadSharp.Prototype1b.Segments.DataField.yml",
+      "output": {
+        ".html": {
+          "relative_path": "api/ACadSharp.Prototype1b.Segments.DataField.html"
+        }
+      },
+      "version": "",
+      "Uid": null,
+      "IsMRef": true,
+      "Title": "ACadSharp.Prototype1b.Segments.DataField",
       "Summary": null
     },
     {

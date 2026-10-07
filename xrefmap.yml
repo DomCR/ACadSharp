@@ -3809,6 +3809,42 @@ references:
   isSpec: "True"
   fullName: ACadSharp.Color.Yellow
   nameWithType: Color.Yellow
+- uid: ACadSharp.DataStorage
+  name: ACadSharp.DataStorage
+  href: api/ACadSharp.DataStorage.html
+  commentId: N:ACadSharp.DataStorage
+  fullName: ACadSharp.DataStorage
+  nameWithType: ACadSharp.DataStorage
+- uid: ACadSharp.DataStorage.SchemaRecordFlags
+  name: SchemaRecordFlags
+  href: api/ACadSharp.DataStorage.SchemaRecordFlags.html
+  commentId: T:ACadSharp.DataStorage.SchemaRecordFlags
+  fullName: ACadSharp.DataStorage.SchemaRecordFlags
+  nameWithType: SchemaRecordFlags
+- uid: ACadSharp.DataStorage.SchemaRecordFlags.NoType
+  name: NoType
+  href: api/ACadSharp.DataStorage.SchemaRecordFlags.html#ACadSharp_DataStorage_SchemaRecordFlags_NoType
+  commentId: F:ACadSharp.DataStorage.SchemaRecordFlags.NoType
+  fullName: ACadSharp.DataStorage.SchemaRecordFlags.NoType
+  nameWithType: SchemaRecordFlags.NoType
+- uid: ACadSharp.DataStorage.SchemaRecordFlags.None
+  name: None
+  href: api/ACadSharp.DataStorage.SchemaRecordFlags.html#ACadSharp_DataStorage_SchemaRecordFlags_None
+  commentId: F:ACadSharp.DataStorage.SchemaRecordFlags.None
+  fullName: ACadSharp.DataStorage.SchemaRecordFlags.None
+  nameWithType: SchemaRecordFlags.None
+- uid: ACadSharp.DataStorage.SchemaRecordFlags.Unknown0
+  name: Unknown0
+  href: api/ACadSharp.DataStorage.SchemaRecordFlags.html#ACadSharp_DataStorage_SchemaRecordFlags_Unknown0
+  commentId: F:ACadSharp.DataStorage.SchemaRecordFlags.Unknown0
+  fullName: ACadSharp.DataStorage.SchemaRecordFlags.Unknown0
+  nameWithType: SchemaRecordFlags.Unknown0
+- uid: ACadSharp.DataStorage.SchemaRecordFlags.Unknown1
+  name: Unknown1
+  href: api/ACadSharp.DataStorage.SchemaRecordFlags.html#ACadSharp_DataStorage_SchemaRecordFlags_Unknown1
+  commentId: F:ACadSharp.DataStorage.SchemaRecordFlags.Unknown1
+  fullName: ACadSharp.DataStorage.SchemaRecordFlags.Unknown1
+  nameWithType: SchemaRecordFlags.Unknown1
 - uid: ACadSharp.DwgPreview
   name: DwgPreview
   href: api/ACadSharp.DwgPreview.html
@@ -52882,38 +52918,6 @@ references:
   isSpec: "True"
   fullName: ACadSharp.Prototype1b.DataEntry.Value
   nameWithType: DataEntry.Value
-- uid: ACadSharp.Prototype1b.DataField
-  name: DataField
-  href: api/ACadSharp.Prototype1b.DataField.html
-  commentId: T:ACadSharp.Prototype1b.DataField
-  fullName: ACadSharp.Prototype1b.DataField
-  nameWithType: DataField
-- uid: ACadSharp.Prototype1b.DataField.Entries
-  name: Entries
-  href: api/ACadSharp.Prototype1b.DataField.html#ACadSharp_Prototype1b_DataField_Entries
-  commentId: P:ACadSharp.Prototype1b.DataField.Entries
-  fullName: ACadSharp.Prototype1b.DataField.Entries
-  nameWithType: DataField.Entries
-- uid: ACadSharp.Prototype1b.DataField.Entries*
-  name: Entries
-  href: api/ACadSharp.Prototype1b.DataField.html#ACadSharp_Prototype1b_DataField_Entries_
-  commentId: Overload:ACadSharp.Prototype1b.DataField.Entries
-  isSpec: "True"
-  fullName: ACadSharp.Prototype1b.DataField.Entries
-  nameWithType: DataField.Entries
-- uid: ACadSharp.Prototype1b.DataField.Header
-  name: Header
-  href: api/ACadSharp.Prototype1b.DataField.html#ACadSharp_Prototype1b_DataField_Header
-  commentId: P:ACadSharp.Prototype1b.DataField.Header
-  fullName: ACadSharp.Prototype1b.DataField.Header
-  nameWithType: DataField.Header
-- uid: ACadSharp.Prototype1b.DataField.Header*
-  name: Header
-  href: api/ACadSharp.Prototype1b.DataField.html#ACadSharp_Prototype1b_DataField_Header_
-  commentId: Overload:ACadSharp.Prototype1b.DataField.Header
-  isSpec: "True"
-  fullName: ACadSharp.Prototype1b.DataField.Header
-  nameWithType: DataField.Header
 - uid: ACadSharp.Prototype1b.DataHeader
   name: DataHeader
   href: api/ACadSharp.Prototype1b.DataHeader.html
@@ -54580,6 +54584,38 @@ references:
   isSpec: "True"
   fullName: ACadSharp.Prototype1b.Segments.Blob01.TotalDataSize
   nameWithType: Blob01.TotalDataSize
+- uid: ACadSharp.Prototype1b.Segments.DataField
+  name: DataField
+  href: api/ACadSharp.Prototype1b.Segments.DataField.html
+  commentId: T:ACadSharp.Prototype1b.Segments.DataField
+  fullName: ACadSharp.Prototype1b.Segments.DataField
+  nameWithType: DataField
+- uid: ACadSharp.Prototype1b.Segments.DataField.Entries
+  name: Entries
+  href: api/ACadSharp.Prototype1b.Segments.DataField.html#ACadSharp_Prototype1b_Segments_DataField_Entries
+  commentId: P:ACadSharp.Prototype1b.Segments.DataField.Entries
+  fullName: ACadSharp.Prototype1b.Segments.DataField.Entries
+  nameWithType: DataField.Entries
+- uid: ACadSharp.Prototype1b.Segments.DataField.Entries*
+  name: Entries
+  href: api/ACadSharp.Prototype1b.Segments.DataField.html#ACadSharp_Prototype1b_Segments_DataField_Entries_
+  commentId: Overload:ACadSharp.Prototype1b.Segments.DataField.Entries
+  isSpec: "True"
+  fullName: ACadSharp.Prototype1b.Segments.DataField.Entries
+  nameWithType: DataField.Entries
+- uid: ACadSharp.Prototype1b.Segments.DataField.Header
+  name: Header
+  href: api/ACadSharp.Prototype1b.Segments.DataField.html#ACadSharp_Prototype1b_Segments_DataField_Header
+  commentId: P:ACadSharp.Prototype1b.Segments.DataField.Header
+  fullName: ACadSharp.Prototype1b.Segments.DataField.Header
+  nameWithType: DataField.Header
+- uid: ACadSharp.Prototype1b.Segments.DataField.Header*
+  name: Header
+  href: api/ACadSharp.Prototype1b.Segments.DataField.html#ACadSharp_Prototype1b_Segments_DataField_Header_
+  commentId: Overload:ACadSharp.Prototype1b.Segments.DataField.Header
+  isSpec: "True"
+  fullName: ACadSharp.Prototype1b.Segments.DataField.Header
+  nameWithType: DataField.Header
 - uid: ACadSharp.Prototype1b.Segments.FreeSpace
   name: FreeSpace
   href: api/ACadSharp.Prototype1b.Segments.FreeSpace.html
