@@ -490,9 +490,9 @@ public class CadDocument : IHandledCadObject
 		if (handle == this.Handle)
 			return false;
 
-		if (this._cadObjects.TryGetValue(handle, out IHandledCadObject obj))
+		if (this._cadObjects.TryGetValue(handle, out IHandledCadObject obj) && obj is T)
 		{
-			cadObject = obj as T;
+			cadObject = (T)obj;
 			return true;
 		}
 
