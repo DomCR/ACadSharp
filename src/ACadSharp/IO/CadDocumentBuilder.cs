@@ -113,8 +113,8 @@ internal abstract class CadDocumentBuilder
 				continue;
 			}
 
-			ulong handle = (ulong)idColumn.CodeValuePair.Value;
-			byte[] bytes = (byte[])dataColumn.CodeValuePair.Value;
+			ulong handle = (ulong)idColumn.Handle;
+			byte[] bytes = dataColumn.Data.ToArray();
 
 			if (!this.DocumentToBuild.TryGetCadObject<ModelerGeometry>(handle, out var geometry))
 			{

@@ -1,10 +1,12 @@
 ﻿using ACadSharp.Entities;
 using ACadSharp.Prototype1b.Segments;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 
 namespace ACadSharp.Prototype1b
 {
+	[Obsolete]
     public class DataStorage
     {
 		/// <summary>

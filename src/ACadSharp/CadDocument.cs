@@ -3,7 +3,6 @@ using ACadSharp.Entities;
 using ACadSharp.Header;
 using ACadSharp.Objects;
 using ACadSharp.Objects.Collections;
-using ACadSharp.Prototype1b;
 using ACadSharp.Tables;
 using ACadSharp.Tables.Collections;
 using CSUtilities.Extensions;
