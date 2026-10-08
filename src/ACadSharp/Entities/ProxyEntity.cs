@@ -1,6 +1,7 @@
 ﻿using ACadSharp.Attributes;
 using ACadSharp.Classes;
 using CSMath;
+using System.IO;
 
 namespace ACadSharp.Entities
 {
@@ -55,6 +56,7 @@ namespace ACadSharp.Entities
 
 		//92 Size of graphics data in bytes
 		//310 Binary graphics data(multiple entries can appear) (optional)
+		//The graphics are read as common entity data and exposed through Entity.ProxyGeometries.
 
 		//93 Size of entity data in bits
 		//310 Binary entity data(multiple entries can appear) (optional)
@@ -64,6 +66,18 @@ namespace ACadSharp.Entities
 		//An object ID(multiple entries can appear) (optional)
 
 		//94 0 (indicates end of object ID section)
+		/// <summary>
+		/// Gets or sets the data of the original object as it was stored while the object is a proxy.
+		/// </summary>
+		/// <remarks>
+		/// This is the payload the original application would read back, and it is the only place where
+		/// the custom object data survives once the object has been saved as a proxy. In the file the
+		/// section has no length of its own: it runs from the end of the proxy fields up to the start of
+		/// the handle section.
+		/// </remarks>
+		[DxfCodeValue(311)]
+		public Stream Data { get; set; }
+
 		/// <inheritdoc/>
 		public ACadVersion Version { get; set; }
 
