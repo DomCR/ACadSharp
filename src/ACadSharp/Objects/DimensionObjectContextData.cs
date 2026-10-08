@@ -12,5 +12,5 @@ public class DimensionObjectContextData : AnnotScaleObjectContextData
 	public BlockRecord Block { get; set; }
 
 	/// <inheritdoc/>
-	public override string ObjectName => "ACDB_DIMOBJECTCONTEXTDATA_CLASS";
+	public override string ObjectName => DxfFileToken.DimensionObjectContextData;
 }
