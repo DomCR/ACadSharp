@@ -195,7 +195,9 @@ internal class DxfTablesSectionReader : DxfSectionReaderBase
 
 					break;
 				case DxfFileToken.TableDimstyle:
-					template = this.readTableEntry(new CadDimensionStyleTemplate(), this.readDimensionStyle);
+					DimensionStyle style = new DimensionStyle();
+					style.CopyVariables(this._builder.DocumentToBuild.Header?.DimensionstyleOverrides);
+					template = this.readTableEntry(new CadDimensionStyleTemplate(style), this.readDimensionStyle);
 					break;
 				case DxfFileToken.TableLayer:
 					template = this.readTableEntry(new CadLayerTemplate(), this.readLayer);
