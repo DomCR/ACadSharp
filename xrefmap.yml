@@ -5012,6 +5012,12 @@ references:
   commentId: F:ACadSharp.DxfFileToken.EntityEllipse
   fullName: ACadSharp.DxfFileToken.EntityEllipse
   nameWithType: DxfFileToken.EntityEllipse
+- uid: ACadSharp.DxfFileToken.EntityExtrudedSurface
+  name: EntityExtrudedSurface
+  href: api/ACadSharp.DxfFileToken.html#ACadSharp_DxfFileToken_EntityExtrudedSurface
+  commentId: F:ACadSharp.DxfFileToken.EntityExtrudedSurface
+  fullName: ACadSharp.DxfFileToken.EntityExtrudedSurface
+  nameWithType: DxfFileToken.EntityExtrudedSurface
 - uid: ACadSharp.DxfFileToken.EntityHatch
   name: EntityHatch
   href: api/ACadSharp.DxfFileToken.html#ACadSharp_DxfFileToken_EntityHatch
@@ -5054,6 +5060,12 @@ references:
   commentId: F:ACadSharp.DxfFileToken.EntityLine
   fullName: ACadSharp.DxfFileToken.EntityLine
   nameWithType: DxfFileToken.EntityLine
+- uid: ACadSharp.DxfFileToken.EntityLoftedSurface
+  name: EntityLoftedSurface
+  href: api/ACadSharp.DxfFileToken.html#ACadSharp_DxfFileToken_EntityLoftedSurface
+  commentId: F:ACadSharp.DxfFileToken.EntityLoftedSurface
+  fullName: ACadSharp.DxfFileToken.EntityLoftedSurface
+  nameWithType: DxfFileToken.EntityLoftedSurface
 - uid: ACadSharp.DxfFileToken.EntityLwPolyline
   name: EntityLwPolyline
   href: api/ACadSharp.DxfFileToken.html#ACadSharp_DxfFileToken_EntityLwPolyline
@@ -5084,6 +5096,12 @@ references:
   commentId: F:ACadSharp.DxfFileToken.EntityMultiLeader
   fullName: ACadSharp.DxfFileToken.EntityMultiLeader
   nameWithType: DxfFileToken.EntityMultiLeader
+- uid: ACadSharp.DxfFileToken.EntityNurbSurface
+  name: EntityNurbSurface
+  href: api/ACadSharp.DxfFileToken.html#ACadSharp_DxfFileToken_EntityNurbSurface
+  commentId: F:ACadSharp.DxfFileToken.EntityNurbSurface
+  fullName: ACadSharp.DxfFileToken.EntityNurbSurface
+  nameWithType: DxfFileToken.EntityNurbSurface
 - uid: ACadSharp.DxfFileToken.EntityOle2Frame
   name: EntityOle2Frame
   href: api/ACadSharp.DxfFileToken.html#ACadSharp_DxfFileToken_EntityOle2Frame
@@ -5102,6 +5120,12 @@ references:
   commentId: F:ACadSharp.DxfFileToken.EntityPdfUnderlay
   fullName: ACadSharp.DxfFileToken.EntityPdfUnderlay
   nameWithType: DxfFileToken.EntityPdfUnderlay
+- uid: ACadSharp.DxfFileToken.EntityPlaneSurface
+  name: EntityPlaneSurface
+  href: api/ACadSharp.DxfFileToken.html#ACadSharp_DxfFileToken_EntityPlaneSurface
+  commentId: F:ACadSharp.DxfFileToken.EntityPlaneSurface
+  fullName: ACadSharp.DxfFileToken.EntityPlaneSurface
+  nameWithType: DxfFileToken.EntityPlaneSurface
 - uid: ACadSharp.DxfFileToken.EntityPoint
   name: EntityPoint
   href: api/ACadSharp.DxfFileToken.html#ACadSharp_DxfFileToken_EntityPoint
@@ -5138,6 +5162,12 @@ references:
   commentId: F:ACadSharp.DxfFileToken.EntityRegion
   fullName: ACadSharp.DxfFileToken.EntityRegion
   nameWithType: DxfFileToken.EntityRegion
+- uid: ACadSharp.DxfFileToken.EntityRevolvedSurface
+  name: EntityRevolvedSurface
+  href: api/ACadSharp.DxfFileToken.html#ACadSharp_DxfFileToken_EntityRevolvedSurface
+  commentId: F:ACadSharp.DxfFileToken.EntityRevolvedSurface
+  fullName: ACadSharp.DxfFileToken.EntityRevolvedSurface
+  nameWithType: DxfFileToken.EntityRevolvedSurface
 - uid: ACadSharp.DxfFileToken.EntitySection
   name: EntitySection
   href: api/ACadSharp.DxfFileToken.html#ACadSharp_DxfFileToken_EntitySection
@@ -5180,6 +5210,12 @@ references:
   commentId: F:ACadSharp.DxfFileToken.EntitySurface
   fullName: ACadSharp.DxfFileToken.EntitySurface
   nameWithType: DxfFileToken.EntitySurface
+- uid: ACadSharp.DxfFileToken.EntitySweptSurface
+  name: EntitySweptSurface
+  href: api/ACadSharp.DxfFileToken.html#ACadSharp_DxfFileToken_EntitySweptSurface
+  commentId: F:ACadSharp.DxfFileToken.EntitySweptSurface
+  fullName: ACadSharp.DxfFileToken.EntitySweptSurface
+  nameWithType: DxfFileToken.EntitySweptSurface
 - uid: ACadSharp.DxfFileToken.EntityTable
   name: EntityTable
   href: api/ACadSharp.DxfFileToken.html#ACadSharp_DxfFileToken_EntityTable
@@ -6780,6 +6816,12 @@ references:
   commentId: F:ACadSharp.DxfSubclassMarker.EvalGraphExpr
   fullName: ACadSharp.DxfSubclassMarker.EvalGraphExpr
   nameWithType: DxfSubclassMarker.EvalGraphExpr
+- uid: ACadSharp.DxfSubclassMarker.ExtrudedSurface
+  name: ExtrudedSurface
+  href: api/ACadSharp.DxfSubclassMarker.html#ACadSharp_DxfSubclassMarker_ExtrudedSurface
+  commentId: F:ACadSharp.DxfSubclassMarker.ExtrudedSurface
+  fullName: ACadSharp.DxfSubclassMarker.ExtrudedSurface
+  nameWithType: DxfSubclassMarker.ExtrudedSurface
 - uid: ACadSharp.DxfSubclassMarker.Face3d
   name: Face3d
   href: api/ACadSharp.DxfSubclassMarker.html#ACadSharp_DxfSubclassMarker_Face3d
@@ -6894,6 +6936,12 @@ references:
   commentId: F:ACadSharp.DxfSubclassMarker.LinkedTableData
   fullName: ACadSharp.DxfSubclassMarker.LinkedTableData
   nameWithType: DxfSubclassMarker.LinkedTableData
+- uid: ACadSharp.DxfSubclassMarker.LoftedSurface
+  name: LoftedSurface
+  href: api/ACadSharp.DxfSubclassMarker.html#ACadSharp_DxfSubclassMarker_LoftedSurface
+  commentId: F:ACadSharp.DxfSubclassMarker.LoftedSurface
+  fullName: ACadSharp.DxfSubclassMarker.LoftedSurface
+  nameWithType: DxfSubclassMarker.LoftedSurface
 - uid: ACadSharp.DxfSubclassMarker.LwPolyline
   name: LwPolyline
   href: api/ACadSharp.DxfSubclassMarker.html#ACadSharp_DxfSubclassMarker_LwPolyline
@@ -6966,6 +7014,12 @@ references:
   commentId: F:ACadSharp.DxfSubclassMarker.MultiLeaderObjectContextData
   fullName: ACadSharp.DxfSubclassMarker.MultiLeaderObjectContextData
   nameWithType: DxfSubclassMarker.MultiLeaderObjectContextData
+- uid: ACadSharp.DxfSubclassMarker.NurbSurface
+  name: NurbSurface
+  href: api/ACadSharp.DxfSubclassMarker.html#ACadSharp_DxfSubclassMarker_NurbSurface
+  commentId: F:ACadSharp.DxfSubclassMarker.NurbSurface
+  fullName: ACadSharp.DxfSubclassMarker.NurbSurface
+  nameWithType: DxfSubclassMarker.NurbSurface
 - uid: ACadSharp.DxfSubclassMarker.ObjectContextData
   name: ObjectContextData
   href: api/ACadSharp.DxfSubclassMarker.html#ACadSharp_DxfSubclassMarker_ObjectContextData
@@ -7008,6 +7062,12 @@ references:
   commentId: F:ACadSharp.DxfSubclassMarker.PdfReference
   fullName: ACadSharp.DxfSubclassMarker.PdfReference
   nameWithType: DxfSubclassMarker.PdfReference
+- uid: ACadSharp.DxfSubclassMarker.PlaneSurface
+  name: PlaneSurface
+  href: api/ACadSharp.DxfSubclassMarker.html#ACadSharp_DxfSubclassMarker_PlaneSurface
+  commentId: F:ACadSharp.DxfSubclassMarker.PlaneSurface
+  fullName: ACadSharp.DxfSubclassMarker.PlaneSurface
+  nameWithType: DxfSubclassMarker.PlaneSurface
 - uid: ACadSharp.DxfSubclassMarker.PlotSettings
   name: PlotSettings
   href: api/ACadSharp.DxfSubclassMarker.html#ACadSharp_DxfSubclassMarker_PlotSettings
@@ -7122,6 +7182,12 @@ references:
   commentId: F:ACadSharp.DxfSubclassMarker.Ray
   fullName: ACadSharp.DxfSubclassMarker.Ray
   nameWithType: DxfSubclassMarker.Ray
+- uid: ACadSharp.DxfSubclassMarker.RevolvedSurface
+  name: RevolvedSurface
+  href: api/ACadSharp.DxfSubclassMarker.html#ACadSharp_DxfSubclassMarker_RevolvedSurface
+  commentId: F:ACadSharp.DxfSubclassMarker.RevolvedSurface
+  fullName: ACadSharp.DxfSubclassMarker.RevolvedSurface
+  nameWithType: DxfSubclassMarker.RevolvedSurface
 - uid: ACadSharp.DxfSubclassMarker.Scale
   name: Scale
   href: api/ACadSharp.DxfSubclassMarker.html#ACadSharp_DxfSubclassMarker_Scale
@@ -7164,6 +7230,18 @@ references:
   commentId: F:ACadSharp.DxfSubclassMarker.Spline
   fullName: ACadSharp.DxfSubclassMarker.Spline
   nameWithType: DxfSubclassMarker.Spline
+- uid: ACadSharp.DxfSubclassMarker.Surface
+  name: Surface
+  href: api/ACadSharp.DxfSubclassMarker.html#ACadSharp_DxfSubclassMarker_Surface
+  commentId: F:ACadSharp.DxfSubclassMarker.Surface
+  fullName: ACadSharp.DxfSubclassMarker.Surface
+  nameWithType: DxfSubclassMarker.Surface
+- uid: ACadSharp.DxfSubclassMarker.SweptSurface
+  name: SweptSurface
+  href: api/ACadSharp.DxfSubclassMarker.html#ACadSharp_DxfSubclassMarker_SweptSurface
+  commentId: F:ACadSharp.DxfSubclassMarker.SweptSurface
+  fullName: ACadSharp.DxfSubclassMarker.SweptSurface
+  nameWithType: DxfSubclassMarker.SweptSurface
 - uid: ACadSharp.DxfSubclassMarker.Table
   name: Table
   href: api/ACadSharp.DxfSubclassMarker.html#ACadSharp_DxfSubclassMarker_Table
@@ -11592,6 +11670,51 @@ references:
   isSpec: "True"
   fullName: ACadSharp.Entities.Entity.transformNormal
   nameWithType: Entity.transformNormal
+- uid: ACadSharp.Entities.ExtrudedSurface
+  name: ExtrudedSurface
+  href: api/ACadSharp.Entities.ExtrudedSurface.html
+  commentId: T:ACadSharp.Entities.ExtrudedSurface
+  fullName: ACadSharp.Entities.ExtrudedSurface
+  nameWithType: ExtrudedSurface
+- uid: ACadSharp.Entities.ExtrudedSurface.GetDxfClass
+  name: GetDxfClass()
+  href: api/ACadSharp.Entities.ExtrudedSurface.html#ACadSharp_Entities_ExtrudedSurface_GetDxfClass
+  commentId: M:ACadSharp.Entities.ExtrudedSurface.GetDxfClass
+  fullName: ACadSharp.Entities.ExtrudedSurface.GetDxfClass()
+  nameWithType: ExtrudedSurface.GetDxfClass()
+- uid: ACadSharp.Entities.ExtrudedSurface.GetDxfClass*
+  name: GetDxfClass
+  href: api/ACadSharp.Entities.ExtrudedSurface.html#ACadSharp_Entities_ExtrudedSurface_GetDxfClass_
+  commentId: Overload:ACadSharp.Entities.ExtrudedSurface.GetDxfClass
+  isSpec: "True"
+  fullName: ACadSharp.Entities.ExtrudedSurface.GetDxfClass
+  nameWithType: ExtrudedSurface.GetDxfClass
+- uid: ACadSharp.Entities.ExtrudedSurface.ObjectName
+  name: ObjectName
+  href: api/ACadSharp.Entities.ExtrudedSurface.html#ACadSharp_Entities_ExtrudedSurface_ObjectName
+  commentId: P:ACadSharp.Entities.ExtrudedSurface.ObjectName
+  fullName: ACadSharp.Entities.ExtrudedSurface.ObjectName
+  nameWithType: ExtrudedSurface.ObjectName
+- uid: ACadSharp.Entities.ExtrudedSurface.ObjectName*
+  name: ObjectName
+  href: api/ACadSharp.Entities.ExtrudedSurface.html#ACadSharp_Entities_ExtrudedSurface_ObjectName_
+  commentId: Overload:ACadSharp.Entities.ExtrudedSurface.ObjectName
+  isSpec: "True"
+  fullName: ACadSharp.Entities.ExtrudedSurface.ObjectName
+  nameWithType: ExtrudedSurface.ObjectName
+- uid: ACadSharp.Entities.ExtrudedSurface.SubclassMarker
+  name: SubclassMarker
+  href: api/ACadSharp.Entities.ExtrudedSurface.html#ACadSharp_Entities_ExtrudedSurface_SubclassMarker
+  commentId: P:ACadSharp.Entities.ExtrudedSurface.SubclassMarker
+  fullName: ACadSharp.Entities.ExtrudedSurface.SubclassMarker
+  nameWithType: ExtrudedSurface.SubclassMarker
+- uid: ACadSharp.Entities.ExtrudedSurface.SubclassMarker*
+  name: SubclassMarker
+  href: api/ACadSharp.Entities.ExtrudedSurface.html#ACadSharp_Entities_ExtrudedSurface_SubclassMarker_
+  commentId: Overload:ACadSharp.Entities.ExtrudedSurface.SubclassMarker
+  isSpec: "True"
+  fullName: ACadSharp.Entities.ExtrudedSurface.SubclassMarker
+  nameWithType: ExtrudedSurface.SubclassMarker
 - uid: ACadSharp.Entities.Face3D
   name: Face3D
   href: api/ACadSharp.Entities.Face3D.html
@@ -15262,6 +15385,51 @@ references:
   commentId: F:ACadSharp.Entities.LineSpacingStyleType.None
   fullName: ACadSharp.Entities.LineSpacingStyleType.None
   nameWithType: LineSpacingStyleType.None
+- uid: ACadSharp.Entities.LoftedSurface
+  name: LoftedSurface
+  href: api/ACadSharp.Entities.LoftedSurface.html
+  commentId: T:ACadSharp.Entities.LoftedSurface
+  fullName: ACadSharp.Entities.LoftedSurface
+  nameWithType: LoftedSurface
+- uid: ACadSharp.Entities.LoftedSurface.GetDxfClass
+  name: GetDxfClass()
+  href: api/ACadSharp.Entities.LoftedSurface.html#ACadSharp_Entities_LoftedSurface_GetDxfClass
+  commentId: M:ACadSharp.Entities.LoftedSurface.GetDxfClass
+  fullName: ACadSharp.Entities.LoftedSurface.GetDxfClass()
+  nameWithType: LoftedSurface.GetDxfClass()
+- uid: ACadSharp.Entities.LoftedSurface.GetDxfClass*
+  name: GetDxfClass
+  href: api/ACadSharp.Entities.LoftedSurface.html#ACadSharp_Entities_LoftedSurface_GetDxfClass_
+  commentId: Overload:ACadSharp.Entities.LoftedSurface.GetDxfClass
+  isSpec: "True"
+  fullName: ACadSharp.Entities.LoftedSurface.GetDxfClass
+  nameWithType: LoftedSurface.GetDxfClass
+- uid: ACadSharp.Entities.LoftedSurface.ObjectName
+  name: ObjectName
+  href: api/ACadSharp.Entities.LoftedSurface.html#ACadSharp_Entities_LoftedSurface_ObjectName
+  commentId: P:ACadSharp.Entities.LoftedSurface.ObjectName
+  fullName: ACadSharp.Entities.LoftedSurface.ObjectName
+  nameWithType: LoftedSurface.ObjectName
+- uid: ACadSharp.Entities.LoftedSurface.ObjectName*
+  name: ObjectName
+  href: api/ACadSharp.Entities.LoftedSurface.html#ACadSharp_Entities_LoftedSurface_ObjectName_
+  commentId: Overload:ACadSharp.Entities.LoftedSurface.ObjectName
+  isSpec: "True"
+  fullName: ACadSharp.Entities.LoftedSurface.ObjectName
+  nameWithType: LoftedSurface.ObjectName
+- uid: ACadSharp.Entities.LoftedSurface.SubclassMarker
+  name: SubclassMarker
+  href: api/ACadSharp.Entities.LoftedSurface.html#ACadSharp_Entities_LoftedSurface_SubclassMarker
+  commentId: P:ACadSharp.Entities.LoftedSurface.SubclassMarker
+  fullName: ACadSharp.Entities.LoftedSurface.SubclassMarker
+  nameWithType: LoftedSurface.SubclassMarker
+- uid: ACadSharp.Entities.LoftedSurface.SubclassMarker*
+  name: SubclassMarker
+  href: api/ACadSharp.Entities.LoftedSurface.html#ACadSharp_Entities_LoftedSurface_SubclassMarker_
+  commentId: Overload:ACadSharp.Entities.LoftedSurface.SubclassMarker
+  isSpec: "True"
+  fullName: ACadSharp.Entities.LoftedSurface.SubclassMarker
+  nameWithType: LoftedSurface.SubclassMarker
 - uid: ACadSharp.Entities.LwPolyline
   name: LwPolyline
   href: api/ACadSharp.Entities.LwPolyline.html
@@ -18324,6 +18492,51 @@ references:
   commentId: F:ACadSharp.Entities.MultiLeaderPropertyOverrideFlags.TextTopAttachment
   fullName: ACadSharp.Entities.MultiLeaderPropertyOverrideFlags.TextTopAttachment
   nameWithType: MultiLeaderPropertyOverrideFlags.TextTopAttachment
+- uid: ACadSharp.Entities.NurbSurface
+  name: NurbSurface
+  href: api/ACadSharp.Entities.NurbSurface.html
+  commentId: T:ACadSharp.Entities.NurbSurface
+  fullName: ACadSharp.Entities.NurbSurface
+  nameWithType: NurbSurface
+- uid: ACadSharp.Entities.NurbSurface.GetDxfClass
+  name: GetDxfClass()
+  href: api/ACadSharp.Entities.NurbSurface.html#ACadSharp_Entities_NurbSurface_GetDxfClass
+  commentId: M:ACadSharp.Entities.NurbSurface.GetDxfClass
+  fullName: ACadSharp.Entities.NurbSurface.GetDxfClass()
+  nameWithType: NurbSurface.GetDxfClass()
+- uid: ACadSharp.Entities.NurbSurface.GetDxfClass*
+  name: GetDxfClass
+  href: api/ACadSharp.Entities.NurbSurface.html#ACadSharp_Entities_NurbSurface_GetDxfClass_
+  commentId: Overload:ACadSharp.Entities.NurbSurface.GetDxfClass
+  isSpec: "True"
+  fullName: ACadSharp.Entities.NurbSurface.GetDxfClass
+  nameWithType: NurbSurface.GetDxfClass
+- uid: ACadSharp.Entities.NurbSurface.ObjectName
+  name: ObjectName
+  href: api/ACadSharp.Entities.NurbSurface.html#ACadSharp_Entities_NurbSurface_ObjectName
+  commentId: P:ACadSharp.Entities.NurbSurface.ObjectName
+  fullName: ACadSharp.Entities.NurbSurface.ObjectName
+  nameWithType: NurbSurface.ObjectName
+- uid: ACadSharp.Entities.NurbSurface.ObjectName*
+  name: ObjectName
+  href: api/ACadSharp.Entities.NurbSurface.html#ACadSharp_Entities_NurbSurface_ObjectName_
+  commentId: Overload:ACadSharp.Entities.NurbSurface.ObjectName
+  isSpec: "True"
+  fullName: ACadSharp.Entities.NurbSurface.ObjectName
+  nameWithType: NurbSurface.ObjectName
+- uid: ACadSharp.Entities.NurbSurface.SubclassMarker
+  name: SubclassMarker
+  href: api/ACadSharp.Entities.NurbSurface.html#ACadSharp_Entities_NurbSurface_SubclassMarker
+  commentId: P:ACadSharp.Entities.NurbSurface.SubclassMarker
+  fullName: ACadSharp.Entities.NurbSurface.SubclassMarker
+  nameWithType: NurbSurface.SubclassMarker
+- uid: ACadSharp.Entities.NurbSurface.SubclassMarker*
+  name: SubclassMarker
+  href: api/ACadSharp.Entities.NurbSurface.html#ACadSharp_Entities_NurbSurface_SubclassMarker_
+  commentId: Overload:ACadSharp.Entities.NurbSurface.SubclassMarker
+  isSpec: "True"
+  fullName: ACadSharp.Entities.NurbSurface.SubclassMarker
+  nameWithType: NurbSurface.SubclassMarker
 - uid: ACadSharp.Entities.Ole2Frame
   name: Ole2Frame
   href: api/ACadSharp.Entities.Ole2Frame.html
@@ -18587,6 +18800,51 @@ references:
   isSpec: "True"
   fullName: ACadSharp.Entities.PdfUnderlay.getDocumentCollection
   nameWithType: PdfUnderlay.getDocumentCollection
+- uid: ACadSharp.Entities.PlaneSurface
+  name: PlaneSurface
+  href: api/ACadSharp.Entities.PlaneSurface.html
+  commentId: T:ACadSharp.Entities.PlaneSurface
+  fullName: ACadSharp.Entities.PlaneSurface
+  nameWithType: PlaneSurface
+- uid: ACadSharp.Entities.PlaneSurface.GetDxfClass
+  name: GetDxfClass()
+  href: api/ACadSharp.Entities.PlaneSurface.html#ACadSharp_Entities_PlaneSurface_GetDxfClass
+  commentId: M:ACadSharp.Entities.PlaneSurface.GetDxfClass
+  fullName: ACadSharp.Entities.PlaneSurface.GetDxfClass()
+  nameWithType: PlaneSurface.GetDxfClass()
+- uid: ACadSharp.Entities.PlaneSurface.GetDxfClass*
+  name: GetDxfClass
+  href: api/ACadSharp.Entities.PlaneSurface.html#ACadSharp_Entities_PlaneSurface_GetDxfClass_
+  commentId: Overload:ACadSharp.Entities.PlaneSurface.GetDxfClass
+  isSpec: "True"
+  fullName: ACadSharp.Entities.PlaneSurface.GetDxfClass
+  nameWithType: PlaneSurface.GetDxfClass
+- uid: ACadSharp.Entities.PlaneSurface.ObjectName
+  name: ObjectName
+  href: api/ACadSharp.Entities.PlaneSurface.html#ACadSharp_Entities_PlaneSurface_ObjectName
+  commentId: P:ACadSharp.Entities.PlaneSurface.ObjectName
+  fullName: ACadSharp.Entities.PlaneSurface.ObjectName
+  nameWithType: PlaneSurface.ObjectName
+- uid: ACadSharp.Entities.PlaneSurface.ObjectName*
+  name: ObjectName
+  href: api/ACadSharp.Entities.PlaneSurface.html#ACadSharp_Entities_PlaneSurface_ObjectName_
+  commentId: Overload:ACadSharp.Entities.PlaneSurface.ObjectName
+  isSpec: "True"
+  fullName: ACadSharp.Entities.PlaneSurface.ObjectName
+  nameWithType: PlaneSurface.ObjectName
+- uid: ACadSharp.Entities.PlaneSurface.SubclassMarker
+  name: SubclassMarker
+  href: api/ACadSharp.Entities.PlaneSurface.html#ACadSharp_Entities_PlaneSurface_SubclassMarker
+  commentId: P:ACadSharp.Entities.PlaneSurface.SubclassMarker
+  fullName: ACadSharp.Entities.PlaneSurface.SubclassMarker
+  nameWithType: PlaneSurface.SubclassMarker
+- uid: ACadSharp.Entities.PlaneSurface.SubclassMarker*
+  name: SubclassMarker
+  href: api/ACadSharp.Entities.PlaneSurface.html#ACadSharp_Entities_PlaneSurface_SubclassMarker_
+  commentId: Overload:ACadSharp.Entities.PlaneSurface.SubclassMarker
+  isSpec: "True"
+  fullName: ACadSharp.Entities.PlaneSurface.SubclassMarker
+  nameWithType: PlaneSurface.SubclassMarker
 - uid: ACadSharp.Entities.Point
   name: Point
   href: api/ACadSharp.Entities.Point.html
@@ -22785,6 +23043,51 @@ references:
   isSpec: "True"
   fullName: ACadSharp.Entities.Region.ObjectType
   nameWithType: Region.ObjectType
+- uid: ACadSharp.Entities.RevolvedSurface
+  name: RevolvedSurface
+  href: api/ACadSharp.Entities.RevolvedSurface.html
+  commentId: T:ACadSharp.Entities.RevolvedSurface
+  fullName: ACadSharp.Entities.RevolvedSurface
+  nameWithType: RevolvedSurface
+- uid: ACadSharp.Entities.RevolvedSurface.GetDxfClass
+  name: GetDxfClass()
+  href: api/ACadSharp.Entities.RevolvedSurface.html#ACadSharp_Entities_RevolvedSurface_GetDxfClass
+  commentId: M:ACadSharp.Entities.RevolvedSurface.GetDxfClass
+  fullName: ACadSharp.Entities.RevolvedSurface.GetDxfClass()
+  nameWithType: RevolvedSurface.GetDxfClass()
+- uid: ACadSharp.Entities.RevolvedSurface.GetDxfClass*
+  name: GetDxfClass
+  href: api/ACadSharp.Entities.RevolvedSurface.html#ACadSharp_Entities_RevolvedSurface_GetDxfClass_
+  commentId: Overload:ACadSharp.Entities.RevolvedSurface.GetDxfClass
+  isSpec: "True"
+  fullName: ACadSharp.Entities.RevolvedSurface.GetDxfClass
+  nameWithType: RevolvedSurface.GetDxfClass
+- uid: ACadSharp.Entities.RevolvedSurface.ObjectName
+  name: ObjectName
+  href: api/ACadSharp.Entities.RevolvedSurface.html#ACadSharp_Entities_RevolvedSurface_ObjectName
+  commentId: P:ACadSharp.Entities.RevolvedSurface.ObjectName
+  fullName: ACadSharp.Entities.RevolvedSurface.ObjectName
+  nameWithType: RevolvedSurface.ObjectName
+- uid: ACadSharp.Entities.RevolvedSurface.ObjectName*
+  name: ObjectName
+  href: api/ACadSharp.Entities.RevolvedSurface.html#ACadSharp_Entities_RevolvedSurface_ObjectName_
+  commentId: Overload:ACadSharp.Entities.RevolvedSurface.ObjectName
+  isSpec: "True"
+  fullName: ACadSharp.Entities.RevolvedSurface.ObjectName
+  nameWithType: RevolvedSurface.ObjectName
+- uid: ACadSharp.Entities.RevolvedSurface.SubclassMarker
+  name: SubclassMarker
+  href: api/ACadSharp.Entities.RevolvedSurface.html#ACadSharp_Entities_RevolvedSurface_SubclassMarker
+  commentId: P:ACadSharp.Entities.RevolvedSurface.SubclassMarker
+  fullName: ACadSharp.Entities.RevolvedSurface.SubclassMarker
+  nameWithType: RevolvedSurface.SubclassMarker
+- uid: ACadSharp.Entities.RevolvedSurface.SubclassMarker*
+  name: SubclassMarker
+  href: api/ACadSharp.Entities.RevolvedSurface.html#ACadSharp_Entities_RevolvedSurface_SubclassMarker_
+  commentId: Overload:ACadSharp.Entities.RevolvedSurface.SubclassMarker
+  isSpec: "True"
+  fullName: ACadSharp.Entities.RevolvedSurface.SubclassMarker
+  nameWithType: RevolvedSurface.SubclassMarker
 - uid: ACadSharp.Entities.Seqend
   name: Seqend
   href: api/ACadSharp.Entities.Seqend.html
@@ -23848,6 +24151,135 @@ references:
   commentId: F:ACadSharp.Entities.SplineFlags1.UseKnotParameter
   fullName: ACadSharp.Entities.SplineFlags1.UseKnotParameter
   nameWithType: SplineFlags1.UseKnotParameter
+- uid: ACadSharp.Entities.Surface
+  name: Surface
+  href: api/ACadSharp.Entities.Surface.html
+  commentId: T:ACadSharp.Entities.Surface
+  fullName: ACadSharp.Entities.Surface
+  nameWithType: Surface
+- uid: ACadSharp.Entities.Surface.GetDxfClass
+  name: GetDxfClass()
+  href: api/ACadSharp.Entities.Surface.html#ACadSharp_Entities_Surface_GetDxfClass
+  commentId: M:ACadSharp.Entities.Surface.GetDxfClass
+  fullName: ACadSharp.Entities.Surface.GetDxfClass()
+  nameWithType: Surface.GetDxfClass()
+- uid: ACadSharp.Entities.Surface.GetDxfClass*
+  name: GetDxfClass
+  href: api/ACadSharp.Entities.Surface.html#ACadSharp_Entities_Surface_GetDxfClass_
+  commentId: Overload:ACadSharp.Entities.Surface.GetDxfClass
+  isSpec: "True"
+  fullName: ACadSharp.Entities.Surface.GetDxfClass
+  nameWithType: Surface.GetDxfClass
+- uid: ACadSharp.Entities.Surface.ObjectName
+  name: ObjectName
+  href: api/ACadSharp.Entities.Surface.html#ACadSharp_Entities_Surface_ObjectName
+  commentId: P:ACadSharp.Entities.Surface.ObjectName
+  fullName: ACadSharp.Entities.Surface.ObjectName
+  nameWithType: Surface.ObjectName
+- uid: ACadSharp.Entities.Surface.ObjectName*
+  name: ObjectName
+  href: api/ACadSharp.Entities.Surface.html#ACadSharp_Entities_Surface_ObjectName_
+  commentId: Overload:ACadSharp.Entities.Surface.ObjectName
+  isSpec: "True"
+  fullName: ACadSharp.Entities.Surface.ObjectName
+  nameWithType: Surface.ObjectName
+- uid: ACadSharp.Entities.Surface.ObjectType
+  name: ObjectType
+  href: api/ACadSharp.Entities.Surface.html#ACadSharp_Entities_Surface_ObjectType
+  commentId: P:ACadSharp.Entities.Surface.ObjectType
+  fullName: ACadSharp.Entities.Surface.ObjectType
+  nameWithType: Surface.ObjectType
+- uid: ACadSharp.Entities.Surface.ObjectType*
+  name: ObjectType
+  href: api/ACadSharp.Entities.Surface.html#ACadSharp_Entities_Surface_ObjectType_
+  commentId: Overload:ACadSharp.Entities.Surface.ObjectType
+  isSpec: "True"
+  fullName: ACadSharp.Entities.Surface.ObjectType
+  nameWithType: Surface.ObjectType
+- uid: ACadSharp.Entities.Surface.SubclassMarker
+  name: SubclassMarker
+  href: api/ACadSharp.Entities.Surface.html#ACadSharp_Entities_Surface_SubclassMarker
+  commentId: P:ACadSharp.Entities.Surface.SubclassMarker
+  fullName: ACadSharp.Entities.Surface.SubclassMarker
+  nameWithType: Surface.SubclassMarker
+- uid: ACadSharp.Entities.Surface.SubclassMarker*
+  name: SubclassMarker
+  href: api/ACadSharp.Entities.Surface.html#ACadSharp_Entities_Surface_SubclassMarker_
+  commentId: Overload:ACadSharp.Entities.Surface.SubclassMarker
+  isSpec: "True"
+  fullName: ACadSharp.Entities.Surface.SubclassMarker
+  nameWithType: Surface.SubclassMarker
+- uid: ACadSharp.Entities.Surface.UIsolines
+  name: UIsolines
+  href: api/ACadSharp.Entities.Surface.html#ACadSharp_Entities_Surface_UIsolines
+  commentId: P:ACadSharp.Entities.Surface.UIsolines
+  fullName: ACadSharp.Entities.Surface.UIsolines
+  nameWithType: Surface.UIsolines
+- uid: ACadSharp.Entities.Surface.UIsolines*
+  name: UIsolines
+  href: api/ACadSharp.Entities.Surface.html#ACadSharp_Entities_Surface_UIsolines_
+  commentId: Overload:ACadSharp.Entities.Surface.UIsolines
+  isSpec: "True"
+  fullName: ACadSharp.Entities.Surface.UIsolines
+  nameWithType: Surface.UIsolines
+- uid: ACadSharp.Entities.Surface.VIsolines
+  name: VIsolines
+  href: api/ACadSharp.Entities.Surface.html#ACadSharp_Entities_Surface_VIsolines
+  commentId: P:ACadSharp.Entities.Surface.VIsolines
+  fullName: ACadSharp.Entities.Surface.VIsolines
+  nameWithType: Surface.VIsolines
+- uid: ACadSharp.Entities.Surface.VIsolines*
+  name: VIsolines
+  href: api/ACadSharp.Entities.Surface.html#ACadSharp_Entities_Surface_VIsolines_
+  commentId: Overload:ACadSharp.Entities.Surface.VIsolines
+  isSpec: "True"
+  fullName: ACadSharp.Entities.Surface.VIsolines
+  nameWithType: Surface.VIsolines
+- uid: ACadSharp.Entities.SweptSurface
+  name: SweptSurface
+  href: api/ACadSharp.Entities.SweptSurface.html
+  commentId: T:ACadSharp.Entities.SweptSurface
+  fullName: ACadSharp.Entities.SweptSurface
+  nameWithType: SweptSurface
+- uid: ACadSharp.Entities.SweptSurface.GetDxfClass
+  name: GetDxfClass()
+  href: api/ACadSharp.Entities.SweptSurface.html#ACadSharp_Entities_SweptSurface_GetDxfClass
+  commentId: M:ACadSharp.Entities.SweptSurface.GetDxfClass
+  fullName: ACadSharp.Entities.SweptSurface.GetDxfClass()
+  nameWithType: SweptSurface.GetDxfClass()
+- uid: ACadSharp.Entities.SweptSurface.GetDxfClass*
+  name: GetDxfClass
+  href: api/ACadSharp.Entities.SweptSurface.html#ACadSharp_Entities_SweptSurface_GetDxfClass_
+  commentId: Overload:ACadSharp.Entities.SweptSurface.GetDxfClass
+  isSpec: "True"
+  fullName: ACadSharp.Entities.SweptSurface.GetDxfClass
+  nameWithType: SweptSurface.GetDxfClass
+- uid: ACadSharp.Entities.SweptSurface.ObjectName
+  name: ObjectName
+  href: api/ACadSharp.Entities.SweptSurface.html#ACadSharp_Entities_SweptSurface_ObjectName
+  commentId: P:ACadSharp.Entities.SweptSurface.ObjectName
+  fullName: ACadSharp.Entities.SweptSurface.ObjectName
+  nameWithType: SweptSurface.ObjectName
+- uid: ACadSharp.Entities.SweptSurface.ObjectName*
+  name: ObjectName
+  href: api/ACadSharp.Entities.SweptSurface.html#ACadSharp_Entities_SweptSurface_ObjectName_
+  commentId: Overload:ACadSharp.Entities.SweptSurface.ObjectName
+  isSpec: "True"
+  fullName: ACadSharp.Entities.SweptSurface.ObjectName
+  nameWithType: SweptSurface.ObjectName
+- uid: ACadSharp.Entities.SweptSurface.SubclassMarker
+  name: SubclassMarker
+  href: api/ACadSharp.Entities.SweptSurface.html#ACadSharp_Entities_SweptSurface_SubclassMarker
+  commentId: P:ACadSharp.Entities.SweptSurface.SubclassMarker
+  fullName: ACadSharp.Entities.SweptSurface.SubclassMarker
+  nameWithType: SweptSurface.SubclassMarker
+- uid: ACadSharp.Entities.SweptSurface.SubclassMarker*
+  name: SubclassMarker
+  href: api/ACadSharp.Entities.SweptSurface.html#ACadSharp_Entities_SweptSurface_SubclassMarker_
+  commentId: Overload:ACadSharp.Entities.SweptSurface.SubclassMarker
+  isSpec: "True"
+  fullName: ACadSharp.Entities.SweptSurface.SubclassMarker
+  nameWithType: SweptSurface.SubclassMarker
 - uid: ACadSharp.Entities.TableEntity
   name: TableEntity
   href: api/ACadSharp.Entities.TableEntity.html
