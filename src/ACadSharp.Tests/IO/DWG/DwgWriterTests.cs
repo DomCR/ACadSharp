@@ -44,6 +44,37 @@ public class DwgWriterTests : IOTestsBase
 
 	[Theory]
 	[MemberData(nameof(Versions))]
+	public void WriteHeaderPlotStyleModeTest(ACadVersion version)
+	{
+		//PSTYLEMODE is stored in the header flags from R2000
+		if (!this.isSupportedVersion(version) || version < ACadVersion.AC1015)
+		{
+			return;
+		}
+
+		foreach (short mode in new short[] { 0, 1 })
+		{
+			CadDocument doc = new CadDocument();
+			doc.Header.Version = version;
+			doc.Header.PlotStyleMode = mode;
+
+			MemoryStream stream = new MemoryStream();
+			using (var wr = new DwgWriter(stream, doc))
+			{
+				wr.Write();
+			}
+
+			stream = new MemoryStream(stream.ToArray());
+			using (var re = new DwgReader(stream, this.onNotification))
+			{
+				CadHeader header = re.ReadHeader();
+				Assert.Equal(mode, header.PlotStyleMode);
+			}
+		}
+	}
+
+	[Theory]
+	[MemberData(nameof(Versions))]
 	public void WriteHeaderTest(ACadVersion version)
 	{
 		CadDocument doc = new CadDocument();
