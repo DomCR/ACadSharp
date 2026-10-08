@@ -29,9 +29,9 @@ internal partial class DwgObjectReader : DwgSectionIO
 		template.ScaleHandle = this.handleReference();
 	}
 
-	private CadTemplate readDimensionObjectContextData()
+	private CadTemplate readDimensionObjectContextData(DimensionObjectContextData contextData)
 	{
-		var template = new CadDimensionObjectContextDataTemplate(new DimensionObjectContextData());
+		var template = new CadDimensionObjectContextDataTemplate(contextData);
 		this.readAnnotScaleObjectContextData(template);
 		//H 2 dimension block for this scale; the data fields are not read
 		template.BlockHandle = this.handleReference();
