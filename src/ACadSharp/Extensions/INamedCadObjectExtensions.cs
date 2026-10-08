@@ -33,6 +33,13 @@ public static class INamedCadObjectExtensions
 			return false;
 		}
 
-		return namedCadObject.Name.IndexOfAny(InvalidCharacters.Skip(1).ToArray()) == -1;
+		var invalidCharacters = InvalidCharacters.Skip(1);
+		if (namedCadObject is Tables.TableEntry entry
+			&& entry.Flags.HasFlag(Tables.StandardFlags.XrefDependent))
+		{
+			invalidCharacters = invalidCharacters.Where(c => c != '|');
+		}
+
+		return namedCadObject.Name.IndexOfAny(invalidCharacters.ToArray()) == -1;
 	}
 }
