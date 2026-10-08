@@ -148,6 +148,8 @@ public static class DxfSubclassMarker
 
 	public const string EvalGraphExpr = "AcDbEvalExpr";
 
+	public const string ExtrudedSurface = "AcDbExtrudedSurface";
+
 	public const string Face3d = "AcDbFace";
 
 	public const string Field = "AcDbField";
@@ -186,6 +188,8 @@ public static class DxfSubclassMarker
 
 	public const string LinkedTableData = "AcDbLinkedTableData";
 
+	public const string LoftedSurface = "AcDbLoftedSurface";
+
 	public const string LwPolyline = "AcDbPolyline";
 
 	public const string Material = "AcDbMaterial";
@@ -214,6 +218,8 @@ public static class DxfSubclassMarker
 
 	public const string MultiLeaderObjectContextData = "AcDbMLeaderObjectContextData";
 
+	public const string NurbSurface = "AcDbNurbSurface";
+
 	public const string ObjectContextData = "AcDbObjectContextData";
 
 	public const string Ole2Frame = "AcDbOle2Frame";
@@ -233,6 +239,8 @@ public static class DxfSubclassMarker
 	public const string PdfDefinition = "AcDbPdfDefinition";
 
 	public const string PdfReference = "AcDbPdfReference";
+
+	public const string PlaneSurface = "AcDbPlaneSurface";
 
 	public const string PlotSettings = "AcDbPlotSettings";
 
@@ -272,6 +280,8 @@ public static class DxfSubclassMarker
 
 	public const string Ray = "AcDbRay";
 
+	public const string RevolvedSurface = "AcDbRevolvedSurface";
+
 	public const string Scale = "AcDbScale";
 
 	public const string Shape = "AcDbShape";
@@ -285,6 +295,10 @@ public static class DxfSubclassMarker
 	public const string SpatialFilter = "AcDbSpatialFilter";
 
 	public const string Spline = "AcDbSpline";
+
+	public const string Surface = "AcDbSurface";
+
+	public const string SweptSurface = "AcDbSweptSurface";
 
 	public const string Table = "AcDbSymbolTable";
 

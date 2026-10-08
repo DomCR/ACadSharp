@@ -8,7 +8,7 @@ internal class AcdsSchema
 
 	public uint Index { get; set; }
 
-	public List<ulong> Indexes { get; } = new();
+	public List<ulong> Indices { get; } = new();
 
 	public string Name { get; set; }
 

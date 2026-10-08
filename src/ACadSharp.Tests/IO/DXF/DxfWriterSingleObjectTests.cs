@@ -107,7 +107,7 @@ public class DxfWriterSingleObjectTests : WriterSingleObjectTests
 		Assert.False(ellipse.CounterClockWise);
 	}
 
-	protected void writeDxfFile(SingleCaseGenerator data, ACadVersion version)
+	protected virtual void writeDxfFile(SingleCaseGenerator data, ACadVersion version)
 	{
 		Assert.True(data.HasExecuted, $"The writer has failed during it's execution.");
 

@@ -1,4 +1,4 @@
-﻿using System.Collections.Generic;
+﻿using System.IO;
 
 namespace ACadSharp.DataStorage;
 
@@ -8,10 +8,12 @@ internal class AcdsRecordColumn
 
 	public string Name { get; set; } = string.Empty;
 
-	public KeyValuePair<int, object> CodeValuePair { get; set; }
+	public ulong Handle { get; set; }
+
+	public MemoryStream Data { get; set; }
 
 	public override string ToString()
 	{
-		return $"{this.Name} : {this.DataType} : {this.CodeValuePair}";
+		return $"{this.Name} : {this.DataType}";
 	}
 }

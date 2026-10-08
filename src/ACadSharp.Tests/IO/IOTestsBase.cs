@@ -156,7 +156,7 @@ public abstract class IOTestsBase
 		}
 	}
 
-	protected void onNotification(object sender, NotificationEventArgs e)
+	protected virtual void onNotification(object sender, NotificationEventArgs e)
 	{
 		if (e.NotificationType == NotificationType.Error)
 		{

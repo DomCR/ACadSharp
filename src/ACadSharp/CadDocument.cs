@@ -3,7 +3,6 @@ using ACadSharp.Entities;
 using ACadSharp.Header;
 using ACadSharp.Objects;
 using ACadSharp.Objects.Collections;
-using ACadSharp.Prototype1b;
 using ACadSharp.Tables;
 using ACadSharp.Tables.Collections;
 using CSUtilities.Extensions;
@@ -491,9 +490,9 @@ public class CadDocument : IHandledCadObject
 		if (handle == this.Handle)
 			return false;
 
-		if (this._cadObjects.TryGetValue(handle, out IHandledCadObject obj))
+		if (this._cadObjects.TryGetValue(handle, out IHandledCadObject obj) && obj is T)
 		{
-			cadObject = obj as T;
+			cadObject = (T)obj;
 			return true;
 		}
 
