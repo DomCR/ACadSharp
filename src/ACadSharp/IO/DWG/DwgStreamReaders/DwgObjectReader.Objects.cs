@@ -1,6 +1,7 @@
 ﻿using ACadSharp.IO.Templates;
 using ACadSharp.Objects;
 using ACadSharp.Objects.Evaluations;
+using ACadSharp.Tables;
 using System;
 using System.Collections.Generic;
 
@@ -33,8 +34,71 @@ internal partial class DwgObjectReader : DwgSectionIO
 	{
 		var template = new CadDimensionObjectContextDataTemplate(contextData);
 		this.readAnnotScaleObjectContextData(template);
-		//H 2 dimension block for this scale; the data fields are not read
+
+		//2RD	10	Text location
+		contextData.TextLocation = this._objectReader.Read2RawDouble();
+		//B	294	Default text location
+		contextData.IsDefaultTextLocation = this._objectReader.ReadBit();
+		//BD	140	Text rotation
+		contextData.TextRotation = this._objectReader.ReadBitDouble();
+		//H	2	Dimension block for this scale
 		template.BlockHandle = this.handleReference();
+		//B	293	Unknown
+		contextData.Unknown293 = this._objectReader.ReadBit();
+		//B	298	DIMTOFL
+		contextData.TextOutsideExtensions = this._objectReader.ReadBit();
+		//B	291	DIMSOXD
+		contextData.SuppressOutsideExtensions = this._objectReader.ReadBit();
+		//B	70	DIMATFIT is overridden, the DXF value is not stored
+		this._objectReader.ReadBit();
+		//B	292	DIMTIX
+		contextData.TextInsideExtensions = this._objectReader.ReadBit();
+		//B	71	DIMTMOVE is overridden, the DXF value is not stored
+		this._objectReader.ReadBit();
+		//RC	280	Override flags
+		contextData.OverrideFlags = this._objectReader.ReadByte();
+		//B	295	Unknown
+		contextData.Unknown295 = this._objectReader.ReadBit();
+		//B	296	Flip second arrow
+		contextData.FlipSecondArrow = this._objectReader.ReadBit();
+		//B	297	Flip first arrow
+		contextData.FlipFirstArrow = this._objectReader.ReadBit();
+
+		switch (contextData)
+		{
+			case AlignedDimensionObjectContextData aligned:
+				//3BD	11	Dimension line point
+				aligned.DimensionLinePoint = this._objectReader.Read3BitDouble();
+				break;
+			case AngularDimensionObjectContextData angular:
+				//3BD	11	Arc point
+				angular.ArcPoint = this._objectReader.Read3BitDouble();
+				break;
+			case DiametricDimensionObjectContextData diametric:
+				//3BD	11	First arc point
+				diametric.FirstArcPoint = this._objectReader.Read3BitDouble();
+				//3BD	12	Definition point
+				diametric.DefinitionPoint = this._objectReader.Read3BitDouble();
+				break;
+			case OrdinateDimensionObjectContextData ordinate:
+				//3BD	11	Definition point
+				ordinate.DefinitionPoint = this._objectReader.Read3BitDouble();
+				//3BD	12	Leader end point
+				ordinate.LeaderEndpoint = this._objectReader.Read3BitDouble();
+				break;
+			case RadialDimensionObjectContextData radial:
+				//3BD	11	First arc point
+				radial.FirstArcPoint = this._objectReader.Read3BitDouble();
+				if (radial is RadialDimensionLargeObjectContextData large)
+				{
+					//3BD	12	Override center
+					large.OverrideCenter = this._objectReader.Read3BitDouble();
+					//3BD	13	Jog point
+					large.JogPoint = this._objectReader.Read3BitDouble();
+				}
+				break;
+		}
+
 		return template;
 	}
 

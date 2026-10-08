@@ -176,7 +176,7 @@ public static class DxfFileToken
 
 	public const string OrdinateDimensionObjectContextData = "ACDB_ORDDIMOBJECTCONTEXTDATA_CLASS";
 
-	public const string RadialDimensionLargeObjectContextData = "ACDB_RADIMLGOBJECTCONTEXTDATA_CLASS";
+	public const string RadialDimensionLargeObjectContextData = "ACDB_RADIMLRGOBJECTCONTEXTDATA_CLASS";
 
 	public const string RadialDimensionObjectContextData = "ACDB_RADIMOBJECTCONTEXTDATA_CLASS";
 
