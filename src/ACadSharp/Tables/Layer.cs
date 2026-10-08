@@ -129,6 +129,12 @@ public class Layer : TableEntry
 	[DxfCodeValue(DxfReferenceType.Unprocess, 390)]
 	public ulong PlotStyleName { get; internal set; } = 0;
 
+	/// <summary>
+	/// Handle of the xref block record an xref-dependent layer comes from (0 when not dependent).
+	/// The layer's "XREF|" name prefix can be stale after the xref is renamed; this link is not.
+	/// </summary>
+	public ulong XrefBlockHandle { get; set; }
+
 	/// <inheritdoc/>
 	public override string SubclassMarker => DxfSubclassMarker.Layer;
 

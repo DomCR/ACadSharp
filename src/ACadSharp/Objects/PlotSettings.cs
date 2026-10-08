@@ -142,6 +142,12 @@ public class PlotSettings : NonGraphicalObject, IDxfClassDefined
 	public string PlotViewName { get; set; }
 
 	/// <summary>
+	/// Handle of the named view plotted when the plot type is View (DWG R2004+ store the view this way
+	/// instead of by <see cref="PlotViewName"/>); 0 when none.
+	/// </summary>
+	public ulong PlotViewHandle { get; set; }
+
+	/// <summary>
 	/// Gets the scale factor.
 	/// </summary>
 	public double PrintScale

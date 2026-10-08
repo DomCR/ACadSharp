@@ -2000,10 +2000,11 @@ namespace ACadSharp.IO.DWG
 
 			//R2000 +:
 			//Plotstyle flags	BB	00 = bylayer, 01 = byblock, 11 = plotstyle handle present at end of object
-			if (this._objectReader.Read2Bits() == 3)
+			template.CadObject.PlotStyleFlags = this._objectReader.Read2Bits();
+			if (template.CadObject.PlotStyleFlags == 3)
 			{
 				//PLOTSTYLE (hard pointer) present if plotstyle flags were 11
-				long plotstyleFlags = (long)this.handleReference();
+				template.CadObject.PlotStyleHandle = this.handleReference();
 			}
 
 			//R2007 +:
@@ -2714,12 +2715,10 @@ namespace ACadSharp.IO.DWG
 			var color = this._mergedReaders.ReadCmColor();
 			layer.Color = color.IsByBlock || color.IsByLayer ? Color.Default : color;
 
-			//TODO: This is not the Layer control handle
-			template.LayerControlHandle = this.handleReference();
-			//Handle refs H Layer control (soft pointer)
-			//[Reactors(soft pointer)]
-			//xdicobjhandle(hard owner)
-			//External reference block handle(hard pointer)
+			//Handle refs H Layer control (soft pointer), [Reactors (soft pointer)] and xdicobjhandle
+			//(hard owner) are read with the common data; this one is the
+			//External reference block handle (hard pointer): the xref a dependent layer comes from
+			layer.XrefBlockHandle = this.handleReference();
 
 			//R2000+:
 			if (this.R2000Plus)
@@ -5091,7 +5090,7 @@ namespace ACadSharp.IO.DWG
 				plot.ShadePlotDPI = this._objectReader.ReadBitShort();
 
 				//6 plot view handle(hard pointer)
-				ulong plotViewHandle = this.handleReference();
+				plot.PlotViewHandle = this.handleReference();
 			}
 
 			//R2007 +:
@@ -6212,6 +6211,27 @@ namespace ACadSharp.IO.DWG
 				case DxfFileToken.ObjectWipeoutVariables:
 					template = this.readWipeoutVariables();
 					break;
+				case DxfFileToken.AlignedDimensionObjectContextData:
+					template = this.readDimensionObjectContextData(new AlignedDimensionObjectContextData());
+					break;
+				case DxfFileToken.AngularDimensionObjectContextData:
+					template = this.readDimensionObjectContextData(new AngularDimensionObjectContextData());
+					break;
+				case DxfFileToken.DiametricDimensionObjectContextData:
+					template = this.readDimensionObjectContextData(new DiametricDimensionObjectContextData());
+					break;
+				case DxfFileToken.OrdinateDimensionObjectContextData:
+					template = this.readDimensionObjectContextData(new OrdinateDimensionObjectContextData());
+					break;
+				case DxfFileToken.RadialDimensionObjectContextData:
+					template = this.readDimensionObjectContextData(new RadialDimensionObjectContextData());
+					break;
+				case DxfFileToken.RadialDimensionLargeObjectContextData:
+					template = this.readDimensionObjectContextData(new RadialDimensionLargeObjectContextData());
+					break;
+				case DxfFileToken.EntityRText:
+					template = this.readRText(c);
+					break;
 			}
 
 			if (template == null && c.IsAnEntity)
@@ -7321,6 +7341,31 @@ namespace ACadSharp.IO.DWG
 			CadUnknownEntityTemplate template = new CadUnknownEntityTemplate(entity);
 
 			this.readCommonEntityData(template);
+
+			return template;
+		}
+
+		private CadTemplate readRText(DxfClass dxfClass)
+		{
+			CadTemplate template = this.readUnknownEntity(dxfClass);
+			UnknownEntity entity = (UnknownEntity)template.CadObject;
+
+			try
+			{
+				var rt = new UnknownEntity.RemoteText();
+				rt.InsertPoint = this._objectReader.Read3BitDouble();
+				rt.Normal = this._objectReader.Read3BitDouble();
+				rt.Rotation = this._objectReader.ReadBitDouble();
+				rt.Height = this._objectReader.ReadBitDouble();
+				rt.Flags = this._objectReader.ReadBitShort();
+				rt.Contents = this._textReader.ReadVariableText();
+				rt.StyleHandle = this.handleReference();
+				entity.RText = rt;
+			}
+			catch (System.Exception ex)
+			{
+				this._builder.Notify($"RTEXT could not be read: {ex.Message}", NotificationType.Warning);
+			}
 
 			return template;
 		}

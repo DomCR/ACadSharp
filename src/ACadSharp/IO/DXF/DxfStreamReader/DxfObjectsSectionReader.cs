@@ -108,6 +108,25 @@ internal class DxfObjectsSectionReader : DxfSectionReaderBase
 		}
 	}
 
+	private bool readDimensionObjectContextData(CadTemplate template, DxfMap map)
+	{
+		var tmp = template as CadDimensionObjectContextDataTemplate;
+		switch (this._reader.Code)
+		{
+			case 2:
+				tmp.BlockName = this._reader.ValueAsString;
+				return true;
+			default:
+				//AcDbAnnotScaleObjectContextData has no properties of its own in the map
+				if (!string.IsNullOrEmpty(this.currentSubclass) && !map.SubClasses.ContainsKey(this.currentSubclass))
+				{
+					return this._reader.Code == 340 && this.readAnnotScaleObjectContextData(template, map);
+				}
+
+				return this.readAnnotScaleObjectContextData(template, map);
+		}
+	}
+
 	private bool readBlock1PtParameter(CadTemplate template, DxfMap map)
 	{
 		CadBlock1PtParameterTemplate tmp = template as CadBlock1PtParameterTemplate;
@@ -2229,6 +2248,18 @@ internal class DxfObjectsSectionReader : DxfSectionReaderBase
 				return this.readObjectCodes<BlockReferenceObjectContextData>(new CadAnnotScaleObjectContextDataTemplate(new BlockReferenceObjectContextData()), this.readAnnotScaleObjectContextData);
 			case DxfFileToken.MTextAttributeObjectContextData:
 				return this.readObjectCodes<MTextAttributeObjectContextData>(new CadAnnotScaleObjectContextDataTemplate(new MTextAttributeObjectContextData()), this.readAnnotScaleObjectContextData);
+			case DxfFileToken.AlignedDimensionObjectContextData:
+				return this.readObjectCodes<AlignedDimensionObjectContextData>(new CadDimensionObjectContextDataTemplate(new AlignedDimensionObjectContextData()), this.readDimensionObjectContextData);
+			case DxfFileToken.AngularDimensionObjectContextData:
+				return this.readObjectCodes<AngularDimensionObjectContextData>(new CadDimensionObjectContextDataTemplate(new AngularDimensionObjectContextData()), this.readDimensionObjectContextData);
+			case DxfFileToken.DiametricDimensionObjectContextData:
+				return this.readObjectCodes<DiametricDimensionObjectContextData>(new CadDimensionObjectContextDataTemplate(new DiametricDimensionObjectContextData()), this.readDimensionObjectContextData);
+			case DxfFileToken.OrdinateDimensionObjectContextData:
+				return this.readObjectCodes<OrdinateDimensionObjectContextData>(new CadDimensionObjectContextDataTemplate(new OrdinateDimensionObjectContextData()), this.readDimensionObjectContextData);
+			case DxfFileToken.RadialDimensionObjectContextData:
+				return this.readObjectCodes<RadialDimensionObjectContextData>(new CadDimensionObjectContextDataTemplate(new RadialDimensionObjectContextData()), this.readDimensionObjectContextData);
+			case DxfFileToken.RadialDimensionLargeObjectContextData:
+				return this.readObjectCodes<RadialDimensionLargeObjectContextData>(new CadDimensionObjectContextDataTemplate(new RadialDimensionLargeObjectContextData()), this.readDimensionObjectContextData);
 			case DxfFileToken.ObjectPlaceholder:
 				return this.readObjectCodes<AcdbPlaceHolder>(new CadNonGraphicalObjectTemplate(new AcdbPlaceHolder()), this.readObjectSubclassMap);
 			case DxfFileToken.ObjectDBColor:

@@ -14,11 +14,17 @@ public static class DxfFileToken
 
 	public const string AcmPartRef = "ACMPARTREF";
 
+	public const string AlignedDimensionObjectContextData = "ACDB_ALDIMOBJECTCONTEXTDATA_CLASS";
+
+	public const string AngularDimensionObjectContextData = "ACDB_ANGDIMOBJECTCONTEXTDATA_CLASS";
+
 	public const string BeginSection = "SECTION";
 
 	public const string BlkRefObjectContextData = "ACDB_BLKREFOBJECTCONTEXTDATA_CLASS";
 
 	public const string BlkRefToken = "{BLKREFS";
+
+	public const string DiametricDimensionObjectContextData = "ACDB_DMDIMOBJECTCONTEXTDATA_CLASS";
 
 	public const string Block = "BLOCK";
 
@@ -120,6 +126,8 @@ public static class DxfFileToken
 
 	public const string EntityRevolvedSurface = "REVOLVEDSURFACE";
 
+	public const string EntityRText = "RTEXT";
+
 	public const string EntitySection = "SECTION";
 
 	public const string EntitySeqend = "SEQEND";
@@ -177,6 +185,12 @@ public static class DxfFileToken
 	public const string LinkedTableDataRow_END = "LINKEDTABLEDATAROW_END";
 
 	public const string MTextAttributeObjectContextData = "ACDB_MTEXTATTRIBUTEOBJECTCONTEXTDATA_CLASS";
+
+	public const string OrdinateDimensionObjectContextData = "ACDB_ORDDIMOBJECTCONTEXTDATA_CLASS";
+
+	public const string RadialDimensionLargeObjectContextData = "ACDB_RADIMLRGOBJECTCONTEXTDATA_CLASS";
+
+	public const string RadialDimensionObjectContextData = "ACDB_RADIMOBJECTCONTEXTDATA_CLASS";
 
 	public const string ObjectAecCleanupGroupDef = "AEC_CLEANUP_GROUP_DEF";
 
