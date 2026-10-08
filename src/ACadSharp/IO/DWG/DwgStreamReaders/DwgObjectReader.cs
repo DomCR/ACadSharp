@@ -72,6 +72,15 @@ namespace ACadSharp.IO.DWG
 		/// </summary>
 		private IDwgStreamReader _handlesReader;
 
+		/// <summary>
+		/// Bit position where the handle section of the current object starts, or -1 when it is unknown.
+		/// </summary>
+		/// <remarks>
+		/// Some sections, notably the retained data of a proxy object, have no length of their own and
+		/// run until the handle section begins.
+		/// </remarks>
+		private long _handleSectionOffset = -1;
+
 		private IDwgStreamReader _mergedReaders;
 
 		private long _objectInitialPos = 0;
@@ -236,6 +245,9 @@ namespace ACadSharp.IO.DWG
 				//Find the handles offset
 				ulong handleSectionOffset = (ulong)this._crcReader.PositionInBits() + sizeInBits - handleSize;
 
+				//Keep it, some sections run until the handle section starts
+				this._handleSectionOffset = (long)handleSectionOffset;
+
 				//Create a handler section reader
 				this._objectReader = DwgStreamReaderBase.GetStreamHandler(this._version, HugeMemoryStream.Clone(this._memoryStream), this._reader.Encoding);
 				this._objectReader.SetPositionInBits(this._crcReader.PositionInBits());
@@ -262,6 +274,9 @@ namespace ACadSharp.IO.DWG
 
 				this._handlesReader = DwgStreamReaderBase.GetStreamHandler(this._version, HugeMemoryStream.Clone(this._memoryStream), this._reader.Encoding);
 				this._textReader = this._objectReader;
+
+				//The handle section offset is not encoded before R2010, sections without a length cannot be delimited
+				this._handleSectionOffset = -1;
 
 				//set the initial position and get the object type
 				this._objectInitialPos = this._objectReader.PositionInBits();
@@ -1181,8 +1196,29 @@ namespace ACadSharp.IO.DWG
 
 			//Common:
 			//Databits X databits, however many there are to the handles
+			//The retained data of the original object has no length of its own, it extends from the
+			//current position up to the start of the handle section.
+			if (this._handleSectionOffset > 0)
+			{
+				long dataBits = this._handleSectionOffset - this._objectReader.PositionInBits();
+				if (dataBits > 0)
+				{
+					//The section is measured in bits, read the bytes that contain them
+					int dataBytes = (int)((dataBits + 7L) / 8L);
+					byte[] data = this._objectReader.ReadBytes(dataBytes);
 
-			//TODO: Investigate how to read the data in proxies, it can contain data, strings and handles
+					Stream stream = new MemoryStream(data, writable: false);
+					switch (proxy)
+					{
+						case ProxyEntity entity:
+							entity.Data = stream;
+							break;
+						case ProxyObject proxyObject:
+							proxyObject.Data = stream;
+							break;
+					}
+				}
+			}
 		}
 
 		private CadTemplate readDbColor()
