@@ -1,4 +1,5 @@
 using ACadSharp.Attributes;
+using CSMath;
 
 namespace ACadSharp.Objects;
 
@@ -9,6 +10,12 @@ namespace ACadSharp.Objects;
 [DxfSubClass(DxfSubclassMarker.AlignedDimensionObjectContextData)]
 public class AlignedDimensionObjectContextData : DimensionObjectContextData
 {
+	/// <summary>
+	/// Point on the dimension line.
+	/// </summary>
+	[DxfCodeValue(11, 21, 31)]
+	public XYZ DimensionLinePoint { get; set; }
+
 	/// <inheritdoc/>
 	public override string ObjectName => DxfFileToken.AlignedDimensionObjectContextData;
 

@@ -1,4 +1,5 @@
 using ACadSharp.Attributes;
+using CSMath;
 
 namespace ACadSharp.Objects;
 
@@ -9,6 +10,18 @@ namespace ACadSharp.Objects;
 [DxfSubClass(DxfSubclassMarker.OrdinateDimensionObjectContextData)]
 public class OrdinateDimensionObjectContextData : DimensionObjectContextData
 {
+	/// <summary>
+	/// Definition point.
+	/// </summary>
+	[DxfCodeValue(11, 21, 31)]
+	public XYZ DefinitionPoint { get; set; }
+
+	/// <summary>
+	/// End point of the leader.
+	/// </summary>
+	[DxfCodeValue(12, 22, 32)]
+	public XYZ LeaderEndpoint { get; set; }
+
 	/// <inheritdoc/>
 	public override string ObjectName => DxfFileToken.OrdinateDimensionObjectContextData;
 

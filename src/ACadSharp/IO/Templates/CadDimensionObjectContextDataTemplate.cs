@@ -7,13 +7,15 @@ internal class CadDimensionObjectContextDataTemplate : CadAnnotScaleObjectContex
 {
 	public ulong? BlockHandle { get; set; }
 
+	public string BlockName { get; set; }
+
 	public CadDimensionObjectContextDataTemplate(DimensionObjectContextData cadObject) : base(cadObject) { }
 
 	protected override void build(CadDocumentBuilder builder)
 	{
 		base.build(builder);
 
-		if (builder.TryGetCadObject(this.BlockHandle, out BlockRecord block))
+		if (this.getTableReference(builder, this.BlockHandle, this.BlockName, out BlockRecord block))
 		{
 			((DimensionObjectContextData)this.CadObject).Block = block;
 		}
