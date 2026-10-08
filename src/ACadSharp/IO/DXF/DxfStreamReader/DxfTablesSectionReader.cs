@@ -225,7 +225,12 @@ internal class DxfTablesSectionReader : DxfSectionReaderBase
 			{
 				this._builder.Notify($"Duplicated entry with name {template.Name} found in {template.CadObject.ObjectName}", NotificationType.Warning);
 
-				tableTemplate.CadObject.Remove(template.Name);
+				if (tableTemplate.CadObject.Remove(template.Name) == null)
+				{
+					//Default entries (layer "0", "Continuous", "Standard"...) cannot be removed, keep the first definition
+					continue;
+				}
+
 				tableTemplate.CadObject.Add((T)template.CadObject);
 			}
 			else
