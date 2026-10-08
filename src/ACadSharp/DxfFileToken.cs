@@ -26,8 +26,6 @@ public static class DxfFileToken
 
 	public const string DiametricDimensionObjectContextData = "ACDB_DMDIMOBJECTCONTEXTDATA_CLASS";
 
-	public const string DimensionObjectContextData = "ACDB_DIMOBJECTCONTEXTDATA_CLASS";
-
 	public const string Block = "BLOCK";
 
 	public const string BlocksSection = "BLOCKS";
