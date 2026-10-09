@@ -150,6 +150,16 @@ namespace ACadSharp
 		}
 
 		/// <summary>
+		/// Copies the property mapping from an existing instance without re-reading its attribute.
+		/// </summary>
+		protected DxfPropertyBase(DxfPropertyBase<T> other)
+		{
+			this._attributeData = other._attributeData;
+			this._property = other._property;
+			this._assignedCode = other._assignedCode;
+		}
+
+		/// <summary>
 		/// Set the value for the property using the AssignedCode
 		/// </summary>
 		/// <typeparam name="TCadObject"></typeparam>
