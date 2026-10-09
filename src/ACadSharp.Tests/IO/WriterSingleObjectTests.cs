@@ -101,6 +101,7 @@ public abstract class WriterSingleObjectTests : IOTestsBase
 		Data.Add(new(nameof(SingleCaseGenerator.SingleMeshWithTextureCoordinates)));
 		Data.Add(new(nameof(SingleCaseGenerator.SingleMaterial)));
 		Data.Add(new(nameof(SingleCaseGenerator.LeaderWithArrowHead)));
+		Data.Add(new(nameof(SingleCaseGenerator.FieldCadValues)));
 	}
 
 	public WriterSingleObjectTests(ITestOutputHelper output) : base(output)
@@ -1696,6 +1697,68 @@ public abstract class WriterSingleObjectTests : IOTestsBase
 				Assert.NotNull(result);
 				EntityComparator.IsEqual(line, result);
 				Assert.Equal(line.Transparency, result.Transparency);
+			};
+		}
+
+		public void FieldCadValues()
+		{
+			MText text = new MText();
+			text.Value = "cad values";
+			this.Document.Entities.Add(text);
+
+			Field field = new Field();
+			field.EvaluatorId = "_text";
+			field.FieldCode = "cad values";
+			field.FormatString = string.Empty;
+			field.Value.SetValue("cad values", CadValueType.String);
+
+			CadValue unknownEmpty = new CadValue();
+			unknownEmpty.IsEmpty = true;
+			field.Values.Add("unknown_empty", unknownEmpty);
+
+			//Unknown value that is not empty, as read from a pre R2007 dwg
+			CadValue unknown = new CadValue();
+			unknown.SetValue(0);
+			field.Values.Add("unknown", unknown);
+
+			CadValue longValue = new CadValue();
+			longValue.SetValue(42, CadValueType.Long);
+			field.Values.Add("long", longValue);
+
+			CadValue doubleValue = new CadValue();
+			doubleValue.SetValue(0.5, CadValueType.Double);
+			field.Values.Add("double", doubleValue);
+
+			CadValue stringValue = new CadValue();
+			stringValue.SetValue("text value", CadValueType.String);
+			field.Values.Add("string", stringValue);
+
+			CadValue pointValue = new CadValue();
+			pointValue.SetValue(new XYZ(1, 2, 3), CadValueType.Point3D);
+			field.Values.Add("point", pointValue);
+
+			CadDictionary dict = text.CreateExtendedDictionary();
+			CadDictionary fields = new CadDictionary("ACAD_FIELD");
+			dict.Add(fields);
+			fields.Add("TEXT", field);
+
+			this.AssertRoundtrip = (doc) =>
+			{
+				if (this.Format == CadFileFormat.DWG)
+				{
+					return;
+				}
+
+				Field result = doc.GetCadObject<Field>(field.Handle);
+
+				Assert.NotNull(result);
+				foreach (var item in field.Values)
+				{
+					Assert.True(result.Values.TryGetValue(item.Key, out CadValue value), $"Value {item.Key} not found");
+					Assert.Equal(item.Value.ValueType, value.ValueType);
+					Assert.Equal(item.Value.IsEmpty, value.IsEmpty);
+					Assert.Equal(item.Value.Value, value.Value);
+				}
 			};
 		}
 
