@@ -1,4 +1,4 @@
-﻿using ACadSharp.Attributes;
+using ACadSharp.Attributes;
 using CSMath;
 using CSMath.Extensions;
 using CSMath.Geometry;
@@ -214,6 +214,12 @@ public class Arc : Circle
 
 		this.StartAngle = MathHelper.FixZero(this.StartAngle);
 		this.EndAngle = MathHelper.FixZero(this.EndAngle);
+
+		// [PATCH] AutoCAD stores/normalizes arc angles in [0, 2π) after a TransformBy
+		// (e.g. an arc rotated by -0.92 rad from start 0 becomes 5.3632, not -0.92).
+		// Match that representation.
+		this.StartAngle = MathHelper.NormalizeAngleRadians(this.StartAngle, true);
+		this.EndAngle = MathHelper.NormalizeAngleRadians(this.EndAngle, true);
 	}
 
 	/// <inheritdoc/>

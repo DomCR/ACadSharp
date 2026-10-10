@@ -1,4 +1,4 @@
-﻿using ACadSharp.Attributes;
+using ACadSharp.Attributes;
 using ACadSharp.Extensions;
 using ACadSharp.Tables;
 using ACadSharp.Types.Units;
@@ -137,7 +137,20 @@ public abstract class Dimension : Entity, IOrientable
 	/// <summary>
 	/// Indicates if the dimension is angular or linear.
 	/// </summary>
-	public bool IsAngular { get { return this.Flags.HasFlag(DimensionType.Angular3Point) || this.Flags.HasFlag(DimensionType.Angular); } }
+	/// <remarks>
+	/// [PATCH] DimensionType stores the raw group-code-70 type values (0-6) in the low
+	/// three bits, not pure bit flags: Diameter=3 (11b) and Ordinate=6 (110b) contain the
+	/// Angular=2 (10b) bit, so HasFlag() reported true for diameter/ordinate dimensions.
+	/// Compare the masked type code instead.
+	/// </remarks>
+	public bool IsAngular
+	{
+		get
+		{
+			int typeCode = (int)this._flags & 0x07;
+			return typeCode == (int)DimensionType.Angular || typeCode == (int)DimensionType.Angular3Point;
+		}
+	}
 
 	/// <summary>
 	/// Indicates if the dimension text has been positioned at a user-defined location rather than at the default location.
@@ -276,11 +289,119 @@ public abstract class Dimension : Entity, IOrientable
 		// （见 issue #854 "not move: Dimension*"）。
 		if (this.Block != null)
 		{
+			// [PATCH] 记录块内 MText 的变换前对齐点，供 AutoCAD 的文字重排规则使用。
+			var blockMTexts = new List<MText>();
+			var originalAligns = new List<XYZ>();
+			foreach (var e in this.Block.Entities)
+			{
+				if (e is MText mt)
+				{
+					blockMTexts.Add(mt);
+					originalAligns.Add(mt.AlignmentPoint);
+				}
+			}
+
+			// [PATCH] 块内参考点（DEFPOINTS）的 Rotation 无几何意义，AutoCAD 变换后
+			// 保持原值（0），不随变换旋转。
+			var originalPointRotations = new List<(Point p, double r)>();
+			foreach (var e in this.Block.Entities)
+			{
+				if (e is Point pt)
+				{
+					originalPointRotations.Add((pt, pt.Rotation));
+				}
+			}
+
 			foreach (var e in this.Block.Entities.ToList())
 			{
 				e.ApplyTransform(transform);
 			}
+
+			foreach (var (pt, r) in originalPointRotations)
+			{
+				pt.Rotation = r;
+			}
+
+			// [PATCH] AutoCAD 变换标注后会对文字重新定位（已对 sample_VBAtransformed.dwg
+			// 逐值核实）：
+			// - 角度标注：文字锚点（MText 对齐点）在线性变换结果上翻转 180°
+			//   （源 (0.4812,-0.8766) → 线性变换 (-0.4059,-0.9139) → VBA (0.4059,0.9139)）；
+			// - 坐标标注：文字保持轴向对齐（0°/90°），变换旋转不作用于对齐点；
+			// - 其他类型（线性/对齐/半径/直径/弧）：对齐点按线性部分正常变换。
+			for (int i = 0; i < blockMTexts.Count; i++)
+			{
+				// [PATCH] DimensionArc 携带 Angular3Point 标志，但其文字锚点
+				// 不翻转（已对基准文件核实：VBA 弧标注对齐点为线性变换结果，
+				// 未取反）。
+				if (this.IsAngular && this is not DimensionArc)
+				{
+					blockMTexts[i].AlignmentPoint = -blockMTexts[i].AlignmentPoint;
+				}
+				else if (this is DimensionOrdinate)
+				{
+					blockMTexts[i].AlignmentPoint = originalAligns[i];
+				}
+			}
+
+			// [PATCH] 刷新存储的测量文字。注意：在子类还会变换自身几何点
+			//（AngleVertex/FirstPoint/SecondPoint/Rotation 等，Measurement 依赖它们）
+			// 的情况下，子类必须在完成变换后再次调用 UpdateDimensionText()。
+			this.UpdateDimensionText();
 		}
+	}
+
+	/// <summary>
+	/// Refreshes the dimension block's MText value with the current measurement text.
+	/// </summary>
+	/// <remarks>
+	/// [PATCH] AutoCAD re-measures dimensions after a transform (R20 → R19,96;
+	/// 92,02 → 91,83; 180 → 593,18). The refresh is skipped when the text is a
+	/// fully manual override: custom text without a "<>" field (e.g. the
+	/// architectural 7'-0 3/4") is kept verbatim by AutoCAD.
+	/// </remarks>
+	protected void UpdateDimensionText()
+	{
+		if (this.Block == null)
+		{
+			return;
+		}
+
+		string userText = this.Text;
+		if (string.IsNullOrEmpty(userText) || userText.Contains("<>"))
+		{
+			string newText = DimensionMTextCodes(this.GetMeasurementText());
+			foreach (Entity e in this.Block.Entities)
+			{
+				if (e is MText mt)
+				{
+					mt.Value = newText;
+				}
+			}
+		}
+	}
+
+	/// <summary>
+	/// Converts the generated measurement text to the MText codes AutoCAD stores for
+	/// SHX fonts (Ø → \U+2205, ° → \U+00B0) and drops the leading first-line
+	/// alignment code (\A1;) that AutoCAD omits in regenerated dimension text.
+	/// </summary>
+	/// <param name="text"></param>
+	/// <returns></returns>
+	private static string DimensionMTextCodes(string text)
+	{
+		if (string.IsNullOrEmpty(text))
+		{
+			return text;
+		}
+
+		text = text.Replace("Ø", "\\U+2205").Replace("°", "\\U+00B0");
+
+		if (text.StartsWith("\\A1;", StringComparison.Ordinal))
+		{
+			text = text.Substring(4);
+		}
+
+		return text;
 	}
 
 	/// <inheritdoc/>
@@ -320,7 +441,29 @@ public abstract class Dimension : Entity, IOrientable
 			var p = styleMap.DxfProperties[item.Key];
 			if (p.StoredValue != item.Value.StoredValue)
 			{
-				p.SetValue(style, item.Value.StoredValue);
+				object value = item.Value.StoredValue;
+
+				// [PATCH] The override XData stores raw values: reference properties
+				// (arrowhead blocks, line types, text styles) hold a ulong handle.
+				// Resolve it through the document's handle table before applying it to
+				// the style's typed property; skip the entry when it cannot be applied
+				// (previously this crashed with "UInt64 cannot be converted to
+				// BlockRecord" for any dimension carrying such an override).
+				if (value is ulong handle
+					&& this.Document != null
+					&& this.Document.TryGetCadObject<CadObject>(handle, out CadObject resolved))
+				{
+					value = resolved;
+				}
+
+				try
+				{
+					p.SetValue(style, value);
+				}
+				catch
+				{
+					// Skip override entries that do not match the target property type
+				}
 			}
 		}
 
@@ -348,7 +491,11 @@ public abstract class Dimension : Entity, IOrientable
 
 		UnitStyleFormat unitFormat = style.GetUnitStyleFormat();
 
-		if (this.IsAngular)
+		// [PATCH] DimensionArc is built on the Angular3Point flag but measures arc
+		// length, not an angle: format it as a linear value.
+		bool isAngularText = this.IsAngular && this is not DimensionArc;
+
+		if (isAngularText)
 		{
 			switch (style.AngularUnit)
 			{
@@ -396,13 +543,17 @@ public abstract class Dimension : Entity, IOrientable
 			}
 		}
 
+		// [PATCH] The low three bits of the flags hold the raw group-code-70 type value
+		// (3 = diameter, 4 = radius); the previous switch compared the whole multi-bit
+		// Flags value, so the Ø/R prefixes were never applied.
 		string prefix = string.Empty;
-		switch (this.Flags)
+		int typeCode = (int)this._flags & 0x07;
+		switch (typeCode)
 		{
-			case DimensionType.Diameter:
+			case (int)DimensionType.Diameter:
 				prefix = string.IsNullOrEmpty(style.Prefix) ? "Ø" : style.Prefix;
 				break;
-			case DimensionType.Radius:
+			case (int)DimensionType.Radius:
 				prefix = string.IsNullOrEmpty(style.Prefix) ? "R" : style.Prefix;
 				break;
 			default:

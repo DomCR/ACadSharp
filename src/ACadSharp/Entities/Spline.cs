@@ -200,12 +200,25 @@ public class Spline : Entity, IOrientable
 	public Spline() : base() { }
 
 	/// <inheritdoc/>
+	/// <remarks>
+	/// Start/end tangents (DXF 12/13) are VECTORS, not points: only the linear part
+	/// (rotation + scale) applies to them. A zero tangent means "absent" in DXF and must
+	/// stay absent — upstream applied the full point transform, turning the absent
+	/// tangents of a plain control-point spline into phantom (dX, dY) points.
+	/// </remarks>
 	public override void ApplyTransform(Transform transform)
 	{
 		this.Normal = this.transformNormal(transform, this.Normal);
 
-		this.StartTangent = transform.ApplyTransform(this.StartTangent);
-		this.EndTangent = transform.ApplyTransform(this.EndTangent);
+		Matrix3 linear = new Matrix3(transform.Matrix);
+		if (!this.StartTangent.IsZero())
+		{
+			this.StartTangent = linear * this.StartTangent;
+		}
+		if (!this.EndTangent.IsZero())
+		{
+			this.EndTangent = linear * this.EndTangent;
+		}
 
 		for (int i = 0; i < this.ControlPoints.Count; i++)
 		{

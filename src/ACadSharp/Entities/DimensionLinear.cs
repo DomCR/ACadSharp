@@ -1,4 +1,4 @@
-﻿using ACadSharp.Attributes;
+using ACadSharp.Attributes;
 using ACadSharp.Tables;
 using CSMath;
 using CSMath.Extensions;
@@ -66,6 +66,24 @@ public class DimensionLinear : DimensionAligned
 	/// <inheritdoc/>
 	public DimensionLinear() : base(DimensionType.Linear)
 	{
+	}
+
+	/// <inheritdoc/>
+	/// <remarks>
+	/// [PATCH] AutoCAD rotates the dimension line of a linear dimension with the
+	/// transform (verified against sample_VBAtransformed.dwg: 0.5236 rad → 5.8868
+	/// rad for a -0.92 rad transform). The computed <see cref="Measurement"/>
+	/// (projection of the extension-line points onto the dimension line) follows
+	/// automatically once the rotation is updated.
+	/// </remarks>
+	public override void ApplyTransform(Transform transform)
+	{
+		base.ApplyTransform(transform);
+
+		this.Rotation = MathHelper.NormalizeAngleRadians(this.Rotation + transform.EulerRotation.Z, true);
+
+		// [PATCH] Measurement 依赖 Rotation，须在 Rotation 更新后重新生成文字。
+		this.UpdateDimensionText();
 	}
 
 	/// <inheritdoc/>

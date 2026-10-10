@@ -1,6 +1,7 @@
-﻿using ACadSharp.Objects;
+using ACadSharp.Objects;
 using ACadSharp.Objects.AEC;
 using ACadSharp.Objects.Evaluations;
+using ACadSharp.Tables;
 using CSMath;
 using CSUtilities.Converters;
 using CSUtilities.IO;
@@ -49,11 +50,15 @@ internal partial class DwgObjectWriter : DwgSectionIO
 			case AecWallStyle:
 			case AecCleanupGroup:
 			case AecBinRecord:
-			case DimensionAssociation:
 			case UnknownNonGraphicalObject:
 			case VisualStyle:
 			case ProxyObject:
 				return true;
+			// [PATCH] DimensionAssociation is intentionally NOT skipped: the reader fully
+			// supports it (readDimensionAssociation/readOsnapPointRef) and this writer has
+			// matching serialization (writeDimensionAssociation/writeOsnapPointRef), so the
+			// ACAD_DIMASSOC dictionary entry of associated dimensions now round-trips like
+			// AutoCAD's own files.
 		}
 
 		return false;
@@ -1601,9 +1606,40 @@ internal partial class DwgObjectWriter : DwgSectionIO
 			//Before R2018:
 			else
 			{
-				//TODO: Fix the Linetype index for dwgReader and DwgWriter
-				//Ltindex BS Linetype index (yes, index)
-				this._writer.WriteBitShort(0);
+				// [PATCH] Ltindex BS Linetype index (yes, index). Convention mirrored by the
+				// reader: 32767 = ByLayer, 32766 = ByBlock, otherwise the index of the line
+				// type in the document's linetypes table. The previous hardcoded 0 resolved to
+				// the first table entry ("Continuous") on read-back, turning ByLayer element
+				// line types into real ones.
+				short ltIndex = short.MaxValue;
+				LineType elt = element.LineType;
+				if (elt != null && elt.Name != LineType.ByLayerName)
+				{
+					if (elt.Name == LineType.ByBlockName)
+					{
+						ltIndex = short.MaxValue - 1;
+					}
+					else
+					{
+						int idx = -1;
+						int i = 0;
+						foreach (LineType t in this._document.LineTypes)
+						{
+							if (t.Name == elt.Name) { idx = i; break; }
+							i++;
+						}
+						if (idx < 0)
+						{
+							this.notify($"MLineStyle element linetype '{elt.Name}' not in linetypes table; written as ByLayer", NotificationType.Warning);
+							ltIndex = short.MaxValue;
+						}
+						else
+						{
+							ltIndex = (short)idx;
+						}
+					}
+				}
+				this._writer.WriteBitShort(ltIndex);
 			}
 		}
 	}

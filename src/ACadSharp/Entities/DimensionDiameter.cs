@@ -1,4 +1,4 @@
-﻿using ACadSharp.Attributes;
+using ACadSharp.Attributes;
 using ACadSharp.Tables;
 using CSMath;
 using CSMath.Extensions;
@@ -63,6 +63,9 @@ namespace ACadSharp.Entities
 			base.ApplyTransform(transform);
 			this.AngleVertex = transform.ApplyTransform(this.AngleVertex);
 			//LeaderLength should be scaled based on axis??
+
+			// [PATCH] Measurement 依赖 AngleVertex，须在点变换后重新生成文字。
+			this.UpdateDimensionText();
 		}
 
 		/// <inheritdoc/>

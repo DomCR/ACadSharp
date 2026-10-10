@@ -1,4 +1,4 @@
-﻿using ACadSharp.Attributes;
+using ACadSharp.Attributes;
 using ACadSharp.Tables;
 using CSMath;
 using CSMath.Extensions;
@@ -90,6 +90,11 @@ namespace ACadSharp.Entities
 			base.ApplyTransform(transform);
 			this.FeatureLocation = transform.ApplyTransform(this.FeatureLocation);
 			this.LeaderEndpoint = transform.ApplyTransform(this.LeaderEndpoint);
+
+			// [PATCH] Measurement 依赖 FeatureLocation，须在点变换后重新生成文字。
+			// （AutoCAD 对坐标标注会重新布局块内几何，但其布局算法不可复现；
+			// 刚性变换副本与基准文件的差异为若干单位的文字重排偏移，见对比报告。）
+			this.UpdateDimensionText();
 		}
 
 		/// <inheritdoc/>

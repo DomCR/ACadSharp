@@ -1,4 +1,4 @@
-﻿using ACadSharp.Attributes;
+using ACadSharp.Attributes;
 using CSMath;
 
 namespace ACadSharp.Entities;
@@ -67,6 +67,10 @@ public class Point : Entity, IOrientable
 	{
 		this.Location = transform.ApplyTransform(this.Location);
 		this.Normal = this.transformNormal(transform, this.Normal);
+
+		// [PATCH] A point marker rotates with the transform (AutoCAD TransformBy turns a
+		// rotation-0 point marker into a 5.3632 rad one under the reference transform).
+		this.Rotation = MathHelper.NormalizeAngleRadians(this.Rotation + transform.EulerRotation.Z, true);
 	}
 
 	/// <inheritdoc/>
