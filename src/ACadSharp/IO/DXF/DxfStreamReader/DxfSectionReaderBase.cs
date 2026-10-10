@@ -1,4 +1,4 @@
-﻿using ACadSharp.Entities;
+using ACadSharp.Entities;
 using ACadSharp.IO.Templates;
 using ACadSharp.Objects;
 using ACadSharp.Tables;
@@ -918,21 +918,44 @@ internal abstract class DxfSectionReaderBase
 		CadHatchTemplate tmp = template as CadHatchTemplate;
 		Hatch hatch = tmp.CadObject;
 
-		XY seedPoint = new XY();
-
 		switch (this._reader.Code)
 		{
 			case 2:
 				hatch.Pattern.Name = this._reader.ValueAsString;
 				return true;
 			case 10:
-				seedPoint.X = this._reader.ValueAsDouble;
-				hatch.SeedPoints.Add(seedPoint);
+				// [PATCH] The first 10/20 pair of the hatch section is the ORIGIN, not a
+				// seed point; only the pairs after the 98 count are seed points. Upstream
+				// collected every 10/20 into SeedPoints, so the origin became an extra
+				// (transformed) seed point on write (98: 1 -> 2). The seed sequence state
+				// lives in the template because the delegate is invoked once per code.
+				if (tmp.SeedPointsLeft > 0)
+				{
+					tmp.SeedPoint.X = this._reader.ValueAsDouble;
+					tmp.SeedPoint.Y = 0.0;
+					hatch.SeedPoints.Add(tmp.SeedPoint);
+				}
+				else
+				{
+					XY o = hatch.Origin;
+					o.X = this._reader.ValueAsDouble;
+					hatch.Origin = o;
+				}
 				return true;
 			case 20:
-				seedPoint = hatch.SeedPoints.LastOrDefault();
-				seedPoint.Y = this._reader.ValueAsDouble;
-				hatch.SeedPoints[hatch.SeedPoints.Count - 1] = seedPoint;
+				if (tmp.SeedPointsLeft > 0 && hatch.SeedPoints.Count > 0)
+				{
+					XY sp = hatch.SeedPoints[hatch.SeedPoints.Count - 1];
+					sp.Y = this._reader.ValueAsDouble;
+					hatch.SeedPoints[hatch.SeedPoints.Count - 1] = sp;
+					tmp.SeedPointsLeft--;
+				}
+				else
+				{
+					XY o = hatch.Origin;
+					o.Y = this._reader.ValueAsDouble;
+					hatch.Origin = o;
+				}
 				return true;
 			case 30:
 				hatch.Elevation = this._reader.ValueAsDouble;
@@ -945,6 +968,9 @@ internal abstract class DxfSectionReaderBase
 				return true;
 			//Information about the hatch pattern
 			case 75:
+				// [PATCH] Read the hatch style (upstream skipped it: a 75=1 (Outer) hatch
+				// was written back as 75=0 (Normal)).
+				hatch.Style = (HatchStyleType)this._reader.ValueAsInt;
 				return true;
 			//Number of pattern definition lines
 			case 78:
@@ -958,6 +984,7 @@ internal abstract class DxfSectionReaderBase
 				return true;
 			//Number of seed points
 			case 98:
+				tmp.SeedPointsLeft = this._reader.ValueAsInt;
 				return true;
 			case 450:
 				hatch.GradientColor.Enabled = this._reader.ValueAsBool;
@@ -996,9 +1023,10 @@ internal abstract class DxfSectionReaderBase
 				GradientColor colorByRgb = hatch.GradientColor.Colors.LastOrDefault();
 				if (colorByRgb != null)
 				{
-					//TODO: Hatch assign color by true color
-					//TODO: Is always duplicated by 63, is it needed??
-					//colorByRgb.Color = new Color(this._reader.LastValueAsShort);
+					// [PATCH] Preserve the raw true-color value (it is not always the ACI
+					// palette RGB of the 63 index, e.g. 165 -> 5005209 in the source file;
+					// regenerating it from the palette would alter the file).
+					colorByRgb.StoredColor = this._reader.ValueAsInt;
 				}
 				return true;
 			case 470:
@@ -1179,7 +1207,8 @@ internal abstract class DxfSectionReaderBase
 			case 340:
 				tmp.AnnotationHandle = this._reader.ValueAsHandle;
 				return true;
-			//Hook line flag - read only
+			//Hook line flag (read-only: the model computes it from the last segment and
+			// the horizontal direction, which are similarity-invariant)
 			case 75:
 			//Vertices count
 			case 76:
@@ -1223,6 +1252,12 @@ internal abstract class DxfSectionReaderBase
 				{
 					last.Bulge = this._reader.ValueAsDouble;
 				}
+				return true;
+			case 43:
+				// [PATCH] Remember that the source explicitly carried a constant width
+				// (code 43) so the writer can round-trip it even when it is 0.
+				tmp.CadObject.ConstantWidth = this._reader.ValueAsDouble;
+				tmp.CadObject.ConstantWidthSpecified = true;
 				return true;
 			case 50:
 				if (last is not null)
@@ -1958,6 +1993,7 @@ internal abstract class DxfSectionReaderBase
 					codes.Add(this._reader.Code);
 				}
 
+				bool consume = true;
 				switch (this._reader.Code)
 				{
 					case 53:
@@ -1991,10 +2027,19 @@ internal abstract class DxfSectionReaderBase
 						line.DashLengths.Add(this._reader.ValueAsDouble);
 						break;
 					default:
+						// [PATCH] An unknown code ends this pattern line but must NOT be
+						// consumed: the reader stays on it (e.g. 98 = seed point count) so
+						// the main hatch loop can process it. Upstream consumed it and
+						// stepped onto the first seed X, which then became the hatch
+						// origin (and the real seed point was lost).
 						end = true;
+						consume = false;
 						break;
 				}
-				this._reader.ReadNext();
+				if (consume)
+				{
+					this._reader.ReadNext();
+				}
 			}
 
 			pattern.Lines.Add(line);

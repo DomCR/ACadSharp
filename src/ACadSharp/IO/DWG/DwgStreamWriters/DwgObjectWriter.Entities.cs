@@ -1,4 +1,4 @@
-﻿using ACadSharp.Entities;
+using ACadSharp.Entities;
 using ACadSharp.Objects;
 using ACadSharp.Types;
 using CSMath;
@@ -1079,7 +1079,9 @@ internal partial class DwgObjectWriter : DwgSectionIO
 		}
 
 		//H 340 Associated annotation
-		this._writer.HandleReference(DwgReferenceType.HardPointer, null);
+		// [PATCH] Write the real associated-annotation handle (was hardcoded null, which
+		// silently dropped the leader's MText/Text annotation on every DWG save).
+		this._writer.HandleReference(DwgReferenceType.HardPointer, leader.AssociatedAnnotation);
 		//H 2 DIMSTYLE (hard pointer)
 		this._writer.HandleReference(DwgReferenceType.HardPointer, leader.Style);
 	}
@@ -1255,7 +1257,9 @@ internal partial class DwgObjectWriter : DwgSectionIO
 			flags = (short)(flags | 0x200);
 		}
 
-		if (lwPolyline.ConstantWidth != 0.0)
+		// [PATCH] The constant-width flag (0x4) follows the DXF presence of code 43,
+		// not its value: a source polyline with 43=0.0 must round-trip the code.
+		if (lwPolyline.ConstantWidthSpecified)
 		{
 			flags = (short)(flags | 0x4);
 		}
@@ -1290,7 +1294,8 @@ internal partial class DwgObjectWriter : DwgSectionIO
 		//More specifically: it starts at the LWPOLYLINE flags (BS), and ends with the width array (BD).
 		this._writer.WriteBitShort(flags);
 
-		if (lwPolyline.ConstantWidth != 0.0)
+		// [PATCH] Mirrors the 0x4 flag condition above (see flag block).
+		if (lwPolyline.ConstantWidthSpecified)
 		{
 			this._writer.WriteBitDouble(lwPolyline.ConstantWidth);
 		}
@@ -2193,7 +2198,9 @@ internal partial class DwgObjectWriter : DwgSectionIO
 		this._writer.Write3BitDouble(shape.Normal);
 
 		//H SHAPEFILE (hard pointer)
-		this._writer.HandleReference(DwgReferenceType.HardPointer, null);
+		// [PATCH] Write the real shape-style (SHAPEFILE) handle (was hardcoded null, which
+		// silently dropped the shape's shape style on every DWG save).
+		this._writer.HandleReference(DwgReferenceType.HardPointer, shape.ShapeStyle);
 	}
 
 	private void writeSolid(Solid solid)
@@ -2521,7 +2528,122 @@ internal partial class DwgObjectWriter : DwgSectionIO
 		}
 
 		//B Has cell flag override
-		this._writer.WriteBit(false);
+		// [PATCH] Serialize the cell style override. The previous implementation always
+		// wrote false, silently dropping every cell override (e.g. the per-cell TextHeight
+		// AutoCAD materializes when a table is transformed: 6.0 -> 5.988 / 4.5 -> 4.491 in
+		// sample_VBAtransformed.dwg, plus preserved alignment/content/background colors).
+		// The reader (readTableCellData) expects a flag-driven field sequence, emitted here
+		// in the exact order it reads:
+		//   BL 177 flags, RC 178 virtual edge flag,
+		//   then per set flag: CellAlignment (BS 170), BackgroundFillNone (B 283),
+		//   BackgroundColor (CMC 63), ContentColor (CMC 64), TextStyle (H 7), TextHeight (BD 140)
+		//   and the four border triples (color/weight/visibility, top/right/bottom/left).
+		TableEntity.Cell.OverrideFlags ovr = TableEntity.Cell.OverrideFlags.None;
+		var so = cell.StyleOverride;
+		if (so != null)
+		{
+			if (so.TextHeight > 0)
+			{
+				ovr |= TableEntity.Cell.OverrideFlags.TextHeight;
+			}
+			if (so.CellAlignment != TableStyle.CellAlignmentType.None)
+			{
+				ovr |= TableEntity.Cell.OverrideFlags.CellAlignment;
+			}
+			if (!so.ContentColor.IsByBlock && !so.ContentColor.IsByLayer)
+			{
+				ovr |= TableEntity.Cell.OverrideFlags.ContentColor;
+			}
+			if (!so.BackgroundColor.IsByBlock && !so.BackgroundColor.IsByLayer)
+			{
+				ovr |= TableEntity.Cell.OverrideFlags.BackgroundColor;
+			}
+		}
+
+		this._writer.WriteBit(ovr != TableEntity.Cell.OverrideFlags.None);
+		if (ovr != TableEntity.Cell.OverrideFlags.None)
+		{
+			//BL 177 Cell flag override
+			this._writer.WriteBitLong((int)ovr);
+			//RC 178 Virtual edge flag
+			this._writer.WriteByte((byte)cell.VirtualEdgeFlag);
+
+			if (ovr.HasFlag(TableEntity.Cell.OverrideFlags.CellAlignment))
+			{
+				//BS 170 Cell alignment
+				this._writer.WriteBitShort((short)so.CellAlignment);
+			}
+			if (ovr.HasFlag(TableEntity.Cell.OverrideFlags.BackgroundFillNone))
+			{
+				//B 283 Background fill none
+				this._writer.WriteBit(so.IsFillColorOn);
+			}
+			if (ovr.HasFlag(TableEntity.Cell.OverrideFlags.BackgroundColor))
+			{
+				//CMC 63 Background color
+				this._writer.WriteCmColor(so.BackgroundColor);
+			}
+			if (ovr.HasFlag(TableEntity.Cell.OverrideFlags.ContentColor))
+			{
+				//CMC 64 Content color
+				this._writer.WriteCmColor(so.ContentColor);
+			}
+			if (ovr.HasFlag(TableEntity.Cell.OverrideFlags.TextHeight))
+			{
+				//BD 140 Text height
+				this._writer.WriteBitDouble(so.TextHeight);
+			}
+
+			//Border override triples (top/right/bottom/left), same order as the reader.
+			if (ovr.HasFlag(TableEntity.Cell.OverrideFlags.TopGridColor))
+			{
+				this._writer.WriteCmColor(so.TopBorder.Color);
+			}
+			if (ovr.HasFlag(TableEntity.Cell.OverrideFlags.TopGridLineWeight))
+			{
+				this._writer.WriteBitShort((short)so.TopBorder.LineWeight);
+			}
+			if (ovr.HasFlag(TableEntity.Cell.OverrideFlags.TopVisibility))
+			{
+				this._writer.WriteBitShort((short)(so.TopBorder.IsInvisible ? 0 : 1));
+			}
+			if (ovr.HasFlag(TableEntity.Cell.OverrideFlags.RightGridColor))
+			{
+				this._writer.WriteCmColor(so.RightBorder.Color);
+			}
+			if (ovr.HasFlag(TableEntity.Cell.OverrideFlags.RightGridLineWeight))
+			{
+				this._writer.WriteBitShort((short)so.RightBorder.LineWeight);
+			}
+			if (ovr.HasFlag(TableEntity.Cell.OverrideFlags.RightVisibility))
+			{
+				this._writer.WriteBitShort((short)(so.RightBorder.IsInvisible ? 0 : 1));
+			}
+			if (ovr.HasFlag(TableEntity.Cell.OverrideFlags.BottomGridColor))
+			{
+				this._writer.WriteCmColor(so.BottomBorder.Color);
+			}
+			if (ovr.HasFlag(TableEntity.Cell.OverrideFlags.BottomGridLineWeight))
+			{
+				this._writer.WriteBitShort((short)so.BottomBorder.LineWeight);
+			}
+			if (ovr.HasFlag(TableEntity.Cell.OverrideFlags.BottomVisibility))
+			{
+				this._writer.WriteBitShort((short)(so.BottomBorder.IsInvisible ? 0 : 1));
+			}
+			if (ovr.HasFlag(TableEntity.Cell.OverrideFlags.LeftGridColor))
+			{
+				this._writer.WriteCmColor(so.LeftBorder.Color);
+			}
+			if (ovr.HasFlag(TableEntity.Cell.OverrideFlags.LeftGridLineWeight))
+			{
+				this._writer.WriteBitShort((short)so.LeftBorder.LineWeight);
+			}
+			if (ovr.HasFlag(TableEntity.Cell.OverrideFlags.LeftVisibility))
+			{
+				this._writer.WriteBitShort((short)(so.LeftBorder.IsInvisible ? 0 : 1));
+			}
+		}
 	}
 
 

@@ -1,4 +1,4 @@
-﻿using ACadSharp.Blocks;
+using ACadSharp.Blocks;
 using ACadSharp.Classes;
 using ACadSharp.Entities;
 using ACadSharp.Entities.AecEntities;
@@ -3266,6 +3266,9 @@ namespace ACadSharp.IO.DWG
 				if ((flags & 0x4u) != 0)
 				{
 					lwPolyline.ConstantWidth = this._objectReader.ReadBitDouble();
+					// [PATCH] Remember the constant width was present (DXF 43), even when
+					// the value is 0, so the DXF writer round-trips the code.
+					lwPolyline.ConstantWidthSpecified = true;
 				}
 
 				if ((flags & 0x8u) != 0)

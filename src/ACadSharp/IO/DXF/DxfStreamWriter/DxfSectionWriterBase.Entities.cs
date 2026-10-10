@@ -1,4 +1,4 @@
-﻿using ACadSharp.Entities;
+using ACadSharp.Entities;
 using ACadSharp.Entities.AecEntities;
 using ACadSharp.Entities.Mechanical;
 using ACadSharp.Objects;
@@ -184,7 +184,8 @@ internal abstract partial class DxfSectionWriterBase
 		this._writer.Write(2, att.Tag);
 
 		this._writer.Write(70, (short)att.Flags);
-		this._writer.Write(73, (short)0);
+		// [PATCH] AutoCAD omits the attribute vertical alignment (73) when it is 0.
+		this._writer.WriteIfNotDefault(73, (short)att.VerticalAlignment, 0);
 
 		if (att.VerticalAlignment != 0)
 		{
@@ -258,13 +259,24 @@ internal abstract partial class DxfSectionWriterBase
 		this._writer.Write(71, (short)image.ClipType, map);
 		if (image.ClipType == ClipType.Polygonal)
 		{
-			this._writer.Write(91, image.ClipBoundaryVertices.Count + 1, map);
+			// [PATCH] Files written by AutoCAD already include the closing vertex that
+			// duplicates the first one (the 91 count includes it); upstream added a second
+			// copy unconditionally, so a 6-vertex source was written as 91=7.
+			XY firstClip = image.ClipBoundaryVertices.First();
+			XY lastClip = image.ClipBoundaryVertices.Last();
+			bool closed = Math.Abs(firstClip.X - lastClip.X) < MathHelper.Epsilon
+				&& Math.Abs(firstClip.Y - lastClip.Y) < MathHelper.Epsilon;
+
+			this._writer.Write(91, image.ClipBoundaryVertices.Count + (closed ? 0 : 1), map);
 			foreach (XY bv in image.ClipBoundaryVertices)
 			{
 				this._writer.Write(14, bv, map);
 			}
 
-			this._writer.Write(14, image.ClipBoundaryVertices.First(), map);
+			if (!closed)
+			{
+				this._writer.Write(14, firstClip, map);
+			}
 		}
 		else
 		{
@@ -300,20 +312,52 @@ internal abstract partial class DxfSectionWriterBase
 
 		this._writer.Write(10, dim.DefinitionPoint, map);
 		this._writer.Write(11, dim.TextMiddlePoint, map);
-		this._writer.Write(12, dim.InsertionPoint, map);
 
-		this._writer.Write(53, dim.TextRotation, map);
+		// [PATCH] AutoCAD omits 12/22/32 (zero insertion point), 53 (zero text rotation),
+		// 72 (zero line spacing style) and 41 (zero line spacing factor); upstream wrote
+		// them unconditionally.
+		if (!dim.InsertionPoint.IsZero())
+		{
+			this._writer.Write(12, dim.InsertionPoint, map);
+		}
+		if (!dim.TextRotation.IsZero())
+		{
+			this._writer.Write(53, dim.TextRotation, map);
+		}
+
 		this._writer.Write(70, (short)dim.Flags, map);
 		this._writer.Write(71, (short)dim.AttachmentPoint, map);
-		this._writer.Write(72, (short)dim.LineSpacingStyle, map);
-		this._writer.Write(41, dim.LineSpacingFactor, map);
+
+		if (dim.LineSpacingStyle != LineSpacingStyleType.None)
+		{
+			this._writer.Write(72, (short)dim.LineSpacingStyle, map);
+		}
+		if (!dim.LineSpacingFactor.IsZero())
+		{
+			this._writer.Write(41, dim.LineSpacingFactor, map);
+		}
+
+		// [PATCH] AutoCAD re-derives and stores the actual measurement (42) after a
+		// TransformBy: distances scale with the transform (81.9615... -> 81.7976... for
+		// 0.998) while angles stay invariant. The model computes Measurement from the
+		// (transformed) geometry, which reproduces AutoCAD for every type except the
+		// ordinate dimension, where AutoCAD re-measures the feature point against the
+		// MOVED base point (the base point is not part of the model, so 42 is skipped
+		// there rather than written with a misleading value).
+		if (!(dim is DimensionOrdinate))
+		{
+			this._writer.Write(42, dim.Measurement, map);
+		}
 
 		if (!string.IsNullOrEmpty(dim.Text))
 		{
 			this._writer.Write(1, dim.Text, map);
 		}
 
-		this._writer.Write(210, dim.Normal, map);
+		if (!dim.Normal.IsZero() && dim.Normal != XYZ.AxisZ)
+		{
+			this._writer.Write(210, dim.Normal, map);
+		}
 
 		this._writer.WriteName(3, dim.Style, map);
 
@@ -483,8 +527,10 @@ internal abstract partial class DxfSectionWriterBase
 
 		this._writer.Write(DxfCode.Subclass, DxfSubclassMarker.Hatch);
 
-		this._writer.Write(10, 0, map);
-		this._writer.Write(20, 0, map);
+		// [PATCH] Write the real origin (upstream hardcoded 0/0; the origin is the first
+		// 10/20 pair of the section and is NOT a seed point).
+		this._writer.Write(10, hatch.Origin.X, map);
+		this._writer.Write(20, hatch.Origin.Y, map);
 		this._writer.Write(30, hatch.Elevation, map);
 
 		this._writer.Write(210, hatch.Normal, map);
@@ -502,7 +548,10 @@ internal abstract partial class DxfSectionWriterBase
 
 		this.writeHatchPattern(hatch, hatch.Pattern);
 
-		if (!hatch.IsSolid || hatch.Paths.Any(p => p.Flags.HasFlag(BoundaryPathFlags.Derived)) || hatch.PixelSize != 0)
+		// [PATCH] AutoCAD omits code 47 when the pixel size is 0 (the source and the
+		// reference files carry no 47 for these hatches); upstream wrote 47=0 for every
+		// non-solid hatch.
+		if (hatch.PixelSize != 0)
 		{
 			this._writer.Write(47, hatch.PixelSize, map);
 		}
@@ -510,10 +559,48 @@ internal abstract partial class DxfSectionWriterBase
 		this._writer.Write(98, hatch.SeedPoints.Count);
 		foreach (XY spoint in hatch.SeedPoints)
 		{
-			this._writer.Write(10, spoint);
+			this._writer.Write(10, spoint.X);
+			this._writer.Write(20, spoint.Y);
 		}
 
-		//TODO: Implement HatchGradientPattern
+		this.writeHatchGradient(hatch);
+	}
+
+	private void writeHatchGradient(Hatch hatch)
+	{
+		// [PATCH] Write the gradient section (450..470) — upstream dropped it entirely,
+		// losing the gradient fill of solid hatches on every DXF save. AutoCAD leaves
+		// the gradient untouched by a TransformBy, so the stored values are written as is.
+		HatchGradientPattern gradient = hatch.GradientColor;
+		if (gradient == null || !gradient.Enabled)
+		{
+			return;
+		}
+
+		this._writer.Write(450, (int)(gradient.Enabled ? 1 : 0));
+		this._writer.Write(451, (int)gradient.Reserved);
+		this._writer.Write(460, gradient.Angle);
+		this._writer.Write(461, gradient.Shift);
+		this._writer.Write(452, (int)(gradient.IsSingleColorGradient ? 1 : 0));
+		this._writer.Write(462, gradient.ColorTint);
+		this._writer.Write(453, gradient.Colors.Count);
+		foreach (GradientColor gc in gradient.Colors)
+		{
+			this._writer.Write(463, gc.Value);
+			this._writer.Write(63, (short)gc.Color.Index);
+			int rgb = gc.StoredColor;
+			if (rgb < 0)
+			{
+				rgb = gc.Color.IsTrueColor
+					? gc.Color.TrueColor
+					: ((gc.Color.GetRgb()[0] & 0xFF) | ((gc.Color.GetRgb()[1] & 0xFF) << 8) | ((gc.Color.GetRgb()[2] & 0xFF) << 16));
+			}
+			this._writer.Write(421, (int)rgb);
+		}
+		if (!string.IsNullOrEmpty(gradient.Name))
+		{
+			this._writer.Write(470, gradient.Name);
+		}
 	}
 
 	private void writeHatchBoundaryAngles(double startAngle, double endAngle)
@@ -625,7 +712,10 @@ internal abstract partial class DxfSectionWriterBase
 
 		if (!hatch.IsSolid)
 		{
-			this._writer.Write(52, MathHelper.RadToDeg(hatch.PatternAngle));
+			// [PATCH] AutoCAD writes the pattern angle (52) raw/unnormalized after a
+			// TransformBy (e.g. -7.712117152035739, not 352.2878828479643); RadToDeg
+			// normalizes to [0, 360) by default.
+			this._writer.Write(52, MathHelper.RadToDeg(hatch.PatternAngle, false, false));
 			this._writer.Write(41, hatch.PatternScale);
 			this._writer.Write(77, (short)(hatch.IsDouble ? 1 : 0));
 			this._writer.Write(78, (short)pattern.Lines.Count);
@@ -692,8 +782,10 @@ internal abstract partial class DxfSectionWriterBase
 
 		this._writer.WriteName(3, leader.Style, map);
 
-		this._writer.Write(71, leader.ArrowHeadEnabled ? (short)1 : (short)0, map);
-		this._writer.Write(72, (short)leader.PathType, map);
+		// [PATCH] AutoCAD omits 71/72 when they are 0 (the source file has neither) but
+		// writes 73/74/75 even when zero.
+		this._writer.WriteIfNotDefault(71, leader.ArrowHeadEnabled ? (short)1 : (short)0, 0, map);
+		this._writer.WriteIfNotDefault(72, (short)leader.PathType, 0, map);
 		this._writer.Write(73, (short)leader.CreationType, map);
 		this._writer.Write(74, leader.HookLineDirection == HookLineDirection.Same ? (short)1 : (short)0, map);
 		this._writer.Write(75, leader.HasHookline ? (short)1 : (short)0, map);
@@ -707,8 +799,12 @@ internal abstract partial class DxfSectionWriterBase
 			this._writer.Write(10, vertex, map);
 		}
 
-		//this._writer.Write(77, leader,map);
-		//this._writer.Write(340, leader.Annotation,map);
+		// [PATCH] Write the association handle (340): upstream commented it out, so the
+		// leader's association to its annotation (981 in the reference) was lost.
+		if (leader.AssociatedAnnotation != null)
+		{
+			this._writer.WriteHandle(340, leader.AssociatedAnnotation, map);
+		}
 
 		this._writer.Write(210, leader.Normal, map);
 
@@ -778,23 +874,48 @@ internal abstract partial class DxfSectionWriterBase
 		this._writer.Write(90, polyline.Vertices.Count);
 		this._writer.Write(70, (short)polyline.Flags);
 
-		if (polyline.ConstantWidth != 0.0)
+		// [PATCH] AutoCAD keeps the constant width (43) when the source carried it — even
+		// when it is 0 (the GIS-exported 5-vertex polyline has 43=0.0 in both the source
+		// and the reference) — so track presence explicitly instead of writing it only
+		// when non-zero.
+		if (polyline.ConstantWidthSpecified)
 		{
 			this._writer.Write(43, polyline.ConstantWidth);
 		}
 
-		this._writer.Write(38, polyline.Elevation);
-		this._writer.Write(39, polyline.Thickness);
+		// [PATCH] Omit the default elevation (38) and thickness (39); the reference has
+		// neither for a planar zero-elevation polyline.
+		this._writer.WriteIfNotDefault(38, polyline.Elevation, 0.0);
+		this._writer.WriteIfNotDefault(39, polyline.Thickness, 0.0);
+
+		// [PATCH] AutoCAD writes the per-vertex widths (40 start, 41 end) only when the
+		// polyline actually carries width data; a polyline whose vertices all have zero
+		// widths gets neither (upstream wrote 40=0/41=0 for every vertex).
+		bool hasWidths = polyline.Vertices.Any(v => v.StartWidth != 0.0 || v.EndWidth != 0.0);
 
 		foreach (LwPolyline.Vertex v in polyline.Vertices)
 		{
 			this._writer.Write(10, v.Location);
-			this._writer.Write(40, v.StartWidth);
-			this._writer.Write(41, v.EndWidth);
-			this._writer.Write(42, v.Bulge);
+
+			if (hasWidths)
+			{
+				this._writer.Write(40, v.StartWidth);
+				this._writer.Write(41, v.EndWidth);
+			}
+
+			// [PATCH] AutoCAD omits the bulge (42) when it is 0; upstream wrote 42=0
+			// for every vertex.
+			if (v.Bulge != 0.0)
+			{
+				this._writer.Write(42, v.Bulge);
+			}
 		}
 
-		this._writer.Write(210, polyline.Normal, map);
+		// [PATCH] Omit the planar extrusion direction; the reference has no 210/220/230.
+		if (!polyline.Normal.IsZero() && polyline.Normal != XYZ.AxisZ)
+		{
+			this._writer.Write(210, polyline.Normal, map);
+		}
 	}
 
 	private void writeMesh(Mesh mesh)
@@ -1084,6 +1205,18 @@ internal abstract partial class DxfSectionWriterBase
 
 		this._writer.Write(10, underlay.InsertPoint, map);
 
+		// [PATCH] Write the scale factors (41/42/43) and rotation (50): upstream
+		// dropped them, so the underlay's 6.8408... scales and the transformed rotation
+		// (307.2878...°) were lost on DXF save.
+		this._writer.Write(41, underlay.XScale, map);
+		this._writer.Write(42, underlay.YScale, map);
+		this._writer.Write(43, underlay.ZScale, map);
+		if (!underlay.Rotation.IsZero())
+		{
+			// The map marks 50 as IsAngle, so Write() converts radians -> degrees itself.
+			this._writer.Write(50, underlay.Rotation, map);
+		}
+
 		this._writer.Write(280, underlay.Flags, map);
 		this._writer.Write(281, underlay.Contrast, map);
 		this._writer.Write(282, underlay.Fade, map);
@@ -1230,12 +1363,20 @@ internal abstract partial class DxfSectionWriterBase
 
 		this._writer.WriteName(2, shape.ShapeStyle, map);
 
-		this._writer.Write(50, shape.Rotation, map);
+		// [PATCH] AutoCAD omits the default codes: 50 when the rotation is 0, 41 when the
+		// X scale is 1, 51 when the oblique angle is 0 (and the planar 210/220/230).
+		if (!shape.Rotation.IsZero())
+		{
+			this._writer.Write(50, shape.Rotation, map);
+		}
 
-		this._writer.Write(41, shape.RelativeXScale, map);
-		this._writer.Write(51, shape.ObliqueAngle, map);
+		this._writer.WriteIfNotDefault(41, shape.RelativeXScale, 1, map);
+		this._writer.WriteIfNotDefault(51, shape.ObliqueAngle, 0, map);
 
-		this._writer.Write(210, shape.Normal, map);
+		if (!shape.Normal.IsZero() && shape.Normal != XYZ.AxisZ)
+		{
+			this._writer.Write(210, shape.Normal, map);
+		}
 	}
 
 	private void writeSolid(Solid solid)
@@ -1270,14 +1411,16 @@ internal abstract partial class DxfSectionWriterBase
 		this._writer.Write(72, (short)spline.Knots.Count, map);
 		this._writer.Write(73, (short)spline.ControlPoints.Count, map);
 
-		if (spline.FitPoints.Any())
-		{
-			this._writer.Write(74, (short)spline.FitPoints.Count, map);
-		}
+		// [PATCH] AutoCAD writes 74 (fit point count) even when it is 0 and omits 44
+		// (fit point tolerance) when there are no fit points; upstream did the opposite.
+		this._writer.Write(74, (short)spline.FitPoints.Count, map);
 
 		this._writer.Write(42, spline.KnotTolerance, map);
 		this._writer.Write(43, spline.ControlPointTolerance, map);
-		this._writer.Write(44, spline.FitTolerance, map);
+		if (spline.FitPoints.Any())
+		{
+			this._writer.Write(44, spline.FitTolerance, map);
+		}
 
 		if (!spline.StartTangent.IsZero())
 		{
@@ -1333,11 +1476,23 @@ internal abstract partial class DxfSectionWriterBase
 			this._writer.Write(51, text.ObliqueAngle, map);
 		}
 
-		this._writer.Write(7, text.Style.Name);
+		// [PATCH] AutoCAD omits the style name (7) for the default "Standard" style.
+		if (!string.Equals(text.Style?.Name, "Standard", StringComparison.OrdinalIgnoreCase))
+		{
+			this._writer.Write(7, text.Style.Name);
+		}
 
-		this._writer.Write(11, text.AlignmentPoint, map);
+		// [PATCH] AutoCAD omits the alignment point (11/21/31) when it is 0.
+		if (!text.AlignmentPoint.IsZero())
+		{
+			this._writer.Write(11, text.AlignmentPoint, map);
+		}
 
-		this._writer.Write(210, text.Normal, map);
+		// [PATCH] AutoCAD omits the extrusion direction (210/220/230) for planar text.
+		if (!text.Normal.IsZero() && text.Normal != XYZ.AxisZ)
+		{
+			this._writer.Write(210, text.Normal, map);
+		}
 
 		if (text.Mirror != 0)
 		{
@@ -1410,7 +1565,8 @@ internal abstract partial class DxfSectionWriterBase
 
 		this._writer.Write(70, v.Flags, map);
 
-		this._writer.Write(50, v.CurveTangent, map);
+		// [PATCH] AutoCAD omits the curve tangent angle (50) when it is 0.
+		this._writer.WriteIfNotDefault(50, v.CurveTangent, 0, map);
 
 		if (v is VertexFaceRecord faceRecord)
 		{
