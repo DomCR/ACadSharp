@@ -7337,7 +7337,32 @@ namespace ACadSharp.IO.DWG
 
 			this.readCommonEntityData(template);
 
+			//The class specific fields have no reader, keep the bytes so that nothing is lost
+			entity.RawData = this.readRemainingObjectData();
+
 			return template;
+		}
+
+		/// <summary>
+		/// Reads the object data that has not been consumed yet, up to the end of the object.
+		/// </summary>
+		/// <remarks>
+		/// The section has no length of its own, so it is delimited by the end of the object. That
+		/// end includes the handle section, which is left in place: consumers of these bytes look
+		/// for what they know, and the padding is harmless.
+		/// </remarks>
+		private byte[] readRemainingObjectData()
+		{
+			long start = this._objectReader.PositionInBits();
+			long end = this._objectInitialPos + ((long)this._size * 8L);
+
+			long bits = end - start;
+			if (bits <= 0)
+			{
+				return null;
+			}
+
+			return this._objectReader.ReadBytes((int)((bits + 7L) / 8L));
 		}
 
 		private CadTemplate readUnknownNonGraphicalObject(DxfClass dxfClass)
