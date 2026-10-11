@@ -35,8 +35,14 @@ public abstract class CadReaderBase<T> : ICadReader
 		this.OnNotification += notification;
 	}
 
+	/// <summary>
+	/// Path of the file being read, null when the document is read from a stream.
+	/// </summary>
+	protected string _filename;
+
 	protected CadReaderBase(string filename, NotificationEventHandler notification = null) : this(File.Open(filename, FileMode.Open, FileAccess.Read, FileShare.ReadWrite), notification)
 	{
+		this._filename = filename;
 	}
 
 	protected CadReaderBase(Stream stream, NotificationEventHandler notification = null) : this(notification)

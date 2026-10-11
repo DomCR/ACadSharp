@@ -1,5 +1,6 @@
 using ACadSharp.Entities;
 using ACadSharp.Tables;
+using System.Collections.Generic;
 
 namespace ACadSharp.IO.Templates
 {
@@ -33,6 +34,30 @@ namespace ACadSharp.IO.Templates
 				else
 				{
 					builder.Notify($"Shape style {this.ShapeFileHandle} | {this.ShapeFileName} not found", NotificationType.Warning);
+				}
+			}
+
+			// [PATCH] A shape coming from DXF only carries its name (code 2); DWG stores it as
+			// a shape number plus a hard pointer to the SHAPEFILE style that owns the .shx where
+			// the shape is defined. Without both of them the shape number stays 0 and AutoCAD
+			// reports "shape number <= 0 / shape index <= 0" on AUDIT, and the shape is not
+			// displayed at all. Resolve the name against the shape files of the document, the
+			// same way AutoCAD does when it opens a DXF.
+			if (shape.ShapeStyle == null && shape.ShapeIndex == 0 && !string.IsNullOrEmpty(shape.ShapeName))
+			{
+				List<string> directories = builder.ShapeFontDirectories;
+				IEnumerable<string> searchPaths = directories != null && directories.Count > 0
+					? directories
+					: ShapeFileIndex.GetDefaultDirectories();
+
+				if (ShapeFileIndex.TryResolve(shape.ShapeName, builder.TextStyles, searchPaths, out TextStyle shapeFile, out ushort number))
+				{
+					shape.ShapeStyle = shapeFile;
+					shape.ShapeIndex = number;
+				}
+				else
+				{
+					builder.Notify($"Shape {shape.ShapeName} not found in any shape file of the document", NotificationType.Warning);
 				}
 			}
 		}

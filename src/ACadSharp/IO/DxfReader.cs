@@ -1,4 +1,4 @@
-﻿using ACadSharp.Classes;
+using ACadSharp.Classes;
 using ACadSharp.Entities;
 using ACadSharp.Exceptions;
 using ACadSharp.Header;
@@ -158,6 +158,16 @@ public class DxfReader : CadReaderBase<DxfReaderConfiguration>
 
 		//Only created if a TABLE is found outside of the TABLES section (non-standard dxf)
 		DxfTablesSectionReader orphanTablesReader = null;
+
+		//Shape files are searched next to the drawing as well.
+		if (!string.IsNullOrEmpty(this._filename))
+		{
+			string directory = Path.GetDirectoryName(this._filename);
+			if (!string.IsNullOrEmpty(directory))
+			{
+				this._builder.ShapeFontDirectories.Add(directory);
+			}
+		}
 
 		while (this._reader.ValueAsString != DxfFileToken.EndOfFile)
 		{

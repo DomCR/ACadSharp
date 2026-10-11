@@ -1,4 +1,6 @@
-﻿namespace ACadSharp.IO
+using System.Collections.Generic;
+
+namespace ACadSharp.IO
 {
 	/// <summary>
 	/// Base configuration for all the <see cref="CadReaderBase{T}"/> classes.
@@ -30,5 +32,18 @@
 		/// These NonGraphicalObjects do not contain any information and will be ignored by the writers.
 		/// </remarks>
 		public bool KeepUnknownNonGraphicalObjects { get; set; } = false;
+
+		/// <summary>
+		/// Additional directories where the shape files (<c>.shx</c>) referenced by the
+		/// document are searched.
+		/// </summary>
+		/// <remarks>
+		/// A <see cref="Entities.Shape"/> is stored by name in DXF, but by number plus a
+		/// reference to its shape file in DWG. The reader resolves the name against the
+		/// <c>.shx</c> files of the shape file styles in the document; add the folder that
+		/// holds the project shape files here when it is not a standard AutoCAD fonts
+		/// folder nor the folder of the drawing itself.
+		/// </remarks>
+		public List<string> FontSearchDirectories { get; } = new List<string>();
 	}
 }
