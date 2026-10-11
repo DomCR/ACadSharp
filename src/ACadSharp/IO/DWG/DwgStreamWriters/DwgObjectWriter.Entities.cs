@@ -2479,6 +2479,15 @@ internal partial class DwgObjectWriter : DwgSectionIO
 
 		//B Has border lineweight overrides
 		this._writer.WriteBit(false);
+
+		//B Has border visibility overrides
+		// [FIX] 读取端 readTableEntity 的 "Until R2007" 分支共读取 4 个覆盖标志位
+		// (table overrides / border color / border lineweight / border visibility，
+		// 见 DwgObjectReader.Entities.cs 行 862、990、1089、1188)；
+		// Rust 参考实现 (cadcodec-main, entities.rs read_table_entity pre-R2010 分支)
+		// 同样是 4 个。此前只写 3 个，导致对象位流整体少 1 bit 而错位，
+		// AutoCAD 解码 R2004 压缩对象流时报"解密数据时出错"。补齐第 4 个位。
+		this._writer.WriteBit(false);
 	}
 
 	/// <summary>
