@@ -256,6 +256,17 @@ public class DwgWriter : CadWriterBase<DwgWriterConfiguration>
 
 	private void writeObjects()
 	{
+		// [FIX] ACDS(Prototype_1b) 段目前不会被写出（见本文件 writePrototype() 调用被注释，
+		// 且不存在对应的 prototype 写出器），但读取端 readDsPrototype_1b() 会把 ACDS 数据
+		// 读入 document.DataStorage，并在根字典留下 "AcDsDecomposeData" 条目指向该数据。
+		// 这会造成悬空引用：字典条目存在、其引用的 ACDS 段却不存在，导致整个对象段
+		// 位流错位，AutoCAD 解码 R2004 压缩对象流时报"解密数据时出错"。
+		//
+		// 为使写出行为自洽（不写 ACDS 段 ⇒ 不保留指向它的条目），此处在写对象段前
+		// 摘除该条目。ACDS 属辅助数据（非核心几何/表格数据），移除不影响图形内容。
+		// 实测：移除后 AutoCAD 可正常打开并识别全部实体（含 AcDbTable）。
+		this.removeAcDsDataStorageEntry();
+
 		MemoryStream stream = new MemoryStream();
 		DwgObjectWriter writer = new DwgObjectWriter(
 			stream,
@@ -271,6 +282,53 @@ public class DwgWriter : CadWriterBase<DwgWriterConfiguration>
 		this._handlesMap = writer.Map;
 
 		this._fileHeaderWriter.AddSection(DwgSectionDefinition.AcDbObjects, stream, true);
+	}
+
+	/// <summary>
+	/// 摘除根字典中指向 ACDS(Prototype_1b) 数据的条目。
+	/// </summary>
+	/// <remarks>
+	/// ACDS 段不会被写出，故其字典条目会成为悬空引用并破坏对象段位流，必须一并摘除。
+	/// </remarks>
+	private void removeAcDsDataStorageEntry()
+	{
+		const string acDsEntryName = "AcDsDecomposeData";
+
+		try
+		{
+			var root = this._document.RootDictionary;
+			if (root is null)
+			{
+				return;
+			}
+
+			string[] names = root.EntryNames;
+			if (names is null)
+			{
+				return;
+			}
+
+			bool found = false;
+			for (int i = 0; i < names.Length; i++)
+			{
+				if (string.Equals(names[i], acDsEntryName, System.StringComparison.OrdinalIgnoreCase))
+				{
+					found = true;
+					break;
+				}
+			}
+
+			if (!found)
+			{
+				return;
+			}
+
+			root.Remove(acDsEntryName);
+		}
+		catch
+		{
+			// 摘除失败不应中断写出；此时最坏结果仍是保留原（可能损坏的）行为
+		}
 	}
 
 	private void writeObjFreeSpace()
