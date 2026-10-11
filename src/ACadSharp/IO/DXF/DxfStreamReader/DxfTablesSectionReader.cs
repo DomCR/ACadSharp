@@ -1,4 +1,4 @@
-﻿using ACadSharp.Exceptions;
+using ACadSharp.Exceptions;
 using ACadSharp.IO.Templates;
 using ACadSharp.Tables;
 using ACadSharp.Tables.Collections;
@@ -692,6 +692,9 @@ internal class DxfTablesSectionReader : DxfSectionReaderBase
 					template.Segment.ShapeNumber = (short)this._reader.ValueAsInt;
 					break;
 				case 340:
+					// [PATCH] 保留 shape 的文字样式句柄：上游直接丢弃该码，导致写出时
+					// 340=0，AutoCAD 找不到 shape 字体，自定义线型的符号（弹簧等）不显示。
+					template.StyleHandle = this._reader.ValueAsHandle;
 					break;
 				default:
 					this._builder.Notify($"[LineTypeSegment] Unhandeled dxf code {this._reader.Code} with value {this._reader.ValueAsString}, positon {this._reader.Position}", NotificationType.None);

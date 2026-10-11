@@ -485,7 +485,12 @@ internal abstract class DxfSectionReaderBase
 				return true;
 			//Border overrides:
 			case 177:
-				//Cell override flag value (before AutoCAD 2007)
+				//Cell override flag value; kept verbatim for round-trip fidelity
+				//because its bit meaning is version dependent.
+				if (tmp.CurrentCell != null)
+				{
+					tmp.CurrentCell.OverrideFlag = this._reader.ValueAsInt;
+				}
 				return true;
 			case 279:
 				//Lineweight for the top border of the cell; override applied at the cell level
@@ -532,6 +537,11 @@ internal abstract class DxfSectionReaderBase
 				if (tmp.CurrentCellTemplate != null)
 				{
 					tmp.CurrentCellTemplate.FormatTextHeight = this._reader.ValueAsDouble;
+					//Per-cell text height override (reference files materialize it on every cell).
+					if (tmp.CurrentCell != null)
+					{
+						tmp.CurrentCell.StyleOverride.TextHeight = this._reader.ValueAsDouble;
+					}
 				}
 				return true;
 			case 283:
@@ -560,7 +570,12 @@ internal abstract class DxfSectionReaderBase
 				tmp.CurrentCell.Rotation = this._reader.ValueAsDouble;
 				return true;
 			case 170:
-				//Has data flag
+				//Cell content alignment (MiddleCenter = 5 in the reference files);
+				//only occurs in the per-cell section, right after the cell content.
+				if (tmp.CurrentCell != null)
+				{
+					tmp.CurrentCell.StyleOverride.CellAlignment = (TableStyle.CellAlignmentType)this._reader.ValueAsShort;
+				}
 				return true;
 			case 171:
 				tmp.CreateCell((TableEntity.CellType)this._reader.ValueAsInt);

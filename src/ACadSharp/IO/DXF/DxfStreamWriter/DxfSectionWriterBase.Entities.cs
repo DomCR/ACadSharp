@@ -45,6 +45,10 @@ internal abstract partial class DxfSectionWriterBase
 			case Hatch hatch:
 				this.writeHatch(hatch);
 				break;
+			case TableEntity table:
+				//Must precede the Insert case: TableEntity derives from Insert.
+				this.writeTableEntity(table);
+				break;
 			case Insert insert:
 				this.writeInsert(insert);
 				break;
@@ -155,7 +159,6 @@ internal abstract partial class DxfSectionWriterBase
 			case Shape:
 				return this.Configuration.WriteShapes;
 			case ProxyEntity:
-			case TableEntity:
 			case Solid3D:
 			case CadBody:
 			case Region:
@@ -1306,7 +1309,7 @@ internal abstract partial class DxfSectionWriterBase
 		if (polyline is PolygonMesh polygon)
 		{
 			this._writer.WriteIfNotDefault(71, polygon.MVertexCount, 0, map);
-			this._writer.WriteIfNotDefault(72, polygon.MVertexCount, 0, map);
+			this._writer.WriteIfNotDefault(72, polygon.NVertexCount, 0, map);
 			this._writer.WriteIfNotDefault(73, polygon.MSmoothSurfaceDensity, 0, map);
 			this._writer.WriteIfNotDefault(74, polygon.NSmoothSurfaceDensity, 0, map);
 		}
@@ -1346,6 +1349,148 @@ internal abstract partial class DxfSectionWriterBase
 		this._writer.Write(10, ray.StartPoint, map);
 
 		this._writer.Write(11, ray.Direction, map);
+	}
+
+	// [PATCH] ACAD_TABLE DXF serialization (was not implemented; the table was silently
+	// dropped, so AutoCAD showed no table). Subclass chain:
+	// AcDbEntity -> AcDbBlockReference (2 = anonymous cache block, 10/20/30) -> AcDbTable.
+	// Layout mirrors the reference file produced by AutoCAD for the same source
+	// (sample_VBAtransformed.dxf): the 92/310 preview blob and the table-level margin /
+	// default text height codes are optional and omitted (as in the source file).
+	private void writeTableEntity(TableEntity table)
+	{
+		DxfClassMap map = DxfClassMap.Create<TableEntity>();
+
+		// AcDbBlockReference part
+		this._writer.Write(DxfCode.Subclass, DxfSubclassMarker.Insert);
+
+		if (table.Block != null)
+		{
+			this._writer.WriteName(2, table.Block, map);
+		}
+
+		this._writer.Write(10, table.InsertPoint, map);
+
+		//The reference file omits scale/rotation for unit-scale, zero-rotation tables.
+		this._writer.WriteIfNotDefault(41, table.XScale, 1.0, map);
+		this._writer.WriteIfNotDefault(42, table.YScale, 1.0, map);
+		this._writer.WriteIfNotDefault(43, table.ZScale, 1.0, map);
+		this._writer.WriteIfNotDefault(50, table.Rotation, 0.0, map);
+
+		// AcDbTable part
+		this._writer.Write(DxfCode.Subclass, DxfSubclassMarker.TableEntity);
+
+		if (table.Style != null)
+		{
+			this._writer.Write(342, table.Style.Handle);
+		}
+
+		if (table.Block != null)
+		{
+			this._writer.Write(343, table.Block.Handle);
+		}
+
+		this._writer.Write(11, table.HorizontalDirection, map);
+
+		this._writer.Write(90, table.ValueFlag, map);
+		this._writer.Write(91, table.Rows.Count, map);
+		this._writer.Write(92, table.Columns.Count, map);
+		this._writer.Write(93, (short)(table.OverrideFlag ? 1 : 0), map);
+		this._writer.WriteIfNotDefault(94, (short)(table.OverrideBorderColor ? 1 : 0), 0, map);
+		this._writer.WriteIfNotDefault(95, (short)(table.OverrideBorderLineWeight ? 1 : 0), 0, map);
+		this._writer.WriteIfNotDefault(96, (short)(table.OverrideBorderVisibility ? 1 : 0), 0, map);
+
+		foreach (var row in table.Rows)
+		{
+			this._writer.Write(141, row.Height, map);
+		}
+
+		foreach (var column in table.Columns)
+		{
+			this._writer.Write(142, column.Width, map);
+		}
+
+		//Cells in row-major order, as in the reference file.
+		foreach (var row in table.Rows)
+		{
+			foreach (var cell in row.Cells)
+			{
+				this.writeTableCell(cell);
+			}
+		}
+	}
+
+	private void writeTableCell(TableEntity.Cell cell)
+	{
+		this._writer.Write(171, (int)cell.Type);
+		this._writer.Write(172, cell.EdgeFlags);
+		this._writer.Write(173, cell.MergedValue);
+		this._writer.Write(174, (short)(cell.AutoFit ? 1 : 0));
+		this._writer.Write(175, cell.BorderWidth);
+		this._writer.Write(176, cell.BorderHeight);
+
+		//Code 177 (cell override flags): the raw value is preserved from the source and
+		//bit 5 (32) is set when a per-cell text height override (140) is present,
+		//matching the reference file exactly (source value + 32).
+		int overrideFlag = cell.OverrideFlag;
+		if (cell.StyleOverride.TextHeight > 0.0)
+		{
+			overrideFlag |= 32;
+		}
+		this._writer.Write(177, (short)overrideFlag);
+
+		this._writer.Write(178, cell.VirtualEdgeFlag);
+		this._writer.Write(145, cell.Rotation);
+
+		foreach (var content in cell.Contents)
+		{
+			this._writer.Write(1, content.CadValue.Value as string ?? string.Empty);
+		}
+
+		TableStyle.CellStyle style = cell.StyleOverride;
+
+		//Background/content color block (only cells with a background in the source).
+		if (!style.BackgroundColor.IsByBlock || !style.ContentColor.IsByBlock)
+		{
+			if (style.CellAlignment != TableStyle.CellAlignmentType.None)
+			{
+				this._writer.Write(170, (short)style.CellAlignment);
+			}
+			this._writer.Write(63, style.BackgroundColor.Index);
+			this._writer.Write(64, style.ContentColor.Index);
+			this._writer.Write(283, (short)(style.IsFillColorOn ? 1 : 0));
+		}
+
+		if (style.TextHeight > 0.0)
+		{
+			this._writer.Write(140, style.TextHeight);
+		}
+
+		this.writeTableCellBorder(275, 65, style.RightBorder);
+		this.writeTableCellBorder(276, 66, style.BottomBorder);
+		this.writeTableCellBorder(278, 68, style.LeftBorder);
+		this.writeTableCellBorder(279, 69, style.TopBorder);
+	}
+
+	private void writeTableCellBorder(int lineWeightCode, int colorCode, TableStyle.CellBorder border)
+	{
+		bool lineWeightSet = border.LineWeight != LineWeightType.ByBlock;
+		bool colorSet = !border.Color.IsByBlock;
+
+		if (!lineWeightSet && !colorSet)
+		{
+			return;
+		}
+
+		if (lineWeightSet)
+		{
+			this._writer.Write(lineWeightCode, (short)border.LineWeight);
+		}
+
+		if (colorSet)
+		{
+			this._writer.Write(colorCode, border.Color.Index);
+		}
 	}
 
 	private void writeSeqend(Seqend seqend)

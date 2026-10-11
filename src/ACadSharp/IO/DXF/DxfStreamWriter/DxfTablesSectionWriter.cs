@@ -1,4 +1,4 @@
-﻿using ACadSharp.IO.DXF.DxfStreamWriter;
+using ACadSharp.IO.DXF.DxfStreamWriter;
 using ACadSharp.Tables;
 using ACadSharp.Tables.Collections;
 using CSMath;
@@ -291,7 +291,12 @@ namespace ACadSharp.IO.DXF
 					this._writer.Write(50, MathHelper.RadToDeg(s.Rotation));
 					this._writer.Write(44, s.Offset.X);
 					this._writer.Write(45, s.Offset.Y);
-					this._writer.Write(9, s.Text);
+					// [PATCH] 仅文本段（74 含 Text 标志）才有组码 9（文本串）；
+					// 无条件写出空 9 会破坏 shape 段的定义（基准文件 shape 段无组码 9）。
+					if (s.Flags.HasFlag(LineTypeShapeFlags.Text) && !string.IsNullOrEmpty(s.Text))
+					{
+						this._writer.Write(9, s.Text);
+					}
 				}
 			}
 		}
