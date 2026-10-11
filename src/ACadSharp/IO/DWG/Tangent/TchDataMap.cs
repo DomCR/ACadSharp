@@ -1,4 +1,4 @@
-using System;
+﻿using System;
 using System.Collections.Generic;
 using System.Text;
 
@@ -139,6 +139,110 @@ namespace ACadSharp.IO.DWG.Tangent
 			}
 		}
 
+		/// <summary>
+		/// Reads a Tianzheng property map from the whole class specific payload of an object, such
+		/// as <see cref="Entities.UnknownEntity.RawData"/>.
+		/// </summary>
+		/// <remarks>
+		/// Unlike <see cref="Read(byte[], ACadVersion)"/> the map is not at the start of the payload
+		/// here: it follows the class's own fields and is bit aligned to whatever they consumed. The
+		/// block is located by trying every bit offset and keeping the longest readable string
+		/// sequence that contains the closing marker.
+		/// </remarks>
+		/// <param name="payload">Raw payload bytes.</param>
+		/// <param name="version">Drawing version used for the string encoding.</param>
+		/// <returns>The decoded map; never null. An empty map when no block is found.</returns>
+		public static TchDataMap ReadFromPayload(byte[] payload, ACadVersion version)
+		{
+			if (payload == null)
+			{
+				throw new ArgumentNullException(nameof(payload));
+			}
+
+			if (payload.Length == 0)
+			{
+				return new TchDataMap();
+			}
+
+			using (System.IO.MemoryStream stream = new System.IO.MemoryStream(payload, writable: false))
+			{
+				IDwgStreamReader reader = DwgStreamReaderBase.GetStreamHandler(version, stream, resetPositon: true);
+
+				return ReadFromPayload(reader, (long)payload.Length * 8L);
+			}
+		}
+
+		private static TchDataMap ReadFromPayload(IDwgStreamReader reader, long limit)
+		{
+			TchDataMap best = null;
+
+			for (long offset = 0; offset < limit; offset++)
+			{
+				TchDataMap candidate = tryReadSequence(reader, offset);
+				if (candidate == null)
+				{
+					continue;
+				}
+
+				//The longest run wins: the properties precede the markers, so the sequence that
+				//starts earliest and still reaches the closing marker is the whole block.
+				if (best == null || candidate._entries.Count > best._entries.Count)
+				{
+					best = candidate;
+				}
+			}
+
+			return best ?? new TchDataMap();
+		}
+
+		private static TchDataMap tryReadSequence(IDwgStreamReader reader, long offset)
+		{
+			TchDataMap map = new TchDataMap();
+			reader.SetPositionInBits(offset);
+
+			for (int i = 0; i < DefaultMaxEntries; i++)
+			{
+				if (reader.IsEmpty)
+				{
+					break;
+				}
+
+				long start = reader.PositionInBits();
+				string value;
+				try
+				{
+					value = reader.ReadVariableText();
+				}
+				catch (Exception)
+				{
+					reader.SetPositionInBits(start);
+					break;
+				}
+
+				if (string.IsNullOrEmpty(value) || value.Length > MaxStringLength || !isPrintable(value))
+				{
+					break;
+				}
+
+				map._entries.Add(value);
+
+				if (value == BlockEndMarker)
+				{
+					map.IsComplete = true;
+					break;
+				}
+			}
+
+			//Only a sequence that reached the closing marker describes a real block
+			if (!map.IsComplete || map._entries.Count < 2)
+			{
+				return null;
+			}
+
+			map.buildProperties();
+			return map;
+		}
+
 		private static bool isPrintable(string value)
 		{
 			foreach (char c in value)
@@ -164,6 +268,15 @@ namespace ACadSharp.IO.DWG.Tangent
 
 				if (isPropertyName(entry))
 				{
+					//A descriptor followed by a plain name looking entry is a pair: the second one is
+					//a value that happens to look like a name, such as the hatch pattern PUB_HATCH.
+					if (pending != null && isTypedFieldDescriptor(pending) && !isTypedFieldDescriptor(entry))
+					{
+						_properties[pending] = entry;
+						pending = null;
+						continue;
+					}
+
 					// A name with no value of its own: it is either a flag or its value is written
 					// through the native (non string) path.
 					if (pending != null)
@@ -193,8 +306,61 @@ namespace ACadSharp.IO.DWG.Tangent
 		/// names, so an entry containing digits is only accepted as a name when it also contains an
 		/// underscore.
 		/// </remarks>
+		/// <summary>
+		/// Decides whether an entry is a typed field descriptor rather than a value.
+		/// </summary>
+		/// <remarks>
+		/// Native objects describe their fields as <c>T20</c> followed by an optional version prefix
+		/// <c>V&lt;n&gt;_</c>, a type letter (<c>b</c> boolean, <c>d</c> double, <c>s</c> string,
+		/// <c>u</c> unsigned) and either an index or a readable name:
+		/// <c>T20s1</c>, <c>T20b2</c>, <c>T20d12</c>, <c>T20V9_dRealDist2DimLine</c>.
+		/// </remarks>
+		private static bool isTypedFieldDescriptor(string value)
+		{
+			if (value.Length < 5 || !value.StartsWith("T20", StringComparison.Ordinal))
+			{
+				return false;
+			}
+
+			int i = 3;
+
+			if (i < value.Length && value[i] == 'V')
+			{
+				i++;
+				while (i < value.Length && value[i] >= '0' && value[i] <= '9')
+				{
+					i++;
+				}
+
+				if (i >= value.Length || value[i] != '_')
+				{
+					return false;
+				}
+
+				i++;
+			}
+
+			if (i >= value.Length)
+			{
+				return false;
+			}
+
+			char type = value[i];
+			if (type != 'b' && type != 'd' && type != 's' && type != 'u')
+			{
+				return false;
+			}
+
+			return i + 1 < value.Length;
+		}
+
 		private static bool isPropertyName(string value)
 		{
+			if (isTypedFieldDescriptor(value))
+			{
+				return true;
+			}
+
 			if (value.Length < 3)
 			{
 				return false;
