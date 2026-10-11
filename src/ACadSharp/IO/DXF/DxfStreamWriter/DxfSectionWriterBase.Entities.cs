@@ -1514,16 +1514,20 @@ internal abstract partial class DxfSectionWriterBase
 
 		this._writer.Write(40, shape.Size, map);
 
-		// [PATCH] Code 2 (shape name) is mandatory — AutoCAD aborts the whole file
-		// without it. The style table may not carry the shape name (GIS exports), in
-		// which case ShapeStyle is null and the raw name is written instead.
-		if (shape.ShapeStyle != null)
-		{
-			this._writer.WriteName(2, shape.ShapeStyle, map);
-		}
-		else if (!string.IsNullOrEmpty(shape.ShapeName))
+		// [PATCH] Code 2 is the SHAPE NAME (within the shape file) and is mandatory —
+		// AutoCAD aborts the whole file if it cannot resolve a valid shape name. Always
+		// prefer the raw shape name (ShapeName, e.g. "MYSHAPE") read from DXF code 2; the
+		// previous code wrote ShapeStyle.Name (the shape-file/style name, e.g. "unnamed1"),
+		// which AutoCAD cannot resolve as a shape and therefore reported as "Missing group
+		// code 2". Only fall back to the style name when the shape name is unknown (shapes
+		// created from a DWG that only carries a shape number).
+		if (!string.IsNullOrEmpty(shape.ShapeName))
 		{
 			this._writer.Write(2, shape.ShapeName, map);
+		}
+		else if (shape.ShapeStyle != null)
+		{
+			this._writer.WriteName(2, shape.ShapeStyle, map);
 		}
 
 		// [PATCH] AutoCAD omits the default codes: 50 when the rotation is 0, 41 when the
