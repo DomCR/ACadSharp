@@ -85,6 +85,13 @@ public class Shape : Entity, IOrientable
 	[DxfCodeValue(39)]
 	public double Thickness { get; set; } = 0.0;
 
+	/// <summary>
+	/// Raw shape name as read from DXF code 2. Kept so the writer can emit the
+	/// mandatory code 2 even when the document carries no matching text style
+	/// (e.g. GIS exports); AutoCAD writes the name regardless of table presence.
+	/// </summary>
+	internal string ShapeName { get; set; }
+
 	internal ushort ShapeIndex { get; set; }
 
 	private TextStyle _style;
@@ -191,6 +198,7 @@ public class Shape : Entity, IOrientable
 		Shape clone = (Shape)base.Clone();
 
 		clone.ShapeStyle = (TextStyle)(this.ShapeStyle?.Clone());
+		clone.ShapeName = this.ShapeName;
 
 		return clone;
 	}

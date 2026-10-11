@@ -1,4 +1,4 @@
-﻿using ACadSharp.Entities;
+using ACadSharp.Entities;
 using ACadSharp.Tables;
 
 namespace ACadSharp.IO.Templates
@@ -18,6 +18,11 @@ namespace ACadSharp.IO.Templates
 			base.build(builder);
 
 			Shape shape = this.CadObject as Shape;
+
+			// [PATCH] Keep the raw shape name: when the STYLES table has no matching
+			// entry the reference resolves to null and the name would be lost, but DXF
+			// code 2 is mandatory (AutoCAD aborts the file with "Missing group code 2").
+			shape.ShapeName = this.ShapeFileName;
 
 			if (this.getTableReference(builder, this.ShapeFileHandle, this.ShapeFileName, out TextStyle text))
 			{

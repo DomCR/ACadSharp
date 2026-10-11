@@ -1288,6 +1288,14 @@ internal abstract partial class DxfSectionWriterBase
 
 		this._writer.Write(DxfCode.Subclass, polyline.SubclassMarker);
 
+		// [PATCH] 66 = "vertices follow". AutoCAD uses it to know the following VERTEX
+		// entities belong to this POLYLINE; without it the vertex chain is not read.
+		// The reference file writes 66=1 right after the subclass marker.
+		if (polyline.Vertices.Any())
+		{
+			this._writer.Write(66, 1, map);
+		}
+
 		this._writer.Write(DxfCode.XCoordinate, 0);
 		this._writer.Write(DxfCode.YCoordinate, 0);
 		this._writer.Write(DxfCode.ZCoordinate, polyline.Elevation);
@@ -1361,7 +1369,17 @@ internal abstract partial class DxfSectionWriterBase
 
 		this._writer.Write(40, shape.Size, map);
 
-		this._writer.WriteName(2, shape.ShapeStyle, map);
+		// [PATCH] Code 2 (shape name) is mandatory — AutoCAD aborts the whole file
+		// without it. The style table may not carry the shape name (GIS exports), in
+		// which case ShapeStyle is null and the raw name is written instead.
+		if (shape.ShapeStyle != null)
+		{
+			this._writer.WriteName(2, shape.ShapeStyle, map);
+		}
+		else if (!string.IsNullOrEmpty(shape.ShapeName))
+		{
+			this._writer.Write(2, shape.ShapeName, map);
+		}
 
 		// [PATCH] AutoCAD omits the default codes: 50 when the rotation is 0, 41 when the
 		// X scale is 1, 51 when the oblique angle is 0 (and the planar 210/220/230).
