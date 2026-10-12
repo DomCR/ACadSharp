@@ -871,11 +871,13 @@ namespace ACadSharp.IO.DWG
 							(this._header.JoinStyle << 0x7);
 
 				//LWDISPLAY!(Flags & 0x0200)
+				// [PATCH] 该位反逻辑（libredwg encoder: if (!LWDISPLAY) FLAGS |= 0x200），
+				// 置位=线宽显示关。原写端极性本就正确，勿改。
 				if (!this._header.DisplayLineWeight)
 				{
 					flags |= 0x200;
 				}
-				//XEDIT!(Flags & 0x0400)
+				//XEDIT!(Flags & 0x0400) —— 同为反逻辑位
 				if (!this._header.XEdit)
 				{
 					flags |= 0x400;

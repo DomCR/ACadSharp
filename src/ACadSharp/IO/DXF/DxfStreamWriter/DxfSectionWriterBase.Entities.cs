@@ -590,13 +590,15 @@ internal abstract partial class DxfSectionWriterBase
 		foreach (GradientColor gc in gradient.Colors)
 		{
 			this._writer.Write(463, gc.Value);
-			this._writer.Write(63, (short)gc.Color.Index);
+			this._writer.Write(63, gc.Color.GetApproxIndex());
 			int rgb = gc.StoredColor;
 			if (rgb < 0)
 			{
-				rgb = gc.Color.IsTrueColor
-					? gc.Color.TrueColor
-					: ((gc.Color.GetRgb()[0] & 0xFF) | ((gc.Color.GetRgb()[1] & 0xFF) << 8) | ((gc.Color.GetRgb()[2] & 0xFF) << 16));
+				// [PATCH] Color.TrueColor 返回的是内部 COLORREF 布局(0x00BBGGRR)，而 DXF
+				// 组码 421 期望 0x00RRGGBB（R 在高位，与 AutoCAD 参考文件一致）。直接写
+				// TrueColor 会导致渐变填充红蓝通道颠倒。GetRgb() 返回 [R,G,B] 语义顺序，
+				// 按高位 R 组装；此公式对索引色与真彩色均成立。
+				rgb = (gc.Color.GetRgb()[0] << 16) | (gc.Color.GetRgb()[1] << 8) | gc.Color.GetRgb()[2];
 			}
 			this._writer.Write(421, (int)rgb);
 		}
