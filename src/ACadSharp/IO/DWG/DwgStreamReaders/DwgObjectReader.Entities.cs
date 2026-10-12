@@ -192,17 +192,7 @@ internal partial class DwgObjectReader : DwgSectionIO
 			switch (size)
 			{
 				case 16:
-					{
-						int year = LittleEndianConverter.Instance.ToInt16(array, 0);
-						int month = LittleEndianConverter.Instance.ToInt16(array, 2);
-						int day = LittleEndianConverter.Instance.ToInt16(array, 6);
-						int hour = LittleEndianConverter.Instance.ToInt16(array, 8);
-						int minute = LittleEndianConverter.Instance.ToInt16(array, 10);
-						int second = LittleEndianConverter.Instance.ToInt16(array, 12);
-						int millisecond = LittleEndianConverter.Instance.ToInt16(array, 14);
-
-						return new System.DateTime(year, month, day, hour, minute, second, millisecond);
-					}
+					return CadUtils.FromSystemTime(array);
 				case 14:
 					{
 						int year = LittleEndianConverter.Instance.ToInt16(array, 0);

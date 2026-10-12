@@ -1,6 +1,8 @@
-﻿using CSUtilities.Text;
+﻿using CSUtilities.Converters;
+using CSUtilities.Text;
 using System;
 using System.Collections.Generic;
+using System.IO;
 using System.Linq;
 using System.Text;
 
@@ -363,5 +365,45 @@ internal static class CadUtils
 		int month = date.Month;
 		jdate = date.Day + (int)System.Math.Floor((153.0 * (double)(month + 12 * day - 3) + 2.0) / 5.0) + 365 * year + (int)System.Math.Floor((double)year / 4.0) - (int)System.Math.Floor((double)year / 100.0) + (int)System.Math.Floor((double)year / 400.0) - 32045;
 		miliseconds = date.Millisecond + date.Second * 1000 + date.Minute * 60000 + date.Hour * 3600000;
+	}
+
+	/// <summary>
+	/// Converts a date into the 16 bytes of a SYSTEMTIME structure: year, month, day of the week, day, hour, minute, second and millisecond, each one as a little endian short.
+	/// </summary>
+	/// <param name="date">The date to convert.</param>
+	/// <returns>The 16 bytes that represent the date.</returns>
+	public static byte[] ToSystemTime(DateTime date)
+	{
+		byte[] array = new byte[16];
+		var stream = new MemoryStream(array);
+
+		stream.Write(LittleEndianConverter.Instance.GetBytes((short)date.Year), 0, 2);
+		stream.Write(LittleEndianConverter.Instance.GetBytes((short)date.Month), 0, 2);
+		stream.Write(LittleEndianConverter.Instance.GetBytes((short)date.DayOfWeek), 0, 2);
+		stream.Write(LittleEndianConverter.Instance.GetBytes((short)date.Day), 0, 2);
+		stream.Write(LittleEndianConverter.Instance.GetBytes((short)date.Hour), 0, 2);
+		stream.Write(LittleEndianConverter.Instance.GetBytes((short)date.Minute), 0, 2);
+		stream.Write(LittleEndianConverter.Instance.GetBytes((short)date.Second), 0, 2);
+		stream.Write(LittleEndianConverter.Instance.GetBytes((short)date.Millisecond), 0, 2);
+
+		return array;
+	}
+
+	/// <summary>
+	/// Converts the 16 bytes of a SYSTEMTIME structure into a date. The day of the week is ignored.
+	/// </summary>
+	/// <param name="array">The 16 bytes that represent the date.</param>
+	/// <returns>The date represented by the bytes.</returns>
+	public static DateTime FromSystemTime(byte[] array)
+	{
+		int year = LittleEndianConverter.Instance.ToInt16(array, 0);
+		int month = LittleEndianConverter.Instance.ToInt16(array, 2);
+		int day = LittleEndianConverter.Instance.ToInt16(array, 6);
+		int hour = LittleEndianConverter.Instance.ToInt16(array, 8);
+		int minute = LittleEndianConverter.Instance.ToInt16(array, 10);
+		int second = LittleEndianConverter.Instance.ToInt16(array, 12);
+		int millisecond = LittleEndianConverter.Instance.ToInt16(array, 14);
+
+		return new DateTime(year, month, day, hour, minute, second, millisecond);
 	}
 }
