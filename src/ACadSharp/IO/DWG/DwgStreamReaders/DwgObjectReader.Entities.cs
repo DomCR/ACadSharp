@@ -417,6 +417,10 @@ internal partial class DwgObjectReader : DwgSectionIO
 			case CellType.Text when template.ValueHandle == 0 && this._version < ACadVersion.AC1021:
 				//Text string TV 1 Present only if 344 value below is 0
 				var content = new CellContent();
+				// [FIX] pre-R2007 路径此前未设置 ContentType（默认 Unknown），导致
+				// R2010+ 写端 writeTableCellContent 按 Unknown 跳过 CadValue，
+				// 版本转换后表格单元格文本全部丢失（表格显示为空）。
+				content.ContentType = TableCellContentType.Value;
 				content.CadValue.SetValue(this._mergedReaders.ReadVariableText(), CadValueType.String);
 				cell.Contents.Add(content);
 				break;
@@ -561,6 +565,8 @@ internal partial class DwgObjectReader : DwgSectionIO
 			var unknown = this._mergedReaders.ReadBitLong();
 			//Value fields … See paragraph 20.4.98.
 			cell.Contents.Add(new CellContent());
+			// [FIX] 同 pre-R2007 路径：设置 ContentType 为 Value，否则 R2010+ 写端丢失文本
+			cell.Content.ContentType = TableCellContentType.Value;
 			this.readCadValue(cell.Content.CadValue);
 		}
 	}
