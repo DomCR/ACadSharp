@@ -720,8 +720,10 @@ internal partial class DwgObjectReader : DwgSectionIO
 		{
 			//RC Unknown (default 0)
 			this._mergedReaders.ReadByte();
-			//H Unknown (soft pointer, default NULL)
-			template.NullHandle = this.handleReference();
+			//H 342 Table style handle (soft pointer)
+			// [FIX] 此前存入 NullHandle 无人解析，往返后 table.Style 丢失，
+			// 写端只能写回 NULL 句柄，AutoCAD 审计报 eWrongObjectType 丢弃表格。
+			template.StyleHandle = this.handleReference();
 
 			//BL Unknown (default 0)
 			long longZero = this._mergedReaders.ReadBitLong();

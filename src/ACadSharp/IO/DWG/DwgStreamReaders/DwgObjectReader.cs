@@ -1369,16 +1369,18 @@ namespace ACadSharp.IO.DWG
 
 			this.readCommonNonEntityData(template);
 
-			//Following the order of dxf:
-			//330
-			template.DimensionHandle = this.handleReference();
-
+			// [FIX] 字段顺序此前与写出端/ODA 规范(libredwg dwg2.spec DIMASSOC)颠倒：
+			// 规范顺序为 BL associativity(90) / B trans_space(70) / RC rotated_type(71)
+			// / H dimensionobj(330)。旧实现先读 330 handle，导致读 AutoCAD 原生文件时
+			// 关联引用全部错位，写回后 AutoCAD 丢弃标注关联（圆半径标注关联丢失）。
 			//90
 			association.AssociativityFlags = (AssociativityFlags)this._mergedReaders.ReadBitLong();
 			//70
 			association.IsTransSpace = this._mergedReaders.ReadBit();
 			//71
 			association.RotatedDimensionType = (RotatedDimensionType)this._mergedReaders.ReadByte();
+			//330
+			template.DimensionHandle = this.handleReference();
 
 			if (association.AssociativityFlags.HasFlag(AssociativityFlags.FirstPointReference))
 			{
@@ -5998,7 +6000,11 @@ namespace ACadSharp.IO.DWG
 			}
 
 			//Common:
-			//Handle refs H ucs control object (soft pointer)
+			//Handle refs H xref handle (hard pointer, 0 if not xref-dependent)。
+			//注：此前误标为 "ucs control object (soft pointer)" 并在写出端填入 UCS 控制表
+			//句柄。经 AutoCAD 原始文件实证（sample.dwg 该槽位=0）并与 cadcodec/ODA 规范
+			//§20.4.62 对照，此槽位是 xref handle，写非空表句柄会导致 AutoCAD
+			//eWrongObjectType 丢弃该记录。
 			long control = (long)this.handleReference();
 
 			//R2000 +:

@@ -1600,8 +1600,12 @@ internal partial class DwgObjectWriter : DwgSectionIO
 		}
 
 		//Common:
-		//Handle refs H ucs control object (soft pointer)
-		this._writer.HandleReference(DwgReferenceType.SoftPointer, this._document.UCSs);
+		//Handle refs H xref handle (hard pointer, 0 if not xref-dependent)。
+		// [FIX] 此前写 "ucs control object (soft pointer)" 并填入 UCS 控制表句柄。
+		// 经 AutoCAD 原始文件实证（sample.dwg 该槽位=0）并与 cadcodec/ODA 规范 §20.4.62
+		// 对照，此槽位是 xref handle；写非空控制表句柄导致 AutoCAD
+		// eWrongObjectType 丢弃 UCS 记录（核查报告 handle 467）。
+		this._writer.HandleReference(DwgReferenceType.HardPointer, 0UL);
 
 		//R2000 +:
 		if (this.R2000Plus)
@@ -1700,8 +1704,11 @@ internal partial class DwgObjectWriter : DwgSectionIO
 		}
 
 		//Common:
-		//Handle refs H view control object (soft pointer)
-		this._writer.HandleReference(DwgReferenceType.SoftPointer, this._document.Views);
+		//Handle refs H xref handle (hard pointer, 0 if not xref-dependent)。
+		// [FIX] 同 writeUCS：此槽位是 xref handle，此前误写 Views 控制表句柄
+		//（cadcodec/ODA 规范 §20.4.60：VIEW 记录句柄序列为 xref → R2007+ background/
+		// visual style/sun → R2000+ ucs 关联句柄）。
+		this._writer.HandleReference(DwgReferenceType.HardPointer, 0UL);
 
 		//R2007+:
 		if (this.R2007Plus)

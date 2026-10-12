@@ -2049,7 +2049,9 @@ internal partial class DwgObjectWriter : DwgSectionIO
 		}
 
 		//75: more references bit, the model supports a single reference per slot
-		this._writer.WriteBit(false);
+		// [FIX] 保留读端读入的 HasLastPointRef 位，此前恒写 false，
+		// 若 AutoCAD 原文件该位为 1（跟随更多点参考），写回后位流缺位导致关联丢失。
+		this._writer.WriteBit(osnap?.HasLastPointRef ?? false);
 	}
 
 	private void writeParameterValueSet(ParameterValueSet valueSet)

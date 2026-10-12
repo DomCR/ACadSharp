@@ -584,8 +584,11 @@ internal partial class DwgObjectWriter : DwgSectionIO
 				{
 					case PolyfaceMesh faceMesh:
 						this.writePolyfaceMesh(faceMesh);
-						children.AddRange(faceMesh.Faces);
+						// [FIX] 子实体链顺序对齐 cadcodec（顶点在前、面在后）：
+						// R13-R2000 的 first/last 句柄语义为 first=首顶点、last=末面，
+						// 此前 Faces 在前导致 first 指向面、last 指向顶点。
 						children.AddRange(faceMesh.Vertices);
+						children.AddRange(faceMesh.Faces);
 						seqend = faceMesh.Vertices.Seqend;
 						break;
 					case Polyline2D pline2d:
@@ -1983,12 +1986,14 @@ internal partial class DwgObjectWriter : DwgSectionIO
 			this._writer.WriteBitLong(fm.Vertices.Count + fm.Faces.Count);
 			foreach (var v in fm.Vertices)
 			{
-				//H[VERTEX(soft pointer)] Repeats “Owned Object Count” times.
-				this._writer.HandleReference(DwgReferenceType.SoftPointer, v);
+				//H[VERTEX(hard owner)] Repeats "Owned Object Count" times。
+				// [FIX] 引用类型应为 HardOwnership（cadcodec write_polyface_mesh，
+				// ODA 全版本验证通过）；此前写 SoftPointer。
+				this._writer.HandleReference(DwgReferenceType.HardOwnership, v);
 			}
 			foreach (var f in fm.Faces)
 			{
-				this._writer.HandleReference(DwgReferenceType.SoftPointer, f);
+				this._writer.HandleReference(DwgReferenceType.HardOwnership, f);
 			}
 		}
 
@@ -2009,7 +2014,9 @@ internal partial class DwgObjectWriter : DwgSectionIO
 
 		//Common:
 		//H SEQEND(hard owner)
-		this._writer.HandleReference(DwgReferenceType.SoftPointer, fm.Vertices.Seqend);
+		// [FIX] 引用类型应为 HardOwnership（cadcodec write_polyface_mesh）；此前写
+		// SoftPointer，与 writePolygonMesh 不一致。
+		this._writer.HandleReference(DwgReferenceType.HardOwnership, fm.Vertices.Seqend);
 	}
 
 	private void writePolygonMesh(PolygonMesh pline)
@@ -2344,8 +2351,10 @@ internal partial class DwgObjectWriter : DwgSectionIO
 		{
 			//RC Unknown (default 0)
 			this._writer.WriteByte(0);
-			//H Unknown (soft pointer, default NULL)
-			this._writer.HandleReference(DwgReferenceType.SoftPointer, null);
+			//H 342 Table style handle (soft pointer)
+			// [FIX] libredwg dwg2.spec TABLE 实体 R2010b+ 分支：该句柄是 tablestyle(342)，
+			// 而非无名 Unknown。此前写 NULL，AutoCAD 审计报 eWrongObjectType 丢弃整个表格。
+			this._writer.HandleReference(DwgReferenceType.SoftPointer, table.Style);
 			//BL Unknown (default 0)
 			this._writer.WriteBitLong(0);
 
