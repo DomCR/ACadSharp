@@ -1,5 +1,6 @@
 ﻿using ACadSharp.IO.DXF;
 using ACadSharp.IO.DXF.DxfStreamWriter;
+using ACadSharp.Objects;
 using System.IO;
 using System.Text;
 
@@ -90,6 +91,13 @@ public class DxfWriter : CadWriterBase<DxfWriterConfiguration>
 		this.createStreamWriter();
 
 		this._objectHolder.Objects.Enqueue(this._document.RootDictionary);
+
+		//Dimension associations are not stored in any dictionary, they are only
+		//referenced by the dimension reactors, enqueue them to keep them in the DXF
+		foreach (DimensionAssociation dimAssociation in this._document.GetCadObjects<DimensionAssociation>())
+		{
+			this._objectHolder.Objects.Enqueue(dimAssociation);
+		}
 
 		this.writeHeader();
 

@@ -4935,8 +4935,62 @@ namespace ACadSharp.IO.DWG
 			//72
 			osnap.ObjectOsnapType = (ObjectOsnapType)this._mergedReaders.ReadByte();
 
-			//331
-			template.ObjectHandle = this.handleReference();
+			//331: number of handles, the main object is the first handle
+			var handleCount = this._mergedReaders.ReadBitLong();
+			for (int i = 0; i < handleCount; i++)
+			{
+				var handle = this.handleReference();
+				if (i == 0)
+				{
+					template.ObjectHandle = handle;
+				}
+			}
+
+			if (osnap.ObjectOsnapType != ObjectOsnapType.None)
+			{
+				//73
+				osnap.SubentType = (SubentType)this._mergedReaders.ReadBitLong();
+				//91
+				osnap.GsMarker = this._mergedReaders.ReadBitLong();
+
+				//301: xref paths
+				var pathCount = this._mergedReaders.ReadBitLong();
+				for (int i = 0; i < pathCount; i++)
+				{
+					osnap.XrefPaths.Add(this._mergedReaders.ReadVariableText());
+				}
+			}
+
+			//40
+			osnap.GeometryParameter = this._mergedReaders.ReadBitDouble();
+			//10
+			osnap.OsnapPoint = this._mergedReaders.Read3BitDouble();
+
+			if (osnap.ObjectOsnapType == (ObjectOsnapType)6 || osnap.ObjectOsnapType == (ObjectOsnapType)11)
+			{
+				//332: intersection objects handles
+				var intersectionCount = this._mergedReaders.ReadBitLong();
+				for (int i = 0; i < intersectionCount; i++)
+				{
+					this.handleReference();
+				}
+
+				//74
+				osnap.IntersectionSubType = (SubentType)this._mergedReaders.ReadBitLong();
+				//92
+				osnap.IntersectionGsMarker = this._mergedReaders.ReadBitLong();
+
+				//302: intersection xref paths
+				var intersectionPathCount = this._mergedReaders.ReadBitLong();
+				for (int i = 0; i < intersectionPathCount; i++)
+				{
+					osnap.IntersectionXrefPaths.Add(this._mergedReaders.ReadVariableText());
+				}
+			}
+
+			//75: more references bit, only the first reference is kept
+			var moreReferences = this._mergedReaders.ReadBit();
+			osnap.HasLastPointRef = moreReferences;
 
 			return template;
 		}

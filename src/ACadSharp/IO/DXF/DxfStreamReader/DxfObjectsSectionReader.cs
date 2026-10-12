@@ -1205,7 +1205,7 @@ internal class DxfObjectsSectionReader : DxfSectionReaderBase
 					&& dimassoc.FirstPointRef == null)
 				{
 					dimassoc.FirstPointRef = new DimensionAssociation.OsnapPointRef();
-					this.readOsnapPointRef(dimassoc.FirstPointRef);
+					tmp.FirstPointRef = this.readOsnapPointRef(dimassoc.FirstPointRef);
 					this.lockPointer = true;
 					return true;
 				}
@@ -1214,7 +1214,7 @@ internal class DxfObjectsSectionReader : DxfSectionReaderBase
 					&& dimassoc.SecondPointRef == null)
 				{
 					dimassoc.SecondPointRef = new DimensionAssociation.OsnapPointRef();
-					this.readOsnapPointRef(dimassoc.SecondPointRef);
+					tmp.SecondPointRef = this.readOsnapPointRef(dimassoc.SecondPointRef);
 					this.lockPointer = true;
 					return true;
 				}
@@ -1223,7 +1223,7 @@ internal class DxfObjectsSectionReader : DxfSectionReaderBase
 					&& dimassoc.ThirdPointRef == null)
 				{
 					dimassoc.ThirdPointRef = new DimensionAssociation.OsnapPointRef();
-					this.readOsnapPointRef(dimassoc.ThirdPointRef);
+					tmp.ThirdPointRef = this.readOsnapPointRef(dimassoc.ThirdPointRef);
 					this.lockPointer = true;
 					return true;
 				}
@@ -1232,7 +1232,7 @@ internal class DxfObjectsSectionReader : DxfSectionReaderBase
 					&& dimassoc.FourthPointRef == null)
 				{
 					dimassoc.FourthPointRef = new DimensionAssociation.OsnapPointRef();
-					this.readOsnapPointRef(dimassoc.FourthPointRef);
+					tmp.FourthPointRef = this.readOsnapPointRef(dimassoc.FourthPointRef);
 					this.lockPointer = true;
 					return true;
 				}

@@ -929,33 +929,33 @@ internal partial class DwgObjectWriter : DwgSectionIO
 
 	private void writeDimensionAssociation(DimensionAssociation association)
 	{
-		this._writer.HandleReference(DwgReferenceType.SoftPointer, association.Dimension);
-
 		//90
 		this._writer.WriteBitLong((int)association.AssociativityFlags);
 		//70
 		this._writer.WriteBit(association.IsTransSpace);
 		//71
 		this._writer.WriteByte((byte)association.RotatedDimensionType);
+		//330
+		this._writer.HandleReference(DwgReferenceType.SoftPointer, association.Dimension);
 
-		if (association.AssociativityFlags.HasFlag(AssociativityFlags.FirstPointReference))
+		for (int slot = 0; slot < 4; slot++)
 		{
-			this.writeOsnapPointRef(association.FirstPointRef);
-		}
+			var flag = (AssociativityFlags)(1 << slot);
+			if (!association.AssociativityFlags.HasFlag(flag))
+			{
+				continue;
+			}
 
-		if (association.AssociativityFlags.HasFlag(AssociativityFlags.SecondPointReference))
-		{
-			this.writeOsnapPointRef(association.SecondPointRef);
-		}
+			DimensionAssociation.OsnapPointRef osnap = slot switch
+			{
+				0 => association.FirstPointRef,
+				1 => association.SecondPointRef,
+				2 => association.ThirdPointRef,
+				3 => association.FourthPointRef,
+				_ => null,
+			};
 
-		if (association.AssociativityFlags.HasFlag(AssociativityFlags.ThirdPointReference))
-		{
-			this.writeOsnapPointRef(association.ThirdPointRef);
-		}
-
-		if (association.AssociativityFlags.HasFlag(AssociativityFlags.FourthPointReference))
-		{
-			this.writeOsnapPointRef(association.FourthPointRef);
+			this.writeOsnapPointRef(osnap);
 		}
 	}
 
@@ -1993,9 +1993,63 @@ internal partial class DwgObjectWriter : DwgSectionIO
 		this._writer.WriteVariableText(DimensionAssociation.OsnapPointRefClassName);
 
 		//72
-		this._writer.WriteByte((byte)osnap.ObjectOsnapType);
-		//331
-		this._writer.HandleReference(DwgReferenceType.Undefined, osnap.Geometry);
+		byte osnapType = (byte)(osnap?.ObjectOsnapType ?? ObjectOsnapType.None);
+		this._writer.WriteByte(osnapType);
+
+		//331: number of main object handles followed by the handles (soft pointers)
+		if (osnap?.Geometry != null)
+		{
+			this._writer.WriteBitLong(1);
+			this._writer.HandleReference(DwgReferenceType.SoftPointer, osnap.Geometry);
+		}
+		else
+		{
+			this._writer.WriteBitLong(0);
+		}
+
+		if (osnapType != 0 && osnap != null)
+		{
+			//73
+			this._writer.WriteBitLong((int)osnap.SubentType);
+			//91
+			this._writer.WriteBitLong(osnap.GsMarker);
+
+			//301: number of xref paths
+			this._writer.WriteBitLong(osnap.XrefPaths.Count);
+			foreach (string path in osnap.XrefPaths)
+			{
+				this._writer.WriteVariableText(path);
+			}
+		}
+
+		//40
+		this._writer.WriteBitDouble(osnap?.GeometryParameter ?? 0);
+		//10
+		this._writer.Write3BitDouble(osnap?.OsnapPoint ?? new XYZ(0, 0, 0));
+
+		if (osnapType == 6 || osnapType == 11)
+		{
+			//332: number of intersection objects followed by the handles (hard pointers)
+			this._writer.WriteBitLong(0);
+
+			//74
+			this._writer.WriteBitLong((int)(osnap?.IntersectionSubType ?? SubentType.Unknown));
+			//92
+			this._writer.WriteBitLong(osnap?.IntersectionGsMarker ?? 0);
+
+			//302: number of intersection xref paths
+			this._writer.WriteBitLong(osnap?.IntersectionXrefPaths.Count ?? 0);
+			if (osnap != null)
+			{
+				foreach (string path in osnap.IntersectionXrefPaths)
+				{
+					this._writer.WriteVariableText(path);
+				}
+			}
+		}
+
+		//75: more references bit, the model supports a single reference per slot
+		this._writer.WriteBit(false);
 	}
 
 	private void writeParameterValueSet(ParameterValueSet valueSet)
