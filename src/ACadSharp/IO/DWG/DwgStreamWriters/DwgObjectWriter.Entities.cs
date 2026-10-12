@@ -2361,7 +2361,13 @@ internal partial class DwgObjectWriter : DwgSectionIO
 		// 注意 ValueFlag 的 has-block 位（0x06）必须与 H2 一同清零并在整个
 		// 写出期间保持清零（BS 90 在 writeTableEntityR2004 中写出），
 		// 否则 ODA 读到 has-block=1 而 H2=NULL，同样报 needs recovery。
-		bool detachTableBlock = this.R2010Plus;
+		// [EXPERIMENT 2026-10-13] AutoCAD COM 实测（TableComCheck）：R2010+ 数据段修复后，
+		// AC1024/1027/1032 表格数据可被 AutoCAD 完整解析（7 行 3 列逐格文本正确），
+		// 但块表中无 *T 匿名缓存块 → 表格不显示（AutoCAD 不会从 TABLECONTENT 数据
+		// 自动重建显示几何；AutoCAD SaveRef 参考文件含 *T0 缓存块且显示正常）。
+		// 结论：此前"恢复缓存块引用导致 needs recovery/卡死"的实验发生在 R2010+ 数据段
+		// 格式修复之前，失败根源是数据段错误而非块引用。故恢复全版本缓存块引用。
+		bool detachTableBlock = false;
 		ACadSharp.Tables.BlockRecord savedTableBlock = table.Block;
 		int savedTableValueFlag = table.ValueFlag;
 		if (detachTableBlock && savedTableBlock != null)
