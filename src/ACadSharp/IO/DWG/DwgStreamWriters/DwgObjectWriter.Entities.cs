@@ -2346,18 +2346,25 @@ internal partial class DwgObjectWriter : DwgSectionIO
 	private void writeTableEntity(TableEntity table)
 	{
 		// [PATCH] 摘除表格匿名缓存块（*Txx）引用后再写表格数据。
-		// 根因（mintable/reduce 二分实验证实）：公共 INSERT 数据的 H2 BLOCK HEADER
+		// 根因（mintable/reduce 二分实验证实）：R2010+ 公共 INSERT 数据的 H2 BLOCK HEADER
 		// 硬指针只要写出真实块（缓存块 *T11 或 ModelSpace），ODA/AutoCAD 解析表格
-		// 即报 "<AcDbTable> needs recovery"（AutoCAD 2007 表现为无法打开、R2010+
-		// 卡死）；H2=NULL 则全部通过。native 文件可通过是因为其 *T 缓存块由
+		// 即报 "<AcDbTable> needs recovery"（R2010+ AutoCAD 打开卡死）；
+		// H2=NULL 则全部通过。native 文件可通过是因为其 *T 缓存块由
 		// AutoCAD 完整写出，本写手写出的块头尚不完整（遗留问题）。
+		// 缓存块缺失时 AutoCAD 2010+ 依据 TABLECONTENT 数据自动重建几何，显示不受影响。
+		//
+		// [REGRESSION FIX] 摘除仅限 R2010+（AC1024+）：R2004/R2007 等旧版本
+		// 渲染表格依赖 *T 缓存块几何（TableEntity 本质是缓存块的 INSERT），
+		// 摘除后 AutoCAD 打开输出文件表格不显示（回归实证，旧版保留 H2 可正常显示）。
+		// AC1021 是否摘除对 ODA 审计结果无影响（表格数据仍报 needs recovery），
+		// 故同样保留缓存块引用以贴近旧版（可显示）行为。
 		// 注意 ValueFlag 的 has-block 位（0x06）必须与 H2 一同清零并在整个
 		// 写出期间保持清零（BS 90 在 writeTableEntityR2004 中写出），
 		// 否则 ODA 读到 has-block=1 而 H2=NULL，同样报 needs recovery。
-		// 缓存块缺失时 AutoCAD 依据表格数据自动重建几何，显示不受影响。
+		bool detachTableBlock = this.R2010Plus;
 		ACadSharp.Tables.BlockRecord savedTableBlock = table.Block;
 		int savedTableValueFlag = table.ValueFlag;
-		if (savedTableBlock != null)
+		if (detachTableBlock && savedTableBlock != null)
 		{
 			table.Block = null;
 			table.ValueFlag = savedTableValueFlag & ~0x06;
@@ -2459,7 +2466,7 @@ internal partial class DwgObjectWriter : DwgSectionIO
 		}
 		finally
 		{
-			if (savedTableBlock != null)
+			if (detachTableBlock && savedTableBlock != null)
 			{
 				table.Block = savedTableBlock;
 				table.ValueFlag = savedTableValueFlag;
