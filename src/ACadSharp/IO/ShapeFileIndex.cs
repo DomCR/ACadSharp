@@ -119,6 +119,64 @@ namespace ACadSharp.IO
 		}
 
 		/// <summary>
+		/// Tries to resolve a shape number into the shape name and shape file style that
+		/// contains it - the inverse of <see cref="TryResolve"/>. A shape read from DWG
+		/// carries only its number plus a hard pointer to the SHAPEFILE style; DXF group
+		/// 2 requires the shape name, which has to be looked up inside the <c>.shx</c>.
+		/// </summary>
+		/// <param name="index">Shape number inside the shape file.</param>
+		/// <param name="shapeStyles">Candidate text styles flagged as shape file.</param>
+		/// <param name="directories">Directories where the shape files are searched.</param>
+		/// <param name="style">Text style owning the shape file that contains the shape.</param>
+		/// <param name="name">Shape name, as stored in DXF code 2.</param>
+		/// <returns><see langword="true"/> when the shape number was found.</returns>
+		public static bool TryGetShapeNameByIndex(
+			ushort index,
+			IEnumerable<TextStyle> shapeStyles,
+			IEnumerable<string> directories,
+			out TextStyle style,
+			out string name)
+		{
+			style = null;
+			name = null;
+
+			if (shapeStyles == null || directories == null)
+			{
+				return false;
+			}
+
+			foreach (TextStyle textStyle in shapeStyles)
+			{
+				if (textStyle == null || !textStyle.IsShapeFile || string.IsNullOrEmpty(textStyle.Filename))
+				{
+					continue;
+				}
+
+				foreach (string directory in directories)
+				{
+					if (string.IsNullOrEmpty(directory))
+					{
+						continue;
+					}
+
+					Dictionary<string, ushort> map = Read(Path.Combine(directory, textStyle.Filename));
+
+					foreach (KeyValuePair<string, ushort> pair in map)
+					{
+						if (pair.Value == index)
+						{
+							style = textStyle;
+							name = pair.Key;
+							return true;
+						}
+					}
+				}
+			}
+
+			return false;
+		}
+
+		/// <summary>
 		/// Default directories used to locate the shape files referenced by a document.
 		/// </summary>
 		public static IEnumerable<string> GetDefaultDirectories()

@@ -60,6 +60,40 @@ namespace ACadSharp.IO.Templates
 					builder.Notify($"Shape {shape.ShapeName} not found in any shape file of the document", NotificationType.Warning);
 				}
 			}
+
+			// [PATCH] A shape coming from DWG only carries its shape number plus a hard
+			// pointer to the SHAPEFILE style that owns the .shx where the shape is defined;
+			// the name is never stored. DXF group 2 requires the shape NAME (AutoCAD aborts
+			// the file with "Missing group code 2" otherwise), so reverse look it up inside
+			// the .shx referenced by the style - the inverse of the DXF resolution above.
+			if (string.IsNullOrEmpty(shape.ShapeName) && shape.ShapeIndex != 0)
+			{
+				List<string> directories = builder.ShapeFontDirectories;
+				IEnumerable<string> searchPaths = directories != null && directories.Count > 0
+					? directories
+					: ShapeFileIndex.GetDefaultDirectories();
+
+				TextStyle style;
+				string name;
+
+				if (ShapeFileIndex.TryGetShapeNameByIndex(shape.ShapeIndex, builder.TextStyles, searchPaths, out style, out name))
+				{
+					shape.ShapeName = name;
+
+					if (shape.ShapeStyle == null)
+					{
+						shape.ShapeStyle = style;
+					}
+				}
+				else if (shape.ShapeStyle != null)
+				{
+					builder.Notify($"Shape number {shape.ShapeIndex} not found in shape file {shape.ShapeStyle.Filename}", NotificationType.Warning);
+				}
+				else
+				{
+					builder.Notify($"Shape number {shape.ShapeIndex} not found in any shape file of the document", NotificationType.Warning);
+				}
+			}
 		}
 	}
 }
