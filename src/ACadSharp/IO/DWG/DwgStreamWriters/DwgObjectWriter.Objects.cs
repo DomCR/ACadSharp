@@ -2307,15 +2307,15 @@ internal partial class DwgObjectWriter : DwgSectionIO
 
 	private void writeStringCadValue(string value)
 	{
-		if (string.IsNullOrEmpty(value))
-		{
-			this._writer.WriteBitLong(0);
-		}
-
+		// [FIX] 原实现在空字符串时写入 BL 0 后未 return，继续落入下方分支再次写入
+		// 长度与终止符，导致读取端 readStringCadValue 读到长度 0 后执行
+		// GetString(arr, 0, -2) 抛出 ArgumentOutOfRangeException（R2007 表格单元格
+		// 空文本即触发）。现统一按"字节数 + 终止符"写出（空串长度为终止符长度），
+		// 与读取端严格对称。
 		byte[] bytes;
 		if (this.R2007Plus)
 		{
-			bytes = System.Text.Encoding.Unicode.GetBytes(value);
+			bytes = System.Text.Encoding.Unicode.GetBytes(value ?? string.Empty);
 			this._writer.WriteBitLong(bytes.Length + 2);
 			this._writer.WriteBytes(bytes);
 			this._writer.WriteByte(0);
@@ -2323,7 +2323,7 @@ internal partial class DwgObjectWriter : DwgSectionIO
 		}
 		else
 		{
-			bytes = this._writer.Encoding.GetBytes(value);
+			bytes = this._writer.Encoding.GetBytes(value ?? string.Empty);
 			this._writer.WriteBitLong(bytes.Length + 1);
 			this._writer.WriteBytes(bytes);
 			this._writer.WriteByte(0);

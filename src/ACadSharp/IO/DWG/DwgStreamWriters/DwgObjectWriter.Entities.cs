@@ -2528,9 +2528,11 @@ internal partial class DwgObjectWriter : DwgSectionIO
 			//B Has attributes flag
 			this._writer.WriteBit(false);
 		}
-		else
+		else if (this._version < ACadVersion.AC1021)
 		{
-			//TV 1 Text string（R2004 之前的文本单元格，值为内联字符串）
+			//TV 1 Text string（R2007 之前的文本单元格，值为内联字符串；
+			//读取端条件为 CellType.Text && handle == 0 && version < AC1021，
+			//R2007 (AC1021) 起文本改存于单元格末尾的 CadValue，不再内联）
 			var content = cell.Contents.Count > 0 ? cell.Contents[0] : null;
 			string text = content != null ? Convert.ToString(content.CadValue?.Value) : string.Empty;
 			this._writer.WriteVariableText(text ?? string.Empty);
@@ -2652,6 +2654,22 @@ internal partial class DwgObjectWriter : DwgSectionIO
 			{
 				this._writer.WriteBitShort((short)(so.LeftBorder.IsInvisible ? 0 : 1));
 			}
+		}
+
+		//R2007+ (AC1021)：
+		//读取端 readTableCellData 末尾 (DwgObjectReader.Entities.cs 行 557-565) 在
+		//R2007Plus 时额外读取 Unknown BL + 完整 CadValue（R2007 起文本单元格的
+		//文字即存于此 CadValue，参见 ODA 规范 §20.4.72）。此前 AC1021 写出错误地
+		//沿用 R2004 内联文本格式，导致读取端位流错位、readCadValue 抛
+		//NotImplementedException，TableEntity 读回丢失（66 vs 67）。
+		if (this.R2007Plus)
+		{
+			//Unknown BL
+			this._writer.WriteBitLong(0);
+
+			//CadValue（Flags BL / ValueType BL / value / Units BL / Format TV / FormattedValue TV）
+			CadValue cadValue = cell.Content?.CadValue ?? new CadValue();
+			this.writeCadValue(cadValue);
 		}
 	}
 
