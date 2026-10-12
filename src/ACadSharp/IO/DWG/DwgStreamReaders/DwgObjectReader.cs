@@ -4160,6 +4160,12 @@ namespace ACadSharp.IO.DWG
 				{
 					//Column height count BL 72
 					int count = this._objectReader.ReadBitLong();
+					// [FIX] 此前未把 count 赋回 ColumnData.ColumnCount（保持默认 0），
+					// 写端 writeMText 按 ColumnCount 写出 BL 72=0、却按 Heights.Count 跟写
+					// N 个列高 BD，AutoCAD 读到 BL=0 后位流错位，MText 整体报
+					// eDwgObjectImproperlyRead 被丢弃（R2018源→R2018 多行文字不显示根因，
+					// 仅带列数据的 MText 受影响，与其余 MText 读写对称）。
+					mtext.ColumnData.ColumnCount = count;
 					//Columnn width BD 44
 					mtext.ColumnData.Width = this._objectReader.ReadBitDouble();
 					//Gutter BD 45

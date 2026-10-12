@@ -305,6 +305,21 @@ internal partial class DwgObjectReader : DwgSectionIO
 			this.readTableCellContent(cellContentTemplate);
 		}
 
+		// [FIX] R2010+ 数据段不存单元格类型字段（pre-2010 的 BS 171 在此不存在），
+		// Type 保持默认 0（非法枚举值）会污染下游写出：DXF 组码 171 写出 0、
+		// pre-2010 DWG 写端写出 0（R2010+源→AC1018 表格被 AutoCAD 丢弃的成因之一）。
+		// 按内容推断：含 Block 内容 → Block，否则 Text（文本/值单元格均为 Text）。
+		bool hasBlockContent = false;
+		foreach (var content in cell.Contents)
+		{
+			if (content.ContentType == TableCellContentType.Block)
+			{
+				hasBlockContent = true;
+				break;
+			}
+		}
+		cell.Type = hasBlockContent ? CellType.Block : CellType.Text;
+
 		CadCellStyleTemplate formatTemplate = new(cell.StyleOverride);
 		this.readCellStyle(formatTemplate);
 

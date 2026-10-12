@@ -2487,7 +2487,18 @@ internal partial class DwgObjectWriter : DwgSectionIO
 	private void writeTableEntityR2004(TableEntity table)
 	{
 		//BS 90 Flag for table value
-		this._writer.WriteBitShort((short)table.ValueFlag);
+		// [FIX] R2010+ 源（sampleR2010/2013/2018.dwg）读端不产生 ValueFlag
+		// （R2010+ 数据段无此字段，模型默认 0）。写 pre-R2010 时 has-block 位(0x06)
+		// 必须与 H2 缓存块句柄一致：H2 写出 *T 缓存块而位清零时，AutoCAD 读取实体
+		// 即报 eWrongObjectType 丢弃表格（R2010+源→AC1018 审计实证；
+		// R2004 源读端从文件读入 0x16 不受影响）。方向(0x10)/标题(0x20)位
+		// 在 R2010+ 模型中无对应属性，保持缺省。
+		int valueFlag = table.ValueFlag;
+		if (table.Block != null)
+		{
+			valueFlag |= 0x06;
+		}
+		this._writer.WriteBitShort((short)valueFlag);
 
 		//3BD 11 Horizontal direction
 		this._writer.Write3BitDouble(table.HorizontalDirection);
@@ -2691,8 +2702,25 @@ internal partial class DwgObjectWriter : DwgSectionIO
 	/// </summary>
 	private void writeTableCellR2004(TableEntity.Cell cell)
 	{
+		// [FIX] R2010+ 源单元格 Type 可能为默认 0（非法枚举值，CellType.Text=1/Block=2）。
+		// 兜底按内容推断：含 Block 内容 → Block，否则 Text，保证 BS 171 恒为合法值。
+		TableEntity.CellType cellType = cell.Type;
+		if (cellType != TableEntity.CellType.Text && cellType != TableEntity.CellType.Block)
+		{
+			bool isBlock = false;
+			foreach (var content in cell.Contents)
+			{
+				if (content.ContentType == TableEntity.TableCellContentType.Block)
+				{
+					isBlock = true;
+					break;
+				}
+			}
+			cellType = isBlock ? TableEntity.CellType.Block : TableEntity.CellType.Text;
+		}
+
 		//BS 171 Cell type, 1 = text, 2 = block
-		this._writer.WriteBitShort((short)cell.Type);
+		this._writer.WriteBitShort((short)cellType);
 
 		//RC 172 Cell edge flags
 		this._writer.WriteByte((byte)cell.EdgeFlags);
@@ -2716,7 +2744,7 @@ internal partial class DwgObjectWriter : DwgSectionIO
 		// 文本单元格直接内联字符串时该 handle 为 0（读取端据此走 TV 1 分支）
 		this._writer.HandleReference(0UL);
 
-		if (cell.Type == TableEntity.CellType.Block)
+		if (cellType == TableEntity.CellType.Block)
 		{
 			//BD 144 Block scale
 			this._writer.WriteBitDouble(cell.BlockScale);
