@@ -870,10 +870,46 @@ namespace ACadSharp.IO.DWG
 			}
 			else
 			{
-				value = this.ReadString(textLength, TextEncoding.GetListedEncoding((CodePage)encodingKey));
+				// [FIX] encodingKey 是 ODA 代码页"索引表"中的索引（ODA 规范 §7.2 codepage
+				// 取值表：30=ANSI-1252、31=GB2312、39=ANSI-936 等），并非 CodePage 枚举的
+				// 数值（枚举值是真实 Windows 代码页号，如 Gb2312=936）。此前直接
+				// (CodePage)encodingKey 强转后在 GetListedEncoding 的 switch 中匹配不到，
+				// 落入 Encoding.Default（.NET Core 恒为 UTF-8），GBK 中文被错误解码为乱码。
+				// 现改用 CadUtils.GetCodePage(int)（即 _pageCodes ODA 索引表，与写出端
+				// GetCodeIndex 互逆）取真实代码页号再构造编码。
+				value = this.ReadString(textLength, this.getEedEncoding(encodingKey));
 			}
 
 			return value;
+		}
+
+		/// <summary>
+		/// 将 EED 字符串的代码页索引字节转换为对应编码。
+		/// </summary>
+		private Encoding getEedEncoding(int odaIndex)
+		{
+			if (odaIndex == 0)
+			{
+				//0 = Unknown/UTF8（规范标注"未用"），保持既有行为
+				return Encoding.Default;
+			}
+
+			try
+			{
+#if !NET48
+				Encoding.RegisterProvider(System.Text.CodePagesEncodingProvider.Instance);
+#endif
+				CodePage code = CadUtils.GetCodePage(odaIndex);
+				if (code != CodePage.Unknown)
+				{
+					return Encoding.GetEncoding((int)code);
+				}
+			}
+			catch
+			{
+			}
+
+			return TextEncoding.Windows1252();
 		}
 
 		/// <inheritdoc/>

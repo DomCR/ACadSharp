@@ -1146,10 +1146,17 @@ internal partial class DwgObjectWriter : DwgSectionIO
 						}
 						else
 						{
+							// [FIX] 长度前缀应为编码后的"字节数"而非"字符数"：
+							// 读取端 ReadTextUnicode (R13-R2004) 语义为
+							// "2 字节长度 N + 1 字节代码页 + N 个单字节字符"，
+							// N 是待解码的字节总数。此前写 str.Value.Length（字符数），
+							// 中文经 GBK 等多字节代码页编码后字节数 > 字符数，
+							// 读取端少读字节导致 XDATA 中文乱码且 EED 位流错位
+							// （DXF 路径不受影响，故 DXF 中文显示正常）。
 							var encodingIndex = CadUtils.GetCodeIndex((CSUtilities.Text.CodePage)this._writer.Encoding.CodePage);
 							byte[] bytes = this._writer.Encoding.GetBytes(string.IsNullOrEmpty(str.Value) ? string.Empty : str.Value);
 
-							mstream.Write(LittleEndianConverter.Instance.GetBytes((ushort)str.Value.Length), 0, 2);
+							mstream.Write(LittleEndianConverter.Instance.GetBytes((ushort)bytes.Length), 0, 2);
 							mstream.WriteByte((byte)encodingIndex);
 							mstream.Write(bytes, 0, bytes.Length);
 						}
