@@ -66,16 +66,11 @@ namespace ACadSharp.Entities
 		//An object ID(multiple entries can appear) (optional)
 
 		//94 0 (indicates end of object ID section)
-		/// <summary>
-		/// Gets or sets the data of the original object as it was stored while the object is a proxy.
-		/// </summary>
+		/// <inheritdoc/>
 		/// <remarks>
-		/// This is the payload the original application would read back, and it is the only place where
-		/// the custom object data survives once the object has been saved as a proxy. In the file the
-		/// section has no length of its own: it runs from the end of the proxy fields up to the start of
-		/// the handle section.
+		/// Only the DWG reader fills this. The DXF reader has no handler for code 311 on an entity and
+		/// the DXF writer does not emit proxy entities at all, so no <c>DxfCodeValue</c> is applied.
 		/// </remarks>
-		[DxfCodeValue(311)]
 		public Stream Data { get; set; }
 
 		/// <inheritdoc/>

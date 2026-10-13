@@ -72,13 +72,6 @@ namespace ACadSharp.IO.DWG
 		/// </summary>
 		private IDwgStreamReader _handlesReader;
 
-		/// <summary>
-		/// Bit position where the handle section of the current object starts, or -1 when it is unknown.
-		/// </summary>
-		/// <remarks>
-		/// Some sections, notably the retained data of a proxy object, have no length of their own and
-		/// run until the handle section begins.
-		/// </remarks>
 		private long _handleSectionOffset = -1;
 
 		private IDwgStreamReader _mergedReaders;
@@ -242,11 +235,8 @@ namespace ACadSharp.IO.DWG
 				//(the padding bits make sure the object stream ends on a byte boundary).
 				ulong handleSize = this._crcReader.ReadModularChar();
 
-				//Find the handles offset
-				ulong handleSectionOffset = (ulong)this._crcReader.PositionInBits() + sizeInBits - handleSize;
-
-				//Keep it, some sections run until the handle section starts
-				this._handleSectionOffset = (long)handleSectionOffset;
+				//Find the handles offset, some sections run until the handle section starts
+				this._handleSectionOffset = (long)((ulong)this._crcReader.PositionInBits() + sizeInBits - handleSize);
 
 				//Create a handler section reader
 				this._objectReader = DwgStreamReaderBase.GetStreamHandler(this._version, HugeMemoryStream.Clone(this._memoryStream), this._reader.Encoding);
@@ -258,11 +248,11 @@ namespace ACadSharp.IO.DWG
 
 				//Create a handler section reader
 				this._handlesReader = DwgStreamReaderBase.GetStreamHandler(this._version, HugeMemoryStream.Clone(this._memoryStream), this._reader.Encoding);
-				this._handlesReader.SetPositionInBits((long)handleSectionOffset);
+				this._handlesReader.SetPositionInBits(this._handleSectionOffset);
 
 				//Create a text section reader
 				this._textReader = DwgStreamReaderBase.GetStreamHandler(this._version, HugeMemoryStream.Clone(this._memoryStream), this._reader.Encoding);
-				this._textReader.SetPositionByFlag((long)handleSectionOffset - 1);
+				this._textReader.SetPositionByFlag(this._handleSectionOffset - 1);
 
 				this._mergedReaders = new DwgMergedReader(this._objectReader, this._textReader, this._handlesReader);
 			}
@@ -274,9 +264,6 @@ namespace ACadSharp.IO.DWG
 
 				this._handlesReader = DwgStreamReaderBase.GetStreamHandler(this._version, HugeMemoryStream.Clone(this._memoryStream), this._reader.Encoding);
 				this._textReader = this._objectReader;
-
-				//The handle section offset is not encoded before R2010, sections without a length cannot be delimited
-				this._handleSectionOffset = -1;
 
 				//set the initial position and get the object type
 				this._objectInitialPos = this._objectReader.PositionInBits();
@@ -1207,16 +1194,7 @@ namespace ACadSharp.IO.DWG
 					int dataBytes = (int)((dataBits + 7L) / 8L);
 					byte[] data = this._objectReader.ReadBytes(dataBytes);
 
-					Stream stream = new MemoryStream(data, writable: false);
-					switch (proxy)
-					{
-						case ProxyEntity entity:
-							entity.Data = stream;
-							break;
-						case ProxyObject proxyObject:
-							proxyObject.Data = stream;
-							break;
-					}
+					proxy.Data = new MemoryStream(data, writable: false);
 				}
 			}
 		}
