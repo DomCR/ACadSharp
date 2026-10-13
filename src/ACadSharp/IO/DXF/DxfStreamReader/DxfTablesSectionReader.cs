@@ -32,7 +32,7 @@ internal class DxfTablesSectionReader : DxfSectionReaderBase
 		{
 
 			if (this._reader.ValueAsString == DxfFileToken.TableEntry)
-				this.readTable();
+				this.ReadTable();
 			else
 				throw new DxfException($"Unexpected token at the beginning of a table: {this._reader.ValueAsString}", this._reader.Position);
 
@@ -45,30 +45,13 @@ internal class DxfTablesSectionReader : DxfSectionReaderBase
 	}
 
 	/// <summary>
-	/// Reads TABLE entries that appear without a SECTION/TABLES/ENDSEC wrapper (non-standard DXF).
-	/// The reader must be positioned at the first bare TABLE token on entry.
-	/// Returns with the reader positioned at the next SECTION, ENDSEC, or EOF token.
+	/// Reads a single table, from its TABLE token to the matching ENDTAB token.
 	/// </summary>
-	internal void ReadOrphaned()
-	{
-		while (this._reader.ValueAsString != DxfFileToken.EndSection
-			&& this._reader.ValueAsString != DxfFileToken.BeginSection
-			&& this._reader.ValueAsString != DxfFileToken.EndOfFile)
-		{
-			if (this._reader.ValueAsString != DxfFileToken.TableEntry)
-			{
-				this._builder.Notify(
-					$"Unexpected token '{this._reader.ValueAsString}' while reading orphaned TABLE entries.",
-					NotificationType.Warning);
-				break;
-			}
-
-			this.readTable();
-			this._reader.ReadNext();
-		}
-	}
-
-	private void readTable()
+	/// <remarks>
+	/// The reader must be positioned at the TABLE token on entry and is positioned at the ENDTAB token on return.
+	/// Exposed so that <see cref="DxfReader"/> can recover tables found outside of the TABLES section.
+	/// </remarks>
+	internal void ReadTable()
 	{
 		Debug.Assert(this._reader.ValueAsString == DxfFileToken.TableEntry);
 

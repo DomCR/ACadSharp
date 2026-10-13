@@ -200,6 +200,8 @@ public class DxfReaderTests : CadReaderTestsBase<DxfReader>
 		}
 
 		Assert.True(notified, "Expected a warning notification about the orphaned TABLE section.");
+		Assert.True(doc.LineTypes.Contains("TestLineType"), "Line type 'TestLineType' should be imported from the orphaned TABLE section.");
 		Assert.True(doc.Layers.Contains("TestLayer"), "Layer 'TestLayer' should be imported from the orphaned TABLE section.");
+		Assert.Equal("TestLineType", doc.Layers["TestLayer"].LineType.Name);
 	}
 }

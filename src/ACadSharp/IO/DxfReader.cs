@@ -156,14 +156,21 @@ public class DxfReader : CadReaderBase<DxfReaderConfiguration>
 		this._builder = new DxfDocumentBuilder(this._version, this._document, this.Configuration);
 		this._builder.OnNotification += this.onNotificationEvent;
 
+		//Only created if a TABLE is found outside of the TABLES section (non-standard dxf)
+		DxfTablesSectionReader orphanTablesReader = null;
+
 		while (this._reader.ValueAsString != DxfFileToken.EndOfFile)
 		{
 			if (this._reader.ValueAsString == DxfFileToken.TableEntry)
 			{
-				this.triggerNotification(
-					"Non-standard DXF: TABLE entry found outside of a TABLES section. Attempting recovery.",
-					NotificationType.Warning);
-				new DxfTablesSectionReader(this._reader, this._builder).ReadOrphaned();
+				if (orphanTablesReader == null)
+				{
+					this.triggerNotification("Non-standard DXF: TABLE entry found outside of a TABLES section. Attempting recovery.", NotificationType.Warning);
+					orphanTablesReader = new DxfTablesSectionReader(this._reader, this._builder);
+				}
+
+				//Reads up to the ENDTAB token, which the loop skips like any other token outside of a section
+				orphanTablesReader.ReadTable();
 				continue;
 			}
 

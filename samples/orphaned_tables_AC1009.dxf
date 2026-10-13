@@ -11,6 +11,28 @@ ENDSEC
   0
 TABLE
   2
+LTYPE
+ 70
+     1
+  0
+LTYPE
+  2
+TestLineType
+ 70
+     0
+  3
+Test line type
+ 72
+    65
+ 73
+     0
+ 40
+0.0
+  0
+ENDTAB
+  0
+TABLE
+  2
 LAYER
  70
      1
@@ -23,7 +45,7 @@ TestLayer
  62
      3
   6
-CONTINUOUS
+TestLineType
   0
 ENDTAB
   0
