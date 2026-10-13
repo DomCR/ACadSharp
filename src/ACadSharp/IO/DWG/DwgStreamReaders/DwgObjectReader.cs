@@ -235,7 +235,7 @@ namespace ACadSharp.IO.DWG
 				//(the padding bits make sure the object stream ends on a byte boundary).
 				ulong handleSize = this._crcReader.ReadModularChar();
 
-				//Find the handles offset, some sections run until the handle section starts
+				//Find the handles offset
 				this._handleSectionOffset = (long)((ulong)this._crcReader.PositionInBits() + sizeInBits - handleSize);
 
 				//Create a handler section reader
@@ -1183,14 +1183,12 @@ namespace ACadSharp.IO.DWG
 
 			//Common:
 			//Databits X databits, however many there are to the handles
-			//The retained data of the original object has no length of its own, it extends from the
-			//current position up to the start of the handle section.
+			//The retained data has no length of its own, it runs up to the handle section
 			if (this._handleSectionOffset > 0)
 			{
 				long dataBits = this._handleSectionOffset - this._objectReader.PositionInBits();
 				if (dataBits > 0)
 				{
-					//The section is measured in bits, read the bytes that contain them
 					int dataBytes = (int)((dataBits + 7L) / 8L);
 					byte[] data = this._objectReader.ReadBytes(dataBytes);
 

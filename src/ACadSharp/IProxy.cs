@@ -33,10 +33,6 @@ public interface IProxy
 	/// <summary>
 	/// Gets or sets the retained data of the original object.
 	/// </summary>
-	/// <remarks>
-	/// The custom object data survives as a proxy only here. In the file the section has no length of
-	/// its own: it runs from the end of the proxy fields up to the start of the handle section.
-	/// </remarks>
 	Stream Data { get; set; }
 
 	ACadVersion Version { get; set; }

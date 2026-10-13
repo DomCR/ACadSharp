@@ -56,7 +56,6 @@ namespace ACadSharp.Entities
 
 		//92 Size of graphics data in bytes
 		//310 Binary graphics data(multiple entries can appear) (optional)
-		//The graphics are read as common entity data and exposed through Entity.ProxyGeometries.
 
 		//93 Size of entity data in bits
 		//310 Binary entity data(multiple entries can appear) (optional)
@@ -67,10 +66,7 @@ namespace ACadSharp.Entities
 
 		//94 0 (indicates end of object ID section)
 		/// <inheritdoc/>
-		/// <remarks>
-		/// Only the DWG reader fills this. The DXF reader has no handler for code 311 on an entity and
-		/// the DXF writer does not emit proxy entities at all, so no <c>DxfCodeValue</c> is applied.
-		/// </remarks>
+		/// <remarks>No <c>DxfCodeValue</c>: the DXF reader has no handler for code 311 on an entity.</remarks>
 		public Stream Data { get; set; }
 
 		/// <inheritdoc/>
