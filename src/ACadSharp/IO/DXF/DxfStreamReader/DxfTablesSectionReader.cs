@@ -223,15 +223,12 @@ internal class DxfTablesSectionReader : DxfSectionReaderBase
 
 			if (tableTemplate.CadObject.Contains(template.Name) && this._builder.Configuration.Failsafe)
 			{
+				//Keep the first definition, the duplicated entry is discarded
 				this._builder.Notify($"Duplicated entry with name {template.Name} found in {template.CadObject.ObjectName}", NotificationType.Warning);
+				continue;
+			}
 
-				tableTemplate.CadObject.Remove(template.Name);
-				tableTemplate.CadObject.Add((T)template.CadObject);
-			}
-			else
-			{
-				tableTemplate.CadObject.Add((T)template.CadObject);
-			}
+			tableTemplate.CadObject.Add((T)template.CadObject);
 
 			//Add the object and the template to the builder
 			this._builder.AddTemplate(template);
