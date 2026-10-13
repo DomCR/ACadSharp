@@ -72,6 +72,8 @@ public class DxfWriterConfiguration : CadWriterConfiguration
 		"$LUPREC",
 		"$MIRRTEXT",
 		"$EXTNAMES",
+		//Without TILEMODE the drawing opens in paper space instead of model space.
+		"$TILEMODE",
 		"$INSBASE",
 		"$INSUNITS",
 		"$MEASUREMENT",
