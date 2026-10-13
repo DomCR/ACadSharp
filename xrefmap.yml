@@ -6078,6 +6078,15 @@ references:
   fullName.vb: ACadSharp.DxfPropertyBase(Of T)
   nameWithType: DxfPropertyBase<T>
   nameWithType.vb: DxfPropertyBase(Of T)
+- uid: ACadSharp.DxfPropertyBase`1.#ctor(ACadSharp.DxfPropertyBase{`0})
+  name: DxfPropertyBase(DxfPropertyBase<T>)
+  href: api/ACadSharp.DxfPropertyBase-1.html#ACadSharp_DxfPropertyBase_1__ctor_ACadSharp_DxfPropertyBase__0__
+  commentId: M:ACadSharp.DxfPropertyBase`1.#ctor(ACadSharp.DxfPropertyBase{`0})
+  name.vb: New(DxfPropertyBase(Of T))
+  fullName: ACadSharp.DxfPropertyBase<T>.DxfPropertyBase(ACadSharp.DxfPropertyBase<T>)
+  fullName.vb: ACadSharp.DxfPropertyBase(Of T).New(ACadSharp.DxfPropertyBase(Of T))
+  nameWithType: DxfPropertyBase<T>.DxfPropertyBase(DxfPropertyBase<T>)
+  nameWithType.vb: DxfPropertyBase(Of T).New(DxfPropertyBase(Of T))
 - uid: ACadSharp.DxfPropertyBase`1.#ctor(System.Reflection.PropertyInfo)
   name: DxfPropertyBase(PropertyInfo)
   href: api/ACadSharp.DxfPropertyBase-1.html#ACadSharp_DxfPropertyBase_1__ctor_System_Reflection_PropertyInfo_
