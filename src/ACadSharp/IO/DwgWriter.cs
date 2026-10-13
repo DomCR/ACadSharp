@@ -149,6 +149,15 @@ public class DwgWriter : CadWriterBase<DwgWriterConfiguration>
 			case ACadVersion.AC1012:
 				throw new CadNotSupportedException(this._document.Header.Version);
 			case ACadVersion.AC1014:
+				//The file header of R14 is written correctly - five section locator records, no
+				//auxiliary header, an empty object free space - but AutoCAD still refuses to open
+				//the result, so the rest of an R14 file is not right yet. Say so instead of handing
+				//back a drawing that looks fine and is not: AC1015 is the oldest version that works.
+				this.triggerNotification(
+					$"A DWG written as {ACadVersion.AC1014} is not accepted by AutoCAD; the oldest version that opens is {ACadVersion.AC1015}",
+					NotificationType.Warning);
+				this._fileHeaderWriter = new DwgFileHeaderWriterAC15(this._stream, this._encoding, this._document);
+				break;
 			case ACadVersion.AC1015:
 				this._fileHeaderWriter = new DwgFileHeaderWriterAC15(this._stream, this._encoding, this._document);
 				break;
