@@ -695,6 +695,13 @@ internal class DxfObjectsSectionWriter : DxfSectionWriterBase
 
 		foreach (var e in record.Entries)
 		{
+			if(e.Value == null)
+			{
+				//TODO: Should allow null values in XRecord entries?
+				this.notify($"XRecord entry with code {e.Code} has a null value", NotificationType.Warning);
+				continue;
+			}
+
 			switch (e.GroupCode)
 			{
 				case GroupCodeValueType.None:
