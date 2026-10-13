@@ -72,6 +72,8 @@ namespace ACadSharp.IO.DWG
 		/// </summary>
 		private IDwgStreamReader _handlesReader;
 
+		private long _handleSectionOffset = -1;
+
 		private IDwgStreamReader _mergedReaders;
 
 		private long _objectInitialPos = 0;
@@ -234,7 +236,7 @@ namespace ACadSharp.IO.DWG
 				ulong handleSize = this._crcReader.ReadModularChar();
 
 				//Find the handles offset
-				ulong handleSectionOffset = (ulong)this._crcReader.PositionInBits() + sizeInBits - handleSize;
+				this._handleSectionOffset = (long)((ulong)this._crcReader.PositionInBits() + sizeInBits - handleSize);
 
 				//Create a handler section reader
 				this._objectReader = DwgStreamReaderBase.GetStreamHandler(this._version, HugeMemoryStream.Clone(this._memoryStream), this._reader.Encoding);
@@ -246,11 +248,11 @@ namespace ACadSharp.IO.DWG
 
 				//Create a handler section reader
 				this._handlesReader = DwgStreamReaderBase.GetStreamHandler(this._version, HugeMemoryStream.Clone(this._memoryStream), this._reader.Encoding);
-				this._handlesReader.SetPositionInBits((long)handleSectionOffset);
+				this._handlesReader.SetPositionInBits(this._handleSectionOffset);
 
 				//Create a text section reader
 				this._textReader = DwgStreamReaderBase.GetStreamHandler(this._version, HugeMemoryStream.Clone(this._memoryStream), this._reader.Encoding);
-				this._textReader.SetPositionByFlag((long)handleSectionOffset - 1);
+				this._textReader.SetPositionByFlag(this._handleSectionOffset - 1);
 
 				this._mergedReaders = new DwgMergedReader(this._objectReader, this._textReader, this._handlesReader);
 			}
@@ -1181,8 +1183,18 @@ namespace ACadSharp.IO.DWG
 
 			//Common:
 			//Databits X databits, however many there are to the handles
+			//The retained data has no length of its own, it runs up to the handle section
+			if (this._handleSectionOffset > 0)
+			{
+				long dataBits = this._handleSectionOffset - this._objectReader.PositionInBits();
+				if (dataBits > 0)
+				{
+					int dataBytes = (int)((dataBits + 7L) / 8L);
+					byte[] data = this._objectReader.ReadBytes(dataBytes);
 
-			//TODO: Investigate how to read the data in proxies, it can contain data, strings and handles
+					proxy.Data = new MemoryStream(data, writable: false);
+				}
+			}
 		}
 
 		private CadTemplate readDbColor()

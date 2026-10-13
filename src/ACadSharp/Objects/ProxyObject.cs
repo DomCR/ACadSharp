@@ -53,6 +53,7 @@ namespace ACadSharp.Objects
 		[DxfCodeValue(310)]
 		public Stream BinaryData { get; set; }
 
+		/// <inheritdoc/>
 		[DxfCodeValue(311)]
 		public Stream Data { get; set; }
 
