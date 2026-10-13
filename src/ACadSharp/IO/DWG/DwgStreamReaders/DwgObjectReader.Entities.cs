@@ -244,11 +244,20 @@ internal partial class DwgObjectReader : DwgSectionIO
 		//NOTE: It also seems to be valid for the string values
 
 		int length = this._mergedReaders.ReadBitLong();
+		if (length <= 0)
+		{
+			//A length of zero carries no bytes at all - not even the terminator the R2007+ form
+			//counts. Files this library wrote before the writeStringCadValue fix contain exactly
+			//that for an empty value, so reading it as empty instead of throwing keeps them
+			//readable.
+			return string.Empty;
+		}
+
 		byte[] arr = this._mergedReaders.ReadBytes(length);
 
 		if (this.R2007Plus)
 		{
-			return System.Text.Encoding.Unicode.GetString(arr, 0, length - 2);
+			return System.Text.Encoding.Unicode.GetString(arr, 0, Math.Max(0, length - 2));
 		}
 		else
 		{
@@ -418,6 +427,12 @@ internal partial class DwgObjectReader : DwgSectionIO
 				//Text string TV 1 Present only if 344 value below is 0
 				var content = new CellContent();
 				content.CadValue.SetValue(this._mergedReaders.ReadVariableText(), CadValueType.String);
+
+				//The content type is not in this older layout - it is implied by the cell type, and the
+				//R2010 layout the writer produces states it. Left at its default the cell says it holds
+				//nothing, so the writer skips the very value just read: the text is lost, and AutoCAD
+				//refuses the whole drawing rather than the one table. Measured on sample_AC1018.
+				content.ContentType = TableCellContentType.Value;
 				cell.Contents.Add(content);
 				break;
 			case CellType.Block:
@@ -801,6 +816,10 @@ internal partial class DwgObjectReader : DwgSectionIO
 		}
 
 		//Until R2007
+
+		//Everything below reads the older layout. Record that, because the writer produces only the
+		//R2010 one and needs to know this content cannot be re-expressed as it.
+		table.ContentIsPreR2010Layout = true;
 
 		//Common:
 		//Flag for table value BS 90
