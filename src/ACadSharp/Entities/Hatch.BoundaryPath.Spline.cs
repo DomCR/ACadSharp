@@ -184,7 +184,8 @@ public partial class Hatch
 			public override Entity ToEntity()
 			{
 				Entities.Spline spline = new();
-				spline.IsClosed = true;
+				// a boundary edge is an open piece of the loop, not a closed curve
+				spline.IsClosed = false;
 				spline.Degree = this.Degree;
 				spline.Flags = this.IsPeriodic ? spline.Flags |= (SplineFlags.Periodic) : spline.Flags;
 				spline.Flags = this.IsRational ? spline.Flags |= (SplineFlags.Rational) : spline.Flags;
@@ -193,7 +194,8 @@ public partial class Hatch
 				spline.EndTangent = this.EndTangent.Convert<XYZ>();
 
 				spline.ControlPoints.AddRange(this.ControlPoints.Select(cp => new XYZ(cp.X, cp.Y, 0)));
-				spline.Weights.AddRange(this.ControlPoints.Select(x => x.Z));
+				// non-rational edges may store 0 weights; they mean 1
+				spline.Weights.AddRange(this.ControlPoints.Select(x => this.IsRational && x.Z > 0 ? x.Z : 1.0));
 				spline.FitPoints.AddRange(this.FitPoints.Select(x => x.Convert<XYZ>()));
 				spline.Knots.AddRange(this.Knots);
 

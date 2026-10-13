@@ -915,7 +915,8 @@ namespace ACadSharp.IO.DWG
 				//EXTNAMES Flags & 0x0800
 				_header.ExtendedNames = (flags & 0x800) == 1;
 				//PSTYLEMODE Flags & 0x2000
-				_header.PlotStyleMode = (short)(flags & 0x2000);
+				//PSTYLEMODE: 1 = color-dependent (CTB), 0 = named (STB), as in DXF and the writer
+				_header.PlotStyleMode = (short)((flags & 0x2000) != 0 ? 1 : 0);
 				//OLESTARTUP Flags & 0x4000
 				_header.LoadOLEObject = (flags & 0x4000) == 1;
 

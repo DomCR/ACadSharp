@@ -23,6 +23,8 @@ public class ProxyGeometryReader
 		var size = stream.ReadInt();
 		var count = stream.ReadInt();
 
+		try
+		{
 		for (int i = 0; i < count; i++)
 		{
 			var objSize = stream.ReadInt(); //Includes size and type
@@ -148,6 +150,12 @@ public class ProxyGeometryReader
 				//jump not implemented proxies
 				stream.ReadBytes((int)readDiff);
 			}
+		}
+
+		}
+		catch (System.Exception)
+		{
+			// a truncated or unexpected record ends the graphics; what was read so far is kept
 		}
 
 		return geometries;
@@ -869,7 +877,8 @@ public class ProxyGeometryReader
 				trueColor.Color = Color.ByBlock;
 				break;
 			case ProxyColorMethod.ByColor:
-				trueColor.Color = new Color(b1, b2, b3);
+				// the value is 0xmmRRGGBB stored little-endian: blue, green, red, then the method byte
+				trueColor.Color = new Color(b3, b2, b1);
 				break;
 			case ProxyColorMethod.ByACI:
 				trueColor.Color = new Color(b1);
