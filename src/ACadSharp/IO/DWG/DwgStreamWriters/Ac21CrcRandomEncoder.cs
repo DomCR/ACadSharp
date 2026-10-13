@@ -64,14 +64,17 @@ internal class Ac21CrcRandomEncoder
 		}
 	}
 
-	/// <summary>Next u64 from two consecutive table entries (no MT tempering).</summary>
+	/// <summary>Next u64 from two consecutive table entries (no MT tempering).
+	/// 注意：AutoCAD 实际实现的字序为 hi = table[index]、lo = table[index+1]
+	///（与 ODA 规范 5.11 伪代码相反；已用 AutoCAD 原生 R2007 文件的
+	/// check data / checking sequence 真值逐位验证）。</summary>
 	public ulong NextUInt64()
 	{
 		_index += 2;
 		updateIndex();
-		ulong lo = _table[_index];
-		ulong hi = _table[_index + 1];
-		return lo | (hi << 32);
+		ulong hi = _table[_index];
+		ulong lo = _table[_index + 1];
+		return (hi << 32) | lo;
 	}
 
 	/// <summary>10-bit spread encoding of a value into a random u64 (spec §5.11).</summary>

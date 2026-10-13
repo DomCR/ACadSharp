@@ -958,6 +958,44 @@ namespace ACadSharp.IO.DWG
 			return new Color(colorIndex);
 		}
 
+		/// <summary>
+		/// 读取 R2004+ 风格完整 CMC（BS index + BL rgb + RC flag），与 <see cref="DwgStreamWriterBase.WriteCmColorR2004"/> 对称。
+		/// 用于 R2000/R13-R15 渐变填充（AutoCAD 以真彩色 CMC 存储渐变停靠色，基类的 <see cref="ReadCmColor"/> 仅读 BS 索引会错位）。
+		/// </summary>
+		public virtual Color ReadCmColorR2004()
+		{
+			//BS: color index(渐变真彩色恒为 0)
+			short colorIndex = this.ReadBitShort();
+			//BL: RGB value(高位带标记)
+			uint rgb = (uint)this.ReadBitLong();
+			byte[] arr = LittleEndianConverter.Instance.GetBytes(rgb);
+
+			Color color;
+			if (rgb == 0xC0000000)
+			{
+				color = Color.ByLayer;
+			}
+			else if ((rgb & 0x01000000u) != 0)
+			{
+				//Indexed color
+				color = new Color(arr[0]);
+			}
+			else
+			{
+				//True color: rgb = 0xC2RRGGBB -> R=arr[2], G=arr[1], B=arr[0]
+				color = new Color(arr[2], arr[1], arr[0]);
+			}
+
+			//RC: 颜色标记位(&1 颜色名 TV 跟随, &2 色簿名 TV 跟随)
+			byte id = this.ReadByte();
+			if ((id & 1) == 1)
+				this.ReadVariableText();
+			if ((id & 2) == 2)
+				this.ReadVariableText();
+
+			return color;
+		}
+
 		/// <inheritdoc/>
 		public virtual Color ReadEnColor(out Transparency transparency, out bool flag)
 		{

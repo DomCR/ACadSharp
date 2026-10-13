@@ -115,6 +115,19 @@ public class DwgWriter : CadWriterBase<DwgWriterConfiguration>
 		//this.writeSecurity();
 		this.writeAuxHeader();
 		this.writeObjects();
+		//R2000 及更早版本：对象段写出期间为渐变填充合成私有 roundtrip 结构
+		//（XRecord + 扩展字典）会分配新句柄，使 Header.HandleSeed 前移。header
+		//段的 HANDSEED 变量必须反映最终状态，否则 AutoCAD 加载时因 HANDSEED
+		//小于已存在对象句柄而判定文件损坏、拒绝打开（accoreconsole
+		//ErrorStatus=53）。writeHeader() 先于 writeObjects() 执行，故此处重建
+		//header 段。此操作仅对 R2000 及更早版本必要：R2004+（AC1018+）写出器
+		//的 AddSection 每次调用都会新增 descriptor（而非替换），重复 writeHeader()
+		//会产出重复 Header 段导致文件损坏（accoreconsole code=434）；且 R2004+
+		//不执行渐变合成、不分配新句柄，HandleSeed 不变，无需重建。
+		if (this._version < ACadVersion.AC1018)
+		{
+			this.writeHeader();
+		}
 		this.writeObjFreeSpace();
 		this.writeTemplate();
 		//this.writePrototype();

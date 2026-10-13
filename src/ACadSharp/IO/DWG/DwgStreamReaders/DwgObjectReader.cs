@@ -2629,79 +2629,58 @@ namespace ACadSharp.IO.DWG
 			if (!this.R2004Plus)
 			{
 				// R2000 (AC1015) 渐变填充：AutoCAD 将渐变定义以私有二进制块存储于文件流中（独立对象，
-				// 非种子点之后；libredwg 按 SINCE(R_2004a) 跳过此块，ODA 升级时读此块写原生 450-470）。
-				// 解析策略：扫描全解压流定位渐变名 TV 标记 (RL=4 + RL=len + NAME\0)，回退定位块起始
-				// (BL 450 = is_gradient) 字节对齐解析。因 R2000 的 EED/XDATA 在实体数据之后才读，
-				// 此处仅按读取顺序登记候选填充并缓存渐变块；待 Read() 结束后在 ApplyR2000Gradients
-				// 中依据 GradientColor1ACI XDATA 判定后按序分配，使 R2000→R2004+ 写出原生 450-470。
-				try
-				{
-					this._r2000GradientCandidates.Add(hatch);
-					if (this._r2000GradientBlocks == null)
-						this._r2000GradientBlocks = this.ScanR2000GradientBlocks();
-				}
-				catch { }
-			}
-
-			return template;
-		}
-
-		private List<R2000GradientDef> _r2000GradientBlocks;
-		private readonly List<Hatch> _r2000GradientCandidates = new List<Hatch>();
-
-	/// <summary>
-	/// 按读取顺序为带 GradientColor1ACI XDATA 的 R2000 填充分配私有渐变块。
-	/// 需在文档构建完成（AppId 名称已解析）后调用。
-	/// 定位策略：
-	///   ① 主路径：填充扩展字典中的 ACAD_XREC_ROUNDTRIP 条目精确指向渐变 XRecord（1:1 关联）；
-	///   ② 回退：按读取顺序分配 ScanR2000GradientBlocks 扫描到的流内渐变块。
-	/// </summary>
-	public void ApplyR2000Gradients()
-	{
-		if (this._r2000GradientCandidates.Count == 0)
-			return;
-		try
-		{
-			if (this._r2000GradientBlocks == null)
-				this._r2000GradientBlocks = this.ScanR2000GradientBlocks();
-			int fallbackIdx = 0;
-			foreach (var hatch in this._r2000GradientCandidates)
+			// 非种子点之后；libredwg 按 SINCE(R_2004a) 跳过此块，ODA 升级时读此块写原生 450-470）。
+			// 解析策略：渐变定义存于独立 XRecord（"Gradient1" 定义块 + "Gradient4" 名称块，
+			// 均字节对齐），经填充扩展字典 ACAD_XREC_ROUNDTRIP 条目 1:1 关联。
+			// 因 R2000 的 EED/XDATA 在实体数据之后才读、AppId 名称需待 BuildDocument 后解析，
+			// 此处仅按读取顺序登记候选填充；待 Read() 结束后在 ApplyR2000Gradients
+			// 中经扩展字典精确定位并解析，使 R2000→R2004+ 写出原生 450-470。
+			try
 			{
-				bool isGradientHatch = false;
-				try
-				{
-					var xbyname = hatch.ExtendedData?.GetExtendedDataByName();
-					if (xbyname != null && xbyname.ContainsKey("GradientColor1ACI"))
-						isGradientHatch = true;
-				}
-				catch { }
-				if (!isGradientHatch) continue;
-
-				// 主路径：经扩展字典 ACAD_XREC_ROUNDTRIP 精确定位渐变 XRecord
-				R2000GradientDef g = TryParseGradientFromXRecord(hatch);
-				// 回退：按读取顺序分配扫描到的流内渐变块
-				if (g == null && fallbackIdx < this._r2000GradientBlocks.Count)
-				{
-					g = this._r2000GradientBlocks[fallbackIdx];
-					fallbackIdx++;
-				}
-
-				if (g == null) continue;
-
-				hatch.GradientColor.Enabled = true;
-				hatch.GradientColor.Reserved = g.Reserved;
-				hatch.GradientColor.Angle = g.Angle;
-				hatch.GradientColor.Shift = g.Shift;
-				hatch.GradientColor.IsSingleColorGradient = g.IsSingleColor;
-				hatch.GradientColor.ColorTint = g.ColorTint;
-				hatch.GradientColor.Colors.Clear();
-				foreach (var c in g.Colors)
-					hatch.GradientColor.Colors.Add(c);
-				hatch.GradientColor.Name = g.Name;
+				this._r2000GradientCandidates.Add(hatch);
 			}
+			catch { }
 		}
-		catch { }
+
+		return template;
 	}
+
+	private readonly List<Hatch> _r2000GradientCandidates = new List<Hatch>();
+
+/// <summary>
+/// 为携带私有渐变 roundtrip XRecord 的 R2000 填充恢复渐变定义。
+/// 需在文档构建完成（AppId 名称已解析）后调用。
+/// 判据（与 AutoCAD / cadcodec 参考一致）：填充扩展字典中的
+/// ACAD_XREC_ROUNDTRIP 条目精确指向渐变 XRecord（1:1 关联）即为渐变填充；
+/// 仅有 GradientColor*ACI EED 标记而无该 XRecord 的是陈旧元数据
+/// （渐变被改为纯色填充后遗留），不得据此恢复渐变。
+/// </summary>
+public void ApplyR2000Gradients()
+{
+	if (this._r2000GradientCandidates.Count == 0)
+		return;
+	try
+	{
+		foreach (var hatch in this._r2000GradientCandidates)
+		{
+			// 经扩展字典 ACAD_XREC_ROUNDTRIP 精确定位渐变 XRecord
+			R2000GradientDef g = TryParseGradientFromXRecord(hatch);
+			if (g == null) continue;
+
+			hatch.GradientColor.Enabled = true;
+			hatch.GradientColor.Reserved = g.Reserved;
+			hatch.GradientColor.Angle = g.Angle;
+			hatch.GradientColor.Shift = g.Shift;
+			hatch.GradientColor.IsSingleColorGradient = g.IsSingleColor;
+			hatch.GradientColor.ColorTint = g.ColorTint;
+			hatch.GradientColor.Colors.Clear();
+			foreach (var c in g.Colors)
+				hatch.GradientColor.Colors.Add(c);
+			hatch.GradientColor.Name = g.Name;
+		}
+	}
+	catch { }
+}
 
 	/// <summary>
 	/// 经填充扩展字典中的 ACAD_XREC_ROUNDTRIP 条目定位 R2000 私有渐变 XRecord 并解析。
@@ -2810,151 +2789,22 @@ namespace ACadSharp.IO.DWG
 		return g;
 	}
 
-		/// <summary>
-		/// R2000 私有渐变块解析结果（对应 <see cref="Hatch.GradientColor"/>）。
-		/// </summary>
-		private sealed class R2000GradientDef
-		{
-			public bool Enabled;
-			public int Reserved;
-			public double Angle;
-			public double Shift;
-			public bool IsSingleColor;
-			public double ColorTint;
-			public List<GradientColor> Colors = new List<GradientColor>();
-			public string Name;
-			public int EndByte;   // 颜色读取结束的字节偏移
-		}
+	/// <summary>
+	/// R2000 私有渐变块解析结果（对应 <see cref="Hatch.GradientColor"/>）。
+	/// </summary>
+	private sealed class R2000GradientDef
+	{
+		public bool Enabled;
+		public int Reserved;
+		public double Angle;
+		public double Shift;
+		public bool IsSingleColor;
+		public double ColorTint;
+		public List<GradientColor> Colors = new List<GradientColor>();
+		public string Name;
+	}
 
-		/// <summary>
-		/// 扫描整个解压对象流，按流顺序定位所有 R2000 私有渐变块。
-		/// 标记：渐变名 TV 之前有固定字段 RL=4 (04 00 00 00) + RL=nameLen + NAME + '\0'；
-		/// 对每个标记回退定位块起始 (BL 450 = is_gradient = 1) 并字节对齐解析。
-		/// </summary>
-		private List<R2000GradientDef> ScanR2000GradientBlocks()
-		{
-			var list = new List<R2000GradientDef>();
-			try
-			{
-				long len = this._objectReader.Stream.Length;
-				this._objectReader.Stream.Position = 0;
-				byte[] full = new byte[len];
-			int rn = this._objectReader.Stream.Read(full, 0, full.Length);
-
-				for (int p = 0; p + 8 <= rn; p++)
-				{
-					// 渐变名 TV 前的固定字段：RL=4 (04 00 00 00) + RL=nameLen
-					if (full[p] == 0x04 && full[p + 1] == 0x00 && full[p + 2] == 0x00 && full[p + 3] == 0x00)
-					{
-						// RL=nameLen 含结尾 '\0'，实际字符数 = nameLen - 1
-						int nameLen = BitConverter.ToInt32(full, p + 4);
-						if (nameLen < 2 || nameLen > 64) continue;
-						int nameStart = p + 8;
-						if (nameStart + nameLen > rn) continue;
-						bool ascii = true;
-						for (int k = 0; k < nameLen - 1; k++)
-						{
-							byte ch = full[nameStart + k];
-							if (ch < 0x20 || ch > 0x7E) { ascii = false; break; }
-						}
-						if (!ascii) continue;
-						if (full[nameStart + nameLen - 1] != 0x00) continue;
-						string name = System.Text.Encoding.ASCII.GetString(full, nameStart, nameLen - 1);
-
-						R2000GradientDef g = this.TryParseR2000Gradient(full, rn, p, name);
-						if (g != null)
-						{
-							g.Name = name;
-							list.Add(g);
-						}
-					}
-				}
-			}
-			catch { }
-			return list;
-		}
-
-		/// <summary>
-		/// 在渐变名标记 (markerPos) 之前回退定位块起始 (BL 450 = 1) 并解析渐变数值字段。
-		/// 结构（字节对齐）：BL450, BL451, BD460(angle), BD461(shift), BL452(single), BD462(tint),
-		/// BL453(ncolors), 每色 32 字节 [BD463 value(8) + RL=24(4) + mode(4) + rgb(4) + 尾部(12)]。
-		/// 校验：is_gradient==1、single 取值 0/1、shift/tint 归一化、颜色读取结束后紧跟渐变名标记。
-		/// </summary>
-		private R2000GradientDef TryParseR2000Gradient(byte[] full, int rn, int markerPos, string expectName)
-		{
-			int lo = Math.Max(0, markerPos - 512);
-			for (int start = markerPos - 16; start >= lo; start--)
-			{
-				R2000GradientDef g = this.DecodeR2000GradientAt(full, rn, start);
-				if (g == null) continue;
-				int endByte = g.EndByte;
-				if (endByte < 0 || endByte > markerPos) continue;
-				// 读色结束位置与 markerPos 之间应出现 04 00 00 00 + nameLen + expectName
-				if (ContainsGradientNameMarker(full, rn, endByte, markerPos, expectName))
-					return g;
-			}
-			return null;
-		}
-
-		private static bool ContainsGradientNameMarker(byte[] full, int rn, int from, int upto, string expectName)
-		{
-			// RL=nameLen 含结尾 '\0'，故 nl = expectName.Length + 1
-			int need = expectName.Length + 1;
-			for (int q = from; q <= upto; q++)
-			{
-				if (q + 8 + need > rn) break;
-				if (full[q] == 0x04 && full[q + 1] == 0x00 && full[q + 2] == 0x00 && full[q + 3] == 0x00)
-				{
-					int nl = BitConverter.ToInt32(full, q + 4);
-					if (nl != need) continue;
-					bool match = true;
-					for (int k = 0; k < expectName.Length; k++)
-					{
-						if (full[q + 8 + k] != (byte)expectName[k]) { match = false; break; }
-					}
-					if (match && full[q + 8 + expectName.Length] == 0x00) return true;
-				}
-			}
-			return false;
-		}
-
-		private R2000GradientDef DecodeR2000GradientAt(byte[] full, int rn, int o)
-		{
-			if (o < 0 || o + 40 > rn) return null;
-			if (BitConverter.ToInt32(full, o) != 1) return null;    // BL 450 is_gradient
-			var g = new R2000GradientDef();
-			g.Enabled = true;
-			o += 4;
-			g.Reserved = BitConverter.ToInt32(full, o); o += 4;    // BL 451
-			g.Angle = BitConverter.ToDouble(full, o); o += 8;      // BD 460
-			g.Shift = BitConverter.ToDouble(full, o); o += 8;      // BD 461
-			int single = BitConverter.ToInt32(full, o); o += 4;    // BL 452
-			if (single != 0 && single != 1) return null;
-			g.IsSingleColor = single != 0;
-			g.ColorTint = BitConverter.ToDouble(full, o); o += 8;  // BD 462
-			int n = BitConverter.ToInt32(full, o); o += 4;         // BL 453
-			if (n < 1 || n > 16) return null;
-			if (double.IsNaN(g.Shift) || g.Shift < -1e-9 || g.Shift > 1 + 1e-9) return null;
-			if (double.IsNaN(g.ColorTint) || g.ColorTint < -1e-9 || g.ColorTint > 1 + 1e-9) return null;
-			for (int i = 0; i < n; i++)
-			{
-				if (o + 32 > rn) return null;
-				double val = BitConverter.ToDouble(full, o);        // BD 463 value
-				// +8: RL=24; +12: mode; +16: rgb(0xC2RRGGBB); 之后 12 字节尾部
-				uint rgb = BitConverter.ToUInt32(full, o + 16);
-				byte[] arr = BitConverter.GetBytes(rgb);
-				Color c;
-				if (rgb == 0xC0000000u) c = Color.ByLayer;
-				else if ((rgb & 0x01000000u) != 0) c = new Color(arr[0]);
-				else c = new Color(arr[2], arr[1], arr[0]);
-				g.Colors.Add(new GradientColor { Value = val, Color = c });
-				o += 32;
-			}
-			g.EndByte = o;
-			return g;
-		}
-
-		private CadTemplate readImageDefinition()
+	private CadTemplate readImageDefinition()
 		{
 			ImageDefinition definition = new ImageDefinition();
 			CadNonGraphicalObjectTemplate template = new CadNonGraphicalObjectTemplate(definition);

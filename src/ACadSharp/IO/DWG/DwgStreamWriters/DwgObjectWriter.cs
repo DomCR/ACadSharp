@@ -1,4 +1,4 @@
-using ACadSharp.Blocks;
+﻿using ACadSharp.Blocks;
 using ACadSharp.Classes;
 using ACadSharp.Entities;
 using ACadSharp.Entities.AecEntities;
@@ -73,6 +73,10 @@ internal partial class DwgObjectWriter : DwgSectionIO
 
 	public void Write()
 	{
+		//R2000 及更早：为渐变填充合成私有 roundtrip 结构（XRecord + 扩展字典 + EED），
+		//使 R2004+ → R2000 转换保留渐变色（无原生 450-470 字段可写）。
+		this.writeR2000GradientRoundTrips();
+
 		//For R18 and later the section data (right after the page header) starts with a
 		//RL value of 0x0dca (meaning unknown).
 		if (this.R2004Plus)
@@ -292,6 +296,9 @@ internal partial class DwgObjectWriter : DwgSectionIO
 		if (record.Flags.HasFlag(BlockTypeFlags.Anonymous))
 		{
 			//Warning: anonymous blocks do not write the full name, only *{type character}
+			//[DBG] 匿名块名写出调试
+			if (Environment.GetEnvironmentVariable("ACADSHARP_DBG_BH") == "1")
+				Console.Error.WriteLine($"[BH-DBG] handle={record.Handle:X} name='{record.Name}' len={record.Name?.Length} anon={record.Flags.HasFlag(BlockTypeFlags.Anonymous)}");
 			this._writer.WriteVariableText(record.Name.Substring(0, 2));
 		}
 		else if (record.Layout != null)
@@ -477,7 +484,25 @@ internal partial class DwgObjectWriter : DwgSectionIO
 		this.writeCommonData(entity);
 
 		//Graphic present Flag B 1 if a graphic is present
-		this._writer.WriteBit(false);
+		//[EXP] proxy graphics 回写实验开关（0=旧写法恒 false）
+		bool writeProxy = Environment.GetEnvironmentVariable("ACADSHARP_PROXY") != "0";
+		bool hasGraphic = writeProxy && entity.ProxyGraphicsData != null && entity.ProxyGraphicsData.Length > 0;
+		this._writer.WriteBit(hasGraphic);
+
+		if (hasGraphic)
+		{
+			//Graphics X if graphicpresentflag is 1, the graphic goes here.
+			//R13 - R007:
+			//RL: Size of graphic image in bytes
+			//R2010 +:
+			//BLL: Size of graphic image in bytes
+			if (this._version >= ACadVersion.AC1024)
+				this._writer.WriteBitLongLong(entity.ProxyGraphicsData.Length);
+			else
+				this._writer.WriteRawLong(entity.ProxyGraphicsData.Length);
+
+			this._writer.WriteBytes(entity.ProxyGraphicsData);
+		}
 
 		//R13 - R14 Only:
 		if (this._version >= ACadVersion.AC1012 && this._version <= ACadVersion.AC1014)

@@ -241,6 +241,13 @@ internal class DwgFileHeaderWriterAC21 : IDwgFileHeaderWriter
 
 	public void AddSection(string name, MemoryStream stream, bool isCompressed, int decompsize = 0x7400)
 	{
+		// [EXP] ACADSHARP_SKIP_SEC=Name1,Name2 时跳过指定节（R2007 崩溃二分实验，验证后移除）
+		string skip = Environment.GetEnvironmentVariable("ACADSHARP_SKIP_SEC");
+		if (!string.IsNullOrEmpty(skip) && Array.IndexOf(skip.Split(','), name) >= 0)
+		{
+			return;
+		}
+
 		if (!tryGetHashCode(name, out uint hashCode))
 		{
 			throw new NotSupportedException($"Unknown AC21 section: {name}");
@@ -361,8 +368,11 @@ internal class DwgFileHeaderWriterAC21 : IDwgFileHeaderWriter
 	// ── System pages ──
 
 	/// <summary>
-	/// Compress and RS-encode system page data; correction factor fills the
-	/// target page size optimally (min 2). Does NOT write to the stream.
+	/// Compress and RS-encode system page data per ODA spec §5.3:
+	/// data → mirrored CRC → compress (if shorter) → align8 → repeat as many
+	/// times as fits the max RS pre-encoded size → RS(255,239) interleaved →
+	/// page remainder filled with random padding from the CRC random encoder.
+	/// Does NOT write to the stream.
 	/// </summary>
 	private (byte[] encoded, ulong compressedSize, ulong uncompressedSize, ulong crcCompressed, ulong crcUncompressed, ulong correctionFactor) encodeSystemPage(byte[] data, int targetPageSize)
 	{
@@ -376,26 +386,28 @@ internal class DwgFileHeaderWriterAC21 : IDwgFileHeaderWriter
 
 		ulong crcCompressed = Ac21Crc64.MirroredCrc64(this._crcSeed, (uint)pageData.Length, pageData, 0, pageData.Length);
 
+		// 8 字节对齐（规范 §5.3：padded with zeroes so the length is a multiple of 8）
 		int alignedComp = (int)(((ulong)pageData.Length + 7) & ~7UL);
-		ulong correctionFactor;
-		if (alignedComp == 0)
+
+		// 最大 RS 块数 = 页大小 / 255；最大预编码容量 = 块数 × 239
+		int maxRsBlocks = Math.Max(1, targetPageSize / Ac21ReedSolomon.RS_N);
+		int maxPreEncoded = maxRsBlocks * Ac21ReedSolomon.RS_SYSTEM_K;
+
+		// 重复次数 = 最大预编码容量 / 对齐后数据长度（规范：repeated as many times as possible）
+		ulong correctionFactor = alignedComp > 0 ? Math.Max((ulong)maxPreEncoded / (ulong)alignedComp, 1UL) : 1UL;
+
+		int repeatLen = (int)((ulong)alignedComp * correctionFactor);
+		int rsBlocks = (repeatLen + Ac21ReedSolomon.RS_SYSTEM_K - 1) / Ac21ReedSolomon.RS_SYSTEM_K;
+
+		// 重复数据缓冲（末块零填充到 factor×K）
+		byte[] repeated = new byte[rsBlocks * Ac21ReedSolomon.RS_SYSTEM_K];
+		for (int off = 0; off < repeatLen; off += alignedComp)
 		{
-			correctionFactor = 1;
-		}
-		else
-		{
-			int maxRsBlocks = targetPageSize / Ac21ReedSolomon.RS_N;
-			int maxDataCapacity = maxRsBlocks * Ac21ReedSolomon.RS_SYSTEM_K;
-			correctionFactor = Math.Max((ulong)maxDataCapacity / (ulong)alignedComp, 2);
+			int n = Math.Min(alignedComp, repeatLen - off);
+			Array.Copy(pageData, 0, repeated, off, Math.Min(pageData.Length, n));
 		}
 
-		int totalSize = (int)((ulong)alignedComp * correctionFactor);
-		int factor = (totalSize + Ac21ReedSolomon.RS_SYSTEM_K - 1) / Ac21ReedSolomon.RS_SYSTEM_K;
-
-		byte[] padded = new byte[factor * Ac21ReedSolomon.RS_SYSTEM_K];
-		Array.Copy(pageData, padded, Math.Min(pageData.Length, padded.Length));
-
-		byte[] encoded = Ac21ReedSolomon.Encode(padded, factor, Ac21ReedSolomon.RS_SYSTEM_K, Ac21ReedSolomon.RS_SYSTEM_PRIM_POLY);
+		byte[] encoded = Ac21ReedSolomon.Encode(repeated, rsBlocks, Ac21ReedSolomon.RS_SYSTEM_K, Ac21ReedSolomon.RS_SYSTEM_PRIM_POLY);
 
 		return (encoded, compressedSize, uncompressedSize, crcCompressed, crcUncompressed, correctionFactor);
 	}
@@ -409,14 +421,18 @@ internal class DwgFileHeaderWriterAC21 : IDwgFileHeaderWriter
 		var (encoded, compressedSize, uncompressedSize, crcCompressed, crcUncompressed, correctionFactor)
 			= this.encodeSystemPage(data, targetPageSize);
 
-		int pageSize = Math.Max(align32(encoded.Length), targetPageSize);
+		// 页大小 = max(align32(RS 编码长), 0x400)；余部按规范 §5.3 用 random encoder 填充
+		int pageSize = Math.Max(align32(encoded.Length), FILE_HEADER_PAGE_SIZE);
 
 		ulong offset = (ulong)this._stream.Position;
 		this._stream.Write(encoded, 0, encoded.Length);
 		int padding = pageSize - encoded.Length;
-		for (int i = 0; i < padding; i++)
+		if (padding > 0)
 		{
-			this._stream.WriteByte(0);
+			byte[] pad = new byte[padding];
+			Ac21CrcRandomEncoder padRng = new Ac21CrcRandomEncoder(0);
+			padRng.FillRandom(pad, 0, padding);
+			this._stream.Write(pad, 0, padding);
 		}
 
 		this._pageRecords.Add(new Ac21PageRecord { Id = pageId, Size = pageSize, Offset = offset });
@@ -443,9 +459,12 @@ internal class DwgFileHeaderWriterAC21 : IDwgFileHeaderWriter
 		this._stream.Position = (long)absPosition;
 		this._stream.Write(encoded, 0, encoded.Length);
 		int padding = actualPageSize - encoded.Length;
-		for (int i = 0; i < padding; i++)
+		if (padding > 0)
 		{
-			this._stream.WriteByte(0);
+			byte[] pad = new byte[padding];
+			Ac21CrcRandomEncoder padRng = new Ac21CrcRandomEncoder(0);
+			padRng.FillRandom(pad, 0, padding);
+			this._stream.Write(pad, 0, padding);
 		}
 
 		return new SystemPageResult
@@ -476,71 +495,82 @@ internal class DwgFileHeaderWriterAC21 : IDwgFileHeaderWriter
 			return ia.CompareTo(ib);
 		});
 
-		foreach (Ac21Section section in sorted)
-		{
-			// 0x00: Data size
-			writer.Write(section.DataSize);
-			// 0x08: Max size / page size
-			writer.Write(section.MaxPageSize);
-			// 0x10: Encryption
-			writer.Write(section.Encryption);
-			// 0x18: HashCode
-			writer.Write((ulong)section.HashCode);
-			// 0x20: SectionNameLength (UTF-16LE byte count incl. null)
-			byte[] nameBytes = Encoding.Unicode.GetBytes(section.Name);
-			ulong nameByteLen = nameBytes.Length > 0 ? (ulong)(nameBytes.Length + 2) : 0;
-			writer.Write(nameByteLen);
-			// 0x28: Unknown
-			writer.Write((ulong)0);
-			// 0x30: Encoding
-			writer.Write(section.Encoding);
-			// 0x38: NumPages
-			writer.Write((ulong)section.Pages.Count);
-
-			// 0x40: UTF-16LE name + null terminator
-			if (nameBytes.Length > 0)
+			foreach (Ac21Section section in sorted)
 			{
-				stream.Write(nameBytes, 0, nameBytes.Length);
-				stream.Write(new byte[] { 0, 0 }, 0, 2);
+				// 0x00: Data size
+				writer.Write(section.DataSize);
+				// 0x08: Max size / page size
+				writer.Write(section.MaxPageSize);
+				// 0x10: Encryption
+				writer.Write(section.Encryption);
+				// 0x18: HashCode
+				writer.Write((ulong)section.HashCode);
+				// 0x20: SectionNameLength (UTF-16LE byte count incl. null)
+				byte[] nameBytes = Encoding.Unicode.GetBytes(section.Name);
+				ulong nameByteLen = nameBytes.Length > 0 ? (ulong)(nameBytes.Length + 2) : 0;
+				writer.Write(nameByteLen);
+				// 0x28: Unknown
+				writer.Write((ulong)0);
+				// 0x30: Encoding
+				writer.Write(section.Encoding);
+				// 0x38: NumPages
+				writer.Write((ulong)section.Pages.Count);
+
+				// 0x40: UTF-16LE name + null terminator
+				if (nameBytes.Length > 0)
+				{
+					stream.Write(nameBytes, 0, nameBytes.Length);
+					stream.Write(new byte[] { 0, 0 }, 0, 2);
+				}
+
+				// Per-page records (7 × u64)
+				foreach (Ac21SectionPage page in section.Pages)
+				{
+					writer.Write(page.DataOffset);
+					writer.Write(page.PageSize);
+					writer.Write((ulong)page.PageId);
+					writer.Write(page.UncompressedSize);
+					writer.Write(page.CompressedSize);
+					writer.Write(page.Checksum);
+					writer.Write(page.Crc);
+				}
 			}
 
-			// Per-page records (7 × u64)
-			foreach (Ac21SectionPage page in section.Pages)
-			{
-				writer.Write(page.DataOffset);
-				writer.Write(page.PageSize);
-				writer.Write((ulong)page.PageId);
-				writer.Write(page.UncompressedSize);
-				writer.Write(page.CompressedSize);
-				writer.Write(page.Checksum);
-				writer.Write(page.Crc);
-			}
-		}
+			// 空终止条目：SectionsAmount = 命名节数 + 1，AutoCAD 按该数量读取，
+			// 末尾必须存在一个全 0 的空条目（max page size 0xF800、encoding 4），
+			// 与 AutoCAD 原生文件实测一致（libredwg 对其报 "Invalid num_pages 0, skip"）。
+			writer.Write(0UL);              // data size
+			writer.Write((ulong)0xF800);    // max size
+			writer.Write(0UL);              // encryption
+			writer.Write(0UL);              // hashcode
+			writer.Write(0UL);              // name length
+			writer.Write(0UL);              // unknown
+			writer.Write((ulong)4);         // encoding
+			writer.Write(0UL);              // num pages
 
-		return stream.ToArray();
+			return stream.ToArray();
 	}
 
 	private byte[] buildPageMapOrdered(long pageMapId, long pageMap2Id, long pageMapPageSize)
 	{
-		using MemoryStream stream = new MemoryStream((this._pageRecords.Count + 3) * 16);
+		using MemoryStream stream = new MemoryStream((this._pageRecords.Count + 2) * 16);
 		StreamIO writer = new StreamIO(stream);
 
-		// 1. Data pages + section map pages (in file-offset order)
+		// 1. 数据页 + 节表页（按物理写入顺序——页表条目的累计 size 即物理位置）
 		foreach (Ac21PageRecord record in this._pageRecords)
 		{
 			writer.Write(record.Size);
 			writer.Write(record.Id);
 		}
 
-		// 2. Page map pages (at the end of the file)
+		// 2. Page map 页（物理上位于数据页之后、文件头副本之前）
 		writer.Write(pageMapPageSize);
 		writer.Write(pageMapId);
 		writer.Write(pageMapPageSize);
 		writer.Write(pageMap2Id);
 
-		// 3. Null terminator
-		writer.Write(0L);
-		writer.Write(0L);
+		// 注意：页表没有 null 终止条目（AutoCAD 原生文件实测 PagesMapSizeUncompressed
+		// 恰好等于条目数 × 16，多写的 (0,0) 条目会被 AutoCAD 视为无效页导致打开失败）
 
 		return stream.ToArray();
 	}
@@ -687,14 +717,15 @@ internal class DwgFileHeaderWriterAC21 : IDwgFileHeaderWriter
 		metadata.RandomSeed = randomSeed;
 		metadata.CrcSeed = this._crcSeed;
 
-		byte[] checkData1 = this.computeCheckData(metadata, randomSeed);
+		// 单个连续 RNG 流贯穿 check data 与文件头页（checking sequence val1 等）
+		Ac21CrcRandomEncoder rng = new Ac21CrcRandomEncoder(randomSeed);
+		byte[] checkData1 = this.computeCheckData(metadata, rng);
 
 		// Compute header CRC-64 (spec §5.2.1.2)
 		byte[] metaBytes = metadata.ToBytes();
 		metadata.HeaderCrc64 = Ac21Crc64.HeaderCrc64(metaBytes);
 
 		// Step 5: Build file header page
-		Ac21CrcRandomEncoder rng = new Ac21CrcRandomEncoder(randomSeed);
 		byte[] fileHeaderPage = this.buildFileHeaderPage(metadata, rng, checkData1);
 
 		// Write file header at offset 0x80
@@ -711,12 +742,13 @@ internal class DwgFileHeaderWriterAC21 : IDwgFileHeaderWriter
 		metadata.FileSize = fileSize;
 		metadata.Header2offset = header2Offset - RESERVED_HEADER_SIZE;
 
-		byte[] checkData2 = this.computeCheckData(metadata, randomSeed);
+		// 第二遍用全新 RNG 实例重放同一消耗序列（保证两份文件头一致）
+		Ac21CrcRandomEncoder rng2 = new Ac21CrcRandomEncoder(randomSeed);
+		byte[] checkData2 = this.computeCheckData(metadata, rng2);
 
 		byte[] metaBytes2 = metadata.ToBytes();
 		metadata.HeaderCrc64 = Ac21Crc64.HeaderCrc64(metaBytes2);
 
-		Ac21CrcRandomEncoder rng2 = new Ac21CrcRandomEncoder(randomSeed);
 		byte[] fileHeaderPage2 = this.buildFileHeaderPage(metadata, rng2, checkData2);
 
 		// Overwrite file header at 0x80
@@ -734,12 +766,21 @@ internal class DwgFileHeaderWriterAC21 : IDwgFileHeaderWriter
 	}
 
 	/// <summary>
-	/// Compute check data and the RNG-consumed metadata fields
-	/// (spec §5.2.1.1.3-6, in the exact RNG consumption order).
+	/// Compute check data and the RNG-consumed metadata fields.
+	/// 消耗顺序已用 AutoCAD 原生 R2007 文件真值逐位验证（单个连续 RNG 流）：
+	/// InitPadding(128) → 20 次预消耗（对应 4 个系统页的 random 填充）→
+	/// SectionsMapCrcSeed → PagesMapCrcSeed → checkRandom1 → checkRandom2 →
+	/// checkEncodedSeed → CrcSeedEncoded（随后 checking sequence val1 为第 7 次 draw）。
 	/// </summary>
-	private byte[] computeCheckData(Dwg21Metadata metadata, ulong randomSeed)
+	private byte[] computeCheckData(Dwg21Metadata metadata, Ac21CrcRandomEncoder rng)
 	{
-		Ac21CrcRandomEncoder rng = new Ac21CrcRandomEncoder(randomSeed);
+		// 系统页（section map ×2 + page map ×2）写入时的 random 填充消耗，
+		// 位于 metadata 链之前（实测 AutoCAD 原生文件 r1 位于表索引 172 = 128 + 44，
+		// 即 smcs=draw#20@168、pmcs=draw#21@170、r1=draw#22@172）
+		for (int i = 0; i < 19; i++)
+		{
+			rng.NextUInt64();
+		}
 
 		// §5.2.1.1.3-4: Encode map CRC seeds
 		metadata.SectionsMapCrcSeed = rng.EncodeCrcSeed(this._crcSeed);
