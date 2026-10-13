@@ -149,9 +149,6 @@ namespace ACadSharp
 			this._property = property;
 		}
 
-		/// <summary>
-		/// Copies the property mapping from an existing instance without re-reading its attribute.
-		/// </summary>
 		protected DxfPropertyBase(DxfPropertyBase<T> other)
 		{
 			this._attributeData = other._attributeData;
