@@ -2521,7 +2521,11 @@ internal partial class DwgObjectWriter : DwgSectionIO
 		}
 
 		//H 342 Table Style ID (hard pointer)
-		this._writer.HandleReference(table.Style);
+		// [FIX] 裸 HandleReference(...) 走 DwgReferenceType.Undefined（句柄码 0），
+		// 写出非法句柄码。AutoCAD 原生 R2000 参考文件此处为码 5 软指针
+		// （句柄流实测：REF=(5.1.7F)，我们=(0.1.7F)），ODA 审计因此报
+		// ".dwg file needs recovery: <AcDbTable>"，AutoCAD 打开即崩溃。
+		this._writer.HandleReference(DwgReferenceType.HardPointer, table.Style);
 
 		//Cell data, repeats for all cells in n x m table
 		foreach (var row in table.Rows)
@@ -2604,7 +2608,7 @@ internal partial class DwgObjectWriter : DwgSectionIO
 			{
 				//Title/Header/Data row color CMC 64/65/66
 				Color color = index < data.RowColors.Count ? data.RowColors[index] : Color.ByBlock;
-				this._writer.WriteCmColor(color, this.R2004Pre);
+				this._writer.WriteCmColorR2004(color);
 				index++;
 			}
 		}
@@ -2625,7 +2629,7 @@ internal partial class DwgObjectWriter : DwgSectionIO
 			{
 				//Title/Header/Data row fill color CMC 63
 				Color color = index < data.RowFillColors.Count ? data.RowFillColors[index] : Color.ByBlock;
-				this._writer.WriteCmColor(color, this.R2004Pre);
+				this._writer.WriteCmColorR2004(color);
 				index++;
 			}
 		}
@@ -2679,7 +2683,7 @@ internal partial class DwgObjectWriter : DwgSectionIO
 			if (colors)
 			{
 				Color color = index < data.Colors.Count ? data.Colors[index] : Color.ByBlock;
-				this._writer.WriteCmColor(color, this.R2004Pre);
+				this._writer.WriteCmColorR2004(color);
 			}
 			else if (lineWeights)
 			{
@@ -2742,7 +2746,10 @@ internal partial class DwgObjectWriter : DwgSectionIO
 
 		//H 344 (text cell) / 340 (block cell) value handle
 		// 文本单元格直接内联字符串时该 handle 为 0（读取端据此走 TV 1 分支）
-		this._writer.HandleReference(0UL);
+		// [FIX] 必须写码 5（软指针）而非 Undefined（码 0）：空句柄应为 0x50，
+		// AutoCAD 原生文件实测 21 个单元格值句柄全部为 (5.0.0)；
+		// 码 0 使 ODA 报 <AcDbTable> needs recovery、AutoCAD 打开崩溃。
+		this._writer.HandleReference(DwgReferenceType.HardPointer, 0UL);
 
 		if (cellType == TableEntity.CellType.Block)
 		{
@@ -2816,12 +2823,12 @@ internal partial class DwgObjectWriter : DwgSectionIO
 			if (ovr.HasFlag(TableEntity.Cell.OverrideFlags.BackgroundColor))
 			{
 				//CMC 63 Background color
-				this._writer.WriteCmColor(so.BackgroundColor);
+				this._writer.WriteCmColorR2004(so.BackgroundColor);
 			}
 			if (ovr.HasFlag(TableEntity.Cell.OverrideFlags.ContentColor))
 			{
 				//CMC 64 Content color
-				this._writer.WriteCmColor(so.ContentColor);
+				this._writer.WriteCmColorR2004(so.ContentColor);
 			}
 			if (ovr.HasFlag(TableEntity.Cell.OverrideFlags.TextHeight))
 			{
@@ -2832,7 +2839,7 @@ internal partial class DwgObjectWriter : DwgSectionIO
 			//Border override triples (top/right/bottom/left), same order as the reader.
 			if (ovr.HasFlag(TableEntity.Cell.OverrideFlags.TopGridColor))
 			{
-				this._writer.WriteCmColor(so.TopBorder.Color);
+				this._writer.WriteCmColorR2004(so.TopBorder.Color);
 			}
 			if (ovr.HasFlag(TableEntity.Cell.OverrideFlags.TopGridLineWeight))
 			{
@@ -2844,7 +2851,7 @@ internal partial class DwgObjectWriter : DwgSectionIO
 			}
 			if (ovr.HasFlag(TableEntity.Cell.OverrideFlags.RightGridColor))
 			{
-				this._writer.WriteCmColor(so.RightBorder.Color);
+				this._writer.WriteCmColorR2004(so.RightBorder.Color);
 			}
 			if (ovr.HasFlag(TableEntity.Cell.OverrideFlags.RightGridLineWeight))
 			{
@@ -2856,7 +2863,7 @@ internal partial class DwgObjectWriter : DwgSectionIO
 			}
 			if (ovr.HasFlag(TableEntity.Cell.OverrideFlags.BottomGridColor))
 			{
-				this._writer.WriteCmColor(so.BottomBorder.Color);
+				this._writer.WriteCmColorR2004(so.BottomBorder.Color);
 			}
 			if (ovr.HasFlag(TableEntity.Cell.OverrideFlags.BottomGridLineWeight))
 			{
@@ -2868,7 +2875,7 @@ internal partial class DwgObjectWriter : DwgSectionIO
 			}
 			if (ovr.HasFlag(TableEntity.Cell.OverrideFlags.LeftGridColor))
 			{
-				this._writer.WriteCmColor(so.LeftBorder.Color);
+				this._writer.WriteCmColorR2004(so.LeftBorder.Color);
 			}
 			if (ovr.HasFlag(TableEntity.Cell.OverrideFlags.LeftGridLineWeight))
 			{

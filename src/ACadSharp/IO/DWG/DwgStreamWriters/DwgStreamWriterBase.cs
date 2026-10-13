@@ -394,6 +394,42 @@ namespace ACadSharp.IO.DWG
 			this.WriteBitShort(index);
 		}
 
+		/// <summary>
+		/// 写出 R2004+ 风格的完整 CMC（BS index + BL rgb + RC flag）。
+		/// [FIX] 表格单元格/表级覆盖的颜色字段无论目标文件版本一律使用完整 CMC：
+		/// libredwg CMTC 宏强制 R_2004 语义，AutoCAD 原生 R2000 参考文件实测
+		/// 单元格颜色均为 BS 0 + BL 0xC3xx0000|index + RC 0。
+		/// 此前按 BS 单字段写出导致 ODA 位流错位报
+		/// "&lt;AcDbTable&gt; Object improperly read"，AutoCAD 打开即崩溃。
+		/// </summary>
+		public virtual void WriteCmColorR2004(Color value)
+		{
+			uint rgb;
+			short index = 0;
+			if (value.IsByLayer)
+			{
+				rgb = 0xC0000000;
+				index = 256;
+			}
+			else if (value.IsByBlock)
+			{
+				rgb = 0xC1000000;
+			}
+			else if (value.IsTrueColor)
+			{
+				rgb = 0xC2000000u | ((uint)value.TrueColor & 0xFFFFFF);
+			}
+			else
+			{
+				// 与 AutoCAD 原生文件一致：rgb = 0xC3000000 | ACI 索引
+				rgb = 0xC3000000u | ((uint)(value.Index & 0xFF));
+			}
+
+			this.WriteBitShort(index);
+			this.WriteBitLong((int)rgb);
+			this.WriteByte(0);
+		}
+
 		public virtual void WriteEnColor(Color color, Transparency transparency)
 		{
 			this.WriteCmColor(color);

@@ -56,6 +56,12 @@ namespace ACadSharp.IO.DWG
 
 		void WriteCmColor(Color value, bool useTextStream = false);
 
+		/// <summary>
+		/// 写出 R2004+ 风格完整 CMC（BS index + BL rgb + RC flag），
+		/// 表格单元格/表级覆盖颜色无论文件版本一律使用（见 DwgStreamWriterBase 注释）。
+		/// </summary>
+		void WriteCmColorR2004(Color value);
+
 		void WriteEnColor(Color color, Transparency transparency);
 
 		void WriteEnColor(Color color, Transparency transparency, bool isBookColor);
