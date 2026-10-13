@@ -267,9 +267,24 @@ namespace ACadSharp.IO.DWG
 				return;
 			}
 
+			//[EXP] TV null 终止实验开关（1=修复 BS(len+1)+chars+0x00，0=旧写法 BS(len)+chars）
+			if (Environment.GetEnvironmentVariable("ACADSHARP_TV_NULL") == "0")
+			{
+				byte[] oldBytes = this.Encoding.GetBytes(value);
+				this.WriteBitShort((short)oldBytes.Length);
+				this.WriteBytes(oldBytes);
+				return;
+			}
+
+			//[FIX] AutoCAD 原生写法：长度字段包含结尾 null，且字符串以 0x00 终止。
+			//此前写 BS(len)+chars（无 null），导致外部解析器（ODA/AutoCAD/libredwg）
+			//读取 TV 失败（如匿名缓存块名 *T 被读为空，TABLE 实体引用失效）。
 			byte[] bytes = this.Encoding.GetBytes(value);
-			this.WriteBitShort((short)bytes.Length);
+			this.WriteBitShort((short)(bytes.Length + 1));
 			this.WriteBytes(bytes);
+			//[FIX] null 必须走位写入器：直接写原始 Stream 会绕过位缓冲，
+			//在字符串位于字节中间时破坏整个位流对齐（类段/头部 TV 全部错位）
+			this.WriteByte(0);
 		}
 
 		public virtual void WriteTextUnicode(string value)
