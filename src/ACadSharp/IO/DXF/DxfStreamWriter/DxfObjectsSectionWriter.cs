@@ -713,6 +713,10 @@ internal class DxfObjectsSectionWriter : DxfSectionWriterBase
 				case GroupCodeValueType.ObjectId:
 				case GroupCodeValueType.ExtendedDataHandle:
 					var obj = e.Value as IHandledCadObject;
+					if(obj == null)
+					{
+						continue;
+					}
 					this._writer.Write(e.Code, obj.Handle);
 					break;
 				default:
