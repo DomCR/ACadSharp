@@ -6900,7 +6900,7 @@ namespace ACadSharp.IO.DWG
 				//numbers all follow the normal DXF convention for group codes.
 				var code = this._objectReader.ReadShort();
 				var groupCode = GroupCodeValue.TransformValue(code);
-
+				XRecord.Entry entry;
 				switch (groupCode)
 				{
 					case GroupCodeValueType.String:
@@ -6937,7 +6937,8 @@ namespace ACadSharp.IO.DWG
 						string hex = this._objectReader.ReadTextUnicode();
 						if (ulong.TryParse(hex, NumberStyles.HexNumber, CultureInfo.InvariantCulture, out ulong result))
 						{
-							template.AddHandleReference(code, result);
+							entry = xRecord.CreateEntry(code, result);
+							template.AddHandleReference(entry);
 						}
 						else
 						{
@@ -6953,7 +6954,9 @@ namespace ACadSharp.IO.DWG
 						break;
 					case GroupCodeValueType.ObjectId:
 					case GroupCodeValueType.ExtendedDataHandle:
-						template.AddHandleReference(code, this._objectReader.ReadRawULong());
+						var handle = this._objectReader.ReadRawULong();
+						entry = xRecord.CreateEntry(code, handle);
+						template.AddHandleReference(entry);
 						break;
 					default:
 						this.notify($"Unidentified GroupCodeValueType {code} for XRecord [{xRecord.Handle}]", NotificationType.Warning);

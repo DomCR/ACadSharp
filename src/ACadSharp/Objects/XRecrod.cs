@@ -23,7 +23,9 @@ public partial class XRecord : NonGraphicalObject
 	[DxfCodeValue(280)]
 	public DictionaryCloningFlags CloningFlags { get; set; }
 
-	//1-369 (except 5 and 105)	These values can be used by an application in any way
+	/// <summary>
+	/// Gets the collection of <see cref="Entry"/> objects associated with this <see cref="XRecord"/>.
+	/// </summary>
 	public IEnumerable<Entry> Entries { get { return this._entries; } }
 
 	/// <inheritdoc/>
@@ -74,8 +76,11 @@ public partial class XRecord : NonGraphicalObject
 	/// </summary>
 	/// <param name="code">The integer code that identifies the entry. The value should be unique within the collection.</param>
 	/// <param name="value">The value to associate with the entry. Can be any object, including <see langword="null"/>.</param>
-	public void CreateEntry(int code, object value)
+	/// <returns>The newly created <see cref="Entry"/> object.</returns>
+	public Entry CreateEntry(int code, object value)
 	{
-		this._entries.Add(new Entry(code, value, this));
+		Entry entry = new Entry(code, value, this);
+		this._entries.Add(entry);
+		return entry;
 	}
 }

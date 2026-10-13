@@ -101,6 +101,7 @@ public abstract class WriterSingleObjectTests : IOTestsBase
 		Data.Add(new(nameof(SingleCaseGenerator.SingleMeshWithTextureCoordinates)));
 		Data.Add(new(nameof(SingleCaseGenerator.SingleMaterial)));
 		Data.Add(new(nameof(SingleCaseGenerator.LeaderWithArrowHead)));
+		Data.Add(new(nameof(SingleCaseGenerator.SortedXRecords)));
 	}
 
 	public WriterSingleObjectTests(ITestOutputHelper output) : base(output)
@@ -1884,7 +1885,7 @@ public abstract class WriterSingleObjectTests : IOTestsBase
 
 			this.AssertRoundtrip = (doc) =>
 			{
-				if(this.Document.Header.Version <= ACadVersion.AC1015 || this.Format == CadFileFormat.DWG)
+				if (this.Document.Header.Version <= ACadVersion.AC1015 || this.Format == CadFileFormat.DWG)
 				{
 					//Not supported in R2000 and earlier, will be converted to index color
 					return;
@@ -2256,7 +2257,7 @@ public abstract class WriterSingleObjectTests : IOTestsBase
 
 			this.AssertRoundtrip = (doc) =>
 			{
-				if(this.Format == CadFileFormat.DXF)
+				if (this.Format == CadFileFormat.DXF)
 				{
 					return;
 				}
@@ -2621,6 +2622,40 @@ public abstract class WriterSingleObjectTests : IOTestsBase
 
 				Assert.NotNull(result);
 				EntityComparator.IsEqual(wipeout, result);
+			};
+		}
+
+		public void SortedXRecords()
+		{
+			Layer layer = this.Document.Layers[Layer.DefaultName];
+
+			XRecord xrecord = new XRecord("MOREDWG_ORDER");
+			xrecord.CreateEntry(300, "before");
+			xrecord.CreateEntry(330, layer);
+			xrecord.CreateEntry(294, false);
+			xrecord.CreateEntry(90, 7);
+
+			CadDictionary dictionary = new CadDictionary("MOREDWG_TEST");
+			dictionary.Add(xrecord);
+			this.Document.RootDictionary.Add(dictionary);
+
+			MemoryStream ms = new MemoryStream();
+			DwgWriter.Write(ms, this.Document);
+			using MemoryStream readStream = new MemoryStream(ms.ToArray());
+			CadDocument rt = DwgReader.Read(readStream);
+
+			this.AssertRoundtrip = (doc) =>
+			{
+				Assert.True(rt.RootDictionary.TryGetEntry("MOREDWG_TEST", out CadDictionary rtDictionary));
+				Assert.True(rtDictionary.TryGetEntry("MOREDWG_ORDER", out XRecord result));
+
+				int[] codes = result.Entries.Select(e => e.Code).ToArray();
+				Assert.Equal(new[] { 300, 330, 294, 90 }, codes);
+
+				Assert.Equal("before", result.Entries.ElementAt(0).Value);
+				Assert.Equal(Layer.DefaultName, ((Layer)result.Entries.ElementAt(1).Value).Name);
+				Assert.False(System.Convert.ToBoolean(result.Entries.ElementAt(2).Value));
+				Assert.Equal(7, System.Convert.ToInt32(result.Entries.ElementAt(3).Value));
 			};
 		}
 
