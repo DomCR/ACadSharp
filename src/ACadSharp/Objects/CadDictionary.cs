@@ -246,10 +246,12 @@ public class CadDictionary : NonGraphicalObject, IObservableCadCollection<NonGra
 		clone.OnAdd = null;
 		clone.OnRemove = null;
 
-		clone._entries = new Dictionary<string, NonGraphicalObject>();
-		foreach (NonGraphicalObject item in this._entries.Values)
+		// Keep each entry under its KEY (the object's name may differ, or be empty) and keep the
+		// case-insensitive comparer of the original collection.
+		clone._entries = new Dictionary<string, NonGraphicalObject>(StringComparer.OrdinalIgnoreCase);
+		foreach (KeyValuePair<string, NonGraphicalObject> item in this._entries)
 		{
-			clone.Add(item.CloneTyped());
+			clone.Add(item.Key, item.Value.CloneTyped());
 		}
 
 		return clone;
@@ -360,7 +362,14 @@ public class CadDictionary : NonGraphicalObject, IObservableCadCollection<NonGra
 
 	private void onEntryNameChanged(object sender, OnNameChangedArgs e)
 	{
-		var entry = this._entries[e.OldName];
+		// Only an entry stored under the object's old name follows the rename: an entry added with a
+		// different key keeps that key (and looking it up by the old name used to throw).
+		if (!this._entries.TryGetValue(e.OldName ?? string.Empty, out NonGraphicalObject entry)
+			|| !ReferenceEquals(entry, sender))
+		{
+			return;
+		}
+
 		this._entries.Add(e.NewName, entry);
 		this._entries.Remove(e.OldName);
 	}
