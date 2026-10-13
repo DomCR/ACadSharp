@@ -1113,7 +1113,8 @@ internal partial class DwgObjectWriter : DwgSectionIO
 
 		//TV 301,9 Value string(DXF: written in 255 character chunks)
 		this._writer.WriteVariableText(field.FormatString);
-		this._writer.WriteBitLong(field.FormatString.Length);
+		//A field without format string (the object's default) threw a NullReferenceException here
+		this._writer.WriteBitLong(field.FormatString?.Length ?? 0);
 		this._writer.WriteBitLong(field.Values.Count);
 		foreach (var value in field.Values)
 		{
@@ -2217,10 +2218,10 @@ internal partial class DwgObjectWriter : DwgSectionIO
 
 	private void writeStringCadValue(string value)
 	{
-		if (string.IsNullOrEmpty(value))
-		{
-			this._writer.WriteBitLong(0);
-		}
+		//An empty (or null) string is written like any other: the byte count includes the terminator.
+		//The old branch wrote a count of 0 and then went on to write the bytes as well: null threw, and ""
+		//shifted the rest of the object, which the reader could not decode (and a lone 0 it cannot read either).
+		value ??= string.Empty;
 
 		byte[] bytes;
 		if (this.R2007Plus)
