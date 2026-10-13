@@ -19865,6 +19865,19 @@ references:
   isSpec: "True"
   fullName: ACadSharp.Entities.ProxyEntity.ClassId
   nameWithType: ProxyEntity.ClassId
+- uid: ACadSharp.Entities.ProxyEntity.Data
+  name: Data
+  href: api/ACadSharp.Entities.ProxyEntity.html#ACadSharp_Entities_ProxyEntity_Data
+  commentId: P:ACadSharp.Entities.ProxyEntity.Data
+  fullName: ACadSharp.Entities.ProxyEntity.Data
+  nameWithType: ProxyEntity.Data
+- uid: ACadSharp.Entities.ProxyEntity.Data*
+  name: Data
+  href: api/ACadSharp.Entities.ProxyEntity.html#ACadSharp_Entities_ProxyEntity_Data_
+  commentId: Overload:ACadSharp.Entities.ProxyEntity.Data
+  isSpec: "True"
+  fullName: ACadSharp.Entities.ProxyEntity.Data
+  nameWithType: ProxyEntity.Data
 - uid: ACadSharp.Entities.ProxyEntity.DrawingFormat
   name: DrawingFormat
   href: api/ACadSharp.Entities.ProxyEntity.html#ACadSharp_Entities_ProxyEntity_DrawingFormat
@@ -34773,6 +34786,19 @@ references:
   isSpec: "True"
   fullName: ACadSharp.IProxy.ClassId
   nameWithType: IProxy.ClassId
+- uid: ACadSharp.IProxy.Data
+  name: Data
+  href: api/ACadSharp.IProxy.html#ACadSharp_IProxy_Data
+  commentId: P:ACadSharp.IProxy.Data
+  fullName: ACadSharp.IProxy.Data
+  nameWithType: IProxy.Data
+- uid: ACadSharp.IProxy.Data*
+  name: Data
+  href: api/ACadSharp.IProxy.html#ACadSharp_IProxy_Data_
+  commentId: Overload:ACadSharp.IProxy.Data
+  isSpec: "True"
+  fullName: ACadSharp.IProxy.Data
+  nameWithType: IProxy.Data
 - uid: ACadSharp.IProxy.DxfClass
   name: DxfClass
   href: api/ACadSharp.IProxy.html#ACadSharp_IProxy_DxfClass
