@@ -107,6 +107,34 @@ public class DxfWriterSingleObjectTests : WriterSingleObjectTests
 		Assert.False(ellipse.CounterClockWise);
 	}
 
+	[Theory]
+	[InlineData(BackgroundFillFlags.TextFrame)]
+	[InlineData(BackgroundFillFlags.UseBackgroundFillColor)]
+	[InlineData(BackgroundFillFlags.UseBackgroundFillColor | BackgroundFillFlags.UseDrawingWindowColor)]
+	[InlineData(BackgroundFillFlags.UseBackgroundFillColor | BackgroundFillFlags.TextFrame)]
+	public void WriteMTextBackgroundAndTextFrame(BackgroundFillFlags flags)
+	{
+		CadDocument document = new CadDocument(ACadVersion.AC1032);
+		document.Entities.Add(new MText("Framed text")
+		{
+			Height = 2.5,
+			BackgroundFillFlags = flags,
+			BackgroundScale = 2.0,
+			BackgroundColor = new Color(2)
+		});
+
+		using MemoryStream output = new MemoryStream();
+		DxfWriter.Write(output, document);
+
+		using MemoryStream input = new MemoryStream(output.ToArray());
+		CadDocument result = DxfReader.Read(input);
+		MText mtext = Assert.Single(result.Entities.OfType<MText>());
+
+		Assert.Equal(flags, mtext.BackgroundFillFlags);
+		Assert.Equal(2.0, mtext.BackgroundScale);
+		Assert.Equal(new Color(2), mtext.BackgroundColor);
+	}
+
 	protected virtual void writeDxfFile(SingleCaseGenerator data, ACadVersion version)
 	{
 		Assert.True(data.HasExecuted, $"The writer has failed during it's execution.");
