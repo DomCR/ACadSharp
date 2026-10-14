@@ -134,6 +134,99 @@ namespace ACadSharp.IO.DWG.Tangent
 		}
 
 		/// <summary>
+		/// Searches a class specific payload for the positions an object carries.
+		/// </summary>
+		/// <remarks>
+		/// <para>
+		/// This is the general form of the shape <see cref="TchText"/> and
+		/// <see cref="TchEntityLayout"/> were special cases of, and it is present in every class in
+		/// the corpus. A position is three raw doubles: Y, then X sixty-eight bits later, then Z
+		/// twenty-four bits after that. The two gaps differ because the fields in front of them do,
+		/// and they hold for every class measured.
+		/// </para>
+		/// <para>
+		/// A wall carries two of these, its centre line; a text object one; a window one; a stair
+		/// one. Nothing marks them, so the search takes every offset that produces a plausible
+		/// position and returns them in order. Z is required to be small, which is what keeps a
+		/// misaligned read from passing: an X or Y read at the wrong bit is almost always
+		/// astronomical, but a Z read at the wrong bit can look ordinary unless it is bounded.
+		/// </para>
+		/// <para>
+		/// Each result is confirmed against the flattened export elsewhere in this library's tests;
+		/// for the wall the two positions are the ends of the centre line the export draws, and for
+		/// a stair the X lands on the first line of the flight.
+		/// </para>
+		/// </remarks>
+		/// <param name="payload">The class specific data of the object.</param>
+		/// <param name="version">Drawing version used by the stream reader.</param>
+		/// <returns>The positions in the order they appear; empty when there are none.</returns>
+		public static IReadOnlyList<XYZ> FindPositions(byte[] payload, ACadVersion version)
+		{
+			if (payload == null)
+			{
+				throw new ArgumentNullException(nameof(payload));
+			}
+
+			List<XYZ> positions = new List<XYZ>();
+
+			if (payload.Length < 32)
+			{
+				return positions;
+			}
+
+			using (MemoryStream stream = new MemoryStream(payload, writable: false))
+			{
+				IDwgStreamReader reader = DwgStreamReaderBase.GetStreamHandler(version, stream, resetPositon: true);
+				long limit = (long)payload.Length * 8L;
+
+				for (long offset = 0; offset + XOffset + CoordinateBits <= limit; offset++)
+				{
+					if (tryReadPosition(reader, offset, limit, out XYZ position))
+					{
+						positions.Add(position);
+					}
+				}
+			}
+
+			return positions;
+		}
+
+		/// <summary>Bit gap between Y and X within a stored position.</summary>
+		public const int XOffset = 68;
+
+		/// <summary>Bit gap between X and Z within a stored position.</summary>
+		public const int ZOffset = 24;
+
+		private static bool tryReadPosition(IDwgStreamReader reader, long offset, long limit, out XYZ position)
+		{
+			position = XYZ.Zero;
+
+			try
+			{
+				reader.SetPositionInBits(offset);
+				double y = reader.ReadDouble();
+
+				reader.SetPositionInBits(offset + XOffset);
+				double x = reader.ReadDouble();
+
+				reader.SetPositionInBits(offset + XOffset + ZOffset);
+				double z = reader.ReadDouble();
+
+				if (!isPlausible(x) || !isPlausible(y) || !isFinite(z) || Math.Abs(z) > 1.0e5)
+				{
+					return false;
+				}
+
+				position = new XYZ(x, y, z);
+				return true;
+			}
+			catch (Exception)
+			{
+				return false;
+			}
+		}
+
+		/// <summary>
 		/// Searches a class specific payload for a run of 2-D points.
 		/// </summary>
 		/// <remarks>
