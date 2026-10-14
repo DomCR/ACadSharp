@@ -116,9 +116,10 @@ namespace ACadSharp.IO.DWG.Tangent
 				text.HasPosition = true;
 			}
 
-			//Only these two classes write text; for anything else the longest readable string is a
-			//property name, which is not content.
-			if (dxfName == "TCH_TEXT" || dxfName == "TCH_MTEXT")
+			//Only the classes that write text take content from this; for anything else the longest
+			//readable string is a property name, which is not content. TCH_DRAWINGNAME carries the
+			//title block's name and its scale as two strings.
+			if (dxfName == "TCH_TEXT" || dxfName == "TCH_MTEXT" || dxfName == "TCH_DRAWINGNAME")
 			{
 				readContent(text, payload, version);
 			}
@@ -188,7 +189,11 @@ namespace ACadSharp.IO.DWG.Tangent
 
 				//The blocks a drawing's text actually uses: ASCII, CJK ideographs, CJK punctuation,
 				//fullwidth forms, and a few typographic marks.
+				//A multiline text carries its line breaks, so the control characters a drawing
+				//legitimately contains are allowed. Leaving them out rejected every multiline text
+				//while every single line one still read, which is why the gap went unnoticed.
 				bool allowed = (o >= 0x20 && o <= 0x7E)
+					|| o == '\t' || o == '\n' || o == '\r' || o == '\f' || o == '\v'
 					|| (o >= 0x4E00 && o <= 0x9FFF)
 					|| (o >= 0x3000 && o <= 0x303F)
 					|| (o >= 0xFF00 && o <= 0xFFEF)
