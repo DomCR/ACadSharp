@@ -179,9 +179,12 @@ namespace ACadSharp.IO.DWG.Tangent
 				IDwgStreamReader reader = DwgStreamReaderBase.GetStreamHandler(version, stream, resetPositon: true);
 				long limit = (long)payload.Length * 8L;
 
-				for (long offset = 0; offset + XOffset + CoordinateBits <= limit; offset++)
+				long boundary = findFieldBoundary(reader, limit);
+
+				for (long offset = 0; offset + XOffset + CoordinateBits <= boundary; offset++)
 				{
-					if (tryReadPosition(reader, offset, limit, out XYZ position))
+					if (tryReadPosition(reader, offset, XOffset, out XYZ position)
+						|| tryReadPosition(reader, offset, XOffsetTight, out position))
 					{
 						positions.Add(position);
 					}
@@ -191,13 +194,78 @@ namespace ACadSharp.IO.DWG.Tangent
 			return positions;
 		}
 
-		/// <summary>Bit gap between Y and X within a stored position.</summary>
+		/// <summary>
+		/// Bit gap between Y and X within a stored position.
+		/// </summary>
+		/// <remarks>
+		/// Most classes put 68 bits between the two. Two in the corpus use 64, which is the same
+		/// shape written from a class whose fields in front end two bits earlier. The search tries
+		/// both rather than assuming one.
+		/// </remarks>
 		public const int XOffset = 68;
+
+		/// <summary>The same gap for the classes that align it two bits earlier.</summary>
+		public const int XOffsetTight = 64;
 
 		/// <summary>Bit gap between X and Z within a stored position.</summary>
 		public const int ZOffset = 24;
 
-		private static bool tryReadPosition(IDwgStreamReader reader, long offset, long limit, out XYZ position)
+		/// <summary>
+		/// Locates the point in a payload past which the class fields end.
+		/// </summary>
+		/// <remarks>
+		/// <para>
+		/// The fields the base class writes, which is where the position lives, all come before the
+		/// class id and the property block. Past that boundary the payload holds text, and text read
+		/// at a misaligned bit yields values that pass for coordinates — the same pair turns up in
+		/// every object because the same block sits in every object.
+		/// </para>
+		/// <para>
+		/// So the search stops at the first class id or block marker rather than filtering its
+		/// results afterwards. The boundary is generous: a position measured at bit 84 of a text
+		/// object and one at 450 of a drawing index both sit far below their boundary.
+		/// </para>
+		/// </remarks>
+		private static long findFieldBoundary(IDwgStreamReader reader, long limit)
+		{
+			long mark = reader.PositionInBits();
+
+			for (long offset = 0; offset < limit; offset++)
+			{
+				string value;
+
+				try
+				{
+					reader.SetPositionInBits(offset);
+					value = reader.ReadVariableText();
+				}
+				catch (Exception)
+				{
+					continue;
+				}
+
+				if (value != null && isBoundary(value))
+				{
+					reader.SetPositionInBits(mark);
+					return offset;
+				}
+			}
+
+			reader.SetPositionInBits(mark);
+			return limit;
+		}
+
+		private static bool isBoundary(string value)
+		{
+			if (value.Length == 38 && value[0] == '{' && value[value.Length - 1] == '}')
+			{
+				return true;
+			}
+
+			return value.StartsWith("TDBXDATAMAP", System.StringComparison.Ordinal);
+		}
+
+		private static bool tryReadPosition(IDwgStreamReader reader, long offset, int xOffset, out XYZ position)
 		{
 			position = XYZ.Zero;
 
@@ -206,10 +274,10 @@ namespace ACadSharp.IO.DWG.Tangent
 				reader.SetPositionInBits(offset);
 				double y = reader.ReadDouble();
 
-				reader.SetPositionInBits(offset + XOffset);
+				reader.SetPositionInBits(offset + xOffset);
 				double x = reader.ReadDouble();
 
-				reader.SetPositionInBits(offset + XOffset + ZOffset);
+				reader.SetPositionInBits(offset + xOffset + ZOffset);
 				double z = reader.ReadDouble();
 
 				if (!isPlausible(x) || !isPlausible(y) || !isFinite(z) || Math.Abs(z) > 1.0e5)
