@@ -1,6 +1,7 @@
-using ACadSharp.IO.DWG;
+﻿using ACadSharp.IO.DWG;
 using CSMath;
 using System;
+using System.Collections.Generic;
 using System.IO;
 
 namespace ACadSharp.IO.DWG.Tangent
@@ -58,12 +59,36 @@ namespace ACadSharp.IO.DWG.Tangent
 		public bool HasPosition { get; private set; }
 
 		/// <summary>
+		/// Gets the text content, or null when the payload carried none that could be told apart from
+		/// the object's own fields.
+		/// </summary>
+		/// <remarks>
+		/// <para>
+		/// The entries in a payload interleave three kinds of string and only the last is content.
+		/// The class id and the block markers are recognisable by shape, and the scalars are
+		/// recognisable because they decode through the alphabet of §4.2.2 — that is what makes this
+		/// readable now, where an earlier attempt failed. What is left is text.
+		/// </para>
+		/// <para>
+		/// Misaligned reads of the other kinds survive that filter as short strings of unusual
+		/// characters, so the longest candidate is taken. On the sample drawing that gives the right
+		/// content for every text object: <c>Wall &amp; Window &amp; Door</c>, <c>Square Column</c>,
+		/// <c>Elevation</c>, <c>Breakline</c>, <c>U Stair</c>, <c>Line Stair</c>,
+		/// <c>Multi-flight Staircase</c>, <c>Callout Title</c> and <c>axial grid with Dimension</c>.
+		/// </para>
+		/// </remarks>
+		public string Value { get; private set; }
+
+		/// <summary>
 		/// Reads the position of a <c>TCH_TEXT</c> or <c>TCH_MTEXT</c> object.
 		/// </summary>
+		/// <param name="dxfName">DXF name of the class. Content is only taken from the classes this
+		/// reader is for; the payload of any other class holds property names that would otherwise
+		/// be mistaken for text.</param>
 		/// <param name="payload">The class specific data of the object.</param>
 		/// <param name="version">Drawing version used by the string encoding.</param>
 		/// <returns>The parsed position; never null.</returns>
-		public static TchText Parse(byte[] payload, ACadVersion version)
+		public static TchText Parse(string dxfName, byte[] payload, ACadVersion version)
 		{
 			if (payload == null)
 			{
@@ -91,7 +116,98 @@ namespace ACadSharp.IO.DWG.Tangent
 				text.HasPosition = true;
 			}
 
+			//Only these two classes write text; for anything else the longest readable string is a
+			//property name, which is not content.
+			if (dxfName == "TCH_TEXT" || dxfName == "TCH_MTEXT")
+			{
+				readContent(text, payload, version);
+			}
+
 			return text;
+		}
+		private static void readContent(TchText text, byte[] payload, ACadVersion version)
+		{
+			using (MemoryStream stream = new MemoryStream(payload, writable: false))
+			{
+				IDwgStreamReader reader = DwgStreamReaderBase.GetStreamHandler(version, stream, resetPositon: true);
+				long limit = (long)payload.Length * 8L;
+
+				while (reader.PositionInBits() < limit)
+				{
+					long start = reader.PositionInBits();
+					string value;
+
+					try
+					{
+						value = reader.ReadVariableText();
+					}
+					catch (Exception)
+					{
+						reader.SetPositionInBits(start + 1);
+						continue;
+					}
+
+					if (isContent(value) && (text.Value == null || value.Length > text.Value.Length))
+					{
+						text.Value = value;
+					}
+
+					reader.SetPositionInBits(start + 1);
+				}
+			}
+		}
+
+		private static bool isContent(string value)
+		{
+			if (value == null || value.Length < 2 || value.Length > 400)
+			{
+				return false;
+			}
+
+			//Markers, field descriptors and the class id are all recognisable by shape.
+			if (value.StartsWith("TDBXDATAMAP", StringComparison.Ordinal) || value.StartsWith("T20", StringComparison.Ordinal))
+			{
+				return false;
+			}
+
+			if (value[0] == '{' || value[value.Length - 1] == '}')
+			{
+				return false;
+			}
+
+			//A scalar decodes through the alphabet, so it is not content.
+			if (TgDataEncrypt.TryDecode(value, out _))
+			{
+				return false;
+			}
+
+			int core = 0;
+			foreach (char c in value)
+			{
+				int o = c;
+
+				//The blocks a drawing's text actually uses: ASCII, CJK ideographs, CJK punctuation,
+				//fullwidth forms, and a few typographic marks.
+				bool allowed = (o >= 0x20 && o <= 0x7E)
+					|| (o >= 0x4E00 && o <= 0x9FFF)
+					|| (o >= 0x3000 && o <= 0x303F)
+					|| (o >= 0xFF00 && o <= 0xFFEF)
+					|| o == 0x2011 || o == 0x2013 || o == 0x2014
+					|| o == 0x2018 || o == 0x2019 || o == 0x201C || o == 0x201D
+					|| o == 0x2026 || o == 0x00B0 || o == 0x00D7 || o == 0x00B1;
+
+				if (!allowed)
+				{
+					return false;
+				}
+
+				if (char.IsLetterOrDigit(c))
+				{
+					core++;
+				}
+			}
+
+			return core >= 2;
 		}
 	}
 }

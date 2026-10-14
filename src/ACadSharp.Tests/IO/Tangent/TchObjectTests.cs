@@ -1,4 +1,4 @@
-using ACadSharp;
+﻿using ACadSharp;
 using ACadSharp.IO.DWG.Tangent;
 using System;
 using System.Collections.Generic;
@@ -265,12 +265,26 @@ namespace ACadSharp.Tests.IO.Tangent
 "kAOEA6gDhAOcA4QDnAOEA5wDgAOkA4QDjAOEA6gDgAPgA4QDjAOEA6QDhAOQA4QDkAOEA5wDhAOYA4QDmAOEA5gDhAOQA4QD" +
 "pAOEA6ADhAOcA4QDnAEG4QDmAOEA5QDhAOYA5COpAUGpAcxy";
 
+		//TCH_TEXT, handle 829
+		private const string SquareColumnFixture =
+"ChGQVQWQOQOBBEbBi4iLTH3ECBSlmpfmkOFASZ7AEYAOABGADAARgAxADIARgAtADkAMwA4ADkALQA0ADkARgBDAC0AOAAzA" +
+"DUARAAtADgAQwA4ADYAQwA2AEUARQBFAEUARABCAH0ASzhAOUA4QDmAOEA5ADhAOUA4QDlAOAA6QDhAOUA4QDlAOEA5QDhAO" +
+"UA4QDlAOEA5QDhAOUA4QDlAOEA5QDhAOUA4QDlAOEA5QDhAOUA4QDlAOEA5QDhAOUASjhAOkA4QDlAOAA+ADgAOkA4QDlAOE" +
+"A5QDhAOUA4QDlAOEA5QDhAOUA4QDlAOEA5QDhAOUA4QDlAOEA5QDhAOUA4QDlAOEA5QDhAOUA4QDlAEG4AD4AOEA5QDgAPcA" +
+"RhUAEQAQgBYAEQAQQBUAEEATQBBAFAAXwBCAEwATwBDAEsAXwBCAEUARwBJAE4AXwBBVQAMgAwAGQAMQBBVQAMgAwAGQAMgB" +
+"BVQAMgAwAGQAMwBBVQAMgAwAGQANABFlQARABCAFgARABBAFQAQQBNAEEAUABfAEIATABPAEMASwBfAEUATgBEAF8ASZ7AEI" +
+"AMAA3ADEAMwBFADYAQgAtAEEARgBGADYALQA0ADgANwAxAC0AQQAyADcAMwAtADcAOAA5ADYAOAAzADQARAA2ADYANwA2AH0" +
+"AQbgAPcA4QDlAOEA6gBDVMAcQB1AGEAcgBlACAAQwBvAGwAdQBtAG4ASjhAOkA4QDkAOAA9wDgAOkA4QDqAOEA5QDhAOUA4Q" +
+"DlAOEA5QDhAOUA4QDlAOEA5QDhAOUA4QDlAOEA5QDhAOUA4QDlAOEA5QDhAOUA4QDlAEo4AD3AOEA5QDhAOoA4ADpAOEA5QD" +
+"hAOUA4QDlAOEA5QDhAOUA4QDlAOEA5QDhAOUA4QDlAOEA5QDhAOUA4QDlAOEA5QDhAOUA4QDlAOEA5QBBuEA4wDhAOgA4QDk" +
+"AEG4QDlAOEA5QDhAOcAGhapAUUoiKAgf7w==";
+
 		private static byte[] decode(string value) => Convert.FromBase64String(value);
 
 		[Fact]
 		public void TchTextPositionMatchesTheFlattenedExport()
 		{
-			TchText text = TchText.Parse(decode(TextPayload), ACadVersion.AC1021);
+			TchText text = TchText.Parse("TCH_TEXT", decode(TextPayload), ACadVersion.AC1021);
 
 			Assert.True(text.HasPosition);
 			Assert.Equal(39176.3507, text.InsertionPoint.X, 4);
@@ -278,9 +292,36 @@ namespace ACadSharp.Tests.IO.Tangent
 		}
 
 		[Fact]
+		public void TchTextReadsTheContent()
+		{
+			TchText text = TchText.Parse("TCH_TEXT", decode(TextPayload), ACadVersion.AC1021);
+
+			//The export splits this into per-word text entities, but the object stores it whole.
+			Assert.Equal("Wall and Window and Door".Replace("and", "&"), text.Value);
+		}
+
+		[Fact]
+		public void TchTextReadsContentThatLooksLikeNothingElse()
+		{
+			TchText text = TchText.Parse("TCH_TEXT", decode(SquareColumnFixture), ACadVersion.AC1021);
+
+			Assert.Equal("Square Column", text.Value);
+		}
+
+		[Fact]
+		public void TchTextTakesNoContentFromAClassThatHasNone()
+		{
+			//A column's payload holds property names such as PUB_HATCH, which must not come back as
+			//text.
+			TchText text = TchText.Parse("TCH_COLUMN", decode(ColumnPayload), ACadVersion.AC1021);
+
+			Assert.Null(text.Value);
+		}
+
+		[Fact]
 		public void TchTextRejectsAShortPayload()
 		{
-			TchText text = TchText.Parse(new byte[4], ACadVersion.AC1021);
+			TchText text = TchText.Parse("TCH_TEXT", new byte[4], ACadVersion.AC1021);
 
 			Assert.False(text.HasPosition);
 			Assert.Equal(CSMath.XYZ.Zero, text.InsertionPoint);
@@ -289,7 +330,7 @@ namespace ACadSharp.Tests.IO.Tangent
 		[Fact]
 		public void TchTextThrowsOnANullPayload()
 		{
-			Assert.Throws<ArgumentNullException>(() => TchText.Parse(null, ACadVersion.AC1021));
+			Assert.Throws<ArgumentNullException>(() => TchText.Parse("TCH_TEXT", null, ACadVersion.AC1021));
 		}
 
 		[Fact]
