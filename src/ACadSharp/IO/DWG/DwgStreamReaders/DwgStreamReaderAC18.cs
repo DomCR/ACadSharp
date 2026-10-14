@@ -110,8 +110,11 @@ namespace ACadSharp.IO.DWG
 			}
 			else
 			{
+				//Color number 0 with no flags: ByBlock color and NO transparency value, which is ByLayer
+				//(the writer writes 0 exactly for ByBlock + ByLayer). Reading it as Opaque turned every
+				//ByBlock-colored entity into an explicit 0% on the next save.
 				color = Color.ByBlock;
-				transparency = Transparency.Opaque;
+				transparency = Transparency.ByLayer;
 			}
 
 			return color;
