@@ -1,4 +1,5 @@
-﻿using CSMath;
+﻿using ACadSharp.Entities;
+using CSMath;
 using System;
 using System.Collections.Generic;
 using System.IO;
@@ -221,6 +222,33 @@ namespace ACadSharp.IO.DWG.Tangent
 
 			polygon.IsComplete = true;
 			return polygon;
+		}
+
+		/// <summary>
+		/// Converts the outline into a lightweight polyline, which is how a consumer draws it.
+		/// </summary>
+		/// <remarks>
+		/// The two representations line up exactly: a vertex carries a position and a bulge in both,
+		/// and the bulge has the same meaning, so the shape survives the conversion without
+		/// approximation. Nothing is lost except the flags byte.
+		/// </remarks>
+		/// <param name="closed">Whether to mark the polyline closed, which is the usual case for an
+		/// object outline but not for every class.</param>
+		/// <returns>A polyline with one vertex per outline vertex.</returns>
+		public LwPolyline ToLwPolyline(bool closed = true)
+		{
+			LwPolyline polyline = new LwPolyline();
+			polyline.IsClosed = closed;
+
+			foreach (TchVertex vertex in _vertices)
+			{
+				polyline.Vertices.Add(new LwPolyline.Vertex(vertex.Position)
+				{
+					Bulge = vertex.Bulge
+				});
+			}
+
+			return polyline;
 		}
 
 		private static bool isPlausible(double value)

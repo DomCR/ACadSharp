@@ -71,6 +71,18 @@ namespace ACadSharp.Tests.IO.Tangent
 "OEA5QDhAOUA4QDlAOAA6QDhAOUA4QDlAOEA5QDhAOUA4QDlAOEA5QDhAOUA4QDlAOEA5QDhAOUA4QDlAOEA5QDhAOUA4QDlA" +
 "OEA5QDhAOUApiHKkBKqEBXiEB1ikBRykBNvm";
 
+		//TCH_CUT, handle 1225, an outline with one arc edge
+		private const string CutPayload =
+"ChGAhEBQQk2ZXF13XuQBin/6kEAdpAYC989e6oe9AGKf/qQQB2kCgL3z17qh70BQ0hKqpMDaQIk2ZXF13XuQFDSEqqkwNpAk" +
+"mewAyAEUAMAAwAEMAMgBGADgALQBGADYANQA0AC0ANAA5ADIAOAAtAEEARgAzAEQALQAwAEUARQA2ADQANQA1ADUAOAA0ADI" +
+"AMwB9AEs4QDqAOEA5gDhAOgA4QDlAOEA5QDgAOkA4QDlAOEA5QDhAOUA4QDlAOEA5QDhAOUA4QDlAOEA5QDhAOUA4QDlAOEA" +
+"5QDhAOUA4QDlAOEA5QDhAOUA4QDlAEo4QDmAOEA5QDhAOgA4ADpAOEA5QDhAOUA4QDlAOEA5QDhAOUA4QDlAOEA5QDhAOUA4" +
+"QDlAOEA5QDhAOUA4QDlAOEA5QDhAOUA4QDlAOEA5QBBuEA5QDhAOMA4QDlAEG4QDkAOEA5ADhAOYARhUAEQAQgBYAEQAQQBU" +
+"AEEATQBBAFAAXwBCAEwATwBDAEsAXwBCAEUARwBJAE4AXwBFlQARABCAFgARABBAFQAQQBNAEEAUABfAEIATABPAEMASwBfA" +
+"EUATgBEAF8ASZ7AEIAMAA3ADEAMwBFADYAQgAtAEEARgBGADYALQA0ADgANwAxAC0AQQAyADcAMwAtADcAOAA5ADYAOAAzAD" +
+"QARAA2ADYANwA2AH0AQbhAOMA4QDlAOEA6gBBuEA6gDhAOYA4AD3AEG4AD4AOEA5QDhAOMAQbgAPgA4QDlAOEA6gBBuEA5gD" +
+"hAOUA4QDnAEG4QDjAOEA5QDhAOMAbBCpAURR";
+
 		private static byte[] decode(string value) => Convert.FromBase64String(value);
 
 		[Fact]
@@ -137,6 +149,37 @@ namespace ACadSharp.Tests.IO.Tangent
 			//export of the same drawing.
 			Assert.Equal(600.0, width, 4);
 			Assert.Equal(600.0, height, 4);
+		}
+
+		[Fact]
+		public void TchPolygonConvertsToAPolylineWithoutLosingTheShape()
+		{
+			TchPolygon polygon = TchPolygon.FindInPayload(decode(ColumnPayload), ACadVersion.AC1021, out _);
+
+			ACadSharp.Entities.LwPolyline polyline = polygon.ToLwPolyline();
+
+			Assert.True(polyline.IsClosed);
+			Assert.Equal(polygon.Vertices.Count, polyline.Vertices.Count);
+
+			for (int i = 0; i < polygon.Vertices.Count; i++)
+			{
+				Assert.Equal(polygon.Vertices[i].Position.X, polyline.Vertices[i].Location.X);
+				Assert.Equal(polygon.Vertices[i].Position.Y, polyline.Vertices[i].Location.Y);
+				Assert.Equal(polygon.Vertices[i].Bulge, polyline.Vertices[i].Bulge);
+			}
+		}
+
+		[Fact]
+		public void TchPolygonConvertsAnArcEdgeAsABulge()
+		{
+			//TCH_CUT carries an outline with a bulge of 1 on its first vertex, a semicircular edge.
+			//The conversion has to keep it rather than flatten it.
+			TchPolygon polygon = TchPolygon.FindInPayload(decode(CutPayload), ACadVersion.AC1021, out _);
+
+			ACadSharp.Entities.LwPolyline polyline = polygon.ToLwPolyline();
+
+			Assert.Equal(1.0, polyline.Vertices[0].Bulge);
+			Assert.Equal(0.0, polyline.Vertices[1].Bulge);
 		}
 
 		[Fact]
