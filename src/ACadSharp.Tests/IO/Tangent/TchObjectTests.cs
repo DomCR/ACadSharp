@@ -1,6 +1,7 @@
 using ACadSharp;
 using ACadSharp.IO.DWG.Tangent;
 using System;
+using System.Collections.Generic;
 using Xunit;
 
 namespace ACadSharp.Tests.IO.Tangent
@@ -307,6 +308,62 @@ namespace ACadSharp.Tests.IO.Tangent
 			//The opening sits in a gap of the wall, and the export draws that gap between 44358.685
 			//and 45158.685, so the opening is centred on the midpoint.
 			Assert.Equal(44758.6853, point.X, 4);
+		}
+
+		[Fact]
+		public void TgDataEncryptUsesTheRecoveredAlphabet()
+		{
+			Assert.Equal(12, TgDataEncrypt.Alphabet.Count);
+
+			//The digits are deliberately out of order: 6 sits below 0.
+			Assert.Equal('0', TgDataEncrypt.Alphabet[58]);
+			Assert.Equal('6', TgDataEncrypt.Alphabet[50]);
+			Assert.Equal('9', TgDataEncrypt.Alphabet[51]);
+			Assert.Equal('8', TgDataEncrypt.Alphabet[56]);
+			Assert.Equal('7', TgDataEncrypt.Alphabet[57]);
+			Assert.Equal('.', TgDataEncrypt.Alphabet[36]);
+		}
+
+		[Fact]
+		public void TgDataEncryptDecodesTheColumnHeight()
+		{
+			IReadOnlyList<double> values = TgDataEncrypt.ReadAllFrom(decode(ColumnPayload), ACadVersion.AC1021);
+
+			Assert.NotEmpty(values);
+
+			//The column section is 600 by 600, which its outline gives, and its height is 2600.
+			//Those come from different parts of the payload, so they confirm each other.
+			Assert.Contains(2600.0, values);
+		}
+
+		[Fact]
+		public void TgDataEncryptDecodesTheWallDimensions()
+		{
+			IReadOnlyList<double> values = TgDataEncrypt.ReadAllFrom(decode(WallFixture), ACadVersion.AC1021);
+
+			Assert.NotEmpty(values);
+
+			//All plausible drawing dimensions: nothing negative, nothing astronomical.
+			foreach (double value in values)
+			{
+				Assert.InRange(value, 0.0, 1.0e6);
+			}
+
+			Assert.Contains(41700.0, values);
+			Assert.Contains(11900.0, values);
+		}
+
+		[Fact]
+		public void TgDataEncryptRejectsAStringOutsideTheAlphabet()
+		{
+			//A class id is not ciphertext and must not be read as a number.
+			Assert.False(TgDataEncrypt.TryDecode("{F8F0F12F-9389-49FC-835D-8C86C6EEEEDB}", out _));
+		}
+
+		[Fact]
+		public void TgDataEncryptThrowsOnANullString()
+		{
+			Assert.Throws<ArgumentNullException>(() => TgDataEncrypt.Decode(null));
 		}
 
 		[Fact]
