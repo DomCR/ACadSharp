@@ -37,6 +37,53 @@ namespace ACadSharp.IO.DWG.Tangent
 		public const double MinimumCoordinate = 100.0;
 
 		/// <summary>
+		/// Reads the 2-D position that a class stores at a recorded offset.
+		/// </summary>
+		/// <remarks>
+		/// For the classes in <see cref="TchEntityLayout"/> the position is a bare pair of
+		/// coordinates with nothing around it to recognise, so it is read at its offset rather than
+		/// searched for. Use <see cref="TryFindPoint"/> for the classes that store a curve.
+		/// </remarks>
+		/// <param name="dxfName">DXF name of the class, for example <c>TCH_ELEVATION</c>.</param>
+		/// <param name="payload">The class specific data of the object.</param>
+		/// <param name="version">Drawing version used by the stream reader.</param>
+		/// <param name="position">Receives the position that was read.</param>
+		/// <returns>True when the class has a recorded position and the payload is long enough.</returns>
+		public static bool TryReadPosition(string dxfName, byte[] payload, ACadVersion version, out XY position)
+		{
+			if (payload == null)
+			{
+				throw new ArgumentNullException(nameof(payload));
+			}
+
+			position = XY.Zero;
+
+			if (!TchEntityLayout.TryGetPositionOffset(dxfName, out int xOffset, out int yOffset))
+			{
+				return false;
+			}
+
+			if ((long)payload.Length * 8L < yOffset + 64)
+			{
+				return false;
+			}
+
+			using (MemoryStream stream = new MemoryStream(payload, writable: false))
+			{
+				IDwgStreamReader reader = DwgStreamReaderBase.GetStreamHandler(version, stream, resetPositon: true);
+
+				reader.SetPositionInBits(xOffset);
+				double x = reader.ReadDouble();
+
+				reader.SetPositionInBits(yOffset);
+				double y = reader.ReadDouble();
+
+				position = new XY(x, y);
+				return true;
+			}
+		}
+
+		/// <summary>
 		/// Searches a class specific payload for the first well formed 3-D point.
 		/// </summary>
 		/// <remarks>
