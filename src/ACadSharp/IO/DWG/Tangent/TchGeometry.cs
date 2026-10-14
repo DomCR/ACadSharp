@@ -181,7 +181,9 @@ namespace ACadSharp.IO.DWG.Tangent
 
 				long boundary = findFieldBoundary(reader, limit);
 
-				for (long offset = 0; offset + XOffset + CoordinateBits <= boundary; offset++)
+				//The tighter alignment needs less room, so the loop has to allow for it: a drawing
+				//index puts its position exactly where the wider check would say there is no room.
+				for (long offset = 0; offset + XOffsetTight + CoordinateBits <= boundary; offset++)
 				{
 					if (tryReadPosition(reader, offset, XOffset, out XYZ position)
 						|| tryReadPosition(reader, offset, XOffsetTight, out position))
