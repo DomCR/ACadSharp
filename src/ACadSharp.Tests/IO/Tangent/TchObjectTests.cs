@@ -99,6 +99,63 @@ namespace ACadSharp.Tests.IO.Tangent
 		}
 
 		[Fact]
+		public void TchPolygonRecoversTheColumnSection()
+		{
+			TchPolygon polygon = TchPolygon.FindInPayload(decode(ColumnPayload), ACadVersion.AC1021, out long offset);
+
+			Assert.NotNull(polygon);
+			Assert.True(polygon.IsComplete);
+			Assert.Equal(332, offset);
+			Assert.Equal(4, polygon.Vertices.Count);
+
+			//The four corners of the column section, in order.
+			Assert.Equal(35910.0208, polygon.Vertices[0].Position.X, 4);
+			Assert.Equal(28751.9846, polygon.Vertices[0].Position.Y, 4);
+			Assert.Equal(36510.0208, polygon.Vertices[1].Position.X, 4);
+			Assert.Equal(28751.9846, polygon.Vertices[1].Position.Y, 4);
+			Assert.Equal(36510.0208, polygon.Vertices[2].Position.X, 4);
+			Assert.Equal(29351.9846, polygon.Vertices[2].Position.Y, 4);
+			Assert.Equal(35910.0208, polygon.Vertices[3].Position.X, 4);
+			Assert.Equal(29351.9846, polygon.Vertices[3].Position.Y, 4);
+
+			//A straight edged outline, so every bulge is zero.
+			foreach (TchVertex vertex in polygon.Vertices)
+			{
+				Assert.Equal(0.0, vertex.Bulge);
+			}
+		}
+
+		[Fact]
+		public void TchPolygonRecoversTheSectionSize()
+		{
+			TchPolygon polygon = TchPolygon.FindInPayload(decode(ColumnPayload), ACadVersion.AC1021, out _);
+
+			double width = polygon.Vertices[1].Position.X - polygon.Vertices[0].Position.X;
+			double height = polygon.Vertices[2].Position.Y - polygon.Vertices[1].Position.Y;
+
+			//The column is square, and its edge lands on the same grid as the walls in the flattened
+			//export of the same drawing.
+			Assert.Equal(600.0, width, 4);
+			Assert.Equal(600.0, height, 4);
+		}
+
+		[Fact]
+		public void TchPolygonReturnsNullWhenThereIsNoOutline()
+		{
+			//A text object carries no outline.
+			TchPolygon polygon = TchPolygon.FindInPayload(decode(TextPayload), ACadVersion.AC1021, out long offset);
+
+			Assert.Null(polygon);
+			Assert.Equal(-1, offset);
+		}
+
+		[Fact]
+		public void TchPolygonThrowsOnANullPayload()
+		{
+			Assert.Throws<ArgumentNullException>(() => TchPolygon.FindInPayload(null, ACadVersion.AC1021, out _));
+		}
+
+		[Fact]
 		public void TchDataMapFindsTheBlockInsideANativePayload()
 		{
 			TchDataMap map = TchDataMap.ReadFromPayload(decode(WallPayload), ACadVersion.AC1021);
