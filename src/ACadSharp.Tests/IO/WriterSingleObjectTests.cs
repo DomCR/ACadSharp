@@ -11,8 +11,10 @@ using System;
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
+using System.Xml.Linq;
 using Xunit;
 using Xunit.Abstractions;
+using static System.Net.Mime.MediaTypeNames;
 
 namespace ACadSharp.Tests.IO;
 
@@ -50,6 +52,7 @@ public abstract class WriterSingleObjectTests : IOTestsBase
 		Data.Add(new(nameof(SingleCaseGenerator.SingleLongMText)));
 		Data.Add(new(nameof(SingleCaseGenerator.SingleMTextRotation)));
 		Data.Add(new(nameof(SingleCaseGenerator.SingleMTextSpecialCharacter)));
+		Data.Add(new(nameof(SingleCaseGenerator.TextWithKoreanCharacters)));
 		Data.Add(new(nameof(SingleCaseGenerator.TextWithChineseCharacters)));
 		Data.Add(new(nameof(SingleCaseGenerator.CreateGroup)));
 		Data.Add(new(nameof(SingleCaseGenerator.SingleMTextMultiline)));
@@ -2789,7 +2792,29 @@ public abstract class WriterSingleObjectTests : IOTestsBase
 
 				Assert.NotNull(mtextResult);
 				Assert.NotNull(textResult);
+
 				Assert.Equal(mtext.Value, mtextResult.Value);
+				Assert.Equal(text.Value, textResult.Value);
+
+				EntityComparator.IsEqual(text, textResult);
+				EntityComparator.IsEqual(mtext, mtextResult);
+			};
+		}
+
+		public void TextWithKoreanCharacters()
+		{
+			this.Document.Header.CodePage = "kcs5601";
+
+			//this.Document.Header.CodePage = "ANSI_949";//Invalid
+
+			var text = new TextEntity { Value = "안녕하세요 도면", Height = 2.5 };
+			this.Document.Entities.Add(text);
+
+			this.AssertRoundtrip = (doc) =>
+			{
+				TextEntity textResult = doc.GetCadObject<TextEntity>(text.Handle);
+				Assert.NotNull(textResult);
+				Assert.Equal(text.Value, textResult.Value);
 				EntityComparator.IsEqual(text, textResult);
 			};
 		}
