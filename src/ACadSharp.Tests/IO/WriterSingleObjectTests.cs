@@ -35,6 +35,7 @@ public abstract class WriterSingleObjectTests : IOTestsBase
 		Data.Add(new(nameof(SingleCaseGenerator.AddViewport)));
 		Data.Add(new(nameof(SingleCaseGenerator.SingleMLeader)));
 		Data.Add(new(nameof(SingleCaseGenerator.SingleMLine)));
+		Data.Add(new(nameof(SingleCaseGenerator.DrawBoundingBox)));
 		Data.Add(new(nameof(SingleCaseGenerator.EllipseSegments)));
 		Data.Add(new(nameof(SingleCaseGenerator.EntityColorByLayer)));
 		Data.Add(new(nameof(SingleCaseGenerator.EntityColorTrueColor)));
@@ -1484,6 +1485,18 @@ public abstract class WriterSingleObjectTests : IOTestsBase
 			};
 		}
 
+		public void DrawBoundingBox()
+		{
+			Line l = new Line(XYZ.Zero, new XYZ(10, 10, 0));
+			this.drawBoundingBox(l);
+
+			Point p = new Point(new XYZ(20, 20, 0));
+			this.drawBoundingBox(p);
+
+			Arc arc = new Arc(XYZ.Zero, 5, 0, Math.PI / 2);
+			this.drawBoundingBox(arc);
+		}
+
 		public void EllipseSegments()
 		{
 			XYZ center = new XYZ(5, 5, 0);
@@ -2888,6 +2901,35 @@ public abstract class WriterSingleObjectTests : IOTestsBase
 				Assert.Equal(record.IsUnloaded, result.IsUnloaded);
 				Assert.Equal(this.Document.ModelSpace.Entities.Count, doc.ModelSpace.Entities.Count);
 			};
+		}
+
+		private void drawBoundingBox(Entity entity)
+		{
+			this.Document.Entities.Add(entity);
+
+			var box = entity.GetBoundingBox();
+			if (box.Extent == BoundingBoxExtent.Infinite)
+			{
+				return;
+			}
+
+			var corners = new List<XYZ>
+			{
+				box.Min,
+				new XYZ(box.Max.X, box.Min.Y, box.Min.Z),
+				new XYZ(box.Max.X, box.Max.Y, box.Min.Z),
+				new XYZ(box.Min.X, box.Max.Y, box.Min.Z),
+				new XYZ(box.Min.X, box.Min.Y, box.Max.Z),
+				new XYZ(box.Max.X, box.Min.Y, box.Max.Z),
+				box.Max,
+				new XYZ(box.Min.X, box.Max.Y, box.Max.Z)
+			};
+
+			var pline = new Polyline3D(corners);
+
+			pline.IsClosed = true;
+			pline.Color = Color.Green;
+			this.Document.Entities.Add(pline);
 		}
 	}
 }
