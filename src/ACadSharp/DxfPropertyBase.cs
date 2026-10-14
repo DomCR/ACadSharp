@@ -149,6 +149,13 @@ namespace ACadSharp
 			this._property = property;
 		}
 
+		protected DxfPropertyBase(DxfPropertyBase<T> other)
+		{
+			this._attributeData = other._attributeData;
+			this._property = other._property;
+			this._assignedCode = other._assignedCode;
+		}
+
 		/// <summary>
 		/// Set the value for the property using the AssignedCode
 		/// </summary>

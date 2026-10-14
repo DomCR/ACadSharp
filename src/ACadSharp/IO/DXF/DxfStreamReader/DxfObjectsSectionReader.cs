@@ -3134,6 +3134,12 @@ internal class DxfObjectsSectionReader : DxfSectionReaderBase
 	{
 		this._reader.ReadNext();
 
+		if (this._reader.Code == 280)
+		{
+			template.CadObject.CloningFlags = (DictionaryCloningFlags)this._reader.ValueAsShort;
+			this._reader.ReadNext();
+		}
+
 		while (this._reader.DxfCode != DxfCode.Start)
 		{
 			switch (this._reader.GroupCodeValue)
@@ -3151,7 +3157,8 @@ internal class DxfObjectsSectionReader : DxfSectionReaderBase
 				case GroupCodeValueType.Handle:
 				case GroupCodeValueType.ObjectId:
 				case GroupCodeValueType.ExtendedDataHandle:
-					template.AddHandleReference(this._reader.Code, this._reader.ValueAsHandle);
+					var entry = template.CadObject.CreateEntry(this._reader.Code, this._reader.ValueAsHandle);
+					template.AddHandleReference(entry);
 					break;
 				default:
 					template.CadObject.CreateEntry(this._reader.Code, this._reader.Value);

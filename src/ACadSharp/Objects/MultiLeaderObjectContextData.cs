@@ -39,7 +39,7 @@ public partial class MultiLeaderObjectContextData : AnnotScaleObjectContextData,
 	/// The value returned is the value entered in AutoCAD multiplied with the <see cref="ScaleFactor"/>.
 	/// </value>
 	[DxfCodeValue(140)]
-	public double ArrowheadSize { get; set; }
+	public double ArrowheadSize { get; set; } = 0.18d;
 
 	/// <summary>
 	/// Background fill color
@@ -75,7 +75,7 @@ public partial class MultiLeaderObjectContextData : AnnotScaleObjectContextData,
 	/// Base direction
 	/// </summary>
 	[DxfCodeValue(111, 121, 131)]
-	public XYZ BaseDirection { get; set; }
+	public XYZ BaseDirection { get; set; } = XYZ.AxisX;
 
 	/// <summary>
 	/// Base point
@@ -87,7 +87,7 @@ public partial class MultiLeaderObjectContextData : AnnotScaleObjectContextData,
 	/// Base vertical
 	/// </summary>
 	[DxfCodeValue(112, 122, 132)]
-	public XYZ BaseVertical { get; set; }
+	public XYZ BaseVertical { get; set; } = XYZ.AxisY;
 
 	/// <summary>
 	/// Gets a <see cref="BlockRecord"/> containing elements
@@ -604,7 +604,6 @@ public partial class MultiLeaderObjectContextData : AnnotScaleObjectContextData,
 	{
 		this.Document.TextStyles.RemoveReference(this._textStyle?.Name, this);
 		this.Document.BlockRecords.RemoveReference(this._blockContent?.Name, this);
-
 
 		base.UnassignDocument();
 

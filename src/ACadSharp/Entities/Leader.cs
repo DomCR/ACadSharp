@@ -2,6 +2,7 @@
 using ACadSharp.Tables;
 using ACadSharp.XData;
 using CSMath;
+using CSMath.Extensions;
 using System;
 using System.Collections.Generic;
 
@@ -69,7 +70,7 @@ public class Leader : Entity, IOrientable
 			}
 
 			double angle = (this.Vertices[this.Vertices.Count - 2] - this.Vertices[this.Vertices.Count - 1]).AngleBetweenVectors(this.HorizontalDirection);
-			return MathHelper.IsZero(angle);
+			return angle.IsZero();
 		}
 	}
 

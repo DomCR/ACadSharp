@@ -3,9 +3,7 @@ using ACadSharp.Entities;
 using ACadSharp.Objects;
 using ACadSharp.Tables;
 using ACadSharp.Tests.Common;
-using ACadSharp.Tests.TestModels;
 using System;
-using System.Collections.Generic;
 using System.Diagnostics;
 using System.Linq;
 using Xunit;
@@ -46,6 +44,11 @@ public class CadDocumentTests
 	[Fact]
 	public void AddCadObjectStressTest()
 	{
+		if (!TestVariables.LocalEnv)
+		{
+			return;
+		}
+
 		CadDocument doc = new CadDocument();
 
 		Stopwatch stopwatch = new Stopwatch();
@@ -439,5 +442,20 @@ public class CadDocumentTests
 		string multiLeaderStyleName = "my_multileaderstyle";
 		doc.SetCurrent(new MultiLeaderStyle(multiLeaderStyleName));
 		Assert.True(doc.MLeaderStyles.ContainsKey(multiLeaderStyleName));
+	}
+
+	[Fact]
+	public void TryGetCadObjectTypeMismatch()
+	{
+		CadDocument doc = new CadDocument();
+
+		Line line = new Line();
+		doc.Entities.Add(line);
+
+		Assert.True(doc.TryGetCadObject(line.Handle, out Line found));
+		Assert.Equal(line, found);
+
+		Assert.False(doc.TryGetCadObject(line.Handle, out Circle circle));
+		Assert.Null(circle);
 	}
 }

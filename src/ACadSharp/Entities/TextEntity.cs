@@ -1,6 +1,7 @@
 ﻿using ACadSharp.Attributes;
 using ACadSharp.Tables;
 using CSMath;
+using CSMath.Extensions;
 using CSUtilities.Extensions;
 using System;
 using System.Collections.Generic;
@@ -256,7 +257,7 @@ public class TextEntity : Entity, IText
 
 		// the height must be greater than zero, the cos is always positive between -85 and 85
 		double newHeight = newVvector.GetLength() * Math.Cos(newObliqueAngle);
-		newHeight = MathHelper.IsZero(newHeight) ? MathHelper.Epsilon : newHeight;
+		newHeight = newHeight.IsZero() ? MathHelper.Epsilon : newHeight;
 
 		// the width factor is defined between 0.01 and 100
 		double newWidthFactor = newUvector.GetLength() / newHeight;

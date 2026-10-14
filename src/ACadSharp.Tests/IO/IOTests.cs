@@ -49,11 +49,6 @@ public class IOTests : IOTestsBase
 		List<Entity> entities = new List<Entity>(doc.Entities);
 		foreach (var item in entities)
 		{
-			if(item is Shape)
-			{
-
-			}
-
 			if (doc.Entities.Remove(item))
 			{
 				transfer.Entities.Add(item);

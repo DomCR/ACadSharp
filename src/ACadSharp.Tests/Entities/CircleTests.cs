@@ -1,6 +1,7 @@
 ﻿using ACadSharp.Entities;
 using ACadSharp.Tests.Common;
 using CSMath;
+using CSMath.Extensions;
 using System;
 using Xunit;
 
@@ -32,7 +33,12 @@ public class CircleTests : CommonEntityTests<Circle>
 			Radius = 1,
 		};
 
-		var v = circle.PolygonalVertexes(4);
+		var v = circle.PolygonalVertexes(2);
+
+		AssertUtils.AreEqual<XYZ>(start, v[0], "start point");
+		AssertUtils.AreEqual<XYZ>(mid2, v[1], "end point");
+
+		v = circle.PolygonalVertexes(4);
 
 		AssertUtils.AreEqual<XYZ>(start, v[0], "start point");
 		AssertUtils.AreEqual<XYZ>(mid1, v[1], "mid point");
@@ -44,7 +50,6 @@ public class CircleTests : CommonEntityTests<Circle>
 			Radius = 1,
 			Center = new XYZ(20, 20, 0),
 		};
-
 
 		start += circle.Center;
 		mid1 += circle.Center;

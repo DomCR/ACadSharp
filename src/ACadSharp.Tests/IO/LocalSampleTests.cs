@@ -1,10 +1,7 @@
-﻿using ACadSharp.Entities;
-using ACadSharp.IO;
+﻿using ACadSharp.IO;
 using ACadSharp.Tests.TestModels;
-using System.Collections.Generic;
 using System.Diagnostics;
 using System.IO;
-using System.Linq;
 using Xunit;
 using Xunit.Abstractions;
 
@@ -45,6 +42,7 @@ public class LocalSampleTests : IOTestsBase
 
 		if (!TestVariables.SaveOutputInStream)
 		{
+			this._output.WriteLine("--- starting write ---");
 			DwgWriter.Write(Path.Combine(TestVariables.DesktopFolder, "output", "test.dwg"), doc, notification: this.onNotification);
 		}
 	}
@@ -66,6 +64,7 @@ public class LocalSampleTests : IOTestsBase
 
 		if (!TestVariables.SaveOutputInStream)
 		{
+			this._output.WriteLine("--- starting write ---");
 			DxfWriter.Write(Path.Combine(TestVariables.DesktopFolder, "output", "test.dxf"), doc, notification: this.onNotification);
 		}
 	}
