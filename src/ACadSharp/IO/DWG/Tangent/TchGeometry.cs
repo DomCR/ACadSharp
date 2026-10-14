@@ -1,0 +1,176 @@
+﻿using CSMath;
+using System;
+using System.IO;
+
+namespace ACadSharp.IO.DWG.Tangent
+{
+	/// <summary>
+	/// Reads the geometric primitives Tianzheng stores on an object but that are not an outline.
+	/// </summary>
+	/// <remarks>
+	/// <para>
+	/// A class that has no filled section, a wall for instance, still stores the curve it is built
+	/// on. That curve is a pair of 3-D points, and a point is written as three <c>BitDouble</c>
+	/// values rather than as three raw doubles, so it is variable length: the 2-bit selector in
+	/// front of each coordinate is 0 when eight bytes follow, 1 for 1.0 and 2 for 0.0. A point of a
+	/// horizontal wall therefore occupies 134 bits, not the 192 a fixed layout would take.
+	/// </para>
+	/// <para>
+	/// That variable length is why a search for a 24-byte point finds nothing, and it is the reason
+	/// this helper exists rather than a fixed offset table.
+	/// </para>
+	/// </remarks>
+	public static class TchGeometry
+	{
+		/// <summary>Bit size of a point whose X and Y are both stored in full and whose Z is zero.</summary>
+		public const int PointBits = 134;
+
+		/// <summary>
+		/// Smallest magnitude accepted for a horizontal coordinate.
+		/// </summary>
+		/// <remarks>
+		/// The filter has to reject the values a misaligned read produces, and those cluster near
+		/// zero: reading a tag or a short as a double yields values of a few units. Architectural
+		/// drawings are dimensioned in millimetres, so requiring three digits keeps the real
+		/// coordinates and drops that noise. A drawing in metres would need this lowered.
+		/// </remarks>
+		public const double MinimumCoordinate = 100.0;
+
+		/// <summary>
+		/// Searches a class specific payload for the first well formed 3-D point.
+		/// </summary>
+		/// <remarks>
+		/// The point does not sit at a fixed offset, so every bit offset is tried and a candidate is
+		/// accepted only when all three coordinates decode to plausible values. On a wall this
+		/// returns the start of the curve the wall is built on.
+		/// </remarks>
+		/// <param name="payload">The class specific data of the object.</param>
+		/// <param name="version">Drawing version used by the stream reader.</param>
+		/// <param name="point">Receives the point that was found.</param>
+		/// <param name="bitOffset">Receives the bit offset the point was found at.</param>
+		/// <returns>True when a point was found.</returns>
+		public static bool TryFindPoint(byte[] payload, ACadVersion version, out XYZ point, out long bitOffset)
+		{
+			if (payload == null)
+			{
+				throw new ArgumentNullException(nameof(payload));
+			}
+
+			point = XYZ.Zero;
+			bitOffset = -1;
+
+			if (payload.Length < 32)
+			{
+				return false;
+			}
+
+			using (MemoryStream stream = new MemoryStream(payload, writable: false))
+			{
+				IDwgStreamReader reader = DwgStreamReaderBase.GetStreamHandler(version, stream, resetPositon: true);
+				long limit = (long)payload.Length * 8L;
+
+				for (long offset = 0; offset < limit - PointBits; offset++)
+				{
+					if (!tryReadPoint(reader, offset, limit, out XYZ candidate))
+					{
+						continue;
+					}
+
+					point = candidate;
+					bitOffset = offset;
+					return true;
+				}
+			}
+
+			return false;
+		}
+
+		/// <summary>
+		/// Searches a class specific payload for a point whose X and Y match the given values.
+		/// </summary>
+		/// <param name="payload">The class specific data of the object.</param>
+		/// <param name="version">Drawing version used by the stream reader.</param>
+		/// <param name="x">Expected X.</param>
+		/// <param name="y">Expected Y.</param>
+		/// <param name="tolerance">Accepted difference, in drawing units.</param>
+		/// <param name="bitOffset">Receives the bit offset the point was found at.</param>
+		public static bool ContainsPoint(byte[] payload, ACadVersion version, double x, double y, double tolerance, out long bitOffset)
+		{
+			if (payload == null)
+			{
+				throw new ArgumentNullException(nameof(payload));
+			}
+
+			return findMatching(payload, version, x, y, tolerance, out bitOffset);
+		}
+
+		private static bool findMatching(byte[] payload, ACadVersion version, double x, double y, double tolerance, out long bitOffset)
+		{
+			bitOffset = -1;
+
+			using (MemoryStream stream = new MemoryStream(payload, writable: false))
+			{
+				IDwgStreamReader reader = DwgStreamReaderBase.GetStreamHandler(version, stream, resetPositon: true);
+				long limit = (long)payload.Length * 8L;
+
+				for (long offset = 0; offset < limit - PointBits; offset++)
+				{
+					if (!tryReadPoint(reader, offset, limit, out XYZ candidate))
+					{
+						continue;
+					}
+
+					if (Math.Abs(candidate.X - x) <= tolerance && Math.Abs(candidate.Y - y) <= tolerance)
+					{
+						bitOffset = offset;
+						return true;
+					}
+				}
+			}
+
+			return false;
+		}
+
+		private static bool tryReadPoint(IDwgStreamReader reader, long offset, long limit, out XYZ point)
+		{
+			point = XYZ.Zero;
+
+			try
+			{
+				reader.SetPositionInBits(offset);
+
+				if (reader.PositionInBits() + PointBits > limit)
+				{
+					return false;
+				}
+
+				double x = reader.ReadBitDouble();
+				double y = reader.ReadBitDouble();
+				double z = reader.ReadBitDouble();
+
+				if (!isPlausible(x) || !isPlausible(y) || !isFinite(z) || Math.Abs(z) > 1.0e7)
+				{
+					return false;
+				}
+
+				point = new XYZ(x, y, z);
+				return true;
+			}
+			catch (Exception)
+			{
+				//A misaligned offset produces values the reader rejects.
+				return false;
+			}
+		}
+
+		private static bool isPlausible(double value)
+		{
+			return isFinite(value) && Math.Abs(value) > MinimumCoordinate && Math.Abs(value) < 1.0e7;
+		}
+
+		private static bool isFinite(double value)
+		{
+			return !double.IsNaN(value) && !double.IsInfinity(value);
+		}
+	}
+}
