@@ -24,12 +24,22 @@ namespace ACadSharp.IO.Templates
 			{
 				this.CadObject.BinaryData = this.Chunks.SelectMany(c => c).ToArray();
 			}
-			else if (this.CadObject.BinaryData == null)
+
+			if (this.CadObject.BinaryData == null || this.CadObject.BinaryData.Length == 0)
 			{
 				return;
 			}
 
 			StreamIO reader = new StreamIO(CadObject.BinaryData);
+
+			// The binary data of an OLE2FRAME is expected to contain at least:
+			// 2 unknown bytes followed by 4 XYZ points (each 3 doubles = 24 bytes).
+			// Guard against truncated or empty data to avoid reading past the end of the stream.
+			const int minLength = 2 + 4 * 3 * sizeof(double);
+			if (reader.Length < minLength)
+			{
+				return;
+			}
 
 			//section that follows.
 			//Unknown data ---The OLE2 data.
