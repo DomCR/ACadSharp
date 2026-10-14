@@ -1,5 +1,6 @@
 ﻿using CSMath;
 using System;
+using System.Collections.Generic;
 using System.IO;
 
 namespace ACadSharp.IO.DWG.Tangent
@@ -131,6 +132,100 @@ namespace ACadSharp.IO.DWG.Tangent
 
 			return false;
 		}
+
+		/// <summary>
+		/// Searches a class specific payload for a run of 2-D points.
+		/// </summary>
+		/// <remarks>
+		/// <para>
+		/// Several classes store the points they are drawn from as a bare run of coordinates with
+		/// nothing in front of them: an index pointer is a line between two points, a section mark
+		/// carries its three, and so on. Each point is written Y first then X, 64 bits apart, and
+		/// the next point begins immediately after, so the whole run is a sequence of plausible
+		/// coordinates at a 64 bit stride.
+		/// </para>
+		/// <para>
+		/// The longest such run wins. A run of one coordinate is not accepted, because a single
+		/// plausible double carries too little information to call it a point.
+		/// </para>
+		/// <para>
+		/// Verified on an index pointer in the sample drawing, whose two points come out as
+		/// (45665.2489, 29070.1762) and (46469.9009, 26579.0959), while the flattened export
+		/// draws the line from (45665.25, 29070.18) to (46469.90, 26579.10).
+		/// </para>
+		/// </remarks>
+		/// <param name="payload">The class specific data of the object.</param>
+		/// <param name="version">Drawing version used by the stream reader.</param>
+		/// <param name="bitOffset">Receives the bit offset of the first Y coordinate.</param>
+		/// <returns>The points in order; empty when the payload holds no such run.</returns>
+		public static IReadOnlyList<XY> FindPoints(byte[] payload, ACadVersion version, out long bitOffset)
+		{
+			if (payload == null)
+			{
+				throw new ArgumentNullException(nameof(payload));
+			}
+
+			bitOffset = -1;
+
+			List<XY> best = new List<XY>();
+
+			if (payload.Length < 32)
+			{
+				return best;
+			}
+
+			using (MemoryStream stream = new MemoryStream(payload, writable: false))
+			{
+				IDwgStreamReader reader = DwgStreamReaderBase.GetStreamHandler(version, stream, resetPositon: true);
+				long limit = (long)payload.Length * 8L;
+
+				for (long offset = 0; offset < limit - 2L * CoordinateBits; offset++)
+				{
+					List<XY> run = tryReadRun(reader, offset, limit);
+					if (run != null && run.Count > best.Count)
+					{
+						best = run;
+						bitOffset = offset;
+					}
+				}
+			}
+
+			return best;
+		}
+
+		private static List<XY> tryReadRun(IDwgStreamReader reader, long offset, long limit)
+		{
+			List<XY> points = new List<XY>();
+
+			try
+			{
+				reader.SetPositionInBits(offset);
+
+				while (reader.PositionInBits() + 2L * CoordinateBits <= limit)
+				{
+					double y = reader.ReadDouble();
+					double x = reader.ReadDouble();
+
+					if (!isPlausible(x) || !isPlausible(y))
+					{
+						break;
+					}
+
+					points.Add(new XY(x, y));
+				}
+			}
+			catch (Exception)
+			{
+				return null;
+			}
+
+			//Two coordinates are one point and tell us nothing; a run is worth having from two
+			//points, that is four coordinates, upwards.
+			return points.Count >= 2 ? points : null;
+		}
+
+		/// <summary>Bit size of one coordinate of a stored point.</summary>
+		public const int CoordinateBits = 64;
 
 		/// <summary>
 		/// Searches a class specific payload for a point whose X and Y match the given values.
