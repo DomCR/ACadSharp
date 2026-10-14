@@ -226,6 +226,35 @@ namespace ACadSharp.Tests.IO.Tangent
 		}
 
 		[Fact]
+		public void TchPolygonCarriesTheColourAndLayerOfTheSourceObject()
+		{
+			TchPolygon polygon = TchPolygon.FindInPayload(decode(ColumnPayload), ACadVersion.AC1021, out _);
+
+			//A third of the objects in the corpus carry an explicit colour rather than ByLayer, so
+			//the conversion has to carry it across.
+			ACadSharp.Entities.Line source = new ACadSharp.Entities.Line();
+			source.Layer = new ACadSharp.Tables.Layer("COLUMN");
+			source.Color = new ACadSharp.Color(30);
+			source.LineWeight = ACadSharp.LineWeightType.W50;
+
+			ACadSharp.Entities.LwPolyline polyline = polygon.ToLwPolyline(source);
+
+			Assert.Equal(source.Color, polyline.Color);
+			Assert.Equal(source.Layer.Name, polyline.Layer.Name);
+			Assert.Equal(source.LineWeight, polyline.LineWeight);
+		}
+
+		[Fact]
+		public void TchPolygonLeavesPropertiesAtTheirDefaultsWithoutASource()
+		{
+			TchPolygon polygon = TchPolygon.FindInPayload(decode(ColumnPayload), ACadVersion.AC1021, out _);
+
+			ACadSharp.Entities.LwPolyline polyline = polygon.ToLwPolyline();
+
+			Assert.True(polyline.Color.IsByLayer);
+		}
+
+		[Fact]
 		public void TchPolygonConvertsAnArcEdgeAsABulge()
 		{
 			//TCH_CUT carries an outline with a bulge of 1 on its first vertex, a semicircular edge.

@@ -228,14 +228,25 @@ namespace ACadSharp.IO.DWG.Tangent
 		/// Converts the outline into a lightweight polyline, which is how a consumer draws it.
 		/// </summary>
 		/// <remarks>
+		/// <para>
 		/// The two representations line up exactly: a vertex carries a position and a bulge in both,
 		/// and the bulge has the same meaning, so the shape survives the conversion without
 		/// approximation. Nothing is lost except the flags byte.
+		/// </para>
+		/// <para>
+		/// Colour, layer, linetype and the rest of the common properties live on the source object
+		/// rather than in its payload, and they are carried across through
+		/// <see cref="Entity.MatchProperties(IEntity)"/>. That matters in practice: of the objects in
+		/// the test corpus, 71 are ByLayer and 40 carry an explicit indexed colour, so a conversion
+		/// that left the colour at its default would draw a third of them wrong.
+		/// </para>
 		/// </remarks>
+		/// <param name="source">Object to take the common properties from, or null to leave them at
+		/// their defaults.</param>
 		/// <param name="closed">Whether to mark the polyline closed, which is the usual case for an
 		/// object outline but not for every class.</param>
 		/// <returns>A polyline with one vertex per outline vertex.</returns>
-		public LwPolyline ToLwPolyline(bool closed = true)
+		public LwPolyline ToLwPolyline(IEntity source = null, bool closed = true)
 		{
 			LwPolyline polyline = new LwPolyline();
 			polyline.IsClosed = closed;
@@ -246,6 +257,11 @@ namespace ACadSharp.IO.DWG.Tangent
 				{
 					Bulge = vertex.Bulge
 				});
+			}
+
+			if (source != null)
+			{
+				polyline.MatchProperties(source);
 			}
 
 			return polyline;
