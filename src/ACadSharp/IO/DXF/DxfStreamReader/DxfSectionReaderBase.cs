@@ -415,6 +415,19 @@ internal abstract class DxfSectionReaderBase
 			case 44:
 			case 46:
 				return true;
+			case 280:
+				//DXF 中 ATTDEF/ATTRIB 的 280 出现两次：AcDbAttributeDefinition 开头为
+				//Version（恒 0），Tag/Flags 之后为 Lock position。原先 Version 独占
+				//[DxfCodeValue(280)] 映射，两个 280 依次灌入 Version（最终 =1）而
+				//IsLocked 无人赋值；R2010+ DWG 写出 Version=1 时 AutoCAD 解析
+				//ATTDEF/ATTRIB 失败报"解密数据时出错"。这里统一按 Lock position
+				//处理，Version 保持默认 0（与 native DWG 一致）。
+				if (tmp.CadObject is AttributeBase att280)
+				{
+					att280.IsLocked = Convert.ToInt32(this._reader.Value ?? 0) != 0;
+					att280.Version = 0;
+				}
+				return true;
 			case 101:
 				var att = tmp.CadObject as AttributeBase;
 				att.MText = new MText();
@@ -444,6 +457,9 @@ internal abstract class DxfSectionReaderBase
 				if (tmp.CurrentCell.Content == null)
 				{
 					content = new TableEntity.CellContent();
+					//DXF 内联单元格文本是"值"型内容；ContentType 缺省 Unknown 时
+					//R2010+ 写端（writeTableCellContent）会跳过 CadValue，表格内容全丢。
+					content.ContentType = TableEntity.TableCellContentType.Value;
 					content.CadValue.ValueType = CadValueType.String;
 					tmp.CurrentCell.Contents.Add(content);
 				}
@@ -603,6 +619,8 @@ internal abstract class DxfSectionReaderBase
 				return true;
 			case 301:
 				content = new TableEntity.CellContent();
+				//同 case 1：DXF 多内容单元格同样是"值"型内容。
+				content.ContentType = TableEntity.TableCellContentType.Value;
 				var contentTemplate = new CadTableCellContentTemplate(content);
 				tmp.CurrentCell.Contents.Add(content);
 				var valTemplate = readCadValue(content.CadValue);

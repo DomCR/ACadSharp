@@ -1,4 +1,4 @@
-﻿using ACadSharp.Exceptions;
+using ACadSharp.Exceptions;
 using ACadSharp.IO.DWG;
 using ACadSharp.IO.DWG.DwgStreamWriters;
 using ACadSharp.Tables.Collections;
@@ -103,37 +103,69 @@ public class DwgWriter : CadWriterBase<DwgWriterConfiguration>
 
 		this.getFileHeaderWriter();
 
-		this.writeHeader();
-		this.writeClasses();
-		//this.writeEmptySection();
-		this.writeSummaryInfo();
-		this.writePreview();
-		//this.writeVBASection();
-		this.writeAppInfo();
-		this.writeFileDepList();
-		this.writeRevHistory();
-		//this.writeSecurity();
-		this.writeAuxHeader();
-		this.writeObjects();
-		//R2000 及更早版本：对象段写出期间为渐变填充合成私有 roundtrip 结构
-		//（XRecord + 扩展字典）会分配新句柄，使 Header.HandleSeed 前移。header
-		//段的 HANDSEED 变量必须反映最终状态，否则 AutoCAD 加载时因 HANDSEED
-		//小于已存在对象句柄而判定文件损坏、拒绝打开（accoreconsole
-		//ErrorStatus=53）。writeHeader() 先于 writeObjects() 执行，故此处重建
-		//header 段。此操作仅对 R2000 及更早版本必要：R2004+（AC1018+）写出器
-		//的 AddSection 每次调用都会新增 descriptor（而非替换），重复 writeHeader()
-		//会产出重复 Header 段导致文件损坏（accoreconsole code=434）；且 R2004+
-		//不执行渐变合成、不分配新句柄，HandleSeed 不变，无需重建。
-		if (this._version < ACadVersion.AC1018)
+		if (this._version == ACadVersion.AC1021)
 		{
+			//R2007：按 AutoCAD 原生物理页顺序写出各节（实测 DrawingR2007.dwg 数据页
+			//id 3-16 与物理顺序一致：SummaryInfo=3、Preview=4、AppInfo=5、
+			//AppInfoHistory=6、RevHistory=7、AcDbObjects=8-10、ObjFreeSpace=11、
+			//Template=12、Handles=13、Classes=14、AuxHeader=15、Header=16）。
+			//页 id 由 AddSection 顺序递增分配，顺序不同会产生与原生不同的页表/节表
+			//记录（页 id 引用错位）。R2007 写出各节互不改变文档状态（无渐变合成、
+			//句柄已分配完毕），ObjFreeSpace 依赖 writeObjects 的句柄表，原生顺序中
+			//ObjFreeSpace(11) 也位于 AcDbObjects(8-10) 之后，约束满足。
+			this.writeSummaryInfo();
+			this.writePreview();
+			this.writeAppInfo();
+			this.writeAppInfoHistory();
+			this.writeRevHistory();
+			this.writeObjects();
+			this.writeObjFreeSpace();
+			this.writeTemplate();
+			this.writeHandles();
+			this.writeClasses();
+			this.writeAuxHeader();
 			this.writeHeader();
 		}
-		this.writeObjFreeSpace();
-		this.writeTemplate();
-		//this.writePrototype();
+		else
+		{
+			this.writeHeader();
+			this.writeClasses();
+			//this.writeEmptySection();
+			this.writeSummaryInfo();
+			this.writePreview();
+			//this.writeVBASection();
+			this.writeAppInfo();
+			this.writeAppInfoHistory();
+			//R2007 原生空文档没有 FileDepList 节（实测 AutoCAD 原生文件）；
+			//且本写出器的 FileDepList 恒为空内容（0 特性/0 文件），省略不影响语义。
+			if (this._version != ACadVersion.AC1021)
+			{
+				this.writeFileDepList();
+			}
+			this.writeRevHistory();
+			//this.writeSecurity();
+			this.writeAuxHeader();
+			this.writeObjects();
+			//R2000 及更早版本：对象段写出期间为渐变填充合成私有 roundtrip 结构
+			//（XRecord + 扩展字典）会分配新句柄，使 Header.HandleSeed 前移。header
+			//段的 HANDSEED 变量必须反映最终状态，否则 AutoCAD 加载时因 HANDSEED
+			//小于已存在对象句柄而判定文件损坏、拒绝打开（accoreconsole
+			//ErrorStatus=53）。writeHeader() 先于 writeObjects() 执行，故此处重建
+			//header 段。此操作仅对 R2000 及更早版本必要：R2004+（AC1018+）写出器
+			//的 AddSection 每次调用都会新增 descriptor（而非替换），重复 writeHeader()
+			//会产出重复 Header 段导致文件损坏（accoreconsole code=434）；且 R2004+
+			//不执行渐变合成、不分配新句柄，HandleSeed 不变，无需重建。
+			if (this._version < ACadVersion.AC1018)
+			{
+				this.writeHeader();
+			}
+			this.writeObjFreeSpace();
+			this.writeTemplate();
+			//this.writePrototype();
 
-		//Write in the last place to avoid conflicts with versions < AC1018
-		this.writeHandles();
+			//Write in the last place to avoid conflicts with versions < AC1018
+			this.writeHandles();
+		}
 
 		this._fileHeaderWriter.WriteFile();
 
@@ -188,10 +220,37 @@ public class DwgWriter : CadWriterBase<DwgWriterConfiguration>
 			return;
 
 		MemoryStream stream = new MemoryStream();
-		DwgAppInfoWriter writer = new DwgAppInfoWriter(this._version, stream);
-		writer.Write();
+		if (this._version == ACadVersion.AC1021)
+		{
+			//R2007：使用 AutoCAD 原生空文档的 AppInfo 内容（与 AppInfoHistory
+			//为配对数据，history 引用其 GUID），保证节内容与原生完全一致。
+			//该内容已是 native 页 data 区原样的 Ac21 压缩流，isCompressed=false
+			//（AC21 语义：false = 原样存储，不再压缩）。
+			byte[] data = DWG.DwgStreamWriters.Ac21NativeSections.AppInfo;
+			stream.Write(data, 0, data.Length);
+		}
+		else
+		{
+			DwgAppInfoWriter writer = new DwgAppInfoWriter(this._version, stream);
+			writer.Write();
+		}
 
 		this._fileHeaderWriter.AddSection(DwgSectionDefinition.AppInfo, stream, false, 0x80);
+	}
+
+	private void writeAppInfoHistory()
+	{
+		if (this._version != ACadVersion.AC1021)
+			return;
+
+		//R2007 原生空文档含有 AcDb:AppInfoHistory 节（encoding=1），
+		//写入原生捕获的内容（见 Ac21NativeSections）。该内容已是 native 页
+		//data 区原样的 Ac21 压缩流，isCompressed=false（原样存储）。
+		MemoryStream stream = new MemoryStream();
+		byte[] data = DWG.DwgStreamWriters.Ac21NativeSections.AppInfoHistory;
+		stream.Write(data, 0, data.Length);
+
+		this._fileHeaderWriter.AddSection(DwgSectionDefinition.AppInfoHistory, stream, false, 0x80);
 	}
 
 	private void writeAuxHeader()
@@ -405,12 +464,14 @@ public class DwgWriter : CadWriterBase<DwgWriterConfiguration>
 
 			//Page has to fit the image byte size, in intervals of 0x400
 			int pageSize = (int)((stream.Length % 0x400) * 0x400 + 0x400);
-			this._fileHeaderWriter.AddSection(DwgSectionDefinition.Preview, stream, false, pageSize);
+			//[R2007-FIX] AC21 的 enc=1 节存储原始数据（native Preview 29103B =
+			//位图包装数据，非 LZ77 流）；其余版本保持压缩语义不变。
+			this._fileHeaderWriter.AddSection(DwgSectionDefinition.Preview, stream, this._version != ACadVersion.AC1021, pageSize);
 		}
 		else
 		{
 			writer.Write();
-			this._fileHeaderWriter.AddSection(DwgSectionDefinition.Preview, stream, false, 0x400);
+			this._fileHeaderWriter.AddSection(DwgSectionDefinition.Preview, stream, this._version != ACadVersion.AC1021, 0x400);
 		}
 	}
 
@@ -466,7 +527,9 @@ public class DwgWriter : CadWriterBase<DwgWriterConfiguration>
 		writer.WriteInt(0);
 		writer.WriteInt(0);
 
-		this._fileHeaderWriter.AddSection(DwgSectionDefinition.SummaryInfo, stream, false, 0x100);
+		//[R2007-FIX] AC21 的 enc=1 节存储原始数据（native SummaryInfo 92B =
+		//Unicode 原文，非 LZ77 流）；其余版本保持压缩语义不变。
+		this._fileHeaderWriter.AddSection(DwgSectionDefinition.SummaryInfo, stream, this._version != ACadVersion.AC1021, 0x100);
 	}
 
 	private void writeTemplate()

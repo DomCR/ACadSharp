@@ -1,4 +1,4 @@
-﻿// AC1021 (R2007) file header writer.
+// AC1021 (R2007) file header writer.
 // Ported from cadcodec (Rust reference implementation, file_header_ac21.rs),
 // following ODA spec sections 5.1-5.13.
 //
@@ -31,6 +31,26 @@ internal class DwgFileHeaderWriterAC21 : IDwgFileHeaderWriter
 	private const int CHECK_DATA_SIZE = 0x28;
 	private const int RS_DATA_IN_HEADER = FILE_HEADER_PAGE_SIZE - CHECK_DATA_SIZE; // 0x3D8
 	private const int FILE_HEADER_RS_FACTOR = 3;
+
+	// RandomSeed（CRC random encoder 表种子），每个文件随机生成并写入 metadata。
+	// AutoCAD 校验机制（ DrawingR2007.dwg 实测 ）：从 fhdr metadata 读 RandomSeed →
+	// 重建编码表 → 校验 enc=4 数据页填充区 / enc=1 页尾 / 系统页页尾填充与本种子
+	// 同源，否则报"解密数据时出错"。种子值本身任意（读取方从 metadata 重建），
+	// 原生参考值 0x3B9CE8B35E549A20；随机种子经 acopen 实测可通过校验。
+	private readonly ulong _randomSeed = newRandomSeed();
+
+	/// <summary>Cryptographically random UInt64 seed, non-zero (0 degenerates the table).</summary>
+	private static ulong newRandomSeed()
+	{
+		byte[] buf = new byte[8];
+		// RandomNumberGenerator.Fill 仅 net5+ 可用；Create().GetBytes() 兼容 net48/netstandard2.0。
+		using (System.Security.Cryptography.RandomNumberGenerator rng = System.Security.Cryptography.RandomNumberGenerator.Create())
+		{
+			rng.GetBytes(buf);
+		}
+		ulong v = BitConverter.ToUInt64(buf, 0);
+		return v == 0 ? 0x3B9CE8B35E549A20UL : v;
+	}
 
 	// ── Section table (spec §5.2) ──
 	private class Ac21Section
@@ -88,8 +108,16 @@ internal class DwgFileHeaderWriterAC21 : IDwgFileHeaderWriter
 	private readonly Encoding _encoding;
 	private readonly CadDocument _document;
 	private readonly ACadVersion _version;
-	private long _nextPageId = 1;
+	private long _nextPageId = 3; // 原生数据页 id 从 3 开始（1、2 保留未用）
 	private ulong _crcSeed = 0;
+
+	// [R2007-FIX] Remember the page-map page size and the data-section start so
+	// findSectionPageOffset() can translate a data page's recorded (pre-reorder)
+	// absolute offset into its final file offset after the layout is reordered to
+	// [page-map][page-map][data...][section-map][section-map] (reference layout).
+	private int _pmPageSize = 0;
+	private List<Ac21PageRecord> _dataPagesFinal = new List<Ac21PageRecord>();
+	private const int _dataStart = RESERVED_HEADER_SIZE; // 0x480
 
 	public int HandleSectionOffset { get { return 0; } }
 
@@ -129,6 +157,7 @@ internal class DwgFileHeaderWriterAC21 : IDwgFileHeaderWriter
 			case DwgSectionDefinition.SummaryInfo: hash = 0x717A060F; return true;
 			case DwgSectionDefinition.Preview: hash = 0x40AA0473; return true;
 			case DwgSectionDefinition.AppInfo: hash = 0x3FA0043E; return true;
+			case DwgSectionDefinition.AppInfoHistory: hash = 0x96DE0737; return true;
 			case DwgSectionDefinition.FileDepList: hash = 0x6C4205CA; return true;
 			case "AcDb:Security": hash = 0x4A0204EA; return true;
 			case "AcDb:VBAProject": hash = 0x586E0544; return true;
@@ -176,6 +205,7 @@ internal class DwgFileHeaderWriterAC21 : IDwgFileHeaderWriter
 			case DwgSectionDefinition.SummaryInfo:
 			case DwgSectionDefinition.Preview:
 			case DwgSectionDefinition.AppInfo:
+			case DwgSectionDefinition.AppInfoHistory:
 			case DwgSectionDefinition.FileDepList:
 			case "AcDb:Security":
 			case "AcDb:VBAProject":
@@ -192,6 +222,7 @@ internal class DwgFileHeaderWriterAC21 : IDwgFileHeaderWriter
 		"AcDb:Security",
 		DwgSectionDefinition.FileDepList,
 		"AcDb:VBAProject",
+		DwgSectionDefinition.AppInfoHistory,
 		DwgSectionDefinition.AppInfo,
 		DwgSectionDefinition.Preview,
 		DwgSectionDefinition.SummaryInfo,
@@ -241,13 +272,6 @@ internal class DwgFileHeaderWriterAC21 : IDwgFileHeaderWriter
 
 	public void AddSection(string name, MemoryStream stream, bool isCompressed, int decompsize = 0x7400)
 	{
-		// [EXP] ACADSHARP_SKIP_SEC=Name1,Name2 时跳过指定节（R2007 崩溃二分实验，验证后移除）
-		string skip = Environment.GetEnvironmentVariable("ACADSHARP_SKIP_SEC");
-		if (!string.IsNullOrEmpty(skip) && Array.IndexOf(skip.Split(','), name) >= 0)
-		{
-			return;
-		}
-
 		if (!tryGetHashCode(name, out uint hashCode))
 		{
 			throw new NotSupportedException($"Unknown AC21 section: {name}");
@@ -256,7 +280,20 @@ internal class DwgFileHeaderWriterAC21 : IDwgFileHeaderWriter
 		ulong encoding = getEncoding(name);
 		// XOR obfuscation (encryption=2) is not implemented; store 0 (plain).
 		ulong encryption = 0;
-		ulong maxPageSize = getPageSize(name);
+		ulong maxPageSize;
+		if (encoding == 1)
+		{
+			// 原生规则（实测 AutoCAD R2007 文件）：encoding=1 节为单页，节级
+			// MaxPageSize 与页记录 PageSize 相同 = round_up(数据长度, 0x80)
+			//（Preview 为 round_up(数据长度, 0x400)），而非静态表值。
+			ulong grain = name == DwgSectionDefinition.Preview ? 0x400UL : 0x80UL;
+			ulong len = (ulong)stream.Length;
+			maxPageSize = len > 0 ? (len + grain - 1) / grain * grain : grain;
+		}
+		else
+		{
+			maxPageSize = getPageSize(name);
+		}
 
 		Ac21Section section = new Ac21Section
 		{
@@ -272,47 +309,64 @@ internal class DwgFileHeaderWriterAC21 : IDwgFileHeaderWriter
 		int pageBlockSize = (int)maxPageSize;
 		ulong dataOffset = 0;
 
-		for (int start = 0; start < stream.Length; start += pageBlockSize)
+		for (int start = 0; start < stream.Length;)
 		{
 			int count = Math.Min(pageBlockSize, (int)stream.Length - start);
-			EncodedDataPage page = encodeDataPage(data, start, count, encoding);
-			Ac21SectionPage pageRecord = writeEncodedDataPage(page, dataOffset, maxPageSize);
+			start += count;
+			EncodedDataPage page = encodeDataPage(data, dataOffset > int.MaxValue ? int.MaxValue : (int)dataOffset, count, encoding, isCompressed);
+			Ac21SectionPage pageRecord = writeEncodedDataPage(page, dataOffset, maxPageSize, encoding);
 			section.Pages.Add(pageRecord);
-			dataOffset += maxPageSize;
+			dataOffset += (ulong)count;
 		}
+
+		// [R2007-FIX] 节记录 DataSize = Σ 页 UncompressedSize（native 实测）：
+		// enc=1 页该值为压缩数据长（SummaryInfo 92）、enc=4 页为解压后大小
+		//（AcDbObjects 57728+68608+41897 = 168233 = 原生节记录 DataSize）。
+		ulong dataSize = 0;
+		foreach (Ac21SectionPage p in section.Pages)
+		{
+			dataSize += p.UncompressedSize;
+		}
+		section.DataSize = dataSize;
 
 		this._sections.Add(section);
 	}
 
-	private EncodedDataPage encodeDataPage(byte[] data, int offset, int count, ulong encoding)
+	private EncodedDataPage encodeDataPage(byte[] data, int offset, int count, ulong encoding, bool isCompressed = false)
 	{
-		uint checksum = Ac21Crc64.PageChecksum(0, data, offset, count);
-
-		if (encoding == 1)
-		{
-			// Uncompressed: store raw (32-byte aligned by the caller).
-			byte[] raw = new byte[count];
-			Array.Copy(data, offset, raw, 0, count);
-			return new EncodedDataPage
-			{
-				Bytes = raw,
-				UncompressedSize = (ulong)count,
-				CompressedSize = (ulong)count,
-				Checksum = checksum,
-				Crc = Ac21Crc64.MirroredCrc64(0, (uint)count, raw, 0, count),
-			};
-		}
-
 		byte[] source = new byte[count];
 		Array.Copy(data, offset, source, 0, count);
 
-		byte[] compressed = Ac21Compressor.Compress(source);
-		byte[] pageData = compressed.Length < count ? compressed : source;
+		// [R2007-FIX] isCompressed 语义：true = Ac21 压缩（enc=4 节，压缩不更短
+		// 则存原始数据）；false = 原样存储（enc=1 节）。native hexdump 实测：
+		// enc=1 节（SummaryInfo 92B = Unicode 原文、AppInfo 780B、Preview 29103B
+		// = 位图包装数据）存储原始数据，并非 LZ77 流。
+		byte[] pageData;
+		if (isCompressed)
+		{
+			byte[] compressed = Ac21Compressor.Compress(source);
+			pageData = compressed.Length < count ? compressed : source;
+		}
+		else
+		{
+			pageData = source;
+		}
+
+		// [R2007-FIX] 页记录 Checksum vs CRC 语义（ac21_cksum_test.py，7/9 页逐位
+		// 命中）：Checksum = PageChecksum，对解压后原始数据计算（enc=1 时 raw==
+		// stored；enc=4 时为未压缩源数据）；CRC = MirroredCrc64，对压缩存储数据
+		// 计算（克隆实验中全部 enc=4 页 CRC 与 native 完全一致）。
+		uint checksum = Ac21Crc64.PageChecksum(0, source, 0, count);
 
 		return new EncodedDataPage
 		{
-			Bytes = rsEncodeDataPageInterleaved(pageData),
-			UncompressedSize = (ulong)count,
+			// enc=4：RS(255,251) 交织编码；enc=1：紧凑数据（non-interleaved
+			// compact parity 由 writeEncodedDataPage 依页计算）。
+			Bytes = encoding == 1 ? pageData : rsEncodeDataPageInterleaved(pageData, this._randomSeed),
+			// 页记录 UncompressedSize 语义（native 实测）：enc=1 页 = 页数据长度
+			//（SummaryInfo 记 92 = comp），enc=4 页 = 解压后大小（AcDbObjects 记
+			// 57728 = uncomp）。
+			UncompressedSize = encoding == 1 ? (ulong)pageData.Length : (ulong)count,
 			CompressedSize = (ulong)pageData.Length,
 			Checksum = checksum,
 			Crc = Ac21Crc64.MirroredCrc64(0, (uint)pageData.Length, pageData, 0, pageData.Length),
@@ -323,7 +377,7 @@ internal class DwgFileHeaderWriterAC21 : IDwgFileHeaderWriter
 	/// RS-encode a data page with interleaving: total = align8(len), factor = ceil(total / 251),
 	/// RS(255, 251) with prim poly 0x11D.
 	/// </summary>
-	private static byte[] rsEncodeDataPageInterleaved(byte[] data)
+	private static byte[] rsEncodeDataPageInterleaved(byte[] data, ulong randomSeed)
 	{
 		int totalSize = (data.Length + CRC_BLOCK_SIZE - 1) & ~(CRC_BLOCK_SIZE - 1);
 		int factor = (totalSize + Ac21ReedSolomon.RS_DATA_K - 1) / Ac21ReedSolomon.RS_DATA_K;
@@ -331,27 +385,74 @@ internal class DwgFileHeaderWriterAC21 : IDwgFileHeaderWriter
 		byte[] padded = new byte[factor * Ac21ReedSolomon.RS_DATA_K];
 		Array.Copy(data, padded, Math.Min(data.Length, padded.Length));
 
-		return Ac21ReedSolomon.Encode(padded, factor, Ac21ReedSolomon.RS_DATA_K, Ac21ReedSolomon.RS_DATA_PRIM_POLY);
+		// [R2007-FIX] 填充区 = RandomSeed 编码表字节流（相位 0，每页独立实例）。
+		// DrawingR2007.dwg 实测：RevHistory/Template/ObjFreeSpace/AuxHeader（factor=1）、
+		// Header（factor=3）、AcDbObjects p0（factor=35，填充 145B）全部精确匹配
+		// build_table(RandomSeed) 的 LE 字节流从 0 开始（FillRandom 语义：前 128 项
+		// 取 padding 表 = table[0..128)，其后继续 table[128..)）。
+		if (padded.Length > data.Length)
+		{
+			new Ac21CrcRandomEncoder(randomSeed).FillRandom(padded, data.Length, padded.Length - data.Length);
+		}
+
+		byte[] encoded = Ac21ReedSolomon.Encode(padded, factor, Ac21ReedSolomon.RS_DATA_K, Ac21ReedSolomon.RS_DATA_PRIM_POLY);
+
+		return encoded;
 	}
 
-	private Ac21SectionPage writeEncodedDataPage(EncodedDataPage page, ulong dataOffset, ulong maxPageSize)
+	private Ac21SectionPage writeEncodedDataPage(EncodedDataPage page, ulong dataOffset, ulong maxPageSize, ulong encoding)
 	{
 		long pageId = this._nextPageId;
 		this._nextPageId++;
 
-		int alignedSize = align32(page.Bytes.Length);
 		ulong offset = (ulong)this._stream.Position;
 		this._stream.Write(page.Bytes, 0, page.Bytes.Length);
-		int padding = alignedSize - page.Bytes.Length;
-		if (padding > 0)
+
+		int pageSize;
+		if (encoding == 1)
 		{
+			// 原生 encoding=1 页布局（实测 DrawingR2007.dwg 四个 enc=1 页逐位验证）：
+			// [数据][零填充到 align8][RS(255,251) non-interleaved parity ceil(D8/251)×4B]
+			// [RandomSeed 编码表填充到页尾]。
+			// 末码字不足 251B 时以 CRC random encoder 随机字节补齐到 251 再算 parity
+			//（规范 §6.4；"X 槽"即末码字 parity：SummaryInfo=0x3F4CF31F、
+			// AppInfo=0x0D3E2E86、AppInfoHistory=0x44999E77、Preview=0xE93ED006 全部
+			// 由 [短数据][随机补齐] 的 RS parity 相位 0 精确命中）。
+			// [R2007-FIX] 物理页必须容纳完整 parity 区：页大小 = maxPageSize(数据区
+			// round_up 粒度) + align32(parity)。parity = ceil(align8(D)/251)×4 随数据
+			// 增长：小页（≤2008B 数据）parity≤32B，与旧 +PAGE_ALIGN_SIZE 一致
+			// （SummaryInfo 160/AppInfo 928/AppInfoHistory 1568 不变）；大页（如
+			// 24495B Preview → 98 码字 392B parity）旧值 +32 使实际写出超出页记录
+			// 280B，后续所有页错位、页表/节表与物理布局失配——R2007/R2010 源转
+			// R2007 打不开的根因（native Preview 30176 = 29696+align32(464) 证实该规则）。
+			int alignedData = (page.Bytes.Length + CRC_BLOCK_SIZE - 1) & ~(CRC_BLOCK_SIZE - 1);
+			byte[] parity = Ac21ReedSolomon.EncodeParityCompact(page.Bytes, page.Bytes.Length, this._randomSeed);
+			pageSize = (int)maxPageSize + align32(parity.Length);
+			for (int i = page.Bytes.Length; i < alignedData; i++)
+			{
+				this._stream.WriteByte(0);
+			}
+			// RS parity 区（含末码字 "X" 槽）
+			this._stream.Write(parity, 0, parity.Length);
+			int tableFill = pageSize - alignedData - parity.Length;
+			if (tableFill > 0)
+			{
+				byte[] pad = new byte[tableFill];
+				new Ac21CrcRandomEncoder(this._randomSeed).FillRandom(pad, 0, tableFill);
+				this._stream.Write(pad, 0, pad.Length);
+			}
+		}
+		else
+		{
+			pageSize = align32(page.Bytes.Length);
+			int padding = pageSize - page.Bytes.Length;
 			for (int i = 0; i < padding; i++)
 			{
 				this._stream.WriteByte(0);
 			}
 		}
 
-		this._pageRecords.Add(new Ac21PageRecord { Id = pageId, Size = alignedSize, Offset = offset });
+		this._pageRecords.Add(new Ac21PageRecord { Id = pageId, Size = pageSize, Offset = offset });
 
 		return new Ac21SectionPage
 		{
@@ -430,7 +531,7 @@ internal class DwgFileHeaderWriterAC21 : IDwgFileHeaderWriter
 		if (padding > 0)
 		{
 			byte[] pad = new byte[padding];
-			Ac21CrcRandomEncoder padRng = new Ac21CrcRandomEncoder(0);
+			Ac21CrcRandomEncoder padRng = new Ac21CrcRandomEncoder(this._randomSeed);
 			padRng.FillRandom(pad, 0, padding);
 			this._stream.Write(pad, 0, padding);
 		}
@@ -462,7 +563,7 @@ internal class DwgFileHeaderWriterAC21 : IDwgFileHeaderWriter
 		if (padding > 0)
 		{
 			byte[] pad = new byte[padding];
-			Ac21CrcRandomEncoder padRng = new Ac21CrcRandomEncoder(0);
+			Ac21CrcRandomEncoder padRng = new Ac21CrcRandomEncoder(this._randomSeed);
 			padRng.FillRandom(pad, 0, padding);
 			this._stream.Write(pad, 0, padding);
 		}
@@ -551,27 +652,52 @@ internal class DwgFileHeaderWriterAC21 : IDwgFileHeaderWriter
 			return stream.ToArray();
 	}
 
-	private byte[] buildPageMapOrdered(long pageMapId, long pageMap2Id, long pageMapPageSize)
+	/// <summary>
+	/// [R2007-FIX] RS-encode a page (page-map or section-map) into a self-contained
+	/// padded byte array (size = max(align32(encoded), targetPageSize)) plus the
+	/// SystemPageResult the reader needs (compressed/uncompressed size, CRCs,
+	/// correction factor). Does not touch the stream.
+	/// </summary>
+	private (byte[] page, SystemPageResult result) buildSystemPageEncoded(byte[] data, int targetPageSize, long pageId, ulong offset)
 	{
-		using MemoryStream stream = new MemoryStream((this._pageRecords.Count + 2) * 16);
-		StreamIO writer = new StreamIO(stream);
+		var (encoded, compressedSize, uncompressedSize, crcCompressed, crcUncompressed, correctionFactor)
+			= this.encodeSystemPage(data, targetPageSize);
+		int pageSize = Math.Max(align32(encoded.Length), targetPageSize);
+		byte[] page = new byte[pageSize];
+		Array.Copy(encoded, page, encoded.Length);
+		if (pageSize > encoded.Length)
+		{
+			byte[] pad = new byte[pageSize - encoded.Length];
+			new Ac21CrcRandomEncoder(this._randomSeed).FillRandom(pad, 0, pad.Length);
+			Array.Copy(pad, 0, page, encoded.Length, pad.Length);
+		}
+		var result = new SystemPageResult
+		{
+			PageId = pageId,
+			Offset = offset,
+			CompressedSize = compressedSize,
+			UncompressedSize = uncompressedSize,
+			CrcCompressed = crcCompressed,
+			CrcUncompressed = crcUncompressed,
+			CorrectionFactor = correctionFactor,
+		};
+		return (page, result);
+	}
 
-		// 1. 数据页 + 节表页（按物理写入顺序——页表条目的累计 size 即物理位置）
+	// [R2007-FIX] Build the page map (list of all pages in PHYSICAL order). The reader
+	// accumulates `offset += size` in this order to derive each page's position, so the
+	// order here must match the on-file layout: page-map(×2), data pages, section-map(×2).
+	// No null terminator (AutoCAD-native: PagesMapSizeUncompressed == entries × 16).
+	private byte[] buildPageMap()
+	{
+		int n = this._pageRecords.Count; // final physical order: PM,PM,data...,SM,SM
+		using MemoryStream stream = new MemoryStream(n * 16);
+		StreamIO writer = new StreamIO(stream);
 		foreach (Ac21PageRecord record in this._pageRecords)
 		{
 			writer.Write(record.Size);
 			writer.Write(record.Id);
 		}
-
-		// 2. Page map 页（物理上位于数据页之后、文件头副本之前）
-		writer.Write(pageMapPageSize);
-		writer.Write(pageMapId);
-		writer.Write(pageMapPageSize);
-		writer.Write(pageMap2Id);
-
-		// 注意：页表没有 null 终止条目（AutoCAD 原生文件实测 PagesMapSizeUncompressed
-		// 恰好等于条目数 × 16，多写的 (0,0) 条目会被 AutoCAD 视为无效页导致打开失败）
-
 		return stream.ToArray();
 	}
 
@@ -668,116 +794,155 @@ internal class DwgFileHeaderWriterAC21 : IDwgFileHeaderWriter
 	{
 		this._crcSeed = 0;
 
-		// ── Step 1: Section map + copy (appended after data pages) ──
-		byte[] sectionMapData = this.buildSectionMap();
-		SystemPageResult sectionMapResult = this.writeSystemPage(sectionMapData);
-		SystemPageResult sectionMap2Result = this.writeSystemPage(sectionMapData);
+		// [R2007-FIX] Match the AutoCAD-native physical layout. AutoCAD's R2007 writer
+		// places the page map at the FRONT of the data section, the section map (×2)
+		// after the data pages, and the file-header copy at the very end:
+		//   [metadata][header][PM][PM][data...][sm][sm][header2]
+		// The previous implementation wrote [metadata][header][data...][sm][sm][PM][PM][header2],
+		// which AutoCAD rejects ("error opening file"): it expects the page map to lead
+		// the data section. We re-assemble the already-written data region into the
+		// native layout by seeking (the data-page bytes were written during AddSection).
 
-		// ── Step 2: Page map at end of file ──
-		long pageMapPageId = this._nextPageId++;
-		long pageMap2PageId = this._nextPageId++;
+		// 1) Snapshot the data pages recorded (in write order) during AddSection.
+		int dataCount = this._pageRecords.Count;
+		var dataPages = new List<Ac21PageRecord>(this._pageRecords);
 
-		int pmRawSizeEst = (this._pageRecords.Count + 3) * 16;
+		// 2) Compute page-map page size (AutoCAD rounds up to a multiple of 0x400).
+		int pmRawSizeEst = (dataCount + 4) * 16; // data + section-map + page-map entries
 		int pmPageSize = (int)getSystemPageSize((ulong)pmRawSizeEst);
+		if (pmPageSize < 0x400) pmPageSize = 0x400;
+		this._pmPageSize = pmPageSize;
 
-		byte[] pageMapData = this.buildPageMapOrdered(pageMapPageId, pageMap2PageId, pmPageSize);
+		int dataStart = RESERVED_HEADER_SIZE + 2 * pmPageSize;
+		int dataTotal = 0;
+		foreach (var d in dataPages) dataTotal += (int)d.Size;
+		int smStart = dataStart + dataTotal;
+		byte[] sectionMapData = this.buildSectionMap();
+		int smPageSize = (int)getSystemPageSize((ulong)sectionMapData.Length);
+		int header2Start = smStart + 2 * smPageSize;
+		int fileSize = header2Start + FILE_HEADER_PAGE_SIZE;
 
-		ulong pmAbsOffset = (ulong)this._stream.Position;
-		SystemPageResult pageMapResult = this.writeSystemPageAt(pageMapData, pmAbsOffset, pageMapPageId, pmPageSize);
-		ulong pmAbsOffset2 = (ulong)this._stream.Position;
-		this.writeSystemPageAt(pageMapData, pmAbsOffset2, pageMap2PageId, pmPageSize);
+		// 3) Page IDs. 原生 id 规则（实测 DrawingR2007.dwg：数据 3-16、sm=17,18、
+		//    pm=21,22；sample：数据 3-19、sm=20,21、pm=24,25）：数据页从 3 起，
+		//    section map 紧随其后，空 2 个 id，page map 最大且
+		//    PagesMaxId == Map2Id == pm2Id。
+		long smId = 3 + dataCount, sm2Id = 4 + dataCount;
+		long pmId = 7 + dataCount, pm2Id = 8 + dataCount;
 
-		// ── Step 4: Metadata ──
+		// 4) Capture the already-written data pages. During AddSection the data pages were
+		//    written immediately after the reserved 0x480 area (data+sm+pm all followed it),
+		//    so the first dataTotal bytes of that region are exactly the data pages.
+		this._stream.Position = RESERVED_HEADER_SIZE;
+		byte[] cap = new byte[dataTotal];
+		this._stream.Read(cap, 0, dataTotal);
+
+		// 5) Re-assemble the data region in native order into _pageRecords (final order).
+		this._pageRecords.Clear();
+		this._dataPagesFinal.Clear();
+		this._dataPagesFinal.Add(new Ac21PageRecord { Id = pmId, Size = pmPageSize, Offset = (ulong)RESERVED_HEADER_SIZE });
+		this._dataPagesFinal.Add(new Ac21PageRecord { Id = pm2Id, Size = pmPageSize, Offset = (ulong)(RESERVED_HEADER_SIZE + pmPageSize) });
+		int off = dataStart;
+		for (int i = 0; i < dataCount; i++)
+		{
+			this._dataPagesFinal.Add(new Ac21PageRecord { Id = dataPages[i].Id, Size = dataPages[i].Size, Offset = (ulong)off });
+			off += (int)dataPages[i].Size;
+		}
+		this._dataPagesFinal.Add(new Ac21PageRecord { Id = smId, Size = smPageSize, Offset = (ulong)smStart });
+		this._dataPagesFinal.Add(new Ac21PageRecord { Id = sm2Id, Size = smPageSize, Offset = (ulong)(smStart + smPageSize) });
+		this._pageRecords.AddRange(this._dataPagesFinal);
+
+		// 6) Build the page map (lists all pages in physical order) and both copies.
+		byte[] pageMapData = this.buildPageMap();
+		var (pageMapPage, pageMapResult) = this.buildSystemPageEncoded(pageMapData, pmPageSize, pmId, (ulong)RESERVED_HEADER_SIZE);
+		var pageMapResult2 = this.buildSystemPageEncoded(pageMapData, pmPageSize, pm2Id, (ulong)(RESERVED_HEADER_SIZE + pmPageSize)).result;
+		var (sectionMapPage, sectionMapResult) = this.buildSystemPageEncoded(sectionMapData, smPageSize, smId, (ulong)smStart);
+		var sectionMap2Result = this.buildSystemPageEncoded(sectionMapData, smPageSize, sm2Id, (ulong)(smStart + smPageSize)).result;
+
+		// 7) Metadata (values match the native layout).
 		Dwg21Metadata metadata = new Dwg21Metadata();
-
 		metadata.PagesMapCrcCompressed = pageMapResult.CrcCompressed;
 		metadata.PagesMapCorrectionFactor = pageMapResult.CorrectionFactor;
-		metadata.PagesMapOffset = pmAbsOffset - RESERVED_HEADER_SIZE;
-		metadata.PagesMapId = (ulong)pageMapPageId;
-		metadata.Map2Offset = pmAbsOffset2 - RESERVED_HEADER_SIZE;
-		metadata.Map2Id = (ulong)pageMap2PageId;
+		metadata.PagesMapOffset = 0; // page map leads the data section
+		metadata.PagesMapId = (ulong)pmId;
+		metadata.Map2Offset = (ulong)pmPageSize;
+		metadata.Map2Id = (ulong)pm2Id;
 		metadata.PagesMapSizeCompressed = pageMapResult.CompressedSize;
 		metadata.PagesMapSizeUncompressed = pageMapResult.UncompressedSize;
-		// Total pages = data pages + section map pages + page map pages
-		metadata.PagesAmount = (ulong)(this._pageRecords.Count + 2);
-		metadata.PagesMaxId = (ulong)(this._nextPageId - 1);
+		metadata.PagesAmount = (ulong)(dataCount + 4);
+		metadata.PagesMaxId = (ulong)pm2Id;
 		metadata.PagesMapCrcUncompressed = pageMapResult.CrcUncompressed;
-
 		metadata.SectionsAmount = (ulong)(this._sections.Count + 1);
 		metadata.SectionsMapCrcUncompressed = sectionMapResult.CrcUncompressed;
 		metadata.SectionsMapSizeCompressed = sectionMapResult.CompressedSize;
-		metadata.SectionsMap2Id = (ulong)sectionMap2Result.PageId;
-		metadata.SectionsMapId = (ulong)sectionMapResult.PageId;
+		metadata.SectionsMap2Id = (ulong)sm2Id;
+		metadata.SectionsMapId = (ulong)smId;
 		metadata.SectionsMapSizeUncompressed = sectionMapResult.UncompressedSize;
 		metadata.SectionsMapCrcCompressed = sectionMapResult.CrcCompressed;
 		metadata.SectionsMapCorrectionFactor = sectionMapResult.CorrectionFactor;
 
 		// CRC/random fields (spec §5.2.1.1 — order is critical for RNG state)
-		ulong randomSeed = 0;
+		// RandomSeed 与所有填充区同源（AutoCAD 从 metadata 读出后重建编码表
+		// 校验填充）；每文件随机生成（newRandomSeed）。
+		ulong randomSeed = this._randomSeed;
 		metadata.RandomSeed = randomSeed;
 		metadata.CrcSeed = this._crcSeed;
 
-		// 单个连续 RNG 流贯穿 check data 与文件头页（checking sequence val1 等）
 		Ac21CrcRandomEncoder rng = new Ac21CrcRandomEncoder(randomSeed);
 		byte[] checkData1 = this.computeCheckData(metadata, rng);
-
-		// Compute header CRC-64 (spec §5.2.1.2)
-		byte[] metaBytes = metadata.ToBytes();
-		metadata.HeaderCrc64 = Ac21Crc64.HeaderCrc64(metaBytes);
-
-		// Step 5: Build file header page
+		metadata.HeaderCrc64 = Ac21Crc64.HeaderCrc64(metadata.ToBytes());
 		byte[] fileHeaderPage = this.buildFileHeaderPage(metadata, rng, checkData1);
 
-		// Write file header at offset 0x80
-		this._stream.Position = METADATA_BLOCK_SIZE;
-		this._stream.Write(fileHeaderPage, 0, fileHeaderPage.Length);
+		// 8) Truncate to the final size, then re-assemble: [PM][PM][data][SM][SM].
+		this._stream.Position = 0;
+		this._stream.SetLength(fileSize);
+		this._stream.Position = RESERVED_HEADER_SIZE;
+		this._stream.Write(pageMapPage, 0, pageMapPage.Length);                       // PM at 0x480
+		this._stream.Position = RESERVED_HEADER_SIZE + pmPageSize;
+		this._stream.Write(pageMapPage, 0, pageMapPage.Length);                       // PM copy
+		this._stream.Position = dataStart;
+		this._stream.Write(cap, 0, dataTotal);                                        // data pages (captured)
+		this._stream.Position = smStart;
+		this._stream.Write(sectionMapPage, 0, sectionMapPage.Length);                 // section map
+		this._stream.Position = smStart + smPageSize;
+		this._stream.Write(sectionMapPage, 0, sectionMapPage.Length);                 // section map copy
+		this._stream.Position = header2Start;
+		this._stream.Write(fileHeaderPage, 0, fileHeaderPage.Length);                 // header copy
 
-		// Write file header copy at end of file
-		this._stream.Position = this._stream.Length;
-		ulong header2Offset = (ulong)this._stream.Position;
-		this._stream.Write(fileHeaderPage, 0, fileHeaderPage.Length);
-
-		// ── Step 6: Patch file size and header2_offset, recompute ──
-		ulong fileSize = (ulong)this._stream.Position;
-		metadata.FileSize = fileSize;
-		metadata.Header2offset = header2Offset - RESERVED_HEADER_SIZE;
-
-		// 第二遍用全新 RNG 实例重放同一消耗序列（保证两份文件头一致）
+		// 9) Patch file size + header2_offset, recompute header (two passes as before).
+		metadata.FileSize = (ulong)fileSize;
+		metadata.Header2offset = (ulong)(header2Start - RESERVED_HEADER_SIZE);
 		Ac21CrcRandomEncoder rng2 = new Ac21CrcRandomEncoder(randomSeed);
 		byte[] checkData2 = this.computeCheckData(metadata, rng2);
-
-		byte[] metaBytes2 = metadata.ToBytes();
-		metadata.HeaderCrc64 = Ac21Crc64.HeaderCrc64(metaBytes2);
-
+		metadata.HeaderCrc64 = Ac21Crc64.HeaderCrc64(metadata.ToBytes());
 		byte[] fileHeaderPage2 = this.buildFileHeaderPage(metadata, rng2, checkData2);
 
-		// Overwrite file header at 0x80
 		this._stream.Position = METADATA_BLOCK_SIZE;
 		this._stream.Write(fileHeaderPage2, 0, fileHeaderPage2.Length);
-
-		// Overwrite file header copy at end
-		this._stream.Position = (long)header2Offset;
+		this._stream.Position = header2Start;
 		this._stream.Write(fileHeaderPage2, 0, fileHeaderPage2.Length);
 
-		// ── Step 7: Write metadata at offset 0x00 ──
+		// 10) Write metadata at offset 0x00.
 		this.writeMetadata(metadata);
-
 		this._stream.Position = this._stream.Length;
 	}
 
 	/// <summary>
 	/// Compute check data and the RNG-consumed metadata fields.
-	/// 消耗顺序已用 AutoCAD 原生 R2007 文件真值逐位验证（单个连续 RNG 流）：
-	/// InitPadding(128) → 20 次预消耗（对应 4 个系统页的 random 填充）→
-	/// SectionsMapCrcSeed → PagesMapCrcSeed → checkRandom1 → checkRandom2 →
-	/// checkEncodedSeed → CrcSeedEncoded（随后 checking sequence val1 为第 7 次 draw）。
+	/// RNG 对齐已用 AutoCAD 原生 R2007 文件真值逐位校准（DrawR2007 真值，
+	/// 表索引对）：InitPadding(128) → SkipOne + 15 次 draw 预消耗 →
+	/// SectionsMapCrcSeed@(161,162) → PagesMapCrcSeed@(163,164) →
+	/// checkRandom1@(165,166) → checkRandom2@(167,168) →
+	/// checkEncodedSeed@(169,170) → CrcSeedEncoded@(171,172)；
+	/// buildFileHeaderPage 的 checking sequence val1 为第 7 次 draw @(173,174)。
+	/// 全部奇数对齐，已由原生真值逐位验证（checking sequence 三个 CRC 同验）。
 	/// </summary>
 	private byte[] computeCheckData(Dwg21Metadata metadata, Ac21CrcRandomEncoder rng)
 	{
-		// 系统页（section map ×2 + page map ×2）写入时的 random 填充消耗，
-		// 位于 metadata 链之前（实测 AutoCAD 原生文件 r1 位于表索引 172 = 128 + 44，
-		// 即 smcs=draw#20@168、pmcs=draw#21@170、r1=draw#22@172）
-		for (int i = 0; i < 19; i++)
+		// native 的链从奇数对 (161,162) 开始（r1/val1 真值确证），而 NextUInt64
+		// 只能落到偶数对（130 起）；SkipOne(128→129) + 15 次 draw 预消耗后
+		// 链自然对齐 (161,162)（1 + 15×2 = 31 条目，128+31 = 159，下一 draw = 161）。
+		rng.SkipOne();
+		for (int i = 0; i < 15; i++)
 		{
 			rng.NextUInt64();
 		}
@@ -861,9 +1026,9 @@ internal class DwgFileHeaderWriterAC21 : IDwgFileHeaderWriter
 		writer.Position = 6;
 		// 0x06: 5 bytes of 0x00 (already zeroed)
 
-		// 0x0B: Maintenance release version (0x19 matches AutoCAD 2007)
+		// 0x0B: Maintenance release version — 原生常量 0x32（两个原生文件一致）
 		writer.Position = 0x0B;
-		writer.Stream.WriteByte(0x19);
+		writer.Stream.WriteByte(0x32);
 
 		// 0x0C: Byte 0x03 (constant)
 		writer.Stream.WriteByte(0x03);
@@ -871,16 +1036,17 @@ internal class DwgFileHeaderWriterAC21 : IDwgFileHeaderWriter
 		// 0x0D: Preview address (4 bytes)
 		writer.Write(this.findSectionPageOffset(DwgSectionDefinition.Preview));
 
-		// 0x11: DWG version byte (writer application version)
-		writer.Stream.WriteByte(0x1B);
+		// 0x11/0x12: 版本字节对 0x21 0xAE（原生常量）
+		writer.Stream.WriteByte(0x21);
+		writer.Stream.WriteByte(0xAE);
 
-		// 0x12: Maintenance release version (app)
-		writer.Stream.WriteByte(0x19);
+		// 0x13: Codepage (2 bytes) — 原生值 0x0027
+		writer.Write((ushort)0x27);
 
-		// 0x13: Codepage (2 bytes) — ANSI_1252
-		writer.Write((ushort)30);
-
-		// 0x15: 3 zero bytes (already zeroed)
+		// 0x15: 0x00, 0x16-0x17: 0x21 0xAE（原生常量）
+		writer.Stream.WriteByte(0x00);
+		writer.Stream.WriteByte(0x21);
+		writer.Stream.WriteByte(0xAE);
 
 		// 0x18: SecurityType (4 bytes)
 		writer.Position = 0x18;
@@ -901,7 +1067,18 @@ internal class DwgFileHeaderWriterAC21 : IDwgFileHeaderWriter
 		// 0x2C: App info address (4 bytes)
 		writer.Write(this.findSectionPageOffset(DwgSectionDefinition.AppInfo));
 
-		// 0x30..0x80: remaining zeros (already zeroed)
+		// 0x30: App info history address (4 bytes)
+		writer.Write(this.findSectionPageOffset(DwgSectionDefinition.AppInfoHistory));
+
+		// 0x34-0x35: 0x02 0x02（原生常量；0x36-0x37 保持 0）
+		writer.Stream.WriteByte(0x02);
+		writer.Stream.WriteByte(0x02);
+
+		// 0x38: 0xE0（原生常量）
+		writer.Position = 0x38;
+		writer.Write(0xE0u);
+
+		// 0x3C..0x80: remaining zeros (already zeroed)
 
 		this._stream.Write(buf, 0, buf.Length);
 	}

@@ -18,6 +18,8 @@ internal static class Ac21ReedSolomon
 	public const ushort RS_DATA_PRIM_POLY = 0x11D;
 	public const int RS_SYSTEM_K = 239;
 	public const ushort RS_SYSTEM_PRIM_POLY = 0x169;
+	/// <summary>CRC block (8-byte) alignment used for page data before RS encoding.</summary>
+	public const int CRC_BLOCK_ALIGN = 8;
 
 	/// <summary>
 	/// Encode interleaved RS codewords: input data (up to factor × blockSize, zero-padded)
@@ -47,6 +49,53 @@ internal static class Ac21ReedSolomon
 		}
 
 		return buffer;
+	}
+
+	/// <summary>
+	/// Non-interleaved compact RS(255, 251) parity for encoding=1 pages.
+	/// The aligned data (align8(count)) is split into ceil(D8/251) codewords;
+	/// each full codeword produces its 4 parity bytes; the last (short)
+	/// codeword is completed to 251 bytes with random bytes from the CRC
+	/// random encoder (spec §6.4: "末块不足 k bytes 时以 CRC random encoder
+	/// 产生的随机字节补齐", fill stream phase 0, same FillRandom semantics
+	/// as the page-tail T fill). Verified byte-exact against the native
+	/// DrawingR2007.dwg enc=1 pages (SummaryInfo/Preview/AppInfo/AppInfoHistory).
+	/// Output: n × 4 parity bytes, codewords stored consecutively.
+	/// </summary>
+	public static byte[] EncodeParityCompact(byte[] data, int count, ulong randomSeed)
+	{
+		int d8 = (count + CRC_BLOCK_ALIGN - 1) & ~(CRC_BLOCK_ALIGN - 1);
+		int n = (d8 + RS_DATA_K - 1) / RS_DATA_K;
+		int nsym = RS_N - RS_DATA_K; // 4
+		GfTables gf = new GfTables(RS_DATA_PRIM_POLY);
+		byte[] gen = generatorPoly(nsym, RS_DATA_K % RS_N, gf);
+
+		byte[] result = new byte[n * nsym];
+		byte[] info = new byte[RS_DATA_K];
+		for (int i = 0; i < n; i++)
+		{
+			int start = i * RS_DATA_K;
+			int len = Math.Min(RS_DATA_K, d8 - start);
+			Array.Clear(info, 0, RS_DATA_K);
+			for (int j = 0; j < len; j++)
+			{
+				int pos = start + j;
+				info[j] = pos < count ? data[pos] : (byte)0;
+			}
+			if (len < RS_DATA_K)
+			{
+				// [R2007-FIX] 规范 §6.4：末块不足 k 字节时以 CRC random encoder
+				// 的随机字节补齐（相位 0，每页独立实例，与页尾 T 填充同语义）。
+				byte[] fill = new byte[RS_DATA_K - len];
+				new Ac21CrcRandomEncoder(randomSeed).FillRandom(fill, 0, fill.Length);
+				Array.Copy(fill, 0, info, len, fill.Length);
+			}
+
+			byte[] codeword = encodeBlock(info, 0, RS_DATA_K, nsym, gen, gf);
+			Array.Copy(codeword, RS_DATA_K, result, i * nsym, nsym);
+		}
+
+		return result;
 	}
 
 	private readonly struct GfTables

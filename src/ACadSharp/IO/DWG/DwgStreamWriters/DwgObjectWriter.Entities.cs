@@ -24,8 +24,8 @@ internal partial class DwgObjectWriter : DwgSectionIO
 
 		//R2010+:
 		if (this.R2010Plus)
-			//Version RC ?		Repeated??
-			this._writer.WriteByte(attdef.Version);
+			//Version RC ?		Repeated?——native 恒 0，见 writeCommonAttData 注释
+			this._writer.WriteByte(0);
 
 		//Common:
 		//Prompt TV 3
@@ -130,8 +130,10 @@ internal partial class DwgObjectWriter : DwgSectionIO
 		//R2010+:
 		if (this.R2010Plus)
 		{
-			//Version RC ?
-			this._writer.WriteByte(att.Version);
+			//Version RC ——native DWG 恒 0；DXF 读端把 280 组码统一作为 Lock position
+			//处理（见 DxfSectionReaderBase.readAttributeDefinition），Version 保持 0，
+			//否则 AutoCAD 解析 ATTDEF/ATTRIB 报"解密数据时出错"。
+			this._writer.WriteByte(0);
 		}
 
 		//R2018+:

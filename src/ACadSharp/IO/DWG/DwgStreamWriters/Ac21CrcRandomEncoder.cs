@@ -48,20 +48,22 @@ internal class Ac21CrcRandomEncoder
 
 	private void updateIndex()
 	{
+		// ODA 规范 §5.11：index 达到 0x270 时直接归零（伪代码不含 MT twist）。
+		// 该分支仅在消耗超过 624 个条目时触发（普通文件不会到达）。
 		if (_index >= TABLE_SIZE)
 		{
-			// Mersenne Twister twist step
-			for (int i = 0; i < TABLE_SIZE; i++)
-			{
-				uint y = (_table[i] & 0x80000000u) | (_table[(i + 1) % TABLE_SIZE] & 0x7FFFFFFFu);
-				_table[i] = _table[(i + 0x18D) % TABLE_SIZE] ^ (y >> 1);
-				if ((y & 1) != 0)
-				{
-					_table[i] ^= 0x9908B0DFu;
-				}
-			}
 			_index = 0;
 		}
+	}
+
+	/// <summary>Advance the stream by a single table entry（奇数对齐移位）.
+	/// native 文件的 metadata/check 链为奇数对齐（hi=t[161] 起，见
+	/// DwgFileHeaderWriterAC21.computeCheckData），而 NextUInt64 只能落到
+	/// 偶数对；SkipOne 使后续 draw 落到奇数对（已用原生真值校准）。</summary>
+	public void SkipOne()
+	{
+		_index++;
+		updateIndex();
 	}
 
 	/// <summary>Next u64 from two consecutive table entries (no MT tempering).
@@ -102,6 +104,28 @@ internal class Ac21CrcRandomEncoder
 	public ulong EncodeCrcSeed(ulong seed)
 	{
 		return Encode((uint)seed);
+	}
+
+	/// <summary>Decode an encoded UInt64 back to the 10 data bits (spec §5.11).
+	/// 纯位提取，不依赖随机表，与 <see cref="Encode"/> 互逆。</summary>
+	public static uint Decode(ulong value)
+	{
+		uint result = 0;
+		uint hi = (uint)(value >> 32);
+		if ((hi & 0x8000000) != 0) { result |= 0x01; }
+		if ((hi & 0x200000) != 0) { result |= 0x02; }
+		if ((hi & 0x8000) != 0) { result |= 0x04; }
+		if ((hi & 0x200) != 0) { result |= 0x08; }
+		if ((hi & 0x8) != 0) { result |= 0x10; }
+
+		uint lo = (uint)value;
+		if ((lo & 0x20000000) != 0) { result |= 0x20; }
+		if ((lo & 0x800000) != 0) { result |= 0x40; }
+		if ((lo & 0x20000) != 0) { result |= 0x80; }
+		if ((lo & 0x800) != 0) { result |= 0x100; }
+		if ((lo & 0x20) != 0) { result |= 0x200; }
+
+		return result;
 	}
 
 	/// <summary>Fill a buffer with random padding bytes from the padding table (spec §5.11).</summary>

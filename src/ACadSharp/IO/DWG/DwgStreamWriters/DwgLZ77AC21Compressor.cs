@@ -1,8 +1,26 @@
-﻿// LZ77 compressor for DWG AC1021 (R2007) format.
-// Ported from cadcodec (Rust reference implementation, compressor_ac21.rs).
-// Stream structure (spec §5.10): literal runs (>= 8 bytes, byte-reordered)
-// alternate with match opcode chains; each match opcode carries a 3-bit
-// trailing-literal count in the low bits of its last byte.
+// LZ77 compressor for DWG AC1021 (R2007) format.
+// Reverse-engineered against native AutoCAD files (DrawingR2007.dwg /
+// sampleR2007.dwg) at the opcode level; stream structure verified with the
+// opcode disassembler (lz77dis/pagedis) against our own decompressor, which
+// decodes all native streams byte-exactly.
+//
+// Stream structure (mirrors DwgLZ77AC21Decompressor):
+// - Stream start: either a 4-byte degenerate opcode "20 00 00 N" carrying the
+//   initial literal count N (1-7) in the low 3 bits of its last byte, or —
+//   when the first match occurs at position >= 8 — a plain literal-run opcode
+//   directly (native large streams start with e.g. "0F 06 ..." = run of 29).
+// - Literal runs: opcode 0x00-0x17 (length = op + 8; op 0x0F extends with
+//   255/65535 suffixes), bytes reordered in 32-byte blocks.
+// - Match chains: opcode (upper nibble 1-14) + operands; the last operand
+//   byte doubles as "nextOp": its low 3 bits carry the trailing-literal count
+//   (1-7, bytes inlined after the opcode group), upper nibble selects the
+//   next instruction: 1-14 = next match, 0 = end of chain (the byte itself
+//   becomes the next literal-run opcode), 15 (0xF_) = unmask to nibble-0 and
+//   decode as a long match (19-50). A match ending with trailing = 0 and
+//   source exhausted simply omits nextOp.
+// - Degradation: when the compressed size reaches the input size the input is
+//   stored as-is (readers detect comp == uncomp and copy raw; native does the
+//   same, e.g. the 6-byte AcDb:Template page is stored verbatim).
 using System;
 using System.IO;
 
@@ -65,11 +83,20 @@ namespace ACadSharp.IO.DWG
 		{
 			if (source.Length == 0)
 			{
-				// Empty input: emit a literal length of 8 with no actual data.
-				return new byte[] { 0x00 };
+				return Array.Empty<byte>();
 			}
 
-			return new Ac21Compressor(source).compress();
+			byte[] compressed = new Ac21Compressor(source).compress();
+
+			// Degradation (native behaviour): when compression does not pay off
+			// the data is stored verbatim; readers see compSize == uncompSize and
+			// copy it raw (e.g. the native 6-byte AcDb:Template page).
+			if (compressed.Length >= source.Length)
+			{
+				return source;
+			}
+
+			return compressed;
 		}
 
 		// ------------------------------------------------------------------
@@ -414,206 +441,192 @@ namespace ACadSharp.IO.DWG
 		private byte[] compress()
 		{
 			int srcLen = _source.Length;
-			if (srcLen == 0)
+
+			// ── Stream start ──
+			// Position 0 is always a literal (no history). Scan forward to the
+			// first match position: if it lies within the first 7 bytes the run
+			// is carried by the 4-byte degenerate opcode "20 00 00 N", otherwise
+			// by a plain literal-run opcode (native streams do exactly this).
+			insertHash(0);
+			int firstMatchPos = srcLen;
+			for (int p = 1; p < srcLen; p++)
 			{
-				return new byte[] { 0x00 };
+				var (ml, _) = findMatch(p);
+				if (ml >= MIN_MATCH)
+				{
+					firstMatchPos = p;
+					break;
+				}
+				insertHash(p);
 			}
 
-			// Inputs < 8 bytes: emit as a single padded literal run of exactly 8 bytes.
-			if (srcLen < 8)
+			int litCount = firstMatchPos;
+			if (litCount <= 7)
 			{
-				encodeLiteralLength(_output, 8);
-				byte[] padded = new byte[8];
-				Array.Copy(_source, padded, srcLen);
-				for (int i = 0; i < 8; i++)
-				{
-					_output.Add(padded[i]); // length 8 has identity permutation
-				}
+				_output.Add(0x20);
+				_output.Add(0x00);
+				_output.Add(0x00);
+				_output.Add((byte)litCount);
+			}
+			else
+			{
+				encodeLiteralLength(_output, (uint)litCount);
+			}
+			emitLiterals(0, litCount);
+
+			if (litCount >= srcLen)
+			{
 				return _output.ToArray();
 			}
 
-			int pos = 0;
-			bool lastWasMatch = false;
+			int pos = litCount;
 
-			// The stream must start with a literal run (minimum 8 bytes).
-			int firstLiteralEnd = findFirstMatchAfterMinLiteral(pos);
+			// Pending literal run, flushed lazily so that a tail of < 8 bytes can
+			// be merged into it instead of emitting a second literal-run opcode
+			// (which the decompressor would misread as a long match).
+			int pendingStart = -1;
+			int pendingLen = 0;
 
-			int literalCount = Math.Min(firstLiteralEnd, srcLen);
-			encodeLiteralLength(_output, (uint)literalCount);
-			emitLiterals(pos, literalCount);
-			pos = literalCount;
+			// True while the next byte to be written lands on a "nextOp" slot
+			// (previous match ended with trailing = 0); false at a fresh slot
+			// (after the start, a literal run, or trailing literals), where
+			// upper-nibble-0 opcodes decode as long matches and are allowed.
+			bool atNextOp = false;
 
+			// --------------------------------------------------------------
+			void flushPending()
+			{
+				if (pendingStart < 0)
+				{
+					return;
+				}
+				emitLongLiteralRun(pendingStart, pendingLen);
+				pendingStart = -1;
+				pendingLen = 0;
+			}
+
+			void advance(int start, int count)
+			{
+				int end = Math.Min(start + count, srcLen);
+				for (int i = start; i < end; i++)
+				{
+					insertHash(i);
+				}
+			}
+
+			// --------------------------------------------------------------
 			while (pos < srcLen)
 			{
 				var (matchLen, matchOff) = findMatch(pos);
 
-				if (matchLen < MIN_MATCH || pos + matchLen > srcLen)
+				if (matchLen >= MIN_MATCH && pendingStart >= 0 && pendingLen < 8 && !atNextOp)
 				{
-					// Accumulate literals until a match is found and >= 8 bytes accumulated.
-					int literalStart = pos;
+					// A match appears before the pending run reaches the minimum
+					// literal length of 8 and there is no match to hang the run
+					// on as trailing literals: skip it (consume as literal).
 					insertHash(pos);
 					pos++;
-
-					while (pos < srcLen)
-					{
-						var (ml, _) = findMatch(pos);
-						if (ml >= MIN_MATCH && (pos - literalStart) >= 8)
-						{
-							break;
-						}
-						insertHash(pos);
-						pos++;
-					}
-
-					int litLen = pos - literalStart;
-
-					if (litLen >= 8)
-					{
-						emitLongLiteralRun(literalStart, litLen);
-						lastWasMatch = false;
-					}
-					else if (pos >= srcLen && lastWasMatch && litLen <= 7)
-					{
-						// End of input with < 8 unmatched bytes after a match:
-						// carry them via the last match's trailing literal field.
-						patchTrailingLiteral((uint)litLen);
-						emitTrailingLiterals(literalStart, litLen);
-					}
-					else if (pos >= srcLen)
-					{
-						// End of input, no preceding match to patch: padded literal.
-						int paddedLen = Math.Max(litLen, 8);
-						encodeLiteralLength(_output, (uint)paddedLen);
-						int @base = _output.Count;
-						for (int i = 0; i < paddedLen; i++)
-						{
-							_output.Add(0);
-						}
-						byte[] table = _reorder[paddedLen];
-						for (int d = 0; d < litLen; d++)
-						{
-							_output[@base + table[d]] = _source[literalStart + d];
-						}
-						lastWasMatch = false;
-					}
-					else
-					{
-						throw new InvalidOperationException("literal accumulation ended with lit_len < 8 and pos < src_len");
-					}
-
+					pendingLen++;
 					continue;
 				}
 
-				// Emit the match.
-				emitMatchSequence(pos, matchLen, matchOff);
-				lastWasMatch = true;
-				int end = pos + (int)matchLen;
-				for (int i = pos; i < end; i++)
+				if (matchLen >= MIN_MATCH && pendingStart >= 0 && pendingLen >= 8)
 				{
-					insertHash(i);
+					flushPending();
 				}
-				pos = end;
 
-				// Chain more matches using trailing literal counts.
-				while (true)
+				if (matchLen >= MIN_MATCH)
 				{
-					if (pos >= srcLen)
+					if (pendingStart >= 0)
 					{
-						break;
+						// Pending run of 1-7 bytes right after a match with
+						// trailing = 0: carry it as the match's trailing literals.
+						patchTrailingLiteral((uint)pendingLen);
+						emitTrailingLiterals(pos - pendingLen, pendingLen);
+						pendingStart = -1;
+						pendingLen = 0;
+						atNextOp = false;
 					}
 
-					var (nextLen, nextOff) = findMatch(pos);
-
-					if (nextLen >= MIN_MATCH)
+					if (atNextOp)
 					{
-						emitChainedMatch(nextLen, nextOff);
-						int e = pos + (int)nextLen;
-						for (int i = pos; i < e; i++)
+						// Chain continues after trailing = 0: upper nibble 0 would
+						// terminate the chain, so fall back to the extended format.
+						emitChainedMatch(matchLen, matchOff);
+					}
+					else
+					{
+						emitMatchSequence(pos, matchLen, matchOff);
+					}
+
+					advance(pos, (int)matchLen);
+					pos += (int)matchLen;
+					atNextOp = true;
+					continue;
+				}
+
+				// No match here. While sitting on a nextOp slot with an empty
+				// pending run, first look for a match within 7 bytes to carry
+				// the gap as trailing literals.
+				if (atNextOp && pendingStart < 0)
+				{
+					int gap = 0;
+					uint gapLen = 0, gapOff = 0;
+					for (int g = 1; g <= 7 && pos + g < srcLen; g++)
+					{
+						var (gl, go) = findMatch(pos + g);
+						if (gl >= MIN_MATCH)
 						{
-							insertHash(i);
+							gap = g;
+							gapLen = gl;
+							gapOff = go;
+							break;
 						}
-						pos = e;
+					}
+
+					if (gap > 0)
+					{
+						patchTrailingLiteral((uint)gap);
+						emitTrailingLiterals(pos, gap);
+						advance(pos, gap);
+						pos += gap;
+						emitMatchSequence(pos, gapLen, gapOff);
+						advance(pos, (int)gapLen);
+						pos += (int)gapLen;
+						atNextOp = true;
 						continue;
 					}
 
-					// No match at current pos: look ahead 1-7 bytes for a match.
-					int gap = 1;
-					bool foundAfterGap = false;
-					while (gap <= 7 && pos + gap < srcLen)
+					if (srcLen - pos <= 7)
 					{
-						var (gl, go) = findMatch(pos + gap);
-						if (gl >= MIN_MATCH)
-						{
-							patchTrailingLiteral((uint)gap);
-							emitTrailingLiterals(pos, gap);
-							for (int i = pos; i < pos + gap; i++)
-							{
-								insertHash(i);
-							}
-							pos += gap;
-
-							// Fresh copy_decompressed_chunks call: no 0xF_ → 0x0_ unmask,
-							// so use emit_match_sequence (which allows upper nibble 0).
-							emitMatchSequence(pos, gl, go);
-							int e2 = pos + (int)gl;
-							for (int i = pos; i < e2; i++)
-							{
-								insertHash(i);
-							}
-							pos = e2;
-							foundAfterGap = true;
-							break;
-						}
-						gap++;
-					}
-
-					if (!foundAfterGap)
-					{
-						int remaining = srcLen - pos;
-						if (remaining > 0 && remaining <= 7)
-						{
-							patchTrailingLiteral((uint)remaining);
-							emitTrailingLiterals(pos, remaining);
-							for (int i = pos; i < srcLen; i++)
-							{
-								insertHash(i);
-							}
-							pos = srcLen;
-						}
+						// End of input: carry the tail as trailing literals.
+						int tail = srcLen - pos;
+						patchTrailingLiteral((uint)tail);
+						emitTrailingLiterals(pos, tail);
+						advance(pos, tail);
+						pos = srcLen;
+						atNextOp = true;
 						break;
 					}
+
+					// Gap >= 8: keep trailing = 0; the pending run's literal-run
+					// opcode itself serves as the chain-terminating nextOp.
+					atNextOp = false;
 				}
-			}
 
-			return _output.ToArray();
-		}
-
-		/// <summary>Find the first position >= 8 where a match exists.</summary>
-		private int findFirstMatchAfterMinLiteral(int start)
-		{
-			int srcLen = _source.Length;
-			if (srcLen <= 8)
-			{
-				return srcLen;
-			}
-
-			for (int i = start; i < start + Math.Min(8, srcLen); i++)
-			{
-				insertHash(i);
-			}
-
-			int pos = start + 8;
-			while (pos + 2 < srcLen)
-			{
-				insertHash(pos);
-				var (ml, _) = findMatch(pos);
-				if (ml >= MIN_MATCH)
+				// Accumulate literals.
+				if (pendingStart < 0)
 				{
-					return pos;
+					pendingStart = pos;
+					pendingLen = 0;
 				}
+				insertHash(pos);
 				pos++;
+				pendingLen++;
 			}
-			return srcLen;
+
+			flushPending();
+			return _output.ToArray();
 		}
 
 		private void emitLongLiteralRun(int start, int count)

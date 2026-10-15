@@ -1,4 +1,4 @@
-﻿using System.Collections.Generic;
+using System.Collections.Generic;
 
 namespace ACadSharp.IO.DWG
 {
@@ -9,6 +9,8 @@ namespace ACadSharp.IO.DWG
 		public const string AcDsPrototype = "AcDb:AcDsPrototype_1b";
 
 		public const string AppInfo = "AcDb:AppInfo";
+
+		public const string AppInfoHistory = "AcDb:AppInfoHistory";
 
 		public const string AuxHeader = "AcDb:AuxHeader";
 
