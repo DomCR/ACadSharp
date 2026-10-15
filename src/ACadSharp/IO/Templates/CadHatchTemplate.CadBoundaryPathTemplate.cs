@@ -9,7 +9,10 @@ namespace ACadSharp.IO.Templates
 		{
 			public Hatch.BoundaryPath Path { get; set; } = new();
 
-			public HashSet<ulong> Handles { get; set; } = new();
+			// A list, not a set: AutoCAD cites the same boundary object more than once in a single loop,
+			// and the duplicate is part of the association (AcDbHatch::getAssocObjIdsAt returns an
+			// AcDbObjectIdArray). A set dropped it on read, so the next save lost the link.
+			public List<ulong> Handles { get; set; } = new();
 
 			public CadBoundaryPathTemplate() { }
 
