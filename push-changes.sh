@@ -5,7 +5,7 @@ echo "Prepare commit"
 
 if [ -z "$BRANCH" ] || [ -z "$VERSION" ]; then
   echo "BRANCH or VERSION not set: skipping push"
-  exit 0
+  exit 1
 fi
 
 # Target repo: the fork for contributor PRs, otherwise this repo
@@ -14,7 +14,7 @@ TOKEN="${PUSH_TOKEN:-$GITHUB_TOKEN}"
 
 if [ -z "$TOKEN" ]; then
   echo "No token available: skipping push"
-  exit 0
+  exit 1
 fi
 
 # Get commit details
@@ -27,7 +27,7 @@ git config --local user.name "$author"
 git add .
 if git diff-index --quiet HEAD; then
   echo "Nothing changed"
-  exit 0
+  exit 1
 fi
 
 echo "Pushing changes to $TARGET_REPO:$BRANCH"
