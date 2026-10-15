@@ -849,8 +849,6 @@ internal abstract class DxfSectionReaderBase
 				return true;
 			//Undocumented codes
 			case 73:
-			case 74:
-			case 75:
 			case 90:
 			case 361:
 				return true;
