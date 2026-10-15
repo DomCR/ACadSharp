@@ -30,9 +30,10 @@ jobs:
           version: ${{env.VERSION_FORMAT}}
       - name: Push changes
         run: bash push-changes.sh
+        shell: bash
         env:
-          BRANCH: ${{ github.head_ref || github.ref_name }}
-          VERSION: ${{ env.VERSION }}
-          HEAD_REPO: ${{ github.event.pull_request.head.repo.full_name }}
-          PUSH_TOKEN: ${{ secrets.PUSH_TOKEN }}
-          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          BRANCH: ${{github.head_ref || github.ref_name}}
+          VERSION: ${{steps.update.outputs.newVersion}}          
+          HEAD_REPO: ${{github.event.pull_request.head.repo.full_name}}
+          PUSH_TOKEN: ${{secrets.PUSH_TOKEN}}
+          GITHUB_TOKEN: ${{secrets.GITHUB_TOKEN}}
