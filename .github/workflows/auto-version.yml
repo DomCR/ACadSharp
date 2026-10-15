@@ -20,8 +20,10 @@ jobs:
       - name: Checkout
         uses: actions/checkout@v4
         with: 
-          submodules: true
-          ref: ${{env.CURRENT_BRANCH}}
+          repository: ${{ github.event.pull_request.head.repo.full_name || github.repository }}
+          ref: ${{ github.head_ref || github.ref_name }}
+          fetch-depth: 0
+          persist-credentials: false
       - name: Update version
         id: update
         uses: vers-one/dotnet-project-version-updater@v1.7
