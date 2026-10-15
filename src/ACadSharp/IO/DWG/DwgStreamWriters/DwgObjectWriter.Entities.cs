@@ -1077,8 +1077,8 @@ internal partial class DwgObjectWriter : DwgSectionIO
 			this._writer.WriteBit(false);
 		}
 
-		//H 340 Associated annotation
-		this._writer.HandleReference(DwgReferenceType.HardPointer, null);
+		//H 340 Associated annotation (was written as null, so AutoCAD's AUDIT reported "Bad mtext id")
+		this._writer.HandleReference(DwgReferenceType.HardPointer, leader.AssociatedAnnotation);
 		//H 2 DIMSTYLE (hard pointer)
 		this._writer.HandleReference(DwgReferenceType.HardPointer, leader.Style);
 	}
