@@ -3,7 +3,6 @@ using ACadSharp.Entities;
 using ACadSharp.Objects;
 using ACadSharp.Tables;
 using ACadSharp.XData;
-using System;
 using System.Collections.Generic;
 
 namespace ACadSharp.IO.Templates;
@@ -19,6 +18,8 @@ internal abstract class CadTemplate : ICadObjectTemplate
 	public Dictionary<string, List<ExtendedDataRecord>> EDataTemplateByAppName { get; set; } = new();
 
 	public bool HasBeenBuilt { get; private set; } = false;
+
+	public bool HasDsBinaryData { get; set; }
 
 	public ulong? OwnerHandle { get; set; }
 

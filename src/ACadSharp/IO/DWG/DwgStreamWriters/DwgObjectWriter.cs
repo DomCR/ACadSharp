@@ -1,7 +1,7 @@
 ﻿using ACadSharp.Blocks;
 using ACadSharp.Classes;
 using ACadSharp.Entities;
-using ACadSharp.Entities.AecObjects;
+using ACadSharp.Entities.AecEntities;
 using ACadSharp.Entities.Mechanical;
 using ACadSharp.Objects;
 using ACadSharp.Tables;
@@ -154,6 +154,7 @@ internal partial class DwgObjectWriter : DwgSectionIO
 			case Solid3D:
 			case CadBody:
 			case Region:
+			case Surface:
 				this.notify($"Entity type not implemented {entity.GetType().FullName}", NotificationType.NotImplemented);
 				return false;
 			default:

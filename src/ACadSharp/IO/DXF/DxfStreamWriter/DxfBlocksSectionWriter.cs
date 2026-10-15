@@ -1,4 +1,5 @@
-﻿using ACadSharp.Blocks;
+﻿using System;
+using ACadSharp.Blocks;
 using ACadSharp.Entities;
 using ACadSharp.IO.DXF.DxfStreamWriter;
 using ACadSharp.Tables;
@@ -54,7 +55,8 @@ namespace ACadSharp.IO.DXF
 
 		private void processEntities(BlockRecord b)
 		{
-			if (b.Name == BlockRecord.ModelSpaceName || b.Name == BlockRecord.PaperSpaceName)
+			if (b.Name.Equals(BlockRecord.ModelSpaceName, StringComparison.OrdinalIgnoreCase) ||
+				b.Name.Equals(BlockRecord.PaperSpaceName, StringComparison.OrdinalIgnoreCase))
 			{
 				foreach (Entity e in b.Entities)
 				{

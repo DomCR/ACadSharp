@@ -326,21 +326,6 @@ public class DxfClassCollection : ICollection<DxfClass>
 			InstanceCount = this._document.GetInstanceCount("ACDB_TEXTOBJECTCONTEXTDATA_CLASS"),
 		});
 
-		//AcDbWipeoutVariables
-		this.AddOrUpdate(new DxfClass
-		{
-			ApplicationName = "WipeOut",
-			CppClassName = "AcDbWipeoutVariables",
-			ClassNumber = (short)(500 + this.Count),
-			DwgVersion = ACadVersion.AC1015,
-			DxfName = "WIPEOUTVARIABLES",
-			ItemClassId = 499,
-			MaintenanceVersion = 0,
-			ProxyFlags = ProxyFlags.R13FormatProxy,
-			WasZombie = false,
-			InstanceCount = this._document.GetInstanceCount("WIPEOUTVARIABLES"),
-		});
-
 		//AcDbTableGeometry
 		this.AddOrUpdate(new DxfClass
 		{

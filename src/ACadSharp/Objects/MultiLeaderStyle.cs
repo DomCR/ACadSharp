@@ -23,7 +23,6 @@ public class MultiLeaderStyle : NonGraphicalObject, IDxfClassDefined
 	/// </summary>
 	public static MultiLeaderStyle Default { get { return new MultiLeaderStyle(DefaultName); } }
 
-	//	TODO What is the meaning of this property?
 	/// <summary>
 	/// Align Space
 	/// </summary>
@@ -52,7 +51,7 @@ public class MultiLeaderStyle : NonGraphicalObject, IDxfClassDefined
 		get { return this._arrowhead; }
 		set
 		{
-			this._arrowhead = CadObject.updateCollection(value, this.Document?.BlockRecords);
+			this._arrowhead = this.updateTableEntry(value, b => this._arrowhead = b, this.Document?.BlockRecords);
 		}
 	}
 
@@ -91,7 +90,7 @@ public class MultiLeaderStyle : NonGraphicalObject, IDxfClassDefined
 		get { return this._blockContent; }
 		set
 		{
-			this._blockContent = CadObject.updateCollection(value, this.Document?.BlockRecords);
+			this._blockContent = this.updateTableEntry(value, b => this._blockContent = b, this.Document?.BlockRecords);
 		}
 	}
 
@@ -359,7 +358,7 @@ public class MultiLeaderStyle : NonGraphicalObject, IDxfClassDefined
 
 			if (this.Document != null)
 			{
-				this._leaderLineType = CadObject.updateCollection(value, this.Document.LineTypes);
+				this._leaderLineType = this.updateTableEntry(value, l => this._leaderLineType = l, this.Document.LineTypes);
 			}
 			else
 			{
@@ -685,7 +684,7 @@ public class MultiLeaderStyle : NonGraphicalObject, IDxfClassDefined
 
 			if (this.Document != null)
 			{
-				this._textStyle = CadObject.updateCollection(value, this.Document.TextStyles);
+				this._textStyle = this.updateTableEntry(value, s => this._textStyle = s, this.Document.TextStyles);
 			}
 			else
 			{
@@ -785,21 +784,18 @@ public class MultiLeaderStyle : NonGraphicalObject, IDxfClassDefined
 	{
 		base.AssignDocument(doc);
 
-		this._textStyle = CadObject.updateCollection(this._textStyle, doc.TextStyles);
-		this._leaderLineType = CadObject.updateCollection(this._leaderLineType, doc.LineTypes);
-		this._arrowhead = CadObject.updateCollection(this._arrowhead, doc.BlockRecords);
-		this._blockContent = CadObject.updateCollection(this._blockContent, doc.BlockRecords);
-
-		doc.TextStyles.OnRemove += this.tableOnRemove;
-		doc.LineTypes.OnRemove += this.tableOnRemove;
-		doc.BlockRecords.OnRemove += this.tableOnRemove;
+		this._textStyle = this.updateTableEntry(this._textStyle, s => this._textStyle = s, doc.TextStyles);
+		this._leaderLineType = this.updateTableEntry(this._leaderLineType, l => this._leaderLineType = l, doc.LineTypes);
+		this._arrowhead = this.updateTableEntry(this._arrowhead, b => this._arrowhead = b, doc.BlockRecords);
+		this._blockContent = this.updateTableEntry(this._blockContent, b => this._blockContent = b, doc.BlockRecords);
 	}
 
 	internal override void UnassignDocument()
 	{
-		this.Document.TextStyles.OnRemove -= this.tableOnRemove;
-		this.Document.LineTypes.OnRemove -= this.tableOnRemove;
-		this.Document.BlockRecords.OnRemove -= this.tableOnRemove;
+		this.Document.TextStyles.RemoveReference(this._textStyle?.Name, this);
+		this.Document.LineTypes.RemoveReference(this._leaderLineType?.Name, this);
+		this.Document.BlockRecords.RemoveReference(this._arrowhead?.Name, this);
+		this.Document.BlockRecords.RemoveReference(this._blockContent?.Name, this);
 
 		base.UnassignDocument();
 
@@ -807,28 +803,5 @@ public class MultiLeaderStyle : NonGraphicalObject, IDxfClassDefined
 		this._leaderLineType = (LineType)this._leaderLineType.Clone();
 		this._arrowhead = (BlockRecord)this._arrowhead?.Clone();
 		this._blockContent = (BlockRecord)this._blockContent?.Clone();
-	}
-
-	protected virtual void tableOnRemove(object sender, CollectionChangedEventArgs e)
-	{
-		if (e.Item.Equals(this._textStyle))
-		{
-			this._textStyle = this.Document.TextStyles[Layer.DefaultName];
-		}
-
-		if (e.Item.Equals(this._leaderLineType))
-		{
-			this._leaderLineType = this.Document.LineTypes[LineType.ByLayerName];
-		}
-
-		if (e.Item.Equals(this.Arrowhead))
-		{
-			this._arrowhead = null;
-		}
-
-		if (e.Item.Equals(this.BlockContent))
-		{
-			this._blockContent = null;
-		}
 	}
 }

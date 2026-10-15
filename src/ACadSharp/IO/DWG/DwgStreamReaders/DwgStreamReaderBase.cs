@@ -1235,6 +1235,11 @@ namespace ACadSharp.IO.DWG
 				dtDateTime = DateTime.MinValue;
 			}
 
+			if (miliseconds < 0)
+			{
+				return dtDateTime;
+			}
+
 			return dtDateTime.AddMilliseconds(miliseconds);
 		}
 	}

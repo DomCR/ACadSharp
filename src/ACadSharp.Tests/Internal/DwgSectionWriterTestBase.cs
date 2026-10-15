@@ -2,37 +2,36 @@
 using Xunit;
 using Xunit.Abstractions;
 
-namespace ACadSharp.Tests.Internal
+namespace ACadSharp.Tests.Internal;
+
+public abstract class DwgSectionWriterTestBase
 {
-	public abstract class DwgSectionWriterTestBase
+	public static TheoryData<ACadVersion> DwgVersions { get; }
+
+	protected readonly ITestOutputHelper _output;
+
+	static DwgSectionWriterTestBase()
 	{
-		public static TheoryData<ACadVersion> DwgVersions { get; }
-
-		protected readonly ITestOutputHelper _output;
-
-		static DwgSectionWriterTestBase()
+		DwgVersions = new TheoryData<ACadVersion>
 		{
-			DwgVersions = new TheoryData<ACadVersion>
-			{
-				ACadVersion.AC1012,
-				ACadVersion.AC1014,
-				ACadVersion.AC1015,
-				ACadVersion.AC1018,
-				ACadVersion.AC1021,
-				ACadVersion.AC1024,
-				ACadVersion.AC1027,
-				ACadVersion.AC1032,
-			};
-		}
+			ACadVersion.AC1012,
+			ACadVersion.AC1014,
+			ACadVersion.AC1015,
+			ACadVersion.AC1018,
+			ACadVersion.AC1021,
+			ACadVersion.AC1024,
+			ACadVersion.AC1027,
+			ACadVersion.AC1032,
+		};
+	}
 
-		public DwgSectionWriterTestBase(ITestOutputHelper output)
-		{
-			this._output = output;
-		}
+	public DwgSectionWriterTestBase(ITestOutputHelper output)
+	{
+		this._output = output;
+	}
 
-		protected virtual void onNotification(object sender, NotificationEventArgs e)
-		{
-			this._output.WriteLine(e.Message);
-		}
+	protected virtual void onNotification(object sender, NotificationEventArgs e)
+	{
+		this._output.WriteLine(e.Message);
 	}
 }

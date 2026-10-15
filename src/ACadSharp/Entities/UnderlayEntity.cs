@@ -60,14 +60,7 @@ public abstract class UnderlayEntity<T> : Entity, IOrientable
 				throw new ArgumentNullException(nameof(value));
 			}
 
-			if (this.Document != null)
-			{
-				this._definition = updateCollection(value, this.getDocumentCollection(this.Document));
-			}
-			else
-			{
-				this._definition = value;
-			}
+			this._definition = this.updateCollectionEntry(value, d => this._definition = d, this.getDocumentCollection(this.Document));
 		}
 	}
 
@@ -268,27 +261,15 @@ public abstract class UnderlayEntity<T> : Entity, IOrientable
 	{
 		base.AssignDocument(doc);
 
-		this._definition = updateCollection(this.Definition, getDocumentCollection(doc));
-
-		this.Document.PdfDefinitions.OnRemove += this.imageDefinitionsOnRemove;
+		this._definition = this.updateCollectionEntry(this.Definition, d => this._definition = d, this.getDocumentCollection(doc));
 	}
 
 	internal override void UnassignDocument()
 	{
-		this.Document.ImageDefinitions.OnRemove -= this.imageDefinitionsOnRemove;
-
 		base.UnassignDocument();
 
 		this.Definition = (T)this.Definition?.Clone();
 	}
 
 	protected abstract ObjectDictionaryCollection<T> getDocumentCollection(CadDocument document);
-
-	private void imageDefinitionsOnRemove(object sender, CollectionChangedEventArgs e)
-	{
-		if (e.Item.Equals(this.Definition))
-		{
-			this.Definition = null;
-		}
-	}
 }

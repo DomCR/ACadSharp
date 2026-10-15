@@ -61,6 +61,16 @@ public class ImageDefinition : NonGraphicalObject, IDxfClassDefined
 	public ResolutionUnit Units { get; set; }
 
 	/// <inheritdoc/>
+	public ImageDefinition()
+	{
+	}
+
+	/// <inheritdoc/>
+	public ImageDefinition(string name) : base(name)
+	{
+	}
+
+	/// <inheritdoc/>
 	public DxfClass GetDxfClass()
 	{
 		return new DxfClass

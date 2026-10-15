@@ -4,6 +4,7 @@ using ACadSharp.Tables;
 using ACadSharp.Types.Units;
 using ACadSharp.XData;
 using CSMath;
+using CSMath.Extensions;
 using CSUtilities.Extensions;
 using System;
 using System.Collections.Generic;
@@ -37,7 +38,7 @@ public abstract class Dimension : Entity, IOrientable
 		get { return this._block; }
 		set
 		{
-			this._block = CadObject.updateCollection(value, this.Document?.BlockRecords);
+			this._block = updateTableEntry(value, v => this._block = v, this.Document?.BlockRecords);
 		}
 	}
 
@@ -202,7 +203,7 @@ public abstract class Dimension : Entity, IOrientable
 				throw new ArgumentNullException(nameof(value));
 			}
 
-			this._style = CadObject.updateCollection(value, this.Document?.DimensionStyles);
+			this._style = this.updateTableEntry(value, v => this._style = v, this.Document?.DimensionStyles);
 		}
 	}
 
@@ -276,8 +277,8 @@ public abstract class Dimension : Entity, IOrientable
 	{
 		Dimension clone = (Dimension)base.Clone();
 
-		clone.Style = this.Style.CloneTyped();
-		clone.Block = this.Block?.CloneTyped();
+		clone._style = this.Style.CloneTyped();
+		clone._block = this.Block?.CloneTyped();
 
 		return clone;
 	}
@@ -536,29 +537,24 @@ public abstract class Dimension : Entity, IOrientable
 	{
 		base.AssignDocument(doc);
 
-		this._style = CadObject.updateCollection(this.Style, doc.DimensionStyles);
-		this._block = CadObject.updateCollection(this.Block, doc.BlockRecords);
+		this._style = this.updateTableEntry(this._style, l => this._style = l, doc.DimensionStyles);
+		this._block = this.updateTableEntry(this._block, b => this._block = b, doc.BlockRecords);
 
 		if (this._block != null)
 		{
 			this._block.Name = this.generateBlockName();
 		}
-
-		this._block = CadObject.updateCollection(this.Block, this.Document.BlockRecords);
-
-		doc.DimensionStyles.OnRemove += this.tableOnRemove;
-		doc.BlockRecords.OnRemove += this.tableOnRemove;
 	}
 
 	internal override void UnassignDocument()
 	{
-		this.Document.DimensionStyles.OnRemove -= this.tableOnRemove;
-		this.Document.BlockRecords.OnRemove -= this.tableOnRemove;
+		this.Document.DimensionStyles.RemoveReference(this.Style.Name, this);
+		this.Document.BlockRecords.RemoveReference(this.Block?.Name, this);
 
 		base.UnassignDocument();
 
-		this.Style = (DimensionStyle)this.Style?.Clone();
-		this.Block = (BlockRecord)this.Block?.Clone();
+		this._style = (DimensionStyle)this.Style?.Clone();
+		this._block = (BlockRecord)this.Block?.Clone();
 	}
 
 	protected static Entity dimensionLine(XYZ start, XYZ end, DimensionStyle style)
@@ -643,7 +639,7 @@ public abstract class Dimension : Entity, IOrientable
 		}
 
 		// center cross
-		if (!MathHelper.IsZero(this.Style.CenterMarkSize))
+		if (!this.Style.CenterMarkSize.IsZero())
 		{
 			this._block.Entities.AddRange(centerCross(centerRef.Convert<XYZ>(), radius, this.Style));
 		}
@@ -675,7 +671,7 @@ public abstract class Dimension : Entity, IOrientable
 	protected List<Entity> centerCross(XYZ center, double radius, DimensionStyle style)
 	{
 		List<Entity> lines = new();
-		if (MathHelper.IsZero(style.CenterMarkSize))
+		if (style.CenterMarkSize.IsZero())
 		{
 			return lines;
 		}
@@ -724,7 +720,7 @@ public abstract class Dimension : Entity, IOrientable
 
 		if (this.Document != null)
 		{
-			this._block = CadObject.updateCollection(this._block, this.Document.BlockRecords);
+			this._block = this.updateTableEntry(this._block, b => this._block = b, this.Document.BlockRecords);
 		}
 
 		this._block.Entities.Clear();
@@ -795,21 +791,6 @@ public abstract class Dimension : Entity, IOrientable
 			LineType = style.LineType ?? LineType.ByLayer,
 			LineWeight = style.DimensionLineWeight
 		};
-	}
-
-	protected override void tableOnRemove(object sender, CollectionChangedEventArgs e)
-	{
-		base.tableOnRemove(sender, e);
-
-		if (e.Item.Equals(this.Style))
-		{
-			this.Style = this.Document.DimensionStyles[DimensionStyle.DefaultName];
-		}
-
-		if (e.Item.Equals(this.Block))
-		{
-			this._block = null;
-		}
 	}
 
 	private string generateBlockName()

@@ -38,7 +38,7 @@ public partial class MultiLeader : Entity, IDxfClassDefined
 		get { return this._arrowhead; }
 		set
 		{
-			this._arrowhead = updateCollection(value, this.Document?.BlockRecords);
+			this._arrowhead = this.updateTableEntry(value, b => this._arrowhead = b, this.Document?.BlockRecords);
 		}
 	}
 
@@ -71,11 +71,86 @@ public partial class MultiLeader : Entity, IDxfClassDefined
 	public IList<BlockAttribute> BlockAttributes { get; private set; } = new List<BlockAttribute>();
 
 	/// <summary>
+	/// Gets a <see cref="BlockRecord"/> containing elements
+	/// to be drawn as content for the multileader.
+	/// This property overrides the value from <see cref="MultiLeaderStyle"/>
+	/// when the <see cref="MultiLeaderPropertyOverrideFlags.BlockContent"/> flag is set (see
+	/// <see cref="PropertyOverrideFlags"/> property).
+	/// </summary>
+	/// <remarks>
+	/// This property is also exposed by the <see cref="MultiLeaderObjectContextData"/> class. Values
+	/// should be equal, the value <see cref="MultiLeaderObjectContextData.BlockContent"/> is
+	/// assumed to be used.
+	/// </remarks>
+	[DxfCodeValue(DxfReferenceType.Handle, 344)]
+	public BlockRecord BlockContent
+	{
+		get { return this._blockContent; }
+		set
+		{
+			this._blockContent = this.updateTableEntry(value, b => this._blockContent = b, this.Document?.BlockRecords);
+		}
+	}
+
+	/// <summary>
+	/// Gets or sets the block-content color.
+	/// This property overrides the value from <see cref="MultiLeaderStyle"/>
+	/// when the <see cref="MultiLeaderPropertyOverrideFlags.BlockContentColor"/> flag is set (see
+	/// <see cref="PropertyOverrideFlags"/> property).
+	/// </summary>
+	/// <remarks>
+	/// This property is also exposed by the <see cref="MultiLeaderObjectContextData"/> class. Values
+	/// should be equal, the value <see cref="MultiLeaderObjectContextData.BlockContentColor"/> is
+	/// assumed to be used.
+	/// </remarks>
+	[DxfCodeValue(93)]
+	public Color BlockContentColor { get; set; }
+
+	/// <summary>
+	/// Gets or sets a value indicating whether the multileader connects to the content-block extents
+	/// or to the content-block base point
+	/// when the <see cref="MultiLeaderPropertyOverrideFlags.BlockContentConnection"/> flag is set in the
+	/// <see cref="PropertyOverrideFlags"/> property.
+	/// </summary>
+	/// <remarks>
+	/// This property is also exposed by the <see cref="MultiLeaderObjectContextData"/> class. Values
+	/// should be equal, the value <see cref="MultiLeaderObjectContextData.BlockContentConnection"/> is
+	/// assumed to be used.
+	/// </remarks>
+	[DxfCodeValue(176)]
+	public BlockContentConnectionType BlockContentConnection { get; set; }
+
+	/// <summary>
+	/// Gets or sets the rotation of the block content of the multileader.
+	/// </summary>
+	/// <remarks>
+	/// This property is also exposed by the <see cref="MultiLeaderObjectContextData"/> class. Values
+	/// should be equal, the value <see cref="MultiLeaderObjectContextData.BlockContentRotation"/> is
+	/// assumed to be used.
+	/// </remarks>
+	[DxfCodeValue(DxfReferenceType.IsAngle, 43)]
+	public double BlockContentRotation { get; set; }
+
+	/// <summary>
+	/// Gets or sets the scale factor for block content.
+	/// This property overrides the value from <see cref="MultiLeaderStyle"/>
+	/// when the <see cref="MultiLeaderPropertyOverrideFlags.BlockContentScale"/> flag is set (see
+	/// <see cref="MultiLeader.PropertyOverrideFlags"/> property).
+	/// </summary>
+	/// <remarks>
+	/// This property is also exposed by the <see cref="MultiLeaderObjectContextData"/> class. Values
+	/// should be equal, the value <see cref="MultiLeaderObjectContextData.BlockContentScale"/> is
+	/// assumed to be used.
+	/// </remarks>
+	[DxfCodeValue(10, 20, 30)]
+	public XYZ BlockContentScale { get; set; } = new XYZ(1.0d);
+
+	/// <summary>
 	/// Gets or sets a value indicating whether the content of this <see cref="MultiLeader"/>
 	/// is a text label, a content block, or a tolerance.
 	/// </summary>
 	[DxfCodeValue(172)]
-	public LeaderContentType ContentType { get; set; }
+	public LeaderContentType ContentType { get; set; } = LeaderContentType.None;
 
 	/// <summary>
 	/// Gets the embedded <see cref="MultiLeaderObjectContextData"/> object
@@ -173,18 +248,10 @@ public partial class MultiLeader : Entity, IDxfClassDefined
 				throw new ArgumentNullException(nameof(value));
 			}
 
-			if (this.Document != null)
-			{
-				this._leaderLineType = updateCollection(value, this.Document.LineTypes);
-			}
-			else
-			{
-				this._leaderLineType = value;
-			}
+			this._leaderLineType = this.updateTableEntry(value, l => this._leaderLineType = l, this.Document?.LineTypes);
 		}
 	}
 
-	//  TODO Additional Line Weight? see Entity.LineWeight.
 	/// <summary>
 	/// Gets or sets a value specifying the line weight to be applied to all leader lines of this
 	/// <see cref="MultiLeader"/> (see <see cref="MultiLeaderStyle.LeaderLineWeight"/>).
@@ -199,7 +266,7 @@ public partial class MultiLeader : Entity, IDxfClassDefined
 	/// <see cref="MultiLeaderObjectContextData.LeaderLine.OverrideFlags"/> property.
 	/// </remarks>
 	[DxfCodeValue(171)]
-	public LineWeightType LeaderLineWeight { get; set; }
+	public LineWeightType LeaderLineWeight { get; set; } = LineWeightType.ByLayer;
 
 	/// <summary>
 	/// Gets or sets color of the leader lines of this <see cref="MultiLeader"/>
@@ -215,7 +282,7 @@ public partial class MultiLeader : Entity, IDxfClassDefined
 	/// <see cref="MultiLeaderObjectContextData.LeaderLine.OverrideFlags"/> property.
 	/// </remarks>
 	[DxfCodeValue(91)]
-	public Color LineColor { get; set; }
+	public Color LineColor { get; set; } = Color.ByLayer;
 
 	/// <inheritdoc/>
 	public override string ObjectName => DxfFileToken.EntityMultiLeader;
@@ -255,7 +322,7 @@ public partial class MultiLeader : Entity, IDxfClassDefined
 	/// assumed to be relevant.
 	/// </remarks>
 	[DxfCodeValue(45)]
-	public double ScaleFactor { get; set; }
+	public double ScaleFactor { get; set; } = 1.0d;
 
 	/// <summary>
 	/// Gets a <see cref="MultiLeaderStyle"/> providing reusable style information
@@ -272,14 +339,7 @@ public partial class MultiLeader : Entity, IDxfClassDefined
 				throw new ArgumentNullException(nameof(value));
 			}
 
-			if (this.Document != null)
-			{
-				this._style = updateCollection(value, this.Document.MLeaderStyles);
-			}
-			else
-			{
-				this._style = value;
-			}
+			this._style = this.updateCollectionEntry(value, s => this._style = s, this.Document?.MLeaderStyles);
 		}
 	}
 
@@ -291,6 +351,31 @@ public partial class MultiLeader : Entity, IDxfClassDefined
 	/// </summary>
 	[DxfCodeValue(178)]
 	public short TextAligninIPE { get; set; }
+
+	/// <summary>
+	/// Gets or sets the text alignement type.
+	/// </summary>
+	/// <remarks><para>
+	/// The Open Design Specification for DWG documents this property as <i>Unknown</i>,
+	/// DXF reference as <i>Text Aligment Type</i>.
+	/// Available DWG and DXF sample documents saved by AutoCAD return always 0=Left.
+	/// </para><para>
+	/// This property is also exposed by the <see cref="MultiLeaderObjectContextData"/> class. Values
+	/// should be equal, the value <see cref="MultiLeaderObjectContextData.TextAlignment"/> is
+	/// assumed to be used.
+	/// </para>
+	/// </remarks>
+	[DxfCodeValue(175)]
+	public TextAlignmentType TextAlignment { get; set; } = TextAlignmentType.Left;
+
+	/// <summary>
+	/// Gets or sets a value indicating the text angle.
+	/// This property overrides the value from <see cref="MultiLeaderStyle"/>
+	/// when the <see cref="MultiLeaderPropertyOverrideFlags.TextAngle"/> flag is set (see
+	/// <see cref="PropertyOverrideFlags"/> property).
+	/// </summary>
+	[DxfCodeValue(174)]
+	public TextAngleType TextAngle { get; set; } = TextAngleType.Horizontal;
 
 	//	TODO According to the OpenDesign_Specification_for_.dwg_files
 	//	a list of arror head AND a list of block attributes can occur.
@@ -365,73 +450,6 @@ public partial class MultiLeader : Entity, IDxfClassDefined
 	[DxfCodeValue(272)]
 	public TextAttachmentType TextBottomAttachment { get; set; }
 
-	//  public IList<ArrowheadAssociation> Arrowheads { get; } = new List<ArrowheadAssociation>();
-	/// <summary>
-	/// Text Direction Negative
-	/// </summary>
-	[DxfCodeValue(294)]
-	public bool TextDirectionNegative { get; set; }
-
-	/// <summary>
-	/// Gets or sets the text top attachment type (see <see cref="MultiLeaderStyle.TextTopAttachment"/>).
-	/// This property override the value from <see cref="MultiLeaderStyle"/>
-	/// when the <see cref="MultiLeaderPropertyOverrideFlags.TextTopAttachment"/> flag is set (see
-	/// <see cref="PropertyOverrideFlags"/> property).
-	/// </summary>
-	/// <remarks>
-	/// This property is also exposed by the <see cref="MultiLeaderObjectContextData"/> class. Values
-	/// should be equal, the value <see cref="MultiLeaderObjectContextData.TextTopAttachment"/> is
-	/// assumed to be used.
-	/// </remarks>
-	/// <value>
-	/// A <see cref="TextAttachmentType"/> having the values
-	/// 	9 = Center,
-	/// 	10 = Underline and Center
-	/// can be used ("vertical" attachment types).
-	/// </value>
-	[DxfCodeValue(273)]
-	public TextAttachmentType TextTopAttachment { get; set; }
-
-	private BlockRecord _arrowhead;
-
-	private BlockRecord _blockContent;
-
-	private MultiLeaderObjectContextData _contextData = new MultiLeaderObjectContextData();
-
-	private LineType _leaderLineType = LineType.ByLayer;
-
-	private MultiLeaderStyle _style = MultiLeaderStyle.Default;
-
-	private TextStyle _textStyle = TextStyle.Default;
-
-	#region Text Menu Properties
-
-	/// <summary>
-	/// Gets or sets the text alignement type.
-	/// </summary>
-	/// <remarks><para>
-	/// The Open Design Specification for DWG documents this property as <i>Unknown</i>,
-	/// DXF reference as <i>Text Aligment Type</i>.
-	/// Available DWG and DXF sample documents saved by AutoCAD return always 0=Left.
-	/// </para><para>
-	/// This property is also exposed by the <see cref="MultiLeaderObjectContextData"/> class. Values
-	/// should be equal, the value <see cref="MultiLeaderObjectContextData.TextAlignment"/> is
-	/// assumed to be used.
-	/// </para>
-	/// </remarks>
-	[DxfCodeValue(175)]
-	public TextAlignmentType TextAlignment { get; set; }
-
-	//	TODO How to set this value?
-	/// <summary>
-	/// Gets or sets a value indicating the text angle.
-	/// This property overrides the value from <see cref="MultiLeaderStyle"/>
-	/// when the <see cref="MultiLeaderPropertyOverrideFlags.TextAngle"/> flag is set (see
-	/// <see cref="PropertyOverrideFlags"/> property).
-	/// </summary>
-	[DxfCodeValue(174)]
-	public TextAngleType TextAngle { get; set; }
-
 	/// <summary>
 	/// Gets or sets the color for the display of the text label.
 	/// This property overrides the value from <see cref="MultiLeaderStyle"/>
@@ -445,6 +463,13 @@ public partial class MultiLeader : Entity, IDxfClassDefined
 	/// </remarks>
 	[DxfCodeValue(92)]
 	public Color TextColor { get; set; }
+
+	//  public IList<ArrowheadAssociation> Arrowheads { get; } = new List<ArrowheadAssociation>();
+	/// <summary>
+	/// Text Direction Negative
+	/// </summary>
+	[DxfCodeValue(294)]
+	public bool TextDirectionNegative { get; set; }
 
 	/// <summary>
 	/// Gets or sets a value indicating that the text label is to be drawn with a frame.
@@ -515,97 +540,41 @@ public partial class MultiLeader : Entity, IDxfClassDefined
 				throw new ArgumentNullException(nameof(value));
 			}
 
-			if (this.Document != null)
-			{
-				this._textStyle = updateCollection(value, this.Document.TextStyles);
-			}
-			else
-			{
-				this._textStyle = value;
-			}
-		}
-	}
-
-	#endregion Text Menu Properties
-
-	#region Block Content Properties
-
-	/// <summary>
-	/// Gets a <see cref="BlockRecord"/> containing elements
-	/// to be drawn as content for the multileader.
-	/// This property overrides the value from <see cref="MultiLeaderStyle"/>
-	/// when the <see cref="MultiLeaderPropertyOverrideFlags.BlockContent"/> flag is set (see
-	/// <see cref="PropertyOverrideFlags"/> property).
-	/// </summary>
-	/// <remarks>
-	/// This property is also exposed by the <see cref="MultiLeaderObjectContextData"/> class. Values
-	/// should be equal, the value <see cref="MultiLeaderObjectContextData.BlockContent"/> is
-	/// assumed to be used.
-	/// </remarks>
-	[DxfCodeValue(DxfReferenceType.Handle, 344)]
-	public BlockRecord BlockContent
-	{
-		get { return this._blockContent; }
-		set
-		{
-			this._blockContent = updateCollection(value, this.Document?.BlockRecords);
+			this._textStyle = this.updateTableEntry(value, s => this._textStyle = s, this.Document?.TextStyles);
 		}
 	}
 
 	/// <summary>
-	/// Gets or sets the block-content color.
-	/// This property overrides the value from <see cref="MultiLeaderStyle"/>
-	/// when the <see cref="MultiLeaderPropertyOverrideFlags.BlockContentColor"/> flag is set (see
+	/// Gets or sets the text top attachment type (see <see cref="MultiLeaderStyle.TextTopAttachment"/>).
+	/// This property override the value from <see cref="MultiLeaderStyle"/>
+	/// when the <see cref="MultiLeaderPropertyOverrideFlags.TextTopAttachment"/> flag is set (see
 	/// <see cref="PropertyOverrideFlags"/> property).
 	/// </summary>
 	/// <remarks>
 	/// This property is also exposed by the <see cref="MultiLeaderObjectContextData"/> class. Values
-	/// should be equal, the value <see cref="MultiLeaderObjectContextData.BlockContentColor"/> is
+	/// should be equal, the value <see cref="MultiLeaderObjectContextData.TextTopAttachment"/> is
 	/// assumed to be used.
 	/// </remarks>
-	[DxfCodeValue(93)]
-	public Color BlockContentColor { get; set; }
+	/// <value>
+	/// A <see cref="TextAttachmentType"/> having the values
+	/// 	9 = Center,
+	/// 	10 = Underline and Center
+	/// can be used ("vertical" attachment types).
+	/// </value>
+	[DxfCodeValue(273)]
+	public TextAttachmentType TextTopAttachment { get; set; }
 
-	/// <summary>
-	/// Gets or sets a value indicating whether the multileader connects to the content-block extents
-	/// or to the content-block base point
-	/// when the <see cref="MultiLeaderPropertyOverrideFlags.BlockContentConnection"/> flag is set in the
-	/// <see cref="PropertyOverrideFlags"/> property.
-	/// </summary>
-	/// <remarks>
-	/// This property is also exposed by the <see cref="MultiLeaderObjectContextData"/> class. Values
-	/// should be equal, the value <see cref="MultiLeaderObjectContextData.BlockContentConnection"/> is
-	/// assumed to be used.
-	/// </remarks>
-	[DxfCodeValue(176)]
-	public BlockContentConnectionType BlockContentConnection { get; set; }
+	private BlockRecord _arrowhead;
 
-	/// <summary>
-	/// Gets or sets the rotation of the block content of the multileader.
-	/// </summary>
-	/// <remarks>
-	/// This property is also exposed by the <see cref="MultiLeaderObjectContextData"/> class. Values
-	/// should be equal, the value <see cref="MultiLeaderObjectContextData.BlockContentRotation"/> is
-	/// assumed to be used.
-	/// </remarks>
-	[DxfCodeValue(DxfReferenceType.IsAngle, 43)]
-	public double BlockContentRotation { get; set; }
+	private BlockRecord _blockContent;
 
-	/// <summary>
-	/// Gets or sets the scale factor for block content.
-	/// This property overrides the value from <see cref="MultiLeaderStyle"/>
-	/// when the <see cref="MultiLeaderPropertyOverrideFlags.BlockContentScale"/> flag is set (see
-	/// <see cref="MultiLeader.PropertyOverrideFlags"/> property).
-	/// </summary>
-	/// <remarks>
-	/// This property is also exposed by the <see cref="MultiLeaderObjectContextData"/> class. Values
-	/// should be equal, the value <see cref="MultiLeaderObjectContextData.BlockContentScale"/> is
-	/// assumed to be used.
-	/// </remarks>
-	[DxfCodeValue(10, 20, 30)]
-	public XYZ BlockContentScale { get; set; }
+	private MultiLeaderObjectContextData _contextData = new MultiLeaderObjectContextData();
 
-	#endregion Block Content Properties
+	private LineType _leaderLineType = LineType.ByLayer;
+
+	private MultiLeaderStyle _style = MultiLeaderStyle.Default;
+
+	private TextStyle _textStyle = TextStyle.Default;
 
 	/// <inheritdoc/>
 	public override void ApplyTransform(Transform transform)
@@ -659,61 +628,30 @@ public partial class MultiLeader : Entity, IDxfClassDefined
 	{
 		base.AssignDocument(doc);
 
-		this._style = updateCollection(this._style, doc.MLeaderStyles);
-		this._textStyle = updateCollection(this._textStyle, doc.TextStyles);
-		this._leaderLineType = updateCollection(this._leaderLineType, doc.LineTypes);
-		this._arrowhead = updateCollection(this._arrowhead, doc.BlockRecords);
-		this._blockContent = updateCollection(this._blockContent, doc.BlockRecords);
+		this._style = this.updateCollectionEntry(this._style, s => this._style = s, doc.MLeaderStyles);
+		this._textStyle = this.updateTableEntry(this._textStyle, s => this._textStyle = s, doc.TextStyles);
+		this._leaderLineType = this.updateTableEntry(this._leaderLineType, l => this._leaderLineType = l, doc.LineTypes);
+		this._arrowhead = this.updateTableEntry(this._arrowhead, b => this._arrowhead = b, doc.BlockRecords);
+		this._blockContent = this.updateTableEntry(this._blockContent, b => this._blockContent = b, doc.BlockRecords);
 
 		this.ContextData.AssignDocument(doc);
-
-		doc.LineTypes.OnRemove += this.tableOnRemove;
-		doc.TextStyles.OnRemove += this.tableOnRemove;
-		doc.MLeaderStyles.OnRemove += this.tableOnRemove;
-		doc.BlockRecords.OnRemove += this.tableOnRemove;
 	}
 
 	internal override void UnassignDocument()
 	{
-		this.Document.LineTypes.OnRemove -= this.tableOnRemove;
-		this.Document.TextStyles.OnRemove -= this.tableOnRemove;
-		this.Document.MLeaderStyles.OnRemove -= this.tableOnRemove;
-		this.Document.BlockRecords.OnRemove -= this.tableOnRemove;
+		this.Document.TextStyles.RemoveReference(this._textStyle.Name, this);
+		this.Document.LineTypes.RemoveReference(this._leaderLineType.Name, this);
+		this.Document.BlockRecords.RemoveReference(this._arrowhead?.Name, this);
+		this.Document.BlockRecords.RemoveReference(this._blockContent?.Name, this);
 
 		this.ContextData.UnassignDocument();
 
 		base.UnassignDocument();
 
-		this._leaderLineType = (LineType)this._leaderLineType.Clone();
-		this._textStyle = (TextStyle)this._textStyle.Clone();
-		this._style = (MultiLeaderStyle)this._style.Clone();
+		this._leaderLineType = (LineType)this._leaderLineType?.Clone();
+		this._textStyle = (TextStyle)this._textStyle?.Clone();
+		this._style = (MultiLeaderStyle)this._style?.Clone();
 		this._arrowhead = (BlockRecord)this._arrowhead?.Clone();
 		this._blockContent = (BlockRecord)this._blockContent?.Clone();
-	}
-
-	protected override void tableOnRemove(object sender, CollectionChangedEventArgs e)
-	{
-		base.tableOnRemove(sender, e);
-
-		if (e.Item.Equals(this._style))
-		{
-			this._style = this.Document.MLeaderStyles[MultiLeaderStyle.DefaultName];
-		}
-		if (e.Item.Equals(this._leaderLineType))
-		{
-			this._leaderLineType = this.Document.LineTypes[LineType.ByLayerName];
-		}
-		if (e.Item.Equals(this._textStyle))
-		{
-			this._textStyle = this.Document.TextStyles[TextStyle.DefaultName];
-		}
-		if (e.Item == this._arrowhead)
-		{
-			this._arrowhead = null;
-		}
-		if (e.Item == this._blockContent)
-		{
-			this._blockContent = null;
-		}
 	}
 }

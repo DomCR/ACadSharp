@@ -2,6 +2,7 @@
 using ACadSharp.Tables;
 using ACadSharp.Text;
 using CSMath;
+using CSMath.Extensions;
 using System;
 using System.Collections.Generic;
 
@@ -79,19 +80,7 @@ public partial class MText : Entity, IText
 
 	/// <inheritdoc/>
 	[DxfCodeValue(40)]
-	public double Height
-	{
-		get => this._height;
-		set
-		{
-			if (value <= 0)
-			{
-				throw new ArgumentOutOfRangeException(nameof(value), value, "The MText height must be greater than zero.");
-			}
-			else
-				this._height = value;
-		}
-	}
+	public double Height { get; set; } = 1.0d;
 
 	/// <summary>
 	/// Horizontal width of the characters that make up the mtext entity.
@@ -186,14 +175,7 @@ public partial class MText : Entity, IText
 				throw new ArgumentNullException(nameof(value));
 			}
 
-			if (this.Document != null)
-			{
-				this._style = CadObject.updateCollection(value, this.Document.TextStyles);
-			}
-			else
-			{
-				this._style = value;
-			}
+			this._style = this.updateTableEntry(value, s => this._style = s, this.Document?.TextStyles);
 		}
 	}
 
@@ -213,8 +195,6 @@ public partial class MText : Entity, IText
 	[DxfCodeValue(DxfReferenceType.Ignored, 43)]
 	public double VerticalHeight { get; set; } = 0.2;
 
-	private double _height = 1.0d;
-
 	private TextStyle _style = TextStyle.Default;
 
 	/// <inheritdoc/>
@@ -224,7 +204,7 @@ public partial class MText : Entity, IText
 	/// Initializes a new instance of the <see cref="MText"/> class with the specified text value.
 	/// </summary>
 	/// <param name="value">The text value to initialize the instance with. Cannot be <see langword="null"/>.</param>
-	public MText(string value) : base()
+	public MText(string value) : this()
 	{
 		this.Value = value;
 	}
@@ -317,7 +297,7 @@ public partial class MText : Entity, IText
 		}
 
 		double newHeight = this.Height * scale;
-		newHeight = MathHelper.IsZero(newHeight) ? MathHelper.Epsilon : newHeight;
+		newHeight = newHeight.IsZero() ? MathHelper.Epsilon : newHeight;
 
 		this.InsertPoint = newInsert;
 		this.Normal = newNormal;
@@ -382,27 +362,15 @@ public partial class MText : Entity, IText
 	{
 		base.AssignDocument(doc);
 
-		this._style = CadObject.updateCollection(this.Style, doc.TextStyles);
-
-		doc.DimensionStyles.OnRemove += this.tableOnRemove;
+		this.updateTableEntry(this._style, s => this._style = s, doc.TextStyles);
 	}
 
 	internal override void UnassignDocument()
 	{
-		this.Document.DimensionStyles.OnRemove -= this.tableOnRemove;
+		this.Document.TextStyles.RemoveReference(this.Style.Name, this);
 
 		base.UnassignDocument();
 
-		this.Style = (TextStyle)this.Style.Clone();
-	}
-
-	protected override void tableOnRemove(object sender, CollectionChangedEventArgs e)
-	{
-		base.tableOnRemove(sender, e);
-
-		if (e.Item.Equals(this.Style))
-		{
-			this.Style = this.Document.TextStyles[TextStyle.DefaultName];
-		}
+		this._style = (TextStyle)this.Style?.Clone();
 	}
 }

@@ -71,6 +71,11 @@ internal class CadEntityTemplate : CadTemplate<Entity>
 		{
 			this.CadObject.Layer = layer;
 		}
+		else if (!string.IsNullOrEmpty(this.LayerName))
+		{
+			builder.Notify($"Layer {this.LayerName} not found in the LAYER table, created for {this.CadObject.GetType().FullName} with handle {this.CadObject.Handle}", NotificationType.Warning);
+			this.CadObject.Layer = builder.Layers.TryAdd(new Layer(this.LayerName));
+		}
 
 		switch (this.LtypeFlags)
 		{

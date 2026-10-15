@@ -5,10 +5,10 @@ using ACadSharp.Objects.AEC;
 using ACadSharp.Objects.Evaluations;
 using ACadSharp.Tables;
 using CSMath;
+using CSMath.Extensions;
 using System;
 using System.Collections.Generic;
 using System.Linq;
-using static ACadSharp.Objects.XRecord;
 
 namespace ACadSharp.IO.DXF;
 
@@ -39,36 +39,45 @@ internal class DxfObjectsSectionWriter : DxfSectionWriterBase
 		this._writer.Write(280, dict.HardOwnerFlag);
 		this._writer.Write(281, (int)dict.ClonningFlags);
 
-		foreach (NonGraphicalObject item in dict)
+		for (int i = 0; i < dict.EntryHandles.Length; i++)
 		{
-			if (item is XRecord && !this.Configuration.WriteXRecords)
+			var handle = dict.EntryHandles[i];
+			var entryName = dict.EntryNames[i];
+			var entry = dict.GetEntry<NonGraphicalObject>(entryName);
+
+			if (entry is XRecord && !this.Configuration.WriteXRecords)
 			{
 				continue;
 			}
 
-			//Not compatible dictionaries
-			if (item.Name == CadDictionary.AcadMaterial)
+			if (entry is CadDictionary dictionary && !dictionary.Any())
+			{
+				continue;
+			}
+
+			//TODO: Not compatible dictionaries
+			if (entryName == CadDictionary.AcadMaterial)
 			{
 				continue;
 			}
 
 			//Skip the entries that will not be written to avoid dangling references
-			if (!this.isObjectSupported(item))
+			if (!this.isObjectSupported(entry))
 			{
 				continue;
 			}
 
-			this._writer.Write(3, item.Name);
+			this._writer.Write(3, entryName);
 			if (dict.HardOwnerFlag)
 			{
-				this._writer.Write(360, item.Handle);
+				this._writer.Write(360, handle);
 			}
 			else
 			{
-				this._writer.Write(350, item.Handle);
+				this._writer.Write(350, handle);
 			}
 
-			this.Holder.Objects.Enqueue(item);
+			this.Holder.Objects.Enqueue(entry);
 		}
 
 		if (dict is CadDictionaryWithDefault withDefault)
@@ -403,13 +412,19 @@ internal class DxfObjectsSectionWriter : DxfSectionWriterBase
 		{
 			case AcdbPlaceHolder acdbPlaceHolder:
 				this.writeAcdbPlaceHolder(acdbPlaceHolder);
-				return;
+				break;
+			case BlockReferenceObjectContextData blockContextData:
+				this.writeBlockReferenceObjectContextData(blockContextData);
+				break;
+			case MTextAttributeObjectContextData mtextContextData:
+				this.writeMTextAttributeObjectContextData(mtextContextData);
+				break;
 			case BookColor bookColor:
 				this.writeBookColor(bookColor);
-				return;
+				break;
 			case CadDictionary cadDictionary:
 				this.writeDictionary(cadDictionary);
-				return;
+				break;
 			case BlockRepresentationData representationData:
 				this.writeBlockRepresentationData(representationData);
 				break;
@@ -481,10 +496,10 @@ internal class DxfObjectsSectionWriter : DxfSectionWriterBase
 				break;
 			case ImageDefinition imageDefinition:
 				this.writeImageDefinition(imageDefinition);
-				return;
+				break;
 			case ImageDefinitionReactor reactor:
 				this.writeImageDefinitionReactor(reactor);
-				return;
+				break;
 			case Layout layout:
 				this.writeLayout(layout);
 				break;
@@ -553,6 +568,9 @@ internal class DxfObjectsSectionWriter : DxfSectionWriterBase
 				break;
 			case TableStyle tableStyle:
 				this.writeTableStyle(tableStyle);
+				break;
+			case WipeoutVariables wipeoutVariables:
+				this.writeWipeoutVariables(wipeoutVariables);
 				break;
 			case XRecord record:
 				this.writeXRecord(record);
@@ -660,6 +678,15 @@ internal class DxfObjectsSectionWriter : DxfSectionWriterBase
 		}
 	}
 
+	protected void writeWipeoutVariables(WipeoutVariables variables)
+	{
+		DxfClassMap map = DxfClassMap.Create<WipeoutVariables>();
+
+		this._writer.Write(100, DxfSubclassMarker.WipeoutVariables);
+
+		this._writer.Write(70, variables.DisplayImageFrame ? 1 : 0, map);
+	}
+
 	protected void writeXRecord(XRecord record)
 	{
 		this._writer.Write(DxfCode.Subclass, DxfSubclassMarker.XRecord);
@@ -686,6 +713,10 @@ internal class DxfObjectsSectionWriter : DxfSectionWriterBase
 				case GroupCodeValueType.ObjectId:
 				case GroupCodeValueType.ExtendedDataHandle:
 					var obj = e.Value as IHandledCadObject;
+					if(obj == null)
+					{
+						continue;
+					}
 					this._writer.Write(e.Code, obj.Handle);
 					break;
 				default:
@@ -706,6 +737,9 @@ internal class DxfObjectsSectionWriter : DxfSectionWriterBase
 		switch (co)
 		{
 			case UnknownNonGraphicalObject:
+			case EvaluationGraph when !this.Configuration.WriteDynamicBlockData:
+			case BlockRepresentationData when !this.Configuration.WriteDynamicBlockData:
+			case DynamicBlockPurgePreventer when !this.Configuration.WriteDynamicBlockData:
 				return false;
 			case AecWallStyle:
 			case AecCleanupGroup:
@@ -715,13 +749,8 @@ internal class DxfObjectsSectionWriter : DxfSectionWriterBase
 			case MultiLeaderObjectContextData:
 			case VisualStyle:
 			case ProxyObject:
-			case MTextAttributeObjectContextData:
-			case BlockReferenceObjectContextData:
 				this.notify($"Object not implemented : {co.GetType().FullName}", NotificationType.NotImplemented);
 				return false;
-			case EvaluationGraph when this.Configuration.WriteDynamicBlockData:
-			case BlockRepresentationData when this.Configuration.WriteDynamicBlockData:
-			case DynamicBlockPurgePreventer when this.Configuration.WriteDynamicBlockData:
 			default:
 				return true;
 		}
@@ -729,6 +758,13 @@ internal class DxfObjectsSectionWriter : DxfSectionWriterBase
 
 	private void writeAcdbPlaceHolder(AcdbPlaceHolder acdbPlaceHolder)
 	{
+	}
+
+	private void writeAnnotScaleObjectContextData(AnnotScaleObjectContextData contextData)
+	{
+		this._writer.Write(100, DxfSubclassMarker.AnnotScaleObjectContextData);
+
+		this._writer.WriteHandle(340, contextData.Scale);
 	}
 
 	private void writeBlock1PtParameter(Block1PtParameter parameter)
@@ -1168,6 +1204,21 @@ internal class DxfObjectsSectionWriter : DxfSectionWriterBase
 		this._writer.Write(77, 0, map);
 	}
 
+	private void writeBlockReferenceObjectContextData(BlockReferenceObjectContextData contextData)
+	{
+		DxfClassMap map = DxfClassMap.Create<BlockReferenceObjectContextData>();
+
+		this.writeAnnotScaleObjectContextData(contextData);
+
+		this._writer.Write(50, contextData.Rotation, map);
+
+		this._writer.Write(10, contextData.InsertionPoint, map);
+
+		this._writer.Write(41, contextData.XScale, map);
+		this._writer.Write(42, contextData.YScale, map);
+		this._writer.Write(43, contextData.ZScale, map);
+	}
+
 	private void writeBlockRepresentationData(BlockRepresentationData representationData)
 	{
 		DxfClassMap map = DxfClassMap.Create<BlockRepresentationData>();
@@ -1588,6 +1639,22 @@ internal class DxfObjectsSectionWriter : DxfSectionWriterBase
 
 		this._writer.Write(90, reactor.ClassVersion);
 		this._writer.WriteHandle(330, reactor.Image);
+	}
+
+	private void writeMTextAttributeObjectContextData(MTextAttributeObjectContextData contextData)
+	{
+		DxfClassMap map = DxfClassMap.Create<MTextAttributeObjectContextData>();
+
+		this.writeAnnotScaleObjectContextData(contextData);
+
+		this._writer.Write(70, contextData.AttachmentPoint, map);
+
+		this._writer.Write(50, contextData.Rotation, map);
+
+		this._writer.Write(10, contextData.AlignmentPoint, map);
+		this._writer.Write(11, contextData.InsertPoint, map);
+
+		this._writer.Write(290, contextData.Value290, map);
 	}
 
 	private void writeOsnapPointRef(DimensionAssociation.OsnapPointRef osnapPoint)

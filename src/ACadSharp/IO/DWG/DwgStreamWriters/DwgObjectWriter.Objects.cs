@@ -53,8 +53,6 @@ internal partial class DwgObjectWriter : DwgSectionIO
 			case UnknownNonGraphicalObject:
 			case VisualStyle:
 			case ProxyObject:
-			case BlockReferenceObjectContextData:
-			case MTextAttributeObjectContextData:
 				return true;
 		}
 
@@ -78,6 +76,8 @@ internal partial class DwgObjectWriter : DwgSectionIO
 
 	private void writeAnnotScaleObjectContextData(AnnotScaleObjectContextData annotScaleObjectContextData)
 	{
+		this.writeObjectContextData(annotScaleObjectContextData);
+
 		this._writer.HandleReference(DwgReferenceType.HardPointer, annotScaleObjectContextData.Scale);
 	}
 
@@ -396,6 +396,17 @@ internal partial class DwgObjectWriter : DwgSectionIO
 
 		//unknown
 		this._writer.WriteBitLong(0);
+	}
+
+	private void writeBlockReferenceObjectContextData(BlockReferenceObjectContextData contextData)
+	{
+		this.writeAnnotScaleObjectContextData(contextData);
+
+		this._writer.WriteBitDouble(contextData.Rotation);
+		this._writer.Write3BitDouble(contextData.InsertionPoint);
+		this._writer.WriteBitDouble(contextData.XScale);
+		this._writer.WriteBitDouble(contextData.YScale);
+		this._writer.WriteBitDouble(contextData.ZScale);
 	}
 
 	private void writeBlockRepresentationData(BlockRepresentationData representation)
@@ -859,14 +870,20 @@ internal partial class DwgObjectWriter : DwgSectionIO
 		//Common:
 		//Numitems L number of dictionary items
 		List<NonGraphicalObject> entries = new List<NonGraphicalObject>();
-		foreach (var item in dictionary)
+		List<(string, ulong)> handleNamePair = new();
+		for (int i = 0; i < dictionary.EntryHandles.Length; i++)
 		{
+			var handle = dictionary.EntryHandles[i];
+			var name = dictionary.EntryNames[i];
+			var item = dictionary.GetEntry<NonGraphicalObject>(name);
+
 			if (this.skipEntry(item))
 			{
 				continue;
 			}
 
 			entries.Add(item);
+			handleNamePair.Add((name, handle));
 		}
 
 		this._writer.WriteBitLong(entries.Count);
@@ -887,15 +904,10 @@ internal partial class DwgObjectWriter : DwgSectionIO
 		}
 
 		//Common:
-		foreach (var item in entries)
+		foreach (var item in handleNamePair)
 		{
-			if (this.skipEntry(item))
-			{
-				continue;
-			}
-
-			this._writer.WriteVariableText(item.Name);
-			this._writer.HandleReference(DwgReferenceType.SoftOwnership, item.Handle);
+			this._writer.WriteVariableText(item.Item1);
+			this._writer.HandleReference(DwgReferenceType.SoftOwnership, item.Item2);
 		}
 
 		this.addObjectsToWriter(entries);
@@ -1596,9 +1608,16 @@ internal partial class DwgObjectWriter : DwgSectionIO
 		}
 	}
 
+	private void writeMTextAttributeObjectContextData(MTextAttributeObjectContextData mtextContextData)
+	{
+		throw new NotImplementedException();
+	}
+
 	private void writeMultiLeaderAnnotContext(MultiLeaderObjectContextData multiLeaderAnnotContext)
 	{
-		writeMultiLeaderAnnotContextSubObject(false, multiLeaderAnnotContext);
+		this.writeAnnotScaleObjectContextData(multiLeaderAnnotContext);
+
+		this.writeMultiLeaderAnnotContextSubObject(multiLeaderAnnotContext);
 	}
 
 	private void writeMultiLeaderStyle(MultiLeaderStyle mLeaderStyle)
@@ -1821,6 +1840,9 @@ internal partial class DwgObjectWriter : DwgSectionIO
 			case BookColor bookColor:
 				this.writeBookColor(bookColor);
 				break;
+			case BlockReferenceObjectContextData blockContextData:
+				this.writeBlockReferenceObjectContextData(blockContextData);
+				break;
 			case CadDictionaryWithDefault dictionarydef:
 				this.writeCadDictionaryWithDefault(dictionarydef);
 				break;
@@ -1864,8 +1886,6 @@ internal partial class DwgObjectWriter : DwgSectionIO
 				this.writeMultiLeaderStyle(multiLeaderStyle);
 				break;
 			case MultiLeaderObjectContextData multiLeaderObjectContextData:
-				this.writeObjectContextData(multiLeaderObjectContextData);
-				this.writeAnnotScaleObjectContextData(multiLeaderObjectContextData);
 				this.writeMultiLeaderAnnotContext(multiLeaderObjectContextData);
 				break;
 			case PdfUnderlayDefinition pdfDefinition:
@@ -1888,6 +1908,12 @@ internal partial class DwgObjectWriter : DwgSectionIO
 				break;
 			case TableStyle tableStyle:
 				this.writeTableStyle(tableStyle);
+				break;
+			case MTextAttributeObjectContextData mtextContextData:
+				this.writeMTextAttributeObjectContextData(mtextContextData);
+				break;
+			case WipeoutVariables wipeoutVariables:
+				this.writeWipeoutVariables(wipeoutVariables);
 				break;
 			case Field field:
 				this.writeField(field);
@@ -2332,6 +2358,13 @@ internal partial class DwgObjectWriter : DwgSectionIO
 				index++;
 			}
 		}
+	}
+
+	private void writeWipeoutVariables(WipeoutVariables wipeoutVariables)
+	{
+		//Common:
+		//Dispfrm BS 70 display image frame
+		this._writer.WriteBitShort(wipeoutVariables.DisplayImageFrame ? (short)1 : (short)0);
 	}
 
 	private void writeXRecord(XRecord xrecord)

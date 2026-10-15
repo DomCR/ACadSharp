@@ -1,6 +1,5 @@
 ﻿using ACadSharp.Attributes;
 using ACadSharp.Classes;
-using System.Xml.Linq;
 
 namespace ACadSharp.Objects;
 
@@ -162,6 +161,15 @@ public class VisualStyle : NonGraphicalObject, IDxfClassDefined
 	/// Default <see cref="VisualStyle"/> name.
 	/// </summary>
 	public const string DefaultName = "2dWireframe";
+
+	/// <inheritdoc/>
+	public VisualStyle()
+	{ }
+
+	/// <inheritdoc/>
+	public VisualStyle(string name) : base(name)
+	{
+	}
 
 	/// <inheritdoc/>
 	public DxfClass GetDxfClass()

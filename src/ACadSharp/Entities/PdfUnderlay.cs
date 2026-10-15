@@ -46,6 +46,6 @@ public class PdfUnderlay : UnderlayEntity<PdfUnderlayDefinition>, IDxfClassDefin
 
 	protected override ObjectDictionaryCollection<PdfUnderlayDefinition> getDocumentCollection(CadDocument document)
 	{
-		return document.PdfDefinitions;
+		return document?.PdfDefinitions;
 	}
 }

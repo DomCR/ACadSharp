@@ -100,14 +100,7 @@ public abstract class CadWipeoutBase : Entity
 		get { return this._definition; }
 		set
 		{
-			if (this.Document != null)
-			{
-				this._definition = CadObject.updateCollection(value, this.Document.ImageDefinitions);
-			}
-			else
-			{
-				this._definition = value;
-			}
+			this._definition = this.updateCollectionEntry(value, d => this._definition = d, this.Document?.ImageDefinitions);
 		}
 	}
 
@@ -268,25 +261,13 @@ public abstract class CadWipeoutBase : Entity
 	{
 		base.AssignDocument(doc);
 
-		this._definition = CadObject.updateCollection(this.Definition, doc.ImageDefinitions);
-
-		this.Document.ImageDefinitions.OnRemove += this.imageDefinitionsOnRemove;
+		this._definition = this.updateCollectionEntry(this.Definition, d => this._definition = d, doc.ImageDefinitions);
 	}
 
 	internal override void UnassignDocument()
 	{
-		this.Document.ImageDefinitions.OnRemove -= this.imageDefinitionsOnRemove;
-
 		base.UnassignDocument();
 
 		this._definition = (ImageDefinition)this.Definition?.Clone();
-	}
-
-	private void imageDefinitionsOnRemove(object sender, CollectionChangedEventArgs e)
-	{
-		if (e.Item.Equals(this.Definition))
-		{
-			this._definition = null;
-		}
 	}
 }
