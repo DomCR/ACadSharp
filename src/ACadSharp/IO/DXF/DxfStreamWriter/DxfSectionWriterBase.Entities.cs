@@ -927,14 +927,20 @@ internal abstract partial class DxfSectionWriterBase
 		if (this.Version >= ACadVersion.AC1018 && mtext.BackgroundFillFlags != BackgroundFillFlags.None)
 		{
 			this._writer.Write(90, (int)mtext.BackgroundFillFlags, map);
-			this._writer.WriteCmColor(63, mtext.BackgroundColor, map);
-			if (mtext.BackgroundColor.IsTrueColor)
-			{
-				this._writer.WriteTrueColor(421, mtext.BackgroundColor, map);
-			}
 
-			this._writer.Write(45, mtext.BackgroundScale, map);
-			this._writer.Write(441, Transparency.ToAlphaValue(mtext.BackgroundTransparency), map);
+			//Color, scale and transparency only when the background is filled or the text is framed
+			if ((mtext.BackgroundFillFlags & (BackgroundFillFlags.UseBackgroundFillColor | BackgroundFillFlags.TextFrame))
+				!= BackgroundFillFlags.None)
+			{
+				this._writer.WriteCmColor(63, mtext.BackgroundColor, map);
+				if (mtext.BackgroundColor.IsTrueColor)
+				{
+					this._writer.WriteTrueColor(421, mtext.BackgroundColor, map);
+				}
+
+				this._writer.Write(45, mtext.BackgroundScale, map);
+				this._writer.Write(441, Transparency.ToAlphaValue(mtext.BackgroundTransparency), map);
+			}
 		}
 
 		if (!mtext.HasColumns || this.Version < ACadVersion.AC1032)
