@@ -119,6 +119,15 @@ public class CadValue
 		this.SetValue(value);
 	}
 
+	/// <summary>
+	/// Creates a copy of this value. The underlying <see cref="Value"/> is shared: it is either immutable or a
+	/// reference to a <see cref="CadObject"/> that the value points to, not one it owns.
+	/// </summary>
+	public CadValue Clone()
+	{
+		return (CadValue)this.MemberwiseClone();
+	}
+
 	/// <inheritdoc/>
 	public override string ToString()
 	{
