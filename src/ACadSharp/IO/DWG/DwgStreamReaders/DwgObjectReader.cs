@@ -6224,6 +6224,24 @@ namespace ACadSharp.IO.DWG
 				case DxfFileToken.ObjectWipeoutVariables:
 					template = this.readWipeoutVariables();
 					break;
+				case DxfFileToken.AlignedDimensionObjectContextData:
+					template = this.readDimensionObjectContextData(new AlignedDimensionObjectContextData());
+					break;
+				case DxfFileToken.AngularDimensionObjectContextData:
+					template = this.readDimensionObjectContextData(new AngularDimensionObjectContextData());
+					break;
+				case DxfFileToken.DiametricDimensionObjectContextData:
+					template = this.readDimensionObjectContextData(new DiametricDimensionObjectContextData());
+					break;
+				case DxfFileToken.OrdinateDimensionObjectContextData:
+					template = this.readDimensionObjectContextData(new OrdinateDimensionObjectContextData());
+					break;
+				case DxfFileToken.RadialDimensionObjectContextData:
+					template = this.readDimensionObjectContextData(new RadialDimensionObjectContextData());
+					break;
+				case DxfFileToken.RadialDimensionLargeObjectContextData:
+					template = this.readDimensionObjectContextData(new RadialDimensionLargeObjectContextData());
+					break;
 			}
 
 			if (template == null && c.IsAnEntity)
