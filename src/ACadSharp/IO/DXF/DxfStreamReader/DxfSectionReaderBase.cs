@@ -841,10 +841,14 @@ internal abstract class DxfSectionReaderBase
 			//Measurement - read only
 			case 42:
 				return true;
+			case 74:
+				((Dimension)tmp.CadObject).FlipArrow1 = this._reader.ValueAsBool;
+				return true;
+			case 75:
+				((Dimension)tmp.CadObject).FlipArrow2 = this._reader.ValueAsBool;
+				return true;
 			//Undocumented codes
 			case 73:
-			case 74:
-			case 75:
 			case 90:
 			case 361:
 				return true;

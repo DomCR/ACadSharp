@@ -308,6 +308,12 @@ internal abstract partial class DxfSectionWriterBase
 		this._writer.Write(72, (short)dim.LineSpacingStyle, map);
 		this._writer.Write(41, dim.LineSpacingFactor, map);
 
+		if (this.Version >= ACadVersion.AC1021)
+		{
+			this._writer.Write(74, dim.FlipArrow1, map);
+			this._writer.Write(75, dim.FlipArrow2, map);
+		}
+
 		if (!string.IsNullOrEmpty(dim.Text))
 		{
 			this._writer.Write(1, dim.Text, map);
