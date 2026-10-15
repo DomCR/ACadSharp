@@ -29,8 +29,10 @@ jobs:
           file: ./src/ACadSharp/ACadSharp.csproj
           version: ${{env.VERSION_FORMAT}}
       - name: Push changes
-        run: ./push-changes.sh
-        shell: bash
+        run: bash push-changes.sh
         env:
-          VERSION: ${{steps.update.outputs.newVersion}}
-          BRANCH: ${{env.CURRENT_BRANCH}}
+          BRANCH: ${{ github.head_ref || github.ref_name }}
+          VERSION: ${{ env.VERSION }}
+          HEAD_REPO: ${{ github.event.pull_request.head.repo.full_name }}
+          PUSH_TOKEN: ${{ secrets.PUSH_TOKEN }}
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
