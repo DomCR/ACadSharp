@@ -1,4 +1,9 @@
 ﻿using ACadSharp;
+using ACadSharp.Classes;
+using CSMath;
+using ACadSharp.Entities;
+using System.Linq;
+using ACadSharp.Entities.Tangent;
 using ACadSharp.IO.DWG.Tangent;
 using System;
 using System.Collections.Generic;
@@ -338,10 +343,20 @@ namespace ACadSharp.Tests.IO.Tangent
 
 		private static byte[] decode(string value) => Convert.FromBase64String(value);
 
+		/// <summary>
+		/// Builds the class record a Tianzheng object carries, which is what tells the reader how to
+		/// read it.
+		/// </summary>
+		private static DxfClass tchClass(string dxfName) => new DxfClass
+		{
+			DxfName = dxfName,
+			ApplicationName = "TCH_KERNAL",
+		};
+
 		[Fact]
 		public void TchTextPositionMatchesTheFlattenedExport()
 		{
-			TchText text = TchText.Parse("TCH_TEXT", decode(TextPayload), ACadVersion.AC1021);
+			TchText text = TchText.Parse(tchClass("TCH_TEXT"), decode(TextPayload), ACadVersion.AC1021);
 
 			Assert.True(text.HasPosition);
 			Assert.Equal(39176.3507, text.InsertionPoint.X, 4);
@@ -351,7 +366,7 @@ namespace ACadSharp.Tests.IO.Tangent
 		[Fact]
 		public void TchTextReadsTheContent()
 		{
-			TchText text = TchText.Parse("TCH_TEXT", decode(TextPayload), ACadVersion.AC1021);
+			TchText text = TchText.Parse(tchClass("TCH_TEXT"), decode(TextPayload), ACadVersion.AC1021);
 
 			//The export splits this into per-word text entities, but the object stores it whole.
 			Assert.Equal("Wall and Window and Door".Replace("and", "&"), text.Value);
@@ -360,7 +375,7 @@ namespace ACadSharp.Tests.IO.Tangent
 		[Fact]
 		public void TchTextReadsContentThatLooksLikeNothingElse()
 		{
-			TchText text = TchText.Parse("TCH_TEXT", decode(SquareColumnFixture), ACadVersion.AC1021);
+			TchText text = TchText.Parse(tchClass("TCH_TEXT"), decode(SquareColumnFixture), ACadVersion.AC1021);
 
 			Assert.Equal("Square Column", text.Value);
 		}
@@ -368,7 +383,7 @@ namespace ACadSharp.Tests.IO.Tangent
 		[Fact]
 		public void TchTextReadsTheContentOfAMultilineText()
 		{
-			TchText text = TchText.Parse("TCH_MTEXT", decode(MTextFixture), ACadVersion.AC1021);
+			TchText text = TchText.Parse(tchClass("TCH_MTEXT"), decode(MTextFixture), ACadVersion.AC1021);
 
 			//The export splits this into one entity per word per line; the object stores it whole.
 			//The line breaks are the reason this read as nothing for a while: a filter that allowed
@@ -380,9 +395,57 @@ namespace ACadSharp.Tests.IO.Tangent
 		[Fact]
 		public void TchTextReadsTheNameOfATitleBlock()
 		{
-			TchText text = TchText.Parse("TCH_DRAWINGNAME", decode(DrawingNameFixture), ACadVersion.AC1021);
+			TchText text = TchText.Parse(tchClass("TCH_DRAWINGNAME"), decode(DrawingNameFixture), ACadVersion.AC1021);
 
 			Assert.Equal("Drawing Title", text.Value);
+		}
+
+		[Fact]
+		public void TchTextIsNotATextEntityButConvertsToThem()
+		{
+			TchText text = TchText.Parse(tchClass("TCH_TEXT"), decode(TextPayload), ACadVersion.AC1021);
+
+			//It is a Tianzheng entity, so the writers leave it alone; asking for a text is explicit.
+			Assert.IsAssignableFrom<TchEntity>(text);
+			Assert.IsNotType<TextEntity>(text);
+
+			TextEntity standard = text.ToTextEntity();
+
+			Assert.Equal("Wall & Window & Door", standard.Value);
+			Assert.Equal(text.InsertionPoint.X, standard.InsertPoint.X, 3);
+			Assert.Equal(text.InsertionPoint.Y, standard.InsertPoint.Y, 3);
+		}
+
+		[Fact]
+		public void TchTextCarriesTheClassItWasReadFrom()
+		{
+			TchText text = TchText.Parse(tchClass("TCH_MTEXT"), decode(MTextFixture), ACadVersion.AC1021);
+
+			//The type says how it is read, the class says what it is.
+			Assert.Equal("TCH_MTEXT", text.DxfClass.DxfName);
+			Assert.Equal("TCH_MTEXT", text.ObjectName);
+		}
+
+		[Fact]
+		public void TchTextConvertsToTheEntitiesItStandsFor()
+		{
+			TchText text = TchText.Parse(tchClass("TCH_TEXT"), decode(TextPayload), ACadVersion.AC1021);
+
+			TextEntity standard = Assert.Single(text.ToStandardEntities().OfType<TextEntity>());
+
+			Assert.Equal("Wall & Window & Door", standard.Value);
+		}
+
+		[Fact]
+		public void TchTextMovesWithTheTransform()
+		{
+			TchText text = TchText.Parse(tchClass("TCH_TEXT"), decode(TextPayload), ACadVersion.AC1021);
+
+			XYZ before = text.InsertionPoint;
+			text.ApplyTransform(Transform.CreateTranslation(new XYZ(10, 20, 0)));
+
+			Assert.Equal(before.X + 10, text.InsertionPoint.X, 3);
+			Assert.Equal(before.Y + 20, text.InsertionPoint.Y, 3);
 		}
 
 		[Fact]
@@ -390,7 +453,7 @@ namespace ACadSharp.Tests.IO.Tangent
 		{
 			//A column's payload holds property names such as PUB_HATCH, which must not come back as
 			//text.
-			TchText text = TchText.Parse("TCH_COLUMN", decode(ColumnPayload), ACadVersion.AC1021);
+			TchText text = TchText.Parse(tchClass("TCH_COLUMN"), decode(ColumnPayload), ACadVersion.AC1021);
 
 			Assert.Null(text.Value);
 		}
@@ -398,16 +461,19 @@ namespace ACadSharp.Tests.IO.Tangent
 		[Fact]
 		public void TchTextRejectsAShortPayload()
 		{
-			TchText text = TchText.Parse("TCH_TEXT", new byte[4], ACadVersion.AC1021);
+			TchText text = TchText.Parse(tchClass("TCH_TEXT"), new byte[4], ACadVersion.AC1021);
 
 			Assert.False(text.HasPosition);
 			Assert.Equal(CSMath.XYZ.Zero, text.InsertionPoint);
 		}
 
 		[Fact]
-		public void TchTextThrowsOnANullPayload()
+		public void TchTextTakesNothingFromANullPayload()
 		{
-			Assert.Throws<ArgumentNullException>(() => TchText.Parse("TCH_TEXT", null, ACadVersion.AC1021));
+			TchText text = TchText.Parse(tchClass("TCH_TEXT"), null, ACadVersion.AC1021);
+
+			Assert.False(text.HasPosition);
+			Assert.Null(text.Value);
 		}
 
 		[Fact]

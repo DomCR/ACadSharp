@@ -2,7 +2,9 @@
 using ACadSharp.Classes;
 using ACadSharp.Entities;
 using ACadSharp.Entities.AecEntities;
+using ACadSharp.Entities.Tangent;
 using ACadSharp.Entities.Mechanical;
+using ACadSharp.IO.DWG.Tangent;
 using ACadSharp.IO.Templates;
 using ACadSharp.Objects;
 using ACadSharp.Objects.AEC;
@@ -6228,8 +6230,15 @@ namespace ACadSharp.IO.DWG
 
 			if (template == null && c.IsAnEntity)
 			{
-				template = this.readUnknownEntity(c);
-				this._builder.Notify($"Unlisted object with DXF name {c.DxfName} has been read as an UnknownEntity", NotificationType.Warning);
+				if (isTangent(c))
+				{
+					template = this.readTangentEntity(c);
+				}
+				else
+				{
+					template = this.readUnknownEntity(c);
+					this._builder.Notify($"Unlisted object with DXF name {c.DxfName} has been read as an UnknownEntity", NotificationType.Warning);
+				}
 			}
 			else if (template == null && !c.IsAnEntity)
 			{
@@ -7326,6 +7335,56 @@ namespace ACadSharp.IO.DWG
 			CadTextEntityTemplate template = new CadTextEntityTemplate(text);
 
 			this.readCommonTextData(template);
+
+			return template;
+		}
+
+		/// <summary>
+		/// Says whether a class belongs to Tianzheng.
+		/// </summary>
+		/// <remarks>
+		/// Two tests rather than one: the application value catches a class whose DXF name does not
+		/// follow the prefix, and the prefix catches a drawing where the application string has been
+		/// rewritten. In the samples both hold, and no other class in the file shares either.
+		/// </remarks>
+		private static bool isTangent(DxfClass dxfClass)
+		{
+			return dxfClass.DxfName.StartsWith("TCH_", System.StringComparison.Ordinal)
+				|| (dxfClass.ApplicationName?.StartsWith("TCH_", System.StringComparison.Ordinal) ?? false);
+		}
+
+		/// <summary>
+		/// Reads a Tianzheng entity.
+		/// </summary>
+		/// <remarks>
+		/// The type follows how the object is read, not which class it is, and that is decided before
+		/// anything is consumed: a class that writes text becomes a <see cref="TchText"/>, anything
+		/// else a <see cref="TchUnlistedEntity"/>. The class itself travels on the entity.
+		/// </remarks>
+		private CadTemplate readTangentEntity(DxfClass dxfClass)
+		{
+			TchEntity entity = TchText.WritesText(dxfClass.DxfName)
+				? new TchText(dxfClass)
+				: new TchUnlistedEntity(dxfClass);
+
+			CadTchEntityTemplate template = new CadTchEntityTemplate(entity);
+
+			this.readCommonEntityData(template);
+
+			//The class specific fields have no reader for most of these classes, so the bytes are kept
+			//and what can be read from them is read.
+			byte[] payload = this.readRemainingObjectData();
+
+			if (payload != null)
+			{
+				entity.RawData = payload;
+				entity.Properties = TchDataMap.ReadFromPayload(payload, this._version);
+
+				if (entity is TchText text)
+				{
+					text.Fill(payload, this._version);
+				}
+			}
 
 			return template;
 		}
