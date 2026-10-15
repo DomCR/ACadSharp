@@ -88,6 +88,7 @@ public abstract class WriterSingleObjectTests : IOTestsBase
 		Data.Add(new(nameof(SingleCaseGenerator.DimensionRadius)));
 		Data.Add(new(nameof(SingleCaseGenerator.Dimensions)));
 		Data.Add(new(nameof(SingleCaseGenerator.DimensionWithLineType)));
+		Data.Add(new(nameof(SingleCaseGenerator.DimensionStyleArrowBlock)));
 		Data.Add(new(nameof(SingleCaseGenerator.GeoData)));
 		Data.Add(new(nameof(SingleCaseGenerator.LineTypeInBlock)));
 		Data.Add(new(nameof(SingleCaseGenerator.XData)));
@@ -1482,6 +1483,35 @@ public abstract class WriterSingleObjectTests : IOTestsBase
 				EntityComparator.IsEqual(dim, result);
 				Assert.NotNull(doc.GetCadObject<LineType>(linetype.Handle));
 				Assert.NotNull(doc.GetCadObject<DimensionStyle>(style.Handle));
+			};
+		}
+
+		public void DimensionStyleArrowBlock()
+		{
+			BlockRecord tick = new BlockRecord("CUSTOM_TICK");
+			tick.Entities.Add(new Line(new XYZ(-0.5, -0.5, 0), new XYZ(0.5, 0.5, 0)));
+			this.Document.BlockRecords.Add(tick);
+
+			DimensionStyle style = new DimensionStyle("arrow_block_style");
+			style.ArrowBlock = tick;
+
+			DimensionLinear dim = new DimensionLinear
+			{
+				FirstPoint = new XYZ(0, 0, 0),
+				SecondPoint = new XYZ(10, 0, 0),
+				Offset = 0.5,
+				Style = style,
+			};
+
+			this.Document.Entities.Add(dim);
+
+			this.AssertRoundtrip = (doc) =>
+			{
+				DimensionStyle result = doc.GetCadObject<DimensionStyle>(style.Handle);
+
+				Assert.NotNull(result);
+				Assert.Equal(tick.Name, result.ArrowBlock?.Name);
+				Assert.Null(result.LeaderArrow);
 			};
 		}
 
