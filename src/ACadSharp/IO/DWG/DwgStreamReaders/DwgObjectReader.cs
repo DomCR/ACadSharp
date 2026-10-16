@@ -7347,6 +7347,26 @@ namespace ACadSharp.IO.DWG
 		/// follow the prefix, and the prefix catches a drawing where the application string has been
 		/// rewritten. In the samples both hold, and no other class in the file shares either.
 		/// </remarks>
+		/// <summary>
+		/// Picks the type that knows how to read a Tianzheng class.
+		/// </summary>
+		/// <remarks>
+		/// A class moves off <see cref="TchUnlistedEntity"/> by being named here, once its reader has
+		/// been worked out; nothing else has to change.
+		/// </remarks>
+		private static TchEntity createTchEntity(DxfClass dxfClass)
+		{
+			switch (dxfClass.DxfName)
+			{
+				case "TCH_COLUMN":
+					return new TchColumn(dxfClass);
+				default:
+					return TchText.WritesText(dxfClass.DxfName)
+						? new TchText(dxfClass)
+						: new TchUnlistedEntity(dxfClass);
+			}
+		}
+
 		private static bool isTangent(DxfClass dxfClass)
 		{
 			return dxfClass.DxfName.StartsWith("TCH_", System.StringComparison.Ordinal)
@@ -7363,9 +7383,7 @@ namespace ACadSharp.IO.DWG
 		/// </remarks>
 		private CadTemplate readTangentEntity(DxfClass dxfClass)
 		{
-			TchEntity entity = TchText.WritesText(dxfClass.DxfName)
-				? new TchText(dxfClass)
-				: new TchUnlistedEntity(dxfClass);
+			TchEntity entity = createTchEntity(dxfClass);
 
 			CadTchEntityTemplate template = new CadTchEntityTemplate(entity);
 
@@ -7380,10 +7398,7 @@ namespace ACadSharp.IO.DWG
 				entity.RawData = payload;
 				entity.Properties = TchDataMap.ReadFromPayload(payload, this._version);
 
-				if (entity is TchText text)
-				{
-					text.Fill(payload, this._version);
-				}
+				entity.Fill(payload, this._version);
 			}
 
 			return template;

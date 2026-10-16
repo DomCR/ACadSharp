@@ -70,6 +70,20 @@ namespace ACadSharp.Entities.Tangent
 		}
 
 		/// <summary>
+		/// Reads whatever this type knows how to read from the class specific data.
+		/// </summary>
+		/// <remarks>
+		/// Empty on the base: a type that has worked out how to read its class overrides this, and
+		/// one that has not keeps only the raw bytes. The reader calls it without knowing which type
+		/// it has.
+		/// </remarks>
+		/// <param name="payload">The class specific data.</param>
+		/// <param name="version">Drawing version, for the string encoding.</param>
+		internal virtual void Fill(byte[] payload, ACadVersion version)
+		{
+		}
+
+		/// <summary>
 		/// Converts this object into the standard entities it stands for.
 		/// </summary>
 		/// <remarks>

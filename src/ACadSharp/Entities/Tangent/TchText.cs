@@ -122,7 +122,11 @@ namespace ACadSharp.Entities.Tangent
 		/// <returns>The text, with whatever could be read filled in.</returns>
 		public static TchText Parse(DxfClass dxfClass, byte[] payload, ACadVersion version)
 		{
-			TchText text = new TchText(dxfClass);
+			TchText text = new TchText(dxfClass)
+			{
+				RawData = payload,
+			};
+
 			text.Fill(payload, version);
 			return text;
 		}
@@ -136,10 +140,8 @@ namespace ACadSharp.Entities.Tangent
 		/// </remarks>
 		/// <param name="payload">The class specific data.</param>
 		/// <param name="version">Drawing version, for the string encoding.</param>
-		internal void Fill(byte[] payload, ACadVersion version)
+		internal override void Fill(byte[] payload, ACadVersion version)
 		{
-			this.RawData = payload;
-
 			if (payload == null)
 			{
 				return;

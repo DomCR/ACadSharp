@@ -59,23 +59,6 @@ namespace ACadSharp.Tests.IO.Tangent
 "DlAOEA5gDgAOkA4QDlAOEA5QDhAOUA4QDlAOEA5QDhAOUA4QDlAOEA5QDhAOUA4QDlAOEA5QDhAOUA4QDlAOEA5QDhAOUA4Q" +
 "DlAEG4QDlAOEA5QDhAOcAyjGpATOpAVkhAZ2gIQHWIQHWICAhAa6hAcuoKCkBRykBNqAgICB0A==";
 
-		//TCH_COLUMN, handle 827
-		private const string ColumnPayload =
-"ChGQOQhCEDAABAABBQAAAAAAABZQEICBEJILgA/9e3ECORmyKpAruFAAUE5GbIqsCI4UAkguAD/xPcQLkZsiqwNPhQCSC4AP" +
-"/E9xAuRmyKrA0+FAJILgA/+p3EC5GbIqsCI4UAkguAD/6ncQJJnsAMgBFADAAMABDADIARgA4AC0ARgA2ADUANAAtADQAOQA" +
-"yADgALQBBAEYAMwBEAC0AMABFAEUANgA0ADUANQA1ADgANAAyADMAfQBLOAA+ADhAOYA4QDlAOEA5QDhAOUA4ADpAOEA5QDh" +
-"AOUA4QDlAOEA5QDhAOUA4QDlAOEA5QDhAOUA4QDlAOEA5QDhAOUA4QDlAOEA5QDhAOUA4QDlAOEA5QBKOEA6QDhAOUA4AD3A" +
-"OAA6QDhAOUA4QDlAOEA5QDhAOUA4QDlAOEA5QDhAOUA4QDlAOEA5QDhAOUA4QDlAOEA5QDhAOUA4QDlAOEA5QDhAOUAQbhAO" +
-"gA4QDkAOEA5ABBuEA5wDhAOoA4QDkAEG4QDjAOEA5ADhAOgARhUAEQAQgBYAEQAQQBUAEEATQBBAFAAXwBCAEwATwBDAEsAX" +
-"wBCAEUARwBJAE4AXwBBVQAMgAwAGIAMABBVQAMgAwAHMAMQBBaKUS3v3bd1RH1dBVQAMgAwAHMAMgBCVAAVQBCAF8ASABBAF" +
-"QAQwBIAEFVAAyADAAcwAzAEFVAAyADAAcwA0AEFVAAyADAAcwA1AEDopRLezx4RZUAEQAQgBYAEQAQQBUAEEATQBBAFAAXwB" +
-"CAEwATwBDAEsAXwBFAE4ARABfAEmewBCADAANwAxADMARQA2AEIALQBBAEYARgA2AC0ANAA4ADcAMQAtAEEAMgA3ADMALQA3" +
-"ADgAOQA2ADgAMwA0AEQANgA2ADcANgB9AEG4QDoAOEA5QDhAOQAS7hAOYA4QDkAOAA9wDhAOUA4QDlAOEA5QDgAOkA4QDlAO" +
-"EA5QDhAOUA4QDlAOEA5QDhAOUA4QDlAOEA5QDhAOUA4QDlAOEA5QDhAOUA4QDlAOEA5QDhAOUA4QDlAEG4QDoAOEA5gDhAOQ" +
-"AQbgAPcA4QDjAOEA4wBCOEA4wDhAOcA4AD4AOEA5QBBuEA5wDhAOUA4QDnAEG4AD4AOEA5QDhAOMASrhAOcA4AD3AOEA5QDh" +
-"AOUA4ADpAOEA5QDhAOUA4QDlAOEA5QDhAOUA4QDlAOEA5QDhAOUA4QDlAOEA5QDhAOUA4QDlAOEA5QDhAOUA4QDlAOEA5QBK" +
-"OEA5QDhAOUA4QDlAOAA6QDhAOUA4QDlAOEA5QDhAOUA4QDlAOEA5QDhAOUA4QDlAOEA5QDhAOUA4QDlAOEA5QDhAOUA4QDlA" +
-"OEA5QDhAOUApiHKkBKqEBXiEB1ikBRykBNvm";
 
 		//TCH_CUT, handle 1225, an outline with one arc edge
 		private const string CutPayload =
@@ -284,6 +267,24 @@ namespace ACadSharp.Tests.IO.Tangent
 "hAOUA4QDlAOEA5QDhAOUA4QDlAOEA5QDhAOUA4QDlAOEA5QDhAOUA4QDlAOEA5QDhAOUA4QDlAOEA5QBBuEA4wDhAOgA4QDk" +
 "AEG4QDlAOEA5QDhAOcAGhapAUUoiKAgf7w==";
 
+		//TCH_COLUMN, handle 827
+		private const string ColumnFixture =
+"ChGQOQhCEDAABAABBQAAAAAAABZQEICBEJILgA/9e3ECORmyKpAruFAAUE5GbIqsCI4UAkguAD/xPcQLkZsiqwNPhQCSC4AP" +
+"/E9xAuRmyKrA0+FAJILgA/+p3EC5GbIqsCI4UAkguAD/6ncQJJnsAMgBFADAAMABDADIARgA4AC0ARgA2ADUANAAtADQAOQA" +
+"yADgALQBBAEYAMwBEAC0AMABFAEUANgA0ADUANQA1ADgANAAyADMAfQBLOAA+ADhAOYA4QDlAOEA5QDhAOUA4ADpAOEA5QDh" +
+"AOUA4QDlAOEA5QDhAOUA4QDlAOEA5QDhAOUA4QDlAOEA5QDhAOUA4QDlAOEA5QDhAOUA4QDlAOEA5QBKOEA6QDhAOUA4AD3A" +
+"OAA6QDhAOUA4QDlAOEA5QDhAOUA4QDlAOEA5QDhAOUA4QDlAOEA5QDhAOUA4QDlAOEA5QDhAOUA4QDlAOEA5QDhAOUAQbhAO" +
+"gA4QDkAOEA5ABBuEA5wDhAOoA4QDkAEG4QDjAOEA5ADhAOgARhUAEQAQgBYAEQAQQBUAEEATQBBAFAAXwBCAEwATwBDAEsAX" +
+"wBCAEUARwBJAE4AXwBBVQAMgAwAGIAMABBVQAMgAwAHMAMQBBaKUS3v3bd1RH1dBVQAMgAwAHMAMgBCVAAVQBCAF8ASABBAF" +
+"QAQwBIAEFVAAyADAAcwAzAEFVAAyADAAcwA0AEFVAAyADAAcwA1AEDopRLezx4RZUAEQAQgBYAEQAQQBUAEEATQBBAFAAXwB" +
+"CAEwATwBDAEsAXwBFAE4ARABfAEmewBCADAANwAxADMARQA2AEIALQBBAEYARgA2AC0ANAA4ADcAMQAtAEEAMgA3ADMALQA3" +
+"ADgAOQA2ADgAMwA0AEQANgA2ADcANgB9AEG4QDoAOEA5QDhAOQAS7hAOYA4QDkAOAA9wDhAOUA4QDlAOEA5QDgAOkA4QDlAO" +
+"EA5QDhAOUA4QDlAOEA5QDhAOUA4QDlAOEA5QDhAOUA4QDlAOEA5QDhAOUA4QDlAOEA5QDhAOUA4QDlAEG4QDoAOEA5gDhAOQ" +
+"AQbgAPcA4QDjAOEA4wBCOEA4wDhAOcA4AD4AOEA5QBBuEA5wDhAOUA4QDnAEG4AD4AOEA5QDhAOMASrhAOcA4AD3AOEA5QDh" +
+"AOUA4ADpAOEA5QDhAOUA4QDlAOEA5QDhAOUA4QDlAOEA5QDhAOUA4QDlAOEA5QDhAOUA4QDlAOEA5QDhAOUA4QDlAOEA5QBK" +
+"OEA5QDhAOUA4QDlAOAA6QDhAOUA4QDlAOEA5QDhAOUA4QDlAOEA5QDhAOUA4QDlAOEA5QDhAOUA4QDlAOEA5QDhAOUA4QDlA" +
+"OEA5QDhAOUApiHKkBKqEBXiEB1ikBRykBNvm";
+
 		//TCH_MTEXT, handle 949
 		private const string MTextFixture =
 "ChGQVQWQOQOBBEhF+0xNYe1kCEJmZ7s+5OVAAhFJnsARABGADcAMAA4AEIAMAAxAC0ARQBGADkAMAAtADQAOQA5ADIALQBCA" +
@@ -401,6 +402,68 @@ namespace ACadSharp.Tests.IO.Tangent
 		}
 
 		[Fact]
+		public void TchColumnReadsItsOutline()
+		{
+			TchColumn column = TchColumn.Parse(tchClass("TCH_COLUMN"), decode(ColumnFixture), ACadVersion.AC1021);
+
+			Assert.NotNull(column.Outline);
+			Assert.Equal(4, column.Outline.Vertices.Count);
+
+			//A 600 by 600 section, which is what the class draws.
+			Assert.Equal(35910.0208, column.Outline.Vertices[0].Position.X, 3);
+			Assert.Equal(28751.9846, column.Outline.Vertices[0].Position.Y, 3);
+			Assert.Equal(36510.0208, column.Outline.Vertices[2].Position.X, 3);
+			Assert.Equal(29351.9846, column.Outline.Vertices[2].Position.Y, 3);
+		}
+
+		[Fact]
+		public void TchColumnReadsItsPosition()
+		{
+			TchColumn column = TchColumn.Parse(tchClass("TCH_COLUMN"), decode(ColumnFixture), ACadVersion.AC1021);
+
+			Assert.True(column.HasPosition);
+
+			//The point that precedes the outline, and the centre of the section it gives.
+			Assert.Equal(36210.0208, column.Position.X, 3);
+			Assert.Equal(29051.9846, column.Position.Y, 3);
+		}
+
+		[Fact]
+		public void TchColumnConvertsToAClosedPolyline()
+		{
+			TchColumn column = TchColumn.Parse(tchClass("TCH_COLUMN"), decode(ColumnFixture), ACadVersion.AC1021);
+
+			LwPolyline polyline = Assert.Single(column.ToStandardEntities().OfType<LwPolyline>());
+
+			Assert.True(polyline.IsClosed);
+			Assert.Equal(4, polyline.Vertices.Count);
+			Assert.Equal(column.Outline.Vertices[0].Position.X, polyline.Vertices[0].Location.X, 3);
+			Assert.Equal(column.Outline.Vertices[0].Position.Y, polyline.Vertices[0].Location.Y, 3);
+		}
+
+		[Fact]
+		public void TchColumnCarriesItsPropertiesToThePolyline()
+		{
+			TchColumn column = TchColumn.Parse(tchClass("TCH_COLUMN"), decode(ColumnFixture), ACadVersion.AC1021);
+			column.Layer = new ACadSharp.Tables.Layer("COLUMN");
+
+			LwPolyline polyline = Assert.Single(column.ToStandardEntities().OfType<LwPolyline>());
+
+			Assert.Equal("COLUMN", polyline.Layer.Name);
+		}
+
+		[Fact]
+		public void TchColumnBoundingBoxIsItsSection()
+		{
+			TchColumn column = TchColumn.Parse(tchClass("TCH_COLUMN"), decode(ColumnFixture), ACadVersion.AC1021);
+
+			BoundingBox box = column.GetBoundingBox();
+
+			Assert.Equal(600.0, box.Max.X - box.Min.X, 3);
+			Assert.Equal(600.0, box.Max.Y - box.Min.Y, 3);
+		}
+
+		[Fact]
 		public void TchTextIsNotATextEntityButConvertsToThem()
 		{
 			TchText text = TchText.Parse(tchClass("TCH_TEXT"), decode(TextPayload), ACadVersion.AC1021);
@@ -453,7 +516,7 @@ namespace ACadSharp.Tests.IO.Tangent
 		{
 			//A column's payload holds property names such as PUB_HATCH, which must not come back as
 			//text.
-			TchText text = TchText.Parse(tchClass("TCH_COLUMN"), decode(ColumnPayload), ACadVersion.AC1021);
+			TchText text = TchText.Parse(tchClass("TCH_COLUMN"), decode(ColumnFixture), ACadVersion.AC1021);
 
 			Assert.Null(text.Value);
 		}
@@ -479,7 +542,7 @@ namespace ACadSharp.Tests.IO.Tangent
 		[Fact]
 		public void TchPolygonRecoversTheColumnSection()
 		{
-			TchPolygon polygon = TchPolygon.FindInPayload(decode(ColumnPayload), ACadVersion.AC1021, out long offset);
+			TchPolygon polygon = TchPolygon.FindInPayload(decode(ColumnFixture), ACadVersion.AC1021, out long offset);
 
 			Assert.NotNull(polygon);
 			Assert.True(polygon.IsComplete);
@@ -506,7 +569,7 @@ namespace ACadSharp.Tests.IO.Tangent
 		[Fact]
 		public void TchPolygonRecoversTheSectionSize()
 		{
-			TchPolygon polygon = TchPolygon.FindInPayload(decode(ColumnPayload), ACadVersion.AC1021, out _);
+			TchPolygon polygon = TchPolygon.FindInPayload(decode(ColumnFixture), ACadVersion.AC1021, out _);
 
 			double width = polygon.Vertices[1].Position.X - polygon.Vertices[0].Position.X;
 			double height = polygon.Vertices[2].Position.Y - polygon.Vertices[1].Position.Y;
@@ -520,7 +583,7 @@ namespace ACadSharp.Tests.IO.Tangent
 		[Fact]
 		public void TchPolygonConvertsToAPolylineWithoutLosingTheShape()
 		{
-			TchPolygon polygon = TchPolygon.FindInPayload(decode(ColumnPayload), ACadVersion.AC1021, out _);
+			TchPolygon polygon = TchPolygon.FindInPayload(decode(ColumnFixture), ACadVersion.AC1021, out _);
 
 			ACadSharp.Entities.LwPolyline polyline = polygon.ToLwPolyline();
 
@@ -538,7 +601,7 @@ namespace ACadSharp.Tests.IO.Tangent
 		[Fact]
 		public void TchPolygonCarriesTheColourAndLayerOfTheSourceObject()
 		{
-			TchPolygon polygon = TchPolygon.FindInPayload(decode(ColumnPayload), ACadVersion.AC1021, out _);
+			TchPolygon polygon = TchPolygon.FindInPayload(decode(ColumnFixture), ACadVersion.AC1021, out _);
 
 			//A third of the objects in the corpus carry an explicit colour rather than ByLayer, so
 			//the conversion has to carry it across.
@@ -557,7 +620,7 @@ namespace ACadSharp.Tests.IO.Tangent
 		[Fact]
 		public void TchPolygonLeavesPropertiesAtTheirDefaultsWithoutASource()
 		{
-			TchPolygon polygon = TchPolygon.FindInPayload(decode(ColumnPayload), ACadVersion.AC1021, out _);
+			TchPolygon polygon = TchPolygon.FindInPayload(decode(ColumnFixture), ACadVersion.AC1021, out _);
 
 			ACadSharp.Entities.LwPolyline polyline = polygon.ToLwPolyline();
 
@@ -723,7 +786,7 @@ namespace ACadSharp.Tests.IO.Tangent
 		[Fact]
 		public void TgDataEncryptDecodesTheColumnHeight()
 		{
-			IReadOnlyList<double> values = TgDataEncrypt.ReadAllFrom(decode(ColumnPayload), ACadVersion.AC1021);
+			IReadOnlyList<double> values = TgDataEncrypt.ReadAllFrom(decode(ColumnFixture), ACadVersion.AC1021);
 
 			Assert.NotEmpty(values);
 
@@ -832,7 +895,7 @@ namespace ACadSharp.Tests.IO.Tangent
 		public void TchDataMapTreatsANameLookingValueAsAValue()
 		{
 			//PUB_HATCH is the value of T20s2, it only looks like a property name
-			TchDataMap map = TchDataMap.ReadFromPayload(decode(ColumnPayload), ACadVersion.AC1021);
+			TchDataMap map = TchDataMap.ReadFromPayload(decode(ColumnFixture), ACadVersion.AC1021);
 
 			Assert.Equal("PUB_HATCH", map.Properties["T20s2"]);
 			Assert.Equal("钢筋混凝土", map.Properties["T20s1"]);
