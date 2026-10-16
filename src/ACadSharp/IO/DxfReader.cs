@@ -199,6 +199,11 @@ public class DxfReader : CadReaderBase<DxfReaderConfiguration>
 				case DxfFileToken.HeaderSection:
 					this._document.Header = this.ReadHeader();
 					this._document.Header.Document = this._document;
+					//Handle 0 belongs to the document, a seed of 0 would hand it out again
+					if (this._document.Header.HandleSeed == 0)
+					{
+						this._document.Header.HandleSeed = 1;
+					}
 					this._builder.InitialHandSeed = this._document.Header.HandleSeed;
 					break;
 				case DxfFileToken.ClassesSection:

@@ -51,6 +51,7 @@ public abstract class WriterSingleObjectTests : IOTestsBase
 		Data.Add(new(nameof(SingleCaseGenerator.SingleLongMText)));
 		Data.Add(new(nameof(SingleCaseGenerator.SingleMTextRotation)));
 		Data.Add(new(nameof(SingleCaseGenerator.SingleMTextSpecialCharacter)));
+		Data.Add(new(nameof(SingleCaseGenerator.MTextBackgroundFillAndTextFrame)));
 		Data.Add(new(nameof(SingleCaseGenerator.TextWithChineseCharacters)));
 		Data.Add(new(nameof(SingleCaseGenerator.CreateGroup)));
 		Data.Add(new(nameof(SingleCaseGenerator.SingleMTextMultiline)));
@@ -88,6 +89,7 @@ public abstract class WriterSingleObjectTests : IOTestsBase
 		Data.Add(new(nameof(SingleCaseGenerator.DimensionRadius)));
 		Data.Add(new(nameof(SingleCaseGenerator.Dimensions)));
 		Data.Add(new(nameof(SingleCaseGenerator.DimensionWithLineType)));
+		Data.Add(new(nameof(SingleCaseGenerator.DimensionStyleArrowBlock)));
 		Data.Add(new(nameof(SingleCaseGenerator.GeoData)));
 		Data.Add(new(nameof(SingleCaseGenerator.LineTypeInBlock)));
 		Data.Add(new(nameof(SingleCaseGenerator.XData)));
@@ -1485,6 +1487,35 @@ public abstract class WriterSingleObjectTests : IOTestsBase
 			};
 		}
 
+		public void DimensionStyleArrowBlock()
+		{
+			BlockRecord tick = new BlockRecord("CUSTOM_TICK");
+			tick.Entities.Add(new Line(new XYZ(-0.5, -0.5, 0), new XYZ(0.5, 0.5, 0)));
+			this.Document.BlockRecords.Add(tick);
+
+			DimensionStyle style = new DimensionStyle("arrow_block_style");
+			style.ArrowBlock = tick;
+
+			DimensionLinear dim = new DimensionLinear
+			{
+				FirstPoint = new XYZ(0, 0, 0),
+				SecondPoint = new XYZ(10, 0, 0),
+				Offset = 0.5,
+				Style = style,
+			};
+
+			this.Document.Entities.Add(dim);
+
+			this.AssertRoundtrip = (doc) =>
+			{
+				DimensionStyle result = doc.GetCadObject<DimensionStyle>(style.Handle);
+
+				Assert.NotNull(result);
+				Assert.Equal(tick.Name, result.ArrowBlock?.Name);
+				Assert.Null(result.LeaderArrow);
+			};
+		}
+
 		public void DrawBoundingBox()
 		{
 			Line l = new Line(XYZ.Zero, new XYZ(10, 10, 0));
@@ -2511,6 +2542,61 @@ public abstract class WriterSingleObjectTests : IOTestsBase
 				Assert.NotNull(result);
 				EntityComparator.IsEqual(mtext, result);
 				Assert.Equal(mtext.Value, result.Value);
+			};
+		}
+
+		public void MTextBackgroundFillAndTextFrame()
+		{
+			List<MText> mtexts = new List<MText>();
+			foreach (BackgroundFillFlags flags in new[]
+			{
+				BackgroundFillFlags.TextFrame,
+				BackgroundFillFlags.UseBackgroundFillColor,
+				BackgroundFillFlags.UseBackgroundFillColor | BackgroundFillFlags.UseDrawingWindowColor,
+				BackgroundFillFlags.UseBackgroundFillColor | BackgroundFillFlags.TextFrame,
+			})
+			{
+				MText mtext = new MText($"Background {flags}")
+				{
+					InsertPoint = new XYZ(0, -10 * mtexts.Count, 0),
+					Height = 2.5,
+					BackgroundFillFlags = flags,
+					BackgroundScale = 2.0,
+					BackgroundColor = flags.HasFlag(BackgroundFillFlags.TextFrame) ? new Color(255, 128, 0) : new Color(2),
+				};
+
+				mtexts.Add(mtext);
+				this.Document.Entities.Add(mtext);
+			}
+
+			this.AssertRoundtrip = (doc) =>
+			{
+				foreach (MText mtext in mtexts)
+				{
+					MText result = doc.GetCadObject<MText>(mtext.Handle);
+
+					Assert.NotNull(result);
+
+					if (doc.Header.Version < ACadVersion.AC1018)
+					{
+						//Background fill is not supported before R2004
+						Assert.Equal(BackgroundFillFlags.None, result.BackgroundFillFlags);
+						continue;
+					}
+
+					Assert.Equal(mtext.BackgroundFillFlags, result.BackgroundFillFlags);
+
+					if (this.Format == CadFileFormat.DWG
+						&& doc.Header.Version < ACadVersion.AC1032
+						&& !mtext.BackgroundFillFlags.HasFlag(BackgroundFillFlags.UseBackgroundFillColor))
+					{
+						//The DWG format stores the values of a text frame only in R2018+
+						continue;
+					}
+
+					Assert.Equal(mtext.BackgroundScale, result.BackgroundScale);
+					Assert.Equal(mtext.BackgroundColor, result.BackgroundColor);
+				}
 			};
 		}
 
