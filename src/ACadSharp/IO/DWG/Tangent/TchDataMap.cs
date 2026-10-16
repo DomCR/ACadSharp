@@ -1,4 +1,4 @@
-﻿using System;
+using System;
 using System.Collections.Generic;
 using System.Text;
 
@@ -19,8 +19,14 @@ namespace ACadSharp.IO.DWG.Tangent
 	/// (<c>PIPE_SYSTEM_NAME</c>, <c>PIPE_THICK</c>, ...); values may be numeric text or localized text.
 	/// </para>
 	/// <para>
-	/// The sequence ends with an (usually empty) <c>TDBXDATAMAP_BLOCK_BEGIN_</c> /
-	/// <c>TDBXDATAMAP_BLOCK_END_</c> marker pair. These markers terminate the map; they do not wrap it.
+	/// The records sit between a <c>TDBXDATAMAP_BLOCK_BEGIN_</c> and a
+	/// <c>TDBXDATAMAP_BLOCK_END_</c> marker, and the writer emits those around them: the opening
+	/// marker is written first, the records follow, and the closing marker is written last.
+	/// </para>
+	/// <para>
+	/// A numeric record carries its name here and its value elsewhere — the value is written as a
+	/// native number in the object's bit stream, which this reader does not walk — so such a record
+	/// appears with no value rather than with the next record's name as one.
 	/// </para>
 	/// </remarks>
 	public sealed class TchDataMap
@@ -46,9 +52,10 @@ namespace ACadSharp.IO.DWG.Tangent
 
 		/// <summary>Gets the property name to value map built from <see cref="Entries"/>.</summary>
 		/// <remarks>
-		/// Tianzheng writes a property name immediately before its value. Names without a following
-		/// value (for example when a flag is set) are still listed in <see cref="Entries"/> but are
-		/// not present here.
+		/// A name whose descriptor says its value is a string is given the entry that follows it; any
+		/// other name is recorded with no value, because its value is not in the stream. The key is
+		/// present either way, so a caller can tell an absent property from one that has no value
+		/// here.
 		/// </remarks>
 		public IReadOnlyDictionary<string, string> Properties => _properties;
 
@@ -258,44 +265,81 @@ namespace ACadSharp.IO.DWG.Tangent
 
 		private void buildProperties()
 		{
-			string pending = null;
-			foreach (string entry in _entries)
+			for (int i = 0; i < _entries.Count; i++)
 			{
+				string entry = _entries[i];
+
 				if (entry == BlockBeginMarker || entry == BlockEndMarker)
 				{
 					continue;
 				}
 
-				if (isPropertyName(entry))
+				if (isTypedFieldDescriptor(entry))
 				{
-					//A descriptor followed by a plain name looking entry is a pair: the second one is
-					//a value that happens to look like a name, such as the hatch pattern PUB_HATCH.
-					if (pending != null && isTypedFieldDescriptor(pending) && !isTypedFieldDescriptor(entry))
+					//The descriptor states in its own name whether a value can follow it, so a numeric,
+					//point or identifier record is never paired with the next record's name.
+					string value = null;
+
+					if (descriptorCarriesStringValue(entry)
+						&& i + 1 < _entries.Count
+						&& !isTypedFieldDescriptor(_entries[i + 1]))
 					{
-						_properties[pending] = entry;
-						pending = null;
-						continue;
+						value = _entries[++i];
 					}
 
-					// A name with no value of its own: it is either a flag or its value is written
-					// through the native (non string) path.
-					if (pending != null)
-					{
-						_properties[pending] = null;
-					}
-
-					pending = entry;
-					if (!_properties.ContainsKey(entry))
-					{
-						_properties[entry] = null;
-					}
+					_properties[entry] = value;
+					continue;
 				}
-				else if (pending != null)
+
+				if (!isPropertyName(entry))
 				{
-					_properties[pending] = entry;
-					pending = null;
+					continue;
+				}
+
+				//A plain name is followed by its value unless the next entry is itself a name, which
+				//is what a value that reads like one — the hatch pattern PUB_HATCH — would look like.
+				if (i + 1 < _entries.Count && !isPropertyName(_entries[i + 1]))
+				{
+					_properties[entry] = _entries[++i];
+				}
+				else
+				{
+					_properties[entry] = null;
 				}
 			}
+		}
+
+		/// <summary>
+		/// Decides whether a typed descriptor's value is written beside it in the stream.
+		/// </summary>
+		/// <remarks>
+		/// Only a string is, and not always then. The block writes each record as its name, then its
+		/// type, then its value through whichever filer slot that type belongs to. A string's value is
+		/// the only one that goes to the string stream — a number, a point or an identifier is written
+		/// as a native value in the object's bit stream, which the strings here do not contain — so an
+		/// entry after a numeric descriptor is always the next record's name.
+		/// <para>
+		/// A string record whose value is a null pointer writes nothing at all, not even an empty
+		/// string, so the next entry after such a record is again the next record's name. That is why
+		/// the caller also checks the shape of the entry that follows.
+		/// </para>
+		/// </remarks>
+		private static bool descriptorCarriesStringValue(string descriptor)
+		{
+			int i = 3;
+
+			if (i < descriptor.Length && descriptor[i] == 'V')
+			{
+				i++;
+				while (i < descriptor.Length && descriptor[i] >= '0' && descriptor[i] <= '9')
+				{
+					i++;
+				}
+
+				i++;
+			}
+
+			return i < descriptor.Length && descriptor[i] == 's';
 		}
 
 		/// <summary>

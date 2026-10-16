@@ -1,4 +1,4 @@
-﻿using ACadSharp;
+using ACadSharp;
 using ACadSharp.Classes;
 using CSMath;
 using ACadSharp.Entities;
@@ -1790,6 +1790,38 @@ namespace ACadSharp.Tests.IO.Tangent
 			Assert.False(map.IsEmpty);
 			Assert.Equal("A级", map.Properties["T20s1"]);
 			Assert.Equal("普通砖", map.Properties["T20s4"]);
+			Assert.Equal("保温层", map.Properties["T20s9"]);
+		}
+
+		[Fact]
+		public void TchDataMapLeavesANumericDescriptorWithoutAValue()
+		{
+			//Only a string record writes its value beside its name. A number, a flag or an
+			//identifier is written through the object's bit stream, which this reader never walks,
+			//so the entry after such a record is the next record's name and must not be taken as
+			//its value. The wall's block opens with T20b2, T20b3, T20d12 and T20d7.
+			TchDataMap map = TchDataMap.ReadFromPayload(decode(WallPayload), ACadVersion.AC1021);
+
+			Assert.True(map.Properties.ContainsKey("T20d12"));
+			Assert.Null(map.Properties["T20d12"]);
+			Assert.Null(map.Properties["T20d7"]);
+			Assert.Null(map.Properties["T20b2"]);
+			Assert.Null(map.Properties["T20u6"]);
+
+			//The name that follows a numeric record keeps its own value.
+			Assert.Equal("A级", map.Properties["T20s1"]);
+			Assert.Equal("保温层", map.Properties["T20s9"]);
+		}
+
+		[Fact]
+		public void TchDataMapLeavesAStringDescriptorWithoutAValueWhenNoneWasWritten()
+		{
+			//T20s8 is a string record whose value was never set. A null string writes nothing at
+			//all — not even the two bits an empty one costs — so what follows it is the next name,
+			//and T20s9's own value still belongs to T20s9.
+			TchDataMap map = TchDataMap.ReadFromPayload(decode(WallPayload), ACadVersion.AC1021);
+
+			Assert.Null(map.Properties["T20s8"]);
 			Assert.Equal("保温层", map.Properties["T20s9"]);
 		}
 
