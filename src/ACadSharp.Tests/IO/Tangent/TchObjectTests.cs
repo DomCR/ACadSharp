@@ -448,6 +448,48 @@ namespace ACadSharp.Tests.IO.Tangent
 		}
 
 		[Fact]
+		public void TchPathReadsThePointsOfAnIndexPointer()
+		{
+			TchPath path = TchPath.Parse(tchClass("TCH_INDEXPOINTER"), decode(IndexPointerFixture), ACadVersion.AC1021);
+
+			Assert.Equal(2, path.Points.Count);
+
+			//The export draws that pointer as a line from (45665.25, 29070.18) to
+			//(46469.90, 26579.10), and those are the two points to the last digit.
+			Assert.Equal(45665.2489, path.Points[0].X, 3);
+			Assert.Equal(29070.1762, path.Points[0].Y, 3);
+			Assert.Equal(46469.9009, path.Points[1].X, 3);
+			Assert.Equal(26579.0959, path.Points[1].Y, 3);
+		}
+
+		[Fact]
+		public void TchPathConvertsToAnOpenPolyline()
+		{
+			TchPath path = TchPath.Parse(tchClass("TCH_INDEXPOINTER"), decode(IndexPointerFixture), ACadVersion.AC1021);
+
+			LwPolyline polyline = Assert.Single(path.ToStandardEntities().OfType<LwPolyline>());
+
+			//A path, not a shape: the two ends are not joined.
+			Assert.False(polyline.IsClosed);
+			Assert.Equal(2, polyline.Vertices.Count);
+			Assert.Equal(path.Points[0].X, polyline.Vertices[0].Location.X);
+			Assert.Equal(path.Points[1].Y, polyline.Vertices[1].Location.Y);
+		}
+
+		[Fact]
+		public void TchPathBoundingBoxIsItsExtent()
+		{
+			TchPath path = TchPath.Parse(tchClass("TCH_INDEXPOINTER"), decode(IndexPointerFixture), ACadVersion.AC1021);
+
+			BoundingBox box = path.GetBoundingBox();
+
+			Assert.Equal(45665.2489, box.Min.X, 3);
+			Assert.Equal(26579.0959, box.Min.Y, 3);
+			Assert.Equal(46469.9009, box.Max.X, 3);
+			Assert.Equal(29070.1762, box.Max.Y, 3);
+		}
+
+		[Fact]
 		public void TchOutlineReadsTheArrow()
 		{
 			TchOutline arrow = TchOutline.Parse(tchClass("TCH_ARROW"), decode(ArrowFixture), ACadVersion.AC1021);

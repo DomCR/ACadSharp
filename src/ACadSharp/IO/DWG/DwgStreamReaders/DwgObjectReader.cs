@@ -7362,6 +7362,13 @@ namespace ACadSharp.IO.DWG
 				case "TCH_ARROW":
 				case "TCH_CUT":
 					return new TchOutline(dxfClass);
+				case "TCH_INDEXPOINTER":
+				case "TCH_SYMB_SECTION":
+				case "TCH_MULTILEADER":
+				case "TCH_COMPOSING":
+				case "TCH_AXIS_LABEL":
+				case "TCH_MULTISTAIR":
+					return new TchPath(dxfClass);
 				default:
 					return TchText.WritesText(dxfClass.DxfName)
 						? new TchText(dxfClass)
