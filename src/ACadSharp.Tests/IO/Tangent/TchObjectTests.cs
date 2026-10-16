@@ -495,6 +495,41 @@ namespace ACadSharp.Tests.IO.Tangent
 			"OEA5QDhAOUA4QDlAOEA5QBLuEA6QDhAOYA4QDjAOEA4wDhAOUA4QDlAOAA6QDhAOUA4QDlAOEA5QDhAOUA4QDlAOEA5QDhAOUA4Q" +
 			"DlAOEA5QDhAOUA4QDlAOEA5QDhAOUA4QDlAOEA5QDhAOUAQbhAOkA4AD4AOEA5ACaUqkBOCApATqoKCkBOikBRSkBWCkBRH6";
 
+		//TCH_PARALLELSTAIR, handle 1262
+		private const string ParallelStairFixture =
+			"ChGQOAxEBETG+f668tXhQIyEFd24xF8kBJnsAOAAwADYAMABEADIAOAAyAC0AMwBEAEYAMgAtADQAOQBFAEQALQA4AEIAMAAxAC0" +
+			"ARABDADQAMQA4ADQARQAxAEQAMwAxADcAfQBLOEA6gDhAOYA4AD4AOEA5QDhAOUA4ADpAOEA5QDhAOUA4QDlAOEA5QDhAOUA4QDl" +
+			"AOEA5QDhAOUA4QDlAOEA5QDhAOUA4QDlAOEA5QDhAOUA4QDlAOEA5QBKOEA4wDhAOUA4AD4AOAA6QDhAOUA4QDlAOEA5QDhAOUA4" +
+			"QDlAOEA5QDhAOUA4QDlAOEA5QDhAOUA4QDlAOEA5QDhAOUA4QDlAOEA5QDhAOUAQbgAPgA4QDmAOEA6gBBuEA5ADhAOoA4QDpAEY" +
+			"VABEAEIAWABEAEEAVABBAE0AQQBQAF8AQgBMAE8AQwBLAF8AQgBFAEcASQBOAF8AQVUADIAMABkADEARZUAEQAQgBYAEQAQQBUAE" +
+			"EATQBBAFAAXwBCAEwATwBDAEsAXwBFAE4ARABfAEmewBCADAANwAxADMARQA2AEIALQBBAEYARgA2AC0ANAA4ADcAMQAtAEEAMgA" +
+			"3ADMALQA3ADgAOQA2ADgAMwA0AEQANgA2ADcANgB9AEG4QDpAOEA5QDhAOMASjhAOQA4QDlAOAA9wDgAOkA4QDlAOEA5QDhAOUA4" +
+			"QDlAOEA5QDhAOUA4QDlAOEA5QDhAOUA4QDlAOEA5QDhAOUA4QDlAOEA5QDhAOUA4QDlAEs4QDqAOEA5gDhAOQA4QDqAOEA5QDgAO" +
+			"kA4QDlAOEA5QDhAOUA4QDlAOEA5QDhAOUA4QDlAOEA5QDhAOUA4QDlAOEA5QDhAOUA4QDlAOEA5QDhAOUA4QDlAEs4QDkAOEA4wD" +
+			"gAPcA4QDoAOEA5QDgAOkA4QDlAOEA5QDhAOUA4QDlAOEA5QDhAOUA4QDlAOEA5QDhAOUA4QDlAOEA5QDhAOUA4QDlAOEA5QDhAOU" +
+			"A4QDlAEu4QDpAOEA5gDhAOgA4QDjAOEA5QDhAOUA4ADpAOEA5QDhAOUA4QDlAOEA5QDhAOUA4QDlAOEA5QDhAOUA4QDlAOEA5QDh" +
+			"AOUA4QDlAOEA5QDhAOUA4QDlAOEA5QBLuAA9wDhAOMA4AD3AOEA6QDhAOUA4QDlAOAA6QDhAOUA4QDlAOEA5QDhAOUA4QDlAOEA5" +
+			"QDhAOUA4QDlAOEA5QDhAOUA4QDlAOEA5QDhAOUA4QDlAOEA5QDhAOUAS7hAOMA4QDmAOEA5gDhAOMA4QDlAOEA5QDgAOkA4QDlAO" +
+			"EA5QDhAOUA4QDlAOEA5QDhAOUA4QDlAOEA5QDhAOUA4QDlAOEA5QDhAOUA4QDlAOEA5QDhAOUA4QDlAEu4QDjAOEA5gDgAPgA4QD" +
+			"jAOEA5QDhAOUA4ADpAOEA5QDhAOUA4QDlAOEA5QDhAOUA4QDlAOEA5QDhAOUA4QDlAOEA5QDhAOUA4QDlAOEA5QDhAOUA4QDlAOE" +
+			"A5QBLuEA5ADhAOYA4AD4AOEA4wDhAOUA4QDlAOAA6QDhAOUA4QDlAOEA5QDhAOUA4QDlAOEA5QDhAOUA4QDlAOEA5QDhAOUA4QDl" +
+			"AOEA5QDhAOUA4QDlAOEA5QDhAOUAQjhAOcA4QDmAOEA5QDhAOUAQjgAPcA4QDmAOEA6gDhAOUAS7hAOUA4QDqAOAA9wDhAOUA4QD" +
+			"lAOEA5QDgAOkA4QDlAOEA5QDhAOUA4QDlAOEA5QDhAOUA4QDlAOEA5QDhAOUA4QDlAOEA5QDhAOUA4QDlAOEA5QDhAOUA4QDlAEs" +
+			"4QDqAOAA+ADhAOUA4QDlAOEA5QDgAOkA4QDlAOEA5QDhAOUA4QDlAOEA5QDhAOUA4QDlAOEA5QDhAOUA4QDlAOEA5QDhAOUA4QDl" +
+			"AOEA5QDhAOUA4QDlAEG4QDmAOEA5gDhAOoAQbgAPcA4QDlAOEA5QBBuEA6QDhAOUA4QDkAEq4QDmAOEA5wDhAOgA4QDlAOAA6QDh" +
+			"AOUA4QDlAOEA5QDhAOUA4QDlAOEA5QDhAOUA4QDlAOEA5QDhAOUA4QDlAOEA5QDhAOUA4QDlAOEA5QDhAOUASjhAOYA4QDlAOEA5" +
+			"ADgAOkA4QDlAOEA5QDhAOUA4QDlAOEA5QDhAOUA4QDlAOEA5QDhAOUA4QDlAOEA5QDhAOUA4QDlAOEA5QDhAOUA4QDlAEq4AD4AO" +
+			"EA5wDgAPcA4QDlAOAA6QDhAOUA4QDlAOEA5QDhAOUA4QDlAOEA5QDhAOUA4QDlAOEA5QDhAOUA4QDlAOEA5QDhAOUA4QDlAOEA5Q" +
+			"DhAOUASrhAOkA4QDnAOEA6gDhAOUA4ADpAOEA5QDhAOUA4QDlAOEA5QDhAOUA4QDlAOEA5QDhAOUA4QDlAOEA5QDhAOUA4QDlAOE" +
+			"A5QDhAOUA4QDlAOEA5QBBuEA5gDhAOoA4QDoAEo4QDkAOEA5QDgAPgA4ADpAOEA6gDhAOMA4QDkAOEA6gDgAPgA4AD3AOEA6ADhA" +
+			"OgA4QDqAOEA6gDgAPgA4AD3AOEA4wDgAPgA4AD3AOAA9wBKOEA6ADhAOQA4QDlAOAA6QDhAOoA4QDlAOEA5QDhAOUA4QDlAOEA5Q" +
+			"DhAOUA4QDlAOEA5QDhAOUA4QDlAOEA5QDhAOUA4QDlAOEA5QDhAOUARDhAOoA4QDjAOEA4wDhAOcA4QDkAOEA6ADhAOUA4QDmAEs" +
+			"4QDoAOEA4wDhAOoA4QDlAOEA5QDgAOkA4QDlAOEA5QDhAOUA4QDlAOEA5QDhAOUA4QDlAOEA5QDhAOUA4QDlAOEA5QDhAOUA4QDl" +
+			"AOEA5QDhAOUA4QDlAEs4AD4AOEA5gDhAOkA4QDjAOEA5QDgAOkA4QDlAOEA5QDhAOUA4QDlAOEA5QDhAOUA4QDlAOEA5QDhAOUA4" +
+			"QDlAOEA5QDhAOUA4QDlAOEA5QDhAOUA4QDlAEs4QDkAOEA5gDhAOQA4QDjAOEA5QDgAOkA4QDlAOEA5QDhAOUA4QDlAOEA5QDhAO" +
+			"UA4QDlAOEA5QDhAOUA4QDlAOEA5QDhAOUA4QDlAOEA5QDhAOUA4QDlAEG4QDjAOEA5QDhAOgAQkepATggKQE6qCgpATopAUUpAVg" +
+			"pAUR2A==";
+
 		private static byte[] decode(string value) => Convert.FromBase64String(value);
 
 		/// <summary>
@@ -944,6 +979,85 @@ namespace ACadSharp.Tests.IO.Tangent
 		public void TchRectStairRefusesAPayloadWithNoOutline()
 		{
 			TchRectStair stair = TchRectStair.Parse(tchClass("TCH_RECTSTAIR"), new byte[64], ACadVersion.AC1021);
+
+			Assert.False(stair.IsConvertible);
+			Assert.NotNull(stair.Reason);
+			Assert.Empty(stair.ToStandardEntities());
+		}
+
+		[Fact]
+		public void TchParallelStairReadsTheSameDimensionsFourPlacesAlong()
+		{
+			//The parallel stair and the rectangular one keep the same things in the same members and
+			//mean the same by them; they differ in how many other values they write first, which is
+			//three here. Every value below is one the export's own drawing agrees with.
+			TchParallelStair stair = TchParallelStair.Parse(tchClass("TCH_PARALLELSTAIR"), decode(ParallelStairFixture), ACadVersion.AC1021);
+
+			Assert.True(stair.IsConvertible);
+			Assert.Null(stair.Reason);
+
+			Assert.Equal(74840.80355573364, stair.Position.X, 9);
+			Assert.Equal(36527.58532666000, stair.Position.Y, 9);
+
+			Assert.Equal(1200.0, stair.FirstStepOffset, 9);
+			Assert.Equal(270.0, stair.TreadDepth, 9);
+			Assert.Equal(10, stair.TreadLineCount);
+			Assert.Equal(5000.0, stair.Width, 9);
+			Assert.Equal(1200.0, stair.HandrailOffset, 9);
+			Assert.Equal(60.0, stair.HandrailBand, 9);
+			Assert.Equal(1140.0, stair.FlightWidth, 9);
+			Assert.Equal(3630.0, stair.Run, 9);
+		}
+
+		[Fact]
+		public void TchParallelStairConvertsToAStairWideEnoughForThreeFlights()
+		{
+			//Against the flattened export: all sixty five straight lines it draws for this stair lie
+			//on one of these forty nine, to the last place, and the parts it leaves out are where the
+			//break symbol crosses. What makes it a different stair from the rectangular one is only
+			//the width: at five thousand there is room for a third flight down the middle, with a
+			//well on either side of it, where the rectangular stair's one well reaches flight to
+			//flight with nothing between.
+			TchParallelStair stair = TchParallelStair.Parse(tchClass("TCH_PARALLELSTAIR"), decode(ParallelStairFixture), ACadVersion.AC1021);
+
+			List<Line> outline = stair.ToStandardEntities().OfType<Line>().ToList();
+
+			Assert.Equal(49, outline.Count);
+
+			//The three flights, read off the first tread line. The handrail's band ends on the same
+			//line and is a hundred long, so it is the length that separates them.
+			List<Line> treads = outline
+				.Where(l => Math.Abs(l.StartPoint.Y - l.EndPoint.Y) < 1e-9)
+				.Where(l => Math.Abs((l.StartPoint.Y - stair.Position.Y) + 1200.0) < 1e-9)
+				.Where(l => Math.Abs(l.EndPoint.X - l.StartPoint.X) > 500.0)
+				.ToList();
+
+			Assert.Equal(3, treads.Count);
+
+			double[] starts = treads.Select(l => l.StartPoint.X - stair.Position.X).OrderBy(x => x).ToArray();
+
+			Assert.Equal(0.0, starts[0], 9);
+			Assert.Equal(1360.0, starts[1], 9);
+			Assert.Equal(3860.0, starts[2], 9);
+
+			//The handrail is a band of its own width inside each outer flight, and here the two do not
+			//meet, which is what tells this stair's handrail rule from the one the rectangular stair
+			//happens to agree with.
+			List<double> railLines = outline
+				.Where(l => Math.Abs(l.StartPoint.X - l.EndPoint.X) < 1e-9)
+				.Where(l => Math.Abs(l.StartPoint.X - stair.Position.X - 1200.0) < 1e-9
+					|| Math.Abs(l.StartPoint.X - stair.Position.X - 1300.0) < 1e-9)
+				.Select(l => l.StartPoint.X - stair.Position.X)
+				.Distinct()
+				.ToList();
+
+			Assert.Equal(2, railLines.Count);
+		}
+
+		[Fact]
+		public void TchParallelStairRefusesAPayloadWithNoOutline()
+		{
+			TchParallelStair stair = TchParallelStair.Parse(tchClass("TCH_PARALLELSTAIR"), new byte[64], ACadVersion.AC1021);
 
 			Assert.False(stair.IsConvertible);
 			Assert.NotNull(stair.Reason);
