@@ -2,7 +2,9 @@
 using ACadSharp.Classes;
 using CSMath;
 using ACadSharp.Entities;
+using System.Globalization;
 using System.Linq;
+using System.Text;
 using ACadSharp.Entities.Tangent;
 using ACadSharp.IO.DWG.Tangent;
 using System;
@@ -866,74 +868,101 @@ namespace ACadSharp.Tests.IO.Tangent
 			Assert.Throws<ArgumentNullException>(() => TchGeometry.FindPoints(null, ACadVersion.AC1021, out _));
 		}
 
-		[Fact]
-		public void TgDataEncryptUsesTheRecoveredAlphabet()
+		public void TgDataEncryptIsExclusiveOredNotTableDriven()
 		{
-			Assert.Equal(11, TgDataEncrypt.Alphabet.Count);
-
-			//The digits are deliberately out of order: 6 sits below 0.
-			Assert.Equal('0', TgDataEncrypt.Alphabet[58]);
-			Assert.Equal('6', TgDataEncrypt.Alphabet[50]);
-			Assert.Equal('9', TgDataEncrypt.Alphabet[51]);
-			Assert.Equal('8', TgDataEncrypt.Alphabet[56]);
-			Assert.Equal('7', TgDataEncrypt.Alphabet[57]);
-			Assert.Equal('.', TgDataEncrypt.Alphabet[36]);
-
-			//The value that is a point in one group of classes and a sign in another is not in the
-			//table at all; it is resolved per string.
-			Assert.False(TgDataEncrypt.Alphabet.ContainsKey(TgDataEncrypt.AmbiguousValue));
+			//The same character pair decodes to different characters in different contexts, so a
+			//fixed pair-to-character table cannot express the layer. An earlier version of this
+			//class held one, and every value it produced was wrong while looking plausible.
+			Assert.Equal(0x09, TgDataEncrypt.XorFor(0));
+			Assert.Equal(0x0A, TgDataEncrypt.XorFor(46));
+			Assert.Equal(TgDataEncrypt.NestedXor, TgDataEncrypt.XorFor(0));
+			Assert.Equal(TgDataEncrypt.ObjectXor, TgDataEncrypt.XorFor(46));
 		}
 
 		[Fact]
-		public void TgDataEncryptReadsTheAmbiguousValueBothWays()
+		public void TgDataEncryptDropsTheTwoCharactersTheWriterAdds()
 		{
-			//Four characters, then the value in question, then sixteen zeros: the shape a
-			//whole-numbered double has. The same bytes read as a sign do not parse.
-			Assert.Equal('.', TgDataEncrypt.AmbiguousAsPoint);
-			Assert.Equal('-', TgDataEncrypt.AmbiguousAsSign);
+			//The reader deletes the characters at indices 0 and 2, so a number carries two extra
+			//characters that are not part of it.
+			string cipher = encodeRaw("878270.5245692529715598");
+
+			Assert.Equal("7270.5245692529715598", TgDataEncrypt.Decode(cipher, TgDataEncrypt.ObjectXor));
 		}
 
 		[Fact]
-		public void TgDataEncryptDecodesTheColumnHeight()
+		public void TgDataEncryptReadsTheMountRoofFields()
 		{
-			IReadOnlyList<double> values = TgDataEncrypt.ReadAllFrom(decode(ColumnFixture), ACadVersion.AC1021);
-
-			Assert.NotEmpty(values);
-
-			//The column section is 600 by 600, which its outline gives, and its height is 2600.
-			//Those come from different parts of the payload, so they confirm each other.
-			Assert.Contains(2600.0, values);
-		}
-
-		[Fact]
-		public void TgDataEncryptDecodesTheWallDimensions()
-		{
-			IReadOnlyList<double> values = TgDataEncrypt.ReadAllFrom(decode(WallFixture), ACadVersion.AC1021);
-
-			Assert.NotEmpty(values);
-
-			//All plausible drawing dimensions: nothing negative, nothing astronomical.
-			foreach (double value in values)
+			//The eight values TDbMountRoof reads, in the order it reads them, against the geometry
+			//Tianzheng's own flattening draws: the rectangle they produce matches it exactly.
+			string[] expected =
 			{
-				Assert.InRange(value, 0.0, 1.0e6);
-			}
+				"0.0000000000000000",
+				"7270.5245692529715598",
+				"3209.7731959130906034",
+				"1.0809791056523319",
+				"600.0000000000000000",
+				"0.0000000000000000",
+				"3000.0000000000000000",
+				"1100.0000000000000000",
+			};
 
-			Assert.Contains(41700.0, values);
-			Assert.Contains(11900.0, values);
+			foreach (string text in expected)
+			{
+				string cipher = encode(text);
+
+				Assert.True(TgDataEncrypt.TryDecode(cipher, out double value, TgDataEncrypt.ObjectXor));
+				Assert.Equal(double.Parse(text, CultureInfo.InvariantCulture), value, 9);
+			}
 		}
 
 		[Fact]
-		public void TgDataEncryptRejectsAStringOutsideTheAlphabet()
+		public void TgDataEncryptTellsCiphertextFromTextByShape()
 		{
-			//A class id is not ciphertext and must not be read as a number.
-			Assert.False(TgDataEncrypt.TryDecode("{F8F0F12F-9389-49FC-835D-8C86C6EEEEDB}", out _));
+			//Ciphertext is recognisable without knowing which field was being read, because every
+			//character of a pair carries a low byte of 0xC0 or more.
+			Assert.True(TgDataEncrypt.IsCiphertext(encodeRaw("3000.0000000000000000")));
+			Assert.False(TgDataEncrypt.IsCiphertext("Wall & Window & Door"));
+			Assert.False(TgDataEncrypt.IsCiphertext("{F8F0F12F-9389-49FC-835D-8C86C6EEEEDB}"));
 		}
 
 		[Fact]
 		public void TgDataEncryptThrowsOnANullString()
 		{
-			Assert.Throws<ArgumentNullException>(() => TgDataEncrypt.Decode(null));
+			Assert.Throws<ArgumentNullException>(() => TgDataEncrypt.Decode(null, TgDataEncrypt.ObjectXor));
 		}
+
+		/// <summary>
+		/// Writes a string the way the obfuscation layer does, so the reader can be tested against
+		/// values whose plain text is known.
+		/// </summary>
+		private static string encode(string text)
+		{
+			//The reader keeps the character at index 1 and everything from index 3 on, so the
+			//writer's form is two characters longer, of which the first and third are not part of
+			//the number. Inverting the reader means putting those two back.
+			return encodeRaw("0" + text[0] + "0" + text.Substring(1));
+		}
+
+		/// <summary>
+		/// Writes a string the way the obfuscation layer does, without inverting the reader's
+		/// deletion, so the deletion itself can be tested.
+		/// </summary>
+		private static string encodeRaw(string text)
+		{
+			StringBuilder cipher = new StringBuilder(text.Length * 2);
+
+			foreach (char c in text)
+			{
+				int value = c ^ TgDataEncrypt.ObjectXor;
+
+				cipher.Append((char)((value / 26) + TgDataEncrypt.DefaultKey));
+				cipher.Append((char)((value % 26) + TgDataEncrypt.DefaultKey));
+			}
+
+			return cipher.ToString();
+		}
+
+
 
 		[Fact]
 		public void TchGeometryReadsAnElevationPosition()

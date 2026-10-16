@@ -34,152 +34,93 @@ namespace ACadSharp.IO.DWG.Tangent
 	public static class TgDataEncrypt
 	{
 		/// <summary>
-		/// The pair value that stands for each character of the decoded text.
-		/// </summary>
-		/// <remarks>
-		/// Twelve entries, being the ten digits, the decimal point and the sign. The digits are
-		/// deliberately out of order: 6, 9 and 8 and 7 sit below 0.
-		/// </remarks>
-		public static readonly IReadOnlyDictionary<int, char> Alphabet = new Dictionary<int, char>
-		{
-			{ 36, '.' },
-			{ 50, '6' },
-			{ 51, '9' },
-			{ 56, '8' },
-			{ 57, '7' },
-			{ 58, '0' },
-			{ 59, '1' },
-			{ 60, '2' },
-			{ 61, '3' },
-			{ 62, '4' },
-			{ 63, '5' },
-		};
-
-		/// <summary>
-		/// The pair value whose reading is not fixed.
-		/// </summary>
-		/// <remarks>
-		/// It stands for a decimal point in some classes and for a sign in others, and the two
-		/// readings cannot both be right for a given string. Nothing distinguishes the classes from
-		/// the outside, so both are tried and the one that reads as a number is taken.
-		/// </remarks>
-		public const int AmbiguousValue = 39;
-
-		/// <summary>What <see cref="AmbiguousValue"/> means in the classes that use it as a point.</summary>
-		public const char AmbiguousAsPoint = '.';
-
-		/// <summary>What <see cref="AmbiguousValue"/> means in the classes that use it as a sign.</summary>
-		public const char AmbiguousAsSign = '-';
-
-		/// <summary>
-		/// The key that applies to the objects in the sample drawings.
+		/// The constant the character pairs are biased by.
 		/// </summary>
 		public const int DefaultKey = 0xDF;
 
 		/// <summary>
-		/// Reads the number stored in a string written through the obfuscation layer.
+		/// The value the decoded characters are exclusive-ored with, for a nested reader.
 		/// </summary>
-		/// <param name="cipher">Ciphertext as it was read from the file.</param>
-		/// <param name="key">Key for the object, <see cref="DefaultKey"/> for the samples.</param>
-		/// <returns>The decoded text.</returns>
-		/// <exception cref="FormatException">A pair decodes to a value outside the alphabet.</exception>
-		public static string Decode(string cipher, int key = DefaultKey)
+		/// <remarks>
+		/// The reader derives it from the context it is handed: the high byte of context + 0x9D2.
+		/// A class passing its own context lands at 0x0A, and a nested helper passing zero at 0x09,
+		/// which is what makes the same bytes read as different characters.
+		/// </remarks>
+		public const byte NestedXor = 0x09;
+
+		/// <inheritdoc cref="NestedXor"/>
+		public const byte ObjectXor = 0x0A;
+
+		/// <summary>
+		/// The exclusive-or value that applies to a reader given this context.
+		/// </summary>
+		public static byte XorFor(int context)
+		{
+			return (byte)(((context + 0x9D2) >> 8) & 0xFF);
+		}
+
+		/// <summary>
+		/// Decodes a string written through the obfuscation layer.
+		/// </summary>
+		/// <param name="cipher">The characters as the filer stored them.</param>
+		/// <param name="xor">The value for the context the field was read in.</param>
+		/// <param name="key">The pair bias.</param>
+		/// <remarks>
+		/// Three steps, and missing either of the last two is silent rather than loud.
+		/// <para>
+		/// Character pairs are read as one value and then exclusive-ored, so the same pair decodes
+		/// to different characters in different contexts. A fixed pair-to-character table cannot
+		/// express that, which is how an earlier version of this class came to hold a table that
+		/// was self-consistent and wrong.
+		/// </para>
+		/// <para>
+		/// The reader then deletes the characters at indices 0 and 2 of what it decoded — the
+		/// second deletion is of index 1 <i>after</i> the first, which is the same as index 2 of
+		/// the original — so the result is the first character plus everything from the fourth on.
+		/// A number written by this layer carries two characters that are not part of it.
+		/// </para>
+		/// </remarks>
+		public static string Decode(string cipher, byte xor, int key = DefaultKey)
 		{
 			if (cipher == null)
 			{
 				throw new ArgumentNullException(nameof(cipher));
 			}
 
-			string first = decodeWith(cipher, key, AmbiguousValue, AmbiguousAsPoint);
-			string second = decodeWith(cipher, key, AmbiguousValue, AmbiguousAsSign);
+			StringBuilder text = new StringBuilder(cipher.Length / 2);
 
-			//The ambiguous value is a decimal point in one group of classes and a sign in another,
-			//and there is no way to tell from the character alone. Whichever reading gives a number
-			//is the one that was meant: a misplaced sign leaves a string that does not parse.
-			if (isNumber(second) && !isNumber(first))
+			for (int i = 0; i + 1 < cipher.Length; i += 2)
 			{
-				return second;
+				int value = ((cipher[i] & 0xFF) - key) * 26 + ((cipher[i + 1] & 0xFF) - key);
+
+				text.Append((char)(value ^ xor));
 			}
 
-			return first;
+			if (text.Length < 4)
+			{
+				return text.ToString();
+			}
+
+			return text[1] + text.ToString(3, text.Length - 3);
 		}
 
 		/// <summary>
-		/// Reads every obfuscated number in a class specific payload.
+		/// Whether a string is the ciphertext of a number rather than text.
 		/// </summary>
 		/// <remarks>
-		/// The scalar fields of a class sit in its payload with nothing to delimit them, so they
-		/// are found the way the other readers find their data: by looking for what they are. A
-		/// ciphertext string is recognisable because every character of it has a low byte of
-		/// <c>0xC0</c> or more, which no ordinary text and no class id does, and because it decodes
-		/// to a number. Strings that fail either test are skipped.
+		/// Every character of an obfuscated pair carries a low byte of 0xC0 or more, which is a
+		/// property of how the writer biases them. Text never does, so the shape separates the two
+		/// without needing to know which field was being read.
 		/// </remarks>
-		/// <param name="payload">The class specific data of the object.</param>
-		/// <param name="version">Drawing version used by the stream reader.</param>
-		/// <param name="key">Key for the object, <see cref="DefaultKey"/> for the samples.</param>
-		/// <returns>The values in the order they appear; never null.</returns>
-		public static IReadOnlyList<double> ReadAllFrom(byte[] payload, ACadVersion version, int key = DefaultKey)
+		public static bool IsCiphertext(string value)
 		{
-			if (payload == null)
-			{
-				throw new ArgumentNullException(nameof(payload));
-			}
-
-			List<double> values = new List<double>();
-
-			if (payload.Length < 16)
-			{
-				return values;
-			}
-
-			using (MemoryStream stream = new MemoryStream(payload, writable: false))
-			{
-				IDwgStreamReader reader = DwgStreamReaderBase.GetStreamHandler(version, stream, resetPositon: true);
-				long limit = (long)payload.Length * 8L;
-
-				while (reader.PositionInBits() < limit)
-				{
-					long start = reader.PositionInBits();
-					string cipher;
-
-					try
-					{
-						cipher = reader.ReadVariableText();
-					}
-					catch (Exception)
-					{
-						reader.SetPositionInBits(start + 1);
-						continue;
-					}
-
-					if (!isCiphertext(cipher))
-					{
-						//Step one bit and try again: the string may start at a different alignment.
-						reader.SetPositionInBits(start + 1);
-						continue;
-					}
-
-					if (TryDecode(cipher, out double value, key))
-					{
-						values.Add(value);
-					}
-				}
-			}
-
-			return values;
-		}
-
-		private static bool isCiphertext(string value)
-		{
-			if (value == null || value.Length < 2 || value.Length > 120 || value.Length % 2 != 0)
+			if (string.IsNullOrEmpty(value) || value.Length < 2 || value.Length % 2 != 0)
 			{
 				return false;
 			}
 
 			foreach (char c in value)
 			{
-				//Every character of a ciphertext string sits in the high half of Latin-1, which is
-				//what makes it distinguishable from a class id, a property name and a marker.
 				if ((c & 0xFF) < 0xC0)
 				{
 					return false;
@@ -189,57 +130,23 @@ namespace ACadSharp.IO.DWG.Tangent
 			return true;
 		}
 
-		private static string decodeWith(string cipher, int key, int ambiguous, char asCharacter)
-		{
-			StringBuilder text = new StringBuilder(cipher.Length / 2);
-
-			for (int i = 0; i + 1 < cipher.Length; i += 2)
-			{
-				int value = ((cipher[i] & 0xFF) - key) * 26 + ((cipher[i + 1] & 0xFF) - key);
-
-				if (value == ambiguous)
-				{
-					text.Append(asCharacter);
-					continue;
-				}
-
-				if (!Alphabet.TryGetValue(value, out char character))
-				{
-					throw new FormatException($"Pair at {i} decodes to {value}, which is not in the alphabet");
-				}
-
-				text.Append(character);
-			}
-
-			return text.ToString();
-		}
-
-		private static bool isNumber(string text)
-		{
-			return !string.IsNullOrEmpty(text)
-				&& double.TryParse(text, NumberStyles.Float, CultureInfo.InvariantCulture, out _);
-		}
-
 		/// <summary>
-		/// Tries to read the number stored in a string written through the obfuscation layer.
+		/// Reads the number a field holds, for a nested reader.
 		/// </summary>
-		/// <param name="cipher">Ciphertext as it was read from the file.</param>
-		/// <param name="value">Receives the decoded number.</param>
-		/// <param name="key">Key for the object, <see cref="DefaultKey"/> for the samples.</param>
-		/// <returns>True when the string decoded to a number.</returns>
-		public static bool TryDecode(string cipher, out double value, int key = DefaultKey)
+		public static bool TryDecode(string cipher, out double value, byte xor, int key = DefaultKey)
 		{
-			value = 0.0;
+			value = 0;
 
-			if (cipher == null || cipher.Length < 2 || cipher.Length % 2 != 0)
+			if (string.IsNullOrEmpty(cipher) || cipher.Length < 2 || cipher.Length % 2 != 0)
 			{
 				return false;
 			}
 
 			string text;
+
 			try
 			{
-				text = Decode(cipher, key);
+				text = Decode(cipher, xor, key);
 			}
 			catch (FormatException)
 			{
@@ -248,5 +155,6 @@ namespace ACadSharp.IO.DWG.Tangent
 
 			return double.TryParse(text, NumberStyles.Float, CultureInfo.InvariantCulture, out value);
 		}
+
 	}
 }

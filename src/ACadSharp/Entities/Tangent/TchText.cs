@@ -270,8 +270,11 @@ namespace ACadSharp.Entities.Tangent
 				return false;
 			}
 
-			//A scalar decodes through the alphabet, so it is not content.
-			if (TgDataEncrypt.TryDecode(value, out _))
+			//The stream a payload carries holds the class's strings and the text it writes, and a
+			//number written through the obfuscation layer sits among them as ciphertext. The two
+			//are told apart by shape: every character of a ciphertext pair has a low byte of 0xC0
+			//or more, which no text does.
+			if (TgDataEncrypt.IsCiphertext(value))
 			{
 				return false;
 			}
