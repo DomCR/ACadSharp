@@ -456,6 +456,45 @@ namespace ACadSharp.Tests.IO.Tangent
 			"6QCSjhAOMA4QDlAOEA4wDgAOkA4QDlAOEA5QDhAOUA4QDlAOEA5QDhAOUA4QDlAOEA5QDhAOUA4QDlAOEA5QDhAOUA4QDlAOEA5Q" +
 			"DhAOUA4QDlAEG4QDjAOEA5QDhAOgAyjGpATOpAVkhAZ2gIQFeIQFeICAhAdahAdcoKCkBRykBNqAgICB7A==";
 
+		//TCH_RECTSTAIR, handle 956
+		private const string RectStairFixture =
+			"ChFAUHAkAAMMDEQcRObK2JiQ59xAjAYfPrhXnwQEmewA4ADAANgAwAEQAMgA4ADIALQAzAEQARgAyAC0ANAA5AEUARAAtADgAQgA" +
+			"wADEALQBEAEMANAAxADgANABFADEARAAzADEANwB9AEs4QDpAOEA5gDhAOoA4QDlAOEA5QDgAOkA4QDlAOEA5QDhAOUA4QDlAOEA" +
+			"5QDhAOUA4QDlAOEA5QDhAOUA4QDlAOEA5QDhAOUA4QDlAOEA5QDhAOUA4QDlAEo4QDoAOEA5QDhAOYA4ADpAOEA5QDhAOUA4QDlA" +
+			"OEA5QDhAOUA4QDlAOEA5QDhAOUA4QDlAOEA5QDhAOUA4QDlAOEA5QDhAOUA4QDlAOEA5QBBuEA6QDhAOYA4AD3AEG4QDmAOEA6gD" +
+			"gAPgAQZrWEVRH3dpX5yYcoJGFQARABCAFgARABBAFQAQQBNAEEAUABfAEIATABPAEMASwBfAEIARQBHAEkATgBfAEWVABEAEIAWA" +
+			"BEAEEAVABBAE0AQQBQAF8AQgBMAE8AQwBLAF8ARQBOAEQAXwBJnsAQgAwADcAMQAzAEUANgBCAC0AQQBGAEYANgAtADQAOAA3ADE" +
+			"ALQBBADIANwAzAC0ANwA4ADkANgA4ADMANABEADYANgA3ADYAfQBBuEA6ADhAOUA4QDpAEo4QDpAOEA5QDhAOUA4ADpAOEA5QDhA" +
+			"OUA4QDlAOEA5QDhAOUA4QDlAOEA5QDhAOUA4QDlAOEA5QDhAOUA4QDlAOEA5QDhAOUA4QDlAOEA5QBLOEA6ADhAOYA4QDpAOEA6g" +
+			"DhAOUA4ADpAOEA5QDhAOUA4QDlAOEA5QDhAOUA4QDlAOEA5QDhAOUA4QDlAOEA5QDhAOUA4QDlAOEA5QDhAOUA4QDlAOEA5QBLOE" +
+			"A5wDhAOMA4QDmAOEA6ADhAOUA4ADpAOEA5QDhAOUA4QDlAOEA5QDhAOUA4QDlAOEA5QDhAOUA4QDlAOEA5QDhAOUA4QDlAOEA5QD" +
+			"hAOUA4QDlAOEA5QBLuAA9wDhAOYA4QDnAOEA4wDhAOQA4QDlAOAA6QDhAOUA4QDlAOEA5QDhAOUA4QDlAOEA5QDhAOUA4QDlAOEA" +
+			"5QDhAOUA4QDlAOEA5QDhAOUA4QDlAOEA5QDhAOUAS7hAOYA4QDmAOEA5wDhAOMA4QDlAOEA5QDgAOkA4QDlAOEA5QDhAOUA4QDlA" +
+			"OEA5QDhAOUA4QDlAOEA5QDhAOUA4QDlAOEA5QDhAOUA4QDlAOEA5QDhAOUA4QDlAEI4QDpAOEA5gDhAOUA4QDlAEI4QDqAOEA5gD" +
+			"hAOQA4QDlAEu4QDjAOEA4wDhAOcA4QDqAOEA5wDhAOUA4ADpAOEA5QDhAOUA4QDlAOEA5QDhAOUA4QDlAOEA5QDhAOUA4QDlAOEA" +
+			"5QDhAOUA4QDlAOEA5QDhAOUA4QDlAOEA5QBLOEA6ADgAPgA4QDmAOEA5QDhAOUA4ADpAOEA5QDhAOUA4QDlAOEA5QDhAOUA4QDlA" +
+			"OEA5QDhAOUA4QDlAOEA5QDhAOUA4QDlAOEA5QDhAOUA4QDlAOEA5QBBuEA6QDhAOYA4QDoAEG4QDmAOEA5QDhAOUAQbhAOkA4QDj" +
+			"AOEA5ABKuEA5wDhAOcA4QDqAOEA5QDgAOkA4QDlAOEA5QDhAOUA4QDlAOEA5QDhAOUA4QDlAOEA5QDhAOUA4QDlAOEA5QDhAOUA4" +
+			"QDlAOEA5QDhAOUA4QDlAEo4QDjAOEA5QDhAOcA4ADpAOEA5QDhAOUA4QDlAOEA5QDhAOUA4QDlAOEA5QDhAOUA4QDlAOEA5QDhAO" +
+			"UA4QDlAOEA5QDhAOUA4QDlAOEA5QBEOEA6gDhAOQA4QDpAOAA+ADhAOkA4QDoAOEA6gDhAOgASzhAOMA4QDjAOEA5gDhAOUA4QDl" +
+			"AOAA6QDhAOUA4QDlAOEA5QDhAOUA4QDlAOEA5QDhAOUA4QDlAOEA5QDhAOUA4QDlAOEA5QDhAOUA4QDlAOEA5QDhAOUASzhAOUA4" +
+			"QDmAOEA5QDhAOMA4QDlAOAA6QDhAOUA4QDlAOEA5QDhAOUA4QDlAOEA5QDhAOUA4QDlAOEA5QDhAOUA4QDlAOEA5QDhAOUA4QDlA" +
+			"OEA5QDhAOUASzhAOcA4QDmAOEA6gDhAOMA4QDlAOAA6QDhAOUA4QDlAOEA5QDhAOUA4QDlAOEA5QDhAOUA4QDlAOEA5QDhAOUA4Q" +
+			"DlAOEA5QDhAOUA4QDlAOEA5QDhAOUASzhAOYA4QDpAOEA6gDhAOgA4QDoAOAA6QDhAOgA4QDkAOAA9wDhAOcA4QDqAOAA9wDhAOU" +
+			"A4QDjAOEA5wDgAPcA4QDoAOEA6ADgAPcA4QDjAOAA9wDgAPgASzhAOcA4AD3AOEA6gDhAOgA4QDjAOAA6QDhAOMA4QDnAOEA5gDh" +
+			"AOQA4QDpAOEA5gDgAPgA4QDoAOEA5ADhAOYA4QDjAOEA4wDhAOYA4QDoAOEA5gDhAOYAQbhAOUA4QDlAOEA5wBKuEA4wDhAOcA4Q" +
+			"DpAOEA5QDgAOkA4QDlAOEA5QDhAOUA4QDlAOEA5QDhAOUA4QDlAOEA5QDhAOUA4QDlAOEA5QDhAOUA4QDlAOEA5QDhAOUA4QDlAE" +
+			"q4QDoAOEA5wDhAOkA4QDlAOAA6QDhAOUA4QDlAOEA5QDhAOUA4QDlAOEA5QDhAOUA4QDlAOEA5QDhAOUA4QDlAOEA5QDhAOUA4QD" +
+			"lAOEA5QDhAOUASzhAOkA4QDnAOAA9wDhAOgA4QDqAOAA6QDhAOUA4QDlAOEA5QDhAOUA4QDlAOEA5QDhAOUA4QDlAOEA5QDhAOUA" +
+			"4QDlAOEA5QDhAOUA4QDlAOEA5QDhAOUASjhAOYA4QDlAOAA+ADgAOkA4QDqAOEA4wDhAOQA4QDqAOAA+ADgAPcA4QDoAOEA6ADhA" +
+			"OoA4QDqAOAA+ADgAPcA4QDjAOAA+ADgAPcA4AD3AEo4AD4AOEA5ADhAOMA4ADpAOEA6gDhAOUA4QDlAOEA5QDhAOUA4QDlAOEA5Q" +
+			"DhAOUA4QDlAOEA5QDhAOUA4QDlAOEA5QDhAOUA4QDlAOEA5QBLuEA6ADhAOYA4QDnAOEA4wDhAOUA4QDlAOAA6QDhAOUA4QDlAOE" +
+			"A5QDhAOUA4QDlAOEA5QDhAOUA4QDlAOEA5QDhAOUA4QDlAOEA5QDhAOUA4QDlAOEA5QDhAOUAS7gAPgA4QDmAOAA9wDhAOMA4QDl" +
+			"AOEA5QDgAOkA4QDlAOEA5QDhAOUA4QDlAOEA5QDhAOUA4QDlAOEA5QDhAOUA4QDlAOEA5QDhAOUA4QDlAOEA5QDhAOUA4QDlAEu4" +
+			"QDmAOEA5gDgAPcA4QDjAOEA5QDhAOUA4ADpAOEA5QDhAOUA4QDlAOEA5QDhAOUA4QDlAOEA5QDhAOUA4QDlAOEA5QDhAOUA4QDlA" +
+			"OEA5QDhAOUA4QDlAOEA5QBLuEA6QDhAOYA4QDjAOEA4wDhAOUA4QDlAOAA6QDhAOUA4QDlAOEA5QDhAOUA4QDlAOEA5QDhAOUA4Q" +
+			"DlAOEA5QDhAOUA4QDlAOEA5QDhAOUA4QDlAOEA5QDhAOUAQbhAOkA4AD4AOEA5ACaUqkBOCApATqoKCkBOikBRSkBWCkBRH6";
+
 		private static byte[] decode(string value) => Convert.FromBase64String(value);
 
 		/// <summary>
@@ -827,6 +866,85 @@ namespace ACadSharp.Tests.IO.Tangent
 			Assert.False(TchFieldMap.TryReadInlinePath(payload, 2, 700, out _));
 			Assert.False(TchFieldMap.TryReadInlinePath(payload, 2, payload.Length * 8L, out _));
 			Assert.False(TchFieldMap.TryReadInlinePath(payload, 0, 628, out _));
+		}
+
+		[Fact]
+		public void TchRectStairReadsTheDimensionsItsOutlineIsBuiltFrom()
+		{
+			//The class stores no outline. These are the values the drawn stair agrees with, which is
+			//how they are identified: the tread spacing is what the tread lines are spaced by, and the
+			//number of steps is how many of them there are.
+			TchRectStair stair = TchRectStair.Parse(tchClass("TCH_RECTSTAIR"), decode(RectStairFixture), ACadVersion.AC1021);
+
+			Assert.True(stair.IsConvertible);
+			Assert.Null(stair.Reason);
+
+			Assert.Equal(67480.37010515388, stair.Position.X, 9);
+			Assert.Equal(29598.25932903113, stair.Position.Y, 9);
+
+			Assert.Equal(1200.0, stair.FirstStepOffset, 9);
+			Assert.Equal(270.0, stair.TreadDepth, 9);
+			Assert.Equal(9, stair.StepCount);
+			Assert.Equal(2560.0, stair.Width, 9);
+			Assert.Equal(1230.0, stair.HandrailOffset, 9);
+			Assert.Equal(60.0, stair.HandrailBand, 9);
+			Assert.Equal(150.0, stair.Riser, 9);
+
+			//Two flights side by side with a well between them, and the well is what is left of the
+			//width once both flights have taken theirs.
+			Assert.Equal(1170.0, stair.FlightWidth, 9);
+			Assert.Equal(3630.0, stair.Run, 9);
+		}
+
+		[Fact]
+		public void TchRectStairConvertsToItsOutline()
+		{
+			//Against the flattened export: every straight line it draws for this stair lies on one of
+			//these, and the only parts of these it does not draw are where the break symbol crosses —
+			//seven of the thirty one, cut for 115.47 units at the outer edges and at the well.
+			TchRectStair stair = TchRectStair.Parse(tchClass("TCH_RECTSTAIR"), decode(RectStairFixture), ACadVersion.AC1021);
+
+			List<Line> outline = stair.ToStandardEntities().OfType<Line>().ToList();
+
+			//The top, two outer edges, two tread lines for each of the ten tread lines the run holds,
+			//the two sides of the well, four for the handrail, and two closing the well.
+			Assert.Equal(31, outline.Count);
+
+			Assert.Equal(0.0, outline[0].StartPoint.X - stair.Position.X, 9);
+			Assert.Equal(0.0, outline[0].StartPoint.Y - stair.Position.Y, 9);
+			Assert.Equal(2560.0, outline[0].EndPoint.X - stair.Position.X, 9);
+
+			//The run ends nine treads below the first one, and the rest of the outline agrees with the
+			//export to the last place at every line these are checked against.
+			double bottom = stair.Position.Y - 3630.0;
+			Assert.Equal(bottom, outline[2].EndPoint.Y, 9);
+			Assert.Equal(stair.Position.X + 2560.0, outline[2].EndPoint.X, 9);
+
+			//The tread lines start where the export's do and are spaced by the tread depth. The top
+			//of the stair starts at the same corner and is horizontal too, so it is the line above the
+			//first tread that is not one.
+			List<Line> treads = outline
+				.Where(l => Math.Abs(l.StartPoint.Y - l.EndPoint.Y) < 1e-9)
+				.Where(l => Math.Abs(l.StartPoint.X - stair.Position.X) < 1e-9)
+				.Where(l => l.StartPoint.Y < stair.Position.Y)
+				.ToList();
+
+			Assert.Equal(10, treads.Count);
+
+			for (int i = 0; i < treads.Count; i++)
+			{
+				Assert.Equal(stair.Position.Y - 1200.0 - (i * 270.0), treads[i].StartPoint.Y, 9);
+			}
+		}
+
+		[Fact]
+		public void TchRectStairRefusesAPayloadWithNoOutline()
+		{
+			TchRectStair stair = TchRectStair.Parse(tchClass("TCH_RECTSTAIR"), new byte[64], ACadVersion.AC1021);
+
+			Assert.False(stair.IsConvertible);
+			Assert.NotNull(stair.Reason);
+			Assert.Empty(stair.ToStandardEntities());
 		}
 
 		[Fact]

@@ -7379,6 +7379,8 @@ namespace ACadSharp.IO.DWG
 					return new TchDimension2(dxfClass);
 				case "TCH_WALL":
 					return new TchWall(dxfClass);
+				case "TCH_RECTSTAIR":
+					return new TchRectStair(dxfClass);
 				default:
 					return TchText.WritesText(dxfClass.DxfName)
 						? new TchText(dxfClass)
