@@ -42,7 +42,6 @@ namespace ACadSharp.IO.DWG.Tangent
 		/// </remarks>
 		public static readonly IReadOnlyDictionary<int, char> Alphabet = new Dictionary<int, char>
 		{
-			{ 39, '-' },
 			{ 36, '.' },
 			{ 50, '6' },
 			{ 51, '9' },
@@ -55,6 +54,22 @@ namespace ACadSharp.IO.DWG.Tangent
 			{ 62, '4' },
 			{ 63, '5' },
 		};
+
+		/// <summary>
+		/// The pair value whose reading is not fixed.
+		/// </summary>
+		/// <remarks>
+		/// It stands for a decimal point in some classes and for a sign in others, and the two
+		/// readings cannot both be right for a given string. Nothing distinguishes the classes from
+		/// the outside, so both are tried and the one that reads as a number is taken.
+		/// </remarks>
+		public const int AmbiguousValue = 39;
+
+		/// <summary>What <see cref="AmbiguousValue"/> means in the classes that use it as a point.</summary>
+		public const char AmbiguousAsPoint = '.';
+
+		/// <summary>What <see cref="AmbiguousValue"/> means in the classes that use it as a sign.</summary>
+		public const char AmbiguousAsSign = '-';
 
 		/// <summary>
 		/// The key that applies to the objects in the sample drawings.
@@ -75,21 +90,18 @@ namespace ACadSharp.IO.DWG.Tangent
 				throw new ArgumentNullException(nameof(cipher));
 			}
 
-			StringBuilder text = new StringBuilder(cipher.Length / 2);
+			string first = decodeWith(cipher, key, AmbiguousValue, AmbiguousAsPoint);
+			string second = decodeWith(cipher, key, AmbiguousValue, AmbiguousAsSign);
 
-			for (int i = 0; i + 1 < cipher.Length; i += 2)
+			//The ambiguous value is a decimal point in one group of classes and a sign in another,
+			//and there is no way to tell from the character alone. Whichever reading gives a number
+			//is the one that was meant: a misplaced sign leaves a string that does not parse.
+			if (isNumber(second) && !isNumber(first))
 			{
-				int value = ((cipher[i] & 0xFF) - key) * 26 + ((cipher[i + 1] & 0xFF) - key);
-
-				if (!Alphabet.TryGetValue(value, out char character))
-				{
-					throw new FormatException($"Pair at {i} decodes to {value}, which is not in the alphabet");
-				}
-
-				text.Append(character);
+				return second;
 			}
 
-			return text.ToString();
+			return first;
 		}
 
 		/// <summary>
@@ -175,6 +187,37 @@ namespace ACadSharp.IO.DWG.Tangent
 			}
 
 			return true;
+		}
+
+		private static string decodeWith(string cipher, int key, int ambiguous, char asCharacter)
+		{
+			StringBuilder text = new StringBuilder(cipher.Length / 2);
+
+			for (int i = 0; i + 1 < cipher.Length; i += 2)
+			{
+				int value = ((cipher[i] & 0xFF) - key) * 26 + ((cipher[i + 1] & 0xFF) - key);
+
+				if (value == ambiguous)
+				{
+					text.Append(asCharacter);
+					continue;
+				}
+
+				if (!Alphabet.TryGetValue(value, out char character))
+				{
+					throw new FormatException($"Pair at {i} decodes to {value}, which is not in the alphabet");
+				}
+
+				text.Append(character);
+			}
+
+			return text.ToString();
+		}
+
+		private static bool isNumber(string text)
+		{
+			return !string.IsNullOrEmpty(text)
+				&& double.TryParse(text, NumberStyles.Float, CultureInfo.InvariantCulture, out _);
 		}
 
 		/// <summary>

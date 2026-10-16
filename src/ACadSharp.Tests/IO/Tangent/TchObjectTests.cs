@@ -869,7 +869,7 @@ namespace ACadSharp.Tests.IO.Tangent
 		[Fact]
 		public void TgDataEncryptUsesTheRecoveredAlphabet()
 		{
-			Assert.Equal(12, TgDataEncrypt.Alphabet.Count);
+			Assert.Equal(11, TgDataEncrypt.Alphabet.Count);
 
 			//The digits are deliberately out of order: 6 sits below 0.
 			Assert.Equal('0', TgDataEncrypt.Alphabet[58]);
@@ -878,6 +878,19 @@ namespace ACadSharp.Tests.IO.Tangent
 			Assert.Equal('8', TgDataEncrypt.Alphabet[56]);
 			Assert.Equal('7', TgDataEncrypt.Alphabet[57]);
 			Assert.Equal('.', TgDataEncrypt.Alphabet[36]);
+
+			//The value that is a point in one group of classes and a sign in another is not in the
+			//table at all; it is resolved per string.
+			Assert.False(TgDataEncrypt.Alphabet.ContainsKey(TgDataEncrypt.AmbiguousValue));
+		}
+
+		[Fact]
+		public void TgDataEncryptReadsTheAmbiguousValueBothWays()
+		{
+			//Four characters, then the value in question, then sixteen zeros: the shape a
+			//whole-numbered double has. The same bytes read as a sign do not parse.
+			Assert.Equal('.', TgDataEncrypt.AmbiguousAsPoint);
+			Assert.Equal('-', TgDataEncrypt.AmbiguousAsSign);
 		}
 
 		[Fact]
