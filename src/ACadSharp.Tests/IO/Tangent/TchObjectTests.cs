@@ -430,6 +430,32 @@ namespace ACadSharp.Tests.IO.Tangent
 			"DhAOMA4QDlAOEA4wDgAPgA4QDqAOAA6QDhAOcA4QDnAOEA4wDhAOUA4QDqAOEA5gDhAOkA4QDqAOEA5wDgAPcA4QDkAOEA6QDgAP" +
 			"cA4AD3AOAA9wDhAOYAQbgAPcA4QDlAOEA6ABaHqkBQakB3Xq";
 
+		//TCH_WALL, handle 940 — the same wall turned a quarter turn
+		private const string VerticalWallFixture =
+			"ChGQOQOQUAAAAAAAAWUBBQAAAAAAABZQEIQhCEDkIQMAAEAAEVQMAAEAAAwRCSC4AP/E9xAjkZsiqQK7hQBc3cHlQw3QQI5GbIqk" +
+			"Cu4UBJnsARgA4AEYAMABGADEAMgBGAC0AOQAzADgAOQAtADQAOQBGAEMALQA4ADMANQBEAC0AOABDADgANgBDADYARQBFAEUARQB" +
+			"EAEIAfQBLOEA6ADhAOYA4QDqAOEA5QDhAOUA4ADpAOEA5QDhAOUA4QDlAOEA5QDhAOUA4QDlAOEA5QDhAOUA4QDlAOEA5QDhAOUA" +
+			"4QDlAOEA5QDhAOUA4QDlAOEA5QBKOEA6QDhAOUA4QDjAOAA6QDhAOUA4QDlAOEA5QDhAOUA4QDlAOEA5QDhAOUA4QDlAOEA5QDhA" +
+			"OUA4QDlAOEA5QDhAOUA4QDlAOEA5QDhAOUAQbhAOYA4QDkAOAA+ABBuEA4wDhAOoA4QDqAEG4QDqAOEA5ADhAOoARhUAEQAQgBYA" +
+			"EQAQQBUAEEATQBBAFAAXwBCAEwATwBDAEsAXwBCAEUARwBJAE4AXwBBVQAMgAwAGIAMgBBVQAMgAwAGIAMwBBlQAMgAwAGQAMQAy" +
+			"AEFVAAyADAAZAA3AEFVAAyADAAcwAxAECQQCnfkGVAAyADAAcwAxADQAQEWeEFVAAyADAAcwA0AEDbmYakBZ4QVUADIAMABzADgA" +
+			"QVUADIAMABzADkAQPdTyluQlxBlQAMgAwAHUAMQAxAEGVAAyADAAdQAxADYAQVUADIAMAB1ADYARZUAEQAQgBYAEQAQQBUAEEATQ" +
+			"BBAFAAXwBCAEwATwBDAEsAXwBFAE4ARABfAEmewBCADAANwAxADMARQA2AEIALQBBAEYARgA2AC0ANAA4ADcAMQAtAEEAMgA3ADM" +
+			"ALQA3ADgAOQA2ADgAMwA0AEQANgA2ADcANgB9AEG4QDlAOEA5QDhAOUASjhAOQA4QDlAOAA+ADgAOkA4QDlAOEA5QDhAOUA4QDlA" +
+			"OEA5QDhAOUA4QDlAOEA5QDhAOUA4QDlAOEA5QDhAOUA4QDlAOEA5QDhAOUA4QDlAEG4QDoAOEA5QDgAPgASzhAOgA4QDmAOEA5wD" +
+			"hAOUA4QDlAOAA6QDhAOUA4QDlAOEA5QDhAOUA4QDlAOEA5QDhAOUA4QDlAOEA5QDhAOUA4QDlAOEA5QDhAOUA4QDlAOEA5QDhAOU" +
+			"ASzhAOgA4QDmAOEA6gDhAOUA4QDlAOAA6QDhAOUA4QDlAOEA5QDhAOUA4QDlAOEA5QDhAOUA4QDlAOEA5QDhAOUA4QDlAOEA5QDh" +
+			"AOUA4QDlAOEA5QDhAOUAS7hAOoA4QDkAOEA5wDhAOUA4QDlAOEA5QDgAOkA4QDlAOEA5QDhAOUA4QDlAOEA5QDhAOUA4QDlAOEA5" +
+			"QDhAOUA4QDlAOEA5QDhAOUA4QDlAOEA5QDhAOUA4QDlAEG4AD3AOEA5QDhAOgAQbhAOUA4QDjAOEA6ABCOEA5QDhAOkA4QDkAOEA" +
+			"5QBBuAA+ADhAOUA4QDpAEq4QDqAOAA9wDhAOkA4QDlAOAA6QDhAOUA4AD3AOEA5QDhAOUA4QDlAOEA5QDhAOUA4QDlAOEA5gDhAO" +
+			"UA4QDlAOEA5QDhAOUA4QDlAOEA5gDgAPgASjgAPcA4QDlAOEA4wDgAOkA4QDlAOEA5QDhAOUA4QDlAOEA5QDhAOUA4QDlAOEA5QD" +
+			"hAOUA4QDlAOEA5QDhAOUA4QDlAOEA5QDhAOUA4QDlAEo4QDlAOEA5QDhAOUA4ADpAOEA5QDhAOUA4QDlAOEA5QDhAOUA4QDlAOEA" +
+			"5QDhAOUA4QDlAOEA5QDhAOUA4QDlAOEA5QDhAOUA4QDlAOEA5QBKOEA6QDhAOUA4QDpAOAA6QDhAOUA4QDlAOEA5QDhAOUA4QDlA" +
+			"OEA5QDhAOUA4QDlAOEA5QDhAOUA4QDlAOEA5QDhAOUA4QDlAOEA5QDhAOUASjhAOkA4QDlAOAA+ADgAOkA4QDlAOEA5QDhAOUA4Q" +
+			"DlAOEA5QDhAOUA4QDlAOEA5QDhAOUA4QDlAOEA5QDhAOUA4QDlAOEA5QDhAOUA4QDlAEG4AD4AOEA5QDgAPcAQbhAOQA4QDlAOEA" +
+			"6QCSjhAOMA4QDlAOEA4wDgAOkA4QDlAOEA5QDhAOUA4QDlAOEA5QDhAOUA4QDlAOEA5QDhAOUA4QDlAOEA5QDhAOUA4QDlAOEA5Q" +
+			"DhAOUA4QDlAEG4QDjAOEA5QDhAOgAyjGpATOpAVkhAZ2gIQFeIQFeICAhAdahAdcoKCkBRykBNqAgICB7A==";
+
 		private static byte[] decode(string value) => Convert.FromBase64String(value);
 
 		/// <summary>
@@ -687,15 +713,120 @@ namespace ACadSharp.Tests.IO.Tangent
 		}
 
 		[Fact]
-		public void FindStringStreamLooksPastALongHandleSection()
+		public void TchWallReadsTheBaselineAndTheFaces()
 		{
-			//The stream ends just before the handle section, and only a flag and a size sit between
-			//them — but a caller holding a payload on its own does not know where the handle section
-			//starts and can only search from the end of the payload. A wall owns enough handles to
-			//put its stream further below that end than a narrow window reaches.
+			//A wall is a rectangle that runs the length of a baseline, and the object stores the
+			//baseline and how far each face sits from it. Nothing about the shape is derived from
+			//anything else in the drawing.
+			TchWall wall = TchWall.Parse(tchClass("TCH_WALL"), decode(WallFixture), ACadVersion.AC1021);
+
+			Assert.True(wall.IsConvertible);
+			Assert.Null(wall.Reason);
+
+			Assert.Equal(36510.020847512205, wall.Start.X, 9);
+			Assert.Equal(29051.984611632433, wall.Start.Y, 9);
+			Assert.Equal(48824.944560872915, wall.End.X, 9);
+			Assert.Equal(29051.984611632433, wall.End.Y, 9);
+
+			//Both faces are the same distance from the baseline, which is what makes the wall 200
+			//thick — the number the drawing shows and the number an opening in it is set out from.
+			Assert.Equal(100.0, wall.LeftOffset, 9);
+			Assert.Equal(100.0, wall.RightOffset, 9);
+			Assert.Equal(200.0, wall.Thickness, 9);
+			Assert.Equal(3000.0, wall.Height, 9);
+		}
+
+		[Fact]
+		public void TchWallFindsTheBaselineOfAWallTurnedAnyWay()
+		{
+			//The second wall is the first one turned a quarter turn, and its payload differs from the
+			//first only in the two points. Where the baseline starts is not recorded anywhere, so it
+			//is found from its end — and finding it in a wall that runs the other way is what shows
+			//the search is a property of the format rather than of one object's numbers.
+			TchWall wall = TchWall.Parse(tchClass("TCH_WALL"), decode(VerticalWallFixture), ACadVersion.AC1021);
+
+			Assert.True(wall.IsConvertible);
+
+			Assert.Equal(36210.020847512205, wall.Start.X, 9);
+			Assert.Equal(28751.984611632433, wall.Start.Y, 9);
+			Assert.Equal(36210.020847512205, wall.End.X, 9);
+			Assert.Equal(16437.060898271724, wall.End.Y, 9);
+
+			Assert.Equal(100.0, wall.LeftOffset, 9);
+			Assert.Equal(100.0, wall.RightOffset, 9);
+		}
+
+		[Fact]
+		public void TchWallConvertsToItsOutline()
+		{
+			//Against the flattened export: every one of its wall segments lies on one of these four
+			//edges, to the last place. The export draws the edges in pieces rather than whole because
+			//it also cuts the wall open where an opening sits in it, and the pieces it leaves out are
+			//exactly the openings' widths — 1200 and 800 here, which are the two openings' widths.
+			TchWall wall = TchWall.Parse(tchClass("TCH_WALL"), decode(WallFixture), ACadVersion.AC1021);
+
+			LwPolyline outline = wall.ToStandardEntities().OfType<LwPolyline>().Single();
+
+			Assert.True(outline.IsClosed);
+			Assert.Equal(4, outline.Vertices.Count);
+
+			double[][] expected =
+			{
+				new[] { 36510.020847512205, 29151.984611632433 },
+				new[] { 48824.944560872915, 29151.984611632433 },
+				new[] { 48824.944560872915, 28951.984611632433 },
+				new[] { 36510.020847512205, 28951.984611632433 },
+			};
+
+			for (int i = 0; i < expected.Length; i++)
+			{
+				Assert.Equal(expected[i][0], outline.Vertices[i].Location.X, 9);
+				Assert.Equal(expected[i][1], outline.Vertices[i].Location.Y, 9);
+			}
+		}
+
+		[Fact]
+		public void TchWallTurnsItsFacesWithTheBaseline()
+		{
+			//The two walls are the same wall in two orientations, so the same two offsets have to
+			//produce faces across the baseline rather than beside it. A conversion that added the
+			//offset to a coordinate instead of turning it would draw the second wall inside out.
+			TchWall wall = TchWall.Parse(tchClass("TCH_WALL"), decode(VerticalWallFixture), ACadVersion.AC1021);
+
+			LwPolyline outline = wall.ToStandardEntities().OfType<LwPolyline>().Single();
+
+			Assert.Equal(36310.020847512205, outline.Vertices[0].Location.X, 9);
+			Assert.Equal(28751.984611632433, outline.Vertices[0].Location.Y, 9);
+			Assert.Equal(36310.020847512205, outline.Vertices[1].Location.X, 9);
+			Assert.Equal(16437.060898271724, outline.Vertices[1].Location.Y, 9);
+			Assert.Equal(36110.020847512205, outline.Vertices[2].Location.X, 9);
+			Assert.Equal(36110.020847512205, outline.Vertices[3].Location.X, 9);
+		}
+
+		[Fact]
+		public void TchWallRefusesAPayloadWithNoBaseline()
+		{
+			//A conversion that quietly drops an object is indistinguishable from one that had nothing
+			//to drop, so both of the ways this can fail say which one happened.
+			TchWall wall = TchWall.Parse(tchClass("TCH_WALL"), new byte[64], ACadVersion.AC1021);
+
+			Assert.False(wall.IsConvertible);
+			Assert.NotNull(wall.Reason);
+			Assert.Empty(wall.ToStandardEntities());
+		}
+
+		[Fact]
+		public void TryReadInlinePathNeedsTheRunToEndWhereItShould()
+		{
 			byte[] payload = decode(WallFixture);
 
-			Assert.Equal(628, TchEntity.FindStringStream(payload, payload.Length * 8L));
+			//The wall's baseline ends where its string stream begins, and nowhere else.
+			Assert.True(TchFieldMap.TryReadInlinePath(payload, 2, 628, out CSMath.XYZ[] points));
+			Assert.Equal(36510.020847512205, points[0].X, 9);
+
+			Assert.False(TchFieldMap.TryReadInlinePath(payload, 2, 700, out _));
+			Assert.False(TchFieldMap.TryReadInlinePath(payload, 2, payload.Length * 8L, out _));
+			Assert.False(TchFieldMap.TryReadInlinePath(payload, 0, 628, out _));
 		}
 
 		[Fact]

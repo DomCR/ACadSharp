@@ -130,6 +130,155 @@ namespace ACadSharp.Entities.Tangent
 		}
 
 		/// <summary>
+		/// Finds a run of points that ends exactly where the object's string stream begins.
+		/// </summary>
+		/// <param name="payload">The object's bytes.</param>
+		/// <param name="count">How many points the run holds.</param>
+		/// <param name="endBit">Where the run has to end, which is the start of the stream.</param>
+		/// <param name="points">The points, when a run was found.</param>
+		/// <returns>True when exactly one run fits.</returns>
+		/// <remarks>
+		/// A class writes its points last among the things it writes inline, so the end of the run is
+		/// known and only its start is not. Searching for the start is therefore a check rather than a
+		/// guess: a candidate is right only when the points it describes fill the space up to the
+		/// stream exactly. That is a stronger test than it sounds, because a point is three values
+		/// whose length varies with the value — a coordinate of zero costs two bits and any other
+		/// costs sixty six — so a wrong start lands somewhere other than the end.
+		/// <para>
+		/// Counting is not an alternative. What precedes the run is a fixed set of class fields
+		/// followed by the object's property block, and that block carries only the properties that
+		/// differ from their defaults, so it is a different length in every object. Ending the search
+		/// at the stream is what makes the reading independent of it.
+		/// </para>
+		/// <para>
+		/// More than one run fitting would make the reading a guess, so it is refused rather than
+		/// resolved. Nothing in the corpus does, and a class for which it happened would need a
+		/// different rule rather than the first match.
+		/// </para>
+		/// </remarks>
+		public static bool TryReadInlinePath(byte[] payload, int count, long endBit, out XYZ[] points)
+		{
+			points = null;
+
+			if (payload == null || count < 1 || endBit <= 0 || endBit > (long)payload.Length * 8L)
+			{
+				return false;
+			}
+
+			XYZ[] found = null;
+
+			for (long start = 16; start < endBit; start++)
+			{
+				TchStreamReader reader = new TchStreamReader(payload, start);
+				XYZ[] candidate = new XYZ[count];
+				bool readable = true;
+
+				for (int i = 0; i < count && readable; i++)
+				{
+					try
+					{
+						double y = reader.ReadBitDouble();
+						double z = reader.ReadBitDouble();
+						double x = reader.ReadBitDouble();
+
+						if (!isPlausible(y) || !isPlausible(z) || !isPlausible(x))
+						{
+							readable = false;
+							break;
+						}
+
+						candidate[i] = new XYZ(x, y, z);
+					}
+					catch (InvalidOperationException)
+					{
+						readable = false;
+					}
+				}
+
+				if (!readable || reader.PositionInBits != endBit)
+				{
+					continue;
+				}
+
+				if (found != null)
+				{
+					//A second fit means the end position does not identify the run, and taking either
+					//would be taking the first of two answers.
+					return false;
+				}
+
+				found = candidate;
+			}
+
+			points = found;
+
+			return found != null;
+		}
+
+		/// <summary>
+		/// Whether a coordinate read out of a payload is one a drawing could hold.
+		/// </summary>
+		/// <remarks>
+		/// Used to reject a candidate rather than to describe a drawing: a run of bits read from the
+		/// wrong place usually produces a number of no particular size, and one beyond this has never
+		/// been a coordinate.
+		/// </remarks>
+		private static bool isPlausible(double value)
+		{
+			return !double.IsNaN(value) && !double.IsInfinity(value) && Math.Abs(value) < 1e8;
+		}
+
+		/// <summary>
+		/// Positions a reader at the first string after the object's property block.
+		/// </summary>
+		/// <param name="payload">The object's bytes.</param>
+		/// <param name="streamOffset">Where the string stream begins.</param>
+		/// <param name="fallbackSkip">How many strings to step over when there is no block to find.</param>
+		/// <remarks>
+		/// The property block carries only the properties that differ from their defaults — a wall's
+		/// construction, an opening's usage — so it is a different length in every object, and
+		/// everything written after it moves with it. Anchoring a class's own fields to the block's
+		/// closing marker is what keeps them where the class put them, and it is why a class reads
+		/// from there rather than from a count measured off the start of the stream.
+		/// <para>
+		/// The fallback is for an object that carries no block at all. Every object in the corpus has
+		/// one, so it is a guard rather than a path anything is expected to take.
+		/// </para>
+		/// </remarks>
+		public static TchStreamReader SkipPropertyBlock(byte[] payload, long streamOffset, int fallbackSkip)
+		{
+			TchStreamReader reader = new TchStreamReader(payload, streamOffset);
+
+			for (int i = 0; i < 512 && reader.PositionInBits < reader.LengthInBits - 16; i++)
+			{
+				string value;
+
+				try
+				{
+					value = reader.ReadCipherString();
+				}
+				catch (InvalidOperationException)
+				{
+					break;
+				}
+
+				if (string.Equals(value, TchDataMap.BlockEndMarker, StringComparison.Ordinal))
+				{
+					return reader;
+				}
+			}
+
+			reader = new TchStreamReader(payload, streamOffset);
+
+			for (int i = 0; i < fallbackSkip; i++)
+			{
+				reader = SkipString(reader);
+			}
+
+			return reader;
+		}
+
+		/// <summary>
 		/// Finds the text a class writes among its numbers.
 		/// </summary>
 		/// <param name="reader">A reader at the start of the stream.</param>
