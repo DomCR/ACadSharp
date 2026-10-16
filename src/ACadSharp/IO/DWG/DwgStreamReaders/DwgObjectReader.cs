@@ -7359,7 +7359,9 @@ namespace ACadSharp.IO.DWG
 			switch (dxfClass.DxfName)
 			{
 				case "TCH_COLUMN":
-					return new TchColumn(dxfClass);
+				case "TCH_ARROW":
+				case "TCH_CUT":
+					return new TchOutline(dxfClass);
 				default:
 					return TchText.WritesText(dxfClass.DxfName)
 						? new TchText(dxfClass)
