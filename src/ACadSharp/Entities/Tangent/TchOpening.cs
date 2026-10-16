@@ -42,7 +42,7 @@ namespace ACadSharp.Entities.Tangent
 		/// <summary>
 		/// How many strings in the stream belong to readers above <see cref="TchOpening"/>.
 		/// </summary>
-		private const int SkippedStrings = 11;
+		
 
 		/// <summary>
 		/// Gets where the opening sits on the wall's centre line.
@@ -151,16 +151,16 @@ namespace ACadSharp.Entities.Tangent
 
 			//The usage is text and sits among the numbers, so it is picked out by shape rather than by
 			//position: it is the string that is not ciphertext and not a marker.
-			string usage = TchFieldMap.FindText(reader, SkippedStrings);
+			string usage = TchFieldMap.FindText(reader, TchFieldMap.OpeningSkippedStrings);
 
 			reader = new TchStreamReader(payload, this.StringStreamOffset);
 
-			for (int i = 0; i < SkippedStrings; i++)
+			for (int i = 0; i < TchFieldMap.OpeningSkippedStrings; i++)
 			{
 				reader = TchFieldMap.SkipString(reader);
 			}
 
-			this.Position = TchFieldMap.ReadInlinePosition(payload, this.StringStreamOffset);
+			this.Position = TchFieldMap.ReadInlinePosition(payload, 52L);
 
 			//A model code comes before the size, and it is not a size: it names which library symbol
 			//the opening is, and the block the usage selects already says that.

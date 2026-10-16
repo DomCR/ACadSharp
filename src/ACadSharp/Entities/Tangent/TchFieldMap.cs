@@ -8,29 +8,50 @@ namespace ACadSharp.Entities.Tangent
 	/// The parts of reading a Tianzheng class that more than one class does the same way.
 	/// </summary>
 	/// <remarks>
-	/// Reading is mechanical and deriving is not, so only the reading lives here. A class declares
-	/// which of its fields the stream holds and in what order; the walking is shared, because getting
-	/// it wrong is a silent error and every class would get it wrong in the same way.
+	/// Reading is mechanical and deriving is not, so only the reading lives here. A class says which
+	/// of its fields the stream holds and in what order; the walking is shared, because getting it
+	/// wrong is a silent error and every class would get it wrong in the same way.
 	/// </remarks>
 	internal static class TchFieldMap
 	{
 		/// <summary>
-		/// How many strings in the stream belong to readers above <see cref="TchMountRoof"/>.
+		/// How many strings in the stream belong to readers above a class.
 		/// </summary>
 		/// <remarks>
 		/// A class reads its base's fields before its own, and the stream is in write order, so a
 		/// class's fields start after everything its chain wrote. Counting them is how the fields are
-		/// found without an offset for any of them.
+		/// found without an offset for any of them. Each value is measured against its own class.
 		/// </remarks>
 		public const int MountRoofSkippedStrings = 15;
+
+		/// <inheritdoc cref="MountRoofSkippedStrings"/>
+		public const int OpeningSkippedStrings = 11;
+
+		/// <inheritdoc cref="MountRoofSkippedStrings"/>
+		public const int ElevationSkippedStrings = 8;
+
+		/// <summary>
+		/// Moves past one string in the stream.
+		/// </summary>
+		/// <remarks>
+		/// Reading a string is what advances a reader, so this is only for stepping over one without
+		/// looking at it. Doing both — reading a value and then skipping — walks past the value just
+		/// read and then off the end of the payload, which loses the whole entity.
+		/// </remarks>
+		public static TchStreamReader SkipString(TchStreamReader reader)
+		{
+			int length = reader.ReadBitShort();
+
+			return new TchStreamReader(reader.Payload, reader.PositionInBits + (length * 16L));
+		}
 
 		/// <summary>
 		/// Reads the next double from the stream.
 		/// </summary>
 		/// <remarks>
-		/// Reading a string is what advances the reader, so there is nothing to skip afterwards.
-		/// Skipping as well walks past the value it just read and then off the end of the payload,
-		/// which loses the whole entity rather than one field.
+		/// A field that does not read is left as not-a-number rather than thrown on: these classes are
+		/// read without a specification, so a value that surprises the reader is expected, and losing
+		/// a whole entity over one field loses the geometry that did read.
 		/// </remarks>
 		public static double ReadDouble(TchStreamReader reader, byte xor)
 		{
@@ -38,15 +59,56 @@ namespace ACadSharp.Entities.Tangent
 		}
 
 		/// <summary>
-		/// Moves past one string in the stream.
+		/// Reads the position a class stores inline.
 		/// </summary>
-		public static TchStreamReader SkipString(TchStreamReader reader)
+		/// <param name="payload">The object's bytes.</param>
+		/// <param name="offset">Where the point begins.</param>
+		/// <remarks>
+		/// A class reads its position before any other field, but not at a fixed place in the object:
+		/// it follows a version byte and a tag for each class in the chain, so a longer chain starts
+		/// later. The offset is therefore per class, and measured against that class's own drawing.
+		/// <para>
+		/// It is not searched for. A search looks for a run of three doubles that names somewhere in a
+		/// drawing, and the numbers that follow a position — lengths, angles, elevations — produce
+		/// runs that look like one often enough that the first match is usually not the position.
+		/// </para>
+		/// <para>
+		/// The format writes a point as (y, z, x), so the third value is the first coordinate.
+		/// </para>
+		/// </remarks>
+		public static XYZ ReadInlinePosition(byte[] payload, long offset)
 		{
-			int length = reader.ReadBitShort();
+			TchStreamReader reader = new TchStreamReader(payload, offset);
 
-			TchStreamReader next = new TchStreamReader(reader.Payload, reader.PositionInBits + (length * 16L));
+			double first = reader.ReadBitDouble();
+			double second = reader.ReadBitDouble();
+			double third = reader.ReadBitDouble();
 
-			return next;
+			return new XYZ(third, first, second);
+		}
+
+		/// <summary>
+		/// Reads a position a class stores as plain consecutive doubles.
+		/// </summary>
+		/// <param name="payload">The object's bytes.</param>
+		/// <param name="offset">Where the point begins.</param>
+		/// <remarks>
+		/// Not every class writes its point the same way. One that goes through the filer's point
+		/// reader gets a length prefix on each coordinate, and one that reads the coordinates itself
+		/// gets none — so the same three numbers sit at different distances apart depending on which
+		/// class wrote them. Both are read here rather than one being assumed.
+		/// <para>
+		/// The pair is written (y, x).
+		/// </para>
+		/// </remarks>
+		public static XYZ ReadInlineRawPosition(byte[] payload, long offset)
+		{
+			TchStreamReader reader = new TchStreamReader(payload, offset);
+
+			double y = reader.ReadRawDouble();
+			double x = reader.ReadRawDouble();
+
+			return new XYZ(x, y, 0.0);
 		}
 
 		/// <summary>
@@ -59,9 +121,9 @@ namespace ACadSharp.Entities.Tangent
 		/// position: a number is written as ciphertext and its characters say so. Markers and class
 		/// identifiers are text as well, so they are passed over by name.
 		/// <para>
-		/// Reading a string is what moves the reader along, so nothing is skipped afterwards. Skipping
-		/// as well steps over the next string without looking at it, which drops the one being sought
-		/// whenever it follows a marker.
+		/// A property is written as its key and then its value, and it is the value that says what the
+		/// object is. Taking the first text found takes the key, which is the same for every instance
+		/// and therefore says nothing.
 		/// </para>
 		/// </remarks>
 		public static string FindText(TchStreamReader reader, int limit)
@@ -70,77 +132,57 @@ namespace ACadSharp.Entities.Tangent
 			{
 				string value = reader.ReadCipherString();
 
-				if (value.Length > 1
-					&& !TgDataEncrypt.IsCiphertext(value)
-					&& !value.StartsWith("TDBXDATAMAP", System.StringComparison.Ordinal)
-					&& !value.StartsWith("T20", System.StringComparison.Ordinal)
-					&& value[0] != '{')
+				if (!isContent(value))
 				{
-					//A property is written as its key and then its value, and it is the value that
-					//says what the object is. Taking the first text found takes the key, which is the
-					//same for every instance and therefore says nothing.
-					string following = reader.ReadCipherString();
-
-					return following.Length > 0 && !TgDataEncrypt.IsCiphertext(following) ? following : value;
+					continue;
 				}
+
+				string following = reader.ReadCipherString();
+
+				return isContent(following) ? following : value;
 			}
 
 			return null;
 		}
 
 		/// <summary>
-		/// Reads the position a class stores inline.
+		/// Finds the level a marker writes beside it.
 		/// </summary>
-		/// <param name="payload">The object's bytes.</param>
-		/// <param name="streamOffset">Where the string stream begins, which bounds the search.</param>
 		/// <remarks>
-		/// A class reads its position first, before any other field, so it is the first point in the
-		/// object's own bytes. It is not at a fixed offset: it follows a version byte and a tag for
-		/// each class in the chain, and a longer chain starts later.
-        /// <para>
-		/// Finding it means finding a point, and a class may write more than one — an opening writes
-		/// three, and the later ones are offsets from this one rather than the position itself. So the
-		/// search runs forward and takes the first run of three doubles that names somewhere in a
-		/// drawing, which is what a position is and what the fields after it are not.
-		/// </para>
-		/// <para>
-		/// The format writes a point as (y, z, x), so the third value is the first coordinate.
-		/// </para>
+		/// The level is text, and unlike the usage an opening carries it is written plainly rather
+		/// than through the obfuscation layer, so it is the one string in the stream that reads as a
+		/// number without being ciphertext. That is what identifies it — and it is also why an earlier
+		/// reading of this class concluded the level was not in the object at all: it was looked for as
+		/// a decoded number, and it had never been encoded.
 		/// </remarks>
-		public static XYZ ReadInlinePosition(byte[] payload, long streamOffset)
+		public static string FindLevel(byte[] payload, long streamOffset)
 		{
-			for (long at = 16; at + 8 < streamOffset; at++)
+			TchStreamReader reader = new TchStreamReader(payload, streamOffset);
+
+			for (int i = 0; i < 24 && reader.PositionInBits < (long)payload.Length * 8L; i++)
 			{
-				TchStreamReader reader = new TchStreamReader(payload, at);
+				string value = reader.ReadCipherString();
 
-				double first = reader.ReadBitDouble();
-				double second = reader.ReadBitDouble();
-				double third = reader.ReadBitDouble();
-
-				//The order is (y, z, x), so the test is on the first and third, which are the plan
-				//coordinates. The elevation is deliberately not tested: a window carries one, and
-				//requiring a point at ground level rejected every window and accepted a field that
-				//follows the position instead.
-				if (isCoordinate(first) && isCoordinate(third))
+				if (value.Length > 1
+					&& !TgDataEncrypt.IsCiphertext(value)
+					&& double.TryParse(value, System.Globalization.NumberStyles.Float,
+						System.Globalization.CultureInfo.InvariantCulture, out _))
 				{
-					return new XYZ(third, first, second);
+					return value;
 				}
 			}
 
-			return XYZ.Zero;
+			return null;
 		}
 
-		/// <summary>
-		/// Whether a value could be one coordinate of a point in a drawing.
-		/// </summary>
-		/// <remarks>
-		/// Deliberately loose. The point of the test is to tell a position from the numbers that
-		/// follow it, and those are lengths and angles: a length near zero and an angle in the first
-		/// few radians, neither of which looks like a coordinate in a survey.
-		/// </remarks>
-		private static bool isCoordinate(double value)
+		private static bool isContent(string value)
 		{
-			return Math.Abs(value) > 1000.0 && Math.Abs(value) < 1e7;
+			return value != null
+				&& value.Length > 1
+				&& !TgDataEncrypt.IsCiphertext(value)
+				&& !value.StartsWith("TDBXDATAMAP", StringComparison.Ordinal)
+				&& !value.StartsWith("T20", StringComparison.Ordinal)
+				&& value[0] != '{';
 		}
 	}
 }

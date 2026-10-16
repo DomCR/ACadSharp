@@ -55,6 +55,16 @@ namespace ACadSharp.Entities.Tangent
 		public const long PositionOffset = 66;
 
 		/// <summary>
+		/// Where the position begins for a class whose version prefix is a different length.
+		/// </summary>
+		/// <remarks>
+		/// The prefix is a version byte and a tag per class in the chain, so a class that reads fewer
+		/// of them starts earlier. Each value here is measured against the class's own drawing rather
+		/// than derived, and the comment says which measurement it came from.
+		/// </remarks>
+		public const long ShortPositionOffset = 52;
+
+		/// <summary>
 		/// Gets the part of the object data that lies beyond the common entity data, as it is stored
 		/// in the file.
 		/// </summary>

@@ -387,6 +387,39 @@ namespace ACadSharp.Tests.IO.Tangent
 		};
 
 		[Fact]
+		public void TchElevationMatchesTheFlattenedExport()
+		{
+			//The marker is a triangle on a point with the level written beside it. The level is text
+			//and is not obfuscated, which is why an earlier reading of this class concluded it was not
+			//in the object at all: it was looked for as a decoded number and had never been encoded.
+			byte[] payload = File.ReadAllBytes("/tmp/elevation.bin");
+
+			TchElevation marker = TchElevation.Parse(tchClass("TCH_ELEVATION"), payload, ACadVersion.AC1021);
+
+			Assert.Equal(41471.871569, marker.Position.X, 6);
+			Assert.Equal(8369.730534, marker.Position.Y, 6);
+			Assert.Equal("22.66669", marker.Level);
+
+			List<Line> sides = marker.ToStandardEntities().OfType<Line>().ToList();
+
+			Assert.Equal(3, sides.Count);
+
+			//The point, then the two ends of the base. The base is twice the height, which is why
+			//one stored length is enough to describe the marker.
+			Assert.Equal(41471.871569, sides[0].StartPoint.X, 6);
+			Assert.Equal(8369.730534, sides[0].StartPoint.Y, 6);
+			Assert.Equal(41171.871569, sides[0].EndPoint.X, 6);
+			Assert.Equal(8669.730534, sides[0].EndPoint.Y, 6);
+
+			TextEntity level = marker.ToStandardEntities().OfType<TextEntity>().Single();
+
+			Assert.Equal("22.66669", level.Value);
+			Assert.Equal(41649.871569, level.InsertPoint.X, 6);
+			Assert.Equal(8774.730534, level.InsertPoint.Y, 6);
+			Assert.Equal(297.5, level.Height, 6);
+		}
+
+		[Fact]
 		public void TchOpeningReadsTheSizeAndTheUsage()
 		{
 			//An opening stores no shape at all: it records which library symbol it uses and how big
