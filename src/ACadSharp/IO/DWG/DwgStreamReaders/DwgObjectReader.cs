@@ -7383,6 +7383,8 @@ namespace ACadSharp.IO.DWG
 					return new TchRectStair(dxfClass);
 				case "TCH_PARALLELSTAIR":
 					return new TchParallelStair(dxfClass);
+				case "TCH_RADIUSDIM":
+					return new TchRadiusDim(dxfClass);
 				default:
 					return TchText.WritesText(dxfClass.DxfName)
 						? new TchText(dxfClass)

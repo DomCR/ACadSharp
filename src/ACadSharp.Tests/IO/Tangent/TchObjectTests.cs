@@ -530,6 +530,17 @@ namespace ACadSharp.Tests.IO.Tangent
 			"UA4QDlAOEA5QDhAOUA4QDlAOEA5QDhAOUA4QDlAOEA5QDhAOUA4QDlAEG4QDjAOEA5QDhAOgAQkepATggKQE6qCgpATopAUUpAVg" +
 			"pAUR2A==";
 
+		//TCH_RADIUSDIM, handle 952
+		private const string RadiusDimFixture =
+			"ChGAhEFqaDAvDb00CMxKlgfVSulA3tTE14Ht00AtJRLy6lbqQEmewBGADgARgAwAEYAMQAyAEYALQA5ADMAOAA5AC0ANAA5AEYAQ" +
+			"wAtADgAMwA1AEQALQA4AEMAOAA2AEMANgBFAEUARQBFAEQAQgB9AEs4AD4AOEA5gDhAOQA4QDlAOEA5QDgAOkA4QDlAOEA5QDhAO" +
+			"UA4QDlAOEA5QDhAOUA4QDlAOEA5QDhAOUA4QDlAOEA5QDhAOUA4QDlAOEA5QDhAOUA4QDlAEo4QDpAOEA5QDhAOcA4ADpAOEA5QD" +
+			"hAOUA4QDlAOEA5QDhAOUA4QDlAOEA5QDhAOUA4QDlAOEA5QDhAOUA4QDlAOEA5QDhAOUA4QDlAOEA5QBBuEA5wDhAOUA4QDoAEYV" +
+			"ABEAEIAWABEAEEAVABBAE0AQQBQAF8AQgBMAE8AQwBLAF8AQgBFAEcASQBOAF8ARZUAEQAQgBYAEQAQQBUAEEATQBBAFAAXwBCAE" +
+			"wATwBDAEsAXwBFAE4ARABfAEmewBCADAANwAxADMARQA2AEIALQBBAEYARgA2AC0ANAA4ADcAMQAtAEEAMgA3ADMALQA3ADgAOQA" +
+			"2ADgAMwA0AEQANgA2ADcANgB9AEG4QDpAOEA5QDgAPcAQbhAOkA4QDlAOEA6gBLOAA9wDgAOwA4QDqAOEA4wDhAOcA4ADpAOEA5Q" +
+			"DhAOUA4QDlAOEA5QDhAOUA4QDlAOEA5QDhAOUA4QDlAOEA5QDhAOUA4QDlAOEA5QDhAOUA4QDlAOEA5QAkEakBQakB2/6g==";
+
 		private static byte[] decode(string value) => Convert.FromBase64String(value);
 
 		/// <summary>
@@ -1065,20 +1076,75 @@ namespace ACadSharp.Tests.IO.Tangent
 		}
 
 		[Fact]
+		public void TchRadiusDimReadsTheCircleAndTheLeader()
+		{
+			//The radius is not stored. The class keeps the centre of the circle and a point on it, and
+			//works the radius out when it is asked for one — which is what the export's circle is
+			//drawn at, to within the last place of a double.
+			TchRadiusDim dimension = TchRadiusDim.Parse(tchClass("TCH_RADIUSDIM"), decode(RadiusDimFixture), ACadVersion.AC1021);
+
+			Assert.True(dimension.IsConvertible);
+			Assert.Null(dimension.Reason);
+
+			Assert.Equal(51798.65717615708, dimension.Center.X, 9);
+			Assert.Equal(20335.75015345783, dimension.Center.Y, 9);
+			Assert.Equal(53943.34204966794, dimension.CirclePoint.X, 9);
+			Assert.Equal(20406.02879448688, dimension.CirclePoint.Y, 9);
+
+			Assert.Equal(2145.83603615261, dimension.Radius, 6);
+
+			//The leader is stored in the drawing's scale rather than in units, so the scale the object
+			//writes alongside it is what turns twenty six into the twenty six hundred the export draws.
+			Assert.Equal(2600.0, dimension.LeaderLength, 6);
+		}
+
+		[Fact]
+		public void TchRadiusDimConvertsToTheStandardDimension()
+		{
+			//The three things the object stores are the three things a radial dimension carries: the
+			//centre, the point on the circle, and the leader. Everything else about how it is drawn —
+			//the arrow, the number, its height and its distance from the line — belongs to the
+			//dimension style the object refers to, which is 200, 297.5 and 126.25 for the one in the
+			//sample and is what the export draws.
+			TchRadiusDim dimension = TchRadiusDim.Parse(tchClass("TCH_RADIUSDIM"), decode(RadiusDimFixture), ACadVersion.AC1021);
+
+			DimensionRadius converted = dimension.ToStandardEntities().OfType<DimensionRadius>().Single();
+
+			Assert.Equal(51798.65717615708, converted.AngleVertex.X, 9);
+			Assert.Equal(53943.34204966794, converted.DefinitionPoint.X, 9);
+			Assert.Equal(20406.02879448688, converted.DefinitionPoint.Y, 9);
+			Assert.Equal(2600.0, converted.LeaderLength, 6);
+			Assert.Equal(2145.83603615261, converted.Measurement, 6);
+		}
+
+		[Fact]
+		public void TchRadiusDimRefusesAPayloadWithNoCircle()
+		{
+			TchRadiusDim dimension = TchRadiusDim.Parse(tchClass("TCH_RADIUSDIM"), new byte[64], ACadVersion.AC1021);
+
+			Assert.False(dimension.IsConvertible);
+			Assert.NotNull(dimension.Reason);
+			Assert.Empty(dimension.ToStandardEntities());
+		}
+
+		[Fact]
 		public void ReadingPastTheEndOfAStreamDoesNotLoseTheObject()
 		{
-			//A class reads its fields in order and has no way to know that a stream is shorter than it
+			//A class reads its fields in order and has no way to know a stream is shorter than it
 			//expects. Reading past the end used to throw, and the reader above drops an entity whose
-			//class threw, reporting only that it could not be read — so a class that looked one value
-			//too far lost the geometry that had already read with it, and the object vanished from the
-			//drawing with nothing to say which one or why.
-			byte[] full = decode(WallFixture);
+			//class threw, reporting only that it could not be read — so a class that guessed one
+			//offset too far lost the geometry that had already read with it. The radius dimension was
+			//read that way first, and its object disappeared from the drawing.
+			TchRadiusDim dimension = TchRadiusDim.Parse(tchClass("TCH_RADIUSDIM"), decode(RadiusDimFixture), ACadVersion.AC1021);
 
-			TchWall wall = TchWall.Parse(tchClass("TCH_WALL"), full.Take(500).ToArray(), ACadVersion.AC1021);
+			Assert.True(dimension.IsConvertible);
 
-			Assert.False(wall.IsConvertible);
-			Assert.NotNull(wall.Reason);
-			Assert.Empty(wall.ToStandardEntities());
+			//The same payload with its stream cut short reads what it can and refuses the rest.
+			byte[] cut = decode(RadiusDimFixture);
+			TchRadiusDim short_ = TchRadiusDim.Parse(tchClass("TCH_RADIUSDIM"), cut.Take(300).ToArray(), ACadVersion.AC1021);
+
+			Assert.False(short_.IsConvertible);
+			Assert.NotNull(short_.Reason);
 		}
 
 		[Fact]
