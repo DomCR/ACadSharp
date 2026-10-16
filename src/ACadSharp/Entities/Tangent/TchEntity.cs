@@ -247,11 +247,22 @@ namespace ACadSharp.Entities.Tangent
 		/// <param name="xor">The value for the context the class reads its fields in.</param>
 		internal static double ReadStreamedDouble(TchStreamReader reader, byte xor)
 		{
-			string cipher = reader.ReadCipherString();
+			string cipher;
 
-			//A field that does not read is left as not-a-number rather than thrown on. These classes
-			//are read without a specification, so a value that surprises the reader is expected, and
-			//losing the whole entity over one of them loses the geometry that did read.
+			try
+			{
+				cipher = reader.ReadCipherString();
+			}
+			catch (InvalidOperationException)
+			{
+				//A field that does not read is left as not-a-number rather than thrown on, and that
+				//covers running off the end of the stream as much as it covers a value that does not
+				//decode. These classes are read without a specification, so a value that surprises the
+				//reader is expected; a throw here costs the whole object, because the reader above
+				//drops an entity whose class threw and says only that it could not be read.
+				return double.NaN;
+			}
+
 			return TgDataEncrypt.TryDecode(cipher, out double value, xor) ? value : double.NaN;
 		}
 

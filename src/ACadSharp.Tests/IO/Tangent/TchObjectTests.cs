@@ -1065,6 +1065,23 @@ namespace ACadSharp.Tests.IO.Tangent
 		}
 
 		[Fact]
+		public void ReadingPastTheEndOfAStreamDoesNotLoseTheObject()
+		{
+			//A class reads its fields in order and has no way to know that a stream is shorter than it
+			//expects. Reading past the end used to throw, and the reader above drops an entity whose
+			//class threw, reporting only that it could not be read — so a class that looked one value
+			//too far lost the geometry that had already read with it, and the object vanished from the
+			//drawing with nothing to say which one or why.
+			byte[] full = decode(WallFixture);
+
+			TchWall wall = TchWall.Parse(tchClass("TCH_WALL"), full.Take(500).ToArray(), ACadVersion.AC1021);
+
+			Assert.False(wall.IsConvertible);
+			Assert.NotNull(wall.Reason);
+			Assert.Empty(wall.ToStandardEntities());
+		}
+
+		[Fact]
 		public void TchTextPositionMatchesTheFlattenedExport()
 		{
 			TchText text = TchText.Parse(tchClass("TCH_TEXT"), decode(TextPayload), ACadVersion.AC1021);

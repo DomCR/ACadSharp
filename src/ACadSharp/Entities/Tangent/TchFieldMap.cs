@@ -43,9 +43,24 @@ namespace ACadSharp.Entities.Tangent
 		/// </remarks>
 		public static TchStreamReader SkipString(TchStreamReader reader)
 		{
-			int length = reader.ReadBitShort();
+			int length;
 
-			return new TchStreamReader(reader.Payload, reader.PositionInBits + (length * 16L));
+			try
+			{
+				length = reader.ReadBitShort();
+			}
+			catch (InvalidOperationException)
+			{
+				return reader;
+			}
+
+			long next = reader.PositionInBits + (length * 16L);
+
+			//A reader parked at the end reads nothing more, which a class reports as the values it
+			//could not read rather than as a failed object.
+			return next >= reader.LengthInBits
+				? new TchStreamReader(reader.Payload, reader.LengthInBits)
+				: new TchStreamReader(reader.Payload, next);
 		}
 
 		/// <summary>
