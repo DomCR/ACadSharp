@@ -1590,6 +1590,8 @@ internal class DxfObjectsSectionWriter : DxfSectionWriterBase
 		foreach (var item in field.Children)
 		{
 			this._writer.WriteHandle(360, item);
+			//Child fields are hard-owned by their parent and are not in any dictionary.
+			this.Holder.Objects.Enqueue(item);
 		}
 
 		this._writer.Write(97, field.CadObjects.Count);
