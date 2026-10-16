@@ -25,10 +25,11 @@ namespace ACadSharp.Entities.Tangent
 	/// </para>
 	/// <para>
 	/// A dimension is associative — it refers to the geometry it measures, and can be recomputed
-	/// when that geometry moves. Only the object's own data is used here, which is enough for the
-	/// run: the anchor, the direction and the distances describe every dimension in it without
-	/// consulting anything the object points at. It is not enough for the angular form, which is
-	/// why that one is refused rather than approximated.
+	/// when that geometry moves. Only the object's own data is used here, and for the angular form
+	/// that is enough: it was refused at first on the grounds that the angle's vertex was not among
+	/// its fields, and that was wrong. The object records a point on the dimension arc, the
+	/// direction the arc is swept from and the arc's radius, and the vertex is the first of those set
+	/// back by the third.
 	/// </para>
 	/// </remarks>
 	public sealed class TchDimension2 : TchEntity
@@ -43,13 +44,23 @@ namespace ACadSharp.Entities.Tangent
 		public const long AnchorOffset = 110L;
 
 		/// <summary>
-		/// Where the dimension line's offset from the measured line begins, as a bit offset.
+		/// Which bit of the object's flags says it measures an angle rather than a distance.
 		/// </summary>
 		/// <remarks>
-		/// The one number this class writes as a plain double rather than as text, which is why it is
-		/// found by position and the rest of the object's numbers are found in the stream.
+		/// Read from the class's own <c>IsAngular</c>, which tests this bit and nothing else. The one
+		/// angular object in the sample carries 144, whose bit this is, and the five runs carry nought.
 		/// </remarks>
-		public const long DimensionLineOffsetOffset = 30L;
+		public const int AngularFlag = 0x10;
+
+		/// <summary>
+		/// How far along its arc the angular form puts the point that places the dimension line.
+		/// </summary>
+		/// <remarks>
+		/// A third. Not a preference: the export's own definition point sits at a third of the swept
+		/// angle to thirteen places, and the class's text placement asks its curve segment for the
+		/// point at a fraction of the segment's length.
+		/// </remarks>
+		public const double DimensionArcFraction = 1.0 / 3.0;
 
 		/// <summary>
 		/// The most measurements a single object is taken to carry.
@@ -97,17 +108,30 @@ namespace ACadSharp.Entities.Tangent
 		/// <summary>
 		/// Gets the distances between the run's measured points, in order.
 		/// </summary>
+		/// <remarks>
+		/// For the angular form this holds the one angle it measures, in radians, and it is the only
+		/// entry: an angle is not a run.
+		/// </remarks>
 		public IReadOnlyList<double> Segments => _segments;
 
 		/// <summary>
-		/// Gets a value indicating whether the object's own data describes a run this can convert.
+		/// Gets a value indicating whether the object measures an angle rather than a run of lengths.
 		/// </summary>
-		/// <remarks>
-		/// False for a dimension whose shape is not decided by the object: the angular form records
-		/// the angle between two directions it does not record, so its vertex cannot be recovered
-		/// without the geometry it refers to. Conversion yields nothing for one of those rather than
-		/// placing a dimension that would look plausible and be wrong.
-		/// </remarks>
+		public bool IsAngular { get; private set; }
+
+		/// <summary>
+		/// Gets the radius of the arc the angular form draws its dimension line on.
+		/// </summary>
+		public double DimensionArcRadius { get; private set; }
+
+		/// <summary>
+		/// Gets the angle the angular form measures, in radians.
+		/// </summary>
+		public double Angle => _segments.Count == 1 ? _segments[0] : double.NaN;
+
+		/// <summary>
+		/// Gets a value indicating whether the object's own data describes a dimension this can convert.
+		/// </summary>
 		public bool IsConvertible { get; private set; }
 
 		/// <summary>
@@ -138,6 +162,12 @@ namespace ACadSharp.Entities.Tangent
 		{
 			if (!this.IsConvertible)
 			{
+				yield break;
+			}
+
+			if (this.IsAngular)
+			{
+				yield return CopyCommonProperties(this, this.toAngularDimension());
 				yield break;
 			}
 
@@ -198,7 +228,16 @@ namespace ACadSharp.Entities.Tangent
 			}
 
 			this.Anchor = TchFieldMap.ReadInlinePosition(payload, AnchorOffset);
-			this.DimensionLineOffset = TchFieldMap.ReadInlineRawDouble(payload, DimensionLineOffsetOffset);
+
+			double scale = TchFieldMap.ReadDouble(
+				TchFieldMap.SkipString(new TchStreamReader(payload, this.StringStreamOffset)),
+				TgDataEncrypt.ObjectXor);
+
+			if (double.IsNaN(scale) || scale <= 0.0)
+			{
+				this.Reason = "the object records no drawing scale, so its distances are not lengths";
+				return;
+			}
 
 			TchStreamReader reader = new TchStreamReader(payload, this.StringStreamOffset);
 
@@ -210,16 +249,17 @@ namespace ACadSharp.Entities.Tangent
 
 			this.Direction = TchFieldMap.ReadDouble(reader, TgDataEncrypt.ObjectXor);
 
-			//The offset is written twice, once inline in drawing units and once here divided by the
-			//drawing's dimension scale. The inline one is the one that places the dimension line, so
-			//this second copy is stepped over rather than read.
-			reader = TchFieldMap.SkipString(reader);
+			//The distance from the measured line to the dimension line is written in the drawing's
+			//own scale, so it is the scale that turns it into a length. The object also writes it a
+			//second time inline, and for a run of lengths the two agree — but not for the angular
+			//form, whose inline copy is left unscaled, so the value read here is the one used.
+			this.DimensionLineOffset = TchFieldMap.ReadDouble(reader, TgDataEncrypt.ObjectXor) * scale;
 
 			double count = TchFieldMap.ReadDouble(reader, TgDataEncrypt.ObjectXor);
 
 			if (double.IsNaN(count) || count < 1.0 || count > MaxSegments || count != Math.Floor(count))
 			{
-				this.Reason = $"the object records {count} measurements, which is not a run";
+				this.Reason = $"the object records {count} measurements, which is not a dimension";
 				return;
 			}
 
@@ -237,22 +277,87 @@ namespace ACadSharp.Entities.Tangent
 				_segments.Add(length);
 			}
 
-			//A run ends with a zero the class writes after its measurements. The angular form does
-			//not: it writes three more numbers — the angle, the arc's radius and the distance to the
-			//first point — in the same place, and a reader that took its single angle for a distance
-			//would place a dimension a fraction of a unit long and draw it as though that were the
-			//measurement. Checking for the zero is what tells the two apart, because nothing about
-			//the count does.
-			double terminator = TchFieldMap.ReadDouble(reader, TgDataEncrypt.ObjectXor);
+			//What follows the measurements is the object's flags, and the bit that says whether it
+			//measures an angle is in them. An earlier reading of this class took the flags for a
+			//terminator and refused anything but zero, which refused the angular form on the grounds
+			//that its vertex was not among the object's fields. It is: the class's own reader derives
+			//it from the anchor, the direction and the two radii that follow the flags.
+			double flags = TchFieldMap.ReadDouble(reader, TgDataEncrypt.ObjectXor);
 
-			if (terminator != 0.0)
+			if (double.IsNaN(flags))
 			{
-				this.Reason = "the object is an angular dimension, whose vertex is not among its own fields";
+				this.Reason = "the object's flags do not read, so what it measures is not established";
+				_segments.Clear();
+				return;
+			}
+
+			this.IsAngular = (((int)flags) & AngularFlag) != 0;
+
+			if (!this.IsAngular)
+			{
+				this.IsConvertible = true;
+				return;
+			}
+
+			this.DimensionArcRadius = TchFieldMap.ReadDouble(reader, TgDataEncrypt.ObjectXor);
+
+			if (double.IsNaN(this.DimensionArcRadius) || this.DimensionArcRadius <= 0.0)
+			{
+				this.Reason = "the object records no radius for its dimension arc";
+				_segments.Clear();
+				return;
+			}
+
+			if (_segments.Count != 1)
+			{
+				this.Reason = $"an angular dimension measures one angle, and this one records {_segments.Count}";
 				_segments.Clear();
 				return;
 			}
 
 			this.IsConvertible = true;
+		}
+
+		/// <summary>
+		/// Builds the angular dimension this object stands for.
+		/// </summary>
+		/// <remarks>
+		/// The vertex is not stored, and it does not have to be: the object records a point on the
+		/// dimension arc and the direction the arc is swept from, and the vertex is that point set
+		/// back by the arc's radius along that direction. The sample's vertex comes out of it to
+		/// thirteen places, as do both ends of the arc and the point that places the dimension line.
+		/// </remarks>
+		private DimensionAngular3Pt toAngularDimension()
+		{
+			//The arc is swept about a direction square to the one the object names, and the anchor is
+			//where it starts. So the vertex is the anchor set back by the offset and the radius.
+			double perpendicular = this.Direction + (Math.PI / 2.0);
+			double reach = this.DimensionLineOffset + this.DimensionArcRadius;
+
+			XYZ vertex = polar(this.Anchor, perpendicular, reach);
+
+			//The arc starts on the far side of the vertex from the direction it was reached by, which
+			//is a half turn from it, and sweeps by the angle the object measures.
+			double sweep = perpendicular + Math.PI;
+
+			return new DimensionAngular3Pt
+			{
+				AngleVertex = vertex,
+				FirstPoint = polar(vertex, sweep, reach),
+				SecondPoint = polar(vertex, sweep + this.Angle, reach),
+				DefinitionPoint = polar(vertex, sweep + (this.Angle * DimensionArcFraction), this.DimensionArcRadius),
+			};
+		}
+
+		/// <summary>
+		/// Moves a point a distance along a direction.
+		/// </summary>
+		private static XYZ polar(XYZ from, double angle, double distance)
+		{
+			return new XYZ(
+				from.X + (distance * Math.Cos(angle)),
+				from.Y + (distance * Math.Sin(angle)),
+				from.Z);
 		}
 	}
 }

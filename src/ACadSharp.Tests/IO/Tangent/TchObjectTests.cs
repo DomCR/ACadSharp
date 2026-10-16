@@ -757,18 +757,42 @@ namespace ACadSharp.Tests.IO.Tangent
 		}
 
 		[Fact]
-		public void TchDimension2RefusesTheAngularForm()
+		public void TchDimension2ReadsTheAngularForm()
 		{
-			//The angular form records the angle between two directions it does not record, so its
-			//vertex cannot be recovered from the object alone. It also writes its one angle where a
-			//run writes its first measurement, and a reader that took it for a length would place a
-			//dimension two thirds of a unit long: a plausible answer rather than a failure.
+			//The object records the angle, the point the dimension arc starts from, the direction it
+			//is swept from and the arc's radius, and the vertex is that point set back by the radius
+			//along that direction. An earlier reading refused this form, on the grounds that the
+			//vertex was not among the object's fields. It is not stored, and it does not have to be.
 			TchDimension2 angular = TchDimension2.Parse(tchClass("TCH_DIMENSION2"), decode(AngularDimensionFixture), ACadVersion.AC1021);
 
-			Assert.False(angular.IsConvertible);
-			Assert.NotNull(angular.Reason);
-			Assert.Empty(angular.Segments);
-			Assert.Empty(angular.ToStandardEntities());
+			Assert.True(angular.IsConvertible, angular.Reason);
+			Assert.True(angular.IsAngular);
+			Assert.Equal(0.7665192189529377, angular.Angle, 12);
+			Assert.Equal(2095.6620514568349, angular.DimensionArcRadius, 9);
+
+			//Its second, inline copy of the offset is left unscaled where a run of lengths leaves it
+			//scaled, so taking that copy would put the vertex a whole radius from where it belongs.
+			Assert.Equal(200.0, angular.DimensionLineOffset, 9);
+		}
+
+		[Fact]
+		public void TchDimension2PlacesTheAngularVertexWhereTheExportDoes()
+		{
+			TchDimension2 angular = TchDimension2.Parse(tchClass("TCH_DIMENSION2"), decode(AngularDimensionFixture), ACadVersion.AC1021);
+
+			DimensionAngular3Pt made = angular.ToStandardEntities().OfType<DimensionAngular3Pt>().Single();
+
+			//The export reports vertex=(59085.49583035609,19960.02581766088),
+			//p1=(61381.15788181292,19960.02581766088), p2=(60739.12872149408,21552.37079154235)
+			//and def=(61113.12312062539,20489.67381932931).
+			Assert.Equal(59085.49583035609, made.AngleVertex.X, 6);
+			Assert.Equal(19960.02581766088, made.AngleVertex.Y, 6);
+			Assert.Equal(61381.15788181292, made.FirstPoint.X, 6);
+			Assert.Equal(19960.02581766088, made.FirstPoint.Y, 6);
+			Assert.Equal(60739.12872149408, made.SecondPoint.X, 6);
+			Assert.Equal(21552.37079154235, made.SecondPoint.Y, 6);
+			Assert.Equal(61113.12312062539, made.DefinitionPoint.X, 6);
+			Assert.Equal(20489.67381932931, made.DefinitionPoint.Y, 6);
 		}
 
 		[Fact]
