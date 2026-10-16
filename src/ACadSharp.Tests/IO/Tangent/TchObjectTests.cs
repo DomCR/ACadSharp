@@ -1182,6 +1182,85 @@ namespace ACadSharp.Tests.IO.Tangent
 		}
 
 		[Fact]
+		public void TchDrawingIndexReadsTheCircleAndTheTexts()
+		{
+			TchDrawingIndex index = TchDrawingIndex.Parse(
+				tchClass("TCH_DRAWINGINDEX"), decode(DrawingIndexFixture), ACadVersion.AC1021);
+
+			Assert.True(index.IsConvertible, index.Reason);
+
+			//The drawing is at 1:100, the circle is seven of those across, and the scale's text is
+			//nine of them across and one radius down.
+			Assert.Equal(100.0, index.Scale, 6);
+			Assert.Equal(7.0 * 100.0, index.Radius, 6);
+			Assert.Equal(82148.3232047297, index.Center.X, 6);
+			Assert.Equal(27030.766417492254, index.Center.Y, 6);
+
+			Assert.Equal("1", index.IndexLabel);
+			Assert.Equal(string.Empty, index.DrawingLabel);
+			Assert.Equal("1:20", index.ScaleText);
+		}
+
+		[Fact]
+		public void TchDrawingIndexPlacesTheScaleTextWhereTheExportDoes()
+		{
+			TchDrawingIndex index = TchDrawingIndex.Parse(
+				tchClass("TCH_DRAWINGINDEX"), decode(DrawingIndexFixture), ACadVersion.AC1021);
+
+			//The export's own text entity sits at 83048.3232, 26330.7664, which is the centre
+			//moved across by the scale's multiple and down by the radius.
+			Assert.Equal(83048.3232047297, index.ScaleTextPoint.X, 6);
+			Assert.Equal(26330.766417492254, index.ScaleTextPoint.Y, 6);
+		}
+
+		[Fact]
+		public void TchDrawingIndexDrawsItsCircleAndItsScale()
+		{
+			TchDrawingIndex index = TchDrawingIndex.Parse(
+				tchClass("TCH_DRAWINGINDEX"), decode(DrawingIndexFixture), ACadVersion.AC1021);
+
+			List<Entity> made = index.ToStandardEntities().ToList();
+
+			//The export draws the circle as two vertices with a bulge of one on each, and both of
+			//its vertices are the ends of a horizontal diameter. Anything else is a different circle.
+			LwPolyline circle = made.OfType<LwPolyline>().Single();
+			Assert.True(circle.IsClosed);
+			Assert.Equal(2, circle.Vertices.Count);
+			Assert.Equal(82848.3232047297, circle.Vertices[0].Location.X, 6);
+			Assert.Equal(27030.766417492254, circle.Vertices[0].Location.Y, 6);
+			Assert.Equal(81448.3232047297, circle.Vertices[1].Location.X, 6);
+			Assert.Equal(1.0, circle.Vertices[0].Bulge, 6);
+			Assert.Equal(1.0, circle.Vertices[1].Bulge, 6);
+
+			TextEntity text = made.OfType<TextEntity>().Single();
+			Assert.Equal("1:20", text.Value);
+		}
+
+		[Fact]
+		public void TchDrawingIndexReportsTheNumberItCannotPlace()
+		{
+			TchDrawingIndex index = TchDrawingIndex.Parse(
+				tchClass("TCH_DRAWINGINDEX"), decode(DrawingIndexFixture), ACadVersion.AC1021);
+
+			//The number inside the circle is read but not drawn, because where it sits and how big
+			//it is come from the drawing's font. It is reported rather than dropped, so a conversion
+			//that leaves it out can say so.
+			Assert.Contains(index.UnplacedText, s => s.Contains("'1'"));
+			Assert.DoesNotContain(index.ToStandardEntities(), e => e is TextEntity t && t.Value == "1");
+		}
+
+		[Fact]
+		public void TchDrawingIndexRefusesAPayloadThatIsNotAnIndex()
+		{
+			TchDrawingIndex index = TchDrawingIndex.Parse(
+				tchClass("TCH_DRAWINGINDEX"), new byte[32], ACadVersion.AC1021);
+
+			Assert.False(index.IsConvertible);
+			Assert.False(string.IsNullOrEmpty(index.Reason));
+			Assert.Empty(index.ToStandardEntities());
+		}
+
+		[Fact]
 		public void TchTextReadsTheContent()
 		{
 			TchText text = TchText.Parse(tchClass("TCH_TEXT"), decode(TextPayload), ACadVersion.AC1021);

@@ -1,4 +1,4 @@
-﻿using ACadSharp.Blocks;
+using ACadSharp.Blocks;
 using ACadSharp.Classes;
 using ACadSharp.Entities;
 using ACadSharp.Entities.AecEntities;
@@ -7385,6 +7385,8 @@ namespace ACadSharp.IO.DWG
 					return new TchParallelStair(dxfClass);
 				case "TCH_RADIUSDIM":
 					return new TchRadiusDim(dxfClass);
+				case "TCH_DRAWINGINDEX":
+					return new TchDrawingIndex(dxfClass);
 				default:
 					return TchText.WritesText(dxfClass.DxfName)
 						? new TchText(dxfClass)
