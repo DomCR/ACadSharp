@@ -687,6 +687,18 @@ namespace ACadSharp.Tests.IO.Tangent
 		}
 
 		[Fact]
+		public void FindStringStreamLooksPastALongHandleSection()
+		{
+			//The stream ends just before the handle section, and only a flag and a size sit between
+			//them — but a caller holding a payload on its own does not know where the handle section
+			//starts and can only search from the end of the payload. A wall owns enough handles to
+			//put its stream further below that end than a narrow window reaches.
+			byte[] payload = decode(WallFixture);
+
+			Assert.Equal(628, TchEntity.FindStringStream(payload, payload.Length * 8L));
+		}
+
+		[Fact]
 		public void TchTextPositionMatchesTheFlattenedExport()
 		{
 			TchText text = TchText.Parse(tchClass("TCH_TEXT"), decode(TextPayload), ACadVersion.AC1021);

@@ -1,4 +1,4 @@
-using ACadSharp.Classes;
+﻿using ACadSharp.Classes;
 using ACadSharp.IO.DWG.Tangent;
 using CSMath;
 using System;
@@ -92,6 +92,19 @@ namespace ACadSharp.Entities.Tangent
 
 
 		/// <summary>
+		/// How far below the handle section the end of the string stream is looked for.
+		/// </summary>
+		/// <remarks>
+		/// Only a flag and the size sit between the two, so a handful of bits is enough when the
+		/// handle section's start is known — which it is while an object is being read. It is not
+		/// known to <c>Parse</c>, which is handed a payload on its own and can only search from the
+		/// end of one, and an object that owns many handles has a handle section long enough to push
+		/// the stream outside a narrow window. Widening it cannot change an answer that was already
+		/// found, because the search runs downwards and stops at the first fit.
+		/// </remarks>
+		private const long StreamSearchBits = 4096;
+
+		/// <summary>
 		/// Finds where an object's string stream begins, given where its handle section does.
 		/// </summary>
 		/// <param name="payload">The object's bytes.</param>
@@ -118,7 +131,7 @@ namespace ACadSharp.Entities.Tangent
 			//stream ends a little before that. Searching for it is cheap and self-checking, because a
 			//candidate is only right if the strings it describes fill the stream exactly: walking
 			//them has to land on the size field and not before or after it.
-			for (long endbit = Math.Min(handleOffset, bits - 1); endbit > handleOffset - 256 && endbit > 32; endbit--)
+			for (long endbit = Math.Min(handleOffset, bits - 1); endbit > handleOffset - StreamSearchBits && endbit > 32; endbit--)
 			{
 				TchStreamReader probe = new TchStreamReader(payload, endbit);
 
