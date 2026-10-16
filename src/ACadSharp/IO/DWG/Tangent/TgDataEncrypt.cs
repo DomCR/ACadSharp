@@ -1,4 +1,4 @@
-﻿using System;
+using System;
 using System.Collections.Generic;
 using System.Globalization;
 using System.IO;
@@ -79,6 +79,12 @@ namespace ACadSharp.IO.DWG.Tangent
 		/// the original — so the result is the first character plus everything from the fourth on.
 		/// A number written by this layer carries two characters that are not part of it.
 		/// </para>
+		/// <para>
+		/// The two deletions apply whatever the length, and that matters most for the shortest
+		/// strings: a one-digit value is written as six characters and decodes to three, of which
+		/// the middle one is the value. Passing the three through undecoded reads <c>254</c> where
+		/// the object wrote <c>5</c>, which is a number and not a failure, so nothing complains.
+		/// </para>
 		/// </remarks>
 		public static string Decode(string cipher, byte xor, int key = DefaultKey)
 		{
@@ -96,12 +102,18 @@ namespace ACadSharp.IO.DWG.Tangent
 				text.Append((char)(value ^ xor));
 			}
 
-			if (text.Length < 4)
+			if (text.Length == 0)
 			{
-				return text.ToString();
+				return string.Empty;
 			}
 
-			return text[1] + text.ToString(3, text.Length - 3);
+			//Deleting index 0 shifts the character that was at index 2 down to index 1, so the
+			//second deletion is of the original index 2. What survives is the character that was at
+			//index 1 and everything from index 3 on, and for a text of fewer than four characters
+			//that is the single character at index 1.
+			return text.Length < 4
+				? text[1].ToString()
+				: text[1] + text.ToString(3, text.Length - 3);
 		}
 
 		/// <summary>

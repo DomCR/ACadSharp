@@ -551,6 +551,22 @@ namespace ACadSharp.Tests.IO.Tangent
 		}
 
 		[Fact]
+		public void TgDataEncryptDecodesValuesShortEnoughToLoseTheDeletions()
+		{
+			//A one-digit value is written as six characters and decodes to three, and the reader's
+			//two deletions apply to those three as much as to a longer text: what survives is the
+			//middle character. Leaving them out reads 50 where the object wrote 5 — a number, not a
+			//failure, which is why nothing complained.
+			Assert.Equal("5", TgDataEncrypt.Decode(encodeRaw("050"), TgDataEncrypt.ObjectXor));
+
+			Assert.True(TgDataEncrypt.TryDecode(encode("5"), out double five, TgDataEncrypt.ObjectXor));
+			Assert.Equal(5.0, five, 9);
+
+			Assert.True(TgDataEncrypt.TryDecode(encode("0"), out double zero, TgDataEncrypt.ObjectXor));
+			Assert.Equal(0.0, zero, 9);
+		}
+
+		[Fact]
 		public void TchTextPositionMatchesTheFlattenedExport()
 		{
 			TchText text = TchText.Parse(tchClass("TCH_TEXT"), decode(TextPayload), ACadVersion.AC1021);
