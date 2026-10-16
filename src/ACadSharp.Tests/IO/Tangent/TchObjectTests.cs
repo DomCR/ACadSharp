@@ -413,6 +413,23 @@ namespace ACadSharp.Tests.IO.Tangent
 "hAOUA4QDlAOEA5QDhAOUA4QDlAOEA5QDhAOUA4QDlAOEA5QDhAOUA4QDlAOEA5QDhAOUA4QDlAOEA5QAcKKkBQykBWCkB0ik" +
 "BQykBWHJ";
 
+		//TCH_DIMENSION2, handle 955 — the angular form
+		private const string AngularDimensionFixture =
+			"ChGQUAAAAAAAAAEACERIHv+mAX7TQI5CheDaX47UBJnsARABGADcAMAA4AEIAMAAxAC0ARQBGADkAMAAtADQAOQA5ADIALQBCADg" +
+			"AQwA1AC0AMgBCADgANgBBADcARgA5AEQANQAxADYAfQBLOAA9wDhAOYA4AD4AOEA5QDhAOUA4ADpAOEA5QDhAOUA4QDlAOEA5QDh" +
+			"AOUA4QDlAOEA5QDhAOUA4QDlAOEA5QDhAOUA4QDlAOEA5QDhAOUA4QDlAOEA5QBKOEA4wDhAOUA4AD3AOAA6QDhAOUA4QDlAOEA5" +
+			"QDhAOUA4QDlAOEA5QDhAOUA4QDlAOEA5QDhAOUA4QDlAOEA5QDhAOUA4QDlAOEA5QDhAOUAQbhAOMA4QDlAOEA5gBGFQARABCAFg" +
+			"ARABBAFQAQQBNAEEAUABfAEIATABPAEMASwBfAEIARQBHAEkATgBfAEXVAAyADAAVgA5AF8AZABSAGUAYQBsAEQAaQBzAHQAMgBE" +
+			"AGkAbQBMAGkAbgBlAEWVABEAEIAWABEAEEAVABBAE0AQQBQAF8AQgBMAE8AQwBLAF8ARQBOAEQAXwBJnsAQgAwADcAMQAzAEUANg" +
+			"BCAC0AQQBGAEYANgAtADQAOAA3ADEALQBBADIANwAzAC0ANwA4ADkANgA4ADMANABEADYANgA3ADYAfQBBuEA5gDhAOUA4QDqAEo" +
+			"4AD3AOEA5gDhAOgA4ADpAOEA6gDhAOgA4QDlAOEA6ADgAPgA4QDnAOEA5ADhAOMA4QDnAOEA6ADgAPgA4QDpAOAA9wDgAPgA4QDn" +
+			"AOEA5wBKOEA5ADhAOMA4QDpAOAA6QDhAOUA4QDlAOEA5QDhAOUA4QDlAOEA5QDhAOUA4QDlAOEA5QDhAOUA4QDlAOEA5QDhAOUA4" +
+			"QDlAOEA5QDhAOUAQbhAOUA4QDmAOEA5ABKOEA6ADhAOUA4AD3AOAA6QDhAOgA4QDnAOEA5wDhAOoA4QDmAOAA+ADhAOMA4QDmAOA" +
+			"A9wDgAPgA4QDqAOEA4wDgAPgA4QDkAOEA6ADhAOgAQrgAPcA4QDmAOEA6ADhAOkA4QDpAEu4QDpAOEA4wDhAOUA4QDlAOAA+ADhA" +
+			"OoA4ADpAOEA5wDhAOcA4QDjAOEA5QDhAOoA4QDmAOEA6QDhAOoA4QDnAOAA9wDhAOQA4QDpAOAA9wDgAPcA4AD3AOEA5gBLuEA6g" +
+			"DhAOMA4QDlAOEA4wDgAPgA4QDqAOAA6QDhAOcA4QDnAOEA4wDhAOUA4QDqAOEA5gDhAOkA4QDqAOEA5wDgAPcA4QDkAOEA6QDgAP" +
+			"cA4AD3AOAA9wDhAOYAQbgAPcA4QDlAOEA6ABaHqkBQakB3Xq";
+
 		private static byte[] decode(string value) => Convert.FromBase64String(value);
 
 		/// <summary>
@@ -548,6 +565,109 @@ namespace ACadSharp.Tests.IO.Tangent
 			long offset = TchEntity.FindStringStream(payload, 12001);
 
 			Assert.Equal(200, offset);
+		}
+
+		[Fact]
+		public void TchDimension2ReadsTheRun()
+		{
+			//One object is not one dimension. This one carries five measurements, and the drawing
+			//shows five dimensions for it, so the run is the thing to read and not a single length.
+			TchDimension2 run = TchDimension2.Parse(tchClass("TCH_DIMENSION2"), decode(DimensionFixture), ACadVersion.AC1021);
+
+			Assert.True(run.IsConvertible);
+			Assert.Null(run.Reason);
+
+			Assert.Equal(38843.062490254, run.Anchor.X, 9);
+			Assert.Equal(28951.984611632433, run.Anchor.Y, 9);
+
+			//The direction is a full turn, which is as horizontal as nought: the object does not
+			//reduce the angle it stores, so the value names a direction and not a range.
+			Assert.Equal(2.0 * Math.PI, run.Direction, 9);
+
+			//One number the class writes plainly rather than through the obfuscation layer, and the
+			//only reason the dimension line can be placed at all without the geometry it measures.
+			Assert.Equal(-776.219286219748, run.DimensionLineOffset, 9);
+
+			Assert.Equal(5, run.Segments.Count);
+			Assert.Equal(1163.251707138319, run.Segments[0], 9);
+			Assert.Equal(1200.0, run.Segments[1], 9);
+			Assert.Equal(3136.2563740445767, run.Segments[2], 9);
+			Assert.Equal(816.114746074898, run.Segments[3], 9);
+			Assert.Equal(3666.2592433611135, run.Segments[4], 9);
+		}
+
+		[Fact]
+		public void TchDimension2ConvertsToTheRunTheExportDraws()
+		{
+			//Against Tianzheng's own flattening of the same object: five dimensions, and every
+			//value of every one of them matches to the last place.
+			TchDimension2 run = TchDimension2.Parse(tchClass("TCH_DIMENSION2"), decode(DimensionFixture), ACadVersion.AC1021);
+
+			List<DimensionAligned> drawn = run.ToStandardEntities().OfType<DimensionAligned>().ToList();
+
+			Assert.Equal(5, drawn.Count);
+
+			double[][] expected =
+			{
+				new[] { 38843.06249025400, 40006.31419739232, 1163.251707138319 },
+				new[] { 40006.31419739232, 41206.31419739232, 1200.0 },
+				new[] { 41206.31419739232, 44342.57057143690, 3136.256374044577 },
+				new[] { 44342.57057143690, 45158.68531751179, 816.114746074898 },
+				new[] { 45158.68531751179, 48824.94456087291, 3666.259243361113 },
+			};
+
+			for (int i = 0; i < expected.Length; i++)
+			{
+				//Each dimension starts where the one before it ended, which is what makes the run a
+				//run rather than a set of lengths.
+				Assert.Equal(expected[i][0], drawn[i].FirstPoint.X, 9);
+				Assert.Equal(28951.984611632433, drawn[i].FirstPoint.Y, 9);
+				Assert.Equal(expected[i][1], drawn[i].SecondPoint.X, 9);
+				Assert.Equal(expected[i][2], drawn[i].Measurement, 9);
+
+				//The dimension line runs alongside the measured one, so the point that defines it is
+				//the second measured point moved across by the offset.
+				Assert.Equal(expected[i][1], drawn[i].DefinitionPoint.X, 9);
+				Assert.Equal(28175.76532541269, drawn[i].DefinitionPoint.Y, 9);
+			}
+		}
+
+		[Fact]
+		public void TchDimension2KeepsTheLayerOfTheObjectItCameFrom()
+		{
+			//The export draws these on PUB_DIM, which is the layer of the object and not a default:
+			//a conversion that keeps the geometry and drops the layer loses what the drawing says
+			//about how the result is drawn.
+			TchDimension2 run = TchDimension2.Parse(tchClass("TCH_DIMENSION2"), decode(DimensionFixture), ACadVersion.AC1021);
+
+			run.Layer = new ACadSharp.Tables.Layer("PUB_DIM");
+
+			Assert.All(run.ToStandardEntities(), e => Assert.Equal("PUB_DIM", e.Layer.Name));
+		}
+
+		[Fact]
+		public void TchDimension2RefusesTheAngularForm()
+		{
+			//The angular form records the angle between two directions it does not record, so its
+			//vertex cannot be recovered from the object alone. It also writes its one angle where a
+			//run writes its first measurement, and a reader that took it for a length would place a
+			//dimension two thirds of a unit long: a plausible answer rather than a failure.
+			TchDimension2 angular = TchDimension2.Parse(tchClass("TCH_DIMENSION2"), decode(AngularDimensionFixture), ACadVersion.AC1021);
+
+			Assert.False(angular.IsConvertible);
+			Assert.NotNull(angular.Reason);
+			Assert.Empty(angular.Segments);
+			Assert.Empty(angular.ToStandardEntities());
+		}
+
+		[Fact]
+		public void TchDimension2RefusesAnObjectWithNoStream()
+		{
+			TchDimension2 run = TchDimension2.Parse(tchClass("TCH_DIMENSION2"), new byte[64], ACadVersion.AC1021);
+
+			Assert.False(run.IsConvertible);
+			Assert.NotNull(run.Reason);
+			Assert.Empty(run.ToStandardEntities());
 		}
 
 		[Fact]

@@ -116,9 +116,9 @@ namespace ACadSharp.Entities.Tangent
 			XY left = new XY(point.X - half, point.Y + height);
 			XY right = new XY(point.X + half, point.Y + height);
 
-			yield return new Line { StartPoint = new XYZ(point.X, point.Y, this.Position.Z), EndPoint = new XYZ(left.X, left.Y, this.Position.Z) };
-			yield return new Line { StartPoint = new XYZ(point.X, point.Y, this.Position.Z), EndPoint = new XYZ(right.X, right.Y, this.Position.Z) };
-			yield return new Line { StartPoint = new XYZ(left.X, left.Y, this.Position.Z), EndPoint = new XYZ(right.X, right.Y, this.Position.Z) };
+			yield return CopyCommonProperties(this, new Line { StartPoint = new XYZ(point.X, point.Y, this.Position.Z), EndPoint = new XYZ(left.X, left.Y, this.Position.Z) });
+			yield return CopyCommonProperties(this, new Line { StartPoint = new XYZ(point.X, point.Y, this.Position.Z), EndPoint = new XYZ(right.X, right.Y, this.Position.Z) });
+			yield return CopyCommonProperties(this, new Line { StartPoint = new XYZ(left.X, left.Y, this.Position.Z), EndPoint = new XYZ(right.X, right.Y, this.Position.Z) });
 
 			if (!string.IsNullOrEmpty(this.Level))
 			{
@@ -131,12 +131,12 @@ namespace ACadSharp.Entities.Tangent
 					? Math.Abs(this.TextOffset)
 					: -Math.Abs(this.TextOffset);
 
-				yield return new TextEntity
+				yield return CopyCommonProperties(this, new TextEntity
 				{
 					Value = this.Level,
 					Height = this.TextHeight,
 					InsertPoint = new XYZ(point.X + offset, point.Y + this.TextRise, this.Position.Z),
-				};
+				});
 			}
 		}
 

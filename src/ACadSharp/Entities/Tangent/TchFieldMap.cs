@@ -1,4 +1,4 @@
-﻿using ACadSharp.IO.DWG.Tangent;
+using ACadSharp.IO.DWG.Tangent;
 using CSMath;
 using System;
 
@@ -29,6 +29,9 @@ namespace ACadSharp.Entities.Tangent
 
 		/// <inheritdoc cref="MountRoofSkippedStrings"/>
 		public const int ElevationSkippedStrings = 8;
+
+		/// <inheritdoc cref="MountRoofSkippedStrings"/>
+		public const int DimensionSkippedStrings = 9;
 
 		/// <summary>
 		/// Moves past one string in the stream.
@@ -109,6 +112,21 @@ namespace ACadSharp.Entities.Tangent
 			double x = reader.ReadRawDouble();
 
 			return new XYZ(x, y, 0.0);
+		}
+
+		/// <summary>
+		/// Reads one number a class stores as a plain double.
+		/// </summary>
+		/// <param name="payload">The object's bytes.</param>
+		/// <param name="offset">Where the number begins.</param>
+		/// <remarks>
+		/// Most of a class's numbers go through the obfuscation layer into the string stream, but not
+		/// all of them: a value the class reads with the filer's own double reader is written plainly,
+		/// and which values those are differs by class. This is the plain one.
+		/// </remarks>
+		public static double ReadInlineRawDouble(byte[] payload, long offset)
+		{
+			return new TchStreamReader(payload, offset).ReadRawDouble();
 		}
 
 		/// <summary>

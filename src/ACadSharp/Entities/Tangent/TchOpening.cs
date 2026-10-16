@@ -125,7 +125,7 @@ namespace ACadSharp.Entities.Tangent
 				ZScale = -this.Width,
 			};
 
-			yield return insert;
+			yield return CopyCommonProperties(this, insert);
 		}
 
 		/// <inheritdoc/>

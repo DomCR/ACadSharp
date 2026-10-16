@@ -1,4 +1,4 @@
-﻿using ACadSharp.Classes;
+using ACadSharp.Classes;
 using ACadSharp.IO.DWG;
 using ACadSharp.IO.DWG.Tangent;
 using CSMath;
@@ -78,13 +78,11 @@ namespace ACadSharp.Entities.Tangent
 		/// <returns>The text entity.</returns>
 		public TextEntity ToTextEntity()
 		{
-			return new TextEntity
+			return CopyCommonProperties(this, new TextEntity
 			{
 				InsertPoint = this.InsertionPoint,
 				Value = this.Value ?? string.Empty,
-				Layer = this.Layer,
-				Color = this.Color,
-			};
+			});
 		}
 
 		/// <inheritdoc/>

@@ -1,4 +1,4 @@
-﻿using ACadSharp.Blocks;
+using ACadSharp.Blocks;
 using ACadSharp.Classes;
 using ACadSharp.Entities;
 using ACadSharp.Entities.AecEntities;
@@ -7375,6 +7375,8 @@ namespace ACadSharp.IO.DWG
 					return new TchOpening(dxfClass);
 				case "TCH_ELEVATION":
 					return new TchElevation(dxfClass);
+				case "TCH_DIMENSION2":
+					return new TchDimension2(dxfClass);
 				default:
 					return TchText.WritesText(dxfClass.DxfName)
 						? new TchText(dxfClass)

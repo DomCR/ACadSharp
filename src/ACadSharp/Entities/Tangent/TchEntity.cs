@@ -1,4 +1,4 @@
-﻿using ACadSharp.Classes;
+using ACadSharp.Classes;
 using ACadSharp.IO.DWG.Tangent;
 using CSMath;
 using System;
@@ -201,6 +201,30 @@ namespace ACadSharp.Entities.Tangent
 			}
 
 			return reader.PositionInBits == end;
+		}
+
+		/// <summary>
+		/// Gives a converted entity the properties the object it came from carries.
+		/// </summary>
+		/// <param name="source">The object being converted.</param>
+		/// <param name="target">The standard entity it becomes.</param>
+		/// <returns>The same entity, so a conversion can build and pass it in one expression.</returns>
+		/// <remarks>
+		/// A conversion that keeps the geometry and drops the layer and the colour loses what the
+		/// drawing says about how the result is drawn, which is most of what a drawing is for. These
+		/// are the common properties that survive: the rest of an entity's state is the class's own
+		/// and has no standard counterpart.
+		/// </remarks>
+		internal static T CopyCommonProperties<T>(TchEntity source, T target)
+			where T : Entity
+		{
+			target.Layer = source.Layer;
+			target.Color = source.Color;
+			target.LineWeight = source.LineWeight;
+			target.LineType = source.LineType;
+			target.LineTypeScale = source.LineTypeScale;
+
+			return target;
 		}
 
 		/// <summary>

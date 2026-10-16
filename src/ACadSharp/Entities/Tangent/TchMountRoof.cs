@@ -1,4 +1,4 @@
-﻿using ACadSharp.IO.DWG.Tangent;
+using ACadSharp.IO.DWG.Tangent;
 using CSMath;
 using System;
 using System.Collections.Generic;
@@ -197,7 +197,7 @@ namespace ACadSharp.Entities.Tangent
 
 			outline.IsClosed = true;
 
-			yield return outline;
+			yield return CopyCommonProperties(this, outline);
 		}
 
 		/// <inheritdoc/>
