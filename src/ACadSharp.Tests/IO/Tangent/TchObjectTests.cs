@@ -150,6 +150,45 @@ namespace ACadSharp.Tests.IO.Tangent
 "OkA4QDlAOEA5QDhAOUA4QDlAOEA5QDhAOUA4QDlAOEA5QDhAOUA4QDlAOEA5QDhAOUA4QDlAOEA5QDhAOUA4QDlAEK4QDnAO" +
 "EA5gDgAPcA4QDnAOEA6ACQbhAOMA4QDlAOEA5gDaIKkBQikBWCkBQnA=";
 
+		//TCH_MOUNTROOF, handle 1268
+		private const string MountRoofFixture =
+			"ChGAxECAxERLLGn5rBGuJAjs7mtJ8hn4QEmewAyAEUAMAAwAEMAMgBGADgALQBGADYANQA0AC0ANAA5ADIAOAAtAEEARgAzAEQAL" +
+			"QAwAEUARQA2ADQANQA1ADUAOAA0ADIAMwB9AEs4QDmAOEA5gDhAOQA4QDlAOEA5QDgAOkA4QDlAOEA5QDhAOUA4QDlAOEA5QDhAO" +
+			"UA4QDlAOEA5QDhAOUA4QDlAOEA5QDhAOUA4QDlAOEA5QDhAOUA4QDlAEo4QDoAOEA5QDhAOUA4ADpAOEA5QDhAOUA4QDlAOEA5QD" +
+			"hAOUA4QDlAOEA5QDhAOUA4QDlAOEA5QDhAOUA4QDlAOEA5QDhAOUA4QDlAOEA5QBBuEA5QDhAOYA4QDlAEG4QDlAOEA6gDhAOoAR" +
+			"hUAEQAQgBYAEQAQQBUAEEATQBBAFAAXwBCAEwATwBDAEsAXwBCAEUARwBJAE4AXwBFlQARABCAFgARABBAFQAQQBNAEEAUABfAEI" +
+			"ATABPAEMASwBfAEUATgBEAF8ASZ7AEIAMAA3ADEAMwBFADYAQgAtAEEARgBGADYALQA0ADgANwAxAC0AQQAyADcAMwAtADcAOAA5" +
+			"ADYAOAAzADQARAA2ADYANwA2AH0AQbhAOMA4QDlAOEA5wBLOEA6QDhAOYA4QDnAOEA5ADhAOQA4ADsAOEA5ADhAOQA4QDkAOEA5A" +
+			"DhAOQA4QDkAOEA5ADhAOQA4QDkAOEA5ADhAOQA4QDkAOEA5ADhAOQA4QDkAOEA5ABKOEA4wDhAOQA4QDlAOAA7ADhAOQA4QDkAOE" +
+			"A5ADhAOQA4QDkAOEA5ADhAOQA4QDkAOEA5ADhAOQA4QDkAOEA5ADhAOQA4QDkAOEA5ADhAOQASjhAOgA4QDkAOAA9QDgAOwA4QDk" +
+			"AOEA5ADhAOQA4QDkAOEA5ADhAOQA4QDkAOEA5ADhAOQA4QDkAOEA5ADhAOQA4QDkAOEA5ADhAOQA4QDkAEG4AD1AOEA5ADhAOMAQ" +
+			"bhAOUA4QDkAOAA9gBBuEA5wDhAOQA4QDnAEo4QDoAOEA5QDhAOkA4ADpAOEA5QDhAOUA4QDlAOEA5QDhAOUA4QDlAOEA5QDhAOUA" +
+			"4QDlAOEA5QDhAOUA4QDlAOEA5QDhAOUA4QDlAOEA5QBLuAA9wDhAOgA4AD3AOEA4wDhAOgA4QDlAOAA6QDhAOoA4QDjAOEA6QDhA" +
+			"OoA4QDnAOAA+ADhAOMA4QDqAOEA4wDgAPgA4QDoAOEA5gDhAOoA4QDqAOAA+ADgAPcAS7hAOYA4QDkAOEA6gDhAOMA4QDlAOAA+A" +
+			"DgAOkA4QDoAOEA6ADhAOQA4QDmAOAA+ADhAOoA4AD4AOEA5gDhAOQA4QDlAOAA+ADhAOUA4QDnAOEA5QDhAOQA4QDpAEo4AD4AOE" +
+			"A5gDhAOUA4ADpAOEA5QDgAPcA4QDlAOAA+ADhAOgA4AD4AOEA5gDhAOUA4QDqAOEA5wDhAOoA4QDjAOEA5ADhAOQA4QDmAOAA+AB" +
+			"LOEA6gDhAOcA4QDjAOEA5QDhAOUA4ADpAOEA5QDhAOUA4QDlAOEA5QDhAOUA4QDlAOEA5QDhAOUA4QDlAOEA5QDhAOUA4QDlAOEA" +
+			"5QDhAOUA4QDlAOEA5QBKOEA5gDhAOUA4QDpAOAA6QDhAOUA4QDlAOEA5QDhAOUA4QDlAOEA5QDhAOUA4QDlAOEA5QDhAOUA4QDlA" +
+			"OEA5QDhAOUA4QDlAOEA5QDhAOUAS7hAOQA4QDkAOEA6QDhAOUA4QDlAOEA5QDgAOkA4QDlAOEA5QDhAOUA4QDlAOEA5QDhAOUA4Q" +
+			"DlAOEA5QDhAOUA4QDlAOEA5QDhAOUA4QDlAOEA5QDhAOUA4QDlAEu4QDmAOEA5gDhAOcA4QDmAOEA5QDhAOUA4ADpAOEA5QDhAOU" +
+			"A4QDlAOEA5QDhAOUA4QDlAOEA5QDhAOUA4QDlAOEA5QDhAOUA4QDlAOEA5QDhAOUA4QDlAOEA5QBBuEA4wDhAOUA4QDkAPAtqQE3" +
+			"ICgoKChI";
+
+		//TCH_ELEVATION, handle 1230
+		private const string ElevationMarkerFixture =
+			"ChFAUGQEEEQURmHQlgt1YwECEUOXj+z/kQAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAASZ7ADgAMAA2ADAARAAyADgA" +
+			"MgAtADMARABGADIALQA0ADkARQBEAC0AOABCADAAMQAtAEQAQwA0ADEAOAA0AEUAMQBEADMAMQA3AH0ASzgAPgA4QDmAOEA5wDhA" +
+			"OUA4QDlAOAA6QDhAOUA4QDlAOEA5QDhAOUA4QDlAOEA5QDhAOUA4QDlAOEA5QDhAOUA4QDlAOEA5QDhAOUA4QDlAOEA5QDhAOUAS" +
+			"jhAOkA4QDlAOAA9wDgAOkA4QDlAOEA5QDhAOUA4QDlAOEA5QDhAOUA4QDlAOEA5QDhAOUA4QDlAOEA5QDhAOUA4QDlAOEA5QDhAO" +
+			"UA4QDlAEG4QDoAOEA5QDhAOkAQcHaNia6GzKkShX81OnT0YVABEAEIAWABEAEEAVABBAE0AQQBQAF8AQgBMAE8AQwBLAF8AQgBFA" +
+			"EcASQBOAF8ARZUAEQAQgBYAEQAQQBUAEEATQBBAFAAXwBCAEwATwBDAEsAXwBFAE4ARABfAEmewBCADAANwAxADMARQA2AEIALQB" +
+			"BAEYARgA2AC0ANAA4ADcAMQAtAEEAMgA3ADMALQA3ADgAOQA2ADgAMwA0AEQANgA2ADcANgB9AEG4QDjAOEA5QDhAOkASjhAOMA4" +
+			"QDkAOEA5QDgAOkA4QDqAOEA5QDhAOUA4QDlAOEA5QDhAOUA4QDlAOEA5QDhAOUA4QDlAOEA5QDhAOUA4QDlAOEA5QDhAOUA4QDlA" +
+			"Eo4QDkAOEA5QDhAOgA4ADpAOEA5QDhAOUA4QDlAOEA5QDhAOUA4QDlAOEA5QDhAOUA4QDlAOEA5QDhAOUA4QDlAOEA5QDhAOUA4Q" +
+			"DlAOEA5QBBuEA5gDhAOgA4AD3AEG4AD4AOEA5QDhAOUAQgyADIALgA2ADYANgA2ADkASrhAOQA4QDmAOEA5ADhAOMA4ADpAOEA6Q" +
+			"DgAPcA4QDlAOEA5QDhAOUA4QDlAOEA5QDhAOUA4QDlAOEA5QDhAOUA4QDlAOEA5QDhAOUA4QDlAOEA6QBMOEA6gDgAOwA4QDmAOE" +
+			"A5gDhAOUA4QDlAOEA5QDgAOkA4QDlAOEA5QDhAOUA4QDlAOEA5QDhAOUA4QDlAOEA5QDhAOUA4QDlAOEA5QDhAOUA4QDlAOEA5QD" +
+			"hAOUA4QDlAEK4AD3AOEA5gDgAPcA4QDnAOEA6ACQbhAOQA4QDlAOEA4wCmG6kBQikBWCkBQnyQ==";
 		//TCH_INDEXPOINTER, handle 936
 		private const string IndexPointerFixture =
 "ChFAkCAHQBBEFESLExEaLY9xA3AqZ9idM5kAUWKMixvTZQATxktS8sOZAAJJnsAMgBFADAAMABDADIARgA4AC0ARgA2ADUAN" +
@@ -392,7 +431,7 @@ namespace ACadSharp.Tests.IO.Tangent
 			//The marker is a triangle on a point with the level written beside it. The level is text
 			//and is not obfuscated, which is why an earlier reading of this class concluded it was not
 			//in the object at all: it was looked for as a decoded number and had never been encoded.
-			byte[] payload = File.ReadAllBytes("/tmp/elevation.bin");
+			byte[] payload = decode(ElevationMarkerFixture);
 
 			TchElevation marker = TchElevation.Parse(tchClass("TCH_ELEVATION"), payload, ACadVersion.AC1021);
 
@@ -425,7 +464,7 @@ namespace ACadSharp.Tests.IO.Tangent
 			//An opening stores no shape at all: it records which library symbol it uses and how big
 			//it is, and the drawing holds a block reference. So the things worth checking are the
 			//size, the position the reference is placed at, and which symbol the usage selects.
-			byte[] payload = File.ReadAllBytes("/tmp/opening.bin");
+			byte[] payload = decode(OpeningFixture);
 
 			TchOpening door = TchOpening.Parse(tchClass("TCH_OPENING"), payload, ACadVersion.AC1021);
 
@@ -448,7 +487,7 @@ namespace ACadSharp.Tests.IO.Tangent
 		[Fact]
 		public void TchOpeningConvertsToAReference()
 		{
-			byte[] payload = File.ReadAllBytes("/tmp/opening.bin");
+			byte[] payload = decode(OpeningFixture);
 
 			TchOpening door = TchOpening.Parse(tchClass("TCH_OPENING"), payload, ACadVersion.AC1021);
 
@@ -464,7 +503,7 @@ namespace ACadSharp.Tests.IO.Tangent
 			//The eight values this class reads, in the order it reads them. Every one of them was
 			//wrong until the stream they live in was found: they are text, written among the object's
 			//strings rather than as doubles where the class writes everything else.
-			byte[] payload = File.ReadAllBytes("/tmp/mountroof.bin");
+			byte[] payload = decode(MountRoofFixture);
 
 			TchMountRoof roof = TchMountRoof.Parse(tchClass("TCH_MOUNTROOF"), payload, ACadVersion.AC1021);
 
@@ -504,7 +543,7 @@ namespace ACadSharp.Tests.IO.Tangent
 		[Fact]
 		public void FindStringStreamLocatesTheStream()
 		{
-			byte[] payload = File.ReadAllBytes("/tmp/mountroof.bin");
+			byte[] payload = decode(MountRoofFixture);
 
 			long offset = TchEntity.FindStringStream(payload, 12001);
 
@@ -994,6 +1033,7 @@ namespace ACadSharp.Tests.IO.Tangent
 			Assert.Throws<ArgumentNullException>(() => TchGeometry.FindPoints(null, ACadVersion.AC1021, out _));
 		}
 
+		[Fact]
 		public void TgDataEncryptIsExclusiveOredNotTableDriven()
 		{
 			//The same character pair decodes to different characters in different contexts, so a
