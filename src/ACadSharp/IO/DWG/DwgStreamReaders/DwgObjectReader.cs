@@ -1,8 +1,10 @@
-﻿using ACadSharp.Blocks;
+using ACadSharp.Blocks;
 using ACadSharp.Classes;
 using ACadSharp.Entities;
 using ACadSharp.Entities.AecEntities;
+using ACadSharp.Entities.Tangent;
 using ACadSharp.Entities.Mechanical;
+using ACadSharp.IO.DWG.Tangent;
 using ACadSharp.IO.Templates;
 using ACadSharp.Objects;
 using ACadSharp.Objects.AEC;
@@ -6228,8 +6230,15 @@ namespace ACadSharp.IO.DWG
 
 			if (template == null && c.IsAnEntity)
 			{
-				template = this.readUnknownEntity(c);
-				this._builder.Notify($"Unlisted object with DXF name {c.DxfName} has been read as an UnknownEntity", NotificationType.Warning);
+				if (isTangent(c))
+				{
+					template = this.readTangentEntity(c);
+				}
+				else
+				{
+					template = this.readUnknownEntity(c);
+					this._builder.Notify($"Unlisted object with DXF name {c.DxfName} has been read as an UnknownEntity", NotificationType.Warning);
+				}
 			}
 			else if (template == null && !c.IsAnEntity)
 			{
@@ -7330,6 +7339,111 @@ namespace ACadSharp.IO.DWG
 			return template;
 		}
 
+		/// <summary>
+		/// Says whether a class belongs to Tianzheng.
+		/// </summary>
+		/// <remarks>
+		/// Two tests rather than one: the application value catches a class whose DXF name does not
+		/// follow the prefix, and the prefix catches a drawing where the application string has been
+		/// rewritten. In the samples both hold, and no other class in the file shares either.
+		/// </remarks>
+		/// <summary>
+		/// Picks the type that knows how to read a Tianzheng class.
+		/// </summary>
+		/// <remarks>
+		/// A class moves off <see cref="TchUnlistedEntity"/> by being named here, once its reader has
+		/// been worked out; nothing else has to change.
+		/// </remarks>
+		private static TchEntity createTchEntity(DxfClass dxfClass)
+		{
+			switch (dxfClass.DxfName)
+			{
+				case "TCH_COLUMN":
+				case "TCH_ARROW":
+				case "TCH_CUT":
+					return new TchOutline(dxfClass);
+				case "TCH_INDEXPOINTER":
+				case "TCH_SYMB_SECTION":
+				case "TCH_MULTILEADER":
+				case "TCH_COMPOSING":
+				case "TCH_AXIS_LABEL":
+				case "TCH_MULTISTAIR":
+					return new TchPath(dxfClass);
+				case "TCH_MOUNTROOF":
+					return new TchMountRoof(dxfClass);
+				case "TCH_OPENING":
+					return new TchOpening(dxfClass);
+				case "TCH_ELEVATION":
+					return new TchElevation(dxfClass);
+				case "TCH_DIMENSION2":
+					return new TchDimension2(dxfClass);
+				case "TCH_WALL":
+					return new TchWall(dxfClass);
+				case "TCH_RECTSTAIR":
+					return new TchRectStair(dxfClass);
+				case "TCH_PARALLELSTAIR":
+					return new TchParallelStair(dxfClass);
+				case "TCH_RADIUSDIM":
+					return new TchRadiusDim(dxfClass);
+				case "TCH_DRAWINGINDEX":
+					return new TchDrawingIndex(dxfClass);
+				default:
+					return TchText.WritesText(dxfClass.DxfName)
+						? new TchText(dxfClass)
+						: new TchUnlistedEntity(dxfClass);
+			}
+		}
+
+		private static bool isTangent(DxfClass dxfClass)
+		{
+			return dxfClass.DxfName.StartsWith("TCH_", System.StringComparison.Ordinal)
+				|| (dxfClass.ApplicationName?.StartsWith("TCH_", System.StringComparison.Ordinal) ?? false);
+		}
+
+		/// <summary>
+		/// Reads a Tianzheng entity.
+		/// </summary>
+		/// <remarks>
+		/// The type follows how the object is read, not which class it is, and that is decided before
+		/// anything is consumed: a class that writes text becomes a <see cref="TchText"/>, anything
+		/// else a <see cref="TchUnlistedEntity"/>. The class itself travels on the entity.
+		/// </remarks>
+		private CadTemplate readTangentEntity(DxfClass dxfClass)
+		{
+			TchEntity entity = createTchEntity(dxfClass);
+
+			CadTchEntityTemplate template = new CadTchEntityTemplate(entity);
+
+			this.readCommonEntityData(template);
+
+			//The class specific fields have no reader for most of these classes, so the bytes are kept
+			//and what can be read from them is read.
+			long payloadStart = this._objectReader.PositionInBits();
+
+			byte[] payload = this.readRemainingObjectData();
+
+			if (payload != null)
+			{
+				entity.RawData = payload;
+
+				//Where the string stream begins, measured from the start of the payload. A Tianzheng
+				//class writes its numbers into that stream rather than inline, so reading its fields
+				//means finding it, and only the object reader knows where the handle section starts.
+				//The handle section is where the version specific paths put the handles reader: the
+				//field this used to read is only filled in for R2010 and later, and an AC1021 drawing
+				//positions it from the object's own end-of-data long instead.
+				long handleOffset = this._handlesReader.PositionInBits() - payloadStart;
+
+				entity.StringStreamOffset = TchEntity.FindStringStream(payload, handleOffset);
+
+				entity.Properties = TchDataMap.ReadFromPayload(payload, this._version);
+
+				entity.Fill(payload, this._version);
+			}
+
+			return template;
+		}
+
 		private CadTemplate readUnknownEntity(DxfClass dxfClass)
 		{
 			UnknownEntity entity = new UnknownEntity(dxfClass);
@@ -7337,7 +7451,32 @@ namespace ACadSharp.IO.DWG
 
 			this.readCommonEntityData(template);
 
+			//The class specific fields have no reader, keep the bytes so that nothing is lost
+			entity.RawData = this.readRemainingObjectData();
+
 			return template;
+		}
+
+		/// <summary>
+		/// Reads the object data that has not been consumed yet, up to the end of the object.
+		/// </summary>
+		/// <remarks>
+		/// The section has no length of its own, so it is delimited by the end of the object. That
+		/// end includes the handle section, which is left in place: consumers of these bytes look
+		/// for what they know, and the padding is harmless.
+		/// </remarks>
+		private byte[] readRemainingObjectData()
+		{
+			long start = this._objectReader.PositionInBits();
+			long end = this._objectInitialPos + ((long)this._size * 8L);
+
+			long bits = end - start;
+			if (bits <= 0)
+			{
+				return null;
+			}
+
+			return this._objectReader.ReadBytes((int)((bits + 7L) / 8L));
 		}
 
 		private CadTemplate readUnknownNonGraphicalObject(DxfClass dxfClass)
