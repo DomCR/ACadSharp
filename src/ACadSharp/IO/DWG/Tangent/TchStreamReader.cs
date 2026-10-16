@@ -42,6 +42,11 @@ namespace ACadSharp.IO.DWG.Tangent
 		}
 
 		/// <summary>
+		/// Gets the bytes being read.
+		/// </summary>
+		public byte[] Payload => _payload;
+
+		/// <summary>
 		/// Gets the current position, in bits.
 		/// </summary>
 		public long PositionInBits => _position;
@@ -172,7 +177,12 @@ namespace ACadSharp.IO.DWG.Tangent
 
 			for (int i = 0; i < length; i++)
 			{
-				text.Append((char)this.readBits(16));
+				//Little endian, like every other short in the format. Reading the pair the other way
+				//round gives characters that are still characters, so nothing fails: the numbers simply
+				//come out as something else.
+				int low = (int)this.readBits(8);
+
+				text.Append((char)(low | (int)this.readBits(8) << 8));
 			}
 
 			return text.ToString();

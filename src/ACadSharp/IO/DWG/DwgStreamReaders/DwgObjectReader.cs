@@ -7369,6 +7369,8 @@ namespace ACadSharp.IO.DWG
 				case "TCH_AXIS_LABEL":
 				case "TCH_MULTISTAIR":
 					return new TchPath(dxfClass);
+				case "TCH_MOUNTROOF":
+					return new TchMountRoof(dxfClass);
 				default:
 					return TchText.WritesText(dxfClass.DxfName)
 						? new TchText(dxfClass)

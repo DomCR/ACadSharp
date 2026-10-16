@@ -45,6 +45,16 @@ namespace ACadSharp.Entities.Tangent
 		public DxfClass DxfClass { get; }
 
 		/// <summary>
+		/// Where the position a class stores inline begins, as a bit offset into the payload.
+		/// </summary>
+		/// <remarks>
+		/// A class writes its position before its string stream, at a fixed place: a version byte, a
+		/// tag, and one short per class in the chain, none of which varies. Counting rather than
+		/// searching is safe here for that reason.
+		/// </remarks>
+		public const long PositionOffset = 66;
+
+		/// <summary>
 		/// Gets the part of the object data that lies beyond the common entity data, as it is stored
 		/// in the file.
 		/// </summary>
@@ -69,6 +79,7 @@ namespace ACadSharp.Entities.Tangent
 		/// starts, so the offset is recorded while reading rather than derived afterwards.
 		/// </remarks>
 		public long StringStreamOffset { get; internal set; } = -1;
+
 
 		/// <summary>
 		/// Finds where an object's string stream begins, given where its handle section does.
@@ -191,9 +202,10 @@ namespace ACadSharp.Entities.Tangent
 		{
 			string cipher = reader.ReadCipherString();
 
-			return TgDataEncrypt.TryDecode(cipher, out double value, xor)
-				? value
-				: throw new System.IO.InvalidDataException($"The string \"{cipher}\" does not decode to a number");
+			//A field that does not read is left as not-a-number rather than thrown on. These classes
+			//are read without a specification, so a value that surprises the reader is expected, and
+			//losing the whole entity over one of them loses the geometry that did read.
+			return TgDataEncrypt.TryDecode(cipher, out double value, xor) ? value : double.NaN;
 		}
 
 		/// <inheritdoc/>

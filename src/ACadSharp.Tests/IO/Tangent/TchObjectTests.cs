@@ -387,6 +387,49 @@ namespace ACadSharp.Tests.IO.Tangent
 		};
 
 		[Fact]
+		public void TchMountRoofConvertsToItsRectangle()
+		{
+			//The eight values this class reads, in the order it reads them. Every one of them was
+			//wrong until the stream they live in was found: they are text, written among the object's
+			//strings rather than as doubles where the class writes everything else.
+			byte[] payload = File.ReadAllBytes("/tmp/mountroof.bin");
+
+			TchMountRoof roof = TchMountRoof.Parse(tchClass("TCH_MOUNTROOF"), payload, ACadVersion.AC1021);
+
+			Assert.Equal(98719.14292519883, roof.Position.X, 9);
+			Assert.Equal(37078.05012501533, roof.Position.Y, 9);
+
+			Assert.Equal(0.0, roof.Angle, 9);
+			Assert.Equal(7270.524569252972, roof.AxialLength, 9);
+			Assert.Equal(3209.7731959130906, roof.Span, 9);
+			Assert.Equal(1.080979105652332, roof.Step, 9);
+			Assert.Equal(600.0, roof.EdgeDistance, 9);
+			Assert.Equal(0.0, roof.StoredLength, 9);
+			Assert.Equal(3000.0, roof.Height, 9);
+			Assert.Equal(1100.0, roof.WallHeight, 9);
+
+			Assert.Equal(1.0795717100879387, roof.Pitch, 9);
+			Assert.Equal(597.971284952719, roof.SlopeLength, 9);
+
+			LwPolyline outline = roof.ToStandardEntities().OfType<LwPolyline>().Single();
+			double[][] expected =
+			{
+				new[] { 98121.17164024612, 36478.05012501533 },
+				new[] { 106587.63877940453, 36478.05012501533 },
+				new[] { 106587.63877940453, 40887.82332092842 },
+				new[] { 98121.17164024612, 40887.82332092842 },
+			};
+
+			Assert.Equal(4, outline.Vertices.Count);
+
+			for (int i = 0; i < 4; i++)
+			{
+				Assert.Equal(expected[i][0], outline.Vertices[i].Location.X, 9);
+				Assert.Equal(expected[i][1], outline.Vertices[i].Location.Y, 9);
+			}
+		}
+
+		[Fact]
 		public void FindStringStreamLocatesTheStream()
 		{
 			byte[] payload = File.ReadAllBytes("/tmp/mountroof.bin");
