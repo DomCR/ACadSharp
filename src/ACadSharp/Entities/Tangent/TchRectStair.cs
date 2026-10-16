@@ -44,9 +44,15 @@ namespace ACadSharp.Entities.Tangent
 		/// Which of the class's own fields each value it uses is.
 		/// </summary>
 		/// <remarks>
-		/// Counted from the first value after the property block. The class writes far more than these
-		/// — thirty of them — and the rest describe what the stair looks like rather than where its
-		/// lines go: the fill colour, the text height, the direction the flights run in.
+		/// Counted from the first value after the property block, in the order <c>dwgInFields</c> reads
+		/// them. The class writes thirty and the rest describe what the stair looks like rather than
+		/// where its lines go: the fill colour, the text height, the direction the flights run in.
+		/// <para>
+		/// The two stair classes put the same things at the same members and differ only in how many
+		/// values they write before them, which is why the parallel stair's indices are these plus
+		/// four. The tread lines are the fifth value rather than a count of steps further down: the
+		/// class stores how many lines to draw, and a stair of ten of them has nine steps between.
+		/// </para>
 		/// </remarks>
 		private const int RiserIndex = 0;
 
@@ -60,24 +66,24 @@ namespace ACadSharp.Entities.Tangent
 		private const int FirstStepOffsetIndex = 3;
 
 		/// <inheritdoc cref="RiserIndex"/>
+		private const int TreadLineCountIndex = 4;
+
+		/// <inheritdoc cref="RiserIndex"/>
 		private const int WidthIndex = 6;
 
 		/// <inheritdoc cref="RiserIndex"/>
 		private const int HandrailBandIndex = 11;
 
-		/// <inheritdoc cref="RiserIndex"/>
-		private const int StepCountIndex = 29;
-
 		/// <summary>
-		/// The most steps a stair is taken to have.
+		/// The most tread lines a stair is taken to have.
 		/// </summary>
 		/// <remarks>
 		/// A guard rather than a fact about the format: the count is read from the object, and one
 		/// that reads wrongly would otherwise emit an arbitrary number of lines.
 		/// </remarks>
-		public const int MaxSteps = 64;
+		public const int MaxTreadLines = 64;
 
-		private readonly double[] _values = new double[StepCountIndex + 1];
+		private readonly double[] _values = new double[HandrailBandIndex + 1];
 
 		/// <summary>
 		/// Initialises a stair from the class it was read as.
@@ -103,9 +109,9 @@ namespace ACadSharp.Entities.Tangent
 		public double TreadDepth { get; private set; }
 
 		/// <summary>
-		/// Gets how many steps the stair has.
+		/// Gets how many tread lines the run holds, which is one more than the steps between them.
 		/// </summary>
-		public int StepCount { get; private set; }
+		public int TreadLineCount { get; private set; }
 
 		/// <summary>
 		/// Gets the height of one step, which a plan view does not show.
@@ -141,7 +147,7 @@ namespace ACadSharp.Entities.Tangent
 		/// <summary>
 		/// Gets how deep the stair runs, from its position to the last tread line.
 		/// </summary>
-		public double Run => this.FirstStepOffset + (this.StepCount * this.TreadDepth);
+		public double Run => this.FirstStepOffset + ((this.TreadLineCount - 1) * this.TreadDepth);
 
 		/// <summary>
 		/// Gets a value indicating whether the object described a stair this can convert.
@@ -171,49 +177,18 @@ namespace ACadSharp.Entities.Tangent
 		{
 			if (!this.IsConvertible)
 			{
-				yield break;
+				return Array.Empty<Entity>();
 			}
 
-			double x = this.Position.X;
-			double y = this.Position.Y;
-			double z = this.Position.Z;
-
-			double flight = this.FlightWidth;
-			double rail = this.HandrailOffset;
-			double run = this.Run;
-			double wellTop = this.FirstStepOffset - this.HandrailBand;
-			double wellBottom = run + this.HandrailBand;
-
-			//The top of the stair, across both flights and the well.
-			yield return this.line(x, y, x + this.Width, y);
-
-			//The two outer edges, down the length of the run.
-			yield return this.line(x, y, x, y - run);
-			yield return this.line(x + this.Width, y, x + this.Width, y - run);
-
-			//A tread line every step, drawn on each flight and stopping at the well.
-			for (int step = 0; step <= this.StepCount; step++)
-			{
-				double tread = y - this.FirstStepOffset - (step * this.TreadDepth);
-
-				yield return this.line(x, tread, x + flight, tread);
-				yield return this.line(x + this.Width - flight, tread, x + this.Width, tread);
-			}
-
-			//The well runs past the flights at both ends, which is what the two extra lengths are.
-			yield return this.line(x + flight, y - wellTop, x + flight, y - wellBottom);
-			yield return this.line(x + this.Width - flight, y - wellTop, x + this.Width - flight, y - wellBottom);
-
-			//The handrail's line runs the length of the flights inside each edge, and the two ends
-			//close the band it makes with them.
-			yield return this.line(x + rail, y - this.FirstStepOffset, x + rail, y - run);
-			yield return this.line(x + this.Width - rail, y - this.FirstStepOffset, x + this.Width - rail, y - run);
-			yield return this.line(x + rail, y - this.FirstStepOffset, x + this.Width - rail, y - this.FirstStepOffset);
-			yield return this.line(x + rail, y - run, x + this.Width - rail, y - run);
-
-			//And the ends of the well.
-			yield return this.line(x + flight, y - wellTop, x + this.Width - flight, y - wellTop);
-			yield return this.line(x + flight, y - wellBottom, x + this.Width - flight, y - wellBottom);
+			return TchStairOutline.Lines(
+				this,
+				this.Position,
+				this.Width,
+				this.HandrailOffset,
+				this.HandrailBand,
+				this.FirstStepOffset,
+				this.TreadDepth,
+				this.TreadLineCount);
 		}
 
 		/// <inheritdoc/>
@@ -274,15 +249,15 @@ namespace ACadSharp.Entities.Tangent
 			this.Width = _values[WidthIndex];
 			this.HandrailBand = _values[HandrailBandIndex];
 
-			double steps = _values[StepCountIndex];
+			double lines = _values[TreadLineCountIndex];
 
-			if (double.IsNaN(steps) || steps < 1.0 || steps > MaxSteps || steps != Math.Floor(steps))
+			if (double.IsNaN(lines) || lines < 2.0 || lines > MaxTreadLines || lines != Math.Floor(lines))
 			{
-				this.Reason = $"the object records {steps} steps, which is not a stair";
+				this.Reason = $"the object records {lines} tread lines, which is not a stair";
 				return;
 			}
 
-			this.StepCount = (int)steps;
+			this.TreadLineCount = (int)lines;
 
 			//Every one of these is a length the outline is built from, so a count that landed in the
 			//wrong place gives numbers that are not lengths rather than an error.
@@ -300,15 +275,6 @@ namespace ACadSharp.Entities.Tangent
 		private static bool isUsable(double value)
 		{
 			return !double.IsNaN(value) && value > 0.0 && value < 1e6;
-		}
-
-		private Line line(double x1, double y1, double x2, double y2)
-		{
-			return CopyCommonProperties(this, new Line
-			{
-				StartPoint = new XYZ(x1, y1, this.Position.Z),
-				EndPoint = new XYZ(x2, y2, this.Position.Z),
-			});
 		}
 	}
 }

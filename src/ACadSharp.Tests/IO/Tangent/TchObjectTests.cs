@@ -884,7 +884,10 @@ namespace ACadSharp.Tests.IO.Tangent
 
 			Assert.Equal(1200.0, stair.FirstStepOffset, 9);
 			Assert.Equal(270.0, stair.TreadDepth, 9);
-			Assert.Equal(9, stair.StepCount);
+			//Ten lines and therefore nine steps between them, which is what the class stores: the
+			//count is of lines rather than of steps, and reading it as either draws the same stair
+			//here only because one is the other plus one.
+			Assert.Equal(10, stair.TreadLineCount);
 			Assert.Equal(2560.0, stair.Width, 9);
 			Assert.Equal(1230.0, stair.HandrailOffset, 9);
 			Assert.Equal(60.0, stair.HandrailBand, 9);
