@@ -1158,6 +1158,30 @@ namespace ACadSharp.Tests.IO.Tangent
 		}
 
 		[Fact]
+		public void TchTextReadsTheHeightItIsDrawnAt()
+		{
+			//The value after the text is the height in the drawing's scale, and the scale is the
+			//second string of the stream. This object carries 3.5 and the drawing is at 1:100, which
+			//is the 350 the export draws it at.
+			TchText text = TchText.Parse(tchClass("TCH_TEXT"), decode(TextPayload), ACadVersion.AC1021);
+
+			Assert.Equal(350.0, text.Height, 6);
+			Assert.Equal(350.0, text.ToTextEntity().Height, 6);
+		}
+
+		[Fact]
+		public void TchTextTakesNoHeightFromAClassThatWritesNoText()
+		{
+			//The value after the text is the height only for the classes that write text. An
+			//elevation writes its label too, but not in the same place in its stream, and its height
+			//comes from a different rule; reading one out of it would place a number at the wrong
+			//size rather than leave it to the style.
+			TchText text = TchText.Parse(tchClass("TCH_ELEVATION"), decode(ElevationMarkerFixture), ACadVersion.AC1021);
+
+			Assert.True(double.IsNaN(text.Height));
+		}
+
+		[Fact]
 		public void TchTextReadsTheContent()
 		{
 			TchText text = TchText.Parse(tchClass("TCH_TEXT"), decode(TextPayload), ACadVersion.AC1021);

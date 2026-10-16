@@ -68,21 +68,35 @@ namespace ACadSharp.Entities.Tangent
 		public string Value { get; internal set; }
 
 		/// <summary>
+		/// Gets the height the text is drawn at, in drawing units.
+		/// </summary>
+		/// <remarks>
+		/// Not-a-number when the text carries no readable height, in which case
+		/// <see cref="ToTextEntity"/> leaves the standard text's own default in place.
+		/// </remarks>
+		public double Height { get; internal set; } = double.NaN;
+
+		/// <summary>
 		/// Builds the standard text this object stands for.
 		/// </summary>
 		/// <remarks>
-		/// The result is a new <see cref="TextEntity"/>; this object is left alone. Height is left at
-		/// its default because the height is one of the obfuscated scalars and which one has not been
-		/// established for these classes.
+		/// The result is a new <see cref="TextEntity"/>; this object is left alone.
 		/// </remarks>
 		/// <returns>The text entity.</returns>
 		public TextEntity ToTextEntity()
 		{
-			return CopyCommonProperties(this, new TextEntity
+			TextEntity text = CopyCommonProperties(this, new TextEntity
 			{
 				InsertPoint = this.InsertionPoint,
 				Value = this.Value ?? string.Empty,
 			});
+
+			if (!double.IsNaN(this.Height))
+			{
+				text.Height = this.Height;
+			}
+
+			return text;
 		}
 
 		/// <inheritdoc/>
@@ -151,8 +165,63 @@ namespace ACadSharp.Entities.Tangent
 			//string is a property name, which is not content.
 			if (WritesText(this.DxfClass?.DxfName))
 			{
-				this.Value = readContent(payload, version);
+				long endBit;
+				this.Value = readContent(payload, version, out endBit);
+
+				this.Height = readHeight(payload, endBit);
 			}
+		}
+
+		/// <summary>
+		/// Reads the height the text is drawn at.
+		/// </summary>
+		/// <param name="payload">The class specific data.</param>
+		/// <param name="valueEndBit">Where the text itself ends, or a negative value when it was not
+		/// found.</param>
+		/// <returns>The height in drawing units, or not-a-number when it does not read.</returns>
+		/// <remarks>
+		/// The value written immediately after the text is the height in the drawing's own scale, so
+		/// it is the scale that turns it into a length — the sample's texts all carry 3.5 and the
+		/// export draws every one of them at 350, the drawing being at 1:100.
+		/// <para>
+		/// The scale is the second string of the stream, after the class id, and it is the same for
+		/// every object in a drawing.
+		/// </para>
+		/// </remarks>
+		private static double readHeight(byte[] payload, long valueEndBit)
+		{
+			if (valueEndBit < 0 || valueEndBit >= (long)payload.Length * 8L)
+			{
+				return double.NaN;
+			}
+
+			long streamOffset = FindStringStream(payload, payload.Length * 8L);
+
+			if (streamOffset < 0)
+			{
+				return double.NaN;
+			}
+
+			double scaled;
+
+			try
+			{
+				scaled = TchFieldMap.ReadDouble(new TchStreamReader(payload, valueEndBit), TgDataEncrypt.ObjectXor);
+			}
+			catch (InvalidOperationException)
+			{
+				return double.NaN;
+			}
+
+			if (double.IsNaN(scaled) || scaled <= 0.0)
+			{
+				return double.NaN;
+			}
+
+			double scale = TchFieldMap.ReadDouble(
+				TchFieldMap.SkipString(new TchStreamReader(payload, streamOffset)), TgDataEncrypt.ObjectXor);
+
+			return double.IsNaN(scale) || scale <= 0.0 ? double.NaN : scaled * scale;
 		}
 
 		/// <summary>
@@ -217,9 +286,10 @@ namespace ACadSharp.Entities.Tangent
 		/// so the longest candidate is taken.
 		/// </para>
 		/// </remarks>
-		private static string readContent(byte[] payload, ACadVersion version)
+		private static string readContent(byte[] payload, ACadVersion version, out long endBit)
 		{
 			string best = null;
+			endBit = -1;
 
 			using (MemoryStream stream = new MemoryStream(payload, writable: false))
 			{
@@ -243,6 +313,7 @@ namespace ACadSharp.Entities.Tangent
 					if (isContent(value) && (best == null || value.Length > best.Length))
 					{
 						best = value;
+						endBit = reader.PositionInBits();
 					}
 				}
 			}
