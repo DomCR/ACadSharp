@@ -6224,6 +6224,9 @@ namespace ACadSharp.IO.DWG
 				case DxfFileToken.ObjectWipeoutVariables:
 					template = this.readWipeoutVariables();
 					break;
+				case DxfFileToken.EntityRText:
+					template = this.readRText(c);
+					break;
 			}
 
 			if (template == null && c.IsAnEntity)
@@ -7336,6 +7339,31 @@ namespace ACadSharp.IO.DWG
 			CadUnknownEntityTemplate template = new CadUnknownEntityTemplate(entity);
 
 			this.readCommonEntityData(template);
+
+			return template;
+		}
+
+		private CadTemplate readRText(DxfClass dxfClass)
+		{
+			CadTemplate template = this.readUnknownEntity(dxfClass);
+			UnknownEntity entity = (UnknownEntity)template.CadObject;
+
+			try
+			{
+				var rt = new UnknownEntity.RemoteText();
+				rt.InsertPoint = this._objectReader.Read3BitDouble();
+				rt.Normal = this._objectReader.Read3BitDouble();
+				rt.Rotation = this._objectReader.ReadBitDouble();
+				rt.Height = this._objectReader.ReadBitDouble();
+				rt.Flags = this._objectReader.ReadBitShort();
+				rt.Contents = this._textReader.ReadVariableText();
+				rt.StyleHandle = this.handleReference();
+				entity.RText = rt;
+			}
+			catch (System.Exception ex)
+			{
+				this._builder.Notify($"RTEXT could not be read: {ex.Message}", NotificationType.Warning);
+			}
 
 			return template;
 		}

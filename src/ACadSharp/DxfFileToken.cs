@@ -120,6 +120,8 @@ public static class DxfFileToken
 
 	public const string EntityRevolvedSurface = "REVOLVEDSURFACE";
 
+	public const string EntityRText = "RTEXT";
+
 	public const string EntitySection = "SECTION";
 
 	public const string EntitySeqend = "SEQEND";
