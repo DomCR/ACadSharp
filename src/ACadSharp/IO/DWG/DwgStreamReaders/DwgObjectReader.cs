@@ -7371,6 +7371,8 @@ namespace ACadSharp.IO.DWG
 					return new TchPath(dxfClass);
 				case "TCH_MOUNTROOF":
 					return new TchMountRoof(dxfClass);
+				case "TCH_OPENING":
+					return new TchOpening(dxfClass);
 				default:
 					return TchText.WritesText(dxfClass.DxfName)
 						? new TchText(dxfClass)

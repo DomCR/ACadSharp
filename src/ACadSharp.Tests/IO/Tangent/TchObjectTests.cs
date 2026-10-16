@@ -387,6 +387,45 @@ namespace ACadSharp.Tests.IO.Tangent
 		};
 
 		[Fact]
+		public void TchOpeningReadsTheSizeAndTheUsage()
+		{
+			//An opening stores no shape at all: it records which library symbol it uses and how big
+			//it is, and the drawing holds a block reference. So the things worth checking are the
+			//size, the position the reference is placed at, and which symbol the usage selects.
+			byte[] payload = File.ReadAllBytes("/tmp/opening.bin");
+
+			TchOpening door = TchOpening.Parse(tchClass("TCH_OPENING"), payload, ACadVersion.AC1021);
+
+			Assert.Equal(44758.68532267988, door.Position.X, 9);
+			Assert.Equal(29051.984611632433, door.Position.Y, 9);
+			Assert.Equal(800.0, door.Width, 6);
+			Assert.Equal(2100.0, door.Height, 6);
+			Assert.Equal(100.0, door.HalfThickness, 6);
+			Assert.Equal(200.0, door.Thickness, 6);
+
+			//The usage is text and is written among the numbers, so it is found by shape rather than
+			//by position. It is also written as a key and then a value, and it is the value that says
+			//which symbol to use.
+			Assert.Equal("普通门", door.Usage);
+			Assert.True(door.IsDoor);
+			Assert.False(door.IsWindow);
+			Assert.Equal(TchOpening.DoorBlock, door.BlockName);
+		}
+
+		[Fact]
+		public void TchOpeningConvertsToAReference()
+		{
+			byte[] payload = File.ReadAllBytes("/tmp/opening.bin");
+
+			TchOpening door = TchOpening.Parse(tchClass("TCH_OPENING"), payload, ACadVersion.AC1021);
+
+			Insert insert = door.ToStandardEntities().OfType<Insert>().Single();
+
+			Assert.Equal(44758.68532267988, insert.InsertPoint.X, 9);
+			Assert.Equal(-800.0, insert.XScale, 6);
+		}
+
+		[Fact]
 		public void TchMountRoofConvertsToItsRectangle()
 		{
 			//The eight values this class reads, in the order it reads them. Every one of them was

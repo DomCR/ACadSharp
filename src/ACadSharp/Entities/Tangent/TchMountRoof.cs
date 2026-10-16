@@ -217,7 +217,7 @@ namespace ACadSharp.Entities.Tangent
 				reader = TchFieldMap.SkipString(reader);
 			}
 
-			this.Position = TchFieldMap.ReadInlinePosition(payload);
+			this.Position = TchFieldMap.ReadInlinePosition(payload, this.StringStreamOffset);
 
 			this.Angle = TchFieldMap.ReadDouble(reader, TgDataEncrypt.ObjectXor);
 			this.AxialLength = TchFieldMap.ReadDouble(reader, TgDataEncrypt.ObjectXor);
