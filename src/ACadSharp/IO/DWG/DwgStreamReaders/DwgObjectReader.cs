@@ -7400,11 +7400,24 @@ namespace ACadSharp.IO.DWG
 
 			//The class specific fields have no reader for most of these classes, so the bytes are kept
 			//and what can be read from them is read.
+			long payloadStart = this._objectReader.PositionInBits();
+
 			byte[] payload = this.readRemainingObjectData();
 
 			if (payload != null)
 			{
 				entity.RawData = payload;
+
+				//Where the string stream begins, measured from the start of the payload. A Tianzheng
+				//class writes its numbers into that stream rather than inline, so reading its fields
+				//means finding it, and only the object reader knows where the handle section starts.
+				//The handle section is where the version specific paths put the handles reader: the
+				//field this used to read is only filled in for R2010 and later, and an AC1021 drawing
+				//positions it from the object's own end-of-data long instead.
+				long handleOffset = this._handlesReader.PositionInBits() - payloadStart;
+
+				entity.StringStreamOffset = TchEntity.FindStringStream(payload, handleOffset);
+
 				entity.Properties = TchDataMap.ReadFromPayload(payload, this._version);
 
 				entity.Fill(payload, this._version);

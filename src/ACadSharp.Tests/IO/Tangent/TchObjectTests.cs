@@ -3,6 +3,7 @@ using ACadSharp.Classes;
 using CSMath;
 using ACadSharp.Entities;
 using System.Globalization;
+using System.IO;
 using System.Linq;
 using System.Text;
 using ACadSharp.Entities.Tangent;
@@ -384,6 +385,16 @@ namespace ACadSharp.Tests.IO.Tangent
 			DxfName = dxfName,
 			ApplicationName = "TCH_KERNAL",
 		};
+
+		[Fact]
+		public void FindStringStreamLocatesTheStream()
+		{
+			byte[] payload = File.ReadAllBytes("/tmp/mountroof.bin");
+
+			long offset = TchEntity.FindStringStream(payload, 12001);
+
+			Assert.Equal(200, offset);
+		}
 
 		[Fact]
 		public void TchTextPositionMatchesTheFlattenedExport()
