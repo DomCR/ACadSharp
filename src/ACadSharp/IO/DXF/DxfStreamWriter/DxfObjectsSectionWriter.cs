@@ -416,6 +416,9 @@ internal class DxfObjectsSectionWriter : DxfSectionWriterBase
 			case BlockReferenceObjectContextData blockContextData:
 				this.writeBlockReferenceObjectContextData(blockContextData);
 				break;
+			case TextObjectContextData textContextData:
+				this.writeTextObjectContextData(textContextData);
+				break;
 			case MTextAttributeObjectContextData mtextContextData:
 				this.writeMTextAttributeObjectContextData(mtextContextData);
 				break;
@@ -762,6 +765,10 @@ internal class DxfObjectsSectionWriter : DxfSectionWriterBase
 
 	private void writeAnnotScaleObjectContextData(AnnotScaleObjectContextData contextData)
 	{
+		this._writer.Write(100, DxfSubclassMarker.ObjectContextData);
+		this._writer.Write(70, contextData.Version);
+		this._writer.Write(290, contextData.Default);
+
 		this._writer.Write(100, DxfSubclassMarker.AnnotScaleObjectContextData);
 
 		this._writer.WriteHandle(340, contextData.Scale);
@@ -1202,6 +1209,18 @@ internal class DxfObjectsSectionWriter : DxfSectionWriterBase
 
 		//Unknown
 		this._writer.Write(77, 0, map);
+	}
+
+	private void writeTextObjectContextData(TextObjectContextData contextData)
+	{
+		DxfClassMap map = DxfClassMap.Create<TextObjectContextData>();
+
+		this.writeAnnotScaleObjectContextData(contextData);
+
+		this._writer.Write(70, (short)contextData.HorizontalAlignment, map);
+		this._writer.Write(50, contextData.Rotation, map);
+		this._writer.Write(10, contextData.InsertPoint, map);
+		this._writer.Write(11, contextData.AlignmentPoint, map);
 	}
 
 	private void writeBlockReferenceObjectContextData(BlockReferenceObjectContextData contextData)

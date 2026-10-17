@@ -29,6 +29,25 @@ internal partial class DwgObjectReader : DwgSectionIO
 		template.ScaleHandle = this.handleReference();
 	}
 
+	private CadTemplate readTextObjectContextData()
+	{
+		TextObjectContextData contextData = new TextObjectContextData();
+		CadAnnotScaleObjectContextDataTemplate template = new CadAnnotScaleObjectContextDataTemplate(contextData);
+
+		this.readAnnotScaleObjectContextData(template);
+
+		//BS	70	Horizontal alignment.
+		contextData.HorizontalAlignment = (ACadSharp.Entities.TextHorizontalAlignment)this._mergedReaders.ReadBitShort();
+		//BD	50	Rotation.
+		contextData.Rotation = this._mergedReaders.ReadBitDouble();
+		//2RD	10	Insertion point.
+		contextData.InsertPoint = this._mergedReaders.Read2RawDouble();
+		//2RD	11	Alignment point.
+		contextData.AlignmentPoint = this._mergedReaders.Read2RawDouble();
+
+		return template;
+	}
+
 	private CadTemplate readBlkRefObjectContextData()
 	{
 		BlockReferenceObjectContextData contextData = new BlockReferenceObjectContextData();

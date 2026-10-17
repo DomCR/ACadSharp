@@ -398,6 +398,20 @@ internal partial class DwgObjectWriter : DwgSectionIO
 		this._writer.WriteBitLong(0);
 	}
 
+	private void writeTextObjectContextData(TextObjectContextData contextData)
+	{
+		this.writeAnnotScaleObjectContextData(contextData);
+
+		//BS	70	Horizontal alignment.
+		this._writer.WriteBitShort((short)contextData.HorizontalAlignment);
+		//BD	50	Rotation.
+		this._writer.WriteBitDouble(contextData.Rotation);
+		//2RD	10	Insertion point.
+		this._writer.Write2RawDouble(contextData.InsertPoint);
+		//2RD	11	Alignment point.
+		this._writer.Write2RawDouble(contextData.AlignmentPoint);
+	}
+
 	private void writeBlockReferenceObjectContextData(BlockReferenceObjectContextData contextData)
 	{
 		this.writeAnnotScaleObjectContextData(contextData);
@@ -1843,6 +1857,9 @@ internal partial class DwgObjectWriter : DwgSectionIO
 			case BlockReferenceObjectContextData blockContextData:
 				this.writeBlockReferenceObjectContextData(blockContextData);
 				break;
+			case TextObjectContextData textContextData:
+				this.writeTextObjectContextData(textContextData);
+				break;
 			case CadDictionaryWithDefault dictionarydef:
 				this.writeCadDictionaryWithDefault(dictionarydef);
 				break;
@@ -1935,8 +1952,6 @@ internal partial class DwgObjectWriter : DwgSectionIO
 	{
 		//BS	70	Version.
 		this._writer.WriteBitShort(objectContextData.Version);
-		//B	-	Has file to extension dictionary.
-		this._writer.WriteBit(objectContextData.HasFileToExtensionDictionary);
 		//B	290	Default flag.
 		this._writer.WriteBit(objectContextData.Default);
 	}
