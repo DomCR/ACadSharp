@@ -1,5 +1,6 @@
 ﻿using ACadSharp.Entities;
 using ACadSharp.Entities.AecEntities;
+using ACadSharp.Entities.Tangent;
 using ACadSharp.Entities.Mechanical;
 using ACadSharp.Objects;
 using CSMath;
@@ -149,6 +150,7 @@ internal abstract partial class DxfSectionWriterBase
 		{
 			case Seqend://Manually assign at the end of the collections
 			case UnknownEntity:
+			case TchEntity:
 			case MechanicalEntity:
 			case Wall:
 				return false;
