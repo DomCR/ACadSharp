@@ -2,6 +2,7 @@
 using ACadSharp.Classes;
 using ACadSharp.Entities;
 using ACadSharp.Entities.AecEntities;
+using ACadSharp.Entities.Tangent;
 using ACadSharp.Entities.Mechanical;
 using ACadSharp.Objects;
 using ACadSharp.Tables;
@@ -144,6 +145,7 @@ internal partial class DwgObjectWriter : DwgSectionIO
 		switch (entity)
 		{
 			case UnknownEntity:
+			case TchEntity:
 				return false;
 			case Shape:
 				return this.WriteShapes;

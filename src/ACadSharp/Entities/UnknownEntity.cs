@@ -14,6 +14,20 @@ namespace ACadSharp.Entities
 		/// <inheritdoc/>
 		public override ObjectType ObjectType => ObjectType.UNDEFINED;
 
+		/// <summary>
+		/// Gets the part of the object data that lays beyond the common entity data, as it is
+		/// stored in the file.
+		/// </summary>
+		/// <remarks>
+		/// ACadSharp has no typed representation for this object, so the bytes written by the
+		/// class's own <c>dwgOutFields</c> are kept here verbatim. They are the only source of the
+		/// class specific fields, and they are what an application that knows the class reads back.
+		/// <para>
+		/// Only populated when the reader is configured to keep unknown entities.
+		/// </para>
+		/// </remarks>
+		public byte[] RawData { get; internal set; }
+
 		/// <inheritdoc/>
 		public override string ObjectName
 		{
