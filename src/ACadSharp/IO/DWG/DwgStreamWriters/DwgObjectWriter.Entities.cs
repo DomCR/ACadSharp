@@ -2166,25 +2166,26 @@ internal partial class DwgObjectWriter : DwgSectionIO
 			{
 				//Object Drawing Format BL 95 This is a bitwise OR of the version and the
 				//maintenance version, shifted 16 bits to the left.
-				_writer.WriteBitLong((int)proxy.Version | (proxy.MaintenanceVersion << 16));
+				this._writer.WriteBitLong((int)proxy.Version | (proxy.MaintenanceVersion << 16));
 
 			}
 			//R2018+:
 			else
 			{
 				//Version BL 71 The AutoCAD version of the object.
-				_writer.WriteBitLong((int)proxy.Version);
+				this._writer.WriteBitLong((int)proxy.Version);
 				//Maintenance version BL 97 The AutoCAD maintenance version of the object.
-				_writer.WriteBitLong((int)proxy.MaintenanceVersion);
+				this._writer.WriteBitLong((int)proxy.MaintenanceVersion);
 			}
 
 			//R2000 +:
 			//Original Data Format B 70 0 for dwg, 1 for dxf
-			_writer.WriteBit(proxy.OriginalDataFormatDxf);
+			this._writer.WriteBit(proxy.OriginalDataFormatDxf);
 		}
 		else
 		{
-			throw new NotImplementedException("ProxyEntity writing for R13-R2000 is not implemented.");
+			this._writer.WriteBitLong(proxy.DxfClass != null
+				? proxy.DxfClass.ItemClassId : 0);
 		}
 	}
 

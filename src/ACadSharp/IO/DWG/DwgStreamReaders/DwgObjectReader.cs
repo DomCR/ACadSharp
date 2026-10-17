@@ -1178,7 +1178,7 @@ namespace ACadSharp.IO.DWG
 			}
 			else
 			{
-				return;
+				var itemClassId = this._mergedReaders.ReadBitLong();
 			}
 
 			//Common:
