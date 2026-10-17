@@ -557,7 +557,7 @@ public class DxfReader : CadReaderBase<DxfReaderConfiguration>
 			{
 				var dxfClass = this.readClass();
 
-				if (dxfClass.ClassNumber < 500)
+				if (dxfClass.ClassNumber <= 500)
 				{
 					dxfClass.ClassNumber = (short)(500 + classes.Count);
 				}

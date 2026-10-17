@@ -29,6 +29,7 @@ public abstract class IOTestsBase
 
 	protected readonly DxfReaderConfiguration _dxfConfiguration = new DxfReaderConfiguration
 	{
+		IgnoreProxyGraphics = false,
 	};
 
 	protected readonly ITestOutputHelper _output;

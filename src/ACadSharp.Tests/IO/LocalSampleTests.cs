@@ -37,11 +37,6 @@ public class LocalSampleTests : IOTestsBase
 
 		CadDocument doc = DwgReader.Read(test.Path, this._dwgConfiguration, this.onNotification);
 
-		foreach (var item in doc.Entities.OfType<ProxyEntity>())
-		{
-
-		}
-
 		if (doc.Header.Version == ACadVersion.AC1021)
 		{
 			doc.Header.Version = ACadVersion.AC1032;
@@ -61,7 +56,7 @@ public class LocalSampleTests : IOTestsBase
 		if (string.IsNullOrEmpty(test.Path))
 			return;
 
-		CadDocument doc = DxfReader.Read(test.Path, this.onNotification);
+		CadDocument doc = DxfReader.Read(test.Path, this._dxfConfiguration, this.onNotification);
 
 		if (doc.Header.Version < ACadVersion.AC1012)
 		{

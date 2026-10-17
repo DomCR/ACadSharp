@@ -42,6 +42,7 @@ public class ProxyEntity : Entity, IProxy
 	/// <summary>
 	/// Gets or sets the maintenance version number.
 	/// </summary>
+	[DxfCodeValue(97)]
 	public int MaintenanceVersion { get; set; }
 
 	/// <inheritdoc/>
@@ -65,6 +66,7 @@ public class ProxyEntity : Entity, IProxy
 	public override string SubclassMarker => DxfSubclassMarker.ProxyEntity;
 
 	/// <inheritdoc/>
+	[DxfCodeValue(71)]
 	public ACadVersion Version { get; set; }
 
 	/// <inheritdoc/>

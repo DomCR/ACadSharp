@@ -1,4 +1,6 @@
-﻿namespace ACadSharp.IO
+﻿using ACadSharp.IO;
+
+namespace ACadSharp.IO
 {
 	/// <summary>
 	/// Base configuration for all the <see cref="CadReaderBase{T}"/> classes.
@@ -30,5 +32,13 @@
 		/// These NonGraphicalObjects do not contain any information and will be ignored by the writers.
 		/// </remarks>
 		public bool KeepUnknownNonGraphicalObjects { get; set; } = false;
+
+		/// <summary>
+		/// If set to true the reader will skip the proxy graphics section.
+		/// </summary>
+		/// <value>
+		/// default: true
+		/// </value>
+		public bool IgnoreProxyGraphics { get; set; } = true;
 	}
 }
