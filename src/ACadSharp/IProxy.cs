@@ -1,4 +1,5 @@
 ﻿using ACadSharp.Classes;
+using System.IO;
 
 namespace ACadSharp;
 
@@ -28,6 +29,11 @@ public interface IProxy
 	/// Proxy object class ID.
 	/// </summary>
 	int ProxyClassId { get; }
+
+	/// <summary>
+	/// Gets or sets the retained data of the original object.
+	/// </summary>
+	Stream Data { get; set; }
 
 	ACadVersion Version { get; set; }
 }

@@ -3157,7 +3157,8 @@ internal class DxfObjectsSectionReader : DxfSectionReaderBase
 				case GroupCodeValueType.Handle:
 				case GroupCodeValueType.ObjectId:
 				case GroupCodeValueType.ExtendedDataHandle:
-					template.AddHandleReference(this._reader.Code, this._reader.ValueAsHandle);
+					var entry = template.CadObject.CreateEntry(this._reader.Code, this._reader.ValueAsHandle);
+					template.AddHandleReference(entry);
 					break;
 				default:
 					template.CadObject.CreateEntry(this._reader.Code, this._reader.Value);

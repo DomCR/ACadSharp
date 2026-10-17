@@ -149,6 +149,13 @@ namespace ACadSharp
 			this._property = property;
 		}
 
+		protected DxfPropertyBase(DxfPropertyBase<T> other)
+		{
+			this._attributeData = other._attributeData;
+			this._property = other._property;
+			this._assignedCode = other._assignedCode;
+		}
+
 		/// <summary>
 		/// Set the value for the property using the AssignedCode
 		/// </summary>
@@ -205,9 +212,11 @@ namespace ACadSharp
 				switch (code)
 				{
 					case 62:
+					case 63:
 						this._property.SetValue(obj, new Color((short)value));
 						break;
 					case 420:
+					case 421:
 						byte[] b = LittleEndianConverter.Instance.GetBytes((int)value);
 						// true color
 						this._property.SetValue(obj, new Color(b[2], b[1], b[0]));
@@ -295,6 +304,7 @@ namespace ACadSharp
 				switch (code)
 				{
 					case 62:
+					case 63:
 						this._property.SetValue(obj, new Color((short)value));
 						break;
 					case 90:
@@ -303,6 +313,7 @@ namespace ACadSharp
 						this._property.SetValue(obj, new Color(b[2], b[1], b[0]));
 						break;
 					case 420:
+					case 421:
 						b = LittleEndianConverter.Instance.GetBytes((int)value);
 						// true color
 						this._property.SetValue(obj, new Color(b[2], b[1], b[0]));

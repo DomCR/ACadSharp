@@ -1,6 +1,7 @@
 ﻿using ACadSharp.Attributes;
 using ACadSharp.Classes;
 using CSMath;
+using System.IO;
 
 namespace ACadSharp.Entities
 {
@@ -64,6 +65,10 @@ namespace ACadSharp.Entities
 		//An object ID(multiple entries can appear) (optional)
 
 		//94 0 (indicates end of object ID section)
+		/// <inheritdoc/>
+		/// <remarks>No <c>DxfCodeValue</c>: the DXF reader has no handler for code 311 on an entity.</remarks>
+		public Stream Data { get; set; }
+
 		/// <inheritdoc/>
 		public ACadVersion Version { get; set; }
 

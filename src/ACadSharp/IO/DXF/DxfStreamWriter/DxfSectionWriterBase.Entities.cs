@@ -159,6 +159,7 @@ internal abstract partial class DxfSectionWriterBase
 			case Solid3D:
 			case CadBody:
 			case Region:
+			case Surface:
 				this.notify($"Entity type not implemented {entity.GetType().FullName}", NotificationType.NotImplemented);
 				return false;
 			default:
@@ -306,6 +307,12 @@ internal abstract partial class DxfSectionWriterBase
 		this._writer.Write(71, (short)dim.AttachmentPoint, map);
 		this._writer.Write(72, (short)dim.LineSpacingStyle, map);
 		this._writer.Write(41, dim.LineSpacingFactor, map);
+
+		if (this.Version >= ACadVersion.AC1021)
+		{
+			this._writer.Write(74, dim.FlipArrow1, map);
+			this._writer.Write(75, dim.FlipArrow2, map);
+		}
 
 		if (!string.IsNullOrEmpty(dim.Text))
 		{
@@ -921,6 +928,26 @@ internal abstract partial class DxfSectionWriterBase
 		this._writer.Write(11, mtext.AlignmentPoint, map);
 
 		this._writer.Write(210, mtext.Normal, map);
+
+		//Background fill and text frame, R2004+ (text frame R2018+)
+		if (this.Version >= ACadVersion.AC1018 && mtext.BackgroundFillFlags != BackgroundFillFlags.None)
+		{
+			this._writer.Write(90, (int)mtext.BackgroundFillFlags, map);
+
+			//Color, scale and transparency only when the background is filled or the text is framed
+			if ((mtext.BackgroundFillFlags & (BackgroundFillFlags.UseBackgroundFillColor | BackgroundFillFlags.TextFrame))
+				!= BackgroundFillFlags.None)
+			{
+				this._writer.WriteCmColor(63, mtext.BackgroundColor, map);
+				if (mtext.BackgroundColor.IsTrueColor)
+				{
+					this._writer.WriteTrueColor(421, mtext.BackgroundColor, map);
+				}
+
+				this._writer.Write(45, mtext.BackgroundScale, map);
+				this._writer.Write(441, Transparency.ToAlphaValue(mtext.BackgroundTransparency), map);
+			}
+		}
 
 		if (!mtext.HasColumns || this.Version < ACadVersion.AC1032)
 		{

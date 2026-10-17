@@ -50,7 +50,12 @@ internal class DxfObjectsSectionWriter : DxfSectionWriterBase
 				continue;
 			}
 
-			//Not compatible dictionaries
+			if (entry is CadDictionary dictionary && !dictionary.Any())
+			{
+				continue;
+			}
+
+			//TODO: Not compatible dictionaries
 			if (entryName == CadDictionary.AcadMaterial)
 			{
 				continue;
@@ -708,6 +713,10 @@ internal class DxfObjectsSectionWriter : DxfSectionWriterBase
 				case GroupCodeValueType.ObjectId:
 				case GroupCodeValueType.ExtendedDataHandle:
 					var obj = e.Value as IHandledCadObject;
+					if(obj == null)
+					{
+						continue;
+					}
 					this._writer.Write(e.Code, obj.Handle);
 					break;
 				default:

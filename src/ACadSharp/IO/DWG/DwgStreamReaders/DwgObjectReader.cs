@@ -72,13 +72,7 @@ namespace ACadSharp.IO.DWG
 		/// </summary>
 		private IDwgStreamReader _handlesReader;
 
-		/// <summary>
-		/// Needed to handle some items like colors or some text data that may not be present.
-		/// </summary>
-		//Has DS binary data flag of the object being read (R2013+): set while the
-		//common data is processed, consumed by the modeler geometry reader to
-		//register the entities whose ACIS payload lives in the AcDs data section.
-		private bool _hasDsBinaryData;
+		private long _handleSectionOffset = -1;
 
 		private IDwgStreamReader _mergedReaders;
 
@@ -242,7 +236,7 @@ namespace ACadSharp.IO.DWG
 				ulong handleSize = this._crcReader.ReadModularChar();
 
 				//Find the handles offset
-				ulong handleSectionOffset = (ulong)this._crcReader.PositionInBits() + sizeInBits - handleSize;
+				this._handleSectionOffset = (long)((ulong)this._crcReader.PositionInBits() + sizeInBits - handleSize);
 
 				//Create a handler section reader
 				this._objectReader = DwgStreamReaderBase.GetStreamHandler(this._version, HugeMemoryStream.Clone(this._memoryStream), this._reader.Encoding);
@@ -254,11 +248,11 @@ namespace ACadSharp.IO.DWG
 
 				//Create a handler section reader
 				this._handlesReader = DwgStreamReaderBase.GetStreamHandler(this._version, HugeMemoryStream.Clone(this._memoryStream), this._reader.Encoding);
-				this._handlesReader.SetPositionInBits((long)handleSectionOffset);
+				this._handlesReader.SetPositionInBits(this._handleSectionOffset);
 
 				//Create a text section reader
 				this._textReader = DwgStreamReaderBase.GetStreamHandler(this._version, HugeMemoryStream.Clone(this._memoryStream), this._reader.Encoding);
-				this._textReader.SetPositionByFlag((long)handleSectionOffset - 1);
+				this._textReader.SetPositionByFlag(this._handleSectionOffset - 1);
 
 				this._mergedReaders = new DwgMergedReader(this._objectReader, this._textReader, this._handlesReader);
 			}
@@ -1189,8 +1183,18 @@ namespace ACadSharp.IO.DWG
 
 			//Common:
 			//Databits X databits, however many there are to the handles
+			//The retained data has no length of its own, it runs up to the handle section
+			if (this._handleSectionOffset > 0)
+			{
+				long dataBits = this._handleSectionOffset - this._objectReader.PositionInBits();
+				if (dataBits > 0)
+				{
+					int dataBytes = (int)((dataBits + 7L) / 8L);
+					byte[] data = this._objectReader.ReadBytes(dataBytes);
 
-			//TODO: Investigate how to read the data in proxies, it can contain data, strings and handles
+					proxy.Data = new MemoryStream(data, writable: false);
+				}
+			}
 		}
 
 		private CadTemplate readDbColor()
@@ -3884,12 +3888,6 @@ namespace ACadSharp.IO.DWG
 					return template;
 				}
 			}
-			else if (this._hasDsBinaryData)
-			{
-				//R2013+ stores the ACIS payload in the AcDs data section: register
-				//the entity so the section reader can attach the matching blob.
-				this._builder.AcisDsEntities.Add(geometry);
-			}
 
 			//Common:
 			//Wireframe data present B X True if wireframe data is present
@@ -5233,11 +5231,19 @@ namespace ACadSharp.IO.DWG
 
 			//75 0 : Splined(75 value is 5)
 			//1 : Splined(75 value is 6)
-			bool splined = ((uint)flags & 0b1) > 0;
-			//Should assign pline.SmoothSurface ??
-
 			//(If either is set, set 70 bit 2(4) to indicate splined.)
+			bool splined = ((uint)flags & 0b1) > 0;
+
 			bool splined1 = ((uint)flags & 0b10) > 0;
+
+			if (splined)
+			{
+				pline.SmoothSurface = SmoothSurfaceType.Quadratic;
+			}
+			else if (splined1)
+			{
+				pline.SmoothSurface = SmoothSurfaceType.Cubic;
+			}
 
 			if (splined | splined1)
 			{
@@ -5416,7 +5422,7 @@ namespace ACadSharp.IO.DWG
 			if (this.R2013Plus)
 			{
 				//Has DS binary data B If 1 then this object has associated binary data stored in the data store
-				this._hasDsBinaryData = this._objectReader.ReadBit();
+				template.HasDsBinaryData = this._objectReader.ReadBit();
 			}
 		}
 
@@ -5579,6 +5585,17 @@ namespace ACadSharp.IO.DWG
 				template.HistoryHandle = this._mergedReaders.HandleReference();
 			}
 
+			return template;
+		}
+
+		private CadTemplate readSurface<T>(CadEntityTemplate<T> template)
+			where T : Surface, new()
+		{
+			this.readModelerGeometry(template);
+
+			//The AcDbSurface data (isoline counts) and the surface subclass data
+			//(sweep, loft and revolve parameters) that follow are not decoded yet;
+			//the object data is length delimited, so the unread tail is skipped
 			return template;
 		}
 
@@ -6051,6 +6068,27 @@ namespace ACadSharp.IO.DWG
 					break;
 				case "SORTENTSTABLE":
 					template = this.readSortentsTable();
+					break;
+				case DxfFileToken.EntitySurface:
+					template = this.readSurface(new CadEntityTemplate<Surface>());
+					break;
+				case DxfFileToken.EntityExtrudedSurface:
+					template = this.readSurface(new CadEntityTemplate<ExtrudedSurface>());
+					break;
+				case DxfFileToken.EntityLoftedSurface:
+					template = this.readSurface(new CadEntityTemplate<LoftedSurface>());
+					break;
+				case DxfFileToken.EntityNurbSurface:
+					template = this.readSurface(new CadEntityTemplate<NurbSurface>());
+					break;
+				case DxfFileToken.EntityPlaneSurface:
+					template = this.readSurface(new CadEntityTemplate<PlaneSurface>());
+					break;
+				case DxfFileToken.EntityRevolvedSurface:
+					template = this.readSurface(new CadEntityTemplate<RevolvedSurface>());
+					break;
+				case DxfFileToken.EntitySweptSurface:
+					template = this.readSurface(new CadEntityTemplate<SweptSurface>());
 					break;
 				case "RASTERVARIABLES":
 					template = this.readRasterVariables();
@@ -6874,7 +6912,7 @@ namespace ACadSharp.IO.DWG
 				//numbers all follow the normal DXF convention for group codes.
 				var code = this._objectReader.ReadShort();
 				var groupCode = GroupCodeValue.TransformValue(code);
-
+				XRecord.Entry entry;
 				switch (groupCode)
 				{
 					case GroupCodeValueType.String:
@@ -6911,7 +6949,8 @@ namespace ACadSharp.IO.DWG
 						string hex = this._objectReader.ReadTextUnicode();
 						if (ulong.TryParse(hex, NumberStyles.HexNumber, CultureInfo.InvariantCulture, out ulong result))
 						{
-							template.AddHandleReference(code, result);
+							entry = xRecord.CreateEntry(code, result);
+							template.AddHandleReference(entry);
 						}
 						else
 						{
@@ -6927,7 +6966,9 @@ namespace ACadSharp.IO.DWG
 						break;
 					case GroupCodeValueType.ObjectId:
 					case GroupCodeValueType.ExtendedDataHandle:
-						template.AddHandleReference(code, this._objectReader.ReadRawULong());
+						var handle = this._objectReader.ReadRawULong();
+						entry = xRecord.CreateEntry(code, handle);
+						template.AddHandleReference(entry);
 						break;
 					default:
 						this.notify($"Unidentified GroupCodeValueType {code} for XRecord [{xRecord.Handle}]", NotificationType.Warning);

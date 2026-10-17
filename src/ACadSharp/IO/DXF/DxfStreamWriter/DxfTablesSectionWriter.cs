@@ -52,7 +52,7 @@ namespace ACadSharp.IO.DXF
 					continue;
 				}
 
-				writeEntry(entry, writeFlags);
+				this.writeEntry(entry, writeFlags);
 			}
 
 			this._writer.Write(DxfCode.Start, DxfFileToken.EndTable);
