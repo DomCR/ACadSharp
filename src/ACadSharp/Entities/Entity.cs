@@ -32,6 +32,17 @@ public abstract class Entity : CadObject, IEntity
 	[DxfCodeValue(62, 420)]
 	public Color Color { get; set; } = Color.ByLayer;
 
+	/// <summary>
+	/// Gets a value indicating whether any proxy geometries are present.
+	/// </summary>
+	public bool HasProxyGeometries
+	{
+		get
+		{
+			return this._proxyGeometries != null && this._proxyGeometries.Count > 0;
+		}
+	}
+
 	/// <inheritdoc/>
 	[DxfCodeValue(60)]
 	public bool IsInvisible { get; set; } = false;

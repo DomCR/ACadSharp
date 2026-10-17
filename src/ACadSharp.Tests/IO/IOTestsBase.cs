@@ -23,6 +23,8 @@ public abstract class IOTestsBase
 	{
 		Failsafe = false,
 		IgnoreProxyGraphics = false,
+		KeepUnknownEntities = true,
+		KeepUnknownNonGraphicalObjects = true,
 	};
 
 	protected readonly DxfReaderConfiguration _dxfConfiguration = new DxfReaderConfiguration

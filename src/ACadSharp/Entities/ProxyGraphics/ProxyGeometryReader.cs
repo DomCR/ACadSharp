@@ -12,7 +12,7 @@ namespace ACadSharp.Entities.ProxyGraphics;
 
 internal class ProxyGeometryReader
 {
-	internal static IEnumerable<IProxyGeometry> ReadGeometries(CadDocumentBuilder builder, byte[] arr)
+	public static IEnumerable<IProxyGeometry> ReadGeometries(CadDocumentBuilder builder, byte[] arr)
 	{
 		List<IProxyGeometry> geometries = new();
 

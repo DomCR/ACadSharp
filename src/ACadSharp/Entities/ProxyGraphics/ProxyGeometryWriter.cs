@@ -49,7 +49,7 @@ internal class ProxyGeometryWriter
 		{
 			byte[] chunk = chunks[i];
 			//Size includes the size and type
-			stream.Write<int, LittleEndianConverter>(chunk.Length + 8);
+			stream.Write<int, LittleEndianConverter>(chunk.Length + 4);
 			stream.WriteBytes(chunk);
 		}
 

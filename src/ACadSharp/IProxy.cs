@@ -11,7 +11,7 @@ public interface IProxy
 	/// <summary>
 	/// Application object's class ID.
 	/// </summary>
-	int ClassId { get; }
+	int ClassNumber { get; }
 
 	/// <summary>
 	/// Application object's class.

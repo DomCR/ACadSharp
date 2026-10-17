@@ -1,7 +1,9 @@
-﻿using ACadSharp.IO;
+﻿using ACadSharp.Entities;
+using ACadSharp.IO;
 using ACadSharp.Tests.TestModels;
 using System.Diagnostics;
 using System.IO;
+using System.Linq;
 using Xunit;
 using Xunit.Abstractions;
 
@@ -34,6 +36,11 @@ public class LocalSampleTests : IOTestsBase
 			return;
 
 		CadDocument doc = DwgReader.Read(test.Path, this._dwgConfiguration, this.onNotification);
+
+		foreach (var item in doc.Entities.OfType<ProxyEntity>())
+		{
+
+		}
 
 		if (doc.Header.Version == ACadVersion.AC1021)
 		{
