@@ -156,8 +156,24 @@ public class DxfReader : CadReaderBase<DxfReaderConfiguration>
 		this._builder = new DxfDocumentBuilder(this._version, this._document, this.Configuration);
 		this._builder.OnNotification += this.onNotificationEvent;
 
+		//Only created if a TABLE is found outside of the TABLES section (non-standard dxf)
+		DxfTablesSectionReader orphanTablesReader = null;
+
 		while (this._reader.ValueAsString != DxfFileToken.EndOfFile)
 		{
+			if (this._reader.ValueAsString == DxfFileToken.TableEntry)
+			{
+				if (orphanTablesReader == null)
+				{
+					this.triggerNotification("Non-standard DXF: TABLE entry found outside of a TABLES section. Attempting recovery.", NotificationType.Warning);
+					orphanTablesReader = new DxfTablesSectionReader(this._reader, this._builder);
+				}
+
+				//Reads up to the ENDTAB token, which the loop skips like any other token outside of a section
+				orphanTablesReader.ReadTable();
+				continue;
+			}
+
 			if (this._reader.ValueAsString != DxfFileToken.BeginSection)
 			{
 				this._reader.ReadNext();
@@ -173,6 +189,11 @@ public class DxfReader : CadReaderBase<DxfReaderConfiguration>
 				case DxfFileToken.HeaderSection:
 					this._document.Header = this.ReadHeader();
 					this._document.Header.Document = this._document;
+					//Handle 0 belongs to the document, a seed of 0 would hand it out again
+					if (this._document.Header.HandleSeed == 0)
+					{
+						this._document.Header.HandleSeed = 1;
+					}
 					this._builder.InitialHandSeed = this._document.Header.HandleSeed;
 					break;
 				case DxfFileToken.ClassesSection:

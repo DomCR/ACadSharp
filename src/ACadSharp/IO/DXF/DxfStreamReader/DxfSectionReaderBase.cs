@@ -836,6 +836,12 @@ internal abstract class DxfSectionReaderBase
 						default:
 							break;
 					}
+
+					//The codes that follow belong to the dimension type,
+					//DimensionLinear keeps its points in AcDbAlignedDimension and the code 50 is read by this method
+					this.currentSubclass = tmp.CadObject is DimensionLinear
+						? DxfSubclassMarker.AlignedDimension
+						: tmp.CadObject.SubclassMarker;
 				}
 				return true;
 			//Measurement - read only
@@ -843,8 +849,6 @@ internal abstract class DxfSectionReaderBase
 				return true;
 			//Undocumented codes
 			case 73:
-			case 74:
-			case 75:
 			case 90:
 			case 361:
 				return true;
@@ -896,7 +900,14 @@ internal abstract class DxfSectionReaderBase
 					this.currentSubclass = tmp.CadObject.SubclassMarker;
 				}
 
-				return this.tryAssignCurrentValue(template.CadObject, map);
+				if (this.tryAssignCurrentValue(template.CadObject, map))
+				{
+					return true;
+				}
+
+				//Pre R13 files write AcDbDimension codes like the text (1) after the code 70, mixed with the codes of the dimension type
+				return this._builder.Version < ACadVersion.AC1012
+					&& this.tryAssignCurrentValue(template.CadObject, map.SubClasses[DxfSubclassMarker.Dimension]);
 		}
 	}
 
