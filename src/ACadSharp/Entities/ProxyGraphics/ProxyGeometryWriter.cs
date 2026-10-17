@@ -12,9 +12,9 @@ namespace ACadSharp.Entities.ProxyGraphics;
 
 internal class ProxyGeometryWriter
 {
-	private readonly ACadVersion _version;
-
 	private readonly Encoding _encoding;
+
+	private readonly ACadVersion _version;
 
 	private StreamIO _stream;
 
@@ -56,6 +56,12 @@ internal class ProxyGeometryWriter
 		return ms.ToArray();
 	}
 
+	private void writeExtents(ProxyExtents extents)
+	{
+		this.writePoint(extents.Min);
+		this.writePoint(extents.Max);
+	}
+
 	private byte[] writeGeometry(IProxyGeometry geometry)
 	{
 		MemoryStream ms = new MemoryStream();
@@ -66,8 +72,7 @@ internal class ProxyGeometryWriter
 		switch (geometry)
 		{
 			case ProxyExtents extents:
-				this.writePoint(extents.Min);
-				this.writePoint(extents.Max);
+				this.writeExtents(extents);
 				break;
 			case ProxyCircle circle:
 				this.writePoint(circle.Center);
@@ -208,285 +213,6 @@ internal class ProxyGeometryWriter
 		return ms.ToArray();
 	}
 
-	private void writePoint(XYZ point)
-	{
-		this._stream.Write<double, LittleEndianConverter>(point.X);
-		this._stream.Write<double, LittleEndianConverter>(point.Y);
-		this._stream.Write<double, LittleEndianConverter>(point.Z);
-	}
-
-	private void writePoints(List<XYZ> points)
-	{
-		points ??= new List<XYZ>();
-		this._stream.Write<int, LittleEndianConverter>(points.Count);
-		foreach (XYZ point in points)
-		{
-			this.writePoint(point);
-		}
-	}
-
-	private void writeMatrix(Matrix4 matrix)
-	{
-		this._stream.Write<double, LittleEndianConverter>(matrix.M00);
-		this._stream.Write<double, LittleEndianConverter>(matrix.M01);
-		this._stream.Write<double, LittleEndianConverter>(matrix.M02);
-		this._stream.Write<double, LittleEndianConverter>(matrix.M03);
-		this._stream.Write<double, LittleEndianConverter>(matrix.M10);
-		this._stream.Write<double, LittleEndianConverter>(matrix.M11);
-		this._stream.Write<double, LittleEndianConverter>(matrix.M12);
-		this._stream.Write<double, LittleEndianConverter>(matrix.M13);
-		this._stream.Write<double, LittleEndianConverter>(matrix.M20);
-		this._stream.Write<double, LittleEndianConverter>(matrix.M21);
-		this._stream.Write<double, LittleEndianConverter>(matrix.M22);
-		this._stream.Write<double, LittleEndianConverter>(matrix.M23);
-		this._stream.Write<double, LittleEndianConverter>(matrix.M30);
-		this._stream.Write<double, LittleEndianConverter>(matrix.M31);
-		this._stream.Write<double, LittleEndianConverter>(matrix.M32);
-		this._stream.Write<double, LittleEndianConverter>(matrix.M33);
-	}
-
-	private void writePaddedString(string value)
-	{
-		// PS : Padded string, terminated with a zero byte and aligned to the next 4-byte boundary
-		byte[] bytes = this._encoding.GetBytes(value ?? string.Empty);
-		this._stream.WriteBytes(bytes);
-		this._stream.WriteBytes(new byte[] { 0 });
-
-		int length = bytes.Length + 1;
-		if (length % 4 != 0)
-		{
-			this._stream.WriteBytes(new byte[4 - length % 4]);
-		}
-	}
-
-	private void writePaddedUnicodeString(string value)
-	{
-		// PUS : Padded Unicode string, terminated by 2 zero bytes and aligned to the next 4-byte boundary
-		value ??= string.Empty;
-		this._stream.WriteBytes(Encoding.Unicode.GetBytes(value));
-		this._stream.WriteBytes(new byte[] { 0, 0 });
-
-		if (value.Length % 2 == 0)
-		{
-			this._stream.WriteBytes(new byte[] { 0, 0 });
-		}
-	}
-
-	private void writeTraits(PrimitiveTraits traits, int count, bool isEdge)
-	{
-		if (traits == null)
-		{
-			this._stream.Write<int, LittleEndianConverter>((int)PrimitiveFlags.None);
-			return;
-		}
-
-		PrimitiveFlags flags = PrimitiveFlags.None;
-		if (traits.Colors.Count > 0)
-			flags |= PrimitiveFlags.HasColors;
-		if (traits.LayerHandles.Count > 0)
-			flags |= PrimitiveFlags.HasLayers;
-		if (isEdge && ((EdgeTraits)traits).LineTypeHandles.Count > 0)
-			flags |= PrimitiveFlags.HasLineTypes;
-		if (traits.MakerIds.Count > 0)
-			flags |= PrimitiveFlags.HasMarkers;
-		if (!isEdge && ((FaceTraits)traits).Normals.Count > 0)
-			flags |= PrimitiveFlags.HasNormals;
-		if (traits.VisibilityIndicators.Count > 0)
-			flags |= PrimitiveFlags.HasVisibilities;
-
-		this._stream.Write<int, LittleEndianConverter>((int)flags);
-
-		if (flags.HasFlag(PrimitiveFlags.HasColors))
-		{
-			this.writeValues(traits.Colors, count, v => this._stream.Write<int, LittleEndianConverter>(v));
-		}
-		if (flags.HasFlag(PrimitiveFlags.HasLayers))
-		{
-			this.writeValues(traits.LayerHandles, count, v => this._stream.Write<int, LittleEndianConverter>((int)v));
-		}
-		if (flags.HasFlag(PrimitiveFlags.HasLineTypes))
-		{
-			this.writeValues(((EdgeTraits)traits).LineTypeHandles, count, v => this._stream.Write<int, LittleEndianConverter>((int)v));
-		}
-		if (flags.HasFlag(PrimitiveFlags.HasMarkers))
-		{
-			this.writeValues(traits.MakerIds, count, v => this._stream.Write<int, LittleEndianConverter>(v));
-		}
-		if (flags.HasFlag(PrimitiveFlags.HasNormals))
-		{
-			this.writeValues(((FaceTraits)traits).Normals, count, this.writePoint);
-		}
-		if (flags.HasFlag(PrimitiveFlags.HasVisibilities))
-		{
-			this.writeValues(traits.VisibilityIndicators, count, v => this._stream.Write<int, LittleEndianConverter>(v));
-		}
-	}
-
-	private void writeValues<T>(List<T> values, int count, Action<T> write)
-	{
-		for (int i = 0; i < count; i++)
-		{
-			write(i < values.Count ? values[i] : default);
-		}
-	}
-
-	private void writeVertexTraits(VertexTraits traits, int count)
-	{
-		if (traits == null)
-		{
-			this._stream.Write<int, LittleEndianConverter>((int)PrimitiveFlags.None);
-			return;
-		}
-
-		PrimitiveFlags flags = PrimitiveFlags.HasOrientation;
-		if (traits.Normals != null && traits.Normals.Count > 0)
-		{
-			flags |= PrimitiveFlags.HasNormals;
-		}
-
-		this._stream.Write<int, LittleEndianConverter>((int)flags);
-
-		if (flags.HasFlag(PrimitiveFlags.HasNormals))
-		{
-			this.writeValues(traits.Normals, count, this.writePoint);
-		}
-
-		this._stream.Write<int, LittleEndianConverter>(traits.Orientation);
-	}
-
-	private void writeMesh(ProxyMesh mesh)
-	{
-		this._stream.Write<int, LittleEndianConverter>(mesh.RowCount);
-		this._stream.Write<int, LittleEndianConverter>(mesh.ColumnCount);
-
-		int vertexCount = mesh.RowCount * mesh.ColumnCount;
-		this.writeValues(mesh.Vertices, vertexCount, this.writePoint);
-
-		int edgeCount = (mesh.RowCount - 1) * mesh.ColumnCount + (mesh.ColumnCount - 1) * mesh.RowCount;
-		int faceCount = (mesh.RowCount - 1) * (mesh.ColumnCount - 1);
-
-		this.writeTraits(mesh.EdgeTraits, edgeCount, true);
-		this.writeTraits(mesh.FaceTraits, faceCount, false);
-		this.writeVertexTraits(mesh.VertexTraits, vertexCount);
-	}
-
-	private void writeShell(ProxyShell shell)
-	{
-		this.writePoints(shell.Vertices);
-
-		List<int[]> faces = shell.Faces ?? new List<int[]>();
-
-		// Face list size, includes the count entry of each face
-		this._stream.Write<int, LittleEndianConverter>(faces.Sum(f => f.Length + 1));
-
-		int edgeCount = 0;
-		foreach (int[] face in faces)
-		{
-			this._stream.Write<int, LittleEndianConverter>(face.Length);
-			foreach (int index in face)
-			{
-				this._stream.Write<int, LittleEndianConverter>(index);
-			}
-			edgeCount += face.Length;
-		}
-
-		this.writeTraits(shell.EdgeTraits, edgeCount, true);
-		this.writeTraits(shell.FaceTraits, faces.Count, false);
-		this.writeVertexTraits(shell.VertexTraits, shell.Vertices?.Count ?? 0);
-	}
-
-	private void writeTextStyleFlags(int textLength, bool isRaw, double height, double widthFactor, double obliqueAngle, double tracking,
-		bool isBackwards, bool isUpsideDown, bool isVertical, bool isUnderlined, bool isOverlined)
-	{
-		this._stream.Write<int, LittleEndianConverter>(textLength);
-		this._stream.Write<int, LittleEndianConverter>(isRaw ? 0 : 1);
-		this._stream.Write<double, LittleEndianConverter>(height);
-		this._stream.Write<double, LittleEndianConverter>(widthFactor);
-		this._stream.Write<double, LittleEndianConverter>(obliqueAngle);
-		this._stream.Write<double, LittleEndianConverter>(tracking);
-		this._stream.Write<int, LittleEndianConverter>(isBackwards ? 1 : 0);
-		this._stream.Write<int, LittleEndianConverter>(isUpsideDown ? 1 : 0);
-		this._stream.Write<int, LittleEndianConverter>(isVertical ? 1 : 0);
-		this._stream.Write<int, LittleEndianConverter>(isUnderlined ? 1 : 0);
-		this._stream.Write<int, LittleEndianConverter>(isOverlined ? 1 : 0);
-	}
-
-	private void writeText2(ProxyText2 text)
-	{
-		this.writePoint(text.StartPoint);
-		this.writePoint(text.Normal);
-		this.writePoint(text.TextDirection);
-		this.writePaddedString(text.Text);
-
-		this.writeTextStyleFlags(text.TextLength, text.IsRaw, text.Height, text.WidthFactor, text.ObliqueAngle, text.TrackingPercentage,
-			text.IsBackwards, text.IsUpsideDown, text.IsVertical, text.IsUnderlined, text.IsOverlined);
-
-		this.writePaddedString(text.FontFilename);
-		this.writePaddedString(text.BigFontFilename);
-	}
-
-	private void writeUnicodeText2(ProxyUnicodeText2 text)
-	{
-		this.writePoint(text.StartPoint);
-		this.writePoint(text.Normal);
-		this.writePoint(text.TextDirection);
-		this.writePaddedUnicodeString(text.Text);
-
-		this.writeTextStyleFlags(text.TextLength, text.IsRaw, text.Height, text.WidthFactor, text.ObliqueAngle, text.TrackingPercentage,
-			text.IsBackwards, text.IsUpsideDown, text.IsVertical, text.IsUnderlined, text.IsOverlined);
-
-		TrueTypeFontDescriptor font = text.FontDescriptor ?? new TrueTypeFontDescriptor();
-		this._stream.Write<int, LittleEndianConverter>(font.IsBold ? 1 : 0);
-		this._stream.Write<int, LittleEndianConverter>(font.IsItalic ? 1 : 0);
-		this._stream.Write<int, LittleEndianConverter>(font.Charset);
-		this._stream.Write<int, LittleEndianConverter>(font.PitchAndFamily);
-		this.writePaddedUnicodeString(font.Typeface);
-		this.writePaddedUnicodeString(font.FontFilename);
-		this.writePaddedUnicodeString(text.BigFontFilename);
-	}
-
-	private void writeSubentTrueColor(ProxySubentTrueColor trueColor)
-	{
-		byte b1 = 0, b2 = 0, b3 = 0;
-
-		switch (trueColor.ColorMethod)
-		{
-			case ProxyColorMethod.ByColor:
-				b1 = trueColor.Color.R;
-				b2 = trueColor.Color.G;
-				b3 = trueColor.Color.B;
-				break;
-			case ProxyColorMethod.ByACI:
-				b1 = (byte)trueColor.Color.Index;
-				break;
-		}
-
-		this._stream.WriteBytes(new byte[] { b1, b2, b3, (byte)trueColor.ColorMethod });
-	}
-
-	private void writePushClip(ProxyPushClip clip)
-	{
-		this.writePoint(clip.Extrusion);
-		this.writePoint(clip.ClipBoundaryOrigin);
-
-		List<XY> boundary = clip.ClipBoundary ?? new List<XY>();
-		this._stream.Write<int, LittleEndianConverter>(boundary.Count);
-		foreach (XY point in boundary)
-		{
-			this._stream.Write<double, LittleEndianConverter>(point.X);
-			this._stream.Write<double, LittleEndianConverter>(point.Y);
-		}
-
-		this.writeMatrix(clip.ClipBoundaryTransformMatrix);
-		this.writeMatrix(clip.InverseBlockTransformMatrix);
-
-		this._stream.Write<int, LittleEndianConverter>(clip.FrontClipOn ? 1 : 0);
-		this._stream.Write<int, LittleEndianConverter>(clip.BackClipOn ? 1 : 0);
-		this._stream.Write<double, LittleEndianConverter>(clip.FrontClip);
-		this._stream.Write<double, LittleEndianConverter>(clip.BackClip);
-		this._stream.Write<int, LittleEndianConverter>(clip.DrawBoundary ? 1 : 0);
-	}
-
 	private void writeLwPolyline(ProxyLwPolyine proxy)
 	{
 		LwPolyline pline = proxy.Entity ?? new LwPolyline();
@@ -585,5 +311,284 @@ internal class ProxyGeometryWriter
 
 		// Additional unknown data after regular LwPolyline Entity data
 		this._stream.WriteBytes(new byte[] { proxy.Unknown1, proxy.Unknown2, proxy.Unknown3 });
+	}
+
+	private void writeMatrix(Matrix4 matrix)
+	{
+		this._stream.Write<double, LittleEndianConverter>(matrix.M00);
+		this._stream.Write<double, LittleEndianConverter>(matrix.M01);
+		this._stream.Write<double, LittleEndianConverter>(matrix.M02);
+		this._stream.Write<double, LittleEndianConverter>(matrix.M03);
+		this._stream.Write<double, LittleEndianConverter>(matrix.M10);
+		this._stream.Write<double, LittleEndianConverter>(matrix.M11);
+		this._stream.Write<double, LittleEndianConverter>(matrix.M12);
+		this._stream.Write<double, LittleEndianConverter>(matrix.M13);
+		this._stream.Write<double, LittleEndianConverter>(matrix.M20);
+		this._stream.Write<double, LittleEndianConverter>(matrix.M21);
+		this._stream.Write<double, LittleEndianConverter>(matrix.M22);
+		this._stream.Write<double, LittleEndianConverter>(matrix.M23);
+		this._stream.Write<double, LittleEndianConverter>(matrix.M30);
+		this._stream.Write<double, LittleEndianConverter>(matrix.M31);
+		this._stream.Write<double, LittleEndianConverter>(matrix.M32);
+		this._stream.Write<double, LittleEndianConverter>(matrix.M33);
+	}
+
+	private void writeMesh(ProxyMesh mesh)
+	{
+		this._stream.Write<int, LittleEndianConverter>(mesh.RowCount);
+		this._stream.Write<int, LittleEndianConverter>(mesh.ColumnCount);
+
+		int vertexCount = mesh.RowCount * mesh.ColumnCount;
+		this.writeValues(mesh.Vertices, vertexCount, this.writePoint);
+
+		int edgeCount = (mesh.RowCount - 1) * mesh.ColumnCount + (mesh.ColumnCount - 1) * mesh.RowCount;
+		int faceCount = (mesh.RowCount - 1) * (mesh.ColumnCount - 1);
+
+		this.writeTraits(mesh.EdgeTraits, edgeCount, true);
+		this.writeTraits(mesh.FaceTraits, faceCount, false);
+		this.writeVertexTraits(mesh.VertexTraits, vertexCount);
+	}
+
+	private void writePaddedString(string value)
+	{
+		// PS : Padded string, terminated with a zero byte and aligned to the next 4-byte boundary
+		byte[] bytes = this._encoding.GetBytes(value ?? string.Empty);
+		this._stream.WriteBytes(bytes);
+		this._stream.WriteBytes(new byte[] { 0 });
+
+		int length = bytes.Length + 1;
+		if (length % 4 != 0)
+		{
+			this._stream.WriteBytes(new byte[4 - length % 4]);
+		}
+	}
+
+	private void writePaddedUnicodeString(string value)
+	{
+		// PUS : Padded Unicode string, terminated by 2 zero bytes and aligned to the next 4-byte boundary
+		value ??= string.Empty;
+		this._stream.WriteBytes(Encoding.Unicode.GetBytes(value));
+		this._stream.WriteBytes(new byte[] { 0, 0 });
+
+		if (value.Length % 2 == 0)
+		{
+			this._stream.WriteBytes(new byte[] { 0, 0 });
+		}
+	}
+
+	private void writePoint(XYZ point)
+	{
+		this._stream.Write<double, LittleEndianConverter>(point.X);
+		this._stream.Write<double, LittleEndianConverter>(point.Y);
+		this._stream.Write<double, LittleEndianConverter>(point.Z);
+	}
+
+	private void writePoints(List<XYZ> points)
+	{
+		points ??= new List<XYZ>();
+		this._stream.Write<int, LittleEndianConverter>(points.Count);
+		foreach (XYZ point in points)
+		{
+			this.writePoint(point);
+		}
+	}
+
+	private void writePushClip(ProxyPushClip clip)
+	{
+		this.writePoint(clip.Extrusion);
+		this.writePoint(clip.ClipBoundaryOrigin);
+
+		List<XY> boundary = clip.ClipBoundary ?? new List<XY>();
+		this._stream.Write<int, LittleEndianConverter>(boundary.Count);
+		foreach (XY point in boundary)
+		{
+			this._stream.Write<double, LittleEndianConverter>(point.X);
+			this._stream.Write<double, LittleEndianConverter>(point.Y);
+		}
+
+		this.writeMatrix(clip.ClipBoundaryTransformMatrix);
+		this.writeMatrix(clip.InverseBlockTransformMatrix);
+
+		this._stream.Write<int, LittleEndianConverter>(clip.FrontClipOn ? 1 : 0);
+		this._stream.Write<int, LittleEndianConverter>(clip.BackClipOn ? 1 : 0);
+		this._stream.Write<double, LittleEndianConverter>(clip.FrontClip);
+		this._stream.Write<double, LittleEndianConverter>(clip.BackClip);
+		this._stream.Write<int, LittleEndianConverter>(clip.DrawBoundary ? 1 : 0);
+	}
+
+	private void writeShell(ProxyShell shell)
+	{
+		this.writePoints(shell.Vertices);
+
+		List<int[]> faces = shell.Faces ?? new List<int[]>();
+
+		// Face list size, includes the count entry of each face
+		this._stream.Write<int, LittleEndianConverter>(faces.Sum(f => f.Length + 1));
+
+		int edgeCount = 0;
+		foreach (int[] face in faces)
+		{
+			this._stream.Write<int, LittleEndianConverter>(face.Length);
+			foreach (int index in face)
+			{
+				this._stream.Write<int, LittleEndianConverter>(index);
+			}
+			edgeCount += face.Length;
+		}
+
+		this.writeTraits(shell.EdgeTraits, edgeCount, true);
+		this.writeTraits(shell.FaceTraits, faces.Count, false);
+		this.writeVertexTraits(shell.VertexTraits, shell.Vertices?.Count ?? 0);
+	}
+
+	private void writeSubentTrueColor(ProxySubentTrueColor trueColor)
+	{
+		byte b1 = 0, b2 = 0, b3 = 0;
+
+		switch (trueColor.ColorMethod)
+		{
+			case ProxyColorMethod.ByColor:
+				b1 = trueColor.Color.R;
+				b2 = trueColor.Color.G;
+				b3 = trueColor.Color.B;
+				break;
+			case ProxyColorMethod.ByACI:
+				b1 = (byte)trueColor.Color.Index;
+				break;
+		}
+
+		this._stream.WriteBytes(new byte[] { b1, b2, b3, (byte)trueColor.ColorMethod });
+	}
+
+	private void writeText2(ProxyText2 text)
+	{
+		this.writePoint(text.StartPoint);
+		this.writePoint(text.Normal);
+		this.writePoint(text.TextDirection);
+		this.writePaddedString(text.Text);
+
+		this.writeTextStyleFlags(text.TextLength, text.IsRaw, text.Height, text.WidthFactor, text.ObliqueAngle, text.TrackingPercentage,
+			text.IsBackwards, text.IsUpsideDown, text.IsVertical, text.IsUnderlined, text.IsOverlined);
+
+		this.writePaddedString(text.FontFilename);
+		this.writePaddedString(text.BigFontFilename);
+	}
+
+	private void writeTextStyleFlags(int textLength, bool isRaw, double height, double widthFactor, double obliqueAngle, double tracking,
+		bool isBackwards, bool isUpsideDown, bool isVertical, bool isUnderlined, bool isOverlined)
+	{
+		this._stream.Write<int, LittleEndianConverter>(textLength);
+		this._stream.Write<int, LittleEndianConverter>(isRaw ? 0 : 1);
+		this._stream.Write<double, LittleEndianConverter>(height);
+		this._stream.Write<double, LittleEndianConverter>(widthFactor);
+		this._stream.Write<double, LittleEndianConverter>(obliqueAngle);
+		this._stream.Write<double, LittleEndianConverter>(tracking);
+		this._stream.Write<int, LittleEndianConverter>(isBackwards ? 1 : 0);
+		this._stream.Write<int, LittleEndianConverter>(isUpsideDown ? 1 : 0);
+		this._stream.Write<int, LittleEndianConverter>(isVertical ? 1 : 0);
+		this._stream.Write<int, LittleEndianConverter>(isUnderlined ? 1 : 0);
+		this._stream.Write<int, LittleEndianConverter>(isOverlined ? 1 : 0);
+	}
+
+	private void writeTraits(PrimitiveTraits traits, int count, bool isEdge)
+	{
+		if (traits == null)
+		{
+			this._stream.Write<int, LittleEndianConverter>((int)PrimitiveFlags.None);
+			return;
+		}
+
+		PrimitiveFlags flags = PrimitiveFlags.None;
+		if (traits.Colors.Count > 0)
+			flags |= PrimitiveFlags.HasColors;
+		if (traits.LayerHandles.Count > 0)
+			flags |= PrimitiveFlags.HasLayers;
+		if (isEdge && ((EdgeTraits)traits).LineTypeHandles.Count > 0)
+			flags |= PrimitiveFlags.HasLineTypes;
+		if (traits.MakerIds.Count > 0)
+			flags |= PrimitiveFlags.HasMarkers;
+		if (!isEdge && ((FaceTraits)traits).Normals.Count > 0)
+			flags |= PrimitiveFlags.HasNormals;
+		if (traits.VisibilityIndicators.Count > 0)
+			flags |= PrimitiveFlags.HasVisibilities;
+
+		this._stream.Write<int, LittleEndianConverter>((int)flags);
+
+		if (flags.HasFlag(PrimitiveFlags.HasColors))
+		{
+			this.writeValues(traits.Colors, count, v => this._stream.Write<int, LittleEndianConverter>(v));
+		}
+		if (flags.HasFlag(PrimitiveFlags.HasLayers))
+		{
+			this.writeValues(traits.LayerHandles, count, v => this._stream.Write<int, LittleEndianConverter>((int)v));
+		}
+		if (flags.HasFlag(PrimitiveFlags.HasLineTypes))
+		{
+			this.writeValues(((EdgeTraits)traits).LineTypeHandles, count, v => this._stream.Write<int, LittleEndianConverter>((int)v));
+		}
+		if (flags.HasFlag(PrimitiveFlags.HasMarkers))
+		{
+			this.writeValues(traits.MakerIds, count, v => this._stream.Write<int, LittleEndianConverter>(v));
+		}
+		if (flags.HasFlag(PrimitiveFlags.HasNormals))
+		{
+			this.writeValues(((FaceTraits)traits).Normals, count, this.writePoint);
+		}
+		if (flags.HasFlag(PrimitiveFlags.HasVisibilities))
+		{
+			this.writeValues(traits.VisibilityIndicators, count, v => this._stream.Write<int, LittleEndianConverter>(v));
+		}
+	}
+
+	private void writeUnicodeText2(ProxyUnicodeText2 text)
+	{
+		this.writePoint(text.StartPoint);
+		this.writePoint(text.Normal);
+		this.writePoint(text.TextDirection);
+		this.writePaddedUnicodeString(text.Text);
+
+		this.writeTextStyleFlags(text.TextLength, text.IsRaw, text.Height, text.WidthFactor, text.ObliqueAngle, text.TrackingPercentage,
+			text.IsBackwards, text.IsUpsideDown, text.IsVertical, text.IsUnderlined, text.IsOverlined);
+
+		TrueTypeFontDescriptor font = text.FontDescriptor ?? new TrueTypeFontDescriptor();
+		this._stream.Write<int, LittleEndianConverter>(font.IsBold ? 1 : 0);
+		this._stream.Write<int, LittleEndianConverter>(font.IsItalic ? 1 : 0);
+		this._stream.Write<int, LittleEndianConverter>(font.Charset);
+		this._stream.Write<int, LittleEndianConverter>(font.PitchAndFamily);
+		this.writePaddedUnicodeString(font.Typeface);
+		this.writePaddedUnicodeString(font.FontFilename);
+		this.writePaddedUnicodeString(text.BigFontFilename);
+	}
+
+	private void writeValues<T>(List<T> values, int count, Action<T> write)
+	{
+		for (int i = 0; i < count; i++)
+		{
+			write(i < values.Count ? values[i] : default);
+		}
+	}
+
+	private void writeVertexTraits(VertexTraits traits, int count)
+	{
+		if (traits == null)
+		{
+			this._stream.Write<int, LittleEndianConverter>((int)PrimitiveFlags.None);
+			return;
+		}
+
+		PrimitiveFlags flags = PrimitiveFlags.HasOrientation;
+		if (traits.Normals != null && traits.Normals.Count > 0)
+		{
+			flags |= PrimitiveFlags.HasNormals;
+		}
+
+		this._stream.Write<int, LittleEndianConverter>((int)flags);
+
+		if (flags.HasFlag(PrimitiveFlags.HasNormals))
+		{
+			this.writeValues(traits.Normals, count, this.writePoint);
+		}
+
+		this._stream.Write<int, LittleEndianConverter>(traits.Orientation);
 	}
 }
