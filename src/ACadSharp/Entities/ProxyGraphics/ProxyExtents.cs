@@ -1,4 +1,4 @@
-﻿using CSMath;
+using CSMath;
 
 namespace ACadSharp.Entities.ProxyGraphics;
 
@@ -25,4 +25,10 @@ public class ProxyExtents : IProxyGeometry
 	/// </summary>
 	/// <value>An <see cref="XYZ"/> representing the minimum corner coordinates.</value>
 	public XYZ Min { get; set; }
+
+	/// <inheritdoc/>
+	public IProxyGeometry Clone()
+	{
+		return (IProxyGeometry)this.MemberwiseClone();
+	}
 }

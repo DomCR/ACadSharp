@@ -360,6 +360,13 @@ internal partial class DwgObjectWriter : DwgSectionIO
 		this._writer.HandleReference(DwgReferenceType.HardOwnership, insert.Attributes.Seqend);
 	}
 
+	private void writeCustomTableData(TableEntity.CustomDataEntry entry)
+	{
+		//TV 300 Item name
+		this._writer.WriteVariableText(entry.Name);
+		this.writeCadValue(entry.Value);
+	}
+
 	private void writeDimensionAligned(DimensionAligned dimension)
 	{
 		//Common:
@@ -605,6 +612,9 @@ internal partial class DwgObjectWriter : DwgSectionIO
 					default:
 						throw new NotImplementedException($"Polyline not implemented : {entity.GetType().FullName}");
 				}
+				break;
+			case ProxyEntity proxyEntity:
+				this.writeProxyEntity(proxyEntity);
 				break;
 			case Ray ray:
 				this.writeRay(ray);
@@ -2138,6 +2148,47 @@ internal partial class DwgObjectWriter : DwgSectionIO
 		this._writer.HandleReference(DwgReferenceType.HardOwnership, pline.Vertices.Seqend);
 	}
 
+	private void writeProxyEntity(ProxyEntity proxy)
+	{
+		this._writer.WriteBitLong(proxy.ClassNumber);
+
+		if (this.R2000Plus)
+		{
+			if (this._version > ACadVersion.AC1015)
+			{
+				//The string stream seems to contain the dxfsubclass
+				this._writer.WriteVariableText(proxy.DxfClass != null 
+					? proxy.DxfClass.CppClassName : string.Empty);
+			}
+
+			//Before R2018:
+			if (!this.R2018Plus)
+			{
+				//Object Drawing Format BL 95 This is a bitwise OR of the version and the
+				//maintenance version, shifted 16 bits to the left.
+				this._writer.WriteBitLong((int)proxy.Version | (proxy.MaintenanceVersion << 16));
+
+			}
+			//R2018+:
+			else
+			{
+				//Version BL 71 The AutoCAD version of the object.
+				this._writer.WriteBitLong((int)proxy.Version);
+				//Maintenance version BL 97 The AutoCAD maintenance version of the object.
+				this._writer.WriteBitLong((int)proxy.MaintenanceVersion);
+			}
+
+			//R2000 +:
+			//Original Data Format B 70 0 for dwg, 1 for dxf
+			this._writer.WriteBit(proxy.OriginalDataFormatDxf);
+		}
+		else
+		{
+			this._writer.WriteBitLong(proxy.DxfClass != null
+				? proxy.DxfClass.ItemClassId : 0);
+		}
+	}
+
 	private void writeRay(Ray ray)
 	{
 		//Point 3BD 10
@@ -2328,200 +2379,6 @@ internal partial class DwgObjectWriter : DwgSectionIO
 		}
 	}
 
-	private void writeTableEntity(TableEntity table)
-	{
-		this.writeCommonInsertData(table);
-
-		if (this.R2010Plus)
-		{
-			//RC Unknown (default 0)
-			this._writer.WriteByte(0);
-			//H Unknown (soft pointer, default NULL)
-			this._writer.HandleReference(DwgReferenceType.SoftPointer, null);
-			//BL Unknown (default 0)
-			this._writer.WriteBitLong(0);
-
-			//R2013
-			if (this.R2013Plus)
-			{
-				//Unknown (default 0)
-				this._writer.WriteBitLong(0);
-			}
-			else
-			{
-				//R2010
-				//B Unknown (default true)
-				this._writer.WriteBit(true);
-			}
-
-			//Here the table content is present (see TABLECONTENT object),
-			//without the common OBJECT data.
-			//See paragraph 20.4.97.
-			this.writeTableContent(table.Content);
-
-			//BS Unknown (default 38)
-			this._writer.WriteBitShort(38);
-			//3BD 11 Horizontal direction
-			this._writer.Write3BitDouble(table.HorizontalDirection);
-
-			//BL Has break data flag (0 = no break data, 1 = has break data)
-			//Begin break data(optional)
-			this._writer.WriteBitLong(table.HasBreadData ? 1 : 0);
-			if (table.HasBreadData)
-			{
-				//BL Option flags:
-				this._writer.WriteBitLong((int)table.BreakData.Flags);
-				//BL Flow direction:
-				this._writer.WriteBitLong((int)table.BreakData.FlowDirection);
-				//BD Break spacing
-				this._writer.WriteBitDouble(table.BreakData.BreakSpacing);
-				//BL Unknown flags
-				this._writer.WriteBitLong(0);
-				//BL Unknown flags
-				this._writer.WriteBitLong(0);
-				//BL Number of manual positions (break heights)
-				this._writer.WriteBitLong(table.BreakData.Heights.Count);
-				foreach (var breakHeight in table.BreakData.Heights)
-				{
-					//3BD Position
-					this._writer.Write3BitDouble(breakHeight.Position);
-					//BD Height
-					this._writer.WriteBitDouble(breakHeight.Height);
-					//BL Flags(meaning unknown)
-					this._writer.WriteBitLong(0);
-				}
-			}
-
-			//BL Number of break row ranges (there is always at least 1)
-			this._writer.WriteBitLong(table.BreakRowRanges.Count);
-			foreach (var breakRowRange in table.BreakRowRanges)
-			{
-				//3BD Position
-				this._writer.Write3BitDouble(breakRowRange.Position);
-				//BL Start row index
-				this._writer.WriteBitLong(breakRowRange.StartRowIndex);
-				//BL End row index
-				this._writer.WriteBitLong(breakRowRange.EndRowIndex);
-			}
-
-			return;
-		}
-
-		//Until R2007
-
-		//Common:
-		//Flag for table value BS 90
-		//	Bit flags, 0x06(0x02 + 0x04): has block,
-		//	0x10: table direction, 0 = up, 1 = down,
-		//	0x20: title suppressed.
-		//	Normally 0x06 is always set.
-
-		throw new NotImplementedException();
-	}
-
-	private void writeTableContent(TableContent content)
-	{
-		//TV 1 Name
-		this._writer.WriteVariableText(content.Name);
-		//TV 300 Description AcDbLinkedTableData fields
-		this._writer.WriteVariableText(content.Description);
-
-		//BL 90 Number of columns
-		this._writer.WriteBitLong(content.Columns.Count);
-		//Begin repeat columns
-		foreach (TableEntity.Column column in content.Columns)
-		{
-			//TV 300 Column name
-			this._writer.WriteVariableText(column.Name);
-			//BL 91 32 bit integer containing custom data
-			this._writer.WriteBitLong(column.CustomData);
-
-			//BL 90 Number of custom data items
-			this._writer.WriteBitLong(column.CustomDataCollection.Count);
-			//Begin repeat custom data items
-			foreach (var entry in column.CustomDataCollection)
-			{
-				//Custom data collection, see paragraph 20.4.100
-				this.writeCustomTableData(entry);
-			}
-
-			//Cell style data, see paragraph 20.4.101.4, this contains cell style overrides for the column.
-			this.writeCellStyle(column.CellStyleOverride);
-
-			//BL 90 Cell style ID, points to the cell style in the table’s table style that is used as the
-			//base cell style for the column. 0 if not present.
-			this._writer.WriteBitLong(column.CellStyle != null ? column.CellStyle.Id : 0);
-
-			//BD 40 Column width.
-			this._writer.WriteBitDouble(column.Width);
-			//End repeat columns
-		}
-
-		//BL 91 Number of rows.
-		this._writer.WriteBitLong(content.Rows.Count);
-		foreach (var row in content.Rows)
-		{
-			//BL 90 Number of cells in row.
-			this._writer.WriteBitLong(row.Cells.Count);
-			//Begin repeat cells
-			foreach (var cell in row.Cells)
-			{
-				this.writeTableCell(cell);
-			}
-
-			//BL 91 32 bit integer containing custom data
-			this._writer.WriteBitLong(row.CustomData);
-
-			//BL 90 Number of custom data items
-			this._writer.WriteBitLong(row.CustomDataCollection.Count);
-			foreach (var entry in row.CustomDataCollection)
-			{
-				//Custom data collection, see paragraph 20.4.100
-				this.writeCustomTableData(entry);
-			}
-
-			//Cell style data, see paragraph 20.4.101.4, this contains cell style overrides for the row.
-			this.writeCellStyle(row.CellStyleOverride);
-
-			//BL 90 Cell style ID, points to the cell style in the table’s table style that is used as the
-			//base cell style for the column. 0 if not present.
-			this._writer.WriteBitLong(row.CellStyle != null ? row.CellStyle.Id : 0);
-
-			//40 Row height
-			this._writer.WriteBitDouble(row.Height);
-		}
-
-		//BL Number of cell contents that contain a field reference.
-		this._writer.WriteBitLong(0);
-		//Begin repeat field references
-		//for (int n = 0; n < nfields; n++)
-		//{
-		//	//H Handle to field (AcDbField), hard owner.
-		//	this._mergedReaders.HandleReference();
-		//}
-
-		//The table’s cell style override fields (see paragraph 20.4.101.4). The table’s
-		//base cell style is the table style’s overall cell style (present from R2010 onwards).
-		this.writeCellStyle(content.CellStyleOverride);
-
-		//Bl 90 Number of merged cell ranges
-		this._writer.WriteBitLong(content.MergedCellRanges.Count);
-		foreach (var cellRange in content.MergedCellRanges)
-		{
-			//BL 91 Top row index
-			this._writer.WriteBitLong(cellRange.TopRowIndex);
-			//BL 92 Left column index
-			this._writer.WriteBitLong(cellRange.LeftColumnIndex);
-			//BL 93 Bottom row index
-			this._writer.WriteBitLong(cellRange.BottomRowIndex);
-			//BL 94 Right column index
-			this._writer.WriteBitLong(cellRange.RightColumnIndex);
-		}
-
-		//H 340 Handle to table style(hard pointer).
-		this._writer.HandleReference(DwgReferenceType.HardPointer, content.Style);
-	}
-
 	private void writeTableCell(TableEntity.Cell cell)
 	{
 		//BL 90 Cell state flags:
@@ -2637,11 +2494,198 @@ internal partial class DwgObjectWriter : DwgSectionIO
 		}
 	}
 
-	private void writeCustomTableData(TableEntity.CustomDataEntry entry)
+	private void writeTableContent(TableContent content)
 	{
-		//TV 300 Item name
-		this._writer.WriteVariableText(entry.Name);
-		this.writeCadValue(entry.Value);
+		//TV 1 Name
+		this._writer.WriteVariableText(content.Name);
+		//TV 300 Description AcDbLinkedTableData fields
+		this._writer.WriteVariableText(content.Description);
+
+		//BL 90 Number of columns
+		this._writer.WriteBitLong(content.Columns.Count);
+		//Begin repeat columns
+		foreach (TableEntity.Column column in content.Columns)
+		{
+			//TV 300 Column name
+			this._writer.WriteVariableText(column.Name);
+			//BL 91 32 bit integer containing custom data
+			this._writer.WriteBitLong(column.CustomData);
+
+			//BL 90 Number of custom data items
+			this._writer.WriteBitLong(column.CustomDataCollection.Count);
+			//Begin repeat custom data items
+			foreach (var entry in column.CustomDataCollection)
+			{
+				//Custom data collection, see paragraph 20.4.100
+				this.writeCustomTableData(entry);
+			}
+
+			//Cell style data, see paragraph 20.4.101.4, this contains cell style overrides for the column.
+			this.writeCellStyle(column.CellStyleOverride);
+
+			//BL 90 Cell style ID, points to the cell style in the table’s table style that is used as the
+			//base cell style for the column. 0 if not present.
+			this._writer.WriteBitLong(column.CellStyle != null ? column.CellStyle.Id : 0);
+
+			//BD 40 Column width.
+			this._writer.WriteBitDouble(column.Width);
+			//End repeat columns
+		}
+
+		//BL 91 Number of rows.
+		this._writer.WriteBitLong(content.Rows.Count);
+		foreach (var row in content.Rows)
+		{
+			//BL 90 Number of cells in row.
+			this._writer.WriteBitLong(row.Cells.Count);
+			//Begin repeat cells
+			foreach (var cell in row.Cells)
+			{
+				this.writeTableCell(cell);
+			}
+
+			//BL 91 32 bit integer containing custom data
+			this._writer.WriteBitLong(row.CustomData);
+
+			//BL 90 Number of custom data items
+			this._writer.WriteBitLong(row.CustomDataCollection.Count);
+			foreach (var entry in row.CustomDataCollection)
+			{
+				//Custom data collection, see paragraph 20.4.100
+				this.writeCustomTableData(entry);
+			}
+
+			//Cell style data, see paragraph 20.4.101.4, this contains cell style overrides for the row.
+			this.writeCellStyle(row.CellStyleOverride);
+
+			//BL 90 Cell style ID, points to the cell style in the table’s table style that is used as the
+			//base cell style for the column. 0 if not present.
+			this._writer.WriteBitLong(row.CellStyle != null ? row.CellStyle.Id : 0);
+
+			//40 Row height
+			this._writer.WriteBitDouble(row.Height);
+		}
+
+		//BL Number of cell contents that contain a field reference.
+		this._writer.WriteBitLong(0);
+		//Begin repeat field references
+		//for (int n = 0; n < nfields; n++)
+		//{
+		//	//H Handle to field (AcDbField), hard owner.
+		//	this._mergedReaders.HandleReference();
+		//}
+
+		//The table’s cell style override fields (see paragraph 20.4.101.4). The table’s
+		//base cell style is the table style’s overall cell style (present from R2010 onwards).
+		this.writeCellStyle(content.CellStyleOverride);
+
+		//Bl 90 Number of merged cell ranges
+		this._writer.WriteBitLong(content.MergedCellRanges.Count);
+		foreach (var cellRange in content.MergedCellRanges)
+		{
+			//BL 91 Top row index
+			this._writer.WriteBitLong(cellRange.TopRowIndex);
+			//BL 92 Left column index
+			this._writer.WriteBitLong(cellRange.LeftColumnIndex);
+			//BL 93 Bottom row index
+			this._writer.WriteBitLong(cellRange.BottomRowIndex);
+			//BL 94 Right column index
+			this._writer.WriteBitLong(cellRange.RightColumnIndex);
+		}
+
+		//H 340 Handle to table style(hard pointer).
+		this._writer.HandleReference(DwgReferenceType.HardPointer, content.Style);
+	}
+
+	private void writeTableEntity(TableEntity table)
+	{
+		this.writeCommonInsertData(table);
+
+		if (this.R2010Plus)
+		{
+			//RC Unknown (default 0)
+			this._writer.WriteByte(0);
+			//H Unknown (soft pointer, default NULL)
+			this._writer.HandleReference(DwgReferenceType.SoftPointer, null);
+			//BL Unknown (default 0)
+			this._writer.WriteBitLong(0);
+
+			//R2013
+			if (this.R2013Plus)
+			{
+				//Unknown (default 0)
+				this._writer.WriteBitLong(0);
+			}
+			else
+			{
+				//R2010
+				//B Unknown (default true)
+				this._writer.WriteBit(true);
+			}
+
+			//Here the table content is present (see TABLECONTENT object),
+			//without the common OBJECT data.
+			//See paragraph 20.4.97.
+			this.writeTableContent(table.Content);
+
+			//BS Unknown (default 38)
+			this._writer.WriteBitShort(38);
+			//3BD 11 Horizontal direction
+			this._writer.Write3BitDouble(table.HorizontalDirection);
+
+			//BL Has break data flag (0 = no break data, 1 = has break data)
+			//Begin break data(optional)
+			this._writer.WriteBitLong(table.HasBreadData ? 1 : 0);
+			if (table.HasBreadData)
+			{
+				//BL Option flags:
+				this._writer.WriteBitLong((int)table.BreakData.Flags);
+				//BL Flow direction:
+				this._writer.WriteBitLong((int)table.BreakData.FlowDirection);
+				//BD Break spacing
+				this._writer.WriteBitDouble(table.BreakData.BreakSpacing);
+				//BL Unknown flags
+				this._writer.WriteBitLong(0);
+				//BL Unknown flags
+				this._writer.WriteBitLong(0);
+				//BL Number of manual positions (break heights)
+				this._writer.WriteBitLong(table.BreakData.Heights.Count);
+				foreach (var breakHeight in table.BreakData.Heights)
+				{
+					//3BD Position
+					this._writer.Write3BitDouble(breakHeight.Position);
+					//BD Height
+					this._writer.WriteBitDouble(breakHeight.Height);
+					//BL Flags(meaning unknown)
+					this._writer.WriteBitLong(0);
+				}
+			}
+
+			//BL Number of break row ranges (there is always at least 1)
+			this._writer.WriteBitLong(table.BreakRowRanges.Count);
+			foreach (var breakRowRange in table.BreakRowRanges)
+			{
+				//3BD Position
+				this._writer.Write3BitDouble(breakRowRange.Position);
+				//BL Start row index
+				this._writer.WriteBitLong(breakRowRange.StartRowIndex);
+				//BL End row index
+				this._writer.WriteBitLong(breakRowRange.EndRowIndex);
+			}
+
+			return;
+		}
+
+		//Until R2007
+
+		//Common:
+		//Flag for table value BS 90
+		//	Bit flags, 0x06(0x02 + 0x04): has block,
+		//	0x10: table direction, 0 = up, 1 = down,
+		//	0x20: title suppressed.
+		//	Normally 0x06 is always set.
+
+		throw new NotImplementedException();
 	}
 
 	private void writeTextEntity(TextEntity text)

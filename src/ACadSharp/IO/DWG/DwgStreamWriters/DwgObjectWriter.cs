@@ -3,6 +3,7 @@ using ACadSharp.Classes;
 using ACadSharp.Entities;
 using ACadSharp.Entities.AecEntities;
 using ACadSharp.Entities.Mechanical;
+using ACadSharp.Entities.ProxyGraphics;
 using ACadSharp.Objects;
 using ACadSharp.Tables;
 using ACadSharp.Tables.Collections;
@@ -150,7 +151,6 @@ internal partial class DwgObjectWriter : DwgSectionIO
 			case TableEntity when !this.R2010Plus:
 			case Wall:
 			case MechanicalEntity:
-			case ProxyEntity:
 			case Solid3D:
 			case CadBody:
 			case Region:
@@ -478,7 +478,37 @@ internal partial class DwgObjectWriter : DwgSectionIO
 		this.writeCommonData(entity);
 
 		//Graphic present Flag B 1 if a graphic is present
-		this._writer.WriteBit(false);
+		if (entity.HasProxyGeometries)
+		{
+			this._writer.WriteBit(true);
+
+			//Graphics X if graphicpresentflag is 1, the graphic goes here.
+			//See the section on Proxy Entity Graphics for the format of this section.
+
+			var graphics = ProxyGeometryWriter.WriteGeometries(this._version, this._writer.Encoding, entity.ProxyGeometries);
+
+			//R13 - R007:
+			//RL: Size of graphic image in bytes
+			//R2010 +:
+			//BLL: Size of graphic image in bytes
+			if(this._version >= ACadVersion.AC1024)
+			{
+				this._writer.WriteBitLongLong(graphics.Length);
+			}
+			else
+			{
+				this._writer.WriteRawLong(graphics.Length);
+			}
+
+			//Common:
+			//X: The graphic image
+			this._writer.WriteBytes(graphics);
+		}
+		else
+		{
+			this._writer.WriteBit(false);
+		}
+
 
 		//R13 - R14 Only:
 		if (this._version >= ACadVersion.AC1012 && this._version <= ACadVersion.AC1014)
