@@ -305,6 +305,21 @@ internal partial class DwgObjectReader : DwgSectionIO
 			this.readTableCellContent(cellContentTemplate);
 		}
 
+		// [FIX] R2010+ 数据段不存单元格类型字段（pre-2010 的 BS 171 在此不存在），
+		// Type 保持默认 0（非法枚举值）会污染下游写出：DXF 组码 171 写出 0、
+		// pre-2010 DWG 写端写出 0（R2010+源→AC1018 表格被 AutoCAD 丢弃的成因之一）。
+		// 按内容推断：含 Block 内容 → Block，否则 Text（文本/值单元格均为 Text）。
+		bool hasBlockContent = false;
+		foreach (var content in cell.Contents)
+		{
+			if (content.ContentType == TableCellContentType.Block)
+			{
+				hasBlockContent = true;
+				break;
+			}
+		}
+		cell.Type = hasBlockContent ? CellType.Block : CellType.Text;
+
 		CadCellStyleTemplate formatTemplate = new(cell.StyleOverride);
 		this.readCellStyle(formatTemplate);
 
@@ -417,6 +432,10 @@ internal partial class DwgObjectReader : DwgSectionIO
 			case CellType.Text when template.ValueHandle == 0 && this._version < ACadVersion.AC1021:
 				//Text string TV 1 Present only if 344 value below is 0
 				var content = new CellContent();
+				// [FIX] pre-R2007 路径此前未设置 ContentType（默认 Unknown），导致
+				// R2010+ 写端 writeTableCellContent 按 Unknown 跳过 CadValue，
+				// 版本转换后表格单元格文本全部丢失（表格显示为空）。
+				content.ContentType = TableCellContentType.Value;
 				content.CadValue.SetValue(this._mergedReaders.ReadVariableText(), CadValueType.String);
 				cell.Contents.Add(content);
 				break;
@@ -561,6 +580,8 @@ internal partial class DwgObjectReader : DwgSectionIO
 			var unknown = this._mergedReaders.ReadBitLong();
 			//Value fields … See paragraph 20.4.98.
 			cell.Contents.Add(new CellContent());
+			// [FIX] 同 pre-R2007 路径：设置 ContentType 为 Value，否则 R2010+ 写端丢失文本
+			cell.Content.ContentType = TableCellContentType.Value;
 			this.readCadValue(cell.Content.CadValue);
 		}
 	}
@@ -720,8 +741,10 @@ internal partial class DwgObjectReader : DwgSectionIO
 		{
 			//RC Unknown (default 0)
 			this._mergedReaders.ReadByte();
-			//H Unknown (soft pointer, default NULL)
-			template.NullHandle = this.handleReference();
+			//H 342 Table style handle (soft pointer)
+			// [FIX] 此前存入 NullHandle 无人解析，往返后 table.Style 丢失，
+			// 写端只能写回 NULL 句柄，AutoCAD 审计报 eWrongObjectType 丢弃表格。
+			template.StyleHandle = this.handleReference();
 
 			//BL Unknown (default 0)
 			long longZero = this._mergedReaders.ReadBitLong();
@@ -864,15 +887,22 @@ internal partial class DwgObjectReader : DwgSectionIO
 			var styleOverride = new TableStyle();
 			table.Content.StyleOverride = styleOverride;
 
-			//TODO: implement table style override
+			// [PATCH] 保存表格样式覆盖段：原实现读入即丢弃，DWG 写端只能对该段恒写
+			// false，单元格边框覆盖引用表格级覆盖数组时索引失效，AutoCAD/ODA 报
+			// "<AcDbTable> needs recovery"。参照 cadcodec read_legacy_table_style_override。
+			var legacyStyle = new TableEntity.TableLegacyOverrides.StyleOverrideData();
+			table.LegacyOverrides ??= new TableEntity.TableLegacyOverrides();
+			table.LegacyOverrides.StyleOverride = legacyStyle;
 
 			//If has override flag == 1
 			//Cell flag override BL 177 (deprecated)
 			TableEntity.TableOverrideFlags flags = (TableOverrideFlags)this._mergedReaders.ReadBitLong();
+			legacyStyle.Flags = (int)flags;
 			if (flags.HasFlag(TableEntity.TableOverrideFlags.TitleSuppressed))
 			{
 				//Title suppressed B 280 Present only if bit 0x0001 is set in table overrides
-				styleOverride.SuppressTitle = this._mergedReaders.ReadBit();
+				legacyStyle.TitleSuppressed = this._mergedReaders.ReadBit();
+				styleOverride.SuppressTitle = legacyStyle.TitleSuppressed;
 			}
 			if (flags.HasFlag(TableEntity.TableOverrideFlags.TitleSuppressed))
 			{
@@ -881,107 +911,107 @@ internal partial class DwgObjectReader : DwgSectionIO
 			if (flags.HasFlag(TableEntity.TableOverrideFlags.FlowDirection))
 			{
 				//Flow direction BS 70 Present only if bit 0x0004 is set in table overrides
-				this._mergedReaders.ReadBitShort();
+				legacyStyle.FlowDirection = this._mergedReaders.ReadBitShort();
 			}
 			if (flags.HasFlag(TableEntity.TableOverrideFlags.HorizontalCellMargin))
 			{
 				//Horz. Cell margin BD 40 Present only if bit 0x0008 is set in table overrides
-				this._mergedReaders.ReadBitDouble();
+				legacyStyle.HorizontalCellMargin = this._mergedReaders.ReadBitDouble();
 			}
 			if (flags.HasFlag(TableEntity.TableOverrideFlags.VerticalCellMargin))
 			{
 				//Vert. cell margin BD 41 Present only if bit 0x0010 is set in table overrides
-				this._mergedReaders.ReadBitDouble();
+				legacyStyle.VerticalCellMargin = this._mergedReaders.ReadBitDouble();
 			}
 			if (flags.HasFlag(TableEntity.TableOverrideFlags.TitleRowColor))
 			{
 				//Title row color CMC 64 Present only if bit 0x0020 is set in table overrides
-				this._mergedReaders.ReadCmColor(this.R2004Pre);
+				legacyStyle.RowColors.Add(this._mergedReaders.ReadCmColor(this.R2004Pre));
 			}
 			if (flags.HasFlag(TableEntity.TableOverrideFlags.HeaderRowColor))
 			{
 				//Header row color CMC 64 Present only if bit 0x0040 is set in table overrides
-				this._mergedReaders.ReadCmColor(this.R2004Pre);
+				legacyStyle.RowColors.Add(this._mergedReaders.ReadCmColor(this.R2004Pre));
 			}
 			if (flags.HasFlag(TableEntity.TableOverrideFlags.DataRowColor))
 			{
 				//Data row color CMC 64 Present only if bit 0x0080 is set in table overrides
-				this._mergedReaders.ReadCmColor(this.R2004Pre);
+				legacyStyle.RowColors.Add(this._mergedReaders.ReadCmColor(this.R2004Pre));
 			}
 			if (flags.HasFlag(TableEntity.TableOverrideFlags.TitleRowFillNone))
 			{
 				//Title row fill none B 283 Present only if bit 0x0100 is set in table overrides
-				this._mergedReaders.ReadBit();
+				legacyStyle.RowFillNone.Add(this._mergedReaders.ReadBit());
 			}
 			if (flags.HasFlag(TableEntity.TableOverrideFlags.HeaderRowFillNone))
 			{
 				//Header row fill none B 283 Present only if bit 0x0200 is set in table overrides
-				this._mergedReaders.ReadBit();
+				legacyStyle.RowFillNone.Add(this._mergedReaders.ReadBit());
 			}
 			if (flags.HasFlag(TableEntity.TableOverrideFlags.DataRowFillNone))
 			{
 				//Data row fill none B 283 Present only if bit 0x0400 is set in table overrides
-				this._mergedReaders.ReadBit();
+				legacyStyle.RowFillNone.Add(this._mergedReaders.ReadBit());
 			}
 			if (flags.HasFlag(TableEntity.TableOverrideFlags.TitleRowFillColor))
 			{
 				//Title row fill color CMC 63 Present only if bit 0x0800 is set in table overrides
-				this._mergedReaders.ReadCmColor(this.R2004Pre);
+				legacyStyle.RowFillColors.Add(this._mergedReaders.ReadCmColor(this.R2004Pre));
 			}
 			if (flags.HasFlag(TableEntity.TableOverrideFlags.HeaderRowFillColor))
 			{
 				//Header row fill clr. CMC 63 Present only if bit 0x1000 is set in table overrides
-				this._mergedReaders.ReadCmColor(this.R2004Pre);
+				legacyStyle.RowFillColors.Add(this._mergedReaders.ReadCmColor(this.R2004Pre));
 			}
 			if (flags.HasFlag(TableEntity.TableOverrideFlags.DataRowFillColor))
 			{
 				//Data row fill color CMC 63 Present only if bit 0x2000 is set in table overrides
-				this._mergedReaders.ReadCmColor(this.R2004Pre);
+				legacyStyle.RowFillColors.Add(this._mergedReaders.ReadCmColor(this.R2004Pre));
 			}
 			if (flags.HasFlag(TableEntity.TableOverrideFlags.TitleRowAlign))
 			{
 				//Title row align. BS 170 Present only if bit 0x4000 is set in table overrides
-				this._mergedReaders.ReadBitShort();
+				legacyStyle.RowAlignments.Add(this._mergedReaders.ReadBitShort());
 			}
 			if (flags.HasFlag(TableEntity.TableOverrideFlags.HeaderRowAlign))
 			{
 				//Header row align. BS 170 Present only if bit 0x8000 is set in table overrides
-				this._mergedReaders.ReadBitShort();
+				legacyStyle.RowAlignments.Add(this._mergedReaders.ReadBitShort());
 			}
 			if (flags.HasFlag(TableEntity.TableOverrideFlags.DataRowAlign))
 			{
 				//Data row align. BS 170 Present only if bit 0x10000 is set in table
-				this._mergedReaders.ReadBitShort();
+				legacyStyle.RowAlignments.Add(this._mergedReaders.ReadBitShort());
 			}
 			if (flags.HasFlag(TableEntity.TableOverrideFlags.TitleTextStyle))
 			{
 				//Title text style hnd H 7 Present only if bit 0x20000 is set in table
-				this.handleReference();
+				legacyStyle.TextStyleHandles.Add(this.handleReference());
 			}
 			if (flags.HasFlag(TableEntity.TableOverrideFlags.HeaderTextStyle))
 			{
 				//Title text style hnd H 7 Present only if bit 0x40000 is set in table
-				this.handleReference();
+				legacyStyle.TextStyleHandles.Add(this.handleReference());
 			}
 			if (flags.HasFlag(TableEntity.TableOverrideFlags.DataTextStyle))
 			{
 				//Title text style hnd H 7 Present only if bit 0x80000 is set in table
-				this.handleReference();
+				legacyStyle.TextStyleHandles.Add(this.handleReference());
 			}
 			if (flags.HasFlag(TableEntity.TableOverrideFlags.TitleRowHeight))
 			{
 				//Title row height BD 140 Present only if bit 0x100000 is set in table
-				this._mergedReaders.ReadBitDouble();
+				legacyStyle.RowHeights.Add(this._mergedReaders.ReadBitDouble());
 			}
 			if (flags.HasFlag(TableEntity.TableOverrideFlags.HeaderRowHeight))
 			{
 				//Header row height BD 140 Present only if bit 0x200000 is set in table
-				this._mergedReaders.ReadBitDouble();
+				legacyStyle.RowHeights.Add(this._mergedReaders.ReadBitDouble());
 			}
 			if (flags.HasFlag(TableEntity.TableOverrideFlags.DataRowHeight))
 			{
 				//Data row height BD 140 Present only if bit 0x400000 is set in table
-				this._mergedReaders.ReadBitDouble();
+				legacyStyle.RowHeights.Add(this._mergedReaders.ReadBitDouble());
 			}
 		}
 
@@ -991,97 +1021,101 @@ internal partial class DwgObjectReader : DwgSectionIO
 		{
 			//Overrides flag BL 94 Border COLOR overrides
 			var flags = (TableEntity.BorderOverrideFlags)this._mergedReaders.ReadBitLong();
+			// [PATCH] 保存边框颜色覆盖段（原实现读入即丢弃，写端恒写 false）
+			var legacyBorderColors = new TableEntity.TableLegacyOverrides.BorderOverrideData { Flags = (int)flags };
+			table.LegacyOverrides ??= new TableEntity.TableLegacyOverrides();
+			table.LegacyOverrides.BorderColors = legacyBorderColors;
 			if (flags.HasFlag(TableEntity.BorderOverrideFlags.TitleHorizontalTop))
 			{
 				//Title hor. Top. col. CMC 64 Present only if bit 0x01 is set in border color
-				this._mergedReaders.ReadCmColor(this.R2004Pre);
+				legacyBorderColors.Colors.Add(this._mergedReaders.ReadCmColor(this.R2004Pre));
 			}
 			if (flags.HasFlag(TableEntity.BorderOverrideFlags.TitleHorizontalInsert))
 			{
 				//Title hor. ins. col. CMC 65 Present only if bit 0x02 is set in border color
-				this._mergedReaders.ReadCmColor(this.R2004Pre);
+				legacyBorderColors.Colors.Add(this._mergedReaders.ReadCmColor(this.R2004Pre));
 			}
 			if (flags.HasFlag(TableEntity.BorderOverrideFlags.TitleHorizontalBottom))
 			{
 				//Title hor. bot. col. CMC 66 Present only if bit 0x04 is set in border color
-				this._mergedReaders.ReadCmColor(this.R2004Pre);
+				legacyBorderColors.Colors.Add(this._mergedReaders.ReadCmColor(this.R2004Pre));
 			}
 			if (flags.HasFlag(TableEntity.BorderOverrideFlags.TitleVerticalLeft))
 			{
 				//Title ver. left.col.CMC 63 Present only if bit 0x08 is set in border color
-				this._mergedReaders.ReadCmColor(this.R2004Pre);
+				legacyBorderColors.Colors.Add(this._mergedReaders.ReadCmColor(this.R2004Pre));
 			}
 			if (flags.HasFlag(TableEntity.BorderOverrideFlags.TitleVerticalInsert))
 			{
 				//Title ver. ins. col. CMC 68 Present only if bit 0x10 is set in border color
-				this._mergedReaders.ReadCmColor(this.R2004Pre);
+				legacyBorderColors.Colors.Add(this._mergedReaders.ReadCmColor(this.R2004Pre));
 			}
 			if (flags.HasFlag(TableEntity.BorderOverrideFlags.TitleVerticalRight))
 			{
 				//Title ver. rt. col. CMC 69 Present only if bit 0x20 is set in border color
-				this._mergedReaders.ReadCmColor(this.R2004Pre);
+				legacyBorderColors.Colors.Add(this._mergedReaders.ReadCmColor(this.R2004Pre));
 			}
 
 			if (flags.HasFlag(TableEntity.BorderOverrideFlags.HeaderHorizontalTop))
 			{
 				//Header hor. Top. col. CMC 64 Present only if bit 0x40 is set in border color
-				this._mergedReaders.ReadCmColor(this.R2004Pre);
+				legacyBorderColors.Colors.Add(this._mergedReaders.ReadCmColor(this.R2004Pre));
 			}
 			if (flags.HasFlag(TableEntity.BorderOverrideFlags.HeaderHorizontalInsert))
 			{
 				//Header hor. ins. col. CMC 65 Present only if bit 0x80 is set in border color
-				this._mergedReaders.ReadCmColor(this.R2004Pre);
+				legacyBorderColors.Colors.Add(this._mergedReaders.ReadCmColor(this.R2004Pre));
 			}
 			if (flags.HasFlag(TableEntity.BorderOverrideFlags.HeaderHorizontalBottom))
 			{
 				//Header hor. bot. col. CMC 66 Present only if bit 0x100 is set in border color
-				this._mergedReaders.ReadCmColor(this.R2004Pre);
+				legacyBorderColors.Colors.Add(this._mergedReaders.ReadCmColor(this.R2004Pre));
 			}
 			if (flags.HasFlag(TableEntity.BorderOverrideFlags.HeaderVerticalLeft))
 			{
 				//Header ver. left. col.CMC 63 Present only if bit 0x200 is set in border color
-				this._mergedReaders.ReadCmColor(this.R2004Pre);
+				legacyBorderColors.Colors.Add(this._mergedReaders.ReadCmColor(this.R2004Pre));
 			}
 			if (flags.HasFlag(TableEntity.BorderOverrideFlags.HeaderVerticalInsert))
 			{
 				//Header ver. ins. col. CMC 68 Present only if bit 0x400 is set in border color
-				this._mergedReaders.ReadCmColor(this.R2004Pre);
+				legacyBorderColors.Colors.Add(this._mergedReaders.ReadCmColor(this.R2004Pre));
 			}
 			if (flags.HasFlag(TableEntity.BorderOverrideFlags.HeaderVerticalRight))
 			{
 				//Header ver. rt. col. CMC 69 Present only if bit 0x800 is set in border color
-				this._mergedReaders.ReadCmColor(this.R2004Pre);
+				legacyBorderColors.Colors.Add(this._mergedReaders.ReadCmColor(this.R2004Pre));
 			}
 
 			if (flags.HasFlag(TableEntity.BorderOverrideFlags.DataHorizontalTop))
 			{
 				//Data hor. Top. col. CMC 64 Present only if bit 0x1000 is set in border color
-				this._mergedReaders.ReadCmColor(this.R2004Pre);
+				legacyBorderColors.Colors.Add(this._mergedReaders.ReadCmColor(this.R2004Pre));
 			}
 			if (flags.HasFlag(TableEntity.BorderOverrideFlags.DataHorizontalInsert))
 			{
 				//Data hor. ins. col. CMC 65 Present only if bit 0x2000 is set in border color
-				this._mergedReaders.ReadCmColor(this.R2004Pre);
+				legacyBorderColors.Colors.Add(this._mergedReaders.ReadCmColor(this.R2004Pre));
 			}
 			if (flags.HasFlag(TableEntity.BorderOverrideFlags.DataHorizontalBottom))
 			{
 				//Data hor. bot. col. CMC 66 Present only if bit 0x4000 is set in border color
-				this._mergedReaders.ReadCmColor(this.R2004Pre);
+				legacyBorderColors.Colors.Add(this._mergedReaders.ReadCmColor(this.R2004Pre));
 			}
 			if (flags.HasFlag(TableEntity.BorderOverrideFlags.DataVerticalLeft))
 			{
 				//Data ver. left. col. CMC 63 Present only if bit 0x8000 is set in border color
-				this._mergedReaders.ReadCmColor(this.R2004Pre);
+				legacyBorderColors.Colors.Add(this._mergedReaders.ReadCmColor(this.R2004Pre));
 			}
 			if (flags.HasFlag(TableEntity.BorderOverrideFlags.DataVerticalInsert))
 			{
 				//Data ver. ins. col. CMC 68 Present only if bit 0x10000 is set in border color
-				this._mergedReaders.ReadCmColor(this.R2004Pre);
+				legacyBorderColors.Colors.Add(this._mergedReaders.ReadCmColor(this.R2004Pre));
 			}
 			if (flags.HasFlag(TableEntity.BorderOverrideFlags.DataVerticalRight))
 			{
 				//Data ver. rt. col. CMC 69 Present only if bit 0x20000 is set in border color
-				this._mergedReaders.ReadCmColor(this.R2004Pre);
+				legacyBorderColors.Colors.Add(this._mergedReaders.ReadCmColor(this.R2004Pre));
 			}
 		}
 
@@ -1090,97 +1124,101 @@ internal partial class DwgObjectReader : DwgSectionIO
 		{
 			//Overrides flag BL 95 Border LINEWEIGHT overrides
 			var flags = (TableEntity.BorderOverrideFlags)this._mergedReaders.ReadBitLong();
+			// [PATCH] 保存边框线宽覆盖段（原实现读入即丢弃，写端恒写 false）
+			var legacyBorderLineWeights = new TableEntity.TableLegacyOverrides.BorderOverrideData { Flags = (int)flags };
+			table.LegacyOverrides ??= new TableEntity.TableLegacyOverrides();
+			table.LegacyOverrides.BorderLineWeights = legacyBorderLineWeights;
 			if (flags.HasFlag(TableEntity.BorderOverrideFlags.TitleHorizontalTop))
 			{
 				//Title hor. Top. lw. BS Present only if bit 0x01 is set in border color
-				this._mergedReaders.ReadBitShort();
+				legacyBorderLineWeights.LineWeights.Add(this._mergedReaders.ReadBitShort());
 			}
 			if (flags.HasFlag(TableEntity.BorderOverrideFlags.TitleHorizontalInsert))
 			{
 				//Title hor. ins. lw. BS Present only if bit 0x02 is set in border color
-				this._mergedReaders.ReadBitShort();
+				legacyBorderLineWeights.LineWeights.Add(this._mergedReaders.ReadBitShort());
 			}
 			if (flags.HasFlag(TableEntity.BorderOverrideFlags.TitleHorizontalBottom))
 			{
 				//Title hor. bot. lw. BS Present only if bit 0x04 is set in border color
-				this._mergedReaders.ReadBitShort();
+				legacyBorderLineWeights.LineWeights.Add(this._mergedReaders.ReadBitShort());
 			}
 			if (flags.HasFlag(TableEntity.BorderOverrideFlags.TitleVerticalLeft))
 			{
 				//Title ver. left. lw. BS Present only if bit 0x08 is set in border color
-				this._mergedReaders.ReadBitShort();
+				legacyBorderLineWeights.LineWeights.Add(this._mergedReaders.ReadBitShort());
 			}
 			if (flags.HasFlag(TableEntity.BorderOverrideFlags.TitleVerticalInsert))
 			{
 				//Title ver. ins. lw. BS Present only if bit 0x10 is set in border color
-				this._mergedReaders.ReadBitShort();
+				legacyBorderLineWeights.LineWeights.Add(this._mergedReaders.ReadBitShort());
 			}
 			if (flags.HasFlag(TableEntity.BorderOverrideFlags.TitleVerticalRight))
 			{
 				//Title ver. rt. lw. BS Present only if bit 0x20 is set in border color
-				this._mergedReaders.ReadBitShort();
+				legacyBorderLineWeights.LineWeights.Add(this._mergedReaders.ReadBitShort());
 			}
 
 			if (flags.HasFlag(TableEntity.BorderOverrideFlags.HeaderHorizontalTop))
 			{
 				//Header hor. Top. lw. BS Present only if bit 0x40 is set in border color
-				this._mergedReaders.ReadBitShort();
+				legacyBorderLineWeights.LineWeights.Add(this._mergedReaders.ReadBitShort());
 			}
 			if (flags.HasFlag(TableEntity.BorderOverrideFlags.HeaderHorizontalInsert))
 			{
 				//Header hor. ins. lw. BS Present only if bit 0x80 is set in border color
-				this._mergedReaders.ReadBitShort();
+				legacyBorderLineWeights.LineWeights.Add(this._mergedReaders.ReadBitShort());
 			}
 			if (flags.HasFlag(TableEntity.BorderOverrideFlags.HeaderHorizontalBottom))
 			{
 				//Header hor. bot. lw. BS Present only if bit 0x100 is set in border color
-				this._mergedReaders.ReadBitShort();
+				legacyBorderLineWeights.LineWeights.Add(this._mergedReaders.ReadBitShort());
 			}
 			if (flags.HasFlag(TableEntity.BorderOverrideFlags.HeaderVerticalLeft))
 			{
 				//Header ver. left. lw. BS Present only if bit 0x200 is set in border color
-				this._mergedReaders.ReadBitShort();
+				legacyBorderLineWeights.LineWeights.Add(this._mergedReaders.ReadBitShort());
 			}
 			if (flags.HasFlag(TableEntity.BorderOverrideFlags.HeaderVerticalInsert))
 			{
 				//Header ver. ins. lw. BS Present only if bit 0x400 is set in border color
-				this._mergedReaders.ReadBitShort();
+				legacyBorderLineWeights.LineWeights.Add(this._mergedReaders.ReadBitShort());
 			}
 			if (flags.HasFlag(TableEntity.BorderOverrideFlags.HeaderVerticalRight))
 			{
 				//Header ver. rt. lw. BS Present only if bit 0x800 is set in border color
-				this._mergedReaders.ReadBitShort();
+				legacyBorderLineWeights.LineWeights.Add(this._mergedReaders.ReadBitShort());
 			}
 
 			if (flags.HasFlag(TableEntity.BorderOverrideFlags.DataHorizontalTop))
 			{
 				//Data hor. Top. lw. BS Present only if bit 0x1000 is set in border color
-				this._mergedReaders.ReadBitShort();
+				legacyBorderLineWeights.LineWeights.Add(this._mergedReaders.ReadBitShort());
 			}
 			if (flags.HasFlag(TableEntity.BorderOverrideFlags.DataHorizontalInsert))
 			{
 				//Data hor. ins. lw. BS Present only if bit 0x2000 is set in border color
-				this._mergedReaders.ReadBitShort();
+				legacyBorderLineWeights.LineWeights.Add(this._mergedReaders.ReadBitShort());
 			}
 			if (flags.HasFlag(TableEntity.BorderOverrideFlags.DataHorizontalBottom))
 			{
 				//Data hor. bot. lw. BS Present only if bit 0x4000 is set in border color
-				this._mergedReaders.ReadBitShort();
+				legacyBorderLineWeights.LineWeights.Add(this._mergedReaders.ReadBitShort());
 			}
 			if (flags.HasFlag(TableEntity.BorderOverrideFlags.DataVerticalLeft))
 			{
 				//Data ver. left. lw. BS Present only if bit 0x8000 is set in border color
-				this._mergedReaders.ReadBitShort();
+				legacyBorderLineWeights.LineWeights.Add(this._mergedReaders.ReadBitShort());
 			}
 			if (flags.HasFlag(TableEntity.BorderOverrideFlags.DataVerticalInsert))
 			{
 				//Data ver. ins. lw. BS Present only if bit 0x10000 is set in border color
-				this._mergedReaders.ReadBitShort();
+				legacyBorderLineWeights.LineWeights.Add(this._mergedReaders.ReadBitShort());
 			}
 			if (flags.HasFlag(TableEntity.BorderOverrideFlags.DataVerticalRight))
 			{
 				//Data ver. rt. lw. BS Present only if bit 0x20000 is set in border color
-				this._mergedReaders.ReadBitShort();
+				legacyBorderLineWeights.LineWeights.Add(this._mergedReaders.ReadBitShort());
 			}
 		}
 
@@ -1189,97 +1227,101 @@ internal partial class DwgObjectReader : DwgSectionIO
 		{
 			//Overrides flag BL 96 Border visibility overrides
 			var flags = (TableEntity.BorderOverrideFlags)this._mergedReaders.ReadBitLong();
+			// [PATCH] 保存边框可见性覆盖段（原实现读入即丢弃，写端恒写 false）
+			var legacyBorderVisibility = new TableEntity.TableLegacyOverrides.BorderOverrideData { Flags = (int)flags };
+			table.LegacyOverrides ??= new TableEntity.TableLegacyOverrides();
+			table.LegacyOverrides.BorderVisibility = legacyBorderVisibility;
 			if (flags.HasFlag(TableEntity.BorderOverrideFlags.TitleHorizontalTop))
 			{
 				//Title hor. Top. vsb. BS Present only if bit 0x01 is set in border visibility
-				this._mergedReaders.ReadBitShortAsBool();
+				legacyBorderVisibility.Visibility.Add(this._mergedReaders.ReadBitShortAsBool());
 			}
 			if (flags.HasFlag(TableEntity.BorderOverrideFlags.TitleHorizontalInsert))
 			{
 				//Title hor. ins. vsb. BS Present only if bit 0x02 is set in border visibility
-				this._mergedReaders.ReadBitShortAsBool();
+				legacyBorderVisibility.Visibility.Add(this._mergedReaders.ReadBitShortAsBool());
 			}
 			if (flags.HasFlag(TableEntity.BorderOverrideFlags.TitleHorizontalBottom))
 			{
 				//Title hor. bot. vsb. BS Present only if bit 0x04 is set in border visibility
-				this._mergedReaders.ReadBitShortAsBool();
+				legacyBorderVisibility.Visibility.Add(this._mergedReaders.ReadBitShortAsBool());
 			}
 			if (flags.HasFlag(TableEntity.BorderOverrideFlags.TitleVerticalLeft))
 			{
 				//Title ver. left. vsb. BS Present only if bit 0x08 is set in border visibility
-				this._mergedReaders.ReadBitShortAsBool();
+				legacyBorderVisibility.Visibility.Add(this._mergedReaders.ReadBitShortAsBool());
 			}
 			if (flags.HasFlag(TableEntity.BorderOverrideFlags.TitleVerticalInsert))
 			{
 				//Title ver. ins. vsb. BS Present only if bit 0x10 is set in border visibility
-				this._mergedReaders.ReadBitShortAsBool();
+				legacyBorderVisibility.Visibility.Add(this._mergedReaders.ReadBitShortAsBool());
 			}
 			if (flags.HasFlag(TableEntity.BorderOverrideFlags.TitleVerticalRight))
 			{
 				//Title ver. rt. vsb. BS Present only if bit 0x20 is set in border visibility
-				this._mergedReaders.ReadBitShortAsBool();
+				legacyBorderVisibility.Visibility.Add(this._mergedReaders.ReadBitShortAsBool());
 			}
 
 			if (flags.HasFlag(TableEntity.BorderOverrideFlags.HeaderHorizontalTop))
 			{
 				//Header hor. Top. vsb. BS Present only if bit 0x40 is set in border visibility
-				this._mergedReaders.ReadBitShortAsBool();
+				legacyBorderVisibility.Visibility.Add(this._mergedReaders.ReadBitShortAsBool());
 			}
 			if (flags.HasFlag(TableEntity.BorderOverrideFlags.HeaderHorizontalInsert))
 			{
 				//Header hor. ins. vsb. BS Present only if bit 0x80 is set in border visibility
-				this._mergedReaders.ReadBitShortAsBool();
+				legacyBorderVisibility.Visibility.Add(this._mergedReaders.ReadBitShortAsBool());
 			}
 			if (flags.HasFlag(TableEntity.BorderOverrideFlags.HeaderHorizontalBottom))
 			{
 				//Header hor. bot. vsb. BS Present only if bit 0x100 is set in border
-				this._mergedReaders.ReadBitShortAsBool();
+				legacyBorderVisibility.Visibility.Add(this._mergedReaders.ReadBitShortAsBool());
 			}
 			if (flags.HasFlag(TableEntity.BorderOverrideFlags.HeaderVerticalLeft))
 			{
 				//Header ver. left. vsb. BS Present only if bit 0x200 is set in border
-				this._mergedReaders.ReadBitShortAsBool();
+				legacyBorderVisibility.Visibility.Add(this._mergedReaders.ReadBitShortAsBool());
 			}
 			if (flags.HasFlag(TableEntity.BorderOverrideFlags.HeaderVerticalInsert))
 			{
 				//Header ver. ins. vsb. BS Present only if bit 0x400 is set in border
-				this._mergedReaders.ReadBitShortAsBool();
+				legacyBorderVisibility.Visibility.Add(this._mergedReaders.ReadBitShortAsBool());
 			}
 			if (flags.HasFlag(TableEntity.BorderOverrideFlags.HeaderVerticalRight))
 			{
 				//Header ver. rt. vsb. BS Present only if bit 0x800 is set in border
-				this._mergedReaders.ReadBitShortAsBool();
+				legacyBorderVisibility.Visibility.Add(this._mergedReaders.ReadBitShortAsBool());
 			}
 
 			if (flags.HasFlag(TableEntity.BorderOverrideFlags.DataHorizontalTop))
 			{
 				//Data hor. Top. vsb. BS Present only if bit 0x1000 is set in border
-				this._mergedReaders.ReadBitShortAsBool();
+				legacyBorderVisibility.Visibility.Add(this._mergedReaders.ReadBitShortAsBool());
 			}
 			if (flags.HasFlag(TableEntity.BorderOverrideFlags.DataHorizontalInsert))
 			{
 				//Data hor. ins. vsb. BS Present only if bit 0x2000 is set in border
-				this._mergedReaders.ReadBitShortAsBool();
+				legacyBorderVisibility.Visibility.Add(this._mergedReaders.ReadBitShortAsBool());
 			}
 			if (flags.HasFlag(TableEntity.BorderOverrideFlags.DataHorizontalBottom))
 			{
 				//Data hor. bot. vsb. BS Present only if bit 0x4000 is set in border
-				this._mergedReaders.ReadBitShortAsBool();
+				legacyBorderVisibility.Visibility.Add(this._mergedReaders.ReadBitShortAsBool());
 			}
 			if (flags.HasFlag(TableEntity.BorderOverrideFlags.DataVerticalLeft))
 			{
 				//Data ver. left. vsb. BS Present only if bit 0x8000 is set in border
-				this._mergedReaders.ReadBitShortAsBool();
+				legacyBorderVisibility.Visibility.Add(this._mergedReaders.ReadBitShortAsBool());
 			}
 			if (flags.HasFlag(TableEntity.BorderOverrideFlags.DataVerticalInsert))
 			{
 				//Data ver. ins. vsb. BS Present only if bit 0x10000 is set in border
-				this._mergedReaders.ReadBitShortAsBool();
+				legacyBorderVisibility.Visibility.Add(this._mergedReaders.ReadBitShortAsBool());
 			}
 			if (flags.HasFlag(TableEntity.BorderOverrideFlags.DataVerticalRight))
 			{
 				//Data ver. rt. vsb. BS Present only if bit 0x20000 is set in border
-				this._mergedReaders.ReadBitShortAsBool();
+				legacyBorderVisibility.Visibility.Add(this._mergedReaders.ReadBitShortAsBool());
 			}
 		}
 

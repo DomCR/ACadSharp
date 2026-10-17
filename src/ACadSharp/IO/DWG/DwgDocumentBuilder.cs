@@ -26,6 +26,11 @@ internal class DwgDocumentBuilder : CadDocumentBuilder
 		: base(version, document)
 	{
 		this.Configuration = configuration;
+
+		if (configuration != null)
+		{
+			this.ShapeFontDirectories.AddRange(configuration.FontSearchDirectories);
+		}
 	}
 
 	public override void BuildDocument()

@@ -73,6 +73,10 @@ internal partial class DwgObjectWriter : DwgSectionIO
 
 	public void Write()
 	{
+		//R2000 及更早：为渐变填充合成私有 roundtrip 结构（XRecord + 扩展字典 + EED），
+		//使 R2004+ → R2000 转换保留渐变色（无原生 450-470 字段可写）。
+		this.writeR2000GradientRoundTrips();
+
 		//For R18 and later the section data (right after the page header) starts with a
 		//RL value of 0x0dca (meaning unknown).
 		if (this.R2004Plus)
@@ -147,7 +151,6 @@ internal partial class DwgObjectWriter : DwgSectionIO
 				return false;
 			case Shape:
 				return this.WriteShapes;
-			case TableEntity when !this.R2010Plus:
 			case Wall:
 			case MechanicalEntity:
 			case ProxyEntity:
@@ -293,6 +296,9 @@ internal partial class DwgObjectWriter : DwgSectionIO
 		if (record.Flags.HasFlag(BlockTypeFlags.Anonymous))
 		{
 			//Warning: anonymous blocks do not write the full name, only *{type character}
+			//[DBG] 匿名块名写出调试
+			if (Environment.GetEnvironmentVariable("ACADSHARP_DBG_BH") == "1")
+				Console.Error.WriteLine($"[BH-DBG] handle={record.Handle:X} name='{record.Name}' len={record.Name?.Length} anon={record.Flags.HasFlag(BlockTypeFlags.Anonymous)}");
 			this._writer.WriteVariableText(record.Name.Substring(0, 2));
 		}
 		else if (record.Layout != null)
@@ -478,7 +484,25 @@ internal partial class DwgObjectWriter : DwgSectionIO
 		this.writeCommonData(entity);
 
 		//Graphic present Flag B 1 if a graphic is present
-		this._writer.WriteBit(false);
+		//[EXP] proxy graphics 回写实验开关（0=旧写法恒 false）
+		bool writeProxy = Environment.GetEnvironmentVariable("ACADSHARP_PROXY") != "0";
+		bool hasGraphic = writeProxy && entity.ProxyGraphicsData != null && entity.ProxyGraphicsData.Length > 0;
+		this._writer.WriteBit(hasGraphic);
+
+		if (hasGraphic)
+		{
+			//Graphics X if graphicpresentflag is 1, the graphic goes here.
+			//R13 - R007:
+			//RL: Size of graphic image in bytes
+			//R2010 +:
+			//BLL: Size of graphic image in bytes
+			if (this._version >= ACadVersion.AC1024)
+				this._writer.WriteBitLongLong(entity.ProxyGraphicsData.Length);
+			else
+				this._writer.WriteRawLong(entity.ProxyGraphicsData.Length);
+
+			this._writer.WriteBytes(entity.ProxyGraphicsData);
+		}
 
 		//R13 - R14 Only:
 		if (this._version >= ACadVersion.AC1012 && this._version <= ACadVersion.AC1014)
@@ -1147,10 +1171,17 @@ internal partial class DwgObjectWriter : DwgSectionIO
 						}
 						else
 						{
+							// [FIX] 长度前缀应为编码后的"字节数"而非"字符数"：
+							// 读取端 ReadTextUnicode (R13-R2004) 语义为
+							// "2 字节长度 N + 1 字节代码页 + N 个单字节字符"，
+							// N 是待解码的字节总数。此前写 str.Value.Length（字符数），
+							// 中文经 GBK 等多字节代码页编码后字节数 > 字符数，
+							// 读取端少读字节导致 XDATA 中文乱码且 EED 位流错位
+							// （DXF 路径不受影响，故 DXF 中文显示正常）。
 							var encodingIndex = CadUtils.GetCodeIndex((CSUtilities.Text.CodePage)this._writer.Encoding.CodePage);
 							byte[] bytes = this._writer.Encoding.GetBytes(string.IsNullOrEmpty(str.Value) ? string.Empty : str.Value);
 
-							mstream.Write(LittleEndianConverter.Instance.GetBytes((ushort)str.Value.Length), 0, 2);
+							mstream.Write(LittleEndianConverter.Instance.GetBytes((ushort)bytes.Length), 0, 2);
 							mstream.WriteByte((byte)encodingIndex);
 							mstream.Write(bytes, 0, bytes.Length);
 						}
@@ -1594,8 +1625,12 @@ internal partial class DwgObjectWriter : DwgSectionIO
 		}
 
 		//Common:
-		//Handle refs H ucs control object (soft pointer)
-		this._writer.HandleReference(DwgReferenceType.SoftPointer, this._document.UCSs);
+		//Handle refs H xref handle (hard pointer, 0 if not xref-dependent)。
+		// [FIX] 此前写 "ucs control object (soft pointer)" 并填入 UCS 控制表句柄。
+		// 经 AutoCAD 原始文件实证（sample.dwg 该槽位=0）并与 cadcodec/ODA 规范 §20.4.62
+		// 对照，此槽位是 xref handle；写非空控制表句柄导致 AutoCAD
+		// eWrongObjectType 丢弃 UCS 记录（核查报告 handle 467）。
+		this._writer.HandleReference(DwgReferenceType.HardPointer, 0UL);
 
 		//R2000 +:
 		if (this.R2000Plus)
@@ -1694,8 +1729,11 @@ internal partial class DwgObjectWriter : DwgSectionIO
 		}
 
 		//Common:
-		//Handle refs H view control object (soft pointer)
-		this._writer.HandleReference(DwgReferenceType.SoftPointer, this._document.Views);
+		//Handle refs H xref handle (hard pointer, 0 if not xref-dependent)。
+		// [FIX] 同 writeUCS：此槽位是 xref handle，此前误写 Views 控制表句柄
+		//（cadcodec/ODA 规范 §20.4.60：VIEW 记录句柄序列为 xref → R2007+ background/
+		// visual style/sun → R2000+ ucs 关联句柄）。
+		this._writer.HandleReference(DwgReferenceType.HardPointer, 0UL);
 
 		//R2007+:
 		if (this.R2007Plus)

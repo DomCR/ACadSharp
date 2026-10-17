@@ -26,6 +26,11 @@ internal class DxfDocumentBuilder : CadDocumentBuilder
 	public DxfDocumentBuilder(ACadVersion version, CadDocument document, DxfReaderConfiguration configuration) : base(version, document)
 	{
 		this.Configuration = configuration;
+
+		if (configuration != null)
+		{
+			this.ShapeFontDirectories.AddRange(configuration.FontSearchDirectories);
+		}
 	}
 
 	public override void BuildDocument()

@@ -234,6 +234,11 @@ namespace ACadSharp.IO.DWG
 		/// <returns></returns>
 		Color ReadCmColor(bool useTextStream = false);
 
+		/// <summary>
+		/// 读取 R2004+ 风格完整 CMC（真彩色），与 <see cref="DwgStreamWriterBase.WriteCmColorR2004"/> 对称。
+		/// </summary>
+		Color ReadCmColorR2004();
+
 		Color ReadColorByIndex();
 
 		/// <summary>

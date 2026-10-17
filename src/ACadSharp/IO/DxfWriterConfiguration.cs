@@ -77,6 +77,11 @@ public class DxfWriterConfiguration : CadWriterConfiguration
 		"$MEASUREMENT",
 		"$LTSCALE",
 		"$LWDISPLAY",
+		// [PATCH] 线宽/编辑状态相关头变量（AutoCAD 参考文件均写出）：
+		// $XEDIT 在线编辑开关、$ENDCAPS/$JOINSTYLE 线端点/连接样式显示
+		"$XEDIT",
+		"$ENDCAPS",
+		"$JOINSTYLE",
 		"$PDMODE",
 		"$PDSIZE",
 		"$PLINEGEN",

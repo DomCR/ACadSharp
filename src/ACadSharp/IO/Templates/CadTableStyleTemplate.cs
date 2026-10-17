@@ -1,4 +1,4 @@
-﻿using ACadSharp.Objects;
+using ACadSharp.Objects;
 using System.Collections.Generic;
 using System.Linq;
 using static ACadSharp.Objects.TableStyle;
@@ -52,6 +52,33 @@ internal partial class CadTableStyleTemplate : CadTemplate<TableStyle>
 		if (this.tryGetCellStyle(CellStyle.TitleCellStyleName, out CellStyle titleStyle))
 		{
 			this.CadObject.TitleCellStyle = titleStyle;
+		}
+
+		// [PATCH] Some files (e.g. netDxf-produced drawings) write the cell style
+		// sections without any explicit name code, so the name lookup above finds
+		// nothing and the default cell styles (zero text height) are kept. The
+		// section order is stable across the AutoCAD round-trip (verified against
+		// sample.dxf and sample_VBAtransformed.dxf): data, title, header, and the
+		// table style when present, so fall back to positional mapping.
+		if (this.CellStyleTemplates.Count > 0
+			&& !this.tryGetCellStyle(CellStyle.DataCellStyleName, out _)
+			&& this.CadObject.DataCellStyle.TextHeight <= 0)
+		{
+			this.CadObject.DataCellStyle = this.CellStyleTemplates[0].CellStyle;
+		}
+
+		if (this.CellStyleTemplates.Count > 1
+			&& !this.tryGetCellStyle(CellStyle.TitleCellStyleName, out _)
+			&& this.CadObject.TitleCellStyle.TextHeight <= 0)
+		{
+			this.CadObject.TitleCellStyle = this.CellStyleTemplates[1].CellStyle;
+		}
+
+		if (this.CellStyleTemplates.Count > 2
+			&& !this.tryGetCellStyle(CellStyle.HeaderCellStyleName, out _)
+			&& this.CadObject.HeaderCellStyle.TextHeight <= 0)
+		{
+			this.CadObject.HeaderCellStyle = this.CellStyleTemplates[2].CellStyle;
 		}
 	}
 

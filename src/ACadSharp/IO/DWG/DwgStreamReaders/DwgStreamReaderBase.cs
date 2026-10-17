@@ -870,10 +870,46 @@ namespace ACadSharp.IO.DWG
 			}
 			else
 			{
-				value = this.ReadString(textLength, TextEncoding.GetListedEncoding((CodePage)encodingKey));
+				// [FIX] encodingKey 是 ODA 代码页"索引表"中的索引（ODA 规范 §7.2 codepage
+				// 取值表：30=ANSI-1252、31=GB2312、39=ANSI-936 等），并非 CodePage 枚举的
+				// 数值（枚举值是真实 Windows 代码页号，如 Gb2312=936）。此前直接
+				// (CodePage)encodingKey 强转后在 GetListedEncoding 的 switch 中匹配不到，
+				// 落入 Encoding.Default（.NET Core 恒为 UTF-8），GBK 中文被错误解码为乱码。
+				// 现改用 CadUtils.GetCodePage(int)（即 _pageCodes ODA 索引表，与写出端
+				// GetCodeIndex 互逆）取真实代码页号再构造编码。
+				value = this.ReadString(textLength, this.getEedEncoding(encodingKey));
 			}
 
 			return value;
+		}
+
+		/// <summary>
+		/// 将 EED 字符串的代码页索引字节转换为对应编码。
+		/// </summary>
+		private Encoding getEedEncoding(int odaIndex)
+		{
+			if (odaIndex == 0)
+			{
+				//0 = Unknown/UTF8（规范标注"未用"），保持既有行为
+				return Encoding.Default;
+			}
+
+			try
+			{
+#if !NET48
+				Encoding.RegisterProvider(System.Text.CodePagesEncodingProvider.Instance);
+#endif
+				CodePage code = CadUtils.GetCodePage(odaIndex);
+				if (code != CodePage.Unknown)
+				{
+					return Encoding.GetEncoding((int)code);
+				}
+			}
+			catch
+			{
+			}
+
+			return TextEncoding.Windows1252();
 		}
 
 		/// <inheritdoc/>
@@ -920,6 +956,44 @@ namespace ACadSharp.IO.DWG
 			short colorIndex = this.ReadBitShort();
 
 			return new Color(colorIndex);
+		}
+
+		/// <summary>
+		/// 读取 R2004+ 风格完整 CMC（BS index + BL rgb + RC flag），与 <see cref="DwgStreamWriterBase.WriteCmColorR2004"/> 对称。
+		/// 用于 R2000/R13-R15 渐变填充（AutoCAD 以真彩色 CMC 存储渐变停靠色，基类的 <see cref="ReadCmColor"/> 仅读 BS 索引会错位）。
+		/// </summary>
+		public virtual Color ReadCmColorR2004()
+		{
+			//BS: color index(渐变真彩色恒为 0)
+			short colorIndex = this.ReadBitShort();
+			//BL: RGB value(高位带标记)
+			uint rgb = (uint)this.ReadBitLong();
+			byte[] arr = LittleEndianConverter.Instance.GetBytes(rgb);
+
+			Color color;
+			if (rgb == 0xC0000000)
+			{
+				color = Color.ByLayer;
+			}
+			else if ((rgb & 0x01000000u) != 0)
+			{
+				//Indexed color
+				color = new Color(arr[0]);
+			}
+			else
+			{
+				//True color: rgb = 0xC2RRGGBB -> R=arr[2], G=arr[1], B=arr[0]
+				color = new Color(arr[2], arr[1], arr[0]);
+			}
+
+			//RC: 颜色标记位(&1 颜色名 TV 跟随, &2 色簿名 TV 跟随)
+			byte id = this.ReadByte();
+			if ((id & 1) == 1)
+				this.ReadVariableText();
+			if ((id & 2) == 2)
+				this.ReadVariableText();
+
+			return color;
 		}
 
 		/// <inheritdoc/>

@@ -187,6 +187,15 @@ namespace ACadSharp.IO.DWG
 			//&2 => book name follows(TV))
 		}
 
+		/// <summary>
+		/// 表格单元格/表级覆盖颜色无论文件版本一律写完整 CMC，
+		/// 与 <see cref="WriteCmColor(Color, bool)"/> 的 useTextStream 分支一致。
+		/// </summary>
+		public void WriteCmColorR2004(Color value)
+		{
+			this.WriteCmColor(value, true);
+		}
+
 		public void WriteEnColor(Color color, Transparency transparency)
 		{
 			this.Main.WriteEnColor(color, transparency);

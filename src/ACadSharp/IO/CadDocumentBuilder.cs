@@ -34,6 +34,12 @@ internal abstract class CadDocumentBuilder
 
 	public abstract bool KeepUnknownNonGraphicalObjects { get; }
 
+	/// <summary>
+	/// Directories used to locate the shape files (.shx) referenced by the document when
+	/// a shape has to be resolved by name. When empty the default locations are used.
+	/// </summary>
+	public List<string> ShapeFontDirectories { get; set; } = new List<string>();
+
 	public LayersTable Layers { get; set; } = new LayersTable();
 
 	public LineTypesTable LineTypesTable { get; set; } = new LineTypesTable();

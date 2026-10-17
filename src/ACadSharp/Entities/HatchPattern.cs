@@ -1,4 +1,4 @@
-﻿using ACadSharp.Attributes;
+using ACadSharp.Attributes;
 using CSMath;
 using CSMath.Extensions;
 using CSUtilities.Extensions;
@@ -198,11 +198,21 @@ public partial class HatchPattern
 
 		var transform = new Transform(tr.Matrix * sc.Matrix * rot.Matrix);
 
+		// [PATCH] The line offset is a relative displacement between pattern lines: only the
+		// linear part (rotation + scale) applies to it, never the translation. Upstream fed it
+		// through the full transform, leaking the huge world translation into the pattern
+		// (Offset became (-1593125.5, -2921121.1) instead of (0.4252, 3.1400) for the reference
+		// transform).
+		Matrix3 linear = new Matrix3(transform.Matrix);
+
 		foreach (var line in Lines)
 		{
-			line.Angle += rotation;
+			// [PATCH] AutoCAD stores pattern line angles normalized to [0, 2π)
+			// (45° + (-0.92 rad) → 6.1486, not -0.1346).
+			line.Angle = MathHelper.NormalizeAngleRadians(line.Angle + rotation, true);
 			line.BasePoint = transform.ApplyTransform(line.BasePoint.Convert<XYZ>()).Convert<XY>();
-			line.Offset = transform.ApplyTransform(line.Offset.Convert<XYZ>()).Convert<XY>();
+			XYZ off = linear * line.Offset.Convert<XYZ>();
+			line.Offset = new XY(off.X, off.Y);
 			line.DashLengths = line.DashLengths.Select(d => d * scale).ToList();
 		}
 	}

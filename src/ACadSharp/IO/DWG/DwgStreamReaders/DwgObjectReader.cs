@@ -1,4 +1,4 @@
-﻿using ACadSharp.Blocks;
+using ACadSharp.Blocks;
 using ACadSharp.Classes;
 using ACadSharp.Entities;
 using ACadSharp.Entities.AecEntities;
@@ -1107,6 +1107,9 @@ namespace ACadSharp.IO.DWG
 				//Common:
 				//X: The graphic image
 				template.ProxyGraphics = this._objectReader.ReadBytes((int)graphicImageSize);
+
+				//Cache the raw bytes on the entity so the writer can write them back
+				entity.ProxyGraphicsData = template.ProxyGraphics;
 			}
 
 			//R13 - R14 Only:
@@ -1369,16 +1372,18 @@ namespace ACadSharp.IO.DWG
 
 			this.readCommonNonEntityData(template);
 
-			//Following the order of dxf:
-			//330
-			template.DimensionHandle = this.handleReference();
-
+			// [FIX] 字段顺序此前与写出端/ODA 规范(libredwg dwg2.spec DIMASSOC)颠倒：
+			// 规范顺序为 BL associativity(90) / B trans_space(70) / RC rotated_type(71)
+			// / H dimensionobj(330)。旧实现先读 330 handle，导致读 AutoCAD 原生文件时
+			// 关联引用全部错位，写回后 AutoCAD 丢弃标注关联（圆半径标注关联丢失）。
 			//90
 			association.AssociativityFlags = (AssociativityFlags)this._mergedReaders.ReadBitLong();
 			//70
 			association.IsTransSpace = this._mergedReaders.ReadBit();
 			//71
 			association.RotatedDimensionType = (RotatedDimensionType)this._mergedReaders.ReadByte();
+			//330
+			template.DimensionHandle = this.handleReference();
 
 			if (association.AssociativityFlags.HasFlag(AssociativityFlags.FirstPointReference))
 			{
@@ -2055,10 +2060,10 @@ namespace ACadSharp.IO.DWG
 			//Each application's data is structured as follows:
 			//|Length|Application handle|Data items|
 
-			//EED size BS size of extended entity data, if any
-			short size = this._objectReader.ReadBitShort();
+		//EED size BS size of extended entity data, if any
+		short size = this._objectReader.ReadBitShort();
 
-			while (size != 0)
+		while (size != 0)
 			{
 				//App handle
 				ulong appHandle = this._objectReader.HandleReference();
@@ -2617,10 +2622,189 @@ namespace ACadSharp.IO.DWG
 				hatch.SeedPoints.Add(spt);
 			}
 
-			return template;
+			//R2000 / R13-R15: AutoCAD 将渐变填充以私有二进制块存储于种子点之后
+			//（ODA 升级为原生 450-470；libredwg 按 SINCE(R_2004a) 跳过此块）。
+			//该块以 BL is_gradient_fill 起始；非渐变填充种子点之后实体流即结束(或紧跟 EED)，
+			//读到非 1 即回退位置以保护 EED，不影响结果。
+			if (!this.R2004Plus)
+			{
+				// R2000 (AC1015) 渐变填充：AutoCAD 将渐变定义以私有二进制块存储于文件流中（独立对象，
+			// 非种子点之后；libredwg 按 SINCE(R_2004a) 跳过此块，ODA 升级时读此块写原生 450-470）。
+			// 解析策略：渐变定义存于独立 XRecord（"Gradient1" 定义块 + "Gradient4" 名称块，
+			// 均字节对齐），经填充扩展字典 ACAD_XREC_ROUNDTRIP 条目 1:1 关联。
+			// 因 R2000 的 EED/XDATA 在实体数据之后才读、AppId 名称需待 BuildDocument 后解析，
+			// 此处仅按读取顺序登记候选填充；待 Read() 结束后在 ApplyR2000Gradients
+			// 中经扩展字典精确定位并解析，使 R2000→R2004+ 写出原生 450-470。
+			try
+			{
+				this._r2000GradientCandidates.Add(hatch);
+			}
+			catch { }
 		}
 
-		private CadTemplate readImageDefinition()
+		return template;
+	}
+
+	private readonly List<Hatch> _r2000GradientCandidates = new List<Hatch>();
+
+/// <summary>
+/// 为携带私有渐变 roundtrip XRecord 的 R2000 填充恢复渐变定义。
+/// 需在文档构建完成（AppId 名称已解析）后调用。
+/// 判据（与 AutoCAD / cadcodec 参考一致）：填充扩展字典中的
+/// ACAD_XREC_ROUNDTRIP 条目精确指向渐变 XRecord（1:1 关联）即为渐变填充；
+/// 仅有 GradientColor*ACI EED 标记而无该 XRecord 的是陈旧元数据
+/// （渐变被改为纯色填充后遗留），不得据此恢复渐变。
+/// </summary>
+public void ApplyR2000Gradients()
+{
+	if (this._r2000GradientCandidates.Count == 0)
+		return;
+	try
+	{
+		foreach (var hatch in this._r2000GradientCandidates)
+		{
+			// 经扩展字典 ACAD_XREC_ROUNDTRIP 精确定位渐变 XRecord
+			R2000GradientDef g = TryParseGradientFromXRecord(hatch);
+			if (g == null) continue;
+
+			hatch.GradientColor.Enabled = true;
+			hatch.GradientColor.Reserved = g.Reserved;
+			hatch.GradientColor.Angle = g.Angle;
+			hatch.GradientColor.Shift = g.Shift;
+			hatch.GradientColor.IsSingleColorGradient = g.IsSingleColor;
+			hatch.GradientColor.ColorTint = g.ColorTint;
+			hatch.GradientColor.Colors.Clear();
+			foreach (var c in g.Colors)
+				hatch.GradientColor.Colors.Add(c);
+			hatch.GradientColor.Name = g.Name;
+		}
+	}
+	catch { }
+}
+
+	/// <summary>
+	/// 经填充扩展字典中的 ACAD_XREC_ROUNDTRIP 条目定位 R2000 私有渐变 XRecord 并解析。
+	/// XRecord 含 4 条目："Gradient1" + 定义块(字节对齐)、"Gradient4" + 名称块。
+	/// 定义块布局：RL len | RL ver | BL450 is_gradient | BL451 reserved | BD460 angle |
+	/// BD461 shift | BL452 single | BD462 tint | BL453 ncolors | 每色 32 字节
+	/// [BD463 value@0 + RL=24@8 + mode@12 + rgb(0xC2RRGGBB)@16 + 尾部 12]。
+	/// 名称块布局：RL len | RL 4 | RL nameLen(含'\0') | NAME'\0'。
+	/// </summary>
+	private static R2000GradientDef TryParseGradientFromXRecord(Hatch hatch)
+	{
+		try
+		{
+			var xdict = hatch.XDictionary;
+			if (xdict == null)
+				return null;
+			if (!xdict.TryGetEntry<XRecord>("ACAD_XREC_ROUNDTRIP", out XRecord xr) || xr == null)
+				return null;
+
+			byte[] def = null;
+			byte[] nameChunk = null;
+			var entries = xr.Entries.ToList();
+			for (int i = 0; i + 1 < entries.Count; i++)
+			{
+				if (!(entries[i].Value is string key))
+					continue;
+				if (!(entries[i + 1].Value is byte[] chunk))
+					continue;
+				if (key == "Gradient1")
+					def = chunk;
+				else if (key == "Gradient4")
+					nameChunk = chunk;
+			}
+			if (def == null)
+				return null;
+
+			R2000GradientDef g = DecodeGradientDefChunk(def);
+			if (g == null)
+				return null;
+
+			if (nameChunk != null && nameChunk.Length >= 12)
+			{
+				// RL len | RL 4 | RL nameLen(含 '\0') | NAME'\0'
+				int nameLen = BitConverter.ToInt32(nameChunk, 8);
+				int nameStart = 12;
+				if (nameLen >= 1 && nameStart + nameLen <= nameChunk.Length)
+					g.Name = System.Text.Encoding.ASCII.GetString(nameChunk, nameStart, nameLen - 1);
+			}
+			return g;
+		}
+		catch
+		{
+			return null;
+		}
+	}
+
+	/// <summary>
+	/// 解析 "Gradient1" 定义块（字节对齐）：
+	/// +0 RL len | +4 RL ver | +8 BL450 is_gradient | +12 BL451 reserved | +16 BD460 angle |
+	/// +24 BD461 shift | +32 BL452 single | +36 BD462 tint | +44 BL453 ncolors |
+	/// +48 起每色 32 字节（BD463 value@0、rgb 0xC2RRGGBB@16）。
+	/// </summary>
+	private static R2000GradientDef DecodeGradientDefChunk(byte[] def)
+	{
+		if (def == null || def.Length < 48)
+			return null;
+		if (BitConverter.ToInt32(def, 8) != 1)      // BL 450 is_gradient
+			return null;
+		var g = new R2000GradientDef();
+		g.Enabled = true;
+		g.Reserved = BitConverter.ToInt32(def, 12);     // BL 451
+		g.Angle = BitConverter.ToDouble(def, 16);       // BD 460
+		g.Shift = BitConverter.ToDouble(def, 24);       // BD 461
+		int single = BitConverter.ToInt32(def, 32);     // BL 452
+		if (single != 0 && single != 1)
+			return null;
+		g.IsSingleColor = single != 0;
+		g.ColorTint = BitConverter.ToDouble(def, 36);  // BD 462
+		int n = BitConverter.ToInt32(def, 44);          // BL 453
+		if (n < 1 || n > 16)
+			return null;
+		if (double.IsNaN(g.Shift) || g.Shift < -1e-9 || g.Shift > 1 + 1e-9)
+			return null;
+		if (double.IsNaN(g.ColorTint) || g.ColorTint < -1e-9 || g.ColorTint > 1 + 1e-9)
+			return null;
+
+		int o = 48;
+		for (int i = 0; i < n; i++)
+		{
+			if (o + 32 > def.Length)
+				return null;
+			double val = BitConverter.ToDouble(def, o);          // BD 463 value
+			// +8: RL=24；+12: mode；+16: rgb(0xC2RRGGBB)；之后 12 字节尾部
+			uint rgb = BitConverter.ToUInt32(def, o + 16);
+			byte[] arr = BitConverter.GetBytes(rgb);
+			Color c;
+			if (rgb == 0xC0000000u)
+				c = Color.ByLayer;
+			else if ((rgb & 0x01000000u) != 0)
+				c = new Color(arr[0]);
+			else
+				c = new Color(arr[2], arr[1], arr[0]);
+			g.Colors.Add(new GradientColor { Value = val, Color = c });
+			o += 32;
+		}
+		return g;
+	}
+
+	/// <summary>
+	/// R2000 私有渐变块解析结果（对应 <see cref="Hatch.GradientColor"/>）。
+	/// </summary>
+	private sealed class R2000GradientDef
+	{
+		public bool Enabled;
+		public int Reserved;
+		public double Angle;
+		public double Shift;
+		public bool IsSingleColor;
+		public double ColorTint;
+		public List<GradientColor> Colors = new List<GradientColor>();
+		public string Name;
+	}
+
+	private CadTemplate readImageDefinition()
 		{
 			ImageDefinition definition = new ImageDefinition();
 			CadNonGraphicalObjectTemplate template = new CadNonGraphicalObjectTemplate(definition);
@@ -3100,9 +3284,31 @@ namespace ACadSharp.IO.DWG
 					continue;
 				}
 
-				segment.Segment.Text = this.readLineTypeTextString(textArea, offset, encoding);
+				//R2007+ 的线型文本区一律为 UTF-16LE（与文档代码页无关，DBCS 编码下
+				//IsSingleByte=false 会绕过 UTF-16 探测导致中文环境只读到首字符，如 "GAS"→"G"）
+				segment.Segment.Text = this.R2007Plus
+					? this.readLineTypeUtf16String(textArea, offset)
+					: this.readLineTypeTextString(textArea, offset, encoding);
 				segment.Segment.ShapeNumber = 0;
 			}
+		}
+
+		private string readLineTypeUtf16String(byte[] buffer, int offset)
+		{
+			if (buffer == null || offset < 0 || offset >= buffer.Length)
+				return string.Empty;
+
+			// 对齐到 UTF-16 字符边界并扫描至 0x0000 终止符
+			int end = offset;
+			while (end + 1 < buffer.Length)
+			{
+				if (buffer[end] == 0 && buffer[end + 1] == 0)
+					break;
+
+				end += 2;
+			}
+
+			return Encoding.Unicode.GetString(buffer, offset, end - offset);
 		}
 
 		private string readLineTypeTextString(byte[] buffer, int offset, Encoding encoding)
@@ -3186,26 +3392,35 @@ namespace ACadSharp.IO.DWG
 				//Shapeflag BS 74 bit coded:
 				segment.Segment.Flags = (LineTypeShapeFlags)this._objectReader.ReadBitShort();
 
-				if (segment.Segment.Flags.HasFlag(LineTypeShapeFlags.Text))
-					isText = true;
+			if (segment.Segment.Flags.HasFlag(LineTypeShapeFlags.Text))
+				isText = true;
 
-				//Add the segment to the type
-				template.SegmentTemplates.Add(segment);
-			}
+			//Add the segment to the type
+			template.SegmentTemplates.Add(segment);
+		}
 
-			byte[] textarea = null;
-			//R2004 and earlier:
-			if (this._version <= ACadVersion.AC1018)
-			{
-				//Strings area X 9 256 bytes of text area. The complex dashes that have text use this area via the 75-group indices. It's basically a pile of 0-terminated strings. First byte is always 0 for R13 and data starts at byte 1. In R14 it is not a valid data start from byte 0.
-				//(The 9 - group is undocumented.)
-				textarea = this._objectReader.ReadBytes(256);
-			}
-			//R2007+:
-			if (this.R2007Plus && isText)
-			{
-				textarea = this._objectReader.ReadBytes(512);
-			}
+		byte[] textarea = null;
+		//R2004 and earlier:
+		if (this._version <= ACadVersion.AC1018)
+		{
+			//Strings area X 9 256 bytes of text area. The complex dashes that have text use this area via the 75-group indices. It's basically a pile of 0-terminated strings. First byte is always 0 for R13 and data starts at byte 1. In R14 it is not a valid data start from byte 0.
+			//(The 9 - group is undocumented.)
+			textarea = this._objectReader.ReadBytes(256);
+		}
+		//R2007+:
+		if (this.R2007Plus && isText)
+		{
+			textarea = this._objectReader.ReadBytes(512);
+		}
+
+		// [DBG-LT]
+		if (Environment.GetEnvironmentVariable("ACADSHARP_DBG_LT") == "1")
+		{
+			var enc = this._reader?.Encoding?.EncodingName ?? "<null reader>";
+			Console.Error.WriteLine($"[DBG-LT] ver={this._version} isText={isText} enc={enc} singleByte={this._reader?.Encoding?.IsSingleByte}");
+			if (textarea != null)
+				Console.Error.WriteLine("[DBG-LT] textarea[0..32]=" + BitConverter.ToString(textarea, 0, Math.Min(32, textarea.Length)));
+		}
 
 			if (isText)
 			{
@@ -3266,6 +3481,9 @@ namespace ACadSharp.IO.DWG
 				if ((flags & 0x4u) != 0)
 				{
 					lwPolyline.ConstantWidth = this._objectReader.ReadBitDouble();
+					// [PATCH] Remember the constant width was present (DXF 43), even when
+					// the value is 0, so the DXF writer round-trips the code.
+					lwPolyline.ConstantWidthSpecified = true;
 				}
 
 				if ((flags & 0x8u) != 0)
@@ -4155,6 +4373,12 @@ namespace ACadSharp.IO.DWG
 				{
 					//Column height count BL 72
 					int count = this._objectReader.ReadBitLong();
+					// [FIX] 此前未把 count 赋回 ColumnData.ColumnCount（保持默认 0），
+					// 写端 writeMText 按 ColumnCount 写出 BL 72=0、却按 Heights.Count 跟写
+					// N 个列高 BD，AutoCAD 读到 BL=0 后位流错位，MText 整体报
+					// eDwgObjectImproperlyRead 被丢弃（R2018源→R2018 多行文字不显示根因，
+					// 仅带列数据的 MText 受影响，与其余 MText 读写对称）。
+					mtext.ColumnData.ColumnCount = count;
 					//Columnn width BD 44
 					mtext.ColumnData.Width = this._objectReader.ReadBitDouble();
 					//Gutter BD 45
@@ -4932,8 +5156,62 @@ namespace ACadSharp.IO.DWG
 			//72
 			osnap.ObjectOsnapType = (ObjectOsnapType)this._mergedReaders.ReadByte();
 
-			//331
-			template.ObjectHandle = this.handleReference();
+			//331: number of handles, the main object is the first handle
+			var handleCount = this._mergedReaders.ReadBitLong();
+			for (int i = 0; i < handleCount; i++)
+			{
+				var handle = this.handleReference();
+				if (i == 0)
+				{
+					template.ObjectHandle = handle;
+				}
+			}
+
+			if (osnap.ObjectOsnapType != ObjectOsnapType.None)
+			{
+				//73
+				osnap.SubentType = (SubentType)this._mergedReaders.ReadBitLong();
+				//91
+				osnap.GsMarker = this._mergedReaders.ReadBitLong();
+
+				//301: xref paths
+				var pathCount = this._mergedReaders.ReadBitLong();
+				for (int i = 0; i < pathCount; i++)
+				{
+					osnap.XrefPaths.Add(this._mergedReaders.ReadVariableText());
+				}
+			}
+
+			//40
+			osnap.GeometryParameter = this._mergedReaders.ReadBitDouble();
+			//10
+			osnap.OsnapPoint = this._mergedReaders.Read3BitDouble();
+
+			if (osnap.ObjectOsnapType == (ObjectOsnapType)6 || osnap.ObjectOsnapType == (ObjectOsnapType)11)
+			{
+				//332: intersection objects handles
+				var intersectionCount = this._mergedReaders.ReadBitLong();
+				for (int i = 0; i < intersectionCount; i++)
+				{
+					this.handleReference();
+				}
+
+				//74
+				osnap.IntersectionSubType = (SubentType)this._mergedReaders.ReadBitLong();
+				//92
+				osnap.IntersectionGsMarker = this._mergedReaders.ReadBitLong();
+
+				//302: intersection xref paths
+				var intersectionPathCount = this._mergedReaders.ReadBitLong();
+				for (int i = 0; i < intersectionPathCount; i++)
+				{
+					osnap.IntersectionXrefPaths.Add(this._mergedReaders.ReadVariableText());
+				}
+			}
+
+			//75: more references bit, only the first reference is kept
+			var moreReferences = this._mergedReaders.ReadBit();
+			osnap.HasLastPointRef = moreReferences;
 
 			return template;
 		}
@@ -5941,7 +6219,11 @@ namespace ACadSharp.IO.DWG
 			}
 
 			//Common:
-			//Handle refs H ucs control object (soft pointer)
+			//Handle refs H xref handle (hard pointer, 0 if not xref-dependent)。
+			//注：此前误标为 "ucs control object (soft pointer)" 并在写出端填入 UCS 控制表
+			//句柄。经 AutoCAD 原始文件实证（sample.dwg 该槽位=0）并与 cadcodec/ODA 规范
+			//§20.4.62 对照，此槽位是 xref handle，写非空表句柄会导致 AutoCAD
+			//eWrongObjectType 丢弃该记录。
 			long control = (long)this.handleReference();
 
 			//R2000 +:

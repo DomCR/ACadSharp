@@ -1,5 +1,6 @@
 ﻿using ACadSharp.Attributes;
 using CSMath;
+using System.Collections.Generic;
 
 namespace ACadSharp.Objects;
 
@@ -38,6 +39,16 @@ public partial class DimensionAssociation
 		/// </summary>
 		[DxfCodeValue(91)]
 		public int GsMarker { get; set; }
+
+		/// <summary>
+		/// Gets the xref paths (DXF code 301) associated with the main object.
+		/// </summary>
+		public List<string> XrefPaths { get; } = new List<string>();
+
+		/// <summary>
+		/// Gets the xref paths (DXF code 302) associated with the intersection object.
+		/// </summary>
+		public List<string> IntersectionXrefPaths { get; } = new List<string>();
 
 		//332
 		//ID of intersection object (geometry)

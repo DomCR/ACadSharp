@@ -211,6 +211,11 @@ namespace ACadSharp.IO.DWG
 			return color;
 		}
 
+		public Color ReadCmColorR2004()
+		{
+			return this._mainReader.ReadCmColorR2004();
+		}
+
 		public Color ReadEnColor(out Transparency transparency, out bool flag)
 		{
 			return this._mainReader.ReadEnColor(out transparency, out flag);

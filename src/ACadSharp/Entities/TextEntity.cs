@@ -1,4 +1,4 @@
-﻿using ACadSharp.Attributes;
+using ACadSharp.Attributes;
 using ACadSharp.Tables;
 using CSMath;
 using CSMath.Extensions;
@@ -272,10 +272,19 @@ public class TextEntity : Entity, IText
 
 		this.InsertPoint = newInsert;
 		this.Normal = newNormal;
-		this.Rotation = newRotation;
+		this.Rotation = MathHelper.NormalizeAngleRadians(newRotation, true);
 		this.Height = newHeight;
 		this.WidthFactor = newWidthFactor;
 		this.ObliqueAngle = newObliqueAngle;
+
+		// [PATCH] The second alignment point is a location (in OCS) used when the justification
+		// is anything other than baseline/left: AutoCAD TransformBy moves it with the full
+		// transform, e.g. (850, -25.69) becomes (-1592630.12, -2921814.08) for the reference
+		// transform. Left-aligned texts keep it untouched.
+		if (this.HorizontalAlignment != TextHorizontalAlignment.Left)
+		{
+			this.AlignmentPoint = transform.ApplyTransform(this.AlignmentPoint);
+		}
 	}
 
 	/// <inheritdoc/>

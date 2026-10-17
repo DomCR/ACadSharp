@@ -1,6 +1,8 @@
-﻿using ACadSharp.Attributes;
+using ACadSharp.Attributes;
 using ACadSharp.Objects;
 using CSMath;
+using CSMath.Extensions;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 
@@ -97,6 +99,16 @@ public partial class MLine : Entity, IOrientable
 	{
 		this.Normal = this.transformNormal(transform, this.Normal);
 		this.StartPoint = transform.ApplyTransform(StartPoint);
+
+		// [PATCH] The mline scale factor scales with the transform (AutoCAD: 20 -> 19.96 for a
+		// 0.998 scale). Uniform scale = average of the decomposed scale components
+		// (transform.Scale is a vector; its GetLength() would give s·√3, not s).
+		XYZ msc = transform.Scale;
+		double scaleFactor = (Math.Abs(msc.X) + Math.Abs(msc.Y) + Math.Abs(msc.Z)) / 3.0;
+		if (scaleFactor > MathHelper.Epsilon)
+		{
+			this.ScaleFactor *= scaleFactor;
+		}
 
 		foreach (var item in this.Vertices)
 		{

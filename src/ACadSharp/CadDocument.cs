@@ -391,6 +391,16 @@ public class CadDocument : IHandledCadObject
 	}
 
 	/// <summary>
+	/// Gets all the objects of the given type currently stored in the document.
+	/// </summary>
+	/// <typeparam name="T">The type of the objects to retrieve.</typeparam>
+	/// <returns>All the instances of <typeparamref name="T"/> in the document.</returns>
+	public IEnumerable<T> GetCadObjects<T>() where T : CadObject
+	{
+		return this._cadObjects.Values.OfType<T>();
+	}
+
+	/// <summary>
 	/// Reassign all the handles in the document to avoid the variable <see cref="CadHeader.HandleSeed"/> to grow past its limit.
 	/// </summary>
 	public void RestoreHandles()

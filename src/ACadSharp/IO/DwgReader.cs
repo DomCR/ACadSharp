@@ -23,6 +23,8 @@ public class DwgReader : CadReaderBase<DwgReaderConfiguration>
 
 	private DwgFileHeader _fileHeader;
 
+	private ACadSharp.IO.DWG.DwgObjectReader _sectionReader;
+
 	/// <summary>
 	/// Initializes a new instance of the <see cref="DwgReader"/> class.
 	/// </summary>
@@ -126,6 +128,9 @@ public class DwgReader : CadReaderBase<DwgReaderConfiguration>
 
 		this._builder.BuildDocument();
 		this._builder.BuildDataStorage();
+
+		// 文档构建完成后（AppId 名称已解析）分配 R2000 私有渐变
+		this._sectionReader?.ApplyR2000Gradients();
 
 		return this._document;
 	}
@@ -1206,6 +1211,7 @@ public class DwgReader : CadReaderBase<DwgReaderConfiguration>
 			handles,
 			this._document.Classes);
 
+		this._sectionReader = sectionReader;
 		sectionReader.Read();
 	}
 

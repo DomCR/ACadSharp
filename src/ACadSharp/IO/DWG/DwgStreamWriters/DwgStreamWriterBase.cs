@@ -267,9 +267,24 @@ namespace ACadSharp.IO.DWG
 				return;
 			}
 
+			//[EXP] TV null 终止实验开关（1=修复 BS(len+1)+chars+0x00，0=旧写法 BS(len)+chars）
+			if (Environment.GetEnvironmentVariable("ACADSHARP_TV_NULL") == "0")
+			{
+				byte[] oldBytes = this.Encoding.GetBytes(value);
+				this.WriteBitShort((short)oldBytes.Length);
+				this.WriteBytes(oldBytes);
+				return;
+			}
+
+			//[FIX] AutoCAD 原生写法：长度字段包含结尾 null，且字符串以 0x00 终止。
+			//此前写 BS(len)+chars（无 null），导致外部解析器（ODA/AutoCAD/libredwg）
+			//读取 TV 失败（如匿名缓存块名 *T 被读为空，TABLE 实体引用失效）。
 			byte[] bytes = this.Encoding.GetBytes(value);
-			this.WriteBitShort((short)bytes.Length);
+			this.WriteBitShort((short)(bytes.Length + 1));
 			this.WriteBytes(bytes);
+			//[FIX] null 必须走位写入器：直接写原始 Stream 会绕过位缓冲，
+			//在字符串位于字节中间时破坏整个位流对齐（类段/头部 TV 全部错位）
+			this.WriteByte(0);
 		}
 
 		public virtual void WriteTextUnicode(string value)
@@ -377,6 +392,42 @@ namespace ACadSharp.IO.DWG
 			}
 
 			this.WriteBitShort(index);
+		}
+
+		/// <summary>
+		/// 写出 R2004+ 风格的完整 CMC（BS index + BL rgb + RC flag）。
+		/// [FIX] 表格单元格/表级覆盖的颜色字段无论目标文件版本一律使用完整 CMC：
+		/// libredwg CMTC 宏强制 R_2004 语义，AutoCAD 原生 R2000 参考文件实测
+		/// 单元格颜色均为 BS 0 + BL 0xC3xx0000|index + RC 0。
+		/// 此前按 BS 单字段写出导致 ODA 位流错位报
+		/// "&lt;AcDbTable&gt; Object improperly read"，AutoCAD 打开即崩溃。
+		/// </summary>
+		public virtual void WriteCmColorR2004(Color value)
+		{
+			uint rgb;
+			short index = 0;
+			if (value.IsByLayer)
+			{
+				rgb = 0xC0000000;
+				index = 256;
+			}
+			else if (value.IsByBlock)
+			{
+				rgb = 0xC1000000;
+			}
+			else if (value.IsTrueColor)
+			{
+				rgb = 0xC2000000u | ((uint)value.TrueColor & 0xFFFFFF);
+			}
+			else
+			{
+				// 与 AutoCAD 原生文件一致：rgb = 0xC3000000 | ACI 索引
+				rgb = 0xC3000000u | ((uint)(value.Index & 0xFF));
+			}
+
+			this.WriteBitShort(index);
+			this.WriteBitLong((int)rgb);
+			this.WriteByte(0);
 		}
 
 		public virtual void WriteEnColor(Color color, Transparency transparency)

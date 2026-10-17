@@ -1,7 +1,8 @@
-﻿using ACadSharp.Attributes;
+using ACadSharp.Attributes;
 using CSMath;
 using CSMath.Extensions;
 using CSMath.Geometry;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 
@@ -51,6 +52,16 @@ public partial class Hatch : Entity, IOrientable
 	/// <inheritdoc/>
 	[DxfCodeValue(210, 220, 230)]
 	public XYZ Normal { get; set; } = XYZ.AxisZ;
+
+	/// <summary>
+	/// Origin point of the hatch (DXF codes 10/20, in OCS).
+	/// </summary>
+	/// <remarks>
+	/// This is the first 10/20 pair of the AcDbHatch section and is NOT a seed point.
+	/// AutoCAD TransformBy leaves the origin untouched while the seed points (code 98
+	/// pairs) move with the transform, so <see cref="ApplyTransform"/> must not touch it.
+	/// </remarks>
+	public XY Origin { get; set; } = new XY();
 
 	/// <inheritdoc/>
 	public override string ObjectName => DxfFileToken.EntityHatch;
@@ -155,6 +166,18 @@ public partial class Hatch : Entity, IOrientable
 		var newNormal = this.transformNormal(transform, this.Normal);
 		var worldTransform = this.getWorldMatrix(transform, this.Normal, newNormal, out Matrix3 transOW, out Matrix3 transWO);
 
+		// [PATCH] Seed points are world locations (OCS): they must move with the full
+		// transform (upstream left them untouched: (-100, 0) stayed instead of becoming
+		// (-1593184.09, -2921044.24)).
+		if (this.SeedPoints.Count > 0)
+		{
+			this.SeedPoints = this.SeedPoints.Select(p =>
+			{
+				XYZ tp = transform.ApplyTransform(new XYZ(p.X, p.Y, 0.0));
+				return new XY(tp.X, tp.Y);
+			}).ToList();
+		}
+
 		foreach (BoundaryPath p in this.Paths)
 		{
 			p.ApplyTransform(transform);
@@ -166,12 +189,30 @@ public partial class Hatch : Entity, IOrientable
 		v = worldTransform * v;
 		v = transWO * v;
 		XY axis = new XY(v.X, v.Y);
-		this._patternAngle = axis.GetAngle();
+
+		// [PATCH] AutoCAD stores the pattern angle (DXF 52) unnormalized after a
+		// TransformBy: 45° + (-0.92 rad) is written as -7.712117152035739°, not as the
+		// [0, 2π) equivalent 352.2878828479643°. Use the raw atan2 of the transformed
+		// axis (the per-line angles in code 53 are the normalized ones — see
+		// HatchPattern.Update).
+		this._patternAngle = Math.Atan2(axis.Y, axis.X);
 
 		double patScale = axis.GetLength();
 		this._patternScale = patScale.IsZero() ? MathHelper.Epsilon : patScale;
 
-		this.Pattern?.Update(transform.Translation.Convert<XY>(), this._patternAngle, this._patternScale);
+		// [PATCH] Pattern.Update must rotate the pattern lines by the TRANSFORM's rotation,
+		// not by the resulting pattern angle (which would add the original pattern angle a
+		// second time: 45° + (-0.1346) instead of 45° + (-0.92) -> 0.6508 instead of 6.1486).
+		double transformRotation = Math.Atan2(worldTransform.M10, worldTransform.M00);
+		double transformScale = (
+			Math.Sqrt(worldTransform.M00 * worldTransform.M00 + worldTransform.M10 * worldTransform.M10) +
+			Math.Sqrt(worldTransform.M01 * worldTransform.M01 + worldTransform.M11 * worldTransform.M11)) / 2.0;
+		if (transformScale.IsZero())
+		{
+			transformScale = MathHelper.Epsilon;
+		}
+
+		this.Pattern?.Update(transform.Translation.Convert<XY>(), transformRotation, transformScale);
 		this.Normal = newNormal;
 	}
 

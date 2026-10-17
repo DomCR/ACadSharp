@@ -1,4 +1,4 @@
-﻿using ACadSharp.Attributes;
+using ACadSharp.Attributes;
 using ACadSharp.Tables;
 using ACadSharp.Text;
 using CSMath;
@@ -303,6 +303,18 @@ public partial class MText : Entity, IText
 		this.Normal = newNormal;
 		this.Height = newHeight;
 		this.RectangleWidth *= scale;
+
+		// [PATCH] Upstream never transformed the alignment point: the MText kept its old
+		// rotation after a TransformBy (MText.Rotation is derived from AlignmentPoint).
+		// The alignment point is a direction, not a location: AutoCAD TransformBy applies only
+		// the linear part (rotation + scale, no translation) and keeps it normalized,
+		// e.g. (1, 0) with rotation -0.92 becomes (0.60582, -0.79560), giving rotation -0.92.
+		XYZ newAlignment = new Matrix3(transform.Matrix) * this.AlignmentPoint;
+		double alignLength = newAlignment.GetLength();
+		if (alignLength > MathHelper.Epsilon)
+		{
+			this.AlignmentPoint = newAlignment / alignLength;
+		}
 	}
 
 	/// <inheritdoc/>

@@ -1,5 +1,6 @@
-﻿using ACadSharp.Entities;
+using ACadSharp.Entities;
 using ACadSharp.Objects;
+using ACadSharp.Types;
 using CSMath;
 using System;
 using System.Collections.Generic;
@@ -23,8 +24,8 @@ internal partial class DwgObjectWriter : DwgSectionIO
 
 		//R2010+:
 		if (this.R2010Plus)
-			//Version RC ?		Repeated??
-			this._writer.WriteByte(attdef.Version);
+			//Version RC ?		Repeated?——native 恒 0，见 writeCommonAttData 注释
+			this._writer.WriteByte(0);
 
 		//Common:
 		//Prompt TV 3
@@ -129,8 +130,10 @@ internal partial class DwgObjectWriter : DwgSectionIO
 		//R2010+:
 		if (this.R2010Plus)
 		{
-			//Version RC ?
-			this._writer.WriteByte(att.Version);
+			//Version RC ——native DWG 恒 0；DXF 读端把 280 组码统一作为 Lock position
+			//处理（见 DxfSectionReaderBase.readAttributeDefinition），Version 保持 0，
+			//否则 AutoCAD 解析 ATTDEF/ATTRIB 报"解密数据时出错"。
+			this._writer.WriteByte(0);
 		}
 
 		//R2018+:
@@ -583,8 +586,11 @@ internal partial class DwgObjectWriter : DwgSectionIO
 				{
 					case PolyfaceMesh faceMesh:
 						this.writePolyfaceMesh(faceMesh);
-						children.AddRange(faceMesh.Faces);
+						// [FIX] 子实体链顺序对齐 cadcodec（顶点在前、面在后）：
+						// R13-R2000 的 first/last 句柄语义为 first=首顶点、last=末面，
+						// 此前 Faces 在前导致 first 指向面、last 指向顶点。
 						children.AddRange(faceMesh.Vertices);
+						children.AddRange(faceMesh.Faces);
 						seqend = faceMesh.Vertices.Seqend;
 						break;
 					case Polyline2D pline2d:
@@ -1078,7 +1084,9 @@ internal partial class DwgObjectWriter : DwgSectionIO
 		}
 
 		//H 340 Associated annotation
-		this._writer.HandleReference(DwgReferenceType.HardPointer, null);
+		// [PATCH] Write the real associated-annotation handle (was hardcoded null, which
+		// silently dropped the leader's MText/Text annotation on every DWG save).
+		this._writer.HandleReference(DwgReferenceType.HardPointer, leader.AssociatedAnnotation);
 		//H 2 DIMSTYLE (hard pointer)
 		this._writer.HandleReference(DwgReferenceType.HardPointer, leader.Style);
 	}
@@ -1254,7 +1262,9 @@ internal partial class DwgObjectWriter : DwgSectionIO
 			flags = (short)(flags | 0x200);
 		}
 
-		if (lwPolyline.ConstantWidth != 0.0)
+		// [PATCH] The constant-width flag (0x4) follows the DXF presence of code 43,
+		// not its value: a source polyline with 43=0.0 must round-trip the code.
+		if (lwPolyline.ConstantWidthSpecified)
 		{
 			flags = (short)(flags | 0x4);
 		}
@@ -1289,7 +1299,8 @@ internal partial class DwgObjectWriter : DwgSectionIO
 		//More specifically: it starts at the LWPOLYLINE flags (BS), and ends with the width array (BD).
 		this._writer.WriteBitShort(flags);
 
-		if (lwPolyline.ConstantWidth != 0.0)
+		// [PATCH] Mirrors the 0x4 flag condition above (see flag block).
+		if (lwPolyline.ConstantWidthSpecified)
 		{
 			this._writer.WriteBitDouble(lwPolyline.ConstantWidth);
 		}
@@ -1977,12 +1988,14 @@ internal partial class DwgObjectWriter : DwgSectionIO
 			this._writer.WriteBitLong(fm.Vertices.Count + fm.Faces.Count);
 			foreach (var v in fm.Vertices)
 			{
-				//H[VERTEX(soft pointer)] Repeats “Owned Object Count” times.
-				this._writer.HandleReference(DwgReferenceType.SoftPointer, v);
+				//H[VERTEX(hard owner)] Repeats "Owned Object Count" times。
+				// [FIX] 引用类型应为 HardOwnership（cadcodec write_polyface_mesh，
+				// ODA 全版本验证通过）；此前写 SoftPointer。
+				this._writer.HandleReference(DwgReferenceType.HardOwnership, v);
 			}
 			foreach (var f in fm.Faces)
 			{
-				this._writer.HandleReference(DwgReferenceType.SoftPointer, f);
+				this._writer.HandleReference(DwgReferenceType.HardOwnership, f);
 			}
 		}
 
@@ -2003,7 +2016,9 @@ internal partial class DwgObjectWriter : DwgSectionIO
 
 		//Common:
 		//H SEQEND(hard owner)
-		this._writer.HandleReference(DwgReferenceType.SoftPointer, fm.Vertices.Seqend);
+		// [FIX] 引用类型应为 HardOwnership（cadcodec write_polyface_mesh）；此前写
+		// SoftPointer，与 writePolygonMesh 不一致。
+		this._writer.HandleReference(DwgReferenceType.HardOwnership, fm.Vertices.Seqend);
 	}
 
 	private void writePolygonMesh(PolygonMesh pline)
@@ -2192,7 +2207,9 @@ internal partial class DwgObjectWriter : DwgSectionIO
 		this._writer.Write3BitDouble(shape.Normal);
 
 		//H SHAPEFILE (hard pointer)
-		this._writer.HandleReference(DwgReferenceType.HardPointer, null);
+		// [PATCH] Write the real shape-style (SHAPEFILE) handle (was hardcoded null, which
+		// silently dropped the shape's shape style on every DWG save).
+		this._writer.HandleReference(DwgReferenceType.HardPointer, shape.ShapeStyle);
 	}
 
 	private void writeSolid(Solid solid)
@@ -2330,14 +2347,49 @@ internal partial class DwgObjectWriter : DwgSectionIO
 
 	private void writeTableEntity(TableEntity table)
 	{
-		this.writeCommonInsertData(table);
+		// [PATCH] 摘除表格匿名缓存块（*Txx）引用后再写表格数据。
+		// 根因（mintable/reduce 二分实验证实）：R2010+ 公共 INSERT 数据的 H2 BLOCK HEADER
+		// 硬指针只要写出真实块（缓存块 *T11 或 ModelSpace），ODA/AutoCAD 解析表格
+		// 即报 "<AcDbTable> needs recovery"（R2010+ AutoCAD 打开卡死）；
+		// H2=NULL 则全部通过。native 文件可通过是因为其 *T 缓存块由
+		// AutoCAD 完整写出，本写手写出的块头尚不完整（遗留问题）。
+		// 缓存块缺失时 AutoCAD 2010+ 依据 TABLECONTENT 数据自动重建几何，显示不受影响。
+		//
+		// [REGRESSION FIX] 摘除仅限 R2010+（AC1024+）：R2004/R2007 等旧版本
+		// 渲染表格依赖 *T 缓存块几何（TableEntity 本质是缓存块的 INSERT），
+		// 摘除后 AutoCAD 打开输出文件表格不显示（回归实证，旧版保留 H2 可正常显示）。
+		// AC1021 是否摘除对 ODA 审计结果无影响（表格数据仍报 needs recovery），
+		// 故同样保留缓存块引用以贴近旧版（可显示）行为。
+		// 注意 ValueFlag 的 has-block 位（0x06）必须与 H2 一同清零并在整个
+		// 写出期间保持清零（BS 90 在 writeTableEntityR2004 中写出），
+		// 否则 ODA 读到 has-block=1 而 H2=NULL，同样报 needs recovery。
+		// [EXPERIMENT 2026-10-13] AutoCAD COM 实测（TableComCheck）：R2010+ 数据段修复后，
+		// AC1024/1027/1032 表格数据可被 AutoCAD 完整解析（7 行 3 列逐格文本正确），
+		// 但块表中无 *T 匿名缓存块 → 表格不显示（AutoCAD 不会从 TABLECONTENT 数据
+		// 自动重建显示几何；AutoCAD SaveRef 参考文件含 *T0 缓存块且显示正常）。
+		// 结论：此前"恢复缓存块引用导致 needs recovery/卡死"的实验发生在 R2010+ 数据段
+		// 格式修复之前，失败根源是数据段错误而非块引用。故恢复全版本缓存块引用。
+		bool detachTableBlock = false;
+		ACadSharp.Tables.BlockRecord savedTableBlock = table.Block;
+		int savedTableValueFlag = table.ValueFlag;
+		if (detachTableBlock && savedTableBlock != null)
+		{
+			table.Block = null;
+			table.ValueFlag = savedTableValueFlag & ~0x06;
+		}
+
+		try
+		{
+			this.writeCommonInsertData(table);
 
 		if (this.R2010Plus)
 		{
 			//RC Unknown (default 0)
 			this._writer.WriteByte(0);
-			//H Unknown (soft pointer, default NULL)
-			this._writer.HandleReference(DwgReferenceType.SoftPointer, null);
+			//H 342 Table style handle (soft pointer)
+			// [FIX] libredwg dwg2.spec TABLE 实体 R2010b+ 分支：该句柄是 tablestyle(342)，
+			// 而非无名 Unknown。此前写 NULL，AutoCAD 审计报 eWrongObjectType 丢弃整个表格。
+			this._writer.HandleReference(DwgReferenceType.SoftPointer, table.Style);
 			//BL Unknown (default 0)
 			this._writer.WriteBitLong(0);
 
@@ -2415,9 +2467,445 @@ internal partial class DwgObjectWriter : DwgSectionIO
 		//	0x10: table direction, 0 = up, 1 = down,
 		//	0x20: title suppressed.
 		//	Normally 0x06 is always set.
-
-		throw new NotImplementedException();
+		//
+		// R2004 (AC1018) 及更早版本：表格数据内联在实体中（无独立 TABLECONTENT 对象）。
+		// 字段序列与读取端 readTableEntity() 的 "Until R2007" 分支严格对称。
+		this.writeTableEntityR2004(table);
+		}
+		finally
+		{
+			if (detachTableBlock && savedTableBlock != null)
+			{
+				table.Block = savedTableBlock;
+				table.ValueFlag = savedTableValueFlag;
+			}
+		}
 	}
+
+	/// <summary>
+	/// 写出 R2004 (AC1018) 及更早版本的 ACAD_TABLE 实体数据（内联表格内容）。
+	/// 字段顺序与 <see cref="DwgObjectReader"/> 中 readTableEntity 的 R2007 之前分支一致。
+	/// </summary>
+	private void writeTableEntityR2004(TableEntity table)
+	{
+		//BS 90 Flag for table value
+		// [FIX] R2010+ 源（sampleR2010/2013/2018.dwg）读端不产生 ValueFlag
+		// （R2010+ 数据段无此字段，模型默认 0）。写 pre-R2010 时 has-block 位(0x06)
+		// 必须与 H2 缓存块句柄一致：H2 写出 *T 缓存块而位清零时，AutoCAD 读取实体
+		// 即报 eWrongObjectType 丢弃表格（R2010+源→AC1018 审计实证；
+		// R2004 源读端从文件读入 0x16 不受影响）。方向(0x10)/标题(0x20)位
+		// 在 R2010+ 模型中无对应属性，保持缺省。
+		int valueFlag = table.ValueFlag;
+		if (table.Block != null)
+		{
+			valueFlag |= 0x06;
+		}
+		this._writer.WriteBitShort((short)valueFlag);
+
+		//3BD 11 Horizontal direction
+		this._writer.Write3BitDouble(table.HorizontalDirection);
+
+		//BL 92 Number of columns
+		this._writer.WriteBitLong(table.Columns.Count);
+		//BL 91 Number of rows
+		this._writer.WriteBitLong(table.Rows.Count);
+
+		//BD 142 Column widths, repeats "# of columns" times
+		foreach (var column in table.Columns)
+		{
+			this._writer.WriteBitDouble(column.Width);
+		}
+
+		//BD 141 Row heights, repeats "# of rows" times
+		foreach (var row in table.Rows)
+		{
+			this._writer.WriteBitDouble(row.Height);
+		}
+
+		//H 342 Table Style ID (hard pointer)
+		// [FIX] 裸 HandleReference(...) 走 DwgReferenceType.Undefined（句柄码 0），
+		// 写出非法句柄码。AutoCAD 原生 R2000 参考文件此处为码 5 软指针
+		// （句柄流实测：REF=(5.1.7F)，我们=(0.1.7F)），ODA 审计因此报
+		// ".dwg file needs recovery: <AcDbTable>"，AutoCAD 打开即崩溃。
+		this._writer.HandleReference(DwgReferenceType.HardPointer, table.Style);
+
+		//Cell data, repeats for all cells in n x m table
+		foreach (var row in table.Rows)
+		{
+			foreach (var cell in row.Cells)
+			{
+				this.writeTableCellR2004(cell);
+			}
+		}
+
+		//B Has table overrides
+		// [PATCH] 完整写出表格级 legacy 覆盖段。原实现 4 段恒写 false 丢弃读入数据，
+		// 单元格边框覆盖引用表格级覆盖数组时索引失效，AutoCAD/ODA 报
+		// "<AcDbTable> needs recovery"（2007 版无法打开的根因，R2004 Invalid index 同源）。
+		// 字段顺序参照 cadcodec write_legacy_table_style_override / write_legacy_border_*。
+		var legacy = table.LegacyOverrides;
+		this._writer.WriteBit(legacy?.StyleOverride != null);
+		if (legacy?.StyleOverride != null)
+		{
+			this.writeLegacyTableStyleOverride(legacy.StyleOverride);
+		}
+
+		//B Has border color overrides
+		this._writer.WriteBit(legacy?.BorderColors != null);
+		if (legacy?.BorderColors != null)
+		{
+			this.writeLegacyBorderOverrides(legacy.BorderColors, true, false, false);
+		}
+
+		//B Has border lineweight overrides
+		this._writer.WriteBit(legacy?.BorderLineWeights != null);
+		if (legacy?.BorderLineWeights != null)
+		{
+			this.writeLegacyBorderOverrides(legacy.BorderLineWeights, false, true, false);
+		}
+
+		//B Has border visibility overrides
+		// 读取端 readTableEntity 的 "Until R2007" 分支共读取 4 个覆盖标志位
+		// (table overrides / border color / border lineweight / border visibility，
+		// 见 DwgObjectReader.Entities.cs)；此前恒写 false 导致位流与数据丢失。
+		this._writer.WriteBit(legacy?.BorderVisibility != null);
+		if (legacy?.BorderVisibility != null)
+		{
+			this.writeLegacyBorderOverrides(legacy.BorderVisibility, false, false, true);
+		}
+	}
+
+	/// <summary>
+	/// 写出 R2007 及更早版本的表格样式覆盖段，
+	/// 字段顺序与 <see cref="DwgObjectReader"/> 中 readTableEntity 的对应读取分支一致。
+	/// </summary>
+	private void writeLegacyTableStyleOverride(TableEntity.TableLegacyOverrides.StyleOverrideData data)
+	{
+		this._writer.WriteBitLong(data.Flags);
+		int flags = data.Flags;
+		if ((flags & 0x0001) != 0)
+		{
+			//Title suppressed B 280
+			this._writer.WriteBit(data.TitleSuppressed);
+		}
+		if ((flags & 0x0004) != 0)
+		{
+			//Flow direction BS 70
+			this._writer.WriteBitShort(data.FlowDirection);
+		}
+		if ((flags & 0x0008) != 0)
+		{
+			//Horz. Cell margin BD 40
+			this._writer.WriteBitDouble(data.HorizontalCellMargin);
+		}
+		if ((flags & 0x0010) != 0)
+		{
+			//Vert. cell margin BD 41
+			this._writer.WriteBitDouble(data.VerticalCellMargin);
+		}
+		int index = 0;
+		foreach (int bit in new[] { 0x0020, 0x0040, 0x0080 })
+		{
+			if ((flags & bit) != 0)
+			{
+				//Title/Header/Data row color CMC 64/65/66
+				Color color = index < data.RowColors.Count ? data.RowColors[index] : Color.ByBlock;
+				this._writer.WriteCmColorR2004(color);
+				index++;
+			}
+		}
+		index = 0;
+		foreach (int bit in new[] { 0x0100, 0x0200, 0x0400 })
+		{
+			if ((flags & bit) != 0)
+			{
+				//Title/Header/Data row fill none B 283
+				this._writer.WriteBit(index < data.RowFillNone.Count ? data.RowFillNone[index] : false);
+				index++;
+			}
+		}
+		index = 0;
+		foreach (int bit in new[] { 0x0800, 0x1000, 0x2000 })
+		{
+			if ((flags & bit) != 0)
+			{
+				//Title/Header/Data row fill color CMC 63
+				Color color = index < data.RowFillColors.Count ? data.RowFillColors[index] : Color.ByBlock;
+				this._writer.WriteCmColorR2004(color);
+				index++;
+			}
+		}
+		index = 0;
+		foreach (int bit in new[] { 0x4000, 0x8000, 0x10000 })
+		{
+			if ((flags & bit) != 0)
+			{
+				//Title/Header/Data row align BS 170
+				this._writer.WriteBitShort(index < data.RowAlignments.Count ? data.RowAlignments[index] : (short)0);
+				index++;
+			}
+		}
+		index = 0;
+		foreach (int bit in new[] { 0x20000, 0x40000, 0x80000 })
+		{
+			if ((flags & bit) != 0)
+			{
+				//Title/Header/Data text style hnd H 7
+				ulong handle = index < data.TextStyleHandles.Count ? data.TextStyleHandles[index] : 0;
+				this._writer.HandleReference(DwgReferenceType.HardPointer, handle);
+				index++;
+			}
+		}
+		index = 0;
+		foreach (int bit in new[] { 0x100000, 0x200000, 0x400000 })
+		{
+			if ((flags & bit) != 0)
+			{
+				//Title/Header/Data row height BD 140
+				this._writer.WriteBitDouble(index < data.RowHeights.Count ? data.RowHeights[index] : 0.0);
+				index++;
+			}
+		}
+	}
+
+	/// <summary>
+	/// 写出 R2007 及更早版本的边框覆盖段（颜色 / 线宽 / 可见性三选一），
+	/// 0-17 位按位序展开，与读取端逐位读取顺序一致。
+	/// </summary>
+	private void writeLegacyBorderOverrides(TableEntity.TableLegacyOverrides.BorderOverrideData data, bool colors, bool lineWeights, bool visibility)
+	{
+		this._writer.WriteBitLong(data.Flags);
+		int index = 0;
+		for (int bit = 0; bit < 18; bit++)
+		{
+			if ((data.Flags & (1 << bit)) == 0)
+			{
+				continue;
+			}
+			if (colors)
+			{
+				Color color = index < data.Colors.Count ? data.Colors[index] : Color.ByBlock;
+				this._writer.WriteCmColorR2004(color);
+			}
+			else if (lineWeights)
+			{
+				//BS 边框线宽，缺省 ByLayer(-1)
+				short lw = index < data.LineWeights.Count ? data.LineWeights[index] : (short)LineWeightType.ByLayer;
+				this._writer.WriteBitShort(lw);
+			}
+			else
+			{
+				//BS 边框可见性（0 = 不可见）
+				bool visible = index < data.Visibility.Count && data.Visibility[index];
+				this._writer.WriteBitShort(visible ? (short)1 : (short)0);
+			}
+			index++;
+		}
+	}
+
+	/// <summary>
+	/// 写出 R2004 表格单元格数据，字段顺序与读取端 readTableCellData 的 R2007 之前分支严格对称。
+	/// </summary>
+	private void writeTableCellR2004(TableEntity.Cell cell)
+	{
+		// [FIX] R2010+ 源单元格 Type 可能为默认 0（非法枚举值，CellType.Text=1/Block=2）。
+		// 兜底按内容推断：含 Block 内容 → Block，否则 Text，保证 BS 171 恒为合法值。
+		TableEntity.CellType cellType = cell.Type;
+		if (cellType != TableEntity.CellType.Text && cellType != TableEntity.CellType.Block)
+		{
+			bool isBlock = false;
+			foreach (var content in cell.Contents)
+			{
+				if (content.ContentType == TableEntity.TableCellContentType.Block)
+				{
+					isBlock = true;
+					break;
+				}
+			}
+			cellType = isBlock ? TableEntity.CellType.Block : TableEntity.CellType.Text;
+		}
+
+		//BS 171 Cell type, 1 = text, 2 = block
+		this._writer.WriteBitShort((short)cellType);
+
+		//RC 172 Cell edge flags
+		this._writer.WriteByte((byte)cell.EdgeFlags);
+
+		//B 173 Cell merged value
+		this._writer.WriteBit(cell.MergedValue != 0);
+
+		//B 174 Cell autofit flag
+		this._writer.WriteBit(cell.AutoFit);
+
+		//BL 175 Merged width flag (horizontal number of merged cells)
+		this._writer.WriteBitLong(cell.BorderWidth);
+
+		//BL 176 Merged height flag (vertical number of merged cells)
+		this._writer.WriteBitLong(cell.BorderHeight);
+
+		//BD 145 Cell rotation
+		this._writer.WriteBitDouble(cell.Rotation);
+
+		//H 344 (text cell) / 340 (block cell) value handle
+		// 文本单元格直接内联字符串时该 handle 为 0（读取端据此走 TV 1 分支）
+		// [FIX] 必须写码 5（软指针）而非 Undefined（码 0）：空句柄应为 0x50，
+		// AutoCAD 原生文件实测 21 个单元格值句柄全部为 (5.0.0)；
+		// 码 0 使 ODA 报 <AcDbTable> needs recovery、AutoCAD 打开崩溃。
+		this._writer.HandleReference(DwgReferenceType.HardPointer, 0UL);
+
+		if (cellType == TableEntity.CellType.Block)
+		{
+			//BD 144 Block scale
+			this._writer.WriteBitDouble(cell.BlockScale);
+
+			//B Has attributes flag
+			this._writer.WriteBit(false);
+		}
+		else if (this._version < ACadVersion.AC1021)
+		{
+			//TV 1 Text string（R2007 之前的文本单元格，值为内联字符串；
+			//读取端条件为 CellType.Text && handle == 0 && version < AC1021，
+			//R2007 (AC1021) 起文本改存于单元格末尾的 CadValue，不再内联）
+			var content = cell.Contents.Count > 0 ? cell.Contents[0] : null;
+			string text = content != null ? Convert.ToString(content.CadValue?.Value) : string.Empty;
+			this._writer.WriteVariableText(text ?? string.Empty);
+		}
+
+		//B Has cell flag override
+		// [PATCH] Serialize the cell style override. The previous implementation always
+		// wrote false, silently dropping every cell override (e.g. the per-cell TextHeight
+		// AutoCAD materializes when a table is transformed: 6.0 -> 5.988 / 4.5 -> 4.491 in
+		// sample_VBAtransformed.dwg, plus preserved alignment/content/background colors).
+		// The reader (readTableCellData) expects a flag-driven field sequence, emitted here
+		// in the exact order it reads:
+		//   BL 177 flags, RC 178 virtual edge flag,
+		//   then per set flag: CellAlignment (BS 170), BackgroundFillNone (B 283),
+		//   BackgroundColor (CMC 63), ContentColor (CMC 64), TextStyle (H 7), TextHeight (BD 140)
+		//   and the four border triples (color/weight/visibility, top/right/bottom/left).
+		TableEntity.Cell.OverrideFlags ovr = TableEntity.Cell.OverrideFlags.None;
+		var so = cell.StyleOverride;
+		if (so != null)
+		{
+			if (so.TextHeight > 0)
+			{
+				ovr |= TableEntity.Cell.OverrideFlags.TextHeight;
+			}
+			if (so.CellAlignment != TableStyle.CellAlignmentType.None)
+			{
+				ovr |= TableEntity.Cell.OverrideFlags.CellAlignment;
+			}
+			if (!so.ContentColor.IsByBlock && !so.ContentColor.IsByLayer)
+			{
+				ovr |= TableEntity.Cell.OverrideFlags.ContentColor;
+			}
+			if (!so.BackgroundColor.IsByBlock && !so.BackgroundColor.IsByLayer)
+			{
+				ovr |= TableEntity.Cell.OverrideFlags.BackgroundColor;
+			}
+		}
+
+		this._writer.WriteBit(ovr != TableEntity.Cell.OverrideFlags.None);
+		if (ovr != TableEntity.Cell.OverrideFlags.None)
+		{
+			//BL 177 Cell flag override
+			this._writer.WriteBitLong((int)ovr);
+			//RC 178 Virtual edge flag
+			this._writer.WriteByte((byte)cell.VirtualEdgeFlag);
+
+			if (ovr.HasFlag(TableEntity.Cell.OverrideFlags.CellAlignment))
+			{
+				//BS 170 Cell alignment
+				this._writer.WriteBitShort((short)so.CellAlignment);
+			}
+			if (ovr.HasFlag(TableEntity.Cell.OverrideFlags.BackgroundFillNone))
+			{
+				//B 283 Background fill none
+				this._writer.WriteBit(so.IsFillColorOn);
+			}
+			if (ovr.HasFlag(TableEntity.Cell.OverrideFlags.BackgroundColor))
+			{
+				//CMC 63 Background color
+				this._writer.WriteCmColorR2004(so.BackgroundColor);
+			}
+			if (ovr.HasFlag(TableEntity.Cell.OverrideFlags.ContentColor))
+			{
+				//CMC 64 Content color
+				this._writer.WriteCmColorR2004(so.ContentColor);
+			}
+			if (ovr.HasFlag(TableEntity.Cell.OverrideFlags.TextHeight))
+			{
+				//BD 140 Text height
+				this._writer.WriteBitDouble(so.TextHeight);
+			}
+
+			//Border override triples (top/right/bottom/left), same order as the reader.
+			if (ovr.HasFlag(TableEntity.Cell.OverrideFlags.TopGridColor))
+			{
+				this._writer.WriteCmColorR2004(so.TopBorder.Color);
+			}
+			if (ovr.HasFlag(TableEntity.Cell.OverrideFlags.TopGridLineWeight))
+			{
+				this._writer.WriteBitShort((short)so.TopBorder.LineWeight);
+			}
+			if (ovr.HasFlag(TableEntity.Cell.OverrideFlags.TopVisibility))
+			{
+				this._writer.WriteBitShort((short)(so.TopBorder.IsInvisible ? 0 : 1));
+			}
+			if (ovr.HasFlag(TableEntity.Cell.OverrideFlags.RightGridColor))
+			{
+				this._writer.WriteCmColorR2004(so.RightBorder.Color);
+			}
+			if (ovr.HasFlag(TableEntity.Cell.OverrideFlags.RightGridLineWeight))
+			{
+				this._writer.WriteBitShort((short)so.RightBorder.LineWeight);
+			}
+			if (ovr.HasFlag(TableEntity.Cell.OverrideFlags.RightVisibility))
+			{
+				this._writer.WriteBitShort((short)(so.RightBorder.IsInvisible ? 0 : 1));
+			}
+			if (ovr.HasFlag(TableEntity.Cell.OverrideFlags.BottomGridColor))
+			{
+				this._writer.WriteCmColorR2004(so.BottomBorder.Color);
+			}
+			if (ovr.HasFlag(TableEntity.Cell.OverrideFlags.BottomGridLineWeight))
+			{
+				this._writer.WriteBitShort((short)so.BottomBorder.LineWeight);
+			}
+			if (ovr.HasFlag(TableEntity.Cell.OverrideFlags.BottomVisibility))
+			{
+				this._writer.WriteBitShort((short)(so.BottomBorder.IsInvisible ? 0 : 1));
+			}
+			if (ovr.HasFlag(TableEntity.Cell.OverrideFlags.LeftGridColor))
+			{
+				this._writer.WriteCmColorR2004(so.LeftBorder.Color);
+			}
+			if (ovr.HasFlag(TableEntity.Cell.OverrideFlags.LeftGridLineWeight))
+			{
+				this._writer.WriteBitShort((short)so.LeftBorder.LineWeight);
+			}
+			if (ovr.HasFlag(TableEntity.Cell.OverrideFlags.LeftVisibility))
+			{
+				this._writer.WriteBitShort((short)(so.LeftBorder.IsInvisible ? 0 : 1));
+			}
+		}
+
+		//R2007+ (AC1021)：
+		//读取端 readTableCellData 末尾 (DwgObjectReader.Entities.cs 行 557-565) 在
+		//R2007Plus 时额外读取 Unknown BL + 完整 CadValue（R2007 起文本单元格的
+		//文字即存于此 CadValue，参见 ODA 规范 §20.4.72）。此前 AC1021 写出错误地
+		//沿用 R2004 内联文本格式，导致读取端位流错位、readCadValue 抛
+		//NotImplementedException，TableEntity 读回丢失（66 vs 67）。
+		if (this.R2007Plus)
+		{
+			//Unknown BL
+			this._writer.WriteBitLong(0);
+
+			//CadValue（Flags BL / ValueType BL / value / Units BL / Format TV / FormattedValue TV）
+			CadValue cadValue = cell.Content?.CadValue ?? new CadValue();
+			this.writeCadValue(cadValue);
+		}
+	}
+
 
 	private void writeTableContent(TableContent content)
 	{

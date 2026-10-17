@@ -1,4 +1,4 @@
-﻿using ACadSharp.Attributes;
+using ACadSharp.Attributes;
 using System.Collections.Generic;
 using System.Linq;
 using static ACadSharp.Objects.TableStyle;
@@ -116,6 +116,16 @@ public partial class TableEntity
 		/// </summary>
 		[DxfCodeValue(173)]
 		public short MergedValue { get; set; }
+
+		/// <summary>
+		/// Raw cell override flag value (DXF code 177), preserved for round-trip fidelity.
+		/// </summary>
+		/// <remarks>
+		/// AutoCAD sets bit 5 (32) in this value when a per-cell text height override
+		/// (code 140) is present. The value is read verbatim and written back verbatim
+		/// (with bit 5 OR-ed in when a text height override is set).
+		/// </remarks>
+		public int OverrideFlag { get; set; }
 
 		/// <summary>
 		/// Rotation value.
