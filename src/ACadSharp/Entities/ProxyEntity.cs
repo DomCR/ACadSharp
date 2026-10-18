@@ -3,6 +3,7 @@ using ACadSharp.Classes;
 using ACadSharp.IO.DWG;
 using CSMath;
 using System.IO;
+using System.Text;
 
 namespace ACadSharp.Entities;
 
@@ -17,6 +18,11 @@ namespace ACadSharp.Entities;
 [DxfSubClass(DxfSubclassMarker.ProxyEntity)]
 public class ProxyEntity : Entity, IProxy
 {
+	/// <summary>
+	/// Gets or sets the stream that contains binary content.
+	/// </summary>
+	/// <remarks>Ensure the stream is readable where consumed. Stream position and lifetime are managed by the
+	/// caller.</remarks>
 	public Stream BinaryData { get; set; }
 
 	/// <summary>
@@ -26,7 +32,6 @@ public class ProxyEntity : Entity, IProxy
 	public int ClassNumber { get { return this.DxfClass?.ClassNumber ?? 0; } }
 
 	/// <inheritdoc/>
-	/// <remarks>No <c>DxfCodeValue</c>: the DXF reader has no handler for code 311 on an entity.</remarks>
 	public Stream Data { get; set; }
 
 	/// <summary>
@@ -65,6 +70,9 @@ public class ProxyEntity : Entity, IProxy
 	[DxfCodeValue(90)]
 	public int ProxyClassId { get; } = 498;
 
+	/// <summary>
+	/// Gets or sets the stream that contains string data.
+	/// </summary>
 	public Stream StringData { get; set; }
 
 	/// <inheritdoc/>
@@ -98,5 +106,22 @@ public class ProxyEntity : Entity, IProxy
 
 		var reader = DwgStreamReaderBase.GetStreamHandler(this.Version, this.StringData, resetPositon: true);
 		return reader.ReadVariableText();
+	}
+
+	/// <summary>
+	/// Writes variable-length text to the string data stream using the specified encoding.
+	/// </summary>
+	/// <remarks>Initializes the string data stream when it has not been created.</remarks>
+	/// <param name="text">Text to write to the string data stream.</param>
+	/// <param name="encoding">Character encoding used to write the text.</param>
+	public void AddStringDataText(string text, Encoding encoding)
+	{
+		if (this.StringData == null)
+		{
+			this.StringData = new MemoryStream();
+		}
+
+		var writer = DwgStreamWriterBase.GetStreamWriter(this.Version, this.StringData, encoding);
+		writer.WriteVariableText(text);
 	}
 }

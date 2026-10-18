@@ -129,14 +129,19 @@ public class DxfWriterSingleObjectTests : WriterSingleObjectTests
 		{
 			this._output.WriteLine("--- starting read ---");
 
+			DxfReaderConfiguration readConfiguration = new DxfReaderConfiguration()
+			{
+				IgnoreProxyGraphics = false
+			};
+
 			CadDocument doc = null;
 			if (TestVariables.SaveOutputInStream)
 			{
-				doc = DxfReader.Read(data.Stream, this.onNotification);
+				doc = DxfReader.Read(data.Stream, readConfiguration, this.onNotification);
 			}
 			else
 			{
-				doc = DxfReader.Read(path, this.onNotification);
+				doc = DxfReader.Read(path, readConfiguration, this.onNotification);
 			}
 
 			data.Format = CadFileFormat.DXF;
