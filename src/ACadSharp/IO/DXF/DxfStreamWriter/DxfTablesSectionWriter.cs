@@ -116,7 +116,7 @@ namespace ACadSharp.IO.DXF
 					throw new NotImplementedException($"TableEntry not implemented {entry.GetType().FullName}");
 			}
 
-			this.writeExtendedData(entry.ExtendedData);
+			this.writeExtendedData(entry is TextStyle fontStyle ? TextStyleExtendedData.ForWrite(fontStyle) : entry.ExtendedData);
 		}
 
 		private void writeBlockRecord(BlockRecord block, DxfClassMap map)

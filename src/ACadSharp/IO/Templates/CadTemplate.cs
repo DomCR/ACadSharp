@@ -44,6 +44,7 @@ internal abstract class CadTemplate : ICadObjectTemplate
 		}
 
 		this.build(builder);
+		if (this.CadObject is TextStyle style) TextStyleExtendedData.Apply(style);
 
 		if (this.DxfClass != null && this.CadObject is not IDxfClassDefined)
 		{

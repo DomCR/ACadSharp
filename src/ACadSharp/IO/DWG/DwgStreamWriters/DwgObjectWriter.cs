@@ -467,7 +467,7 @@ internal partial class DwgObjectWriter : DwgSectionIO
 		this._writer.Main.HandleReference(cadObject);
 
 		//Extended object data, if any
-		this.writeExtendedData(cadObject.ExtendedData);
+		this.writeExtendedData(cadObject is TextStyle style ? TextStyleExtendedData.ForWrite(style) : cadObject.ExtendedData);
 	}
 
 	private void writeCommonEntityData(Entity entity)
