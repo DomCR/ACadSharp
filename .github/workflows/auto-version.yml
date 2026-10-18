@@ -38,12 +38,6 @@ jobs:
       - name: Push changes
         shell: bash
         env:
-          BRANCH: ${{github.head_ref || github.ref_name}}
-          VERSION: ${{steps.update.outputs.newVersion}}          
-          HEAD_REPO: ${{github.event.pull_request.head.repo.full_name}}
-          PUSH_TOKEN: ${{secrets.PUSH_TOKEN}}
-          GITHUB_TOKEN: ${{secrets.GITHUB_TOKEN}}
-        env:
           GIT_USER: ${{ github.event.pull_request.merged_by.login }}
           GIT_USER_ID: ${{ github.event.pull_request.merged_by.id }}
         run: |
