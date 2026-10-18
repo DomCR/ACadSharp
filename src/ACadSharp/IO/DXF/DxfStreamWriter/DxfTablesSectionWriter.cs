@@ -1,4 +1,4 @@
-﻿using ACadSharp.Tables;
+using ACadSharp.Tables;
 using ACadSharp.Tables.Collections;
 using CSMath;
 using System;
@@ -192,7 +192,7 @@ internal class DxfTablesSectionWriter : DxfSectionWriterBase
 				throw new NotImplementedException($"TableEntry not implemented {entry.GetType().FullName}");
 		}
 
-		this.writeExtendedData(entry.ExtendedData);
+		this.writeExtendedData(entry is TextStyle fontStyle ? TextStyleExtendedData.ForWrite(fontStyle) : entry.ExtendedData);
 	}
 
 	private void writeLayer(Layer layer, DxfClassMap map)
