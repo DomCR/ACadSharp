@@ -1,4 +1,4 @@
-﻿namespace ACadSharp.Entities.ProxyGraphics;
+namespace ACadSharp.Entities.ProxyGraphics;
 
 /// <summary>
 /// Represents a proxy sub-entity material in a CAD drawing.
@@ -12,4 +12,10 @@ public class ProxySubEntityMaterial : IProxyGeometry
 	/// Gets or sets the handle of the material.
 	/// </summary>
 	public ulong MaterialHandle { get; set; }
+
+	/// <inheritdoc/>
+	public IProxyGeometry Clone()
+	{
+		return (IProxyGeometry)this.MemberwiseClone();
+	}
 }

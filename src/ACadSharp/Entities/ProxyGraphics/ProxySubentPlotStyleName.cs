@@ -1,4 +1,4 @@
-﻿namespace ACadSharp.Entities.ProxyGraphics;
+namespace ACadSharp.Entities.ProxyGraphics;
 
 /// <summary>
 /// Represents a proxy subentity plot style name.
@@ -17,4 +17,10 @@ public class ProxySubentPlotStyleName : IProxyGeometry
 	/// Gets or sets the plot style type.
 	/// </summary>
 	public ProxyPlotStyleType Type { get; set; }
+
+	/// <inheritdoc/>
+	public IProxyGeometry Clone()
+	{
+		return (IProxyGeometry)this.MemberwiseClone();
+	}
 }

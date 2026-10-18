@@ -1,7 +1,9 @@
-﻿using ACadSharp.IO;
+﻿using ACadSharp.Entities;
+using ACadSharp.IO;
 using ACadSharp.Tests.TestModels;
 using System.Diagnostics;
 using System.IO;
+using System.Linq;
 using Xunit;
 using Xunit.Abstractions;
 
@@ -54,7 +56,7 @@ public class LocalSampleTests : IOTestsBase
 		if (string.IsNullOrEmpty(test.Path))
 			return;
 
-		CadDocument doc = DxfReader.Read(test.Path, this.onNotification);
+		CadDocument doc = DxfReader.Read(test.Path, this._dxfConfiguration, this.onNotification);
 
 		if (doc.Header.Version < ACadVersion.AC1012)
 		{

@@ -1138,9 +1138,9 @@ namespace ACadSharp.IO.DWG
 		{
 			//Class ID BL 91
 			//It seems to be the same for all versions
-			int classId = this._mergedReaders.ReadBitLong();
+			int classNumber = this._mergedReaders.ReadBitLong();
 
-			if (this._classes.TryGetValue((short)classId, out DxfClass dxfClass))
+			if (this._classes.TryGetValue((short)classNumber, out DxfClass dxfClass))
 			{
 				proxy.DxfClass = dxfClass;
 			}
@@ -1178,7 +1178,7 @@ namespace ACadSharp.IO.DWG
 			}
 			else
 			{
-				return;
+				var itemClassId = this._mergedReaders.ReadBitLong();
 			}
 
 			//Common:
@@ -5337,7 +5337,7 @@ namespace ACadSharp.IO.DWG
 		private CadTemplate readProxyEntity()
 		{
 			ProxyEntity proxy = new ProxyEntity();
-			CadEntityTemplate<ProxyEntity> template = new CadEntityTemplate<ProxyEntity>(proxy);
+			CadProxyEntityTemplate template = new CadProxyEntityTemplate(proxy);
 
 			this.readCommonEntityData(template);
 

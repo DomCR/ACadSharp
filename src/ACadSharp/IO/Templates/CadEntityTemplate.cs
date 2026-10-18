@@ -3,6 +3,7 @@ using ACadSharp.Entities.ProxyGraphics;
 using ACadSharp.Objects;
 using ACadSharp.Tables;
 using CSUtilities.Extensions;
+using System.Collections.Generic;
 
 namespace ACadSharp.IO.Templates;
 

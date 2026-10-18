@@ -98,6 +98,26 @@ public class DxfReader : CadReaderBase<DxfReaderConfiguration>
 	}
 
 	/// <summary>
+	/// Reads a DXF document from the specified stream using the provided reader configuration.
+	/// </summary>
+	/// <param name="stream">The input stream that contains DXF content.</param>
+	/// <param name="configuration">The settings that control how the DXF content is parsed.</param>
+	/// <param name="notification">An optional handler that receives reader notifications during parsing.</param>
+	/// <returns>A <see cref="CadDocument"/> instance populated from the DXF content in the stream.</returns>
+	public static CadDocument Read(Stream stream, DxfReaderConfiguration configuration, NotificationEventHandler notification = null)
+	{
+		CadDocument doc = null;
+
+		using (DxfReader reader = new DxfReader(stream, notification))
+		{
+			reader.Configuration = configuration;
+			doc = reader.Read();
+		}
+
+		return doc;
+	}
+
+	/// <summary>
 	/// Read a dxf document in a stream.
 	/// </summary>
 	/// <param name="stream">The stream to read from.</param>
@@ -557,7 +577,7 @@ public class DxfReader : CadReaderBase<DxfReaderConfiguration>
 			{
 				var dxfClass = this.readClass();
 
-				if (dxfClass.ClassNumber < 500)
+				if (dxfClass.ClassNumber <= 500)
 				{
 					dxfClass.ClassNumber = (short)(500 + classes.Count);
 				}

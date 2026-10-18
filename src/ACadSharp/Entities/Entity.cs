@@ -32,6 +32,17 @@ public abstract class Entity : CadObject, IEntity
 	[DxfCodeValue(62, 420)]
 	public Color Color { get; set; } = Color.ByLayer;
 
+	/// <summary>
+	/// Gets a value indicating whether any proxy geometries are present.
+	/// </summary>
+	public bool HasProxyGeometries
+	{
+		get
+		{
+			return this._proxyGeometries != null && this._proxyGeometries.Count > 0;
+		}
+	}
+
 	/// <inheritdoc/>
 	[DxfCodeValue(60)]
 	public bool IsInvisible { get; set; } = false;
@@ -90,7 +101,18 @@ public abstract class Entity : CadObject, IEntity
 	/// <summary>
 	/// Gets the list of proxy geometries for this entity.
 	/// </summary>
-	public List<IProxyGeometry> ProxyGeometries { get; } = new();
+	public List<IProxyGeometry> ProxyGeometries
+	{
+		get
+		{
+			if (this._proxyGeometries == null)
+			{
+				this._proxyGeometries = new List<IProxyGeometry>();
+			}
+
+			return _proxyGeometries;
+		}
+	}
 
 	/// <inheritdoc/>
 	public override string SubclassMarker => DxfSubclassMarker.Entity;
@@ -106,6 +128,8 @@ public abstract class Entity : CadObject, IEntity
 	private LineType _lineType = LineType.ByLayer;
 
 	private Material _material = null;
+
+	private List<IProxyGeometry> _proxyGeometries = null;
 
 	/// <inheritdoc/>
 	public Entity() : base() { }
@@ -163,6 +187,15 @@ public abstract class Entity : CadObject, IEntity
 		clone.Layer = (Layer)this.Layer.Clone();
 		clone.LineType = (LineType)this.LineType.Clone();
 		clone.Material = (Material)this.Material?.Clone();
+
+		if (this._proxyGeometries != null)
+		{
+			clone._proxyGeometries = new List<IProxyGeometry>(this._proxyGeometries);
+			foreach (var item in this._proxyGeometries)
+			{
+				clone._proxyGeometries.Add(item.Clone());
+			}
+		}
 
 		return clone;
 	}
