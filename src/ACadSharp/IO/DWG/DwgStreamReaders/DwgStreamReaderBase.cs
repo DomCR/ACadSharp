@@ -1,4 +1,4 @@
-﻿using ACadSharp.Exceptions;
+using ACadSharp.Exceptions;
 using CSMath;
 using CSUtilities.Converters;
 using CSUtilities.IO;
@@ -400,6 +400,7 @@ internal abstract class DwgStreamReaderBase : StreamIO, IDwgStreamReader
 
 	public long SetPositionByFlag(long position)
 	{
+		this.IsEmpty = false;
 		this.SetPositionInBits(position);
 
 		//String stream present bit (last bit in pre-handles section).
