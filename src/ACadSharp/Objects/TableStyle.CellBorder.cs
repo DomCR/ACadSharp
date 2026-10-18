@@ -1,4 +1,5 @@
-﻿using ACadSharp.Attributes;
+using ACadSharp.Attributes;
+using ACadSharp.Tables;
 
 namespace ACadSharp.Objects;
 
@@ -16,6 +17,9 @@ public partial class TableStyle
 		/// Gets or sets a value indicating whether a border is applied.
 		/// </summary>
 		public bool ApplyBorder { get; set; } = false;
+
+		/// <summary>Border line type.</summary>
+		public LineType LineType { get; set; }
 
 		/// <summary>
 		/// Gets or sets the color associated with the entity.

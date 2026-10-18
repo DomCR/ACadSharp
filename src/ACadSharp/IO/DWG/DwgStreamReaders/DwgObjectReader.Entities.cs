@@ -475,13 +475,13 @@ internal partial class DwgObjectReader : DwgSectionIO
 		if (cell.HasLinkedData)
 		{
 			//H 340 Handle to data link object (hard pointer).
-			template.ValueHandle = this._mergedReaders.HandleReference();
+			template.DataLinkHandle = this.handleReference();
 			//BL 93 Row count.
-			this._mergedReaders.ReadBitLong();
+			cell.LinkedRowCount = this._mergedReaders.ReadBitLong();
 			//BL 94 Column count.
-			this._mergedReaders.ReadBitLong();
+			cell.LinkedColumnCount = this._mergedReaders.ReadBitLong();
 			//BL 96 Unknown.
-			this._mergedReaders.ReadBitLong();
+			cell.LinkedDataFlags = this._mergedReaders.ReadBitLong();
 			//End if has linked data
 		}
 
@@ -500,6 +500,7 @@ internal partial class DwgObjectReader : DwgSectionIO
 		}
 
 		CadCellStyleTemplate formatTemplate = new(cell.StyleOverride);
+		template.StyleTemplate = formatTemplate;
 		this.readCellStyle(formatTemplate);
 
 		//BL 90 Cell style ID, points to the cell style in the table’s table style that is used as the
@@ -512,21 +513,23 @@ internal partial class DwgObjectReader : DwgSectionIO
 		{
 			//If unknown flag is non-zero
 			//BL 91 Unknown
-			var value91 = this._mergedReaders.ReadBitLong();
+			cell.GeometryFlags = this._mergedReaders.ReadBitLong();
 			//BD 40 Unknown
-			var value40 = this._mergedReaders.ReadBitDouble();
+			cell.GeometryWidth = this._mergedReaders.ReadBitDouble();
 			//BD 40 Unknown
-			var value41 = this._mergedReaders.ReadBitDouble();
+			cell.GeometryHeight = this._mergedReaders.ReadBitDouble();
 			//BL Geometry data flags
 			var geomFlags = this._mergedReaders.ReadBitLong();
 
 			//H Unknown ()
 			template.UnknownHandle = this.handleReference();
-			if (geomFlags != 0)
+			for (int i = 0; i < geomFlags; i++)
 			{
-				cell.Geometry = new CellContentGeometry();
-				this.readCellContentGeometry(cell.Geometry);
+				var geometry = new CellContentGeometry();
+				this.readCellContentGeometry(geometry);
+				cell.GeometryCollection.Add(geometry);
 			}
+			cell.Geometry = cell.GeometryCollection.Count > 0 ? cell.GeometryCollection[0] : null;
 		}
 	}
 
@@ -540,7 +543,7 @@ internal partial class DwgObjectReader : DwgSectionIO
 			case TableCellContentType.Unknown:
 				break;
 			case TableCellContentType.Value:
-				this.readCadValue(template.Content.CadValue);
+				template.CadValueTemplate = this.readCadValue(template.Content.CadValue);
 				break;
 			case TableCellContentType.Field:
 				//H 340 Handle to AcDbField object (hard pointer).
@@ -564,7 +567,7 @@ internal partial class DwgObjectReader : DwgSectionIO
 			//TV 301 Attribute value.
 			tableAttribute.Value = this._mergedReaders.ReadVariableText();
 			//BL 92 Index (starts at 1).
-			this._mergedReaders.ReadBitLong();
+			tableAttribute.Index = this._mergedReaders.ReadBitLong();
 
 			template.AttTemplates.Add(attTemplate);
 			//End repeat attributes
@@ -575,6 +578,7 @@ internal partial class DwgObjectReader : DwgSectionIO
 		if (template.Content.Format.HasData)
 		{
 			CellContentFormatTemplate formatTemplate = new CellContentFormatTemplate(template.Content.Format);
+			template.FormatTemplate = formatTemplate;
 			this.readCellContentFormat(formatTemplate, template.Content.Format);
 		}
 	}
