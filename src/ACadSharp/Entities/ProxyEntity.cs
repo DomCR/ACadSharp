@@ -16,6 +16,8 @@ namespace ACadSharp.Entities;
 [DxfSubClass(DxfSubclassMarker.ProxyEntity)]
 public class ProxyEntity : Entity, IProxy
 {
+	public Stream BinaryData { get; set; }
+
 	/// <summary>
 	/// Gets the DXF class number.
 	/// </summary>
@@ -61,6 +63,8 @@ public class ProxyEntity : Entity, IProxy
 	/// </remarks>
 	[DxfCodeValue(90)]
 	public int ProxyClassId { get; } = 498;
+
+	public Stream StringData { get; set; }
 
 	/// <inheritdoc/>
 	public override string SubclassMarker => DxfSubclassMarker.ProxyEntity;

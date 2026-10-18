@@ -5337,7 +5337,7 @@ namespace ACadSharp.IO.DWG
 		private CadTemplate readProxyEntity()
 		{
 			ProxyEntity proxy = new ProxyEntity();
-			CadEntityTemplate<ProxyEntity> template = new CadEntityTemplate<ProxyEntity>(proxy);
+			CadProxyEntityTemplate template = new CadProxyEntityTemplate(proxy);
 
 			this.readCommonEntityData(template);
 

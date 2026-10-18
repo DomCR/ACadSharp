@@ -247,7 +247,7 @@ internal abstract class DxfSectionReaderBase
 			case DxfFileToken.EntityImage:
 				return this.readEntityCodes<RasterImage>(new CadWipeoutBaseTemplate(new RasterImage()), this.readWipeoutBase);
 			case DxfFileToken.EntityProxyEntity:
-				return this.readEntityCodes<ProxyEntity>(new CadEntityTemplate<ProxyEntity>(new ProxyEntity()), this.readProxyEntity);
+				return this.readEntityCodes<ProxyEntity>(new CadProxyEntityTemplate(), this.readProxyEntity);
 			case DxfFileToken.EntityWipeout:
 				return this.readEntityCodes<Wipeout>(new CadWipeoutBaseTemplate(new Wipeout()), this.readWipeoutBase);
 			case DxfFileToken.EntityXline:
@@ -1543,7 +1543,7 @@ internal abstract class DxfSectionReaderBase
 
 	private bool readProxyEntity(CadEntityTemplate template, DxfMap map, string subclass = null)
 	{
-		CadEntityTemplate<ProxyEntity> tmp = template as CadEntityTemplate<ProxyEntity>;
+		CadProxyEntityTemplate tmp = template as CadProxyEntityTemplate;
 
 		switch (this._reader.Code)
 		{
@@ -1557,14 +1557,25 @@ internal abstract class DxfSectionReaderBase
 					this._builder.Notify($"DxfClass with class number {this._reader.ValueAsShort} not found.", NotificationType.Warning);
 				}
 				return true;
+			case 94:
+				return true;
 			//Graphics data size
 			case 160:
-				template.ProxyGraphics = this.readByteEntries(310).ToArray();
+				tmp.ProxyGraphics = this.readByteEntries(310).ToArray();
 				return true;
 			//Binary data size
 			case 161:
+				tmp.CadObject.BinaryData = this.readByteEntries(310);
+				return true;
 			//String data size
 			case 162:
+				tmp.CadObject.StringData = this.readByteEntries(311);
+				return true;
+			case 330:
+			case 340:
+			case 350:
+			case 360:
+				tmp.ReferencedObjectHandles.Add(this._reader.ValueAsHandle);
 				return true;
 			default:
 				return this.tryAssignCurrentValue(template.CadObject, map.SubClasses[tmp.CadObject.SubclassMarker]);
@@ -1573,6 +1584,11 @@ internal abstract class DxfSectionReaderBase
 
 	private MemoryStream readByteEntries(int code)
 	{
+		if (this._reader.ValueAsInt == 0)
+		{
+			return null;
+		}
+
 		MemoryStream ms = new MemoryStream();
 
 		this._reader.ExpectedCode(code);
