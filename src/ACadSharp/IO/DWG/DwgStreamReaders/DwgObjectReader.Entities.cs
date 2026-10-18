@@ -1,4 +1,4 @@
-﻿using ACadSharp.Entities;
+using ACadSharp.Entities;
 using ACadSharp.IO.Templates;
 using ACadSharp.Objects;
 using CSMath;
@@ -259,16 +259,13 @@ internal partial class DwgObjectReader : DwgSectionIO
 
 		this.readCommonEntityData(template);
 
-		//Chapter 24 - Info
-		if (!this.R2013Plus)
+		if (template.HasDsBinaryData)
 		{
-			//ACIS Empty bit B X If 1, then no data follows
-			var hasData = this._mergedReaders.ReadBit();
-			if (!hasData)
-			{
-				this.readModelerGeometryData(template);
-				return template;
-			}
+			geometry.ModelerFormatVersion = 2;
+		}
+		else if (!this._mergedReaders.ReadBit())
+		{
+			this.readModelerGeometryData(template);
 		}
 
 		//Common:
@@ -332,37 +329,25 @@ internal partial class DwgObjectReader : DwgSectionIO
 				geometry.Silhouettes.Add(silhouette);
 			}
 
-			//ACIS Empty bit B X Normally 1.If 0, then acis data follows in the
-			//same format as described above, except no wireframe
-			//of silhouette data will be present(no empty bits
-			//for these items either).
-			if (!this._mergedReaders.ReadBit())
-			{
-				this.readModelerGeometryData(template);
-			}
 		}
-
-		//R2007 +:
-		if (this.R2007Plus)
+		if (!this._mergedReaders.ReadBit()) this.readModelerGeometryData(template);
+		if (this.R2007Plus && geometry.ModelerFormatVersion > 1)
 		{
-			//Materials
-			var nmat = this._mergedReaders.ReadBitLong();
-			for (int i = 0; i < nmat; i++)
+			int count = this._mergedReaders.ReadBitLong();
+			for (int i = 0; i < count; i++)
 			{
-				//Unknown BL
-				var unknown = this._mergedReaders.ReadBitLong();
-				//Unknown BL
-				var unknown2 = this._mergedReaders.ReadBitLong();
-
-				template.MaterialHandles.Add(this.handleReference());
+				int arrayIndex = this._mergedReaders.ReadBitLong();
+				int absoluteReference = this._mergedReaders.ReadBitLong();
+				ulong handle = this.handleReference();
+				template.MaterialHandles.Add(handle);
+				geometry.MaterialMappings.Add((arrayIndex, absoluteReference, handle));
 			}
 		}
-
 		if (this.R2013Plus)
 		{
-			this._mergedReaders.ReadBit();
+			geometry.RevisionGuidPresent = this._mergedReaders.ReadBit();
 			geometry.Guid = this.readGuid();
-			this._mergedReaders.ReadBitLong();
+			geometry.RevisionEndMarker = this._mergedReaders.ReadBitLong();
 		}
 
 		return template;
@@ -372,10 +357,11 @@ internal partial class DwgObjectReader : DwgSectionIO
 			where T : ModelerGeometry, new()
 	{
 		//Unknown bit B X
-		bool unknown = this._mergedReaders.ReadBit();
+		template.CadObject.ModelerDataFlag = this._mergedReaders.ReadBit();
 
 		//Version BS Can be 1 or 2.
 		short version = this._mergedReaders.ReadBitShort();
+		template.CadObject.ModelerFormatVersion = version;
 
 		switch (version)
 		{
@@ -407,28 +393,23 @@ internal partial class DwgObjectReader : DwgSectionIO
 			//SAB, otherwise it is a text SAT file. No length is given.SAB files will end with
 			//“End\x0E\x02of\x0E\x04ACIS\x0D\x04data”. SAT files must be parsed to find the end.
 			case 2:
-				//The stream gives no payload length: read up to the end of the
-				//object data and cut at the End-of-ACIS-data marker. Anything
-				//after the marker (wireframe data, handles) is discarded with
-				//the rest of the object, the caller returns right away.
-				long currentPos = this._mergedReaders.PositionInBits();
-				long endPos = this._objectInitialPos + (this._size * 8);
+				long currentPos = this._objectReader.PositionInBits();
+				long endPos = this._handleSectionOffset > currentPos
+					? this._handleSectionOffset : this._objectInitialPos + (this._size * 8);
 				int remainingBytes = (int)((endPos - currentPos) / 8);
-
-				if (remainingBytes > 0)
-				{
-					byte[] data = this._mergedReaders.ReadBytes(remainingBytes);
-					template.CadObject.AcisData = AcisTextCodec.TrimAtAcisEnd(data, out byte[] remain);
-
-					var pos = currentPos + remainingBytes * 8 - remain.Length * 8;
-					this._mergedReaders.SetPositionInBits(pos);
-				}
+				byte[] data = this._mergedReaders.ReadBytes(remainingBytes);
+				this._objectReader.SetPositionInBits(currentPos);
+				byte[] payload = AcisTextCodec.TrimAtAcisEnd(data);
+				if (payload.Length == data.Length)
+					throw new System.IO.InvalidDataException("Missing ACIS payload end marker.");
+				template.CadObject.AcisData = this._mergedReaders.ReadBytes(payload.Length);
 				break;
 			default:
 				this.notify($"Modeler geometry data version {version} not recognized for {template.CadObject.ObjectName}", NotificationType.Warning);
 				break;
 		}
 	}
+
 
 	private CadTemplate readSolid3D()
 	{

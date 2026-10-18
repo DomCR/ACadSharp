@@ -1,4 +1,4 @@
-﻿using ACadSharp.DataStorage;
+using ACadSharp.DataStorage;
 using System;
 using System.Collections.Generic;
 using System.IO;
@@ -199,6 +199,8 @@ internal class DwgPrototype1bReader : DwgSectionIO
 				// 10 - 20 valid DataHeader entries have been seen
 				byte[] data = this._reader.ReadBytes((int)(dataRefPosition - this._reader.Position));
 			}
+
+			headers.Sort((a, b) => a.LocalOffset.CompareTo(b.LocalOffset));
 
 			for (int i = 0; i < headers.Count; i++)
 			{

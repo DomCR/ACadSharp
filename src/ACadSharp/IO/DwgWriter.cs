@@ -1,4 +1,4 @@
-﻿using ACadSharp.Exceptions;
+using ACadSharp.Exceptions;
 using ACadSharp.IO.DWG;
 using ACadSharp.IO.DWG.DwgStreamWriters;
 using ACadSharp.Tables.Collections;
@@ -6,6 +6,8 @@ using CSUtilities.IO;
 using CSUtilities.Text;
 using System.Collections.Generic;
 using System.IO;
+using System.Linq;
+using ACadSharp.Entities;
 
 namespace ACadSharp.IO;
 
@@ -117,7 +119,7 @@ public class DwgWriter : CadWriterBase<DwgWriterConfiguration>
 		this.writeObjects();
 		this.writeObjFreeSpace();
 		this.writeTemplate();
-		//this.writePrototype();
+		this.writePrototype();
 
 		//Write in the last place to avoid conflicts with versions < AC1018
 		this.writeHandles();
@@ -395,6 +397,18 @@ public class DwgWriter : CadWriterBase<DwgWriterConfiguration>
 		writer.WriteInt(0);
 
 		this._fileHeaderWriter.AddSection(DwgSectionDefinition.SummaryInfo, stream, false, 0x100);
+	}
+
+	private void writePrototype()
+	{
+		if (this._version < ACadVersion.AC1027) return;
+		var geometry = this._document.BlockRecords.SelectMany(b => b.Entities)
+			.OfType<ModelerGeometry>().Where(e => this._handlesMap.ContainsKey(e.Handle) && e.AcisData?.Length > 0).ToArray();
+		if (geometry.Length == 0) return;
+		byte[] bytes = DwgPrototype1bWriter.Write(geometry);
+		var stream = new MemoryStream();
+		stream.Write(bytes, 0, bytes.Length);
+		this._fileHeaderWriter.AddSection(DwgSectionDefinition.AcDsPrototype, stream, true);
 	}
 
 	private void writeTemplate()
