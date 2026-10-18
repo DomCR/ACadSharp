@@ -39,3 +39,17 @@ jobs:
           HEAD_REPO: ${{github.event.pull_request.head.repo.full_name}}
           PUSH_TOKEN: ${{secrets.PUSH_TOKEN}}
           GITHUB_TOKEN: ${{secrets.GITHUB_TOKEN}}
+        env:
+          GIT_USER: ${{ github.event.pull_request.merged_by.login }}
+          GIT_USER_ID: ${{ github.event.pull_request.merged_by.id }}
+        run: |
+          git config user.name "$GIT_USER"
+          git config user.email "${GIT_USER_ID}+${GIT_USER}@users.noreply.github.com"
+          git add ./src/ACadSharp/ACadSharp.csproj
+          if git diff --cached --quiet; then
+            echo "Nothing changed"
+            exit 0
+          fi
+          git commit -m "#PR${{github.event.pull_request.number}} ${{steps.update.outputs.newVersion}}"
+          git pull --rebase origin master
+          git push origin HEAD:master
