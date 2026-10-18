@@ -1,4 +1,7 @@
-﻿using ACadSharp.Attributes;
+using ACadSharp.Attributes;
+using ACadSharp.Objects;
+using ACadSharp.Tables;
+using System.Collections.Generic;
 using static ACadSharp.Objects.TableStyle;
 
 namespace ACadSharp.Entities;
@@ -13,6 +16,13 @@ public partial class TableEntity
 	/// information, and the underlying CAD value.</remarks>
 	public class CellContent
 	{
+		/// <summary>Field referenced by field content.</summary>
+		public Field Field { get; set; }
+		/// <summary>Block referenced by block content.</summary>
+		public BlockRecord BlockRecord { get; set; }
+		/// <summary>Attribute values for block content.</summary>
+		public List<TableAttribute> Attributes { get; } = new();
+
 		/// <summary>
 		/// Gets or sets the type of content contained in the table cell.
 		/// </summary>

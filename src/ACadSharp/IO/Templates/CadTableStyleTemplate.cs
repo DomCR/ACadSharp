@@ -1,4 +1,4 @@
-﻿using ACadSharp.Objects;
+using ACadSharp.Objects;
 using System.Collections.Generic;
 using System.Linq;
 using static ACadSharp.Objects.TableStyle;
@@ -37,6 +37,7 @@ internal partial class CadTableStyleTemplate : CadTemplate<TableStyle>
 		foreach (var item in this.CellStyleTemplates)
 		{
 			item.Build(builder);
+			if (!this.CadObject.CellStyles.Contains(item.CellStyle)) this.CadObject.CellStyles.Add(item.CellStyle);
 		}
 
 		if (this.tryGetCellStyle(TableStyle.CellStyle.DataCellStyleName, out CellStyle dataStyle))
@@ -59,10 +60,8 @@ internal partial class CadTableStyleTemplate : CadTemplate<TableStyle>
 	{
 		var cellStyleTemplate = this.CellStyleTemplates
 		.FirstOrDefault(s =>
-		s.CellStyle.Name != null
-		&& s.CellStyle.Name.Equals(
-			name,
-			System.StringComparison.OrdinalIgnoreCase));
+		(s.CellStyle.Name != null && s.CellStyle.Name.Equals(name, System.StringComparison.OrdinalIgnoreCase))
+		|| s.CellStyle.Id == (name == CellStyle.TitleCellStyleName ? 1 : name == CellStyle.HeaderCellStyleName ? 2 : 3));
 
 		if (cellStyleTemplate != null)
 		{

@@ -30,6 +30,13 @@ internal partial class DwgObjectWriter : DwgSectionIO
 
 	private bool skipEntry(NonGraphicalObject entry, out bool notify)
 	{
+		if (this.R2007Plus && entry is XRecord legacy
+			&& legacy.Entries.Count(e => e.Code == 102) == 1
+			&& legacy.Entries.Any(e => e.Code == 102 && e.Value as string == "ACAD_ROUNDTRIP_PRE2007_TABLESTYLE"))
+		{
+			notify = false;
+			return true;
+		}
 		if (!entry.IsValid(CadFileFormat.DWG, this._version))
 		{
 			notify = false;
@@ -581,8 +588,7 @@ internal partial class DwgObjectWriter : DwgSectionIO
 		//BL 92 Line weight
 		this._writer.WriteBitLong((int)border.LineWeight);
 		//H 40 Line type (hard pointer)
-		//this._writer.HandleReference(DwgReferenceType.HardPointer, border.LineType);
-		this._writer.HandleReference(DwgReferenceType.HardPointer, null);
+		this._writer.HandleReference(DwgReferenceType.HardPointer, border.LineType);
 		//BL 93 Invisibility: 1 = invisible, 0 = visible.
 		this._writer.WriteBitLong(border.IsInvisible ? 1 : 0);
 		//BD 40 Double line spacing
@@ -2293,7 +2299,24 @@ internal partial class DwgObjectWriter : DwgSectionIO
 
 	private void writeTableStyle(TableStyle tableStyle)
 	{
-		if (this.R2007Pre)
+		if (this.R2007Plus)
+		{
+			var legacy = tableStyle.XDictionary?.GetEntry<XRecord>("ACAD_XREC_ROUNDTRIP");
+			if (legacy != null && legacy.Entries.Any(e => e.Code == 102 && e.Value as string == "ACAD_ROUNDTRIP_PRE2007_TABLESTYLE"))
+			{
+				var styles = new[] { tableStyle.DataCellStyle, tableStyle.TitleCellStyle, tableStyle.HeaderCellStyle };
+				for (int i = 0; i < styles.Length; i++)
+				{
+					object type = legacy.Entries.FirstOrDefault(e => e.Code == 90 + i * 2)?.Value;
+					object unit = legacy.Entries.FirstOrDefault(e => e.Code == 91 + i * 2)?.Value;
+					object format = legacy.Entries.FirstOrDefault(e => e.Code == 1 + i)?.Value;
+					if (type is int dataType) styles[i].ValueDataType = dataType;
+					if (unit is int unitType) styles[i].ValueUnitType = unitType;
+					if (format is string text) styles[i].ValueFormatString = text;
+				}
+			}
+		}
+		if (!this.R2010Plus)
 		{
 			//TABLESTYLE format until R21
 			//Common:

@@ -2405,16 +2405,10 @@ internal partial class DwgObjectWriter : DwgSectionIO
 		this._writer.WriteBitLong(cell.HasLinkedData ? 1 : 0);
 		if (cell.HasLinkedData)
 		{
-			//H 340 Handle to data link object (hard pointer).
-			this._writer.HandleReference(null);
-			//BL 93 Row count.
-			this._writer.WriteBitLong(0);
-			//BL 94 Column count.
-			this._writer.WriteBitLong(0);
-			//BL 96 Unknown.
-			this._writer.WriteBitLong(0);
-			//End if has linked data
-			throw new Exception();
+			this._writer.HandleReference(DwgReferenceType.HardPointer, cell.DataLink);
+			this._writer.WriteBitLong(cell.LinkedRowCount);
+			this._writer.WriteBitLong(cell.LinkedColumnCount);
+			this._writer.WriteBitLong(cell.LinkedDataFlags);
 		}
 
 		//BL 95 Number of cell contents
@@ -2430,28 +2424,25 @@ internal partial class DwgObjectWriter : DwgSectionIO
 		//base cell style for the cell. 0 if not present.
 		this._writer.WriteBitLong(cell.Style != null ? cell.Style.Id : 0);
 
-		//BL 91 Unknown flag
-		this._writer.WriteBitLong(0);
-		//if (unknownFlag != 0)
-		//{
-		//	//If unknown flag is non-zero
-		//	//BL 91 Unknown
-		//	this._writer.WriteBitLong();
-		//	//BD 40 Unknown
-		//	this._writer.WriteBitDouble();
-		//	//BD 40 Unknown
-		//	this._writer.WriteBitDouble();
-		//	//BL Geometry data flags
-		//	var geomFlags = this._writer.WriteBitLong();
-
-		//	//H Unknown ()
-		//	template.UnknownHandle = this.handleReference();
-		//	if (geomFlags != 0)
-		//	{
-		//		cell.Geometry = new CellContentGeometry();
-		//		this.readCellContentGeometry(cell.Geometry);
-		//	}
-		//}
+		var geometry = cell.GeometryCollection.Count > 0 ? cell.GeometryCollection
+			: cell.Geometry == null ? new List<TableEntity.CellContentGeometry>() : new List<TableEntity.CellContentGeometry> { cell.Geometry };
+		this._writer.WriteBitLong(geometry.Count > 0 ? 1 : 0);
+		if (geometry.Count > 0)
+		{
+			this._writer.WriteBitLong(cell.GeometryFlags);
+			this._writer.WriteBitDouble(cell.GeometryWidth);
+			this._writer.WriteBitDouble(cell.GeometryHeight);
+			this._writer.WriteBitLong(geometry.Count);
+			this._writer.HandleReference(DwgReferenceType.SoftPointer, cell.GeometryReference);
+			foreach (var item in geometry)
+			{
+				this._writer.Write3BitDouble(item.DistanceTopLeft);
+				this._writer.Write3BitDouble(item.DistanceCenter);
+				this._writer.WriteBitDouble(item.ContentWidth); this._writer.WriteBitDouble(item.ContentHeight);
+				this._writer.WriteBitDouble(item.Width); this._writer.WriteBitDouble(item.Height);
+				this._writer.WriteBitLong(item.Flags);
+			}
+		}
 	}
 
 	private void writeTableCellContent(TableEntity.CellContent content)
@@ -2468,29 +2459,22 @@ internal partial class DwgObjectWriter : DwgSectionIO
 				break;
 			case TableEntity.TableCellContentType.Field:
 				//H 340 Handle to AcDbField object (hard pointer).
-				this._writer.HandleReference(DwgReferenceType.HardPointer, null);
+				this._writer.HandleReference(DwgReferenceType.HardPointer, content.Field);
+				if (content.Field != null) this.enqueueValidObject(content.Field);
 				break;
 			case TableEntity.TableCellContentType.Block:
 				//H 340 Handle to block record (hard pointer).
-				this._writer.HandleReference(DwgReferenceType.HardPointer, null);
+				this._writer.HandleReference(DwgReferenceType.HardPointer, content.BlockRecord);
 				break;
 		}
 
-		//BL 91 Number of attributes
-		this._writer.WriteBitLong(0);
-		//for (int i = 0; i < natts; i++)
-		//{
-		//	TableAttribute tableAttribute = new TableAttribute();
-		//	CadTableAttributeTemplate attTemplate = new CadTableAttributeTemplate(tableAttribute);
-
-		//	//H 330 Handle to attribute definition (ATTDEF), soft pointer.
-		//	attTemplate.AttDefHandle = this.handleReference();
-		//	//TV 301 Attribute value.
-		//	tableAttribute.Value = this._writer.WriteVariableText();
-		//	//BL 92 Index (starts at 1).
-		//	this._writer.WriteBitLong();
-		//	//End repeat attributes
-		//}
+		this._writer.WriteBitLong(content.Attributes.Count);
+		foreach (var attribute in content.Attributes)
+		{
+			this._writer.HandleReference(DwgReferenceType.SoftPointer, attribute.AttributeDefinition);
+			this._writer.WriteVariableText(attribute.Value);
+			this._writer.WriteBitLong(attribute.Index);
+		}
 
 		//BS 170 Has content format overrides flag
 		this._writer.WriteBitShort((short)(content.Format.HasData ? 1 : 0));
@@ -2572,14 +2556,12 @@ internal partial class DwgObjectWriter : DwgSectionIO
 			this._writer.WriteBitDouble(row.Height);
 		}
 
-		//BL Number of cell contents that contain a field reference.
-		this._writer.WriteBitLong(0);
-		//Begin repeat field references
-		//for (int n = 0; n < nfields; n++)
-		//{
-		//	//H Handle to field (AcDbField), hard owner.
-		//	this._mergedReaders.HandleReference();
-		//}
+		this._writer.WriteBitLong(content.FieldReferences.Count);
+		foreach (var field in content.FieldReferences)
+		{
+			this._writer.HandleReference(DwgReferenceType.HardOwnership, field);
+			this.enqueueValidObject(field);
+		}
 
 		//The table’s cell style override fields (see paragraph 20.4.101.4). The table’s
 		//base cell style is the table style’s overall cell style (present from R2010 onwards).

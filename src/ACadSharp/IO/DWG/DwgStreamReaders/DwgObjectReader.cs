@@ -5774,7 +5774,7 @@ namespace ACadSharp.IO.DWG
 
 			this.readCommonNonEntityData(template);
 
-			if (this.R2007Pre)
+			if (!this.R2010Plus)
 			{
 				//TABLESTYLE format until R21
 				//Common:

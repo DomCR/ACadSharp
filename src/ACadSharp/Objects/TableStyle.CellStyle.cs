@@ -1,4 +1,4 @@
-﻿using ACadSharp.Attributes;
+using ACadSharp.Attributes;
 
 namespace ACadSharp.Objects;
 
@@ -204,7 +204,7 @@ public partial class TableStyle
 		/// <summary>
 		/// Gets or sets the top border style of the cell.
 		/// </summary>
-		public CellBorder TopBorder { get; set; } = new(CellEdgeFlags.Right);
+		public CellBorder TopBorder { get; set; } = new(CellEdgeFlags.Top);
 
 		/// <summary>
 		/// Gets or sets the type of the cell style.
