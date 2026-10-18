@@ -48,6 +48,6 @@ jobs:
             echo "Nothing changed"
             exit 0
           fi
-          git commit -m "#PR${{github.event.pull_request.number}} ${{steps.update.outputs.newVersion}}"
+          git commit -m "#PR${{github.event.pull_request.number}} v${{steps.update.outputs.newVersion}}"
           git pull --rebase origin master
           git push origin HEAD:master
