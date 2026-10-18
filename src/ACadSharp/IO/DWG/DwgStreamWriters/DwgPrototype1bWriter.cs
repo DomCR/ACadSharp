@@ -13,14 +13,24 @@ internal static class DwgPrototype1bWriter
 	internal static byte[] Write(IEnumerable<ModelerGeometry> geometry)
 	{
 		var entities = geometry.OrderBy(e => e.Handle).ToArray();
+		// A page and its segment/page headers fit within one MiB.
+		const int pageSize = 0xfffb0;
+		int segmentCount = 6;
+		var records = entities.Select(entity =>
+		{
+			int count = entity.AcisData.Length > 0x40000 ? (entity.AcisData.Length - 1) / pageSize + 1 : 0;
+			var pages = Enumerable.Range(0, count).Select(i => (Segment: segmentCount++, Offset: i * pageSize,
+				Size: Math.Min(pageSize, entity.AcisData.Length - i * pageSize))).ToArray();
+			return (Entity: entity, Pages: pages, Size: count == 0 ? 4 + entity.AcisData.Length : 36 + count * 8);
+		}).ToArray();
 		var segments = new List<byte[]>();
-		void segment(string name, StorageBytes body, int systemOffset = 0, int objectOffset = 0)
+		void segment(string name, StorageBytes body, int systemOffset = 0, int objectOffset = 0, bool blob = false)
 		{
 			using var header = new StorageBytes();
 			header.U16(0xd5ac);
 			header.Write(Encoding.ASCII.GetBytes(name));
 			header.U32(segments.Count);
-			header.U32(0);
+			header.U32(blob ? 1 : 0);
 			header.U32((48 + body.Length + 63) / 64 * 64);
 			header.U32(0); header.U32(1); header.U32(0);
 			header.U32(systemOffset); header.U32(objectOffset);
@@ -31,7 +41,7 @@ internal static class DwgPrototype1bWriter
 		}
 
 		using var index = new StorageBytes();
-		for (int i = 0; i < 6; i++) { index.U64(0); index.U32(0); }
+		for (int i = 0; i < segmentCount; i++) { index.U64(0); index.U32(0); }
 		segment("segidx", index);
 		using var schemas = new StorageBytes();
 		schemas.U32(1); schemas.U32(0);
@@ -64,16 +74,27 @@ internal static class DwgPrototype1bWriter
 
 		using var data = new StorageBytes();
 		int localOffset = 0;
-		foreach (var entity in entities)
+		foreach (var record in records)
 		{
-			data.U32(20); data.U32(1); data.U64(entity.Handle); data.U32(localOffset);
-			localOffset = checked(localOffset + 4 + entity.AcisData.Length);
+			data.U32(20); data.U32(1); data.U64(record.Entity.Handle); data.U32(localOffset);
+			localOffset = checked(localOffset + record.Size);
 		}
 		data.Align(16);
 		int objectOffset = (48 + data.Length) / 16;
-		foreach (var entity in entities)
+		foreach (var record in records)
 		{
-			data.U32(entity.AcisData.Length); data.Write(entity.AcisData);
+			if (record.Pages.Length == 0)
+			{
+				data.U32(record.Entity.AcisData.Length); data.Write(record.Entity.AcisData);
+			}
+			else
+			{
+				data.U32(0xbb106bb1u);
+				data.U64((ulong)record.Entity.AcisData.Length); data.U32(record.Pages.Length);
+				data.U32(record.Size); data.U32(pageSize); data.U32(record.Pages[record.Pages.Length - 1].Size);
+				data.U32(0); data.U32(0);
+				foreach (var page in record.Pages) { data.U32(page.Segment); data.U32(page.Size); }
+			}
 		}
 		segment("_data_", data, 0, objectOffset);
 
@@ -86,6 +107,18 @@ internal static class DwgPrototype1bWriter
 			search.U64(entities[i].Handle); search.U64(1); search.U64((ulong)i);
 		}
 		segment("search", search);
+		foreach (var record in records)
+		{
+			for (int i = 0; i < record.Pages.Length; i++)
+			{
+				var page = record.Pages[i];
+				using var body = new StorageBytes();
+				body.U64((ulong)record.Entity.AcisData.Length); body.U64((ulong)page.Offset);
+				body.U32(i); body.U32(record.Pages.Length); body.U64((ulong)page.Size);
+				body.Write(record.Entity.AcisData, page.Offset, page.Size);
+				segment("blob01", body, blob: true);
+			}
+		}
 
 		using var output = new StorageBytes();
 		int size = checked(128 + segments.Sum(s => s.Length));
@@ -117,6 +150,7 @@ internal static class DwgPrototype1bWriter
 		public void U32(uint value) => this._writer.Write(value);
 		public void U64(ulong value) => this._writer.Write(value);
 		public void Write(byte[] value) => this._writer.Write(value);
+		public void Write(byte[] value, int offset, int count) => this._writer.Write(value, offset, count);
 		public void Text(string value) { this.Write(Encoding.UTF8.GetBytes(value)); this._writer.Write((byte)0); }
 		public void Align(int size, byte fill = 0x55)
 		{

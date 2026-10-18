@@ -11,6 +11,38 @@ namespace ACadSharp.Tests.IO.DWG;
 public class ModelerGeometryWriterTests
 {
 	[Theory]
+	[InlineData(0x40000)]
+	[InlineData(0x40001)]
+	[InlineData(0xfffb0)]
+	[InlineData(0xfffb1)]
+	[InlineData(0x1fff60)]
+	[InlineData(0x1fff61)]
+	public void MixedInlineAndBlobRecordsRetainEveryByte(int length)
+	{
+		foreach (var version in new[] { ACadVersion.AC1027, ACadVersion.AC1032 })
+		{
+			var document = new CadDocument();
+			document.Header.Version = version;
+			var random = new System.Random(1729);
+			foreach (ModelerGeometry entity in new ModelerGeometry[] { new Solid3D(), new Region(), new CadBody() })
+			{
+				entity.AcisData = new byte[length];
+				random.NextBytes(entity.AcisData);
+				document.Entities.Add(entity);
+			}
+			document.Entities.Add(new Solid3D { AcisData = new byte[] { 1, 2, 3 } });
+			var result = Roundtrip(document);
+			Assert.Equal(4, result.Entities.OfType<ModelerGeometry>().Count());
+			foreach (var expected in document.Entities.OfType<ModelerGeometry>())
+			{
+				var actual = Assert.Single(result.Entities.OfType<ModelerGeometry>(), e => e.Handle == expected.Handle);
+				Assert.Equal(expected.GetType(), actual.GetType());
+				Assert.Equal(expected.AcisData, actual.AcisData);
+			}
+		}
+	}
+
+	[Theory]
 	[InlineData(ACadVersion.AC1014)]
 	[InlineData(ACadVersion.AC1015)]
 	[InlineData(ACadVersion.AC1018)]
