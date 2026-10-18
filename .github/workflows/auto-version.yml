@@ -37,6 +37,9 @@ jobs:
           version: ${{env.VERSION_FORMAT}}
       - name: Push changes
         shell: bash
+        env:
+          GIT_USER: ${{ github.event.pull_request.merged_by.login }}
+          GIT_USER_ID: ${{ github.event.pull_request.merged_by.id }}
         run: |
           git config user.name "$GIT_USER"
           git config user.email "${GIT_USER_ID}+${GIT_USER}@users.noreply.github.com"
