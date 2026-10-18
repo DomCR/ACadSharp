@@ -1,4 +1,4 @@
-﻿using ACadSharp.Objects;
+using ACadSharp.Objects;
 using ACadSharp.Objects.AEC;
 using ACadSharp.Objects.Evaluations;
 using CSMath;
@@ -49,7 +49,6 @@ internal partial class DwgObjectWriter : DwgSectionIO
 			case AecWallStyle:
 			case AecCleanupGroup:
 			case AecBinRecord:
-			case DimensionAssociation:
 			case UnknownNonGraphicalObject:
 			case VisualStyle:
 			case ProxyObject:
@@ -412,7 +411,7 @@ internal partial class DwgObjectWriter : DwgSectionIO
 	private void writeBlockRepresentationData(BlockRepresentationData representation)
 	{
 		this._writer.WriteBitShort(representation.Version);
-		this._writer.HandleReference(DwgReferenceType.HardPointer, representation.Block);
+		this._writer.HandleReference(DwgReferenceType.HardOwnership, representation.Block);
 	}
 
 	private void writeBlockRotationAction(BlockRotationAction action)
@@ -1737,6 +1736,7 @@ internal partial class DwgObjectWriter : DwgSectionIO
 
 	private void writeObject(NonGraphicalObject obj)
 	{
+		if (obj == null || this.Map.ContainsKey(obj.Handle)) return;
 		if (this.skipEntry(obj, out bool notify))
 		{
 			if (notify)
@@ -1951,15 +1951,36 @@ internal partial class DwgObjectWriter : DwgSectionIO
 		}
 	}
 
-	private void writeOsnapPointRef(DimensionAssociation.OsnapPointRef osnap)
+	private void writeOsnapPointRef(DimensionAssociation.OsnapPointRef osnap, int depth = 0)
 	{
-		//1
+		if (depth > 16) throw new InvalidDataException("Excessive nested dimension point references.");
+		osnap ??= new DimensionAssociation.OsnapPointRef();
 		this._writer.WriteVariableText(DimensionAssociation.OsnapPointRefClassName);
-
-		//72
 		this._writer.WriteByte((byte)osnap.ObjectOsnapType);
-		//331
-		this._writer.HandleReference(DwgReferenceType.Undefined, osnap.Geometry);
+		var geometry = osnap.GeometryPath.Count > 0 ? osnap.GeometryPath
+			: osnap.Geometry == null ? new List<CadObject>() : new List<CadObject> { osnap.Geometry };
+		this._writer.WriteBitLong(geometry.Count);
+		foreach (var obj in geometry) this._writer.HandleReference(DwgReferenceType.SoftPointer, obj);
+		if (osnap.ObjectOsnapType != ObjectOsnapType.None)
+		{
+			this._writer.WriteBitLong((int)osnap.SubentType);
+			this._writer.WriteBitLong(osnap.GsMarker);
+			this._writer.WriteBitLong(osnap.XrefPaths.Count);
+			foreach (var path in osnap.XrefPaths) this._writer.WriteVariableText(path);
+		}
+		this._writer.WriteBitDouble(osnap.GeometryParameter);
+		this._writer.Write3BitDouble(osnap.OsnapPoint);
+		if (osnap.ObjectOsnapType == ObjectOsnapType.Intersection || osnap.ObjectOsnapType == ObjectOsnapType.ApparentIntersection)
+		{
+			this._writer.WriteBitLong(osnap.IntersectionGeometry.Count);
+			foreach (var obj in osnap.IntersectionGeometry) this._writer.HandleReference(DwgReferenceType.HardPointer, obj);
+			this._writer.WriteBitLong((int)osnap.IntersectionSubType);
+			this._writer.WriteBitLong(osnap.IntersectionGsMarker);
+			this._writer.WriteBitLong(osnap.IntersectionXrefPaths.Count);
+			foreach (var path in osnap.IntersectionXrefPaths) this._writer.WriteVariableText(path);
+		}
+		this._writer.WriteBit(osnap.HasLastPointRef);
+		if (osnap.HasLastPointRef) this.writeOsnapPointRef(osnap.LastPointRef, depth + 1);
 	}
 
 	private void writeParameterValueSet(ParameterValueSet valueSet)
@@ -2220,6 +2241,7 @@ internal partial class DwgObjectWriter : DwgSectionIO
 		if (string.IsNullOrEmpty(value))
 		{
 			this._writer.WriteBitLong(0);
+			return;
 		}
 
 		byte[] bytes;
@@ -2419,14 +2441,7 @@ internal partial class DwgObjectWriter : DwgSectionIO
 					break;
 				case GroupCodeValueType.Handle:
 					var obj = entry.GetReference();
-					if (obj == null)
-					{
-						this.writeStringInStream(ms, string.Empty);
-					}
-					else
-					{
-						this.writeStringInStream(ms, obj.Handle.ToString("X", CultureInfo.InvariantCulture));
-					}
+					ms.Write<ulong>(obj?.Handle ?? 0);
 					break;
 				case GroupCodeValueType.String:
 				case GroupCodeValueType.ExtendedDataString:

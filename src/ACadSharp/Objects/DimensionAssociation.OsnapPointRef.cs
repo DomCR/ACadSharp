@@ -1,5 +1,6 @@
-﻿using ACadSharp.Attributes;
+using ACadSharp.Attributes;
 using CSMath;
+using System.Collections.Generic;
 
 namespace ACadSharp.Objects;
 
@@ -7,6 +8,17 @@ public partial class DimensionAssociation
 {
 	public class OsnapPointRef
 	{
+		/// <summary>Nested geometry path associated with the snap point.</summary>
+		public List<CadObject> GeometryPath { get; } = new();
+		/// <summary>External reference paths for the primary geometry.</summary>
+		public List<string> XrefPaths { get; } = new();
+		/// <summary>Geometry used for an intersection snap.</summary>
+		public List<CadObject> IntersectionGeometry { get; } = new();
+		/// <summary>External reference paths for the intersection geometry.</summary>
+		public List<string> IntersectionXrefPaths { get; } = new();
+		/// <summary>Previous point reference when HasLastPointRef is set.</summary>
+		public OsnapPointRef LastPointRef { get; set; }
+
 		/// <summary>
 		/// Gets or sets the geometry parameter used for the Near object snap (Osnap).
 		/// </summary>

@@ -2094,7 +2094,17 @@ namespace ACadSharp.IO.DWG
 						//1 (1001) This one seems to be invalid; can't even use as a string inside braces.
 						//This would be a registered application that this data relates to, but we've already had that above,
 						//so it would be redundant or irrelevant here.
-						record = new ExtendedDataString(this._objectReader.ReadTextUnicode());
+						if (this.R2007Plus)
+						{
+							record = new ExtendedDataString(this._objectReader.ReadTextUnicode());
+						}
+						else
+						{
+							int length = this._objectReader.ReadByte();
+							int codePage = (this._objectReader.ReadByte() << 8) | this._objectReader.ReadByte();
+							var encoding = codePage == 0 ? this._objectReader.Encoding : Encoding.GetEncoding((int)CadUtils.GetCodePage(codePage));
+							record = new ExtendedDataString(encoding.GetString(this._objectReader.ReadBytes(length)));
+						}
 						break;
 					case DxfCode.ExtendedDataControlString:
 						//2 (1002) A '{' or '}'; 1 byte; ASCII 0 means '{', ASCII 1 means '}'
@@ -4093,10 +4103,8 @@ namespace ACadSharp.IO.DWG
 				//Background flags BL 90 0 = no background, 1 = background fill, 2 = background fill with drawing fill color, 0x10 = text frame (R2018+)
 				mtext.BackgroundFillFlags = (BackgroundFillFlags)this._objectReader.ReadBitLong();
 
-				//background flags has bit 0x01 set, or in case of R2018 bit 0x10:
-				if ((mtext.BackgroundFillFlags & BackgroundFillFlags.UseBackgroundFillColor) != BackgroundFillFlags.None
-					|| this._version > ACadVersion.AC1027
-					&& (mtext.BackgroundFillFlags & BackgroundFillFlags.TextFrame) > 0)
+				//Background values are present only when the fill-color bit is set.
+				if ((mtext.BackgroundFillFlags & BackgroundFillFlags.UseBackgroundFillColor) != BackgroundFillFlags.None)
 				{
 					//Background scale factor	BL 45 default = 1.5
 					mtext.BackgroundScale = this._objectReader.ReadBitDouble();
@@ -4918,19 +4926,36 @@ namespace ACadSharp.IO.DWG
 			return template;
 		}
 
-		private CadDimensionAssociationTemplate.OsnapPointRefTemplate readOsnapPointRef()
+		private CadDimensionAssociationTemplate.OsnapPointRefTemplate readOsnapPointRef(int depth = 0)
 		{
+			if (depth > 16) throw new System.IO.InvalidDataException("Excessive nested dimension point references.");
 			var osnap = new DimensionAssociation.OsnapPointRef();
 			var template = new CadDimensionAssociationTemplate.OsnapPointRefTemplate(osnap);
-
-			//1
-			var className = this._mergedReaders.ReadVariableText();
-			//72
+			this._mergedReaders.ReadVariableText();
 			osnap.ObjectOsnapType = (ObjectOsnapType)this._mergedReaders.ReadByte();
-
-			//331
-			template.ObjectHandle = this.handleReference();
-
+			int count = this._mergedReaders.ReadBitLong();
+			for (int i = 0; i < count; i++) template.GeometryHandles.Add(this.handleReference());
+			if (count > 0) template.ObjectHandle = template.GeometryHandles[0];
+			if (osnap.ObjectOsnapType != ObjectOsnapType.None)
+			{
+				osnap.SubentType = (SubentType)this._mergedReaders.ReadBitLong();
+				osnap.GsMarker = this._mergedReaders.ReadBitLong();
+				count = this._mergedReaders.ReadBitLong();
+				for (int i = 0; i < count; i++) osnap.XrefPaths.Add(this._mergedReaders.ReadVariableText());
+			}
+			osnap.GeometryParameter = this._mergedReaders.ReadBitDouble();
+			osnap.OsnapPoint = this._mergedReaders.Read3BitDouble();
+			if (osnap.ObjectOsnapType == ObjectOsnapType.Intersection || osnap.ObjectOsnapType == ObjectOsnapType.ApparentIntersection)
+			{
+				count = this._mergedReaders.ReadBitLong();
+				for (int i = 0; i < count; i++) template.IntersectionHandles.Add(this.handleReference());
+				osnap.IntersectionSubType = (SubentType)this._mergedReaders.ReadBitLong();
+				osnap.IntersectionGsMarker = this._mergedReaders.ReadBitLong();
+				count = this._mergedReaders.ReadBitLong();
+				for (int i = 0; i < count; i++) osnap.IntersectionXrefPaths.Add(this._mergedReaders.ReadVariableText());
+			}
+			osnap.HasLastPointRef = this._mergedReaders.ReadBit();
+			if (osnap.HasLastPointRef) template.LastPoint = this.readOsnapPointRef(depth + 1);
 			return template;
 		}
 
@@ -6942,16 +6967,8 @@ namespace ACadSharp.IO.DWG
 						xRecord.CreateEntry(code, this._objectReader.ReadRawULong());
 						break;
 					case GroupCodeValueType.Handle:
-						string hex = this._objectReader.ReadTextUnicode();
-						if (ulong.TryParse(hex, NumberStyles.HexNumber, CultureInfo.InvariantCulture, out ulong result))
-						{
-							entry = xRecord.CreateEntry(code, result);
-							template.AddHandleReference(entry);
-						}
-						else
-						{
-							this.notify($"Failed to parse {hex} to handle", NotificationType.Warning);
-						}
+						entry = xRecord.CreateEntry(code, this._objectReader.ReadRawULong());
+						template.AddHandleReference(entry);
 						break;
 					case GroupCodeValueType.Bool:
 						xRecord.CreateEntry(code, this._objectReader.ReadByte() > 0);

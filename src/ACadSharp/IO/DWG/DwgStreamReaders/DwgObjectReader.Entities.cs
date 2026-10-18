@@ -1,4 +1,4 @@
-﻿using ACadSharp.Entities;
+using ACadSharp.Entities;
 using ACadSharp.IO.Templates;
 using ACadSharp.Objects;
 using CSMath;
@@ -244,6 +244,7 @@ internal partial class DwgObjectReader : DwgSectionIO
 		//NOTE: It also seems to be valid for the string values
 
 		int length = this._mergedReaders.ReadBitLong();
+		if (length <= 0) return string.Empty;
 		byte[] arr = this._mergedReaders.ReadBytes(length);
 
 		if (this.R2007Plus)
@@ -252,7 +253,7 @@ internal partial class DwgObjectReader : DwgSectionIO
 		}
 		else
 		{
-			return this._mergedReaders.Encoding.GetString(arr, 0, length);
+			return this._mergedReaders.Encoding.GetString(arr, 0, length).TrimEnd('\0');
 		}
 	}
 

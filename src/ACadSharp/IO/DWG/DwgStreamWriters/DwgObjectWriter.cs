@@ -1174,11 +1174,11 @@ internal partial class DwgObjectWriter : DwgSectionIO
 						}
 						else
 						{
-							var encodingIndex = CadUtils.GetCodeIndex((CSUtilities.Text.CodePage)this._writer.Encoding.CodePage);
-							byte[] bytes = this._writer.Encoding.GetBytes(string.IsNullOrEmpty(str.Value) ? string.Empty : str.Value);
-
-							mstream.Write(LittleEndianConverter.Instance.GetBytes((ushort)str.Value.Length), 0, 2);
-							mstream.WriteByte((byte)encodingIndex);
+							byte[] bytes = this._writer.Encoding.GetBytes(str.Value ?? string.Empty);
+							if (bytes.Length > byte.MaxValue)
+								throw new InvalidDataException("Legacy extended data strings cannot exceed 255 encoded bytes.");
+							mstream.WriteByte((byte)bytes.Length);
+							mstream.Write(BigEndianConverter.Instance.GetBytes((ushort)CadUtils.GetCodeIndex((CSUtilities.Text.CodePage)this._writer.Encoding.CodePage)), 0, 2);
 							mstream.Write(bytes, 0, bytes.Length);
 						}
 						break;
