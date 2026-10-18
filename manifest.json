@@ -2225,20 +2225,6 @@
     },
     {
       "type": "ManagedReference",
-      "source_relative_path": "api/ACadSharp.Entities.ProxyGraphics.ProxyGeometryReader.yml",
-      "output": {
-        ".html": {
-          "relative_path": "api/ACadSharp.Entities.ProxyGraphics.ProxyGeometryReader.html"
-        }
-      },
-      "version": "",
-      "Uid": null,
-      "IsMRef": true,
-      "Title": "ACadSharp.Entities.ProxyGraphics.ProxyGeometryReader",
-      "Summary": null
-    },
-    {
-      "type": "ManagedReference",
       "source_relative_path": "api/ACadSharp.Entities.ProxyGraphics.ProxyLwPolyine.yml",
       "output": {
         ".html": {

@@ -89,7 +89,7 @@
 
 
   <h1 id="ACadSharp_Entities_ProxyEntity" data-uid="ACadSharp.Entities.ProxyEntity" class="text-break">
-Class ProxyEntity  <a class="header-action link-secondary" title="View source" href="https://github.com/DomCR/ACadSharp/blob/master/src/ACadSharp/Entities/ProxyEntity.cs/#L15"><i class="bi bi-code-slash"></i></a>
+Class ProxyEntity  <a class="header-action link-secondary" title="View source" href="https://github.com/DomCR/ACadSharp/blob/master/src/ACadSharp/Entities/ProxyEntity.cs/#L17"><i class="bi bi-code-slash"></i></a>
   </h1>
 
   <div class="facts text-secondary">
@@ -139,6 +139,9 @@ public class ProxyEntity : Entity, IEntity, IHandledCadObject, IGeometricEntity,
     </div>
     <div>
       <a class="xref" href="ACadSharp.Entities.Entity.html#ACadSharp_Entities_Entity_Color">Entity.Color</a>
+    </div>
+    <div>
+      <a class="xref" href="ACadSharp.Entities.Entity.html#ACadSharp_Entities_Entity_HasProxyGeometries">Entity.HasProxyGeometries</a>
     </div>
     <div>
       <a class="xref" href="ACadSharp.Entities.Entity.html#ACadSharp_Entities_Entity_IsInvisible">Entity.IsInvisible</a>
@@ -294,20 +297,56 @@ Dxf class name <a class="xref" href="ACadSharp.DxfSubclassMarker.html#ACadSharp_
 </h2>
 
 
-  <a id="ACadSharp_Entities_ProxyEntity_ClassId_" data-uid="ACadSharp.Entities.ProxyEntity.ClassId*"></a>
+  <a id="ACadSharp_Entities_ProxyEntity_BinaryData_" data-uid="ACadSharp.Entities.ProxyEntity.BinaryData*"></a>
 
-  <h3 id="ACadSharp_Entities_ProxyEntity_ClassId" data-uid="ACadSharp.Entities.ProxyEntity.ClassId">
-  ClassId
-  <a class="header-action link-secondary" title="View source" href="https://github.com/DomCR/ACadSharp/blob/master/src/ACadSharp/Entities/ProxyEntity.cs/#L22"><i class="bi bi-code-slash"></i></a>
+  <h3 id="ACadSharp_Entities_ProxyEntity_BinaryData" data-uid="ACadSharp.Entities.ProxyEntity.BinaryData">
+  BinaryData
+  <a class="header-action link-secondary" title="View source" href="https://github.com/DomCR/ACadSharp/blob/master/src/ACadSharp/Entities/ProxyEntity.cs/#L26"><i class="bi bi-code-slash"></i></a>
   </h3>
 
-  <div class="markdown level1 summary"><p>Application dxf class ID.</p>
+  <div class="markdown level1 summary"><p>Gets or sets the stream that contains binary content.</p>
+</div>
+  <div class="markdown level1 conceptual"></div>
+
+  <div class="codewrapper">
+    <pre><code class="lang-csharp hljs">public Stream BinaryData { get; set; }</code></pre>
+  </div>
+
+
+
+
+
+  <h4 class="section">Property Value</h4>
+  <dl class="parameters">
+    <dt><a class="xref" href="https://learn.microsoft.com/dotnet/api/system.io.stream">Stream</a></dt>
+    <dd></dd>
+  </dl>
+
+
+
+
+  <h4 class="section" id="ACadSharp_Entities_ProxyEntity_BinaryData_remarks">Remarks</h4>
+  <div class="markdown level1 remarks"><p>Ensure the stream is readable where consumed. Stream position and lifetime are managed by the
+caller.</p>
+</div>
+
+
+
+
+  <a id="ACadSharp_Entities_ProxyEntity_ClassNumber_" data-uid="ACadSharp.Entities.ProxyEntity.ClassNumber*"></a>
+
+  <h3 id="ACadSharp_Entities_ProxyEntity_ClassNumber" data-uid="ACadSharp.Entities.ProxyEntity.ClassNumber">
+  ClassNumber
+  <a class="header-action link-secondary" title="View source" href="https://github.com/DomCR/ACadSharp/blob/master/src/ACadSharp/Entities/ProxyEntity.cs/#L31"><i class="bi bi-code-slash"></i></a>
+  </h3>
+
+  <div class="markdown level1 summary"><p>Gets the DXF class number.</p>
 </div>
   <div class="markdown level1 conceptual"></div>
 
   <div class="codewrapper">
     <pre><code class="lang-csharp hljs">[DxfCodeValue(new int[] { 91 })]
-public int ClassId { get; }</code></pre>
+public int ClassNumber { get; }</code></pre>
   </div>
 
 
@@ -331,7 +370,7 @@ public int ClassId { get; }</code></pre>
 
   <h3 id="ACadSharp_Entities_ProxyEntity_Data" data-uid="ACadSharp.Entities.ProxyEntity.Data">
   Data
-  <a class="header-action link-secondary" title="View source" href="https://github.com/DomCR/ACadSharp/blob/master/src/ACadSharp/Entities/ProxyEntity.cs/#L70"><i class="bi bi-code-slash"></i></a>
+  <a class="header-action link-secondary" title="View source" href="https://github.com/DomCR/ACadSharp/blob/master/src/ACadSharp/Entities/ProxyEntity.cs/#L35"><i class="bi bi-code-slash"></i></a>
   </h3>
 
   <div class="markdown level1 summary"><p>Gets or sets the retained data of the original object.</p>
@@ -355,9 +394,6 @@ public int ClassId { get; }</code></pre>
 
 
 
-  <h4 class="section" id="ACadSharp_Entities_ProxyEntity_Data_remarks">Remarks</h4>
-  <div class="markdown level1 remarks"><p>No <code>DxfCodeValue</code>: the DXF reader has no handler for code 311 on an entity.</p>
-</div>
 
 
 
@@ -366,7 +402,7 @@ public int ClassId { get; }</code></pre>
 
   <h3 id="ACadSharp_Entities_ProxyEntity_DrawingFormat" data-uid="ACadSharp.Entities.ProxyEntity.DrawingFormat">
   DrawingFormat
-  <a class="header-action link-secondary" title="View source" href="https://github.com/DomCR/ACadSharp/blob/master/src/ACadSharp/Entities/ProxyEntity.cs/#L30"><i class="bi bi-code-slash"></i></a>
+  <a class="header-action link-secondary" title="View source" href="https://github.com/DomCR/ACadSharp/blob/master/src/ACadSharp/Entities/ProxyEntity.cs/#L42"><i class="bi bi-code-slash"></i></a>
   </h3>
 
   <div class="markdown level1 summary"><p>Object drawing format when it becomes a proxy: <br>
@@ -401,10 +437,10 @@ public int DrawingFormat { get; }</code></pre>
 
   <h3 id="ACadSharp_Entities_ProxyEntity_DxfClass" data-uid="ACadSharp.Entities.ProxyEntity.DxfClass">
   DxfClass
-  <a class="header-action link-secondary" title="View source" href="https://github.com/DomCR/ACadSharp/blob/master/src/ACadSharp/Entities/ProxyEntity.cs/#L33"><i class="bi bi-code-slash"></i></a>
+  <a class="header-action link-secondary" title="View source" href="https://github.com/DomCR/ACadSharp/blob/master/src/ACadSharp/Entities/ProxyEntity.cs/#L48"><i class="bi bi-code-slash"></i></a>
   </h3>
 
-  <div class="markdown level1 summary"><p>Application object's class.</p>
+  <div class="markdown level1 summary"><p>Gets or sets the DXF class associated with the object.</p>
 </div>
   <div class="markdown level1 conceptual"></div>
 
@@ -433,14 +469,16 @@ public int DrawingFormat { get; }</code></pre>
 
   <h3 id="ACadSharp_Entities_ProxyEntity_MaintenanceVersion" data-uid="ACadSharp.Entities.ProxyEntity.MaintenanceVersion">
   MaintenanceVersion
-  <a class="header-action link-secondary" title="View source" href="https://github.com/DomCR/ACadSharp/blob/master/src/ACadSharp/Entities/ProxyEntity.cs/#L35"><i class="bi bi-code-slash"></i></a>
+  <a class="header-action link-secondary" title="View source" href="https://github.com/DomCR/ACadSharp/blob/master/src/ACadSharp/Entities/ProxyEntity.cs/#L53"><i class="bi bi-code-slash"></i></a>
   </h3>
 
-  <div class="markdown level1 summary"></div>
+  <div class="markdown level1 summary"><p>Gets or sets the maintenance version number.</p>
+</div>
   <div class="markdown level1 conceptual"></div>
 
   <div class="codewrapper">
-    <pre><code class="lang-csharp hljs">public int MaintenanceVersion { get; set; }</code></pre>
+    <pre><code class="lang-csharp hljs">[DxfCodeValue(new int[] { 97 })]
+public int MaintenanceVersion { get; set; }</code></pre>
   </div>
 
 
@@ -464,7 +502,7 @@ public int DrawingFormat { get; }</code></pre>
 
   <h3 id="ACadSharp_Entities_ProxyEntity_ObjectName" data-uid="ACadSharp.Entities.ProxyEntity.ObjectName">
   ObjectName
-  <a class="header-action link-secondary" title="View source" href="https://github.com/DomCR/ACadSharp/blob/master/src/ACadSharp/Entities/ProxyEntity.cs/#L38"><i class="bi bi-code-slash"></i></a>
+  <a class="header-action link-secondary" title="View source" href="https://github.com/DomCR/ACadSharp/blob/master/src/ACadSharp/Entities/ProxyEntity.cs/#L57"><i class="bi bi-code-slash"></i></a>
   </h3>
 
   <div class="markdown level1 summary"><p>The CAD class name of an object.</p>
@@ -496,7 +534,7 @@ public int DrawingFormat { get; }</code></pre>
 
   <h3 id="ACadSharp_Entities_ProxyEntity_ObjectType" data-uid="ACadSharp.Entities.ProxyEntity.ObjectType">
   ObjectType
-  <a class="header-action link-secondary" title="View source" href="https://github.com/DomCR/ACadSharp/blob/master/src/ACadSharp/Entities/ProxyEntity.cs/#L41"><i class="bi bi-code-slash"></i></a>
+  <a class="header-action link-secondary" title="View source" href="https://github.com/DomCR/ACadSharp/blob/master/src/ACadSharp/Entities/ProxyEntity.cs/#L60"><i class="bi bi-code-slash"></i></a>
   </h3>
 
   <div class="markdown level1 summary"><p>Get the object type.</p>
@@ -528,7 +566,7 @@ public int DrawingFormat { get; }</code></pre>
 
   <h3 id="ACadSharp_Entities_ProxyEntity_OriginalDataFormatDxf" data-uid="ACadSharp.Entities.ProxyEntity.OriginalDataFormatDxf">
   OriginalDataFormatDxf
-  <a class="header-action link-secondary" title="View source" href="https://github.com/DomCR/ACadSharp/blob/master/src/ACadSharp/Entities/ProxyEntity.cs/#L44"><i class="bi bi-code-slash"></i></a>
+  <a class="header-action link-secondary" title="View source" href="https://github.com/DomCR/ACadSharp/blob/master/src/ACadSharp/Entities/ProxyEntity.cs/#L63"><i class="bi bi-code-slash"></i></a>
   </h3>
 
   <div class="markdown level1 summary"><p>Original custom object data format.</p>
@@ -561,7 +599,7 @@ public bool OriginalDataFormatDxf { get; set; }</code></pre>
 
   <h3 id="ACadSharp_Entities_ProxyEntity_ProxyClassId" data-uid="ACadSharp.Entities.ProxyEntity.ProxyClassId">
   ProxyClassId
-  <a class="header-action link-secondary" title="View source" href="https://github.com/DomCR/ACadSharp/blob/master/src/ACadSharp/Entities/ProxyEntity.cs/#L51"><i class="bi bi-code-slash"></i></a>
+  <a class="header-action link-secondary" title="View source" href="https://github.com/DomCR/ACadSharp/blob/master/src/ACadSharp/Entities/ProxyEntity.cs/#L70"><i class="bi bi-code-slash"></i></a>
   </h3>
 
   <div class="markdown level1 summary"><p>Proxy object class ID.</p>
@@ -593,11 +631,43 @@ public int ProxyClassId { get; }</code></pre>
 
 
 
+  <a id="ACadSharp_Entities_ProxyEntity_StringData_" data-uid="ACadSharp.Entities.ProxyEntity.StringData*"></a>
+
+  <h3 id="ACadSharp_Entities_ProxyEntity_StringData" data-uid="ACadSharp.Entities.ProxyEntity.StringData">
+  StringData
+  <a class="header-action link-secondary" title="View source" href="https://github.com/DomCR/ACadSharp/blob/master/src/ACadSharp/Entities/ProxyEntity.cs/#L76"><i class="bi bi-code-slash"></i></a>
+  </h3>
+
+  <div class="markdown level1 summary"><p>Gets or sets the stream that contains string data.</p>
+</div>
+  <div class="markdown level1 conceptual"></div>
+
+  <div class="codewrapper">
+    <pre><code class="lang-csharp hljs">public Stream StringData { get; set; }</code></pre>
+  </div>
+
+
+
+
+
+  <h4 class="section">Property Value</h4>
+  <dl class="parameters">
+    <dt><a class="xref" href="https://learn.microsoft.com/dotnet/api/system.io.stream">Stream</a></dt>
+    <dd></dd>
+  </dl>
+
+
+
+
+
+
+
+
   <a id="ACadSharp_Entities_ProxyEntity_SubclassMarker_" data-uid="ACadSharp.Entities.ProxyEntity.SubclassMarker*"></a>
 
   <h3 id="ACadSharp_Entities_ProxyEntity_SubclassMarker" data-uid="ACadSharp.Entities.ProxyEntity.SubclassMarker">
   SubclassMarker
-  <a class="header-action link-secondary" title="View source" href="https://github.com/DomCR/ACadSharp/blob/master/src/ACadSharp/Entities/ProxyEntity.cs/#L55"><i class="bi bi-code-slash"></i></a>
+  <a class="header-action link-secondary" title="View source" href="https://github.com/DomCR/ACadSharp/blob/master/src/ACadSharp/Entities/ProxyEntity.cs/#L79"><i class="bi bi-code-slash"></i></a>
   </h3>
 
   <div class="markdown level1 summary"><p>Object Subclass marker.</p>
@@ -629,14 +699,16 @@ public int ProxyClassId { get; }</code></pre>
 
   <h3 id="ACadSharp_Entities_ProxyEntity_Version" data-uid="ACadSharp.Entities.ProxyEntity.Version">
   Version
-  <a class="header-action link-secondary" title="View source" href="https://github.com/DomCR/ACadSharp/blob/master/src/ACadSharp/Entities/ProxyEntity.cs/#L73"><i class="bi bi-code-slash"></i></a>
+  <a class="header-action link-secondary" title="View source" href="https://github.com/DomCR/ACadSharp/blob/master/src/ACadSharp/Entities/ProxyEntity.cs/#L82"><i class="bi bi-code-slash"></i></a>
   </h3>
 
-  <div class="markdown level1 summary"></div>
+  <div class="markdown level1 summary"><p>Gets or sets the AutoCAD version.</p>
+</div>
   <div class="markdown level1 conceptual"></div>
 
   <div class="codewrapper">
-    <pre><code class="lang-csharp hljs">public ACadVersion Version { get; set; }</code></pre>
+    <pre><code class="lang-csharp hljs">[DxfCodeValue(new int[] { 71 })]
+public ACadVersion Version { get; set; }</code></pre>
   </div>
 
 
@@ -660,11 +732,50 @@ public int ProxyClassId { get; }</code></pre>
 </h2>
 
 
+  <a id="ACadSharp_Entities_ProxyEntity_AddStringDataText_" data-uid="ACadSharp.Entities.ProxyEntity.AddStringDataText*"></a>
+
+  <h3 id="ACadSharp_Entities_ProxyEntity_AddStringDataText_System_String_System_Text_Encoding_" data-uid="ACadSharp.Entities.ProxyEntity.AddStringDataText(System.String,System.Text.Encoding)">
+  AddStringDataText(string, Encoding)
+  <a class="header-action link-secondary" title="View source" href="https://github.com/DomCR/ACadSharp/blob/master/src/ACadSharp/Entities/ProxyEntity.cs/#L117"><i class="bi bi-code-slash"></i></a>
+  </h3>
+
+  <div class="markdown level1 summary"><p>Writes variable-length text to the string data stream using the specified encoding.</p>
+</div>
+  <div class="markdown level1 conceptual"></div>
+
+  <div class="codewrapper">
+    <pre><code class="lang-csharp hljs">public void AddStringDataText(string text, Encoding encoding)</code></pre>
+  </div>
+
+  <h4 class="section">Parameters</h4>
+  <dl class="parameters">
+    <dt><code>text</code> <a class="xref" href="https://learn.microsoft.com/dotnet/api/system.string">string</a></dt>
+    <dd><p>Text to write to the string data stream.</p>
+</dd>
+    <dt><code>encoding</code> <a class="xref" href="https://learn.microsoft.com/dotnet/api/system.text.encoding">Encoding</a></dt>
+    <dd><p>Character encoding used to write the text.</p>
+</dd>
+  </dl>
+
+
+
+
+
+
+
+
+  <h4 class="section" id="ACadSharp_Entities_ProxyEntity_AddStringDataText_System_String_System_Text_Encoding__remarks">Remarks</h4>
+  <div class="markdown level1 remarks"><p>Initializes the string data stream when it has not been created.</p>
+</div>
+
+
+
+
   <a id="ACadSharp_Entities_ProxyEntity_ApplyTransform_" data-uid="ACadSharp.Entities.ProxyEntity.ApplyTransform*"></a>
 
   <h3 id="ACadSharp_Entities_ProxyEntity_ApplyTransform_CSMath_Transform_" data-uid="ACadSharp.Entities.ProxyEntity.ApplyTransform(CSMath.Transform)">
   ApplyTransform(Transform)
-  <a class="header-action link-secondary" title="View source" href="https://github.com/DomCR/ACadSharp/blob/master/src/ACadSharp/Entities/ProxyEntity.cs/#L76"><i class="bi bi-code-slash"></i></a>
+  <a class="header-action link-secondary" title="View source" href="https://github.com/DomCR/ACadSharp/blob/master/src/ACadSharp/Entities/ProxyEntity.cs/#L86"><i class="bi bi-code-slash"></i></a>
   </h3>
 
   <div class="markdown level1 summary"><p>Apply a transform matrix to this entity.</p>
@@ -696,7 +807,7 @@ public int ProxyClassId { get; }</code></pre>
 
   <h3 id="ACadSharp_Entities_ProxyEntity_GetBoundingBox" data-uid="ACadSharp.Entities.ProxyEntity.GetBoundingBox">
   GetBoundingBox()
-  <a class="header-action link-secondary" title="View source" href="https://github.com/DomCR/ACadSharp/blob/master/src/ACadSharp/Entities/ProxyEntity.cs/#L81"><i class="bi bi-code-slash"></i></a>
+  <a class="header-action link-secondary" title="View source" href="https://github.com/DomCR/ACadSharp/blob/master/src/ACadSharp/Entities/ProxyEntity.cs/#L91"><i class="bi bi-code-slash"></i></a>
   </h3>
 
   <div class="markdown level1 summary"><p>Gets the bounding box aligned with the axis XYZ that occupies this entity.</p>
@@ -725,11 +836,44 @@ public int ProxyClassId { get; }</code></pre>
 
 
 
+  <a id="ACadSharp_Entities_ProxyEntity_GetStringDataText_" data-uid="ACadSharp.Entities.ProxyEntity.GetStringDataText*"></a>
+
+  <h3 id="ACadSharp_Entities_ProxyEntity_GetStringDataText" data-uid="ACadSharp.Entities.ProxyEntity.GetStringDataText">
+  GetStringDataText()
+  <a class="header-action link-secondary" title="View source" href="https://github.com/DomCR/ACadSharp/blob/master/src/ACadSharp/Entities/ProxyEntity.cs/#L100"><i class="bi bi-code-slash"></i></a>
+  </h3>
+
+  <div class="markdown level1 summary"><p>Reads and returns variable-length text from the current string data buffer using the current DWG version.</p>
+</div>
+  <div class="markdown level1 conceptual"></div>
+
+  <div class="codewrapper">
+    <pre><code class="lang-csharp hljs">public string GetStringDataText()</code></pre>
+  </div>
+
+
+  <h4 class="section">Returns</h4>
+  <dl class="parameters">
+    <dt><a class="xref" href="https://learn.microsoft.com/dotnet/api/system.string">string</a></dt>
+    <dd><p>The decoded text value, or an empty string when <code>StringData</code> is <code>null</code>.</p>
+</dd>
+  </dl>
+
+
+
+
+
+
+
+
+
+
+
 
 </article>
 
         <div class="contribution d-print-none">
-          <a href="https://github.com/DomCR/ACadSharp/blob/master/src/ACadSharp/Entities/ProxyEntity.cs/#L15" class="edit-link">Edit this page</a>
+          <a href="https://github.com/DomCR/ACadSharp/blob/master/src/ACadSharp/Entities/ProxyEntity.cs/#L17" class="edit-link">Edit this page</a>
         </div>
 
 

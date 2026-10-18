@@ -11491,6 +11491,19 @@ references:
   isSpec: "True"
   fullName: ACadSharp.Entities.Entity.GetBoundingBox
   nameWithType: Entity.GetBoundingBox
+- uid: ACadSharp.Entities.Entity.HasProxyGeometries
+  name: HasProxyGeometries
+  href: api/ACadSharp.Entities.Entity.html#ACadSharp_Entities_Entity_HasProxyGeometries
+  commentId: P:ACadSharp.Entities.Entity.HasProxyGeometries
+  fullName: ACadSharp.Entities.Entity.HasProxyGeometries
+  nameWithType: Entity.HasProxyGeometries
+- uid: ACadSharp.Entities.Entity.HasProxyGeometries*
+  name: HasProxyGeometries
+  href: api/ACadSharp.Entities.Entity.html#ACadSharp_Entities_Entity_HasProxyGeometries_
+  commentId: Overload:ACadSharp.Entities.Entity.HasProxyGeometries
+  isSpec: "True"
+  fullName: ACadSharp.Entities.Entity.HasProxyGeometries
+  nameWithType: Entity.HasProxyGeometries
 - uid: ACadSharp.Entities.Entity.IsInvisible
   name: IsInvisible
   href: api/ACadSharp.Entities.Entity.html#ACadSharp_Entities_Entity_IsInvisible
@@ -19839,6 +19852,22 @@ references:
   commentId: T:ACadSharp.Entities.ProxyEntity
   fullName: ACadSharp.Entities.ProxyEntity
   nameWithType: ProxyEntity
+- uid: ACadSharp.Entities.ProxyEntity.AddStringDataText(System.String,System.Text.Encoding)
+  name: AddStringDataText(string, Encoding)
+  href: api/ACadSharp.Entities.ProxyEntity.html#ACadSharp_Entities_ProxyEntity_AddStringDataText_System_String_System_Text_Encoding_
+  commentId: M:ACadSharp.Entities.ProxyEntity.AddStringDataText(System.String,System.Text.Encoding)
+  name.vb: AddStringDataText(String, Encoding)
+  fullName: ACadSharp.Entities.ProxyEntity.AddStringDataText(string, System.Text.Encoding)
+  fullName.vb: ACadSharp.Entities.ProxyEntity.AddStringDataText(String, System.Text.Encoding)
+  nameWithType: ProxyEntity.AddStringDataText(string, Encoding)
+  nameWithType.vb: ProxyEntity.AddStringDataText(String, Encoding)
+- uid: ACadSharp.Entities.ProxyEntity.AddStringDataText*
+  name: AddStringDataText
+  href: api/ACadSharp.Entities.ProxyEntity.html#ACadSharp_Entities_ProxyEntity_AddStringDataText_
+  commentId: Overload:ACadSharp.Entities.ProxyEntity.AddStringDataText
+  isSpec: "True"
+  fullName: ACadSharp.Entities.ProxyEntity.AddStringDataText
+  nameWithType: ProxyEntity.AddStringDataText
 - uid: ACadSharp.Entities.ProxyEntity.ApplyTransform(CSMath.Transform)
   name: ApplyTransform(Transform)
   href: api/ACadSharp.Entities.ProxyEntity.html#ACadSharp_Entities_ProxyEntity_ApplyTransform_CSMath_Transform_
@@ -19852,19 +19881,32 @@ references:
   isSpec: "True"
   fullName: ACadSharp.Entities.ProxyEntity.ApplyTransform
   nameWithType: ProxyEntity.ApplyTransform
-- uid: ACadSharp.Entities.ProxyEntity.ClassId
-  name: ClassId
-  href: api/ACadSharp.Entities.ProxyEntity.html#ACadSharp_Entities_ProxyEntity_ClassId
-  commentId: P:ACadSharp.Entities.ProxyEntity.ClassId
-  fullName: ACadSharp.Entities.ProxyEntity.ClassId
-  nameWithType: ProxyEntity.ClassId
-- uid: ACadSharp.Entities.ProxyEntity.ClassId*
-  name: ClassId
-  href: api/ACadSharp.Entities.ProxyEntity.html#ACadSharp_Entities_ProxyEntity_ClassId_
-  commentId: Overload:ACadSharp.Entities.ProxyEntity.ClassId
+- uid: ACadSharp.Entities.ProxyEntity.BinaryData
+  name: BinaryData
+  href: api/ACadSharp.Entities.ProxyEntity.html#ACadSharp_Entities_ProxyEntity_BinaryData
+  commentId: P:ACadSharp.Entities.ProxyEntity.BinaryData
+  fullName: ACadSharp.Entities.ProxyEntity.BinaryData
+  nameWithType: ProxyEntity.BinaryData
+- uid: ACadSharp.Entities.ProxyEntity.BinaryData*
+  name: BinaryData
+  href: api/ACadSharp.Entities.ProxyEntity.html#ACadSharp_Entities_ProxyEntity_BinaryData_
+  commentId: Overload:ACadSharp.Entities.ProxyEntity.BinaryData
   isSpec: "True"
-  fullName: ACadSharp.Entities.ProxyEntity.ClassId
-  nameWithType: ProxyEntity.ClassId
+  fullName: ACadSharp.Entities.ProxyEntity.BinaryData
+  nameWithType: ProxyEntity.BinaryData
+- uid: ACadSharp.Entities.ProxyEntity.ClassNumber
+  name: ClassNumber
+  href: api/ACadSharp.Entities.ProxyEntity.html#ACadSharp_Entities_ProxyEntity_ClassNumber
+  commentId: P:ACadSharp.Entities.ProxyEntity.ClassNumber
+  fullName: ACadSharp.Entities.ProxyEntity.ClassNumber
+  nameWithType: ProxyEntity.ClassNumber
+- uid: ACadSharp.Entities.ProxyEntity.ClassNumber*
+  name: ClassNumber
+  href: api/ACadSharp.Entities.ProxyEntity.html#ACadSharp_Entities_ProxyEntity_ClassNumber_
+  commentId: Overload:ACadSharp.Entities.ProxyEntity.ClassNumber
+  isSpec: "True"
+  fullName: ACadSharp.Entities.ProxyEntity.ClassNumber
+  nameWithType: ProxyEntity.ClassNumber
 - uid: ACadSharp.Entities.ProxyEntity.Data
   name: Data
   href: api/ACadSharp.Entities.ProxyEntity.html#ACadSharp_Entities_ProxyEntity_Data
@@ -19917,6 +19959,19 @@ references:
   isSpec: "True"
   fullName: ACadSharp.Entities.ProxyEntity.GetBoundingBox
   nameWithType: ProxyEntity.GetBoundingBox
+- uid: ACadSharp.Entities.ProxyEntity.GetStringDataText
+  name: GetStringDataText()
+  href: api/ACadSharp.Entities.ProxyEntity.html#ACadSharp_Entities_ProxyEntity_GetStringDataText
+  commentId: M:ACadSharp.Entities.ProxyEntity.GetStringDataText
+  fullName: ACadSharp.Entities.ProxyEntity.GetStringDataText()
+  nameWithType: ProxyEntity.GetStringDataText()
+- uid: ACadSharp.Entities.ProxyEntity.GetStringDataText*
+  name: GetStringDataText
+  href: api/ACadSharp.Entities.ProxyEntity.html#ACadSharp_Entities_ProxyEntity_GetStringDataText_
+  commentId: Overload:ACadSharp.Entities.ProxyEntity.GetStringDataText
+  isSpec: "True"
+  fullName: ACadSharp.Entities.ProxyEntity.GetStringDataText
+  nameWithType: ProxyEntity.GetStringDataText
 - uid: ACadSharp.Entities.ProxyEntity.MaintenanceVersion
   name: MaintenanceVersion
   href: api/ACadSharp.Entities.ProxyEntity.html#ACadSharp_Entities_ProxyEntity_MaintenanceVersion
@@ -19982,6 +20037,19 @@ references:
   isSpec: "True"
   fullName: ACadSharp.Entities.ProxyEntity.ProxyClassId
   nameWithType: ProxyEntity.ProxyClassId
+- uid: ACadSharp.Entities.ProxyEntity.StringData
+  name: StringData
+  href: api/ACadSharp.Entities.ProxyEntity.html#ACadSharp_Entities_ProxyEntity_StringData
+  commentId: P:ACadSharp.Entities.ProxyEntity.StringData
+  fullName: ACadSharp.Entities.ProxyEntity.StringData
+  nameWithType: ProxyEntity.StringData
+- uid: ACadSharp.Entities.ProxyEntity.StringData*
+  name: StringData
+  href: api/ACadSharp.Entities.ProxyEntity.html#ACadSharp_Entities_ProxyEntity_StringData_
+  commentId: Overload:ACadSharp.Entities.ProxyEntity.StringData
+  isSpec: "True"
+  fullName: ACadSharp.Entities.ProxyEntity.StringData
+  nameWithType: ProxyEntity.StringData
 - uid: ACadSharp.Entities.ProxyEntity.SubclassMarker
   name: SubclassMarker
   href: api/ACadSharp.Entities.ProxyEntity.html#ACadSharp_Entities_ProxyEntity_SubclassMarker
@@ -20280,6 +20348,19 @@ references:
   commentId: T:ACadSharp.Entities.ProxyGraphics.IProxyGeometry
   fullName: ACadSharp.Entities.ProxyGraphics.IProxyGeometry
   nameWithType: IProxyGeometry
+- uid: ACadSharp.Entities.ProxyGraphics.IProxyGeometry.Clone
+  name: Clone()
+  href: api/ACadSharp.Entities.ProxyGraphics.IProxyGeometry.html#ACadSharp_Entities_ProxyGraphics_IProxyGeometry_Clone
+  commentId: M:ACadSharp.Entities.ProxyGraphics.IProxyGeometry.Clone
+  fullName: ACadSharp.Entities.ProxyGraphics.IProxyGeometry.Clone()
+  nameWithType: IProxyGeometry.Clone()
+- uid: ACadSharp.Entities.ProxyGraphics.IProxyGeometry.Clone*
+  name: Clone
+  href: api/ACadSharp.Entities.ProxyGraphics.IProxyGeometry.html#ACadSharp_Entities_ProxyGraphics_IProxyGeometry_Clone_
+  commentId: Overload:ACadSharp.Entities.ProxyGraphics.IProxyGeometry.Clone
+  isSpec: "True"
+  fullName: ACadSharp.Entities.ProxyGraphics.IProxyGeometry.Clone
+  nameWithType: IProxyGeometry.Clone
 - uid: ACadSharp.Entities.ProxyGraphics.IProxyGeometry.GraphicsType
   name: GraphicsType
   href: api/ACadSharp.Entities.ProxyGraphics.IProxyGeometry.html#ACadSharp_Entities_ProxyGraphics_IProxyGeometry_GraphicsType
@@ -20424,6 +20505,19 @@ references:
   isSpec: "True"
   fullName: ACadSharp.Entities.ProxyGraphics.ProxyCircle.Center
   nameWithType: ProxyCircle.Center
+- uid: ACadSharp.Entities.ProxyGraphics.ProxyCircle.Clone
+  name: Clone()
+  href: api/ACadSharp.Entities.ProxyGraphics.ProxyCircle.html#ACadSharp_Entities_ProxyGraphics_ProxyCircle_Clone
+  commentId: M:ACadSharp.Entities.ProxyGraphics.ProxyCircle.Clone
+  fullName: ACadSharp.Entities.ProxyGraphics.ProxyCircle.Clone()
+  nameWithType: ProxyCircle.Clone()
+- uid: ACadSharp.Entities.ProxyGraphics.ProxyCircle.Clone*
+  name: Clone
+  href: api/ACadSharp.Entities.ProxyGraphics.ProxyCircle.html#ACadSharp_Entities_ProxyGraphics_ProxyCircle_Clone_
+  commentId: Overload:ACadSharp.Entities.ProxyGraphics.ProxyCircle.Clone
+  isSpec: "True"
+  fullName: ACadSharp.Entities.ProxyGraphics.ProxyCircle.Clone
+  nameWithType: ProxyCircle.Clone
 - uid: ACadSharp.Entities.ProxyGraphics.ProxyCircle.GraphicsType
   name: GraphicsType
   href: api/ACadSharp.Entities.ProxyGraphics.ProxyCircle.html#ACadSharp_Entities_ProxyGraphics_ProxyCircle_GraphicsType
@@ -20469,6 +20563,19 @@ references:
   commentId: T:ACadSharp.Entities.ProxyGraphics.ProxyCirclePt3
   fullName: ACadSharp.Entities.ProxyGraphics.ProxyCirclePt3
   nameWithType: ProxyCirclePt3
+- uid: ACadSharp.Entities.ProxyGraphics.ProxyCirclePt3.Clone
+  name: Clone()
+  href: api/ACadSharp.Entities.ProxyGraphics.ProxyCirclePt3.html#ACadSharp_Entities_ProxyGraphics_ProxyCirclePt3_Clone
+  commentId: M:ACadSharp.Entities.ProxyGraphics.ProxyCirclePt3.Clone
+  fullName: ACadSharp.Entities.ProxyGraphics.ProxyCirclePt3.Clone()
+  nameWithType: ProxyCirclePt3.Clone()
+- uid: ACadSharp.Entities.ProxyGraphics.ProxyCirclePt3.Clone*
+  name: Clone
+  href: api/ACadSharp.Entities.ProxyGraphics.ProxyCirclePt3.html#ACadSharp_Entities_ProxyGraphics_ProxyCirclePt3_Clone_
+  commentId: Overload:ACadSharp.Entities.ProxyGraphics.ProxyCirclePt3.Clone
+  isSpec: "True"
+  fullName: ACadSharp.Entities.ProxyGraphics.ProxyCirclePt3.Clone
+  nameWithType: ProxyCirclePt3.Clone
 - uid: ACadSharp.Entities.ProxyGraphics.ProxyCirclePt3.GraphicsType
   name: GraphicsType
   href: api/ACadSharp.Entities.ProxyGraphics.ProxyCirclePt3.html#ACadSharp_Entities_ProxyGraphics_ProxyCirclePt3_GraphicsType
@@ -20553,6 +20660,19 @@ references:
   isSpec: "True"
   fullName: ACadSharp.Entities.ProxyGraphics.ProxyCircularArc.Center
   nameWithType: ProxyCircularArc.Center
+- uid: ACadSharp.Entities.ProxyGraphics.ProxyCircularArc.Clone
+  name: Clone()
+  href: api/ACadSharp.Entities.ProxyGraphics.ProxyCircularArc.html#ACadSharp_Entities_ProxyGraphics_ProxyCircularArc_Clone
+  commentId: M:ACadSharp.Entities.ProxyGraphics.ProxyCircularArc.Clone
+  fullName: ACadSharp.Entities.ProxyGraphics.ProxyCircularArc.Clone()
+  nameWithType: ProxyCircularArc.Clone()
+- uid: ACadSharp.Entities.ProxyGraphics.ProxyCircularArc.Clone*
+  name: Clone
+  href: api/ACadSharp.Entities.ProxyGraphics.ProxyCircularArc.html#ACadSharp_Entities_ProxyGraphics_ProxyCircularArc_Clone_
+  commentId: Overload:ACadSharp.Entities.ProxyGraphics.ProxyCircularArc.Clone
+  isSpec: "True"
+  fullName: ACadSharp.Entities.ProxyGraphics.ProxyCircularArc.Clone
+  nameWithType: ProxyCircularArc.Clone
 - uid: ACadSharp.Entities.ProxyGraphics.ProxyCircularArc.GraphicsType
   name: GraphicsType
   href: api/ACadSharp.Entities.ProxyGraphics.ProxyCircularArc.html#ACadSharp_Entities_ProxyGraphics_ProxyCircularArc_GraphicsType
@@ -20637,6 +20757,19 @@ references:
   isSpec: "True"
   fullName: ACadSharp.Entities.ProxyGraphics.ProxyCircularArc3Pt.ArcType
   nameWithType: ProxyCircularArc3Pt.ArcType
+- uid: ACadSharp.Entities.ProxyGraphics.ProxyCircularArc3Pt.Clone
+  name: Clone()
+  href: api/ACadSharp.Entities.ProxyGraphics.ProxyCircularArc3Pt.html#ACadSharp_Entities_ProxyGraphics_ProxyCircularArc3Pt_Clone
+  commentId: M:ACadSharp.Entities.ProxyGraphics.ProxyCircularArc3Pt.Clone
+  fullName: ACadSharp.Entities.ProxyGraphics.ProxyCircularArc3Pt.Clone()
+  nameWithType: ProxyCircularArc3Pt.Clone()
+- uid: ACadSharp.Entities.ProxyGraphics.ProxyCircularArc3Pt.Clone*
+  name: Clone
+  href: api/ACadSharp.Entities.ProxyGraphics.ProxyCircularArc3Pt.html#ACadSharp_Entities_ProxyGraphics_ProxyCircularArc3Pt_Clone_
+  commentId: Overload:ACadSharp.Entities.ProxyGraphics.ProxyCircularArc3Pt.Clone
+  isSpec: "True"
+  fullName: ACadSharp.Entities.ProxyGraphics.ProxyCircularArc3Pt.Clone
+  nameWithType: ProxyCircularArc3Pt.Clone
 - uid: ACadSharp.Entities.ProxyGraphics.ProxyCircularArc3Pt.GraphicsType
   name: GraphicsType
   href: api/ACadSharp.Entities.ProxyGraphics.ProxyCircularArc3Pt.html#ACadSharp_Entities_ProxyGraphics_ProxyCircularArc3Pt_GraphicsType
@@ -20737,6 +20870,19 @@ references:
   commentId: T:ACadSharp.Entities.ProxyGraphics.ProxyExtents
   fullName: ACadSharp.Entities.ProxyGraphics.ProxyExtents
   nameWithType: ProxyExtents
+- uid: ACadSharp.Entities.ProxyGraphics.ProxyExtents.Clone
+  name: Clone()
+  href: api/ACadSharp.Entities.ProxyGraphics.ProxyExtents.html#ACadSharp_Entities_ProxyGraphics_ProxyExtents_Clone
+  commentId: M:ACadSharp.Entities.ProxyGraphics.ProxyExtents.Clone
+  fullName: ACadSharp.Entities.ProxyGraphics.ProxyExtents.Clone()
+  nameWithType: ProxyExtents.Clone()
+- uid: ACadSharp.Entities.ProxyGraphics.ProxyExtents.Clone*
+  name: Clone
+  href: api/ACadSharp.Entities.ProxyGraphics.ProxyExtents.html#ACadSharp_Entities_ProxyGraphics_ProxyExtents_Clone_
+  commentId: Overload:ACadSharp.Entities.ProxyGraphics.ProxyExtents.Clone
+  isSpec: "True"
+  fullName: ACadSharp.Entities.ProxyGraphics.ProxyExtents.Clone
+  nameWithType: ProxyExtents.Clone
 - uid: ACadSharp.Entities.ProxyGraphics.ProxyExtents.GraphicsType
   name: GraphicsType
   href: api/ACadSharp.Entities.ProxyGraphics.ProxyExtents.html#ACadSharp_Entities_ProxyGraphics_ProxyExtents_GraphicsType
@@ -20776,18 +20922,25 @@ references:
   isSpec: "True"
   fullName: ACadSharp.Entities.ProxyGraphics.ProxyExtents.Min
   nameWithType: ProxyExtents.Min
-- uid: ACadSharp.Entities.ProxyGraphics.ProxyGeometryReader
-  name: ProxyGeometryReader
-  href: api/ACadSharp.Entities.ProxyGraphics.ProxyGeometryReader.html
-  commentId: T:ACadSharp.Entities.ProxyGraphics.ProxyGeometryReader
-  fullName: ACadSharp.Entities.ProxyGraphics.ProxyGeometryReader
-  nameWithType: ProxyGeometryReader
 - uid: ACadSharp.Entities.ProxyGraphics.ProxyLwPolyine
   name: ProxyLwPolyine
   href: api/ACadSharp.Entities.ProxyGraphics.ProxyLwPolyine.html
   commentId: T:ACadSharp.Entities.ProxyGraphics.ProxyLwPolyine
   fullName: ACadSharp.Entities.ProxyGraphics.ProxyLwPolyine
   nameWithType: ProxyLwPolyine
+- uid: ACadSharp.Entities.ProxyGraphics.ProxyLwPolyine.Clone
+  name: Clone()
+  href: api/ACadSharp.Entities.ProxyGraphics.ProxyLwPolyine.html#ACadSharp_Entities_ProxyGraphics_ProxyLwPolyine_Clone
+  commentId: M:ACadSharp.Entities.ProxyGraphics.ProxyLwPolyine.Clone
+  fullName: ACadSharp.Entities.ProxyGraphics.ProxyLwPolyine.Clone()
+  nameWithType: ProxyLwPolyine.Clone()
+- uid: ACadSharp.Entities.ProxyGraphics.ProxyLwPolyine.Clone*
+  name: Clone
+  href: api/ACadSharp.Entities.ProxyGraphics.ProxyLwPolyine.html#ACadSharp_Entities_ProxyGraphics_ProxyLwPolyine_Clone_
+  commentId: Overload:ACadSharp.Entities.ProxyGraphics.ProxyLwPolyine.Clone
+  isSpec: "True"
+  fullName: ACadSharp.Entities.ProxyGraphics.ProxyLwPolyine.Clone
+  nameWithType: ProxyLwPolyine.Clone
 - uid: ACadSharp.Entities.ProxyGraphics.ProxyLwPolyine.Entity
   name: Entity
   href: api/ACadSharp.Entities.ProxyGraphics.ProxyLwPolyine.html#ACadSharp_Entities_ProxyGraphics_ProxyLwPolyine_Entity
@@ -20904,6 +21057,19 @@ references:
   commentId: T:ACadSharp.Entities.ProxyGraphics.ProxyMeshBase
   fullName: ACadSharp.Entities.ProxyGraphics.ProxyMeshBase
   nameWithType: ProxyMeshBase
+- uid: ACadSharp.Entities.ProxyGraphics.ProxyMeshBase.Clone
+  name: Clone()
+  href: api/ACadSharp.Entities.ProxyGraphics.ProxyMeshBase.html#ACadSharp_Entities_ProxyGraphics_ProxyMeshBase_Clone
+  commentId: M:ACadSharp.Entities.ProxyGraphics.ProxyMeshBase.Clone
+  fullName: ACadSharp.Entities.ProxyGraphics.ProxyMeshBase.Clone()
+  nameWithType: ProxyMeshBase.Clone()
+- uid: ACadSharp.Entities.ProxyGraphics.ProxyMeshBase.Clone*
+  name: Clone
+  href: api/ACadSharp.Entities.ProxyGraphics.ProxyMeshBase.html#ACadSharp_Entities_ProxyGraphics_ProxyMeshBase_Clone_
+  commentId: Overload:ACadSharp.Entities.ProxyGraphics.ProxyMeshBase.Clone
+  isSpec: "True"
+  fullName: ACadSharp.Entities.ProxyGraphics.ProxyMeshBase.Clone
+  nameWithType: ProxyMeshBase.Clone
 - uid: ACadSharp.Entities.ProxyGraphics.ProxyMeshBase.EdgeTraits
   name: EdgeTraits
   href: api/ACadSharp.Entities.ProxyGraphics.ProxyMeshBase.html#ACadSharp_Entities_ProxyGraphics_ProxyMeshBase_EdgeTraits
@@ -21005,6 +21171,19 @@ references:
   commentId: T:ACadSharp.Entities.ProxyGraphics.ProxyPolygon
   fullName: ACadSharp.Entities.ProxyGraphics.ProxyPolygon
   nameWithType: ProxyPolygon
+- uid: ACadSharp.Entities.ProxyGraphics.ProxyPolygon.Clone
+  name: Clone()
+  href: api/ACadSharp.Entities.ProxyGraphics.ProxyPolygon.html#ACadSharp_Entities_ProxyGraphics_ProxyPolygon_Clone
+  commentId: M:ACadSharp.Entities.ProxyGraphics.ProxyPolygon.Clone
+  fullName: ACadSharp.Entities.ProxyGraphics.ProxyPolygon.Clone()
+  nameWithType: ProxyPolygon.Clone()
+- uid: ACadSharp.Entities.ProxyGraphics.ProxyPolygon.Clone*
+  name: Clone
+  href: api/ACadSharp.Entities.ProxyGraphics.ProxyPolygon.html#ACadSharp_Entities_ProxyGraphics_ProxyPolygon_Clone_
+  commentId: Overload:ACadSharp.Entities.ProxyGraphics.ProxyPolygon.Clone
+  isSpec: "True"
+  fullName: ACadSharp.Entities.ProxyGraphics.ProxyPolygon.Clone
+  nameWithType: ProxyPolygon.Clone
 - uid: ACadSharp.Entities.ProxyGraphics.ProxyPolygon.GraphicsType
   name: GraphicsType
   href: api/ACadSharp.Entities.ProxyGraphics.ProxyPolygon.html#ACadSharp_Entities_ProxyGraphics_ProxyPolygon_GraphicsType
@@ -21037,6 +21216,19 @@ references:
   commentId: T:ACadSharp.Entities.ProxyGraphics.ProxyPolyline
   fullName: ACadSharp.Entities.ProxyGraphics.ProxyPolyline
   nameWithType: ProxyPolyline
+- uid: ACadSharp.Entities.ProxyGraphics.ProxyPolyline.Clone
+  name: Clone()
+  href: api/ACadSharp.Entities.ProxyGraphics.ProxyPolyline.html#ACadSharp_Entities_ProxyGraphics_ProxyPolyline_Clone
+  commentId: M:ACadSharp.Entities.ProxyGraphics.ProxyPolyline.Clone
+  fullName: ACadSharp.Entities.ProxyGraphics.ProxyPolyline.Clone()
+  nameWithType: ProxyPolyline.Clone()
+- uid: ACadSharp.Entities.ProxyGraphics.ProxyPolyline.Clone*
+  name: Clone
+  href: api/ACadSharp.Entities.ProxyGraphics.ProxyPolyline.html#ACadSharp_Entities_ProxyGraphics_ProxyPolyline_Clone_
+  commentId: Overload:ACadSharp.Entities.ProxyGraphics.ProxyPolyline.Clone
+  isSpec: "True"
+  fullName: ACadSharp.Entities.ProxyGraphics.ProxyPolyline.Clone
+  nameWithType: ProxyPolyline.Clone
 - uid: ACadSharp.Entities.ProxyGraphics.ProxyPolyline.GraphicsType
   name: GraphicsType
   href: api/ACadSharp.Entities.ProxyGraphics.ProxyPolyline.html#ACadSharp_Entities_ProxyGraphics_ProxyPolyline_GraphicsType
@@ -21101,6 +21293,19 @@ references:
   commentId: T:ACadSharp.Entities.ProxyGraphics.ProxyPopClip
   fullName: ACadSharp.Entities.ProxyGraphics.ProxyPopClip
   nameWithType: ProxyPopClip
+- uid: ACadSharp.Entities.ProxyGraphics.ProxyPopClip.Clone
+  name: Clone()
+  href: api/ACadSharp.Entities.ProxyGraphics.ProxyPopClip.html#ACadSharp_Entities_ProxyGraphics_ProxyPopClip_Clone
+  commentId: M:ACadSharp.Entities.ProxyGraphics.ProxyPopClip.Clone
+  fullName: ACadSharp.Entities.ProxyGraphics.ProxyPopClip.Clone()
+  nameWithType: ProxyPopClip.Clone()
+- uid: ACadSharp.Entities.ProxyGraphics.ProxyPopClip.Clone*
+  name: Clone
+  href: api/ACadSharp.Entities.ProxyGraphics.ProxyPopClip.html#ACadSharp_Entities_ProxyGraphics_ProxyPopClip_Clone_
+  commentId: Overload:ACadSharp.Entities.ProxyGraphics.ProxyPopClip.Clone
+  isSpec: "True"
+  fullName: ACadSharp.Entities.ProxyGraphics.ProxyPopClip.Clone
+  nameWithType: ProxyPopClip.Clone
 - uid: ACadSharp.Entities.ProxyGraphics.ProxyPopClip.GraphicsType
   name: GraphicsType
   href: api/ACadSharp.Entities.ProxyGraphics.ProxyPopClip.html#ACadSharp_Entities_ProxyGraphics_ProxyPopClip_GraphicsType
@@ -21120,6 +21325,19 @@ references:
   commentId: T:ACadSharp.Entities.ProxyGraphics.ProxyPopModelTransform
   fullName: ACadSharp.Entities.ProxyGraphics.ProxyPopModelTransform
   nameWithType: ProxyPopModelTransform
+- uid: ACadSharp.Entities.ProxyGraphics.ProxyPopModelTransform.Clone
+  name: Clone()
+  href: api/ACadSharp.Entities.ProxyGraphics.ProxyPopModelTransform.html#ACadSharp_Entities_ProxyGraphics_ProxyPopModelTransform_Clone
+  commentId: M:ACadSharp.Entities.ProxyGraphics.ProxyPopModelTransform.Clone
+  fullName: ACadSharp.Entities.ProxyGraphics.ProxyPopModelTransform.Clone()
+  nameWithType: ProxyPopModelTransform.Clone()
+- uid: ACadSharp.Entities.ProxyGraphics.ProxyPopModelTransform.Clone*
+  name: Clone
+  href: api/ACadSharp.Entities.ProxyGraphics.ProxyPopModelTransform.html#ACadSharp_Entities_ProxyGraphics_ProxyPopModelTransform_Clone_
+  commentId: Overload:ACadSharp.Entities.ProxyGraphics.ProxyPopModelTransform.Clone
+  isSpec: "True"
+  fullName: ACadSharp.Entities.ProxyGraphics.ProxyPopModelTransform.Clone
+  nameWithType: ProxyPopModelTransform.Clone
 - uid: ACadSharp.Entities.ProxyGraphics.ProxyPopModelTransform.GraphicsType
   name: GraphicsType
   href: api/ACadSharp.Entities.ProxyGraphics.ProxyPopModelTransform.html#ACadSharp_Entities_ProxyGraphics_ProxyPopModelTransform_GraphicsType
@@ -21204,6 +21422,19 @@ references:
   isSpec: "True"
   fullName: ACadSharp.Entities.ProxyGraphics.ProxyPushClip.ClipBoundaryTransformMatrix
   nameWithType: ProxyPushClip.ClipBoundaryTransformMatrix
+- uid: ACadSharp.Entities.ProxyGraphics.ProxyPushClip.Clone
+  name: Clone()
+  href: api/ACadSharp.Entities.ProxyGraphics.ProxyPushClip.html#ACadSharp_Entities_ProxyGraphics_ProxyPushClip_Clone
+  commentId: M:ACadSharp.Entities.ProxyGraphics.ProxyPushClip.Clone
+  fullName: ACadSharp.Entities.ProxyGraphics.ProxyPushClip.Clone()
+  nameWithType: ProxyPushClip.Clone()
+- uid: ACadSharp.Entities.ProxyGraphics.ProxyPushClip.Clone*
+  name: Clone
+  href: api/ACadSharp.Entities.ProxyGraphics.ProxyPushClip.html#ACadSharp_Entities_ProxyGraphics_ProxyPushClip_Clone_
+  commentId: Overload:ACadSharp.Entities.ProxyGraphics.ProxyPushClip.Clone
+  isSpec: "True"
+  fullName: ACadSharp.Entities.ProxyGraphics.ProxyPushClip.Clone
+  nameWithType: ProxyPushClip.Clone
 - uid: ACadSharp.Entities.ProxyGraphics.ProxyPushClip.DrawBoundary
   name: DrawBoundary
   href: api/ACadSharp.Entities.ProxyGraphics.ProxyPushClip.html#ACadSharp_Entities_ProxyGraphics_ProxyPushClip_DrawBoundary
@@ -21301,6 +21532,19 @@ references:
   commentId: T:ACadSharp.Entities.ProxyGraphics.ProxyPushModelTransform
   fullName: ACadSharp.Entities.ProxyGraphics.ProxyPushModelTransform
   nameWithType: ProxyPushModelTransform
+- uid: ACadSharp.Entities.ProxyGraphics.ProxyPushModelTransform.Clone
+  name: Clone()
+  href: api/ACadSharp.Entities.ProxyGraphics.ProxyPushModelTransform.html#ACadSharp_Entities_ProxyGraphics_ProxyPushModelTransform_Clone
+  commentId: M:ACadSharp.Entities.ProxyGraphics.ProxyPushModelTransform.Clone
+  fullName: ACadSharp.Entities.ProxyGraphics.ProxyPushModelTransform.Clone()
+  nameWithType: ProxyPushModelTransform.Clone()
+- uid: ACadSharp.Entities.ProxyGraphics.ProxyPushModelTransform.Clone*
+  name: Clone
+  href: api/ACadSharp.Entities.ProxyGraphics.ProxyPushModelTransform.html#ACadSharp_Entities_ProxyGraphics_ProxyPushModelTransform_Clone_
+  commentId: Overload:ACadSharp.Entities.ProxyGraphics.ProxyPushModelTransform.Clone
+  isSpec: "True"
+  fullName: ACadSharp.Entities.ProxyGraphics.ProxyPushModelTransform.Clone
+  nameWithType: ProxyPushModelTransform.Clone
 - uid: ACadSharp.Entities.ProxyGraphics.ProxyPushModelTransform.GraphicsType
   name: GraphicsType
   href: api/ACadSharp.Entities.ProxyGraphics.ProxyPushModelTransform.html#ACadSharp_Entities_ProxyGraphics_ProxyPushModelTransform_GraphicsType
@@ -21333,6 +21577,19 @@ references:
   commentId: T:ACadSharp.Entities.ProxyGraphics.ProxyPushModelTransform2
   fullName: ACadSharp.Entities.ProxyGraphics.ProxyPushModelTransform2
   nameWithType: ProxyPushModelTransform2
+- uid: ACadSharp.Entities.ProxyGraphics.ProxyPushModelTransform2.Clone
+  name: Clone()
+  href: api/ACadSharp.Entities.ProxyGraphics.ProxyPushModelTransform2.html#ACadSharp_Entities_ProxyGraphics_ProxyPushModelTransform2_Clone
+  commentId: M:ACadSharp.Entities.ProxyGraphics.ProxyPushModelTransform2.Clone
+  fullName: ACadSharp.Entities.ProxyGraphics.ProxyPushModelTransform2.Clone()
+  nameWithType: ProxyPushModelTransform2.Clone()
+- uid: ACadSharp.Entities.ProxyGraphics.ProxyPushModelTransform2.Clone*
+  name: Clone
+  href: api/ACadSharp.Entities.ProxyGraphics.ProxyPushModelTransform2.html#ACadSharp_Entities_ProxyGraphics_ProxyPushModelTransform2_Clone_
+  commentId: Overload:ACadSharp.Entities.ProxyGraphics.ProxyPushModelTransform2.Clone
+  isSpec: "True"
+  fullName: ACadSharp.Entities.ProxyGraphics.ProxyPushModelTransform2.Clone
+  nameWithType: ProxyPushModelTransform2.Clone
 - uid: ACadSharp.Entities.ProxyGraphics.ProxyPushModelTransform2.GraphicsType
   name: GraphicsType
   href: api/ACadSharp.Entities.ProxyGraphics.ProxyPushModelTransform2.html#ACadSharp_Entities_ProxyGraphics_ProxyPushModelTransform2_GraphicsType
@@ -21365,6 +21622,19 @@ references:
   commentId: T:ACadSharp.Entities.ProxyGraphics.ProxyRay
   fullName: ACadSharp.Entities.ProxyGraphics.ProxyRay
   nameWithType: ProxyRay
+- uid: ACadSharp.Entities.ProxyGraphics.ProxyRay.Clone
+  name: Clone()
+  href: api/ACadSharp.Entities.ProxyGraphics.ProxyRay.html#ACadSharp_Entities_ProxyGraphics_ProxyRay_Clone
+  commentId: M:ACadSharp.Entities.ProxyGraphics.ProxyRay.Clone
+  fullName: ACadSharp.Entities.ProxyGraphics.ProxyRay.Clone()
+  nameWithType: ProxyRay.Clone()
+- uid: ACadSharp.Entities.ProxyGraphics.ProxyRay.Clone*
+  name: Clone
+  href: api/ACadSharp.Entities.ProxyGraphics.ProxyRay.html#ACadSharp_Entities_ProxyGraphics_ProxyRay_Clone_
+  commentId: Overload:ACadSharp.Entities.ProxyGraphics.ProxyRay.Clone
+  isSpec: "True"
+  fullName: ACadSharp.Entities.ProxyGraphics.ProxyRay.Clone
+  nameWithType: ProxyRay.Clone
 - uid: ACadSharp.Entities.ProxyGraphics.ProxyRay.ConstructionLinePoint
   name: ConstructionLinePoint
   href: api/ACadSharp.Entities.ProxyGraphics.ProxyRay.html#ACadSharp_Entities_ProxyGraphics_ProxyRay_ConstructionLinePoint
@@ -21410,6 +21680,19 @@ references:
   commentId: T:ACadSharp.Entities.ProxyGraphics.ProxyShell
   fullName: ACadSharp.Entities.ProxyGraphics.ProxyShell
   nameWithType: ProxyShell
+- uid: ACadSharp.Entities.ProxyGraphics.ProxyShell.Clone
+  name: Clone()
+  href: api/ACadSharp.Entities.ProxyGraphics.ProxyShell.html#ACadSharp_Entities_ProxyGraphics_ProxyShell_Clone
+  commentId: M:ACadSharp.Entities.ProxyGraphics.ProxyShell.Clone
+  fullName: ACadSharp.Entities.ProxyGraphics.ProxyShell.Clone()
+  nameWithType: ProxyShell.Clone()
+- uid: ACadSharp.Entities.ProxyGraphics.ProxyShell.Clone*
+  name: Clone
+  href: api/ACadSharp.Entities.ProxyGraphics.ProxyShell.html#ACadSharp_Entities_ProxyGraphics_ProxyShell_Clone_
+  commentId: Overload:ACadSharp.Entities.ProxyGraphics.ProxyShell.Clone
+  isSpec: "True"
+  fullName: ACadSharp.Entities.ProxyGraphics.ProxyShell.Clone
+  nameWithType: ProxyShell.Clone
 - uid: ACadSharp.Entities.ProxyGraphics.ProxyShell.Faces
   name: Faces
   href: api/ACadSharp.Entities.ProxyGraphics.ProxyShell.html#ACadSharp_Entities_ProxyGraphics_ProxyShell_Faces
@@ -21455,6 +21738,19 @@ references:
   isSpec: "True"
   fullName: ACadSharp.Entities.ProxyGraphics.ProxySubEntityMapper.AutoTransform
   nameWithType: ProxySubEntityMapper.AutoTransform
+- uid: ACadSharp.Entities.ProxyGraphics.ProxySubEntityMapper.Clone
+  name: Clone()
+  href: api/ACadSharp.Entities.ProxyGraphics.ProxySubEntityMapper.html#ACadSharp_Entities_ProxyGraphics_ProxySubEntityMapper_Clone
+  commentId: M:ACadSharp.Entities.ProxyGraphics.ProxySubEntityMapper.Clone
+  fullName: ACadSharp.Entities.ProxyGraphics.ProxySubEntityMapper.Clone()
+  nameWithType: ProxySubEntityMapper.Clone()
+- uid: ACadSharp.Entities.ProxyGraphics.ProxySubEntityMapper.Clone*
+  name: Clone
+  href: api/ACadSharp.Entities.ProxyGraphics.ProxySubEntityMapper.html#ACadSharp_Entities_ProxyGraphics_ProxySubEntityMapper_Clone_
+  commentId: Overload:ACadSharp.Entities.ProxyGraphics.ProxySubEntityMapper.Clone
+  isSpec: "True"
+  fullName: ACadSharp.Entities.ProxyGraphics.ProxySubEntityMapper.Clone
+  nameWithType: ProxySubEntityMapper.Clone
 - uid: ACadSharp.Entities.ProxyGraphics.ProxySubEntityMapper.DummyValue1
   name: DummyValue1
   href: api/ACadSharp.Entities.ProxyGraphics.ProxySubEntityMapper.html#ACadSharp_Entities_ProxyGraphics_ProxySubEntityMapper_DummyValue1
@@ -21552,6 +21848,19 @@ references:
   commentId: T:ACadSharp.Entities.ProxyGraphics.ProxySubEntityMaterial
   fullName: ACadSharp.Entities.ProxyGraphics.ProxySubEntityMaterial
   nameWithType: ProxySubEntityMaterial
+- uid: ACadSharp.Entities.ProxyGraphics.ProxySubEntityMaterial.Clone
+  name: Clone()
+  href: api/ACadSharp.Entities.ProxyGraphics.ProxySubEntityMaterial.html#ACadSharp_Entities_ProxyGraphics_ProxySubEntityMaterial_Clone
+  commentId: M:ACadSharp.Entities.ProxyGraphics.ProxySubEntityMaterial.Clone
+  fullName: ACadSharp.Entities.ProxyGraphics.ProxySubEntityMaterial.Clone()
+  nameWithType: ProxySubEntityMaterial.Clone()
+- uid: ACadSharp.Entities.ProxyGraphics.ProxySubEntityMaterial.Clone*
+  name: Clone
+  href: api/ACadSharp.Entities.ProxyGraphics.ProxySubEntityMaterial.html#ACadSharp_Entities_ProxyGraphics_ProxySubEntityMaterial_Clone_
+  commentId: Overload:ACadSharp.Entities.ProxyGraphics.ProxySubEntityMaterial.Clone
+  isSpec: "True"
+  fullName: ACadSharp.Entities.ProxyGraphics.ProxySubEntityMaterial.Clone
+  nameWithType: ProxySubEntityMaterial.Clone
 - uid: ACadSharp.Entities.ProxyGraphics.ProxySubEntityMaterial.GraphicsType
   name: GraphicsType
   href: api/ACadSharp.Entities.ProxyGraphics.ProxySubEntityMaterial.html#ACadSharp_Entities_ProxyGraphics_ProxySubEntityMaterial_GraphicsType
@@ -21584,6 +21893,19 @@ references:
   commentId: T:ACadSharp.Entities.ProxyGraphics.ProxySubentColor
   fullName: ACadSharp.Entities.ProxyGraphics.ProxySubentColor
   nameWithType: ProxySubentColor
+- uid: ACadSharp.Entities.ProxyGraphics.ProxySubentColor.Clone
+  name: Clone()
+  href: api/ACadSharp.Entities.ProxyGraphics.ProxySubentColor.html#ACadSharp_Entities_ProxyGraphics_ProxySubentColor_Clone
+  commentId: M:ACadSharp.Entities.ProxyGraphics.ProxySubentColor.Clone
+  fullName: ACadSharp.Entities.ProxyGraphics.ProxySubentColor.Clone()
+  nameWithType: ProxySubentColor.Clone()
+- uid: ACadSharp.Entities.ProxyGraphics.ProxySubentColor.Clone*
+  name: Clone
+  href: api/ACadSharp.Entities.ProxyGraphics.ProxySubentColor.html#ACadSharp_Entities_ProxyGraphics_ProxySubentColor_Clone_
+  commentId: Overload:ACadSharp.Entities.ProxyGraphics.ProxySubentColor.Clone
+  isSpec: "True"
+  fullName: ACadSharp.Entities.ProxyGraphics.ProxySubentColor.Clone
+  nameWithType: ProxySubentColor.Clone
 - uid: ACadSharp.Entities.ProxyGraphics.ProxySubentColor.ColorIndex
   name: ColorIndex
   href: api/ACadSharp.Entities.ProxyGraphics.ProxySubentColor.html#ACadSharp_Entities_ProxyGraphics_ProxySubentColor_ColorIndex
@@ -21616,6 +21938,19 @@ references:
   commentId: T:ACadSharp.Entities.ProxyGraphics.ProxySubentFillon
   fullName: ACadSharp.Entities.ProxyGraphics.ProxySubentFillon
   nameWithType: ProxySubentFillon
+- uid: ACadSharp.Entities.ProxyGraphics.ProxySubentFillon.Clone
+  name: Clone()
+  href: api/ACadSharp.Entities.ProxyGraphics.ProxySubentFillon.html#ACadSharp_Entities_ProxyGraphics_ProxySubentFillon_Clone
+  commentId: M:ACadSharp.Entities.ProxyGraphics.ProxySubentFillon.Clone
+  fullName: ACadSharp.Entities.ProxyGraphics.ProxySubentFillon.Clone()
+  nameWithType: ProxySubentFillon.Clone()
+- uid: ACadSharp.Entities.ProxyGraphics.ProxySubentFillon.Clone*
+  name: Clone
+  href: api/ACadSharp.Entities.ProxyGraphics.ProxySubentFillon.html#ACadSharp_Entities_ProxyGraphics_ProxySubentFillon_Clone_
+  commentId: Overload:ACadSharp.Entities.ProxyGraphics.ProxySubentFillon.Clone
+  isSpec: "True"
+  fullName: ACadSharp.Entities.ProxyGraphics.ProxySubentFillon.Clone
+  nameWithType: ProxySubentFillon.Clone
 - uid: ACadSharp.Entities.ProxyGraphics.ProxySubentFillon.GraphicsType
   name: GraphicsType
   href: api/ACadSharp.Entities.ProxyGraphics.ProxySubentFillon.html#ACadSharp_Entities_ProxyGraphics_ProxySubentFillon_GraphicsType
@@ -21648,6 +21983,19 @@ references:
   commentId: T:ACadSharp.Entities.ProxyGraphics.ProxySubentLayer
   fullName: ACadSharp.Entities.ProxyGraphics.ProxySubentLayer
   nameWithType: ProxySubentLayer
+- uid: ACadSharp.Entities.ProxyGraphics.ProxySubentLayer.Clone
+  name: Clone()
+  href: api/ACadSharp.Entities.ProxyGraphics.ProxySubentLayer.html#ACadSharp_Entities_ProxyGraphics_ProxySubentLayer_Clone
+  commentId: M:ACadSharp.Entities.ProxyGraphics.ProxySubentLayer.Clone
+  fullName: ACadSharp.Entities.ProxyGraphics.ProxySubentLayer.Clone()
+  nameWithType: ProxySubentLayer.Clone()
+- uid: ACadSharp.Entities.ProxyGraphics.ProxySubentLayer.Clone*
+  name: Clone
+  href: api/ACadSharp.Entities.ProxyGraphics.ProxySubentLayer.html#ACadSharp_Entities_ProxyGraphics_ProxySubentLayer_Clone_
+  commentId: Overload:ACadSharp.Entities.ProxyGraphics.ProxySubentLayer.Clone
+  isSpec: "True"
+  fullName: ACadSharp.Entities.ProxyGraphics.ProxySubentLayer.Clone
+  nameWithType: ProxySubentLayer.Clone
 - uid: ACadSharp.Entities.ProxyGraphics.ProxySubentLayer.GraphicsType
   name: GraphicsType
   href: api/ACadSharp.Entities.ProxyGraphics.ProxySubentLayer.html#ACadSharp_Entities_ProxyGraphics_ProxySubentLayer_GraphicsType
@@ -21680,6 +22028,19 @@ references:
   commentId: T:ACadSharp.Entities.ProxyGraphics.ProxySubentLineType
   fullName: ACadSharp.Entities.ProxyGraphics.ProxySubentLineType
   nameWithType: ProxySubentLineType
+- uid: ACadSharp.Entities.ProxyGraphics.ProxySubentLineType.Clone
+  name: Clone()
+  href: api/ACadSharp.Entities.ProxyGraphics.ProxySubentLineType.html#ACadSharp_Entities_ProxyGraphics_ProxySubentLineType_Clone
+  commentId: M:ACadSharp.Entities.ProxyGraphics.ProxySubentLineType.Clone
+  fullName: ACadSharp.Entities.ProxyGraphics.ProxySubentLineType.Clone()
+  nameWithType: ProxySubentLineType.Clone()
+- uid: ACadSharp.Entities.ProxyGraphics.ProxySubentLineType.Clone*
+  name: Clone
+  href: api/ACadSharp.Entities.ProxyGraphics.ProxySubentLineType.html#ACadSharp_Entities_ProxyGraphics_ProxySubentLineType_Clone_
+  commentId: Overload:ACadSharp.Entities.ProxyGraphics.ProxySubentLineType.Clone
+  isSpec: "True"
+  fullName: ACadSharp.Entities.ProxyGraphics.ProxySubentLineType.Clone
+  nameWithType: ProxySubentLineType.Clone
 - uid: ACadSharp.Entities.ProxyGraphics.ProxySubentLineType.GraphicsType
   name: GraphicsType
   href: api/ACadSharp.Entities.ProxyGraphics.ProxySubentLineType.html#ACadSharp_Entities_ProxyGraphics_ProxySubentLineType_GraphicsType
@@ -21738,6 +22099,19 @@ references:
   commentId: T:ACadSharp.Entities.ProxyGraphics.ProxySubentLineTypeScale
   fullName: ACadSharp.Entities.ProxyGraphics.ProxySubentLineTypeScale
   nameWithType: ProxySubentLineTypeScale
+- uid: ACadSharp.Entities.ProxyGraphics.ProxySubentLineTypeScale.Clone
+  name: Clone()
+  href: api/ACadSharp.Entities.ProxyGraphics.ProxySubentLineTypeScale.html#ACadSharp_Entities_ProxyGraphics_ProxySubentLineTypeScale_Clone
+  commentId: M:ACadSharp.Entities.ProxyGraphics.ProxySubentLineTypeScale.Clone
+  fullName: ACadSharp.Entities.ProxyGraphics.ProxySubentLineTypeScale.Clone()
+  nameWithType: ProxySubentLineTypeScale.Clone()
+- uid: ACadSharp.Entities.ProxyGraphics.ProxySubentLineTypeScale.Clone*
+  name: Clone
+  href: api/ACadSharp.Entities.ProxyGraphics.ProxySubentLineTypeScale.html#ACadSharp_Entities_ProxyGraphics_ProxySubentLineTypeScale_Clone_
+  commentId: Overload:ACadSharp.Entities.ProxyGraphics.ProxySubentLineTypeScale.Clone
+  isSpec: "True"
+  fullName: ACadSharp.Entities.ProxyGraphics.ProxySubentLineTypeScale.Clone
+  nameWithType: ProxySubentLineTypeScale.Clone
 - uid: ACadSharp.Entities.ProxyGraphics.ProxySubentLineTypeScale.GraphicsType
   name: GraphicsType
   href: api/ACadSharp.Entities.ProxyGraphics.ProxySubentLineTypeScale.html#ACadSharp_Entities_ProxyGraphics_ProxySubentLineTypeScale_GraphicsType
@@ -21770,6 +22144,19 @@ references:
   commentId: T:ACadSharp.Entities.ProxyGraphics.ProxySubentLineWeight
   fullName: ACadSharp.Entities.ProxyGraphics.ProxySubentLineWeight
   nameWithType: ProxySubentLineWeight
+- uid: ACadSharp.Entities.ProxyGraphics.ProxySubentLineWeight.Clone
+  name: Clone()
+  href: api/ACadSharp.Entities.ProxyGraphics.ProxySubentLineWeight.html#ACadSharp_Entities_ProxyGraphics_ProxySubentLineWeight_Clone
+  commentId: M:ACadSharp.Entities.ProxyGraphics.ProxySubentLineWeight.Clone
+  fullName: ACadSharp.Entities.ProxyGraphics.ProxySubentLineWeight.Clone()
+  nameWithType: ProxySubentLineWeight.Clone()
+- uid: ACadSharp.Entities.ProxyGraphics.ProxySubentLineWeight.Clone*
+  name: Clone
+  href: api/ACadSharp.Entities.ProxyGraphics.ProxySubentLineWeight.html#ACadSharp_Entities_ProxyGraphics_ProxySubentLineWeight_Clone_
+  commentId: Overload:ACadSharp.Entities.ProxyGraphics.ProxySubentLineWeight.Clone
+  isSpec: "True"
+  fullName: ACadSharp.Entities.ProxyGraphics.ProxySubentLineWeight.Clone
+  nameWithType: ProxySubentLineWeight.Clone
 - uid: ACadSharp.Entities.ProxyGraphics.ProxySubentLineWeight.GraphicsType
   name: GraphicsType
   href: api/ACadSharp.Entities.ProxyGraphics.ProxySubentLineWeight.html#ACadSharp_Entities_ProxyGraphics_ProxySubentLineWeight_GraphicsType
@@ -21802,6 +22189,19 @@ references:
   commentId: T:ACadSharp.Entities.ProxyGraphics.ProxySubentMarker
   fullName: ACadSharp.Entities.ProxyGraphics.ProxySubentMarker
   nameWithType: ProxySubentMarker
+- uid: ACadSharp.Entities.ProxyGraphics.ProxySubentMarker.Clone
+  name: Clone()
+  href: api/ACadSharp.Entities.ProxyGraphics.ProxySubentMarker.html#ACadSharp_Entities_ProxyGraphics_ProxySubentMarker_Clone
+  commentId: M:ACadSharp.Entities.ProxyGraphics.ProxySubentMarker.Clone
+  fullName: ACadSharp.Entities.ProxyGraphics.ProxySubentMarker.Clone()
+  nameWithType: ProxySubentMarker.Clone()
+- uid: ACadSharp.Entities.ProxyGraphics.ProxySubentMarker.Clone*
+  name: Clone
+  href: api/ACadSharp.Entities.ProxyGraphics.ProxySubentMarker.html#ACadSharp_Entities_ProxyGraphics_ProxySubentMarker_Clone_
+  commentId: Overload:ACadSharp.Entities.ProxyGraphics.ProxySubentMarker.Clone
+  isSpec: "True"
+  fullName: ACadSharp.Entities.ProxyGraphics.ProxySubentMarker.Clone
+  nameWithType: ProxySubentMarker.Clone
 - uid: ACadSharp.Entities.ProxyGraphics.ProxySubentMarker.GraphicsType
   name: GraphicsType
   href: api/ACadSharp.Entities.ProxyGraphics.ProxySubentMarker.html#ACadSharp_Entities_ProxyGraphics_ProxySubentMarker_GraphicsType
@@ -21834,6 +22234,19 @@ references:
   commentId: T:ACadSharp.Entities.ProxyGraphics.ProxySubentPlotStyleName
   fullName: ACadSharp.Entities.ProxyGraphics.ProxySubentPlotStyleName
   nameWithType: ProxySubentPlotStyleName
+- uid: ACadSharp.Entities.ProxyGraphics.ProxySubentPlotStyleName.Clone
+  name: Clone()
+  href: api/ACadSharp.Entities.ProxyGraphics.ProxySubentPlotStyleName.html#ACadSharp_Entities_ProxyGraphics_ProxySubentPlotStyleName_Clone
+  commentId: M:ACadSharp.Entities.ProxyGraphics.ProxySubentPlotStyleName.Clone
+  fullName: ACadSharp.Entities.ProxyGraphics.ProxySubentPlotStyleName.Clone()
+  nameWithType: ProxySubentPlotStyleName.Clone()
+- uid: ACadSharp.Entities.ProxyGraphics.ProxySubentPlotStyleName.Clone*
+  name: Clone
+  href: api/ACadSharp.Entities.ProxyGraphics.ProxySubentPlotStyleName.html#ACadSharp_Entities_ProxyGraphics_ProxySubentPlotStyleName_Clone_
+  commentId: Overload:ACadSharp.Entities.ProxyGraphics.ProxySubentPlotStyleName.Clone
+  isSpec: "True"
+  fullName: ACadSharp.Entities.ProxyGraphics.ProxySubentPlotStyleName.Clone
+  nameWithType: ProxySubentPlotStyleName.Clone
 - uid: ACadSharp.Entities.ProxyGraphics.ProxySubentPlotStyleName.GraphicsType
   name: GraphicsType
   href: api/ACadSharp.Entities.ProxyGraphics.ProxySubentPlotStyleName.html#ACadSharp_Entities_ProxyGraphics_ProxySubentPlotStyleName_GraphicsType
@@ -21879,6 +22292,19 @@ references:
   commentId: T:ACadSharp.Entities.ProxyGraphics.ProxySubentThickness
   fullName: ACadSharp.Entities.ProxyGraphics.ProxySubentThickness
   nameWithType: ProxySubentThickness
+- uid: ACadSharp.Entities.ProxyGraphics.ProxySubentThickness.Clone
+  name: Clone()
+  href: api/ACadSharp.Entities.ProxyGraphics.ProxySubentThickness.html#ACadSharp_Entities_ProxyGraphics_ProxySubentThickness_Clone
+  commentId: M:ACadSharp.Entities.ProxyGraphics.ProxySubentThickness.Clone
+  fullName: ACadSharp.Entities.ProxyGraphics.ProxySubentThickness.Clone()
+  nameWithType: ProxySubentThickness.Clone()
+- uid: ACadSharp.Entities.ProxyGraphics.ProxySubentThickness.Clone*
+  name: Clone
+  href: api/ACadSharp.Entities.ProxyGraphics.ProxySubentThickness.html#ACadSharp_Entities_ProxyGraphics_ProxySubentThickness_Clone_
+  commentId: Overload:ACadSharp.Entities.ProxyGraphics.ProxySubentThickness.Clone
+  isSpec: "True"
+  fullName: ACadSharp.Entities.ProxyGraphics.ProxySubentThickness.Clone
+  nameWithType: ProxySubentThickness.Clone
 - uid: ACadSharp.Entities.ProxyGraphics.ProxySubentThickness.GraphicsType
   name: GraphicsType
   href: api/ACadSharp.Entities.ProxyGraphics.ProxySubentThickness.html#ACadSharp_Entities_ProxyGraphics_ProxySubentThickness_GraphicsType
@@ -21911,6 +22337,19 @@ references:
   commentId: T:ACadSharp.Entities.ProxyGraphics.ProxySubentTrueColor
   fullName: ACadSharp.Entities.ProxyGraphics.ProxySubentTrueColor
   nameWithType: ProxySubentTrueColor
+- uid: ACadSharp.Entities.ProxyGraphics.ProxySubentTrueColor.Clone
+  name: Clone()
+  href: api/ACadSharp.Entities.ProxyGraphics.ProxySubentTrueColor.html#ACadSharp_Entities_ProxyGraphics_ProxySubentTrueColor_Clone
+  commentId: M:ACadSharp.Entities.ProxyGraphics.ProxySubentTrueColor.Clone
+  fullName: ACadSharp.Entities.ProxyGraphics.ProxySubentTrueColor.Clone()
+  nameWithType: ProxySubentTrueColor.Clone()
+- uid: ACadSharp.Entities.ProxyGraphics.ProxySubentTrueColor.Clone*
+  name: Clone
+  href: api/ACadSharp.Entities.ProxyGraphics.ProxySubentTrueColor.html#ACadSharp_Entities_ProxyGraphics_ProxySubentTrueColor_Clone_
+  commentId: Overload:ACadSharp.Entities.ProxyGraphics.ProxySubentTrueColor.Clone
+  isSpec: "True"
+  fullName: ACadSharp.Entities.ProxyGraphics.ProxySubentTrueColor.Clone
+  nameWithType: ProxySubentTrueColor.Clone
 - uid: ACadSharp.Entities.ProxyGraphics.ProxySubentTrueColor.Color
   name: Color
   href: api/ACadSharp.Entities.ProxyGraphics.ProxySubentTrueColor.html#ACadSharp_Entities_ProxyGraphics_ProxySubentTrueColor_Color
@@ -21956,6 +22395,19 @@ references:
   commentId: T:ACadSharp.Entities.ProxyGraphics.ProxyText
   fullName: ACadSharp.Entities.ProxyGraphics.ProxyText
   nameWithType: ProxyText
+- uid: ACadSharp.Entities.ProxyGraphics.ProxyText.Clone
+  name: Clone()
+  href: api/ACadSharp.Entities.ProxyGraphics.ProxyText.html#ACadSharp_Entities_ProxyGraphics_ProxyText_Clone
+  commentId: M:ACadSharp.Entities.ProxyGraphics.ProxyText.Clone
+  fullName: ACadSharp.Entities.ProxyGraphics.ProxyText.Clone()
+  nameWithType: ProxyText.Clone()
+- uid: ACadSharp.Entities.ProxyGraphics.ProxyText.Clone*
+  name: Clone
+  href: api/ACadSharp.Entities.ProxyGraphics.ProxyText.html#ACadSharp_Entities_ProxyGraphics_ProxyText_Clone_
+  commentId: Overload:ACadSharp.Entities.ProxyGraphics.ProxyText.Clone
+  isSpec: "True"
+  fullName: ACadSharp.Entities.ProxyGraphics.ProxyText.Clone
+  nameWithType: ProxyText.Clone
 - uid: ACadSharp.Entities.ProxyGraphics.ProxyText.GraphicsType
   name: GraphicsType
   href: api/ACadSharp.Entities.ProxyGraphics.ProxyText.html#ACadSharp_Entities_ProxyGraphics_ProxyText_GraphicsType
@@ -22079,6 +22531,19 @@ references:
   isSpec: "True"
   fullName: ACadSharp.Entities.ProxyGraphics.ProxyText2.BigFontFilename
   nameWithType: ProxyText2.BigFontFilename
+- uid: ACadSharp.Entities.ProxyGraphics.ProxyText2.Clone
+  name: Clone()
+  href: api/ACadSharp.Entities.ProxyGraphics.ProxyText2.html#ACadSharp_Entities_ProxyGraphics_ProxyText2_Clone
+  commentId: M:ACadSharp.Entities.ProxyGraphics.ProxyText2.Clone
+  fullName: ACadSharp.Entities.ProxyGraphics.ProxyText2.Clone()
+  nameWithType: ProxyText2.Clone()
+- uid: ACadSharp.Entities.ProxyGraphics.ProxyText2.Clone*
+  name: Clone
+  href: api/ACadSharp.Entities.ProxyGraphics.ProxyText2.html#ACadSharp_Entities_ProxyGraphics_ProxyText2_Clone_
+  commentId: Overload:ACadSharp.Entities.ProxyGraphics.ProxyText2.Clone
+  isSpec: "True"
+  fullName: ACadSharp.Entities.ProxyGraphics.ProxyText2.Clone
+  nameWithType: ProxyText2.Clone
 - uid: ACadSharp.Entities.ProxyGraphics.ProxyText2.FontFilename
   name: FontFilename
   href: api/ACadSharp.Entities.ProxyGraphics.ProxyText2.html#ACadSharp_Entities_ProxyGraphics_ProxyText2_FontFilename
@@ -22306,6 +22771,19 @@ references:
   commentId: T:ACadSharp.Entities.ProxyGraphics.ProxyUnicodeText
   fullName: ACadSharp.Entities.ProxyGraphics.ProxyUnicodeText
   nameWithType: ProxyUnicodeText
+- uid: ACadSharp.Entities.ProxyGraphics.ProxyUnicodeText.Clone
+  name: Clone()
+  href: api/ACadSharp.Entities.ProxyGraphics.ProxyUnicodeText.html#ACadSharp_Entities_ProxyGraphics_ProxyUnicodeText_Clone
+  commentId: M:ACadSharp.Entities.ProxyGraphics.ProxyUnicodeText.Clone
+  fullName: ACadSharp.Entities.ProxyGraphics.ProxyUnicodeText.Clone()
+  nameWithType: ProxyUnicodeText.Clone()
+- uid: ACadSharp.Entities.ProxyGraphics.ProxyUnicodeText.Clone*
+  name: Clone
+  href: api/ACadSharp.Entities.ProxyGraphics.ProxyUnicodeText.html#ACadSharp_Entities_ProxyGraphics_ProxyUnicodeText_Clone_
+  commentId: Overload:ACadSharp.Entities.ProxyGraphics.ProxyUnicodeText.Clone
+  isSpec: "True"
+  fullName: ACadSharp.Entities.ProxyGraphics.ProxyUnicodeText.Clone
+  nameWithType: ProxyUnicodeText.Clone
 - uid: ACadSharp.Entities.ProxyGraphics.ProxyUnicodeText.GraphicsType
   name: GraphicsType
   href: api/ACadSharp.Entities.ProxyGraphics.ProxyUnicodeText.html#ACadSharp_Entities_ProxyGraphics_ProxyUnicodeText_GraphicsType
@@ -22429,6 +22907,19 @@ references:
   isSpec: "True"
   fullName: ACadSharp.Entities.ProxyGraphics.ProxyUnicodeText2.BigFontFilename
   nameWithType: ProxyUnicodeText2.BigFontFilename
+- uid: ACadSharp.Entities.ProxyGraphics.ProxyUnicodeText2.Clone
+  name: Clone()
+  href: api/ACadSharp.Entities.ProxyGraphics.ProxyUnicodeText2.html#ACadSharp_Entities_ProxyGraphics_ProxyUnicodeText2_Clone
+  commentId: M:ACadSharp.Entities.ProxyGraphics.ProxyUnicodeText2.Clone
+  fullName: ACadSharp.Entities.ProxyGraphics.ProxyUnicodeText2.Clone()
+  nameWithType: ProxyUnicodeText2.Clone()
+- uid: ACadSharp.Entities.ProxyGraphics.ProxyUnicodeText2.Clone*
+  name: Clone
+  href: api/ACadSharp.Entities.ProxyGraphics.ProxyUnicodeText2.html#ACadSharp_Entities_ProxyGraphics_ProxyUnicodeText2_Clone_
+  commentId: Overload:ACadSharp.Entities.ProxyGraphics.ProxyUnicodeText2.Clone
+  isSpec: "True"
+  fullName: ACadSharp.Entities.ProxyGraphics.ProxyUnicodeText2.Clone
+  nameWithType: ProxyUnicodeText2.Clone
 - uid: ACadSharp.Entities.ProxyGraphics.ProxyUnicodeText2.FontDescriptor
   name: FontDescriptor
   href: api/ACadSharp.Entities.ProxyGraphics.ProxyUnicodeText2.html#ACadSharp_Entities_ProxyGraphics_ProxyUnicodeText2_FontDescriptor
@@ -22656,6 +23147,19 @@ references:
   commentId: T:ACadSharp.Entities.ProxyGraphics.ProxyUnknown37
   fullName: ACadSharp.Entities.ProxyGraphics.ProxyUnknown37
   nameWithType: ProxyUnknown37
+- uid: ACadSharp.Entities.ProxyGraphics.ProxyUnknown37.Clone
+  name: Clone()
+  href: api/ACadSharp.Entities.ProxyGraphics.ProxyUnknown37.html#ACadSharp_Entities_ProxyGraphics_ProxyUnknown37_Clone
+  commentId: M:ACadSharp.Entities.ProxyGraphics.ProxyUnknown37.Clone
+  fullName: ACadSharp.Entities.ProxyGraphics.ProxyUnknown37.Clone()
+  nameWithType: ProxyUnknown37.Clone()
+- uid: ACadSharp.Entities.ProxyGraphics.ProxyUnknown37.Clone*
+  name: Clone
+  href: api/ACadSharp.Entities.ProxyGraphics.ProxyUnknown37.html#ACadSharp_Entities_ProxyGraphics_ProxyUnknown37_Clone_
+  commentId: Overload:ACadSharp.Entities.ProxyGraphics.ProxyUnknown37.Clone
+  isSpec: "True"
+  fullName: ACadSharp.Entities.ProxyGraphics.ProxyUnknown37.Clone
+  nameWithType: ProxyUnknown37.Clone
 - uid: ACadSharp.Entities.ProxyGraphics.ProxyUnknown37.GraphicsType
   name: GraphicsType
   href: api/ACadSharp.Entities.ProxyGraphics.ProxyUnknown37.html#ACadSharp_Entities_ProxyGraphics_ProxyUnknown37_GraphicsType
@@ -22675,6 +23179,19 @@ references:
   commentId: T:ACadSharp.Entities.ProxyGraphics.ProxyXLine
   fullName: ACadSharp.Entities.ProxyGraphics.ProxyXLine
   nameWithType: ProxyXLine
+- uid: ACadSharp.Entities.ProxyGraphics.ProxyXLine.Clone
+  name: Clone()
+  href: api/ACadSharp.Entities.ProxyGraphics.ProxyXLine.html#ACadSharp_Entities_ProxyGraphics_ProxyXLine_Clone
+  commentId: M:ACadSharp.Entities.ProxyGraphics.ProxyXLine.Clone
+  fullName: ACadSharp.Entities.ProxyGraphics.ProxyXLine.Clone()
+  nameWithType: ProxyXLine.Clone()
+- uid: ACadSharp.Entities.ProxyGraphics.ProxyXLine.Clone*
+  name: Clone
+  href: api/ACadSharp.Entities.ProxyGraphics.ProxyXLine.html#ACadSharp_Entities_ProxyGraphics_ProxyXLine_Clone_
+  commentId: Overload:ACadSharp.Entities.ProxyGraphics.ProxyXLine.Clone
+  isSpec: "True"
+  fullName: ACadSharp.Entities.ProxyGraphics.ProxyXLine.Clone
+  nameWithType: ProxyXLine.Clone
 - uid: ACadSharp.Entities.ProxyGraphics.ProxyXLine.GraphicsType
   name: GraphicsType
   href: api/ACadSharp.Entities.ProxyGraphics.ProxyXLine.html#ACadSharp_Entities_ProxyGraphics_ProxyXLine_GraphicsType
@@ -33168,6 +33685,19 @@ references:
   isSpec: "True"
   fullName: ACadSharp.IO.CadReaderConfiguration.Failsafe
   nameWithType: CadReaderConfiguration.Failsafe
+- uid: ACadSharp.IO.CadReaderConfiguration.IgnoreProxyGraphics
+  name: IgnoreProxyGraphics
+  href: api/ACadSharp.IO.CadReaderConfiguration.html#ACadSharp_IO_CadReaderConfiguration_IgnoreProxyGraphics
+  commentId: P:ACadSharp.IO.CadReaderConfiguration.IgnoreProxyGraphics
+  fullName: ACadSharp.IO.CadReaderConfiguration.IgnoreProxyGraphics
+  nameWithType: CadReaderConfiguration.IgnoreProxyGraphics
+- uid: ACadSharp.IO.CadReaderConfiguration.IgnoreProxyGraphics*
+  name: IgnoreProxyGraphics
+  href: api/ACadSharp.IO.CadReaderConfiguration.html#ACadSharp_IO_CadReaderConfiguration_IgnoreProxyGraphics_
+  commentId: Overload:ACadSharp.IO.CadReaderConfiguration.IgnoreProxyGraphics
+  isSpec: "True"
+  fullName: ACadSharp.IO.CadReaderConfiguration.IgnoreProxyGraphics
+  nameWithType: CadReaderConfiguration.IgnoreProxyGraphics
 - uid: ACadSharp.IO.CadReaderConfiguration.KeepUnknownEntities
   name: KeepUnknownEntities
   href: api/ACadSharp.IO.CadReaderConfiguration.html#ACadSharp_IO_CadReaderConfiguration_KeepUnknownEntities
@@ -33633,19 +34163,6 @@ references:
   isSpec: "True"
   fullName: ACadSharp.IO.DwgReaderConfiguration.CrcCheck
   nameWithType: DwgReaderConfiguration.CrcCheck
-- uid: ACadSharp.IO.DwgReaderConfiguration.IgnoreProxyGraphics
-  name: IgnoreProxyGraphics
-  href: api/ACadSharp.IO.DwgReaderConfiguration.html#ACadSharp_IO_DwgReaderConfiguration_IgnoreProxyGraphics
-  commentId: P:ACadSharp.IO.DwgReaderConfiguration.IgnoreProxyGraphics
-  fullName: ACadSharp.IO.DwgReaderConfiguration.IgnoreProxyGraphics
-  nameWithType: DwgReaderConfiguration.IgnoreProxyGraphics
-- uid: ACadSharp.IO.DwgReaderConfiguration.IgnoreProxyGraphics*
-  name: IgnoreProxyGraphics
-  href: api/ACadSharp.IO.DwgReaderConfiguration.html#ACadSharp_IO_DwgReaderConfiguration_IgnoreProxyGraphics_
-  commentId: Overload:ACadSharp.IO.DwgReaderConfiguration.IgnoreProxyGraphics
-  isSpec: "True"
-  fullName: ACadSharp.IO.DwgReaderConfiguration.IgnoreProxyGraphics
-  nameWithType: DwgReaderConfiguration.IgnoreProxyGraphics
 - uid: ACadSharp.IO.DwgReaderConfiguration.ReadSummaryInfo
   name: ReadSummaryInfo
   href: api/ACadSharp.IO.DwgReaderConfiguration.html#ACadSharp_IO_DwgReaderConfiguration_ReadSummaryInfo
@@ -33837,6 +34354,12 @@ references:
   commentId: M:ACadSharp.IO.DxfReader.Read
   fullName: ACadSharp.IO.DxfReader.Read()
   nameWithType: DxfReader.Read()
+- uid: ACadSharp.IO.DxfReader.Read(System.IO.Stream,ACadSharp.IO.DxfReaderConfiguration,ACadSharp.IO.NotificationEventHandler)
+  name: Read(Stream, DxfReaderConfiguration, NotificationEventHandler)
+  href: api/ACadSharp.IO.DxfReader.html#ACadSharp_IO_DxfReader_Read_System_IO_Stream_ACadSharp_IO_DxfReaderConfiguration_ACadSharp_IO_NotificationEventHandler_
+  commentId: M:ACadSharp.IO.DxfReader.Read(System.IO.Stream,ACadSharp.IO.DxfReaderConfiguration,ACadSharp.IO.NotificationEventHandler)
+  fullName: ACadSharp.IO.DxfReader.Read(System.IO.Stream, ACadSharp.IO.DxfReaderConfiguration, ACadSharp.IO.NotificationEventHandler)
+  nameWithType: DxfReader.Read(Stream, DxfReaderConfiguration, NotificationEventHandler)
 - uid: ACadSharp.IO.DxfReader.Read(System.IO.Stream,ACadSharp.IO.NotificationEventHandler)
   name: Read(Stream, NotificationEventHandler)
   href: api/ACadSharp.IO.DxfReader.html#ACadSharp_IO_DxfReader_Read_System_IO_Stream_ACadSharp_IO_NotificationEventHandler_
@@ -34773,19 +35296,19 @@ references:
   commentId: T:ACadSharp.IProxy
   fullName: ACadSharp.IProxy
   nameWithType: IProxy
-- uid: ACadSharp.IProxy.ClassId
-  name: ClassId
-  href: api/ACadSharp.IProxy.html#ACadSharp_IProxy_ClassId
-  commentId: P:ACadSharp.IProxy.ClassId
-  fullName: ACadSharp.IProxy.ClassId
-  nameWithType: IProxy.ClassId
-- uid: ACadSharp.IProxy.ClassId*
-  name: ClassId
-  href: api/ACadSharp.IProxy.html#ACadSharp_IProxy_ClassId_
-  commentId: Overload:ACadSharp.IProxy.ClassId
+- uid: ACadSharp.IProxy.ClassNumber
+  name: ClassNumber
+  href: api/ACadSharp.IProxy.html#ACadSharp_IProxy_ClassNumber
+  commentId: P:ACadSharp.IProxy.ClassNumber
+  fullName: ACadSharp.IProxy.ClassNumber
+  nameWithType: IProxy.ClassNumber
+- uid: ACadSharp.IProxy.ClassNumber*
+  name: ClassNumber
+  href: api/ACadSharp.IProxy.html#ACadSharp_IProxy_ClassNumber_
+  commentId: Overload:ACadSharp.IProxy.ClassNumber
   isSpec: "True"
-  fullName: ACadSharp.IProxy.ClassId
-  nameWithType: IProxy.ClassId
+  fullName: ACadSharp.IProxy.ClassNumber
+  nameWithType: IProxy.ClassNumber
 - uid: ACadSharp.IProxy.Data
   name: Data
   href: api/ACadSharp.IProxy.html#ACadSharp_IProxy_Data
@@ -49355,19 +49878,19 @@ references:
   isSpec: "True"
   fullName: ACadSharp.Objects.ProxyObject.BinaryData
   nameWithType: ProxyObject.BinaryData
-- uid: ACadSharp.Objects.ProxyObject.ClassId
-  name: ClassId
-  href: api/ACadSharp.Objects.ProxyObject.html#ACadSharp_Objects_ProxyObject_ClassId
-  commentId: P:ACadSharp.Objects.ProxyObject.ClassId
-  fullName: ACadSharp.Objects.ProxyObject.ClassId
-  nameWithType: ProxyObject.ClassId
-- uid: ACadSharp.Objects.ProxyObject.ClassId*
-  name: ClassId
-  href: api/ACadSharp.Objects.ProxyObject.html#ACadSharp_Objects_ProxyObject_ClassId_
-  commentId: Overload:ACadSharp.Objects.ProxyObject.ClassId
+- uid: ACadSharp.Objects.ProxyObject.ClassNumber
+  name: ClassNumber
+  href: api/ACadSharp.Objects.ProxyObject.html#ACadSharp_Objects_ProxyObject_ClassNumber
+  commentId: P:ACadSharp.Objects.ProxyObject.ClassNumber
+  fullName: ACadSharp.Objects.ProxyObject.ClassNumber
+  nameWithType: ProxyObject.ClassNumber
+- uid: ACadSharp.Objects.ProxyObject.ClassNumber*
+  name: ClassNumber
+  href: api/ACadSharp.Objects.ProxyObject.html#ACadSharp_Objects_ProxyObject_ClassNumber_
+  commentId: Overload:ACadSharp.Objects.ProxyObject.ClassNumber
   isSpec: "True"
-  fullName: ACadSharp.Objects.ProxyObject.ClassId
-  nameWithType: ProxyObject.ClassId
+  fullName: ACadSharp.Objects.ProxyObject.ClassNumber
+  nameWithType: ProxyObject.ClassNumber
 - uid: ACadSharp.Objects.ProxyObject.Data
   name: Data
   href: api/ACadSharp.Objects.ProxyObject.html#ACadSharp_Objects_ProxyObject_Data
