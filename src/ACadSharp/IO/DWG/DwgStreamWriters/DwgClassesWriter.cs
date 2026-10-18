@@ -1,4 +1,4 @@
-﻿using CSUtilities.IO;
+using CSUtilities.IO;
 using System.IO;
 using System.Linq;
 using System.Text;
@@ -43,7 +43,7 @@ namespace ACadSharp.IO.DWG
 				this._writer.SavePositonForSize();
 			}
 
-			short maxClassNumber = 0;
+			short maxClassNumber = 499;
 			if (this._document.Classes.Any())
 			{
 				maxClassNumber = this._document.Classes.Max(c => c.ClassNumber);

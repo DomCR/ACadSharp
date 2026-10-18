@@ -1,4 +1,4 @@
-﻿using ACadSharp.Entities;
+using ACadSharp.Entities;
 using ACadSharp.Objects;
 using CSMath;
 using System;
@@ -627,6 +627,12 @@ internal partial class DwgObjectWriter : DwgSectionIO
 				break;
 			case Solid3D solid3d:
 				this.writeSolid3D(solid3d);
+				break;
+			case Region region:
+				this.writeModelerGeometry(region);
+				break;
+			case CadBody body:
+				this.writeModelerGeometry(body);
 				break;
 			case Spline spline:
 				this.writeSpline(spline);
@@ -2273,6 +2279,8 @@ internal partial class DwgObjectWriter : DwgSectionIO
 
 	private void writeSolid3D(Solid3D solid)
 	{
+		this.writeModelerGeometry(solid);
+		if (this.R2007Plus) this._writer.HandleReference(DwgReferenceType.SoftPointer, null);
 	}
 
 	private void writeSpline(Spline spline)

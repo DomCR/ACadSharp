@@ -1,4 +1,4 @@
-﻿using ACadSharp.Attributes;
+using ACadSharp.Attributes;
 using CSMath;
 using System;
 using System.Collections.Generic;
@@ -55,20 +55,13 @@ namespace ACadSharp.Entities
 		{
 			get
 			{
-				if (this.AcisData == null || this.AcisData.Length < _acisBinarySignature.Length)
+				if (this.AcisData == null || this.AcisData.Length < _asmBinarySignature.Length)
 				{
 					return false;
 				}
 
-				for (int i = 0; i < _acisBinarySignature.Length; i++)
-				{
-					if (this.AcisData[i] != _acisBinarySignature[i])
-					{
-						return false;
-					}
-				}
-
-				return true;
+				return startsWith(this.AcisData, _acisBinarySignature)
+					|| startsWith(this.AcisData, _asmBinarySignature);
 			}
 		}
 
@@ -88,6 +81,25 @@ namespace ACadSharp.Entities
 
 		//Signature that marks the start of a binary SAB payload
 		private static readonly byte[] _acisBinarySignature = Encoding.ASCII.GetBytes("ACIS BinaryFile");
+
+		private static readonly byte[] _asmBinarySignature = Encoding.ASCII.GetBytes("ASM BinaryFile");
+
+		private static bool startsWith(byte[] data, byte[] signature)
+		{
+			if (data.Length < signature.Length) return false;
+			for (int i = 0; i < signature.Length; i++)
+				if (data[i] != signature[i]) return false;
+			return true;
+		}
+
+		internal bool? ModelerDataFlag { get; set; }
+		internal List<(int ArrayIndex, int AbsoluteReference, ulong MaterialHandle)> MaterialMappings { get; } = new();
+		internal bool RevisionGuidPresent { get; set; }
+		internal int RevisionMajor { get; set; }
+		internal short RevisionMinor1 { get; set; }
+		internal short RevisionMinor2 { get; set; }
+		internal byte[] RevisionBytes { get; set; } = new byte[8];
+		internal int RevisionEndMarker { get; set; }
 
 		/// <inheritdoc/>
 		public override void ApplyTransform(Transform transform)

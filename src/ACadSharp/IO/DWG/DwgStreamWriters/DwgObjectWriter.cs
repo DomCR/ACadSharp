@@ -1,4 +1,4 @@
-﻿using ACadSharp.Blocks;
+using ACadSharp.Blocks;
 using ACadSharp.Classes;
 using ACadSharp.Entities;
 using ACadSharp.Entities.AecEntities;
@@ -151,9 +151,6 @@ internal partial class DwgObjectWriter : DwgSectionIO
 			case TableEntity when !this.R2010Plus:
 			case Wall:
 			case MechanicalEntity:
-			case Solid3D:
-			case CadBody:
-			case Region:
 			case Surface:
 				this.notify($"Entity type not implemented {entity.GetType().FullName}", NotificationType.NotImplemented);
 				return false;
@@ -529,7 +526,7 @@ internal partial class DwgObjectWriter : DwgSectionIO
 			this._writer.SavePositonForSize();
 
 		//[Owner ref handle (soft pointer)]
-		this._writer.HandleReference(DwgReferenceType.SoftPointer, cadObject.Owner.Handle);
+		this._writer.HandleReference(DwgReferenceType.SoftPointer, cadObject.Owner);
 
 		//write the cad object reactors
 		this.writeReactorsAndDictionaryHandle(cadObject);
@@ -914,7 +911,7 @@ internal partial class DwgObjectWriter : DwgSectionIO
 			//Isbylayerlt B 1 if bylayer linetype, else 0
 			bool isbylayerlt = entity.LineType.Name == LineType.ByLayerName;
 			this._writer.WriteBit(isbylayerlt);
-			if (isbylayerlt)
+			if (!isbylayerlt)
 				//6 [LTYPE (hard pointer)] (present if Isbylayerlt is 0)
 				this._writer.HandleReference(DwgReferenceType.HardPointer, entity.LineType);
 		}
@@ -1473,7 +1470,7 @@ internal partial class DwgObjectWriter : DwgSectionIO
 		if (this.R2013Plus)
 		{
 			//Has DS binary data B If 1 then this object has associated binary data stored in the data store
-			this._writer.WriteBit(false);
+			this._writer.WriteBit(cadObject is ModelerGeometry geometry && geometry.AcisData?.Length > 0);
 		}
 
 		if (!noDictionary)
