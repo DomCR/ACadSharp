@@ -1,4 +1,4 @@
-﻿using ACadSharp.Blocks;
+using ACadSharp.Blocks;
 using ACadSharp.Entities;
 using ACadSharp.Entities.ProxyGraphics;
 using ACadSharp.Extensions;
@@ -2203,10 +2203,9 @@ public abstract class WriterSingleObjectTests : IOTestsBase
 					Assert.Equal(mtext.BackgroundFillFlags, result.BackgroundFillFlags);
 
 					if (this.Format == CadFileFormat.DWG
-						&& doc.Header.Version < ACadVersion.AC1032
 						&& !mtext.BackgroundFillFlags.HasFlag(BackgroundFillFlags.UseBackgroundFillColor))
 					{
-						//The DWG format stores the values of a text frame only in R2018+
+						//Frame-only DWG data omits background scale and color in every version.
 						continue;
 					}
 

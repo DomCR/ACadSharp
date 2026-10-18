@@ -1562,11 +1562,9 @@ internal partial class DwgObjectWriter : DwgSectionIO
 			//Background flags BL 90 0 = no background, 1 = background fill, 2 = background fill with drawing fill color, 0x10 = text frame (R2018+)
 			this._writer.WriteBitLong((int)mtext.BackgroundFillFlags);
 
-			//background flags has bit 0x01 set, or in case of R2018 bit 0x10:
+			//Background values are present only when the fill-color bit is set.
 			if ((mtext.BackgroundFillFlags & BackgroundFillFlags.UseBackgroundFillColor)
-				!= BackgroundFillFlags.None
-				|| this._version > ACadVersion.AC1027
-				&& (mtext.BackgroundFillFlags & BackgroundFillFlags.TextFrame) > 0)
+				!= BackgroundFillFlags.None)
 			{
 				//Background scale factor	BL 45 default = 1.5
 				this._writer.WriteBitDouble(mtext.BackgroundScale);
