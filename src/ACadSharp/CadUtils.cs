@@ -204,7 +204,7 @@ internal static class CadUtils
 
 	public static CodePage GetCodePage(string value)
 	{
-		if (_dxfEncodingMap.TryGetValue(value.ToLower(), out CodePage code))
+		if (_dxfEncodingMap.TryGetValue(value.ToLowerInvariant(), out CodePage code))
 		{
 			return code;
 		}
