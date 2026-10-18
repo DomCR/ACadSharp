@@ -50,7 +50,7 @@ internal partial class DwgObjectWriter : DwgSectionIO
 			case AecCleanupGroup:
 			case AecBinRecord:
 			case UnknownNonGraphicalObject:
-			case VisualStyle:
+			case VisualStyle when !this.R2007Plus:
 			case ProxyObject:
 				return true;
 		}
@@ -1920,6 +1920,9 @@ internal partial class DwgObjectWriter : DwgSectionIO
 				break;
 			case FieldList fieldList:
 				this.writeFieldList(fieldList);
+				break;
+			case VisualStyle visualStyle:
+				DwgVisualStyle.Write(this._writer, this._version, visualStyle);
 				break;
 			case XRecord record:
 				this.writeXRecord(record);
