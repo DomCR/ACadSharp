@@ -281,6 +281,11 @@ namespace ACadSharp
 
 		internal void SetValue(int code, object obj, object value)
 		{
+			if (this._property.SetMethod == null)
+			{
+				return;
+			}
+
 			if (this._property.PropertyType.IsEquivalentTo(typeof(XY)))
 			{
 				XY vector = (XY)this._property.GetValue(obj);

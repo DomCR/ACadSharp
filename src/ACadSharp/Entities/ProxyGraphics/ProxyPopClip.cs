@@ -1,4 +1,4 @@
-﻿namespace ACadSharp.Entities.ProxyGraphics;
+namespace ACadSharp.Entities.ProxyGraphics;
 
 /// <summary>
 /// Represents a proxy graphics pop clip entity.
@@ -7,4 +7,10 @@ public class ProxyPopClip : IProxyGeometry
 {
 	/// <inheritdoc/>
 	public GraphicsType GraphicsType { get { return GraphicsType.PopClip; } }
+
+	/// <inheritdoc/>
+	public IProxyGeometry Clone()
+	{
+		return (IProxyGeometry)this.MemberwiseClone();
+	}
 }

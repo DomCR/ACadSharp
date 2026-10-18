@@ -1,4 +1,4 @@
-﻿namespace ACadSharp.Entities.ProxyGraphics;
+namespace ACadSharp.Entities.ProxyGraphics;
 
 /// <summary>
 /// Represents a proxy graphics subentity fillon.
@@ -12,4 +12,10 @@ public class ProxySubentFillon : IProxyGeometry
 	/// Gets or sets a value indicating whether the subentity fillon is on.
 	/// </summary>
 	public bool IsOn { get; set; }
+
+	/// <inheritdoc/>
+	public IProxyGeometry Clone()
+	{
+		return (IProxyGeometry)this.MemberwiseClone();
+	}
 }

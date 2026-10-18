@@ -22,4 +22,12 @@ public class ProxyPolyline : IProxyGeometry
 	/// A <see cref="List{T}"/> of <see cref="XYZ"/> coordinates representing the polyline vertices.
 	/// </value>
 	public List<XYZ> Points { get; set; } = new();
+
+	/// <inheritdoc/>
+	public IProxyGeometry Clone()
+	{
+		ProxyPolyline clone = (ProxyPolyline)this.MemberwiseClone();
+		clone.Points = this.Points != null ? new List<XYZ>(this.Points) : null;
+		return clone;
+	}
 }

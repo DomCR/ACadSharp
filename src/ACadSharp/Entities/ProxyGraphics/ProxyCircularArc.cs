@@ -1,4 +1,4 @@
-﻿using CSMath;
+using CSMath;
 
 namespace ACadSharp.Entities.ProxyGraphics;
 
@@ -37,4 +37,10 @@ public class ProxyCircularArc : IProxyGeometry, IOrientable
 	/// Gets or sets the sweep angle of the arc in radians.
 	/// </summary>
 	public double SweepAngle { get; set; }
+
+	/// <inheritdoc/>
+	public IProxyGeometry Clone()
+	{
+		return (IProxyGeometry)this.MemberwiseClone();
+	}
 }
