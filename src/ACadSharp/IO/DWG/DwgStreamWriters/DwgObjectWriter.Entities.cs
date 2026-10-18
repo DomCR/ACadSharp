@@ -1,4 +1,4 @@
-﻿using ACadSharp.Entities;
+using ACadSharp.Entities;
 using ACadSharp.Objects;
 using CSMath;
 using CSMath.Extensions;
@@ -629,14 +629,14 @@ internal partial class DwgObjectWriter : DwgSectionIO
 			case Solid3D solid3d:
 				this.writeSolid3D(solid3d);
 				break;
-			case Spline spline:
-				this.writeSpline(spline);
-				break;
 			case Region region:
 				this.writeModelerGeometry(region);
 				break;
 			case CadBody body:
 				this.writeModelerGeometry(body);
+				break;
+			case Spline spline:
+				this.writeSpline(spline);
 				break;
 			case CadWipeoutBase image:
 				this.writeCadImage(image);
@@ -1507,128 +1507,6 @@ internal partial class DwgObjectWriter : DwgSectionIO
 		this._writer.HandleReference(DwgReferenceType.HardPointer, mline.Style);
 	}
 
-	private void writeModelerGeometry(ModelerGeometry geometry)
-	{
-		bool hasAcisData = geometry.AcisData != null && geometry.AcisData.Length > 0;
-
-		//Chapter 24 - Info
-		if (!this.R2013Plus)
-		{
-			if (hasAcisData && geometry.IsBinaryAcisData)
-			{
-				//Version 2 (SAB) has no length in the stream, the reader has to
-				//consume the rest of the object, which cannot be written along
-				//with the wireframe data and the handle stream.
-				this.notify($"Binary ACIS data cannot be written for {geometry.ObjectName} in {this._version}, the geometry will be empty", NotificationType.Warning);
-				hasAcisData = false;
-			}
-
-			//ACIS Empty bit B X If 1, then no data follows
-			this._writer.WriteBit(!hasAcisData);
-
-			if (hasAcisData)
-			{
-				this.writeModelerGeometryData(geometry);
-				return;
-			}
-		}
-
-		//Common:
-		//Wireframe data present B X True if wireframe data is present
-		this._writer.WriteBit(geometry.HasWireframeData);
-		if (geometry.HasWireframeData)
-		{
-			//Point present B X If true, following point is present, otherwise assume 0,0,0 for point
-			if (geometry.Point.IsZero())
-			{
-				this._writer.WriteBit(false);
-			}
-			else
-			{
-				this._writer.WriteBit(true);
-				//Point 3BD X Present if above bit is 1.
-				this._writer.Write3BitDouble(geometry.Point);
-			}
-
-			//Num IsoLines BL X
-			this._writer.WriteBitLong(geometry.Wires.Count);
-			//IsoLines present B X If true, isoline data is present.
-			this._writer.WriteBit(geometry.Wires.Any());
-			if (geometry.Wires.Any())
-			{
-				//Num Wires BL X Number of ISO lines that follow.
-				this._writer.WriteBitLong(geometry.Wires.Count);
-				foreach (ModelerGeometry.Wire wire in geometry.Wires)
-				{
-					this.writeWire(wire);
-				}
-			}
-
-			//Num. silhouettes BL X
-			this._writer.WriteBitLong(geometry.Silhouettes.Count);
-			foreach (ModelerGeometry.Silhouette silhouette in geometry.Silhouettes)
-			{
-				//VP id BL X
-				this._writer.WriteBitLongLong(silhouette.ViewportId);
-				//VP Target 3BD X
-				this._writer.Write3BitDouble(silhouette.ViewportTarget);
-				//VP dir. From target 3BD X
-				this._writer.Write3BitDouble(silhouette.ViewportDirectionFromTarget);
-				//VP up dir. 3BD X
-				this._writer.Write3BitDouble(silhouette.ViewportUpDirection);
-				//VP perspective B X
-				this._writer.WriteBit(silhouette.ViewportPerspective);
-
-				//IsoLines present B X If true, isoline data is present.
-				this._writer.WriteBit(silhouette.Wires.Any());
-				if (silhouette.Wires.Any())
-				{
-					//Num Wires BL X
-					this._writer.WriteBitLong(silhouette.Wires.Count);
-					foreach (ModelerGeometry.Wire wire in silhouette.Wires)
-					{
-						this.writeWire(wire);
-					}
-				}
-			}
-
-			//ACIS Empty bit B X Normally 1. If 0, then acis data follows.
-			this._writer.WriteBit(true);
-		}
-
-		//R2007 +:
-		if (this.R2007Plus)
-		{
-			//Unknown BL
-			this._writer.WriteBitLong(0);
-		}
-
-		if (this.R2013Plus)
-		{
-			//290
-			this._writer.WriteBit(geometry.Guid != System.Guid.Empty);
-			this.writeGuid(geometry.Guid);
-			this._writer.WriteBitLong(0);
-		}
-	}
-
-	private void writeModelerGeometryData(ModelerGeometry geometry)
-	{
-		//Unknown bit B X
-		this._writer.WriteBit(false);
-
-		//Version BS Can be 1 or 2.
-		this._writer.WriteBitShort(1);
-
-		//Version == 1 (following 2 items repeat until Block Size is 0):
-		//Block Size BL X Number of bytes of SAT data in this block.
-		byte[] data = AcisTextCodec.Decode(geometry.AcisData);
-		this._writer.WriteBitLong(data.Length);
-		this._writer.WriteBytes(data);
-
-		//End of the blocks
-		this._writer.WriteBitLong(0);
-	}
 
 	private void writeMText(MText mtext)
 	{
