@@ -1,5 +1,6 @@
 ﻿using ACadSharp.Attributes;
 using ACadSharp.Classes;
+using ACadSharp.IO.DWG;
 using CSMath;
 using System.IO;
 
@@ -82,5 +83,20 @@ public class ProxyEntity : Entity, IProxy
 	public override BoundingBox GetBoundingBox()
 	{
 		return BoundingBox.Null;
+	}
+
+	/// <summary>
+	/// Reads and returns variable-length text from the current string data buffer using the current DWG version.
+	/// </summary>
+	/// <returns>The decoded text value, or an empty string when `StringData` is `null`.</returns>
+	public string GetStringDataText()
+	{
+		if (this.StringData == null)
+		{
+			return string.Empty;
+		}
+
+		var reader = DwgStreamReaderBase.GetStreamHandler(this.Version, this.StringData, resetPositon: true);
+		return reader.ReadVariableText();
 	}
 }
