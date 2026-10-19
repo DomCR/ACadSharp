@@ -92,6 +92,11 @@ internal abstract partial class DxfSectionWriterBase
 
 	protected void writeCommonObjectData(CadObject cadObject)
 	{
+		if (this.Version <= ACadVersion.AC1009)
+		{
+			if (!(cadObject is DimensionStyle)) this._writer.Write(DxfCode.Handle, cadObject.Handle);
+			return;
+		}
 		if (cadObject is DimensionStyle)
 		{
 			this._writer.Write(DxfCode.DimVarHandle, cadObject.Handle);
@@ -209,7 +214,8 @@ internal abstract partial class DxfSectionWriterBase
 		}
 		else if (entity.Color.IsTrueColor)
 		{
-			this._writer.WriteTrueColor(420, entity.Color);
+			if (this.Version <= ACadVersion.AC1009) this._writer.Write(62, entity.Color.GetApproxIndex());
+			else this._writer.WriteTrueColor(420, entity.Color);
 		}
 		else
 		{
@@ -225,9 +231,12 @@ internal abstract partial class DxfSectionWriterBase
 
 		this._writer.Write(60, entity.IsInvisible ? (short)1 : (short)0, map);
 
-		if (entity.Owner is BlockRecord record && record.Layout != null)
+		if (entity.Owner is BlockRecord record)
 		{
-			this._writer.Write(67, record.Layout.IsPaperSpace ? (short)1 : 0);
+			bool paperSpace = record.Name.Equals(BlockRecord.PaperSpaceName, StringComparison.OrdinalIgnoreCase)
+				|| (record.Layout != null && record.Layout.IsPaperSpace);
+			if (paperSpace || record.Layout != null || record.Name.Equals(BlockRecord.ModelSpaceName, StringComparison.OrdinalIgnoreCase))
+				this._writer.Write(67, paperSpace ? (short)1 : 0);
 		}
 
 		this._writer.Write(370, entity.LineWeight);

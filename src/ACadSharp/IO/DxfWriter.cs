@@ -93,7 +93,7 @@ public class DxfWriter : CadWriterBase<DxfWriterConfiguration>
 
 		this.writeHeader();
 
-		this.writeDxfClasses();
+		if (this._document.Header.Version > ACadVersion.AC1009) this.writeDxfClasses();
 
 		this.writeTables();
 
@@ -101,7 +101,7 @@ public class DxfWriter : CadWriterBase<DxfWriterConfiguration>
 
 		this.writeEntities();
 
-		this.writeObjects();
+		if (this._document.Header.Version > ACadVersion.AC1009) this.writeObjects();
 
 		this.writeACDSData();
 
@@ -133,6 +133,7 @@ public class DxfWriter : CadWriterBase<DxfWriterConfiguration>
 		}
 
 		this._writer.WriteOptional = this.Configuration.WriteOptionalValues;
+		((DxfStreamWriterBase)this._writer).LegacyR12 = this._document.Header.Version <= ACadVersion.AC1009;
 	}
 
 	private void writeACDSData()
