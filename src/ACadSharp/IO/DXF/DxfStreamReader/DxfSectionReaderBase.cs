@@ -190,7 +190,7 @@ internal abstract class DxfSectionReaderBase
 			case DxfFileToken.EntityHatch:
 				return this.readEntityCodes<Hatch>(new CadHatchTemplate(), this.readHatch);
 			case DxfFileToken.EntityInsert:
-				return this.readEntityCodes<Insert>(new CadInsertTemplate(), this.readInsert);
+				return this.readInsertEntity();
 			case DxfFileToken.EntityMText:
 				return this.readEntityCodes<MText>(new CadTextEntityTemplate(new MText()), this.readTextEntity);
 			case DxfFileToken.EntityMLine:
@@ -326,6 +326,7 @@ internal abstract class DxfSectionReaderBase
 				break;
 			//Absent or zero indicates entity is in model space. 1 indicates entity is in paper space (optional).
 			case 67:
+				template.EntityMode = this._reader.ValueAsInt == 1 ? (byte)1 : (byte)2;
 				break;
 			//Number of bytes Proxy entity graphics data
 			case 92:
@@ -801,7 +802,7 @@ internal abstract class DxfSectionReaderBase
 
 				if (tmp.CadObject is CadDimensionTemplate.DimensionPlaceholder placeholder && this._builder.Version < ACadVersion.AC1012)
 				{
-					switch (placeholder.Flags)
+					switch ((DimensionType)((int)placeholder.Flags & 7))
 					{
 						case DimensionType.Linear:
 							tmp.SetDimensionObject(new DimensionLinear());
@@ -1010,6 +1011,40 @@ internal abstract class DxfSectionReaderBase
 		}
 	}
 
+	private CadInsertTemplate readInsertEntity()
+	{
+		var template = new CadInsertTemplate();
+		this.readEntityCodes<Insert>(template, this.readInsert);
+		if (!template.HasAtts) return template;
+		while (this._reader.Code == 0 && this._reader.ValueAsString == DxfFileToken.EntityAttribute)
+		{
+			var attribute = new CadAttributeTemplate(new AttributeEntity());
+			this.readEntityCodes<AttributeEntity>(attribute, this.readAttributeDefinition);
+			attribute.OwnerHandle = template.CadObject.Handle;
+			if (attribute.CadObject.Handle == 0)
+				((Insert)template.CadObject).Attributes.Add((AttributeEntity)attribute.CadObject);
+			else
+			{
+				template.OwnedObjectsHandlers.Add(attribute.CadObject.Handle);
+				this._builder.AddTemplate(attribute);
+			}
+		}
+		if (this._reader.Code == 0 && this._reader.ValueAsString == DxfFileToken.EndSequence)
+		{
+			var seqend = new CadEntityTemplate<Seqend>(new Seqend());
+			this.readEntityCodes<Seqend>(seqend, this.readEntitySubclassMap);
+			seqend.OwnerHandle = template.CadObject.Handle;
+			if (seqend.CadObject.Handle == 0)
+				((Insert)template.CadObject).Attributes.Seqend = (Seqend)seqend.CadObject;
+			else
+			{
+				template.SeqendHandle = seqend.CadObject.Handle;
+				this._builder.AddTemplate(seqend);
+			}
+		}
+		return template;
+	}
+
 	private bool readInsert(CadEntityTemplate template, DxfMap map, string subclass = null)
 	{
 		CadInsertTemplate tmp = template as CadInsertTemplate;
@@ -1025,6 +1060,7 @@ internal abstract class DxfSectionReaderBase
 				//AcDbMInsertBlock
 				return true;
 			case 66:
+				tmp.HasAtts = this._reader.ValueAsInt != 0;
 				return true;
 			default:
 				return this.tryAssignCurrentValue(template.CadObject, map.SubClasses[DxfSubclassMarker.Insert]);
@@ -1088,13 +1124,31 @@ internal abstract class DxfSectionReaderBase
 
 		while (this._reader.Code == 0 && this._reader.ValueAsString == DxfFileToken.EntityVertex)
 		{
-			Vertex2D v = new Vertex2D();
-			CadVertexTemplate vertexTemplate = new CadVertexTemplate(v);
-			this.readEntityCodes<Vertex2D>(vertexTemplate, this.readVertex);
+			CadVertexTemplate vertexTemplate;
+			switch (template.CadObject)
+			{
+				case Polyline3D: vertexTemplate = this.readLegacyVertex<Vertex3D>(); break;
+				case PolygonMesh: vertexTemplate = this.readLegacyVertex<PolygonMeshVertex>(); break;
+				case PolyfaceMesh:
+					vertexTemplate = this.readLegacyVertex<VertexFaceRecord>();
+					if (((int)vertexTemplate.Vertex.Flags & 64) != 0)
+						vertexTemplate.SetVertexObject(new VertexFaceMesh());
+					break;
+				default: vertexTemplate = this.readLegacyVertex<Vertex2D>(); break;
+			}
 
 			if (vertexTemplate.Vertex.Handle == 0)
 			{
-				polyline.Vertices.Add(v);
+				switch (template.CadObject)
+				{
+					case Polyline2D p: p.Vertices.Add((Vertex2D)vertexTemplate.Vertex); break;
+					case Polyline3D p: p.Vertices.Add((Vertex3D)vertexTemplate.Vertex); break;
+					case PolygonMesh p: p.Vertices.Add((PolygonMeshVertex)vertexTemplate.Vertex); break;
+					case PolyfaceMesh p:
+						if (vertexTemplate.Vertex is VertexFaceRecord face) p.Faces.Add(face);
+						else p.Vertices.Add((VertexFaceMesh)vertexTemplate.Vertex);
+						break;
+				}
 			}
 			else
 			{
@@ -1109,10 +1163,38 @@ internal abstract class DxfSectionReaderBase
 			var seqendTemplate = new CadEntityTemplate<Seqend>(seqend);
 			this.readEntityCodes<Seqend>(seqendTemplate, this.readEntitySubclassMap);
 
-			polyline.Vertices.Seqend = seqend;
+			switch (template.CadObject)
+			{
+				case Polyline2D p: p.Vertices.Seqend = seqend; break;
+				case Polyline3D p: p.Vertices.Seqend = seqend; break;
+				case PolygonMesh p: p.Vertices.Seqend = seqend; break;
+				case PolyfaceMesh p: p.Vertices.Seqend = seqend; break;
+			}
 		}
 
 		return template;
+	}
+
+	private CadVertexTemplate readLegacyVertex<T>() where T : Vertex, new()
+	{
+		var template = new CadVertexTemplate(new T());
+		this.readEntityCodes<T>(template, this.readVertex);
+		return template;
+	}
+
+	private void setLegacyPolyline<T>(CadPolyLineTemplate template, DxfMap map, Polyline<T> polyline, short flags)
+		where T : Entity, IVertex
+	{
+		var source = (Polyline2D)template.CadObject;
+		polyline.Elevation = source.Elevation;
+		polyline.Thickness = source.Thickness;
+		polyline.Normal = source.Normal;
+		polyline.StartWidth = source.StartWidth;
+		polyline.EndWidth = source.EndWidth;
+		polyline.SmoothSurface = source.SmoothSurface;
+		template.SetPolyLineObject(polyline);
+		polyline.Flags = (PolylineFlags)flags;
+		map.SubClasses[polyline.SubclassMarker] = DxfClassMap.Create(polyline.GetType());
 	}
 
 	private bool readPolyline(CadEntityTemplate template, DxfMap map, string subclass = null)
@@ -1121,6 +1203,17 @@ internal abstract class DxfSectionReaderBase
 
 		switch (this._reader.Code)
 		{
+			case 70:
+				if (this._builder.Version == ACadVersion.AC1009 || this._builder.Version == ACadVersion.Unknown)
+				{
+					short flags = this._reader.ValueAsShort;
+					if ((flags & 64) != 0) this.setLegacyPolyline(tmp, map, new PolyfaceMesh(), flags);
+					else if ((flags & 16) != 0) this.setLegacyPolyline(tmp, map, new PolygonMesh(), flags);
+					else if ((flags & 8) != 0) this.setLegacyPolyline(tmp, map, new Polyline3D(), flags);
+					else ((Polyline2D)tmp.CadObject).Flags = (PolylineFlags)flags;
+					return true;
+				}
+				return this.tryAssignCurrentValue(template.CadObject, map.SubClasses[tmp.CadObject.SubclassMarker]);
 			//DXF: always 0
 			//APP: a “dummy” point; the X and Y values are always 0, and the Z value is the polyline's elevation (in OCS when 2D, WCS when 3D)
 			case 10:
@@ -1534,6 +1627,7 @@ internal abstract class DxfSectionReaderBase
 		switch (this._reader.Code)
 		{
 			case 2:
+				((Shape)tmp.CadObject).ShapeName = this._reader.ValueAsString;
 				tmp.ShapeFileName = this._reader.ValueAsString;
 				return true;
 			default:
@@ -1842,6 +1936,7 @@ internal abstract class DxfSectionReaderBase
 		{
 			//Undocumented
 			case 67:
+				return false; // Common paper-space ownership flag.
 			case 68:
 				return true;
 			case 69:

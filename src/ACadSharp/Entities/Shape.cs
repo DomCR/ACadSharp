@@ -86,6 +86,11 @@ public class Shape : Entity, IOrientable
 
 	internal ushort ShapeIndex { get; set; }
 
+	/// <summary>
+	/// Shape name preserved from DXF. Resolving it to a DWG index requires the shape font.
+	/// </summary>
+	public string ShapeName { get; set; } = string.Empty;
+
 	private TextStyle _style;
 
 	/// <summary>
@@ -113,7 +118,7 @@ public class Shape : Entity, IOrientable
 	{
 		Shape clone = (Shape)base.Clone();
 
-		clone.ShapeStyle = (TextStyle)(this.ShapeStyle?.Clone());
+		clone._style = (TextStyle)(this.ShapeStyle?.Clone());
 
 		return clone;
 	}

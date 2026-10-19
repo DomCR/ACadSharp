@@ -23,7 +23,7 @@ internal class DxfTablesSectionWriter : DxfSectionWriterBase
 		this.writeTable(this._document.UCSs);
 		this.writeTable(this._document.AppIds);
 		this.writeTable(this._document.DimensionStyles, DxfSubclassMarker.DimensionStyleTable);
-		this.writeTable(this._document.BlockRecords, writeFlags: false);
+		if (this.Version > ACadVersion.AC1009) this.writeTable(this._document.BlockRecords, writeFlags: false);
 	}
 
 	private void writeBlockRecord(BlockRecord block, DxfClassMap map)

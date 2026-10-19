@@ -412,13 +412,13 @@ public class DxfReader : CadReaderBase<DxfReaderConfiguration>
 		bool isBinary = IsBinary(this._fileStream.Stream, false);
 		bool isAC1009Format = false;
 
-		if (isBinary && this._fileStream.Stream.ReadByte() != -1)
+		if (isBinary)
 		{
-			int flag = this._fileStream.ReadByte();
-			if (flag != -1 && flag != 0)
-			{
-				isAC1009Format = true;
-			}
+			int first = this._fileStream.ReadByte();
+			int second = this._fileStream.ReadByte();
+			// Group 0 uses one byte in R12 and two bytes in R13+.
+			// A leading comment is FF E7 03 in R12, E7 03 in R13+.
+			isAC1009Format = first == 0xFF || (second > 0 && !(first == 0xE7 && second == 0x03));
 		}
 
 		tmpReader = this.createReader(isBinary, isAC1009Format);
