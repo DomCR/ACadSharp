@@ -432,6 +432,16 @@ internal abstract class DxfSectionReaderBase
 
 	protected void readExtendedData(Dictionary<string, List<ExtendedDataRecord>> edata)
 	{
+		//One application after another in a loop, a long run of them must not overflow the stack
+		do
+		{
+			this.readExtendedDataApplication(edata);
+		}
+		while (this._reader.DxfCode == DxfCode.ExtendedDataRegAppName);
+	}
+
+	private void readExtendedDataApplication(Dictionary<string, List<ExtendedDataRecord>> edata)
+	{
 		List<ExtendedDataRecord> records = new();
 		edata.Add(this._reader.ValueAsString, records);
 
@@ -441,7 +451,6 @@ internal abstract class DxfSectionReaderBase
 		{
 			if (this._reader.DxfCode == DxfCode.ExtendedDataRegAppName)
 			{
-				this.readExtendedData(edata);
 				break;
 			}
 
@@ -2472,9 +2481,8 @@ internal abstract class DxfSectionReaderBase
 					wipeout.ClipBoundaryVertices.Add(new XY(x, y));
 				}
 
-				this._reader.ReadNext();
-
-				return this.checkEntityEnd(template, map, subclass, this.readWipeoutBase);
+				//The entity loop reads the next code, a run of 91 groups must not nest one call per group
+				return true;
 			case 340:
 				tmp.ImgDefHandle = this._reader.ValueAsHandle;
 				return true;
