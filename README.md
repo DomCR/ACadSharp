@@ -14,10 +14,15 @@ ACadSharp allows to read or create CAD files using .Net and also extract or modi
 - Read/Write Dxf ASCII files
 - Read Dwg files
 - Write Dwg files
+- Preserve imported ACIS geometry when writing DWG solids (3DSOLID), regions and bodies, including large R2013+ payloads stored in AcDs
+- Read/Write DWG visual styles and preserve table content, formatting and references during modern DWG rewrites
+- Transform MultiLeader geometry and compute AEC wall bounds
 - Extract/Modify the geometric information from the different [entities](https://help.autodesk.com/view/OARX/2021/ENU/?guid=GUID-7D07C886-FD1D-4A0C-A7AB-B4D21F18E484) in the model
 - Control over the table elements like Blocks, Layers and Styles, allows you to read, create or modify the different tables
 
 For other format export like svg, image, json or pdf check :construction: [ACadSharp.Formats](https://github.com/DomCR/ACadSharp.Formats) :construction:.
+
+ACIS support preserves existing SAT/SAB payloads; it does not provide a solid-modeling engine or generate updated ACIS geometry after editing an entity. See the [acad-ts port audit](docs/articles/acad-ts-port-audit.md) for the changes and validation coverage.
 
 #### Compatible Dwg/Dxf versions:
 
