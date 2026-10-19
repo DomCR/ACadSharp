@@ -190,7 +190,7 @@ public abstract class Entity : CadObject, IEntity
 
 		if (this._proxyGeometries != null)
 		{
-			clone._proxyGeometries = new List<IProxyGeometry>(this._proxyGeometries);
+			clone._proxyGeometries = new List<IProxyGeometry>(this._proxyGeometries.Count);
 			foreach (var item in this._proxyGeometries)
 			{
 				clone._proxyGeometries.Add(item.Clone());
