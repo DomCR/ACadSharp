@@ -148,8 +148,8 @@ public class DwgWriter : CadWriterBase<DwgWriterConfiguration>
 			case ACadVersion.AC1004:
 			case ACadVersion.AC1006:
 			case ACadVersion.AC1009:
-			case ACadVersion.AC1012:
 				throw new CadNotSupportedException(this._document.Header.Version);
+			case ACadVersion.AC1012:
 			case ACadVersion.AC1014:
 			case ACadVersion.AC1015:
 				this._fileHeaderWriter = new DwgFileHeaderWriterAC15(this._stream, this._encoding, this._document);
