@@ -236,8 +236,24 @@ internal partial class DwgObjectReader : DwgSectionIO
 		}
 	}
 
+	private System.Guid readGuid()
+	{
+		var a = this._mergedReaders.ReadBitLong();
+		var b = this._mergedReaders.ReadBitShort();
+		var c = this._mergedReaders.ReadBitShort();
+		var d = this._mergedReaders.ReadByte();
+		var e = this._mergedReaders.ReadByte();
+		var f = this._mergedReaders.ReadByte();
+		var g = this._mergedReaders.ReadByte();
+		var h = this._mergedReaders.ReadByte();
+		var i = this._mergedReaders.ReadByte();
+		var j = this._mergedReaders.ReadByte();
+		var k = this._mergedReaders.ReadByte();
+		return new Guid(a, b, c, d, e, f, g, h, i, j, k);
+	}
+
 	private CadEntityTemplate<T> readModelerGeometry<T>(CadEntityTemplate<T> template)
-								where T : ModelerGeometry, new()
+									where T : ModelerGeometry, new()
 	{
 		ModelerGeometry geometry = template.CadObject;
 
@@ -323,7 +339,6 @@ internal partial class DwgObjectReader : DwgSectionIO
 			if (!this._mergedReaders.ReadBit())
 			{
 				this.readModelerGeometryData(template);
-				return template;
 			}
 		}
 
@@ -331,6 +346,13 @@ internal partial class DwgObjectReader : DwgSectionIO
 		if (this.R2007Plus)
 		{
 			//Unknown BL
+			this._mergedReaders.ReadBitLong();
+		}
+
+		if (this.R2013Plus)
+		{
+			this._mergedReaders.ReadBit();
+			geometry.Guid = this.readGuid();
 			this._mergedReaders.ReadBitLong();
 		}
 
