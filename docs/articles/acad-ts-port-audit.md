@@ -47,7 +47,7 @@ The remaining non-port commits are release/dependency updates (`40a7d685`,
 `7c7ead5b`), Node CI changes (`a5b588c6`, `f53e0566`) and synchronization
 documentation (`0484aba6`, `7f5bea17`).
 
-## Validation
+## Initial port validation
 
 All 41 new regression cases pass on .NET 9. They include exact payload comparisons
 for 36 public-sample DWG version conversions; six-version SAT/ASM and wireframe
@@ -60,10 +60,52 @@ three failures also reproduce on the untouched `ed5ff1cf` baseline on this machi
 
 - `ArcTests.CreateFromBulgeTest` and `ArcTests.GetCenter` compare zero with
   `-2.220446049250313E-16` using exact equality.
-- One `DimensionStyleTests.GetLinearMeasurementText` case expects a different
-  scientific-notation exponent format.
+- One `DimensionStyleTests.GetLinearMeasurementText` case expects different
+  culture/scientific-notation formatting.
 
 The library builds for net8.0, net9.0, net10.0, net48, netstandard2.0 and
 netstandard2.1. Native ODA validation of the TypeScript implementation is not a
 validation result for this C# port; the C# results above are library regression
 and build checks.
+
+## Legacy format follow-up (2026-10-19)
+
+The follow-up compares acad-ts commits `fc89c4fb`, `e692b58e` and `528c8702`
+after the six-month audit above. It adds R13 DWG export with a five-record
+section directory and the specified header CRC, and R12 ASCII/binary DXF export
+with legacy group codes, header variables and sections. Lightweight polylines
+become POLYLINE/VERTEX sequences and true colors become indexed colors.
+
+The shared preservation fixes cover R12 dimension subtype flags, named SHAPE
+records, INSERT attribute sequences and the correct 2D/3D/polyface/polygon
+polyline types. The C# polygon mesh writer also writes the N count from
+`NVertexCount` and retains polyline thickness and widths. Group 67 now routes
+legacy paper-space entities to the proper block; its layout is registered
+without creating an extra viewport or re-adding an existing block record.
+R12 viewports have no annotation-scale references, which the viewport test now
+checks explicitly instead of inspecting an unrelated default viewport.
+
+C# already accepts unnamed viewport headers, writes attribute fields, registers
+child handles, handles SEQEND separately from vertices and uses reflection for
+inherited DXF metadata. Those TypeScript-specific repairs were not duplicated.
+The C# legacy TABLE decoder was retained because it already reads the older
+custom table layouts. The DWG viewport-header reader now consumes the external
+block reference before the viewport and previous-header references.
+
+The compatibility table now includes R12 DXF writing and R13 DWG reading/writing.
+This does not imply every entity can be represented in every release. Post-R12
+entities are reported and omitted during R12 export. R12 DWG reading/writing and
+R2007 DWG writing remain unsupported.
+
+Twelve new regression cases pass, including three optional native-check cases
+actually run with ODA File Converter 27.9.0.0. The native cases validate five
+C#-generated outputs: R12 ASCII and binary drawings, matching 3D-polyline/mesh
+drawings, and an R13 DWG. ODA audit must produce DXF output without error reports;
+the tests then compare geometry, text, block attributes, polyline bulges and
+signed mesh topology. The checked-in R13 fixture was independently re-encoded
+by ODA. See [the fixture provenance and native-check instructions](../../samples/legacy/README.md).
+
+Final validation: all six library target frameworks build; the full .NET 9 suite
+reports **2,540 passed, two skipped and the same three baseline failures** listed
+above. `git diff --check` passes. The native results cover the legacy additions;
+they do not extend native validation to the earlier modeler/AcDs ports.
