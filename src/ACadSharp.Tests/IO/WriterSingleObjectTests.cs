@@ -1,5 +1,6 @@
 ﻿using ACadSharp.Blocks;
 using ACadSharp.Entities;
+using ACadSharp.Entities.ProxyGraphics;
 using ACadSharp.Extensions;
 using ACadSharp.IO;
 using ACadSharp.Objects;
@@ -51,6 +52,7 @@ public abstract class WriterSingleObjectTests : IOTestsBase
 		Data.Add(new(nameof(SingleCaseGenerator.SingleLongMText)));
 		Data.Add(new(nameof(SingleCaseGenerator.SingleMTextRotation)));
 		Data.Add(new(nameof(SingleCaseGenerator.SingleMTextSpecialCharacter)));
+		Data.Add(new(nameof(SingleCaseGenerator.MTextBackgroundFillAndTextFrame)));
 		Data.Add(new(nameof(SingleCaseGenerator.TextWithChineseCharacters)));
 		Data.Add(new(nameof(SingleCaseGenerator.CreateGroup)));
 		Data.Add(new(nameof(SingleCaseGenerator.SingleMTextMultiline)));
@@ -88,6 +90,7 @@ public abstract class WriterSingleObjectTests : IOTestsBase
 		Data.Add(new(nameof(SingleCaseGenerator.DimensionRadius)));
 		Data.Add(new(nameof(SingleCaseGenerator.Dimensions)));
 		Data.Add(new(nameof(SingleCaseGenerator.DimensionWithLineType)));
+		Data.Add(new(nameof(SingleCaseGenerator.DimensionStyleArrowBlock)));
 		Data.Add(new(nameof(SingleCaseGenerator.GeoData)));
 		Data.Add(new(nameof(SingleCaseGenerator.LineTypeInBlock)));
 		Data.Add(new(nameof(SingleCaseGenerator.XData)));
@@ -103,6 +106,7 @@ public abstract class WriterSingleObjectTests : IOTestsBase
 		Data.Add(new(nameof(SingleCaseGenerator.SingleMaterial)));
 		Data.Add(new(nameof(SingleCaseGenerator.LeaderWithArrowHead)));
 		Data.Add(new(nameof(SingleCaseGenerator.SortedXRecords)));
+		Data.Add(new(nameof(SingleCaseGenerator.ProxyGraphics)));
 	}
 
 	public WriterSingleObjectTests(ITestOutputHelper output) : base(output)
@@ -1458,6 +1462,35 @@ public abstract class WriterSingleObjectTests : IOTestsBase
 			};
 		}
 
+		public void DimensionStyleArrowBlock()
+		{
+			BlockRecord tick = new BlockRecord("CUSTOM_TICK");
+			tick.Entities.Add(new Line(new XYZ(-0.5, -0.5, 0), new XYZ(0.5, 0.5, 0)));
+			this.Document.BlockRecords.Add(tick);
+
+			DimensionStyle style = new DimensionStyle("arrow_block_style");
+			style.ArrowBlock = tick;
+
+			DimensionLinear dim = new DimensionLinear
+			{
+				FirstPoint = new XYZ(0, 0, 0),
+				SecondPoint = new XYZ(10, 0, 0),
+				Offset = 0.5,
+				Style = style,
+			};
+
+			this.Document.Entities.Add(dim);
+
+			this.AssertRoundtrip = (doc) =>
+			{
+				DimensionStyle result = doc.GetCadObject<DimensionStyle>(style.Handle);
+
+				Assert.NotNull(result);
+				Assert.Equal(tick.Name, result.ArrowBlock?.Name);
+				Assert.Null(result.LeaderArrow);
+			};
+		}
+
 		public void DimensionWithLineType()
 		{
 			LineType linetype = new LineType("LTYPE_PAINT");
@@ -2122,6 +2155,61 @@ public abstract class WriterSingleObjectTests : IOTestsBase
 			};
 		}
 
+		public void MTextBackgroundFillAndTextFrame()
+		{
+			List<MText> mtexts = new List<MText>();
+			foreach (BackgroundFillFlags flags in new[]
+			{
+				BackgroundFillFlags.TextFrame,
+				BackgroundFillFlags.UseBackgroundFillColor,
+				BackgroundFillFlags.UseBackgroundFillColor | BackgroundFillFlags.UseDrawingWindowColor,
+				BackgroundFillFlags.UseBackgroundFillColor | BackgroundFillFlags.TextFrame,
+			})
+			{
+				MText mtext = new MText($"Background {flags}")
+				{
+					InsertPoint = new XYZ(0, -10 * mtexts.Count, 0),
+					Height = 2.5,
+					BackgroundFillFlags = flags,
+					BackgroundScale = 2.0,
+					BackgroundColor = flags.HasFlag(BackgroundFillFlags.TextFrame) ? new Color(255, 128, 0) : new Color(2),
+				};
+
+				mtexts.Add(mtext);
+				this.Document.Entities.Add(mtext);
+			}
+
+			this.AssertRoundtrip = (doc) =>
+			{
+				foreach (MText mtext in mtexts)
+				{
+					MText result = doc.GetCadObject<MText>(mtext.Handle);
+
+					Assert.NotNull(result);
+
+					if (doc.Header.Version < ACadVersion.AC1018)
+					{
+						//Background fill is not supported before R2004
+						Assert.Equal(BackgroundFillFlags.None, result.BackgroundFillFlags);
+						continue;
+					}
+
+					Assert.Equal(mtext.BackgroundFillFlags, result.BackgroundFillFlags);
+
+					if (this.Format == CadFileFormat.DWG
+						&& doc.Header.Version < ACadVersion.AC1032
+						&& !mtext.BackgroundFillFlags.HasFlag(BackgroundFillFlags.UseBackgroundFillColor))
+					{
+						//The DWG format stores the values of a text frame only in R2018+
+						continue;
+					}
+
+					Assert.Equal(mtext.BackgroundScale, result.BackgroundScale);
+					Assert.Equal(mtext.BackgroundColor, result.BackgroundColor);
+				}
+			};
+		}
+
 		public void PolylineVertexLayer()
 		{
 			var dxfLayer = new Layer("Example layer");
@@ -2152,6 +2240,40 @@ public abstract class WriterSingleObjectTests : IOTestsBase
 				EntityComparator.IsEqual(line, result);
 				Assert.Equal(dxfLayer.Name, result.Layer.Name);
 				Assert.NotNull(doc.GetCadObject<Polyline2D>(anotherLine.Handle));
+			};
+		}
+
+		public void ProxyGraphics()
+		{
+			ProxyEntity proxy = new ProxyEntity();
+			proxy.Version = ACadVersion.AC1032;
+			proxy.MaintenanceVersion = 0;
+
+			ProxyXLine proxyXline = new ProxyXLine
+			{
+				Point1 = new XYZ(0, -10, 0),
+				Point2 = new XYZ(0, 10, 0),
+			};
+			ProxyCircle proxyCircle = new ProxyCircle
+			{
+				Center = new XYZ(5, 5, 0),
+				Radius = 5,
+			};
+
+			proxy.ProxyGeometries.Add(proxyXline);
+			proxy.ProxyGeometries.Add(proxyCircle);
+
+			this.Document.Entities.Add(proxy);
+
+			this.AssertRoundtrip = (doc) =>
+			{
+				ProxyEntity result = doc.GetCadObject<ProxyEntity>(proxy.Handle);
+				Assert.NotNull(result);
+
+				Assert.NotEmpty(result.ProxyGeometries);
+				Assert.Equal(proxy.ProxyGeometries.Count, result.ProxyGeometries.Count);
+				Assert.True(result.ProxyGeometries[0] is ProxyXLine);
+				Assert.True(result.ProxyGeometries[1] is ProxyCircle);
 			};
 		}
 

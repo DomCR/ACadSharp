@@ -1,4 +1,4 @@
-﻿using CSMath;
+using CSMath;
 
 namespace ACadSharp.Entities.ProxyGraphics;
 
@@ -24,4 +24,10 @@ public class ProxyCirclePt3 : IProxyGeometry
 	/// Gets or sets the third point that defines the circle.
 	/// </summary>
 	public XYZ Point3 { get; set; }
+
+	/// <inheritdoc/>
+	public IProxyGeometry Clone()
+	{
+		return (IProxyGeometry)this.MemberwiseClone();
+	}
 }

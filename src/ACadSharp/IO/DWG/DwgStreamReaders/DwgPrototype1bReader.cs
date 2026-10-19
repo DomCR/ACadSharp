@@ -242,6 +242,7 @@ internal class DwgPrototype1bReader : DwgSectionIO
 					{
 						var segmentIndex = this._reader.ReadUInt();
 						var size = this._reader.ReadUInt();
+						var nextPagePosition = this._reader.Position;
 
 						this._reader.Position = (long)this._fileSegmentIndex.Entries[(int)segmentIndex].Offset;
 
@@ -256,6 +257,8 @@ internal class DwgPrototype1bReader : DwgSectionIO
 
 						blob.Data = this._reader.ReadBytes((int)blob.PageDataSize);
 						value.BlobReference.Blobs.Add(blob);
+
+						this._reader.Position = nextPagePosition;
 					}
 				}
 

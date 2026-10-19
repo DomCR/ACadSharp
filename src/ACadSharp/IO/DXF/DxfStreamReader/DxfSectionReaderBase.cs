@@ -9,6 +9,7 @@ using CSUtilities.Extensions;
 using System;
 using System.Collections.Generic;
 using System.Diagnostics;
+using System.IO;
 using System.Linq;
 using static ACadSharp.IO.Templates.CadMLeaderAnnotContextTemplate;
 using static ACadSharp.IO.Templates.CadTableEntityTemplate;
@@ -245,6 +246,8 @@ internal abstract class DxfSectionReaderBase
 				return this.readEntityCodes<SweptSurface>(new CadModelerGeometryTemplate<SweptSurface>(), this.readSurfaceEntity);
 			case DxfFileToken.EntityImage:
 				return this.readEntityCodes<RasterImage>(new CadWipeoutBaseTemplate(new RasterImage()), this.readWipeoutBase);
+			case DxfFileToken.EntityProxyEntity:
+				return this.readEntityCodes<ProxyEntity>(new CadProxyEntityTemplate(), this.readProxyEntity);
 			case DxfFileToken.EntityWipeout:
 				return this.readEntityCodes<Wipeout>(new CadWipeoutBaseTemplate(new Wipeout()), this.readWipeoutBase);
 			case DxfFileToken.EntityXline:
@@ -849,8 +852,6 @@ internal abstract class DxfSectionReaderBase
 				return true;
 			//Undocumented codes
 			case 73:
-			case 74:
-			case 75:
 			case 90:
 			case 361:
 				return true;
@@ -1538,6 +1539,69 @@ internal abstract class DxfSectionReaderBase
 			default:
 				return this.tryAssignCurrentValue(template.CadObject, map.SubClasses[tmp.CadObject.SubclassMarker]);
 		}
+	}
+
+	private bool readProxyEntity(CadEntityTemplate template, DxfMap map, string subclass = null)
+	{
+		CadProxyEntityTemplate tmp = template as CadProxyEntityTemplate;
+
+		switch (this._reader.Code)
+		{
+			case 91:
+				if (this._builder.DocumentToBuild.Classes.TryGetByClassNumber(this._reader.ValueAsShort, out var dxfclass))
+				{
+					tmp.CadObject.DxfClass = dxfclass;
+				}
+				else
+				{
+					this._builder.Notify($"DxfClass with class number {this._reader.ValueAsShort} not found.", NotificationType.Warning);
+				}
+				return true;
+			case 94:
+				return true;
+			//Graphics data size
+			case 160:
+				tmp.ProxyGraphics = this.readByteEntries(310).ToArray();
+				return true;
+			//Binary data size
+			case 161:
+				tmp.CadObject.BinaryData = this.readByteEntries(310);
+				return true;
+			//String data size
+			case 162:
+				tmp.CadObject.StringData = this.readByteEntries(311);
+				return true;
+			case 330:
+			case 340:
+			case 350:
+			case 360:
+				tmp.ReferencedObjectHandles.Add(this._reader.ValueAsHandle);
+				return true;
+			default:
+				return this.tryAssignCurrentValue(template.CadObject, map.SubClasses[tmp.CadObject.SubclassMarker]);
+		}
+	}
+
+	private MemoryStream readByteEntries(int code)
+	{
+		if (this._reader.ValueAsInt == 0)
+		{
+			return null;
+		}
+
+		MemoryStream ms = new MemoryStream();
+
+		this._reader.ExpectedCode(code);
+
+		while (this._reader.Code == code)
+		{
+			ms.Write(this._reader.ValueAsBinaryChunk, 0, this._reader.ValueAsBinaryChunk.Length);
+			this._reader.ReadNext();
+		}
+
+		this.lockPointer = true;
+
+		return ms;
 	}
 
 	private bool readWipeoutBase(CadEntityTemplate template, DxfMap map, string subclass = null)
