@@ -6629,12 +6629,11 @@ namespace ACadSharp.IO.DWG
 			//1 flag B The 1 bit of the 70 group
 			this._objectReader.ReadBit();
 
-			//Handle refs H viewport entity control (soft pointer)
-			this.handleReference();
-			//xdicobjhandle (hard owner)
-			this.handleReference();
 			//External reference block handle (hard pointer)
 			template.BlockHandle = this.handleReference();
+			//Corresponding viewport entity (soft owner), previous header (hard pointer).
+			this.handleReference();
+			this.handleReference();
 
 			return template;
 		}
