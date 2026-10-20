@@ -860,6 +860,19 @@ public class DwgReader : CadReaderBase<DwgReaderConfiguration>
 				decompressSizeCounter += localmap.DecompressedSize;
 			}
 
+			//Add the trailing zero pages not written to file until the section size is reached
+			while (decompressSizeCounter < descriptor.CompressedSize)
+			{
+				descriptor.LocalSections.Add(new DwgLocalSectionMap
+				{
+					IsEmpty = true,
+					Offset = decompressSizeCounter,
+					CompressedSize = 0,
+					DecompressedSize = descriptor.DecompressedSize
+				});
+				decompressSizeCounter += descriptor.DecompressedSize;
+			}
+
 			//Get the final size for the local section
 			uint sizeLeft = (uint)(descriptor.CompressedSize % descriptor.DecompressedSize);
 			if (sizeLeft > 0U && descriptor.LocalSections.Count > 0)
@@ -1245,18 +1258,21 @@ public class DwgReader : CadReaderBase<DwgReaderConfiguration>
 	{
 		this._fileHeader = this._fileHeader ?? this.readFileHeader();
 
-		if (this._fileHeader.AcadVersion < ACadVersion.AC1018)
+		IDwgStreamReader sreader = this.getSectionStream(DwgSectionDefinition.Template);
+		if (sreader == null)
 			return;
 
-		IDwgStreamReader sreader = this.getSectionStream(DwgSectionDefinition.Template);
-		if (sreader == null || sreader.Stream.Length < 4) // The section is often empty
+		long sectionSize = this._fileHeader is DwgFileHeaderAC15 header15
+			? header15.Records[DwgSectionDefinition.GetSectionLocatorByName(DwgSectionDefinition.Template).Value].Size
+			: sreader.Stream.Length;
+		if (sectionSize < 4)
 			return;
 
 		// Template description string length in bytes (the ODA always writes 0 here)
-		short descriptionLength = sreader.ReadShort();
+		short descriptionLength = (short) (sreader.ReadShort() * (this._fileHeader.AcadVersion >= ACadVersion.AC1021 ? 2 : 1));
 		if (descriptionLength > 0)
 		{
-			if (sreader.Stream.Length < 4 + descriptionLength)
+			if (sectionSize < 4 + descriptionLength)
 				return;
 
 			//Skip the description string when present
