@@ -1,4 +1,4 @@
-﻿namespace ACadSharp;
+namespace ACadSharp;
 
 public static class DxfFileToken
 {
@@ -310,7 +310,7 @@ public static class DxfFileToken
 
 	public const string ObjectTableRowBegin = "TABLEROW_BEGIN";
 
-	public const string ObjectTableRowEnd = "TABLEOW_END";
+	public const string ObjectTableRowEnd = "TABLEROW_END";
 
 	public const string ObjectTableStyle = "TABLESTYLE";
 

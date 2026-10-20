@@ -24,7 +24,7 @@ namespace ACadSharp.IO.DXF
 			this.writeTable(this._document.UCSs);
 			this.writeTable(this._document.AppIds);
 			this.writeTable(this._document.DimensionStyles, DxfSubclassMarker.DimensionStyleTable);
-			this.writeTable(this._document.BlockRecords, writeFlags: false);
+			if (this.Version > ACadVersion.AC1009) this.writeTable(this._document.BlockRecords, writeFlags: false);
 		}
 
 		private void writeTable<T>(Table<T> table, string subclass = null, bool writeFlags = true)
@@ -116,7 +116,7 @@ namespace ACadSharp.IO.DXF
 					throw new NotImplementedException($"TableEntry not implemented {entry.GetType().FullName}");
 			}
 
-			this.writeExtendedData(entry.ExtendedData);
+			this.writeExtendedData(entry is TextStyle fontStyle ? TextStyleExtendedData.ForWrite(fontStyle) : entry.ExtendedData);
 		}
 
 		private void writeBlockRecord(BlockRecord block, DxfClassMap map)

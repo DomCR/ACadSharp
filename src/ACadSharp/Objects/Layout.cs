@@ -316,7 +316,7 @@ public class Layout : PlotSettings, IDxfClassDefined
 
 		if (this.AssociatedBlock != null)
 		{
-			doc.BlockRecords.Add(this.AssociatedBlock);
+			if (this.AssociatedBlock.Document != doc) doc.BlockRecords.Add(this.AssociatedBlock);
 			doc.BlockRecords.OnRemove += this.onRemoveBlockRecord;
 		}
 	}

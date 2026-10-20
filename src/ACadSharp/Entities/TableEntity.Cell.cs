@@ -1,4 +1,4 @@
-﻿using ACadSharp.Attributes;
+using ACadSharp.Attributes;
 using System.Collections.Generic;
 using System.Linq;
 using static ACadSharp.Objects.TableStyle;
@@ -9,6 +9,25 @@ public partial class TableEntity
 {
 	public partial class Cell
 	{
+		/// <summary>Referenced legacy cell value.</summary>
+		public CadObject Value { get; set; }
+		/// <summary>Legacy block cell attribute values.</summary>
+		public List<TableAttribute> Attributes { get; } = new();
+		/// <summary>Linked data object.</summary>
+		public CadObject DataLink { get; set; }
+		/// <summary>Number of linked rows.</summary>
+		public int LinkedRowCount { get; set; }
+		/// <summary>Number of linked columns.</summary>
+		public int LinkedColumnCount { get; set; }
+		/// <summary>Linked data flags.</summary>
+		public int LinkedDataFlags { get; set; }
+		/// <summary>Cell content geometry records.</summary>
+		public List<CellContentGeometry> GeometryCollection { get; } = new();
+		internal int GeometryFlags { get; set; }
+		internal double GeometryWidth { get; set; }
+		internal double GeometryHeight { get; set; }
+		internal CadObject GeometryReference { get; set; }
+
 		/// <summary>
 		/// Boolean flag indicating if the auto fit option is set for the cell.
 		/// </summary>

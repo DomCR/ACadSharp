@@ -8,6 +8,8 @@ internal abstract class DxfStreamWriterBase : IDxfStreamWriter
 {
 	public bool WriteOptional { get; set; } = false;
 
+	public bool LegacyR12 { get; set; }
+
 	public abstract void Close();
 
 	/// <inheritdoc/>
@@ -35,6 +37,10 @@ internal abstract class DxfStreamWriterBase : IDxfStreamWriter
 
 	public void Write(int code, object value, DxfClassMap map = null)
 	{
+		if (this.LegacyR12 && code >= 80 && code < 999
+			&& !(code >= 140 && code <= 149)
+			&& !(code >= 170 && code <= 179)
+			&& !(code >= 210 && code <= 239)) return;
 		if (value == null)
 		{
 			return;

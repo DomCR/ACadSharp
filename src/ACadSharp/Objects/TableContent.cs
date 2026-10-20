@@ -1,5 +1,6 @@
-﻿using ACadSharp.Attributes;
+using ACadSharp.Attributes;
 using ACadSharp.Classes;
+using System.Collections.Generic;
 
 namespace ACadSharp.Objects;
 
@@ -27,6 +28,9 @@ public class TableContent : FormattedTableData, IDxfClassDefined
 	public TableStyle Style { get; set; } = TableStyle.Default;
 
 	public TableStyle StyleOverride { get; set; }
+
+	/// <summary>Fields owned by the table content.</summary>
+	public List<Field> FieldReferences { get; } = new();
 
 	/// <inheritdoc/>
 	public DxfClass GetDxfClass()

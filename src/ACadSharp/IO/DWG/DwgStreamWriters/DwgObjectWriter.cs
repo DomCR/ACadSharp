@@ -1,4 +1,4 @@
-﻿using ACadSharp.Blocks;
+using ACadSharp.Blocks;
 using ACadSharp.Classes;
 using ACadSharp.Entities;
 using ACadSharp.Entities.AecEntities;
@@ -151,9 +151,6 @@ internal partial class DwgObjectWriter : DwgSectionIO
 			case TableEntity when !this.R2010Plus:
 			case Wall:
 			case MechanicalEntity:
-			case Solid3D:
-			case CadBody:
-			case Region:
 			case Surface:
 				this.notify($"Entity type not implemented {entity.GetType().FullName}", NotificationType.NotImplemented);
 				return false;
@@ -470,7 +467,7 @@ internal partial class DwgObjectWriter : DwgSectionIO
 		this._writer.Main.HandleReference(cadObject);
 
 		//Extended object data, if any
-		this.writeExtendedData(cadObject.ExtendedData);
+		this.writeExtendedData(cadObject is TextStyle style ? TextStyleExtendedData.ForWrite(style) : cadObject.ExtendedData);
 	}
 
 	private void writeCommonEntityData(Entity entity)
@@ -529,7 +526,7 @@ internal partial class DwgObjectWriter : DwgSectionIO
 			this._writer.SavePositonForSize();
 
 		//[Owner ref handle (soft pointer)]
-		this._writer.HandleReference(DwgReferenceType.SoftPointer, cadObject.Owner.Handle);
+		this._writer.HandleReference(DwgReferenceType.SoftPointer, cadObject.Owner);
 
 		//write the cad object reactors
 		this.writeReactorsAndDictionaryHandle(cadObject);
@@ -914,7 +911,7 @@ internal partial class DwgObjectWriter : DwgSectionIO
 			//Isbylayerlt B 1 if bylayer linetype, else 0
 			bool isbylayerlt = entity.LineType.Name == LineType.ByLayerName;
 			this._writer.WriteBit(isbylayerlt);
-			if (isbylayerlt)
+			if (!isbylayerlt)
 				//6 [LTYPE (hard pointer)] (present if Isbylayerlt is 0)
 				this._writer.HandleReference(DwgReferenceType.HardPointer, entity.LineType);
 		}
@@ -1177,11 +1174,11 @@ internal partial class DwgObjectWriter : DwgSectionIO
 						}
 						else
 						{
-							var encodingIndex = CadUtils.GetCodeIndex((CSUtilities.Text.CodePage)this._writer.Encoding.CodePage);
-							byte[] bytes = this._writer.Encoding.GetBytes(string.IsNullOrEmpty(str.Value) ? string.Empty : str.Value);
-
-							mstream.Write(LittleEndianConverter.Instance.GetBytes((ushort)str.Value.Length), 0, 2);
-							mstream.WriteByte((byte)encodingIndex);
+							byte[] bytes = this._writer.Encoding.GetBytes(str.Value ?? string.Empty);
+							if (bytes.Length > byte.MaxValue)
+								throw new InvalidDataException("Legacy extended data strings cannot exceed 255 encoded bytes.");
+							mstream.WriteByte((byte)bytes.Length);
+							mstream.Write(BigEndianConverter.Instance.GetBytes((ushort)CadUtils.GetCodeIndex((CSUtilities.Text.CodePage)this._writer.Encoding.CodePage)), 0, 2);
 							mstream.Write(bytes, 0, bytes.Length);
 						}
 						break;
@@ -1473,7 +1470,7 @@ internal partial class DwgObjectWriter : DwgSectionIO
 		if (this.R2013Plus)
 		{
 			//Has DS binary data B If 1 then this object has associated binary data stored in the data store
-			this._writer.WriteBit(false);
+			this._writer.WriteBit(cadObject is ModelerGeometry geometry && geometry.AcisData?.Length > 0);
 		}
 
 		if (!noDictionary)

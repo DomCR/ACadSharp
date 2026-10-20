@@ -1,4 +1,4 @@
-﻿using ACadSharp.Tables;
+using ACadSharp.Tables;
 using static ACadSharp.Objects.TableStyle;
 
 namespace ACadSharp.IO.Templates;
@@ -18,7 +18,7 @@ internal partial class CadTableStyleTemplate
 			this.Format = format;
 		}
 
-		public void Build(CadDocumentBuilder builder)
+		public virtual void Build(CadDocumentBuilder builder)
 		{
 			if (builder.TryGetCadObject(this.TextStyleHandle, out TextStyle textStyle) 
 				|| builder.TryGetTableEntry(this.TextStyleName, out textStyle))

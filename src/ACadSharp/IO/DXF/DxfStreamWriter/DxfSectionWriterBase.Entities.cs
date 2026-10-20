@@ -13,9 +13,20 @@ namespace ACadSharp.IO.DXF;
 
 internal abstract partial class DxfSectionWriterBase
 {
+	private static readonly System.Collections.Generic.HashSet<string> _r12EntityNames = new(StringComparer.Ordinal)
+	{
+		"LINE", "CIRCLE", "ARC", "POINT", "TEXT", "ATTRIB", "ATTDEF", "INSERT",
+		"POLYLINE", "VERTEX", "SEQEND", "3DFACE", "SOLID", "TRACE", "SHAPE", "DIMENSION", "VIEWPORT"
+	};
+
 	protected void writeEntity<T>(T entity)
 		where T : Entity
 	{
+		if (this.Version <= ACadVersion.AC1009 && entity is LwPolyline legacyPolyline)
+		{
+			this.writeR12LwPolyline(legacyPolyline);
+			return;
+		}
 		if (!this.isEntitySupported(entity))
 		{
 			return;
@@ -142,8 +153,38 @@ internal abstract partial class DxfSectionWriterBase
 		this.writeExtendedData(entity.ExtendedData);
 	}
 
+	private void writeR12LwPolyline(LwPolyline polyline)
+	{
+		this._writer.Write(0, "POLYLINE");
+		this.writeCommonObjectData(polyline);
+		this.writeCommonEntityData(polyline);
+		this._writer.Write(66, 1);
+		this._writer.Write(70, (short)polyline.Flags);
+		this._writer.Write(10, new XYZ(0, 0, polyline.Elevation));
+		this._writer.Write(39, polyline.Thickness);
+		this._writer.Write(210, polyline.Normal);
+		this.writeExtendedData(polyline.ExtendedData);
+		foreach (var vertex in polyline.Vertices)
+		{
+			this._writer.Write(0, "VERTEX");
+			this._writer.Write(8, polyline.Layer.Name);
+			this._writer.Write(10, new XYZ(vertex.Location.X, vertex.Location.Y, 0));
+			this._writer.Write(70, 0);
+			this._writer.Write(40, polyline.ConstantWidth != 0 ? polyline.ConstantWidth : vertex.StartWidth);
+			this._writer.Write(41, polyline.ConstantWidth != 0 ? polyline.ConstantWidth : vertex.EndWidth);
+			this._writer.Write(42, vertex.Bulge);
+		}
+		this._writer.Write(0, "SEQEND");
+		this._writer.Write(8, polyline.Layer.Name);
+	}
+
 	private bool isEntitySupported(Entity entity)
 	{
+		if (this.Version <= ACadVersion.AC1009 && !_r12EntityNames.Contains(entity.ObjectName))
+		{
+			this.notify($"Entity {entity.ObjectName} is not supported by R12 DXF.", NotificationType.NotImplemented);
+			return false;
+		}
 		if (!entity.IsValid(CadFileFormat.DXF, this.Version))
 		{
 			this.notify($"Invalid entity {entity.GetType().FullName} with handle {entity.Handle}", NotificationType.Warning);
@@ -1195,7 +1236,7 @@ internal abstract partial class DxfSectionWriterBase
 		if (polyline is PolygonMesh polygon)
 		{
 			this._writer.WriteIfNotDefault(71, polygon.MVertexCount, 0, map);
-			this._writer.WriteIfNotDefault(72, polygon.MVertexCount, 0, map);
+			this._writer.WriteIfNotDefault(72, polygon.NVertexCount, 0, map);
 			this._writer.WriteIfNotDefault(73, polygon.MSmoothSurfaceDensity, 0, map);
 			this._writer.WriteIfNotDefault(74, polygon.NSmoothSurfaceDensity, 0, map);
 		}
@@ -1206,6 +1247,10 @@ internal abstract partial class DxfSectionWriterBase
 		}
 
 		this._writer.Write(210, polyline.Normal, map);
+		this._writer.Write(66, 1);
+		this._writer.Write(39, polyline.Thickness, map);
+		this._writer.Write(40, polyline.StartWidth, map);
+		this._writer.Write(41, polyline.EndWidth, map);
 
 		if (polyline.Vertices.Any())
 		{
@@ -1304,7 +1349,8 @@ internal abstract partial class DxfSectionWriterBase
 
 		this._writer.Write(40, shape.Size, map);
 
-		this._writer.WriteName(2, shape.ShapeStyle, map);
+		if (!string.IsNullOrEmpty(shape.ShapeName)) this._writer.Write(2, shape.ShapeName, map);
+		else this._writer.WriteName(2, shape.ShapeStyle, map);
 
 		this._writer.Write(50, shape.Rotation, map);
 

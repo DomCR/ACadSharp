@@ -1,4 +1,4 @@
-﻿using ACadSharp.Blocks;
+using ACadSharp.Blocks;
 using ACadSharp.Entities;
 using ACadSharp.Objects;
 using ACadSharp.Tables;
@@ -78,8 +78,8 @@ internal class CadBlockRecordTemplate : CadTableEntryTemplate<BlockRecord>, ICad
 				this.addEntity(builder, e);
 			}
 		}
-		else
 		{
+			// Explicit space entities can supplement the legacy first/last chain.
 			if (this.BlockEntityTemplate != null)
 			{
 				this.OwnedObjectsHandlers.UnionWith(this.BlockEntityTemplate.OwnedObjectsHandlers);
@@ -107,7 +107,7 @@ internal class CadBlockRecordTemplate : CadTableEntryTemplate<BlockRecord>, ICad
 			return;
 		}
 
-		this.CadObject.Entities.Add(entity);
+		if (entity.Owner != this.CadObject) this.CadObject.Entities.Add(entity);
 	}
 
 	private void ensureCorrectNaming(CadDocumentBuilder builder, ulong? handle, string expected)

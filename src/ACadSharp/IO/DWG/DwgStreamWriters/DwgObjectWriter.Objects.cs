@@ -1,4 +1,4 @@
-﻿using ACadSharp.Objects;
+using ACadSharp.Objects;
 using ACadSharp.Objects.AEC;
 using ACadSharp.Objects.Evaluations;
 using CSMath;
@@ -30,6 +30,13 @@ internal partial class DwgObjectWriter : DwgSectionIO
 
 	private bool skipEntry(NonGraphicalObject entry, out bool notify)
 	{
+		if (this.R2007Plus && entry is XRecord legacy
+			&& legacy.Entries.Count(e => e.Code == 102) == 1
+			&& legacy.Entries.Any(e => e.Code == 102 && e.Value as string == "ACAD_ROUNDTRIP_PRE2007_TABLESTYLE"))
+		{
+			notify = false;
+			return true;
+		}
 		if (!entry.IsValid(CadFileFormat.DWG, this._version))
 		{
 			notify = false;
@@ -49,9 +56,8 @@ internal partial class DwgObjectWriter : DwgSectionIO
 			case AecWallStyle:
 			case AecCleanupGroup:
 			case AecBinRecord:
-			case DimensionAssociation:
 			case UnknownNonGraphicalObject:
-			case VisualStyle:
+			case VisualStyle when !this.R2007Plus:
 			case ProxyObject:
 				return true;
 		}
@@ -412,7 +418,7 @@ internal partial class DwgObjectWriter : DwgSectionIO
 	private void writeBlockRepresentationData(BlockRepresentationData representation)
 	{
 		this._writer.WriteBitShort(representation.Version);
-		this._writer.HandleReference(DwgReferenceType.HardPointer, representation.Block);
+		this._writer.HandleReference(DwgReferenceType.HardOwnership, representation.Block);
 	}
 
 	private void writeBlockRotationAction(BlockRotationAction action)
@@ -582,8 +588,7 @@ internal partial class DwgObjectWriter : DwgSectionIO
 		//BL 92 Line weight
 		this._writer.WriteBitLong((int)border.LineWeight);
 		//H 40 Line type (hard pointer)
-		//this._writer.HandleReference(DwgReferenceType.HardPointer, border.LineType);
-		this._writer.HandleReference(DwgReferenceType.HardPointer, null);
+		this._writer.HandleReference(DwgReferenceType.HardPointer, border.LineType);
 		//BL 93 Invisibility: 1 = invisible, 0 = visible.
 		this._writer.WriteBitLong(border.IsInvisible ? 1 : 0);
 		//BD 40 Double line spacing
@@ -1737,6 +1742,7 @@ internal partial class DwgObjectWriter : DwgSectionIO
 
 	private void writeObject(NonGraphicalObject obj)
 	{
+		if (obj == null || this.Map.ContainsKey(obj.Handle)) return;
 		if (this.skipEntry(obj, out bool notify))
 		{
 			if (notify)
@@ -1921,6 +1927,9 @@ internal partial class DwgObjectWriter : DwgSectionIO
 			case FieldList fieldList:
 				this.writeFieldList(fieldList);
 				break;
+			case VisualStyle visualStyle:
+				DwgVisualStyle.Write(this._writer, this._version, visualStyle);
+				break;
 			case XRecord record:
 				this.writeXRecord(record);
 				break;
@@ -1951,15 +1960,36 @@ internal partial class DwgObjectWriter : DwgSectionIO
 		}
 	}
 
-	private void writeOsnapPointRef(DimensionAssociation.OsnapPointRef osnap)
+	private void writeOsnapPointRef(DimensionAssociation.OsnapPointRef osnap, int depth = 0)
 	{
-		//1
+		if (depth > 16) throw new InvalidDataException("Excessive nested dimension point references.");
+		osnap ??= new DimensionAssociation.OsnapPointRef();
 		this._writer.WriteVariableText(DimensionAssociation.OsnapPointRefClassName);
-
-		//72
 		this._writer.WriteByte((byte)osnap.ObjectOsnapType);
-		//331
-		this._writer.HandleReference(DwgReferenceType.Undefined, osnap.Geometry);
+		var geometry = osnap.GeometryPath.Count > 0 ? osnap.GeometryPath
+			: osnap.Geometry == null ? new List<CadObject>() : new List<CadObject> { osnap.Geometry };
+		this._writer.WriteBitLong(geometry.Count);
+		foreach (var obj in geometry) this._writer.HandleReference(DwgReferenceType.SoftPointer, obj);
+		if (osnap.ObjectOsnapType != ObjectOsnapType.None)
+		{
+			this._writer.WriteBitLong((int)osnap.SubentType);
+			this._writer.WriteBitLong(osnap.GsMarker);
+			this._writer.WriteBitLong(osnap.XrefPaths.Count);
+			foreach (var path in osnap.XrefPaths) this._writer.WriteVariableText(path);
+		}
+		this._writer.WriteBitDouble(osnap.GeometryParameter);
+		this._writer.Write3BitDouble(osnap.OsnapPoint);
+		if (osnap.ObjectOsnapType == ObjectOsnapType.Intersection || osnap.ObjectOsnapType == ObjectOsnapType.ApparentIntersection)
+		{
+			this._writer.WriteBitLong(osnap.IntersectionGeometry.Count);
+			foreach (var obj in osnap.IntersectionGeometry) this._writer.HandleReference(DwgReferenceType.HardPointer, obj);
+			this._writer.WriteBitLong((int)osnap.IntersectionSubType);
+			this._writer.WriteBitLong(osnap.IntersectionGsMarker);
+			this._writer.WriteBitLong(osnap.IntersectionXrefPaths.Count);
+			foreach (var path in osnap.IntersectionXrefPaths) this._writer.WriteVariableText(path);
+		}
+		this._writer.WriteBit(osnap.HasLastPointRef);
+		if (osnap.HasLastPointRef) this.writeOsnapPointRef(osnap.LastPointRef, depth + 1);
 	}
 
 	private void writeParameterValueSet(ParameterValueSet valueSet)
@@ -2220,6 +2250,7 @@ internal partial class DwgObjectWriter : DwgSectionIO
 		if (string.IsNullOrEmpty(value))
 		{
 			this._writer.WriteBitLong(0);
+			return;
 		}
 
 		byte[] bytes;
@@ -2268,7 +2299,24 @@ internal partial class DwgObjectWriter : DwgSectionIO
 
 	private void writeTableStyle(TableStyle tableStyle)
 	{
-		if (this.R2007Pre)
+		if (this.R2007Plus)
+		{
+			var legacy = tableStyle.XDictionary?.GetEntry<XRecord>("ACAD_XREC_ROUNDTRIP");
+			if (legacy != null && legacy.Entries.Any(e => e.Code == 102 && e.Value as string == "ACAD_ROUNDTRIP_PRE2007_TABLESTYLE"))
+			{
+				var styles = new[] { tableStyle.DataCellStyle, tableStyle.TitleCellStyle, tableStyle.HeaderCellStyle };
+				for (int i = 0; i < styles.Length; i++)
+				{
+					object type = legacy.Entries.FirstOrDefault(e => e.Code == 90 + i * 2)?.Value;
+					object unit = legacy.Entries.FirstOrDefault(e => e.Code == 91 + i * 2)?.Value;
+					object format = legacy.Entries.FirstOrDefault(e => e.Code == 1 + i)?.Value;
+					if (type is int dataType) styles[i].ValueDataType = dataType;
+					if (unit is int unitType) styles[i].ValueUnitType = unitType;
+					if (format is string text) styles[i].ValueFormatString = text;
+				}
+			}
+		}
+		if (!this.R2010Plus)
 		{
 			//TABLESTYLE format until R21
 			//Common:
@@ -2419,14 +2467,7 @@ internal partial class DwgObjectWriter : DwgSectionIO
 					break;
 				case GroupCodeValueType.Handle:
 					var obj = entry.GetReference();
-					if (obj == null)
-					{
-						this.writeStringInStream(ms, string.Empty);
-					}
-					else
-					{
-						this.writeStringInStream(ms, obj.Handle.ToString("X", CultureInfo.InvariantCulture));
-					}
+					ms.Write<ulong>(obj?.Handle ?? 0);
 					break;
 				case GroupCodeValueType.String:
 				case GroupCodeValueType.ExtendedDataString:

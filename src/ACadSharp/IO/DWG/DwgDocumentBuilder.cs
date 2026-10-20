@@ -1,6 +1,7 @@
-﻿using ACadSharp.Entities;
+using ACadSharp.Entities;
 using ACadSharp.IO.Templates;
 using System.Collections.Generic;
+using System.Linq;
 
 namespace ACadSharp.IO.DWG;
 
@@ -38,6 +39,9 @@ internal class DwgDocumentBuilder : CadDocumentBuilder
 			item.SetBlockToRecord(this, this.HeaderHandles);
 		}
 
+		this.attachSpaceEntities(this.HeaderHandles.MODEL_SPACE, this.ModelSpaceEntities);
+		this.attachSpaceEntities(this.HeaderHandles.PAPER_SPACE, this.PaperSpaceEntities);
+
 		this.RegisterTables();
 
 		this.BuildTables();
@@ -48,4 +52,16 @@ internal class DwgDocumentBuilder : CadDocumentBuilder
 
 		this.HeaderHandles.UpdateHeader(this.DocumentToBuild.Header, this);
 	}
+	private void attachSpaceEntities(ulong? handle, List<Entity> entities)
+	{
+		if (!handle.HasValue || handle == 0 || entities.Count == 0) return;
+		var space = this.BlockRecordTemplates.FirstOrDefault(t => t.CadObject.Handle == handle);
+		if (space == null)
+		{
+			this.Notify($"Block record {handle} for {entities.Count} explicit space entities was not found.", NotificationType.Warning);
+			return;
+		}
+		foreach (var entity in entities) space.OwnedObjectsHandlers.Add(entity.Handle);
+	}
+
 }
