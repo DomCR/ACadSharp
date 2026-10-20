@@ -2227,6 +2227,8 @@ internal class DxfObjectsSectionReader : DxfSectionReaderBase
 		{
 			case DxfFileToken.BlkRefObjectContextData:
 				return this.readObjectCodes<BlockReferenceObjectContextData>(new CadAnnotScaleObjectContextDataTemplate(new BlockReferenceObjectContextData()), this.readAnnotScaleObjectContextData);
+			case DxfFileToken.TextObjectContextData:
+				return this.readObjectCodes<TextObjectContextData>(new CadAnnotScaleObjectContextDataTemplate(new TextObjectContextData()), this.readAnnotScaleObjectContextData);
 			case DxfFileToken.MTextAttributeObjectContextData:
 				return this.readObjectCodes<MTextAttributeObjectContextData>(new CadAnnotScaleObjectContextDataTemplate(new MTextAttributeObjectContextData()), this.readAnnotScaleObjectContextData);
 			case DxfFileToken.ObjectPlaceholder:
