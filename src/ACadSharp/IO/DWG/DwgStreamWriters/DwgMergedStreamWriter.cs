@@ -187,6 +187,15 @@ namespace ACadSharp.IO.DWG
 			//&2 => book name follows(TV))
 		}
 
+		/// <summary>
+		/// Table cell / table-level override colors always write a full CMC regardless of file version,
+		/// consistent with the useTextStream branch of <see cref="WriteCmColor(Color, bool)"/>.
+		/// </summary>
+		public void WriteCmColorR2004(Color value)
+		{
+			this.WriteCmColor(value, true);
+		}
+
 		public void WriteEnColor(Color color, Transparency transparency)
 		{
 			this.Main.WriteEnColor(color, transparency);

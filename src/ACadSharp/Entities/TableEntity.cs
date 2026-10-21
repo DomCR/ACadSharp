@@ -1,8 +1,9 @@
-﻿using ACadSharp.Attributes;
+using ACadSharp.Attributes;
 using ACadSharp.Classes;
 using ACadSharp.Objects;
 using ACadSharp.Tables;
 using CSMath;
+using CSMath.Extensions;
 using System;
 using System.Collections.Generic;
 
@@ -181,4 +182,117 @@ public partial class TableEntity : Insert, IDxfClassDefined
 	/// Use this to set table-level overrides such as flow direction (FlowDirectionBottomToTop).
 	/// </summary>
 	public TableStyle.CellStyle CellStyleOverride { get { return this.Content.CellStyleOverride; } }
+
+	/// <inheritdoc/>
+	/// <remarks>
+	/// AutoCAD TransformBy semantics (verified value-by-value against the sample_VBAtransformed.dwg baseline):
+	/// - the insertion point is moved by the full transform;
+	/// - rotation and scale are "baked" into the anonymous block's content: each entity in the block is
+	///   transformed about the block origin by the linear part (without translation)
+	///   (MText alignment point/height/width in the block, Solid corner points, and Line endpoints all behave this way);
+	/// - the table's own Rotation keeps its original value (0 stays 0), and the referenced XScale/YScale/ZScale also keep
+	///   their original values (all are 1 in the baseline file) — rotation is reflected in the block geometry and the HorizontalDirection vector;
+	/// - the horizontal direction vector is rotated by the linear part only, unaffected by translation;
+	/// - column widths and row heights are scaled by the scale factor (60 -> 59.88, i.e. 60 x 0.998);
+	/// - the transparency of entities in the block is normalized to ByBlock (in the baseline file the block's Solid/MText are all
+	///   (ByBlock, 100); the source file has (ByLayer, -1)/(ByBlock, 0)).
+	/// </remarks>
+	public override void ApplyTransform(Transform transform)
+	{
+		// [PATCH] The base Insert.ApplyTransform adds the transform rotation to Rotation and multiplies the
+		// scale into XScale/YScale/ZScale; but AutoCAD does not do this for tables (in the baseline file Rotation=0,
+		// xscale=yscale=1 all keep their original values), rotation/scale are baked into the block content. Record the original values first, restore them after the base runs.
+		double originalRotation = this.Rotation;
+		double originalXScale = this.XScale;
+		double originalYScale = this.YScale;
+		double originalZScale = this.ZScale;
+		base.ApplyTransform(transform);
+		this.Rotation = originalRotation;
+		this.XScale = originalXScale;
+		this.YScale = originalYScale;
+		this.ZScale = originalZScale;
+
+		// Horizontal direction vector: rotation only, unaffected by translation
+		XYZ dir = this.HorizontalDirection;
+		if (dir != XYZ.Zero)
+		{
+			this.HorizontalDirection = transform.ApplyRotation(dir);
+		}
+
+		// Scale factor: take the average scale over the axes
+		XYZ sc = transform.Scale;
+		double uniform = (Math.Abs(sc.X) + Math.Abs(sc.Y) + Math.Abs(sc.Z)) / 3.0;
+		if (uniform.IsZero())
+		{
+			uniform = MathHelper.Epsilon;
+		}
+
+		// Column widths and row heights are scaled by the scale factor
+		foreach (var column in this.Columns)
+		{
+			column.Width *= uniform;
+		}
+		foreach (var row in this.Rows)
+		{
+			row.Height *= uniform;
+		}
+
+		// [PATCH] When AutoCAD transforms a table it materializes the effective text height of each row's cells as cell-level
+		// style overrides and scales them uniformly (verified value-by-value against sample_VBAtransformed.dwg: title row
+		// 6.0 -> 5.988, data rows 4.5 -> 4.491; HasData stays false). Row assignment rule:
+		// first row is the title style, second row is the header style, the rest are the data style.
+		TableStyle tstyle = this.Style;
+		if (tstyle != null)
+		{
+			bool hasTitle = !tstyle.SuppressTitle;
+			bool hasHeader = !tstyle.SuppressHeaderRow;
+			int rowIdx = 0;
+			foreach (var row in this.Rows)
+			{
+				TableStyle.CellStyle cs;
+				if (hasTitle && rowIdx == 0)
+				{
+					cs = tstyle.TitleCellStyle;
+				}
+				else if (hasHeader && rowIdx == (hasTitle ? 1 : 0))
+				{
+					cs = tstyle.HeaderCellStyle;
+				}
+				else
+				{
+					cs = tstyle.DataCellStyle;
+				}
+
+				if (cs != null && cs.TextHeight > 0)
+				{
+					double h = cs.TextHeight * uniform;
+					foreach (var cell in row.Cells)
+					{
+						cell.StyleOverride.TextHeight = h;
+					}
+				}
+
+				rowIdx++;
+			}
+		}
+
+		// [PATCH] Bake rotation and scale into the anonymous block content: each entity in the block is
+		// transformed about the block origin by the linear part (without translation); and the transparency of entities in the block is normalized to ByBlock.
+		if (this.Block != null)
+		{
+			Matrix4 m = transform.Matrix;
+			Matrix4 linear = new Matrix4(
+				m.M00, m.M10, m.M20, 0,
+				m.M01, m.M11, m.M21, 0,
+				m.M02, m.M12, m.M22, 0,
+				0, 0, 0, 1);
+			Transform local = new Transform(linear);
+
+			foreach (Entity e in this.Block.Entities)
+			{
+				e.ApplyTransform(local);
+				e.Transparency = Transparency.ByBlock;
+			}
+		}
+	}
 }

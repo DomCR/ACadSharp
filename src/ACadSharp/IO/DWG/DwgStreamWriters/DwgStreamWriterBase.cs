@@ -267,9 +267,24 @@ namespace ACadSharp.IO.DWG
 				return;
 			}
 
+			//[EXP] TV null-termination experiment switch (1 = fixed BS(len+1)+chars+0x00, 0 = old form BS(len)+chars)
+			if (Environment.GetEnvironmentVariable("ACADSHARP_TV_NULL") == "0")
+			{
+				byte[] oldBytes = this.Encoding.GetBytes(value);
+				this.WriteBitShort((short)oldBytes.Length);
+				this.WriteBytes(oldBytes);
+				return;
+			}
+
+			//[FIX] AutoCAD native form: the length field includes the trailing null, and the string is terminated with 0x00.
+			//Previously written as BS(len)+chars (no null), which caused external parsers (ODA/AutoCAD/libredwg)
+			//to fail reading TV (e.g. the anonymous cache block name *T was read as empty, invalidating TABLE entity references).
 			byte[] bytes = this.Encoding.GetBytes(value);
-			this.WriteBitShort((short)bytes.Length);
+			this.WriteBitShort((short)(bytes.Length + 1));
 			this.WriteBytes(bytes);
+			//[FIX] The null must go through the bit writer: writing directly to the raw Stream bypasses the bit buffer,
+			//corrupting the entire bitstream alignment when the string sits in the middle of a byte (class/header TV all misaligned)
+			this.WriteByte(0);
 		}
 
 		public virtual void WriteTextUnicode(string value)
@@ -377,6 +392,42 @@ namespace ACadSharp.IO.DWG
 			}
 
 			this.WriteBitShort(index);
+		}
+
+		/// <summary>
+		/// Writes a full R2004+-style CMC (BS index + BL rgb + RC flag).
+		/// [FIX] Table cell / table-level override color fields always use the full CMC regardless of target file version:
+		/// the libredwg CMTC macro enforces R_2004 semantics, and AutoCAD native R2000 reference files measured
+		/// to have all cell colors as BS 0 + BL 0xC3xx0000|index + RC 0.
+		/// Previously written as a single BS field, which caused an ODA bitstream misalignment reporting
+		/// "&lt;AcDbTable&gt; Object improperly read", and AutoCAD crashed on open.
+		/// </summary>
+		public virtual void WriteCmColorR2004(Color value)
+		{
+			uint rgb;
+			short index = 0;
+			if (value.IsByLayer)
+			{
+				rgb = 0xC0000000;
+				index = 256;
+			}
+			else if (value.IsByBlock)
+			{
+				rgb = 0xC1000000;
+			}
+			else if (value.IsTrueColor)
+			{
+				rgb = 0xC2000000u | ((uint)value.TrueColor & 0xFFFFFF);
+			}
+			else
+			{
+				// Consistent with AutoCAD native files: rgb = 0xC3000000 | ACI index
+				rgb = 0xC3000000u | ((uint)(value.Index & 0xFF));
+			}
+
+			this.WriteBitShort(index);
+			this.WriteBitLong((int)rgb);
+			this.WriteByte(0);
 		}
 
 		public virtual void WriteEnColor(Color color, Transparency transparency)

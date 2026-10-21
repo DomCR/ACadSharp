@@ -1,4 +1,4 @@
-﻿using ACadSharp.Blocks;
+using ACadSharp.Blocks;
 using ACadSharp.Classes;
 using ACadSharp.Entities;
 using ACadSharp.Entities.AecEntities;
@@ -14,6 +14,7 @@ using System.Collections.Generic;
 using System.IO;
 using System.Linq;
 using System.Text;
+using System.Threading.Tasks;
 
 namespace ACadSharp.IO.DWG;
 
@@ -55,11 +56,40 @@ internal partial class DwgObjectWriter : DwgSectionIO
 
 	private IDwgStreamWriter _writer;
 
+	// [PATCH] P0 object-level dirty tracking: when non-null, only serialize dirty handles (and new objects not present in the patch source);
+	// the remaining objects skip serialization and are reused as original bytes by the incremental writer from the patch source.
+	private HashSet<ulong> _dirtyHandles;
+
+	// [PATCH] Set of handles for objects that already exist in the patch source (containing this object enables dirty-tracking mode).
+	private HashSet<ulong> _existingHandles;
+
+	// [PATCH] P2 block-entity parallel serialization: whether it is enabled (set by DwgWriter based on configuration and version gating).
+	// Only effective for R2004+(AC1018+) and non-streaming, non-P0 dirty-tracking mode — R2004+ does not write the prev/next chain,
+	// so a single-entity serialization is fully self-contained (depends only on the entity and its subtree), and concatenating in the original order is byte-for-byte identical to the sequential path.
+	internal bool _parallelSerialize;
+
+	// [PATCH] P2: dynamic enqueues (XDictionary, DefinitionReactor, etc.) captured by the worker instance while serializing a batch,
+	// for the main thread to replay in batch/entity order, guaranteeing queue order consistent with the sequential path.
+	internal List<NonGraphicalObject> _capturedEnqueues = new List<NonGraphicalObject>();
+
+	// [PATCH] P2: the worker instance only captures enqueues, does not enqueue (the main thread replays and enqueues uniformly in order).
+	internal bool _captureEnqueuesOnly;
+
+	// [PATCH] P2: worker notification forwarding lock (multi-threaded concurrent forwarding to the main instance event, avoiding subscriber races).
+	private readonly object _p2NotifyLock = new object();
+
+	// [PATCH] Save-progress state: created by the main instance and distributed to P2 workers only when DwgWriter.OnSaveProgress has subscribers;
+	// by default null (writeEntity's _saveProgress?.ReportEntity() is a no-op), so zero overhead.
+	// Counting, throttling, and callback firing all happen within this shared state (Interlocked thread-safe).
+	internal DwgSaveProgressState _saveProgress;
+
 	public DwgObjectWriter(Stream stream, CadDocument document, Encoding encoding,
 		bool writeXRecords = true,
 		bool writeXData = true,
 		bool writeShapes = true,
-		bool writeDynamicParameters = true) : base(document.Header.Version)
+		bool writeDynamicParameters = true,
+		HashSet<ulong> dirtyHandles = null,
+		HashSet<ulong> existingHandles = null) : base(document.Header.Version)
 	{
 		this._stream = stream;
 		this._document = document;
@@ -70,10 +100,37 @@ internal partial class DwgObjectWriter : DwgSectionIO
 		this.WriteXData = writeXData;
 		this.WriteShapes = writeShapes;
 		this.WriteDynamicParameters = writeDynamicParameters;
+		this._dirtyHandles = dirtyHandles;
+		this._existingHandles = existingHandles;
+	}
+
+	/// <summary>
+	/// [PATCH] P0 dirty-tracking skip decision: an object can skip serialization when it has not been declared dirty and its original bytes exist in the patch source.
+	/// An object whose handle is not in the patch source (a new object) must be serialized even if not declared, otherwise data is lost.
+	/// </summary>
+	private bool skipClean(CadObject cadObject)
+	{
+		if (this._existingHandles == null || cadObject == null)
+		{
+			return false;
+		}
+
+		ulong handle = cadObject.Handle;
+		if (!this._existingHandles.Contains(handle))
+		{
+			//New object: must serialize
+			return false;
+		}
+
+		return this._dirtyHandles == null || !this._dirtyHandles.Contains(handle);
 	}
 
 	public void Write()
 	{
+		//R2000 and earlier: synthesize the private roundtrip structure (XRecord + extension dictionary + EED) for gradient fills,
+		//so the R2004+ → R2000 conversion preserves the gradient colors (no native 450-470 fields to write).
+		this.writeR2000GradientRoundTrips();
+
 		//For R18 and later the section data (right after the page header) starts with a
 		//RL value of 0x0dca (meaning unknown).
 		if (this.R2004Plus)
@@ -106,6 +163,14 @@ internal partial class DwgObjectWriter : DwgSectionIO
 
 	private void enqueueValidObject(NonGraphicalObject obj)
 	{
+		// [PATCH] P2: the worker instance only captures enqueues, does not enqueue (the main thread replays uniformly in entity order,
+		// guaranteeing queue order consistent with the sequential path).
+		if (this._captureEnqueuesOnly)
+		{
+			this._capturedEnqueues.Add(obj);
+			return;
+		}
+
 		this._objects.Enqueue(obj);
 	}
 
@@ -148,7 +213,9 @@ internal partial class DwgObjectWriter : DwgSectionIO
 				return false;
 			case Shape:
 				return this.WriteShapes;
-			case TableEntity when !this.R2010Plus:
+			// [PATCH] TableEntity is no longer rejected for pre-R2010 (AC1018 and earlier):
+			// writeTableEntityR2004 now serializes the inlined R2004 table data (see
+			// DwgObjectWriter.Entities.cs), so tables round-trip in R2004 DWGs.
 			case Wall:
 			case MechanicalEntity:
 			case Solid3D:
@@ -212,6 +279,12 @@ internal partial class DwgObjectWriter : DwgSectionIO
 
 	private void writeBlockBegin(Block block)
 	{
+		// [PATCH] P0 dirty tracking: skip serialization for unmodified objects whose patch source has original bytes
+		if (this.skipClean(block))
+		{
+			return;
+		}
+
 		this.writeCommonEntityData(block);
 
 		//Common:
@@ -223,41 +296,76 @@ internal partial class DwgObjectWriter : DwgSectionIO
 
 	private void writeBlockControl()
 	{
-		this.writeCommonNonEntityData(this._document.BlockRecords);
-
-		//Common:
-		//Numentries BL 70 Doesn't count *MODEL_SPACE and *PAPER_SPACE.
-		this._writer.WriteBitLong(this._document.BlockRecords.Count - 2);
-
-		foreach (var item in this._document.BlockRecords)
+		// [PATCH] P0 dirty tracking: an unmodified block control object skips serialization, the entry loop still runs
+		// (each BlockRecord decides dirty/clean independently, and its child-entity cache is used by writeBlockEntities)
+		if (!this.skipClean(this._document.BlockRecords))
 		{
-			if (item.Name.Equals(BlockRecord.ModelSpaceName, StringComparison.OrdinalIgnoreCase)
-				|| item.Name.Equals(BlockRecord.PaperSpaceName, StringComparison.OrdinalIgnoreCase))
+			this.writeCommonNonEntityData(this._document.BlockRecords);
+
+			//Common:
+			//Numentries BL 70 Doesn't count *MODEL_SPACE and *PAPER_SPACE.
+			this._writer.WriteBitLong(this._document.BlockRecords.Count - 2);
+
+			foreach (var item in this._document.BlockRecords)
 			{
-				continue;
+				if (item.Name.Equals(BlockRecord.ModelSpaceName, StringComparison.OrdinalIgnoreCase)
+					|| item.Name.Equals(BlockRecord.PaperSpaceName, StringComparison.OrdinalIgnoreCase))
+				{
+					continue;
+				}
+
+				//numentries handles of blockheaders in the file (soft owner)
+				this._writer.HandleReference(DwgReferenceType.SoftOwnership, item);
 			}
 
-			//numentries handles of blockheaders in the file (soft owner)
-			this._writer.HandleReference(DwgReferenceType.SoftOwnership, item);
+			//*MODEL_SPACE and *PAPER_SPACE(hard owner).
+			this._writer.HandleReference(DwgReferenceType.HardOwnership, this._document.ModelSpace);
+			this._writer.HandleReference(DwgReferenceType.HardOwnership, this._document.PaperSpace);
+
+			this.registerObject(this._document.BlockRecords);
 		}
-
-		//*MODEL_SPACE and *PAPER_SPACE(hard owner).
-		this._writer.HandleReference(DwgReferenceType.HardOwnership, this._document.ModelSpace);
-		this._writer.HandleReference(DwgReferenceType.HardOwnership, this._document.PaperSpace);
-
-		this.registerObject(this._document.BlockRecords);
 
 		this.writeEntries(this._document.BlockRecords);
 	}
 
 	private void writeBlockEnd(BlockEnd blkEnd)
 	{
+		// [PATCH] P0 dirty tracking: skip serialization for unmodified objects whose patch source has original bytes
+		if (this.skipClean(blkEnd))
+		{
+			return;
+		}
+
 		this.writeCommonEntityData(blkEnd);
 
 		this.registerObject(blkEnd);
 	}
 
 	private void writeBlockEntities()
+	{
+		// [PATCH] Save progress: preset denominator = total compatible entities across all blocks (writeEntity increments the numerator per entity).
+		// Computed only when OnSaveProgress is subscribed (_saveProgress non-null), zero overhead by default.
+		if (this._saveProgress != null)
+		{
+			int total = 0;
+			foreach (var arr in this._blockCompatibleEntities.Values)
+				total += arr?.Length ?? 0;
+			this._saveProgress.Total = total;
+		}
+
+		if (this._parallelSerialize)
+		{
+			this.writeBlockEntitiesParallel();
+			return;
+		}
+
+		this.writeBlockEntitiesSequential();
+	}
+
+	/// <summary>
+	/// Sequentially writes block entities (the original implementation; used when P2 is not enabled or as a fallback after a parallel failure).
+	/// </summary>
+	private void writeBlockEntitiesSequential()
 	{
 		foreach (BlockRecord blkRecord in this._document.BlockRecords)
 		{
@@ -272,6 +380,12 @@ internal partial class DwgObjectWriter : DwgSectionIO
 				Entity e = arr[i];
 				this._next = arr.ElementAtOrDefault(i + 1);
 
+				// [PATCH] Save progress: count at top-level entities (consistent with the Total
+				// preset by writeBlockEntities); entities skipped by skipClean are not counted — consistent with skipClean inside writeEntity.
+				// Child entities (attributes/vertices/Seqend) are written recursively by writeEntity, not double-counted here.
+				if (this._saveProgress != null && !this.skipClean(e))
+					this._saveProgress.ReportEntity();
+
 				this.writeEntity(e);
 			}
 
@@ -282,10 +396,226 @@ internal partial class DwgObjectWriter : DwgSectionIO
 		}
 	}
 
-	private void writeBlockHeader(BlockRecord record, out Entity[] entities)
+	/// <summary>
+	/// [PATCH] P2 entity-level parallel serialization: flatten all block entities (each block's BlockBegin + in-block entities + BlockEnd)
+	/// into a sequential entity list, split into contiguous batches, serialize each batch on an independent worker thread (an independent <see cref="DwgObjectWriter"/>
+	/// instance) into an independent buffer; the main thread concatenates bytes in the original order, remaps the handle graph offsets, and replays the dynamically enqueued objects in order.
+	/// <para>
+	/// Entity-level (rather than block-level) parallelism was chosen: in real large files the entities are often concentrated in the single *MODEL_SPACE block (e.g. BGDY
+	/// has only 150 blocks yet 1.89 million entities), so block-level parallelism has limited parallelism; entity-level batches by total count, parallelism = number of batches.
+	/// </para>
+	/// <para>
+	/// Enabled only for R2004+(AC1018+) and no patch source (pure full serialization) — this version does not write the prev/next chain
+	/// (see writeEntityMode's <c>if (!this.R2004Plus)</c>), a single-entity serialization is fully self-contained
+	/// (depends only on the entity and its subtree), and concatenating in the original order is byte-for-byte identical to the sequential path output (verifiable by MD5).
+	/// </para>
+	/// </summary>
+	private void writeBlockEntitiesParallel()
 	{
-		entities = this.getCompatibleEntities(record.Entities);
+		// ① Flatten into a sequential entity list (exactly matching the sequential path's write order):
+		//    each block = [BlockBegin] + in-block entities... + [BlockEnd]
+		var flat = new List<Entity>();
+		foreach (BlockRecord blkRecord in this._document.BlockRecords)
+		{
+			flat.Add(blkRecord.BlockEntity);
+			foreach (Entity e in this._blockCompatibleEntities[blkRecord])
+			{
+				flat.Add(e);
+			}
+			flat.Add(blkRecord.BlockEnd);
+		}
 
+		if (flat.Count == 0)
+		{
+			return;
+		}
+
+		// ② Contiguous batch splitting (the number of batches adapts to the total entity count: ~50k entities/batch, lower bound 4, upper bound 256).
+		int batchCount = flat.Count / 50000;
+		if (batchCount < 4)
+		{
+			batchCount = 4;
+		}
+		if (batchCount > 256)
+		{
+			batchCount = 256;
+		}
+		int batchSize = (flat.Count + batchCount - 1) / batchCount;
+
+		int actualBatches = (flat.Count + batchSize - 1) / batchSize;
+		var batchResults = new BlockBatchResult[actualBatches];
+		var tasks = new Task[actualBatches];
+
+		for (int b = 0; b < actualBatches; b++)
+		{
+			int start = b * batchSize;
+			int end = Math.Min(start + batchSize, flat.Count);
+			int count = end - start;
+
+			Entity[] batchEntities = new Entity[count];
+			for (int i = 0; i < count; i++)
+			{
+				batchEntities[i] = flat[start + i];
+			}
+
+			int bi = b;
+			tasks[b] = Task.Run(() =>
+			{
+				batchResults[bi] = this.serializeEntityBatch(batchEntities);
+			});
+		}
+
+		// ③ Wait for all batches to finish serializing. At this stage nothing has been written to the main _stream / Map / queue yet
+		//    (each worker uses its own buffer), so if any batch fails, we can safely fall back to the sequential path with no residual state.
+		long sectionStart = this._stream.Position;
+		try
+		{
+			Task.WaitAll(tasks);
+		}
+		catch (Exception ex)
+		{
+			// Parallel path failed (unsupported entity, etc.): at this point the main _stream position is still at sectionStart,
+			// and Map and the queue have not been modified by the parallel path, so just rerun the sequential path — behavior is identical to P2 not being enabled.
+			this.notify($"[P2] 并行序列化失败，回退顺序路径：{ex.Message}", NotificationType.Warning);
+			this._stream.Position = sectionStart;
+			this.writeBlockEntitiesSequential();
+			return;
+		}
+
+		// ④ All batches succeeded; the main thread assembles in the original order: concatenate bytes, remap handle graph offsets, replay enqueues in order.
+		//    Concatenating in order guarantees the physical byte order is exactly identical to the sequential path (R2004+ has no prev/next chain dependency),
+		//    and the output is byte-for-byte identical to the sequential path (verifiable by MD5).
+		long globalOffset = sectionStart;
+		for (int b = 0; b < actualBatches; b++)
+		{
+			BlockBatchResult r = batchResults[b];
+			if (r == null)
+			{
+				continue;
+			}
+
+			this._stream.Write(r.Bytes, 0, r.Bytes.Length);
+
+			// Remap the handle graph: the in-worker offset (the worker _stream starts from 0) + this batch's global start point in the main _stream.
+			foreach (KeyValuePair<ulong, long> kv in r.Map)
+			{
+				this.Map[kv.Key] = kv.Value + globalOffset;
+			}
+
+			// Replay the dynamically enqueued objects (XDictionary, DefinitionReactor, etc.) in order,
+			// keeping the queue order consistent with the sequential path.
+			foreach (NonGraphicalObject obj in r.CapturedEnqueues)
+			{
+				this._objects.Enqueue(obj);
+			}
+
+			globalOffset += r.Bytes.Length;
+			r.Bytes = null; // progressively release memory
+		}
+	}
+
+	/// <summary>
+	/// [PATCH] P2 the parallel serialization result for a single batch of entities.
+	/// </summary>
+	private sealed class BlockBatchResult
+	{
+		public byte[] Bytes;
+
+		public Dictionary<ulong, long> Map = new Dictionary<ulong, long>();
+
+		public List<NonGraphicalObject> CapturedEnqueues = new List<NonGraphicalObject>();
+	}
+
+	/// <summary>
+	/// [PATCH] P2 worker thread: serialize a batch of entities (including BlockBegin/BlockEnd/ordinary entities and their subtrees)
+	/// to an independent buffer using an independent <see cref="DwgObjectWriter"/> instance, returning the byte stream and the local handle graph.
+	/// <para>
+	/// The worker instance shares the same <see cref="CadDocument"/> (read-only) with the main instance, but owns independent
+	/// _stream / _msmain / _writer / Map state, so they do not interfere. Under R2004+ _prev/_next are always null.
+	/// </para>
+	/// </summary>
+	private BlockBatchResult serializeEntityBatch(Entity[] batchEntities)
+	{
+		var result = new BlockBatchResult();
+		var workerStream = new MemoryStream();
+		DwgObjectWriter worker = new DwgObjectWriter(
+			workerStream,
+			this._document,
+			this._writer.Encoding,
+			this.WriteXRecords,
+			this.WriteXData,
+			this.WriteShapes,
+			this.WriteDynamicParameters);
+
+		// The worker captures enqueues, does not enqueue. The worker directly serializes the entities passed in by the main thread (including
+		// BlockBegin/BlockEnd/ordinary entities); _blockCompatibleEntities is not needed (that is used by the main thread
+		// to read the in-block entity list when flattening).
+		worker._captureEnqueuesOnly = true;
+
+		// [PATCH] Shared save-progress state: the worker's writeEntity counts through this (Interlocked thread-safe),
+		// the same Total/Completed as the main instance, guaranteeing correct progress accumulation under parallelism.
+		worker._saveProgress = this._saveProgress;
+
+		// Notification forwarding: the worker's notify is forwarded to the main instance (via the main instance's inherited protected notify,
+		// which internally calls this.OnNotification?.Invoke, equivalent to subscribing directly). The lock serializes to avoid subscriber races.
+		worker.OnNotification += (s, e) =>
+		{
+			lock (this._p2NotifyLock)
+			{
+				this.notify(e.Message, e.NotificationType, e.Exception);
+			}
+		};
+
+		worker._prev = null;
+		worker._next = null;
+		foreach (Entity e in batchEntities)
+		{
+			worker._prev = null;
+			worker._next = null;
+			switch (e)
+			{
+				case Block b:
+					worker.writeBlockBegin(b);
+					break;
+				case BlockEnd be:
+					worker.writeBlockEnd(be);
+					break;
+				default:
+					// [PATCH] Save progress: count top-level entities (same basis as the sequential path), entities skipped by skipClean are not counted;
+					// child entities are written recursively by writeEntity, not double-counted. _saveProgress is Interlocked thread-safe.
+					if (this._saveProgress != null && !this.skipClean(e))
+						this._saveProgress.ReportEntity();
+					worker.writeEntity(e);
+					break;
+			}
+		}
+
+		long len = workerStream.Length;
+		result.Bytes = new byte[len];
+		workerStream.Position = 0;
+		int read = 0;
+		while (read < (int)len)
+		{
+			int n = workerStream.Read(result.Bytes, read, (int)len - read);
+			if (n <= 0)
+			{
+				break;
+			}
+			read += n;
+		}
+		result.Map = worker.Map;
+		result.CapturedEnqueues = worker._capturedEnqueues;
+
+		return result;
+	}
+
+	/// <summary>
+	/// [PATCH] Body of the block record header write (the entity set is precomputed by the caller).
+	/// Under P0 dirty tracking, even when a BlockRecord skips serialization the entity set must still be computed and cached
+	/// (<see cref="_blockCompatibleEntities"/> is used by writeBlockEntities).
+	/// </summary>
+	private void writeBlockHeaderCore(BlockRecord record, Entity[] entities)
+	{
 		this.writeCommonNonEntityData(record);
 
 		//Common:
@@ -293,6 +623,9 @@ internal partial class DwgObjectWriter : DwgSectionIO
 		if (record.Flags.HasFlag(BlockTypeFlags.Anonymous))
 		{
 			//Warning: anonymous blocks do not write the full name, only *{type character}
+			//[DBG] Anonymous block name write debugging
+			if (Environment.GetEnvironmentVariable("ACADSHARP_DBG_BH") == "1")
+				Console.Error.WriteLine($"[BH-DBG] handle={record.Handle:X} name='{record.Name}' len={record.Name?.Length} anon={record.Flags.HasFlag(BlockTypeFlags.Anonymous)}");
 			this._writer.WriteVariableText(record.Name.Substring(0, 2));
 		}
 		else if (record.Layout != null)
@@ -427,8 +760,26 @@ internal partial class DwgObjectWriter : DwgSectionIO
 
 	private void writeBlockRecord(BlockRecord blkRecord)
 	{
-		this.writeBlockHeader(blkRecord, out Entity[] entities);
+		if (this._streaming)
+		{
+			// [PATCH] Streaming mode: the block record header uses the pre-collected handle lists
+			// (owned/insert); at this point all entities and INSERTs have been written, so the
+			// lists are complete. The non-streaming path is unaffected.
+			this.writeBlockHeaderStreaming(blkRecord);
+			return;
+		}
+
+		// [PATCH] Decouple the entity-set cache from serialization: under P0 dirty tracking an unmodified BlockRecord skips
+		// serialization, but the cache must be retained — writeBlockEntities depends on it to iterate each block's entities.
+		Entity[] entities = this.getCompatibleEntities(blkRecord.Entities);
 		this._blockCompatibleEntities.Add(blkRecord, entities);
+
+		if (this.skipClean(blkRecord))
+		{
+			return;
+		}
+
+		this.writeBlockHeaderCore(blkRecord, entities);
 	}
 
 	private void writeCommonData(CadObject cadObject)
@@ -478,37 +829,43 @@ internal partial class DwgObjectWriter : DwgSectionIO
 		this.writeCommonData(entity);
 
 		//Graphic present Flag B 1 if a graphic is present
-		if (entity.HasProxyGeometries)
+		// Prefer the raw proxy graphic bytes cached at read time (round-trip
+		// preservation, e.g. for class entities such as TABLE). When no raw
+		// bytes are present (e.g. a freshly constructed ProxyEntity that only
+		// carries structured proxy geometries), fall back to serializing the
+		// proxy geometries so the graphic is not silently dropped.
+		bool writeProxy = Environment.GetEnvironmentVariable("ACADSHARP_PROXY") != "0";
+		byte[] graphic = null;
+		if (writeProxy)
 		{
-			this._writer.WriteBit(true);
+			if (entity.ProxyGraphicsData != null && entity.ProxyGraphicsData.Length > 0)
+			{
+				graphic = entity.ProxyGraphicsData;
+			}
+			else if (entity.HasProxyGeometries)
+			{
+				graphic = ProxyGeometryWriter.WriteGeometries(this._version, this._writer.Encoding, entity.ProxyGeometries);
+			}
+		}
+		bool hasGraphic = graphic != null && graphic.Length > 0;
+		this._writer.WriteBit(hasGraphic);
 
+		if (hasGraphic)
+		{
 			//Graphics X if graphicpresentflag is 1, the graphic goes here.
-			//See the section on Proxy Entity Graphics for the format of this section.
-
-			var graphics = ProxyGeometryWriter.WriteGeometries(this._version, this._writer.Encoding, entity.ProxyGeometries);
-
 			//R13 - R007:
 			//RL: Size of graphic image in bytes
 			//R2010 +:
 			//BLL: Size of graphic image in bytes
-			if(this._version >= ACadVersion.AC1024)
-			{
-				this._writer.WriteBitLongLong(graphics.Length);
-			}
+			if (this._version >= ACadVersion.AC1024)
+				this._writer.WriteBitLongLong(graphic.Length);
 			else
-			{
-				this._writer.WriteRawLong(graphics.Length);
-			}
+				this._writer.WriteRawLong(graphic.Length);
 
 			//Common:
 			//X: The graphic image
-			this._writer.WriteBytes(graphics);
+			this._writer.WriteBytes(graphic);
 		}
-		else
-		{
-			this._writer.WriteBit(false);
-		}
-
 
 		//R13 - R14 Only:
 		if (this._version >= ACadVersion.AC1012 && this._version <= ACadVersion.AC1014)
@@ -914,7 +1271,7 @@ internal partial class DwgObjectWriter : DwgSectionIO
 			//Isbylayerlt B 1 if bylayer linetype, else 0
 			bool isbylayerlt = entity.LineType.Name == LineType.ByLayerName;
 			this._writer.WriteBit(isbylayerlt);
-			if (isbylayerlt)
+			if (!isbylayerlt)
 				//6 [LTYPE (hard pointer)] (present if Isbylayerlt is 0)
 				this._writer.HandleReference(DwgReferenceType.HardPointer, entity.LineType);
 		}
@@ -1053,6 +1410,13 @@ internal partial class DwgObjectWriter : DwgSectionIO
 				continue;
 			}
 
+			// [PATCH] P0 dirty tracking: skip unmodified table entries. BlockRecord is the exception — its child-entity
+			// cache is used by writeBlockEntities; serialization skipping is handled inside writeBlockRecord.
+			if (!(entry is BlockRecord) && this.skipClean(entry))
+			{
+				continue;
+			}
+
 			switch (entry)
 			{
 				case AppId app:
@@ -1177,10 +1541,25 @@ internal partial class DwgObjectWriter : DwgSectionIO
 						}
 						else
 						{
+							// [FIX] The length prefix should be the encoded "byte count", not the "character count":
+							// the read-side ReadTextUnicode (R13-R2004) semantics is
+							// "2-byte length N + 1-byte code page + N single-byte characters",
+							// where N is the total number of bytes to decode. Previously str.Value.Length (character count) was written;
+							// after Chinese is encoded via a multibyte code page such as GBK, byte count > character count,
+							// so the read side reads too few bytes, causing XDATA Chinese garbling and EED bitstream misalignment
+							// (the DXF path is unaffected, so DXF Chinese displays normally).
 							var encodingIndex = CadUtils.GetCodeIndex((CSUtilities.Text.CodePage)this._writer.Encoding.CodePage);
 							byte[] bytes = this._writer.Encoding.GetBytes(string.IsNullOrEmpty(str.Value) ? string.Empty : str.Value);
 
-							mstream.Write(LittleEndianConverter.Instance.GetBytes((ushort)str.Value.Length), 0, 2);
+							// [PATCH] Write the BYTES length, not the characters length.
+							// Pre-R2007 XData strings are stored as N single-byte (codepage) characters
+							// preceded by a 2-byte length in BYTES (see DwgStreamReaderBase.ReadTextUnicode,
+							// which feeds this length straight into ReadString(length, encoding)).
+							// For multi-byte code pages (e.g. ANSI_936/GBK, 2 bytes per CJK char) the old
+							// code wrote str.Value.Length (char count), so the reader consumed half the
+							// bytes: CJK XData values came back truncated/garbled and the leftover bytes
+							// desynchronized the rest of the app entry (closing control string lost).
+							mstream.Write(LittleEndianConverter.Instance.GetBytes((ushort)bytes.Length), 0, 2);
 							mstream.WriteByte((byte)encodingIndex);
 							mstream.Write(bytes, 0, bytes.Length);
 						}
@@ -1295,6 +1674,11 @@ internal partial class DwgObjectWriter : DwgSectionIO
 
 		this.writeXrefDependantBit(ltype);
 
+		//Xref block handle (hard pointer) - part of the common table flags,
+		//written right after the xref-dependent bits and before the description.
+		//NULLHDL when the entry is not xref-dependent.
+		this._writer.HandleReference(DwgReferenceType.HardPointer, 0);
+
 		//Description TV 3
 		this._writer.WriteVariableText(ltype.Description);
 		//Pattern Len BD 40
@@ -1365,6 +1749,10 @@ internal partial class DwgObjectWriter : DwgSectionIO
 			//Complex shapecode BS 75 Shape number if shapeflag is 2, or index into the string area if shapeflag is 4.
 			this._writer.WriteBitShort(segment.ShapeNumber);
 
+			//340 shapefile for dash/shape (hard pointer) - written INSIDE the
+			//dash loop, right after the complex shapecode and before the offsets.
+			this._writer.HandleReference(DwgReferenceType.HardPointer, segment.Style);
+
 			//X - offset RD 44 (0.0 for a simple dash.)
 			//Y - offset RD 45(0.0 for a simple dash.)
 			this._writer.WriteRawDouble(segment.Offset.X);
@@ -1398,44 +1786,42 @@ internal partial class DwgObjectWriter : DwgSectionIO
 			}
 		}
 
-		//Common:
-		//External reference block handle(hard pointer)
-		this._writer.HandleReference(DwgReferenceType.HardPointer, 0);
-
-		foreach (var segment in ltype.Segments)
-		{
-			//340 shapefile for dash/shape (1 each) (hard pointer)
-			this._writer.HandleReference(DwgReferenceType.HardPointer, segment.Style);
-		}
+		//Note: the xref block handle is written in the common table flags (before
+		//the description) and the per-dash shape style handles are written inside
+		//the dash loop. Nothing follows the strings area.
 
 		this.registerObject(ltype);
 	}
 
 	private void writeLTypeControlObject()
 	{
-		this.writeCommonNonEntityData(this._document.LineTypes);
-
-		//Common:
-		//Numentries BL 70
-		this._writer.WriteBitLong(this._document.LineTypes.Count - 2);
-
-		foreach (LineType item in this._document.LineTypes)
+		// [PATCH] P0 dirty tracking: an unmodified linetype control object skips serialization, the entry loop still runs
+		if (!this.skipClean(this._document.LineTypes))
 		{
-			if (item.Name.Equals(LineType.ByBlockName, StringComparison.OrdinalIgnoreCase)
-				|| item.Name.Equals(LineType.ByLayerName, StringComparison.OrdinalIgnoreCase))
+			this.writeCommonNonEntityData(this._document.LineTypes);
+
+			//Common:
+			//Numentries BL 70
+			this._writer.WriteBitLong(this._document.LineTypes.Count - 2);
+
+			foreach (LineType item in this._document.LineTypes)
 			{
-				continue;
+				if (item.Name.Equals(LineType.ByBlockName, StringComparison.OrdinalIgnoreCase)
+					|| item.Name.Equals(LineType.ByLayerName, StringComparison.OrdinalIgnoreCase))
+				{
+					continue;
+				}
+
+				//numentries handles in the file (soft owner)
+				this._writer.HandleReference(DwgReferenceType.SoftOwnership, item);
 			}
 
-			//numentries handles in the file (soft owner)
-			this._writer.HandleReference(DwgReferenceType.SoftOwnership, item);
+			//the linetypes, ending with BYLAYER and BYBLOCK.
+			this._writer.HandleReference(DwgReferenceType.HardOwnership, this._document.LineTypes.ByBlock);
+			this._writer.HandleReference(DwgReferenceType.HardOwnership, this._document.LineTypes.ByLayer);
+
+			this.registerObject(this._document.LineTypes);
 		}
-
-		//the linetypes, ending with BYLAYER and BYBLOCK.
-		this._writer.HandleReference(DwgReferenceType.HardOwnership, this._document.LineTypes.ByBlock);
-		this._writer.HandleReference(DwgReferenceType.HardOwnership, this._document.LineTypes.ByLayer);
-
-		this.registerObject(this._document.LineTypes);
 
 		this.writeEntries(this._document.LineTypes);
 	}
@@ -1530,25 +1916,30 @@ internal partial class DwgObjectWriter : DwgSectionIO
 	private void writeTable<T>(Table<T> table)
 		where T : TableEntry
 	{
-		this.writeCommonNonEntityData(table);
-
-		//Common:
-		//Numentries BL 70
-		this._writer.WriteBitLong(table.Count);
-
-		if (this.R2000Plus && table is DimensionStylesTable)
+		// [PATCH] P0 dirty tracking: an unmodified table control object skips serialization, the entry loop still runs
+		// (each entry decides dirty/clean independently)
+		if (!this.skipClean(table))
 		{
-			//Undocumented: this byte is found only in the DimensionStylesTable
-			this._writer.WriteByte(0);
-		}
+			this.writeCommonNonEntityData(table);
 
-		foreach (var item in table)
-		{
-			//numentries handles in the file (soft owner)
-			this._writer.HandleReference(DwgReferenceType.SoftOwnership, item);
-		}
+			//Common:
+			//Numentries BL 70
+			this._writer.WriteBitLong(table.Count);
 
-		this.registerObject(table);
+			if (this.R2000Plus && table is DimensionStylesTable)
+			{
+				//Undocumented: this byte is found only in the DimensionStylesTable
+				this._writer.WriteByte(0);
+			}
+
+			foreach (var item in table)
+			{
+				//numentries handles in the file (soft owner)
+				this._writer.HandleReference(DwgReferenceType.SoftOwnership, item);
+			}
+
+			this.registerObject(table);
+		}
 
 		this.writeEntries(table);
 	}
@@ -1624,8 +2015,12 @@ internal partial class DwgObjectWriter : DwgSectionIO
 		}
 
 		//Common:
-		//Handle refs H ucs control object (soft pointer)
-		this._writer.HandleReference(DwgReferenceType.SoftPointer, this._document.UCSs);
+		//Handle refs H xref handle (hard pointer, 0 if not xref-dependent).
+		// [FIX] Previously wrote "ucs control object (soft pointer)" and filled in the UCS control table handle.
+		// Verified against the AutoCAD original file (sample.dwg has this slot = 0) and cross-checked with the cadcodec/ODA spec §20.4.62,
+		// this slot is the xref handle; writing a non-empty control table handle makes AutoCAD
+		// raise eWrongObjectType and drop the UCS record (verification report handle 467).
+		this._writer.HandleReference(DwgReferenceType.HardPointer, 0UL);
 
 		//R2000 +:
 		if (this.R2000Plus)
@@ -1724,8 +2119,11 @@ internal partial class DwgObjectWriter : DwgSectionIO
 		}
 
 		//Common:
-		//Handle refs H view control object (soft pointer)
-		this._writer.HandleReference(DwgReferenceType.SoftPointer, this._document.Views);
+		//Handle refs H xref handle (hard pointer, 0 if not xref-dependent).
+		// [FIX] Same as writeUCS: this slot is the xref handle; previously the Views control table handle was written by mistake
+		// (cadcodec/ODA spec §20.4.60: the VIEW record handle sequence is xref → R2007+ background/
+		// visual style/sun → R2000+ ucs associated handle).
+		this._writer.HandleReference(DwgReferenceType.HardPointer, 0UL);
 
 		//R2007+:
 		if (this.R2007Plus)

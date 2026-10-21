@@ -1,4 +1,4 @@
-﻿using System.IO;
+using System.IO;
 
 namespace ACadSharp.IO.DWG.FileHeaders;
 
@@ -19,7 +19,10 @@ internal class DwgSectionLocatorRecord
 	/// </summary>
 	public long Size { get; set; }
 
-	public MemoryStream Stream { get; set; }
+	// [PATCH] Upstream is MemoryStream: every section (including the largest, AcDbObjects) must
+	// stay fully in memory. Widened to Stream so large sections can be spilled straight to disk
+	// (temp file).
+	public Stream Stream { get; set; }
 
 	public DwgSectionLocatorRecord()
 	{ }

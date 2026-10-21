@@ -1,6 +1,7 @@
-﻿using ACadSharp.Objects;
+using ACadSharp.Objects;
 using ACadSharp.Objects.AEC;
 using ACadSharp.Objects.Evaluations;
+using ACadSharp.Tables;
 using CSMath;
 using CSUtilities.Converters;
 using CSUtilities.IO;
@@ -49,11 +50,21 @@ internal partial class DwgObjectWriter : DwgSectionIO
 			case AecWallStyle:
 			case AecCleanupGroup:
 			case AecBinRecord:
-			case DimensionAssociation:
 			case UnknownNonGraphicalObject:
 			case VisualStyle:
 			case ProxyObject:
 				return true;
+			// R14 (AC1014) does not support the AcDbTableStyle object: AutoCAD R14 has no tables/table styles,
+			// and writing one is judged "uncorrectable" by AUDIT. Skip the object and its entry in the
+			// ACAD_TABLESTYLE dictionary here (writeDictionary calls skipEntry, which also skips it, avoiding a dangling pointer).
+			case TableStyle when this._version <= ACadVersion.AC1014:
+				notify = false;
+				return true;
+			// [PATCH] DimensionAssociation is intentionally NOT skipped: the reader fully
+			// supports it (readDimensionAssociation/readOsnapPointRef) and this writer has
+			// matching serialization (writeDimensionAssociation/writeOsnapPointRef), so the
+			// ACAD_DIMASSOC dictionary entry of associated dimensions now round-trips like
+			// AutoCAD's own files.
 		}
 
 		return false;
@@ -602,7 +613,14 @@ internal partial class DwgObjectWriter : DwgSectionIO
 
 	private void writeCadDictionaryWithDefault(CadDictionaryWithDefault dictionary)
 	{
-		this.writeDictionary(dictionary);
+		//[FIX] The field layout of ACDBDICTIONARYWDFLT differs from a plain DICTIONARY:
+		//① it has no R14 "Unknown RC" byte; ② the cloning flag (281)/hard-owner flag (280) are
+		//present in R13/R14 too. The Rust references objects.rs::read_dictionary_with_default and
+		//write_dictionary_with_default both handle all versions ("Unlike a plain DICTIONARY,
+		//these fields are present in R13/R14 too").
+		//Previously we reused writeDictionary directly, so the R14 output wrote 1 extra byte and
+		//lacked BS+RC → AutoCAD reported eDwgObjectImproperlyRead and dropped the object (.adt handle E).
+		this.writeDictionary(dictionary, isWithDefault: true);
 
 		//H 7 Default entry (hard pointer)
 		this._writer.HandleReference(DwgReferenceType.HardPointer, dictionary.DefaultEntry);
@@ -865,7 +883,10 @@ internal partial class DwgObjectWriter : DwgSectionIO
 		}
 	}
 
-	private void writeDictionary(CadDictionary dictionary)
+	/// <param name="isWithDefault">
+	/// true means writing an ACDBDICTIONARYWDFLT: no R14 unknown byte, and the cloning/hard-owner flags are present in all versions.
+	/// </param>
+	private void writeDictionary(CadDictionary dictionary, bool isWithDefault = false)
 	{
 		//Common:
 		//Numitems L number of dictionary items
@@ -888,15 +909,15 @@ internal partial class DwgObjectWriter : DwgSectionIO
 
 		this._writer.WriteBitLong(entries.Count);
 
-		//R14 Only:
-		if (this._version == ACadVersion.AC1014)
+		//R14 Only (plain DICTIONARY only; DICTIONARYWDFLT has no such byte):
+		if (this._version == ACadVersion.AC1014 && !isWithDefault)
 		{
 			//Unknown R14 RC Unknown R14 byte, has always been 0
 			this._writer.WriteByte(0);
 		}
 
-		//R2000 +:
-		if (this.R2000Plus)
+		//R2000 + (DICTIONARYWDFLT is all versions):
+		if (this.R2000Plus || isWithDefault)
 		{
 			//Cloning flag BS 281
 			this._writer.WriteBitShort((short)dictionary.ClonningFlags);
@@ -924,33 +945,33 @@ internal partial class DwgObjectWriter : DwgSectionIO
 
 	private void writeDimensionAssociation(DimensionAssociation association)
 	{
-		this._writer.HandleReference(DwgReferenceType.SoftPointer, association.Dimension);
-
 		//90
 		this._writer.WriteBitLong((int)association.AssociativityFlags);
 		//70
 		this._writer.WriteBit(association.IsTransSpace);
 		//71
 		this._writer.WriteByte((byte)association.RotatedDimensionType);
+		//330
+		this._writer.HandleReference(DwgReferenceType.SoftPointer, association.Dimension);
 
-		if (association.AssociativityFlags.HasFlag(AssociativityFlags.FirstPointReference))
+		for (int slot = 0; slot < 4; slot++)
 		{
-			this.writeOsnapPointRef(association.FirstPointRef);
-		}
+			var flag = (AssociativityFlags)(1 << slot);
+			if (!association.AssociativityFlags.HasFlag(flag))
+			{
+				continue;
+			}
 
-		if (association.AssociativityFlags.HasFlag(AssociativityFlags.SecondPointReference))
-		{
-			this.writeOsnapPointRef(association.SecondPointRef);
-		}
+			DimensionAssociation.OsnapPointRef osnap = slot switch
+			{
+				0 => association.FirstPointRef,
+				1 => association.SecondPointRef,
+				2 => association.ThirdPointRef,
+				3 => association.FourthPointRef,
+				_ => null,
+			};
 
-		if (association.AssociativityFlags.HasFlag(AssociativityFlags.ThirdPointReference))
-		{
-			this.writeOsnapPointRef(association.ThirdPointRef);
-		}
-
-		if (association.AssociativityFlags.HasFlag(AssociativityFlags.FourthPointReference))
-		{
-			this.writeOsnapPointRef(association.FourthPointRef);
+			this.writeOsnapPointRef(osnap);
 		}
 	}
 
@@ -1316,7 +1337,7 @@ internal partial class DwgObjectWriter : DwgSectionIO
 		//Limmin 2RD 10 layout minimum limits
 		this._writer.Write2RawDouble(layout.MinLimits);
 		//Limmax 2RD 11 layout maximum limits
-		this._writer.Write2RawDouble(layout.MinLimits);
+		this._writer.Write2RawDouble(layout.MaxLimits);
 		//Inspoint 3BD 12 layout insertion base point
 		this._writer.Write3BitDouble(layout.InsertionBasePoint);
 		this._writer.Write3BitDouble(layout.XAxis);
@@ -1601,9 +1622,40 @@ internal partial class DwgObjectWriter : DwgSectionIO
 			//Before R2018:
 			else
 			{
-				//TODO: Fix the Linetype index for dwgReader and DwgWriter
-				//Ltindex BS Linetype index (yes, index)
-				this._writer.WriteBitShort(0);
+				// [PATCH] Ltindex BS Linetype index (yes, index). Convention mirrored by the
+				// reader: 32767 = ByLayer, 32766 = ByBlock, otherwise the index of the line
+				// type in the document's linetypes table. The previous hardcoded 0 resolved to
+				// the first table entry ("Continuous") on read-back, turning ByLayer element
+				// line types into real ones.
+				short ltIndex = short.MaxValue;
+				LineType elt = element.LineType;
+				if (elt != null && elt.Name != LineType.ByLayerName)
+				{
+					if (elt.Name == LineType.ByBlockName)
+					{
+						ltIndex = short.MaxValue - 1;
+					}
+					else
+					{
+						int idx = -1;
+						int i = 0;
+						foreach (LineType t in this._document.LineTypes)
+						{
+							if (t.Name == elt.Name) { idx = i; break; }
+							i++;
+						}
+						if (idx < 0)
+						{
+							this.notify($"MLineStyle element linetype '{elt.Name}' not in linetypes table; written as ByLayer", NotificationType.Warning);
+							ltIndex = short.MaxValue;
+						}
+						else
+						{
+							ltIndex = (short)idx;
+						}
+					}
+				}
+				this._writer.WriteBitShort(ltIndex);
 			}
 		}
 	}
@@ -1743,6 +1795,12 @@ internal partial class DwgObjectWriter : DwgSectionIO
 			{
 				this.notify($"Object type not implemented {obj.GetType().FullName}", NotificationType.NotImplemented);
 			}
+			return;
+		}
+
+		// [PATCH] P0 dirty tracking: skip serialization for unmodified objects whose patch source has original bytes
+		if (this.skipClean(obj))
+		{
 			return;
 		}
 
@@ -1957,9 +2015,65 @@ internal partial class DwgObjectWriter : DwgSectionIO
 		this._writer.WriteVariableText(DimensionAssociation.OsnapPointRefClassName);
 
 		//72
-		this._writer.WriteByte((byte)osnap.ObjectOsnapType);
-		//331
-		this._writer.HandleReference(DwgReferenceType.Undefined, osnap.Geometry);
+		byte osnapType = (byte)(osnap?.ObjectOsnapType ?? ObjectOsnapType.None);
+		this._writer.WriteByte(osnapType);
+
+		//331: number of main object handles followed by the handles (soft pointers)
+		if (osnap?.Geometry != null)
+		{
+			this._writer.WriteBitLong(1);
+			this._writer.HandleReference(DwgReferenceType.SoftPointer, osnap.Geometry);
+		}
+		else
+		{
+			this._writer.WriteBitLong(0);
+		}
+
+		if (osnapType != 0 && osnap != null)
+		{
+			//73
+			this._writer.WriteBitLong((int)osnap.SubentType);
+			//91
+			this._writer.WriteBitLong(osnap.GsMarker);
+
+			//301: number of xref paths
+			this._writer.WriteBitLong(osnap.XrefPaths.Count);
+			foreach (string path in osnap.XrefPaths)
+			{
+				this._writer.WriteVariableText(path);
+			}
+		}
+
+		//40
+		this._writer.WriteBitDouble(osnap?.GeometryParameter ?? 0);
+		//10
+		this._writer.Write3BitDouble(osnap?.OsnapPoint ?? new XYZ(0, 0, 0));
+
+		if (osnapType == 6 || osnapType == 11)
+		{
+			//332: number of intersection objects followed by the handles (hard pointers)
+			this._writer.WriteBitLong(0);
+
+			//74
+			this._writer.WriteBitLong((int)(osnap?.IntersectionSubType ?? SubentType.Unknown));
+			//92
+			this._writer.WriteBitLong(osnap?.IntersectionGsMarker ?? 0);
+
+			//302: number of intersection xref paths
+			this._writer.WriteBitLong(osnap?.IntersectionXrefPaths.Count ?? 0);
+			if (osnap != null)
+			{
+				foreach (string path in osnap.IntersectionXrefPaths)
+				{
+					this._writer.WriteVariableText(path);
+				}
+			}
+		}
+
+		//75: more references bit, the model supports a single reference per slot
+		// [FIX] Preserve the HasLastPointRef bit read in by the reader; previously it was always written false.
+		// If that bit is 1 in the original AutoCAD file (follows more point references), writing it back with the bit missing causes the association to be lost.
+		this._writer.WriteBit(osnap?.HasLastPointRef ?? false);
 	}
 
 	private void writeParameterValueSet(ParameterValueSet valueSet)
@@ -2217,15 +2331,16 @@ internal partial class DwgObjectWriter : DwgSectionIO
 
 	private void writeStringCadValue(string value)
 	{
-		if (string.IsNullOrEmpty(value))
-		{
-			this._writer.WriteBitLong(0);
-		}
-
+		// [FIX] The original implementation did not return after writing BL 0 for an empty string,
+		// and fell through to the branch below to write the length and terminator again,
+		// causing the read-side readStringCadValue to read a length of 0 and then execute
+		// GetString(arr, 0, -2), throwing ArgumentOutOfRangeException (triggered by R2007 table cell
+		// empty text). Now uniformly write as "byte count + terminator" (empty string has the terminator's length),
+		// strictly symmetric with the read side.
 		byte[] bytes;
 		if (this.R2007Plus)
 		{
-			bytes = System.Text.Encoding.Unicode.GetBytes(value);
+			bytes = System.Text.Encoding.Unicode.GetBytes(value ?? string.Empty);
 			this._writer.WriteBitLong(bytes.Length + 2);
 			this._writer.WriteBytes(bytes);
 			this._writer.WriteByte(0);
@@ -2233,7 +2348,7 @@ internal partial class DwgObjectWriter : DwgSectionIO
 		}
 		else
 		{
-			bytes = this._writer.Encoding.GetBytes(value);
+			bytes = this._writer.Encoding.GetBytes(value ?? string.Empty);
 			this._writer.WriteBitLong(bytes.Length + 1);
 			this._writer.WriteBytes(bytes);
 			this._writer.WriteByte(0);
@@ -2250,6 +2365,7 @@ internal partial class DwgObjectWriter : DwgSectionIO
 				return;
 			}
 
+			// R2007+: length is in 2-byte Unicode chars, so text.Length is correct here.
 			ms.Write<short>((short)text.Length);
 			ms.Write(text, System.Text.Encoding.Unicode);
 		}
@@ -2260,9 +2376,16 @@ internal partial class DwgObjectWriter : DwgSectionIO
 		}
 		else
 		{
-			ms.Write<short>((short)text.Length);
+			// [PATCH] Write the BYTES length, not the characters length — same bug as the
+			// pre-R2007 XData string writer. The reader (DwgStreamReaderBase.ReadTextUnicode)
+			// feeds this length straight into ReadString(length, encoding), which consumes
+			// that many BYTES. With multi-byte code pages (e.g. ANSI_936/GBK) the char count
+			// is too small: CJK XRecord strings came back truncated/garbled and the leftover
+			// bytes desynchronized the following XRecord entries.
+			byte[] bytes = this._writer.Encoding.GetBytes(text);
+			ms.Write<short>((short)bytes.Length);
 			ms.Write((byte)CadUtils.GetCodeIndex((CodePage)this._writer.Encoding.CodePage));
-			ms.Write(text, this._writer.Encoding);
+			ms.WriteBytes(bytes);
 		}
 	}
 

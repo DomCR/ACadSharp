@@ -1,5 +1,7 @@
-﻿using ACadSharp.Entities;
+using ACadSharp.Entities;
 using ACadSharp.Objects;
+using ACadSharp.Types;
+using ACadSharp.XData;
 using CSMath;
 using System;
 using System.Collections.Generic;
@@ -23,8 +25,8 @@ internal partial class DwgObjectWriter : DwgSectionIO
 
 		//R2010+:
 		if (this.R2010Plus)
-			//Version RC ?		Repeated??
-			this._writer.WriteByte(attdef.Version);
+			//Version RC ?		Repeated?——native is always 0, see the writeCommonAttData comment
+			this._writer.WriteByte(0);
 
 		//Common:
 		//Prompt TV 3
@@ -129,8 +131,10 @@ internal partial class DwgObjectWriter : DwgSectionIO
 		//R2010+:
 		if (this.R2010Plus)
 		{
-			//Version RC ?
-			this._writer.WriteByte(att.Version);
+			//Version RC ——native DWG is always 0; the DXF reader treats group code 280 uniformly as Lock position
+			//handling (see DxfSectionReaderBase.readAttributeDefinition). Version stays 0,
+			//otherwise AutoCAD reports "error while decrypting data" when parsing ATTDEF/ATTRIB.
+			this._writer.WriteByte(0);
 		}
 
 		//R2018+:
@@ -491,8 +495,27 @@ internal partial class DwgObjectWriter : DwgSectionIO
 
 	private void writeEntity(Entity entity)
 	{
+		// [PATCH] P0 dirty tracking: skip serialization for unmodified objects whose patch source has original bytes
+		if (this.skipClean(entity))
+		{
+			return;
+		}
+
+		// [PATCH] Save-progress counting is not here: writeEntity is called recursively by writeChildEntities
+		// (child entities such as Insert attributes, Polyline vertices, Seqend, etc.). Counting here would
+		// make the numerator (Completed) accumulate over child entities, far exceeding the denominator
+		// (Total = number of top-level block entities), and the progress bar would overshoot 100%.
+		// Counting has been moved up to the top-level call sites (writeBlockEntitiesSequential / serializeEntityBatch),
+		// consistent with the Total preset by writeBlockEntities, so the progress lands accurately at 100%.
+
 		List<Entity> children = new List<Entity>();
 		Seqend seqend = null;
+
+		//R13-R14 Only: viewports must carry the ACAD "MVIEW" extended data with the
+		//view parameters, AutoCAD fails to open R14 files with viewports lacking it
+		//(16 error opening layout: eDwgObjectImproperlyRead).
+		if (this.R13_14Only && entity is Viewport vpR14)
+			this.addMviewExtendedData(vpR14);
 
 		this.writeCommonEntityData(entity);
 
@@ -589,22 +612,29 @@ internal partial class DwgObjectWriter : DwgSectionIO
 				switch (pline)
 				{
 					case PolyfaceMesh faceMesh:
+						this.alignVertexLayerToOwner(faceMesh);
 						this.writePolyfaceMesh(faceMesh);
-						children.AddRange(faceMesh.Faces);
+						// [FIX] Child-entity chain order aligned with cadcodec (vertices first, faces after):
+						// For R13-R2000 the first/last handle semantics are first = first vertex, last = last face;
+						// previously Faces came first, so first pointed at a face and last at a vertex.
 						children.AddRange(faceMesh.Vertices);
+						children.AddRange(faceMesh.Faces);
 						seqend = faceMesh.Vertices.Seqend;
 						break;
 					case Polyline2D pline2d:
+						this.alignVertexLayerToOwner(pline2d);
 						this.writePolyline2D(pline2d);
 						children.AddRange(pline2d.Vertices);
 						seqend = pline2d.Vertices.Seqend;
 						break;
 					case Polyline3D pline3d:
+						this.alignVertexLayerToOwner(pline3d);
 						this.writePolyline3D(pline3d);
 						children.AddRange(pline3d.Vertices);
 						seqend = pline3d.Vertices.Seqend;
 						break;
 					case PolygonMesh polygonMesh:
+						this.alignVertexLayerToOwner(polygonMesh);
 						this.writePolygonMesh(polygonMesh);
 						children.AddRange(polygonMesh.Vertices);
 						seqend = polygonMesh.Vertices.Seqend;
@@ -1088,7 +1118,9 @@ internal partial class DwgObjectWriter : DwgSectionIO
 		}
 
 		//H 340 Associated annotation
-		this._writer.HandleReference(DwgReferenceType.HardPointer, null);
+		// [PATCH] Write the real associated-annotation handle (was hardcoded null, which
+		// silently dropped the leader's MText/Text annotation on every DWG save).
+		this._writer.HandleReference(DwgReferenceType.HardPointer, leader.AssociatedAnnotation);
 		//H 2 DIMSTYLE (hard pointer)
 		this._writer.HandleReference(DwgReferenceType.HardPointer, leader.Style);
 	}
@@ -1264,7 +1296,9 @@ internal partial class DwgObjectWriter : DwgSectionIO
 			flags = (short)(flags | 0x200);
 		}
 
-		if (lwPolyline.ConstantWidth != 0.0)
+		// [PATCH] The constant-width flag (0x4) follows the DXF presence of code 43,
+		// not its value: a source polyline with 43=0.0 must round-trip the code.
+		if (lwPolyline.ConstantWidthSpecified)
 		{
 			flags = (short)(flags | 0x4);
 		}
@@ -1299,7 +1333,8 @@ internal partial class DwgObjectWriter : DwgSectionIO
 		//More specifically: it starts at the LWPOLYLINE flags (BS), and ends with the width array (BD).
 		this._writer.WriteBitShort(flags);
 
-		if (lwPolyline.ConstantWidth != 0.0)
+		// [PATCH] Mirrors the 0x4 flag condition above (see flag block).
+		if (lwPolyline.ConstantWidthSpecified)
 		{
 			this._writer.WriteBitDouble(lwPolyline.ConstantWidth);
 		}
@@ -1987,12 +2022,14 @@ internal partial class DwgObjectWriter : DwgSectionIO
 			this._writer.WriteBitLong(fm.Vertices.Count + fm.Faces.Count);
 			foreach (var v in fm.Vertices)
 			{
-				//H[VERTEX(soft pointer)] Repeats “Owned Object Count” times.
-				this._writer.HandleReference(DwgReferenceType.SoftPointer, v);
+				//H[VERTEX(hard owner)] Repeats "Owned Object Count" times.
+				// [FIX] The reference type should be HardOwnership (cadcodec write_polyface_mesh,
+				// verified across all ODA versions); previously wrote SoftPointer.
+				this._writer.HandleReference(DwgReferenceType.HardOwnership, v);
 			}
 			foreach (var f in fm.Faces)
 			{
-				this._writer.HandleReference(DwgReferenceType.SoftPointer, f);
+				this._writer.HandleReference(DwgReferenceType.HardOwnership, f);
 			}
 		}
 
@@ -2013,7 +2050,9 @@ internal partial class DwgObjectWriter : DwgSectionIO
 
 		//Common:
 		//H SEQEND(hard owner)
-		this._writer.HandleReference(DwgReferenceType.SoftPointer, fm.Vertices.Seqend);
+		// [FIX] The reference type should be HardOwnership (cadcodec write_polyface_mesh); previously wrote
+		// SoftPointer, inconsistent with writePolygonMesh.
+		this._writer.HandleReference(DwgReferenceType.HardOwnership, fm.Vertices.Seqend);
 	}
 
 	private void writePolygonMesh(PolygonMesh pline)
@@ -2203,6 +2242,12 @@ internal partial class DwgObjectWriter : DwgSectionIO
 		if (seqend == null)
 			return;
 
+		// [PATCH] P0 dirty tracking: skip serialization for unmodified objects whose patch source has original bytes
+		if (this.skipClean(seqend))
+		{
+			return;
+		}
+
 		//Seqend does not have links for AC1015 or before (causes errors)
 		Entity prevHolder = this._prev;
 		Entity nextHolder = this._next;
@@ -2243,7 +2288,9 @@ internal partial class DwgObjectWriter : DwgSectionIO
 		this._writer.Write3BitDouble(shape.Normal);
 
 		//H SHAPEFILE (hard pointer)
-		this._writer.HandleReference(DwgReferenceType.HardPointer, null);
+		// [PATCH] Write the real shape-style (SHAPEFILE) handle (was hardcoded null, which
+		// silently dropped the shape's shape style on every DWG save).
+		this._writer.HandleReference(DwgReferenceType.HardPointer, shape.ShapeStyle);
 	}
 
 	private void writeSolid(Solid solid)
@@ -2379,6 +2426,671 @@ internal partial class DwgObjectWriter : DwgSectionIO
 		}
 	}
 
+	private void writeTableEntity(TableEntity table)
+	{
+		// [PATCH] Detach the table's anonymous cache block (*Txx) reference before writing the table data.
+		// Root cause (confirmed by the mintable/reduce bisection experiment): for R2010+ common INSERT data, the H2 BLOCK HEADER
+		// hard pointer, once it writes a real block (cache block *T11 or ModelSpace), makes ODA/AutoCAD report
+		// "<AcDbTable> needs recovery" while parsing the table (R2010+ AutoCAD hangs on open);
+		// H2=NULL passes everything. Native files pass because their *T cache block is
+		// fully written by AutoCAD, whereas the block header written by this writer is still incomplete (legacy issue).
+		// When the cache block is missing, AutoCAD 2010+ automatically rebuilds the geometry from the TABLECONTENT data, so display is unaffected.
+		//
+		// [REGRESSION FIX] Detachment is limited to R2010+ (AC1024+): older versions such as R2004/R2007
+		// rely on *T cache block geometry to render tables (a TableEntity is essentially an INSERT of the cache block);
+		// after detachment AutoCAD does not show the table when opening the output file (regression evidence; the older version keeps H2 and displays normally).
+		// Whether to detach on AC1021 does not affect the ODA audit result (the table data still reports needs recovery),
+		// so the cache block reference is likewise kept to stay close to the older (displayable) behavior.
+		// Note that the has-block bit (0x06) of ValueFlag must be cleared together with H2 and
+		// kept cleared for the entire write period (BS 90 is written in writeTableEntityR2004),
+		// otherwise ODA reads has-block=1 with H2=NULL and also reports needs recovery.
+		// [EXPERIMENT 2026-10-13] AutoCAD COM measurement (TableComCheck): after the R2010+ data section was fixed,
+		// the AC1024/1027/1032 table data can be fully parsed by AutoCAD (7 rows x 3 columns, cell text all correct),
+		// but the block table has no *T anonymous cache block → the table is not displayed (AutoCAD does not
+		// automatically rebuild the display geometry from TABLECONTENT data; the AutoCAD SaveRef reference file contains a *T0 cache block and displays normally).
+		// Conclusion: the earlier experiment in which "restoring the cache block reference caused needs recovery/hang" happened before the R2010+ data section
+		// format was fixed; the failure root cause was the data section, not the block reference. So restore the cache block reference for all versions.
+		bool detachTableBlock = false;
+		ACadSharp.Tables.BlockRecord savedTableBlock = table.Block;
+		int savedTableValueFlag = table.ValueFlag;
+		if (detachTableBlock && savedTableBlock != null)
+		{
+			table.Block = null;
+			table.ValueFlag = savedTableValueFlag & ~0x06;
+		}
+
+		try
+		{
+			this.writeCommonInsertData(table);
+
+		if (this.R2010Plus)
+		{
+			//RC Unknown (default 0)
+			this._writer.WriteByte(0);
+			//H 342 Table style handle (soft pointer)
+			// [FIX] libredwg dwg2.spec TABLE entity R2010b+ branch: this handle is tablestyle(342),
+			// not an unnamed Unknown. Previously wrote NULL, and AutoCAD audit reported eWrongObjectType and dropped the whole table.
+			this._writer.HandleReference(DwgReferenceType.SoftPointer, table.Style);
+			//BL Unknown (default 0)
+			this._writer.WriteBitLong(0);
+
+			//R2013
+			if (this.R2013Plus)
+			{
+				//Unknown (default 0)
+				this._writer.WriteBitLong(0);
+			}
+			else
+			{
+				//R2010
+				//B Unknown (default true)
+				this._writer.WriteBit(true);
+			}
+
+			//Here the table content is present (see TABLECONTENT object),
+			//without the common OBJECT data.
+			//See paragraph 20.4.97.
+			this.writeTableContent(table.Content);
+
+			//BS Unknown (default 38)
+			this._writer.WriteBitShort(38);
+			//3BD 11 Horizontal direction
+			this._writer.Write3BitDouble(table.HorizontalDirection);
+
+			//BL Has break data flag (0 = no break data, 1 = has break data)
+			//Begin break data(optional)
+			this._writer.WriteBitLong(table.HasBreadData ? 1 : 0);
+			if (table.HasBreadData)
+			{
+				//BL Option flags:
+				this._writer.WriteBitLong((int)table.BreakData.Flags);
+				//BL Flow direction:
+				this._writer.WriteBitLong((int)table.BreakData.FlowDirection);
+				//BD Break spacing
+				this._writer.WriteBitDouble(table.BreakData.BreakSpacing);
+				//BL Unknown flags
+				this._writer.WriteBitLong(0);
+				//BL Unknown flags
+				this._writer.WriteBitLong(0);
+				//BL Number of manual positions (break heights)
+				this._writer.WriteBitLong(table.BreakData.Heights.Count);
+				foreach (var breakHeight in table.BreakData.Heights)
+				{
+					//3BD Position
+					this._writer.Write3BitDouble(breakHeight.Position);
+					//BD Height
+					this._writer.WriteBitDouble(breakHeight.Height);
+					//BL Flags(meaning unknown)
+					this._writer.WriteBitLong(0);
+				}
+			}
+
+			//BL Number of break row ranges (there is always at least 1)
+			this._writer.WriteBitLong(table.BreakRowRanges.Count);
+			foreach (var breakRowRange in table.BreakRowRanges)
+			{
+				//3BD Position
+				this._writer.Write3BitDouble(breakRowRange.Position);
+				//BL Start row index
+				this._writer.WriteBitLong(breakRowRange.StartRowIndex);
+				//BL End row index
+				this._writer.WriteBitLong(breakRowRange.EndRowIndex);
+			}
+
+			return;
+		}
+
+		//Until R2007
+
+		//Common:
+		//Flag for table value BS 90
+		//	Bit flags, 0x06(0x02 + 0x04): has block,
+		//	0x10: table direction, 0 = up, 1 = down,
+		//	0x20: title suppressed.
+		//	Normally 0x06 is always set.
+		//
+		// R2004 (AC1018) and earlier versions: the table data is inlined in the entity (no separate TABLECONTENT object).
+		// The field sequence is strictly symmetric with the "Until R2007" branch of the read-side readTableEntity().
+		this.writeTableEntityR2004(table);
+		}
+		finally
+		{
+			if (detachTableBlock && savedTableBlock != null)
+			{
+				table.Block = savedTableBlock;
+				table.ValueFlag = savedTableValueFlag;
+			}
+		}
+	}
+
+	/// <summary>
+	/// Writes the ACAD_TABLE entity data for R2004 (AC1018) and earlier versions (inline table content).
+	/// The field order matches the pre-R2007 branch of readTableEntity in <see cref="DwgObjectReader"/>.
+	/// </summary>
+	private void writeTableEntityR2004(TableEntity table)
+	{
+		//BS 90 Flag for table value
+		// [FIX] For R2010+ sources (sampleR2010/2013/2018.dwg) the reader produces no ValueFlag
+		// (the R2010+ data section has no such field; the model defaults to 0). When writing pre-R2010, the has-block bit (0x06)
+		// must be consistent with the H2 cache block handle: when H2 writes a *T cache block but the bit is cleared, AutoCAD reports
+		// eWrongObjectType while reading the entity and drops the table (evidenced by R2010+ source → AC1018 audit;
+		// for R2004 sources the reader reads 0x16 from the file, unaffected). The direction (0x10)/title (0x20) bits
+		// have no corresponding property in the R2010+ model, so keep the default.
+		int valueFlag = table.ValueFlag;
+		if (table.Block != null)
+		{
+			valueFlag |= 0x06;
+		}
+		this._writer.WriteBitShort((short)valueFlag);
+
+		//3BD 11 Horizontal direction
+		this._writer.Write3BitDouble(table.HorizontalDirection);
+
+		//BL 92 Number of columns
+		this._writer.WriteBitLong(table.Columns.Count);
+		//BL 91 Number of rows
+		this._writer.WriteBitLong(table.Rows.Count);
+
+		//BD 142 Column widths, repeats "# of columns" times
+		foreach (var column in table.Columns)
+		{
+			this._writer.WriteBitDouble(column.Width);
+		}
+
+		//BD 141 Row heights, repeats "# of rows" times
+		foreach (var row in table.Rows)
+		{
+			this._writer.WriteBitDouble(row.Height);
+		}
+
+		//H 342 Table Style ID (hard pointer)
+		// [FIX] A bare HandleReference(...) uses DwgReferenceType.Undefined (handle code 0),
+		// writing an invalid handle code. The AutoCAD native R2000 reference file uses code 5 soft pointer here
+		// (measured handle stream: REF=(5.1.7F), ours=(0.1.7F)), so ODA audit reports
+		// ".dwg file needs recovery: <AcDbTable>", and AutoCAD crashes on open.
+		this._writer.HandleReference(DwgReferenceType.HardPointer, table.Style);
+
+		//Cell data, repeats for all cells in n x m table
+		foreach (var row in table.Rows)
+		{
+			foreach (var cell in row.Cells)
+			{
+				this.writeTableCellR2004(cell);
+			}
+		}
+
+		//B Has table overrides
+		// [PATCH] Fully write the table-level legacy override section. The original implementation wrote false for all 4 segments, discarding the read-in data;
+		// when a cell border override referenced the table-level override array the index became invalid, and AutoCAD/ODA reported
+		// "<AcDbTable> needs recovery" (the root cause of 2007 being unable to open; same origin as R2004 Invalid index).
+		// Field order follows cadcodec write_legacy_table_style_override / write_legacy_border_*.
+		var legacy = table.LegacyOverrides;
+		this._writer.WriteBit(legacy?.StyleOverride != null);
+		if (legacy?.StyleOverride != null)
+		{
+			this.writeLegacyTableStyleOverride(legacy.StyleOverride);
+		}
+
+		//B Has border color overrides
+		this._writer.WriteBit(legacy?.BorderColors != null);
+		if (legacy?.BorderColors != null)
+		{
+			this.writeLegacyBorderOverrides(legacy.BorderColors, true, false, false);
+		}
+
+		//B Has border lineweight overrides
+		this._writer.WriteBit(legacy?.BorderLineWeights != null);
+		if (legacy?.BorderLineWeights != null)
+		{
+			this.writeLegacyBorderOverrides(legacy.BorderLineWeights, false, true, false);
+		}
+
+		//B Has border visibility overrides
+		// The "Until R2007" branch of the read-side readTableEntity reads 4 override flag bits in total
+		// (table overrides / border color / border lineweight / border visibility,
+		// see DwgObjectReader.Entities.cs); previously writing false always caused bitstream and data loss.
+		this._writer.WriteBit(legacy?.BorderVisibility != null);
+		if (legacy?.BorderVisibility != null)
+		{
+			this.writeLegacyBorderOverrides(legacy.BorderVisibility, false, false, true);
+		}
+	}
+
+	/// <summary>
+	/// Writes the table style override section for R2007 and earlier versions,
+	/// with field order matching the corresponding read branch of readTableEntity in <see cref="DwgObjectReader"/>.
+	/// </summary>
+	private void writeLegacyTableStyleOverride(TableEntity.TableLegacyOverrides.StyleOverrideData data)
+	{
+		this._writer.WriteBitLong(data.Flags);
+		int flags = data.Flags;
+		if ((flags & 0x0001) != 0)
+		{
+			//Title suppressed B 280
+			this._writer.WriteBit(data.TitleSuppressed);
+		}
+		if ((flags & 0x0004) != 0)
+		{
+			//Flow direction BS 70
+			this._writer.WriteBitShort(data.FlowDirection);
+		}
+		if ((flags & 0x0008) != 0)
+		{
+			//Horz. Cell margin BD 40
+			this._writer.WriteBitDouble(data.HorizontalCellMargin);
+		}
+		if ((flags & 0x0010) != 0)
+		{
+			//Vert. cell margin BD 41
+			this._writer.WriteBitDouble(data.VerticalCellMargin);
+		}
+		int index = 0;
+		foreach (int bit in new[] { 0x0020, 0x0040, 0x0080 })
+		{
+			if ((flags & bit) != 0)
+			{
+				//Title/Header/Data row color CMC 64/65/66
+				Color color = index < data.RowColors.Count ? data.RowColors[index] : Color.ByBlock;
+				this._writer.WriteCmColorR2004(color);
+				index++;
+			}
+		}
+		index = 0;
+		foreach (int bit in new[] { 0x0100, 0x0200, 0x0400 })
+		{
+			if ((flags & bit) != 0)
+			{
+				//Title/Header/Data row fill none B 283
+				this._writer.WriteBit(index < data.RowFillNone.Count ? data.RowFillNone[index] : false);
+				index++;
+			}
+		}
+		index = 0;
+		foreach (int bit in new[] { 0x0800, 0x1000, 0x2000 })
+		{
+			if ((flags & bit) != 0)
+			{
+				//Title/Header/Data row fill color CMC 63
+				Color color = index < data.RowFillColors.Count ? data.RowFillColors[index] : Color.ByBlock;
+				this._writer.WriteCmColorR2004(color);
+				index++;
+			}
+		}
+		index = 0;
+		foreach (int bit in new[] { 0x4000, 0x8000, 0x10000 })
+		{
+			if ((flags & bit) != 0)
+			{
+				//Title/Header/Data row align BS 170
+				this._writer.WriteBitShort(index < data.RowAlignments.Count ? data.RowAlignments[index] : (short)0);
+				index++;
+			}
+		}
+		index = 0;
+		foreach (int bit in new[] { 0x20000, 0x40000, 0x80000 })
+		{
+			if ((flags & bit) != 0)
+			{
+				//Title/Header/Data text style hnd H 7
+				ulong handle = index < data.TextStyleHandles.Count ? data.TextStyleHandles[index] : 0;
+				this._writer.HandleReference(DwgReferenceType.HardPointer, handle);
+				index++;
+			}
+		}
+		index = 0;
+		foreach (int bit in new[] { 0x100000, 0x200000, 0x400000 })
+		{
+			if ((flags & bit) != 0)
+			{
+				//Title/Header/Data row height BD 140
+				this._writer.WriteBitDouble(index < data.RowHeights.Count ? data.RowHeights[index] : 0.0);
+				index++;
+			}
+		}
+	}
+
+	/// <summary>
+	/// Writes the border override section for R2007 and earlier versions (one of color / lineweight / visibility),
+	/// with bits 0-17 expanded in bit order, consistent with the read-side bit-by-bit read order.
+	/// </summary>
+	private void writeLegacyBorderOverrides(TableEntity.TableLegacyOverrides.BorderOverrideData data, bool colors, bool lineWeights, bool visibility)
+	{
+		this._writer.WriteBitLong(data.Flags);
+		int index = 0;
+		for (int bit = 0; bit < 18; bit++)
+		{
+			if ((data.Flags & (1 << bit)) == 0)
+			{
+				continue;
+			}
+			if (colors)
+			{
+				Color color = index < data.Colors.Count ? data.Colors[index] : Color.ByBlock;
+				this._writer.WriteCmColorR2004(color);
+			}
+			else if (lineWeights)
+			{
+				//BS border lineweight, default ByLayer(-1)
+				short lw = index < data.LineWeights.Count ? data.LineWeights[index] : (short)LineWeightType.ByLayer;
+				this._writer.WriteBitShort(lw);
+			}
+			else
+			{
+				//BS border visibility (0 = not visible)
+				bool visible = index < data.Visibility.Count && data.Visibility[index];
+				this._writer.WriteBitShort(visible ? (short)1 : (short)0);
+			}
+			index++;
+		}
+	}
+
+	/// <summary>
+	/// Writes R2004 table cell data, with field order strictly symmetric with the pre-R2007 branch of the read-side readTableCellData.
+	/// </summary>
+	private void writeTableCellR2004(TableEntity.Cell cell)
+	{
+		// [FIX] The Type of an R2010+ source cell may default to 0 (an invalid enum value, CellType.Text=1/Block=2).
+		// Fall back to inferring from content: contains Block content → Block, otherwise Text, guaranteeing BS 171 is always a valid value.
+		TableEntity.CellType cellType = cell.Type;
+		if (cellType != TableEntity.CellType.Text && cellType != TableEntity.CellType.Block)
+		{
+			bool isBlock = false;
+			foreach (var content in cell.Contents)
+			{
+				if (content.ContentType == TableEntity.TableCellContentType.Block)
+				{
+					isBlock = true;
+					break;
+				}
+			}
+			cellType = isBlock ? TableEntity.CellType.Block : TableEntity.CellType.Text;
+		}
+
+		//BS 171 Cell type, 1 = text, 2 = block
+		this._writer.WriteBitShort((short)cellType);
+
+		//RC 172 Cell edge flags
+		this._writer.WriteByte((byte)cell.EdgeFlags);
+
+		//B 173 Cell merged value
+		this._writer.WriteBit(cell.MergedValue != 0);
+
+		//B 174 Cell autofit flag
+		this._writer.WriteBit(cell.AutoFit);
+
+		//BL 175 Merged width flag (horizontal number of merged cells)
+		this._writer.WriteBitLong(cell.BorderWidth);
+
+		//BL 176 Merged height flag (vertical number of merged cells)
+		this._writer.WriteBitLong(cell.BorderHeight);
+
+		//BD 145 Cell rotation
+		this._writer.WriteBitDouble(cell.Rotation);
+
+		//H 344 (text cell) / 340 (block cell) value handle
+		// When a text cell inlines the string directly, this handle is 0 (the read side takes the TV 1 branch based on this)
+		// [FIX] Must write code 5 (soft pointer) rather than Undefined (code 0): the empty handle should be 0x50,
+		// and the AutoCAD native file measured to have all 21 cell value handles as (5.0.0);
+		// code 0 makes ODA report <AcDbTable> needs recovery, and AutoCAD crashes on open.
+		this._writer.HandleReference(DwgReferenceType.HardPointer, 0UL);
+
+		if (cellType == TableEntity.CellType.Block)
+		{
+			//BD 144 Block scale
+			this._writer.WriteBitDouble(cell.BlockScale);
+
+			//B Has attributes flag
+			this._writer.WriteBit(false);
+		}
+		else if (this._version < ACadVersion.AC1021)
+		{
+			//TV 1 Text string (text cells before R2007, value is an inline string;
+			//the read-side condition is CellType.Text && handle == 0 && version < AC1021,
+			//from R2007 (AC1021) onward text is stored in the CadValue at the end of the cell, no longer inlined)
+			var content = cell.Contents.Count > 0 ? cell.Contents[0] : null;
+			string text = content != null ? Convert.ToString(content.CadValue?.Value) : string.Empty;
+			this._writer.WriteVariableText(text ?? string.Empty);
+		}
+
+		//B Has cell flag override
+		// [PATCH] Serialize the cell style override. The previous implementation always
+		// wrote false, silently dropping every cell override (e.g. the per-cell TextHeight
+		// AutoCAD materializes when a table is transformed: 6.0 -> 5.988 / 4.5 -> 4.491 in
+		// sample_VBAtransformed.dwg, plus preserved alignment/content/background colors).
+		// The reader (readTableCellData) expects a flag-driven field sequence, emitted here
+		// in the exact order it reads:
+		//   BL 177 flags, RC 178 virtual edge flag,
+		//   then per set flag: CellAlignment (BS 170), BackgroundFillNone (B 283),
+		//   BackgroundColor (CMC 63), ContentColor (CMC 64), TextStyle (H 7), TextHeight (BD 140)
+		//   and the four border triples (color/weight/visibility, top/right/bottom/left).
+		TableEntity.Cell.OverrideFlags ovr = TableEntity.Cell.OverrideFlags.None;
+		var so = cell.StyleOverride;
+		if (so != null)
+		{
+			if (so.TextHeight > 0)
+			{
+				ovr |= TableEntity.Cell.OverrideFlags.TextHeight;
+			}
+			if (so.CellAlignment != TableStyle.CellAlignmentType.None)
+			{
+				ovr |= TableEntity.Cell.OverrideFlags.CellAlignment;
+			}
+			if (!so.ContentColor.IsByBlock && !so.ContentColor.IsByLayer)
+			{
+				ovr |= TableEntity.Cell.OverrideFlags.ContentColor;
+			}
+			if (!so.BackgroundColor.IsByBlock && !so.BackgroundColor.IsByLayer)
+			{
+				ovr |= TableEntity.Cell.OverrideFlags.BackgroundColor;
+			}
+		}
+
+		this._writer.WriteBit(ovr != TableEntity.Cell.OverrideFlags.None);
+		if (ovr != TableEntity.Cell.OverrideFlags.None)
+		{
+			//BL 177 Cell flag override
+			this._writer.WriteBitLong((int)ovr);
+			//RC 178 Virtual edge flag
+			this._writer.WriteByte((byte)cell.VirtualEdgeFlag);
+
+			if (ovr.HasFlag(TableEntity.Cell.OverrideFlags.CellAlignment))
+			{
+				//BS 170 Cell alignment
+				this._writer.WriteBitShort((short)so.CellAlignment);
+			}
+			if (ovr.HasFlag(TableEntity.Cell.OverrideFlags.BackgroundFillNone))
+			{
+				//B 283 Background fill none
+				this._writer.WriteBit(so.IsFillColorOn);
+			}
+			if (ovr.HasFlag(TableEntity.Cell.OverrideFlags.BackgroundColor))
+			{
+				//CMC 63 Background color
+				this._writer.WriteCmColorR2004(so.BackgroundColor);
+			}
+			if (ovr.HasFlag(TableEntity.Cell.OverrideFlags.ContentColor))
+			{
+				//CMC 64 Content color
+				this._writer.WriteCmColorR2004(so.ContentColor);
+			}
+			if (ovr.HasFlag(TableEntity.Cell.OverrideFlags.TextHeight))
+			{
+				//BD 140 Text height
+				this._writer.WriteBitDouble(so.TextHeight);
+			}
+
+			//Border override triples (top/right/bottom/left), same order as the reader.
+			if (ovr.HasFlag(TableEntity.Cell.OverrideFlags.TopGridColor))
+			{
+				this._writer.WriteCmColorR2004(so.TopBorder.Color);
+			}
+			if (ovr.HasFlag(TableEntity.Cell.OverrideFlags.TopGridLineWeight))
+			{
+				this._writer.WriteBitShort((short)so.TopBorder.LineWeight);
+			}
+			if (ovr.HasFlag(TableEntity.Cell.OverrideFlags.TopVisibility))
+			{
+				this._writer.WriteBitShort((short)(so.TopBorder.IsInvisible ? 0 : 1));
+			}
+			if (ovr.HasFlag(TableEntity.Cell.OverrideFlags.RightGridColor))
+			{
+				this._writer.WriteCmColorR2004(so.RightBorder.Color);
+			}
+			if (ovr.HasFlag(TableEntity.Cell.OverrideFlags.RightGridLineWeight))
+			{
+				this._writer.WriteBitShort((short)so.RightBorder.LineWeight);
+			}
+			if (ovr.HasFlag(TableEntity.Cell.OverrideFlags.RightVisibility))
+			{
+				this._writer.WriteBitShort((short)(so.RightBorder.IsInvisible ? 0 : 1));
+			}
+			if (ovr.HasFlag(TableEntity.Cell.OverrideFlags.BottomGridColor))
+			{
+				this._writer.WriteCmColorR2004(so.BottomBorder.Color);
+			}
+			if (ovr.HasFlag(TableEntity.Cell.OverrideFlags.BottomGridLineWeight))
+			{
+				this._writer.WriteBitShort((short)so.BottomBorder.LineWeight);
+			}
+			if (ovr.HasFlag(TableEntity.Cell.OverrideFlags.BottomVisibility))
+			{
+				this._writer.WriteBitShort((short)(so.BottomBorder.IsInvisible ? 0 : 1));
+			}
+			if (ovr.HasFlag(TableEntity.Cell.OverrideFlags.LeftGridColor))
+			{
+				this._writer.WriteCmColorR2004(so.LeftBorder.Color);
+			}
+			if (ovr.HasFlag(TableEntity.Cell.OverrideFlags.LeftGridLineWeight))
+			{
+				this._writer.WriteBitShort((short)so.LeftBorder.LineWeight);
+			}
+			if (ovr.HasFlag(TableEntity.Cell.OverrideFlags.LeftVisibility))
+			{
+				this._writer.WriteBitShort((short)(so.LeftBorder.IsInvisible ? 0 : 1));
+			}
+		}
+
+		//R2007+ (AC1021):
+		//At the end of the read-side readTableCellData (DwgObjectReader.Entities.cs lines 557-565), when
+		//R2007Plus it additionally reads Unknown BL + the full CadValue (from R2007 onward a text cell's
+		//text is stored in this CadValue, see ODA spec §20.4.72). Previously the AC1021 write incorrectly
+		//carried over the R2004 inline text format, causing a read-side bitstream misalignment and readCadValue throwing
+		//NotImplementedException, with TableEntity lost on read-back (66 vs 67).
+		if (this.R2007Plus)
+		{
+			//Unknown BL
+			this._writer.WriteBitLong(0);
+
+			//CadValue (Flags BL / ValueType BL / value / Units BL / Format TV / FormattedValue TV)
+			CadValue cadValue = cell.Content?.CadValue ?? new CadValue();
+			this.writeCadValue(cadValue);
+		}
+	}
+
+
+	private void writeTableContent(TableContent content)
+	{
+		//TV 1 Name
+		this._writer.WriteVariableText(content.Name);
+		//TV 300 Description AcDbLinkedTableData fields
+		this._writer.WriteVariableText(content.Description);
+
+		//BL 90 Number of columns
+		this._writer.WriteBitLong(content.Columns.Count);
+		//Begin repeat columns
+		foreach (TableEntity.Column column in content.Columns)
+		{
+			//TV 300 Column name
+			this._writer.WriteVariableText(column.Name);
+			//BL 91 32 bit integer containing custom data
+			this._writer.WriteBitLong(column.CustomData);
+
+			//BL 90 Number of custom data items
+			this._writer.WriteBitLong(column.CustomDataCollection.Count);
+			//Begin repeat custom data items
+			foreach (var entry in column.CustomDataCollection)
+			{
+				//Custom data collection, see paragraph 20.4.100
+				this.writeCustomTableData(entry);
+			}
+
+			//Cell style data, see paragraph 20.4.101.4, this contains cell style overrides for the column.
+			this.writeCellStyle(column.CellStyleOverride);
+
+			//BL 90 Cell style ID, points to the cell style in the table’s table style that is used as the
+			//base cell style for the column. 0 if not present.
+			this._writer.WriteBitLong(column.CellStyle != null ? column.CellStyle.Id : 0);
+
+			//BD 40 Column width.
+			this._writer.WriteBitDouble(column.Width);
+			//End repeat columns
+		}
+
+		//BL 91 Number of rows.
+		this._writer.WriteBitLong(content.Rows.Count);
+		foreach (var row in content.Rows)
+		{
+			//BL 90 Number of cells in row.
+			this._writer.WriteBitLong(row.Cells.Count);
+			//Begin repeat cells
+			foreach (var cell in row.Cells)
+			{
+				this.writeTableCell(cell);
+			}
+
+			//BL 91 32 bit integer containing custom data
+			this._writer.WriteBitLong(row.CustomData);
+
+			//BL 90 Number of custom data items
+			this._writer.WriteBitLong(row.CustomDataCollection.Count);
+			foreach (var entry in row.CustomDataCollection)
+			{
+				//Custom data collection, see paragraph 20.4.100
+				this.writeCustomTableData(entry);
+			}
+
+			//Cell style data, see paragraph 20.4.101.4, this contains cell style overrides for the row.
+			this.writeCellStyle(row.CellStyleOverride);
+
+			//BL 90 Cell style ID, points to the cell style in the table’s table style that is used as the
+			//base cell style for the column. 0 if not present.
+			this._writer.WriteBitLong(row.CellStyle != null ? row.CellStyle.Id : 0);
+
+			//40 Row height
+			this._writer.WriteBitDouble(row.Height);
+		}
+
+		//BL Number of cell contents that contain a field reference.
+		this._writer.WriteBitLong(0);
+		//Begin repeat field references
+		//for (int n = 0; n < nfields; n++)
+		//{
+		//	//H Handle to field (AcDbField), hard owner.
+		//	this._mergedReaders.HandleReference();
+		//}
+
+		//The table’s cell style override fields (see paragraph 20.4.101.4). The table’s
+		//base cell style is the table style’s overall cell style (present from R2010 onwards).
+		this.writeCellStyle(content.CellStyleOverride);
+
+		//Bl 90 Number of merged cell ranges
+		this._writer.WriteBitLong(content.MergedCellRanges.Count);
+		foreach (var cellRange in content.MergedCellRanges)
+		{
+			//BL 91 Top row index
+			this._writer.WriteBitLong(cellRange.TopRowIndex);
+			//BL 92 Left column index
+			this._writer.WriteBitLong(cellRange.LeftColumnIndex);
+			//BL 93 Bottom row index
+			this._writer.WriteBitLong(cellRange.BottomRowIndex);
+			//BL 94 Right column index
+			this._writer.WriteBitLong(cellRange.RightColumnIndex);
+		}
+
+		//H 340 Handle to table style(hard pointer).
+		this._writer.HandleReference(DwgReferenceType.HardPointer, content.Style);
+	}
+
 	private void writeTableCell(TableEntity.Cell cell)
 	{
 		//BL 90 Cell state flags:
@@ -2492,200 +3204,6 @@ internal partial class DwgObjectWriter : DwgSectionIO
 		{
 			this.writeCellContentFormat(content.Format);
 		}
-	}
-
-	private void writeTableContent(TableContent content)
-	{
-		//TV 1 Name
-		this._writer.WriteVariableText(content.Name);
-		//TV 300 Description AcDbLinkedTableData fields
-		this._writer.WriteVariableText(content.Description);
-
-		//BL 90 Number of columns
-		this._writer.WriteBitLong(content.Columns.Count);
-		//Begin repeat columns
-		foreach (TableEntity.Column column in content.Columns)
-		{
-			//TV 300 Column name
-			this._writer.WriteVariableText(column.Name);
-			//BL 91 32 bit integer containing custom data
-			this._writer.WriteBitLong(column.CustomData);
-
-			//BL 90 Number of custom data items
-			this._writer.WriteBitLong(column.CustomDataCollection.Count);
-			//Begin repeat custom data items
-			foreach (var entry in column.CustomDataCollection)
-			{
-				//Custom data collection, see paragraph 20.4.100
-				this.writeCustomTableData(entry);
-			}
-
-			//Cell style data, see paragraph 20.4.101.4, this contains cell style overrides for the column.
-			this.writeCellStyle(column.CellStyleOverride);
-
-			//BL 90 Cell style ID, points to the cell style in the table’s table style that is used as the
-			//base cell style for the column. 0 if not present.
-			this._writer.WriteBitLong(column.CellStyle != null ? column.CellStyle.Id : 0);
-
-			//BD 40 Column width.
-			this._writer.WriteBitDouble(column.Width);
-			//End repeat columns
-		}
-
-		//BL 91 Number of rows.
-		this._writer.WriteBitLong(content.Rows.Count);
-		foreach (var row in content.Rows)
-		{
-			//BL 90 Number of cells in row.
-			this._writer.WriteBitLong(row.Cells.Count);
-			//Begin repeat cells
-			foreach (var cell in row.Cells)
-			{
-				this.writeTableCell(cell);
-			}
-
-			//BL 91 32 bit integer containing custom data
-			this._writer.WriteBitLong(row.CustomData);
-
-			//BL 90 Number of custom data items
-			this._writer.WriteBitLong(row.CustomDataCollection.Count);
-			foreach (var entry in row.CustomDataCollection)
-			{
-				//Custom data collection, see paragraph 20.4.100
-				this.writeCustomTableData(entry);
-			}
-
-			//Cell style data, see paragraph 20.4.101.4, this contains cell style overrides for the row.
-			this.writeCellStyle(row.CellStyleOverride);
-
-			//BL 90 Cell style ID, points to the cell style in the table’s table style that is used as the
-			//base cell style for the column. 0 if not present.
-			this._writer.WriteBitLong(row.CellStyle != null ? row.CellStyle.Id : 0);
-
-			//40 Row height
-			this._writer.WriteBitDouble(row.Height);
-		}
-
-		//BL Number of cell contents that contain a field reference.
-		this._writer.WriteBitLong(0);
-		//Begin repeat field references
-		//for (int n = 0; n < nfields; n++)
-		//{
-		//	//H Handle to field (AcDbField), hard owner.
-		//	this._mergedReaders.HandleReference();
-		//}
-
-		//The table’s cell style override fields (see paragraph 20.4.101.4). The table’s
-		//base cell style is the table style’s overall cell style (present from R2010 onwards).
-		this.writeCellStyle(content.CellStyleOverride);
-
-		//Bl 90 Number of merged cell ranges
-		this._writer.WriteBitLong(content.MergedCellRanges.Count);
-		foreach (var cellRange in content.MergedCellRanges)
-		{
-			//BL 91 Top row index
-			this._writer.WriteBitLong(cellRange.TopRowIndex);
-			//BL 92 Left column index
-			this._writer.WriteBitLong(cellRange.LeftColumnIndex);
-			//BL 93 Bottom row index
-			this._writer.WriteBitLong(cellRange.BottomRowIndex);
-			//BL 94 Right column index
-			this._writer.WriteBitLong(cellRange.RightColumnIndex);
-		}
-
-		//H 340 Handle to table style(hard pointer).
-		this._writer.HandleReference(DwgReferenceType.HardPointer, content.Style);
-	}
-
-	private void writeTableEntity(TableEntity table)
-	{
-		this.writeCommonInsertData(table);
-
-		if (this.R2010Plus)
-		{
-			//RC Unknown (default 0)
-			this._writer.WriteByte(0);
-			//H Unknown (soft pointer, default NULL)
-			this._writer.HandleReference(DwgReferenceType.SoftPointer, null);
-			//BL Unknown (default 0)
-			this._writer.WriteBitLong(0);
-
-			//R2013
-			if (this.R2013Plus)
-			{
-				//Unknown (default 0)
-				this._writer.WriteBitLong(0);
-			}
-			else
-			{
-				//R2010
-				//B Unknown (default true)
-				this._writer.WriteBit(true);
-			}
-
-			//Here the table content is present (see TABLECONTENT object),
-			//without the common OBJECT data.
-			//See paragraph 20.4.97.
-			this.writeTableContent(table.Content);
-
-			//BS Unknown (default 38)
-			this._writer.WriteBitShort(38);
-			//3BD 11 Horizontal direction
-			this._writer.Write3BitDouble(table.HorizontalDirection);
-
-			//BL Has break data flag (0 = no break data, 1 = has break data)
-			//Begin break data(optional)
-			this._writer.WriteBitLong(table.HasBreadData ? 1 : 0);
-			if (table.HasBreadData)
-			{
-				//BL Option flags:
-				this._writer.WriteBitLong((int)table.BreakData.Flags);
-				//BL Flow direction:
-				this._writer.WriteBitLong((int)table.BreakData.FlowDirection);
-				//BD Break spacing
-				this._writer.WriteBitDouble(table.BreakData.BreakSpacing);
-				//BL Unknown flags
-				this._writer.WriteBitLong(0);
-				//BL Unknown flags
-				this._writer.WriteBitLong(0);
-				//BL Number of manual positions (break heights)
-				this._writer.WriteBitLong(table.BreakData.Heights.Count);
-				foreach (var breakHeight in table.BreakData.Heights)
-				{
-					//3BD Position
-					this._writer.Write3BitDouble(breakHeight.Position);
-					//BD Height
-					this._writer.WriteBitDouble(breakHeight.Height);
-					//BL Flags(meaning unknown)
-					this._writer.WriteBitLong(0);
-				}
-			}
-
-			//BL Number of break row ranges (there is always at least 1)
-			this._writer.WriteBitLong(table.BreakRowRanges.Count);
-			foreach (var breakRowRange in table.BreakRowRanges)
-			{
-				//3BD Position
-				this._writer.Write3BitDouble(breakRowRange.Position);
-				//BL Start row index
-				this._writer.WriteBitLong(breakRowRange.StartRowIndex);
-				//BL End row index
-				this._writer.WriteBitLong(breakRowRange.EndRowIndex);
-			}
-
-			return;
-		}
-
-		//Until R2007
-
-		//Common:
-		//Flag for table value BS 90
-		//	Bit flags, 0x06(0x02 + 0x04): has block,
-		//	0x10: table direction, 0 = up, 1 = down,
-		//	0x20: title suppressed.
-		//	Normally 0x06 is always set.
-
-		throw new NotImplementedException();
 	}
 
 	private void writeTextEntity(TextEntity text)
@@ -2846,6 +3364,41 @@ internal partial class DwgObjectWriter : DwgSectionIO
 		this._writer.HandleReference(DwgReferenceType.HardPointer, tolerance.Style);
 	}
 
+	/// <summary>
+	/// Before writing a polyline/mesh, align the sub-vertex layers to the owner layer, eliminating the AUDIT
+	/// "AcDbPolygonMeshVertex layer != owner's" error (equivalent to AutoCAD AUDIT's automatic repair).
+	/// </summary>
+	/// <remarks>
+	/// Root cause: read-side assembly is done in two steps — first <c>build()</c> (onAddVertices→MatchProperties syncs the vertex layer to the
+	/// owner's "at that time" layer, which is often still the default "0"), then each vertex template's own <c>build()</c> writes the vertex layer back
+	/// per the source file (e.g. "0"), overwriting the sync result, so the end state is owner = real layer, some vertices = leftover "0".
+	/// The source file itself is in the corrupted state "vertex layer != owner layer", and the ACadSharp reader faithfully preserves that inconsistency.
+	/// At this point the write side has fully parsed the document and the owner layer is fixed — the only reliable normalization point: set each sub-vertex layer to the owner
+	/// layer (semantically in AutoCAD vertices are not independent of the owner layer), and writing clears this AUDIT error.
+	/// Honors <see cref="Polyline{T}.MatchVerticesEntityProperties"/>: when false, keep the original layer (respecting explicit intent).
+	/// </remarks>
+	private void alignVertexLayerToOwner<T>(Polyline<T> pline) where T : Vertex
+	{
+		if (!pline.MatchVerticesEntityProperties)
+		{
+			return;
+		}
+
+		var ownerLayer = pline.Layer;
+		if (ownerLayer == null)
+		{
+			return;
+		}
+
+		foreach (var v in pline.Vertices)
+		{
+			if (v.Layer != ownerLayer)
+			{
+				v.Layer = ownerLayer;
+			}
+		}
+	}
+
 	private void writeVertex(Vertex vertex)
 	{
 		//Flags EC 70 NOT bit-pair-coded.
@@ -2890,6 +3443,65 @@ internal partial class DwgObjectWriter : DwgSectionIO
 		//Common:
 		//Tangent dir BD 50
 		this._writer.WriteBitDouble(vertex.CurveTangent);
+	}
+
+	/// <summary>
+	/// Adds the ACAD "MVIEW" extended data to a viewport when writing R13-R14 files.
+	/// </summary>
+	/// <remarks>
+	/// <para>
+	/// Native AutoCAD R13-R14 files always store the viewport view data (target, direction,
+	/// twist, height, lens length...) in an ACAD "MVIEW" XDATA attached to the viewport entity;
+	/// the in-entity view fields only exist from R2000 on. AutoCAD R14 fails to open files whose
+	/// viewports lack this XDATA (16 error opening layout: eDwgObjectImproperlyRead).
+	/// </para>
+	/// <para>
+	/// Record layout matches a native AutoCAD R14 reference file; fields with no counterpart
+	/// in <see cref="Viewport"/> keep the native default values.
+	/// </para>
+	/// </remarks>
+	private void addMviewExtendedData(Viewport viewport)
+	{
+		if (viewport.ExtendedData != null && viewport.ExtendedData.ContainsKeyName("ACAD"))
+			return;
+
+		ExtendedData eed = new ExtendedData();
+		eed.Records.Add(new ExtendedDataString("MVIEW"));
+		eed.Records.Add(ExtendedDataControlString.Open);
+		eed.Records.Add(new ExtendedDataInteger16(16));
+		//View Target: WC 17
+		eed.Records.Add(new ExtendedDataWorldCoordinate(viewport.ViewTarget));
+		//View Direction: WC 16
+		eed.Records.Add(new ExtendedDataWorldCoordinate(viewport.ViewDirection));
+		//View Twist Angle: Real 51
+		eed.Records.Add(new ExtendedDataReal(viewport.TwistAngle));
+		//View Height: Real 45
+		eed.Records.Add(new ExtendedDataReal(viewport.ViewHeight));
+		//View Center: Real 12, 13
+		eed.Records.Add(new ExtendedDataReal(viewport.ViewCenter.X));
+		eed.Records.Add(new ExtendedDataReal(viewport.ViewCenter.Y));
+		//Lens Length: Real 42
+		eed.Records.Add(new ExtendedDataReal(viewport.LensLength));
+		//Front Clip Z: Real 43
+		eed.Records.Add(new ExtendedDataReal(viewport.FrontClipPlane));
+		//Back Clip Z: Real 44
+		eed.Records.Add(new ExtendedDataReal(viewport.BackClipPlane));
+		eed.Records.Add(new ExtendedDataInteger16(0));
+		eed.Records.Add(new ExtendedDataInteger16(1000));
+		eed.Records.Add(new ExtendedDataInteger16(1));
+		eed.Records.Add(new ExtendedDataInteger16(1));
+		for (int i = 0; i < 4; i++)
+			eed.Records.Add(new ExtendedDataInteger16(0));
+		for (int i = 0; i < 3; i++)
+			eed.Records.Add(new ExtendedDataReal(0));
+		for (int i = 0; i < 4; i++)
+			eed.Records.Add(new ExtendedDataReal(10));
+		eed.Records.Add(new ExtendedDataInteger16(0));
+		eed.Records.Add(ExtendedDataControlString.Open);
+		eed.Records.Add(ExtendedDataControlString.Close);
+		eed.Records.Add(ExtendedDataControlString.Close);
+
+		viewport.ExtendedData.Add("ACAD", eed);
 	}
 
 	private void writeViewport(Viewport viewport)
@@ -2989,6 +3601,10 @@ internal partial class DwgObjectWriter : DwgSectionIO
 		}
 
 		//R13 - R14 Only:
+		//H VIEWPORT ENT HEADER(hard pointer) —— R14's view data is stored in a separate
+		//VIEWPORT ENTITY HEADER(71) object; inside the entity only one hard pointer (null here) is written.
+		//Per the ODA spec VIEWPORT ENTITY(34): the view data fields only exist from R2000+;
+		//R14 cannot write them inline, otherwise AutoCAD raises Error 67 and drops the whole viewport object.
 		if (this.R13_14Only)
 		{
 			this._writer.HandleReference(DwgReferenceType.HardPointer, null);

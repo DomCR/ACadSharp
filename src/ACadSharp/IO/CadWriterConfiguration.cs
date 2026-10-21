@@ -63,12 +63,15 @@ public class CadWriterConfiguration
 	/// The writer will not ignore the <see cref="ACadSharp.Entities.Shape"/> entities in the document.
 	/// </summary>
 	/// <remarks>
-	/// Shapes can cause corruption for some documents due the lack of support for shx files in this library which cannot validate the correct shape format.
+	/// The writer in the current version fully supports Shape entities (writeShape emits the real SHAPEFILE style handle,
+	/// no longer discarding them due to missing shx validation), and accoreconsole AUDIT has verified that output containing Shape entities has 0 deletions
+	/// and opens normally, so the default was changed to true in order to retain Shape entities in the document (the previous default of false was a
+	/// conservative setting from an early version that did not support saving them). Set it to false explicitly to reproduce the old behavior.
 	/// </remarks>
 	/// <value>
-	/// default: false
+	/// default: true
 	/// </value>
-	public bool WriteShapes { get; set; } = false;
+	public bool WriteShapes { get; set; } = true;
 
 	/// <summary>
 	/// The writer will not ignore the <see cref="ACadSharp.XData.ExtendedData"/> collection in the <see cref="CadObject"/>.
