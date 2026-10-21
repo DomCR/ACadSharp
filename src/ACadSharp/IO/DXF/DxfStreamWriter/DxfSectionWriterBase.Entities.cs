@@ -482,6 +482,37 @@ internal abstract partial class DxfSectionWriterBase
 		this._writer.Write(42, ellipse.EndParameter, map);
 	}
 
+	private void writeEncryptedSAT(ModelerGeometry geometry)
+	{
+		int CHUNK = 255;
+		foreach (string line in geometry.GetAcisText().Split('\n'))
+		{
+			string trimmed = line.TrimEnd('\r');
+			if (trimmed.Length == 0)
+			{
+				continue;
+			}
+
+			string encoded = AcisTextCodec.Decode(trimmed);
+			int offset = 0;
+			while (offset < encoded.Length)
+			{
+				int length = Math.Min(CHUNK, encoded.Length - offset);
+				if (offset + length < encoded.Length)
+				{
+					int space = encoded.LastIndexOf(' ', offset + length - 1, length);
+					if (space > offset)
+					{
+						length = space - offset + 1;
+					}
+				}
+
+				this._writer.Write(offset == 0 ? 1 : 3, encoded.Substring(offset, length));
+				offset += length;
+			}
+		}
+	}
+
 	private void writeFace3D(Face3D face)
 	{
 		DxfClassMap map = DxfClassMap.Create<Face3D>();
@@ -909,6 +940,32 @@ internal abstract partial class DxfSectionWriterBase
 		}
 	}
 
+	private void writeModelerGeometry(ModelerGeometry geometry)
+	{
+		DxfClassMap map = DxfClassMap.Create<ModelerGeometry>();
+
+		this._writer.Write(DxfCode.Subclass, DxfSubclassMarker.ModelerGeometry);
+
+		if (this.Version >= ACadVersion.AC1027)
+		{
+			this._writer.Write(290, geometry.Guid != System.Guid.Empty ? (short)1 : (short)0, map);
+			this._writer.Write(2, geometry.Guid.ToString("B"), map);
+			return;
+		}
+
+		this._writer.Write(70, geometry.ModelerFormatVersion, map);
+
+		if (geometry.IsBinaryAcisData)
+		{
+			//Encrypted sab
+		}
+		else
+		{
+			//Encrypted sat
+			writeEncryptedSAT(geometry);
+		}
+	}
+
 	private void writeMText(MText mtext, bool writeSubclass = true)
 	{
 		DxfClassMap map = DxfClassMap.Create<MText>();
@@ -1292,44 +1349,6 @@ internal abstract partial class DxfSectionWriterBase
 		this._writer.Write(11, ray.Direction, map);
 	}
 
-	private void writeModelerGeometry(ModelerGeometry geometry)
-	{
-		DxfClassMap map = DxfClassMap.Create<ModelerGeometry>();
-
-		this._writer.Write(DxfCode.Subclass, DxfSubclassMarker.ModelerGeometry);
-
-		if (this.Version >= ACadVersion.AC1027)
-		{
-			this._writer.Write(290, geometry.Guid != System.Guid.Empty ? (short)1 : (short)0, map);
-			this._writer.Write(2, geometry.Guid.ToString("B"), map);
-			return;
-		}
-
-		this._writer.Write(70, geometry.ModelerFormatVersion, map);
-
-		if (geometry.IsBinaryAcisData)
-		{
-			//Encrypted sat
-		}
-		else
-		{
-			//Encrypted sat
-		}
-
-		throw new NotImplementedException();
-	}
-
-	private void writeSolid3D(Solid3D solid)
-	{
-		this.writeModelerGeometry(solid);
-
-		if (this.Version >= ACadVersion.AC1021)
-		{
-			this._writer.Write(DxfCode.Subclass, DxfSubclassMarker.Solid3D);
-			this._writer.Write(350, (ulong)0);
-		}
-	}
-
 	private void writeSeqend(Seqend seqend)
 	{
 		this._writer.Write(0, seqend.ObjectName);
@@ -1375,6 +1394,17 @@ internal abstract partial class DxfSectionWriterBase
 		this._writer.Write(39, solid.Thickness, map);
 
 		this._writer.Write(210, solid.Normal, map);
+	}
+
+	private void writeSolid3D(Solid3D solid)
+	{
+		this.writeModelerGeometry(solid);
+
+		if (this.Version >= ACadVersion.AC1021)
+		{
+			this._writer.Write(DxfCode.Subclass, DxfSubclassMarker.Solid3D);
+			this._writer.Write(350, (ulong)0);
+		}
 	}
 
 	private void writeSpline(Spline spline)

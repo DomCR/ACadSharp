@@ -71,7 +71,7 @@ public abstract partial class ModelerGeometry : Entity
 	/// Gets or sets the modeler format version used in the drawing.
 	/// </summary>
 	[DxfCodeValue(70)]
-	public short ModelerFormatVersion { get; set; }
+	public short ModelerFormatVersion { get; set; } = 1;
 
 	/// <summary>
 	/// Gets or sets the point in 3D space.
