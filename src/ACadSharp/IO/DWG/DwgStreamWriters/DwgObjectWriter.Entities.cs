@@ -1605,6 +1605,7 @@ internal partial class DwgObjectWriter : DwgSectionIO
 
 		if (this.R2013Plus)
 		{
+			//290
 			this._writer.WriteBit(geometry.Guid != System.Guid.Empty);
 			this.writeGuid(geometry.Guid);
 			this._writer.WriteBitLong(0);
