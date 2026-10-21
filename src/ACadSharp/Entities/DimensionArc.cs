@@ -116,6 +116,9 @@ public class DimensionArc : Dimension, IDxfClassDefined
 		this.Center = transform.ApplyTransform(this.Center);
 		this.LeaderPoint1 = transform.ApplyTransform(this.LeaderPoint1);
 		this.LeaderPoint2 = transform.ApplyTransform(this.LeaderPoint2);
+
+		// [PATCH] Measurement depends on the arc geometric points; the text must be regenerated after the points are transformed.
+		this.UpdateDimensionText();
 	}
 
 	/// <inheritdoc/>

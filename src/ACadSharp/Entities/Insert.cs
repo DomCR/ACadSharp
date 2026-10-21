@@ -1,4 +1,4 @@
-﻿using ACadSharp.Attributes;
+using ACadSharp.Attributes;
 using ACadSharp.Extensions;
 using ACadSharp.IO;
 using ACadSharp.Objects;
@@ -258,33 +258,35 @@ public class Insert : Entity, IOrientable
 		XYZ newPosition = transform.ApplyTransform(this.InsertPoint);
 		XYZ newNormal = this.transformNormal(transform, this.Normal);
 
-		Matrix3 transOW = Matrix3.ArbitraryAxis(this.Normal);
-		transOW *= Matrix3.RotationZ(this.Rotation);
+		// AutoCAD semantics (verified against the VBA baseline sample_VBAtransformed.dwg):
+		// the block reference's Scale belongs to the block definition coordinate system, it is only enlarged by the scale factor, never polluted by rotation;
+		// Rotation directly accumulates the transform's rotation-about-normal angle, normalized to [0, 2PI).
+		// The original implementation rotated the scale vector together using the OCS matrix,
+		// causing negative components in Scale and Rotation to take a wrong angle reference
+		// (block references displayed with a scrambled rotation).
+		XYZ scaleVec = transform.Scale;
+		double uniformScale = (Math.Abs(scaleVec.X) + Math.Abs(scaleVec.Y) + Math.Abs(scaleVec.Z)) / 3.0;
+		if (uniformScale.IsZero())
+		{
+			uniformScale = MathHelper.Epsilon;
+		}
 
-		Matrix3 transWO = Matrix3.ArbitraryAxis(newNormal);
-		transWO = transWO.Transpose();
-
-		var transformation = new Matrix3(transform.Matrix);
-		XYZ v = transOW * XYZ.AxisX;
-		v = transformation * v;
-		v = transWO * v;
-		double newRotation = new XY(v.X, v.Y).GetAngle();
-
-		transWO = Matrix3.RotationZ(newRotation).Transpose() * transWO;
-
-		XYZ s = transOW * new XYZ(this.XScale, this.YScale, this.ZScale);
-		s = transformation * s;
-		s = transWO * s;
-		XYZ newScale = new XYZ(
-			s.X.IsZero() ? MathHelper.Epsilon : s.X,
-			s.Y.IsZero() ? MathHelper.Epsilon : s.Y,
-			s.Z.IsZero() ? MathHelper.Epsilon : s.Z);
+		// Rotation angle about the block reference normal, normalized to [0, 2PI)
+		// The transform's rotation is applied about the Z axis (consistent with the AutoCAD/VBA baseline),
+		// the Z component is taken as the rotation-about-normal angle.
+		double rotationDelta = transform.EulerRotation.Z;
+		double newRotation = this.Rotation + rotationDelta;
+		newRotation %= Math.PI * 2.0;
+		if (newRotation < 0)
+		{
+			newRotation += Math.PI * 2.0;
+		}
 
 		this.Normal = newNormal;
 		this.InsertPoint = newPosition;
-		this.XScale = newScale.X;
-		this.YScale = newScale.Y;
-		this.ZScale = newScale.Z;
+		this.XScale = this.XScale * uniformScale;
+		this.YScale = this.YScale * uniformScale;
+		this.ZScale = this.ZScale * uniformScale;
 		this.Rotation = newRotation;
 
 		foreach (AttributeEntity att in this.Attributes)

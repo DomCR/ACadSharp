@@ -1,8 +1,9 @@
-﻿using ACadSharp.Attributes;
+using ACadSharp.Attributes;
 using ACadSharp.Extensions;
 using CSMath;
 using CSMath.Extensions;
 using CSUtilities.Extensions;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 
@@ -27,6 +28,12 @@ public partial class LwPolyline : Entity, IPolyline
 	/// </remarks>
 	[DxfCodeValue(43)]
 	public double ConstantWidth { get; set; } = 0.0;
+
+	/// <summary>
+	/// True when the source data explicitly carried a constant width (DXF 43), even if
+	/// the value is 0, so the writer can round-trip the code exactly as AutoCAD does.
+	/// </summary>
+	public bool ConstantWidthSpecified { get; set; }
 
 	/// <summary>
 	/// The current elevation of the object.
@@ -115,11 +122,24 @@ public partial class LwPolyline : Entity, IPolyline
 		: this(vertices.Select(v => new Vertex(v.Convert<XY>()))) { }
 
 	/// <inheritdoc/>
+	/// <remarks>
+	/// AutoCAD TransformBy semantics (verified against sample_VBAtransformed.dxf):
+	/// vertex locations move with the full transform, both widths (DXF 40 start, 41 end)
+	/// are multiplied by the uniform scale (5 → 4.99, 0.8485775377005793 → 0.8468803826251781
+	/// for a 0.998 scale) and the bulge (DXF 42) is left untouched (-0.52056705 stays —
+	/// a bulge is tan(θ/4), an angle factor, invariant under rotation + uniform scale).
+	/// Upstream moved only the vertex locations, leaving widths unscaled.
+	/// </remarks>
 	public override void ApplyTransform(Transform transform)
 	{
 		var newNormal = this.transformNormal(transform, this.Normal);
 
 		this.getWorldMatrix(transform, this.Normal, newNormal, out Matrix3 transOW, out Matrix3 transWO);
+
+		// [PATCH] Uniform scale = average of the decomposed scale components
+		// (transform.Scale is a vector; its GetLength() would give s·√3, not s).
+		XYZ vsc = transform.Scale;
+		double scaleFactor = (Math.Abs(vsc.X) + Math.Abs(vsc.Y) + Math.Abs(vsc.Z)) / 3.0;
 
 		foreach (var vertex in this.Vertices)
 		{
@@ -127,8 +147,11 @@ public partial class LwPolyline : Entity, IPolyline
 			v = transform.ApplyTransform(v);
 			v = transWO * v;
 			vertex.Location = v.Convert<XY>();
+			vertex.StartWidth *= scaleFactor;
+			vertex.EndWidth *= scaleFactor;
 		}
 
+		this.ConstantWidth *= scaleFactor;
 		this.Normal = newNormal;
 	}
 

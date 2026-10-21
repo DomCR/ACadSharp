@@ -1,4 +1,4 @@
-﻿using ACadSharp.Attributes;
+using ACadSharp.Attributes;
 using ACadSharp.Tables;
 using ACadSharp.XData;
 using CSMath;
@@ -28,8 +28,15 @@ public class Leader : Entity, IOrientable
 	/// <summary>
 	/// Arrowhead flag.
 	/// </summary>
+	/// <remarks>
+	/// Default <c>true</c> follows the DXF convention: group code 71 is <em>omitted</em> when the arrowhead is
+	/// enabled (the default) and only written as <c>0</c> when explicitly disabled. The DXF reader assigns this
+	/// property only when code 71 is present, so the default value governs the "absent" case. (A default of
+	/// <c>false</c> would wrongly treat "arrowhead on (omitted)" the same as "arrowhead off (71=0)".) DWG reads
+	/// assign this property explicitly, so they are unaffected.
+	/// </remarks>
 	[DxfCodeValue(71)]
-	public bool ArrowHeadEnabled { get; set; }
+	public bool ArrowHeadEnabled { get; set; } = true;
 
 	/// <summary>
 	/// Hard reference to associated annotation (mtext, tolerance, or insert entity).
@@ -69,8 +76,14 @@ public class Leader : Entity, IOrientable
 				return result;
 			}
 
-			double angle = (this.Vertices[this.Vertices.Count - 2] - this.Vertices[this.Vertices.Count - 1]).AngleBetweenVectors(this.HorizontalDirection);
-			return angle.IsZero();
+			// [PATCH] Use the direction of travel of the last segment (v[n-1] - v[n-2]);
+			// upstream subtracted in reverse, so a hookline pointing along the horizontal
+			// direction gave an angle of PI and the stored 75=1 was written back as 75=0.
+			// A 1e-6 rad tolerance absorbs the ~2e-8 rad rounding left by a similarity
+			// transform (rotated direction vs. transformed vertex difference), and PI is
+			// accepted as well since parallelism in either direction is a hookline.
+			double angle = (this.Vertices[this.Vertices.Count - 1] - this.Vertices[this.Vertices.Count - 2]).AngleBetweenVectors(this.HorizontalDirection);
+			return angle.IsZero(1e-6) || Math.Abs(angle - Math.PI) < 1e-6;
 		}
 	}
 
@@ -160,6 +173,18 @@ public class Leader : Entity, IOrientable
 		}
 
 		this.HorizontalDirection = transform.ApplyRotation(this.HorizontalDirection).Normalize();
+
+		// [PATCH] The leader text height (40) and width (41) both scale with the transform
+		// (AutoCAD: 3.3333... -> 3.3266... and 35 -> 34.93 for a 0.998 scale). Uniform
+		// scale = average of the decomposed scale components (transform.Scale is a vector;
+		// its GetLength() would give s·√3, not s).
+		XYZ lsc = transform.Scale;
+		double scaleFactor = (Math.Abs(lsc.X) + Math.Abs(lsc.Y) + Math.Abs(lsc.Z)) / 3.0;
+		if (scaleFactor > MathHelper.Epsilon)
+		{
+			this.TextHeight *= scaleFactor;
+			this.TextWidth *= scaleFactor;
+		}
 	}
 
 	/// <inheritdoc/>

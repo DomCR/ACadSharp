@@ -1,4 +1,4 @@
-﻿using ACadSharp.Attributes;
+using ACadSharp.Attributes;
 using ACadSharp.Extensions;
 using ACadSharp.Objects;
 using ACadSharp.Objects.Collections;
@@ -234,7 +234,8 @@ public abstract class UnderlayEntity<T> : Entity, IOrientable
 
 		this.InsertPoint = newPosition;
 		this.Normal = newNormal;
-		this.Rotation = newRotation;
+		// [PATCH] AutoCAD stores the underlay rotation normalized in [0, 2π).
+		this.Rotation = MathHelper.NormalizeAngleRadians(newRotation, true);
 		this.XScale = transform.Scale.X * this.XScale;
 		this.YScale = transform.Scale.Y * this.YScale;
 		this.ZScale = transform.Scale.Z * this.ZScale;

@@ -1,4 +1,4 @@
-﻿using ACadSharp.Attributes;
+using ACadSharp.Attributes;
 using ACadSharp.Blocks;
 using ACadSharp.Entities;
 using ACadSharp.Objects;
@@ -381,31 +381,57 @@ public class BlockRecord : TableEntry, IGeometricEntity
 		}
 	}
 
+	// Self-referencing block cycle detection: when block A contains an INSERT pointing to A itself
+	// (or A->B->A), a deep clone recurses infinitely (infinite loop).
+	// Use a ThreadLocal ancestor handle set for DFS cycle detection: if the same block handle appears
+	// again on the current clone chain it is a cycle, so the block entities at that level are truncated
+	// (AutoCAD also expands self-referencing blocks only finitely, so the truncation is visually lossless). Normal blocks are unaffected.
+	// Trigger scenario: after reading back a streamed-out DWG, some block definitions (e.g. the symbolized block gc257, *Model_Space)
+	// contain in-block INSERT self-references -> infinite loop during a second direct-cut clone.
+	private static readonly System.Threading.ThreadLocal<HashSet<ulong>> _cloneGuard
+		= new(() => new HashSet<ulong>());
+
 	/// <inheritdoc/>
 	public override CadObject Clone()
 	{
-		BlockRecord clone = (BlockRecord)base.Clone();
-
-		clone.Layout = null;
-
-		if (this.SortEntitiesTable != null)
+		var guard = _cloneGuard.Value;
+		if (!guard.Add(this.Handle))
 		{
-			clone.XDictionary.Remove(SortEntitiesTable.DictionaryEntryName);
+			// Cycle detected: this block is already in the current clone ancestor chain -> truncate, clone only the table entry itself (empty entity set) to prevent an infinite loop
+			BlockRecord cut = (BlockRecord)base.Clone();
+			cut.Layout = null;
+			cut.Entities = new CadObjectCollection<Entity>(cut);
+			return cut;
 		}
 
-		clone.Entities = new CadObjectCollection<Entity>(clone);
-		foreach (var item in this.GetSortedEntities())
+		try
 		{
-			var e = (Entity)item.Clone();
-			clone.Entities.Add(e);
+			BlockRecord clone = (BlockRecord)base.Clone();
+			clone.Layout = null;
+
+			if (this.SortEntitiesTable != null)
+			{
+				clone.XDictionary.Remove(SortEntitiesTable.DictionaryEntryName);
+			}
+
+			clone.Entities = new CadObjectCollection<Entity>(clone);
+			foreach (var item in this.GetSortedEntities())
+			{
+				var e = (Entity)item.Clone();
+				clone.Entities.Add(e);
+			}
+
+			clone.BlockEntity = (Block)this.BlockEntity.Clone();
+			clone.BlockEntity.Owner = clone;
+			clone.BlockEnd = (BlockEnd)this.BlockEnd.Clone();
+			clone.BlockEnd.Owner = clone;
+
+			return clone;
 		}
-
-		clone.BlockEntity = (Block)this.BlockEntity.Clone();
-		clone.BlockEntity.Owner = clone;
-		clone.BlockEnd = (BlockEnd)this.BlockEnd.Clone();
-		clone.BlockEnd.Owner = clone;
-
-		return clone;
+		finally
+		{
+			guard.Remove(this.Handle);
+		}
 	}
 
 	/// <summary>

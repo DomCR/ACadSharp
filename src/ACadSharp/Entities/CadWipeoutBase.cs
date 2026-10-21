@@ -1,4 +1,4 @@
-﻿using ACadSharp.Attributes;
+using ACadSharp.Attributes;
 using CSMath;
 using System.Collections.Generic;
 using System;
@@ -208,8 +208,18 @@ public abstract class CadWipeoutBase : Entity
 	public override void ApplyTransform(Transform transform)
 	{
 		this.InsertPoint = transform.ApplyTransform(this.InsertPoint);
-		this.UVector = transform.ApplyTransform(this.UVector);
-		this.VVector = transform.ApplyTransform(this.VVector);
+
+		// [PATCH] UVector/VVector are the plane direction vectors of the image/wipeout, not
+		// locations: AutoCAD TransformBy applies only the linear part (rotation + scale) to
+		// them, never the translation (an IMAGE with U (0.3077, 0) rotated by -0.92 and scaled
+		// by 0.998 becomes (0.18587, -0.24431), not a point near the translation offset).
+		Matrix3 linear = new Matrix3(transform.Matrix);
+		this.UVector = linear * this.UVector;
+		this.VVector = linear * this.VVector;
+
+		// [PATCH] Clip boundary vertices are relative to the insert point in the OCS plane
+		// (AutoCAD TransformBy leaves them untouched: a wipeout clip (-0.3889, -0.2778) and an
+		// image clip (259.5, 259.5) keep their values after a transform). Do NOT transform them.
 	}
 
 	/// <inheritdoc/>

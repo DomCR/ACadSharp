@@ -1,4 +1,4 @@
-﻿using ACadSharp.Attributes;
+using ACadSharp.Attributes;
 using CSMath;
 using CSMath.Extensions;
 using CSMath.Geometry;
@@ -123,6 +123,9 @@ namespace ACadSharp.Entities
 			this.SecondPoint = transform.ApplyTransform(this.SecondPoint);
 			this.AngleVertex = transform.ApplyTransform(this.AngleVertex);
 			this.DimensionArc = transform.ApplyTransform(this.DimensionArc);
+
+			// [PATCH] Measurement depends on the angular geometric points; the text must be regenerated after the points are transformed.
+			this.UpdateDimensionText();
 		}
 
 		/// <inheritdoc/>

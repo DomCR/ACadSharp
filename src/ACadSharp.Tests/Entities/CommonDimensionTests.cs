@@ -50,7 +50,12 @@ public abstract class CommonDimensionTests<T> : CommonEntityTests<T>
 	{
 		T dim = this.createDim();
 
-		Assert.Equal(dim.Flags.HasFlag(DimensionType.Angular) || dim.Flags.HasFlag(DimensionType.Angular3Point), dim.IsAngular);
+		// [PATCH] DimensionType keeps the raw group-code-70 type values (0-6) in the low
+		// three bits, so HasFlag(DimensionType.Angular) is also true for Diameter(3) and
+		// Ordinate(6) because of the shared bit. IsAngular now compares the masked type code,
+		// so it is true only for genuine angular dimensions. Assert against the real type.
+		bool expected = this.Type == DimensionType.Angular || this.Type == DimensionType.Angular3Point;
+		Assert.Equal(expected, dim.IsAngular);
 	}
 
 	[Fact]

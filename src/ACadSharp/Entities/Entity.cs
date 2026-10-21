@@ -114,6 +114,12 @@ public abstract class Entity : CadObject, IEntity
 		}
 	}
 
+	/// <summary>
+	/// Gets or sets the raw proxy/vector graphics bytes as stored in the DWG file.
+	/// Used to preserve the graphic preview (e.g. for class entities such as TABLE) on round trips.
+	/// </summary>
+	public byte[] ProxyGraphicsData { get; set; }
+
 	/// <inheritdoc/>
 	public override string SubclassMarker => DxfSubclassMarker.Entity;
 

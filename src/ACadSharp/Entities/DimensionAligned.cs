@@ -1,4 +1,4 @@
-﻿using ACadSharp.Attributes;
+using ACadSharp.Attributes;
 using CSMath;
 using CSMath.Extensions;
 using System;
@@ -100,6 +100,9 @@ namespace ACadSharp.Entities
 
 			this.FirstPoint = this.applyWorldMatrix(this.FirstPoint, transform, transOW, transWO);
 			this.SecondPoint = this.applyWorldMatrix(this.SecondPoint, transform, transOW, transWO);
+
+			// [PATCH] Measurement depends on FirstPoint/SecondPoint; the text must be regenerated after the points are transformed.
+			this.UpdateDimensionText();
 		}
 
 		/// <inheritdoc/>

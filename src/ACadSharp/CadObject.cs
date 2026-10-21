@@ -1,4 +1,4 @@
-﻿using ACadSharp.Attributes;
+using ACadSharp.Attributes;
 using ACadSharp.Extensions;
 using ACadSharp.IO;
 using ACadSharp.Objects;
@@ -81,16 +81,25 @@ public abstract class CadObject : IHandledCadObject
 	public CadDictionary XDictionary
 	{
 		get { return this._xdictionary; }
-		internal set
+		// [PATCH] internal -> public (follows the property): the downstream consumer's cross-document cloning
+		// (DWG direct-cut clone trimming) needs to strip the extended dictionary after cloning
+		// (the cloned dictionary has handle 0 and streaming entities are not registered into the document ->
+		// when writeCommonNonEntityData enqueues the write, multiple handle 0s collide in the handle table Map.Add and crash).
+		// Upstream setter is internal.
+		set
 		{
-			if (value == null)
-				return;
-
+			// [PATCH] Upstream silently ignores null (impossible to clear). The downstream consumer OFF-route
+			// parity needs it: netDxf has no XDictionary concept, and an empty
+			// `102 {ACAD_XDICTIONARY` marker read from external DXF must be dropped.
 			this._xdictionary = value;
-			this._xdictionary.Owner = this;
 
-			if (this.Document != null)
-				this.Document.RegisterCollection(this._xdictionary);
+			if (value != null)
+			{
+				value.Owner = this;
+
+				if (this.Document != null)
+					this.Document.RegisterCollection(value);
+			}
 		}
 	}
 
@@ -151,7 +160,15 @@ public abstract class CadObject : IHandledCadObject
 
 		//Collections
 		clone._reactors = new List<CadObject>();
+		// [PATCH] Upstream replaces ExtendedData with an EMPTY dictionary, silently dropping all
+		// XData on clone (MemberwiseClone alone would share the original's internal dictionary,
+		// hence the replacement). The downstream consumer's cross-document clones (external DXF blocks, e.g. the
+		// frame logo with gradient-hatch XData) rely on the clone keeping its XData; the target
+		// document re-keys the AppId entries on registration. Copy the entries (value objects are
+		// read-only during writing, so sharing them is safe).
 		clone.ExtendedData = new ExtendedDataDictionary(clone);
+		foreach (var kv in this.ExtendedData)
+			clone.ExtendedData.Add(kv.Key, kv.Value);
 		clone.XDictionary = this._xdictionary?.CloneTyped();
 
 		return clone;

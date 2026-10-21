@@ -1,4 +1,4 @@
-﻿using ACadSharp.Tables;
+using ACadSharp.Tables;
 using System;
 using System.Collections;
 using System.Collections.Generic;
@@ -71,6 +71,20 @@ public class ExtendedDataDictionary : IEnumerable<KeyValuePair<AppId, ExtendedDa
 			if (this.Document.AppIds.TryGetValue(app.Name, out AppId existing))
 			{
 				this._data.Add(existing, extendedData);
+			}
+			else if (app.Document != null && app.Document != this.Document)
+			{
+				// [T5.2 cross-document XData fix] app belongs to another document (typical: the
+				// AppId registered in the source document when an external .dxf/.dwg block file is read in,
+				// which after the entity is Cloned into the target document gets its XData rebound by Entity.AssignDocument).
+				// Adding the foreign AppId object directly is rejected by CadDocument.AddCadObject
+				// ("The item with handle N is already assigned to a document"), which aborts the whole block load
+				// (Table.add inserts into the table before firing the event -> the block record is left half-registered).
+				// Same semantics as the "target already has an AppId with the same name -> rebind" branch:
+				// create a new AppId with the same name in the target document and bind it.
+				var local = new AppId(app.Name);
+				this.Document.AppIds.Add(local);
+				this._data.Add(local, extendedData);
 			}
 			else
 			{
