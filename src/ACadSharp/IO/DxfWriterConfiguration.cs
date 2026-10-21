@@ -77,6 +77,11 @@ public class DxfWriterConfiguration : CadWriterConfiguration
 		"$MEASUREMENT",
 		"$LTSCALE",
 		"$LWDISPLAY",
+		// [PATCH] Linewidth / edit-state related header variables (all written by the AutoCAD
+		// reference files): $XEDIT in-place edit switch, $ENDCAPS/$JOINSTYLE line endcap/join style display
+		"$XEDIT",
+		"$ENDCAPS",
+		"$JOINSTYLE",
 		"$PDMODE",
 		"$PDSIZE",
 		"$PLINEGEN",

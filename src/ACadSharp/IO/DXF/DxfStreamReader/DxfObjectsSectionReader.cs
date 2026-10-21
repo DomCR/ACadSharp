@@ -1205,7 +1205,7 @@ internal class DxfObjectsSectionReader : DxfSectionReaderBase
 					&& dimassoc.FirstPointRef == null)
 				{
 					dimassoc.FirstPointRef = new DimensionAssociation.OsnapPointRef();
-					this.readOsnapPointRef(dimassoc.FirstPointRef);
+					tmp.FirstPointRef = this.readOsnapPointRef(dimassoc.FirstPointRef);
 					this.lockPointer = true;
 					return true;
 				}
@@ -1214,7 +1214,7 @@ internal class DxfObjectsSectionReader : DxfSectionReaderBase
 					&& dimassoc.SecondPointRef == null)
 				{
 					dimassoc.SecondPointRef = new DimensionAssociation.OsnapPointRef();
-					this.readOsnapPointRef(dimassoc.SecondPointRef);
+					tmp.SecondPointRef = this.readOsnapPointRef(dimassoc.SecondPointRef);
 					this.lockPointer = true;
 					return true;
 				}
@@ -1223,7 +1223,7 @@ internal class DxfObjectsSectionReader : DxfSectionReaderBase
 					&& dimassoc.ThirdPointRef == null)
 				{
 					dimassoc.ThirdPointRef = new DimensionAssociation.OsnapPointRef();
-					this.readOsnapPointRef(dimassoc.ThirdPointRef);
+					tmp.ThirdPointRef = this.readOsnapPointRef(dimassoc.ThirdPointRef);
 					this.lockPointer = true;
 					return true;
 				}
@@ -1232,7 +1232,7 @@ internal class DxfObjectsSectionReader : DxfSectionReaderBase
 					&& dimassoc.FourthPointRef == null)
 				{
 					dimassoc.FourthPointRef = new DimensionAssociation.OsnapPointRef();
-					this.readOsnapPointRef(dimassoc.FourthPointRef);
+					tmp.FourthPointRef = this.readOsnapPointRef(dimassoc.FourthPointRef);
 					this.lockPointer = true;
 					return true;
 				}
@@ -1804,7 +1804,19 @@ internal class DxfObjectsSectionReader : DxfSectionReaderBase
 				tmp.PaperSpaceBlockHandle = this._reader.ValueAsHandle;
 				return true;
 			case 331:
-				tmp.LasActiveViewportHandle = (this._reader.ValueAsHandle);
+			//331 = last active viewport. Must be written into ActiveViewportHandle, the field
+			//build() actually reads (the DWG reader uses this field too). Previously it was
+			//mistakenly written into the dead field LasActiveViewportHandle (never read in
+			//CadLayoutTemplate), so the layout 331 viewport references of DXF sources were all
+			//lost and LastActiveViewport was always null.
+			//Note: this is a real bug (after the fix, the 331 viewport of DXF source Layout1 is
+			//restored from 0x0 to a valid handle), but it has been demonstrated to NOT be the root
+			//cause of "16 error opening layout" — after reverting this fix, DXF→R14 still reports
+			//16 error (see the project memory record of 2026-10-17 for details). The true root cause
+			//of the 16 error lies in the R14 writer's viewport/object serialization (the viewport
+			//object of an R2010+ source is 29 bytes smaller than that of an R2000-R2007 source);
+			//to be located later.
+				tmp.ActiveViewportHandle = (this._reader.ValueAsHandle);
 				return true;
 			default:
 				if (!this.tryAssignCurrentValue(template.CadObject, map.SubClasses[DxfSubclassMarker.Layout]))

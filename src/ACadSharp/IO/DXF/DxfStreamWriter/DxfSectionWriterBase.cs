@@ -94,6 +94,10 @@ internal abstract partial class DxfSectionWriterBase
 	{
 		if (cadObject is DimensionStyle)
 		{
+			//DIMSTYLE records use the dedicated handle group code 105 (DxfCode.DimVarHandle)
+			//in every DXF version that carries handles (R13+). Native R14 DXF files write
+			//"105 <handle>" for DIMSTYLE records; using the standard group code 5 makes
+			//AutoCAD reports "error handle A: already in use" (handle already in use) and aborts the import.
 			this._writer.Write(DxfCode.DimVarHandle, cadObject.Handle);
 		}
 		else

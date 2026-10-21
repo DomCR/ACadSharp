@@ -11,6 +11,13 @@ internal class DxfAsciiWriter : DxfStreamWriterBase
 
 	private TextWriter _stream;
 
+	/// <summary>
+	/// [PATCH] Exposes the underlying TextWriter (used by a downstream consumer for streaming DXF:
+	/// it splices the ENTITIES temp file serialized during conversion into the main output stream
+	/// block by block, mirroring netDxf's GetExternalTextWriter).
+	/// </summary>
+	public TextWriter ExternalTextWriter { get { return this._stream; } }
+
 	public DxfAsciiWriter(StreamWriter stream)
 	{
 		this._stream = stream;

@@ -1,4 +1,4 @@
-﻿using ACadSharp.IO.DXF.DxfStreamReader;
+using ACadSharp.IO.DXF.DxfStreamReader;
 using ACadSharp.IO.Templates;
 using System;
 
@@ -15,6 +15,12 @@ namespace ACadSharp.IO.DXF
 		{
 			//Advance to the first value in the section
 			this._reader.ReadNext();
+
+			// [PATCH] Periodic full GC to keep the working set close to the live object graph
+			// (reading a huge DXF allocates a lot of transient garbage; without this the WS
+			// grows far beyond the live size). 0 disables (upstream behavior).
+			int gcEvery = this._builder.Configuration.GCEveryNEntities;
+			int gcCounter = 0;
 
 			//Loop until the section ends
 			while (this._reader.ValueAsString != DxfFileToken.EndSection)
@@ -38,6 +44,15 @@ namespace ACadSharp.IO.DXF
 
 				if (template == null)
 					continue;
+
+				// [PATCH] Periodic GC + working-set trim (see gcEvery above): keeps the working
+				// set close to the live object graph instead of letting committed-but-free
+				// memory accumulate (23GB WS -> ~13GB for a 1.9M-entity file with XData).
+				if (gcEvery > 0 && ++gcCounter >= gcEvery)
+				{
+					gcCounter = 0;
+					MemoryTrimmer.Trim();
+				}
 
 				//Add the object and the template to the builder
 				this._builder.AddTemplate(template);

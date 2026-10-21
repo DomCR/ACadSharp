@@ -1,4 +1,4 @@
-﻿using ACadSharp.IO.DXF.DxfStreamWriter;
+using ACadSharp.IO.DXF.DxfStreamWriter;
 using ACadSharp.Tables;
 using ACadSharp.Tables.Collections;
 using CSMath;
@@ -23,7 +23,11 @@ namespace ACadSharp.IO.DXF
 			this.writeTable(this._document.Views);
 			this.writeTable(this._document.UCSs);
 			this.writeTable(this._document.AppIds);
-			this.writeTable(this._document.DimensionStyles, DxfSubclassMarker.DimensionStyleTable);
+			//R2000+: the DIMSTYLE table header carries the AcDbDimStyleTable subclass marker.
+			//R13-R14 files only write AcDbSymbolTable in the DIMSTYLE table header; the extra
+			//marker makes AutoCAD abort with "improper object termination" (the object ends prematurely).
+			string dimStyleTableSubclass = this.Version >= ACadVersion.AC1015 ? DxfSubclassMarker.DimensionStyleTable : null;
+			this.writeTable(this._document.DimensionStyles, dimStyleTableSubclass);
 			this.writeTable(this._document.BlockRecords, writeFlags: false);
 		}
 
@@ -128,9 +132,15 @@ namespace ACadSharp.IO.DXF
 			this._writer.Write(281, (byte)(block.CanScale ? 1u : 0u), map);
 		}
 
-		private void writeDimensionStyle(DimensionStyle style, DxfClassMap map)
-		{
-			this._writer.Write(3, style.PostFix, map);
+	private void writeDimensionStyle(DimensionStyle style, DxfClassMap map)
+	{
+		// R2000+ introduced several DIMSTYLE group codes (69/70 text background, 90 arc
+		// length symbol, 176-179 colors, 271-290, 340-347 handles, 371-372 lineweights)
+		// that are invalid in an R14 (AC1014) DXF and make AutoCAD reject the file.
+		bool isR2000 = this.Version >= ACadVersion.AC1015;
+		bool isR2007 = this.Version >= ACadVersion.AC1021;
+
+		this._writer.Write(3, style.PostFix, map);
 			this._writer.Write(4, style.AlternateDimensioningSuffix, map);
 
 			this._writer.Write(40, style.ScaleFactor, map);
@@ -143,8 +153,11 @@ namespace ACadSharp.IO.DXF
 			this._writer.Write(47, style.PlusTolerance, map);
 			this._writer.Write(48, style.MinusTolerance, map);
 			this._writer.Write(49, style.FixedExtensionLineLength, map);
+			if (isR2007)
 			this._writer.Write(50, style.JoggedRadiusDimensionTransverseSegmentAngle, map);
 
+		if (isR2000)
+		{
 			if (style.TextBackgroundFillMode != 0)
 			{
 				this._writer.Write(69, (short)style.TextBackgroundFillMode, map);
@@ -154,11 +167,12 @@ namespace ACadSharp.IO.DXF
 			{
 				this._writer.Write(70, 0, map);
 			}
+		}
 
-			if (style.ArcLengthSymbolPosition != ArcLengthSymbolPosition.AboveDimensionText)
-			{
-				this._writer.Write(90, (int)style.ArcLengthSymbolPosition);
-			}
+		if (isR2000 && style.ArcLengthSymbolPosition != ArcLengthSymbolPosition.AboveDimensionText)
+		{
+			this._writer.Write(90, (int)style.ArcLengthSymbolPosition);
+		}
 
 			this._writer.Write(140, style.TextHeight);
 			this._writer.Write(141, style.CenterMarkSize);
@@ -187,6 +201,8 @@ namespace ACadSharp.IO.DXF
 			this._writer.Write(174, (short)(style.TextInsideExtensions ? 1 : 0));
 			this._writer.Write(175, (short)(style.SuppressOutsideExtensions ? 1 : 0));
 
+		if (isR2000)
+		{
 			this._writer.Write(176, style.DimensionLineColor.GetApproxIndex(), map);
 			this._writer.Write(177, style.ExtensionLineColor.GetApproxIndex(), map);
 			this._writer.Write(178, style.TextColor.GetApproxIndex(), map);
@@ -213,7 +229,10 @@ namespace ACadSharp.IO.DXF
 			this._writer.Write(288, style.CursorUpdate);
 			this._writer.Write(289, (byte)style.DimensionTextArrowFit);
 			this._writer.Write(290, style.IsExtensionLineLengthFixed);
+		}
 
+		if (isR2000)
+		{
 			this._writer.WriteHandle(340, style.Style, map);
 			this._writer.WriteHandle(341, style.LeaderArrow, map);
 			this._writer.WriteHandle(342, style.ArrowBlock, map);
@@ -222,9 +241,13 @@ namespace ACadSharp.IO.DXF
 			this._writer.WriteHandle(345, style.LineType, map);
 			this._writer.WriteHandle(346, style.LineTypeExt1, map);
 			this._writer.WriteHandle(347, style.LineTypeExt2, map);
+		}
 
+		if (isR2000)
+		{
 			this._writer.Write(371, style.DimensionLineWeight);
 			this._writer.Write(372, style.ExtensionLineWeight);
+		}
 		}
 
 		private void writeLayer(Layer layer, DxfClassMap map)
@@ -291,7 +314,12 @@ namespace ACadSharp.IO.DXF
 					this._writer.Write(50, MathHelper.RadToDeg(s.Rotation));
 					this._writer.Write(44, s.Offset.X);
 					this._writer.Write(45, s.Offset.Y);
-					this._writer.Write(9, s.Text);
+					// [PATCH] Only text segments (74 has the Text flag) have group code 9 (the text string);
+					// writing an empty 9 unconditionally would break the shape segment definition (the reference file's shape segment has no group code 9).
+					if (s.Flags.HasFlag(LineTypeShapeFlags.Text) && !string.IsNullOrEmpty(s.Text))
+					{
+						this._writer.Write(9, s.Text);
+					}
 				}
 			}
 		}

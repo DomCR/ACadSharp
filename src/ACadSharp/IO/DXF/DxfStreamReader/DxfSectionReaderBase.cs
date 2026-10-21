@@ -1,4 +1,4 @@
-﻿using ACadSharp.Entities;
+using ACadSharp.Entities;
 using ACadSharp.IO.Templates;
 using ACadSharp.Objects;
 using ACadSharp.Tables;
@@ -26,6 +26,13 @@ internal abstract class DxfSectionReaderBase
 	//Avoid to move the reader to the next line
 	protected bool lockPointer = false;
 	protected string currentSubclass = null;
+
+	// [T5.2 hatch seed fix] Seed points only read the N×(10,20) declared by 98 (seed count) — consistent
+	// with the netDxf reference implementation (ReadHatch's main section 10/20 only as origin, ReadHatchPattern's
+	// case 98 reads the seeds). The origin 10/20 of the AcDbHatch main section (which in AutoCAD exported files
+	// appears before 2/70/91) no longer produces spurious seeds.
+	protected int _hatchSeedRemaining = 0;
+	protected bool _hatchSeedXSet = false;
 
 	public DxfSectionReaderBase(IDxfStreamReader reader, DxfDocumentBuilder builder)
 	{
@@ -143,7 +150,15 @@ internal abstract class DxfSectionReaderBase
 				break;
 			case 1001:
 				isExtendedData = true;
-				this.readExtendedData(template.EDataTemplateByAppName);
+				// [PATCH] Skip XData parsing when ReadXData=false (only advance the reader, save memory)
+				if (this._builder.Configuration.ReadXData)
+				{
+					this.readExtendedData(template.EDataTemplateByAppName);
+				}
+				else
+				{
+					this.skipExtendedData();
+				}
 				break;
 			default:
 				this._builder.Notify($"[{this.currentSubclass}] Unhandled dxf code {this._reader.Code} with value {this._reader.ValueAsString}", NotificationType.None);
@@ -418,6 +433,20 @@ internal abstract class DxfSectionReaderBase
 			case 44:
 			case 46:
 				return true;
+			case 280:
+			//In DXF, 280 appears twice for ATTDEF/ATTRIB: at the start of AcDbAttributeDefinition
+			//it is the Version (always 0), and after Tag/Flags it is the Lock position. Previously
+			//Version exclusively owned the [DxfCodeValue(280)] mapping, so the two 280s were
+			//sequentially poured into Version (ending up =1) while IsLocked was left unassigned;
+			//when R2010+ DWG wrote Version=1, AutoCAD failed to parse ATTDEF/ATTRIB and reported
+			//an "error while decrypting data". Here it is uniformly treated as the Lock position,
+			//with Version kept at the default 0 (consistent with native DWG).
+				if (tmp.CadObject is AttributeBase att280)
+				{
+					att280.IsLocked = Convert.ToInt32(this._reader.Value ?? 0) != 0;
+					att280.Version = 0;
+				}
+				return true;
 			case 101:
 				var att = tmp.CadObject as AttributeBase;
 				att.MText = new MText();
@@ -447,6 +476,9 @@ internal abstract class DxfSectionReaderBase
 				if (tmp.CurrentCell.Content == null)
 				{
 					content = new TableEntity.CellContent();
+				//DXF inline cell text is "value"-type content; when ContentType defaults to Unknown,
+				//the R2010+ writer (writeTableCellContent) skips CadValue and the entire table content is lost.
+				content.ContentType = TableEntity.TableCellContentType.Value;
 					content.CadValue.ValueType = CadValueType.String;
 					tmp.CurrentCell.Contents.Add(content);
 				}
@@ -488,7 +520,12 @@ internal abstract class DxfSectionReaderBase
 				return true;
 			//Border overrides:
 			case 177:
-				//Cell override flag value (before AutoCAD 2007)
+				//Cell override flag value; kept verbatim for round-trip fidelity
+				//because its bit meaning is version dependent.
+				if (tmp.CurrentCell != null)
+				{
+					tmp.CurrentCell.OverrideFlag = this._reader.ValueAsInt;
+				}
 				return true;
 			case 279:
 				//Lineweight for the top border of the cell; override applied at the cell level
@@ -535,6 +572,11 @@ internal abstract class DxfSectionReaderBase
 				if (tmp.CurrentCellTemplate != null)
 				{
 					tmp.CurrentCellTemplate.FormatTextHeight = this._reader.ValueAsDouble;
+					//Per-cell text height override (reference files materialize it on every cell).
+					if (tmp.CurrentCell != null)
+					{
+						tmp.CurrentCell.StyleOverride.TextHeight = this._reader.ValueAsDouble;
+					}
 				}
 				return true;
 			case 283:
@@ -563,7 +605,12 @@ internal abstract class DxfSectionReaderBase
 				tmp.CurrentCell.Rotation = this._reader.ValueAsDouble;
 				return true;
 			case 170:
-				//Has data flag
+				//Cell content alignment (MiddleCenter = 5 in the reference files);
+				//only occurs in the per-cell section, right after the cell content.
+				if (tmp.CurrentCell != null)
+				{
+					tmp.CurrentCell.StyleOverride.CellAlignment = (TableStyle.CellAlignmentType)this._reader.ValueAsShort;
+				}
 				return true;
 			case 171:
 				tmp.CreateCell((TableEntity.CellType)this._reader.ValueAsInt);
@@ -590,7 +637,9 @@ internal abstract class DxfSectionReaderBase
 				//Unknown value
 				return true;
 			case 301:
-				content = new TableEntity.CellContent();
+			content = new TableEntity.CellContent();
+			//Same as case 1: DXF multi-content cells are also "value"-type content.
+			content.ContentType = TableEntity.TableCellContentType.Value;
 				var contentTemplate = new CadTableCellContentTemplate(content);
 				tmp.CurrentCell.Contents.Add(content);
 				var valTemplate = readCadValue(content.CadValue);
@@ -919,21 +968,47 @@ internal abstract class DxfSectionReaderBase
 		CadHatchTemplate tmp = template as CadHatchTemplate;
 		Hatch hatch = tmp.CadObject;
 
-		XY seedPoint = new XY();
-
 		switch (this._reader.Code)
 		{
 			case 2:
 				hatch.Pattern.Name = this._reader.ValueAsString;
+			// [T5.2] Pattern section start: reset the seed-reading state (independent per entity, to prevent cross-talk between adjacent hatches)
+			this._hatchSeedRemaining = 0;
+				this._hatchSeedXSet = false;
 				return true;
 			case 10:
-				seedPoint.X = this._reader.ValueAsDouble;
-				hatch.SeedPoints.Add(seedPoint);
+				// [PATCH] The first 10/20 pair of the hatch section is the ORIGIN, not a
+				// seed point; only the pairs after the 98 count are seed points. Upstream
+				// collected every 10/20 into SeedPoints, so the origin became an extra
+				// (transformed) seed point on write (98: 1 -> 2). The seed sequence state
+				// lives in the template because the delegate is invoked once per code.
+				if (tmp.SeedPointsLeft > 0)
+				{
+					tmp.SeedPoint.X = this._reader.ValueAsDouble;
+					tmp.SeedPoint.Y = 0.0;
+					hatch.SeedPoints.Add(tmp.SeedPoint);
+				}
+				else
+				{
+					XY o = hatch.Origin;
+					o.X = this._reader.ValueAsDouble;
+					hatch.Origin = o;
+				}
 				return true;
 			case 20:
-				seedPoint = hatch.SeedPoints.LastOrDefault();
-				seedPoint.Y = this._reader.ValueAsDouble;
-				hatch.SeedPoints[hatch.SeedPoints.Count - 1] = seedPoint;
+				if (tmp.SeedPointsLeft > 0 && hatch.SeedPoints.Count > 0)
+				{
+					XY sp = hatch.SeedPoints[hatch.SeedPoints.Count - 1];
+					sp.Y = this._reader.ValueAsDouble;
+					hatch.SeedPoints[hatch.SeedPoints.Count - 1] = sp;
+					tmp.SeedPointsLeft--;
+				}
+				else
+				{
+					XY o = hatch.Origin;
+					o.Y = this._reader.ValueAsDouble;
+					hatch.Origin = o;
+				}
 				return true;
 			case 30:
 				hatch.Elevation = this._reader.ValueAsDouble;
@@ -946,6 +1021,9 @@ internal abstract class DxfSectionReaderBase
 				return true;
 			//Information about the hatch pattern
 			case 75:
+				// [PATCH] Read the hatch style (upstream skipped it: a 75=1 (Outer) hatch
+				// was written back as 75=0 (Normal)).
+				hatch.Style = (HatchStyleType)this._reader.ValueAsInt;
 				return true;
 			//Number of pattern definition lines
 			case 78:
@@ -959,6 +1037,7 @@ internal abstract class DxfSectionReaderBase
 				return true;
 			//Number of seed points
 			case 98:
+				tmp.SeedPointsLeft = this._reader.ValueAsInt;
 				return true;
 			case 450:
 				hatch.GradientColor.Enabled = this._reader.ValueAsBool;
@@ -997,9 +1076,10 @@ internal abstract class DxfSectionReaderBase
 				GradientColor colorByRgb = hatch.GradientColor.Colors.LastOrDefault();
 				if (colorByRgb != null)
 				{
-					//TODO: Hatch assign color by true color
-					//TODO: Is always duplicated by 63, is it needed??
-					//colorByRgb.Color = new Color(this._reader.LastValueAsShort);
+					// [PATCH] Preserve the raw true-color value (it is not always the ACI
+					// palette RGB of the 63 index, e.g. 165 -> 5005209 in the source file;
+					// regenerating it from the palette would alter the file).
+					colorByRgb.StoredColor = this._reader.ValueAsInt;
 				}
 				return true;
 			case 470:
@@ -1180,7 +1260,8 @@ internal abstract class DxfSectionReaderBase
 			case 340:
 				tmp.AnnotationHandle = this._reader.ValueAsHandle;
 				return true;
-			//Hook line flag - read only
+			//Hook line flag (read-only: the model computes it from the last segment and
+			// the horizontal direction, which are similarity-invariant)
 			case 75:
 			//Vertices count
 			case 76:
@@ -1224,6 +1305,12 @@ internal abstract class DxfSectionReaderBase
 				{
 					last.Bulge = this._reader.ValueAsDouble;
 				}
+				return true;
+			case 43:
+				// [PATCH] Remember that the source explicitly carried a constant width
+				// (code 43) so the writer can round-trip it even when it is 0.
+				tmp.CadObject.ConstantWidth = this._reader.ValueAsDouble;
+				tmp.CadObject.ConstantWidthSpecified = true;
 				return true;
 			case 50:
 				if (last is not null)
@@ -1867,10 +1954,47 @@ internal abstract class DxfSectionReaderBase
 		}
 	}
 
+	// [PATCH] Mirrors readExtendedData's group-code consumption pattern but only advances the
+	// reader without building any record. Used to skip XData when ReadXData=false: coordinate/
+	// direction/displacement group codes each consume 3 ReadNext calls (X/Y/Z), the others 1;
+	// the next 1001 (RegAppName) is handled recursively, exactly like readExtendedData, so after
+	// skipping the reader still lands at the correct position after the XData.
+	protected void skipExtendedData()
+	{
+		this._reader.ReadNext();
+
+		while (this._reader.DxfCode >= DxfCode.ExtendedDataAsciiString)
+		{
+			if (this._reader.DxfCode == DxfCode.ExtendedDataRegAppName)
+			{
+				this.skipExtendedData();
+				break;
+			}
+
+			switch (this._reader.DxfCode)
+			{
+				case DxfCode.ExtendedDataXCoordinate:
+				case DxfCode.ExtendedDataWorldXCoordinate:
+				case DxfCode.ExtendedDataWorldXDisp:
+				case DxfCode.ExtendedDataWorldXDir:
+					this._reader.ReadNext();
+					this._reader.ReadNext();
+					break;
+			}
+
+			this._reader.ReadNext();
+		}
+	}
+
+	// [PATCH] XData string interning (see DxfXDataInterning): in GIS attribute export the same
+	// key name / coded value / layer name repeats millions of times; sharing string instances
+	// compresses ~100M string objects down to a few million unique instances.
 	protected void readExtendedData(Dictionary<string, List<ExtendedDataRecord>> edata)
 	{
+		bool intern = this._builder.Configuration.InternXDataStrings;
+
 		List<ExtendedDataRecord> records = new();
-		edata.Add(this._reader.ValueAsString, records);
+		edata.Add(intern ? DxfXDataInterning.Intern(this._reader.ValueAsString) : this._reader.ValueAsString, records);
 
 		this._reader.ReadNext();
 
@@ -1891,7 +2015,8 @@ internal abstract class DxfSectionReaderBase
 			{
 				case DxfCode.ExtendedDataAsciiString:
 				case DxfCode.ExtendedDataRegAppName:
-					record = new ExtendedDataString(this._reader.ValueAsString);
+					// [PATCH] intern the string value (duplicate values share one instance, saving memory)
+					record = new ExtendedDataString(intern ? DxfXDataInterning.Intern(this._reader.ValueAsString) : this._reader.ValueAsString);
 					break;
 				case DxfCode.ExtendedDataControlString:
 					record = new ExtendedDataControlString(this._reader.ValueAsString == "}");
@@ -2022,6 +2147,7 @@ internal abstract class DxfSectionReaderBase
 					codes.Add(this._reader.Code);
 				}
 
+				bool consume = true;
 				switch (this._reader.Code)
 				{
 					case 53:
@@ -2055,10 +2181,19 @@ internal abstract class DxfSectionReaderBase
 						line.DashLengths.Add(this._reader.ValueAsDouble);
 						break;
 					default:
+						// [PATCH] An unknown code ends this pattern line but must NOT be
+						// consumed: the reader stays on it (e.g. 98 = seed point count) so
+						// the main hatch loop can process it. Upstream consumed it and
+						// stepped onto the first seed X, which then became the hatch
+						// origin (and the real seed point was lost).
 						end = true;
+						consume = false;
 						break;
 				}
-				this._reader.ReadNext();
+				if (consume)
+				{
+					this._reader.ReadNext();
+				}
 			}
 
 			pattern.Lines.Add(line);

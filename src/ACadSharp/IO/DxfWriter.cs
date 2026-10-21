@@ -1,5 +1,8 @@
-﻿using ACadSharp.IO.DXF;
+﻿using ACadSharp.Entities;
+using ACadSharp.IO.DXF;
 using ACadSharp.IO.DXF.DxfStreamWriter;
+using ACadSharp.Objects;
+using ACadSharp.Tables;
 using System.IO;
 using System.Text;
 
@@ -8,7 +11,7 @@ namespace ACadSharp.IO;
 /// <summary>
 /// Class for writing a DXF from a <see cref="CadDocument"/>.
 /// </summary>
-public class DxfWriter : CadWriterBase<DxfWriterConfiguration>
+public partial class DxfWriter : CadWriterBase<DxfWriterConfiguration>
 {
 	/// <summary>
 	/// Flag indicating if the dxf will be writen as a binary file
@@ -18,6 +21,9 @@ public class DxfWriter : CadWriterBase<DxfWriterConfiguration>
 	private CadObjectHolder _objectHolder = new CadObjectHolder();
 
 	private IDxfStreamWriter _writer;
+
+	// [PATCH] Streaming ENTITIES section writer (created by BeginStreamingEntities, cleaned up after WriteStreaming consumes it)
+	private ACadSharp.IO.DXF.DxfStreamWriter.DxfEntitiesStreamWriter _entitiesStreamer;
 
 	/// <summary>
 	/// Initializes a new instance of the <see cref="DxfWriter"/> class.
@@ -90,6 +96,13 @@ public class DxfWriter : CadWriterBase<DxfWriterConfiguration>
 		this.createStreamWriter();
 
 		this._objectHolder.Objects.Enqueue(this._document.RootDictionary);
+
+		//Dimension associations are not stored in any dictionary, they are only
+		//referenced by the dimension reactors, enqueue them to keep them in the DXF
+		foreach (DimensionAssociation dimAssociation in this._document.GetCadObjects<DimensionAssociation>())
+		{
+			this._objectHolder.Objects.Enqueue(dimAssociation);
+		}
 
 		this.writeHeader();
 

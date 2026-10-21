@@ -40,7 +40,25 @@ namespace ACadSharp.IO.DXF
 				this._writer.Write(1, block.XRefPath, map);
 			}
 			this._writer.Write(2, block.Name, map);
-			this._writer.Write(70, (short)block.Flags, map);
+
+		// Group code 70 bit0 (anonymous flag) must be consistent with the block name: only * -prefixed
+		// blocks (and not *Model_Space / *Paper_Space*) are anonymous blocks. Some source files mark named
+		// blocks (e.g. dynamic block A$C… blocks) as IsAnonymous=true; copying Flags verbatim would write
+		// the anonymous bit onto non-* named blocks, which the DXF spec judges inconsistent, and AutoCAD's
+		// strict parser reports "AcDbBlockReference … BTR Id invalid" and drops that block's INSERT (the
+		// DWG path is looser, so it still displays). Therefore derive the anonymous bit from the block name
+		// and leave the other flag bits (has-attrs / xref, etc.) unchanged.
+		var blockFlags = block.Flags;
+			string blockName = block.Name;
+			bool isAnonymousByname = !string.IsNullOrEmpty(blockName)
+				&& blockName.StartsWith("*", StringComparison.Ordinal)
+				&& !blockName.StartsWith("*Model_Space", StringComparison.Ordinal)
+				&& !blockName.StartsWith("*Paper_Space", StringComparison.Ordinal);
+			if (isAnonymousByname)
+				blockFlags |= BlockTypeFlags.Anonymous;
+			else
+				blockFlags &= ~BlockTypeFlags.Anonymous;
+			this._writer.Write(70, (short)blockFlags, map);
 
 			if (this.Version >= ACadVersion.AC1015 && block.IsUnloaded)
 			{

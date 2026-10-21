@@ -744,12 +744,19 @@ internal class DxfObjectsSectionWriter : DxfSectionWriterBase
 			case AecWallStyle:
 			case AecCleanupGroup:
 			case AecBinRecord:
-			case DimensionAssociation:
 			case Material:
 			case MultiLeaderObjectContextData:
 			case VisualStyle:
 			case ProxyObject:
 				this.notify($"Object not implemented : {co.GetType().FullName}", NotificationType.NotImplemented);
+				return false;
+			// R14 (AC1014) does not support AcDbTableStyle objects; writing one is judged "unrepairable" by AUDIT, so skip it.
+			case TableStyle when this.Version <= ACadVersion.AC1014:
+				return false;
+			// The R14 (AC1014) object area does not support AcDbPlaceHolder (the R2000 ObjectDBX mechanism); a native R14 DXF
+			// only declares the class in the CLASSES section, with no instance in the object area. After writing it, AutoCAD dxfin
+			// reports "class AcDbPlaceHolder requires a class separator" and aborts the import, so skip it.
+			case AcdbPlaceHolder when this.Version <= ACadVersion.AC1014:
 				return false;
 			default:
 				return true;

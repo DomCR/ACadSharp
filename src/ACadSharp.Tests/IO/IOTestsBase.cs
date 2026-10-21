@@ -145,9 +145,8 @@ public abstract class IOTestsBase
 			case ACadVersion.AC1014:
 			case ACadVersion.AC1015:
 			case ACadVersion.AC1018:
-				return true;
 			case ACadVersion.AC1021:
-				return false;
+				return true;
 			case ACadVersion.AC1024:
 				return true;
 			case ACadVersion.AC1027:

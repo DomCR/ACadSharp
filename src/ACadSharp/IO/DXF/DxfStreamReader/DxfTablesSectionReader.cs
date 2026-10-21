@@ -1,4 +1,4 @@
-﻿using ACadSharp.Exceptions;
+using ACadSharp.Exceptions;
 using ACadSharp.IO.Templates;
 using ACadSharp.Tables;
 using ACadSharp.Tables.Collections;
@@ -86,7 +86,15 @@ internal class DxfTablesSectionReader : DxfSectionReaderBase
 						Debug.Assert(this._reader.ValueAsString == DxfSubclassMarker.Table);
 						break;
 					case 1001:
-						this.readExtendedData(edata);
+						// [PATCH] Skip table-level XData parsing when ReadXData=false
+						if (this._builder.Configuration.ReadXData)
+						{
+							this.readExtendedData(edata);
+						}
+						else
+						{
+							this.skipExtendedData();
+						}
 						break;
 					default:
 						this._builder.Notify($"[AcDbSymbolTable] Unhandeled dxf code {this._reader.Code} at line {this._reader.Position}.");
@@ -212,6 +220,29 @@ internal class DxfTablesSectionReader : DxfSectionReaderBase
 					break;
 				case DxfFileToken.TableStyle:
 					template = this.readTableEntry(new CadTableEntryTemplate<TextStyle>(new TextStyle()), this.readTextStyle);
+// [PATCH] TTF text styles: the real TTF font name lives in the ACAD xdata (1001=ACAD / 1000=<name>);
+// upstream does not restore it -> TextStyle.Filename empty -> DWG written with empty font -> AutoCAD
+// substitutes the font, character widths mismatch, title-block text squeezed/overlapping.
+// [PATCH 2026-10-02 netDxf parity] netDxf ReadTextStyle: ACAD xdata string records are iterated in
+// order, later overwrites earlier; when the final value is non-empty code 3 is IGNORED (TTF branch).
+// The original implementation only restored xdata when code 3 was empty, which diverged from the
+// netDxf (OFF) route for frame TTF styles (code 3 = simhei.ttf + xdata = SimHei).
+
+				if (template is CadTableEntryTemplate<TextStyle> styleEntry)
+				{
+					TextStyle style = styleEntry.CadObject;
+					if (styleEntry.EDataTemplateByAppName.TryGetValue("ACAD", out List<ExtendedDataRecord> acadXData))
+					{
+						string? fontFamily = null;
+						foreach (ExtendedDataRecord rec in acadXData)
+						{
+							if (rec is ExtendedDataString s)
+								fontFamily = s.Value; // netDxf parity: later overwrites earlier (incl. empty)
+						}
+						if (!string.IsNullOrEmpty(fontFamily))
+							style.Filename = fontFamily;
+					}
+				}
 					break;
 				case DxfFileToken.TableUcs:
 					template = this.readTableEntry(new CadUcsTemplate(), this.readUcs);
@@ -692,6 +723,10 @@ internal class DxfTablesSectionReader : DxfSectionReaderBase
 					template.Segment.ShapeNumber = (short)this._reader.ValueAsInt;
 					break;
 				case 340:
+					// [PATCH] Preserve the shape's text style handle: the upstream simply dropped this code,
+					// causing 340=0 on write; AutoCAD could not find the shape font and custom linetype
+					// symbols (springs, etc.) would not display.
+					template.StyleHandle = this._reader.ValueAsHandle;
 					break;
 				default:
 					this._builder.Notify($"[LineTypeSegment] Unhandeled dxf code {this._reader.Code} with value {this._reader.ValueAsString}, positon {this._reader.Position}", NotificationType.None);
@@ -715,6 +750,22 @@ internal class DxfTablesSectionReader : DxfSectionReaderBase
 				{
 					//In some files the TextStyle is an empty string
 					template.CadObject.Name = this._reader.ValueAsString;
+				}
+				return true;
+			case 70:
+				// [PATCH] Group 70 carries the style state flags; upstream silently
+				// dropped them because no property maps code 70. Bit 1 marks a SHAPE
+				// style (e.g. the CASS template entries AAA.SHX / ltypeshp.shx used by
+				// complex linetype shape segments). Without the flag the DWG writer
+				// emits the style as a plain named text style (shape bit = 0), and
+				// AutoCAD loses the shape-font association — complex-linetype symbols
+				// (e.g. CASS terrain linetypes 10422/914C) render missing/garbled.
+				{
+					int raw = this._reader.ValueAsShort;
+					if ((raw & (int)StyleFlags.IsShape) != 0)
+						template.CadObject.Flags |= StyleFlags.IsShape;
+					if ((raw & (int)StyleFlags.VerticalText) != 0)
+						template.CadObject.Flags |= StyleFlags.VerticalText;
 				}
 				return true;
 			default:
