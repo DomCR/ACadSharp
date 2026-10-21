@@ -1,4 +1,4 @@
-﻿using ACadSharp.Header;
+using ACadSharp.Header;
 using CSUtilities.IO;
 using CSUtilities.Converters;
 using CSUtilities.Text;
@@ -11,6 +11,7 @@ using ACadSharp.Exceptions;
 using ACadSharp.IO.DWG;
 using ACadSharp.IO.DWG.DwgStreamReaders;
 using ACadSharp.IO.DWG.FileHeaders;
+using ACadSharp.IO.Templates;
 
 namespace ACadSharp.IO;
 
@@ -22,6 +23,15 @@ public class DwgReader : CadReaderBase<DwgReaderConfiguration>
 	private DwgDocumentBuilder _builder;
 
 	private DwgFileHeader _fileHeader;
+
+	private ACadSharp.IO.DWG.DwgObjectReader _sectionReader;
+
+	/// <summary>
+	/// [PATCH] The incremental save patch source. Non-null only when
+	/// <see cref="DwgReaderConfiguration.RetainPatchSource"/> is true
+	/// and the version is R2004 (AC1018); the caller is responsible for <see cref="DwgObjectPatchSource.Dispose"/> after use.
+	/// </summary>
+	public DwgObjectPatchSource PatchSource { get; private set; }
 
 	/// <summary>
 	/// Initializes a new instance of the <see cref="DwgReader"/> class.
@@ -127,7 +137,229 @@ public class DwgReader : CadReaderBase<DwgReaderConfiguration>
 		this._builder.BuildDocument();
 		this._builder.BuildDataStorage();
 
+		// After the document is built (AppId names resolved), assign R2000 private gradients
+		this._sectionReader?.ApplyR2000Gradients();
+
+		// After the document is built (AppId names resolved), assign R2000 private gradients
+		this._sectionReader?.ApplyR2000Gradients();
+
 		return this._document;
+	}
+
+	/// <summary>
+	/// [PATCH] Step 1 of lazy (partial) read: reads only the file header / section map / class table /
+	/// header section / handles section (KB~MB scale), without decoding any object. Produces a
+	/// <see cref="DwgPartialReadContext"/> for <see cref="ReadObjectsPartial"/> to decode on demand
+	/// from a seed set of handles. Supports only R2004 (AC1018) and later versions.
+	/// </summary>
+	/// <returns>A partial-read context (holds the objects-section decompressed stream; the caller must
+	/// keep it alive until the read completes).</returns>
+	public DwgPartialReadContext PreparePartialRead()
+	{
+		//Read the file header
+		this._fileHeader = this._fileHeader ?? this.readFileHeader();
+
+		if (this._fileHeader.AcadVersion < ACadVersion.AC1018)
+		{
+			throw new NotSupportedException($"DWG 惰性读取仅支持 R2004（AC1018）及以上版本，当前为 {this._fileHeader.AcadVersion}");
+		}
+
+		this._builder = new DwgDocumentBuilder(this._fileHeader.AcadVersion, this._document, this.Configuration);
+		this._builder.OnNotification += this.onNotificationEvent;
+		if (this.onProgressEventEnabled())
+		{
+			this._builder.OnProgress += this.onProgressEvent;
+		}
+
+		this._document.Header = this.ReadHeader();
+		this._document.Header.Document = this._document;
+
+		this.readClasses();
+
+		// Template section: non-critical — on any read failure keep the default and continue
+		try
+		{
+			this.readTemplate();
+		}
+		catch (Exception ex)
+		{
+			this._builder?.Notify($"[Template] {ex.Message}", NotificationType.Warning);
+		}
+
+		this.readAppInfo();
+
+		//Handles section: handle -> offset in the object section (the random-access primitive)
+		Dictionary<ulong, long> handles = this.readHandles();
+
+		IDwgStreamReader objectsStream = this.getSectionStream(DwgSectionDefinition.AcDbObjects);
+		if (objectsStream == null)
+		{
+			throw new InvalidDataException("DWG 文件缺少对象段（AcDbObjects）");
+		}
+
+		return new DwgPartialReadContext(
+			this._fileHeader.AcadVersion,
+			handles,
+			this._document.Classes,
+			this._builder.HeaderHandles,
+			this._document.Header,
+			objectsStream.Stream);
+	}
+
+	/// <summary>
+	/// [PATCH] Step 2 of lazy (partial) read: decodes objects and assembles the document from a seed
+	/// set of handles (BFS expands along references; noExpand can suppress enqueueing of the child
+	/// objects of specified handles — e.g. the *MODEL_SPACE/*PAPER_SPACE block records). Objects that
+	/// do not appear in the expansion graph are not decoded, so memory usage is proportional to the
+	/// seed-set size rather than the total file size.
+	/// </summary>
+	/// <param name="ctx">The product of PreparePartialRead.</param>
+	/// <param name="document">The target document to be assembled (a CadDocument created by the caller).</param>
+	/// <param name="seedHandles">The seed handles (typically = all header handles + the needed entity handles).</param>
+	/// <param name="noExpand">When a reference reaches these handles, do not expand their child objects (nullable).</param>
+	/// <returns>The assembled document.</returns>
+	public CadDocument ReadObjectsPartial(
+		DwgPartialReadContext ctx,
+		CadDocument document,
+		Queue<ulong> seedHandles,
+		HashSet<ulong> noExpand = null)
+	{
+		// [PATCH] Reuse this._builder / this._document created by PreparePartialRead (same path as the
+		// full read readObjects: the same builder has read header/classes, so its state is complete).
+		// Previously a fresh builder was created, which lacked state and caused table-handle mismatch
+		// ("Table X not found"). The incoming document argument is ignored; this._document is returned.
+		var builder = this._builder;
+
+		// Raw objects-section stream → the bit-stream reader for the version (same path as getSectionStream/readObjects)
+		IDwgStreamReader sreader = DwgStreamReaderBase.GetStreamHandler(ctx.Version, ctx.ObjectsStream);
+		sreader.Encoding = this._encoding;
+
+		using var sectionReader = new DwgObjectReader(
+			ctx.Version,
+			builder,
+			sreader,
+			seedHandles,
+			ctx.HandleMap,
+			ctx.Classes,
+			noExpand);
+
+		sectionReader.Read();
+
+		builder.BuildDocument();
+
+		return this._document;
+	}
+
+	/// <summary>
+	/// [PATCH] Streaming scan of all entities in *MODEL_SPACE (exclusively for spatial-index construction):
+	/// BFS-decodes from the header handle set (tables / styles / linetypes / block registration / dictionaries
+	/// + model-space entities); suppressBlockExpand keeps block-definition entities from expanding
+	/// (the index only needs the model-space entities and block insertion points, not block content).
+	/// After each object template is read successfully, <paramref name="onObject"/> is invoked (the caller
+	/// extracts fields and releases them via builder.PruneTemplate, so memory is proportional to a single
+	/// object rather than the file size). BuildDocument is not called and no usable document is produced;
+	/// the ctx must first be prepared via PreparePartialRead (R2004+ only).
+	/// </summary>
+	/// <param name="ctx">The product of PreparePartialRead.</param>
+	/// <param name="onObject">The object-read callback (builder + template).</param>
+	internal void ScanModelSpaceEntities(
+		DwgPartialReadContext ctx,
+		Action<DwgDocumentBuilder, CadTemplate> onObject)
+	{
+		var builder = this._builder;
+		builder.SkipEntityTracking = true;
+
+		// Raw objects-section stream → the bit-stream reader for the version (same path as getSectionStream/readObjects)
+		IDwgStreamReader sreader = DwgStreamReaderBase.GetStreamHandler(ctx.Version, ctx.ObjectsStream);
+		sreader.Encoding = this._encoding;
+
+		var seed = new Queue<ulong>(ctx.HeaderHandles.GetHandles()
+			.Where(o => o.HasValue)
+			.Select(a => a.Value));
+
+		using var sectionReader = new DwgObjectReader(
+			ctx.Version,
+			builder,
+			sreader,
+			seed,
+			ctx.HandleMap,
+			ctx.Classes,
+			suppressBlockExpand: true,
+			onObjectRead: t => onObject(builder, t));
+
+		sectionReader.Read();
+	}
+
+	/// <summary>
+	/// [PATCH] Phased-timing variant of <see cref="PreparePartialRead"/>: executes exactly the same
+	/// preparation sequence as PreparePartialRead (file header → Header section → class table →
+	/// Template/AppInfo → Handles section → objects-section decompressed stream), invoking
+	/// <paramref name="onPhase"/> (phase name, milliseconds, extra info) after each phase completes.
+	/// Used for read-speed diagnosis and optimization verification; phase names: FileHeader / Header /
+	/// Classes / TemplateAppInfo / Handles / ObjectsStream.
+	/// </summary>
+	internal DwgPartialReadContext PreparePartialReadPhased(Action<string, long, string> onPhase)
+	{
+		var sw = System.Diagnostics.Stopwatch.StartNew();
+		long last = 0;
+		void Phase(string name, string info = null)
+		{
+			long now = sw.ElapsedMilliseconds;
+			onPhase(name, now - last, info);
+			last = now;
+		}
+
+		// Same sequence as PreparePartialRead
+		this._fileHeader = this._fileHeader ?? this.readFileHeader();
+		Phase("FileHeader", $"version={this._fileHeader.AcadVersion}");
+
+		if (this._fileHeader.AcadVersion < ACadVersion.AC1018)
+		{
+			throw new NotSupportedException($"DWG 惰性读取仅支持 R2004（AC1018）及以上版本，当前为 {this._fileHeader.AcadVersion}");
+		}
+
+		this._builder = new DwgDocumentBuilder(this._fileHeader.AcadVersion, this._document, this.Configuration);
+		this._builder.OnNotification += this.onNotificationEvent;
+		if (this.onProgressEventEnabled())
+		{
+			this._builder.OnProgress += this.onProgressEvent;
+		}
+
+		this._document.Header = this.ReadHeader();
+		this._document.Header.Document = this._document;
+		Phase("Header");
+
+		this.readClasses();
+		Phase("Classes", $"classes={this._document.Classes.Count}");
+
+		try
+		{
+			this.readTemplate();
+		}
+		catch (Exception ex)
+		{
+			this._builder?.Notify($"[Template] {ex.Message}", NotificationType.Warning);
+		}
+		this.readAppInfo();
+		Phase("TemplateAppInfo");
+
+		Dictionary<ulong, long> handles = this.readHandles();
+		Phase("Handles", $"handles={handles.Count:N0}");
+
+		IDwgStreamReader objectsStream = this.getSectionStream(DwgSectionDefinition.AcDbObjects);
+		if (objectsStream == null)
+		{
+			throw new InvalidDataException("DWG 文件缺少对象段（AcDbObjects）");
+		}
+		Phase("ObjectsStream", $"streamLen={objectsStream.Stream.Length:N0}");
+
+		return new DwgPartialReadContext(
+			this._fileHeader.AcadVersion,
+			handles,
+			this._document.Classes,
+			this._builder.HeaderHandles,
+			this._document.Header,
+			objectsStream.Stream);
 	}
 
 	/// <inheritdoc/>
@@ -202,7 +434,8 @@ public class DwgReader : CadReaderBase<DwgReaderConfiguration>
 		if (reader == null)
 			return new CadSummaryInfo();
 
-		DwgSummaryInfoReader summaryReader = new DwgSummaryInfoReader(this._fileHeader.AcadVersion, reader);
+		// [PATCH] Pass the file code page: SummaryInfo custom properties are encoded with the document code page (e.g. ANSI_936)
+		DwgSummaryInfoReader summaryReader = new DwgSummaryInfoReader(this._fileHeader.AcadVersion, reader, this._fileHeader.DrawingCodePage);
 		return summaryReader.Read();
 	}
 
@@ -367,35 +600,127 @@ public class DwgReader : CadReaderBase<DwgReaderConfiguration>
 		return stream;
 	}
 
+	/// <summary>
+	/// [PATCH] Factory for the storage location of the decompressed image (objects section).
+	/// When UseDiskSectionCache=true and the section is the objects section, returns a temp-file FileStream
+	/// (length pre-allocated, DeleteOnClose); otherwise returns an in-memory-resident HugeMemoryStream (the original behavior).
+	/// </summary>
+	private Stream CreateSectionBuffer(string sectionName, long length)
+	{
+		if (this.Configuration.UseDiskSectionCache && sectionName == DwgSectionDefinition.AcDbObjects)
+		{
+			string path = Path.Combine(Path.GetTempPath(), "acsh_" + Guid.NewGuid().ToString("N") + ".tmp");
+			FileStream fs = new FileStream(
+				path,
+				FileMode.Create,
+				FileAccess.ReadWrite,
+				FileShare.Read | FileShare.Delete,
+				1 << 16,
+				FileOptions.DeleteOnClose);
+			fs.SetLength(length);
+			return fs;
+		}
+
+		return HugeMemoryStream.Create(length);
+	}
+
 	private Stream getSectionBuffer18(DwgFileHeaderAC18 fileheader, string sectionName)
 	{
 		if (!fileheader.Descriptors.TryGetValue(sectionName, out DwgSectionDescriptor descriptor))
 			return null;
 
 		//get the total size of the page
-		MemoryStream memoryStream = HugeMemoryStream.Create((long)descriptor.DecompressedSize * descriptor.LocalSections.Count);
+		Stream memoryStream = this.CreateSectionBuffer(sectionName, (long)descriptor.DecompressedSize * descriptor.LocalSections.Count);
+
+		// [PATCH] One page-header reader per section (the original used one per page): the objects section has
+		// 27,000 pages, which avoids the repeated allocation of a new reader and its 64KB byte buffer per page
+		IDwgStreamReader sreader = DwgStreamReaderBase.GetStreamHandler(fileheader.AcadVersion, this._fileStream.Stream);
+
+		// [PATCH] Page-level parallel decompression: each page is independent (the 32B page header XOR + LZ77 data sit at a fixed file offset, and the target position accumulates per page without overlap).
+		// Objects section 27,688 pages/822MB: 4-core measured sequential 4.6s → parallel ~1.6s. Small sections (<64 pages) keep the sequential path.
+		if (descriptor.IsCompressed && descriptor.LocalSections.Count >= 64 && this._fileStream.Stream is FileStream rawFile)
+		{
+			int pageCount = descriptor.LocalSections.Count;
+			var pageInfo = new (long filePos, bool empty, int emptySize)[pageCount];
+			long dest = 0;
+			int lastNonEmpty = -1;
+			for (int i = 0; i < pageCount; i++)
+			{
+				DwgLocalSectionMap section = descriptor.LocalSections[i];
+				if (section.IsEmpty)
+				{
+					pageInfo[i] = (0, true, (int)section.DecompressedSize);
+					dest += (long)section.DecompressedSize;
+					continue;
+				}
+				sreader.Position = section.Seeker;
+				this.decryptDataSection(section, sreader); // fills CompressedSize/PageSize/Offset
+				pageInfo[i] = (section.Seeker + 32, false, 0); // the compressed data follows the 32B page header
+				dest += (long)section.DecompressedSize;
+				lastNonEmpty = i;
+			}
+
+			var pages = new (byte[] data, int len)[pageCount];
+			var threadFile = new System.Threading.ThreadLocal<FileStream>(
+				() => new FileStream(rawFile.Name, FileMode.Open, FileAccess.Read, FileShare.Read),
+				trackAllValues: true);
+			try
+			{
+				System.Threading.Tasks.Parallel.For(0, pageCount, new System.Threading.Tasks.ParallelOptions
+				{
+					MaxDegreeOfParallelism = Math.Max(1, Environment.ProcessorCount)
+				}, i =>
+				{
+					if (pageInfo[i].empty)
+						return;
+					pages[i] = DwgLZ77AC18Decompressor.DecompressPageToBuffer(threadFile.Value, pageInfo[i].filePos);
+				});
+			}
+			finally
+			{
+				threadFile.Dispose();
+			}
+
+			foreach (int i in System.Linq.Enumerable.Range(0, pageCount))
+			{
+				if (pageInfo[i].empty)
+				{
+					memoryStream.Position += pageInfo[i].emptySize; // zero-fill the pre-allocated region (same layout as the sequential path)
+					continue;
+				}
+				memoryStream.Write(pages[i].data, 0, pages[i].len);
+			}
+
+			// Restore the underlying-stream position semantics of the sequential path (the last page's compressed data has been read)
+			if (lastNonEmpty >= 0)
+				this._fileStream.Stream.Position = pageInfo[lastNonEmpty].filePos + (long)descriptor.LocalSections[lastNonEmpty].CompressedSize;
+
+			memoryStream.Position = 0L;
+			return memoryStream;
+		}
 
 		foreach (DwgLocalSectionMap section in descriptor.LocalSections)
 		{
 			if (section.IsEmpty)
 			{
-				//Page is empty, fill the gap with 0s
-				for (int index = 0; index < (int)section.DecompressedSize; ++index)
-				{
-					memoryStream.WriteByte(0);
-				}
+				//Page is empty, fill the gap with 0s (common to memory/disk cache: skip the zero-fill region;
+				//CreateSectionBuffer has already SetLength'd the disk stream to pre-zero it; HugeMemoryStream blocks are zero-initialized anyway)
+				memoryStream.Position += (long)section.DecompressedSize;
 			}
 			else
 			{
 				//Get the page section header
-				IDwgStreamReader sreader = DwgStreamReaderBase.GetStreamHandler(fileheader.AcadVersion, this._fileStream.Stream);
 				sreader.Position = section.Seeker;
 				//Get the header data
 				this.decryptDataSection(section, sreader);
+				// [PATCH] Read the page data directly from the underlying stream: first sync the logical position (byte-buffer correction)
+				sreader.SyncStreamPosition();
 
 				if (descriptor.IsCompressed)
 				{
 					//Page is compressed
+					// [PATCH] Original semantics: decompress up to the 0x11 terminator, writing directly to the pre-allocated stream (full-page buffer).
+					// The page header PageSize is not the true decompressed size (small-section pages also decompress to a full 0x7400 page with zero padding), so it must not be used to size the buffer.
 					DwgLZ77AC18Decompressor.DecompressToDest(this._fileStream.Stream, memoryStream);
 				}
 				else
@@ -423,17 +748,14 @@ public class DwgReader : CadReaderBase<DwgReaderConfiguration>
 		foreach (DwgLocalSectionMap page in section.LocalSections)
 			totalLength += page.DecompressedSize;
 
-		MemoryStream memoryStream = HugeMemoryStream.Create((long)totalLength);
+		Stream memoryStream = this.CreateSectionBuffer(sectionName, (long)totalLength);
 
 		foreach (DwgLocalSectionMap page in section.LocalSections)
 		{
 			if (page.IsEmpty)
 			{
-				//Page is empty, fill the gap with 0s
-				for (int i = 0; i < (int)page.DecompressedSize; ++i)
-				{
-					memoryStream.WriteByte(0);
-				}
+				//Page is empty, fill the gap with 0s (common to memory/disk cache: skip the zero-fill region)
+				memoryStream.Position += (long)page.DecompressedSize;
 			}
 			else
 			{
@@ -477,6 +799,17 @@ public class DwgReader : CadReaderBase<DwgReaderConfiguration>
 		memoryStream.Position = 0L;
 
 		return memoryStream;
+	}
+
+	/// <summary>
+	/// [PATCH] Dispose the objects-section reader (in disk-cache mode, close the temp-file FileStream → DeleteOnClose removes it).
+	/// </summary>
+	public override void Dispose()
+	{
+		this._sectionReader?.Dispose();
+		this._sectionReader = null;
+
+		base.Dispose();
 	}
 
 	private IDwgStreamReader getSectionStream(string sectionName)
@@ -737,9 +1070,12 @@ public class DwgReader : CadReaderBase<DwgReaderConfiguration>
 		sreader.Position = (long)fileheader.PageMapAddress;
 
 		//Get the page size
-		this.getPageHeaderData(sreader, out _, out long decompressedSize, out _, out _, out _);
+		this.getPageHeaderData(sreader, out _, out long decompressedSize, out long compressedSize, out _, out _);
+		// [PATCH] Sync the logical position before reading the underlying stream directly (byte-buffer correction)
+		sreader.SyncStreamPosition();
 		//Get the descompressed stream to read the records
-		StreamIO decompressed = new StreamIO(DwgLZ77AC18Decompressor.Decompress(sreader.Stream, decompressedSize));
+		// [PATCH] Compressed size is known → exact read (the stream position advances precisely, no seek-back)
+		StreamIO decompressed = new StreamIO(DwgLZ77AC18Decompressor.Decompress(sreader.Stream, compressedSize, decompressedSize));
 
 		//Section size
 		int total = 0x100;
@@ -781,8 +1117,11 @@ public class DwgReader : CadReaderBase<DwgReaderConfiguration>
 		//Set the positon of the map
 		sreader.Position = fileheader.Records[(int)fileheader.SectionMapId].Seeker;
 		//Get the page size
-		this.getPageHeaderData(sreader, out _, out decompressedSize, out _, out _, out _);
-		StreamIO decompressedStream = new StreamIO(DwgLZ77AC18Decompressor.Decompress(sreader.Stream, decompressedSize));
+		this.getPageHeaderData(sreader, out _, out decompressedSize, out long sectionMapCompressedSize, out _, out _);
+		// [PATCH] Sync the logical position before reading the underlying stream directly (byte-buffer correction)
+		sreader.SyncStreamPosition();
+		// [PATCH] Compressed size is known → exact read (the stream position advances precisely, no seek-back)
+		StreamIO decompressedStream = new StreamIO(DwgLZ77AC18Decompressor.Decompress(sreader.Stream, sectionMapCompressedSize, decompressedSize));
 		decompressedStream.Encoding = TextEncoding.GetListedEncoding(CodePage.Windows1252);
 
 		//0x00	4	Number of section descriptions(NumDescriptions)
@@ -989,6 +1328,8 @@ public class DwgReader : CadReaderBase<DwgReaderConfiguration>
 			HeaderCRC64 = decompressed.ReadULong()
 		};
 
+		// [PATCH] Sync the logical position before reading the underlying stream directly (byte-buffer correction)
+		sreader.SyncStreamPosition();
 		//Prepare the page data stream to read
 		byte[] arr = this.getPageBuffer(
 			fileheader.CompressedMetadata.PagesMapOffset,
@@ -1011,6 +1352,8 @@ public class DwgReader : CadReaderBase<DwgReaderConfiguration>
 			offset += size;
 		}
 
+		// [PATCH] Sync the logical position before reading the underlying stream directly (byte-buffer correction)
+		sreader.SyncStreamPosition();
 		//Prepare the section map data stream to read
 		arr = this.getPageBuffer(
 			(ulong)fileheader.Records[(int)fileheader.CompressedMetadata.SectionsMapId].Seeker,
@@ -1182,7 +1525,14 @@ public class DwgReader : CadReaderBase<DwgReaderConfiguration>
 	{
 		Dictionary<ulong, long> handles = this.readHandles();
 
+		// [PATCH] Denominator for read progress: the handles section contains every object in the file
+		// (handle → offset), and its Count is the upper bound of the number of objects to decode
+		// (the objects discovered by BFS along references all come from this set). Set before decoding so the
+		// progress events can carry a real Total, from which consumers display a correct percentage (previously ProgressEventArgs had no Total and was always 0.0%).
+		this._builder.ProgressTotal = handles.Count;
+
 		IDwgStreamReader sreader = null;
+		Stream objectsImage = null;
 		if (this._fileHeader.AcadVersion <= ACadVersion.AC1015)
 		{
 			sreader = DwgStreamReaderBase.GetStreamHandler(this._fileHeader.AcadVersion, this._fileStream.Stream, this._encoding);
@@ -1192,11 +1542,21 @@ public class DwgReader : CadReaderBase<DwgReaderConfiguration>
 		else
 		{
 			sreader = this.getSectionStream(DwgSectionDefinition.AcDbObjects);
+			objectsImage = sreader?.Stream;
 		}
 
 		Queue<ulong> objectHandles = new Queue<ulong>(this._builder.HeaderHandles.GetHandles()
 			.Where(o => o.HasValue)
 			.Select(a => a.Value));
+
+		// [PATCH] Incremental save: record the byte range of each object in the objects-section decompressed image (only AC1018 supports incremental save)
+		Dictionary<ulong, ObjectByteRange> objectRanges = null;
+		if (this.Configuration.RetainPatchSource
+			&& this._fileHeader.AcadVersion == ACadVersion.AC1018
+			&& objectsImage != null)
+		{
+			objectRanges = new Dictionary<ulong, ObjectByteRange>();
+		}
 
 		DwgObjectReader sectionReader = new DwgObjectReader(
 			this._fileHeader.AcadVersion,
@@ -1204,9 +1564,166 @@ public class DwgReader : CadReaderBase<DwgReaderConfiguration>
 			sreader,
 			objectHandles,
 			handles,
-			this._document.Classes);
+			this._document.Classes,
+			objectRanges: objectRanges);
 
-		sectionReader.Read();
+		this._sectionReader = sectionReader;
+
+		// [PATCH] P3 parallelization of read-side object decoding: enabled only for R2004 (AC1018) and later
+		// and non-incremental save (objectRanges is null). Object decoding is ~94% of the read-side cost;
+		// parallel BFS decoding scales down linearly with core count. Incremental save needs to record the
+		// byte range per object (objectRanges), which the worker path does not support, so it falls back to sequential Read.
+		if (this.Configuration.ParallelDecode
+			&& this._fileHeader.AcadVersion >= ACadVersion.AC1018
+			&& objectRanges == null)
+		{
+			sectionReader.ReadParallel();
+		}
+		else
+		{
+			sectionReader.Read();
+		}
+
+		if (objectRanges != null)
+		{
+			this.buildPatchSource(objectRanges, objectsImage);
+		}
+	}
+
+	/// <summary>
+	/// [PATCH] Build the incremental save patch source: copies the objects-section decompressed image into the
+	/// patch source's own temp file, and collects the page metadata and object byte ranges.
+	/// </summary>
+	private void buildPatchSource(Dictionary<ulong, ObjectByteRange> objectRanges, Stream objectsImage)
+	{
+		try
+		{
+			if (!(this._fileHeader is DwgFileHeaderAC18 fileHeader)
+				|| !fileHeader.Descriptors.TryGetValue(DwgSectionDefinition.AcDbObjects, out DwgSectionDescriptor descriptor))
+			{
+				return;
+			}
+
+			//Total length of the decompressed image = the sum of each page's decompressed size (the last page may be less than a full page; the temp file's pre-allocated length may be larger than this value)
+			long sectionLength = 0L;
+			foreach (DwgLocalSectionMap section in descriptor.LocalSections)
+			{
+				sectionLength += (long)section.DecompressedSize;
+			}
+
+			//Copy the decompressed image into the patch source's own temp file (deleted on Dispose) to avoid coupling with the reader's lifetime
+			string tmpPath = Path.Combine(Path.GetTempPath(), $"acsh_patch_{Guid.NewGuid():N}.tmp");
+			var imageStream = new FileStream(tmpPath, FileMode.Create, FileAccess.ReadWrite, FileShare.None, 1 << 20, FileOptions.DeleteOnClose);
+			objectsImage.Position = 0;
+			long copied = 0;
+			byte[] buffer = new byte[1 << 20];
+			while (copied < sectionLength)
+			{
+				int want = (int)Math.Min(buffer.Length, sectionLength - copied);
+				int read = 0;
+				while (read < want)
+				{
+					int r = objectsImage.Read(buffer, read, want - read);
+					if (r <= 0)
+					{
+						break;
+					}
+					read += r;
+				}
+				if (read <= 0)
+				{
+					break;
+				}
+				imageStream.Write(buffer, 0, read);
+				copied += read;
+			}
+			imageStream.Position = 0;
+
+			if (copied != sectionLength)
+			{
+				imageStream.Dispose();
+				this._builder?.Notify($"[PatchSource] 解压映像长度不符（期望 {sectionLength}，实得 {copied}），已禁用增量保存", NotificationType.Warning);
+				return;
+			}
+
+			//Page metadata: in ascending decompressed-offset order (LocalSections is usually already page order; sort explicitly here to guard against a disordered page table)
+			var ordered = new List<DwgLocalSectionMap>(descriptor.LocalSections);
+			ordered.Sort((a, b) => a.Offset.CompareTo(b.Offset));
+
+		//Snapshot the raw (compressed, masked) page bytes into the patch source's own temp file, making the
+		//patch source self-contained and independent of the reader's lifetime. Empty pages have no physical
+		//bytes, so their snapshot length is 0.
+		//Note: the writer's ReadRawPage must read this snapshot back, so it must be ReadWrite (a Write-only
+		//access once caused incremental save to throw "Stream does not support reading" and fall back to a full save).
+		string rawPath = Path.Combine(Path.GetTempPath(), $"acsh_rawpages_{Guid.NewGuid():N}.tmp");
+		var rawPagesStream = new FileStream(rawPath, FileMode.Create, FileAccess.ReadWrite, FileShare.None, 1 << 20, FileOptions.DeleteOnClose);
+
+			var pages = new ObjectPageInfo[ordered.Count];
+			long decompressed = 0L;
+			int snapshotOffset = 0;
+			var pageBuffer = new byte[1 << 20];
+			for (int i = 0; i < ordered.Count; i++)
+			{
+				DwgLocalSectionMap section = ordered[i];
+				int pageDecompressed = (int)section.DecompressedSize;
+				if (section.IsEmpty)
+				{
+					pages[i] = new ObjectPageInfo(decompressed, pageDecompressed, 0L, snapshotOffset, 0, 0, true);
+				}
+				else
+				{
+					int rawLength = (int)section.PageSize;
+					int compressedSize = (int)section.CompressedSize;
+					pages[i] = new ObjectPageInfo(decompressed, pageDecompressed, section.Seeker, snapshotOffset, compressedSize, rawLength, false);
+
+					this._fileStream.Stream.Position = section.Seeker;
+					int written = 0;
+					while (written < rawLength)
+					{
+						int want = (int)Math.Min(pageBuffer.Length, rawLength - written);
+						int read = 0;
+						while (read < want)
+						{
+							int r = this._fileStream.Stream.Read(pageBuffer, read, want - read);
+							if (r <= 0)
+							{
+								break;
+							}
+							read += r;
+						}
+						if (read <= 0)
+						{
+							break;
+						}
+						rawPagesStream.Write(pageBuffer, 0, read);
+						written += read;
+					}
+
+					if (written != rawLength)
+					{
+						throw new EndOfStreamException($"页 {i} 原始字节快照长度不符（期望 {rawLength}，实得 {written}）");
+					}
+
+					snapshotOffset += rawLength;
+				}
+				decompressed += pageDecompressed;
+			}
+
+			rawPagesStream.Flush();
+
+			this.PatchSource = new DwgObjectPatchSource(
+				this._fileHeader.AcadVersion,
+				imageStream,
+				rawPagesStream,
+				sectionLength,
+				(int)descriptor.DecompressedSize,
+				pages,
+				objectRanges);
+		}
+		catch (Exception ex)
+		{
+			this._builder?.Notify($"[PatchSource] 构建失败，已禁用增量保存：{ex.Message}", NotificationType.Warning);
+		}
 	}
 
 	/// <summary>

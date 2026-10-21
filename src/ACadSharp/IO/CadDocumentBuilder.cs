@@ -16,9 +16,23 @@ internal abstract class CadDocumentBuilder
 
 	public event ProgressEventHandler OnProgress;
 
+	// [PATCH] Read progress: denominator = the total number of objects in the file (known after the
+	// handle section is read), set by DwgReader before decoding. -1 means unknown (lazy/partial read,
+	// the decoded set cannot be known exactly in advance); the consumer shows an indeterminate state.
+	public int ProgressTotal { get; set; } = -1;
+
+	// [PATCH] Read progress: count of completed objects. Incremented only in the Read stage (once per
+	// object, not repeated in the Build stage), on the same basis as ProgressTotal. AddTemplate is only
+	// called serially on the main thread (including the deferred replay of P3 parallel decoding),
+	// so no atomic operation is needed here.
+	private int _progressCompleted;
+
 	public AppIdsTable AppIds { get; set; } = new AppIdsTable();
 
 	public BlockRecordsTable BlockRecords { get; set; } = new BlockRecordsTable();
+
+	// [PATCH] P3 parallel read: protects the OnNotification event subscribers (workers call Notify concurrently).
+	private readonly object _notifyLock = new object();
 
 	public CadFileDataStorage DataStorage { get; set; }
 
@@ -33,6 +47,12 @@ internal abstract class CadDocumentBuilder
 	public abstract bool KeepUnknownEntities { get; }
 
 	public abstract bool KeepUnknownNonGraphicalObjects { get; }
+
+	/// <summary>
+	/// Directories used to locate the shape files (.shx) referenced by the document when
+	/// a shape has to be resolved by name. When empty the default locations are used.
+	/// </summary>
+	public List<string> ShapeFontDirectories { get; set; } = new List<string>();
 
 	public LayersTable Layers { get; set; } = new LayersTable();
 
@@ -66,6 +86,24 @@ internal abstract class CadDocumentBuilder
 	{
 		this.Version = version;
 		this.DocumentToBuild = document;
+	}
+
+	/// <summary>
+	/// [PATCH] Streaming scan mode: removes the template from all the handle indexes so that the
+	/// object and its geometry can be reclaimed by the GC. The reader's own _readedObjects is not
+	/// affected (the same handle is never re-read), but subsequent TryGetObjectTemplate/TryGetCadObject
+	/// calls will not find the handle - only suitable for the "read-then-discard" scan scenario
+	/// (spatial index building), not for paths that need BuildDocument to assemble the document.
+	/// </summary>
+	public void PruneTemplate(ICadObjectTemplate template)
+	{
+		var h = template.CadObject.Handle;
+		this.templatesMap.Remove(h);
+		this.cadObjects.Remove(h);
+		this.cadObjectsTemplates.Remove(h);
+		this.tableEntryTemplates.Remove(h);
+		this.tableTemplates.Remove(h);
+		this.dictionaryTemplates.Remove(h);
 	}
 
 	public void AddTemplate(ICadObjectTemplate template)
@@ -177,7 +215,15 @@ internal abstract class CadDocumentBuilder
 
 	public void Notify(string message, NotificationType notificationType = NotificationType.None, Exception exception = null)
 	{
-		this.OnNotification?.Invoke(this, new NotificationEventArgs(message, notificationType, exception));
+		// [PATCH] P3 parallel read: workers call Notify concurrently; the Monitor protects the shared
+		// state accessed by the subscriber callbacks (the OnNotification subscriptions do not change
+		// during the read, but a callback may access shared logs/collections). Notify is triggered only
+		// for errors/warnings/special objects, so the frequency is very low on normal files and the
+		// lock overhead is negligible.
+		lock (this._notifyLock)
+		{
+			this.OnNotification?.Invoke(this, new NotificationEventArgs(message, notificationType, exception));
+		}
 	}
 
 	public void NotifyProgress(ReadStage stage, ICadObjectTemplate template)
@@ -187,7 +233,15 @@ internal abstract class CadDocumentBuilder
 			return;
 		}
 
-		this.OnProgress?.Invoke(this, new ProgressEventArgs(stage, template.GetObjectData()));
+		// [PATCH] Increment the completion count only in the Read stage (no double counting in the
+		// Build stage), so that Completed and ProgressTotal (the file's object count) share the same
+		// basis and the consumer can compute the correct percentage.
+		if (stage == ReadStage.Read)
+		{
+			this._progressCompleted++;
+		}
+
+		this.OnProgress?.Invoke(this, new ProgressEventArgs(stage, template.GetObjectData(), this._progressCompleted, this.ProgressTotal));
 	}
 
 	public void RegisterTables()

@@ -1,6 +1,7 @@
-﻿using CSUtilities.Converters;
+using CSUtilities.Converters;
 using CSUtilities.IO;
 using CSUtilities.Text;
+using System.Text;
 
 namespace ACadSharp.IO.DWG
 {
@@ -16,10 +17,14 @@ namespace ACadSharp.IO.DWG
 
 		private StreamIO _sreader;
 
-		public DwgSummaryInfoReader(ACadVersion version, IDwgStreamReader reader) : base(version)
+		// [PATCH] Decoding Encoding for the file's graphics code page (SummaryInfo section strings are encoded in the document code page, e.g. ANSI_936 -> GBK)
+		private readonly System.Text.Encoding _encoding;
+
+		public DwgSummaryInfoReader(ACadVersion version, IDwgStreamReader reader, CodePage codePage = CodePage.Windows1252) : base(version)
 		{
 			this._reader = reader;
 			this._sreader = new StreamIO(reader.Stream);
+			this._encoding = ResolveEncoding(codePage);
 
 			if (version < ACadVersion.AC1021)
 			{
@@ -104,6 +109,9 @@ namespace ACadSharp.IO.DWG
 
 		private string readUnicodeString()
 		{
+			// [PATCH] _sreader and _reader share the same underlying stream:
+			// the bit reader has an internal byte buffer, so sync the stream position before a direct read and invalidate the buffer after.
+			this._reader.SyncStreamPosition();
 			short textLength = this._sreader.ReadShort<LittleEndianConverter>();
 			string value;
 			if (textLength == 0)
@@ -113,12 +121,32 @@ namespace ACadSharp.IO.DWG
 			else
 			{
 				//Read the string and get rid of the empty bytes
-				value = this._sreader.ReadString(textLength,
-					TextEncoding.GetListedEncoding(CodePage.Windows1252))
+				// [PATCH] Decode using the file code page (the original implementation was fixed to Windows-1252, so Chinese properties were read as mojibake)
+				value = this._sreader.ReadString(textLength, this._encoding)
 					.Replace("\0", "");
 			}
 
+			this._reader.MarkStreamAdvanced();
 			return value;
+		}
+
+		// [PATCH] TextEncoding.GetListedEncoding returns null for most enum values (e.g. Gb2312):
+		// fall back to CodePagesEncodingProvider to obtain the Encoding by Windows code page number (same strategy as CadUtils.GetListedEncoding)
+		private static Encoding ResolveEncoding(CodePage codePage)
+		{
+			var e = TextEncoding.GetListedEncoding(codePage);
+			if (e != null) return e;
+			try
+			{
+#if !NET48
+				Encoding.RegisterProvider(System.Text.CodePagesEncodingProvider.Instance);
+#endif
+				return Encoding.GetEncoding((int)codePage);
+			}
+			catch
+			{
+				return TextEncoding.Windows1252();
+			}
 		}
 	}
 }

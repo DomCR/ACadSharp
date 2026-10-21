@@ -1,11 +1,12 @@
-﻿using ACadSharp.Header;
+using ACadSharp.Header;
 using ACadSharp.Tables;
 using System.Collections.Generic;
 using System.Runtime.CompilerServices;
 
 namespace ACadSharp.IO.DWG
 {
-	internal class DwgHeaderHandlesCollection
+	// [PATCH] Changed to public: DwgPartialReadContext (lazy-read context) exposes the header handle set externally
+	public class DwgHeaderHandlesCollection
 	{
 		public ulong? CMATERIAL { get { return getHandle(); } set { setHandle(value: value); } }
 		public ulong? CLAYER { get { return getHandle(); } set { setHandle(value: value); } }
@@ -74,7 +75,22 @@ namespace ACadSharp.IO.DWG
 			return new List<ulong?>(_handles.Values);
 		}
 
-		public void UpdateHeader(CadHeader header, DwgDocumentBuilder builder)
+		internal void UpdateHeader(CadHeader header, DwgDocumentBuilder builder)
+		{
+			// [PATCH] Under lazy (partial) reads the document may be incomplete: when table entries such as the current layer/linetype are missing,
+			// header.X = name looks up the table by name and throws KeyNotFoundException (placeholder names are often "0").
+			// UpdateHeader is only final-assignment housekeeping, tolerant per entry: any single failure does not affect the availability of the document body (geometry/entities).
+			try
+			{
+				UpdateHeaderCore(header, builder);
+			}
+			catch
+			{
+				// Under partial reads, missing table entries are expected; under a full read, no exception should be thrown here.
+			}
+		}
+
+		private void UpdateHeaderCore(CadHeader header, DwgDocumentBuilder builder)
 		{
 			TableEntry entry;
 			if (builder.TryGetCadObject(this.CLAYER, out entry))

@@ -1,4 +1,4 @@
-﻿using ACadSharp.Blocks;
+using ACadSharp.Blocks;
 using ACadSharp.Classes;
 using ACadSharp.Entities;
 using ACadSharp.Entities.AecEntities;
@@ -41,11 +41,14 @@ namespace ACadSharp.IO.DWG
 	 * name clash. To complicate matters more, files also exist with table records with duplicate
 	 * names. This is incorrect, and the software should rename the record to be unique upon reading.
 	 */
-	internal partial class DwgObjectReader : DwgSectionIO
+	internal partial class DwgObjectReader : DwgSectionIO, IDisposable
 	{
 		public override string SectionName { get { return DwgSectionDefinition.AcDbObjects; } }
 
 		private readonly Dictionary<short, DxfClass> _classes;
+
+		// [PATCH] P3 parallel: original class table (workers must rebuild the dictionary from the DxfClassCollection when they are constructed).
+		private readonly DxfClassCollection _classesSource;
 
 		/// <summary>
 		/// Stream decoded using the crc.
@@ -54,7 +57,29 @@ namespace ACadSharp.IO.DWG
 
 		private readonly Dictionary<ulong, long> _map;
 
-		private readonly MemoryStream _memoryStream;
+		/// <summary>
+		/// Stream decoded using the crc.
+		/// In disk-cache mode (UseDiskSectionCache) this is a temporary-file FileStream (zero-copy reuse);
+		/// otherwise it is a memory stream (the MemoryStream passed in from upstream or a HugeMemoryStream built in the copy branch).
+		/// </summary>
+		private readonly Stream _memoryStream;
+
+		// [PATCH] Disk-cache mode: each object needs three independent seek views for object/handles/text,
+		// each holding an independent FileStream (same temp file) + an independent 64KB buffer -> saves memory and avoids cross-talk through the shared underlying stream buffer.
+		// The 3 slots are reused across all objects to avoid million-level open/close overhead.
+		private readonly List<Stream> _diskViewStreams = new List<Stream>();
+
+		private int _cloneSlot;
+
+		// [FIX] Shared object-section image array for P3 parallel workers (exported by the ReadParallel main thread, a single copy).
+		// When cloning sub-views (object/handles/text), build independent cursor views directly from this array, avoiding
+		// GetBuffer() on an array-backed MemoryStream throwing UnauthorizedAccessException under .NET 10 (the original catch fallback
+		// CopyTo would read worker._memoryStream to the end, polluting the _crcReader position -> type=256 -> BFS completely empty).
+		private readonly byte[] _sharedImage;
+
+		// [PATCH] Whether this reader owns and is responsible for releasing the decompressed image stream (disk-cache temp file / HugeMemoryStream built in the copy branch).
+		// When reusing an upstream-passed stream in memory, it does not own it, to avoid closing a stream held by the caller.
+		private bool _ownsSectionStream;
 
 		private readonly Dictionary<ulong, ObjectType> _readedObjects = new Dictionary<ulong, ObjectType>();
 
@@ -76,19 +101,54 @@ namespace ACadSharp.IO.DWG
 
 		private IDwgStreamReader _mergedReaders;
 
-		private long _objectInitialPos = 0;
+	private long _objectInitialPos = 0;
 
-		/// <summary>
-		/// Reader to handle the object data.
-		/// </summary>
-		private IDwgStreamReader _objectReader;
+	// [PATCH] Incremental save: the byte range of the current object in the decompressed image of the object section (recorded when a patch source is enabled)
+	private long _objectStartOffset;
 
-		private uint _size;
+	private int _objectTotalLength;
+
+	// [PATCH] Incremental save: handle -> object byte range. When non-null, Read() records each one.
+	private readonly Dictionary<ulong, ObjectByteRange> _objectRanges;
+
+	/// <summary>
+	/// Reader to handle the object data.
+	/// </summary>
+	private IDwgStreamReader _objectReader;
+
+	private uint _size;
 
 		/// <summary>
 		/// Reader focused on the string data section of the stream.
 		/// </summary>
 		private IDwgStreamReader _textReader;
+
+		// [PATCH] Lazy reading: when these handles are referenced, only the reference value is resolved; their children are not enqueued for expansion
+		// (used for *MODEL_SPACE/*PAPER_SPACE block records, to prevent the BFS walk from descending into all model-space entities).
+		private readonly HashSet<ulong> _noExpand;
+
+		// [PATCH] Streaming scan (spatial index build): the owned entities of all block records (except *MODEL_SPACE) are not enqueued --
+		// the index only needs model-space entities + block insertion points; block definition content does not need decoding.
+		private readonly bool _suppressBlockExpand;
+
+		// [PATCH] Streaming scan: callback after each object template is successfully read (merged into the builder); the caller can extract fields and
+		// release via PruneTemplate, so memory stays proportional to a single object rather than file size.
+		private readonly Action<CadTemplate> _onObjectRead;
+
+		// [PATCH] P3 shared state for reader-side parallel object decoding. When non-null, this is a parallel worker (or the parallel main driver).
+		// Object decoding is self-contained (each object is located absolutely via "handle -> offset" + an independent cloned view stream; decoding only records reference
+		// handle values, and reference resolution happens in the BuildDocument phase), so multiple workers can decode in parallel without interfering,
+		// coordinating only through the shared structures of DwgParallelDecodeState:
+		//  - Claim: an atomic claim set (TryAdd succeeds only the first time), covering the deduplication semantics of the serial _readedObjects
+		//    (claimed => no longer decoded).
+		//  - RefQueue: the reference discovery queue (handleReference enqueues newly discovered handles; all workers compete to consume it).
+		//  - BuilderLock: protects the writable points of the builder (block record template list / error notifications).
+		// Table property assignments (the 9 places such as Layers/AppIds) each write different fields and are triggered by the single controlling object writer, so
+		// reference assignment is atomic and contention-free; the entity bypass lists (ModelSpace/PaperSpaceEntities) are dead storage on the DWG path
+		// (entities are assembled via template.Build), so workers skip their writes.
+		// AddTemplate is executed serially by the driver after all workers finish => during decoding the builder dictionaries are read-only and contention-free.
+		private readonly DwgParallelDecodeState _parallelState;
+		private readonly bool _parallel;
 
 		public DwgObjectReader(
 			ACadVersion version,
@@ -96,35 +156,111 @@ namespace ACadSharp.IO.DWG
 			IDwgStreamReader reader,
 			Queue<ulong> handles,
 			Dictionary<ulong, long> handleMap,
-			DxfClassCollection classes) : base(version)
+			DxfClassCollection classes,
+			HashSet<ulong> noExpand = null,
+			bool suppressBlockExpand = false,
+			Action<CadTemplate> onObjectRead = null,
+			Dictionary<ulong, ObjectByteRange> objectRanges = null,
+			DwgParallelDecodeState parallelState = null) : base(version)
 		{
 			this._builder = builder;
 
 			this._reader = reader;
 
-			this._handles = new Queue<ulong>(handles);
-			this._map = new Dictionary<ulong, long>(handleMap);
-			this._classes = classes.ToDictionary(x => x.ClassNumber, x => x);
+			// [PATCH] P3 parallel flag (set early, for _map sharing and image view decisions)
+			this._parallelState = parallelState;
+			this._parallel = parallelState != null;
 
-			if (this._reader.Stream is MemoryStream memoryStream)
+			this._handles = new Queue<ulong>(handles);
+			// [PATCH] P3 parallel: the handle graph is read-only (not mutated during decoding; only getEntityType TryGetValue),
+			// workers share the reference directly, avoiding a 2.8M handles x worker-count memory doubling.
+			this._map = this._parallel ? handleMap : new Dictionary<ulong, long>(handleMap);
+			this._classes = classes.ToDictionary(x => x.ClassNumber, x => x);
+			this._classesSource = classes;
+			this._noExpand = noExpand;
+			this._suppressBlockExpand = suppressBlockExpand;
+			this._onObjectRead = onObjectRead;
+			this._objectRanges = objectRanges;
+
+			// [PATCH] P3 parallel worker: create an independent image view based on the main reader's decompressed image (_reader.Stream).
+			// Key point: a worker's _crcReader wraps _memoryStream, and getEntityType does
+			// _crcReader.Position=offset (a seek) per object. If workers shared the same _memoryStream object,
+			// those seeks would clobber each other across workers => each worker must have an independent view (independent cursors, data shared zero-copy):
+			//  - FileStream (disk cache): each opens its own FileStream handle (same temp file)
+			//  - HugeMemoryStream: Clone shares the read-only chunks
+			//  - array-backed MemoryStream: GetBuffer shares the underlying byte[]
+			// CloneSectionStream(worker._memoryStream) then clones out the independent views of _objectReader/_handlesReader/
+			// _textReader, fully isolated. The image stream is owned by the main reader; workers do not release it.
+			// Note that HugeMemoryStream is a MemoryStream subclass, so Huge must be checked first (takes the zero-copy Clone path).
+			if (this._parallel)
 			{
-				try
+				// [FIX] Prefer the shared image exported by the main thread (exported in ReadParallel, SharedImage):
+				// a complete array at offset=0, GetBuffer() is always available (requires _writable=true, so the view here uses the
+				// 3-arg constructor with the default writable=true); each worker gets an independent cursor view with no cross-talk, sharing the underlying read-only array
+				// (zero-copy, occupying only one copy of memory). Covers both <2GB object sections (plain MemoryStream image, where GetBuffer
+				// used to throw UnauthorizedAccessException) and >2GB (HugeMemoryStream).
+				if (this._parallelState.SharedImage != null)
 				{
-					var buffer = memoryStream.GetBuffer();
-					this._memoryStream = memoryStream;
+					byte[] img = this._parallelState.SharedImage;
+				this._sharedImage = img; // [FIX] Record the shared array; CloneSectionStream builds sub-views directly from it
+				this._memoryStream = new MemoryStream(img, 0, img.Length);
+				this._ownsSectionStream = true; // the view stream is closed by the worker (the shared array is not released)
 				}
-				catch
+				else if (this._reader.Stream is FileStream fs)
 				{
-					// Ignore, will be handled below
+					this._memoryStream = new FileStream(fs.Name, FileMode.Open, FileAccess.Read, FileShare.Read | FileShare.Write | FileShare.Delete, 1 << 16);
+					this._ownsSectionStream = true; // the handle opened by the worker itself is closed by this worker
+				}
+				else if (this._reader.Stream is HugeMemoryStream huge)
+				{
+					this._memoryStream = HugeMemoryStream.Clone(huge); // share the read-only chunks (zero-copy)
+				}
+				else if (this._reader.Stream is MemoryStream ms)
+				{
+					try
+					{
+						this._memoryStream = new MemoryStream(ms.GetBuffer()); // share the underlying byte[] (zero-copy)
+					}
+					catch
+					{
+						// non-publicly-buffered stream; fall back to the default branch below
+					}
 				}
 			}
 
 			if (this._memoryStream == null)
 			{
-				this._memoryStream = HugeMemoryStream.Create(this._reader.Stream.Length);
-				this._reader.Stream.Position = 0;
-				this._reader.Stream.CopyTo(this._memoryStream);
-				this._memoryStream.Position = 0;
+				if (this._reader.Stream is MemoryStream memoryStream)
+				{
+					try
+					{
+						var buffer = memoryStream.GetBuffer();
+						this._memoryStream = memoryStream;
+					}
+					catch
+					{
+						// Ignore, will be handled below
+					}
+				}
+
+				if (this._memoryStream == null)
+				{
+					if (this._reader.Stream is FileStream fsDisk)
+					{
+					// [PATCH] Disk-cache mode: the decompressed image is already in the temp file, reuse it directly, zero-copy
+					// (avoids copying the whole object data into a HugeMemoryStream again, which would defeat the disk cache).
+					this._memoryStream = fsDisk;
+					this._ownsSectionStream = true; // the temp file is closed by this reader (deleted via DeleteOnClose)
+					}
+					else
+					{
+						this._memoryStream = HugeMemoryStream.Create(this._reader.Stream.Length);
+						this._reader.Stream.Position = 0;
+						this._reader.Stream.CopyTo(this._memoryStream);
+						this._memoryStream.Position = 0;
+						this._ownsSectionStream = true; // the self-built stream is closed by this reader
+					}
+				}
 			}
 
 			//Setup the entity handler
@@ -178,11 +314,175 @@ namespace ACadSharp.IO.DWG
 					continue;
 				}
 
-				//Add the template to the list to be processed
-				if (template == null)
-					continue;
+			//Add the template to the list to be processed
+			if (template == null)
+				continue;
 
-				this._builder.AddTemplate(template);
+			this._builder.AddTemplate(template);
+
+			// [PATCH] Incremental save: record the object's byte range in the decompressed image of the object section
+			if (this._objectRanges != null && this._objectTotalLength > 0)
+			{
+				this._objectRanges[handle] = new ObjectByteRange(this._objectStartOffset, this._objectTotalLength);
+			}
+
+			// [PATCH] Streaming scan: post-read callback (extract fields / release via PruneTemplate)
+			this._onObjectRead?.Invoke(template);
+			}
+		}
+
+		/// <summary>
+		/// [PATCH] P3 driver for reader-side parallel object decoding. Called by <see cref="DwgReader.readObjects"/> only for
+		/// R2004 (AC1018) and later, when not in incremental mode (RetainPatchSource off).
+		/// </summary>
+		/// <remarks>
+		/// Distributes the seed handles to N independent workers (each its own <see cref="DwgObjectReader"/> instance +
+		/// an independent decompressed image view, sharing the underlying data zero-copy) and runs a parallel BFS decode. Workers only decode --
+		/// <see cref="CadDocumentBuilder.AddTemplate"/> is deferred until it is executed uniformly on the main thread, so during decoding
+		/// the builder dictionaries are read-only and contention-free. Object decoding is self-contained (absolute offset positioning + independent view streams + references only record handle
+		/// values), so the parallel results are equivalent to the sequential path.
+		/// </remarks>
+		public void ReadParallel()
+		{
+			int workerCount = Math.Max(2, Environment.ProcessorCount);
+			var state = new DwgParallelDecodeState(workerCount);
+
+				// [FIX] The main thread exports the object-section image once as a shared read-only byte[] (a single copy, shared zero-copy with all
+				// workers). Avoids two kinds of problems: (1) <2GB object section images go through the plain MemoryStream path, and under .NET
+				// GetBuffer() throws UnauthorizedAccessException on dynamically grown / offset-bearing streams; (2) the original catch
+				// fallback to the shared main reader cursor (line ~220) made multiple workers seek the same cursor concurrently, causing cross-talk.
+				// After exporting as a standalone array at offset=0, workers build independent cursor views: GetBuffer is always available and cursors are isolated.
+				// Export only when the image is <= int.MaxValue; >2GB goes through the HugeMemoryStream.Clone clone path
+				// (Create returns a HugeMemoryStream for >2GB, whose Clone works; see the worker-constructor else-if).
+			if (this._reader.Stream.Length <= int.MaxValue)
+			{
+				long savedPos = this._reader.Stream.Position;
+				this._reader.Stream.Position = 0;
+				int imgLen = (int)this._reader.Stream.Length;
+				var img = new byte[imgLen];
+				int read = 0;
+				while (read < imgLen)
+				{
+					int n = this._reader.Stream.Read(img, read, imgLen - read);
+					if (n <= 0)
+						break;
+					read += n;
+				}
+				this._reader.Stream.Position = savedPos; // restore the main reader cursor (that stream is not read again after object-section decoding)
+				state.SharedImage = img;
+			}
+
+			// Distribute the seed handles (header handles): atomic claim + enqueue into the reference queue
+			foreach (ulong seed in this._handles)
+			{
+				if (state.Claim.TryAdd(seed, 0))
+				{
+					System.Threading.Interlocked.Increment(ref state.Outstanding);
+					state.RefQueue.Enqueue(seed);
+				}
+			}
+
+			var workers = new DwgObjectReader[workerCount];
+			var tasks = new System.Threading.Tasks.Task[workerCount];
+			for (int i = 0; i < workerCount; i++)
+			{
+					// Each worker is an independent instance: its own _crcReader/_objectReader cursors + an independent image view +
+					// an independent file handle. Shared read-only _map (handle graph), _classesSource, _noExpand, _builder
+					// (read-only during decoding). objectRanges=null (parallel does not support an incremental patch source; see the DwgReader gating).
+				workers[i] = new DwgObjectReader(
+					this._version,
+					this._builder,
+					this._reader,
+					new Queue<ulong>(),
+					this._map,
+					this._classesSource,
+					this._noExpand,
+					parallelState: state);
+
+					// [FIX] The worker instance must be captured into a local variable wk. Writing () => workers[i].WorkerLoop(...)
+					// directly would capture the loop counter i (the for-loop's i is the same variable shared across the whole loop); by the time
+					// the thread pool actually schedules that lambda (after the loop has ended), i has already been incremented to workerCount, and
+					// workers[workerCount] is an array out-of-bounds
+					// (IndexOutOfRangeException), intermittently (depending on thread pool scheduling timing).
+				var wk = workers[i];
+				tasks[i] = System.Threading.Tasks.Task.Run(() => wk.WorkerLoop(state));
+			}
+
+			System.Threading.Tasks.Task.WaitAll(tasks);
+
+			foreach (var w in workers)
+				w.Dispose();
+
+				// The main thread does AddTemplate uniformly: at this point no worker contends on the builder dictionaries, serial is safe.
+				// Out-of-order AddTemplate does not affect correctness (BuildDocument layers by template type: table records Build first,
+				// entities Build later; reference resolution happens in the BuildDocument phase, not the decode phase).
+			foreach (var t in state.Results)
+				this._builder.AddTemplate(t);
+		}
+
+		/// <summary>
+		/// [PATCH] P3 parallel worker main loop: competes to consume the shared reference queue, decodes objects, results into the bag.
+		/// </summary>
+		/// <remarks>
+		/// Termination: the reference queue is empty AND <see cref="DwgParallelDecodeState.Outstanding"/>==0.
+		/// Outstanding counts the objects that are "enqueued but not yet decoded" (Increment on enqueue,
+		/// Decrement in finally). Because an object's Decrement happens after all of its references have been enqueued via handleReference,
+		/// when Outstanding reaches zero all references have necessarily been discovered, so no work is lost (no TOCTOU hole).
+		/// </remarks>
+		internal void WorkerLoop(DwgParallelDecodeState state)
+		{
+			while (true)
+			{
+				ulong handle;
+				if (!state.RefQueue.TryDequeue(out handle))
+				{
+					// queue empty: if there are no in-flight objects, the BFS is complete
+					if (state.Outstanding == 0)
+						break;
+					// in-flight objects exist (their references have not been enqueued yet): yield the CPU and retry
+					System.Threading.Thread.Yield();
+					continue;
+				}
+
+				// handle not in the handle graph (invalid/deleted): drop it outright
+				if (!this._map.TryGetValue(handle, out long offset))
+				{
+					System.Threading.Interlocked.Decrement(ref state.Outstanding);
+					continue;
+				}
+
+				// read the object type (seek the independent image view to the object's offset). Do not swallow the exception (a getEntityType
+				// failure means the file structure is corrupted; Failsafe does not cover this path, consistent with serial behavior).
+				ObjectType type = this.getEntityType(offset);
+
+				CadTemplate template = null;
+				try
+				{
+					template = this.readObject(type);
+				}
+				catch (Exception ex)
+				{
+					if (!this._builder.Configuration.Failsafe)
+						throw;
+
+					if (this._classes.TryGetValue((short)type, out DxfClass dxf))
+					{
+						this._builder.Notify($"Could not read {dxf.DxfName} number {dxf.ClassNumber} with handle: {handle}", NotificationType.Error, ex);
+					}
+					else
+					{
+						this._builder.Notify($"Could not read {type} with handle: {handle}", NotificationType.Error, ex);
+					}
+				}
+				finally
+				{
+				// this object has finished decoding (all of its references were enqueued via handleReference during readObject).
+				// Decrement must happen after all of its references have been enqueued, so that when Outstanding reaches zero all references have been discovered.
+					System.Threading.Interlocked.Decrement(ref state.Outstanding);
+				}
+
+				if (template != null)
+					state.Results.Add(template);
 			}
 		}
 
@@ -211,9 +511,70 @@ namespace ACadSharp.IO.DWG
 			return false;
 		}
 
+		/// <summary>
+		/// [PATCH] Clone an independent, separately-seekable view stream for the object/handles/text readers.
+		/// Memory mode: HugeMemoryStream zero-copy shared chunks / MemoryStream underlying buffer;
+		/// disk-cache mode: each opens its own independent FileStream (same temp file), holding an independent 64KB buffer with no cross-talk.
+		/// </summary>
+		private Stream CloneSectionStream(Stream src)
+		{
+			// [FIX] P3 parallel worker: build independent read-only cursor views directly from the shared image array (sharing the underlying array zero-copy,
+			// each sub-reader's cursor isolated from the others). Key point: under .NET 10, GetBuffer() on an array-backed MemoryStream throws
+			// UnauthorizedAccessException (1/3/4-arg constructors all throw); the original MemoryStream branch's catch fallback
+			// `ms.Position=0; ms.CopyTo(copy)` would read src(=worker._memoryStream, the underlying stream of _crcReader)
+			// to the end -> the _crcReader position gets polluted -> _objectReader.SetPositionInBits(end) ->
+			// ReadObjectType reads from the end of the stream -> type=256 -> all seed readObject calls return null -> BFS is completely empty
+			// (empirically: at STEP-1 crcPosAfterSize=off+2 was correct, and at the end of DIAG crcPos=stream end).
+			// Building the view directly from _sharedImage (=the underlying array of worker._memoryStream) bypasses GetBuffer entirely,
+			// and never calls src.Position/CopyTo, so the source stream position is unaffected.
+			if (this._sharedImage != null)
+				return new MemoryStream(this._sharedImage, 0, this._sharedImage.Length, false);
+
+			if (src is HugeMemoryStream huge)
+				return HugeMemoryStream.Clone(huge);
+
+			if (src is MemoryStream ms)
+			{
+				// serial path: src is a dynamically grown MemoryStream from upstream (GetBuffer is available); take its underlying array to build the view.
+				// Defensive: in case GetBuffer throws (a .NET 10 array-backed stream), save and restore the src position around the copy,
+				// so CopyTo does not push the src cursor to the end and pollute _crcReader (a defect of the original implementation).
+				try
+				{
+					return new MemoryStream(ms.GetBuffer());
+				}
+				catch
+				{
+					long savedPos = ms.Position;
+					ms.Position = 0;
+					var copy = new MemoryStream((int)ms.Length);
+					ms.CopyTo(copy);
+					ms.Position = savedPos; // [FIX] Restore the source stream position (the original implementation forgot to restore it -> polluted _crcReader)
+					copy.Position = 0;
+					return copy;
+				}
+			}
+
+			if (src is FileStream fs)
+			{
+				int slot = this._cloneSlot++;
+				while (this._diskViewStreams.Count <= slot)
+					// [PATCH] The clone opens the same temp file read-only; FileShare must include Write,
+					// because the main file is opened ReadWrite, so the clone's share mode must allow the main handle's write access (otherwise ERROR_SHARING_VIOLATION).
+					this._diskViewStreams.Add(new FileStream(fs.Name, FileMode.Open, FileAccess.Read, FileShare.Read | FileShare.Write | FileShare.Delete, 1 << 16, FileOptions.None));
+				Stream s = this._diskViewStreams[slot];
+				s.Position = 0; // will be overridden by SetPositionInBits
+				return s;
+			}
+
+			throw new NotSupportedException("不支持的解压映像流类型，无法克隆视图：" + src.GetType().Name);
+		}
+
 		private ObjectType getEntityType(long offset)
 		{
 			ObjectType type = ObjectType.INVALID;
+
+			// [PATCH] Reset the clone slots: the object/handles/text views used by this object are reused from the pool
+			this._cloneSlot = 0;
 
 			//Set the position to the entity to find
 			this._crcReader.Position = offset;
@@ -239,7 +600,7 @@ namespace ACadSharp.IO.DWG
 				this._handleSectionOffset = (long)((ulong)this._crcReader.PositionInBits() + sizeInBits - handleSize);
 
 				//Create a handler section reader
-				this._objectReader = DwgStreamReaderBase.GetStreamHandler(this._version, HugeMemoryStream.Clone(this._memoryStream), this._reader.Encoding);
+				this._objectReader = DwgStreamReaderBase.GetStreamHandler(this._version, this.CloneSectionStream(this._memoryStream), this._reader.Encoding);
 				this._objectReader.SetPositionInBits(this._crcReader.PositionInBits());
 
 				//set the initial position and get the object type
@@ -247,11 +608,11 @@ namespace ACadSharp.IO.DWG
 				type = this._objectReader.ReadObjectType();
 
 				//Create a handler section reader
-				this._handlesReader = DwgStreamReaderBase.GetStreamHandler(this._version, HugeMemoryStream.Clone(this._memoryStream), this._reader.Encoding);
+				this._handlesReader = DwgStreamReaderBase.GetStreamHandler(this._version, this.CloneSectionStream(this._memoryStream), this._reader.Encoding);
 				this._handlesReader.SetPositionInBits(this._handleSectionOffset);
 
 				//Create a text section reader
-				this._textReader = DwgStreamReaderBase.GetStreamHandler(this._version, HugeMemoryStream.Clone(this._memoryStream), this._reader.Encoding);
+				this._textReader = DwgStreamReaderBase.GetStreamHandler(this._version, this.CloneSectionStream(this._memoryStream), this._reader.Encoding);
 				this._textReader.SetPositionByFlag(this._handleSectionOffset - 1);
 
 				this._mergedReaders = new DwgMergedReader(this._objectReader, this._textReader, this._handlesReader);
@@ -259,15 +620,24 @@ namespace ACadSharp.IO.DWG
 			else
 			{
 				//Create a handler section reader
-				this._objectReader = DwgStreamReaderBase.GetStreamHandler(this._version, HugeMemoryStream.Clone(this._memoryStream), this._reader.Encoding);
+				this._objectReader = DwgStreamReaderBase.GetStreamHandler(this._version, this.CloneSectionStream(this._memoryStream), this._reader.Encoding);
 				this._objectReader.SetPositionInBits(this._crcReader.PositionInBits());
 
-				this._handlesReader = DwgStreamReaderBase.GetStreamHandler(this._version, HugeMemoryStream.Clone(this._memoryStream), this._reader.Encoding);
+				this._handlesReader = DwgStreamReaderBase.GetStreamHandler(this._version, this.CloneSectionStream(this._memoryStream), this._reader.Encoding);
 				this._textReader = this._objectReader;
 
 				//set the initial position and get the object type
 				this._objectInitialPos = this._objectReader.PositionInBits();
 				type = this._objectReader.ReadObjectType();
+			}
+
+			// [PATCH] Record the object's byte range: [offset, data start + size + 2 CRC bytes).
+			// The layout matches DwgObjectWriter.registerObject: MS size prefix + object data + CRC16.
+			if (this._objectRanges != null)
+			{
+				long dataStartByte = this._objectInitialPos >> 3;
+				this._objectStartOffset = offset;
+				this._objectTotalLength = (int)(dataStartByte + this._size + 2L - offset);
 			}
 
 			return type;
@@ -291,7 +661,31 @@ namespace ACadSharp.IO.DWG
 			//Read the handle
 			ulong value = this._handlesReader.HandleReference(handle);
 
-			if (value != 0 &&
+			if (value == 0)
+			{
+				return value;
+			}
+
+			// [PATCH] Lazy reading: when noExpand is null (full read) the behavior matches the original;
+			// otherwise, when a reference hits the noExpand set (model/paper-space block records, etc.), its children are not expanded.
+			if (this._noExpand != null && this._noExpand.Contains(value))
+			{
+				return value;
+			}
+
+			if (this._parallel)
+			{
+				// [PATCH] P3 parallel: shared claim set for atomic deduplication + shared reference queue.
+				// Claim.TryAdd succeeds only the first time => each handle is enqueued at most once (more efficient than the serial
+				// "lenient enqueue + dedup at dequeue"). Increment before Enqueue, guaranteeing that "queue non-empty OR Outstanding>0" always holds,
+				// so the termination check (queue empty AND Outstanding==0) never triggers early.
+				if (this._parallelState.Claim.TryAdd(value, 0))
+				{
+					System.Threading.Interlocked.Increment(ref this._parallelState.Outstanding);
+					this._parallelState.RefQueue.Enqueue(value);
+				}
+			}
+			else if (
 				!this._builder.TryGetObjectTemplate(value, out CadTemplate _) &&
 				!this._readedObjects.ContainsKey(value))
 			{
@@ -678,7 +1072,14 @@ namespace ACadSharp.IO.DWG
 			Block block = record.BlockEntity;
 
 			CadBlockRecordTemplate template = new CadBlockRecordTemplate(record);
-			this._builder.BlockRecordTemplates.Add(template);
+				// [PATCH] P3 parallel: BlockRecordTemplates is a shared List; concurrent Adds from multiple workers would race.
+				// Block records are a cold path (dozens to a few hundred per file); the BuilderLock overhead is negligible. BuildDocument reads
+				// this list after all workers have finished, so only the concurrent Adds during decoding need protection.
+			if (this._parallel)
+				lock (this._parallelState.BuilderLock)
+					this._builder.BlockRecordTemplates.Add(template);
+			else
+				this._builder.BlockRecordTemplates.Add(template);
 
 			this.readCommonNonEntityData(template);
 
@@ -783,9 +1184,25 @@ namespace ACadSharp.IO.DWG
 			//R2004+:
 			if (this.R2004Plus)
 			{
+					// [PATCH] Lazy reading: when the block record itself is in the noExpand set (e.g. *MODEL_SPACE/*PAPER_SPACE),
+					// its owned entity handles are still read and recorded one by one (already-decoded entities -- such as window candidates -- are merged into that
+					// block in the build phase via OwnedObjectsHandlers+TryGetCadObject), but it is not enqueued for BFS,
+					// avoiding decoding all of the block's entities (model space can reach tens of thousands).
+					// [PATCH] Streaming scan (suppressBlockExpand, spatial index build): *MODEL_SPACE is the index target and
+					// must be expanded; the owned entities of all other block records (block definitions/paper space) are never enqueued --
+					// the index only needs model-space entities (INSERT provides the insertion point; block content is not needed).
+				bool suppressOwnedExpand = (this._noExpand != null && this._noExpand.Contains(template.CadObject.Handle))
+					|| (this._suppressBlockExpand
+						&& this._builder.HeaderHandles.MODEL_SPACE != template.CadObject.Handle
+						&& this._builder.HeaderHandles.PAPER_SPACE != template.CadObject.Handle);
 				for (int i = 0; i < nownedObjects; ++i)
+				{
 					//H[ENTITY(hard owner)] Repeats “Owned Object Count” times.
-					template.OwnedObjectsHandlers.Add(this.handleReference());
+					if (suppressOwnedExpand)
+						template.OwnedObjectsHandlers.Add(this._handlesReader.HandleReference());
+					else
+						template.OwnedObjectsHandlers.Add(this.handleReference());
+				}
 			}
 
 			//Common:
@@ -931,7 +1348,10 @@ namespace ACadSharp.IO.DWG
 			this.readExtendedData(template);
 		}
 
-		private void readCommonDictionary(CadDictionaryTemplate template)
+		/// <param name="isWithDefault">
+		/// true means reading ACDBDICTIONARYWDFLT: no R14 unknown byte; the cloning/hard-owner flags exist in all versions.
+		/// </param>
+		private void readCommonDictionary(CadDictionaryTemplate template, bool isWithDefault = false)
 		{
 			this.readCommonNonEntityData(template);
 
@@ -939,14 +1359,15 @@ namespace ACadSharp.IO.DWG
 			//Numitems L number of dictonary items
 			int nentries = this._objectReader.ReadBitLong();
 
-			//R14 Only:
-			if (this._version == ACadVersion.AC1014)
+			//R14 Only (plain DICTIONARY only; DICTIONARYWDFLT has no such byte):
+			if (this._version == ACadVersion.AC1014 && !isWithDefault)
 			{
 				//Unknown R14 RC Unknown R14 byte, has always been 0
 				byte zero = this._objectReader.ReadByte();
 			}
-			//R2000 +:
-			if (this.R2000Plus)
+
+			//R2000 + (DICTIONARYWDFLT has the cloning/hard-owner flags in all versions):
+			if (this.R2000Plus || isWithDefault)
 			{
 				//Cloning flag BS 281
 				template.CadObject.ClonningFlags = (DictionaryCloningFlags)this._objectReader.ReadBitShort();
@@ -1107,6 +1528,9 @@ namespace ACadSharp.IO.DWG
 				//Common:
 				//X: The graphic image
 				template.ProxyGraphics = this._objectReader.ReadBytes((int)graphicImageSize);
+
+				//Cache the raw bytes on the entity so the writer can write them back
+				entity.ProxyGraphicsData = template.ProxyGraphics;
 			}
 
 			//R13 - R14 Only:
@@ -1264,7 +1688,8 @@ namespace ACadSharp.IO.DWG
 			CadDictionaryWithDefault dictionary = new CadDictionaryWithDefault();
 			CadDictionaryWithDefaultTemplate template = new CadDictionaryWithDefaultTemplate(dictionary);
 
-			this.readCommonDictionary(template);
+			//[FIX] Consistent with the writer: DICTIONARYWDFLT has no R14 unknown byte; the cloning/hard-owner flags exist in all versions
+			this.readCommonDictionary(template, isWithDefault: true);
 
 			//H 7 Default entry (hard pointer)
 			template.DefaultEntryHandle = this.handleReference();
@@ -1369,16 +1794,18 @@ namespace ACadSharp.IO.DWG
 
 			this.readCommonNonEntityData(template);
 
-			//Following the order of dxf:
-			//330
-			template.DimensionHandle = this.handleReference();
-
+			// [FIX] The field order was previously reversed relative to the writer/ODA spec (libredwg dwg2.spec DIMASSOC):
+			// the spec order is BL associativity(90) / B trans_space(70) / RC rotated_type(71)
+			// / H dimensionobj(330). The old implementation read the 330 handle first, so reading AutoCAD-native files
+			// misaligned all association references, and after writing back AutoCAD dropped the dimension associations (circle radius annotation associations lost).
 			//90
 			association.AssociativityFlags = (AssociativityFlags)this._mergedReaders.ReadBitLong();
 			//70
 			association.IsTransSpace = this._mergedReaders.ReadBit();
 			//71
 			association.RotatedDimensionType = (RotatedDimensionType)this._mergedReaders.ReadByte();
+			//330
+			template.DimensionHandle = this.handleReference();
 
 			if (association.AssociativityFlags.HasFlag(AssociativityFlags.FirstPointReference))
 			{
@@ -1920,11 +2347,17 @@ namespace ACadSharp.IO.DWG
 			}
 			else if (template.EntityMode == 1)
 			{
-				this._builder.PaperSpaceEntities.Add(entity);
+				// [PATCH] Streaming scan: when SkipEntityTracking is set, do not add to the dead-storage list (the caller releases it via PruneTemplate)
+				// [PATCH] P3 parallel: the entity bypass list (PaperSpaceEntities) is dead storage on the DWG path
+				// (entities are assembled via template.Build; DwgDocumentBuilder is an internal class with no external readers),
+				// so parallel workers skip its writes, eliminating the 1.89M-per-file hot contention point.
+				if (!this._builder.SkipEntityTracking && !this._parallel)
+					this._builder.PaperSpaceEntities.Add(entity);
 			}
 			else if (template.EntityMode == 2)
 			{
-				this._builder.ModelSpaceEntities.Add(entity);
+				if (!this._builder.SkipEntityTracking && !this._parallel)
+					this._builder.ModelSpaceEntities.Add(entity);
 			}
 
 			//Numreactors BL number of persistent reactors attached to this object
@@ -2055,10 +2488,10 @@ namespace ACadSharp.IO.DWG
 			//Each application's data is structured as follows:
 			//|Length|Application handle|Data items|
 
-			//EED size BS size of extended entity data, if any
-			short size = this._objectReader.ReadBitShort();
+		//EED size BS size of extended entity data, if any
+		short size = this._objectReader.ReadBitShort();
 
-			while (size != 0)
+		while (size != 0)
 			{
 				//App handle
 				ulong appHandle = this._objectReader.HandleReference();
@@ -2617,10 +3050,189 @@ namespace ACadSharp.IO.DWG
 				hatch.SeedPoints.Add(spt);
 			}
 
-			return template;
+			//R2000 / R13-R15: AutoCAD stores gradient fills as a private binary block after the seed points
+			// (ODA upgrades them to native 450-470; libredwg skips this block per SINCE(R_2004a)).
+			// The block starts with BL is_gradient_fill; for non-gradient fills the entity stream ends after the seed points (or is followed by EED),
+			// so reading a value other than 1 backs the position up to protect the EED, without affecting the result.
+			if (!this.R2004Plus)
+			{
+				// R2000 (AC1015) gradient fills: AutoCAD stores the gradient definition as a private binary block in the file stream (an independent object,
+		// not after the seed points; libredwg skips this block per SINCE(R_2004a); ODA reads this block on upgrade and writes native 450-470).
+		// Parsing strategy: the gradient definition lives in a separate XRecord (a "Gradient1" definition block + a "Gradient4" name block,
+		// both byte-aligned), linked 1:1 via the ACAD_XREC_ROUNDTRIP entry in the hatch's extension dictionary.
+		// Because R2000 EED/XDATA is read only after the entity data, and the AppId name can be resolved only after BuildDocument,
+		// here we merely register the candidate hatch in read order; after Read() finishes, ApplyR2000Gradients
+		// locates and parses it precisely via the extension dictionary, so R2000->R2004+ writes native 450-470.
+			try
+			{
+				this._r2000GradientCandidates.Add(hatch);
+			}
+			catch { }
 		}
 
-		private CadTemplate readImageDefinition()
+		return template;
+	}
+
+	private readonly List<Hatch> _r2000GradientCandidates = new List<Hatch>();
+
+/// <summary>
+/// Restores the gradient definition for R2000 hatches carrying a private gradient roundtrip XRecord.
+/// Must be called after the document has been built (AppId names resolved).
+/// Criterion (consistent with the AutoCAD / cadcodec reference): if the
+/// ACAD_XREC_ROUNDTRIP entry in the hatch's extension dictionary points exactly at the gradient XRecord (1:1 association), it is a gradient hatch;
+/// a GradientColor*ACI EED marker alone without that XRecord is stale metadata
+/// (left behind after the gradient was changed to a solid fill) and must not restore a gradient from it.
+/// </summary>
+public void ApplyR2000Gradients()
+{
+	if (this._r2000GradientCandidates.Count == 0)
+		return;
+	try
+	{
+		foreach (var hatch in this._r2000GradientCandidates)
+		{
+			// Locate the gradient XRecord precisely via the ACAD_XREC_ROUNDTRIP entry in the extension dictionary
+			R2000GradientDef g = TryParseGradientFromXRecord(hatch);
+			if (g == null) continue;
+
+			hatch.GradientColor.Enabled = true;
+			hatch.GradientColor.Reserved = g.Reserved;
+			hatch.GradientColor.Angle = g.Angle;
+			hatch.GradientColor.Shift = g.Shift;
+			hatch.GradientColor.IsSingleColorGradient = g.IsSingleColor;
+			hatch.GradientColor.ColorTint = g.ColorTint;
+			hatch.GradientColor.Colors.Clear();
+			foreach (var c in g.Colors)
+				hatch.GradientColor.Colors.Add(c);
+			hatch.GradientColor.Name = g.Name;
+		}
+	}
+	catch { }
+}
+
+	/// <summary>
+	/// Locates and parses the R2000 private gradient XRecord via the ACAD_XREC_ROUNDTRIP entry in the hatch's extension dictionary.
+	/// The XRecord has 4 entries: "Gradient1" + definition block (byte-aligned), "Gradient4" + name block.
+	/// Definition block layout: RL len | RL ver | BL450 is_gradient | BL451 reserved | BD460 angle |
+	/// BD461 shift | BL452 single | BD462 tint | BL453 ncolors | 32 bytes per color
+	/// [BD463 value@0 + RL=24@8 + mode@12 + rgb(0xC2RRGGBB)@16 + trailing 12].
+	/// Name block layout: RL len | RL 4 | RL nameLen (incl. '\0') | NAME'\0'.
+	/// </summary>
+	private static R2000GradientDef TryParseGradientFromXRecord(Hatch hatch)
+	{
+		try
+		{
+			var xdict = hatch.XDictionary;
+			if (xdict == null)
+				return null;
+			if (!xdict.TryGetEntry<XRecord>("ACAD_XREC_ROUNDTRIP", out XRecord xr) || xr == null)
+				return null;
+
+			byte[] def = null;
+			byte[] nameChunk = null;
+			var entries = xr.Entries.ToList();
+			for (int i = 0; i + 1 < entries.Count; i++)
+			{
+				if (!(entries[i].Value is string key))
+					continue;
+				if (!(entries[i + 1].Value is byte[] chunk))
+					continue;
+				if (key == "Gradient1")
+					def = chunk;
+				else if (key == "Gradient4")
+					nameChunk = chunk;
+			}
+			if (def == null)
+				return null;
+
+			R2000GradientDef g = DecodeGradientDefChunk(def);
+			if (g == null)
+				return null;
+
+			if (nameChunk != null && nameChunk.Length >= 12)
+			{
+				// RL len | RL 4 | RL nameLen (incl. '\0') | NAME'\0'
+				int nameLen = BitConverter.ToInt32(nameChunk, 8);
+				int nameStart = 12;
+				if (nameLen >= 1 && nameStart + nameLen <= nameChunk.Length)
+					g.Name = System.Text.Encoding.ASCII.GetString(nameChunk, nameStart, nameLen - 1);
+			}
+			return g;
+		}
+		catch
+		{
+			return null;
+		}
+	}
+
+	/// <summary>
+	/// Parses the "Gradient1" definition block (byte-aligned):
+	/// +0 RL len | +4 RL ver | +8 BL450 is_gradient | +12 BL451 reserved | +16 BD460 angle |
+	/// +24 BD461 shift | +32 BL452 single | +36 BD462 tint | +44 BL453 ncolors |
+	/// from +48, 32 bytes per color (BD463 value@0, rgb 0xC2RRGGBB@16).
+	/// </summary>
+	private static R2000GradientDef DecodeGradientDefChunk(byte[] def)
+	{
+		if (def == null || def.Length < 48)
+			return null;
+		if (BitConverter.ToInt32(def, 8) != 1)      // BL 450 is_gradient
+			return null;
+		var g = new R2000GradientDef();
+		g.Enabled = true;
+		g.Reserved = BitConverter.ToInt32(def, 12);     // BL 451
+		g.Angle = BitConverter.ToDouble(def, 16);       // BD 460
+		g.Shift = BitConverter.ToDouble(def, 24);       // BD 461
+		int single = BitConverter.ToInt32(def, 32);     // BL 452
+		if (single != 0 && single != 1)
+			return null;
+		g.IsSingleColor = single != 0;
+		g.ColorTint = BitConverter.ToDouble(def, 36);  // BD 462
+		int n = BitConverter.ToInt32(def, 44);          // BL 453
+		if (n < 1 || n > 16)
+			return null;
+		if (double.IsNaN(g.Shift) || g.Shift < -1e-9 || g.Shift > 1 + 1e-9)
+			return null;
+		if (double.IsNaN(g.ColorTint) || g.ColorTint < -1e-9 || g.ColorTint > 1 + 1e-9)
+			return null;
+
+		int o = 48;
+		for (int i = 0; i < n; i++)
+		{
+			if (o + 32 > def.Length)
+				return null;
+			double val = BitConverter.ToDouble(def, o);          // BD 463 value
+			// +8: RL=24; +12: mode; +16: rgb(0xC2RRGGBB); followed by a 12-byte tail
+			uint rgb = BitConverter.ToUInt32(def, o + 16);
+			byte[] arr = BitConverter.GetBytes(rgb);
+			Color c;
+			if (rgb == 0xC0000000u)
+				c = Color.ByLayer;
+			else if ((rgb & 0x01000000u) != 0)
+				c = new Color(arr[0]);
+			else
+				c = new Color(arr[2], arr[1], arr[0]);
+			g.Colors.Add(new GradientColor { Value = val, Color = c });
+			o += 32;
+		}
+		return g;
+	}
+
+	/// <summary>
+	/// Parse result of the R2000 private gradient block (maps to <see cref="Hatch.GradientColor"/>).
+	/// </summary>
+	private sealed class R2000GradientDef
+	{
+		public bool Enabled;
+		public int Reserved;
+		public double Angle;
+		public double Shift;
+		public bool IsSingleColor;
+		public double ColorTint;
+		public List<GradientColor> Colors = new List<GradientColor>();
+		public string Name;
+	}
+
+	private CadTemplate readImageDefinition()
 		{
 			ImageDefinition definition = new ImageDefinition();
 			CadNonGraphicalObjectTemplate template = new CadNonGraphicalObjectTemplate(definition);
@@ -2724,7 +3336,11 @@ namespace ACadSharp.IO.DWG
 			//Common:
 			//Color CMC 62
 			var color = this._mergedReaders.ReadCmColor();
-			layer.Color = color.IsByBlock || color.IsByLayer ? Color.Default : color;
+			// [PATCH] Keep the layer color exactly as read, including ByLayer/ByBlock.
+			// The original code coerced ByLayer/ByBlock to a default/ACI-30 value, which
+			// corrupted every ByLayer layer's color on DWG read-back (e.g. a white ByLayer
+			// layer came back dark blue). ReadCmColor already returns proper ByLayer/ByBlock values.
+			layer.Color = color;
 
 			//TODO: This is not the Layer control handle
 			template.LayerControlHandle = this.handleReference();
@@ -3100,9 +3716,31 @@ namespace ACadSharp.IO.DWG
 					continue;
 				}
 
-				segment.Segment.Text = this.readLineTypeTextString(textArea, offset, encoding);
+				//R2007+ linetype text areas are always UTF-16LE (independent of the document code page; under
+				//DBCS encoding, IsSingleByte=false bypasses the UTF-16 probe, so a Chinese environment reads only the first character, e.g. "GAS"->"G")
+				segment.Segment.Text = this.R2007Plus
+					? this.readLineTypeUtf16String(textArea, offset)
+					: this.readLineTypeTextString(textArea, offset, encoding);
 				segment.Segment.ShapeNumber = 0;
 			}
+		}
+
+		private string readLineTypeUtf16String(byte[] buffer, int offset)
+		{
+			if (buffer == null || offset < 0 || offset >= buffer.Length)
+				return string.Empty;
+
+			// Align to a UTF-16 character boundary and scan to the 0x0000 terminator
+			int end = offset;
+			while (end + 1 < buffer.Length)
+			{
+				if (buffer[end] == 0 && buffer[end + 1] == 0)
+					break;
+
+				end += 2;
+			}
+
+			return Encoding.Unicode.GetString(buffer, offset, end - offset);
 		}
 
 		private string readLineTypeTextString(byte[] buffer, int offset, Encoding encoding)
@@ -3154,6 +3792,10 @@ namespace ACadSharp.IO.DWG
 
 			this.readXrefDependantBit(template.CadObject);
 
+			//Xref block handle (hard pointer) - part of the common table flags,
+			//written right after the xref-dependent bits and before the description.
+			this.handleReference();
+
 			//Description TV 3
 			ltype.Description = this._textReader.ReadVariableText();
 			//Pattern Len BD 40
@@ -3174,6 +3816,10 @@ namespace ACadSharp.IO.DWG
 				//Complex shapecode BS 75 Shape number if shapeflag is 2, or index into the string area if shapeflag is 4.
 				segment.Segment.ShapeNumber = this._objectReader.ReadBitShort();
 
+				//340 shapefile for dash/shape (hard pointer) - read INSIDE the
+				//dash loop, right after the complex shapecode and before the offsets.
+				segment.StyleHandle = this.handleReference();
+
 				//X - offset RD 44 (0.0 for a simple dash.)
 				//Y - offset RD 45(0.0 for a simple dash.)
 				XY offset = new XY(this._objectReader.ReadDouble(), this._objectReader.ReadDouble());
@@ -3186,44 +3832,44 @@ namespace ACadSharp.IO.DWG
 				//Shapeflag BS 74 bit coded:
 				segment.Segment.Flags = (LineTypeShapeFlags)this._objectReader.ReadBitShort();
 
-				if (segment.Segment.Flags.HasFlag(LineTypeShapeFlags.Text))
-					isText = true;
+			if (segment.Segment.Flags.HasFlag(LineTypeShapeFlags.Text))
+				isText = true;
 
-				//Add the segment to the type
-				template.SegmentTemplates.Add(segment);
-			}
+			//Add the segment to the type
+			template.SegmentTemplates.Add(segment);
+		}
 
-			byte[] textarea = null;
-			//R2004 and earlier:
-			if (this._version <= ACadVersion.AC1018)
-			{
-				//Strings area X 9 256 bytes of text area. The complex dashes that have text use this area via the 75-group indices. It's basically a pile of 0-terminated strings. First byte is always 0 for R13 and data starts at byte 1. In R14 it is not a valid data start from byte 0.
-				//(The 9 - group is undocumented.)
-				textarea = this._objectReader.ReadBytes(256);
-			}
-			//R2007+:
-			if (this.R2007Plus && isText)
-			{
-				textarea = this._objectReader.ReadBytes(512);
-			}
+		byte[] textarea = null;
+		//R2004 and earlier:
+		if (this._version <= ACadVersion.AC1018)
+		{
+			//Strings area X 9 256 bytes of text area. The complex dashes that have text use this area via the 75-group indices. It's basically a pile of 0-terminated strings. First byte is always 0 for R13 and data starts at byte 1. In R14 it is not a valid data start from byte 0.
+			//(The 9 - group is undocumented.)
+			textarea = this._objectReader.ReadBytes(256);
+		}
+		//R2007+:
+		if (this.R2007Plus && isText)
+		{
+			textarea = this._objectReader.ReadBytes(512);
+		}
+
+		// [DBG-LT]
+		if (Environment.GetEnvironmentVariable("ACADSHARP_DBG_LT") == "1")
+		{
+			var enc = this._reader?.Encoding?.EncodingName ?? "<null reader>";
+			Console.Error.WriteLine($"[DBG-LT] ver={this._version} isText={isText} enc={enc} singleByte={this._reader?.Encoding?.IsSingleByte}");
+			if (textarea != null)
+				Console.Error.WriteLine("[DBG-LT] textarea[0..32]=" + BitConverter.ToString(textarea, 0, Math.Min(32, textarea.Length)));
+		}
 
 			if (isText)
 			{
 				this.readLineTypeSegmentTexts(template.SegmentTemplates, textarea);
 			}
 
-			//Common:
-			//Handle refs H Ltype control(soft pointer)
-			//[Reactors (soft pointer)]
-			//xdicobjhandle(hard owner)
-			//External reference block handle(hard pointer)
-			template.LtypeControlHandle = this.handleReference();
-
-			//340 shapefile for dash/shape (1 each) (hard pointer)
-			for (int i = 0; i < ndashes; i++)
-			{
-				template.SegmentTemplates[i].StyleHandle = this.handleReference();
-			}
+			//Note: the xref block handle is read in the common table flags (before
+			//the description) and the per-dash shape style handles are read inside
+			//the dash loop. Nothing follows the strings area.
 
 			return template;
 		}
@@ -3266,6 +3912,9 @@ namespace ACadSharp.IO.DWG
 				if ((flags & 0x4u) != 0)
 				{
 					lwPolyline.ConstantWidth = this._objectReader.ReadBitDouble();
+					// [PATCH] Remember the constant width was present (DXF 43), even when
+					// the value is 0, so the DXF writer round-trips the code.
+					lwPolyline.ConstantWidthSpecified = true;
 				}
 
 				if ((flags & 0x8u) != 0)
@@ -4155,6 +4804,12 @@ namespace ACadSharp.IO.DWG
 				{
 					//Column height count BL 72
 					int count = this._objectReader.ReadBitLong();
+					// [FIX] Previously count was not assigned back to ColumnData.ColumnCount (kept its default 0),
+					// so the writer's writeMText wrote BL 72=0 per ColumnCount yet followed with N column-height BDs per Heights.Count;
+					// after AutoCAD read BL=0 the bit stream misaligned, and the whole MText reported
+					// eDwgObjectImproperlyRead and was dropped (root cause of R2018 source -> R2018 multilinetext not displaying;
+					// only MText with column data is affected, symmetric with the rest of MText read/write).
+					mtext.ColumnData.ColumnCount = count;
 					//Columnn width BD 44
 					mtext.ColumnData.Width = this._objectReader.ReadBitDouble();
 					//Gutter BD 45
@@ -4932,8 +5587,62 @@ namespace ACadSharp.IO.DWG
 			//72
 			osnap.ObjectOsnapType = (ObjectOsnapType)this._mergedReaders.ReadByte();
 
-			//331
-			template.ObjectHandle = this.handleReference();
+			//331: number of handles, the main object is the first handle
+			var handleCount = this._mergedReaders.ReadBitLong();
+			for (int i = 0; i < handleCount; i++)
+			{
+				var handle = this.handleReference();
+				if (i == 0)
+				{
+					template.ObjectHandle = handle;
+				}
+			}
+
+			if (osnap.ObjectOsnapType != ObjectOsnapType.None)
+			{
+				//73
+				osnap.SubentType = (SubentType)this._mergedReaders.ReadBitLong();
+				//91
+				osnap.GsMarker = this._mergedReaders.ReadBitLong();
+
+				//301: xref paths
+				var pathCount = this._mergedReaders.ReadBitLong();
+				for (int i = 0; i < pathCount; i++)
+				{
+					osnap.XrefPaths.Add(this._mergedReaders.ReadVariableText());
+				}
+			}
+
+			//40
+			osnap.GeometryParameter = this._mergedReaders.ReadBitDouble();
+			//10
+			osnap.OsnapPoint = this._mergedReaders.Read3BitDouble();
+
+			if (osnap.ObjectOsnapType == (ObjectOsnapType)6 || osnap.ObjectOsnapType == (ObjectOsnapType)11)
+			{
+				//332: intersection objects handles
+				var intersectionCount = this._mergedReaders.ReadBitLong();
+				for (int i = 0; i < intersectionCount; i++)
+				{
+					this.handleReference();
+				}
+
+				//74
+				osnap.IntersectionSubType = (SubentType)this._mergedReaders.ReadBitLong();
+				//92
+				osnap.IntersectionGsMarker = this._mergedReaders.ReadBitLong();
+
+				//302: intersection xref paths
+				var intersectionPathCount = this._mergedReaders.ReadBitLong();
+				for (int i = 0; i < intersectionPathCount; i++)
+				{
+					osnap.IntersectionXrefPaths.Add(this._mergedReaders.ReadVariableText());
+				}
+			}
+
+			//75: more references bit, only the first reference is kept
+			var moreReferences = this._mergedReaders.ReadBit();
+			osnap.HasLastPointRef = moreReferences;
 
 			return template;
 		}
@@ -5941,7 +6650,11 @@ namespace ACadSharp.IO.DWG
 			}
 
 			//Common:
-			//Handle refs H ucs control object (soft pointer)
+			//Handle refs H xref handle (hard pointer, 0 if not xref-dependent).
+			//Note: this was previously mislabeled as "ucs control object (soft pointer)" and the writer filled it with the UCS control table
+			//handle. Verified against AutoCAD-native files (sample.dwg has this slot = 0) and checked against the
+			//cadcodec/ODA spec §20.4.62: this slot is the xref handle, and writing a non-null table handle makes AutoCAD
+			//report eWrongObjectType and drop the record.
 			long control = (long)this.handleReference();
 
 			//R2000 +:
@@ -7046,7 +7759,7 @@ namespace ACadSharp.IO.DWG
 
 			if (this._version == ACadVersion.AC1021)
 			{
-				this._textReader = DwgStreamReaderBase.GetStreamHandler(this._version, HugeMemoryStream.Clone(this._memoryStream), this._reader.Encoding);
+				this._textReader = DwgStreamReaderBase.GetStreamHandler(this._version, this.CloneSectionStream(this._memoryStream), this._reader.Encoding);
 				//"endbit" of the pre-handles section.
 				this._textReader.SetPositionByFlag(size + this._objectInitialPos - 1);
 			}
@@ -7488,5 +8201,21 @@ namespace ACadSharp.IO.DWG
 		}
 
 		#endregion Insert methods
+
+		/// <summary>
+		/// [PATCH] Releases the decompressed image stream and cloned views (in disk-cache mode, closes the temp-file FileStream -> deleted via DeleteOnClose).
+		/// Only closes it when this reader owns the stream; when reusing an upstream-passed stream in memory, it does not close it, to avoid harming the caller.
+		/// </summary>
+		public void Dispose()
+		{
+			if (this._ownsSectionStream)
+				this._memoryStream?.Dispose();
+
+			foreach (Stream s in this._diskViewStreams)
+				s.Dispose();
+			this._diskViewStreams.Clear();
+
+			GC.SuppressFinalize(this);
+		}
 	}
 }
