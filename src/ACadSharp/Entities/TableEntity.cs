@@ -1,5 +1,6 @@
 using ACadSharp.Attributes;
 using ACadSharp.Classes;
+using ACadSharp.Extensions;
 using ACadSharp.Objects;
 using ACadSharp.Tables;
 using CSMath;
@@ -137,7 +138,52 @@ public partial class TableEntity : Insert, IDxfClassDefined
 	{
 		TableEntity clone = (TableEntity)base.Clone();
 
+		// [PATCH] The base CadObject.Clone uses MemberwiseClone, which copies the Content reference
+		// (so clone.Content === original.Content). Re-pointing clone.Content.Style in AssignDocument would
+		// then corrupt the SOURCE document's table. Build an independent TableContent: the row/column cell
+		// data is shared by reference (the writer only reads it during serialization, and it holds no handles),
+		// while the two TableStyle references are cloned detached (Document == null) so they can be re-registered
+		// into the target document without a cross-document dangling pointer (mirrors Dimension.Clone for its style).
+		TableContent src = this.Content;
+		TableContent content = new TableContent
+		{
+			Style = src.Style?.CloneTyped(),
+			StyleOverride = src.StyleOverride?.CloneTyped(),
+			CellStyleOverride = src.CellStyleOverride,
+			Name = src.Name,
+			Description = src.Description,
+		};
+
+		foreach (Row r in src.Rows)
+		{
+			content.Rows.Add(r);
+		}
+
+		foreach (Column c in src.Columns)
+		{
+			content.Columns.Add(c);
+		}
+
+		foreach (CellRange m in src.MergedCellRanges)
+		{
+			content.MergedCellRanges.Add(m);
+		}
+
+		clone.Content = content;
+
 		return clone;
+	}
+
+	/// <inheritdoc/>
+	internal override void AssignDocument(CadDocument doc)
+	{
+		base.AssignDocument(doc);
+
+		// Re-register the table style into the target document so the writer resolves a valid handle
+		// instead of the source document's (dangling) handle. By-name reuse matches the library's
+		// established behavior (see Dimension.AssignDocument); a style already present in the target
+		// document is reused, otherwise the detached clone is added and assigned a new handle.
+		this.Content.Style = this.updateCollectionEntry(this.Content.Style, s => this.Content.Style = s, doc.TableStyles);
 	}
 
 	/// <inheritdoc/>
