@@ -13,9 +13,12 @@ public class MTextTests : CommonEntityTests<MText>
 		XYZ pt = this._random.NextXYZ();
 		MText text = new MText("hello") { InsertPoint = pt };
 
+		// [MERGE] Upstream returned a degenerate point box. The patched GetBoundingBox
+		// now computes a real extent (line-wrapped width + vertical range) via
+		// TextBoundsHelper, so the box is finite and has a non-zero span.
 		var box = text.GetBoundingBox();
-		Assert.Equal(BoundingBoxExtent.Point, box.Extent);
-		Assert.Equal(pt, box.Center);
+		Assert.Equal(BoundingBoxExtent.Finite, box.Extent);
+		Assert.True(box.LengthX > 0 || box.LengthY > 0);
 	}
 
 	[Fact]

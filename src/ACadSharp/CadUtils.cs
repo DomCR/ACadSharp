@@ -1,4 +1,4 @@
-﻿using CSUtilities.Text;
+using CSUtilities.Text;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -242,9 +242,27 @@ internal static class CadUtils
 		return _pageCodes.ElementAtOrDefault(value);
 	}
 
+	private static Dictionary<CodePage, int> _codeIndexCache;
+
+	// [PATCH] Upstream materializes _pageCodes.ToList() and runs IndexOf(code) on every call
+	// (O(n) materialization + linear search), and DwgObjectWriter calls it once per XData string
+	// record — extremely slow when writing XData for large files. Build a dictionary cache once
+	// instead. Note: _pageCodes contains duplicate values and IndexOf returns the first
+	// occurrence, so the cache must keep the same semantics (only the first index is stored).
 	public static int GetCodeIndex(CodePage code)
 	{
-		return _pageCodes.ToList().IndexOf(code);
+		if (_codeIndexCache is null)
+		{
+			_codeIndexCache = new Dictionary<CodePage, int>();
+			for (int i = 0; i < _pageCodes.Length; i++)
+			{
+				// ContainsKey/Add instead of TryAdd: TryAdd does not exist on net48/netstandard2.0
+				if (!_codeIndexCache.ContainsKey(_pageCodes[i]))
+					_codeIndexCache.Add(_pageCodes[i], i);
+			}
+		}
+
+		return _codeIndexCache.TryGetValue(code, out int idx) ? idx : -1;
 	}
 
 	public static ACadVersion GetVersionFromName(string name)

@@ -1,4 +1,4 @@
-﻿using ACadSharp.Attributes;
+using ACadSharp.Attributes;
 using ACadSharp.Tables;
 using CSMath;
 using CSMath.Extensions;
@@ -272,10 +272,23 @@ public class TextEntity : Entity, IText
 
 		this.InsertPoint = newInsert;
 		this.Normal = newNormal;
-		this.Rotation = newRotation;
+		this.Rotation = MathHelper.NormalizeAngleRadians(newRotation, true);
 		this.Height = newHeight;
 		this.WidthFactor = newWidthFactor;
 		this.ObliqueAngle = newObliqueAngle;
+
+		// [PATCH] The second alignment point (11/21/31, OCS) is meaningful only when the
+		// justification is anything other than baseline/left — i.e. when 72 (horizontal) OR
+		// 73 (vertical) is nonzero, per the DXF spec. AutoCAD TransformBy moves it with the
+		// full transform. A text that is Left-aligned but Middle/Top/Bottom-aligned vertically
+		// (72=0, 73!=0) still anchors its vertical center at this point, so it MUST be
+		// transformed too — otherwise the text lags at the old location after the transform
+		// (e.g. an ATTRIB inside a block whose insert point moved but the text did not follow).
+		if (this.HorizontalAlignment != TextHorizontalAlignment.Left
+			|| this.VerticalAlignment != TextVerticalAlignmentType.Baseline)
+		{
+			this.AlignmentPoint = transform.ApplyTransform(this.AlignmentPoint);
+		}
 	}
 
 	/// <inheritdoc/>
@@ -289,7 +302,10 @@ public class TextEntity : Entity, IText
 	/// <inheritdoc/>
 	public override BoundingBox GetBoundingBox()
 	{
-		return new BoundingBox(this.InsertPoint);
+		// [MERGE] Upstream returns a degenerate 0x0 point box (insertion point only), which is wrong: text occupies a real 2D extent.
+		// Instead use TextBoundsHelper to estimate the CJK-aware width + the vertical range per font type (SHX/TTF),
+		// anchored by group codes 72/73 and combined with the rotation to get the AABB, matching the range the renderer actually draws.
+		return TextBoundsHelper.TextBox(this);
 	}
 
 	internal override void AssignDocument(CadDocument doc)

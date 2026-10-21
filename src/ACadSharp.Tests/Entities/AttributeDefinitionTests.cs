@@ -22,8 +22,11 @@ public class AttributeDefinitionTests : CommonEntityTests<AttributeDefinition>
 		AttributeDefinition att = new AttributeDefinition();
 		att.InsertPoint = new CSMath.XYZ(5, 5, 5);
 
+		// [MERGE] Inherits the patched TextEntity.GetBoundingBox which returns a real
+		// font-metrics extent instead of the upstream degenerate point box.
 		BoundingBox box = att.GetBoundingBox();
 
-		Assert.Equal(new BoundingBox(new CSMath.XYZ(5, 5, 5)), box);
+		Assert.Equal(BoundingBoxExtent.Finite, box.Extent);
+		Assert.True(box.LengthX > 0 || box.LengthY > 0);
 	}
 }
