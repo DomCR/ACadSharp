@@ -418,6 +418,23 @@ internal partial class DwgObjectReader : DwgSectionIO
 		}
 	}
 
+	private CadTemplate readSolid3D()
+	{
+		Solid3D solid = new Solid3D();
+		var template = new CadSolid3DTemplate(solid);
+
+		this.readModelerGeometry(template);
+
+		//R2007 +:
+		if (this.R2007Plus)
+		{
+			//H 350 History ID
+			template.HistoryHandle = this._mergedReaders.HandleReference();
+		}
+
+		return template;
+	}
+
 	private string readStringCadValue()
 	{
 		//General, BL containing the byte count followed by a

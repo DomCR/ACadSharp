@@ -2417,6 +2417,14 @@ internal partial class DwgObjectWriter : DwgSectionIO
 
 	private void writeSolid3D(Solid3D solid)
 	{
+		this.writeModelerGeometry(solid);
+
+		//R2007 +:
+		if (this.R2007Plus)
+		{
+			//H 350 History ID
+			this._writer.HandleReference(DwgReferenceType.HardOwnership, null);
+		}
 	}
 
 	private void writeSpline(Spline spline)
