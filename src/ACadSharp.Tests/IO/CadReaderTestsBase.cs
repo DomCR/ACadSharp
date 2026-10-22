@@ -1,4 +1,4 @@
-﻿using ACadSharp.Header;
+using ACadSharp.Header;
 using ACadSharp.IO;
 using ACadSharp.Tables;
 using ACadSharp.Tests.TestModels;
@@ -86,6 +86,12 @@ public abstract class CadReaderTestsBase<T> : IOTestsBase, IDisposable
 	public virtual void CheckPaperViewportsTest(FileModel test)
 	{
 		CadDocument doc = this.getDocument(test);
+
+		//Files without an ACAD_LAYOUT dictionary have no layouts at all.
+		if (doc.Layouts == null)
+		{
+			return;
+		}
 
 		foreach (var layout in doc.Layouts)
 		{
