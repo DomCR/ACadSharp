@@ -1,4 +1,4 @@
-﻿using ACadSharp.Attributes;
+using ACadSharp.Attributes;
 
 namespace ACadSharp.Entities
 {
@@ -18,6 +18,16 @@ namespace ACadSharp.Entities
 		/// </summary>
 		[DxfCodeValue(421)]
 		public Color Color { get; set; }
+
+		/// <summary>
+		/// True color value as stored in the file (DXF code 421), -1 when absent.
+		/// </summary>
+		/// <remarks>
+		/// The value is not always consistent with the ACI index of <see cref="Color"/>
+		/// (exporters may compute their own RGB for a given ACI index), so the raw value is
+		/// preserved to round-trip the file faithfully.
+		/// </remarks>
+		public int StoredColor { get; set; } = -1;
 
 		public GradientColor Clone()
 		{

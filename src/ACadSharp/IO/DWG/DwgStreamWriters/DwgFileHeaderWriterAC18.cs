@@ -27,9 +27,55 @@ internal class DwgFileHeaderWriterAC18 : DwgFileHeaderWriterBase<DwgFileHeaderAC
 		{
 			this._stream.WriteByte(0);
 		}
+
+		// [PATCH] The empty section (section id 0) must exist and be first in the section table —
+		// DWGs written by AutoCAD always start the section table with an empty section
+		// (comp=0/pages=0). Upstream omits it and leaves every SectionId at the default 0, so
+		// the section table does not match the AutoCAD standard layout and AutoCAD reports
+		// "file is corrupted". Reference: the AutoCAD-saved DWG — section table = empty (0) +
+		// the real sections (1..n), with unique SectionIds.
+		var emptyDesc = new DwgSectionDescriptor("")
+		{
+			SectionId = 0,
+			CompressedSize = 0,
+			PageCount = 0,
+			DecompressedSize = 0x7400,
+			CompressedCode = 2
+		};
+		this.FileHeader.AddSection(emptyDesc);
 	}
 
-	public override void AddSection(string name, MemoryStream stream, bool isCompressed, int decompsize = 0x7400)
+	// [PATCH] Standard section ID mapping (matches the section table of DWGs written by
+	// AutoCAD): empty section = 0, the other sections 1..13 in a fixed order. Upstream never
+	// assigns SectionId (always 0), which AutoCAD's strict parser treats as file corruption.
+	private static int GetSectionId(string name)
+	{
+		switch (name)
+		{
+			case DwgSectionDefinition.Header: return 1;
+			case DwgSectionDefinition.AuxHeader: return 2;
+			case DwgSectionDefinition.Classes: return 3;
+			case DwgSectionDefinition.Handles: return 4;
+			case DwgSectionDefinition.Template: return 5;
+			case DwgSectionDefinition.ObjFreeSpace: return 6;
+			case DwgSectionDefinition.AcDbObjects: return 7;
+			case DwgSectionDefinition.RevHistory: return 8;
+			case DwgSectionDefinition.SummaryInfo: return 9;
+			case DwgSectionDefinition.Preview: return 10;
+			case DwgSectionDefinition.AppInfo: return 11;
+			case "AcDb:AppInfoHistory": return 12;
+			case DwgSectionDefinition.FileDepList: return 13;
+			default: return 0;
+		}
+	}
+
+	// [PATCH] Upstream grabs the whole section buffer at once with stream.GetBuffer()
+	// (MemoryStream only), so a large section (AcDbObjects) must stay fully in memory.
+	// Read the section sequentially page by page (decompsize bytes/page) from the Stream
+	// instead — the section may come from a temp file and memory use stays constant
+	// (one page ~29KB). Behavior matches upstream: full pages are always written; a
+	// trailing partial page is written only when it contains non-zero bytes.
+	public override void AddSection(string name, Stream stream, bool isCompressed, int decompsize = 0x7400)
 	{
 		DwgSectionDescriptor descriptor = new DwgSectionDescriptor(name);
 		this.FileHeader.AddSection(descriptor);
@@ -37,33 +83,188 @@ internal class DwgFileHeaderWriterAC18 : DwgFileHeaderWriterBase<DwgFileHeaderAC
 
 		descriptor.CompressedSize = (ulong)stream.Length;
 		descriptor.CompressedCode = !isCompressed ? 1 : 2;
+		// [PATCH] Assign a unique section ID (upstream always 0, which AutoCAD treats as corruption)
+		descriptor.SectionId = GetSectionId(name);
 
-		int nlocalSections = (int)(stream.Length / (int)descriptor.DecompressedSize);
-
-		byte[] buffer = stream.GetBuffer();
-		ulong offset = 0uL;
-		for (int i = 0; i < nlocalSections; i++)
+		long length = stream.Length;
+		long originalPosition = stream.Position;
+		stream.Seek(0, SeekOrigin.Begin);
+		try
 		{
-			this.craeteLocalSection(
-				descriptor,
-				buffer,
-				(int)descriptor.DecompressedSize,
-				offset,
-				(int)descriptor.DecompressedSize,
-				isCompressed);
-			offset += descriptor.DecompressedSize;
+			this.writeSectionPages(descriptor, stream, (int)descriptor.DecompressedSize, length, isCompressed, null, null);
+		}
+		finally
+		{
+			stream.Seek(originalPosition, SeekOrigin.Begin);
+		}
+	}
+
+	// [PATCH] Parallel page compression: pages are fully independent of each other (each its own LZ77 + independent page header/checksum),
+	// read in batches -> compress on multiple threads -> write out sequentially; the output is byte-for-byte identical to per-page sequential compression.
+	// The compressor is a stateful object, so one instance per thread (ThreadLocal reuse, avoiding a fresh 128KB block table per page).
+	private const int ParallelBatchPages = 16;
+
+	private System.Threading.ThreadLocal<DwgLZ77AC18Compressor> _compressors;
+
+	private void ensureCompressors()
+	{
+		if (this._compressors == null)
+		{
+			this._compressors = new System.Threading.ThreadLocal<DwgLZ77AC18Compressor>(
+				() => new DwgLZ77AC18Compressor(), trackAllValues: true);
+		}
+	}
+
+	/// <summary>
+	/// [PATCH] Unified per-page write path. When all page content comes from <paramref name="stream"/>, pages are compressed in parallel;
+	/// when <paramref name="patch"/> is non-null, pages where <paramref name="reusePage"/>[i] is true directly reuse the source file's
+	/// compressed bytes (skipping the read and re-compression), while the remaining pages come from <paramref name="stream"/> and are
+	/// batch-compressed in parallel. In both modes the page order, page sizes and page count exactly match the upstream per-page path.
+	/// </summary>
+	private void writeSectionPages(
+		DwgSectionDescriptor descriptor,
+		Stream stream,
+		int pageSize,
+		long length,
+		bool isCompressed,
+		DwgObjectPatchSource patch,
+		bool[] reusePage)
+	{
+		var buffers = new byte[ParallelBatchPages][];
+		var sizes = new int[ParallelBatchPages];
+		var offsets = new ulong[ParallelBatchPages];
+		int count = 0;
+		long offset = 0L;
+		int pageIndex = 0;
+
+		void flushBatch()
+		{
+			if (count == 0)
+			{
+				return;
+			}
+
+			MemoryStream[] compressed;
+			if (!isCompressed)
+			{
+				compressed = new MemoryStream[count];
+				for (int i = 0; i < count; i++)
+				{
+					compressed[i] = this.applyCompression(buffers[i], pageSize, 0, sizes[i], false);
+				}
+			}
+			else if (count == 1)
+			{
+				compressed = new MemoryStream[1];
+				compressed[0] = this.applyCompression(buffers[0], pageSize, 0, sizes[0], true);
+			}
+			else
+			{
+				this.ensureCompressors();
+				compressed = new MemoryStream[count];
+				System.Threading.Tasks.Parallel.For(0, count, i =>
+				{
+					MemoryStream holder = new MemoryStream(pageSize);
+					holder.Write(buffers[i], 0, sizes[i]);
+					int diff = pageSize - sizes[i];
+					for (int j = 0; j < diff; j++)
+					{
+						holder.WriteByte(0);
+					}
+
+					MemoryStream outp = new MemoryStream(pageSize);
+					this._compressors.Value.Compress(holder.GetBuffer(), 0, pageSize, outp);
+					compressed[i] = outp;
+				});
+			}
+
+			for (int i = 0; i < count; i++)
+			{
+				this.writeLocalSection(descriptor, compressed[i], sizes[i], offsets[i], isCompressed);
+			}
+
+			count = 0;
 		}
 
-		int spearBytes = (int)(stream.Length % (int)descriptor.DecompressedSize);
-		if (spearBytes > 0 && !checkEmptyBytes(buffer, offset, (ulong)spearBytes))
+		while (offset < length)
 		{
-			this.craeteLocalSection(
-				descriptor,
-				buffer,
-				(int)descriptor.DecompressedSize,
-				offset,
-				spearBytes,
-				isCompressed);
+			int totalSize = (int)Math.Min(pageSize, length - offset);
+
+			bool reuse = patch != null
+				&& pageIndex < reusePage.Length
+				&& pageIndex < patch.Pages.Length
+				&& reusePage[pageIndex]
+				&& !patch.Pages[pageIndex].Empty
+				&& patch.Pages[pageIndex].DecompressedOffset == offset;
+
+			if (reuse)
+			{
+				//Before a reused page, the already-accumulated batch must first be flushed to disk (to preserve page order)
+				flushBatch();
+				this.writeReusedLocalSection(descriptor, patch.ReadRawPage(pageIndex), patch.Pages[pageIndex], (ulong)offset, totalSize);
+			}
+			else
+			{
+				//Reused pages do not read bytes from the stream; sequential reading would leave the stream position behind the page offset,
+				//so it must be explicitly positioned to this page's offset within the section image (always equal to the sequential position when patch is null).
+				stream.Position = offset;
+				byte[] buffer = new byte[totalSize];
+				int read = 0;
+				while (read < totalSize)
+				{
+					int r = stream.Read(buffer, read, totalSize - read);
+					if (r <= 0)
+					{
+						break;
+					}
+					read += r;
+				}
+
+				//A full page is written unconditionally; a trailing partial page is written only when it contains non-zero bytes (consistent with upstream)
+				if (totalSize == pageSize || !checkEmptyBytes(buffer, 0, (ulong)totalSize))
+				{
+					buffers[count] = buffer;
+					sizes[count] = totalSize;
+					offsets[count] = (ulong)offset;
+					count++;
+
+					if (count == ParallelBatchPages)
+					{
+						flushBatch();
+					}
+				}
+			}
+
+			offset += totalSize;
+			pageIndex++;
+		}
+
+		flushBatch();
+	}
+
+	// [PATCH] Incremental save: page-for-page equivalent to AddSection, but pages where <paramref name="reusePage"/>[i] is true
+	// directly reuse the compressed bytes from the source file (only re-masking the 32-byte page header for the new file position), skipping LZ77 re-compression.
+	public void AddSectionWithPageReuse(string name, Stream stream, DwgObjectPatchSource patch, bool[] reusePage)
+	{
+		DwgSectionDescriptor descriptor = new DwgSectionDescriptor(name);
+		this.FileHeader.AddSection(descriptor);
+		descriptor.DecompressedSize = (ulong)patch.PageSize;
+
+		descriptor.CompressedSize = (ulong)stream.Length;
+		//The object section is always a compressed section (consistent with AddSection(name, stream, true))
+		descriptor.CompressedCode = 2;
+		descriptor.SectionId = GetSectionId(name);
+
+		long length = stream.Length;
+		long originalPosition = stream.Position;
+		stream.Seek(0, SeekOrigin.Begin);
+		try
+		{
+			this.writeSectionPages(descriptor, stream, patch.PageSize, length, true, patch, reusePage);
+		}
+		finally
+		{
+			stream.Seek(originalPosition, SeekOrigin.Begin);
 		}
 	}
 
@@ -78,6 +279,48 @@ internal class DwgFileHeaderWriterAC18 : DwgFileHeaderWriterBase<DwgFileHeaderAC
 		this.writeRecords();
 
 		this.writeFileMetaData();
+	}
+
+
+	/// <summary>
+	/// [PATCH] Writes the source file's compressed page verbatim. The page-header mask is <c>0x4164536B ^ page file position</c>,
+	/// so after relocation it must be re-masked (only the leading 32-byte page header is masked; the compressed data and padding magic are unaffected).
+	/// </summary>
+	protected void writeReusedLocalSection(DwgSectionDescriptor descriptor, byte[] rawPage, ObjectPageInfo page, ulong offset, int decompressedSize)
+	{
+		this.writeMagicNumber();
+
+		//Save position for the local section
+		long position = this._stream.Position;
+
+		//Re-mask the page header for the new position
+		byte[] oldMask = LittleEndianConverter.Instance.GetBytes(0x4164536B ^ (int)page.FileOffset);
+		byte[] newMask = LittleEndianConverter.Instance.GetBytes(0x4164536B ^ (int)position);
+		for (int i = 0; i < 32; i++)
+		{
+			rawPage[i] ^= (byte)(oldMask[i & 3] ^ newMask[i & 3]);
+		}
+
+		this._stream.Write(rawPage, 0, rawPage.Length);
+
+		DwgLocalSectionMap localMap = new DwgLocalSectionMap();
+		localMap.Offset = offset;
+		localMap.Seeker = position;
+		localMap.PageNumber = this._localSectionsMaps.Count + 1;
+		localMap.ODA = 0u;
+		localMap.CompressedSize = (ulong)page.CompressedSize;
+		localMap.DecompressedSize = (ulong)decompressedSize;
+		localMap.PageSize = rawPage.Length;
+		localMap.Checksum = 0u;
+
+		if (localMap.PageNumber > 0)
+		{
+			descriptor.PageCount++;
+		}
+
+		localMap.Size = this._stream.Position - position;
+		descriptor.LocalSections.Add(localMap);
+		this._localSectionsMaps.Add(localMap);
 	}
 
 	protected MemoryStream applyCompression(byte[] buffer, int decompressedSize, ulong offset, int totalSize, bool isCompressed)
@@ -110,8 +353,22 @@ internal class DwgFileHeaderWriterAC18 : DwgFileHeaderWriterBase<DwgFileHeaderAC
 
 	protected virtual void craeteLocalSection(DwgSectionDescriptor descriptor, byte[] buffer, int decompressedSize, ulong offset, int totalSize, bool isCompressed)
 	{
-		MemoryStream descriptorStream = this.applyCompression(buffer, decompressedSize, offset, totalSize, isCompressed);
+		// [PATCH] offset now denotes the page's Start Offset inside the whole decompressed
+		// section buffer (written to localMap.Offset, i.e. the "Start Offset" in the page
+		// header and the section descriptor). buffer is the totalSize-byte tail chunk just
+		// read; its start inside buffer is always 0, so it must not be used as the in-buffer
+		// offset (multi-page sections would go out of bounds / be misaligned).
+		MemoryStream descriptorStream = this.applyCompression(buffer, decompressedSize, 0, totalSize, isCompressed);
 
+		this.writeLocalSection(descriptor, descriptorStream, totalSize, offset, isCompressed);
+	}
+
+	/// <summary>
+	/// [PATCH] Writes the compressed (or raw) page data to the file and registers the local section map.
+	/// Extracted from <see cref="craeteLocalSection"/> so the parallel compression path can reuse the same write logic.
+	/// </summary>
+	protected void writeLocalSection(DwgSectionDescriptor descriptor, MemoryStream descriptorStream, int totalSize, ulong offset, bool isCompressed)
+	{
 		this.writeMagicNumber();
 
 		//Save position for the local section
@@ -490,7 +747,12 @@ internal class DwgFileHeaderWriterAC18 : DwgFileHeaderWriterBase<DwgFileHeaderAC
 		this.FileHeader.GapAmount = 0u;
 		this.FileHeader.LastPageId = last.PageNumber;
 		this.FileHeader.LastSectionAddr = (ulong)(last.Seeker + size - 256);
-		this.FileHeader.SectionAmount = (uint)(this._localSectionsMaps.Count - 1);
+		// [PATCH] numsections must equal the total number of section table entries
+		// (data pages + section map + section page map). Upstream writes Count-1, one short,
+		// which fails the AutoCAD/libredwg check "num_sections != numgaps + numsections" and
+		// makes the reader read all subsequent sections (classes/objects/handles) from the
+		// wrong offset, reporting "file is corrupted". libredwg encode.c: numsections = si (all entries).
+		this.FileHeader.SectionAmount = (uint)(this._localSectionsMaps.Count);
 		this.FileHeader.PageMapAddress = (ulong)section.Seeker;
 	}
 }

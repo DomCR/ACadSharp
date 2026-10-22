@@ -1,5 +1,4 @@
-﻿using ACadSharp.Entities;
-using CSMath;
+﻿using CSMath;
 using System;
 using System.IO;
 using System.Text;
@@ -55,7 +54,13 @@ namespace ACadSharp.IO.DWG
 
 		void WriteTimeSpan(TimeSpan value);
 
-		void WriteCmColor(Color value);
+		void WriteCmColor(Color value, bool useTextStream = false);
+
+		/// <summary>
+		/// Writes a full R2004+-style CMC (BS index + BL rgb + RC flag).
+		/// Always used for table cell / table-level override colors regardless of file version (see the DwgStreamWriterBase comment).
+		/// </summary>
+		void WriteCmColorR2004(Color value);
 
 		void WriteEnColor(Color color, Transparency transparency);
 

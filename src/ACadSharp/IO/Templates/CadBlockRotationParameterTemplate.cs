@@ -1,16 +1,15 @@
 ﻿using ACadSharp.Objects.Evaluations;
 
-namespace ACadSharp.IO.Templates
-{
-	internal partial class CadBlockRotationParameterTemplate : CadBlock2PtParameterTemplate
-	{
-		public CadBlockRotationParameterTemplate() : base(new BlockRotationParameter())
-		{
-		}
+namespace ACadSharp.IO.Templates;
 
-		public CadBlockRotationParameterTemplate(BlockRotationParameter cadObject)
-			: base(cadObject)
-		{
-		}
+internal class CadBlockRotationParameterTemplate : CadBlock2PtParameterTemplate
+{
+	public CadBlockRotationParameterTemplate() : base(new BlockRotationParameter())
+	{
+	}
+
+	public CadBlockRotationParameterTemplate(BlockRotationParameter cadObject)
+		: base(cadObject)
+	{
 	}
 }

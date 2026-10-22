@@ -1,0 +1,50 @@
+{
+	"metadata": [
+		{
+			"src": [
+				{
+					"src": "../",
+					"files": [
+						"src/ACadSharp/*.csproj"
+					]
+				}
+			],
+			"dest": "api"
+		}
+	],
+	"build": {
+		"template": [
+			"default",
+			"modern",
+			"template"
+		],
+		"content": [
+			{
+				"files": [
+					"api/**.yml",
+					"api/index.md"
+				]
+			},
+			{
+				"files": [
+					"articles/**.md",
+					"articles/index.md",
+					"index.md",
+					"**/toc.yml"
+				]
+			},
+			{
+				"files": [
+					"index.md",
+					"toc.yml"
+				]
+			}
+		],
+		"dest": "_site",
+		"globalMetadata": {
+			"_appTitle": "ACadSharp",
+			"_appName": "ACadSharp",
+			"_enableSearch": true
+		}
+	}
+}

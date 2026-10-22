@@ -904,20 +904,23 @@ namespace ACadSharp.IO.DWG
 				int flags = _reader.ReadBitLong();
 				//CELWEIGHT Flags & 0x001F
 				_header.CurrentEntityLineWeight = (LineWeightType)(flags & 0x1F);
-				//ENDCAPS Flags & 0x0060
-				_header.EndCaps = (short)(flags & 0x60);
-				//JOINSTYLE Flags & 0x0180
-				_header.JoinStyle = (short)(flags & 0x180);
+				//ENDCAPS Flags & 0x0060 (bits 5-6, value 0-3)
+				_header.EndCaps = (short)((flags & 0x60) >> 5);
+				//JOINSTYLE Flags & 0x0180 (bits 7-8, value 0-3)
+				_header.JoinStyle = (short)((flags & 0x180) >> 7);
 				//LWDISPLAY!(Flags & 0x0200)
-				_header.DisplayLineWeight = (flags & 0x200) == 1;
-				//XEDIT!(Flags & 0x0400)
-				_header.XEdit = (short)(flags & 0x400) == 1;
+				// [PATCH] Per libredwg header_variables.spec, this bit has inverse logic: set = off(0),
+				// unset = on(1). The original (flags & 0x200) == 1 was always false, so LWDISPLAY was always
+				// read as off and the DXF header $LWDISPLAY was always written as 0 (lineweight display lost).
+				_header.DisplayLineWeight = (flags & 0x200) == 0;
+				//XEDIT!(Flags & 0x0400) —— also an inverse-logic bit (libredwg: ? 0 : 1)
+				_header.XEdit = (flags & 0x400) == 0;
 				//EXTNAMES Flags & 0x0800
-				_header.ExtendedNames = (flags & 0x800) == 1;
-				//PSTYLEMODE Flags & 0x2000
-				_header.PlotStyleMode = (short)(flags & 0x2000);
+				_header.ExtendedNames = (flags & 0x800) != 0;
+				//PSTYLEMODE Flags & 0x2000 (bool 0/1; the original stored the raw mask, inconsistent with the writer's ==1 check)
+				_header.PlotStyleMode = (short)((flags & 0x2000) != 0 ? 1 : 0);
 				//OLESTARTUP Flags & 0x4000
-				_header.LoadOLEObject = (flags & 0x4000) == 1;
+				_header.LoadOLEObject = (flags & 0x4000) != 0;
 
 				//BS: INSUNITS
 				_header.InsUnits = (UnitsType)_reader.ReadBitShort();

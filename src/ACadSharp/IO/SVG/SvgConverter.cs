@@ -1,7 +1,5 @@
-﻿using ACadSharp.Objects;
-using ACadSharp.Types.Units;
+﻿using ACadSharp.Types.Units;
 using CSMath;
-using System;
 using System.ComponentModel;
 using System.Globalization;
 

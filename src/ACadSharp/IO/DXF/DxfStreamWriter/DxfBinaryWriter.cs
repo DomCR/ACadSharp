@@ -1,4 +1,5 @@
 ﻿using ACadSharp.Exceptions;
+using ACadSharp.IO.DXF.DxfStreamWriter;
 using System;
 using System.IO;
 

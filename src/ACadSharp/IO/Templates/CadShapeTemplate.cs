@@ -1,5 +1,6 @@
-﻿using ACadSharp.Entities;
+using ACadSharp.Entities;
 using ACadSharp.Tables;
+using System.Collections.Generic;
 
 namespace ACadSharp.IO.Templates
 {
@@ -19,6 +20,11 @@ namespace ACadSharp.IO.Templates
 
 			Shape shape = this.CadObject as Shape;
 
+			// [PATCH] Keep the raw shape name: when the STYLES table has no matching
+			// entry the reference resolves to null and the name would be lost, but DXF
+			// code 2 is mandatory (AutoCAD aborts the file with "Missing group code 2").
+			shape.ShapeName = this.ShapeFileName;
+
 			if (this.getTableReference(builder, this.ShapeFileHandle, this.ShapeFileName, out TextStyle text))
 			{
 				if (text.IsShapeFile)
@@ -28,6 +34,64 @@ namespace ACadSharp.IO.Templates
 				else
 				{
 					builder.Notify($"Shape style {this.ShapeFileHandle} | {this.ShapeFileName} not found", NotificationType.Warning);
+				}
+			}
+
+			// [PATCH] A shape coming from DXF only carries its name (code 2); DWG stores it as
+			// a shape number plus a hard pointer to the SHAPEFILE style that owns the .shx where
+			// the shape is defined. Without both of them the shape number stays 0 and AutoCAD
+			// reports "shape number <= 0 / shape index <= 0" on AUDIT, and the shape is not
+			// displayed at all. Resolve the name against the shape files of the document, the
+			// same way AutoCAD does when it opens a DXF.
+			if (shape.ShapeStyle == null && shape.ShapeIndex == 0 && !string.IsNullOrEmpty(shape.ShapeName))
+			{
+				List<string> directories = builder.ShapeFontDirectories;
+				IEnumerable<string> searchPaths = directories != null && directories.Count > 0
+					? directories
+					: ShapeFileIndex.GetDefaultDirectories();
+
+				if (ShapeFileIndex.TryResolve(shape.ShapeName, builder.TextStyles, searchPaths, out TextStyle shapeFile, out ushort number))
+				{
+					shape.ShapeStyle = shapeFile;
+					shape.ShapeIndex = number;
+				}
+				else
+				{
+					builder.Notify($"Shape {shape.ShapeName} not found in any shape file of the document", NotificationType.Warning);
+				}
+			}
+
+			// [PATCH] A shape coming from DWG only carries its shape number plus a hard
+			// pointer to the SHAPEFILE style that owns the .shx where the shape is defined;
+			// the name is never stored. DXF group 2 requires the shape NAME (AutoCAD aborts
+			// the file with "Missing group code 2" otherwise), so reverse look it up inside
+			// the .shx referenced by the style - the inverse of the DXF resolution above.
+			if (string.IsNullOrEmpty(shape.ShapeName) && shape.ShapeIndex != 0)
+			{
+				List<string> directories = builder.ShapeFontDirectories;
+				IEnumerable<string> searchPaths = directories != null && directories.Count > 0
+					? directories
+					: ShapeFileIndex.GetDefaultDirectories();
+
+				TextStyle style;
+				string name;
+
+				if (ShapeFileIndex.TryGetShapeNameByIndex(shape.ShapeIndex, builder.TextStyles, searchPaths, out style, out name))
+				{
+					shape.ShapeName = name;
+
+					if (shape.ShapeStyle == null)
+					{
+						shape.ShapeStyle = style;
+					}
+				}
+				else if (shape.ShapeStyle != null)
+				{
+					builder.Notify($"Shape number {shape.ShapeIndex} not found in shape file {shape.ShapeStyle.Filename}", NotificationType.Warning);
+				}
+				else
+				{
+					builder.Notify($"Shape number {shape.ShapeIndex} not found in any shape file of the document", NotificationType.Warning);
 				}
 			}
 		}

@@ -1,9 +1,7 @@
-﻿using CSMath;
+using CSMath;
 using CSUtilities.Converters;
 using System;
 using System.IO;
-using System.Linq;
-using System.Reflection;
 using System.Text;
 
 namespace ACadSharp.IO.DWG
@@ -56,6 +54,22 @@ namespace ACadSharp.IO.DWG
 		public void AdvanceByte()
 		{
 			throw new InvalidOperationException();
+		}
+
+		/// <summary>
+		/// [PATCH] Forwards to the main reader (the only reader holding the internal byte buffer).
+		/// </summary>
+		public void SyncStreamPosition()
+		{
+			this._mainReader.SyncStreamPosition();
+		}
+
+		/// <summary>
+		/// [PATCH] Forwards to the main reader (the only reader holding the internal byte buffer).
+		/// </summary>
+		public void MarkStreamAdvanced()
+		{
+			this._mainReader.MarkStreamAdvanced();
 		}
 
 		public ulong HandleReference()
@@ -211,6 +225,11 @@ namespace ACadSharp.IO.DWG
 			}
 
 			return color;
+		}
+
+		public Color ReadCmColorR2004()
+		{
+			return this._mainReader.ReadCmColorR2004();
 		}
 
 		public Color ReadEnColor(out Transparency transparency, out bool flag)

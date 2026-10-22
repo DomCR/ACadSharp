@@ -1,13 +1,12 @@
 ﻿using System.Collections.Generic;
 
-namespace ACadSharp.Tests.TestModels
+namespace ACadSharp.Tests.TestModels;
+
+public class BlockRecordNode : TableEntryNode
 {
-	public class BlockRecordNode : TableEntryNode
-	{
-		public bool IsAnonymous { get; set; }
+	public bool IsAnonymous { get; set; }
 
-		public bool IsDynamic { get; set; }
+	public bool IsDynamic { get; set; }
 
-		public List<EntityNode> Entities { get; set; } = new List<EntityNode>();
-	}
+	public List<EntityNode> Entities { get; set; } = new List<EntityNode>();
 }

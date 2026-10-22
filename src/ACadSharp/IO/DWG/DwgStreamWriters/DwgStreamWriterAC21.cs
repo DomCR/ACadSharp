@@ -16,8 +16,12 @@ namespace ACadSharp.IO.DWG
 				base.WriteBitShort(0);
 				return;
 			}
-			base.WriteBitShort((short)value.Length);
+			//[FIX] Consistent with WriteTextUnicode: TU length includes the trailing null wide character; the string is terminated with a 2-byte 0
+			base.WriteBitShort((short)(value.Length + 1));
 			base.WriteBytes(Encoding.Unicode.GetBytes(value));
+			//[FIX] Same as WriteVariableText: the null is written via the bit writer; never write directly to the raw Stream
+			base.WriteByte(0);
+			base.WriteByte(0);
 		}
 
 		public override void WriteTextUnicode(string value)

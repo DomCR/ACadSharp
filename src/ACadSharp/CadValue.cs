@@ -1,5 +1,6 @@
 ﻿using ACadSharp.Attributes;
 using CSMath;
+using CSMath.Extensions;
 using System;
 
 namespace ACadSharp;
@@ -98,6 +99,8 @@ public class CadValue
 				this.Value = value;
 				break;
 			case CadValueType.Unknown:
+				this.Value = value;
+				break;
 			case CadValueType.Buffer:
 			case CadValueType.ResultBuffer:
 			default:

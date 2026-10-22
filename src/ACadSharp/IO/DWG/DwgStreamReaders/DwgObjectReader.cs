@@ -1,9 +1,11 @@
-﻿using ACadSharp.Blocks;
+using ACadSharp.Blocks;
 using ACadSharp.Classes;
 using ACadSharp.Entities;
-using ACadSharp.Entities.AecObjects;
+using ACadSharp.Entities.AecEntities;
+using ACadSharp.Entities.Mechanical;
 using ACadSharp.IO.Templates;
 using ACadSharp.Objects;
+using ACadSharp.Objects.AEC;
 using ACadSharp.Objects.Evaluations;
 using ACadSharp.Tables;
 using ACadSharp.Tables.Collections;
@@ -13,6 +15,7 @@ using CSMath;
 using CSUtilities.Converters;
 using System;
 using System.Collections.Generic;
+using System.Diagnostics;
 using System.Globalization;
 using System.IO;
 using System.Linq;
@@ -39,11 +42,14 @@ namespace ACadSharp.IO.DWG
 	 * name clash. To complicate matters more, files also exist with table records with duplicate
 	 * names. This is incorrect, and the software should rename the record to be unique upon reading.
 	 */
-	internal partial class DwgObjectReader : DwgSectionIO
+	internal partial class DwgObjectReader : DwgSectionIO, IDisposable
 	{
 		public override string SectionName { get { return DwgSectionDefinition.AcDbObjects; } }
 
 		private readonly Dictionary<short, DxfClass> _classes;
+
+		// [PATCH] P3 parallel: original class table (workers must rebuild the dictionary from the DxfClassCollection when they are constructed).
+		private readonly DxfClassCollection _classesSource;
 
 		/// <summary>
 		/// Stream decoded using the crc.
@@ -52,7 +58,29 @@ namespace ACadSharp.IO.DWG
 
 		private readonly Dictionary<ulong, long> _map;
 
-		private readonly MemoryStream _memoryStream;
+		/// <summary>
+		/// Stream decoded using the crc.
+		/// In disk-cache mode (UseDiskSectionCache) this is a temporary-file FileStream (zero-copy reuse);
+		/// otherwise it is a memory stream (the MemoryStream passed in from upstream or a HugeMemoryStream built in the copy branch).
+		/// </summary>
+		private readonly Stream _memoryStream;
+
+		// [PATCH] Disk-cache mode: each object needs three independent seek views for object/handles/text,
+		// each holding an independent FileStream (same temp file) + an independent 64KB buffer -> saves memory and avoids cross-talk through the shared underlying stream buffer.
+		// The 3 slots are reused across all objects to avoid million-level open/close overhead.
+		private readonly List<Stream> _diskViewStreams = new List<Stream>();
+
+		private int _cloneSlot;
+
+		// [FIX] Shared object-section image array for P3 parallel workers (exported by the ReadParallel main thread, a single copy).
+		// When cloning sub-views (object/handles/text), build independent cursor views directly from this array, avoiding
+		// GetBuffer() on an array-backed MemoryStream throwing UnauthorizedAccessException under .NET 10 (the original catch fallback
+		// CopyTo would read worker._memoryStream to the end, polluting the _crcReader position -> type=256 -> BFS completely empty).
+		private readonly byte[] _sharedImage;
+
+		// [PATCH] Whether this reader owns and is responsible for releasing the decompressed image stream (disk-cache temp file / HugeMemoryStream built in the copy branch).
+		// When reusing an upstream-passed stream in memory, it does not own it, to avoid closing a stream held by the caller.
+		private bool _ownsSectionStream;
 
 		private readonly Dictionary<ulong, ObjectType> _readedObjects = new Dictionary<ulong, ObjectType>();
 
@@ -70,24 +98,58 @@ namespace ACadSharp.IO.DWG
 		/// </summary>
 		private IDwgStreamReader _handlesReader;
 
-		/// <summary>
-		/// Needed to handle some items like colors or some text data that may not be present.
-		/// </summary>
+		private long _handleSectionOffset = -1;
+
 		private IDwgStreamReader _mergedReaders;
 
-		private long _objectInitialPos = 0;
+	private long _objectInitialPos = 0;
 
-		/// <summary>
-		/// Reader to handle the object data.
-		/// </summary>
-		private IDwgStreamReader _objectReader;
+	// [PATCH] Incremental save: the byte range of the current object in the decompressed image of the object section (recorded when a patch source is enabled)
+	private long _objectStartOffset;
 
-		private uint _size;
+	private int _objectTotalLength;
+
+	// [PATCH] Incremental save: handle -> object byte range. When non-null, Read() records each one.
+	private readonly Dictionary<ulong, ObjectByteRange> _objectRanges;
+
+	/// <summary>
+	/// Reader to handle the object data.
+	/// </summary>
+	private IDwgStreamReader _objectReader;
+
+	private uint _size;
 
 		/// <summary>
 		/// Reader focused on the string data section of the stream.
 		/// </summary>
 		private IDwgStreamReader _textReader;
+
+		// [PATCH] Lazy reading: when these handles are referenced, only the reference value is resolved; their children are not enqueued for expansion
+		// (used for *MODEL_SPACE/*PAPER_SPACE block records, to prevent the BFS walk from descending into all model-space entities).
+		private readonly HashSet<ulong> _noExpand;
+
+		// [PATCH] Streaming scan (spatial index build): the owned entities of all block records (except *MODEL_SPACE) are not enqueued --
+		// the index only needs model-space entities + block insertion points; block definition content does not need decoding.
+		private readonly bool _suppressBlockExpand;
+
+		// [PATCH] Streaming scan: callback after each object template is successfully read (merged into the builder); the caller can extract fields and
+		// release via PruneTemplate, so memory stays proportional to a single object rather than file size.
+		private readonly Action<CadTemplate> _onObjectRead;
+
+		// [PATCH] P3 shared state for reader-side parallel object decoding. When non-null, this is a parallel worker (or the parallel main driver).
+		// Object decoding is self-contained (each object is located absolutely via "handle -> offset" + an independent cloned view stream; decoding only records reference
+		// handle values, and reference resolution happens in the BuildDocument phase), so multiple workers can decode in parallel without interfering,
+		// coordinating only through the shared structures of DwgParallelDecodeState:
+		//  - Claim: an atomic claim set (TryAdd succeeds only the first time), covering the deduplication semantics of the serial _readedObjects
+		//    (claimed => no longer decoded).
+		//  - RefQueue: the reference discovery queue (handleReference enqueues newly discovered handles; all workers compete to consume it).
+		//  - BuilderLock: protects the writable points of the builder (block record template list / error notifications).
+		// Table property assignments (the 9 places such as Layers/AppIds) each write different fields and are triggered by the single controlling object writer, so
+		// reference assignment is atomic and contention-free; the entity bypass lists (ModelSpace/PaperSpaceEntities) are dead storage on the DWG path
+		// (entities are assembled via template.Build), so workers skip their writes.
+		// AddTemplate is executed serially by the driver after all workers finish => during decoding the builder dictionaries are read-only and contention-free.
+		private readonly DwgParallelDecodeState _parallelState;
+		private readonly bool _parallel;
 
 		public DwgObjectReader(
 			ACadVersion version,
@@ -95,35 +157,111 @@ namespace ACadSharp.IO.DWG
 			IDwgStreamReader reader,
 			Queue<ulong> handles,
 			Dictionary<ulong, long> handleMap,
-			DxfClassCollection classes) : base(version)
+			DxfClassCollection classes,
+			HashSet<ulong> noExpand = null,
+			bool suppressBlockExpand = false,
+			Action<CadTemplate> onObjectRead = null,
+			Dictionary<ulong, ObjectByteRange> objectRanges = null,
+			DwgParallelDecodeState parallelState = null) : base(version)
 		{
 			this._builder = builder;
 
 			this._reader = reader;
 
-			this._handles = new Queue<ulong>(handles);
-			this._map = new Dictionary<ulong, long>(handleMap);
-			this._classes = classes.ToDictionary(x => x.ClassNumber, x => x);
+			// [PATCH] P3 parallel flag (set early, for _map sharing and image view decisions)
+			this._parallelState = parallelState;
+			this._parallel = parallelState != null;
 
-			if (this._reader.Stream is MemoryStream memoryStream)
+			this._handles = new Queue<ulong>(handles);
+			// [PATCH] P3 parallel: the handle graph is read-only (not mutated during decoding; only getEntityType TryGetValue),
+			// workers share the reference directly, avoiding a 2.8M handles x worker-count memory doubling.
+			this._map = this._parallel ? handleMap : new Dictionary<ulong, long>(handleMap);
+			this._classes = classes.ToDictionary(x => x.ClassNumber, x => x);
+			this._classesSource = classes;
+			this._noExpand = noExpand;
+			this._suppressBlockExpand = suppressBlockExpand;
+			this._onObjectRead = onObjectRead;
+			this._objectRanges = objectRanges;
+
+			// [PATCH] P3 parallel worker: create an independent image view based on the main reader's decompressed image (_reader.Stream).
+			// Key point: a worker's _crcReader wraps _memoryStream, and getEntityType does
+			// _crcReader.Position=offset (a seek) per object. If workers shared the same _memoryStream object,
+			// those seeks would clobber each other across workers => each worker must have an independent view (independent cursors, data shared zero-copy):
+			//  - FileStream (disk cache): each opens its own FileStream handle (same temp file)
+			//  - HugeMemoryStream: Clone shares the read-only chunks
+			//  - array-backed MemoryStream: GetBuffer shares the underlying byte[]
+			// CloneSectionStream(worker._memoryStream) then clones out the independent views of _objectReader/_handlesReader/
+			// _textReader, fully isolated. The image stream is owned by the main reader; workers do not release it.
+			// Note that HugeMemoryStream is a MemoryStream subclass, so Huge must be checked first (takes the zero-copy Clone path).
+			if (this._parallel)
 			{
-				try
+				// [FIX] Prefer the shared image exported by the main thread (exported in ReadParallel, SharedImage):
+				// a complete array at offset=0, GetBuffer() is always available (requires _writable=true, so the view here uses the
+				// 3-arg constructor with the default writable=true); each worker gets an independent cursor view with no cross-talk, sharing the underlying read-only array
+				// (zero-copy, occupying only one copy of memory). Covers both <2GB object sections (plain MemoryStream image, where GetBuffer
+				// used to throw UnauthorizedAccessException) and >2GB (HugeMemoryStream).
+				if (this._parallelState.SharedImage != null)
 				{
-					var buffer = memoryStream.GetBuffer();
-					this._memoryStream = memoryStream;
+					byte[] img = this._parallelState.SharedImage;
+				this._sharedImage = img; // [FIX] Record the shared array; CloneSectionStream builds sub-views directly from it
+				this._memoryStream = new MemoryStream(img, 0, img.Length);
+				this._ownsSectionStream = true; // the view stream is closed by the worker (the shared array is not released)
 				}
-				catch
+				else if (this._reader.Stream is FileStream fs)
 				{
-					// Ignore, will be handled below
+					this._memoryStream = new FileStream(fs.Name, FileMode.Open, FileAccess.Read, FileShare.Read | FileShare.Write | FileShare.Delete, 1 << 16);
+					this._ownsSectionStream = true; // the handle opened by the worker itself is closed by this worker
+				}
+				else if (this._reader.Stream is HugeMemoryStream huge)
+				{
+					this._memoryStream = HugeMemoryStream.Clone(huge); // share the read-only chunks (zero-copy)
+				}
+				else if (this._reader.Stream is MemoryStream ms)
+				{
+					try
+					{
+						this._memoryStream = new MemoryStream(ms.GetBuffer()); // share the underlying byte[] (zero-copy)
+					}
+					catch
+					{
+						// non-publicly-buffered stream; fall back to the default branch below
+					}
 				}
 			}
 
 			if (this._memoryStream == null)
 			{
-				this._memoryStream = HugeMemoryStream.Create(this._reader.Stream.Length);
-				this._reader.Stream.Position = 0;
-				this._reader.Stream.CopyTo(this._memoryStream);
-				this._memoryStream.Position = 0;
+				if (this._reader.Stream is MemoryStream memoryStream)
+				{
+					try
+					{
+						var buffer = memoryStream.GetBuffer();
+						this._memoryStream = memoryStream;
+					}
+					catch
+					{
+						// Ignore, will be handled below
+					}
+				}
+
+				if (this._memoryStream == null)
+				{
+					if (this._reader.Stream is FileStream fsDisk)
+					{
+					// [PATCH] Disk-cache mode: the decompressed image is already in the temp file, reuse it directly, zero-copy
+					// (avoids copying the whole object data into a HugeMemoryStream again, which would defeat the disk cache).
+					this._memoryStream = fsDisk;
+					this._ownsSectionStream = true; // the temp file is closed by this reader (deleted via DeleteOnClose)
+					}
+					else
+					{
+						this._memoryStream = HugeMemoryStream.Create(this._reader.Stream.Length);
+						this._reader.Stream.Position = 0;
+						this._reader.Stream.CopyTo(this._memoryStream);
+						this._memoryStream.Position = 0;
+						this._ownsSectionStream = true; // the self-built stream is closed by this reader
+					}
+				}
 			}
 
 			//Setup the entity handler
@@ -155,6 +293,10 @@ namespace ACadSharp.IO.DWG
 
 				CadTemplate template = null;
 
+				// [PERF] Per-type decode timing (no-op unless DwgReadDiagnostics.EnableTypeTimers was called)
+				bool perfTimers = DwgReadDiagnostics.TypeTimersEnabled;
+				long perfT0 = perfTimers ? Stopwatch.GetTimestamp() : 0;
+
 				try
 				{
 					//Read the object
@@ -177,565 +319,182 @@ namespace ACadSharp.IO.DWG
 					continue;
 				}
 
-				//Add the template to the list to be processed
-				if (template == null)
+				// [PERF] Per-type decode timing (no-op unless DwgReadDiagnostics.EnableTypeTimers was called)
+				if (perfTimers && template != null)
+				{
+					DwgReadDiagnostics.AccumulateDecode(template.CadObject?.GetType(), Stopwatch.GetTimestamp() - perfT0);
+				}
+
+			//Add the template to the list to be processed
+			if (template == null)
+				continue;
+
+			this._builder.AddTemplate(template);
+
+			// [PATCH] Incremental save: record the object's byte range in the decompressed image of the object section
+			if (this._objectRanges != null && this._objectTotalLength > 0)
+			{
+				this._objectRanges[handle] = new ObjectByteRange(this._objectStartOffset, this._objectTotalLength);
+			}
+
+			// [PATCH] Streaming scan: post-read callback (extract fields / release via PruneTemplate)
+			this._onObjectRead?.Invoke(template);
+			}
+		}
+
+		/// <summary>
+		/// [PATCH] P3 driver for reader-side parallel object decoding. Called by <see cref="DwgReader.readObjects"/> only for
+		/// R2004 (AC1018) and later, when not in incremental mode (RetainPatchSource off).
+		/// </summary>
+		/// <remarks>
+		/// Distributes the seed handles to N independent workers (each its own <see cref="DwgObjectReader"/> instance +
+		/// an independent decompressed image view, sharing the underlying data zero-copy) and runs a parallel BFS decode. Workers only decode --
+		/// <see cref="CadDocumentBuilder.AddTemplate"/> is deferred until it is executed uniformly on the main thread, so during decoding
+		/// the builder dictionaries are read-only and contention-free. Object decoding is self-contained (absolute offset positioning + independent view streams + references only record handle
+		/// values), so the parallel results are equivalent to the sequential path.
+		/// </remarks>
+		public void ReadParallel()
+		{
+			int workerCount = Math.Max(2, Environment.ProcessorCount);
+			var state = new DwgParallelDecodeState(workerCount);
+
+				// [FIX] The main thread exports the object-section image once as a shared read-only byte[] (a single copy, shared zero-copy with all
+				// workers). Avoids two kinds of problems: (1) <2GB object section images go through the plain MemoryStream path, and under .NET
+				// GetBuffer() throws UnauthorizedAccessException on dynamically grown / offset-bearing streams; (2) the original catch
+				// fallback to the shared main reader cursor (line ~220) made multiple workers seek the same cursor concurrently, causing cross-talk.
+				// After exporting as a standalone array at offset=0, workers build independent cursor views: GetBuffer is always available and cursors are isolated.
+				// Export only when the image is <= int.MaxValue; >2GB goes through the HugeMemoryStream.Clone clone path
+				// (Create returns a HugeMemoryStream for >2GB, whose Clone works; see the worker-constructor else-if).
+			if (this._reader.Stream.Length <= int.MaxValue)
+			{
+				long savedPos = this._reader.Stream.Position;
+				this._reader.Stream.Position = 0;
+				int imgLen = (int)this._reader.Stream.Length;
+				var img = new byte[imgLen];
+				int read = 0;
+				while (read < imgLen)
+				{
+					int n = this._reader.Stream.Read(img, read, imgLen - read);
+					if (n <= 0)
+						break;
+					read += n;
+				}
+				this._reader.Stream.Position = savedPos; // restore the main reader cursor (that stream is not read again after object-section decoding)
+				state.SharedImage = img;
+			}
+
+			// Distribute the seed handles (header handles): atomic claim + enqueue into the reference queue
+			foreach (ulong seed in this._handles)
+			{
+				if (state.Claim.TryAdd(seed, 0))
+				{
+					System.Threading.Interlocked.Increment(ref state.Outstanding);
+					state.RefQueue.Enqueue(seed);
+				}
+			}
+
+			var workers = new DwgObjectReader[workerCount];
+			var tasks = new System.Threading.Tasks.Task[workerCount];
+			for (int i = 0; i < workerCount; i++)
+			{
+					// Each worker is an independent instance: its own _crcReader/_objectReader cursors + an independent image view +
+					// an independent file handle. Shared read-only _map (handle graph), _classesSource, _noExpand, _builder
+					// (read-only during decoding). objectRanges=null (parallel does not support an incremental patch source; see the DwgReader gating).
+				workers[i] = new DwgObjectReader(
+					this._version,
+					this._builder,
+					this._reader,
+					new Queue<ulong>(),
+					this._map,
+					this._classesSource,
+					this._noExpand,
+					parallelState: state);
+
+					// [FIX] The worker instance must be captured into a local variable wk. Writing () => workers[i].WorkerLoop(...)
+					// directly would capture the loop counter i (the for-loop's i is the same variable shared across the whole loop); by the time
+					// the thread pool actually schedules that lambda (after the loop has ended), i has already been incremented to workerCount, and
+					// workers[workerCount] is an array out-of-bounds
+					// (IndexOutOfRangeException), intermittently (depending on thread pool scheduling timing).
+				var wk = workers[i];
+				tasks[i] = System.Threading.Tasks.Task.Run(() => wk.WorkerLoop(state));
+			}
+
+			System.Threading.Tasks.Task.WaitAll(tasks);
+
+			foreach (var w in workers)
+				w.Dispose();
+
+				// The main thread does AddTemplate uniformly: at this point no worker contends on the builder dictionaries, serial is safe.
+				// Out-of-order AddTemplate does not affect correctness (BuildDocument layers by template type: table records Build first,
+				// entities Build later; reference resolution happens in the BuildDocument phase, not the decode phase).
+			foreach (var t in state.Results)
+				this._builder.AddTemplate(t);
+		}
+
+		/// <summary>
+		/// [PATCH] P3 parallel worker main loop: competes to consume the shared reference queue, decodes objects, results into the bag.
+		/// </summary>
+		/// <remarks>
+		/// Termination: the reference queue is empty AND <see cref="DwgParallelDecodeState.Outstanding"/>==0.
+		/// Outstanding counts the objects that are "enqueued but not yet decoded" (Increment on enqueue,
+		/// Decrement in finally). Because an object's Decrement happens after all of its references have been enqueued via handleReference,
+		/// when Outstanding reaches zero all references have necessarily been discovered, so no work is lost (no TOCTOU hole).
+		/// </remarks>
+		internal void WorkerLoop(DwgParallelDecodeState state)
+		{
+			while (true)
+			{
+				ulong handle;
+				if (!state.RefQueue.TryDequeue(out handle))
+				{
+					// queue empty: if there are no in-flight objects, the BFS is complete
+					if (state.Outstanding == 0)
+						break;
+					// in-flight objects exist (their references have not been enqueued yet): yield the CPU and retry
+					System.Threading.Thread.Yield();
 					continue;
-
-				this._builder.AddTemplate(template);
-			}
-		}
-
-		private ObjectType getEntityType(long offset)
-		{
-			ObjectType type = ObjectType.INVALID;
-
-			//Set the position to the entity to find
-			this._crcReader.Position = offset;
-
-			//MS : Size of object, not including the CRC
-			this._size = (uint)this._crcReader.ReadModularShort();
-
-			if (this._size <= 0U)
-				return type;
-
-			//remove the padding bits make sure the object stream ends on a byte boundary
-			uint sizeInBits = (uint)(this._size << 3);
-
-			//R2010+:
-			if (this.R2010Plus)
-			{
-				//MC : Size in bits of the handle stream (unsigned, 0x40 is not interpreted as sign).
-				//This includes the padding bits at the end of the handle stream
-				//(the padding bits make sure the object stream ends on a byte boundary).
-				ulong handleSize = this._crcReader.ReadModularChar();
-
-				//Find the handles offset
-				ulong handleSectionOffset = (ulong)this._crcReader.PositionInBits() + sizeInBits - handleSize;
-
-				//Create a handler section reader
-				this._objectReader = DwgStreamReaderBase.GetStreamHandler(this._version, HugeMemoryStream.Clone(this._memoryStream), this._reader.Encoding);
-				this._objectReader.SetPositionInBits(this._crcReader.PositionInBits());
-
-				//set the initial position and get the object type
-				this._objectInitialPos = this._objectReader.PositionInBits();
-				type = this._objectReader.ReadObjectType();
-
-				//Create a handler section reader
-				this._handlesReader = DwgStreamReaderBase.GetStreamHandler(this._version, HugeMemoryStream.Clone(this._memoryStream), this._reader.Encoding);
-				this._handlesReader.SetPositionInBits((long)handleSectionOffset);
-
-				//Create a text section reader
-				this._textReader = DwgStreamReaderBase.GetStreamHandler(this._version, HugeMemoryStream.Clone(this._memoryStream), this._reader.Encoding);
-				this._textReader.SetPositionByFlag((long)handleSectionOffset - 1);
-
-				this._mergedReaders = new DwgMergedReader(this._objectReader, this._textReader, this._handlesReader);
-			}
-			else
-			{
-				//Create a handler section reader
-				this._objectReader = DwgStreamReaderBase.GetStreamHandler(this._version, HugeMemoryStream.Clone(this._memoryStream), this._reader.Encoding);
-				this._objectReader.SetPositionInBits(this._crcReader.PositionInBits());
-
-				this._handlesReader = DwgStreamReaderBase.GetStreamHandler(this._version, HugeMemoryStream.Clone(this._memoryStream), this._reader.Encoding);
-				this._textReader = this._objectReader;
-
-				//set the initial position and get the object type
-				this._objectInitialPos = this._objectReader.PositionInBits();
-				type = this._objectReader.ReadObjectType();
-			}
-
-			return type;
-		}
-
-		/// <summary>
-		/// Get the handle of the entity and saves the value to the <see cref="_handles"/>
-		/// </summary>
-		/// <returns>the handle to reference into the entity</returns>
-		private ulong handleReference()
-		{
-			return this.handleReference(0);
-		}
-
-		/// <summary>
-		/// Get the handle of the entity and saves the value to the <see cref="_handles"/>
-		/// </summary>
-		/// <returns>the handle to reference into the entity</returns>
-		private ulong handleReference(ulong handle)
-		{
-			//Read the handle
-			ulong value = this._handlesReader.HandleReference(handle);
-
-			if (value != 0 &&
-				!this._builder.TryGetObjectTemplate(value, out CadTemplate _) &&
-				!this._readedObjects.ContainsKey(value))
-			{
-				//Add the value to the handles queue to be processed
-				this._handles.Enqueue(value);
-			}
-
-			return value;
-		}
-
-		private void readCommonData(CadTemplate template)
-		{
-			if (this._version >= ACadVersion.AC1015 && this._version < ACadVersion.AC1024)
-			{
-				//Obj size RL size of object in bits, not including end handles
-				this.updateHandleReader();
-			}
-
-			//Common:
-			//Handle H 5 code 0, length followed by the handle bytes.
-			template.CadObject.Handle = this._objectReader.HandleReference();
-
-			//Extended object data, if any
-			this.readExtendedData(template);
-		}
-
-		// Read the common entity format.
-		private void readCommonEntityData(CadEntityTemplate template)
-		{
-			//Get the cad object as an entity
-			Entity entity = template.CadObject;
-
-			this.readCommonData(template);
-
-			//Graphic present Flag B 1 if a graphic is present
-			if (this._objectReader.ReadBit())
-			{
-				//Graphics X if graphicpresentflag is 1, the graphic goes here.
-				//See the section on Proxy Entity Graphics for the format of this section.
-
-				//R13 - R007:
-				//RL: Size of graphic image in bytes
-				//R2010 +:
-				//BLL: Size of graphic image in bytes
-				long graphicImageSize = this._version >= ACadVersion.AC1024 ?
-					this._objectReader.ReadBitLongLong() : this._objectReader.ReadRawLong();
-
-				//Common:
-				//X: The graphic image
-				//entityHandler.CadObject.JumpGraphicImage(this, entityHandler, graphicImageSize);
-				this._objectReader.Advance((int)graphicImageSize);
-			}
-
-			//R13 - R14 Only:
-			if (this._version >= ACadVersion.AC1012 && this._version <= ACadVersion.AC1014)
-			{
-				this.updateHandleReader();
-			}
-
-			this.readEntityMode(template);
-		}
-
-		private void readCommonNonEntityData(CadTemplate template)
-		{
-			this.readCommonData(template);
-
-			//R13-R14 Only:
-			//Obj size RL size of object in bits, not including end handles
-			if (this.R13_14Only)
-				this.updateHandleReader();
-
-			//[Owner ref handle (soft pointer)]
-			template.OwnerHandle = this.handleReference(template.CadObject.Handle);
-
-			//Read the cad object reactors
-			this.readReactorsAndDictionaryHandle(template);
-		}
-
-		private void readEntityMode(CadEntityTemplate template)
-		{
-			//Get the cad object as an entity
-			Entity entity = template.CadObject;
-
-			//Common:
-			//6B : Flags
-			//Entmode BB entity mode
-			template.EntityMode = this._objectReader.Read2Bits();
-
-			//FE: Entity mode(entmode). Generally, this indicates whether or not the owner
-			//relative handle reference is present.The values go as follows:
-
-			//00 : The owner relative handle reference is present.
-			//Applies to the following:
-			//VERTEX, ATTRIB, and SEQEND.
-			//BLOCK, ENDBLK, and the defining entities in all
-			//block defs except *MODEL_SPACE and * PAPER_SPACE.
-
-			//01 : PSPACE entity without a owner relative handle ref.
-			//10 : MSPACE entity without a owner relative handle ref.
-			//11 : Not used.
-
-			if (template.EntityMode == 0)
-			{
-				template.OwnerHandle = this._handlesReader.HandleReference(entity.Handle);
-			}
-			else if (template.EntityMode == 1)
-			{
-				this._builder.PaperSpaceEntities.Add(entity);
-			}
-			else if (template.EntityMode == 2)
-			{
-				this._builder.ModelSpaceEntities.Add(entity);
-			}
-
-			//Numreactors BL number of persistent reactors attached to this object
-			this.readReactorsAndDictionaryHandle(template);
-
-			//R13-R14 Only:
-			if (this.R13_14Only)
-			{
-				//8 LAYER (hard pointer)
-				template.LayerHandle = this.handleReference();
-
-				//Isbylayerlt B 1 if bylayer linetype, else 0
-				if (!this._objectReader.ReadBit())
-					//6 [LTYPE (hard pointer)] (present if Isbylayerlt is 0)
-					template.LineTypeHandle = this.handleReference();
-			}
-
-			//R13-R2000 Only:
-			//previous/next handles present if Nolinks is 0.
-			//Nolinks B 1 if major links are assumed +1, -1, else 0 For R2004+this always has value 1 (links are not used)
-			if (!this.R2004Plus && !this._objectReader.ReadBit())
-			{
-				//[PREVIOUS ENTITY (relative soft pointer)]
-				template.PrevEntity = this.handleReference(entity.Handle);
-				//[NEXT ENTITY (relative soft pointer)]
-				template.NextEntity = this.handleReference(entity.Handle);
-			}
-			else if (!this.R2004Plus)
-			{
-				if (!this._readedObjects.ContainsKey(entity.Handle - 1UL))
-				{
-					this._handles.Enqueue(entity.Handle - 1UL);
-				}
-				if (!this._readedObjects.ContainsKey(entity.Handle + 1UL))
-				{
-					this._handles.Enqueue(entity.Handle + 1UL);
-				}
-			}
-
-			//Color	CMC(B)	62
-			entity.Color = this._objectReader.ReadEnColor(out Transparency transparency, out bool colorFlag);
-			entity.Transparency = transparency;
-
-			//R2004+:
-			if ((this._version >= ACadVersion.AC1018) && colorFlag)
-				//[Color book color handle (hard pointer)]
-				template.ColorHandle = this.handleReference();
-
-			//Ltype scale	BD	48
-			entity.LineTypeScale = this._objectReader.ReadBitDouble();
-
-			if (!(this._version >= ACadVersion.AC1015))
-			{
-				//Common:
-				//Invisibility BS 60
-				entity.IsInvisible = (this._objectReader.ReadBitShort() & 1) == 0;
-
-				return;
-			}
-
-			//R2000+:
-			//8 LAYER (hard pointer)
-			template.LayerHandle = this.handleReference();
-
-			//Ltype flags BB 00 = bylayer, 01 = byblock, 10 = continous, 11 = linetype handle present at end of object
-			template.LtypeFlags = this._objectReader.Read2Bits();
-
-			if (template.LtypeFlags == 3)
-				//6 [LTYPE (hard pointer)] present if linetype flags were 11
-				template.LineTypeHandle = this.handleReference();
-
-			//R2007+:
-			if (this.R2007Plus)
-			{
-				//Material flags BB 00 = bylayer, 01 = byblock, 11 = material handle present at end of object
-				if (this._objectReader.Read2Bits() == 3)
-				{
-					//MATERIAL present if material flags were 11
-					template.MaterialHandle = this.handleReference();
 				}
 
-				//Shadow flags RC
-				this._objectReader.ReadByte();
-			}
-
-			//R2000 +:
-			//Plotstyle flags	BB	00 = bylayer, 01 = byblock, 11 = plotstyle handle present at end of object
-			if (this._objectReader.Read2Bits() == 3)
-			{
-				//PLOTSTYLE (hard pointer) present if plotstyle flags were 11
-				long plotstyleFlags = (long)this.handleReference();
-			}
-
-			//R2007 +:
-			if (this.R2010Plus)
-			{
-				//Material flags BB 00 = bylayer, 01 = byblock, 11 = material handle present at end of object
-				if (this._objectReader.ReadBit())
+				// handle not in the handle graph (invalid/deleted): drop it outright
+				if (!this._map.TryGetValue(handle, out long offset))
 				{
-					//If has full visual style, the full visual style handle (hard pointer).
-					long n = (long)this.handleReference();
-				}
-				if (this._objectReader.ReadBit())
-				{
-					//If has full visual style, the full visual style handle (hard pointer).
-					long n = (long)this.handleReference();
-				}
-				//Shadow flags RC
-				if (this._objectReader.ReadBit())
-				{
-					//If has full visual style, the full visual style handle (hard pointer).
-					long n = (long)this.handleReference();
-				}
-			}
-
-			//Common:
-			//Invisibility BS 60
-			entity.IsInvisible = (this._objectReader.ReadBitShort() & 1) == 1;
-
-			//R2000+:
-			//Lineweight RC 370
-			entity.LineWeight = CadUtils.ToValue(this._objectReader.ReadByte());
-		}
-
-		private void readExtendedData(CadTemplate template)
-		{
-			//EED directly follows the entity handle.
-			//Each application's data is structured as follows:
-			//|Length|Application handle|Data items|
-
-			//EED size BS size of extended entity data, if any
-			short size = this._objectReader.ReadBitShort();
-
-			while (size != 0)
-			{
-				//App handle
-				ulong appHandle = this._objectReader.HandleReference();
-				long endPos = this._objectReader.Position + size;
-
-				//template.ExtendedData
-				List<ExtendedDataRecord> edata = this.readExtendedDataRecords(endPos);
-
-				template.EDataTemplate.Add(appHandle, edata);
-
-				size = this._objectReader.ReadBitShort();
-			}
-		}
-
-		private List<ExtendedDataRecord> readExtendedDataRecords(long endPos)
-		{
-			List<ExtendedDataRecord> records = new List<ExtendedDataRecord>();
-
-			while (this._objectReader.Position < endPos)
-			{
-				//Each data item has a 1-byte code (DXF group code minus 1000) followed by the value.
-				DxfCode dxfCode = (DxfCode)(1000 + this._objectReader.ReadByte());
-
-				ExtendedDataRecord record = null;
-
-				switch (dxfCode)
-				{
-					//0 (1000) String.
-					//R13-R2004: 1st byte of value is the length N; this is followed by a 2-byte short indicating the codepage, followed by N single-byte characters.
-					//R2007 +: 2 - byte length N, followed by N Unicode characters(2 bytes each).
-					case DxfCode.ExtendedDataAsciiString:
-					case DxfCode.ExtendedDataRegAppName:
-						//1 (1001) This one seems to be invalid; can't even use as a string inside braces.
-						//This would be a registered application that this data relates to, but we've already had that above,
-						//so it would be redundant or irrelevant here.
-						record = new ExtendedDataString(this._objectReader.ReadTextUnicode());
-						break;
-					case DxfCode.ExtendedDataControlString:
-						//2 (1002) A '{' or '}'; 1 byte; ASCII 0 means '{', ASCII 1 means '}'
-						record = new ExtendedDataControlString(this._objectReader.ReadByte() == 1);
-						break;
-					case DxfCode.ExtendedDataLayerName:
-						//3 (1003) A layer table reference. The value is the handle of the layer;
-						//it's 8 bytes -- even if the leading ones are 0. It's not a string; read
-						//it as hex, as usual for handles. (There's no length specifier this time.)
-						//Even layer 0 is referred to by handle here.
-						byte[] arr = this._objectReader.ReadBytes(8);
-						ulong handle = BigEndianConverter.Instance.ToUInt64(arr);
-						record = new ExtendedDataLayer(handle);
-						break;
-					case DxfCode.ExtendedDataBinaryChunk:
-						//4 (1004) Binary chunk. The first byte of the value is a char giving the length; the bytes follow.
-						record = new ExtendedDataBinaryChunk(this._objectReader.ReadBytes(this._objectReader.ReadByte()));
-						break;
-					case DxfCode.ExtendedDataHandle:
-						//5 (1005) An entity handle reference.
-						//The value is given as 8 bytes -- even if the leading ones are 0.
-						//It's not a string; read it as hex, as usual for handles.
-						//(There's no length specifier this time.)
-						arr = this._objectReader.ReadBytes(8);
-						handle = BigEndianConverter.Instance.ToUInt64(arr);
-						record = new ExtendedDataHandle(handle);
-						break;
-					//10 - 13 (1010 - 1013)
-					case DxfCode.ExtendedDataXCoordinate:
-						//Points; 24 bytes(XYZ)-- 3 doubles
-						record = new ExtendedDataCoordinate(
-							new XYZ(
-								this._objectReader.ReadDouble(),
-								this._objectReader.ReadDouble(),
-								this._objectReader.ReadDouble()
-								)
-							);
-						break;
-					case DxfCode.ExtendedDataWorldXCoordinate:
-						//Points; 24 bytes(XYZ)-- 3 doubles
-						record = new ExtendedDataWorldCoordinate(
-							new XYZ(
-								this._objectReader.ReadDouble(),
-								this._objectReader.ReadDouble(),
-								this._objectReader.ReadDouble()
-								)
-							);
-						break;
-					case DxfCode.ExtendedDataWorldXDisp:
-						//Points; 24 bytes(XYZ)-- 3 doubles
-						record = new ExtendedDataDisplacement(
-							new XYZ(
-								this._objectReader.ReadDouble(),
-								this._objectReader.ReadDouble(),
-								this._objectReader.ReadDouble()
-								)
-							);
-						break;
-					case DxfCode.ExtendedDataWorldXDir:
-						//Points; 24 bytes(XYZ)-- 3 doubles
-						record = new ExtendedDataDirection(
-							new XYZ(
-								this._objectReader.ReadDouble(),
-								this._objectReader.ReadDouble(),
-								this._objectReader.ReadDouble()
-								)
-							);
-						break;
-					//40 - 42 (1040 - 1042)
-					//Reals; 8 bytes(double)
-					case DxfCode.ExtendedDataReal:
-						record = new ExtendedDataReal(this._objectReader.ReadDouble());
-						break;
-					case DxfCode.ExtendedDataDist:
-						record = new ExtendedDataDistance(this._objectReader.ReadDouble());
-						break;
-					case DxfCode.ExtendedDataScale:
-						record = new ExtendedDataScale(this._objectReader.ReadDouble());
-						break;
-					//70(1070) A short int; 2 bytes
-					case DxfCode.ExtendedDataInteger16:
-						record = new ExtendedDataInteger16(this._objectReader.ReadShort());
-						break;
-					//71(1071) A long int; 4 bytes
-					case DxfCode.ExtendedDataInteger32:
-						record = new ExtendedDataInteger32((int)this._objectReader.ReadRawLong());
-						break;
-					default:
-						this._objectReader.ReadBytes((int)(endPos - this._objectReader.Position));
-						this._builder.Notify($"Unknown code for extended data: {dxfCode}", NotificationType.Warning);
-						return records;
+					System.Threading.Interlocked.Decrement(ref state.Outstanding);
+					continue;
 				}
 
-				records.Add(record);
-			}
+				// read the object type (seek the independent image view to the object's offset). Do not swallow the exception (a getEntityType
+				// failure means the file structure is corrupted; Failsafe does not cover this path, consistent with serial behavior).
+				ObjectType type = this.getEntityType(offset);
 
-			return records;
-		}
-
-		// Add the reactors to the template.
-		private void readReactorsAndDictionaryHandle(CadTemplate template)
-		{
-			//Numreactors S number of reactors in this object
-			int numberOfReactors = this._objectReader.ReadBitLong();
-
-			//Add the reactors to the template
-			for (int i = 0; i < numberOfReactors; ++i)
-				//[Reactors (soft pointer)]
-				template.ReactorsHandles.Add(this.handleReference());
-
-			bool flag = false;
-			//R2004+:
-			if (this.R2004Plus)
-				/*XDic Missing Flag
-				 * B
-				 * If 1, no XDictionary handle is stored for this object,
-				 * otherwise XDictionary handle is stored as in R2000 and earlier.
-				*/
-				flag = this._objectReader.ReadBit();
-
-			if (!flag)
-				//xdicobjhandle(hard owner)
-				template.XDictHandle = this.handleReference();
-
-			//R2013+:
-			if (this.R2013Plus)
-			{
-				//Has DS binary data B If 1 then this object has associated binary data stored in the data store
-				this._objectReader.ReadBit();
-			}
-		}
-
-		private void readXrefDependantBit(TableEntry entry)
-		{
-			if (this.R2007Plus)
-			{
-				//xrefindex+1 BS 70 subtract one from this value when read.
-				//After that, -1 indicates that this reference did not come from an xref,
-				//otherwise this value indicates the index of the blockheader for the xref from which this came.
-				short xrefindex = this._objectReader.ReadBitShort();
-
-				//Xdep B 70 dependent on an xref. (16 bit)
-				if (((uint)xrefindex & 0b100000000) > 0)
+				CadTemplate template = null;
+				try
 				{
-					entry.Flags |= StandardFlags.XrefDependent;
+					template = this.readObject(type);
 				}
-			}
-			else
-			{
-				//64-flag B 70 The 64-bit of the 70 group.
-				if (this._objectReader.ReadBit())
+				catch (Exception ex)
 				{
-					entry.Flags |= StandardFlags.Referenced;
+					if (!this._builder.Configuration.Failsafe)
+						throw;
+
+					if (this._classes.TryGetValue((short)type, out DxfClass dxf))
+					{
+						this._builder.Notify($"Could not read {dxf.DxfName} number {dxf.ClassNumber} with handle: {handle}", NotificationType.Error, ex);
+					}
+					else
+					{
+						this._builder.Notify($"Could not read {type} with handle: {handle}", NotificationType.Error, ex);
+					}
+				}
+				finally
+				{
+				// this object has finished decoding (all of its references were enqueued via handleReference during readObject).
+				// Decrement must happen after all of its references have been enqueued, so that when Outstanding reaches zero all references have been discovered.
+					System.Threading.Interlocked.Decrement(ref state.Outstanding);
 				}
 
-				//xrefindex + 1 BS 70 subtract one from this value when read.
-				//After that, -1 indicates that this reference did not come from an xref,
-				//otherwise this value indicates the index of the blockheader for the xref from which this came.
-				int xrefindex = this._objectReader.ReadBitShort() - 1;
-
-				//Xdep B 70 dependent on an xref. (16 bit)
-				if (this._objectReader.ReadBit())
-				{
-					entry.Flags |= StandardFlags.XrefDependent;
-				}
+				if (template != null)
+					state.Results.Add(template);
 			}
-		}
-
-		/// <summary>
-		/// Update the text reader and the handler reader at the end of the object position.
-		/// </summary>
-		private void updateHandleReader()
-		{
-			//RL: Size of object data in bits (number of bits before the handles),
-			//or the "endbit" of the pre-handles section.
-			long size = this._objectReader.ReadRawLong();
-
-			//Set the position to the handle section
-			this._handlesReader.SetPositionInBits(size + this._objectInitialPos);
-
-			if (this._version == ACadVersion.AC1021)
-			{
-				this._textReader = DwgStreamReaderBase.GetStreamHandler(this._version, HugeMemoryStream.Clone(this._memoryStream), this._reader.Encoding);
-				//"endbit" of the pre-handles section.
-				this._textReader.SetPositionByFlag(size + this._objectInitialPos - 1);
-			}
-
-			this._mergedReaders = new DwgMergedReader(this._objectReader, this._textReader, this._handlesReader);
 		}
 
 		private static bool looksLikeUtf16Le(byte[] buffer, int offset)
@@ -761,6 +520,191 @@ namespace ACadSharp.IO.DWG
 			}
 
 			return false;
+		}
+
+		/// <summary>
+		/// [PATCH] Clone an independent, separately-seekable view stream for the object/handles/text readers.
+		/// Memory mode: HugeMemoryStream zero-copy shared chunks / MemoryStream underlying buffer;
+		/// disk-cache mode: each opens its own independent FileStream (same temp file), holding an independent 64KB buffer with no cross-talk.
+		/// </summary>
+		private Stream CloneSectionStream(Stream src)
+		{
+			// [FIX] P3 parallel worker: build independent read-only cursor views directly from the shared image array (sharing the underlying array zero-copy,
+			// each sub-reader's cursor isolated from the others). Key point: under .NET 10, GetBuffer() on an array-backed MemoryStream throws
+			// UnauthorizedAccessException (1/3/4-arg constructors all throw); the original MemoryStream branch's catch fallback
+			// `ms.Position=0; ms.CopyTo(copy)` would read src(=worker._memoryStream, the underlying stream of _crcReader)
+			// to the end -> the _crcReader position gets polluted -> _objectReader.SetPositionInBits(end) ->
+			// ReadObjectType reads from the end of the stream -> type=256 -> all seed readObject calls return null -> BFS is completely empty
+			// (empirically: at STEP-1 crcPosAfterSize=off+2 was correct, and at the end of DIAG crcPos=stream end).
+			// Building the view directly from _sharedImage (=the underlying array of worker._memoryStream) bypasses GetBuffer entirely,
+			// and never calls src.Position/CopyTo, so the source stream position is unaffected.
+			if (this._sharedImage != null)
+				return new MemoryStream(this._sharedImage, 0, this._sharedImage.Length, false);
+
+			if (src is HugeMemoryStream huge)
+				return HugeMemoryStream.Clone(huge);
+
+			if (src is MemoryStream ms)
+			{
+				// serial path: src is a dynamically grown MemoryStream from upstream (GetBuffer is available); take its underlying array to build the view.
+				// Defensive: in case GetBuffer throws (a .NET 10 array-backed stream), save and restore the src position around the copy,
+				// so CopyTo does not push the src cursor to the end and pollute _crcReader (a defect of the original implementation).
+				try
+				{
+					return new MemoryStream(ms.GetBuffer());
+				}
+				catch
+				{
+					long savedPos = ms.Position;
+					ms.Position = 0;
+					var copy = new MemoryStream((int)ms.Length);
+					ms.CopyTo(copy);
+					ms.Position = savedPos; // [FIX] Restore the source stream position (the original implementation forgot to restore it -> polluted _crcReader)
+					copy.Position = 0;
+					return copy;
+				}
+			}
+
+			if (src is FileStream fs)
+			{
+				int slot = this._cloneSlot++;
+				while (this._diskViewStreams.Count <= slot)
+					// [PATCH] The clone opens the same temp file read-only; FileShare must include Write,
+					// because the main file is opened ReadWrite, so the clone's share mode must allow the main handle's write access (otherwise ERROR_SHARING_VIOLATION).
+					this._diskViewStreams.Add(new FileStream(fs.Name, FileMode.Open, FileAccess.Read, FileShare.Read | FileShare.Write | FileShare.Delete, 1 << 16, FileOptions.None));
+				Stream s = this._diskViewStreams[slot];
+				s.Position = 0; // will be overridden by SetPositionInBits
+				return s;
+			}
+
+			throw new NotSupportedException("不支持的解压映像流类型，无法克隆视图：" + src.GetType().Name);
+		}
+
+		private ObjectType getEntityType(long offset)
+		{
+			ObjectType type = ObjectType.INVALID;
+
+			// [PATCH] Reset the clone slots: the object/handles/text views used by this object are reused from the pool
+			this._cloneSlot = 0;
+
+			//Set the position to the entity to find
+			this._crcReader.Position = offset;
+
+			//MS : Size of object, not including the CRC
+			this._size = (uint)this._crcReader.ReadModularShort();
+
+			if (this._size <= 0U)
+				return type;
+
+			//remove the padding bits make sure the object stream ends on a byte boundary
+			uint sizeInBits = (uint)(this._size << 3);
+
+			//R2010+:
+			if (this.R2010Plus)
+			{
+				//MC : Size in bits of the handle stream (unsigned, 0x40 is not interpreted as sign).
+				//This includes the padding bits at the end of the handle stream
+				//(the padding bits make sure the object stream ends on a byte boundary).
+				ulong handleSize = this._crcReader.ReadModularChar();
+
+				//Find the handles offset
+				this._handleSectionOffset = (long)((ulong)this._crcReader.PositionInBits() + sizeInBits - handleSize);
+
+				//Create a handler section reader
+				this._objectReader = DwgStreamReaderBase.GetStreamHandler(this._version, this.CloneSectionStream(this._memoryStream), this._reader.Encoding);
+				this._objectReader.SetPositionInBits(this._crcReader.PositionInBits());
+
+				//set the initial position and get the object type
+				this._objectInitialPos = this._objectReader.PositionInBits();
+				type = this._objectReader.ReadObjectType();
+
+				//Create a handler section reader
+				this._handlesReader = DwgStreamReaderBase.GetStreamHandler(this._version, this.CloneSectionStream(this._memoryStream), this._reader.Encoding);
+				this._handlesReader.SetPositionInBits(this._handleSectionOffset);
+
+				//Create a text section reader
+				this._textReader = DwgStreamReaderBase.GetStreamHandler(this._version, this.CloneSectionStream(this._memoryStream), this._reader.Encoding);
+				this._textReader.SetPositionByFlag(this._handleSectionOffset - 1);
+
+				this._mergedReaders = new DwgMergedReader(this._objectReader, this._textReader, this._handlesReader);
+			}
+			else
+			{
+				//Create a handler section reader
+				this._objectReader = DwgStreamReaderBase.GetStreamHandler(this._version, this.CloneSectionStream(this._memoryStream), this._reader.Encoding);
+				this._objectReader.SetPositionInBits(this._crcReader.PositionInBits());
+
+				this._handlesReader = DwgStreamReaderBase.GetStreamHandler(this._version, this.CloneSectionStream(this._memoryStream), this._reader.Encoding);
+				this._textReader = this._objectReader;
+
+				//set the initial position and get the object type
+				this._objectInitialPos = this._objectReader.PositionInBits();
+				type = this._objectReader.ReadObjectType();
+			}
+
+			// [PATCH] Record the object's byte range: [offset, data start + size + 2 CRC bytes).
+			// The layout matches DwgObjectWriter.registerObject: MS size prefix + object data + CRC16.
+			if (this._objectRanges != null)
+			{
+				long dataStartByte = this._objectInitialPos >> 3;
+				this._objectStartOffset = offset;
+				this._objectTotalLength = (int)(dataStartByte + this._size + 2L - offset);
+			}
+
+			return type;
+		}
+
+		/// <summary>
+		/// Get the handle of the entity and saves the value to the <see cref="_handles"/>
+		/// </summary>
+		/// <returns>the handle to reference into the entity</returns>
+		private ulong handleReference()
+		{
+			return this.handleReference(0);
+		}
+
+		/// <summary>
+		/// Get the handle of the entity and saves the value to the <see cref="_handles"/>
+		/// </summary>
+		/// <returns>the handle to reference into the entity</returns>
+		private ulong handleReference(ulong handle)
+		{
+			//Read the handle
+			ulong value = this._handlesReader.HandleReference(handle);
+
+			if (value == 0)
+			{
+				return value;
+			}
+
+			// [PATCH] Lazy reading: when noExpand is null (full read) the behavior matches the original;
+			// otherwise, when a reference hits the noExpand set (model/paper-space block records, etc.), its children are not expanded.
+			if (this._noExpand != null && this._noExpand.Contains(value))
+			{
+				return value;
+			}
+
+			if (this._parallel)
+			{
+				// [PATCH] P3 parallel: shared claim set for atomic deduplication + shared reference queue.
+				// Claim.TryAdd succeeds only the first time => each handle is enqueued at most once (more efficient than the serial
+				// "lenient enqueue + dedup at dequeue"). Increment before Enqueue, guaranteeing that "queue non-empty OR Outstanding>0" always holds,
+				// so the termination check (queue empty AND Outstanding==0) never triggers early.
+				if (this._parallelState.Claim.TryAdd(value, 0))
+				{
+					System.Threading.Interlocked.Increment(ref this._parallelState.Outstanding);
+					this._parallelState.RefQueue.Enqueue(value);
+				}
+			}
+			else if (
+				!this._builder.TryGetObjectTemplate(value, out CadTemplate _) &&
+				!this._readedObjects.ContainsKey(value))
+			{
+				//Add the value to the handles queue to be processed
+				this._handles.Enqueue(value);
+			}
+
+			return value;
 		}
 
 		private CadTemplate read3dFace()
@@ -816,6 +760,77 @@ namespace ACadSharp.IO.DWG
 				if (!noFlags)
 					face.Flags = (InvisibleEdgeFlags)this._objectReader.ReadBitShort();
 			}
+
+			return template;
+		}
+
+		private CadTemplate readAcmBalloon()
+		{
+			AcmBalloon balloon = new AcmBalloon();
+			CadAcmBalloonTemplate template = new CadAcmBalloonTemplate(balloon);
+
+			this.readCommonEntityData(template);
+
+			this.readMechanicalEntity(template);
+
+			var unknown_position1 = this._mergedReaders.Read3BitDouble();
+			var unknown_position2 = this._mergedReaders.Read3BitDouble();
+
+			template.BomRowHandle = this.handleReference();
+			template.BlockHandle = this.handleReference();
+
+			var unknownHandle1 = this.handleReference();        // 0x0
+
+			return template;
+		}
+
+		private CadTemplate readAcmPartList()
+		{
+			AcmPartList partList = new AcmPartList();
+			CadAcmPartListTemplate template = new(partList);
+
+			this.readCommonEntityData(template);
+
+			this.readMechanicalEntity(template);
+
+			template.BomHandle = this.handleReference();           // ACMBOM:*A1 (AcmBom)
+			template.ItemFilterCustomHandle = this.handleReference();
+
+			// Handles to each data row (excluding the headers) of the BOM table follow.
+			// Then seemingly always 3 handles of value 0x0 follow
+
+			ulong handle;
+			while (true)
+			{
+				handle = this.handleReference();
+				if (handle == 0)
+				{
+					break;
+				}
+				template.RowHandles.Add(handle);
+			}
+
+			// ulong handle: 0x0
+			template.UnknownHandle1 = this.handleReference();        // 0x0
+			template.UnknownHandle2 = this.handleReference();        // 0x0
+
+			return template;
+		}
+
+		private CadTemplate readAcmPartRef()
+		{
+			AcmPartRef partref = new AcmPartRef();
+			CadAcmPartRefTemplate template = new CadAcmPartRefTemplate(partref);
+
+			this.readCommonEntityData(template);
+
+			this.readMechanicalEntity(template);
+
+			template.LineResHandle = this.handleReference();
+			template.UnknownHandle1 = this.handleReference();        // 0x0
+			template.DataEntryPartHandle = this.handleReference();
+
+			template.LayerHandle = this.handleReference();
 
 			return template;
 		}
@@ -1068,7 +1083,14 @@ namespace ACadSharp.IO.DWG
 			Block block = record.BlockEntity;
 
 			CadBlockRecordTemplate template = new CadBlockRecordTemplate(record);
-			this._builder.BlockRecordTemplates.Add(template);
+				// [PATCH] P3 parallel: BlockRecordTemplates is a shared List; concurrent Adds from multiple workers would race.
+				// Block records are a cold path (dozens to a few hundred per file); the BuilderLock overhead is negligible. BuildDocument reads
+				// this list after all workers have finished, so only the concurrent Adds during decoding need protection.
+			if (this._parallel)
+				lock (this._parallelState.BuilderLock)
+					this._builder.BlockRecordTemplates.Add(template);
+			else
+				this._builder.BlockRecordTemplates.Add(template);
 
 			this.readCommonNonEntityData(template);
 
@@ -1173,9 +1195,25 @@ namespace ACadSharp.IO.DWG
 			//R2004+:
 			if (this.R2004Plus)
 			{
+					// [PATCH] Lazy reading: when the block record itself is in the noExpand set (e.g. *MODEL_SPACE/*PAPER_SPACE),
+					// its owned entity handles are still read and recorded one by one (already-decoded entities -- such as window candidates -- are merged into that
+					// block in the build phase via OwnedObjectsHandlers+TryGetCadObject), but it is not enqueued for BFS,
+					// avoiding decoding all of the block's entities (model space can reach tens of thousands).
+					// [PATCH] Streaming scan (suppressBlockExpand, spatial index build): *MODEL_SPACE is the index target and
+					// must be expanded; the owned entities of all other block records (block definitions/paper space) are never enqueued --
+					// the index only needs model-space entities (INSERT provides the insertion point; block content is not needed).
+				bool suppressOwnedExpand = (this._noExpand != null && this._noExpand.Contains(template.CadObject.Handle))
+					|| (this._suppressBlockExpand
+						&& this._builder.HeaderHandles.MODEL_SPACE != template.CadObject.Handle
+						&& this._builder.HeaderHandles.PAPER_SPACE != template.CadObject.Handle);
 				for (int i = 0; i < nownedObjects; ++i)
+				{
 					//H[ENTITY(hard owner)] Repeats “Owned Object Count” times.
-					template.OwnedObjectsHandlers.Add(this.handleReference());
+					if (suppressOwnedExpand)
+						template.OwnedObjectsHandlers.Add(this._handlesReader.HandleReference());
+					else
+						template.OwnedObjectsHandlers.Add(this.handleReference());
+				}
 			}
 
 			//Common:
@@ -1198,7 +1236,7 @@ namespace ACadSharp.IO.DWG
 			return template;
 		}
 
-		private void readBorderStyle(TableEntity.CellBorder border)
+		private void readBorderStyle(TableStyle.CellBorder border)
 		{
 			//Line weight BS 274-279
 			border.LineWeight = (LineWeightType)this._mergedReaders.ReadBitShort();
@@ -1206,6 +1244,27 @@ namespace ACadSharp.IO.DWG
 			border.IsInvisible = !this._mergedReaders.ReadBit();
 			//Border color CMC 64-69
 			border.Color = this._mergedReaders.ReadCmColor(this.R2004Pre);
+		}
+
+		private BreakInfo readBreakInfo()
+		{
+			BreakInfo breakInfo = new BreakInfo();
+
+			//BL	90	Segment index
+			breakInfo.SegmentIndex = this._objectReader.ReadBitLong();
+
+			//Start/end point pairs
+			int startEndPointCount = this._objectReader.ReadBitLong();
+			for (int sep = 0; sep < startEndPointCount; sep++)
+			{
+				breakInfo.StartEndPoints.Add(new StartEndPointPair(
+					//3BD	11	Start Point
+					this._objectReader.Read3BitDouble(),
+					//3BD	12	End point
+					this._objectReader.Read3BitDouble()));
+			}
+
+			return breakInfo;
 		}
 
 		private CadTemplate readCadImage(CadWipeoutBase image)
@@ -1233,8 +1292,8 @@ namespace ACadSharp.IO.DWG
 				image.ClipMode = this._objectReader.ReadBit() ? ClipMode.Inside : ClipMode.Outside;
 			}
 
-			image.ClipType = (ClipType)this._objectReader.ReadBitShort();
-			switch (image.ClipType)
+			var clipType = (ClipType)this._objectReader.ReadBitShort();
+			switch (clipType)
 			{
 				case ClipType.Rectangular:
 					image.ClipBoundaryVertices.Add(this._objectReader.Read2RawDouble());
@@ -1284,7 +1343,26 @@ namespace ACadSharp.IO.DWG
 			return template;
 		}
 
-		private void readCommonDictionary(CadDictionaryTemplate template)
+		private void readCommonData(CadTemplate template)
+		{
+			if (this._version >= ACadVersion.AC1015 && this._version < ACadVersion.AC1024)
+			{
+				//Obj size RL size of object in bits, not including end handles
+				this.updateHandleReader();
+			}
+
+			//Common:
+			//Handle H 5 code 0, length followed by the handle bytes.
+			template.CadObject.Handle = this._objectReader.HandleReference();
+
+			//Extended object data, if any
+			this.readExtendedData(template);
+		}
+
+		/// <param name="isWithDefault">
+		/// true means reading ACDBDICTIONARYWDFLT: no R14 unknown byte; the cloning/hard-owner flags exist in all versions.
+		/// </param>
+		private void readCommonDictionary(CadDictionaryTemplate template, bool isWithDefault = false)
 		{
 			this.readCommonNonEntityData(template);
 
@@ -1292,14 +1370,15 @@ namespace ACadSharp.IO.DWG
 			//Numitems L number of dictonary items
 			int nentries = this._objectReader.ReadBitLong();
 
-			//R14 Only:
-			if (this._version == ACadVersion.AC1014)
+			//R14 Only (plain DICTIONARY only; DICTIONARYWDFLT has no such byte):
+			if (this._version == ACadVersion.AC1014 && !isWithDefault)
 			{
 				//Unknown R14 RC Unknown R14 byte, has always been 0
 				byte zero = this._objectReader.ReadByte();
 			}
-			//R2000 +:
-			if (this.R2000Plus)
+
+			//R2000 + (DICTIONARYWDFLT has the cloning/hard-owner flags in all versions):
+			if (this.R2000Plus || isWithDefault)
 			{
 				//Cloning flag BS 281
 				template.CadObject.ClonningFlags = (DictionaryCloningFlags)this._objectReader.ReadBitShort();
@@ -1325,13 +1404,178 @@ namespace ACadSharp.IO.DWG
 			}
 		}
 
+		private void readCommonDimensionAlignedData(CadDimensionTemplate template)
+		{
+			DimensionAligned dimension = (DimensionAligned)template.CadObject;
+
+			//Common:
+			//13 - pt 3BD 13 See DXF documentation.
+			dimension.FirstPoint = this._objectReader.Read3BitDouble();
+			//14 - pt 3BD 14 See DXF documentation.
+			dimension.SecondPoint = this._objectReader.Read3BitDouble();
+			//10 - pt 3BD 10 See DXF documentation.
+			dimension.DefinitionPoint = this._objectReader.Read3BitDouble();
+
+			//Ext ln rot BD 52 Extension line rotation; see DXF documentation.
+			dimension.ExtLineRotation = this._objectReader.ReadBitDouble();
+		}
+
+		private void readCommonDimensionData(CadDimensionTemplate template)
+		{
+			this.readCommonEntityData(template);
+
+			Dimension dimension = template.CadObject as Dimension;
+
+			//R2010:
+			if (this.R2010Plus)
+				//Version RC 280 0 = R2010
+				dimension.Version = this._objectReader.ReadByte();
+
+			//Common:
+			//Extrusion 3BD 210
+			dimension.Normal = this._objectReader.Read3BitDouble();
+			//Text midpt 2RD 11 See DXF documentation.
+			XY midpt = this._objectReader.Read2RawDouble();
+			//Elevation BD 11 Z - coord for the ECS points(11, 12, 16).
+			//12 (The 16 remains (0,0,0) in entgets of this entity,
+			//since the 16 is not used in this type of dimension
+			//and is not present in the binary form here.)
+			double elevation = this._objectReader.ReadBitDouble();
+			dimension.TextMiddlePoint = new XYZ(midpt.X, midpt.Y, elevation);
+
+			//Flags 1 RC 70 Non - bit - pair - coded.
+			//NOT the 70 group, but helps define it.
+			//Apparently only the two lowest bit are used:
+			//76543210:
+			//Bit 0 : The OPPOSITE of bit 7(128) of 70.
+			//Bit 1 : Same as bit 5(32) of the 70(but 32 is not doc'd by ACAD).
+			//The actual 70 - group value comes from 3 things:
+			//6 for being an ordinate DIMENSION, plus whatever bits "Flags 1" and "Flags 2" specify.
+
+			byte flags = this._objectReader.ReadByte();
+			dimension.IsTextUserDefinedLocation = (flags & 0b01) == 0;
+
+			//User text TV 1
+			dimension.Text = this._textReader.ReadVariableText();
+
+			//Text rot BD 53 See DXF documentation.
+			dimension.TextRotation = this._objectReader.ReadBitDouble();
+			//Horiz dir BD 51 See DXF documentation.
+			dimension.HorizontalDirection = this._objectReader.ReadBitDouble();
+
+			///<see cref="DwgObjectWriter.writeCommonDimensionData"></see>
+			//TODO: readDimension insert scale and rotation not implemented
+
+			//Ins X - scale BD 41 Undoc'd. These apply to the insertion of the
+			//Ins Y - scale BD 42 anonymous block. None of them can be
+			//Ins Z - scale BD 43 dealt with via entget/entmake/entmod.
+			var insertionScaleFactor = new XYZ(this._objectReader.ReadBitDouble(), this._objectReader.ReadBitDouble(), this._objectReader.ReadBitDouble());
+
+			//Ins rotation BD 54 The last 2(43 and 54) are reported by DXFOUT(when not default values).
+			//ALL OF THEM can be set via DXFIN, however.
+			var insertionRotation = this._objectReader.ReadBitDouble();
+
+			//R2000 +:
+			if (this.R2000Plus)
+			{
+				//Attachment Point BS 71
+				dimension.AttachmentPoint = (AttachmentPointType)this._objectReader.ReadBitShort();
+				//Linespacing Style BS 72
+				dimension.LineSpacingStyle = (LineSpacingStyleType)this._objectReader.ReadBitShort();
+				//Linespacing Factor BD 41
+				dimension.LineSpacingFactor = this._objectReader.ReadBitDouble();
+				//Actual Measurement BD 42
+				this._objectReader.ReadBitDouble();
+			}
+
+			//R2007 +:
+			if (this.R2007Plus)
+			{
+				//Unknown B 73
+				this._objectReader.ReadBit();
+				//Flip arrow1 B 74
+				dimension.FlipArrow1 = this._objectReader.ReadBit();
+				//Flip arrow2 B 75
+				dimension.FlipArrow2 = this._objectReader.ReadBit();
+			}
+
+			//Common:
+			//12 - pt 2RD 12 See DXF documentation.
+			XY pt = this._objectReader.Read2RawDouble();
+			dimension.InsertionPoint = new XYZ((double)pt.X, (double)pt.Y, elevation);
+		}
+
+		[Obsolete("Can be moved to the common dimension data")]
+		private void readCommonDimensionHandles(CadDimensionTemplate template)
+		{
+			//Common Entity Handle Data
+			//H 3 DIMSTYLE(hard pointer)
+			template.StyleHandle = this.handleReference();
+			//H 2 anonymous BLOCK(hard pointer)
+			template.BlockHandle = this.handleReference();
+		}
+
+		// Read the common entity format.
+		private void readCommonEntityData(CadEntityTemplate template)
+		{
+			//Get the cad object as an entity
+			Entity entity = template.CadObject;
+
+			this.readCommonData(template);
+
+			//Graphic present Flag B 1 if a graphic is present
+			if (this._objectReader.ReadBit())
+			{
+				//Graphics X if graphicpresentflag is 1, the graphic goes here.
+				//See the section on Proxy Entity Graphics for the format of this section.
+
+				//R13 - R007:
+				//RL: Size of graphic image in bytes
+				//R2010 +:
+				//BLL: Size of graphic image in bytes
+				long graphicImageSize = this._version >= ACadVersion.AC1024 ?
+					this._objectReader.ReadBitLongLong() : this._objectReader.ReadRawLong();
+
+				//Common:
+				//X: The graphic image
+				template.ProxyGraphics = this._objectReader.ReadBytes((int)graphicImageSize);
+
+				//Cache the raw bytes on the entity so the writer can write them back
+				entity.ProxyGraphicsData = template.ProxyGraphics;
+			}
+
+			//R13 - R14 Only:
+			if (this._version >= ACadVersion.AC1012 && this._version <= ACadVersion.AC1014)
+			{
+				this.updateHandleReader();
+			}
+
+			this.readEntityMode(template);
+		}
+
+		private void readCommonNonEntityData(CadTemplate template)
+		{
+			this.readCommonData(template);
+
+			//R13-R14 Only:
+			//Obj size RL size of object in bits, not including end handles
+			if (this.R13_14Only)
+				this.updateHandleReader();
+
+			//[Owner ref handle (soft pointer)]
+			template.OwnerHandle = this.handleReference(template.CadObject.Handle);
+
+			//Read the cad object reactors
+			this.readReactorsAndDictionaryHandle(template);
+		}
+
 		private void readCommonProxyData(IProxy proxy)
 		{
 			//Class ID BL 91
 			//It seems to be the same for all versions
-			int classId = this._mergedReaders.ReadBitLong(); ;
+			int classNumber = this._mergedReaders.ReadBitLong();
 
-			if (this._classes.TryGetValue((short)classId, out DxfClass dxfClass))
+			if (this._classes.TryGetValue((short)classNumber, out DxfClass dxfClass))
 			{
 				proxy.DxfClass = dxfClass;
 			}
@@ -1369,13 +1613,59 @@ namespace ACadSharp.IO.DWG
 			}
 			else
 			{
-				return;
+				var itemClassId = this._mergedReaders.ReadBitLong();
 			}
 
 			//Common:
 			//Databits X databits, however many there are to the handles
+			//The retained data has no length of its own, it runs up to the handle section
+			if (this._handleSectionOffset > 0)
+			{
+				long dataBits = this._handleSectionOffset - this._objectReader.PositionInBits();
+				if (dataBits > 0)
+				{
+					int dataBytes = (int)((dataBits + 7L) / 8L);
+					byte[] data = this._objectReader.ReadBytes(dataBytes);
 
-			//TODO: Investigate how to read the data in proxies, it can contain data, strings and handles
+					proxy.Data = new MemoryStream(data, writable: false);
+				}
+			}
+		}
+
+		private CadTemplate readDbColor()
+		{
+			BookColor bookColor = new();
+			CadNonGraphicalObjectTemplate template = new(bookColor);
+
+			this.readCommonNonEntityData(template);
+
+			short colorIndex = this._objectReader.ReadBitShort();
+
+			if (this.R2004Plus)
+			{
+				uint trueColor = (uint)this._objectReader.ReadBitLong();
+				byte flags = this._objectReader.ReadByte();
+
+				if ((flags & 1U) > 0U)
+				{
+					bookColor.ColorName = this._textReader.ReadVariableText();
+				}
+
+				if ((flags & 2U) > 0U)
+				{
+					bookColor.BookName = this._textReader.ReadVariableText();
+				}
+
+				byte[] arr = LittleEndianConverter.Instance.GetBytes(trueColor);
+
+				bookColor.Color = new Color(arr[2], arr[1], arr[0]);
+			}
+			else
+			{
+				bookColor.Color = new Color(colorIndex);
+			}
+
+			return template;
 		}
 
 		private CadTemplate readDictionary()
@@ -1409,10 +1699,230 @@ namespace ACadSharp.IO.DWG
 			CadDictionaryWithDefault dictionary = new CadDictionaryWithDefault();
 			CadDictionaryWithDefaultTemplate template = new CadDictionaryWithDefaultTemplate(dictionary);
 
-			this.readCommonDictionary(template);
+			//[FIX] Consistent with the writer: DICTIONARYWDFLT has no R14 unknown byte; the cloning/hard-owner flags exist in all versions
+			this.readCommonDictionary(template, isWithDefault: true);
 
 			//H 7 Default entry (hard pointer)
 			template.DefaultEntryHandle = this.handleReference();
+
+			return template;
+		}
+
+		private CadTemplate readDimAligned()
+		{
+			DimensionAligned dimension = new DimensionAligned();
+			CadDimensionTemplate template = new CadDimensionTemplate(dimension);
+
+			this.readCommonDimensionData(template);
+
+			this.readCommonDimensionAlignedData(template);
+
+			this.readCommonDimensionHandles(template);
+
+			return template;
+		}
+
+		private CadTemplate readDimAngular3pt()
+		{
+			DimensionAngular3Pt dimension = new DimensionAngular3Pt();
+			CadDimensionTemplate template = new CadDimensionTemplate(dimension);
+
+			this.readCommonDimensionData(template);
+
+			//Common:
+			//10 - pt 3BD 10 See DXF documentation.
+			dimension.DefinitionPoint = this._objectReader.Read3BitDouble();
+			//13 - pt 3BD 13 See DXF documentation.
+			dimension.FirstPoint = this._objectReader.Read3BitDouble();
+			//14 - pt 3BD 14 See DXF documentation.
+			dimension.SecondPoint = this._objectReader.Read3BitDouble();
+			//15-pt 3BD 15 See DXF documentation.
+			dimension.AngleVertex = this._objectReader.Read3BitDouble();
+
+			this.readCommonDimensionHandles(template);
+
+			return template;
+		}
+
+		private CadTemplate readDimArc()
+		{
+			DimensionArc dimension = new DimensionArc();
+			CadDimensionTemplate template = new CadDimensionTemplate(dimension);
+
+			this.readCommonDimensionData(template);
+
+			//Common:
+			//Dim line arc point 3BD 10
+			dimension.DefinitionPoint = this._objectReader.Read3BitDouble();
+			//Extension line 1 point 3BD 13
+			dimension.FirstPoint = this._objectReader.Read3BitDouble();
+			//Extension line 2 point 3BD 14
+			dimension.SecondPoint = this._objectReader.Read3BitDouble();
+			//Arc center 3BD 15
+			dimension.Center = this._objectReader.Read3BitDouble();
+			//Is partial? B 70
+			dimension.IsPartial = this._objectReader.ReadBit();
+			//Start angle (radians) BD 40
+			dimension.StartAngle = this._objectReader.ReadBitDouble();
+			//End angle (radians) BD 41
+			dimension.EndAngle = this._objectReader.ReadBitDouble();
+			//Has leader? B 71
+			dimension.HasLeader = this._objectReader.ReadBit();
+			//Leader point 1 3BD 16
+			dimension.LeaderPoint1 = this._objectReader.Read3BitDouble();
+			//Leader point 2 3BD 17
+			dimension.LeaderPoint2 = this._objectReader.Read3BitDouble();
+
+			this.readCommonDimensionHandles(template);
+
+			return template;
+		}
+
+		private CadTemplate readDimDiameter()
+		{
+			DimensionDiameter dimension = new DimensionDiameter();
+			CadDimensionTemplate template = new CadDimensionTemplate(dimension);
+
+			this.readCommonDimensionData(template);
+
+			//Common:
+			//15-pt 3BD 15 See DXF documentation.
+			dimension.AngleVertex = this._objectReader.Read3BitDouble();
+			//10 - pt 3BD 10 See DXF documentation.
+			dimension.DefinitionPoint = this._objectReader.Read3BitDouble();
+			//Leader len D 40 Leader length.
+			dimension.LeaderLength = this._objectReader.ReadBitDouble();
+
+			this.readCommonDimensionHandles(template);
+
+			return template;
+		}
+
+		private CadTemplate readDimensionAssociation()
+		{
+			DimensionAssociation association = new DimensionAssociation();
+			CadDimensionAssociationTemplate template = new CadDimensionAssociationTemplate(association);
+
+			this.readCommonNonEntityData(template);
+
+			// [FIX] The field order was previously reversed relative to the writer/ODA spec (libredwg dwg2.spec DIMASSOC):
+			// the spec order is BL associativity(90) / B trans_space(70) / RC rotated_type(71)
+			// / H dimensionobj(330). The old implementation read the 330 handle first, so reading AutoCAD-native files
+			// misaligned all association references, and after writing back AutoCAD dropped the dimension associations (circle radius annotation associations lost).
+			//90
+			association.AssociativityFlags = (AssociativityFlags)this._mergedReaders.ReadBitLong();
+			//70
+			association.IsTransSpace = this._mergedReaders.ReadBit();
+			//71
+			association.RotatedDimensionType = (RotatedDimensionType)this._mergedReaders.ReadByte();
+			//330
+			template.DimensionHandle = this.handleReference();
+
+			if (association.AssociativityFlags.HasFlag(AssociativityFlags.FirstPointReference))
+			{
+				template.FirstPointRef = this.readOsnapPointRef();
+			}
+
+			if (association.AssociativityFlags.HasFlag(AssociativityFlags.SecondPointReference))
+			{
+				template.SecondPointRef = this.readOsnapPointRef();
+			}
+
+			if (association.AssociativityFlags.HasFlag(AssociativityFlags.ThirdPointReference))
+			{
+				template.ThirdPointRef = this.readOsnapPointRef();
+			}
+
+			if (association.AssociativityFlags.HasFlag(AssociativityFlags.FourthPointReference))
+			{
+				template.FourthPointRef = this.readOsnapPointRef();
+			}
+
+			return template;
+		}
+
+		private CadTemplate readDimLine2pt()
+		{
+			DimensionAngular2Line dimension = new DimensionAngular2Line();
+			CadDimensionTemplate template = new CadDimensionTemplate(dimension);
+
+			this.readCommonDimensionData(template);
+
+			//Common:
+			//16-pt 2RD 16 See DXF documentation.
+			XY xy = this._objectReader.Read2RawDouble();
+			dimension.DimensionArc = new XYZ(xy.X, xy.Y, dimension.TextMiddlePoint.Z);
+
+			//13 - pt 3BD 13 See DXF documentation.
+			dimension.FirstPoint = this._objectReader.Read3BitDouble();
+			//14 - pt 3BD 14 See DXF documentation.
+			dimension.SecondPoint = this._objectReader.Read3BitDouble();
+			//15-pt 3BD 15 See DXF documentation.
+			dimension.AngleVertex = this._objectReader.Read3BitDouble();
+			//10 - pt 3BD 10 See DXF documentation.
+			dimension.DefinitionPoint = this._objectReader.Read3BitDouble();
+
+			this.readCommonDimensionHandles(template);
+
+			return template;
+		}
+
+		private CadTemplate readDimLinear()
+		{
+			DimensionLinear dimension = new DimensionLinear();
+			CadDimensionTemplate template = new CadDimensionTemplate(dimension);
+
+			this.readCommonDimensionData(template);
+
+			this.readCommonDimensionAlignedData(template);
+
+			//Dim rot BD 50 Linear dimension rotation; see DXF documentation.
+			dimension.Rotation = this._objectReader.ReadBitDouble();
+
+			this.readCommonDimensionHandles(template);
+
+			return template;
+		}
+
+		private CadTemplate readDimOrdinate()
+		{
+			DimensionOrdinate dimension = new DimensionOrdinate();
+			CadDimensionTemplate template = new CadDimensionTemplate(dimension);
+
+			this.readCommonDimensionData(template);
+
+			//Common:
+			//10 - pt 3BD 10 See DXF documentation.
+			dimension.DefinitionPoint = this._objectReader.Read3BitDouble();
+			//13 - pt 3BD 13 See DXF documentation.
+			dimension.FeatureLocation = this._objectReader.Read3BitDouble();
+			//14 - pt 3BD 14 See DXF documentation.
+			dimension.LeaderEndpoint = this._objectReader.Read3BitDouble();
+
+			byte flags = this._objectReader.ReadByte();
+			dimension.IsOrdinateTypeX = (flags & 0b01) != 0;
+
+			this.readCommonDimensionHandles(template);
+
+			return template;
+		}
+
+		private CadTemplate readDimRadius()
+		{
+			DimensionRadius dimension = new DimensionRadius();
+			CadDimensionTemplate template = new CadDimensionTemplate(dimension);
+
+			this.readCommonDimensionData(template);
+
+			//Common:
+			//10 - pt 3BD 10 See DXF documentation.
+			dimension.DefinitionPoint = this._objectReader.Read3BitDouble();
+			//15-pt 3BD 15 See DXF documentation.
+			dimension.AngleVertex = this._objectReader.Read3BitDouble();
+			//Leader len D 40 Leader length.
+			dimension.LeaderLength = this._objectReader.ReadBitDouble();
+
+			this.readCommonDimensionHandles(template);
 
 			return template;
 		}
@@ -1819,6 +2329,315 @@ namespace ACadSharp.IO.DWG
 			return template;
 		}
 
+		private void readEntityMode(CadEntityTemplate template)
+		{
+			//Get the cad object as an entity
+			Entity entity = template.CadObject;
+
+			//Common:
+			//6B : Flags
+			//Entmode BB entity mode
+			template.EntityMode = this._objectReader.Read2Bits();
+
+			//FE: Entity mode(entmode). Generally, this indicates whether or not the owner
+			//relative handle reference is present.The values go as follows:
+
+			//00 : The owner relative handle reference is present.
+			//Applies to the following:
+			//VERTEX, ATTRIB, and SEQEND.
+			//BLOCK, ENDBLK, and the defining entities in all
+			//block defs except *MODEL_SPACE and * PAPER_SPACE.
+
+			//01 : PSPACE entity without a owner relative handle ref.
+			//10 : MSPACE entity without a owner relative handle ref.
+			//11 : Not used.
+
+			if (template.EntityMode == 0)
+			{
+				template.OwnerHandle = this._handlesReader.HandleReference(entity.Handle);
+			}
+			else if (template.EntityMode == 1)
+			{
+				// [PATCH] Streaming scan: when SkipEntityTracking is set, do not add to the dead-storage list (the caller releases it via PruneTemplate)
+				// [PATCH] P3 parallel: the entity bypass list (PaperSpaceEntities) is dead storage on the DWG path
+				// (entities are assembled via template.Build; DwgDocumentBuilder is an internal class with no external readers),
+				// so parallel workers skip its writes, eliminating the 1.89M-per-file hot contention point.
+				if (!this._builder.SkipEntityTracking && !this._parallel)
+					this._builder.PaperSpaceEntities.Add(entity);
+			}
+			else if (template.EntityMode == 2)
+			{
+				if (!this._builder.SkipEntityTracking && !this._parallel)
+					this._builder.ModelSpaceEntities.Add(entity);
+			}
+
+			//Numreactors BL number of persistent reactors attached to this object
+			this.readReactorsAndDictionaryHandle(template);
+
+			//R13-R14 Only:
+			if (this.R13_14Only)
+			{
+				//8 LAYER (hard pointer)
+				template.LayerHandle = this.handleReference();
+
+				//Isbylayerlt B 1 if bylayer linetype, else 0
+				if (!this._objectReader.ReadBit())
+					//6 [LTYPE (hard pointer)] (present if Isbylayerlt is 0)
+					template.LineTypeHandle = this.handleReference();
+			}
+
+			//R13-R2000 Only:
+			//previous/next handles present if Nolinks is 0.
+			//Nolinks B 1 if major links are assumed +1, -1, else 0 For R2004+this always has value 1 (links are not used)
+			if (!this.R2004Plus && !this._objectReader.ReadBit())
+			{
+				//[PREVIOUS ENTITY (relative soft pointer)]
+				template.PrevEntity = this.handleReference(entity.Handle);
+				//[NEXT ENTITY (relative soft pointer)]
+				template.NextEntity = this.handleReference(entity.Handle);
+			}
+			else if (!this.R2004Plus)
+			{
+				if (!this._readedObjects.ContainsKey(entity.Handle - 1UL))
+				{
+					this._handles.Enqueue(entity.Handle - 1UL);
+				}
+				if (!this._readedObjects.ContainsKey(entity.Handle + 1UL))
+				{
+					this._handles.Enqueue(entity.Handle + 1UL);
+				}
+			}
+
+			//Color	CMC(B)	62
+			entity.Color = this._objectReader.ReadEnColor(out Transparency transparency, out bool colorFlag);
+			entity.Transparency = transparency;
+
+			//R2004+:
+			if ((this._version >= ACadVersion.AC1018) && colorFlag)
+				//[Color book color handle (hard pointer)]
+				template.ColorHandle = this.handleReference();
+
+			//Ltype scale	BD	48
+			entity.LineTypeScale = this._objectReader.ReadBitDouble();
+
+			if (!(this._version >= ACadVersion.AC1015))
+			{
+				//Common:
+				//Invisibility BS 60
+				entity.IsInvisible = (this._objectReader.ReadBitShort() & 1) == 1;
+
+				return;
+			}
+
+			//R2000+:
+			//8 LAYER (hard pointer)
+			template.LayerHandle = this.handleReference();
+
+			//Ltype flags BB 00 = bylayer, 01 = byblock, 10 = continous, 11 = linetype handle present at end of object
+			template.LtypeFlags = this._objectReader.Read2Bits();
+
+			if (template.LtypeFlags == 3)
+				//6 [LTYPE (hard pointer)] present if linetype flags were 11
+				template.LineTypeHandle = this.handleReference();
+
+			//R2007+:
+			if (this.R2007Plus)
+			{
+				//Material flags BB 00 = bylayer, 01 = byblock, 11 = material handle present at end of object
+				if (this._objectReader.Read2Bits() == 3)
+				{
+					//MATERIAL present if material flags were 11
+					template.MaterialHandle = this.handleReference();
+				}
+
+				//Shadow flags RC
+				this._objectReader.ReadByte();
+			}
+
+			//R2000 +:
+			//Plotstyle flags	BB	00 = bylayer, 01 = byblock, 11 = plotstyle handle present at end of object
+			if (this._objectReader.Read2Bits() == 3)
+			{
+				//PLOTSTYLE (hard pointer) present if plotstyle flags were 11
+				long plotstyleFlags = (long)this.handleReference();
+			}
+
+			//R2007 +:
+			if (this.R2010Plus)
+			{
+				//Material flags BB 00 = bylayer, 01 = byblock, 11 = material handle present at end of object
+				if (this._objectReader.ReadBit())
+				{
+					//If has full visual style, the full visual style handle (hard pointer).
+					long n = (long)this.handleReference();
+				}
+				if (this._objectReader.ReadBit())
+				{
+					//If has full visual style, the full visual style handle (hard pointer).
+					long n = (long)this.handleReference();
+				}
+				//Shadow flags RC
+				if (this._objectReader.ReadBit())
+				{
+					//If has full visual style, the full visual style handle (hard pointer).
+					long n = (long)this.handleReference();
+				}
+			}
+
+			//Common:
+			//Invisibility BS 60
+			entity.IsInvisible = (this._objectReader.ReadBitShort() & 1) == 1;
+
+			//R2000+:
+			//Lineweight RC 370
+			entity.LineWeight = CadUtils.ToValue(this._objectReader.ReadByte());
+		}
+
+		private void readExtendedData(CadTemplate template)
+		{
+			//EED directly follows the entity handle.
+			//Each application's data is structured as follows:
+			//|Length|Application handle|Data items|
+
+		//EED size BS size of extended entity data, if any
+		short size = this._objectReader.ReadBitShort();
+
+		while (size != 0)
+			{
+				//App handle
+				ulong appHandle = this._objectReader.HandleReference();
+				long endPos = this._objectReader.Position + size;
+
+				//template.ExtendedData
+				List<ExtendedDataRecord> edata = this.readExtendedDataRecords(endPos);
+
+				template.EDataTemplate.Add(appHandle, edata);
+
+				size = this._objectReader.ReadBitShort();
+			}
+		}
+
+		private List<ExtendedDataRecord> readExtendedDataRecords(long endPos)
+		{
+			List<ExtendedDataRecord> records = new List<ExtendedDataRecord>();
+
+			while (this._objectReader.Position < endPos)
+			{
+				//Each data item has a 1-byte code (DXF group code minus 1000) followed by the value.
+				DxfCode dxfCode = (DxfCode)(1000 + this._objectReader.ReadByte());
+
+				ExtendedDataRecord record = null;
+
+				switch (dxfCode)
+				{
+					//0 (1000) String.
+					//R13-R2004: 1st byte of value is the length N; this is followed by a 2-byte short indicating the codepage, followed by N single-byte characters.
+					//R2007 +: 2 - byte length N, followed by N Unicode characters(2 bytes each).
+					case DxfCode.ExtendedDataAsciiString:
+					case DxfCode.ExtendedDataRegAppName:
+						//1 (1001) This one seems to be invalid; can't even use as a string inside braces.
+						//This would be a registered application that this data relates to, but we've already had that above,
+						//so it would be redundant or irrelevant here.
+						record = new ExtendedDataString(this._objectReader.ReadTextUnicode());
+						break;
+					case DxfCode.ExtendedDataControlString:
+						//2 (1002) A '{' or '}'; 1 byte; ASCII 0 means '{', ASCII 1 means '}'
+						record = new ExtendedDataControlString(this._objectReader.ReadByte() == 1);
+						break;
+					case DxfCode.ExtendedDataLayerName:
+						//3 (1003) A layer table reference. The value is the handle of the layer;
+						//it's 8 bytes -- even if the leading ones are 0. It's not a string; read
+						//it as hex, as usual for handles. (There's no length specifier this time.)
+						//Even layer 0 is referred to by handle here.
+						byte[] arr = this._objectReader.ReadBytes(8);
+						ulong handle = BigEndianConverter.Instance.ToUInt64(arr);
+						record = new ExtendedDataLayer(handle);
+						break;
+					case DxfCode.ExtendedDataBinaryChunk:
+						//4 (1004) Binary chunk. The first byte of the value is a char giving the length; the bytes follow.
+						record = new ExtendedDataBinaryChunk(this._objectReader.ReadBytes(this._objectReader.ReadByte()));
+						break;
+					case DxfCode.ExtendedDataHandle:
+						//5 (1005) An entity handle reference.
+						//The value is given as 8 bytes -- even if the leading ones are 0.
+						//It's not a string; read it as hex, as usual for handles.
+						//(There's no length specifier this time.)
+						arr = this._objectReader.ReadBytes(8);
+						handle = BigEndianConverter.Instance.ToUInt64(arr);
+						record = new ExtendedDataHandle(handle);
+						break;
+					//10 - 13 (1010 - 1013)
+					case DxfCode.ExtendedDataXCoordinate:
+						//Points; 24 bytes(XYZ)-- 3 doubles
+						record = new ExtendedDataCoordinate(
+							new XYZ(
+								this._objectReader.ReadDouble(),
+								this._objectReader.ReadDouble(),
+								this._objectReader.ReadDouble()
+								)
+							);
+						break;
+					case DxfCode.ExtendedDataWorldXCoordinate:
+						//Points; 24 bytes(XYZ)-- 3 doubles
+						record = new ExtendedDataWorldCoordinate(
+							new XYZ(
+								this._objectReader.ReadDouble(),
+								this._objectReader.ReadDouble(),
+								this._objectReader.ReadDouble()
+								)
+							);
+						break;
+					case DxfCode.ExtendedDataWorldXDisp:
+						//Points; 24 bytes(XYZ)-- 3 doubles
+						record = new ExtendedDataDisplacement(
+							new XYZ(
+								this._objectReader.ReadDouble(),
+								this._objectReader.ReadDouble(),
+								this._objectReader.ReadDouble()
+								)
+							);
+						break;
+					case DxfCode.ExtendedDataWorldXDir:
+						//Points; 24 bytes(XYZ)-- 3 doubles
+						record = new ExtendedDataDirection(
+							new XYZ(
+								this._objectReader.ReadDouble(),
+								this._objectReader.ReadDouble(),
+								this._objectReader.ReadDouble()
+								)
+							);
+						break;
+					//40 - 42 (1040 - 1042)
+					//Reals; 8 bytes(double)
+					case DxfCode.ExtendedDataReal:
+						record = new ExtendedDataReal(this._objectReader.ReadDouble());
+						break;
+					case DxfCode.ExtendedDataDist:
+						record = new ExtendedDataDistance(this._objectReader.ReadDouble());
+						break;
+					case DxfCode.ExtendedDataScale:
+						record = new ExtendedDataScale(this._objectReader.ReadDouble());
+						break;
+					//70(1070) A short int; 2 bytes
+					case DxfCode.ExtendedDataInteger16:
+						record = new ExtendedDataInteger16(this._objectReader.ReadShort());
+						break;
+					//71(1071) A long int; 4 bytes
+					case DxfCode.ExtendedDataInteger32:
+						record = new ExtendedDataInteger32((int)this._objectReader.ReadRawLong());
+						break;
+					default:
+						this._objectReader.ReadBytes((int)(endPos - this._objectReader.Position));
+						this._builder.Notify($"Unknown code for extended data: {dxfCode}", NotificationType.Warning);
+						return records;
+				}
+
+				records.Add(record);
+			}
+
+			return records;
+		}
+
 		private CadTemplate readGeoData()
 		{
 			GeoData geoData = new GeoData();
@@ -2084,7 +2903,7 @@ namespace ACadSharp.IO.DWG
 									//endpoint 2RD 11 endpoint of major axis
 									MajorAxisEndPoint = this._objectReader.Read2RawDouble(),
 									//minormajoratio BD 40 ratio of minor to major axis
-									MinorToMajorRatio = this._objectReader.ReadBitDouble(),
+									RadiusRatio = this._objectReader.ReadBitDouble(),
 									//startangle BD 50 start angle
 									StartAngle = this._objectReader.ReadBitDouble(),
 									//endangle BD 51 endangle
@@ -2242,10 +3061,189 @@ namespace ACadSharp.IO.DWG
 				hatch.SeedPoints.Add(spt);
 			}
 
-			return template;
+			//R2000 / R13-R15: AutoCAD stores gradient fills as a private binary block after the seed points
+			// (ODA upgrades them to native 450-470; libredwg skips this block per SINCE(R_2004a)).
+			// The block starts with BL is_gradient_fill; for non-gradient fills the entity stream ends after the seed points (or is followed by EED),
+			// so reading a value other than 1 backs the position up to protect the EED, without affecting the result.
+			if (!this.R2004Plus)
+			{
+				// R2000 (AC1015) gradient fills: AutoCAD stores the gradient definition as a private binary block in the file stream (an independent object,
+		// not after the seed points; libredwg skips this block per SINCE(R_2004a); ODA reads this block on upgrade and writes native 450-470).
+		// Parsing strategy: the gradient definition lives in a separate XRecord (a "Gradient1" definition block + a "Gradient4" name block,
+		// both byte-aligned), linked 1:1 via the ACAD_XREC_ROUNDTRIP entry in the hatch's extension dictionary.
+		// Because R2000 EED/XDATA is read only after the entity data, and the AppId name can be resolved only after BuildDocument,
+		// here we merely register the candidate hatch in read order; after Read() finishes, ApplyR2000Gradients
+		// locates and parses it precisely via the extension dictionary, so R2000->R2004+ writes native 450-470.
+			try
+			{
+				this._r2000GradientCandidates.Add(hatch);
+			}
+			catch { }
 		}
 
-		private CadTemplate readImageDefinition()
+		return template;
+	}
+
+	private readonly List<Hatch> _r2000GradientCandidates = new List<Hatch>();
+
+/// <summary>
+/// Restores the gradient definition for R2000 hatches carrying a private gradient roundtrip XRecord.
+/// Must be called after the document has been built (AppId names resolved).
+/// Criterion (consistent with the AutoCAD / cadcodec reference): if the
+/// ACAD_XREC_ROUNDTRIP entry in the hatch's extension dictionary points exactly at the gradient XRecord (1:1 association), it is a gradient hatch;
+/// a GradientColor*ACI EED marker alone without that XRecord is stale metadata
+/// (left behind after the gradient was changed to a solid fill) and must not restore a gradient from it.
+/// </summary>
+public void ApplyR2000Gradients()
+{
+	if (this._r2000GradientCandidates.Count == 0)
+		return;
+	try
+	{
+		foreach (var hatch in this._r2000GradientCandidates)
+		{
+			// Locate the gradient XRecord precisely via the ACAD_XREC_ROUNDTRIP entry in the extension dictionary
+			R2000GradientDef g = TryParseGradientFromXRecord(hatch);
+			if (g == null) continue;
+
+			hatch.GradientColor.Enabled = true;
+			hatch.GradientColor.Reserved = g.Reserved;
+			hatch.GradientColor.Angle = g.Angle;
+			hatch.GradientColor.Shift = g.Shift;
+			hatch.GradientColor.IsSingleColorGradient = g.IsSingleColor;
+			hatch.GradientColor.ColorTint = g.ColorTint;
+			hatch.GradientColor.Colors.Clear();
+			foreach (var c in g.Colors)
+				hatch.GradientColor.Colors.Add(c);
+			hatch.GradientColor.Name = g.Name;
+		}
+	}
+	catch { }
+}
+
+	/// <summary>
+	/// Locates and parses the R2000 private gradient XRecord via the ACAD_XREC_ROUNDTRIP entry in the hatch's extension dictionary.
+	/// The XRecord has 4 entries: "Gradient1" + definition block (byte-aligned), "Gradient4" + name block.
+	/// Definition block layout: RL len | RL ver | BL450 is_gradient | BL451 reserved | BD460 angle |
+	/// BD461 shift | BL452 single | BD462 tint | BL453 ncolors | 32 bytes per color
+	/// [BD463 value@0 + RL=24@8 + mode@12 + rgb(0xC2RRGGBB)@16 + trailing 12].
+	/// Name block layout: RL len | RL 4 | RL nameLen (incl. '\0') | NAME'\0'.
+	/// </summary>
+	private static R2000GradientDef TryParseGradientFromXRecord(Hatch hatch)
+	{
+		try
+		{
+			var xdict = hatch.XDictionary;
+			if (xdict == null)
+				return null;
+			if (!xdict.TryGetEntry<XRecord>("ACAD_XREC_ROUNDTRIP", out XRecord xr) || xr == null)
+				return null;
+
+			byte[] def = null;
+			byte[] nameChunk = null;
+			var entries = xr.Entries.ToList();
+			for (int i = 0; i + 1 < entries.Count; i++)
+			{
+				if (!(entries[i].Value is string key))
+					continue;
+				if (!(entries[i + 1].Value is byte[] chunk))
+					continue;
+				if (key == "Gradient1")
+					def = chunk;
+				else if (key == "Gradient4")
+					nameChunk = chunk;
+			}
+			if (def == null)
+				return null;
+
+			R2000GradientDef g = DecodeGradientDefChunk(def);
+			if (g == null)
+				return null;
+
+			if (nameChunk != null && nameChunk.Length >= 12)
+			{
+				// RL len | RL 4 | RL nameLen (incl. '\0') | NAME'\0'
+				int nameLen = BitConverter.ToInt32(nameChunk, 8);
+				int nameStart = 12;
+				if (nameLen >= 1 && nameStart + nameLen <= nameChunk.Length)
+					g.Name = System.Text.Encoding.ASCII.GetString(nameChunk, nameStart, nameLen - 1);
+			}
+			return g;
+		}
+		catch
+		{
+			return null;
+		}
+	}
+
+	/// <summary>
+	/// Parses the "Gradient1" definition block (byte-aligned):
+	/// +0 RL len | +4 RL ver | +8 BL450 is_gradient | +12 BL451 reserved | +16 BD460 angle |
+	/// +24 BD461 shift | +32 BL452 single | +36 BD462 tint | +44 BL453 ncolors |
+	/// from +48, 32 bytes per color (BD463 value@0, rgb 0xC2RRGGBB@16).
+	/// </summary>
+	private static R2000GradientDef DecodeGradientDefChunk(byte[] def)
+	{
+		if (def == null || def.Length < 48)
+			return null;
+		if (BitConverter.ToInt32(def, 8) != 1)      // BL 450 is_gradient
+			return null;
+		var g = new R2000GradientDef();
+		g.Enabled = true;
+		g.Reserved = BitConverter.ToInt32(def, 12);     // BL 451
+		g.Angle = BitConverter.ToDouble(def, 16);       // BD 460
+		g.Shift = BitConverter.ToDouble(def, 24);       // BD 461
+		int single = BitConverter.ToInt32(def, 32);     // BL 452
+		if (single != 0 && single != 1)
+			return null;
+		g.IsSingleColor = single != 0;
+		g.ColorTint = BitConverter.ToDouble(def, 36);  // BD 462
+		int n = BitConverter.ToInt32(def, 44);          // BL 453
+		if (n < 1 || n > 16)
+			return null;
+		if (double.IsNaN(g.Shift) || g.Shift < -1e-9 || g.Shift > 1 + 1e-9)
+			return null;
+		if (double.IsNaN(g.ColorTint) || g.ColorTint < -1e-9 || g.ColorTint > 1 + 1e-9)
+			return null;
+
+		int o = 48;
+		for (int i = 0; i < n; i++)
+		{
+			if (o + 32 > def.Length)
+				return null;
+			double val = BitConverter.ToDouble(def, o);          // BD 463 value
+			// +8: RL=24; +12: mode; +16: rgb(0xC2RRGGBB); followed by a 12-byte tail
+			uint rgb = BitConverter.ToUInt32(def, o + 16);
+			byte[] arr = BitConverter.GetBytes(rgb);
+			Color c;
+			if (rgb == 0xC0000000u)
+				c = Color.ByLayer;
+			else if ((rgb & 0x01000000u) != 0)
+				c = new Color(arr[0]);
+			else
+				c = new Color(arr[2], arr[1], arr[0]);
+			g.Colors.Add(new GradientColor { Value = val, Color = c });
+			o += 32;
+		}
+		return g;
+	}
+
+	/// <summary>
+	/// Parse result of the R2000 private gradient block (maps to <see cref="Hatch.GradientColor"/>).
+	/// </summary>
+	private sealed class R2000GradientDef
+	{
+		public bool Enabled;
+		public int Reserved;
+		public double Angle;
+		public double Shift;
+		public bool IsSingleColor;
+		public double ColorTint;
+		public List<GradientColor> Colors = new List<GradientColor>();
+		public string Name;
+	}
+
+	private CadTemplate readImageDefinition()
 		{
 			ImageDefinition definition = new ImageDefinition();
 			CadNonGraphicalObjectTemplate template = new CadNonGraphicalObjectTemplate(definition);
@@ -2307,8 +3305,8 @@ namespace ACadSharp.IO.DWG
 				if (this._objectReader.ReadBit())
 					layer.Flags |= LayerFlags.Frozen;
 
-				//On B if on.
-				layer.IsOn = this._objectReader.ReadBit();
+				//On B 1 if off (bit set = off)
+				layer.IsOn = !this._objectReader.ReadBit();
 
 				//Frz in new B 70 if frozen by default in new viewports (2 bit)
 				if (this._objectReader.ReadBit())
@@ -2349,7 +3347,11 @@ namespace ACadSharp.IO.DWG
 			//Common:
 			//Color CMC 62
 			var color = this._mergedReaders.ReadCmColor();
-			layer.Color = color.IsByBlock || color.IsByLayer ? new(30) : color;
+			// [PATCH] Keep the layer color exactly as read, including ByLayer/ByBlock.
+			// The original code coerced ByLayer/ByBlock to a default/ACI-30 value, which
+			// corrupted every ByLayer layer's color on DWG read-back (e.g. a white ByLayer
+			// layer came back dark blue). ReadCmColor already returns proper ByLayer/ByBlock values.
+			layer.Color = color;
 
 			//TODO: This is not the Layer control handle
 			template.LayerControlHandle = this.handleReference();
@@ -2571,22 +3573,10 @@ namespace ACadSharp.IO.DWG
 
 			//	Add optional Break Info (one or more)
 			//	BL	Break info count
-			leaderLine.BreakInfoCount = this._objectReader.ReadBitLong();
-			if (leaderLine.BreakInfoCount > 0)
+			var breakInfoCount = this._objectReader.ReadBitLong();
+			for (int i = 0; i < breakInfoCount; i++)
 			{
-				//	BL	90		Segment index
-				leaderLine.SegmentIndex = this._objectReader.ReadBitLong();
-
-				//	Start/end point pairs
-				int startEndPointCount = this._objectReader.ReadBitLong();
-				for (int sep = 0; sep < startEndPointCount; sep++)
-				{
-					leaderLine.StartEndPoints.Add(new StartEndPointPair(
-						//	3BD	11	Start Point
-						this._objectReader.Read3BitDouble(),
-						//	3BD	12	End point
-						this._objectReader.Read3BitDouble()));
-				}
+				leaderLine.BreakInfoEntries.Add(this.readBreakInfo());
 			}
 
 			//	BL	91	Leader line index
@@ -2597,7 +3587,7 @@ namespace ACadSharp.IO.DWG
 				//	BS	170	Leader type(0 = invisible leader, 1 = straight leader, 2 = spline leader)
 				leaderLine.PathType = (MultiLeaderPathType)this._objectReader.ReadBitShort();
 				//	CMC	92	Line color
-				leaderLine.LineColor = this._objectReader.ReadCmColor();
+				leaderLine.LineColor = this._mergedReaders.ReadCmColor();
 				//	H	340	Line type handle(hard pointer)
 				leaderLineSubTemplate.LineTypeHandle = this.handleReference();
 				//	BL	171	Line weight
@@ -2617,34 +3607,34 @@ namespace ACadSharp.IO.DWG
 		{
 			LeaderRoot leaderRoot = new LeaderRoot();
 
-			//	B		290		Is content valid(ODA writes true)/DXF: Has Set Last Leader Line Point
+			//	B	290	Is content valid(ODA writes true)/DXF: Has Set Last Leader Line Point
 			leaderRoot.ContentValid = this._objectReader.ReadBit();
-			//	B		291		Unknown(ODA writes true)/DXF: Has Set Dogleg Vector
+			//	B	291	Unknown(ODA writes true)/DXF: Has Set Dogleg Vector
 			leaderRoot.Unknown = this._objectReader.ReadBit();
-			//	3BD		10		Connection point/DXF: Last Leader Line Point
+			//	3BD	10	Connection point/DXF: Last Leader Line Point
 			leaderRoot.ConnectionPoint = this._objectReader.Read3BitDouble();
-			//	3BD		11		Direction/DXF: Dogleg vector
+			//	3BD	11	Direction/DXF: Dogleg vector
 			leaderRoot.Direction = this._objectReader.Read3BitDouble();
 
 			//	Break start/end point pairs
-			//	BL		Number of break start / end point pairs
-			//	3BD		12		Break start point
-			//	3BD		13		Break end point
+			//	BL	Number of break start / end point pairs
 			int breakStartEndPointCount = this._objectReader.ReadBitLong();
 			for (int bsep = 0; bsep < breakStartEndPointCount; bsep++)
 			{
 				leaderRoot.BreakStartEndPointsPairs.Add(new StartEndPointPair(
+					//3BD	12	Break start point
 					this._objectReader.Read3BitDouble(),
+					//3BD	13	Break end point
 					this._objectReader.Read3BitDouble()));
 			}
 
-			//	BL		90		Leader index
+			//BL	90	Leader index
 			leaderRoot.LeaderIndex = this._objectReader.ReadBitLong();
-			//	BD		40		Landing distance
+			//BD	40	Landing distance
 			leaderRoot.LandingDistance = this._objectReader.ReadBitDouble();
 
-			//	Leader lines
-			//	BL		Number of leader lines
+			//Leader lines
+			//BL	Number of leader lines
 			int leaderLineCount = this._objectReader.ReadBitLong();
 			for (int ll = 0; ll < leaderLineCount; ll++)
 			{
@@ -2653,7 +3643,7 @@ namespace ACadSharp.IO.DWG
 
 			if (this.R2010Plus)
 			{
-				//	BS	271	Attachment direction(0 = horizontal, 1 = vertical, default is 0)
+				//BS	271	Attachment direction(0 = horizontal, 1 = vertical, default is 0)
 				leaderRoot.TextAttachmentDirection = (TextAttachmentDirectionType)this._objectReader.ReadBitShort();
 			}
 
@@ -2737,9 +3727,31 @@ namespace ACadSharp.IO.DWG
 					continue;
 				}
 
-				segment.Segment.Text = this.readLineTypeTextString(textArea, offset, encoding);
+				//R2007+ linetype text areas are always UTF-16LE (independent of the document code page; under
+				//DBCS encoding, IsSingleByte=false bypasses the UTF-16 probe, so a Chinese environment reads only the first character, e.g. "GAS"->"G")
+				segment.Segment.Text = this.R2007Plus
+					? this.readLineTypeUtf16String(textArea, offset)
+					: this.readLineTypeTextString(textArea, offset, encoding);
 				segment.Segment.ShapeNumber = 0;
 			}
+		}
+
+		private string readLineTypeUtf16String(byte[] buffer, int offset)
+		{
+			if (buffer == null || offset < 0 || offset >= buffer.Length)
+				return string.Empty;
+
+			// Align to a UTF-16 character boundary and scan to the 0x0000 terminator
+			int end = offset;
+			while (end + 1 < buffer.Length)
+			{
+				if (buffer[end] == 0 && buffer[end + 1] == 0)
+					break;
+
+				end += 2;
+			}
+
+			return Encoding.Unicode.GetString(buffer, offset, end - offset);
 		}
 
 		private string readLineTypeTextString(byte[] buffer, int offset, Encoding encoding)
@@ -2791,6 +3803,10 @@ namespace ACadSharp.IO.DWG
 
 			this.readXrefDependantBit(template.CadObject);
 
+			//Xref block handle (hard pointer) - part of the common table flags,
+			//written right after the xref-dependent bits and before the description.
+			this.handleReference();
+
 			//Description TV 3
 			ltype.Description = this._textReader.ReadVariableText();
 			//Pattern Len BD 40
@@ -2811,6 +3827,10 @@ namespace ACadSharp.IO.DWG
 				//Complex shapecode BS 75 Shape number if shapeflag is 2, or index into the string area if shapeflag is 4.
 				segment.Segment.ShapeNumber = this._objectReader.ReadBitShort();
 
+				//340 shapefile for dash/shape (hard pointer) - read INSIDE the
+				//dash loop, right after the complex shapecode and before the offsets.
+				segment.StyleHandle = this.handleReference();
+
 				//X - offset RD 44 (0.0 for a simple dash.)
 				//Y - offset RD 45(0.0 for a simple dash.)
 				XY offset = new XY(this._objectReader.ReadDouble(), this._objectReader.ReadDouble());
@@ -2823,44 +3843,44 @@ namespace ACadSharp.IO.DWG
 				//Shapeflag BS 74 bit coded:
 				segment.Segment.Flags = (LineTypeShapeFlags)this._objectReader.ReadBitShort();
 
-				if (segment.Segment.Flags.HasFlag(LineTypeShapeFlags.Text))
-					isText = true;
+			if (segment.Segment.Flags.HasFlag(LineTypeShapeFlags.Text))
+				isText = true;
 
-				//Add the segment to the type
-				template.SegmentTemplates.Add(segment);
-			}
+			//Add the segment to the type
+			template.SegmentTemplates.Add(segment);
+		}
 
-			byte[] textarea = null;
-			//R2004 and earlier:
-			if (this._version <= ACadVersion.AC1018)
-			{
-				//Strings area X 9 256 bytes of text area. The complex dashes that have text use this area via the 75-group indices. It's basically a pile of 0-terminated strings. First byte is always 0 for R13 and data starts at byte 1. In R14 it is not a valid data start from byte 0.
-				//(The 9 - group is undocumented.)
-				textarea = this._objectReader.ReadBytes(256);
-			}
-			//R2007+:
-			if (this.R2007Plus && isText)
-			{
-				textarea = this._objectReader.ReadBytes(512);
-			}
+		byte[] textarea = null;
+		//R2004 and earlier:
+		if (this._version <= ACadVersion.AC1018)
+		{
+			//Strings area X 9 256 bytes of text area. The complex dashes that have text use this area via the 75-group indices. It's basically a pile of 0-terminated strings. First byte is always 0 for R13 and data starts at byte 1. In R14 it is not a valid data start from byte 0.
+			//(The 9 - group is undocumented.)
+			textarea = this._objectReader.ReadBytes(256);
+		}
+		//R2007+:
+		if (this.R2007Plus && isText)
+		{
+			textarea = this._objectReader.ReadBytes(512);
+		}
+
+		// [DBG-LT]
+		if (Environment.GetEnvironmentVariable("ACADSHARP_DBG_LT") == "1")
+		{
+			var enc = this._reader?.Encoding?.EncodingName ?? "<null reader>";
+			Console.Error.WriteLine($"[DBG-LT] ver={this._version} isText={isText} enc={enc} singleByte={this._reader?.Encoding?.IsSingleByte}");
+			if (textarea != null)
+				Console.Error.WriteLine("[DBG-LT] textarea[0..32]=" + BitConverter.ToString(textarea, 0, Math.Min(32, textarea.Length)));
+		}
 
 			if (isText)
 			{
 				this.readLineTypeSegmentTexts(template.SegmentTemplates, textarea);
 			}
 
-			//Common:
-			//Handle refs H Ltype control(soft pointer)
-			//[Reactors (soft pointer)]
-			//xdicobjhandle(hard owner)
-			//External reference block handle(hard pointer)
-			template.LtypeControlHandle = this.handleReference();
-
-			//340 shapefile for dash/shape (1 each) (hard pointer)
-			for (int i = 0; i < ndashes; i++)
-			{
-				template.SegmentTemplates[i].StyleHandle = this.handleReference();
-			}
+			//Note: the xref block handle is read in the common table flags (before
+			//the description) and the per-dash shape style handles are read inside
+			//the dash loop. Nothing follows the strings area.
 
 			return template;
 		}
@@ -2903,6 +3923,9 @@ namespace ACadSharp.IO.DWG
 				if ((flags & 0x4u) != 0)
 				{
 					lwPolyline.ConstantWidth = this._objectReader.ReadBitDouble();
+					// [PATCH] Remember the constant width was present (DXF 43), even when
+					// the value is 0, so the DXF writer round-trips the code.
+					lwPolyline.ConstantWidthSpecified = true;
 				}
 
 				if ((flags & 0x8u) != 0)
@@ -3239,10 +4262,23 @@ namespace ACadSharp.IO.DWG
 
 			#endregion Refraction
 
-#if TEST
-			var obj = DwgStreamReaderBase.Explore(this._objectReader);
-			var text = DwgStreamReaderBase.Explore(this._textReader);
-#endif
+			// Since R2007a there is a tail block with the render-mode hints.
+			// AutoCAD writes these every time, even when the values are default;
+			// consuming them keeps the in-memory model in sync with the file and
+			// lets ACadSharp round-trip a non-default material (e.g. one with
+			// kMetalShader or a custom channel-flag mask) without losing the choice.
+			// Pre-R2007 MATERIAL objects end after the refraction block, so reading
+			// the tail there would run past the end of the object and corrupt the
+			// stream position for every subsequent object.
+			if (this.R2007Plus)
+			{
+				material.Translucence = this._mergedReaders.ReadBitDouble();
+				material.SelfIllumination = this._mergedReaders.ReadBitDouble();
+				material.Reflectivity = this._mergedReaders.ReadBitDouble();
+				material.IlluminationModel = (MaterialIlluminationModel)this._mergedReaders.ReadBitLong();
+				material.ChannelFlags = (MaterialChannelFlags)this._mergedReaders.ReadBitLong();
+				material.Mode = (MaterialMode)this._mergedReaders.ReadBitLong();
+			}
 
 			return template;
 		}
@@ -3268,7 +4304,17 @@ namespace ACadSharp.IO.DWG
 			matrix.M32 = this._mergedReaders.ReadBitDouble();
 			matrix.M33 = this._mergedReaders.ReadBitDouble();
 
-			return Matrix4.Identity;
+			return matrix;
+		}
+
+		private void readMechanicalEntity<T>(CadMechanicalEntityTemplate<T> template)
+				where T : MechanicalEntity, new()
+		{
+			var unknown1 = this._mergedReaders.ReadBitLong();   // 212
+			template.CadObject.Position = this._mergedReaders.Read3BitDouble();
+
+			template.StandardDINHandle = this.handleReference();
+			template.BOMStandardDINHandle = this.handleReference();
 		}
 
 		private CadTemplate readMesh()
@@ -3352,7 +4398,7 @@ namespace ACadSharp.IO.DWG
 			mline.Normal = this._objectReader.Read3BitDouble();
 
 			//Openclosed BS open (1), closed(3)
-			mline.Flags |= this._objectReader.ReadBitShort() == 3 ? MLineFlags.Closed : MLineFlags.Has;
+			mline.Flags |= this._objectReader.ReadBitShort() == 3 ? MLineFlags.Closed : MLineFlags.HasVertices;
 
 			//Linesinstyle RC 73
 			int nlines = (int)this._objectReader.ReadByte();
@@ -3485,7 +4531,7 @@ namespace ACadSharp.IO.DWG
 		}
 
 		private CadEntityTemplate<T> readModelerGeometry<T>(CadEntityTemplate<T> template)
-			where T : ModelerGeometry, new()
+				where T : ModelerGeometry, new()
 		{
 			ModelerGeometry geometry = template.CadObject;
 
@@ -3586,7 +4632,7 @@ namespace ACadSharp.IO.DWG
 		}
 
 		private void readModelerGeometryData<T>(CadEntityTemplate<T> template)
-			where T : ModelerGeometry, new()
+				where T : ModelerGeometry, new()
 		{
 			//Unknown bit B X
 			bool unknown = this._mergedReaders.ReadBit();
@@ -3602,16 +4648,46 @@ namespace ACadSharp.IO.DWG
 				//to get the real character.If it's a tab, we
 				//convert to a space.
 				case 1:
+					using (MemoryStream stream = new MemoryStream())
+					{
+						int blockSize = this._mergedReaders.ReadBitLong();
+						while (blockSize > 0)
+						{
+							byte[] block = AcisTextCodec.Decode(this._mergedReaders.ReadBytes(blockSize));
+							stream.Write(block, 0, block.Length);
+
+							blockSize = this._mergedReaders.ReadBitLong();
+						}
+
+						if (stream.Length > 0)
+						{
+							template.CadObject.AcisData = stream.ToArray();
+						}
+					}
 					break;
 				//Version == 2:
 				//Immediately following will be an acis file.Header value of “ACIS BinaryFile” indicates
 				//SAB, otherwise it is a text SAT file. No length is given.SAB files will end with
 				//“End\x0E\x02of\x0E\x04ACIS\x0D\x04data”. SAT files must be parsed to find the end.
 				case 2:
+					//The stream gives no payload length: read up to the end of the
+					//object data and cut at the End-of-ACIS-data marker. Anything
+					//after the marker (wireframe data, handles) is discarded with
+					//the rest of the object, the caller returns right away.
+					long currentPos = this._mergedReaders.PositionInBits();
+					long endPos = this._objectInitialPos + (this._size * 8);
+					int remainingBytes = (int)((endPos - currentPos) / 8);
+
+					if (remainingBytes > 0)
+					{
+						byte[] data = this._mergedReaders.ReadBytes(remainingBytes);
+						template.CadObject.AcisData = AcisTextCodec.TrimAtAcisEnd(data);
+					}
+					break;
+				default:
+					this.notify($"Modeler geometry data version {version} not recognized for {template.CadObject.ObjectName}", NotificationType.Warning);
 					break;
 			}
-
-			this.notify($"Stream data reader hasn't been implemented for {template.CadObject.ObjectName}", NotificationType.NotImplemented);
 		}
 
 		private CadTemplate readMText()
@@ -3739,6 +4815,12 @@ namespace ACadSharp.IO.DWG
 				{
 					//Column height count BL 72
 					int count = this._objectReader.ReadBitLong();
+					// [FIX] Previously count was not assigned back to ColumnData.ColumnCount (kept its default 0),
+					// so the writer's writeMText wrote BL 72=0 per ColumnCount yet followed with N column-height BDs per Heights.Count;
+					// after AutoCAD read BL=0 the bit stream misaligned, and the whole MText reported
+					// eDwgObjectImproperlyRead and was dropped (root cause of R2018 source -> R2018 multilinetext not displaying;
+					// only MText with column data is affected, symmetric with the rest of MText read/write).
+					mtext.ColumnData.ColumnCount = count;
 					//Columnn width BD 44
 					mtext.ColumnData.Width = this._objectReader.ReadBitDouble();
 					//Gutter BD 45
@@ -3917,19 +4999,6 @@ namespace ACadSharp.IO.DWG
 		{
 			//	BL	-	Number of leader roots
 			int leaderRootCount = this._objectReader.ReadBitLong();
-			if (leaderRootCount == 0)
-			{
-				bool b0 = this._objectReader.ReadBit();
-				bool b1 = this._objectReader.ReadBit();
-				bool b2 = this._objectReader.ReadBit();
-				bool b3 = this._objectReader.ReadBit();
-				bool b4 = this._objectReader.ReadBit();
-				bool b5 = this._objectReader.ReadBit();
-				bool b6 = this._objectReader.ReadBit();
-
-				leaderRootCount = b5 ? 2 : 1;
-			}
-
 			for (int i = 0; i < leaderRootCount; i++)
 			{
 				annotContext.LeaderRoots.Add(this.readLeaderRoot(template));
@@ -3946,6 +5015,7 @@ namespace ACadSharp.IO.DWG
 			annotContext.ArrowheadSize = this._objectReader.ReadBitDouble();
 			//  BD	145	Landing gap
 			annotContext.LandingGap = this._objectReader.ReadBitDouble();
+
 			//	BS	174	Style left text attachment type. See also MLEADER style left text attachment type for values. Relevant if mleader attachment direction is horizontal.
 			annotContext.TextLeftAttachment = (TextAttachmentType)this._objectReader.ReadBitShort();
 			//	BS	175	Style right text attachment type. See also MLEADER style left text attachment type for values. Relevant if mleader attachment direction is horizontal.
@@ -3954,6 +5024,7 @@ namespace ACadSharp.IO.DWG
 			annotContext.TextAlignment = (TextAlignmentType)this._objectReader.ReadBitShort();
 			//	BS	177	Attachment type (0 = content extents, 1 = insertion point).
 			annotContext.BlockContentConnection = (BlockContentConnectionType)this._objectReader.ReadBitShort();
+
 			//	B	290	Has text contents
 			annotContext.HasTextContents = this._objectReader.ReadBit();
 			if (annotContext.HasTextContents)
@@ -3979,13 +5050,13 @@ namespace ACadSharp.IO.DWG
 				//	BS	170	Line spacing style (1 = at least, 2 = exactly)
 				annotContext.LineSpacing = (LineSpacingStyle)this._objectReader.ReadBitShort();
 				//	CMC	90	Text color
-				annotContext.TextColor = this._objectReader.ReadCmColor();
+				annotContext.TextColor = this._mergedReaders.ReadCmColor();
 				//	BS	171	Alignment (1 = left, 2 = center, 3 = right)
 				annotContext.TextAttachmentPoint = (TextAttachmentPointType)this._objectReader.ReadBitShort();
 				//	BS	172	Flow direction (1 = horizontal, 3 = vertical, 6 = by style)
 				annotContext.FlowDirection = (FlowDirectionType)this._objectReader.ReadBitShort();
 				//	CMC	91	Background fill color
-				annotContext.BackgroundFillColor = this._objectReader.ReadCmColor();
+				annotContext.BackgroundFillColor = this._mergedReaders.ReadCmColor();
 				//	BD	141	Background scale factor
 				annotContext.BackgroundScaleFactor = this._objectReader.ReadBitDouble();
 				//	BL	92	Background transparency
@@ -4034,7 +5105,7 @@ namespace ACadSharp.IO.DWG
 				//	BD	46	Rotation (radians)
 				annotContext.BlockContentRotation = this._objectReader.ReadBitDouble();
 				//  CMC	93	Block color
-				annotContext.BlockContentColor = this._objectReader.ReadCmColor();
+				annotContext.BlockContentColor = this._mergedReaders.ReadCmColor();
 				//	BD (16)	47	16 doubles containing the complete transformation
 				//	matrix. Order of transformation is:
 				//	- Rotation,
@@ -4517,6 +5588,76 @@ namespace ACadSharp.IO.DWG
 			return template;
 		}
 
+		private CadDimensionAssociationTemplate.OsnapPointRefTemplate readOsnapPointRef()
+		{
+			var osnap = new DimensionAssociation.OsnapPointRef();
+			var template = new CadDimensionAssociationTemplate.OsnapPointRefTemplate(osnap);
+
+			//1
+			var className = this._mergedReaders.ReadVariableText();
+			//72
+			osnap.ObjectOsnapType = (ObjectOsnapType)this._mergedReaders.ReadByte();
+
+			//331: number of handles, the main object is the first handle
+			var handleCount = this._mergedReaders.ReadBitLong();
+			for (int i = 0; i < handleCount; i++)
+			{
+				var handle = this.handleReference();
+				if (i == 0)
+				{
+					template.ObjectHandle = handle;
+				}
+			}
+
+			if (osnap.ObjectOsnapType != ObjectOsnapType.None)
+			{
+				//73
+				osnap.SubentType = (SubentType)this._mergedReaders.ReadBitLong();
+				//91
+				osnap.GsMarker = this._mergedReaders.ReadBitLong();
+
+				//301: xref paths
+				var pathCount = this._mergedReaders.ReadBitLong();
+				for (int i = 0; i < pathCount; i++)
+				{
+					osnap.XrefPaths.Add(this._mergedReaders.ReadVariableText());
+				}
+			}
+
+			//40
+			osnap.GeometryParameter = this._mergedReaders.ReadBitDouble();
+			//10
+			osnap.OsnapPoint = this._mergedReaders.Read3BitDouble();
+
+			if (osnap.ObjectOsnapType == (ObjectOsnapType)6 || osnap.ObjectOsnapType == (ObjectOsnapType)11)
+			{
+				//332: intersection objects handles
+				var intersectionCount = this._mergedReaders.ReadBitLong();
+				for (int i = 0; i < intersectionCount; i++)
+				{
+					this.handleReference();
+				}
+
+				//74
+				osnap.IntersectionSubType = (SubentType)this._mergedReaders.ReadBitLong();
+				//92
+				osnap.IntersectionGsMarker = this._mergedReaders.ReadBitLong();
+
+				//302: intersection xref paths
+				var intersectionPathCount = this._mergedReaders.ReadBitLong();
+				for (int i = 0; i < intersectionPathCount; i++)
+				{
+					osnap.IntersectionXrefPaths.Add(this._mergedReaders.ReadVariableText());
+				}
+			}
+
+			//75: more references bit, only the first reference is kept
+			var moreReferences = this._mergedReaders.ReadBit();
+			osnap.HasLastPointRef = moreReferences;
+
+			return template;
+		}
+
 		private CadTemplate readPdfDefinition()
 		{
 			PdfUnderlayDefinition definition = new PdfUnderlayDefinition();
@@ -4810,11 +5951,19 @@ namespace ACadSharp.IO.DWG
 
 			//75 0 : Splined(75 value is 5)
 			//1 : Splined(75 value is 6)
-			bool splined = ((uint)flags & 0b1) > 0;
-			//Should assign pline.SmoothSurface ??
-
 			//(If either is set, set 70 bit 2(4) to indicate splined.)
+			bool splined = ((uint)flags & 0b1) > 0;
+
 			bool splined1 = ((uint)flags & 0b10) > 0;
+
+			if (splined)
+			{
+				pline.SmoothSurface = SmoothSurfaceType.Quadratic;
+			}
+			else if (splined1)
+			{
+				pline.SmoothSurface = SmoothSurfaceType.Cubic;
+			}
 
 			if (splined | splined1)
 			{
@@ -4908,7 +6057,7 @@ namespace ACadSharp.IO.DWG
 		private CadTemplate readProxyEntity()
 		{
 			ProxyEntity proxy = new ProxyEntity();
-			CadEntityTemplate<ProxyEntity> template = new CadEntityTemplate<ProxyEntity>(proxy);
+			CadProxyEntityTemplate template = new CadProxyEntityTemplate(proxy);
 
 			this.readCommonEntityData(template);
 
@@ -4964,9 +6113,42 @@ namespace ACadSharp.IO.DWG
 			return template;
 		}
 
-		private void readRowCellStyle(CadTableStyleTemplate tableStyleTemplate, TableEntity.CellStyle style)
+		// Add the reactors to the template.
+		private void readReactorsAndDictionaryHandle(CadTemplate template)
 		{
-			var cellStyleTemplate = new CadTableEntityTemplate.CadCellStyleTemplate(style);
+			//Numreactors S number of reactors in this object
+			int numberOfReactors = this._objectReader.ReadBitLong();
+
+			//Add the reactors to the template
+			for (int i = 0; i < numberOfReactors; ++i)
+				//[Reactors (soft pointer)]
+				template.ReactorsHandles.Add(this.handleReference());
+
+			bool flag = false;
+			//R2004+:
+			if (this.R2004Plus)
+				/*XDic Missing Flag
+				 * B
+				 * If 1, no XDictionary handle is stored for this object,
+				 * otherwise XDictionary handle is stored as in R2000 and earlier.
+				*/
+				flag = this._objectReader.ReadBit();
+
+			if (!flag)
+				//xdicobjhandle(hard owner)
+				template.XDictHandle = this.handleReference();
+
+			//R2013+:
+			if (this.R2013Plus)
+			{
+				//Has DS binary data B If 1 then this object has associated binary data stored in the data store
+				template.HasDsBinaryData = this._objectReader.ReadBit();
+			}
+		}
+
+		private void readRowCellStyle(CadTableStyleTemplate tableStyleTemplate, TableStyle.CellStyle style)
+		{
+			var cellStyleTemplate = new CadTableStyleTemplate.CadCellStyleTemplate(style);
 
 			tableStyleTemplate.CellStyleTemplates.Add(cellStyleTemplate);
 
@@ -4977,7 +6159,7 @@ namespace ACadSharp.IO.DWG
 			//Text alignment BS 170 Top left = 1, top center = 2, top right = 3, middle
 			//left = 4, middle center = 5, middle right = 6,
 			//bottom left = 7, bottom center = 8, bottom right = 9
-			style.CellAlignment = (TableEntity.CellAlignmentType)this._mergedReaders.ReadBitShort();
+			style.CellAlignment = (TableStyle.CellAlignmentType)this._mergedReaders.ReadBitShort();
 			//Text color CMC 62
 			style.TextColor = this._mergedReaders.ReadCmColor(this.R2004Pre);
 			//Fill color CMC 63
@@ -5123,6 +6305,17 @@ namespace ACadSharp.IO.DWG
 				template.HistoryHandle = this._mergedReaders.HandleReference();
 			}
 
+			return template;
+		}
+
+		private CadTemplate readSurface<T>(CadEntityTemplate<T> template)
+			where T : Surface, new()
+		{
+			this.readModelerGeometry(template);
+
+			//The AcDbSurface data (isoline counts) and the surface subclass data
+			//(sweep, loft and revolve parameters) that follow are not decoded yet;
+			//the object data is length delimited, so the unread tail is skipped
 			return template;
 		}
 
@@ -5319,16 +6512,15 @@ namespace ACadSharp.IO.DWG
 			var h = this.handleReference();
 
 			//… The cell style with name “Table”, see paragraph 20.4.101.4.
-			var tableCellStyleTemplate = new CadTableEntityTemplate.CadCellStyleTemplate(style.TableCellStyle);
-			this.readCellStyle(tableCellStyleTemplate);
+			template.TableCellStyleTemplate = new CadTableStyleTemplate.CadCellStyleTemplate(style.TableCellStyle);
+			this.readCellStyle(template.TableCellStyleTemplate);
 
 			//BL 90 Cell style ID, 1 = title, 2 = header, 3 = data, 4 = table (new in R24).
 			//The cell style ID is used by cells, columns, rows to reference a cell style in the
 			//table’s table style.Custom cell style ID’s are numbered starting at 101.
-			//TODO: is the same as the cell type??
 			style.TableCellStyle.Id = this._mergedReaders.ReadBitLong();
 			//BL 91 Cell style class, 1= data, 2 = label. The default value is label.
-			style.TableCellStyle.StyleClass = (TableEntity.CellStyleClass)this._mergedReaders.ReadBitLong();
+			style.TableCellStyle.StyleClass = (TableStyle.CellStyleClass)this._mergedReaders.ReadBitLong();
 			//TV 300 Cell style name
 			style.TableCellStyle.Name = this._mergedReaders.ReadVariableText();
 			//BL The number of cell styles (should be 3), the non-custom cell styles are present
@@ -5336,11 +6528,12 @@ namespace ACadSharp.IO.DWG
 			int nCellStyles = this._mergedReaders.ReadBitLong();
 			for (int i = 0; i < nCellStyles; i++)
 			{
-				var cellStyle = new TableEntity.CellStyle();
-				var cellStyleTemplate = new CadTableEntityTemplate.CadCellStyleTemplate(cellStyle);
+				var cellStyle = new TableStyle.CellStyle();
+				var cellStyleTemplate = new CadTableStyleTemplate.CadCellStyleTemplate(cellStyle);
 				template.CellStyleTemplates.Add(cellStyleTemplate);
 
 				//… The cell style fields, see paragraph 20.4.101.4.
+				//Index starting by 1
 				int unknown = this._mergedReaders.ReadBitLong();
 				this.readCellStyle(cellStyleTemplate);
 
@@ -5349,7 +6542,7 @@ namespace ACadSharp.IO.DWG
 				//table’s table style.Custom cell style ID’s are numbered starting at 101.
 				cellStyle.Id = this._mergedReaders.ReadBitLong();
 				//BL - Cell style class, 1= data, 2 = label. The default value is label.
-				cellStyle.StyleClass = (TableEntity.CellStyleClass)this._mergedReaders.ReadBitLong();
+				cellStyle.StyleClass = (TableStyle.CellStyleClass)this._mergedReaders.ReadBitLong();
 				//TV - Cell style name
 				cellStyle.Name = this._mergedReaders.ReadVariableText();
 			}
@@ -5468,7 +6661,11 @@ namespace ACadSharp.IO.DWG
 			}
 
 			//Common:
-			//Handle refs H ucs control object (soft pointer)
+			//Handle refs H xref handle (hard pointer, 0 if not xref-dependent).
+			//Note: this was previously mislabeled as "ucs control object (soft pointer)" and the writer filled it with the UCS control table
+			//handle. Verified against AutoCAD-native files (sample.dwg has this slot = 0) and checked against the
+			//cadcodec/ODA spec §20.4.62: this slot is the xref handle, and writing a non-null table handle makes AutoCAD
+			//report eWrongObjectType and drop the record.
 			long control = (long)this.handleReference();
 
 			//R2000 +:
@@ -5486,14 +6683,32 @@ namespace ACadSharp.IO.DWG
 		private CadTemplate readUnlistedType(short classNumber)
 		{
 			if (!this._classes.TryGetValue(classNumber, out DxfClass c))
+			{
+				this.notify($"Class number {classNumber} not found in classes dictionary.", NotificationType.Warning);
 				return null;
+			}
 
 			CadTemplate template = null;
 
 			switch (c.DxfName)
 			{
+				case DxfFileToken.AcmPartRef:
+					template = this.readAcmPartRef();
+					break;
+				case DxfFileToken.AcmBalloon:
+					template = this.readAcmBalloon();
+					break;
+				case DxfFileToken.AcmPartList:
+					template = this.readAcmPartList();
+					break;
+				case DxfFileToken.ObjectDynamicBlockPurgePreventer:
+					template = this.readDynamicBlockPurgePreventer();
+					break;
 				case DxfFileToken.EntityAecWall:
 					template = this.readAecWall();
+					break;
+				case DxfFileToken.EntityArcDimension:
+					template = this.readDimArc();
 					break;
 				case DxfFileToken.ObjectBinRecord:  // Add this variant
 					template = this.readBinRecord();
@@ -5578,6 +6793,27 @@ namespace ACadSharp.IO.DWG
 				case "SORTENTSTABLE":
 					template = this.readSortentsTable();
 					break;
+				case DxfFileToken.EntitySurface:
+					template = this.readSurface(new CadEntityTemplate<Surface>());
+					break;
+				case DxfFileToken.EntityExtrudedSurface:
+					template = this.readSurface(new CadEntityTemplate<ExtrudedSurface>());
+					break;
+				case DxfFileToken.EntityLoftedSurface:
+					template = this.readSurface(new CadEntityTemplate<LoftedSurface>());
+					break;
+				case DxfFileToken.EntityNurbSurface:
+					template = this.readSurface(new CadEntityTemplate<NurbSurface>());
+					break;
+				case DxfFileToken.EntityPlaneSurface:
+					template = this.readSurface(new CadEntityTemplate<PlaneSurface>());
+					break;
+				case DxfFileToken.EntityRevolvedSurface:
+					template = this.readSurface(new CadEntityTemplate<RevolvedSurface>());
+					break;
+				case DxfFileToken.EntitySweptSurface:
+					template = this.readSurface(new CadEntityTemplate<SweptSurface>());
+					break;
 				case "RASTERVARIABLES":
 					template = this.readRasterVariables();
 					break;
@@ -5590,14 +6826,35 @@ namespace ACadSharp.IO.DWG
 				case DxfFileToken.ObjectEvalGraph:
 					template = this.readEvaluationGraph();
 					break;
+				case DxfFileToken.ObjectBlockPolarParameter:
+					template = this.readBlockPolarParameter();
+					break;
+				case DxfFileToken.ObjectBlockLinearParameter:
+					template = this.readBlockLinearParameter();
+					break;
 				case DxfFileToken.ObjectBlockRotationParameter:
 					template = this.readBlockRotationParameter();
 					break;
 				case DxfFileToken.ObjectBlockVisibilityParameter:
 					template = this.readBlockVisibilityParameter();
 					break;
-				case "BLOCKFLIPPARAMETER":
+				case DxfFileToken.ObjectBlockLookupParameter:
+					template = this.readBlockLookupParameter();
+					break;
+				case DxfFileToken.ObjectBlockFlipParameter:
 					template = this.readBlockFlipParameter();
+					break;
+				case DxfFileToken.ObjectBlockBasePointParameter:
+					template = this.readBlockBasePointParameter();
+					break;
+				case DxfFileToken.ObjectBlockPointParameter:
+					template = this.readBlockPointParameter();
+					break;
+				case DxfFileToken.ObjectBlockXYParameter:
+					template = this.readBlockXYParameter();
+					break;
+				case DxfFileToken.ObjectBlockAlignmentParameter:
+					template = this.readBlockAlignmentParameter();
 					break;
 				case DxfFileToken.ObjectBlockRepresentationData:
 					template = this.readBlockRepresentationData();
@@ -5605,13 +6862,37 @@ namespace ACadSharp.IO.DWG
 				case DxfFileToken.ObjectBlockGripLocationComponent:
 					template = this.readBlockGripLocationComponent();
 					break;
+				case DxfFileToken.ObjectBlockAlignmentGrip:
+					template = this.readAlignmentGrip();
+					break;
+				case DxfFileToken.ObjectBlockFlipGrip:
+					template = this.readFlipGrip();
+					break;
+				case DxfFileToken.ObjectBlockLinearGrip:
+					template = this.readLinearGrip();
+					break;
+				case DxfFileToken.ObjectBlockXYGrip:
+					template = new CadBlockGripTemplate(new BlockXYGrip());
+					this.readBlockGrip(template as CadBlockGripTemplate);
+					break;
 				case DxfFileToken.ObjectBlockRotationGrip:
-					template = new CadBlockRotationGripTemplate();
-					this.readBlockGrip(template as CadBlockRotationGripTemplate);
+					template = new CadBlockGripTemplate(new BlockRotationGrip());
+					this.readBlockGrip(template as CadBlockGripTemplate);
 					break;
 				case DxfFileToken.ObjectBlockVisibilityGrip:
-					template = new CadBlockVisibilityGripTemplate();
-					this.readBlockGrip(template as CadBlockVisibilityGripTemplate);
+					template = new CadBlockGripTemplate(new BlockVisibilityGrip());
+					this.readBlockGrip(template as CadBlockGripTemplate);
+					break;
+				case DxfFileToken.ObjectBlockLookupGrip:
+					template = new CadBlockGripTemplate(new BlockLookupGrip());
+					this.readBlockGrip(template as CadBlockGripTemplate);
+					break;
+				case DxfFileToken.ObjectBlockPolarGrip:
+					template = new CadBlockGripTemplate(new BlockPolarGrip());
+					this.readBlockGrip(template as CadBlockGripTemplate);
+					break;
+				case DxfFileToken.ObjectBlockPolarStretchAction:
+					template = this.readBlockPolarStretchAction();
 					break;
 				case DxfFileToken.ObjectBlockFlipAction:
 					template = this.readBlockFlipAction();
@@ -5619,13 +6900,28 @@ namespace ACadSharp.IO.DWG
 				case DxfFileToken.ObjectBlockRotateAction:
 					template = this.readBlockRotateAction();
 					break;
-				case "SPATIAL_FILTER":
+				case DxfFileToken.ObjectBlockScaleAction:
+					template = this.readBlockScaleAction();
+					break;
+				case DxfFileToken.ObjectBlockMoveAction:
+					template = this.readBlockMoveAction();
+					break;
+				case DxfFileToken.ObjectBlockLookupAction:
+					template = this.readBlockLookupAction();
+					break;
+				case DxfFileToken.ObjectBlockArrayAction:
+					template = this.readBlockArrayAction();
+					break;
+				case DxfFileToken.ObjectBlockStretchAction:
+					template = this.readBlockStretchAction();
+					break;
+				case DxfFileToken.ObjectSpatialFilter:
 					template = this.readSpatialFilter();
 					break;
-				case "ACAD_PROXY_ENTITY":
+				case DxfFileToken.EntityProxyEntity:
 					template = this.readProxyEntity();
 					break;
-				case "ACAD_PROXY_OBJECT":
+				case DxfFileToken.ObjectProxyObject:
 					template = this.readProxyObject();
 					break;
 				case DxfFileToken.ObjectVisualStyle:
@@ -5649,6 +6945,9 @@ namespace ACadSharp.IO.DWG
 				case DxfFileToken.ObjectField:
 					template = this.readField();
 					break;
+				case DxfFileToken.ObjectWipeoutVariables:
+					template = this.readWipeoutVariables();
+					break;
 			}
 
 			if (template == null && c.IsAnEntity)
@@ -5662,569 +6961,13 @@ namespace ACadSharp.IO.DWG
 				this._builder.Notify($"Unlisted object with DXF name {c.DxfName} has been read as an UnknownNonGraphicalObject", NotificationType.Warning);
 			}
 
-			return template;
-		}
-
-		#region Evaluation Graph, Enhanced Block etc.
-
-		private Matrix4 read4x3Matrix()
-		{
-			Matrix4 identity = Matrix4.Identity;
-			for (int i = 0; i < 3; i++)
+			if (template != null)
 			{
-				for (int j = 0; j < 4; j++)
-				{
-					identity[i, j] = this._mergedReaders.ReadBitDouble();
-				}
-			}
-			return identity;
-		}
-
-		private CadTemplate readBlockFlipAction()
-		{
-			BlockFlipAction blockFlipAction = new BlockFlipAction();
-			CadBlockFlipActionTemplate template = new CadBlockFlipActionTemplate(blockFlipAction);
-
-			this.readBlockAction(template);
-
-			// 92
-			blockFlipAction.Value92 = this._mergedReaders.ReadBitLong();
-			// 93
-			blockFlipAction.Value93 = this._mergedReaders.ReadBitLong();
-			// 94
-			blockFlipAction.Value94 = this._mergedReaders.ReadBitLong();
-			// 95
-			blockFlipAction.Value95 = this._mergedReaders.ReadBitLong();
-
-			// 301
-			blockFlipAction.Caption301 = this._mergedReaders.ReadVariableText();
-			// 302
-			blockFlipAction.Caption302 = this._mergedReaders.ReadVariableText();
-			// 303
-			blockFlipAction.Caption303 = this._mergedReaders.ReadVariableText();
-			// 304
-			blockFlipAction.Caption304 = this._mergedReaders.ReadVariableText();
-
-			return template;
-		}
-
-		private CadBlockFlipParameterTemplate readBlockFlipParameter()
-		{
-			BlockFlipParameter blockFlipParameter = new BlockFlipParameter();
-			CadBlockFlipParameterTemplate template = new CadBlockFlipParameterTemplate(blockFlipParameter);
-
-			this.readBlock2PtParameter(template);
-
-			//	305
-			blockFlipParameter.Caption = this._mergedReaders.ReadVariableText();
-			//	306
-			blockFlipParameter.Description = this._mergedReaders.ReadVariableText();
-			//	307
-			blockFlipParameter.BaseStateName = this._mergedReaders.ReadVariableText();
-			//	308
-			blockFlipParameter.FlippedStateName = this._mergedReaders.ReadVariableText();
-			//	1012, 1022, 1032
-			blockFlipParameter.CaptionLocation = this._mergedReaders.Read3BitDouble();
-			//	309
-			blockFlipParameter.Caption309 = this._mergedReaders.ReadVariableText();
-			//	96
-			blockFlipParameter.Value96 = this._mergedReaders.ReadBitLong();
-
-			//	The remainder seen in DXF cannot be read
-			//DwgAnalyseTool.Analyse03(_objectReader, _handlesReader, _textReader, "BD", null, 1000);
-			//blockFlipParameter.Caption1001 = this._mergedReaders.ReadVariableText();
-			//blockFlipParameter.Point1010 = this._mergedReaders.Read3BitDouble();
-
-			return template;
-		}
-
-		private CadTemplate readEvaluationGraph()
-		{
-			EvaluationGraph evaluationGraph = new EvaluationGraph();
-			CadEvaluationGraphTemplate template = new CadEvaluationGraphTemplate(evaluationGraph);
-
-			this.readCommonNonEntityData(template);
-
-			//DXF fields 96, 97 contain the value 5, here are three fields returning the same value 5
-			evaluationGraph.Value96 = this._objectReader.ReadBitLong();
-			evaluationGraph.Value97 = this._objectReader.ReadBitLong();
-
-			int nodeCount = this._objectReader.ReadBitLong();
-			for (int i = 0; i < nodeCount; i++)
-			{
-				var nodeTemplate = new CadEvaluationGraphTemplate.GraphNodeTemplate();
-				var node = new EvaluationGraph.Node();
-				template.NodeTemplates.Add(nodeTemplate);
-
-				//Code 91
-				node.Index = this._objectReader.ReadBitLong();
-				//Code 93
-				node.Flags = this._objectReader.ReadBitLong();
-				//Code 95
-				node.NextNodeIndex = this._objectReader.ReadBitLong();
-
-				//Code 360
-				nodeTemplate.ExpressionHandle = this.handleReference();
-
-				//Codes 92, x4
-				node.Data1 = this._objectReader.ReadBitLong();
-				node.Data2 = this._objectReader.ReadBitLong();
-				node.Data3 = this._objectReader.ReadBitLong();
-				node.Data4 = this._objectReader.ReadBitLong();
-			}
-
-			//Last node has x5 92 with the last value as 0 instead of x4
-			//Followed by a 93
-			var edgeCount = this._objectReader.ReadBitLong();
-			for (int i = 0; i < edgeCount; i++)
-			{
-				//id BL, DXF 92
-				//nextid BLd, DXF 93
-				//e1 BLd, DXF 94
-				//e2 BLd, DXF 91
-				//e3 BLd, DXF 91
-				//out_edge BLd
-
-				//92 id
-				this._objectReader.ReadBitLong();
-				//93
-				this._objectReader.ReadBitLong();
-				//94
-				this._objectReader.ReadBitLong();
-				//91
-				this._objectReader.ReadBitLong();
-				//91
-				this._objectReader.ReadBitLong();
-				//92 x6
-				this._objectReader.ReadBitLong();
-				this._objectReader.ReadBitLong();
-				this._objectReader.ReadBitLong();
-				this._objectReader.ReadBitLong();
-				this._objectReader.ReadBitLong();
+				template.DxfClass = c;
 			}
 
 			return template;
 		}
-
-		private CadTemplate readSpatialFilter()
-		{
-			SpatialFilter filter = new SpatialFilter();
-			CadNonGraphicalObjectTemplate template = new CadNonGraphicalObjectTemplate(filter);
-
-			this.readCommonNonEntityData(template);
-
-			//Common:
-			//Numpts BS 70 number of points
-			int numPts = this._mergedReaders.ReadBitShort();
-			//Repeat numpts times:
-			for (int i = 0; i < numPts; i++)
-			{
-				//pt0 2RD 10 a point on the clip boundary
-				filter.BoundaryPoints.Add(this._mergedReaders.Read2RawDouble());
-			}
-
-			//Extrusion 3BD 210 extrusion
-			filter.Normal = this._mergedReaders.Read3BitDouble();
-			//Clipbdorg 3BD 10 clip bound origin
-			filter.Origin = this._mergedReaders.Read3BitDouble();
-			//Dispbound BS 71 display boundary
-			filter.DisplayBoundary = this._mergedReaders.ReadBitShort() != 0;
-			//Frontclipon BS 72 1 if front clip on
-			filter.ClipFrontPlane = this._mergedReaders.ReadBitShort() != 0;
-
-			if (filter.ClipFrontPlane)
-			{
-				//Frontdist BD 40 front clip dist(present if frontclipon == 1)
-				filter.FrontDistance = this._mergedReaders.ReadBitDouble();
-			}
-
-			//Backclipon BS 73 1 if back clip on
-			filter.ClipBackPlane = this._mergedReaders.ReadBitShort() != 0;
-			if (filter.ClipBackPlane)
-			{
-				//Backdist BD 41 back clip dist(present if backclipon == 1)
-				filter.BackDistance = this._mergedReaders.ReadBitDouble();
-			}
-
-			//Invblktr 12BD 40 inverse block transformation matrix
-			//(double[4][3], column major order)
-			filter.InverseInsertTransform = this.read4x3Matrix();
-			//clipbdtr 12BD 40 clip bound transformation matrix
-			//(double[4][3], column major order)
-			filter.InsertTransform = this.read4x3Matrix();
-
-			return template;
-		}
-
-		#endregion Evaluation Graph, Enhanced Block etc.
-
-		#region Text entities
-
-		private CadTemplate readAttribute()
-		{
-			AttributeEntity att = new AttributeEntity();
-			CadAttributeTemplate template = new CadAttributeTemplate(att);
-
-			this.readCommonTextData(template);
-
-			this.readCommonAttData(template);
-
-			return template;
-		}
-
-		private CadTemplate readAttributeDefinition()
-		{
-			AttributeDefinition attdef = new AttributeDefinition();
-			CadAttributeTemplate template = new CadAttributeTemplate(attdef);
-
-			this.readCommonTextData(template);
-
-			this.readCommonAttData(template);
-
-			//R2010+:
-			if (this.R2010Plus)
-				//Version RC ?		Repeated??
-				attdef.Version = this._objectReader.ReadByte();
-
-			//Common:
-			//Prompt TV 3
-			attdef.Prompt = this._textReader.ReadVariableText();
-
-			return template;
-		}
-
-		private void readCommonAttData(CadAttributeTemplate template)
-		{
-			AttributeBase att = template.CadObject as AttributeBase;
-
-			//R2010+:
-			if (this.R2010Plus)
-			{
-				//Version RC ?
-				att.Version = this._objectReader.ReadByte();
-			}
-
-			//R2018+:
-			if (this.R2018Plus)
-			{
-				att.AttributeType = (AttributeType)this._objectReader.ReadByte();
-			}
-
-			switch (att.AttributeType)
-			{
-				case AttributeType.MultiLine:
-				case AttributeType.ConstantMultiLine:
-					//Attribute type is multi line
-					//MTEXT fields … Here all fields of an embedded MTEXT object
-					//are written, starting from the Entmode
-					//(entity mode). The owner handle can be 0.
-					att.MText = new MText();
-					CadTextEntityTemplate mtextTemplate = new CadTextEntityTemplate(att.MText);
-					template.MTextTemplate = mtextTemplate;
-
-					this.readEntityMode(mtextTemplate);
-
-					this.readMText(mtextTemplate, false);
-
-					short dataSize = this._objectReader.ReadBitShort();
-					if (dataSize > 0)
-					{
-						//Annotative data bytes RC Byte array with length Annotative data size.
-						var data = this._objectReader.ReadBytes(dataSize);
-						//Registered application H Hard pointer.
-						var appHanlde = this.handleReference(); //What to do??
-																//Unknown BS 72? Value 0.
-						this._objectReader.ReadBitShort();
-					}
-					break;
-			}
-
-			//Common:
-			//Tag TV 2
-			att.Tag = this._textReader.ReadVariableText();
-			//Field length BS 73 unused
-			short length = this._objectReader.ReadBitShort();
-			//Flags RC 70 NOT bit-pair - coded.
-			att.Flags = (AttributeFlags)this._objectReader.ReadByte();
-			//R2007 +:
-			if (this.R2007Plus)
-			{
-				//Lock position flag B 280
-				att.IsReallyLocked = this._objectReader.ReadBit();
-			}
-		}
-
-		private void readCommonTextData(CadTextEntityTemplate template)
-		{
-			this.readCommonEntityData(template);
-
-			TextEntity text = (TextEntity)template.CadObject;
-
-			double elevation = 0.0;
-			XY pt = new XY();
-
-			//R13-14 Only:
-			if (this.R13_14Only)
-			{
-				//Elevation BD ---
-				elevation = this._objectReader.ReadBitDouble();
-				//Insertion pt 2RD 10
-				pt = this._objectReader.Read2RawDouble();
-				text.InsertPoint = new XYZ(pt.X, pt.Y, elevation);
-
-				//Alignment pt 2RD 11
-				pt = this._objectReader.Read2RawDouble();
-				text.AlignmentPoint = new XYZ(pt.X, pt.Y, elevation);
-
-				//Extrusion 3BD 210
-				text.Normal = this._objectReader.Read3BitDouble();
-				//Thickness BD 39
-				text.Thickness = this._objectReader.ReadBitDouble();
-				//Oblique ang BD 51
-				text.ObliqueAngle = this._objectReader.ReadBitDouble();
-				//Rotation ang BD 50
-				text.Rotation = this._objectReader.ReadBitDouble();
-				//Height BD 40
-				text.Height = this._objectReader.ReadBitDouble();
-				//Width factor BD 41
-				text.WidthFactor = this._objectReader.ReadBitDouble();
-				//Text value TV 1
-				text.Value = this._textReader.ReadVariableText();
-				//Generation BS 71
-				text.Mirror = (TextMirrorFlag)this._objectReader.ReadBitShort();
-				//Horiz align. BS 72
-				text.HorizontalAlignment = (TextHorizontalAlignment)this._objectReader.ReadBitShort();
-				//Vert align. BS 73
-				text.VerticalAlignment = (TextVerticalAlignmentType)this._objectReader.ReadBitShort();
-
-				//Common:
-				//Common Entity Handle Data H 7 STYLE(hard pointer)
-				template.StyleHandle = this.handleReference();
-				return;
-			}
-
-			//DataFlags RC Used to determine presence of subsquent data
-			byte dataFlags = this._objectReader.ReadByte();
-
-			//Elevation RD --- present if !(DataFlags & 0x01)
-			if ((dataFlags & 0x1) == 0)
-				elevation = this._objectReader.ReadDouble();
-
-			//Insertion pt 2RD 10
-			pt = this._objectReader.Read2RawDouble();
-			text.InsertPoint = new XYZ(pt.X, pt.Y, elevation);
-
-			//Alignment pt 2DD 11 present if !(DataFlags & 0x02), use 10 & 20 values for 2 default values.
-			if ((dataFlags & 0x2) == 0)
-			{
-				double x = this._objectReader.ReadBitDoubleWithDefault((double)text.InsertPoint.X);
-				double y = this._objectReader.ReadBitDoubleWithDefault((double)text.InsertPoint.Y);
-				text.AlignmentPoint = new XYZ(x, y, elevation);
-			}
-
-			//Extrusion BE 210
-			text.Normal = this._objectReader.ReadBitExtrusion();
-			//Thickness BT 39
-			text.Thickness = this._objectReader.ReadBitThickness();
-
-			//Oblique ang RD 51 present if !(DataFlags & 0x04)
-			if ((dataFlags & 0x4) == 0)
-				text.ObliqueAngle = this._objectReader.ReadDouble();
-			//Rotation ang RD 50 present if !(DataFlags & 0x08)
-			if ((dataFlags & 0x8) == 0)
-				text.Rotation = this._objectReader.ReadDouble();
-			//Height RD 40
-			text.Height = this._objectReader.ReadDouble();
-			//Width factor RD 41 present if !(DataFlags & 0x10)
-			if ((dataFlags & 0x10) == 0)
-				text.WidthFactor = this._objectReader.ReadDouble();
-
-			//Text value TV 1
-			text.Value = this._textReader.ReadVariableText();
-
-			//Generation BS 71 present if !(DataFlags & 0x20)
-			if ((dataFlags & 0x20) == 0)
-				text.Mirror = (TextMirrorFlag)this._objectReader.ReadBitShort();
-			//Horiz align. BS 72 present if !(DataFlags & 0x40)
-			if ((dataFlags & 0x40) == 0)
-				text.HorizontalAlignment = (TextHorizontalAlignment)this._objectReader.ReadBitShort();
-			//Vert align. BS 73 present if !(DataFlags & 0x80)
-			if ((dataFlags & 0x80) == 0)
-				text.VerticalAlignment = (TextVerticalAlignmentType)this._objectReader.ReadBitShort();
-
-			//Common:
-			//Common Entity Handle Data H 7 STYLE(hard pointer)
-			template.StyleHandle = this.handleReference();
-		}
-
-		private CadTemplate readText()
-		{
-			TextEntity text = new TextEntity();
-			CadTextEntityTemplate template = new CadTextEntityTemplate(text);
-
-			this.readCommonTextData(template);
-
-			return template;
-		}
-
-		private CadTemplate readUnknownEntity(DxfClass dxfClass)
-		{
-			UnknownEntity entity = new UnknownEntity(dxfClass);
-			CadUnknownEntityTemplate template = new CadUnknownEntityTemplate(entity);
-
-			this.readCommonEntityData(template);
-
-			return template;
-		}
-
-		private CadTemplate readUnknownNonGraphicalObject(DxfClass dxfClass)
-		{
-			UnknownNonGraphicalObject obj = new UnknownNonGraphicalObject(dxfClass);
-			CadUnknownNonGraphicalObjectTemplate template = new CadUnknownNonGraphicalObjectTemplate(obj);
-
-			this.readCommonNonEntityData(template);
-
-			return template;
-		}
-
-		#endregion Text entities
-
-		#region Insert methods
-
-		private CadTemplate readInsert()
-		{
-			CadInsertTemplate template = new CadInsertTemplate(new Insert());
-
-			this.readInsertCommonData(template);
-			this.readInsertCommonHandles(template);
-
-			return template;
-		}
-
-		private void readInsertCommonData(CadInsertTemplate template)
-		{
-			Insert insert = template.CadObject as Insert;
-
-			this.readCommonEntityData(template);
-
-			//Ins pt 3BD 10
-			insert.InsertPoint = this._objectReader.Read3BitDouble();
-
-			//R13-R14 Only:
-			if (this.R13_14Only)
-			{
-				XYZ scale = this._objectReader.Read3BitDouble();
-				//X Scale BD 41
-				insert.XScale = scale.X;
-				//Y Scale BD 42
-				insert.YScale = scale.Y;
-				//Z Scale BD 43
-				insert.ZScale = scale.Z;
-			}
-
-			//R2000 + Only:
-			if (this.R2000Plus)
-			{
-				//Data flags BB
-				//Scale Data Varies with Data flags:
-				switch (this._objectReader.Read2Bits())
-				{
-					//00 – 41 value stored as a RD, followed by a 42 value stored as DD (use 41 for default value), and a 43 value stored as a DD(use 41 value for default value).
-					case 0:
-						insert.XScale = this._objectReader.ReadDouble();
-						insert.YScale = this._objectReader.ReadBitDoubleWithDefault(insert.XScale);
-						insert.ZScale = this._objectReader.ReadBitDoubleWithDefault(insert.XScale);
-						break;
-					//01 – 41 value is 1.0, 2 DD’s are present, each using 1.0 as the default value, representing the 42 and 43 values.
-					case 1:
-						insert.YScale = this._objectReader.ReadBitDoubleWithDefault(insert.XScale);
-						insert.ZScale = this._objectReader.ReadBitDoubleWithDefault(insert.XScale);
-						break;
-					//10 – 41 value stored as a RD, and 42 & 43 values are not stored, assumed equal to 41 value.
-					case 2:
-						double xyz = this._objectReader.ReadDouble();
-						insert.XScale = xyz;
-						insert.YScale = xyz;
-						insert.ZScale = xyz;
-						break;
-					//11 - scale is (1.0, 1.0, 1.0), no data stored.
-					case 3:
-						insert.XScale = 1;
-						insert.YScale = 1;
-						insert.ZScale = 1;
-						break;
-				}
-			}
-
-			//Common:
-			//Rotation BD 50
-			insert.Rotation = this._objectReader.ReadBitDouble();
-			//Extrusion 3BD 210
-			insert.Normal = this._objectReader.Read3BitDouble();
-			//Has ATTRIBs B 66 Single bit; 1 if ATTRIBs follow.
-			template.HasAtts = this._objectReader.ReadBit();
-			template.OwnedObjectsCount = 0;
-
-			//R2004+:
-			if (this.R2004Plus && template.HasAtts)
-				//Owned Object Count BL Number of objects owned by this object.
-				template.OwnedObjectsCount = this._objectReader.ReadBitLong();
-		}
-
-		private void readInsertCommonHandles(CadInsertTemplate template)
-		{
-			//Common:
-			//Common Entity Handle Data
-			//H 2 BLOCK HEADER(hard pointer)
-			template.BlockHeaderHandle = this.handleReference();
-
-			if (!template.HasAtts)
-				return;
-
-			//R13 - R2000:
-			if (this._version >= ACadVersion.AC1012 && this._version <= ACadVersion.AC1015)
-			{
-				//H[1st ATTRIB(soft pointer)] if 66 bit set; can be NULL
-				template.FirstAttributeHandle = this.handleReference();
-				//H[last ATTRIB](soft pointer)] if 66 bit set; can be NULL
-				template.EndAttributeHandle = this.handleReference();
-			}
-			//R2004+:
-			else if (this.R2004Plus)
-			{
-				for (int i = 0; i < template.OwnedObjectsCount; ++i)
-					//H[ATTRIB(hard owner)] Repeats “Owned Object Count” times.
-					template.OwnedObjectsHandlers.Add(this.handleReference());
-			}
-
-			//Common:
-			//H[SEQEND(hard owner)] if 66 bit set
-			template.SeqendHandle = this.handleReference();
-		}
-
-		private CadTemplate readMInsert()
-		{
-			Insert insert = new Insert();
-			CadInsertTemplate template = new CadInsertTemplate(insert);
-
-			this.readInsertCommonData(template);
-
-			//Common:
-			//Numcols BS 70
-			insert.ColumnCount = (ushort)this._objectReader.ReadBitShort();
-			//Numrows BS 71
-			insert.RowCount = (ushort)this._objectReader.ReadBitShort();
-			//Col spacing BD 44
-			insert.ColumnSpacing = this._objectReader.ReadBitDouble();
-			//Row spacing BD 45
-			insert.RowSpacing = this._objectReader.ReadBitDouble();
-
-			this.readInsertCommonHandles(template);
-
-			return template;
-		}
-
-		#endregion Insert methods
 
 		private CadTemplate readVertex2D()
 		{
@@ -6278,259 +7021,6 @@ namespace ACadSharp.IO.DWG
 			vertex.Flags = (VertexFlags)this._objectReader.ReadByte();
 			//Point 3BD 10
 			vertex.Location = this._objectReader.Read3BitDouble();
-
-			return template;
-		}
-
-		private void readCommonDimensionAlignedData(CadDimensionTemplate template)
-		{
-			DimensionAligned dimension = (DimensionAligned)template.CadObject;
-
-			//Common:
-			//13 - pt 3BD 13 See DXF documentation.
-			dimension.FirstPoint = this._objectReader.Read3BitDouble();
-			//14 - pt 3BD 14 See DXF documentation.
-			dimension.SecondPoint = this._objectReader.Read3BitDouble();
-			//10 - pt 3BD 10 See DXF documentation.
-			dimension.DefinitionPoint = this._objectReader.Read3BitDouble();
-
-			//Ext ln rot BD 52 Extension line rotation; see DXF documentation.
-			dimension.ExtLineRotation = this._objectReader.ReadBitDouble();
-		}
-
-		private void readCommonDimensionData(CadDimensionTemplate template)
-		{
-			this.readCommonEntityData(template);
-
-			Dimension dimension = template.CadObject as Dimension;
-
-			//R2010:
-			if (this.R2010Plus)
-				//Version RC 280 0 = R2010
-				dimension.Version = this._objectReader.ReadByte();
-
-			//Common:
-			//Extrusion 3BD 210
-			dimension.Normal = this._objectReader.Read3BitDouble();
-			//Text midpt 2RD 11 See DXF documentation.
-			XY midpt = this._objectReader.Read2RawDouble();
-			//Elevation BD 11 Z - coord for the ECS points(11, 12, 16).
-			//12 (The 16 remains (0,0,0) in entgets of this entity,
-			//since the 16 is not used in this type of dimension
-			//and is not present in the binary form here.)
-			double elevation = this._objectReader.ReadBitDouble();
-			dimension.TextMiddlePoint = new XYZ(midpt.X, midpt.Y, elevation);
-
-			//Flags 1 RC 70 Non - bit - pair - coded.
-			//NOT the 70 group, but helps define it.
-			//Apparently only the two lowest bit are used:
-			//76543210:
-			//Bit 0 : The OPPOSITE of bit 7(128) of 70.
-			//Bit 1 : Same as bit 5(32) of the 70(but 32 is not doc'd by ACAD).
-			//The actual 70 - group value comes from 3 things:
-			//6 for being an ordinate DIMENSION, plus whatever bits "Flags 1" and "Flags 2" specify.
-
-			byte flags = this._objectReader.ReadByte();
-			dimension.IsTextUserDefinedLocation = (flags & 0b01) == 0;
-
-			//User text TV 1
-			dimension.Text = this._textReader.ReadVariableText();
-
-			//Text rot BD 53 See DXF documentation.
-			dimension.TextRotation = this._objectReader.ReadBitDouble();
-			//Horiz dir BD 51 See DXF documentation.
-			dimension.HorizontalDirection = this._objectReader.ReadBitDouble();
-
-			///<see cref="DwgObjectWriter.writeCommonDimensionData"></see>
-			//TODO: readDimension insert scale and rotation not implemented
-
-			//Ins X - scale BD 41 Undoc'd. These apply to the insertion of the
-			//Ins Y - scale BD 42 anonymous block. None of them can be
-			//Ins Z - scale BD 43 dealt with via entget/entmake/entmod.
-			var insertionScaleFactor = new XYZ(this._objectReader.ReadBitDouble(), this._objectReader.ReadBitDouble(), this._objectReader.ReadBitDouble());
-
-			//Ins rotation BD 54 The last 2(43 and 54) are reported by DXFOUT(when not default values).
-			//ALL OF THEM can be set via DXFIN, however.
-			var insertionRotation = this._objectReader.ReadBitDouble();
-
-			//R2000 +:
-			if (this.R2000Plus)
-			{
-				//Attachment Point BS 71
-				dimension.AttachmentPoint = (AttachmentPointType)this._objectReader.ReadBitShort();
-				//Linespacing Style BS 72
-				dimension.LineSpacingStyle = (LineSpacingStyleType)this._objectReader.ReadBitShort();
-				//Linespacing Factor BD 41
-				dimension.LineSpacingFactor = this._objectReader.ReadBitDouble();
-				//Actual Measurement BD 42
-				this._objectReader.ReadBitDouble();
-			}
-
-			//R2007 +:
-			if (this.R2007Plus)
-			{
-				//Unknown B 73
-				this._objectReader.ReadBit();
-				//Flip arrow1 B 74
-				dimension.FlipArrow1 = this._objectReader.ReadBit();
-				//Flip arrow2 B 75
-				dimension.FlipArrow2 = this._objectReader.ReadBit();
-			}
-
-			//Common:
-			//12 - pt 2RD 12 See DXF documentation.
-			XY pt = this._objectReader.Read2RawDouble();
-			dimension.InsertionPoint = new XYZ((double)pt.X, (double)pt.Y, elevation);
-		}
-
-		[Obsolete("Can be moved to the common dimension data")]
-		private void readCommonDimensionHandles(CadDimensionTemplate template)
-		{
-			//Common Entity Handle Data
-			//H 3 DIMSTYLE(hard pointer)
-			template.StyleHandle = this.handleReference();
-			//H 2 anonymous BLOCK(hard pointer)
-			template.BlockHandle = this.handleReference();
-		}
-
-		private CadTemplate readDimAligned()
-		{
-			DimensionAligned dimension = new DimensionAligned();
-			CadDimensionTemplate template = new CadDimensionTemplate(dimension);
-
-			this.readCommonDimensionData(template);
-
-			this.readCommonDimensionAlignedData(template);
-
-			this.readCommonDimensionHandles(template);
-
-			return template;
-		}
-
-		private CadTemplate readDimAngular3pt()
-		{
-			DimensionAngular3Pt dimension = new DimensionAngular3Pt();
-			CadDimensionTemplate template = new CadDimensionTemplate(dimension);
-
-			this.readCommonDimensionData(template);
-
-			//Common:
-			//10 - pt 3BD 10 See DXF documentation.
-			dimension.DefinitionPoint = this._objectReader.Read3BitDouble();
-			//13 - pt 3BD 13 See DXF documentation.
-			dimension.FirstPoint = this._objectReader.Read3BitDouble();
-			//14 - pt 3BD 14 See DXF documentation.
-			dimension.SecondPoint = this._objectReader.Read3BitDouble();
-			//15-pt 3BD 15 See DXF documentation.
-			dimension.AngleVertex = this._objectReader.Read3BitDouble();
-
-			this.readCommonDimensionHandles(template);
-
-			return template;
-		}
-
-		private CadTemplate readDimDiameter()
-		{
-			DimensionDiameter dimension = new DimensionDiameter();
-			CadDimensionTemplate template = new CadDimensionTemplate(dimension);
-
-			this.readCommonDimensionData(template);
-
-			//Common:
-			//10 - pt 3BD 10 See DXF documentation.
-			dimension.DefinitionPoint = this._objectReader.Read3BitDouble();
-			//15-pt 3BD 15 See DXF documentation.
-			dimension.AngleVertex = this._objectReader.Read3BitDouble();
-			//Leader len D 40 Leader length.
-			dimension.LeaderLength = this._objectReader.ReadBitDouble();
-
-			this.readCommonDimensionHandles(template);
-
-			return template;
-		}
-
-		private CadTemplate readDimLine2pt()
-		{
-			DimensionAngular2Line dimension = new DimensionAngular2Line();
-			CadDimensionTemplate template = new CadDimensionTemplate(dimension);
-
-			this.readCommonDimensionData(template);
-
-			//Common:
-			//16-pt 2RD 16 See DXF documentation.
-			XY xy = this._objectReader.Read2RawDouble();
-			dimension.DimensionArc = new XYZ(xy.X, xy.Y, dimension.TextMiddlePoint.Z);
-
-			//13 - pt 3BD 13 See DXF documentation.
-			dimension.FirstPoint = this._objectReader.Read3BitDouble();
-			//14 - pt 3BD 14 See DXF documentation.
-			dimension.SecondPoint = this._objectReader.Read3BitDouble();
-			//15-pt 3BD 15 See DXF documentation.
-			dimension.AngleVertex = this._objectReader.Read3BitDouble();
-			//10 - pt 3BD 10 See DXF documentation.
-			dimension.DefinitionPoint = this._objectReader.Read3BitDouble();
-
-			this.readCommonDimensionHandles(template);
-
-			return template;
-		}
-
-		private CadTemplate readDimLinear()
-		{
-			DimensionLinear dimension = new DimensionLinear();
-			CadDimensionTemplate template = new CadDimensionTemplate(dimension);
-
-			this.readCommonDimensionData(template);
-
-			this.readCommonDimensionAlignedData(template);
-
-			//Dim rot BD 50 Linear dimension rotation; see DXF documentation.
-			dimension.Rotation = this._objectReader.ReadBitDouble();
-
-			this.readCommonDimensionHandles(template);
-
-			return template;
-		}
-
-		private CadTemplate readDimOrdinate()
-		{
-			DimensionOrdinate dimension = new DimensionOrdinate();
-			CadDimensionTemplate template = new CadDimensionTemplate(dimension);
-
-			this.readCommonDimensionData(template);
-
-			//Common:
-			//10 - pt 3BD 10 See DXF documentation.
-			dimension.DefinitionPoint = this._objectReader.Read3BitDouble();
-			//13 - pt 3BD 13 See DXF documentation.
-			dimension.FeatureLocation = this._objectReader.Read3BitDouble();
-			//14 - pt 3BD 14 See DXF documentation.
-			dimension.LeaderEndpoint = this._objectReader.Read3BitDouble();
-
-			byte flags = this._objectReader.ReadByte();
-			dimension.IsOrdinateTypeX = (flags & 0b01) != 0;
-
-			this.readCommonDimensionHandles(template);
-
-			return template;
-		}
-
-		private CadTemplate readDimRadius()
-		{
-			DimensionRadius dimension = new DimensionRadius();
-			CadDimensionTemplate template = new CadDimensionTemplate(dimension);
-
-			this.readCommonDimensionData(template);
-
-			//Common:
-			//10 - pt 3BD 10 See DXF documentation.
-			dimension.DefinitionPoint = this._objectReader.Read3BitDouble();
-			//15-pt 3BD 15 See DXF documentation.
-			dimension.AngleVertex = this._objectReader.Read3BitDouble();
-			//Leader len D 40 Leader length.
-			dimension.LeaderLength = this._objectReader.ReadBitDouble();
-
-			this.readCommonDimensionHandles(template);
 
 			return template;
 		}
@@ -7106,63 +7596,6 @@ namespace ACadSharp.IO.DWG
 			}
 		}
 
-		private CadTemplate readDimensionAssociation()
-		{
-			DimensionAssociation association = new DimensionAssociation();
-			CadDimensionAssociationTemplate template = new CadDimensionAssociationTemplate(association);
-
-			this.readCommonNonEntityData(template);
-
-			//Following the order of dxf:
-			//330
-			template.DimensionHandle = this.handleReference();
-
-			//90 
-			association.AssociativityFlags = (AssociativityFlags)this._mergedReaders.ReadBitLong();
-			//70
-			association.IsTransSpace = this._mergedReaders.ReadBit();
-			//71
-			association.RotatedDimensionType = (RotatedDimensionType)this._mergedReaders.ReadByte();
-
-			if (association.AssociativityFlags.HasFlag(AssociativityFlags.FirstPointReference))
-			{
-				template.FirstPointRef = this.readOsnapPointRef();
-			}
-
-			if (association.AssociativityFlags.HasFlag(AssociativityFlags.SecondPointReference))
-			{
-				template.SecondPointRef = this.readOsnapPointRef();
-			}
-
-			if (association.AssociativityFlags.HasFlag(AssociativityFlags.ThirdPointReference))
-			{
-				template.ThirdPointRef = this.readOsnapPointRef();
-			}
-
-			if (association.AssociativityFlags.HasFlag(AssociativityFlags.FourthPointReference))
-			{
-				template.FourthPointRef = this.readOsnapPointRef();
-			}
-
-			return template;
-		}
-
-		private CadDimensionAssociationTemplate.OsnapPointRefTemplate readOsnapPointRef()
-		{
-			var osnap = new DimensionAssociation.OsnapPointRef();
-			var template = new CadDimensionAssociationTemplate.OsnapPointRefTemplate(osnap);
-
-			//1
-			var className = this._mergedReaders.ReadVariableText();
-			//72
-			osnap.ObjectOsnapType = (ObjectOsnapType)this._mergedReaders.ReadByte();
-
-			//331
-			template.ObjectHandle = this.handleReference();
-
-			return template;
-		}
-
 		private CadTemplate readXLine()
 		{
 			XLine xline = new XLine();
@@ -7203,7 +7636,7 @@ namespace ACadSharp.IO.DWG
 				//numbers all follow the normal DXF convention for group codes.
 				var code = this._objectReader.ReadShort();
 				var groupCode = GroupCodeValue.TransformValue(code);
-
+				XRecord.Entry entry;
 				switch (groupCode)
 				{
 					case GroupCodeValueType.String:
@@ -7240,7 +7673,8 @@ namespace ACadSharp.IO.DWG
 						string hex = this._objectReader.ReadTextUnicode();
 						if (ulong.TryParse(hex, NumberStyles.HexNumber, CultureInfo.InvariantCulture, out ulong result))
 						{
-							template.AddHandleReference(code, result);
+							entry = xRecord.CreateEntry(code, result);
+							template.AddHandleReference(entry);
 						}
 						else
 						{
@@ -7256,7 +7690,9 @@ namespace ACadSharp.IO.DWG
 						break;
 					case GroupCodeValueType.ObjectId:
 					case GroupCodeValueType.ExtendedDataHandle:
-						template.AddHandleReference(code, this._objectReader.ReadRawULong());
+						var handle = this._objectReader.ReadRawULong();
+						entry = xRecord.CreateEntry(code, handle);
+						template.AddHandleReference(entry);
 						break;
 					default:
 						this.notify($"Unidentified GroupCodeValueType {code} for XRecord [{xRecord.Handle}]", NotificationType.Warning);
@@ -7284,40 +7720,513 @@ namespace ACadSharp.IO.DWG
 			return template;
 		}
 
-		private CadTemplate readDbColor()
+		private void readXrefDependantBit(TableEntry entry)
 		{
-			BookColor bookColor = new();
-			CadNonGraphicalObjectTemplate template = new(bookColor);
-
-			this.readCommonNonEntityData(template);
-
-			short colorIndex = this._objectReader.ReadBitShort();
-
-			if (this.R2004Plus)
+			if (this.R2007Plus)
 			{
-				uint trueColor = (uint)this._objectReader.ReadBitLong();
-				byte flags = this._objectReader.ReadByte();
+				//xrefindex+1 BS 70 subtract one from this value when read.
+				//After that, -1 indicates that this reference did not come from an xref,
+				//otherwise this value indicates the index of the blockheader for the xref from which this came.
+				short xrefindex = this._objectReader.ReadBitShort();
 
-				if ((flags & 1U) > 0U)
+				//Xdep B 70 dependent on an xref. (16 bit)
+				if (((uint)xrefindex & 0b100000000) > 0)
 				{
-					bookColor.ColorName = this._textReader.ReadVariableText();
+					entry.Flags |= StandardFlags.XrefDependent;
 				}
-
-				if ((flags & 2U) > 0U)
-				{
-					bookColor.BookName = this._textReader.ReadVariableText();
-				}
-
-				byte[] arr = LittleEndianConverter.Instance.GetBytes(trueColor);
-
-				bookColor.Color = new Color(arr[2], arr[1], arr[0]);
 			}
 			else
 			{
-				bookColor.Color = new Color(colorIndex);
+				//64-flag B 70 The 64-bit of the 70 group.
+				if (this._objectReader.ReadBit())
+				{
+					entry.Flags |= StandardFlags.Referenced;
+				}
+
+				//xrefindex + 1 BS 70 subtract one from this value when read.
+				//After that, -1 indicates that this reference did not come from an xref,
+				//otherwise this value indicates the index of the blockheader for the xref from which this came.
+				int xrefindex = this._objectReader.ReadBitShort() - 1;
+
+				//Xdep B 70 dependent on an xref. (16 bit)
+				if (this._objectReader.ReadBit())
+				{
+					entry.Flags |= StandardFlags.XrefDependent;
+				}
+			}
+		}
+
+		/// <summary>
+		/// Update the text reader and the handler reader at the end of the object position.
+		/// </summary>
+		private void updateHandleReader()
+		{
+			//RL: Size of object data in bits (number of bits before the handles),
+			//or the "endbit" of the pre-handles section.
+			long size = this._objectReader.ReadRawLong();
+
+			//Set the position to the handle section
+			this._handlesReader.SetPositionInBits(size + this._objectInitialPos);
+
+			if (this._version == ACadVersion.AC1021)
+			{
+				this._textReader = DwgStreamReaderBase.GetStreamHandler(this._version, this.CloneSectionStream(this._memoryStream), this._reader.Encoding);
+				//"endbit" of the pre-handles section.
+				this._textReader.SetPositionByFlag(size + this._objectInitialPos - 1);
 			}
 
+			this._mergedReaders = new DwgMergedReader(this._objectReader, this._textReader, this._handlesReader);
+		}
+
+		#region Evaluation Graph, Enhanced Block etc.
+
+		private Matrix4 read4x3Matrix()
+		{
+			Matrix4 identity = Matrix4.Identity;
+			for (int i = 0; i < 3; i++)
+			{
+				for (int j = 0; j < 4; j++)
+				{
+					identity[i, j] = this._mergedReaders.ReadBitDouble();
+				}
+			}
+			return identity;
+		}
+
+		private CadTemplate readSpatialFilter()
+		{
+			SpatialFilter filter = new SpatialFilter();
+			CadNonGraphicalObjectTemplate template = new CadNonGraphicalObjectTemplate(filter);
+
+			this.readCommonNonEntityData(template);
+
+			//Common:
+			//Numpts BS 70 number of points
+			int numPts = this._mergedReaders.ReadBitShort();
+			//Repeat numpts times:
+			for (int i = 0; i < numPts; i++)
+			{
+				//pt0 2RD 10 a point on the clip boundary
+				filter.BoundaryPoints.Add(this._mergedReaders.Read2RawDouble());
+			}
+
+			//Extrusion 3BD 210 extrusion
+			filter.Normal = this._mergedReaders.Read3BitDouble();
+			//Clipbdorg 3BD 10 clip bound origin
+			filter.Origin = this._mergedReaders.Read3BitDouble();
+			//Dispbound BS 71 display boundary
+			filter.DisplayBoundary = this._mergedReaders.ReadBitShort() != 0;
+			//Frontclipon BS 72 1 if front clip on
+			filter.ClipFrontPlane = this._mergedReaders.ReadBitShort() != 0;
+
+			if (filter.ClipFrontPlane)
+			{
+				//Frontdist BD 40 front clip dist(present if frontclipon == 1)
+				filter.FrontDistance = this._mergedReaders.ReadBitDouble();
+			}
+
+			//Backclipon BS 73 1 if back clip on
+			filter.ClipBackPlane = this._mergedReaders.ReadBitShort() != 0;
+			if (filter.ClipBackPlane)
+			{
+				//Backdist BD 41 back clip dist(present if backclipon == 1)
+				filter.BackDistance = this._mergedReaders.ReadBitDouble();
+			}
+
+			//Invblktr 12BD 40 inverse block transformation matrix
+			//(double[4][3], column major order)
+			filter.InverseInsertTransform = this.read4x3Matrix();
+			//clipbdtr 12BD 40 clip bound transformation matrix
+			//(double[4][3], column major order)
+			filter.InsertTransform = this.read4x3Matrix();
+
 			return template;
+		}
+
+		#endregion Evaluation Graph, Enhanced Block etc.
+
+		#region Text entities
+
+		private CadTemplate readAttribute()
+		{
+			AttributeEntity att = new AttributeEntity();
+			CadAttributeTemplate template = new CadAttributeTemplate(att);
+
+			this.readCommonTextData(template);
+
+			this.readCommonAttData(template);
+
+			return template;
+		}
+
+		private CadTemplate readAttributeDefinition()
+		{
+			AttributeDefinition attdef = new AttributeDefinition();
+			CadAttributeTemplate template = new CadAttributeTemplate(attdef);
+
+			this.readCommonTextData(template);
+
+			this.readCommonAttData(template);
+
+			//R2010+:
+			if (this.R2010Plus)
+				//Version RC ?		Repeated??
+				attdef.Version = this._objectReader.ReadByte();
+
+			//Common:
+			//Prompt TV 3
+			attdef.Prompt = this._textReader.ReadVariableText();
+
+			return template;
+		}
+
+		private void readCommonAttData(CadAttributeTemplate template)
+		{
+			AttributeBase att = template.CadObject as AttributeBase;
+
+			//R2010+:
+			if (this.R2010Plus)
+			{
+				//Version RC ?
+				att.Version = this._objectReader.ReadByte();
+			}
+
+			//R2018+:
+			if (this.R2018Plus)
+			{
+				att.AttributeType = (AttributeType)this._objectReader.ReadByte();
+			}
+
+			switch (att.AttributeType)
+			{
+				case AttributeType.MultiLine:
+				case AttributeType.ConstantMultiLine:
+					//Attribute type is multi line
+					//MTEXT fields … Here all fields of an embedded MTEXT object
+					//are written, starting from the Entmode
+					//(entity mode). The owner handle can be 0.
+					att.MText = new MText();
+					CadTextEntityTemplate mtextTemplate = new CadTextEntityTemplate(att.MText);
+					template.MTextTemplate = mtextTemplate;
+
+					this.readEntityMode(mtextTemplate);
+
+					this.readMText(mtextTemplate, false);
+
+					short dataSize = this._objectReader.ReadBitShort();
+					if (dataSize > 0)
+					{
+						//Annotative data bytes RC Byte array with length Annotative data size.
+						var data = this._objectReader.ReadBytes(dataSize);
+						//Registered application H Hard pointer.
+						var appHanlde = this.handleReference(); //What to do??
+																//Unknown BS 72? Value 0.
+						this._objectReader.ReadBitShort();
+					}
+					break;
+			}
+
+			//Common:
+			//Tag TV 2
+			att.Tag = this._textReader.ReadVariableText();
+			//Field length BS 73 unused
+			short length = this._objectReader.ReadBitShort();
+			//Flags RC 70 NOT bit-pair - coded.
+			att.Flags = (AttributeFlags)this._objectReader.ReadByte();
+			//R2007 +:
+			if (this.R2007Plus)
+			{
+				//Lock position flag B 280
+				att.IsLocked = this._objectReader.ReadBit();
+			}
+		}
+
+		private void readCommonTextData(CadTextEntityTemplate template)
+		{
+			this.readCommonEntityData(template);
+
+			TextEntity text = (TextEntity)template.CadObject;
+
+			double elevation = 0.0;
+			XY pt = new XY();
+
+			//R13-14 Only:
+			if (this.R13_14Only)
+			{
+				//Elevation BD ---
+				elevation = this._objectReader.ReadBitDouble();
+				//Insertion pt 2RD 10
+				pt = this._objectReader.Read2RawDouble();
+				text.InsertPoint = new XYZ(pt.X, pt.Y, elevation);
+
+				//Alignment pt 2RD 11
+				pt = this._objectReader.Read2RawDouble();
+				text.AlignmentPoint = new XYZ(pt.X, pt.Y, elevation);
+
+				//Extrusion 3BD 210
+				text.Normal = this._objectReader.Read3BitDouble();
+				//Thickness BD 39
+				text.Thickness = this._objectReader.ReadBitDouble();
+				//Oblique ang BD 51
+				text.ObliqueAngle = this._objectReader.ReadBitDouble();
+				//Rotation ang BD 50
+				text.Rotation = this._objectReader.ReadBitDouble();
+				//Height BD 40
+				text.Height = this._objectReader.ReadBitDouble();
+				//Width factor BD 41
+				text.WidthFactor = this._objectReader.ReadBitDouble();
+				//Text value TV 1
+				text.Value = this._textReader.ReadVariableText();
+				//Generation BS 71
+				text.Mirror = (TextMirrorFlag)this._objectReader.ReadBitShort();
+				//Horiz align. BS 72
+				text.HorizontalAlignment = (TextHorizontalAlignment)this._objectReader.ReadBitShort();
+				//Vert align. BS 73
+				text.VerticalAlignment = (TextVerticalAlignmentType)this._objectReader.ReadBitShort();
+
+				//Common:
+				//Common Entity Handle Data H 7 STYLE(hard pointer)
+				template.StyleHandle = this.handleReference();
+				return;
+			}
+
+			//DataFlags RC Used to determine presence of subsquent data
+			byte dataFlags = this._objectReader.ReadByte();
+
+			//Elevation RD --- present if !(DataFlags & 0x01)
+			if ((dataFlags & 0x1) == 0)
+				elevation = this._objectReader.ReadDouble();
+
+			//Insertion pt 2RD 10
+			pt = this._objectReader.Read2RawDouble();
+			text.InsertPoint = new XYZ(pt.X, pt.Y, elevation);
+
+			//Alignment pt 2DD 11 present if !(DataFlags & 0x02), use 10 & 20 values for 2 default values.
+			if ((dataFlags & 0x2) == 0)
+			{
+				double x = this._objectReader.ReadBitDoubleWithDefault((double)text.InsertPoint.X);
+				double y = this._objectReader.ReadBitDoubleWithDefault((double)text.InsertPoint.Y);
+				text.AlignmentPoint = new XYZ(x, y, elevation);
+			}
+
+			//Extrusion BE 210
+			text.Normal = this._objectReader.ReadBitExtrusion();
+			//Thickness BT 39
+			text.Thickness = this._objectReader.ReadBitThickness();
+
+			//Oblique ang RD 51 present if !(DataFlags & 0x04)
+			if ((dataFlags & 0x4) == 0)
+				text.ObliqueAngle = this._objectReader.ReadDouble();
+			//Rotation ang RD 50 present if !(DataFlags & 0x08)
+			if ((dataFlags & 0x8) == 0)
+				text.Rotation = this._objectReader.ReadDouble();
+			//Height RD 40
+			text.Height = this._objectReader.ReadDouble();
+			//Width factor RD 41 present if !(DataFlags & 0x10)
+			if ((dataFlags & 0x10) == 0)
+				text.WidthFactor = this._objectReader.ReadDouble();
+
+			//Text value TV 1
+			text.Value = this._textReader.ReadVariableText();
+
+			//Generation BS 71 present if !(DataFlags & 0x20)
+			if ((dataFlags & 0x20) == 0)
+				text.Mirror = (TextMirrorFlag)this._objectReader.ReadBitShort();
+			//Horiz align. BS 72 present if !(DataFlags & 0x40)
+			if ((dataFlags & 0x40) == 0)
+				text.HorizontalAlignment = (TextHorizontalAlignment)this._objectReader.ReadBitShort();
+			//Vert align. BS 73 present if !(DataFlags & 0x80)
+			if ((dataFlags & 0x80) == 0)
+				text.VerticalAlignment = (TextVerticalAlignmentType)this._objectReader.ReadBitShort();
+
+			//Common:
+			//Common Entity Handle Data H 7 STYLE(hard pointer)
+			template.StyleHandle = this.handleReference();
+		}
+
+		private CadTemplate readText()
+		{
+			TextEntity text = new TextEntity();
+			CadTextEntityTemplate template = new CadTextEntityTemplate(text);
+
+			this.readCommonTextData(template);
+
+			return template;
+		}
+
+		private CadTemplate readUnknownEntity(DxfClass dxfClass)
+		{
+			UnknownEntity entity = new UnknownEntity(dxfClass);
+			CadUnknownEntityTemplate template = new CadUnknownEntityTemplate(entity);
+
+			this.readCommonEntityData(template);
+
+			return template;
+		}
+
+		private CadTemplate readUnknownNonGraphicalObject(DxfClass dxfClass)
+		{
+			UnknownNonGraphicalObject obj = new UnknownNonGraphicalObject(dxfClass);
+			CadUnknownNonGraphicalObjectTemplate template = new CadUnknownNonGraphicalObjectTemplate(obj);
+
+			this.readCommonNonEntityData(template);
+
+			return template;
+		}
+
+		#endregion Text entities
+
+		#region Insert methods
+
+		private CadTemplate readInsert()
+		{
+			CadInsertTemplate template = new CadInsertTemplate(new Insert());
+
+			this.readInsertCommonData(template);
+			this.readInsertCommonHandles(template);
+
+			return template;
+		}
+
+		private void readInsertCommonData(CadInsertTemplate template)
+		{
+			Insert insert = template.CadObject as Insert;
+
+			this.readCommonEntityData(template);
+
+			//Ins pt 3BD 10
+			insert.InsertPoint = this._objectReader.Read3BitDouble();
+
+			//R13-R14 Only:
+			if (this.R13_14Only)
+			{
+				XYZ scale = this._objectReader.Read3BitDouble();
+				//X Scale BD 41
+				insert.XScale = scale.X;
+				//Y Scale BD 42
+				insert.YScale = scale.Y;
+				//Z Scale BD 43
+				insert.ZScale = scale.Z;
+			}
+
+			//R2000 + Only:
+			if (this.R2000Plus)
+			{
+				//Data flags BB
+				//Scale Data Varies with Data flags:
+				switch (this._objectReader.Read2Bits())
+				{
+					//00 – 41 value stored as a RD, followed by a 42 value stored as DD (use 41 for default value), and a 43 value stored as a DD(use 41 value for default value).
+					case 0:
+						insert.XScale = this._objectReader.ReadDouble();
+						insert.YScale = this._objectReader.ReadBitDoubleWithDefault(insert.XScale);
+						insert.ZScale = this._objectReader.ReadBitDoubleWithDefault(insert.XScale);
+						break;
+					//01 – 41 value is 1.0, 2 DD’s are present, each using 1.0 as the default value, representing the 42 and 43 values.
+					case 1:
+						insert.YScale = this._objectReader.ReadBitDoubleWithDefault(insert.XScale);
+						insert.ZScale = this._objectReader.ReadBitDoubleWithDefault(insert.XScale);
+						break;
+					//10 – 41 value stored as a RD, and 42 & 43 values are not stored, assumed equal to 41 value.
+					case 2:
+						double xyz = this._objectReader.ReadDouble();
+						insert.XScale = xyz;
+						insert.YScale = xyz;
+						insert.ZScale = xyz;
+						break;
+					//11 - scale is (1.0, 1.0, 1.0), no data stored.
+					case 3:
+						insert.XScale = 1;
+						insert.YScale = 1;
+						insert.ZScale = 1;
+						break;
+				}
+			}
+
+			//Common:
+			//Rotation BD 50
+			insert.Rotation = this._objectReader.ReadBitDouble();
+			//Extrusion 3BD 210
+			insert.Normal = this._objectReader.Read3BitDouble();
+			//Has ATTRIBs B 66 Single bit; 1 if ATTRIBs follow.
+			template.HasAtts = this._objectReader.ReadBit();
+			template.OwnedObjectsCount = 0;
+
+			//R2004+:
+			if (this.R2004Plus && template.HasAtts)
+				//Owned Object Count BL Number of objects owned by this object.
+				template.OwnedObjectsCount = this._objectReader.ReadBitLong();
+		}
+
+		private void readInsertCommonHandles(CadInsertTemplate template)
+		{
+			//Common:
+			//Common Entity Handle Data
+			//H 2 BLOCK HEADER(hard pointer)
+			template.BlockHeaderHandle = this.handleReference();
+
+			if (!template.HasAtts)
+				return;
+
+			//R13 - R2000:
+			if (this._version >= ACadVersion.AC1012 && this._version <= ACadVersion.AC1015)
+			{
+				//H[1st ATTRIB(soft pointer)] if 66 bit set; can be NULL
+				template.FirstAttributeHandle = this.handleReference();
+				//H[last ATTRIB](soft pointer)] if 66 bit set; can be NULL
+				template.EndAttributeHandle = this.handleReference();
+			}
+			//R2004+:
+			else if (this.R2004Plus)
+			{
+				for (int i = 0; i < template.OwnedObjectsCount; ++i)
+					//H[ATTRIB(hard owner)] Repeats “Owned Object Count” times.
+					template.OwnedObjectsHandlers.Add(this.handleReference());
+			}
+
+			//Common:
+			//H[SEQEND(hard owner)] if 66 bit set
+			template.SeqendHandle = this.handleReference();
+		}
+
+		private CadTemplate readMInsert()
+		{
+			Insert insert = new Insert();
+			CadInsertTemplate template = new CadInsertTemplate(insert);
+
+			this.readInsertCommonData(template);
+
+			//Common:
+			//Numcols BS 70
+			insert.ColumnCount = (ushort)this._objectReader.ReadBitShort();
+			//Numrows BS 71
+			insert.RowCount = (ushort)this._objectReader.ReadBitShort();
+			//Col spacing BD 44
+			insert.ColumnSpacing = this._objectReader.ReadBitDouble();
+			//Row spacing BD 45
+			insert.RowSpacing = this._objectReader.ReadBitDouble();
+
+			this.readInsertCommonHandles(template);
+
+			return template;
+		}
+
+		#endregion Insert methods
+
+		/// <summary>
+		/// [PATCH] Releases the decompressed image stream and cloned views (in disk-cache mode, closes the temp-file FileStream -> deleted via DeleteOnClose).
+		/// Only closes it when this reader owns the stream; when reusing an upstream-passed stream in memory, it does not close it, to avoid harming the caller.
+		/// </summary>
+		public void Dispose()
+		{
+			if (this._ownsSectionStream)
+				this._memoryStream?.Dispose();
+
+			foreach (Stream s in this._diskViewStreams)
+				s.Dispose();
+			this._diskViewStreams.Clear();
+
+			GC.SuppressFinalize(this);
 		}
 	}
 }

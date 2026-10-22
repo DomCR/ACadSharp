@@ -1,4 +1,4 @@
-﻿using CSUtilities.Converters;
+using CSUtilities.Converters;
 using System.Collections.Generic;
 
 namespace ACadSharp.IO.DWG

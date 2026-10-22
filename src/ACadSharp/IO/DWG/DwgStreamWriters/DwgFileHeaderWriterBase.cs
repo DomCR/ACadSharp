@@ -1,4 +1,4 @@
-﻿using CSUtilities.Converters;
+using CSUtilities.Converters;
 using System;
 using System.IO;
 using System.Text;
@@ -35,7 +35,9 @@ internal abstract class DwgFileHeaderWriterBase<T> : IDwgFileHeaderWriter
 		this._encoding = encoding;
 	}
 
-	public abstract void AddSection(string name, MemoryStream stream, bool isCompressed, int decompsize = 0x7400);
+	// [PATCH] Upstream's parameter is MemoryStream; widened to Stream so large sections can be
+	// spilled to disk (temp file).
+	public abstract void AddSection(string name, Stream stream, bool isCompressed, int decompsize = 0x7400);
 
 	public abstract void WriteFile();
 

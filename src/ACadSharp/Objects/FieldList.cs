@@ -1,4 +1,5 @@
 ﻿using ACadSharp.Attributes;
+using ACadSharp.Classes;
 using System.Collections.Generic;
 
 namespace ACadSharp.Objects;
@@ -12,7 +13,7 @@ namespace ACadSharp.Objects;
 /// </remarks>
 [DxfName(DxfFileToken.ObjectFieldList)]
 [DxfSubClass(DxfSubclassMarker.FieldList)]
-public class FieldList : NonGraphicalObject
+public class FieldList : NonGraphicalObject, IDxfClassDefined
 {
 	/// <summary>
 	/// Gets the collection of fields associated with this instance.
@@ -38,9 +39,24 @@ public class FieldList : NonGraphicalObject
 		clone.Fields = new List<Field>();
 		foreach (Field f in this.Fields)
 		{
-			clone.Fields.Add(f);
+			clone.Fields.Add(f.Clone() as Field);
 		}
 
 		return clone;
+	}
+
+	/// <inheritdoc/>
+	public DxfClass GetDxfClass()
+	{
+		return new DxfClass
+		{
+			CppClassName = DxfSubclassMarker.FieldList,
+			DwgVersion = ACadVersion.AC1018,
+			DxfName = DxfFileToken.ObjectFieldList,
+			ItemClassId = 499,
+			MaintenanceVersion = 0,
+			ProxyFlags = ProxyFlags.CloningAllowed | ProxyFlags.DisablesProxyWarningDialog,
+			WasZombie = false,
+		};
 	}
 }

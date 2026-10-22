@@ -1,4 +1,4 @@
-﻿using CSMath;
+using CSMath;
 using CSUtilities.Converters;
 using System;
 using System.IO;
@@ -82,6 +82,21 @@ namespace ACadSharp.IO.DWG
 		/// Advance one byte fordward, saves the last byte.
 		/// </summary>
 		void AdvanceByte();
+
+		/// <summary>
+		/// [PATCH] Call before reading the <see cref="Stream"/> directly (bypassing this reader):
+		/// writes the logical position (including the correction for unconsumed bytes in the internal byte buffer) back to the underlying stream,
+		/// restoring the "stream position == logical position" invariant. BitShift is left unchanged.
+		/// Implementations without an internal buffer are no-ops.
+		/// </summary>
+		void SyncStreamPosition();
+
+		/// <summary>
+		/// [PATCH] Call after external code (another reader) has read the <see cref="Stream"/> directly:
+		/// invalidates the internal byte buffer (if any). BitShift is left unchanged.
+		/// Implementations without an internal buffer are no-ops.
+		/// </summary>
+		void MarkStreamAdvanced();
 
 		/// <summary>
 		/// H : handle reference(see the HANDLE REFERENCES section)
@@ -233,6 +248,11 @@ namespace ACadSharp.IO.DWG
 		/// </summary>
 		/// <returns></returns>
 		Color ReadCmColor(bool useTextStream = false);
+
+		/// <summary>
+		/// Reads a full R2004+-style CMC (true color), symmetric with <see cref="DwgStreamWriterBase.WriteCmColorR2004"/>.
+		/// </summary>
+		Color ReadCmColorR2004();
 
 		Color ReadColorByIndex();
 

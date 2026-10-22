@@ -1,12 +1,10 @@
-﻿using ACadSharp.Exceptions;
+using ACadSharp.Exceptions;
 using CSMath;
 using CSUtilities.Converters;
 using CSUtilities.IO;
 using CSUtilities.Text;
 using System;
-using System.Collections.Generic;
 using System.IO;
-using System.Linq;
 using System.Runtime.CompilerServices;
 using System.Text;
 
@@ -18,13 +16,17 @@ namespace ACadSharp.IO.DWG
 		public int BitShift { get; set; }
 
 		/// <inheritdoc/>
+		/// <remarks>
+		/// [PATCH] Has an internal byte buffer: logical position = stream physical position - unconsumed bytes in the buffer.
+		/// </remarks>
 		public override long Position
 		{
-			get => this._stream.Position;
+			get => this._stream.Position - (this._bufLen - this._bufPos);
 			set
 			{
 				this._stream.Position = value;
 				this.BitShift = 0;
+				this._bufPos = this._bufLen; // invalidate the buffer, next read refills it
 			}
 		}
 
@@ -32,8 +34,97 @@ namespace ACadSharp.IO.DWG
 
 		protected byte _lastByte;
 
+		// [PATCH] Internal byte buffer: eliminates the per-byte new byte[1] + Stream.Read virtual call
+		// (StreamIO.ReadByte allocates a 1-byte array on every read). Filled in bulk via Stream.Read;
+		// bit reads/byte reads take data from the buffer; Position semantics are unchanged.
+		// Enabled only for non-memory (file) streams: the object scan creates 2 temporary readers per object
+		// on memory streams (2.3M objects x 2 x 64KB buffers = ~300GB of allocations), causing GC churn
+		// and making the scan slower (measured 53.9s -> 107.9s). Memory stream direct reads are already
+		// at original speed and need no buffer.
+		private byte[] _buf;
+		private int _bufPos;
+		private int _bufLen;
+
+		private byte ReadByteFast()
+		{
+			if (this._buf == null)
+				return (byte)this._stream.ReadByte();
+			if (this._bufPos >= this._bufLen)
+			{
+				int n = this._stream.Read(this._buf, 0, this._buf.Length);
+				if (n <= 0)
+					throw new EndOfStreamException();
+				this._bufLen = n;
+				this._bufPos = 0;
+			}
+			return this._buf[this._bufPos++];
+		}
+
+		private void FillBuffered(byte[] arr, int offset, int length)
+		{
+			if (this._buf == null)
+			{
+				// memory stream: direct read (original path), with short-read protection added
+				int dpos = offset;
+				int dneed = length;
+				while (dneed > 0)
+				{
+					int r = this._stream.Read(arr, dpos, dneed);
+					if (r <= 0)
+						throw new EndOfStreamException();
+					dpos += r;
+					dneed -= r;
+				}
+				return;
+			}
+			int need = length;
+			int pos = offset;
+			while (need > 0)
+			{
+				if (this._bufPos >= this._bufLen)
+				{
+					int n = this._stream.Read(this._buf, 0, this._buf.Length);
+					if (n <= 0)
+						throw new EndOfStreamException();
+					this._bufLen = n;
+					this._bufPos = 0;
+				}
+				int take = Math.Min(need, this._bufLen - this._bufPos);
+				Buffer.BlockCopy(this._buf, this._bufPos, arr, pos, take);
+				this._bufPos += take;
+				pos += take;
+				need -= take;
+			}
+		}
+
+		/// <summary>
+		/// [PATCH] Call before reading the <c>Stream</c> directly (bypassing this reader):
+		/// writes the logical position (including the correction for unconsumed bytes in the byte buffer) back to the underlying stream,
+		/// restoring the old "stream position == logical position" invariant (the original had no buffer, so it held naturally).
+		/// BitShift/_lastByte are left unchanged.
+		/// </summary>
+		public void SyncStreamPosition()
+		{
+			long pos = this.Position; // logical position (buffer correction already applied)
+			this._stream.Position = pos;
+			this._bufPos = this._bufLen; // invalidate the buffer
+		}
+
+		/// <summary>
+		/// [PATCH] Call after external code (another reader) has read the <c>Stream</c> directly:
+		/// the underlying stream position has moved past this reader's buffer; invalidate the buffer (next read refills it).
+		/// BitShift/_lastByte are left unchanged.
+		/// </summary>
+		public void MarkStreamAdvanced()
+		{
+			this._bufPos = this._bufLen; // invalidate the buffer
+		}
+
 		public DwgStreamReaderBase(Stream stream, bool resetPosition) : base(stream, resetPosition)
 		{
+			// [PATCH] Byte buffer enabled only for file streams; memory streams (the per-object temporary readers of the object scan) keep the original direct-read path
+			if (!(stream is MemoryStream))
+				this._buf = new byte[65536];
 		}
 
 		public static IDwgStreamReader GetStreamHandler(ACadVersion version, Stream stream, Encoding encoding = null, bool resetPositon = false)
@@ -353,7 +444,8 @@ namespace ACadSharp.IO.DWG
 			if (this.BitShift == 0)
 			{
 				//No need to apply the shift
-				_lastByte = base.ReadByte();
+				// [PATCH] Route through the internal byte buffer (the original base.ReadByte() allocated a byte[1] per byte)
+				_lastByte = ReadByteFast();
 
 				return _lastByte;
 			}
@@ -361,7 +453,7 @@ namespace ACadSharp.IO.DWG
 			//Get the last bits from the last readed byte
 			byte lastValues = (byte)((uint)_lastByte << BitShift);
 
-			_lastByte = base.ReadByte();
+			_lastByte = ReadByteFast();
 
 			return (byte)(lastValues | (uint)(byte)((uint)_lastByte >> 8 - BitShift));
 		}
@@ -825,8 +917,8 @@ namespace ACadSharp.IO.DWG
 			byte[] raw = new byte[length];
 			byte[] arr = new byte[8];
 
-			if (this.Stream.Read(raw, 0, length) < length)
-				throw new EndOfStreamException();
+			// [PATCH] Fill via the byte buffer (a direct Stream.Read would bypass the unconsumed bytes in the buffer)
+			FillBuffered(raw, 0, length);
 
 			if (this.BitShift == 0)
 			{
@@ -872,10 +964,46 @@ namespace ACadSharp.IO.DWG
 			}
 			else
 			{
-				value = this.ReadString(textLength, TextEncoding.GetListedEncoding((CodePage)encodingKey));
+				// [FIX] encodingKey is an index into the ODA codepage "index table" (ODA spec §7.2 codepage
+				// value table: 30=ANSI-1252, 31=GB2312, 39=ANSI-936, etc.), not the numeric value of the
+				// CodePage enum (enum values are real Windows code page numbers, e.g. Gb2312=936). Previously the
+				// direct (CodePage)encodingKey cast matched nothing in the GetListedEncoding switch and fell
+				// through to Encoding.Default (always UTF-8 on .NET Core), so GBK Chinese was mis-decoded to mojibake.
+				// Now uses CadUtils.GetCodePage(int) (i.e. the _pageCodes ODA index table, the inverse of the
+				// writer-side GetCodeIndex) to get the real code page number before constructing the encoding.
+				value = this.ReadString(textLength, this.getEedEncoding(encodingKey));
 			}
 
 			return value;
+		}
+
+		/// <summary>
+		/// Converts the codepage index byte of an EED string to the corresponding encoding.
+		/// </summary>
+		private Encoding getEedEncoding(int odaIndex)
+		{
+			if (odaIndex == 0)
+			{
+				//0 = Unknown/UTF8 (marked "unused" in the spec), keep existing behavior
+				return Encoding.Default;
+			}
+
+			try
+			{
+#if !NET48
+				Encoding.RegisterProvider(System.Text.CodePagesEncodingProvider.Instance);
+#endif
+				CodePage code = CadUtils.GetCodePage(odaIndex);
+				if (code != CodePage.Unknown)
+				{
+					return Encoding.GetEncoding((int)code);
+				}
+			}
+			catch
+			{
+			}
+
+			return TextEncoding.Windows1252();
 		}
 
 		/// <inheritdoc/>
@@ -922,6 +1050,44 @@ namespace ACadSharp.IO.DWG
 			short colorIndex = this.ReadBitShort();
 
 			return new Color(colorIndex);
+		}
+
+		/// <summary>
+		/// Reads a full R2004+-style CMC (BS index + BL rgb + RC flag), symmetric with <see cref="DwgStreamWriterBase.WriteCmColorR2004"/>.
+		/// Used for R2000/R13-R15 gradient fills (AutoCAD stores gradient stop colors as true-color CMC; the base class <see cref="ReadCmColor"/> only reads the BS index, which would misalign).
+		/// </summary>
+		public virtual Color ReadCmColorR2004()
+		{
+			//BS: color index(always 0 for gradient true color)
+			short colorIndex = this.ReadBitShort();
+			//BL: RGB value(high bits carry flags)
+			uint rgb = (uint)this.ReadBitLong();
+			byte[] arr = LittleEndianConverter.Instance.GetBytes(rgb);
+
+			Color color;
+			if (rgb == 0xC0000000)
+			{
+				color = Color.ByLayer;
+			}
+			else if ((rgb & 0x01000000u) != 0)
+			{
+				//Indexed color
+				color = new Color(arr[0]);
+			}
+			else
+			{
+				//True color: rgb = 0xC2RRGGBB -> R=arr[2], G=arr[1], B=arr[0]
+				color = new Color(arr[2], arr[1], arr[0]);
+			}
+
+			//RC: color flag bits (&1 color name TV follows, &2 book name TV follows)
+			byte id = this.ReadByte();
+			if ((id & 1) == 1)
+				this.ReadVariableText();
+			if ((id & 2) == 2)
+				this.ReadVariableText();
+
+			return color;
 		}
 
 		/// <inheritdoc/>
@@ -1087,7 +1253,8 @@ namespace ACadSharp.IO.DWG
 		/// <inheritdoc/>
 		public long PositionInBits()
 		{
-			long bitPosition = this.Stream.Position * 8L;
+			// [PATCH] Logical position (including the byte buffer correction)
+			long bitPosition = this.Position * 8L;
 
 			if ((uint)this.BitShift > 0U)
 				bitPosition += this.BitShift - 8;
@@ -1110,14 +1277,16 @@ namespace ACadSharp.IO.DWG
 		/// <inheritdoc/>
 		public void AdvanceByte()
 		{
-			this._lastByte = base.ReadByte();
+			// [PATCH] Route through the internal byte buffer
+			this._lastByte = ReadByteFast();
 		}
 
 		/// <inheritdoc/>
 		public void Advance(int offset)
 		{
 			if (offset > 1)
-				this.Stream.Position += offset - 1;
+				// [PATCH] Via the Position property (which also invalidates the byte buffer)
+				this.Position += offset - 1;
 
 			this.ReadByte();
 		}
@@ -1188,8 +1357,8 @@ namespace ACadSharp.IO.DWG
 		private void applyShiftToArr(int length, byte[] arr)
 		{
 			//Empty Stream
-			if (this.Stream.Read(arr, 0, length) != length)
-				throw new EndOfStreamException();
+			// [PATCH] Fill via the byte buffer (a direct Stream.Read would bypass the unconsumed bytes in the buffer)
+			FillBuffered(arr, 0, length);
 
 			if ((uint)this.BitShift <= 0U)
 				return;
@@ -1235,6 +1404,11 @@ namespace ACadSharp.IO.DWG
 			catch (Exception)
 			{
 				dtDateTime = DateTime.MinValue;
+			}
+
+			if (miliseconds < 0)
+			{
+				return dtDateTime;
 			}
 
 			return dtDateTime.AddMilliseconds(miliseconds);

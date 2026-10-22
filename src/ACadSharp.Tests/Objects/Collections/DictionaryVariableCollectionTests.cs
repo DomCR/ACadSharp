@@ -2,32 +2,31 @@
 using ACadSharp.Objects.Collections;
 using Xunit;
 
-namespace ACadSharp.Tests.Objects.Collections
+namespace ACadSharp.Tests.Objects.Collections;
+
+public class DictionaryVariableCollectionTests : ObjectDictionaryCollectionTests<DictionaryVariableCollection, DictionaryVariable>
 {
-	public class DictionaryVariableCollectionTests : ObjectDictionaryCollectionTests<DictionaryVariableCollection, DictionaryVariable>
+	[Fact]
+	public void AddVariable()
 	{
-		[Fact]
-		public void AddVariable()
-		{
-			CadDocument document = new CadDocument();
-			var c = this.getDocumentCollection(document);
+		CadDocument document = new CadDocument();
+		var c = this.getDocumentCollection(document);
 
-			c.AddOrUpdateVariable("hello", "value");
+		c.AddOrUpdateVariable("hello", "value");
 
-			Assert.NotEmpty(c);
-			Assert.True(c.TryGet("hello", out DictionaryVariable variable));
-			Assert.Equal("value", variable.Value);
-			Assert.Equal("value", c.GetValue("hello"));
+		Assert.NotEmpty(c);
+		Assert.True(c.TryGet("hello", out DictionaryVariable variable));
+		Assert.Equal("value", variable.Value);
+		Assert.Equal("value", c.GetValue("hello"));
 
-			Assert.Null(c.GetValue("goodbye"));
+		Assert.Null(c.GetValue("goodbye"));
 
-			c.AddOrUpdateVariable("hello", "new_value");
-			Assert.Equal("new_value", c.GetValue("hello"));
-		}
+		c.AddOrUpdateVariable("hello", "new_value");
+		Assert.Equal("new_value", c.GetValue("hello"));
+	}
 
-		protected override DictionaryVariableCollection getDocumentCollection(CadDocument doc)
-		{
-			return doc.DictionaryVariables;
-		}
+	protected override DictionaryVariableCollection getDocumentCollection(CadDocument doc)
+	{
+		return doc.DictionaryVariables;
 	}
 }

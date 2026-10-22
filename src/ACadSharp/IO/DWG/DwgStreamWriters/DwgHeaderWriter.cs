@@ -1,7 +1,7 @@
 ﻿using ACadSharp.Header;
 using ACadSharp.Objects;
 using CSUtilities.IO;
-using CSUtilities.Text;
+using System;
 using System.IO;
 using System.Text;
 
@@ -84,7 +84,14 @@ namespace ACadSharp.IO.DWG
 			if (this.R2004Pre)
 			{
 				//H : Handle of the current viewport entity header (hard pointer)
-				this._writer.HandleReference(DwgReferenceType.HardPointer, null);
+				//VX_TABLE_RECORD ("current view"): ODA/AutoCAD dereference this handle
+				//while loading R13-R2000 files; a NULL handle makes ODA fail with
+				//"Invalid index". Point to the VX control when no record is modeled.
+				//[EXP] VX experiment switch: writes NULL when ACADSHARP_VX_NULL=1 (mirroring AutoCAD behavior)
+				if (Environment.GetEnvironmentVariable("ACADSHARP_VX_NULL") == "1")
+					this._writer.HandleReference(DwgReferenceType.HardPointer, 0UL);
+				else
+					this._writer.HandleReference(DwgReferenceType.HardPointer, this._document.VEntityControl ?? (CadObject)null);
 			}
 
 			//Common:
@@ -832,9 +839,9 @@ namespace ACadSharp.IO.DWG
 				//H : DICTIONARY(LAYOUTS)(hard pointer)
 				this._writer.HandleReference(DwgReferenceType.HardPointer, this._document.Layouts);
 				//H: DICTIONARY(PLOTSETTINGS)(hard pointer)
-				this._writer.HandleReference(DwgReferenceType.HardPointer, null);
+				this._writer.HandleReference(DwgReferenceType.HardPointer, null); //[BISECT]
 				//H: DICTIONARY(PLOTSTYLES)(hard pointer)
-				this._writer.HandleReference(DwgReferenceType.HardPointer, null);
+				this._writer.HandleReference(DwgReferenceType.HardPointer, null); //[BISECT]
 			}
 
 			//R2004 +:
@@ -873,11 +880,13 @@ namespace ACadSharp.IO.DWG
 							(this._header.JoinStyle << 0x7);
 
 				//LWDISPLAY!(Flags & 0x0200)
+				// [PATCH] This bit is inverted-logic (libredwg encoder: if (!LWDISPLAY) FLAGS |= 0x200),
+				// set = line-width display off. The original writer polarity is already correct, do not change it.
 				if (!this._header.DisplayLineWeight)
 				{
 					flags |= 0x200;
 				}
-				//XEDIT!(Flags & 0x0400)
+				//XEDIT!(Flags & 0x0400) —— also an inverted-logic bit
 				if (!this._header.XEdit)
 				{
 					flags |= 0x400;
@@ -1089,6 +1098,22 @@ namespace ACadSharp.IO.DWG
 
 			//Ending sentinel: 0x30,0x84,0xE0,0xDC,0x02,0x21,0xC7,0x56,0xA0,0x83,0x97,0x47,0xB1,0x92,0xCC,0xA0
 			this._startWriter.WriteBytes(DwgSectionDefinition.EndSentinels[SectionName]);
+		}
+
+		/// <summary>
+		/// Looks up a standard dictionary in the named object dictionary by key
+		/// (e.g. ACAD_PLOTSETTINGS / ACAD_PLOTSTYLENAME). AutoCAD/ODA expect the
+		/// header variables to reference these dictionaries when they exist.
+		/// </summary>
+		private CadObject getNamedDictionary(string key)
+		{
+			if (this._document.RootDictionary != null
+				&& this._document.RootDictionary.TryGetEntry(key, out NonGraphicalObject entry))
+			{
+				return entry;
+			}
+
+			return null;
 		}
 	}
 }

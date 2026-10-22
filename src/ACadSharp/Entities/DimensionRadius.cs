@@ -1,7 +1,6 @@
-﻿using ACadSharp.Attributes;
-using ACadSharp.Tables;
+using ACadSharp.Attributes;
 using CSMath;
-using System;
+using CSMath.Extensions;
 
 namespace ACadSharp.Entities
 {
@@ -56,6 +55,9 @@ namespace ACadSharp.Entities
 		{
 			base.ApplyTransform(transform);
 			this.AngleVertex = transform.ApplyTransform(this.AngleVertex);
+
+			// [PATCH] Measurement depends on AngleVertex; the text must be regenerated after the point is transformed.
+			this.UpdateDimensionText();
 		}
 
 		/// <inheritdoc/>
