@@ -669,6 +669,24 @@ public class CadDocument : IHandledCadObject
 		cadObject.AssignDocument(this);
 	}
 
+	/// <summary>
+	/// [PERF] Pre-allocates capacity for the internal handle-to-object dictionary before the
+	/// build phase, when the reader already knows the decoded object count (plus a margin for
+	/// objects created during the build: BlockEntity/BlockEnd pairs, missing layers, etc.).
+	/// Avoids the geometric resize sequence (each resize copies every entry) for large files.
+	/// No-op when the dictionary already holds at least <paramref name="count"/> entries or on
+	/// targets without <c>Dictionary.EnsureCapacity</c> (net9.0+).
+	/// </summary>
+	internal void EnsureCadObjectsCapacity(int count)
+	{
+#if NET9_0_OR_GREATER
+		if (count > 0 && this._cadObjects.Count < count)
+		{
+			this._cadObjects.EnsureCapacity(count);
+		}
+#endif
+	}
+
 	internal void RegisterCollection<T>(IObservableCadCollection<T> collection)
 			where T : CadObject
 	{

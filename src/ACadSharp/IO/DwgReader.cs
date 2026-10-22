@@ -112,6 +112,9 @@ public class DwgReader : CadReaderBase<DwgReaderConfiguration>
 	/// <inheritdoc/>
 	public override CadDocument Read()
 	{
+		// [PATCH] phase timing for diagnostics (no behavior change)
+		DwgReadDiagnostics.Begin();
+
 		//Read the file header
 		this._fileHeader = this.readFileHeader();
 
@@ -127,12 +130,19 @@ public class DwgReader : CadReaderBase<DwgReaderConfiguration>
 		this._document.Header = this.ReadHeader();
 		this._document.Header.Document = this._document;
 
+		// [PATCH] phase timing: decoding starts here
+		DwgReadDiagnostics.MarkPreDecodeEnd();
+
 		this.readTemplate();
 		this.readClasses();
 		this.readAppInfo();
 		this.readDsPrototype_1b();
 		this.readObjects();
 		this.readAuxHeader();
+
+		// [PATCH] phase timing: decoding done
+		DwgReadDiagnostics.MarkDecodeEnd();
+		DwgReadDiagnostics.SetObjectCount(this._builder.DecodedObjectCount);
 
 		this._builder.BuildDocument();
 		this._builder.BuildDataStorage();
@@ -142,6 +152,9 @@ public class DwgReader : CadReaderBase<DwgReaderConfiguration>
 
 		// After the document is built (AppId names resolved), assign R2000 private gradients
 		this._sectionReader?.ApplyR2000Gradients();
+
+		// [PATCH] phase timing: read fully finished
+		DwgReadDiagnostics.MarkBuildEnd();
 
 		return this._document;
 	}

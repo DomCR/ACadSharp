@@ -6,6 +6,7 @@ using ACadSharp.Tables;
 using ACadSharp.Tables.Collections;
 using System;
 using System.Collections.Generic;
+using System.Diagnostics;
 using System.Linq;
 
 namespace ACadSharp.IO;
@@ -106,6 +107,11 @@ internal abstract class CadDocumentBuilder
 		this.dictionaryTemplates.Remove(h);
 	}
 
+	/// <summary>
+	/// [PATCH] Total number of decoded object templates (all kinds). Diagnostic use (see <see cref="DwgReadDiagnostics"/>).
+	/// </summary>
+	internal int DecodedObjectCount => this.templatesMap.Count;
+
 	public void AddTemplate(ICadObjectTemplate template)
 	{
 		this.NotifyProgress(ReadStage.Read, template);
@@ -166,15 +172,39 @@ internal abstract class CadDocumentBuilder
 
 	public virtual void BuildDocument()
 	{
+		// [PERF] All decoded objects are added to the document during this build; the exact
+		// decoded count is known here, so pre-allocate the handle dictionary once (margin
+		// covers objects created along the way: BlockEntity/BlockEnd, missing layers, ...).
+		this.DocumentToBuild.EnsureCadObjectsCapacity(this.templatesMap.Count + 2048);
+
+		// [PERF] Per-type build timing (no-op unless DwgReadDiagnostics.EnableTypeTimers was called)
+		bool perfTimers = DwgReadDiagnostics.TypeTimersEnabled;
+
 		foreach (ICadTableEntryTemplate template in this.tableEntryTemplates.Values)
 		{
+			long perfT0 = perfTimers ? Stopwatch.GetTimestamp() : 0;
 			template.Build(this);
+			if (perfTimers)
+			{
+				DwgReadDiagnostics.AccumulateBuild(template.CadObject?.GetType(), Stopwatch.GetTimestamp() - perfT0);
+			}
 		}
+
+		// [PATCH] phase timing for diagnostics (no behavior change)
+		DwgReadDiagnostics.MarkTableEntryBuildEnd();
 
 		foreach (CadTemplate template in this.cadObjectsTemplates.Values)
 		{
+			long perfT0 = perfTimers ? Stopwatch.GetTimestamp() : 0;
 			template.Build(this);
+			if (perfTimers)
+			{
+				DwgReadDiagnostics.AccumulateBuild(template.CadObject?.GetType(), Stopwatch.GetTimestamp() - perfT0);
+			}
 		}
+
+		// [PATCH] phase timing for diagnostics (no behavior change)
+		DwgReadDiagnostics.MarkBaseBuildEnd();
 	}
 
 	public void BuildTable<T>(Table<T> table)

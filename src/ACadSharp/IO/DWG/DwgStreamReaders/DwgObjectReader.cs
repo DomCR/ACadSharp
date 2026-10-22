@@ -15,6 +15,7 @@ using CSMath;
 using CSUtilities.Converters;
 using System;
 using System.Collections.Generic;
+using System.Diagnostics;
 using System.Globalization;
 using System.IO;
 using System.Linq;
@@ -292,6 +293,10 @@ namespace ACadSharp.IO.DWG
 
 				CadTemplate template = null;
 
+				// [PERF] Per-type decode timing (no-op unless DwgReadDiagnostics.EnableTypeTimers was called)
+				bool perfTimers = DwgReadDiagnostics.TypeTimersEnabled;
+				long perfT0 = perfTimers ? Stopwatch.GetTimestamp() : 0;
+
 				try
 				{
 					//Read the object
@@ -312,6 +317,12 @@ namespace ACadSharp.IO.DWG
 					}
 
 					continue;
+				}
+
+				// [PERF] Per-type decode timing (no-op unless DwgReadDiagnostics.EnableTypeTimers was called)
+				if (perfTimers && template != null)
+				{
+					DwgReadDiagnostics.AccumulateDecode(template.CadObject?.GetType(), Stopwatch.GetTimestamp() - perfT0);
 				}
 
 			//Add the template to the list to be processed

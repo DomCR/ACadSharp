@@ -248,7 +248,25 @@ public abstract class CadObject : IHandledCadObject
 			doc.RegisterCollection(this.XDictionary);
 		}
 
-		if (this.ExtendedData.Any())
+		// [PERF] The ToArray/Clear/re-Add cycle below re-resolves every XData AppId against the
+		// target document's AppIds table (one string-keyed lookup per entry). During a read the
+		// XData is attached in CadTemplate.build using AppId instances already resolved from this
+		// same document's tables, so the cycle is a pure no-op there. Skip it unless at least one
+		// AppId is foreign to the target document (cross-document clone) or not assigned to a
+		// document yet (standalone AppId), i.e. the cases where the re-Add actually re-binds or
+		// registers the AppId.
+		bool rebindXData = false;
+
+		foreach (var item in this.ExtendedData)
+		{
+			if (item.Key.Document != doc)
+			{
+				rebindXData = true;
+				break;
+			}
+		}
+
+		if (rebindXData)
 		{
 			//Reset existing collection
 			var entries = this.ExtendedData.ToArray();

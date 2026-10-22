@@ -74,7 +74,13 @@ internal class DwgDocumentBuilder : CadDocumentBuilder
 
 		this.BuildTables();
 
+		// [PATCH] phase timing for diagnostics (no behavior change)
+		DwgReadDiagnostics.MarkTablesEnd();
+
 		this.buildDictionaries();
+
+		// [PATCH] phase timing for diagnostics (no behavior change)
+		DwgReadDiagnostics.MarkDictionariesEnd();
 
 		base.BuildDocument();
 
