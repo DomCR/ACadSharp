@@ -1,4 +1,4 @@
-﻿using System;
+using System;
 using System.Collections;
 using System.Collections.Generic;
 using System.Linq;
@@ -143,6 +143,39 @@ public abstract class ObjectDictionaryCollection<T> : ICadCollection<T>, IObserv
 			this.Add(item);
 			return item;
 		}
+	}
+
+	/// <summary>
+	/// Adds the entry to the collection or, if an entry with the same name (case-insensitive)
+	/// already exists, replaces that entry with the given entry.
+	/// [PATCH] Used when copying a document into another document so that the source document's
+	/// entries win name collisions against the destination's default placeholders.
+	/// </summary>
+	/// <param name="entry"></param>
+	/// <returns>The entry that now owns the name: <paramref name="entry"/> itself (added or replacing an existing entry).</returns>
+	public T AddOrUpdate(T entry)
+	{
+		if (entry == null)
+		{
+			throw new ArgumentNullException(nameof(entry));
+		}
+
+		if (this.TryGet(entry.Name, out T existing))
+		{
+			if (existing == entry)
+			{
+				return entry;
+			}
+
+			// [PATCH] Name collision: the incoming entry (e.g. from the source document) takes
+			// precedence. Remove the existing entry through the regular OnRemove path and add
+			// the new one through the regular Add path so the owning document keeps its
+			// object registry consistent.
+			this.Remove(existing.Name, out _);
+		}
+
+		this.Add(entry);
+		return entry;
 	}
 
 	/// <summary>

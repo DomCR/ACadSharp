@@ -1,4 +1,4 @@
-﻿using ACadSharp.Attributes;
+using ACadSharp.Attributes;
 
 namespace ACadSharp.Objects;
 
@@ -262,6 +262,22 @@ public partial class TableStyle
 		/// The name constant for the default title cell style.
 		/// </summary>
 		public const string TitleCellStyleName = "_TITLE";
+
+		/// <inheritdoc/>
+		public CellStyle Clone()
+		{
+			// [FIX] MemberwiseClone alone would share the six CellBorder instances with the
+			// source; deep-clone them so a cell style moved to another document does not keep
+			// reading or mutating the source's border state.
+			CellStyle clone = (CellStyle)this.MemberwiseClone();
+			clone.BottomBorder = this.BottomBorder.Clone();
+			clone.HorizontalInsideBorder = this.HorizontalInsideBorder.Clone();
+			clone.LeftBorder = this.LeftBorder.Clone();
+			clone.RightBorder = this.RightBorder.Clone();
+			clone.TopBorder = this.TopBorder.Clone();
+			clone.VerticalInsideBorder = this.VerticalInsideBorder.Clone();
+			return clone;
+		}
 
 		/// <inheritdoc/>
 		public override string ToString()

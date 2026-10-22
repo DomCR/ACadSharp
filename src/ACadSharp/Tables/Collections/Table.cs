@@ -1,4 +1,4 @@
-﻿using ACadSharp.Attributes;
+using ACadSharp.Attributes;
 using CSUtilities.Extensions;
 using System;
 using System.Collections;
@@ -158,6 +158,52 @@ public abstract class Table<T> : CadObject, ITable, ICadCollection<T>, IObservab
 			this.Add(item);
 			return item;
 		}
+	}
+
+	/// <summary>
+	/// Adds the item to the collection or, if an entry with the same name (case-insensitive)
+	/// already exists, replaces that entry with the given item.
+	/// [PATCH] Used when copying a document into another document so that the source document's
+	/// entries win name collisions against the destination's default placeholders (e.g. the
+	/// "Standard" text style that a fresh <see cref="CadDocument"/> creates).
+	/// </summary>
+	/// <param name="item"></param>
+	/// <returns>The entry that now owns the name: <paramref name="item"/> itself (added or replacing an existing entry).</returns>
+	public T AddOrUpdate(T item)
+	{
+		if (item == null)
+		{
+			throw new ArgumentNullException(nameof(item));
+		}
+
+		if (string.IsNullOrEmpty(item.Name))
+		{
+			item.Name = this.createName("unnamed");
+		}
+
+		if (!this.entries.TryGetValue(item.Name, out T existing))
+		{
+			this.Add(item);
+			return item;
+		}
+
+		if (existing == item)
+		{
+			return item;
+		}
+
+		// [PATCH] Name collision: the incoming entry (e.g. from the source document) takes
+		// precedence over the entry already in this document (e.g. a default placeholder).
+		// Remove the old entry through the regular OnRemove path (so the owning document
+		// unregisters it) and register the new one through the regular Add path (so the
+		// owning document runs AddCadObject/AssignDocument on it).
+		this.entries.Remove(item.Name);
+		existing.Owner = null;
+		existing.OnNameChanged -= this.onEntryNameChanged;
+		OnRemove?.Invoke(this, new CollectionChangedEventArgs(existing));
+
+		this.add(item.Name, item);
+		return item;
 	}
 
 	/// <summary>

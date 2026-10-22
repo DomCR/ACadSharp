@@ -1,6 +1,7 @@
-﻿using ACadSharp.Attributes;
+using ACadSharp.Attributes;
 using ACadSharp.Classes;
 using System.Collections.Generic;
+using System.Linq;
 
 namespace ACadSharp.Objects;
 
@@ -109,6 +110,62 @@ public partial class TableStyle : NonGraphicalObject, IDxfClassDefined
 		// A valid AutoCAD table style carries a non-empty description (e.g. "Standard").
 		// AutoCAD flags a default style with a blank description as invalid during AUDIT.
 		this.Description = name;
+	}
+
+	/// <inheritdoc/>
+	/// <remarks>
+	/// [FIX] The base <see cref="NonGraphicalObject.Clone"/> uses MemberwiseClone, which shared
+	/// the <see cref="CellStyles"/> list and the four <see cref="CellStyle"/> instances with the
+	/// source. A TableStyle cloned into another document must carry independent cell styles;
+	/// their <see cref="ContentFormat.TextStyle"/> references are re-registered by
+	/// <see cref="AssignDocument"/>.
+	/// </remarks>
+	public override CadObject Clone()
+	{
+		TableStyle clone = (TableStyle)base.Clone();
+
+		// [FIX] MemberwiseClone shares the CellStyles list instance with the source.
+		// Snapshot first, then clear the shared list and refill with independent clones
+		// (same snapshot-Clear-refill pattern as CadObject.Clone for ExtendedData).
+		var srcStyles = this.CellStyles.ToList();
+		clone.CellStyles.Clear();
+		foreach (var item in srcStyles)
+		{
+			clone.CellStyles.Add(item.Clone());
+		}
+
+		clone.DataCellStyle = this.DataCellStyle.Clone();
+		clone.HeaderCellStyle = this.HeaderCellStyle.Clone();
+		clone.TableCellStyle = this.TableCellStyle.Clone();
+		clone.TitleCellStyle = this.TitleCellStyle.Clone();
+
+		return clone;
+	}
+
+	/// <inheritdoc/>
+	internal override void AssignDocument(CadDocument doc)
+	{
+		base.AssignDocument(doc);
+
+		// Re-register each cell style's text style into the target document (mirrors
+		// LineType/Segment.AssignDocument); otherwise the writer emits the source document's
+		// (dangling) text-style handle and the table text falls back to the default font.
+		var styles = new List<CellStyle>
+		{
+			this.DataCellStyle,
+			this.HeaderCellStyle,
+			this.TableCellStyle,
+			this.TitleCellStyle,
+		};
+		styles.AddRange(this.CellStyles);
+
+		foreach (var cellStyle in styles)
+		{
+			if (cellStyle?.TextStyle != null)
+			{
+				cellStyle.TextStyle = this.updateTableEntry(cellStyle.TextStyle, s => cellStyle.TextStyle = s, doc.TextStyles);
+			}
+		}
 	}
 
 	/// <inheritdoc/>

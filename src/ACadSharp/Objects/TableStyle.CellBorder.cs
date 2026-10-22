@@ -1,4 +1,4 @@
-﻿using ACadSharp.Attributes;
+using ACadSharp.Attributes;
 
 namespace ACadSharp.Objects;
 
@@ -71,6 +71,14 @@ public partial class TableStyle
 		public CellBorder(CellEdgeFlags edgeFlags)
 		{
 			this.EdgeFlags = edgeFlags;
+		}
+
+		/// <inheritdoc/>
+		public CellBorder Clone()
+		{
+			// All members are value types; the get-only EdgeFlags field is carried over by
+			// MemberwiseClone.
+			return (CellBorder)this.MemberwiseClone();
 		}
 	}
 }

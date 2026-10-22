@@ -1,4 +1,4 @@
-﻿using ACadSharp.Attributes;
+using ACadSharp.Attributes;
 using System.Collections.Generic;
 
 namespace ACadSharp.Entities
@@ -74,7 +74,10 @@ namespace ACadSharp.Entities
 		{
 			HatchGradientPattern clone = (HatchGradientPattern)this.MemberwiseClone();
 
-			clone.Colors.Clear();
+			// [FIX] MemberwiseClone shares the Colors list instance; Clear() emptied the
+			// source's list (and the foreach then iterated the already-cleared list), so the
+			// clone came out with zero gradient colors and the source was destroyed in place.
+			clone.Colors = new List<GradientColor>();
 			foreach (var item in this.Colors)
 			{
 				clone.Colors.Add(item.Clone());
