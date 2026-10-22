@@ -20,12 +20,19 @@ public partial class TableStyle
 		{
 			get
 			{
+				// R2004 row-cell defaults (writeRowCellStyle / BS 170) aligned with a genuine
+				// AC1018 file: a valid table style carries a non-zero text height, a true-color
+				// (black) background and a defined (non-None) cell alignment. A None alignment
+				// (the old default) is invalid and AutoCAD reports "AcDbTableStyle ... repaired".
 				var data = new CellStyle
 				{
 					Name = DataCellStyleName,
 					StyleClass = CellStyleClass.Label,
 					Id = 3,
 					HasData = true,
+					TextHeight = 0.18d,
+					BackgroundColor = new Color(0, 0, 0),
+					CellAlignment = CellAlignmentType.TopCenter,
 				};
 
 				return data;
@@ -39,12 +46,19 @@ public partial class TableStyle
 		{
 			get
 			{
+				// R2004 row-cell defaults (writeRowCellStyle / BS 170) aligned with a genuine
+				// AC1018 file: non-zero text height + true-color (black) background + a defined
+				// (non-None) cell alignment, otherwise AUDIT flags the default style as invalid
+				// (AcDbTableStyle repaired).
 				var data = new CellStyle
 				{
 					Name = HeaderCellStyleName,
 					StyleClass = CellStyleClass.Data,
 					Id = 2,
 					HasData = true,
+					TextHeight = 0.18d,
+					BackgroundColor = new Color(0, 0, 0),
+					CellAlignment = CellAlignmentType.MiddleCenter,
 				};
 
 				return data;
@@ -58,12 +72,19 @@ public partial class TableStyle
 		{
 			get
 			{
+				// R2004 row-cell defaults (writeRowCellStyle / BS 170) aligned with a genuine
+				// AC1018 file: non-zero text height + true-color (black) background + a defined
+				// (non-None) cell alignment, otherwise AUDIT flags the default style as invalid
+				// (AcDbTableStyle repaired).
 				var data = new CellStyle
 				{
 					Name = TitleCellStyleName,
 					StyleClass = CellStyleClass.Data,
 					Id = 1,
 					HasData = true,
+					TextHeight = 0.25d,
+					BackgroundColor = new Color(0, 0, 0),
+					CellAlignment = CellAlignmentType.MiddleCenter,
 				};
 
 				return data;

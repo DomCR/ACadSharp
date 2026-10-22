@@ -738,9 +738,44 @@ internal partial class DwgObjectWriter : DwgSectionIO
 		//TC 62 Content color
 		this._writer.WriteCmColor(format.Color, this.R2004Pre);
 		//H 340 Text style handle (hard pointer)
-		this._writer.HandleReference(DwgReferenceType.HardPointer, format.TextStyle);
+		this._writer.HandleReference(DwgReferenceType.HardPointer, this.ResolveCellStyleTextStyle(format.TextStyle));
 		//BD 144 Text height
 		this._writer.WriteBitDouble(format.TextHeight);
+	}
+
+	/// <summary>
+	/// Resolves the text style referenced by a cell content format to a registered <see cref="TextStyle"/>.
+	/// </summary>
+	/// <remarks>
+	/// The default <see cref="TableStyle"/> initializes its cell styles with the static
+	/// <see cref="TextStyle.Default"/>, which is a dangling instance (no owning document and
+	/// handle 0). Writing its hard pointer as-is makes AutoCAD flag the table style as invalid
+	/// (AUDIT reports "AcDbTableStyle ... repaired"). When the referenced style is dangling, this
+	/// rebinds it to the document's registered style of the same name (typically "Standard") so the
+	/// handle resolves to a real object. Registered (already-owned) styles pass through unchanged.
+	/// </remarks>
+	private TextStyle ResolveCellStyleTextStyle(TextStyle textStyle)
+	{
+		if (textStyle == null)
+		{
+			return null;
+		}
+
+		// A style that already belongs to this document is valid; write it as-is.
+		if (textStyle.Document == this._document)
+		{
+			return textStyle;
+		}
+
+		// Dangling (static default) or foreign style: try to resolve it by name to a registered entry.
+		if (textStyle.Name != null && this._document?.TextStyles != null
+			&& this._document.TextStyles.TryGetValue(textStyle.Name, out TextStyle registered))
+		{
+			return registered;
+		}
+
+		// No registered match: keep the original so behavior is unchanged.
+		return textStyle;
 	}
 
 	private void writeCellStyle(TableStyle.CellStyle cellStyle)
@@ -2200,7 +2235,7 @@ internal partial class DwgObjectWriter : DwgSectionIO
 	private void writeRowCellStyle(TableStyle.CellStyle style)
 	{
 		//Text style ID H 7 Hard pointer.
-		this._writer.HandleReference(DwgReferenceType.HardPointer, style.TextStyle);
+		this._writer.HandleReference(DwgReferenceType.HardPointer, this.ResolveCellStyleTextStyle(style.TextStyle));
 
 		//Text height BD 140
 		this._writer.WriteBitDouble(style.TextHeight);

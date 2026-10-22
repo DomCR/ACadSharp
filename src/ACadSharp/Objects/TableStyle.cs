@@ -106,6 +106,9 @@ public partial class TableStyle : NonGraphicalObject, IDxfClassDefined
 	/// </summary>
 	public TableStyle(string name) : base(name)
 	{
+		// A valid AutoCAD table style carries a non-empty description (e.g. "Standard").
+		// AutoCAD flags a default style with a blank description as invalid during AUDIT.
+		this.Description = name;
 	}
 
 	/// <inheritdoc/>
