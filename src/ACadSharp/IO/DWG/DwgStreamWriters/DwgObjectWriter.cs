@@ -63,6 +63,13 @@ internal partial class DwgObjectWriter : DwgSectionIO
 	// [PATCH] Set of handles for objects that already exist in the patch source (containing this object enables dirty-tracking mode).
 	private HashSet<ulong> _existingHandles;
 
+	// [FIX D4] (c) Count of skipClean() calls that returned true (an object may be checked more than once,
+	// so this is a check count, not an object count). In P0 dirty tracking this is expected (clean objects are
+	// reused from the patch source); in a P1 zero-modification save (no DirtyHandles) it must stay 0 — a
+	// non-zero value means existing objects were dropped from the section and the fallback would write a
+	// corrupt AcDbObjects section unless DwgWriter re-serializes in full mode first.
+	internal int SkippedCleanChecks;
+
 	// [PATCH] P2 block-entity parallel serialization: whether it is enabled (set by DwgWriter based on configuration and version gating).
 	// Only effective for R2004+(AC1018+) and non-streaming, non-P0 dirty-tracking mode — R2004+ does not write the prev/next chain,
 	// so a single-entity serialization is fully self-contained (depends only on the entity and its subtree), and concatenating in the original order is byte-for-byte identical to the sequential path.
@@ -122,7 +129,18 @@ internal partial class DwgObjectWriter : DwgSectionIO
 			return false;
 		}
 
-		return this._dirtyHandles == null || !this._dirtyHandles.Contains(handle);
+		// [FIX D4] (a) The skip decision belongs to P0 dirty tracking only (_dirtyHandles != null).
+		// When _dirtyHandles == null (P1: zero-modification save with a patch source) every existing
+		// object must still be serialized: the previous behavior (skip all existing objects) degenerated
+		// the objects section to the bare 4-byte 0xDCA prefix, the incremental length check then failed,
+		// and the fallback AddSection wrote that 4-byte stub as the AcDbObjects section -> corrupt DWG
+		// (read-back threw KeyNotFoundException on '*Model_Space').
+		bool skip = this._dirtyHandles != null && !this._dirtyHandles.Contains(handle);
+		if (skip)
+		{
+			this.SkippedCleanChecks++; // [FIX D4] (c) DwgWriter uses this to detect a degenerate P1 section
+		}
+		return skip;
 	}
 
 	public void Write()

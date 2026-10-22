@@ -439,13 +439,15 @@ public partial class DwgWriter : CadWriterBase<DwgWriterConfiguration>
 		HashSet<ulong> dirtyHandles = null;
 		HashSet<ulong> existingHandles = null;
 		DwgObjectPatchSource patch = this.Configuration?.PatchSource;
-		if (patch != null && this._version == ACadVersion.AC1018)
+		// [FIX D4] (b) existingHandles is owned by P0 dirty tracking only: it marks objects whose original
+		// bytes exist in the patch source and may therefore skip serialization. The previous code set it for
+		// ANY save with a patch source, so a P1 zero-modification save (no DirtyHandles) made skipClean() drop
+		// every existing object and the section degenerated to 4 bytes. P1 now serializes fully and the
+		// incremental path (tryWriteObjectsIncremental) then reuses the source's compressed pages byte-for-byte.
+		if (patch != null && this._version == ACadVersion.AC1018 && this.Configuration.DirtyHandles != null)
 		{
 			existingHandles = new HashSet<ulong>(patch.ObjectRanges.Keys);
-			if (this.Configuration.DirtyHandles != null)
-			{
-				dirtyHandles = new HashSet<ulong>(this.Configuration.DirtyHandles);
-			}
+			dirtyHandles = new HashSet<ulong>(this.Configuration.DirtyHandles);
 		}
 
 		// [PATCH] Save progress: the shared progress state is created only when OnSaveProgress has subscribers, for the object writer
@@ -513,6 +515,36 @@ public partial class DwgWriter : CadWriterBase<DwgWriterConfiguration>
 		if (this.tryWriteObjectsIncremental(stream, writer.Map))
 		{
 			return;
+		}
+
+		// [FIX D4] (c) Fallback safety net (defense in depth): a patch source exists without dirty tracking (P1)
+		// and the object writer still skipped existing objects => the stream holds a PARTIAL objects section
+		// (D4: the section degenerated to the bare 4-byte 0xDCA prefix and the fallback AddSection wrote that
+		// stub as AcDbObjects -> 6 KB corrupt artifact, read-back threw KeyNotFoundException on '*Model_Space').
+		// Re-serialize in full mode first, mirroring the P0 failure path above, so the AddSection below always
+		// receives a complete section.
+		// NB: the trigger is the writer's skip counter, NOT a comparison of Map.Count against the patch or
+		// document object counts — a normal full traversal legitimately omits objects reachable only through
+		// inline XData handles (sample.dwg: 836 written of 907 in-memory / 919 in the patch), and comparing
+		// counts would trigger a useless double serialization on every legitimate P1 fallback.
+		if (patch != null && dirtyHandles == null && writer.SkippedCleanChecks > 0)
+		{
+			this.triggerNotification("[Incremental] P1 回退时对象段不完整，重新全量序列化后回退", NotificationType.None);
+			stream.SetLength(0);
+			stream.Position = 0;
+			writer = new DwgObjectWriter(
+				stream,
+				this._document,
+				this._encoding,
+				this.Configuration.WriteXRecords,
+				this.Configuration.WriteXData,
+				this.Configuration.WriteShapes,
+				this.Configuration.WriteDynamicBlockData);
+			writer.OnNotification += this.triggerNotification;
+			writer._saveProgress = saveProgress;
+			saveProgress?.Reset();
+			writer.Write();
+			this._handlesMap = writer.Map;
 		}
 
 		// [PATCH] Testability hook: allow replacing the decompressed objects section before compression
