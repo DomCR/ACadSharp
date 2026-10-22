@@ -47,6 +47,9 @@ internal abstract partial class DxfSectionWriterBase
 			case Hatch hatch:
 				this.writeHatch(hatch);
 				break;
+			case TableEntity table://A TableEntity is an Insert, so it must be checked first
+				this.writeTableEntity(table);
+				break;
 			case Insert insert:
 				this.writeInsert(insert);
 				break;
@@ -159,7 +162,6 @@ internal abstract partial class DxfSectionWriterBase
 				return false;
 			case Shape:
 				return this.Configuration.WriteShapes;
-			case TableEntity:
 			case Solid3D:
 			case CadBody:
 			case Region:
@@ -691,6 +693,92 @@ internal abstract partial class DxfSectionWriterBase
 			}
 
 			this.writeSeqend(insert.Attributes.Seqend);
+		}
+	}
+
+	private void writeTableEntity(TableEntity table)
+	{
+		//AcDbBlockReference data (a TableEntity inherits Insert)
+		DxfClassMap insertMap = DxfClassMap.Create<Insert>();
+
+		this._writer.Write(DxfCode.Subclass, DxfSubclassMarker.Insert);
+
+		this._writer.WriteName(2, table.Block, insertMap);
+
+		this._writer.Write(10, table.InsertPoint, insertMap);
+
+		this._writer.Write(41, table.XScale, insertMap);
+		this._writer.Write(42, table.YScale, insertMap);
+		this._writer.Write(43, table.ZScale, insertMap);
+
+		this._writer.Write(50, table.Rotation, insertMap);
+
+		this._writer.Write(210, table.Normal, insertMap);
+
+		//AcDbTable data
+		DxfClassMap map = DxfClassMap.Create<TableEntity>();
+
+		this._writer.Write(DxfCode.Subclass, DxfSubclassMarker.TableEntity);
+
+		this._writer.Write(280, table.Version, map);
+
+		this._writer.WriteHandle(342, table.Style);
+
+		this._writer.Write(11, table.HorizontalDirection, map);
+
+		this._writer.Write(90, table.ValueFlag, map);
+
+		this._writer.Write(91, table.Rows.Count);
+		this._writer.Write(92, table.Columns.Count);
+
+		this._writer.WriteIfNotDefault(93, table.OverrideFlag, false, map);
+		this._writer.WriteIfNotDefault(94, table.OverrideBorderColor, false, map);
+		this._writer.WriteIfNotDefault(95, table.OverrideBorderLineWeight, false, map);
+		this._writer.WriteIfNotDefault(96, table.OverrideBorderVisibility, false, map);
+
+		//Row heights and column widths
+		foreach (TableEntity.Row row in table.Rows)
+		{
+			this._writer.Write(141, row.Height);
+		}
+
+		foreach (TableEntity.Column column in table.Columns)
+		{
+			this._writer.Write(142, column.Width);
+		}
+
+		//Cells in row-major order, the order in which the reader creates them
+		foreach (TableEntity.Row row in table.Rows)
+		{
+			foreach (TableEntity.Cell cell in row.Cells)
+			{
+				this.writeTableCell(cell);
+			}
+		}
+	}
+
+	private void writeTableCell(TableEntity.Cell cell)
+	{
+		this._writer.Write(171, (short)cell.Type);
+		this._writer.Write(172, cell.EdgeFlags);
+		this._writer.Write(173, cell.MergedValue);
+		this._writer.Write(174, cell.AutoFit);
+		this._writer.Write(175, cell.BorderWidth);
+		this._writer.Write(176, cell.BorderHeight);
+		this._writer.Write(178, cell.VirtualEdgeFlag);
+		this._writer.Write(145, cell.Rotation);
+
+		foreach (TableEntity.CellContent content in cell.Contents)
+		{
+			//Empty cells carry a typed but valueless CadValue; there is nothing to write.
+			if (content.CadValue.Value == null)
+			{
+				continue;
+			}
+
+			this._writer.Write(301, "CELL_VALUE");
+
+			this.writeCadValue(content.CadValue);
 		}
 	}
 
