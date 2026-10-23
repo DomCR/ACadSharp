@@ -33,7 +33,24 @@ internal class DxfAcdsDataSectionWriter : DxfSectionWriterBase
 
 	private void writeAcdsRecord(AcdsRecord record)
 	{
-		throw new NotImplementedException();
+		this._writer.Write(0, DxfFileToken.AcdsRecord);
+		this._writer.Write(90, record.Index);
+		foreach (AcdsRecordColumn col in record.Columns.Values)
+		{
+			this._writer.Write(2, col.Name);
+			this._writer.Write(280, col.DataType);
+
+			switch (col.DataType)
+			{
+				case 10:
+					this._writer.Write(320, col.Handle);
+					break;
+				case 15:
+					this._writer.Write(94, col.Data.Length);
+					this._writer.Write(310, col.Data.ToArray());
+					break;
+			}
+		}
 	}
 
 	private void writeAcdsSchema(AcdsSchema schema)

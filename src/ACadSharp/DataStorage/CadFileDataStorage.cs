@@ -1,4 +1,5 @@
 ﻿using ACadSharp.Entities;
+using System;
 using System.Collections.Generic;
 
 namespace ACadSharp.DataStorage;
@@ -23,10 +24,10 @@ internal class CadFileDataStorage
 
 	public CadFileDataStorage(IEnumerable<ModelerGeometry> geometries)
 	{
-		this.build(geometries);
+		this.init(geometries);
 	}
 
-	private void build(IEnumerable<ModelerGeometry> geometries)
+	private void init(IEnumerable<ModelerGeometry> geometries)
 	{
 		uint index = 0;
 		this.buildThumbnailSchema(index++);
@@ -35,6 +36,33 @@ internal class CadFileDataStorage
 		this.buildIndexedPropertySchema(index++);
 		this.buildHandleAttributeSchema(index++);
 		this.buildAcDb3DSolid_ASM_Data(index++);
+
+		this.buildRecords(geometries);
+	}
+
+	private void buildRecords(IEnumerable<ModelerGeometry> geometries)
+	{
+		foreach (var item in geometries)
+		{
+			AcdsRecord record = new AcdsRecord();
+			record.Index = 0;
+
+			record.Columns.Add(AcDbDsIdName, new AcdsRecordColumn
+			{
+				Name = AcDbDsIdName,
+				DataType = 10,
+				Handle = item.Handle,
+			});
+
+			record.Columns.Add(AsmData, new AcdsRecordColumn
+			{
+				Name = AsmData,
+				DataType = 15,
+				Data = new System.IO.MemoryStream(item.AcisData),
+			});
+
+			this.Records.Add(record);
+		}
 	}
 
 	private void buildAcDb3DSolid_ASM_Data(uint index)
