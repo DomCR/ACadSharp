@@ -7,6 +7,7 @@ using ACadSharp.IO.Templates;
 using ACadSharp.Objects;
 using ACadSharp.Objects.AEC;
 using ACadSharp.Objects.Evaluations;
+using ACadSharp.Objects.Mechanical;
 using ACadSharp.Tables;
 using ACadSharp.Tables.Collections;
 using ACadSharp.Types.Units;
@@ -4959,6 +4960,252 @@ namespace ACadSharp.IO.DWG
 
 			this.readCommonEntityData(template);
 
+			switch (c.DxfName)
+			{
+				case DxfFileToken.AcmBom:
+					template = this.readAcmBom();
+					break;
+				case DxfFileToken.AcmBomRow:
+					template = this.readAcmBomRow();
+					break;
+				case DxfFileToken.AcmDataEntryBlock:
+					template = this.readAcmDataEntryBlock();
+					break;
+				case DxfFileToken.AcmDataEntryPart:
+					template = this.readAcmDataEntryPart();
+					break;
+				case DxfFileToken.AcmPartRef:
+					template = this.readAcmPartRef();
+					break;
+				case DxfFileToken.AcmBalloon:
+					template = this.readAcmBalloon();
+					break;
+				case DxfFileToken.AcmPartList:
+					template = this.readAcmPartList();
+					break;
+				case DxfFileToken.ObjectDynamicBlockPurgePreventer:
+					template = this.readDynamicBlockPurgePreventer();
+					break;
+				case DxfFileToken.EntityAecWall:
+					template = this.readAecWall();
+					break;
+				case DxfFileToken.EntityArcDimension:
+					template = this.readDimArc();
+					break;
+				case DxfFileToken.ObjectBinRecord:  // Add this variant
+					template = this.readBinRecord();
+					break;
+				case DxfFileToken.ObjectAecWallStyle:
+					template = this.readAecWallStyle();
+					break;
+				case DxfFileToken.ObjectAecCleanupGroupDef:
+					template = this.readAecCleanupGroup();
+					break;
+				case "ACDBDICTIONARYWDFLT":
+					template = this.readDictionaryWithDefault();
+					break;
+				case "ACDBPLACEHOLDER":
+					template = this.readPlaceHolder();
+					break;
+				case "ACAD_TABLE":
+					template = this.readTableEntity();
+					break;
+				case DxfFileToken.ObjectDimensionAssociation:
+					template = this.readDimensionAssociation();
+					break;
+				case "DBCOLOR":
+					template = this.readDbColor();
+					break;
+				case "DICTIONARYVAR":
+					template = this.readDictionaryVar();
+					break;
+				case "DICTIONARYWDFLT":
+					template = this.readDictionaryWithDefault();
+					break;
+				case DxfFileToken.ObjectGeoData:
+					template = this.readGeoData();
+					break;
+				case "GROUP":
+					template = this.readGroup();
+					break;
+				case "HATCH":
+					template = this.readHatch();
+					break;
+				case "IMAGE":
+					template = this.readCadImage(new RasterImage());
+					break;
+				case "IMAGEDEF":
+					template = this.readImageDefinition();
+					break;
+				case "IMAGEDEF_REACTOR":
+					template = this.readImageDefinitionReactor();
+					break;
+				case "LAYOUT":
+					template = this.readLayout();
+					break;
+				case "LWPLINE":
+				case "LWPOLYLINE":
+					template = this.readLWPolyline();
+					break;
+				case "MATERIAL":
+					template = this.readMaterial();
+					break;
+				case "MESH":
+					template = this.readMesh();
+					break;
+				case "MULTILEADER":
+					template = this.readMultiLeader();
+					break;
+				case "ACDB_MLEADEROBJECTCONTEXTDATA_CLASS":
+					template = this.readMultiLeaderAnnotContext();
+					break;
+				case "MLEADERSTYLE":
+					template = this.readMultiLeaderStyle();
+					break;
+				case "PDFDEFINITION":
+					template = this.readPdfDefinition();
+					break;
+				case "PDFUNDERLAY":
+				case "PDFREFERENCE":
+					template = this.readPdfUnderlay();
+					break;
+				case "SCALE":
+					template = this.readScale();
+					break;
+				case "SORTENTSTABLE":
+					template = this.readSortentsTable();
+					break;
+				case "RASTERVARIABLES":
+					template = this.readRasterVariables();
+					break;
+				case "WIPEOUT":
+					template = this.readCadImage(new Wipeout());
+					break;
+				case "XRECORD":
+					template = this.readXRecord();
+					break;
+				case DxfFileToken.ObjectEvalGraph:
+					template = this.readEvaluationGraph();
+					break;
+				case DxfFileToken.ObjectBlockPolarParameter:
+					template = this.readBlockPolarParameter();
+					break;
+				case DxfFileToken.ObjectBlockLinearParameter:
+					template = this.readBlockLinearParameter();
+					break;
+				case DxfFileToken.ObjectBlockRotationParameter:
+					template = this.readBlockRotationParameter();
+					break;
+				case DxfFileToken.ObjectBlockVisibilityParameter:
+					template = this.readBlockVisibilityParameter();
+					break;
+				case DxfFileToken.ObjectBlockLookupParameter:
+					template = this.readBlockLookupParameter();
+					break;
+				case DxfFileToken.ObjectBlockFlipParameter:
+					template = this.readBlockFlipParameter();
+					break;
+				case DxfFileToken.ObjectBlockBasePointParameter:
+					template = this.readBlockBasePointParameter();
+					break;
+				case DxfFileToken.ObjectBlockPointParameter:
+					template = this.readBlockPointParameter();
+					break;
+				case DxfFileToken.ObjectBlockXYParameter:
+					template = this.readBlockXYParameter();
+					break;
+				case DxfFileToken.ObjectBlockAlignmentParameter:
+					template = this.readBlockAlignmentParameter();
+					break;
+				case DxfFileToken.ObjectBlockRepresentationData:
+					template = this.readBlockRepresentationData();
+					break;
+				case DxfFileToken.ObjectBlockGripLocationComponent:
+					template = this.readBlockGripLocationComponent();
+					break;
+				case DxfFileToken.ObjectBlockAlignmentGrip:
+					template = this.readAlignmentGrip();
+					break;
+				case DxfFileToken.ObjectBlockFlipGrip:
+					template = this.readFlipGrip();
+					break;
+				case DxfFileToken.ObjectBlockLinearGrip:
+					template = this.readLinearGrip();
+					break;
+				case DxfFileToken.ObjectBlockXYGrip:
+					template = new CadBlockGripTemplate(new BlockXYGrip());
+					this.readBlockGrip(template as CadBlockGripTemplate);
+					break;
+				case DxfFileToken.ObjectBlockRotationGrip:
+					template = new CadBlockGripTemplate(new BlockRotationGrip());
+					this.readBlockGrip(template as CadBlockGripTemplate);
+					break;
+				case DxfFileToken.ObjectBlockVisibilityGrip:
+					template = new CadBlockGripTemplate(new BlockVisibilityGrip());
+					this.readBlockGrip(template as CadBlockGripTemplate);
+					break;
+				case DxfFileToken.ObjectBlockLookupGrip:
+					template = new CadBlockGripTemplate(new BlockLookupGrip());
+					this.readBlockGrip(template as CadBlockGripTemplate);
+					break;
+				case DxfFileToken.ObjectBlockPolarGrip:
+					template = new CadBlockGripTemplate(new BlockPolarGrip());
+					this.readBlockGrip(template as CadBlockGripTemplate);
+					break;
+				case DxfFileToken.ObjectBlockPolarStretchAction:
+					template = this.readBlockPolarStretchAction();
+					break;
+				case DxfFileToken.ObjectBlockFlipAction:
+					template = this.readBlockFlipAction();
+					break;
+				case DxfFileToken.ObjectBlockRotateAction:
+					template = this.readBlockRotateAction();
+					break;
+				case DxfFileToken.ObjectBlockScaleAction:
+					template = this.readBlockScaleAction();
+					break;
+				case DxfFileToken.ObjectBlockMoveAction:
+					template = this.readBlockMoveAction();
+					break;
+				case DxfFileToken.ObjectBlockLookupAction:
+					template = this.readBlockLookupAction();
+					break;
+				case DxfFileToken.ObjectBlockArrayAction:
+					template = this.readBlockArrayAction();
+					break;
+				case DxfFileToken.ObjectBlockStretchAction:
+					template = this.readBlockStretchAction();
+					break;
+				case DxfFileToken.ObjectSpatialFilter:
+					template = this.readSpatialFilter();
+					break;
+				case DxfFileToken.EntityProxyEntity:
+					template = this.readProxyEntity();
+					break;
+				case DxfFileToken.ObjectProxyObject:
+					template = this.readProxyObject();
+					break;
+				case DxfFileToken.ObjectVisualStyle:
+					template = this.readVisualStyle();
+					break;
+				case DxfFileToken.ObjectPlotSettings:
+					template = this.readPlotSettings();
+					break;
+				case DxfFileToken.ObjectTableStyle:
+					template = this.readTableStyle();
+					break;
+				case DxfFileToken.BlkRefObjectContextData:
+					template = this.readBlkRefObjectContextData();
+					break;
+				case DxfFileToken.MTextAttributeObjectContextData:
+					template = this.readMTextAttributeObjectContextData();
+					break;
+				case DxfFileToken.ObjectFieldList:
+					template = this.readFieldList();
+					break;
+				case DxfFileToken.ObjectField:
+					template = this.readField();
+					break;
 			//Point 3BD 10
 			pt.Location = this._objectReader.Read3BitDouble();
 			//Thickness BT 39
@@ -5743,6 +5990,170 @@ namespace ACadSharp.IO.DWG
 			//Entry name TV 2
 			ucs.Name = this._textReader.ReadVariableText();
 
+		private List<ulong> readRemainingHandleReferences()
+		{
+			List<ulong> handles = new();
+			long endPosition = this._objectInitialPos + (long)(this._size * 8U) - 7L;
+
+			while (this._handlesReader.PositionInBits() < endPosition)
+			{
+				handles.Add(this.handleReference());
+			}
+
+			return handles;
+		}
+
+		private CadTemplate readAcmBom()
+		{
+			AcmBom bom = new AcmBom();
+			CadAcmBomTemplate template = new CadAcmBomTemplate(bom);
+
+			this.readCommonNonEntityData(template);
+
+			int rowCount = this._mergedReaders.ReadBitLong();
+			if (rowCount < 0)
+			{
+				throw new InvalidDataException($"Invalid ACMBOM row count: {rowCount}.");
+			}
+
+			bom.ItemNumberStep = this._mergedReaders.ReadBitLong();
+			bom.IsExpanded = this._mergedReaders.ReadBit();
+
+			for (int i = 0; i < rowCount; i++)
+			{
+				bom.RowNames.Add(this._textReader.ReadVariableText());
+			}
+
+			bom.Name = this._textReader.ReadVariableText();
+			bom.ItemNumberSeparator = this._textReader.ReadVariableText();
+			bom.ItemNumberStart = this._textReader.ReadVariableText();
+
+			for (int i = 0; i < rowCount; i++)
+			{
+				template.RowHandles.Add(this.handleReference());
+			}
+
+			template.PartListHandle = this.handleReference();
+			template.DataEntryHandle = this.handleReference();
+			template.UnknownHandle = this.handleReference();
+
+			return template;
+		}
+
+		private CadTemplate readAcmBomRow()
+		{
+			AcmBomRow row = new AcmBomRow();
+			CadAcmBomRowTemplate template = new CadAcmBomRowTemplate(row);
+
+			this.readCommonNonEntityData(template);
+
+			row.Version = this._mergedReaders.ReadBitLong();
+			row.SortPriority = this._mergedReaders.ReadBitLong();
+			for (int i = 0; i < 6; i++)
+			{
+				row.RawValues.Add(this._mergedReaders.ReadBitLong());
+			}
+
+			row.ItemName = this._textReader.ReadVariableText();
+
+			template.DataEntryHandle = this.handleReference();
+			template.PartReferenceHandles.Add(this.handleReference());
+			template.PartReferenceHandles.Add(this.handleReference());
+			template.BalloonHandles.Add(this.handleReference());
+			template.BalloonHandles.Add(this.handleReference());
+			template.UnknownHandles.Add(this.handleReference());
+			template.UnknownHandles.Add(this.handleReference());
+
+			return template;
+		}
+
+		private CadTemplate readAcmDataEntryPart()
+		{
+			AcmDataEntryPart dataEntry = new AcmDataEntryPart();
+			CadAcmDataEntryPartTemplate template = new CadAcmDataEntryPartTemplate(dataEntry);
+
+			this.readCommonNonEntityData(template);
+
+			dataEntry.Signature = this._mergedReaders.ReadBitLong();
+			dataEntry.Version = this._mergedReaders.ReadBitLong();
+			dataEntry.EntryId = this._mergedReaders.ReadBitLong();
+			int attributeCount = this._mergedReaders.ReadBitLong();
+			if (attributeCount < 0)
+			{
+				throw new InvalidDataException($"Invalid ACMDATAENTRYPART attribute count: {attributeCount}.");
+			}
+
+			int rawAttributeValueCount = 1 + attributeCount * 3;
+			for (int i = 0; i < rawAttributeValueCount; i++)
+			{
+				dataEntry.RawAttributeValues.Add(this._mergedReaders.ReadBitLong());
+			}
+
+			for (int i = 0; i < attributeCount; i++)
+			{
+				dataEntry.Attributes.Add(new AcmDataEntryAttribute
+				{
+					Name = this._textReader.ReadVariableText(),
+					Value = this._textReader.ReadVariableText(),
+					Metadata = this._textReader.ReadVariableText(),
+				});
+			}
+
+			template.PartReferenceHandles.Add(this.handleReference());
+			template.BomRowHandles.Add(this.handleReference());
+			template.PartReferenceHandles.Add(this.handleReference());
+			template.UnknownHandles.Add(this.handleReference());
+			template.UnknownHandles.Add(this.handleReference());
+
+			return template;
+		}
+
+		private CadTemplate readAcmDataEntryBlock()
+		{
+			AcmDataEntryBlock dataEntry = new AcmDataEntryBlock();
+			CadAcmDataEntryBlockTemplate template = new CadAcmDataEntryBlockTemplate(dataEntry);
+
+			this.readCommonNonEntityData(template);
+
+			dataEntry.Signature = this._mergedReaders.ReadBitLong();
+			dataEntry.Version = this._mergedReaders.ReadBitLong();
+			dataEntry.EntryId = this._mergedReaders.ReadBitLong();
+			int attributeCount = this._mergedReaders.ReadBitLong();
+			if (attributeCount < 0)
+			{
+				throw new InvalidDataException($"Invalid ACMDATAENTRYBLOCK attribute count: {attributeCount}.");
+			}
+
+			int rawValueCount = 1 + attributeCount * 3;
+			for (int i = 0; i < rawValueCount; i++)
+			{
+				dataEntry.RawValues.Add(this._mergedReaders.ReadBitLong());
+			}
+
+			for (int i = 0; i < attributeCount; i++)
+			{
+				dataEntry.Attributes.Add(new AcmDataEntryAttribute
+				{
+					Name = this._textReader.ReadVariableText(),
+					Value = this._textReader.ReadVariableText(),
+					Metadata = this._textReader.ReadVariableText(),
+				});
+			}
+
+			dataEntry.DisplayName = this._textReader.ReadVariableText();
+
+			for (int i = 0; i < 3; i++)
+			{
+				template.ReferenceHandles.Add(this.handleReference());
+			}
+
+			return template;
+		}
+
+		private CadTemplate readAcmPartRef()
+		{
+			AcmPartRef partref = new AcmPartRef();
+			CadAcmPartRefTemplate template = new CadAcmPartRefTemplate(partref);
 			this.readXrefDependantBit(ucs);
 
 			//Origin 3BD 10
@@ -5763,6 +6174,17 @@ namespace ACadSharp.IO.DWG
 				ucs.OrthographicType = (OrthographicType)this._objectReader.ReadBitShort();
 			}
 
+			List<ulong> handles = this.readRemainingHandleReferences();
+			if (handles.Count >= 2)
+			{
+				template.DataEntryPartHandle = handles[handles.Count - 2];
+				template.LayerHandle = handles[handles.Count - 1];
+			}
+
+			if (handles.Count >= 4)
+			{
+				template.LineResHandle = handles[0];
+				template.UnknownHandle1 = handles[1];
 			//Common:
 			//Handle refs H ucs control object (soft pointer)
 			long control = (long)this.handleReference();
@@ -5781,6 +6203,64 @@ namespace ACadSharp.IO.DWG
 
 		private CadTemplate readUnlistedType(short classNumber)
 		{
+			AcmPartList partList = new AcmPartList();
+			CadAcmPartListTemplate template = new(partList);
+
+			this.readCommonEntityData(template);
+
+			this.readMechanicalEntity(template);
+
+			List<ulong> handles = this.readRemainingHandleReferences();
+			if (handles.Count > 0)
+			{
+				template.BomHandle = handles[0];
+			}
+
+			if (handles.Count > 1)
+			{
+				template.ItemFilterCustomHandle = handles[1];
+			}
+
+			for (int i = 2; i < handles.Count; i++)
+			{
+				template.RelatedHandles.Add(handles[i]);
+			}
+
+			return template;
+		}
+
+		private void readMechanicalEntity<T>(CadMechanicalEntityTemplate<T> template)
+			where T : MechanicalEntity, new()
+		{
+			var unknown1 = this._mergedReaders.ReadBitLong();   // 212
+			template.CadObject.Position = this._mergedReaders.Read3BitDouble();
+
+			template.StandardDINHandle = this.handleReference();
+			template.BOMStandardDINHandle = this.handleReference();
+		}
+
+		private CadTemplate readAcmBalloon()
+		{
+			AcmBalloon balloon = new AcmBalloon();
+			CadAcmBalloonTemplate template = new CadAcmBalloonTemplate(balloon);
+
+			this.readCommonEntityData(template);
+
+			this.readMechanicalEntity(template);
+
+			var unknown_position1 = this._mergedReaders.Read3BitDouble();
+			var unknown_position2 = this._mergedReaders.Read3BitDouble();
+
+			List<ulong> handles = this.readRemainingHandleReferences();
+			if (handles.Count >= 4)
+			{
+				template.BomRowHandle = handles[1];
+				template.BlockHandle = handles[2];
+			}
+			else if (handles.Count >= 2)
+			{
+				template.BomRowHandle = handles[0];
+				template.BlockHandle = handles[1];
 			if (!this._classes.TryGetValue(classNumber, out DxfClass c))
 			{
 				this.notify($"Class number {classNumber} not found in classes dictionary.", NotificationType.Warning);
