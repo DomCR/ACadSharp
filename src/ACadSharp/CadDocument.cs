@@ -1,4 +1,5 @@
 ﻿using ACadSharp.Classes;
+using ACadSharp.DataStorage;
 using ACadSharp.Entities;
 using ACadSharp.Header;
 using ACadSharp.Objects;
@@ -657,6 +658,19 @@ public class CadDocument : IHandledCadObject
 		}
 
 		cadObject.AssignDocument(this);
+	}
+
+	internal CadFileDataStorage CreateDataStorage()
+	{
+		var geometries = this._cadObjects.Values.OfType<ModelerGeometry>();
+		if(!geometries.Any())
+		{
+			return null;
+		}
+
+		CadFileDataStorage dataStorage = new CadFileDataStorage(geometries);
+
+		return dataStorage;
 	}
 
 	internal void RegisterCollection<T>(IObservableCadCollection<T> collection)
