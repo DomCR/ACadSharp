@@ -103,7 +103,7 @@ internal abstract class CadDocumentBuilder
 
 		foreach (var record in this.DataStorage.Records)
 		{
-			if (!record.Columns.TryGetValue(CadFileDataStorage.AcDbDsIdName, out var idColumn))
+			if (!record.Columns.TryGetValue(CadFileDataStorage.AcDbDsId, out var idColumn))
 			{
 				continue;
 			}

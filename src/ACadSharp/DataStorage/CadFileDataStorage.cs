@@ -11,11 +11,29 @@ internal class CadFileDataStorage
 
 	public const string AcDb3DSolid_ASM_Data = "AcDb3DSolid_ASM_Data";
 
-	public const string AcDbDsIdName = "AcDbDs::ID";
+	public const string AcDbDsId = "AcDbDs::ID";
 
 	public const string AsmData = "ASM_Data";
 
-	public const string ThumbnailSchemaName = "AcDb_Thumbnail_Schema";
+	public const string HandleAttribute = "AcDbDs::HandleAttribute";
+
+	public const string HandleAttributeSchemaName = "AcDbDs::HandleAttributeSchema";
+
+	public const string Indexable = "AcDs:Indexable";
+
+	public const string IndexedPropertySchemaName = "AcDbDs::IndexedPropertySchema";
+
+	public const string Legacy = "AcDbDs::Legacy";
+
+	public const string LegacySchemaName = "AcDbDs::LegacySchema";
+
+	public const string ThumbnailData = "Thumbnail_Data";
+
+	public const string ThumbnailSchema = "AcDb_Thumbnail_Schema";
+
+	public const string TreatedAsObjectData = "AcDbDs::TreatedAsObjectData";
+
+	public const string TreatedAsObjectDataSchemaName = "AcDbDs::TreatedAsObjectDataSchema";
 
 	public CadFileDataStorage()
 	{
@@ -37,7 +55,7 @@ internal class CadFileDataStorage
 
 		schema.Properties.Add(new AcdsSchemaProperty
 		{
-			Name = AcDbDsIdName,
+			Name = AcDbDsId,
 			Type = 10,
 			PropertyFlags = AcdsSchemaPropertyFlags.Unknown2,
 		});
@@ -56,13 +74,13 @@ internal class CadFileDataStorage
 		//{4 : AcDbDs::HandleAttributeSchema}
 		AcdsSchema schema = new AcdsSchema
 		{
-			Name = "AcDbDs::HandleAttributeSchema",
+			Name = HandleAttributeSchemaName,
 			Index = index
 		};
 
 		schema.Properties.Add(new AcdsSchemaProperty
 		{
-			Name = "AcDbDs::HandleAttribute",
+			Name = HandleAttribute,
 			Type = 1,
 			PropertyFlags = AcdsSchemaPropertyFlags.None,
 		});
@@ -75,13 +93,13 @@ internal class CadFileDataStorage
 		//{3 : AcDbDs::IndexedPropertySchema}
 		AcdsSchema schema = new AcdsSchema
 		{
-			Name = "AcDbDs::IndexedPropertySchema",
+			Name = IndexedPropertySchemaName,
 			Index = index
 		};
 
 		schema.Properties.Add(new AcdsSchemaProperty
 		{
-			Name = "AcDs:Indexable",
+			Name = Indexable,
 			Type = 1,
 			PropertyFlags = AcdsSchemaPropertyFlags.None,
 		});
@@ -94,13 +112,13 @@ internal class CadFileDataStorage
 		//{2 : AcDbDs::LegacySchema}
 		AcdsSchema schema = new AcdsSchema
 		{
-			Name = "AcDbDs::LegacySchema",
+			Name = LegacySchemaName,
 			Index = index
 		};
 
 		schema.Properties.Add(new AcdsSchemaProperty
 		{
-			Name = "AcDbDs::Legacy",
+			Name = Legacy,
 			Type = 1,
 			PropertyFlags = AcdsSchemaPropertyFlags.None,
 		});
@@ -115,9 +133,9 @@ internal class CadFileDataStorage
 			AcdsRecord record = new AcdsRecord();
 			record.Index = index;
 
-			record.Columns.Add(AcDbDsIdName, new AcdsRecordColumn
+			record.Columns.Add(AcDbDsId, new AcdsRecordColumn
 			{
-				Name = AcDbDsIdName,
+				Name = AcDbDsId,
 				DataType = 10,
 				Handle = item.Handle,
 			});
@@ -138,26 +156,26 @@ internal class CadFileDataStorage
 		//{0 : AcDb_Thumbnail_Schema}
 		AcdsSchema thumbnail = new AcdsSchema
 		{
-			Name = ThumbnailSchemaName,
+			Name = ThumbnailSchema,
 			Index = index
 		};
 
 		thumbnail.Properties.Add(new AcdsSchemaProperty
 		{
-			Name = AcDbDsIdName,
+			Name = AcDbDsId,
 			Type = 10,
 			PropertyFlags = AcdsSchemaPropertyFlags.Unknown2,
 		});
 		thumbnail.Properties.Add(new AcdsSchemaProperty
 		{
-			Name = "Thumbnail_Data",
+			Name = ThumbnailData,
 			Type = 15,
 			PropertyFlags = AcdsSchemaPropertyFlags.None,
 		});
 
 		thumbnail.Properties.Add(new AcdsSchemaProperty
 		{
-			Name = "AcDbDs::TreatedAsObjectData",
+			Name = TreatedAsObjectData,
 			Type = 1,
 			PropertyFlags = AcdsSchemaPropertyFlags.Unknown1,
 		});
@@ -170,13 +188,13 @@ internal class CadFileDataStorage
 		//{1 : AcDbDs::TreatedAsObjectDataSchema}
 		AcdsSchema schema = new AcdsSchema
 		{
-			Name = "AcDbDs::TreatedAsObjectDataSchema",
+			Name = TreatedAsObjectDataSchemaName,
 			Index = index
 		};
 
 		schema.Properties.Add(new AcdsSchemaProperty
 		{
-			Name = "AcDbDs::TreatedAsObjectData",
+			Name = TreatedAsObjectData,
 			Type = 1,
 			PropertyFlags = AcdsSchemaPropertyFlags.None,
 		});
