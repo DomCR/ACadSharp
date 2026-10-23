@@ -1,4 +1,4 @@
-using ACadSharp.Header;
+﻿using ACadSharp.Header;
 using ACadSharp.IO;
 using ACadSharp.Tables;
 using ACadSharp.Tests.TestModels;
