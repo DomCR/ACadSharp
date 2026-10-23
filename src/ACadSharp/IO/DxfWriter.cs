@@ -138,7 +138,8 @@ public class DxfWriter : CadWriterBase<DxfWriterConfiguration>
 
 	private void writeACDSData()
 	{
-		if (this._document.Header.Version <= ACadVersion.AC1024)
+		if (this._document.Header.Version <= ACadVersion.AC1024 
+			|| !this.Configuration.WriteACISData)
 		{
 			return;
 		}
