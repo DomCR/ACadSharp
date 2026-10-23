@@ -87,6 +87,12 @@ public abstract class CadReaderTestsBase<T> : IOTestsBase, IDisposable
 	{
 		CadDocument doc = this.getDocument(test);
 
+		//Files without an ACAD_LAYOUT dictionary have no layouts at all.
+		if (doc.Layouts == null)
+		{
+			return;
+		}
+
 		foreach (var layout in doc.Layouts)
 		{
 			if (!layout.IsPaperSpace)
