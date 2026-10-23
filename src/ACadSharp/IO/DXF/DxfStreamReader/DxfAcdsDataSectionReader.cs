@@ -204,10 +204,10 @@ internal class DxfAcdsDataSectionReader : DxfSectionReaderBase
 			switch (this._reader.Code)
 			{
 				case 91:
-					property.Type = (byte)this._reader.ValueAsShort;
+					property.PropertyFlags = (AcdsSchemaPropertyFlags)this._reader.ValueAsShort;
 					break;
 				case 280:
-					property.PropertyFlags = (AcdsSchemaPropertyFlags)this._reader.ValueAsShort;
+					property.Type = (byte)this._reader.ValueAsShort;
 					break;
 			}
 

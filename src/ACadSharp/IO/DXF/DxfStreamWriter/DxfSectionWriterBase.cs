@@ -12,16 +12,17 @@ internal abstract partial class DxfSectionWriterBase
 {
 	public event NotificationEventHandler OnNotification;
 
+	public DxfWriterConfiguration Configuration { get; }
+
+	public CadObjectHolder Holder { get; }
+
 	public abstract string SectionName { get; }
 
 	public ACadVersion Version { get { return this._document.Header.Version; } }
 
-	public CadObjectHolder Holder { get; }
-
-	public DxfWriterConfiguration Configuration { get; }
+	protected CadDocument _document;
 
 	protected IDxfStreamWriter _writer;
-	protected CadDocument _document;
 
 	public DxfSectionWriterBase(
 		IDxfStreamWriter writer,
@@ -43,6 +44,11 @@ internal abstract partial class DxfSectionWriterBase
 		this.writeSection();
 
 		this._writer.Write(DxfCode.Start, DxfFileToken.EndSection);
+	}
+
+	protected void notify(string message, NotificationType notificationType = NotificationType.None, Exception ex = null)
+	{
+		this.OnNotification?.Invoke(this, new NotificationEventArgs(message, notificationType, ex));
 	}
 
 	protected void writeCadValue(CadValue value)
@@ -88,6 +94,48 @@ internal abstract partial class DxfSectionWriterBase
 		}
 
 		this._writer.Write(304, DxfFileToken.ValueEnd);
+	}
+
+	protected void writeCommonEntityData(Entity entity)
+	{
+		DxfClassMap map = DxfClassMap.Create<Entity>();
+
+		this._writer.Write(DxfCode.Subclass, DxfSubclassMarker.Entity);
+
+		this._writer.Write(8, entity.Layer.Name);
+
+		this._writer.Write(6, entity.LineType.Name);
+
+		if (entity.BookColor != null)
+		{
+			this._writer.Write(62, entity.BookColor.Color.GetApproxIndex());
+			this._writer.WriteTrueColor(420, entity.BookColor.Color);
+			this._writer.Write(430, entity.BookColor.Name);
+		}
+		else if (entity.Color.IsTrueColor)
+		{
+			this._writer.WriteTrueColor(420, entity.Color);
+		}
+		else
+		{
+			this._writer.Write(62, entity.Color.Index);
+		}
+
+		if (entity.Transparency.Value >= 0)
+		{
+			this._writer.Write(440, Transparency.ToAlphaValue(entity.Transparency));
+		}
+
+		this._writer.Write(48, entity.LineTypeScale, map);
+
+		this._writer.Write(60, entity.IsInvisible ? (short)1 : (short)0, map);
+
+		if (entity.Owner is BlockRecord record && record.Layout != null)
+		{
+			this._writer.Write(67, record.Layout.IsPaperSpace ? (short)1 : 0);
+		}
+
+		this._writer.Write(370, entity.LineWeight);
 	}
 
 	protected void writeCommonObjectData(CadObject cadObject)
@@ -191,50 +239,6 @@ internal abstract partial class DxfSectionWriterBase
 		}
 	}
 
-	protected void writeCommonEntityData(Entity entity)
-	{
-		DxfClassMap map = DxfClassMap.Create<Entity>();
-
-		this._writer.Write(DxfCode.Subclass, DxfSubclassMarker.Entity);
-
-		this._writer.Write(8, entity.Layer.Name);
-
-		this._writer.Write(6, entity.LineType.Name);
-
-		if (entity.BookColor != null)
-		{
-			this._writer.Write(62, entity.BookColor.Color.GetApproxIndex());
-			this._writer.WriteTrueColor(420, entity.BookColor.Color);
-			this._writer.Write(430, entity.BookColor.Name);
-		}
-		else if (entity.Color.IsTrueColor)
-		{
-			this._writer.WriteTrueColor(420, entity.Color);
-		}
-		else
-		{
-			this._writer.Write(62, entity.Color.Index);
-		}
-
-		if (entity.Transparency.Value >= 0)
-		{
-			this._writer.Write(440, Transparency.ToAlphaValue(entity.Transparency));
-		}
-
-		this._writer.Write(48, entity.LineTypeScale, map);
-
-		this._writer.Write(60, entity.IsInvisible ? (short)1 : (short)0, map);
-
-		if (entity.Owner is BlockRecord record && record.Layout != null)
-		{
-			this._writer.Write(67, record.Layout.IsPaperSpace ? (short)1 : 0);
-		}
-
-		this._writer.Write(370, entity.LineWeight);
-	}
-
-	protected abstract void writeSection();
-
 	protected void writeLongTextValue(int code, int subcode, string text)
 	{
 		text = text ?? string.Empty;
@@ -247,8 +251,5 @@ internal abstract partial class DxfSectionWriterBase
 		this._writer.Write(code, text);
 	}
 
-	protected void notify(string message, NotificationType notificationType = NotificationType.None, Exception ex = null)
-	{
-		this.OnNotification?.Invoke(this, new NotificationEventArgs(message, notificationType, ex));
-	}
+	protected abstract void writeSection();
 }
