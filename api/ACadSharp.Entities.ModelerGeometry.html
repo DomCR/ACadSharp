@@ -310,7 +310,7 @@ public abstract class ModelerGeometry : Entity, IEntity, IHandledCadObject, IGeo
 
   <h3 id="ACadSharp_Entities_ModelerGeometry_AcisData" data-uid="ACadSharp.Entities.ModelerGeometry.AcisData">
   AcisData
-  <a class="header-action link-secondary" title="View source" href="https://github.com/DomCR/ACadSharp/blob/master/src/ACadSharp/Entities/ModelerGeometry.cs/#L48"><i class="bi bi-code-slash"></i></a>
+  <a class="header-action link-secondary" title="View source" href="https://github.com/DomCR/ACadSharp/blob/master/src/ACadSharp/Entities/ModelerGeometry.cs/#L26"><i class="bi bi-code-slash"></i></a>
   </h3>
 
   <div class="markdown level1 summary"><p>Raw ACIS payload that describes the geometry of this entity.</p>
@@ -346,11 +346,76 @@ itself.</p>
 
 
 
+  <a id="ACadSharp_Entities_ModelerGeometry_Guid_" data-uid="ACadSharp.Entities.ModelerGeometry.Guid*"></a>
+
+  <h3 id="ACadSharp_Entities_ModelerGeometry_Guid" data-uid="ACadSharp.Entities.ModelerGeometry.Guid">
+  Guid
+  <a class="header-action link-secondary" title="View source" href="https://github.com/DomCR/ACadSharp/blob/master/src/ACadSharp/Entities/ModelerGeometry.cs/#L31"><i class="bi bi-code-slash"></i></a>
+  </h3>
+
+  <div class="markdown level1 summary"><p>Gets or sets the globally unique identifier.</p>
+</div>
+  <div class="markdown level1 conceptual"></div>
+
+  <div class="codewrapper">
+    <pre><code class="lang-csharp hljs">[DxfCodeValue(new int[] { 2 })]
+public Guid Guid { get; set; }</code></pre>
+  </div>
+
+
+
+
+
+  <h4 class="section">Property Value</h4>
+  <dl class="parameters">
+    <dt><a class="xref" href="https://learn.microsoft.com/dotnet/api/system.guid">Guid</a></dt>
+    <dd></dd>
+  </dl>
+
+
+
+
+
+
+
+
+  <a id="ACadSharp_Entities_ModelerGeometry_HasWireframeData_" data-uid="ACadSharp.Entities.ModelerGeometry.HasWireframeData*"></a>
+
+  <h3 id="ACadSharp_Entities_ModelerGeometry_HasWireframeData" data-uid="ACadSharp.Entities.ModelerGeometry.HasWireframeData">
+  HasWireframeData
+  <a class="header-action link-secondary" title="View source" href="https://github.com/DomCR/ACadSharp/blob/master/src/ACadSharp/Entities/ModelerGeometry.cs/#L37"><i class="bi bi-code-slash"></i></a>
+  </h3>
+
+  <div class="markdown level1 summary"><p>Gets a value indicating whether any wireframe data is available.</p>
+</div>
+  <div class="markdown level1 conceptual"></div>
+
+  <div class="codewrapper">
+    <pre><code class="lang-csharp hljs">public bool HasWireframeData { get; }</code></pre>
+  </div>
+
+
+
+
+
+  <h4 class="section">Property Value</h4>
+  <dl class="parameters">
+    <dt><a class="xref" href="https://learn.microsoft.com/dotnet/api/system.boolean">bool</a></dt>
+    <dd></dd>
+  </dl>
+
+
+
+
+
+
+
+
   <a id="ACadSharp_Entities_ModelerGeometry_IsBinaryAcisData_" data-uid="ACadSharp.Entities.ModelerGeometry.IsBinaryAcisData*"></a>
 
   <h3 id="ACadSharp_Entities_ModelerGeometry_IsBinaryAcisData" data-uid="ACadSharp.Entities.ModelerGeometry.IsBinaryAcisData">
   IsBinaryAcisData
-  <a class="header-action link-secondary" title="View source" href="https://github.com/DomCR/ACadSharp/blob/master/src/ACadSharp/Entities/ModelerGeometry.cs/#L54"><i class="bi bi-code-slash"></i></a>
+  <a class="header-action link-secondary" title="View source" href="https://github.com/DomCR/ACadSharp/blob/master/src/ACadSharp/Entities/ModelerGeometry.cs/#L49"><i class="bi bi-code-slash"></i></a>
   </h3>
 
   <div class="markdown level1 summary"><p>Flag that indicates if <a class="xref" href="ACadSharp.Entities.ModelerGeometry.html#ACadSharp_Entities_ModelerGeometry_AcisData">AcisData</a> contains a binary SAB
@@ -383,7 +448,7 @@ payload instead of SAT text.</p>
 
   <h3 id="ACadSharp_Entities_ModelerGeometry_ModelerFormatVersion" data-uid="ACadSharp.Entities.ModelerGeometry.ModelerFormatVersion">
   ModelerFormatVersion
-  <a class="header-action link-secondary" title="View source" href="https://github.com/DomCR/ACadSharp/blob/master/src/ACadSharp/Entities/ModelerGeometry.cs/#L30"><i class="bi bi-code-slash"></i></a>
+  <a class="header-action link-secondary" title="View source" href="https://github.com/DomCR/ACadSharp/blob/master/src/ACadSharp/Entities/ModelerGeometry.cs/#L73"><i class="bi bi-code-slash"></i></a>
   </h3>
 
   <div class="markdown level1 summary"><p>Gets or sets the modeler format version used in the drawing.</p>
@@ -416,10 +481,11 @@ public short ModelerFormatVersion { get; set; }</code></pre>
 
   <h3 id="ACadSharp_Entities_ModelerGeometry_Point" data-uid="ACadSharp.Entities.ModelerGeometry.Point">
   Point
-  <a class="header-action link-secondary" title="View source" href="https://github.com/DomCR/ACadSharp/blob/master/src/ACadSharp/Entities/ModelerGeometry.cs/#L15"><i class="bi bi-code-slash"></i></a>
+  <a class="header-action link-secondary" title="View source" href="https://github.com/DomCR/ACadSharp/blob/master/src/ACadSharp/Entities/ModelerGeometry.cs/#L79"><i class="bi bi-code-slash"></i></a>
   </h3>
 
-  <div class="markdown level1 summary"></div>
+  <div class="markdown level1 summary"><p>Gets or sets the point in 3D space.</p>
+</div>
   <div class="markdown level1 conceptual"></div>
 
   <div class="codewrapper">
@@ -447,7 +513,7 @@ public short ModelerFormatVersion { get; set; }</code></pre>
 
   <h3 id="ACadSharp_Entities_ModelerGeometry_ProprietaryData" data-uid="ACadSharp.Entities.ModelerGeometry.ProprietaryData">
   ProprietaryData
-  <a class="header-action link-secondary" title="View source" href="https://github.com/DomCR/ACadSharp/blob/master/src/ACadSharp/Entities/ModelerGeometry.cs/#L33"><i class="bi bi-code-slash"></i></a>
+  <a class="header-action link-secondary" title="View source" href="https://github.com/DomCR/ACadSharp/blob/master/src/ACadSharp/Entities/ModelerGeometry.cs/#L81"><i class="bi bi-code-slash"></i></a>
   </h3>
 
   <div class="markdown level1 summary"></div>
@@ -479,10 +545,11 @@ public StringBuilder ProprietaryData { get; }</code></pre>
 
   <h3 id="ACadSharp_Entities_ModelerGeometry_Silhouettes" data-uid="ACadSharp.Entities.ModelerGeometry.Silhouettes">
   Silhouettes
-  <a class="header-action link-secondary" title="View source" href="https://github.com/DomCR/ACadSharp/blob/master/src/ACadSharp/Entities/ModelerGeometry.cs/#L17"><i class="bi bi-code-slash"></i></a>
+  <a class="header-action link-secondary" title="View source" href="https://github.com/DomCR/ACadSharp/blob/master/src/ACadSharp/Entities/ModelerGeometry.cs/#L89"><i class="bi bi-code-slash"></i></a>
   </h3>
 
-  <div class="markdown level1 summary"></div>
+  <div class="markdown level1 summary"><p>Gets the collection of silhouettes.</p>
+</div>
   <div class="markdown level1 conceptual"></div>
 
   <div class="codewrapper">
@@ -502,6 +569,9 @@ public StringBuilder ProprietaryData { get; }</code></pre>
 
 
 
+  <h4 class="section" id="ACadSharp_Entities_ModelerGeometry_Silhouettes_remarks">Remarks</h4>
+  <div class="markdown level1 remarks"><p>The returned list is mutable; add or remove items to modify the collection.</p>
+</div>
 
 
 
@@ -510,7 +580,7 @@ public StringBuilder ProprietaryData { get; }</code></pre>
 
   <h3 id="ACadSharp_Entities_ModelerGeometry_SubclassMarker" data-uid="ACadSharp.Entities.ModelerGeometry.SubclassMarker">
   SubclassMarker
-  <a class="header-action link-secondary" title="View source" href="https://github.com/DomCR/ACadSharp/blob/master/src/ACadSharp/Entities/ModelerGeometry.cs/#L20"><i class="bi bi-code-slash"></i></a>
+  <a class="header-action link-secondary" title="View source" href="https://github.com/DomCR/ACadSharp/blob/master/src/ACadSharp/Entities/ModelerGeometry.cs/#L92"><i class="bi bi-code-slash"></i></a>
   </h3>
 
   <div class="markdown level1 summary"><p>Object Subclass marker.</p>
@@ -542,10 +612,11 @@ public StringBuilder ProprietaryData { get; }</code></pre>
 
   <h3 id="ACadSharp_Entities_ModelerGeometry_Wires" data-uid="ACadSharp.Entities.ModelerGeometry.Wires">
   Wires
-  <a class="header-action link-secondary" title="View source" href="https://github.com/DomCR/ACadSharp/blob/master/src/ACadSharp/Entities/ModelerGeometry.cs/#L22"><i class="bi bi-code-slash"></i></a>
+  <a class="header-action link-secondary" title="View source" href="https://github.com/DomCR/ACadSharp/blob/master/src/ACadSharp/Entities/ModelerGeometry.cs/#L97"><i class="bi bi-code-slash"></i></a>
   </h3>
 
-  <div class="markdown level1 summary"></div>
+  <div class="markdown level1 summary"><p>Gets the collection of wires.</p>
+</div>
   <div class="markdown level1 conceptual"></div>
 
   <div class="codewrapper">
@@ -577,7 +648,7 @@ public StringBuilder ProprietaryData { get; }</code></pre>
 
   <h3 id="ACadSharp_Entities_ModelerGeometry_ApplyTransform_CSMath_Transform_" data-uid="ACadSharp.Entities.ModelerGeometry.ApplyTransform(CSMath.Transform)">
   ApplyTransform(Transform)
-  <a class="header-action link-secondary" title="View source" href="https://github.com/DomCR/ACadSharp/blob/master/src/ACadSharp/Entities/ModelerGeometry.cs/#L93"><i class="bi bi-code-slash"></i></a>
+  <a class="header-action link-secondary" title="View source" href="https://github.com/DomCR/ACadSharp/blob/master/src/ACadSharp/Entities/ModelerGeometry.cs/#L103"><i class="bi bi-code-slash"></i></a>
   </h3>
 
   <div class="markdown level1 summary"><p>Apply a transform matrix to this entity.</p>
@@ -609,7 +680,7 @@ public StringBuilder ProprietaryData { get; }</code></pre>
 
   <h3 id="ACadSharp_Entities_ModelerGeometry_GetAcisText" data-uid="ACadSharp.Entities.ModelerGeometry.GetAcisText">
   GetAcisText()
-  <a class="header-action link-secondary" title="View source" href="https://github.com/DomCR/ACadSharp/blob/master/src/ACadSharp/Entities/ModelerGeometry.cs/#L79"><i class="bi bi-code-slash"></i></a>
+  <a class="header-action link-secondary" title="View source" href="https://github.com/DomCR/ACadSharp/blob/master/src/ACadSharp/Entities/ModelerGeometry.cs/#L111"><i class="bi bi-code-slash"></i></a>
   </h3>
 
   <div class="markdown level1 summary"><p>Gets the SAT text carried by <a class="xref" href="ACadSharp.Entities.ModelerGeometry.html#ACadSharp_Entities_ModelerGeometry_AcisData">AcisData</a>.</p>
@@ -642,7 +713,7 @@ public StringBuilder ProprietaryData { get; }</code></pre>
 
   <h3 id="ACadSharp_Entities_ModelerGeometry_GetBoundingBox" data-uid="ACadSharp.Entities.ModelerGeometry.GetBoundingBox">
   GetBoundingBox()
-  <a class="header-action link-secondary" title="View source" href="https://github.com/DomCR/ACadSharp/blob/master/src/ACadSharp/Entities/ModelerGeometry.cs/#L98"><i class="bi bi-code-slash"></i></a>
+  <a class="header-action link-secondary" title="View source" href="https://github.com/DomCR/ACadSharp/blob/master/src/ACadSharp/Entities/ModelerGeometry.cs/#L122"><i class="bi bi-code-slash"></i></a>
   </h3>
 
   <div class="markdown level1 summary"><p>Gets the bounding box aligned with the axis XYZ that occupies this entity.</p>

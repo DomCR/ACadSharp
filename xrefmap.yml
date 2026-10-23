@@ -17349,6 +17349,32 @@ references:
   isSpec: "True"
   fullName: ACadSharp.Entities.ModelerGeometry.GetBoundingBox
   nameWithType: ModelerGeometry.GetBoundingBox
+- uid: ACadSharp.Entities.ModelerGeometry.Guid
+  name: Guid
+  href: api/ACadSharp.Entities.ModelerGeometry.html#ACadSharp_Entities_ModelerGeometry_Guid
+  commentId: P:ACadSharp.Entities.ModelerGeometry.Guid
+  fullName: ACadSharp.Entities.ModelerGeometry.Guid
+  nameWithType: ModelerGeometry.Guid
+- uid: ACadSharp.Entities.ModelerGeometry.Guid*
+  name: Guid
+  href: api/ACadSharp.Entities.ModelerGeometry.html#ACadSharp_Entities_ModelerGeometry_Guid_
+  commentId: Overload:ACadSharp.Entities.ModelerGeometry.Guid
+  isSpec: "True"
+  fullName: ACadSharp.Entities.ModelerGeometry.Guid
+  nameWithType: ModelerGeometry.Guid
+- uid: ACadSharp.Entities.ModelerGeometry.HasWireframeData
+  name: HasWireframeData
+  href: api/ACadSharp.Entities.ModelerGeometry.html#ACadSharp_Entities_ModelerGeometry_HasWireframeData
+  commentId: P:ACadSharp.Entities.ModelerGeometry.HasWireframeData
+  fullName: ACadSharp.Entities.ModelerGeometry.HasWireframeData
+  nameWithType: ModelerGeometry.HasWireframeData
+- uid: ACadSharp.Entities.ModelerGeometry.HasWireframeData*
+  name: HasWireframeData
+  href: api/ACadSharp.Entities.ModelerGeometry.html#ACadSharp_Entities_ModelerGeometry_HasWireframeData_
+  commentId: Overload:ACadSharp.Entities.ModelerGeometry.HasWireframeData
+  isSpec: "True"
+  fullName: ACadSharp.Entities.ModelerGeometry.HasWireframeData
+  nameWithType: ModelerGeometry.HasWireframeData
 - uid: ACadSharp.Entities.ModelerGeometry.IsBinaryAcisData
   name: IsBinaryAcisData
   href: api/ACadSharp.Entities.ModelerGeometry.html#ACadSharp_Entities_ModelerGeometry_IsBinaryAcisData
