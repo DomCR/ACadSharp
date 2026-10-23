@@ -1,4 +1,4 @@
-using ACadSharp.IO;
+﻿using ACadSharp.IO;
 using ACadSharp.Objects;
 using ACadSharp.Tables;
 using System.IO;
