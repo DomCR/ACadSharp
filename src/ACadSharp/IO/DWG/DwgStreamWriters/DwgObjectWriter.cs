@@ -151,9 +151,6 @@ internal partial class DwgObjectWriter : DwgSectionIO
 			case TableEntity when !this.R2010Plus:
 			case Wall:
 			case MechanicalEntity:
-			case Solid3D:
-			case CadBody:
-			case Region:
 			case Surface:
 				this.notify($"Entity type not implemented {entity.GetType().FullName}", NotificationType.NotImplemented);
 				return false;

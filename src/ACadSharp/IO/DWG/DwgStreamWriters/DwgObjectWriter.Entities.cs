@@ -1,6 +1,7 @@
 ﻿using ACadSharp.Entities;
 using ACadSharp.Objects;
 using CSMath;
+using CSMath.Extensions;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -631,6 +632,12 @@ internal partial class DwgObjectWriter : DwgSectionIO
 			case Spline spline:
 				this.writeSpline(spline);
 				break;
+			case Region region:
+				this.writeModelerGeometry(region);
+				break;
+			case CadBody body:
+				this.writeModelerGeometry(body);
+				break;
 			case CadWipeoutBase image:
 				this.writeCadImage(image);
 				break;
@@ -750,6 +757,22 @@ internal partial class DwgObjectWriter : DwgSectionIO
 		this._writer.WriteBitShort(face.Index3);
 		//Vert index BS 74 1 - based vertex index(see DXF doc)
 		this._writer.WriteBitShort(face.Index4);
+	}
+
+	private void writeGuid(System.Guid _E000)
+	{
+		byte[] array = _E000.ToByteArray();
+		this._writer.WriteBitLong(BitConverter.ToInt32(array, 0));
+		this._writer.WriteBitShort(BitConverter.ToInt16(array, 4));
+		this._writer.WriteBitShort(BitConverter.ToInt16(array, 6));
+		this._writer.WriteByte(array[8]);
+		this._writer.WriteByte(array[9]);
+		this._writer.WriteByte(array[10]);
+		this._writer.WriteByte(array[11]);
+		this._writer.WriteByte(array[12]);
+		this._writer.WriteByte(array[13]);
+		this._writer.WriteByte(array[14]);
+		this._writer.WriteByte(array[15]);
 	}
 
 	private void writeHatch(Hatch hatch)
@@ -1484,6 +1507,129 @@ internal partial class DwgObjectWriter : DwgSectionIO
 		this._writer.HandleReference(DwgReferenceType.HardPointer, mline.Style);
 	}
 
+	private void writeModelerGeometry(ModelerGeometry geometry)
+	{
+		bool hasAcisData = geometry.AcisData != null && geometry.AcisData.Length > 0;
+
+		//Chapter 24 - Info
+		if (!this.R2013Plus)
+		{
+			if (hasAcisData && geometry.IsBinaryAcisData)
+			{
+				//Version 2 (SAB) has no length in the stream, the reader has to
+				//consume the rest of the object, which cannot be written along
+				//with the wireframe data and the handle stream.
+				this.notify($"Binary ACIS data cannot be written for {geometry.ObjectName} in {this._version}, the geometry will be empty", NotificationType.Warning);
+				hasAcisData = false;
+			}
+
+			//ACIS Empty bit B X If 1, then no data follows
+			this._writer.WriteBit(!hasAcisData);
+
+			if (hasAcisData)
+			{
+				this.writeModelerGeometryData(geometry);
+				return;
+			}
+		}
+
+		//Common:
+		//Wireframe data present B X True if wireframe data is present
+		this._writer.WriteBit(geometry.HasWireframeData);
+		if (geometry.HasWireframeData)
+		{
+			//Point present B X If true, following point is present, otherwise assume 0,0,0 for point
+			if (geometry.Point.IsZero())
+			{
+				this._writer.WriteBit(false);
+			}
+			else
+			{
+				this._writer.WriteBit(true);
+				//Point 3BD X Present if above bit is 1.
+				this._writer.Write3BitDouble(geometry.Point);
+			}
+
+			//Num IsoLines BL X
+			this._writer.WriteBitLong(geometry.Wires.Count);
+			//IsoLines present B X If true, isoline data is present.
+			this._writer.WriteBit(geometry.Wires.Any());
+			if (geometry.Wires.Any())
+			{
+				//Num Wires BL X Number of ISO lines that follow.
+				this._writer.WriteBitLong(geometry.Wires.Count);
+				foreach (ModelerGeometry.Wire wire in geometry.Wires)
+				{
+					this.writeWire(wire);
+				}
+			}
+
+			//Num. silhouettes BL X
+			this._writer.WriteBitLong(geometry.Silhouettes.Count);
+			foreach (ModelerGeometry.Silhouette silhouette in geometry.Silhouettes)
+			{
+				//VP id BL X
+				this._writer.WriteBitLongLong(silhouette.ViewportId);
+				//VP Target 3BD X
+				this._writer.Write3BitDouble(silhouette.ViewportTarget);
+				//VP dir. From target 3BD X
+				this._writer.Write3BitDouble(silhouette.ViewportDirectionFromTarget);
+				//VP up dir. 3BD X
+				this._writer.Write3BitDouble(silhouette.ViewportUpDirection);
+				//VP perspective B X
+				this._writer.WriteBit(silhouette.ViewportPerspective);
+
+				//IsoLines present B X If true, isoline data is present.
+				this._writer.WriteBit(silhouette.Wires.Any());
+				if (silhouette.Wires.Any())
+				{
+					//Num Wires BL X
+					this._writer.WriteBitLong(silhouette.Wires.Count);
+					foreach (ModelerGeometry.Wire wire in silhouette.Wires)
+					{
+						this.writeWire(wire);
+					}
+				}
+			}
+
+			//ACIS Empty bit B X Normally 1. If 0, then acis data follows.
+			this._writer.WriteBit(true);
+		}
+
+		//R2007 +:
+		if (this.R2007Plus)
+		{
+			//Unknown BL
+			this._writer.WriteBitLong(0);
+		}
+
+		if (this.R2013Plus)
+		{
+			//290
+			this._writer.WriteBit(geometry.Guid != System.Guid.Empty);
+			this.writeGuid(geometry.Guid);
+			this._writer.WriteBitLong(0);
+		}
+	}
+
+	private void writeModelerGeometryData(ModelerGeometry geometry)
+	{
+		//Unknown bit B X
+		this._writer.WriteBit(false);
+
+		//Version BS Can be 1 or 2.
+		this._writer.WriteBitShort(1);
+
+		//Version == 1 (following 2 items repeat until Block Size is 0):
+		//Block Size BL X Number of bytes of SAT data in this block.
+		byte[] data = AcisTextCodec.Decode(geometry.AcisData);
+		this._writer.WriteBitLong(data.Length);
+		this._writer.WriteBytes(data);
+
+		//End of the blocks
+		this._writer.WriteBitLong(0);
+	}
+
 	private void writeMText(MText mtext)
 	{
 		//Insertion pt3 BD 10 First picked point. (Location relative to text depends on attachment point (71).)
@@ -2157,7 +2303,7 @@ internal partial class DwgObjectWriter : DwgSectionIO
 			if (this._version > ACadVersion.AC1015)
 			{
 				//The string stream seems to contain the dxfsubclass
-				this._writer.WriteVariableText(proxy.DxfClass != null 
+				this._writer.WriteVariableText(proxy.DxfClass != null
 					? proxy.DxfClass.CppClassName : string.Empty);
 			}
 
@@ -2167,7 +2313,6 @@ internal partial class DwgObjectWriter : DwgSectionIO
 				//Object Drawing Format BL 95 This is a bitwise OR of the version and the
 				//maintenance version, shifted 16 bits to the left.
 				this._writer.WriteBitLong((int)proxy.Version | (proxy.MaintenanceVersion << 16));
-
 			}
 			//R2018+:
 			else
@@ -2273,6 +2418,14 @@ internal partial class DwgObjectWriter : DwgSectionIO
 
 	private void writeSolid3D(Solid3D solid)
 	{
+		this.writeModelerGeometry(solid);
+
+		//R2007 +:
+		if (this.R2007Plus)
+		{
+			//H 350 History ID
+			this._writer.HandleReference(DwgReferenceType.HardOwnership, null);
+		}
 	}
 
 	private void writeSpline(Spline spline)
@@ -3041,6 +3194,48 @@ internal partial class DwgObjectWriter : DwgSectionIO
 			this._writer.HandleReference(DwgReferenceType.SoftPointer, null);
 			//H 361 Sun(hard owner)
 			this._writer.HandleReference(DwgReferenceType.HardOwnership, null);
+		}
+	}
+
+	private void writeWire(ModelerGeometry.Wire wire)
+	{
+		//Wire type RC X
+		this._writer.WriteByte(wire.Type);
+		//Wire selection marker BL X
+		this._writer.WriteBitLong(wire.SelectionMarker);
+		//Wire color BS X
+		this._writer.WriteBitShort((short)wire.Color.Index);
+		//Wire Acis Index BL X
+		this._writer.WriteBitLong(wire.AcisIndex);
+
+		//Wire # of points BL X
+		this._writer.WriteBitLong(wire.Points.Count);
+		foreach (XYZ point in wire.Points)
+		{
+			//Point 3BD X Repeats “Wire # of points” times.
+			this._writer.Write3BitDouble(point);
+		}
+
+		//Transform present B X
+		this._writer.WriteBit(wire.ApplyTransformPresent);
+		if (wire.ApplyTransformPresent)
+		{
+			//X Axis 3BD X
+			this._writer.Write3BitDouble(wire.XAxis);
+			//Y Axis 3BD X
+			this._writer.Write3BitDouble(wire.YAxis);
+			//Z Axis 3BD X
+			this._writer.Write3BitDouble(wire.ZAxis);
+			//Translation 3BD X
+			this._writer.Write3BitDouble(wire.Translation);
+			//Scale BD X
+			this._writer.WriteBitDouble(wire.Scale);
+			//Has rotation B X
+			this._writer.WriteBit(wire.HasRotation);
+			//Has reflection B X
+			this._writer.WriteBit(wire.HasReflection);
+			//Has shear B X
+			this._writer.WriteBit(wire.HasShear);
 		}
 	}
 
