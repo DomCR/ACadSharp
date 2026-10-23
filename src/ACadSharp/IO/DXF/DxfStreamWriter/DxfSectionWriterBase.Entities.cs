@@ -958,11 +958,12 @@ internal abstract partial class DxfSectionWriterBase
 		if (geometry.IsBinaryAcisData)
 		{
 			//Encrypted sab
+			this.notify($"Encrypted SAB data is not supported in DXF version {this.Version}.", NotificationType.Warning);
 		}
 		else
 		{
 			//Encrypted sat
-			writeEncryptedSAT(geometry);
+			this.writeEncryptedSAT(geometry);
 		}
 	}
 
