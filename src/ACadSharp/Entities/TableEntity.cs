@@ -31,6 +31,16 @@ public partial class TableEntity : Insert, IDxfClassDefined
 	public List<Column> Columns { get { return this.Content.Columns; } }
 
 	/// <summary>
+	/// Gets the number of columns in the table.
+	/// </summary>
+	/// <remarks>
+	/// This value is always in sync with the <see cref="Columns"/> collection. It hides
+	/// <see cref="Insert.ColumnCount"/>, which is the MINSERT array column counter and is not
+	/// used by table entities.
+	/// </remarks>
+	public new ushort ColumnCount { get { return (ushort)this.Columns.Count; } }
+
+	/// <summary>
 	/// Gets or sets a value indicating whether bread data is available.
 	/// </summary>
 	public bool HasBreadData { get; set; }
@@ -76,6 +86,16 @@ public partial class TableEntity : Insert, IDxfClassDefined
 	/// </summary>
 	[DxfCodeValue(DxfReferenceType.Count, 91)]
 	public List<Row> Rows { get { return this.Content.Rows; } }
+
+	/// <summary>
+	/// Gets the number of rows in the table.
+	/// </summary>
+	/// <remarks>
+	/// This value is always in sync with the <see cref="Rows"/> collection. It hides
+	/// <see cref="Insert.RowCount"/>, which is the MINSERT array row counter and is not
+	/// used by table entities.
+	/// </remarks>
+	public new ushort RowCount { get { return (ushort)this.Rows.Count; } }
 
 	/// <summary>
 	/// Gets or sets the table style associated with this object.
@@ -154,6 +174,67 @@ public partial class TableEntity : Insert, IDxfClassDefined
 	public Cell GetCell(int row, int column)
 	{
 		return this.Rows[row].Cells[column];
+	}
+
+	/// <summary>
+	/// Retrieves the cell at the specified row and column indices, filling the row with empty
+	/// cells if needed.
+	/// </summary>
+	/// <param name="row">The zero-based row index, must be less than <see cref="RowCount"/>.</param>
+	/// <param name="column">The zero-based column index, must be less than <see cref="ColumnCount"/>.</param>
+	/// <returns>The cell located at the specified row and column.</returns>
+	/// <exception cref="ArgumentOutOfRangeException">Thrown when <paramref name="row"/> or
+	/// <paramref name="column"/> is outside the table grid.</exception>
+	public Cell GetOrCreateCell(int row, int column)
+	{
+		if (row < 0 || row >= this.Rows.Count)
+		{
+			throw new ArgumentOutOfRangeException(nameof(row));
+		}
+
+		if (column < 0 || column >= this.Columns.Count)
+		{
+			throw new ArgumentOutOfRangeException(nameof(column));
+		}
+
+		Row tableRow = this.Rows[row];
+
+		while (tableRow.Cells.Count < this.Columns.Count)
+		{
+			tableRow.Cells.Add(new Cell());
+		}
+
+		return tableRow.Cells[column];
+	}
+
+	/// <summary>
+	/// Sets the text value of the cell at the specified row and column indices.
+	/// </summary>
+	/// <remarks>
+	/// If the cell already has a single content its value is replaced; otherwise a new content
+	/// item is added to the cell.
+	/// </remarks>
+	/// <param name="row">The zero-based row index, must be less than <see cref="RowCount"/>.</param>
+	/// <param name="column">The zero-based column index, must be less than <see cref="ColumnCount"/>.</param>
+	/// <param name="value">The text to store in the cell.</param>
+	/// <exception cref="ArgumentOutOfRangeException">Thrown when <paramref name="row"/> or
+	/// <paramref name="column"/> is outside the table grid.</exception>
+	public void SetCellText(int row, int column, string value)
+	{
+		Cell cell = this.GetOrCreateCell(row, column);
+
+		CellContent content;
+		if (cell.Content == null)
+		{
+			content = new CellContent();
+			cell.Contents.Add(content);
+		}
+		else
+		{
+			content = cell.Content;
+		}
+
+		content.CadValue.SetValue(value, CadValueType.String);
 	}
 
 	/// <inheritdoc/>
