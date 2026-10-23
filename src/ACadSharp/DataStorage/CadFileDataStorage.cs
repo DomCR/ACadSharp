@@ -1,5 +1,4 @@
 ﻿using ACadSharp.Entities;
-using System;
 using System.Collections.Generic;
 
 namespace ACadSharp.DataStorage;
@@ -27,52 +26,29 @@ internal class CadFileDataStorage
 		this.init(geometries);
 	}
 
-	private void init(IEnumerable<ModelerGeometry> geometries)
-	{
-		uint index = 0;
-		this.buildThumbnailSchema(index++);
-		this.buildTreatedAsObjectDataSchema(index++);
-		this.buildLegacySchema(index++);
-		this.buildIndexedPropertySchema(index++);
-		this.buildHandleAttributeSchema(index++);
-		this.buildAcDb3DSolid_ASM_Data(index++);
-
-		this.buildRecords(geometries);
-	}
-
-	private void buildRecords(IEnumerable<ModelerGeometry> geometries)
-	{
-		foreach (var item in geometries)
-		{
-			AcdsRecord record = new AcdsRecord();
-			record.Index = 0;
-
-			record.Columns.Add(AcDbDsIdName, new AcdsRecordColumn
-			{
-				Name = AcDbDsIdName,
-				DataType = 10,
-				Handle = item.Handle,
-			});
-
-			record.Columns.Add(AsmData, new AcdsRecordColumn
-			{
-				Name = AsmData,
-				DataType = 15,
-				Data = new System.IO.MemoryStream(item.AcisData),
-			});
-
-			this.Records.Add(record);
-		}
-	}
-
 	private void buildAcDb3DSolid_ASM_Data(uint index)
 	{
 		//{5 : AcDb3DSolid_ASM_Data}
-		AcdsSchema thumbnail = new AcdsSchema
+		AcdsSchema schema = new AcdsSchema
 		{
 			Name = AcDb3DSolid_ASM_Data,
 			Index = index
 		};
+
+		schema.Properties.Add(new AcdsSchemaProperty
+		{
+			Name = AcDbDsIdName,
+			Type = 10,
+			PropertyFlags = AcdsSchemaPropertyFlags.Unknown2,
+		});
+		schema.Properties.Add(new AcdsSchemaProperty
+		{
+			Name = AsmData,
+			Type = 15,
+			PropertyFlags = AcdsSchemaPropertyFlags.None,
+		});
+
+		this.Schemes.Add(schema);
 	}
 
 	private void buildHandleAttributeSchema(uint index)
@@ -132,6 +108,31 @@ internal class CadFileDataStorage
 		this.Schemes.Add(schema);
 	}
 
+	private void buildRecords(uint index, IEnumerable<ModelerGeometry> geometries)
+	{
+		foreach (var item in geometries)
+		{
+			AcdsRecord record = new AcdsRecord();
+			record.Index = index;
+
+			record.Columns.Add(AcDbDsIdName, new AcdsRecordColumn
+			{
+				Name = AcDbDsIdName,
+				DataType = 10,
+				Handle = item.Handle,
+			});
+
+			record.Columns.Add(AsmData, new AcdsRecordColumn
+			{
+				Name = AsmData,
+				DataType = 15,
+				Data = new System.IO.MemoryStream(item.AcisData),
+			});
+
+			this.Records.Add(record);
+		}
+	}
+
 	private void buildThumbnailSchema(uint index)
 	{
 		//{0 : AcDb_Thumbnail_Schema}
@@ -181,5 +182,18 @@ internal class CadFileDataStorage
 		});
 
 		this.Schemes.Add(schema);
+	}
+
+	private void init(IEnumerable<ModelerGeometry> geometries)
+	{
+		uint index = 0;
+		this.buildThumbnailSchema(index++);
+		this.buildTreatedAsObjectDataSchema(index++);
+		this.buildLegacySchema(index++);
+		this.buildIndexedPropertySchema(index++);
+		this.buildHandleAttributeSchema(index++);
+		this.buildAcDb3DSolid_ASM_Data(index);
+
+		this.buildRecords(index, geometries);
 	}
 }

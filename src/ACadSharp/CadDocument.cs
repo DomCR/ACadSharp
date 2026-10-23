@@ -662,8 +662,11 @@ public class CadDocument : IHandledCadObject
 
 	internal CadFileDataStorage CreateDataStorage()
 	{
-		var geometries = this._cadObjects.Values.OfType<ModelerGeometry>();
-		if(!geometries.Any())
+		var geometries = this._cadObjects.Values.OfType<ModelerGeometry>()
+			.Where(geometry => geometry.AcisData != null
+					&& geometry.AcisData.Length > 0);
+
+		if (!geometries.Any())
 		{
 			return null;
 		}
