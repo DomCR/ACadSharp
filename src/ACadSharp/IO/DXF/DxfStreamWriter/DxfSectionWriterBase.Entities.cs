@@ -1186,7 +1186,10 @@ internal abstract partial class DxfSectionWriterBase
 		this._writer.Write(73, 3, map);//Undocumented
 
 		this._writer.Write(90, ole.BinaryData.Length, map);
-		this._writer.Write(310, ole.BinaryData, map);
+		if (ole.BinaryData.Length > 0)
+		{
+			this._writer.Write(310, ole.BinaryData, map);
+		}
 		this._writer.Write(1, "OLE");
 	}
 
