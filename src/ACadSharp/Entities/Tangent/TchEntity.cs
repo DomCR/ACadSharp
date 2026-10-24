@@ -18,6 +18,29 @@ public abstract class TchEntity : Entity
 	/// </remarks>
 	public DxfClass DxfClass { get; }
 
+	/// <summary>
+	/// Gets the identifier of the Tianzheng class, as the object writes it.
+	/// </summary>
+	public string ClassId { get; set; }
+
+	/// <summary>
+	/// Gets the scale the object was drawn at, 100 for 1:100.
+	/// </summary>
+	public double Scale { get; set; } = double.NaN;
+
+	/// <summary>
+	/// Gets the entries of the object's data-map block.
+	/// </summary>
+	/// <remarks>
+	/// Each entry is a field descriptor written as text, such as <c>T20d1</c>.
+	/// </remarks>
+	public List<string> DataMap { get; } = new List<string>();
+
+	/// <summary>
+	/// Gets the identifier of the style or definition the object refers to.
+	/// </summary>
+	public string StyleId { get; set; }
+
 	/// <inheritdoc/>
 	public override string ObjectName => this.DxfClass?.DxfName ?? TchUnknownClassName;
 

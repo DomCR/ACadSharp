@@ -62,6 +62,26 @@ public class TchText : TchEntity
 	public string Value { get; set; }
 
 	/// <summary>
+	/// Gets the width a multiline text wraps at, not-a-number for the other classes.
+	/// </summary>
+	public double Width { get; set; } = double.NaN;
+
+	/// <summary>
+	/// Gets the line spacing factor of a multiline text, not-a-number for the other classes.
+	/// </summary>
+	public double LineSpacingFactor { get; set; } = double.NaN;
+
+	/// <summary>
+	/// Gets the text written under a drawing name, its scale such as <c>1:100</c>.
+	/// </summary>
+	public string Subtitle { get; set; }
+
+	/// <summary>
+	/// Gets the height the subtitle of a drawing name is drawn at.
+	/// </summary>
+	public double SubtitleHeight { get; set; } = double.NaN;
+
+	/// <summary>
 	/// Initialises a text from the class it was read as.
 	/// </summary>
 	public TchText(DxfClass dxfClass)

@@ -20,6 +20,7 @@ namespace ACadSharp.IO.DWG.Tangent;
 /// <c>TCH_DRAWINGNAME</c>. They are read the same way, which is why they are one reader.
 /// </para>
 /// </remarks>
+[Obsolete]
 public static class TchTextReader
 {
 	private const long _textXOffset = 152;

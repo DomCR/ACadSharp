@@ -6055,6 +6055,8 @@ namespace ACadSharp.IO.DWG
 			switch (c.DxfName)
 			{
 				case TchDxfClasses.Text:
+				case TchDxfClasses.MText:
+				case TchDxfClasses.DrawingName:
 					template = this.readTangentText(c);
 					break;
 			}
