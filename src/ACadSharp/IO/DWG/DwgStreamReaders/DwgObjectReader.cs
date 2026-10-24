@@ -2,7 +2,9 @@
 using ACadSharp.Classes;
 using ACadSharp.Entities;
 using ACadSharp.Entities.AecEntities;
+using ACadSharp.Entities.Tangent;
 using ACadSharp.Entities.Mechanical;
+using ACadSharp.IO.DWG.Tangent;
 using ACadSharp.IO.Templates;
 using ACadSharp.Objects;
 using ACadSharp.Objects.AEC;
@@ -6051,8 +6053,15 @@ namespace ACadSharp.IO.DWG
 
 			if (template == null && c.IsAnEntity)
 			{
-				template = this.readUnknownEntity(c);
-				this._builder.Notify($"Unlisted object with DXF name {c.DxfName} has been read as an UnknownEntity", NotificationType.Warning);
+				if (isTangent(c))
+				{
+					template = this.readTangentEntity(c);
+				}
+				else
+				{
+					template = this.readUnknownEntity(c);
+					this._builder.Notify($"Unlisted object with DXF name {c.DxfName} has been read as an UnknownEntity", NotificationType.Warning);
+				}
 			}
 			else if (template == null && !c.IsAnEntity)
 			{
@@ -7152,7 +7161,6 @@ namespace ACadSharp.IO.DWG
 
 			return template;
 		}
-
 		private CadTemplate readUnknownEntity(DxfClass dxfClass)
 		{
 			UnknownEntity entity = new UnknownEntity(dxfClass);
@@ -7160,7 +7168,32 @@ namespace ACadSharp.IO.DWG
 
 			this.readCommonEntityData(template);
 
+			//The class specific fields have no reader, keep the bytes so that nothing is lost
+			entity.RawData = this.readRemainingObjectData();
+
 			return template;
+		}
+
+		/// <summary>
+		/// Reads the object data that has not been consumed yet, up to the end of the object.
+		/// </summary>
+		/// <remarks>
+		/// The section has no length of its own, so it is delimited by the end of the object. That
+		/// end includes the handle section, which is left in place: consumers of these bytes look
+		/// for what they know, and the padding is harmless.
+		/// </remarks>
+		private byte[] readRemainingObjectData()
+		{
+			long start = this._objectReader.PositionInBits();
+			long end = this._objectInitialPos + ((long)this._size * 8L);
+
+			long bits = end - start;
+			if (bits <= 0)
+			{
+				return null;
+			}
+
+			return this._objectReader.ReadBytes((int)((bits + 7L) / 8L));
 		}
 
 		private CadTemplate readUnknownNonGraphicalObject(DxfClass dxfClass)
