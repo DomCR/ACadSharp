@@ -6052,13 +6052,9 @@ namespace ACadSharp.IO.DWG
 			}
 
 			//Check for Tangent entities
-			switch (c.DxfName)
+			if (template == null)
 			{
-				case TchDxfClasses.Text:
-				case TchDxfClasses.MText:
-				case TchDxfClasses.DrawingName:
-					template = this.readTangentText(c);
-					break;
+				template = this.readTangentObject(c);
 			}
 
 			if (template == null && c.IsAnEntity)

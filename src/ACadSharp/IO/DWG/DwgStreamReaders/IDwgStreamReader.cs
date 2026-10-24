@@ -4,346 +4,345 @@ using System;
 using System.IO;
 using System.Text;
 
-namespace ACadSharp.IO.DWG
+namespace ACadSharp.IO.DWG;
+
+/*
+ NOTE: Unless otherwise stated, all data in this manual is in little-endian order,
+		with the least significant byte first.
+
+	B : bit (1 or 0)
+	BB : special 2 bit code (entmode in entities, for instance)
+	3B : bit triplet (1-3 bits) (R24)
+	BS : bitshort (16 bits)
+	BL : bitlong (32 bits)
+	BLL : bitlonglong (64 bits) (R24)
+	BD : bitdouble
+	2BD : 2D point (2 bitdoubles)
+	3BD : 3D point (3 bitdoubles)
+	RC : raw char (not compressed)
+	RS : raw short (not compressed)
+	RD : raw double (not compressed)
+	RL : raw long (not compressed)
+	2RD : 2 raw doubles
+	3RD : 3 raw doubles
+	MC : modular char
+	MS : modular short
+	H : handle reference (see the HANDLE REFERENCES section)
+	T : text (bitshort length, followed by the string).
+	TU : Unicode text (bitshort character length, followed by Unicode string,
+		2 bytes per character). Unicode text is read from the “string stream”
+		within the object data, see the main Object description section for details.
+	TV : Variable text, T for 2004 and earlier files, TU for 2007+ files.
+	X : special form
+	U : unknown
+	SN : 16 byte sentinel
+	BE : BitExtrusion
+	DD : BitDouble With Default
+	BT : BitThickness
+	3DD : 3D point as 3 DD, needing 3 default values
+	CMC : CmColor value
+	TC : True Color: this is the same format as CMC in R2004+.
+	OT : Object type
+ */
+
+internal interface IDwgStreamReader
 {
-	/*
-	 NOTE: Unless otherwise stated, all data in this manual is in little-endian order,
-			with the least significant byte first.
+	/// <summary>
+	/// Shift to perform after reading a single bit.
+	/// </summary>
+	int BitShift { get; }
 
-		B : bit (1 or 0)
-		BB : special 2 bit code (entmode in entities, for instance)
-		3B : bit triplet (1-3 bits) (R24)
-		BS : bitshort (16 bits)
-		BL : bitlong (32 bits)
-		BLL : bitlonglong (64 bits) (R24)
-		BD : bitdouble
-		2BD : 2D point (2 bitdoubles)
-		3BD : 3D point (3 bitdoubles)
-		RC : raw char (not compressed)
-		RS : raw short (not compressed)
-		RD : raw double (not compressed)
-		RL : raw long (not compressed)
-		2RD : 2 raw doubles
-		3RD : 3 raw doubles
-		MC : modular char
-		MS : modular short
-		H : handle reference (see the HANDLE REFERENCES section)
-		T : text (bitshort length, followed by the string).
-		TU : Unicode text (bitshort character length, followed by Unicode string,
-			2 bytes per character). Unicode text is read from the “string stream”
-			within the object data, see the main Object description section for details.
-		TV : Variable text, T for 2004 and earlier files, TU for 2007+ files.
-		X : special form
-		U : unknown
-		SN : 16 byte sentinel
-		BE : BitExtrusion
-		DD : BitDouble With Default
-		BT : BitThickness
-		3DD : 3D point as 3 DD, needing 3 default values
-		CMC : CmColor value
-		TC : True Color: this is the same format as CMC in R2004+.
-		OT : Object type
-	 */
+	/// <summary>
+	/// Encoding used to read the text.
+	/// </summary>
+	Encoding Encoding { get; set; }
 
-	internal interface IDwgStreamReader
-	{
-		/// <summary>
-		/// Shift to perform after reading a single bit.
-		/// </summary>
-		int BitShift { get; }
+	/// <summary>
+	/// Indicates that the handler is empty of information.
+	/// </summary>
+	bool IsEmpty { get; }
 
-		/// <summary>
-		/// Encoding used to read the text.
-		/// </summary>
-		Encoding Encoding { get; set; }
+	/// <summary>
+	/// Current stream position.
+	/// </summary>
+	long Position { get; set; }
 
-		/// <summary>
-		/// Indicates that the handler is empty of information.
-		/// </summary>
-		bool IsEmpty { get; }
+	/// <summary>
+	/// Stream that will be read.
+	/// </summary>
+	Stream Stream { get; }
 
-		/// <summary>
-		/// Current stream position.
-		/// </summary>
-		long Position { get; set; }
+	/// <summary>
+	/// Advance an offset of bytes fordward, saves the last byte.
+	/// </summary>
+	/// <param name="offset"></param>
+	void Advance(int offset);
 
-		/// <summary>
-		/// Stream that will be read.
-		/// </summary>
-		Stream Stream { get; }
+	/// <summary>
+	/// Advance one byte fordward, saves the last byte.
+	/// </summary>
+	void AdvanceByte();
 
-		/// <summary>
-		/// Advance an offset of bytes fordward, saves the last byte.
-		/// </summary>
-		/// <param name="offset"></param>
-		void Advance(int offset);
+	/// <summary>
+	/// H : handle reference(see the HANDLE REFERENCES section)
+	/// </summary>
+	/// <returns></returns>
+	ulong HandleReference();
 
-		/// <summary>
-		/// Advance one byte fordward, saves the last byte.
-		/// </summary>
-		void AdvanceByte();
+	/// <summary>
+	/// H : handle reference(see the HANDLE REFERENCES section)
+	/// </summary>
+	/// <param name="referenceHandle"></param>
+	/// <returns></returns>
+	ulong HandleReference(ulong referenceHandle);
 
-		/// <summary>
-		/// H : handle reference(see the HANDLE REFERENCES section)
-		/// </summary>
-		/// <returns></returns>
-		ulong HandleReference();
+	/// <summary>
+	/// H : handle reference(see the HANDLE REFERENCES section)
+	/// </summary>
+	/// <param name="referenceHandle"></param>
+	/// <param name="reference"></param>
+	/// <returns></returns>
+	ulong HandleReference(ulong referenceHandle, out DwgReferenceType reference);
 
-		/// <summary>
-		/// H : handle reference(see the HANDLE REFERENCES section)
-		/// </summary>
-		/// <param name="referenceHandle"></param>
-		/// <returns></returns>
-		ulong HandleReference(ulong referenceHandle);
+	/// <summary>
+	/// Get the absolute position in the stream in bits.
+	/// </summary>
+	/// <returns></returns>
+	long PositionInBits();
 
-		/// <summary>
-		/// H : handle reference(see the HANDLE REFERENCES section)
-		/// </summary>
-		/// <param name="referenceHandle"></param>
-		/// <param name="reference"></param>
-		/// <returns></returns>
-		ulong HandleReference(ulong referenceHandle, out DwgReferenceType reference);
+	/// <summary>
+	/// 2BD : 2D point (2 bitdoubles)
+	/// </summary>
+	/// <returns></returns>
+	XY Read2BitDouble();
 
-		/// <summary>
-		/// Get the absolute position in the stream in bits.
-		/// </summary>
-		/// <returns></returns>
-		long PositionInBits();
+	/// <summary>
+	/// 2DD : 2D point as 2DD, needing 2 default values
+	/// </summary>
+	/// <param name="defValues"></param>
+	/// <returns></returns>
+	XY Read2BitDoubleWithDefault(XY defValues);
 
-		/// <summary>
-		/// 2BD : 2D point (2 bitdoubles)
-		/// </summary>
-		/// <returns></returns>
-		XY Read2BitDouble();
+	/// <summary>
+	/// BB : special 2 bit code (entmode in entities, for instance)
+	/// </summary>
+	/// <returns></returns>
+	byte Read2Bits();
 
-		/// <summary>
-		/// 2DD : 2D point as 2DD, needing 2 default values
-		/// </summary>
-		/// <param name="defValues"></param>
-		/// <returns></returns>
-		XY Read2BitDoubleWithDefault(XY defValues);
+	/// <summary>
+	/// 2RD : 2 raw doubles
+	/// </summary>
+	/// <returns></returns>
+	XY Read2RawDouble();
 
-		/// <summary>
-		/// BB : special 2 bit code (entmode in entities, for instance)
-		/// </summary>
-		/// <returns></returns>
-		byte Read2Bits();
+	/// <summary>
+	/// 3BD : 3D point (3 bitdoubles)
+	/// </summary>
+	/// <returns></returns>
+	XYZ Read3BitDouble();
 
-		/// <summary>
-		/// 2RD : 2 raw doubles
-		/// </summary>
-		/// <returns></returns>
-		XY Read2RawDouble();
+	/// <summary>
+	/// 3DD : 3D point as 3 DD, needing 3 default values
+	/// </summary>
+	/// <returns></returns>
+	XYZ Read3BitDoubleWithDefault(XYZ defValues);
 
-		/// <summary>
-		/// 3BD : 3D point (3 bitdoubles)
-		/// </summary>
-		/// <returns></returns>
-		XYZ Read3BitDouble();
+	/// <summary>
+	/// 3RD : 3 raw doubles
+	/// </summary>
+	/// <returns></returns>
+	XYZ Read3RawDouble();
 
-		/// <summary>
-		/// 3DD : 3D point as 3 DD, needing 3 default values
-		/// </summary>
-		/// <returns></returns>
-		XYZ Read3BitDoubleWithDefault(XYZ defValues);
+	/// <summary>
+	/// Reads 2 Integers into a DateTime.
+	/// </summary>
+	/// <returns></returns>
+	DateTime Read8BitJulianDate();
 
-		/// <summary>
-		/// 3RD : 3 raw doubles
-		/// </summary>
-		/// <returns></returns>
-		XYZ Read3RawDouble();
+	/// <summary>
+	/// B : bit (1 or 0)
+	/// </summary>
+	/// <returns></returns>
+	bool ReadBit();
 
-		/// <summary>
-		/// Reads 2 Integers into a DateTime.
-		/// </summary>
-		/// <returns></returns>
-		DateTime Read8BitJulianDate();
+	/// <summary>
+	/// <see cref="IDwgStreamReader.ReadBit"/> return the result as short.
+	/// </summary>
+	/// <returns></returns>
+	short ReadBitAsShort();
 
-		/// <summary>
-		/// B : bit (1 or 0)
-		/// </summary>
-		/// <returns></returns>
-		bool ReadBit();
+	/// <summary>
+	/// BD : bitdouble
+	/// </summary>
+	/// <returns></returns>
+	double ReadBitDouble();
 
-		/// <summary>
-		/// <see cref="IDwgStreamReader.ReadBit"/> return the result as short.
-		/// </summary>
-		/// <returns></returns>
-		short ReadBitAsShort();
+	/// <summary>
+	/// DD : BitDouble With Default
+	/// </summary>
+	/// <param name="def"></param>
+	/// <returns></returns>
+	double ReadBitDoubleWithDefault(double def);
 
-		/// <summary>
-		/// BD : bitdouble
-		/// </summary>
-		/// <returns></returns>
-		double ReadBitDouble();
+	/// <summary>
+	/// BE : BitExtrusion
+	/// </summary>
+	/// <returns></returns>
+	XYZ ReadBitExtrusion();
 
-		/// <summary>
-		/// DD : BitDouble With Default
-		/// </summary>
-		/// <param name="def"></param>
-		/// <returns></returns>
-		double ReadBitDoubleWithDefault(double def);
+	/// <summary>
+	/// BL : bitlong (32 bits)
+	/// </summary>
+	/// <returns></returns>
+	int ReadBitLong();
 
-		/// <summary>
-		/// BE : BitExtrusion
-		/// </summary>
-		/// <returns></returns>
-		XYZ ReadBitExtrusion();
+	/// <summary>
+	/// BLL : bitlonglong (64 bits) (R24)
+	/// </summary>
+	/// <returns></returns>
+	long ReadBitLongLong();
 
-		/// <summary>
-		/// BL : bitlong (32 bits)
-		/// </summary>
-		/// <returns></returns>
-		int ReadBitLong();
+	/// <summary>
+	/// BS : bitshort (16 bits)
+	/// </summary>
+	/// <returns></returns>
+	short ReadBitShort();
 
-		/// <summary>
-		/// BLL : bitlonglong (64 bits) (R24)
-		/// </summary>
-		/// <returns></returns>
-		long ReadBitLongLong();
+	/// <summary>
+	/// <see cref="IDwgStreamReader.ReadBitShort"/> return the result as bool.
+	/// </summary>
+	/// <returns></returns>
+	bool ReadBitShortAsBool();
 
-		/// <summary>
-		/// BS : bitshort (16 bits)
-		/// </summary>
-		/// <returns></returns>
-		short ReadBitShort();
+	/// <summary>
+	/// BT : BitThickness
+	/// </summary>
+	/// <returns></returns>
+	double ReadBitThickness();
 
-		/// <summary>
-		/// <see cref="IDwgStreamReader.ReadBitShort"/> return the result as bool.
-		/// </summary>
-		/// <returns></returns>
-		bool ReadBitShortAsBool();
+	/// <summary>
+	/// Read a byte and store the value, apply the shift to correct the bit reading.
+	/// </summary>
+	/// <returns>Value of the last byte.</returns>
+	byte ReadByte();
 
-		/// <summary>
-		/// BT : BitThickness
-		/// </summary>
-		/// <returns></returns>
-		double ReadBitThickness();
+	byte[] ReadBytes(int length);
 
-		/// <summary>
-		/// Read a byte and store the value, apply the shift to correct the bit reading.
-		/// </summary>
-		/// <returns>Value of the last byte.</returns>
-		byte ReadByte();
+	/// <summary>
+	/// CMC : CmColor value
+	/// </summary>
+	/// <returns></returns>
+	Color ReadCmColor(bool useTextStream = false);
 
-		byte[] ReadBytes(int length);
+	Color ReadColorByIndex();
 
-		/// <summary>
-		/// CMC : CmColor value
-		/// </summary>
-		/// <returns></returns>
-		Color ReadCmColor(bool useTextStream = false);
+	/// <summary>
+	/// BL: Julian day
+	/// BL: Milliseconds into the day
+	/// </summary>
+	/// <returns></returns>
+	DateTime ReadDateTime();
 
-		Color ReadColorByIndex();
+	double ReadDouble();
 
-		/// <summary>
-		/// BL: Julian day
-		/// BL: Milliseconds into the day
-		/// </summary>
-		/// <returns></returns>
-		DateTime ReadDateTime();
+	/// <summary>
+	/// ENC: This color is used by entities: this definition may contain a DBCOLOR reference and optional transparency.
+	/// </summary>
+	/// <param name="transparency"></param>
+	/// <param name="flag">If true the handle to the color is written in the handle stream.</param>
+	/// <returns></returns>
+	Color ReadEnColor(out Transparency transparency, out bool flag);
 
-		double ReadDouble();
+	int ReadInt();
 
-		/// <summary>
-		/// ENC: This color is used by entities: this definition may contain a DBCOLOR reference and optional transparency.
-		/// </summary>
-		/// <param name="transparency"></param>
-		/// <param name="flag">If true the handle to the color is written in the handle stream.</param>
-		/// <returns></returns>
-		Color ReadEnColor(out Transparency transparency, out bool flag);
+	/// <summary>
+	/// MC : modular char
+	/// </summary>
+	/// <returns></returns>
+	ulong ReadModularChar();
 
-		int ReadInt();
+	/// <summary>
+	/// MS : modular short
+	/// </summary>
+	/// <returns></returns>
+	int ReadModularShort();
 
-		/// <summary>
-		/// MC : modular char
-		/// </summary>
-		/// <returns></returns>
-		ulong ReadModularChar();
+	/// <summary>
+	/// OT : Object type
+	/// </summary>
+	/// <returns></returns>
+	ObjectType ReadObjectType();
 
-		/// <summary>
-		/// MS : modular short
-		/// </summary>
-		/// <returns></returns>
-		int ReadModularShort();
+	/// <summary>
+	/// RC : raw char (not compressed)
+	/// </summary>
+	/// <returns></returns>
+	char ReadRawChar();
 
-		/// <summary>
-		/// OT : Object type
-		/// </summary>
-		/// <returns></returns>
-		ObjectType ReadObjectType();
+	/// <summary>
+	/// RL : raw long (not compressed)
+	/// </summary>
+	/// <returns></returns>
+	long ReadRawLong();
 
-		/// <summary>
-		/// RC : raw char (not compressed)
-		/// </summary>
-		/// <returns></returns>
-		char ReadRawChar();
+	ulong ReadRawULong();
 
-		/// <summary>
-		/// RL : raw long (not compressed)
-		/// </summary>
-		/// <returns></returns>
-		long ReadRawLong();
+	/// <summary>
+	/// SN : 16 byte sentinel
+	/// </summary>
+	/// <returns></returns>
+	byte[] ReadSentinel();
 
-		ulong ReadRawULong();
+	short ReadShort();
 
-		/// <summary>
-		/// SN : 16 byte sentinel
-		/// </summary>
-		/// <returns></returns>
-		byte[] ReadSentinel();
+	short ReadShort<T>() where T : IEndianConverter, new();
 
-		short ReadShort();
+	/// <summary>
+	/// MC : modular char
+	/// </summary>
+	/// <remarks>
+	/// The 4th bit of the final value it will be the sign.
+	/// </remarks>
+	/// <returns></returns>
+	long ReadSignedModularChar();
 
-		short ReadShort<T>() where T : IEndianConverter, new();
+	/// <summary>
+	/// T : text (bitshort length, followed by the string).
+	/// </summary>
+	/// <returns></returns>
+	string ReadTextUnicode();
 
-		/// <summary>
-		/// MC : modular char
-		/// </summary>
-		/// <remarks>
-		/// The 4th bit of the final value it will be the sign.
-		/// </remarks>
-		/// <returns></returns>
-		long ReadSignedModularChar();
+	/// <summary>
+	/// BL: Days
+	/// BL: Milliseconds into the day
+	/// </summary>
+	/// <returns></returns>
+	TimeSpan ReadTimeSpan();
 
-		/// <summary>
-		/// T : text (bitshort length, followed by the string).
-		/// </summary>
-		/// <returns></returns>
-		string ReadTextUnicode();
+	uint ReadUInt();
 
-		/// <summary>
-		/// BL: Days
-		/// BL: Milliseconds into the day
-		/// </summary>
-		/// <returns></returns>
-		TimeSpan ReadTimeSpan();
+	/// <summary>
+	/// TV : Variable text, T for 2004 and earlier files, TU for 2007+ files.
+	/// </summary>
+	/// <returns></returns>
+	string ReadVariableText();
 
-		uint ReadUInt();
+	/// <summary>
+	/// Sets the shift displacement to 0.
+	/// </summary>
+	/// <returns></returns>
+	ushort ResetShift();
 
-		/// <summary>
-		/// TV : Variable text, T for 2004 and earlier files, TU for 2007+ files.
-		/// </summary>
-		/// <returns></returns>
-		string ReadVariableText();
+	/// <summary>
+	/// Find the position of the string stream.
+	/// </summary>
+	/// <param name="position"></param>
+	/// <returns></returns>
+	long SetPositionByFlag(long position);
 
-		/// <summary>
-		/// Sets the shift displacement to 0.
-		/// </summary>
-		/// <returns></returns>
-		ushort ResetShift();
-
-		/// <summary>
-		/// Find the position of the string stream.
-		/// </summary>
-		/// <param name="position"></param>
-		/// <returns></returns>
-		long SetPositionByFlag(long position);
-
-		/// <summary>
-		/// Set the position in the stream by bits.
-		/// </summary>
-		/// <param name="positon"></param>
-		void SetPositionInBits(long positon);
-	}
+	/// <summary>
+	/// Set the position in the stream by bits.
+	/// </summary>
+	/// <param name="positon"></param>
+	void SetPositionInBits(long positon);
 }
