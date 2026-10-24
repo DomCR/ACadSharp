@@ -18682,6 +18682,19 @@ references:
   isSpec: "True"
   fullName: ACadSharp.Entities.Ole2Frame.ObjectType
   nameWithType: Ole2Frame.ObjectType
+- uid: ACadSharp.Entities.Ole2Frame.OleData
+  name: OleData
+  href: api/ACadSharp.Entities.Ole2Frame.html#ACadSharp_Entities_Ole2Frame_OleData
+  commentId: P:ACadSharp.Entities.Ole2Frame.OleData
+  fullName: ACadSharp.Entities.Ole2Frame.OleData
+  nameWithType: Ole2Frame.OleData
+- uid: ACadSharp.Entities.Ole2Frame.OleData*
+  name: OleData
+  href: api/ACadSharp.Entities.Ole2Frame.html#ACadSharp_Entities_Ole2Frame_OleData_
+  commentId: Overload:ACadSharp.Entities.Ole2Frame.OleData
+  isSpec: "True"
+  fullName: ACadSharp.Entities.Ole2Frame.OleData
+  nameWithType: Ole2Frame.OleData
 - uid: ACadSharp.Entities.Ole2Frame.OleObjectType
   name: OleObjectType
   href: api/ACadSharp.Entities.Ole2Frame.html#ACadSharp_Entities_Ole2Frame_OleObjectType
