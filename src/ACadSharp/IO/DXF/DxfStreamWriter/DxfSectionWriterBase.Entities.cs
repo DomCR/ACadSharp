@@ -148,7 +148,22 @@ internal abstract partial class DxfSectionWriterBase
 				throw new NotImplementedException($"Entity not implemented {entity.GetType().FullName}");
 		}
 
-		this.writeExtendedData(entity.ExtendedData);
+		if (!writesOwnExtendedData(entity))
+		{
+			this.writeExtendedData(entity.ExtendedData);
+		}
+	}
+
+	/// <summary>
+	/// An entity followed by its own sub-entities (a heavy polyline's VERTEX and SEQEND, an insert's ATTRIB and SEQEND)
+	/// writes its extended data with its own header, before them: a reader attaches the 1001 groups to the last entity
+	/// it opened, so extended data written after the SEQEND would belong to the SEQEND.
+	/// </summary>
+	private static bool writesOwnExtendedData(Entity entity)
+	{
+		//Not IPolyline: an LWPOLYLINE is one too, and has no sub-entities (its vertices are groups of its own)
+		return entity is Polyline2D or Polyline3D or PolyfaceMesh or PolygonMesh
+			|| entity is Insert { HasAttributes: true };
 	}
 
 	private bool isEntitySupported(Entity entity)
@@ -723,7 +738,8 @@ internal abstract partial class DxfSectionWriterBase
 		{
 			this._writer.Write(66, 1);
 
-			//WARNING: Write extended data before attributes
+			//Extended data goes before the attributes (see writesOwnExtendedData)
+			this.writeExtendedData(insert.ExtendedData);
 
 			foreach (var att in insert.Attributes)
 			{
@@ -1273,6 +1289,9 @@ internal abstract partial class DxfSectionWriterBase
 		}
 
 		this._writer.Write(210, polyline.Normal, map);
+
+		//Extended data goes before the vertices (see writesOwnExtendedData)
+		this.writeExtendedData(polyline.ExtendedData);
 
 		if (polyline.Vertices.Any())
 		{
