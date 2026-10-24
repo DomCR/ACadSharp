@@ -1,4 +1,5 @@
 ﻿using ACadSharp.Attributes;
+using ACadSharp.Classes;
 using ACadSharp.Objects;
 using CSMath;
 using System.Collections.Generic;
@@ -15,7 +16,7 @@ namespace ACadSharp.Entities;
 /// </remarks>
 [DxfName(DxfFileToken.EntityMesh)]
 [DxfSubClass(DxfSubclassMarker.Mesh)]
-public partial class Mesh : Entity
+public partial class Mesh : Entity, IDxfClassDefined
 {
 	/// <summary>
 	/// Blend Crease flag
@@ -186,5 +187,20 @@ public partial class Mesh : Entity
 	public override BoundingBox GetBoundingBox()
 	{
 		return BoundingBox.FromPoints(this.Vertices);
+	}
+
+	/// <inheritdoc/>
+	public DxfClass GetDxfClass()
+	{
+		return new DxfClass
+		{
+			CppClassName = DxfSubclassMarker.Mesh,
+			DwgVersion = 0,
+			DxfName = DxfFileToken.EntityMesh,
+			ItemClassId = 498,
+			MaintenanceVersion = 0,
+			ProxyFlags = ProxyFlags.None,
+			WasZombie = false,
+		};
 	}
 }

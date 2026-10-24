@@ -1,4 +1,5 @@
 using ACadSharp.Attributes;
+using ACadSharp.Classes;
 
 namespace ACadSharp.Objects.Evaluations;
 
@@ -17,7 +18,7 @@ namespace ACadSharp.Objects.Evaluations;
 /// </remarks>
 [DxfName(DxfFileToken.ObjectBlockLookupParameter)]
 [DxfSubClass(DxfSubclassMarker.BlockLookupParameter)]
-public class BlockLookupParameter : Block1PtParameter
+public class BlockLookupParameter : Block1PtParameter, IDxfClassDefined
 {
 	/// <summary>
 	/// Gets or sets the action ID associated with the block lookup parameter. This ID is used to link the parameter to a specific action in the dynamic block's evaluation graph.
@@ -42,4 +43,19 @@ public class BlockLookupParameter : Block1PtParameter
 
 	/// <inheritdoc/>
 	public override string SubclassMarker => DxfSubclassMarker.BlockLookupParameter;
+
+	/// <inheritdoc/>
+	public DxfClass GetDxfClass()
+	{
+		return new DxfClass
+		{
+			CppClassName = DxfSubclassMarker.BlockLookupParameter,
+			DwgVersion = ACadVersion.AC1018,
+			DxfName = DxfFileToken.ObjectBlockLookupParameter,
+			ItemClassId = 499,
+			MaintenanceVersion = 55,
+			ProxyFlags = ACadSharp.Classes.ProxyFlags.EraseAllowed | ACadSharp.Classes.ProxyFlags.CloningAllowed | ACadSharp.Classes.ProxyFlags.DisablesProxyWarningDialog,
+			WasZombie = false,
+		};
+	}
 }

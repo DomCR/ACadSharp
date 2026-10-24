@@ -1,4 +1,5 @@
 ﻿using ACadSharp.Attributes;
+using ACadSharp.Classes;
 
 namespace ACadSharp.Objects;
 
@@ -11,7 +12,7 @@ namespace ACadSharp.Objects;
 /// </remarks>
 [DxfName(DxfFileToken.ObjectDictionaryWithDefault)]
 [DxfSubClass(DxfSubclassMarker.DictionaryWithDefault)]
-public class CadDictionaryWithDefault : CadDictionary
+public class CadDictionaryWithDefault : CadDictionary, IDxfClassDefined
 {
 	/// <summary>
 	/// Default entry.
@@ -58,5 +59,20 @@ public class CadDictionaryWithDefault : CadDictionary
 	public CadDictionaryWithDefault(string name, CadObject defaultEntry) : base(name)
 	{
 		this.DefaultEntry = defaultEntry;
+	}
+
+	/// <inheritdoc/>
+	public DxfClass GetDxfClass()
+	{
+		return new DxfClass
+		{
+			CppClassName = DxfSubclassMarker.DictionaryWithDefault,
+			DwgVersion = (ACadVersion)22,
+			DxfName = DxfFileToken.ObjectDictionaryWithDefault,
+			ItemClassId = 499,
+			MaintenanceVersion = 42,
+			ProxyFlags = ProxyFlags.R13FormatProxy,
+			WasZombie = false,
+		};
 	}
 }

@@ -1,4 +1,5 @@
 ﻿using ACadSharp.Attributes;
+using ACadSharp.Classes;
 using ACadSharp.Entities;
 using ACadSharp.Tables;
 using CSMath;
@@ -17,7 +18,7 @@ namespace ACadSharp.Objects;
 /// </remarks>
 [DxfName(DxfFileToken.ObjectLayout)]
 [DxfSubClass(DxfSubclassMarker.Layout)]
-public class Layout : PlotSettings
+public class Layout : PlotSettings, IDxfClassDefined
 {
 	/// <summary>
 	/// The associated paper space block table record.
@@ -263,6 +264,21 @@ public class Layout : PlotSettings
 		clone._blockRecord = (BlockRecord)this._blockRecord?.Clone();
 
 		return clone;
+	}
+
+	/// <inheritdoc/>
+	public DxfClass GetDxfClass()
+	{
+		return new DxfClass
+		{
+			CppClassName = DxfSubclassMarker.Layout,
+			DwgVersion = (ACadVersion)0,
+			DxfName = DxfFileToken.ObjectLayout,
+			ItemClassId = 499,
+			MaintenanceVersion = 0,
+			ProxyFlags = ProxyFlags.None,
+			WasZombie = false,
+		};
 	}
 
 	/// <inheritdoc/>

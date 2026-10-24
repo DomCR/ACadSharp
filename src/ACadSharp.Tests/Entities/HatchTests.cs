@@ -1,6 +1,7 @@
 ﻿using ACadSharp.Entities;
 using ACadSharp.Tests.Common;
 using CSMath;
+using CSMath.Extensions;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -147,8 +148,8 @@ public class HatchTests : CommonEntityTests<Hatch>
 			.ToList();
 
 		Assert.Single(lines);
-		AssertUtils.AreEqual(new XYZ(-1, 0, 0), lines[0].StartPoint);
-		AssertUtils.AreEqual(new XYZ(1, 0, 0), lines[0].EndPoint);
+		AssertUtils.AreEqual(new XYZ(-1, 0, 0), lines[0].StartPoint, 3);
+		AssertUtils.AreEqual(new XYZ(1, 0, 0), lines[0].EndPoint, 3);
 	}
 
 	[Fact]

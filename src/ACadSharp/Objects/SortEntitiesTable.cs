@@ -1,4 +1,5 @@
 ﻿using ACadSharp.Attributes;
+using ACadSharp.Classes;
 using ACadSharp.Entities;
 using ACadSharp.Tables;
 using System;
@@ -17,7 +18,7 @@ namespace ACadSharp.Objects;
 /// </remarks>
 [DxfName(DxfFileToken.ObjectSortEntsTable)]
 [DxfSubClass(DxfSubclassMarker.SortentsTable)]
-public partial class SortEntitiesTable : NonGraphicalObject, IEnumerable<SortEntitiesTable.Sorter>
+public partial class SortEntitiesTable : NonGraphicalObject, IDxfClassDefined, IEnumerable<SortEntitiesTable.Sorter>
 {
 	/// <summary>
 	/// Block owner where the table is applied
@@ -78,6 +79,21 @@ public partial class SortEntitiesTable : NonGraphicalObject, IEnumerable<SortEnt
 		clone._sorters = new List<Sorter>();
 
 		return clone;
+	}
+
+	/// <inheritdoc/>
+	public DxfClass GetDxfClass()
+	{
+		return new DxfClass
+		{
+			CppClassName = DxfSubclassMarker.SortentsTable,
+			DwgVersion = ACadVersion.AC1014,
+			DxfName = DxfFileToken.ObjectSortEntsTable,
+			ItemClassId = 499,
+			MaintenanceVersion = 0,
+			ProxyFlags = ProxyFlags.None,
+			WasZombie = false,
+		};
 	}
 
 	/// <inheritdoc/>
@@ -159,19 +175,28 @@ public partial class SortEntitiesTable : NonGraphicalObject, IEnumerable<SortEnt
 	}
 
 	/// <summary>
-	/// Removes the first occurrence of a specific object from the sorters table.
+	/// Moves the specified entity one step down in the draw order.
+	/// If the entity is not in the table or is already at the bottom, no action is taken.
 	/// </summary>
-	/// <param name="entity"></param>
-	/// <returns></returns>
-	public bool Remove(Entity entity)
+	/// <param name="entity">Entity to move one step down.</param>
+	public void OneStepDown(Entity entity)
 	{
-		var sorter = this._sorters.FirstOrDefault(s => s.Entity.Equals(entity));
-		if (sorter is null)
+		Sorter existing = this._sorters.FirstOrDefault(s => s.Entity.Equals(entity));
+		if (existing is null)
 		{
-			return false;
+			return;
 		}
 
-		return this._sorters.Remove(sorter);
+		this._sorters.Sort();
+
+		int index = this._sorters.IndexOf(existing);
+		if (index < 0 || index >= this._sorters.Count - 1)
+		{
+			return;
+		}
+
+		Sorter next = this._sorters[index + 1];
+		(existing.SortHandle, next.SortHandle) = (next.SortHandle, existing.SortHandle);
 	}
 
 	/// <summary>
@@ -198,27 +223,18 @@ public partial class SortEntitiesTable : NonGraphicalObject, IEnumerable<SortEnt
 	}
 
 	/// <summary>
-	/// Moves the specified entity one step down in the draw order.
-	/// If the entity is not in the table or is already at the bottom, no action is taken.
+	/// Removes the first occurrence of a specific object from the sorters table.
 	/// </summary>
-	/// <param name="entity">Entity to move one step down.</param>
-	public void OneStepDown(Entity entity)
+	/// <param name="entity"></param>
+	/// <returns></returns>
+	public bool Remove(Entity entity)
 	{
-		Sorter existing = this._sorters.FirstOrDefault(s => s.Entity.Equals(entity));
-		if (existing is null)
+		var sorter = this._sorters.FirstOrDefault(s => s.Entity.Equals(entity));
+		if (sorter is null)
 		{
-			return;
+			return false;
 		}
 
-		this._sorters.Sort();
-
-		int index = this._sorters.IndexOf(existing);
-		if (index < 0 || index >= this._sorters.Count - 1)
-		{
-			return;
-		}
-
-		Sorter next = this._sorters[index + 1];
-		(existing.SortHandle, next.SortHandle) = (next.SortHandle, existing.SortHandle);
+		return this._sorters.Remove(sorter);
 	}
 }

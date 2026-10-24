@@ -1,4 +1,5 @@
 ﻿using ACadSharp.Attributes;
+using ACadSharp.Classes;
 
 namespace ACadSharp.Objects.Evaluations;
 
@@ -11,7 +12,7 @@ namespace ACadSharp.Objects.Evaluations;
 /// </remarks>
 [DxfName(DxfFileToken.ObjectBlockFlipGrip)]
 [DxfSubClass(DxfSubclassMarker.BlockFlipGrip)]
-public class BlockFlipGrip : BlockGrip
+public class BlockFlipGrip : BlockGrip, IDxfClassDefined
 {
 	/// <summary>
 	/// Gets or sets the X component of the direction vector.
@@ -42,4 +43,19 @@ public class BlockFlipGrip : BlockGrip
 
 	/// <inheritdoc/>
 	public override string SubclassMarker => DxfSubclassMarker.BlockFlipGrip;
+
+	/// <inheritdoc/>
+	public DxfClass GetDxfClass()
+	{
+		return new DxfClass
+		{
+			CppClassName = DxfSubclassMarker.BlockFlipGrip,
+			DwgVersion = ACadVersion.AC1018,
+			DxfName = DxfFileToken.ObjectBlockFlipGrip,
+			ItemClassId = 499,
+			MaintenanceVersion = 55,
+			ProxyFlags = ACadSharp.Classes.ProxyFlags.EraseAllowed | ACadSharp.Classes.ProxyFlags.CloningAllowed | ACadSharp.Classes.ProxyFlags.DisablesProxyWarningDialog,
+			WasZombie = false,
+		};
+	}
 }

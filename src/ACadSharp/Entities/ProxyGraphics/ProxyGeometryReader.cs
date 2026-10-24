@@ -10,9 +10,9 @@ using System.Text;
 
 namespace ACadSharp.Entities.ProxyGraphics;
 
-public class ProxyGeometryReader
+internal class ProxyGeometryReader
 {
-	internal static IEnumerable<IProxyGeometry> ReadGeometries(CadDocumentBuilder builder, byte[] arr)
+	public static IEnumerable<IProxyGeometry> ReadGeometries(CadDocumentBuilder builder, byte[] arr)
 	{
 		List<IProxyGeometry> geometries = new();
 
@@ -623,7 +623,7 @@ public class ProxyGeometryReader
 		for (int i = 0; i < nfaces; i++)
 		{
 			int count = Math.Abs(stream.ReadInt());
-			i += count + 1;
+			i += count;
 
 			List<int> faceIndices = [];
 			for (int j = 0; j < count; j++)

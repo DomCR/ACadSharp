@@ -1,4 +1,5 @@
 ﻿using ACadSharp.Attributes;
+using ACadSharp.Classes;
 using System.Collections.Generic;
 using System.Linq;
 
@@ -10,7 +11,7 @@ namespace ACadSharp.Objects.Evaluations;
 /// </summary>
 [DxfName(DxfFileToken.ObjectEvalGraph)]
 [DxfSubClass(DxfSubclassMarker.EvalGraph)]
-public partial class EvaluationGraph : NonGraphicalObject
+public partial class EvaluationGraph : NonGraphicalObject, IDxfClassDefined
 {
 	/// <summary>
 	/// Gets a list of <see cref="Edge"/> objects.
@@ -70,6 +71,10 @@ public partial class EvaluationGraph : NonGraphicalObject
 		return clone;
 	}
 
+	/// <summary>
+	/// Creates a new <see cref="Node"/> object and adds it to the list of nodes.
+	/// </summary>
+	/// <returns>The newly created <see cref="Node"/> object.</returns>
 	public Node CreateNode()
 	{
 		Node node = new Node(this);
@@ -79,6 +84,26 @@ public partial class EvaluationGraph : NonGraphicalObject
 		return node;
 	}
 
+	/// <inheritdoc/>
+	public DxfClass GetDxfClass()
+	{
+		return new DxfClass
+		{
+			CppClassName = DxfSubclassMarker.EvalGraph,
+			DwgVersion = ACadVersion.AC1018,
+			DxfName = DxfFileToken.ObjectEvalGraph,
+			ItemClassId = 499,
+			MaintenanceVersion = 55,
+			ProxyFlags = ACadSharp.Classes.ProxyFlags.EraseAllowed | ACadSharp.Classes.ProxyFlags.CloningAllowed | ACadSharp.Classes.ProxyFlags.DisablesProxyWarningDialog,
+			WasZombie = false,
+		};
+	}
+
+	/// <summary>
+	/// Removes a <see cref="Node"/> object from the list of nodes by its ID.
+	/// </summary>
+	/// <param name="id">The ID of the <see cref="Node"/> to remove.</param>
+	/// <returns>True if the node was found and removed; otherwise, false.</returns>
 	public bool RemoveNode(int id)
 	{
 		Node node = this._nodes.FirstOrDefault(n => n.Id == id);

@@ -1,4 +1,5 @@
 ﻿using ACadSharp.Attributes;
+using ACadSharp.Classes;
 
 namespace ACadSharp.Objects.Evaluations;
 
@@ -13,7 +14,7 @@ namespace ACadSharp.Objects.Evaluations;
 
 [DxfName(DxfFileToken.ObjectBlockAlignmentParameter)]
 [DxfSubClass(DxfSubclassMarker.BlockAlignmentParameter)]
-public class BlockAlignmentParameter : Block2PtParameter
+public class BlockAlignmentParameter : Block2PtParameter, IDxfClassDefined
 {
 	/// <inheritdoc/>
 	public override string ObjectName => DxfFileToken.ObjectBlockAlignmentParameter;
@@ -26,4 +27,19 @@ public class BlockAlignmentParameter : Block2PtParameter
 	/// </summary>
 	[DxfCodeValue(280)]
 	public bool IsPerpendicular { get; internal set; }
+
+	/// <inheritdoc/>
+	public DxfClass GetDxfClass()
+	{
+		return new DxfClass
+		{
+			CppClassName = DxfSubclassMarker.BlockAlignmentParameter,
+			DwgVersion = ACadVersion.AC1018,
+			DxfName = DxfFileToken.ObjectBlockAlignmentParameter,
+			ItemClassId = 499,
+			MaintenanceVersion = 55,
+			ProxyFlags = ACadSharp.Classes.ProxyFlags.EraseAllowed | ACadSharp.Classes.ProxyFlags.CloningAllowed | ACadSharp.Classes.ProxyFlags.DisablesProxyWarningDialog,
+			WasZombie = false,
+		};
+	}
 }

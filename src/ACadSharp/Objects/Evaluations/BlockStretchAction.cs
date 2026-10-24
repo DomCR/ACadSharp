@@ -1,4 +1,5 @@
 ﻿using ACadSharp.Attributes;
+using ACadSharp.Classes;
 using CSMath;
 using System.Collections.Generic;
 
@@ -14,7 +15,7 @@ namespace ACadSharp.Objects.Evaluations;
 /// </remarks>
 [DxfName(DxfFileToken.ObjectBlockStretchAction)]
 [DxfSubClass(DxfSubclassMarker.BlockStretchAction)]
-public class BlockStretchAction : StretchActionBase
+public class BlockStretchAction : StretchActionBase, IDxfClassDefined
 {
 	/// <inheritdoc/>
 	[DxfCodeValue(141)]
@@ -42,4 +43,19 @@ public class BlockStretchAction : StretchActionBase
 	/// <inheritdoc/>
 	[DxfCodeValue(280)]
 	public byte UnknownFlag { get; set; }
+
+	/// <inheritdoc/>
+	public DxfClass GetDxfClass()
+	{
+		return new DxfClass
+		{
+			CppClassName = DxfSubclassMarker.BlockStretchAction,
+			DwgVersion = ACadVersion.AC1018,
+			DxfName = DxfFileToken.ObjectBlockStretchAction,
+			ItemClassId = 499,
+			MaintenanceVersion = 55,
+			ProxyFlags = ACadSharp.Classes.ProxyFlags.EraseAllowed | ACadSharp.Classes.ProxyFlags.CloningAllowed | ACadSharp.Classes.ProxyFlags.DisablesProxyWarningDialog,
+			WasZombie = false,
+		};
+	}
 }

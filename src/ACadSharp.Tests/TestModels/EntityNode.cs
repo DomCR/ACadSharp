@@ -1,23 +1,22 @@
 ﻿using System.Collections.Generic;
 
-namespace ACadSharp.Tests.TestModels
+namespace ACadSharp.Tests.TestModels;
+
+public class EntityNode : Node
 {
-	public class EntityNode : Node
-	{
-		public ColorData Color { get; set; } = new ColorData();
+	public ColorData Color { get; set; } = new ColorData();
 
-		public string LayerName { get; set; }
+	public string LayerName { get; set; }
 
-		public bool IsInvisible { get; set; }
+	public bool IsInvisible { get; set; }
 
-		public Transparency Transparency { get; set; }
+	public Transparency Transparency { get; set; }
 
-		public string LinetypeName { get; set; }
+	public string LinetypeName { get; set; }
 
-		public double LinetypeScale { get; set; }
+	public double LinetypeScale { get; set; }
 
-		public LineWeightType LineWeight { get; set; }
+	public LineWeightType LineWeight { get; set; }
 
-		public Dictionary<string, object> Properties { get; set; } = new Dictionary<string, object>();
-	}
+	public Dictionary<string, object> Properties { get; set; } = new Dictionary<string, object>();
 }

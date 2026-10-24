@@ -1,4 +1,5 @@
 using ACadSharp.Attributes;
+using ACadSharp.Classes;
 using CSMath;
 
 namespace ACadSharp.Objects.Evaluations;
@@ -13,7 +14,7 @@ namespace ACadSharp.Objects.Evaluations;
 /// </remarks>
 [DxfName(DxfFileToken.ObjectBlockPointParameter)]
 [DxfSubClass(DxfSubclassMarker.BlockPointParameter)]
-public class BlockPointParameter : Block1PtParameter
+public class BlockPointParameter : Block1PtParameter, IDxfClassDefined
 {
 	/// <summary>
 	/// Gets or sets the description.
@@ -38,4 +39,19 @@ public class BlockPointParameter : Block1PtParameter
 
 	/// <inheritdoc/>
 	public override string SubclassMarker => DxfSubclassMarker.BlockPointParameter;
+
+	/// <inheritdoc/>
+	public DxfClass GetDxfClass()
+	{
+		return new DxfClass
+		{
+			CppClassName = DxfSubclassMarker.BlockPointParameter,
+			DwgVersion = ACadVersion.AC1018,
+			DxfName = DxfFileToken.ObjectBlockPointParameter,
+			ItemClassId = 499,
+			MaintenanceVersion = 55,
+			ProxyFlags = ACadSharp.Classes.ProxyFlags.EraseAllowed | ACadSharp.Classes.ProxyFlags.CloningAllowed | ACadSharp.Classes.ProxyFlags.DisablesProxyWarningDialog,
+			WasZombie = false,
+		};
+	}
 }

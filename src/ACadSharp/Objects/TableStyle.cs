@@ -1,4 +1,5 @@
 ﻿using ACadSharp.Attributes;
+using ACadSharp.Classes;
 using System.Collections.Generic;
 
 namespace ACadSharp.Objects;
@@ -12,7 +13,7 @@ namespace ACadSharp.Objects;
 /// </remarks>
 [DxfName(DxfFileToken.ObjectTableStyle)]
 [DxfSubClass(DxfSubclassMarker.TableStyle)]
-public partial class TableStyle : NonGraphicalObject
+public partial class TableStyle : NonGraphicalObject, IDxfClassDefined
 {
 	/// <summary>
 	/// Gets the default TableStyle.
@@ -105,5 +106,20 @@ public partial class TableStyle : NonGraphicalObject
 	/// </summary>
 	public TableStyle(string name) : base(name)
 	{
+	}
+
+	/// <inheritdoc/>
+	public DxfClass GetDxfClass()
+	{
+		return new DxfClass
+		{
+			CppClassName = DxfSubclassMarker.TableStyle,
+			DwgVersion = ACadVersion.AC1018,
+			DxfName = DxfFileToken.ObjectTableStyle,
+			ItemClassId = 499,
+			MaintenanceVersion = 0,
+			ProxyFlags = (ProxyFlags)4095,
+			WasZombie = false,
+		};
 	}
 }

@@ -1,4 +1,5 @@
 ﻿using ACadSharp.Attributes;
+using ACadSharp.Classes;
 using CSMath;
 
 namespace ACadSharp.Objects.Evaluations;
@@ -13,18 +14,13 @@ namespace ACadSharp.Objects.Evaluations;
 /// </remarks>
 [DxfName(DxfFileToken.ObjectBlockFlipParameter)]
 [DxfSubClass(DxfSubclassMarker.BlockFlipParameter)]
-public class BlockFlipParameter : Block2PtParameter
+public class BlockFlipParameter : Block2PtParameter, IDxfClassDefined
 {
 	/// <summary>
 	/// Gets or sets the base state name.
 	/// </summary>
 	[DxfCodeValue(307)]
 	public string BaseStateName { get; set; }
-
-	/// <summary>
-	/// Gets or sets the connection.
-	/// </summary>
-	public EvalConnection UpdatedFlipConnection { get; set; }
 
 	/// <summary>
 	/// Gets or sets the description.
@@ -55,4 +51,24 @@ public class BlockFlipParameter : Block2PtParameter
 
 	/// <inheritdoc/>
 	public override string SubclassMarker => DxfSubclassMarker.BlockFlipParameter;
+
+	/// <summary>
+	/// Gets or sets the connection.
+	/// </summary>
+	public EvalConnection UpdatedFlipConnection { get; set; }
+
+	/// <inheritdoc/>
+	public DxfClass GetDxfClass()
+	{
+		return new DxfClass
+		{
+			CppClassName = DxfSubclassMarker.BlockFlipParameter,
+			DwgVersion = ACadVersion.AC1018,
+			DxfName = DxfFileToken.ObjectBlockFlipParameter,
+			ItemClassId = 499,
+			MaintenanceVersion = 55,
+			ProxyFlags = ACadSharp.Classes.ProxyFlags.EraseAllowed | ACadSharp.Classes.ProxyFlags.CloningAllowed | ACadSharp.Classes.ProxyFlags.DisablesProxyWarningDialog,
+			WasZombie = false,
+		};
+	}
 }

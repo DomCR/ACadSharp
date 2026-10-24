@@ -1,4 +1,5 @@
 ﻿using ACadSharp.Attributes;
+using ACadSharp.Classes;
 using System.Collections.Generic;
 
 namespace ACadSharp.Objects.Evaluations;
@@ -13,7 +14,7 @@ namespace ACadSharp.Objects.Evaluations;
 /// </remarks>
 [DxfName(DxfFileToken.ObjectBlockLookupAction)]
 [DxfSubClass(DxfSubclassMarker.BlockLookupAction)]
-public partial class BlockLookupAction : BlockAction
+public partial class BlockLookupAction : BlockAction, IDxfClassDefined
 {
 	public List<ColumnData> Columns { get; set; } = new List<ColumnData>();
 
@@ -25,4 +26,19 @@ public partial class BlockLookupAction : BlockAction
 
 	[DxfCodeValue(280)]
 	public bool UnknownFlag { get; set; }
+
+	/// <inheritdoc/>
+	public DxfClass GetDxfClass()
+	{
+		return new DxfClass
+		{
+			CppClassName = DxfSubclassMarker.BlockLookupAction,
+			DwgVersion = ACadVersion.AC1018,
+			DxfName = DxfFileToken.ObjectBlockLookupAction,
+			ItemClassId = 499,
+			MaintenanceVersion = 55,
+			ProxyFlags = ACadSharp.Classes.ProxyFlags.EraseAllowed | ACadSharp.Classes.ProxyFlags.CloningAllowed | ACadSharp.Classes.ProxyFlags.DisablesProxyWarningDialog,
+			WasZombie = false,
+		};
+	}
 }

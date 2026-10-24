@@ -53,22 +53,22 @@ public abstract class CadWipeoutBase : Entity
 	public List<XY> ClipBoundaryVertices { get; set; } = new List<XY>();
 
 	/// <summary>
-	/// Clipping state
+	/// Clipping state.
 	/// </summary>
 	[DxfCodeValue(290)]
 	public ClipMode ClipMode { get; set; }
 
 	/// <summary>
-	/// Clipping state
+	/// Clipping state.
 	/// </summary>
 	[DxfCodeValue(280)]
 	public bool ClippingState { get; set; }
 
 	/// <summary>
-	/// Clipping boundary type
+	/// Clipping boundary type.
 	/// </summary>
 	[DxfCodeValue(71)]
-	public ClipType ClipType { get; set; } = ClipType.Rectangular;
+	public ClipType ClipType { get { return this.ClipBoundaryVertices.Count > 2 ? ClipType.Polygonal : ClipType.Rectangular; } }
 
 	/// <summary>
 	/// Contrast
@@ -100,14 +100,7 @@ public abstract class CadWipeoutBase : Entity
 		get { return this._definition; }
 		set
 		{
-			if (this.Document != null)
-			{
-				this._definition = CadObject.updateCollection(value, this.Document.ImageDefinitions);
-			}
-			else
-			{
-				this._definition = value;
-			}
+			this._definition = this.updateCollectionEntry(value, d => this._definition = d, this.Document?.ImageDefinitions);
 		}
 	}
 
@@ -255,15 +248,9 @@ public abstract class CadWipeoutBase : Entity
 	{
 		var result = base.IsValid(format, version, out errors);
 
-		if (this.DefinitionReactor == null)
+		if (this.ClipBoundaryVertices.Count < 2)
 		{
-			errors.Add($"The {nameof(this.DefinitionReactor)} property is null.");
-			result = false;
-		}
-
-		if (this.Definition == null)
-		{
-			errors.Add($"The {nameof(this.Definition)} property is null.");
+			errors.Add($"Invalid {nameof(ClipBoundaryVertices)} count: {this.ClipBoundaryVertices.Count}, must be at least 2.");
 			result = false;
 		}
 
@@ -274,25 +261,13 @@ public abstract class CadWipeoutBase : Entity
 	{
 		base.AssignDocument(doc);
 
-		this._definition = CadObject.updateCollection(this.Definition, doc.ImageDefinitions);
-
-		this.Document.ImageDefinitions.OnRemove += this.imageDefinitionsOnRemove;
+		this._definition = this.updateCollectionEntry(this.Definition, d => this._definition = d, doc.ImageDefinitions);
 	}
 
 	internal override void UnassignDocument()
 	{
-		this.Document.ImageDefinitions.OnRemove -= this.imageDefinitionsOnRemove;
-
 		base.UnassignDocument();
 
 		this._definition = (ImageDefinition)this.Definition?.Clone();
-	}
-
-	private void imageDefinitionsOnRemove(object sender, CollectionChangedEventArgs e)
-	{
-		if (e.Item.Equals(this.Definition))
-		{
-			this._definition = null;
-		}
 	}
 }

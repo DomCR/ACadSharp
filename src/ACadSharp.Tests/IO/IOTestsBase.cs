@@ -23,10 +23,13 @@ public abstract class IOTestsBase
 	{
 		Failsafe = false,
 		IgnoreProxyGraphics = false,
+		KeepUnknownEntities = true,
+		KeepUnknownNonGraphicalObjects = true,
 	};
 
 	protected readonly DxfReaderConfiguration _dxfConfiguration = new DxfReaderConfiguration
 	{
+		IgnoreProxyGraphics = false,
 	};
 
 	protected readonly ITestOutputHelper _output;
@@ -156,7 +159,7 @@ public abstract class IOTestsBase
 		}
 	}
 
-	protected void onNotification(object sender, NotificationEventArgs e)
+	protected virtual void onNotification(object sender, NotificationEventArgs e)
 	{
 		if (e.NotificationType == NotificationType.Error)
 		{

@@ -2259,6 +2259,8 @@ internal class DxfObjectsSectionReader : DxfSectionReaderBase
 				return this.readObjectCodes<ProxyObject>(new CadProxyObjectTemplate(), this.readProxyObject);
 			case DxfFileToken.ObjectRasterVariables:
 				return this.readObjectCodes<RasterVariables>(new CadNonGraphicalObjectTemplate(new RasterVariables()), this.readObjectSubclassMap);
+			case DxfFileToken.ObjectWipeoutVariables:
+				return this.readObjectCodes<WipeoutVariables>(new CadNonGraphicalObjectTemplate(new WipeoutVariables()), this.readObjectSubclassMap);
 			case DxfFileToken.ObjectGroup:
 				return this.readObjectCodes<Group>(new CadGroupTemplate(), this.readGroup);
 			case DxfFileToken.ObjectGeoData:
@@ -3132,6 +3134,12 @@ internal class DxfObjectsSectionReader : DxfSectionReaderBase
 	{
 		this._reader.ReadNext();
 
+		if (this._reader.Code == 280)
+		{
+			template.CadObject.CloningFlags = (DictionaryCloningFlags)this._reader.ValueAsShort;
+			this._reader.ReadNext();
+		}
+
 		while (this._reader.DxfCode != DxfCode.Start)
 		{
 			switch (this._reader.GroupCodeValue)
@@ -3149,7 +3157,8 @@ internal class DxfObjectsSectionReader : DxfSectionReaderBase
 				case GroupCodeValueType.Handle:
 				case GroupCodeValueType.ObjectId:
 				case GroupCodeValueType.ExtendedDataHandle:
-					template.AddHandleReference(this._reader.Code, this._reader.ValueAsHandle);
+					var entry = template.CadObject.CreateEntry(this._reader.Code, this._reader.ValueAsHandle);
+					template.AddHandleReference(entry);
 					break;
 				default:
 					template.CadObject.CreateEntry(this._reader.Code, this._reader.Value);

@@ -3,9 +3,9 @@ using ACadSharp.Entities;
 using ACadSharp.Header;
 using ACadSharp.Objects;
 using ACadSharp.Objects.Collections;
-using ACadSharp.Prototype1b;
 using ACadSharp.Tables;
 using ACadSharp.Tables.Collections;
+using CSUtilities.Extensions;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -48,7 +48,8 @@ public class CadDocument : IHandledCadObject
 	/// <summary>
 	/// The data stored in the Prototype1b header section. This primarily contains ACIS and thumbnail data
 	/// </summary>
-	public DataStorage DataStorage { get; set; }
+	[Obsolete("This property is obsolete and will be removed in future versions.")]
+	public Prototype1b.DataStorage DataStorage { get; set; }
 
 	/// <summary>
 	/// The collection of the system variables in the drawing.
@@ -249,8 +250,6 @@ public class CadDocument : IHandledCadObject
 	/// </summary>
 	public void CreateDefaults()
 	{
-		this.Classes.UpdateDxfClasses();
-
 		//Header and summary
 		if (this.Header is null)
 		{
@@ -391,11 +390,6 @@ public class CadDocument : IHandledCadObject
 			.Count(c => c.ObjectName == dxfName);
 	}
 
-	public bool IsValid()
-	{
-		throw new NotImplementedException();
-	}
-
 	/// <summary>
 	/// Reassign all the handles in the document to avoid the variable <see cref="CadHeader.HandleSeed"/> to grow past its limit.
 	/// </summary>
@@ -496,9 +490,9 @@ public class CadDocument : IHandledCadObject
 		if (handle == this.Handle)
 			return false;
 
-		if (this._cadObjects.TryGetValue(handle, out IHandledCadObject obj))
+		if (this._cadObjects.TryGetValue(handle, out IHandledCadObject obj) && obj is T)
 		{
-			cadObject = obj as T;
+			cadObject = (T)obj;
 			return true;
 		}
 
@@ -592,8 +586,17 @@ public class CadDocument : IHandledCadObject
 		{
 			this.Classes.Clear();
 		}
+		else
+		{
+			this.Classes.ForEach(c => c.InstanceCount = 0);
+		}
 
-		this.Classes.UpdateDxfClasses();
+		foreach (IDxfClassDefined item in this._cadObjects.Values.OfType<IDxfClassDefined>())
+		{
+			this.Classes.IncreaseInstanceCount(item.GetDxfClass());
+		}
+
+		this.Classes.ResetClassNumbers();
 	}
 
 	/// <summary>
@@ -612,9 +615,14 @@ public class CadDocument : IHandledCadObject
 			this._cadObjects.Remove(item.Handle);
 		}
 
-		var rasterImages = this._cadObjects.Values.OfType<RasterImage>().ToList();
-		foreach (RasterImage image in rasterImages)
+		var values = this._cadObjects.Values.OfType<RasterImage>().ToList();
+		foreach (RasterImage image in values)
 		{
+			if (image.Definition == null)
+			{
+				continue;
+			}
+
 			image.DefinitionReactor = new ImageDefinitionReactor(image);
 			this.AddCadObject(image.DefinitionReactor);
 			image.Definition.AddReactor(image.DefinitionReactor);

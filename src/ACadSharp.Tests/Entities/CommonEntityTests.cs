@@ -4,6 +4,7 @@ using ACadSharp.IO;
 using ACadSharp.Tables;
 using ACadSharp.Tests.Common;
 using CSMath;
+using System;
 using Xunit;
 
 namespace ACadSharp.Tests.Entities;
@@ -117,6 +118,18 @@ public abstract class CommonEntityTests<T>
 			orientable.Normal = new XYZ();
 			Assert.False(e.IsValid(format, version));
 		}
+	}
+
+	[Fact]
+	public void SetNullLayerOrLineTypeThrowsTest()
+	{
+		T entity = new T();
+
+		Assert.ThrowsAny<ArgumentException>(() => entity.Layer = null);
+		Assert.Equal("0", entity.Layer.Name);
+
+		Assert.ThrowsAny<ArgumentException>(() => entity.LineType = null);
+		Assert.Equal("ByLayer", entity.LineType.Name);
 	}
 
 	[Theory]

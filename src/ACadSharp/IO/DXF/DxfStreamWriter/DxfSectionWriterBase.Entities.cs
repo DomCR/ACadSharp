@@ -1,9 +1,12 @@
 ﻿using ACadSharp.Entities;
-using ACadSharp.Entities.AecObjects;
+using ACadSharp.Entities.AecEntities;
 using ACadSharp.Entities.Mechanical;
+using ACadSharp.Entities.ProxyGraphics;
 using ACadSharp.Objects;
 using CSMath;
+using CSMath.Extensions;
 using System;
+using System.IO;
 using System.Linq;
 
 namespace ACadSharp.IO.DXF;
@@ -28,6 +31,9 @@ internal abstract partial class DxfSectionWriterBase
 		{
 			case Arc arc:
 				this.writeArc(arc);
+				break;
+			case CadBody cadBody:
+				this.writeModelerGeometry(cadBody);
 				break;
 			case Circle circle:
 				this.writeCircle(circle);
@@ -96,17 +102,26 @@ internal abstract partial class DxfSectionWriterBase
 						throw new NotImplementedException($"Polyline not implemented {polyline.GetType().FullName}");
 				}
 				break;
+			case ProxyEntity proxyEntity:
+				this.writeProxyEntity(proxyEntity);
+				break;
 			case RasterImage rasterImage:
 				this.writeCadImage(rasterImage);
 				break;
 			case Ray ray:
 				this.writeRay(ray);
 				break;
+			case Region region:
+				this.writeModelerGeometry(region);
+				break;
 			case Shape shape:
 				this.writeShape(shape);
 				break;
 			case Solid solid:
 				this.writeSolid(solid);
+				break;
+			case Solid3D solid3D:
+				this.writeSolid3D(solid3D);
 				break;
 			case Spline spline:
 				this.writeSpline(spline);
@@ -150,14 +165,14 @@ internal abstract partial class DxfSectionWriterBase
 			case UnknownEntity:
 			case MechanicalEntity:
 			case Wall:
+			case Solid3D when this.Version < ACadVersion.AC1014:
+			case CadBody when this.Version < ACadVersion.AC1014:
+			case Region when this.Version < ACadVersion.AC1014:
 				return false;
 			case Shape:
 				return this.Configuration.WriteShapes;
-			case ProxyEntity:
 			case TableEntity:
-			case Solid3D:
-			case CadBody:
-			case Region:
+			case Surface:
 				this.notify($"Entity type not implemented {entity.GetType().FullName}", NotificationType.NotImplemented);
 				return false;
 			default:
@@ -254,7 +269,6 @@ internal abstract partial class DxfSectionWriterBase
 		}
 
 		this._writer.Write(71, (short)image.ClipType, map);
-
 		if (image.ClipType == ClipType.Polygonal)
 		{
 			this._writer.Write(91, image.ClipBoundaryVertices.Count + 1, map);
@@ -299,12 +313,19 @@ internal abstract partial class DxfSectionWriterBase
 
 		this._writer.Write(10, dim.DefinitionPoint, map);
 		this._writer.Write(11, dim.TextMiddlePoint, map);
+		this._writer.Write(12, dim.InsertionPoint, map);
 
 		this._writer.Write(53, dim.TextRotation, map);
 		this._writer.Write(70, (short)dim.Flags, map);
 		this._writer.Write(71, (short)dim.AttachmentPoint, map);
 		this._writer.Write(72, (short)dim.LineSpacingStyle, map);
 		this._writer.Write(41, dim.LineSpacingFactor, map);
+
+		if (this.Version >= ACadVersion.AC1021)
+		{
+			this._writer.Write(74, dim.FlipArrow1, map);
+			this._writer.Write(75, dim.FlipArrow2, map);
+		}
 
 		if (!string.IsNullOrEmpty(dim.Text))
 		{
@@ -461,6 +482,37 @@ internal abstract partial class DxfSectionWriterBase
 		this._writer.Write(42, ellipse.EndParameter, map);
 	}
 
+	private void writeEncryptedSAT(ModelerGeometry geometry)
+	{
+		int CHUNK = 255;
+		foreach (string line in geometry.GetAcisText().Split('\n'))
+		{
+			string trimmed = line.TrimEnd('\r');
+			if (trimmed.Length == 0)
+			{
+				continue;
+			}
+
+			string encoded = AcisTextCodec.Decode(trimmed);
+			int offset = 0;
+			while (offset < encoded.Length)
+			{
+				int length = Math.Min(CHUNK, encoded.Length - offset);
+				if (offset + length < encoded.Length)
+				{
+					int space = encoded.LastIndexOf(' ', offset + length - 1, length);
+					if (space > offset)
+					{
+						length = space - offset + 1;
+					}
+				}
+
+				this._writer.Write(offset == 0 ? 1 : 3, encoded.Substring(offset, length));
+				offset += length;
+			}
+		}
+	}
+
 	private void writeFace3D(Face3D face)
 	{
 		DxfClassMap map = DxfClassMap.Create<Face3D>();
@@ -514,6 +566,26 @@ internal abstract partial class DxfSectionWriterBase
 		//TODO: Implement HatchGradientPattern
 	}
 
+	private void writeHatchBoundaryAngles(double startAngle, double endAngle)
+	{
+		double start = MathHelper.RadToDeg(startAngle, normalize: true, absolute: false);
+		double end = MathHelper.RadToDeg(endAngle, normalize: true, absolute: false);
+
+		if (MathHelper.IsEqual(Math.Abs(endAngle - startAngle), MathHelper.TwoPI))
+		{
+			// Keep a full sweep distinct without writing angles outside -360 to 360.
+			double sweep = endAngle > startAngle ? 360.0 : -360.0;
+			if (Math.Abs(start + sweep) > 360.0)
+			{
+				start -= sweep;
+			}
+			end = start + sweep;
+		}
+
+		this._writer.Write(50, start);
+		this._writer.Write(51, end);
+	}
+
 	private void writeHatchBoundaryPathEdge(Hatch.BoundaryPath.Edge edge)
 	{
 		if (edge is not Hatch.BoundaryPath.Polyline)
@@ -526,16 +598,14 @@ internal abstract partial class DxfSectionWriterBase
 			case Hatch.BoundaryPath.Arc arc:
 				this._writer.Write(10, arc.Center);
 				this._writer.Write(40, arc.Radius);
-				this._writer.Write(50, MathHelper.RadToDeg(arc.StartAngle));
-				this._writer.Write(51, MathHelper.RadToDeg(arc.EndAngle));
+				this.writeHatchBoundaryAngles(arc.StartAngle, arc.EndAngle);
 				this._writer.Write(73, arc.CounterClockWise ? (short)1 : (short)0);
 				break;
 			case Hatch.BoundaryPath.Ellipse ellipse:
 				this._writer.Write(10, ellipse.Center);
 				this._writer.Write(11, ellipse.MajorAxisEndPoint);
 				this._writer.Write(40, ellipse.RadiusRatio);
-				this._writer.Write(50, MathHelper.RadToDeg(ellipse.StartAngle));
-				this._writer.Write(51, MathHelper.RadToDeg(ellipse.EndAngle));
+				this.writeHatchBoundaryAngles(ellipse.StartAngle, ellipse.EndAngle);
 				this._writer.Write(73, ellipse.CounterClockWise ? (short)1 : (short)0);
 				break;
 			case Hatch.BoundaryPath.Line line:
@@ -870,6 +940,33 @@ internal abstract partial class DxfSectionWriterBase
 		}
 	}
 
+	private void writeModelerGeometry(ModelerGeometry geometry)
+	{
+		DxfClassMap map = DxfClassMap.Create<ModelerGeometry>();
+
+		this._writer.Write(DxfCode.Subclass, DxfSubclassMarker.ModelerGeometry);
+
+		if (this.Version >= ACadVersion.AC1027)
+		{
+			this._writer.Write(290, geometry.Guid != System.Guid.Empty ? (short)1 : (short)0, map);
+			this._writer.Write(2, geometry.Guid.ToString("B"), map);
+			return;
+		}
+
+		this._writer.Write(70, geometry.ModelerFormatVersion, map);
+
+		if (geometry.IsBinaryAcisData)
+		{
+			//Encrypted sab
+			this.notify($"Encrypted SAB data is not supported in DXF version {this.Version}.", NotificationType.Warning);
+		}
+		else
+		{
+			//Encrypted sat
+			this.writeEncryptedSAT(geometry);
+		}
+	}
+
 	private void writeMText(MText mtext, bool writeSubclass = true)
 	{
 		DxfClassMap map = DxfClassMap.Create<MText>();
@@ -902,6 +999,26 @@ internal abstract partial class DxfSectionWriterBase
 		this._writer.Write(11, mtext.AlignmentPoint, map);
 
 		this._writer.Write(210, mtext.Normal, map);
+
+		//Background fill and text frame, R2004+ (text frame R2018+)
+		if (this.Version >= ACadVersion.AC1018 && mtext.BackgroundFillFlags != BackgroundFillFlags.None)
+		{
+			this._writer.Write(90, (int)mtext.BackgroundFillFlags, map);
+
+			//Color, scale and transparency only when the background is filled or the text is framed
+			if ((mtext.BackgroundFillFlags & (BackgroundFillFlags.UseBackgroundFillColor | BackgroundFillFlags.TextFrame))
+				!= BackgroundFillFlags.None)
+			{
+				this._writer.WriteCmColor(63, mtext.BackgroundColor, map);
+				if (mtext.BackgroundColor.IsTrueColor)
+				{
+					this._writer.WriteTrueColor(421, mtext.BackgroundColor, map);
+				}
+
+				this._writer.Write(45, mtext.BackgroundScale, map);
+				this._writer.Write(441, Transparency.ToAlphaValue(mtext.BackgroundTransparency), map);
+			}
+		}
 
 		if (!mtext.HasColumns || this.Version < ACadVersion.AC1032)
 		{
@@ -1052,6 +1169,27 @@ internal abstract partial class DxfSectionWriterBase
 		this._writer.Write(301, "}");       //	CONTEXT_DATA
 	}
 
+	private void writeOle2Frame(Ole2Frame ole)
+	{
+		DxfClassMap map = DxfClassMap.Create<Ole2Frame>();
+
+		this._writer.Write(DxfCode.Subclass, DxfSubclassMarker.Ole2Frame);
+
+		this._writer.Write(70, ole.Version, map);
+		this._writer.Write(3, ole.SourceApplication, map);
+
+		this._writer.Write(10, ole.UpperLeftCorner, map);
+		this._writer.Write(11, ole.LowerRightCorner, map);
+
+		this._writer.Write(71, ole.OleObjectType, map);
+		this._writer.Write(72, ole.IsPaperSpace, map);
+		this._writer.Write(73, 3, map);//Undocumented
+
+		this._writer.Write(90, ole.BinaryData.Length, map);
+		this._writer.Write(310, ole.BinaryData, map);
+		this._writer.Write(1, "OLE");
+	}
+
 	private void writePdfUnderlay<T, R>(T underlay)
 		where T : UnderlayEntity<R>
 		where R : UnderlayDefinition
@@ -1072,27 +1210,6 @@ internal abstract partial class DxfSectionWriterBase
 		{
 			this._writer.Write(11, bv, map);
 		}
-	}
-
-	private void writeOle2Frame(Ole2Frame ole)
-	{
-		DxfClassMap map = DxfClassMap.Create<Ole2Frame>();
-
-		this._writer.Write(DxfCode.Subclass, DxfSubclassMarker.Ole2Frame);
-
-		this._writer.Write(70, ole.Version, map);
-		this._writer.Write(3, ole.SourceApplication, map);
-
-		this._writer.Write(10, ole.UpperLeftCorner, map);
-		this._writer.Write(11, ole.LowerRightCorner, map);
-
-		this._writer.Write(71, ole.OleObjectType, map);
-		this._writer.Write(72, ole.IsPaperSpace, map);
-		this._writer.Write(73, 3, map);//Undocumented
-
-		this._writer.Write(90, ole.BinaryData.Length, map);
-		this._writer.Write(310, ole.BinaryData, map);
-		this._writer.Write(1, "OLE");
 	}
 
 	private void writePoint(Point point)
@@ -1176,6 +1293,52 @@ internal abstract partial class DxfSectionWriterBase
 		}
 	}
 
+	private void writeProxyEntity(ProxyEntity proxy)
+	{
+		DxfClassMap map = DxfClassMap.Create<ProxyEntity>();
+
+		this._writer.Write(DxfCode.Subclass, DxfSubclassMarker.ProxyEntity);
+
+		this._writer.Write(90, proxy.ProxyClassId, map);
+		this._writer.Write(91, proxy.ClassNumber, map);
+		this._writer.Write(71, (short)proxy.Version, map);
+		this._writer.Write(97, proxy.MaintenanceVersion, map);
+		this._writer.Write(70, proxy.OriginalDataFormatDxf ? (short)1 : (short)0, map);
+
+		if (proxy.HasProxyGeometries)
+		{
+			var geometries = ProxyGeometryWriter.WriteGeometries(this.Version, System.Text.Encoding.UTF8, proxy.ProxyGeometries);
+			this._writer.Write(160, geometries.Length, map);
+			this._writer.Write(310, geometries, map);
+		}
+
+		if (proxy.StringData != null)
+		{
+			var stringData = new MemoryStream();
+			proxy.StringData.CopyTo(stringData);
+
+			this._writer.Write(162, stringData.Length, map);
+			this._writer.Write(311, stringData.ToArray(), map);
+		}
+		else
+		{
+			this._writer.Write(162, 0, map);
+		}
+
+		if (proxy.BinaryData != null)
+		{
+			var binaryData = new MemoryStream();
+			proxy.BinaryData.CopyTo(binaryData);
+
+			this._writer.Write(161, binaryData.Length, map);
+			this._writer.Write(310, binaryData.ToArray(), map);
+		}
+		else
+		{
+			this._writer.Write(161, 0, map);
+		}
+	}
+
 	private void writeRay(Ray ray)
 	{
 		DxfClassMap map = DxfClassMap.Create<Ray>();
@@ -1232,6 +1395,17 @@ internal abstract partial class DxfSectionWriterBase
 		this._writer.Write(39, solid.Thickness, map);
 
 		this._writer.Write(210, solid.Normal, map);
+	}
+
+	private void writeSolid3D(Solid3D solid)
+	{
+		this.writeModelerGeometry(solid);
+
+		if (this.Version >= ACadVersion.AC1021)
+		{
+			this._writer.Write(DxfCode.Subclass, DxfSubclassMarker.Solid3D);
+			this._writer.Write(350, (ulong)0);
+		}
 	}
 
 	private void writeSpline(Spline spline)

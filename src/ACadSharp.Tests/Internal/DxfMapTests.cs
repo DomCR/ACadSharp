@@ -7,68 +7,67 @@ using System.Linq;
 using System.Reflection;
 using Xunit;
 
-namespace ACadSharp.Tests.Internal
+namespace ACadSharp.Tests.Internal;
+
+public class DxfMapTests
 {
-	public class DxfMapTests
+	public static readonly TheoryData<Type> Types;
+
+	static DxfMapTests()
 	{
-		public static readonly TheoryData<Type> Types;
+		Types = new TheoryData<Type>();
 
-		static DxfMapTests()
+		var d = AppDomain.CurrentDomain.GetAssemblies().FirstOrDefault(a => a.ManifestModule.Name == "ACadSharp.dll");
+
+		foreach (var item in d.GetTypes().Where(i => !i.IsAbstract && i.IsPublic))
 		{
-			Types = new TheoryData<Type>();
-
-			var d = AppDomain.CurrentDomain.GetAssemblies().FirstOrDefault(a => a.ManifestModule.Name == "ACadSharp.dll");
-
-			foreach (var item in d.GetTypes().Where(i => !i.IsAbstract && i.IsPublic))
+			if (item.IsSubclassOf(typeof(Entity))
+				|| item.IsSubclassOf(typeof(TableEntry)))
 			{
-				if (item.IsSubclassOf(typeof(Entity))
-					|| item.IsSubclassOf(typeof(TableEntry)))
+				if (item == typeof(UnknownEntity) 
+					|| item == typeof(PdfUnderlay))
 				{
-					if (item == typeof(UnknownEntity) 
-						|| item == typeof(PdfUnderlay))
-					{
-						continue;
-					}
-
-					Types.Add(item);
+					continue;
 				}
+
+				Types.Add(item);
 			}
 		}
+	}
 
-		[Theory]
-		[MemberData(nameof(Types))]
-		public void CreateMapTest(Type t)
+	[Theory]
+	[MemberData(nameof(Types))]
+	public void CreateMapTest(Type t)
+	{
+		DxfNameAttribute att = t.GetCustomAttribute<DxfNameAttribute>();
+		DxfSubClassAttribute subclass = t.GetCustomAttribute<DxfSubClassAttribute>();
+		CadObject obj = Factory.CreateObject(t);
+
+		Assert.NotNull(att);
+
+		if (subclass != null && !obj.HasDynamicSubclass)
 		{
-			DxfNameAttribute att = t.GetCustomAttribute<DxfNameAttribute>();
-			DxfSubClassAttribute subclass = t.GetCustomAttribute<DxfSubClassAttribute>();
-			CadObject obj = Factory.CreateObject(t);
-
-			Assert.NotNull(att);
-
-			if (subclass != null && !obj.HasDynamicSubclass)
-			{
-				Assert.True(obj.SubclassMarker == subclass.ClassName);
-			}
-
-			DxfMap map = DxfMap.Create(t);
+			Assert.True(obj.SubclassMarker == subclass.ClassName);
 		}
 
-		[Fact]
-		public void TableEntryMapTest()
-		{
-			var map = DxfMap.Create<AppId>();
+		DxfMap map = DxfMap.Create(t);
+	}
 
-			Assert.True(map.SubClasses.ContainsKey(DxfSubclassMarker.TableRecord));
-			Assert.True(map.SubClasses.ContainsKey(DxfSubclassMarker.ApplicationId));
-		}
+	[Fact]
+	public void TableEntryMapTest()
+	{
+		var map = DxfMap.Create<AppId>();
 
-		[Fact]
-		public void PolylineMapTest()
-		{
-			var map = DxfMap.Create<Polyline2D>();
+		Assert.True(map.SubClasses.ContainsKey(DxfSubclassMarker.TableRecord));
+		Assert.True(map.SubClasses.ContainsKey(DxfSubclassMarker.ApplicationId));
+	}
 
-			Assert.True(map.SubClasses.ContainsKey(DxfSubclassMarker.Entity));
-			Assert.True(map.SubClasses.ContainsKey(DxfSubclassMarker.Polyline));
-		}
+	[Fact]
+	public void PolylineMapTest()
+	{
+		var map = DxfMap.Create<Polyline2D>();
+
+		Assert.True(map.SubClasses.ContainsKey(DxfSubclassMarker.Entity));
+		Assert.True(map.SubClasses.ContainsKey(DxfSubclassMarker.Polyline));
 	}
 }
