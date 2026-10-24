@@ -141,4 +141,47 @@ public class SubEntityXDataTests
 		CadDocument read = DxfReader.Read(new MemoryStream(Encoding.ASCII.GetBytes(dxf)));
 		assertXData(read.Entities.OfType<Insert>().Single(), "plain insert");
 	}
+
+	public static TheoryData<string> EntitiesWithoutSubEntities { get; } = new() { "LWPOLYLINE", "LINE" };
+
+	/// <summary>An LWPOLYLINE is an <see cref="IPolyline"/> too, but has no VERTEX entities: it writes its xdata at the end.</summary>
+	[Theory]
+	[MemberData(nameof(EntitiesWithoutSubEntities))]
+	public void EntityWithoutSubEntitiesKeepsItsXData(string kind)
+	{
+		CadDocument doc = new CadDocument();
+		doc.AppIds.Add(new AppId(AppName));
+
+		Entity entity = kind switch
+		{
+			"LWPOLYLINE" => new LwPolyline(new IVector[] { new XY(0, 0), new XY(10, 5), new XY(20, 0) }),
+			_ => new Line(new XYZ(0, 0, 0), new XYZ(10, 5, 0)),
+		};
+		entity.ExtendedData.Add(AppName, xdata(kind));
+		doc.Entities.Add(entity);
+
+		string dxf = writeDxf(doc, ACadVersion.AC1032);
+
+		CadDocument read = DxfReader.Read(new MemoryStream(Encoding.ASCII.GetBytes(dxf)));
+		assertXData(read.Entities.Single(e => e.ObjectName == kind), kind);
+	}
+
+	[Fact]
+	public void Polyline3DXDataIsWrittenBeforeItsVertices()
+	{
+		CadDocument doc = new CadDocument();
+		doc.AppIds.Add(new AppId(AppName));
+
+		Polyline3D polyline = new Polyline3D(new[] { new Vertex3D(new XYZ(0, 0, 0)), new Vertex3D(new XYZ(10, 5, 2)) });
+		polyline.ExtendedData.Add(AppName, xdata("polyline 3d"));
+		doc.Entities.Add(polyline);
+
+		string dxf = writeDxf(doc, ACadVersion.AC1032);
+		assertWrittenBefore(dxf, DxfFileToken.EntityVertex);
+
+		CadDocument read = DxfReader.Read(new MemoryStream(Encoding.ASCII.GetBytes(dxf)));
+		Polyline3D readBack = read.Entities.OfType<Polyline3D>().Single();
+		assertXData(readBack, "polyline 3d");
+		assertNoXData(readBack.Vertices.Seqend);
+	}
 }

@@ -161,7 +161,8 @@ internal abstract partial class DxfSectionWriterBase
 	/// </summary>
 	private static bool writesOwnExtendedData(Entity entity)
 	{
-		return entity is IPolyline
+		//Not IPolyline: an LWPOLYLINE is one too, and has no sub-entities (its vertices are groups of its own)
+		return entity is Polyline2D or Polyline3D or PolyfaceMesh or PolygonMesh
 			|| entity is Insert { HasAttributes: true };
 	}
 
