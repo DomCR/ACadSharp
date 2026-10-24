@@ -5,22 +5,6 @@ using System.Collections.Generic;
 
 namespace ACadSharp.Entities.Tangent;
 
-public static class TchDxfClasses
-{
-	/// <summary>
-	/// The DXF name of the class that writes text.
-	/// </summary>
-	public const string Text = "TCH_TEXT";
-	/// <summary>
-	/// The DXF name of the class that writes multiline text.
-	/// </summary>
-	public const string MText = "TCH_MTEXT";
-	/// <summary>
-	/// The DXF name of the class that writes a drawing name.
-	/// </summary>
-	public const string DrawingName = "TCH_DRAWINGNAME";
-}
-
 /// <summary>
 /// A Tianzheng text object.
 /// </summary>
@@ -60,26 +44,6 @@ public class TchText : TchEntity
 	/// A multiline text keeps its line breaks, so the value can contain <c>\r\n</c>.
 	/// </remarks>
 	public string Value { get; set; }
-
-	/// <summary>
-	/// Gets the width a multiline text wraps at, not-a-number for the other classes.
-	/// </summary>
-	public double Width { get; set; } = double.NaN;
-
-	/// <summary>
-	/// Gets the line spacing factor of a multiline text, not-a-number for the other classes.
-	/// </summary>
-	public double LineSpacingFactor { get; set; } = double.NaN;
-
-	/// <summary>
-	/// Gets the text written under a drawing name, its scale such as <c>1:100</c>.
-	/// </summary>
-	public string Subtitle { get; set; }
-
-	/// <summary>
-	/// Gets the height the subtitle of a drawing name is drawn at.
-	/// </summary>
-	public double SubtitleHeight { get; set; } = double.NaN;
 
 	/// <summary>
 	/// Initialises a text from the class it was read as.
@@ -131,16 +95,5 @@ public class TchText : TchEntity
 		text.MatchProperties(this);
 
 		yield return text;
-	}
-
-	/// <summary>
-	/// Says whether a Tianzheng class writes text, and so is read as a
-	/// <see cref="TchText"/> rather than as an unlisted entity.
-	/// </summary>
-	/// <param name="dxfName">DXF name of the class.</param>
-	/// <returns>True when the class writes text.</returns>
-	internal static bool WritesText(string dxfName)
-	{
-		return dxfName == TchDxfClasses.Text || dxfName == TchDxfClasses.MText || dxfName == TchDxfClasses.DrawingName;
 	}
 }
