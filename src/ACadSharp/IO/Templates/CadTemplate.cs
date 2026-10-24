@@ -1,5 +1,6 @@
 ﻿using ACadSharp.Classes;
 using ACadSharp.Entities;
+using ACadSharp.Entities.Tangent;
 using ACadSharp.Objects;
 using ACadSharp.Tables;
 using ACadSharp.XData;
@@ -49,6 +50,7 @@ internal abstract class CadTemplate : ICadObjectTemplate
 		{
 			switch (this.CadObject)
 			{
+				case TchEntity:
 				case ProxyEntity:
 				case UnknownEntity:
 				case UnknownNonGraphicalObject:

@@ -6051,17 +6051,18 @@ namespace ACadSharp.IO.DWG
 					break;
 			}
 
+			//Check for Tangent entities
+			switch (c.DxfName)
+			{
+				case TchDxfClasses.Text:
+					template = this.readTangentText(c);
+					break;
+			}
+
 			if (template == null && c.IsAnEntity)
 			{
-				if (isTangent(c))
-				{
-					template = this.readTangentEntity(c);
-				}
-				else
-				{
-					template = this.readUnknownEntity(c);
-					this._builder.Notify($"Unlisted object with DXF name {c.DxfName} has been read as an UnknownEntity", NotificationType.Warning);
-				}
+				template = this.readUnknownEntity(c);
+				this._builder.Notify($"Unlisted object with DXF name {c.DxfName} has been read as an UnknownEntity", NotificationType.Warning);
 			}
 			else if (template == null && !c.IsAnEntity)
 			{
