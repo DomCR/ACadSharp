@@ -32,8 +32,12 @@ namespace ACadSharp.Extensions
 					break;
 				}
 
+				XY p1 = curr.Location.Convert<XY>();
+				XY p2 = next.Location.Convert<XY>();
+
 				Entity e = null;
-				if (curr.Bulge == 0)
+				//A bulge over a zero-length segment has no arc to create
+				if (curr.Bulge == 0 || p1.Equals(p2))
 				{
 					//Is a line
 					e = new Line
@@ -46,9 +50,6 @@ namespace ACadSharp.Extensions
 				}
 				else
 				{
-					XY p1 = curr.Location.Convert<XY>();
-					XY p2 = next.Location.Convert<XY>();
-
 					//Is an arc
 					Arc arc = Arc.CreateFromBulge(p1, p2, curr.Bulge);
 					arc.Center = new XYZ(arc.Center.X, arc.Center.Y, polyline.Elevation);
