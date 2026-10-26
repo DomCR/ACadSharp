@@ -34015,6 +34015,19 @@ references:
   isSpec: "True"
   fullName: ACadSharp.IO.CadWriterConfiguration.UpdateDimensionsInModel
   nameWithType: CadWriterConfiguration.UpdateDimensionsInModel
+- uid: ACadSharp.IO.CadWriterConfiguration.WriteACISData
+  name: WriteACISData
+  href: api/ACadSharp.IO.CadWriterConfiguration.html#ACadSharp_IO_CadWriterConfiguration_WriteACISData
+  commentId: P:ACadSharp.IO.CadWriterConfiguration.WriteACISData
+  fullName: ACadSharp.IO.CadWriterConfiguration.WriteACISData
+  nameWithType: CadWriterConfiguration.WriteACISData
+- uid: ACadSharp.IO.CadWriterConfiguration.WriteACISData*
+  name: WriteACISData
+  href: api/ACadSharp.IO.CadWriterConfiguration.html#ACadSharp_IO_CadWriterConfiguration_WriteACISData_
+  commentId: Overload:ACadSharp.IO.CadWriterConfiguration.WriteACISData
+  isSpec: "True"
+  fullName: ACadSharp.IO.CadWriterConfiguration.WriteACISData
+  nameWithType: CadWriterConfiguration.WriteACISData
 - uid: ACadSharp.IO.CadWriterConfiguration.WriteDynamicBlockData
   name: WriteDynamicBlockData
   href: api/ACadSharp.IO.CadWriterConfiguration.html#ACadSharp_IO_CadWriterConfiguration_WriteDynamicBlockData
