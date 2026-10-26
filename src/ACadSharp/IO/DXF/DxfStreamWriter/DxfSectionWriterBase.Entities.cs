@@ -758,7 +758,7 @@ internal abstract partial class DxfSectionWriterBase
 		}
 
 		//this._writer.Write(77, leader,map);
-		//this._writer.Write(340, leader.Annotation,map);
+		this._writer.WriteHandle(340, leader.AssociatedAnnotation, map);
 
 		this._writer.Write(210, leader.Normal, map);
 
