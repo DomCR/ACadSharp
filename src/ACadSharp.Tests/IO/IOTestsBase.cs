@@ -1,4 +1,4 @@
-﻿using ACadSharp.IO;
+using ACadSharp.IO;
 using ACadSharp.Tests.Common;
 using ACadSharp.Tests.TestModels;
 using System.IO;
@@ -147,7 +147,7 @@ public abstract class IOTestsBase
 			case ACadVersion.AC1018:
 				return true;
 			case ACadVersion.AC1021:
-				return false;
+				return true;
 			case ACadVersion.AC1024:
 				return true;
 			case ACadVersion.AC1027:

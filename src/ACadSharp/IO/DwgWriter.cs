@@ -98,6 +98,16 @@ public class DwgWriter : CadWriterBase<DwgWriterConfiguration>
 	{
 		base.Write();
 
+		if (this._version == ACadVersion.AC1009)
+		{
+			byte[] bytes = new DwgR12Codec(this._encoding).Write(this._document,
+				message => this.triggerNotification(message, NotificationType.NotSupported));
+			this._stream.Write(bytes, 0, bytes.Length);
+			this._stream.Flush();
+			if (this.Configuration.CloseStream) this._stream.Close();
+			return;
+		}
+
 		if (this._version < ACadVersion.AC1018)
 		{
 			this._document.VEntityControl ??= new ViewportEntityControl(this._document);
@@ -158,7 +168,8 @@ public class DwgWriter : CadWriterBase<DwgWriterConfiguration>
 				this._fileHeaderWriter = new DwgFileHeaderWriterAC18(this._stream, this._encoding, this._document);
 				break;
 			case ACadVersion.AC1021:
-				throw new CadNotSupportedException(this._document.Header.Version);
+				this._fileHeaderWriter = new DwgFileHeaderWriterAC21(this._stream, this._encoding, this._document);
+				break;
 			case ACadVersion.AC1024:
 			case ACadVersion.AC1027:
 			case ACadVersion.AC1032:

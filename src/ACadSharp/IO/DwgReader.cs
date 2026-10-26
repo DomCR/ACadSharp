@@ -1,4 +1,4 @@
-﻿using ACadSharp.Header;
+using ACadSharp.Header;
 using CSUtilities.IO;
 using CSUtilities.Converters;
 using CSUtilities.Text;
@@ -102,6 +102,7 @@ public class DwgReader : CadReaderBase<DwgReaderConfiguration>
 	/// <inheritdoc/>
 	public override CadDocument Read()
 	{
+		if (this.tryReadR12(out CadDocument legacy)) return legacy;
 		//Read the file header
 		this._fileHeader = this.readFileHeader();
 
@@ -137,6 +138,7 @@ public class DwgReader : CadReaderBase<DwgReaderConfiguration>
 	/// <returns></returns>
 	public override CadHeader ReadHeader()
 	{
+		if (this.tryReadR12(out CadDocument legacy)) return legacy.Header;
 		this._fileHeader = this._fileHeader ?? this.readFileHeader();
 
 		CadHeader header = new CadHeader();
@@ -204,6 +206,23 @@ public class DwgReader : CadReaderBase<DwgReaderConfiguration>
 
 		DwgSummaryInfoReader summaryReader = new DwgSummaryInfoReader(this._fileHeader.AcadVersion, reader);
 		return summaryReader.Read();
+	}
+
+	private bool tryReadR12(out CadDocument document)
+	{
+		document = null;
+		Stream stream = this._fileStream.Stream;
+		long position = stream.Position;
+		stream.Position = 0;
+		byte[] signature = new byte[6];
+		int read = stream.Read(signature, 0, signature.Length);
+		stream.Position = position;
+		if (read != 6 || System.Text.Encoding.ASCII.GetString(signature) != "AC1009") return false;
+		stream.Position = 0;
+		using var buffer = new MemoryStream(); stream.CopyTo(buffer);
+		document = new DwgR12Codec(this.getListedEncoding(1252)).Read(buffer.ToArray(), !this.Configuration.Failsafe,
+			message => this.onNotificationEvent(this, new NotificationEventArgs(message, NotificationType.NotSupported)), this.Configuration.CrcCheck);
+		return true;
 	}
 
 	/// <summary>
@@ -318,7 +337,10 @@ public class DwgReader : CadReaderBase<DwgReaderConfiguration>
 
 		byte[] decompressedData = new byte[uncompressedSize];
 
-		new DwgLZ77AC21Decompressor().Decompress(compressedData, 0U, (uint)compressedSize, decompressedData);
+		if (compressedSize == uncompressedSize)
+			Array.Copy(compressedData, decompressedData, checked((int)uncompressedSize));
+		else
+			new DwgLZ77AC21Decompressor().Decompress(compressedData, 0U, (uint)compressedSize, decompressedData);
 
 		return decompressedData;
 	}
@@ -904,8 +926,9 @@ public class DwgReader : CadReaderBase<DwgReaderConfiguration>
 		//If ComprLen is negative, then Data is not compressed (and data length is ComprLen).
 		if (comprLen < 0)
 		{
-			//buffer = decodedData
-			throw new NotImplementedException();
+			if (comprLen != -buffer.Length || decodedData.Length < 32 + buffer.Length)
+				throw new InvalidDataException("Invalid uncompressed R2007 metadata length.");
+			Array.Copy(decodedData, 32, buffer, 0, buffer.Length);
 		}
 		//If ComprLen is positive, the ComprLen bytes of data are compressed
 		else

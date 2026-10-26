@@ -15,7 +15,7 @@ namespace ACadSharp.Tests.IO;
 
 public class LegacyFormatTests
 {
-	private static CadDocument fixture(ACadVersion version)
+	internal static CadDocument fixture(ACadVersion version)
 	{
 		var doc = new CadDocument();
 		doc.Header.Version = version;
@@ -56,7 +56,7 @@ public class LegacyFormatTests
 		return reader.Read();
 	}
 
-	private static void verify(CadDocument doc, bool attributes)
+	internal static void verify(CadDocument doc, bool attributes)
 	{
 		Assert.True(doc.Entities.Count == 5, string.Join(", ", doc.Entities.Select(e => e.ObjectName)));
 		var line = Assert.Single(doc.Entities.OfType<Line>());
@@ -118,7 +118,7 @@ public class LegacyFormatTests
 		verifyMeshes(readDxf(writeDxf(meshFixture(), binary)));
 	}
 
-	private static CadDocument meshFixture()
+	internal static CadDocument meshFixture()
 	{
 		var doc = new CadDocument(); doc.Header.Version = ACadVersion.AC1009;
 		var line = new Polyline3D();
@@ -136,7 +136,7 @@ public class LegacyFormatTests
 		return doc;
 	}
 
-	private static void verifyMeshes(CadDocument result)
+	internal static void verifyMeshes(CadDocument result)
 	{
 		Assert.Equal(3, result.Entities.Count);
 		Assert.Equal(new XYZ(4, 5, 6), Assert.Single(result.Entities.OfType<Polyline3D>()).Vertices.Last().Location);
@@ -184,16 +184,22 @@ public class LegacyFormatTests
 	[InlineData(ACadVersion.AC1009, false)]
 	[InlineData(ACadVersion.AC1009, true)]
 	[InlineData(ACadVersion.AC1012, false)]
-	public void LegacyOutputPassesIndependentOdaAudit(ACadVersion version, bool binary)
+	[InlineData(ACadVersion.AC1009, false, true)]
+	[InlineData(ACadVersion.AC1021, false, true)]
+	public void LegacyOutputPassesIndependentOdaAudit(ACadVersion version, bool binary, bool nativeDwg = false)
 	{
 		string converter = Environment.GetEnvironmentVariable("ODA_FILE_CONVERTER");
 		if (string.IsNullOrEmpty(converter)) return;
 		string run = Path.Combine(TestVariables.OutputSamplesFolder, "legacy-oda-" + Guid.NewGuid().ToString("N"));
 		string input = Path.GetFullPath(Path.Combine(run, "input")), output = Path.GetFullPath(Path.Combine(run, "output"));
 		Directory.CreateDirectory(input); Directory.CreateDirectory(output);
-		bool dwg = version == ACadVersion.AC1012;
+		bool dwg = nativeDwg || version == ACadVersion.AC1012;
 		var doc = fixture(version);
-		if (dwg) DwgWriter.Write(Path.Combine(input, "drawing.dwg"), doc);
+		if (dwg)
+		{
+			DwgWriter.Write(Path.Combine(input, "drawing.dwg"), doc);
+			if (version == ACadVersion.AC1009) DwgWriter.Write(Path.Combine(input, "mesh.dwg"), meshFixture());
+		}
 		else
 		{
 			File.WriteAllBytes(Path.Combine(input, "drawing.dxf"), writeDxf(doc, binary));
@@ -210,7 +216,7 @@ public class LegacyFormatTests
 		Assert.Empty(Directory.GetFiles(output, "*.err"));
 		string converted = Path.Combine(output, "drawing.dxf");
 		Assert.True(File.Exists(converted), "ODA produced no DXF");
-		verify(readDxf(File.ReadAllBytes(converted)), !dwg);
-		if (!dwg) verifyMeshes(readDxf(File.ReadAllBytes(Path.Combine(output, "mesh.dxf"))));
+		verify(readDxf(File.ReadAllBytes(converted)), version == ACadVersion.AC1009);
+		if (!dwg || version == ACadVersion.AC1009) verifyMeshes(readDxf(File.ReadAllBytes(Path.Combine(output, "mesh.dxf"))));
 	}
 }

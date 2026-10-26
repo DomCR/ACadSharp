@@ -1,4 +1,4 @@
-﻿using ACadSharp.Exceptions;
+using ACadSharp.Exceptions;
 using CSUtilities.Text;
 
 namespace ACadSharp.IO.DWG
@@ -35,8 +35,9 @@ namespace ACadSharp.IO.DWG
 				case ACadVersion.AC1003:
 				case ACadVersion.AC1004:
 				case ACadVersion.AC1006:
-				case ACadVersion.AC1009:
 					throw new CadNotSupportedException(version);
+				case ACadVersion.AC1009:
+					return new DwgFileHeaderAC15(version);
 				case ACadVersion.AC1012:
 				case ACadVersion.AC1014:
 				case ACadVersion.AC1015:
