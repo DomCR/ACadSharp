@@ -5,8 +5,6 @@ namespace ACadSharp.IO.Templates
 {
 	internal class CadLayerTemplate : CadTableEntryTemplate<Layer>
 	{
-		public ulong LayerControlHandle { get; set; }
-
 		public ulong PlotStyleHandle { get; set; }
 
 		public ulong MaterialHandle { get; set; }
@@ -28,7 +26,11 @@ namespace ACadSharp.IO.Templates
 
 			base.build(builder);
 
-			//this.CadObject.PlotStyleName = builder.GetCadObject(PlotStyleHandle);
+			// DWG keeps the layer's plot style (ACAD_PLOTSTYLENAME entry) as a handle; the DXF reader sets it directly.
+			if (this.PlotStyleHandle != 0)
+			{
+				this.CadObject.PlotStyleName = this.PlotStyleHandle;
+			}
 
 			if (builder.TryGetCadObject(this.MaterialHandle, out Material material))
 			{
