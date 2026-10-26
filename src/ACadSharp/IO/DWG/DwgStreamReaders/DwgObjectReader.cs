@@ -6390,7 +6390,7 @@ namespace ACadSharp.IO.DWG
 				//H 332 Background(soft pointer)
 				long backgroundHandle = (long)this.handleReference();
 				//H 348 Visual Style(hard pointer)
-				long visualStyleHandle = (long)this.handleReference();
+				template.VisualStyleHandle = this.handleReference();
 				//H 333 Shadeplot ID(soft pointer)
 				long shadePlotIdHandle = (long)this.handleReference();
 				//H 361 Sun(hard owner)
