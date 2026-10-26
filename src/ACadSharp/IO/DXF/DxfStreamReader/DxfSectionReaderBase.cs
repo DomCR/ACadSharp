@@ -1051,7 +1051,13 @@ internal abstract class DxfSectionReaderBase
 
 		while (this._reader.Code == 0 && this._reader.ValueAsString == DxfFileToken.EntityVertex)
 		{
-			var vertexTemplate = this.readEntityCodes<Entity>(new CadVertexTemplate(), this.readVertex);
+			var vertexTemplate = (CadVertexTemplate)this.readEntityCodes<Entity>(new CadVertexTemplate(), this.readVertex);
+
+			if (vertexTemplate.CadObject is CadVertexTemplate.VertexPlaceholder)
+			{
+				//The subclass markers end at AcDbVertex, the vertex type comes from the polyline
+				this.setVertexFromPolyline(vertexTemplate, template.CadObject);
+			}
 
 			if (vertexTemplate.OwnerHandle == null)
 			{
@@ -1078,6 +1084,24 @@ internal abstract class DxfSectionReaderBase
 		}
 
 		return template;
+	}
+
+	private void setVertexFromPolyline(CadVertexTemplate template, Entity polyline)
+	{
+		//A polyface mesh is left out: its vertex type depends on the flags and a face record needs codes
+		//the placeholder does not keep; the polyline template reports such a vertex instead of failing
+		switch (polyline)
+		{
+			case Polyline2D:
+				template.SetVertexObject(new Vertex2D());
+				break;
+			case Polyline3D:
+				template.SetVertexObject(new Vertex3D());
+				break;
+			case PolygonMesh:
+				template.SetVertexObject(new PolygonMeshVertex());
+				break;
+		}
 	}
 
 	private CadEntityTemplate readLegacyPolyline()
@@ -1803,6 +1827,8 @@ internal abstract class DxfSectionReaderBase
 				switch (this._reader.ValueAsString)
 				{
 					case DxfSubclassMarker.Vertex:
+						//Until a subtype marker names the vertex type, the placeholder keeps the codes of the vertex base
+						map.SubClasses[DxfSubclassMarker.Vertex] = DxfClassMap.Create<Vertex>();
 						return true;
 					case DxfSubclassMarker.PolylineVertex:
 						tmp.SetVertexObject(new Vertex2D());
@@ -1828,6 +1854,12 @@ internal abstract class DxfSectionReaderBase
 						return false;
 				}
 			default:
+				if (tmp.CadObject is CadVertexTemplate.VertexPlaceholder
+					&& map.SubClasses.TryGetValue(DxfSubclassMarker.Vertex, out DxfClassMap vertexMap))
+				{
+					return this.tryAssignCurrentValue(template.CadObject, vertexMap);
+				}
+
 				return this.tryAssignCurrentValue(template.CadObject, map.SubClasses[tmp.CadObject.SubclassMarker]);
 		}
 	}
