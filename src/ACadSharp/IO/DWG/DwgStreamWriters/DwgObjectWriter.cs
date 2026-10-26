@@ -4,6 +4,7 @@ using ACadSharp.Entities;
 using ACadSharp.Entities.AecEntities;
 using ACadSharp.Entities.Mechanical;
 using ACadSharp.Entities.ProxyGraphics;
+using ACadSharp.IO.DWG.DwgStreamWriters;
 using ACadSharp.Objects;
 using ACadSharp.Tables;
 using ACadSharp.Tables.Collections;

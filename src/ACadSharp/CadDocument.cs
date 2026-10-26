@@ -47,12 +47,6 @@ public class CadDocument : IHandledCadObject
 	public ColorCollection Colors { get; private set; }
 
 	/// <summary>
-	/// The data stored in the Prototype1b header section. This primarily contains ACIS and thumbnail data
-	/// </summary>
-	[Obsolete("This property is obsolete and will be removed in future versions.")]
-	public Prototype1b.DataStorage DataStorage { get; set; }
-
-	/// <summary>
 	/// The collection of the system variables in the drawing.
 	/// </summary>
 	/// <remarks>

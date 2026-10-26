@@ -1,6 +1,7 @@
 ﻿using ACadSharp.Attributes;
 using ACadSharp.Classes;
 using ACadSharp.IO.DWG;
+using ACadSharp.IO.DWG.DwgStreamWriters;
 using CSMath;
 using System.IO;
 using System.Text;

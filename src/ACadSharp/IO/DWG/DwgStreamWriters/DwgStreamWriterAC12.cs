@@ -1,4 +1,5 @@
-﻿using System.IO;
+﻿using ACadSharp.IO.DWG.DwgStreamWriters;
+using System.IO;
 using System.Text;
 
 namespace ACadSharp.IO.DWG
