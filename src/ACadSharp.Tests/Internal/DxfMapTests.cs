@@ -1,5 +1,6 @@
 ﻿using ACadSharp.Attributes;
 using ACadSharp.Entities;
+using ACadSharp.Entities.Tangent;
 using ACadSharp.Tables;
 using ACadSharp.Tests.Common;
 using System;
@@ -25,7 +26,8 @@ public class DxfMapTests
 				|| item.IsSubclassOf(typeof(TableEntry)))
 			{
 				if (item == typeof(UnknownEntity) 
-					|| item == typeof(PdfUnderlay))
+					|| item == typeof(PdfUnderlay)
+					|| typeof(TchEntity).IsAssignableFrom(item))
 				{
 					continue;
 				}

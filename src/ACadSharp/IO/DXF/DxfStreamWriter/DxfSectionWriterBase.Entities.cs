@@ -1,5 +1,6 @@
 ﻿using ACadSharp.Entities;
 using ACadSharp.Entities.AecEntities;
+using ACadSharp.Entities.Tangent;
 using ACadSharp.Entities.Mechanical;
 using ACadSharp.Entities.ProxyGraphics;
 using ACadSharp.Objects;
@@ -163,6 +164,7 @@ internal abstract partial class DxfSectionWriterBase
 		{
 			case Seqend://Manually assign at the end of the collections
 			case UnknownEntity:
+			case TchEntity:
 			case MechanicalEntity:
 			case Wall:
 			case Solid3D when this.Version < ACadVersion.AC1014:

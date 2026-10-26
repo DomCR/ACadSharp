@@ -2,6 +2,7 @@
 using Xunit;
 using ACadSharp.Tests.Common;
 using ACadSharp.Entities;
+using ACadSharp.Entities.Tangent;
 using ACadSharp.Objects;
 using ACadSharp.Tables;
 using ACadSharp.XData;
@@ -20,7 +21,8 @@ public class CadObjectTests
 		{
 			if (item == typeof(UnknownEntity) 
 				|| item == typeof(PdfUnderlay) 
-				|| item == typeof(UnknownNonGraphicalObject))
+				|| item == typeof(UnknownNonGraphicalObject)
+				|| typeof(TchEntity).IsAssignableFrom(item))
 			{
 				continue;
 			}
