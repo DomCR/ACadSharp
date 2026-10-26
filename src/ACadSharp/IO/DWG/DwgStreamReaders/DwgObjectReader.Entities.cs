@@ -916,6 +916,22 @@ internal partial class DwgObjectReader : DwgSectionIO
 		this.readInsertCommonData(template);
 		this.readInsertCommonHandles(template);
 
+		// The insert data above (position, scale, the *T graphics block) is enough to plot the
+		// table. If the cell data below cannot be parsed, keep the table rather than drop it.
+		try
+		{
+			this.readTableEntityData(table, template);
+		}
+		catch (System.Exception ex)
+		{
+			this._builder.Notify($"ACAD_TABLE {table.Handle}: cell data could not be read; the table graphics are kept", NotificationType.Warning, ex);
+		}
+
+		return template;
+	}
+
+	private void readTableEntityData(TableEntity table, CadTableEntityTemplate template)
+	{
 		if (this.R2010Plus)
 		{
 			//RC Unknown (default 0)
@@ -997,7 +1013,7 @@ internal partial class DwgObjectReader : DwgSectionIO
 				table.BreakRowRanges.Add(breakRowRange);
 			}
 
-			return template;
+			return;
 		}
 
 		//Until R2007
@@ -1483,7 +1499,6 @@ internal partial class DwgObjectReader : DwgSectionIO
 			}
 		}
 
-		return template;
 	}
 
 	private XY? readValueXY()

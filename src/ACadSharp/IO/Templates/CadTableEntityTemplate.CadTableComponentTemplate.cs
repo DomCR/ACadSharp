@@ -36,7 +36,7 @@ internal partial class CadTableEntityTemplate
 					break;
 			}
 
-			this.CellStyleTemplate.Build(builder);
+			this.CellStyleTemplate?.Build(builder); // null when the cell data was only partly read
 		}
 	}
 }
