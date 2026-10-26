@@ -366,6 +366,10 @@ namespace ACadSharp.IO.DWG
 
 		public override byte[] ReadBytes(int length)
 		{
+			//The length may come from a damaged file, check it before allocating
+			if (length < 0 || length > this.Stream.Length - this.Stream.Position)
+				throw new EndOfStreamException();
+
 			byte[] numArray = new byte[length];
 			this.applyShiftToArr(length, numArray);
 			return numArray;
