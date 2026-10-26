@@ -448,7 +448,8 @@ internal partial class DwgObjectReader : DwgSectionIO
 
 		if (this.R2007Plus)
 		{
-			return System.Text.Encoding.Unicode.GetString(arr, 0, length - 2);
+			//A count smaller than the terminator is an empty string (it used to throw and drop the object)
+			return length < 2 ? string.Empty : System.Text.Encoding.Unicode.GetString(arr, 0, length - 2);
 		}
 		else
 		{
