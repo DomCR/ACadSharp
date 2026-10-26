@@ -36,7 +36,25 @@ namespace ACadSharp.Text
 							index += 2;
 							break;
 						case 'A':
+						case 'Q':
+						case 'T':
+						case 'W':
 							jump(text, index, out index);
+							break;
+						case 'L':
+						case 'l':
+						case 'O':
+						case 'o':
+						case 'K':
+						case 'k':
+							index += 2;
+							break;
+						case '~':
+							sb.Append(' ');
+							index += 2;
+							break;
+						case 'S':
+							processStacking(text, index, sb, out index);
 							break;
 						case 'c':
 						case 'C':
@@ -55,6 +73,7 @@ namespace ACadSharp.Text
 							break;
 						case 'P':
 						case 'n':
+						case 'N':
 							sb.Append(Environment.NewLine);
 							index += 2;
 							break;
@@ -164,51 +183,40 @@ namespace ACadSharp.Text
 			return sb.ToString();
 		}
 
-		private static void processFont(string text, int start, out int end)
+		private static void processStacking(string text, int start, StringBuilder output, out int end)
 		{
-			//Example:
-			//- Font: {\\fCalibri|b0|i0|c0|p34;Calibri\\Fcdm|c0; CDM \\fConsolas|b0|i0|c0|p49;Consolas\\P}
-			end = text.IndexOf(';', start);
-			end += 1;
-			var data = text.Substring(start, end - start).Split('|');
-
-			FontData fontData = new FontData
+			int index = start + 2;
+			bool separated = false;
+			while (index < text.Length && text[index] != ';')
 			{
-				Name = data[0],
-			};
+				char ch = text[index];
+				if (ch == '\\' && index + 1 < text.Length)
+					ch = text[++index];
+				else if (!separated && (ch == '^' || ch == '/' || ch == '#'))
+				{
+					separated = true;
+					ch = '/';
+				}
+				output.Append(ch);
+				index++;
+			}
+			end = Math.Min(index + 1, text.Length);
 		}
+
+		private static void processFont(string text, int start, out int end) => jump(text, start, out end);
 
 		private static void jump(string text, int start, out int end)
 		{
-			//Example:
-			//\\(unknown escape code)(escape text);
-			end = text.IndexOf(';', start);
-			end += 1;
+			int terminator = text.IndexOf(';', start);
+			end = terminator < 0 ? text.Length : terminator + 1;
 		}
 
-		private static void processColor(string text, int start, out int end)
-		{
-			//Example:
-			//- Color text {\\C3;green}, {\\C5;blue}, {\\C1;red}, ByLayer, {\\C0;ByBlock}, {\\C21;\\c5872631;TrueColor}
-			end = text.IndexOf(';', start);
-			end += 1;
-		}
+		private static void processColor(string text, int start, out int end) => jump(text, start, out end);
 
-		private static void processHeight(string text, int start, out int end)
-		{
-			//Example:
-			//- {\\H2x;Double height \\H0.875x;height is: 0.35\\H1.14286x;\\P}
-			end = text.IndexOf(';', start);
-			end += 1;
-		}
+		private static void processHeight(string text, int start, out int end) => jump(text, start, out end);
 
-		private static void processJustification(string text, int start, out int end)
-		{
-			//Example:
-			//\\pxqc;Text in the center\\P\\pq*;Hello this is an mText\\P
-			end = text.IndexOf(';', start);
-			end += 1;
-		}
+		private static void processJustification(string text, int start, out int end) => jump(text, start, out end);
+
 	}
 
 	internal struct FontData
