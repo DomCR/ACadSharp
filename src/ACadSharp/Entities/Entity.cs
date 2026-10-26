@@ -305,8 +305,10 @@ public abstract class Entity : CadObject, IEntity
 
 	internal override void UnassignDocument()
 	{
-		this.Document.Colors.RemoveReference(this._bookColor?.Name, this);
-		this.Document.Materials.RemoveReference(this._material?.Name, this);
+		//The colors/materials collections are null for documents read from files without
+		//an ACAD_COLOR/ACAD_MATERIAL dictionary.
+		this.Document.Colors?.RemoveReference(this._bookColor?.Name, this);
+		this.Document.Materials?.RemoveReference(this._material?.Name, this);
 
 		this.Document.Layers.RemoveReference(this.Layer.Name, this);
 		this.Document.LineTypes.RemoveReference(this.LineType.Name, this);
