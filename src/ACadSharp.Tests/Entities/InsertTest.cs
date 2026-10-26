@@ -139,6 +139,67 @@ public class InsertTest
 	}
 
 	[Fact]
+	public void TheTransformCarriesTheBasePointOntoTheInsertPoint()
+	{
+		//Whatever a block's base point is, that is the spot that lands on the insertion point.
+		//Folding the base into the outer translation instead gives (insert - base) + R*S*p, which
+		//is off by (R*S - I)*base - invisible at unit scale, wrong as soon as the insert is scaled.
+		BlockRecord record = new BlockRecord(this._blockName);
+		record.BlockEntity.BasePoint = new XYZ(100, 0, 0);
+
+		Insert insert = new Insert(record)
+		{
+			InsertPoint = XYZ.Zero,
+			XScale = 2,
+			YScale = 2,
+			ZScale = 2,
+		};
+
+		XYZ mapped = insert.GetTransform().ApplyTransform(new XYZ(100, 0, 0));
+
+		Assert.Equal(XYZ.Zero, mapped);
+	}
+
+	[Fact]
+	public void GetBoundingBoxTransformsEveryCornerNotJustTwo()
+	{
+		//Rotation mixes the axes, so the images of two opposite corners no longer span the
+		//transformed box. At 45 degrees the pair collapses onto a diagonal and the box comes back
+		//with no width at all.
+		BlockRecord record = new BlockRecord(this._blockName);
+		record.Entities.Add(new Line(new XYZ(0, 0, 0), new XYZ(1, 0, 0)));
+		record.Entities.Add(new Line(new XYZ(0, 1, 0), new XYZ(1, 1, 0)));
+
+		Insert insert = new Insert(record)
+		{
+			InsertPoint = XYZ.Zero,
+			Rotation = Math.PI / 4,
+		};
+
+		BoundingBox box = insert.GetBoundingBox();
+
+		double h = Math.Sqrt(2) / 2;
+
+		Assert.Equal(-h, box.Min.X, 9);
+		Assert.Equal(h, box.Max.X, 9);
+		Assert.Equal(0, box.Min.Y, 9);
+		Assert.Equal(Math.Sqrt(2), box.Max.Y, 9);
+	}
+
+	[Fact]
+	public void GetBoundingBoxSurvivesABlockTheReaderCouldNotResolve()
+	{
+		//The reader warns and leaves Block null rather than refuse a file that names a block it
+		//cannot find, so measuring such an insert must not throw either.
+		Insert insert = new Insert { InsertPoint = new XYZ(5, 6, 7) };
+
+		BoundingBox box = insert.GetBoundingBox();
+
+		Assert.Equal(new XYZ(5, 6, 7), box.Min);
+		Assert.Equal(new XYZ(5, 6, 7), box.Max);
+	}
+
+	[Fact]
 	public void GetBoundingBoxTest()
 	{
 		var l = new Line(XYZ.Zero, new XYZ(10, 10, 0));
