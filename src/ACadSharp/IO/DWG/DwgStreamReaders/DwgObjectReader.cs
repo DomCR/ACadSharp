@@ -4762,21 +4762,85 @@ namespace ACadSharp.IO.DWG
 			return template;
 		}
 
-		private CadDimensionAssociationTemplate.OsnapPointRefTemplate readOsnapPointRef()
+		/// <summary>
+		/// Reads one AcDbOsnapPointRef, and the references chained after it (see
+		/// <see cref="DimensionAssociation.OsnapPointRef.LastPointRef"/>).
+		/// </summary>
+		/// <remarks>
+		/// The old reader stopped after the first handle: it skipped the count before the handles and every
+		/// field after them, so the second reference of a dimension was read from the wrong position.
+		/// </remarks>
+		private CadDimensionAssociationTemplate.OsnapPointRefTemplate readOsnapPointRef(int depth = 0)
 		{
 			var osnap = new DimensionAssociation.OsnapPointRef();
 			var template = new CadDimensionAssociationTemplate.OsnapPointRefTemplate(osnap);
 
-			//1
-			var className = this._mergedReaders.ReadVariableText();
-			//72
+			//TV 1 class name (AcDbOsnapPointRef)
+			this._mergedReaders.ReadVariableText();
+			//RC 72 object snap type
 			osnap.ObjectOsnapType = (ObjectOsnapType)this._mergedReaders.ReadByte();
 
-			//331
-			template.ObjectHandle = this.handleReference();
+			//BL number of objects in the main path, then H 331 for each (outermost first)
+			int count = this._mergedReaders.ReadBitLong();
+			for (int i = 0; i < count; i++)
+			{
+				template.GeometryHandles.Add(this.handleReference());
+			}
+
+			if (osnap.ObjectOsnapType != ObjectOsnapType.None)
+			{
+				//BL 73 subentity type of the main object
+				osnap.SubentType = (SubentType)this._mergedReaders.ReadBitLong();
+				//BL 91 GsMarker of the main object
+				osnap.GsMarker = this._mergedReaders.ReadBitLong();
+				//BL number of Xref paths, then TV 301 for each
+				int xrefs = this._mergedReaders.ReadBitLong();
+				for (int i = 0; i < xrefs; i++)
+				{
+					osnap.XrefPaths.Add(this._mergedReaders.ReadVariableText());
+				}
+			}
+
+			//BD 40 geometry parameter (near snap)
+			osnap.GeometryParameter = this._mergedReaders.ReadBitDouble();
+			//3BD 10 osnap point (WCS)
+			osnap.OsnapPoint = this._mergedReaders.Read3BitDouble();
+
+			if (osnap.HasIntersection)
+			{
+				//BL number of objects in the intersection path, then H 332 for each
+				int intersections = this._mergedReaders.ReadBitLong();
+				for (int i = 0; i < intersections; i++)
+				{
+					template.IntersectionHandles.Add(this.handleReference());
+				}
+
+				//BL 74 subentity type of the intersection object
+				osnap.IntersectionSubType = (SubentType)this._mergedReaders.ReadBitLong();
+				//BL 92 GsMarker of the intersection object
+				osnap.IntersectionGsMarker = this._mergedReaders.ReadBitLong();
+				//BL number of Xref paths, then TV 302 for each
+				int xrefs = this._mergedReaders.ReadBitLong();
+				for (int i = 0; i < xrefs; i++)
+				{
+					osnap.IntersectionXrefPaths.Add(this._mergedReaders.ReadVariableText());
+				}
+			}
+
+			//B 75 another reference follows in the same slot
+			osnap.HasLastPointRef = this._mergedReaders.ReadBit();
+			if (osnap.HasLastPointRef && depth < MaxOsnapPointRefChain)
+			{
+				template.LastPointRef = this.readOsnapPointRef(depth + 1);
+			}
 
 			return template;
 		}
+
+		/// <summary>
+		/// Bound for the chain of references in one slot: corrupt data must not recurse forever.
+		/// </summary>
+		private const int MaxOsnapPointRefChain = 8;
 
 		private CadTemplate readPdfDefinition()
 		{
