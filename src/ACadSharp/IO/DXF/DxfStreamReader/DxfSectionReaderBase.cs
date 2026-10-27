@@ -163,7 +163,7 @@ internal abstract class DxfSectionReaderBase
 			case DxfFileToken.EntityArc:
 				return this.readEntityCodes<Arc>(new CadEntityTemplate<Arc>(), this.readArc);
 			case DxfFileToken.EntityBody:
-				return this.readEntityCodes<CadBody>(new CadModelerGeometryTemplate<CadBody>(), this.readModelerGeometry);
+				return this.readEntityCodes<CadBody>(new CadModelerGeometryTemplate<CadBody>(), this.readModelerGeometry<CadBody>);
 			case DxfFileToken.EntityCircle:
 				return this.readEntityCodes<Circle>(new CadEntityTemplate<Circle>(), this.readCircle);
 			case DxfFileToken.EntityDimension:
