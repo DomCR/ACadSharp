@@ -2357,7 +2357,6 @@ namespace ACadSharp.IO.DWG
 			//R2004+:
 			if (this.R2004Plus)
 			{
-				hatch.GradientColor = new HatchGradientPattern();
 				//Is Gradient Fill BL 450 Non-zero indicates a gradient fill is used.
 				hatch.GradientColor.Enabled = this._objectReader.ReadBitLong() != 0;
 
