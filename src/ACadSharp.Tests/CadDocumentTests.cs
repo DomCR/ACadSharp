@@ -1,5 +1,6 @@
 ﻿using ACadSharp.Blocks;
 using ACadSharp.Entities;
+using ACadSharp.Entities.Tangent;
 using ACadSharp.Objects;
 using ACadSharp.Tables;
 using ACadSharp.Tests.Common;
@@ -28,7 +29,8 @@ public class CadDocumentTests
 			if (item == typeof(Block)
 				|| item == typeof(PdfUnderlay)
 				|| item == typeof(BlockEnd)
-				|| item == typeof(UnknownEntity))
+				|| item == typeof(UnknownEntity)
+				|| typeof(TchEntity).IsAssignableFrom(item))
 				continue;
 
 			EntityTypes.Add(item);
