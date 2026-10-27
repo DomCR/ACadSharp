@@ -107,6 +107,7 @@ public abstract class WriterSingleObjectTests : IOTestsBase
 		Data.Add(new(nameof(SingleCaseGenerator.LeaderWithArrowHead)));
 		Data.Add(new(nameof(SingleCaseGenerator.SortedXRecords)));
 		Data.Add(new(nameof(SingleCaseGenerator.ProxyGraphics)));
+		Data.Add(new(nameof(SingleCaseGenerator.AnonymousBlockWithShortName)));
 	}
 
 	public WriterSingleObjectTests(ITestOutputHelper output) : base(output)
@@ -357,6 +358,11 @@ public abstract class WriterSingleObjectTests : IOTestsBase
 				Assert.Equal(vp1.Width, result1.Width);
 				Assert.Equal(vp2.Height, result2.Height);
 			};
+		}
+
+		public void AnonymousBlockWithShortName()
+		{
+			this.Document.BlockRecords.Add(new BlockRecord("顶") { IsAnonymous = true });
 		}
 
 		public void ArcSegments()
