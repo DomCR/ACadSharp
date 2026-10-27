@@ -5798,12 +5798,6 @@ references:
   commentId: F:ACadSharp.DxfFileToken.TableEntry
   fullName: ACadSharp.DxfFileToken.TableEntry
   nameWithType: DxfFileToken.TableEntry
-- uid: ACadSharp.DxfFileToken.TableGroup
-  name: TableGroup
-  href: api/ACadSharp.DxfFileToken.html#ACadSharp_DxfFileToken_TableGroup
-  commentId: F:ACadSharp.DxfFileToken.TableGroup
-  fullName: ACadSharp.DxfFileToken.TableGroup
-  nameWithType: DxfFileToken.TableGroup
 - uid: ACadSharp.DxfFileToken.TableLayer
   name: TableLayer
   href: api/ACadSharp.DxfFileToken.html#ACadSharp_DxfFileToken_TableLayer
