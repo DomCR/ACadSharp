@@ -597,7 +597,7 @@ internal abstract partial class DxfSectionWriterBase
 			}
 		}
 
-		this._writer.Write(470, hatch.GradientColor.Name);
+		this._writer.Write(470, hatch.GradientColor.Name ?? string.Empty);
 	}
 
 	private void writeHatchBoundaryAngles(double startAngle, double endAngle)
