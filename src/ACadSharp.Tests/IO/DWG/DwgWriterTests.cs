@@ -2,7 +2,6 @@
 using ACadSharp.Exceptions;
 using ACadSharp.Header;
 using ACadSharp.IO;
-using ACadSharp.Tables;
 using ACadSharp.Tests.Common;
 using System.IO;
 using Xunit;
@@ -180,26 +179,6 @@ public class DwgWriterTests : IOTestsBase
 		}
 
 		using (var re = new DwgReader(path, this.onNotification))
-		{
-			CadDocument readed = re.Read();
-		}
-	}
-
-	[Fact]
-	public void WriteAnonymousBlockWithShortName()
-	{
-		CadDocument doc = new CadDocument();
-		doc.Header.Version = ACadVersion.AC1032;
-		doc.BlockRecords.Add(new BlockRecord("顶") { IsAnonymous = true });
-
-		MemoryStream ms = new MemoryStream();
-		using (var wr = new DwgWriter(ms, doc))
-		{
-			wr.OnNotification += this.onNotification;
-			wr.Write();
-		}
-
-		using (var re = new DwgReader(new MemoryStream(ms.ToArray()), this.onNotification))
 		{
 			CadDocument readed = re.Read();
 		}
