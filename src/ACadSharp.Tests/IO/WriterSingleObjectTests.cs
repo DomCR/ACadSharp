@@ -2722,24 +2722,51 @@ public abstract class WriterSingleObjectTests : IOTestsBase
 
 		public void SingleTableEntity()
 		{
-			var t = new TableEntity();
+			BlockRecord block = new BlockRecord("*T1")
+			{
+				IsAnonymous = true,
+			};
+			this.Document.BlockRecords.Add(block);
 
-			t.Columns.Add(new TableEntity.Column() { Width = 10 });
+			TableEntity t = new TableEntity(block);
+
 			t.Rows.Add(new TableEntity.Row() { Height = 5 });
+			t.Rows.Add(new TableEntity.Row() { Height = 5 });
+			t.Columns.Add(new TableEntity.Column() { Width = 10 });
+			t.Columns.Add(new TableEntity.Column() { Width = 10 });
+			t.Columns.Add(new TableEntity.Column() { Width = 10 });
+
+			for (int r = 0; r < 2; r++)
+			{
+				for (int c = 0; c < 3; c++)
+				{
+					TableEntity.Cell cell = new TableEntity.Cell();
+					TableEntity.CellContent content = new TableEntity.CellContent();
+					content.CadValue.SetValue($"R{r}C{c}", CadValueType.String);
+					cell.Contents.Add(content);
+					t.Rows[r].Cells.Add(cell);
+				}
+			}
 
 			this.Document.Entities.Add(t);
 
 			this.AssertRoundtrip = (doc) =>
 			{
-				//TODO: Generate a valid table entity, currently it creates an invalid one but it is correctly read by AutoCAD
-				return;
+				if (this.Format == CadFileFormat.DWG)
+				{
+					//The DWG writer does not restore the cell contents of this synthetic
+					//table yet; DXF writing is covered by the accompanying PR.
+					return;
+				}
 
 				TableEntity result = doc.GetCadObject<TableEntity>(t.Handle);
 
 				Assert.NotNull(result);
-				EntityComparator.IsEqual(t, result);
-				Assert.Equal(t.Columns.Count, result.Columns.Count);
+				Assert.NotNull(result.Block);
 				Assert.Equal(t.Rows.Count, result.Rows.Count);
+				Assert.Equal(t.Columns.Count, result.Columns.Count);
+				Assert.Equal("R0C0", result.GetCell(0, 0).Content.CadValue.Value);
+				Assert.Equal("R1C2", result.GetCell(1, 2).Content.CadValue.Value);
 			};
 		}
 
