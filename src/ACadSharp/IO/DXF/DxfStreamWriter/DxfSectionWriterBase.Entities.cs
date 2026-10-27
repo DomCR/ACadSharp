@@ -539,7 +539,7 @@ internal abstract partial class DxfSectionWriterBase
 
 		this._writer.Write(210, hatch.Normal, map);
 
-		this._writer.Write(2, hatch.Pattern.Name, map);
+		this._writer.Write(2, hatch.Pattern?.Name, map);
 
 		this._writer.Write(70, hatch.IsSolid ? (short)1 : (short)0, map);
 		this._writer.Write(71, hatch.IsAssociative ? (short)1 : (short)0, map);
@@ -550,9 +550,12 @@ internal abstract partial class DxfSectionWriterBase
 			this.writeBoundaryPath(path);
 		}
 
+		this._writer.Write(75, (short)hatch.Style);
+		this._writer.Write(76, (short)hatch.PatternType);
+
 		this.writeHatchPattern(hatch, hatch.Pattern);
 
-		if (!hatch.IsSolid || hatch.Paths.Any(p => p.Flags.HasFlag(BoundaryPathFlags.Derived)) || hatch.PixelSize != 0)
+		if (hatch.PixelSize != 0.0 || hatch.Paths.Any(p => p.Flags.HasFlag(BoundaryPathFlags.Derived)) || hatch.PixelSize != 0)
 		{
 			this._writer.Write(47, hatch.PixelSize, map);
 		}
@@ -563,7 +566,31 @@ internal abstract partial class DxfSectionWriterBase
 			this._writer.Write(10, spoint);
 		}
 
-		//TODO: Implement HatchGradientPattern
+		if (this.Version <= ACadVersion.AC1015
+			|| hatch.GradientColor == null
+			|| (hatch.Pattern != null && hatch.Pattern.Lines.Count > 0))
+		{
+			return;
+		}
+
+		this._writer.Write(450, hatch.GradientColor.Enabled ? 1 : 0);
+		this._writer.Write(451, hatch.GradientColor.Reserved);
+		this._writer.Write(460, hatch.GradientColor.Angle);
+		this._writer.Write(461, hatch.GradientColor.Shift);
+		this._writer.Write(452, hatch.GradientColor.IsSingleColorGradient ? 1 : 0);
+		this._writer.Write(462, hatch.GradientColor.ColorTint);
+		this._writer.Write(453, hatch.GradientColor.Colors.Count);
+		foreach (var color in hatch.GradientColor.Colors)
+		{
+			this._writer.Write(463, color.Value);
+			this._writer.Write(63, color.Color.GetApproxIndex());
+			if (color.Color.IsTrueColor)
+			{
+				this._writer.WriteCmColor(421, color.Color);
+			}
+		}
+
+		this._writer.Write(470, hatch.GradientColor.Name);
 	}
 
 	private void writeHatchBoundaryAngles(double startAngle, double endAngle)
@@ -670,8 +697,10 @@ internal abstract partial class DxfSectionWriterBase
 
 	private void writeHatchPattern(Hatch hatch, HatchPattern pattern)
 	{
-		this._writer.Write(75, (short)hatch.Style);
-		this._writer.Write(76, (short)hatch.PatternType);
+		if (pattern == null || pattern.Lines.Count == 0)
+		{
+			return;
+		}
 
 		if (!hatch.IsSolid)
 		{
