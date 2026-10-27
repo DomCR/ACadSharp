@@ -1,9 +1,7 @@
-﻿using ACadSharp.Entities;
-using ACadSharp.IO;
+﻿using ACadSharp.IO;
 using ACadSharp.Tests.TestModels;
 using System.Diagnostics;
 using System.IO;
-using System.Linq;
 using Xunit;
 using Xunit.Abstractions;
 
@@ -46,7 +44,6 @@ public class LocalSampleTests : IOTestsBase
 		{
 			this._output.WriteLine("--- starting write ---");
 			DwgWriter.Write(Path.Combine(TestVariables.DesktopFolder, "output", "test.dwg"), doc, notification: this.onNotification);
-			DxfWriter.Write(Path.Combine(TestVariables.DesktopFolder, "output", "test.dxf"), doc, notification: this.onNotification);
 		}
 	}
 

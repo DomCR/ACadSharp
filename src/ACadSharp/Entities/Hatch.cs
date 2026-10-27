@@ -28,7 +28,7 @@ public partial class Hatch : Entity, IOrientable
 	/// Gradient color pattern, if exists.
 	/// </summary>
 	[DxfCodeValue(DxfReferenceType.Name, 470)]
-	public HatchGradientPattern GradientColor { get; set; } = null;
+	public HatchGradientPattern GradientColor { get; set; } = new HatchGradientPattern();
 
 	/// <summary>
 	/// Associativity flag.
