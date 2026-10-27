@@ -231,19 +231,19 @@ internal abstract class DxfSectionReaderBase
 			case DxfFileToken.EntityRegion:
 				return this.readEntityCodes<Region>(new CadModelerGeometryTemplate<Region>(), this.readModelerGeometry<Region>);
 			case DxfFileToken.EntitySurface:
-				return this.readEntityCodes<Surface>(new CadModelerGeometryTemplate<Surface>(), this.readSurfaceEntity);
+				return this.readEntityCodes<Surface>(new CadModelerGeometryTemplate<Surface>(), this.readSurfaceEntity<Surface>);
 			case DxfFileToken.EntityExtrudedSurface:
-				return this.readEntityCodes<ExtrudedSurface>(new CadModelerGeometryTemplate<ExtrudedSurface>(), this.readSurfaceEntity);
+				return this.readEntityCodes<ExtrudedSurface>(new CadModelerGeometryTemplate<ExtrudedSurface>(), this.readSurfaceEntity<ExtrudedSurface>);
 			case DxfFileToken.EntityLoftedSurface:
-				return this.readEntityCodes<LoftedSurface>(new CadModelerGeometryTemplate<LoftedSurface>(), this.readSurfaceEntity);
+				return this.readEntityCodes<LoftedSurface>(new CadModelerGeometryTemplate<LoftedSurface>(), this.readSurfaceEntity<LoftedSurface>);
 			case DxfFileToken.EntityNurbSurface:
-				return this.readEntityCodes<NurbSurface>(new CadModelerGeometryTemplate<NurbSurface>(), this.readSurfaceEntity);
+				return this.readEntityCodes<NurbSurface>(new CadModelerGeometryTemplate<NurbSurface>(), this.readSurfaceEntity<NurbSurface>);
 			case DxfFileToken.EntityPlaneSurface:
-				return this.readEntityCodes<PlaneSurface>(new CadModelerGeometryTemplate<PlaneSurface>(), this.readSurfaceEntity);
+				return this.readEntityCodes<PlaneSurface>(new CadModelerGeometryTemplate<PlaneSurface>(), this.readSurfaceEntity<PlaneSurface>);
 			case DxfFileToken.EntityRevolvedSurface:
-				return this.readEntityCodes<RevolvedSurface>(new CadModelerGeometryTemplate<RevolvedSurface>(), this.readSurfaceEntity);
+				return this.readEntityCodes<RevolvedSurface>(new CadModelerGeometryTemplate<RevolvedSurface>(), this.readSurfaceEntity<RevolvedSurface>);
 			case DxfFileToken.EntitySweptSurface:
-				return this.readEntityCodes<SweptSurface>(new CadModelerGeometryTemplate<SweptSurface>(), this.readSurfaceEntity);
+				return this.readEntityCodes<SweptSurface>(new CadModelerGeometryTemplate<SweptSurface>(), this.readSurfaceEntity<SweptSurface>);
 			case DxfFileToken.EntityImage:
 				return this.readEntityCodes<RasterImage>(new CadWipeoutBaseTemplate(new RasterImage()), this.readWipeoutBase);
 			case DxfFileToken.EntityProxyEntity:
@@ -1704,7 +1704,8 @@ internal abstract class DxfSectionReaderBase
 		}
 	}
 
-	private bool readSurfaceEntity(CadEntityTemplate template, DxfMap map, string subclass = null)
+	private bool readSurfaceEntity<T>(CadEntityTemplate template, DxfMap map, string subclass = null)
+		where T : Surface, new()
 	{
 		switch (this._reader.Code)
 		{
@@ -1714,7 +1715,7 @@ internal abstract class DxfSectionReaderBase
 			case 2:
 			case 3:
 			case 290:
-				return this.readModelerGeometry<Surface>(template, map, DxfSubclassMarker.ModelerGeometry);
+				return this.readModelerGeometry<T>(template, map, DxfSubclassMarker.ModelerGeometry);
 			default:
 				//surface codes (the isoline counts) resolve through the map of
 				//the subclass being read
@@ -1723,7 +1724,7 @@ internal abstract class DxfSectionReaderBase
 					return true;
 				}
 
-				return this.readModelerGeometry<Surface>(template, map, DxfSubclassMarker.ModelerGeometry);
+				return this.readModelerGeometry<T>(template, map, DxfSubclassMarker.ModelerGeometry);
 		}
 	}
 
