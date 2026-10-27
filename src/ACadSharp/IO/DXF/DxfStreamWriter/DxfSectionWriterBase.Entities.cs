@@ -484,8 +484,15 @@ internal abstract partial class DxfSectionWriterBase
 
 	private void writeEncryptedSAT(ModelerGeometry geometry)
 	{
+		var acisText = geometry.GetAcisText();
+		if (string.IsNullOrEmpty(acisText))
+		{
+			this.notify($"Encrypted SAT not found for {geometry.ObjectName}: {geometry.Handle}.", NotificationType.Warning);
+			return;
+		}
+
 		int CHUNK = 255;
-		foreach (string line in geometry.GetAcisText().Split('\n'))
+		foreach (string line in acisText.Split('\n'))
 		{
 			string trimmed = line.TrimEnd('\r');
 			if (trimmed.Length == 0)

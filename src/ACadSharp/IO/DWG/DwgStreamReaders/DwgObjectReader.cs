@@ -4567,13 +4567,13 @@ namespace ACadSharp.IO.DWG
 					template = this.readSpline();
 					break;
 				case ObjectType.REGION:
-					template = this.readModelerGeometry(new CadEntityTemplate<Region>());
+					template = this.readModelerGeometry(new CadModelerGeometryTemplate<Region>());
 					break;
 				case ObjectType.SOLID3D:
 					template = this.readSolid3D();
 					break;
 				case ObjectType.BODY:
-					template = this.readModelerGeometry(new CadEntityTemplate<CadBody>());
+					template = this.readModelerGeometry(new CadModelerGeometryTemplate<CadBody>());
 					break;
 				case ObjectType.RAY:
 					template = this.readRay();
@@ -5411,7 +5411,7 @@ namespace ACadSharp.IO.DWG
 			return template;
 		}
 
-		private CadTemplate readSurface<T>(CadEntityTemplate<T> template)
+		private CadTemplate readSurface<T>(CadModelerGeometryTemplate<T> template)
 			where T : Surface, new()
 		{
 			this.readModelerGeometry(template);
@@ -5818,108 +5818,106 @@ namespace ACadSharp.IO.DWG
 				case DxfFileToken.ObjectAecCleanupGroupDef:
 					template = this.readAecCleanupGroup();
 					break;
-				case "ACDBDICTIONARYWDFLT":
+				case "DICTIONARYWDFLT":
+				case DxfFileToken.ObjectDictionaryWithDefault:
 					template = this.readDictionaryWithDefault();
 					break;
-				case "ACDBPLACEHOLDER":
+				case DxfFileToken.ObjectPlaceholder:
 					template = this.readPlaceHolder();
 					break;
-				case "ACAD_TABLE":
+				case DxfFileToken.EntityTable:
 					template = this.readTableEntity();
 					break;
 				case DxfFileToken.ObjectDimensionAssociation:
 					template = this.readDimensionAssociation();
 					break;
-				case "DBCOLOR":
+				case DxfFileToken.ObjectDBColor:
 					template = this.readDbColor();
 					break;
-				case "DICTIONARYVAR":
+				case DxfFileToken.ObjectDictionaryVar:
 					template = this.readDictionaryVar();
-					break;
-				case "DICTIONARYWDFLT":
-					template = this.readDictionaryWithDefault();
 					break;
 				case DxfFileToken.ObjectGeoData:
 					template = this.readGeoData();
 					break;
-				case "GROUP":
+				case DxfFileToken.ObjectGroup:
 					template = this.readGroup();
 					break;
-				case "HATCH":
+				case DxfFileToken.EntityHatch:
 					template = this.readHatch();
 					break;
-				case "IMAGE":
+				case DxfFileToken.EntityImage:
 					template = this.readCadImage(new RasterImage());
 					break;
-				case "IMAGEDEF":
+				case DxfFileToken.ObjectImageDefinition:
 					template = this.readImageDefinition();
 					break;
-				case "IMAGEDEF_REACTOR":
+				case DxfFileToken.ObjectImageDefinitionReactor:
 					template = this.readImageDefinitionReactor();
 					break;
-				case "LAYOUT":
+				case DxfFileToken.ObjectLayout:
 					template = this.readLayout();
 					break;
 				case "LWPLINE":
-				case "LWPOLYLINE":
+				case DxfFileToken.EntityLwPolyline:
 					template = this.readLWPolyline();
 					break;
-				case "MATERIAL":
+				case DxfFileToken.ObjectMaterial:
 					template = this.readMaterial();
 					break;
-				case "MESH":
+				case DxfFileToken.EntityMesh:
 					template = this.readMesh();
 					break;
-				case "MULTILEADER":
+				case DxfFileToken.EntityMultiLeader:
 					template = this.readMultiLeader();
 					break;
-				case "ACDB_MLEADEROBJECTCONTEXTDATA_CLASS":
+				case DxfFileToken.ObjectMLeaderContextData:
 					template = this.readMultiLeaderAnnotContext();
 					break;
-				case "MLEADERSTYLE":
+				case DxfFileToken.ObjectMLeaderStyle:
 					template = this.readMultiLeaderStyle();
 					break;
-				case "PDFDEFINITION":
+				case DxfFileToken.ObjectPdfDefinition:
 					template = this.readPdfDefinition();
 					break;
-				case "PDFUNDERLAY":
+				case DxfFileToken.EntityPdfUnderlay:
 				case "PDFREFERENCE":
 					template = this.readPdfUnderlay();
 					break;
-				case "SCALE":
+				case DxfFileToken.ObjectScale:
 					template = this.readScale();
 					break;
-				case "SORTENTSTABLE":
+				case DxfFileToken.ObjectSortEntsTable:
 					template = this.readSortentsTable();
 					break;
 				case DxfFileToken.EntitySurface:
-					template = this.readSurface(new CadEntityTemplate<Surface>());
+					template = this.readSurface(new CadModelerGeometryTemplate<Surface>());
 					break;
 				case DxfFileToken.EntityExtrudedSurface:
-					template = this.readSurface(new CadEntityTemplate<ExtrudedSurface>());
+					template = this.readSurface(new CadModelerGeometryTemplate<ExtrudedSurface>());
 					break;
 				case DxfFileToken.EntityLoftedSurface:
-					template = this.readSurface(new CadEntityTemplate<LoftedSurface>());
+					template = this.readSurface(new CadModelerGeometryTemplate<LoftedSurface>());
 					break;
 				case DxfFileToken.EntityNurbSurface:
-					template = this.readSurface(new CadEntityTemplate<NurbSurface>());
+					template = this.readSurface(new CadModelerGeometryTemplate<NurbSurface>());
 					break;
 				case DxfFileToken.EntityPlaneSurface:
-					template = this.readSurface(new CadEntityTemplate<PlaneSurface>());
+					template = this.readSurface(new CadModelerGeometryTemplate<PlaneSurface>());
 					break;
 				case DxfFileToken.EntityRevolvedSurface:
-					template = this.readSurface(new CadEntityTemplate<RevolvedSurface>());
+					template = this.readSurface(new CadModelerGeometryTemplate<RevolvedSurface>());
 					break;
 				case DxfFileToken.EntitySweptSurface:
-					template = this.readSurface(new CadEntityTemplate<SweptSurface>());
+					template = this.readSurface(new CadModelerGeometryTemplate<SweptSurface>());
 					break;
-				case "RASTERVARIABLES":
+				case DxfFileToken.ObjectRasterVariables:
 					template = this.readRasterVariables();
 					break;
-				case "WIPEOUT":
+				case DxfFileToken.EntityWipeout:
 					template = this.readCadImage(new Wipeout());
 					break;
-				case "XRECORD":
+				case DxfFileToken.ObjectXRecord:
 					template = this.readXRecord();
 					break;
 				case DxfFileToken.ObjectEvalGraph:

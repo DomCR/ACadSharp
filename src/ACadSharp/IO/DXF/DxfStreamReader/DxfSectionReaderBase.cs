@@ -163,7 +163,7 @@ internal abstract class DxfSectionReaderBase
 			case DxfFileToken.EntityArc:
 				return this.readEntityCodes<Arc>(new CadEntityTemplate<Arc>(), this.readArc);
 			case DxfFileToken.EntityBody:
-				return this.readEntityCodes<CadBody>(new CadModelerGeometryTemplate<CadBody>(), this.readModelerGeometry);
+				return this.readEntityCodes<CadBody>(new CadModelerGeometryTemplate<CadBody>(), this.readModelerGeometry<CadBody>);
 			case DxfFileToken.EntityCircle:
 				return this.readEntityCodes<Circle>(new CadEntityTemplate<Circle>(), this.readCircle);
 			case DxfFileToken.EntityDimension:
@@ -211,7 +211,7 @@ internal abstract class DxfSectionReaderBase
 				return this.readEntityCodes<Seqend>(new CadEntityTemplate<Seqend>(), this.readEntitySubclassMap);
 			case DxfFileToken.EntityTrace:
 			case DxfFileToken.EntitySolid:
-				return this.readEntityCodes<Solid>(new CadEntityTemplate<Solid>(), this.readModelerGeometry);
+				return this.readEntityCodes<Solid>(new CadEntityTemplate<Solid>(), this.readEntitySubclassMap);
 			case DxfFileToken.EntityTable:
 				return this.readEntityCodes<TableEntity>(new CadTableEntityTemplate(), this.readTableEntity);
 			case DxfFileToken.EntityText:
@@ -229,7 +229,7 @@ internal abstract class DxfSectionReaderBase
 			case DxfFileToken.Entity3DSolid:
 				return this.readEntityCodes<Solid3D>(new CadSolid3DTemplate(), this.readSolid3d);
 			case DxfFileToken.EntityRegion:
-				return this.readEntityCodes<Region>(new CadModelerGeometryTemplate<Region>(), this.readModelerGeometry);
+				return this.readEntityCodes<Region>(new CadModelerGeometryTemplate<Region>(), this.readModelerGeometry<Region>);
 			case DxfFileToken.EntitySurface:
 				return this.readEntityCodes<Surface>(new CadModelerGeometryTemplate<Surface>(), this.readSurfaceEntity);
 			case DxfFileToken.EntityExtrudedSurface:
@@ -1660,9 +1660,10 @@ internal abstract class DxfSectionReaderBase
 		}
 	}
 
-	private bool readModelerGeometry(CadEntityTemplate template, DxfMap map, string subclass = null)
+	private bool readModelerGeometry<T>(CadEntityTemplate template, DxfMap map, string subclass = null)
+		where T : ModelerGeometry, new()
 	{
-		CadSolid3DTemplate tmp = template as CadSolid3DTemplate;
+		var tmp = template as CadModelerGeometryTemplate<T>;
 		string mapName = string.IsNullOrEmpty(subclass) ? template.CadObject.SubclassMarker : subclass;
 		var geometry = template.CadObject as ModelerGeometry;
 
@@ -1671,12 +1672,12 @@ internal abstract class DxfSectionReaderBase
 			case 1:
 				//New SAT line: decoded into the template accumulator, raw into
 				//ProprietaryData to preserve the previous behavior.
-				(template as IAcisDataTemplate)?.AppendAcisLine(this._reader.ValueAsString);
+				tmp.AppendAcisLine(this._reader.ValueAsString);
 				geometry.ProprietaryData.AppendLine(this._reader.ValueAsString);
 				return true;
 			case 3:
 				//Continuation of the previous SAT line.
-				(template as IAcisDataTemplate)?.AppendAcisContinuation(this._reader.ValueAsString);
+				tmp.AppendAcisContinuation(this._reader.ValueAsString);
 				geometry.ProprietaryData.AppendLine(this._reader.ValueAsString);
 				return true;
 			case 2:
@@ -1699,7 +1700,7 @@ internal abstract class DxfSectionReaderBase
 				tmp.HistoryHandle = this._reader.ValueAsHandle;
 				return true;
 			default:
-				return this.readModelerGeometry(template, map, DxfSubclassMarker.ModelerGeometry);
+				return this.readModelerGeometry<Solid3D>(template, map, DxfSubclassMarker.ModelerGeometry);
 		}
 	}
 
@@ -1713,7 +1714,7 @@ internal abstract class DxfSectionReaderBase
 			case 2:
 			case 3:
 			case 290:
-				return this.readModelerGeometry(template, map, DxfSubclassMarker.ModelerGeometry);
+				return this.readModelerGeometry<Surface>(template, map, DxfSubclassMarker.ModelerGeometry);
 			default:
 				//surface codes (the isoline counts) resolve through the map of
 				//the subclass being read
@@ -1722,7 +1723,7 @@ internal abstract class DxfSectionReaderBase
 					return true;
 				}
 
-				return this.readModelerGeometry(template, map, DxfSubclassMarker.ModelerGeometry);
+				return this.readModelerGeometry<Surface>(template, map, DxfSubclassMarker.ModelerGeometry);
 		}
 	}
 
