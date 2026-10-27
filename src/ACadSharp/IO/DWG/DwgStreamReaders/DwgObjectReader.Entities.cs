@@ -252,8 +252,8 @@ internal partial class DwgObjectReader : DwgSectionIO
 		return new Guid(a, b, c, d, e, f, g, h, i, j, k);
 	}
 
-	private CadEntityTemplate<T> readModelerGeometry<T>(CadEntityTemplate<T> template)
-									where T : ModelerGeometry, new()
+	private CadModelerGeometryTemplate<T> readModelerGeometry<T>(CadModelerGeometryTemplate<T> template)
+		where T : ModelerGeometry, new()
 	{
 		ModelerGeometry geometry = template.CadObject;
 
@@ -345,8 +345,17 @@ internal partial class DwgObjectReader : DwgSectionIO
 		//R2007 +:
 		if (this.R2007Plus)
 		{
-			//Unknown BL
-			this._mergedReaders.ReadBitLong();
+			//Materials
+			var nmat = this._mergedReaders.ReadBitLong();
+			for (int i = 0; i < nmat; i++)
+			{
+				//Unknown BL
+				var unknown = this._mergedReaders.ReadBitLong();
+				//Unknown BL
+				var unknown2 = this._mergedReaders.ReadBitLong();
+
+				template.MaterialHandles.Add(this.handleReference());
+			}
 		}
 
 		if (this.R2013Plus)

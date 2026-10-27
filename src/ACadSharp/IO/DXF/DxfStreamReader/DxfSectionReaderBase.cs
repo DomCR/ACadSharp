@@ -1671,12 +1671,12 @@ internal abstract class DxfSectionReaderBase
 			case 1:
 				//New SAT line: decoded into the template accumulator, raw into
 				//ProprietaryData to preserve the previous behavior.
-				(template as IAcisDataTemplate)?.AppendAcisLine(this._reader.ValueAsString);
+				tmp.AppendAcisLine(this._reader.ValueAsString);
 				geometry.ProprietaryData.AppendLine(this._reader.ValueAsString);
 				return true;
 			case 3:
 				//Continuation of the previous SAT line.
-				(template as IAcisDataTemplate)?.AppendAcisContinuation(this._reader.ValueAsString);
+				tmp.AppendAcisContinuation(this._reader.ValueAsString);
 				geometry.ProprietaryData.AppendLine(this._reader.ValueAsString);
 				return true;
 			case 2:

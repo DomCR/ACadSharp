@@ -4567,13 +4567,13 @@ namespace ACadSharp.IO.DWG
 					template = this.readSpline();
 					break;
 				case ObjectType.REGION:
-					template = this.readModelerGeometry(new CadEntityTemplate<Region>());
+					template = this.readModelerGeometry(new CadModelerGeometryTemplate<Region>());
 					break;
 				case ObjectType.SOLID3D:
 					template = this.readSolid3D();
 					break;
 				case ObjectType.BODY:
-					template = this.readModelerGeometry(new CadEntityTemplate<CadBody>());
+					template = this.readModelerGeometry(new CadModelerGeometryTemplate<CadBody>());
 					break;
 				case ObjectType.RAY:
 					template = this.readRay();
@@ -5411,7 +5411,7 @@ namespace ACadSharp.IO.DWG
 			return template;
 		}
 
-		private CadTemplate readSurface<T>(CadEntityTemplate<T> template)
+		private CadTemplate readSurface<T>(CadModelerGeometryTemplate<T> template)
 			where T : Surface, new()
 		{
 			this.readModelerGeometry(template);
@@ -5893,25 +5893,25 @@ namespace ACadSharp.IO.DWG
 					template = this.readSortentsTable();
 					break;
 				case DxfFileToken.EntitySurface:
-					template = this.readSurface(new CadEntityTemplate<Surface>());
+					template = this.readSurface(new CadModelerGeometryTemplate<Surface>());
 					break;
 				case DxfFileToken.EntityExtrudedSurface:
-					template = this.readSurface(new CadEntityTemplate<ExtrudedSurface>());
+					template = this.readSurface(new CadModelerGeometryTemplate<ExtrudedSurface>());
 					break;
 				case DxfFileToken.EntityLoftedSurface:
-					template = this.readSurface(new CadEntityTemplate<LoftedSurface>());
+					template = this.readSurface(new CadModelerGeometryTemplate<LoftedSurface>());
 					break;
 				case DxfFileToken.EntityNurbSurface:
-					template = this.readSurface(new CadEntityTemplate<NurbSurface>());
+					template = this.readSurface(new CadModelerGeometryTemplate<NurbSurface>());
 					break;
 				case DxfFileToken.EntityPlaneSurface:
-					template = this.readSurface(new CadEntityTemplate<PlaneSurface>());
+					template = this.readSurface(new CadModelerGeometryTemplate<PlaneSurface>());
 					break;
 				case DxfFileToken.EntityRevolvedSurface:
-					template = this.readSurface(new CadEntityTemplate<RevolvedSurface>());
+					template = this.readSurface(new CadModelerGeometryTemplate<RevolvedSurface>());
 					break;
 				case DxfFileToken.EntitySweptSurface:
-					template = this.readSurface(new CadEntityTemplate<SweptSurface>());
+					template = this.readSurface(new CadModelerGeometryTemplate<SweptSurface>());
 					break;
 				case "RASTERVARIABLES":
 					template = this.readRasterVariables();
