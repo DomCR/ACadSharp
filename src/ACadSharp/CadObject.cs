@@ -137,6 +137,11 @@ public abstract class CadObject : IHandledCadObject
 	/// <param name="reactor"></param>
 	public void AddReactor(CadObject reactor)
 	{
+		if (this._reactors == null)
+		{
+			this._reactors = new List<CadObject>();
+		}
+
 		this._reactors.Add(reactor);
 	}
 
@@ -145,7 +150,7 @@ public abstract class CadObject : IHandledCadObject
 	/// </summary>
 	public void CleanReactors()
 	{
-		if(this._reactors == null)
+		if (this._reactors == null)
 		{
 			return;
 		}
