@@ -26,9 +26,101 @@ internal class DxfTablesSectionWriter : DxfSectionWriterBase
 		this.writeTable(this._document.BlockRecords, writeFlags: false);
 	}
 
-	private void writeBlockRecord(BlockRecord block, DxfClassMap map)
-	{
-		this._writer.WriteHandle(340, block.Layout, map);
+		private void writeTable<T>(Table<T> table, string subclass = null, bool writeFlags = true)
+			where T : TableEntry
+		{
+			this._writer.Write(DxfCode.Start, DxfFileToken.TableEntry);
+			this._writer.Write(DxfCode.Name, table.ObjectName);
+
+			this.writeCommonObjectData(table);
+
+			this._writer.Write(DxfCode.Subclass, DxfSubclassMarker.Table);
+
+			this._writer.Write(70, table.Count > short.MaxValue ? (short)0 : (short)table.Count);
+
+			if (!string.IsNullOrEmpty(subclass))
+			{
+				this._writer.Write(DxfCode.Subclass, subclass);
+			}
+
+			foreach (T entry in table)
+			{
+				if (!entry.IsValid(CadFileFormat.DXF, this.Version))
+				{
+					this.notify($"{entry.GetType().FullName} with name {entry.Name} is not valid for version {this.Version}.", NotificationType.Warning);
+					continue;
+				}
+
+				this.writeEntry(entry, writeFlags);
+			}
+
+			this._writer.Write(DxfCode.Start, DxfFileToken.EndTable);
+		}
+
+		private void writeEntry<T>(T entry, bool writeFlags = true)
+			where T : TableEntry
+		{
+			DxfMap map = DxfMap.Create<T>();
+
+			this._writer.Write(DxfCode.Start, entry.ObjectName);
+
+			this.writeCommonObjectData(entry);
+
+			this._writer.Write(DxfCode.Subclass, DxfSubclassMarker.TableRecord);
+			this._writer.Write(DxfCode.Subclass, entry.SubclassMarker);
+
+			if (entry is TextStyle ts && ts.IsShapeFile)
+			{
+				this._writer.Write(DxfCode.Name, string.Empty);
+			}
+			else
+			{
+				this._writer.Write(DxfCode.Name, entry.Name);
+			}
+
+			if (writeFlags)
+			{
+				this._writer.Write(70, entry.Flags);
+			}
+
+			switch (entry)
+			{
+				case AppId appId:
+					break;
+				case BlockRecord block:
+					this.writeBlockRecord(block, map.SubClasses[block.SubclassMarker]);
+					break;
+				case DimensionStyle style:
+					this.writeDimensionStyle(style, map.SubClasses[style.SubclassMarker]);
+					break;
+				case Layer layer:
+					this.writeLayer(layer, map.SubClasses[layer.SubclassMarker]);
+					break;
+				case LineType ltype:
+					this.writeLineType(ltype, map.SubClasses[ltype.SubclassMarker]);
+					break;
+				case TextStyle textStyle:
+					this.writeTextStyle(textStyle, map.SubClasses[textStyle.SubclassMarker]);
+					break;
+				case UCS ucs:
+					this.writeUcs(ucs, map.SubClasses[ucs.SubclassMarker]);
+					break;
+				case View view:
+					this.writeView(view, map.SubClasses[view.SubclassMarker]);
+					break;
+				case VPort vport:
+					this.writeVPort(vport, map.SubClasses[vport.SubclassMarker]);
+					break;
+				default:
+					throw new NotImplementedException($"TableEntry not implemented {entry.GetType().FullName}");
+			}
+
+			this.writeExtendedData(entry.ExtendedData);
+		}
+
+		private void writeBlockRecord(BlockRecord block, DxfClassMap map)
+		{
+			this._writer.WriteHandle(340, block.Layout, map);
 
 		this._writer.Write(70, (short)block.Units, map);
 		this._writer.Write(280, (byte)(block.IsExplodable ? 1u : 0u), map);
@@ -121,11 +213,14 @@ internal class DxfTablesSectionWriter : DxfSectionWriterBase
 		this._writer.Write(289, (byte)style.DimensionTextArrowFit);
 		this._writer.Write(290, style.IsExtensionLineLengthFixed);
 
-		this._writer.WriteHandle(340, style.Style, map);
-		this._writer.WriteHandle(341, style.LeaderArrow, map);
-		this._writer.WriteHandle(342, style.ArrowBlock, map);
-		this._writer.WriteHandle(343, style.DimArrow1, map);
-		this._writer.WriteHandle(344, style.DimArrow2, map);
+			this._writer.WriteHandle(340, style.Style, map);
+			this._writer.WriteHandle(341, style.LeaderArrow, map);
+			this._writer.WriteHandle(342, style.ArrowBlock, map);
+			this._writer.WriteHandle(343, style.DimArrow1, map);
+			this._writer.WriteHandle(344, style.DimArrow2, map);
+			this._writer.WriteHandle(345, style.LineType, map);
+			this._writer.WriteHandle(346, style.LineTypeExt1, map);
+			this._writer.WriteHandle(347, style.LineTypeExt2, map);
 
 		this._writer.Write(371, style.DimensionLineWeight);
 		this._writer.Write(372, style.ExtensionLineWeight);

@@ -108,12 +108,11 @@ public partial class LwPolyline : Entity, IPolyline
 	/// Initializes a new instance of the <see cref="LwPolyline"/> class with the specified vertices.
 	/// </summary>
 	/// <remarks>This constructor allows you to create a lightweight polyline by specifying its vertices as a
-	/// collection of <see cref="XY"/> points. The vertices are internally converted to <see cref="Vertex"/>
+	/// collection of <see cref="IVector"/> points. The vertices are internally converted to <see cref="Vertex"/>
 	/// objects.</remarks>
-	/// <param name="vertices">A collection of <see cref="XY"/> points representing the vertices of the polyline. Each point defines a vertex in
-	/// the order it appears in the collection.</param>
-	public LwPolyline(params IEnumerable<XY> vertices)
-		: this(vertices.Select(v => new Vertex(v))) { }
+	/// <param name="vertices">A collection of <see cref="IVector"/> objects that define the vertices of the polyline.</param>
+	public LwPolyline(params IEnumerable<IVector> vertices)
+		: this(vertices.Select(v => new Vertex(v.Convert<XY>()))) { }
 
 	/// <inheritdoc/>
 	public override void ApplyTransform(Transform transform)

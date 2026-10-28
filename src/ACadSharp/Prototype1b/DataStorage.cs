@@ -1,10 +1,12 @@
 ﻿using ACadSharp.Entities;
 using ACadSharp.Prototype1b.Segments;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 
 namespace ACadSharp.Prototype1b
 {
+	[Obsolete]
     public class DataStorage
     {
 		/// <summary>
@@ -23,7 +25,7 @@ namespace ACadSharp.Prototype1b
         public DataStoragePointers IndexPointers { get; set; }
 
         /// <summary>
-		/// All registered Schemas
+		/// All registered Schemes
 		/// </summary>
         public List<SchemaData> SchemaFields { get; set; }
 

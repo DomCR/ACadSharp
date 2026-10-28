@@ -143,14 +143,14 @@ public partial class MultiLeader : Entity, IDxfClassDefined
 	/// assumed to be used.
 	/// </remarks>
 	[DxfCodeValue(10, 20, 30)]
-	public XYZ BlockContentScale { get; set; }
+	public XYZ BlockContentScale { get; set; } = new XYZ(1.0d);
 
 	/// <summary>
 	/// Gets or sets a value indicating whether the content of this <see cref="MultiLeader"/>
 	/// is a text label, a content block, or a tolerance.
 	/// </summary>
 	[DxfCodeValue(172)]
-	public LeaderContentType ContentType { get; set; }
+	public LeaderContentType ContentType { get; set; } = LeaderContentType.None;
 
 	/// <summary>
 	/// Gets the embedded <see cref="MultiLeaderObjectContextData"/> object
@@ -252,7 +252,6 @@ public partial class MultiLeader : Entity, IDxfClassDefined
 		}
 	}
 
-	//  TODO Additional Line Weight? see Entity.LineWeight.
 	/// <summary>
 	/// Gets or sets a value specifying the line weight to be applied to all leader lines of this
 	/// <see cref="MultiLeader"/> (see <see cref="MultiLeaderStyle.LeaderLineWeight"/>).
@@ -267,7 +266,7 @@ public partial class MultiLeader : Entity, IDxfClassDefined
 	/// <see cref="MultiLeaderObjectContextData.LeaderLine.OverrideFlags"/> property.
 	/// </remarks>
 	[DxfCodeValue(171)]
-	public LineWeightType LeaderLineWeight { get; set; }
+	public LineWeightType LeaderLineWeight { get; set; } = LineWeightType.ByLayer;
 
 	/// <summary>
 	/// Gets or sets color of the leader lines of this <see cref="MultiLeader"/>
@@ -283,7 +282,7 @@ public partial class MultiLeader : Entity, IDxfClassDefined
 	/// <see cref="MultiLeaderObjectContextData.LeaderLine.OverrideFlags"/> property.
 	/// </remarks>
 	[DxfCodeValue(91)]
-	public Color LineColor { get; set; }
+	public Color LineColor { get; set; } = Color.ByLayer;
 
 	/// <inheritdoc/>
 	public override string ObjectName => DxfFileToken.EntityMultiLeader;
@@ -323,7 +322,7 @@ public partial class MultiLeader : Entity, IDxfClassDefined
 	/// assumed to be relevant.
 	/// </remarks>
 	[DxfCodeValue(45)]
-	public double ScaleFactor { get; set; }
+	public double ScaleFactor { get; set; } = 1.0d;
 
 	/// <summary>
 	/// Gets a <see cref="MultiLeaderStyle"/> providing reusable style information
@@ -367,9 +366,8 @@ public partial class MultiLeader : Entity, IDxfClassDefined
 	/// </para>
 	/// </remarks>
 	[DxfCodeValue(175)]
-	public TextAlignmentType TextAlignment { get; set; }
+	public TextAlignmentType TextAlignment { get; set; } = TextAlignmentType.Left;
 
-	//	TODO How to set this value?
 	/// <summary>
 	/// Gets or sets a value indicating the text angle.
 	/// This property overrides the value from <see cref="MultiLeaderStyle"/>
@@ -377,7 +375,7 @@ public partial class MultiLeader : Entity, IDxfClassDefined
 	/// <see cref="PropertyOverrideFlags"/> property).
 	/// </summary>
 	[DxfCodeValue(174)]
-	public TextAngleType TextAngle { get; set; }
+	public TextAngleType TextAngle { get; set; } = TextAngleType.Horizontal;
 
 	//	TODO According to the OpenDesign_Specification_for_.dwg_files
 	//	a list of arror head AND a list of block attributes can occur.

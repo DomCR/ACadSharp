@@ -107,7 +107,7 @@ public class DxfWriterSingleObjectTests : WriterSingleObjectTests
 		Assert.False(ellipse.CounterClockWise);
 	}
 
-	protected void writeDxfFile(SingleCaseGenerator data, ACadVersion version)
+	protected virtual void writeDxfFile(SingleCaseGenerator data, ACadVersion version)
 	{
 		Assert.True(data.HasExecuted, $"The writer has failed during it's execution.");
 
@@ -129,15 +129,23 @@ public class DxfWriterSingleObjectTests : WriterSingleObjectTests
 		{
 			this._output.WriteLine("--- starting read ---");
 
+			DxfReaderConfiguration readConfiguration = new DxfReaderConfiguration()
+			{
+				IgnoreProxyGraphics = false
+			};
+
 			CadDocument doc = null;
 			if (TestVariables.SaveOutputInStream)
 			{
-				doc = DxfReader.Read(data.Stream, this.onNotification);
+				doc = DxfReader.Read(data.Stream, readConfiguration, this.onNotification);
 			}
 			else
 			{
-				doc = DxfReader.Read(path, this.onNotification);
+				doc = DxfReader.Read(path, readConfiguration, this.onNotification);
 			}
+
+			data.Format = CadFileFormat.DXF;
+			data.AssertRoundtrip?.Invoke(doc);
 		}
 	}
 }

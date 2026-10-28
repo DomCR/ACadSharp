@@ -9,13 +9,16 @@ namespace ACadSharp.Tests.IO.DXF;
 
 public class DxfAcdsDataSectionTests
 {
-	[Fact]
-	public void ReadAcdsDataAttachesAcisPayloadToOwnerEntity()
+	[Theory]
+	[InlineData("414349532042696E61727946696C65")]
+	[InlineData("41434953204269", "6E61727946696C65")]
+	public void ReadAcdsDataAttachesAcisPayloadToOwnerEntity(params string[] chunks)
 	{
 		// Minimal R2013+ style layout: the REGION entity carries no geometry codes,
 		// the SAB payload lives in the ACDSDATA section and points back to the
 		// entity through the AcDbDs::ID handle at group code 320.
-		// The payload here is just the "ACIS BinaryFile" signature (15 bytes).
+		// The payload here is just the "ACIS BinaryFile" signature (15 bytes),
+		// split over one 310 line per chunk.
 		string dxf = string.Join("\n",
 			"0", "SECTION",
 			"2", "ENTITIES",
@@ -47,7 +50,7 @@ public class DxfAcdsDataSectionTests
 			"2", "ASM_Data",
 			"280", "15",
 			"94", "15",
-			"310", "414349532042696E61727946696C65",
+			string.Join("\n", chunks.Select(c => $"310\n{c}")),
 			"0", "ENDSEC",
 			"0", "EOF");
 

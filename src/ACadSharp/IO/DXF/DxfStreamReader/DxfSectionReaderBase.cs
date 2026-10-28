@@ -9,6 +9,7 @@ using CSUtilities.Extensions;
 using System;
 using System.Collections.Generic;
 using System.Diagnostics;
+using System.IO;
 using System.Linq;
 using static ACadSharp.IO.Templates.CadMLeaderAnnotContextTemplate;
 using static ACadSharp.IO.Templates.CadTableEntityTemplate;
@@ -162,7 +163,7 @@ internal abstract class DxfSectionReaderBase
 			case DxfFileToken.EntityArc:
 				return this.readEntityCodes<Arc>(new CadEntityTemplate<Arc>(), this.readArc);
 			case DxfFileToken.EntityBody:
-				return this.readEntityCodes<CadBody>(new CadModelerGeometryTemplate<CadBody>(), this.readModelerGeometry);
+				return this.readEntityCodes<CadBody>(new CadModelerGeometryTemplate<CadBody>(), this.readModelerGeometry<CadBody>);
 			case DxfFileToken.EntityCircle:
 				return this.readEntityCodes<Circle>(new CadEntityTemplate<Circle>(), this.readCircle);
 			case DxfFileToken.EntityDimension:
@@ -210,7 +211,7 @@ internal abstract class DxfSectionReaderBase
 				return this.readEntityCodes<Seqend>(new CadEntityTemplate<Seqend>(), this.readEntitySubclassMap);
 			case DxfFileToken.EntityTrace:
 			case DxfFileToken.EntitySolid:
-				return this.readEntityCodes<Solid>(new CadEntityTemplate<Solid>(), this.readModelerGeometry);
+				return this.readEntityCodes<Solid>(new CadEntityTemplate<Solid>(), this.readEntitySubclassMap);
 			case DxfFileToken.EntityTable:
 				return this.readEntityCodes<TableEntity>(new CadTableEntityTemplate(), this.readTableEntity);
 			case DxfFileToken.EntityText:
@@ -228,9 +229,25 @@ internal abstract class DxfSectionReaderBase
 			case DxfFileToken.Entity3DSolid:
 				return this.readEntityCodes<Solid3D>(new CadSolid3DTemplate(), this.readSolid3d);
 			case DxfFileToken.EntityRegion:
-				return this.readEntityCodes<Region>(new CadModelerGeometryTemplate<Region>(), this.readModelerGeometry);
+				return this.readEntityCodes<Region>(new CadModelerGeometryTemplate<Region>(), this.readModelerGeometry<Region>);
+			case DxfFileToken.EntitySurface:
+				return this.readEntityCodes<Surface>(new CadModelerGeometryTemplate<Surface>(), this.readSurfaceEntity<Surface>);
+			case DxfFileToken.EntityExtrudedSurface:
+				return this.readEntityCodes<ExtrudedSurface>(new CadModelerGeometryTemplate<ExtrudedSurface>(), this.readSurfaceEntity<ExtrudedSurface>);
+			case DxfFileToken.EntityLoftedSurface:
+				return this.readEntityCodes<LoftedSurface>(new CadModelerGeometryTemplate<LoftedSurface>(), this.readSurfaceEntity<LoftedSurface>);
+			case DxfFileToken.EntityNurbSurface:
+				return this.readEntityCodes<NurbSurface>(new CadModelerGeometryTemplate<NurbSurface>(), this.readSurfaceEntity<NurbSurface>);
+			case DxfFileToken.EntityPlaneSurface:
+				return this.readEntityCodes<PlaneSurface>(new CadModelerGeometryTemplate<PlaneSurface>(), this.readSurfaceEntity<PlaneSurface>);
+			case DxfFileToken.EntityRevolvedSurface:
+				return this.readEntityCodes<RevolvedSurface>(new CadModelerGeometryTemplate<RevolvedSurface>(), this.readSurfaceEntity<RevolvedSurface>);
+			case DxfFileToken.EntitySweptSurface:
+				return this.readEntityCodes<SweptSurface>(new CadModelerGeometryTemplate<SweptSurface>(), this.readSurfaceEntity<SweptSurface>);
 			case DxfFileToken.EntityImage:
 				return this.readEntityCodes<RasterImage>(new CadWipeoutBaseTemplate(new RasterImage()), this.readWipeoutBase);
+			case DxfFileToken.EntityProxyEntity:
+				return this.readEntityCodes<ProxyEntity>(new CadProxyEntityTemplate(), this.readProxyEntity);
 			case DxfFileToken.EntityWipeout:
 				return this.readEntityCodes<Wipeout>(new CadWipeoutBaseTemplate(new Wipeout()), this.readWipeoutBase);
 			case DxfFileToken.EntityXline:
@@ -822,6 +839,12 @@ internal abstract class DxfSectionReaderBase
 						default:
 							break;
 					}
+
+					//The codes that follow belong to the dimension type,
+					//DimensionLinear keeps its points in AcDbAlignedDimension and the code 50 is read by this method
+					this.currentSubclass = tmp.CadObject is DimensionLinear
+						? DxfSubclassMarker.AlignedDimension
+						: tmp.CadObject.SubclassMarker;
 				}
 				return true;
 			//Measurement - read only
@@ -829,8 +852,6 @@ internal abstract class DxfSectionReaderBase
 				return true;
 			//Undocumented codes
 			case 73:
-			case 74:
-			case 75:
 			case 90:
 			case 361:
 				return true;
@@ -882,7 +903,14 @@ internal abstract class DxfSectionReaderBase
 					this.currentSubclass = tmp.CadObject.SubclassMarker;
 				}
 
-				return this.tryAssignCurrentValue(template.CadObject, map);
+				if (this.tryAssignCurrentValue(template.CadObject, map))
+				{
+					return true;
+				}
+
+				//Pre R13 files write AcDbDimension codes like the text (1) after the code 70, mixed with the codes of the dimension type
+				return this._builder.Version < ACadVersion.AC1012
+					&& this.tryAssignCurrentValue(template.CadObject, map.SubClasses[DxfSubclassMarker.Dimension]);
 		}
 	}
 
@@ -1513,6 +1541,69 @@ internal abstract class DxfSectionReaderBase
 		}
 	}
 
+	private bool readProxyEntity(CadEntityTemplate template, DxfMap map, string subclass = null)
+	{
+		CadProxyEntityTemplate tmp = template as CadProxyEntityTemplate;
+
+		switch (this._reader.Code)
+		{
+			case 91:
+				if (this._builder.DocumentToBuild.Classes.TryGetByClassNumber(this._reader.ValueAsShort, out var dxfclass))
+				{
+					tmp.CadObject.DxfClass = dxfclass;
+				}
+				else
+				{
+					this._builder.Notify($"DxfClass with class number {this._reader.ValueAsShort} not found.", NotificationType.Warning);
+				}
+				return true;
+			case 94:
+				return true;
+			//Graphics data size
+			case 160:
+				tmp.ProxyGraphics = this.readByteEntries(310).ToArray();
+				return true;
+			//Binary data size
+			case 161:
+				tmp.CadObject.BinaryData = this.readByteEntries(310);
+				return true;
+			//String data size
+			case 162:
+				tmp.CadObject.StringData = this.readByteEntries(311);
+				return true;
+			case 330:
+			case 340:
+			case 350:
+			case 360:
+				tmp.ReferencedObjectHandles.Add(this._reader.ValueAsHandle);
+				return true;
+			default:
+				return this.tryAssignCurrentValue(template.CadObject, map.SubClasses[tmp.CadObject.SubclassMarker]);
+		}
+	}
+
+	private MemoryStream readByteEntries(int code)
+	{
+		if (this._reader.ValueAsInt == 0)
+		{
+			return null;
+		}
+
+		MemoryStream ms = new MemoryStream();
+
+		this._reader.ExpectedCode(code);
+
+		while (this._reader.Code == code)
+		{
+			ms.Write(this._reader.ValueAsBinaryChunk, 0, this._reader.ValueAsBinaryChunk.Length);
+			this._reader.ReadNext();
+		}
+
+		this.lockPointer = true;
+
+		return ms;
+	}
+
 	private bool readWipeoutBase(CadEntityTemplate template, DxfMap map, string subclass = null)
 	{
 		CadWipeoutBaseTemplate tmp = template as CadWipeoutBaseTemplate;
@@ -1569,9 +1660,10 @@ internal abstract class DxfSectionReaderBase
 		}
 	}
 
-	private bool readModelerGeometry(CadEntityTemplate template, DxfMap map, string subclass = null)
+	private bool readModelerGeometry<T>(CadEntityTemplate template, DxfMap map, string subclass = null)
+		where T : ModelerGeometry, new()
 	{
-		CadSolid3DTemplate tmp = template as CadSolid3DTemplate;
+		var tmp = template as CadModelerGeometryTemplate<T>;
 		string mapName = string.IsNullOrEmpty(subclass) ? template.CadObject.SubclassMarker : subclass;
 		var geometry = template.CadObject as ModelerGeometry;
 
@@ -1580,12 +1672,12 @@ internal abstract class DxfSectionReaderBase
 			case 1:
 				//New SAT line: decoded into the template accumulator, raw into
 				//ProprietaryData to preserve the previous behavior.
-				(template as IAcisDataTemplate)?.AppendAcisLine(this._reader.ValueAsString);
+				tmp.AppendAcisLine(this._reader.ValueAsString);
 				geometry.ProprietaryData.AppendLine(this._reader.ValueAsString);
 				return true;
 			case 3:
 				//Continuation of the previous SAT line.
-				(template as IAcisDataTemplate)?.AppendAcisContinuation(this._reader.ValueAsString);
+				tmp.AppendAcisContinuation(this._reader.ValueAsString);
 				geometry.ProprietaryData.AppendLine(this._reader.ValueAsString);
 				return true;
 			case 2:
@@ -1608,7 +1700,31 @@ internal abstract class DxfSectionReaderBase
 				tmp.HistoryHandle = this._reader.ValueAsHandle;
 				return true;
 			default:
-				return this.readModelerGeometry(template, map, DxfSubclassMarker.ModelerGeometry);
+				return this.readModelerGeometry<Solid3D>(template, map, DxfSubclassMarker.ModelerGeometry);
+		}
+	}
+
+	private bool readSurfaceEntity<T>(CadEntityTemplate template, DxfMap map, string subclass = null)
+		where T : Surface, new()
+	{
+		switch (this._reader.Code)
+		{
+			//SAT text and modeler geometry codes: same handling as the other
+			//modeler geometry entities (the template accumulates the payload)
+			case 1:
+			case 2:
+			case 3:
+			case 290:
+				return this.readModelerGeometry<T>(template, map, DxfSubclassMarker.ModelerGeometry);
+			default:
+				//surface codes (the isoline counts) resolve through the map of
+				//the subclass being read
+				if (this.tryAssignCurrentValue(template.CadObject, map))
+				{
+					return true;
+				}
+
+				return this.readModelerGeometry<T>(template, map, DxfSubclassMarker.ModelerGeometry);
 		}
 	}
 

@@ -1,6 +1,7 @@
 ﻿using ACadSharp.Entities;
 using ACadSharp.Objects;
 using CSMath;
+using CSMath.Extensions;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -360,6 +361,13 @@ internal partial class DwgObjectWriter : DwgSectionIO
 		this._writer.HandleReference(DwgReferenceType.HardOwnership, insert.Attributes.Seqend);
 	}
 
+	private void writeCustomTableData(TableEntity.CustomDataEntry entry)
+	{
+		//TV 300 Item name
+		this._writer.WriteVariableText(entry.Name);
+		this.writeCadValue(entry.Value);
+	}
+
 	private void writeDimensionAligned(DimensionAligned dimension)
 	{
 		//Common:
@@ -606,6 +614,9 @@ internal partial class DwgObjectWriter : DwgSectionIO
 						throw new NotImplementedException($"Polyline not implemented : {entity.GetType().FullName}");
 				}
 				break;
+			case ProxyEntity proxyEntity:
+				this.writeProxyEntity(proxyEntity);
+				break;
 			case Ray ray:
 				this.writeRay(ray);
 				break;
@@ -620,6 +631,12 @@ internal partial class DwgObjectWriter : DwgSectionIO
 				break;
 			case Spline spline:
 				this.writeSpline(spline);
+				break;
+			case Region region:
+				this.writeModelerGeometry(region);
+				break;
+			case CadBody body:
+				this.writeModelerGeometry(body);
 				break;
 			case CadWipeoutBase image:
 				this.writeCadImage(image);
@@ -740,6 +757,22 @@ internal partial class DwgObjectWriter : DwgSectionIO
 		this._writer.WriteBitShort(face.Index3);
 		//Vert index BS 74 1 - based vertex index(see DXF doc)
 		this._writer.WriteBitShort(face.Index4);
+	}
+
+	private void writeGuid(System.Guid _E000)
+	{
+		byte[] array = _E000.ToByteArray();
+		this._writer.WriteBitLong(BitConverter.ToInt32(array, 0));
+		this._writer.WriteBitShort(BitConverter.ToInt16(array, 4));
+		this._writer.WriteBitShort(BitConverter.ToInt16(array, 6));
+		this._writer.WriteByte(array[8]);
+		this._writer.WriteByte(array[9]);
+		this._writer.WriteByte(array[10]);
+		this._writer.WriteByte(array[11]);
+		this._writer.WriteByte(array[12]);
+		this._writer.WriteByte(array[13]);
+		this._writer.WriteByte(array[14]);
+		this._writer.WriteByte(array[15]);
 	}
 
 	private void writeHatch(Hatch hatch)
@@ -1095,21 +1128,22 @@ internal partial class DwgObjectWriter : DwgSectionIO
 			this._writer.Write3BitDouble(point);
 		}
 
-		//	Add optional Break Info (one or more)
-		//	BL	Break info count
-		this._writer.WriteBitLong(leaderLine.BreakInfoCount);
-		if (leaderLine.BreakInfoCount > 0)
+		//Add optional Break Info (one or more)
+		//BL	Break info count
+		this._writer.WriteBitLong(leaderLine.BreakInfoEntries.Count);
+		foreach (var item in leaderLine.BreakInfoEntries)
 		{
-			//	BL	90		Segment index
-			this._writer.WriteBitLong(leaderLine.SegmentIndex);
+			//BL	90		Segment index
+			this._writer.WriteBitLong(item.SegmentIndex);
 
-			//	Start/end point pairs
-			//	3BD	12	End point
-			this._writer.WriteBitLong(leaderLine.StartEndPoints.Count);
-			foreach (MultiLeaderObjectContextData.StartEndPointPair sep in leaderLine.StartEndPoints)
+			//Start/end point pairs
+			//3BD	12	End point
+			this._writer.WriteBitLong(item.StartEndPoints.Count);
+			foreach (MultiLeaderObjectContextData.StartEndPointPair sep in item.StartEndPoints)
 			{
-				//	3BD	11	Start Point
+				//3BD	11	Start Point
 				this._writer.Write3BitDouble(sep.StartPoint);
+				//3BD	12	End point
 				this._writer.Write3BitDouble(sep.EndPoint);
 			}
 		}
@@ -1123,12 +1157,15 @@ internal partial class DwgObjectWriter : DwgSectionIO
 			this._writer.WriteBitShort((short)leaderLine.PathType);
 			//	CMC	92	Line color
 			this._writer.WriteCmColor(leaderLine.LineColor);
+
 			//	H	340	Line type handle(hard pointer)
 			this._writer.HandleReference(DwgReferenceType.HardPointer, leaderLine.LineType);
+
 			//	BL	171	Line weight
 			this._writer.WriteBitLong((short)leaderLine.LineWeight);
 			//	BD	40	Arrow size
 			this._writer.WriteBitDouble(leaderLine.ArrowheadSize);
+
 			//	H	341	Arrow symbol handle(hard pointer)
 			this._writer.HandleReference(DwgReferenceType.HardPointer, leaderLine.Arrowhead);
 
@@ -1142,7 +1179,7 @@ internal partial class DwgObjectWriter : DwgSectionIO
 		//	B		290		Is content valid(ODA writes true)/DXF: Has Set Last Leader Line Point
 		this._writer.WriteBit(leaderRoot.ContentValid);
 		//	B		291		Unknown(ODA writes true)/DXF: Has Set Dogleg Vector
-		this._writer.WriteBit(true);
+		this._writer.WriteBit(leaderRoot.Unknown);
 		//	3BD		10		Connection point/DXF: Last Leader Line Point
 		this._writer.Write3BitDouble(leaderRoot.ConnectionPoint);
 		//	3BD		11		Direction/DXF: Dogleg vector
@@ -1470,6 +1507,129 @@ internal partial class DwgObjectWriter : DwgSectionIO
 		this._writer.HandleReference(DwgReferenceType.HardPointer, mline.Style);
 	}
 
+	private void writeModelerGeometry(ModelerGeometry geometry)
+	{
+		bool hasAcisData = geometry.AcisData != null && geometry.AcisData.Length > 0;
+
+		//Chapter 24 - Info
+		if (!this.R2013Plus)
+		{
+			if (hasAcisData && geometry.IsBinaryAcisData)
+			{
+				//Version 2 (SAB) has no length in the stream, the reader has to
+				//consume the rest of the object, which cannot be written along
+				//with the wireframe data and the handle stream.
+				this.notify($"Binary ACIS data cannot be written for {geometry.ObjectName} in {this._version}, the geometry will be empty", NotificationType.Warning);
+				hasAcisData = false;
+			}
+
+			//ACIS Empty bit B X If 1, then no data follows
+			this._writer.WriteBit(!hasAcisData);
+
+			if (hasAcisData)
+			{
+				this.writeModelerGeometryData(geometry);
+				return;
+			}
+		}
+
+		//Common:
+		//Wireframe data present B X True if wireframe data is present
+		this._writer.WriteBit(geometry.HasWireframeData);
+		if (geometry.HasWireframeData)
+		{
+			//Point present B X If true, following point is present, otherwise assume 0,0,0 for point
+			if (geometry.Point.IsZero())
+			{
+				this._writer.WriteBit(false);
+			}
+			else
+			{
+				this._writer.WriteBit(true);
+				//Point 3BD X Present if above bit is 1.
+				this._writer.Write3BitDouble(geometry.Point);
+			}
+
+			//Num IsoLines BL X
+			this._writer.WriteBitLong(geometry.Wires.Count);
+			//IsoLines present B X If true, isoline data is present.
+			this._writer.WriteBit(geometry.Wires.Any());
+			if (geometry.Wires.Any())
+			{
+				//Num Wires BL X Number of ISO lines that follow.
+				this._writer.WriteBitLong(geometry.Wires.Count);
+				foreach (ModelerGeometry.Wire wire in geometry.Wires)
+				{
+					this.writeWire(wire);
+				}
+			}
+
+			//Num. silhouettes BL X
+			this._writer.WriteBitLong(geometry.Silhouettes.Count);
+			foreach (ModelerGeometry.Silhouette silhouette in geometry.Silhouettes)
+			{
+				//VP id BL X
+				this._writer.WriteBitLongLong(silhouette.ViewportId);
+				//VP Target 3BD X
+				this._writer.Write3BitDouble(silhouette.ViewportTarget);
+				//VP dir. From target 3BD X
+				this._writer.Write3BitDouble(silhouette.ViewportDirectionFromTarget);
+				//VP up dir. 3BD X
+				this._writer.Write3BitDouble(silhouette.ViewportUpDirection);
+				//VP perspective B X
+				this._writer.WriteBit(silhouette.ViewportPerspective);
+
+				//IsoLines present B X If true, isoline data is present.
+				this._writer.WriteBit(silhouette.Wires.Any());
+				if (silhouette.Wires.Any())
+				{
+					//Num Wires BL X
+					this._writer.WriteBitLong(silhouette.Wires.Count);
+					foreach (ModelerGeometry.Wire wire in silhouette.Wires)
+					{
+						this.writeWire(wire);
+					}
+				}
+			}
+
+			//ACIS Empty bit B X Normally 1. If 0, then acis data follows.
+			this._writer.WriteBit(true);
+		}
+
+		//R2007 +:
+		if (this.R2007Plus)
+		{
+			//Unknown BL
+			this._writer.WriteBitLong(0);
+		}
+
+		if (this.R2013Plus)
+		{
+			//290
+			this._writer.WriteBit(geometry.Guid != System.Guid.Empty);
+			this.writeGuid(geometry.Guid);
+			this._writer.WriteBitLong(0);
+		}
+	}
+
+	private void writeModelerGeometryData(ModelerGeometry geometry)
+	{
+		//Unknown bit B X
+		this._writer.WriteBit(false);
+
+		//Version BS Can be 1 or 2.
+		this._writer.WriteBitShort(1);
+
+		//Version == 1 (following 2 items repeat until Block Size is 0):
+		//Block Size BL X Number of bytes of SAT data in this block.
+		byte[] data = AcisTextCodec.Decode(geometry.AcisData);
+		this._writer.WriteBitLong(data.Length);
+		this._writer.WriteBytes(data);
+
+		//End of the blocks
+		this._writer.WriteBitLong(0);
+	}
+
 	private void writeMText(MText mtext)
 	{
 		//Insertion pt3 BD 10 First picked point. (Location relative to text depends on attachment point (71).)
@@ -1616,7 +1776,7 @@ internal partial class DwgObjectWriter : DwgSectionIO
 			this._writer.WriteBitShort(2);
 		}
 
-		writeMultiLeaderAnnotContextSubObject(true, multiLeader.ContextData);
+		this.writeMultiLeaderAnnotContextSubObject(multiLeader.ContextData);
 
 		//	Multileader Common data
 		//	340 Leader StyleId (handle)
@@ -1674,6 +1834,21 @@ internal partial class DwgObjectWriter : DwgSectionIO
 		this._writer.WriteBit(multiLeader.EnableAnnotationScale);
 
 		//	R2007pre not supported
+		if (this.R2007Pre)
+		{
+			//	BL number of arrow  heads
+			this._writer.WriteBitLong(0);
+			//for (int ah = 0; ah < arrowHeadCount; ah++)
+			//{
+			//	//	//  DXF:	94  BL Arrowhead Index (DXF)
+			//	//	//	ODA:	94 B Is Default
+			//	//	int arrowheadIndex = _objectReader.ReadBitLong();
+			//	bool isDefault = this._objectReader.ReadBit();
+
+			//	//  345 Arrowhead ID
+			//	template.ArrowheadHandles.Add(this.handleReference(), isDefault);
+			//}
+		}
 
 		//	BL Number of Block Labels
 		int blockLabelCount = multiLeader.BlockAttributes.Count;
@@ -1717,26 +1892,12 @@ internal partial class DwgObjectWriter : DwgSectionIO
 		}
 	}
 
-	private void writeMultiLeaderAnnotContextSubObject(bool writeLeaderRootsCount, MultiLeaderObjectContextData annotContext)
+	private void writeMultiLeaderAnnotContextSubObject(MultiLeaderObjectContextData annotContext)
 	{
 		int leaderRootCount = annotContext.LeaderRoots.Count;
-		if (writeLeaderRootsCount)
-		{
-			//	BL	-	Number of leader roots
-			this._writer.WriteBitLong(leaderRootCount);
-		}
-		else
-		{
-			this._writer.WriteBitLong(0);
-			this._writer.WriteBit(false);    // b0
-			this._writer.WriteBit(false);    // b1
-			this._writer.WriteBit(false);    // b2
-			this._writer.WriteBit(false);    // b3
-			this._writer.WriteBit(false);    // b4
-			this._writer.WriteBit(leaderRootCount == 2);    // b5
-			this._writer.WriteBit(leaderRootCount == 1);    // b6
-		}
 
+		//	BL	-	Number of leader roots
+		this._writer.WriteBitLong(leaderRootCount);
 		for (int i = 0; i < leaderRootCount; i++)
 		{
 			this.writeLeaderRoot(annotContext.LeaderRoots[i]);
@@ -1826,50 +1987,53 @@ internal partial class DwgObjectWriter : DwgSectionIO
 			//	B	Unknown
 			this._writer.WriteBit(false);
 		}
-		else if (annotContext.HasContentsBlock)
+		else
 		{
+			//B	296	Has contents block
 			this._writer.WriteBit(annotContext.HasContentsBlock);
 
-			//B	296	Has contents block
 			//IF Has contents block
-			//	H	341	AcDbBlockTableRecord handle (soft pointer)
-			this._writer.HandleReference(DwgReferenceType.SoftPointer, annotContext.BlockContent);
-			//	3BD	14	Normal vector
-			this._writer.Write3BitDouble(annotContext.BlockContentNormal);
-			//	3BD	15	Location
-			this._writer.Write3BitDouble(annotContext.BlockContentLocation);
-			//	3BD	16	Scale vector
-			this._writer.Write3BitDouble(annotContext.BlockContentScale);
-			//	BD	46	Rotation (radians)
-			this._writer.WriteBitDouble(annotContext.BlockContentRotation);
-			//  CMC	93	Block color
-			this._writer.WriteCmColor(annotContext.BlockContentColor);
-			//	BD (16)	47	16 doubles containing the complete transformation
-			//	matrix. Order of transformation is:
-			//	- Rotation,
-			//	- OCS to WCS (using normal vector),
-			//	- Scaling (using scale vector)
-			//	- Translation (using location)
-			var m4 = annotContext.TransformationMatrix;
-			this._writer.WriteBitDouble(m4.M00);
-			this._writer.WriteBitDouble(m4.M10);
-			this._writer.WriteBitDouble(m4.M20);
-			this._writer.WriteBitDouble(m4.M30);
+			if (annotContext.HasContentsBlock)
+			{
+				//	H	341	AcDbBlockTableRecord handle (soft pointer)
+				this._writer.HandleReference(DwgReferenceType.SoftPointer, annotContext.BlockContent);
+				//	3BD	14	Normal vector
+				this._writer.Write3BitDouble(annotContext.BlockContentNormal);
+				//	3BD	15	Location
+				this._writer.Write3BitDouble(annotContext.BlockContentLocation);
+				//	3BD	16	Scale vector
+				this._writer.Write3BitDouble(annotContext.BlockContentScale);
+				//	BD	46	Rotation (radians)
+				this._writer.WriteBitDouble(annotContext.BlockContentRotation);
+				//  CMC	93	Block color
+				this._writer.WriteCmColor(annotContext.BlockContentColor);
+				//	BD (16)	47	16 doubles containing the complete transformation
+				//	matrix. Order of transformation is:
+				//	- Rotation,
+				//	- OCS to WCS (using normal vector),
+				//	- Scaling (using scale vector)
+				//	- Translation (using location)
+				var m4 = annotContext.TransformationMatrix;
+				this._writer.WriteBitDouble(m4.M00);
+				this._writer.WriteBitDouble(m4.M10);
+				this._writer.WriteBitDouble(m4.M20);
+				this._writer.WriteBitDouble(m4.M30);
 
-			this._writer.WriteBitDouble(m4.M01);
-			this._writer.WriteBitDouble(m4.M11);
-			this._writer.WriteBitDouble(m4.M21);
-			this._writer.WriteBitDouble(m4.M31);
+				this._writer.WriteBitDouble(m4.M01);
+				this._writer.WriteBitDouble(m4.M11);
+				this._writer.WriteBitDouble(m4.M21);
+				this._writer.WriteBitDouble(m4.M31);
 
-			this._writer.WriteBitDouble(m4.M02);
-			this._writer.WriteBitDouble(m4.M12);
-			this._writer.WriteBitDouble(m4.M22);
-			this._writer.WriteBitDouble(m4.M32);
+				this._writer.WriteBitDouble(m4.M02);
+				this._writer.WriteBitDouble(m4.M12);
+				this._writer.WriteBitDouble(m4.M22);
+				this._writer.WriteBitDouble(m4.M32);
 
-			this._writer.WriteBitDouble(m4.M03);
-			this._writer.WriteBitDouble(m4.M13);
-			this._writer.WriteBitDouble(m4.M23);
-			this._writer.WriteBitDouble(m4.M33);
+				this._writer.WriteBitDouble(m4.M03);
+				this._writer.WriteBitDouble(m4.M13);
+				this._writer.WriteBitDouble(m4.M23);
+				this._writer.WriteBitDouble(m4.M33);
+			}
 		}
 		//END IF Has contents block
 		//END IF Has text contents
@@ -2086,8 +2250,18 @@ internal partial class DwgObjectWriter : DwgSectionIO
 		//Flags RC 70 NOT DIRECTLY THE 75. Bit-coded (76543210):
 		//75 0 : Splined(75 value is 5)
 		//1 : Splined(75 value is 6)
-		//Should assign pline.SmoothSurface ??
-		this._writer.WriteByte(0);
+		byte smoothSurface = 0;
+		switch (pline.SmoothSurface)
+		{
+			case SmoothSurfaceType.Quadratic:
+				smoothSurface = 0b1;
+				break;
+			case SmoothSurfaceType.Cubic:
+				smoothSurface = 0b10;
+				break;
+		}
+
+		this._writer.WriteByte(smoothSurface);
 
 		//Flags RC 70 NOT DIRECTLY THE 70. Bit-coded (76543210):
 		//0 : Closed(70 bit 0(1))
@@ -2118,6 +2292,46 @@ internal partial class DwgObjectWriter : DwgSectionIO
 		//Common:
 		//H SEQEND(hard owner)
 		this._writer.HandleReference(DwgReferenceType.HardOwnership, pline.Vertices.Seqend);
+	}
+
+	private void writeProxyEntity(ProxyEntity proxy)
+	{
+		this._writer.WriteBitLong(proxy.ClassNumber);
+
+		if (this.R2000Plus)
+		{
+			if (this._version > ACadVersion.AC1015)
+			{
+				//The string stream seems to contain the dxfsubclass
+				this._writer.WriteVariableText(proxy.DxfClass != null
+					? proxy.DxfClass.CppClassName : string.Empty);
+			}
+
+			//Before R2018:
+			if (!this.R2018Plus)
+			{
+				//Object Drawing Format BL 95 This is a bitwise OR of the version and the
+				//maintenance version, shifted 16 bits to the left.
+				this._writer.WriteBitLong((int)proxy.Version | (proxy.MaintenanceVersion << 16));
+			}
+			//R2018+:
+			else
+			{
+				//Version BL 71 The AutoCAD version of the object.
+				this._writer.WriteBitLong((int)proxy.Version);
+				//Maintenance version BL 97 The AutoCAD maintenance version of the object.
+				this._writer.WriteBitLong((int)proxy.MaintenanceVersion);
+			}
+
+			//R2000 +:
+			//Original Data Format B 70 0 for dwg, 1 for dxf
+			this._writer.WriteBit(proxy.OriginalDataFormatDxf);
+		}
+		else
+		{
+			this._writer.WriteBitLong(proxy.DxfClass != null
+				? proxy.DxfClass.ItemClassId : 0);
+		}
 	}
 
 	private void writeRay(Ray ray)
@@ -2204,6 +2418,14 @@ internal partial class DwgObjectWriter : DwgSectionIO
 
 	private void writeSolid3D(Solid3D solid)
 	{
+		this.writeModelerGeometry(solid);
+
+		//R2007 +:
+		if (this.R2007Plus)
+		{
+			//H 350 History ID
+			this._writer.HandleReference(DwgReferenceType.HardOwnership, null);
+		}
 	}
 
 	private void writeSpline(Spline spline)
@@ -2308,200 +2530,6 @@ internal partial class DwgObjectWriter : DwgSectionIO
 					break;
 				}
 		}
-	}
-
-	private void writeTableEntity(TableEntity table)
-	{
-		this.writeCommonInsertData(table);
-
-		if (this.R2010Plus)
-		{
-			//RC Unknown (default 0)
-			this._writer.WriteByte(0);
-			//H Unknown (soft pointer, default NULL)
-			this._writer.HandleReference(DwgReferenceType.SoftPointer, null);
-			//BL Unknown (default 0)
-			this._writer.WriteBitLong(0);
-
-			//R2013
-			if (this.R2013Plus)
-			{
-				//Unknown (default 0)
-				this._writer.WriteBitLong(0);
-			}
-			else
-			{
-				//R2010
-				//B Unknown (default true)
-				this._writer.WriteBit(true);
-			}
-
-			//Here the table content is present (see TABLECONTENT object),
-			//without the common OBJECT data.
-			//See paragraph 20.4.97.
-			this.writeTableContent(table.Content);
-
-			//BS Unknown (default 38)
-			this._writer.WriteBitShort(38);
-			//3BD 11 Horizontal direction
-			this._writer.Write3BitDouble(table.HorizontalDirection);
-
-			//BL Has break data flag (0 = no break data, 1 = has break data)
-			//Begin break data(optional)
-			this._writer.WriteBitLong(table.HasBreadData ? 1 : 0);
-			if (table.HasBreadData)
-			{
-				//BL Option flags:
-				this._writer.WriteBitLong((int)table.BreakData.Flags);
-				//BL Flow direction:
-				this._writer.WriteBitLong((int)table.BreakData.FlowDirection);
-				//BD Break spacing
-				this._writer.WriteBitDouble(table.BreakData.BreakSpacing);
-				//BL Unknown flags
-				this._writer.WriteBitLong(0);
-				//BL Unknown flags
-				this._writer.WriteBitLong(0);
-				//BL Number of manual positions (break heights)
-				this._writer.WriteBitLong(table.BreakData.Heights.Count);
-				foreach (var breakHeight in table.BreakData.Heights)
-				{
-					//3BD Position
-					this._writer.Write3BitDouble(breakHeight.Position);
-					//BD Height
-					this._writer.WriteBitDouble(breakHeight.Height);
-					//BL Flags(meaning unknown)
-					this._writer.WriteBitLong(0);
-				}
-			}
-
-			//BL Number of break row ranges (there is always at least 1)
-			this._writer.WriteBitLong(table.BreakRowRanges.Count);
-			foreach (var breakRowRange in table.BreakRowRanges)
-			{
-				//3BD Position
-				this._writer.Write3BitDouble(breakRowRange.Position);
-				//BL Start row index
-				this._writer.WriteBitLong(breakRowRange.StartRowIndex);
-				//BL End row index
-				this._writer.WriteBitLong(breakRowRange.EndRowIndex);
-			}
-
-			return;
-		}
-
-		//Until R2007
-
-		//Common:
-		//Flag for table value BS 90
-		//	Bit flags, 0x06(0x02 + 0x04): has block,
-		//	0x10: table direction, 0 = up, 1 = down,
-		//	0x20: title suppressed.
-		//	Normally 0x06 is always set.
-
-		throw new NotImplementedException();
-	}
-
-	private void writeTableContent(TableContent content)
-	{
-		//TV 1 Name
-		this._writer.WriteVariableText(content.Name);
-		//TV 300 Description AcDbLinkedTableData fields
-		this._writer.WriteVariableText(content.Description);
-
-		//BL 90 Number of columns
-		this._writer.WriteBitLong(content.Columns.Count);
-		//Begin repeat columns
-		foreach (TableEntity.Column column in content.Columns)
-		{
-			//TV 300 Column name
-			this._writer.WriteVariableText(column.Name);
-			//BL 91 32 bit integer containing custom data
-			this._writer.WriteBitLong(column.CustomData);
-
-			//BL 90 Number of custom data items
-			this._writer.WriteBitLong(column.CustomDataCollection.Count);
-			//Begin repeat custom data items
-			foreach (var entry in column.CustomDataCollection)
-			{
-				//Custom data collection, see paragraph 20.4.100
-				this.writeCustomTableData(entry);
-			}
-
-			//Cell style data, see paragraph 20.4.101.4, this contains cell style overrides for the column.
-			this.writeCellStyle(column.CellStyleOverride);
-
-			//BL 90 Cell style ID, points to the cell style in the table’s table style that is used as the
-			//base cell style for the column. 0 if not present.
-			this._writer.WriteBitLong(column.CellStyle != null ? column.CellStyle.Id : 0);
-
-			//BD 40 Column width.
-			this._writer.WriteBitDouble(column.Width);
-			//End repeat columns
-		}
-
-		//BL 91 Number of rows.
-		this._writer.WriteBitLong(content.Rows.Count);
-		foreach (var row in content.Rows)
-		{
-			//BL 90 Number of cells in row.
-			this._writer.WriteBitLong(row.Cells.Count);
-			//Begin repeat cells
-			foreach (var cell in row.Cells)
-			{
-				this.writeTableCell(cell);
-			}
-
-			//BL 91 32 bit integer containing custom data
-			this._writer.WriteBitLong(row.CustomData);
-
-			//BL 90 Number of custom data items
-			this._writer.WriteBitLong(row.CustomDataCollection.Count);
-			foreach (var entry in row.CustomDataCollection)
-			{
-				//Custom data collection, see paragraph 20.4.100
-				this.writeCustomTableData(entry);
-			}
-
-			//Cell style data, see paragraph 20.4.101.4, this contains cell style overrides for the row.
-			this.writeCellStyle(row.CellStyleOverride);
-
-			//BL 90 Cell style ID, points to the cell style in the table’s table style that is used as the
-			//base cell style for the column. 0 if not present.
-			this._writer.WriteBitLong(row.CellStyle != null ? row.CellStyle.Id : 0);
-
-			//40 Row height
-			this._writer.WriteBitDouble(row.Height);
-		}
-
-		//BL Number of cell contents that contain a field reference.
-		this._writer.WriteBitLong(0);
-		//Begin repeat field references
-		//for (int n = 0; n < nfields; n++)
-		//{
-		//	//H Handle to field (AcDbField), hard owner.
-		//	this._mergedReaders.HandleReference();
-		//}
-
-		//The table’s cell style override fields (see paragraph 20.4.101.4). The table’s
-		//base cell style is the table style’s overall cell style (present from R2010 onwards).
-		this.writeCellStyle(content.CellStyleOverride);
-
-		//Bl 90 Number of merged cell ranges
-		this._writer.WriteBitLong(content.MergedCellRanges.Count);
-		foreach (var cellRange in content.MergedCellRanges)
-		{
-			//BL 91 Top row index
-			this._writer.WriteBitLong(cellRange.TopRowIndex);
-			//BL 92 Left column index
-			this._writer.WriteBitLong(cellRange.LeftColumnIndex);
-			//BL 93 Bottom row index
-			this._writer.WriteBitLong(cellRange.BottomRowIndex);
-			//BL 94 Right column index
-			this._writer.WriteBitLong(cellRange.RightColumnIndex);
-		}
-
-		//H 340 Handle to table style(hard pointer).
-		this._writer.HandleReference(DwgReferenceType.HardPointer, content.Style);
 	}
 
 	private void writeTableCell(TableEntity.Cell cell)
@@ -2619,11 +2647,198 @@ internal partial class DwgObjectWriter : DwgSectionIO
 		}
 	}
 
-	private void writeCustomTableData(TableEntity.CustomDataEntry entry)
+	private void writeTableContent(TableContent content)
 	{
-		//TV 300 Item name
-		this._writer.WriteVariableText(entry.Name);
-		this.writeCadValue(entry.Value);
+		//TV 1 Name
+		this._writer.WriteVariableText(content.Name);
+		//TV 300 Description AcDbLinkedTableData fields
+		this._writer.WriteVariableText(content.Description);
+
+		//BL 90 Number of columns
+		this._writer.WriteBitLong(content.Columns.Count);
+		//Begin repeat columns
+		foreach (TableEntity.Column column in content.Columns)
+		{
+			//TV 300 Column name
+			this._writer.WriteVariableText(column.Name);
+			//BL 91 32 bit integer containing custom data
+			this._writer.WriteBitLong(column.CustomData);
+
+			//BL 90 Number of custom data items
+			this._writer.WriteBitLong(column.CustomDataCollection.Count);
+			//Begin repeat custom data items
+			foreach (var entry in column.CustomDataCollection)
+			{
+				//Custom data collection, see paragraph 20.4.100
+				this.writeCustomTableData(entry);
+			}
+
+			//Cell style data, see paragraph 20.4.101.4, this contains cell style overrides for the column.
+			this.writeCellStyle(column.CellStyleOverride);
+
+			//BL 90 Cell style ID, points to the cell style in the table’s table style that is used as the
+			//base cell style for the column. 0 if not present.
+			this._writer.WriteBitLong(column.CellStyle != null ? column.CellStyle.Id : 0);
+
+			//BD 40 Column width.
+			this._writer.WriteBitDouble(column.Width);
+			//End repeat columns
+		}
+
+		//BL 91 Number of rows.
+		this._writer.WriteBitLong(content.Rows.Count);
+		foreach (var row in content.Rows)
+		{
+			//BL 90 Number of cells in row.
+			this._writer.WriteBitLong(row.Cells.Count);
+			//Begin repeat cells
+			foreach (var cell in row.Cells)
+			{
+				this.writeTableCell(cell);
+			}
+
+			//BL 91 32 bit integer containing custom data
+			this._writer.WriteBitLong(row.CustomData);
+
+			//BL 90 Number of custom data items
+			this._writer.WriteBitLong(row.CustomDataCollection.Count);
+			foreach (var entry in row.CustomDataCollection)
+			{
+				//Custom data collection, see paragraph 20.4.100
+				this.writeCustomTableData(entry);
+			}
+
+			//Cell style data, see paragraph 20.4.101.4, this contains cell style overrides for the row.
+			this.writeCellStyle(row.CellStyleOverride);
+
+			//BL 90 Cell style ID, points to the cell style in the table’s table style that is used as the
+			//base cell style for the column. 0 if not present.
+			this._writer.WriteBitLong(row.CellStyle != null ? row.CellStyle.Id : 0);
+
+			//40 Row height
+			this._writer.WriteBitDouble(row.Height);
+		}
+
+		//BL Number of cell contents that contain a field reference.
+		this._writer.WriteBitLong(0);
+		//Begin repeat field references
+		//for (int n = 0; n < nfields; n++)
+		//{
+		//	//H Handle to field (AcDbField), hard owner.
+		//	this._mergedReaders.HandleReference();
+		//}
+
+		//The table’s cell style override fields (see paragraph 20.4.101.4). The table’s
+		//base cell style is the table style’s overall cell style (present from R2010 onwards).
+		this.writeCellStyle(content.CellStyleOverride);
+
+		//Bl 90 Number of merged cell ranges
+		this._writer.WriteBitLong(content.MergedCellRanges.Count);
+		foreach (var cellRange in content.MergedCellRanges)
+		{
+			//BL 91 Top row index
+			this._writer.WriteBitLong(cellRange.TopRowIndex);
+			//BL 92 Left column index
+			this._writer.WriteBitLong(cellRange.LeftColumnIndex);
+			//BL 93 Bottom row index
+			this._writer.WriteBitLong(cellRange.BottomRowIndex);
+			//BL 94 Right column index
+			this._writer.WriteBitLong(cellRange.RightColumnIndex);
+		}
+
+		//H 340 Handle to table style(hard pointer).
+		this._writer.HandleReference(DwgReferenceType.HardPointer, content.Style);
+	}
+
+	private void writeTableEntity(TableEntity table)
+	{
+		this.writeCommonInsertData(table);
+
+		if (this.R2010Plus)
+		{
+			//RC Unknown (default 0)
+			this._writer.WriteByte(0);
+			//H Unknown (soft pointer, default NULL)
+			this._writer.HandleReference(DwgReferenceType.SoftPointer, null);
+			//BL Unknown (default 0)
+			this._writer.WriteBitLong(0);
+
+			//R2013
+			if (this.R2013Plus)
+			{
+				//Unknown (default 0)
+				this._writer.WriteBitLong(0);
+			}
+			else
+			{
+				//R2010
+				//B Unknown (default true)
+				this._writer.WriteBit(true);
+			}
+
+			//Here the table content is present (see TABLECONTENT object),
+			//without the common OBJECT data.
+			//See paragraph 20.4.97.
+			this.writeTableContent(table.Content);
+
+			//BS Unknown (default 38)
+			this._writer.WriteBitShort(38);
+			//3BD 11 Horizontal direction
+			this._writer.Write3BitDouble(table.HorizontalDirection);
+
+			//BL Has break data flag (0 = no break data, 1 = has break data)
+			//Begin break data(optional)
+			this._writer.WriteBitLong(table.HasBreadData ? 1 : 0);
+			if (table.HasBreadData)
+			{
+				//BL Option flags:
+				this._writer.WriteBitLong((int)table.BreakData.Flags);
+				//BL Flow direction:
+				this._writer.WriteBitLong((int)table.BreakData.FlowDirection);
+				//BD Break spacing
+				this._writer.WriteBitDouble(table.BreakData.BreakSpacing);
+				//BL Unknown flags
+				this._writer.WriteBitLong(0);
+				//BL Unknown flags
+				this._writer.WriteBitLong(0);
+				//BL Number of manual positions (break heights)
+				this._writer.WriteBitLong(table.BreakData.Heights.Count);
+				foreach (var breakHeight in table.BreakData.Heights)
+				{
+					//3BD Position
+					this._writer.Write3BitDouble(breakHeight.Position);
+					//BD Height
+					this._writer.WriteBitDouble(breakHeight.Height);
+					//BL Flags(meaning unknown)
+					this._writer.WriteBitLong(0);
+				}
+			}
+
+			//BL Number of break row ranges (there is always at least 1)
+			this._writer.WriteBitLong(table.BreakRowRanges.Count);
+			foreach (var breakRowRange in table.BreakRowRanges)
+			{
+				//3BD Position
+				this._writer.Write3BitDouble(breakRowRange.Position);
+				//BL Start row index
+				this._writer.WriteBitLong(breakRowRange.StartRowIndex);
+				//BL End row index
+				this._writer.WriteBitLong(breakRowRange.EndRowIndex);
+			}
+
+			return;
+		}
+
+		//Until R2007
+
+		//Common:
+		//Flag for table value BS 90
+		//	Bit flags, 0x06(0x02 + 0x04): has block,
+		//	0x10: table direction, 0 = up, 1 = down,
+		//	0x20: title suppressed.
+		//	Normally 0x06 is always set.
+
+		throw new NotImplementedException();
 	}
 
 	private void writeTextEntity(TextEntity text)
@@ -2979,6 +3194,48 @@ internal partial class DwgObjectWriter : DwgSectionIO
 			this._writer.HandleReference(DwgReferenceType.SoftPointer, null);
 			//H 361 Sun(hard owner)
 			this._writer.HandleReference(DwgReferenceType.HardOwnership, null);
+		}
+	}
+
+	private void writeWire(ModelerGeometry.Wire wire)
+	{
+		//Wire type RC X
+		this._writer.WriteByte(wire.Type);
+		//Wire selection marker BL X
+		this._writer.WriteBitLong(wire.SelectionMarker);
+		//Wire color BS X
+		this._writer.WriteBitShort((short)wire.Color.Index);
+		//Wire Acis Index BL X
+		this._writer.WriteBitLong(wire.AcisIndex);
+
+		//Wire # of points BL X
+		this._writer.WriteBitLong(wire.Points.Count);
+		foreach (XYZ point in wire.Points)
+		{
+			//Point 3BD X Repeats “Wire # of points” times.
+			this._writer.Write3BitDouble(point);
+		}
+
+		//Transform present B X
+		this._writer.WriteBit(wire.ApplyTransformPresent);
+		if (wire.ApplyTransformPresent)
+		{
+			//X Axis 3BD X
+			this._writer.Write3BitDouble(wire.XAxis);
+			//Y Axis 3BD X
+			this._writer.Write3BitDouble(wire.YAxis);
+			//Z Axis 3BD X
+			this._writer.Write3BitDouble(wire.ZAxis);
+			//Translation 3BD X
+			this._writer.Write3BitDouble(wire.Translation);
+			//Scale BD X
+			this._writer.WriteBitDouble(wire.Scale);
+			//Has rotation B X
+			this._writer.WriteBit(wire.HasRotation);
+			//Has reflection B X
+			this._writer.WriteBit(wire.HasReflection);
+			//Has shear B X
+			this._writer.WriteBit(wire.HasShear);
 		}
 	}
 
