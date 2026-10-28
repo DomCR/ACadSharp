@@ -173,6 +173,29 @@ public class InsertTest
 	}
 
 	[Fact]
+	public void GetTransformHonorsBlockBasePointWithRotationAndScale()
+	{
+		BlockRecord record = new BlockRecord(this._blockName);
+		record.BlockEntity.BasePoint = new XYZ(1, 2, 0);
+		record.Entities.Add(new Point(new XYZ(3, 5, 0)));
+
+		Insert insert = new Insert(record)
+		{
+			InsertPoint = new XYZ(10, 20, 0),
+			XScale = 2,
+			YScale = 3,
+			Rotation = MathHelper.HalfPI
+		};
+
+		Transform transform = insert.GetTransform();
+		Point exploded = (Point)insert.Explode().Single();
+
+		AssertUtils.AreEqual(new XYZ(10, 20, 0), transform.ApplyTransform(new XYZ(1, 2, 0)));
+		AssertUtils.AreEqual(new XYZ(1, 24, 0), transform.ApplyTransform(new XYZ(3, 5, 0)));
+		AssertUtils.AreEqual(new XYZ(1, 24, 0), exploded.Location);
+	}
+
+	[Fact]
 	public void LinkedAttributes()
 	{
 		BlockRecord record = new BlockRecord(this._blockName);
