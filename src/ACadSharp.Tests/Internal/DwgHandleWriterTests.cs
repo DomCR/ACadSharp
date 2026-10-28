@@ -1,4 +1,5 @@
 ﻿using ACadSharp.IO.DWG;
+using ACadSharp.IO.DWG.DwgStreamReaders;
 using System.Collections.Generic;
 using System.IO;
 using Xunit;
