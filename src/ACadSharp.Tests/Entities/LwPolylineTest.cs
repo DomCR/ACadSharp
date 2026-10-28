@@ -115,6 +115,23 @@ public class LwPolylineTests : CommonEntityTests<LwPolyline>
 		}
 	}
 
+	[Fact]
+	public void ExplodeBulgeOverZeroLengthSegment()
+	{
+		LwPolyline lwPolyline = new LwPolyline();
+		lwPolyline.Vertices.Add(new LwPolyline.Vertex(new XY(0, 0)) { Bulge = 1.0 });
+		lwPolyline.Vertices.Add(new LwPolyline.Vertex(new XY(0, 0)));
+		lwPolyline.Vertices.Add(new LwPolyline.Vertex(new XY(10, 0)));
+
+		List<Entity> entities = lwPolyline.Explode().ToList();
+
+		Assert.Equal(2, entities.Count);
+		Line l = Assert.IsType<Line>(entities[0]);
+		Assert.Equal(XYZ.Zero, l.StartPoint);
+		Assert.Equal(XYZ.Zero, l.EndPoint);
+		Assert.IsType<Line>(entities[1]);
+	}
+
 	public override void GetBoundingBoxTest()
 	{
 	}
