@@ -62,7 +62,15 @@ public class Layer : TableEntry
 	[DxfCodeValue(DxfReferenceType.Name, 6)]
 	public LineType LineType
 	{
-		get { return this._lineType; }
+		get
+		{
+			if(this._lineType == null)
+			{
+				this._lineType = LineType.Continuous;
+			}
+
+			return this._lineType;
+		}
 		set
 		{
 			if (value == null)
@@ -144,9 +152,9 @@ public class Layer : TableEntry
 
 	private Color _color = new Color(7);
 
-	private LineType _lineType = LineType.Continuous;
+	private LineType _lineType = null;
 
-	private Material _material;
+	private Material _material = null;
 
 	private bool _plotFlag = true;
 
@@ -163,8 +171,8 @@ public class Layer : TableEntry
 	{
 		Layer clone = (Layer)base.Clone();
 
-		clone._lineType = (LineType)this.LineType.Clone();
-		clone._material = (Material)(this.Material?.Clone());
+		clone._lineType = (LineType)this._lineType?.Clone();
+		clone._material = (Material)(this._material?.Clone());
 
 		return clone;
 	}
@@ -173,15 +181,15 @@ public class Layer : TableEntry
 	{
 		base.AssignDocument(doc);
 
-		this.updateTableEntry(this._lineType, l => this._lineType = l, doc.LineTypes);
+		this._lineType = this.updateTableEntry(this._lineType ?? LineType.Continuous, l => this._lineType = l, doc.LineTypes);
 	}
 
 	internal override void UnassignDocument()
 	{
-		this.Document.LineTypes.RemoveReference(this.LineType.Name, this);
+		this.Document.LineTypes.RemoveReference(this._lineType?.Name, this);
 
 		base.UnassignDocument();
 
-		this._lineType = (LineType)this.LineType.Clone();
+		this._lineType = (LineType)this._lineType?.Clone();
 	}
 }

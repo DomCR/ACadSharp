@@ -1,5 +1,6 @@
 ﻿using ACadSharp.Attributes;
 using ACadSharp.Entities.ProxyGraphics;
+using ACadSharp.Extensions;
 using ACadSharp.Objects;
 using ACadSharp.Tables;
 using CSMath;
@@ -53,7 +54,7 @@ public abstract class Entity : CadObject, IEntity
 	{
 		get
 		{
-			if(this._layer == null)
+			if (this._layer == null)
 			{
 				this._layer = Layer.Default;
 			}
@@ -77,7 +78,7 @@ public abstract class Entity : CadObject, IEntity
 	{
 		get
 		{
-			if(this._lineType == null)
+			if (this._lineType == null)
 			{
 				this._lineType = LineType.ByLayer;
 			}
@@ -200,9 +201,9 @@ public abstract class Entity : CadObject, IEntity
 	{
 		Entity clone = (Entity)base.Clone();
 
-		clone.Layer = (Layer)this.Layer.Clone();
-		clone.LineType = (LineType)this.LineType.Clone();
-		clone.Material = (Material)this.Material?.Clone();
+		clone._layer = this._layer?.CloneTyped();
+		clone._lineType = this._lineType?.CloneTyped();
+		clone._material = this._material?.CloneTyped();
 
 		if (this._proxyGeometries != null)
 		{
@@ -324,16 +325,16 @@ public abstract class Entity : CadObject, IEntity
 		this.Document.Colors.RemoveReference(this._bookColor?.Name, this);
 		this.Document.Materials.RemoveReference(this._material?.Name, this);
 
-		this.Document.Layers.RemoveReference(this.Layer.Name, this);
-		this.Document.LineTypes.RemoveReference(this.LineType.Name, this);
+		this.Document.Layers.RemoveReference(this._layer?.Name, this);
+		this.Document.LineTypes.RemoveReference(this._lineType?.Name, this);
 
 		base.UnassignDocument();
 
-		this._layer = (Layer)this.Layer.Clone();
-		this._lineType = (LineType)this.LineType.Clone();
+		this._layer = (Layer)this._layer?.Clone();
+		this._lineType = (LineType)this._lineType?.Clone();
 
-		this._bookColor = (BookColor)this.BookColor?.Clone();
-		this._material = (Material)this.Material?.Clone();
+		this._bookColor = (BookColor)this._bookColor?.Clone();
+		this._material = (Material)this._material?.Clone();
 	}
 
 	protected List<XY> applyRotation(IEnumerable<XY> points, double rotation)
