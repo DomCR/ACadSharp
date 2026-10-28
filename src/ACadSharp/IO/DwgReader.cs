@@ -298,9 +298,23 @@ public class DwgReader : CadReaderBase<DwgReaderConfiguration>
 	/// <returns></returns>
 	private byte[] getPageBuffer(ulong pageOffset, ulong compressedSize, ulong uncompressedSize, ulong correctionFactor, int blockSize, Stream stream)
 	{
+		//The sizes come from the file header, check them before allocating: the encoded page cannot be larger than the file
+		ulong fileLength = (ulong)stream.Length;
+		if (pageOffset > fileLength || compressedSize > fileLength)
+			throw new DwgException($"Page at offset {pageOffset} with {compressedSize} compressed bytes does not fit in the file.");
+
 		//Avoid shifted bits
 		ulong v = compressedSize + 7L;
 		ulong v1 = v & 0b11111111_11111111_11111111_11111000L;
+
+		if (correctionFactor != 0 && v1 > fileLength / correctionFactor)
+			throw new DwgException($"Page at offset {pageOffset} with {compressedSize} compressed bytes does not fit in the file.");
+
+		ulong encodedSize = (v1 * correctionFactor + (ulong)blockSize - 1) / (ulong)blockSize * byte.MaxValue;
+		if (encodedSize > int.MaxValue || encodedSize > fileLength)
+			throw new DwgException($"Page at offset {pageOffset} with {compressedSize} compressed bytes does not fit in the file.");
+
+		checkDecompressedSize(compressedSize, uncompressedSize);
 
 		uint totalSize = (uint)(v1 * correctionFactor);
 
@@ -321,6 +335,18 @@ public class DwgReader : CadReaderBase<DwgReaderConfiguration>
 		new DwgLZ77AC21Decompressor().Decompress(compressedData, 0U, (uint)compressedSize, decompressedData);
 
 		return decompressedData;
+	}
+
+	/// <summary>
+	/// An AC21 LZ77 instruction of 5 bytes copies at most 65791 bytes, so a page cannot decompress to more than
+	/// this many times its compressed size.
+	/// </summary>
+	private const ulong MaxCompressionRatio = 0x10000;
+
+	private static void checkDecompressedSize(ulong compressedSize, ulong decompressedSize)
+	{
+		if (decompressedSize > int.MaxValue || decompressedSize / MaxCompressionRatio > compressedSize)
+			throw new DwgException($"Page declares {decompressedSize} decompressed bytes for {compressedSize} compressed bytes.");
 	}
 
 	private void getPageHeaderData(IDwgStreamReader sreader,
@@ -421,7 +447,17 @@ public class DwgReader : CadReaderBase<DwgReaderConfiguration>
 		//Get the total lenght of all uncompressed pages
 		ulong totalLength = 0;
 		foreach (DwgLocalSectionMap page in section.LocalSections)
+		{
+			//The sizes come from the section map, check them before allocating:
+			//a page lies inside the section's data size and decompresses from what it holds
+			if (page.Offset > section.CompressedSize || page.DecompressedSize > section.CompressedSize - page.Offset)
+				throw new DwgException($"Page at offset {page.Offset} of section {sectionName} is outside the section size {section.CompressedSize}.");
+
+			if (!page.IsEmpty)
+				checkDecompressedSize(page.CompressedSize, page.DecompressedSize);
+
 			totalLength += page.DecompressedSize;
+		}
 
 		MemoryStream memoryStream = HugeMemoryStream.Create((long)totalLength);
 
@@ -439,6 +475,9 @@ public class DwgReader : CadReaderBase<DwgReaderConfiguration>
 			{
 				//Get the page data
 				DwgSectionLocatorRecord pageData = fileheader.Records[page.PageNumber];
+
+				if (pageData.Size < 0 || pageData.Size > this._fileStream.Stream.Length)
+					throw new DwgException($"Page {page.PageNumber} of section {sectionName} has an invalid size {pageData.Size}.");
 
 				//Set the pointer on the current page
 				this._fileStream.Position = pageData.Seeker + 0x480L;
@@ -1047,6 +1086,10 @@ public class DwgReader : CadReaderBase<DwgReaderConfiguration>
 			//			pages, then it is to be preceded by a zero page with a size
 			//			that is equal to the difference between these two numbers.
 			section.PageCount = (int)sectionMapStream.ReadULong<LittleEndianConverter>();
+
+			//The name lies in the section map, check its length before allocating it
+			if (sectionNameLength < 0 || sectionNameLength > sectionMapStream.Length - sectionMapStream.Position)
+				throw new DwgException($"Section name length {sectionNameLength} is outside the section map.");
 
 			//Read the name
 			if (sectionNameLength > 0)

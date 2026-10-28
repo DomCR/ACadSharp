@@ -1,4 +1,6 @@
-﻿using ACadSharp.IO;
+﻿using ACadSharp.Exceptions;
+using ACadSharp.IO;
+using ACadSharp.IO.DWG;
 using ACadSharp.Tests.TestModels;
 using System.IO;
 using Xunit;
@@ -82,6 +84,37 @@ public class DwgReaderTests : CadReaderTestsBase<DwgReader>
 		configuration.CrcCheck = true;
 
 		CadDocument doc = DwgReader.Read(test.Path, configuration, this.onNotification);
+	}
+
+	[Theory]
+	//A page decompressing to 17.9 TB from 757 bytes (62 GB were requested in 1 GiB blocks before the OutOfMemoryException)
+	[InlineData(new int[] { 1050757 }, new byte[] { 0x80 })]
+	//A page 4 GB past the end of an 848 bytes section
+	[InlineData(new int[] { 1054, 123321, 859, 1050779 }, new byte[] { 0xFC, 0xA3, 0x7C, 0x63 })]
+	//A section name length of 1.6 GB, allocated before the name was read
+	[InlineData(new int[] { 1048884 }, new byte[] { 0x90 })]
+	public void ReadDamagedAC1021MapsTest(int[] offsets, byte[] values)
+	{
+		byte[] data = File.ReadAllBytes(Path.Combine(TestVariables.SamplesFolder, "sample_AC1021.dwg"));
+		for (int i = 0; i < offsets.Length; i++)
+		{
+			data[offsets[i]] = values[i];
+		}
+
+		using (DwgReader reader = new DwgReader(new MemoryStream(data)))
+		{
+			Assert.Throws<DwgException>(() => reader.Read());
+		}
+	}
+
+	[Fact]
+	public void ReadBytesPastTheEndTest()
+	{
+		IDwgStreamReader reader = DwgStreamReaderBase.GetStreamHandler(ACadVersion.AC1021, new MemoryStream(new byte[16]));
+
+		//Checked before the array is allocated
+		Assert.Throws<EndOfStreamException>(() => reader.ReadBytes(int.MaxValue));
+		Assert.Throws<EndOfStreamException>(() => reader.ReadBytes(-1));
 	}
 
 	[Theory]
