@@ -26,7 +26,23 @@ public abstract class CadObject : IHandledCadObject
 	/// <summary>
 	/// Extended data attached to this object.
 	/// </summary>
-	public ExtendedDataDictionary ExtendedData { get; private set; }
+	public ExtendedDataDictionary ExtendedData
+	{
+		get
+		{
+			if (this._extendedData == null)
+			{
+				this._extendedData = new ExtendedDataDictionary(this);
+			}
+
+			return this._extendedData;
+		}
+
+		private set
+		{
+			this._extendedData = value;
+		}
+	}
 
 	/// <inheritdoc/>
 	/// <remarks>
@@ -63,6 +79,11 @@ public abstract class CadObject : IHandledCadObject
 	{
 		get
 		{
+			if (this._reactors == null)
+			{
+				this._reactors = new List<CadObject>();
+			}
+
 			return this._reactors;
 		}
 	}
@@ -94,7 +115,9 @@ public abstract class CadObject : IHandledCadObject
 		}
 	}
 
-	private List<CadObject> _reactors = new List<CadObject>();
+	private ExtendedDataDictionary _extendedData = null;
+
+	private List<CadObject> _reactors = null;
 
 	private CadDictionary _xdictionary = null;
 
@@ -103,7 +126,6 @@ public abstract class CadObject : IHandledCadObject
 	/// </summary>
 	public CadObject()
 	{
-		this.ExtendedData = new ExtendedDataDictionary(this);
 	}
 
 	/// <summary>
@@ -115,6 +137,11 @@ public abstract class CadObject : IHandledCadObject
 	/// <param name="reactor"></param>
 	public void AddReactor(CadObject reactor)
 	{
+		if (this._reactors == null)
+		{
+			this._reactors = new List<CadObject>();
+		}
+
 		this._reactors.Add(reactor);
 	}
 
@@ -123,6 +150,11 @@ public abstract class CadObject : IHandledCadObject
 	/// </summary>
 	public void CleanReactors()
 	{
+		if (this._reactors == null)
+		{
+			return;
+		}
+
 		var reactors = this._reactors.ToList();
 		foreach (var reactor in reactors)
 		{
@@ -150,8 +182,8 @@ public abstract class CadObject : IHandledCadObject
 		clone.Owner = null;
 
 		//Collections
-		clone._reactors = new List<CadObject>();
-		clone.ExtendedData = new ExtendedDataDictionary(clone);
+		clone._reactors = null;
+		clone._extendedData = null;
 		clone.XDictionary = this._xdictionary?.CloneTyped();
 
 		return clone;
@@ -213,7 +245,7 @@ public abstract class CadObject : IHandledCadObject
 	/// <returns></returns>
 	public bool RemoveReactor(CadObject reactor)
 	{
-		return this._reactors.Remove(reactor);
+		return this._reactors?.Remove(reactor) ?? false;
 	}
 
 	/// <inheritdoc/>
@@ -266,7 +298,7 @@ public abstract class CadObject : IHandledCadObject
 			}
 		}
 
-		this._reactors.Clear();
+		this._reactors?.Clear();
 	}
 
 	protected T updateCollectionEntry<T>(T entry, Action<T> assignValue, ObjectDictionaryCollection<T> collection)
