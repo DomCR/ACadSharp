@@ -271,33 +271,37 @@ internal partial class DwgObjectWriter : DwgSectionIO
 		//R2000 + Only:
 		if (this.R2000Plus)
 		{
+			var x = insert.XScale == 0 ? 1.0 : insert.XScale;
+			var y = insert.YScale == 0 ? 1.0 : insert.YScale;
+			var z = insert.ZScale == 0 ? 1.0 : insert.ZScale;
+
 			//Data flags BB
 			//Scale Data Varies with Data flags:
-			if (insert.XScale == 1.0 && insert.YScale == 1.0 && insert.ZScale == 1.0)
+			if (x == 1.0 && y == 1.0 && z == 1.0)
 			{
 				//11 - scale is (1.0, 1.0, 1.0), no data stored.
 				this._writer.Write2Bits(3);
 			}
-			else if (insert.XScale == insert.YScale && insert.XScale == insert.ZScale)
+			else if (x == y && x == z)
 			{
 				//10 – 41 value stored as a RD, and 42 & 43 values are not stored, assumed equal to 41 value.
 				this._writer.Write2Bits(2);
-				this._writer.WriteRawDouble(insert.XScale);
+				this._writer.WriteRawDouble(x);
 			}
-			else if (insert.XScale == 1.0)
+			else if (x == 1.0)
 			{
 				//01 – 41 value is 1.0, 2 DD’s are present, each using 1.0 as the default value, representing the 42 and 43 values.
 				this._writer.Write2Bits(1);
-				this._writer.WriteBitDoubleWithDefault(insert.YScale, 1.0);
-				this._writer.WriteBitDoubleWithDefault(insert.ZScale, 1.0);
+				this._writer.WriteBitDoubleWithDefault(y, 1.0);
+				this._writer.WriteBitDoubleWithDefault(z, 1.0);
 			}
 			else
 			{
 				//00 – 41 value stored as a RD, followed by a 42 value stored as DD (use 41 for default value), and a 43 value stored as a DD(use 41 value for default value).
 				this._writer.Write2Bits(0);
-				this._writer.WriteRawDouble(insert.XScale);
-				this._writer.WriteBitDoubleWithDefault(insert.YScale, insert.XScale);
-				this._writer.WriteBitDoubleWithDefault(insert.ZScale, insert.XScale);
+				this._writer.WriteRawDouble(x);
+				this._writer.WriteBitDoubleWithDefault(y, x);
+				this._writer.WriteBitDoubleWithDefault(z, x);
 			}
 		}
 

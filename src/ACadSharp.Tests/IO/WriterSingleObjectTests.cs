@@ -1919,6 +1919,13 @@ public abstract class WriterSingleObjectTests : IOTestsBase
 			w.ClipBoundaryVertices.Clear();
 			this.Document.Entities.Add(w);
 
+			//Invalid for dwg but not dxf, it simplifies the setter too
+			var blk = new BlockRecord("block1");
+			blk.Entities.Add(new Line(XYZ.Zero, new XYZ(10, 10, 0)));
+			Insert insert = new Insert(blk);
+			insert.XScale = 0;
+			this.Document.Entities.Add(insert);
+
 			//Empty file
 
 			this.AssertRoundtrip = (doc) =>

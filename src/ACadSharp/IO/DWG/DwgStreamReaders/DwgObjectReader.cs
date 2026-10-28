@@ -3948,7 +3948,12 @@ namespace ACadSharp.IO.DWG
 					//Background color CMC 63
 					mtext.BackgroundColor = this._mergedReaders.ReadCmColor();
 					//Background transparency BL 441
-					mtext.BackgroundTransparency = new Transparency((short)this._objectReader.ReadBitLong());
+
+					var transparency = (short)this._objectReader.ReadBitLong();
+					if (!(transparency < 0 || transparency > 90))
+					{
+						mtext.BackgroundTransparency = new Transparency(transparency);
+					}
 				}
 			}
 

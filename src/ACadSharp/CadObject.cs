@@ -145,6 +145,11 @@ public abstract class CadObject : IHandledCadObject
 	/// </summary>
 	public void CleanReactors()
 	{
+		if(this._reactors == null)
+		{
+			return;
+		}
+
 		var reactors = this._reactors.ToList();
 		foreach (var reactor in reactors)
 		{
