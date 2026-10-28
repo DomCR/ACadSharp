@@ -102,9 +102,9 @@ internal abstract partial class DxfSectionWriterBase
 
 		this._writer.Write(DxfCode.Subclass, DxfSubclassMarker.Entity);
 
-		this._writer.Write(8, entity.Layer.Name);
+		this._writer.WriteIfNotDefault(8, entity.Layer.Name, Layer.DefaultName);
 
-		this._writer.Write(6, entity.LineType.Name);
+		this._writer.WriteIfNotDefault(6, entity.LineType.Name, LineType.ByLayerName);
 
 		if (entity.BookColor != null)
 		{
@@ -126,16 +126,19 @@ internal abstract partial class DxfSectionWriterBase
 			this._writer.Write(440, Transparency.ToAlphaValue(entity.Transparency));
 		}
 
-		this._writer.Write(48, entity.LineTypeScale, map);
+		this._writer.WriteIfNotDefault(48, entity.LineTypeScale, 1.0, map);
 
-		this._writer.Write(60, entity.IsInvisible ? (short)1 : (short)0, map);
+		this._writer.WriteIfNotDefault(60, entity.IsInvisible ? (short)1 : (short)0, 0, map);
 
 		if (entity.Owner is BlockRecord record && record.Layout != null)
 		{
 			this._writer.Write(67, record.Layout.IsPaperSpace ? (short)1 : 0);
 		}
 
-		this._writer.Write(370, entity.LineWeight);
+		if (this.Version >= ACadVersion.AC1015 && entity.LineWeight != LineWeightType.ByLayer)
+		{
+			this._writer.WriteIfNotDefault(370, entity.LineWeight, LineWeightType.ByLayer, map);
+		}
 	}
 
 	protected void writeCommonObjectData(CadObject cadObject)
