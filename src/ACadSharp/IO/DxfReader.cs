@@ -462,7 +462,7 @@ public class DxfReader : CadReaderBase<DxfReaderConfiguration>
 
 				string encoding = tmpReader.ValueAsString;
 
-				CodePage code = CadUtils.GetCodePage(encoding.ToLower());
+				CodePage code = CadUtils.GetCodePage(encoding);
 				this._encoding = this.getListedEncoding((int)code);
 			}
 
