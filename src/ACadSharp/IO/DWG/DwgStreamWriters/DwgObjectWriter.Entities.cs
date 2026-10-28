@@ -1,4 +1,4 @@
-﻿using ACadSharp.Entities;
+using ACadSharp.Entities;
 using ACadSharp.Objects;
 using CSMath;
 using CSMath.Extensions;
@@ -629,14 +629,14 @@ internal partial class DwgObjectWriter : DwgSectionIO
 			case Solid3D solid3d:
 				this.writeSolid3D(solid3d);
 				break;
-			case Spline spline:
-				this.writeSpline(spline);
-				break;
 			case Region region:
 				this.writeModelerGeometry(region);
 				break;
 			case CadBody body:
 				this.writeModelerGeometry(body);
+				break;
+			case Spline spline:
+				this.writeSpline(spline);
 				break;
 			case CadWipeoutBase image:
 				this.writeCadImage(image);
@@ -1507,128 +1507,6 @@ internal partial class DwgObjectWriter : DwgSectionIO
 		this._writer.HandleReference(DwgReferenceType.HardPointer, mline.Style);
 	}
 
-	private void writeModelerGeometry(ModelerGeometry geometry)
-	{
-		bool hasAcisData = geometry.AcisData != null && geometry.AcisData.Length > 0;
-
-		//Chapter 24 - Info
-		if (!this.R2013Plus)
-		{
-			if (hasAcisData && geometry.IsBinaryAcisData)
-			{
-				//Version 2 (SAB) has no length in the stream, the reader has to
-				//consume the rest of the object, which cannot be written along
-				//with the wireframe data and the handle stream.
-				this.notify($"Binary ACIS data cannot be written for {geometry.ObjectName} in {this._version}, the geometry will be empty", NotificationType.Warning);
-				hasAcisData = false;
-			}
-
-			//ACIS Empty bit B X If 1, then no data follows
-			this._writer.WriteBit(!hasAcisData);
-
-			if (hasAcisData)
-			{
-				this.writeModelerGeometryData(geometry);
-				return;
-			}
-		}
-
-		//Common:
-		//Wireframe data present B X True if wireframe data is present
-		this._writer.WriteBit(geometry.HasWireframeData);
-		if (geometry.HasWireframeData)
-		{
-			//Point present B X If true, following point is present, otherwise assume 0,0,0 for point
-			if (geometry.Point.IsZero())
-			{
-				this._writer.WriteBit(false);
-			}
-			else
-			{
-				this._writer.WriteBit(true);
-				//Point 3BD X Present if above bit is 1.
-				this._writer.Write3BitDouble(geometry.Point);
-			}
-
-			//Num IsoLines BL X
-			this._writer.WriteBitLong(geometry.Wires.Count);
-			//IsoLines present B X If true, isoline data is present.
-			this._writer.WriteBit(geometry.Wires.Any());
-			if (geometry.Wires.Any())
-			{
-				//Num Wires BL X Number of ISO lines that follow.
-				this._writer.WriteBitLong(geometry.Wires.Count);
-				foreach (ModelerGeometry.Wire wire in geometry.Wires)
-				{
-					this.writeWire(wire);
-				}
-			}
-
-			//Num. silhouettes BL X
-			this._writer.WriteBitLong(geometry.Silhouettes.Count);
-			foreach (ModelerGeometry.Silhouette silhouette in geometry.Silhouettes)
-			{
-				//VP id BL X
-				this._writer.WriteBitLongLong(silhouette.ViewportId);
-				//VP Target 3BD X
-				this._writer.Write3BitDouble(silhouette.ViewportTarget);
-				//VP dir. From target 3BD X
-				this._writer.Write3BitDouble(silhouette.ViewportDirectionFromTarget);
-				//VP up dir. 3BD X
-				this._writer.Write3BitDouble(silhouette.ViewportUpDirection);
-				//VP perspective B X
-				this._writer.WriteBit(silhouette.ViewportPerspective);
-
-				//IsoLines present B X If true, isoline data is present.
-				this._writer.WriteBit(silhouette.Wires.Any());
-				if (silhouette.Wires.Any())
-				{
-					//Num Wires BL X
-					this._writer.WriteBitLong(silhouette.Wires.Count);
-					foreach (ModelerGeometry.Wire wire in silhouette.Wires)
-					{
-						this.writeWire(wire);
-					}
-				}
-			}
-
-			//ACIS Empty bit B X Normally 1. If 0, then acis data follows.
-			this._writer.WriteBit(true);
-		}
-
-		//R2007 +:
-		if (this.R2007Plus)
-		{
-			//Unknown BL
-			this._writer.WriteBitLong(0);
-		}
-
-		if (this.R2013Plus)
-		{
-			//290
-			this._writer.WriteBit(geometry.Guid != System.Guid.Empty);
-			this.writeGuid(geometry.Guid);
-			this._writer.WriteBitLong(0);
-		}
-	}
-
-	private void writeModelerGeometryData(ModelerGeometry geometry)
-	{
-		//Unknown bit B X
-		this._writer.WriteBit(false);
-
-		//Version BS Can be 1 or 2.
-		this._writer.WriteBitShort(1);
-
-		//Version == 1 (following 2 items repeat until Block Size is 0):
-		//Block Size BL X Number of bytes of SAT data in this block.
-		byte[] data = AcisTextCodec.Decode(geometry.AcisData);
-		this._writer.WriteBitLong(data.Length);
-		this._writer.WriteBytes(data);
-
-		//End of the blocks
-		this._writer.WriteBitLong(0);
-	}
 
 	private void writeMText(MText mtext)
 	{
@@ -1684,11 +1562,9 @@ internal partial class DwgObjectWriter : DwgSectionIO
 			//Background flags BL 90 0 = no background, 1 = background fill, 2 = background fill with drawing fill color, 0x10 = text frame (R2018+)
 			this._writer.WriteBitLong((int)mtext.BackgroundFillFlags);
 
-			//background flags has bit 0x01 set, or in case of R2018 bit 0x10:
+			//Background values are present only when the fill-color bit is set.
 			if ((mtext.BackgroundFillFlags & BackgroundFillFlags.UseBackgroundFillColor)
-				!= BackgroundFillFlags.None
-				|| this._version > ACadVersion.AC1027
-				&& (mtext.BackgroundFillFlags & BackgroundFillFlags.TextFrame) > 0)
+				!= BackgroundFillFlags.None)
 			{
 				//Background scale factor	BL 45 default = 1.5
 				this._writer.WriteBitDouble(mtext.BackgroundScale);
@@ -2552,16 +2428,10 @@ internal partial class DwgObjectWriter : DwgSectionIO
 		this._writer.WriteBitLong(cell.HasLinkedData ? 1 : 0);
 		if (cell.HasLinkedData)
 		{
-			//H 340 Handle to data link object (hard pointer).
-			this._writer.HandleReference(null);
-			//BL 93 Row count.
-			this._writer.WriteBitLong(0);
-			//BL 94 Column count.
-			this._writer.WriteBitLong(0);
-			//BL 96 Unknown.
-			this._writer.WriteBitLong(0);
-			//End if has linked data
-			throw new Exception();
+			this._writer.HandleReference(DwgReferenceType.HardPointer, cell.DataLink);
+			this._writer.WriteBitLong(cell.LinkedRowCount);
+			this._writer.WriteBitLong(cell.LinkedColumnCount);
+			this._writer.WriteBitLong(cell.LinkedDataFlags);
 		}
 
 		//BL 95 Number of cell contents
@@ -2577,28 +2447,25 @@ internal partial class DwgObjectWriter : DwgSectionIO
 		//base cell style for the cell. 0 if not present.
 		this._writer.WriteBitLong(cell.Style != null ? cell.Style.Id : 0);
 
-		//BL 91 Unknown flag
-		this._writer.WriteBitLong(0);
-		//if (unknownFlag != 0)
-		//{
-		//	//If unknown flag is non-zero
-		//	//BL 91 Unknown
-		//	this._writer.WriteBitLong();
-		//	//BD 40 Unknown
-		//	this._writer.WriteBitDouble();
-		//	//BD 40 Unknown
-		//	this._writer.WriteBitDouble();
-		//	//BL Geometry data flags
-		//	var geomFlags = this._writer.WriteBitLong();
-
-		//	//H Unknown ()
-		//	template.UnknownHandle = this.handleReference();
-		//	if (geomFlags != 0)
-		//	{
-		//		cell.Geometry = new CellContentGeometry();
-		//		this.readCellContentGeometry(cell.Geometry);
-		//	}
-		//}
+		var geometry = cell.GeometryCollection.Count > 0 ? cell.GeometryCollection
+			: cell.Geometry == null ? new List<TableEntity.CellContentGeometry>() : new List<TableEntity.CellContentGeometry> { cell.Geometry };
+		this._writer.WriteBitLong(geometry.Count > 0 ? 1 : 0);
+		if (geometry.Count > 0)
+		{
+			this._writer.WriteBitLong(cell.GeometryFlags);
+			this._writer.WriteBitDouble(cell.GeometryWidth);
+			this._writer.WriteBitDouble(cell.GeometryHeight);
+			this._writer.WriteBitLong(geometry.Count);
+			this._writer.HandleReference(DwgReferenceType.SoftPointer, cell.GeometryReference);
+			foreach (var item in geometry)
+			{
+				this._writer.Write3BitDouble(item.DistanceTopLeft);
+				this._writer.Write3BitDouble(item.DistanceCenter);
+				this._writer.WriteBitDouble(item.ContentWidth); this._writer.WriteBitDouble(item.ContentHeight);
+				this._writer.WriteBitDouble(item.Width); this._writer.WriteBitDouble(item.Height);
+				this._writer.WriteBitLong(item.Flags);
+			}
+		}
 	}
 
 	private void writeTableCellContent(TableEntity.CellContent content)
@@ -2615,29 +2482,22 @@ internal partial class DwgObjectWriter : DwgSectionIO
 				break;
 			case TableEntity.TableCellContentType.Field:
 				//H 340 Handle to AcDbField object (hard pointer).
-				this._writer.HandleReference(DwgReferenceType.HardPointer, null);
+				this._writer.HandleReference(DwgReferenceType.HardPointer, content.Field);
+				if (content.Field != null) this.enqueueValidObject(content.Field);
 				break;
 			case TableEntity.TableCellContentType.Block:
 				//H 340 Handle to block record (hard pointer).
-				this._writer.HandleReference(DwgReferenceType.HardPointer, null);
+				this._writer.HandleReference(DwgReferenceType.HardPointer, content.BlockRecord);
 				break;
 		}
 
-		//BL 91 Number of attributes
-		this._writer.WriteBitLong(0);
-		//for (int i = 0; i < natts; i++)
-		//{
-		//	TableAttribute tableAttribute = new TableAttribute();
-		//	CadTableAttributeTemplate attTemplate = new CadTableAttributeTemplate(tableAttribute);
-
-		//	//H 330 Handle to attribute definition (ATTDEF), soft pointer.
-		//	attTemplate.AttDefHandle = this.handleReference();
-		//	//TV 301 Attribute value.
-		//	tableAttribute.Value = this._writer.WriteVariableText();
-		//	//BL 92 Index (starts at 1).
-		//	this._writer.WriteBitLong();
-		//	//End repeat attributes
-		//}
+		this._writer.WriteBitLong(content.Attributes.Count);
+		foreach (var attribute in content.Attributes)
+		{
+			this._writer.HandleReference(DwgReferenceType.SoftPointer, attribute.AttributeDefinition);
+			this._writer.WriteVariableText(attribute.Value);
+			this._writer.WriteBitLong(attribute.Index);
+		}
 
 		//BS 170 Has content format overrides flag
 		this._writer.WriteBitShort((short)(content.Format.HasData ? 1 : 0));
@@ -2719,14 +2579,12 @@ internal partial class DwgObjectWriter : DwgSectionIO
 			this._writer.WriteBitDouble(row.Height);
 		}
 
-		//BL Number of cell contents that contain a field reference.
-		this._writer.WriteBitLong(0);
-		//Begin repeat field references
-		//for (int n = 0; n < nfields; n++)
-		//{
-		//	//H Handle to field (AcDbField), hard owner.
-		//	this._mergedReaders.HandleReference();
-		//}
+		this._writer.WriteBitLong(content.FieldReferences.Count);
+		foreach (var field in content.FieldReferences)
+		{
+			this._writer.HandleReference(DwgReferenceType.HardOwnership, field);
+			this.enqueueValidObject(field);
+		}
 
 		//The table’s cell style override fields (see paragraph 20.4.101.4). The table’s
 		//base cell style is the table style’s overall cell style (present from R2010 onwards).

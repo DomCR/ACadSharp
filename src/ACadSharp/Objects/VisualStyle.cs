@@ -1,5 +1,6 @@
 ﻿using ACadSharp.Attributes;
 using ACadSharp.Classes;
+using System.Linq;
 
 namespace ACadSharp.Objects;
 
@@ -36,7 +37,24 @@ public class VisualStyle : NonGraphicalObject, IDxfClassDefined
 	public short EdgeApplyStyleFlag { get; set; }
 
 	[DxfCodeValue(66)]
-	public int EdgeColor { get; set; }
+	public int EdgeColor { get => this.EdgeColorValue.GetApproxIndex(); set => this.EdgeColorValue = new Color((short)value); }
+
+	/// <summary>Edge color retaining RGB data as well as indexed colors.</summary>
+	public Color EdgeColorValue { get; set; } = Color.ByBlock;
+
+	internal short DwgLightingModel { get; set; } = 2;
+	internal double DwgLegacyUnknown { get; set; }
+	internal short[] DwgPropertyOperations { get; set; } = Enumerable.Repeat((short)1, 28).ToArray();
+	internal (object Value, short Operation)[] DwgExtendedProperties { get; set; } = new (object, short)[30];
+
+	/// <inheritdoc/>
+	public override CadObject Clone()
+	{
+		var clone = (VisualStyle)base.Clone();
+		clone.DwgPropertyOperations = (short[])this.DwgPropertyOperations.Clone();
+		clone.DwgExtendedProperties = ((object, short)[])this.DwgExtendedProperties.Clone();
+		return clone;
+	}
 
 	[DxfCodeValue(42)]
 	public double EdgeCreaseAngle { get; set; }

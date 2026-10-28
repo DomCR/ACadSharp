@@ -1,4 +1,4 @@
-﻿using ACadSharp.Exceptions;
+using ACadSharp.Exceptions;
 using ACadSharp.IO.DWG;
 using ACadSharp.IO.DWG.DwgStreamWriters;
 using ACadSharp.Tables.Collections;
@@ -6,6 +6,8 @@ using CSUtilities.IO;
 using CSUtilities.Text;
 using System.Collections.Generic;
 using System.IO;
+using System.Linq;
+using ACadSharp.Entities;
 
 namespace ACadSharp.IO;
 
@@ -96,6 +98,16 @@ public class DwgWriter : CadWriterBase<DwgWriterConfiguration>
 	{
 		base.Write();
 
+		if (this._version == ACadVersion.AC1009)
+		{
+			byte[] bytes = new DwgR12Codec(this._encoding).Write(this._document,
+				message => this.triggerNotification(message, NotificationType.NotSupported));
+			this._stream.Write(bytes, 0, bytes.Length);
+			this._stream.Flush();
+			if (this.Configuration.CloseStream) this._stream.Close();
+			return;
+		}
+
 		if (this._version < ACadVersion.AC1018)
 		{
 			this._document.VEntityControl ??= new ViewportEntityControl(this._document);
@@ -117,7 +129,7 @@ public class DwgWriter : CadWriterBase<DwgWriterConfiguration>
 		this.writeObjects();
 		this.writeObjFreeSpace();
 		this.writeTemplate();
-		//this.writePrototype();
+		this.writePrototype();
 
 		//Write in the last place to avoid conflicts with versions < AC1018
 		this.writeHandles();
@@ -146,8 +158,8 @@ public class DwgWriter : CadWriterBase<DwgWriterConfiguration>
 			case ACadVersion.AC1004:
 			case ACadVersion.AC1006:
 			case ACadVersion.AC1009:
-			case ACadVersion.AC1012:
 				throw new CadNotSupportedException(this._document.Header.Version);
+			case ACadVersion.AC1012:
 			case ACadVersion.AC1014:
 			case ACadVersion.AC1015:
 				this._fileHeaderWriter = new DwgFileHeaderWriterAC15(this._stream, this._encoding, this._document);
@@ -156,7 +168,8 @@ public class DwgWriter : CadWriterBase<DwgWriterConfiguration>
 				this._fileHeaderWriter = new DwgFileHeaderWriterAC18(this._stream, this._encoding, this._document);
 				break;
 			case ACadVersion.AC1021:
-				throw new CadNotSupportedException(this._document.Header.Version);
+				this._fileHeaderWriter = new DwgFileHeaderWriterAC21(this._stream, this._encoding, this._document);
+				break;
 			case ACadVersion.AC1024:
 			case ACadVersion.AC1027:
 			case ACadVersion.AC1032:
@@ -395,6 +408,18 @@ public class DwgWriter : CadWriterBase<DwgWriterConfiguration>
 		writer.WriteInt(0);
 
 		this._fileHeaderWriter.AddSection(DwgSectionDefinition.SummaryInfo, stream, false, 0x100);
+	}
+
+	private void writePrototype()
+	{
+		if (this._version < ACadVersion.AC1027) return;
+		var geometry = this._document.BlockRecords.SelectMany(b => b.Entities)
+			.OfType<ModelerGeometry>().Where(e => this._handlesMap.ContainsKey(e.Handle) && e.AcisData?.Length > 0).ToArray();
+		if (geometry.Length == 0) return;
+		byte[] bytes = DwgPrototype1bWriter.Write(geometry);
+		var stream = new MemoryStream();
+		stream.Write(bytes, 0, bytes.Length);
+		this._fileHeaderWriter.AddSection(DwgSectionDefinition.AcDsPrototype, stream, true);
 	}
 
 	private void writeTemplate()

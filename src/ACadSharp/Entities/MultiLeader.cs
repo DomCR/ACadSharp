@@ -1,10 +1,11 @@
-﻿using System;
+using System;
 using System.Collections.Generic;
 using ACadSharp.Attributes;
 using ACadSharp.Classes;
 using ACadSharp.Objects;
 using ACadSharp.Tables;
 using CSMath;
+using CSMath.Extensions;
 
 namespace ACadSharp.Entities;
 
@@ -579,6 +580,63 @@ public partial class MultiLeader : Entity, IDxfClassDefined
 	/// <inheritdoc/>
 	public override void ApplyTransform(Transform transform)
 	{
+		XYZ origin = transform.ApplyTransform(XYZ.Zero);
+		XYZ vector(XYZ value) => transform.ApplyTransform(value) - origin;
+		XYZ direction(XYZ value)
+		{
+			XYZ result = vector(value);
+			return result.GetLength() == 0 ? result : result.Normalize();
+		}
+		void pairs(IList<MultiLeaderObjectContextData.StartEndPointPair> values)
+		{
+			for (int i = 0; i < values.Count; i++)
+				values[i] = new MultiLeaderObjectContextData.StartEndPointPair(
+					transform.ApplyTransform(values[i].StartPoint), transform.ApplyTransform(values[i].EndPoint));
+		}
+		XYZ scale = new XYZ(vector(XYZ.AxisX).GetLength(), vector(XYZ.AxisY).GetLength(), vector(XYZ.AxisZ).GetLength());
+		double planarScale = (scale.X + scale.Y) / 2;
+		XYZ scaled(XYZ value) => new XYZ(value.X * scale.X, value.Y * scale.Y, value.Z * scale.Z);
+		this.ArrowheadSize *= planarScale;
+		this.LandingDistance *= planarScale;
+		this.ScaleFactor *= planarScale;
+		this.BlockContentScale = scaled(this.BlockContentScale);
+		this.BlockContentRotation += transform.EulerRotation.Z;
+
+		var context = this.ContextData;
+		context.BasePoint = transform.ApplyTransform(context.BasePoint);
+		context.ContentBasePoint = transform.ApplyTransform(context.ContentBasePoint);
+		context.TextLocation = transform.ApplyTransform(context.TextLocation);
+		context.BlockContentLocation = transform.ApplyTransform(context.BlockContentLocation);
+		context.BaseDirection = direction(context.BaseDirection);
+		context.BaseVertical = direction(context.BaseVertical);
+		context.Direction = direction(context.Direction);
+		context.BlockContentNormal = direction(context.BlockContentNormal);
+		context.TextNormal = direction(context.TextNormal);
+		context.ArrowheadSize *= planarScale;
+		context.BoundaryWidth *= scale.X;
+		context.BoundaryHeight *= scale.Y;
+		context.ColumnGutter *= scale.X;
+		context.ColumnWidth *= scale.X;
+		for (int i = 0; i < context.ColumnSizes.Count; i++) context.ColumnSizes[i] *= scale.X;
+		context.LandingGap *= planarScale;
+		context.ScaleFactor *= planarScale;
+		context.TextHeight *= scale.Y;
+		context.BlockContentScale = scaled(context.BlockContentScale);
+		context.BlockContentRotation += transform.EulerRotation.Z;
+		context.TextRotation += transform.EulerRotation.Z;
+		foreach (var root in context.LeaderRoots)
+		{
+			root.ConnectionPoint = transform.ApplyTransform(root.ConnectionPoint);
+			root.Direction = direction(root.Direction);
+			root.LandingDistance *= planarScale;
+			pairs(root.BreakStartEndPointsPairs);
+			foreach (var line in root.Lines)
+			{
+				for (int i = 0; i < line.Points.Count; i++) line.Points[i] = transform.ApplyTransform(line.Points[i]);
+				line.ArrowheadSize *= planarScale;
+				foreach (var info in line.BreakInfoEntries) pairs(info.StartEndPoints);
+			}
+		}
 	}
 
 	/// <inheritdoc/>

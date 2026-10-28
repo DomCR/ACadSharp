@@ -44,7 +44,8 @@ namespace ACadSharp.IO.DXF
 
 				if (template.OwnerHandle == null)
 				{
-					this._builder.ModelSpaceEntities.Add(template.CadObject);
+					if (template.EntityMode == 1) this._builder.PaperSpaceEntities.Add(template.CadObject);
+					else this._builder.ModelSpaceEntities.Add(template.CadObject);
 				}
 				else if (this._builder.TryGetObjectTemplate(template.OwnerHandle, out ICadOwnerTemplate owner))
 				{

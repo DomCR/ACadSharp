@@ -35,6 +35,11 @@ namespace ACadSharp.IO.DXF
 
 		protected override void writeDxfCode(int code)
 		{
+			if (this.LegacyR12)
+			{
+				this._stream.Write(code < 255 ? (byte)code : (byte)255);
+				if (code < 255) return;
+			}
 			this._stream.Write((short)code);
 		}
 

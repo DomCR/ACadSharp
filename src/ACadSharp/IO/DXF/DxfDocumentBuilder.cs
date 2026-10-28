@@ -19,6 +19,8 @@ internal class DxfDocumentBuilder : CadDocumentBuilder
 
 	public HashSet<Entity> ModelSpaceEntities { get; } = new();
 
+	public HashSet<Entity> PaperSpaceEntities { get; } = new();
+
 	public CadBlockRecordTemplate ModelSpaceTemplate { get; set; }
 
 	public List<CadTemplate> OrphanTemplates { get; set; } = new();
@@ -38,7 +40,28 @@ internal class DxfDocumentBuilder : CadDocumentBuilder
 			this.AddTemplate(this.ModelSpaceTemplate);
 		}
 
+		CadBlockRecordTemplate paperTemplate = null;
+		Layout paperLayout = null;
+		if (this.PaperSpaceEntities.Count > 0)
+		{
+			var record = this.BlockRecords.FirstOrDefault(b => b.Name == BlockRecord.PaperSpaceName);
+			if (record == null)
+			{
+				record = new BlockRecord(BlockRecord.PaperSpaceName);
+				// The factory also creates a viewport; read the file's viewport instead.
+				this.BlockRecords.Add(record);
+			}
+			if (record.Layout == null)
+				paperLayout = new Layout { Name = Layout.PaperLayoutName, AssociatedBlock = record, TabOrder = 1 };
+			if (record.Handle == 0 || !this.TryGetObjectTemplate(record.Handle, out paperTemplate))
+			{
+				paperTemplate = new CadBlockRecordTemplate(record);
+				this.AddTemplate(paperTemplate);
+			}
+		}
+
 		this.createMissingHandles();
+		paperTemplate?.OwnedObjectsHandlers.UnionWith(this.PaperSpaceEntities.Select(o => o.Handle));
 
 		this.ModelSpaceTemplate.OwnedObjectsHandlers.UnionWith(this.ModelSpaceEntities.Select(o => o.Handle));
 
@@ -47,6 +70,7 @@ internal class DxfDocumentBuilder : CadDocumentBuilder
 		this.BuildTables();
 
 		this.buildDictionaries();
+		if (paperLayout != null) this.DocumentToBuild.Layouts.Add(paperLayout);
 
 		//Assign the owners for the different objects
 		foreach (CadTemplate template in this.OrphanTemplates)

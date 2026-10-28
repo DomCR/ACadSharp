@@ -1,6 +1,9 @@
 ﻿using ACadSharp.DataStorage;
 using ACadSharp.IO.DXF;
 using ACadSharp.IO.DXF.DxfStreamWriter;
+using ACadSharp.Objects;
+using System;
+using System.Collections.Generic;
 using System.IO;
 using System.Text;
 
@@ -88,13 +91,15 @@ public class DxfWriter : CadWriterBase<DxfWriterConfiguration>
 	{
 		base.Write();
 
+		if (this._document.Header.Version > ACadVersion.AC1009) this.prepareFields();
+
 		this.createStreamWriter();
 
 		this._objectHolder.Objects.Enqueue(this._document.RootDictionary);
 
 		this.writeHeader();
 
-		this.writeDxfClasses();
+		if (this._document.Header.Version > ACadVersion.AC1009) this.writeDxfClasses();
 
 		this.writeTables();
 
@@ -102,7 +107,7 @@ public class DxfWriter : CadWriterBase<DxfWriterConfiguration>
 
 		this.writeEntities();
 
-		this.writeObjects();
+		if (this._document.Header.Version > ACadVersion.AC1009) this.writeObjects();
 
 		this.writeACDSData();
 
@@ -114,6 +119,54 @@ public class DxfWriter : CadWriterBase<DxfWriterConfiguration>
 		{
 			this._writer.Close();
 		}
+	}
+
+	private void prepareFields()
+	{
+		var objects = new Queue<CadObject>(this._document.GetCadObjects());
+		var visited = new HashSet<CadObject>();
+		var fields = new List<Field>();
+		var lists = new List<FieldList>();
+		while (objects.Count > 0)
+		{
+			CadObject item = objects.Dequeue();
+			if (!visited.Add(item)) continue;
+			if (item.XDictionary != null) objects.Enqueue(item.XDictionary);
+			if (item is CadDictionary dictionary)
+				foreach (var entry in dictionary) objects.Enqueue(entry);
+			if (item is FieldList list)
+			{
+				lists.Add(list);
+				foreach (var field in list.Fields) objects.Enqueue(field);
+			}
+			else if (item is Field field)
+			{
+				fields.Add(field);
+				foreach (var child in field.Children) objects.Enqueue(child);
+			}
+		}
+
+		// Children already have their hard owner through CadObjectCollection.
+		// FIELDLIST references supply an owner only for otherwise orphan fields.
+		foreach (var list in lists)
+			foreach (var field in list.Fields) field.Owner ??= list;
+
+		bool registered = false;
+		foreach (var field in fields)
+		{
+			if (field.Document == this._document) continue;
+			Field root = field;
+			var ancestors = new HashSet<Field> { root };
+			while (root.Owner is Field parent && parent.Document == null)
+			{
+				if (!ancestors.Add(parent)) throw new InvalidOperationException("Cyclic FIELD ownership.");
+				root = parent;
+			}
+			// AssignDocument registers the owned child collections recursively.
+			this._document.AddCadObject(root);
+			registered = true;
+		}
+		if (registered) this._document.UpdateDxfClasses(this.Configuration.ResetDxfClasses);
 	}
 
 	private void createStreamWriter()
@@ -134,6 +187,7 @@ public class DxfWriter : CadWriterBase<DxfWriterConfiguration>
 		}
 
 		this._writer.WriteOptional = this.Configuration.WriteOptionalValues;
+		((DxfStreamWriterBase)this._writer).LegacyR12 = this._document.Header.Version <= ACadVersion.AC1009;
 	}
 
 	private void writeACDSData()

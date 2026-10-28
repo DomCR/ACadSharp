@@ -1,4 +1,4 @@
-﻿using ACadSharp.Prototype1b;
+using ACadSharp.Prototype1b;
 using ACadSharp.Prototype1b.Segments;
 using System;
 using System.Collections.Generic;
@@ -406,7 +406,7 @@ internal class DwgPrototype1bReader_obsolete : DwgSectionIO
 
 	private PreviousSave readPreviousSave()
 	{
-		if (this._storage.FileHeader.PreviousSaveIndex == 0) return null;
+		if (this._storage.FileHeader.PreviousSaveIndex <= 0) return null;
 		return (PreviousSave)this.ReadSegmentAt(this._storage.IndexPointers.SegmentIndex.Pointers[this._storage.FileHeader.PreviousSaveIndex].Offset);
 	}
 

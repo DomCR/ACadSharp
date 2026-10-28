@@ -21,7 +21,10 @@ public class ViewportTests : IOTestsBase
 		ACadSharp.Tables.BlockRecord paper = doc.PaperSpace;
 		foreach (Viewport v in paper.Viewports)
 		{
-			Assert.NotNull(v.Scale);
+			// R12 has no annotation-scale references. Its actual paper-space
+			// viewports must still be retained instead of testing a default viewport.
+			if (doc.Header.Version == ACadVersion.AC1009) Assert.Null(v.Scale);
+			else Assert.NotNull(v.Scale);
 		}
 	}
 }

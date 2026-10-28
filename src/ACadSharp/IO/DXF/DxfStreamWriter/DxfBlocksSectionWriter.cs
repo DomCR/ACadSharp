@@ -17,6 +17,13 @@ namespace ACadSharp.IO.DXF
 		{
 			foreach (BlockRecord b in this._document.BlockRecords)
 			{
+				if (this.Version <= ACadVersion.AC1009 &&
+					(b.Name.Equals(BlockRecord.ModelSpaceName, StringComparison.OrdinalIgnoreCase) ||
+					b.Name.Equals(BlockRecord.PaperSpaceName, StringComparison.OrdinalIgnoreCase)))
+				{
+					this.processEntities(b);
+					continue;
+				}
 				this.writeBlock(b.BlockEntity);
 				this.processEntities(b);
 				this.writeBlockEnd(b.BlockEnd);

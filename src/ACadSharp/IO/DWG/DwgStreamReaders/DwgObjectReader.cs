@@ -1,4 +1,4 @@
-﻿using ACadSharp.Blocks;
+using ACadSharp.Blocks;
 using ACadSharp.Classes;
 using ACadSharp.Entities;
 using ACadSharp.Entities.AecEntities;
@@ -68,6 +68,8 @@ namespace ACadSharp.IO.DWG
 		/// </summary>
 		private Queue<ulong> _handles;
 
+		private readonly HashSet<ulong> _queuedHandles;
+
 		/// <summary>
 		/// Reader focused on the handles section of the stream.
 		/// </summary>
@@ -104,6 +106,7 @@ namespace ACadSharp.IO.DWG
 			this._reader = reader;
 
 			this._handles = new Queue<ulong>(handles);
+			this._queuedHandles = new HashSet<ulong>(handles);
 			this._map = new Dictionary<ulong, long>(handleMap);
 			this._classes = classes.ToDictionary(x => x.ClassNumber, x => x);
 
@@ -130,6 +133,9 @@ namespace ACadSharp.IO.DWG
 
 			//Setup the entity handler
 			this._crcReader = DwgStreamReaderBase.GetStreamHandler(this._version, this._memoryStream);
+			this._objectReader = DwgStreamReaderBase.GetStreamHandler(this._version, HugeMemoryStream.Clone(this._memoryStream), this._reader.Encoding);
+			this._handlesReader = DwgStreamReaderBase.GetStreamHandler(this._version, HugeMemoryStream.Clone(this._memoryStream), this._reader.Encoding);
+			this._textReader = this.R2007Plus ? DwgStreamReaderBase.GetStreamHandler(this._version, HugeMemoryStream.Clone(this._memoryStream), this._reader.Encoding) : this._objectReader;
 		}
 
 		/// <summary>
@@ -240,7 +246,6 @@ namespace ACadSharp.IO.DWG
 				this._handleSectionOffset = (long)((ulong)this._crcReader.PositionInBits() + sizeInBits - handleSize);
 
 				//Create a handler section reader
-				this._objectReader = DwgStreamReaderBase.GetStreamHandler(this._version, HugeMemoryStream.Clone(this._memoryStream), this._reader.Encoding);
 				this._objectReader.SetPositionInBits(this._crcReader.PositionInBits());
 
 				//set the initial position and get the object type
@@ -248,11 +253,9 @@ namespace ACadSharp.IO.DWG
 				type = this._objectReader.ReadObjectType();
 
 				//Create a handler section reader
-				this._handlesReader = DwgStreamReaderBase.GetStreamHandler(this._version, HugeMemoryStream.Clone(this._memoryStream), this._reader.Encoding);
 				this._handlesReader.SetPositionInBits(this._handleSectionOffset);
 
 				//Create a text section reader
-				this._textReader = DwgStreamReaderBase.GetStreamHandler(this._version, HugeMemoryStream.Clone(this._memoryStream), this._reader.Encoding);
 				this._textReader.SetPositionByFlag(this._handleSectionOffset - 1);
 
 				this._mergedReaders = new DwgMergedReader(this._objectReader, this._textReader, this._handlesReader);
@@ -260,11 +263,9 @@ namespace ACadSharp.IO.DWG
 			else
 			{
 				//Create a handler section reader
-				this._objectReader = DwgStreamReaderBase.GetStreamHandler(this._version, HugeMemoryStream.Clone(this._memoryStream), this._reader.Encoding);
 				this._objectReader.SetPositionInBits(this._crcReader.PositionInBits());
 
-				this._handlesReader = DwgStreamReaderBase.GetStreamHandler(this._version, HugeMemoryStream.Clone(this._memoryStream), this._reader.Encoding);
-				this._textReader = this._objectReader;
+				if (!this.R2007Plus) this._textReader = this._objectReader;
 
 				//set the initial position and get the object type
 				this._objectInitialPos = this._objectReader.PositionInBits();
@@ -292,15 +293,17 @@ namespace ACadSharp.IO.DWG
 			//Read the handle
 			ulong value = this._handlesReader.HandleReference(handle);
 
-			if (value != 0 &&
-				!this._builder.TryGetObjectTemplate(value, out CadTemplate _) &&
-				!this._readedObjects.ContainsKey(value))
-			{
-				//Add the value to the handles queue to be processed
-				this._handles.Enqueue(value);
-			}
+			this.enqueueHandle(value);
 
 			return value;
+		}
+
+		private void enqueueHandle(ulong value)
+		{
+			if (value == 0 || !this._map.ContainsKey(value) || this._queuedHandles.Contains(value)
+				|| this._builder.TryGetObjectTemplate(value, out CadTemplate _) || this._readedObjects.ContainsKey(value)) return;
+			this._queuedHandles.Add(value);
+			this._handles.Enqueue(value);
 		}
 
 		private CadTemplate read3dFace()
@@ -1955,14 +1958,8 @@ namespace ACadSharp.IO.DWG
 			}
 			else if (!this.R2004Plus)
 			{
-				if (!this._readedObjects.ContainsKey(entity.Handle - 1UL))
-				{
-					this._handles.Enqueue(entity.Handle - 1UL);
-				}
-				if (!this._readedObjects.ContainsKey(entity.Handle + 1UL))
-				{
-					this._handles.Enqueue(entity.Handle + 1UL);
-				}
+				this.enqueueHandle(entity.Handle - 1UL);
+				this.enqueueHandle(entity.Handle + 1UL);
 			}
 
 			//Color	CMC(B)	62
@@ -2095,7 +2092,17 @@ namespace ACadSharp.IO.DWG
 						//1 (1001) This one seems to be invalid; can't even use as a string inside braces.
 						//This would be a registered application that this data relates to, but we've already had that above,
 						//so it would be redundant or irrelevant here.
-						record = new ExtendedDataString(this._objectReader.ReadTextUnicode());
+						if (this.R2007Plus)
+						{
+							record = new ExtendedDataString(this._objectReader.ReadTextUnicode());
+						}
+						else
+						{
+							int length = this._objectReader.ReadByte();
+							int codePage = (this._objectReader.ReadByte() << 8) | this._objectReader.ReadByte();
+							var encoding = codePage == 0 ? this._objectReader.Encoding : Encoding.GetEncoding((int)CadUtils.GetCodePage(codePage));
+							record = new ExtendedDataString(encoding.GetString(this._objectReader.ReadBytes(length)));
+						}
 						break;
 					case DxfCode.ExtendedDataControlString:
 						//2 (1002) A '{' or '}'; 1 byte; ASCII 0 means '{', ASCII 1 means '}'
@@ -3938,10 +3945,8 @@ namespace ACadSharp.IO.DWG
 				//Background flags BL 90 0 = no background, 1 = background fill, 2 = background fill with drawing fill color, 0x10 = text frame (R2018+)
 				mtext.BackgroundFillFlags = (BackgroundFillFlags)this._objectReader.ReadBitLong();
 
-				//background flags has bit 0x01 set, or in case of R2018 bit 0x10:
-				if ((mtext.BackgroundFillFlags & BackgroundFillFlags.UseBackgroundFillColor) != BackgroundFillFlags.None
-					|| this._version > ACadVersion.AC1027
-					&& (mtext.BackgroundFillFlags & BackgroundFillFlags.TextFrame) > 0)
+				//Background values are present only when the fill-color bit is set.
+				if ((mtext.BackgroundFillFlags & BackgroundFillFlags.UseBackgroundFillColor) != BackgroundFillFlags.None)
 				{
 					//Background scale factor	BL 45 default = 1.5
 					mtext.BackgroundScale = this._objectReader.ReadBitDouble();
@@ -4763,19 +4768,36 @@ namespace ACadSharp.IO.DWG
 			return template;
 		}
 
-		private CadDimensionAssociationTemplate.OsnapPointRefTemplate readOsnapPointRef()
+		private CadDimensionAssociationTemplate.OsnapPointRefTemplate readOsnapPointRef(int depth = 0)
 		{
+			if (depth > 16) throw new System.IO.InvalidDataException("Excessive nested dimension point references.");
 			var osnap = new DimensionAssociation.OsnapPointRef();
 			var template = new CadDimensionAssociationTemplate.OsnapPointRefTemplate(osnap);
-
-			//1
-			var className = this._mergedReaders.ReadVariableText();
-			//72
+			this._mergedReaders.ReadVariableText();
 			osnap.ObjectOsnapType = (ObjectOsnapType)this._mergedReaders.ReadByte();
-
-			//331
-			template.ObjectHandle = this.handleReference();
-
+			int count = this._mergedReaders.ReadBitLong();
+			for (int i = 0; i < count; i++) template.GeometryHandles.Add(this.handleReference());
+			if (count > 0) template.ObjectHandle = template.GeometryHandles[0];
+			if (osnap.ObjectOsnapType != ObjectOsnapType.None)
+			{
+				osnap.SubentType = (SubentType)this._mergedReaders.ReadBitLong();
+				osnap.GsMarker = this._mergedReaders.ReadBitLong();
+				count = this._mergedReaders.ReadBitLong();
+				for (int i = 0; i < count; i++) osnap.XrefPaths.Add(this._mergedReaders.ReadVariableText());
+			}
+			osnap.GeometryParameter = this._mergedReaders.ReadBitDouble();
+			osnap.OsnapPoint = this._mergedReaders.Read3BitDouble();
+			if (osnap.ObjectOsnapType == ObjectOsnapType.Intersection || osnap.ObjectOsnapType == ObjectOsnapType.ApparentIntersection)
+			{
+				count = this._mergedReaders.ReadBitLong();
+				for (int i = 0; i < count; i++) template.IntersectionHandles.Add(this.handleReference());
+				osnap.IntersectionSubType = (SubentType)this._mergedReaders.ReadBitLong();
+				osnap.IntersectionGsMarker = this._mergedReaders.ReadBitLong();
+				count = this._mergedReaders.ReadBitLong();
+				for (int i = 0; i < count; i++) osnap.IntersectionXrefPaths.Add(this._mergedReaders.ReadVariableText());
+			}
+			osnap.HasLastPointRef = this._mergedReaders.ReadBit();
+			if (osnap.HasLastPointRef) template.LastPoint = this.readOsnapPointRef(depth + 1);
 			return template;
 		}
 
@@ -5577,7 +5599,7 @@ namespace ACadSharp.IO.DWG
 
 			this.readCommonNonEntityData(template);
 
-			if (this.R2007Pre)
+			if (!this.R2010Plus)
 			{
 				//TABLESTYLE format until R21
 				//Common:
@@ -6433,12 +6455,11 @@ namespace ACadSharp.IO.DWG
 			//1 flag B The 1 bit of the 70 group
 			this._objectReader.ReadBit();
 
-			//Handle refs H viewport entity control (soft pointer)
-			this.handleReference();
-			//xdicobjhandle (hard owner)
-			this.handleReference();
 			//External reference block handle (hard pointer)
 			template.BlockHandle = this.handleReference();
+			//Corresponding viewport entity (soft owner), previous header (hard pointer).
+			this.handleReference();
+			this.handleReference();
 
 			return template;
 		}
@@ -6450,27 +6471,7 @@ namespace ACadSharp.IO.DWG
 
 			this.readCommonNonEntityData(template);
 
-			//WARNING: this object is not documented, the fields have been found using exploration methods and matching them with the dxf file
-
-			//2 Name
-			visualStyle.Name = this._textReader.ReadVariableText();
-			//70
-			visualStyle.Type = this._objectReader.ReadBitLong();
-
-			//177
-			var value177 = _objectReader.ReadBitShort();
-			//291 Internal use only flag
-			var value291 = this._objectReader.ReadBit();
-
-			//70 Count then repeat 90 and 176
-			int count = this._objectReader.ReadBitLong();
-
-#if TEST
-			var objValues = DwgStreamReaderBase.Explore(_objectReader);
-			var textValues = DwgStreamReaderBase.Explore(_textReader);
-#endif
-
-			//TODO: Finish dwg implementation for VisualStyle (avoids noise in the logs)
+			DwgVisualStyle.Read(this._mergedReaders, this._version, visualStyle);
 
 			return template;
 		}
@@ -6768,16 +6769,8 @@ namespace ACadSharp.IO.DWG
 						xRecord.CreateEntry(code, this._objectReader.ReadRawULong());
 						break;
 					case GroupCodeValueType.Handle:
-						string hex = this._objectReader.ReadTextUnicode();
-						if (ulong.TryParse(hex, NumberStyles.HexNumber, CultureInfo.InvariantCulture, out ulong result))
-						{
-							entry = xRecord.CreateEntry(code, result);
-							template.AddHandleReference(entry);
-						}
-						else
-						{
-							this.notify($"Failed to parse {hex} to handle", NotificationType.Warning);
-						}
+						entry = xRecord.CreateEntry(code, this._objectReader.ReadRawULong());
+						template.AddHandleReference(entry);
 						break;
 					case GroupCodeValueType.Bool:
 						xRecord.CreateEntry(code, this._objectReader.ReadByte() > 0);
@@ -6868,7 +6861,6 @@ namespace ACadSharp.IO.DWG
 
 			if (this._version == ACadVersion.AC1021)
 			{
-				this._textReader = DwgStreamReaderBase.GetStreamHandler(this._version, HugeMemoryStream.Clone(this._memoryStream), this._reader.Encoding);
 				//"endbit" of the pre-handles section.
 				this._textReader.SetPositionByFlag(size + this._objectInitialPos - 1);
 			}

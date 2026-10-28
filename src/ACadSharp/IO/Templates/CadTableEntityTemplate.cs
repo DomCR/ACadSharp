@@ -1,4 +1,4 @@
-﻿using ACadSharp.Entities;
+using ACadSharp.Entities;
 using ACadSharp.Objects;
 using System.Collections.Generic;
 using static ACadSharp.Entities.TableEntity;
@@ -73,6 +73,11 @@ internal partial class CadTableEntityTemplate : CadInsertTemplate
 		foreach (var cellTemplate in this.CadTableCellTemplates)
 		{
 			cellTemplate.Build(builder);
+			int id = cellTemplate.StyleId;
+			cellTemplate.Cell.Style = id == 1 ? this.TableEntity.Style.TitleCellStyle
+				: id == 2 ? this.TableEntity.Style.HeaderCellStyle
+				: id == 3 ? this.TableEntity.Style.DataCellStyle
+				: this.TableEntity.Style.CellStyles.Find(style => style.Id == id);
 		}
 
 		foreach (var component in this.CadTableComponentTemplates)
@@ -82,6 +87,7 @@ internal partial class CadTableEntityTemplate : CadInsertTemplate
 
 		foreach (var handle in this.FieldHandles)
 		{
+			if (builder.TryGetCadObject<Field>(handle, out var field)) this.TableEntity.Content.FieldReferences.Add(field);
 		}
 
 		this.CellStyleTemplate?.Build(builder);
