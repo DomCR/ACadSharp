@@ -3,6 +3,7 @@ using ACadSharp.Classes;
 using ACadSharp.Entities;
 using ACadSharp.Entities.AecEntities;
 using ACadSharp.Entities.Mechanical;
+using ACadSharp.IO.DWG.DwgStreamReaders;
 using ACadSharp.IO.Templates;
 using ACadSharp.Objects;
 using ACadSharp.Objects.AEC;

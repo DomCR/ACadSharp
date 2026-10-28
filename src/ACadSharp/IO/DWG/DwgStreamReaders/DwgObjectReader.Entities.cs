@@ -418,7 +418,10 @@ internal partial class DwgObjectReader : DwgSectionIO
 				if (remainingBytes > 0)
 				{
 					byte[] data = this._mergedReaders.ReadBytes(remainingBytes);
-					template.CadObject.AcisData = AcisTextCodec.TrimAtAcisEnd(data);
+					template.CadObject.AcisData = AcisTextCodec.TrimAtAcisEnd(data, out byte[] remain);
+
+					var pos = currentPos + remainingBytes * 8 - remain.Length * 8;
+					this._mergedReaders.SetPositionInBits(pos);
 				}
 				break;
 			default:
