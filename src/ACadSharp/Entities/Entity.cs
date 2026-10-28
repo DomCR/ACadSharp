@@ -51,7 +51,15 @@ public abstract class Entity : CadObject, IEntity
 	[DxfCodeValue(DxfReferenceType.Name, 8)]
 	public virtual Layer Layer
 	{
-		get { return this._layer; }
+		get
+		{
+			if(this._layer == null)
+			{
+				this._layer = Layer.Default;
+			}
+
+			return this._layer;
+		}
 		set
 		{
 			if (value == null)
@@ -59,7 +67,7 @@ public abstract class Entity : CadObject, IEntity
 				throw new ArgumentNullException(nameof(value));
 			}
 
-			this._layer = updateTableEntry(value, l => this._layer = l, this.Document?.Layers);
+			this._layer = this.updateTableEntry(value, l => this._layer = l, this.Document?.Layers);
 		}
 	}
 
@@ -67,7 +75,15 @@ public abstract class Entity : CadObject, IEntity
 	[DxfCodeValue(DxfReferenceType.Name, 6)]
 	public virtual LineType LineType
 	{
-		get { return this._lineType; }
+		get
+		{
+			if(this._lineType == null)
+			{
+				this._lineType = LineType.ByLayer;
+			}
+
+			return this._lineType;
+		}
 		set
 		{
 			if (value == null)
@@ -75,7 +91,7 @@ public abstract class Entity : CadObject, IEntity
 				throw new ArgumentNullException(nameof(value));
 			}
 
-			this._lineType = updateTableEntry(value, l => this._lineType = l, this.Document?.LineTypes);
+			this._lineType = this.updateTableEntry(value, l => this._lineType = l, this.Document?.LineTypes);
 		}
 	}
 
@@ -110,7 +126,7 @@ public abstract class Entity : CadObject, IEntity
 				this._proxyGeometries = new List<IProxyGeometry>();
 			}
 
-			return _proxyGeometries;
+			return this._proxyGeometries;
 		}
 	}
 
@@ -123,9 +139,9 @@ public abstract class Entity : CadObject, IEntity
 
 	private BookColor _bookColor = null;
 
-	private Layer _layer = Layer.Default;
+	private Layer _layer = null;
 
-	private LineType _lineType = LineType.ByLayer;
+	private LineType _lineType = null;
 
 	private Material _material = null;
 
@@ -299,8 +315,8 @@ public abstract class Entity : CadObject, IEntity
 		this._bookColor = this.updateCollectionEntry(this._bookColor, c => this._bookColor = c, doc.Colors);
 		this._material = this.updateCollectionEntry(this._material, m => this._material = m, doc.Materials);
 
-		this._layer = this.updateTableEntry(this._layer, l => this._layer = l, doc.Layers);
-		this._lineType = this.updateTableEntry(this._lineType, l => this._lineType = l, doc.LineTypes);
+		this._layer = this.updateTableEntry(this._layer ?? Layer.Default, l => this._layer = l, doc.Layers);
+		this._lineType = this.updateTableEntry(this._lineType ?? LineType.ByLayer, l => this._lineType = l, doc.LineTypes);
 	}
 
 	internal override void UnassignDocument()

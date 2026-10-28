@@ -26,7 +26,23 @@ public abstract class CadObject : IHandledCadObject
 	/// <summary>
 	/// Extended data attached to this object.
 	/// </summary>
-	public ExtendedDataDictionary ExtendedData { get; private set; }
+	public ExtendedDataDictionary ExtendedData
+	{
+		get
+		{
+			if (this._extendedData == null)
+			{
+				this._extendedData = new ExtendedDataDictionary(this);
+			}
+
+			return this._extendedData;
+		}
+
+		private set
+		{
+			this._extendedData = value;
+		}
+	}
 
 	/// <inheritdoc/>
 	/// <remarks>
@@ -63,6 +79,11 @@ public abstract class CadObject : IHandledCadObject
 	{
 		get
 		{
+			if (this._reactors == null)
+			{
+				this._reactors = new List<CadObject>();
+			}
+
 			return this._reactors;
 		}
 	}
@@ -94,7 +115,9 @@ public abstract class CadObject : IHandledCadObject
 		}
 	}
 
-	private List<CadObject> _reactors = new List<CadObject>();
+	private ExtendedDataDictionary _extendedData = null;
+
+	private List<CadObject> _reactors = null;
 
 	private CadDictionary _xdictionary = null;
 
@@ -103,7 +126,6 @@ public abstract class CadObject : IHandledCadObject
 	/// </summary>
 	public CadObject()
 	{
-		this.ExtendedData = new ExtendedDataDictionary(this);
 	}
 
 	/// <summary>
