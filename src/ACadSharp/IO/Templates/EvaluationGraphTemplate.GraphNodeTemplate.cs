@@ -1,25 +1,29 @@
 ﻿using ACadSharp.Objects.Evaluations;
 
-namespace ACadSharp.IO.Templates
+namespace ACadSharp.IO.Templates;
+
+internal partial class CadEvaluationGraphTemplate
 {
-	internal partial class CadEvaluationGraphTemplate
+	public class GraphNodeTemplate : ICadTemplate
 	{
-		public class GraphNodeTemplate : ICadTemplate
+		public ulong? ExpressionHandle { get; set; }
+
+		public EvaluationGraph.Node Node { get; }
+
+		public GraphNodeTemplate(EvaluationGraph.Node node)
 		{
-			public EvaluationGraph.Node Node { get; } = new();
+			this.Node = node;
+		}
 
-			public ulong? ExpressionHandle { get; set; }
-
-			public void Build(CadDocumentBuilder builder)
+		public void Build(CadDocumentBuilder builder)
+		{
+			if (builder.TryGetCadObject(this.ExpressionHandle, out EvaluationExpression evExpression))
 			{
-				if (builder.TryGetCadObject(this.ExpressionHandle, out EvaluationExpression evExpression))
-				{
-					this.Node.Expression = evExpression;
-				}
-				else
-				{
-					builder.Notify($"Evaluation graph couldn't find the EvaluationExpression with handle {this.ExpressionHandle}", NotificationType.Warning);
-				}
+				this.Node.Expression = evExpression;
+			}
+			else
+			{
+				builder.Notify($"Evaluation graph couldn't find the EvaluationExpression with handle {this.ExpressionHandle}", NotificationType.Warning);
 			}
 		}
 	}

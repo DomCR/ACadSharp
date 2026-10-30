@@ -1,0 +1,39 @@
+name: GitHub Pages Documentation
+
+on:
+  push:
+    branches: [ master ]
+
+permissions:
+  contents: write
+
+jobs:
+  generate:
+    runs-on: windows-latest
+    steps:
+
+    - name: Checkout
+      run: git config --global core.autocrlf true
+    - uses: actions/checkout@v2
+      with: 
+        submodules: true
+
+    - name: Dotnet Setup
+      uses: actions/setup-dotnet@v3
+      with:
+        dotnet-version: 8.x
+    
+    - name: Update Index
+      run: cp README.md docs/index.md
+
+    - name: Install DocFX
+      run: dotnet tool install -g docfx
+    
+    - name: Build site
+      run: docfx docs/docfx.json
+
+    - name: Publish to GitHub Pages
+      uses: peaceiris/actions-gh-pages@v4
+      with:
+        github_token: ${{ github.token }}
+        publish_dir: ./docs/_site

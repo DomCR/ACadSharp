@@ -1,5 +1,4 @@
-﻿using ACadSharp.Entities;
-using ACadSharp.Objects;
+﻿using ACadSharp.Objects;
 using System.Collections.Generic;
 
 namespace ACadSharp.IO.Templates
@@ -21,7 +20,15 @@ namespace ACadSharp.IO.Templates
 				if (builder.TryGetObjectTemplate(handle, out CadEntityTemplate e))
 				{
 					e.Build(builder);
-					this.CadObject.Add(e.CadObject);
+
+					try
+					{
+						this.CadObject.Add(e.CadObject);
+					}
+					catch (System.Exception ex)
+					{
+						builder.Notify($"Entity with handle {handle} could not be added to group {this.CadObject.Handle}", NotificationType.Error, ex);
+					}
 				}
 				else
 				{

@@ -1,11 +1,13 @@
 ﻿using ACadSharp.Blocks;
 using ACadSharp.Entities;
+using ACadSharp.Entities.ProxyGraphics;
 using ACadSharp.Extensions;
+using ACadSharp.IO;
 using ACadSharp.Objects;
 using ACadSharp.Tables;
+using ACadSharp.Tests.Common;
 using ACadSharp.XData;
 using CSMath;
-using CSUtilities.Extensions;
 using System;
 using System.Collections.Generic;
 using System.IO;
@@ -13,1482 +15,3056 @@ using System.Linq;
 using Xunit;
 using Xunit.Abstractions;
 
-namespace ACadSharp.Tests.IO
+namespace ACadSharp.Tests.IO;
+
+public abstract class WriterSingleObjectTests : IOTestsBase
 {
-	public abstract class WriterSingleObjectTests : IOTestsBase
+	public static readonly TheoryData<SingleCaseGenerator> Data;
+
+	static WriterSingleObjectTests()
 	{
-		public static readonly TheoryData<SingleCaseGenerator> Data;
+		Data = new();
+		Data.Add(new(nameof(SingleCaseGenerator.Empty)));
+		Data.Add(new(nameof(SingleCaseGenerator.ArrowBlocks)));
+		Data.Add(new(nameof(SingleCaseGenerator.AddBlockWithMTextAttributes)));
+		Data.Add(new(nameof(SingleCaseGenerator.ArcSegments)));
+		Data.Add(new(nameof(SingleCaseGenerator.GenerateExampleDxf)));
+		Data.Add(new(nameof(SingleCaseGenerator.SingleEllipse)));
+		Data.Add(new(nameof(SingleCaseGenerator.SingleLine)));
+		Data.Add(new(nameof(SingleCaseGenerator.SingleLineInPaperSpace)));
+		Data.Add(new(nameof(SingleCaseGenerator.ViewZoom)));
+		Data.Add(new(nameof(SingleCaseGenerator.AddViewport)));
+		Data.Add(new(nameof(SingleCaseGenerator.SingleMLeader)));
+		Data.Add(new(nameof(SingleCaseGenerator.SingleMLine)));
+		Data.Add(new(nameof(SingleCaseGenerator.DrawBoundingBox)));
+		Data.Add(new(nameof(SingleCaseGenerator.EllipseSegments)));
+		Data.Add(new(nameof(SingleCaseGenerator.EntityColorByLayer)));
+		Data.Add(new(nameof(SingleCaseGenerator.EntityColorTrueColor)));
+		Data.Add(new(nameof(SingleCaseGenerator.EntityChangeNormal)));
+		Data.Add(new(nameof(SingleCaseGenerator.EntityColorByIndex)));
+		Data.Add(new(nameof(SingleCaseGenerator.CurrentEntityColorTrueColor)));
+		Data.Add(new(nameof(SingleCaseGenerator.CurrentEntityByIndex)));
+		Data.Add(new(nameof(SingleCaseGenerator.CurrentEntityByLayer)));
+		Data.Add(new(nameof(SingleCaseGenerator.CurrentEntityByBlock)));
+		Data.Add(new(nameof(SingleCaseGenerator.DefaultLayer)));
+		Data.Add(new(nameof(SingleCaseGenerator.LayerTrueColor)));
+		Data.Add(new(nameof(SingleCaseGenerator.SingleMText)));
+		Data.Add(new(nameof(SingleCaseGenerator.SingleLongMText)));
+		Data.Add(new(nameof(SingleCaseGenerator.SingleMTextRotation)));
+		Data.Add(new(nameof(SingleCaseGenerator.SingleMTextSpecialCharacter)));
+		Data.Add(new(nameof(SingleCaseGenerator.MTextBackgroundFillAndTextFrame)));
+		Data.Add(new(nameof(SingleCaseGenerator.TextWithChineseCharacters)));
+		Data.Add(new(nameof(SingleCaseGenerator.CreateGroup)));
+		Data.Add(new(nameof(SingleCaseGenerator.SingleMTextMultiline)));
+		Data.Add(new(nameof(SingleCaseGenerator.SinglePoint)));
+		Data.Add(new(nameof(SingleCaseGenerator.PolylineVertexLayer)));
+		Data.Add(new(nameof(SingleCaseGenerator.ClosedLwPolyline)));
+		Data.Add(new(nameof(SingleCaseGenerator.ClosedPolyline2DTest)));
+		Data.Add(new(nameof(SingleCaseGenerator.ClosedPolyline3DTest)));
+		Data.Add(new(nameof(SingleCaseGenerator.SinglePdfUnderlay)));
+		Data.Add(new(nameof(SingleCaseGenerator.SingleRasterImage)));
+		Data.Add(new(nameof(SingleCaseGenerator.SingleWipeout)));
+		Data.Add(new(nameof(SingleCaseGenerator.CreateLayout)));
+		Data.Add(new(nameof(SingleCaseGenerator.EntityTransparency)));
+		Data.Add(new(nameof(SingleCaseGenerator.LineTypeWithSegments)));
+		Data.Add(new(nameof(SingleCaseGenerator.LineTypeWithTextSegment)));
+		Data.Add(new(nameof(SingleCaseGenerator.CreateInsertWithHatch)));
+		Data.Add(new(nameof(SingleCaseGenerator.InsertWithSpatialFilter)));
+		Data.Add(new(nameof(SingleCaseGenerator.CreateHatchPolyline)));
+		Data.Add(new(nameof(SingleCaseGenerator.CreateHatch)));
+		Data.Add(new(nameof(SingleCaseGenerator.CreateCircleHatch)));
+		Data.Add(new(nameof(SingleCaseGenerator.CreateHatchFullSweeps)));
+		Data.Add(new(nameof(SingleCaseGenerator.HatchWithEntities)));
+		Data.Add(new(nameof(SingleCaseGenerator.ChangedEncoding)));
+		Data.Add(new(nameof(SingleCaseGenerator.AddBlockWithAttributes)));
+		Data.Add(new(nameof(SingleCaseGenerator.AddCustomScale)));
+		Data.Add(new(nameof(SingleCaseGenerator.AddCustomBookColor)));
+		Data.Add(new(nameof(SingleCaseGenerator.DimensionsInBlock)));
+		Data.Add(new(nameof(SingleCaseGenerator.DimensionAligned)));
+		Data.Add(new(nameof(SingleCaseGenerator.DimensionLinear)));
+		Data.Add(new(nameof(SingleCaseGenerator.DimensionOrdinate)));
+		Data.Add(new(nameof(SingleCaseGenerator.DimensionAngular2Line)));
+		Data.Add(new(nameof(SingleCaseGenerator.DimensionAngular3Pt)));
+		Data.Add(new(nameof(SingleCaseGenerator.DimensionArc)));
+		Data.Add(new(nameof(SingleCaseGenerator.DimensionDiameter)));
+		Data.Add(new(nameof(SingleCaseGenerator.DimensionRadius)));
+		Data.Add(new(nameof(SingleCaseGenerator.Dimensions)));
+		Data.Add(new(nameof(SingleCaseGenerator.DimensionWithLineType)));
+		Data.Add(new(nameof(SingleCaseGenerator.DimensionStyleArrowBlock)));
+		Data.Add(new(nameof(SingleCaseGenerator.GeoData)));
+		Data.Add(new(nameof(SingleCaseGenerator.LineTypeInBlock)));
+		Data.Add(new(nameof(SingleCaseGenerator.XData)));
+		Data.Add(new(nameof(SingleCaseGenerator.XRef)));
+		Data.Add(new(nameof(SingleCaseGenerator.SPlineCreation)));
+		Data.Add(new(nameof(SingleCaseGenerator.SurfaceEntities)));
+		Data.Add(new(nameof(SingleCaseGenerator.TextAlignment)));
+		Data.Add(new(nameof(SingleCaseGenerator.InvalidEntities)));
+		Data.Add(new(nameof(SingleCaseGenerator.CreateXRecords)));
+		Data.Add(new(nameof(SingleCaseGenerator.SingleTableEntity)));
+		Data.Add(new(nameof(SingleCaseGenerator.SingleMesh)));
+		Data.Add(new(nameof(SingleCaseGenerator.SingleMeshWithTextureCoordinates)));
+		Data.Add(new(nameof(SingleCaseGenerator.SingleMaterial)));
+		Data.Add(new(nameof(SingleCaseGenerator.LeaderWithArrowHead)));
+		Data.Add(new(nameof(SingleCaseGenerator.SortedXRecords)));
+		Data.Add(new(nameof(SingleCaseGenerator.ProxyGraphics)));
+		Data.Add(new(nameof(SingleCaseGenerator.AnonymousBlockWithShortName)));
+	}
 
-		static WriterSingleObjectTests()
+	public WriterSingleObjectTests(ITestOutputHelper output) : base(output)
+	{
+	}
+
+	protected string getPath(string name, string ext, ACadVersion version)
+	{
+		return Path.Combine(TestVariables.OutputSingleCasesFolder, $"{name}_{version}.{ext}");
+	}
+
+	public class SingleCaseGenerator : IXunitSerializable
+	{
+		public Action<CadDocument> AssertRoundtrip { get; private set; }
+
+		public CadDocument Document { get; private set; } = new CadDocument();
+
+		public CadFileFormat Format { get; set; } = CadFileFormat.Unknown;
+
+		/// <summary>
+		/// Gets a value indicating whether the operation has been executed.
+		/// </summary>
+		public bool HasExecuted { get; private set; }
+
+		public string Name { get; private set; }
+
+		public Stream Stream { get; set; }
+
+		public SingleCaseGenerator()
 		{
-			Data = new();
-			if (!TestVariables.RunDwgWriterSingleCases)
-			{
-				Data.Add(new(nameof(SingleCaseGenerator.Empty)));
-				return;
-			}
-
-			Data.Add(new(nameof(SingleCaseGenerator.Empty)));
-			Data.Add(new(nameof(SingleCaseGenerator.ArcSegments)));
-			Data.Add(new(nameof(SingleCaseGenerator.SingleEllipse)));
-			Data.Add(new(nameof(SingleCaseGenerator.SingleLine)));
-			Data.Add(new(nameof(SingleCaseGenerator.ViewZoom)));
-			Data.Add(new(nameof(SingleCaseGenerator.SingleMLeader)));
-			Data.Add(new(nameof(SingleCaseGenerator.SingleMLine)));
-			Data.Add(new(nameof(SingleCaseGenerator.EllipseSegments)));
-			Data.Add(new(nameof(SingleCaseGenerator.EntityColorByLayer)));
-			Data.Add(new(nameof(SingleCaseGenerator.EntityColorTrueColor)));
-			Data.Add(new(nameof(SingleCaseGenerator.EntityChangeNormal)));
-			Data.Add(new(nameof(SingleCaseGenerator.EntityColorByIndex)));
-			Data.Add(new(nameof(SingleCaseGenerator.CurrentEntityColorTrueColor)));
-			Data.Add(new(nameof(SingleCaseGenerator.CurrentEntityByIndex)));
-			Data.Add(new(nameof(SingleCaseGenerator.CurrentEntityByBlock)));
-			Data.Add(new(nameof(SingleCaseGenerator.DefaultLayer)));
-			Data.Add(new(nameof(SingleCaseGenerator.LayerTrueColor)));
-			Data.Add(new(nameof(SingleCaseGenerator.SingleMText)));
-			Data.Add(new(nameof(SingleCaseGenerator.SingleMTextRotation)));
-			Data.Add(new(nameof(SingleCaseGenerator.SingleMTextSpecialCharacter)));
-			Data.Add(new(nameof(SingleCaseGenerator.TextWithChineseCharacters)));
-			Data.Add(new(nameof(SingleCaseGenerator.CreateGroup)));
-			Data.Add(new(nameof(SingleCaseGenerator.SingleMTextMultiline)));
-			Data.Add(new(nameof(SingleCaseGenerator.SinglePoint)));
-			Data.Add(new(nameof(SingleCaseGenerator.ClosedLwPolyline)));
-			Data.Add(new(nameof(SingleCaseGenerator.ClosedPolyline2DTest)));
-			Data.Add(new(nameof(SingleCaseGenerator.ClosedPolyline3DTest)));
-			Data.Add(new(nameof(SingleCaseGenerator.SinglePdfUnderlay)));
-			Data.Add(new(nameof(SingleCaseGenerator.SingleRasterImage)));
-			Data.Add(new(nameof(SingleCaseGenerator.SingleWipeout)));
-			Data.Add(new(nameof(SingleCaseGenerator.CreateLayout)));
-			Data.Add(new(nameof(SingleCaseGenerator.EntityTransparency)));
-			Data.Add(new(nameof(SingleCaseGenerator.LineTypeWithSegments)));
-            Data.Add(new(nameof(SingleCaseGenerator.LineTypeWithTextSegment)));
-			Data.Add(new(nameof(SingleCaseGenerator.CreateInsertWithHatch)));
-			Data.Add(new(nameof(SingleCaseGenerator.InsertWithSpatialFilter)));
-			Data.Add(new(nameof(SingleCaseGenerator.CreateHatchPolyline)));
-			Data.Add(new(nameof(SingleCaseGenerator.CreateHatch)));
-			Data.Add(new(nameof(SingleCaseGenerator.CreateCircleHatch)));
-			Data.Add(new(nameof(SingleCaseGenerator.ChangedEncoding)));
-			Data.Add(new(nameof(SingleCaseGenerator.AddBlockWithAttributes)));
-			Data.Add(new(nameof(SingleCaseGenerator.AddCustomScale)));
-			Data.Add(new(nameof(SingleCaseGenerator.AddCustomBookColor)));
-			Data.Add(new(nameof(SingleCaseGenerator.DimensionsInBlock)));
-			Data.Add(new(nameof(SingleCaseGenerator.DimensionAligned)));
-			Data.Add(new(nameof(SingleCaseGenerator.DimensionLinear)));
-			Data.Add(new(nameof(SingleCaseGenerator.DimensionOrdinate)));
-			Data.Add(new(nameof(SingleCaseGenerator.DimensionAngular2Line)));
-			Data.Add(new(nameof(SingleCaseGenerator.DimensionAngular3Pt)));
-			Data.Add(new(nameof(SingleCaseGenerator.DimensionDiameter)));
-			Data.Add(new(nameof(SingleCaseGenerator.DimensionRadius)));
-			Data.Add(new(nameof(SingleCaseGenerator.Dimensions)));
-			Data.Add(new(nameof(SingleCaseGenerator.DimensionWithLineType)));
-			Data.Add(new(nameof(SingleCaseGenerator.GeoData)));
-			Data.Add(new(nameof(SingleCaseGenerator.TextAlignment)));
-			Data.Add(new(nameof(SingleCaseGenerator.LineTypeInBlock)));
-			Data.Add(new(nameof(SingleCaseGenerator.XData)));
-			Data.Add(new(nameof(SingleCaseGenerator.XRef)));
-			Data.Add(new(nameof(SingleCaseGenerator.SPlineCreation)));
-			Data.Add(new(nameof(SingleCaseGenerator.CreateXRecords)));
+			this.Document.Header.ShowModelSpace = true;
 		}
 
-		public WriterSingleObjectTests(ITestOutputHelper output) : base(output)
+		public SingleCaseGenerator(string name) : this()
 		{
+			this.Name = name;
 		}
 
-		protected string getPath(string name, string ext, ACadVersion version)
+		public void AddBlockWithAttributes()
 		{
-			return Path.Combine(TestVariables.OutputSingleCasesFolder, $"{name}_{version}.{ext}");
+			BlockRecord record = new("my_block");
+
+			record.Entities.Add(new Circle
+			{
+				Radius = 10,
+				Center = XYZ.Zero
+			});
+
+			record.Entities.Add(new AttributeDefinition()
+			{
+				InsertPoint = XYZ.Zero,
+				Prompt = "Name_custom",
+				Tag = "CIRCLE_NAME",
+				Value = "Circilla",
+				HorizontalAlignment = TextHorizontalAlignment.Left,
+				Height = 18,
+				AttributeType = AttributeType.SingleLine,
+			});
+
+			record.Entities.Add(new AttributeDefinition()
+			{
+				InsertPoint = new XYZ(10, 10, 0),
+				Prompt = "Name_custom",
+				Tag = "CIRCLE_NAME",
+				Value = "Circilla",
+				HorizontalAlignment = TextHorizontalAlignment.Left,
+				Height = 18,
+				AttributeType = AttributeType.SingleLine,
+			});
+
+			this.Document.BlockRecords.Add(record);
+
+			var insert = new Insert(record)
+			{
+				InsertPoint = new XYZ(0, 0, 0),
+				XScale = 0.8,
+				YScale = 0.8,
+			};
+
+			insert.Attributes.Add(new AttributeEntity()
+			{
+				InsertPoint = new XYZ(-10, -10, 0),
+				Tag = "CIRCLE_NAME_ATT",
+				Value = "Bla",
+				HorizontalAlignment = TextHorizontalAlignment.Left,
+				Height = 18,
+				AttributeType = AttributeType.SingleLine,
+			});
+
+			this.Document.Entities.Add(insert);
+
+			this.AssertRoundtrip = (doc) =>
+			{
+				Insert result = doc.GetCadObject<Insert>(insert.Handle);
+
+				Assert.NotNull(result);
+				EntityComparator.IsEqual(insert, result);
+				Assert.Equal(insert.Attributes.Count, result.Attributes.Count);
+				Assert.NotNull(doc.GetCadObject<BlockRecord>(record.Handle));
+			};
 		}
 
-		public class SingleCaseGenerator : IXunitSerializable
+		public void AddBlockWithMTextAttributes()
 		{
-			public CadDocument Document { get; private set; } = new CadDocument();
+			BlockRecord record = new("my_block");
 
-			/// <summary>
-			/// Gets a value indicating whether the operation has been executed.
-			/// </summary>
-			public bool HasExecuted { get; private set; }
-
-			public string Name { get; private set; }
-
-			public SingleCaseGenerator()
+			record.Entities.Add(new Circle
 			{
-				this.Document.Header.ShowModelSpace = true;
+				Radius = 10,
+				Center = XYZ.Zero
+			});
+
+			record.Entities.Add(new AttributeDefinition()
+			{
+				InsertPoint = XYZ.Zero,
+				Prompt = "mtext_custom",
+				Tag = "MTEXT_ATT",
+				Value = "Hello I'm an MText",
+				HorizontalAlignment = TextHorizontalAlignment.Left,
+				Height = 18,
+				AttributeType = AttributeType.SingleLine,
+				MText = new MText { Value = "Hello I'm an MText" }
+			});
+
+			record.Entities.Add(new AttributeDefinition()
+			{
+				InsertPoint = new XYZ(10, 10, 0),
+				Prompt = "Name_custom",
+				Tag = "CIRCLE_NAME",
+				Value = "Circilla",
+				HorizontalAlignment = TextHorizontalAlignment.Left,
+				Height = 18,
+				AttributeType = AttributeType.SingleLine,
+			});
+
+			this.Document.BlockRecords.Add(record);
+
+			var insert = new Insert(record)
+			{
+				InsertPoint = new XYZ(0, 0, 0),
+				XScale = 0.8,
+				YScale = 0.8,
+			};
+
+			insert.Attributes.Add(new AttributeEntity()
+			{
+				InsertPoint = new XYZ(-10, -10, 0),
+				Tag = "CIRCLE_NAME_ATT",
+				Value = "Bla",
+				HorizontalAlignment = TextHorizontalAlignment.Left,
+				Height = 18,
+				AttributeType = AttributeType.SingleLine,
+			});
+
+			this.Document.Entities.Add(insert);
+
+			this.AssertRoundtrip = (doc) =>
+			{
+				Insert result = doc.GetCadObject<Insert>(insert.Handle);
+
+				Assert.NotNull(result);
+				EntityComparator.IsEqual(insert, result);
+				Assert.Equal(insert.Attributes.Count, result.Attributes.Count);
+				Assert.NotNull(doc.GetCadObject<BlockRecord>(record.Handle));
+			};
+		}
+
+		public void AddCustomBookColor()
+		{
+			//var color = new BookColor("RAL CLASSIC$RAL 1006");
+			var color = new BookColor("TEST BOOK$MY COLOR");
+			color.Color = new(226, 144, 0);
+
+			Line line = new Line(XYZ.Zero, new XYZ(100, 100, 0));
+			line.Color = Color.ByBlock;
+			line.BookColor = color;
+
+			this.Document.Colors.Add(color);
+			this.Document.Entities.Add(line);
+
+			color = new BookColor("TEST");
+			color.Color = new(226, 144, 0);
+
+			line = new Line(new XYZ(100, 100, 0), XYZ.Zero);
+			line.Color = Color.ByBlock;
+			line.BookColor = color;
+
+			this.Document.Colors.Add(color);
+			this.Document.Entities.Add(line);
+
+			this.AssertRoundtrip = (doc) =>
+			{
+				Line result = doc.GetCadObject<Line>(line.Handle);
+
+				Assert.NotNull(result);
+				EntityComparator.IsEqual(line, result);
+				Assert.NotNull(doc.GetCadObject<BookColor>(color.Handle));
+			};
+		}
+
+		public void AddCustomScale()
+		{
+			Scale scale = new Scale("Hello");
+
+			this.Document.Scales.Add(scale);
+
+			this.AssertRoundtrip = (doc) =>
+			{
+				Scale result = doc.GetCadObject<Scale>(scale.Handle);
+
+				Assert.NotNull(result);
+				Assert.Equal(scale.Name, result.Name);
+			};
+		}
+
+		public void AddViewport()
+		{
+			Viewport vp1 = new Viewport
+			{
+				Center = new XYZ(148.5, 105, 0),
+				Width = 50,
+				Height = 50,
+				Scale = new Scale("scale") { DrawingUnits = 0.5, PaperUnits = 1 },
+				Status = ViewportStatusFlags.UcsIconVisibility | ViewportStatusFlags.FastZoom | ViewportStatusFlags.CurrentlyAlwaysEnabled,
+				Color = Color.Blue,
+			};
+
+			Viewport vp2 = new Viewport
+			{
+				Center = new XYZ(148.5, 105, 0),
+				Width = 100,
+				Height = 100,
+				Scale = new Scale("scale") { DrawingUnits = 0.5, PaperUnits = 1 },
+				Status = ViewportStatusFlags.UcsIconVisibility | ViewportStatusFlags.FastZoom | ViewportStatusFlags.CurrentlyAlwaysEnabled,
+				Color = Color.Red,
+			};
+
+			this.Document.PaperSpace.Layout.AddViewport(vp1);
+			this.Document.PaperSpace.Layout.AddViewport(vp2);
+
+			this.AssertRoundtrip = (doc) =>
+			{
+				Viewport result1 = doc.GetCadObject<Viewport>(vp1.Handle);
+				Viewport result2 = doc.GetCadObject<Viewport>(vp2.Handle);
+
+				Assert.NotNull(result1);
+				Assert.NotNull(result2);
+				Assert.Equal(vp1.Width, result1.Width);
+				Assert.Equal(vp2.Height, result2.Height);
+			};
+		}
+
+		public void AnonymousBlockWithShortName()
+		{
+			this.Document.BlockRecords.Add(new BlockRecord("顶") { IsAnonymous = true });
+		}
+
+		public void ArcSegments()
+		{
+			Arc arc = new Arc()
+			{
+				Center = new XYZ(100, 0, 0),
+				Radius = 50,
+				StartAngle = MathHelper.HalfPI,
+				EndAngle = Math.PI,
+			};
+
+			XYZ start = new XYZ(100, 50, 0);
+			XYZ end = new XYZ(50, 0, 0);
+
+			var v = arc.PolygonalVertexes(3);
+
+			Polyline3D polyline = new Polyline3D(v.Select(a => new Vertex3D(a)), false);
+			polyline.Color = Color.Red;
+
+			arc.GetEndVertices(out XYZ s, out XYZ e);
+
+			this.Document.Entities.Add(arc);
+			this.Document.Entities.Add(polyline);
+
+			//Inverted normal
+			arc = new Arc()
+			{
+				Center = new XYZ(0, 0, 0),
+				Radius = 50,
+				StartAngle = MathHelper.HalfPI,
+				EndAngle = Math.PI,
+				Normal = new XYZ(0, 0, -1)
+			};
+
+			arc.GetEndVertices(out s, out e);
+			Line l = new Line(s, e);
+
+			v = arc.PolygonalVertexes(3);
+			polyline = new Polyline3D(v.Select(a => new Vertex3D(a)), false);
+			//polyline.Normal = new XYZ(0, 0, -1);
+			polyline.Color = Color.Green;
+
+			this.Document.Entities.Add(arc);
+			this.Document.Entities.Add(polyline);
+			this.Document.Entities.Add(l);
+
+			arc = new Arc()
+			{
+				StartAngle = 0,
+				EndAngle = Math.PI / (2),
+				Radius = 20,
+				Normal = XYZ.AxisX
+			};
+
+			v = arc.PolygonalVertexes(3);
+			polyline = new Polyline3D(v.Select(a => new Vertex3D(a)), false);
+			polyline.Color = Color.Blue;
+
+			arc.GetEndVertices(out s, out e);
+			l = new Line(s, e);
+
+			this.Document.Entities.Add(arc);
+			this.Document.Entities.Add(polyline);
+			this.Document.Entities.Add(l);
+
+			arc = new Arc()
+			{
+				StartAngle = 0,
+				EndAngle = Math.PI / (2),
+				Radius = 20,
+				Normal = -XYZ.AxisX
+			};
+
+			v = arc.PolygonalVertexes(3);
+			polyline = new Polyline3D(v.Select(a => new Vertex3D(a)), false);
+			polyline.Color = Color.Yellow;
+
+			arc.GetEndVertices(out s, out e);
+			l = new Line(s, e);
+
+			this.Document.Entities.Add(arc);
+			this.Document.Entities.Add(polyline);
+			this.Document.Entities.Add(l);
+
+			arc = new Arc()
+			{
+				StartAngle = 0,
+				EndAngle = Math.PI / (2),
+				Radius = 20,
+				Normal = XYZ.AxisY
+			};
+
+			v = arc.PolygonalVertexes(3);
+			polyline = new Polyline3D(v.Select(a => new Vertex3D(a)), false);
+			polyline.Color = Color.Magenta;
+
+			arc.GetEndVertices(out s, out e);
+			l = new Line(s, e);
+
+			this.Document.Entities.Add(arc);
+			this.Document.Entities.Add(polyline);
+			this.Document.Entities.Add(l);
+
+			arc = new Arc()
+			{
+				StartAngle = 0,
+				EndAngle = Math.PI / (2),
+				Radius = 20,
+				Normal = -XYZ.AxisY
+			};
+
+			v = arc.PolygonalVertexes(3);
+			polyline = new Polyline3D(v.Select(a => new Vertex3D(a)), false);
+			polyline.Color = Color.Cyan;
+
+			arc.GetEndVertices(out s, out e);
+			l = new Line(s, e);
+
+			this.Document.Entities.Add(arc);
+			this.Document.Entities.Add(polyline);
+			this.Document.Entities.Add(l);
+
+			this.AssertRoundtrip = (doc) =>
+			{
+				Arc result = doc.GetCadObject<Arc>(arc.Handle);
+
+				Assert.NotNull(result);
+				EntityComparator.IsEqual(arc, result);
+				Assert.Equal(this.Document.ModelSpace.Entities.Count, doc.ModelSpace.Entities.Count);
+			};
+		}
+
+		public void ArrowBlocks()
+		{
+			DimensionLinear dim1 = new DimensionLinear
+			{
+				FirstPoint = new XYZ(0, 0, 0),
+				SecondPoint = new XYZ(10, 0, 0),
+				Offset = 0.5,
+				Style = new DimensionStyle("style_01")
+				{
+					DimArrow1 = DimensionArrowhead.ArchitecturalTick,
+					DimArrow2 = DimensionArrowhead.BoxBlank,
+				}
+			};
+
+			DimensionLinear dim2 = new DimensionLinear
+			{
+				FirstPoint = new XYZ(0, 5, 0),
+				SecondPoint = new XYZ(10, 5, 0),
+				Offset = 0.5,
+				Style = new DimensionStyle("style_02")
+				{
+					DimArrow1 = DimensionArrowhead.BoxFilled,
+					DimArrow2 = DimensionArrowhead.Closed,
+				}
+			};
+
+			DimensionLinear dim3 = new DimensionLinear
+			{
+				FirstPoint = new XYZ(0, 10, 0),
+				SecondPoint = new XYZ(10, 10, 0),
+				Offset = 0.5,
+				Style = new DimensionStyle("style_03")
+				{
+					DimArrow1 = DimensionArrowhead.ClosedBlank,
+					DimArrow2 = DimensionArrowhead.DatumFilled,
+				}
+			};
+
+			DimensionLinear dim4 = new DimensionLinear
+			{
+				FirstPoint = new XYZ(0, 15, 0),
+				SecondPoint = new XYZ(10, 15, 0),
+				Offset = 0.5,
+				Style = new DimensionStyle("style_04")
+				{
+					DimArrow1 = DimensionArrowhead.DatumTriangle,
+					DimArrow2 = DimensionArrowhead.Dot,
+				}
+			};
+
+			DimensionLinear dim5 = new DimensionLinear
+			{
+				FirstPoint = new XYZ(0, 20, 0),
+				SecondPoint = new XYZ(10, 20, 0),
+				Offset = 0.5,
+				Style = new DimensionStyle("style_05")
+				{
+					DimArrow1 = DimensionArrowhead.DotBlank,
+					DimArrow2 = DimensionArrowhead.DotSmall,
+				}
+			};
+
+			DimensionLinear dim6 = new DimensionLinear
+			{
+				FirstPoint = new XYZ(0, 25, 0),
+				SecondPoint = new XYZ(10, 25, 0),
+				Offset = 0.5,
+				Style = new DimensionStyle("style_06")
+				{
+					DimArrow1 = DimensionArrowhead.DotSmallBlank,
+					DimArrow2 = DimensionArrowhead.Integral,
+				}
+			};
+
+			DimensionLinear dim7 = new DimensionLinear
+			{
+				FirstPoint = new XYZ(0, 30, 0),
+				SecondPoint = new XYZ(10, 30, 0),
+				Offset = 0.5,
+				Style = new DimensionStyle("style_07")
+				{
+					DimArrow1 = DimensionArrowhead.None,
+					DimArrow2 = DimensionArrowhead.Oblique,
+				}
+			};
+
+			DimensionLinear dim8 = new DimensionLinear
+			{
+				FirstPoint = new XYZ(0, 35, 0),
+				SecondPoint = new XYZ(10, 35, 0),
+				Offset = 0.5,
+				Style = new DimensionStyle("style_08")
+				{
+					DimArrow1 = DimensionArrowhead.Open,
+					DimArrow2 = DimensionArrowhead.Open30,
+				}
+			};
+
+			DimensionLinear dim9 = new DimensionLinear
+			{
+				FirstPoint = new XYZ(0, 40, 0),
+				SecondPoint = new XYZ(10, 40, 0),
+				Offset = 0.5,
+				Style = new DimensionStyle("style_09")
+				{
+					DimArrow1 = DimensionArrowhead.Open90,
+					DimArrow2 = DimensionArrowhead.OriginIndicator,
+				}
+			};
+
+			DimensionLinear dim10 = new DimensionLinear
+			{
+				FirstPoint = new XYZ(0, 45, 0),
+				SecondPoint = new XYZ(10, 45, 0),
+				Offset = 0.5,
+				Style = new DimensionStyle("style_10")
+				{
+					DimArrow1 = DimensionArrowhead.OriginIndicator2,
+					DimArrow2 = DimensionArrowhead.OriginIndicator2,
+				}
+			};
+
+			this.Document.Entities.Add(dim1);
+			this.Document.Entities.Add(dim2);
+			this.Document.Entities.Add(dim3);
+			this.Document.Entities.Add(dim4);
+			this.Document.Entities.Add(dim5);
+			this.Document.Entities.Add(dim6);
+			this.Document.Entities.Add(dim7);
+			this.Document.Entities.Add(dim8);
+			this.Document.Entities.Add(dim9);
+			this.Document.Entities.Add(dim10);
+
+			this.AssertRoundtrip = (doc) =>
+			{
+				DimensionLinear result = doc.GetCadObject<DimensionLinear>(dim1.Handle);
+
+				Assert.NotNull(result);
+				EntityComparator.IsEqual(dim1, result);
+				Assert.Equal(this.Document.ModelSpace.Entities.Count, doc.ModelSpace.Entities.Count);
+			};
+		}
+
+		public void ChangedEncoding()
+		{
+			Layer layer = new Layer("我的自定义层");
+
+			this.Document.Header.CodePage = "gb2312";
+			this.Document.Layers.Add(layer);
+
+			this.AssertRoundtrip = (doc) =>
+			{
+				Layer result = doc.GetCadObject<Layer>(layer.Handle);
+
+				Assert.NotNull(result);
+				Assert.Equal(layer.Name, result.Name);
+			};
+		}
+
+		public void ClosedLwPolyline()
+		{
+			List<LwPolyline.Vertex> vertices = new List<LwPolyline.Vertex>() {
+			new LwPolyline.Vertex(new XY(0,0)),
+			new LwPolyline.Vertex(new XY(1,0)),
+			new LwPolyline.Vertex(new XY(2,1)),
+			new LwPolyline.Vertex(new XY(3,1)),
+			new LwPolyline.Vertex(new XY(4,4))
+			};
+
+			var lwPline = new LwPolyline();
+
+			for (int i = 0; i < vertices.Count; i++)
+				lwPline.Vertices.Add(vertices[i]);
+
+			lwPline.IsClosed = true;
+
+			lwPline.Vertices[2].Bulge = -0.5;
+			this.Document.Entities.Add(lwPline);
+
+			this.AssertRoundtrip = (doc) =>
+			{
+				LwPolyline result = doc.GetCadObject<LwPolyline>(lwPline.Handle);
+
+				Assert.NotNull(result);
+				EntityComparator.IsEqual(lwPline, result);
+				Assert.Equal(lwPline.IsClosed, result.IsClosed);
+				Assert.Equal(lwPline.Vertices.Count, result.Vertices.Count);
+			};
+		}
+
+		public void ClosedPolyline2DTest()
+		{
+			List<Vertex2D> vector2d = new()
+			{
+				new Vertex2D() { Location = new XYZ(0, 0, 0) },
+				new Vertex2D() { Location = new XYZ(1, 0, 0) },
+				new Vertex2D() { Location = new XYZ(2, 1, 0) },
+				new Vertex2D() { Location = new XYZ(3, 1, 0) },
+				new Vertex2D() { Location = new XYZ(4, 4, 0) }
+			};
+
+			var pline = new Polyline2D();
+			pline.Vertices.AddRange(vector2d);
+			pline.IsClosed = true;
+			pline.Vertices.ElementAt(3).Bulge = 1;
+
+			this.Document.Entities.Add(pline);
+
+			this.AssertRoundtrip = (doc) =>
+			{
+				Polyline2D result = doc.GetCadObject<Polyline2D>(pline.Handle);
+
+				Assert.NotNull(result);
+				EntityComparator.IsEqual(pline, result);
+				Assert.Equal(pline.IsClosed, result.IsClosed);
+				Assert.Equal(pline.Vertices.Count(), result.Vertices.Count());
+			};
+		}
+
+		public void ClosedPolyline3DTest()
+		{
+			List<Vertex3D> vector2d = new()
+			{
+				new Vertex3D() { Location = new XYZ(0, 0, 0) },
+				new Vertex3D() { Location = new XYZ(1, 0, 0) },
+				new Vertex3D() { Location = new XYZ(2, 1, 0) },
+				new Vertex3D() { Location = new XYZ(3, 1, 0) },
+				new Vertex3D() { Location = new XYZ(4, 4, 0) }
+			};
+
+			var pline = new Polyline3D();
+			pline.Vertices.AddRange(vector2d);
+			pline.IsClosed = true;
+			pline.Vertices.ElementAt(3).Bulge = 1;
+
+			this.Document.Entities.Add(pline);
+
+			this.AssertRoundtrip = (doc) =>
+			{
+				Polyline3D result = doc.GetCadObject<Polyline3D>(pline.Handle);
+
+				Assert.NotNull(result);
+				EntityComparator.IsEqual(pline, result);
+				Assert.Equal(pline.IsClosed, result.IsClosed);
+				Assert.Equal(pline.Vertices.Count(), result.Vertices.Count());
+			};
+		}
+
+		public void CreateCircleHatch()
+		{
+			Hatch hatch = new Hatch();
+			hatch.IsSolid = true;
+
+			hatch.SeedPoints.Add(new XY());
+
+			List<Hatch.BoundaryPath.Line> edges = new List<Hatch.BoundaryPath.Line>();
+
+			//Polyline circle
+			Hatch.BoundaryPath.Polyline polyline = new Hatch.BoundaryPath.Polyline();
+			polyline.IsClosed = true;
+			polyline.Vertices.Add(new XYZ(0, 2.5, 1));
+			polyline.Vertices.Add(new XYZ(10, 2.5, 1));
+
+			//Arc circle
+			Hatch.BoundaryPath.Arc arc = new();
+			arc.Center = new XY(10, 10);
+			arc.CounterClockWise = true;
+			arc.Radius = 5;
+			arc.StartAngle = 0;
+			arc.EndAngle = MathHelper.TwoPI;
+
+			Hatch.BoundaryPath path = new Hatch.BoundaryPath();
+			path.Edges.Add(polyline);
+
+			Hatch.BoundaryPath path1 = new Hatch.BoundaryPath();
+			path1.Edges.Add(arc);
+
+			hatch.Paths.Add(path);
+			hatch.Paths.Add(path1);
+
+			this.Document.Entities.Add(hatch);
+
+			this.AssertRoundtrip = (doc) =>
+			{
+				Hatch result = doc.GetCadObject<Hatch>(hatch.Handle);
+
+				Assert.NotNull(result);
+				EntityComparator.IsEqual(hatch, result);
+				Assert.Equal(hatch.IsSolid, result.IsSolid);
+				Assert.Equal(hatch.Paths.Count, result.Paths.Count);
+			};
+		}
+
+		public void CreateGroup()
+		{
+			Layer layer = new Layer("MyLayer");
+			layer.Color = new Color(0, 153, 0);
+			this.Document.Layers.Add(layer);
+
+			Circle circle = new Circle();
+			circle.Center = new CSMath.XYZ(1, 1, 0);
+			circle.Radius = 1;
+			circle.Normal = new CSMath.XYZ(0, 0, 1);
+
+			Line line = new Line();
+			line.StartPoint = new CSMath.XYZ(0, 0, 0);
+			line.EndPoint = new CSMath.XYZ(2, 2, 0);
+
+			circle.Layer = layer;
+			line.Layer = layer;
+
+			this.Document.Entities.Add(circle);
+			this.Document.Entities.Add(line);
+
+			//Group group = new Group();
+			//group.Name = "MyGroup";
+			//group.Add(circle);
+			//group.Add(line);
+
+			this.Document.Groups.CreateGroup("MyGroup", new List<Entity> { circle, line });
+
+			TextEntity text = new TextEntity();
+			text.Value = "Hello World!";
+			text.Layer = layer;
+			text.HorizontalAlignment = TextHorizontalAlignment.Center;
+			text.VerticalAlignment = TextVerticalAlignmentType.Middle;
+			text.InsertPoint = new CSMath.XYZ(1, 1, 0);
+			text.AlignmentPoint = new CSMath.XYZ(10, 10, 0);
+
+			this.Document.Entities.Add(text);
+
+			this.AssertRoundtrip = (doc) =>
+			{
+				Circle circleResult = doc.GetCadObject<Circle>(circle.Handle);
+				Line lineResult = doc.GetCadObject<Line>(line.Handle);
+				TextEntity textResult = doc.GetCadObject<TextEntity>(text.Handle);
+
+				Assert.NotNull(circleResult);
+				Assert.NotNull(lineResult);
+				Assert.NotNull(textResult);
+
+				EntityComparator.IsEqual(circle, circleResult);
+				EntityComparator.IsEqual(line, lineResult);
+				EntityComparator.IsEqual(text, textResult);
+
+				Assert.NotNull(doc.GetCadObject<Layer>(layer.Handle));
+			};
+		}
+
+		public void CreateHatch()
+		{
+			Hatch hatch = new Hatch();
+			hatch.IsSolid = true;
+
+			hatch.SeedPoints.Add(new XY());
+
+			List<Hatch.BoundaryPath.Line> edges = new List<Hatch.BoundaryPath.Line>();
+
+			//edges
+			Hatch.BoundaryPath.Line edge1 = new Hatch.BoundaryPath.Line
+			{
+				Start = new CSMath.XY(0, 0),
+				End = new CSMath.XY(1, 0)
+			};
+			edges.Add(edge1);
+
+			Hatch.BoundaryPath.Line edge2 = new Hatch.BoundaryPath.Line
+			{
+				Start = new CSMath.XY(1, 0),
+				End = new CSMath.XY(1, 1)
+			};
+			edges.Add(edge2);
+
+			Hatch.BoundaryPath.Line edge3 = new Hatch.BoundaryPath.Line
+			{
+				Start = new CSMath.XY(1, 1),
+				End = new CSMath.XY(0, 1)
+			};
+			edges.Add(edge3);
+
+			Hatch.BoundaryPath.Line edge4 = new Hatch.BoundaryPath.Line
+			{
+				Start = new CSMath.XY(0, 1),
+				End = new CSMath.XY(0, 0)
+			};
+			edges.Add(edge4);
+
+			Hatch.BoundaryPath path = new Hatch.BoundaryPath();
+			foreach (var item in edges)
+			{
+				path.Edges.Add(item);
 			}
 
-			public SingleCaseGenerator(string name) : this()
+			hatch.Paths.Add(path);
+
+			this.Document.Entities.Add(hatch);
+
+			this.AssertRoundtrip = (doc) =>
 			{
-				this.Name = name;
-			}
+				Hatch result = doc.GetCadObject<Hatch>(hatch.Handle);
 
-			public void AddBlockWithAttributes()
+				Assert.NotNull(result);
+				EntityComparator.IsEqual(hatch, result);
+				Assert.Equal(hatch.Paths.Count, result.Paths.Count);
+				Assert.Equal(hatch.Paths.First().Edges.Count, result.Paths.First().Edges.Count);
+			};
+		}
+
+		public void CreateHatchFullSweeps()
+		{
+			Hatch hatch = new Hatch { IsSolid = true };
+			hatch.SeedPoints.Add(XY.Zero);
+
+			Hatch.BoundaryPath arcPath = new Hatch.BoundaryPath();
+			arcPath.Edges.Add(new Hatch.BoundaryPath.Arc
 			{
-				BlockRecord record = new("my_block");
+				Center = XY.Zero,
+				Radius = 2,
+				StartAngle = -MathHelper.HalfPI,
+				EndAngle = MathHelper.ThreeHalfPI,
+				CounterClockWise = true,
+			});
+			hatch.Paths.Add(arcPath);
 
-				record.Entities.Add(new Circle
-				{
-					Radius = 10,
-					Center = XYZ.Zero
-				});
-
-				record.Entities.Add(new AttributeDefinition()
-				{
-					InsertPoint = XYZ.Zero,
-					Prompt = "Name_custom",
-					Tag = "CIRCLE_NAME",
-					Value = "Circilla",
-					HorizontalAlignment = TextHorizontalAlignment.Left,
-					Height = 18,
-					AttributeType = AttributeType.SingleLine,
-				});
-
-				record.Entities.Add(new AttributeDefinition()
-				{
-					InsertPoint = new XYZ(10, 10, 0),
-					Prompt = "Name_custom",
-					Tag = "CIRCLE_NAME",
-					Value = "Circilla",
-					HorizontalAlignment = TextHorizontalAlignment.Left,
-					Height = 18,
-					AttributeType = AttributeType.SingleLine,
-				});
-
-				this.Document.BlockRecords.Add(record);
-
-				var insert = new Insert(record)
-				{
-					InsertPoint = new XYZ(0, 0, 0),
-					XScale = 0.8,
-					YScale = 0.8,
-				};
-
-				insert.Attributes.Add(new AttributeEntity()
-				{
-					InsertPoint = new XYZ(-10, -10, 0),
-					Tag = "CIRCLE_NAME_ATT",
-					Value = "Bla",
-					HorizontalAlignment = TextHorizontalAlignment.Left,
-					Height = 18,
-					AttributeType = AttributeType.SingleLine,
-				});
-
-				this.Document.Entities.Add(insert);
-			}
-
-			public void AddCustomBookColor()
+			Hatch.BoundaryPath ellipsePath = new Hatch.BoundaryPath();
+			ellipsePath.Edges.Add(new Hatch.BoundaryPath.Ellipse
 			{
-				//var color = new BookColor("RAL CLASSIC$RAL 1006");
-				var color = new BookColor("TEST BOOK$MY COLOR");
-				color.Color = new(226, 144, 0);
+				Center = new XY(5, 0),
+				MajorAxisEndPoint = new XY(2, 0),
+				RadiusRatio = 0.5,
+				StartAngle = Math.PI,
+				EndAngle = 3 * Math.PI,
+				CounterClockWise = true,
+			});
+			hatch.Paths.Add(ellipsePath);
 
-				Line line = new Line(XYZ.Zero, new XYZ(100, 100, 0));
-				line.Color = Color.ByBlock;
-				line.BookColor = color;
+			this.Document.Entities.Add(hatch);
 
-				this.Document.Colors.Add(color);
-				this.Document.Entities.Add(line);
-
-				color = new BookColor("TEST");
-				color.Color = new(226, 144, 0);
-
-				line = new Line(new XYZ(100, 100, 0), XYZ.Zero);
-				line.Color = Color.ByBlock;
-				line.BookColor = color;
-
-				this.Document.Colors.Add(color);
-				this.Document.Entities.Add(line);
-			}
-
-			public void AddCustomScale()
+			this.AssertRoundtrip = (doc) =>
 			{
-				this.Document.Scales.Add(new Scale("Hello"));
-			}
+				Hatch result = doc.GetCadObject<Hatch>(hatch.Handle);
 
-			public void ArcSegments()
+				Assert.NotNull(result);
+				EntityComparator.IsEqual(hatch, result);
+				Assert.Equal(hatch.Paths.Count, result.Paths.Count);
+			};
+		}
+
+		public void CreateHatchPolyline()
+		{
+			Hatch hatch = new Hatch();
+			hatch.IsSolid = true;
+
+			Hatch.BoundaryPath path = new Hatch.BoundaryPath();
+
+			Hatch.BoundaryPath.Polyline pline = new Hatch.BoundaryPath.Polyline();
+			pline.Vertices.Add(new XYZ(0, 0, 0));
+			pline.Vertices.Add(new XYZ(1, 0, 0));
+			pline.Vertices.Add(new XYZ(1, 1, 0));
+			pline.Vertices.Add(new XYZ(0, 1, 0));
+			pline.Vertices.Add(new XYZ(0, 0, 0));
+
+			path.Edges.Add(pline);
+			path.Flags |= BoundaryPathFlags.Polyline;
+			hatch.Paths.Add(path);
+
+			this.Document.Entities.Add(hatch);
+
+			Hatch multiplePoly = new Hatch();
+			multiplePoly.IsSolid = true;
+			multiplePoly.SeedPoints.Add(new XY());
+			multiplePoly.Color = new Color(30);
+
+			Hatch.BoundaryPath.Polyline pol = new();
+			pol.Vertices.Add(new CSMath.XYZ(0, 10, 0));
+			pol.Vertices.Add(new CSMath.XYZ(10, 10, 0));
+			pol.Vertices.Add(new CSMath.XYZ(10, 0, 0));
+			pol.Vertices.Add(new CSMath.XYZ(0, 0, 0));
+			pol.Vertices.Add(new CSMath.XYZ(0, 10, 0));
+			pol.IsClosed = true;
+
+			Hatch.BoundaryPath.Polyline pol2 = new();
+			pol2.Vertices.Add(new CSMath.XYZ(-5, 0, 0));
+			pol2.Vertices.Add(new CSMath.XYZ(-5, 5, 0));
+			pol2.Vertices.Add(new CSMath.XYZ(0, 0, 0));
+			pol2.Vertices.Add(new CSMath.XYZ(-5, 0, 0));
+			pol2.IsClosed = true;
+
+			Hatch.BoundaryPath path1 = new Hatch.BoundaryPath();
+			Hatch.BoundaryPath path2 = new Hatch.BoundaryPath();
+			path1.Edges.Add(pol);
+			path2.Edges.Add(pol2);
+
+			multiplePoly.Paths.Add(path1);
+			multiplePoly.Paths.Add(path2);
+
+			this.Document.Entities.Add(multiplePoly);
+
+			this.AssertRoundtrip = (doc) =>
 			{
-				Arc arc = new Arc()
-				{
-					Center = new XYZ(100, 0, 0),
-					Radius = 50,
-					StartAngle = MathHelper.HalfPI,
-					EndAngle = Math.PI,
-				};
+				Hatch result = doc.GetCadObject<Hatch>(hatch.Handle);
+				Hatch multipleResult = doc.GetCadObject<Hatch>(multiplePoly.Handle);
 
-				XYZ start = new XYZ(100, 50, 0);
-				XYZ end = new XYZ(50, 0, 0);
+				Assert.NotNull(result);
+				Assert.NotNull(multipleResult);
+				Assert.Equal(hatch.Paths.Count, result.Paths.Count);
+				Assert.Equal(multiplePoly.Paths.Count, multipleResult.Paths.Count);
+			};
+		}
 
-				var v = arc.PolygonalVertexes(3);
+		public void CreateInsertWithHatch()
+		{
+			CadDocument doc = this.Document;
+			var modelSpace = doc.ModelSpace;
 
-				Polyline3D polyline = new Polyline3D(v.Select(a => new Vertex3D(a)), false);
-				polyline.Color = Color.Red;
+			string blockName = "my_block";
+			var blockRecord = new BlockRecord(blockName);
+			var insert = new Insert(blockRecord);
+			modelSpace.Entities.Add(insert);
 
-				arc.GetEndVertices(out XYZ s, out XYZ e);
-
-				this.Document.Entities.Add(arc);
-				this.Document.Entities.Add(polyline);
-
-				//Inverted normal
-				arc = new Arc()
-				{
-					Center = new XYZ(0, 0, 0),
-					Radius = 50,
-					StartAngle = MathHelper.HalfPI,
-					EndAngle = Math.PI,
-					Normal = new XYZ(0, 0, -1)
-				};
-
-				arc.GetEndVertices(out s, out e);
-				Line l = new Line(s, e);
-
-				v = arc.PolygonalVertexes(3);
-				polyline = new Polyline3D(v.Select(a => new Vertex3D(a)), false);
-				//polyline.Normal = new XYZ(0, 0, -1);
-				polyline.Color = Color.Green;
-
-				this.Document.Entities.Add(arc);
-				this.Document.Entities.Add(polyline);
-				this.Document.Entities.Add(l);
-
-				arc = new Arc()
-				{
-					StartAngle = 0,
-					EndAngle = Math.PI / (2),
-					Radius = 20,
-					Normal = XYZ.AxisX
-				};
-
-				v = arc.PolygonalVertexes(3);
-				polyline = new Polyline3D(v.Select(a => new Vertex3D(a)), false);
-				polyline.Color = Color.Blue;
-
-				arc.GetEndVertices(out s, out e);
-				l = new Line(s, e);
-
-				this.Document.Entities.Add(arc);
-				this.Document.Entities.Add(polyline);
-				this.Document.Entities.Add(l);
-
-				arc = new Arc()
-				{
-					StartAngle = 0,
-					EndAngle = Math.PI / (2),
-					Radius = 20,
-					Normal = -XYZ.AxisX
-				};
-
-				v = arc.PolygonalVertexes(3);
-				polyline = new Polyline3D(v.Select(a => new Vertex3D(a)), false);
-				polyline.Color = Color.Yellow;
-
-				arc.GetEndVertices(out s, out e);
-				l = new Line(s, e);
-
-				this.Document.Entities.Add(arc);
-				this.Document.Entities.Add(polyline);
-				this.Document.Entities.Add(l);
-
-				arc = new Arc()
-				{
-					StartAngle = 0,
-					EndAngle = Math.PI / (2),
-					Radius = 20,
-					Normal = XYZ.AxisY
-				};
-
-				v = arc.PolygonalVertexes(3);
-				polyline = new Polyline3D(v.Select(a => new Vertex3D(a)), false);
-				polyline.Color = Color.Magenta;
-
-				arc.GetEndVertices(out s, out e);
-				l = new Line(s, e);
-
-				this.Document.Entities.Add(arc);
-				this.Document.Entities.Add(polyline);
-				this.Document.Entities.Add(l);
-
-				arc = new Arc()
-				{
-					StartAngle = 0,
-					EndAngle = Math.PI / (2),
-					Radius = 20,
-					Normal = -XYZ.AxisY
-				};
-
-				v = arc.PolygonalVertexes(3);
-				polyline = new Polyline3D(v.Select(a => new Vertex3D(a)), false);
-				polyline.Color = Color.Cyan;
-
-				arc.GetEndVertices(out s, out e);
-				l = new Line(s, e);
-
-				this.Document.Entities.Add(arc);
-				this.Document.Entities.Add(polyline);
-				this.Document.Entities.Add(l);
-			}
-
-			public void ChangedEncoding()
+			var hatch = new Hatch()
 			{
-				this.Document.Header.CodePage = "gb2312";
-				this.Document.Layers.Add(new Layer("我的自定义层"));
-			}
+				Pattern = HatchPattern.Solid,
+				Color = new ACadSharp.Color(0, 0, 0),
+				IsAssociative = false,
+				IsSolid = true,
+				PatternType = HatchPatternType.SolidFill,
+				IsInvisible = false,
+				Style = HatchStyleType.Normal,
+			};
 
-			public void ClosedLwPolyline()
+			var path = new Hatch.BoundaryPath
 			{
-				List<LwPolyline.Vertex> vertices = new List<LwPolyline.Vertex>() {
-				new LwPolyline.Vertex(new XY(0,0)),
-				new LwPolyline.Vertex(new XY(1,0)),
-				new LwPolyline.Vertex(new XY(2,1)),
-				new LwPolyline.Vertex(new XY(3,1)),
-				new LwPolyline.Vertex(new XY(4,4))
-				};
+				Flags = BoundaryPathFlags.External,
+			};
 
-				var lwPline = new LwPolyline();
+			path.Edges.Add(new Hatch.BoundaryPath.Polyline([new(0, 0, 0), new(0, 5, 0), new(5, 5, 0), new(5, 0, 0)]));
 
-				for (int i = 0; i < vertices.Count; i++)
-					lwPline.Vertices.Add(vertices[i]);
+			hatch.Paths.Add(path);
 
-				lwPline.IsClosed = true;
+			blockRecord.Entities.Add(hatch);
 
-				lwPline.Vertices[2].Bulge = -0.5;
-				this.Document.Entities.Add(lwPline);
-			}
-
-			public void ClosedPolyline2DTest()
+			this.AssertRoundtrip = (doc) =>
 			{
-				List<Vertex2D> vector2d = new()
-				{
-					new Vertex2D() { Location = new XYZ(0, 0, 0) },
-					new Vertex2D() { Location = new XYZ(1, 0, 0) },
-					new Vertex2D() { Location = new XYZ(2, 1, 0) },
-					new Vertex2D() { Location = new XYZ(3, 1, 0) },
-					new Vertex2D() { Location = new XYZ(4, 4, 0) }
-				};
+				Insert insertResult = doc.GetCadObject<Insert>(insert.Handle);
+				Hatch hatchResult = doc.GetCadObject<Hatch>(hatch.Handle);
 
-				var pline = new Polyline2D();
-				pline.Vertices.AddRange(vector2d);
-				pline.IsClosed = true;
-				pline.Vertices.ElementAt(3).Bulge = 1;
+				Assert.NotNull(insertResult);
+				Assert.NotNull(hatchResult);
+				Assert.Equal(hatch.Paths.Count, hatchResult.Paths.Count);
+				Assert.NotNull(doc.GetCadObject<BlockRecord>(blockRecord.Handle));
+			};
+		}
 
-				this.Document.Entities.Add(pline);
-			}
+		public void CreateLayout()
+		{
+			//Draw a cross in the model
+			this.Document.Entities.Add(new Line(XYZ.Zero, new XYZ(100, 100, 0)));
+			this.Document.Entities.Add(new Line(new XYZ(0, 100, 0), new XYZ(100, 0, 0)));
 
-			public void ClosedPolyline3DTest()
+			Layout layout = new Layout("my_layout");
+
+			this.Document.Layouts.Add(layout);
+
+			this.AssertRoundtrip = (doc) =>
 			{
-				List<Vertex3D> vector2d = new()
-				{
-					new Vertex3D() { Location = new XYZ(0, 0, 0) },
-					new Vertex3D() { Location = new XYZ(1, 0, 0) },
-					new Vertex3D() { Location = new XYZ(2, 1, 0) },
-					new Vertex3D() { Location = new XYZ(3, 1, 0) },
-					new Vertex3D() { Location = new XYZ(4, 4, 0) }
-				};
+				Layout result = doc.GetCadObject<Layout>(layout.Handle);
 
-				var pline = new Polyline3D();
-				pline.Vertices.AddRange(vector2d);
-				pline.IsClosed = true;
-				pline.Vertices.ElementAt(3).Bulge = 1;
+				Assert.NotNull(result);
+				Assert.Equal(layout.Name, result.Name);
+			};
+		}
 
-				this.Document.Entities.Add(pline);
-			}
+		public void CreateXRecords()
+		{
+			Layer lay = new Layer("my_layer");
 
-			public void CreateCircleHatch()
+			//Extracted form a real case
+			var dict = lay.CreateExtendedDictionary();
+			var layerstates = new CadDictionary("ACAD_LAYERSTATES");
+			dict.Add(layerstates);
+
+			XRecord record = new XRecord("test");
+			record.CreateEntry(90, 1);
+			record.CreateEntry(330, this.Document.Layers);
+			layerstates.Add(record);
+
+			this.Document.Layers.Add(lay);
+
+			this.AssertRoundtrip = (doc) =>
 			{
-				Hatch hatch = new Hatch();
-				hatch.IsSolid = true;
+				Layer layerResult = doc.GetCadObject<Layer>(lay.Handle);
+				XRecord recordResult = doc.GetCadObject<XRecord>(record.Handle);
 
-				hatch.SeedPoints.Add(new XY());
+				Assert.NotNull(layerResult);
+				Assert.NotNull(recordResult);
+				Assert.Equal(record.Entries.Count(), recordResult.Entries.Count());
+			};
+		}
 
-				List<Hatch.BoundaryPath.Line> edges = new List<Hatch.BoundaryPath.Line>();
+		public void CurrentEntityByBlock()
+		{
+			this.Document.Header.CurrentEntityColor = Color.ByBlock;
 
-				//Polyline circle
-				Hatch.BoundaryPath.Polyline polyline = new Hatch.BoundaryPath.Polyline();
-				polyline.IsClosed = true;
-				polyline.Vertices.Add(new XYZ(0, 2.5, 1));
-				polyline.Vertices.Add(new XYZ(10, 2.5, 1));
-
-				//Arc circle
-				Hatch.BoundaryPath.Arc arc = new();
-				arc.Center = new XY(10, 10);
-				arc.CounterClockWise = true;
-				arc.Radius = 5;
-				arc.StartAngle = 0;
-				arc.EndAngle = MathHelper.TwoPI;
-
-				Hatch.BoundaryPath path = new Hatch.BoundaryPath();
-				path.Edges.Add(polyline);
-
-				Hatch.BoundaryPath path1 = new Hatch.BoundaryPath();
-				path1.Edges.Add(arc);
-
-				hatch.Paths.Add(path);
-				hatch.Paths.Add(path1);
-
-				this.Document.Entities.Add(hatch);
-			}
-
-			public void CreateGroup()
+			this.AssertRoundtrip = (doc) =>
 			{
-				Layer layer = new Layer("MyLayer");
-				layer.Color = new Color(0, 153, 0);
-				this.Document.Layers.Add(layer);
+				Assert.Equal(this.Document.Header.CurrentEntityColor, doc.Header.CurrentEntityColor);
+			};
+		}
 
-				Circle circle = new Circle();
-				circle.Center = new CSMath.XYZ(1, 1, 0);
-				circle.Radius = 1;
-				circle.Normal = new CSMath.XYZ(0, 0, 1);
+		public void CurrentEntityByIndex()
+		{
+			this.Document.Header.CurrentEntityColor = new Color(11);
 
-				Line line = new Line();
-				line.StartPoint = new CSMath.XYZ(0, 0, 0);
-				line.EndPoint = new CSMath.XYZ(2, 2, 0);
-
-				circle.Layer = layer;
-				line.Layer = layer;
-
-				this.Document.Entities.Add(circle);
-				this.Document.Entities.Add(line);
-
-				//Group group = new Group();
-				//group.Name = "MyGroup";
-				//group.Add(circle);
-				//group.Add(line);
-
-				this.Document.Groups.CreateGroup("MyGroup", new List<Entity> { circle, line });
-
-				TextEntity text = new TextEntity();
-				text.Value = "Hello World!";
-				text.Layer = layer;
-				text.HorizontalAlignment = TextHorizontalAlignment.Center;
-				text.VerticalAlignment = TextVerticalAlignmentType.Middle;
-				text.InsertPoint = new CSMath.XYZ(1, 1, 0);
-				text.AlignmentPoint = new CSMath.XYZ(10, 10, 0);
-
-				this.Document.Entities.Add(text);
-			}
-
-			public void CreateHatch()
+			this.AssertRoundtrip = (doc) =>
 			{
-				Hatch hatch = new Hatch();
-				hatch.IsSolid = true;
+				Assert.Equal(this.Document.Header.CurrentEntityColor, doc.Header.CurrentEntityColor);
+			};
+		}
 
-				hatch.SeedPoints.Add(new XY());
+		public void CurrentEntityByLayer()
+		{
+			this.Document.Header.CurrentEntityColor = Color.ByLayer;
 
-				List<Hatch.BoundaryPath.Line> edges = new List<Hatch.BoundaryPath.Line>();
+			this.AssertRoundtrip = (doc) =>
+			{
+				Assert.Equal(this.Document.Header.CurrentEntityColor, doc.Header.CurrentEntityColor);
+			};
+		}
 
-				//edges
-				Hatch.BoundaryPath.Line edge1 = new Hatch.BoundaryPath.Line
+		public void CurrentEntityColorTrueColor()
+		{
+			this.Document.Header.CurrentEntityColor = Color.FromTrueColor(1151726);
+
+			this.AssertRoundtrip = (doc) =>
+			{
+				if (doc.Header.Version <= ACadVersion.AC1015 || this.Format == CadFileFormat.DXF)
 				{
-					Start = new CSMath.XY(0, 0),
-					End = new CSMath.XY(1, 0)
-				};
-				edges.Add(edge1);
-
-				Hatch.BoundaryPath.Line edge2 = new Hatch.BoundaryPath.Line
-				{
-					Start = new CSMath.XY(1, 0),
-					End = new CSMath.XY(1, 1)
-				};
-				edges.Add(edge2);
-
-				Hatch.BoundaryPath.Line edge3 = new Hatch.BoundaryPath.Line
-				{
-					Start = new CSMath.XY(1, 1),
-					End = new CSMath.XY(0, 1)
-				};
-				edges.Add(edge3);
-
-				Hatch.BoundaryPath.Line edge4 = new Hatch.BoundaryPath.Line
-				{
-					Start = new CSMath.XY(0, 1),
-					End = new CSMath.XY(0, 0)
-				};
-				edges.Add(edge4);
-
-				Hatch.BoundaryPath path = new Hatch.BoundaryPath();
-				foreach (var item in edges)
-				{
-					path.Edges.Add(item);
+					//Not supported in R2000 and earlier, will be converted to index color
+					return;
 				}
 
-				hatch.Paths.Add(path);
+				Assert.Equal(this.Document.Header.CurrentEntityColor, doc.Header.CurrentEntityColor);
+			};
+		}
 
-				this.Document.Entities.Add(hatch);
-			}
+		public void DefaultLayer()
+		{
+			Layer layer = new Layer("default_layer");
 
-			public void CreateHatchPolyline()
+			this.Document.Layers.Add(layer);
+
+			this.AssertRoundtrip = (doc) =>
 			{
-				Hatch hatch = new Hatch();
-				hatch.IsSolid = true;
+				Layer result = doc.GetCadObject<Layer>(layer.Handle);
 
-				Hatch.BoundaryPath path = new Hatch.BoundaryPath();
+				Assert.NotNull(result);
+				Assert.Equal(layer.Name, result.Name);
+			};
+		}
 
-				Hatch.BoundaryPath.Polyline pline = new Hatch.BoundaryPath.Polyline();
-				pline.Vertices.Add(new XYZ(0, 0, 0));
-				pline.Vertices.Add(new XYZ(1, 0, 0));
-				pline.Vertices.Add(new XYZ(1, 1, 0));
-				pline.Vertices.Add(new XYZ(0, 1, 0));
-				pline.Vertices.Add(new XYZ(0, 0, 0));
-
-				path.Edges.Add(pline);
-				path.Flags |= BoundaryPathFlags.Polyline;
-				hatch.Paths.Add(path);
-
-				this.Document.Entities.Add(hatch);
-			}
-
-			public void CreateInsertWithHatch()
+		public void Deserialize(IXunitSerializationInfo info)
+		{
+			this.Name = info.GetValue<string>(nameof(this.Name));
+			try
 			{
-				CadDocument doc = this.Document;
-				var modelSpace = doc.ModelSpace;
+				this.GetType().GetMethod(this.Name).Invoke(this, null);
+				this.HasExecuted = true;
+			}
+			catch
+			{
+				this.HasExecuted = false;
+			}
+		}
 
-				string blockName = Guid.NewGuid().ToString();
-				var blockRecord = new BlockRecord(blockName);
-				var insert = new Insert(blockRecord);
-				modelSpace.Entities.Add(insert);
+		public void DimensionAligned()
+		{
+			//DimensionAligned dim = new DimensionAligned
+			//{
+			//	SecondPoint = new XYZ(10, 0, 0),
+			//	Offset = 0.5,
+			//	//DefinitionPoint = new XYZ(10, 1, 0),
+			//	//TextMiddlePoint = new XYZ(5, 1, 0)
+			//};
 
-				var hatch = new Hatch()
+			DimensionAligned dim1 = new DimensionAligned
+			{
+				SecondPoint = new XYZ(10, 0, 0),
+				Offset = 2,
+				TextMiddlePoint = new XYZ(5, 1, 0)
+			};
+
+			//this.Document.Entities.Add(dim);
+			this.Document.Entities.Add(dim1);
+
+			//dim.UpdateBlock();
+			dim1.UpdateBlock();
+
+			this.AssertRoundtrip = (doc) =>
+			{
+				DimensionAligned result = doc.GetCadObject<DimensionAligned>(dim1.Handle);
+
+				Assert.NotNull(result);
+				EntityComparator.IsEqual(dim1, result);
+				Assert.Equal(dim1.SecondPoint, result.SecondPoint);
+			};
+		}
+
+		public void DimensionAngular2Line()
+		{
+			DimensionAngular2Line dim = new DimensionAngular2Line();
+			dim.FirstPoint = XYZ.AxisY;
+			dim.SecondPoint = -XYZ.AxisY;
+
+			dim.DefinitionPoint = -XYZ.AxisX;
+			dim.AngleVertex = XYZ.AxisX;
+
+			this.Document.Entities.Add(dim);
+
+			dim.UpdateBlock();
+
+			this.AssertRoundtrip = (doc) =>
+			{
+				DimensionAngular2Line result = doc.GetCadObject<DimensionAngular2Line>(dim.Handle);
+
+				Assert.NotNull(result);
+				EntityComparator.IsEqual(dim, result);
+				Assert.Equal(dim.FirstPoint, result.FirstPoint);
+				Assert.Equal(dim.SecondPoint, result.SecondPoint);
+			};
+		}
+
+		public void DimensionAngular3Pt()
+		{
+			this.AssertRoundtrip = (doc) =>
+			{
+				Assert.Equal(this.Document.ModelSpace.Entities.Count, doc.ModelSpace.Entities.Count);
+			};
+
+			return;
+
+			DimensionAngular3Pt dim = new DimensionAngular3Pt();
+			dim.FirstPoint = XYZ.AxisY;
+			dim.SecondPoint = XYZ.AxisX;
+
+			dim.DefinitionPoint = XYZ.Zero;
+			dim.AngleVertex = XYZ.AxisY;
+
+			this.Document.Entities.Add(dim);
+
+			dim.UpdateBlock();
+		}
+
+		public void DimensionArc()
+		{
+			DimensionArc dim = new DimensionArc
+			{
+				Center = XYZ.Zero,
+				FirstPoint = new XYZ(10, 0, 0),
+				SecondPoint = new XYZ(0, 10, 0),
+				DefinitionPoint = new XYZ(7.07, 7.07, 0),
+				TextMiddlePoint = new XYZ(8, 8, 0),
+				StartAngle = 0.0,
+				EndAngle = Math.PI / 2.0,
+			};
+
+			this.Document.Entities.Add(dim);
+
+			this.AssertRoundtrip = (doc) =>
+			{
+				DimensionArc result = doc.GetCadObject<DimensionArc>(dim.Handle);
+
+				Assert.NotNull(result);
+				EntityComparator.IsEqual(dim, result);
+				Assert.Equal(dim.Center, result.Center);
+			};
+		}
+
+		public void DimensionDiameter()
+		{
+			DimensionDiameter dim = new DimensionDiameter
+			{
+				AngleVertex = new XYZ(10, 10, 0),
+			};
+
+			this.Document.Entities.Add(dim);
+
+			dim.UpdateBlock();
+
+			dim = new DimensionDiameter
+			{
+				DefinitionPoint = new XYZ(0, 0, 0),
+				AngleVertex = new XYZ(10, 0, 0),
+			};
+
+			this.Document.Entities.Add(dim);
+
+			dim.UpdateBlock();
+
+			this.AssertRoundtrip = (doc) =>
+			{
+				DimensionDiameter result = doc.GetCadObject<DimensionDiameter>(dim.Handle);
+
+				Assert.NotNull(result);
+				EntityComparator.IsEqual(dim, result);
+				Assert.Equal(this.Document.ModelSpace.Entities.Count, doc.ModelSpace.Entities.Count);
+			};
+		}
+
+		public void DimensionLinear()
+		{
+			DimensionLinear dim = new DimensionLinear
+			{
+				SecondPoint = new XYZ(10, 10, 0),
+				Offset = 0.5,
+				//DefinitionPoint = new XYZ(10, 1, 0),
+				//TextMiddlePoint = new XYZ(5, 1, 0)
+			};
+
+			DimensionLinear dim1 = new DimensionLinear
+			{
+				SecondPoint = new XYZ(10, 0, 0),
+				Offset = 2,
+				TextMiddlePoint = new XYZ(5, 1, 0)
+			};
+
+			this.Document.Entities.Add(dim);
+			this.Document.Entities.Add(dim1);
+
+			dim.UpdateBlock();
+			dim1.UpdateBlock();
+
+			this.AssertRoundtrip = (doc) =>
+			{
+				DimensionLinear result = doc.GetCadObject<DimensionLinear>(dim.Handle);
+				DimensionLinear result1 = doc.GetCadObject<DimensionLinear>(dim1.Handle);
+
+				Assert.NotNull(result);
+				Assert.NotNull(result1);
+				EntityComparator.IsEqual(dim, result);
+				EntityComparator.IsEqual(dim1, result1);
+				Assert.Equal(dim.SecondPoint, result.SecondPoint);
+			};
+		}
+
+		public void DimensionOrdinate()
+		{
+			DimensionOrdinate dim = new DimensionOrdinate
+			{
+				FeatureLocation = new XYZ(10, 10, 0),
+			};
+
+			this.Document.Entities.Add(dim);
+
+			dim.UpdateBlock();
+
+			this.AssertRoundtrip = (doc) =>
+			{
+				DimensionOrdinate result = doc.GetCadObject<DimensionOrdinate>(dim.Handle);
+
+				Assert.NotNull(result);
+				EntityComparator.IsEqual(dim, result);
+				Assert.Equal(dim.FeatureLocation, result.FeatureLocation);
+			};
+		}
+
+		public void DimensionRadius()
+		{
+			DimensionRadius dim = new DimensionRadius
+			{
+				AngleVertex = new XYZ(10, 10, 0),
+			};
+
+			this.Document.Entities.Add(dim);
+
+			dim.UpdateBlock();
+
+			this.AssertRoundtrip = (doc) =>
+			{
+				DimensionRadius result = doc.GetCadObject<DimensionRadius>(dim.Handle);
+
+				Assert.NotNull(result);
+				EntityComparator.IsEqual(dim, result);
+				Assert.Equal(dim.AngleVertex, result.AngleVertex);
+			};
+		}
+
+		public void Dimensions()
+		{
+			DimensionAligned dim = new DimensionAligned
+			{
+				SecondPoint = new XYZ(10)
+			};
+
+			dim.UpdateBlock();
+
+			ACadSharp.Entities.Line line = new ACadSharp.Entities.Line
+			{
+				StartPoint = new CSMath.XYZ(1, 0, 0),
+				EndPoint = new CSMath.XYZ(5, 5, 0)
+			};
+
+			dim.Text = "HELLO";
+			dim.IsTextUserDefinedLocation = true;
+			dim.TextMiddlePoint = new XYZ(10, 10, 0);
+
+			this.Document.Entities.Add(dim);
+
+			DimensionAligned dim1 = new DimensionAligned();
+
+			dim1.SecondPoint = new XYZ(10, 0, 0);
+
+			this.Document.Entities.Add(dim1);
+
+			this.AssertRoundtrip = (doc) =>
+			{
+				DimensionAligned result = doc.GetCadObject<DimensionAligned>(dim.Handle);
+				DimensionAligned result1 = doc.GetCadObject<DimensionAligned>(dim1.Handle);
+
+				Assert.NotNull(result);
+				Assert.NotNull(result1);
+				EntityComparator.IsEqual(dim, result);
+				EntityComparator.IsEqual(dim1, result1);
+				Assert.Equal(dim.Text, result.Text);
+			};
+		}
+
+		public void DimensionsInBlock()
+		{
+			DimensionAligned dim = new DimensionAligned
+			{
+				SecondPoint = new XYZ(10, 0, 0)
+			};
+
+			ACadSharp.Entities.Line line = new ACadSharp.Entities.Line
+			{
+				StartPoint = new CSMath.XYZ(1, 0, 0),
+				EndPoint = new CSMath.XYZ(5, 5, 0)
+			};
+
+			DimensionLinear dim1 = new DimensionLinear()
+			{
+				FirstPoint = line.StartPoint,
+				SecondPoint = line.EndPoint
+			};
+
+			BlockRecord record = new BlockRecord("dim_block");
+			record.Entities.Add(dim);
+			record.Entities.Add(line);
+			record.Entities.Add(dim1);
+
+			this.Document.Entities.Add(new Insert(record));
+
+			DimensionAligned c = (DimensionAligned)dim.Clone();
+			this.Document.Entities.Add(c);
+
+			dim.UpdateBlock();
+			dim1.UpdateBlock();
+			c.UpdateBlock();
+
+			this.AssertRoundtrip = (doc) =>
+			{
+				DimensionAligned result = doc.GetCadObject<DimensionAligned>(c.Handle);
+
+				Assert.NotNull(result);
+				EntityComparator.IsEqual(c, result);
+				Assert.NotNull(doc.GetCadObject<BlockRecord>(record.Handle));
+				Assert.NotNull(doc.GetCadObject<DimensionAligned>(dim.Handle));
+				Assert.NotNull(doc.GetCadObject<DimensionLinear>(dim1.Handle));
+			};
+		}
+
+		public void DimensionStyleArrowBlock()
+		{
+			BlockRecord tick = new BlockRecord("CUSTOM_TICK");
+			tick.Entities.Add(new Line(new XYZ(-0.5, -0.5, 0), new XYZ(0.5, 0.5, 0)));
+			this.Document.BlockRecords.Add(tick);
+
+			DimensionStyle style = new DimensionStyle("arrow_block_style");
+			style.ArrowBlock = tick;
+
+			DimensionLinear dim = new DimensionLinear
+			{
+				FirstPoint = new XYZ(0, 0, 0),
+				SecondPoint = new XYZ(10, 0, 0),
+				Offset = 0.5,
+				Style = style,
+			};
+
+			this.Document.Entities.Add(dim);
+
+			this.AssertRoundtrip = (doc) =>
+			{
+				DimensionStyle result = doc.GetCadObject<DimensionStyle>(style.Handle);
+
+				Assert.NotNull(result);
+				Assert.Equal(tick.Name, result.ArrowBlock?.Name);
+				Assert.Null(result.LeaderArrow);
+			};
+		}
+
+		public void DimensionWithLineType()
+		{
+			LineType linetype = new LineType("LTYPE_PAINT");
+			linetype.AddSegment(new LineType.Segment() { Length = 1 });
+			linetype.AddSegment(new LineType.Segment() { Length = -1 });
+
+			DimensionStyle style = new DimensionStyle("my_style");
+			style.LineType = linetype;
+
+			DimensionAligned dim = new DimensionAligned();
+			dim.Style = style;
+
+			dim.SecondPoint = new XYZ(10);
+
+			this.Document.Entities.Add(dim);
+
+			this.AssertRoundtrip = (doc) =>
+			{
+				DimensionAligned result = doc.GetCadObject<DimensionAligned>(dim.Handle);
+
+				Assert.NotNull(result);
+				EntityComparator.IsEqual(dim, result);
+				Assert.NotNull(doc.GetCadObject<LineType>(linetype.Handle));
+				Assert.NotNull(doc.GetCadObject<DimensionStyle>(style.Handle));
+			};
+		}
+
+		public void DrawBoundingBox()
+		{
+			Line l = new Line(XYZ.Zero, new XYZ(10, 10, 0));
+			this.drawBoundingBox(l);
+
+			Point p = new Point(new XYZ(20, 20, 0));
+			this.drawBoundingBox(p);
+
+			Arc arc = new Arc(XYZ.Zero, 5, 0, Math.PI / 2);
+			this.drawBoundingBox(arc);
+		}
+
+		public void EllipseSegments()
+		{
+			XYZ center = new XYZ(5, 5, 0);
+
+			Ellipse ellipse = new Ellipse();
+			ellipse.RadiusRatio = 0.5d;
+			ellipse.StartParameter = 0.0d;
+			ellipse.EndParameter = Math.PI * 2;
+			ellipse.MajorAxisEndPoint *= 4;
+			ellipse.Center = center;
+
+			var pline = new Polyline3D(ellipse.PolygonalVertexes(4));
+			pline.Color = Color.Green;
+
+			this.Document.Entities.Add(pline);
+			this.Document.Entities.Add(ellipse);
+
+			ellipse = new Ellipse();
+			ellipse.RadiusRatio = 0.5d;
+			ellipse.StartParameter = 0.0d;
+			ellipse.EndParameter = Math.PI * 2;
+			ellipse.Normal = XYZ.AxisY;
+			ellipse.Center = center;
+
+			pline = new Polyline3D(ellipse.PolygonalVertexes(4));
+			pline.Color = Color.Red;
+
+			this.Document.Entities.Add(pline);
+			this.Document.Entities.Add(ellipse);
+
+			ellipse = new Ellipse();
+			ellipse.RadiusRatio = 0.5d;
+			ellipse.StartParameter = 0.0d;
+			ellipse.EndParameter = Math.PI * 2;
+			ellipse.MajorAxisEndPoint = XYZ.AxisY;
+			ellipse.Normal = XYZ.AxisX;
+			ellipse.Center = center;
+
+			pline = new Polyline3D(ellipse.PolygonalVertexes(4));
+			pline.Color = Color.Cyan;
+
+			this.Document.Entities.Add(pline);
+			this.Document.Entities.Add(ellipse);
+
+			ellipse = new Ellipse();
+			ellipse.RadiusRatio = 0.5d;
+			ellipse.StartParameter = 0.0d;
+			ellipse.EndParameter = Math.PI * 2;
+			ellipse.Center = center;
+			ellipse.Normal = -XYZ.AxisZ;
+
+			pline = new Polyline3D(ellipse.PolygonalVertexes(4));
+			pline.Color = Color.Blue;
+
+			this.Document.Entities.Add(pline);
+			this.Document.Entities.Add(ellipse);
+
+			this.AssertRoundtrip = (doc) =>
+			{
+				Ellipse result = doc.GetCadObject<Ellipse>(ellipse.Handle);
+
+				Assert.NotNull(result);
+				EntityComparator.IsEqual(ellipse, result);
+				Assert.Equal(ellipse.Center, result.Center);
+				Assert.Equal(this.Document.ModelSpace.Entities.Count, doc.ModelSpace.Entities.Count);
+			};
+		}
+
+		public void Empty()
+		{
+			this.AssertRoundtrip = (doc) =>
+			{
+				Assert.NotNull(doc.ModelSpace);
+				Assert.Empty(doc.ModelSpace.Entities);
+			};
+		}
+
+		public void EntityChangeNormal()
+		{
+			Circle c = new Circle();
+			c.Center = new XYZ(0, 0, 0);
+			c.Radius = 10;
+
+			c.Normal = XYZ.AxisX;
+
+			this.Document.Entities.Add(c);
+
+			var arc = new Arc()
+			{
+				StartAngle = 0,
+				EndAngle = Math.PI / (2),
+				Radius = 20,
+				Normal = XYZ.AxisX
+			};
+
+			var lst = arc.PolygonalVertexes(100);
+			var pline = new Polyline3D(lst);
+			foreach (XYZ item in lst)
+			{
+				this.Document.Entities.Add(new Circle()
 				{
-					Pattern = HatchPattern.Solid,
-					Color = new ACadSharp.Color(0, 0, 0),
-					IsAssociative = false,
-					IsSolid = true,
-					PatternType = HatchPatternType.SolidFill,
-					IsInvisible = false,
-					Style = HatchStyleType.Normal,
-				};
+					Center = item,
+					Radius = 0.1,
+					Color = new Color(255, 0, 0)
+				});
+			}
 
-				var path = new Hatch.BoundaryPath
+			this.Document.Entities.Add(arc);
+			this.Document.Entities.Add(pline);
+
+			this.AssertRoundtrip = (doc) =>
+			{
+				Circle circleResult = doc.GetCadObject<Circle>(c.Handle);
+				Arc arcResult = doc.GetCadObject<Arc>(arc.Handle);
+
+				Assert.NotNull(circleResult);
+				Assert.NotNull(arcResult);
+				EntityComparator.IsEqual(c, circleResult);
+				EntityComparator.IsEqual(arc, arcResult);
+				Assert.Equal(this.Document.ModelSpace.Entities.Count, doc.ModelSpace.Entities.Count);
+			};
+		}
+
+		public void EntityColorByIndex()
+		{
+			Circle c = new Circle();
+			c.Center = new XYZ(0, 0, 0);
+			c.Radius = 10;
+			c.Color = new Color(11);
+
+			this.Document.Entities.Add(c);
+
+			this.AssertRoundtrip = (doc) =>
+			{
+				Circle result = doc.GetCadObject<Circle>(c.Handle);
+
+				Assert.NotNull(result);
+				EntityComparator.IsEqual(c, result);
+				Assert.Equal(c.Color, result.Color);
+			};
+		}
+
+		public void EntityColorByLayer()
+		{
+			Layer layer = new Layer("Test");
+			layer.Color = new Color(25);
+			this.Document.Layers.Add(layer);
+
+			Circle c = new Circle();
+			c.Center = new XYZ(0, 0, 0);
+			c.Radius = 10;
+			c.Layer = layer;
+			c.Color = Color.ByLayer;
+
+			this.Document.Entities.Add(c);
+
+			this.AssertRoundtrip = (doc) =>
+			{
+				Circle result = doc.GetCadObject<Circle>(c.Handle);
+
+				Assert.NotNull(result);
+				EntityComparator.IsEqual(c, result);
+				Assert.Equal(c.Color, result.Color);
+				Assert.Equal(layer.Name, result.Layer.Name);
+			};
+		}
+
+		public void EntityColorTrueColor()
+		{
+			Circle c = new Circle();
+			c.Center = new XYZ(0, 0, 0);
+			c.Radius = 10;
+			c.Color = Color.FromTrueColor(1151726);
+
+			this.Document.Entities.Add(c);
+
+			this.AssertRoundtrip = (doc) =>
+			{
+				if (doc.Header.Version <= ACadVersion.AC1015)
 				{
-					Flags = BoundaryPathFlags.External,
-				};
-
-				path.Edges.Add(new Hatch.BoundaryPath.Polyline([new(0, 0, 0), new(0, 5, 0), new(5, 5, 0), new(5, 0, 0)]));
-
-				hatch.Paths.Add(path);
-
-				blockRecord.Entities.Add(hatch);
-			}
-
-			public void CreateLayout()
-			{
-				//Draw a cross in the model
-				this.Document.Entities.Add(new Line(XYZ.Zero, new XYZ(100, 100, 0)));
-				this.Document.Entities.Add(new Line(new XYZ(0, 100, 0), new XYZ(100, 0, 0)));
-
-				Layout layout = new Layout("my_layout");
-
-				this.Document.Layouts.Add(layout);
-			}
-
-			public void CreateXRecords()
-			{
-				Layer lay = new Layer("my_layer");
-
-				//Extracted form a real case
-				var dict = lay.CreateExtendedDictionary();
-				var layerstates = new CadDictionary("ACAD_LAYERSTATES");
-				dict.Add(layerstates);
-
-				XRecord record = new XRecord("test");
-				record.CreateEntry(90, 1);
-				record.CreateEntry(330, Document.Layers);
-				layerstates.Add(record);
-
-				this.Document.Layers.Add(lay);
-			}
-
-			public void CurrentEntityByBlock()
-			{
-				this.Document.Header.CurrentEntityColor = Color.ByBlock;
-			}
-
-			public void CurrentEntityByIndex()
-			{
-				this.Document.Header.CurrentEntityColor = new Color(11);
-			}
-
-			public void CurrentEntityColorTrueColor()
-			{
-				this.Document.Header.CurrentEntityColor = Color.FromTrueColor(1151726);
-			}
-
-			public void DefaultLayer()
-			{
-				this.Document.Layers.Add(new Layer("default_layer"));
-			}
-
-			public void Deserialize(IXunitSerializationInfo info)
-			{
-				this.Name = info.GetValue<string>(nameof(this.Name));
-				try
-				{
-					this.GetType().GetMethod(this.Name).Invoke(this, null);
-					this.HasExecuted = true;
+					//Not supported in R2000 and earlier, will be converted to index color
+					return;
 				}
-				catch
+
+				Circle result = doc.GetCadObject<Circle>(c.Handle);
+
+				Assert.NotNull(result);
+				EntityComparator.IsEqual(c, result);
+				Assert.Equal(c.Color, result.Color);
+			};
+		}
+
+		public void EntityTransparency()
+		{
+			Line line = new Line(XYZ.Zero, new XYZ(100, 100, 0));
+
+			line.Transparency = new Transparency(50);
+
+			this.Document.Entities.Add(line);
+
+			this.AssertRoundtrip = (doc) =>
+			{
+				if (doc.Header.Version <= ACadVersion.AC1015)
 				{
-					this.HasExecuted = false;
+					//Not supported in R2000 and earlier, will be converted to index color
+					return;
 				}
+
+				Line result = doc.GetCadObject<Line>(line.Handle);
+
+				Assert.NotNull(result);
+				EntityComparator.IsEqual(line, result);
+				Assert.Equal(line.Transparency, result.Transparency);
+			};
+		}
+
+		public void GenerateExampleDxf()
+		{
+			this.Document.Header.UnitMode = (short)ACadSharp.Types.Units.UnitsType.Millimeters;
+			var dxfLayer = new Layer("Example layer");
+			this.Document.Layers.Add(dxfLayer);
+			var anotherDxfLayer = new Layer("Another layer");
+			this.Document.Layers.Add(anotherDxfLayer);
+
+			var line = new Polyline2D(vertices: [new Vertex2D(new CSMath.XY(0, 0)), new Vertex2D(new CSMath.XY(100, 100))], isClosed: false)
+			{
+				Layer = dxfLayer,
+				Color = new Color(128)
+			};
+
+			var anotherLine = new Polyline2D(vertices: [new Vertex2D(new CSMath.XY(50, 50)), new Vertex2D(new CSMath.XY(100, 100))], isClosed: false)
+			{
+				Layer = anotherDxfLayer,
+				Color = new Color(64)
+			};
+
+			this.Document.Entities.Add(line);
+			this.Document.Entities.Add(anotherLine);
+
+			this.AssertRoundtrip = (doc) =>
+			{
+				Polyline2D result = doc.GetCadObject<Polyline2D>(line.Handle);
+
+				Assert.NotNull(result);
+				EntityComparator.IsEqual(line, result);
+				Assert.NotNull(doc.GetCadObject<Polyline2D>(anotherLine.Handle));
+				Assert.NotNull(doc.GetCadObject<Layer>(dxfLayer.Handle));
+				Assert.NotNull(doc.GetCadObject<Layer>(anotherDxfLayer.Handle));
+			};
+		}
+
+		public void GeoData()
+		{
+			this.Document.ModelSpace.CreateExtendedDictionary();
+
+			var geodata = new GeoData();
+			geodata.Name = CadDictionary.GeographicData;
+			geodata.HostBlock = this.Document.ModelSpace;
+
+			this.Document.ModelSpace.XDictionary.Add(CadDictionary.GeographicData, geodata);
+
+			this.AssertRoundtrip = (doc) =>
+			{
+				GeoData result = doc.GetCadObject<GeoData>(geodata.Handle);
+
+				Assert.NotNull(result);
+				Assert.Equal(geodata.Name, result.Name);
+			};
+		}
+
+		public void HatchWithEntities()
+		{
+			Hatch hatch = new Hatch();
+			hatch.IsSolid = true;
+
+			Circle c = new Circle
+			{
+				Radius = 5
+			};
+
+			hatch.Paths.Add(new Hatch.BoundaryPath(c));
+
+			this.Document.Entities.Add(hatch);
+			this.Document.Entities.Add(c);
+
+			hatch = new Hatch();
+			hatch.IsSolid = true;
+
+			hatch.Paths.Add(new Hatch.BoundaryPath(new Arc
+			{
+				Radius = 5,
+				Center = new XYZ(10, 10, 0)
+			}));
+
+			this.Document.Entities.Add(hatch);
+
+			hatch = new Hatch();
+			hatch.IsSolid = true;
+
+			hatch.Paths.Add(new Hatch.BoundaryPath(new Line
+			{
+				StartPoint = XYZ.Zero,
+				EndPoint = new XYZ(10, 10, 0)
+			}));
+
+			this.Document.Entities.Add(hatch);
+
+			this.AssertRoundtrip = (doc) =>
+			{
+				Hatch result = doc.GetCadObject<Hatch>(hatch.Handle);
+				Circle circleResult = doc.GetCadObject<Circle>(c.Handle);
+
+				Assert.NotNull(result);
+				Assert.NotNull(circleResult);
+				EntityComparator.IsEqual(c, circleResult);
+				Assert.Equal(this.Document.ModelSpace.Entities.Count, doc.ModelSpace.Entities.Count);
+			};
+		}
+
+		public void InsertWithSpatialFilter()
+		{
+			string blockName = Guid.NewGuid().ToString();
+			var blockRecord = new BlockRecord("my_block");
+			var insert = new Insert(blockRecord);
+
+			SpatialFilter filter = new SpatialFilter();
+			filter.BoundaryPoints.Add(XY.Zero);
+			filter.BoundaryPoints.Add(new XY(50, 50));
+			filter.DisplayBoundary = true;
+
+			insert.SpatialFilter = filter;
+
+			this.Document.Entities.Add(insert);
+
+			Circle circle = new Circle
+			{
+				Radius = 20
+			};
+			blockRecord.Entities.Add(circle);
+
+			this.AssertRoundtrip = (doc) =>
+			{
+				Insert result = doc.GetCadObject<Insert>(insert.Handle);
+				SpatialFilter filterResult = doc.GetCadObject<SpatialFilter>(filter.Handle);
+
+				Assert.NotNull(filterResult);
+
+				Assert.NotNull(result);
+				EntityComparator.IsEqual(insert, result);
+
+				Assert.NotNull(result.SpatialFilter);
+				Assert.Equal(filter.BoundaryPoints.Count, result.SpatialFilter.BoundaryPoints.Count);
+				Assert.NotNull(doc.GetCadObject<Circle>(circle.Handle));
+			};
+		}
+
+		public void InvalidEntities()
+		{
+			Ellipse e = new Ellipse();
+			e.Normal = new XYZ(1, 1, 0);
+			this.Document.Entities.Add(e);
+
+			e = new Ellipse();
+			e.Normal = new XYZ();
+			this.Document.Entities.Add(e);
+
+			Layer l = new Layer("Lorem ipsum dolor sit amet, consectetuer adipiscing elit. Aenean commodo ligula eget dolor. Aenean massa. Cum sociis natoque penatibus et magnis dis parturient montes, nascetur ridiculus mus. Donec quam felis, ultricies nec, pellentesque eu, pretium quis, sem. Nulla consequat massa quis enim. Donec.");
+			this.Document.Layers.Add(l);
+
+			foreach (var item in INamedCadObjectExtensions.InvalidCharacters)
+			{
+				l = new Layer($"invalid_character_{item}");
+				this.Document.Layers.Add(l);
 			}
 
-			public void DimensionAligned()
-			{
-				//DimensionAligned dim = new DimensionAligned
-				//{
-				//	SecondPoint = new XYZ(10, 0, 0),
-				//	Offset = 0.5,
-				//	//DefinitionPoint = new XYZ(10, 1, 0),
-				//	//TextMiddlePoint = new XYZ(5, 1, 0)
-				//};
+			//Valid name for a layer but is not shown in the layer list in AutoCAD
+			l = new Layer("*hello");
+			this.Document.Layers.Add(l);
 
-				DimensionAligned dim1 = new DimensionAligned
+			Wipeout w = new Wipeout();
+			w.ClipBoundaryVertices.Clear();
+			this.Document.Entities.Add(w);
+
+			//Invalid for dwg but not dxf, it simplifies the setter too
+			var blk = new BlockRecord("block1");
+			blk.Entities.Add(new Line(XYZ.Zero, new XYZ(10, 10, 0)));
+			Insert insert = new Insert(blk);
+			insert.XScale = 0;
+			this.Document.Entities.Add(insert);
+
+			//Empty file
+
+			this.AssertRoundtrip = (doc) =>
+			{
+				Assert.NotNull(doc.ModelSpace);
+				Assert.NotNull(doc.Layers);
+			};
+		}
+
+		public void LayerTrueColor()
+		{
+			Layer layer = new Layer("Layer_true_color");
+			layer.Color = Color.FromTrueColor(1151726);
+
+			this.Document.Layers.Add(layer);
+
+			this.AssertRoundtrip = (doc) =>
+			{
+				if (this.Document.Header.Version <= ACadVersion.AC1015 || this.Format == CadFileFormat.DWG)
 				{
-					SecondPoint = new XYZ(10, 0, 0),
-					Offset = 2,
-					TextMiddlePoint = new XYZ(5, 1, 0)
+					//Not supported in R2000 and earlier, will be converted to index color
+					return;
+				}
+
+				Layer result = doc.GetCadObject<Layer>(layer.Handle);
+
+				Assert.NotNull(result);
+				Assert.Equal(layer.Name, result.Name);
+				Assert.Equal(layer.Color, result.Color);
+			};
+		}
+
+		public void LeaderWithArrowHead()
+		{
+			Leader leader = new Leader()
+			{
+				Vertices = { new CSMath.XYZ(0, 0, 0), new CSMath.XYZ(0, 5, 0) }
+			};
+
+			BlockRecord arrowHead = new BlockRecord("ArrowHead");
+
+			Line line = new Line(new CSMath.XY(1, 1), new CSMath.XY(-1, -1));
+			arrowHead.Entities.Add(line);
+
+			DimensionStyle style = new DimensionStyle("my_style");
+			style.LeaderArrow = arrowHead;
+			style.ArrowSize = 2;
+
+			leader.Style = style;
+
+			leader.ArrowHeadEnabled = true;
+
+			this.Document.Entities.Add(leader);
+
+			this.AssertRoundtrip = (doc) =>
+			{
+				Leader result = doc.GetCadObject<Leader>(leader.Handle);
+
+				Assert.NotNull(result);
+				EntityComparator.IsEqual(leader, result);
+				Assert.Equal(leader.ArrowHeadEnabled, result.ArrowHeadEnabled);
+				Assert.NotNull(doc.GetCadObject<BlockRecord>(arrowHead.Handle));
+				Assert.NotNull(doc.GetCadObject<DimensionStyle>(style.Handle));
+			};
+		}
+
+		public void LineTypeInBlock()
+		{
+			BlockRecord block = new BlockRecord("block1");
+
+			LineType linetype = new LineType("LTYPE_PAINT");
+			linetype.AddSegment(new LineType.Segment() { Length = 1 });
+			linetype.AddSegment(new LineType.Segment() { Length = -1 });
+
+			ACadSharp.Entities.Line line = new ACadSharp.Entities.Line
+			{
+				StartPoint = new CSMath.XYZ(1, 0, 0),
+				EndPoint = new CSMath.XYZ(5, 5, 0),
+				LineType = linetype
+			};
+
+			ACadSharp.Entities.Line line1 = new ACadSharp.Entities.Line
+			{
+				StartPoint = new CSMath.XYZ(1, 0, 0),
+				EndPoint = new CSMath.XYZ(5, 5, 0),
+				LineType = linetype
+			};
+			// dashed line shows up fine when added directly to the document
+			this.Document.Entities.Add(line1);
+
+			block.Entities.Add(line);
+
+			this.Document.BlockRecords.Add(block);
+			Insert blockinsert = new Insert(block)
+			{
+				InsertPoint = new XYZ(10, 10, 0)
+			};
+
+			this.Document.Entities.Add(blockinsert);
+
+			this.AssertRoundtrip = (doc) =>
+			{
+				Insert result = doc.GetCadObject<Insert>(blockinsert.Handle);
+
+				Assert.NotNull(result);
+				EntityComparator.IsEqual(blockinsert, result);
+				Assert.NotNull(doc.GetCadObject<LineType>(linetype.Handle));
+				Assert.NotNull(doc.GetCadObject<Line>(line.Handle));
+				Assert.NotNull(doc.GetCadObject<Line>(line1.Handle));
+			};
+		}
+
+		public void LineTypeWithSegments()
+		{
+			LineType lt = new LineType("segmented");
+			lt.Description = "hello";
+
+			LineType.Segment s1 = new LineType.Segment
+			{
+				Length = 12,
+				//Style = this.Document.TextStyles[TextStyle.DefaultName]
+			};
+
+			LineType.Segment s2 = new LineType.Segment
+			{
+				Length = -3,
+				//Style = this.Document.TextStyles[TextStyle.DefaultName]
+			};
+
+			lt.AddSegment(s1);
+			lt.AddSegment(s2);
+
+			this.Document.LineTypes.Add(lt);
+
+			this.AssertRoundtrip = (doc) =>
+			{
+				LineType result = doc.GetCadObject<LineType>(lt.Handle);
+
+				Assert.NotNull(result);
+				Assert.Equal(lt.Name, result.Name);
+				Assert.Equal(lt.Segments.Count(), result.Segments.Count());
+			};
+		}
+
+		public void LineTypeWithTextSegment()
+		{
+			LineType lt1 = new LineType("segmentedWithText")
+			{
+				Description = "hello text"
+			};
+
+			LineType.Segment lt1s1 = new LineType.Segment
+			{
+				Length = 5,
+				//Style = this.Document.TextStyles[TextStyle.DefaultName]
+			};
+
+			LineType.Segment lt1s2 = new LineType.Segment
+			{
+				Text = "Text",
+				Length = -3.0,
+				IsText = true,
+				Offset = new XY(-2.8, -.5),
+				Style = this.Document.TextStyles[TextStyle.DefaultName]
+			};
+
+			LineType.Segment lt1s3 = new LineType.Segment
+			{
+				Length = -.350,
+				//Style = this.Document.TextStyles[TextStyle.DefaultName]
+			};
+
+			lt1.AddSegment(lt1s1);
+			lt1.AddSegment(lt1s2);
+			lt1.AddSegment(lt1s3);
+
+			LineType lt2 = new LineType("degrees")
+			{
+				Description = "degree symbol",
+				Segments = { }
+			};
+
+			TextStyle style = new TextStyle("custom");
+
+			//this.Document.Header.CodePage = "GB2312";
+			style.Filename = "romans.shx";
+			style.BigFontFilename = "chineset.shx";
+			this.Document.TextStyles.Add(style);
+
+			LineType.Segment lt2s1 = new LineType.Segment
+			{
+				Length = 5,
+				//Style = this.Document.TextStyles[TextStyle.DefaultName]
+			};
+
+			LineType.Segment lt2s2 = new LineType.Segment
+			{
+				Text = "信",
+				Length = -3.0,
+				IsText = true,
+				Offset = new XY(-2.8, -.5),
+				Style = style
+			};
+
+			LineType.Segment lt2s3 = new LineType.Segment
+			{
+				Length = -.350,
+				//Style = this.Document.TextStyles[TextStyle.DefaultName]
+			};
+
+			lt2.AddSegment(lt2s1);
+			lt2.AddSegment(lt2s2);
+			lt2.AddSegment(lt2s3);
+
+			this.Document.LineTypes.Add(lt1);
+			this.Document.LineTypes.Add(lt2);
+
+			var line1 = new Line(new XYZ(0, 0, 0), new XYZ(20, 0, 0))
+			{
+				LineType = lt1
+			};
+
+			var line2 = new Line(new XYZ(0, 0, 0), new XYZ(0, 20, 0))
+			{
+				LineType = lt2
+			};
+			this.Document.Entities.Add(line1);
+			this.Document.Entities.Add(line2);
+
+			this.AssertRoundtrip = (doc) =>
+			{
+				LineType result1 = doc.GetCadObject<LineType>(lt1.Handle);
+				LineType result2 = doc.GetCadObject<LineType>(lt2.Handle);
+
+				Assert.NotNull(result1);
+				Assert.NotNull(result2);
+				Assert.Equal(lt1.Segments.Count(), result1.Segments.Count());
+				Assert.Equal(lt2.Segments.Count(), result2.Segments.Count());
+				Assert.NotNull(doc.GetCadObject<TextStyle>(style.Handle));
+			};
+		}
+
+		public void MTextBackgroundFillAndTextFrame()
+		{
+			List<MText> mtexts = new List<MText>();
+			foreach (BackgroundFillFlags flags in new[]
+			{
+				BackgroundFillFlags.TextFrame,
+				BackgroundFillFlags.UseBackgroundFillColor,
+				BackgroundFillFlags.UseBackgroundFillColor | BackgroundFillFlags.UseDrawingWindowColor,
+				BackgroundFillFlags.UseBackgroundFillColor | BackgroundFillFlags.TextFrame,
+			})
+			{
+				MText mtext = new MText($"Background {flags}")
+				{
+					InsertPoint = new XYZ(0, -10 * mtexts.Count, 0),
+					Height = 2.5,
+					BackgroundFillFlags = flags,
+					BackgroundScale = 2.0,
+					BackgroundColor = flags.HasFlag(BackgroundFillFlags.TextFrame) ? new Color(255, 128, 0) : new Color(2),
 				};
 
-				//this.Document.Entities.Add(dim);
-				this.Document.Entities.Add(dim1);
-
-				//dim.UpdateBlock();
-				dim1.UpdateBlock();
+				mtexts.Add(mtext);
+				this.Document.Entities.Add(mtext);
 			}
 
-			public void DimensionAngular2Line()
+			this.AssertRoundtrip = (doc) =>
 			{
-				DimensionAngular2Line dim = new DimensionAngular2Line();
-				dim.FirstPoint = XYZ.AxisY;
-				dim.SecondPoint = -XYZ.AxisY;
-
-				dim.DefinitionPoint = -XYZ.AxisX;
-				dim.AngleVertex = XYZ.AxisX;
-
-				this.Document.Entities.Add(dim);
-
-				dim.UpdateBlock();
-			}
-
-			public void DimensionAngular3Pt()
-			{
-				return;
-
-				DimensionAngular3Pt dim = new DimensionAngular3Pt();
-				dim.FirstPoint = XYZ.AxisY;
-				dim.SecondPoint = XYZ.AxisX;
-
-				dim.DefinitionPoint = XYZ.Zero;
-				dim.AngleVertex = XYZ.AxisY;
-
-				this.Document.Entities.Add(dim);
-
-				dim.UpdateBlock();
-			}
-
-			public void DimensionDiameter()
-			{
-				DimensionDiameter dim = new DimensionDiameter
+				foreach (MText mtext in mtexts)
 				{
-					AngleVertex = new XYZ(10, 10, 0),
-				};
+					MText result = doc.GetCadObject<MText>(mtext.Handle);
 
-				this.Document.Entities.Add(dim);
+					Assert.NotNull(result);
 
-				dim.UpdateBlock();
-
-				dim = new DimensionDiameter
-				{
-					DefinitionPoint = new XYZ(0, 0, 0),
-					AngleVertex = new XYZ(10, 0, 0),
-				};
-
-				this.Document.Entities.Add(dim);
-
-				dim.UpdateBlock();
-			}
-
-			public void DimensionLinear()
-			{
-				DimensionLinear dim = new DimensionLinear
-				{
-					SecondPoint = new XYZ(10, 10, 0),
-					Offset = 0.5,
-					//DefinitionPoint = new XYZ(10, 1, 0),
-					//TextMiddlePoint = new XYZ(5, 1, 0)
-				};
-
-				DimensionLinear dim1 = new DimensionLinear
-				{
-					SecondPoint = new XYZ(10, 0, 0),
-					Offset = 2,
-					TextMiddlePoint = new XYZ(5, 1, 0)
-				};
-
-				this.Document.Entities.Add(dim);
-				this.Document.Entities.Add(dim1);
-
-				dim.UpdateBlock();
-				dim1.UpdateBlock();
-			}
-
-			public void DimensionOrdinate()
-			{
-				DimensionOrdinate dim = new DimensionOrdinate
-				{
-					FeatureLocation = new XYZ(10, 10, 0),
-				};
-
-				this.Document.Entities.Add(dim);
-
-				dim.UpdateBlock();
-			}
-
-			public void DimensionRadius()
-			{
-				DimensionRadius dim = new DimensionRadius
-				{
-					AngleVertex = new XYZ(10, 10, 0),
-				};
-
-				this.Document.Entities.Add(dim);
-
-				dim.UpdateBlock();
-			}
-
-			public void Dimensions()
-			{
-				DimensionAligned dim = new DimensionAligned
-				{
-					SecondPoint = new XYZ(10)
-				};
-
-				dim.UpdateBlock();
-
-				ACadSharp.Entities.Line line = new ACadSharp.Entities.Line
-				{
-					StartPoint = new CSMath.XYZ(1, 0, 0),
-					EndPoint = new CSMath.XYZ(5, 5, 0)
-				};
-
-				dim.Text = "HELLO";
-				dim.IsTextUserDefinedLocation = true;
-				dim.TextMiddlePoint = new XYZ(10, 10, 0);
-
-				this.Document.Entities.Add(dim);
-
-				DimensionAligned dim1 = new DimensionAligned();
-
-				dim1.SecondPoint = new XYZ(10, 0, 0);
-
-				this.Document.Entities.Add(dim1);
-			}
-
-			public void DimensionsInBlock()
-			{
-				DimensionAligned dim = new DimensionAligned
-				{
-					SecondPoint = new XYZ(10, 0, 0)
-				};
-
-				ACadSharp.Entities.Line line = new ACadSharp.Entities.Line
-				{
-					StartPoint = new CSMath.XYZ(1, 0, 0),
-					EndPoint = new CSMath.XYZ(5, 5, 0)
-				};
-
-				DimensionLinear dim1 = new DimensionLinear()
-				{
-					FirstPoint = line.StartPoint,
-					SecondPoint = line.EndPoint
-				};
-
-				BlockRecord record = new BlockRecord("dim_block");
-				record.Entities.Add(dim);
-				record.Entities.Add(line);
-				record.Entities.Add(dim1);
-
-				this.Document.Entities.Add(new Insert(record));
-
-				DimensionAligned c = (DimensionAligned)dim.Clone();
-				Document.Entities.Add(c);
-
-				dim.UpdateBlock();
-				dim1.UpdateBlock();
-				c.UpdateBlock();
-			}
-
-			public void DimensionWithLineType()
-			{
-				LineType linetype = new LineType("LTYPE:PAINT");
-				linetype.AddSegment(new LineType.Segment() { Length = 1 });
-				linetype.AddSegment(new LineType.Segment() { Length = -1 });
-
-				DimensionStyle style = new DimensionStyle("my_style");
-				style.LineType = linetype;
-
-				DimensionAligned dim = new DimensionAligned();
-				dim.Style = style;
-
-				dim.SecondPoint = new XYZ(10);
-
-				this.Document.Entities.Add(dim);
-			}
-
-			public void EllipseSegments()
-			{
-				XYZ center = new XYZ(5, 5, 0);
-
-				Ellipse ellipse = new Ellipse();
-				ellipse.RadiusRatio = 0.5d;
-				ellipse.StartParameter = 0.0d;
-				ellipse.EndParameter = Math.PI * 2;
-				ellipse.Center = center;
-
-				var pline = new Polyline3D(ellipse.PolygonalVertexes(4));
-				pline.Color = Color.Green;
-
-				this.Document.Entities.Add(pline);
-				this.Document.Entities.Add(ellipse);
-
-				ellipse = new Ellipse();
-				ellipse.RadiusRatio = 0.5d;
-				ellipse.StartParameter = 0.0d;
-				ellipse.EndParameter = Math.PI * 2;
-				ellipse.Normal = XYZ.AxisY;
-				ellipse.Center = center;
-
-				pline = new Polyline3D(ellipse.PolygonalVertexes(4));
-				pline.Color = Color.Red;
-
-				this.Document.Entities.Add(pline);
-				this.Document.Entities.Add(ellipse);
-
-				ellipse = new Ellipse();
-				ellipse.RadiusRatio = 0.5d;
-				ellipse.StartParameter = 0.0d;
-				ellipse.EndParameter = Math.PI * 2;
-				ellipse.MajorAxisEndPoint = XYZ.AxisY;
-				ellipse.Normal = XYZ.AxisX;
-				ellipse.Center = center;
-
-				pline = new Polyline3D(ellipse.PolygonalVertexes(4));
-				pline.Color = Color.Cyan;
-
-				this.Document.Entities.Add(pline);
-				this.Document.Entities.Add(ellipse);
-
-				ellipse = new Ellipse();
-				ellipse.RadiusRatio = 0.5d;
-				ellipse.StartParameter = 0.0d;
-				ellipse.EndParameter = Math.PI * 2;
-				ellipse.Center = center;
-				ellipse.Normal = -XYZ.AxisZ;
-
-				pline = new Polyline3D(ellipse.PolygonalVertexes(4));
-				pline.Color = Color.Blue;
-
-				this.Document.Entities.Add(pline);
-				this.Document.Entities.Add(ellipse);
-			}
-
-			public void Empty()
-			{ }
-
-			public void EntityChangeNormal()
-			{
-				Circle c = new Circle();
-				c.Center = new XYZ(0, 0, 0);
-				c.Radius = 10;
-
-				c.Normal = XYZ.AxisX;
-
-				this.Document.Entities.Add(c);
-
-				var arc = new Arc()
-				{
-					StartAngle = 0,
-					EndAngle = Math.PI / (2),
-					Radius = 20,
-					Normal = XYZ.AxisX
-				};
-
-				var lst = arc.PolygonalVertexes(100);
-				var pline = new Polyline3D(lst);
-				foreach (XYZ item in lst)
-				{
-					this.Document.Entities.Add(new Circle()
+					if (doc.Header.Version < ACadVersion.AC1018)
 					{
-						Center = item,
-						Radius = 0.1,
-						Color = new Color(255, 0, 0)
-					});
+						//Background fill is not supported before R2004
+						Assert.Equal(BackgroundFillFlags.None, result.BackgroundFillFlags);
+						continue;
+					}
+
+					Assert.Equal(mtext.BackgroundFillFlags, result.BackgroundFillFlags);
+
+					if (this.Format == CadFileFormat.DWG
+						&& doc.Header.Version < ACadVersion.AC1032
+						&& !mtext.BackgroundFillFlags.HasFlag(BackgroundFillFlags.UseBackgroundFillColor))
+					{
+						//The DWG format stores the values of a text frame only in R2018+
+						continue;
+					}
+
+					Assert.Equal(mtext.BackgroundScale, result.BackgroundScale);
+					Assert.Equal(mtext.BackgroundColor, result.BackgroundColor);
+				}
+			};
+		}
+
+		public void PolylineVertexLayer()
+		{
+			var dxfLayer = new Layer("Example layer");
+			this.Document.Layers.Add(dxfLayer);
+			var anotherDxfLayer = new Layer("Another layer");
+			this.Document.Layers.Add(anotherDxfLayer);
+
+			var line = new Polyline2D(vertices: [new Vertex2D(new CSMath.XY(0, 0)), new Vertex2D(new CSMath.XY(100, 100))], isClosed: false)
+			{
+				Layer = dxfLayer,
+				Color = new Color(128)
+			};
+
+			var anotherLine = new Polyline2D(vertices: [new Vertex2D(new CSMath.XY(50, 50)), new Vertex2D(new CSMath.XY(100, 100))], isClosed: false)
+			{
+				Layer = anotherDxfLayer,
+				Color = new Color(64)
+			};
+
+			this.Document.Entities.Add(line);
+			this.Document.Entities.Add(anotherLine);
+
+			this.AssertRoundtrip = (doc) =>
+			{
+				Polyline2D result = doc.GetCadObject<Polyline2D>(line.Handle);
+
+				Assert.NotNull(result);
+				EntityComparator.IsEqual(line, result);
+				Assert.Equal(dxfLayer.Name, result.Layer.Name);
+				Assert.NotNull(doc.GetCadObject<Polyline2D>(anotherLine.Handle));
+			};
+		}
+
+		public void ProxyGraphics()
+		{
+			ProxyEntity proxy = new ProxyEntity();
+			proxy.Version = ACadVersion.AC1032;
+			proxy.MaintenanceVersion = 0;
+
+			ProxyXLine proxyXline = new ProxyXLine
+			{
+				Point1 = new XYZ(0, -10, 0),
+				Point2 = new XYZ(0, 10, 0),
+			};
+			ProxyCircle proxyCircle = new ProxyCircle
+			{
+				Center = new XYZ(5, 5, 0),
+				Radius = 5,
+			};
+
+			proxy.ProxyGeometries.Add(proxyXline);
+			proxy.ProxyGeometries.Add(proxyCircle);
+
+			this.Document.Entities.Add(proxy);
+
+			this.AssertRoundtrip = (doc) =>
+			{
+				ProxyEntity result = doc.GetCadObject<ProxyEntity>(proxy.Handle);
+				Assert.NotNull(result);
+
+				Assert.NotEmpty(result.ProxyGeometries);
+				Assert.Equal(proxy.ProxyGeometries.Count, result.ProxyGeometries.Count);
+				Assert.True(result.ProxyGeometries[0] is ProxyXLine);
+				Assert.True(result.ProxyGeometries[1] is ProxyCircle);
+			};
+		}
+
+		public void Serialize(IXunitSerializationInfo info)
+		{
+			info.AddValue(nameof(this.Name), this.Name);
+		}
+
+		public void SingleEllipse()
+		{
+			Ellipse ellipse = new Ellipse();
+			ellipse.RadiusRatio = 0.5d;
+			ellipse.StartParameter = 0.0d;
+			ellipse.EndParameter = Math.PI * 2;
+
+			this.Document.Entities.Add(ellipse);
+
+			this.AssertRoundtrip = (doc) =>
+			{
+				Ellipse result = doc.GetCadObject<Ellipse>(ellipse.Handle);
+
+				Assert.NotNull(result);
+				EntityComparator.IsEqual(ellipse, result);
+				Assert.Equal(ellipse.RadiusRatio, result.RadiusRatio);
+			};
+		}
+
+		public void SingleLine()
+		{
+			Line line = new Line(XYZ.Zero, new XYZ(100, 100, 0));
+
+			this.Document.Entities.Add(line);
+
+			this.AssertRoundtrip = (doc) =>
+			{
+				Line result = doc.GetCadObject<Line>(line.Handle);
+
+				Assert.NotNull(result);
+				EntityComparator.IsEqual(line, result);
+			};
+		}
+
+		public void SingleLineInPaperSpace()
+		{
+			Line line = new Line(XYZ.Zero, new XYZ(100, 100, 0));
+
+			this.Document.PaperSpace.Entities.Add(line);
+
+			this.AssertRoundtrip = (doc) =>
+			{
+				Line result = doc.GetCadObject<Line>(line.Handle);
+
+				Assert.NotNull(result);
+				EntityComparator.IsEqual(line, result);
+				Assert.True(result.Owner == doc.PaperSpace);
+				Assert.Equal(this.Document.PaperSpace.Entities.Count, doc.PaperSpace.Entities.Count);
+			};
+		}
+
+		public void SingleLongMText()
+		{
+			MText mtext = new MText();
+
+			mtext.Value = "HELLO I'm a long MTEXT with more than 250 characters that I need to be tested in the dxfwriter to see if I've been written correctly in any Cad software.\n" +
+				"Lorem ipsum dolor sit amet, consectetur adipiscing elit. Cras accumsan erat velit, nec sagittis felis convallis id. Morbi ac metus at purus tempor ornare quis vel mi. Phasellus iaculis molestie neque eu ultrices. Praesent in interdum mauris. Nulla in mi non eros aliquam tempus ut at metus. Sed vel ligula vitae ante facilisis malesuada id sit amet elit. Praesent fringilla enim at ipsum posuere blandit. Aliquam id magna metus. Aenean at ex mi. Etiam auctor elit lectus, at eleifend urna feugiat sed. Vivamus vitae tortor vel enim consectetur venenatis. Nulla gravida tellus id fermentum feugiat. Pellentesque laoreet elit a mi.\n";
+
+			this.Document.Entities.Add(mtext);
+
+			this.AssertRoundtrip = (doc) =>
+			{
+				MText result = doc.GetCadObject<MText>(mtext.Handle);
+
+				Assert.NotNull(result);
+				EntityComparator.IsEqual(mtext, result);
+				Assert.Equal(mtext.Value, result.Value);
+			};
+		}
+
+		public void SingleMaterial()
+		{
+			Material material = new Material("TestMaterial")
+			{
+				Description = "Round-trip test material",
+				AmbientColorMethod = ColorMethod.Override,
+				AmbientColor = new Color(10, 20, 30),
+				DiffuseColorMethod = ColorMethod.Override,
+				DiffuseColor = new Color(200, 100, 50),
+				SpecularColorMethod = ColorMethod.Override,
+				SpecularColor = new Color(255, 255, 255),
+				SpecularGlossFactor = 0.5,
+				Opacity = 0.8,
+				RefractionIndex = 1.2,
+				Translucence = 0.1,
+				Reflectivity = 0.3,
+				ChannelFlags = MaterialChannelFlags.UseDiffuse | MaterialChannelFlags.UseBump,
+				IlluminationModel = MaterialIlluminationModel.MetalShader,
+				Mode = MaterialMode.Advanced,
+				DiffuseMapSource = MapSource.UseImageFile,
+				DiffuseMapFileName = "diffuse.png",
+				DiffuseMapBlendFactor = 1.0,
+			};
+
+			this.Document.Materials.Add(material);
+
+			// Anchor the material to an entity so the on-disk handle reference is exercised too.
+			Mesh mesh = new Mesh
+			{
+				Material = material,
+			};
+			mesh.Vertices.Add(new XYZ(0, 0, 0));
+			mesh.Vertices.Add(new XYZ(1, 0, 0));
+			mesh.Vertices.Add(new XYZ(1, 1, 0));
+			mesh.Faces.Add([0, 1, 2]);
+
+			this.Document.Entities.Add(mesh);
+
+			this.AssertRoundtrip = (doc) =>
+			{
+				if (this.Format == CadFileFormat.DXF)
+				{
+					return;
 				}
 
-				this.Document.Entities.Add(arc);
-				this.Document.Entities.Add(pline);
-			}
+				Material materialResult = doc.GetCadObject<Material>(material.Handle);
+				Mesh meshResult = doc.GetCadObject<Mesh>(mesh.Handle);
 
-			public void EntityColorByIndex()
+				Assert.NotNull(materialResult);
+				Assert.NotNull(meshResult);
+				Assert.Equal(material.Name, materialResult.Name);
+				Assert.Equal(material.Description, materialResult.Description);
+			};
+		}
+
+		public void SingleMesh()
+		{
+			Mesh mesh = new Mesh();
+			mesh.Vertices.Add(new XYZ(0, 0, 0));
+			mesh.Vertices.Add(new XYZ(1, 0, 0));
+			mesh.Vertices.Add(new XYZ(1, 1, 0));
+			mesh.Vertices.Add(new XYZ(0, 1, 0));
+
+			mesh.Faces.Add([0, 1, 2, 3]);
+
+			//mesh.Edges.Add(new Mesh.Edge { Start = 0, End = 1 });
+			//mesh.Edges.Add(new Mesh.Edge { Start = 1, End = 2 });
+			//mesh.Edges.Add(new Mesh.Edge { Start = 2, End = 3 });
+			//mesh.Edges.Add(new Mesh.Edge { Start = 0, End = 3 });
+
+			this.Document.Entities.Add(mesh);
+
+			this.AssertRoundtrip = (doc) =>
 			{
-				Circle c = new Circle();
-				c.Center = new XYZ(0, 0, 0);
-				c.Radius = 10;
-				c.Color = new Color(11);
+				Mesh result = doc.GetCadObject<Mesh>(mesh.Handle);
 
-				this.Document.Entities.Add(c);
-			}
+				Assert.NotNull(result);
+				EntityComparator.IsEqual(mesh, result);
+				Assert.Equal(mesh.Vertices.Count, result.Vertices.Count);
+				Assert.Equal(mesh.Faces.Count, result.Faces.Count);
+			};
+		}
 
-			public void EntityColorByLayer()
+		public void SingleMeshWithTextureCoordinates()
+		{
+			// Face-corner-duplicated vertices so each corner gets its own UV, matching
+			// the AcDbSubDMesh convention persisted via the ADSK_XREC_SUBDVERTEXTEXCOORDS XRecord.
+			Mesh mesh = new Mesh();
+			mesh.Vertices.Add(new XYZ(0, 0, 0));
+			mesh.Vertices.Add(new XYZ(1, 0, 0));
+			mesh.Vertices.Add(new XYZ(1, 1, 0));
+			mesh.Vertices.Add(new XYZ(0, 0, 0));
+			mesh.Vertices.Add(new XYZ(1, 1, 0));
+			mesh.Vertices.Add(new XYZ(0, 1, 0));
+
+			mesh.Faces.Add([0, 1, 2]);
+			mesh.Faces.Add([3, 4, 5]);
+
+			mesh.AddTextureCoordinate(new XYZ(0, 0, 0));
+			mesh.AddTextureCoordinate(new XYZ(1, 0, 0));
+			mesh.AddTextureCoordinate(new XYZ(1, 1, 0));
+			mesh.AddTextureCoordinate(new XYZ(0, 0, 0));
+			mesh.AddTextureCoordinate(new XYZ(1, 1, 0));
+			mesh.AddTextureCoordinate(new XYZ(0, 1, 0));
+
+			this.Document.Entities.Add(mesh);
+
+			this.AssertRoundtrip = (doc) =>
 			{
-				Layer layer = new Layer("Test");
-				layer.Color = new Color(25);
-				this.Document.Layers.Add(layer);
+				Mesh result = doc.GetCadObject<Mesh>(mesh.Handle);
 
-				Circle c = new Circle();
-				c.Center = new XYZ(0, 0, 0);
-				c.Radius = 10;
-				c.Layer = layer;
-				c.Color = Color.ByLayer;
+				Assert.NotNull(result);
+				EntityComparator.IsEqual(mesh, result);
+				Assert.Equal(mesh.Vertices.Count, result.Vertices.Count);
+				Assert.Equal(mesh.Faces.Count, result.Faces.Count);
+			};
+		}
 
-				this.Document.Entities.Add(c);
-			}
+		public void SingleMLeader()
+		{
+			MultiLeader mleader = new MultiLeader();
+			mleader.PathType = MultiLeaderPathType.StraightLineSegments;
+			mleader.PropertyOverrideFlags = MultiLeaderPropertyOverrideFlags.ContentType | MultiLeaderPropertyOverrideFlags.TextAlignment | MultiLeaderPropertyOverrideFlags.EnableUseDefaultMText;
 
-			public void EntityColorTrueColor()
+			mleader.ContextData.ContentBasePoint = new XYZ(1.8599999999999999, 1.5, 0);
+			mleader.ContextData.BasePoint = new XYZ(0, 0, 0);
+			mleader.ContextData.TextLabel = "This is my test MLEader";
+			mleader.ContextData.HasTextContents = true;
+
+			var root = new MultiLeaderObjectContextData.LeaderRoot
 			{
-				Circle c = new Circle();
-				c.Center = new XYZ(0, 0, 0);
-				c.Radius = 10;
-				c.Color = Color.FromTrueColor(1151726);
+				ConnectionPoint = new XYZ(1.5, 1.5, 0),
+				ContentValid = true,
+				Direction = XYZ.AxisX,
+				LandingDistance = 0.36,
+			};
 
-				this.Document.Entities.Add(c);
-			}
+			MultiLeaderObjectContextData.LeaderLine leaderLine = new MultiLeaderObjectContextData.LeaderLine();
+			leaderLine.PathType = MultiLeaderPathType.StraightLineSegments;
+			leaderLine.Points.Add(XYZ.Zero);
+			root.Lines.Add(leaderLine);
+			mleader.ContextData.LeaderRoots.Add(root);
 
-			public void EntityTransparency()
+			this.Document.Entities.Add(mleader);
+
+			this.AssertRoundtrip = (doc) =>
 			{
-				Line line = new Line(XYZ.Zero, new XYZ(100, 100, 0));
+				MultiLeader result = doc.GetCadObject<MultiLeader>(mleader.Handle);
 
-				line.Transparency = new Transparency(50);
+				Assert.NotNull(result);
+				EntityComparator.IsEqual(mleader, result);
+				Assert.Equal(mleader.ContextData.TextLabel, result.ContextData.TextLabel);
+				Assert.Equal(mleader.ContextData.LeaderRoots.Count, result.ContextData.LeaderRoots.Count);
+			};
+		}
 
-				this.Document.Entities.Add(line);
-			}
+		public void SingleMLine()
+		{
+			//It creates a valid dxf but the MLine is wrongly drawn
 
-			public void GeoData()
+			MLine line = new MLine();
+
+			line.StartPoint = XYZ.Zero;
+
+			var v1 = new MLine.Vertex();
+			v1.Position = XYZ.Zero;
+			v1.Direction = XYZ.AxisY;
+
+			v1.Segments.Add(new MLine.Vertex.Segment { Parameters = new List<double> { 0.75, 0 } });
+			v1.Segments.Add(new MLine.Vertex.Segment { Parameters = new List<double> { -0.75, 0 } });
+
+			var v2 = new MLine.Vertex();
+			v2.Position = new XYZ(100, 100, 0);
+			v2.Direction = XYZ.AxisY;
+
+			v2.Segments.Add(new MLine.Vertex.Segment { Parameters = new List<double> { 0.75, 0 } });
+			v2.Segments.Add(new MLine.Vertex.Segment { Parameters = new List<double> { -0.75, 0 } });
+
+			line.Vertices.Add(v1);
+			line.Vertices.Add(v2);
+
+			this.Document.Entities.Add(line);
+
+			this.AssertRoundtrip = (doc) =>
 			{
-				this.Document.ModelSpace.CreateExtendedDictionary();
+				MLine result = doc.GetCadObject<MLine>(line.Handle);
 
-				var geodata = new GeoData();
-				geodata.HostBlock = this.Document.ModelSpace;
+				Assert.NotNull(result);
+				EntityComparator.IsEqual(line, result);
+				Assert.Equal(line.Vertices.Count, result.Vertices.Count);
+			};
+		}
 
-				this.Document.ModelSpace.XDictionary.Add(CadDictionary.GeographicData, geodata);
-			}
+		public void SingleMText()
+		{
+			MText mtext = new MText();
 
-			public void InsertWithSpatialFilter()
+			mtext.Value = "HELLO I'm an MTEXT";
+
+			this.Document.Entities.Add(mtext);
+
+			this.AssertRoundtrip = (doc) =>
 			{
-				string blockName = Guid.NewGuid().ToString();
-				var blockRecord = new BlockRecord("my_block");
-				var insert = new Insert(blockRecord);
+				MText result = doc.GetCadObject<MText>(mtext.Handle);
 
-				SpatialFilter filter = new SpatialFilter();
-				filter.BoundaryPoints.Add(XY.Zero);
-				filter.BoundaryPoints.Add(new XY(50, 50));
-				filter.DisplayBoundary = true;
+				Assert.NotNull(result);
+				EntityComparator.IsEqual(mtext, result);
+				Assert.Equal(mtext.Value, result.Value);
+			};
+		}
 
-				insert.SpatialFilter = filter;
+		public void SingleMTextMultiline()
+		{
+			MText mtext = new MText();
 
-				this.Document.Entities.Add(insert);
+			mtext.Value = "HELLO I'm an MTEXT\n and I have multiple lines";
 
-				Circle circle = new Circle
+			this.Document.Entities.Add(mtext);
+
+			this.AssertRoundtrip = (doc) =>
+			{
+				MText result = doc.GetCadObject<MText>(mtext.Handle);
+
+				Assert.NotNull(result);
+				EntityComparator.IsEqual(mtext, result);
+				Assert.Equal(mtext.Value, result.Value);
+			};
+		}
+
+		public void SingleMTextRotation()
+		{
+			MText mtext = new MText();
+			mtext.Value = "HELLO I'm a rotated MTEXT";
+			mtext.AlignmentPoint = new XYZ(Math.Cos(MathHelper.DegToRad(-30)), Math.Sin(MathHelper.DegToRad(-30)), 0);
+
+			this.Document.Entities.Add(mtext);
+
+			mtext = new MText();
+			mtext.Value = "normal changed";
+			mtext.AlignmentPoint = new XYZ(Math.PI / 4, Math.PI / 4, 0);
+			mtext.Normal = XYZ.AxisX;
+
+			this.Document.Entities.Add(mtext);
+
+			mtext = new MText();
+			mtext.Value = "Bla bla bla";
+			mtext.ApplyRotation(XYZ.AxisZ, Math.PI / 4);
+
+			this.Document.Entities.Add(mtext);
+
+			this.AssertRoundtrip = (doc) =>
+			{
+				MText result = doc.GetCadObject<MText>(mtext.Handle);
+
+				Assert.NotNull(result);
+				EntityComparator.IsEqual(mtext, result);
+				Assert.Equal(this.Document.ModelSpace.Entities.Count, doc.ModelSpace.Entities.Count);
+			};
+		}
+
+		public void SingleMTextSpecialCharacter()
+		{
+			MText mtext = new MText();
+
+			mtext.Value = "∅45,6";
+
+			this.Document.Entities.Add(mtext);
+
+			this.AssertRoundtrip = (doc) =>
+			{
+				if (doc.Header.Version <= ACadVersion.AC1018)
 				{
-					Radius = 20
-				};
-				blockRecord.Entities.Add(circle);
-			}
-
-			public void LayerTrueColor()
-			{
-				Layer layer = new Layer("Layer_true_color");
-				layer.Color = Color.FromTrueColor(1151726);
-
-				this.Document.Layers.Add(layer);
-			}
-
-			public void LineTypeInBlock()
-			{
-				BlockRecord block = new BlockRecord("block1");
-
-				LineType linetype = new LineType("LTYPE:PAINT");
-				linetype.AddSegment(new LineType.Segment() { Length = 1 });
-				linetype.AddSegment(new LineType.Segment() { Length = -1 });
-
-				ACadSharp.Entities.Line line = new ACadSharp.Entities.Line
-				{
-					StartPoint = new CSMath.XYZ(1, 0, 0),
-					EndPoint = new CSMath.XYZ(5, 5, 0),
-					LineType = linetype
-				};
-
-				ACadSharp.Entities.Line line1 = new ACadSharp.Entities.Line
-				{
-					StartPoint = new CSMath.XYZ(1, 0, 0),
-					EndPoint = new CSMath.XYZ(5, 5, 0),
-					LineType = linetype
-				};
-				// dashed line shows up fine when added directly to the document
-				this.Document.Entities.Add(line1);
-
-				block.Entities.Add(line);
-
-				this.Document.BlockRecords.Add(block);
-				Insert blockinsert = new Insert(block)
-				{
-					InsertPoint = new XYZ(10, 10, 0)
-				};
-
-				this.Document.Entities.Add(blockinsert);
-			}
-
-			public void LineTypeWithSegments()
-			{
-				LineType lt = new LineType("segmented");
-				lt.Description = "hello";
-
-				LineType.Segment s1 = new LineType.Segment
-				{
-					Length = 12,
-					//Style = this.Document.TextStyles[TextStyle.DefaultName]
-				};
-
-				LineType.Segment s2 = new LineType.Segment
-				{
-					Length = -3,
-					//Style = this.Document.TextStyles[TextStyle.DefaultName]
-				};
-
-				lt.AddSegment(s1);
-				lt.AddSegment(s2);
-
-				this.Document.LineTypes.Add(lt);
-			}
-
-            public void LineTypeWithTextSegment()
-            {
-                LineType lt1 = new LineType("segmentedWithText")
-                {
-                    Description = "hello text"
-                };
-
-                LineType.Segment lt1s1 = new LineType.Segment
-                {
-                    Length = 5,
-                    //Style = this.Document.TextStyles[TextStyle.DefaultName]
-                };
-                
-                LineType.Segment lt1s2 = new LineType.Segment
-                {
-                    Text = "Text",
-                    Length = -3.0, 
-                    IsText = true,
-                    Offset = new XY(-2.8, -.5),
-                    Style = this.Document.TextStyles[TextStyle.DefaultName]
-                };
-
-                LineType.Segment lt1s3 = new LineType.Segment
-                {
-                    Length = -.350,
-                    //Style = this.Document.TextStyles[TextStyle.DefaultName]
-                };
-                
-                lt1.AddSegment(lt1s1);
-                lt1.AddSegment(lt1s2);
-                lt1.AddSegment(lt1s3);
-
-
-                LineType lt2 = new LineType("degrees")
-                {
-                    Description = "degree symbol",
-                    Segments = {  }
-                };
-                
-                
-                TextStyle style = new TextStyle("custom");
-                
-                //this.Document.Header.CodePage = "GB2312";
-                style.Filename = "romans.shx";
-                style.BigFontFilename = "chineset.shx";
-                this.Document.TextStyles.Add(style);
-                
-                LineType.Segment lt2s1 = new LineType.Segment
-                {
-                    Length = 5,
-                    //Style = this.Document.TextStyles[TextStyle.DefaultName]
-                };
-                
-                LineType.Segment lt2s2 = new LineType.Segment
-                {
-                    Text = "信",
-                    Length = -3.0, 
-                    IsText = true,
-                    Offset = new XY(-2.8, -.5),
-                    Style = style
-                };
-
-                LineType.Segment lt2s3 = new LineType.Segment
-                {
-                    Length = -.350,
-                    //Style = this.Document.TextStyles[TextStyle.DefaultName]
-                };
-                
-                lt2.AddSegment(lt2s1);
-                lt2.AddSegment(lt2s2);
-                lt2.AddSegment(lt2s3);
-
-                this.Document.LineTypes.Add(lt1);
-                this.Document.LineTypes.Add(lt2);
-                
-                var line1 = new Line(new XYZ(0, 0, 0), new XYZ(20, 0, 0))
-                {
-                    LineType = lt1
-                };
-                
-                var line2 = new Line(new XYZ(0, 0, 0), new XYZ(0, 20, 0))
-                {
-                    LineType = lt2
-                };
-                this.Document.Entities.Add(line1);
-                this.Document.Entities.Add(line2);
-            }
-
-			public void Serialize(IXunitSerializationInfo info)
-			{
-				info.AddValue(nameof(this.Name), this.Name);
-			}
-
-			public void SingleEllipse()
-			{
-				Ellipse ellipse = new Ellipse();
-				ellipse.RadiusRatio = 0.5d;
-				ellipse.StartParameter = 0.0d;
-				ellipse.EndParameter = Math.PI * 2;
-
-				this.Document.Entities.Add(ellipse);
-			}
-
-			public void SingleLine()
-			{
-				Line line = new Line(XYZ.Zero, new XYZ(100, 100, 0));
-
-				this.Document.Entities.Add(line);
-			}
-
-			public void SingleMLeader()
-			{
-				MultiLeader mleader = new MultiLeader();
-				mleader.PathType = MultiLeaderPathType.StraightLineSegments;
-				mleader.PropertyOverrideFlags = MultiLeaderPropertyOverrideFlags.ContentType | MultiLeaderPropertyOverrideFlags.TextAlignment | MultiLeaderPropertyOverrideFlags.EnableUseDefaultMText;
-
-				mleader.ContextData.ContentBasePoint = new XYZ(1.8599999999999999, 1.5, 0);
-				mleader.ContextData.BasePoint = new XYZ(0, 0, 0);
-				mleader.ContextData.TextLabel = "This is my test MLEader";
-
-				var root = new MultiLeaderObjectContextData.LeaderRoot
-				{
-					ConnectionPoint = new XYZ(1.5, 1.5, 0),
-					ContentValid = true,
-					Direction = XYZ.AxisX,
-					LandingDistance = 0.36,
-				};
-				MultiLeaderObjectContextData.LeaderLine leaderLine = new MultiLeaderObjectContextData.LeaderLine();
-				leaderLine.PathType = MultiLeaderPathType.StraightLineSegments;
-				leaderLine.Points.Add(XYZ.Zero);
-				root.Lines.Add(leaderLine);
-				mleader.ContextData.LeaderRoots.Add(root);
-
-				this.Document.Entities.Add(mleader);
-			}
-
-			public void SingleMLine()
-			{
-				//It creates a valid dxf but the MLine is wrongly drawn
-
-				MLine line = new MLine();
-
-				line.StartPoint = XYZ.Zero;
-
-				var v1 = new MLine.Vertex();
-				v1.Position = XYZ.Zero;
-				v1.Direction = XYZ.AxisY;
-
-				v1.Segments.Add(new MLine.Vertex.Segment { Parameters = new List<double> { 0.75, 0 } });
-				v1.Segments.Add(new MLine.Vertex.Segment { Parameters = new List<double> { -0.75, 0 } });
-
-				var v2 = new MLine.Vertex();
-				v2.Position = new XYZ(100, 100, 0);
-				v2.Direction = XYZ.AxisY;
-
-				v2.Segments.Add(new MLine.Vertex.Segment { Parameters = new List<double> { 0.75, 0 } });
-				v2.Segments.Add(new MLine.Vertex.Segment { Parameters = new List<double> { -0.75, 0 } });
-
-				line.Vertices.Add(v1);
-				line.Vertices.Add(v2);
-
-				this.Document.Entities.Add(line);
-			}
-
-			public void SingleMText()
-			{
-				MText mtext = new MText();
-
-				mtext.Value = "HELLO I'm an MTEXT";
-
-				this.Document.Entities.Add(mtext);
-			}
-
-			public void SingleMTextMultiline()
-			{
-				MText mtext = new MText();
-
-				mtext.Value = "HELLO I'm an MTEXT\n and I have multiple lines";
-
-				this.Document.Entities.Add(mtext);
-			}
-
-			public void SingleMTextRotation()
-			{
-				MText mtext = new MText();
-				mtext.Value = "HELLO I'm a rotated MTEXT";
-				mtext.AlignmentPoint = new XYZ(Math.Cos(MathHelper.DegToRad(-30)), Math.Sin(MathHelper.DegToRad(-30)), 0);
-
-				this.Document.Entities.Add(mtext);
-
-				mtext = new MText();
-				mtext.Value = "normal changed";
-				mtext.AlignmentPoint = new XYZ(Math.PI / 4, Math.PI / 4, 0);
-				mtext.Normal = XYZ.AxisX;
-
-				this.Document.Entities.Add(mtext);
-
-				mtext = new MText();
-				mtext.Value = "Bla bla bla";
-				mtext.ApplyRotation(XYZ.AxisZ, Math.PI / 4);
-
-				this.Document.Entities.Add(mtext);
-			}
-
-			public void SingleMTextSpecialCharacter()
-			{
-				MText mtext = new MText();
-
-				mtext.Value = "∅45,6";
-
-				this.Document.Entities.Add(mtext);
-			}
-
-			public void SinglePdfUnderlay()
-			{
-				var definition = new PdfUnderlayDefinition();
-				definition.Page = "1";
-				definition.File = "..\\..\\pdf-definition.pdf";
-
-				definition.Name = $"{definition.File} {definition.Page}";
-
-				PdfUnderlay raster = new PdfUnderlay(definition);
-
-				raster.ClipBoundaryVertices.Add(new XY(0, 0));
-				raster.ClipBoundaryVertices.Add(new XY(1, 1));
-
-				this.Document.Entities.Add(raster);
-
-				var clone = raster.CloneTyped();
-				clone.InsertPoint = new XYZ(10, 10, 0);
-
-				this.Document.Entities.Add(clone);
-			}
-
-			public void SinglePoint()
-			{
-				this.Document.Entities.Add(new Point(XYZ.Zero));
-			}
-
-			public void SingleRasterImage()
-			{
-				ImageDefinition definition = new ImageDefinition();
-				definition.Size = new XY(1, 1);
-				definition.Name = "image";
-				definition.IsLoaded = true;
-
-				definition.FileName = "..\\..\\image.JPG";
-
-				RasterImage raster = new RasterImage(definition);
-
-				raster.Flags = ImageDisplayFlags.ShowImage;
-
-				raster.ClipBoundaryVertices.Add(new XY(0, 0));
-				raster.ClipBoundaryVertices.Add(new XY(0, 1));
-				raster.ClipBoundaryVertices.Add(new XY(1, 1));
-				raster.ClipBoundaryVertices.Add(new XY(1, 0));
-
-				this.Document.Entities.Add(raster);
-			}
-
-			public void SingleWipeout()
-			{
-				Wipeout wipeout = new Wipeout();
-
-				wipeout.Size = new XY(1, 1);
-				wipeout.ClippingState = true;
-
-				wipeout.ClipBoundaryVertices.Add(new XY(0, 0));
-				wipeout.ClipBoundaryVertices.Add(new XY(0, 1));
-				wipeout.ClipBoundaryVertices.Add(new XY(1, 1));
-				wipeout.ClipBoundaryVertices.Add(new XY(1, 0));
-
-				this.Document.Entities.Add(wipeout);
-			}
-
-			public void SPlineCreation()
-			{
-				Spline spline = new Spline();
-
-				spline.ControlPoints.Add(new XYZ(0, 0, 0));
-				spline.ControlPoints.Add(new XYZ(10, 10, 0));
-				spline.ControlPoints.Add(new XYZ(20, 10, 0));
-				spline.ControlPoints.Add(new XYZ(50, 30, 0));
-
-				spline.Degree = 3;
-
-				spline.Knots.Add(0);
-				spline.Knots.Add(0);
-				spline.Knots.Add(0);
-				spline.Knots.Add(0);
-
-				spline.Knots.Add(1);
-				spline.Knots.Add(1);
-				spline.Knots.Add(1);
-				spline.Knots.Add(1);
-
-				Polyline3D polyline = new Polyline3D(spline.PolygonalVertexes(255));
-
-				this.Document.Entities.Add(spline);
-				this.Document.Entities.Add(polyline);
-
-				List<XYZ> fitPoints = new()
-				{
-					new XYZ(0, 0, 0),
-					new XYZ(5, 5, 0),
-					new XYZ(10, 0, 0),
-					new XYZ(15, -5, 0),
-					new XYZ(20, 0, 0)
-				};
-
-				spline = new Spline();
-				spline.FitPoints.AddRange(fitPoints);
-
-				spline.UpdateFromFitPoints();
-
-				this.Document.Entities.Add(spline);
-			}
-
-			public void TextAlignment()
-			{
-				XYZ insert = new XYZ(0, 0, 0);
-
-				foreach (var item in Enum.GetValues(typeof(TextHorizontalAlignment)).Cast<TextHorizontalAlignment>())
-				{
-					TextEntity textEntity = new TextEntity();
-					textEntity.Value = item.ToString();
-					textEntity.HorizontalAlignment = item;
-					textEntity.InsertPoint = insert;
-					textEntity.Height = 0.5;
-
-					this.Document.Entities.Add(textEntity);
-
-					insert = new XYZ(insert.X + 2, 0, 0);
+					//Not supported in R2000 and earlier, the encoding is enforced
+					return;
 				}
-			}
 
-			public void TextWithChineseCharacters()
+				MText result = doc.GetCadObject<MText>(mtext.Handle);
+
+				Assert.NotNull(result);
+				EntityComparator.IsEqual(mtext, result);
+				Assert.Equal(mtext.Value, result.Value);
+			};
+		}
+
+		public void SinglePdfUnderlay()
+		{
+			var definition = new PdfUnderlayDefinition();
+			definition.Page = "1";
+			definition.File = "..\\..\\pdf-definition.pdf";
+
+			definition.Name = $"{definition.File} {definition.Page}";
+
+			PdfUnderlay raster = new PdfUnderlay(definition);
+
+			raster.ClipBoundaryVertices.Add(new XY(0, 0));
+			raster.ClipBoundaryVertices.Add(new XY(1, 1));
+
+			this.Document.Entities.Add(raster);
+
+			var clone = raster.CloneTyped();
+			clone.InsertPoint = new XYZ(10, 10, 0);
+
+			this.Document.Entities.Add(clone);
+
+			this.AssertRoundtrip = (doc) =>
 			{
-				//this.Document.Header.CodePage = "GB2312";
+				PdfUnderlay result = doc.GetCadObject<PdfUnderlay>(raster.Handle);
 
-				TextStyle style = new TextStyle("custom");
-				style.Filename = "romans.shx";
-				style.BigFontFilename = "chineset.shx";
+				Assert.NotNull(result);
+				EntityComparator.IsEqual(raster, result);
+				Assert.NotNull(result.Definition);
+				Assert.Equal(definition.Page, result.Definition.Page);
+				Assert.NotNull(doc.GetCadObject<PdfUnderlay>(clone.Handle));
+			};
+		}
 
-				MText mtext = new MText();
-				//mtext.AlignmentPoint = XYZ.Zero;
-				//mtext.HorizontalWidth = 1;
-				mtext.Value = "我的短信";
-				mtext.Style = style;
+		public void SinglePoint()
+		{
+			Point point = new Point(XYZ.Zero);
 
-				TextEntity text = new TextEntity();
-				text.Value = "我的短信";
-				text.Style = style;
+			this.Document.Entities.Add(point);
 
-				this.Document.Entities.Add(mtext);
-				this.Document.Entities.Add(text);
-			}
-
-			public override string ToString()
+			this.AssertRoundtrip = (doc) =>
 			{
-				return this.Name;
-			}
+				Point result = doc.GetCadObject<Point>(point.Handle);
 
-			public void ViewZoom()
+				Assert.NotNull(result);
+				EntityComparator.IsEqual(point, result);
+			};
+		}
+
+		public void SingleRasterImage()
+		{
+			ImageDefinition definition = new ImageDefinition();
+			definition.Size = new XY(1, 1);
+			definition.Name = "image";
+			definition.IsLoaded = true;
+
+			definition.FileName = "..\\..\\image.JPG";
+
+			RasterImage raster = new RasterImage(definition);
+
+			raster.Flags = ImageDisplayFlags.ShowImage;
+
+			raster.ClipBoundaryVertices.Add(new XY(0, 0));
+			raster.ClipBoundaryVertices.Add(new XY(0, 1));
+			raster.ClipBoundaryVertices.Add(new XY(1, 1));
+			raster.ClipBoundaryVertices.Add(new XY(1, 0));
+
+			this.Document.Entities.Add(raster);
+
+			this.AssertRoundtrip = (doc) =>
 			{
-				Line line = new Line(XYZ.Zero, new XYZ(100, 100, 0));
-				Line line1 = new Line(new XYZ(0, 100, 0), new XYZ(100, 0, 0));
+				RasterImage result = doc.GetCadObject<RasterImage>(raster.Handle);
 
-				this.Document.Entities.Add(line);
-				this.Document.Entities.Add(line1);
+				Assert.NotNull(result);
+				EntityComparator.IsEqual(raster, result);
+				Assert.NotNull(result.Definition);
+				Assert.Equal(definition.Name, result.Definition.Name);
+			};
+		}
 
-				var box = line.GetBoundingBox();
+		public void SingleTableEntity()
+		{
+			var t = new TableEntity();
 
-				VPort active = this.Document.VPorts[VPort.DefaultName];
-				active.Center = (XY)box.Center;
-				//active.BottomLeft = (XY)box.Min;
-				//active.TopRight = (XY)box.Max;
-				active.ViewHeight = 100;
-			}
+			t.Columns.Add(new TableEntity.Column() { Width = 10 });
+			t.Rows.Add(new TableEntity.Row() { Height = 5 });
 
-			public void XData()
+			this.Document.Entities.Add(t);
+
+			this.AssertRoundtrip = (doc) =>
 			{
-				AppId app = new AppId("my_app");
-				Layer layer = new Layer("my_layer");
-				this.Document.AppIds.Add(app);
-				this.Document.Layers.Add(layer);
+				//TODO: Generate a valid table entity, currently it creates an invalid one but it is correctly read by AutoCAD
+				return;
 
-				Line line = new Line(XYZ.Zero, new XYZ(100, 100, 0));
+				TableEntity result = doc.GetCadObject<TableEntity>(t.Handle);
 
-				List<ExtendedDataRecord> records = new();
-				records.Add(new ExtendedDataControlString(false));
-				records.Add(new ExtendedDataInteger16(5));
-				records.Add(new ExtendedDataInteger32(33));
-				records.Add(new ExtendedDataString("my extended data string"));
-				records.Add(new ExtendedDataHandle(5));
-				records.Add(new ExtendedDataReal(25.35));
-				records.Add(new ExtendedDataScale(0.66));
-				records.Add(new ExtendedDataDistance(481.48));
-				records.Add(new ExtendedDataDirection(new XYZ(4, 3, 2)));
-				records.Add(new ExtendedDataCoordinate(new XYZ(8, 7, 4)));
-				records.Add(new ExtendedDataWorldCoordinate(new XYZ(85, 74, 47)));
-				records.Add(new ExtendedDataLayer(layer.Handle));
-				records.Add(new ExtendedDataBinaryChunk(new byte[] { 1, 2, 3, 4 }));
-				records.Add(new ExtendedDataControlString(true));
+				Assert.NotNull(result);
+				EntityComparator.IsEqual(t, result);
+				Assert.Equal(t.Columns.Count, result.Columns.Count);
+				Assert.Equal(t.Rows.Count, result.Rows.Count);
+			};
+		}
 
-				line.ExtendedData.Add(app, records);
+		public void SingleWipeout()
+		{
+			Wipeout wipeout = new Wipeout();
 
-				this.Document.Entities.Add(line);
-			}
+			wipeout.Size = new XY(10, 10);
+			wipeout.ClippingState = true;
 
-			public void XRef()
+			wipeout.ClipBoundaryVertices.Add(new XY(0, 0));
+			wipeout.ClipBoundaryVertices.Add(new XY(1, 0));
+			wipeout.ClipBoundaryVertices.Add(new XY(1, 1));
+			wipeout.ClipBoundaryVertices.Add(new XY(0, 1));
+
+			this.Document.Entities.Add(wipeout);
+
+			this.AssertRoundtrip = (doc) =>
 			{
-				BlockRecord record = new BlockRecord("my_xref", "./SinglePoint_AC1032.dwg");
-				this.Document.BlockRecords.Add(record);
-				this.Document.Entities.Add(new Insert(record));
+				Wipeout result = doc.GetCadObject<Wipeout>(wipeout.Handle);
 
-				record = new BlockRecord("my_line_xref", "./SingleLine_AC1032.dwg");
-				record.IsUnloaded = true;
-				this.Document.BlockRecords.Add(record);
-				this.Document.Entities.Add(new Insert(record));
+				Assert.NotNull(result);
+				EntityComparator.IsEqual(wipeout, result);
+			};
+		}
+
+		public void SortedXRecords()
+		{
+			Layer layer = this.Document.Layers[Layer.DefaultName];
+
+			XRecord xrecord = new XRecord("MOREDWG_ORDER");
+			xrecord.CreateEntry(300, "before");
+			xrecord.CreateEntry(330, layer);
+			xrecord.CreateEntry(294, false);
+			xrecord.CreateEntry(90, 7);
+
+			CadDictionary dictionary = new CadDictionary("MOREDWG_TEST");
+			dictionary.Add(xrecord);
+			this.Document.RootDictionary.Add(dictionary);
+
+			MemoryStream ms = new MemoryStream();
+			DwgWriter.Write(ms, this.Document);
+			using MemoryStream readStream = new MemoryStream(ms.ToArray());
+			CadDocument rt = DwgReader.Read(readStream);
+
+			this.AssertRoundtrip = (doc) =>
+			{
+				Assert.True(rt.RootDictionary.TryGetEntry("MOREDWG_TEST", out CadDictionary rtDictionary));
+				Assert.True(rtDictionary.TryGetEntry("MOREDWG_ORDER", out XRecord result));
+
+				int[] codes = result.Entries.Select(e => e.Code).ToArray();
+				Assert.Equal(new[] { 300, 330, 294, 90 }, codes);
+
+				Assert.Equal("before", result.Entries.ElementAt(0).Value);
+				Assert.Equal(Layer.DefaultName, ((Layer)result.Entries.ElementAt(1).Value).Name);
+				Assert.False(System.Convert.ToBoolean(result.Entries.ElementAt(2).Value));
+				Assert.Equal(7, System.Convert.ToInt32(result.Entries.ElementAt(3).Value));
+			};
+		}
+
+		public void SPlineCreation()
+		{
+			Spline spline = new Spline();
+
+			spline.ControlPoints.Add(new XYZ(0, 0, 0));
+			spline.ControlPoints.Add(new XYZ(10, 10, 0));
+			spline.ControlPoints.Add(new XYZ(20, 10, 0));
+			spline.ControlPoints.Add(new XYZ(50, 30, 0));
+
+			spline.Degree = 3;
+
+			spline.Knots.Add(0);
+			spline.Knots.Add(0);
+			spline.Knots.Add(0);
+			spline.Knots.Add(0);
+
+			spline.Knots.Add(1);
+			spline.Knots.Add(1);
+			spline.Knots.Add(1);
+			spline.Knots.Add(1);
+
+			Polyline3D polyline = new Polyline3D(spline.PolygonalVertexes(255));
+
+			this.Document.Entities.Add(spline);
+			this.Document.Entities.Add(polyline);
+
+			List<XYZ> fitPoints = new()
+			{
+				new XYZ(0, 0, 0),
+				new XYZ(5, 5, 0),
+				new XYZ(10, 0, 0),
+				new XYZ(15, -5, 0),
+				new XYZ(20, 0, 0)
+			};
+
+			spline = new Spline();
+			spline.FitPoints.AddRange(fitPoints);
+
+			spline.UpdateFromFitPoints();
+
+			this.Document.Entities.Add(spline);
+
+			this.AssertRoundtrip = (doc) =>
+			{
+				Spline result = doc.GetCadObject<Spline>(spline.Handle);
+
+				Assert.NotNull(result);
+				EntityComparator.IsEqual(spline, result);
+				Assert.Equal(this.Document.ModelSpace.Entities.Count, doc.ModelSpace.Entities.Count);
+			};
+		}
+
+		public void SurfaceEntities()
+		{
+			Line line = new Line(XYZ.Zero, new XYZ(10, 10, 0));
+			this.Document.Entities.Add(line);
+
+			//Surfaces are not written yet, the writers skip them
+			this.Document.Entities.Add(new Surface());
+			this.Document.Entities.Add(new ExtrudedSurface());
+			this.Document.Entities.Add(new LoftedSurface());
+			this.Document.Entities.Add(new NurbSurface());
+			this.Document.Entities.Add(new PlaneSurface());
+			this.Document.Entities.Add(new RevolvedSurface());
+			this.Document.Entities.Add(new SweptSurface());
+
+			this.AssertRoundtrip = (doc) =>
+			{
+				Assert.NotNull(doc.GetCadObject<Line>(line.Handle));
+				Assert.Empty(doc.Entities.OfType<Surface>());
+			};
+		}
+
+		public void TextAlignment()
+		{
+			XYZ insert = new XYZ(0, 0, 0);
+			List<TextEntity> texts = new();
+
+			foreach (var item in Enum.GetValues(typeof(TextHorizontalAlignment)).Cast<TextHorizontalAlignment>())
+			{
+				TextEntity textEntity = new TextEntity();
+				textEntity.Value = item.ToString();
+				textEntity.HorizontalAlignment = item;
+				textEntity.InsertPoint = insert;
+				textEntity.Height = 0.5;
+
+				this.Document.Entities.Add(textEntity);
+				texts.Add(textEntity);
+
+				insert = new XYZ(insert.X + 2, 0, 0);
 			}
+
+			this.AssertRoundtrip = (doc) =>
+			{
+				foreach (TextEntity text in texts)
+				{
+					TextEntity result = doc.GetCadObject<TextEntity>(text.Handle);
+
+					Assert.NotNull(result);
+					EntityComparator.IsEqual(text, result);
+				}
+			};
+		}
+
+		public void TextWithChineseCharacters()
+		{
+			this.Document.Header.CodePage = "GB2312";
+
+			TextStyle style = new TextStyle("custom");
+			style.Filename = "romans.shx";
+			style.BigFontFilename = "chineset.shx";
+
+			MText mtext = new MText();
+			mtext.Value = "我的短信";
+			mtext.Style = style;
+
+			TextEntity text = new TextEntity();
+			text.Value = "我的短信";
+			text.Style = style;
+
+			this.Document.Entities.Add(mtext);
+			this.Document.Entities.Add(text);
+
+			this.AssertRoundtrip = (doc) =>
+			{
+				MText mtextResult = doc.GetCadObject<MText>(mtext.Handle);
+				TextEntity textResult = doc.GetCadObject<TextEntity>(text.Handle);
+
+				Assert.NotNull(mtextResult);
+				Assert.NotNull(textResult);
+				Assert.Equal(mtext.Value, mtextResult.Value);
+				EntityComparator.IsEqual(text, textResult);
+			};
+		}
+
+		public override string ToString()
+		{
+			return this.Name;
+		}
+
+		public void ViewZoom()
+		{
+			Line line = new Line(XYZ.Zero, new XYZ(100, 100, 0));
+			Line line1 = new Line(new XYZ(0, 100, 0), new XYZ(100, 0, 0));
+
+			this.Document.Entities.Add(line);
+			this.Document.Entities.Add(line1);
+
+			var box = line.GetBoundingBox();
+
+			VPort active = this.Document.VPorts[VPort.DefaultName];
+			active.Center = (XY)box.Center;
+			//active.BottomLeft = (XY)box.Min;
+			//active.TopRight = (XY)box.Max;
+			active.ViewHeight = 100;
+
+			this.AssertRoundtrip = (doc) =>
+			{
+				VPort result = doc.VPorts[VPort.DefaultName];
+
+				Assert.NotNull(result);
+				Assert.Equal(active.Center, result.Center);
+				Assert.Equal(active.ViewHeight, result.ViewHeight);
+				Assert.NotNull(doc.GetCadObject<Line>(line.Handle));
+				Assert.NotNull(doc.GetCadObject<Line>(line1.Handle));
+			};
+		}
+
+		public void XData()
+		{
+			AppId app = new AppId("my_app");
+			Layer layer = new Layer("my_layer");
+			this.Document.AppIds.Add(app);
+			this.Document.Layers.Add(layer);
+
+			Line line = new Line(XYZ.Zero, new XYZ(100, 100, 0));
+
+			List<ExtendedDataRecord> records = new();
+			records.Add(new ExtendedDataControlString(false));
+			records.Add(new ExtendedDataInteger16(5));
+			records.Add(new ExtendedDataInteger32(33));
+			records.Add(new ExtendedDataString("my extended data string"));
+			//records.Add(new ExtendedDataHandle(5));
+			records.Add(new ExtendedDataReal(25.35));
+			records.Add(new ExtendedDataScale(0.66));
+			records.Add(new ExtendedDataDistance(481.48));
+			records.Add(new ExtendedDataDirection(new XYZ(4, 3, 2)));
+			records.Add(new ExtendedDataCoordinate(new XYZ(8, 7, 4)));
+			records.Add(new ExtendedDataWorldCoordinate(new XYZ(85, 74, 47)));
+			records.Add(new ExtendedDataLayer(layer.Handle));
+			records.Add(new ExtendedDataBinaryChunk(new byte[] { 1, 2, 3, 4 }));
+			records.Add(new ExtendedDataControlString(true));
+
+			line.ExtendedData.Add(app, records);
+
+			this.Document.Entities.Add(line);
+
+			this.AssertRoundtrip = (doc) =>
+			{
+				Line result = doc.GetCadObject<Line>(line.Handle);
+
+				Assert.NotNull(result);
+				EntityComparator.IsEqual(line, result);
+				Assert.NotEmpty(result.ExtendedData);
+				Assert.NotNull(doc.GetCadObject<AppId>(app.Handle));
+				Assert.NotNull(doc.GetCadObject<Layer>(layer.Handle));
+			};
+		}
+
+		public void XRef()
+		{
+			BlockRecord record = new BlockRecord("my_xref", "./SinglePoint_AC1032.dwg");
+			this.Document.BlockRecords.Add(record);
+			this.Document.Entities.Add(new Insert(record));
+
+			record = new BlockRecord("my_line_xref", "./SingleLine_AC1032.dwg");
+			record.IsUnloaded = true;
+			this.Document.BlockRecords.Add(record);
+			this.Document.Entities.Add(new Insert(record));
+
+			this.AssertRoundtrip = (doc) =>
+			{
+				BlockRecord result = doc.GetCadObject<BlockRecord>(record.Handle);
+
+				Assert.NotNull(result);
+				Assert.Equal(record.Name, result.Name);
+				Assert.Equal(record.IsUnloaded, result.IsUnloaded);
+				Assert.Equal(this.Document.ModelSpace.Entities.Count, doc.ModelSpace.Entities.Count);
+			};
+		}
+
+		private void drawBoundingBox(Entity entity)
+		{
+			this.Document.Entities.Add(entity);
+
+			var box = entity.GetBoundingBox();
+			if (box.Extent == BoundingBoxExtent.Infinite)
+			{
+				return;
+			}
+
+			var corners = new List<XYZ>
+			{
+				box.Min,
+				new XYZ(box.Max.X, box.Min.Y, box.Min.Z),
+				new XYZ(box.Max.X, box.Max.Y, box.Min.Z),
+				new XYZ(box.Min.X, box.Max.Y, box.Min.Z),
+				new XYZ(box.Min.X, box.Min.Y, box.Max.Z),
+				new XYZ(box.Max.X, box.Min.Y, box.Max.Z),
+				box.Max,
+				new XYZ(box.Min.X, box.Max.Y, box.Max.Z)
+			};
+
+			var pline = new Polyline3D(corners);
+
+			pline.IsClosed = true;
+			pline.Color = Color.Green;
+			this.Document.Entities.Add(pline);
 		}
 	}
 }

@@ -1,13 +1,16 @@
 ﻿using ACadSharp.Entities;
 
-namespace ACadSharp.Tests.Entities
-{
-	public class DimensionAngular3PtTests : CommonDimensionTests<DimensionAngular3Pt>
-	{
-		public override DimensionType Type => DimensionType.Angular3Point;
+namespace ACadSharp.Tests.Entities;
 
-		public override void UpdateBlockTests()
-		{
-		}
+public class DimensionAngular3PtTests : CommonDimensionTests<DimensionAngular3Pt>
+{
+	public override DimensionType Type => DimensionType.Angular3Point;
+
+	public override void GetBoundingBoxTest()
+	{
+	}
+
+	public override void UpdateBlockTests()
+	{
 	}
 }

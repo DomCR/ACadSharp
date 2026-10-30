@@ -1,126 +1,184 @@
 ﻿using ACadSharp.Attributes;
+using ACadSharp.Classes;
 using ACadSharp.Objects;
 using ACadSharp.Tables;
 using CSMath;
 using System;
 using System.Collections.Generic;
 
-namespace ACadSharp.Entities
+namespace ACadSharp.Entities;
+
+/// <summary>
+/// Represents a <see cref="TableEntity"/> entity.
+/// </summary>
+/// <remarks>
+/// Object name <see cref="DxfFileToken.EntityTable"/> <br/>
+/// Dxf class name <see cref="DxfSubclassMarker.TableEntity"/>
+/// </remarks>
+[DxfName(DxfFileToken.EntityTable)]
+[DxfSubClass(DxfSubclassMarker.TableEntity)]
+public partial class TableEntity : Insert, IDxfClassDefined
 {
 	/// <summary>
-	/// Represents a <see cref="TableEntity"/> entity.
+	/// Gets the table break data that defines how the table should be divided across breaks, including spacing, flow direction,
 	/// </summary>
-	/// <remarks>
-	/// Object name <see cref="DxfFileToken.EntityTable"/> <br/>
-	/// Dxf class name <see cref="DxfSubclassMarker.TableEntity"/>
-	/// </remarks>
-	[DxfName(DxfFileToken.EntityTable)]
-	[DxfSubClass(DxfSubclassMarker.TableEntity)]
-	[Obsolete("TableEntity is in a work in progress")]
-	public partial class TableEntity : Insert
+	public TableBreakData BreakData { get; } = new();
+
+	/// <summary>
+	/// Gets the collection of columns in the table entity.
+	/// </summary>
+	[DxfCodeValue(DxfReferenceType.Count, 92)]
+	public List<Column> Columns { get { return this.Content.Columns; } }
+
+	/// <summary>
+	/// Gets or sets a value indicating whether bread data is available.
+	/// </summary>
+	public bool HasBreadData { get; set; }
+
+	/// <summary>
+	/// Horizontal direction vector
+	/// </summary>
+	[DxfCodeValue(11, 21, 31)]
+	public XYZ HorizontalDirection { get; set; }
+
+	/// <inheritdoc/>
+	public override string ObjectName => DxfFileToken.EntityTable;
+
+	/// <inheritdoc/>
+	public override ObjectType ObjectType => ObjectType.UNLISTED;
+
+	/// <summary>
+	/// Flag for an override of border color.
+	/// </summary>
+	[DxfCodeValue(94)]
+	public bool OverrideBorderColor { get; set; }
+
+	/// <summary>
+	/// Flag for an override of border line weight.
+	/// </summary>
+	[DxfCodeValue(95)]
+	public bool OverrideBorderLineWeight { get; set; }
+
+	/// <summary>
+	/// Flag for an override of border visibility.
+	/// </summary>
+	[DxfCodeValue(96)]
+	public bool OverrideBorderVisibility { get; set; }
+
+	/// <summary>
+	/// Flag for an override.
+	/// </summary>
+	[DxfCodeValue(93)]
+	public bool OverrideFlag { get; set; }
+
+	/// <summary>
+	/// Table rows.
+	/// </summary>
+	[DxfCodeValue(DxfReferenceType.Count, 91)]
+	public List<Row> Rows { get { return this.Content.Rows; } }
+
+	/// <summary>
+	/// Gets or sets the table style associated with this object.
+	/// </summary>
+	[DxfCodeValue(DxfReferenceType.Handle, 342)]
+	public TableStyle Style
 	{
-		/// <summary>
-		/// Table columns
-		/// </summary>
-		[DxfCodeValue(DxfReferenceType.Count, 92)]
-		public List<Column> Columns { get { return this.Content.Columns; } }
-
-		/// <summary>
-		/// Horizontal direction vector
-		/// </summary>
-		[DxfCodeValue(11, 21, 31)]
-		public XYZ HorizontalDirection { get; set; }
-
-		/// <inheritdoc/>
-		public override string ObjectName => DxfFileToken.EntityTable;
-
-		/// <inheritdoc/>
-		public override ObjectType ObjectType => ObjectType.UNLISTED;
-
-		/// <summary>
-		/// Flag for an override of border color.
-		/// </summary>
-		[DxfCodeValue(94)]
-		public bool OverrideBorderColor { get; set; }
-
-		/// <summary>
-		/// Flag for an override of border line weight.
-		/// </summary>
-		[DxfCodeValue(95)]
-		public bool OverrideBorderLineWeight { get; set; }
-
-		/// <summary>
-		/// Flag for an override of border visibility.
-		/// </summary>
-		[DxfCodeValue(96)]
-		public bool OverrideBorderVisibility { get; set; }
-
-		/// <summary>
-		/// Flag for an override.
-		/// </summary>
-		[DxfCodeValue(93)]
-		public bool OverrideFlag { get; set; }
-
-		/// <summary>
-		/// Table rows.
-		/// </summary>
-		[DxfCodeValue(DxfReferenceType.Count, 91)]
-		public List<Row> Rows { get { return this.Content.Rows; } }
-
-		/// <summary>
-		/// Gets or sets the table style associated with this object.
-		/// </summary>
-		[DxfCodeValue(DxfReferenceType.Handle, 342)]
-		public TableStyle Style
+		get { return this.Content.Style; }
+		set
 		{
-			get { return this.Content.Style; }
-			set
-			{
-				this.Content.Style = value;
-			}
-		}
-
-		/// <inheritdoc/>
-		public override string SubclassMarker => DxfSubclassMarker.TableEntity;
-
-		/// <summary>
-		/// Flag for table value.
-		/// </summary>
-		[DxfCodeValue(90)]
-		public int ValueFlag { get; set; }
-
-		/// <summary>
-		/// Table data version
-		/// </summary>
-		[DxfCodeValue(280)]
-		public short Version { get; set; }
-
-		internal List<BreakRowRange> BreakRowRanges { get; set; } = new();
-
-		internal TableContent Content { get; set; } = new();
-
-		//343	Hard pointer ID of the owning BLOCK record
-		[DxfCodeValue(DxfReferenceType.Handle, 343)]
-		[Obsolete("Is it needed??")]
-		internal BlockRecord TableBlock { get { return this.Block; } }
-
-		internal BreakData TableBreakData { get; set; } = new();
-
-		/// <inheritdoc/>
-		public override CadObject Clone()
-		{
-			return base.Clone();
-		}
-
-		/// <inheritdoc/>
-		public override BoundingBox GetBoundingBox()
-		{
-			return BoundingBox.Null;
-		}
-
-		public Cell GetCell(int row, int column)
-		{
-			return this.Rows[row].Cells[column];
+			this.Content.Style = value;
 		}
 	}
+
+	/// <inheritdoc/>
+	public override string SubclassMarker => DxfSubclassMarker.TableEntity;
+
+	/// <summary>
+	/// Flag for table value.
+	/// </summary>
+	[DxfCodeValue(90)]
+	public int ValueFlag { get; set; }
+
+	/// <summary>
+	/// Table data version
+	/// </summary>
+	[DxfCodeValue(280)]
+	public short Version { get; set; }
+
+	internal List<BreakRowRange> BreakRowRanges { get; set; } = new();
+
+	internal TableContent Content { get; set; } = new();
+
+	[DxfCodeValue(DxfReferenceType.Handle, 343)]
+	internal BlockRecord TableBlock { get { return this.Block; } }
+
+	/// <summary>
+	/// Initializes a new instance of the <see cref="TableEntity"/> class.
+	/// </summary>
+	public TableEntity() : base()
+	{
+	}
+
+	/// <summary>
+	/// Initializes a new instance of the <see cref="TableEntity"/> class
+	/// bound to the given anonymous <see cref="BlockRecord"/> that will host the table cache.
+	/// </summary>
+	/// <param name="block">Anonymous block record used as the table's owning block (DXF 343).</param>
+	/// <exception cref="ArgumentNullException"></exception>
+	public TableEntity(BlockRecord block) : base()
+	{
+		if (block is null) throw new ArgumentNullException(nameof(block));
+		this.Block = block;
+	}
+
+	/// <inheritdoc/>
+	public override CadObject Clone()
+	{
+		TableEntity clone = (TableEntity)base.Clone();
+
+		return clone;
+	}
+
+	/// <inheritdoc/>
+	public override BoundingBox GetBoundingBox()
+	{
+		return BoundingBox.Null;
+	}
+
+	/// <summary>
+	/// Retrieves the cell at the specified row and column indices.
+	/// </summary>
+	/// <param name="row">The zero-based index of the row containing the cell to retrieve.</param>
+	/// <param name="column">The zero-based index of the column containing the cell to retrieve.</param>
+	/// <returns>The cell located at the specified row and column.</returns>
+	public Cell GetCell(int row, int column)
+	{
+		return this.Rows[row].Cells[column];
+	}
+
+	/// <inheritdoc/>
+	public DxfClass GetDxfClass()
+	{
+		return new DxfClass
+		{
+			CppClassName = DxfSubclassMarker.TableEntity,
+			DwgVersion = ACadVersion.AC1018,
+			DxfName = DxfFileToken.EntityTable,
+			ItemClassId = 498,
+			MaintenanceVersion = 0,
+			ProxyFlags = ProxyFlags.EraseAllowed | ProxyFlags.DisablesProxyWarningDialog,
+			WasZombie = false,
+		};
+	}
+
+	/// <summary>
+	/// Gets the collection of merged cell ranges associated with this table.
+	/// </summary>
+	public List<CellRange> MergedCellRanges { get { return this.Content.MergedCellRanges; } }
+
+	/// <summary>
+	/// Gets the cell style override applied at the table level.
+	/// Use this to set table-level overrides such as flow direction (FlowDirectionBottomToTop).
+	/// </summary>
+	public TableStyle.CellStyle CellStyleOverride { get { return this.Content.CellStyleOverride; } }
 }

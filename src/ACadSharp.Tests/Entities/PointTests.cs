@@ -3,41 +3,48 @@ using ACadSharp.Tests.Common;
 using CSMath;
 using Xunit;
 
-namespace ACadSharp.Tests.Entities
+namespace ACadSharp.Tests.Entities;
+
+public class PointTests : CommonEntityTests<Point>
 {
-	public class PointTests : CommonEntityTests<Point>
+	[Fact]
+	public void TranslateTest()
 	{
-		private CSMathRandom _random = new CSMathRandom();
+		XYZ init = this._random.Next<XYZ>();
+		XYZ transform = this._random.Next<XYZ>();
+		XYZ result = init + transform;
 
-		[Fact]
-		public void TranslateTest()
-		{
-			XYZ init = _random.Next<XYZ>();
-			XYZ transform = _random.Next<XYZ>();
-			XYZ result = init + transform;
+		Point point = new Point(init);
 
-			Point point = new Point(init);
+		point.ApplyTranslation(transform);
 
-			point.ApplyTranslation(transform);
-
-			AssertUtils.AreEqual(result, point.Location, "Point Location");
-			AssertUtils.AreEqual(XYZ.AxisZ, point.Normal);
-		}
+		AssertUtils.AreEqual(result, point.Location, "Point Location");
+		AssertUtils.AreEqual(XYZ.AxisZ, point.Normal);
+	}
 
 
-		[Fact]
-		public void RotationTest()
-		{
-			XYZ init = new(5, 5, 0);
+	[Fact]
+	public void RotationTest()
+	{
+		XYZ init = new(5, 5, 0);
 
-			Point point = new Point(init);
+		Point point = new Point(init);
 
-			Transform translation = Transform.CreateRotation(new XYZ(1, 0, 0), MathHelper.DegToRad(90));
-			point.ApplyTransform(translation);
+		Transform translation = Transform.CreateRotation(new XYZ(1, 0, 0), MathHelper.DegToRad(90));
+		point.ApplyTransform(translation);
 
-			//Rotation around origin
-			AssertUtils.AreEqual(new XYZ(5, 0, 5), point.Location, "Point Location");
-			AssertUtils.AreEqual(XYZ.AxisY, point.Normal);
-		}
+		//Rotation around origin
+		AssertUtils.AreEqual(new XYZ(5, 0, 5), point.Location, "Point Location");
+		AssertUtils.AreEqual(XYZ.AxisY, point.Normal);
+	}
+
+	public override void GetBoundingBoxTest()
+	{
+		XYZ pt = this._random.NextXYZ();
+		Point point = new Point(pt);
+
+		var box = point.GetBoundingBox();
+		Assert.Equal(BoundingBoxExtent.Point, box.Extent);
+		Assert.Equal(pt, box.Center);
 	}
 }

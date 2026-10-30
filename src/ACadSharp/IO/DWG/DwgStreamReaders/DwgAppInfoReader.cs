@@ -1,8 +1,4 @@
-﻿using CSUtilities.Converters;
-using System.Runtime.CompilerServices;
-using System.Text;
-
-namespace ACadSharp.IO.DWG.DwgStreamReaders
+﻿namespace ACadSharp.IO.DWG.DwgStreamReaders
 {
 	internal class DwgAppInfoReader : DwgSectionIO
 	{

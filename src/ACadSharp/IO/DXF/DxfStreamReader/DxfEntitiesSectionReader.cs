@@ -1,4 +1,4 @@
-﻿using ACadSharp.Blocks;
+﻿using ACadSharp.IO.DXF.DxfStreamReader;
 using ACadSharp.IO.Templates;
 using System;
 
@@ -49,6 +49,10 @@ namespace ACadSharp.IO.DXF
 				else if (this._builder.TryGetObjectTemplate(template.OwnerHandle, out ICadOwnerTemplate owner))
 				{
 					owner.OwnedObjectsHandlers.Add(template.CadObject.Handle);
+				}
+				else
+				{
+					_builder.OrphanTemplates.Add(template);
 				}
 			}
 		}

@@ -1,5 +1,6 @@
 ﻿using ACadSharp.Entities;
 using CSMath;
+using CSMath.Extensions;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -57,7 +58,7 @@ namespace ACadSharp.Extensions
 					e = arc;
 				}
 
-				polyline.MatchProperties(e);
+				e.MatchProperties(polyline);
 
 				entities.Add(e);
 			}

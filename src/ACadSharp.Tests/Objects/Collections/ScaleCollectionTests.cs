@@ -1,15 +1,12 @@
-﻿using Xunit;
+﻿using ACadSharp.Objects;
+using ACadSharp.Objects.Collections;
 
-namespace ACadSharp.Tests.Objects.Collections
+namespace ACadSharp.Tests.Objects.Collections;
+
+public class ScaleCollectionTests : ObjectDictionaryCollectionTests<ScaleCollection, Scale>
 {
-	public class ScaleCollectionTests
+	protected override ScaleCollection getDocumentCollection(CadDocument doc)
 	{
-		[Fact]
-		public void InitScaleCollection()
-		{
-			CadDocument doc = new CadDocument();
-
-			Assert.NotNull(doc.Scales);
-		}
+		return doc.Scales;
 	}
 }

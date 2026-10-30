@@ -1,4 +1,5 @@
 ﻿using CSMath;
+using CSUtilities.Converters;
 using System;
 using System.IO;
 using System.Text;
@@ -145,9 +146,45 @@ namespace ACadSharp.IO.DWG
 			this.Main.WriteBytes(bytes);
 		}
 
-		public void WriteCmColor(Color value)
+		public void WriteCmColor(Color value, bool useTextStream = false)
 		{
-			this.Main.WriteCmColor(value);
+			if (!(this.Main is DwgStreamWriterAC18) && !useTextStream)
+			{
+				this.Main.WriteCmColor(value);
+				return;
+			}
+
+			//CMC:
+			//BS: color index(always 0)
+			this.WriteBitShort(0);
+
+			byte[] arr = new byte[4];
+
+			if (value.IsTrueColor)
+			{
+				arr[2] = (byte)value.R;
+				arr[1] = (byte)value.G;
+				arr[0] = (byte)value.B;
+				arr[3] = 0b1100_0010;
+			}
+			else if (value.IsByLayer)
+			{
+				arr[3] = 0b11000000;
+			}
+			else
+			{
+				arr[3] = 0b1100_0011;
+				arr[0] = (byte)value.Index;
+			}
+
+			//BL: RGB value
+			this.WriteBitLong(LittleEndianConverter.Instance.ToInt32(arr));
+
+			//RC: Color Byte
+			this.WriteByte(0);
+
+			//(&1 => color name follows(TV),
+			//&2 => book name follows(TV))
 		}
 
 		public void WriteEnColor(Color color, Transparency transparency)

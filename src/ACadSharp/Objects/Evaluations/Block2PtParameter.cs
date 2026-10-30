@@ -1,31 +1,63 @@
 ﻿using ACadSharp.Attributes;
 using CSMath;
+using System.Collections.Generic;
 
-namespace ACadSharp.Objects.Evaluations
+namespace ACadSharp.Objects.Evaluations;
+
+/// <summary>
+/// Represents the dynamic block 2 point parameter.
+/// </summary>
+[DxfSubClass(DxfSubclassMarker.Block2PtParameter)]
+public abstract class Block2PtParameter : BlockParameter
 {
-	[DxfSubClass(DxfSubclassMarker.Block2PtParameter)]
-	public abstract class Block2PtParameter : BlockParameter
-	{
-		/// <inheritdoc/>
-		public override string SubclassMarker => DxfSubclassMarker.Block2PtParameter;
+	/// <summary>
+	/// Base point the distance is measured from (start point or middle point).
+	/// </summary>
+	[DxfCodeValue(177)]
+	public LinearParameterBaseLocation BaseLocation { get; set; }
 
-		[DxfCodeValue(1010, 1020, 1030)]
-		public XYZ FirstPoint { get; set; }
+	/// <summary>
+	/// Gets or sets the first point.
+	/// </summary>
+	[DxfCodeValue(1010, 1020, 1030)]
+	public XYZ FirstPoint { get; set; }
 
-		[DxfCodeValue(1011, 1021, 1031)]
-		public XYZ SecondPoint { get; set; }
+	/// <summary>
+	/// Gets or sets the first point displacement in X direction.
+	/// </summary>
+	public EvalParameterProperty FirstPointDisplacementX { get; set; } = new EvalParameterProperty();
 
-		//	Appears on DXF
-		//170	BS	4
-		//91	BL	31
-		//91	BL	0
-		//91	BL	0
-		//91	BL	0
+	/// <summary>
+	/// Gets or sets the first point displacement in Y direction.
+	/// </summary>
+	public EvalParameterProperty FirstPointDisplacementY { get; set; } = new EvalParameterProperty();
 
-		//171	BS	0
-		//172	BS	0
-		//173	BS	0
-		//174	BS	0
-		//177	BS	0
-	}
+	/// <summary>
+	/// Gets or sets the grip ids.
+	/// </summary>
+	/// <remarks>
+	/// Size 4 array of grip ids.
+	/// </remarks>
+	[DxfCollectionCodeValue(91)]
+	[DxfCodeValue(DxfReferenceType.Count, 170)]
+	public List<long> GripIds { get; } = new();
+
+	/// <summary>
+	/// Gets or sets the second point.
+	/// </summary>
+	[DxfCodeValue(1011, 1021, 1031)]
+	public XYZ SecondPoint { get; set; }
+
+	/// <summary>
+	/// Gets or sets the second point displacement in X direction.
+	/// </summary>
+	public EvalParameterProperty SecondPointDisplacementX { get; set; } = new EvalParameterProperty();
+
+	/// <summary>
+	/// Gets or sets the second point displacement in Y direction.
+	/// </summary>
+	public EvalParameterProperty SecondPointDisplacementY { get; set; } = new EvalParameterProperty();
+
+	/// <inheritdoc/>
+	public override string SubclassMarker => DxfSubclassMarker.Block2PtParameter;
 }

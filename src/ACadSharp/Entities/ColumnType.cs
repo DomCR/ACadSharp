@@ -5,10 +5,10 @@
 	/// </summary>
 	public enum ColumnType : short
 	{
-		NoColumns,
+		NoColumns = 0,
 
-		StaticColumns,
+		StaticColumns = 1,
 
-		DynamicColumns,
+		DynamicColumns = 2,
 	}
 }

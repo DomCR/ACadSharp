@@ -1,26 +1,35 @@
 ﻿using ACadSharp.Attributes;
 
-namespace ACadSharp.Objects.Evaluations
+namespace ACadSharp.Objects.Evaluations;
+
+/// <summary>
+/// Represents an evaluation expression used in AutoCAD to define dynamic block parameters and constraints.
+/// </summary>
+[DxfSubClass(DxfSubclassMarker.EvalGraphExpr)]
+public abstract class EvaluationExpression : NonGraphicalObject
 {
 	/// <summary>
-	/// 
+	/// Gets or sets the evaluated value of the expression.
 	/// </summary>
-	[DxfSubClass(DxfSubclassMarker.EvalGraphExpr)]
-	public abstract class EvaluationExpression : CadObject
-	{
-		/// <inheritdoc/>
-		public override ObjectType ObjectType => ObjectType.UNLISTED;
+	public DxfValuePair EvaluatedValue { get; set; }
 
-		/// <inheritdoc/>
-		public override string SubclassMarker => DxfSubclassMarker.EvalGraphExpr;
+	/// <summary>
+	/// Gets or sets the unique identifier for the evaluation expression.
+	/// </summary>
+	[DxfCodeValue(90)]
+	public int Id { get; set; }
 
-		[DxfCodeValue(90)]
-		internal int Value90 { get; set; }
+	/// <inheritdoc/>
+	public override ObjectType ObjectType => ObjectType.UNLISTED;
 
-		[DxfCodeValue(98)]
-		internal int Value98 { get; set; }
+	/// <inheritdoc/>
+	public override string SubclassMarker => DxfSubclassMarker.EvalGraphExpr;
 
-		[DxfCodeValue(99)]
-		internal int Value99 { get; set; }
-	}
+	[DxfCodeValue(98)]
+	public int Value98 { get; set; }
+
+	[DxfCodeValue(99)]
+	public int Value99 { get; set; }
+
+	internal int Unknown { get; set; } = -1;
 }

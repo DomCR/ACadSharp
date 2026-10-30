@@ -1,23 +1,42 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
+﻿using ACadSharp.Attributes;
+using ACadSharp.Classes;
 
-using ACadSharp.Attributes;
+namespace ACadSharp.Objects.Evaluations;
 
+/// <summary>
+/// Represents a BLOCKGRIPLOCATIONCOMPONENT object.
+/// </summary>
+/// <remarks>
+/// Object name <see cref="DxfFileToken.ObjectBlockGripLocationComponent"/> <br/>
+/// Dxf class name <see cref="DxfSubclassMarker.BlockGripExpression"/>
+/// </remarks>
+[DxfName(DxfFileToken.ObjectBlockGripLocationComponent)]
+[DxfSubClass(DxfSubclassMarker.BlockGripExpression)]
+public class BlockGripLocationComponent : EvaluationExpression, IDxfClassDefined
+{
+	/// <summary>
+	/// Gets or sets the connection of the block grip location component.
+	/// </summary>
+	public EvalConnection Connection { get; set; } = new EvalConnection();
 
-namespace ACadSharp.Objects.Evaluations {
+	/// <inheritdoc/>
+	public override string ObjectName => DxfFileToken.ObjectBlockGripLocationComponent;
 
-	// No properties
+	/// <inheritdoc/>
+	public override string SubclassMarker => DxfSubclassMarker.BlockGripExpression;
 
-	[DxfSubClass(DxfSubclassMarker.BlockGripLocationComponent)]
-	internal class BlockGripLocationComponent : BlockGripExpression {
-
-		// /// <inheritdoc/>
-		// public override string ObjectName => DxfFileToken.??;
-
-		/// <inheritdoc/>
-		public override string SubclassMarker => DxfSubclassMarker.BlockGripLocationComponent;
+	/// <inheritdoc/>
+	public DxfClass GetDxfClass()
+	{
+		return new DxfClass
+		{
+			CppClassName = DxfSubclassMarker.BlockGripExpression,
+			DwgVersion = ACadVersion.AC1018,
+			DxfName = DxfFileToken.ObjectBlockGripLocationComponent,
+			ItemClassId = 499,
+			MaintenanceVersion = 20,
+			ProxyFlags = ACadSharp.Classes.ProxyFlags.EraseAllowed | ACadSharp.Classes.ProxyFlags.CloningAllowed | ACadSharp.Classes.ProxyFlags.DisablesProxyWarningDialog,
+			WasZombie = false,
+		};
 	}
 }

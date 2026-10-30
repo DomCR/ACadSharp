@@ -4,6 +4,7 @@ using ACadSharp.Objects;
 using ACadSharp.Tables;
 using ACadSharp.Types.Units;
 using CSMath;
+using CSMath.Extensions;
 using CSUtilities.Extensions;
 using System;
 using System.Collections.Generic;
@@ -121,6 +122,9 @@ namespace ACadSharp.IO.SVG
 				case Arc arc:
 					this.writeArc(arc, transform);
 					break;
+				case Dimension dimension:
+					this.writeDimension(dimension, transform);
+					break;
 				case Line line:
 					this.writeLine(line, transform);
 					break;
@@ -148,6 +152,9 @@ namespace ACadSharp.IO.SVG
 				//case Spline spline:
 				//	this.writeSpline(spline, transform);
 				//	break;
+				case Solid solid:
+					this.writeSolid(solid, transform);
+					break;
 				default:
 					this.notify($"[{entity.ObjectName}] Entity not implemented.", NotificationType.NotImplemented);
 					break;
@@ -228,9 +235,9 @@ namespace ACadSharp.IO.SVG
 				this.WriteValue(" ");
 				this.WriteValue(vb.Min.Y.ToPixelSize(units));
 				this.WriteValue(" ");
-				this.WriteValue((vb.Width).ToPixelSize(units));
+				this.WriteValue(vb.LengthX.ToPixelSize(units));
 				this.WriteValue(" ");
-				this.WriteValue((vb.Height).ToPixelSize(units));
+				this.WriteValue(vb.LengthY.ToPixelSize(units));
 				this.WriteEndAttribute();
 			}
 
@@ -271,9 +278,30 @@ namespace ACadSharp.IO.SVG
 
 			arc.GetEndVertices(out XYZ start, out XYZ end);
 			var largeArc = Math.Abs(arc.Sweep) > MathHelper.PI ? 1 : 0;
-			this.WriteAttributeString("d", $"M {start.ToPixelSize(this.Units).ToSvg()} A {arc.Radius} {arc.Radius} {0} {largeArc} {1} {end.ToPixelSize(this.Units).ToSvg()}");
+
+			StringBuilder sb = new StringBuilder();
+
+			sb.Append($"M {start.ToPixelSize(this.Units).ToSvg()}");
+			sb.Append($" ");
+			sb.Append($"A {arc.Radius.ToPixelSize(this.Units)} {arc.Radius.ToPixelSize(this.Units)}");
+			sb.Append($" ");
+			sb.Append($"{0} {largeArc} {1} {end.ToPixelSize(this.Units).ToSvg()}");
+
+			this.WriteAttributeString("d", sb.ToString());
 
 			this.WriteAttributeString("fill", "none");
+
+			this.WriteEndElement();
+		}
+
+		private void writeDimension(Dimension dimension, Transform transform)
+		{
+			this.WriteStartElement("g");
+
+			foreach (Entity e in dimension.Block.Entities)
+			{
+				this.writeEntity(e, transform);
+			}
 
 			this.WriteEndElement();
 		}
@@ -534,8 +562,8 @@ namespace ACadSharp.IO.SVG
 				//Add BasePoint
 				this.WriteAttributeString("x1", 0.0d.ToSvg(this.Units));
 				this.WriteAttributeString("y1", 0.0d.ToSvg(this.Units));
-				this.WriteAttributeString("x2", (x).ToSvg(this.Units));
-				this.WriteAttributeString("y2", (y).ToSvg(this.Units));
+				this.WriteAttributeString("x2", x.ToSvg(this.Units));
+				this.WriteAttributeString("y2", y.ToSvg(this.Units));
 
 				//Rotate the pattern after line
 				//this.WriteAttributeString("x1", 0.0d.ToSvg(this.Units));
@@ -557,8 +585,8 @@ namespace ACadSharp.IO.SVG
 				if (false)
 				{
 					this.WriteStartElement("rect");
-					this.WriteAttributeString("width", (item.LineOffset).ToSvg(this.Units));
-					this.WriteAttributeString("height", (item.LineOffset).ToSvg(this.Units));
+					this.WriteAttributeString("width", item.LineOffset.ToSvg(this.Units));
+					this.WriteAttributeString("height", item.LineOffset.ToSvg(this.Units));
 					this.WriteAttributeString("fill", $"none");
 					this.WriteAttributeString("stroke", $"red");
 					this.WriteEndElement();
@@ -569,8 +597,8 @@ namespace ACadSharp.IO.SVG
 			}
 
 			string id = this.writePatternHeader(hatch);
-			var width = patterns.Values.Max(w => w.Width);
-			var height = patterns.Values.Max(w => w.Height);
+			var width = patterns.Values.Max(w => w.LengthX);
+			var height = patterns.Values.Max(w => w.LengthY);
 
 			this.WriteAttributeString("width", width.ToSvg(this.Units));
 			this.WriteAttributeString("height", height.ToSvg(this.Units));
@@ -578,8 +606,8 @@ namespace ACadSharp.IO.SVG
 			foreach (var item in patterns)
 			{
 				this.WriteStartElement("rect");
-				this.WriteAttributeString("width", (item.Value.Width).ToSvg(this.Units));
-				this.WriteAttributeString("height", (item.Value.Height).ToSvg(this.Units));
+				this.WriteAttributeString("width", item.Value.LengthX.ToSvg(this.Units));
+				this.WriteAttributeString("height", item.Value.LengthY.ToSvg(this.Units));
 				this.WriteAttributeString("fill", $"url(#{item.Key})");
 				this.WriteEndElement();
 			}
@@ -626,7 +654,7 @@ namespace ACadSharp.IO.SVG
 
 			this.writeEntityHeader(point, transform);
 
-			this.WriteAttributeString("r", this.Configuration.PointRadius);
+			this.WriteAttributeString("r", this.Configuration.PointRadius, UnitsType.Unitless);
 			this.WriteAttributeString("cx", point.Location.X);
 			this.WriteAttributeString("cy", point.Location.Y);
 
@@ -691,7 +719,7 @@ namespace ACadSharp.IO.SVG
 				this.WriteValue("px");
 			}
 
-			if(text.Style.TrueType.HasFlag(FontFlags.Bold))
+			if (text.Style.TrueType.HasFlag(FontFlags.Bold))
 			{
 				this.WriteValue("bold");
 			}
@@ -750,7 +778,7 @@ namespace ACadSharp.IO.SVG
 							break;
 					}
 
-					foreach (var item in mtext.GetTextLines())
+					foreach (var item in mtext.GetPlainTextLines())
 					{
 						this.WriteStartElement("tspan");
 						this.WriteAttributeString("x", 0);
@@ -802,6 +830,19 @@ namespace ACadSharp.IO.SVG
 			}
 
 			this.WriteEndElement();
+			this.WriteEndElement();
+		}
+
+		private void writeSolid(Solid solid, Transform transform)
+		{
+			this.WriteStartElement("polygon");
+
+			this.writeEntityHeader(solid, transform);
+
+			string pts = this.svgPoints([solid.FirstCorner, solid.SecondCorner, solid.ThirdCorner, solid.FourthCorner], transform);
+			this.WriteAttributeString("points", pts);
+			this.WriteAttributeString("fill", this.colorSvg(solid.GetActiveColor()));
+
 			this.WriteEndElement();
 		}
 

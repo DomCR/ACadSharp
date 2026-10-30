@@ -232,7 +232,7 @@ namespace ACadSharp.IO.DWG
 		/// CMC : CmColor value
 		/// </summary>
 		/// <returns></returns>
-		Color ReadCmColor();
+		Color ReadCmColor(bool useTextStream = false);
 
 		Color ReadColorByIndex();
 
