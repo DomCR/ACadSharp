@@ -1,4 +1,6 @@
-﻿namespace ACadSharp.IO.DWG
+﻿using ACadSharp.IO.DWG.FileHeaders;
+
+namespace ACadSharp.IO.DWG
 {
 	internal class DwgFileHeaderAC21 : DwgFileHeaderAC18
 	{
