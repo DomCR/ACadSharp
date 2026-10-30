@@ -35,11 +35,6 @@ public class LocalSampleTests : IOTestsBase
 
 		CadDocument doc = DwgReader.Read(test.Path, this._dwgConfiguration, this.onNotification);
 
-		if (doc.Header.Version == ACadVersion.AC1021)
-		{
-			doc.Header.Version = ACadVersion.AC1032;
-		}
-
 		if (!TestVariables.SaveOutputInStream)
 		{
 			this._output.WriteLine("--- starting write ---");
