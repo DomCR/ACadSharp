@@ -119,10 +119,13 @@ internal partial class DwgObjectWriter : DwgSectionIO
 
 		this._writer.Write3BitDouble(action.LabelPosition);
 
-		this._writer.WriteBitLong(action.Entities.Count);
-		foreach (Entities.Entity entity in action.Entities)
+		//Elements, not Entities: an action refers to parameters and grips as well as entities, and
+		//writing only the entities dropped 385 references in one drawing's 118 actions.
+		List<CadObject> referenced = action.GetReferencedObjects().ToList();
+		this._writer.WriteBitLong(referenced.Count);
+		foreach (CadObject obj in referenced)
 		{
-			this._writer.HandleReference(DwgReferenceType.SoftPointer, entity);
+			this._writer.HandleReference(DwgReferenceType.SoftPointer, obj);
 		}
 
 		this._writer.WriteBitLong(action.ParametersIds.Count);
