@@ -1590,6 +1590,7 @@ internal class DxfObjectsSectionWriter : DxfSectionWriterBase
 		foreach (var item in field.Children)
 		{
 			this._writer.WriteHandle(360, item);
+			this.Holder.Objects.Enqueue(item);
 		}
 
 		this._writer.Write(97, field.CadObjects.Count);
