@@ -1,5 +1,6 @@
 ﻿using ACadSharp.Entities;
 using ACadSharp.IO;
+using ACadSharp.Objects;
 using ACadSharp.Tests.Common;
 using System.Collections.Generic;
 using System.IO;
@@ -64,6 +65,25 @@ public class DxfWriterTests : IOTestsBase
 		{
 			CadDocument readed = re.Read();
 		}
+	}
+
+	[Fact]
+	public void WriteFieldWithoutOwnerTest()
+	{
+		//A FIELD read without its owner is still listed by ACAD_FIELDLIST, the writer must not fail on it
+		CadDocument doc = new CadDocument();
+		doc.Header.Version = ACadVersion.AC1032;
+
+		FieldList list = new FieldList();
+		list.Fields.Add(new Field { FormatString = string.Empty });
+		doc.RootDictionary.Remove(CadDictionary.AcadFieldList);
+		doc.RootDictionary.Add(CadDictionary.AcadFieldList, list);
+
+		MemoryStream stream = new MemoryStream();
+		DxfWriter.Write(stream, doc, false, notification: this.onNotification);
+
+		CadDocument read = DxfReader.Read(new MemoryStream(stream.ToArray()), this.onNotification);
+		Assert.NotNull(read);
 	}
 
 	[Theory]
