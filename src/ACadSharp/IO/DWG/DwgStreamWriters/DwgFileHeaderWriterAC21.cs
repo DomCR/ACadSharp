@@ -231,29 +231,41 @@ internal class DwgFileHeaderWriterAC21 : DwgFileHeaderWriterBase<DwgFileHeaderAC
 			metadataStream.GetBuffer(), 0u, 0x110,
 			CRC.UpdateSeed2(0uL, 0x110));
 
-		((Stream)(object)metadataStream).Position = 0x108L;
-		
+		((Stream)(object)metadataStream).Position = 0x108;
+
 		//0x108	8	Header CRC64
 		metadataIO.Write<ulong>(crc64);
-
-		MemoryStream compressed = new MemoryStream();
-		this._compressor.Compress(metadataStream.GetBuffer(), 0, (int)metadataStream.Length, compressed);
 
 		byte[] decoded = new byte[_headerFactor * _headerBlockSize];
 		StreamIO writer = new StreamIO(new MemoryStream(decoded));
 
-		ulong crc = this._crcEncoding.NextUInt64();
+		MemoryStream compressed = new MemoryStream();
+		this._compressor.Compress(metadataStream.GetBuffer(), 0, (int)metadataStream.Length, compressed);
+
+		ulong compressedCrc = CRC.Encode(
+			compressed.GetBuffer(), 0u, (uint)((Stream)(object)compressed).Length,
+			CRC.UpdateSeed2(0uL, (uint)((Stream)(object)compressed).Length));
+
+		MemoryStream crcMemoryStream = new MemoryStream(12);
+		StreamIO crcStreamIO = new StreamIO(crcMemoryStream);
+		ulong seed = this._crcEncoding.NextUInt64();
+		crcStreamIO.Write<ulong>(seed);
+		crcStreamIO.Write<ulong>(rotateLeft(seed, seed));
+		ulong crc = CRC.Encode(
+			crcMemoryStream.GetBuffer(), 0u, (uint)((Stream)(object)crcMemoryStream).Length,
+			CRC.UpdateSeed1(0uL, (uint)((Stream)(object)crcMemoryStream).Length));
+
 		//0x00	8	CRC
 		writer.Write<ulong>(crc);
 		//0x08	8	Unknown key
-		writer.Write<ulong>(0L);
+		writer.Write<ulong>(seed);
 		//0x10	8	Compressed Data CRC
-		writer.Write<ulong>(0L);
-		//0x18	4	ComprLen
-		writer.Write<ulong>((ulong)compressed.Length);
-		//0x1C	4	Length2
-		writer.Write<ulong>(0);
+		writer.Write<ulong>(compressedCrc);
 
+		//0x18	4	ComprLen
+		//0x1C	4	Length2
+		writer.Write<long>(compressed.Length);
+		
 		System.Array.Copy(compressed.GetBuffer(), 0, decoded, 0x20, (int)compressed.Length);
 
 		byte[] encoded = reedSolomonEncoding(decoded, decoded.Length, _headerFactor, _headerBlockSize);
@@ -317,6 +329,16 @@ internal class DwgFileHeaderWriterAC21 : DwgFileHeaderWriterBase<DwgFileHeaderAC
 		}
 
 		return encoded;
+	}
+
+	private static ulong rotateLeft(ulong value, ulong count)
+	{
+		int shift = (int)(count & 0x1F);
+		if (shift != 0)
+		{
+			value = (value << shift) | (value >> 64 - shift);
+		}
+		return value;
 	}
 
 	private static byte[] rsGenerator(int nsym)
