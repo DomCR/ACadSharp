@@ -12,13 +12,13 @@ internal class DwgFileHeaderWriterAC21 : DwgFileHeaderWriterBase<DwgFileHeaderAC
 
 	public override int HandleSectionOffset { get { return 0; } }
 
-	private const int HeaderBlockSize = 239;
+	private const int _headerBlockSize = 239;
 
-	private const int HeaderFactor = 3;
+	private const int _headerFactor = 3;
 
-	private const int PageBlockSize = 251;
+	private const int _pageBlockSize = 251;
 
-	private const int SystemBlockSize = 239;
+	private const int _systemBlockSize = 239;
 
 	private readonly ICompressor _compressor = new DwgLZ77AC21Compressor();
 
@@ -180,8 +180,8 @@ internal class DwgFileHeaderWriterAC21 : DwgFileHeaderWriterBase<DwgFileHeaderAC
 		if (descriptor.Encoding == 4)
 		{
 			//Encoded page, use reed solomon
-			int factor = (int)((align8((ulong)dataLength) + PageBlockSize - 1) / PageBlockSize);
-			data = reedSolomonEncoding(data, dataLength, factor, PageBlockSize);
+			int factor = (int)((align8((ulong)dataLength) + _pageBlockSize - 1) / _pageBlockSize);
+			data = reedSolomonEncoding(data, dataLength, factor, _pageBlockSize);
 			dataLength = data.Length;
 		}
 
@@ -200,7 +200,7 @@ internal class DwgFileHeaderWriterAC21 : DwgFileHeaderWriterBase<DwgFileHeaderAC
 		MemoryStream compressed = new MemoryStream();
 		this._compressor.Compress(metadataStream.GetBuffer(), 0, (int)metadataStream.Length, compressed);
 
-		byte[] decoded = new byte[HeaderFactor * HeaderBlockSize];
+		byte[] decoded = new byte[_headerFactor * _headerBlockSize];
 		StreamIO writer = new StreamIO(new MemoryStream(decoded));
 
 		//0x00	8	CRC
@@ -216,7 +216,7 @@ internal class DwgFileHeaderWriterAC21 : DwgFileHeaderWriterBase<DwgFileHeaderAC
 
 		System.Array.Copy(compressed.GetBuffer(), 0, decoded, 0x20, (int)compressed.Length);
 
-		byte[] encoded = reedSolomonEncoding(decoded, decoded.Length, HeaderFactor, HeaderBlockSize);
+		byte[] encoded = reedSolomonEncoding(decoded, decoded.Length, _headerFactor, _headerBlockSize);
 
 		stream.Write(encoded, 0, encoded.Length);
 		//Fill the rest of the 0x400 bytes, the last 0x28 bytes are the check data
@@ -339,8 +339,8 @@ internal class DwgFileHeaderWriterAC21 : DwgFileHeaderWriterBase<DwgFileHeaderAC
 		this._compressor.Compress(data, 0, length, compressed);
 		compressedSize = (ulong)compressed.Length;
 
-		int factor = (int)((align8(compressedSize) + SystemBlockSize - 1) / SystemBlockSize);
-		byte[] encoded = reedSolomonEncoding(compressed.GetBuffer(), (int)compressed.Length, factor, SystemBlockSize);
+		int factor = (int)((align8(compressedSize) + _systemBlockSize - 1) / _systemBlockSize);
+		byte[] encoded = reedSolomonEncoding(compressed.GetBuffer(), (int)compressed.Length, factor, _systemBlockSize);
 
 		DwgLocalSectionMap map = new DwgLocalSectionMap();
 		map.CompressedSize = compressedSize;
@@ -416,7 +416,7 @@ internal class DwgFileHeaderWriterAC21 : DwgFileHeaderWriterBase<DwgFileHeaderAC
 		int length = (pageId) * 16;
 		MemoryStream compressed = new MemoryStream();
 		this._compressor.Compress(new byte[length], 0, length, compressed);
-		int factor = (int)((align8((ulong)compressed.Length) + SystemBlockSize - 1) / SystemBlockSize);
+		int factor = (int)((align8((ulong)compressed.Length) + _systemBlockSize - 1) / _systemBlockSize);
 		long pagesMapSize = factor * byte.MaxValue;
 
 		MemoryStream stream = new MemoryStream();
@@ -505,6 +505,12 @@ internal class DwgFileHeaderWriterAC21 : DwgFileHeaderWriterBase<DwgFileHeaderAC
 		}
 
 		return 0u;
+	}
+
+	private void prepareMetadata(Dwg21CompressedMetadata metadata)
+	{
+		metadata.FileSize = (ulong)(this._stream.Length + 0x400);
+		metadata.Header2offset = (ulong)(this._stream.Position - 0x480);
 	}
 
 	private void writeCompressedMetadata(StreamIO writer)
