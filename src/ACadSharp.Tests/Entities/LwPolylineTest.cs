@@ -115,6 +115,26 @@ public class LwPolylineTests : CommonEntityTests<LwPolyline>
 		}
 	}
 
+	[Fact]
+	public void ABulgeOverAZeroLengthSegmentDoesNotThrow()
+	{
+		//A repeated vertex that still carries a bulge is an arc over a chord of no length.
+		//There is no radius to recover, and Arc refuses the zero its own maths produces - so
+		//one such vertex, which real exports are full of, used to discard the whole polyline.
+		LwPolyline lwPolyline = new LwPolyline();
+		lwPolyline.Vertices.Add(new LwPolyline.Vertex(new XY(0, 0)));
+		lwPolyline.Vertices.Add(new LwPolyline.Vertex(new XY(10, 0)) { Bulge = 0.5 });
+		lwPolyline.Vertices.Add(new LwPolyline.Vertex(new XY(10, 0)));
+		lwPolyline.Vertices.Add(new LwPolyline.Vertex(new XY(10, 8)));
+
+		BoundingBox box = lwPolyline.GetBoundingBox();
+
+		Assert.Equal(0.0, box.Min.X, 6);
+		Assert.Equal(0.0, box.Min.Y, 6);
+		Assert.Equal(10.0, box.Max.X, 6);
+		Assert.Equal(8.0, box.Max.Y, 6);
+	}
+
 	public override void GetBoundingBoxTest()
 	{
 	}
