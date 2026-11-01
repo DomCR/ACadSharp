@@ -224,8 +224,17 @@ internal class DwgFileHeaderWriterAC21 : DwgFileHeaderWriterBase<DwgFileHeaderAC
 	protected void writeFileHeader(MemoryStream stream)
 	{
 		MemoryStream metadataStream = new MemoryStream();
-		StreamIO streamIO = new StreamIO(metadataStream);
-		this.writeCompressedMetadata(streamIO);
+		StreamIO metadataIO = new StreamIO(metadataStream);
+		this.writeCompressedMetadata(metadataIO);
+
+		ulong crc64 = CRC.Encode(
+			metadataStream.GetBuffer(), 0u, 0x110,
+			CRC.UpdateSeed2(0uL, 0x110));
+
+		((Stream)(object)metadataStream).Position = 0x108L;
+		
+		//0x108	8	Header CRC64
+		metadataIO.Write<ulong>(crc64);
 
 		MemoryStream compressed = new MemoryStream();
 		this._compressor.Compress(metadataStream.GetBuffer(), 0, (int)metadataStream.Length, compressed);
@@ -233,16 +242,17 @@ internal class DwgFileHeaderWriterAC21 : DwgFileHeaderWriterBase<DwgFileHeaderAC
 		byte[] decoded = new byte[_headerFactor * _headerBlockSize];
 		StreamIO writer = new StreamIO(new MemoryStream(decoded));
 
+		ulong crc = this._crcEncoding.NextUInt64();
 		//0x00	8	CRC
-		writer.Write<long>(0L);
+		writer.Write<ulong>(crc);
 		//0x08	8	Unknown key
-		writer.Write<long>(0L);
+		writer.Write<ulong>(0L);
 		//0x10	8	Compressed Data CRC
-		writer.Write<long>(0L);
+		writer.Write<ulong>(0L);
 		//0x18	4	ComprLen
-		writer.Write<int>((int)compressed.Length);
+		writer.Write<ulong>((ulong)compressed.Length);
 		//0x1C	4	Length2
-		writer.Write<int>(0);
+		writer.Write<ulong>(0);
 
 		System.Array.Copy(compressed.GetBuffer(), 0, decoded, 0x20, (int)compressed.Length);
 
