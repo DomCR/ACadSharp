@@ -27,7 +27,7 @@ public class DwgWriterSingleObjectTests : WriterSingleObjectTests
 	[MemberData(nameof(Data))]
 	public void WriteCasesAC1021(SingleCaseGenerator data)
 	{
-		this.writeDwgFile(data, ACadVersion.AC1024);
+		this.writeDwgFile(data, ACadVersion.AC1021);
 	}
 
 	[Theory()]

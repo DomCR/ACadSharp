@@ -1,5 +1,7 @@
 ﻿using ACadSharp.IO.DWG.FileHeaders;
+using CSUtilities.Converters;
 using CSUtilities.IO;
+using System;
 using System.Collections.Generic;
 using System.IO;
 using System.Text;
@@ -12,6 +14,8 @@ internal class DwgFileHeaderWriterAC21 : DwgFileHeaderWriterBase<DwgFileHeaderAC
 
 	public override int HandleSectionOffset { get { return 0; } }
 
+	private Dictionary<string, DwgSectionDescriptor> _descriptors { get { return this.FileHeader.Descriptors; } }
+
 	private const int _headerBlockSize = 239;
 
 	private const int _headerFactor = 3;
@@ -20,14 +24,40 @@ internal class DwgFileHeaderWriterAC21 : DwgFileHeaderWriterBase<DwgFileHeaderAC
 
 	private const int _systemBlockSize = 239;
 
-	private readonly ICompressor _compressor = new DwgLZ77AC21Compressor();
+	private static readonly byte[] _gfExp = new byte[512];
 
-	private Dictionary<string, DwgSectionDescriptor> _descriptors { get { return this.FileHeader.Descriptors; } }
+	private static readonly byte[] _gfLog = new byte[256];
+
+	private readonly ICompressor _compressor = new DwgLZ77AC21Compressor();
 
 	private readonly List<DwgLocalSectionMap> _pageRecords = new List<DwgLocalSectionMap>();
 
+	private CrcRandomEncoding _crcEncoding = new CrcRandomEncoding();
+
+	static DwgFileHeaderWriterAC21()
+	{
+		//GF(256) with primitive polynomial x^8 + x^4 + x^3 + x^2 + 1 (0x11D)
+		int x = 1;
+		for (int i = 0; i < 255; i++)
+		{
+			_gfExp[i] = (byte)x;
+			_gfLog[x] = (byte)i;
+			x <<= 1;
+			if ((x & 0x100) != 0)
+			{
+				x ^= 0x11D;
+			}
+		}
+
+		for (int i = 255; i < 512; i++)
+		{
+			_gfExp[i] = _gfExp[i - 255];
+		}
+	}
+
 	public DwgFileHeaderWriterAC21(Stream stream, Encoding encoding, CadDocument model) : base(stream, encoding, model)
 	{
+		this.initialize();
 		// File header info
 		for (int i = 0; i < this.FileHeaderSize; i++)
 		{
@@ -228,55 +258,12 @@ internal class DwgFileHeaderWriterAC21 : DwgFileHeaderWriterBase<DwgFileHeaderAC
 		return (value + 7UL) & 0xFFFFFFFFFFFFFFF8UL;
 	}
 
-	private static readonly byte[] _gfExp = new byte[512];
-
-	private static readonly byte[] _gfLog = new byte[256];
-
-	static DwgFileHeaderWriterAC21()
-	{
-		//GF(256) with primitive polynomial x^8 + x^4 + x^3 + x^2 + 1 (0x11D)
-		int x = 1;
-		for (int i = 0; i < 255; i++)
-		{
-			_gfExp[i] = (byte)x;
-			_gfLog[x] = (byte)i;
-			x <<= 1;
-			if ((x & 0x100) != 0)
-			{
-				x ^= 0x11D;
-			}
-		}
-
-		for (int i = 255; i < 512; i++)
-		{
-			_gfExp[i] = _gfExp[i - 255];
-		}
-	}
-
 	private static byte gfMultiply(byte a, byte b)
 	{
 		if (a == 0 || b == 0)
 			return 0;
 
 		return _gfExp[_gfLog[a] + _gfLog[b]];
-	}
-
-	private static byte[] rsGenerator(int nsym)
-	{
-		//g(x) = (x - a^1)(x - a^2)...(x - a^nsym), highest degree first
-		byte[] g = new byte[] { 1 };
-		for (int i = 1; i <= nsym; i++)
-		{
-			byte[] next = new byte[g.Length + 1];
-			for (int j = 0; j < g.Length; j++)
-			{
-				next[j] ^= g[j];
-				next[j + 1] ^= gfMultiply(g[j], _gfExp[i]);
-			}
-			g = next;
-		}
-
-		return g;
 	}
 
 	/// <summary>
@@ -322,178 +309,22 @@ internal class DwgFileHeaderWriterAC21 : DwgFileHeaderWriterBase<DwgFileHeaderAC
 		return encoded;
 	}
 
-	private void writePage(DwgLocalSectionMap map, byte[] data, int length)
+	private static byte[] rsGenerator(int nsym)
 	{
-		map.PageNumber = this._pageRecords.Count + 1;
-		map.Seeker = this._stream.Position - this.FileHeaderSize;
-		map.Size = length;
-
-		this._stream.Write(data, 0, length);
-
-		this._pageRecords.Add(map);
-	}
-
-	private DwgLocalSectionMap writeSystemPage(byte[] data, int length, out ulong compressedSize)
-	{
-		MemoryStream compressed = new MemoryStream();
-		this._compressor.Compress(data, 0, length, compressed);
-		compressedSize = (ulong)compressed.Length;
-
-		int factor = (int)((align8(compressedSize) + _systemBlockSize - 1) / _systemBlockSize);
-		byte[] encoded = reedSolomonEncoding(compressed.GetBuffer(), (int)compressed.Length, factor, _systemBlockSize);
-
-		DwgLocalSectionMap map = new DwgLocalSectionMap();
-		map.CompressedSize = compressedSize;
-		map.DecompressedSize = (ulong)length;
-		this.writePage(map, encoded, encoded.Length);
-
-		return map;
-	}
-
-	private void writeSectionsMap()
-	{
-		MemoryStream stream = new MemoryStream();
-		StreamIO writer = new StreamIO(stream);
-
-		foreach (DwgSectionDescriptor descriptor in this._descriptors.Values)
+		//g(x) = (x - a^1)(x - a^2)...(x - a^nsym), highest degree first
+		byte[] g = new byte[] { 1 };
+		for (int i = 1; i <= nsym; i++)
 		{
-			byte[] name = Encoding.Unicode.GetBytes(descriptor.Name + "\0");
-
-			//0x00	8	Data size
-			writer.Write<ulong>(descriptor.CompressedSize);
-			//0x08	8	Max size
-			writer.Write<ulong>(descriptor.DecompressedSize);
-			//0x10	8	Encryption
-			writer.Write<ulong>((ulong)descriptor.Encrypted);
-			//0x18	8	HashCode
-			writer.Write<ulong>(descriptor.HashCode ?? 0);
-			//0x20	8	SectionNameLength
-			writer.Write<ulong>((ulong)name.Length);
-			//0x28	8	Unknown
-			writer.Write<ulong>(0UL);
-			//0x30	8	Encoding
-			writer.Write<ulong>(descriptor.Encoding ?? 1);
-			//0x38	8	NumPages
-			writer.Write<ulong>((ulong)descriptor.PageCount);
-			//Section name (Unicode)
-			stream.Write(name, 0, name.Length);
-
-			foreach (DwgLocalSectionMap page in descriptor.LocalSections)
+			byte[] next = new byte[g.Length + 1];
+			for (int j = 0; j < g.Length; j++)
 			{
-				//8	Page data offset
-				writer.Write<ulong>(page.Offset);
-				//8	Page Size
-				writer.Write<long>(page.Size);
-				//8	Page Id
-				writer.Write<long>(page.PageNumber);
-				//8	Page Uncompressed Size
-				writer.Write<ulong>(page.DecompressedSize);
-				//8	Page Compressed Size
-				writer.Write<ulong>(page.CompressedSize);
-				//8	Page Checksum
-				writer.Write<ulong>(page.Checksum);
-				//8	Page CRC
-				writer.Write<ulong>(page.CRC);
+				next[j] ^= g[j];
+				next[j + 1] ^= gfMultiply(g[j], _gfExp[i]);
 			}
+			g = next;
 		}
 
-		DwgLocalSectionMap map = this.writeSystemPage(stream.GetBuffer(), (int)stream.Length, out ulong compressedSize);
-
-		Dwg21CompressedMetadata metadata = this.FileHeader.CompressedMetadata;
-		metadata.SectionsAmount = (ulong)this._descriptors.Count + 1;
-		metadata.SectionsMapId = (ulong)map.PageNumber;
-		metadata.SectionsMap2Id = (ulong)map.PageNumber;
-		metadata.SectionsMapSizeCompressed = compressedSize;
-		metadata.SectionsMapSizeUncompressed = (ulong)stream.Length;
-		metadata.SectionsMapCorrectionFactor = 1;
-	}
-
-	private void writePagesMap()
-	{
-		int pageId = this._pageRecords.Count + 1;
-
-		//The pages map contains its own record, the size has to be known before writing it
-		int length = (pageId) * 16;
-		MemoryStream compressed = new MemoryStream();
-		this._compressor.Compress(new byte[length], 0, length, compressed);
-		int factor = (int)((align8((ulong)compressed.Length) + _systemBlockSize - 1) / _systemBlockSize);
-		long pagesMapSize = factor * byte.MaxValue;
-
-		MemoryStream stream = new MemoryStream();
-		StreamIO writer = new StreamIO(stream);
-		foreach (DwgLocalSectionMap record in this._pageRecords)
-		{
-			writer.Write<long>(record.Size);
-			writer.Write<long>(record.PageNumber);
-		}
-		writer.Write<long>(pagesMapSize);
-		writer.Write<long>(pageId);
-
-		DwgLocalSectionMap map = this.writeSystemPage(stream.GetBuffer(), (int)stream.Length, out ulong compressedSize);
-
-		Dwg21CompressedMetadata metadata = this.FileHeader.CompressedMetadata;
-		metadata.PagesMapId = (ulong)map.PageNumber;
-		metadata.PagesMapOffset = (ulong)map.Seeker;
-		metadata.Map2Id = (ulong)map.PageNumber;
-		metadata.Map2Offset = (ulong)map.Seeker;
-		metadata.PagesMapSizeCompressed = compressedSize;
-		metadata.PagesMapSizeUncompressed = (ulong)stream.Length;
-		metadata.PagesMapCorrectionFactor = 1;
-		metadata.PagesAmount = (ulong)this._pageRecords.Count;
-		metadata.PagesMaxId = (ulong)this._pageRecords.Count;
-	}
-
-	private void writeFileMetaData()
-	{
-		StreamIO writer = new StreamIO(this._stream);
-
-		//Repeated header at the end of the file
-		this.FileHeader.CompressedMetadata.Header2offset = (ulong)(this._stream.Position - this.FileHeaderSize);
-		this.FileHeader.CompressedMetadata.FileSize = (ulong)(this._stream.Position + 0x400);
-
-		MemoryStream header = new MemoryStream();
-		this.writeFileHeader(header);
-		this._stream.Write(header.GetBuffer(), 0, (int)header.Length);
-
-		this._stream.Position = 0L;
-
-		//0x00	6	“ACXXXX” version string
-		this._stream.Write(Encoding.ASCII.GetBytes(this._document.Header.VersionString), 0, 6);
-		//5 bytes of 0x00
-		this._stream.Write(new byte[5], 0, 5);
-		//0x0B	1	Maintenance release version
-		this._stream.WriteByte((byte)this._document.Header.MaintenanceVersion);
-		//0x0C	1	Byte 0x00, 0x01, or 0x03
-		this._stream.WriteByte(3);
-		//0x0D	4	Preview address(long)
-		writer.Write(this.getSectionAddress(DwgSectionDefinition.Preview));
-		//0x11	1	Dwg version (Acad version that writes the file)
-		this._stream.WriteByte(33);
-		//0x12	1	Application maintenance release version
-		this._stream.WriteByte((byte)this._document.Header.MaintenanceVersion);
-		//0x13	2	Codepage
-		writer.Write(this.getFileCodePage());
-		//0x15	3	3 0x00 bytes
-		this._stream.Write(new byte[3], 0, 3);
-		//0x18	4	SecurityType
-		writer.Write(0);
-		//0x1C	4	Unknown long
-		writer.Write(0);
-		//0x20	4	Summary info Address in stream
-		writer.Write(this.getSectionAddress(DwgSectionDefinition.SummaryInfo));
-		//0x24	4	VBA Project Addr(0 if not present)
-		writer.Write(0u);
-		//0x28	4	0x00000080
-		writer.Write(0x00000080);
-		//0x2C	4	App info Address in stream
-		writer.Write(this.getSectionAddress(DwgSectionDefinition.AppInfo));
-		//0x30	0x50	0x00 bytes
-		this._stream.Write(new byte[0x50], 0, 0x50);
-
-		//0x80	0x400	Encoded file header
-		this._stream.Write(header.GetBuffer(), 0, (int)header.Length);
-
-		this._stream.Position = this._stream.Length;
+		return g;
 	}
 
 	private uint getSectionAddress(string name)
@@ -507,10 +338,17 @@ internal class DwgFileHeaderWriterAC21 : DwgFileHeaderWriterBase<DwgFileHeaderAC
 		return 0u;
 	}
 
-	private void prepareMetadata(Dwg21CompressedMetadata metadata)
+	private void initialize()
 	{
-		metadata.FileSize = (ulong)(this._stream.Length + 0x400);
-		metadata.Header2offset = (ulong)(this._stream.Position - 0x480);
+		Random val = new Random();
+		byte[] array = new byte[8];
+		val.NextBytes(array);
+		this._crcEncoding.Initialize(LittleEndianConverter.Instance.ToUInt64(array));
+
+		this.FileHeader.CompressedMetadata.RandomSeed = this._crcEncoding.Seed;
+		this.FileHeader.CompressedMetadata.CrcSeed = 0;
+		this.FileHeader.CompressedMetadata.PagesMapCrcSeed = 0;
+		this.FileHeader.CompressedMetadata.SectionsMapCrcSeed = 0;
 	}
 
 	private void writeCompressedMetadata(StreamIO writer)
@@ -582,5 +420,184 @@ internal class DwgFileHeaderWriterAC21 : DwgFileHeaderWriterBase<DwgFileHeaderAC
 		writer.Write<ulong>(this.FileHeader.CompressedMetadata.RandomSeed);
 		//0x108	8	Header CRC64
 		writer.Write<ulong>(0uL);
+	}
+
+	private void writeFileMetaData()
+	{
+		StreamIO writer = new StreamIO(this._stream);
+
+		//Repeated header at the end of the file
+		this.FileHeader.CompressedMetadata.Header2offset = (ulong)(this._stream.Position - this.FileHeaderSize);
+		this.FileHeader.CompressedMetadata.FileSize = (ulong)(this._stream.Position + 0x400);
+
+		this.FileHeader.CompressedMetadata.SectionsMapCrcSeed = this._crcEncoding.EncodeValue((uint)this.FileHeader.CompressedMetadata.SectionsMapCrcSeed);
+		this.FileHeader.CompressedMetadata.PagesMapCrcSeed = this._crcEncoding.EncodeValue((uint)this.FileHeader.CompressedMetadata.PagesMapCrcSeed);
+
+		this.FileHeader.CompressedMetadata.CrcSeedEncoded = this._crcEncoding.EncodeValue((uint)(this.FileHeader.CompressedMetadata.CrcSeed & 0xFFFF));
+
+		MemoryStream header = new MemoryStream();
+		this.writeFileHeader(header);
+		this._stream.Write(header.GetBuffer(), 0, (int)header.Length);
+
+		this._stream.Position = 0L;
+
+		//0x00	6	“ACXXXX” version string
+		this._stream.Write(Encoding.ASCII.GetBytes(this._document.Header.VersionString), 0, 6);
+		//5 bytes of 0x00
+		this._stream.Write(new byte[5], 0, 5);
+		//0x0B	1	Maintenance release version
+		this._stream.WriteByte((byte)this._document.Header.MaintenanceVersion);
+		//0x0C	1	Byte 0x00, 0x01, or 0x03
+		this._stream.WriteByte(3);
+		//0x0D	4	Preview address(long)
+		writer.Write(this.getSectionAddress(DwgSectionDefinition.Preview));
+		//0x11	1	Dwg version (Acad version that writes the file)
+		this._stream.WriteByte(33);
+		//0x12	1	Application maintenance release version
+		this._stream.WriteByte((byte)this._document.Header.MaintenanceVersion);
+		//0x13	2	Codepage
+		writer.Write(this.getFileCodePage());
+		//0x15	3	3 0x00 bytes
+		this._stream.Write(new byte[3], 0, 3);
+		//0x18	4	SecurityType
+		writer.Write(0);
+		//0x1C	4	Unknown long
+		writer.Write(0);
+		//0x20	4	Summary info Address in stream
+		writer.Write(this.getSectionAddress(DwgSectionDefinition.SummaryInfo));
+		//0x24	4	VBA Project Addr(0 if not present)
+		writer.Write(0u);
+		//0x28	4	0x00000080
+		writer.Write(0x00000080);
+		//0x2C	4	App info Address in stream
+		writer.Write(this.getSectionAddress(DwgSectionDefinition.AppInfo));
+		//0x30	0x50	0x00 bytes
+		this._stream.Write(new byte[0x50], 0, 0x50);
+
+		//0x80	0x400	Encoded file header
+		this._stream.Write(header.GetBuffer(), 0, (int)header.Length);
+
+		this._stream.Position = this._stream.Length;
+	}
+
+	private void writePage(DwgLocalSectionMap map, byte[] data, int length)
+	{
+		map.PageNumber = this._pageRecords.Count + 1;
+		map.Seeker = this._stream.Position - this.FileHeaderSize;
+		map.Size = length;
+
+		this._stream.Write(data, 0, length);
+
+		this._pageRecords.Add(map);
+	}
+
+	private void writePagesMap()
+	{
+		int pageId = this._pageRecords.Count + 1;
+
+		//The pages map contains its own record, the size has to be known before writing it
+		int length = (pageId) * 16;
+		MemoryStream compressed = new MemoryStream();
+		this._compressor.Compress(new byte[length], 0, length, compressed);
+		int factor = (int)((align8((ulong)compressed.Length) + _systemBlockSize - 1) / _systemBlockSize);
+		long pagesMapSize = factor * byte.MaxValue;
+
+		MemoryStream stream = new MemoryStream();
+		StreamIO writer = new StreamIO(stream);
+		foreach (DwgLocalSectionMap record in this._pageRecords)
+		{
+			writer.Write<long>(record.Size);
+			writer.Write<long>(record.PageNumber);
+		}
+
+		writer.Write<long>(pagesMapSize);
+		writer.Write<long>(pageId);
+
+		DwgLocalSectionMap map = this.writeSystemPage(stream.GetBuffer(), (int)stream.Length, out ulong compressedSize);
+
+		this.FileHeader.CompressedMetadata.PagesMapId = (ulong)map.PageNumber;
+		this.FileHeader.CompressedMetadata.PagesMapOffset = (ulong)map.Seeker;
+		this.FileHeader.CompressedMetadata.Map2Id = (ulong)map.PageNumber;
+		this.FileHeader.CompressedMetadata.Map2Offset = (ulong)map.Seeker;
+		this.FileHeader.CompressedMetadata.PagesMapSizeCompressed = compressedSize;
+		this.FileHeader.CompressedMetadata.PagesMapSizeUncompressed = (ulong)stream.Length;
+		this.FileHeader.CompressedMetadata.PagesMapCorrectionFactor = 1;
+		this.FileHeader.CompressedMetadata.PagesAmount = (ulong)this._pageRecords.Count;
+		this.FileHeader.CompressedMetadata.PagesMaxId = (ulong)this._pageRecords.Count;
+	}
+
+	private void writeSectionsMap()
+	{
+		MemoryStream stream = new MemoryStream();
+		StreamIO writer = new StreamIO(stream);
+
+		foreach (DwgSectionDescriptor descriptor in this._descriptors.Values)
+		{
+			byte[] name = Encoding.Unicode.GetBytes(descriptor.Name + "\0");
+
+			//0x00	8	Data size
+			writer.Write<ulong>(descriptor.CompressedSize);
+			//0x08	8	Max size
+			writer.Write<ulong>(descriptor.DecompressedSize);
+			//0x10	8	Encryption
+			writer.Write<ulong>((ulong)descriptor.Encrypted);
+			//0x18	8	HashCode
+			writer.Write<ulong>(descriptor.HashCode ?? 0);
+			//0x20	8	SectionNameLength
+			writer.Write<ulong>((ulong)name.Length);
+			//0x28	8	Unknown
+			writer.Write<ulong>(0UL);
+			//0x30	8	Encoding
+			writer.Write<ulong>(descriptor.Encoding ?? 1);
+			//0x38	8	NumPages
+			writer.Write<ulong>((ulong)descriptor.PageCount);
+			//Section name (Unicode)
+			stream.Write(name, 0, name.Length);
+
+			foreach (DwgLocalSectionMap page in descriptor.LocalSections)
+			{
+				//8	Page data offset
+				writer.Write<ulong>(page.Offset);
+				//8	Page Size
+				writer.Write<long>(page.Size);
+				//8	Page Id
+				writer.Write<long>(page.PageNumber);
+				//8	Page Uncompressed Size
+				writer.Write<ulong>(page.DecompressedSize);
+				//8	Page Compressed Size
+				writer.Write<ulong>(page.CompressedSize);
+				//8	Page Checksum
+				writer.Write<ulong>(page.Checksum);
+				//8	Page CRC
+				writer.Write<ulong>(page.CRC);
+			}
+		}
+
+		DwgLocalSectionMap map = this.writeSystemPage(stream.GetBuffer(), (int)stream.Length, out ulong compressedSize);
+
+		Dwg21CompressedMetadata metadata = this.FileHeader.CompressedMetadata;
+		metadata.SectionsAmount = (ulong)this._descriptors.Count + 1;
+		metadata.SectionsMapId = (ulong)map.PageNumber;
+		metadata.SectionsMap2Id = (ulong)map.PageNumber;
+		metadata.SectionsMapSizeCompressed = compressedSize;
+		metadata.SectionsMapSizeUncompressed = (ulong)stream.Length;
+		metadata.SectionsMapCorrectionFactor = 1;
+	}
+
+	private DwgLocalSectionMap writeSystemPage(byte[] data, int length, out ulong compressedSize)
+	{
+		MemoryStream compressed = new MemoryStream();
+		this._compressor.Compress(data, 0, length, compressed);
+		compressedSize = (ulong)compressed.Length;
+
+		int factor = (int)((align8(compressedSize) + _systemBlockSize - 1) / _systemBlockSize);
+		byte[] encoded = reedSolomonEncoding(compressed.GetBuffer(), (int)compressed.Length, factor, _systemBlockSize);
+
+		DwgLocalSectionMap map = new DwgLocalSectionMap();
+		map.CompressedSize = compressedSize;
+		map.DecompressedSize = (ulong)length;
+		this.writePage(map, encoded, encoded.Length);
+
+		return map;
 	}
 }
