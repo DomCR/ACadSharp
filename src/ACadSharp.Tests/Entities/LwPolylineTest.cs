@@ -9,21 +9,21 @@ namespace ACadSharp.Tests.Entities;
 
 public class LwPolylineTests : CommonEntityTests<LwPolyline>
 {
-	private XYZ[] _points = new XYZ[]
-		{
-			new XYZ(0,0,0),
-			new XYZ(0,1,0),
-			new XYZ(1,1,0),
-			new XYZ(1,0,0),
-		};
-
-	private List<Line> _lines;
-
 	private Arc _arc = new Arc
 	{
 		Radius = 0.5,
 		Center = new XYZ(1, 0.5, 0)
 	};
+
+	private List<Line> _lines;
+
+	private XYZ[] _points = new XYZ[]
+				{
+			new XYZ(0,0,0),
+			new XYZ(0,1,0),
+			new XYZ(1,1,0),
+			new XYZ(1,0,0),
+		};
 
 	public LwPolylineTests()
 	{
@@ -35,6 +35,47 @@ public class LwPolylineTests : CommonEntityTests<LwPolyline>
 			new Line{StartPoint = this._points[2], EndPoint = this._points[3]},
 			new Line{StartPoint = this._points[3], EndPoint = this._points[0]},
 		};
+	}
+
+	[Fact]
+	public void ABulgeOverAZeroLengthSegmentDoesNotThrow()
+	{
+		LwPolyline lwPolyline = new LwPolyline();
+		lwPolyline.Vertices.Add(new LwPolyline.Vertex(new XY(0, 0)));
+		lwPolyline.Vertices.Add(new LwPolyline.Vertex(new XY(10, 0)) { Bulge = 0.5 });
+		lwPolyline.Vertices.Add(new LwPolyline.Vertex(new XY(10, 0)));
+		lwPolyline.Vertices.Add(new LwPolyline.Vertex(new XY(10, 8)));
+
+		BoundingBox box = lwPolyline.GetBoundingBox();
+
+		Assert.Equal(0.0, box.Min.X, 6);
+		Assert.Equal(0.0, box.Min.Y, 6);
+		Assert.Equal(10.0, box.Max.X, 6);
+		Assert.Equal(8.0, box.Max.Y, 6);
+	}
+
+	[Fact]
+	public void ExplodeClosedInLines()
+	{
+		LwPolyline lwPolyline = new LwPolyline();
+		lwPolyline.Flags |= LwPolylineFlags.Closed;
+
+		for (int i = 0; i < this._points.Length; i++)
+		{
+			lwPolyline.Vertices.Add(new LwPolyline.Vertex((XY)this._points[i]));
+		}
+
+		foreach (Entity item in lwPolyline.Explode())
+		{
+			Assert.IsType<Line>(item);
+
+			Line l = item as Line;
+			var result = this._lines.FirstOrDefault(o =>
+			o.StartPoint == l.StartPoint &&
+			o.EndPoint == l.EndPoint);
+
+			Assert.NotNull(result);
+		}
 	}
 
 	[Fact]
@@ -86,30 +127,6 @@ public class LwPolylineTests : CommonEntityTests<LwPolyline>
 				Assert.Equal(this._arc.Radius, a.Radius);
 				continue;
 			}
-
-			Assert.NotNull(result);
-		}
-	}
-
-	[Fact]
-	public void ExplodeClosedInLines()
-	{
-		LwPolyline lwPolyline = new LwPolyline();
-		lwPolyline.Flags |= LwPolylineFlags.Closed;
-
-		for (int i = 0; i < this._points.Length; i++)
-		{
-			lwPolyline.Vertices.Add(new LwPolyline.Vertex((XY)this._points[i]));
-		}
-
-		foreach (Entity item in lwPolyline.Explode())
-		{
-			Assert.IsType<Line>(item);
-
-			Line l = item as Line;
-			var result = this._lines.FirstOrDefault(o =>
-			o.StartPoint == l.StartPoint &&
-			o.EndPoint == l.EndPoint);
 
 			Assert.NotNull(result);
 		}
