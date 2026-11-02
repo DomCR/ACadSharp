@@ -1,4 +1,5 @@
 ﻿using ACadSharp.Classes;
+using ACadSharp.IO.DWG.DwgStreamReaders;
 using CSUtilities.IO;
 
 namespace ACadSharp.IO.DWG;

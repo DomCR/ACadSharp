@@ -62,7 +62,11 @@ public class SeqendCollection<T> : CadObjectCollection<T>, ISeqendCollection
 	/// <inheritdoc/>
 	public override bool Remove(T item)
 	{
-		if(base.Remove(item))
+		if (!base.Remove(item))
+			return false;
+
+		//The seqend only leaves with the last entry
+		if (!this._entries.Any())
 		{
 			this.OnSeqendRemoved?.Invoke(this, new CollectionChangedEventArgs(this._seqend));
 		}

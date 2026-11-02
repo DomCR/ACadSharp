@@ -64,9 +64,14 @@ namespace ACadSharp.IO.Templates
 				this.CadObject.LineTypeExt2 = linetTypeEx2;
 			}
 
-			if (this.getTableReference(builder, this.DIMLDRBLK, this.DIMBL_Name, out BlockRecord leaderArrow))
+			if (this.getTableReference(builder, this.DIMLDRBLK, null, out BlockRecord leaderArrow))
 			{
 				this.CadObject.LeaderArrow = leaderArrow;
+			}
+
+			if (this.getTableReference(builder, this.DIMBLK, this.DIMBL_Name, out BlockRecord arrowBlock))
+			{
+				this.CadObject.ArrowBlock = arrowBlock;
 			}
 
 			if (this.getTableReference(builder, this.DIMBLK1, this.DIMBLK1_Name, out BlockRecord dimArrow1))

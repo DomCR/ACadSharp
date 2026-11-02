@@ -17,7 +17,7 @@ namespace ACadSharp.Objects
 	{
 		/// <inheritdoc/>
 		[DxfCodeValue(91)]
-		public int ClassId { get { return this.DxfClass.ClassNumber; } }
+		public int ClassNumber { get { return this.DxfClass.ClassNumber; } }
 
 		/// <summary>
 		/// Object drawing format when it becomes a proxy: <br/>

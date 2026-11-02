@@ -80,4 +80,12 @@ public class ProxyPushClip : IProxyGeometry
 	/// </summary>
 	/// <value>A <see cref="List{T}"/> of <see cref="XY"/> coordinates representing boundary points.</value>
 	public List<XY> ClipBoundary { get; set; }
+
+	/// <inheritdoc/>
+	public IProxyGeometry Clone()
+	{
+		ProxyPushClip clone = (ProxyPushClip)this.MemberwiseClone();
+		clone.ClipBoundary = this.ClipBoundary != null ? new List<XY>(this.ClipBoundary) : null;
+		return clone;
+	}
 }

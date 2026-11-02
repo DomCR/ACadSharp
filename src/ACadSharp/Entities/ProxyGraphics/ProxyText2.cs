@@ -1,4 +1,4 @@
-﻿using CSMath;
+using CSMath;
 
 namespace ACadSharp.Entities.ProxyGraphics;
 
@@ -94,4 +94,10 @@ public class ProxyText2 : IProxyGeometry, IOrientable
 	/// Gets or sets the width factor that scales the text horizontally.
 	/// </summary>
 	public double WidthFactor { get; set; }
+
+	/// <inheritdoc/>
+	public IProxyGeometry Clone()
+	{
+		return (IProxyGeometry)this.MemberwiseClone();
+	}
 }

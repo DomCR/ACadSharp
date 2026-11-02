@@ -1,4 +1,4 @@
-﻿using CSMath;
+using CSMath;
 
 namespace ACadSharp.Entities.ProxyGraphics;
 
@@ -14,4 +14,10 @@ public class ProxyPushModelTransform2 : IProxyGeometry
 	/// Gets or sets the transformation matrix to be pushed onto the stack.
 	/// </summary>
 	public Matrix4 TransformationMatrix { get; set; }
+
+	/// <inheritdoc/>
+	public IProxyGeometry Clone()
+	{
+		return (IProxyGeometry)this.MemberwiseClone();
+	}
 }

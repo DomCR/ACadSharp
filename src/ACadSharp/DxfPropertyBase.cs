@@ -212,9 +212,11 @@ namespace ACadSharp
 				switch (code)
 				{
 					case 62:
+					case 63:
 						this._property.SetValue(obj, new Color((short)value));
 						break;
 					case 420:
+					case 421:
 						byte[] b = LittleEndianConverter.Instance.GetBytes((int)value);
 						// true color
 						this._property.SetValue(obj, new Color(b[2], b[1], b[0]));
@@ -279,6 +281,11 @@ namespace ACadSharp
 
 		internal void SetValue(int code, object obj, object value)
 		{
+			if (this._property.SetMethod == null)
+			{
+				return;
+			}
+
 			if (this._property.PropertyType.IsEquivalentTo(typeof(XY)))
 			{
 				XY vector = (XY)this._property.GetValue(obj);
@@ -302,6 +309,7 @@ namespace ACadSharp
 				switch (code)
 				{
 					case 62:
+					case 63:
 						this._property.SetValue(obj, new Color((short)value));
 						break;
 					case 90:
@@ -310,6 +318,7 @@ namespace ACadSharp
 						this._property.SetValue(obj, new Color(b[2], b[1], b[0]));
 						break;
 					case 420:
+					case 421:
 						b = LittleEndianConverter.Instance.GetBytes((int)value);
 						// true color
 						this._property.SetValue(obj, new Color(b[2], b[1], b[0]));

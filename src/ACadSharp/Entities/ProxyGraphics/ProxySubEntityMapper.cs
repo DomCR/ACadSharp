@@ -1,4 +1,4 @@
-﻿namespace ACadSharp.Entities.ProxyGraphics;
+namespace ACadSharp.Entities.ProxyGraphics;
 
 /// <summary>
 /// Represents a proxy sub-entity mapper for handling proxy graphics geometry mapping.
@@ -46,4 +46,10 @@ public class ProxySubEntityMapper : IProxyGeometry
 	/// Gets or sets the V-direction tiling parameter for the proxy sub-entity mapper.
 	/// </summary>
 	public int VTiling { get; set; }
+
+	/// <inheritdoc/>
+	public IProxyGeometry Clone()
+	{
+		return (IProxyGeometry)this.MemberwiseClone();
+	}
 }

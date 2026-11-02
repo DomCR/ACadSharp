@@ -4,6 +4,7 @@ using ACadSharp.Objects;
 using CSMath;
 using CSUtilities.Converters;
 using System;
+using System.IO;
 using static ACadSharp.Entities.TableEntity;
 using static ACadSharp.Entities.TableEntity.TableBreakData;
 using static ACadSharp.IO.Templates.CadTableEntityTemplate;
@@ -233,6 +234,217 @@ internal partial class DwgObjectReader : DwgSectionIO
 
 			return new System.DateTime(1970, 1, 1, 0, 0, 0, System.DateTimeKind.Utc).AddSeconds(seconds);
 		}
+	}
+
+	private System.Guid readGuid()
+	{
+		var a = this._mergedReaders.ReadBitLong();
+		var b = this._mergedReaders.ReadBitShort();
+		var c = this._mergedReaders.ReadBitShort();
+		var d = this._mergedReaders.ReadByte();
+		var e = this._mergedReaders.ReadByte();
+		var f = this._mergedReaders.ReadByte();
+		var g = this._mergedReaders.ReadByte();
+		var h = this._mergedReaders.ReadByte();
+		var i = this._mergedReaders.ReadByte();
+		var j = this._mergedReaders.ReadByte();
+		var k = this._mergedReaders.ReadByte();
+		return new Guid(a, b, c, d, e, f, g, h, i, j, k);
+	}
+
+	private CadModelerGeometryTemplate<T> readModelerGeometry<T>(CadModelerGeometryTemplate<T> template)
+		where T : ModelerGeometry, new()
+	{
+		ModelerGeometry geometry = template.CadObject;
+
+		this.readCommonEntityData(template);
+
+		//Chapter 24 - Info
+		if (!this.R2013Plus)
+		{
+			//ACIS Empty bit B X If 1, then no data follows
+			var hasData = this._mergedReaders.ReadBit();
+			if (!hasData)
+			{
+				this.readModelerGeometryData(template);
+				return template;
+			}
+		}
+
+		//Common:
+		//Wireframe data present B X True if wireframe data is present
+		var isWireframe = this._mergedReaders.ReadBit();
+		if (isWireframe)
+		{
+			//Point present B X If true, following point is present, otherwise assume 0,0,0 for point
+			bool hasPoint = this._mergedReaders.ReadBit();
+			if (hasPoint)
+			{
+				//Point 3BD X Present if above bit is 1.
+				geometry.Point = this._objectReader.Read3BitDouble();
+			}
+
+			//Num IsoLines BL X
+			int nIsoLines = this._mergedReaders.ReadBitLong();
+			//IsoLines present B X If true, isoline data is present.
+			if (this._mergedReaders.ReadBit())
+			{
+				//Num Wires BL X Number of ISO lines that follow.
+				int nWires = this._mergedReaders.ReadBitLong();
+				for (int i = 0; i < nWires; i++)
+				{
+					ModelerGeometry.Wire wire = new ModelerGeometry.Wire();
+					this.readWire(wire);
+					geometry.Wires.Add(wire);
+				}
+			}
+
+			//Repeat “Num. silhouettes” times:
+			int nSilhouettes = this._mergedReaders.ReadBitLong();
+			for (int i = 0; i < nSilhouettes; i++)
+			{
+				var silhouette = new ModelerGeometry.Silhouette();
+
+				//VP id BL X
+				silhouette.ViewportId = this._mergedReaders.ReadBitLongLong();
+				//VP Target 3BD X
+				silhouette.ViewportTarget = this._mergedReaders.Read3BitDouble();
+				//VP dir. From target 3BD X
+				silhouette.ViewportDirectionFromTarget = this._mergedReaders.Read3BitDouble();
+				//VP up dir. 3BD X
+				silhouette.ViewportUpDirection = this._mergedReaders.Read3BitDouble();
+				//VP perspective B X
+				silhouette.ViewportPerspective = this._mergedReaders.ReadBit();
+
+				//IsoLines present B X If true, isoline data is present.
+				if (this._mergedReaders.ReadBit())
+				{
+					//Num Wires BL X
+					int nWires = this._mergedReaders.ReadBitLong();
+					for (int j = 0; j < nWires; j++)
+					{
+						ModelerGeometry.Wire wire = new ModelerGeometry.Wire();
+						this.readWire(wire);
+						silhouette.Wires.Add(wire);
+					}
+				}
+
+				geometry.Silhouettes.Add(silhouette);
+			}
+
+			//ACIS Empty bit B X Normally 1.If 0, then acis data follows in the
+			//same format as described above, except no wireframe
+			//of silhouette data will be present(no empty bits
+			//for these items either).
+			if (!this._mergedReaders.ReadBit())
+			{
+				this.readModelerGeometryData(template);
+			}
+		}
+
+		//R2007 +:
+		if (this.R2007Plus)
+		{
+			//Materials
+			var nmat = this._mergedReaders.ReadBitLong();
+			for (int i = 0; i < nmat; i++)
+			{
+				//Unknown BL
+				var unknown = this._mergedReaders.ReadBitLong();
+				//Unknown BL
+				var unknown2 = this._mergedReaders.ReadBitLong();
+
+				template.MaterialHandles.Add(this.handleReference());
+			}
+		}
+
+		if (this.R2013Plus)
+		{
+			this._mergedReaders.ReadBit();
+			geometry.Guid = this.readGuid();
+			this._mergedReaders.ReadBitLong();
+		}
+
+		return template;
+	}
+
+	private void readModelerGeometryData<T>(CadEntityTemplate<T> template)
+			where T : ModelerGeometry, new()
+	{
+		//Unknown bit B X
+		bool unknown = this._mergedReaders.ReadBit();
+
+		//Version BS Can be 1 or 2.
+		short version = this._mergedReaders.ReadBitShort();
+
+		switch (version)
+		{
+			//Version == 1 (following 2 items repeat until Block Size is 0):
+			//Block Size BL X Number of bytes of SAT data in this block. if value
+			//is between 0x20 and 0x7E, calculate 0x9F-the value
+			//to get the real character.If it's a tab, we
+			//convert to a space.
+			case 1:
+				using (MemoryStream stream = new MemoryStream())
+				{
+					int blockSize = this._mergedReaders.ReadBitLong();
+					while (blockSize > 0)
+					{
+						byte[] block = AcisTextCodec.Decode(this._mergedReaders.ReadBytes(blockSize));
+						stream.Write(block, 0, block.Length);
+
+						blockSize = this._mergedReaders.ReadBitLong();
+					}
+
+					if (stream.Length > 0)
+					{
+						template.CadObject.AcisData = stream.ToArray();
+					}
+				}
+				break;
+			//Version == 2:
+			//Immediately following will be an acis file.Header value of “ACIS BinaryFile” indicates
+			//SAB, otherwise it is a text SAT file. No length is given.SAB files will end with
+			//“End\x0E\x02of\x0E\x04ACIS\x0D\x04data”. SAT files must be parsed to find the end.
+			case 2:
+				//The stream gives no payload length: read up to the end of the
+				//object data and cut at the End-of-ACIS-data marker. Anything
+				//after the marker (wireframe data, handles) is discarded with
+				//the rest of the object, the caller returns right away.
+				long currentPos = this._mergedReaders.PositionInBits();
+				long endPos = this._objectInitialPos + (this._size * 8);
+				int remainingBytes = (int)((endPos - currentPos) / 8);
+
+				if (remainingBytes > 0)
+				{
+					byte[] data = this._mergedReaders.ReadBytes(remainingBytes);
+					template.CadObject.AcisData = AcisTextCodec.TrimAtAcisEnd(data, out byte[] remain);
+
+					var pos = currentPos + remainingBytes * 8 - remain.Length * 8;
+					this._mergedReaders.SetPositionInBits(pos);
+				}
+				break;
+			default:
+				this.notify($"Modeler geometry data version {version} not recognized for {template.CadObject.ObjectName}", NotificationType.Warning);
+				break;
+		}
+	}
+
+	private CadTemplate readSolid3D()
+	{
+		Solid3D solid = new Solid3D();
+		var template = new CadSolid3DTemplate(solid);
+
+		this.readModelerGeometry(template);
+
+		//R2007 +:
+		if (this.R2007Plus)
+		{
+			//H 350 History ID
+			template.HistoryHandle = this._mergedReaders.HandleReference();
+		}
+
+		return template;
 	}
 
 	private string readStringCadValue()

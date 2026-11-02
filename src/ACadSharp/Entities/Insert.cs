@@ -153,70 +153,19 @@ public class Insert : Entity, IOrientable
 	/// X scale factor.
 	/// </summary>
 	[DxfCodeValue(41)]
-	public double XScale
-	{
-		get
-		{
-			return this._xscale;
-		}
-		set
-		{
-			if (value.Equals(0))
-			{
-				string name = nameof(this.XScale);
-				throw new ArgumentOutOfRangeException(name, value, $"{name} value must be none zero.");
-			}
-			this._xscale = value;
-		}
-	}
+	public double XScale { get; set; } = 1;
 
 	/// <summary>
 	/// Y scale factor.
 	/// </summary>
 	[DxfCodeValue(42)]
-	public double YScale
-	{
-		get
-		{
-			return this._yscale;
-		}
-		set
-		{
-			if (value.Equals(0))
-			{
-				string name = nameof(this.YScale);
-				throw new ArgumentOutOfRangeException(name, value, $"{name} value must be none zero.");
-			}
-			this._yscale = value;
-		}
-	}
+	public double YScale { get; set; } = 1;
 
 	/// <summary>
 	/// Z scale factor.
 	/// </summary>
 	[DxfCodeValue(43)]
-	public double ZScale
-	{
-		get
-		{
-			return this._zscale;
-		}
-		set
-		{
-			if (value.Equals(0))
-			{
-				string name = nameof(this.ZScale);
-				throw new ArgumentOutOfRangeException(name, value, $"{name} value must be none zero.");
-			}
-			this._zscale = value;
-		}
-	}
-
-	private double _xscale = 1;
-
-	private double _yscale = 1;
-
-	private double _zscale = 1;
+	public double ZScale { get; set; } = 1;
 
 	/// <summary>
 	/// Constructor to reference an insert to a block record

@@ -87,4 +87,53 @@ public class SeqendTests
 		Assert.False(doc.TryGetCadObject(holder.Handle, out Seqend inner));
 		Assert.Null(inner);
 	}
+
+	[Fact]
+	public void RemoveOneOfManyKeepsSeqendTest()
+	{
+		CadDocument doc = new CadDocument();
+
+		Polyline2D polyline = new Polyline2D();
+		Vertex2D first = new Vertex2D();
+		polyline.Vertices.Add(first);
+		polyline.Vertices.Add(new Vertex2D());
+
+		doc.Entities.Add(polyline);
+		ulong handle = polyline.Vertices.Seqend.Handle;
+
+		Assert.True(polyline.Vertices.Remove(first));
+
+		Assert.NotEmpty(polyline.Vertices);
+		Assert.Equal(handle, polyline.Vertices.Seqend.Handle);
+		Assert.True(doc.TryGetCadObject(handle, out Seqend inner));
+		Assert.NotNull(inner);
+	}
+
+	[Fact]
+	public void RemoveLastUnregistersSeqendTest()
+	{
+		CadDocument doc = new CadDocument();
+
+		Polyline2D polyline = new Polyline2D();
+		Vertex2D vertex = new Vertex2D();
+		polyline.Vertices.Add(vertex);
+		Seqend holder = polyline.Vertices.Seqend;
+
+		doc.Entities.Add(polyline);
+
+		Assert.True(polyline.Vertices.Remove(vertex));
+
+		Assert.Null(polyline.Vertices.Seqend);
+		Assert.True(holder.Handle == 0);
+	}
+
+	[Fact]
+	public void RemoveMissingItemReturnsFalseTest()
+	{
+		Polyline2D polyline = new Polyline2D();
+		polyline.Vertices.Add(new Vertex2D());
+
+		Assert.False(polyline.Vertices.Remove(new Vertex2D()));
+		Assert.NotNull(polyline.Vertices.Seqend);
+	}
 }

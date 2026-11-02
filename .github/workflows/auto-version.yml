@@ -1,27 +1,34 @@
 name: Auto Version
 
 on:
-  pull_request:
-    types: [labeled]
+  pull_request_target:
+    types: [closed]
+    branches: [master]
 
 permissions:
   contents: write
 
+concurrency:
+  group: auto-version
+  cancel-in-progress: false
+
 env:
-  CURRENT_BRANCH: ${{github.event.pull_request.head.ref}}
   VERSION_FORMAT: ${{ fromJSON('[ "*.^.0", "*.*.^"]')[contains(github.event.pull_request.labels.*.name, 'minor')] }}
 
 jobs:
   update:
-    if: contains(github.event.pull_request.labels.*.name, 'minor') || contains(github.event.pull_request.labels.*.name, 'major')
+    if: >
+      github.event.pull_request.merged == true &&
+      (contains(github.event.pull_request.labels.*.name, 'minor') ||
+       contains(github.event.pull_request.labels.*.name, 'major'))
     runs-on: windows-latest
     name: Update version
     steps:
-      - name: Checkout
+      - name: Checkout master
         uses: actions/checkout@v4
-        with: 
-          submodules: true
-          ref: ${{env.CURRENT_BRANCH}}
+        with:
+          ref: master
+          fetch-depth: 0
       - name: Update version
         id: update
         uses: vers-one/dotnet-project-version-updater@v1.7
@@ -29,8 +36,18 @@ jobs:
           file: ./src/ACadSharp/ACadSharp.csproj
           version: ${{env.VERSION_FORMAT}}
       - name: Push changes
-        run: ./push-changes.sh
         shell: bash
         env:
-          VERSION: ${{steps.update.outputs.newVersion}}
-          BRANCH: ${{env.CURRENT_BRANCH}}
+          GIT_USER: ${{ github.event.pull_request.merged_by.login }}
+          GIT_USER_ID: ${{ github.event.pull_request.merged_by.id }}
+        run: |
+          git config user.name "$GIT_USER"
+          git config user.email "${GIT_USER_ID}+${GIT_USER}@users.noreply.github.com"
+          git add ./src/ACadSharp/ACadSharp.csproj
+          if git diff --cached --quiet; then
+            echo "Nothing changed"
+            exit 0
+          fi
+          git commit -m "#${{github.event.pull_request.number}} v${{steps.update.outputs.newVersion}}"
+          git pull --rebase origin master
+          git push origin HEAD:master

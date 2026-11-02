@@ -1,4 +1,4 @@
-﻿namespace ACadSharp.Entities.ProxyGraphics;
+namespace ACadSharp.Entities.ProxyGraphics;
 
 /// <summary>
 /// Represents a proxy graphics entity for a pop model transform in AutoCAD.
@@ -7,4 +7,10 @@ public class ProxyPopModelTransform : IProxyGeometry
 {
 	/// <inheritdoc/>
 	public GraphicsType GraphicsType { get { return GraphicsType.PopModelTransform; } }
+
+	/// <inheritdoc/>
+	public IProxyGeometry Clone()
+	{
+		return (IProxyGeometry)this.MemberwiseClone();
+	}
 }

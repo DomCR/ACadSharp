@@ -338,8 +338,6 @@ public static class DxfFileToken
 
 	public const string TableEntry = "TABLE";
 
-	public const string TableGroup = "GROUP";
-
 	public const string TableLayer = "LAYER";
 
 	public const string TableLinetype = "LTYPE";

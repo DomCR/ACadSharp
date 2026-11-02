@@ -193,25 +193,4 @@ public class InsertTest
 		Assert.NotNull(att);
 		Assert.Equal(attdef.InsertPoint, att.InsertPoint);
 	}
-
-	[Fact]
-	public void ScaleRange()
-	{
-		BlockRecord record = new BlockRecord(this._blockName);
-		Insert insert = new Insert(record);
-
-		insert.XScale = 5;
-		insert.YScale = 5;
-		insert.ZScale = 5;
-
-		//Negative
-		insert.XScale = -1;
-		insert.YScale = -1;
-		insert.ZScale = -1;
-
-		//Zero
-		Assert.Throws<ArgumentOutOfRangeException>(() => insert.XScale = 0);
-		Assert.Throws<ArgumentOutOfRangeException>(() => insert.YScale = 0);
-		Assert.Throws<ArgumentOutOfRangeException>(() => insert.ZScale = 0);
-	}
 }

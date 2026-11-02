@@ -27,4 +27,12 @@ public class ProxyLwPolyine : IProxyGeometry
 	/// Gets or sets the third unknown byte value.
 	/// </summary>
 	public byte Unknown3 { get; set; }
+
+	/// <inheritdoc/>
+	public IProxyGeometry Clone()
+	{
+		ProxyLwPolyine clone = (ProxyLwPolyine)this.MemberwiseClone();
+		clone.Entity = (LwPolyline)this.Entity?.Clone();
+		return clone;
+	}
 }

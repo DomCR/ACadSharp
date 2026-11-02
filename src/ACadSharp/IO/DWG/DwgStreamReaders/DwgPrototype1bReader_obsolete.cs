@@ -607,7 +607,7 @@ internal class DwgPrototype1bReader_obsolete : DwgSectionIO
 				byte[] propertyValue = this._reader.ReadBytes((int)prop.TypeSize);
 				for (int j = 0; j < propertyValue.Length; j++)
 				{
-					prop.Values[0, j] = propertyValue[j];
+					prop.Values[i, j] = propertyValue[j];
 				}
 			}
 		}
