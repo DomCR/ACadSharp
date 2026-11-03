@@ -10,23 +10,27 @@ internal class CrcRandomEncoding
 
 	public ulong Seed { get; private set; }
 
+	private const int _randomBlockSize = 512;
+
+	private const uint _stateSize = 624;
+
 	private uint _index;
 
 	private uint[] _state;
 
 	public CrcRandomEncoding()
 	{
-		Random ran = new Random();
-		byte[] arr = new byte[8];
-		ran.NextBytes(arr);
-		this.Initialize(LittleEndianConverter.Instance.ToUInt64(arr));
+		Random random = new Random();
+		byte[] seedBytes = new byte[8];
+		random.NextBytes(seedBytes);
+		this.Initialize(LittleEndianConverter.Instance.ToUInt64(seedBytes));
 	}
 
 	public ulong EncodeValue(uint value)
 	{
-		ulong ran = this.NextUInt64();
-		uint low = (uint)(ran & 0xDF7DF7DFu);
-		uint high = (uint)((ran >> 32) & 0xF7DF7DF7u);
+		ulong randomValue = this.NextUInt64();
+		uint low = (uint)(randomValue & 0xDF7DF7DFu);
+		uint high = (uint)((randomValue >> 32) & 0xF7DF7DF7u);
 		if ((value & 0x200u) != 0)
 		{
 			low |= 0x20u;
@@ -63,7 +67,7 @@ internal class CrcRandomEncoding
 		{
 			high |= 0x200000u;
 		}
-		if ((value & (true ? 1u : 0u)) != 0)
+		if ((value & 1u) != 0)
 		{
 			high |= 0x8000000u;
 		}
@@ -72,18 +76,18 @@ internal class CrcRandomEncoding
 
 	public void Initialize(ulong seed)
 	{
-		this._state = new uint[624];
+		this._state = new uint[_stateSize];
 		this.Seed = seed;
 		this._index = 0u;
 		this._state[0] = (uint)((int)seed * 214013 + 2531011);
 		this._state[1] = (uint)((int)(seed >> 32) * 214013 + 2531011);
 		uint previous = this._state[1];
-		this._state[0] = ensureLittleEndian(this._state[0]);
-		this._state[1] = ensureLittleEndian(this._state[1]);
-		for (uint num2 = 2u; num2 < 624; num2++)
+		this._state[0] = swapToLittleEndian(this._state[0]);
+		this._state[1] = swapToLittleEndian(this._state[1]);
+		for (uint i = 2u; i < _stateSize; i++)
 		{
-			previous = ((previous >> 30) ^ previous) * 1812433253 + num2;
-			this._state[num2] = ensureLittleEndian(previous);
+			previous = ((previous >> 30) ^ previous) * 1812433253 + i;
+			this._state[i] = swapToLittleEndian(previous);
 		}
 		this.fillRandomBlock();
 	}
@@ -92,82 +96,53 @@ internal class CrcRandomEncoding
 	{
 		this._index += 2u;
 		this.wrapIndex();
-		return fromLittleEndian(this._state[this._index]) | ((ulong)fromLittleEndian(this._state[this._index + 1]) << 32);
+		return swapToLittleEndian(this._state[this._index]) | ((ulong)swapToLittleEndian(this._state[this._index + 1]) << 32);
 	}
 
-	[Obsolete]
-	private static uint ensureLittleEndian(uint value)
+	private static uint swapToLittleEndian(uint value)
 	{
-		uint result = value;
-		if (!BitConverter.IsLittleEndian)
-		{
-			byte[] b = BitConverter.GetBytes(value);
-			result = BitConverter.ToUInt32(new byte[4]
-			{
-				b[3],
-				b[2],
-				b[1],
-				b[0]
-			}, 0);
-		}
-		return result;
-	}
-
-	[Obsolete]
-	private static uint fromLittleEndian(uint _E000)
-	{
-		uint result = _E000;
-		if (!BitConverter.IsLittleEndian)
-		{
-			byte[] b = BitConverter.GetBytes(_E000);
-			result = BitConverter.ToUInt32(new byte[4]
-			{
-				b[3],
-				b[2],
-				b[1],
-				b[0]
-			}, 0);
-		}
-		return result;
-	}
-
-	[Obsolete]
-	private static void writeUInt32LittleEndian(System.IO.Stream _E000, uint _E001)
-	{
-		byte[] bytes = BitConverter.GetBytes(_E001);
 		if (BitConverter.IsLittleEndian)
 		{
-			_E000.Write(bytes, 0, 4);
+			return value;
+		}
+
+		return ((value & 0x000000FFu) << 24)
+			| ((value & 0x0000FF00u) << 8)
+			| ((value & 0x00FF0000u) >> 8)
+			| ((value & 0xFF000000u) >> 24);
+	}
+
+	private static void writeUInt32LittleEndian(Stream stream, uint value)
+	{
+		byte[] bytes = BitConverter.GetBytes(value);
+		if (BitConverter.IsLittleEndian)
+		{
+			stream.Write(bytes, 0, 4);
 			return;
 		}
 		for (int i = 3; i >= 0; i--)
 		{
-			_E000.WriteByte(bytes[i]);
+			stream.WriteByte(bytes[i]);
 		}
 	}
 
 	private void fillRandomBlock()
 	{
-		this.RandomBlock = new byte[512];
-		MemoryStream val = new MemoryStream(this.RandomBlock, true);
-		try
+		this.RandomBlock = new byte[_randomBlockSize];
+		using (MemoryStream stream = new MemoryStream(this.RandomBlock, true))
 		{
-			for (int i = 0; i < 128; i++)
+			for (int i = 0; i < _randomBlockSize / sizeof(uint); i++)
 			{
 				this.wrapIndex();
-				writeUInt32LittleEndian((System.IO.Stream)(object)val, this._state[this._index]);
+				writeUInt32LittleEndian(stream, this._state[this._index]);
 				this._index++;
 			}
-		}
-		finally
-		{
-			((System.IDisposable)val)?.Dispose();
 		}
 	}
 
 	private void wrapIndex()
 	{
-		if (this._index >= 624)
+		if (this._index >= _stateSize)
 		{
 			this._index = 0u;
 		}

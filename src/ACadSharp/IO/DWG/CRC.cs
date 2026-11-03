@@ -248,6 +248,8 @@ internal class CRC
 		0x5dedc41a34bbeeb2, 0x1f1d25f19d51d821, 0xd80c07cd676f8394, 0x9afce626ce85b507
 	};
 
+	private static bool _mirrored = false;
+
 	public static ushort ApplyCrc8(ushort dx, byte[] arr)
 	{
 		ushort retval = dx;
@@ -259,25 +261,10 @@ internal class CRC
 		return retval;
 	}
 
-	public static ulong UpdateSeed1(ulong seed, uint dataLength)
+	public static ulong Encode(byte[] buffer, uint offset, uint length, ulong seed, bool mirrored = false)
 	{
-		seed = (seed + dataLength) * 0x343FD + 0x269EC3;
-		seed |= seed * 0x343FD00000000L + 0x269EC300000000L;
-		seed = ~seed;
-		return seed;
-	}
+		_mirrored = mirrored;
 
-	public static ulong UpdateSeed2(ulong seed, uint dataLength)
-	{
-		seed = (seed + dataLength) * 0x343FD + 0x269EC3;
-		seed = seed * 0x1000343FDL + (ulong)((long)dataLength + 0x269EC3L);
-		seed = ~seed;
-		return seed;
-	}
-
-
-	public static ulong Encode(byte[] buffer, uint offset, uint length, ulong seed)
-	{
 		int ptr = (int)offset;
 		uint num = length >> 3;
 		while (num-- != 0)
@@ -323,22 +310,47 @@ internal class CRC
 				break;
 		}
 
-		return finalizeCrc(seed);
+		if (_mirrored)
+		{
+			return seed;
+		}
+		else
+		{
+			return ~seed;
+		}
 	}
 
-	private static void updateCrc64(byte value, ref ulong crc)
+	public static ulong UpdateSeed1(ulong seed, uint dataLength)
 	{
-		crc = NormalCRC[(value ^ (crc >> 56)) & 0xFF] ^ (crc << 8);
+		seed = (seed + dataLength) * 0x343FD + 0x269EC3;
+		seed |= seed * 0x343FD00000000L + 0x269EC300000000L;
+		seed = ~seed;
+		return seed;
 	}
 
-	private static ulong finalizeCrc(ulong crc)
+	public static ulong UpdateSeed2(ulong seed, uint dataLength)
 	{
-		return ~crc;
+		seed = (seed + dataLength) * 0x343FD + 0x269EC3;
+		seed = seed * 0x1000343FDL + (ulong)((long)dataLength + 0x269EC3L);
+		seed = ~seed;
+		return seed;
 	}
 
 	private static void applyPair(byte[] buffer, int index, ref ulong crc)
 	{
 		updateCrc64(buffer[index], ref crc);
 		updateCrc64(buffer[index + 1], ref crc);
+	}
+
+	private static void updateCrc64(byte value, ref ulong crc)
+	{
+		if (_mirrored)
+		{
+			crc = MirroredCRC[(crc ^ value) & 0xFF] ^ (crc >> 8);
+		}
+		else
+		{
+			crc = NormalCRC[(value ^ (crc >> 56)) & 0xFF] ^ (crc << 8);
+		}
 	}
 }

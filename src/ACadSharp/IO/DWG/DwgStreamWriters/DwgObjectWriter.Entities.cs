@@ -763,9 +763,9 @@ internal partial class DwgObjectWriter : DwgSectionIO
 		this._writer.WriteBitShort(face.Index4);
 	}
 
-	private void writeGuid(System.Guid _E000)
+	private void writeGuid(System.Guid guid)
 	{
-		byte[] array = _E000.ToByteArray();
+		byte[] array = guid.ToByteArray();
 		this._writer.WriteBitLong(BitConverter.ToInt32(array, 0));
 		this._writer.WriteBitShort(BitConverter.ToInt16(array, 4));
 		this._writer.WriteBitShort(BitConverter.ToInt16(array, 6));

@@ -1,4 +1,5 @@
-﻿using ACadSharp.IO.DWG.FileHeaders;
+using ACadSharp.IO.DWG.FileHeaders;
+using ACadSharp.IO.DWG.FileHeaders.AC21;
 using CSUtilities.Converters;
 using CSUtilities.IO;
 using System;
@@ -10,377 +11,433 @@ namespace ACadSharp.IO.DWG.DwgStreamWriters;
 
 internal class DwgFileHeaderWriterAC21 : DwgFileHeaderWriterBase<DwgFileHeaderAC21>
 {
-	public override int FileHeaderSize { get { return 0x480; } }
+	public override int FileHeaderSize { get { return _dataStartOffset; } }
 
-	public override int HandleSectionOffset { get { return 0; } }
+	public override int HandleSectionOffset { get; }
 
-	private Dictionary<string, DwgSectionDescriptor> _descriptors { get { return this.FileHeader.Descriptors; } }
+	private const int _dataStartOffset = 0x480;
 
-	private const int _headerBlockSize = 239;
+	private const int _encodedHeaderSize = 0x400;
 
-	private const int _headerFactor = 3;
+	private const int _metadataSize = 0x110;
 
-	private const int _pageBlockSize = 251;
+	private const int _pageAlignment = 0x20;
 
-	private const int _systemBlockSize = 239;
-
-	private static readonly byte[] _gfExp = new byte[512];
-
-	private static readonly byte[] _gfLog = new byte[256];
-
-	private readonly ICompressor _compressor = new DwgLZ77AC21Compressor();
-
-	private readonly List<DwgLocalSectionMap> _pageRecords = new List<DwgLocalSectionMap>();
+	private DwgSectionDescriptorAC21 _appInfoDescriptor;
 
 	private CrcRandomEncoding _crcEncoding = new CrcRandomEncoding();
 
-	static DwgFileHeaderWriterAC21()
+	private Dictionary<string, DwgSectionDescriptorAC21> _descriptors = new();
+
+	private DwgLocalSectionCompressedDataAC21 _map2Record = new DwgLocalSectionCompressedDataAC21();
+
+	private List<DwgLocalSectionMapAC21Base> _pageRecords = new();
+
+	private DwgLocalSectionCompressedDataAC21 _pagesMapRecord = new DwgLocalSectionCompressedDataAC21();
+
+	private DwgSectionDescriptorAC21 _previewDescriptor;
+
+	private DwgSectionDescriptorAC21 _summaryInfoDescriptor;
+
+	public DwgFileHeaderWriterAC21(Stream stream, Encoding encoding, CadDocument document)
+		: base(stream, encoding, document)
 	{
-		//GF(256) with primitive polynomial x^8 + x^4 + x^3 + x^2 + 1 (0x11D)
-		int x = 1;
-		for (int i = 0; i < 255; i++)
-		{
-			_gfExp[i] = (byte)x;
-			_gfLog[x] = (byte)i;
-			x <<= 1;
-			if ((x & 0x100) != 0)
-			{
-				x ^= 0x11D;
-			}
-		}
-
-		for (int i = 255; i < 512; i++)
-		{
-			_gfExp[i] = _gfExp[i - 255];
-		}
-	}
-
-	public DwgFileHeaderWriterAC21(Stream stream, Encoding encoding, CadDocument model) : base(stream, encoding, model)
-	{
-		this.initialize();
-		// File header info
-		for (int i = 0; i < this.FileHeaderSize; i++)
-		{
-			this._stream.WriteByte(0);
-		}
-	}
-
-	public override void AddSection(string name, MemoryStream stream, bool isCompressed, int decompsize = 0x7400)
-	{
-		DwgSectionDescriptor descriptor = this.createDescriptor(name, (ulong)stream.Length, (ulong)decompsize, isCompressed);
-		this.FileHeader.AddSection(descriptor);
-
-		byte[] buffer = stream.GetBuffer();
-		ulong offset = 0uL;
-		int nlocalSections = (int)(stream.Length / decompsize);
-
-		for (int i = 0; i < nlocalSections; i++)
-		{
-			this.createLocalSection(descriptor, buffer, decompsize, offset, decompsize, isCompressed);
-			offset += (ulong)decompsize;
-		}
-
-		int spearBytes = (int)(stream.Length % decompsize);
-		if (spearBytes > 0 && !this.checkEmptyBytes(buffer, offset, (ulong)spearBytes))
-		{
-			this.createLocalSection(descriptor, buffer, decompsize, offset, spearBytes, isCompressed);
-		}
-	}
-
-	public override void WriteFile()
-	{
-		this.writeSectionsMap();
-
-		this.writePagesMap();
-
-		this.writeFileMetaData();
-	}
-
-	protected DwgSectionDescriptor createDescriptor(string name, ulong compressedSize, ulong decompressedSize, bool isCompressed)
-	{
-		DwgSectionDescriptor descriptor = new DwgSectionDescriptor(name);
-		descriptor.CompressedSize = compressedSize;
-		descriptor.DecompressedSize = decompressedSize;
-
-		switch (name)
-		{
-			case DwgSectionDefinition.Security:
-				descriptor.HashCode = 0x4a0204ea;
-				descriptor.Encrypted = 0;
-				descriptor.Encoding = 1;
-				break;
-			case DwgSectionDefinition.FileDepList:
-				descriptor.HashCode = 0x6c4205ca;
-				descriptor.Encrypted = 2;
-				descriptor.Encoding = 1;
-				break;
-			case DwgSectionDefinition.VBAProject:
-				descriptor.HashCode = 0x586e0544;
-				descriptor.Encrypted = 2;
-				descriptor.Encoding = 1;
-				break;
-			case DwgSectionDefinition.AppInfo:
-				descriptor.HashCode = 0x3fa0043e;
-				descriptor.Encrypted = 0;
-				descriptor.Encoding = 1;
-				break;
-			case DwgSectionDefinition.Preview:
-				descriptor.HashCode = 0x40aa0473;
-				descriptor.Encrypted = 0;
-				descriptor.Encoding = 1;
-				break;
-			case DwgSectionDefinition.SummaryInfo:
-				descriptor.HashCode = 0x717a060f;
-				descriptor.Encrypted = 0;
-				descriptor.Encoding = 1;
-				break;
-			case DwgSectionDefinition.RevHistory:
-				descriptor.HashCode = 0x60a205b3;
-				descriptor.Encrypted = 0;
-				descriptor.Encoding = 4;
-				break;
-			case DwgSectionDefinition.AcDbObjects:
-				descriptor.HashCode = 0x674c05a9;
-				descriptor.Encrypted = 0;
-				descriptor.Encoding = 4;
-				break;
-			case DwgSectionDefinition.ObjFreeSpace:
-				descriptor.HashCode = 0x77e2061f;
-				descriptor.Encrypted = 0;
-				descriptor.Encoding = 4;
-				break;
-			case DwgSectionDefinition.Template:
-				descriptor.HashCode = 0x4a1404ce;
-				descriptor.Encrypted = 0;
-				descriptor.Encoding = 4;
-				break;
-			case DwgSectionDefinition.Handles:
-				descriptor.HashCode = 0x3f6e0450;
-				descriptor.Encrypted = 0;
-				descriptor.Encoding = 4;
-				break;
-			case DwgSectionDefinition.Classes:
-				descriptor.HashCode = 0x3f54045f;
-				descriptor.Encrypted = 0;
-				descriptor.Encoding = 4;
-				break;
-			case DwgSectionDefinition.AuxHeader:
-				descriptor.HashCode = 0x54f0050a;
-				descriptor.Encrypted = 0;
-				descriptor.Encoding = 4;
-				break;
-			case DwgSectionDefinition.Header:
-				descriptor.HashCode = 0x32b803d9;
-				descriptor.Encrypted = 0;
-				descriptor.Encoding = 4;
-				break;
-			default:
-				throw new System.NotImplementedException(name);
-		}
-
-		descriptor.CompressedCode = isCompressed ? 2 : 1;
-
-		return descriptor;
-	}
-
-	protected void createLocalSection(DwgSectionDescriptor descriptor, byte[] buffer, int decompressedSize, ulong offset, int totalSize, bool isCompressed)
-	{
-		byte[] data;
-		int dataLength;
-
-		if (isCompressed)
-		{
-			MemoryStream compressed = new MemoryStream();
-			this._compressor.Compress(buffer, (int)offset, totalSize, compressed);
-			data = compressed.GetBuffer();
-			dataLength = (int)compressed.Length;
-		}
-		else
-		{
-			data = new byte[totalSize];
-			System.Array.Copy(buffer, (int)offset, data, 0, totalSize);
-			dataLength = totalSize;
-		}
-
-		DwgLocalSectionMap localMap = new DwgLocalSectionMap();
-		localMap.Offset = offset;
-		localMap.CompressedSize = (ulong)dataLength;
-		localMap.DecompressedSize = (ulong)totalSize;
-
-		if (descriptor.Encoding == 4)
-		{
-			//Encoded page, use reed solomon
-			int factor = (int)((align8((ulong)dataLength) + _pageBlockSize - 1) / _pageBlockSize);
-			data = reedSolomonEncoding(data, dataLength, factor, _pageBlockSize);
-			dataLength = data.Length;
-		}
-
-		this.writePage(localMap, data, dataLength);
-
-		descriptor.PageCount++;
-		descriptor.LocalSections.Add(localMap);
-	}
-
-	protected void writeFileHeader(MemoryStream stream)
-	{
-		MemoryStream metadataStream = new MemoryStream();
-		StreamIO metadataIO = new StreamIO(metadataStream);
-		this.writeCompressedMetadata(metadataIO);
-
-		ulong crc64 = CRC.Encode(
-			metadataStream.GetBuffer(), 0u, 0x110,
-			CRC.UpdateSeed2(0uL, 0x110));
-
-		((Stream)(object)metadataStream).Position = 0x108;
-
-		//0x108	8	Header CRC64
-		metadataIO.Write<ulong>(crc64);
-
-		byte[] decoded = new byte[_headerFactor * _headerBlockSize];
-		StreamIO writer = new StreamIO(new MemoryStream(decoded));
-
-		MemoryStream compressed = new MemoryStream();
-		this._compressor.Compress(metadataStream.GetBuffer(), 0, (int)metadataStream.Length, compressed);
-
-		ulong compressedCrc = CRC.Encode(
-			compressed.GetBuffer(), 0u, (uint)((Stream)(object)compressed).Length,
-			CRC.UpdateSeed2(0uL, (uint)((Stream)(object)compressed).Length));
-
-		MemoryStream crcMemoryStream = new MemoryStream(12);
-		StreamIO crcStreamIO = new StreamIO(crcMemoryStream);
-		ulong seed = this._crcEncoding.NextUInt64();
-		crcStreamIO.Write<ulong>(seed);
-		crcStreamIO.Write<ulong>(rotateLeft(seed, seed));
-		ulong crc = CRC.Encode(
-			crcMemoryStream.GetBuffer(), 0u, (uint)((Stream)(object)crcMemoryStream).Length,
-			CRC.UpdateSeed1(0uL, (uint)((Stream)(object)crcMemoryStream).Length));
-
-		//0x00	8	CRC
-		writer.Write<ulong>(crc);
-		//0x08	8	Unknown key
-		writer.Write<ulong>(seed);
-		//0x10	8	Compressed Data CRC
-		writer.Write<ulong>(compressedCrc);
-
-		//0x18	4	ComprLen
-		//0x1C	4	Length2
-		writer.Write<long>(compressed.Length);
-		
-		System.Array.Copy(compressed.GetBuffer(), 0, decoded, 0x20, (int)compressed.Length);
-
-		byte[] encoded = reedSolomonEncoding(decoded, decoded.Length, _headerFactor, _headerBlockSize);
-
-		stream.Write(encoded, 0, encoded.Length);
-		//Fill the rest of the 0x400 bytes, the last 0x28 bytes are the check data
-		stream.Write(new byte[0x400 - encoded.Length], 0, 0x400 - encoded.Length);
-	}
-
-	private static ulong align8(ulong value)
-	{
-		return (value + 7UL) & 0xFFFFFFFFFFFFFFF8UL;
-	}
-
-	private static byte gfMultiply(byte a, byte b)
-	{
-		if (a == 0 || b == 0)
-			return 0;
-
-		return _gfExp[_gfLog[a] + _gfLog[b]];
-	}
-
-	/// <summary>
-	/// Reed-Solomon (255, blockSize) systematic encoding, each codeword is interleaved
-	/// in the output as the inverse of the decoding used by the reader.
-	/// </summary>
-	private static byte[] reedSolomonEncoding(byte[] data, int length, int factor, int blockSize)
-	{
-		int nsym = byte.MaxValue - blockSize;
-		byte[] generator = rsGenerator(nsym);
-		byte[] encoded = new byte[factor * byte.MaxValue];
-		byte[] parity = new byte[nsym];
-
-		int index = 0;
-		for (int i = 0; i < factor; i++)
-		{
-			System.Array.Clear(parity, 0, nsym);
-
-			int cindex = i;
-			for (int j = 0; j < blockSize; j++)
-			{
-				byte value = index < length ? data[index] : (byte)0;
-				encoded[cindex] = value;
-				index++;
-				cindex += factor;
-
-				//LFSR division by the generator polynomial
-				byte feedback = (byte)(value ^ parity[0]);
-				for (int k = 0; k < nsym - 1; k++)
-				{
-					parity[k] = (byte)(parity[k + 1] ^ gfMultiply(feedback, generator[k + 1]));
-				}
-				parity[nsym - 1] = gfMultiply(feedback, generator[nsym]);
-			}
-
-			for (int k = 0; k < nsym; k++)
-			{
-				encoded[cindex] = parity[k];
-				cindex += factor;
-			}
-		}
-
-		return encoded;
-	}
-
-	private static ulong rotateLeft(ulong value, ulong count)
-	{
-		int shift = (int)(count & 0x1F);
-		if (shift != 0)
-		{
-			value = (value << shift) | (value >> 64 - shift);
-		}
-		return value;
-	}
-
-	private static byte[] rsGenerator(int nsym)
-	{
-		//g(x) = (x - a^1)(x - a^2)...(x - a^nsym), highest degree first
-		byte[] g = new byte[] { 1 };
-		for (int i = 1; i <= nsym; i++)
-		{
-			byte[] next = new byte[g.Length + 1];
-			for (int j = 0; j < g.Length; j++)
-			{
-				next[j] ^= g[j];
-				next[j + 1] ^= gfMultiply(g[j], _gfExp[i]);
-			}
-			g = next;
-		}
-
-		return g;
-	}
-
-	private uint getSectionAddress(string name)
-	{
-		if (this._descriptors.TryGetValue(name, out DwgSectionDescriptor descriptor)
-			&& descriptor.LocalSections.Count > 0)
-		{
-			return (uint)(descriptor.LocalSections[0].Seeker + this.FileHeaderSize);
-		}
-
-		return 0u;
-	}
-
-	private void initialize()
-	{
-		Random val = new Random();
-		byte[] array = new byte[8];
-		val.NextBytes(array);
-		this._crcEncoding.Initialize(LittleEndianConverter.Instance.ToUInt64(array));
+		Random random = new Random();
+		byte[] seedBytes = new byte[8];
+		random.NextBytes(seedBytes);
+		this._crcEncoding.Initialize(LittleEndianConverter.Instance.ToUInt64(seedBytes));
 
 		this.FileHeader.CompressedMetadata.RandomSeed = this._crcEncoding.Seed;
 		this.FileHeader.CompressedMetadata.CrcSeed = 0;
 		this.FileHeader.CompressedMetadata.PagesMapCrcSeed = 0;
 		this.FileHeader.CompressedMetadata.SectionsMapCrcSeed = 0;
+
+		this.initialize();
+	}
+
+	public override void AddSection(string name, MemoryStream stream, bool isCompressed, int decompsize = 0x7400)
+	{
+		this._descriptors[name].Stream = stream;
+	}
+
+	public override void WriteFile()
+	{
+		for (int i = 0; i < this.FileHeaderSize; i++)
+		{
+			this._stream.WriteByte(0);
+		}
+
+		int totalPageCount = 0;
+		foreach (DwgSectionDescriptorAC21 item in this._descriptors.Values)
+		{
+			item.Update();
+			totalPageCount += (int)item.PageCount;
+		}
+
+		byte[] pagesMapBuffer = new byte[DwgChecksumCalculatorAC21.CalculatePageSize((ulong)(totalPageCount + 5) * 16uL)];
+
+		this.reservePage(this._pagesMapRecord, pagesMapBuffer, 0, pagesMapBuffer.Length);
+		this.reservePage(this._map2Record, pagesMapBuffer, 0, pagesMapBuffer.Length);
+
+		foreach (var item in this._descriptors.Values)
+		{
+			this.createDescriptorSection(item);
+		}
+
+		this.FileHeader.CompressedMetadata.PagesMaxId = (uint)(this._pageRecords.Count + 2);
+		this.FileHeader.CompressedMetadata.PagesMapId = this.FileHeader.CompressedMetadata.PagesMaxId;
+		this.FileHeader.CompressedMetadata.SectionsMapId = this.FileHeader.CompressedMetadata.PagesMaxId - 1;
+
+		this.writeDescriptors();
+
+		this.writePagesMap();
+
+		this.writeFileHeader();
+
+		this.writeFileMetaData();
+
+		this._stream.Flush();
+	}
+
+	private static ulong alignTo8(ulong value)
+	{
+		return (value + 7) & ~7uL;
+	}
+
+	private static void writeZeroPadding(Stream stream, ulong targetLength)
+	{
+		while ((ulong)stream.Length < targetLength)
+		{
+			stream.WriteByte(0);
+		}
+	}
+
+	private void compressAndEncodePagesMap(DwgLocalSectionCompressedDataAC21 record, MemoryStream data, ulong crcSeed, ulong pageSize, out byte[] encodedData)
+	{
+		record.PagesMapSizeUncompressed = (ulong)data.Length;
+		record.PagesMapCrcUncompressed = CRC.Encode(
+			data.GetBuffer(), 0u, (uint)data.Length,
+			CRC.UpdateSeed1(crcSeed, (uint)data.Length), true);
+
+		MemoryStream compressed = new MemoryStream();
+		new DwgLZ77AC21Compressor().Compress(data.GetBuffer(), 0, (int)data.Length, compressed);
+		if (compressed.Length >= data.Length)
+		{
+			compressed = data;
+		}
+		record.PagesMapSizeCompressed = (ulong)compressed.Length;
+		record.PagesMapCrcCompressed = CRC.Encode(compressed.GetBuffer(), 0u, (uint)compressed.Length,
+			CRC.UpdateSeed1(crcSeed, (uint)compressed.Length), true);
+
+		ulong alignedLength = alignTo8((ulong)compressed.Length);
+		writeZeroPadding(compressed, alignedLength);
+		ulong blockCount = pageSize / 255uL;
+		record.PagesMapCorrectionFactor = blockCount * ReedSolomon.Rs255_239.BlockSize / alignedLength;
+		for (int j = 1; j < (int)record.PagesMapCorrectionFactor; j++)
+		{
+			compressed.Write(compressed.GetBuffer(), 0, (int)alignedLength);
+		}
+		encodedData = new byte[pageSize];
+		uint position = 0u;
+		uint encodedLength = (uint)(this.encodeInterleaved(encodedData, position, compressed.GetBuffer(), 0u, (int)compressed.Length, ReedSolomon.Rs255_239) * 255);
+		position += encodedLength;
+		uint totalBlocksLength = (uint)((int)blockCount * 255);
+		uint zeroPaddingLength = totalBlocksLength - encodedLength;
+		for (int k = 0; k < zeroPaddingLength; k++)
+		{
+			encodedData[position++] = 0;
+		}
+		uint randomPaddingLength = (uint)(int)pageSize - totalBlocksLength;
+		this.fillRandomPadding(encodedData, position, randomPaddingLength);
+		if (position + randomPaddingLength != pageSize)
+		{
+			throw new InvalidOperationException("Encoded pages map size does not match the page size.");
+		}
+	}
+
+	private void copyAndEncodeBlocks(byte[] dataBuffer, uint dataOffset, byte[] parityBuffer, uint parityOffset, byte[] source, uint sourceOffset, int length, ReedSolomon reedSolomon)
+	{
+		for (int i = 0; i < length; i++)
+		{
+			dataBuffer[dataOffset + i] = source[sourceOffset + i];
+		}
+		while (length >= reedSolomon.BlockSize)
+		{
+			this.encodeBlock(parityBuffer, ref parityOffset, source, sourceOffset, reedSolomon);
+			length -= (int)reedSolomon.BlockSize;
+			sourceOffset += reedSolomon.BlockSize;
+		}
+		if (length > 0)
+		{
+			byte[] paddedBlock = new byte[reedSolomon.BlockSize];
+			int blockIndex;
+			for (blockIndex = 0; blockIndex < length; blockIndex++)
+			{
+				paddedBlock[blockIndex] = source[sourceOffset++];
+			}
+			int randomIndex = 0;
+			while (blockIndex < reedSolomon.BlockSize)
+			{
+				paddedBlock[blockIndex++] = this._crcEncoding.RandomBlock[randomIndex++];
+			}
+			this.encodeBlock(parityBuffer, ref parityOffset, paddedBlock, 0u, reedSolomon);
+		}
+	}
+
+	private void createDescriptorSection(DwgSectionDescriptorAC21 descriptor)
+	{
+		descriptor.CompressedSize = (ulong)descriptor.Stream.Length;
+		ulong pageCount = (ulong)descriptor.Stream.Length / descriptor.DecompressedSize;
+		byte[] buffer = descriptor.Stream.GetBuffer();
+		descriptor.Stream.Dispose();
+		descriptor.Stream = null;
+
+		ulong offset = 0uL;
+		for (int i = 0; i < (int)pageCount; i++)
+		{
+			this.createLocalSection(descriptor, buffer, offset, descriptor.DecompressedSize);
+			offset += descriptor.DecompressedSize;
+		}
+
+		ulong remainingSize = descriptor.CompressedSize % descriptor.DecompressedSize;
+		if (remainingSize != 0)
+		{
+			this.createLocalSection(descriptor, buffer, offset, remainingSize);
+			pageCount++;
+		}
+		descriptor.PageCount = pageCount;
+	}
+
+	private void createLocalSection(DwgSectionDescriptorAC21 descriptor, byte[] buffer, ulong offset, ulong length)
+	{
+		DwgLocalSectionMapAC21 localMap = new DwgLocalSectionMapAC21();
+		localMap.PageSize = descriptor.DecompressedSize;
+		localMap.Offset = offset;
+		localMap.DecompressedSize = length;
+		localMap.Checksum = DwgChecksumCalculatorAC21.Calculate(0, buffer, (uint)offset, (uint)length);
+
+		ReedSolomon reedSolomon = ReedSolomon.Rs255_251;
+		MemoryStream compressed = new MemoryStream();
+		if (descriptor.IsCompressed)
+		{
+			new DwgLZ77AC21Compressor().Compress(buffer, (int)offset, (int)length, compressed);
+			if (compressed.Length >= (long)length)
+			{
+				compressed = new MemoryStream();
+				compressed.Write(buffer, (int)offset, (int)length);
+			}
+		}
+		else
+		{
+			compressed.Write(buffer, (int)offset, (int)length);
+		}
+
+		localMap.CompressedSize = (ulong)compressed.Length;
+		localMap.CRC = CRC.Encode(
+			compressed.GetBuffer(), 0u, (uint)compressed.Length,
+			CRC.UpdateSeed1(0, (uint)compressed.Length), true);
+
+		ulong alignedLength = alignTo8((ulong)compressed.Length);
+		int blockCount = (int)((alignedLength + reedSolomon.BlockSize - 1) / reedSolomon.BlockSize);
+		byte[] encodedData;
+		if (descriptor.Encoding == 4)
+		{
+			encodedData = new byte[blockCount * reedSolomon.CodewordLength];
+			writeZeroPadding(compressed, alignedLength);
+			this.encodeInterleaved(encodedData, 0u, compressed.GetBuffer(), 0u, (int)compressed.Length, reedSolomon);
+		}
+		else if (descriptor.Encoding == 1)
+		{
+			writeZeroPadding(compressed, alignedLength);
+			encodedData = new byte[(long)alignedLength + blockCount * (reedSolomon.CodewordLength - reedSolomon.BlockSize)];
+			this.copyAndEncodeBlocks(encodedData, 0u, encodedData, (uint)alignedLength, compressed.GetBuffer(), 0u, (int)compressed.Length, reedSolomon);
+		}
+		else
+		{
+			throw new NotSupportedException($"Section encoding {descriptor.Encoding} is not supported for section {descriptor.Name}.");
+		}
+
+		this.reservePage(localMap, encodedData, 0, encodedData.Length);
+		if (localMap.PageNumber > 0)
+		{
+			descriptor.PageCount++;
+		}
+		descriptor.LocalSections.Add(localMap);
+	}
+
+	private void encodeBlock(byte[] parityBuffer, ref uint parityOffset, byte[] source, uint sourceOffset, ReedSolomon reedSolomon)
+	{
+		reedSolomon.Encode(source, sourceOffset, parityBuffer, parityOffset);
+		parityOffset += reedSolomon.CodewordLength - reedSolomon.BlockSize;
+	}
+
+	private void encodeBlockInterleaved(byte[] target, uint targetOffset, byte[] source, uint sourceOffset, int stride, ReedSolomon reedSolomon)
+	{
+		uint sourceIndex = sourceOffset;
+		int remaining = (int)(reedSolomon.BlockSize - 1);
+		while (remaining >= 0)
+		{
+			target[targetOffset] = source[sourceIndex];
+			targetOffset += (uint)stride;
+			remaining--;
+			sourceIndex++;
+		}
+
+		byte[] parity = reedSolomon.Encode(source, sourceOffset);
+		int parityLength = parity.Length;
+		for (int i = 0; i < parityLength; i++)
+		{
+			target[targetOffset] = parity[i];
+			targetOffset += (uint)stride;
+		}
+	}
+
+	private int encodeInterleaved(byte[] target, uint targetOffset, byte[] source, uint sourceOffset, int length, ReedSolomon reedSolomon)
+	{
+		int blockCount = (int)((length + reedSolomon.BlockSize - 1) / reedSolomon.BlockSize);
+		while (length >= reedSolomon.BlockSize)
+		{
+			this.encodeBlockInterleaved(target, targetOffset, source, sourceOffset, blockCount, reedSolomon);
+			targetOffset++;
+			length -= (int)reedSolomon.BlockSize;
+			sourceOffset += reedSolomon.BlockSize;
+		}
+		if (length > 0)
+		{
+			byte[] paddedBlock = new byte[reedSolomon.BlockSize];
+			int blockIndex = 0;
+			while (blockIndex < length)
+			{
+				paddedBlock[blockIndex] = source[sourceOffset];
+				blockIndex++;
+				sourceOffset++;
+			}
+			int randomIndex = 0;
+			while (blockIndex < reedSolomon.BlockSize)
+			{
+				paddedBlock[blockIndex++] = this._crcEncoding.RandomBlock[randomIndex++];
+			}
+			this.encodeBlockInterleaved(target, targetOffset, paddedBlock, 0u, blockCount, reedSolomon);
+		}
+		return blockCount;
+	}
+
+	private void fillRandomPadding(byte[] buffer, uint offset, uint count)
+	{
+		for (int i = 0; i < count; i++)
+		{
+			buffer[offset + i] = this._crcEncoding.RandomBlock[i];
+		}
+	}
+
+	private void initialize()
+	{
+		DwgSectionDescriptorAC21 appInfoDescriptor = this._appInfoDescriptor = new DwgSectionDescriptorAC21(DwgSectionDefinition.AppInfo);
+		appInfoDescriptor.HashCode = 1067451454uL;
+		appInfoDescriptor.DecompressedSize = 0x300uL;
+		appInfoDescriptor.Encryption = 0uL;
+		appInfoDescriptor.Encoding = 1uL;
+		this._descriptors.Add(appInfoDescriptor.Name, appInfoDescriptor);
+
+		DwgSectionDescriptorAC21 previewDescriptor = this._previewDescriptor = new DwgSectionDescriptorAC21(DwgSectionDefinition.Preview);
+		previewDescriptor.HashCode = 1084884083uL;
+		previewDescriptor.DecompressedSize = 1024uL;
+		previewDescriptor.Encryption = 0uL;
+		previewDescriptor.Encoding = 1uL;
+		this._descriptors.Add(previewDescriptor.Name, previewDescriptor);
+
+		DwgSectionDescriptorAC21 summaryInfoDescriptor = this._summaryInfoDescriptor = new DwgSectionDescriptorAC21(DwgSectionDefinition.SummaryInfo);
+		summaryInfoDescriptor.HashCode = 1903822351uL;
+		summaryInfoDescriptor.DecompressedSize = 128uL;
+		summaryInfoDescriptor.Encryption = 0uL;
+		summaryInfoDescriptor.Encoding = 1uL;
+		this._descriptors.Add(summaryInfoDescriptor.Name, summaryInfoDescriptor);
+
+		DwgSectionDescriptorAC21 revHistoryDescriptor = new DwgSectionDescriptorAC21(DwgSectionDefinition.RevHistory);
+		revHistoryDescriptor.HashCode = 1621231027uL;
+		revHistoryDescriptor.DecompressedSize = 4096uL;
+		revHistoryDescriptor.Encryption = 0uL;
+		revHistoryDescriptor.Encoding = 4uL;
+		revHistoryDescriptor.IsCompressed = true;
+		this._descriptors.Add(revHistoryDescriptor.Name, revHistoryDescriptor);
+
+		DwgSectionDescriptorAC21 objectsDescriptor = new DwgSectionDescriptorAC21(DwgSectionDefinition.AcDbObjects);
+		objectsDescriptor.HashCode = 1733035433uL;
+		objectsDescriptor.DecompressedSize = 63488uL;
+		objectsDescriptor.Encryption = 0uL;
+		objectsDescriptor.Encoding = 4uL;
+		objectsDescriptor.IsCompressed = true;
+		this._descriptors.Add(objectsDescriptor.Name, objectsDescriptor);
+
+		DwgSectionDescriptorAC21 objFreeSpaceDescriptor = new DwgSectionDescriptorAC21(DwgSectionDefinition.ObjFreeSpace);
+		objFreeSpaceDescriptor.HashCode = 2011301407uL;
+		objFreeSpaceDescriptor.DecompressedSize = 63488uL;
+		objFreeSpaceDescriptor.Encryption = 0uL;
+		objFreeSpaceDescriptor.Encoding = 4uL;
+		objFreeSpaceDescriptor.IsCompressed = true;
+		this._descriptors.Add(objFreeSpaceDescriptor.Name, objFreeSpaceDescriptor);
+
+		DwgSectionDescriptorAC21 templateDescriptor = new DwgSectionDescriptorAC21(DwgSectionDefinition.Template);
+		templateDescriptor.HashCode = 1242825934uL;
+		templateDescriptor.DecompressedSize = 1024uL;
+		templateDescriptor.Encryption = 0uL;
+		templateDescriptor.Encoding = 4uL;
+		templateDescriptor.IsCompressed = true;
+		this._descriptors.Add(templateDescriptor.Name, templateDescriptor);
+
+		DwgSectionDescriptorAC21 handlesDescriptor = new DwgSectionDescriptorAC21(DwgSectionDefinition.Handles);
+		handlesDescriptor.HashCode = 1064174672uL;
+		handlesDescriptor.DecompressedSize = 63488uL;
+		handlesDescriptor.Encryption = 0uL;
+		handlesDescriptor.Encoding = 4uL;
+		handlesDescriptor.IsCompressed = true;
+		this._descriptors.Add(handlesDescriptor.Name, handlesDescriptor);
+
+		DwgSectionDescriptorAC21 classesDescriptor = new DwgSectionDescriptorAC21(DwgSectionDefinition.Classes);
+		classesDescriptor.HashCode = 1062470751uL;
+		classesDescriptor.DecompressedSize = 63488uL;
+		classesDescriptor.Encryption = 0uL;
+		classesDescriptor.Encoding = 4uL;
+		classesDescriptor.IsCompressed = true;
+		this._descriptors.Add(classesDescriptor.Name, classesDescriptor);
+
+		DwgSectionDescriptorAC21 auxHeaderDescriptor = new DwgSectionDescriptorAC21(DwgSectionDefinition.AuxHeader);
+		auxHeaderDescriptor.HashCode = 1425016074uL;
+		auxHeaderDescriptor.DecompressedSize = 2048uL;
+		auxHeaderDescriptor.Encryption = 0uL;
+		auxHeaderDescriptor.Encoding = 4uL;
+		auxHeaderDescriptor.IsCompressed = true;
+		this._descriptors.Add(auxHeaderDescriptor.Name, auxHeaderDescriptor);
+
+		DwgSectionDescriptorAC21 headerDescriptor = new DwgSectionDescriptorAC21(DwgSectionDefinition.Header);
+		headerDescriptor.HashCode = 850920409uL;
+		headerDescriptor.DecompressedSize = 2048uL;
+		headerDescriptor.Encryption = 0uL;
+		headerDescriptor.Encoding = 4uL;
+		headerDescriptor.IsCompressed = true;
+		this._descriptors.Add(headerDescriptor.Name, headerDescriptor);
+
+		this.FileHeader.CompressedMetadata.SectionsAmount = (ulong)(this._descriptors.Count + 1);
+	}
+
+	private void reservePage(DwgLocalSectionMapAC21Base record, byte[] buffer, int offset, int length)
+	{
+		if (this._stream.Position % _pageAlignment != 0)
+		{
+			throw new InvalidOperationException($"Page position must be aligned to {_pageAlignment} bytes.");
+		}
+
+		long position = this._stream.Position;
+		record.PageNumber = this._pageRecords.Count + 1;
+		record.Seeker = (ulong)(position - _dataStartOffset);
+
+		this._stream.Write(buffer, offset, length);
+
+		int alignedLength = (length + _pageAlignment - 1) & ~(_pageAlignment - 1);
+		this.writeRandomPadding(this._stream, (uint)(alignedLength - length));
+
+		record.Size = this._stream.Position - position;
+		this._pageRecords.Add(record);
 	}
 
 	private void writeCompressedMetadata(StreamIO writer)
@@ -454,182 +511,333 @@ internal class DwgFileHeaderWriterAC21 : DwgFileHeaderWriterBase<DwgFileHeaderAC
 		writer.Write<ulong>(0uL);
 	}
 
-	private void writeFileMetaData()
+	private void writeDescriptor(DwgSectionDescriptorAC21 descriptor, StreamIO writer)
 	{
-		StreamIO writer = new StreamIO(this._stream);
+		//0x00	8	Data size
+		writer.Write<ulong>(descriptor.CompressedSize);
+		//0x08	8	Max size
+		writer.Write<ulong>(descriptor.DecompressedSize);
+		//0x10	8	Encryption
+		writer.Write<ulong>(descriptor.Encryption);
+		//0x18	8	HashCode
+		writer.Write<ulong>(descriptor.HashCode ?? 0);
 
-		//Repeated header at the end of the file
-		this.FileHeader.CompressedMetadata.Header2offset = (ulong)(this._stream.Position - this.FileHeaderSize);
-		this.FileHeader.CompressedMetadata.FileSize = (ulong)(this._stream.Position + 0x400);
+		ulong nameLength = (ulong)descriptor.Name.Length;
+		if (nameLength != 0)
+		{
+			nameLength = nameLength + 1 << 1;
+		}
+		//0x20	8	SectionNameLength
+		writer.Write<ulong>(nameLength);
+		//0x28	8	Unknown
+		writer.Write<ulong>(0UL);
+		//0x30	8	Encoding
+		writer.Write<ulong>(descriptor.Encoding ?? 0);
+		//0x38	8	NumPages
+		writer.Write<ulong>(descriptor.PageCount);
+
+		if (nameLength != 0)
+		{
+			//Section name (Unicode)
+			byte[] bytes = System.Text.Encoding.Unicode.GetBytes(descriptor.Name);
+			writer.Stream.Write(bytes, 0, bytes.Length);
+			writer.Write<byte>(0);
+			writer.Write<byte>(0);
+		}
+
+		foreach (DwgLocalSectionMapAC21 page in descriptor.LocalSections)
+		{
+			//8	Page data offset
+			writer.Write<ulong>(page.Offset);
+			//8	Page Size
+			writer.Write<ulong>(page.PageSize);
+			//8	Page Id
+			writer.Write<long>(page.PageNumber);
+			//8	Page Uncompressed Size
+			writer.Write<ulong>(page.DecompressedSize);
+			//8	Page Compressed Size
+			writer.Write<ulong>(page.CompressedSize);
+			//8	Page Checksum
+			writer.Write<ulong>(page.Checksum);
+			//8	Page CRC
+			writer.Write<ulong>(page.CRC);
+		}
+	}
+
+	private void writeDescriptors()
+	{
+		MemoryStream descriptorsStream = new MemoryStream();
+		var writer = new StreamIO(descriptorsStream);
+		writer.Encoding = this._encoding;
+
+		foreach (var item in this._descriptors.Values)
+		{
+			if (item.CompressedSize != 0)
+			{
+				this.writeDescriptor(item, writer);
+			}
+		}
+
+		DwgSectionDescriptorAC21 emptyDescriptor = new DwgSectionDescriptorAC21();
+		emptyDescriptor.HashCode = 0uL;
+		emptyDescriptor.DecompressedSize = 63488uL;
+		emptyDescriptor.Encryption = 0uL;
+		emptyDescriptor.Encoding = 4uL;
+		this.writeDescriptor(emptyDescriptor, writer);
+
+		DwgLocalSectionCompressedDataAC21 sectionsMapRecord = new DwgLocalSectionCompressedDataAC21();
+		this.compressAndEncodePagesMap(pageSize: DwgChecksumCalculatorAC21.CalculatePageSize((ulong)descriptorsStream.Length), record: sectionsMapRecord, data: descriptorsStream,
+			crcSeed: this.FileHeader.CompressedMetadata.SectionsMapCrcSeed, encodedData: out var encodedData);
+
+		DwgLocalSectionCompressedDataAC21 sectionsMap2Record = (DwgLocalSectionCompressedDataAC21)sectionsMapRecord.Clone();
+		this.reservePage(sectionsMapRecord, encodedData, 0, encodedData.Length);
+		this.reservePage(sectionsMap2Record, encodedData, 0, encodedData.Length);
+
+		this.FileHeader.CompressedMetadata.SectionsMapCorrectionFactor = sectionsMapRecord.PagesMapCorrectionFactor;
+		this.FileHeader.CompressedMetadata.SectionsMapSizeCompressed = sectionsMapRecord.PagesMapSizeCompressed;
+		this.FileHeader.CompressedMetadata.SectionsMapSizeUncompressed = sectionsMapRecord.PagesMapSizeUncompressed;
+		this.FileHeader.CompressedMetadata.SectionsMapCrcCompressed = sectionsMapRecord.PagesMapCrcCompressed;
+		this.FileHeader.CompressedMetadata.SectionsMapCrcUncompressed = sectionsMapRecord.PagesMapCrcUncompressed;
+		this.FileHeader.CompressedMetadata.SectionsMapId = (ulong)sectionsMapRecord.PageNumber;
+		this.FileHeader.CompressedMetadata.SectionsMap2Id = (ulong)sectionsMap2Record.PageNumber;
+	}
+
+	private void writeFileHeader()
+	{
+		this._stream.Position = this._stream.Length;
+		this.FileHeader.CompressedMetadata.FileSize = (ulong)(this._stream.Length + _encodedHeaderSize);
+		this.FileHeader.CompressedMetadata.Header2offset = (ulong)(this._stream.Position - _dataStartOffset);
 
 		this.FileHeader.CompressedMetadata.SectionsMapCrcSeed = this._crcEncoding.EncodeValue((uint)this.FileHeader.CompressedMetadata.SectionsMapCrcSeed);
 		this.FileHeader.CompressedMetadata.PagesMapCrcSeed = this._crcEncoding.EncodeValue((uint)this.FileHeader.CompressedMetadata.PagesMapCrcSeed);
 
+		DwgCheckDataAC21 checkData = new DwgCheckDataAC21(this.FileHeader.CompressedMetadata.CrcSeed, this._crcEncoding);
+
 		this.FileHeader.CompressedMetadata.CrcSeedEncoded = this._crcEncoding.EncodeValue((uint)(this.FileHeader.CompressedMetadata.CrcSeed & 0xFFFF));
 
-		MemoryStream header = new MemoryStream();
-		this.writeFileHeader(header);
-		this._stream.Write(header.GetBuffer(), 0, (int)header.Length);
+		MemoryStream metadataStream = new MemoryStream();
+		StreamIO metadataIO = new StreamIO(metadataStream);
+		metadataIO.Encoding = this._encoding;
+		this.writeCompressedMetadata(metadataIO);
 
-		this._stream.Position = 0L;
+		ulong CRC64 = CRC.Encode(
+			metadataStream.GetBuffer(), 0u, (uint)metadataStream.Length,
+			CRC.UpdateSeed2(0uL, (uint)metadataStream.Length));
+		metadataStream.Position = 0x108L;
 
-		//0x00	6	“ACXXXX” version string
-		this._stream.Write(Encoding.ASCII.GetBytes(this._document.Header.VersionString), 0, 6);
-		//5 bytes of 0x00
-		this._stream.Write(new byte[5], 0, 5);
-		//0x0B	1	Maintenance release version
-		this._stream.WriteByte((byte)this._document.Header.MaintenanceVersion);
-		//0x0C	1	Byte 0x00, 0x01, or 0x03
-		this._stream.WriteByte(3);
-		//0x0D	4	Preview address(long)
-		writer.Write(this.getSectionAddress(DwgSectionDefinition.Preview));
-		//0x11	1	Dwg version (Acad version that writes the file)
-		this._stream.WriteByte(33);
-		//0x12	1	Application maintenance release version
-		this._stream.WriteByte((byte)this._document.Header.MaintenanceVersion);
-		//0x13	2	Codepage
-		writer.Write(this.getFileCodePage());
-		//0x15	3	3 0x00 bytes
-		this._stream.Write(new byte[3], 0, 3);
-		//0x18	4	SecurityType
-		writer.Write(0);
-		//0x1C	4	Unknown long
-		writer.Write(0);
-		//0x20	4	Summary info Address in stream
-		writer.Write(this.getSectionAddress(DwgSectionDefinition.SummaryInfo));
-		//0x24	4	VBA Project Addr(0 if not present)
-		writer.Write(0u);
-		//0x28	4	0x00000080
-		writer.Write(0x00000080);
-		//0x2C	4	App info Address in stream
-		writer.Write(this.getSectionAddress(DwgSectionDefinition.AppInfo));
-		//0x30	0x50	0x00 bytes
-		this._stream.Write(new byte[0x50], 0, 0x50);
+		//0x108	8	Header CRC64
+		metadataIO.Write<ulong>(CRC64);
 
-		//0x80	0x400	Encoded file header
-		this._stream.Write(header.GetBuffer(), 0, (int)header.Length);
+		MemoryStream compressed = new MemoryStream();
+		new DwgLZ77AC21Compressor().Compress(metadataStream.GetBuffer(), 0, (int)metadataStream.Length, compressed);
+		if (compressed.Length >= metadataStream.Length)
+		{
+			compressed = metadataStream;
+		}
 
-		this._stream.Position = this._stream.Length;
+		ulong compressedCrc = CRC.Encode(
+			compressed.GetBuffer(), 0u, (uint)compressed.Length,
+			CRC.UpdateSeed2(0uL, (uint)compressed.Length));
+
+		MemoryStream crcMemoryStream = new MemoryStream(12);
+		StreamIO crcStreamIO = new StreamIO(crcMemoryStream);
+		crcStreamIO.Encoding = this._encoding;
+
+		ulong seed = this._crcEncoding.NextUInt64();
+		crcStreamIO.Write<ulong>(seed);
+		crcStreamIO.Write<ulong>(DwgCheckDataAC21.Encode(seed, seed));
+		ulong crc = CRC.Encode(
+			crcMemoryStream.GetBuffer(), 0u, (uint)crcMemoryStream.Length,
+			CRC.UpdateSeed1(0uL, (uint)crcMemoryStream.Length));
+
+		MemoryStream headerStream = new MemoryStream(1024);
+		StreamIO headerStreamIO = new StreamIO(headerStream);
+		headerStreamIO.Encoding = this._encoding;
+
+		//0x00	8	CRC
+		headerStreamIO.Write<ulong>(crc);
+		//0x08	8	Unknown key
+		headerStreamIO.Write<ulong>(seed);
+		//0x10	8	Compressed Data CRC
+		headerStreamIO.Write<ulong>(compressedCrc);
+
+		if (compressed.Length < _metadataSize)
+		{
+			//0x18	4	ComprLen & 0x1C	4	Length2
+			headerStreamIO.Write<long>(compressed.Length);
+		}
+		else if (compressed.Length == _metadataSize)
+		{
+			//0x18	4	ComprLen (negative = stored uncompressed)
+			headerStreamIO.Write<long>(-_metadataSize);
+		}
+		else
+		{
+			throw new InvalidOperationException($"Compressed metadata size {compressed.Length} exceeds {_metadataSize}.");
+		}
+
+		//Position 32 = 0x20
+		headerStream.Write(
+			compressed.GetBuffer(), 0, (int)compressed.Length);
+
+		uint encodedSize = ReedSolomon.Rs255_239.BlockSize * 3;
+		uint headerLength = (uint)headerStreamIO.Stream.Length;
+		uint alignedHeaderLength = (uint)alignTo8(headerLength);
+
+		this.writeRandomPadding(headerStream, alignedHeaderLength - headerLength);
+		uint repeatCount = encodedSize / alignedHeaderLength;
+		for (int i = 1; i < repeatCount; i++)
+		{
+			headerStream.Write(headerStream.GetBuffer(), 0, (int)alignedHeaderLength);
+		}
+
+		this.writeRandomPadding(headerStream, encodedSize - (uint)(int)headerStream.Length);
+		byte[] encodedHeader = new byte[_encodedHeaderSize];
+		this.encodeInterleaved(encodedHeader, 0u, headerStream.GetBuffer(), 0u, (int)encodedSize, ReedSolomon.Rs255_239);
+		this.fillRandomPadding(encodedHeader, 765u, 259u);
+		MemoryStream encodedHeaderStream = new MemoryStream(encodedHeader, true);
+		encodedHeaderStream.Position = encodedHeaderStream.Length - 40;
+		checkData.Write(encodedHeaderStream);
+		if (encodedHeaderStream.Length != _encodedHeaderSize)
+		{
+			throw new InvalidOperationException($"Encoded file header must be {_encodedHeaderSize} bytes.");
+		}
+
+		this._stream.Write(encodedHeader, 0, encodedHeader.Length);
+		this._stream.Position = 0x80;
+		this._stream.Write(encodedHeader, 0, encodedHeader.Length);
 	}
 
-	private void writePage(DwgLocalSectionMap map, byte[] data, int length)
+	private void writeFileMetaData()
 	{
-		map.PageNumber = this._pageRecords.Count + 1;
-		map.Seeker = this._stream.Position - this.FileHeaderSize;
-		map.Size = length;
+		StreamIO writer = new StreamIO(this._stream);
+		writer.Encoding = this._encoding;
 
-		this._stream.Write(data, 0, length);
+		////0x00	6	“ACXXXX” version string
+		this._stream.Position = 0L;
+		this._stream.Write(Encoding.ASCII.GetBytes(this._document.Header.VersionString), 0, 6);
 
-		this._pageRecords.Add(map);
+		//5 bytes of 0x00
+		this._stream.Write(new byte[5], 0, 5);
+
+		//0x0B	1	Maintenance release version
+		this._stream.WriteByte((byte)this._document.Header.MaintenanceVersion);
+
+		//0x0C	1	Byte 0x00, 0x01, or 0x03
+		this._stream.WriteByte(3);
+
+		//0x0D	4	Preview address(long), points to the image page + page header size(0x20).
+		writer.Write<uint>((uint)((int)this._previewDescriptor.LocalSections[0].Seeker + _dataStartOffset));
+
+		//0x11	1	Dwg version (Acad version that writes the file)
+		this._stream.WriteByte(33);
+		//0x12	1	Application maintenance release version(Acad maintenance version that writes the file)
+		this._stream.WriteByte(0);
+
+		//0x13	2	Codepage
+		writer.Write<ushort>(getFileCodePage());
+		//0x15	3	3 0x00 bytes
+		this._stream.Write(new byte[3], 0, 3);
+
+		//TODO: Write SecurityType
+		//0x18	4	SecurityType (long), see R2004 meta data, the definition is the same, paragraph 4.1.
+		writer.Write<int>(0);
+		//0x1C	4	Unknown long
+		writer.Write<int>(0);
+
+		//0x20	4	Summary info Address in stream
+		writer.Write<uint>((uint)((int)this._summaryInfoDescriptor.LocalSections[0].Seeker + _dataStartOffset));
+
+		//0x24	4	VBA Project Addr(0 if not present)
+		writer.Write<uint>(0u);
+
+		//0x28	4	0x00000080
+		writer.Write<int>(128);
+
+		//0x2C	4	App info Address in stream
+		writer.Write<uint>((uint)((int)this._appInfoDescriptor.LocalSections[0].Seeker + _dataStartOffset));
+
+		//0x30	0x80	0x00 bytes
+		for (int i = 0; i < 80; i++)
+		{
+			this._stream.WriteByte(0);
+		}
 	}
 
 	private void writePagesMap()
 	{
-		int pageId = this._pageRecords.Count + 1;
-
-		//The pages map contains its own record, the size has to be known before writing it
-		int length = (pageId) * 16;
-		MemoryStream compressed = new MemoryStream();
-		this._compressor.Compress(new byte[length], 0, length, compressed);
-		int factor = (int)((align8((ulong)compressed.Length) + _systemBlockSize - 1) / _systemBlockSize);
-		long pagesMapSize = factor * byte.MaxValue;
-
-		MemoryStream stream = new MemoryStream();
-		StreamIO writer = new StreamIO(stream);
-		foreach (DwgLocalSectionMap record in this._pageRecords)
+		this._pagesMapRecord.Seeker = 0uL;
+		ulong pageSize = DwgChecksumCalculatorAC21.CalculatePageSize((ulong)(this._pageRecords.Count + 5) * 16uL);
+		long nextPageId = this._pageRecords.Count + 1 + 2;
+		if (pageSize <= 1024)
 		{
-			writer.Write<long>(record.Size);
-			writer.Write<long>(record.PageNumber);
+			this._pageRecords[0].PageNumber = nextPageId++;
+			this._pageRecords[1].PageNumber = nextPageId;
+			this.FileHeader.CompressedMetadata.PagesMapId = (ulong)this._pageRecords[0].PageNumber;
+			this.FileHeader.CompressedMetadata.PagesMapOffset = this._pageRecords[0].Seeker;
+			this.FileHeader.CompressedMetadata.Map2Id = (ulong)this._pageRecords[1].PageNumber;
+			this.FileHeader.CompressedMetadata.Map2Offset = this._pageRecords[1].Seeker;
 		}
-
-		writer.Write<long>(pagesMapSize);
-		writer.Write<long>(pageId);
-
-		DwgLocalSectionMap map = this.writeSystemPage(stream.GetBuffer(), (int)stream.Length, out ulong compressedSize);
-
-		this.FileHeader.CompressedMetadata.PagesMapId = (ulong)map.PageNumber;
-		this.FileHeader.CompressedMetadata.PagesMapOffset = (ulong)map.Seeker;
-		this.FileHeader.CompressedMetadata.Map2Id = (ulong)map.PageNumber;
-		this.FileHeader.CompressedMetadata.Map2Offset = (ulong)map.Seeker;
-		this.FileHeader.CompressedMetadata.PagesMapSizeCompressed = compressedSize;
-		this.FileHeader.CompressedMetadata.PagesMapSizeUncompressed = (ulong)stream.Length;
-		this.FileHeader.CompressedMetadata.PagesMapCorrectionFactor = 1;
-		this.FileHeader.CompressedMetadata.PagesAmount = (ulong)this._pageRecords.Count;
-		this.FileHeader.CompressedMetadata.PagesMaxId = (ulong)this._pageRecords.Count;
-	}
-
-	private void writeSectionsMap()
-	{
-		MemoryStream stream = new MemoryStream();
-		StreamIO writer = new StreamIO(stream);
-
-		foreach (DwgSectionDescriptor descriptor in this._descriptors.Values)
+		else
 		{
-			byte[] name = Encoding.Unicode.GetBytes(descriptor.Name + "\0");
+			this._pageRecords[0].PageNumber = -nextPageId++;
+			this._pageRecords[1].PageNumber = -nextPageId++;
+			uint streamOffset = (uint)(this._stream.Position - _dataStartOffset);
+			DwgLocalSectionCompressedDataAC21 pagesMapPage = new DwgLocalSectionCompressedDataAC21();
+			pagesMapPage.PageNumber = nextPageId++;
+			pagesMapPage.Seeker = streamOffset - _dataStartOffset;
+			this._pageRecords.Add(pagesMapPage);
+			DwgLocalSectionCompressedDataAC21 pagesMap2Page = new DwgLocalSectionCompressedDataAC21();
+			pagesMap2Page.PageNumber = nextPageId;
+			pagesMap2Page.Seeker = streamOffset + pageSize - _dataStartOffset;
+			this._pageRecords.Add(pagesMap2Page);
+		}
+		this.FileHeader.CompressedMetadata.PagesMaxId = 0uL;
+		this.FileHeader.CompressedMetadata.PagesAmount = (uint)this._pageRecords.Count;
+		this.FileHeader.CompressedMetadata.PagesMapOffset = this._pagesMapRecord.Seeker;
 
-			//0x00	8	Data size
-			writer.Write<ulong>(descriptor.CompressedSize);
-			//0x08	8	Max size
-			writer.Write<ulong>(descriptor.DecompressedSize);
-			//0x10	8	Encryption
-			writer.Write<ulong>((ulong)descriptor.Encrypted);
-			//0x18	8	HashCode
-			writer.Write<ulong>(descriptor.HashCode ?? 0);
-			//0x20	8	SectionNameLength
-			writer.Write<ulong>((ulong)name.Length);
-			//0x28	8	Unknown
-			writer.Write<ulong>(0UL);
-			//0x30	8	Encoding
-			writer.Write<ulong>(descriptor.Encoding ?? 1);
-			//0x38	8	NumPages
-			writer.Write<ulong>((ulong)descriptor.PageCount);
-			//Section name (Unicode)
-			stream.Write(name, 0, name.Length);
+		MemoryStream pagesMapStream = new MemoryStream();
+		StreamIO writer = new StreamIO(pagesMapStream);
+		writer.Encoding = this._encoding;
 
-			foreach (DwgLocalSectionMap page in descriptor.LocalSections)
+		foreach (DwgLocalSectionMapAC21Base item in this._pageRecords)
+		{
+			if (item != null)
 			{
-				//8	Page data offset
-				writer.Write<ulong>(page.Offset);
-				//8	Page Size
-				writer.Write<long>(page.Size);
-				//8	Page Id
-				writer.Write<long>(page.PageNumber);
-				//8	Page Uncompressed Size
-				writer.Write<ulong>(page.DecompressedSize);
-				//8	Page Compressed Size
-				writer.Write<ulong>(page.CompressedSize);
-				//8	Page Checksum
-				writer.Write<ulong>(page.Checksum);
-				//8	Page CRC
-				writer.Write<ulong>(page.CRC);
+				writer.Write<long>(item.Size);
+				writer.Write<long>(item.PageNumber);
+				if (item.PageNumber > (long)this.FileHeader.CompressedMetadata.PagesMaxId)
+				{
+					this.FileHeader.CompressedMetadata.PagesMaxId = (ulong)item.PageNumber;
+				}
 			}
 		}
 
-		DwgLocalSectionMap map = this.writeSystemPage(stream.GetBuffer(), (int)stream.Length, out ulong compressedSize);
+		this.compressAndEncodePagesMap(this._pagesMapRecord, pagesMapStream, this.FileHeader.CompressedMetadata.PagesMapCrcSeed, pageSize, out var encodedData);
 
-		Dwg21CompressedMetadata metadata = this.FileHeader.CompressedMetadata;
-		metadata.SectionsAmount = (ulong)this._descriptors.Count + 1;
-		metadata.SectionsMapId = (ulong)map.PageNumber;
-		metadata.SectionsMap2Id = (ulong)map.PageNumber;
-		metadata.SectionsMapSizeCompressed = compressedSize;
-		metadata.SectionsMapSizeUncompressed = (ulong)stream.Length;
-		metadata.SectionsMapCorrectionFactor = 1;
+		this._pagesMapRecord.Size = encodedData.Length;
+		long map2PageNumber = this._map2Record.PageNumber;
+		this._map2Record.Copy(this._pagesMapRecord);
+		this._map2Record.PageNumber = map2PageNumber;
+		this._map2Record.Seeker = 1024uL;
+
+		this._stream.Position = (long)(this.FileHeader.CompressedMetadata.PagesMapOffset + _dataStartOffset);
+		this._stream.Write(encodedData, 0, encodedData.Length);
+		this._stream.Position = (long)(this.FileHeader.CompressedMetadata.Map2Offset + _dataStartOffset);
+		this._stream.Write(encodedData, 0, encodedData.Length);
+
+		this.FileHeader.CompressedMetadata.PagesMapCorrectionFactor = this._pagesMapRecord.PagesMapCorrectionFactor;
+		this.FileHeader.CompressedMetadata.PagesMapSizeCompressed = this._pagesMapRecord.PagesMapSizeCompressed;
+		this.FileHeader.CompressedMetadata.PagesMapSizeUncompressed = this._pagesMapRecord.PagesMapSizeUncompressed;
+		this.FileHeader.CompressedMetadata.PagesMapCrcCompressed = this._pagesMapRecord.PagesMapCrcCompressed;
+		this.FileHeader.CompressedMetadata.PagesMapCrcUncompressed = this._pagesMapRecord.PagesMapCrcUncompressed;
 	}
 
-	private DwgLocalSectionMap writeSystemPage(byte[] data, int length, out ulong compressedSize)
+	private void writeRandomPadding(Stream stream, uint length)
 	{
-		MemoryStream compressed = new MemoryStream();
-		this._compressor.Compress(data, 0, length, compressed);
-		compressedSize = (ulong)compressed.Length;
-
-		int factor = (int)((align8(compressedSize) + _systemBlockSize - 1) / _systemBlockSize);
-		byte[] encoded = reedSolomonEncoding(compressed.GetBuffer(), (int)compressed.Length, factor, _systemBlockSize);
-
-		DwgLocalSectionMap map = new DwgLocalSectionMap();
-		map.CompressedSize = compressedSize;
-		map.DecompressedSize = (ulong)length;
-		this.writePage(map, encoded, encoded.Length);
-
-		return map;
+		for (int i = 0; i < length; i++)
+		{
+			stream.WriteByte(this._crcEncoding.RandomBlock[i]);
+		}
 	}
 }

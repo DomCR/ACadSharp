@@ -1,11 +1,10 @@
-﻿namespace ACadSharp.IO.DWG
+﻿namespace ACadSharp.IO.DWG.DwgStreamWriters;
+
+internal interface IDwgFileHeaderWriter
 {
-	internal interface IDwgFileHeaderWriter
-	{
-		int HandleSectionOffset { get; }
+	int HandleSectionOffset { get; }
 
-		void AddSection(string name, System.IO.MemoryStream stream, bool isCompressed, int decompsize = 0x7400);
+	void AddSection(string name, System.IO.MemoryStream stream, bool isCompressed, int decompsize = 0x7400);
 
-		void WriteFile();
-	}
+	void WriteFile();
 }
