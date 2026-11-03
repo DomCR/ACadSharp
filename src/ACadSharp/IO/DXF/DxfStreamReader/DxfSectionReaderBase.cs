@@ -801,7 +801,9 @@ internal abstract class DxfSectionReaderBase
 
 				if (tmp.CadObject is CadDimensionTemplate.DimensionPlaceholder placeholder && this._builder.Version < ACadVersion.AC1012)
 				{
-					switch (placeholder.Flags)
+					//Ignore the bit values (32, 64, 128) when picking the dimension type
+					DimensionType type = placeholder.Flags & ~(DimensionType.BlockReference | DimensionType.OrdinateTypeX | DimensionType.TextUserDefinedLocation);
+					switch (type)
 					{
 						case DimensionType.Linear:
 							tmp.SetDimensionObject(new DimensionLinear());
@@ -829,13 +831,9 @@ internal abstract class DxfSectionReaderBase
 							map.SubClasses.TryAdd(DxfSubclassMarker.Angular3PointDimension, DxfClassMap.Create<DimensionAngular3Pt>());
 							break;
 						case DimensionType.Ordinate:
-						case DimensionType.OrdinateTypeX:
-						case DimensionType.Ordinate | DimensionType.OrdinateTypeX:
 							tmp.SetDimensionObject(new DimensionOrdinate());
 							map.SubClasses.TryAdd(DxfSubclassMarker.OrdinateDimension, DxfClassMap.Create<DimensionOrdinate>());
 							break;
-						case DimensionType.BlockReference:
-						case DimensionType.TextUserDefinedLocation:
 						default:
 							break;
 					}
