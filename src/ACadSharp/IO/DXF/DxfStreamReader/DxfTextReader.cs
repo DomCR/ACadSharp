@@ -24,9 +24,9 @@ namespace ACadSharp.IO.DXF
 			this._stream.DiscardBufferedData();
 		}
 
-		public override void ReadNext()
+		protected override void readGroup()
 		{
-			base.ReadNext();
+			base.readGroup();
 			this.Position += 2;
 		}
 

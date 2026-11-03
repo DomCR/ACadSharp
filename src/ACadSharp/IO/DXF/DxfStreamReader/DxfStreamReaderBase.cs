@@ -77,14 +77,12 @@ internal abstract class DxfStreamReaderBase : IDxfStreamReader
 
 	public virtual void ReadNext()
 	{
-		this.DxfCode = this.readCode();
-		this.GroupCodeValue = ACadSharp.GroupCodeValue.TransformValue(this.Code);
-		this.Value = this.transformValue(this.GroupCodeValue);
-
-		if (this.DxfCode == DxfCode.Comment)
+		//Comments are skipped in a loop, a long run of them must not overflow the stack
+		do
 		{
-			this.ReadNext();
+			this.readGroup();
 		}
+		while (this.DxfCode == DxfCode.Comment);
 	}
 
 	public virtual void Start()
@@ -117,6 +115,13 @@ internal abstract class DxfStreamReaderBase : IDxfStreamReader
 	protected abstract short lineAsShort();
 
 	protected abstract DxfCode readCode();
+
+	protected virtual void readGroup()
+	{
+		this.DxfCode = this.readCode();
+		this.GroupCodeValue = ACadSharp.GroupCodeValue.TransformValue(this.Code);
+		this.Value = this.transformValue(this.GroupCodeValue);
+	}
 
 	protected abstract string readStringLine();
 
