@@ -226,7 +226,7 @@ public abstract class CadObject : IHandledCadObject
 		bool result = true;
 		errors = new List<string>();
 
-		if (this.Owner == null)
+		if (this.Document != null && this.Owner == null)
 		{
 			errors.Add($"{nameof(this.Owner)} cannot be null.");
 			result = false;
