@@ -1,4 +1,5 @@
 ﻿using ACadSharp.Attributes;
+using ACadSharp.Extensions;
 using ACadSharp.Tables;
 
 namespace ACadSharp.Objects;
@@ -31,6 +32,23 @@ public partial class TableStyle
 		/// </summary>
 		[DxfCodeValue(170)]
 		public bool HasData { get; set; }
+
+		/// <summary>
+		/// Gets the linked table data that owns the current instance.
+		/// </summary>
+		public CadObject Owner
+		{
+			get { return this._owner; }
+			internal set
+			{
+				this._owner = value;
+
+				if (this._owner == null)
+				{
+					this._textStyle = this._textStyle?.CloneTyped();
+				}
+			}
+		}
 
 		/// <summary>
 		/// Gets or sets the property flags for the content format.
@@ -67,7 +85,34 @@ public partial class TableStyle
 		/// </summary>
 		//[DxfCodeValue(DxfReferenceType.Handle, 340)]
 		[DxfCodeValue(DxfReferenceType.Name, 7)]
-		public TextStyle TextStyle { get; set; } = TextStyle.Default;
+		public TextStyle TextStyle
+		{
+			get
+			{
+				if (this.Owner?.Document != null
+					&& this.Owner.Document.TextStyles.TryGetValue(this._textStyle?.Name, out var textStyle))
+				{
+					this._textStyle = textStyle;
+				}
+				else if (this.Owner?.Document != this._textStyle?.Document)
+				{
+					this._textStyle = this._textStyle?.CloneTyped();
+				}
+
+				return this._textStyle;
+			}
+			set
+			{
+				if (this.Owner?.Document != null)
+				{
+					this._textStyle = this.Owner.Document.TextStyles.TryAdd(value);
+				}
+				else
+				{
+					this._textStyle = value;
+				}
+			}
+		}
 
 		/// <summary>
 		/// Gets or sets the value data type.
@@ -86,5 +131,17 @@ public partial class TableStyle
 		/// </summary>
 		[DxfCodeValue(93)]
 		public int ValueUnitType { get; set; }
+
+		private CadObject _owner;
+
+		private TextStyle _textStyle = null;
+
+		public virtual ContentFormat Clone()
+		{
+			ContentFormat clone = this.MemberwiseClone() as ContentFormat;
+			clone.Owner = null;
+			clone._textStyle = (TextStyle)(this._textStyle?.Clone());
+			return clone;
+		}
 	}
 }
