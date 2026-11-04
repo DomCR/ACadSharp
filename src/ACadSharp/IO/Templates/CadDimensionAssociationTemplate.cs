@@ -15,6 +15,11 @@ internal partial class CadDimensionAssociationTemplate : CadTemplate<DimensionAs
 
 	public OsnapPointRefTemplate ThirdPointRef { get; set; }
 
+	/// <summary>
+	/// The reference the DXF reader read last, to chain the next one when it has 75 = 1.
+	/// </summary>
+	public OsnapPointRefTemplate LastReadPointRef { get; set; }
+
 	public CadDimensionAssociationTemplate() : base(new())
 	{
 	}
@@ -27,9 +32,10 @@ internal partial class CadDimensionAssociationTemplate : CadTemplate<DimensionAs
 	{
 		base.build(builder);
 
-		if (builder.TryGetCadObject<Dimension>(this.DimensionHandle, out var dimension))
+		//A dimension or a leader (LEADER, MULTILEADER): see DimensionAssociation.AssociatedEntity
+		if (builder.TryGetCadObject<Entity>(this.DimensionHandle, out var entity))
 		{
-			this.CadObject.Dimension = dimension;
+			this.CadObject.AssociatedEntity = entity;
 		}
 
 		if (this.FirstPointRef != null)

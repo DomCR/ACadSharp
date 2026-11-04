@@ -1201,43 +1201,37 @@ internal class DxfObjectsSectionReader : DxfSectionReaderBase
 		switch (this._reader.Code)
 		{
 			case 1 when this._reader.ValueAsString.Equals(DimensionAssociation.OsnapPointRefClassName):
-				if (dimassoc.AssociativityFlags.HasFlag(AssociativityFlags.FirstPointReference)
-					&& dimassoc.FirstPointRef == null)
+			{
+				//The template is kept (it used to be discarded, so the geometry was never resolved)
+				var pointRef = this.readOsnapPointRef(new DimensionAssociation.OsnapPointRef());
+				this.lockPointer = true;
+
+				//A reference read after one with 75 = 1 belongs to the same slot: it is chained to it
+				if (tmp.LastReadPointRef != null && tmp.LastReadPointRef.OsnapPointRef.HasLastPointRef
+					&& tmp.LastReadPointRef.LastPointRef == null)
 				{
-					dimassoc.FirstPointRef = new DimensionAssociation.OsnapPointRef();
-					this.readOsnapPointRef(dimassoc.FirstPointRef);
-					this.lockPointer = true;
-					return true;
+					tmp.LastReadPointRef.LastPointRef = pointRef;
+				}
+				else if (dimassoc.AssociativityFlags.HasFlag(AssociativityFlags.FirstPointReference) && tmp.FirstPointRef == null)
+				{
+					tmp.FirstPointRef = pointRef;
+				}
+				else if (dimassoc.AssociativityFlags.HasFlag(AssociativityFlags.SecondPointReference) && tmp.SecondPointRef == null)
+				{
+					tmp.SecondPointRef = pointRef;
+				}
+				else if (dimassoc.AssociativityFlags.HasFlag(AssociativityFlags.ThirdPointReference) && tmp.ThirdPointRef == null)
+				{
+					tmp.ThirdPointRef = pointRef;
+				}
+				else if (dimassoc.AssociativityFlags.HasFlag(AssociativityFlags.FourthPointReference) && tmp.FourthPointRef == null)
+				{
+					tmp.FourthPointRef = pointRef;
 				}
 
-				if (dimassoc.AssociativityFlags.HasFlag(AssociativityFlags.SecondPointReference)
-					&& dimassoc.SecondPointRef == null)
-				{
-					dimassoc.SecondPointRef = new DimensionAssociation.OsnapPointRef();
-					this.readOsnapPointRef(dimassoc.SecondPointRef);
-					this.lockPointer = true;
-					return true;
-				}
-
-				if (dimassoc.AssociativityFlags.HasFlag(AssociativityFlags.ThirdPointReference)
-					&& dimassoc.ThirdPointRef == null)
-				{
-					dimassoc.ThirdPointRef = new DimensionAssociation.OsnapPointRef();
-					this.readOsnapPointRef(dimassoc.ThirdPointRef);
-					this.lockPointer = true;
-					return true;
-				}
-
-				if (dimassoc.AssociativityFlags.HasFlag(AssociativityFlags.FourthPointReference)
-					&& dimassoc.FourthPointRef == null)
-				{
-					dimassoc.FourthPointRef = new DimensionAssociation.OsnapPointRef();
-					this.readOsnapPointRef(dimassoc.FourthPointRef);
-					this.lockPointer = true;
-					return true;
-				}
-
+				tmp.LastReadPointRef = pointRef;
 				return true;
+			}
 			case 330 when template.OwnerHandle.HasValue:
 				tmp.DimensionHandle = this._reader.ValueAsHandle;
 				return true;
@@ -2447,11 +2441,18 @@ internal class DxfObjectsSectionReader : DxfSectionReaderBase
 					osnapPoint.IntersectionGsMarker = this._reader.ValueAsInt;
 					break;
 				case 331:
-					template.ObjectHandle = this._reader.ValueAsHandle;
+					//One per object of the main path, outermost first
+					template.GeometryHandles.Add(this._reader.ValueAsHandle);
+					break;
+				case 332:
+					//One per object of the intersection path (intersection snaps)
+					template.IntersectionHandles.Add(this._reader.ValueAsHandle);
+					break;
+				case 301:
+					osnapPoint.XrefPaths.Add(this._reader.ValueAsString);
 					break;
 				case 302:
-				case 332:
-					//What are these?
+					osnapPoint.IntersectionXrefPaths.Add(this._reader.ValueAsString);
 					break;
 				default:
 					end = true;
