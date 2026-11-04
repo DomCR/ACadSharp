@@ -1,4 +1,5 @@
-﻿using ACadSharp.Entities;
+﻿using ACadSharp.Classes;
+using ACadSharp.Entities;
 using ACadSharp.IO;
 using ACadSharp.Objects;
 using ACadSharp.Objects.Evaluations;
@@ -96,6 +97,46 @@ public class DynamicBlockTests : IOTestsBase
 		{
 			DwgWriter.Write(pathOut, doc, configuration: writerConfiguration as DwgWriterConfiguration, notification: this.onNotification);
 		}
+	}
+
+	[Fact]
+	public void BlockRotateActionCppClassName()
+	{
+		// AutoCAD registers the class as AcDbBlockRotateAction, while the subclass marker
+		// of the object is AcDbBlockRotationAction.
+		DxfClass dxfClass = new BlockRotationAction().GetDxfClass();
+
+		Assert.Equal("AcDbBlockRotateAction", dxfClass.CppClassName);
+		Assert.Equal(DxfFileToken.ObjectBlockRotateAction, dxfClass.DxfName);
+		Assert.Equal("AcDbBlockRotationAction", DxfSubclassMarker.BlockRotationAction);
+	}
+
+	[Fact]
+	public void BlockRotateActionClassSurvivesDwgRoundTrip()
+	{
+		string path = Path.Combine(TestVariables.SamplesFolder, "dynamic-blocks", "BLOCKROTATIONPARAMETER.dxf");
+		CadDocument doc;
+		using (DxfReader reader = new(path))
+		{
+			doc = reader.Read();
+		}
+
+		Assert.Contains(doc.BlockRecords
+			.Where(b => b.EvaluationGraph != null)
+			.SelectMany(b => b.EvaluationGraph.Nodes), n => n.Expression is BlockRotationAction);
+
+		// Rebuild the class table from the objects instead of keeping the one read from the sample.
+		doc.UpdateDxfClasses(true);
+
+		string pathOut = Path.Combine(TestVariables.OutputSamplesFolder, "BlockRotateActionClass.dwg");
+		DwgWriterConfiguration configuration = new() { WriteDynamicBlockData = true };
+		DwgWriter.Write(pathOut, doc, configuration: configuration);
+
+		using DwgReader dwgReader = new(pathOut);
+		CadDocument reread = dwgReader.Read();
+
+		Assert.Contains(reread.Classes, c => c.DxfName == DxfFileToken.ObjectBlockRotateAction && c.CppClassName == "AcDbBlockRotateAction");
+		Assert.DoesNotContain(reread.Classes, c => c.CppClassName == "AcDbBlockRotationAction");
 	}
 
 	private void assertBlockParameter(CadDocument doc, string blockName, Type parameterType)
