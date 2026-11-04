@@ -49,9 +49,11 @@ internal abstract class DwgStreamReaderBase : StreamIO, IDwgStreamReader
 			case ACadVersion.AC1002:
 			case ACadVersion.AC1003:
 			case ACadVersion.AC1004:
+				throw new CadNotSupportedException(version);
 			case ACadVersion.AC1006:
 			case ACadVersion.AC1009:
-				throw new CadNotSupportedException(version);
+				reader = new DwgStreamReaderAC09(stream, resetPositon);
+				break;
 			case ACadVersion.AC1012:
 			case ACadVersion.AC1014:
 				reader = new DwgStreamReaderAC12(stream, resetPositon);

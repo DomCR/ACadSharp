@@ -11,6 +11,8 @@ public abstract class IOTestsBase
 {
 	public static TheoryData<FileModel> DwgFilePaths { get; } = new();
 
+	public static TheoryData<FileModel> DwgPreR13FilePaths { get; } = new();
+
 	public static TheoryData<FileModel> DxfAsciiFiles { get; } = new();
 
 	public static TheoryData<FileModel> DxfBinaryFiles { get; } = new();
@@ -43,6 +45,8 @@ public abstract class IOTestsBase
 	static IOTestsBase()
 	{
 		loadSamples("", "dwg", DwgFilePaths);
+		loadSamples(Path.Combine("pre_r13", "AC1006"), "dwg", DwgPreR13FilePaths);
+		loadSamples(Path.Combine("pre_r13", "AC1009"), "dwg", DwgPreR13FilePaths);
 		loadSamples("", "_ascii", "dxf", DxfAsciiFiles);
 		loadSamples("", "_binary", "dxf", DxfBinaryFiles);
 

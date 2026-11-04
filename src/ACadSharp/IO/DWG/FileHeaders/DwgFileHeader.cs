@@ -35,9 +35,10 @@ internal abstract class DwgFileHeader
 			case ACadVersion.AC1002:
 			case ACadVersion.AC1003:
 			case ACadVersion.AC1004:
+				throw new CadNotSupportedException(version);
 			case ACadVersion.AC1006:
 			case ACadVersion.AC1009:
-				throw new CadNotSupportedException(version);
+				return new DwgFileHeaderAC09(version);
 			case ACadVersion.AC1012:
 			case ACadVersion.AC1014:
 			case ACadVersion.AC1015:

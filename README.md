@@ -23,7 +23,8 @@ For other format export like svg, image, json or pdf check :construction: [ACadS
 
 |      | DxfReader | DxfWriter | DwgReader | DwgWriter |
 ------ | :-------: | :-------: | :-------: | :-------: |
-AC1009 |    :heavy_check_mark:    |   :x:     |    :x:    |    :x:    |
+AC1006 |    :x:    |   :x:     |    :heavy_check_mark:    |    :x:    |
+AC1009 |    :heavy_check_mark:    |   :x:     |    :heavy_check_mark:    |    :x:    |
 AC1012 |    :heavy_check_mark:    |   :heavy_check_mark:     |    :x:    |    :x:    |
 AC1014 |    :heavy_check_mark:    |   :heavy_check_mark:     |    :heavy_check_mark:    |    :heavy_check_mark:    |
 AC1015 |    :heavy_check_mark:    |   :heavy_check_mark:     |    :heavy_check_mark:    |    :heavy_check_mark:    |
@@ -32,6 +33,8 @@ AC1021 |    :heavy_check_mark:    |   :heavy_check_mark:     |    :heavy_check_m
 AC1024 |    :heavy_check_mark:    |   :heavy_check_mark:     |    :heavy_check_mark:    |    :heavy_check_mark:    |
 AC1027 |    :heavy_check_mark:    |   :heavy_check_mark:     |    :heavy_check_mark:    |    :heavy_check_mark:    |
 AC1032 |    :heavy_check_mark:    |   :heavy_check_mark:     |    :heavy_check_mark:    |    :heavy_check_mark:    |
+
+DWG files older than R13 (AC1006, AC1009) are read-only.
 
 Code Example
 ---

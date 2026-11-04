@@ -9,6 +9,10 @@ namespace ACadSharp.IO.DWG
 		public abstract string SectionName { get; }
 
 		/// <summary>
+		/// R11+, used by the drawings older than R13
+		/// </summary>
+		protected bool R11Plus;
+		/// <summary>
 		/// R13-R14 Only
 		/// </summary>
 		protected bool R13_14Only;
@@ -55,6 +59,7 @@ namespace ACadSharp.IO.DWG
 		{
 			this._version = version;
 
+			this.R11Plus = version >= ACadVersion.AC1009;
 			this.R13_14Only = version == ACadVersion.AC1014 || version == ACadVersion.AC1012;
 			this.R13_15Only = version >= ACadVersion.AC1012 && version <= ACadVersion.AC1015;
 			this.R2000Plus = version >= ACadVersion.AC1015;
