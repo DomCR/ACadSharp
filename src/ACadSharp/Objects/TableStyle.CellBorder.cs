@@ -1,4 +1,5 @@
 ﻿using ACadSharp.Attributes;
+using ACadSharp.Tables;
 
 namespace ACadSharp.Objects;
 
@@ -45,6 +46,11 @@ public partial class TableStyle
 		/// </summary>
 		[DxfCodeValue(284)]
 		public bool IsInvisible { get; set; } = false;
+
+		/// <summary>
+		/// Gets or sets the type of line.
+		/// </summary>
+		public LineType LineType { get; set; }
 
 		/// <summary>
 		/// Gets or sets the line weight to use when rendering the entity.

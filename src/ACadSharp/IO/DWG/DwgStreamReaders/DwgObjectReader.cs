@@ -5643,7 +5643,7 @@ namespace ACadSharp.IO.DWG
 
 				//… The cell style fields, see paragraph 20.4.101.4.
 				//Index starting by 1
-				int unknown = this._mergedReaders.ReadBitLong();
+				int index = this._mergedReaders.ReadBitLong();
 				this.readCellStyle(cellStyleTemplate);
 
 				//BL - Cell style ID, 1 = title, 2 = header, 3 = data, 4 = table (new in R24).
