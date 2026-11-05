@@ -269,7 +269,8 @@ public class DwgWriter : CadWriterBase<DwgWriterConfiguration>
 			this.Configuration.WriteXRecords,
 			this.Configuration.WriteXData,
 			this.Configuration.WriteShapes,
-			this.Configuration.WriteDynamicBlockData);
+			this.Configuration.WriteDynamicBlockData,
+			this.Configuration.WriteLegacyAsmData);
 		writer.OnNotification += this.triggerNotification;
 		writer.Write();
 

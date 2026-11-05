@@ -12,11 +12,15 @@ internal partial class DwgObjectWriter
 	{
 		byte[] data = geometry.AcisData ?? Array.Empty<byte>();
 		if (geometry.IsBinaryAcisData && (this._version < ACadVersion.AC1018
-			|| (this._version < ACadVersion.AC1027 && geometry.IsAsmAcisData)))
+			|| (this._version < ACadVersion.AC1027 && geometry.IsAsmAcisData && !this.WriteLegacyAsmData)))
 		{
 			// Match the existing best-effort export policy without altering the source entity.
 			this.notify($"Binary modeler data for {geometry.ObjectName} (handle {geometry.Handle:X}) is not supported by this writer in {this._version}; the modeler payload will be written empty.", NotificationType.Warning);
 			data = Array.Empty<byte>();
+		}
+		else if (geometry.IsAsmAcisData && this._version < ACadVersion.AC1027)
+		{
+			this.notify($"ASM data for {geometry.ObjectName} (handle {geometry.Handle:X}) will be preserved unchanged in {this._version}. Compatibility depends on the target application's modeling kernel; no kernel conversion is performed.", NotificationType.Warning);
 		}
 		// ASM_Data records contain SAB/ASM streams; SAT remains inline.
 		bool storedInAcDs = this.R2013Plus && data.Length > 0 && geometry.IsBinaryAcisData;

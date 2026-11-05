@@ -32,6 +32,182 @@ public class ModelerGeometryWriterTests
 	}
 
 	[Theory]
+	[InlineData(ACadVersion.AC1018)]
+	[InlineData(ACadVersion.AC1021)]
+	[InlineData(ACadVersion.AC1024)]
+	public void LegacyAsmOptInPreservesSamplePayloadAndWireframe(ACadVersion version)
+	{
+		var sample = DwgReader.Read(Path.Combine(TestVariables.SamplesFolder, "sample_AC1032.dwg"));
+		byte[] payload = sample.Entities.OfType<Region>().First().AcisData;
+		var document = new CadDocument(); document.Header.Version = version;
+		foreach (var geometry in new ModelerGeometry[] { new Region(), new Solid3D(), new CadBody() })
+		{
+			geometry.AcisData = payload;
+			geometry.Point = new XYZ(1, 2, 3);
+			var wire = new ModelerGeometry.Wire { AcisIndex = 17, Color = new Color(3) };
+			wire.Points.Add(new XYZ(4, 5, 6)); geometry.Wires.Add(wire);
+			document.Entities.Add(geometry);
+		}
+		var notifications = new List<NotificationEventArgs>();
+		var result = Roundtrip(document, (_, e) => notifications.Add(e), new DwgWriterConfiguration { WriteLegacyAsmData = true });
+		Assert.Equal(3, result.Entities.Count);
+		foreach (var expected in document.Entities.OfType<ModelerGeometry>())
+		{
+			var actual = Assert.Single(result.Entities.OfType<ModelerGeometry>(), e => e.Handle == expected.Handle);
+			Assert.Equal(expected.GetType(), actual.GetType());
+			Assert.Equal(payload, actual.AcisData);
+			Assert.Equal(2, actual.ModelerFormatVersion);
+			Assert.Equal(expected.Point, actual.Point);
+			Assert.Equal(new XYZ(4, 5, 6), Assert.Single(Assert.Single(actual.Wires).Points));
+			Assert.Same(payload, expected.AcisData);
+			Assert.Contains(notifications, e => e.NotificationType == NotificationType.Warning
+				&& e.Message.Contains($"handle {expected.Handle:X}") && e.Message.Contains("preserved unchanged"));
+		}
+		Assert.DoesNotContain(notifications, e => e.Message.Contains("modeler payload will be written empty"));
+	}
+
+	[Theory]
+	[InlineData(ACadVersion.AC1018)]
+	[InlineData(ACadVersion.AC1021)]
+	[InlineData(ACadVersion.AC1024)]
+	public void LegacyAsmOptInWritesUnmodifiedVersion2Record(ACadVersion version)
+	{
+		var sample = DwgReader.Read(Path.Combine(TestVariables.SamplesFolder, "sample_AC1032.dwg"));
+		var geometry = new Region { AcisData = sample.Entities.OfType<Region>().First().AcisData };
+		using var stream = new MemoryStream();
+		var document = new CadDocument(); document.Header.Version = version;
+		var writer = new DwgObjectWriter(stream, document, Encoding.ASCII, writeLegacyAsmData: true);
+		var bits = DwgStreamWriterBase.GetStreamWriter(version, stream, Encoding.ASCII);
+		typeof(DwgObjectWriter).GetField("_writer", BindingFlags.Instance | BindingFlags.NonPublic).SetValue(writer, bits);
+		typeof(DwgObjectWriter).GetMethod("writeModelerGeometry", BindingFlags.Instance | BindingFlags.NonPublic).Invoke(writer, new object[] { geometry });
+		long end = bits.PositionInBits;
+		bits.WriteByte(0xa5); bits.WriteSpearShift();
+		stream.Position = 0;
+		var reader = DwgStreamReaderBase.GetStreamHandler(version, stream);
+		Assert.False(reader.ReadBit()); // Nonempty inline payload.
+		Assert.False(reader.ReadBit());
+		Assert.Equal(2, reader.ReadBitShort());
+		Assert.Equal(geometry.AcisData, reader.ReadBytes(geometry.AcisData.Length)); // No block count or SAT encoding.
+		Assert.False(reader.ReadBit()); // No wireframe.
+		if (version >= ACadVersion.AC1021) Assert.Equal(0, reader.ReadBitLong());
+		Assert.Equal(end, reader.PositionInBits());
+		Assert.Equal(0xa5, reader.ReadByte());
+		// Also check that the regular reader stops at the end marker without wireframe data.
+		document.Entities.Add(geometry);
+		var restored = Roundtrip(document, configuration: new DwgWriterConfiguration { WriteLegacyAsmData = true });
+		Assert.Equal(geometry.AcisData, Assert.Single(restored.Entities.OfType<Region>()).AcisData);
+	}
+
+	[Theory]
+	[InlineData(ACadVersion.AC1014)]
+	[InlineData(ACadVersion.AC1015)]
+	public void LegacyAsmOptInDoesNotEnableBinaryDataBefore2004(ACadVersion version)
+	{
+		var document = new CadDocument(); document.Header.Version = version;
+		var geometry = new Region { AcisData = Encoding.ASCII.GetBytes("ASM BinaryFile4\0test End-of-ASM-data") };
+		document.Entities.Add(geometry);
+		var notifications = new List<NotificationEventArgs>();
+		var result = Roundtrip(document, (_, e) => notifications.Add(e), new DwgWriterConfiguration { WriteLegacyAsmData = true });
+		Assert.Null(Assert.Single(result.Entities.OfType<Region>()).AcisData);
+		Assert.Contains(notifications, e => e.NotificationType == NotificationType.Warning && e.Message.Contains("modeler payload will be written empty"));
+	}
+
+	[Theory]
+	[InlineData(0x40000)]
+	[InlineData(0x40001)]
+	[InlineData(0xfffb0)]
+	[InlineData(0xfffb1)]
+	[InlineData(0x1fff60)]
+	[InlineData(0x1fff61)]
+	public void MixedInlineAndBlobRecordsRetainEveryByte(int length)
+	{
+		foreach (var version in new[] { ACadVersion.AC1027, ACadVersion.AC1032 })
+		{
+			var document = new CadDocument(); document.Header.Version = version;
+			var random = new Random(1729);
+			// Synthetic binary buffers test storage boundaries, not modeling-kernel validity.
+			foreach (var entity in new ModelerGeometry[] { new Solid3D(), new Region(), new CadBody() })
+			{
+				entity.AcisData = new byte[length]; random.NextBytes(entity.AcisData);
+				Encoding.ASCII.GetBytes("ASM BinaryFile4").CopyTo(entity.AcisData, 0);
+				document.Entities.Add(entity);
+			}
+			document.Entities.Add(new Solid3D { AcisData = Encoding.ASCII.GetBytes("ACIS BinaryFile\0small") });
+			AssertBlobLayout(document.Entities.OfType<ModelerGeometry>().ToArray());
+			var result = Roundtrip(document);
+			Assert.Equal(4, result.Entities.OfType<ModelerGeometry>().Count());
+			foreach (var expected in document.Entities.OfType<ModelerGeometry>())
+			{
+				var actual = Assert.Single(result.Entities.OfType<ModelerGeometry>(), e => e.Handle == expected.Handle);
+				Assert.Equal(expected.GetType(), actual.GetType());
+				Assert.Equal(expected.AcisData, actual.AcisData);
+			}
+		}
+	}
+
+	private static void AssertBlobLayout(ModelerGeometry[] entities)
+	{
+		byte[] bytes = DwgPrototype1bWriter.Write(entities);
+		using var reader = new BinaryReader(new MemoryStream(bytes));
+		reader.BaseStream.Position = 32;
+		int segmentCount = reader.ReadInt32();
+		var offsets = new long[segmentCount];
+		var sizes = new int[segmentCount];
+		reader.BaseStream.Position = 128 + 48;
+		for (int i = 0; i < segmentCount; i++)
+		{
+			offsets[i] = (long)reader.ReadUInt64(); sizes[i] = reader.ReadInt32();
+			Assert.Equal(0, sizes[i] % 64);
+			Assert.InRange(offsets[i] + sizes[i], 0, bytes.Length);
+		}
+		reader.BaseStream.Position = offsets[4] + 36;
+		long dataStart = offsets[4] + reader.ReadInt32() * 16;
+		reader.BaseStream.Position = dataStart;
+		int expectedBlobSegment = 6;
+		foreach (var entity in entities.OrderBy(e => e.Handle))
+		{
+			if (entity.AcisData.Length <= 0x40000)
+			{
+				Assert.Equal(entity.AcisData.Length, reader.ReadInt32());
+				Assert.Equal(entity.AcisData, reader.ReadBytes(entity.AcisData.Length));
+				continue;
+			}
+			Assert.Equal(0xbb106bb1u, reader.ReadUInt32());
+			Assert.Equal((ulong)entity.AcisData.Length, reader.ReadUInt64());
+			int count = reader.ReadInt32();
+			Assert.Equal(36 + count * 8, reader.ReadInt32());
+			Assert.Equal(0xfffb0, reader.ReadInt32());
+			int lastSize = reader.ReadInt32();
+			Assert.Equal(0, reader.ReadInt32()); Assert.Equal(0, reader.ReadInt32());
+			int payloadOffset = 0;
+			for (int i = 0; i < count; i++)
+			{
+				int segment = reader.ReadInt32(); int size = reader.ReadInt32();
+				Assert.Equal(expectedBlobSegment++, segment);
+				Assert.Equal(i == count - 1 ? lastSize : 0xfffb0, size);
+				long next = reader.BaseStream.Position;
+				reader.BaseStream.Position = offsets[segment];
+				Assert.Equal(0xd5ac, reader.ReadUInt16());
+				Assert.Equal("blob01", Encoding.ASCII.GetString(reader.ReadBytes(6)));
+				Assert.Equal(segment, reader.ReadInt32()); Assert.Equal(1, reader.ReadInt32());
+				Assert.Equal(sizes[segment], reader.ReadInt32());
+				Assert.InRange(sizes[segment], 80 + size, 0x100000);
+				reader.BaseStream.Position = offsets[segment] + 48;
+				Assert.Equal((ulong)entity.AcisData.Length, reader.ReadUInt64());
+				Assert.Equal((ulong)payloadOffset, reader.ReadUInt64());
+				Assert.Equal(i, reader.ReadInt32()); Assert.Equal(count, reader.ReadInt32());
+				Assert.Equal((ulong)size, reader.ReadUInt64());
+				byte[] expected = new byte[size]; Array.Copy(entity.AcisData, payloadOffset, expected, 0, size);
+				Assert.Equal(expected, reader.ReadBytes(size));
+				payloadOffset += size;
+				reader.BaseStream.Position = next;
+			}
+			Assert.Equal(entity.AcisData.Length, payloadOffset);
+		}
+		Assert.Equal(segmentCount, expectedBlobSegment);
+	}
+
+	[Theory]
 	[InlineData(ACadVersion.AC1014)]
 	[InlineData(ACadVersion.AC1015)]
 	[InlineData(ACadVersion.AC1018)]
@@ -255,11 +431,12 @@ public class ModelerGeometryWriterTests
 			Assert.Contains(name, Encoding.ASCII.GetString(bytes));
 	}
 
-	internal static CadDocument Roundtrip(CadDocument document, NotificationEventHandler notification = null)
+	internal static CadDocument Roundtrip(CadDocument document, NotificationEventHandler notification = null, DwgWriterConfiguration configuration = null)
 	{
 		using var output = new MemoryStream();
 		using (var writer = new DwgWriter(output, document))
 		{
+			if (configuration != null) writer.Configuration = configuration;
 			writer.Configuration.CloseStream = false;
 			writer.OnNotification += notification;
 			writer.Write();

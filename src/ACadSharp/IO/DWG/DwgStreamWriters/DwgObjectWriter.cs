@@ -34,6 +34,8 @@ internal partial class DwgObjectWriter : DwgSectionIO
 
 	public bool WriteXRecords { get; }
 
+	public bool WriteLegacyAsmData { get; }
+
 	private ILookup<string, Insert> InsertsByBlockName =>
 		this._insertsByBlockName ??= this._document.Entities.OfType<Insert>().ToLookup(i => i.Block?.Name);
 
@@ -59,7 +61,8 @@ internal partial class DwgObjectWriter : DwgSectionIO
 		bool writeXRecords = true,
 		bool writeXData = true,
 		bool writeShapes = true,
-		bool writeDynamicParameters = true) : base(document.Header.Version)
+		bool writeDynamicParameters = true,
+		bool writeLegacyAsmData = false) : base(document.Header.Version)
 	{
 		this._stream = stream;
 		this._document = document;
@@ -70,6 +73,7 @@ internal partial class DwgObjectWriter : DwgSectionIO
 		this.WriteXData = writeXData;
 		this.WriteShapes = writeShapes;
 		this.WriteDynamicParameters = writeDynamicParameters;
+		this.WriteLegacyAsmData = writeLegacyAsmData;
 	}
 
 	public void Write()
