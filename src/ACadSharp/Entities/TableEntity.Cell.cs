@@ -196,7 +196,7 @@ public partial class TableEntity
 		private void onBeforeAdd<T>(object sender, ObservableListEventArgs<T> e)
 		where T : CellContent
 		{
-			if (e.Item.Owner != this.Owner)
+			if (e.Item.Owner != null)
 			{
 				throw new System.ArgumentException($"{e.Item.GetType().FullName} already belongs to a table.");
 			}
