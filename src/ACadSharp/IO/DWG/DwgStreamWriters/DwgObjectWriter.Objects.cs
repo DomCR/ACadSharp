@@ -2326,14 +2326,10 @@ internal partial class DwgObjectWriter : DwgSectionIO
 			styles.Add(tableStyle.DataCellStyle);
 		}
 
-		foreach (var cs in tableStyle.CellStyles)
-		{
-			if (!styles.Any(s => ReferenceEquals(s, cs)))
-				styles.Add(cs);
-		}
+		styles.AddRange(tableStyle.CellStyles);
 
 		this._writer.WriteBitLong(styles.Count);
-		for (int i = 0; i < styles.Count; i++)
+		for (int i = 0; i < 3; i++)
 		{
 			//Index starting by 1
 			this._writer.WriteBitLong(i + 1);

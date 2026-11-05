@@ -34,33 +34,40 @@ internal partial class CadTableStyleTemplate : CadTemplate<TableStyle>
 
 		this.TableCellStyleTemplate?.Build(builder);
 
+		List<CellStyle> styles = new List<CellStyle>();
 		foreach (var item in this.CellStyleTemplates)
 		{
 			item.Build(builder);
+			styles.Add(item.CellStyle);
 		}
 
 		if (this.tryGetCellStyle(TableStyle.CellStyle.DataCellStyleName, out CellStyle dataStyle))
 		{
+			styles.Remove(dataStyle);
 			this.CadObject.DataCellStyle = dataStyle;
 		}
 
 		if (this.tryGetCellStyle(CellStyle.HeaderCellStyleName, out CellStyle headerStyle))
 		{
+			styles.Remove(headerStyle);
 			this.CadObject.HeaderCellStyle = headerStyle;
 		}
 
 		if (this.tryGetCellStyle(CellStyle.TitleCellStyleName, out CellStyle titleStyle))
 		{
+			styles.Remove(titleStyle);
 			this.CadObject.TitleCellStyle = titleStyle;
 		}
+
+		this.CadObject.CellStyles.AddRange(styles);
 	}
 
 	private bool tryGetCellStyle(string name, out CellStyle cellStyle)
 	{
 		var cellStyleTemplate = this.CellStyleTemplates
-		.FirstOrDefault(s =>
-		s.CellStyle.Name != null
-		&& s.CellStyle.Name.Equals(
+			.FirstOrDefault(s =>
+			s.CellStyle.Name != null
+			&& s.CellStyle.Name.Equals(
 			name,
 			System.StringComparison.OrdinalIgnoreCase));
 
