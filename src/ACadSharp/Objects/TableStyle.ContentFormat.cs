@@ -36,7 +36,7 @@ public partial class TableStyle
 		/// <summary>
 		/// Gets the linked table data that owns the current instance.
 		/// </summary>
-		public CadObject Owner
+		public LinkedTableData Owner
 		{
 			get { return this._owner; }
 			internal set
@@ -132,10 +132,17 @@ public partial class TableStyle
 		[DxfCodeValue(93)]
 		public int ValueUnitType { get; set; }
 
-		private CadObject _owner;
+		private LinkedTableData _owner;
 
 		private TextStyle _textStyle = null;
 
+		/// <summary>
+		/// Creates a copy of the current <see cref="ContentFormat"/> instance.
+		/// </summary>
+		/// <remarks>Performs a memberwise copy and then clones the text style to avoid sharing the same
+		/// <c>TextStyle</c> reference.</remarks>
+		/// <returns>A new <see cref="ContentFormat"/> instance with the same values as the current instance, with <c>Owner</c> set to
+		/// <see langword="null"/> and a cloned <c>TextStyle</c>.</returns>
 		public virtual ContentFormat Clone()
 		{
 			ContentFormat clone = this.MemberwiseClone() as ContentFormat;

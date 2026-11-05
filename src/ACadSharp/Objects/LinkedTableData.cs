@@ -40,7 +40,7 @@ public abstract class LinkedTableData : LinkedData
 	{
 		if (e.Item.Owner != null)
 		{
-			throw new System.ArgumentException("Row already belongs to a table.");
+			throw new System.ArgumentException($"{e.Item.GetType().FullName} already belongs to a table.");
 		}
 
 		e.Item.Owner = this;

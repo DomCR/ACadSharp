@@ -1,5 +1,6 @@
 ﻿using ACadSharp.Attributes;
 using ACadSharp.Objects;
+using CSUtilities.Collections.Generic;
 using System.Collections.Generic;
 using static ACadSharp.Objects.TableStyle;
 
@@ -12,7 +13,7 @@ public partial class TableEntity
 		/// <summary>
 		/// Gets or sets the collection of cells contained in the current object.
 		/// </summary>
-		public List<Cell> Cells { get; private set; } = new();
+		public ObservableList<Cell> Cells { get; private set; }
 
 		/// <inheritdoc/>
 		public CellStyle CellStyle { get; set; }
@@ -37,9 +38,38 @@ public partial class TableEntity
 				this._owner = value;
 
 				this.CellStyle?.Owner = this._owner;
+				this.CellStyleOverride?.Owner = this._owner;
+				foreach (var cell in this.Cells)
+				{
+					cell.Owner = this._owner;
+				}
 			}
 		}
 
 		private LinkedTableData _owner;
+
+		protected TableComponent()
+		{
+			this.Cells = new ObservableList<Cell>();
+			this.Cells.OnBeforeAdd += this.onBeforeAdd;
+			this.Cells.OnRemove += this.onRemove;
+		}
+
+		private void onBeforeAdd<T>(object sender, ObservableListEventArgs<T> e)
+			where T : Cell
+		{
+			if (e.Item.Owner != null)
+			{
+				throw new System.ArgumentException($"{e.Item.GetType().FullName} already belongs to a table.");
+			}
+
+			e.Item.Owner = this.Owner;
+		}
+
+		private void onRemove<T>(object sender, ObservableListEventArgs<T> e)
+			where T : Cell
+		{
+			e.Item.Owner = null;
+		}
 	}
 }

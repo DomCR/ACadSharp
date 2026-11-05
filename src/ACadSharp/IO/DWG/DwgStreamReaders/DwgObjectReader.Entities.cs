@@ -557,7 +557,7 @@ internal partial class DwgObjectReader : DwgSectionIO
 		if (this._mergedReaders.ReadBit())
 		{
 			//Cell flag override BL 177 (deprecated)
-			TableEntity.Cell.OverrideFlags flags = (Cell.OverrideFlags)this._mergedReaders.ReadBitLong();
+			TableEntity.CellOverrideFlags flags = (CellOverrideFlags)this._mergedReaders.ReadBitLong();
 
 			//Virtual edge flag RC 178 Determines which edges are virtual, see also the
 			//explanation on the cell edge flags above.When an
@@ -565,96 +565,96 @@ internal partial class DwgObjectReader : DwgSectionIO
 			//1 = top, 2 = right, 4 = bottom, 8 = left.
 			cell.VirtualEdgeFlag = this._mergedReaders.ReadByte();
 
-			if (flags.HasFlag(Cell.OverrideFlags.CellAlignment))
+			if (flags.HasFlag(CellOverrideFlags.CellAlignment))
 			{
 				//Cell alignment RS 170 Present only if bit 0x01 is set in cell flag
 				cell.StyleOverride.CellAlignment = (CellAlignmentType)this._mergedReaders.ReadBitShort();
 			}
-			if (flags.HasFlag(Cell.OverrideFlags.BackgroundFillNone))
+			if (flags.HasFlag(CellOverrideFlags.BackgroundFillNone))
 			{
 				//Background fill none B 283 Present only if bit 0x02 is set in cell flag
 				cell.StyleOverride.IsFillColorOn = this._mergedReaders.ReadBit();
 			}
-			if (flags.HasFlag(Cell.OverrideFlags.BackgroundColor))
+			if (flags.HasFlag(CellOverrideFlags.BackgroundColor))
 			{
 				//Background color CMC 63 Present only if bit 0x04 is set in cell flag
 				cell.StyleOverride.BackgroundColor = this._mergedReaders.ReadCmColor(this.R2004Pre);
 			}
-			if (flags.HasFlag(Cell.OverrideFlags.ContentColor))
+			if (flags.HasFlag(CellOverrideFlags.ContentColor))
 			{
 				//Content color CMC 64 Present only if bit 0x08 is set in cell flag
 				cell.StyleOverride.ContentColor = this._mergedReaders.ReadCmColor(this.R2004Pre);
 			}
-			if (flags.HasFlag(Cell.OverrideFlags.TextStyle))
+			if (flags.HasFlag(CellOverrideFlags.TextStyle))
 			{
 				//Text style H 7 Present only if bit 0x10 is set in cell flag
 				template.TextStyleOverrideHandle = this.handleReference();
 			}
-			if (flags.HasFlag(Cell.OverrideFlags.TextHeight))
+			if (flags.HasFlag(CellOverrideFlags.TextHeight))
 			{
 				//Text height BD 140 Present only if bit 0x20 is set in cell flag
 				cell.StyleOverride.TextHeight = this._mergedReaders.ReadBitDouble();
 			}
 
-			if (flags.HasFlag(Cell.OverrideFlags.TopGridColor))
+			if (flags.HasFlag(CellOverrideFlags.TopGridColor))
 			{
 				//Top grid color CMC 69 Present only if bit 0x00040 is set in cell flag
 				cell.StyleOverride.TopBorder.Color = this._mergedReaders.ReadCmColor(this.R2004Pre);
 			}
-			if (flags.HasFlag(Cell.OverrideFlags.TopGridLineWeight))
+			if (flags.HasFlag(CellOverrideFlags.TopGridLineWeight))
 			{
 				//Top grid lineweight BS 279 Present only if bit 0x00400 is set in cell flag
 				cell.StyleOverride.TopBorder.LineWeight = (LineWeightType)this._mergedReaders.ReadBitShort();
 			}
-			if (flags.HasFlag(Cell.OverrideFlags.TopGridLineWeight))
+			if (flags.HasFlag(CellOverrideFlags.TopGridLineWeight))
 			{
 				//Top visibility BS 289 Present only if bit 0x04000 is set in cell flag
 				cell.StyleOverride.TopBorder.IsInvisible = !this._mergedReaders.ReadBitShortAsBool();
 			}
 
-			if (flags.HasFlag(Cell.OverrideFlags.RightGridColor))
+			if (flags.HasFlag(CellOverrideFlags.RightGridColor))
 			{
 				//Right grid color CMC 65 Present only if bit 0x00080 is set in cell flag
 				cell.StyleOverride.RightBorder.Color = this._mergedReaders.ReadCmColor(this.R2004Pre);
 			}
-			if (flags.HasFlag(Cell.OverrideFlags.RightGridLineWeight))
+			if (flags.HasFlag(CellOverrideFlags.RightGridLineWeight))
 			{
 				//Right grid lineweight BS 275 Present only if bit 0x00800 is set in cell flag
 				cell.StyleOverride.RightBorder.LineWeight = (LineWeightType)this._mergedReaders.ReadBitShort();
 			}
-			if (flags.HasFlag(Cell.OverrideFlags.RightGridLineWeight))
+			if (flags.HasFlag(CellOverrideFlags.RightGridLineWeight))
 			{
 				//Right visibility BS 285 Present only if bit 0x08000 is set in cell flag
 				cell.StyleOverride.RightBorder.IsInvisible = !this._mergedReaders.ReadBitShortAsBool();
 			}
 
-			if (flags.HasFlag(Cell.OverrideFlags.BottomGridColor))
+			if (flags.HasFlag(CellOverrideFlags.BottomGridColor))
 			{
 				//Bottom grid color CMC 66 Present only if bit 0x00100 is set in cell flag
 				cell.StyleOverride.BottomBorder.Color = this._mergedReaders.ReadCmColor(this.R2004Pre);
 			}
-			if (flags.HasFlag(Cell.OverrideFlags.BottomGridLineWeight))
+			if (flags.HasFlag(CellOverrideFlags.BottomGridLineWeight))
 			{
 				//Bottom grid lineweight BS 276 Present only if bit 0x01000 is set in cell flag
 				cell.StyleOverride.BottomBorder.LineWeight = (LineWeightType)this._mergedReaders.ReadBitShort();
 			}
-			if (flags.HasFlag(Cell.OverrideFlags.BottomGridLineWeight))
+			if (flags.HasFlag(CellOverrideFlags.BottomGridLineWeight))
 			{
 				//Bottom visibility BS 286 Present only if bit 0x10000 is set in cell flag
 				cell.StyleOverride.BottomBorder.IsInvisible = !this._mergedReaders.ReadBitShortAsBool();
 			}
 
-			if (flags.HasFlag(Cell.OverrideFlags.LeftGridColor))
+			if (flags.HasFlag(CellOverrideFlags.LeftGridColor))
 			{
 				//Left grid color CMC 68 Present only if bit 0x00200 is set in cell flag
 				cell.StyleOverride.LeftBorder.Color = this._mergedReaders.ReadCmColor(this.R2004Pre);
 			}
-			if (flags.HasFlag(Cell.OverrideFlags.LeftGridLineWeight))
+			if (flags.HasFlag(CellOverrideFlags.LeftGridLineWeight))
 			{
 				//Left grid lineweight BS 278 Present only if bit 0x02000 is set in cell flag
 				cell.StyleOverride.LeftBorder.LineWeight = (LineWeightType)this._mergedReaders.ReadBitShort();
 			}
-			if (flags.HasFlag(Cell.OverrideFlags.LeftGridLineWeight))
+			if (flags.HasFlag(CellOverrideFlags.LeftGridLineWeight))
 			{
 				//Left visibility BS 288 Present only if bit 0x20000 is set in cell flag
 				cell.StyleOverride.LeftBorder.IsInvisible = !this._mergedReaders.ReadBitShortAsBool();

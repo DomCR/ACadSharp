@@ -1,4 +1,5 @@
 ﻿using ACadSharp.Attributes;
+using ACadSharp.Objects;
 using static ACadSharp.Objects.TableStyle;
 
 namespace ACadSharp.Entities;
@@ -14,6 +15,11 @@ public partial class TableEntity
 	public class CellContent
 	{
 		/// <summary>
+		/// Gets the value associated with the CAD entity or property.
+		/// </summary>
+		public CadValue CadValue { get; } = new();
+
+		/// <summary>
 		/// Gets or sets the type of content contained in the table cell.
 		/// </summary>
 		[DxfCodeValue(90)]
@@ -25,8 +31,19 @@ public partial class TableEntity
 		public ContentFormat Format { get; } = new();
 
 		/// <summary>
-		/// Gets the value associated with the CAD entity or property.
+		/// Gets the linked table data that owns the current instance.
 		/// </summary>
-		public CadValue CadValue { get; } = new();
+		/// <remarks>When set internally, also updates the format owner reference to the same instance.</remarks>
+		public LinkedTableData Owner
+		{
+			get { return _owner; }
+			internal set
+			{
+				this._owner = value;
+				this.Format.Owner = this._owner;
+			}
+		}
+
+		private LinkedTableData _owner;
 	}
 }

@@ -70,6 +70,8 @@ public partial class TableStyle
 		[DxfCodeValue(91)]
 		public BorderType Type { get; set; } = BorderType.Single;
 
+		public LinkedTableData Owner { get; internal set; }
+
 		/// <summary>
 		/// Initializes a new instance of the CellBorder class with the specified edge flags.
 		/// </summary>
