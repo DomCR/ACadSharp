@@ -34,24 +34,44 @@ internal static class DwgPrototype1bWriter
 		for (int i = 0; i < 6; i++) { index.U64(0); index.U32(0); }
 		segment("segidx", index);
 		using var schemas = new StorageBytes();
-		schemas.U32(1); schemas.U32(0);
-		schemas.U32(0); schemas.U32(2); schemas.U32(0);
-		schemas.U64(0xaf10c); schemas.U32(0); schemas.U32(0);
+		string[] schemaNames = { "AcDb3DSolid_ASM_Data", "AcDbDs::TreatedAsObjectDataSchema",
+			"AcDbDs::LegacySchema", "AcDbDs::IndexedPropertySchema", "AcDbDs::HandleAttributeSchema" };
+		using var schemaData = new StorageBytes();
+		// Four property descriptors are referenced by the schema and ID property.
+		for (int i = 0; i < 4; i++) { schemaData.U32(8); schemaData.U32(i == 3 ? 0 : 1); }
+		var schemaOffsets = new List<int>();
+		schemaOffsets.Add(schemaData.Length);
+		schemaData.U16(2); schemaData.U64(0); schemaData.U64(1); schemaData.U16(2);
+		schemaData.U32(0); schemaData.U32(0); schemaData.U32(10);
+		schemaData.U16(2); schemaData.U64(2); schemaData.U64(3);
+		schemaData.U32(0); schemaData.U32(1); schemaData.U32(15); schemaData.U16(0);
+		for (int i = 1; i < schemaNames.Length; i++)
+		{
+			schemaOffsets.Add(schemaData.Length);
+			schemaData.U16(0); schemaData.U16(1);
+			schemaData.U32(i == 4 ? 8 : 0); schemaData.U32(i + 1); schemaData.U32(i == 4 ? 7 : 1);
+			if (i == 4) schemaData.U32(1);
+			schemaData.U16(i == 4 ? (ushort)1 : (ushort)0);
+			if (i == 4) schemaData.Write(new byte[] { 0 });
+		}
+		schemas.U32(schemaNames.Length); schemas.U32(0);
+		for (int i = 0; i < schemaNames.Length; i++)
+		{
+			schemas.U32(i); schemas.U32(2); schemas.U32(schemaOffsets[i]);
+		}
+		schemas.U64(0xaf10c); schemas.U32(4); schemas.U32(0);
+		for (int i = 0; i < 4; i++) { schemas.U32(2); schemas.U32(i * 8); schemas.U32(i); }
 		schemas.Align(16);
 		int namesOffset = (48 + schemas.Length) / 16;
-		schemas.U32(1); schemas.Text("AcDb3DSolid_ASM_Data");
+		schemas.U32(schemaNames.Length);
+		foreach (string name in schemaNames) schemas.Text(name);
 		segment("schidx", schemas, namesOffset);
 
-		using var schemaData = new StorageBytes();
-		schemaData.U16(0); schemaData.U16(2);
-		for (int i = 0; i < 2; i++)
-		{
-			schemaData.U32(0); schemaData.U32(i); schemaData.U32(i == 0 ? 10 : 15);
-			schemaData.U16(0);
-		}
 		schemaData.Align(16);
 		int propertyOffset = (48 + schemaData.Length) / 16;
-		schemaData.U32(2); schemaData.Text("AcDbDs::ID"); schemaData.Text("ASM_Data");
+		schemaData.U32(6); schemaData.Text("AcDbDs::ID"); schemaData.Text("ASM_Data");
+		schemaData.Text("AcDbDs::TreatedAsObjectData"); schemaData.Text("AcDbDs::Legacy");
+		schemaData.Text("AcDs:Indexable"); schemaData.Text("AcDbDs::HandleAttribute");
 		segment("schdat", schemaData, propertyOffset);
 
 		using var dataIndex = new StorageBytes();
@@ -89,7 +109,7 @@ internal static class DwgPrototype1bWriter
 
 		using var output = new StorageBytes();
 		int size = checked(128 + segments.Sum(s => s.Length));
-		foreach (uint field in new uint[] { 0x6472616a, 0x10080, 8, 2, 0, 1, 128, 0, (uint)segments.Count, 1, 3, 5, uint.MaxValue, (uint)size })
+		foreach (uint field in new uint[] { 0x6472616a, 0x10080, 8, 2, 0, 1, 128, 0, (uint)segments.Count, 1, 3, 5, 0, (uint)size })
 			output.U32(field);
 		for (int i = 0; i < 4; i++) output.U32(0);
 		output.Align(128);

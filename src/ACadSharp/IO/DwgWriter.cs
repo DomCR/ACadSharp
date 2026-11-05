@@ -97,6 +97,17 @@ public class DwgWriter : CadWriterBase<DwgWriterConfiguration>
 	/// <inheritdoc/>
 	public override void Write()
 	{
+		// Preserving bytes does not convert a newer modeling kernel to an older one.
+		// Refuse incompatible inline formats before writing any output.
+		foreach (var geometry in this._document.BlockRecords.SelectMany(b => b.Entities).OfType<ModelerGeometry>())
+		{
+			if (geometry.IsBinaryAcisData && (this._version < ACadVersion.AC1018
+				|| (this._version < ACadVersion.AC1027 && geometry.IsAsmAcisData)))
+			{
+				throw new System.NotSupportedException($"The binary modeler payload for {geometry.ObjectName} cannot be preserved in {this._version}. Convert it with a modeling kernel before exporting to this DWG version.");
+			}
+		}
+
 		base.Write();
 
 		if (this._version < ACadVersion.AC1018)
@@ -407,7 +418,7 @@ public class DwgWriter : CadWriterBase<DwgWriterConfiguration>
 	{
 		if (this._version < ACadVersion.AC1027) return;
 		var geometry = this._document.BlockRecords.SelectMany(b => b.Entities)
-			.OfType<ModelerGeometry>().Where(e => this._handlesMap.ContainsKey(e.Handle) && e.AcisData?.Length > 0).ToArray();
+			.OfType<ModelerGeometry>().Where(e => this._handlesMap.ContainsKey(e.Handle) && e.IsBinaryAcisData).ToArray();
 		if (geometry.Length == 0) return;
 		byte[] bytes = DwgPrototype1bWriter.Write(geometry);
 		var stream = new MemoryStream();

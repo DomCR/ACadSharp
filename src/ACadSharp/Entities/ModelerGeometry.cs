@@ -89,6 +89,8 @@ public abstract partial class ModelerGeometry : Entity
 
 	private static readonly byte[] _asmBinarySignature = Encoding.ASCII.GetBytes("ASM BinaryFile");
 
+	internal bool IsAsmAcisData => this.AcisData != null && startsWith(this.AcisData, _asmBinarySignature);
+
 	private static bool startsWith(byte[] data, byte[] signature)
 	{
 		if (data.Length < signature.Length) return false;

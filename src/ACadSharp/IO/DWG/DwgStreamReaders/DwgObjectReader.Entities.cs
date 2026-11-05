@@ -329,9 +329,9 @@ internal partial class DwgObjectReader : DwgSectionIO
 				geometry.Silhouettes.Add(silhouette);
 			}
 
+			if (!this._mergedReaders.ReadBit()) this.readModelerGeometryData(template);
 		}
-		if (!this._mergedReaders.ReadBit()) this.readModelerGeometryData(template);
-		if (this.R2007Plus && geometry.ModelerFormatVersion > 1)
+		if (this.R2007Plus)
 		{
 			int count = this._mergedReaders.ReadBitLong();
 			for (int i = 0; i < count; i++)
@@ -399,10 +399,9 @@ internal partial class DwgObjectReader : DwgSectionIO
 				int remainingBytes = (int)((endPos - currentPos) / 8);
 				byte[] data = this._mergedReaders.ReadBytes(remainingBytes);
 				this._objectReader.SetPositionInBits(currentPos);
-				byte[] payload = AcisTextCodec.TrimAtAcisEnd(data);
-				if (payload.Length == data.Length)
+				if (!AcisTextCodec.TryGetAcisEnd(data, out int payloadLength))
 					throw new System.IO.InvalidDataException("Missing ACIS payload end marker.");
-				template.CadObject.AcisData = this._mergedReaders.ReadBytes(payload.Length);
+				template.CadObject.AcisData = this._mergedReaders.ReadBytes(payloadLength);
 				break;
 			default:
 				this.notify($"Modeler geometry data version {version} not recognized for {template.CadObject.ObjectName}", NotificationType.Warning);

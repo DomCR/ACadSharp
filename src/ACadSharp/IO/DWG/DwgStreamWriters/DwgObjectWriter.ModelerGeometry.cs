@@ -11,12 +11,14 @@ internal partial class DwgObjectWriter
 	private void writeModelerGeometry(ModelerGeometry geometry)
 	{
 		byte[] data = geometry.AcisData ?? Array.Empty<byte>();
-		bool storedInAcDs = this.R2013Plus && data.Length > 0;
+		// ASM_Data records contain SAB/ASM streams; SAT remains inline.
+		bool storedInAcDs = this.R2013Plus && data.Length > 0 && geometry.IsBinaryAcisData;
 		short version = (short)(storedInAcDs || geometry.IsBinaryAcisData ? 2 : 1);
 		if (!storedInAcDs) this._writer.WriteBit(data.Length == 0);
 		if (data.Length > 0 && !storedInAcDs)
 		{
-			this._writer.WriteBit(geometry.ModelerDataFlag ?? version == 1);
+			// SAT uses the text-data flag even when imported from another DWG.
+			this._writer.WriteBit(version == 1 || geometry.ModelerDataFlag == true);
 			this._writer.WriteBitShort(version);
 			if (version == 2)
 			{
@@ -64,9 +66,10 @@ internal partial class DwgObjectWriter
 					foreach (var wire in silhouette.Wires) this.writeModelerGeometryWire(wire);
 				}
 			}
+			// A second ACIS payload is only present inside the wireframe block.
+			this._writer.WriteBit(true);
 		}
-		this._writer.WriteBit(true);
-		if (this.R2007Plus && version > 1)
+		if (this.R2007Plus)
 		{
 			this._writer.WriteBitLong(geometry.MaterialMappings.Count);
 			foreach (var material in geometry.MaterialMappings)
