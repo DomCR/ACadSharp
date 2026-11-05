@@ -5,6 +5,7 @@ using ACadSharp.IO.DWG.DwgStreamReaders;
 using ACadSharp.IO.DWG.DwgStreamWriters;
 using CSMath;
 using System;
+using System.Collections.Generic;
 using System.IO;
 using System.Linq;
 using System.Reflection;
@@ -37,18 +38,13 @@ public class ModelerGeometryWriterTests
 	[InlineData(ACadVersion.AC1024)]
 	[InlineData(ACadVersion.AC1027)]
 	[InlineData(ACadVersion.AC1032)]
-	public void SamplePayloadsSurviveVersionConversions(ACadVersion source)
+	public void SamplePayloadsArePreservedOrWrittenEmptyWithWarning(ACadVersion source)
 	{
 		foreach (var target in new[] { ACadVersion.AC1014, ACadVersion.AC1015, ACadVersion.AC1018,
 			ACadVersion.AC1024, ACadVersion.AC1027, ACadVersion.AC1032 })
 		{
 			var original = DwgReader.Read(Path.Combine(TestVariables.SamplesFolder, $"sample_{source}.dwg"));
 			original.Header.Version = target;
-			if (original.Entities.OfType<ModelerGeometry>().Any(e => Incompatible(e, target)))
-			{
-				Assert.Throws<NotSupportedException>(() => Roundtrip(original));
-				continue;
-			}
 			var result = Roundtrip(original);
 			var expected = original.Entities.OfType<ModelerGeometry>().ToArray();
 			Assert.NotEmpty(expected);
@@ -56,7 +52,8 @@ public class ModelerGeometryWriterTests
 			{
 				var actual = Assert.Single(result.Entities.OfType<ModelerGeometry>(), e => e.Handle == entity.Handle);
 				Assert.NotEmpty(entity.AcisData);
-				Assert.Equal(entity.AcisData, actual.AcisData);
+				if (WritesEmptyPayload(entity, target)) Assert.Null(actual.AcisData);
+				else Assert.Equal(entity.AcisData, actual.AcisData);
 			}
 		}
 	}
@@ -86,11 +83,6 @@ public class ModelerGeometryWriterTests
 				entity.Wires.Add(wire);
 				document.Entities.Add(entity);
 			}
-			if (binary && version < ACadVersion.AC1018)
-			{
-				Assert.Throws<NotSupportedException>(() => Roundtrip(document));
-				continue;
-			}
 			CadDocument result = Roundtrip(document);
 			var entities = result.Entities.OfType<ModelerGeometry>().ToArray();
 			Assert.Equal(3, entities.Length);
@@ -98,9 +90,10 @@ public class ModelerGeometryWriterTests
 			{
 				var actual = Assert.Single(entities, e => e.Handle == expected.Handle);
 				Assert.Equal(expected.GetType(), actual.GetType());
-				Assert.Equal(payload, actual.AcisData);
+				if (WritesEmptyPayload(expected, version)) Assert.Null(actual.AcisData);
+				else Assert.Equal(payload, actual.AcisData);
 				Assert.Equal(expected.Point, actual.Point);
-				Assert.Equal(binary, actual.IsBinaryAcisData);
+				Assert.Equal(binary && !WritesEmptyPayload(expected, version), actual.IsBinaryAcisData);
 				var wire = Assert.Single(actual.Wires);
 				Assert.Equal(17, wire.AcisIndex);
 				Assert.Equal(29, wire.SelectionMarker);
@@ -109,7 +102,7 @@ public class ModelerGeometryWriterTests
 		}
 	}
 
-	private static bool Incompatible(ModelerGeometry entity, ACadVersion version) =>
+	private static bool WritesEmptyPayload(ModelerGeometry entity, ACadVersion version) =>
 		entity.IsBinaryAcisData && (version < ACadVersion.AC1018
 			|| (version < ACadVersion.AC1027 && entity.IsAsmAcisData));
 
@@ -127,18 +120,74 @@ public class ModelerGeometryWriterTests
 			var document = new CadDocument(); document.Header.Version = target;
 			var region = new Region { AcisData = payload };
 			document.Entities.Add(region);
-			if (Incompatible(region, target))
+			var notifications = new List<NotificationEventArgs>();
+			var actual = Assert.Single(Roundtrip(document, (_, e) => notifications.Add(e)).Entities.OfType<Region>());
+			if (WritesEmptyPayload(region, target))
 			{
-				using var stream = new MemoryStream();
-				using var writer = new DwgWriter(stream, document);
-				Assert.Throws<NotSupportedException>(() => writer.Write());
-				Assert.Equal(0, stream.Length);
+				Assert.Null(actual.AcisData);
+				Assert.Contains(notifications, e => e.NotificationType == NotificationType.Warning && e.Message.Contains("modeler payload will be written empty"));
 			}
-			else
-			{
-				Assert.Equal(payload, Assert.Single(Roundtrip(document).Entities.OfType<Region>()).AcisData);
-			}
+			else Assert.Equal(payload, actual.AcisData);
+			Assert.Same(payload, region.AcisData);
 		}
+	}
+
+	[Theory]
+	[InlineData(ACadVersion.AC1018, ACadVersion.AC1014)]
+	[InlineData(ACadVersion.AC1018, ACadVersion.AC1015)]
+	[InlineData(ACadVersion.AC1032, ACadVersion.AC1014)]
+	[InlineData(ACadVersion.AC1032, ACadVersion.AC1015)]
+	[InlineData(ACadVersion.AC1032, ACadVersion.AC1018)]
+	[InlineData(ACadVersion.AC1032, ACadVersion.AC1021)]
+	[InlineData(ACadVersion.AC1032, ACadVersion.AC1024)]
+	public void UnsupportedPayloadDoesNotPreventSavingOtherEntities(ACadVersion source, ACadVersion target)
+	{
+		var sample = DwgReader.Read(Path.Combine(TestVariables.SamplesFolder, $"sample_{source}.dwg"));
+		byte[] payload = sample.Entities.OfType<Region>().First().AcisData;
+		byte[] originalBytes = (byte[])payload.Clone();
+		var document = new CadDocument(); document.Header.Version = target;
+		var modelers = new ModelerGeometry[] { new Region(), new Solid3D(), new CadBody() };
+		foreach (var modeler in modelers)
+		{
+			modeler.AcisData = payload;
+			document.Entities.Add(modeler);
+		}
+		var line = new Line(new XYZ(1, 2, 3), new XYZ(4, 5, 6));
+		document.Entities.Add(line);
+		var satSample = DwgReader.Read(Path.Combine(TestVariables.SamplesFolder, "sample_AC1015.dwg"));
+		var sat = new Region { AcisData = satSample.Entities.OfType<Region>().First().AcisData };
+		document.Entities.Add(sat);
+		var notifications = new List<NotificationEventArgs>();
+		string path = Path.GetTempFileName();
+		try
+		{
+			DwgWriter.Write(path, document, notification: (_, e) => notifications.Add(e));
+			Assert.True(new FileInfo(path).Length > 0);
+			var restored = DwgReader.Read(path, configuration: new DwgReaderConfiguration { Failsafe = false });
+			Assert.Equal(5, restored.Entities.Count);
+			var actualLine = Assert.Single(restored.Entities.OfType<Line>());
+			Assert.Equal(line.StartPoint, actualLine.StartPoint);
+			Assert.Equal(line.EndPoint, actualLine.EndPoint);
+			Assert.Equal(sat.AcisData, Assert.Single(restored.Entities.OfType<Region>(), e => e.Handle == sat.Handle).AcisData);
+			foreach (var expected in modelers)
+			{
+				var actual = Assert.Single(restored.Entities.OfType<ModelerGeometry>(), e => e.Handle == expected.Handle);
+				Assert.Equal(expected.GetType(), actual.GetType());
+				Assert.Null(actual.AcisData);
+				Assert.Same(payload, expected.AcisData);
+				Assert.Equal(originalBytes, expected.AcisData);
+				var warning = Assert.Single(notifications, e => e.Message.Contains($"{expected.ObjectName} (handle {expected.Handle:X})"));
+				Assert.Equal(NotificationType.Warning, warning.NotificationType);
+				Assert.Contains(target.ToString(), warning.Message);
+				Assert.Contains("modeler payload will be written empty", warning.Message);
+			}
+			// Exporting the same document to a supported target must retain the original payload.
+			document.Header.Version = ACadVersion.AC1032;
+			var modern = Roundtrip(document);
+			foreach (var expected in modelers)
+				Assert.Equal(originalBytes, Assert.Single(modern.Entities.OfType<ModelerGeometry>(), e => e.Handle == expected.Handle).AcisData);
+		}
+		finally { File.Delete(path); }
 	}
 
 	[Theory]
@@ -206,12 +255,13 @@ public class ModelerGeometryWriterTests
 			Assert.Contains(name, Encoding.ASCII.GetString(bytes));
 	}
 
-	internal static CadDocument Roundtrip(CadDocument document)
+	internal static CadDocument Roundtrip(CadDocument document, NotificationEventHandler notification = null)
 	{
 		using var output = new MemoryStream();
 		using (var writer = new DwgWriter(output, document))
 		{
 			writer.Configuration.CloseStream = false;
+			writer.OnNotification += notification;
 			writer.Write();
 		}
 		using var input = new MemoryStream(output.ToArray());
