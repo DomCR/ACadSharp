@@ -3104,13 +3104,6 @@ internal class DxfObjectsSectionReader : DxfSectionReaderBase
 	{
 		switch (this._reader.Code)
 		{
-			//Common codes
-			case 5:
-			case 100:
-			case 102:
-			case 330:
-			case 1001:
-				return false;
 			//The type follows the description, from R2013 the code 70 is used again later in the object
 			case 2:
 				VisualStyle visualStyle = template.CadObject as VisualStyle;
@@ -3125,14 +3118,14 @@ internal class DxfObjectsSectionReader : DxfSectionReaderBase
 					this.lockPointer = true;
 				}
 				return true;
+			case 70:
+				return true;
 			// Undocumented codes
 			case 176:
 			case 177:
 			case 420:
 				return true;
 			default:
-				//Avoid noise while is not implemented
-				return true;
 				return this.tryAssignCurrentValue(template.CadObject, map.SubClasses[DxfSubclassMarker.VisualStyle]);
 		}
 	}
