@@ -3912,9 +3912,9 @@ namespace ACadSharp.IO.DWG
 			//Drawing dir BS 72 Left to right, etc.; see DXF doc
 			mtext.DrawingDirection = (DrawingDirectionType)this._objectReader.ReadBitShort();
 			//Extents ht BD ---Undocumented and not present in DXF or entget
-			this._objectReader.ReadBitDouble();
+			mtext.VerticalHeight = this._objectReader.ReadBitDouble();
 			//Extents wid BD ---Undocumented and not present in DXF or entget
-			this._objectReader.ReadBitDouble();
+			mtext.HorizontalWidth = this._objectReader.ReadBitDouble();
 			//Text TV 1 All text in one long string
 			mtext.Value = this._textReader.ReadVariableText();
 
