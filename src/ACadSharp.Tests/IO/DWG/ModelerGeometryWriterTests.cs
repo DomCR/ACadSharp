@@ -99,6 +99,53 @@ public class ModelerGeometryWriterTests
 	}
 
 	[Theory]
+	[InlineData(26991)]
+	[InlineData(32700)]
+	[InlineData(32768)]
+	[InlineData(32769)]
+	public void LegacyAsmLargeInlineRecordsPreservePayloadAndFollowingEntities(int length)
+	{
+		// Storage regression for the reported 26991-byte solid and object-size boundaries.
+		// Synthetic buffers cannot establish whether TrueView can render the geometry.
+		foreach (var version in new[] { ACadVersion.AC1018, ACadVersion.AC1024 })
+		foreach (bool wireframe in new[] { false, true })
+		{
+			var document = new CadDocument(); document.Header.Version = version;
+			foreach (int size in new[] { 80, length, 96 })
+			{
+				var payload = new byte[size]; new Random(1729 + size).NextBytes(payload);
+				Encoding.ASCII.GetBytes("ASM BinaryFile4").CopyTo(payload, 0);
+				byte[] end = { 0x0e, 3, (byte)'E', (byte)'n', (byte)'d', 0x0e, 2, (byte)'o', (byte)'f',
+					0x0e, 3, (byte)'A', (byte)'S', (byte)'M', 0x0d, 4, (byte)'d', (byte)'a', (byte)'t', (byte)'a' };
+				end.CopyTo(payload, payload.Length - end.Length);
+				var solid = new Solid3D { AcisData = payload };
+				if (wireframe)
+				{
+					solid.Point = new XYZ(1, 2, 3);
+					var wire = new ModelerGeometry.Wire { AcisIndex = 17, Color = new Color(3) };
+					wire.Points.Add(new XYZ(4, 5, 6)); solid.Wires.Add(wire);
+				}
+				document.Entities.Add(solid);
+			}
+			var line = new Line(new XYZ(7, 8, 9), new XYZ(10, 11, 12));
+			document.Entities.Add(line);
+			var result = Roundtrip(document, configuration: new DwgWriterConfiguration { WriteLegacyAsmData = true });
+			Assert.Equal(4, result.Entities.Count);
+			foreach (var expected in document.Entities.OfType<Solid3D>())
+			{
+				var actual = Assert.Single(result.Entities.OfType<Solid3D>(), e => e.Handle == expected.Handle);
+				Assert.Equal(expected.AcisData, actual.AcisData);
+				Assert.Equal(expected.Point, actual.Point);
+				if (wireframe) Assert.Equal(new XYZ(4, 5, 6), Assert.Single(Assert.Single(actual.Wires).Points));
+				else Assert.Empty(actual.Wires);
+			}
+			var actualLine = Assert.Single(result.Entities.OfType<Line>());
+			Assert.Equal(line.StartPoint, actualLine.StartPoint);
+			Assert.Equal(line.EndPoint, actualLine.EndPoint);
+		}
+	}
+
+	[Theory]
 	[InlineData(ACadVersion.AC1014)]
 	[InlineData(ACadVersion.AC1015)]
 	public void LegacyAsmOptInDoesNotEnableBinaryDataBefore2004(ACadVersion version)
