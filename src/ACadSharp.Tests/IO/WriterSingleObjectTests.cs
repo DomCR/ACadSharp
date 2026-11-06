@@ -74,6 +74,7 @@ public abstract class WriterSingleObjectTests : IOTestsBase
 		Data.Add(new(nameof(SingleCaseGenerator.CreateHatch)));
 		Data.Add(new(nameof(SingleCaseGenerator.CreateCircleHatch)));
 		Data.Add(new(nameof(SingleCaseGenerator.CreateHatchFullSweeps)));
+		Data.Add(new(nameof(SingleCaseGenerator.CreateHatchSplineEdge)));
 		Data.Add(new(nameof(SingleCaseGenerator.HatchWithEntities)));
 		Data.Add(new(nameof(SingleCaseGenerator.ChangedEncoding)));
 		Data.Add(new(nameof(SingleCaseGenerator.AddBlockWithAttributes)));
@@ -1003,6 +1004,80 @@ public abstract class WriterSingleObjectTests : IOTestsBase
 				Assert.NotNull(multipleResult);
 				Assert.Equal(hatch.Paths.Count, result.Paths.Count);
 				Assert.Equal(multiplePoly.Paths.Count, multipleResult.Paths.Count);
+			};
+		}
+
+		public void CreateHatchSplineEdge()
+		{
+			Hatch hatch = new Hatch();
+			hatch.IsSolid = true;
+
+			//Spline edge without fit points
+			Hatch.BoundaryPath.Spline spline = new Hatch.BoundaryPath.Spline();
+			spline.Degree = 3;
+			spline.Knots.AddRange(new double[] { 0, 0, 0, 0, 1, 1, 1, 1 });
+			spline.ControlPoints.Add(new XYZ(0, 0, 1));
+			spline.ControlPoints.Add(new XYZ(3, 5, 1));
+			spline.ControlPoints.Add(new XYZ(7, 5, 1));
+			spline.ControlPoints.Add(new XYZ(10, 0, 1));
+
+			Hatch.BoundaryPath path = new Hatch.BoundaryPath();
+			path.Edges.Add(spline);
+			path.Edges.Add(new Hatch.BoundaryPath.Line
+			{
+				Start = new XY(10, 0),
+				End = new XY(0, 0)
+			});
+			hatch.Paths.Add(path);
+
+			//Spline edge with fit points
+			Hatch.BoundaryPath.Spline fitSpline = new Hatch.BoundaryPath.Spline();
+			fitSpline.Degree = 3;
+			fitSpline.Knots.AddRange(new double[] { 0, 0, 0, 0, 1, 1, 1, 1 });
+			fitSpline.ControlPoints.Add(new XYZ(20, 0, 1));
+			fitSpline.ControlPoints.Add(new XYZ(23, 5, 1));
+			fitSpline.ControlPoints.Add(new XYZ(27, 5, 1));
+			fitSpline.ControlPoints.Add(new XYZ(30, 0, 1));
+			fitSpline.FitPoints.Add(new XY(20, 0));
+			fitSpline.FitPoints.Add(new XY(25, 3.75));
+			fitSpline.FitPoints.Add(new XY(30, 0));
+			fitSpline.StartTangent = new XY(3, 5);
+			fitSpline.EndTangent = new XY(3, -5);
+
+			Hatch.BoundaryPath fitPath = new Hatch.BoundaryPath();
+			fitPath.Edges.Add(fitSpline);
+			fitPath.Edges.Add(new Hatch.BoundaryPath.Line
+			{
+				Start = new XY(30, 0),
+				End = new XY(20, 0)
+			});
+			hatch.Paths.Add(fitPath);
+
+			this.Document.Entities.Add(hatch);
+
+			this.AssertRoundtrip = (doc) =>
+			{
+				Hatch result = doc.GetCadObject<Hatch>(hatch.Handle);
+
+				Assert.NotNull(result);
+				Assert.Equal(hatch.Paths.Count, result.Paths.Count);
+
+				Hatch.BoundaryPath.Spline splineResult = Assert.IsType<Hatch.BoundaryPath.Spline>(result.Paths[0].Edges[0]);
+				Assert.Equal(spline.Knots.Count, splineResult.Knots.Count);
+				Assert.Equal(spline.ControlPoints.Count, splineResult.ControlPoints.Count);
+				Assert.Empty(splineResult.FitPoints);
+
+				//Fit data is only stored from AC1024
+				Hatch.BoundaryPath.Spline fitResult = Assert.IsType<Hatch.BoundaryPath.Spline>(result.Paths[1].Edges[0]);
+				Assert.Equal(fitSpline.ControlPoints.Count, fitResult.ControlPoints.Count);
+				if (doc.Header.Version >= ACadVersion.AC1024)
+				{
+					Assert.Equal(fitSpline.FitPoints.Count, fitResult.FitPoints.Count);
+				}
+				else
+				{
+					Assert.Empty(fitResult.FitPoints);
+				}
 			};
 		}
 
