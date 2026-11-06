@@ -3104,14 +3104,28 @@ internal class DxfObjectsSectionReader : DxfSectionReaderBase
 	{
 		switch (this._reader.Code)
 		{
+			//The type follows the description, from R2013 the code 70 is used again later in the object
+			case 2:
+				VisualStyle visualStyle = template.CadObject as VisualStyle;
+				visualStyle.Description = this._reader.ValueAsString;
+				this._reader.ReadNext();
+				if (this._reader.Code == 70)
+				{
+					visualStyle.Type = this._reader.ValueAsInt;
+				}
+				else
+				{
+					this.lockPointer = true;
+				}
+				return true;
+			case 70:
+				return true;
 			// Undocumented codes
 			case 176:
 			case 177:
 			case 420:
 				return true;
 			default:
-				//Avoid noise while is not implemented
-				return true;
 				return this.tryAssignCurrentValue(template.CadObject, map.SubClasses[DxfSubclassMarker.VisualStyle]);
 		}
 	}

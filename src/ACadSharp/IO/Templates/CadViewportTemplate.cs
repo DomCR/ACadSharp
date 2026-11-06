@@ -1,4 +1,5 @@
 ﻿using ACadSharp.Entities;
+using ACadSharp.Objects;
 using ACadSharp.Tables;
 using System.Collections.Generic;
 
@@ -47,6 +48,15 @@ namespace ACadSharp.IO.Templates
 			if (this.BaseUcsHandle.HasValue && this.BaseUcsHandle > 0)
 			{
 				builder.Notify($"Base ucs not implemented for Viewport, handle {this.BaseUcsHandle}");
+			}
+
+			if (builder.TryGetCadObject<VisualStyle>(this.VisualStyleHandle, out VisualStyle visualStyle))
+			{
+				this.CadObject.VisualStyle = visualStyle;
+			}
+			else if (this.VisualStyleHandle.HasValue && this.VisualStyleHandle > 0)
+			{
+				builder.Notify($"Visual style {this.VisualStyleHandle} not found for viewport {this.CadObject.Handle}", NotificationType.Warning);
 			}
 
 			foreach (var handle in this.FrozenLayerHandles)
