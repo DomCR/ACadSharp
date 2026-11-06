@@ -200,17 +200,18 @@ internal class DwgPrototype1bReader : DwgSectionIO
 				byte[] data = this._reader.ReadBytes((int)(dataRefPosition - this._reader.Position));
 			}
 
-			headers.Sort((a, b) => a.LocalOffset.CompareTo(b.LocalOffset));
-
 			for (int i = 0; i < headers.Count; i++)
 			{
 				DataField.DataHeader dataHeader = headers[i];
 				var recordStreamOffset = dataRefPosition + dataHeader.LocalOffset;
 				this._reader.Position = recordStreamOffset;
 
-				uint maxRecordSize = i + 1 < headers.Count ?
-					(headers[i + 1].LocalOffset - dataHeader.LocalOffset)
-					: (field.Header.SegmentSize - (uint)(field.Header.ObjectDataAlignmentOffset << 4) - dataHeader.LocalOffset);
+				// Preserve header/schema pairing; payloads can be stored in a different order.
+				uint maxRecordSize = headers
+					.Where(h => h.LocalOffset > dataHeader.LocalOffset)
+					.Select(h => h.LocalOffset - dataHeader.LocalOffset)
+					.DefaultIfEmpty(field.Header.SegmentSize - (uint)(field.Header.ObjectDataAlignmentOffset << 4) - dataHeader.LocalOffset)
+					.Min();
 
 				DataField.DataEntry value = new();
 				value.Header = dataHeader;
