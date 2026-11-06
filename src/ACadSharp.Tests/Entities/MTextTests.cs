@@ -1,7 +1,10 @@
 ﻿using ACadSharp.Entities;
+using ACadSharp.IO;
 using CSMath;
 using System;
 using System.Collections.Generic;
+using System.IO;
+using System.Linq;
 using Xunit;
 
 namespace ACadSharp.Tests.Entities;
@@ -16,6 +19,27 @@ public class MTextTests : CommonEntityTests<MText>
 		var box = text.GetBoundingBox();
 		Assert.Equal(BoundingBoxExtent.Point, box.Extent);
 		Assert.Equal(pt, box.Center);
+	}
+
+	[Theory]
+	[InlineData(ACadVersion.AC1015)]
+	[InlineData(ACadVersion.AC1018)]
+	[InlineData(ACadVersion.AC1024)]
+	[InlineData(ACadVersion.AC1027)]
+	[InlineData(ACadVersion.AC1032)]
+	public void DwgExtentsRoundTrip(ACadVersion version)
+	{
+		CadDocument doc = new CadDocument(version);
+		MText mtext = new MText("extents") { HorizontalWidth = 123.25, VerticalHeight = 45.5 };
+		doc.Entities.Add(mtext);
+
+		MemoryStream ms = new MemoryStream();
+		DwgWriter.Write(ms, doc);
+		using MemoryStream readStream = new MemoryStream(ms.ToArray());
+		MText roundTripped = DwgReader.Read(readStream).Entities.OfType<MText>().Single();
+
+		Assert.Equal(mtext.HorizontalWidth, roundTripped.HorizontalWidth);
+		Assert.Equal(mtext.VerticalHeight, roundTripped.VerticalHeight);
 	}
 
 	[Fact]
