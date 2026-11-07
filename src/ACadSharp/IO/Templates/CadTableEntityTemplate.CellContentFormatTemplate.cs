@@ -18,14 +18,14 @@ internal partial class CadTableStyleTemplate
 			this.Format = format;
 		}
 
-		public void Build(CadDocumentBuilder builder)
+		public virtual void Build(CadDocumentBuilder builder)
 		{
-			if (builder.TryGetCadObject(this.TextStyleHandle, out TextStyle textStyle) 
+			if (builder.TryGetCadObject(this.TextStyleHandle, out TextStyle textStyle)
 				|| builder.TryGetTableEntry(this.TextStyleName, out textStyle))
 			{
 				this.Format.TextStyle = textStyle;
 			}
-			else if(this.TextStyleHandle != null || !string.IsNullOrEmpty(this.TextStyleName))
+			else if ((this.TextStyleHandle != null && this.TextStyleHandle != 0) || !string.IsNullOrEmpty(this.TextStyleName))
 			{
 				builder.Notify($"{typeof(TextStyle).FullName} table reference with handle: {this.TextStyleName} | name: {this.TextStyleName} not found for {this.Format.GetType().FullName}", NotificationType.Warning);
 			}

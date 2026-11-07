@@ -28,7 +28,7 @@ public partial class TableEntity : Insert, IDxfClassDefined
 	/// Gets the collection of columns in the table entity.
 	/// </summary>
 	[DxfCodeValue(DxfReferenceType.Count, 92)]
-	public List<Column> Columns { get { return this.Content.Columns; } }
+	public IList<Column> Columns { get { return this.Content.Columns; } }
 
 	/// <summary>
 	/// Gets or sets a value indicating whether bread data is available.
@@ -75,7 +75,7 @@ public partial class TableEntity : Insert, IDxfClassDefined
 	/// Table rows.
 	/// </summary>
 	[DxfCodeValue(DxfReferenceType.Count, 91)]
-	public List<Row> Rows { get { return this.Content.Rows; } }
+	public IList<Row> Rows { get { return this.Content.Rows; } }
 
 	/// <summary>
 	/// Gets or sets the table style associated with this object.
@@ -109,9 +109,6 @@ public partial class TableEntity : Insert, IDxfClassDefined
 
 	internal TableContent Content { get; set; } = new();
 
-	[DxfCodeValue(DxfReferenceType.Handle, 343)]
-	internal BlockRecord TableBlock { get { return this.Block; } }
-
 	/// <summary>
 	/// Initializes a new instance of the <see cref="TableEntity"/> class.
 	/// </summary>
@@ -127,7 +124,11 @@ public partial class TableEntity : Insert, IDxfClassDefined
 	/// <exception cref="ArgumentNullException"></exception>
 	public TableEntity(BlockRecord block) : base()
 	{
-		if (block is null) throw new ArgumentNullException(nameof(block));
+		if (block is null)
+		{
+			throw new ArgumentNullException(nameof(block));
+		}
+
 		this.Block = block;
 	}
 

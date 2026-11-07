@@ -1,4 +1,6 @@
 ﻿using ACadSharp.Attributes;
+using ACadSharp.Objects;
+using CSUtilities.Collections.Generic;
 using System.Collections.Generic;
 using System.Linq;
 using static ACadSharp.Objects.TableStyle;
@@ -7,7 +9,7 @@ namespace ACadSharp.Entities;
 
 public partial class TableEntity
 {
-	public partial class Cell
+	public class Cell
 	{
 		/// <summary>
 		/// Boolean flag indicating if the auto fit option is set for the cell.
@@ -65,7 +67,7 @@ public partial class TableEntity
 		/// <summary>
 		/// Gets the collection of cell contents contained in this instance.
 		/// </summary>
-		public List<CellContent> Contents { get; } = new();
+		public ObservableList<CellContent> Contents { get; }
 
 		/// <summary>
 		/// Gets or sets the custom data value associated with this cell.
@@ -117,6 +119,21 @@ public partial class TableEntity
 		[DxfCodeValue(173)]
 		public short MergedValue { get; set; }
 
+		public LinkedTableData Owner
+		{
+			get { return this._owner; }
+			internal set
+			{
+				this._owner = value;
+				this.Style?.Owner = this._owner;
+				this.StyleOverride?.Owner = this._owner;
+				foreach (var content in this.Contents)
+				{
+					content.Owner = this._owner;
+				}
+			}
+		}
+
 		/// <summary>
 		/// Rotation value.
 		/// </summary>
@@ -163,5 +180,34 @@ public partial class TableEntity
 		/// </summary>
 		[DxfCodeValue(178)]
 		public short VirtualEdgeFlag { get; set; }
+
+		private LinkedTableData _owner;
+
+		/// <summary>
+		/// Initializes a new instance of the Cell class.
+		/// </summary>
+		public Cell()
+		{
+			this.Contents = new ObservableList<CellContent>();
+			this.Contents.OnBeforeAdd += this.onBeforeAdd;
+			this.Contents.OnRemove += this.onRemove;
+		}
+
+		private void onBeforeAdd<T>(object sender, ObservableListEventArgs<T> e)
+		where T : CellContent
+		{
+			if (e.Item.Owner != null)
+			{
+				throw new System.ArgumentException($"{e.Item.GetType().FullName} already belongs to a table.");
+			}
+
+			e.Item.Owner = this.Owner;
+		}
+
+		private void onRemove<T>(object sender, ObservableListEventArgs<T> e)
+			where T : CellContent
+		{
+			e.Item.Owner = null;
+		}
 	}
 }

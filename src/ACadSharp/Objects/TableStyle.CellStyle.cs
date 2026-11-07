@@ -13,6 +13,23 @@ public partial class TableStyle
 	/// </remarks>
 	public class CellStyle : ContentFormat
 	{
+		public override LinkedTableData Owner
+		{
+			get
+			{ return base.Owner; }
+
+			internal set
+			{
+				base.Owner = value;
+				this.LeftBorder.Owner = value;
+				this.RightBorder.Owner = value;
+				this.TopBorder.Owner = value;
+				this.BottomBorder.Owner = value;
+				this.HorizontalInsideBorder.Owner = value;
+				this.VerticalInsideBorder.Owner = value;
+			}
+		}
+
 		/// <summary>
 		/// Gets the default cell style used for data cells.
 		/// </summary>
@@ -52,25 +69,6 @@ public partial class TableStyle
 		}
 
 		/// <summary>
-		/// Gets the default cell style used for title cells.
-		/// </summary>
-		public static CellStyle DefaultTitleCellStyle
-		{
-			get
-			{
-				var data = new CellStyle
-				{
-					Name = TitleCellStyleName,
-					StyleClass = CellStyleClass.Data,
-					Id = 1,
-					HasData = true,
-				};
-
-				return data;
-			}
-		}
-
-		/// <summary>
 		/// Gets the default cell style used as the table's overall ("Table") style.
 		/// </summary>
 		public static CellStyle DefaultTableCellStyle
@@ -90,9 +88,23 @@ public partial class TableStyle
 		}
 
 		/// <summary>
-		/// The name constant for the default table-level cell style.
+		/// Gets the default cell style used for title cells.
 		/// </summary>
-		public const string TableCellStyleName = "Table";
+		public static CellStyle DefaultTitleCellStyle
+		{
+			get
+			{
+				var data = new CellStyle
+				{
+					Name = TitleCellStyleName,
+					StyleClass = CellStyleClass.Data,
+					Id = 1,
+					HasData = true,
+				};
+
+				return data;
+			}
+		}
 
 		/// <summary>
 		/// Gets or sets the background (fill) color of the cell content.
@@ -238,6 +250,11 @@ public partial class TableStyle
 		public const string HeaderCellStyleName = "_HEADER";
 
 		/// <summary>
+		/// The name constant for the default table-level cell style.
+		/// </summary>
+		public const string TableCellStyleName = "Table";
+
+		/// <summary>
 		/// The name constant for the default title cell style.
 		/// </summary>
 		public const string TitleCellStyleName = "_TITLE";
@@ -245,7 +262,7 @@ public partial class TableStyle
 		/// <inheritdoc/>
 		public override string ToString()
 		{
-			return $"{Id}|{Name}";
+			return $"{this.Id}|{this.Name}";
 		}
 	}
 }

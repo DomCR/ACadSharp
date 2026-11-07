@@ -15,26 +15,6 @@ namespace ACadSharp.IO.DWG;
 
 internal partial class DwgObjectReader : DwgSectionIO
 {
-	private void readBorder(CadCellStyleTemplate template, CellBorder border)
-	{
-		//BL 90 Border property override flags
-		border.PropertyOverrideFlags = (BorderPropertyFlags)this._mergedReaders.ReadBitLong();
-		//BL 91 Border type
-		border.Type = ((BorderType)this._mergedReaders.ReadBitLong());
-		//TC 62 Color
-		border.Color = this._mergedReaders.ReadCmColor(this.R2004Pre);
-		//BL 92 Line weight
-		border.LineWeight = ((LineWeightType)this._mergedReaders.ReadBitLong());
-		//H 40 Line type (hard pointer)
-		template.BorderLineTypePairs.Add(new Tuple<CellBorder, ulong>(border, this.handleReference()));
-		//BL 93 Invisibility: 1 = invisible, 0 = visible.
-		border.IsInvisible = (this._mergedReaders.ReadBitLong() == 1);
-		//BD 40 Double line spacing
-		border.DoubleLineSpacing = this._mergedReaders.ReadBitDouble();
-
-		border.ApplyBorder = true;
-	}
-
 	private void readCellContentFormat(CellContentFormatTemplate template, TableStyle.ContentFormat format)
 	{
 		//Cell.ContentFormat format = template.Content.Format;
@@ -83,91 +63,6 @@ internal partial class DwgObjectReader : DwgSectionIO
 		geometry.Height = this._mergedReaders.ReadBitDouble();
 		//BL	Unknown flags
 		geometry.Flags = this._mergedReaders.ReadBitLong();
-	}
-
-	private void readCellStyle(CadTableStyleTemplate.CadCellStyleTemplate template)
-	{
-		//20.4.101.4
-		CellStyle cellStyle = (CellStyle)template.Format;
-
-		//BL 90 Cell style type
-		cellStyle.Type = (CellStyleType)this._mergedReaders.ReadBitLong();
-
-		//BS 170 Data flags, 0 = no data, 1 = data is present
-		//If data is present
-		cellStyle.HasData = this._mergedReaders.ReadBitShortAsBool();
-		if (!cellStyle.HasData)
-		{
-			return;
-		}
-
-		//BL 91 Property override flags. The definition is the same as the content format
-		//propery override flags, see paragraph 20.4.101.3.
-		cellStyle.PropertyOverrideFlags = (TableStyle.CellStylePropertyFlags)this._mergedReaders.ReadBitLong();
-		//BL  92 Merge flags, but may only for bits 0x8000 and 0x10000.
-		cellStyle.TableCellStylePropertyFlags = (CellStylePropertyFlags)this._mergedReaders.ReadBitLong();
-		//TC 62 Background color
-		cellStyle.BackgroundColor = this._mergedReaders.ReadCmColor(this.R2004Pre);
-
-		//BL 93 Content layout flags
-		cellStyle.ContentLayoutFlags = (CellContentLayoutFlags)this._mergedReaders.ReadBitLong();
-
-		//Content format fields (see paragraph 20.4.101.3)
-		this.readCellContentFormat(template, cellStyle);
-
-		//BS 171 Margin override flags, bit 1 is set if margin overrides are present
-		//If margin overrides are present
-		cellStyle.MarginOverrideFlags = (MarginFlags)this._mergedReaders.ReadBitShort();
-		if (cellStyle.MarginOverrideFlags.HasFlag(MarginFlags.Override))
-		{
-			//BD 40 Vertical margin
-			cellStyle.VerticalMargin = this._mergedReaders.ReadBitDouble();
-			//BD 40 Horizontal margin
-			cellStyle.HorizontalMargin = this._mergedReaders.ReadBitDouble();
-			//BD 40 Bottom margin
-			cellStyle.BottomMargin = this._mergedReaders.ReadBitDouble();
-			//BD 40 Right margin
-			cellStyle.RightMargin = this._mergedReaders.ReadBitDouble();
-			//BD 40 Margin horizontal spacing
-			cellStyle.MarginHorizontalSpacing = this._mergedReaders.ReadBitDouble();
-			//BD 40 Margin vertical spacing
-			cellStyle.MarginVerticalSpacing = this._mergedReaders.ReadBitDouble();
-		}
-
-		//BL 94 Number of borders present (0-6)
-		int nborders = this._mergedReaders.ReadBitLong();
-		//Begin repeat borders
-		for (int i = 0; i < nborders; i++)
-		{
-			//BL 95 Edge flags
-			CellEdgeFlags edgeFlags = (CellEdgeFlags)this._mergedReaders.ReadBitLong();
-
-			// If edge flags is non - zero
-			switch (edgeFlags)
-			{
-				case CellEdgeFlags.Top:
-					this.readBorder(template, cellStyle.TopBorder);
-					break;
-				case CellEdgeFlags.Right:
-					this.readBorder(template, cellStyle.RightBorder);
-					break;
-				case CellEdgeFlags.Bottom:
-					this.readBorder(template, cellStyle.BottomBorder);
-					break;
-				case CellEdgeFlags.Left:
-					this.readBorder(template, cellStyle.LeftBorder);
-					break;
-				case CellEdgeFlags.InsideVertical:
-					this.readBorder(template, cellStyle.VerticalInsideBorder);
-					break;
-				case CellEdgeFlags.InsideHorizontal:
-					this.readBorder(template, cellStyle.HorizontalInsideBorder);
-					break;
-				case CellEdgeFlags.Unknown:
-				default:
-					continue;
-			}
-		}
 	}
 
 	private void readCustomTableData(CustomDataEntry entry)
@@ -662,7 +557,7 @@ internal partial class DwgObjectReader : DwgSectionIO
 		if (this._mergedReaders.ReadBit())
 		{
 			//Cell flag override BL 177 (deprecated)
-			TableEntity.Cell.OverrideFlags flags = (Cell.OverrideFlags)this._mergedReaders.ReadBitLong();
+			TableEntity.CellOverrideFlags flags = (CellOverrideFlags)this._mergedReaders.ReadBitLong();
 
 			//Virtual edge flag RC 178 Determines which edges are virtual, see also the
 			//explanation on the cell edge flags above.When an
@@ -670,96 +565,96 @@ internal partial class DwgObjectReader : DwgSectionIO
 			//1 = top, 2 = right, 4 = bottom, 8 = left.
 			cell.VirtualEdgeFlag = this._mergedReaders.ReadByte();
 
-			if (flags.HasFlag(Cell.OverrideFlags.CellAlignment))
+			if (flags.HasFlag(CellOverrideFlags.CellAlignment))
 			{
 				//Cell alignment RS 170 Present only if bit 0x01 is set in cell flag
 				cell.StyleOverride.CellAlignment = (CellAlignmentType)this._mergedReaders.ReadBitShort();
 			}
-			if (flags.HasFlag(Cell.OverrideFlags.BackgroundFillNone))
+			if (flags.HasFlag(CellOverrideFlags.BackgroundFillNone))
 			{
 				//Background fill none B 283 Present only if bit 0x02 is set in cell flag
 				cell.StyleOverride.IsFillColorOn = this._mergedReaders.ReadBit();
 			}
-			if (flags.HasFlag(Cell.OverrideFlags.BackgroundColor))
+			if (flags.HasFlag(CellOverrideFlags.BackgroundColor))
 			{
 				//Background color CMC 63 Present only if bit 0x04 is set in cell flag
 				cell.StyleOverride.BackgroundColor = this._mergedReaders.ReadCmColor(this.R2004Pre);
 			}
-			if (flags.HasFlag(Cell.OverrideFlags.ContentColor))
+			if (flags.HasFlag(CellOverrideFlags.ContentColor))
 			{
 				//Content color CMC 64 Present only if bit 0x08 is set in cell flag
 				cell.StyleOverride.ContentColor = this._mergedReaders.ReadCmColor(this.R2004Pre);
 			}
-			if (flags.HasFlag(Cell.OverrideFlags.TextStyle))
+			if (flags.HasFlag(CellOverrideFlags.TextStyle))
 			{
 				//Text style H 7 Present only if bit 0x10 is set in cell flag
 				template.TextStyleOverrideHandle = this.handleReference();
 			}
-			if (flags.HasFlag(Cell.OverrideFlags.TextHeight))
+			if (flags.HasFlag(CellOverrideFlags.TextHeight))
 			{
 				//Text height BD 140 Present only if bit 0x20 is set in cell flag
 				cell.StyleOverride.TextHeight = this._mergedReaders.ReadBitDouble();
 			}
 
-			if (flags.HasFlag(Cell.OverrideFlags.TopGridColor))
+			if (flags.HasFlag(CellOverrideFlags.TopGridColor))
 			{
 				//Top grid color CMC 69 Present only if bit 0x00040 is set in cell flag
 				cell.StyleOverride.TopBorder.Color = this._mergedReaders.ReadCmColor(this.R2004Pre);
 			}
-			if (flags.HasFlag(Cell.OverrideFlags.TopGridLineWeight))
+			if (flags.HasFlag(CellOverrideFlags.TopGridLineWeight))
 			{
 				//Top grid lineweight BS 279 Present only if bit 0x00400 is set in cell flag
 				cell.StyleOverride.TopBorder.LineWeight = (LineWeightType)this._mergedReaders.ReadBitShort();
 			}
-			if (flags.HasFlag(Cell.OverrideFlags.TopGridLineWeight))
+			if (flags.HasFlag(CellOverrideFlags.TopGridLineWeight))
 			{
 				//Top visibility BS 289 Present only if bit 0x04000 is set in cell flag
 				cell.StyleOverride.TopBorder.IsInvisible = !this._mergedReaders.ReadBitShortAsBool();
 			}
 
-			if (flags.HasFlag(Cell.OverrideFlags.RightGridColor))
+			if (flags.HasFlag(CellOverrideFlags.RightGridColor))
 			{
 				//Right grid color CMC 65 Present only if bit 0x00080 is set in cell flag
 				cell.StyleOverride.RightBorder.Color = this._mergedReaders.ReadCmColor(this.R2004Pre);
 			}
-			if (flags.HasFlag(Cell.OverrideFlags.RightGridLineWeight))
+			if (flags.HasFlag(CellOverrideFlags.RightGridLineWeight))
 			{
 				//Right grid lineweight BS 275 Present only if bit 0x00800 is set in cell flag
 				cell.StyleOverride.RightBorder.LineWeight = (LineWeightType)this._mergedReaders.ReadBitShort();
 			}
-			if (flags.HasFlag(Cell.OverrideFlags.RightGridLineWeight))
+			if (flags.HasFlag(CellOverrideFlags.RightGridLineWeight))
 			{
 				//Right visibility BS 285 Present only if bit 0x08000 is set in cell flag
 				cell.StyleOverride.RightBorder.IsInvisible = !this._mergedReaders.ReadBitShortAsBool();
 			}
 
-			if (flags.HasFlag(Cell.OverrideFlags.BottomGridColor))
+			if (flags.HasFlag(CellOverrideFlags.BottomGridColor))
 			{
 				//Bottom grid color CMC 66 Present only if bit 0x00100 is set in cell flag
 				cell.StyleOverride.BottomBorder.Color = this._mergedReaders.ReadCmColor(this.R2004Pre);
 			}
-			if (flags.HasFlag(Cell.OverrideFlags.BottomGridLineWeight))
+			if (flags.HasFlag(CellOverrideFlags.BottomGridLineWeight))
 			{
 				//Bottom grid lineweight BS 276 Present only if bit 0x01000 is set in cell flag
 				cell.StyleOverride.BottomBorder.LineWeight = (LineWeightType)this._mergedReaders.ReadBitShort();
 			}
-			if (flags.HasFlag(Cell.OverrideFlags.BottomGridLineWeight))
+			if (flags.HasFlag(CellOverrideFlags.BottomGridLineWeight))
 			{
 				//Bottom visibility BS 286 Present only if bit 0x10000 is set in cell flag
 				cell.StyleOverride.BottomBorder.IsInvisible = !this._mergedReaders.ReadBitShortAsBool();
 			}
 
-			if (flags.HasFlag(Cell.OverrideFlags.LeftGridColor))
+			if (flags.HasFlag(CellOverrideFlags.LeftGridColor))
 			{
 				//Left grid color CMC 68 Present only if bit 0x00200 is set in cell flag
 				cell.StyleOverride.LeftBorder.Color = this._mergedReaders.ReadCmColor(this.R2004Pre);
 			}
-			if (flags.HasFlag(Cell.OverrideFlags.LeftGridLineWeight))
+			if (flags.HasFlag(CellOverrideFlags.LeftGridLineWeight))
 			{
 				//Left grid lineweight BS 278 Present only if bit 0x02000 is set in cell flag
 				cell.StyleOverride.LeftBorder.LineWeight = (LineWeightType)this._mergedReaders.ReadBitShort();
 			}
-			if (flags.HasFlag(Cell.OverrideFlags.LeftGridLineWeight))
+			if (flags.HasFlag(CellOverrideFlags.LeftGridLineWeight))
 			{
 				//Left visibility BS 288 Present only if bit 0x20000 is set in cell flag
 				cell.StyleOverride.LeftBorder.IsInvisible = !this._mergedReaders.ReadBitShortAsBool();
