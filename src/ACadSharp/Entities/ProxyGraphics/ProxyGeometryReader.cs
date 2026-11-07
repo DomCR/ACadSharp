@@ -143,12 +143,7 @@ internal class ProxyGeometryReader
 					break;
 			}
 
-			long readDiff = objSize - (stream.Position - pos) - 8;
-			if (readDiff > 0)
-			{
-				//jump not implemented proxies
-				stream.ReadBytes((int)readDiff);
-			}
+			stream.Position = pos - 8 + objSize;
 		}
 
 		return geometries;
