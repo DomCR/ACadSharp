@@ -1,5 +1,7 @@
 ﻿using ACadSharp.Attributes;
+using ACadSharp.Objects.Mechanical;
 using CSMath;
+using System.Collections.Generic;
 
 namespace ACadSharp.Entities.Mechanical;
 
@@ -14,6 +16,26 @@ namespace ACadSharp.Entities.Mechanical;
 [DxfSubClass(DxfSubclassMarker.PartList)]
 public class AcmPartList : MechanicalEntity
 {
+	/// <summary>
+	/// Gets the BOM displayed by this part list.
+	/// </summary>
+	public AcmBom Bom { get; internal set; }
+
+	/// <summary>
+	/// Gets the BOM rows displayed by this part list.
+	/// </summary>
+	public List<AcmBomRow> Rows { get; } = new();
+
+	/// <summary>
+	/// Gets the custom item filter object, when present.
+	/// </summary>
+	public CadObject ItemFilterCustom { get; internal set; }
+
+	/// <summary>
+	/// Gets additional Mechanical objects referenced by the part list.
+	/// </summary>
+	public List<CadObject> RelatedObjects { get; } = new();
+
 	/// <inheritdoc/>
 	public override string ObjectName => DxfFileToken.AcmPartList;
 
