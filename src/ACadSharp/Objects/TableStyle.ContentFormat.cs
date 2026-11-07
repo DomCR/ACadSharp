@@ -36,7 +36,7 @@ public partial class TableStyle
 		/// <summary>
 		/// Gets the linked table data that owns the current instance.
 		/// </summary>
-		public LinkedTableData Owner
+		public virtual LinkedTableData Owner
 		{
 			get { return this._owner; }
 			internal set

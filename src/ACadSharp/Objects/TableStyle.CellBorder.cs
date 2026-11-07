@@ -1,4 +1,5 @@
 ﻿using ACadSharp.Attributes;
+using ACadSharp.Extensions;
 using ACadSharp.Tables;
 
 namespace ACadSharp.Objects;
@@ -50,13 +51,54 @@ public partial class TableStyle
 		/// <summary>
 		/// Gets or sets the type of line.
 		/// </summary>
-		public LineType LineType { get; set; }
+		public LineType LineType
+		{
+			get
+			{
+				if (this.Owner?.Document != null
+					&& this.Owner.Document.LineTypes.TryGetValue(this._lineType?.Name, out var lineType))
+				{
+					this._lineType = lineType;
+				}
+				else if (this.Owner?.Document != this._lineType?.Document)
+				{
+					this._lineType = this._lineType?.CloneTyped();
+				}
+
+				return this._lineType;
+			}
+			set
+			{
+				if (this.Owner?.Document != null)
+				{
+					this._lineType = this.Owner.Document.LineTypes.TryAdd(value);
+				}
+				else
+				{
+					this._lineType = value;
+				}
+			}
+		}
 
 		/// <summary>
 		/// Gets or sets the line weight to use when rendering the entity.
 		/// </summary>
 		[DxfCodeValue(274)]
 		public LineWeightType LineWeight { get; set; } = LineWeightType.ByBlock;
+
+		public LinkedTableData Owner
+		{
+			get { return this._owner; }
+			internal set
+			{
+				this._owner = value;
+
+				if (this._owner == null)
+				{
+					this._lineType = this._lineType?.CloneTyped();
+				}
+			}
+		}
 
 		/// <summary>
 		/// Gets or sets the set of flags that specify which border properties are overridden.
@@ -70,7 +112,9 @@ public partial class TableStyle
 		[DxfCodeValue(91)]
 		public BorderType Type { get; set; } = BorderType.Single;
 
-		public LinkedTableData Owner { get; internal set; }
+		private LineType _lineType;
+
+		private LinkedTableData _owner;
 
 		/// <summary>
 		/// Initializes a new instance of the CellBorder class with the specified edge flags.

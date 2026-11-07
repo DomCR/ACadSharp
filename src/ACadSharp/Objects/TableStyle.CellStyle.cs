@@ -13,6 +13,23 @@ public partial class TableStyle
 	/// </remarks>
 	public class CellStyle : ContentFormat
 	{
+		public override LinkedTableData Owner
+		{
+			get
+			{ return base.Owner; }
+
+			internal set
+			{
+				base.Owner = value;
+				this.LeftBorder.Owner = value;
+				this.RightBorder.Owner = value;
+				this.TopBorder.Owner = value;
+				this.BottomBorder.Owner = value;
+				this.HorizontalInsideBorder.Owner = value;
+				this.VerticalInsideBorder.Owner = value;
+			}
+		}
+
 		/// <summary>
 		/// Gets the default cell style used for data cells.
 		/// </summary>
