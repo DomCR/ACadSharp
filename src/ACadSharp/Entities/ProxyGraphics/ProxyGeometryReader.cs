@@ -870,7 +870,7 @@ internal class ProxyGeometryReader
 				trueColor.Color = Color.ByBlock;
 				break;
 			case ProxyColorMethod.ByColor:
-				trueColor.Color = new Color(b1, b2, b3);
+				trueColor.Color = new Color(b3, b2, b1);
 				break;
 			case ProxyColorMethod.ByACI:
 				trueColor.Color = new Color(b1);

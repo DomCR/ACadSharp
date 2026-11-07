@@ -540,9 +540,9 @@ internal class ProxyGeometryWriter
 		switch (trueColor.ColorMethod)
 		{
 			case ProxyColorMethod.ByColor:
-				b1 = trueColor.Color.R;
+				b1 = trueColor.Color.B;
 				b2 = trueColor.Color.G;
-				b3 = trueColor.Color.B;
+				b3 = trueColor.Color.R;
 				break;
 			case ProxyColorMethod.ByACI:
 				b1 = (byte)trueColor.Color.Index;
