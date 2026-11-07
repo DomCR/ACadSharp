@@ -290,10 +290,21 @@ internal abstract class DxfSectionReaderBase
 		this._reader.ReadNext();
 
 		DxfMap map = DxfMap.Create<T>();
+		bool isEntitySubclass = false;
 
 		while (this._reader.DxfCode != DxfCode.Start)
 		{
-			if (!readEntity(template, map))
+			if (this._reader.DxfCode == DxfCode.Subclass)
+			{
+				isEntitySubclass = this._reader.ValueAsString == DxfSubclassMarker.Entity;
+			}
+
+			//Proxy graphics, read before the entity can take 92 for one of its own codes
+			if (isEntitySubclass && (this._reader.Code == 92 || this._reader.Code == 160))
+			{
+				template.ProxyGraphics = this.readByteEntries(310)?.ToArray();
+			}
+			else if (!readEntity(template, map))
 			{
 				this.readCommonEntityCodes(template, out bool isExtendedData, map);
 				if (isExtendedData)

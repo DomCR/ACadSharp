@@ -2,6 +2,8 @@
 using ACadSharp.IO;
 using ACadSharp.Tests.TestModels;
 using System.Collections.Generic;
+using System.IO;
+using System.Linq;
 using Xunit;
 using Xunit.Abstractions;
 
@@ -156,6 +158,32 @@ public class DxfReaderTests : CadReaderTestsBase<DxfReader>
 	public void ReadHeaderBinaryTest(FileModel test)
 	{
 		base.ReadHeaderTest(test);
+	}
+
+	[Theory]
+	[MemberData(nameof(DxfAsciiFiles))]
+	[MemberData(nameof(DxfBinaryFiles))]
+	public void ReadProxyGraphicsTest(FileModel test)
+	{
+		string dwgPath = Path.Combine(test.Folder, test.NoExtensionName.Replace("_ascii", string.Empty).Replace("_binary", string.Empty) + ".dwg");
+		if (!File.Exists(dwgPath))
+		{
+			return;
+		}
+
+		CadDocument dxf = DxfReader.Read(test.Path, this._dxfConfiguration, this.onNotification);
+		CadDocument dwg = DwgReader.Read(dwgPath, this._dwgConfiguration, this.onNotification);
+
+		List<Entity> expected = dwg.Entities.Where(e => e.HasProxyGeometries).ToList();
+		Assert.NotEmpty(expected);
+		Assert.Equal(expected.Count, dxf.Entities.Count(e => e.HasProxyGeometries));
+
+		foreach (Entity entity in expected)
+		{
+			Entity read = dxf.GetCadObject<Entity>(entity.Handle);
+			Assert.Equal(entity.ObjectName, read.ObjectName);
+			Assert.Equal(entity.ProxyGeometries.Select(g => g.GetType()), read.ProxyGeometries.Select(g => g.GetType()));
+		}
 	}
 
 	[Theory]
