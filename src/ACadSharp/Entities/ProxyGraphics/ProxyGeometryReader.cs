@@ -728,6 +728,7 @@ internal class ProxyGeometryReader
 			shell.VertexTraits = new VertexTraits();
 			if (vertexFlags.HasFlag(PrimitiveFlags.HasNormals))
 			{
+				shell.VertexTraits.Normals = new List<XYZ>();
 				for (int i = 0; i < shell.Vertices.Count; i++)
 				{
 					shell.VertexTraits.Normals.Add(readPoint(stream));
