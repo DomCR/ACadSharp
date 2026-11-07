@@ -275,7 +275,7 @@ internal class ProxyGeometryWriter
 			writer.Write2RawDouble(pline.Vertices[0].Location);
 			for (int i = 1; i < pline.Vertices.Count; i++)
 			{
-				writer.Write2BitDoubleWithDefault(pline.Vertices[i - 1].Location, pline.Vertices[i].Location);
+				writer.Write2BitDoubleWithDefault(pline.Vertices[i].Location, pline.Vertices[i - 1].Location);
 			}
 		}
 

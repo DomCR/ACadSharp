@@ -107,6 +107,7 @@ public abstract class WriterSingleObjectTests : IOTestsBase
 		Data.Add(new(nameof(SingleCaseGenerator.LeaderWithArrowHead)));
 		Data.Add(new(nameof(SingleCaseGenerator.SortedXRecords)));
 		Data.Add(new(nameof(SingleCaseGenerator.ProxyGraphics)));
+		Data.Add(new(nameof(SingleCaseGenerator.ProxyGraphicsLwPolyline)));
 		Data.Add(new(nameof(SingleCaseGenerator.AnonymousBlockWithShortName)));
 	}
 
@@ -2287,6 +2288,31 @@ public abstract class WriterSingleObjectTests : IOTestsBase
 				Assert.Equal(proxy.ProxyGeometries.Count, result.ProxyGeometries.Count);
 				Assert.True(result.ProxyGeometries[0] is ProxyXLine);
 				Assert.True(result.ProxyGeometries[1] is ProxyCircle);
+			};
+		}
+
+		public void ProxyGraphicsLwPolyline()
+		{
+			ProxyEntity proxy = new ProxyEntity();
+			proxy.Version = ACadVersion.AC1032;
+			proxy.MaintenanceVersion = 0;
+
+			ProxyLwPolyine proxyLwPolyline = new ProxyLwPolyine
+			{
+				Entity = new LwPolyline(new XY(1, 2), new XY(3, 4), new XY(5, 6))
+			};
+
+			proxy.ProxyGeometries.Add(proxyLwPolyline);
+
+			this.Document.Entities.Add(proxy);
+
+			this.AssertRoundtrip = (doc) =>
+			{
+				ProxyEntity result = doc.GetCadObject<ProxyEntity>(proxy.Handle);
+				Assert.NotNull(result);
+
+				ProxyLwPolyine resultLwPolyline = Assert.IsType<ProxyLwPolyine>(Assert.Single(result.ProxyGeometries));
+				Assert.Equal(proxyLwPolyline.Entity.Vertices.Select(v => v.Location), resultLwPolyline.Entity.Vertices.Select(v => v.Location));
 			};
 		}
 
