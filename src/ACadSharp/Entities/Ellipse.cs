@@ -84,16 +84,19 @@ public class Ellipse : Entity, ICurve, IOrientable
 	/// <summary>
 	/// Ratio of minor axis to major axis.
 	/// </summary>
+	/// <value>
+	/// The valid range is 0 (not included) to 1, a value above 1 by no more than <see cref="MathHelper.Epsilon"/> is set to 1.
+	/// </value>
 	[DxfCodeValue(40)]
 	public double RadiusRatio
 	{
 		get { return this._radiusRatio; }
 		set
 		{
-			if (value <= 0 || value > 1)
+			if (value <= 0 || value > 1 + MathHelper.Epsilon)
 				throw new ArgumentOutOfRangeException(nameof(value), "Radius ratio must be a value between 0 (not included) and 1.");
 
-			this._radiusRatio = value;
+			this._radiusRatio = Math.Min(value, 1);
 		}
 	}
 
