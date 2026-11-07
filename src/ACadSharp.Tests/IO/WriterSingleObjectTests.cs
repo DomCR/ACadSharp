@@ -107,6 +107,7 @@ public abstract class WriterSingleObjectTests : IOTestsBase
 		Data.Add(new(nameof(SingleCaseGenerator.LeaderWithArrowHead)));
 		Data.Add(new(nameof(SingleCaseGenerator.SortedXRecords)));
 		Data.Add(new(nameof(SingleCaseGenerator.ProxyGraphics)));
+		Data.Add(new(nameof(SingleCaseGenerator.ProxyShellWithHole)));
 		Data.Add(new(nameof(SingleCaseGenerator.AnonymousBlockWithShortName)));
 	}
 
@@ -2287,6 +2288,44 @@ public abstract class WriterSingleObjectTests : IOTestsBase
 				Assert.Equal(proxy.ProxyGeometries.Count, result.ProxyGeometries.Count);
 				Assert.True(result.ProxyGeometries[0] is ProxyXLine);
 				Assert.True(result.ProxyGeometries[1] is ProxyCircle);
+			};
+		}
+
+		public void ProxyShellWithHole()
+		{
+			ProxyEntity proxy = new ProxyEntity();
+			proxy.Version = ACadVersion.AC1032;
+			proxy.MaintenanceVersion = 0;
+
+			ProxyShell shell = new ProxyShell();
+			shell.Vertices.AddRange(new[]
+			{
+				new XYZ(0, 0, 0), new XYZ(10, 0, 0), new XYZ(10, 10, 0), new XYZ(0, 10, 0),
+				new XYZ(2, 2, 0), new XYZ(2, 8, 0), new XYZ(8, 8, 0), new XYZ(8, 2, 0),
+			});
+			shell.Faces.Add(new[] { 0, 1, 2, 3 });
+			shell.Faces.Add(new[] { 4, 5, 6, 7 });
+			shell.Holes.Add(1);
+			shell.EdgeTraits = new EdgeTraits();
+			shell.EdgeTraits.Colors.AddRange(Enumerable.Range(1, 8));
+			shell.FaceTraits = new FaceTraits();
+			shell.FaceTraits.Colors.AddRange(new[] { 11, 12 });
+
+			proxy.ProxyGeometries.Add(shell);
+
+			this.Document.Entities.Add(proxy);
+
+			this.AssertRoundtrip = (doc) =>
+			{
+				ProxyEntity result = doc.GetCadObject<ProxyEntity>(proxy.Handle);
+				Assert.NotNull(result);
+
+				ProxyShell resultShell = Assert.IsType<ProxyShell>(Assert.Single(result.ProxyGeometries));
+				Assert.Equal(shell.Vertices, resultShell.Vertices);
+				Assert.Equal(shell.Faces, resultShell.Faces);
+				Assert.Equal(shell.Holes, resultShell.Holes);
+				Assert.Equal(shell.EdgeTraits.Colors, resultShell.EdgeTraits.Colors);
+				Assert.Equal(shell.FaceTraits.Colors, resultShell.FaceTraits.Colors);
 			};
 		}
 
