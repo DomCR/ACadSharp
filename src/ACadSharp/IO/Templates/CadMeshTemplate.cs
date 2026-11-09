@@ -1,6 +1,4 @@
 using ACadSharp.Entities;
-using ACadSharp.Objects;
-using CSMath;
 
 namespace ACadSharp.IO.Templates;
 

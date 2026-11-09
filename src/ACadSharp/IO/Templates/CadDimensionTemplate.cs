@@ -98,6 +98,8 @@ internal class CadDimensionTemplate : CadEntityTemplate
 		dimension.Text = source.Text;
 		dimension.TextRotation = source.TextRotation;
 		dimension.HorizontalDirection = source.HorizontalDirection;
+		dimension.FlipArrow1 = source.FlipArrow1;
+		dimension.FlipArrow2 = source.FlipArrow2;
 
 		dimension.Flags = source.Flags;
 

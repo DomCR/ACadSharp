@@ -1,4 +1,4 @@
-﻿namespace ACadSharp.Entities.ProxyGraphics;
+namespace ACadSharp.Entities.ProxyGraphics;
 
 /// <summary>
 /// Represents a proxy subentity color in a CAD drawing.
@@ -12,4 +12,10 @@ public class ProxySubentColor : IProxyGeometry
 
 	/// <inheritdoc/>
 	public GraphicsType GraphicsType { get { return GraphicsType.SubentColor; } }
+
+	/// <inheritdoc/>
+	public IProxyGeometry Clone()
+	{
+		return (IProxyGeometry)this.MemberwiseClone();
+	}
 }

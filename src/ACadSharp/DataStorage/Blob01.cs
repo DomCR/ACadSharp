@@ -1,0 +1,16 @@
+﻿namespace ACadSharp.DataStorage;
+
+internal class Blob01 : FileSegment
+{
+	public byte[] Data { get; set; }
+
+	public uint PageCount { get; set; }
+
+	public ulong PageDataSize { get; set; }
+
+	public uint PageIndex { get; set; }
+
+	public ulong PageStartOffset { get; set; }
+
+	public ulong TotalDataSize { get; set; }
+}

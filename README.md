@@ -17,7 +17,7 @@ ACadSharp allows to read or create CAD files using .Net and also extract or modi
 - Extract/Modify the geometric information from the different [entities](https://help.autodesk.com/view/OARX/2021/ENU/?guid=GUID-7D07C886-FD1D-4A0C-A7AB-B4D21F18E484) in the model
 - Control over the table elements like Blocks, Layers and Styles, allows you to read, create or modify the different tables
 
-For pdf export check :construction: [ACadSharp.Pdf](https://github.com/DomCR/ACadSharp.Pdf) :construction:.
+For other format export like svg, image, json or pdf check :construction: [ACadSharp.Formats](https://github.com/DomCR/ACadSharp.Formats) :construction:.
 
 #### Compatible Dwg/Dxf versions:
 
@@ -28,7 +28,7 @@ AC1012 |    :heavy_check_mark:    |   :heavy_check_mark:     |    :x:    |    :x
 AC1014 |    :heavy_check_mark:    |   :heavy_check_mark:     |    :heavy_check_mark:    |    :heavy_check_mark:    |
 AC1015 |    :heavy_check_mark:    |   :heavy_check_mark:     |    :heavy_check_mark:    |    :heavy_check_mark:    |
 AC1018 |    :heavy_check_mark:    |   :heavy_check_mark:     |    :heavy_check_mark:    |    :heavy_check_mark:    |
-AC1021 |    :heavy_check_mark:    |   :heavy_check_mark:     |    :heavy_check_mark:    |    :x:                   |
+AC1021 |    :heavy_check_mark:    |   :heavy_check_mark:     |    :heavy_check_mark:    |    :heavy_check_mark:    |
 AC1024 |    :heavy_check_mark:    |   :heavy_check_mark:     |    :heavy_check_mark:    |    :heavy_check_mark:    |
 AC1027 |    :heavy_check_mark:    |   :heavy_check_mark:     |    :heavy_check_mark:    |    :heavy_check_mark:    |
 AC1032 |    :heavy_check_mark:    |   :heavy_check_mark:     |    :heavy_check_mark:    |    :heavy_check_mark:    |

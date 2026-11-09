@@ -1,11 +1,11 @@
-﻿using CSMath;
+using CSMath;
 
 namespace ACadSharp.Entities.ProxyGraphics;
 
 /// <summary>
 /// Represents a proxy circular arc graphic element.
 /// </summary>
-public class ProxyCircularArc : IProxyGeometry
+public class ProxyCircularArc : IProxyGeometry, IOrientable
 {
 	/// <summary>
 	/// Gets or sets the type of the arc.
@@ -20,10 +20,8 @@ public class ProxyCircularArc : IProxyGeometry
 	/// <inheritdoc/>
 	public GraphicsType GraphicsType { get { return GraphicsType.CircularArc; } }
 
-	/// <summary>
-	/// Gets or sets the normal vector of the plane containing the arc.
-	/// </summary>
-	public XYZ Normal { get; set; }
+	/// <inheritdoc/>
+	public XYZ Normal { get; set; } = XYZ.AxisZ;
 
 	/// <summary>
 	/// Gets or sets the radius of the circular arc.
@@ -39,4 +37,10 @@ public class ProxyCircularArc : IProxyGeometry
 	/// Gets or sets the sweep angle of the arc in radians.
 	/// </summary>
 	public double SweepAngle { get; set; }
+
+	/// <inheritdoc/>
+	public IProxyGeometry Clone()
+	{
+		return (IProxyGeometry)this.MemberwiseClone();
+	}
 }

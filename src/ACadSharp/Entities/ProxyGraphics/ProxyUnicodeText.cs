@@ -1,4 +1,4 @@
-﻿using CSMath;
+using CSMath;
 
 namespace ACadSharp.Entities.ProxyGraphics;
 
@@ -9,7 +9,7 @@ namespace ACadSharp.Entities.ProxyGraphics;
 /// This class is used to store and manage the properties of Unicode text within proxy graphics,
 /// including positioning, orientation, sizing, and the actual text content.
 /// </remarks>
-public class ProxyUnicodeText : IProxyGeometry
+public class ProxyUnicodeText : IProxyGeometry, IOrientable
 {
 	/// <inheritdoc/>
 	public GraphicsType GraphicsType { get { return GraphicsType.UnicodeText; } }
@@ -20,11 +20,8 @@ public class ProxyUnicodeText : IProxyGeometry
 	/// <value>The text height as a double value.</value>
 	public double Height { get; set; }
 
-	/// <summary>
-	/// Gets or sets the normal vector of the text plane.
-	/// </summary>
-	/// <value>An <see cref="XYZ"/> vector representing the normal direction.</value>
-	public XYZ Normal { get; set; }
+	/// <inheritdoc/>
+	public XYZ Normal { get; set; } = XYZ.AxisZ;
 
 	/// <summary>
 	/// Gets or sets the oblique angle of the text in radians.
@@ -55,4 +52,10 @@ public class ProxyUnicodeText : IProxyGeometry
 	/// </summary>
 	/// <value>The width factor as a double value, where 1.0 is normal width.</value>
 	public double WidthFactor { get; set; }
+
+	/// <inheritdoc/>
+	public IProxyGeometry Clone()
+	{
+		return (IProxyGeometry)this.MemberwiseClone();
+	}
 }

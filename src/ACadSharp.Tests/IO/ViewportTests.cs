@@ -3,26 +3,25 @@ using ACadSharp.Tests.TestModels;
 using Xunit;
 using Xunit.Abstractions;
 
-namespace ACadSharp.Tests.IO
+namespace ACadSharp.Tests.IO;
+
+public class ViewportTests : IOTestsBase
 {
-	public class ViewportTests : IOTestsBase
+	public ViewportTests(ITestOutputHelper output) : base(output)
 	{
-		public ViewportTests(ITestOutputHelper output) : base(output)
-		{
-		}
+	}
 
-		[Theory]
-		[MemberData(nameof(DwgFilePaths))]
-		[MemberData(nameof(DxfAsciiFiles))]
-		public void ScaleInViewport(FileModel test)
-		{
-			CadDocument doc = this.readDocument(test);
+	[Theory]
+	[MemberData(nameof(DwgFilePaths))]
+	[MemberData(nameof(DxfAsciiFiles))]
+	public void ScaleInViewport(FileModel test)
+	{
+		CadDocument doc = this.readDocument(test);
 
-			ACadSharp.Tables.BlockRecord paper = doc.PaperSpace;
-			foreach (Viewport v in paper.Viewports)
-			{
-				Assert.NotNull(v.Scale);
-			}
+		ACadSharp.Tables.BlockRecord paper = doc.PaperSpace;
+		foreach (Viewport v in paper.Viewports)
+		{
+			Assert.NotNull(v.Scale);
 		}
 	}
 }

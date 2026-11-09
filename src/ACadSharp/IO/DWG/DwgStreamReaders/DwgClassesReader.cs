@@ -1,4 +1,6 @@
 ﻿using ACadSharp.Classes;
+using ACadSharp.IO.DWG.DwgStreamReaders;
+using ACadSharp.IO.DWG.FileHeaders;
 using CSUtilities.IO;
 
 namespace ACadSharp.IO.DWG;
@@ -117,7 +119,7 @@ internal class DwgClassesReader : DwgSectionIO
 				this._sreader.ReadBitLong();
 			}
 
-			_classes.AddOrUpdate(dxfClass);
+			this._classes.TryAdd(dxfClass);
 		}
 
 		if (this.R2007Plus)

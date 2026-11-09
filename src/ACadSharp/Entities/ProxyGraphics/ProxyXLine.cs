@@ -1,4 +1,4 @@
-﻿using CSMath;
+using CSMath;
 
 namespace ACadSharp.Entities.ProxyGraphics;
 
@@ -30,4 +30,10 @@ public class ProxyXLine : IProxyGeometry
 	/// Combined with <see cref="XYZ"/>, this point defines the infinite line direction.
 	/// </remarks>
 	public XYZ Point2 { get; set; }
+
+	/// <inheritdoc/>
+	public IProxyGeometry Clone()
+	{
+		return (IProxyGeometry)this.MemberwiseClone();
+	}
 }

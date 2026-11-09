@@ -7,7 +7,7 @@ namespace ACadSharp.Entities.ProxyGraphics;
 /// This class encapsulates all properties necessary to render and transform Unicode text geometry,
 /// including font information, styling attributes, positioning, and text-specific transformations.
 /// </summary>
-public class ProxyUnicodeText2 : IProxyGeometry
+public class ProxyUnicodeText2 : IProxyGeometry, IOrientable
 {
 	/// <summary>
 	/// Gets or sets the filename of the big font file used for rendering the text.
@@ -58,10 +58,8 @@ public class ProxyUnicodeText2 : IProxyGeometry
 	/// </summary>
 	public bool IsVertical { get; set; }
 
-	/// <summary>
-	/// Gets or sets the normal vector defining the plane in which the text is oriented.
-	/// </summary>
-	public XYZ Normal { get; set; }
+	/// <inheritdoc/>
+	public XYZ Normal { get; set; } = XYZ.AxisZ;
 
 	/// <summary>
 	/// Gets or sets the oblique angle in degrees, creating an italic-like slant effect on the text.
@@ -97,4 +95,23 @@ public class ProxyUnicodeText2 : IProxyGeometry
 	/// Gets or sets the width factor that scales the text horizontally. A value of 1.0 represents normal width.
 	/// </summary>
 	public double WidthFactor { get; set; }
+
+	/// <inheritdoc/>
+	public IProxyGeometry Clone()
+	{
+		ProxyUnicodeText2 clone = (ProxyUnicodeText2)this.MemberwiseClone();
+		if (this.FontDescriptor != null)
+		{
+			clone.FontDescriptor = new TrueTypeFontDescriptor
+			{
+				Charset = this.FontDescriptor.Charset,
+				FontFilename = this.FontDescriptor.FontFilename,
+				IsBold = this.FontDescriptor.IsBold,
+				IsItalic = this.FontDescriptor.IsItalic,
+				PitchAndFamily = this.FontDescriptor.PitchAndFamily,
+				Typeface = this.FontDescriptor.Typeface
+			};
+		}
+		return clone;
+	}
 }

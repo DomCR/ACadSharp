@@ -1,4 +1,5 @@
 ﻿using ACadSharp.Header;
+using ACadSharp.IO.DWG.DwgStreamReaders;
 using ACadSharp.Types.Units;
 using CSMath;
 using CSUtilities.IO;

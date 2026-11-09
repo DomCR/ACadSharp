@@ -1,6 +1,7 @@
 ﻿using ACadSharp.Attributes;
 using ACadSharp.Objects;
 using CSMath;
+using CSMath.Extensions;
 using System;
 
 namespace ACadSharp.Tables
@@ -74,7 +75,7 @@ namespace ACadSharp.Tables
 			get { return this._direction; }
 			set
 			{
-				this._direction = value.Normalize();
+				this._direction = value;
 			}
 		}
 

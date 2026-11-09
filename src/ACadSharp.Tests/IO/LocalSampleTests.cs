@@ -1,10 +1,7 @@
-﻿using ACadSharp.Entities;
-using ACadSharp.IO;
+﻿using ACadSharp.IO;
 using ACadSharp.Tests.TestModels;
-using System.Collections.Generic;
 using System.Diagnostics;
 using System.IO;
-using System.Linq;
 using Xunit;
 using Xunit.Abstractions;
 
@@ -37,8 +34,10 @@ public class LocalSampleTests : IOTestsBase
 			return;
 
 		CadDocument doc = DwgReader.Read(test.Path, this._dwgConfiguration, this.onNotification);
+
 		if (!TestVariables.SaveOutputInStream)
 		{
+			this._output.WriteLine("--- starting write ---");
 			DwgWriter.Write(Path.Combine(TestVariables.DesktopFolder, "output", "test.dwg"), doc, notification: this.onNotification);
 		}
 	}
@@ -50,7 +49,7 @@ public class LocalSampleTests : IOTestsBase
 		if (string.IsNullOrEmpty(test.Path))
 			return;
 
-		CadDocument doc = DxfReader.Read(test.Path, this.onNotification);
+		CadDocument doc = DxfReader.Read(test.Path, this._dxfConfiguration, this.onNotification);
 
 		if (doc.Header.Version < ACadVersion.AC1012)
 		{
@@ -60,6 +59,7 @@ public class LocalSampleTests : IOTestsBase
 
 		if (!TestVariables.SaveOutputInStream)
 		{
+			this._output.WriteLine("--- starting write ---");
 			DxfWriter.Write(Path.Combine(TestVariables.DesktopFolder, "output", "test.dxf"), doc, notification: this.onNotification);
 		}
 	}

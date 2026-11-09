@@ -1,6 +1,7 @@
 ﻿using ACadSharp.Exceptions;
 using ACadSharp.IO.DWG;
 using ACadSharp.IO.DWG.DwgStreamWriters;
+using ACadSharp.IO.DWG.FileHeaders;
 using ACadSharp.Tables.Collections;
 using CSUtilities.IO;
 using CSUtilities.Text;
@@ -156,7 +157,8 @@ public class DwgWriter : CadWriterBase<DwgWriterConfiguration>
 				this._fileHeaderWriter = new DwgFileHeaderWriterAC18(this._stream, this._encoding, this._document);
 				break;
 			case ACadVersion.AC1021:
-				throw new CadNotSupportedException(this._document.Header.Version);
+				this._fileHeaderWriter = new DwgFileHeaderWriterAC21(this._stream, this._encoding, this._document);
+				break;
 			case ACadVersion.AC1024:
 			case ACadVersion.AC1027:
 			case ACadVersion.AC1032:
@@ -200,7 +202,8 @@ public class DwgWriter : CadWriterBase<DwgWriterConfiguration>
 
 	private void writeFileDepList()
 	{
-		if (this._fileHeader.AcadVersion < ACadVersion.AC1018)
+		//ACadVersion.AC1021 should have this section but right now it breaks the files
+		if (this._fileHeader.AcadVersion < ACadVersion.AC1018 || this._fileHeader.AcadVersion == ACadVersion.AC1021)
 			return;
 
 		MemoryStream stream = new MemoryStream();
@@ -263,7 +266,8 @@ public class DwgWriter : CadWriterBase<DwgWriterConfiguration>
 			this._encoding,
 			this.Configuration.WriteXRecords,
 			this.Configuration.WriteXData,
-			this.Configuration.WriteShapes);
+			this.Configuration.WriteShapes,
+			this.Configuration.WriteDynamicBlockData);
 		writer.OnNotification += this.triggerNotification;
 		writer.Write();
 
@@ -350,6 +354,7 @@ public class DwgWriter : CadWriterBase<DwgWriterConfiguration>
 		StreamIO swriter = new StreamIO(stream);
 		swriter.Write<uint>(0);
 		swriter.Write<uint>(0);
+		swriter.Write<uint>(1);
 		swriter.Write<uint>(0);
 		this._fileHeaderWriter.AddSection(DwgSectionDefinition.RevHistory, stream, true);
 	}

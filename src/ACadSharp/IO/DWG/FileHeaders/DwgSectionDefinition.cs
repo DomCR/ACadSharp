@@ -6,6 +6,8 @@ namespace ACadSharp.IO.DWG
 	{
 		public const string AcDbObjects = "AcDb:AcDbObjects";
 
+		public const string AcDsPrototype = "AcDb:AcDsPrototype_1b";
+
 		public const string AppInfo = "AcDb:AppInfo";
 
 		public const string AuxHeader = "AcDb:AuxHeader";
@@ -24,9 +26,13 @@ namespace ACadSharp.IO.DWG
 
 		public const string RevHistory = "AcDb:RevHistory";
 
+		public const string Security = "AcDb:Security";
+
 		public const string SummaryInfo = "AcDb:SummaryInfo";
 
 		public const string Template = "AcDb:Template";
+
+		public const string VBAProject = "AcDb:VBAProject ";
 
 		public static Dictionary<string, byte[]> EndSentinels = new Dictionary<string, byte[]>()
 		{

@@ -1,13 +1,20 @@
-﻿namespace ACadSharp.Tables.Collections
+﻿namespace ACadSharp.Tables.Collections;
+
+internal class ViewportEntityControl : Table<ViewportEntityHeader>
 {
-	internal class ViewportEntityControl : Table<ViewportEntityHeader>
+	public override ObjectType ObjectType { get => ObjectType.VP_ENT_HDR_CTRL_OBJ; }
+
+	public ViewportEntityControl(CadDocument document) : base(document)
 	{
-		public override ObjectType ObjectType { get => ObjectType.VP_ENT_HDR_CTRL_OBJ; }
+	}
 
-		protected override string[] defaultEntries { get; }
+	protected override string[] getDefaultEntries()
+	{
+		return new string[] { };
+	}
 
-		public ViewportEntityControl(CadDocument document) : base(document)
-		{
-		}
+	public override ViewportEntityHeader GetDefaultEntry()
+	{
+		return null;
 	}
 }

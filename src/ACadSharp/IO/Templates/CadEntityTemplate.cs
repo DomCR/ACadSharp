@@ -3,6 +3,7 @@ using ACadSharp.Entities.ProxyGraphics;
 using ACadSharp.Objects;
 using ACadSharp.Tables;
 using CSUtilities.Extensions;
+using System.Collections.Generic;
 
 namespace ACadSharp.IO.Templates;
 
@@ -70,6 +71,11 @@ internal class CadEntityTemplate : CadTemplate<Entity>
 		if (this.getTableReference(builder, this.LayerHandle, this.LayerName, out Layer layer))
 		{
 			this.CadObject.Layer = layer;
+		}
+		else if (!string.IsNullOrEmpty(this.LayerName))
+		{
+			builder.Notify($"Layer {this.LayerName} not found in the LAYER table, created for {this.CadObject.GetType().FullName} with handle {this.CadObject.Handle}", NotificationType.Warning);
+			this.CadObject.Layer = builder.Layers.TryAdd(new Layer(this.LayerName));
 		}
 
 		switch (this.LtypeFlags)

@@ -4,6 +4,7 @@ using ACadSharp.Objects;
 using CSMath;
 using CSUtilities.Converters;
 using System;
+using System.IO;
 using static ACadSharp.Entities.TableEntity;
 using static ACadSharp.Entities.TableEntity.TableBreakData;
 using static ACadSharp.IO.Templates.CadTableEntityTemplate;
@@ -14,26 +15,6 @@ namespace ACadSharp.IO.DWG;
 
 internal partial class DwgObjectReader : DwgSectionIO
 {
-	private void readBorder(CadCellStyleTemplate template, CellBorder border)
-	{
-		//BL 90 Border property override flags
-		border.PropertyOverrideFlags = (BorderPropertyFlags)this._mergedReaders.ReadBitLong();
-		//BL 91 Border type
-		border.Type = ((BorderType)this._mergedReaders.ReadBitLong());
-		//TC 62 Color
-		border.Color = this._mergedReaders.ReadCmColor(this.R2004Pre);
-		//BL 92 Line weight
-		border.LineWeight = ((LineWeightType)this._mergedReaders.ReadBitLong());
-		//H 40 Line type (hard pointer)
-		template.BorderLineTypePairs.Add(new Tuple<CellBorder, ulong>(border, this.handleReference()));
-		//BL 93 Invisibility: 1 = invisible, 0 = visible.
-		border.IsInvisible = (this._mergedReaders.ReadBitLong() == 1);
-		//BD 40 Double line spacing
-		border.DoubleLineSpacing = this._mergedReaders.ReadBitDouble();
-
-		border.ApplyBorder = true;
-	}
-
 	private void readCellContentFormat(CellContentFormatTemplate template, TableStyle.ContentFormat format)
 	{
 		//Cell.ContentFormat format = template.Content.Format;
@@ -82,91 +63,6 @@ internal partial class DwgObjectReader : DwgSectionIO
 		geometry.Height = this._mergedReaders.ReadBitDouble();
 		//BL	Unknown flags
 		geometry.Flags = this._mergedReaders.ReadBitLong();
-	}
-
-	private void readCellStyle(CadTableStyleTemplate.CadCellStyleTemplate template)
-	{
-		//20.4.101.4
-		CellStyle cellStyle = (CellStyle)template.Format;
-
-		//BL 90 Cell style type
-		cellStyle.Type = (CellStyleType)this._mergedReaders.ReadBitLong();
-
-		//BS 170 Data flags, 0 = no data, 1 = data is present
-		//If data is present
-		cellStyle.HasData = this._mergedReaders.ReadBitShortAsBool();
-		if (!cellStyle.HasData)
-		{
-			return;
-		}
-
-		//BL 91 Property override flags. The definition is the same as the content format
-		//propery override flags, see paragraph 20.4.101.3.
-		cellStyle.PropertyOverrideFlags = (TableStyle.CellStylePropertyFlags)this._mergedReaders.ReadBitLong();
-		//BL  92 Merge flags, but may only for bits 0x8000 and 0x10000.
-		cellStyle.TableCellStylePropertyFlags = (CellStylePropertyFlags)this._mergedReaders.ReadBitLong();
-		//TC 62 Background color
-		cellStyle.BackgroundColor = this._mergedReaders.ReadCmColor(this.R2004Pre);
-
-		//BL 93 Content layout flags
-		cellStyle.ContentLayoutFlags = (CellContentLayoutFlags)this._mergedReaders.ReadBitLong();
-
-		//Content format fields (see paragraph 20.4.101.3)
-		this.readCellContentFormat(template, cellStyle);
-
-		//BS 171 Margin override flags, bit 1 is set if margin overrides are present
-		//If margin overrides are present
-		cellStyle.MarginOverrideFlags = (MarginFlags)this._mergedReaders.ReadBitShort();
-		if (cellStyle.MarginOverrideFlags.HasFlag(MarginFlags.Override))
-		{
-			//BD 40 Vertical margin
-			cellStyle.VerticalMargin = this._mergedReaders.ReadBitDouble();
-			//BD 40 Horizontal margin
-			cellStyle.HorizontalMargin = this._mergedReaders.ReadBitDouble();
-			//BD 40 Bottom margin
-			cellStyle.BottomMargin = this._mergedReaders.ReadBitDouble();
-			//BD 40 Right margin
-			cellStyle.RightMargin = this._mergedReaders.ReadBitDouble();
-			//BD 40 Margin horizontal spacing
-			cellStyle.MarginHorizontalSpacing = this._mergedReaders.ReadBitDouble();
-			//BD 40 Margin vertical spacing
-			cellStyle.MarginVerticalSpacing = this._mergedReaders.ReadBitDouble();
-		}
-
-		//BL 94 Number of borders present (0-6)
-		int nborders = this._mergedReaders.ReadBitLong();
-		//Begin repeat borders
-		for (int i = 0; i < nborders; i++)
-		{
-			//BL 95 Edge flags
-			CellEdgeFlags edgeFlags = (CellEdgeFlags)this._mergedReaders.ReadBitLong();
-
-			// If edge flags is non - zero
-			switch (edgeFlags)
-			{
-				case CellEdgeFlags.Top:
-					this.readBorder(template, cellStyle.TopBorder);
-					break;
-				case CellEdgeFlags.Right:
-					this.readBorder(template, cellStyle.RightBorder);
-					break;
-				case CellEdgeFlags.Bottom:
-					this.readBorder(template, cellStyle.BottomBorder);
-					break;
-				case CellEdgeFlags.Left:
-					this.readBorder(template, cellStyle.LeftBorder);
-					break;
-				case CellEdgeFlags.InsideVertical:
-					this.readBorder(template, cellStyle.VerticalInsideBorder);
-					break;
-				case CellEdgeFlags.InsideHorizontal:
-					this.readBorder(template, cellStyle.HorizontalInsideBorder);
-					break;
-				case CellEdgeFlags.Unknown:
-				default:
-					continue;
-			}
-		}
 	}
 
 	private void readCustomTableData(CustomDataEntry entry)
@@ -233,6 +129,217 @@ internal partial class DwgObjectReader : DwgSectionIO
 
 			return new System.DateTime(1970, 1, 1, 0, 0, 0, System.DateTimeKind.Utc).AddSeconds(seconds);
 		}
+	}
+
+	private System.Guid readGuid()
+	{
+		var a = this._mergedReaders.ReadBitLong();
+		var b = this._mergedReaders.ReadBitShort();
+		var c = this._mergedReaders.ReadBitShort();
+		var d = this._mergedReaders.ReadByte();
+		var e = this._mergedReaders.ReadByte();
+		var f = this._mergedReaders.ReadByte();
+		var g = this._mergedReaders.ReadByte();
+		var h = this._mergedReaders.ReadByte();
+		var i = this._mergedReaders.ReadByte();
+		var j = this._mergedReaders.ReadByte();
+		var k = this._mergedReaders.ReadByte();
+		return new Guid(a, b, c, d, e, f, g, h, i, j, k);
+	}
+
+	private CadModelerGeometryTemplate<T> readModelerGeometry<T>(CadModelerGeometryTemplate<T> template)
+		where T : ModelerGeometry, new()
+	{
+		ModelerGeometry geometry = template.CadObject;
+
+		this.readCommonEntityData(template);
+
+		//Chapter 24 - Info
+		if (!this.R2013Plus)
+		{
+			//ACIS Empty bit B X If 1, then no data follows
+			var hasData = this._mergedReaders.ReadBit();
+			if (!hasData)
+			{
+				this.readModelerGeometryData(template);
+				return template;
+			}
+		}
+
+		//Common:
+		//Wireframe data present B X True if wireframe data is present
+		var isWireframe = this._mergedReaders.ReadBit();
+		if (isWireframe)
+		{
+			//Point present B X If true, following point is present, otherwise assume 0,0,0 for point
+			bool hasPoint = this._mergedReaders.ReadBit();
+			if (hasPoint)
+			{
+				//Point 3BD X Present if above bit is 1.
+				geometry.Point = this._objectReader.Read3BitDouble();
+			}
+
+			//Num IsoLines BL X
+			int nIsoLines = this._mergedReaders.ReadBitLong();
+			//IsoLines present B X If true, isoline data is present.
+			if (this._mergedReaders.ReadBit())
+			{
+				//Num Wires BL X Number of ISO lines that follow.
+				int nWires = this._mergedReaders.ReadBitLong();
+				for (int i = 0; i < nWires; i++)
+				{
+					ModelerGeometry.Wire wire = new ModelerGeometry.Wire();
+					this.readWire(wire);
+					geometry.Wires.Add(wire);
+				}
+			}
+
+			//Repeat “Num. silhouettes” times:
+			int nSilhouettes = this._mergedReaders.ReadBitLong();
+			for (int i = 0; i < nSilhouettes; i++)
+			{
+				var silhouette = new ModelerGeometry.Silhouette();
+
+				//VP id BL X
+				silhouette.ViewportId = this._mergedReaders.ReadBitLongLong();
+				//VP Target 3BD X
+				silhouette.ViewportTarget = this._mergedReaders.Read3BitDouble();
+				//VP dir. From target 3BD X
+				silhouette.ViewportDirectionFromTarget = this._mergedReaders.Read3BitDouble();
+				//VP up dir. 3BD X
+				silhouette.ViewportUpDirection = this._mergedReaders.Read3BitDouble();
+				//VP perspective B X
+				silhouette.ViewportPerspective = this._mergedReaders.ReadBit();
+
+				//IsoLines present B X If true, isoline data is present.
+				if (this._mergedReaders.ReadBit())
+				{
+					//Num Wires BL X
+					int nWires = this._mergedReaders.ReadBitLong();
+					for (int j = 0; j < nWires; j++)
+					{
+						ModelerGeometry.Wire wire = new ModelerGeometry.Wire();
+						this.readWire(wire);
+						silhouette.Wires.Add(wire);
+					}
+				}
+
+				geometry.Silhouettes.Add(silhouette);
+			}
+
+			//ACIS Empty bit B X Normally 1.If 0, then acis data follows in the
+			//same format as described above, except no wireframe
+			//of silhouette data will be present(no empty bits
+			//for these items either).
+			if (!this._mergedReaders.ReadBit())
+			{
+				this.readModelerGeometryData(template);
+			}
+		}
+
+		//R2007 +:
+		if (this.R2007Plus)
+		{
+			//Materials
+			var nmat = this._mergedReaders.ReadBitLong();
+			for (int i = 0; i < nmat; i++)
+			{
+				//Unknown BL
+				var unknown = this._mergedReaders.ReadBitLong();
+				//Unknown BL
+				var unknown2 = this._mergedReaders.ReadBitLong();
+
+				template.MaterialHandles.Add(this.handleReference());
+			}
+		}
+
+		if (this.R2013Plus)
+		{
+			this._mergedReaders.ReadBit();
+			geometry.Guid = this.readGuid();
+			this._mergedReaders.ReadBitLong();
+		}
+
+		return template;
+	}
+
+	private void readModelerGeometryData<T>(CadEntityTemplate<T> template)
+			where T : ModelerGeometry, new()
+	{
+		//Unknown bit B X
+		bool unknown = this._mergedReaders.ReadBit();
+
+		//Version BS Can be 1 or 2.
+		short version = this._mergedReaders.ReadBitShort();
+
+		switch (version)
+		{
+			//Version == 1 (following 2 items repeat until Block Size is 0):
+			//Block Size BL X Number of bytes of SAT data in this block. if value
+			//is between 0x20 and 0x7E, calculate 0x9F-the value
+			//to get the real character.If it's a tab, we
+			//convert to a space.
+			case 1:
+				using (MemoryStream stream = new MemoryStream())
+				{
+					int blockSize = this._mergedReaders.ReadBitLong();
+					while (blockSize > 0)
+					{
+						byte[] block = AcisTextCodec.Decode(this._mergedReaders.ReadBytes(blockSize));
+						stream.Write(block, 0, block.Length);
+
+						blockSize = this._mergedReaders.ReadBitLong();
+					}
+
+					if (stream.Length > 0)
+					{
+						template.CadObject.AcisData = stream.ToArray();
+					}
+				}
+				break;
+			//Version == 2:
+			//Immediately following will be an acis file.Header value of “ACIS BinaryFile” indicates
+			//SAB, otherwise it is a text SAT file. No length is given.SAB files will end with
+			//“End\x0E\x02of\x0E\x04ACIS\x0D\x04data”. SAT files must be parsed to find the end.
+			case 2:
+				//The stream gives no payload length: read up to the end of the
+				//object data and cut at the End-of-ACIS-data marker. Anything
+				//after the marker (wireframe data, handles) is discarded with
+				//the rest of the object, the caller returns right away.
+				long currentPos = this._mergedReaders.PositionInBits();
+				long endPos = this._objectInitialPos + (this._size * 8);
+				int remainingBytes = (int)((endPos - currentPos) / 8);
+
+				if (remainingBytes > 0)
+				{
+					byte[] data = this._mergedReaders.ReadBytes(remainingBytes);
+					template.CadObject.AcisData = AcisTextCodec.TrimAtAcisEnd(data, out byte[] remain);
+
+					var pos = currentPos + remainingBytes * 8 - remain.Length * 8;
+					this._mergedReaders.SetPositionInBits(pos);
+				}
+				break;
+			default:
+				this.notify($"Modeler geometry data version {version} not recognized for {template.CadObject.ObjectName}", NotificationType.Warning);
+				break;
+		}
+	}
+
+	private CadTemplate readSolid3D()
+	{
+		Solid3D solid = new Solid3D();
+		var template = new CadSolid3DTemplate(solid);
+
+		this.readModelerGeometry(template);
+
+		//R2007 +:
+		if (this.R2007Plus)
+		{
+			//H 350 History ID
+			template.HistoryHandle = this._mergedReaders.HandleReference();
+		}
+
+		return template;
 	}
 
 	private string readStringCadValue()
@@ -450,7 +557,7 @@ internal partial class DwgObjectReader : DwgSectionIO
 		if (this._mergedReaders.ReadBit())
 		{
 			//Cell flag override BL 177 (deprecated)
-			TableEntity.Cell.OverrideFlags flags = (Cell.OverrideFlags)this._mergedReaders.ReadBitLong();
+			TableEntity.CellOverrideFlags flags = (CellOverrideFlags)this._mergedReaders.ReadBitLong();
 
 			//Virtual edge flag RC 178 Determines which edges are virtual, see also the
 			//explanation on the cell edge flags above.When an
@@ -458,96 +565,96 @@ internal partial class DwgObjectReader : DwgSectionIO
 			//1 = top, 2 = right, 4 = bottom, 8 = left.
 			cell.VirtualEdgeFlag = this._mergedReaders.ReadByte();
 
-			if (flags.HasFlag(Cell.OverrideFlags.CellAlignment))
+			if (flags.HasFlag(CellOverrideFlags.CellAlignment))
 			{
 				//Cell alignment RS 170 Present only if bit 0x01 is set in cell flag
 				cell.StyleOverride.CellAlignment = (CellAlignmentType)this._mergedReaders.ReadBitShort();
 			}
-			if (flags.HasFlag(Cell.OverrideFlags.BackgroundFillNone))
+			if (flags.HasFlag(CellOverrideFlags.BackgroundFillNone))
 			{
 				//Background fill none B 283 Present only if bit 0x02 is set in cell flag
 				cell.StyleOverride.IsFillColorOn = this._mergedReaders.ReadBit();
 			}
-			if (flags.HasFlag(Cell.OverrideFlags.BackgroundColor))
+			if (flags.HasFlag(CellOverrideFlags.BackgroundColor))
 			{
 				//Background color CMC 63 Present only if bit 0x04 is set in cell flag
 				cell.StyleOverride.BackgroundColor = this._mergedReaders.ReadCmColor(this.R2004Pre);
 			}
-			if (flags.HasFlag(Cell.OverrideFlags.ContentColor))
+			if (flags.HasFlag(CellOverrideFlags.ContentColor))
 			{
 				//Content color CMC 64 Present only if bit 0x08 is set in cell flag
 				cell.StyleOverride.ContentColor = this._mergedReaders.ReadCmColor(this.R2004Pre);
 			}
-			if (flags.HasFlag(Cell.OverrideFlags.TextStyle))
+			if (flags.HasFlag(CellOverrideFlags.TextStyle))
 			{
 				//Text style H 7 Present only if bit 0x10 is set in cell flag
 				template.TextStyleOverrideHandle = this.handleReference();
 			}
-			if (flags.HasFlag(Cell.OverrideFlags.TextHeight))
+			if (flags.HasFlag(CellOverrideFlags.TextHeight))
 			{
 				//Text height BD 140 Present only if bit 0x20 is set in cell flag
 				cell.StyleOverride.TextHeight = this._mergedReaders.ReadBitDouble();
 			}
 
-			if (flags.HasFlag(Cell.OverrideFlags.TopGridColor))
+			if (flags.HasFlag(CellOverrideFlags.TopGridColor))
 			{
 				//Top grid color CMC 69 Present only if bit 0x00040 is set in cell flag
 				cell.StyleOverride.TopBorder.Color = this._mergedReaders.ReadCmColor(this.R2004Pre);
 			}
-			if (flags.HasFlag(Cell.OverrideFlags.TopGridLineWeight))
+			if (flags.HasFlag(CellOverrideFlags.TopGridLineWeight))
 			{
 				//Top grid lineweight BS 279 Present only if bit 0x00400 is set in cell flag
 				cell.StyleOverride.TopBorder.LineWeight = (LineWeightType)this._mergedReaders.ReadBitShort();
 			}
-			if (flags.HasFlag(Cell.OverrideFlags.TopGridLineWeight))
+			if (flags.HasFlag(CellOverrideFlags.TopGridLineWeight))
 			{
 				//Top visibility BS 289 Present only if bit 0x04000 is set in cell flag
 				cell.StyleOverride.TopBorder.IsInvisible = !this._mergedReaders.ReadBitShortAsBool();
 			}
 
-			if (flags.HasFlag(Cell.OverrideFlags.RightGridColor))
+			if (flags.HasFlag(CellOverrideFlags.RightGridColor))
 			{
 				//Right grid color CMC 65 Present only if bit 0x00080 is set in cell flag
 				cell.StyleOverride.RightBorder.Color = this._mergedReaders.ReadCmColor(this.R2004Pre);
 			}
-			if (flags.HasFlag(Cell.OverrideFlags.RightGridLineWeight))
+			if (flags.HasFlag(CellOverrideFlags.RightGridLineWeight))
 			{
 				//Right grid lineweight BS 275 Present only if bit 0x00800 is set in cell flag
 				cell.StyleOverride.RightBorder.LineWeight = (LineWeightType)this._mergedReaders.ReadBitShort();
 			}
-			if (flags.HasFlag(Cell.OverrideFlags.RightGridLineWeight))
+			if (flags.HasFlag(CellOverrideFlags.RightGridLineWeight))
 			{
 				//Right visibility BS 285 Present only if bit 0x08000 is set in cell flag
 				cell.StyleOverride.RightBorder.IsInvisible = !this._mergedReaders.ReadBitShortAsBool();
 			}
 
-			if (flags.HasFlag(Cell.OverrideFlags.BottomGridColor))
+			if (flags.HasFlag(CellOverrideFlags.BottomGridColor))
 			{
 				//Bottom grid color CMC 66 Present only if bit 0x00100 is set in cell flag
 				cell.StyleOverride.BottomBorder.Color = this._mergedReaders.ReadCmColor(this.R2004Pre);
 			}
-			if (flags.HasFlag(Cell.OverrideFlags.BottomGridLineWeight))
+			if (flags.HasFlag(CellOverrideFlags.BottomGridLineWeight))
 			{
 				//Bottom grid lineweight BS 276 Present only if bit 0x01000 is set in cell flag
 				cell.StyleOverride.BottomBorder.LineWeight = (LineWeightType)this._mergedReaders.ReadBitShort();
 			}
-			if (flags.HasFlag(Cell.OverrideFlags.BottomGridLineWeight))
+			if (flags.HasFlag(CellOverrideFlags.BottomGridLineWeight))
 			{
 				//Bottom visibility BS 286 Present only if bit 0x10000 is set in cell flag
 				cell.StyleOverride.BottomBorder.IsInvisible = !this._mergedReaders.ReadBitShortAsBool();
 			}
 
-			if (flags.HasFlag(Cell.OverrideFlags.LeftGridColor))
+			if (flags.HasFlag(CellOverrideFlags.LeftGridColor))
 			{
 				//Left grid color CMC 68 Present only if bit 0x00200 is set in cell flag
 				cell.StyleOverride.LeftBorder.Color = this._mergedReaders.ReadCmColor(this.R2004Pre);
 			}
-			if (flags.HasFlag(Cell.OverrideFlags.LeftGridLineWeight))
+			if (flags.HasFlag(CellOverrideFlags.LeftGridLineWeight))
 			{
 				//Left grid lineweight BS 278 Present only if bit 0x02000 is set in cell flag
 				cell.StyleOverride.LeftBorder.LineWeight = (LineWeightType)this._mergedReaders.ReadBitShort();
 			}
-			if (flags.HasFlag(Cell.OverrideFlags.LeftGridLineWeight))
+			if (flags.HasFlag(CellOverrideFlags.LeftGridLineWeight))
 			{
 				//Left visibility BS 288 Present only if bit 0x20000 is set in cell flag
 				cell.StyleOverride.LeftBorder.IsInvisible = !this._mergedReaders.ReadBitShortAsBool();

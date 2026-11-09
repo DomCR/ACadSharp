@@ -2,6 +2,7 @@
 using ACadSharp.Extensions;
 using ACadSharp.Tables;
 using CSMath;
+using CSMath.Extensions;
 using CSUtilities.Extensions;
 using System.Collections.Generic;
 using System.Linq;

@@ -1,4 +1,5 @@
 ﻿using ACadSharp.Attributes;
+using ACadSharp.Classes;
 
 namespace ACadSharp.Objects;
 
@@ -241,4 +242,19 @@ public partial class VisualStyle : NonGraphicalObject
 	/// </summary>
 	/// <param name="name">The name of the visual style.</param>
 	public VisualStyle(string name) : base(name) { }
+
+	/// <inheritdoc/>
+	public DxfClass GetDxfClass()
+	{
+		return new DxfClass
+		{
+			CppClassName = DxfSubclassMarker.VisualStyle,
+			DwgVersion = ACadVersion.AC1021,
+			DxfName = DxfFileToken.ObjectVisualStyle,
+			ItemClassId = 499,
+			MaintenanceVersion = 0,
+			ProxyFlags = (ProxyFlags)4095,
+			WasZombie = false,
+		};
+	}
 }
