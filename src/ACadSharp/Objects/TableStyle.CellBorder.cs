@@ -56,7 +56,8 @@ public partial class TableStyle
 			get
 			{
 				if (this.Owner?.Document != null
-					&& this.Owner.Document.LineTypes.TryGetValue(this._lineType?.Name, out var lineType))
+					&& this._lineType != null
+					&& this.Owner.Document.LineTypes.TryGetValue(this._lineType.Name, out var lineType))
 				{
 					this._lineType = lineType;
 				}
@@ -86,7 +87,7 @@ public partial class TableStyle
 		[DxfCodeValue(274)]
 		public LineWeightType LineWeight { get; set; } = LineWeightType.ByBlock;
 
-		public LinkedTableData Owner
+		public CadObject Owner
 		{
 			get { return this._owner; }
 			internal set
@@ -114,7 +115,7 @@ public partial class TableStyle
 
 		private LineType _lineType;
 
-		private LinkedTableData _owner;
+		private CadObject _owner;
 
 		/// <summary>
 		/// Initializes a new instance of the CellBorder class with the specified edge flags.

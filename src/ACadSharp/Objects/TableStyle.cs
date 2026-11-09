@@ -1,6 +1,6 @@
 ﻿using ACadSharp.Attributes;
 using ACadSharp.Classes;
-using System.Collections.Generic;
+using CSUtilities.Collections.Generic;
 
 namespace ACadSharp.Objects;
 
@@ -23,12 +23,23 @@ public partial class TableStyle : NonGraphicalObject, IDxfClassDefined
 	/// <summary>
 	/// Gets the collection of cell styles applied to the table entity.
 	/// </summary>
-	public List<CellStyle> CellStyles { get; } = new();
+	public ObservableList<CellStyle> CellStyles { get; private set; } = new();
 
 	/// <summary>
 	/// Gets the style settings applied to data cells within the table entity.
 	/// </summary>
-	public CellStyle DataCellStyle { get; set; } = CellStyle.DefaultDataCellStyle;
+	public CellStyle DataCellStyle
+	{
+		get
+		{
+			return this._dataCellStyle;
+		}
+		set
+		{
+			this._dataCellStyle = value;
+			this._dataCellStyle.Owner = this;
+		}
+	}
 
 	/// <summary>
 	/// Table style description.
@@ -54,7 +65,18 @@ public partial class TableStyle : NonGraphicalObject, IDxfClassDefined
 	/// <summary>
 	/// Gets the style settings applied to the header cells of the table.
 	/// </summary>
-	public CellStyle HeaderCellStyle { get; set; } = CellStyle.DefaultHeaderCellStyle;
+	public CellStyle HeaderCellStyle
+	{
+		get
+		{
+			return this._headerCellStyle;
+		}
+		set
+		{
+			this._headerCellStyle = value;
+			this._headerCellStyle.Owner = this;
+		}
+	}
 
 	/// <summary>
 	/// Gets or sets the horizontal margin, in drawing units, applied to the content within each cell.
@@ -80,9 +102,31 @@ public partial class TableStyle : NonGraphicalObject, IDxfClassDefined
 	[DxfCodeValue(280)]
 	public bool SuppressTitle { get; set; }
 
-	public CellStyle TableCellStyle { get; set; } = CellStyle.DefaultTableCellStyle;
+	public CellStyle TableCellStyle
+	{
+		get
+		{
+			return this._tableCellStyle;
+		}
+		set
+		{
+			this._tableCellStyle = value;
+			this._tableCellStyle.Owner = this;
+		}
+	}
 
-	public CellStyle TitleCellStyle { get; set; } = CellStyle.DefaultTitleCellStyle;
+	public CellStyle TitleCellStyle
+	{
+		get
+		{
+			return this._titleCellStyle;
+		}
+		set
+		{
+			this._titleCellStyle = value;
+			this._titleCellStyle.Owner = this;
+		}
+	}
 
 	/// <summary>
 	/// Gets or sets the vertical margin, in drawing units, applied to the content within a cell.
@@ -95,6 +139,14 @@ public partial class TableStyle : NonGraphicalObject, IDxfClassDefined
 	/// </summary>
 	public const string DefaultName = "Standard";
 
+	private CellStyle _dataCellStyle = null;
+
+	private CellStyle _headerCellStyle = null;
+
+	private CellStyle _tableCellStyle = null;
+
+	private CellStyle _titleCellStyle = null;
+
 	/// <summary>
 	/// Initializes a new instance of the <see cref="TableStyle"/> class.
 	/// </summary>
@@ -106,6 +158,7 @@ public partial class TableStyle : NonGraphicalObject, IDxfClassDefined
 	/// </summary>
 	public TableStyle(string name) : base(name)
 	{
+		this.initialize();
 	}
 
 	/// <inheritdoc/>
@@ -121,5 +174,34 @@ public partial class TableStyle : NonGraphicalObject, IDxfClassDefined
 			ProxyFlags = (ProxyFlags)4095,
 			WasZombie = false,
 		};
+	}
+
+	private void initialize()
+	{
+		this.HeaderCellStyle = CellStyle.DefaultHeaderCellStyle;
+		this.DataCellStyle = CellStyle.DefaultDataCellStyle;
+		this.TitleCellStyle = CellStyle.DefaultTitleCellStyle;
+		this.TableCellStyle = CellStyle.DefaultTableCellStyle;
+
+		this.CellStyles = new ObservableList<CellStyle>();
+		this.CellStyles.OnBeforeAdd += this.onBeforeAdd;
+		this.CellStyles.OnRemove += this.onRemove;
+	}
+
+	private void onBeforeAdd<T>(object sender, ObservableListEventArgs<T> e)
+		where T : CellStyle
+	{
+		if (e.Item.Owner != null)
+		{
+			throw new System.ArgumentException($"{e.Item.GetType().FullName} already belongs to a table.");
+		}
+
+		e.Item.Owner = this;
+	}
+
+	private void onRemove<T>(object sender, ObservableListEventArgs<T> e)
+		where T : CellStyle
+	{
+		e.Item.Owner = null;
 	}
 }

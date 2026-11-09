@@ -36,7 +36,7 @@ public partial class TableStyle
 		/// <summary>
 		/// Gets the linked table data that owns the current instance.
 		/// </summary>
-		public virtual LinkedTableData Owner
+		public virtual CadObject Owner
 		{
 			get { return this._owner; }
 			internal set
@@ -90,7 +90,8 @@ public partial class TableStyle
 			get
 			{
 				if (this.Owner?.Document != null
-					&& this.Owner.Document.TextStyles.TryGetValue(this._textStyle?.Name, out var textStyle))
+					&& this._textStyle != null
+					&& this.Owner.Document.TextStyles.TryGetValue(this._textStyle.Name, out var textStyle))
 				{
 					this._textStyle = textStyle;
 				}
@@ -132,7 +133,7 @@ public partial class TableStyle
 		[DxfCodeValue(93)]
 		public int ValueUnitType { get; set; }
 
-		private LinkedTableData _owner;
+		private CadObject _owner;
 
 		private TextStyle _textStyle = null;
 
