@@ -143,11 +143,11 @@ public partial class TableStyle
 		/// <c>TextStyle</c> reference.</remarks>
 		/// <returns>A new <see cref="ContentFormat"/> instance with the same values as the current instance, with <c>Owner</c> set to
 		/// <see langword="null"/> and a cloned <c>TextStyle</c>.</returns>
-		public virtual ContentFormat Clone()
+		public ContentFormat Clone()
 		{
 			ContentFormat clone = this.MemberwiseClone() as ContentFormat;
 			clone.Owner = null;
-			clone._textStyle = (TextStyle)(this._textStyle?.Clone());
+
 			return clone;
 		}
 	}

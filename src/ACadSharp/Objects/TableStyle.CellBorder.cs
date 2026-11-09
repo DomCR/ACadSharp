@@ -124,5 +124,18 @@ public partial class TableStyle
 		{
 			this.EdgeFlags = edgeFlags;
 		}
+
+		/// <summary>
+		/// Creates a copy of the current <see cref="CellBorder"/> instance.
+		/// </summary>
+		/// <remarks>Reference-type members are copied by reference.</remarks>
+		/// <returns>A new <see cref="CellBorder"/> that is a shallow copy of the current instance, with <c>Owner</c> set to <see
+		/// langword="null"/>.</returns>
+		public CellBorder Clone()
+		{
+			CellBorder clone = this.MemberwiseClone() as CellBorder;
+			clone.Owner = null;
+			return clone;
+		}
 	}
 }

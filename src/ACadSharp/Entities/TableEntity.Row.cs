@@ -1,6 +1,4 @@
 ﻿using ACadSharp.Attributes;
-using ACadSharp.Objects;
-using System.Collections.Generic;
 namespace ACadSharp.Entities;
 
 public partial class TableEntity

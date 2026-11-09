@@ -67,7 +67,7 @@ public partial class TableEntity
 		/// <summary>
 		/// Gets the collection of cell contents contained in this instance.
 		/// </summary>
-		public ObservableList<CellContent> Contents { get; }
+		public ObservableList<CellContent> Contents { get; private set; }
 
 		/// <summary>
 		/// Gets or sets the custom data value associated with this cell.
@@ -119,6 +119,11 @@ public partial class TableEntity
 		[DxfCodeValue(173)]
 		public short MergedValue { get; set; }
 
+		/// <summary>
+		/// Gets the owning <see cref="LinkedTableData"/> instance.
+		/// </summary>
+		/// <remarks>When set internally, updates the owner reference for the style, style override, and all content
+		/// items.</remarks>
 		public LinkedTableData Owner
 		{
 			get { return this._owner; }
@@ -188,13 +193,40 @@ public partial class TableEntity
 		/// </summary>
 		public Cell()
 		{
+			this.initialize();
+		}
+
+		/// <summary>
+		/// Creates a copy of the current cell.
+		/// </summary>
+		/// <returns>A new Cell instance that is a copy of the current instance.</returns>
+		public Cell Clone()
+		{
+			Cell clone = (Cell)this.MemberwiseClone();
+
+			clone.initialize();
+			foreach (var item in this.Contents)
+			{
+				clone.Contents.Add(item.Clone());
+			}
+
+			clone.Style = this.Style?.Clone();
+			clone.StyleOverride = this.StyleOverride?.Clone();
+
+			clone.Owner = null;
+
+			return clone;
+		}
+
+		private void initialize()
+		{
 			this.Contents = new ObservableList<CellContent>();
 			this.Contents.OnBeforeAdd += this.onBeforeAdd;
 			this.Contents.OnRemove += this.onRemove;
 		}
 
 		private void onBeforeAdd<T>(object sender, ObservableListEventArgs<T> e)
-		where T : CellContent
+			where T : CellContent
 		{
 			if (e.Item.Owner != null)
 			{

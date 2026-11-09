@@ -26,7 +26,7 @@ public partial class TableEntity
 		public int CustomData { get; set; }
 
 		/// <inheritdoc/>
-		public List<CustomDataEntry> CustomDataCollection { get; } = new();
+		public List<CustomDataEntry> CustomDataCollection { get; private set; } = new();
 
 		/// <inheritdoc/>
 		public LinkedTableData Owner
@@ -50,9 +50,27 @@ public partial class TableEntity
 
 		protected TableComponent()
 		{
+			this.initialize();
+		}
+
+		private void initialize()
+		{
 			this.Cells = new ObservableList<Cell>();
 			this.Cells.OnBeforeAdd += this.onBeforeAdd;
 			this.Cells.OnRemove += this.onRemove;
+		}
+
+		public TableComponent Clone()
+		{
+			TableComponent clone = this.MemberwiseClone() as TableComponent;
+			clone.initialize();
+
+			foreach (var item in this.Cells)
+			{
+				clone.Cells.Add(item.Clone());
+			}
+
+			return clone;
 		}
 
 		private void onBeforeAdd<T>(object sender, ObservableListEventArgs<T> e)

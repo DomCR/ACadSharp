@@ -1,5 +1,6 @@
 ﻿using ACadSharp.Attributes;
 using ACadSharp.Classes;
+using ACadSharp.Extensions;
 using ACadSharp.Objects;
 using ACadSharp.Tables;
 using CSMath;
@@ -22,7 +23,20 @@ public partial class TableEntity : Insert, IDxfClassDefined
 	/// <summary>
 	/// Gets the table break data that defines how the table should be divided across breaks, including spacing, flow direction,
 	/// </summary>
-	public TableBreakData BreakData { get; } = new();
+	public TableBreakData BreakData { get; private set; } = new();
+
+	/// <summary>
+	/// Gets the collection of row ranges where breaks are defined.
+	/// </summary>
+	/// <remarks>Initialized to an empty list. The collection can be modified, while the property reference is set
+	/// only within the containing type.</remarks>
+	public List<BreakRowRange> BreakRowRanges { get; private set; } = new();
+
+	/// <summary>
+	/// Gets the cell style override applied at the table level.
+	/// Use this to set table-level overrides such as flow direction (FlowDirectionBottomToTop).
+	/// </summary>
+	public TableStyle.CellStyle CellStyleOverride { get { return this.Content.CellStyleOverride; } }
 
 	/// <summary>
 	/// Gets the collection of columns in the table entity.
@@ -40,6 +54,11 @@ public partial class TableEntity : Insert, IDxfClassDefined
 	/// </summary>
 	[DxfCodeValue(11, 21, 31)]
 	public XYZ HorizontalDirection { get; set; }
+
+	/// <summary>
+	/// Gets the collection of merged cell ranges associated with this table.
+	/// </summary>
+	public List<CellRange> MergedCellRanges { get { return this.Content.MergedCellRanges; } }
 
 	/// <inheritdoc/>
 	public override string ObjectName => DxfFileToken.EntityTable;
@@ -105,8 +124,6 @@ public partial class TableEntity : Insert, IDxfClassDefined
 	[DxfCodeValue(280)]
 	public short Version { get; set; }
 
-	internal List<BreakRowRange> BreakRowRanges { get; set; } = new();
-
 	internal TableContent Content { get; set; } = new();
 
 	/// <summary>
@@ -136,14 +153,10 @@ public partial class TableEntity : Insert, IDxfClassDefined
 	public override CadObject Clone()
 	{
 		TableEntity clone = (TableEntity)base.Clone();
+		clone.Content = this.Content.CloneTyped();
+		clone.BreakData = this.BreakData.Clone();
 
 		return clone;
-	}
-
-	/// <inheritdoc/>
-	public override BoundingBox GetBoundingBox()
-	{
-		return BoundingBox.Null;
 	}
 
 	/// <summary>
@@ -171,15 +184,4 @@ public partial class TableEntity : Insert, IDxfClassDefined
 			WasZombie = false,
 		};
 	}
-
-	/// <summary>
-	/// Gets the collection of merged cell ranges associated with this table.
-	/// </summary>
-	public List<CellRange> MergedCellRanges { get { return this.Content.MergedCellRanges; } }
-
-	/// <summary>
-	/// Gets the cell style override applied at the table level.
-	/// Use this to set table-level overrides such as flow direction (FlowDirectionBottomToTop).
-	/// </summary>
-	public TableStyle.CellStyle CellStyleOverride { get { return this.Content.CellStyleOverride; } }
 }

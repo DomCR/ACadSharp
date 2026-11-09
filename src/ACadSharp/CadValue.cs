@@ -71,6 +71,25 @@ public class CadValue
 	public CadValueType ValueType { get; set; }
 
 	/// <summary>
+	/// Creates a shallow copy of the current instance.
+	/// </summary>
+	/// <remarks>Performs member-wise copying by using <c>MemberwiseClone</c> and intentionally clears handled CAD
+	/// object references in the clone.</remarks>
+	/// <returns>A new <see cref="CadValue"/> copied from the current instance. If <c>Value</c> implements <c>IHandledCadObject</c>,
+	/// the cloned instance has <c>Value</c> set to <see langword="null"/>.</returns>
+	public CadValue Clone()
+	{
+		CadValue clone = this.MemberwiseClone() as CadValue;
+
+		if (this.Value is IHandledCadObject cloneable)
+		{
+			clone.Value = null;
+		}
+
+		return clone;
+	}
+
+	/// <summary>
 	/// Sets the value of the current object, converting or validating the input as required by the current value type.
 	/// </summary>
 	/// <remarks>The type of the value parameter must match the requirements of the current value type. If the value

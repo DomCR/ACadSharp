@@ -1,4 +1,5 @@
 ﻿using ACadSharp.Attributes;
+using ACadSharp.Tables;
 
 namespace ACadSharp.Objects;
 
@@ -13,23 +14,6 @@ public partial class TableStyle
 	/// </remarks>
 	public class CellStyle : ContentFormat
 	{
-		public override LinkedTableData Owner
-		{
-			get
-			{ return base.Owner; }
-
-			internal set
-			{
-				base.Owner = value;
-				this.LeftBorder.Owner = value;
-				this.RightBorder.Owner = value;
-				this.TopBorder.Owner = value;
-				this.BottomBorder.Owner = value;
-				this.HorizontalInsideBorder.Owner = value;
-				this.VerticalInsideBorder.Owner = value;
-			}
-		}
-
 		/// <summary>
 		/// Gets the default cell style used for data cells.
 		/// </summary>
@@ -186,6 +170,28 @@ public partial class TableStyle
 		public string Name { get; set; }
 
 		/// <summary>
+		/// Gets the linked table that owns this border set.
+		/// </summary>
+		/// <remarks>When set internally, the owner is propagated to the left, right, top, bottom, horizontal-inside,
+		/// and vertical-inside borders.</remarks>
+		public override LinkedTableData Owner
+		{
+			get
+			{ return base.Owner; }
+
+			internal set
+			{
+				base.Owner = value;
+				this.LeftBorder.Owner = value;
+				this.RightBorder.Owner = value;
+				this.TopBorder.Owner = value;
+				this.BottomBorder.Owner = value;
+				this.HorizontalInsideBorder.Owner = value;
+				this.VerticalInsideBorder.Owner = value;
+			}
+		}
+
+		/// <summary>
 		/// Gets or sets the right border style of the cell.
 		/// </summary>
 		public CellBorder RightBorder { get; set; } = new(CellEdgeFlags.Right);
@@ -263,6 +269,25 @@ public partial class TableStyle
 		public override string ToString()
 		{
 			return $"{this.Id}|{this.Name}";
+		}
+
+		/// <summary>
+		/// Creates a copy of the current CellStyle instance with cloned border settings.
+		/// </summary>
+		/// <returns>A new CellStyle instance that copies the current values and contains independent border objects.</returns>
+		public new  CellStyle Clone()
+		{
+			CellStyle clone = this.MemberwiseClone() as CellStyle;
+			clone.LeftBorder = this.LeftBorder.Clone();
+			clone.RightBorder = this.RightBorder.Clone();
+			clone.TopBorder = this.TopBorder.Clone();
+			clone.BottomBorder = this.BottomBorder.Clone();
+			clone.HorizontalInsideBorder = this.HorizontalInsideBorder.Clone();
+			clone.VerticalInsideBorder = this.VerticalInsideBorder.Clone();
+
+			clone.Owner = null;
+
+			return clone;
 		}
 	}
 }
