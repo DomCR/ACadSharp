@@ -68360,6 +68360,24 @@ references:
   fullName.vb: CSUtilities.Collections.Generic.ObservableList(Of T).Add
   nameWithType: ObservableList<T>.Add
   nameWithType.vb: ObservableList(Of T).Add
+- uid: CSUtilities.Collections.Generic.ObservableList`1.AddRange(System.Collections.Generic.IEnumerable{`0})
+  name: AddRange(IEnumerable<T>)
+  href: api/CSUtilities.Collections.Generic.ObservableList-1.html#CSUtilities_Collections_Generic_ObservableList_1_AddRange_System_Collections_Generic_IEnumerable__0__
+  commentId: M:CSUtilities.Collections.Generic.ObservableList`1.AddRange(System.Collections.Generic.IEnumerable{`0})
+  name.vb: AddRange(IEnumerable(Of T))
+  fullName: CSUtilities.Collections.Generic.ObservableList<T>.AddRange(System.Collections.Generic.IEnumerable<T>)
+  fullName.vb: CSUtilities.Collections.Generic.ObservableList(Of T).AddRange(System.Collections.Generic.IEnumerable(Of T))
+  nameWithType: ObservableList<T>.AddRange(IEnumerable<T>)
+  nameWithType.vb: ObservableList(Of T).AddRange(IEnumerable(Of T))
+- uid: CSUtilities.Collections.Generic.ObservableList`1.AddRange*
+  name: AddRange
+  href: api/CSUtilities.Collections.Generic.ObservableList-1.html#CSUtilities_Collections_Generic_ObservableList_1_AddRange_
+  commentId: Overload:CSUtilities.Collections.Generic.ObservableList`1.AddRange
+  isSpec: "True"
+  fullName: CSUtilities.Collections.Generic.ObservableList<T>.AddRange
+  fullName.vb: CSUtilities.Collections.Generic.ObservableList(Of T).AddRange
+  nameWithType: ObservableList<T>.AddRange
+  nameWithType.vb: ObservableList(Of T).AddRange
 - uid: CSUtilities.Collections.Generic.ObservableList`1.Clear
   name: Clear()
   href: api/CSUtilities.Collections.Generic.ObservableList-1.html#CSUtilities_Collections_Generic_ObservableList_1_Clear
