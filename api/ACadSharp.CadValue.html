@@ -393,11 +393,49 @@ public CadValueType ValueType { get; set; }</code></pre>
 </h2>
 
 
+  <a id="ACadSharp_CadValue_Clone_" data-uid="ACadSharp.CadValue.Clone*"></a>
+
+  <h3 id="ACadSharp_CadValue_Clone" data-uid="ACadSharp.CadValue.Clone">
+  Clone()
+  <a class="header-action link-secondary" title="View source" href="https://github.com/DomCR/ACadSharp/blob/master/src/ACadSharp/CadValue.cs/#L80"><i class="bi bi-code-slash"></i></a>
+  </h3>
+
+  <div class="markdown level1 summary"><p>Creates a shallow copy of the current instance.</p>
+</div>
+  <div class="markdown level1 conceptual"></div>
+
+  <div class="codewrapper">
+    <pre><code class="lang-csharp hljs">public CadValue Clone()</code></pre>
+  </div>
+
+
+  <h4 class="section">Returns</h4>
+  <dl class="parameters">
+    <dt><a class="xref" href="ACadSharp.CadValue.html">CadValue</a></dt>
+    <dd><p>A new <a class="xref" href="ACadSharp.CadValue.html">CadValue</a> copied from the current instance. If <code>Value</code> implements <code>IHandledCadObject</code>,
+the cloned instance has <code>Value</code> set to <a href="https://learn.microsoft.com/dotnet/csharp/language-reference/keywords/null">null</a>.</p>
+</dd>
+  </dl>
+
+
+
+
+
+
+
+  <h4 class="section" id="ACadSharp_CadValue_Clone_remarks">Remarks</h4>
+  <div class="markdown level1 remarks"><p>Performs member-wise copying by using <code>MemberwiseClone</code> and intentionally clears handled CAD
+object references in the clone.</p>
+</div>
+
+
+
+
   <a id="ACadSharp_CadValue_SetValue_" data-uid="ACadSharp.CadValue.SetValue*"></a>
 
   <h3 id="ACadSharp_CadValue_SetValue_System_Object_" data-uid="ACadSharp.CadValue.SetValue(System.Object)">
   SetValue(object)
-  <a class="header-action link-secondary" title="View source" href="https://github.com/DomCR/ACadSharp/blob/master/src/ACadSharp/CadValue.cs/#L83"><i class="bi bi-code-slash"></i></a>
+  <a class="header-action link-secondary" title="View source" href="https://github.com/DomCR/ACadSharp/blob/master/src/ACadSharp/CadValue.cs/#L102"><i class="bi bi-code-slash"></i></a>
   </h3>
 
   <div class="markdown level1 summary"><p>Sets the value of the current object, converting or validating the input as required by the current value type.</p>
@@ -443,7 +481,7 @@ incorrect type will result in an exception.</p>
 
   <h3 id="ACadSharp_CadValue_SetValue_System_Object_ACadSharp_CadValueType_" data-uid="ACadSharp.CadValue.SetValue(System.Object,ACadSharp.CadValueType)">
   SetValue(object, CadValueType)
-  <a class="header-action link-secondary" title="View source" href="https://github.com/DomCR/ACadSharp/blob/master/src/ACadSharp/CadValue.cs/#L116"><i class="bi bi-code-slash"></i></a>
+  <a class="header-action link-secondary" title="View source" href="https://github.com/DomCR/ACadSharp/blob/master/src/ACadSharp/CadValue.cs/#L135"><i class="bi bi-code-slash"></i></a>
   </h3>
 
   <div class="markdown level1 summary"><p>Sets the value and specifies its type for the current instance.</p>
@@ -479,7 +517,7 @@ incorrect type will result in an exception.</p>
 
   <h3 id="ACadSharp_CadValue_ToString" data-uid="ACadSharp.CadValue.ToString">
   ToString()
-  <a class="header-action link-secondary" title="View source" href="https://github.com/DomCR/ACadSharp/blob/master/src/ACadSharp/CadValue.cs/#L123"><i class="bi bi-code-slash"></i></a>
+  <a class="header-action link-secondary" title="View source" href="https://github.com/DomCR/ACadSharp/blob/master/src/ACadSharp/CadValue.cs/#L142"><i class="bi bi-code-slash"></i></a>
   </h3>
 
   <div class="markdown level1 summary"><p>Returns a string that represents the current object.</p>

@@ -2512,6 +2512,19 @@ references:
   commentId: T:ACadSharp.CadValue
   fullName: ACadSharp.CadValue
   nameWithType: CadValue
+- uid: ACadSharp.CadValue.Clone
+  name: Clone()
+  href: api/ACadSharp.CadValue.html#ACadSharp_CadValue_Clone
+  commentId: M:ACadSharp.CadValue.Clone
+  fullName: ACadSharp.CadValue.Clone()
+  nameWithType: CadValue.Clone()
+- uid: ACadSharp.CadValue.Clone*
+  name: Clone
+  href: api/ACadSharp.CadValue.html#ACadSharp_CadValue_Clone_
+  commentId: Overload:ACadSharp.CadValue.Clone
+  isSpec: "True"
+  fullName: ACadSharp.CadValue.Clone
+  nameWithType: CadValue.Clone
 - uid: ACadSharp.CadValue.Flags
   name: Flags
   href: api/ACadSharp.CadValue.html#ACadSharp_CadValue_Flags
@@ -24965,12 +24978,102 @@ references:
   commentId: F:ACadSharp.Entities.TableEntity.BreakOptionFlags.RepeatTopLabels
   fullName: ACadSharp.Entities.TableEntity.BreakOptionFlags.RepeatTopLabels
   nameWithType: TableEntity.BreakOptionFlags.RepeatTopLabels
+- uid: ACadSharp.Entities.TableEntity.BreakRowRange
+  name: TableEntity.BreakRowRange
+  href: api/ACadSharp.Entities.TableEntity.BreakRowRange.html
+  commentId: T:ACadSharp.Entities.TableEntity.BreakRowRange
+  fullName: ACadSharp.Entities.TableEntity.BreakRowRange
+  nameWithType: TableEntity.BreakRowRange
+- uid: ACadSharp.Entities.TableEntity.BreakRowRange.Clone
+  name: Clone()
+  href: api/ACadSharp.Entities.TableEntity.BreakRowRange.html#ACadSharp_Entities_TableEntity_BreakRowRange_Clone
+  commentId: M:ACadSharp.Entities.TableEntity.BreakRowRange.Clone
+  fullName: ACadSharp.Entities.TableEntity.BreakRowRange.Clone()
+  nameWithType: TableEntity.BreakRowRange.Clone()
+- uid: ACadSharp.Entities.TableEntity.BreakRowRange.Clone*
+  name: Clone
+  href: api/ACadSharp.Entities.TableEntity.BreakRowRange.html#ACadSharp_Entities_TableEntity_BreakRowRange_Clone_
+  commentId: Overload:ACadSharp.Entities.TableEntity.BreakRowRange.Clone
+  isSpec: "True"
+  fullName: ACadSharp.Entities.TableEntity.BreakRowRange.Clone
+  nameWithType: TableEntity.BreakRowRange.Clone
+- uid: ACadSharp.Entities.TableEntity.BreakRowRange.EndRowIndex
+  name: EndRowIndex
+  href: api/ACadSharp.Entities.TableEntity.BreakRowRange.html#ACadSharp_Entities_TableEntity_BreakRowRange_EndRowIndex
+  commentId: P:ACadSharp.Entities.TableEntity.BreakRowRange.EndRowIndex
+  fullName: ACadSharp.Entities.TableEntity.BreakRowRange.EndRowIndex
+  nameWithType: TableEntity.BreakRowRange.EndRowIndex
+- uid: ACadSharp.Entities.TableEntity.BreakRowRange.EndRowIndex*
+  name: EndRowIndex
+  href: api/ACadSharp.Entities.TableEntity.BreakRowRange.html#ACadSharp_Entities_TableEntity_BreakRowRange_EndRowIndex_
+  commentId: Overload:ACadSharp.Entities.TableEntity.BreakRowRange.EndRowIndex
+  isSpec: "True"
+  fullName: ACadSharp.Entities.TableEntity.BreakRowRange.EndRowIndex
+  nameWithType: TableEntity.BreakRowRange.EndRowIndex
+- uid: ACadSharp.Entities.TableEntity.BreakRowRange.Position
+  name: Position
+  href: api/ACadSharp.Entities.TableEntity.BreakRowRange.html#ACadSharp_Entities_TableEntity_BreakRowRange_Position
+  commentId: P:ACadSharp.Entities.TableEntity.BreakRowRange.Position
+  fullName: ACadSharp.Entities.TableEntity.BreakRowRange.Position
+  nameWithType: TableEntity.BreakRowRange.Position
+- uid: ACadSharp.Entities.TableEntity.BreakRowRange.Position*
+  name: Position
+  href: api/ACadSharp.Entities.TableEntity.BreakRowRange.html#ACadSharp_Entities_TableEntity_BreakRowRange_Position_
+  commentId: Overload:ACadSharp.Entities.TableEntity.BreakRowRange.Position
+  isSpec: "True"
+  fullName: ACadSharp.Entities.TableEntity.BreakRowRange.Position
+  nameWithType: TableEntity.BreakRowRange.Position
+- uid: ACadSharp.Entities.TableEntity.BreakRowRange.StartRowIndex
+  name: StartRowIndex
+  href: api/ACadSharp.Entities.TableEntity.BreakRowRange.html#ACadSharp_Entities_TableEntity_BreakRowRange_StartRowIndex
+  commentId: P:ACadSharp.Entities.TableEntity.BreakRowRange.StartRowIndex
+  fullName: ACadSharp.Entities.TableEntity.BreakRowRange.StartRowIndex
+  nameWithType: TableEntity.BreakRowRange.StartRowIndex
+- uid: ACadSharp.Entities.TableEntity.BreakRowRange.StartRowIndex*
+  name: StartRowIndex
+  href: api/ACadSharp.Entities.TableEntity.BreakRowRange.html#ACadSharp_Entities_TableEntity_BreakRowRange_StartRowIndex_
+  commentId: Overload:ACadSharp.Entities.TableEntity.BreakRowRange.StartRowIndex
+  isSpec: "True"
+  fullName: ACadSharp.Entities.TableEntity.BreakRowRange.StartRowIndex
+  nameWithType: TableEntity.BreakRowRange.StartRowIndex
+- uid: ACadSharp.Entities.TableEntity.BreakRowRanges
+  name: BreakRowRanges
+  href: api/ACadSharp.Entities.TableEntity.html#ACadSharp_Entities_TableEntity_BreakRowRanges
+  commentId: P:ACadSharp.Entities.TableEntity.BreakRowRanges
+  fullName: ACadSharp.Entities.TableEntity.BreakRowRanges
+  nameWithType: TableEntity.BreakRowRanges
+- uid: ACadSharp.Entities.TableEntity.BreakRowRanges*
+  name: BreakRowRanges
+  href: api/ACadSharp.Entities.TableEntity.html#ACadSharp_Entities_TableEntity_BreakRowRanges_
+  commentId: Overload:ACadSharp.Entities.TableEntity.BreakRowRanges
+  isSpec: "True"
+  fullName: ACadSharp.Entities.TableEntity.BreakRowRanges
+  nameWithType: TableEntity.BreakRowRanges
 - uid: ACadSharp.Entities.TableEntity.Cell
   name: TableEntity.Cell
   href: api/ACadSharp.Entities.TableEntity.Cell.html
   commentId: T:ACadSharp.Entities.TableEntity.Cell
   fullName: ACadSharp.Entities.TableEntity.Cell
   nameWithType: TableEntity.Cell
+- uid: ACadSharp.Entities.TableEntity.Cell.#ctor
+  name: Cell()
+  href: api/ACadSharp.Entities.TableEntity.Cell.html#ACadSharp_Entities_TableEntity_Cell__ctor
+  commentId: M:ACadSharp.Entities.TableEntity.Cell.#ctor
+  name.vb: New()
+  fullName: ACadSharp.Entities.TableEntity.Cell.Cell()
+  fullName.vb: ACadSharp.Entities.TableEntity.Cell.New()
+  nameWithType: TableEntity.Cell.Cell()
+  nameWithType.vb: TableEntity.Cell.New()
+- uid: ACadSharp.Entities.TableEntity.Cell.#ctor*
+  name: Cell
+  href: api/ACadSharp.Entities.TableEntity.Cell.html#ACadSharp_Entities_TableEntity_Cell__ctor_
+  commentId: Overload:ACadSharp.Entities.TableEntity.Cell.#ctor
+  isSpec: "True"
+  name.vb: New
+  fullName: ACadSharp.Entities.TableEntity.Cell.Cell
+  fullName.vb: ACadSharp.Entities.TableEntity.Cell.New
+  nameWithType: TableEntity.Cell.Cell
+  nameWithType.vb: TableEntity.Cell.New
 - uid: ACadSharp.Entities.TableEntity.Cell.AutoFit
   name: AutoFit
   href: api/ACadSharp.Entities.TableEntity.Cell.html#ACadSharp_Entities_TableEntity_Cell_AutoFit
@@ -25023,6 +25126,19 @@ references:
   isSpec: "True"
   fullName: ACadSharp.Entities.TableEntity.Cell.BorderWidth
   nameWithType: TableEntity.Cell.BorderWidth
+- uid: ACadSharp.Entities.TableEntity.Cell.Clone
+  name: Clone()
+  href: api/ACadSharp.Entities.TableEntity.Cell.html#ACadSharp_Entities_TableEntity_Cell_Clone
+  commentId: M:ACadSharp.Entities.TableEntity.Cell.Clone
+  fullName: ACadSharp.Entities.TableEntity.Cell.Clone()
+  nameWithType: TableEntity.Cell.Clone()
+- uid: ACadSharp.Entities.TableEntity.Cell.Clone*
+  name: Clone
+  href: api/ACadSharp.Entities.TableEntity.Cell.html#ACadSharp_Entities_TableEntity_Cell_Clone_
+  commentId: Overload:ACadSharp.Entities.TableEntity.Cell.Clone
+  isSpec: "True"
+  fullName: ACadSharp.Entities.TableEntity.Cell.Clone
+  nameWithType: TableEntity.Cell.Clone
 - uid: ACadSharp.Entities.TableEntity.Cell.Content
   name: Content
   href: api/ACadSharp.Entities.TableEntity.Cell.html#ACadSharp_Entities_TableEntity_Cell_Content
@@ -25140,6 +25256,19 @@ references:
   isSpec: "True"
   fullName: ACadSharp.Entities.TableEntity.Cell.MergedValue
   nameWithType: TableEntity.Cell.MergedValue
+- uid: ACadSharp.Entities.TableEntity.Cell.Owner
+  name: Owner
+  href: api/ACadSharp.Entities.TableEntity.Cell.html#ACadSharp_Entities_TableEntity_Cell_Owner
+  commentId: P:ACadSharp.Entities.TableEntity.Cell.Owner
+  fullName: ACadSharp.Entities.TableEntity.Cell.Owner
+  nameWithType: TableEntity.Cell.Owner
+- uid: ACadSharp.Entities.TableEntity.Cell.Owner*
+  name: Owner
+  href: api/ACadSharp.Entities.TableEntity.Cell.html#ACadSharp_Entities_TableEntity_Cell_Owner_
+  commentId: Overload:ACadSharp.Entities.TableEntity.Cell.Owner
+  isSpec: "True"
+  fullName: ACadSharp.Entities.TableEntity.Cell.Owner
+  nameWithType: TableEntity.Cell.Owner
 - uid: ACadSharp.Entities.TableEntity.Cell.Rotation
   name: Rotation
   href: api/ACadSharp.Entities.TableEntity.Cell.html#ACadSharp_Entities_TableEntity_Cell_Rotation
@@ -25250,6 +25379,19 @@ references:
   isSpec: "True"
   fullName: ACadSharp.Entities.TableEntity.CellContent.CadValue
   nameWithType: TableEntity.CellContent.CadValue
+- uid: ACadSharp.Entities.TableEntity.CellContent.Clone
+  name: Clone()
+  href: api/ACadSharp.Entities.TableEntity.CellContent.html#ACadSharp_Entities_TableEntity_CellContent_Clone
+  commentId: M:ACadSharp.Entities.TableEntity.CellContent.Clone
+  fullName: ACadSharp.Entities.TableEntity.CellContent.Clone()
+  nameWithType: TableEntity.CellContent.Clone()
+- uid: ACadSharp.Entities.TableEntity.CellContent.Clone*
+  name: Clone
+  href: api/ACadSharp.Entities.TableEntity.CellContent.html#ACadSharp_Entities_TableEntity_CellContent_Clone_
+  commentId: Overload:ACadSharp.Entities.TableEntity.CellContent.Clone
+  isSpec: "True"
+  fullName: ACadSharp.Entities.TableEntity.CellContent.Clone
+  nameWithType: TableEntity.CellContent.Clone
 - uid: ACadSharp.Entities.TableEntity.CellContent.ContentType
   name: ContentType
   href: api/ACadSharp.Entities.TableEntity.CellContent.html#ACadSharp_Entities_TableEntity_CellContent_ContentType
@@ -25276,6 +25418,19 @@ references:
   isSpec: "True"
   fullName: ACadSharp.Entities.TableEntity.CellContent.Format
   nameWithType: TableEntity.CellContent.Format
+- uid: ACadSharp.Entities.TableEntity.CellContent.Owner
+  name: Owner
+  href: api/ACadSharp.Entities.TableEntity.CellContent.html#ACadSharp_Entities_TableEntity_CellContent_Owner
+  commentId: P:ACadSharp.Entities.TableEntity.CellContent.Owner
+  fullName: ACadSharp.Entities.TableEntity.CellContent.Owner
+  nameWithType: TableEntity.CellContent.Owner
+- uid: ACadSharp.Entities.TableEntity.CellContent.Owner*
+  name: Owner
+  href: api/ACadSharp.Entities.TableEntity.CellContent.html#ACadSharp_Entities_TableEntity_CellContent_Owner_
+  commentId: Overload:ACadSharp.Entities.TableEntity.CellContent.Owner
+  isSpec: "True"
+  fullName: ACadSharp.Entities.TableEntity.CellContent.Owner
+  nameWithType: TableEntity.CellContent.Owner
 - uid: ACadSharp.Entities.TableEntity.CellContentGeometry
   name: TableEntity.CellContentGeometry
   href: api/ACadSharp.Entities.TableEntity.CellContentGeometry.html
@@ -25392,6 +25547,19 @@ references:
   isSpec: "True"
   fullName: ACadSharp.Entities.TableEntity.CellRange.BottomRowIndex
   nameWithType: TableEntity.CellRange.BottomRowIndex
+- uid: ACadSharp.Entities.TableEntity.CellRange.Clone
+  name: Clone()
+  href: api/ACadSharp.Entities.TableEntity.CellRange.html#ACadSharp_Entities_TableEntity_CellRange_Clone
+  commentId: M:ACadSharp.Entities.TableEntity.CellRange.Clone
+  fullName: ACadSharp.Entities.TableEntity.CellRange.Clone()
+  nameWithType: TableEntity.CellRange.Clone()
+- uid: ACadSharp.Entities.TableEntity.CellRange.Clone*
+  name: Clone
+  href: api/ACadSharp.Entities.TableEntity.CellRange.html#ACadSharp_Entities_TableEntity_CellRange_Clone_
+  commentId: Overload:ACadSharp.Entities.TableEntity.CellRange.Clone
+  isSpec: "True"
+  fullName: ACadSharp.Entities.TableEntity.CellRange.Clone
+  nameWithType: TableEntity.CellRange.Clone
 - uid: ACadSharp.Entities.TableEntity.CellRange.LeftColumnIndex
   name: LeftColumnIndex
   href: api/ACadSharp.Entities.TableEntity.CellRange.html#ACadSharp_Entities_TableEntity_CellRange_LeftColumnIndex
@@ -25481,58 +25649,6 @@ references:
   commentId: T:ACadSharp.Entities.TableEntity.Column
   fullName: ACadSharp.Entities.TableEntity.Column
   nameWithType: TableEntity.Column
-- uid: ACadSharp.Entities.TableEntity.Column.CellStyle
-  name: CellStyle
-  href: api/ACadSharp.Entities.TableEntity.Column.html#ACadSharp_Entities_TableEntity_Column_CellStyle
-  commentId: P:ACadSharp.Entities.TableEntity.Column.CellStyle
-  fullName: ACadSharp.Entities.TableEntity.Column.CellStyle
-  nameWithType: TableEntity.Column.CellStyle
-- uid: ACadSharp.Entities.TableEntity.Column.CellStyle*
-  name: CellStyle
-  href: api/ACadSharp.Entities.TableEntity.Column.html#ACadSharp_Entities_TableEntity_Column_CellStyle_
-  commentId: Overload:ACadSharp.Entities.TableEntity.Column.CellStyle
-  isSpec: "True"
-  fullName: ACadSharp.Entities.TableEntity.Column.CellStyle
-  nameWithType: TableEntity.Column.CellStyle
-- uid: ACadSharp.Entities.TableEntity.Column.CellStyleOverride
-  name: CellStyleOverride
-  href: api/ACadSharp.Entities.TableEntity.Column.html#ACadSharp_Entities_TableEntity_Column_CellStyleOverride
-  commentId: P:ACadSharp.Entities.TableEntity.Column.CellStyleOverride
-  fullName: ACadSharp.Entities.TableEntity.Column.CellStyleOverride
-  nameWithType: TableEntity.Column.CellStyleOverride
-- uid: ACadSharp.Entities.TableEntity.Column.CellStyleOverride*
-  name: CellStyleOverride
-  href: api/ACadSharp.Entities.TableEntity.Column.html#ACadSharp_Entities_TableEntity_Column_CellStyleOverride_
-  commentId: Overload:ACadSharp.Entities.TableEntity.Column.CellStyleOverride
-  isSpec: "True"
-  fullName: ACadSharp.Entities.TableEntity.Column.CellStyleOverride
-  nameWithType: TableEntity.Column.CellStyleOverride
-- uid: ACadSharp.Entities.TableEntity.Column.CustomData
-  name: CustomData
-  href: api/ACadSharp.Entities.TableEntity.Column.html#ACadSharp_Entities_TableEntity_Column_CustomData
-  commentId: P:ACadSharp.Entities.TableEntity.Column.CustomData
-  fullName: ACadSharp.Entities.TableEntity.Column.CustomData
-  nameWithType: TableEntity.Column.CustomData
-- uid: ACadSharp.Entities.TableEntity.Column.CustomData*
-  name: CustomData
-  href: api/ACadSharp.Entities.TableEntity.Column.html#ACadSharp_Entities_TableEntity_Column_CustomData_
-  commentId: Overload:ACadSharp.Entities.TableEntity.Column.CustomData
-  isSpec: "True"
-  fullName: ACadSharp.Entities.TableEntity.Column.CustomData
-  nameWithType: TableEntity.Column.CustomData
-- uid: ACadSharp.Entities.TableEntity.Column.CustomDataCollection
-  name: CustomDataCollection
-  href: api/ACadSharp.Entities.TableEntity.Column.html#ACadSharp_Entities_TableEntity_Column_CustomDataCollection
-  commentId: P:ACadSharp.Entities.TableEntity.Column.CustomDataCollection
-  fullName: ACadSharp.Entities.TableEntity.Column.CustomDataCollection
-  nameWithType: TableEntity.Column.CustomDataCollection
-- uid: ACadSharp.Entities.TableEntity.Column.CustomDataCollection*
-  name: CustomDataCollection
-  href: api/ACadSharp.Entities.TableEntity.Column.html#ACadSharp_Entities_TableEntity_Column_CustomDataCollection_
-  commentId: Overload:ACadSharp.Entities.TableEntity.Column.CustomDataCollection
-  isSpec: "True"
-  fullName: ACadSharp.Entities.TableEntity.Column.CustomDataCollection
-  nameWithType: TableEntity.Column.CustomDataCollection
 - uid: ACadSharp.Entities.TableEntity.Column.Name
   name: Name
   href: api/ACadSharp.Entities.TableEntity.Column.html#ACadSharp_Entities_TableEntity_Column_Name
@@ -25604,19 +25720,6 @@ references:
   isSpec: "True"
   fullName: ACadSharp.Entities.TableEntity.CustomDataEntry.Value
   nameWithType: TableEntity.CustomDataEntry.Value
-- uid: ACadSharp.Entities.TableEntity.GetBoundingBox
-  name: GetBoundingBox()
-  href: api/ACadSharp.Entities.TableEntity.html#ACadSharp_Entities_TableEntity_GetBoundingBox
-  commentId: M:ACadSharp.Entities.TableEntity.GetBoundingBox
-  fullName: ACadSharp.Entities.TableEntity.GetBoundingBox()
-  nameWithType: TableEntity.GetBoundingBox()
-- uid: ACadSharp.Entities.TableEntity.GetBoundingBox*
-  name: GetBoundingBox
-  href: api/ACadSharp.Entities.TableEntity.html#ACadSharp_Entities_TableEntity_GetBoundingBox_
-  commentId: Overload:ACadSharp.Entities.TableEntity.GetBoundingBox
-  isSpec: "True"
-  fullName: ACadSharp.Entities.TableEntity.GetBoundingBox
-  nameWithType: TableEntity.GetBoundingBox
 - uid: ACadSharp.Entities.TableEntity.GetCell(System.Int32,System.Int32)
   name: GetCell(int, int)
   href: api/ACadSharp.Entities.TableEntity.html#ACadSharp_Entities_TableEntity_GetCell_System_Int32_System_Int32_
@@ -25730,6 +25833,19 @@ references:
   isSpec: "True"
   fullName: ACadSharp.Entities.TableEntity.ITableComponent.CustomDataCollection
   nameWithType: TableEntity.ITableComponent.CustomDataCollection
+- uid: ACadSharp.Entities.TableEntity.ITableComponent.Owner
+  name: Owner
+  href: api/ACadSharp.Entities.TableEntity.ITableComponent.html#ACadSharp_Entities_TableEntity_ITableComponent_Owner
+  commentId: P:ACadSharp.Entities.TableEntity.ITableComponent.Owner
+  fullName: ACadSharp.Entities.TableEntity.ITableComponent.Owner
+  nameWithType: TableEntity.ITableComponent.Owner
+- uid: ACadSharp.Entities.TableEntity.ITableComponent.Owner*
+  name: Owner
+  href: api/ACadSharp.Entities.TableEntity.ITableComponent.html#ACadSharp_Entities_TableEntity_ITableComponent_Owner_
+  commentId: Overload:ACadSharp.Entities.TableEntity.ITableComponent.Owner
+  isSpec: "True"
+  fullName: ACadSharp.Entities.TableEntity.ITableComponent.Owner
+  nameWithType: TableEntity.ITableComponent.Owner
 - uid: ACadSharp.Entities.TableEntity.MergedCellRanges
   name: MergedCellRanges
   href: api/ACadSharp.Entities.TableEntity.html#ACadSharp_Entities_TableEntity_MergedCellRanges
@@ -25827,71 +25943,6 @@ references:
   commentId: T:ACadSharp.Entities.TableEntity.Row
   fullName: ACadSharp.Entities.TableEntity.Row
   nameWithType: TableEntity.Row
-- uid: ACadSharp.Entities.TableEntity.Row.CellStyle
-  name: CellStyle
-  href: api/ACadSharp.Entities.TableEntity.Row.html#ACadSharp_Entities_TableEntity_Row_CellStyle
-  commentId: P:ACadSharp.Entities.TableEntity.Row.CellStyle
-  fullName: ACadSharp.Entities.TableEntity.Row.CellStyle
-  nameWithType: TableEntity.Row.CellStyle
-- uid: ACadSharp.Entities.TableEntity.Row.CellStyle*
-  name: CellStyle
-  href: api/ACadSharp.Entities.TableEntity.Row.html#ACadSharp_Entities_TableEntity_Row_CellStyle_
-  commentId: Overload:ACadSharp.Entities.TableEntity.Row.CellStyle
-  isSpec: "True"
-  fullName: ACadSharp.Entities.TableEntity.Row.CellStyle
-  nameWithType: TableEntity.Row.CellStyle
-- uid: ACadSharp.Entities.TableEntity.Row.CellStyleOverride
-  name: CellStyleOverride
-  href: api/ACadSharp.Entities.TableEntity.Row.html#ACadSharp_Entities_TableEntity_Row_CellStyleOverride
-  commentId: P:ACadSharp.Entities.TableEntity.Row.CellStyleOverride
-  fullName: ACadSharp.Entities.TableEntity.Row.CellStyleOverride
-  nameWithType: TableEntity.Row.CellStyleOverride
-- uid: ACadSharp.Entities.TableEntity.Row.CellStyleOverride*
-  name: CellStyleOverride
-  href: api/ACadSharp.Entities.TableEntity.Row.html#ACadSharp_Entities_TableEntity_Row_CellStyleOverride_
-  commentId: Overload:ACadSharp.Entities.TableEntity.Row.CellStyleOverride
-  isSpec: "True"
-  fullName: ACadSharp.Entities.TableEntity.Row.CellStyleOverride
-  nameWithType: TableEntity.Row.CellStyleOverride
-- uid: ACadSharp.Entities.TableEntity.Row.Cells
-  name: Cells
-  href: api/ACadSharp.Entities.TableEntity.Row.html#ACadSharp_Entities_TableEntity_Row_Cells
-  commentId: P:ACadSharp.Entities.TableEntity.Row.Cells
-  fullName: ACadSharp.Entities.TableEntity.Row.Cells
-  nameWithType: TableEntity.Row.Cells
-- uid: ACadSharp.Entities.TableEntity.Row.Cells*
-  name: Cells
-  href: api/ACadSharp.Entities.TableEntity.Row.html#ACadSharp_Entities_TableEntity_Row_Cells_
-  commentId: Overload:ACadSharp.Entities.TableEntity.Row.Cells
-  isSpec: "True"
-  fullName: ACadSharp.Entities.TableEntity.Row.Cells
-  nameWithType: TableEntity.Row.Cells
-- uid: ACadSharp.Entities.TableEntity.Row.CustomData
-  name: CustomData
-  href: api/ACadSharp.Entities.TableEntity.Row.html#ACadSharp_Entities_TableEntity_Row_CustomData
-  commentId: P:ACadSharp.Entities.TableEntity.Row.CustomData
-  fullName: ACadSharp.Entities.TableEntity.Row.CustomData
-  nameWithType: TableEntity.Row.CustomData
-- uid: ACadSharp.Entities.TableEntity.Row.CustomData*
-  name: CustomData
-  href: api/ACadSharp.Entities.TableEntity.Row.html#ACadSharp_Entities_TableEntity_Row_CustomData_
-  commentId: Overload:ACadSharp.Entities.TableEntity.Row.CustomData
-  isSpec: "True"
-  fullName: ACadSharp.Entities.TableEntity.Row.CustomData
-  nameWithType: TableEntity.Row.CustomData
-- uid: ACadSharp.Entities.TableEntity.Row.CustomDataCollection
-  name: CustomDataCollection
-  href: api/ACadSharp.Entities.TableEntity.Row.html#ACadSharp_Entities_TableEntity_Row_CustomDataCollection
-  commentId: P:ACadSharp.Entities.TableEntity.Row.CustomDataCollection
-  fullName: ACadSharp.Entities.TableEntity.Row.CustomDataCollection
-  nameWithType: TableEntity.Row.CustomDataCollection
-- uid: ACadSharp.Entities.TableEntity.Row.CustomDataCollection*
-  name: CustomDataCollection
-  href: api/ACadSharp.Entities.TableEntity.Row.html#ACadSharp_Entities_TableEntity_Row_CustomDataCollection_
-  commentId: Overload:ACadSharp.Entities.TableEntity.Row.CustomDataCollection
-  isSpec: "True"
-  fullName: ACadSharp.Entities.TableEntity.Row.CustomDataCollection
-  nameWithType: TableEntity.Row.CustomDataCollection
 - uid: ACadSharp.Entities.TableEntity.Row.Height
   name: Height
   href: api/ACadSharp.Entities.TableEntity.Row.html#ACadSharp_Entities_TableEntity_Row_Height
@@ -26014,6 +26065,19 @@ references:
   isSpec: "True"
   fullName: ACadSharp.Entities.TableEntity.TableBreakData.BreakSpacing
   nameWithType: TableEntity.TableBreakData.BreakSpacing
+- uid: ACadSharp.Entities.TableEntity.TableBreakData.Clone
+  name: Clone()
+  href: api/ACadSharp.Entities.TableEntity.TableBreakData.html#ACadSharp_Entities_TableEntity_TableBreakData_Clone
+  commentId: M:ACadSharp.Entities.TableEntity.TableBreakData.Clone
+  fullName: ACadSharp.Entities.TableEntity.TableBreakData.Clone()
+  nameWithType: TableEntity.TableBreakData.Clone()
+- uid: ACadSharp.Entities.TableEntity.TableBreakData.Clone*
+  name: Clone
+  href: api/ACadSharp.Entities.TableEntity.TableBreakData.html#ACadSharp_Entities_TableEntity_TableBreakData_Clone_
+  commentId: Overload:ACadSharp.Entities.TableEntity.TableBreakData.Clone
+  isSpec: "True"
+  fullName: ACadSharp.Entities.TableEntity.TableBreakData.Clone
+  nameWithType: TableEntity.TableBreakData.Clone
 - uid: ACadSharp.Entities.TableEntity.TableBreakData.Flags
   name: Flags
   href: api/ACadSharp.Entities.TableEntity.TableBreakData.html#ACadSharp_Entities_TableEntity_TableBreakData_Flags
@@ -26137,6 +26201,122 @@ references:
   commentId: F:ACadSharp.Entities.TableEntity.TableCellStateFlags.None
   fullName: ACadSharp.Entities.TableEntity.TableCellStateFlags.None
   nameWithType: TableEntity.TableCellStateFlags.None
+- uid: ACadSharp.Entities.TableEntity.TableComponent
+  name: TableEntity.TableComponent
+  href: api/ACadSharp.Entities.TableEntity.TableComponent.html
+  commentId: T:ACadSharp.Entities.TableEntity.TableComponent
+  fullName: ACadSharp.Entities.TableEntity.TableComponent
+  nameWithType: TableEntity.TableComponent
+- uid: ACadSharp.Entities.TableEntity.TableComponent.#ctor
+  name: TableComponent()
+  href: api/ACadSharp.Entities.TableEntity.TableComponent.html#ACadSharp_Entities_TableEntity_TableComponent__ctor
+  commentId: M:ACadSharp.Entities.TableEntity.TableComponent.#ctor
+  name.vb: New()
+  fullName: ACadSharp.Entities.TableEntity.TableComponent.TableComponent()
+  fullName.vb: ACadSharp.Entities.TableEntity.TableComponent.New()
+  nameWithType: TableEntity.TableComponent.TableComponent()
+  nameWithType.vb: TableEntity.TableComponent.New()
+- uid: ACadSharp.Entities.TableEntity.TableComponent.#ctor*
+  name: TableComponent
+  href: api/ACadSharp.Entities.TableEntity.TableComponent.html#ACadSharp_Entities_TableEntity_TableComponent__ctor_
+  commentId: Overload:ACadSharp.Entities.TableEntity.TableComponent.#ctor
+  isSpec: "True"
+  name.vb: New
+  fullName: ACadSharp.Entities.TableEntity.TableComponent.TableComponent
+  fullName.vb: ACadSharp.Entities.TableEntity.TableComponent.New
+  nameWithType: TableEntity.TableComponent.TableComponent
+  nameWithType.vb: TableEntity.TableComponent.New
+- uid: ACadSharp.Entities.TableEntity.TableComponent.CellStyle
+  name: CellStyle
+  href: api/ACadSharp.Entities.TableEntity.TableComponent.html#ACadSharp_Entities_TableEntity_TableComponent_CellStyle
+  commentId: P:ACadSharp.Entities.TableEntity.TableComponent.CellStyle
+  fullName: ACadSharp.Entities.TableEntity.TableComponent.CellStyle
+  nameWithType: TableEntity.TableComponent.CellStyle
+- uid: ACadSharp.Entities.TableEntity.TableComponent.CellStyle*
+  name: CellStyle
+  href: api/ACadSharp.Entities.TableEntity.TableComponent.html#ACadSharp_Entities_TableEntity_TableComponent_CellStyle_
+  commentId: Overload:ACadSharp.Entities.TableEntity.TableComponent.CellStyle
+  isSpec: "True"
+  fullName: ACadSharp.Entities.TableEntity.TableComponent.CellStyle
+  nameWithType: TableEntity.TableComponent.CellStyle
+- uid: ACadSharp.Entities.TableEntity.TableComponent.CellStyleOverride
+  name: CellStyleOverride
+  href: api/ACadSharp.Entities.TableEntity.TableComponent.html#ACadSharp_Entities_TableEntity_TableComponent_CellStyleOverride
+  commentId: P:ACadSharp.Entities.TableEntity.TableComponent.CellStyleOverride
+  fullName: ACadSharp.Entities.TableEntity.TableComponent.CellStyleOverride
+  nameWithType: TableEntity.TableComponent.CellStyleOverride
+- uid: ACadSharp.Entities.TableEntity.TableComponent.CellStyleOverride*
+  name: CellStyleOverride
+  href: api/ACadSharp.Entities.TableEntity.TableComponent.html#ACadSharp_Entities_TableEntity_TableComponent_CellStyleOverride_
+  commentId: Overload:ACadSharp.Entities.TableEntity.TableComponent.CellStyleOverride
+  isSpec: "True"
+  fullName: ACadSharp.Entities.TableEntity.TableComponent.CellStyleOverride
+  nameWithType: TableEntity.TableComponent.CellStyleOverride
+- uid: ACadSharp.Entities.TableEntity.TableComponent.Cells
+  name: Cells
+  href: api/ACadSharp.Entities.TableEntity.TableComponent.html#ACadSharp_Entities_TableEntity_TableComponent_Cells
+  commentId: P:ACadSharp.Entities.TableEntity.TableComponent.Cells
+  fullName: ACadSharp.Entities.TableEntity.TableComponent.Cells
+  nameWithType: TableEntity.TableComponent.Cells
+- uid: ACadSharp.Entities.TableEntity.TableComponent.Cells*
+  name: Cells
+  href: api/ACadSharp.Entities.TableEntity.TableComponent.html#ACadSharp_Entities_TableEntity_TableComponent_Cells_
+  commentId: Overload:ACadSharp.Entities.TableEntity.TableComponent.Cells
+  isSpec: "True"
+  fullName: ACadSharp.Entities.TableEntity.TableComponent.Cells
+  nameWithType: TableEntity.TableComponent.Cells
+- uid: ACadSharp.Entities.TableEntity.TableComponent.Clone
+  name: Clone()
+  href: api/ACadSharp.Entities.TableEntity.TableComponent.html#ACadSharp_Entities_TableEntity_TableComponent_Clone
+  commentId: M:ACadSharp.Entities.TableEntity.TableComponent.Clone
+  fullName: ACadSharp.Entities.TableEntity.TableComponent.Clone()
+  nameWithType: TableEntity.TableComponent.Clone()
+- uid: ACadSharp.Entities.TableEntity.TableComponent.Clone*
+  name: Clone
+  href: api/ACadSharp.Entities.TableEntity.TableComponent.html#ACadSharp_Entities_TableEntity_TableComponent_Clone_
+  commentId: Overload:ACadSharp.Entities.TableEntity.TableComponent.Clone
+  isSpec: "True"
+  fullName: ACadSharp.Entities.TableEntity.TableComponent.Clone
+  nameWithType: TableEntity.TableComponent.Clone
+- uid: ACadSharp.Entities.TableEntity.TableComponent.CustomData
+  name: CustomData
+  href: api/ACadSharp.Entities.TableEntity.TableComponent.html#ACadSharp_Entities_TableEntity_TableComponent_CustomData
+  commentId: P:ACadSharp.Entities.TableEntity.TableComponent.CustomData
+  fullName: ACadSharp.Entities.TableEntity.TableComponent.CustomData
+  nameWithType: TableEntity.TableComponent.CustomData
+- uid: ACadSharp.Entities.TableEntity.TableComponent.CustomData*
+  name: CustomData
+  href: api/ACadSharp.Entities.TableEntity.TableComponent.html#ACadSharp_Entities_TableEntity_TableComponent_CustomData_
+  commentId: Overload:ACadSharp.Entities.TableEntity.TableComponent.CustomData
+  isSpec: "True"
+  fullName: ACadSharp.Entities.TableEntity.TableComponent.CustomData
+  nameWithType: TableEntity.TableComponent.CustomData
+- uid: ACadSharp.Entities.TableEntity.TableComponent.CustomDataCollection
+  name: CustomDataCollection
+  href: api/ACadSharp.Entities.TableEntity.TableComponent.html#ACadSharp_Entities_TableEntity_TableComponent_CustomDataCollection
+  commentId: P:ACadSharp.Entities.TableEntity.TableComponent.CustomDataCollection
+  fullName: ACadSharp.Entities.TableEntity.TableComponent.CustomDataCollection
+  nameWithType: TableEntity.TableComponent.CustomDataCollection
+- uid: ACadSharp.Entities.TableEntity.TableComponent.CustomDataCollection*
+  name: CustomDataCollection
+  href: api/ACadSharp.Entities.TableEntity.TableComponent.html#ACadSharp_Entities_TableEntity_TableComponent_CustomDataCollection_
+  commentId: Overload:ACadSharp.Entities.TableEntity.TableComponent.CustomDataCollection
+  isSpec: "True"
+  fullName: ACadSharp.Entities.TableEntity.TableComponent.CustomDataCollection
+  nameWithType: TableEntity.TableComponent.CustomDataCollection
+- uid: ACadSharp.Entities.TableEntity.TableComponent.Owner
+  name: Owner
+  href: api/ACadSharp.Entities.TableEntity.TableComponent.html#ACadSharp_Entities_TableEntity_TableComponent_Owner
+  commentId: P:ACadSharp.Entities.TableEntity.TableComponent.Owner
+  fullName: ACadSharp.Entities.TableEntity.TableComponent.Owner
+  nameWithType: TableEntity.TableComponent.Owner
+- uid: ACadSharp.Entities.TableEntity.TableComponent.Owner*
+  name: Owner
+  href: api/ACadSharp.Entities.TableEntity.TableComponent.html#ACadSharp_Entities_TableEntity_TableComponent_Owner_
+  commentId: Overload:ACadSharp.Entities.TableEntity.TableComponent.Owner
+  isSpec: "True"
+  fullName: ACadSharp.Entities.TableEntity.TableComponent.Owner
+  nameWithType: TableEntity.TableComponent.Owner
 - uid: ACadSharp.Entities.TableEntity.ValueFlag
   name: ValueFlag
   href: api/ACadSharp.Entities.TableEntity.html#ACadSharp_Entities_TableEntity_ValueFlag
@@ -43863,6 +44043,19 @@ references:
   isSpec: "True"
   fullName: ACadSharp.Objects.FormattedTableData.CellStyleOverride
   nameWithType: FormattedTableData.CellStyleOverride
+- uid: ACadSharp.Objects.FormattedTableData.Clone
+  name: Clone()
+  href: api/ACadSharp.Objects.FormattedTableData.html#ACadSharp_Objects_FormattedTableData_Clone
+  commentId: M:ACadSharp.Objects.FormattedTableData.Clone
+  fullName: ACadSharp.Objects.FormattedTableData.Clone()
+  nameWithType: FormattedTableData.Clone()
+- uid: ACadSharp.Objects.FormattedTableData.Clone*
+  name: Clone
+  href: api/ACadSharp.Objects.FormattedTableData.html#ACadSharp_Objects_FormattedTableData_Clone_
+  commentId: Overload:ACadSharp.Objects.FormattedTableData.Clone
+  isSpec: "True"
+  fullName: ACadSharp.Objects.FormattedTableData.Clone
+  nameWithType: FormattedTableData.Clone
 - uid: ACadSharp.Objects.FormattedTableData.MergedCellRanges
   name: MergedCellRanges
   href: api/ACadSharp.Objects.FormattedTableData.html#ACadSharp_Objects_FormattedTableData_MergedCellRanges
@@ -45400,6 +45593,38 @@ references:
   commentId: T:ACadSharp.Objects.LinkedTableData
   fullName: ACadSharp.Objects.LinkedTableData
   nameWithType: LinkedTableData
+- uid: ACadSharp.Objects.LinkedTableData.#ctor
+  name: LinkedTableData()
+  href: api/ACadSharp.Objects.LinkedTableData.html#ACadSharp_Objects_LinkedTableData__ctor
+  commentId: M:ACadSharp.Objects.LinkedTableData.#ctor
+  name.vb: New()
+  fullName: ACadSharp.Objects.LinkedTableData.LinkedTableData()
+  fullName.vb: ACadSharp.Objects.LinkedTableData.New()
+  nameWithType: LinkedTableData.LinkedTableData()
+  nameWithType.vb: LinkedTableData.New()
+- uid: ACadSharp.Objects.LinkedTableData.#ctor*
+  name: LinkedTableData
+  href: api/ACadSharp.Objects.LinkedTableData.html#ACadSharp_Objects_LinkedTableData__ctor_
+  commentId: Overload:ACadSharp.Objects.LinkedTableData.#ctor
+  isSpec: "True"
+  name.vb: New
+  fullName: ACadSharp.Objects.LinkedTableData.LinkedTableData
+  fullName.vb: ACadSharp.Objects.LinkedTableData.New
+  nameWithType: LinkedTableData.LinkedTableData
+  nameWithType.vb: LinkedTableData.New
+- uid: ACadSharp.Objects.LinkedTableData.Clone
+  name: Clone()
+  href: api/ACadSharp.Objects.LinkedTableData.html#ACadSharp_Objects_LinkedTableData_Clone
+  commentId: M:ACadSharp.Objects.LinkedTableData.Clone
+  fullName: ACadSharp.Objects.LinkedTableData.Clone()
+  nameWithType: LinkedTableData.Clone()
+- uid: ACadSharp.Objects.LinkedTableData.Clone*
+  name: Clone
+  href: api/ACadSharp.Objects.LinkedTableData.html#ACadSharp_Objects_LinkedTableData_Clone_
+  commentId: Overload:ACadSharp.Objects.LinkedTableData.Clone
+  isSpec: "True"
+  fullName: ACadSharp.Objects.LinkedTableData.Clone
+  nameWithType: LinkedTableData.Clone
 - uid: ACadSharp.Objects.LinkedTableData.Columns
   name: Columns
   href: api/ACadSharp.Objects.LinkedTableData.html#ACadSharp_Objects_LinkedTableData_Columns
@@ -51258,6 +51483,19 @@ references:
   commentId: T:ACadSharp.Objects.TableContent
   fullName: ACadSharp.Objects.TableContent
   nameWithType: TableContent
+- uid: ACadSharp.Objects.TableContent.Clone
+  name: Clone()
+  href: api/ACadSharp.Objects.TableContent.html#ACadSharp_Objects_TableContent_Clone
+  commentId: M:ACadSharp.Objects.TableContent.Clone
+  fullName: ACadSharp.Objects.TableContent.Clone()
+  nameWithType: TableContent.Clone()
+- uid: ACadSharp.Objects.TableContent.Clone*
+  name: Clone
+  href: api/ACadSharp.Objects.TableContent.html#ACadSharp_Objects_TableContent_Clone_
+  commentId: Overload:ACadSharp.Objects.TableContent.Clone
+  isSpec: "True"
+  fullName: ACadSharp.Objects.TableContent.Clone
+  nameWithType: TableContent.Clone
 - uid: ACadSharp.Objects.TableContent.GetDxfClass
   name: GetDxfClass()
   href: api/ACadSharp.Objects.TableContent.html#ACadSharp_Objects_TableContent_GetDxfClass
@@ -51564,6 +51802,19 @@ references:
   isSpec: "True"
   fullName: ACadSharp.Objects.TableStyle.CellBorder.ApplyBorder
   nameWithType: TableStyle.CellBorder.ApplyBorder
+- uid: ACadSharp.Objects.TableStyle.CellBorder.Clone
+  name: Clone()
+  href: api/ACadSharp.Objects.TableStyle.CellBorder.html#ACadSharp_Objects_TableStyle_CellBorder_Clone
+  commentId: M:ACadSharp.Objects.TableStyle.CellBorder.Clone
+  fullName: ACadSharp.Objects.TableStyle.CellBorder.Clone()
+  nameWithType: TableStyle.CellBorder.Clone()
+- uid: ACadSharp.Objects.TableStyle.CellBorder.Clone*
+  name: Clone
+  href: api/ACadSharp.Objects.TableStyle.CellBorder.html#ACadSharp_Objects_TableStyle_CellBorder_Clone_
+  commentId: Overload:ACadSharp.Objects.TableStyle.CellBorder.Clone
+  isSpec: "True"
+  fullName: ACadSharp.Objects.TableStyle.CellBorder.Clone
+  nameWithType: TableStyle.CellBorder.Clone
 - uid: ACadSharp.Objects.TableStyle.CellBorder.Color
   name: Color
   href: api/ACadSharp.Objects.TableStyle.CellBorder.html#ACadSharp_Objects_TableStyle_CellBorder_Color
@@ -51616,6 +51867,19 @@ references:
   isSpec: "True"
   fullName: ACadSharp.Objects.TableStyle.CellBorder.IsInvisible
   nameWithType: TableStyle.CellBorder.IsInvisible
+- uid: ACadSharp.Objects.TableStyle.CellBorder.LineType
+  name: LineType
+  href: api/ACadSharp.Objects.TableStyle.CellBorder.html#ACadSharp_Objects_TableStyle_CellBorder_LineType
+  commentId: P:ACadSharp.Objects.TableStyle.CellBorder.LineType
+  fullName: ACadSharp.Objects.TableStyle.CellBorder.LineType
+  nameWithType: TableStyle.CellBorder.LineType
+- uid: ACadSharp.Objects.TableStyle.CellBorder.LineType*
+  name: LineType
+  href: api/ACadSharp.Objects.TableStyle.CellBorder.html#ACadSharp_Objects_TableStyle_CellBorder_LineType_
+  commentId: Overload:ACadSharp.Objects.TableStyle.CellBorder.LineType
+  isSpec: "True"
+  fullName: ACadSharp.Objects.TableStyle.CellBorder.LineType
+  nameWithType: TableStyle.CellBorder.LineType
 - uid: ACadSharp.Objects.TableStyle.CellBorder.LineWeight
   name: LineWeight
   href: api/ACadSharp.Objects.TableStyle.CellBorder.html#ACadSharp_Objects_TableStyle_CellBorder_LineWeight
@@ -51629,6 +51893,19 @@ references:
   isSpec: "True"
   fullName: ACadSharp.Objects.TableStyle.CellBorder.LineWeight
   nameWithType: TableStyle.CellBorder.LineWeight
+- uid: ACadSharp.Objects.TableStyle.CellBorder.Owner
+  name: Owner
+  href: api/ACadSharp.Objects.TableStyle.CellBorder.html#ACadSharp_Objects_TableStyle_CellBorder_Owner
+  commentId: P:ACadSharp.Objects.TableStyle.CellBorder.Owner
+  fullName: ACadSharp.Objects.TableStyle.CellBorder.Owner
+  nameWithType: TableStyle.CellBorder.Owner
+- uid: ACadSharp.Objects.TableStyle.CellBorder.Owner*
+  name: Owner
+  href: api/ACadSharp.Objects.TableStyle.CellBorder.html#ACadSharp_Objects_TableStyle_CellBorder_Owner_
+  commentId: Overload:ACadSharp.Objects.TableStyle.CellBorder.Owner
+  isSpec: "True"
+  fullName: ACadSharp.Objects.TableStyle.CellBorder.Owner
+  nameWithType: TableStyle.CellBorder.Owner
 - uid: ACadSharp.Objects.TableStyle.CellBorder.PropertyOverrideFlags
   name: PropertyOverrideFlags
   href: api/ACadSharp.Objects.TableStyle.CellBorder.html#ACadSharp_Objects_TableStyle_CellBorder_PropertyOverrideFlags
@@ -51791,6 +52068,19 @@ references:
   isSpec: "True"
   fullName: ACadSharp.Objects.TableStyle.CellStyle.CellAlignment
   nameWithType: TableStyle.CellStyle.CellAlignment
+- uid: ACadSharp.Objects.TableStyle.CellStyle.Clone
+  name: Clone()
+  href: api/ACadSharp.Objects.TableStyle.CellStyle.html#ACadSharp_Objects_TableStyle_CellStyle_Clone
+  commentId: M:ACadSharp.Objects.TableStyle.CellStyle.Clone
+  fullName: ACadSharp.Objects.TableStyle.CellStyle.Clone()
+  nameWithType: TableStyle.CellStyle.Clone()
+- uid: ACadSharp.Objects.TableStyle.CellStyle.Clone*
+  name: Clone
+  href: api/ACadSharp.Objects.TableStyle.CellStyle.html#ACadSharp_Objects_TableStyle_CellStyle_Clone_
+  commentId: Overload:ACadSharp.Objects.TableStyle.CellStyle.Clone
+  isSpec: "True"
+  fullName: ACadSharp.Objects.TableStyle.CellStyle.Clone
+  nameWithType: TableStyle.CellStyle.Clone
 - uid: ACadSharp.Objects.TableStyle.CellStyle.ContentColor
   name: ContentColor
   href: api/ACadSharp.Objects.TableStyle.CellStyle.html#ACadSharp_Objects_TableStyle_CellStyle_ContentColor
@@ -51985,6 +52275,19 @@ references:
   isSpec: "True"
   fullName: ACadSharp.Objects.TableStyle.CellStyle.Name
   nameWithType: TableStyle.CellStyle.Name
+- uid: ACadSharp.Objects.TableStyle.CellStyle.Owner
+  name: Owner
+  href: api/ACadSharp.Objects.TableStyle.CellStyle.html#ACadSharp_Objects_TableStyle_CellStyle_Owner
+  commentId: P:ACadSharp.Objects.TableStyle.CellStyle.Owner
+  fullName: ACadSharp.Objects.TableStyle.CellStyle.Owner
+  nameWithType: TableStyle.CellStyle.Owner
+- uid: ACadSharp.Objects.TableStyle.CellStyle.Owner*
+  name: Owner
+  href: api/ACadSharp.Objects.TableStyle.CellStyle.html#ACadSharp_Objects_TableStyle_CellStyle_Owner_
+  commentId: Overload:ACadSharp.Objects.TableStyle.CellStyle.Owner
+  isSpec: "True"
+  fullName: ACadSharp.Objects.TableStyle.CellStyle.Owner
+  nameWithType: TableStyle.CellStyle.Owner
 - uid: ACadSharp.Objects.TableStyle.CellStyle.RightBorder
   name: RightBorder
   href: api/ACadSharp.Objects.TableStyle.CellStyle.html#ACadSharp_Objects_TableStyle_CellStyle_RightBorder
@@ -52345,6 +52648,19 @@ references:
   isSpec: "True"
   fullName: ACadSharp.Objects.TableStyle.ContentFormat.Alignment
   nameWithType: TableStyle.ContentFormat.Alignment
+- uid: ACadSharp.Objects.TableStyle.ContentFormat.Clone
+  name: Clone()
+  href: api/ACadSharp.Objects.TableStyle.ContentFormat.html#ACadSharp_Objects_TableStyle_ContentFormat_Clone
+  commentId: M:ACadSharp.Objects.TableStyle.ContentFormat.Clone
+  fullName: ACadSharp.Objects.TableStyle.ContentFormat.Clone()
+  nameWithType: TableStyle.ContentFormat.Clone()
+- uid: ACadSharp.Objects.TableStyle.ContentFormat.Clone*
+  name: Clone
+  href: api/ACadSharp.Objects.TableStyle.ContentFormat.html#ACadSharp_Objects_TableStyle_ContentFormat_Clone_
+  commentId: Overload:ACadSharp.Objects.TableStyle.ContentFormat.Clone
+  isSpec: "True"
+  fullName: ACadSharp.Objects.TableStyle.ContentFormat.Clone
+  nameWithType: TableStyle.ContentFormat.Clone
 - uid: ACadSharp.Objects.TableStyle.ContentFormat.Color
   name: Color
   href: api/ACadSharp.Objects.TableStyle.ContentFormat.html#ACadSharp_Objects_TableStyle_ContentFormat_Color
@@ -52371,6 +52687,19 @@ references:
   isSpec: "True"
   fullName: ACadSharp.Objects.TableStyle.ContentFormat.HasData
   nameWithType: TableStyle.ContentFormat.HasData
+- uid: ACadSharp.Objects.TableStyle.ContentFormat.Owner
+  name: Owner
+  href: api/ACadSharp.Objects.TableStyle.ContentFormat.html#ACadSharp_Objects_TableStyle_ContentFormat_Owner
+  commentId: P:ACadSharp.Objects.TableStyle.ContentFormat.Owner
+  fullName: ACadSharp.Objects.TableStyle.ContentFormat.Owner
+  nameWithType: TableStyle.ContentFormat.Owner
+- uid: ACadSharp.Objects.TableStyle.ContentFormat.Owner*
+  name: Owner
+  href: api/ACadSharp.Objects.TableStyle.ContentFormat.html#ACadSharp_Objects_TableStyle_ContentFormat_Owner_
+  commentId: Overload:ACadSharp.Objects.TableStyle.ContentFormat.Owner
+  isSpec: "True"
+  fullName: ACadSharp.Objects.TableStyle.ContentFormat.Owner
+  nameWithType: TableStyle.ContentFormat.Owner
 - uid: ACadSharp.Objects.TableStyle.ContentFormat.PropertyFlags
   name: PropertyFlags
   href: api/ACadSharp.Objects.TableStyle.ContentFormat.html#ACadSharp_Objects_TableStyle_ContentFormat_PropertyFlags
@@ -67892,6 +68221,369 @@ references:
   isSpec: "True"
   fullName: CSUtilities.Attributes.StringValueAttribute.Value
   nameWithType: StringValueAttribute.Value
+- uid: CSUtilities.Collections.Generic
+  name: CSUtilities.Collections.Generic
+  href: api/CSUtilities.Collections.Generic.html
+  commentId: N:CSUtilities.Collections.Generic
+  fullName: CSUtilities.Collections.Generic
+  nameWithType: CSUtilities.Collections.Generic
+- uid: CSUtilities.Collections.Generic.ObservableListEventArgs`1
+  name: ObservableListEventArgs<T>
+  href: api/CSUtilities.Collections.Generic.ObservableListEventArgs-1.html
+  commentId: T:CSUtilities.Collections.Generic.ObservableListEventArgs`1
+  name.vb: ObservableListEventArgs(Of T)
+  fullName: CSUtilities.Collections.Generic.ObservableListEventArgs<T>
+  fullName.vb: CSUtilities.Collections.Generic.ObservableListEventArgs(Of T)
+  nameWithType: ObservableListEventArgs<T>
+  nameWithType.vb: ObservableListEventArgs(Of T)
+- uid: CSUtilities.Collections.Generic.ObservableListEventArgs`1.#ctor(`0,System.Int32)
+  name: ObservableListEventArgs(T, int)
+  href: api/CSUtilities.Collections.Generic.ObservableListEventArgs-1.html#CSUtilities_Collections_Generic_ObservableListEventArgs_1__ctor__0_System_Int32_
+  commentId: M:CSUtilities.Collections.Generic.ObservableListEventArgs`1.#ctor(`0,System.Int32)
+  name.vb: New(T, Integer)
+  fullName: CSUtilities.Collections.Generic.ObservableListEventArgs<T>.ObservableListEventArgs(T, int)
+  fullName.vb: CSUtilities.Collections.Generic.ObservableListEventArgs(Of T).New(T, Integer)
+  nameWithType: ObservableListEventArgs<T>.ObservableListEventArgs(T, int)
+  nameWithType.vb: ObservableListEventArgs(Of T).New(T, Integer)
+- uid: CSUtilities.Collections.Generic.ObservableListEventArgs`1.#ctor*
+  name: ObservableListEventArgs
+  href: api/CSUtilities.Collections.Generic.ObservableListEventArgs-1.html#CSUtilities_Collections_Generic_ObservableListEventArgs_1__ctor_
+  commentId: Overload:CSUtilities.Collections.Generic.ObservableListEventArgs`1.#ctor
+  isSpec: "True"
+  name.vb: New
+  fullName: CSUtilities.Collections.Generic.ObservableListEventArgs<T>.ObservableListEventArgs
+  fullName.vb: CSUtilities.Collections.Generic.ObservableListEventArgs(Of T).New
+  nameWithType: ObservableListEventArgs<T>.ObservableListEventArgs
+  nameWithType.vb: ObservableListEventArgs(Of T).New
+- uid: CSUtilities.Collections.Generic.ObservableListEventArgs`1.Cancel
+  name: Cancel
+  href: api/CSUtilities.Collections.Generic.ObservableListEventArgs-1.html#CSUtilities_Collections_Generic_ObservableListEventArgs_1_Cancel
+  commentId: P:CSUtilities.Collections.Generic.ObservableListEventArgs`1.Cancel
+  fullName: CSUtilities.Collections.Generic.ObservableListEventArgs<T>.Cancel
+  fullName.vb: CSUtilities.Collections.Generic.ObservableListEventArgs(Of T).Cancel
+  nameWithType: ObservableListEventArgs<T>.Cancel
+  nameWithType.vb: ObservableListEventArgs(Of T).Cancel
+- uid: CSUtilities.Collections.Generic.ObservableListEventArgs`1.Cancel*
+  name: Cancel
+  href: api/CSUtilities.Collections.Generic.ObservableListEventArgs-1.html#CSUtilities_Collections_Generic_ObservableListEventArgs_1_Cancel_
+  commentId: Overload:CSUtilities.Collections.Generic.ObservableListEventArgs`1.Cancel
+  isSpec: "True"
+  fullName: CSUtilities.Collections.Generic.ObservableListEventArgs<T>.Cancel
+  fullName.vb: CSUtilities.Collections.Generic.ObservableListEventArgs(Of T).Cancel
+  nameWithType: ObservableListEventArgs<T>.Cancel
+  nameWithType.vb: ObservableListEventArgs(Of T).Cancel
+- uid: CSUtilities.Collections.Generic.ObservableListEventArgs`1.Index
+  name: Index
+  href: api/CSUtilities.Collections.Generic.ObservableListEventArgs-1.html#CSUtilities_Collections_Generic_ObservableListEventArgs_1_Index
+  commentId: P:CSUtilities.Collections.Generic.ObservableListEventArgs`1.Index
+  fullName: CSUtilities.Collections.Generic.ObservableListEventArgs<T>.Index
+  fullName.vb: CSUtilities.Collections.Generic.ObservableListEventArgs(Of T).Index
+  nameWithType: ObservableListEventArgs<T>.Index
+  nameWithType.vb: ObservableListEventArgs(Of T).Index
+- uid: CSUtilities.Collections.Generic.ObservableListEventArgs`1.Index*
+  name: Index
+  href: api/CSUtilities.Collections.Generic.ObservableListEventArgs-1.html#CSUtilities_Collections_Generic_ObservableListEventArgs_1_Index_
+  commentId: Overload:CSUtilities.Collections.Generic.ObservableListEventArgs`1.Index
+  isSpec: "True"
+  fullName: CSUtilities.Collections.Generic.ObservableListEventArgs<T>.Index
+  fullName.vb: CSUtilities.Collections.Generic.ObservableListEventArgs(Of T).Index
+  nameWithType: ObservableListEventArgs<T>.Index
+  nameWithType.vb: ObservableListEventArgs(Of T).Index
+- uid: CSUtilities.Collections.Generic.ObservableListEventArgs`1.Item
+  name: Item
+  href: api/CSUtilities.Collections.Generic.ObservableListEventArgs-1.html#CSUtilities_Collections_Generic_ObservableListEventArgs_1_Item
+  commentId: P:CSUtilities.Collections.Generic.ObservableListEventArgs`1.Item
+  fullName: CSUtilities.Collections.Generic.ObservableListEventArgs<T>.Item
+  fullName.vb: CSUtilities.Collections.Generic.ObservableListEventArgs(Of T).Item
+  nameWithType: ObservableListEventArgs<T>.Item
+  nameWithType.vb: ObservableListEventArgs(Of T).Item
+- uid: CSUtilities.Collections.Generic.ObservableListEventArgs`1.Item*
+  name: Item
+  href: api/CSUtilities.Collections.Generic.ObservableListEventArgs-1.html#CSUtilities_Collections_Generic_ObservableListEventArgs_1_Item_
+  commentId: Overload:CSUtilities.Collections.Generic.ObservableListEventArgs`1.Item
+  isSpec: "True"
+  fullName: CSUtilities.Collections.Generic.ObservableListEventArgs<T>.Item
+  fullName.vb: CSUtilities.Collections.Generic.ObservableListEventArgs(Of T).Item
+  nameWithType: ObservableListEventArgs<T>.Item
+  nameWithType.vb: ObservableListEventArgs(Of T).Item
+- uid: CSUtilities.Collections.Generic.ObservableList`1
+  name: ObservableList<T>
+  href: api/CSUtilities.Collections.Generic.ObservableList-1.html
+  commentId: T:CSUtilities.Collections.Generic.ObservableList`1
+  name.vb: ObservableList(Of T)
+  fullName: CSUtilities.Collections.Generic.ObservableList<T>
+  fullName.vb: CSUtilities.Collections.Generic.ObservableList(Of T)
+  nameWithType: ObservableList<T>
+  nameWithType.vb: ObservableList(Of T)
+- uid: CSUtilities.Collections.Generic.ObservableList`1.#ctor
+  name: ObservableList()
+  href: api/CSUtilities.Collections.Generic.ObservableList-1.html#CSUtilities_Collections_Generic_ObservableList_1__ctor
+  commentId: M:CSUtilities.Collections.Generic.ObservableList`1.#ctor
+  name.vb: New()
+  fullName: CSUtilities.Collections.Generic.ObservableList<T>.ObservableList()
+  fullName.vb: CSUtilities.Collections.Generic.ObservableList(Of T).New()
+  nameWithType: ObservableList<T>.ObservableList()
+  nameWithType.vb: ObservableList(Of T).New()
+- uid: CSUtilities.Collections.Generic.ObservableList`1.#ctor(System.Collections.Generic.IEnumerable{`0})
+  name: ObservableList(IEnumerable<T>)
+  href: api/CSUtilities.Collections.Generic.ObservableList-1.html#CSUtilities_Collections_Generic_ObservableList_1__ctor_System_Collections_Generic_IEnumerable__0__
+  commentId: M:CSUtilities.Collections.Generic.ObservableList`1.#ctor(System.Collections.Generic.IEnumerable{`0})
+  name.vb: New(IEnumerable(Of T))
+  fullName: CSUtilities.Collections.Generic.ObservableList<T>.ObservableList(System.Collections.Generic.IEnumerable<T>)
+  fullName.vb: CSUtilities.Collections.Generic.ObservableList(Of T).New(System.Collections.Generic.IEnumerable(Of T))
+  nameWithType: ObservableList<T>.ObservableList(IEnumerable<T>)
+  nameWithType.vb: ObservableList(Of T).New(IEnumerable(Of T))
+- uid: CSUtilities.Collections.Generic.ObservableList`1.#ctor*
+  name: ObservableList
+  href: api/CSUtilities.Collections.Generic.ObservableList-1.html#CSUtilities_Collections_Generic_ObservableList_1__ctor_
+  commentId: Overload:CSUtilities.Collections.Generic.ObservableList`1.#ctor
+  isSpec: "True"
+  name.vb: New
+  fullName: CSUtilities.Collections.Generic.ObservableList<T>.ObservableList
+  fullName.vb: CSUtilities.Collections.Generic.ObservableList(Of T).New
+  nameWithType: ObservableList<T>.ObservableList
+  nameWithType.vb: ObservableList(Of T).New
+- uid: CSUtilities.Collections.Generic.ObservableList`1.Add(`0)
+  name: Add(T)
+  href: api/CSUtilities.Collections.Generic.ObservableList-1.html#CSUtilities_Collections_Generic_ObservableList_1_Add__0_
+  commentId: M:CSUtilities.Collections.Generic.ObservableList`1.Add(`0)
+  fullName: CSUtilities.Collections.Generic.ObservableList<T>.Add(T)
+  fullName.vb: CSUtilities.Collections.Generic.ObservableList(Of T).Add(T)
+  nameWithType: ObservableList<T>.Add(T)
+  nameWithType.vb: ObservableList(Of T).Add(T)
+- uid: CSUtilities.Collections.Generic.ObservableList`1.Add*
+  name: Add
+  href: api/CSUtilities.Collections.Generic.ObservableList-1.html#CSUtilities_Collections_Generic_ObservableList_1_Add_
+  commentId: Overload:CSUtilities.Collections.Generic.ObservableList`1.Add
+  isSpec: "True"
+  fullName: CSUtilities.Collections.Generic.ObservableList<T>.Add
+  fullName.vb: CSUtilities.Collections.Generic.ObservableList(Of T).Add
+  nameWithType: ObservableList<T>.Add
+  nameWithType.vb: ObservableList(Of T).Add
+- uid: CSUtilities.Collections.Generic.ObservableList`1.Clear
+  name: Clear()
+  href: api/CSUtilities.Collections.Generic.ObservableList-1.html#CSUtilities_Collections_Generic_ObservableList_1_Clear
+  commentId: M:CSUtilities.Collections.Generic.ObservableList`1.Clear
+  fullName: CSUtilities.Collections.Generic.ObservableList<T>.Clear()
+  fullName.vb: CSUtilities.Collections.Generic.ObservableList(Of T).Clear()
+  nameWithType: ObservableList<T>.Clear()
+  nameWithType.vb: ObservableList(Of T).Clear()
+- uid: CSUtilities.Collections.Generic.ObservableList`1.Clear*
+  name: Clear
+  href: api/CSUtilities.Collections.Generic.ObservableList-1.html#CSUtilities_Collections_Generic_ObservableList_1_Clear_
+  commentId: Overload:CSUtilities.Collections.Generic.ObservableList`1.Clear
+  isSpec: "True"
+  fullName: CSUtilities.Collections.Generic.ObservableList<T>.Clear
+  fullName.vb: CSUtilities.Collections.Generic.ObservableList(Of T).Clear
+  nameWithType: ObservableList<T>.Clear
+  nameWithType.vb: ObservableList(Of T).Clear
+- uid: CSUtilities.Collections.Generic.ObservableList`1.Contains(`0)
+  name: Contains(T)
+  href: api/CSUtilities.Collections.Generic.ObservableList-1.html#CSUtilities_Collections_Generic_ObservableList_1_Contains__0_
+  commentId: M:CSUtilities.Collections.Generic.ObservableList`1.Contains(`0)
+  fullName: CSUtilities.Collections.Generic.ObservableList<T>.Contains(T)
+  fullName.vb: CSUtilities.Collections.Generic.ObservableList(Of T).Contains(T)
+  nameWithType: ObservableList<T>.Contains(T)
+  nameWithType.vb: ObservableList(Of T).Contains(T)
+- uid: CSUtilities.Collections.Generic.ObservableList`1.Contains*
+  name: Contains
+  href: api/CSUtilities.Collections.Generic.ObservableList-1.html#CSUtilities_Collections_Generic_ObservableList_1_Contains_
+  commentId: Overload:CSUtilities.Collections.Generic.ObservableList`1.Contains
+  isSpec: "True"
+  fullName: CSUtilities.Collections.Generic.ObservableList<T>.Contains
+  fullName.vb: CSUtilities.Collections.Generic.ObservableList(Of T).Contains
+  nameWithType: ObservableList<T>.Contains
+  nameWithType.vb: ObservableList(Of T).Contains
+- uid: CSUtilities.Collections.Generic.ObservableList`1.CopyTo(`0[],System.Int32)
+  name: CopyTo(T[], int)
+  href: api/CSUtilities.Collections.Generic.ObservableList-1.html#CSUtilities_Collections_Generic_ObservableList_1_CopyTo__0___System_Int32_
+  commentId: M:CSUtilities.Collections.Generic.ObservableList`1.CopyTo(`0[],System.Int32)
+  name.vb: CopyTo(T(), Integer)
+  fullName: CSUtilities.Collections.Generic.ObservableList<T>.CopyTo(T[], int)
+  fullName.vb: CSUtilities.Collections.Generic.ObservableList(Of T).CopyTo(T(), Integer)
+  nameWithType: ObservableList<T>.CopyTo(T[], int)
+  nameWithType.vb: ObservableList(Of T).CopyTo(T(), Integer)
+- uid: CSUtilities.Collections.Generic.ObservableList`1.CopyTo*
+  name: CopyTo
+  href: api/CSUtilities.Collections.Generic.ObservableList-1.html#CSUtilities_Collections_Generic_ObservableList_1_CopyTo_
+  commentId: Overload:CSUtilities.Collections.Generic.ObservableList`1.CopyTo
+  isSpec: "True"
+  fullName: CSUtilities.Collections.Generic.ObservableList<T>.CopyTo
+  fullName.vb: CSUtilities.Collections.Generic.ObservableList(Of T).CopyTo
+  nameWithType: ObservableList<T>.CopyTo
+  nameWithType.vb: ObservableList(Of T).CopyTo
+- uid: CSUtilities.Collections.Generic.ObservableList`1.Count
+  name: Count
+  href: api/CSUtilities.Collections.Generic.ObservableList-1.html#CSUtilities_Collections_Generic_ObservableList_1_Count
+  commentId: P:CSUtilities.Collections.Generic.ObservableList`1.Count
+  fullName: CSUtilities.Collections.Generic.ObservableList<T>.Count
+  fullName.vb: CSUtilities.Collections.Generic.ObservableList(Of T).Count
+  nameWithType: ObservableList<T>.Count
+  nameWithType.vb: ObservableList(Of T).Count
+- uid: CSUtilities.Collections.Generic.ObservableList`1.Count*
+  name: Count
+  href: api/CSUtilities.Collections.Generic.ObservableList-1.html#CSUtilities_Collections_Generic_ObservableList_1_Count_
+  commentId: Overload:CSUtilities.Collections.Generic.ObservableList`1.Count
+  isSpec: "True"
+  fullName: CSUtilities.Collections.Generic.ObservableList<T>.Count
+  fullName.vb: CSUtilities.Collections.Generic.ObservableList(Of T).Count
+  nameWithType: ObservableList<T>.Count
+  nameWithType.vb: ObservableList(Of T).Count
+- uid: CSUtilities.Collections.Generic.ObservableList`1.GetEnumerator
+  name: GetEnumerator()
+  href: api/CSUtilities.Collections.Generic.ObservableList-1.html#CSUtilities_Collections_Generic_ObservableList_1_GetEnumerator
+  commentId: M:CSUtilities.Collections.Generic.ObservableList`1.GetEnumerator
+  fullName: CSUtilities.Collections.Generic.ObservableList<T>.GetEnumerator()
+  fullName.vb: CSUtilities.Collections.Generic.ObservableList(Of T).GetEnumerator()
+  nameWithType: ObservableList<T>.GetEnumerator()
+  nameWithType.vb: ObservableList(Of T).GetEnumerator()
+- uid: CSUtilities.Collections.Generic.ObservableList`1.GetEnumerator*
+  name: GetEnumerator
+  href: api/CSUtilities.Collections.Generic.ObservableList-1.html#CSUtilities_Collections_Generic_ObservableList_1_GetEnumerator_
+  commentId: Overload:CSUtilities.Collections.Generic.ObservableList`1.GetEnumerator
+  isSpec: "True"
+  fullName: CSUtilities.Collections.Generic.ObservableList<T>.GetEnumerator
+  fullName.vb: CSUtilities.Collections.Generic.ObservableList(Of T).GetEnumerator
+  nameWithType: ObservableList<T>.GetEnumerator
+  nameWithType.vb: ObservableList(Of T).GetEnumerator
+- uid: CSUtilities.Collections.Generic.ObservableList`1.IndexOf(`0)
+  name: IndexOf(T)
+  href: api/CSUtilities.Collections.Generic.ObservableList-1.html#CSUtilities_Collections_Generic_ObservableList_1_IndexOf__0_
+  commentId: M:CSUtilities.Collections.Generic.ObservableList`1.IndexOf(`0)
+  fullName: CSUtilities.Collections.Generic.ObservableList<T>.IndexOf(T)
+  fullName.vb: CSUtilities.Collections.Generic.ObservableList(Of T).IndexOf(T)
+  nameWithType: ObservableList<T>.IndexOf(T)
+  nameWithType.vb: ObservableList(Of T).IndexOf(T)
+- uid: CSUtilities.Collections.Generic.ObservableList`1.IndexOf*
+  name: IndexOf
+  href: api/CSUtilities.Collections.Generic.ObservableList-1.html#CSUtilities_Collections_Generic_ObservableList_1_IndexOf_
+  commentId: Overload:CSUtilities.Collections.Generic.ObservableList`1.IndexOf
+  isSpec: "True"
+  fullName: CSUtilities.Collections.Generic.ObservableList<T>.IndexOf
+  fullName.vb: CSUtilities.Collections.Generic.ObservableList(Of T).IndexOf
+  nameWithType: ObservableList<T>.IndexOf
+  nameWithType.vb: ObservableList(Of T).IndexOf
+- uid: CSUtilities.Collections.Generic.ObservableList`1.Insert(System.Int32,`0)
+  name: Insert(int, T)
+  href: api/CSUtilities.Collections.Generic.ObservableList-1.html#CSUtilities_Collections_Generic_ObservableList_1_Insert_System_Int32__0_
+  commentId: M:CSUtilities.Collections.Generic.ObservableList`1.Insert(System.Int32,`0)
+  name.vb: Insert(Integer, T)
+  fullName: CSUtilities.Collections.Generic.ObservableList<T>.Insert(int, T)
+  fullName.vb: CSUtilities.Collections.Generic.ObservableList(Of T).Insert(Integer, T)
+  nameWithType: ObservableList<T>.Insert(int, T)
+  nameWithType.vb: ObservableList(Of T).Insert(Integer, T)
+- uid: CSUtilities.Collections.Generic.ObservableList`1.Insert*
+  name: Insert
+  href: api/CSUtilities.Collections.Generic.ObservableList-1.html#CSUtilities_Collections_Generic_ObservableList_1_Insert_
+  commentId: Overload:CSUtilities.Collections.Generic.ObservableList`1.Insert
+  isSpec: "True"
+  fullName: CSUtilities.Collections.Generic.ObservableList<T>.Insert
+  fullName.vb: CSUtilities.Collections.Generic.ObservableList(Of T).Insert
+  nameWithType: ObservableList<T>.Insert
+  nameWithType.vb: ObservableList(Of T).Insert
+- uid: CSUtilities.Collections.Generic.ObservableList`1.IsReadOnly
+  name: IsReadOnly
+  href: api/CSUtilities.Collections.Generic.ObservableList-1.html#CSUtilities_Collections_Generic_ObservableList_1_IsReadOnly
+  commentId: P:CSUtilities.Collections.Generic.ObservableList`1.IsReadOnly
+  fullName: CSUtilities.Collections.Generic.ObservableList<T>.IsReadOnly
+  fullName.vb: CSUtilities.Collections.Generic.ObservableList(Of T).IsReadOnly
+  nameWithType: ObservableList<T>.IsReadOnly
+  nameWithType.vb: ObservableList(Of T).IsReadOnly
+- uid: CSUtilities.Collections.Generic.ObservableList`1.IsReadOnly*
+  name: IsReadOnly
+  href: api/CSUtilities.Collections.Generic.ObservableList-1.html#CSUtilities_Collections_Generic_ObservableList_1_IsReadOnly_
+  commentId: Overload:CSUtilities.Collections.Generic.ObservableList`1.IsReadOnly
+  isSpec: "True"
+  fullName: CSUtilities.Collections.Generic.ObservableList<T>.IsReadOnly
+  fullName.vb: CSUtilities.Collections.Generic.ObservableList(Of T).IsReadOnly
+  nameWithType: ObservableList<T>.IsReadOnly
+  nameWithType.vb: ObservableList(Of T).IsReadOnly
+- uid: CSUtilities.Collections.Generic.ObservableList`1.Item(System.Int32)
+  name: this[int]
+  href: api/CSUtilities.Collections.Generic.ObservableList-1.html#CSUtilities_Collections_Generic_ObservableList_1_Item_System_Int32_
+  commentId: P:CSUtilities.Collections.Generic.ObservableList`1.Item(System.Int32)
+  name.vb: this[](Integer)
+  fullName: CSUtilities.Collections.Generic.ObservableList<T>.this[int]
+  fullName.vb: CSUtilities.Collections.Generic.ObservableList(Of T).this[](Integer)
+  nameWithType: ObservableList<T>.this[int]
+  nameWithType.vb: ObservableList(Of T).this[](Integer)
+- uid: CSUtilities.Collections.Generic.ObservableList`1.Item*
+  name: this
+  href: api/CSUtilities.Collections.Generic.ObservableList-1.html#CSUtilities_Collections_Generic_ObservableList_1_Item_
+  commentId: Overload:CSUtilities.Collections.Generic.ObservableList`1.Item
+  isSpec: "True"
+  name.vb: this[]
+  fullName: CSUtilities.Collections.Generic.ObservableList<T>.this
+  fullName.vb: CSUtilities.Collections.Generic.ObservableList(Of T).this[]
+  nameWithType: ObservableList<T>.this
+  nameWithType.vb: ObservableList(Of T).this[]
+- uid: CSUtilities.Collections.Generic.ObservableList`1.OnAdd
+  name: OnAdd
+  href: api/CSUtilities.Collections.Generic.ObservableList-1.html#CSUtilities_Collections_Generic_ObservableList_1_OnAdd
+  commentId: E:CSUtilities.Collections.Generic.ObservableList`1.OnAdd
+  fullName: CSUtilities.Collections.Generic.ObservableList<T>.OnAdd
+  fullName.vb: CSUtilities.Collections.Generic.ObservableList(Of T).OnAdd
+  nameWithType: ObservableList<T>.OnAdd
+  nameWithType.vb: ObservableList(Of T).OnAdd
+- uid: CSUtilities.Collections.Generic.ObservableList`1.OnBeforeAdd
+  name: OnBeforeAdd
+  href: api/CSUtilities.Collections.Generic.ObservableList-1.html#CSUtilities_Collections_Generic_ObservableList_1_OnBeforeAdd
+  commentId: E:CSUtilities.Collections.Generic.ObservableList`1.OnBeforeAdd
+  fullName: CSUtilities.Collections.Generic.ObservableList<T>.OnBeforeAdd
+  fullName.vb: CSUtilities.Collections.Generic.ObservableList(Of T).OnBeforeAdd
+  nameWithType: ObservableList<T>.OnBeforeAdd
+  nameWithType.vb: ObservableList(Of T).OnBeforeAdd
+- uid: CSUtilities.Collections.Generic.ObservableList`1.OnBeforeRemove
+  name: OnBeforeRemove
+  href: api/CSUtilities.Collections.Generic.ObservableList-1.html#CSUtilities_Collections_Generic_ObservableList_1_OnBeforeRemove
+  commentId: E:CSUtilities.Collections.Generic.ObservableList`1.OnBeforeRemove
+  fullName: CSUtilities.Collections.Generic.ObservableList<T>.OnBeforeRemove
+  fullName.vb: CSUtilities.Collections.Generic.ObservableList(Of T).OnBeforeRemove
+  nameWithType: ObservableList<T>.OnBeforeRemove
+  nameWithType.vb: ObservableList(Of T).OnBeforeRemove
+- uid: CSUtilities.Collections.Generic.ObservableList`1.OnRemove
+  name: OnRemove
+  href: api/CSUtilities.Collections.Generic.ObservableList-1.html#CSUtilities_Collections_Generic_ObservableList_1_OnRemove
+  commentId: E:CSUtilities.Collections.Generic.ObservableList`1.OnRemove
+  fullName: CSUtilities.Collections.Generic.ObservableList<T>.OnRemove
+  fullName.vb: CSUtilities.Collections.Generic.ObservableList(Of T).OnRemove
+  nameWithType: ObservableList<T>.OnRemove
+  nameWithType.vb: ObservableList(Of T).OnRemove
+- uid: CSUtilities.Collections.Generic.ObservableList`1.Remove(`0)
+  name: Remove(T)
+  href: api/CSUtilities.Collections.Generic.ObservableList-1.html#CSUtilities_Collections_Generic_ObservableList_1_Remove__0_
+  commentId: M:CSUtilities.Collections.Generic.ObservableList`1.Remove(`0)
+  fullName: CSUtilities.Collections.Generic.ObservableList<T>.Remove(T)
+  fullName.vb: CSUtilities.Collections.Generic.ObservableList(Of T).Remove(T)
+  nameWithType: ObservableList<T>.Remove(T)
+  nameWithType.vb: ObservableList(Of T).Remove(T)
+- uid: CSUtilities.Collections.Generic.ObservableList`1.Remove*
+  name: Remove
+  href: api/CSUtilities.Collections.Generic.ObservableList-1.html#CSUtilities_Collections_Generic_ObservableList_1_Remove_
+  commentId: Overload:CSUtilities.Collections.Generic.ObservableList`1.Remove
+  isSpec: "True"
+  fullName: CSUtilities.Collections.Generic.ObservableList<T>.Remove
+  fullName.vb: CSUtilities.Collections.Generic.ObservableList(Of T).Remove
+  nameWithType: ObservableList<T>.Remove
+  nameWithType.vb: ObservableList(Of T).Remove
+- uid: CSUtilities.Collections.Generic.ObservableList`1.RemoveAt(System.Int32)
+  name: RemoveAt(int)
+  href: api/CSUtilities.Collections.Generic.ObservableList-1.html#CSUtilities_Collections_Generic_ObservableList_1_RemoveAt_System_Int32_
+  commentId: M:CSUtilities.Collections.Generic.ObservableList`1.RemoveAt(System.Int32)
+  name.vb: RemoveAt(Integer)
+  fullName: CSUtilities.Collections.Generic.ObservableList<T>.RemoveAt(int)
+  fullName.vb: CSUtilities.Collections.Generic.ObservableList(Of T).RemoveAt(Integer)
+  nameWithType: ObservableList<T>.RemoveAt(int)
+  nameWithType.vb: ObservableList(Of T).RemoveAt(Integer)
+- uid: CSUtilities.Collections.Generic.ObservableList`1.RemoveAt*
+  name: RemoveAt
+  href: api/CSUtilities.Collections.Generic.ObservableList-1.html#CSUtilities_Collections_Generic_ObservableList_1_RemoveAt_
+  commentId: Overload:CSUtilities.Collections.Generic.ObservableList`1.RemoveAt
+  isSpec: "True"
+  fullName: CSUtilities.Collections.Generic.ObservableList<T>.RemoveAt
+  fullName.vb: CSUtilities.Collections.Generic.ObservableList(Of T).RemoveAt
+  nameWithType: ObservableList<T>.RemoveAt
+  nameWithType.vb: ObservableList(Of T).RemoveAt
 - uid: CSUtilities.Extensions
   name: CSUtilities.Extensions
   href: api/CSUtilities.Extensions.html

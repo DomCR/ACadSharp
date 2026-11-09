@@ -2953,6 +2953,20 @@
     },
     {
       "type": "ManagedReference",
+      "source_relative_path": "api/ACadSharp.Entities.TableEntity.BreakRowRange.yml",
+      "output": {
+        ".html": {
+          "relative_path": "api/ACadSharp.Entities.TableEntity.BreakRowRange.html"
+        }
+      },
+      "version": "",
+      "Uid": null,
+      "IsMRef": true,
+      "Title": "ACadSharp.Entities.TableEntity.BreakRowRange",
+      "Summary": "<p sourcefile=\"api/ACadSharp.Entities.TableEntity.BreakRowRange.yml\" sourcestartlinenumber=\"1\">Represents a range of rows associated with a break position.</p>\n"
+    },
+    {
+      "type": "ManagedReference",
       "source_relative_path": "api/ACadSharp.Entities.TableEntity.Cell.yml",
       "output": {
         ".html": {
@@ -3005,7 +3019,7 @@
       "Uid": null,
       "IsMRef": true,
       "Title": "ACadSharp.Entities.TableEntity.CellRange",
-      "Summary": null
+      "Summary": "<p sourcefile=\"api/ACadSharp.Entities.TableEntity.CellRange.yml\" sourcestartlinenumber=\"1\">Represents a rectangular range of cells defined by top, bottom, left, and right indexes.</p>\n"
     },
     {
       "type": "ManagedReference",
@@ -3145,6 +3159,20 @@
       "Uid": null,
       "IsMRef": true,
       "Title": "ACadSharp.Entities.TableEntity.TableCellStateFlags",
+      "Summary": null
+    },
+    {
+      "type": "ManagedReference",
+      "source_relative_path": "api/ACadSharp.Entities.TableEntity.TableComponent.yml",
+      "output": {
+        ".html": {
+          "relative_path": "api/ACadSharp.Entities.TableEntity.TableComponent.html"
+        }
+      },
+      "version": "",
+      "Uid": null,
+      "IsMRef": true,
+      "Title": "ACadSharp.Entities.TableEntity.TableComponent",
       "Summary": null
     },
     {
@@ -8871,6 +8899,48 @@
       "Uid": null,
       "IsMRef": true,
       "Title": "CSUtilities.Attributes",
+      "Summary": null
+    },
+    {
+      "type": "ManagedReference",
+      "source_relative_path": "api/CSUtilities.Collections.Generic.ObservableList-1.yml",
+      "output": {
+        ".html": {
+          "relative_path": "api/CSUtilities.Collections.Generic.ObservableList-1.html"
+        }
+      },
+      "version": "",
+      "Uid": null,
+      "IsMRef": true,
+      "Title": "CSUtilities.Collections.Generic.ObservableList<T>",
+      "Summary": null
+    },
+    {
+      "type": "ManagedReference",
+      "source_relative_path": "api/CSUtilities.Collections.Generic.ObservableListEventArgs-1.yml",
+      "output": {
+        ".html": {
+          "relative_path": "api/CSUtilities.Collections.Generic.ObservableListEventArgs-1.html"
+        }
+      },
+      "version": "",
+      "Uid": null,
+      "IsMRef": true,
+      "Title": "CSUtilities.Collections.Generic.ObservableListEventArgs<T>",
+      "Summary": "<p sourcefile=\"api/CSUtilities.Collections.Generic.ObservableListEventArgs-1.yml\" sourcestartlinenumber=\"1\">Provides data for events from an observable list, including the affected item, its index, and whether the operation\nis canceled.</p>\n"
+    },
+    {
+      "type": "ManagedReference",
+      "source_relative_path": "api/CSUtilities.Collections.Generic.yml",
+      "output": {
+        ".html": {
+          "relative_path": "api/CSUtilities.Collections.Generic.html"
+        }
+      },
+      "version": "",
+      "Uid": null,
+      "IsMRef": true,
+      "Title": "CSUtilities.Collections.Generic",
       "Summary": null
     },
     {

@@ -89,7 +89,7 @@
 
 
   <h1 id="ACadSharp_Objects_FormattedTableData" data-uid="ACadSharp.Objects.FormattedTableData" class="text-break">
-Class FormattedTableData  <a class="header-action link-secondary" title="View source" href="https://github.com/DomCR/ACadSharp/blob/master/src/ACadSharp/Objects/LinkedData.cs/#L56"><i class="bi bi-code-slash"></i></a>
+Class FormattedTableData  <a class="header-action link-secondary" title="View source" href="https://github.com/DomCR/ACadSharp/blob/master/src/ACadSharp/Objects/FormattedTableData.cs/#L14"><i class="bi bi-code-slash"></i></a>
   </h1>
 
   <div class="facts text-secondary">
@@ -140,10 +140,10 @@ public abstract class FormattedTableData : LinkedTableData, IHandledCadObject, I
     <dt>Inherited Members</dt>
     <dd>
     <div>
-      <a class="xref" href="ACadSharp.Objects.LinkedTableData.html#ACadSharp_Objects_LinkedTableData_Rows">LinkedTableData.Rows</a>
+      <a class="xref" href="ACadSharp.Objects.LinkedTableData.html#ACadSharp_Objects_LinkedTableData_Columns">LinkedTableData.Columns</a>
     </div>
     <div>
-      <a class="xref" href="ACadSharp.Objects.LinkedTableData.html#ACadSharp_Objects_LinkedTableData_Columns">LinkedTableData.Columns</a>
+      <a class="xref" href="ACadSharp.Objects.LinkedTableData.html#ACadSharp_Objects_LinkedTableData_Rows">LinkedTableData.Rows</a>
     </div>
     <div>
       <a class="xref" href="ACadSharp.Objects.LinkedData.html#ACadSharp_Objects_LinkedData_Name">LinkedData.Name</a>
@@ -156,9 +156,6 @@ public abstract class FormattedTableData : LinkedTableData, IHandledCadObject, I
     </div>
     <div>
       <a class="xref" href="ACadSharp.Objects.NonGraphicalObject.html#ACadSharp_Objects_NonGraphicalObject_ObjectType">NonGraphicalObject.ObjectType</a>
-    </div>
-    <div>
-      <a class="xref" href="ACadSharp.Objects.NonGraphicalObject.html#ACadSharp_Objects_NonGraphicalObject_Clone">NonGraphicalObject.Clone()</a>
     </div>
     <div>
       <a class="xref" href="ACadSharp.Objects.NonGraphicalObject.html#ACadSharp_Objects_NonGraphicalObject_ToString">NonGraphicalObject.ToString()</a>
@@ -260,14 +257,15 @@ public abstract class FormattedTableData : LinkedTableData, IHandledCadObject, I
 
   <h3 id="ACadSharp_Objects_FormattedTableData_CellStyleOverride" data-uid="ACadSharp.Objects.FormattedTableData.CellStyleOverride">
   CellStyleOverride
-  <a class="header-action link-secondary" title="View source" href="https://github.com/DomCR/ACadSharp/blob/master/src/ACadSharp/Objects/LinkedData.cs/#L64"><i class="bi bi-code-slash"></i></a>
+  <a class="header-action link-secondary" title="View source" href="https://github.com/DomCR/ACadSharp/blob/master/src/ACadSharp/Objects/FormattedTableData.cs/#L22"><i class="bi bi-code-slash"></i></a>
   </h3>
 
-  <div class="markdown level1 summary"></div>
+  <div class="markdown level1 summary"><p>Gets the style override applied to the cell.</p>
+</div>
   <div class="markdown level1 conceptual"></div>
 
   <div class="codewrapper">
-    <pre><code class="lang-csharp hljs">public TableStyle.CellStyle CellStyleOverride { get; set; }</code></pre>
+    <pre><code class="lang-csharp hljs">public TableStyle.CellStyle CellStyleOverride { get; }</code></pre>
   </div>
 
 
@@ -283,6 +281,10 @@ public abstract class FormattedTableData : LinkedTableData, IHandledCadObject, I
 
 
 
+  <h4 class="section" id="ACadSharp_Objects_FormattedTableData_CellStyleOverride_remarks">Remarks</h4>
+  <div class="markdown level1 remarks"><p>Initialized with <code>HasData</code> set to <a href="https://learn.microsoft.com/dotnet/csharp/language-reference/builtin-types/bool">false</a>, indicating no override is applied
+by default.</p>
+</div>
 
 
 
@@ -291,10 +293,11 @@ public abstract class FormattedTableData : LinkedTableData, IHandledCadObject, I
 
   <h3 id="ACadSharp_Objects_FormattedTableData_MergedCellRanges" data-uid="ACadSharp.Objects.FormattedTableData.MergedCellRanges">
   MergedCellRanges
-  <a class="header-action link-secondary" title="View source" href="https://github.com/DomCR/ACadSharp/blob/master/src/ACadSharp/Objects/LinkedData.cs/#L62"><i class="bi bi-code-slash"></i></a>
+  <a class="header-action link-secondary" title="View source" href="https://github.com/DomCR/ACadSharp/blob/master/src/ACadSharp/Objects/FormattedTableData.cs/#L27"><i class="bi bi-code-slash"></i></a>
   </h3>
 
-  <div class="markdown level1 summary"></div>
+  <div class="markdown level1 summary"><p>Gets or sets the collection of merged cell ranges.</p>
+</div>
   <div class="markdown level1 conceptual"></div>
 
   <div class="codewrapper">
@@ -322,7 +325,7 @@ public abstract class FormattedTableData : LinkedTableData, IHandledCadObject, I
 
   <h3 id="ACadSharp_Objects_FormattedTableData_SubclassMarker" data-uid="ACadSharp.Objects.FormattedTableData.SubclassMarker">
   SubclassMarker
-  <a class="header-action link-secondary" title="View source" href="https://github.com/DomCR/ACadSharp/blob/master/src/ACadSharp/Objects/LinkedData.cs/#L60"><i class="bi bi-code-slash"></i></a>
+  <a class="header-action link-secondary" title="View source" href="https://github.com/DomCR/ACadSharp/blob/master/src/ACadSharp/Objects/FormattedTableData.cs/#L30"><i class="bi bi-code-slash"></i></a>
   </h3>
 
   <div class="markdown level1 summary"><p>Object Subclass marker.</p>
@@ -350,11 +353,51 @@ public abstract class FormattedTableData : LinkedTableData, IHandledCadObject, I
 
 
 
+  <h2 class="section" id="methods">Methods
+</h2>
+
+
+  <a id="ACadSharp_Objects_FormattedTableData_Clone_" data-uid="ACadSharp.Objects.FormattedTableData.Clone*"></a>
+
+  <h3 id="ACadSharp_Objects_FormattedTableData_Clone" data-uid="ACadSharp.Objects.FormattedTableData.Clone">
+  Clone()
+  <a class="header-action link-secondary" title="View source" href="https://github.com/DomCR/ACadSharp/blob/master/src/ACadSharp/Objects/FormattedTableData.cs/#L33"><i class="bi bi-code-slash"></i></a>
+  </h3>
+
+  <div class="markdown level1 summary"><p>Creates a new object that is a copy of the current instance.</p>
+</div>
+  <div class="markdown level1 conceptual"></div>
+
+  <div class="codewrapper">
+    <pre><code class="lang-csharp hljs">public override CadObject Clone()</code></pre>
+  </div>
+
+
+  <h4 class="section">Returns</h4>
+  <dl class="parameters">
+    <dt><a class="xref" href="ACadSharp.CadObject.html">CadObject</a></dt>
+    <dd><p>A new object that is a copy of this instance.</p>
+</dd>
+  </dl>
+
+
+
+
+
+
+
+  <h4 class="section" id="ACadSharp_Objects_FormattedTableData_Clone_remarks">Remarks</h4>
+  <div class="markdown level1 remarks"><p>The copy will be unattached from the document or any reference.</p>
+</div>
+
+
+
+
 
 </article>
 
         <div class="contribution d-print-none">
-          <a href="https://github.com/DomCR/ACadSharp/blob/master/src/ACadSharp/Objects/LinkedData.cs/#L56" class="edit-link">Edit this page</a>
+          <a href="https://github.com/DomCR/ACadSharp/blob/master/src/ACadSharp/Objects/FormattedTableData.cs/#L14" class="edit-link">Edit this page</a>
         </div>
 
 

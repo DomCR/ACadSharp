@@ -6,7 +6,7 @@
       <meta name="viewport" content="width=device-width, initial-scale=1.0">
       <meta name="title" content="Class TableEntity.CellRange | ACadSharp ">
       
-      
+      <meta name="description" content="Represents a rectangular range of cells defined by top, bottom, left, and right indexes.">
       <link rel="icon" href="../favicon.ico">
       <link rel="stylesheet" href="../public/docfx.min.css">
       <link rel="stylesheet" href="../public/main.css">
@@ -89,7 +89,7 @@
 
 
   <h1 id="ACadSharp_Entities_TableEntity_CellRange" data-uid="ACadSharp.Entities.TableEntity.CellRange" class="text-break">
-Class TableEntity.CellRange  <a class="header-action link-secondary" title="View source" href="https://github.com/DomCR/ACadSharp/blob/master/src/ACadSharp/Entities/TableEntity.CellRange.cs/#L7"><i class="bi bi-code-slash"></i></a>
+Class TableEntity.CellRange  <a class="header-action link-secondary" title="View source" href="https://github.com/DomCR/ACadSharp/blob/master/src/ACadSharp/Entities/TableEntity.CellRange.cs/#L11"><i class="bi bi-code-slash"></i></a>
   </h1>
 
   <div class="facts text-secondary">
@@ -97,7 +97,8 @@ Class TableEntity.CellRange  <a class="header-action link-secondary" title="View
   <dl><dt>Assembly</dt><dd>ACadSharp.dll</dd></dl>
   </div>
 
-  <div class="markdown summary"></div>
+  <div class="markdown summary"><p>Represents a rectangular range of cells defined by top, bottom, left, and right indexes.</p>
+</div>
   <div class="markdown conceptual"></div>
 
   <div class="codewrapper">
@@ -153,6 +154,9 @@ Class TableEntity.CellRange  <a class="header-action link-secondary" title="View
 
 
 
+  <h2 id="ACadSharp_Entities_TableEntity_CellRange_remarks">Remarks</h2>
+  <div class="markdown level0 remarks"><p>Stores the inclusive row and column boundaries of the range.</p>
+</div>
 
 
   <h2 class="section" id="properties">Properties
@@ -163,10 +167,11 @@ Class TableEntity.CellRange  <a class="header-action link-secondary" title="View
 
   <h3 id="ACadSharp_Entities_TableEntity_CellRange_BottomRowIndex" data-uid="ACadSharp.Entities.TableEntity.CellRange.BottomRowIndex">
   BottomRowIndex
-  <a class="header-action link-secondary" title="View source" href="https://github.com/DomCR/ACadSharp/blob/master/src/ACadSharp/Entities/TableEntity.CellRange.cs/#L9"><i class="bi bi-code-slash"></i></a>
+  <a class="header-action link-secondary" title="View source" href="https://github.com/DomCR/ACadSharp/blob/master/src/ACadSharp/Entities/TableEntity.CellRange.cs/#L16"><i class="bi bi-code-slash"></i></a>
   </h3>
 
-  <div class="markdown level1 summary"></div>
+  <div class="markdown level1 summary"><p>Gets or sets the index of the bottom row.</p>
+</div>
   <div class="markdown level1 conceptual"></div>
 
   <div class="codewrapper">
@@ -195,10 +200,11 @@ public int BottomRowIndex { get; set; }</code></pre>
 
   <h3 id="ACadSharp_Entities_TableEntity_CellRange_LeftColumnIndex" data-uid="ACadSharp.Entities.TableEntity.CellRange.LeftColumnIndex">
   LeftColumnIndex
-  <a class="header-action link-secondary" title="View source" href="https://github.com/DomCR/ACadSharp/blob/master/src/ACadSharp/Entities/TableEntity.CellRange.cs/#L12"><i class="bi bi-code-slash"></i></a>
+  <a class="header-action link-secondary" title="View source" href="https://github.com/DomCR/ACadSharp/blob/master/src/ACadSharp/Entities/TableEntity.CellRange.cs/#L22"><i class="bi bi-code-slash"></i></a>
   </h3>
 
-  <div class="markdown level1 summary"></div>
+  <div class="markdown level1 summary"><p>Gets or sets the zero-based index of the leftmost column.</p>
+</div>
   <div class="markdown level1 conceptual"></div>
 
   <div class="codewrapper">
@@ -227,10 +233,11 @@ public int LeftColumnIndex { get; set; }</code></pre>
 
   <h3 id="ACadSharp_Entities_TableEntity_CellRange_RightColumnIndex" data-uid="ACadSharp.Entities.TableEntity.CellRange.RightColumnIndex">
   RightColumnIndex
-  <a class="header-action link-secondary" title="View source" href="https://github.com/DomCR/ACadSharp/blob/master/src/ACadSharp/Entities/TableEntity.CellRange.cs/#L15"><i class="bi bi-code-slash"></i></a>
+  <a class="header-action link-secondary" title="View source" href="https://github.com/DomCR/ACadSharp/blob/master/src/ACadSharp/Entities/TableEntity.CellRange.cs/#L28"><i class="bi bi-code-slash"></i></a>
   </h3>
 
-  <div class="markdown level1 summary"></div>
+  <div class="markdown level1 summary"><p>Gets or sets the index of the right column.</p>
+</div>
   <div class="markdown level1 conceptual"></div>
 
   <div class="codewrapper">
@@ -259,10 +266,11 @@ public int RightColumnIndex { get; set; }</code></pre>
 
   <h3 id="ACadSharp_Entities_TableEntity_CellRange_TopRowIndex" data-uid="ACadSharp.Entities.TableEntity.CellRange.TopRowIndex">
   TopRowIndex
-  <a class="header-action link-secondary" title="View source" href="https://github.com/DomCR/ACadSharp/blob/master/src/ACadSharp/Entities/TableEntity.CellRange.cs/#L18"><i class="bi bi-code-slash"></i></a>
+  <a class="header-action link-secondary" title="View source" href="https://github.com/DomCR/ACadSharp/blob/master/src/ACadSharp/Entities/TableEntity.CellRange.cs/#L34"><i class="bi bi-code-slash"></i></a>
   </h3>
 
-  <div class="markdown level1 summary"></div>
+  <div class="markdown level1 summary"><p>Gets or sets the zero-based index of the top row.</p>
+</div>
   <div class="markdown level1 conceptual"></div>
 
   <div class="codewrapper">
@@ -287,11 +295,52 @@ public int TopRowIndex { get; set; }</code></pre>
 
 
 
+  <h2 class="section" id="methods">Methods
+</h2>
+
+
+  <a id="ACadSharp_Entities_TableEntity_CellRange_Clone_" data-uid="ACadSharp.Entities.TableEntity.CellRange.Clone*"></a>
+
+  <h3 id="ACadSharp_Entities_TableEntity_CellRange_Clone" data-uid="ACadSharp.Entities.TableEntity.CellRange.Clone">
+  Clone()
+  <a class="header-action link-secondary" title="View source" href="https://github.com/DomCR/ACadSharp/blob/master/src/ACadSharp/Entities/TableEntity.CellRange.cs/#L43"><i class="bi bi-code-slash"></i></a>
+  </h3>
+
+  <div class="markdown level1 summary"><p>Creates a new <a class="xref" href="ACadSharp.Entities.TableEntity.CellRange.html">TableEntity.CellRange</a> with the same row and column boundary indices.</p>
+</div>
+  <div class="markdown level1 conceptual"></div>
+
+  <div class="codewrapper">
+    <pre><code class="lang-csharp hljs">public TableEntity.CellRange Clone()</code></pre>
+  </div>
+
+
+  <h4 class="section">Returns</h4>
+  <dl class="parameters">
+    <dt><a class="xref" href="ACadSharp.Entities.TableEntity.html">TableEntity</a>.<a class="xref" href="ACadSharp.Entities.TableEntity.CellRange.html">CellRange</a></dt>
+    <dd><p>A new <a class="xref" href="ACadSharp.Entities.TableEntity.CellRange.html">TableEntity.CellRange</a> instance whose <code>TopRowIndex</code>, <code>BottomRowIndex</code>, <code>LeftColumnIndex</code>,
+and <code>RightColumnIndex</code> match the current instance.</p>
+</dd>
+  </dl>
+
+
+
+
+
+
+
+  <h4 class="section" id="ACadSharp_Entities_TableEntity_CellRange_Clone_remarks">Remarks</h4>
+  <div class="markdown level1 remarks"><p>The returned instance is a separate object.</p>
+</div>
+
+
+
+
 
 </article>
 
         <div class="contribution d-print-none">
-          <a href="https://github.com/DomCR/ACadSharp/blob/master/src/ACadSharp/Entities/TableEntity.CellRange.cs/#L7" class="edit-link">Edit this page</a>
+          <a href="https://github.com/DomCR/ACadSharp/blob/master/src/ACadSharp/Entities/TableEntity.CellRange.cs/#L11" class="edit-link">Edit this page</a>
         </div>
 
 

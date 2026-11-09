@@ -89,7 +89,7 @@
 
 
   <h1 id="ACadSharp_Objects_LinkedTableData" data-uid="ACadSharp.Objects.LinkedTableData" class="text-break">
-Class LinkedTableData  <a class="header-action link-secondary" title="View source" href="https://github.com/DomCR/ACadSharp/blob/master/src/ACadSharp/Objects/LinkedData.cs/#L39"><i class="bi bi-code-slash"></i></a>
+Class LinkedTableData  <a class="header-action link-secondary" title="View source" href="https://github.com/DomCR/ACadSharp/blob/master/src/ACadSharp/Objects/LinkedTableData.cs/#L13"><i class="bi bi-code-slash"></i></a>
   </h1>
 
   <div class="facts text-secondary">
@@ -149,9 +149,6 @@ public abstract class LinkedTableData : LinkedData, IHandledCadObject, INamedCad
     </div>
     <div>
       <a class="xref" href="ACadSharp.Objects.NonGraphicalObject.html#ACadSharp_Objects_NonGraphicalObject_ObjectType">NonGraphicalObject.ObjectType</a>
-    </div>
-    <div>
-      <a class="xref" href="ACadSharp.Objects.NonGraphicalObject.html#ACadSharp_Objects_NonGraphicalObject_Clone">NonGraphicalObject.Clone()</a>
     </div>
     <div>
       <a class="xref" href="ACadSharp.Objects.NonGraphicalObject.html#ACadSharp_Objects_NonGraphicalObject_ToString">NonGraphicalObject.ToString()</a>
@@ -245,6 +242,38 @@ public abstract class LinkedTableData : LinkedData, IHandledCadObject, INamedCad
 </div>
 
 
+  <h2 class="section" id="constructors">Constructors
+</h2>
+
+
+  <a id="ACadSharp_Objects_LinkedTableData__ctor_" data-uid="ACadSharp.Objects.LinkedTableData.#ctor*"></a>
+
+  <h3 id="ACadSharp_Objects_LinkedTableData__ctor" data-uid="ACadSharp.Objects.LinkedTableData.#ctor">
+  LinkedTableData()
+  <a class="header-action link-secondary" title="View source" href="https://github.com/DomCR/ACadSharp/blob/master/src/ACadSharp/Objects/LinkedTableData.cs/#L34"><i class="bi bi-code-slash"></i></a>
+  </h3>
+
+  <div class="markdown level1 summary"><p>Initializes a new instance of the LinkedTableData class and registers internal handlers for row and column add and
+remove events.</p>
+</div>
+  <div class="markdown level1 conceptual"></div>
+
+  <div class="codewrapper">
+    <pre><code class="lang-csharp hljs">public LinkedTableData()</code></pre>
+  </div>
+
+
+
+
+
+
+
+
+
+
+
+
+
   <h2 class="section" id="properties">Properties
 </h2>
 
@@ -253,14 +282,15 @@ public abstract class LinkedTableData : LinkedData, IHandledCadObject, INamedCad
 
   <h3 id="ACadSharp_Objects_LinkedTableData_Columns" data-uid="ACadSharp.Objects.LinkedTableData.Columns">
   Columns
-  <a class="header-action link-secondary" title="View source" href="https://github.com/DomCR/ACadSharp/blob/master/src/ACadSharp/Objects/LinkedData.cs/#L47"><i class="bi bi-code-slash"></i></a>
+  <a class="header-action link-secondary" title="View source" href="https://github.com/DomCR/ACadSharp/blob/master/src/ACadSharp/Objects/LinkedTableData.cs/#L19"><i class="bi bi-code-slash"></i></a>
   </h3>
 
-  <div class="markdown level1 summary"></div>
+  <div class="markdown level1 summary"><p>Gets the collection of columns defined for the table entity.</p>
+</div>
   <div class="markdown level1 conceptual"></div>
 
   <div class="codewrapper">
-    <pre><code class="lang-csharp hljs">public List&lt;TableEntity.Column&gt; Columns { get; }</code></pre>
+    <pre><code class="lang-csharp hljs">public ObservableList&lt;TableEntity.Column&gt; Columns { get; }</code></pre>
   </div>
 
 
@@ -269,7 +299,7 @@ public abstract class LinkedTableData : LinkedData, IHandledCadObject, INamedCad
 
   <h4 class="section">Property Value</h4>
   <dl class="parameters">
-    <dt><a class="xref" href="https://learn.microsoft.com/dotnet/api/system.collections.generic.list-1">List</a>&lt;<a class="xref" href="ACadSharp.Entities.TableEntity.html">TableEntity</a>.<a class="xref" href="ACadSharp.Entities.TableEntity.Column.html">Column</a>&gt;</dt>
+    <dt><a class="xref" href="CSUtilities.Collections.Generic.ObservableList-1.html">ObservableList</a>&lt;<a class="xref" href="ACadSharp.Entities.TableEntity.html">TableEntity</a>.<a class="xref" href="ACadSharp.Entities.TableEntity.Column.html">Column</a>&gt;</dt>
     <dd></dd>
   </dl>
 
@@ -284,14 +314,15 @@ public abstract class LinkedTableData : LinkedData, IHandledCadObject, INamedCad
 
   <h3 id="ACadSharp_Objects_LinkedTableData_Rows" data-uid="ACadSharp.Objects.LinkedTableData.Rows">
   Rows
-  <a class="header-action link-secondary" title="View source" href="https://github.com/DomCR/ACadSharp/blob/master/src/ACadSharp/Objects/LinkedData.cs/#L45"><i class="bi bi-code-slash"></i></a>
+  <a class="header-action link-secondary" title="View source" href="https://github.com/DomCR/ACadSharp/blob/master/src/ACadSharp/Objects/LinkedTableData.cs/#L25"><i class="bi bi-code-slash"></i></a>
   </h3>
 
-  <div class="markdown level1 summary"></div>
+  <div class="markdown level1 summary"><p>Gets the collection of rows in the table.</p>
+</div>
   <div class="markdown level1 conceptual"></div>
 
   <div class="codewrapper">
-    <pre><code class="lang-csharp hljs">public List&lt;TableEntity.Row&gt; Rows { get; }</code></pre>
+    <pre><code class="lang-csharp hljs">public ObservableList&lt;TableEntity.Row&gt; Rows { get; }</code></pre>
   </div>
 
 
@@ -300,13 +331,16 @@ public abstract class LinkedTableData : LinkedData, IHandledCadObject, INamedCad
 
   <h4 class="section">Property Value</h4>
   <dl class="parameters">
-    <dt><a class="xref" href="https://learn.microsoft.com/dotnet/api/system.collections.generic.list-1">List</a>&lt;<a class="xref" href="ACadSharp.Entities.TableEntity.html">TableEntity</a>.<a class="xref" href="ACadSharp.Entities.TableEntity.Row.html">Row</a>&gt;</dt>
+    <dt><a class="xref" href="CSUtilities.Collections.Generic.ObservableList-1.html">ObservableList</a>&lt;<a class="xref" href="ACadSharp.Entities.TableEntity.html">TableEntity</a>.<a class="xref" href="ACadSharp.Entities.TableEntity.Row.html">Row</a>&gt;</dt>
     <dd></dd>
   </dl>
 
 
 
 
+  <h4 class="section" id="ACadSharp_Objects_LinkedTableData_Rows_remarks">Remarks</h4>
+  <div class="markdown level1 remarks"><p>The returned collection is initialized and can be observed for changes.</p>
+</div>
 
 
 
@@ -315,7 +349,7 @@ public abstract class LinkedTableData : LinkedData, IHandledCadObject, INamedCad
 
   <h3 id="ACadSharp_Objects_LinkedTableData_SubclassMarker" data-uid="ACadSharp.Objects.LinkedTableData.SubclassMarker">
   SubclassMarker
-  <a class="header-action link-secondary" title="View source" href="https://github.com/DomCR/ACadSharp/blob/master/src/ACadSharp/Objects/LinkedData.cs/#L43"><i class="bi bi-code-slash"></i></a>
+  <a class="header-action link-secondary" title="View source" href="https://github.com/DomCR/ACadSharp/blob/master/src/ACadSharp/Objects/LinkedTableData.cs/#L28"><i class="bi bi-code-slash"></i></a>
   </h3>
 
   <div class="markdown level1 summary"><p>Object Subclass marker.</p>
@@ -343,11 +377,51 @@ public abstract class LinkedTableData : LinkedData, IHandledCadObject, INamedCad
 
 
 
+  <h2 class="section" id="methods">Methods
+</h2>
+
+
+  <a id="ACadSharp_Objects_LinkedTableData_Clone_" data-uid="ACadSharp.Objects.LinkedTableData.Clone*"></a>
+
+  <h3 id="ACadSharp_Objects_LinkedTableData_Clone" data-uid="ACadSharp.Objects.LinkedTableData.Clone">
+  Clone()
+  <a class="header-action link-secondary" title="View source" href="https://github.com/DomCR/ACadSharp/blob/master/src/ACadSharp/Objects/LinkedTableData.cs/#L48"><i class="bi bi-code-slash"></i></a>
+  </h3>
+
+  <div class="markdown level1 summary"><p>Creates a new object that is a copy of the current instance.</p>
+</div>
+  <div class="markdown level1 conceptual"></div>
+
+  <div class="codewrapper">
+    <pre><code class="lang-csharp hljs">public override CadObject Clone()</code></pre>
+  </div>
+
+
+  <h4 class="section">Returns</h4>
+  <dl class="parameters">
+    <dt><a class="xref" href="ACadSharp.CadObject.html">CadObject</a></dt>
+    <dd><p>A new object that is a copy of this instance.</p>
+</dd>
+  </dl>
+
+
+
+
+
+
+
+  <h4 class="section" id="ACadSharp_Objects_LinkedTableData_Clone_remarks">Remarks</h4>
+  <div class="markdown level1 remarks"><p>The copy will be unattached from the document or any reference.</p>
+</div>
+
+
+
+
 
 </article>
 
         <div class="contribution d-print-none">
-          <a href="https://github.com/DomCR/ACadSharp/blob/master/src/ACadSharp/Objects/LinkedData.cs/#L39" class="edit-link">Edit this page</a>
+          <a href="https://github.com/DomCR/ACadSharp/blob/master/src/ACadSharp/Objects/LinkedTableData.cs/#L13" class="edit-link">Edit this page</a>
         </div>
 
 

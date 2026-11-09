@@ -89,7 +89,7 @@
 
 
   <h1 id="ACadSharp_Entities_TableEntity_Row" data-uid="ACadSharp.Entities.TableEntity.Row" class="text-break">
-Class TableEntity.Row  <a class="header-action link-secondary" title="View source" href="https://github.com/DomCR/ACadSharp/blob/master/src/ACadSharp/Entities/TableEntity.Row.cs/#L12"><i class="bi bi-code-slash"></i></a>
+Class TableEntity.Row  <a class="header-action link-secondary" title="View source" href="https://github.com/DomCR/ACadSharp/blob/master/src/ACadSharp/Entities/TableEntity.Row.cs/#L9"><i class="bi bi-code-slash"></i></a>
   </h1>
 
   <div class="facts text-secondary">
@@ -102,7 +102,7 @@ Class TableEntity.Row  <a class="header-action link-secondary" title="View sourc
   <div class="markdown conceptual"></div>
 
   <div class="codewrapper">
-    <pre><code class="lang-csharp hljs">public class TableEntity.Row : TableEntity.ITableComponent</code></pre>
+    <pre><code class="lang-csharp hljs">public class TableEntity.Row : TableEntity.TableComponent, TableEntity.ITableComponent</code></pre>
   </div>
 
 
@@ -112,6 +112,7 @@ Class TableEntity.Row  <a class="header-action link-secondary" title="View sourc
     <dt>Inheritance</dt>
     <dd>
       <div><a class="xref" href="https://learn.microsoft.com/dotnet/api/system.object">object</a></div>
+      <div><a class="xref" href="ACadSharp.Entities.TableEntity.html">TableEntity</a>.<a class="xref" href="ACadSharp.Entities.TableEntity.TableComponent.html">TableComponent</a></div>
       <div><span class="xref">TableEntity.Row</span></div>
     </dd>
   </dl>
@@ -127,6 +128,27 @@ Class TableEntity.Row  <a class="header-action link-secondary" title="View sourc
   <dl class="typelist inheritedMembers">
     <dt>Inherited Members</dt>
     <dd>
+    <div>
+      <a class="xref" href="ACadSharp.Entities.TableEntity.TableComponent.html#ACadSharp_Entities_TableEntity_TableComponent_Cells">TableEntity.TableComponent.Cells</a>
+    </div>
+    <div>
+      <a class="xref" href="ACadSharp.Entities.TableEntity.TableComponent.html#ACadSharp_Entities_TableEntity_TableComponent_CellStyle">TableEntity.TableComponent.CellStyle</a>
+    </div>
+    <div>
+      <a class="xref" href="ACadSharp.Entities.TableEntity.TableComponent.html#ACadSharp_Entities_TableEntity_TableComponent_CellStyleOverride">TableEntity.TableComponent.CellStyleOverride</a>
+    </div>
+    <div>
+      <a class="xref" href="ACadSharp.Entities.TableEntity.TableComponent.html#ACadSharp_Entities_TableEntity_TableComponent_CustomData">TableEntity.TableComponent.CustomData</a>
+    </div>
+    <div>
+      <a class="xref" href="ACadSharp.Entities.TableEntity.TableComponent.html#ACadSharp_Entities_TableEntity_TableComponent_CustomDataCollection">TableEntity.TableComponent.CustomDataCollection</a>
+    </div>
+    <div>
+      <a class="xref" href="ACadSharp.Entities.TableEntity.TableComponent.html#ACadSharp_Entities_TableEntity_TableComponent_Owner">TableEntity.TableComponent.Owner</a>
+    </div>
+    <div>
+      <a class="xref" href="ACadSharp.Entities.TableEntity.TableComponent.html#ACadSharp_Entities_TableEntity_TableComponent_Clone">TableEntity.TableComponent.Clone()</a>
+    </div>
     <div>
       <a class="xref" href="https://learn.microsoft.com/dotnet/api/system.object.equals#system-object-equals(system-object)">object.Equals(object)</a>
     </div>
@@ -166,176 +188,11 @@ Class TableEntity.Row  <a class="header-action link-secondary" title="View sourc
 </h2>
 
 
-  <a id="ACadSharp_Entities_TableEntity_Row_CellStyle_" data-uid="ACadSharp.Entities.TableEntity.Row.CellStyle*"></a>
-
-  <h3 id="ACadSharp_Entities_TableEntity_Row_CellStyle" data-uid="ACadSharp.Entities.TableEntity.Row.CellStyle">
-  CellStyle
-  <a class="header-action link-secondary" title="View source" href="https://github.com/DomCR/ACadSharp/blob/master/src/ACadSharp/Entities/TableEntity.Row.cs/#L20"><i class="bi bi-code-slash"></i></a>
-  </h3>
-
-  <div class="markdown level1 summary"><p>Gets or sets the style applied to the cells in the component.</p>
-</div>
-  <div class="markdown level1 conceptual"></div>
-
-  <div class="codewrapper">
-    <pre><code class="lang-csharp hljs">public TableStyle.CellStyle CellStyle { get; set; }</code></pre>
-  </div>
-
-
-
-
-
-  <h4 class="section">Property Value</h4>
-  <dl class="parameters">
-    <dt><a class="xref" href="ACadSharp.Objects.TableStyle.html">TableStyle</a>.<a class="xref" href="ACadSharp.Objects.TableStyle.CellStyle.html">CellStyle</a></dt>
-    <dd></dd>
-  </dl>
-
-
-
-
-
-
-
-
-  <a id="ACadSharp_Entities_TableEntity_Row_CellStyleOverride_" data-uid="ACadSharp.Entities.TableEntity.Row.CellStyleOverride*"></a>
-
-  <h3 id="ACadSharp_Entities_TableEntity_Row_CellStyleOverride" data-uid="ACadSharp.Entities.TableEntity.Row.CellStyleOverride">
-  CellStyleOverride
-  <a class="header-action link-secondary" title="View source" href="https://github.com/DomCR/ACadSharp/blob/master/src/ACadSharp/Entities/TableEntity.Row.cs/#L23"><i class="bi bi-code-slash"></i></a>
-  </h3>
-
-  <div class="markdown level1 summary"><p>Gets or sets the style to apply to the cell, overriding the default cell style.</p>
-</div>
-  <div class="markdown level1 conceptual"></div>
-
-  <div class="codewrapper">
-    <pre><code class="lang-csharp hljs">public TableStyle.CellStyle CellStyleOverride { get; set; }</code></pre>
-  </div>
-
-
-
-
-
-  <h4 class="section">Property Value</h4>
-  <dl class="parameters">
-    <dt><a class="xref" href="ACadSharp.Objects.TableStyle.html">TableStyle</a>.<a class="xref" href="ACadSharp.Objects.TableStyle.CellStyle.html">CellStyle</a></dt>
-    <dd></dd>
-  </dl>
-
-
-
-
-  <h4 class="section" id="ACadSharp_Entities_TableEntity_Row_CellStyleOverride_remarks">Remarks</h4>
-  <div class="markdown level1 remarks"><p>Set this property to customize the appearance of the cell independently of the default or
-inherited styles. If not set, the cell uses the default style.</p>
-</div>
-
-
-
-
-  <a id="ACadSharp_Entities_TableEntity_Row_Cells_" data-uid="ACadSharp.Entities.TableEntity.Row.Cells*"></a>
-
-  <h3 id="ACadSharp_Entities_TableEntity_Row_Cells" data-uid="ACadSharp.Entities.TableEntity.Row.Cells">
-  Cells
-  <a class="header-action link-secondary" title="View source" href="https://github.com/DomCR/ACadSharp/blob/master/src/ACadSharp/Entities/TableEntity.Row.cs/#L17"><i class="bi bi-code-slash"></i></a>
-  </h3>
-
-  <div class="markdown level1 summary"><p>Gets or sets the collection of cells contained in the current object.</p>
-</div>
-  <div class="markdown level1 conceptual"></div>
-
-  <div class="codewrapper">
-    <pre><code class="lang-csharp hljs">public List&lt;TableEntity.Cell&gt; Cells { get; set; }</code></pre>
-  </div>
-
-
-
-
-
-  <h4 class="section">Property Value</h4>
-  <dl class="parameters">
-    <dt><a class="xref" href="https://learn.microsoft.com/dotnet/api/system.collections.generic.list-1">List</a>&lt;<a class="xref" href="ACadSharp.Entities.TableEntity.html">TableEntity</a>.<a class="xref" href="ACadSharp.Entities.TableEntity.Cell.html">Cell</a>&gt;</dt>
-    <dd></dd>
-  </dl>
-
-
-
-
-
-
-
-
-  <a id="ACadSharp_Entities_TableEntity_Row_CustomData_" data-uid="ACadSharp.Entities.TableEntity.Row.CustomData*"></a>
-
-  <h3 id="ACadSharp_Entities_TableEntity_Row_CustomData" data-uid="ACadSharp.Entities.TableEntity.Row.CustomData">
-  CustomData
-  <a class="header-action link-secondary" title="View source" href="https://github.com/DomCR/ACadSharp/blob/master/src/ACadSharp/Entities/TableEntity.Row.cs/#L26"><i class="bi bi-code-slash"></i></a>
-  </h3>
-
-  <div class="markdown level1 summary"><p>Gets or sets the custom data value associated with the entity.</p>
-</div>
-  <div class="markdown level1 conceptual"></div>
-
-  <div class="codewrapper">
-    <pre><code class="lang-csharp hljs">[DxfCodeValue(new int[] { 90 })]
-public int CustomData { get; set; }</code></pre>
-  </div>
-
-
-
-
-
-  <h4 class="section">Property Value</h4>
-  <dl class="parameters">
-    <dt><a class="xref" href="https://learn.microsoft.com/dotnet/api/system.int32">int</a></dt>
-    <dd></dd>
-  </dl>
-
-
-
-
-
-
-
-
-  <a id="ACadSharp_Entities_TableEntity_Row_CustomDataCollection_" data-uid="ACadSharp.Entities.TableEntity.Row.CustomDataCollection*"></a>
-
-  <h3 id="ACadSharp_Entities_TableEntity_Row_CustomDataCollection" data-uid="ACadSharp.Entities.TableEntity.Row.CustomDataCollection">
-  CustomDataCollection
-  <a class="header-action link-secondary" title="View source" href="https://github.com/DomCR/ACadSharp/blob/master/src/ACadSharp/Entities/TableEntity.Row.cs/#L30"><i class="bi bi-code-slash"></i></a>
-  </h3>
-
-  <div class="markdown level1 summary"><p>Gets the collection of custom data entries associated with this instance.</p>
-</div>
-  <div class="markdown level1 conceptual"></div>
-
-  <div class="codewrapper">
-    <pre><code class="lang-csharp hljs">public List&lt;TableEntity.CustomDataEntry&gt; CustomDataCollection { get; }</code></pre>
-  </div>
-
-
-
-
-
-  <h4 class="section">Property Value</h4>
-  <dl class="parameters">
-    <dt><a class="xref" href="https://learn.microsoft.com/dotnet/api/system.collections.generic.list-1">List</a>&lt;<a class="xref" href="ACadSharp.Entities.TableEntity.html">TableEntity</a>.<a class="xref" href="ACadSharp.Entities.TableEntity.CustomDataEntry.html">CustomDataEntry</a>&gt;</dt>
-    <dd></dd>
-  </dl>
-
-
-
-
-
-
-
-
   <a id="ACadSharp_Entities_TableEntity_Row_Height_" data-uid="ACadSharp.Entities.TableEntity.Row.Height*"></a>
 
   <h3 id="ACadSharp_Entities_TableEntity_Row_Height" data-uid="ACadSharp.Entities.TableEntity.Row.Height">
   Height
-  <a class="header-action link-secondary" title="View source" href="https://github.com/DomCR/ACadSharp/blob/master/src/ACadSharp/Entities/TableEntity.Row.cs/#L35"><i class="bi bi-code-slash"></i></a>
+  <a class="header-action link-secondary" title="View source" href="https://github.com/DomCR/ACadSharp/blob/master/src/ACadSharp/Entities/TableEntity.Row.cs/#L14"><i class="bi bi-code-slash"></i></a>
   </h3>
 
   <div class="markdown level1 summary"><p>Row height.</p>
@@ -368,7 +225,7 @@ public double Height { get; set; }</code></pre>
 </article>
 
         <div class="contribution d-print-none">
-          <a href="https://github.com/DomCR/ACadSharp/blob/master/src/ACadSharp/Entities/TableEntity.Row.cs/#L12" class="edit-link">Edit this page</a>
+          <a href="https://github.com/DomCR/ACadSharp/blob/master/src/ACadSharp/Entities/TableEntity.Row.cs/#L9" class="edit-link">Edit this page</a>
         </div>
 
 

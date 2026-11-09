@@ -89,7 +89,7 @@
 
 
   <h1 id="ACadSharp_Objects_TableContent" data-uid="ACadSharp.Objects.TableContent" class="text-break">
-Class TableContent  <a class="header-action link-secondary" title="View source" href="https://github.com/DomCR/ACadSharp/blob/master/src/ACadSharp/Objects/TableContent.cs/#L13"><i class="bi bi-code-slash"></i></a>
+Class TableContent  <a class="header-action link-secondary" title="View source" href="https://github.com/DomCR/ACadSharp/blob/master/src/ACadSharp/Objects/TableContent.cs/#L14"><i class="bi bi-code-slash"></i></a>
   </h1>
 
   <div class="facts text-secondary">
@@ -137,16 +137,16 @@ public class TableContent : FormattedTableData, IHandledCadObject, INamedCadObje
     <dt>Inherited Members</dt>
     <dd>
     <div>
-      <a class="xref" href="ACadSharp.Objects.FormattedTableData.html#ACadSharp_Objects_FormattedTableData_MergedCellRanges">FormattedTableData.MergedCellRanges</a>
-    </div>
-    <div>
       <a class="xref" href="ACadSharp.Objects.FormattedTableData.html#ACadSharp_Objects_FormattedTableData_CellStyleOverride">FormattedTableData.CellStyleOverride</a>
     </div>
     <div>
-      <a class="xref" href="ACadSharp.Objects.LinkedTableData.html#ACadSharp_Objects_LinkedTableData_Rows">LinkedTableData.Rows</a>
+      <a class="xref" href="ACadSharp.Objects.FormattedTableData.html#ACadSharp_Objects_FormattedTableData_MergedCellRanges">FormattedTableData.MergedCellRanges</a>
     </div>
     <div>
       <a class="xref" href="ACadSharp.Objects.LinkedTableData.html#ACadSharp_Objects_LinkedTableData_Columns">LinkedTableData.Columns</a>
+    </div>
+    <div>
+      <a class="xref" href="ACadSharp.Objects.LinkedTableData.html#ACadSharp_Objects_LinkedTableData_Rows">LinkedTableData.Rows</a>
     </div>
     <div>
       <a class="xref" href="ACadSharp.Objects.LinkedData.html#ACadSharp_Objects_LinkedData_Name">LinkedData.Name</a>
@@ -156,9 +156,6 @@ public class TableContent : FormattedTableData, IHandledCadObject, INamedCadObje
     </div>
     <div>
       <a class="xref" href="ACadSharp.Objects.NonGraphicalObject.html#ACadSharp_Objects_NonGraphicalObject_OnNameChanged">NonGraphicalObject.OnNameChanged</a>
-    </div>
-    <div>
-      <a class="xref" href="ACadSharp.Objects.NonGraphicalObject.html#ACadSharp_Objects_NonGraphicalObject_Clone">NonGraphicalObject.Clone()</a>
     </div>
     <div>
       <a class="xref" href="ACadSharp.Objects.NonGraphicalObject.html#ACadSharp_Objects_NonGraphicalObject_ToString">NonGraphicalObject.ToString()</a>
@@ -258,7 +255,7 @@ Dxf class name <a class="xref" href="ACadSharp.DxfSubclassMarker.html#ACadSharp_
 
   <h3 id="ACadSharp_Objects_TableContent_ObjectName" data-uid="ACadSharp.Objects.TableContent.ObjectName">
   ObjectName
-  <a class="header-action link-secondary" title="View source" href="https://github.com/DomCR/ACadSharp/blob/master/src/ACadSharp/Objects/TableContent.cs/#L21"><i class="bi bi-code-slash"></i></a>
+  <a class="header-action link-secondary" title="View source" href="https://github.com/DomCR/ACadSharp/blob/master/src/ACadSharp/Objects/TableContent.cs/#L19"><i class="bi bi-code-slash"></i></a>
   </h3>
 
   <div class="markdown level1 summary"><p>The CAD class name of an object.</p>
@@ -290,7 +287,7 @@ Dxf class name <a class="xref" href="ACadSharp.DxfSubclassMarker.html#ACadSharp_
 
   <h3 id="ACadSharp_Objects_TableContent_ObjectType" data-uid="ACadSharp.Objects.TableContent.ObjectType">
   ObjectType
-  <a class="header-action link-secondary" title="View source" href="https://github.com/DomCR/ACadSharp/blob/master/src/ACadSharp/Objects/TableContent.cs/#L18"><i class="bi bi-code-slash"></i></a>
+  <a class="header-action link-secondary" title="View source" href="https://github.com/DomCR/ACadSharp/blob/master/src/ACadSharp/Objects/TableContent.cs/#L22"><i class="bi bi-code-slash"></i></a>
   </h3>
 
   <div class="markdown level1 summary"><p>Get the object type.</p>
@@ -322,10 +319,11 @@ Dxf class name <a class="xref" href="ACadSharp.DxfSubclassMarker.html#ACadSharp_
 
   <h3 id="ACadSharp_Objects_TableContent_Style" data-uid="ACadSharp.Objects.TableContent.Style">
   Style
-  <a class="header-action link-secondary" title="View source" href="https://github.com/DomCR/ACadSharp/blob/master/src/ACadSharp/Objects/TableContent.cs/#L26"><i class="bi bi-code-slash"></i></a>
+  <a class="header-action link-secondary" title="View source" href="https://github.com/DomCR/ACadSharp/blob/master/src/ACadSharp/Objects/TableContent.cs/#L27"><i class="bi bi-code-slash"></i></a>
   </h3>
 
-  <div class="markdown level1 summary"></div>
+  <div class="markdown level1 summary"><p>Gets or sets the table style applied to the table.</p>
+</div>
   <div class="markdown level1 conceptual"></div>
 
   <div class="codewrapper">
@@ -354,10 +352,11 @@ public TableStyle Style { get; set; }</code></pre>
 
   <h3 id="ACadSharp_Objects_TableContent_StyleOverride" data-uid="ACadSharp.Objects.TableContent.StyleOverride">
   StyleOverride
-  <a class="header-action link-secondary" title="View source" href="https://github.com/DomCR/ACadSharp/blob/master/src/ACadSharp/Objects/TableContent.cs/#L29"><i class="bi bi-code-slash"></i></a>
+  <a class="header-action link-secondary" title="View source" href="https://github.com/DomCR/ACadSharp/blob/master/src/ACadSharp/Objects/TableContent.cs/#L56"><i class="bi bi-code-slash"></i></a>
   </h3>
 
-  <div class="markdown level1 summary"></div>
+  <div class="markdown level1 summary"><p>Gets or sets the table style that overrides the default style.</p>
+</div>
   <div class="markdown level1 conceptual"></div>
 
   <div class="codewrapper">
@@ -385,7 +384,7 @@ public TableStyle Style { get; set; }</code></pre>
 
   <h3 id="ACadSharp_Objects_TableContent_SubclassMarker" data-uid="ACadSharp.Objects.TableContent.SubclassMarker">
   SubclassMarker
-  <a class="header-action link-secondary" title="View source" href="https://github.com/DomCR/ACadSharp/blob/master/src/ACadSharp/Objects/TableContent.cs/#L24"><i class="bi bi-code-slash"></i></a>
+  <a class="header-action link-secondary" title="View source" href="https://github.com/DomCR/ACadSharp/blob/master/src/ACadSharp/Objects/TableContent.cs/#L59"><i class="bi bi-code-slash"></i></a>
   </h3>
 
   <div class="markdown level1 summary"><p>Object Subclass marker.</p>
@@ -417,11 +416,47 @@ public TableStyle Style { get; set; }</code></pre>
 </h2>
 
 
+  <a id="ACadSharp_Objects_TableContent_Clone_" data-uid="ACadSharp.Objects.TableContent.Clone*"></a>
+
+  <h3 id="ACadSharp_Objects_TableContent_Clone" data-uid="ACadSharp.Objects.TableContent.Clone">
+  Clone()
+  <a class="header-action link-secondary" title="View source" href="https://github.com/DomCR/ACadSharp/blob/master/src/ACadSharp/Objects/TableContent.cs/#L64"><i class="bi bi-code-slash"></i></a>
+  </h3>
+
+  <div class="markdown level1 summary"><p>Creates a new object that is a copy of the current instance.</p>
+</div>
+  <div class="markdown level1 conceptual"></div>
+
+  <div class="codewrapper">
+    <pre><code class="lang-csharp hljs">public override CadObject Clone()</code></pre>
+  </div>
+
+
+  <h4 class="section">Returns</h4>
+  <dl class="parameters">
+    <dt><a class="xref" href="ACadSharp.CadObject.html">CadObject</a></dt>
+    <dd><p>A new object that is a copy of this instance.</p>
+</dd>
+  </dl>
+
+
+
+
+
+
+
+  <h4 class="section" id="ACadSharp_Objects_TableContent_Clone_remarks">Remarks</h4>
+  <div class="markdown level1 remarks"><p>The copy will be unattached from the document or any reference.</p>
+</div>
+
+
+
+
   <a id="ACadSharp_Objects_TableContent_GetDxfClass_" data-uid="ACadSharp.Objects.TableContent.GetDxfClass*"></a>
 
   <h3 id="ACadSharp_Objects_TableContent_GetDxfClass" data-uid="ACadSharp.Objects.TableContent.GetDxfClass">
   GetDxfClass()
-  <a class="header-action link-secondary" title="View source" href="https://github.com/DomCR/ACadSharp/blob/master/src/ACadSharp/Objects/TableContent.cs/#L32"><i class="bi bi-code-slash"></i></a>
+  <a class="header-action link-secondary" title="View source" href="https://github.com/DomCR/ACadSharp/blob/master/src/ACadSharp/Objects/TableContent.cs/#L75"><i class="bi bi-code-slash"></i></a>
   </h3>
 
   <div class="markdown level1 summary"><p>Gets the <a class="xref" href="ACadSharp.Classes.DxfClass.html">DxfClass</a> instance associated with this class.</p>
@@ -454,7 +489,7 @@ public TableStyle Style { get; set; }</code></pre>
 </article>
 
         <div class="contribution d-print-none">
-          <a href="https://github.com/DomCR/ACadSharp/blob/master/src/ACadSharp/Objects/TableContent.cs/#L13" class="edit-link">Edit this page</a>
+          <a href="https://github.com/DomCR/ACadSharp/blob/master/src/ACadSharp/Objects/TableContent.cs/#L14" class="edit-link">Edit this page</a>
         </div>
 
 
