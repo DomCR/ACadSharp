@@ -3,11 +3,118 @@ using ACadSharp.Objects;
 using ACadSharp.Objects.Evaluations;
 using System;
 using System.Collections.Generic;
+using static ACadSharp.IO.Templates.CadTableStyleTemplate;
+using static ACadSharp.Objects.TableStyle;
 
 namespace ACadSharp.IO.DWG;
 
 internal partial class DwgObjectReader : DwgSectionIO
 {
+	private void readCellStyle(CadTableStyleTemplate.CadCellStyleTemplate template)
+	{
+		//20.4.101.4
+		CellStyle cellStyle = (CellStyle)template.Format;
+
+		//BL 90 Cell style type
+		cellStyle.Type = (CellStyleType)this._mergedReaders.ReadBitLong();
+
+		//BS 170 Data flags, 0 = no data, 1 = data is present
+		//If data is present
+		cellStyle.HasData = this._mergedReaders.ReadBitShortAsBool();
+		if (!cellStyle.HasData)
+		{
+			return;
+		}
+
+		//BL 91 Property override flags. The definition is the same as the content format
+		//propery override flags, see paragraph 20.4.101.3.
+		cellStyle.PropertyOverrideFlags = (TableStyle.CellStylePropertyFlags)this._mergedReaders.ReadBitLong();
+		//BL  92 Merge flags, but may only for bits 0x8000 and 0x10000.
+		cellStyle.TableCellStylePropertyFlags = (CellStylePropertyFlags)this._mergedReaders.ReadBitLong();
+		//TC 62 Background color
+		cellStyle.BackgroundColor = this._mergedReaders.ReadCmColor(this.R2004Pre);
+
+		//BL 93 Content layout flags
+		cellStyle.ContentLayoutFlags = (CellContentLayoutFlags)this._mergedReaders.ReadBitLong();
+
+		//Content format fields (see paragraph 20.4.101.3)
+		this.readCellContentFormat(template, cellStyle);
+
+		//BS 171 Margin override flags, bit 1 is set if margin overrides are present
+		//If margin overrides are present
+		cellStyle.MarginOverrideFlags = (MarginFlags)this._mergedReaders.ReadBitShort();
+		if (cellStyle.MarginOverrideFlags.HasFlag(MarginFlags.Override))
+		{
+			//BD 40 Vertical margin
+			cellStyle.VerticalMargin = this._mergedReaders.ReadBitDouble();
+			//BD 40 Horizontal margin
+			cellStyle.HorizontalMargin = this._mergedReaders.ReadBitDouble();
+			//BD 40 Bottom margin
+			cellStyle.BottomMargin = this._mergedReaders.ReadBitDouble();
+			//BD 40 Right margin
+			cellStyle.RightMargin = this._mergedReaders.ReadBitDouble();
+			//BD 40 Margin horizontal spacing
+			cellStyle.MarginHorizontalSpacing = this._mergedReaders.ReadBitDouble();
+			//BD 40 Margin vertical spacing
+			cellStyle.MarginVerticalSpacing = this._mergedReaders.ReadBitDouble();
+		}
+
+		//BL 94 Number of borders present (0-6)
+		int nborders = this._mergedReaders.ReadBitLong();
+		//Begin repeat borders
+		for (int i = 0; i < nborders; i++)
+		{
+			//BL 95 Edge flags
+			CellEdgeFlags edgeFlags = (CellEdgeFlags)this._mergedReaders.ReadBitLong();
+
+			// If edge flags is non - zero
+			switch (edgeFlags)
+			{
+				case CellEdgeFlags.Top:
+					this.readBorder(template, cellStyle.TopBorder);
+					break;
+				case CellEdgeFlags.Right:
+					this.readBorder(template, cellStyle.RightBorder);
+					break;
+				case CellEdgeFlags.Bottom:
+					this.readBorder(template, cellStyle.BottomBorder);
+					break;
+				case CellEdgeFlags.Left:
+					this.readBorder(template, cellStyle.LeftBorder);
+					break;
+				case CellEdgeFlags.InsideVertical:
+					this.readBorder(template, cellStyle.VerticalInsideBorder);
+					break;
+				case CellEdgeFlags.InsideHorizontal:
+					this.readBorder(template, cellStyle.HorizontalInsideBorder);
+					break;
+				case CellEdgeFlags.Unknown:
+				default:
+					continue;
+			}
+		}
+	}
+
+	private void readBorder(CadCellStyleTemplate template, CellBorder border)
+	{
+		//BL 90 Border property override flags
+		border.PropertyOverrideFlags = (BorderPropertyFlags)this._mergedReaders.ReadBitLong();
+		//BL 91 Border type
+		border.Type = ((BorderType)this._mergedReaders.ReadBitLong());
+		//TC 62 Color
+		border.Color = this._mergedReaders.ReadCmColor(this.R2004Pre);
+		//BL 92 Line weight
+		border.LineWeight = ((LineWeightType)this._mergedReaders.ReadBitLong());
+		//H 40 Line type (hard pointer)
+		template.BorderLineTypePairs.Add(new Tuple<CellBorder, ulong>(border, this.handleReference()));
+		//BL 93 Invisibility: 1 = invisible, 0 = visible.
+		border.IsInvisible = (this._mergedReaders.ReadBitLong() == 1);
+		//BD 40 Double line spacing
+		border.DoubleLineSpacing = this._mergedReaders.ReadBitDouble();
+
+		border.ApplyBorder = true;
+	}
+
 	private CadTemplate readAlignmentGrip()
 	{
 		var grip = new BlockAlignmentGrip();

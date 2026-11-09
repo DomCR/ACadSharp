@@ -1,5 +1,6 @@
 ﻿using ACadSharp.Attributes;
 using ACadSharp.Classes;
+using ACadSharp.Extensions;
 
 namespace ACadSharp.Objects;
 
@@ -15,18 +16,60 @@ namespace ACadSharp.Objects;
 public class TableContent : FormattedTableData, IDxfClassDefined
 {
 	/// <inheritdoc/>
-	public override ObjectType ObjectType { get { return ObjectType.UNLISTED; } }
+	public override string ObjectName => DxfFileToken.ObjectTableContent;
 
 	/// <inheritdoc/>
-	public override string ObjectName => DxfFileToken.ObjectTableContent;
+	public override ObjectType ObjectType { get { return ObjectType.UNLISTED; } }
+
+	/// <summary>
+	/// Gets or sets the table style applied to the table.
+	/// </summary>
+	[DxfCodeValue(DxfReferenceType.Handle, 340)]
+	public TableStyle Style
+	{
+		get
+		{
+			return _style;
+		}
+
+		set
+		{
+			if (value == null)
+			{
+				throw new System.ArgumentNullException(nameof(value), "Table style cannot be null");
+			}
+
+			if (this.Document != null)
+			{
+				this._style = this.updateCollectionEntry(value, s => this._style = s, this.Document.TableStyles);
+			}
+			else
+			{
+				this._style = value;
+			}
+		}
+	}
+
+	/// <summary>
+	/// Gets or sets the table style that overrides the default style.
+	/// </summary>
+	public TableStyle StyleOverride { get; set; }
 
 	/// <inheritdoc/>
 	public override string SubclassMarker => DxfSubclassMarker.TableContent;
 
-	[DxfCodeValue(DxfReferenceType.Handle, 340)]
-	public TableStyle Style { get; set; } = TableStyle.Default;
+	private TableStyle _style = TableStyle.Default;
 
-	public TableStyle StyleOverride { get; set; }
+	/// <inheritdoc/>
+	public override CadObject Clone()
+	{
+		TableContent clone = (TableContent)base.Clone();
+
+		clone.Style = this.Style?.CloneTyped();
+		clone.StyleOverride = this.StyleOverride?.CloneTyped();
+
+		return clone;
+	}
 
 	/// <inheritdoc/>
 	public DxfClass GetDxfClass()
@@ -41,5 +84,19 @@ public class TableContent : FormattedTableData, IDxfClassDefined
 			ProxyFlags = ProxyFlags.CloningAllowed | ProxyFlags.DisablesProxyWarningDialog,
 			WasZombie = false,
 		};
+	}
+
+	internal override void AssignDocument(CadDocument doc)
+	{
+		base.AssignDocument(doc);
+
+		this._style = this.updateCollectionEntry(this.Style, s => this._style = s, doc.TableStyles);
+	}
+
+	internal override void UnassignDocument()
+	{
+		base.UnassignDocument();
+
+		this._style = this.Style.CloneTyped();
 	}
 }
