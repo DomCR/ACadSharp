@@ -64,6 +64,7 @@ public partial class TableEntity
 		{
 			TableComponent clone = this.MemberwiseClone() as TableComponent;
 			clone.initialize();
+			clone.Owner = null;
 
 			foreach (var item in this.Cells)
 			{
