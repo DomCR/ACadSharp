@@ -174,7 +174,7 @@ public partial class TableStyle
 		/// </summary>
 		/// <remarks>When set internally, the owner is propagated to the left, right, top, bottom, horizontal-inside,
 		/// and vertical-inside borders.</remarks>
-		public override LinkedTableData Owner
+		public override CadObject Owner
 		{
 			get
 			{ return base.Owner; }
@@ -222,7 +222,7 @@ public partial class TableStyle
 		/// <summary>
 		/// Gets or sets the top border style of the cell.
 		/// </summary>
-		public CellBorder TopBorder { get; set; } = new(CellEdgeFlags.Right);
+		public CellBorder TopBorder { get; set; } = new(CellEdgeFlags.Top);
 
 		/// <summary>
 		/// Gets or sets the type of the cell style.
