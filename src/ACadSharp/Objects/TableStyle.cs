@@ -93,6 +93,9 @@ public partial class TableStyle : NonGraphicalObject, IDxfClassDefined
 	/// <inheritdoc/>
 	public override string SubclassMarker { get; } = DxfSubclassMarker.TableStyle;
 
+	/// <summary>
+	/// Gets or sets a value indicating whether the header row is suppressed.
+	/// </summary>
 	[DxfCodeValue(281)]
 	public bool SuppressHeaderRow { get; set; }
 
@@ -102,6 +105,10 @@ public partial class TableStyle : NonGraphicalObject, IDxfClassDefined
 	[DxfCodeValue(280)]
 	public bool SuppressTitle { get; set; }
 
+	/// <summary>
+	/// Gets or sets the cell style applied to table cells.
+	/// </summary>
+	/// <remarks>When set, the style's Owner is assigned to the current table instance.</remarks>
 	public CellStyle TableCellStyle
 	{
 		get
@@ -115,6 +122,10 @@ public partial class TableStyle : NonGraphicalObject, IDxfClassDefined
 		}
 	}
 
+	/// <summary>
+	/// Gets or sets the cell style used for title cells.
+	/// </summary>
+	/// <remarks>When set, the style owner is assigned to the current instance.</remarks>
 	public CellStyle TitleCellStyle
 	{
 		get
