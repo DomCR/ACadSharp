@@ -713,7 +713,7 @@ internal class DxfObjectsSectionReader : DxfSectionReaderBase
 				color.Name = this._reader.ValueAsString;
 				return true;
 			default:
-				return this.tryAssignCurrentValue(template.CadObject, map.SubClasses[DxfSubclassMarker.DbColor]);
+				return this.tryAssignCurrentValue(template.CadObject, map);
 		}
 	}
 
@@ -1060,7 +1060,7 @@ internal class DxfObjectsSectionReader : DxfSectionReaderBase
 				tmp.Entries[tmp.Entries.LastOrDefault().Key] = this._reader.ValueAsHandle;
 				return true;
 			default:
-				return this.tryAssignCurrentValue(template.CadObject, map.SubClasses[DxfSubclassMarker.Dictionary]);
+				return this.tryAssignCurrentValue(template.CadObject, map);
 		}
 	}
 
@@ -1074,7 +1074,7 @@ internal class DxfObjectsSectionReader : DxfSectionReaderBase
 				tmp.DefaultEntryHandle = this._reader.ValueAsHandle;
 				return true;
 			default:
-				if (!this.tryAssignCurrentValue(template.CadObject, map.SubClasses[DxfSubclassMarker.DictionaryWithDefault]))
+				if (!this.tryAssignCurrentValue(template.CadObject, map))
 				{
 					return this.readDictionary(template, map);
 				}
@@ -1131,7 +1131,7 @@ internal class DxfObjectsSectionReader : DxfSectionReaderBase
 				tmp.DimensionHandle = this._reader.ValueAsHandle;
 				return true;
 			default:
-				return this.tryAssignCurrentValue(template.CadObject, map.SubClasses[tmp.CadObject.SubclassMarker]);
+				return this.tryAssignCurrentValue(template.CadObject, map);
 		}
 	}
 
@@ -1297,7 +1297,7 @@ internal class DxfObjectsSectionReader : DxfSectionReaderBase
 				tmp.ChildrenHandles.Add(this._reader.ValueAsHandle);
 				return true;
 			default:
-				return this.tryAssignCurrentValue(template.CadObject, map.SubClasses[DxfSubclassMarker.Field]);
+				return this.tryAssignCurrentValue(template.CadObject, map);
 		}
 	}
 
@@ -1316,7 +1316,7 @@ internal class DxfObjectsSectionReader : DxfSectionReaderBase
 				tmp.OwnedObjectsHandlers.Add(this._reader.ValueAsHandle);
 				return true;
 			default:
-				return this.tryAssignCurrentValue(template.CadObject, map.SubClasses[DxfSubclassMarker.FieldList]);
+				return this.tryAssignCurrentValue(template.CadObject, map);
 		}
 	}
 
@@ -1618,7 +1618,7 @@ internal class DxfObjectsSectionReader : DxfSectionReaderBase
 			case 292:
 				return true;
 			default:
-				return this.tryAssignCurrentValue(template.CadObject, map.SubClasses[tmp.CadObject.SubclassMarker]);
+				return this.tryAssignCurrentValue(template.CadObject, map);
 		}
 	}
 
@@ -1696,11 +1696,7 @@ internal class DxfObjectsSectionReader : DxfSectionReaderBase
 				tmp.LasActiveViewportHandle = (this._reader.ValueAsHandle);
 				return true;
 			default:
-				if (!this.tryAssignCurrentValue(template.CadObject, map.SubClasses[DxfSubclassMarker.Layout]))
-				{
-					return this.readPlotSettings(template, map);
-				}
-				return true;
+				return this.tryAssignCurrentValue(template.CadObject, map);
 		}
 	}
 
@@ -1964,11 +1960,7 @@ internal class DxfObjectsSectionReader : DxfSectionReaderBase
 				action.Columns.Add(col);
 				return true;
 			default:
-				if (!this.tryAssignCurrentValue(template.CadObject, map.SubClasses[DxfSubclassMarker.BlockLookupAction]))
-				{
-					return this.readBlockAction(template, map);
-				}
-				return true;
+				return this.readBlockAction(template, map);
 		}
 	}
 
@@ -2064,7 +2056,7 @@ internal class DxfObjectsSectionReader : DxfSectionReaderBase
 				this.lockPointer = true;
 				return true;
 			default:
-				return this.tryAssignCurrentValue(template.CadObject, map.SubClasses[tmp.CadObject.SubclassMarker]);
+				return this.tryAssignCurrentValue(template.CadObject, map);
 		}
 	}
 
@@ -2083,7 +2075,7 @@ internal class DxfObjectsSectionReader : DxfSectionReaderBase
 				tmp.MTextStyleHandle = this._reader.ValueAsHandle;
 				return true;
 			default:
-				return this.tryAssignCurrentValue(template.CadObject, map.SubClasses[tmp.CadObject.SubclassMarker]);
+				return this.tryAssignCurrentValue(template.CadObject, map);
 		}
 	}
 
@@ -2111,7 +2103,7 @@ internal class DxfObjectsSectionReader : DxfSectionReaderBase
 				mLineStyle.AddElement(element);
 				return true;
 			default:
-				return this.tryAssignCurrentValue(template.CadObject, map.SubClasses[tmp.CadObject.SubclassMarker]);
+				return this.tryAssignCurrentValue(template.CadObject, map);
 		}
 	}
 
@@ -2137,7 +2129,7 @@ internal class DxfObjectsSectionReader : DxfSectionReaderBase
 			case DxfFileToken.ObjectLayout:
 				return this.readObjectCodes<Layout>(new CadLayoutTemplate(), this.readLayout);
 			case DxfFileToken.ObjectPlotSettings:
-				return this.readObjectCodes<PlotSettings>(new CadNonGraphicalObjectTemplate(new PlotSettings()), this.readPlotSettings);
+				return this.readObjectCodes<PlotSettings>(new CadNonGraphicalObjectTemplate(new PlotSettings()), this.readObjectSubclassMap);
 			case DxfFileToken.ObjectEvalGraph:
 				return this.readObjectCodes<EvaluationGraph>(new CadEvaluationGraphTemplate(), this.readEvaluationGraph);
 			case DxfFileToken.ObjectImageDefinition:
@@ -2375,15 +2367,6 @@ internal class DxfObjectsSectionReader : DxfSectionReaderBase
 		return valueSet;
 	}
 
-	private bool readPlotSettings(CadTemplate template, DxfMap map)
-	{
-		switch (this._reader.Code)
-		{
-			default:
-				return this.tryAssignCurrentValue(template.CadObject, map.SubClasses[DxfSubclassMarker.PlotSettings]);
-		}
-	}
-
 	private bool readProxyObject(CadTemplate template, DxfMap map)
 	{
 		CadProxyObjectTemplate tmp = template as CadProxyObjectTemplate;
@@ -2434,7 +2417,7 @@ internal class DxfObjectsSectionReader : DxfSectionReaderBase
 				tmp.Entries.Add(this._reader.ValueAsHandle);
 				return true;
 			default:
-				return this.tryAssignCurrentValue(template.CadObject, map.SubClasses[DxfSubclassMarker.ProxyObject]);
+				return this.tryAssignCurrentValue(template.CadObject, map);
 		}
 	}
 
@@ -2447,7 +2430,7 @@ internal class DxfObjectsSectionReader : DxfSectionReaderBase
 				//Always 0
 				return true;
 			default:
-				return this.tryAssignCurrentValue(template.CadObject, map.SubClasses[DxfSubclassMarker.Scale]);
+				return this.tryAssignCurrentValue(template.CadObject, map);
 		}
 	}
 
@@ -2551,7 +2534,7 @@ internal class DxfObjectsSectionReader : DxfSectionReaderBase
 				return true;
 			case 73:
 			default:
-				return this.tryAssignCurrentValue(template.CadObject, map.SubClasses[DxfSubclassMarker.SpatialFilter]);
+				return this.tryAssignCurrentValue(template.CadObject, map);
 		}
 	}
 
@@ -2980,7 +2963,7 @@ internal class DxfObjectsSectionReader : DxfSectionReaderBase
 				cellStyle.RightBorder.Color = new Color(this._reader.ValueAsShort);
 				return true;
 			default:
-				return this.tryAssignCurrentValue(template.CadObject, map.SubClasses[tmp.CadObject.SubclassMarker]);
+				return this.tryAssignCurrentValue(template.CadObject, map);
 		}
 	}
 
