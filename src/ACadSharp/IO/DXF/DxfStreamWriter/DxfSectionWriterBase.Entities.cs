@@ -682,6 +682,11 @@ internal abstract partial class DxfSectionWriterBase
 					}
 				}
 
+				if (this.Version < ACadVersion.AC1024)
+				{
+					break;
+				}
+
 				this._writer.Write(97, spline.FitPoints.Count);
 				foreach (var fitPoint in spline.FitPoints)
 				{

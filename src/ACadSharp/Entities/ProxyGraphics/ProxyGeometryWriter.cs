@@ -275,7 +275,7 @@ internal class ProxyGeometryWriter
 			writer.Write2RawDouble(pline.Vertices[0].Location);
 			for (int i = 1; i < pline.Vertices.Count; i++)
 			{
-				writer.Write2BitDoubleWithDefault(pline.Vertices[i - 1].Location, pline.Vertices[i].Location);
+				writer.Write2BitDoubleWithDefault(pline.Vertices[i].Location, pline.Vertices[i - 1].Location);
 			}
 		}
 
@@ -450,14 +450,16 @@ internal class ProxyGeometryWriter
 		this.writePoints(shell.Vertices);
 
 		List<int[]> faces = shell.Faces ?? new List<int[]>();
+		HashSet<int> holes = shell.Holes ?? new HashSet<int>();
 
 		// Face list size, includes the count entry of each face
 		this._stream.Write<int, LittleEndianConverter>(faces.Sum(f => f.Length + 1));
 
 		int edgeCount = 0;
-		foreach (int[] face in faces)
+		for (int i = 0; i < faces.Count; i++)
 		{
-			this._stream.Write<int, LittleEndianConverter>(face.Length);
+			int[] face = faces[i];
+			this._stream.Write<int, LittleEndianConverter>(holes.Contains(i) ? -face.Length : face.Length);
 			foreach (int index in face)
 			{
 				this._stream.Write<int, LittleEndianConverter>(index);
