@@ -1032,7 +1032,7 @@ internal class ProxyGeometryReader
 		text.BigFontFilename = readPaddedUnicodeString(stream);
 
 		// Padding to align the text to the next 4-byte boundary
-		if (fontDescriptor.FontFilename.Length % 2 == 0)
+		if (text.BigFontFilename.Length % 2 == 0)
 		{
 			stream.ReadShort();
 		}

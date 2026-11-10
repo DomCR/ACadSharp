@@ -582,8 +582,7 @@ internal partial class DwgObjectWriter : DwgSectionIO
 		//BL 92 Line weight
 		this._writer.WriteBitLong((int)border.LineWeight);
 		//H 40 Line type (hard pointer)
-		//this._writer.HandleReference(DwgReferenceType.HardPointer, border.LineType);
-		this._writer.HandleReference(DwgReferenceType.HardPointer, null);
+		this._writer.HandleReference(DwgReferenceType.HardPointer, border.LineType);
 		//BL 93 Invisibility: 1 = invisible, 0 = visible.
 		this._writer.WriteBitLong(border.IsInvisible ? 1 : 0);
 		//BD 40 Double line spacing
@@ -2311,52 +2310,47 @@ internal partial class DwgObjectWriter : DwgSectionIO
 
 		//BL The number of cell styles (should be 3), the non-custom cell styles are present
 		//only in the CELLSTYLEMAP.
-		int nCellStyles = tableStyle.CellStyles.Count;
-		if (tableStyle.TitleCellStyle != null && !tableStyle.CellStyles.Contains(tableStyle.TitleCellStyle))
-		{
-			nCellStyles++;
-		}
-		if (tableStyle.HeaderCellStyle != null && !tableStyle.CellStyles.Contains(tableStyle.HeaderCellStyle))
-		{
-			nCellStyles++;
-		}
-		if (tableStyle.DataCellStyle != null && !tableStyle.CellStyles.Contains(tableStyle.DataCellStyle))
-		{
-			nCellStyles++;
-		}
-
-		this._writer.WriteBitLong(nCellStyles);
-
-		int index = 1;
+		var styles = new List<TableStyle.CellStyle>();
 		if (tableStyle.TitleCellStyle != null)
 		{
-			this._writer.WriteBitLong(index++);
-			this.writeCellStyleWithId(tableStyle.TitleCellStyle);
-		}
-		if (tableStyle.HeaderCellStyle != null)
-		{
-			this._writer.WriteBitLong(index++);
-			this.writeCellStyleWithId(tableStyle.HeaderCellStyle);
-		}
-		if (tableStyle.DataCellStyle != null)
-		{
-			this._writer.WriteBitLong(index++);
-			this.writeCellStyleWithId(tableStyle.DataCellStyle);
+			styles.Add(tableStyle.TitleCellStyle);
 		}
 
-		index = 101;
+		if (tableStyle.HeaderCellStyle != null)
+		{
+			styles.Add(tableStyle.HeaderCellStyle);
+		}
+
+		if (tableStyle.DataCellStyle != null)
+		{
+			styles.Add(tableStyle.DataCellStyle);
+		}
+
+		styles.AddRange(tableStyle.CellStyles);
+
+		this._writer.WriteBitLong(styles.Count);
+		for (int i = 0; i < 3; i++)
+		{
+			//Index starting by 1
+			this._writer.WriteBitLong(i + 1);
+			this.writeCellStyleWithId(styles[i]);
+		}
+
+		int index = 101;
 		foreach (var cellStyle in tableStyle.CellStyles)
 		{
-			if (cellStyle != tableStyle.TitleCellStyle
-				&& cellStyle != tableStyle.HeaderCellStyle
-				&& cellStyle != tableStyle.DataCellStyle)
+			if (cellStyle == tableStyle.TitleCellStyle
+				|| cellStyle == tableStyle.HeaderCellStyle
+				|| cellStyle == tableStyle.DataCellStyle)
 			{
-				//… The cell style fields, see paragraph 20.4.101.4.
-				//Index starting by 1
-				this._writer.WriteBitLong(index);
-				this.writeCellStyleWithId(cellStyle);
-				index++;
+				continue;
 			}
+
+			//… The cell style fields, see paragraph 20.4.101.4.
+			//Index starting by 1
+			this._writer.WriteBitLong(index);
+			this.writeCellStyleWithId(cellStyle);
+			index++;
 		}
 	}
 

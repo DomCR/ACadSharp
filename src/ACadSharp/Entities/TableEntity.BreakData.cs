@@ -35,6 +35,24 @@ public partial class TableEntity
 		public List<BreakHeight> Heights { get; set; } = new List<BreakHeight>();
 
 		/// <summary>
+		/// Creates a copy of the current TableBreakData instance.
+		/// </summary>
+		/// <remarks>Performs a shallow copy of the Heights collection elements.</remarks>
+		/// <returns>A new TableBreakData instance with copied BreakSpacing, Flags, FlowDirection, and a new Heights list containing
+		/// the same BreakHeight elements.</returns>
+		public TableBreakData Clone()
+		{
+			TableBreakData clone = new TableBreakData
+			{
+				BreakSpacing = this.BreakSpacing,
+				Flags = this.Flags,
+				FlowDirection = this.FlowDirection,
+				Heights = new List<BreakHeight>(this.Heights)
+			};
+			return clone;
+		}
+
+		/// <summary>
 		/// Represents the height and insertion position of a table break segment.
 		/// </summary>
 		public struct BreakHeight

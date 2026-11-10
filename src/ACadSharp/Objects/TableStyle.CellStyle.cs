@@ -1,4 +1,5 @@
 ﻿using ACadSharp.Attributes;
+using ACadSharp.Tables;
 
 namespace ACadSharp.Objects;
 
@@ -52,25 +53,6 @@ public partial class TableStyle
 		}
 
 		/// <summary>
-		/// Gets the default cell style used for title cells.
-		/// </summary>
-		public static CellStyle DefaultTitleCellStyle
-		{
-			get
-			{
-				var data = new CellStyle
-				{
-					Name = TitleCellStyleName,
-					StyleClass = CellStyleClass.Data,
-					Id = 1,
-					HasData = true,
-				};
-
-				return data;
-			}
-		}
-
-		/// <summary>
 		/// Gets the default cell style used as the table's overall ("Table") style.
 		/// </summary>
 		public static CellStyle DefaultTableCellStyle
@@ -90,9 +72,23 @@ public partial class TableStyle
 		}
 
 		/// <summary>
-		/// The name constant for the default table-level cell style.
+		/// Gets the default cell style used for title cells.
 		/// </summary>
-		public const string TableCellStyleName = "Table";
+		public static CellStyle DefaultTitleCellStyle
+		{
+			get
+			{
+				var data = new CellStyle
+				{
+					Name = TitleCellStyleName,
+					StyleClass = CellStyleClass.Data,
+					Id = 1,
+					HasData = true,
+				};
+
+				return data;
+			}
+		}
 
 		/// <summary>
 		/// Gets or sets the background (fill) color of the cell content.
@@ -174,6 +170,28 @@ public partial class TableStyle
 		public string Name { get; set; }
 
 		/// <summary>
+		/// Gets the linked table that owns this border set.
+		/// </summary>
+		/// <remarks>When set internally, the owner is propagated to the left, right, top, bottom, horizontal-inside,
+		/// and vertical-inside borders.</remarks>
+		public override CadObject Owner
+		{
+			get
+			{ return base.Owner; }
+
+			internal set
+			{
+				base.Owner = value;
+				this.LeftBorder.Owner = value;
+				this.RightBorder.Owner = value;
+				this.TopBorder.Owner = value;
+				this.BottomBorder.Owner = value;
+				this.HorizontalInsideBorder.Owner = value;
+				this.VerticalInsideBorder.Owner = value;
+			}
+		}
+
+		/// <summary>
 		/// Gets or sets the right border style of the cell.
 		/// </summary>
 		public CellBorder RightBorder { get; set; } = new(CellEdgeFlags.Right);
@@ -204,7 +222,7 @@ public partial class TableStyle
 		/// <summary>
 		/// Gets or sets the top border style of the cell.
 		/// </summary>
-		public CellBorder TopBorder { get; set; } = new(CellEdgeFlags.Right);
+		public CellBorder TopBorder { get; set; } = new(CellEdgeFlags.Top);
 
 		/// <summary>
 		/// Gets or sets the type of the cell style.
@@ -238,6 +256,11 @@ public partial class TableStyle
 		public const string HeaderCellStyleName = "_HEADER";
 
 		/// <summary>
+		/// The name constant for the default table-level cell style.
+		/// </summary>
+		public const string TableCellStyleName = "Table";
+
+		/// <summary>
 		/// The name constant for the default title cell style.
 		/// </summary>
 		public const string TitleCellStyleName = "_TITLE";
@@ -245,7 +268,26 @@ public partial class TableStyle
 		/// <inheritdoc/>
 		public override string ToString()
 		{
-			return $"{Id}|{Name}";
+			return $"{this.Id}|{this.Name}";
+		}
+
+		/// <summary>
+		/// Creates a copy of the current CellStyle instance with cloned border settings.
+		/// </summary>
+		/// <returns>A new CellStyle instance that copies the current values and contains independent border objects.</returns>
+		public new  CellStyle Clone()
+		{
+			CellStyle clone = this.MemberwiseClone() as CellStyle;
+			clone.LeftBorder = this.LeftBorder.Clone();
+			clone.RightBorder = this.RightBorder.Clone();
+			clone.TopBorder = this.TopBorder.Clone();
+			clone.BottomBorder = this.BottomBorder.Clone();
+			clone.HorizontalInsideBorder = this.HorizontalInsideBorder.Clone();
+			clone.VerticalInsideBorder = this.VerticalInsideBorder.Clone();
+
+			clone.Owner = null;
+
+			return clone;
 		}
 	}
 }
