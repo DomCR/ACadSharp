@@ -38,7 +38,7 @@ internal class ProxyGeometryWriter
 			}
 		}
 
-		int size = 8 + chunks.Sum(c => c.Length + 8);
+		int size = 8 + chunks.Sum(c => c.Length + 4);
 
 		MemoryStream ms = new MemoryStream();
 		StreamIO stream = new StreamIO(ms);
