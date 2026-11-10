@@ -651,7 +651,7 @@ internal abstract class DxfSectionReaderBase
 				hatch.GradientColor.Name = this._reader.ValueAsString;
 				return true;
 			default:
-				return this.tryAssignCurrentValue(template.CadObject, map.SubClasses[template.CadObject.SubclassMarker]);
+				return this.tryAssignCurrentValue(template.CadObject, map);
 		}
 	}
 
@@ -737,7 +737,6 @@ internal abstract class DxfSectionReaderBase
 
 	private bool readAttributeDefinition(CadEntityTemplate template, DxfMap map, string subclass = null)
 	{
-		DxfClassMap emap = map.SubClasses[template.CadObject.SubclassMarker];
 		CadAttributeTemplate tmp = template as CadAttributeTemplate;
 
 		switch (this._reader.Code)
@@ -753,7 +752,7 @@ internal abstract class DxfSectionReaderBase
 				this.readEntityCodes<MText>(mtextTemplate, this.readTextEntity);
 				return true;
 			default:
-				if (!this.tryAssignCurrentValue(template.CadObject, emap))
+				if (!this.tryAssignCurrentValue(template.CadObject, map))
 				{
 					return this.readTextEntity(template, map, DxfSubclassMarker.Text);
 				}
@@ -1462,19 +1461,11 @@ internal abstract class DxfSectionReaderBase
 
 		switch (this._reader.Code)
 		{
-			case 100 when this._reader.ValueAsString.Equals(DxfSubclassMarker.Mesh, StringComparison.OrdinalIgnoreCase):
-				tmp.SubclassMarker = true;
-				return true;
 			//Count of sub-entity which property has been overridden
 			case 90:
 				//TODO: process further entities
 				return true;
-			case 92:
-				if (!tmp.SubclassMarker)
-				{
-					return false;
-				}
-
+			case 92 when this.currentSubclass.Equals(DxfSubclassMarker.Mesh, StringComparison.OrdinalIgnoreCase):
 				int nvertices = this._reader.ValueAsInt;
 				for (int i = 0; i < nvertices; i++)
 				{

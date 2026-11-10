@@ -97,14 +97,7 @@ internal class DxfObjectsSectionReader : DxfSectionReaderBase
 				tmp.ScaleHandle = this._reader.ValueAsHandle;
 				return true;
 			default:
-				if (string.IsNullOrEmpty(this.currentSubclass))
-				{
-					return this.tryAssignCurrentValue(template.CadObject, map.SubClasses[template.CadObject.SubclassMarker]);
-				}
-				else
-				{
-					return this.tryAssignCurrentValue(template.CadObject, map);
-				}
+				return this.tryAssignCurrentValue(template.CadObject, map);
 		}
 	}
 
@@ -1790,7 +1783,7 @@ internal class DxfObjectsSectionReader : DxfSectionReaderBase
 				tmp.Handles.Add(this._reader.ValueAsHandle);
 				return true;
 			default:
-				return this.tryAssignCurrentValue(template.CadObject, map.SubClasses[template.CadObject.SubclassMarker]);
+				return this.tryAssignCurrentValue(template.CadObject, map);
 		}
 	}
 
@@ -2385,18 +2378,7 @@ internal class DxfObjectsSectionReader : DxfSectionReaderBase
 
 	private bool readObjectSubclassMap(CadTemplate template, DxfMap map)
 	{
-		switch (this._reader.Code)
-		{
-			default:
-				if (string.IsNullOrEmpty(this.currentSubclass))
-				{
-					return this.tryAssignCurrentValue(template.CadObject, map.SubClasses[template.CadObject.SubclassMarker]);
-				}
-				else
-				{
-					return this.tryAssignCurrentValue(template.CadObject, map);
-				}
-		}
+		return this.tryAssignCurrentValue(template.CadObject, map);
 	}
 
 	private CadDimensionAssociationTemplate.OsnapPointRefTemplate readOsnapPointRef(DimensionAssociation.OsnapPointRef osnapPoint)
