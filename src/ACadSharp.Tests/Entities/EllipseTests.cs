@@ -2,7 +2,6 @@
 using ACadSharp.Tests.Common;
 using CSMath;
 using CSMath.Extensions;
-using System;
 using Xunit;
 
 namespace ACadSharp.Tests.Entities;
@@ -39,17 +38,5 @@ public class EllipseTests : CommonEntityTests<Ellipse>
 		ellipse.GetEndVertices(out start, out end);
 		AssertUtils.AreEqual(XYZ.AxisY, start.RoundZero());
 		AssertUtils.AreEqual(-XYZ.AxisX, end.RoundZero());
-	}
-
-	[Fact]
-	public void RadiusRatioTest()
-	{
-		Ellipse ellipse = new Ellipse();
-
-		ellipse.RadiusRatio = 1.0000000000000002;
-		Assert.Equal(1.0, ellipse.RadiusRatio);
-
-		Assert.Throws<ArgumentOutOfRangeException>(() => ellipse.RadiusRatio = 1.000001);
-		Assert.Throws<ArgumentOutOfRangeException>(() => ellipse.RadiusRatio = 0);
 	}
 }

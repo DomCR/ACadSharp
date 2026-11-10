@@ -178,7 +178,7 @@ internal abstract class DxfSectionReaderBase
 			case DxfFileToken.Entity3DFace:
 				return this.readEntityCodes<Face3D>(new CadEntityTemplate<Face3D>(), this.readEntitySubclassMap);
 			case DxfFileToken.EntityEllipse:
-				return this.readEntityCodes<Ellipse>(new CadEntityTemplate<Ellipse>(), this.readEntitySubclassMap);
+				return this.readEntityCodes<Ellipse>(new CadEntityTemplate<Ellipse>(), this.readEllipse);
 			case DxfFileToken.EntityLeader:
 				return this.readEntityCodes<Leader>(new CadLeaderTemplate(), this.readLeader);
 			case DxfFileToken.EntityLine:
@@ -405,6 +405,32 @@ internal abstract class DxfSectionReaderBase
 					return this.readCircle(template, map, DxfSubclassMarker.Circle);
 				}
 				return true;
+		}
+	}
+
+	private bool readEllipse(CadEntityTemplate template, DxfMap map, string subclass = null)
+	{
+		Ellipse ellipse = template.CadObject as Ellipse;
+
+		switch (this._reader.Code)
+		{
+			case 40:
+				double ratio = this._reader.ValueAsDouble;
+				if (ratio <= 0)
+				{
+					ellipse.RadiusRatio = MathHelper.Epsilon;
+				}
+				else if (ratio > 1)
+				{
+					ellipse.RadiusRatio = 1;
+				}
+				else
+				{
+					ellipse.RadiusRatio = ratio;
+				}
+				return true;
+			default:
+				return this.tryAssignCurrentValue(template.CadObject, map.SubClasses[DxfSubclassMarker.Ellipse]);
 		}
 	}
 
