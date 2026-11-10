@@ -125,6 +125,8 @@ internal abstract class DxfSectionReaderBase
 			case 5:
 				template.CadObject.Handle = this._reader.ValueAsHandle;
 				break;
+			case 10:
+				break;
 			//Check with mapper
 			case 100:
 				this.currentSubclass = this._reader.ValueAsString;
@@ -2390,6 +2392,7 @@ internal abstract class DxfSectionReaderBase
 		switch (this._reader.Code)
 		{
 			case 100:
+				this.currentSubclass = this._reader.ValueAsString;
 				switch (this._reader.ValueAsString)
 				{
 					case DxfSubclassMarker.Vertex:
