@@ -315,6 +315,11 @@ internal abstract class DxfSectionReaderBase
 
 	protected void readCommonEntityCodes(CadEntityTemplate template, out bool isExtendedData, DxfMap map = null)
 	{
+		if (template.CadObject is Mesh)
+		{
+
+		}
+
 		isExtendedData = false;
 		switch (this._reader.Code)
 		{
@@ -1253,11 +1258,8 @@ internal abstract class DxfSectionReaderBase
 
 		switch (this._reader.Code)
 		{
-			case 100:
-				if (this._reader.ValueAsString.Equals(DxfSubclassMarker.Mesh, StringComparison.OrdinalIgnoreCase))
-				{
-					tmp.SubclassMarker = true;
-				}
+			case 100 when this._reader.ValueAsString.Equals(DxfSubclassMarker.Mesh, StringComparison.OrdinalIgnoreCase):
+				tmp.SubclassMarker = true;
 				return true;
 			//Count of sub-entity which property has been overridden
 			case 90:
