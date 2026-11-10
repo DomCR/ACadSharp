@@ -290,12 +290,20 @@ internal abstract class DxfSectionReaderBase
 		this._reader.ReadNext();
 
 		DxfMap map = DxfMap.Create<T>();
+		bool isEntitySubclass = false;
 
 		while (this._reader.DxfCode != DxfCode.Start)
 		{
-			if (!readEntity(template, map))
+			if (this._reader.DxfCode == DxfCode.Subclass)
 			{
-				this.readCommonEntityCodes(template, out bool isExtendedData, map);
+				isEntitySubclass = this._reader.ValueAsString == DxfSubclassMarker.Entity;
+			}
+
+			//In AcDbEntity 92 and 160 are the size of the proxy graphics, MULTILEADER and ACAD_TABLE would read 92 as a code of their own
+			if ((isEntitySubclass && (this._reader.Code == 92 || this._reader.Code == 160))
+				|| !readEntity(template, map))
+			{
+				this.readCommonEntityCodes(template, out bool isExtendedData, map, isEntitySubclass);
 				if (isExtendedData)
 					continue;
 			}
@@ -313,7 +321,7 @@ internal abstract class DxfSectionReaderBase
 		return template;
 	}
 
-	protected void readCommonEntityCodes(CadEntityTemplate template, out bool isExtendedData, DxfMap map = null)
+	protected void readCommonEntityCodes(CadEntityTemplate template, out bool isExtendedData, DxfMap map = null, bool isEntitySubclass = false)
 	{
 		isExtendedData = false;
 		switch (this._reader.Code)
@@ -328,6 +336,10 @@ internal abstract class DxfSectionReaderBase
 			case 67:
 				break;
 			//Number of bytes Proxy entity graphics data
+			case 92 when isEntitySubclass:
+			case 160 when isEntitySubclass:
+				template.ProxyGraphics = this.readByteEntries(310)?.ToArray();
+				break;
 			case 92:
 			case 160:
 			//Proxy entity graphics data
