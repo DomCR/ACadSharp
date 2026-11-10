@@ -108,6 +108,7 @@ public abstract class WriterSingleObjectTests : IOTestsBase
 		Data.Add(new(nameof(SingleCaseGenerator.SortedXRecords)));
 		Data.Add(new(nameof(SingleCaseGenerator.ProxyGraphics)));
 		Data.Add(new(nameof(SingleCaseGenerator.ProxyGraphicsShellWithVertexNormals)));
+		Data.Add(new(nameof(SingleCaseGenerator.ProxyGraphicsUnicodeText2)));
 		Data.Add(new(nameof(SingleCaseGenerator.AnonymousBlockWithShortName)));
 	}
 
@@ -2319,6 +2320,39 @@ public abstract class WriterSingleObjectTests : IOTestsBase
 				Assert.Equal(shell.Vertices, resultShell.Vertices);
 				Assert.Equal(shell.VertexTraits.Normals, resultShell.VertexTraits.Normals);
 				Assert.Equal(shell.VertexTraits.Orientation, resultShell.VertexTraits.Orientation);
+			};
+		}
+
+		public void ProxyGraphicsUnicodeText2()
+		{
+			ProxyEntity proxy = new ProxyEntity();
+			proxy.Version = ACadVersion.AC1032;
+			proxy.MaintenanceVersion = 0;
+
+			ProxyUnicodeText2 proxyText = new ProxyUnicodeText2
+			{
+				Text = "A",
+				FontDescriptor = new TrueTypeFontDescriptor
+				{
+					Typeface = "Arial",
+					FontFilename = "ab.ttf",
+				},
+				BigFontFilename = "big.shx",
+			};
+
+			proxy.ProxyGeometries.Add(proxyText);
+
+			this.Document.Entities.Add(proxy);
+
+			this.AssertRoundtrip = (doc) =>
+			{
+				ProxyEntity result = doc.GetCadObject<ProxyEntity>(proxy.Handle);
+				Assert.NotNull(result);
+
+				Assert.Equal(proxy.ProxyGeometries.Count, result.ProxyGeometries.Count);
+				ProxyUnicodeText2 text = Assert.IsType<ProxyUnicodeText2>(result.ProxyGeometries[0]);
+				Assert.Equal(proxyText.FontDescriptor.FontFilename, text.FontDescriptor.FontFilename);
+				Assert.Equal(proxyText.BigFontFilename, text.BigFontFilename);
 			};
 		}
 

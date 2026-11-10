@@ -1,4 +1,5 @@
-﻿using System.Collections.Generic;
+﻿using ACadSharp.Objects;
+using System.Collections.Generic;
 using static ACadSharp.Objects.TableStyle;
 
 namespace ACadSharp.Entities;
@@ -31,5 +32,10 @@ public partial class TableEntity
 		/// Gets the collection of custom data entries associated with this instance.
 		/// </summary>
 		List<CustomDataEntry> CustomDataCollection { get; }
+
+		/// <summary>
+		/// Gets the linked table that owns the current object.
+		/// </summary>
+		public LinkedTableData Owner { get; }
 	}
 }
