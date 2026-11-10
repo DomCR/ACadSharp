@@ -1,4 +1,5 @@
 ﻿using ACadSharp.Attributes;
+using ACadSharp.Objects.Mechanical;
 using CSMath;
 
 namespace ACadSharp.Entities.Mechanical;
@@ -14,6 +15,11 @@ namespace ACadSharp.Entities.Mechanical;
 [DxfSubClass(DxfSubclassMarker.PartRef)]
 public class AcmPartRef : MechanicalEntity
 {
+	/// <summary>
+	/// Gets the Mechanical part data referenced by this entity.
+	/// </summary>
+	public AcmDataEntryPart DataEntry { get; internal set; }
+
 	/// <inheritdoc/>
 	public override string ObjectName => DxfFileToken.AcmPartRef;
 
