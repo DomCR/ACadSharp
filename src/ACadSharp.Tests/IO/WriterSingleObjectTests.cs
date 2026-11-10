@@ -106,6 +106,7 @@ public abstract class WriterSingleObjectTests : IOTestsBase
 		Data.Add(new(nameof(SingleCaseGenerator.SingleMaterial)));
 		Data.Add(new(nameof(SingleCaseGenerator.LeaderWithArrowHead)));
 		Data.Add(new(nameof(SingleCaseGenerator.SortedXRecords)));
+		Data.Add(new(nameof(SingleCaseGenerator.ProxyEntityTrueColor)));
 		Data.Add(new(nameof(SingleCaseGenerator.ProxyGraphics)));
 		Data.Add(new(nameof(SingleCaseGenerator.AnonymousBlockWithShortName)));
 	}
@@ -2253,6 +2254,41 @@ public abstract class WriterSingleObjectTests : IOTestsBase
 				EntityComparator.IsEqual(line, result);
 				Assert.Equal(dxfLayer.Name, result.Layer.Name);
 				Assert.NotNull(doc.GetCadObject<Polyline2D>(anotherLine.Handle));
+			};
+		}
+
+		public void ProxyEntityTrueColor()
+		{
+			ProxyEntity proxy = new ProxyEntity();
+			proxy.Version = ACadVersion.AC1032;
+			proxy.MaintenanceVersion = 0;
+
+			ProxySubentTrueColor proxyTrueColor = new ProxySubentTrueColor
+			{
+				Color = new Color(255, 128, 0),
+				ColorMethod = ProxyColorMethod.ByColor,
+			};
+			ProxyCircle proxyCircle = new ProxyCircle
+			{
+				Center = new XYZ(5, 5, 0),
+				Radius = 5,
+			};
+
+			proxy.ProxyGeometries.Add(proxyTrueColor);
+			proxy.ProxyGeometries.Add(proxyCircle);
+
+			this.Document.Entities.Add(proxy);
+
+			this.AssertRoundtrip = (doc) =>
+			{
+				ProxyEntity result = doc.GetCadObject<ProxyEntity>(proxy.Handle);
+				Assert.NotNull(result);
+
+				Assert.Equal(proxy.ProxyGeometries.Count, result.ProxyGeometries.Count);
+				ProxySubentTrueColor resultTrueColor = Assert.IsType<ProxySubentTrueColor>(result.ProxyGeometries[0]);
+				Assert.Equal(ProxyColorMethod.ByColor, resultTrueColor.ColorMethod);
+				Assert.Equal(proxyTrueColor.Color, resultTrueColor.Color);
+				Assert.IsType<ProxyCircle>(result.ProxyGeometries[1]);
 			};
 		}
 
