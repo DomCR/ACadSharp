@@ -110,6 +110,7 @@ public abstract class WriterSingleObjectTests : IOTestsBase
 		Data.Add(new(nameof(SingleCaseGenerator.ProxyEntityTrueColor)));
 		Data.Add(new(nameof(SingleCaseGenerator.ProxyGraphics)));
 		Data.Add(new(nameof(SingleCaseGenerator.ProxyGraphicsLwPolyline)));
+		Data.Add(new(nameof(SingleCaseGenerator.ProxyGraphicsShellWithVertexNormals)));
 		Data.Add(new(nameof(SingleCaseGenerator.ProxyGraphicsUnicodeText2)));
 		Data.Add(new(nameof(SingleCaseGenerator.ProxyShellWithHole)));
 		Data.Add(new(nameof(SingleCaseGenerator.AnonymousBlockWithShortName)));
@@ -2426,6 +2427,37 @@ public abstract class WriterSingleObjectTests : IOTestsBase
 
 				ProxyLwPolyine resultLwPolyline = Assert.IsType<ProxyLwPolyine>(Assert.Single(result.ProxyGeometries));
 				Assert.Equal(proxyLwPolyline.Entity.Vertices.Select(v => v.Location), resultLwPolyline.Entity.Vertices.Select(v => v.Location));
+			};
+		}
+
+		public void ProxyGraphicsShellWithVertexNormals()
+		{
+			ProxyEntity proxy = new ProxyEntity();
+			proxy.Version = ACadVersion.AC1032;
+			proxy.MaintenanceVersion = 0;
+
+			ProxyShell shell = new ProxyShell();
+			shell.Vertices.AddRange(new[] { new XYZ(0, 0, 0), new XYZ(10, 0, 0), new XYZ(0, 10, 0) });
+			shell.Faces.Add(new[] { 0, 1, 2 });
+			shell.VertexTraits = new VertexTraits
+			{
+				Normals = new List<XYZ> { XYZ.AxisZ, XYZ.AxisZ, new XYZ(0, 0, -1) },
+				Orientation = 1,
+			};
+
+			proxy.ProxyGeometries.Add(shell);
+
+			this.Document.Entities.Add(proxy);
+
+			this.AssertRoundtrip = (doc) =>
+			{
+				ProxyEntity result = doc.GetCadObject<ProxyEntity>(proxy.Handle);
+				Assert.NotNull(result);
+
+				ProxyShell resultShell = Assert.IsType<ProxyShell>(Assert.Single(result.ProxyGeometries));
+				Assert.Equal(shell.Vertices, resultShell.Vertices);
+				Assert.Equal(shell.VertexTraits.Normals, resultShell.VertexTraits.Normals);
+				Assert.Equal(shell.VertexTraits.Orientation, resultShell.VertexTraits.Orientation);
 			};
 		}
 
