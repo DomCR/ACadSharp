@@ -337,6 +337,7 @@ internal abstract class DxfSectionReaderBase
 			case 160:
 			//Proxy entity graphics data
 			case 310:
+				template.ProxyGraphics = this.readByteEntries(310)?.ToArray();
 				break;
 			case 347:
 				template.MaterialHandle = this._reader.ValueAsHandle;
@@ -396,7 +397,7 @@ internal abstract class DxfSectionReaderBase
 				}
 				return true;
 			default:
-				return this.tryAssignCurrentValue(template.CadObject, map.SubClasses[DxfSubclassMarker.Circle]);
+				return this.tryAssignCurrentValue(template.CadObject, map);
 		}
 	}
 
@@ -405,9 +406,9 @@ internal abstract class DxfSectionReaderBase
 		switch (this._reader.Code)
 		{
 			default:
-				if (!this.tryAssignCurrentValue(template.CadObject, map.SubClasses[DxfSubclassMarker.Arc]))
+				if (!this.tryAssignCurrentValue(template.CadObject, map))
 				{
-					return this.readCircle(template, map, DxfSubclassMarker.Circle);
+					return this.readCircle(template, map);
 				}
 				return true;
 		}
@@ -928,20 +929,7 @@ internal abstract class DxfSectionReaderBase
 						return false;
 				}
 			default:
-				if (string.IsNullOrEmpty(this.currentSubclass))
-				{
-					//Pre R13 files do not have the subclass markers
-					this.currentSubclass = tmp.CadObject.SubclassMarker;
-				}
-
-				if (this.tryAssignCurrentValue(template.CadObject, map))
-				{
-					return true;
-				}
-
-				//Pre R13 files write AcDbDimension codes like the text (1) after the code 70, mixed with the codes of the dimension type
-				return this._builder.Version < ACadVersion.AC1012
-					&& this.tryAssignCurrentValue(template.CadObject, map.SubClasses[DxfSubclassMarker.Dimension]);
+				return this.tryAssignCurrentValue(template.CadObject, map);
 		}
 	}
 
@@ -1155,6 +1143,7 @@ internal abstract class DxfSectionReaderBase
 			case 66:
 				return true;
 			case 100:
+				this.currentSubclass = this._reader.ValueAsString;
 				switch (this._reader.ValueAsString)
 				{
 					case DxfSubclassMarker.Polyline:
