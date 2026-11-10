@@ -136,7 +136,7 @@ public abstract class CommonEntityTests<T>
 	[InlineData(CadFileFormat.DXF, ACadVersion.AC1014)]
 	[InlineData(CadFileFormat.DXF, ACadVersion.AC1032)]
 	[InlineData(CadFileFormat.DWG, ACadVersion.AC1032)]
-	public void ValidEntityTest(CadFileFormat format, ACadVersion version)
+	public virtual void ValidEntityTest(CadFileFormat format, ACadVersion version)
 	{
 		//By default all entities must be valid on creation
 		var e = new T();

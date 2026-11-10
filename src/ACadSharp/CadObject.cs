@@ -226,6 +226,12 @@ public abstract class CadObject : IHandledCadObject
 		bool result = true;
 		errors = new List<string>();
 
+		if (this.Document != null && this.Owner == null)
+		{
+			errors.Add($"{nameof(this.Owner)} cannot be null.");
+			result = false;
+		}
+
 		if (this is IOrientable orientable)
 		{
 			if (orientable.Normal.IsZero())
