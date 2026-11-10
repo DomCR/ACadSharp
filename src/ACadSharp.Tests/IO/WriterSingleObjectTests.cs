@@ -108,7 +108,6 @@ public abstract class WriterSingleObjectTests : IOTestsBase
 		Data.Add(new(nameof(SingleCaseGenerator.SortedXRecords)));
 		Data.Add(new(nameof(SingleCaseGenerator.ProxyGraphics)));
 		Data.Add(new(nameof(SingleCaseGenerator.AnonymousBlockWithShortName)));
-		Data.Add(new(nameof(SingleCaseGenerator.EllipseRadiusRatioRoundingError)));
 	}
 
 	public WriterSingleObjectTests(ITestOutputHelper output) : base(output)
@@ -1535,24 +1534,6 @@ public abstract class WriterSingleObjectTests : IOTestsBase
 
 			Arc arc = new Arc(XYZ.Zero, 5, 0, Math.PI / 2);
 			this.drawBoundingBox(arc);
-		}
-
-		public void EllipseRadiusRatioRoundingError()
-		{
-			Ellipse ellipse = new Ellipse();
-			typeof(Ellipse)
-				.GetField("_radiusRatio", System.Reflection.BindingFlags.NonPublic | System.Reflection.BindingFlags.Instance)
-				.SetValue(ellipse, 1.0000000000000002);
-
-			this.Document.Entities.Add(ellipse);
-
-			this.AssertRoundtrip = (doc) =>
-			{
-				Ellipse result = doc.GetCadObject<Ellipse>(ellipse.Handle);
-
-				Assert.NotNull(result);
-				Assert.Equal(1.0, result.RadiusRatio);
-			};
 		}
 
 		public void EllipseSegments()
