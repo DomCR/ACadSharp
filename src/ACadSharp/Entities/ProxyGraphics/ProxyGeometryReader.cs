@@ -618,7 +618,12 @@ internal class ProxyGeometryReader
 		int edgeCount = 0;
 		for (int i = 0; i < nfaces; i++)
 		{
-			int count = Math.Abs(stream.ReadInt());
+			int count = stream.ReadInt();
+			if (count < 0)
+			{
+				shell.Holes.Add(shell.Faces.Count);
+				count = Math.Abs(count);
+			}
 			i += count;
 
 			List<int> faceIndices = [];

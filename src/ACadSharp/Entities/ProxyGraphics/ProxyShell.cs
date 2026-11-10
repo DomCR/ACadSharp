@@ -15,11 +15,17 @@ public class ProxyShell : ProxyMeshBase
 	/// <inheritdoc/>
 	public override GraphicsType GraphicsType { get { return GraphicsType.Shell; } }
 
+	/// <summary>
+	/// The indexes of the <see cref="Faces"/> that are holes in the shell, stored with a negative vertex count.
+	/// </summary>
+	public HashSet<int> Holes { get; set; } = new();
+
 	/// <inheritdoc/>
 	public override IProxyGeometry Clone()
 	{
 		ProxyShell clone = (ProxyShell)base.Clone();
 		clone.Faces = this.Faces?.ConvertAll(f => (int[])f?.Clone());
+		clone.Holes = this.Holes != null ? new HashSet<int>(this.Holes) : null;
 		return clone;
 	}
 }
