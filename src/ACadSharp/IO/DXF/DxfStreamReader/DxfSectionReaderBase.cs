@@ -168,9 +168,10 @@ internal abstract class DxfSectionReaderBase
 			//Number of bytes Proxy entity graphics data
 			case 92:
 			case 160:
+				template.ProxyGraphics = this.readByteEntries(310)?.ToArray();
+				break;
 			//Proxy entity graphics data
 			case 310:
-				template.ProxyGraphics = this.readByteEntries(310)?.ToArray();
 				break;
 			case 347:
 				template.MaterialHandle = this._reader.ValueAsHandle;
@@ -2344,7 +2345,7 @@ internal abstract class DxfSectionReaderBase
 			case 7:
 				tmp.StyleName = this._reader.ValueAsString;
 				return true;
-			case 101 when tmp.CadObject is MText mtext: 
+			case 101 when tmp.CadObject is MText mtext:
 				this.readColumnData(mtext);
 				this.lockPointer = true;
 				return true;
