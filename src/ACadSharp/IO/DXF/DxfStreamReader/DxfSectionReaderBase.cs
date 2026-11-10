@@ -125,8 +125,6 @@ internal abstract class DxfSectionReaderBase
 			case 5:
 				template.CadObject.Handle = this._reader.ValueAsHandle;
 				break;
-			case 10:
-				break;
 			//Check with mapper
 			case 100:
 				this.currentSubclass = this._reader.ValueAsString;
@@ -1231,14 +1229,13 @@ internal abstract class DxfSectionReaderBase
 				}
 				return true;
 			default:
-				return this.tryAssignCurrentValue(template.CadObject, map.SubClasses[DxfSubclassMarker.Ellipse]);
+				return this.tryAssignCurrentValue(template.CadObject, map);
 		}
 	}
 
 	private bool readEntitySubclassMap(CadEntityTemplate template, DxfMap map, string subclass = null)
 	{
-		string mapName = string.IsNullOrEmpty(subclass) ? template.CadObject.SubclassMarker : subclass;
-		return this.tryAssignCurrentValue(template.CadObject, map.SubClasses[mapName]);
+		return this.tryAssignCurrentValue(template.CadObject, map);
 	}
 
 	private bool readInsert(CadEntityTemplate template, DxfMap map, string subclass = null)
@@ -2347,7 +2344,7 @@ internal abstract class DxfSectionReaderBase
 			case 7:
 				tmp.StyleName = this._reader.ValueAsString;
 				return true;
-			case 101 when tmp.CadObject is MText mtext:
+			case 101 when tmp.CadObject is MText mtext: 
 				this.readColumnData(mtext);
 				this.lockPointer = true;
 				return true;
@@ -2366,7 +2363,7 @@ internal abstract class DxfSectionReaderBase
 				tmp.DimensionStyleName = this._reader.ValueAsString;
 				return true;
 			default:
-				return this.tryAssignCurrentValue(template.CadObject, map.SubClasses[template.CadObject.SubclassMarker]);
+				return this.tryAssignCurrentValue(template.CadObject, map);
 		}
 	}
 
@@ -2445,7 +2442,7 @@ internal abstract class DxfSectionReaderBase
 				tmp.VisualStyleHandle = this._reader.ValueAsHandle;
 				return true;
 			default:
-				return this.tryAssignCurrentValue(template.CadObject, map.SubClasses[DxfSubclassMarker.Viewport]);
+				return this.tryAssignCurrentValue(template.CadObject, map);
 		}
 	}
 
