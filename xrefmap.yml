@@ -21765,19 +21765,6 @@ references:
   isSpec: "True"
   fullName: ACadSharp.Entities.ProxyGraphics.ProxyShell.GraphicsType
   nameWithType: ProxyShell.GraphicsType
-- uid: ACadSharp.Entities.ProxyGraphics.ProxyShell.Holes
-  name: Holes
-  href: api/ACadSharp.Entities.ProxyGraphics.ProxyShell.html#ACadSharp_Entities_ProxyGraphics_ProxyShell_Holes
-  commentId: P:ACadSharp.Entities.ProxyGraphics.ProxyShell.Holes
-  fullName: ACadSharp.Entities.ProxyGraphics.ProxyShell.Holes
-  nameWithType: ProxyShell.Holes
-- uid: ACadSharp.Entities.ProxyGraphics.ProxyShell.Holes*
-  name: Holes
-  href: api/ACadSharp.Entities.ProxyGraphics.ProxyShell.html#ACadSharp_Entities_ProxyGraphics_ProxyShell_Holes_
-  commentId: Overload:ACadSharp.Entities.ProxyGraphics.ProxyShell.Holes
-  isSpec: "True"
-  fullName: ACadSharp.Entities.ProxyGraphics.ProxyShell.Holes
-  nameWithType: ProxyShell.Holes
 - uid: ACadSharp.Entities.ProxyGraphics.ProxySubEntityMapper
   name: ProxySubEntityMapper
   href: api/ACadSharp.Entities.ProxyGraphics.ProxySubEntityMapper.html
