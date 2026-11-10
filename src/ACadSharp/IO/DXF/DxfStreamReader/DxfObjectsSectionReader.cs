@@ -2102,7 +2102,8 @@ internal class DxfObjectsSectionReader : DxfSectionReaderBase
 				}
 
 				tmp.CadObject.DiffuseMatrix = new CSMath.Matrix4(arr.ToArray());
-				return this.checkObjectEnd(template, map, this.readMaterial);
+				this.lockPointer = true;
+				return true;
 			case 47:
 				arr = new();
 				for (int i = 0; i < 16; i++)
@@ -2115,7 +2116,8 @@ internal class DxfObjectsSectionReader : DxfSectionReaderBase
 				}
 
 				tmp.CadObject.SpecularMatrix = new CSMath.Matrix4(arr.ToArray());
-				return this.checkObjectEnd(template, map, this.readMaterial);
+				this.lockPointer = true;
+				return true;
 			case 49:
 				arr = new();
 				for (int i = 0; i < 16; i++)
@@ -2128,7 +2130,8 @@ internal class DxfObjectsSectionReader : DxfSectionReaderBase
 				}
 
 				tmp.CadObject.ReflectionMatrix = new CSMath.Matrix4(arr.ToArray());
-				return this.checkObjectEnd(template, map, this.readMaterial);
+				this.lockPointer = true;
+				return true;
 			case 142:
 				arr = new();
 				for (int i = 0; i < 16; i++)
@@ -2141,7 +2144,8 @@ internal class DxfObjectsSectionReader : DxfSectionReaderBase
 				}
 
 				tmp.CadObject.OpacityMatrix = new CSMath.Matrix4(arr.ToArray());
-				return this.checkObjectEnd(template, map, this.readMaterial);
+				this.lockPointer = true;
+				return true;
 			case 144:
 				arr = new();
 				for (int i = 0; i < 16; i++)
@@ -2154,7 +2158,8 @@ internal class DxfObjectsSectionReader : DxfSectionReaderBase
 				}
 
 				tmp.CadObject.BumpMatrix = new CSMath.Matrix4(arr.ToArray());
-				return this.checkObjectEnd(template, map, this.readMaterial);
+				this.lockPointer = true;
+				return true;
 			case 147:
 				arr = new();
 				for (int i = 0; i < 16; i++)
@@ -2167,7 +2172,8 @@ internal class DxfObjectsSectionReader : DxfSectionReaderBase
 				}
 
 				tmp.CadObject.RefractionMatrix = new CSMath.Matrix4(arr.ToArray());
-				return this.checkObjectEnd(template, map, this.readMaterial);
+				this.lockPointer = true;
+				return true;
 			default:
 				return this.tryAssignCurrentValue(template.CadObject, map.SubClasses[tmp.CadObject.SubclassMarker]);
 		}
