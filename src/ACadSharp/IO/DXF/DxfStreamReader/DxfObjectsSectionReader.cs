@@ -103,7 +103,7 @@ internal class DxfObjectsSectionReader : DxfSectionReaderBase
 				}
 				else
 				{
-					return this.tryAssignCurrentValue(template.CadObject, map.SubClasses[this.currentSubclass]);
+					return this.tryAssignCurrentValue(template.CadObject, map);
 				}
 		}
 	}
@@ -2388,7 +2388,7 @@ internal class DxfObjectsSectionReader : DxfSectionReaderBase
 				}
 				else
 				{
-					return this.tryAssignCurrentValue(template.CadObject, map.SubClasses[this.currentSubclass]);
+					return this.tryAssignCurrentValue(template.CadObject, map);
 				}
 		}
 	}
