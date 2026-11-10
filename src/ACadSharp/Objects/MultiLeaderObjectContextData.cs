@@ -51,13 +51,13 @@ public partial class MultiLeaderObjectContextData : AnnotScaleObjectContextData,
 	/// Is text background color on
 	/// </summary>
 	/// <remarks>
-	/// The text background fill itself is turned on by <see cref="BackgroundMaskFillOn"/>.
+	/// The text background mask fill itself is turned on by <see cref="BackgroundMaskFillOn"/>.
 	/// </remarks>
 	[DxfCodeValue(291)]
 	public bool BackgroundFillEnabled { get; set; }
 
 	/// <summary>
-	/// Is text background fill on
+	/// Is text background mask fill on
 	/// </summary>
 	[DxfCodeValue(292)]
 	public bool BackgroundMaskFillOn { get; set; }
