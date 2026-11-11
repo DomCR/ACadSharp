@@ -1248,6 +1248,10 @@ internal abstract class DxfSectionReaderBase
 			case 2:
 				tmp.BlockName = this._reader.ValueAsString;
 				return true;
+			case 100 when this._reader.ValueAsString.Equals(DxfSubclassMarker.MInsert):
+				this.currentSubclass = this._reader.ValueAsString;
+				map.SubClasses.TryAdd(this._reader.ValueAsString, map.SubClasses[DxfSubclassMarker.Insert]);
+				return true;
 			case 66:
 				return true;
 			default:

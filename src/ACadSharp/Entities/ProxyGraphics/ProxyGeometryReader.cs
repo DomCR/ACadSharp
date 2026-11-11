@@ -835,7 +835,7 @@ internal class ProxyGeometryReader
 	{
 		ProxySubentPlotStyleName psName = new ProxySubentPlotStyleName();
 
-		psName.Type = (ProxyPlotStyleType)stream.ReadInt();
+		psName.Type = (PlotStyleType)stream.ReadInt();
 		psName.PlotStyleIndex = stream.ReadInt();
 
 		return psName;

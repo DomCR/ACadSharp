@@ -116,6 +116,13 @@ public abstract class Entity : CadObject, IEntity
 	}
 
 	/// <summary>
+	/// Gets or sets the plot style assignment mode for the entity.
+	/// </summary>
+	/// <remarks>Default value is <see cref="PlotStyleType.ByLayer"/>.</remarks>
+	[DxfCodeValue(380)]
+	public PlotStyleType PlotStyle { get; set; } = PlotStyleType.ByLayer;
+
+	/// <summary>
 	/// Gets the list of proxy geometries for this entity.
 	/// </summary>
 	public List<IProxyGeometry> ProxyGeometries
