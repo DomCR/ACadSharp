@@ -114,6 +114,7 @@ public abstract class WriterSingleObjectTests : IOTestsBase
 		Data.Add(new(nameof(SingleCaseGenerator.ProxyGraphicsUnicodeText2)));
 		Data.Add(new(nameof(SingleCaseGenerator.ProxyShellWithHole)));
 		Data.Add(new(nameof(SingleCaseGenerator.AnonymousBlockWithShortName)));
+		Data.Add(new(nameof(SingleCaseGenerator.LongTableEntryNames)));
 	}
 
 	public WriterSingleObjectTests(ITestOutputHelper output) : base(output)
@@ -2245,6 +2246,43 @@ public abstract class WriterSingleObjectTests : IOTestsBase
 				Assert.Equal(lt1.Segments.Count(), result1.Segments.Count());
 				Assert.Equal(lt2.Segments.Count(), result2.Segments.Count());
 				Assert.NotNull(doc.GetCadObject<TextStyle>(style.Handle));
+			};
+		}
+
+		public void LongTableEntryNames()
+		{
+			Layer layer = new Layer("Layer_with_a_name_longer_than_31_characters");
+			this.Document.Layers.Add(layer);
+
+			TextStyle style = new TextStyle("Style_name_longer_than_31_chars_");
+			this.Document.TextStyles.Add(style);
+
+			TextEntity text = new TextEntity
+			{
+				Value = "Long names",
+				Layer = layer,
+				Style = style
+			};
+			this.Document.Entities.Add(text);
+
+			BlockRecord record = new BlockRecord("Block_with_a_name_longer_than_31_chars");
+			record.Entities.Add(new Line(XYZ.Zero, new XYZ(10, 10, 0)));
+			this.Document.BlockRecords.Add(record);
+
+			Insert insert = new Insert(record);
+			this.Document.Entities.Add(insert);
+
+			this.AssertRoundtrip = (doc) =>
+			{
+				TextEntity textResult = doc.GetCadObject<TextEntity>(text.Handle);
+				Insert insertResult = doc.GetCadObject<Insert>(insert.Handle);
+
+				Assert.NotNull(textResult);
+				Assert.NotNull(insertResult);
+				Assert.Equal(layer.Name, textResult.Layer.Name);
+				Assert.Equal(style.Name, textResult.Style.Name);
+				Assert.Equal(record.Name, insertResult.Block.Name);
+				Assert.Single(insertResult.Block.Entities);
 			};
 		}
 
