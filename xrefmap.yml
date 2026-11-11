@@ -39973,6 +39973,32 @@ references:
   isSpec: "True"
   fullName: ACadSharp.Objects.Evaluations.BlockElement.Value1071
   nameWithType: BlockElement.Value1071
+- uid: ACadSharp.Objects.Evaluations.BlockElement.Value98
+  name: Value98
+  href: api/ACadSharp.Objects.Evaluations.BlockElement.html#ACadSharp_Objects_Evaluations_BlockElement_Value98
+  commentId: P:ACadSharp.Objects.Evaluations.BlockElement.Value98
+  fullName: ACadSharp.Objects.Evaluations.BlockElement.Value98
+  nameWithType: BlockElement.Value98
+- uid: ACadSharp.Objects.Evaluations.BlockElement.Value98*
+  name: Value98
+  href: api/ACadSharp.Objects.Evaluations.BlockElement.html#ACadSharp_Objects_Evaluations_BlockElement_Value98_
+  commentId: Overload:ACadSharp.Objects.Evaluations.BlockElement.Value98
+  isSpec: "True"
+  fullName: ACadSharp.Objects.Evaluations.BlockElement.Value98
+  nameWithType: BlockElement.Value98
+- uid: ACadSharp.Objects.Evaluations.BlockElement.Value99
+  name: Value99
+  href: api/ACadSharp.Objects.Evaluations.BlockElement.html#ACadSharp_Objects_Evaluations_BlockElement_Value99
+  commentId: P:ACadSharp.Objects.Evaluations.BlockElement.Value99
+  fullName: ACadSharp.Objects.Evaluations.BlockElement.Value99
+  nameWithType: BlockElement.Value99
+- uid: ACadSharp.Objects.Evaluations.BlockElement.Value99*
+  name: Value99
+  href: api/ACadSharp.Objects.Evaluations.BlockElement.html#ACadSharp_Objects_Evaluations_BlockElement_Value99_
+  commentId: Overload:ACadSharp.Objects.Evaluations.BlockElement.Value99
+  isSpec: "True"
+  fullName: ACadSharp.Objects.Evaluations.BlockElement.Value99
+  nameWithType: BlockElement.Value99
 - uid: ACadSharp.Objects.Evaluations.BlockFlipAction
   name: BlockFlipAction
   href: api/ACadSharp.Objects.Evaluations.BlockFlipAction.html
