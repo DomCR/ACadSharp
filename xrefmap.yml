@@ -11602,6 +11602,19 @@ references:
   isSpec: "True"
   fullName: ACadSharp.Entities.Entity.Material
   nameWithType: Entity.Material
+- uid: ACadSharp.Entities.Entity.PlotStyle
+  name: PlotStyle
+  href: api/ACadSharp.Entities.Entity.html#ACadSharp_Entities_Entity_PlotStyle
+  commentId: P:ACadSharp.Entities.Entity.PlotStyle
+  fullName: ACadSharp.Entities.Entity.PlotStyle
+  nameWithType: Entity.PlotStyle
+- uid: ACadSharp.Entities.Entity.PlotStyle*
+  name: PlotStyle
+  href: api/ACadSharp.Entities.Entity.html#ACadSharp_Entities_Entity_PlotStyle_
+  commentId: Overload:ACadSharp.Entities.Entity.PlotStyle
+  isSpec: "True"
+  fullName: ACadSharp.Entities.Entity.PlotStyle
+  nameWithType: Entity.PlotStyle
 - uid: ACadSharp.Entities.Entity.ProxyGeometries
   name: ProxyGeometries
   href: api/ACadSharp.Entities.Entity.html#ACadSharp_Entities_Entity_ProxyGeometries
@@ -18913,6 +18926,36 @@ references:
   isSpec: "True"
   fullName: ACadSharp.Entities.PlaneSurface.SubclassMarker
   nameWithType: PlaneSurface.SubclassMarker
+- uid: ACadSharp.Entities.PlotStyleType
+  name: PlotStyleType
+  href: api/ACadSharp.Entities.PlotStyleType.html
+  commentId: T:ACadSharp.Entities.PlotStyleType
+  fullName: ACadSharp.Entities.PlotStyleType
+  nameWithType: PlotStyleType
+- uid: ACadSharp.Entities.PlotStyleType.ByBlock
+  name: ByBlock
+  href: api/ACadSharp.Entities.PlotStyleType.html#ACadSharp_Entities_PlotStyleType_ByBlock
+  commentId: F:ACadSharp.Entities.PlotStyleType.ByBlock
+  fullName: ACadSharp.Entities.PlotStyleType.ByBlock
+  nameWithType: PlotStyleType.ByBlock
+- uid: ACadSharp.Entities.PlotStyleType.ByLayer
+  name: ByLayer
+  href: api/ACadSharp.Entities.PlotStyleType.html#ACadSharp_Entities_PlotStyleType_ByLayer
+  commentId: F:ACadSharp.Entities.PlotStyleType.ByLayer
+  fullName: ACadSharp.Entities.PlotStyleType.ByLayer
+  nameWithType: PlotStyleType.ByLayer
+- uid: ACadSharp.Entities.PlotStyleType.DictDefault
+  name: DictDefault
+  href: api/ACadSharp.Entities.PlotStyleType.html#ACadSharp_Entities_PlotStyleType_DictDefault
+  commentId: F:ACadSharp.Entities.PlotStyleType.DictDefault
+  fullName: ACadSharp.Entities.PlotStyleType.DictDefault
+  nameWithType: PlotStyleType.DictDefault
+- uid: ACadSharp.Entities.PlotStyleType.PlotstyleById
+  name: PlotstyleById
+  href: api/ACadSharp.Entities.PlotStyleType.html#ACadSharp_Entities_PlotStyleType_PlotstyleById
+  commentId: F:ACadSharp.Entities.PlotStyleType.PlotstyleById
+  fullName: ACadSharp.Entities.PlotStyleType.PlotstyleById
+  nameWithType: PlotStyleType.PlotstyleById
 - uid: ACadSharp.Entities.Point
   name: Point
   href: api/ACadSharp.Entities.Point.html
@@ -21181,36 +21224,6 @@ references:
   isSpec: "True"
   fullName: ACadSharp.Entities.ProxyGraphics.ProxyMeshBase.Vertices
   nameWithType: ProxyMeshBase.Vertices
-- uid: ACadSharp.Entities.ProxyGraphics.ProxyPlotStyleType
-  name: ProxyPlotStyleType
-  href: api/ACadSharp.Entities.ProxyGraphics.ProxyPlotStyleType.html
-  commentId: T:ACadSharp.Entities.ProxyGraphics.ProxyPlotStyleType
-  fullName: ACadSharp.Entities.ProxyGraphics.ProxyPlotStyleType
-  nameWithType: ProxyPlotStyleType
-- uid: ACadSharp.Entities.ProxyGraphics.ProxyPlotStyleType.ByBlock
-  name: ByBlock
-  href: api/ACadSharp.Entities.ProxyGraphics.ProxyPlotStyleType.html#ACadSharp_Entities_ProxyGraphics_ProxyPlotStyleType_ByBlock
-  commentId: F:ACadSharp.Entities.ProxyGraphics.ProxyPlotStyleType.ByBlock
-  fullName: ACadSharp.Entities.ProxyGraphics.ProxyPlotStyleType.ByBlock
-  nameWithType: ProxyPlotStyleType.ByBlock
-- uid: ACadSharp.Entities.ProxyGraphics.ProxyPlotStyleType.ByLayer
-  name: ByLayer
-  href: api/ACadSharp.Entities.ProxyGraphics.ProxyPlotStyleType.html#ACadSharp_Entities_ProxyGraphics_ProxyPlotStyleType_ByLayer
-  commentId: F:ACadSharp.Entities.ProxyGraphics.ProxyPlotStyleType.ByLayer
-  fullName: ACadSharp.Entities.ProxyGraphics.ProxyPlotStyleType.ByLayer
-  nameWithType: ProxyPlotStyleType.ByLayer
-- uid: ACadSharp.Entities.ProxyGraphics.ProxyPlotStyleType.DictDefault
-  name: DictDefault
-  href: api/ACadSharp.Entities.ProxyGraphics.ProxyPlotStyleType.html#ACadSharp_Entities_ProxyGraphics_ProxyPlotStyleType_DictDefault
-  commentId: F:ACadSharp.Entities.ProxyGraphics.ProxyPlotStyleType.DictDefault
-  fullName: ACadSharp.Entities.ProxyGraphics.ProxyPlotStyleType.DictDefault
-  nameWithType: ProxyPlotStyleType.DictDefault
-- uid: ACadSharp.Entities.ProxyGraphics.ProxyPlotStyleType.PlotstyleById
-  name: PlotstyleById
-  href: api/ACadSharp.Entities.ProxyGraphics.ProxyPlotStyleType.html#ACadSharp_Entities_ProxyGraphics_ProxyPlotStyleType_PlotstyleById
-  commentId: F:ACadSharp.Entities.ProxyGraphics.ProxyPlotStyleType.PlotstyleById
-  fullName: ACadSharp.Entities.ProxyGraphics.ProxyPlotStyleType.PlotstyleById
-  nameWithType: ProxyPlotStyleType.PlotstyleById
 - uid: ACadSharp.Entities.ProxyGraphics.ProxyPolygon
   name: ProxyPolygon
   href: api/ACadSharp.Entities.ProxyGraphics.ProxyPolygon.html

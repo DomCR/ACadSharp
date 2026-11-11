@@ -1931,6 +1931,20 @@
     },
     {
       "type": "ManagedReference",
+      "source_relative_path": "api/ACadSharp.Entities.PlotStyleType.yml",
+      "output": {
+        ".html": {
+          "relative_path": "api/ACadSharp.Entities.PlotStyleType.html"
+        }
+      },
+      "version": "",
+      "Uid": null,
+      "IsMRef": true,
+      "Title": "ACadSharp.Entities.PlotStyleType",
+      "Summary": null
+    },
+    {
+      "type": "ManagedReference",
       "source_relative_path": "api/ACadSharp.Entities.Point.yml",
       "output": {
         ".html": {
@@ -2264,20 +2278,6 @@
       "IsMRef": true,
       "Title": "ACadSharp.Entities.ProxyGraphics.ProxyMeshBase",
       "Summary": "<p sourcefile=\"api/ACadSharp.Entities.ProxyGraphics.ProxyMeshBase.yml\" sourcestartlinenumber=\"1\">Represents a proxy mesh geometry in AutoCAD.</p>\n"
-    },
-    {
-      "type": "ManagedReference",
-      "source_relative_path": "api/ACadSharp.Entities.ProxyGraphics.ProxyPlotStyleType.yml",
-      "output": {
-        ".html": {
-          "relative_path": "api/ACadSharp.Entities.ProxyGraphics.ProxyPlotStyleType.html"
-        }
-      },
-      "version": "",
-      "Uid": null,
-      "IsMRef": true,
-      "Title": "ACadSharp.Entities.ProxyGraphics.ProxyPlotStyleType",
-      "Summary": null
     },
     {
       "type": "ManagedReference",

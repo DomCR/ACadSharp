@@ -268,7 +268,7 @@ public abstract class Entity : CadObject, IEntity, IHandledCadObject, IGeometric
 
   <h3 id="ACadSharp_Entities_Entity__ctor" data-uid="ACadSharp.Entities.Entity.#ctor">
   Entity()
-  <a class="header-action link-secondary" title="View source" href="https://github.com/DomCR/ACadSharp/blob/master/src/ACadSharp/Entities/Entity.cs/#L152"><i class="bi bi-code-slash"></i></a>
+  <a class="header-action link-secondary" title="View source" href="https://github.com/DomCR/ACadSharp/blob/master/src/ACadSharp/Entities/Entity.cs/#L159"><i class="bi bi-code-slash"></i></a>
   </h3>
 
   <div class="markdown level1 summary"><p>Default constructor.</p>
@@ -605,11 +605,47 @@ public Material Material { get; set; }</code></pre>
 
 
 
+  <a id="ACadSharp_Entities_Entity_PlotStyle_" data-uid="ACadSharp.Entities.Entity.PlotStyle*"></a>
+
+  <h3 id="ACadSharp_Entities_Entity_PlotStyle" data-uid="ACadSharp.Entities.Entity.PlotStyle">
+  PlotStyle
+  <a class="header-action link-secondary" title="View source" href="https://github.com/DomCR/ACadSharp/blob/master/src/ACadSharp/Entities/Entity.cs/#L122"><i class="bi bi-code-slash"></i></a>
+  </h3>
+
+  <div class="markdown level1 summary"><p>Gets or sets the plot style assignment mode for the entity.</p>
+</div>
+  <div class="markdown level1 conceptual"></div>
+
+  <div class="codewrapper">
+    <pre><code class="lang-csharp hljs">[DxfCodeValue(new int[] { 380 })]
+public PlotStyleType PlotStyle { get; set; }</code></pre>
+  </div>
+
+
+
+
+
+  <h4 class="section">Property Value</h4>
+  <dl class="parameters">
+    <dt><a class="xref" href="ACadSharp.Entities.PlotStyleType.html">PlotStyleType</a></dt>
+    <dd></dd>
+  </dl>
+
+
+
+
+  <h4 class="section" id="ACadSharp_Entities_Entity_PlotStyle_remarks">Remarks</h4>
+  <div class="markdown level1 remarks"><p>Default value is <a class="xref" href="ACadSharp.Entities.PlotStyleType.html#ACadSharp_Entities_PlotStyleType_ByLayer">ByLayer</a>.</p>
+</div>
+
+
+
+
   <a id="ACadSharp_Entities_Entity_ProxyGeometries_" data-uid="ACadSharp.Entities.Entity.ProxyGeometries*"></a>
 
   <h3 id="ACadSharp_Entities_Entity_ProxyGeometries" data-uid="ACadSharp.Entities.Entity.ProxyGeometries">
   ProxyGeometries
-  <a class="header-action link-secondary" title="View source" href="https://github.com/DomCR/ACadSharp/blob/master/src/ACadSharp/Entities/Entity.cs/#L121"><i class="bi bi-code-slash"></i></a>
+  <a class="header-action link-secondary" title="View source" href="https://github.com/DomCR/ACadSharp/blob/master/src/ACadSharp/Entities/Entity.cs/#L128"><i class="bi bi-code-slash"></i></a>
   </h3>
 
   <div class="markdown level1 summary"><p>Gets the list of proxy geometries for this entity.</p>
@@ -641,7 +677,7 @@ public Material Material { get; set; }</code></pre>
 
   <h3 id="ACadSharp_Entities_Entity_SubclassMarker" data-uid="ACadSharp.Entities.Entity.SubclassMarker">
   SubclassMarker
-  <a class="header-action link-secondary" title="View source" href="https://github.com/DomCR/ACadSharp/blob/master/src/ACadSharp/Entities/Entity.cs/#L135"><i class="bi bi-code-slash"></i></a>
+  <a class="header-action link-secondary" title="View source" href="https://github.com/DomCR/ACadSharp/blob/master/src/ACadSharp/Entities/Entity.cs/#L142"><i class="bi bi-code-slash"></i></a>
   </h3>
 
   <div class="markdown level1 summary"><p>Object Subclass marker.</p>
@@ -673,7 +709,7 @@ public Material Material { get; set; }</code></pre>
 
   <h3 id="ACadSharp_Entities_Entity_Transparency" data-uid="ACadSharp.Entities.Entity.Transparency">
   Transparency
-  <a class="header-action link-secondary" title="View source" href="https://github.com/DomCR/ACadSharp/blob/master/src/ACadSharp/Entities/Entity.cs/#L138"><i class="bi bi-code-slash"></i></a>
+  <a class="header-action link-secondary" title="View source" href="https://github.com/DomCR/ACadSharp/blob/master/src/ACadSharp/Entities/Entity.cs/#L145"><i class="bi bi-code-slash"></i></a>
   </h3>
 
   <div class="markdown level1 summary"><p>Transparency value.</p>
@@ -710,7 +746,7 @@ public Transparency Transparency { get; set; }</code></pre>
 
   <h3 id="ACadSharp_Entities_Entity_ApplyRotation_CSMath_XYZ_System_Double_" data-uid="ACadSharp.Entities.Entity.ApplyRotation(CSMath.XYZ,System.Double)">
   ApplyRotation(XYZ, double)
-  <a class="header-action link-secondary" title="View source" href="https://github.com/DomCR/ACadSharp/blob/master/src/ACadSharp/Entities/Entity.cs/#L159"><i class="bi bi-code-slash"></i></a>
+  <a class="header-action link-secondary" title="View source" href="https://github.com/DomCR/ACadSharp/blob/master/src/ACadSharp/Entities/Entity.cs/#L166"><i class="bi bi-code-slash"></i></a>
   </h3>
 
   <div class="markdown level1 summary"><p>Apply a rotation to this entity.</p>
@@ -745,7 +781,7 @@ public Transparency Transparency { get; set; }</code></pre>
 
   <h3 id="ACadSharp_Entities_Entity_ApplyScaling_CSMath_XYZ_" data-uid="ACadSharp.Entities.Entity.ApplyScaling(CSMath.XYZ)">
   ApplyScaling(XYZ)
-  <a class="header-action link-secondary" title="View source" href="https://github.com/DomCR/ACadSharp/blob/master/src/ACadSharp/Entities/Entity.cs/#L169"><i class="bi bi-code-slash"></i></a>
+  <a class="header-action link-secondary" title="View source" href="https://github.com/DomCR/ACadSharp/blob/master/src/ACadSharp/Entities/Entity.cs/#L176"><i class="bi bi-code-slash"></i></a>
   </h3>
 
   <div class="markdown level1 summary"><p>Apply a scaling transformation to this entity.</p>
@@ -777,7 +813,7 @@ public Transparency Transparency { get; set; }</code></pre>
 
   <h3 id="ACadSharp_Entities_Entity_ApplyScaling_CSMath_XYZ_CSMath_XYZ_" data-uid="ACadSharp.Entities.Entity.ApplyScaling(CSMath.XYZ,CSMath.XYZ)">
   ApplyScaling(XYZ, XYZ)
-  <a class="header-action link-secondary" title="View source" href="https://github.com/DomCR/ACadSharp/blob/master/src/ACadSharp/Entities/Entity.cs/#L180"><i class="bi bi-code-slash"></i></a>
+  <a class="header-action link-secondary" title="View source" href="https://github.com/DomCR/ACadSharp/blob/master/src/ACadSharp/Entities/Entity.cs/#L187"><i class="bi bi-code-slash"></i></a>
   </h3>
 
   <div class="markdown level1 summary"><p>Apply a scaling transformation to this entity.</p>
@@ -811,7 +847,7 @@ public Transparency Transparency { get; set; }</code></pre>
 
   <h3 id="ACadSharp_Entities_Entity_ApplyTransform_CSMath_Transform_" data-uid="ACadSharp.Entities.Entity.ApplyTransform(CSMath.Transform)">
   ApplyTransform(Transform)
-  <a class="header-action link-secondary" title="View source" href="https://github.com/DomCR/ACadSharp/blob/master/src/ACadSharp/Entities/Entity.cs/#L187"><i class="bi bi-code-slash"></i></a>
+  <a class="header-action link-secondary" title="View source" href="https://github.com/DomCR/ACadSharp/blob/master/src/ACadSharp/Entities/Entity.cs/#L194"><i class="bi bi-code-slash"></i></a>
   </h3>
 
   <div class="markdown level1 summary"><p>Apply a transform matrix to this entity.</p>
@@ -843,7 +879,7 @@ public Transparency Transparency { get; set; }</code></pre>
 
   <h3 id="ACadSharp_Entities_Entity_ApplyTranslation_CSMath_XYZ_" data-uid="ACadSharp.Entities.Entity.ApplyTranslation(CSMath.XYZ)">
   ApplyTranslation(XYZ)
-  <a class="header-action link-secondary" title="View source" href="https://github.com/DomCR/ACadSharp/blob/master/src/ACadSharp/Entities/Entity.cs/#L193"><i class="bi bi-code-slash"></i></a>
+  <a class="header-action link-secondary" title="View source" href="https://github.com/DomCR/ACadSharp/blob/master/src/ACadSharp/Entities/Entity.cs/#L200"><i class="bi bi-code-slash"></i></a>
   </h3>
 
   <div class="markdown level1 summary"><p>Apply a translation to this entity.</p>
@@ -875,7 +911,7 @@ public Transparency Transparency { get; set; }</code></pre>
 
   <h3 id="ACadSharp_Entities_Entity_Clone" data-uid="ACadSharp.Entities.Entity.Clone">
   Clone()
-  <a class="header-action link-secondary" title="View source" href="https://github.com/DomCR/ACadSharp/blob/master/src/ACadSharp/Entities/Entity.cs/#L200"><i class="bi bi-code-slash"></i></a>
+  <a class="header-action link-secondary" title="View source" href="https://github.com/DomCR/ACadSharp/blob/master/src/ACadSharp/Entities/Entity.cs/#L207"><i class="bi bi-code-slash"></i></a>
   </h3>
 
   <div class="markdown level1 summary"><p>Creates a new object that is a copy of the current instance.</p>
@@ -911,7 +947,7 @@ public Transparency Transparency { get; set; }</code></pre>
 
   <h3 id="ACadSharp_Entities_Entity_GetActiveColor" data-uid="ACadSharp.Entities.Entity.GetActiveColor">
   GetActiveColor()
-  <a class="header-action link-secondary" title="View source" href="https://github.com/DomCR/ACadSharp/blob/master/src/ACadSharp/Entities/Entity.cs/#L221"><i class="bi bi-code-slash"></i></a>
+  <a class="header-action link-secondary" title="View source" href="https://github.com/DomCR/ACadSharp/blob/master/src/ACadSharp/Entities/Entity.cs/#L228"><i class="bi bi-code-slash"></i></a>
   </h3>
 
   <div class="markdown level1 summary"><p>Get the active color for the entity, process the colors like <a class="xref" href="ACadSharp.Color.html#ACadSharp_Color_ByBlock">ByBlock</a> and <a class="xref" href="ACadSharp.Color.html#ACadSharp_Color_ByLayer">ByLayer</a>.</p>
@@ -943,7 +979,7 @@ public Transparency Transparency { get; set; }</code></pre>
 
   <h3 id="ACadSharp_Entities_Entity_GetActiveLineType" data-uid="ACadSharp.Entities.Entity.GetActiveLineType">
   GetActiveLineType()
-  <a class="header-action link-secondary" title="View source" href="https://github.com/DomCR/ACadSharp/blob/master/src/ACadSharp/Entities/Entity.cs/#L245"><i class="bi bi-code-slash"></i></a>
+  <a class="header-action link-secondary" title="View source" href="https://github.com/DomCR/ACadSharp/blob/master/src/ACadSharp/Entities/Entity.cs/#L252"><i class="bi bi-code-slash"></i></a>
   </h3>
 
   <div class="markdown level1 summary"><p>Get the active line type for the entity, process the line types like <a class="xref" href="ACadSharp.Tables.LineType.html#ACadSharp_Tables_LineType_ByBlock">ByBlock</a> and <a class="xref" href="ACadSharp.Tables.LineType.html#ACadSharp_Tables_LineType_ByLayer">ByLayer</a>.</p>
@@ -975,7 +1011,7 @@ public Transparency Transparency { get; set; }</code></pre>
 
   <h3 id="ACadSharp_Entities_Entity_GetActiveLineWeightType" data-uid="ACadSharp.Entities.Entity.GetActiveLineWeightType">
   GetActiveLineWeightType()
-  <a class="header-action link-secondary" title="View source" href="https://github.com/DomCR/ACadSharp/blob/master/src/ACadSharp/Entities/Entity.cs/#L261"><i class="bi bi-code-slash"></i></a>
+  <a class="header-action link-secondary" title="View source" href="https://github.com/DomCR/ACadSharp/blob/master/src/ACadSharp/Entities/Entity.cs/#L268"><i class="bi bi-code-slash"></i></a>
   </h3>
 
   <div class="markdown level1 summary"><p>Get the active line weight for the entity, process the line weights like <a class="xref" href="ACadSharp.LineWeightType.html#ACadSharp_LineWeightType_ByBlock">ByBlock</a> and <a class="xref" href="ACadSharp.LineWeightType.html#ACadSharp_LineWeightType_ByLayer">ByLayer</a>.</p>
@@ -1007,7 +1043,7 @@ public Transparency Transparency { get; set; }</code></pre>
 
   <h3 id="ACadSharp_Entities_Entity_GetBoundingBox" data-uid="ACadSharp.Entities.Entity.GetBoundingBox">
   GetBoundingBox()
-  <a class="header-action link-secondary" title="View source" href="https://github.com/DomCR/ACadSharp/blob/master/src/ACadSharp/Entities/Entity.cs/#L282"><i class="bi bi-code-slash"></i></a>
+  <a class="header-action link-secondary" title="View source" href="https://github.com/DomCR/ACadSharp/blob/master/src/ACadSharp/Entities/Entity.cs/#L289"><i class="bi bi-code-slash"></i></a>
   </h3>
 
   <div class="markdown level1 summary"><p>Gets the bounding box aligned with the axis XYZ that occupies this entity.</p>
@@ -1040,7 +1076,7 @@ public Transparency Transparency { get; set; }</code></pre>
 
   <h3 id="ACadSharp_Entities_Entity_MatchProperties_ACadSharp_Entities_IEntity_" data-uid="ACadSharp.Entities.Entity.MatchProperties(ACadSharp.Entities.IEntity)">
   MatchProperties(IEntity)
-  <a class="header-action link-secondary" title="View source" href="https://github.com/DomCR/ACadSharp/blob/master/src/ACadSharp/Entities/Entity.cs/#L285"><i class="bi bi-code-slash"></i></a>
+  <a class="header-action link-secondary" title="View source" href="https://github.com/DomCR/ACadSharp/blob/master/src/ACadSharp/Entities/Entity.cs/#L292"><i class="bi bi-code-slash"></i></a>
   </h3>
 
   <div class="markdown level1 summary"><p>Copies matching property values from the specified entity to the current object.</p>
@@ -1077,7 +1113,7 @@ do not exist or are not compatible in either object are ignored.</p>
 
   <h3 id="ACadSharp_Entities_Entity_applyRotation_System_Collections_Generic_IEnumerable_CSMath_XY__System_Double_" data-uid="ACadSharp.Entities.Entity.applyRotation(System.Collections.Generic.IEnumerable{CSMath.XY},System.Double)">
   applyRotation(IEnumerable&lt;XY&gt;, double)
-  <a class="header-action link-secondary" title="View source" href="https://github.com/DomCR/ACadSharp/blob/master/src/ACadSharp/Entities/Entity.cs/#L340"><i class="bi bi-code-slash"></i></a>
+  <a class="header-action link-secondary" title="View source" href="https://github.com/DomCR/ACadSharp/blob/master/src/ACadSharp/Entities/Entity.cs/#L347"><i class="bi bi-code-slash"></i></a>
   </h3>
 
   <div class="markdown level1 summary"></div>
@@ -1115,7 +1151,7 @@ do not exist or are not compatible in either object are ignored.</p>
 
   <h3 id="ACadSharp_Entities_Entity_applyWorldMatrix_CSMath_XYZ_CSMath_Transform_CSMath_Matrix3_CSMath_Matrix3_" data-uid="ACadSharp.Entities.Entity.applyWorldMatrix(CSMath.XYZ,CSMath.Transform,CSMath.Matrix3,CSMath.Matrix3)">
   applyWorldMatrix(XYZ, Transform, Matrix3, Matrix3)
-  <a class="header-action link-secondary" title="View source" href="https://github.com/DomCR/ACadSharp/blob/master/src/ACadSharp/Entities/Entity.cs/#L365"><i class="bi bi-code-slash"></i></a>
+  <a class="header-action link-secondary" title="View source" href="https://github.com/DomCR/ACadSharp/blob/master/src/ACadSharp/Entities/Entity.cs/#L372"><i class="bi bi-code-slash"></i></a>
   </h3>
 
   <div class="markdown level1 summary"></div>
@@ -1157,7 +1193,7 @@ do not exist or are not compatible in either object are ignored.</p>
 
   <h3 id="ACadSharp_Entities_Entity_getWorldMatrix_CSMath_Transform_CSMath_XYZ_CSMath_XYZ_CSMath_Matrix3__CSMath_Matrix3__" data-uid="ACadSharp.Entities.Entity.getWorldMatrix(CSMath.Transform,CSMath.XYZ,CSMath.XYZ,CSMath.Matrix3@,CSMath.Matrix3@)">
   getWorldMatrix(Transform, XYZ, XYZ, out Matrix3, out Matrix3)
-  <a class="header-action link-secondary" title="View source" href="https://github.com/DomCR/ACadSharp/blob/master/src/ACadSharp/Entities/Entity.cs/#L373"><i class="bi bi-code-slash"></i></a>
+  <a class="header-action link-secondary" title="View source" href="https://github.com/DomCR/ACadSharp/blob/master/src/ACadSharp/Entities/Entity.cs/#L380"><i class="bi bi-code-slash"></i></a>
   </h3>
 
   <div class="markdown level1 summary"></div>
@@ -1201,7 +1237,7 @@ do not exist or are not compatible in either object are ignored.</p>
 
   <h3 id="ACadSharp_Entities_Entity_transformNormal_CSMath_Transform_CSMath_XYZ_" data-uid="ACadSharp.Entities.Entity.transformNormal(CSMath.Transform,CSMath.XYZ)">
   transformNormal(Transform, XYZ)
-  <a class="header-action link-secondary" title="View source" href="https://github.com/DomCR/ACadSharp/blob/master/src/ACadSharp/Entities/Entity.cs/#L380"><i class="bi bi-code-slash"></i></a>
+  <a class="header-action link-secondary" title="View source" href="https://github.com/DomCR/ACadSharp/blob/master/src/ACadSharp/Entities/Entity.cs/#L387"><i class="bi bi-code-slash"></i></a>
   </h3>
 
   <div class="markdown level1 summary"></div>
