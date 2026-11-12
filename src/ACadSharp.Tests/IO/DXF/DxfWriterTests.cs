@@ -1,5 +1,8 @@
 ﻿using ACadSharp.Entities;
 using ACadSharp.IO;
+using ACadSharp.Objects;
+using CSMath;
+using System.Linq;
 using ACadSharp.Tests.Common;
 using System.Collections.Generic;
 using System.IO;
@@ -64,6 +67,61 @@ public class DxfWriterTests : IOTestsBase
 		{
 			CadDocument readed = re.Read();
 		}
+	}
+
+	[Fact]
+	public void WriteFieldWithoutOwnerTest()
+	{
+		//A FIELD read without its owner is still listed by ACAD_FIELDLIST, the writer must not fail on it
+		CadDocument doc = new CadDocument();
+		doc.Header.Version = ACadVersion.AC1032;
+
+		FieldList list = new FieldList();
+		list.Fields.Add(new Field { FormatString = string.Empty });
+		doc.RootDictionary.Remove(CadDictionary.AcadFieldList);
+		doc.RootDictionary.Add(CadDictionary.AcadFieldList, list);
+
+		MemoryStream stream = new MemoryStream();
+		DxfWriter.Write(stream, doc, false, notification: this.onNotification);
+
+		CadDocument read = DxfReader.Read(new MemoryStream(stream.ToArray()), this.onNotification);
+		Assert.NotNull(read);
+	}
+
+	[Fact]
+	public void WriteDimensionAssociationTest()
+	{
+		CadDocument doc = new CadDocument();
+		doc.Header.Version = ACadVersion.AC1032;
+
+		Line line = new Line(XYZ.Zero, new XYZ(10, 0, 0));
+		DimensionLinear dimension = new DimensionLinear();
+		doc.Entities.Add(line);
+		doc.Entities.Add(dimension);
+
+		DimensionAssociation association = new DimensionAssociation
+		{
+			Dimension = dimension,
+			AssociativityFlags = AssociativityFlags.FirstPointReference,
+			FirstPointRef = new DimensionAssociation.OsnapPointRef
+			{
+				ObjectOsnapType = ObjectOsnapType.Endpoint,
+				Geometry = line,
+				OsnapPoint = new XYZ(10, 0, 0),
+			},
+		};
+		dimension.CreateExtendedDictionary().Add("ACAD_DIMASSOC", association);
+
+		MemoryStream stream = new MemoryStream();
+		DxfWriter.Write(stream, doc, false, notification: this.onNotification);
+
+		CadDocument read = DxfReader.Read(new MemoryStream(stream.ToArray()), this.onNotification);
+		DimensionLinear readDimension = Assert.Single(read.Entities.OfType<DimensionLinear>());
+		DimensionAssociation readAssociation = Assert.IsType<DimensionAssociation>(readDimension.XDictionary["ACAD_DIMASSOC"]);
+		Assert.Equal(AssociativityFlags.FirstPointReference, readAssociation.AssociativityFlags);
+		Assert.Equal(readDimension.Handle, readAssociation.Dimension.Handle);
+		Assert.Equal(new XYZ(10, 0, 0), readAssociation.FirstPointRef.OsnapPoint);
+		Assert.Equal(ObjectOsnapType.Endpoint, readAssociation.FirstPointRef.ObjectOsnapType);
 	}
 
 	[Theory]
