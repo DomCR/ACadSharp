@@ -11,6 +11,13 @@ internal partial class DwgObjectWriter
 	private void writeModelerGeometry(ModelerGeometry geometry)
 	{
 		byte[] data = geometry.AcisData ?? Array.Empty<byte>();
+		byte[] secondaryData = geometry.SecondaryAcisData ?? Array.Empty<byte>();
+		if (ModelerGeometry.IsBinaryPayload(secondaryData) && (this._version < ACadVersion.AC1018
+			|| (this._version < ACadVersion.AC1027 && ModelerGeometry.IsAsmPayload(secondaryData) && !this.WriteLegacyAsmData)))
+		{
+			this.notify($"Secondary binary modeler data for {geometry.ObjectName} (handle {geometry.Handle:X}) is not supported by this writer in {this._version}; the secondary modeler payload will be written empty.", NotificationType.Warning);
+			secondaryData = Array.Empty<byte>();
+		}
 		if (geometry.IsBinaryAcisData && (this._version < ACadVersion.AC1018
 			|| (this._version < ACadVersion.AC1027 && geometry.IsAsmAcisData && !this.WriteLegacyAsmData)))
 		{
@@ -29,27 +36,11 @@ internal partial class DwgObjectWriter
 		if (data.Length > 0 && !storedInAcDs)
 		{
 			// SAT uses the text-data flag even when imported from another DWG.
-			this._writer.WriteBit(version == 1 || geometry.ModelerDataFlag == true);
-			this._writer.WriteBitShort(version);
-			if (version == 2)
-			{
-				this._writer.WriteBytes(data);
-			}
-			else
-			{
-				for (int offset = 0; offset < data.Length; offset += 4096)
-				{
-					byte[] block = new byte[Math.Min(4096, data.Length - offset)];
-					Array.Copy(data, offset, block, 0, block.Length);
-					this._writer.WriteBitLong(block.Length);
-					this._writer.WriteBytes(AcisTextCodec.Decode(block));
-				}
-				this._writer.WriteBitLong(0);
-			}
+			this.writeModelerGeometryData(data, version, version == 1 || geometry.ModelerDataFlag == true);
 		}
 
 		bool hasPoint = geometry.Point != XYZ.Zero;
-		bool hasWireframe = hasPoint || geometry.Wires.Any() || geometry.Silhouettes.Any();
+		bool hasWireframe = hasPoint || geometry.Wires.Any() || geometry.Silhouettes.Any() || secondaryData.Length > 0;
 		this._writer.WriteBit(hasWireframe);
 		if (hasWireframe)
 		{
@@ -78,7 +69,13 @@ internal partial class DwgObjectWriter
 				}
 			}
 			// A second ACIS payload is only present inside the wireframe block.
-			this._writer.WriteBit(true);
+			this._writer.WriteBit(secondaryData.Length == 0);
+			if (secondaryData.Length > 0)
+			{
+				short secondaryVersion = geometry.SecondaryModelerFormatVersion
+					?? (short)(ModelerGeometry.IsBinaryPayload(secondaryData) ? 2 : 1);
+				this.writeModelerGeometryData(secondaryData, secondaryVersion, geometry.SecondaryModelerDataFlag ?? secondaryVersion == 1);
+			}
 		}
 		if (this.R2007Plus)
 		{
@@ -96,6 +93,25 @@ internal partial class DwgObjectWriter
 			this.writeGuid(geometry.Guid);
 			this._writer.WriteBitLong(geometry.RevisionEndMarker);
 		}
+	}
+
+	private void writeModelerGeometryData(byte[] data, short version, bool modelerDataFlag)
+	{
+		this._writer.WriteBit(modelerDataFlag);
+		this._writer.WriteBitShort(version);
+		if (version == 2)
+		{
+			this._writer.WriteBytes(data);
+			return;
+		}
+		for (int offset = 0; offset < data.Length; offset += 4096)
+		{
+			byte[] block = new byte[Math.Min(4096, data.Length - offset)];
+			Array.Copy(data, offset, block, 0, block.Length);
+			this._writer.WriteBitLong(block.Length);
+			this._writer.WriteBytes(AcisTextCodec.Decode(block));
+		}
+		this._writer.WriteBitLong(0);
 	}
 
 	private void writeModelerGeometryWire(ModelerGeometry.Wire wire)

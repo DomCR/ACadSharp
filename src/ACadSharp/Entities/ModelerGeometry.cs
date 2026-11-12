@@ -26,6 +26,16 @@ public abstract partial class ModelerGeometry : Entity
 	public byte[] AcisData { get; set; }
 
 	/// <summary>
+	/// Optional secondary ACIS payload stored after the DWG wireframe and silhouette data.
+	/// </summary>
+	/// <remarks>
+	/// This payload may contain auxiliary edges referenced by silhouette wires' ACIS indexes.
+	/// It is preserved separately from <see cref="AcisData"/>, which describes the primary geometry.
+	/// Null or empty means no secondary payload. This property is serialized by the DWG writer.
+	/// </remarks>
+	public byte[] SecondaryAcisData { get; set; }
+
+	/// <summary>
 	/// Gets or sets the globally unique identifier.
 	/// </summary>
 	[DxfCodeValue(2)]
@@ -38,7 +48,7 @@ public abstract partial class ModelerGeometry : Entity
 	{
 		get
 		{
-			return this.Wires.Count > 0 || this.Silhouettes.Count > 0;
+			return this.Wires.Count > 0 || this.Silhouettes.Count > 0 || this.SecondaryAcisData?.Length > 0;
 		}
 	}
 
@@ -50,8 +60,7 @@ public abstract partial class ModelerGeometry : Entity
 	{
 		get
 		{
-			return this.AcisData != null && (startsWith(this.AcisData, _acisBinarySignature)
-				|| startsWith(this.AcisData, _asmBinarySignature));
+			return IsBinaryPayload(this.AcisData);
 		}
 	}
 
@@ -89,7 +98,12 @@ public abstract partial class ModelerGeometry : Entity
 
 	private static readonly byte[] _asmBinarySignature = Encoding.ASCII.GetBytes("ASM BinaryFile");
 
-	internal bool IsAsmAcisData => this.AcisData != null && startsWith(this.AcisData, _asmBinarySignature);
+	internal bool IsAsmAcisData => IsAsmPayload(this.AcisData);
+
+	internal static bool IsBinaryPayload(byte[] data) => data != null
+		&& (startsWith(data, _acisBinarySignature) || startsWith(data, _asmBinarySignature));
+
+	internal static bool IsAsmPayload(byte[] data) => data != null && startsWith(data, _asmBinarySignature);
 
 	private static bool startsWith(byte[] data, byte[] signature)
 	{
@@ -100,6 +114,8 @@ public abstract partial class ModelerGeometry : Entity
 	}
 
 	internal bool? ModelerDataFlag { get; set; }
+	internal bool? SecondaryModelerDataFlag { get; set; }
+	internal short? SecondaryModelerFormatVersion { get; set; }
 	internal List<(int ArrayIndex, int AbsoluteReference, ulong MaterialHandle)> MaterialMappings { get; } = new();
 	internal bool RevisionGuidPresent { get; set; }
 	internal int RevisionEndMarker { get; set; }

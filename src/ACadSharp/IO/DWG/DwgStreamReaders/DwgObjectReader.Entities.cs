@@ -265,7 +265,10 @@ internal partial class DwgObjectReader : DwgSectionIO
 		}
 		else if (!this._mergedReaders.ReadBit())
 		{
-			this.readModelerGeometryData(template);
+			var payload = this.readModelerGeometryData(geometry.ObjectName);
+			geometry.AcisData = payload.Data;
+			geometry.ModelerDataFlag = payload.Flag;
+			geometry.ModelerFormatVersion = payload.Version;
 		}
 
 		//Common:
@@ -329,7 +332,15 @@ internal partial class DwgObjectReader : DwgSectionIO
 				geometry.Silhouettes.Add(silhouette);
 			}
 
-			if (!this._mergedReaders.ReadBit()) this.readModelerGeometryData(template);
+			if (!this._mergedReaders.ReadBit())
+			{
+				// This auxiliary stream may contain edges referenced by silhouette wires.
+				// Consume and retain it without changing the primary body's payload or metadata.
+				var payload = this.readModelerGeometryData(geometry.ObjectName);
+				geometry.SecondaryAcisData = payload.Data;
+				geometry.SecondaryModelerDataFlag = payload.Flag;
+				geometry.SecondaryModelerFormatVersion = payload.Version;
+			}
 		}
 		if (this.R2007Plus)
 		{
@@ -353,15 +364,14 @@ internal partial class DwgObjectReader : DwgSectionIO
 		return template;
 	}
 
-	private void readModelerGeometryData<T>(CadEntityTemplate<T> template)
-			where T : ModelerGeometry, new()
+	private (byte[] Data, bool Flag, short Version) readModelerGeometryData(string objectName)
 	{
+		byte[] acisData = null;
 		//Unknown bit B X
-		template.CadObject.ModelerDataFlag = this._mergedReaders.ReadBit();
+		bool modelerDataFlag = this._mergedReaders.ReadBit();
 
 		//Version BS Can be 1 or 2.
 		short version = this._mergedReaders.ReadBitShort();
-		template.CadObject.ModelerFormatVersion = version;
 
 		switch (version)
 		{
@@ -384,7 +394,7 @@ internal partial class DwgObjectReader : DwgSectionIO
 
 					if (stream.Length > 0)
 					{
-						template.CadObject.AcisData = stream.ToArray();
+						acisData = stream.ToArray();
 					}
 				}
 				break;
@@ -401,12 +411,13 @@ internal partial class DwgObjectReader : DwgSectionIO
 				this._objectReader.SetPositionInBits(currentPos);
 				if (!AcisTextCodec.TryGetAcisEnd(data, out int payloadLength))
 					throw new System.IO.InvalidDataException("Missing ACIS payload end marker.");
-				template.CadObject.AcisData = this._mergedReaders.ReadBytes(payloadLength);
+				acisData = this._mergedReaders.ReadBytes(payloadLength);
 				break;
 			default:
-				this.notify($"Modeler geometry data version {version} not recognized for {template.CadObject.ObjectName}", NotificationType.Warning);
+				this.notify($"Modeler geometry data version {version} not recognized for {objectName}", NotificationType.Warning);
 				break;
 		}
+		return (acisData, modelerDataFlag, version);
 	}
 
 
