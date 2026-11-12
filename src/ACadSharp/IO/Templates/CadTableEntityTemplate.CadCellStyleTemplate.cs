@@ -1,4 +1,5 @@
-﻿using System;
+﻿using ACadSharp.Tables;
+using System;
 using System.Collections.Generic;
 using static ACadSharp.Objects.TableStyle;
 
@@ -17,7 +18,25 @@ internal partial class CadTableStyleTemplate
 		}
 
 		public CadCellStyleTemplate(CellStyle style) : base(style)
-		{			
+		{
+		}
+
+		public override void Build(CadDocumentBuilder builder)
+		{
+			base.Build(builder);
+
+			foreach (Tuple<CellBorder, ulong> item in this.BorderLineTypePairs)
+			{
+				if(item.Item2 == 0)
+				{
+					continue;
+				}
+
+				if (builder.TryGetCadObject<LineType>(item.Item2, out LineType lineType))
+				{
+					item.Item1.LineType = lineType;
+				}
+			}
 		}
 	}
 }

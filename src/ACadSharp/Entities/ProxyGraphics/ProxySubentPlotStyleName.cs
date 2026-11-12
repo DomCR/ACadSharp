@@ -16,7 +16,7 @@ public class ProxySubentPlotStyleName : IProxyGeometry
 	/// <summary>
 	/// Gets or sets the plot style type.
 	/// </summary>
-	public ProxyPlotStyleType Type { get; set; }
+	public PlotStyleType Type { get; set; }
 
 	/// <inheritdoc/>
 	public IProxyGeometry Clone()

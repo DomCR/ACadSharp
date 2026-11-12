@@ -181,7 +181,7 @@ public class CadDictionary : NonGraphicalObject, IObservableCadCollection<NonGra
 		root.TryAdd(new CadDictionary(AcadScaleList));
 		root.TryAdd(new CadDictionary(AcadVisualStyle));
 		root.TryAdd(new CadDictionary(AcadImageDict));
-		root.TryAdd(new CadDictionary(AcadFieldList));
+		//root.TryAdd(new CadDictionary(AcadFieldList));
 	}
 
 	/// <summary>

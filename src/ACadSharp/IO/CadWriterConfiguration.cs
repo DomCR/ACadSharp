@@ -49,6 +49,12 @@ public class CadWriterConfiguration
 	public bool UpdateDimensionsInModel { get; set; } = false;
 
 	/// <summary>
+	/// Gets or sets a value indicating whether ACIS data is written.
+	/// </summary>
+	/// <remarks>The default value is `true`.</remarks>
+	public bool WriteACISData { get; set; } = true;
+
+	/// <summary>
 	/// The writer will not ignore the <see cref="ACadSharp.Objects.Evaluations.EvaluationGraph"/> objects in the document.
 	/// </summary>
 	/// <remarks>

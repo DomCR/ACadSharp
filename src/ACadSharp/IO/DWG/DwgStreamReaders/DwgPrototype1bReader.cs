@@ -71,7 +71,7 @@ internal class DwgPrototype1bReader : DwgSectionIO
 
 			switch (item.Name)
 			{
-				case CadFileDataStorage.Id:
+				case CadFileDataStorage.AcDbDsId:
 					column.Handle = data.Header.Handle;
 					break;
 				case CadFileDataStorage.AsmData:

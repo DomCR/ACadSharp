@@ -151,9 +151,6 @@ internal partial class DwgObjectWriter : DwgSectionIO
 			case TableEntity when !this.R2010Plus:
 			case Wall:
 			case MechanicalEntity:
-			case Solid3D:
-			case CadBody:
-			case Region:
 			case Surface:
 				this.notify($"Entity type not implemented {entity.GetType().FullName}", NotificationType.NotImplemented);
 				return false;
@@ -293,7 +290,7 @@ internal partial class DwgObjectWriter : DwgSectionIO
 		if (record.Flags.HasFlag(BlockTypeFlags.Anonymous))
 		{
 			//Warning: anonymous blocks do not write the full name, only *{type character}
-			this._writer.WriteVariableText(record.Name.Substring(0, 2));
+			this._writer.WriteVariableText(record.Name.Substring(0, Math.Min(2, record.Name.Length)));
 		}
 		else if (record.Layout != null)
 		{

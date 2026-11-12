@@ -1,4 +1,6 @@
 ﻿using ACadSharp.Attributes;
+using ACadSharp.Extensions;
+using ACadSharp.Tables;
 
 namespace ACadSharp.Objects;
 
@@ -47,10 +49,57 @@ public partial class TableStyle
 		public bool IsInvisible { get; set; } = false;
 
 		/// <summary>
+		/// Gets or sets the type of line.
+		/// </summary>
+		public LineType LineType
+		{
+			get
+			{
+				if (this.Owner?.Document != null
+					&& this._lineType != null
+					&& this.Owner.Document.LineTypes.TryGetValue(this._lineType.Name, out var lineType))
+				{
+					this._lineType = lineType;
+				}
+				else if (this.Owner?.Document != this._lineType?.Document)
+				{
+					this._lineType = this._lineType?.CloneTyped();
+				}
+
+				return this._lineType;
+			}
+			set
+			{
+				if (this.Owner?.Document != null)
+				{
+					this._lineType = this.Owner.Document.LineTypes.TryAdd(value);
+				}
+				else
+				{
+					this._lineType = value;
+				}
+			}
+		}
+
+		/// <summary>
 		/// Gets or sets the line weight to use when rendering the entity.
 		/// </summary>
 		[DxfCodeValue(274)]
 		public LineWeightType LineWeight { get; set; } = LineWeightType.ByBlock;
+
+		public CadObject Owner
+		{
+			get { return this._owner; }
+			internal set
+			{
+				this._owner = value;
+
+				if (this._owner == null)
+				{
+					this._lineType = this._lineType?.CloneTyped();
+				}
+			}
+		}
 
 		/// <summary>
 		/// Gets or sets the set of flags that specify which border properties are overridden.
@@ -64,6 +113,10 @@ public partial class TableStyle
 		[DxfCodeValue(91)]
 		public BorderType Type { get; set; } = BorderType.Single;
 
+		private LineType _lineType;
+
+		private CadObject _owner;
+
 		/// <summary>
 		/// Initializes a new instance of the CellBorder class with the specified edge flags.
 		/// </summary>
@@ -71,6 +124,19 @@ public partial class TableStyle
 		public CellBorder(CellEdgeFlags edgeFlags)
 		{
 			this.EdgeFlags = edgeFlags;
+		}
+
+		/// <summary>
+		/// Creates a copy of the current <see cref="CellBorder"/> instance.
+		/// </summary>
+		/// <remarks>Reference-type members are copied by reference.</remarks>
+		/// <returns>A new <see cref="CellBorder"/> that is a shallow copy of the current instance, with <c>Owner</c> set to <see
+		/// langword="null"/>.</returns>
+		public CellBorder Clone()
+		{
+			CellBorder clone = this.MemberwiseClone() as CellBorder;
+			clone.Owner = null;
+			return clone;
 		}
 	}
 }

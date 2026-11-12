@@ -20,7 +20,7 @@ public class ExtendedDataDictionary : IEnumerable<KeyValuePair<AppId, ExtendedDa
 	/// </summary>
 	public CadObject Owner { get; }
 
-	private Dictionary<AppId, ExtendedData> _data = new Dictionary<AppId, ExtendedData>();
+	private readonly Dictionary<AppId, ExtendedData> _data = new Dictionary<AppId, ExtendedData>();
 
 	/// <summary>
 	/// Default constructor.

@@ -3,6 +3,7 @@ using ACadSharp.Classes;
 using ACadSharp.Entities;
 using ACadSharp.Entities.AecEntities;
 using ACadSharp.Entities.Mechanical;
+using ACadSharp.IO.DWG.DwgStreamReaders;
 using ACadSharp.IO.Templates;
 using ACadSharp.Objects;
 using ACadSharp.Objects.AEC;
@@ -1872,7 +1873,19 @@ namespace ACadSharp.IO.DWG
 			//Extrusion 3BD 210
 			ellipse.Normal = this._objectReader.Read3BitDouble();
 			//Axis ratio BD 40 Minor/major axis ratio
-			ellipse.RadiusRatio = this._objectReader.ReadBitDouble();
+			double ratio = this._objectReader.ReadBitDouble();
+			if (ratio <= 0)
+			{
+				ellipse.RadiusRatio = MathHelper.Epsilon;
+			}
+			else if (ratio > 1)
+			{
+				ellipse.RadiusRatio = 1;
+			}
+			else
+			{
+				ellipse.RadiusRatio = ratio;
+			}
 			//Beg angle BD 41 Starting angle (eccentric anomaly, radians)
 			ellipse.StartParameter = this._objectReader.ReadBitDouble();
 			//End angle BD 42 Ending angle (eccentric anomaly, radians)
@@ -3870,166 +3883,6 @@ namespace ACadSharp.IO.DWG
 			return template;
 		}
 
-		private CadEntityTemplate<T> readModelerGeometry<T>(CadEntityTemplate<T> template)
-				where T : ModelerGeometry, new()
-		{
-			ModelerGeometry geometry = template.CadObject;
-
-			this.readCommonEntityData(template);
-
-			//Chapter 24 - Info
-			if (!this.R2013Plus)
-			{
-				//ACIS Empty bit B X If 1, then no data follows
-				var hasData = this._mergedReaders.ReadBit();
-				if (!hasData)
-				{
-					this.readModelerGeometryData(template);
-					return template;
-				}
-			}
-
-			//Common:
-			//Wireframe data present B X True if wireframe data is present
-			var isWireframe = this._mergedReaders.ReadBit();
-			if (isWireframe)
-			{
-				//Point present B X If true, following point is present, otherwise assume 0,0,0 for point
-				bool hasPoint = this._mergedReaders.ReadBit();
-				if (hasPoint)
-				{
-					//Point 3BD X Present if above bit is 1.
-					geometry.Point = this._objectReader.Read3BitDouble();
-				}
-
-				//Num IsoLines BL X
-				int nIsoLines = this._mergedReaders.ReadBitLong();
-				//IsoLines present B X If true, isoline data is present.
-				if (this._mergedReaders.ReadBit())
-				{
-					//Num Wires BL X Number of ISO lines that follow.
-					int nWires = this._mergedReaders.ReadBitLong();
-					for (int i = 0; i < nWires; i++)
-					{
-						ModelerGeometry.Wire wire = new ModelerGeometry.Wire();
-						this.readWire(wire);
-						geometry.Wires.Add(wire);
-					}
-				}
-
-				//Repeat “Num. silhouettes” times:
-				int nSilhouettes = this._mergedReaders.ReadBitLong();
-				for (int i = 0; i < nSilhouettes; i++)
-				{
-					var silhouette = new ModelerGeometry.Silhouette();
-
-					//VP id BL X
-					silhouette.ViewportId = this._mergedReaders.ReadBitLongLong();
-					//VP Target 3BD X
-					silhouette.ViewportTarget = this._mergedReaders.Read3BitDouble();
-					//VP dir. From target 3BD X
-					silhouette.ViewportDirectionFromTarget = this._mergedReaders.Read3BitDouble();
-					//VP up dir. 3BD X
-					silhouette.ViewportUpDirection = this._mergedReaders.Read3BitDouble();
-					//VP perspective B X
-					silhouette.ViewportPerspective = this._mergedReaders.ReadBit();
-
-					//IsoLines present B X If true, isoline data is present.
-					if (this._mergedReaders.ReadBit())
-					{
-						//Num Wires BL X
-						int nWires = this._mergedReaders.ReadBitLong();
-						for (int j = 0; j < nWires; j++)
-						{
-							ModelerGeometry.Wire wire = new ModelerGeometry.Wire();
-							this.readWire(wire);
-							silhouette.Wires.Add(wire);
-						}
-					}
-
-					geometry.Silhouettes.Add(silhouette);
-				}
-
-				//ACIS Empty bit B X Normally 1.If 0, then acis data follows in the
-				//same format as described above, except no wireframe
-				//of silhouette data will be present(no empty bits
-				//for these items either).
-				if (!this._mergedReaders.ReadBit())
-				{
-					this.readModelerGeometryData(template);
-					return template;
-				}
-			}
-
-			//R2007 +:
-			if (this.R2007Plus)
-			{
-				//Unknown BL
-				this._mergedReaders.ReadBitLong();
-			}
-
-			return template;
-		}
-
-		private void readModelerGeometryData<T>(CadEntityTemplate<T> template)
-				where T : ModelerGeometry, new()
-		{
-			//Unknown bit B X
-			bool unknown = this._mergedReaders.ReadBit();
-
-			//Version BS Can be 1 or 2.
-			short version = this._mergedReaders.ReadBitShort();
-
-			switch (version)
-			{
-				//Version == 1 (following 2 items repeat until Block Size is 0):
-				//Block Size BL X Number of bytes of SAT data in this block. if value
-				//is between 0x20 and 0x7E, calculate 0x9F-the value
-				//to get the real character.If it's a tab, we
-				//convert to a space.
-				case 1:
-					using (MemoryStream stream = new MemoryStream())
-					{
-						int blockSize = this._mergedReaders.ReadBitLong();
-						while (blockSize > 0)
-						{
-							byte[] block = AcisTextCodec.Decode(this._mergedReaders.ReadBytes(blockSize));
-							stream.Write(block, 0, block.Length);
-
-							blockSize = this._mergedReaders.ReadBitLong();
-						}
-
-						if (stream.Length > 0)
-						{
-							template.CadObject.AcisData = stream.ToArray();
-						}
-					}
-					break;
-				//Version == 2:
-				//Immediately following will be an acis file.Header value of “ACIS BinaryFile” indicates
-				//SAB, otherwise it is a text SAT file. No length is given.SAB files will end with
-				//“End\x0E\x02of\x0E\x04ACIS\x0D\x04data”. SAT files must be parsed to find the end.
-				case 2:
-					//The stream gives no payload length: read up to the end of the
-					//object data and cut at the End-of-ACIS-data marker. Anything
-					//after the marker (wireframe data, handles) is discarded with
-					//the rest of the object, the caller returns right away.
-					long currentPos = this._mergedReaders.PositionInBits();
-					long endPos = this._objectInitialPos + (this._size * 8);
-					int remainingBytes = (int)((endPos - currentPos) / 8);
-
-					if (remainingBytes > 0)
-					{
-						byte[] data = this._mergedReaders.ReadBytes(remainingBytes);
-						template.CadObject.AcisData = AcisTextCodec.TrimAtAcisEnd(data);
-					}
-					break;
-				default:
-					this.notify($"Modeler geometry data version {version} not recognized for {template.CadObject.ObjectName}", NotificationType.Warning);
-					break;
-			}
-		}
-
 		private CadTemplate readMText()
 		{
 			MText mtext = new MText();
@@ -4107,7 +3960,12 @@ namespace ACadSharp.IO.DWG
 					//Background color CMC 63
 					mtext.BackgroundColor = this._mergedReaders.ReadCmColor();
 					//Background transparency BL 441
-					mtext.BackgroundTransparency = new Transparency((short)this._objectReader.ReadBitLong());
+
+					var transparency = (short)this._objectReader.ReadBitLong();
+					if (!(transparency < 0 || transparency > 90))
+					{
+						mtext.BackgroundTransparency = new Transparency(transparency);
+					}
 				}
 			}
 
@@ -4727,13 +4585,13 @@ namespace ACadSharp.IO.DWG
 					template = this.readSpline();
 					break;
 				case ObjectType.REGION:
-					template = this.readModelerGeometry(new CadEntityTemplate<Region>());
+					template = this.readModelerGeometry(new CadModelerGeometryTemplate<Region>());
 					break;
 				case ObjectType.SOLID3D:
 					template = this.readSolid3D();
 					break;
 				case ObjectType.BODY:
-					template = this.readModelerGeometry(new CadEntityTemplate<CadBody>());
+					template = this.readModelerGeometry(new CadModelerGeometryTemplate<CadBody>());
 					break;
 				case ObjectType.RAY:
 					template = this.readRay();
@@ -5571,24 +5429,7 @@ namespace ACadSharp.IO.DWG
 			return template;
 		}
 
-		private CadTemplate readSolid3D()
-		{
-			Solid3D solid = new Solid3D();
-			var template = new CadSolid3DTemplate(solid);
-
-			this.readModelerGeometry(template);
-
-			//R2007 +:
-			if (this.R2007Plus)
-			{
-				//H 350 History ID
-				template.HistoryHandle = this._mergedReaders.HandleReference();
-			}
-
-			return template;
-		}
-
-		private CadTemplate readSurface<T>(CadEntityTemplate<T> template)
+		private CadTemplate readSurface<T>(CadModelerGeometryTemplate<T> template)
 			where T : Surface, new()
 		{
 			this.readModelerGeometry(template);
@@ -5814,7 +5655,7 @@ namespace ACadSharp.IO.DWG
 
 				//… The cell style fields, see paragraph 20.4.101.4.
 				//Index starting by 1
-				int unknown = this._mergedReaders.ReadBitLong();
+				int index = this._mergedReaders.ReadBitLong();
 				this.readCellStyle(cellStyleTemplate);
 
 				//BL - Cell style ID, 1 = title, 2 = header, 3 = data, 4 = table (new in R24).
@@ -5995,108 +5836,106 @@ namespace ACadSharp.IO.DWG
 				case DxfFileToken.ObjectAecCleanupGroupDef:
 					template = this.readAecCleanupGroup();
 					break;
-				case "ACDBDICTIONARYWDFLT":
+				case "DICTIONARYWDFLT":
+				case DxfFileToken.ObjectDictionaryWithDefault:
 					template = this.readDictionaryWithDefault();
 					break;
-				case "ACDBPLACEHOLDER":
+				case DxfFileToken.ObjectPlaceholder:
 					template = this.readPlaceHolder();
 					break;
-				case "ACAD_TABLE":
+				case DxfFileToken.EntityTable:
 					template = this.readTableEntity();
 					break;
 				case DxfFileToken.ObjectDimensionAssociation:
 					template = this.readDimensionAssociation();
 					break;
-				case "DBCOLOR":
+				case DxfFileToken.ObjectDBColor:
 					template = this.readDbColor();
 					break;
-				case "DICTIONARYVAR":
+				case DxfFileToken.ObjectDictionaryVar:
 					template = this.readDictionaryVar();
-					break;
-				case "DICTIONARYWDFLT":
-					template = this.readDictionaryWithDefault();
 					break;
 				case DxfFileToken.ObjectGeoData:
 					template = this.readGeoData();
 					break;
-				case "GROUP":
+				case DxfFileToken.ObjectGroup:
 					template = this.readGroup();
 					break;
-				case "HATCH":
+				case DxfFileToken.EntityHatch:
 					template = this.readHatch();
 					break;
-				case "IMAGE":
+				case DxfFileToken.EntityImage:
 					template = this.readCadImage(new RasterImage());
 					break;
-				case "IMAGEDEF":
+				case DxfFileToken.ObjectImageDefinition:
 					template = this.readImageDefinition();
 					break;
-				case "IMAGEDEF_REACTOR":
+				case DxfFileToken.ObjectImageDefinitionReactor:
 					template = this.readImageDefinitionReactor();
 					break;
-				case "LAYOUT":
+				case DxfFileToken.ObjectLayout:
 					template = this.readLayout();
 					break;
 				case "LWPLINE":
-				case "LWPOLYLINE":
+				case DxfFileToken.EntityLwPolyline:
 					template = this.readLWPolyline();
 					break;
-				case "MATERIAL":
+				case DxfFileToken.ObjectMaterial:
 					template = this.readMaterial();
 					break;
-				case "MESH":
+				case DxfFileToken.EntityMesh:
 					template = this.readMesh();
 					break;
-				case "MULTILEADER":
+				case DxfFileToken.EntityMultiLeader:
 					template = this.readMultiLeader();
 					break;
-				case "ACDB_MLEADEROBJECTCONTEXTDATA_CLASS":
+				case DxfFileToken.ObjectMLeaderContextData:
 					template = this.readMultiLeaderAnnotContext();
 					break;
-				case "MLEADERSTYLE":
+				case DxfFileToken.ObjectMLeaderStyle:
 					template = this.readMultiLeaderStyle();
 					break;
-				case "PDFDEFINITION":
+				case DxfFileToken.ObjectPdfDefinition:
 					template = this.readPdfDefinition();
 					break;
-				case "PDFUNDERLAY":
+				case DxfFileToken.EntityPdfUnderlay:
 				case "PDFREFERENCE":
 					template = this.readPdfUnderlay();
 					break;
-				case "SCALE":
+				case DxfFileToken.ObjectScale:
 					template = this.readScale();
 					break;
-				case "SORTENTSTABLE":
+				case DxfFileToken.ObjectSortEntsTable:
 					template = this.readSortentsTable();
 					break;
 				case DxfFileToken.EntitySurface:
-					template = this.readSurface(new CadEntityTemplate<Surface>());
+					template = this.readSurface(new CadModelerGeometryTemplate<Surface>());
 					break;
 				case DxfFileToken.EntityExtrudedSurface:
-					template = this.readSurface(new CadEntityTemplate<ExtrudedSurface>());
+					template = this.readSurface(new CadModelerGeometryTemplate<ExtrudedSurface>());
 					break;
 				case DxfFileToken.EntityLoftedSurface:
-					template = this.readSurface(new CadEntityTemplate<LoftedSurface>());
+					template = this.readSurface(new CadModelerGeometryTemplate<LoftedSurface>());
 					break;
 				case DxfFileToken.EntityNurbSurface:
-					template = this.readSurface(new CadEntityTemplate<NurbSurface>());
+					template = this.readSurface(new CadModelerGeometryTemplate<NurbSurface>());
 					break;
 				case DxfFileToken.EntityPlaneSurface:
-					template = this.readSurface(new CadEntityTemplate<PlaneSurface>());
+					template = this.readSurface(new CadModelerGeometryTemplate<PlaneSurface>());
 					break;
 				case DxfFileToken.EntityRevolvedSurface:
-					template = this.readSurface(new CadEntityTemplate<RevolvedSurface>());
+					template = this.readSurface(new CadModelerGeometryTemplate<RevolvedSurface>());
 					break;
 				case DxfFileToken.EntitySweptSurface:
-					template = this.readSurface(new CadEntityTemplate<SweptSurface>());
+					template = this.readSurface(new CadModelerGeometryTemplate<SweptSurface>());
 					break;
-				case "RASTERVARIABLES":
+				case DxfFileToken.ObjectRasterVariables:
 					template = this.readRasterVariables();
 					break;
-				case "WIPEOUT":
+				case DxfFileToken.EntityWipeout:
 					template = this.readCadImage(new Wipeout());
 					break;
-				case "XRECORD":
+				case DxfFileToken.ObjectXRecord:
 					template = this.readXRecord();
 					break;
 				case DxfFileToken.ObjectEvalGraph:
@@ -6567,7 +6406,7 @@ namespace ACadSharp.IO.DWG
 				//H 332 Background(soft pointer)
 				long backgroundHandle = (long)this.handleReference();
 				//H 348 Visual Style(hard pointer)
-				long visualStyleHandle = (long)this.handleReference();
+				template.VisualStyleHandle = this.handleReference();
 				//H 333 Shadeplot ID(soft pointer)
 				long shadePlotIdHandle = (long)this.handleReference();
 				//H 361 Sun(hard owner)

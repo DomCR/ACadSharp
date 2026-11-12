@@ -1,5 +1,6 @@
 ﻿using ACadSharp.Header;
 using ACadSharp.IO.DWG;
+using ACadSharp.IO.DWG.DwgStreamReaders;
 using System.IO;
 using System.Text;
 using Xunit;

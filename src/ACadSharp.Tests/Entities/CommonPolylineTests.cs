@@ -14,6 +14,23 @@ public abstract class CommonPolylineTests<T, R> : CommonEntityTests<T>
 	where R : Vertex, new()
 {
 	[Fact]
+	public void ZeroLengthSegmentWithBulgeDoesNotThrowTest()
+	{
+		T pline = new T();
+		pline.Vertices.Add(new R { Location = new XYZ(0, 0, 0) });
+		pline.Vertices.Add(new R { Location = new XYZ(10, 0, 0), Bulge = 0.5 });
+		pline.Vertices.Add(new R { Location = new XYZ(10, 0, 0) });
+		pline.Vertices.Add(new R { Location = new XYZ(10, 8, 0) });
+
+		BoundingBox box = pline.GetBoundingBox();
+
+		Assert.Equal(0.0, box.Min.X, 6);
+		Assert.Equal(0.0, box.Min.Y, 6);
+		Assert.Equal(10.0, box.Max.X, 6);
+		Assert.Equal(8.0, box.Max.Y, 6);
+	}
+
+	[Fact]
 	public void ClearVerticesTest()
 	{
 		CadDocument doc = new CadDocument();
