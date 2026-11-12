@@ -65,7 +65,7 @@ internal partial class DwgObjectWriter
 			this._writer.WriteBitLong(geometry.Silhouettes.Count);
 			foreach (var silhouette in geometry.Silhouettes)
 			{
-				this._writer.WriteBitLongLong(silhouette.ViewportId);
+				this._writer.WriteBitLong((int)silhouette.ViewportId);
 				this._writer.Write3BitDouble(silhouette.ViewportTarget);
 				this._writer.Write3BitDouble(silhouette.ViewportDirectionFromTarget);
 				this._writer.Write3BitDouble(silhouette.ViewportUpDirection);
