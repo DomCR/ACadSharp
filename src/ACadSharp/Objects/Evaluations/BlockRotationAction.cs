@@ -20,7 +20,9 @@ public class BlockRotationAction : BlockActionBasePt, IDxfClassDefined
 	{
 		return new DxfClass
 		{
-			CppClassName = DxfSubclassMarker.BlockRotationAction,
+			// The C++ class name differs from the subclass marker (AcDbBlockRotationAction):
+			// AutoCAD registers the class as AcDbBlockRotateAction.
+			CppClassName = "AcDbBlockRotateAction",
 			DwgVersion = ACadVersion.AC1018,
 			DxfName = DxfFileToken.ObjectBlockRotateAction,
 			ItemClassId = 499,
