@@ -331,11 +331,12 @@ public class Insert : Entity, IOrientable
 	{
 		var world = Matrix4.GetArbitraryAxis(this.Normal);
 		XYZ basePoint = this.Block?.BlockEntity?.BasePoint ?? XYZ.Zero;
-		var translation = Transform.CreateTranslation(this.InsertPoint - basePoint);
+		var translation = Transform.CreateTranslation(this.InsertPoint);
 		var rotation = Transform.CreateRotation(XYZ.AxisZ, this.Rotation);
 		var scale = Transform.CreateScaling(new XYZ(this.XScale, this.YScale, this.ZScale));
+		var baseTranslation = Transform.CreateTranslation(-basePoint);
 
-		return new Transform(world * translation.Matrix * rotation.Matrix * scale.Matrix);
+		return new Transform(world * translation.Matrix * rotation.Matrix * scale.Matrix * baseTranslation.Matrix);
 	}
 
 	/// <inheritdoc/>
