@@ -305,8 +305,8 @@ internal partial class DwgObjectReader : DwgSectionIO
 			{
 				var silhouette = new ModelerGeometry.Silhouette();
 
-				//VP id BL X
-				silhouette.ViewportId = this._mergedReaders.ReadBitLong();
+				// VP id: BL through R2007, BLL from R2010 onward.
+				silhouette.ViewportId = this.R2010Plus ? this._mergedReaders.ReadBitLongLong() : this._mergedReaders.ReadBitLong();
 				//VP Target 3BD X
 				silhouette.ViewportTarget = this._mergedReaders.Read3BitDouble();
 				//VP dir. From target 3BD X

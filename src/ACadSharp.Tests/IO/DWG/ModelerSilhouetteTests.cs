@@ -50,7 +50,7 @@ public class ModelerSilhouetteTests
 		foreach (var geometry in new ModelerGeometry[] { new Solid3D(), new Region(), new CadBody() })
 		{
 			geometry.AcisData = Encoding.ASCII.GetBytes("400 0 1 0\nEnd-of-ACIS-data\n");
-			foreach (int id in new[] { 0, 255, 256, int.MaxValue, int.MinValue })
+			foreach (long id in ViewportIds(version))
 			{
 				var silhouette = new ModelerGeometry.Silhouette
 				{
@@ -82,37 +82,51 @@ public class ModelerSilhouetteTests
 	}
 
 	[Theory]
-	[InlineData(0)]
-	[InlineData(255)]
-	[InlineData(256)]
-	[InlineData(int.MaxValue)]
-	[InlineData(int.MinValue)]
-	public void ViewportIdUsesBitLongAndLeavesNextFieldAligned(int id)
+	[InlineData(ACadVersion.AC1018)]
+	[InlineData(ACadVersion.AC1021)]
+	[InlineData(ACadVersion.AC1024)]
+	[InlineData(ACadVersion.AC1027)]
+	[InlineData(ACadVersion.AC1032)]
+	public void ViewportIdUsesVersionedEncodingAndLeavesNextFieldAligned(ACadVersion version)
 	{
-		// Read the emitted fields directly so matching reader/writer bugs cannot hide BLL encoding.
-		using var stream = new MemoryStream();
-		var document = new CadDocument(); document.Header.Version = ACadVersion.AC1018;
-		var writer = new DwgObjectWriter(stream, document, Encoding.ASCII);
-		var bits = DwgStreamWriterBase.GetStreamWriter(ACadVersion.AC1018, stream, Encoding.ASCII);
-		typeof(DwgObjectWriter).GetField("_writer", BindingFlags.Instance | BindingFlags.NonPublic).SetValue(writer, bits);
-		var geometry = new Solid3D();
-		geometry.Silhouettes.Add(new ModelerGeometry.Silhouette { ViewportId = id, ViewportTarget = new XYZ(1, 2, 3) });
-		typeof(DwgObjectWriter).GetMethod("writeModelerGeometry", BindingFlags.Instance | BindingFlags.NonPublic).Invoke(writer, new object[] { geometry });
-		long end = bits.PositionInBits;
-		bits.WriteByte(0xa5); bits.WriteSpearShift();
-		stream.Position = 0;
-		var reader = DwgStreamReaderBase.GetStreamHandler(ACadVersion.AC1018, stream);
-		Assert.True(reader.ReadBit()); // Empty ACIS payload.
-		Assert.True(reader.ReadBit()); Assert.False(reader.ReadBit()); // Wireframe, no point.
-		Assert.Equal(0, reader.ReadBitLong()); Assert.False(reader.ReadBit()); // No isolines.
-		Assert.Equal(1, reader.ReadBitLong());
-		Assert.Equal(id, reader.ReadBitLong());
-		Assert.Equal(new XYZ(1, 2, 3), reader.Read3BitDouble());
-		Assert.Equal(XYZ.Zero, reader.Read3BitDouble()); Assert.Equal(XYZ.Zero, reader.Read3BitDouble());
-		Assert.False(reader.ReadBit()); Assert.False(reader.ReadBit()); // No perspective or wires.
-		Assert.True(reader.ReadBit()); // No second ACIS payload.
-		Assert.Equal(end, reader.PositionInBits()); Assert.Equal(0xa5, reader.ReadByte());
+		// Read the emitted fields directly: BL through 2007, BLL from 2010 onward.
+		foreach (long id in ViewportIds(version))
+		{
+			using var stream = new MemoryStream();
+			var document = new CadDocument(); document.Header.Version = version;
+			var writer = new DwgObjectWriter(stream, document, Encoding.ASCII);
+			var bits = DwgStreamWriterBase.GetStreamWriter(version, stream, Encoding.ASCII);
+			typeof(DwgObjectWriter).GetField("_writer", BindingFlags.Instance | BindingFlags.NonPublic).SetValue(writer, bits);
+			var geometry = new Solid3D();
+			geometry.Silhouettes.Add(new ModelerGeometry.Silhouette { ViewportId = id, ViewportTarget = new XYZ(1, 2, 3) });
+			typeof(DwgObjectWriter).GetMethod("writeModelerGeometry", BindingFlags.Instance | BindingFlags.NonPublic).Invoke(writer, new object[] { geometry });
+			long end = bits.PositionInBits;
+			bits.WriteByte(0xa5); bits.WriteSpearShift();
+			stream.Position = 0;
+			var reader = DwgStreamReaderBase.GetStreamHandler(version, stream);
+			Assert.True(reader.ReadBit()); // Empty ACIS payload.
+			Assert.True(reader.ReadBit()); Assert.False(reader.ReadBit()); // Wireframe, no point.
+			Assert.Equal(0, reader.ReadBitLong()); Assert.False(reader.ReadBit()); // No isolines.
+			Assert.Equal(1, reader.ReadBitLong());
+			Assert.Equal(id, version >= ACadVersion.AC1024 ? reader.ReadBitLongLong() : reader.ReadBitLong());
+			Assert.Equal(new XYZ(1, 2, 3), reader.Read3BitDouble());
+			Assert.Equal(XYZ.Zero, reader.Read3BitDouble()); Assert.Equal(XYZ.Zero, reader.Read3BitDouble());
+			Assert.False(reader.ReadBit()); Assert.False(reader.ReadBit()); // No perspective or wires.
+			Assert.True(reader.ReadBit()); // No second ACIS payload.
+			if (version >= ACadVersion.AC1021) Assert.Equal(0, reader.ReadBitLong());
+			if (version >= ACadVersion.AC1027)
+			{
+				Assert.False(reader.ReadBit());
+				Assert.Equal(0, reader.ReadBitLong()); Assert.Equal(0, reader.ReadBitShort()); Assert.Equal(0, reader.ReadBitShort());
+				Assert.All(reader.ReadBytes(8), b => Assert.Equal(0, b)); Assert.Equal(0, reader.ReadBitLong());
+			}
+			Assert.Equal(end, reader.PositionInBits()); Assert.Equal(0xa5, reader.ReadByte());
+		}
 	}
+
+	private static long[] ViewportIds(ACadVersion version) => version >= ACadVersion.AC1024
+		? new long[] { 0, 255, 256, int.MaxValue, 1L << 32, (1L << 56) - 1 }
+		: new long[] { 0, 255, 256, int.MaxValue, int.MinValue };
 
 	private static void AssertSilhouette(ModelerGeometry.Silhouette expected, ModelerGeometry.Silhouette actual)
 	{
