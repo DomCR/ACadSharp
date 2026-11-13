@@ -1,3 +1,4 @@
+using System;
 using System.Text;
 
 namespace ACadSharp.IO;
@@ -122,6 +123,12 @@ internal static class AcisTextCodec
 	/// </remarks>
 	public static byte[] TrimAtAcisEnd(byte[] data)
 	{
+		return TrimAtAcisEnd(data, out _);
+	}
+
+	public static byte[] TrimAtAcisEnd(byte[] data, out byte[] remaining)
+	{
+		remaining = Array.Empty<byte>();
 		if (data == null || data.Length == 0)
 		{
 			return data;
@@ -132,22 +139,26 @@ internal static class AcisTextCodec
 			int index = indexOf(data, marker, 0);
 			if (index >= 0)
 			{
-				return cutAfter(data, index + marker.Length);
+				return cutAfter(data, index + marker.Length, out remaining);
 			}
 		}
 
 		return data;
 	}
 
-	private static byte[] cutAfter(byte[] data, int end)
+	private static byte[] cutAfter(byte[] data, int end, out byte[] remain)
 	{
 		if (end >= data.Length)
 		{
+			remain = Array.Empty<byte>();
 			return data;
 		}
 
 		byte[] result = new byte[end];
+		remain = new byte[data.Length - end];
+
 		System.Array.Copy(data, result, end);
+		System.Array.Copy(data, end, remain, 0, remain.Length);
 		return result;
 	}
 

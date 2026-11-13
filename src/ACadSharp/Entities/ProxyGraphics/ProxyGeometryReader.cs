@@ -1,5 +1,6 @@
 ﻿using ACadSharp.IO;
 using ACadSharp.IO.DWG;
+using ACadSharp.IO.DWG.DwgStreamReaders;
 using CSMath;
 using CSUtilities.Converters;
 using CSUtilities.IO;
@@ -142,12 +143,7 @@ internal class ProxyGeometryReader
 					break;
 			}
 
-			long readDiff = objSize - (stream.Position - pos) - 8;
-			if (readDiff > 0)
-			{
-				//jump not implemented proxies
-				stream.ReadBytes((int)readDiff);
-			}
+			stream.Position = pos - 8 + objSize;
 		}
 
 		return geometries;
@@ -622,7 +618,12 @@ internal class ProxyGeometryReader
 		int edgeCount = 0;
 		for (int i = 0; i < nfaces; i++)
 		{
-			int count = Math.Abs(stream.ReadInt());
+			int count = stream.ReadInt();
+			if (count < 0)
+			{
+				shell.Holes.Add(shell.Faces.Count);
+				count = Math.Abs(count);
+			}
 			i += count;
 
 			List<int> faceIndices = [];
@@ -727,6 +728,7 @@ internal class ProxyGeometryReader
 			shell.VertexTraits = new VertexTraits();
 			if (vertexFlags.HasFlag(PrimitiveFlags.HasNormals))
 			{
+				shell.VertexTraits.Normals = new List<XYZ>();
 				for (int i = 0; i < shell.Vertices.Count; i++)
 				{
 					shell.VertexTraits.Normals.Add(readPoint(stream));
@@ -833,7 +835,7 @@ internal class ProxyGeometryReader
 	{
 		ProxySubentPlotStyleName psName = new ProxySubentPlotStyleName();
 
-		psName.Type = (ProxyPlotStyleType)stream.ReadInt();
+		psName.Type = (PlotStyleType)stream.ReadInt();
 		psName.PlotStyleIndex = stream.ReadInt();
 
 		return psName;
@@ -869,7 +871,7 @@ internal class ProxyGeometryReader
 				trueColor.Color = Color.ByBlock;
 				break;
 			case ProxyColorMethod.ByColor:
-				trueColor.Color = new Color(b1, b2, b3);
+				trueColor.Color = new Color(b3, b2, b1);
 				break;
 			case ProxyColorMethod.ByACI:
 				trueColor.Color = new Color(b1);
@@ -1026,7 +1028,7 @@ internal class ProxyGeometryReader
 		text.BigFontFilename = readPaddedUnicodeString(stream);
 
 		// Padding to align the text to the next 4-byte boundary
-		if (fontDescriptor.FontFilename.Length % 2 == 0)
+		if (text.BigFontFilename.Length % 2 == 0)
 		{
 			stream.ReadShort();
 		}

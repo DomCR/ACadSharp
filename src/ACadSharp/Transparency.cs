@@ -27,7 +27,7 @@ public struct Transparency
 	/// </summary>
 	public bool IsByBlock
 	{
-		get { return _value == 100; }
+		get { return this._value == 100; }
 	}
 
 	/// <summary>
@@ -35,7 +35,7 @@ public struct Transparency
 	/// </summary>
 	public bool IsByLayer
 	{
-		get { return _value == -1; }
+		get { return this._value == -1; }
 	}
 
 	/// <summary>
@@ -46,25 +46,25 @@ public struct Transparency
 	/// </remarks>
 	public short Value
 	{
-		get { return _value; }
+		get { return this._value; }
 		set
 		{
 			if (value == -1)
 			{
-				_value = value;
+				this._value = value;
 				return;
 			}
 
 			if (value == 100)
 			{
-				_value = value;
+				this._value = value;
 				return;
 			}
 
 			if (value < 0 || value > 90)
 				throw new ArgumentOutOfRangeException(nameof(value), value, "Transparency must be in range from 0 to 90.");
 
-			_value = value;
+			this._value = value;
 		}
 	}
 
@@ -79,7 +79,7 @@ public struct Transparency
 	/// </remarks>
 	public Transparency(short value)
 	{
-		_value = -1;
+		this._value = -1;
 		this.Value = value;
 	}
 

@@ -74,6 +74,7 @@ public abstract class WriterSingleObjectTests : IOTestsBase
 		Data.Add(new(nameof(SingleCaseGenerator.CreateHatch)));
 		Data.Add(new(nameof(SingleCaseGenerator.CreateCircleHatch)));
 		Data.Add(new(nameof(SingleCaseGenerator.CreateHatchFullSweeps)));
+		Data.Add(new(nameof(SingleCaseGenerator.CreateHatchSplineEdge)));
 		Data.Add(new(nameof(SingleCaseGenerator.HatchWithEntities)));
 		Data.Add(new(nameof(SingleCaseGenerator.ChangedEncoding)));
 		Data.Add(new(nameof(SingleCaseGenerator.AddBlockWithAttributes)));
@@ -106,7 +107,13 @@ public abstract class WriterSingleObjectTests : IOTestsBase
 		Data.Add(new(nameof(SingleCaseGenerator.SingleMaterial)));
 		Data.Add(new(nameof(SingleCaseGenerator.LeaderWithArrowHead)));
 		Data.Add(new(nameof(SingleCaseGenerator.SortedXRecords)));
+		Data.Add(new(nameof(SingleCaseGenerator.ProxyEntityTrueColor)));
 		Data.Add(new(nameof(SingleCaseGenerator.ProxyGraphics)));
+		Data.Add(new(nameof(SingleCaseGenerator.ProxyGraphicsLwPolyline)));
+		Data.Add(new(nameof(SingleCaseGenerator.ProxyGraphicsShellWithVertexNormals)));
+		Data.Add(new(nameof(SingleCaseGenerator.ProxyGraphicsUnicodeText2)));
+		Data.Add(new(nameof(SingleCaseGenerator.ProxyShellWithHole)));
+		Data.Add(new(nameof(SingleCaseGenerator.AnonymousBlockWithShortName)));
 	}
 
 	public WriterSingleObjectTests(ITestOutputHelper output) : base(output)
@@ -357,6 +364,11 @@ public abstract class WriterSingleObjectTests : IOTestsBase
 				Assert.Equal(vp1.Width, result1.Width);
 				Assert.Equal(vp2.Height, result2.Height);
 			};
+		}
+
+		public void AnonymousBlockWithShortName()
+		{
+			this.Document.BlockRecords.Add(new BlockRecord("顶") { IsAnonymous = true });
 		}
 
 		public void ArcSegments()
@@ -997,6 +1009,80 @@ public abstract class WriterSingleObjectTests : IOTestsBase
 				Assert.NotNull(multipleResult);
 				Assert.Equal(hatch.Paths.Count, result.Paths.Count);
 				Assert.Equal(multiplePoly.Paths.Count, multipleResult.Paths.Count);
+			};
+		}
+
+		public void CreateHatchSplineEdge()
+		{
+			Hatch hatch = new Hatch();
+			hatch.IsSolid = true;
+
+			//Spline edge without fit points
+			Hatch.BoundaryPath.Spline spline = new Hatch.BoundaryPath.Spline();
+			spline.Degree = 3;
+			spline.Knots.AddRange(new double[] { 0, 0, 0, 0, 1, 1, 1, 1 });
+			spline.ControlPoints.Add(new XYZ(0, 0, 1));
+			spline.ControlPoints.Add(new XYZ(3, 5, 1));
+			spline.ControlPoints.Add(new XYZ(7, 5, 1));
+			spline.ControlPoints.Add(new XYZ(10, 0, 1));
+
+			Hatch.BoundaryPath path = new Hatch.BoundaryPath();
+			path.Edges.Add(spline);
+			path.Edges.Add(new Hatch.BoundaryPath.Line
+			{
+				Start = new XY(10, 0),
+				End = new XY(0, 0)
+			});
+			hatch.Paths.Add(path);
+
+			//Spline edge with fit points
+			Hatch.BoundaryPath.Spline fitSpline = new Hatch.BoundaryPath.Spline();
+			fitSpline.Degree = 3;
+			fitSpline.Knots.AddRange(new double[] { 0, 0, 0, 0, 1, 1, 1, 1 });
+			fitSpline.ControlPoints.Add(new XYZ(20, 0, 1));
+			fitSpline.ControlPoints.Add(new XYZ(23, 5, 1));
+			fitSpline.ControlPoints.Add(new XYZ(27, 5, 1));
+			fitSpline.ControlPoints.Add(new XYZ(30, 0, 1));
+			fitSpline.FitPoints.Add(new XY(20, 0));
+			fitSpline.FitPoints.Add(new XY(25, 3.75));
+			fitSpline.FitPoints.Add(new XY(30, 0));
+			fitSpline.StartTangent = new XY(3, 5);
+			fitSpline.EndTangent = new XY(3, -5);
+
+			Hatch.BoundaryPath fitPath = new Hatch.BoundaryPath();
+			fitPath.Edges.Add(fitSpline);
+			fitPath.Edges.Add(new Hatch.BoundaryPath.Line
+			{
+				Start = new XY(30, 0),
+				End = new XY(20, 0)
+			});
+			hatch.Paths.Add(fitPath);
+
+			this.Document.Entities.Add(hatch);
+
+			this.AssertRoundtrip = (doc) =>
+			{
+				Hatch result = doc.GetCadObject<Hatch>(hatch.Handle);
+
+				Assert.NotNull(result);
+				Assert.Equal(hatch.Paths.Count, result.Paths.Count);
+
+				Hatch.BoundaryPath.Spline splineResult = Assert.IsType<Hatch.BoundaryPath.Spline>(result.Paths[0].Edges[0]);
+				Assert.Equal(spline.Knots.Count, splineResult.Knots.Count);
+				Assert.Equal(spline.ControlPoints.Count, splineResult.ControlPoints.Count);
+				Assert.Empty(splineResult.FitPoints);
+
+				//Fit data is only stored from AC1024
+				Hatch.BoundaryPath.Spline fitResult = Assert.IsType<Hatch.BoundaryPath.Spline>(result.Paths[1].Edges[0]);
+				Assert.Equal(fitSpline.ControlPoints.Count, fitResult.ControlPoints.Count);
+				if (doc.Header.Version >= ACadVersion.AC1024)
+				{
+					Assert.Equal(fitSpline.FitPoints.Count, fitResult.FitPoints.Count);
+				}
+				else
+				{
+					Assert.Empty(fitResult.FitPoints);
+				}
 			};
 		}
 
@@ -1913,6 +1999,13 @@ public abstract class WriterSingleObjectTests : IOTestsBase
 			w.ClipBoundaryVertices.Clear();
 			this.Document.Entities.Add(w);
 
+			//Invalid for dwg but not dxf, it simplifies the setter too
+			var blk = new BlockRecord("block1");
+			blk.Entities.Add(new Line(XYZ.Zero, new XYZ(10, 10, 0)));
+			Insert insert = new Insert(blk);
+			insert.XScale = 0;
+			this.Document.Entities.Add(insert);
+
 			//Empty file
 
 			this.AssertRoundtrip = (doc) =>
@@ -2243,6 +2336,41 @@ public abstract class WriterSingleObjectTests : IOTestsBase
 			};
 		}
 
+		public void ProxyEntityTrueColor()
+		{
+			ProxyEntity proxy = new ProxyEntity();
+			proxy.Version = ACadVersion.AC1032;
+			proxy.MaintenanceVersion = 0;
+
+			ProxySubentTrueColor proxyTrueColor = new ProxySubentTrueColor
+			{
+				Color = new Color(255, 128, 0),
+				ColorMethod = ProxyColorMethod.ByColor,
+			};
+			ProxyCircle proxyCircle = new ProxyCircle
+			{
+				Center = new XYZ(5, 5, 0),
+				Radius = 5,
+			};
+
+			proxy.ProxyGeometries.Add(proxyTrueColor);
+			proxy.ProxyGeometries.Add(proxyCircle);
+
+			this.Document.Entities.Add(proxy);
+
+			this.AssertRoundtrip = (doc) =>
+			{
+				ProxyEntity result = doc.GetCadObject<ProxyEntity>(proxy.Handle);
+				Assert.NotNull(result);
+
+				Assert.Equal(proxy.ProxyGeometries.Count, result.ProxyGeometries.Count);
+				ProxySubentTrueColor resultTrueColor = Assert.IsType<ProxySubentTrueColor>(result.ProxyGeometries[0]);
+				Assert.Equal(ProxyColorMethod.ByColor, resultTrueColor.ColorMethod);
+				Assert.Equal(proxyTrueColor.Color, resultTrueColor.Color);
+				Assert.IsType<ProxyCircle>(result.ProxyGeometries[1]);
+			};
+		}
+
 		public void ProxyGraphics()
 		{
 			ProxyEntity proxy = new ProxyEntity();
@@ -2274,6 +2402,133 @@ public abstract class WriterSingleObjectTests : IOTestsBase
 				Assert.Equal(proxy.ProxyGeometries.Count, result.ProxyGeometries.Count);
 				Assert.True(result.ProxyGeometries[0] is ProxyXLine);
 				Assert.True(result.ProxyGeometries[1] is ProxyCircle);
+			};
+		}
+
+		public void ProxyGraphicsLwPolyline()
+		{
+			ProxyEntity proxy = new ProxyEntity();
+			proxy.Version = ACadVersion.AC1032;
+			proxy.MaintenanceVersion = 0;
+
+			ProxyLwPolyine proxyLwPolyline = new ProxyLwPolyine
+			{
+				Entity = new LwPolyline(new XY(1, 2), new XY(3, 4), new XY(5, 6))
+			};
+
+			proxy.ProxyGeometries.Add(proxyLwPolyline);
+
+			this.Document.Entities.Add(proxy);
+
+			this.AssertRoundtrip = (doc) =>
+			{
+				ProxyEntity result = doc.GetCadObject<ProxyEntity>(proxy.Handle);
+				Assert.NotNull(result);
+
+				ProxyLwPolyine resultLwPolyline = Assert.IsType<ProxyLwPolyine>(Assert.Single(result.ProxyGeometries));
+				Assert.Equal(proxyLwPolyline.Entity.Vertices.Select(v => v.Location), resultLwPolyline.Entity.Vertices.Select(v => v.Location));
+			};
+		}
+
+		public void ProxyGraphicsShellWithVertexNormals()
+		{
+			ProxyEntity proxy = new ProxyEntity();
+			proxy.Version = ACadVersion.AC1032;
+			proxy.MaintenanceVersion = 0;
+
+			ProxyShell shell = new ProxyShell();
+			shell.Vertices.AddRange(new[] { new XYZ(0, 0, 0), new XYZ(10, 0, 0), new XYZ(0, 10, 0) });
+			shell.Faces.Add(new[] { 0, 1, 2 });
+			shell.VertexTraits = new VertexTraits
+			{
+				Normals = new List<XYZ> { XYZ.AxisZ, XYZ.AxisZ, new XYZ(0, 0, -1) },
+				Orientation = 1,
+			};
+
+			proxy.ProxyGeometries.Add(shell);
+
+			this.Document.Entities.Add(proxy);
+
+			this.AssertRoundtrip = (doc) =>
+			{
+				ProxyEntity result = doc.GetCadObject<ProxyEntity>(proxy.Handle);
+				Assert.NotNull(result);
+
+				ProxyShell resultShell = Assert.IsType<ProxyShell>(Assert.Single(result.ProxyGeometries));
+				Assert.Equal(shell.Vertices, resultShell.Vertices);
+				Assert.Equal(shell.VertexTraits.Normals, resultShell.VertexTraits.Normals);
+				Assert.Equal(shell.VertexTraits.Orientation, resultShell.VertexTraits.Orientation);
+			};
+		}
+
+		public void ProxyGraphicsUnicodeText2()
+		{
+			ProxyEntity proxy = new ProxyEntity();
+			proxy.Version = ACadVersion.AC1032;
+			proxy.MaintenanceVersion = 0;
+
+			ProxyUnicodeText2 proxyText = new ProxyUnicodeText2
+			{
+				Text = "A",
+				FontDescriptor = new TrueTypeFontDescriptor
+				{
+					Typeface = "Arial",
+					FontFilename = "ab.ttf",
+				},
+				BigFontFilename = "big.shx",
+			};
+
+			proxy.ProxyGeometries.Add(proxyText);
+
+			this.Document.Entities.Add(proxy);
+
+			this.AssertRoundtrip = (doc) =>
+			{
+				ProxyEntity result = doc.GetCadObject<ProxyEntity>(proxy.Handle);
+				Assert.NotNull(result);
+
+				Assert.Equal(proxy.ProxyGeometries.Count, result.ProxyGeometries.Count);
+				ProxyUnicodeText2 text = Assert.IsType<ProxyUnicodeText2>(result.ProxyGeometries[0]);
+				Assert.Equal(proxyText.FontDescriptor.FontFilename, text.FontDescriptor.FontFilename);
+				Assert.Equal(proxyText.BigFontFilename, text.BigFontFilename);
+			};
+		}
+
+		public void ProxyShellWithHole()
+		{
+			ProxyEntity proxy = new ProxyEntity();
+			proxy.Version = ACadVersion.AC1032;
+			proxy.MaintenanceVersion = 0;
+
+			ProxyShell shell = new ProxyShell();
+			shell.Vertices.AddRange(new[]
+			{
+				new XYZ(0, 0, 0), new XYZ(10, 0, 0), new XYZ(10, 10, 0), new XYZ(0, 10, 0),
+				new XYZ(2, 2, 0), new XYZ(2, 8, 0), new XYZ(8, 8, 0), new XYZ(8, 2, 0),
+			});
+			shell.Faces.Add(new[] { 0, 1, 2, 3 });
+			shell.Faces.Add(new[] { 4, 5, 6, 7 });
+			shell.Holes.Add(1);
+			shell.EdgeTraits = new EdgeTraits();
+			shell.EdgeTraits.Colors.AddRange(Enumerable.Range(1, 8));
+			shell.FaceTraits = new FaceTraits();
+			shell.FaceTraits.Colors.AddRange(new[] { 11, 12 });
+
+			proxy.ProxyGeometries.Add(shell);
+
+			this.Document.Entities.Add(proxy);
+
+			this.AssertRoundtrip = (doc) =>
+			{
+				ProxyEntity result = doc.GetCadObject<ProxyEntity>(proxy.Handle);
+				Assert.NotNull(result);
+
+				ProxyShell resultShell = Assert.IsType<ProxyShell>(Assert.Single(result.ProxyGeometries));
+				Assert.Equal(shell.Vertices, resultShell.Vertices);
+				Assert.Equal(shell.Faces, resultShell.Faces);
+				Assert.Equal(shell.Holes, resultShell.Holes);
+				Assert.Equal(shell.EdgeTraits.Colors, resultShell.EdgeTraits.Colors);
+				Assert.Equal(shell.FaceTraits.Colors, resultShell.FaceTraits.Colors);
 			};
 		}
 

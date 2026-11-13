@@ -1,30 +1,66 @@
-﻿using CSMath;
+﻿using ACadSharp.IO.DWG.DwgStreamReaders;
+using CSMath;
 using CSUtilities.Converters;
 using CSUtilities.IO;
 using System;
 using System.IO;
 using System.Text;
 
-namespace ACadSharp.IO.DWG.DwgStreamWriters;
+namespace ACadSharp.IO.DWG;
 
 /// <summary>
 /// Writer equivalent to reader <see cref="DwgStreamReaderBase"/>
 /// </summary>
 internal abstract class DwgStreamWriterBase : StreamIO, IDwgStreamWriter
 {
-	public int BitShift { get; private set; } = 0;
-
 	public IDwgStreamWriter Main { get { return this; } }
 
 	public long PositionInBits { get { return this.Position * 8 + this.BitShift; } }
 
 	public long SavedPositionInBits { get; } = 0;
 
+	public int BitShift { get; private set; } = 0;
+
 	private byte _lastByte;
 
 	public DwgStreamWriterBase(Stream stream, Encoding encoding) : base(stream)
 	{
 		this.Encoding = encoding;
+	}
+
+	public static IDwgStreamWriter GetStreamWriter(ACadVersion version, Stream stream, Encoding encoding)
+	{
+		switch (version)
+		{
+			case ACadVersion.Unknown:
+				throw new Exception();
+			case ACadVersion.MC0_0:
+			case ACadVersion.AC1_2:
+			case ACadVersion.AC1_4:
+			case ACadVersion.AC1_50:
+			case ACadVersion.AC2_10:
+			case ACadVersion.AC1002:
+			case ACadVersion.AC1003:
+			case ACadVersion.AC1004:
+			case ACadVersion.AC1006:
+			case ACadVersion.AC1009:
+				throw new NotSupportedException($"Dwg version not supported: {version}");
+			case ACadVersion.AC1012:
+			case ACadVersion.AC1014:
+				return new DwgStreamWriterAC12(stream, encoding);
+			case ACadVersion.AC1015:
+				return new DwgStreamWriterAC15(stream, encoding);
+			case ACadVersion.AC1018:
+				return new DwgStreamWriterAC18(stream, encoding);
+			case ACadVersion.AC1021:
+				return new DwgStreamWriterAC21(stream, encoding);
+			case ACadVersion.AC1024:
+			case ACadVersion.AC1027:
+			case ACadVersion.AC1032:
+				return new DwgStreamWriterAC24(stream, encoding);
+			default:
+				throw new NotSupportedException($"Dwg version not supported: {version}");
+		}
 	}
 
 	public static IDwgStreamWriter GetMergedWriter(ACadVersion version, Stream stream, Encoding encoding)
@@ -79,39 +115,313 @@ internal abstract class DwgStreamWriterBase : StreamIO, IDwgStreamWriter
 		}
 	}
 
-	public static IDwgStreamWriter GetStreamWriter(ACadVersion version, Stream stream, Encoding encoding)
+	public void WriteInt(int value)
 	{
-		switch (version)
+		this.Write(value, LittleEndianConverter.Instance);
+	}
+
+	public virtual void WriteObjectType(short value)
+	{
+		this.WriteBitShort(value);
+	}
+
+	public void WriteObjectType(ObjectType value)
+	{
+		this.WriteObjectType((short)value);
+	}
+
+	public void WriteRawLong(long value)
+	{
+		this.WriteBytes(LittleEndianConverter.Instance.GetBytes((int)value));
+	}
+
+	public override void WriteBytes(byte[] arr)
+	{
+		if (this.BitShift == 0)
 		{
-			case ACadVersion.Unknown:
-				throw new Exception();
-			case ACadVersion.MC0_0:
-			case ACadVersion.AC1_2:
-			case ACadVersion.AC1_4:
-			case ACadVersion.AC1_50:
-			case ACadVersion.AC2_10:
-			case ACadVersion.AC1002:
-			case ACadVersion.AC1003:
-			case ACadVersion.AC1004:
-			case ACadVersion.AC1006:
-			case ACadVersion.AC1009:
-				throw new NotSupportedException($"Dwg version not supported: {version}");
-			case ACadVersion.AC1012:
-			case ACadVersion.AC1014:
-				return new DwgStreamWriterAC12(stream, encoding);
-			case ACadVersion.AC1015:
-				return new DwgStreamWriterAC15(stream, encoding);
-			case ACadVersion.AC1018:
-				return new DwgStreamWriterAC18(stream, encoding);
-			case ACadVersion.AC1021:
-				return new DwgStreamWriterAC21(stream, encoding);
-			case ACadVersion.AC1024:
-			case ACadVersion.AC1027:
-			case ACadVersion.AC1032:
-				return new DwgStreamWriterAC24(stream, encoding);
-			default:
-				throw new NotSupportedException($"Dwg version not supported: {version}");
+			for (int i = 0; i < arr.Length; i++)
+			{
+				this.Stream.WriteByte(arr[i]);
+			}
+			return;
 		}
+
+		int num = 8 - this.BitShift;
+		foreach (byte b in arr)
+		{
+			this.Stream.WriteByte((byte)(this._lastByte | (b >> this.BitShift)));
+			this._lastByte = (byte)(b << num);
+		}
+	}
+
+	public override void WriteBytes(byte[] arr, int initialIndex, int length)
+	{
+		if (this.BitShift == 0)
+		{
+			for (int i = 0, j = initialIndex; i < length; i++, j++)
+			{
+				this._stream.WriteByte(arr[j]);
+			}
+
+			return;
+		}
+
+		int num = 8 - this.BitShift;
+		for (int i = 0, j = initialIndex; i < length; i++, j++)
+		{
+			byte b = arr[j];
+			this._stream.WriteByte((byte)(this._lastByte | (b >> this.BitShift)));
+			this._lastByte = (byte)(b << num);
+		}
+	}
+
+	public void WriteBitShort(short value)
+	{
+		if (value == 0)
+		{
+			this.Write2Bits(2);
+		}
+		else if (value > 0 && value < 256)
+		{
+			this.Write2Bits(1);
+			this.WriteByte((byte)value);
+		}
+		else if (value == 256)
+		{
+			this.Write2Bits(3);
+		}
+		else
+		{
+			this.Write2Bits(0);
+			this.WriteByte((byte)value);
+			this.WriteByte((byte)(value >> 8));
+		}
+	}
+
+	public void WriteBitDouble(double value)
+	{
+		if (value == 0.0)
+		{
+			this.Write2Bits(2);
+			return;
+		}
+
+		if (value == 1.0)
+		{
+			this.Write2Bits(1);
+			return;
+		}
+
+		this.Write2Bits(0);
+		this.WriteBytes(LittleEndianConverter.Instance.GetBytes(value));
+	}
+
+	public void WriteBitLong(int value)
+	{
+		if (value == 0)
+		{
+			this.Write2Bits(2);
+			return;
+		}
+
+		if (value > 0 && value < 256)
+		{
+			this.Write2Bits(1);
+			this.WriteByte((byte)value);
+			return;
+		}
+
+		this.Write2Bits(0);
+		this.WriteByte((byte)value);
+		this.WriteByte((byte)(value >> 8));
+		this.WriteByte((byte)(value >> 16));
+		this.WriteByte((byte)(value >> 24));
+	}
+
+	public void WriteBitLongLong(long value)
+	{
+		byte size = 0;
+		ulong unsignedValue = (ulong)value;
+
+		ulong hold = unsignedValue;
+		while (hold != 0)
+		{
+			hold >>= 8;
+			size = (byte)(size + 1);
+		}
+
+		this.write3Bits(size);
+
+		hold = unsignedValue;
+		for (int i = 0; i < size; i++)
+		{
+			this.WriteByte((byte)(hold & 0xFF));
+			hold >>= 8;
+		}
+	}
+
+	public virtual void WriteVariableText(string value)
+	{
+		if (string.IsNullOrEmpty(value))
+		{
+			this.WriteBitShort(0);
+			return;
+		}
+
+		byte[] bytes = this.Encoding.GetBytes(value);
+		this.WriteBitShort((short)bytes.Length);
+		this.WriteBytes(bytes);
+	}
+
+	public virtual void WriteTextUnicode(string value)
+	{
+		byte[] bytes = this.Encoding.GetBytes(string.IsNullOrEmpty(value) ? string.Empty : value);
+		this.WriteRawShort((ushort)(bytes.Length + 1));
+		this._stream.Write(bytes, 0, bytes.Length);
+		this._stream.WriteByte(0);
+	}
+
+	public void Write2Bits(byte value)
+	{
+		if (this.BitShift < 6)
+		{
+			this._lastByte |= (byte)(value << 6 - this.BitShift);
+			this.BitShift += 2;
+		}
+		else if (this.BitShift == 6)
+		{
+			this._lastByte |= value;
+			this.Stream.WriteByte(this._lastByte);
+			this.resetShift();
+		}
+		else
+		{
+			this._lastByte |= (byte)(value >> 1);
+			this.Stream.WriteByte(this._lastByte);
+			this._lastByte = (byte)(value << 7);
+			this.BitShift = 1;
+		}
+	}
+
+	public void WriteBit(bool value)
+	{
+		if (this.BitShift < 7)
+		{
+			if (value)
+			{
+				this._lastByte |= (byte)(1 << 7 - this.BitShift);
+			}
+			this.BitShift++;
+			return;
+		}
+
+		if (value)
+		{
+			this._lastByte |= 1;
+		}
+
+		this.Stream.WriteByte(this._lastByte);
+		this.resetShift();
+	}
+
+	public void WriteByte(byte value)
+	{
+		if (this.BitShift == 0)
+		{
+			this.Stream.WriteByte(value);
+			return;
+		}
+
+		int shift = 8 - this.BitShift;
+		this.Stream.WriteByte((byte)(this._lastByte | (value >> this.BitShift)));
+		this._lastByte = (byte)(value << shift);
+	}
+
+	private void resetShift()
+	{
+		this.BitShift = 0;
+		this._lastByte = 0;
+	}
+
+	public void WriteDateTime(DateTime value)
+	{
+		CadUtils.DateToJulian(value, out int jdate, out int miliseconds);
+
+		this.WriteBitLong(jdate);
+		this.WriteBitLong(miliseconds);
+	}
+
+	public void WriteTimeSpan(TimeSpan value)
+	{
+		this.WriteBitLong(value.Days);
+		this.WriteBitLong(value.Milliseconds);
+	}
+
+	public void Write8BitJulianDate(DateTime value)
+	{
+		CadUtils.DateToJulian(value, out int jdate, out int miliseconds);
+		this.WriteRawLong(jdate);
+		this.WriteRawLong(miliseconds);
+	}
+
+	public virtual void WriteCmColor(Color value, bool useTextStream = false)
+	{
+		//R15 and earlier: BS color index
+		short index = 0;
+		if (value.IsTrueColor)
+		{
+			index = value.GetApproxIndex();
+		}
+		else
+		{
+			index = value.Index;
+		}
+
+		this.WriteBitShort(index);
+	}
+
+	public virtual void WriteEnColor(Color color, Transparency transparency)
+	{
+		this.WriteCmColor(color);
+	}
+
+	public virtual void WriteEnColor(Color color, Transparency transparency, bool isBookColor)
+	{
+		this.WriteCmColor(color);
+	}
+
+	public void Write2BitDouble(XY value)
+	{
+		this.WriteBitDouble(value.X);
+		this.WriteBitDouble(value.Y);
+	}
+
+	public void Write3BitDouble(XYZ value)
+	{
+		this.WriteBitDouble(value.X);
+		this.WriteBitDouble(value.Y);
+		this.WriteBitDouble(value.Z);
+	}
+
+	public void Write2RawDouble(XY value)
+	{
+		this.WriteRawDouble(value.X);
+		this.WriteRawDouble(value.Y);
+	}
+
+	public void WriteRawShort(short value)
+	{
+		this.WriteBytes(LittleEndianConverter.Instance.GetBytes(value));
+	}
+
+	public void WriteRawShort(ushort value)
+	{
+		this.WriteBytes(LittleEndianConverter.Instance.GetBytes(value));
+	}
+
+	public void WriteRawDouble(double value)
+	{
+		this.WriteBytes(LittleEndianConverter.Instance.GetBytes(value));
 	}
 
 	public void HandleReference(IHandledCadObject cadObject)
@@ -214,6 +524,91 @@ internal abstract class DwgStreamWriterBase : StreamIO, IDwgStreamWriter
 		}
 	}
 
+	public void WriteSpearShift()
+	{
+		if (this.BitShift > 0)
+		{
+			for (int i = this.BitShift; i < 8; i++)
+			{
+				this.WriteBit(value: false);
+			}
+		}
+	}
+
+	public virtual void WriteBitThickness(double thickness)
+	{
+		//For R13-R14, this is a BD.
+		this.WriteBitDouble(thickness);
+	}
+
+	public virtual void WriteBitExtrusion(XYZ normal)
+	{
+		//For R13-R14 this is 3BD.
+		this.Write3BitDouble(normal);
+	}
+
+	public void Write2BitDoubleWithDefault(XY def, XY value)
+	{
+		this.WriteBitDoubleWithDefault(def.X, value.X);
+		this.WriteBitDoubleWithDefault(def.Y, value.Y);
+	}
+
+	public void Write3BitDoubleWithDefault(XYZ def, XYZ value)
+	{
+		this.WriteBitDoubleWithDefault(def.X, value.X);
+		this.WriteBitDoubleWithDefault(def.Y, value.Y);
+		this.WriteBitDoubleWithDefault(def.Z, value.Z);
+	}
+
+	public void WriteBitDoubleWithDefault(double def, double value)
+	{
+		if (def == value)
+		{
+			//00 No more data present, use the value of the default double.
+			this.Write2Bits(0);
+			return;
+		}
+
+		byte[] defBytes = LittleEndianConverter.Instance.GetBytes(def);
+		byte[] valueBytes = LittleEndianConverter.Instance.GetBytes(value);
+
+		//Compare the 2 sets of bytes by it's simetry
+		int first = 0;
+		int last = 7;
+		while (last >= 0 && defBytes[last] == valueBytes[last])
+		{
+			first++;
+			last--;
+		}
+
+		if (first >= 4)
+		{
+			//01 4 bytes of data are present. The result is the default double, with the 4 data bytes patched in
+			//replacing the first 4 bytes of the default double(assuming little endian).
+			this.Write2Bits(1);
+			this.WriteBytes(defBytes, 0, 4);
+		}
+		else if (first >= 2)
+		{
+			//10 6 bytes of data are present. The result is the default double, with the first 2 data bytes patched in
+			//replacing bytes 5 and 6 of the default double, and the last 4 data bytes patched in replacing the first 4
+			//bytes of the default double(assuming little endian).
+			this.Write2Bits(2);
+			this.WriteByte(defBytes[4]);
+			this.WriteByte(defBytes[5]);
+			this.WriteByte(defBytes[0]);
+			this.WriteByte(defBytes[1]);
+			this.WriteByte(defBytes[2]);
+			this.WriteByte(defBytes[3]);
+		}
+		else
+		{
+			//11 A full RD follows.
+			this.Write2Bits(3);
+			this.WriteBytes(defBytes);
+		}
+	}
+
 	public void ResetStream()
 	{
 		this._stream.Position = 0L;
@@ -271,356 +666,6 @@ internal abstract class DwgStreamWriterBase : StreamIO, IDwgStreamWriter
 		this._stream.Position = position;
 	}
 
-	public void Write2BitDouble(XY value)
-	{
-		this.WriteBitDouble(value.X);
-		this.WriteBitDouble(value.Y);
-	}
-
-	public void Write2BitDoubleWithDefault(XY def, XY value)
-	{
-		this.WriteBitDoubleWithDefault(def.X, value.X);
-		this.WriteBitDoubleWithDefault(def.Y, value.Y);
-	}
-
-	public void Write2Bits(byte value)
-	{
-		if (this.BitShift < 6)
-		{
-			this._lastByte |= (byte)(value << 6 - this.BitShift);
-			this.BitShift += 2;
-		}
-		else if (this.BitShift == 6)
-		{
-			this._lastByte |= value;
-			this.Stream.WriteByte(this._lastByte);
-			this.resetShift();
-		}
-		else
-		{
-			this._lastByte |= (byte)(value >> 1);
-			this.Stream.WriteByte(this._lastByte);
-			this._lastByte = (byte)(value << 7);
-			this.BitShift = 1;
-		}
-	}
-
-	public void Write2RawDouble(XY value)
-	{
-		this.WriteRawDouble(value.X);
-		this.WriteRawDouble(value.Y);
-	}
-
-	public void Write3BitDouble(XYZ value)
-	{
-		this.WriteBitDouble(value.X);
-		this.WriteBitDouble(value.Y);
-		this.WriteBitDouble(value.Z);
-	}
-
-	public void Write3BitDoubleWithDefault(XYZ def, XYZ value)
-	{
-		this.WriteBitDoubleWithDefault(def.X, value.X);
-		this.WriteBitDoubleWithDefault(def.Y, value.Y);
-		this.WriteBitDoubleWithDefault(def.Z, value.Z);
-	}
-
-	public void Write8BitJulianDate(DateTime value)
-	{
-		CadUtils.DateToJulian(value, out int jdate, out int miliseconds);
-		this.WriteRawLong(jdate);
-		this.WriteRawLong(miliseconds);
-	}
-
-	public void WriteBit(bool value)
-	{
-		if (this.BitShift < 7)
-		{
-			if (value)
-			{
-				this._lastByte |= (byte)(1 << 7 - this.BitShift);
-			}
-			this.BitShift++;
-			return;
-		}
-
-		if (value)
-		{
-			this._lastByte |= 1;
-		}
-
-		this.Stream.WriteByte(this._lastByte);
-		this.resetShift();
-	}
-
-	public void WriteBitDouble(double value)
-	{
-		if (value == 0.0)
-		{
-			this.Write2Bits(2);
-			return;
-		}
-
-		if (value == 1.0)
-		{
-			this.Write2Bits(1);
-			return;
-		}
-
-		this.Write2Bits(0);
-		this.WriteBytes(LittleEndianConverter.Instance.GetBytes(value));
-	}
-
-	public void WriteBitDoubleWithDefault(double def, double value)
-	{
-		if (def == value)
-		{
-			//00 No more data present, use the value of the default double.
-			this.Write2Bits(0);
-			return;
-		}
-
-		byte[] defBytes = LittleEndianConverter.Instance.GetBytes(def);
-		byte[] valueBytes = LittleEndianConverter.Instance.GetBytes(value);
-
-		//Compare the 2 sets of bytes by it's simetry
-		int first = 0;
-		int last = 7;
-		while (last >= 0 && defBytes[last] == valueBytes[last])
-		{
-			first++;
-			last--;
-		}
-
-		if (first >= 4)
-		{
-			//01 4 bytes of data are present. The result is the default double, with the 4 data bytes patched in
-			//replacing the first 4 bytes of the default double(assuming little endian).
-			this.Write2Bits(1);
-			this.WriteBytes(defBytes, 0, 4);
-		}
-		else if (first >= 2)
-		{
-			//10 6 bytes of data are present. The result is the default double, with the first 2 data bytes patched in
-			//replacing bytes 5 and 6 of the default double, and the last 4 data bytes patched in replacing the first 4
-			//bytes of the default double(assuming little endian).
-			this.Write2Bits(2);
-			this.WriteByte(defBytes[4]);
-			this.WriteByte(defBytes[5]);
-			this.WriteByte(defBytes[0]);
-			this.WriteByte(defBytes[1]);
-			this.WriteByte(defBytes[2]);
-			this.WriteByte(defBytes[3]);
-		}
-		else
-		{
-			//11 A full RD follows.
-			this.Write2Bits(3);
-			this.WriteBytes(defBytes);
-		}
-	}
-
-	public virtual void WriteBitExtrusion(XYZ normal)
-	{
-		//For R13-R14 this is 3BD.
-		this.Write3BitDouble(normal);
-	}
-
-	public void WriteBitLong(int value)
-	{
-		if (value == 0)
-		{
-			this.Write2Bits(2);
-			return;
-		}
-
-		if (value > 0 && value < 256)
-		{
-			this.Write2Bits(1);
-			this.WriteByte((byte)value);
-			return;
-		}
-
-		this.Write2Bits(0);
-		this.WriteByte((byte)value);
-		this.WriteByte((byte)(value >> 8));
-		this.WriteByte((byte)(value >> 16));
-		this.WriteByte((byte)(value >> 24));
-	}
-
-	public void WriteBitLongLong(long value)
-	{
-		byte size = 0;
-		ulong unsignedValue = (ulong)value;
-
-		ulong hold = unsignedValue;
-		while (hold != 0)
-		{
-			hold >>= 8;
-			size = (byte)(size + 1);
-		}
-
-		this.write3Bits(size);
-
-		hold = unsignedValue;
-		for (int i = 0; i < size; i++)
-		{
-			this.WriteByte((byte)(hold & 0xFF));
-			hold >>= 8;
-		}
-	}
-
-	public void WriteBitShort(short value)
-	{
-		if (value == 0)
-		{
-			this.Write2Bits(2);
-		}
-		else if (value > 0 && value < 256)
-		{
-			this.Write2Bits(1);
-			this.WriteByte((byte)value);
-		}
-		else if (value == 256)
-		{
-			this.Write2Bits(3);
-		}
-		else
-		{
-			this.Write2Bits(0);
-			this.WriteByte((byte)value);
-			this.WriteByte((byte)(value >> 8));
-		}
-	}
-
-	public virtual void WriteBitThickness(double thickness)
-	{
-		//For R13-R14, this is a BD.
-		this.WriteBitDouble(thickness);
-	}
-
-	public void WriteByte(byte value)
-	{
-		if (this.BitShift == 0)
-		{
-			this.Stream.WriteByte(value);
-			return;
-		}
-
-		int shift = 8 - this.BitShift;
-		this.Stream.WriteByte((byte)(this._lastByte | (value >> this.BitShift)));
-		this._lastByte = (byte)(value << shift);
-	}
-
-	public override void WriteBytes(byte[] arr)
-	{
-		if (this.BitShift == 0)
-		{
-			for (int i = 0; i < arr.Length; i++)
-			{
-				this.Stream.WriteByte(arr[i]);
-			}
-			return;
-		}
-
-		int num = 8 - this.BitShift;
-		foreach (byte b in arr)
-		{
-			this.Stream.WriteByte((byte)(this._lastByte | (b >> this.BitShift)));
-			this._lastByte = (byte)(b << num);
-		}
-	}
-
-	public override void WriteBytes(byte[] arr, int initialIndex, int length)
-	{
-		if (this.BitShift == 0)
-		{
-			for (int i = 0, j = initialIndex; i < length; i++, j++)
-			{
-				this._stream.WriteByte(arr[j]);
-			}
-
-			return;
-		}
-
-		int num = 8 - this.BitShift;
-		for (int i = 0, j = initialIndex; i < length; i++, j++)
-		{
-			byte b = arr[j];
-			this._stream.WriteByte((byte)(this._lastByte | (b >> this.BitShift)));
-			this._lastByte = (byte)(b << num);
-		}
-	}
-
-	public virtual void WriteCmColor(Color value, bool useTextStream = false)
-	{
-		//R15 and earlier: BS color index
-		short index = 0;
-		if (value.IsTrueColor)
-		{
-			index = value.GetApproxIndex();
-		}
-		else
-		{
-			index = value.Index;
-		}
-
-		this.WriteBitShort(index);
-	}
-
-	public void WriteDateTime(DateTime value)
-	{
-		CadUtils.DateToJulian(value, out int jdate, out int miliseconds);
-
-		this.WriteBitLong(jdate);
-		this.WriteBitLong(miliseconds);
-	}
-
-	public virtual void WriteEnColor(Color color, Transparency transparency)
-	{
-		this.WriteCmColor(color);
-	}
-
-	public virtual void WriteEnColor(Color color, Transparency transparency, bool isBookColor)
-	{
-		this.WriteCmColor(color);
-	}
-
-	public void WriteInt(int value)
-	{
-		this.Write(value, LittleEndianConverter.Instance);
-	}
-
-	public virtual void WriteObjectType(short value)
-	{
-		this.WriteBitShort(value);
-	}
-
-	public void WriteObjectType(ObjectType value)
-	{
-		this.WriteObjectType((short)value);
-	}
-
-	public void WriteRawDouble(double value)
-	{
-		this.WriteBytes(LittleEndianConverter.Instance.GetBytes(value));
-	}
-
-	public void WriteRawLong(long value)
-	{
-		this.WriteBytes(LittleEndianConverter.Instance.GetBytes((int)value));
-	}
-
-	public void WriteRawShort(short value)
-	{
-		this.WriteBytes(LittleEndianConverter.Instance.GetBytes(value));
-	}
-
-	public void WriteRawShort(ushort value)
-	{
-		this.WriteBytes(LittleEndianConverter.Instance.GetBytes(value));
-	}
-
 	public void WriteShiftValue()
 	{
 		if (this.BitShift > 0)
@@ -631,55 +676,6 @@ internal abstract class DwgStreamWriterBase : StreamIO, IDwgStreamWriter
 			this._stream.Position = position;
 			this._stream.WriteByte(currValue);
 		}
-	}
-
-	public void WriteSpearShift()
-	{
-		if (this.BitShift > 0)
-		{
-			for (int i = this.BitShift; i < 8; i++)
-			{
-				this.WriteBit(value: false);
-			}
-		}
-	}
-
-	public virtual void WriteTextUnicode(string value)
-	{
-		byte[] bytes = this.Encoding.GetBytes(string.IsNullOrEmpty(value) ? string.Empty : value);
-		this.WriteRawShort((ushort)(bytes.Length + 1));
-		this._stream.Write(bytes, 0, bytes.Length);
-		this._stream.WriteByte(0);
-	}
-
-	public void WriteTimeSpan(TimeSpan value)
-	{
-		this.WriteBitLong(value.Days);
-		this.WriteBitLong(value.Milliseconds);
-	}
-
-	public void WriteUInt(uint value)
-	{
-		this.WriteBytes(LittleEndianConverter.Instance.GetBytes(value));
-	}
-
-	public virtual void WriteVariableText(string value)
-	{
-		if (string.IsNullOrEmpty(value))
-		{
-			this.WriteBitShort(0);
-			return;
-		}
-
-		byte[] bytes = this.Encoding.GetBytes(value);
-		this.WriteBitShort((short)bytes.Length);
-		this.WriteBytes(bytes);
-	}
-
-	private void resetShift()
-	{
-		this.BitShift = 0;
-		this._lastByte = 0;
 	}
 
 	private void write3Bits(byte value)

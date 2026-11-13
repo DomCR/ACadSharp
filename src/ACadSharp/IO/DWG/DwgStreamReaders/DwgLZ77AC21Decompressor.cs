@@ -1,4 +1,4 @@
-﻿namespace ACadSharp.IO.DWG;
+﻿namespace ACadSharp.IO.DWG.DwgStreamReaders;
 
 internal class DwgLZ77AC21Decompressor
 {
@@ -10,174 +10,174 @@ internal class DwgLZ77AC21Decompressor
 	/// (so 31 separate copy functions). For copying 1-32 bytes, a combination of sub byte blocks is made:
 	/// </summary>
 	private readonly copyDelegate[] _copyMethods = new copyDelegate[32]
-{
-	null,
-	(src, srcIndex, dst, dstIndex) =>{copy1b(src, srcIndex, dst, dstIndex); },
-	(src, srcIndex, dst, dstIndex) =>{copy2b(src, srcIndex, dst, dstIndex); },
-	(src, srcIndex, dst, dstIndex) =>{copy3b(src, srcIndex, dst, dstIndex); },
-	(src, srcIndex, dst, dstIndex) =>{copy4b(src, srcIndex, dst, dstIndex); },
-	(src, srcIndex, dst, dstIndex) =>
 	{
-	  copy1b(src, srcIndex + 4U, dst, dstIndex);
-	  copy4b(src, srcIndex, dst, dstIndex + 1U);
-	},
-	 (src, srcIndex, dst, dstIndex) =>
-	{
-	  copy1b(src, srcIndex + 5U, dst, dstIndex);
-	  copy4b(src, srcIndex + 1U, dst, dstIndex + 1U);
-	  copy1b(src, srcIndex, dst, dstIndex + 5U);
-	},
-	 (src, srcIndex, dst, dstIndex) =>
-	{
-	  copy2b(src, srcIndex + 5U, dst, dstIndex);
-	  copy4b(src, srcIndex + 1U, dst, dstIndex + 2U);
-	  copy1b(src, srcIndex, dst, dstIndex + 6U);
-	},
-	new copyDelegate(copy8b),
-	 (src, srcIndex, dst, dstIndex) =>
-	{
-	  copy1b(src, srcIndex + 8U, dst, dstIndex);
-	  copy8b(src, srcIndex, dst, dstIndex + 1U);
-	},
-	 (src, srcIndex, dst, dstIndex) =>
-	{
-	  copy1b(src, srcIndex + 9U, dst, dstIndex);
-	  copy8b(src, srcIndex + 1U, dst, dstIndex + 1U);
-	  copy1b(src, srcIndex, dst, dstIndex + 9U);
-	},
-	 (src, srcIndex, dst, dstIndex) =>
-	{
-	  copy2b(src, srcIndex + 9U, dst, dstIndex);
-	  copy8b(src, srcIndex + 1U, dst, dstIndex + 2U);
-	  copy1b(src, srcIndex, dst, dstIndex + 10U);
-	},
-	 (src, srcIndex, dst, dstIndex) =>
-	{
-	  copy4b(src, srcIndex + 8U, dst, dstIndex);
-	  copy8b(src, srcIndex, dst, dstIndex + 4U);
-	},
-	 (src, srcIndex, dst, dstIndex) =>
-	{
-	  copy1b(src, srcIndex + 12U, dst, dstIndex);
-	  copy4b(src, srcIndex + 8U, dst, dstIndex + 1U);
-	  copy8b(src, srcIndex, dst, dstIndex + 5U);
-	},
-	 (src, srcIndex, dst, dstIndex) =>
-	{
-	  copy1b(src, srcIndex + 13U, dst, dstIndex);
-	  copy4b(src, srcIndex + 9U, dst, dstIndex + 1U);
-	  copy8b(src, srcIndex + 1U, dst, dstIndex + 5U);
-	  copy1b(src, srcIndex, dst, dstIndex + 13U);
-	},
-	 (src, srcIndex, dst, dstIndex) =>
-	{
-	  copy2b(src, srcIndex + 13U, dst, dstIndex);
-	  copy4b(src, srcIndex + 9U, dst, dstIndex + 2U);
-	  copy8b(src, srcIndex + 1U, dst, dstIndex + 6U);
-	  copy1b(src, srcIndex, dst, dstIndex + 14U);
-	},
-	new copyDelegate(copy16b),
-	 (src, srcIndex, dst, dstIndex) =>
-	{
-	  copy8b(src, srcIndex + 9U, dst, dstIndex);
-	  copy1b(src, srcIndex + 8U, dst, dstIndex + 8U);
-	  copy8b(src, srcIndex, dst, dstIndex + 9U);
-	},
-	 (src, srcIndex, dst, dstIndex) =>
-	{
-	  copy1b(src, srcIndex + 17U, dst, dstIndex);
-	  copy16b(src, srcIndex + 1U, dst, dstIndex + 1U);
-	  copy1b(src, srcIndex, dst, dstIndex + 17U);
-	},
-	 (src, srcIndex, dst, dstIndex) =>
-	{
-	  copy3b(src, srcIndex + 16U, dst, dstIndex);
-	  copy16b(src, srcIndex, dst, dstIndex + 3U);
-	},
-	 (src, srcIndex, dst, dstIndex) =>
-	{
-	  copy4b(src, srcIndex + 16U, dst, dstIndex);
-	  copy8b(src, srcIndex + 8U, dst, dstIndex + 4U);
-	  copy8b(src, srcIndex, dst, dstIndex + 12U);
-	},
-	 (src, srcIndex, dst, dstIndex) =>
-	{
-	  copy1b(src, srcIndex + 20U, dst, dstIndex);
-	  copy4b(src, srcIndex + 16U, dst, dstIndex + 1U);
-	  copy8b(src, srcIndex + 8U, dst, dstIndex + 5U);
-	  copy8b(src, srcIndex, dst, dstIndex + 13U);
-	},
-	 (src, srcIndex, dst, dstIndex) =>
-	{
-	  copy2b(src, srcIndex + 20U, dst, dstIndex);
-	  copy4b(src, srcIndex + 16U, dst, dstIndex + 2U);
-	  copy8b(src, srcIndex + 8U, dst, dstIndex + 6U);
-	  copy8b(src, srcIndex, dst, dstIndex + 14U);
-	},
-	 (src, srcIndex, dst, dstIndex) =>
-	{
-	  copy3b(src, srcIndex + 20U, dst, dstIndex);
-	  copy4b(src, srcIndex + 16U, dst, dstIndex + 3U);
-	  copy8b(src, srcIndex + 8U, dst, dstIndex + 7U);
-	  copy8b(src, srcIndex, dst, dstIndex + 15U);
-	},
-	 (src, srcIndex, dst, dstIndex) =>
-	{
-	  copy8b(src, srcIndex + 16U, dst, dstIndex);
-	  copy16b(src, srcIndex, dst, dstIndex + 8U);
-	},
-	 (src, srcIndex, dst, dstIndex) =>
-	{
-	  copy8b(src, srcIndex + 17U, dst, dstIndex);
-	  copy1b(src, srcIndex + 16U, dst, dstIndex + 8U);
-	  copy16b(src, srcIndex, dst, dstIndex + 9U);
-	},
-	 (src, srcIndex, dst, dstIndex) =>
-	{
-	  copy1b(src, srcIndex + 25U, dst, dstIndex);
-	  copy8b(src, srcIndex + 17U, dst, dstIndex + 1U);
-	  copy1b(src, srcIndex + 16U, dst, dstIndex + 9U);
-	  copy16b(src, srcIndex, dst, dstIndex + 10U);
-	},
-	 (src, srcIndex, dst, dstIndex) =>
-	{
-	  copy2b(src, srcIndex + 25U, dst, dstIndex);
-	  copy8b(src, srcIndex + 17U, dst, dstIndex + 2U);
-	  copy1b(src, srcIndex + 16U, dst, dstIndex + 10U);
-	  copy16b(src, srcIndex, dst, dstIndex + 11U);
-	},
-	 (src, srcIndex, dst, dstIndex) =>
-	{
-	  copy4b(src, srcIndex + 24U, dst, dstIndex);
-	  copy8b(src, srcIndex + 16U, dst, dstIndex + 4U);
-	  copy8b(src, srcIndex + 8U, dst, dstIndex + 12U);
-	  copy8b(src, srcIndex, dst, dstIndex + 20U);
-	},
-	 (src, srcIndex, dst, dstIndex) =>
-	{
-	  copy1b(src, srcIndex + 28U, dst, dstIndex);
-	  copy4b(src, srcIndex + 24U, dst, dstIndex + 1U);
-	  copy8b(src, srcIndex + 16U, dst, dstIndex + 5U);
-	  copy8b(src, srcIndex + 8U, dst, dstIndex + 13U);
-	  copy8b(src, srcIndex, dst, dstIndex + 21U);
-	},
-	 (src, srcIndex, dst, dstIndex) =>
-	{
-	  copy2b(src, srcIndex + 28U, dst, dstIndex);
-	  copy4b(src, srcIndex + 24U, dst, dstIndex + 2U);
-	  copy8b(src, srcIndex + 16U, dst, dstIndex + 6U);
-	  copy8b(src, srcIndex + 8U, dst, dstIndex + 14U);
-	  copy8b(src, srcIndex, dst, dstIndex + 22U);
-	},
-	 (src, srcIndex, dst, dstIndex) =>
-	{
-	  copy1b(src, srcIndex + 30U, dst, dstIndex);
-	  copy4b(src, srcIndex + 26U, dst, dstIndex + 1U);
-	  copy8b(src, srcIndex + 18U, dst, dstIndex + 5U);
-	  copy8b(src, srcIndex + 10U, dst, dstIndex + 13U);
-	  copy8b(src, srcIndex + 2U, dst, dstIndex + 21U);
-	  copy2b(src, srcIndex, dst, dstIndex + 29U);
-	}
+		null,
+		(src, srcIndex, dst, dstIndex) =>{copy1b(src, srcIndex, dst, dstIndex); },
+		(src, srcIndex, dst, dstIndex) =>{copy2b(src, srcIndex, dst, dstIndex); },
+		(src, srcIndex, dst, dstIndex) =>{copy3b(src, srcIndex, dst, dstIndex); },
+		(src, srcIndex, dst, dstIndex) =>{copy4b(src, srcIndex, dst, dstIndex); },
+		(src, srcIndex, dst, dstIndex) =>
+		{
+		  copy1b(src, srcIndex + 4U, dst, dstIndex);
+		  copy4b(src, srcIndex, dst, dstIndex + 1U);
+		},
+		 (src, srcIndex, dst, dstIndex) =>
+		{
+		  copy1b(src, srcIndex + 5U, dst, dstIndex);
+		  copy4b(src, srcIndex + 1U, dst, dstIndex + 1U);
+		  copy1b(src, srcIndex, dst, dstIndex + 5U);
+		},
+		 (src, srcIndex, dst, dstIndex) =>
+		{
+		  copy2b(src, srcIndex + 5U, dst, dstIndex);
+		  copy4b(src, srcIndex + 1U, dst, dstIndex + 2U);
+		  copy1b(src, srcIndex, dst, dstIndex + 6U);
+		},
+		new copyDelegate(copy8b),
+		 (src, srcIndex, dst, dstIndex) =>
+		{
+		  copy1b(src, srcIndex + 8U, dst, dstIndex);
+		  copy8b(src, srcIndex, dst, dstIndex + 1U);
+		},
+		 (src, srcIndex, dst, dstIndex) =>
+		{
+		  copy1b(src, srcIndex + 9U, dst, dstIndex);
+		  copy8b(src, srcIndex + 1U, dst, dstIndex + 1U);
+		  copy1b(src, srcIndex, dst, dstIndex + 9U);
+		},
+		 (src, srcIndex, dst, dstIndex) =>
+		{
+		  copy2b(src, srcIndex + 9U, dst, dstIndex);
+		  copy8b(src, srcIndex + 1U, dst, dstIndex + 2U);
+		  copy1b(src, srcIndex, dst, dstIndex + 10U);
+		},
+		 (src, srcIndex, dst, dstIndex) =>
+		{
+		  copy4b(src, srcIndex + 8U, dst, dstIndex);
+		  copy8b(src, srcIndex, dst, dstIndex + 4U);
+		},
+		 (src, srcIndex, dst, dstIndex) =>
+		{
+		  copy1b(src, srcIndex + 12U, dst, dstIndex);
+		  copy4b(src, srcIndex + 8U, dst, dstIndex + 1U);
+		  copy8b(src, srcIndex, dst, dstIndex + 5U);
+		},
+		 (src, srcIndex, dst, dstIndex) =>
+		{
+		  copy1b(src, srcIndex + 13U, dst, dstIndex);
+		  copy4b(src, srcIndex + 9U, dst, dstIndex + 1U);
+		  copy8b(src, srcIndex + 1U, dst, dstIndex + 5U);
+		  copy1b(src, srcIndex, dst, dstIndex + 13U);
+		},
+		 (src, srcIndex, dst, dstIndex) =>
+		{
+		  copy2b(src, srcIndex + 13U, dst, dstIndex);
+		  copy4b(src, srcIndex + 9U, dst, dstIndex + 2U);
+		  copy8b(src, srcIndex + 1U, dst, dstIndex + 6U);
+		  copy1b(src, srcIndex, dst, dstIndex + 14U);
+		},
+		new copyDelegate(copy16b),
+		 (src, srcIndex, dst, dstIndex) =>
+		{
+		  copy8b(src, srcIndex + 9U, dst, dstIndex);
+		  copy1b(src, srcIndex + 8U, dst, dstIndex + 8U);
+		  copy8b(src, srcIndex, dst, dstIndex + 9U);
+		},
+		 (src, srcIndex, dst, dstIndex) =>
+		{
+		  copy1b(src, srcIndex + 17U, dst, dstIndex);
+		  copy16b(src, srcIndex + 1U, dst, dstIndex + 1U);
+		  copy1b(src, srcIndex, dst, dstIndex + 17U);
+		},
+		 (src, srcIndex, dst, dstIndex) =>
+		{
+		  copy3b(src, srcIndex + 16U, dst, dstIndex);
+		  copy16b(src, srcIndex, dst, dstIndex + 3U);
+		},
+		 (src, srcIndex, dst, dstIndex) =>
+		{
+		  copy4b(src, srcIndex + 16U, dst, dstIndex);
+		  copy8b(src, srcIndex + 8U, dst, dstIndex + 4U);
+		  copy8b(src, srcIndex, dst, dstIndex + 12U);
+		},
+		 (src, srcIndex, dst, dstIndex) =>
+		{
+		  copy1b(src, srcIndex + 20U, dst, dstIndex);
+		  copy4b(src, srcIndex + 16U, dst, dstIndex + 1U);
+		  copy8b(src, srcIndex + 8U, dst, dstIndex + 5U);
+		  copy8b(src, srcIndex, dst, dstIndex + 13U);
+		},
+		 (src, srcIndex, dst, dstIndex) =>
+		{
+		  copy2b(src, srcIndex + 20U, dst, dstIndex);
+		  copy4b(src, srcIndex + 16U, dst, dstIndex + 2U);
+		  copy8b(src, srcIndex + 8U, dst, dstIndex + 6U);
+		  copy8b(src, srcIndex, dst, dstIndex + 14U);
+		},
+		 (src, srcIndex, dst, dstIndex) =>
+		{
+		  copy3b(src, srcIndex + 20U, dst, dstIndex);
+		  copy4b(src, srcIndex + 16U, dst, dstIndex + 3U);
+		  copy8b(src, srcIndex + 8U, dst, dstIndex + 7U);
+		  copy8b(src, srcIndex, dst, dstIndex + 15U);
+		},
+		 (src, srcIndex, dst, dstIndex) =>
+		{
+		  copy8b(src, srcIndex + 16U, dst, dstIndex);
+		  copy16b(src, srcIndex, dst, dstIndex + 8U);
+		},
+		 (src, srcIndex, dst, dstIndex) =>
+		{
+		  copy8b(src, srcIndex + 17U, dst, dstIndex);
+		  copy1b(src, srcIndex + 16U, dst, dstIndex + 8U);
+		  copy16b(src, srcIndex, dst, dstIndex + 9U);
+		},
+		 (src, srcIndex, dst, dstIndex) =>
+		{
+		  copy1b(src, srcIndex + 25U, dst, dstIndex);
+		  copy8b(src, srcIndex + 17U, dst, dstIndex + 1U);
+		  copy1b(src, srcIndex + 16U, dst, dstIndex + 9U);
+		  copy16b(src, srcIndex, dst, dstIndex + 10U);
+		},
+		 (src, srcIndex, dst, dstIndex) =>
+		{
+		  copy2b(src, srcIndex + 25U, dst, dstIndex);
+		  copy8b(src, srcIndex + 17U, dst, dstIndex + 2U);
+		  copy1b(src, srcIndex + 16U, dst, dstIndex + 10U);
+		  copy16b(src, srcIndex, dst, dstIndex + 11U);
+		},
+		 (src, srcIndex, dst, dstIndex) =>
+		{
+		  copy4b(src, srcIndex + 24U, dst, dstIndex);
+		  copy8b(src, srcIndex + 16U, dst, dstIndex + 4U);
+		  copy8b(src, srcIndex + 8U, dst, dstIndex + 12U);
+		  copy8b(src, srcIndex, dst, dstIndex + 20U);
+		},
+		 (src, srcIndex, dst, dstIndex) =>
+		{
+		  copy1b(src, srcIndex + 28U, dst, dstIndex);
+		  copy4b(src, srcIndex + 24U, dst, dstIndex + 1U);
+		  copy8b(src, srcIndex + 16U, dst, dstIndex + 5U);
+		  copy8b(src, srcIndex + 8U, dst, dstIndex + 13U);
+		  copy8b(src, srcIndex, dst, dstIndex + 21U);
+		},
+		 (src, srcIndex, dst, dstIndex) =>
+		{
+		  copy2b(src, srcIndex + 28U, dst, dstIndex);
+		  copy4b(src, srcIndex + 24U, dst, dstIndex + 2U);
+		  copy8b(src, srcIndex + 16U, dst, dstIndex + 6U);
+		  copy8b(src, srcIndex + 8U, dst, dstIndex + 14U);
+		  copy8b(src, srcIndex, dst, dstIndex + 22U);
+		},
+		 (src, srcIndex, dst, dstIndex) =>
+		{
+		  copy1b(src, srcIndex + 30U, dst, dstIndex);
+		  copy4b(src, srcIndex + 26U, dst, dstIndex + 1U);
+		  copy8b(src, srcIndex + 18U, dst, dstIndex + 5U);
+		  copy8b(src, srcIndex + 10U, dst, dstIndex + 13U);
+		  copy8b(src, srcIndex + 2U, dst, dstIndex + 21U);
+		  copy2b(src, srcIndex, dst, dstIndex + 29U);
+		}
 	};
 
 	private uint _length = 0;
