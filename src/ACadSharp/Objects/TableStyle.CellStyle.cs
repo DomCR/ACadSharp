@@ -1,5 +1,4 @@
 ﻿using ACadSharp.Attributes;
-using ACadSharp.Tables;
 
 namespace ACadSharp.Objects;
 
@@ -124,6 +123,8 @@ public partial class TableStyle
 		/// Gets or sets the layout flags that control how content is arranged within the cell.
 		/// </summary>
 		public CellContentLayoutFlags ContentLayoutFlags { get; set; }
+
+		public CellOverrideFlags OverrideFlags { get; set; }
 
 		/// <summary>
 		/// Gets or sets the horizontal inside border style of the cell.
@@ -275,7 +276,7 @@ public partial class TableStyle
 		/// Creates a copy of the current CellStyle instance with cloned border settings.
 		/// </summary>
 		/// <returns>A new CellStyle instance that copies the current values and contains independent border objects.</returns>
-		public new  CellStyle Clone()
+		public new CellStyle Clone()
 		{
 			CellStyle clone = this.MemberwiseClone() as CellStyle;
 			clone.LeftBorder = this.LeftBorder.Clone();
@@ -288,6 +289,15 @@ public partial class TableStyle
 			clone.Owner = null;
 
 			return clone;
+		}
+
+		public CellOverrideFlags GetOverrideFlags()
+		{
+			CellOverrideFlags flags = CellOverrideFlags.None;
+			
+
+
+			return flags;
 		}
 	}
 }

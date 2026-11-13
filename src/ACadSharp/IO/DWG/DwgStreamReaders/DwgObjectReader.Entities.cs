@@ -505,7 +505,7 @@ internal partial class DwgObjectReader : DwgSectionIO
 		cell.EdgeFlags = this._mergedReaders.ReadByte();
 
 		//Cell merged value B 173 Determines whether this cell is merged with another cell.
-		cell.MergedValue = this._mergedReaders.ReadBit() ? (short)1 : (short)0;
+		cell.MergedValue = this._mergedReaders.ReadBit();
 		//Autofit flag B 174
 		cell.AutoFit = this._mergedReaders.ReadBit();
 		//Merged width flag BL 175 Represents the horizontal number of merged cells.
@@ -557,7 +557,8 @@ internal partial class DwgObjectReader : DwgSectionIO
 		if (this._mergedReaders.ReadBit())
 		{
 			//Cell flag override BL 177 (deprecated)
-			TableEntity.CellOverrideFlags flags = (CellOverrideFlags)this._mergedReaders.ReadBitLong();
+			TableStyle.CellOverrideFlags flags = (CellOverrideFlags)this._mergedReaders.ReadBitLong();
+			cell.StyleOverride.OverrideFlags = flags;
 
 			//Virtual edge flag RC 178 Determines which edges are virtual, see also the
 			//explanation on the cell edge flags above.When an

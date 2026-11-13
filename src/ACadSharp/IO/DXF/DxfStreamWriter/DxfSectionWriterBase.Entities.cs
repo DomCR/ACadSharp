@@ -8,6 +8,7 @@ using CSMath.Extensions;
 using System;
 using System.IO;
 using System.Linq;
+using static ACadSharp.Entities.TableEntity;
 
 namespace ACadSharp.IO.DXF;
 
@@ -49,6 +50,9 @@ internal abstract partial class DxfSectionWriterBase
 				break;
 			case Hatch hatch:
 				this.writeHatch(hatch);
+				break;
+			case TableEntity table:
+				this.writeTable(table);
 				break;
 			case Insert insert:
 				this.writeInsert(insert);
@@ -171,7 +175,6 @@ internal abstract partial class DxfSectionWriterBase
 				return false;
 			case Shape:
 				return this.Configuration.WriteShapes;
-			case TableEntity:
 			case Surface:
 				this.notify($"Entity type not implemented {entity.GetType().FullName}", NotificationType.NotImplemented);
 				return false;
@@ -1502,6 +1505,92 @@ internal abstract partial class DxfSectionWriterBase
 		{
 			this._writer.Write(11, fp, map);
 		}
+	}
+
+	private void writeTable(TableEntity table)
+	{
+		DxfClassMap map = DxfClassMap.Create<TableEntity>();
+
+		this._writer.Write(DxfCode.Subclass, DxfSubclassMarker.Insert);
+		this._writer.WriteName(2, table.Block, map);
+		this._writer.Write(10, table.InsertPoint, map);
+
+		this._writer.Write(DxfCode.Subclass, DxfSubclassMarker.TableEntity);
+
+		this._writer.Write(280, table.Version, map);
+		this._writer.WriteHandle(342, table.Style, map);
+		this._writer.WriteHandle(343, table.Block, map);
+		this._writer.Write(11, table.HorizontalDirection, map);
+
+		this._writer.Write(90, table.ValueFlag, map);
+		this._writer.Write(91, table.Rows.Count, map);
+		this._writer.Write(92, table.Columns.Count, map);
+		this._writer.Write(93, table.OverrideFlag, map);
+		this._writer.Write(94, table.OverrideBorderColor, map);
+		this._writer.Write(95, table.OverrideBorderLineWeight, map);
+		this._writer.Write(96, table.OverrideBorderVisibility, map);
+
+		foreach (var row in table.Rows)
+		{
+			this._writer.Write(141, row.Height);
+		}
+
+		foreach (var col in table.Columns)
+		{
+			this._writer.Write(142, col.Width);
+		}
+
+		foreach (TableEntity.Row row in table.Rows)
+		{
+			foreach (TableEntity.Cell cell in row.Cells)
+			{
+				this.writeCell(cell);
+			}
+		}
+	}
+
+	private void writeCell(TableEntity.Cell cell)
+	{
+		this._writer.Write(171, (short)cell.Type);
+		this._writer.Write(172, (short)cell.EdgeFlags);
+		this._writer.Write(173, cell.MergedValue ? 1 : 0);
+		this._writer.Write(174, cell.AutoFit ? 1 : 0);
+		this._writer.Write(175, (short)cell.BorderWidth);
+		this._writer.Write(176, (short)cell.BorderHeight);
+
+		if (this.Version > ACadVersion.AC1018)
+		{
+			this._writer.Write(91, cell.StyleOverride.OverrideFlags);
+		}
+		else
+		{
+			this._writer.Write(177, cell.StyleOverride.OverrideFlags);
+		}
+
+		this._writer.Write(178, cell.VirtualEdgeFlag);
+		this._writer.Write(145, MathHelper.RadToDeg(cell.Rotation));
+
+		if (cell.Type == CellType.Text && this.Version <= ACadVersion.AC1018)
+		{
+			this.writeLongTextValue(1, 2, cell.Content.CadValue.FormattedValue);
+		}
+		else if (cell.Type == CellType.Block)
+		{
+			throw new NotImplementedException();
+		}
+
+		//Write override properties
+		if (this.Version <= ACadVersion.AC1018)
+		{
+			return;
+		}
+
+		this._writer.Write(92, 0);
+		this._writer.Write(301, DxfFileToken.CellValue);
+
+		//Finish writing the cell value
+
+		this._writer.Write(304, "ACVALUE_END");
 	}
 
 	private void writeTextEntity(TextEntity text)

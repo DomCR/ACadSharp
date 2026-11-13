@@ -1,11 +1,11 @@
 ﻿using System;
 
-namespace ACadSharp.Entities;
+namespace ACadSharp.Objects;
 
-public partial class TableEntity
+public partial class TableStyle
 {
 	[Flags]
-	internal enum CellOverrideFlags
+	public enum CellOverrideFlags
 	{
 		None = 0,
 		CellAlignment = 0x01,
