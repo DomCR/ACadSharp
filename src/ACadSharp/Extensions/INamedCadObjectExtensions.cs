@@ -19,7 +19,7 @@ public static class INamedCadObjectExtensions
 			return false;
 		}
 
-		if (version <= ACadVersion.AC1015 && namedCadObject.Name.Length > 31)
+		if (version < ACadVersion.AC1015 && namedCadObject.Name.Length > 31)
 		{
 			return false;
 		}
