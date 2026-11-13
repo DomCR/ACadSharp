@@ -2213,6 +2213,7 @@ internal abstract class DxfSectionReaderBase
 			//Border overrides:
 			case 177:
 				//Cell override flag value (before AutoCAD 2007)
+				tmp.CurrentCell.StyleOverride.OverrideFlags = (TableStyle.CellOverrideFlags)this._reader.ValueAsShort;
 				return true;
 			case 279:
 				//Lineweight for the top border of the cell; override applied at the cell level
@@ -2284,7 +2285,7 @@ internal abstract class DxfSectionReaderBase
 				tmp.CurrentCellTemplate.FormatTextHeight = this._reader.ValueAsDouble;
 				return true;
 			case 145:
-				tmp.CurrentCell.Rotation = this._reader.ValueAsDouble;
+				tmp.CurrentCell.Rotation = MathHelper.DegToRad(this._reader.ValueAsDouble);
 				return true;
 			case 170:
 				//Has data flag
@@ -2296,7 +2297,7 @@ internal abstract class DxfSectionReaderBase
 				tmp.CurrentCell.EdgeFlags = this._reader.ValueAsShort;
 				return true;
 			case 173:
-				tmp.CurrentCell.MergedValue = this._reader.ValueAsShort;
+				tmp.CurrentCell.MergedValue = this._reader.ValueAsBool;
 				return true;
 			case 174:
 				tmp.CurrentCell.AutoFit = this._reader.ValueAsBool;

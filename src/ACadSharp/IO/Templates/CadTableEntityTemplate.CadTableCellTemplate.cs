@@ -30,10 +30,6 @@ internal partial class CadTableEntityTemplate
 
 		public void Build(CadDocumentBuilder builder)
 		{
-			if (StyleId != 0)
-			{
-			}
-
 			if (builder.TryGetCadObject<CadObject>(this.ValueHandle, out var cadObject))
 			{
 			}
