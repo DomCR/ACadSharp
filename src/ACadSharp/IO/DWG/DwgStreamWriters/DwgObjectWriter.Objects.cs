@@ -49,7 +49,8 @@ internal partial class DwgObjectWriter : DwgSectionIO
 			case AecWallStyle:
 			case AecCleanupGroup:
 			case AecBinRecord:
-			case DimensionAssociation:
+			//DimensionAssociation used to be skipped here: its writer was incomplete (see writeOsnapPointRef)
+			case DimensionAssociation association when !association.IsBoundTo(this._document):
 			case UnknownNonGraphicalObject:
 			case VisualStyle:
 			case ProxyObject:
@@ -923,7 +924,7 @@ internal partial class DwgObjectWriter : DwgSectionIO
 
 	private void writeDimensionAssociation(DimensionAssociation association)
 	{
-		this._writer.HandleReference(DwgReferenceType.SoftPointer, association.Dimension);
+		this._writer.HandleReference(DwgReferenceType.SoftPointer, association.AssociatedEntity);
 
 		//90
 		this._writer.WriteBitLong((int)association.AssociativityFlags);
@@ -1950,16 +1951,75 @@ internal partial class DwgObjectWriter : DwgSectionIO
 		}
 	}
 
-	private void writeOsnapPointRef(DimensionAssociation.OsnapPointRef osnap)
+	/// <summary>
+	/// Writes one AcDbOsnapPointRef, mirroring <c>DwgObjectReader.readOsnapPointRef</c>, and the reference
+	/// chained after it. The old writer stopped after the first handle (no count, no subentity, no point),
+	/// which is why <see cref="DimensionAssociation"/> was skipped altogether.
+	/// </summary>
+	private void writeOsnapPointRef(DimensionAssociation.OsnapPointRef osnap, int depth = 0)
 	{
-		//1
+		//TV 1 class name
 		this._writer.WriteVariableText(DimensionAssociation.OsnapPointRefClassName);
-
-		//72
+		//RC 72 object snap type
 		this._writer.WriteByte((byte)osnap.ObjectOsnapType);
-		//331
-		this._writer.HandleReference(DwgReferenceType.Undefined, osnap.Geometry);
+
+		//BL number of objects in the main path, then H 331 for each (outermost first)
+		this._writer.WriteBitLong(osnap.GeometryPath.Count);
+		foreach (CadObject obj in osnap.GeometryPath)
+		{
+			this._writer.HandleReference(DwgReferenceType.SoftPointer, obj);
+		}
+
+		if (osnap.ObjectOsnapType != ObjectOsnapType.None)
+		{
+			//BL 73, BL 91
+			this._writer.WriteBitLong((int)osnap.SubentType);
+			this._writer.WriteBitLong(osnap.GsMarker);
+			//BL number of Xref paths, then TV 301 for each
+			this._writer.WriteBitLong(osnap.XrefPaths.Count);
+			foreach (string path in osnap.XrefPaths)
+			{
+				this._writer.WriteVariableText(path);
+			}
+		}
+
+		//BD 40 geometry parameter, 3BD 10 osnap point
+		this._writer.WriteBitDouble(osnap.GeometryParameter);
+		this._writer.Write3BitDouble(osnap.OsnapPoint);
+
+		if (osnap.HasIntersection)
+		{
+			//BL number of objects in the intersection path, then H 332 for each
+			this._writer.WriteBitLong(osnap.IntersectionPath.Count);
+			foreach (CadObject obj in osnap.IntersectionPath)
+			{
+				this._writer.HandleReference(DwgReferenceType.SoftPointer, obj);
+			}
+
+			//BL 74, BL 92
+			this._writer.WriteBitLong((int)osnap.IntersectionSubType);
+			this._writer.WriteBitLong(osnap.IntersectionGsMarker);
+			//BL number of Xref paths, then TV 302 for each
+			this._writer.WriteBitLong(osnap.IntersectionXrefPaths.Count);
+			foreach (string path in osnap.IntersectionXrefPaths)
+			{
+				this._writer.WriteVariableText(path);
+			}
+		}
+
+		//B 75 another reference follows in the same slot
+		bool chained = osnap.LastPointRef != null && depth < MaxOsnapPointRefChain;
+		this._writer.WriteBit(chained);
+		if (chained)
+		{
+			this.writeOsnapPointRef(osnap.LastPointRef, depth + 1);
+		}
 	}
+
+	/// <summary>
+	/// The same bound the reader uses for a chain of references in one slot.
+	/// </summary>
+	private const int MaxOsnapPointRefChain = 8;
 
 	private void writeParameterValueSet(ParameterValueSet valueSet)
 	{

@@ -740,11 +740,12 @@ internal class DxfObjectsSectionWriter : DxfSectionWriterBase
 			case EvaluationGraph when !this.Configuration.WriteDynamicBlockData:
 			case BlockRepresentationData when !this.Configuration.WriteDynamicBlockData:
 			case DynamicBlockPurgePreventer when !this.Configuration.WriteDynamicBlockData:
+			//An association without its owner, or pointing to another document's objects, is not written
+			case DimensionAssociation association when !association.IsBoundTo(this._document):
 				return false;
 			case AecWallStyle:
 			case AecCleanupGroup:
 			case AecBinRecord:
-			case DimensionAssociation:
 			case Material:
 			case MultiLeaderObjectContextData:
 			case VisualStyle:
@@ -1439,7 +1440,7 @@ internal class DxfObjectsSectionWriter : DxfSectionWriterBase
 
 		this._writer.Write(100, DxfSubclassMarker.DimensionAssociation);
 
-		this._writer.WriteHandle(330, dimAssociation.Dimension, map);
+		this._writer.WriteHandle(330, dimAssociation.AssociatedEntity, map);
 		this._writer.Write(90, (int)dimAssociation.AssociativityFlags, map);
 		this._writer.Write(70, dimAssociation.IsTransSpace, map);
 		this._writer.Write(71, (short)dimAssociation.RotatedDimensionType, map);
@@ -1657,24 +1658,58 @@ internal class DxfObjectsSectionWriter : DxfSectionWriterBase
 		this._writer.Write(290, contextData.Value290, map);
 	}
 
-	private void writeOsnapPointRef(DimensionAssociation.OsnapPointRef osnapPoint)
+	private void writeOsnapPointRef(DimensionAssociation.OsnapPointRef osnapPoint, int depth = 0)
 	{
-		if (osnapPoint == null)
+		//null ends the chain; the bound is the one the DWG reader uses
+		if (osnapPoint == null || depth > 8)
 		{
 			return;
 		}
 
 		this._writer.Write(1, DimensionAssociation.OsnapPointRefClassName);
 
+		//Same layout as AutoCAD's DXFOUT: the whole path (one 331 per object), the subentity only when
+		//there is a snap, the intersection block only for intersection snaps, and the chained reference.
 		this._writer.Write(72, (short)osnapPoint.ObjectOsnapType);
-		this._writer.WriteHandle(331, osnapPoint.Geometry);
-		this._writer.Write(73, (short)osnapPoint.SubentType);
-		this._writer.Write(91, osnapPoint.GsMarker);
-		this._writer.Write(40, osnapPoint.GeometryParameter);
+		foreach (CadObject obj in osnapPoint.GeometryPath)
+		{
+			this._writer.WriteHandle(331, obj);
+		}
 
+		if (osnapPoint.ObjectOsnapType != ObjectOsnapType.None)
+		{
+			this._writer.Write(73, (short)osnapPoint.SubentType);
+			this._writer.Write(91, osnapPoint.GsMarker);
+			foreach (string path in osnapPoint.XrefPaths)
+			{
+				this._writer.Write(301, path);
+			}
+		}
+
+		this._writer.Write(40, osnapPoint.GeometryParameter);
 		this._writer.Write(10, osnapPoint.OsnapPoint);
 
-		this._writer.Write(75, (short)(osnapPoint.HasLastPointRef ? 1 : 0));
+		if (osnapPoint.HasIntersection)
+		{
+			foreach (CadObject obj in osnapPoint.IntersectionPath)
+			{
+				this._writer.WriteHandle(332, obj);
+			}
+
+			this._writer.Write(74, (short)osnapPoint.IntersectionSubType);
+			this._writer.Write(92, osnapPoint.IntersectionGsMarker);
+			foreach (string path in osnapPoint.IntersectionXrefPaths)
+			{
+				this._writer.Write(302, path);
+			}
+		}
+
+		bool chained = osnapPoint.LastPointRef != null && depth < 8;
+		this._writer.Write(75, (short)(chained ? 1 : 0));
+		if (chained)
+		{
+			this.writeOsnapPointRef(osnapPoint.LastPointRef, depth + 1);
+		}
 	}
 
 	private void writeParameterValueSet(ParameterValueSet valueSet, int startCode, int typeCode, int valueCode, int countCode)
