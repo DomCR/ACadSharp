@@ -6051,6 +6051,9 @@ namespace ACadSharp.IO.DWG
 				case DxfFileToken.BlkRefObjectContextData:
 					template = this.readBlkRefObjectContextData();
 					break;
+				case DxfFileToken.TextObjectContextData:
+					template = this.readTextObjectContextData();
+					break;
 				case DxfFileToken.MTextAttributeObjectContextData:
 					template = this.readMTextAttributeObjectContextData();
 					break;

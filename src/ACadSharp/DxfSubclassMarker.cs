@@ -36,6 +36,8 @@ public static class DxfSubclassMarker
 
 	public const string BlkRefObjectContextData = "AcDbBlkRefObjectContextData";
 
+	public const string TextObjectContextData = "AcDbTextObjectContextData";
+
 	public const string Block1PtParameter = "AcDbBlock1PtParameter";
 
 	public const string Block2PtParameter = "AcDbBlock2PtParameter";
