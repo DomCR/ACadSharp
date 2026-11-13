@@ -162,7 +162,6 @@ internal partial class DwgObjectReader : DwgSectionIO
 			if (!hasData)
 			{
 				this.readModelerGeometryData(template);
-				return template;
 			}
 		}
 
@@ -201,7 +200,7 @@ internal partial class DwgObjectReader : DwgSectionIO
 				var silhouette = new ModelerGeometry.Silhouette();
 
 				//VP id BL X
-				silhouette.ViewportId = this._mergedReaders.ReadBitLongLong();
+				silhouette.ViewportId = this._mergedReaders.ReadBitLong();
 				//VP Target 3BD X
 				silhouette.ViewportTarget = this._mergedReaders.Read3BitDouble();
 				//VP dir. From target 3BD X

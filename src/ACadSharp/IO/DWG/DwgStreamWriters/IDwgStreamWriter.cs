@@ -3,105 +3,106 @@ using System;
 using System.IO;
 using System.Text;
 
-namespace ACadSharp.IO.DWG
+namespace ACadSharp.IO.DWG.DwgStreamWriters;
+
+/// <summary>
+/// Writer equivalent to reader <see cref="IDwgStreamReader"/>
+/// </summary>
+internal interface IDwgStreamWriter
 {
-	/// <summary>
-	/// Writer equivalent to reader <see cref="IDwgStreamReader"/>
-	/// </summary>
-	internal interface IDwgStreamWriter
-	{
-		Encoding Encoding { get; }
+	Encoding Encoding { get; }
 
-		IDwgStreamWriter Main { get; }
+	IDwgStreamWriter Main { get; }
 
-		Stream Stream { get; }
+	long PositionInBits { get; }
 
-		long PositionInBits { get; }
+	long SavedPositionInBits { get; }
 
-		long SavedPositionInBits { get; }
+	Stream Stream { get; }
 
-		void WriteBytes(byte[] bytes);
+	void HandleReference(IHandledCadObject cadObject);
 
-		void WriteBytes(byte[] bytes, int offset, int length);
+	void HandleReference(DwgReferenceType type, IHandledCadObject cadObject);
 
-		void WriteInt(int value);
+	void HandleReference(ulong handle);
 
-		void WriteObjectType(short value);
+	void HandleReference(DwgReferenceType type, ulong handle);
 
-		void WriteObjectType(ObjectType value);
+	void ResetStream();
 
-		void WriteRawLong(long value);
+	void SavePositonForSize();
 
-		void WriteBitDouble(double value);
+	void SetPositionByFlag(long pos);
 
-		void WriteBitLong(int value);
+	void SetPositionInBits(long posInBits);
 
-		void WriteBitLongLong(long value);
+	void Write2BitDouble(XY value);
 
-		void WriteVariableText(string value);
+	void Write2BitDoubleWithDefault(XY def, XY value);
 
-		void WriteTextUnicode(string value);
+	void Write2Bits(byte value);
 
-		void WriteBit(bool value);
+	void Write2RawDouble(XY value);
 
-		void Write2Bits(byte value);
+	void Write3BitDouble(XYZ value);
 
-		void WriteBitShort(short value);
+	void Write3BitDoubleWithDefault(XYZ def, XYZ value);
 
-		void WriteDateTime(DateTime value);
+	void Write8BitJulianDate(DateTime value);
 
-		void Write8BitJulianDate(DateTime value);
+	void WriteBit(bool value);
 
-		void WriteTimeSpan(TimeSpan value);
+	void WriteBitDouble(double value);
 
-		void WriteCmColor(Color value, bool useTextStream = false);
+	void WriteBitDoubleWithDefault(double def, double value);
 
-		void WriteEnColor(Color color, Transparency transparency);
+	void WriteBitExtrusion(XYZ normal);
 
-		void WriteEnColor(Color color, Transparency transparency, bool isBookColor);
+	void WriteBitLong(int value);
 
-		void Write2BitDouble(XY value);
+	void WriteBitLongLong(long value);
 
-		void Write3BitDouble(XYZ value);
+	void WriteBitShort(short value);
 
-		void Write2RawDouble(XY value);
+	void WriteBitThickness(double thickness);
 
-		void WriteByte(byte value);
+	void WriteByte(byte value);
 
-		void HandleReference(IHandledCadObject cadObject);
+	void WriteBytes(byte[] bytes);
 
-		void HandleReference(DwgReferenceType type, IHandledCadObject cadObject);
+	void WriteBytes(byte[] bytes, int offset, int length);
 
-		void HandleReference(ulong handle);
+	void WriteCmColor(Color value, bool useTextStream = false);
 
-		void HandleReference(DwgReferenceType type, ulong handle);
+	void WriteDateTime(DateTime value);
 
-		void WriteSpearShift();
+	void WriteEnColor(Color color, Transparency transparency);
 
-		void WriteRawShort(short value);
+	void WriteEnColor(Color color, Transparency transparency, bool isBookColor);
 
-		void WriteRawShort(ushort value);
+	void WriteInt(int value);
 
-		void WriteRawDouble(double value);
+	void WriteObjectType(short value);
 
-		void WriteBitThickness(double thickness);
+	void WriteObjectType(ObjectType value);
 
-		void WriteBitExtrusion(XYZ normal);
+	void WriteRawDouble(double value);
 
-		void WriteBitDoubleWithDefault(double def, double value);
+	void WriteRawLong(long value);
 
-		void Write2BitDoubleWithDefault(XY def, XY value);
+	void WriteRawShort(short value);
 
-		void Write3BitDoubleWithDefault(XYZ def, XYZ value);
+	void WriteRawShort(ushort value);
 
-		void ResetStream();
+	void WriteShiftValue();
 
-		void SavePositonForSize();
+	void WriteSpearShift();
 
-		void SetPositionInBits(long posInBits);
+	void WriteTextUnicode(string value);
 
-		void SetPositionByFlag(long pos);
+	void WriteTimeSpan(TimeSpan value);
 
-		void WriteShiftValue();
-	}
+	void WriteUInt(uint value);
+
+	void WriteVariableText(string value);
 }

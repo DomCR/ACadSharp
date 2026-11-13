@@ -597,13 +597,6 @@ public class DwgReader : CadReaderBase<DwgReaderConfiguration>
 		var reader = new DwgPrototype1bReader(this._fileHeader.AcadVersion, this._builder, sreader);
 		reader.OnNotification += this.onNotificationEvent;
 		reader.Read();
-
-		//Backwards compatibility with older versions of the library
-		//Remove on 3.9.0
-		sreader.Position = 0;
-		var obs = new DwgPrototype1bReader_obsolete(this._fileHeader.AcadVersion, this._builder, sreader);
-		obs.OnNotification += onNotificationEvent;
-		this._document.DataStorage = obs.Read();
 	}
 
 	/// <summary>
