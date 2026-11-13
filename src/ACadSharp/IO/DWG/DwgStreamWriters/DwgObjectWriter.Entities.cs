@@ -1518,22 +1518,12 @@ internal partial class DwgObjectWriter : DwgSectionIO
 		//Chapter 24 - Info
 		if (!this.R2013Plus)
 		{
-			if (hasAcisData && geometry.IsBinaryAcisData)
-			{
-				//Version 2 (SAB) has no length in the stream, the reader has to
-				//consume the rest of the object, which cannot be written along
-				//with the wireframe data and the handle stream.
-				this.notify($"Binary ACIS data cannot be written for {geometry.ObjectName} in {this._version}, the geometry will be empty", NotificationType.Warning);
-				hasAcisData = false;
-			}
-
 			//ACIS Empty bit B X If 1, then no data follows
 			this._writer.WriteBit(!hasAcisData);
 
 			if (hasAcisData)
 			{
 				this.writeModelerGeometryData(geometry);
-				return;
 			}
 		}
 
@@ -1573,7 +1563,7 @@ internal partial class DwgObjectWriter : DwgSectionIO
 			foreach (ModelerGeometry.Silhouette silhouette in geometry.Silhouettes)
 			{
 				//VP id BL X
-				this._writer.WriteBitLongLong(silhouette.ViewportId);
+				this._writer.WriteBitLong((int)silhouette.ViewportId);
 				//VP Target 3BD X
 				this._writer.Write3BitDouble(silhouette.ViewportTarget);
 				//VP dir. From target 3BD X
@@ -1622,16 +1612,25 @@ internal partial class DwgObjectWriter : DwgSectionIO
 		this._writer.WriteBit(false);
 
 		//Version BS Can be 1 or 2.
-		this._writer.WriteBitShort(1);
+		short version = (short)(this._version <= ACadVersion.AC1015 ? 1 : 2);
+		this._writer.WriteBitShort(version);
 
-		//Version == 1 (following 2 items repeat until Block Size is 0):
-		//Block Size BL X Number of bytes of SAT data in this block.
-		byte[] data = AcisTextCodec.Decode(geometry.AcisData);
-		this._writer.WriteBitLong(data.Length);
-		this._writer.WriteBytes(data);
+		switch (version)
+		{
+			case 1:
+				//Version == 1 (following 2 items repeat until Block Size is 0):
+				//Block Size BL X Number of bytes of SAT data in this block.
+				byte[] data = AcisTextCodec.Decode(geometry.AcisData);
+				this._writer.WriteBitLong(data.Length);
+				this._writer.WriteBytes(data);
 
-		//End of the blocks
-		this._writer.WriteBitLong(0);
+				//End of the blocks
+				this._writer.WriteBitLong(0);
+				break;
+			case 2:
+				this._writer.WriteBytes(geometry.AcisData);
+				break;
+		}
 	}
 
 	private void writeMText(MText mtext)
