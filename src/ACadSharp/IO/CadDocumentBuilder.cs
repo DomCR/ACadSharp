@@ -335,7 +335,9 @@ internal abstract class CadDocumentBuilder
 			}
 		}
 
-		this.DocumentToBuild.UpdateCollections(true, false);
+		//Do not create the optional dictionaries: a document read from a file must only
+		//contain the entries that the file actually has (see CadDocument.TableStyles docs).
+		this.DocumentToBuild.UpdateCollections(false, false);
 	}
 
 	protected void createMissingHandles()

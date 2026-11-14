@@ -469,12 +469,20 @@ public class Viewport : Entity
 			this.updateScaleXRecord();
 		}
 
-		this.Document.Scales.OnRemove += this.scalesOnRemove;
+		//The scales collection is null for documents read from files without an
+		//ACAD_SCALELIST dictionary.
+		if (this.Document.Scales != null)
+		{
+			this.Document.Scales.OnRemove += this.scalesOnRemove;
+		}
 	}
 
 	internal override void UnassignDocument()
 	{
-		this.Document.Scales.OnRemove -= this.scalesOnRemove;
+		if (this.Document.Scales != null)
+		{
+			this.Document.Scales.OnRemove -= this.scalesOnRemove;
+		}
 
 		base.UnassignDocument();
 
