@@ -1,4 +1,5 @@
 ﻿using ACadSharp.DataStorage;
+using System;
 using System.IO;
 using System.Text;
 
@@ -32,8 +33,28 @@ internal class DwgPrototype1bWriter : DwgSectionIO
 			this._writer.WriteByte(0);
 		}
 
+		this.writeDataFields();
+
 		this._writer.SetPositionInBits(0);
 		this.writeFileHeader(this._fileHeader);
+	}
+
+	private void writeDataFields()
+	{
+		DataField dataField = new DataField();
+		foreach (AcdsRecord item in this._dataStorage.Records)
+		{
+			DataField.DataEntry entry = new();
+			entry.Header.Handle = item.Columns[CadFileDataStorage.AcDbDsId].Handle;
+			entry.Data = item.Columns[CadFileDataStorage.AsmData].Data.ToArray();
+
+			dataField.DataEntries.Add(entry);
+		}
+	}
+
+	private void writeFileSegmentIndex()
+	{
+		throw new NotImplementedException();
 	}
 
 	private void writeFileHeader(FileHeader fileHeader)
@@ -41,7 +62,7 @@ internal class DwgPrototype1bWriter : DwgSectionIO
 		//UInt32 File signature
 		this._writer.WriteUInt(fileHeader.FileSignature);
 		//Int32 File header size
-		 this._writer.WriteInt(fileHeader.FileHeaderSize);
+		this._writer.WriteInt(fileHeader.FileHeaderSize);
 		//Int32 Unknown 1 (always 2?)
 		this._writer.WriteInt(fileHeader.Unknown1);
 		//Int32 Version(always 2 ?)

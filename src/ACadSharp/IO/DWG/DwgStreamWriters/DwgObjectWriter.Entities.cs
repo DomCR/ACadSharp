@@ -1563,7 +1563,14 @@ internal partial class DwgObjectWriter : DwgSectionIO
 			foreach (ModelerGeometry.Silhouette silhouette in geometry.Silhouettes)
 			{
 				//VP id BL X
-				this._writer.WriteBitLong((int)silhouette.ViewportId);
+				if (this.R2010Plus)
+				{
+					this._writer.WriteBitLongLong(silhouette.ViewportId);
+				}
+				else
+				{
+					this._writer.WriteBitLong((int)silhouette.ViewportId);
+				}
 				//VP Target 3BD X
 				this._writer.Write3BitDouble(silhouette.ViewportTarget);
 				//VP dir. From target 3BD X
