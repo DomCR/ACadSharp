@@ -14,7 +14,7 @@ internal class FileSegmentHeader
 
 	public uint SegmentSize { get; set; }
 
-	public short Signature { get; set; }
+	public ushort Signature { get; set; } = 0xD5AC;
 
 	public int SystemDataAlignmentOffset { get; set; }
 
@@ -27,6 +27,16 @@ internal class FileSegmentHeader
 	/// long and the AlignmentBytes is always 8 bytes long.
 	/// </summary>
 	public const uint SIZE = 48;
+
+	public FileSegmentHeader()
+	{
+		this.Name = string.Empty;
+	}
+
+	public FileSegmentHeader(string name)
+	{
+		this.Name = name;
+	}
 
 	public override string ToString()
 	{

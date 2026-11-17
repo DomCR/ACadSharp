@@ -13,4 +13,9 @@ internal class Blob01 : FileSegment
 	public ulong PageStartOffset { get; set; }
 
 	public ulong TotalDataSize { get; set; }
+
+	public Blob01() 
+		: base("blob01")
+	{
+	}
 }

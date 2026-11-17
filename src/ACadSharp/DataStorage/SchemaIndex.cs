@@ -5,6 +5,11 @@ namespace ACadSharp.DataStorage;
 
 internal class SchemaIndex : FileSegment
 {
+	public SchemaIndex()
+		: base("schidx")
+	{
+	}
+
 	public List<Pointer> PropertyPointers { get; set; } = new();
 
 	public List<string> SchemaNames { get; set; } = new();

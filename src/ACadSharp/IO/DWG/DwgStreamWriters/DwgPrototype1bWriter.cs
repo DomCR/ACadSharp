@@ -1,13 +1,17 @@
 ﻿using ACadSharp.DataStorage;
 using System;
 using System.IO;
+using System.Runtime.InteropServices;
 using System.Text;
+using static System.Collections.Specialized.BitVector32;
 
 namespace ACadSharp.IO.DWG.DwgStreamWriters;
 
 internal class DwgPrototype1bWriter : DwgSectionIO
 {
 	public override string SectionName => DwgSectionDefinition.AcDsPrototype;
+
+	private readonly DataIndexSegment _dataIndex;
 
 	private readonly CadFileDataStorage _dataStorage;
 
@@ -17,13 +21,19 @@ internal class DwgPrototype1bWriter : DwgSectionIO
 
 	private readonly IDwgStreamWriter _writer;
 
+	private uint _currentSegmentIndex = 0;
+
+	private uint StartPosition = 0;
+
 	public DwgPrototype1bWriter(ACadVersion version, MemoryStream stream, Encoding encoding, CadFileDataStorage dataStorage)
-	: base(version)
+				: base(version)
 	{
 		this._stream = stream;
 		this._dataStorage = dataStorage;
 
 		this._writer = DwgStreamWriterBase.GetStreamWriter(this._version, this._stream, encoding);
+
+		this._dataIndex = new DataIndexSegment();
 	}
 
 	public void Write()
@@ -39,6 +49,18 @@ internal class DwgPrototype1bWriter : DwgSectionIO
 		this.writeFileHeader(this._fileHeader);
 	}
 
+	private static uint getPaddingSize(uint length, int alignment)
+	{
+		return (uint)(alignment - 1 - (long)(length - 1) % (long)alignment);
+	}
+
+	private void writeDataField(DataField dataField)
+	{
+		writeDataStorageFileSegment(dataField);
+
+		throw new NotImplementedException();
+	}
+
 	private void writeDataFields()
 	{
 		DataField dataField = new DataField();
@@ -50,11 +72,33 @@ internal class DwgPrototype1bWriter : DwgSectionIO
 
 			dataField.DataEntries.Add(entry);
 		}
+
+		this.writeDataField(dataField);
 	}
 
-	private void writeFileSegmentIndex()
+	private void writeDataStorageFileSegment(FileSegment segment)
 	{
-		throw new NotImplementedException();
+		long offset = this._writer.Stream.Position - this.StartPosition;
+		segment.Header.SegmentIndex = this._currentSegmentIndex++;
+
+		var fileSegmentHeaderPosition = this._writer.Stream.Position;
+		this.writeSubItemHeader(segment.Header);//size is header + name bytes
+
+		//Write header body
+
+		uint segmentLength = (uint)((ulong)this._writer.Stream.Position - this.StartPosition);
+		uint paddingSize = getPaddingSize(segmentLength, 128);
+		segment.Header.SegmentSize = segmentLength + paddingSize;
+
+		for (int i = 0; i < paddingSize; i++)
+		{
+			this._writer.WriteByte(0x70);
+		}
+
+		long endPosition = this._writer.Stream.Position;
+		this._writer.Stream.Position = (long)this.StartPosition;
+		this.writeSubItemHeader(segment.Header);
+		this._writer.Stream.Position = endPosition;
 	}
 
 	private void writeFileHeader(FileHeader fileHeader)
@@ -90,5 +134,32 @@ internal class DwgPrototype1bWriter : DwgSectionIO
 		this._writer.WriteInt(fileHeader.PreviousSaveIndex);
 		//Int32 File size
 		this._writer.WriteInt(fileHeader.FileSize);
+	}
+
+	private void writeFileSegmentIndex()
+	{
+		throw new NotImplementedException();
+	}
+
+	private void writeSubItemHeader(FileSegmentHeader header)
+	{
+		this._writer.WriteRawShort(header.Signature);
+
+		var name = Encoding.ASCII.GetBytes(header.Name);
+		this._writer.WriteBytes(name, 0, name.Length);
+
+		this._writer.WriteUInt(header.SegmentIndex);
+		this._writer.WriteInt(header.IsBlob);
+		this._writer.WriteUInt(header.SegmentSize);
+		this._writer.WriteInt(header.Unknown2);
+		this._writer.WriteInt(header.DataStorageRevision);
+		this._writer.WriteInt(header.Unknown3);
+		this._writer.WriteInt(header.SystemDataAlignmentOffset);
+		this._writer.WriteInt(header.ObjectDataAlignmentOffset);
+
+		for (int i = 0; i < 8; i++)
+		{
+			this._writer.WriteByte(0x55);
+		}
 	}
 }
