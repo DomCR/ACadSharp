@@ -1,4 +1,5 @@
-﻿using ACadSharp.IO;
+﻿using ACadSharp.Entities;
+using ACadSharp.IO;
 using ACadSharp.Tests.TestModels;
 using System.IO;
 using Xunit;
@@ -133,5 +134,18 @@ public class DwgReaderTests : CadReaderTestsBase<DwgReader>
 	public override void ReadTest(FileModel test)
 	{
 		base.ReadTest(test);
+	}
+
+	[Theory]
+	[InlineData("sample_AC1018.dwg")]
+	[InlineData("sample_AC1032.dwg")]
+	public void ReadBookColorSetsEntityColor(string file)
+	{
+		CadDocument doc = DwgReader.Read(Path.Combine(TestVariables.SamplesFolder, file));
+
+		Circle circle = doc.GetCadObject<Circle>(0x99F);
+		Assert.NotNull(circle.BookColor);
+		Assert.Equal(circle.BookColor.Color, circle.Color);
+		Assert.Equal(new Color(226, 144, 0), circle.Color);
 	}
 }
