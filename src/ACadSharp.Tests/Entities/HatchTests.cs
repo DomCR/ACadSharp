@@ -269,6 +269,20 @@ public class HatchTests : CommonEntityTests<Hatch>
 	}
 
 	[Fact]
+	public void TransformTranslationKeepsPatternOffset()
+	{
+		Hatch hatch = this.createPolylineHatch();
+		this.applyHorizontalPattern(hatch);
+		hatch.PatternScale = 1;
+
+		hatch.ApplyTransform(Transform.CreateTranslation(new XYZ(100, 0, 0)));
+
+		HatchPattern.Line line = hatch.Pattern.Lines.First();
+		Assert.Equal(new XY(100, 0), line.BasePoint);
+		Assert.Equal(new XY(0, 0.5), line.Offset);
+	}
+
+	[Fact]
 	public void UpdatePattern()
 	{
 		Hatch hatch = new Hatch();
