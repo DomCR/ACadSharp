@@ -5,16 +5,16 @@ namespace ACadSharp.DataStorage;
 
 internal class SchemaIndex : FileSegment
 {
-	public SchemaIndex()
-		: base("schidx")
-	{
-	}
-
 	public List<Pointer> PropertyPointers { get; set; } = new();
 
 	public List<string> SchemaNames { get; set; } = new();
 
 	public List<Pointer> SchemaPointers { get; set; } = new();
+
+	public SchemaIndex()
+		: base("schidx")
+	{
+	}
 
 	public IEnumerable<Pointer> GetAllPointers()
 	{
@@ -24,7 +24,7 @@ internal class SchemaIndex : FileSegment
 	public IEnumerable<uint> GetSchemaIndexes()
 	{
 		return this.SchemaPointers.Select(p => p.SegmentIndex).Distinct();
-	}	
+	}
 
 	public class Pointer
 	{

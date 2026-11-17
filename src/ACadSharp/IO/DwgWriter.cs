@@ -361,6 +361,7 @@ public class DwgWriter : CadWriterBase<DwgWriterConfiguration>
 
 		MemoryStream stream = new MemoryStream();
 		DwgPrototype1bWriter writer = new DwgPrototype1bWriter(this._version, stream, this._encoding, dataStorage);
+		writer.OnNotification += this.triggerNotification;
 		writer.Write();
 
 		this._fileHeaderWriter.AddSection(DwgSectionDefinition.AcDsPrototype, stream, true);
