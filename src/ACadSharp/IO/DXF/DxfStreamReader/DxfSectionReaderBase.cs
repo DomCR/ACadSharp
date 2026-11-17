@@ -2342,6 +2342,12 @@ internal abstract class DxfSectionReaderBase
 			case 1 or 3 when tmp.CadObject is MText mtext:
 				mtext.Value += this._reader.ValueAsString;
 				return true;
+			case 75 or 76 or 78 or 79 or 48 or 49 when tmp.CadObject is MText:
+				//Column data, a 50 after it is a column height
+				tmp.HasColumnData = true;
+				return this.tryAssignCurrentValue(template.CadObject, map.SubClasses[mapName]);
+			case 50 when tmp.CadObject is MText && tmp.HasColumnData:
+				return true;
 			case 50 when tmp.CadObject is MText mtext://Read only for MText
 				double angle = this._reader.ValueAsAngle;
 				mtext.AlignmentPoint = new XYZ(System.Math.Cos(angle), System.Math.Sin(angle), 0.0);
