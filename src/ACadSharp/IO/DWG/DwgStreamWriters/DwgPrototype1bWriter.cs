@@ -12,43 +12,42 @@ internal class DwgPrototype1bWriter : DwgSectionIO
 {
 	public override string SectionName => DwgSectionDefinition.AcDsPrototype;
 
-	private const uint BlobReferenceSignature = 0xbb106bb1;
+	private const uint _blobReferenceSignature = 0xbb106bb1;
 
-	private const byte DataAlignmentPadding = 0x62;
+	private const byte _dataAlignmentPadding = 0x62;
 
-	private const uint DataHeaderSize = 20;
+	private const uint _dataHeaderSize = 20;
 
-	private const uint DataIndexSegmentIndex = 1;
+	private const uint _dataIndexSegmentIndex = 1;
 
-	private const uint DataSegmentIndex = 2;
+	private const uint _dataSegmentIndex = 2;
 
-	private const int DataStorageRevision = 1;
+	private const int _dataStorageRevision = 1;
 
-	private const int FileHeaderSize = 0x80;
+	private const int _fileHeaderSize = 0x80;
 
-	//"jard"
-	private const uint FileSignature = 0x6472616A;
+	private const uint _fileSignature = 0x6472616A;
 
-	private const uint FirstBlobSegmentIndex = 6;
+	private const uint _firstBlobSegmentIndex = 6;
 
 	//Records bigger than this size are stored in blob01 segments, as AutoCAD does
-	private const uint MaxInlineDataSize = 0x40000;
+	private const uint _maxInlineDataSize = 0x40000;
 
-	private const byte SchemaAlignmentPadding = 0x73;
+	private const byte _schemaAlignmentPadding = 0x73;
 
-	private const uint SchemaDataSegmentIndex = 5;
+	private const uint _schemaDataSegmentIndex = 5;
 
-	private const uint SchemaIndexSegmentIndex = 4;
+	private const uint _schemaIndexSegmentIndex = 4;
 
-	private const ulong SchemaIndexTag = 0x0af10c;
+	private const ulong _schemaIndexTag = 0x0af10c;
 
-	private const uint SearchSegmentIndex = 3;
+	private const uint _searchSegmentIndex = 3;
 
-	private const int SegmentAlignment = 0x80;
+	private const int _segmentAlignment = 0x80;
 
-	private const uint SegmentIndexSegmentIndex = 0;
+	private const uint _segmentIndexSegmentIndex = 0;
 
-	private const byte SegmentPadding = 0x70;
+	private const byte _segmentPadding = 0x70;
 
 	private static readonly string[] _attributePropertyNames =
 	[
@@ -107,13 +106,13 @@ internal class DwgPrototype1bWriter : DwgSectionIO
 		this.buildRecords();
 
 		int blobCount = this._dataField.DataEntries.Sum(e => e.BlobReference?.Blobs.Count ?? 0);
-		for (int i = 0; i < FirstBlobSegmentIndex + blobCount; i++)
+		for (int i = 0; i < _firstBlobSegmentIndex + blobCount; i++)
 		{
 			this._segmentIndex.AddEntry(0, 0);
 		}
 
 		//Placeholder for the file header, written once all the segments are in place
-		this.writePadding(0, FileHeaderSize);
+		this.writePadding(0, _fileHeaderSize);
 
 		this.writeFileSegmentIndex();
 		this.writeDataField();
@@ -125,17 +124,17 @@ internal class DwgPrototype1bWriter : DwgSectionIO
 		long fileSize = this._stream.Position;
 
 		//Rewrite the segment index now that the location of all the segments is known
-		this._stream.Position = FileHeaderSize;
+		this._stream.Position = _fileHeaderSize;
 		this.writeFileSegmentIndex();
 
-		this._fileHeader.FileSignature = FileSignature;
-		this._fileHeader.FileHeaderSize = FileHeaderSize;
-		this._fileHeader.DataStorageRevision = DataStorageRevision;
-		this._fileHeader.SegmentIndexOffset = FileHeaderSize;
+		this._fileHeader.FileSignature = _fileSignature;
+		this._fileHeader.FileHeaderSize = _fileHeaderSize;
+		this._fileHeader.DataStorageRevision = _dataStorageRevision;
+		this._fileHeader.SegmentIndexOffset = _fileHeaderSize;
 		this._fileHeader.SegmentIndexEntryCount = this._segmentIndex.Entries.Count;
-		this._fileHeader.SchemaIndexSegmentIndex = (int)SchemaIndexSegmentIndex;
-		this._fileHeader.DataIndexSegmentIndex = (int)DataIndexSegmentIndex;
-		this._fileHeader.SearchSegmentIndex = (int)SearchSegmentIndex;
+		this._fileHeader.SchemaIndexSegmentIndex = (int)_schemaIndexSegmentIndex;
+		this._fileHeader.DataIndexSegmentIndex = (int)_dataIndexSegmentIndex;
+		this._fileHeader.SearchSegmentIndex = (int)_searchSegmentIndex;
 		this._fileHeader.FileSize = (int)fileSize;
 
 		this._stream.Position = 0;
@@ -167,7 +166,7 @@ internal class DwgPrototype1bWriter : DwgSectionIO
 		long start = this._stream.Position;
 
 		segment.Header.SegmentIndex = segmentIndex;
-		segment.Header.DataStorageRevision = DataStorageRevision;
+		segment.Header.DataStorageRevision = _dataStorageRevision;
 		this.writeSubItemHeader(segment.Header);
 
 		return start;
@@ -195,15 +194,15 @@ internal class DwgPrototype1bWriter : DwgSectionIO
 		}
 
 		//The record index used by the search segment is the position of the record in the data index
-		uint blobSegmentIndex = FirstBlobSegmentIndex;
+		uint blobSegmentIndex = _firstBlobSegmentIndex;
 		foreach (var item in records.OrderBy(r => r.SchemaIndex).ThenBy(r => r.Handle))
 		{
 			DataField.DataEntry entry = new();
-			entry.Header.Size = DataHeaderSize;
+			entry.Header.Size = _dataHeaderSize;
 			entry.Header.Handle = item.Handle;
 			entry.DataSize = (uint)item.Data.Length;
 
-			if (entry.DataSize > MaxInlineDataSize)
+			if (entry.DataSize > _maxInlineDataSize)
 			{
 				Blob01 blob = new Blob01
 				{
@@ -237,8 +236,8 @@ internal class DwgPrototype1bWriter : DwgSectionIO
 
 			this._dataIndex.Entries.Add(new DataIndexSegment.Entry
 			{
-				SegmentIndex = DataSegmentIndex,
-				LocalOffset = (uint)this._dataField.DataEntries.Count * DataHeaderSize,
+				SegmentIndex = _dataSegmentIndex,
+				LocalOffset = (uint)this._dataField.DataEntries.Count * _dataHeaderSize,
 				SchemaIndex = item.SchemaIndex,
 			});
 			this._dataField.DataEntries.Add(entry);
@@ -302,7 +301,7 @@ internal class DwgPrototype1bWriter : DwgSectionIO
 			this._schemaIndex.SchemaPointers.Add(new SchemaIndex.Pointer
 			{
 				Index = dwgSchema.Index,
-				SegmentIndex = SchemaDataSegmentIndex,
+				SegmentIndex = _schemaDataSegmentIndex,
 			});
 		}
 	}
@@ -342,8 +341,8 @@ internal class DwgPrototype1bWriter : DwgSectionIO
 	private void endSegment(FileSegment segment, long start)
 	{
 		uint length = (uint)(this._stream.Position - start);
-		uint paddingSize = getPaddingSize(length, SegmentAlignment);
-		this.writePadding(SegmentPadding, paddingSize);
+		uint paddingSize = getPaddingSize(length, _segmentAlignment);
+		this.writePadding(_segmentPadding, paddingSize);
 
 		uint size = length + paddingSize;
 
@@ -387,7 +386,7 @@ internal class DwgPrototype1bWriter : DwgSectionIO
 		//Each attribute instance takes 8 bytes at the beginning of the schema data segment
 		this._schemaIndex.PropertyPointers.Add(new SchemaIndex.Pointer
 		{
-			SegmentIndex = SchemaDataSegmentIndex,
+			SegmentIndex = _schemaDataSegmentIndex,
 			LocalOffset = (uint)index * 8,
 			Index = attributeSchema.Index,
 		});
@@ -463,7 +462,7 @@ internal class DwgPrototype1bWriter : DwgSectionIO
 
 	private void writeDataField()
 	{
-		long start = this.beginSegment(this._dataField, DataSegmentIndex);
+		long start = this.beginSegment(this._dataField, _dataSegmentIndex);
 
 		uint localOffset = 0;
 		foreach (DataField.DataEntry entry in this._dataField.DataEntries)
@@ -478,7 +477,7 @@ internal class DwgPrototype1bWriter : DwgSectionIO
 			this._writer.WriteUInt(entry.Header.LocalOffset);
 		}
 
-		this.alignPosition(start, 16, DataAlignmentPadding);
+		this.alignPosition(start, 16, _dataAlignmentPadding);
 		this._dataField.Header.ObjectDataAlignmentOffset = (int)((this._stream.Position - start) >> 4);
 
 		foreach (DataField.DataEntry entry in this._dataField.DataEntries)
@@ -491,7 +490,7 @@ internal class DwgPrototype1bWriter : DwgSectionIO
 			}
 
 			DataField.DataBlobReference reference = entry.BlobReference;
-			this._writer.WriteUInt(BlobReferenceSignature);
+			this._writer.WriteUInt(_blobReferenceSignature);
 			this.writeULong(reference.TotalDataSize);
 			this._writer.WriteUInt(reference.PageCount);
 			this._writer.WriteUInt(reference.RecordSize);
@@ -520,7 +519,7 @@ internal class DwgPrototype1bWriter : DwgSectionIO
 
 	private void writeDataIndex()
 	{
-		long start = this.beginSegment(this._dataIndex, DataIndexSegmentIndex);
+		long start = this.beginSegment(this._dataIndex, _dataIndexSegmentIndex);
 
 		//UInt32 Entry count
 		this._writer.WriteUInt((uint)this._dataIndex.Entries.Count);
@@ -573,7 +572,7 @@ internal class DwgPrototype1bWriter : DwgSectionIO
 
 	private void writeFileSegmentIndex()
 	{
-		long start = this.beginSegment(this._segmentIndex, SegmentIndexSegmentIndex);
+		long start = this.beginSegment(this._segmentIndex, _segmentIndexSegmentIndex);
 
 		foreach (FileSegmentIndex.Entry entry in this._segmentIndex.Entries)
 		{
@@ -601,7 +600,7 @@ internal class DwgPrototype1bWriter : DwgSectionIO
 	private void writeSchemaData()
 	{
 		SchemaData schemaData = new SchemaData();
-		long start = this.beginSegment(schemaData, SchemaDataSegmentIndex);
+		long start = this.beginSegment(schemaData, _schemaDataSegmentIndex);
 		long dataStart = start + FileSegmentHeader.SIZE;
 
 		//Attribute instances referenced by the schema index property entries
@@ -617,7 +616,7 @@ internal class DwgPrototype1bWriter : DwgSectionIO
 			this.writeAcdsSchema(this._schemas[i]);
 		}
 
-		this.alignPosition(start, 16, SchemaAlignmentPadding);
+		this.alignPosition(start, 16, _schemaAlignmentPadding);
 		schemaData.Header.SystemDataAlignmentOffset = (int)((this._stream.Position - start) >> 4);
 
 		//Uint32 Property name count
@@ -632,7 +631,7 @@ internal class DwgPrototype1bWriter : DwgSectionIO
 
 	private void writeSchemaIndex()
 	{
-		long start = this.beginSegment(this._schemaIndex, SchemaIndexSegmentIndex);
+		long start = this.beginSegment(this._schemaIndex, _schemaIndexSegmentIndex);
 
 		//UInt32 Schema count
 		this._writer.WriteUInt((uint)this._schemaIndex.SchemaPointers.Count);
@@ -646,7 +645,7 @@ internal class DwgPrototype1bWriter : DwgSectionIO
 		}
 
 		//Int64 Unknown (0x0af10c)
-		this.writeULong(SchemaIndexTag);
+		this.writeULong(_schemaIndexTag);
 
 		//UInt32 Property entry count
 		this._writer.WriteUInt((uint)this._schemaIndex.PropertyPointers.Count);
@@ -659,7 +658,7 @@ internal class DwgPrototype1bWriter : DwgSectionIO
 			this._writer.WriteUInt(pointer.Index);
 		}
 
-		this.alignPosition(start, 16, SegmentPadding);
+		this.alignPosition(start, 16, _segmentPadding);
 		this._schemaIndex.Header.SystemDataAlignmentOffset = (int)((this._stream.Position - start) >> 4);
 
 		//Uint32 Schema name count
@@ -675,7 +674,7 @@ internal class DwgPrototype1bWriter : DwgSectionIO
 	private void writeSearch()
 	{
 		FileSegment search = new FileSegment("search");
-		long start = this.beginSegment(search, SearchSegmentIndex);
+		long start = this.beginSegment(search, _searchSegmentIndex);
 
 		var groups = this._dataIndex.Entries
 			.Select((e, i) => (e.SchemaIndex, RecordIndex: (ulong)i, this._dataField.DataEntries[i].Header.Handle))
