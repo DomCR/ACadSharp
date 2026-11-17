@@ -2392,7 +2392,7 @@ internal partial class DwgObjectWriter : DwgSectionIO
 		this._writer.Write3BitDouble(shape.Normal);
 
 		//H SHAPEFILE (hard pointer)
-		this._writer.HandleReference(DwgReferenceType.HardPointer, null);
+		this._writer.HandleReference(DwgReferenceType.HardPointer, shape.ShapeStyle);
 	}
 
 	private void writeSolid(Solid solid)
