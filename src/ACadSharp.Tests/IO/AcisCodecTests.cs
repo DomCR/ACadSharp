@@ -5,26 +5,26 @@ using Xunit;
 
 namespace ACadSharp.Tests.IO;
 
-public class AcisTextCodecTests
+public class AcisCodecTests
 {
 	[Fact]
 	public void DecodeIsAnInvolution()
 	{
 		string text = "400 0 1 0\nbody $-1 $1 $-1 $-1 #";
 
-		string swapped = AcisTextCodec.Decode(text);
+		string swapped = AcisEncryption.Decode(text);
 
 		Assert.NotEqual(text, swapped);
-		Assert.Equal(text, AcisTextCodec.Decode(swapped));
+		Assert.Equal(text, AcisEncryption.Decode(swapped));
 	}
 
 	[Fact]
 	public void DecodeBytesMatchesTextDecode()
 	{
 		string text = "body $-1 $1 $-1 $-1 #";
-		byte[] swapped = Encoding.ASCII.GetBytes(AcisTextCodec.Decode(text));
+		byte[] swapped = Encoding.ASCII.GetBytes(AcisEncryption.Decode(text));
 
-		byte[] decoded = AcisTextCodec.Decode(swapped);
+		byte[] decoded = AcisEncryption.Swap(swapped);
 
 		Assert.Equal(text, Encoding.ASCII.GetString(decoded));
 	}
@@ -34,8 +34,8 @@ public class AcisTextCodecTests
 	{
 		string plain = "400 0 1 0";
 
-		Assert.False(AcisTextCodec.IsEncoded(plain));
-		Assert.True(AcisTextCodec.IsEncoded(AcisTextCodec.Decode(plain)));
+		Assert.False(AcisEncryption.IsEncoded(plain));
+		Assert.True(AcisEncryption.IsEncoded(AcisEncryption.Decode(plain)));
 	}
 
 	[Theory]
@@ -46,7 +46,7 @@ public class AcisTextCodecTests
 		byte[] payload = Encoding.ASCII.GetBytes("some sat content " + marker);
 		byte[] trailing = payload.Concat(new byte[] { 0x00, 0x11, 0x22, 0x33 }).ToArray();
 
-		byte[] trimmed = AcisTextCodec.TrimAtAcisEnd(trailing);
+		byte[] trimmed = AcisEncryption.TrimAtAcisEnd(trailing);
 
 		Assert.Equal(payload.Length, trimmed.Length);
 		Assert.EndsWith(marker, Encoding.ASCII.GetString(trimmed));
@@ -65,7 +65,7 @@ public class AcisTextCodecTests
 		byte[] payload = Encoding.ASCII.GetBytes("ACIS BinaryFile fake content ").Concat(compound).ToArray();
 		byte[] trailing = payload.Concat(new byte[] { 0xAA, 0xBB }).ToArray();
 
-		byte[] trimmed = AcisTextCodec.TrimAtAcisEnd(trailing);
+		byte[] trimmed = AcisEncryption.TrimAtAcisEnd(trailing);
 
 		Assert.Equal(payload.Length, trimmed.Length);
 	}
@@ -75,7 +75,7 @@ public class AcisTextCodecTests
 	{
 		byte[] payload = Encoding.ASCII.GetBytes("truncated sat content");
 
-		byte[] trimmed = AcisTextCodec.TrimAtAcisEnd(payload);
+		byte[] trimmed = AcisEncryption.TrimAtAcisEnd(payload);
 
 		Assert.Same(payload, trimmed);
 	}

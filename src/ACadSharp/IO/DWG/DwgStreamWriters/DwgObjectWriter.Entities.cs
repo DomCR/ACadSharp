@@ -4,6 +4,7 @@ using CSMath;
 using CSMath.Extensions;
 using System;
 using System.Collections.Generic;
+using System.IO;
 using System.Linq;
 
 namespace ACadSharp.IO.DWG;
@@ -1571,6 +1572,7 @@ internal partial class DwgObjectWriter : DwgSectionIO
 				{
 					this._writer.WriteBitLong((int)silhouette.ViewportId);
 				}
+
 				//VP Target 3BD X
 				this._writer.Write3BitDouble(silhouette.ViewportTarget);
 				//VP dir. From target 3BD X
@@ -1615,29 +1617,42 @@ internal partial class DwgObjectWriter : DwgSectionIO
 
 	private void writeModelerGeometryData(ModelerGeometry geometry)
 	{
+		short version = (short)(this._version <= ACadVersion.AC1015 ? 1 : 2);
+
 		//Unknown bit B X
-		this._writer.WriteBit(false);
+		this._writer.WriteBit(version == 1);
 
 		//Version BS Can be 1 or 2.
-		short version = (short)(this._version <= ACadVersion.AC1015 ? 1 : 2);
 		this._writer.WriteBitShort(version);
 
 		switch (version)
 		{
 			case 1:
-				//Version == 1 (following 2 items repeat until Block Size is 0):
-				//Block Size BL X Number of bytes of SAT data in this block.
-				byte[] data = AcisTextCodec.Decode(geometry.AcisData);
-				this._writer.WriteBitLong(data.Length);
-				this._writer.WriteBytes(data);
-
-				//End of the blocks
-				this._writer.WriteBitLong(0);
+				this.writeChunks(new MemoryStream(AcisEncryption.Swap(geometry.AcisData)));
 				break;
 			case 2:
 				this._writer.WriteBytes(geometry.AcisData);
 				break;
 		}
+	}
+
+	private void writeChunks(MemoryStream stream)
+	{
+		stream.Position = 0L;
+
+		byte[] buffer = new byte[4096];
+		var n = stream.Read(buffer, 0, buffer.Length);
+		while (n == buffer.Length)
+		{
+			this._writer.WriteBitLong(n);
+			this._writer.WriteBytes(buffer, 0, n);
+			n = stream.Read(buffer, 0, buffer.Length);
+		}
+
+		this._writer.WriteBitLong(n);
+		this._writer.WriteBytes(buffer, 0, n);
+
+		this._writer.WriteBitLong(0);
 	}
 
 	private void writeMText(MText mtext)

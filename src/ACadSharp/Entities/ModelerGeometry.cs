@@ -1,4 +1,5 @@
 ﻿using ACadSharp.Attributes;
+using ACadSharp.IO;
 using CSMath;
 using System;
 using System.Collections.Generic;
@@ -50,20 +51,7 @@ public abstract partial class ModelerGeometry : Entity
 	{
 		get
 		{
-			if (this.AcisData == null || this.AcisData.Length < _acisBinarySignature.Length)
-			{
-				return false;
-			}
-
-			for (int i = 0; i < _acisBinarySignature.Length; i++)
-			{
-				if (this.AcisData[i] != _acisBinarySignature[i])
-				{
-					return false;
-				}
-			}
-
-			return true;
+			return AcisEncryption.IsBinary(this.AcisData);
 		}
 	}
 
@@ -77,10 +65,6 @@ public abstract partial class ModelerGeometry : Entity
 	/// Gets or sets the point in 3D space.
 	/// </summary>
 	public XYZ Point { get; set; }
-
-	[DxfCodeValue(1)]
-	//[DxfCodeValue(3)]
-	public StringBuilder ProprietaryData { get; } = new();
 
 	/// <summary>
 	/// Gets the collection of silhouettes.
@@ -122,5 +106,25 @@ public abstract partial class ModelerGeometry : Entity
 	public override BoundingBox GetBoundingBox()
 	{
 		return BoundingBox.Null;
+	}
+
+	/// <summary>
+	/// Sets the ACIS data from the specified text, decoding it first if it is ACIS-encoded and storing it as ASCII bytes.
+	/// </summary>
+	/// <param name="text">The text to store. If null or empty, the ACIS data is cleared.</param>
+	public void SetAcisText(string text)
+	{
+		if (AcisEncryption.IsEncoded(text))
+		{
+			text = AcisEncryption.Decode(text);
+		}
+
+		if (string.IsNullOrEmpty(text))
+		{
+			this.AcisData = null;
+			return;
+		}
+
+		this.AcisData = Encoding.ASCII.GetBytes(text);
 	}
 }

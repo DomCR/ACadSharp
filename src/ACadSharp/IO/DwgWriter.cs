@@ -5,7 +5,6 @@ using ACadSharp.IO.DWG.FileHeaders;
 using ACadSharp.Tables.Collections;
 using CSUtilities.IO;
 using CSUtilities.Text;
-using System;
 using System.Collections.Generic;
 using System.IO;
 

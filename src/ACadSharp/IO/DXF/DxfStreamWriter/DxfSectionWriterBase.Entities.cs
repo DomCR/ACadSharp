@@ -482,44 +482,6 @@ internal abstract partial class DxfSectionWriterBase
 		this._writer.Write(42, ellipse.EndParameter, map);
 	}
 
-	private void writeEncryptedSAT(ModelerGeometry geometry)
-	{
-		var acisText = geometry.GetAcisText();
-		if (string.IsNullOrEmpty(acisText))
-		{
-			this.notify($"Encrypted SAT not found for {geometry.ObjectName}: {geometry.Handle}.", NotificationType.Warning);
-			return;
-		}
-
-		int CHUNK = 255;
-		foreach (string line in acisText.Split('\n'))
-		{
-			string trimmed = line.TrimEnd('\r');
-			if (trimmed.Length == 0)
-			{
-				continue;
-			}
-
-			string encoded = AcisTextCodec.Decode(trimmed);
-			int offset = 0;
-			while (offset < encoded.Length)
-			{
-				int length = Math.Min(CHUNK, encoded.Length - offset);
-				if (offset + length < encoded.Length)
-				{
-					int space = encoded.LastIndexOf(' ', offset + length - 1, length);
-					if (space > offset)
-					{
-						length = space - offset + 1;
-					}
-				}
-
-				this._writer.Write(offset == 0 ? 1 : 3, encoded.Substring(offset, length));
-				offset += length;
-			}
-		}
-	}
-
 	private void writeFace3D(Face3D face)
 	{
 		DxfClassMap map = DxfClassMap.Create<Face3D>();
@@ -1004,7 +966,31 @@ internal abstract partial class DxfSectionWriterBase
 		else
 		{
 			//Encrypted sat
-			this.writeEncryptedSAT(geometry);
+			var sat = AcisEncryption.Encode(geometry.GetAcisText());
+			if(string.IsNullOrEmpty(sat))
+			{
+				this.notify($"Failed to encode SAT data for ModelerGeometry {geometry.Handle}.", NotificationType.Warning);
+				return;
+			}
+
+			int start = 0;
+			System.Collections.Generic.List<string> lines = new();
+			int end;
+			while ((end = sat.IndexOf("\n", start)) >= 0)
+			{
+				lines.Add(sat.Substring(start, end - start));
+				start = end + "\n".Length;
+			}
+
+			if (start < sat.Length)
+			{
+				lines.Add(sat.Substring(start));
+			}
+
+			foreach (var item in lines)
+			{
+				this.writeLongTextValue(1, 3, item);
+			}
 		}
 	}
 
