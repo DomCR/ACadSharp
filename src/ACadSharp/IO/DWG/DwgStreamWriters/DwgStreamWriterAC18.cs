@@ -128,7 +128,7 @@ namespace ACadSharp.IO.DWG
 
 			base.WriteBitShort((short)size);
 
-			if (color.IsTrueColor)
+			if (color.IsTrueColor && !isBookColor)
 			{
 				byte[] arr = new byte[] { color.B, color.G, color.R, 0b11000010 };
 				uint rgb = LittleEndianConverter.Instance.ToUInt32(arr);
