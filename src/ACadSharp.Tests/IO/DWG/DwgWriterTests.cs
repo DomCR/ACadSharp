@@ -2,8 +2,11 @@
 using ACadSharp.Exceptions;
 using ACadSharp.Header;
 using ACadSharp.IO;
+using ACadSharp.IO.DWG;
+using ACadSharp.Tables;
 using ACadSharp.Tests.Common;
 using System.IO;
+using System.Text;
 using Xunit;
 using Xunit.Abstractions;
 
@@ -70,6 +73,47 @@ public class DwgWriterTests : IOTestsBase
 		{
 			CadHeader header = re.ReadHeader();
 		}
+	}
+
+	[Theory]
+	[InlineData(ACadVersion.AC1024)]
+	[InlineData(ACadVersion.AC1027)]
+	[InlineData(ACadVersion.AC1032)]
+	public void WriteTextStyleWithNullXrefBlockHandle(ACadVersion version)
+	{
+		CadDocument doc = new CadDocument(version);
+
+		MemoryStream stream = new MemoryStream();
+		DwgObjectWriter writer = new DwgObjectWriter(stream, doc, Encoding.ASCII);
+		writer.Write();
+
+		byte[] data = stream.ToArray();
+		int position = (int)writer.Map[doc.TextStyles[TextStyle.DefaultName].Handle];
+
+		int size = data[position] | (data[position + 1] << 8);
+		position += 2;
+
+		//Size in bits of the handle stream, including its padding
+		int handleBits = 0;
+		for (int shift = 0; ; shift += 7)
+		{
+			byte b = data[position++];
+			handleBits |= (b & 0x7F) << shift;
+			if ((b & 0x80) == 0)
+			{
+				break;
+			}
+		}
+
+		//The xref block handle is the last handle of the object, a null handle is the single byte 0x50
+		int bit = size * 8 - handleBits + (handleBits / 8 - 1) * 8;
+		int last = 0;
+		for (int i = bit; i < bit + 8; i++)
+		{
+			last = (last << 1) | ((data[position + i / 8] >> (7 - i % 8)) & 1);
+		}
+
+		Assert.Equal(0x50, last);
 	}
 
 	[Theory]
