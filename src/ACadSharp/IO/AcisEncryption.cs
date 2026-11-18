@@ -222,6 +222,19 @@ public class AcisEncryption
 	/// in text or binary form).
 	/// </summary>
 	/// <param name="data">The data to trim.</param>
+	/// <returns>
+	/// The data up to and including the end marker, or the original <paramref name="data"/> if no marker is found.
+	/// </returns>
+	public static byte[] TrimAtAcisEnd(byte[] data)
+	{
+		return TrimAtAcisEnd(data, out _);
+	}
+
+	/// <summary>
+	/// Cuts the data right after the first ACIS end marker (<c>End-of-ACIS-data</c> or <c>End-of-ASM-data</c>,
+	/// in text or binary form).
+	/// </summary>
+	/// <param name="data">The data to trim.</param>
 	/// <param name="remaining">
 	/// The bytes that follow the end marker, or an empty array if no marker is found or nothing follows it.
 	/// </param>
