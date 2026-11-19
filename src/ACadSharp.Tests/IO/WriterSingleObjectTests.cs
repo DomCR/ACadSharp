@@ -48,7 +48,7 @@ public abstract class WriterSingleObjectTests : IOTestsBase
 		Data.Add(new(nameof(SingleCaseGenerator.CurrentEntityByBlock)));
 		Data.Add(new(nameof(SingleCaseGenerator.DefaultLayer)));
 		Data.Add(new(nameof(SingleCaseGenerator.LayerTrueColor)));
-		Data.Add(new(nameof(SingleCaseGenerator.SingleMText)));
+		Data.Add(new(nameof(SingleCaseGenerator.SingleMTextCases)));
 		Data.Add(new(nameof(SingleCaseGenerator.SingleLongMText)));
 		Data.Add(new(nameof(SingleCaseGenerator.SingleMTextRotation)));
 		Data.Add(new(nameof(SingleCaseGenerator.SingleMTextSpecialCharacter)));
@@ -2838,13 +2838,20 @@ public abstract class WriterSingleObjectTests : IOTestsBase
 			};
 		}
 
-		public void SingleMText()
+		public void SingleMTextCases()
 		{
 			MText mtext = new MText();
-
 			mtext.Value = "HELLO I'm an MTEXT";
-
 			this.Document.Entities.Add(mtext);
+
+			MText mtextWidthHeight = new MText();
+			mtextWidthHeight.Value = "HELLO I'm an MTEXT with a width and height";
+			mtextWidthHeight.InsertPoint = new XYZ(10, 10, 0);
+			mtextWidthHeight.ColumnData.ColumnType = ColumnType.StaticColumns;
+			mtextWidthHeight.ColumnData.Heights.Add(10);
+			mtextWidthHeight.ColumnData.Heights.Add(10);
+			mtextWidthHeight.ColumnData.Heights.Add(10);
+			this.Document.Entities.Add(mtextWidthHeight);
 
 			this.AssertRoundtrip = (doc) =>
 			{
@@ -2853,6 +2860,12 @@ public abstract class WriterSingleObjectTests : IOTestsBase
 				Assert.NotNull(result);
 				EntityComparator.IsEqual(mtext, result);
 				Assert.Equal(mtext.Value, result.Value);
+
+				MText resultWidthHeight = doc.GetCadObject<MText>(mtextWidthHeight.Handle);
+
+				Assert.NotNull(resultWidthHeight);
+				EntityComparator.IsEqual(mtextWidthHeight, resultWidthHeight);
+				Assert.Equal(mtextWidthHeight.Value, resultWidthHeight.Value);
 			};
 		}
 
