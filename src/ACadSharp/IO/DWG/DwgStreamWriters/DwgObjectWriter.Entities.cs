@@ -1628,7 +1628,7 @@ internal partial class DwgObjectWriter : DwgSectionIO
 		switch (version)
 		{
 			case 1:
-				this.writeChunks(new MemoryStream(AcisEncryption.Swap(geometry.AcisData)));
+				this.writeChunks(new MemoryStream(AcisEncryption.Encode(geometry.AcisData)));
 				break;
 			case 2:
 				this._writer.WriteBytes(geometry.AcisData);

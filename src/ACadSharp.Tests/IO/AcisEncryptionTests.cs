@@ -13,7 +13,7 @@ public class AcisEncryptionTests
 		string text = "body $-1 $1 $-1 $-1 #";
 		byte[] swapped = Encoding.ASCII.GetBytes(AcisEncryption.Decode(text));
 
-		byte[] decoded = AcisEncryption.Swap(swapped);
+		byte[] decoded = AcisEncryption.Decode(swapped);
 
 		Assert.Equal(text, Encoding.ASCII.GetString(decoded));
 	}
@@ -27,6 +27,78 @@ public class AcisEncryptionTests
 
 		Assert.NotEqual(text, swapped);
 		Assert.Equal(text, AcisEncryption.Decode(swapped));
+	}
+
+	[Fact]
+	public void EncodeBytesOnlyMirrorsPrintableAscii()
+	{
+		byte[] plain = new byte[] { (byte)'1', (byte)'~', (byte)'\t', (byte)' ', 0x01, 0x7F, 0x80, 0x9E, 0xFF };
+
+		byte[] encoded = AcisEncryption.Encode(plain);
+
+		Assert.Equal(new byte[] { 0x9F - (byte)'1', (byte)'!', (byte)'\t', (byte)' ', 0x01, 0x7F, 0x80, 0x9E, 0xFF }, encoded);
+	}
+
+	[Fact]
+	public void EncodeDecodeBytesKeepNullAndEmptyInputs()
+	{
+		byte[] empty = new byte[0];
+
+		Assert.Null(AcisEncryption.Encode((byte[])null));
+		Assert.Null(AcisEncryption.Decode((byte[])null));
+		Assert.Same(empty, AcisEncryption.Encode(empty));
+		Assert.Same(empty, AcisEncryption.Decode(empty));
+	}
+
+	[Fact]
+	public void EncodeDecodeBytesMatchTextVersions()
+	{
+		string plain = "400 0 1 0\nbody $-1 $1 $-1 $-1 # ^~{}";
+
+		byte[] encoded = AcisEncryption.Encode(Encoding.ASCII.GetBytes(plain));
+
+		Assert.Equal(AcisEncryption.Encode(plain), Encoding.ASCII.GetString(encoded));
+		Assert.Equal(
+			AcisEncryption.Decode(AcisEncryption.Encode(plain)),
+			Encoding.ASCII.GetString(AcisEncryption.Decode(encoded)));
+	}
+
+	[Fact]
+	public void EncodeDecodeBytesRoundTrip()
+	{
+		byte[] plain = Encoding.ASCII.GetBytes("400 0 1 0\r\nbody $-1 $1 $-1 $-1 #");
+
+		byte[] encoded = AcisEncryption.Encode(plain);
+
+		Assert.NotEqual(plain, encoded);
+		Assert.True(AcisEncryption.IsEncoded(encoded));
+		Assert.Equal(plain, AcisEncryption.Decode(encoded));
+	}
+
+	[Fact]
+	public void EncodeDecodeBytesRoundTripDataNotStartingWithDigit()
+	{
+		byte[] plain = Encoding.ASCII.GetBytes("fo body $-1 #");
+
+		Assert.Equal(plain, AcisEncryption.Decode(AcisEncryption.Encode(plain)));
+	}
+
+	[Fact]
+	public void EncodeDecodeBytesRoundTripEveryByte()
+	{
+		byte[] all = Enumerable.Range(0, 256).Select(i => (byte)i).ToArray();
+
+		Assert.Equal(all, AcisEncryption.Decode(AcisEncryption.Encode(all)));
+		Assert.Equal(all, AcisEncryption.Encode(AcisEncryption.Decode(all)));
+	}
+
+	[Fact]
+	public void IsEncodedBytesDetectsPlainAndEncodedSat()
+	{
+		byte[] plain = Encoding.ASCII.GetBytes("400 0 1 0");
+
+		Assert.False(AcisEncryption.IsEncoded(plain));
+		Assert.True(AcisEncryption.IsEncoded(AcisEncryption.Encode(plain)));
 	}
 
 	[Fact]

@@ -286,7 +286,7 @@ internal partial class DwgObjectReader : DwgSectionIO
 					while (blockSize > 0)
 					{
 						var arr = this._mergedReaders.ReadBytes(blockSize);
-						byte[] block = AcisEncryption.Swap(arr);
+						byte[] block = AcisEncryption.Decode(arr);
 						stream.Write(block, 0, block.Length);
 
 						blockSize = this._mergedReaders.ReadBitLong();

@@ -6,7 +6,7 @@ namespace ACadSharp.IO;
 /// <summary>
 /// Provides encoding, decoding, and binary data utilities for ACIS data.
 /// </summary>
-/// <remarks>Supports ACIS text encoding and decoding, binary signature detection, byte swapping, and trimming
+/// <remarks>Supports ACIS text and binary encoding and decoding, binary signature detection, and trimming
 /// data at ACIS end markers.</remarks>
 public class AcisEncryption
 {
@@ -74,6 +74,23 @@ public class AcisEncryption
 	}
 
 	/// <summary>
+	/// Decodes ACIS data that was encoded with <see cref="Encode(byte[])"/>, such as the SAT blocks stored in DWG files.
+	/// </summary>
+	/// <remarks>
+	/// Bytes in the range <c>0x21</c> to <c>0x7E</c> are mirrored (<c>0x9F - b</c>), every other byte is kept as is.
+	/// The data is always decoded, it is not inspected with <see cref="IsEncoded(byte[])"/>, so
+	/// <c>Decode(Encode(data))</c> always returns the original data.
+	/// </remarks>
+	/// <param name="data">The data to decode.</param>
+	/// <returns>
+	/// A new array with the decoded data, or the original <paramref name="data"/> if it is <see langword="null"/> or empty.
+	/// </returns>
+	public static byte[] Decode(byte[] data)
+	{
+		return mirror(data);
+	}
+
+	/// <summary>
 	/// Encodes plain ACIS text using the DXF/DWG character substitution.
 	/// </summary>
 	/// <remarks>
@@ -129,6 +146,23 @@ public class AcisEncryption
 			}
 		}
 		return sb.ToString();
+	}
+
+	/// <summary>
+	/// Encodes plain ACIS data using the DWG character substitution, such as the SAT blocks stored in DWG files.
+	/// </summary>
+	/// <remarks>
+	/// Bytes in the range <c>0x21</c> to <c>0x7E</c> are mirrored (<c>0x9F - b</c>), every other byte is kept as is.
+	/// The data is always encoded, it is not inspected with <see cref="IsEncoded(byte[])"/>, so
+	/// <c>Decode(Encode(data))</c> always returns the original data.
+	/// </remarks>
+	/// <param name="data">The data to encode.</param>
+	/// <returns>
+	/// A new array with the encoded data, or the original <paramref name="data"/> if it is <see langword="null"/> or empty.
+	/// </returns>
+	public static byte[] Encode(byte[] data)
+	{
+		return mirror(data);
 	}
 
 	/// <summary>
@@ -190,31 +224,35 @@ public class AcisEncryption
 	}
 
 	/// <summary>
-	/// Swaps the bytes of the ACIS binary data using the <c>0x9F - b</c> substitution.
+	/// Determines whether the data is encoded.
 	/// </summary>
 	/// <remarks>
-	/// Only bytes in the range <c>0x21</c> to <c>0x9E</c> are modified. The operation is symmetric,
-	/// applying it twice returns the original data.
+	/// Plain ACIS data starts with a number, so the data is considered encoded when its first
+	/// non-whitespace byte is not an ASCII digit.
 	/// </remarks>
-	/// <param name="data">The data to swap.</param>
+	/// <param name="data">The data to inspect.</param>
 	/// <returns>
-	/// A new array with the swapped bytes, or the original <paramref name="data"/> if it is <see langword="null"/> or empty.
+	/// <see langword="true"/> if the data is encoded; otherwise <see langword="false"/>, including when
+	/// <paramref name="data"/> is <see langword="null"/>, empty or contains only whitespace.
 	/// </returns>
-	public static byte[] Swap(byte[] data)
+	public static bool IsEncoded(byte[] data)
 	{
 		if (data == null || data.Length == 0)
 		{
-			return data;
+			return false;
 		}
 
-		byte[] result = new byte[data.Length];
-		for (int i = 0; i < data.Length; i++)
+		foreach (byte b in data)
 		{
-			byte b = data[i];
-			result[i] = b > 0x20 && b < 0x9F ? (byte)(0x9F - b) : b;
+			if (b <= (byte)' ')
+			{
+				continue;
+			}
+
+			return b < 0x30 || b > 0x39;
 		}
 
-		return result;
+		return false;
 	}
 
 	/// <summary>
@@ -298,5 +336,22 @@ public class AcisEncryption
 		}
 
 		return -1;
+	}
+
+	private static byte[] mirror(byte[] data)
+	{
+		if (data == null || data.Length == 0)
+		{
+			return data;
+		}
+
+		byte[] result = new byte[data.Length];
+		for (int i = 0; i < data.Length; i++)
+		{
+			byte b = data[i];
+			result[i] = b > 0x20 && b < 0x7F ? (byte)(0x9F - b) : b;
+		}
+
+		return result;
 	}
 }
