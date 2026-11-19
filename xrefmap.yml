@@ -33322,6 +33322,24 @@ references:
   commentId: F:ACadSharp.Header.ObjectSortingFlags.Snap
   fullName: ACadSharp.Header.ObjectSortingFlags.Snap
   nameWithType: ObjectSortingFlags.Snap
+- uid: ACadSharp.Header.PlotStyleMode
+  name: PlotStyleMode
+  href: api/ACadSharp.Header.PlotStyleMode.html
+  commentId: T:ACadSharp.Header.PlotStyleMode
+  fullName: ACadSharp.Header.PlotStyleMode
+  nameWithType: PlotStyleMode
+- uid: ACadSharp.Header.PlotStyleMode.ColorDependent
+  name: ColorDependent
+  href: api/ACadSharp.Header.PlotStyleMode.html#ACadSharp_Header_PlotStyleMode_ColorDependent
+  commentId: F:ACadSharp.Header.PlotStyleMode.ColorDependent
+  fullName: ACadSharp.Header.PlotStyleMode.ColorDependent
+  nameWithType: PlotStyleMode.ColorDependent
+- uid: ACadSharp.Header.PlotStyleMode.Named
+  name: Named
+  href: api/ACadSharp.Header.PlotStyleMode.html#ACadSharp_Header_PlotStyleMode_Named
+  commentId: F:ACadSharp.Header.PlotStyleMode.Named
+  fullName: ACadSharp.Header.PlotStyleMode.Named
+  nameWithType: PlotStyleMode.Named
 - uid: ACadSharp.Header.ShadeEdgeType
   name: ShadeEdgeType
   href: api/ACadSharp.Header.ShadeEdgeType.html

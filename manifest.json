@@ -3779,6 +3779,20 @@
     },
     {
       "type": "ManagedReference",
+      "source_relative_path": "api/ACadSharp.Header.PlotStyleMode.yml",
+      "output": {
+        ".html": {
+          "relative_path": "api/ACadSharp.Header.PlotStyleMode.html"
+        }
+      },
+      "version": "",
+      "Uid": null,
+      "IsMRef": true,
+      "Title": "ACadSharp.Header.PlotStyleMode",
+      "Summary": "<p sourcefile=\"api/ACadSharp.Header.PlotStyleMode.yml\" sourcestartlinenumber=\"1\">Specifies how plot styles are assigned.</p>\n"
+    },
+    {
+      "type": "ManagedReference",
       "source_relative_path": "api/ACadSharp.Header.ShadeEdgeType.yml",
       "output": {
         ".html": {
