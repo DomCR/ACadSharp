@@ -65,7 +65,7 @@ internal partial class DwgObjectWriter : DwgSectionIO
 		{
 			for (int j = 0; j < 4; j++)
 			{
-				this._writer.WriteBitDouble(matrix[i, j]);
+				this._writer.WriteBitDouble(matrix[j, i]);
 			}
 		}
 	}
