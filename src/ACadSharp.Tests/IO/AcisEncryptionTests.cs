@@ -5,7 +5,7 @@ using Xunit;
 
 namespace ACadSharp.Tests.IO;
 
-public class AcisCodecTests
+public class AcisEncryptionTests
 {
 	[Fact]
 	public void DecodeIsAnInvolution()
