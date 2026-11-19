@@ -93,6 +93,27 @@ public class AcisEncryptionTests
 	}
 
 	[Fact]
+	public void EncodeDecodeTextRoundTripsCaretTabsAndControlChars()
+	{
+		string plain = "400 0 1 0\r\nA ^ \t \u0001 \u007f \u0080 \u009f \u00e9 body $-1 #\n";
+
+		string encoded = AcisEncryption.Encode(plain);
+
+		Assert.True(AcisEncryption.IsEncoded(encoded));
+		Assert.Equal(plain, AcisEncryption.Decode(encoded));
+	}
+
+	[Fact]
+	public void EncodeTextOnlyMirrorsPrintableAscii()
+	{
+		string plain = "1A^~\t \u0001\u007f\u0080\u009f";
+
+		string encoded = AcisEncryption.Encode(plain);
+
+		Assert.Equal("n^A!\t \u0001\u007f\u0080\u009f", encoded);
+	}
+
+	[Fact]
 	public void IsEncodedBytesDetectsPlainAndEncodedSat()
 	{
 		byte[] plain = Encoding.ASCII.GetBytes("400 0 1 0");

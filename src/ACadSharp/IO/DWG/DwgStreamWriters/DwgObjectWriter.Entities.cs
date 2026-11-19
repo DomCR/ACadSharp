@@ -1524,7 +1524,7 @@ internal partial class DwgObjectWriter : DwgSectionIO
 
 			if (hasAcisData)
 			{
-				this.writeModelerGeometryData(geometry);
+				this.writeModelerGeometryData(geometry, geometry.AcisData);
 			}
 		}
 
@@ -1596,7 +1596,15 @@ internal partial class DwgObjectWriter : DwgSectionIO
 			}
 
 			//ACIS Empty bit B X Normally 1. If 0, then acis data follows.
-			this._writer.WriteBit(true);
+			if(geometry.WireframeAcisData != null && geometry.WireframeAcisData.Length > 0)
+			{
+				this._writer.WriteBit(false);
+				this.writeModelerGeometryData(geometry, geometry.WireframeAcisData);
+			}
+			else
+			{
+				this._writer.WriteBit(true);
+			}
 		}
 
 		//R2007 +:
@@ -1615,7 +1623,7 @@ internal partial class DwgObjectWriter : DwgSectionIO
 		}
 	}
 
-	private void writeModelerGeometryData(ModelerGeometry geometry)
+	private void writeModelerGeometryData(ModelerGeometry geometry, byte[] data)
 	{
 		short version = (short)(this._version <= ACadVersion.AC1015 ? 1 : 2);
 
@@ -1628,10 +1636,10 @@ internal partial class DwgObjectWriter : DwgSectionIO
 		switch (version)
 		{
 			case 1:
-				this.writeChunks(new MemoryStream(AcisEncryption.Encode(geometry.AcisData)));
+				this.writeChunks(new MemoryStream(AcisEncryption.Encode(data)));
 				break;
 			case 2:
-				this._writer.WriteBytes(geometry.AcisData);
+				this._writer.WriteBytes(data);
 				break;
 		}
 	}

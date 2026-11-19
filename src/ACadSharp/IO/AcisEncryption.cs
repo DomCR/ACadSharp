@@ -35,6 +35,10 @@ public class AcisEncryption
 	/// <summary>
 	/// Decodes ACIS text that was encoded with the DXF/DWG character substitution.
 	/// </summary>
+	/// <remarks>
+	/// Characters in the range <c>0x21</c> to <c>0x7E</c> are mirrored (<c>0x9F - c</c>), every other character is kept as is.
+	/// DXF caret escapes (<c>^ </c>, <c>^J</c>, <c>^M</c>, <c>^I</c>) are expected to be already resolved by the DXF reader.
+	/// </remarks>
 	/// <param name="text">The text to decode.</param>
 	/// <returns>
 	/// The decoded text, or the original <paramref name="text"/> if it is <see langword="null"/>, empty or not encoded.
@@ -52,25 +56,7 @@ public class AcisEncryption
 			return text;
 		}
 
-		int length = text.Length;
-		StringBuilder sb = new StringBuilder(length);
-		for (int i = 0; i < length; i++)
-		{
-			char c = text[i];
-			if (c == ' ' || c < ' ')
-			{
-				sb.Append(c);
-			}
-			else if (c == '^' || c >= '?' && c <= '_')
-			{
-				sb.Append((char)(0x9F - c));
-			}
-			else
-			{
-				sb.Append((char)(c ^ 0x5Fu));
-			}
-		}
-		return sb.ToString();
+		return mirror(text);
 	}
 
 	/// <summary>
@@ -94,7 +80,9 @@ public class AcisEncryption
 	/// Encodes plain ACIS text using the DXF/DWG character substitution.
 	/// </summary>
 	/// <remarks>
-	/// Printable characters are mirrored (<c>0x9F - c</c>), tabs are converted to spaces and line breaks are preserved.
+	/// Characters in the range <c>0x21</c> to <c>0x7E</c> are mirrored (<c>0x9F - c</c>), every other character is kept as is,
+	/// so <c>Decode(Encode(text))</c> returns the original text. DXF caret escapes (<c>^ </c>, <c>^J</c>, <c>^M</c>, <c>^I</c>)
+	/// are not applied here, they are handled by the DXF writer.
 	/// </remarks>
 	/// <param name="text">The text to encode.</param>
 	/// <returns>
@@ -113,39 +101,7 @@ public class AcisEncryption
 			return text;
 		}
 
-		int length = text.Length;
-		StringBuilder sb = new StringBuilder(length + 8);
-		for (int i = 0; i < length; i++)
-		{
-			char c = text[i];
-			if (c > ' ' && c < '\u00a0')
-			{
-				c = (char)(0x9F - c);
-			}
-			else if (c == '\t')
-			{
-				c = ' ';
-			}
-
-			if (c == '\r' || c == '\n')
-			{
-				sb.Append(c);
-			}
-			else if (c < ' ')
-			{
-				sb.Append('^');
-				sb.Append(c + 0x40);
-			}
-			else if (c == '^')
-			{
-				sb.Append('^');
-			}
-			else
-			{
-				sb.Append(c);
-			}
-		}
-		return sb.ToString();
+		return mirror(text);
 	}
 
 	/// <summary>
@@ -348,10 +304,26 @@ public class AcisEncryption
 		byte[] result = new byte[data.Length];
 		for (int i = 0; i < data.Length; i++)
 		{
-			byte b = data[i];
-			result[i] = b > 0x20 && b < 0x7F ? (byte)(0x9F - b) : b;
+			result[i] = (byte)mirror((char)data[i]);
 		}
 
 		return result;
+	}
+
+	private static string mirror(string text)
+	{
+		StringBuilder sb = new StringBuilder(text.Length);
+		foreach (char c in text)
+		{
+			sb.Append(mirror(c));
+		}
+
+		return sb.ToString();
+	}
+
+	//0x9F - c maps 0x21..0x7E onto itself, restricting it to that range makes the substitution its own inverse.
+	private static char mirror(char c)
+	{
+		return c > ' ' && c < '\u007f' ? (char)(0x9F - c) : c;
 	}
 }

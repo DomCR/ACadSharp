@@ -39,7 +39,8 @@ public abstract partial class ModelerGeometry : Entity
 	{
 		get
 		{
-			return this.Wires.Count > 0 || this.Silhouettes.Count > 0;
+			return this.Wires.Count > 0 || this.Silhouettes.Count > 0
+				|| (this.WireframeAcisData != null && this.WireframeAcisData.Length > 0);
 		}
 	}
 
@@ -74,6 +75,11 @@ public abstract partial class ModelerGeometry : Entity
 
 	/// <inheritdoc/>
 	public override string SubclassMarker => DxfSubclassMarker.ModelerGeometry;
+
+	/// <summary>
+	/// Gets or sets the wireframe ACIS data.
+	/// </summary>
+	public byte[] WireframeAcisData { get; set; }
 
 	/// <summary>
 	/// Gets the collection of wires.

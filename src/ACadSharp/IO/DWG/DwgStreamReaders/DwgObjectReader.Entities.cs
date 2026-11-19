@@ -161,7 +161,8 @@ internal partial class DwgObjectReader : DwgSectionIO
 			var hasData = this._mergedReaders.ReadBit();
 			if (!hasData)
 			{
-				this.readModelerGeometryData(template);
+				this.readModelerGeometryData(template, out byte[] data);
+				template.CadObject.AcisData = data;
 			}
 		}
 
@@ -233,7 +234,8 @@ internal partial class DwgObjectReader : DwgSectionIO
 			//for these items either).
 			if (!this._mergedReaders.ReadBit())
 			{
-				this.readModelerGeometryData(template);
+				this.readModelerGeometryData(template, out byte[] data);
+				template.CadObject.WireframeAcisData = data;
 			}
 		}
 
@@ -263,9 +265,11 @@ internal partial class DwgObjectReader : DwgSectionIO
 		return template;
 	}
 
-	private void readModelerGeometryData<T>(CadEntityTemplate<T> template)
+	private void readModelerGeometryData<T>(CadEntityTemplate<T> template, out byte[] data)
 		where T : ModelerGeometry, new()
 	{
+		data = Array.Empty<byte>();
+
 		//Unknown bit B X
 		bool unknown = this._mergedReaders.ReadBit();
 
@@ -294,7 +298,7 @@ internal partial class DwgObjectReader : DwgSectionIO
 
 					if (stream.Length > 0)
 					{
-						template.CadObject.AcisData = stream.ToArray();
+						data = stream.ToArray();
 					}
 				}
 				break;
@@ -313,8 +317,8 @@ internal partial class DwgObjectReader : DwgSectionIO
 
 				if (remainingBytes > 0)
 				{
-					byte[] data = this._mergedReaders.ReadBytes(remainingBytes);
-					template.CadObject.AcisData = AcisEncryption.TrimAtAcisEnd(data, out byte[] remain);
+					byte[] raw = this._mergedReaders.ReadBytes(remainingBytes);
+					data = AcisEncryption.TrimAtAcisEnd(raw, out byte[] remain);
 
 					var pos = currentPos + remainingBytes * 8 - remain.Length * 8;
 					this._mergedReaders.SetPositionInBits(pos);
