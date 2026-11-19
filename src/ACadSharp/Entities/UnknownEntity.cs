@@ -47,6 +47,32 @@ namespace ACadSharp.Entities
 		}
 
 		/// <summary>
+		/// Remote text (Express Tools RTEXT) data, when this unknown entity is one and could be read.
+		/// </summary>
+		public RemoteText RText { get; set; }
+
+		/// <summary>
+		/// Data of an Express Tools RTEXT object: text from a file or from a DIESEL expression.
+		/// </summary>
+		public class RemoteText
+		{
+			/// <summary>Insertion point.</summary>
+			public XYZ InsertPoint { get; set; }
+			/// <summary>Extrusion direction.</summary>
+			public XYZ Normal { get; set; } = XYZ.AxisZ;
+			/// <summary>Rotation, radians.</summary>
+			public double Rotation { get; set; }
+			/// <summary>Text height.</summary>
+			public double Height { get; set; }
+			/// <summary>Flags: 1 = contents is a DIESEL expression, otherwise a file name.</summary>
+			public short Flags { get; set; }
+			/// <summary>DIESEL expression or file name.</summary>
+			public string Contents { get; set; }
+			/// <summary>Handle of the text style.</summary>
+			public ulong StyleHandle { get; set; }
+		}
+
+		/// <summary>
 		/// Dxf class linked to this entity.
 		/// </summary>
 		public DxfClass DxfClass { get; }
