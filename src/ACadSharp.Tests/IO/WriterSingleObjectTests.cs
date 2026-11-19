@@ -48,7 +48,7 @@ public abstract class WriterSingleObjectTests : IOTestsBase
 		Data.Add(new(nameof(SingleCaseGenerator.CurrentEntityByBlock)));
 		Data.Add(new(nameof(SingleCaseGenerator.DefaultLayer)));
 		Data.Add(new(nameof(SingleCaseGenerator.LayerTrueColor)));
-		Data.Add(new(nameof(SingleCaseGenerator.SingleMText)));
+		Data.Add(new(nameof(SingleCaseGenerator.SingleMTextCases)));
 		Data.Add(new(nameof(SingleCaseGenerator.SingleLongMText)));
 		Data.Add(new(nameof(SingleCaseGenerator.SingleMTextRotation)));
 		Data.Add(new(nameof(SingleCaseGenerator.SingleMTextSpecialCharacter)));
@@ -114,6 +114,7 @@ public abstract class WriterSingleObjectTests : IOTestsBase
 		Data.Add(new(nameof(SingleCaseGenerator.ProxyGraphicsUnicodeText2)));
 		Data.Add(new(nameof(SingleCaseGenerator.ProxyShellWithHole)));
 		Data.Add(new(nameof(SingleCaseGenerator.AnonymousBlockWithShortName)));
+		Data.Add(new(nameof(SingleCaseGenerator.LongTableEntryNames)));
 	}
 
 	public WriterSingleObjectTests(ITestOutputHelper output) : base(output)
@@ -2248,6 +2249,43 @@ public abstract class WriterSingleObjectTests : IOTestsBase
 			};
 		}
 
+		public void LongTableEntryNames()
+		{
+			Layer layer = new Layer("Layer_with_a_name_longer_than_31_characters");
+			this.Document.Layers.Add(layer);
+
+			TextStyle style = new TextStyle("Style_name_longer_than_31_chars_");
+			this.Document.TextStyles.Add(style);
+
+			TextEntity text = new TextEntity
+			{
+				Value = "Long names",
+				Layer = layer,
+				Style = style
+			};
+			this.Document.Entities.Add(text);
+
+			BlockRecord record = new BlockRecord("Block_with_a_name_longer_than_31_chars");
+			record.Entities.Add(new Line(XYZ.Zero, new XYZ(10, 10, 0)));
+			this.Document.BlockRecords.Add(record);
+
+			Insert insert = new Insert(record);
+			this.Document.Entities.Add(insert);
+
+			this.AssertRoundtrip = (doc) =>
+			{
+				TextEntity textResult = doc.GetCadObject<TextEntity>(text.Handle);
+				Insert insertResult = doc.GetCadObject<Insert>(insert.Handle);
+
+				Assert.NotNull(textResult);
+				Assert.NotNull(insertResult);
+				Assert.Equal(layer.Name, textResult.Layer.Name);
+				Assert.Equal(style.Name, textResult.Style.Name);
+				Assert.Equal(record.Name, insertResult.Block.Name);
+				Assert.Single(insertResult.Block.Entities);
+			};
+		}
+
 		public void MTextBackgroundFillAndTextFrame()
 		{
 			List<MText> mtexts = new List<MText>();
@@ -2800,13 +2838,20 @@ public abstract class WriterSingleObjectTests : IOTestsBase
 			};
 		}
 
-		public void SingleMText()
+		public void SingleMTextCases()
 		{
 			MText mtext = new MText();
-
 			mtext.Value = "HELLO I'm an MTEXT";
-
 			this.Document.Entities.Add(mtext);
+
+			MText mtextWidthHeight = new MText();
+			mtextWidthHeight.Value = "HELLO I'm an MTEXT with a width and height";
+			mtextWidthHeight.InsertPoint = new XYZ(10, 10, 0);
+			mtextWidthHeight.ColumnData.ColumnType = ColumnType.StaticColumns;
+			mtextWidthHeight.ColumnData.Heights.Add(10);
+			mtextWidthHeight.ColumnData.Heights.Add(10);
+			mtextWidthHeight.ColumnData.Heights.Add(10);
+			this.Document.Entities.Add(mtextWidthHeight);
 
 			this.AssertRoundtrip = (doc) =>
 			{
@@ -2815,6 +2860,12 @@ public abstract class WriterSingleObjectTests : IOTestsBase
 				Assert.NotNull(result);
 				EntityComparator.IsEqual(mtext, result);
 				Assert.Equal(mtext.Value, result.Value);
+
+				MText resultWidthHeight = doc.GetCadObject<MText>(mtextWidthHeight.Handle);
+
+				Assert.NotNull(resultWidthHeight);
+				EntityComparator.IsEqual(mtextWidthHeight, resultWidthHeight);
+				Assert.Equal(mtextWidthHeight.Value, resultWidthHeight.Value);
 			};
 		}
 

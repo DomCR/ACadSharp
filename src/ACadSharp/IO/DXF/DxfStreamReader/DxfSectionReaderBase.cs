@@ -819,7 +819,6 @@ internal abstract class DxfSectionReaderBase
 					mtext.ColumnData.ColumnType = (ColumnType)this._reader.ValueAsShort;
 					break;
 				case 72:
-					mtext.ColumnData.ColumnCount = this._reader.ValueAsInt;
 					break;
 				//X - axis dir 3BD 10
 				case 10:
