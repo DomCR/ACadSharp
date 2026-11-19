@@ -8,17 +8,6 @@ namespace ACadSharp.Tests.IO;
 public class AcisEncryptionTests
 {
 	[Fact]
-	public void DecodeIsAnInvolution()
-	{
-		string text = "400 0 1 0\nbody $-1 $1 $-1 $-1 #";
-
-		string swapped = AcisEncryption.Decode(text);
-
-		Assert.NotEqual(text, swapped);
-		Assert.Equal(text, AcisEncryption.Decode(swapped));
-	}
-
-	[Fact]
 	public void DecodeBytesMatchesTextDecode()
 	{
 		string text = "body $-1 $1 $-1 $-1 #";
@@ -30,12 +19,23 @@ public class AcisEncryptionTests
 	}
 
 	[Fact]
+	public void DecodeIsAnInvolution()
+	{
+		string text = "400 0 1 0\nbody $-1 $1 $-1 $-1 #";
+
+		string swapped = AcisEncryption.Encode(text);
+
+		Assert.NotEqual(text, swapped);
+		Assert.Equal(text, AcisEncryption.Decode(swapped));
+	}
+
+	[Fact]
 	public void IsEncodedDetectsPlainAndSwappedSat()
 	{
 		string plain = "400 0 1 0";
 
 		Assert.False(AcisEncryption.IsEncoded(plain));
-		Assert.True(AcisEncryption.IsEncoded(AcisEncryption.Decode(plain)));
+		Assert.True(AcisEncryption.IsEncoded(AcisEncryption.Encode(plain)));
 	}
 
 	[Theory]
