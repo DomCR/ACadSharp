@@ -9,6 +9,8 @@ namespace ACadSharp.IO.Templates
 
 		public string StyleName { get; set; }
 
+		public bool HasColumnData { get; set; }
+
 		public CadTextEntityTemplate(Entity entity) : base(entity) { }
 
 		protected override void build(CadDocumentBuilder builder)
