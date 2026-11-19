@@ -1471,7 +1471,7 @@ internal partial class DwgObjectWriter : DwgSectionIO
 		if (this.R2013Plus)
 		{
 			//Has DS binary data B If 1 then this object has associated binary data stored in the data store
-			this._writer.WriteBit(false);
+			this._writer.WriteBit(cadObject is ModelerGeometry);
 		}
 
 		if (!noDictionary)
