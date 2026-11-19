@@ -80,9 +80,6 @@ public abstract partial class ModelerGeometry : Entity
 	/// </summary>
 	public List<Wire> Wires { get; } = new();
 
-	//Signature that marks the start of a binary SAB payload
-	private static readonly byte[] _acisBinarySignature = Encoding.ASCII.GetBytes("ACIS BinaryFile");
-
 	/// <inheritdoc/>
 	public override void ApplyTransform(Transform transform)
 	{
@@ -106,6 +103,22 @@ public abstract partial class ModelerGeometry : Entity
 	public override BoundingBox GetBoundingBox()
 	{
 		return BoundingBox.Null;
+	}
+
+	/// <inheritdoc/>
+	public override bool IsValid(CadFileFormat format, ACadVersion version, out IList<string> errors)
+	{
+		var result = base.IsValid(format, version, out errors);
+
+		if (format == CadFileFormat.DWG
+			&& version <= ACadVersion.AC1015
+			&& this.IsBinaryAcisData)
+		{
+			errors.Add($"Binary ACIS data is not supported in DWG format version {version} or earlier.");
+			result = false;
+		}
+
+		return result;
 	}
 
 	/// <summary>

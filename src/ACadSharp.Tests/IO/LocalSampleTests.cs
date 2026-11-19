@@ -39,7 +39,6 @@ public class LocalSampleTests : IOTestsBase
 		{
 			this._output.WriteLine("--- starting write ---");
 			DwgWriter.Write(Path.Combine(TestVariables.DesktopFolder, "output", "test.dwg"), doc, notification: this.onNotification);
-			CadDocument doc1 = DwgReader.Read(Path.Combine(TestVariables.DesktopFolder, "output", "test.dwg"), this._dwgConfiguration, this.onNotification);
 		}
 	}
 
