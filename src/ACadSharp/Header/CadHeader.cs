@@ -2518,7 +2518,7 @@ public class CadHeader
 	/// System variable PSTYLEMODE
 	/// </remarks>
 	[CadSystemVariable("$PSTYLEMODE", 290)]
-	public short PlotStyleMode { get; set; }
+	public PlotStyleMode PlotStyleMode { get; set; } = PlotStyleMode.Named;
 
 	/// <summary>
 	/// Controls how point objects are displayed.
