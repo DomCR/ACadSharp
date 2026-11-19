@@ -1,4 +1,5 @@
 ﻿using ACadSharp.Header;
+using ACadSharp.IO.DWG.DwgStreamWriters;
 using CSUtilities.IO;
 using System.IO;
 using System.Text;

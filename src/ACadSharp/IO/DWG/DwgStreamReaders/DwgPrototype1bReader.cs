@@ -308,8 +308,33 @@ internal class DwgPrototype1bReader : DwgSectionIO
 
 	private void readDataStorageFileSegment(FileSegment segment)
 	{
-		var pos = this._reader.Position;
-		segment.Header = this.readSubItemHeader();
+		//Int16 Signature (always 0xd5ac?)
+		segment.Header.Signature = (ushort)this._reader.ReadShort();
+		//byte[6] Name (6 bytes). Names for the several file segments are:
+		segment.Header.Name = Encoding.ASCII.GetString(this._reader.ReadBytes(6));
+		//Int32 Segment index
+		segment.Header.SegmentIndex = this._reader.ReadUInt();
+		//Int32 Unknown 1 (0 or 1? 1 in blob01 segment).
+		segment.Header.IsBlob = this._reader.ReadInt();
+		//Int32 Segment size (multiple of 0x40 bytes (AutoCAD uses 0x80), padded with 0x70 values).
+		segment.Header.SegmentSize = this._reader.ReadUInt();
+		//Int32 Unknown 2 (always 0?)
+		segment.Header.Unknown2 = this._reader.ReadInt();
+		//Int32 Data storage revision
+		segment.Header.DataStorageRevision = this._reader.ReadInt();
+		//Int32 Unknown 3 (always 0?)
+		segment.Header.Unknown3 = this._reader.ReadInt();
+		//Int32 System data alignment offset (calculate the stream position by shifting left 4
+		//bits and adding to the file segment’s stream start position). This offset is used
+		//for schema index and schema data segments.So the name “system data” seems
+		//to refer to schema index/schema data.
+		segment.Header.SystemDataAlignmentOffset = this._reader.ReadInt();
+		//Int32 Object data alignment offset (calculate the stream position by shifting left 4
+		//bits and adding to the file segment’s stream start position). This offset is used
+		//for the data segment.
+		segment.Header.ObjectDataAlignmentOffset = this._reader.ReadInt();
+		//byte[8] 8 alignment bytes (always 8 x 0x55?).
+		var alignmentBytes = this._reader.ReadBytes(8);
 	}
 
 	private FileHeader readFileHeader()
@@ -531,40 +556,5 @@ internal class DwgPrototype1bReader : DwgSectionIO
 		}
 
 		return schema;
-	}
-
-	private FileSegmentHeader readSubItemHeader()
-	{
-		var header = new FileSegmentHeader();
-
-		//Int16 Signature (always 0xd5ac?)
-		header.Signature = this._reader.ReadShort();
-		//byte[6] Name (6 bytes). Names for the several file segments are:
-		header.Name = Encoding.ASCII.GetString(this._reader.ReadBytes(6));
-		//Int32 Segment index
-		header.SegmentIndex = this._reader.ReadUInt();
-		//Int32 Unknown 1 (0 or 1? 1 in blob01 segment).
-		header.IsBlob = this._reader.ReadInt();
-		//Int32 Segment size (multiple of 0x40 bytes (AutoCAD uses 0x80), padded with 0x70 values).
-		header.SegmentSize = this._reader.ReadUInt();
-		//Int32 Unknown 2 (always 0?)
-		header.Unknown2 = this._reader.ReadInt();
-		//Int32 Data storage revision
-		header.DataStorageRevision = this._reader.ReadInt();
-		//Int32 Unknown 3 (always 0?)
-		header.Unknown3 = this._reader.ReadInt();
-		//Int32 System data alignment offset (calculate the stream position by shifting left 4
-		//bits and adding to the file segment’s stream start position). This offset is used
-		//for schema index and schema data segments.So the name “system data” seems
-		//to refer to schema index/schema data.
-		header.SystemDataAlignmentOffset = this._reader.ReadInt();
-		//Int32 Object data alignment offset (calculate the stream position by shifting left 4
-		//bits and adding to the file segment’s stream start position). This offset is used
-		//for the data segment.
-		header.ObjectDataAlignmentOffset = this._reader.ReadInt();
-		//byte[8] 8 alignment bytes (always 8 x 0x55?).
-		var alignmentBytes = this._reader.ReadBytes(8);
-
-		return header;
 	}
 }

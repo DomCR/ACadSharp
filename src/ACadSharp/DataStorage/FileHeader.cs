@@ -12,7 +12,7 @@ internal class FileHeader
 
 	public int FileSize { get; set; }
 
-	public int PreviousSaveIndex { get; set; }
+	public int PreviousSaveIndex { get; set; } = 0;
 
 	public int SchemaIndexSegmentIndex { get; set; }
 
@@ -22,7 +22,7 @@ internal class FileHeader
 
 	public int SegmentIndexOffset { get; set; }
 
-	public int SegmentIndexUnknown { get; set; }
+	public int SegmentIndexUnknown { get; set; } = 0;
 
 	public int Unknown1 { get; set; } = 2;
 

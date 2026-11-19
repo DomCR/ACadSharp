@@ -1,5 +1,4 @@
-﻿using ACadSharp.DataStorage;
-using ACadSharp.IO.DXF;
+﻿using ACadSharp.IO.DXF;
 using ACadSharp.IO.DXF.DxfStreamWriter;
 using System.IO;
 using System.Text;

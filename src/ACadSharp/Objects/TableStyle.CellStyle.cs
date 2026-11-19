@@ -1,5 +1,4 @@
 ﻿using ACadSharp.Attributes;
-using ACadSharp.Tables;
 
 namespace ACadSharp.Objects;
 

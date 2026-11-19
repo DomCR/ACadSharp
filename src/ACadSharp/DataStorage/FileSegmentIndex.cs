@@ -6,6 +6,11 @@ internal class FileSegmentIndex : FileSegment
 {
 	public List<Entry> Entries { get; } = new();
 
+	public FileSegmentIndex()
+		: base("segidx")
+	{
+	}
+
 	public void AddEntry(ulong offset, uint size)
 	{
 		this.Entries.Add(new Entry { Offset = offset, Size = size });
