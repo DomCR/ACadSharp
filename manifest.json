@@ -1661,7 +1661,7 @@
       "Uid": null,
       "IsMRef": true,
       "Title": "ACadSharp.Entities.MText.TextColumnData",
-      "Summary": null
+      "Summary": "<p sourcefile=\"api/ACadSharp.Entities.MText.TextColumnData.yml\" sourcestartlinenumber=\"1\">Represents column layout data for multiline text.</p>\n"
     },
     {
       "type": "ManagedReference",
