@@ -197,12 +197,14 @@ public partial class HatchPattern
 		var rot = Transform.CreateRotation(XYZ.AxisZ, rotation);
 
 		var transform = new Transform(tr.Matrix * sc.Matrix * rot.Matrix);
+		//The offset is a vector, the translation doesn't apply to it
+		var vectorTransform = new Transform(sc.Matrix * rot.Matrix);
 
 		foreach (var line in Lines)
 		{
 			line.Angle += rotation;
 			line.BasePoint = transform.ApplyTransform(line.BasePoint.Convert<XYZ>()).Convert<XY>();
-			line.Offset = transform.ApplyTransform(line.Offset.Convert<XYZ>()).Convert<XY>();
+			line.Offset = vectorTransform.ApplyTransform(line.Offset.Convert<XYZ>()).Convert<XY>();
 			line.DashLengths = line.DashLengths.Select(d => d * scale).ToList();
 		}
 	}
