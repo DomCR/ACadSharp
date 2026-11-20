@@ -2,7 +2,9 @@
 using ACadSharp.Exceptions;
 using ACadSharp.Header;
 using ACadSharp.IO;
+using ACadSharp.Objects;
 using ACadSharp.Tests.Common;
+using CSMath;
 using System.IO;
 using Xunit;
 using Xunit.Abstractions;
@@ -40,6 +42,35 @@ public class DwgWriterTests : IOTestsBase
 		{
 			CadDocument readed = re.Read();
 		}
+	}
+
+	[Theory]
+	[InlineData(ACadVersion.AC1018)]
+	[InlineData(ACadVersion.AC1021)]
+	[InlineData(ACadVersion.AC1024)]
+	[InlineData(ACadVersion.AC1027)]
+	[InlineData(ACadVersion.AC1032)]
+	public void WriteTrueColorWithBookColor(ACadVersion version)
+	{
+		CadDocument doc = new CadDocument();
+		doc.Header.Version = version;
+
+		Circle circle = new Circle { Center = new XYZ(10, 20, 0), Radius = 5, Color = new Color(226, 144, 0) };
+		doc.ModelSpace.Entities.Add(circle);
+		circle.BookColor = new BookColor("RAL CLASSIC$RAL 1006") { Color = new Color(226, 144, 0) };
+		doc.ModelSpace.Entities.Add(new Line { StartPoint = XYZ.Zero, EndPoint = new XYZ(100, 0, 0) });
+
+		using MemoryStream stream = new MemoryStream();
+		DwgWriter.Write(stream, doc, null, this.onNotification);
+
+		using MemoryStream written = new MemoryStream(stream.ToArray());
+		using DwgReader reader = new DwgReader(written, this.onNotification);
+		CadDocument read = reader.Read();
+
+		Assert.Equal(2, read.ModelSpace.Entities.Count);
+		Assert.True(read.TryGetCadObject(circle.Handle, out Circle readCircle));
+		Assert.Equal(circle.Center, readCircle.Center);
+		Assert.Equal(circle.Radius, readCircle.Radius);
 	}
 
 	[Theory]
