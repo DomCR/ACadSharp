@@ -307,6 +307,11 @@ internal abstract class DxfSectionReaderBase
 			case DxfFileToken.EntityHatch:
 				return this.readEntityCodes<Hatch>(new CadHatchTemplate(), this.readHatch);
 			case DxfFileToken.EntityInsert:
+				if (this._builder.Version == ACadVersion.Unknown
+					|| this._builder.Version == ACadVersion.AC1009)
+				{
+					return this.readLegacyInsert();
+				}
 				return this.readEntityCodes<Insert>(new CadInsertTemplate(), this.readInsert);
 			case DxfFileToken.EntityMText:
 				return this.readEntityCodes<MText>(new CadTextEntityTemplate(new MText()), this.readTextEntity);
@@ -1291,6 +1296,42 @@ internal abstract class DxfSectionReaderBase
 			default:
 				return this.tryAssignCurrentValue(template.CadObject, map);
 		}
+	}
+
+	private CadEntityTemplate readLegacyInsert()
+	{
+		var insert = new Insert();
+		CadInsertTemplate template = new CadInsertTemplate(insert);
+		this.readEntityCodes<Insert>(template, this.readInsert);
+
+		//R12 has no owner handles, the attributes and the SEQEND follow the INSERT
+		while (this._reader.Code == 0 && this._reader.ValueAsString == DxfFileToken.EntityAttribute)
+		{
+			AttributeEntity att = new AttributeEntity();
+			CadAttributeTemplate attTemplate = new CadAttributeTemplate(att);
+			this.readEntityCodes<AttributeEntity>(attTemplate, this.readAttributeDefinition);
+
+			if (att.Handle == 0)
+			{
+				insert.Attributes.Add(att);
+			}
+			else
+			{
+				template.OwnedObjectsHandlers.Add(att.Handle);
+				this._builder.AddTemplate(attTemplate);
+			}
+		}
+
+		while (this._reader.Code == 0 && this._reader.ValueAsString == DxfFileToken.EndSequence)
+		{
+			var seqend = new Seqend();
+			var seqendTemplate = new CadEntityTemplate<Seqend>(seqend);
+			this.readEntityCodes<Seqend>(seqendTemplate, this.readEntitySubclassMap);
+
+			insert.Attributes.Seqend = seqend;
+		}
+
+		return template;
 	}
 
 	private CadEntityTemplate readLegacyPolyline()
