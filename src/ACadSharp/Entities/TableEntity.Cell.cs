@@ -117,7 +117,7 @@ public partial class TableEntity
 		/// Cell merged value.
 		/// </summary>
 		[DxfCodeValue(173)]
-		public short MergedValue { get; set; }
+		public bool MergedValue { get; set; }
 
 		/// <summary>
 		/// Gets the owning <see cref="LinkedTableData"/> instance.
@@ -145,7 +145,7 @@ public partial class TableEntity
 		/// <remarks>
 		/// Applicable for a block-type cell and a text-type cell.
 		/// </remarks>
-		[DxfCodeValue(145)]
+		[DxfCodeValue(DxfReferenceType.IsAngle, 145)]
 		public double Rotation { get; set; }
 
 		/// <summary>

@@ -1,5 +1,6 @@
 ﻿using ACadSharp.Attributes;
 using ACadSharp.Objects;
+using ACadSharp.Tables;
 using static ACadSharp.Objects.TableStyle;
 
 namespace ACadSharp.Entities;
@@ -47,6 +48,21 @@ public partial class TableEntity
 		private LinkedTableData _owner;
 
 		/// <summary>
+		/// Initializes a new instance of the CellContent class.
+		/// </summary>
+		public CellContent()
+		{ }
+
+		/// <summary>
+		/// Initializes cell content from a block record.
+		/// </summary>
+		/// <param name="block">The block record to use as the cell content.</param>
+		public CellContent(BlockRecord block)
+		{
+			this.CadValue.SetValue(block);
+		}
+
+		/// <summary>
 		/// Creates a copy of the current CellContent instance.
 		/// </summary>
 		/// <remarks>The Owner reference is copied to the new instance.</remarks>
@@ -60,7 +76,7 @@ public partial class TableEntity
 			};
 
 			clone.CadValue = this.CadValue.Clone();
-			clone.Format = (this.Format.Clone());
+			clone.Format = this.Format.Clone();
 			return clone;
 		}
 	}
