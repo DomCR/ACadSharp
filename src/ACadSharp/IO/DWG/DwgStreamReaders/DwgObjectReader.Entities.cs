@@ -388,7 +388,7 @@ internal partial class DwgObjectReader : DwgSectionIO
 		if (cell.HasLinkedData)
 		{
 			//H 340 Handle to data link object (hard pointer).
-			template.ValueHandle = this._mergedReaders.HandleReference();
+			template.BlockRecordHandle = this._mergedReaders.HandleReference();
 			//BL 93 Row count.
 			this._mergedReaders.ReadBitLong();
 			//BL 94 Column count.
@@ -516,12 +516,12 @@ internal partial class DwgObjectReader : DwgSectionIO
 		cell.Rotation = this._mergedReaders.ReadBitDouble();
 
 		//H 344 for text cell, 340 for block cell (hard pointer)
-		template.ValueHandle = this.handleReference();
+		template.BlockRecordHandle = this.handleReference();
 
 		switch (cell.Type)
 		{
 			//In AutoCAD 2007 a cell can contain either 1 text block.
-			case CellType.Text when template.ValueHandle == 0 && this._version < ACadVersion.AC1021:
+			case CellType.Text when template.BlockRecordHandle == 0 && this._version < ACadVersion.AC1021:
 				//Text string TV 1 Present only if 344 value below is 0
 				var content = new CellContent();
 				content.CadValue.SetValue(this._mergedReaders.ReadVariableText(), CadValueType.String);

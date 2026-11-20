@@ -2321,7 +2321,7 @@ internal abstract class DxfSectionReaderBase
 				contentTemplate.CadValueTemplate = valTemplate;
 				return true;
 			case 340:
-				tmp.CurrentCellTemplate.ValueHandle = this._reader.ValueAsHandle;
+				tmp.CurrentCellTemplate.BlockRecordHandle = this._reader.ValueAsHandle;
 				return true;
 			default:
 				if (!this.tryAssignCurrentValue(template.CadObject, map))

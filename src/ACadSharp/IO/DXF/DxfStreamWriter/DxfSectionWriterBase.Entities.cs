@@ -3,6 +3,7 @@ using ACadSharp.Entities.AecEntities;
 using ACadSharp.Entities.Mechanical;
 using ACadSharp.Entities.ProxyGraphics;
 using ACadSharp.Objects;
+using ACadSharp.Tables;
 using CSMath;
 using CSMath.Extensions;
 using System;
@@ -1576,10 +1577,19 @@ internal abstract partial class DxfSectionWriterBase
 		}
 		else if (cell.Type == CellType.Block)
 		{
-			throw new NotImplementedException();
+			if (cell.Content.CadValue.Value is BlockRecord record)
+			{
+				this._writer.WriteHandle(340, record);
+				this._writer.Write(144, cell.BlockScale);
+			}
+
+			//Attribute count
+			this._writer.Write(179, 0);
 		}
 
 		//Write override properties
+		//...
+
 		if (this.Version <= ACadVersion.AC1018)
 		{
 			return;
