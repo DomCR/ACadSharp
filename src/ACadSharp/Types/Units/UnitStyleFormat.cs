@@ -560,7 +560,12 @@ namespace ACadSharp.Types.Units
 		/// <returns>A string that represents the length in scientific units.</returns>
 		public string ToScientific(double value)
 		{
-			return value.ToString($"{this.GetZeroHandlingFormat()}E+00");
+			NumberFormatInfo numberFormat = new NumberFormatInfo
+			{
+				NumberDecimalSeparator = this.DecimalSeparator
+			};
+
+			return value.ToString($"{this.GetZeroHandlingFormat()}E+00", numberFormat);
 		}
 
 		private static void getFraction(double number, int precision, out int numerator, out int denominator)
