@@ -1565,7 +1565,7 @@ internal abstract partial class DxfSectionWriterBase
 		}
 		else
 		{
-			this._writer.Write(177, cell.StyleOverride.OverrideFlags);
+			this._writer.Write(177, (short)((uint)cell.StyleOverride.OverrideFlags & 0xFFFF));
 		}
 
 		this._writer.Write(178, cell.VirtualEdgeFlag);
@@ -1577,7 +1577,7 @@ internal abstract partial class DxfSectionWriterBase
 		}
 		else if (cell.Type == CellType.Block)
 		{
-			if (cell.Content.CadValue.Value is BlockRecord record)
+			if (cell.Content?.CadValue?.Value is BlockRecord record)
 			{
 				this._writer.WriteHandle(340, record);
 				this._writer.Write(144, cell.BlockScale);
