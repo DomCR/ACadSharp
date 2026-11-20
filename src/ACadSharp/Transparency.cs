@@ -91,17 +91,18 @@ public struct Transparency
 	public static Transparency FromAlphaValue(int value)
 	{
 		byte[] bytes = BitConverter.GetBytes(value);
+
+		//The last byte is the method: 0 = ByLayer, 1 = ByBlock, 2 = the alpha in the first byte.
+		//Without it an explicit ByLayer (value 0) was read as ByBlock, and alpha 0 too.
+		switch (bytes[3])
+		{
+			case 0:
+				return ByLayer;
+			case 1:
+				return ByBlock;
+		}
+
 		short alpha = (short)(100 - (bytes[0] / 255.0) * 100);
-
-		if (alpha == -1)
-		{
-			return ByLayer;
-		}
-
-		if (alpha == 100)
-		{
-			return ByBlock;
-		}
 
 		if (alpha < 0)
 		{
@@ -123,6 +124,13 @@ public struct Transparency
 	/// <returns></returns>
 	public static int ToAlphaValue(Transparency transparency)
 	{
+		//ByLayer is the method byte 0 with no value: 255 * 101 / 100 does not fit in a byte and
+		//saturated into 255, which is an explicit 0% (opaque) instead of ByLayer.
+		if (transparency.IsByLayer)
+		{
+			return 0;
+		}
+
 		byte alpha = (byte)(255 * (100 - transparency.Value) / 100.0);
 		byte[] bytes = transparency.IsByBlock ? new byte[] { 0, 0, 0, 1 } : new byte[] { alpha, 0, 0, 2 };
 		return BitConverter.ToInt32(bytes, 0);
