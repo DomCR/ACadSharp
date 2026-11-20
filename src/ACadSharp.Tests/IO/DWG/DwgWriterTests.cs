@@ -184,6 +184,23 @@ public class DwgWriterTests : IOTestsBase
 		}
 	}
 
+	[Fact]
+	public void WriteShapeKeepsShapeStyle()
+	{
+		CadDocument doc = DwgReader.Read(Path.Combine(TestVariables.SamplesFolder, "sample_AC1032.dwg"));
+		Shape shape = doc.GetCadObject<Shape>(0x889);
+		Assert.NotNull(shape.ShapeStyle);
+		string styleName = shape.ShapeStyle.Name;
+
+		MemoryStream stream = new MemoryStream();
+		DwgWriter.Write(stream, doc, new DwgWriterConfiguration { WriteShapes = true }, this.onNotification);
+
+		CadDocument readed = DwgReader.Read(new MemoryStream(stream.ToArray()));
+		shape = readed.GetCadObject<Shape>(0x889);
+		Assert.NotNull(shape.ShapeStyle);
+		Assert.Equal(styleName, shape.ShapeStyle.Name);
+	}
+
 	private void addEntities(CadDocument doc)
 	{
 		doc.Entities.Add(EntityFactory.Create<Point>());
