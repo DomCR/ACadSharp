@@ -1,4 +1,5 @@
 ﻿using ACadSharp.Entities.Mechanical;
+using ACadSharp.Objects.Mechanical;
 using ACadSharp.Tables;
 
 namespace ACadSharp.IO.Templates;
@@ -20,6 +21,15 @@ internal class CadAcmBalloonTemplate : CadMechanicalEntityTemplate<AcmBalloon>
 		if (this.getTableReference(builder, this.BlockHandle, null, out BlockRecord record))
 		{
 			this.CadObject.Block = record;
+		}
+
+		if (builder.TryGetCadObject(this.BomRowHandle, out AcmBomRow row))
+		{
+			this.CadObject.BomRow = row;
+			if (!row.Balloons.Contains(this.CadObject))
+			{
+				row.Balloons.Add(this.CadObject);
+			}
 		}
 	}
 }
