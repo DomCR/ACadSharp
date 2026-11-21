@@ -17,6 +17,9 @@ namespace ACadSharp.Entities
 	public class Polyline3D : Polyline<Vertex3D>
 	{
 		/// <inheritdoc/>
+		protected override bool VertexesAreInObjectCoordinates { get; } = false;
+
+		/// <inheritdoc/>
 		public override PolylineFlags Flags { get => base.Flags | (PolylineFlags.Polyline3D); set => base.Flags = value; }
 
 		/// <inheritdoc/>

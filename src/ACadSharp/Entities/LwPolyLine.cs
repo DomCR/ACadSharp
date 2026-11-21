@@ -148,11 +148,15 @@ public partial class LwPolyline : Entity, IPolyline
 	/// <inheritdoc/>
 	public override BoundingBox GetBoundingBox()
 	{
-		if (this.Vertices.Any(v => v.Bulge != 0))
-		{
-			return BoundingBox.FromPoints(this.GetPoints<XYZ>(byte.MaxValue));
-		}
+		IEnumerable<XYZ> points = this.Vertices.Any(v => v.Bulge != 0)
+			? this.GetPoints<XYZ>(byte.MaxValue)
+			: this.Vertices.Select(v => v.Location.Convert<XYZ>());
 
-		return BoundingBox.FromPoints(this.Vertices.Select(v => v.Location.Convert<XYZ>()));
+		//The vertices are stored in the entity's own object coordinate system. A caller asking for a
+		//bounding box is asking where the thing sits in the world, and for the (0,0,-1) normal AutoCAD
+		//writes whenever geometry is mirrored the two differ by the sign of X - which is enough to put
+		//a drawing's extents out by millions of units and make a viewer's zoom-extents useless.
+		Matrix4 toWorld = Matrix4.GetArbitraryAxis(this.Normal);
+		return BoundingBox.FromPoints(points.Select(p => toWorld * p));
 	}
 }
