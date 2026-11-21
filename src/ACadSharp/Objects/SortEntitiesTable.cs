@@ -26,6 +26,18 @@ public partial class SortEntitiesTable : NonGraphicalObject, IDxfClassDefined, I
 	[DxfCodeValue(330)]
 	public BlockRecord BlockOwner { get; internal set; }
 
+	/// <summary>
+	/// The owner exactly as the file stores it, which is not always a block record.
+	/// </summary>
+	/// <remarks>
+	/// A drawing can hold sort tables whose owner is a dictionary: AutoCAD writes them, keeps them
+	/// and audits such a file without a single error. <see cref="BlockOwner"/> can only hold a block
+	/// record, so writing that back gave a null handle and AutoCAD then reported
+	/// "AcDbSortEntsTable Block Id not valid" once per object. The writers use this reference so the
+	/// file keeps what it came with.
+	/// </remarks>
+	internal CadObject BlockOwnerReference { get; set; }
+
 	/// <inheritdoc/>
 	public override string ObjectName => DxfFileToken.ObjectSortEntsTable;
 
@@ -96,11 +108,21 @@ public partial class SortEntitiesTable : NonGraphicalObject, IDxfClassDefined, I
 		};
 	}
 
+	//The order the file gives this table is not the order it enumerates in, and it is worth keeping:
+	//a table whose keys collide - AutoCAD reports 15 such entries in one production drawing - is read
+	//by whichever entry comes first, so rewriting it in another order changes what the drawing means.
+	//Sorting inside GetEnumerator did exactly that: reading the table reordered it, and the writer
+	//then wrote that order back out. It cost that drawing an audit error it did not arrive with.
+	internal IReadOnlyList<Sorter> StoredOrder
+	{
+		get { return this._sorters; }
+	}
+
 	/// <inheritdoc/>
 	public IEnumerator<Sorter> GetEnumerator()
 	{
-		this._sorters.Sort();
-		return this._sorters.GetEnumerator();
+		//Sorted, as before - but without reordering what is stored.
+		return this._sorters.OrderBy(s => s.SortHandle).GetEnumerator();
 	}
 
 	/// <inheritdoc/>
@@ -187,15 +209,15 @@ public partial class SortEntitiesTable : NonGraphicalObject, IDxfClassDefined, I
 			return;
 		}
 
-		this._sorters.Sort();
-
-		int index = this._sorters.IndexOf(existing);
-		if (index < 0 || index >= this._sorters.Count - 1)
+		//A sorted view, not a sort in place: the stored order is what the file gave and is kept.
+		List<Sorter> sorted = this._sorters.OrderBy(s => s.SortHandle).ToList();
+		int index = sorted.IndexOf(existing);
+		if (index < 0 || index >= sorted.Count - 1)
 		{
 			return;
 		}
 
-		Sorter next = this._sorters[index + 1];
+		Sorter next = sorted[index + 1];
 		(existing.SortHandle, next.SortHandle) = (next.SortHandle, existing.SortHandle);
 	}
 
@@ -212,13 +234,17 @@ public partial class SortEntitiesTable : NonGraphicalObject, IDxfClassDefined, I
 			return;
 		}
 
-		int index = this._sorters.OrderBy(s => s.SortHandle).ToList().IndexOf(existing);
-		if (index <= 0 || _sorters.Count < 2)
+		//The neighbour has to come from the same sorted view the index came from. Taking it from
+		//the stored list swapped with whatever happened to sit there, which was only right while
+		//enumeration sorted the list in place as a side effect.
+		List<Sorter> sorted = this._sorters.OrderBy(s => s.SortHandle).ToList();
+		int index = sorted.IndexOf(existing);
+		if (index <= 0)
 		{
 			return;
 		}
 
-		Sorter previous = this._sorters[index - 1];
+		Sorter previous = sorted[index - 1];
 		(existing.SortHandle, previous.SortHandle) = (previous.SortHandle, existing.SortHandle);
 	}
 
