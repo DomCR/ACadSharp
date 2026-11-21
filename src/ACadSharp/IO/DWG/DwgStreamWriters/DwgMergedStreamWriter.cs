@@ -171,6 +171,11 @@ namespace ACadSharp.IO.DWG
 			{
 				arr[3] = 0b11000000;
 			}
+			else if (value.Index == 257)
+			{
+				//"none" (ByEntity), AutoCAD marks it with 0xC8 and an empty rgb value.
+				arr[3] = 0b1100_1000;
+			}
 			else
 			{
 				arr[3] = 0b1100_0011;
