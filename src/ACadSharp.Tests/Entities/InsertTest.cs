@@ -1,4 +1,5 @@
 ﻿using ACadSharp.Entities;
+using ACadSharp.Objects;
 using ACadSharp.Extensions;
 using ACadSharp.Tables;
 using ACadSharp.Tests.Common;
@@ -136,6 +137,33 @@ public class InsertTest
 
 		Assert.Equal(XYZ.Zero, box.Min);
 		Assert.Equal(new XYZ(20, 10, 0), box.Max);
+	}
+
+	[Fact]
+	public void GetBoundingBoxIsClippedByTheSpatialFilter()
+	{
+		//An XCLIP takes everything outside the boundary out of the drawing, and AutoCAD measures its
+		//extents from what survives, so the box has to be the intersection and not the whole block.
+		BlockRecord record = new BlockRecord(this._blockName);
+		record.Entities.Add(new Line(XYZ.Zero, new XYZ(100, 100, 0)));
+
+		Insert insert = new Insert(record);
+
+		SpatialFilter filter = new SpatialFilter(SpatialFilter.SpatialFilterEntryName);
+		filter.BoundaryPoints.Add(new XY(20, 20));
+		filter.BoundaryPoints.Add(new XY(60, 60));
+
+		//Both formats record this matrix with the translation in the fourth column, which is the
+		//transpose of the layout Matrix4's own operators read. Building it the same way here keeps
+		//the test honest about what a file actually holds.
+		filter.InverseInsertTransform = Matrix4.CreateTranslation(new XYZ(-5, -5, 0)).Transpose();
+
+		insert.SpatialFilter = filter;
+
+		BoundingBox box = insert.GetBoundingBox();
+
+		Assert.Equal(new XYZ(15, 15, 0), box.Min);
+		Assert.Equal(new XYZ(55, 55, 0), box.Max);
 	}
 
 	[Fact]
