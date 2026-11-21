@@ -42,5 +42,12 @@ internal class CadFieldTemplate : CadTemplate<Field>
 				builder.Notify($"[{this.CadObject.SubclassMarker}] CadObject with handle {handle} not found.", NotificationType.Warning);
 			}
 		}
+
+		//Values of type Handle (e.g. the "ObjectPropertyId" of an AcObjProp field) are read as a handle
+		//and only resolved here.
+		foreach (var valueTemplate in this.CadValueTemplates)
+		{
+			valueTemplate.Build(builder);
+		}
 	}
 }
