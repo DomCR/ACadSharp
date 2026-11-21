@@ -8,21 +8,31 @@ namespace ACadSharp.IO.DWG.DwgStreamWriters;
 
 internal class DwgFileHeaderWriterAC15 : DwgFileHeaderWriterBase<DwgFileHeaderAC15>
 {
-	public override int FileHeaderSize { get { return 0x61; } }
+	/// <summary>
+	/// R14 writes five section locator records and R2000 six, and the header is exactly that much
+	/// shorter: 21 bytes of preamble, 4 for the count, 9 per record, 2 of CRC and 16 of sentinel.
+	/// </summary>
+	public override int FileHeaderSize { get { return this.isR14 ? 0x58 : 0x61; } }
 
 	public override int HandleSectionOffset
 	{
 		get
 		{
 			return (int)(FileHeaderSize
-				+ this._records[DwgSectionDefinition.AuxHeader].Stream.Length
-				+ this._records[DwgSectionDefinition.Preview].Stream.Length
-				+ this._records[DwgSectionDefinition.Header].Stream.Length
-				+ this._records[DwgSectionDefinition.Classes].Stream.Length);
+				+ this.streamLength(DwgSectionDefinition.AuxHeader)
+				+ this.streamLength(DwgSectionDefinition.Preview)
+				+ this.streamLength(DwgSectionDefinition.Header)
+				+ this.streamLength(DwgSectionDefinition.Classes));
 		}
 	}
 
-	private const int _nRecords = 6;
+	/// <summary>
+	/// R14 has no auxiliary header and leaves the object free space empty; AutoCAD writes its record
+	/// with a seeker and a size of 0. Measured on samples/sample_AC1014.dwg.
+	/// </summary>
+	private bool isR14 { get { return this._version == ACadVersion.AC1014; } }
+
+	private int nRecords { get { return this.isR14 ? 5 : 6; } }
 
 	private byte[] _endSentinel = new byte[16]
 	{
@@ -52,7 +62,21 @@ internal class DwgFileHeaderWriterAC15 : DwgFileHeaderWriterBase<DwgFileHeaderAC
 
 	public override void AddSection(string name, MemoryStream stream, bool isCompressed, int decompsize = 29696)
 	{
+		if (this.isR14
+			&& (name == DwgSectionDefinition.AuxHeader || name == DwgSectionDefinition.ObjFreeSpace))
+		{
+			//Not part of an R14 file; leaving the stream null keeps the record at seeker 0, size 0
+			//and keeps the bytes out of the file.
+			return;
+		}
+
 		this._records[name].Stream = stream;
+	}
+
+	private long streamLength(string name)
+	{
+		MemoryStream stream = this._records[name].Stream;
+		return stream == null ? 0 : stream.Length;
 	}
 
 	public override void WriteFile()
@@ -72,6 +96,13 @@ internal class DwgFileHeaderWriterAC15 : DwgFileHeaderWriterBase<DwgFileHeaderAC
 		foreach (var kv in this._records)
 		{
 			var record = kv.Value;
+			if (record.Stream == null)
+			{
+				//A section this version does not have: AutoCAD points its record at 0.
+				record.Seeker = 0;
+				continue;
+			}
+
 			record.Seeker = currOffset;
 			currOffset += (int)record.Stream.Length;
 		}
@@ -86,7 +117,8 @@ internal class DwgFileHeaderWriterAC15 : DwgFileHeaderWriterBase<DwgFileHeaderAC
 		writer.WriteBytes(Encoding.ASCII.GetBytes(this._document.Header.VersionString), 0, 6);
 		//The next 7 starting at offset 0x06 are to be six bytes of 0
 		//(in R14, 5 0’s and the ACADMAINTVER variable) and a byte of 1.
-		writer.WriteBytes(new byte[7] { 0, 0, 0, 0, 0, 15, 1 });
+		//The maintenance version byte: AutoCAD writes 10 in R14 and 15 in R2000.
+		writer.WriteBytes(new byte[7] { 0, 0, 0, 0, 0, (byte)(this.isR14 ? 10 : 15), 1 });
 		//At 0x0D is a seeker (4 byte long absolute address) for the beginning sentinel of the image data.
 		writer.WriteRawLong(this._records[DwgSectionDefinition.Preview].Seeker);
 
@@ -95,14 +127,18 @@ internal class DwgFileHeaderWriterAC15 : DwgFileHeaderWriterBase<DwgFileHeaderAC
 
 		//Bytes at 0x13 and 0x14 are a raw short indicating the value of the code page for this drawing file.
 		writer.WriteBytes(LittleEndianConverter.Instance.GetBytes(this.getFileCodePage()));
-		writer.WriteBytes(LittleEndianConverter.Instance.GetBytes(_nRecords), 0, 4);
+		writer.WriteBytes(LittleEndianConverter.Instance.GetBytes(this.nRecords), 0, 4);
 
 		this.writeRecord(writer, this._records[DwgSectionDefinition.Header]);
 		this.writeRecord(writer, this._records[DwgSectionDefinition.Classes]);
 		this.writeRecord(writer, this._records[DwgSectionDefinition.Handles]);
 		this.writeRecord(writer, this._records[DwgSectionDefinition.ObjFreeSpace]);
 		this.writeRecord(writer, this._records[DwgSectionDefinition.Template]);
-		this.writeRecord(writer, this._records[DwgSectionDefinition.AuxHeader]);
+
+		if (!this.isR14)
+		{
+			this.writeRecord(writer, this._records[DwgSectionDefinition.AuxHeader]);
+		}
 
 		//CRC
 		writer.WriteSpearShift();
@@ -119,7 +155,7 @@ internal class DwgFileHeaderWriterAC15 : DwgFileHeaderWriterBase<DwgFileHeaderAC
 		//Record number (raw byte) | Seeker (raw long) | Size (raw long)
 		writer.WriteByte((byte)record.Number.Value);
 		writer.WriteRawLong(record.Seeker);
-		writer.WriteRawLong(record.Stream.Length);
+		writer.WriteRawLong(record.Stream == null ? 0 : record.Stream.Length);
 	}
 
 	private void writeRecordStreams()
