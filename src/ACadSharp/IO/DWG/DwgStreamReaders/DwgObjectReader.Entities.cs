@@ -607,7 +607,7 @@ internal partial class DwgObjectReader : DwgSectionIO
 				//Top grid lineweight BS 279 Present only if bit 0x00400 is set in cell flag
 				cell.StyleOverride.TopBorder.LineWeight = (LineWeightType)this._mergedReaders.ReadBitShort();
 			}
-			if (flags.HasFlag(CellOverrideFlags.TopGridLineWeight))
+			if (flags.HasFlag(CellOverrideFlags.TopVisibility))
 			{
 				//Top visibility BS 289 Present only if bit 0x04000 is set in cell flag
 				cell.StyleOverride.TopBorder.IsInvisible = !this._mergedReaders.ReadBitShortAsBool();
@@ -623,7 +623,7 @@ internal partial class DwgObjectReader : DwgSectionIO
 				//Right grid lineweight BS 275 Present only if bit 0x00800 is set in cell flag
 				cell.StyleOverride.RightBorder.LineWeight = (LineWeightType)this._mergedReaders.ReadBitShort();
 			}
-			if (flags.HasFlag(CellOverrideFlags.RightGridLineWeight))
+			if (flags.HasFlag(CellOverrideFlags.RightVisibility))
 			{
 				//Right visibility BS 285 Present only if bit 0x08000 is set in cell flag
 				cell.StyleOverride.RightBorder.IsInvisible = !this._mergedReaders.ReadBitShortAsBool();
@@ -639,7 +639,7 @@ internal partial class DwgObjectReader : DwgSectionIO
 				//Bottom grid lineweight BS 276 Present only if bit 0x01000 is set in cell flag
 				cell.StyleOverride.BottomBorder.LineWeight = (LineWeightType)this._mergedReaders.ReadBitShort();
 			}
-			if (flags.HasFlag(CellOverrideFlags.BottomGridLineWeight))
+			if (flags.HasFlag(CellOverrideFlags.BottomVisibility))
 			{
 				//Bottom visibility BS 286 Present only if bit 0x10000 is set in cell flag
 				cell.StyleOverride.BottomBorder.IsInvisible = !this._mergedReaders.ReadBitShortAsBool();
@@ -655,7 +655,7 @@ internal partial class DwgObjectReader : DwgSectionIO
 				//Left grid lineweight BS 278 Present only if bit 0x02000 is set in cell flag
 				cell.StyleOverride.LeftBorder.LineWeight = (LineWeightType)this._mergedReaders.ReadBitShort();
 			}
-			if (flags.HasFlag(CellOverrideFlags.LeftGridLineWeight))
+			if (flags.HasFlag(CellOverrideFlags.LeftVisibility))
 			{
 				//Left visibility BS 288 Present only if bit 0x20000 is set in cell flag
 				cell.StyleOverride.LeftBorder.IsInvisible = !this._mergedReaders.ReadBitShortAsBool();
