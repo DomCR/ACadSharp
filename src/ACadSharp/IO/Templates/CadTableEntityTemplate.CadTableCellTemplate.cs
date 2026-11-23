@@ -35,6 +35,10 @@ internal partial class CadTableEntityTemplate
 			{
 				this.Cell.Contents.Add(new TableEntity.CellContent(block));
 			}
+			else if (this.BlockRecordHandle != null && this.BlockRecordHandle != 0)
+			{
+				builder.Notify($"Block record with handle {this.BlockRecordHandle} not found for table cell.");
+			}
 
 			foreach (var contentTemplate in this.ContentTemplates)
 			{
