@@ -2131,23 +2131,43 @@ internal abstract class DxfSectionReaderBase
 	private bool readExtrudedSurface(CadEntityTemplate template, DxfMap map, string subclass = null)
 	{
 		var tmp = template as CadModelerGeometryTemplate<ExtrudedSurface>;
-		List<double> arr = null;
 
 		switch (this._reader.Code)
 		{
-			case 40:
-				arr = new();
-				arr.Add(this._reader.ValueAsDouble);
-				for (int i = 1; i < 16; i++)
+			case 90:
+				if (!tmp.CadObject.ClassId.HasValue)
 				{
-					this._reader.ExpectedCode(40);
-					arr.Add(this._reader.ValueAsDouble);
+					tmp.CadObject.ClassId = this._reader.ValueAsInt;
 				}
-				tmp.CadObject.ExtrusionTransform = new Matrix4(arr.ToArray());
+				else
+				{
+					tmp.CadObject.BinaryData = this.readByteEntries(310)?.ToArray();
+				}
+				return true;
+			case 40:
+				tmp.CadObject.ExtrusionTransform = this.readMatrix4(40);
+				return true;
+			case 46:
+				tmp.CadObject.SweepEntityTransform = this.readMatrix4(46);
+				return true;
+			case 47:
+				tmp.CadObject.PathEntityTransform = this.readMatrix4(47);
 				return true;
 			default:
 				return this.readSurfaceEntity<ExtrudedSurface>(template, map, subclass);
 		}
+	}
+
+	private Matrix4 readMatrix4(int expectedCode)
+	{
+		List<double> arr = new();
+		arr.Add(this._reader.ValueAsDouble);
+		for (int i = 1; i < 16; i++)
+		{
+			this._reader.ExpectedCode(expectedCode);
+			arr.Add(this._reader.ValueAsDouble);
+		}
+		return new Matrix4(arr.ToArray());
 	}
 
 	private bool readSurfaceEntity<T>(CadEntityTemplate template, DxfMap map, string subclass = null)
