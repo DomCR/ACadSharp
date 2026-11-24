@@ -2458,6 +2458,16 @@ internal abstract class DxfSectionReaderBase
 				return true;
 			case 301:
 				content = new TableEntity.CellContent();
+				if (tmp.CurrentCell.Type == TableEntity.CellType.Block)
+				{
+					//The block is in 340, the value is an empty string
+					content.ContentType = TableEntity.TableCellContentType.Block;
+					tmp.CurrentCell.Contents.Add(content);
+					this.readCadValue(new CadValue());
+					return true;
+				}
+
+				content.ContentType = TableEntity.TableCellContentType.Value;
 				var contentTemplate = new CadTableCellContentTemplate(content);
 				tmp.CurrentCell.Contents.Add(content);
 				var valTemplate = readCadValue(content.CadValue);
