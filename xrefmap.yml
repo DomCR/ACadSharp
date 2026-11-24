@@ -39219,12 +39219,12 @@ references:
   commentId: F:ACadSharp.Objects.EdgeStyleModel.Isolines
   fullName: ACadSharp.Objects.EdgeStyleModel.Isolines
   nameWithType: EdgeStyleModel.Isolines
-- uid: ACadSharp.Objects.EdgeStyleModel.NoEdges
-  name: NoEdges
-  href: api/ACadSharp.Objects.EdgeStyleModel.html#ACadSharp_Objects_EdgeStyleModel_NoEdges
-  commentId: F:ACadSharp.Objects.EdgeStyleModel.NoEdges
-  fullName: ACadSharp.Objects.EdgeStyleModel.NoEdges
-  nameWithType: EdgeStyleModel.NoEdges
+- uid: ACadSharp.Objects.EdgeStyleModel.None
+  name: None
+  href: api/ACadSharp.Objects.EdgeStyleModel.html#ACadSharp_Objects_EdgeStyleModel_None
+  commentId: F:ACadSharp.Objects.EdgeStyleModel.None
+  fullName: ACadSharp.Objects.EdgeStyleModel.None
+  nameWithType: EdgeStyleModel.None
 - uid: ACadSharp.Objects.EvaluationOptionFlags
   name: EvaluationOptionFlags
   href: api/ACadSharp.Objects.EvaluationOptionFlags.html
@@ -53472,6 +53472,84 @@ references:
   fullName.vb: ACadSharp.Objects.VisualStyle.New
   nameWithType: VisualStyle.VisualStyle
   nameWithType.vb: VisualStyle.New
+- uid: ACadSharp.Objects.VisualStyle.BloomEffectEnabled
+  name: BloomEffectEnabled
+  href: api/ACadSharp.Objects.VisualStyle.html#ACadSharp_Objects_VisualStyle_BloomEffectEnabled
+  commentId: P:ACadSharp.Objects.VisualStyle.BloomEffectEnabled
+  fullName: ACadSharp.Objects.VisualStyle.BloomEffectEnabled
+  nameWithType: VisualStyle.BloomEffectEnabled
+- uid: ACadSharp.Objects.VisualStyle.BloomEffectEnabled*
+  name: BloomEffectEnabled
+  href: api/ACadSharp.Objects.VisualStyle.html#ACadSharp_Objects_VisualStyle_BloomEffectEnabled_
+  commentId: Overload:ACadSharp.Objects.VisualStyle.BloomEffectEnabled
+  isSpec: "True"
+  fullName: ACadSharp.Objects.VisualStyle.BloomEffectEnabled
+  nameWithType: VisualStyle.BloomEffectEnabled
+- uid: ACadSharp.Objects.VisualStyle.BloomIntensity
+  name: BloomIntensity
+  href: api/ACadSharp.Objects.VisualStyle.html#ACadSharp_Objects_VisualStyle_BloomIntensity
+  commentId: P:ACadSharp.Objects.VisualStyle.BloomIntensity
+  fullName: ACadSharp.Objects.VisualStyle.BloomIntensity
+  nameWithType: VisualStyle.BloomIntensity
+- uid: ACadSharp.Objects.VisualStyle.BloomIntensity*
+  name: BloomIntensity
+  href: api/ACadSharp.Objects.VisualStyle.html#ACadSharp_Objects_VisualStyle_BloomIntensity_
+  commentId: Overload:ACadSharp.Objects.VisualStyle.BloomIntensity
+  isSpec: "True"
+  fullName: ACadSharp.Objects.VisualStyle.BloomIntensity
+  nameWithType: VisualStyle.BloomIntensity
+- uid: ACadSharp.Objects.VisualStyle.BloomRadius
+  name: BloomRadius
+  href: api/ACadSharp.Objects.VisualStyle.html#ACadSharp_Objects_VisualStyle_BloomRadius
+  commentId: P:ACadSharp.Objects.VisualStyle.BloomRadius
+  fullName: ACadSharp.Objects.VisualStyle.BloomRadius
+  nameWithType: VisualStyle.BloomRadius
+- uid: ACadSharp.Objects.VisualStyle.BloomRadius*
+  name: BloomRadius
+  href: api/ACadSharp.Objects.VisualStyle.html#ACadSharp_Objects_VisualStyle_BloomRadius_
+  commentId: Overload:ACadSharp.Objects.VisualStyle.BloomRadius
+  isSpec: "True"
+  fullName: ACadSharp.Objects.VisualStyle.BloomRadius
+  nameWithType: VisualStyle.BloomRadius
+- uid: ACadSharp.Objects.VisualStyle.BloomThreshold
+  name: BloomThreshold
+  href: api/ACadSharp.Objects.VisualStyle.html#ACadSharp_Objects_VisualStyle_BloomThreshold
+  commentId: P:ACadSharp.Objects.VisualStyle.BloomThreshold
+  fullName: ACadSharp.Objects.VisualStyle.BloomThreshold
+  nameWithType: VisualStyle.BloomThreshold
+- uid: ACadSharp.Objects.VisualStyle.BloomThreshold*
+  name: BloomThreshold
+  href: api/ACadSharp.Objects.VisualStyle.html#ACadSharp_Objects_VisualStyle_BloomThreshold_
+  commentId: Overload:ACadSharp.Objects.VisualStyle.BloomThreshold
+  isSpec: "True"
+  fullName: ACadSharp.Objects.VisualStyle.BloomThreshold
+  nameWithType: VisualStyle.BloomThreshold
+- uid: ACadSharp.Objects.VisualStyle.BlurAmount
+  name: BlurAmount
+  href: api/ACadSharp.Objects.VisualStyle.html#ACadSharp_Objects_VisualStyle_BlurAmount
+  commentId: P:ACadSharp.Objects.VisualStyle.BlurAmount
+  fullName: ACadSharp.Objects.VisualStyle.BlurAmount
+  nameWithType: VisualStyle.BlurAmount
+- uid: ACadSharp.Objects.VisualStyle.BlurAmount*
+  name: BlurAmount
+  href: api/ACadSharp.Objects.VisualStyle.html#ACadSharp_Objects_VisualStyle_BlurAmount_
+  commentId: Overload:ACadSharp.Objects.VisualStyle.BlurAmount
+  isSpec: "True"
+  fullName: ACadSharp.Objects.VisualStyle.BlurAmount
+  nameWithType: VisualStyle.BlurAmount
+- uid: ACadSharp.Objects.VisualStyle.BlurEffectEnabled
+  name: BlurEffectEnabled
+  href: api/ACadSharp.Objects.VisualStyle.html#ACadSharp_Objects_VisualStyle_BlurEffectEnabled
+  commentId: P:ACadSharp.Objects.VisualStyle.BlurEffectEnabled
+  fullName: ACadSharp.Objects.VisualStyle.BlurEffectEnabled
+  nameWithType: VisualStyle.BlurEffectEnabled
+- uid: ACadSharp.Objects.VisualStyle.BlurEffectEnabled*
+  name: BlurEffectEnabled
+  href: api/ACadSharp.Objects.VisualStyle.html#ACadSharp_Objects_VisualStyle_BlurEffectEnabled_
+  commentId: Overload:ACadSharp.Objects.VisualStyle.BlurEffectEnabled
+  isSpec: "True"
+  fullName: ACadSharp.Objects.VisualStyle.BlurEffectEnabled
+  nameWithType: VisualStyle.BlurEffectEnabled
 - uid: ACadSharp.Objects.VisualStyle.Brightness
   name: Brightness
   href: api/ACadSharp.Objects.VisualStyle.html#ACadSharp_Objects_VisualStyle_Brightness
@@ -53504,6 +53582,19 @@ references:
   commentId: F:ACadSharp.Objects.VisualStyle.DefaultName
   fullName: ACadSharp.Objects.VisualStyle.DefaultName
   nameWithType: VisualStyle.DefaultName
+- uid: ACadSharp.Objects.VisualStyle.DepthOfFieldEnabled
+  name: DepthOfFieldEnabled
+  href: api/ACadSharp.Objects.VisualStyle.html#ACadSharp_Objects_VisualStyle_DepthOfFieldEnabled
+  commentId: P:ACadSharp.Objects.VisualStyle.DepthOfFieldEnabled
+  fullName: ACadSharp.Objects.VisualStyle.DepthOfFieldEnabled
+  nameWithType: VisualStyle.DepthOfFieldEnabled
+- uid: ACadSharp.Objects.VisualStyle.DepthOfFieldEnabled*
+  name: DepthOfFieldEnabled
+  href: api/ACadSharp.Objects.VisualStyle.html#ACadSharp_Objects_VisualStyle_DepthOfFieldEnabled_
+  commentId: Overload:ACadSharp.Objects.VisualStyle.DepthOfFieldEnabled
+  isSpec: "True"
+  fullName: ACadSharp.Objects.VisualStyle.DepthOfFieldEnabled
+  nameWithType: VisualStyle.DepthOfFieldEnabled
 - uid: ACadSharp.Objects.VisualStyle.Description
   name: Description
   href: api/ACadSharp.Objects.VisualStyle.html#ACadSharp_Objects_VisualStyle_Description
@@ -53530,6 +53621,19 @@ references:
   isSpec: "True"
   fullName: ACadSharp.Objects.VisualStyle.DisplaySettings
   nameWithType: VisualStyle.DisplaySettings
+- uid: ACadSharp.Objects.VisualStyle.DrawOrderEnabled
+  name: DrawOrderEnabled
+  href: api/ACadSharp.Objects.VisualStyle.html#ACadSharp_Objects_VisualStyle_DrawOrderEnabled
+  commentId: P:ACadSharp.Objects.VisualStyle.DrawOrderEnabled
+  fullName: ACadSharp.Objects.VisualStyle.DrawOrderEnabled
+  nameWithType: VisualStyle.DrawOrderEnabled
+- uid: ACadSharp.Objects.VisualStyle.DrawOrderEnabled*
+  name: DrawOrderEnabled
+  href: api/ACadSharp.Objects.VisualStyle.html#ACadSharp_Objects_VisualStyle_DrawOrderEnabled_
+  commentId: Overload:ACadSharp.Objects.VisualStyle.DrawOrderEnabled
+  isSpec: "True"
+  fullName: ACadSharp.Objects.VisualStyle.DrawOrderEnabled
+  nameWithType: VisualStyle.DrawOrderEnabled
 - uid: ACadSharp.Objects.VisualStyle.EdgeApplyStyleFlag
   name: EdgeApplyStyleFlag
   href: api/ACadSharp.Objects.VisualStyle.html#ACadSharp_Objects_VisualStyle_EdgeApplyStyleFlag
@@ -53725,6 +53829,19 @@ references:
   isSpec: "True"
   fullName: ACadSharp.Objects.VisualStyle.EdgeStyleModel
   nameWithType: VisualStyle.EdgeStyleModel
+- uid: ACadSharp.Objects.VisualStyle.EdgeTexturePath
+  name: EdgeTexturePath
+  href: api/ACadSharp.Objects.VisualStyle.html#ACadSharp_Objects_VisualStyle_EdgeTexturePath
+  commentId: P:ACadSharp.Objects.VisualStyle.EdgeTexturePath
+  fullName: ACadSharp.Objects.VisualStyle.EdgeTexturePath
+  nameWithType: VisualStyle.EdgeTexturePath
+- uid: ACadSharp.Objects.VisualStyle.EdgeTexturePath*
+  name: EdgeTexturePath
+  href: api/ACadSharp.Objects.VisualStyle.html#ACadSharp_Objects_VisualStyle_EdgeTexturePath_
+  commentId: Overload:ACadSharp.Objects.VisualStyle.EdgeTexturePath
+  isSpec: "True"
+  fullName: ACadSharp.Objects.VisualStyle.EdgeTexturePath
+  nameWithType: VisualStyle.EdgeTexturePath
 - uid: ACadSharp.Objects.VisualStyle.EdgeWidth
   name: EdgeWidth
   href: api/ACadSharp.Objects.VisualStyle.html#ACadSharp_Objects_VisualStyle_EdgeWidth
@@ -53738,6 +53855,32 @@ references:
   isSpec: "True"
   fullName: ACadSharp.Objects.VisualStyle.EdgeWidth
   nameWithType: VisualStyle.EdgeWidth
+- uid: ACadSharp.Objects.VisualStyle.EdgeWiggleAmount
+  name: EdgeWiggleAmount
+  href: api/ACadSharp.Objects.VisualStyle.html#ACadSharp_Objects_VisualStyle_EdgeWiggleAmount
+  commentId: P:ACadSharp.Objects.VisualStyle.EdgeWiggleAmount
+  fullName: ACadSharp.Objects.VisualStyle.EdgeWiggleAmount
+  nameWithType: VisualStyle.EdgeWiggleAmount
+- uid: ACadSharp.Objects.VisualStyle.EdgeWiggleAmount*
+  name: EdgeWiggleAmount
+  href: api/ACadSharp.Objects.VisualStyle.html#ACadSharp_Objects_VisualStyle_EdgeWiggleAmount_
+  commentId: Overload:ACadSharp.Objects.VisualStyle.EdgeWiggleAmount
+  isSpec: "True"
+  fullName: ACadSharp.Objects.VisualStyle.EdgeWiggleAmount
+  nameWithType: VisualStyle.EdgeWiggleAmount
+- uid: ACadSharp.Objects.VisualStyle.FaceAdjustmentEnabled
+  name: FaceAdjustmentEnabled
+  href: api/ACadSharp.Objects.VisualStyle.html#ACadSharp_Objects_VisualStyle_FaceAdjustmentEnabled
+  commentId: P:ACadSharp.Objects.VisualStyle.FaceAdjustmentEnabled
+  fullName: ACadSharp.Objects.VisualStyle.FaceAdjustmentEnabled
+  nameWithType: VisualStyle.FaceAdjustmentEnabled
+- uid: ACadSharp.Objects.VisualStyle.FaceAdjustmentEnabled*
+  name: FaceAdjustmentEnabled
+  href: api/ACadSharp.Objects.VisualStyle.html#ACadSharp_Objects_VisualStyle_FaceAdjustmentEnabled_
+  commentId: Overload:ACadSharp.Objects.VisualStyle.FaceAdjustmentEnabled
+  isSpec: "True"
+  fullName: ACadSharp.Objects.VisualStyle.FaceAdjustmentEnabled
+  nameWithType: VisualStyle.FaceAdjustmentEnabled
 - uid: ACadSharp.Objects.VisualStyle.FaceColorMode
   name: FaceColorMode
   href: api/ACadSharp.Objects.VisualStyle.html#ACadSharp_Objects_VisualStyle_FaceColorMode
@@ -53829,6 +53972,32 @@ references:
   isSpec: "True"
   fullName: ACadSharp.Objects.VisualStyle.FaceStyleMonoColor
   nameWithType: VisualStyle.FaceStyleMonoColor
+- uid: ACadSharp.Objects.VisualStyle.FocusDistance
+  name: FocusDistance
+  href: api/ACadSharp.Objects.VisualStyle.html#ACadSharp_Objects_VisualStyle_FocusDistance
+  commentId: P:ACadSharp.Objects.VisualStyle.FocusDistance
+  fullName: ACadSharp.Objects.VisualStyle.FocusDistance
+  nameWithType: VisualStyle.FocusDistance
+- uid: ACadSharp.Objects.VisualStyle.FocusDistance*
+  name: FocusDistance
+  href: api/ACadSharp.Objects.VisualStyle.html#ACadSharp_Objects_VisualStyle_FocusDistance_
+  commentId: Overload:ACadSharp.Objects.VisualStyle.FocusDistance
+  isSpec: "True"
+  fullName: ACadSharp.Objects.VisualStyle.FocusDistance
+  nameWithType: VisualStyle.FocusDistance
+- uid: ACadSharp.Objects.VisualStyle.FocusWidth
+  name: FocusWidth
+  href: api/ACadSharp.Objects.VisualStyle.html#ACadSharp_Objects_VisualStyle_FocusWidth
+  commentId: P:ACadSharp.Objects.VisualStyle.FocusWidth
+  fullName: ACadSharp.Objects.VisualStyle.FocusWidth
+  nameWithType: VisualStyle.FocusWidth
+- uid: ACadSharp.Objects.VisualStyle.FocusWidth*
+  name: FocusWidth
+  href: api/ACadSharp.Objects.VisualStyle.html#ACadSharp_Objects_VisualStyle_FocusWidth_
+  commentId: Overload:ACadSharp.Objects.VisualStyle.FocusWidth
+  isSpec: "True"
+  fullName: ACadSharp.Objects.VisualStyle.FocusWidth
+  nameWithType: VisualStyle.FocusWidth
 - uid: ACadSharp.Objects.VisualStyle.GetDxfClass
   name: GetDxfClass()
   href: api/ACadSharp.Objects.VisualStyle.html#ACadSharp_Objects_VisualStyle_GetDxfClass
@@ -53855,19 +54024,117 @@ references:
   isSpec: "True"
   fullName: ACadSharp.Objects.VisualStyle.HaloGap
   nameWithType: VisualStyle.HaloGap
-- uid: ACadSharp.Objects.VisualStyle.InternalFlag
-  name: InternalFlag
-  href: api/ACadSharp.Objects.VisualStyle.html#ACadSharp_Objects_VisualStyle_InternalFlag
-  commentId: P:ACadSharp.Objects.VisualStyle.InternalFlag
-  fullName: ACadSharp.Objects.VisualStyle.InternalFlag
-  nameWithType: VisualStyle.InternalFlag
-- uid: ACadSharp.Objects.VisualStyle.InternalFlag*
-  name: InternalFlag
-  href: api/ACadSharp.Objects.VisualStyle.html#ACadSharp_Objects_VisualStyle_InternalFlag_
-  commentId: Overload:ACadSharp.Objects.VisualStyle.InternalFlag
+- uid: ACadSharp.Objects.VisualStyle.InternalUseOnlyFlag
+  name: InternalUseOnlyFlag
+  href: api/ACadSharp.Objects.VisualStyle.html#ACadSharp_Objects_VisualStyle_InternalUseOnlyFlag
+  commentId: P:ACadSharp.Objects.VisualStyle.InternalUseOnlyFlag
+  fullName: ACadSharp.Objects.VisualStyle.InternalUseOnlyFlag
+  nameWithType: VisualStyle.InternalUseOnlyFlag
+- uid: ACadSharp.Objects.VisualStyle.InternalUseOnlyFlag*
+  name: InternalUseOnlyFlag
+  href: api/ACadSharp.Objects.VisualStyle.html#ACadSharp_Objects_VisualStyle_InternalUseOnlyFlag_
+  commentId: Overload:ACadSharp.Objects.VisualStyle.InternalUseOnlyFlag
   isSpec: "True"
-  fullName: ACadSharp.Objects.VisualStyle.InternalFlag
-  nameWithType: VisualStyle.InternalFlag
+  fullName: ACadSharp.Objects.VisualStyle.InternalUseOnlyFlag
+  nameWithType: VisualStyle.InternalUseOnlyFlag
+- uid: ACadSharp.Objects.VisualStyle.LightingEnabled
+  name: LightingEnabled
+  href: api/ACadSharp.Objects.VisualStyle.html#ACadSharp_Objects_VisualStyle_LightingEnabled
+  commentId: P:ACadSharp.Objects.VisualStyle.LightingEnabled
+  fullName: ACadSharp.Objects.VisualStyle.LightingEnabled
+  nameWithType: VisualStyle.LightingEnabled
+- uid: ACadSharp.Objects.VisualStyle.LightingEnabled*
+  name: LightingEnabled
+  href: api/ACadSharp.Objects.VisualStyle.html#ACadSharp_Objects_VisualStyle_LightingEnabled_
+  commentId: Overload:ACadSharp.Objects.VisualStyle.LightingEnabled
+  isSpec: "True"
+  fullName: ACadSharp.Objects.VisualStyle.LightingEnabled
+  nameWithType: VisualStyle.LightingEnabled
+- uid: ACadSharp.Objects.VisualStyle.LineType
+  name: VisualStyle.LineType
+  href: api/ACadSharp.Objects.VisualStyle.LineType.html
+  commentId: T:ACadSharp.Objects.VisualStyle.LineType
+  fullName: ACadSharp.Objects.VisualStyle.LineType
+  nameWithType: VisualStyle.LineType
+- uid: ACadSharp.Objects.VisualStyle.LineType.Dashed
+  name: Dashed
+  href: api/ACadSharp.Objects.VisualStyle.LineType.html#ACadSharp_Objects_VisualStyle_LineType_Dashed
+  commentId: F:ACadSharp.Objects.VisualStyle.LineType.Dashed
+  fullName: ACadSharp.Objects.VisualStyle.LineType.Dashed
+  nameWithType: VisualStyle.LineType.Dashed
+- uid: ACadSharp.Objects.VisualStyle.LineType.Dotted
+  name: Dotted
+  href: api/ACadSharp.Objects.VisualStyle.LineType.html#ACadSharp_Objects_VisualStyle_LineType_Dotted
+  commentId: F:ACadSharp.Objects.VisualStyle.LineType.Dotted
+  fullName: ACadSharp.Objects.VisualStyle.LineType.Dotted
+  nameWithType: VisualStyle.LineType.Dotted
+- uid: ACadSharp.Objects.VisualStyle.LineType.DoubleLongDash
+  name: DoubleLongDash
+  href: api/ACadSharp.Objects.VisualStyle.LineType.html#ACadSharp_Objects_VisualStyle_LineType_DoubleLongDash
+  commentId: F:ACadSharp.Objects.VisualStyle.LineType.DoubleLongDash
+  fullName: ACadSharp.Objects.VisualStyle.LineType.DoubleLongDash
+  nameWithType: VisualStyle.LineType.DoubleLongDash
+- uid: ACadSharp.Objects.VisualStyle.LineType.DoubleMediumDash
+  name: DoubleMediumDash
+  href: api/ACadSharp.Objects.VisualStyle.LineType.html#ACadSharp_Objects_VisualStyle_LineType_DoubleMediumDash
+  commentId: F:ACadSharp.Objects.VisualStyle.LineType.DoubleMediumDash
+  fullName: ACadSharp.Objects.VisualStyle.LineType.DoubleMediumDash
+  nameWithType: VisualStyle.LineType.DoubleMediumDash
+- uid: ACadSharp.Objects.VisualStyle.LineType.DoubleShortDash
+  name: DoubleShortDash
+  href: api/ACadSharp.Objects.VisualStyle.LineType.html#ACadSharp_Objects_VisualStyle_LineType_DoubleShortDash
+  commentId: F:ACadSharp.Objects.VisualStyle.LineType.DoubleShortDash
+  fullName: ACadSharp.Objects.VisualStyle.LineType.DoubleShortDash
+  nameWithType: VisualStyle.LineType.DoubleShortDash
+- uid: ACadSharp.Objects.VisualStyle.LineType.LongDash
+  name: LongDash
+  href: api/ACadSharp.Objects.VisualStyle.LineType.html#ACadSharp_Objects_VisualStyle_LineType_LongDash
+  commentId: F:ACadSharp.Objects.VisualStyle.LineType.LongDash
+  fullName: ACadSharp.Objects.VisualStyle.LineType.LongDash
+  nameWithType: VisualStyle.LineType.LongDash
+- uid: ACadSharp.Objects.VisualStyle.LineType.MediumDash
+  name: MediumDash
+  href: api/ACadSharp.Objects.VisualStyle.LineType.html#ACadSharp_Objects_VisualStyle_LineType_MediumDash
+  commentId: F:ACadSharp.Objects.VisualStyle.LineType.MediumDash
+  fullName: ACadSharp.Objects.VisualStyle.LineType.MediumDash
+  nameWithType: VisualStyle.LineType.MediumDash
+- uid: ACadSharp.Objects.VisualStyle.LineType.MediumLongDash
+  name: MediumLongDash
+  href: api/ACadSharp.Objects.VisualStyle.LineType.html#ACadSharp_Objects_VisualStyle_LineType_MediumLongDash
+  commentId: F:ACadSharp.Objects.VisualStyle.LineType.MediumLongDash
+  fullName: ACadSharp.Objects.VisualStyle.LineType.MediumLongDash
+  nameWithType: VisualStyle.LineType.MediumLongDash
+- uid: ACadSharp.Objects.VisualStyle.LineType.ShortDash
+  name: ShortDash
+  href: api/ACadSharp.Objects.VisualStyle.LineType.html#ACadSharp_Objects_VisualStyle_LineType_ShortDash
+  commentId: F:ACadSharp.Objects.VisualStyle.LineType.ShortDash
+  fullName: ACadSharp.Objects.VisualStyle.LineType.ShortDash
+  nameWithType: VisualStyle.LineType.ShortDash
+- uid: ACadSharp.Objects.VisualStyle.LineType.Solid
+  name: Solid
+  href: api/ACadSharp.Objects.VisualStyle.LineType.html#ACadSharp_Objects_VisualStyle_LineType_Solid
+  commentId: F:ACadSharp.Objects.VisualStyle.LineType.Solid
+  fullName: ACadSharp.Objects.VisualStyle.LineType.Solid
+  nameWithType: VisualStyle.LineType.Solid
+- uid: ACadSharp.Objects.VisualStyle.LineType.SparseDot
+  name: SparseDot
+  href: api/ACadSharp.Objects.VisualStyle.LineType.html#ACadSharp_Objects_VisualStyle_LineType_SparseDot
+  commentId: F:ACadSharp.Objects.VisualStyle.LineType.SparseDot
+  fullName: ACadSharp.Objects.VisualStyle.LineType.SparseDot
+  nameWithType: VisualStyle.LineType.SparseDot
+- uid: ACadSharp.Objects.VisualStyle.MonoEffectEnabled
+  name: MonoEffectEnabled
+  href: api/ACadSharp.Objects.VisualStyle.html#ACadSharp_Objects_VisualStyle_MonoEffectEnabled
+  commentId: P:ACadSharp.Objects.VisualStyle.MonoEffectEnabled
+  fullName: ACadSharp.Objects.VisualStyle.MonoEffectEnabled
+  nameWithType: VisualStyle.MonoEffectEnabled
+- uid: ACadSharp.Objects.VisualStyle.MonoEffectEnabled*
+  name: MonoEffectEnabled
+  href: api/ACadSharp.Objects.VisualStyle.html#ACadSharp_Objects_VisualStyle_MonoEffectEnabled_
+  commentId: Overload:ACadSharp.Objects.VisualStyle.MonoEffectEnabled
+  isSpec: "True"
+  fullName: ACadSharp.Objects.VisualStyle.MonoEffectEnabled
+  nameWithType: VisualStyle.MonoEffectEnabled
 - uid: ACadSharp.Objects.VisualStyle.ObjectName
   name: ObjectName
   href: api/ACadSharp.Objects.VisualStyle.html#ACadSharp_Objects_VisualStyle_ObjectName
@@ -53907,6 +54174,136 @@ references:
   isSpec: "True"
   fullName: ACadSharp.Objects.VisualStyle.OpacityLevel
   nameWithType: VisualStyle.OpacityLevel
+- uid: ACadSharp.Objects.VisualStyle.PastelEffectEnabled
+  name: PastelEffectEnabled
+  href: api/ACadSharp.Objects.VisualStyle.html#ACadSharp_Objects_VisualStyle_PastelEffectEnabled
+  commentId: P:ACadSharp.Objects.VisualStyle.PastelEffectEnabled
+  fullName: ACadSharp.Objects.VisualStyle.PastelEffectEnabled
+  nameWithType: VisualStyle.PastelEffectEnabled
+- uid: ACadSharp.Objects.VisualStyle.PastelEffectEnabled*
+  name: PastelEffectEnabled
+  href: api/ACadSharp.Objects.VisualStyle.html#ACadSharp_Objects_VisualStyle_PastelEffectEnabled_
+  commentId: Overload:ACadSharp.Objects.VisualStyle.PastelEffectEnabled
+  isSpec: "True"
+  fullName: ACadSharp.Objects.VisualStyle.PastelEffectEnabled
+  nameWithType: VisualStyle.PastelEffectEnabled
+- uid: ACadSharp.Objects.VisualStyle.PencilAngle
+  name: PencilAngle
+  href: api/ACadSharp.Objects.VisualStyle.html#ACadSharp_Objects_VisualStyle_PencilAngle
+  commentId: P:ACadSharp.Objects.VisualStyle.PencilAngle
+  fullName: ACadSharp.Objects.VisualStyle.PencilAngle
+  nameWithType: VisualStyle.PencilAngle
+- uid: ACadSharp.Objects.VisualStyle.PencilAngle*
+  name: PencilAngle
+  href: api/ACadSharp.Objects.VisualStyle.html#ACadSharp_Objects_VisualStyle_PencilAngle_
+  commentId: Overload:ACadSharp.Objects.VisualStyle.PencilAngle
+  isSpec: "True"
+  fullName: ACadSharp.Objects.VisualStyle.PencilAngle
+  nameWithType: VisualStyle.PencilAngle
+- uid: ACadSharp.Objects.VisualStyle.PencilColor
+  name: PencilColor
+  href: api/ACadSharp.Objects.VisualStyle.html#ACadSharp_Objects_VisualStyle_PencilColor
+  commentId: P:ACadSharp.Objects.VisualStyle.PencilColor
+  fullName: ACadSharp.Objects.VisualStyle.PencilColor
+  nameWithType: VisualStyle.PencilColor
+- uid: ACadSharp.Objects.VisualStyle.PencilColor*
+  name: PencilColor
+  href: api/ACadSharp.Objects.VisualStyle.html#ACadSharp_Objects_VisualStyle_PencilColor_
+  commentId: Overload:ACadSharp.Objects.VisualStyle.PencilColor
+  isSpec: "True"
+  fullName: ACadSharp.Objects.VisualStyle.PencilColor
+  nameWithType: VisualStyle.PencilColor
+- uid: ACadSharp.Objects.VisualStyle.PencilEffectEnabled
+  name: PencilEffectEnabled
+  href: api/ACadSharp.Objects.VisualStyle.html#ACadSharp_Objects_VisualStyle_PencilEffectEnabled
+  commentId: P:ACadSharp.Objects.VisualStyle.PencilEffectEnabled
+  fullName: ACadSharp.Objects.VisualStyle.PencilEffectEnabled
+  nameWithType: VisualStyle.PencilEffectEnabled
+- uid: ACadSharp.Objects.VisualStyle.PencilEffectEnabled*
+  name: PencilEffectEnabled
+  href: api/ACadSharp.Objects.VisualStyle.html#ACadSharp_Objects_VisualStyle_PencilEffectEnabled_
+  commentId: Overload:ACadSharp.Objects.VisualStyle.PencilEffectEnabled
+  isSpec: "True"
+  fullName: ACadSharp.Objects.VisualStyle.PencilEffectEnabled
+  nameWithType: VisualStyle.PencilEffectEnabled
+- uid: ACadSharp.Objects.VisualStyle.PencilPattern
+  name: PencilPattern
+  href: api/ACadSharp.Objects.VisualStyle.html#ACadSharp_Objects_VisualStyle_PencilPattern
+  commentId: P:ACadSharp.Objects.VisualStyle.PencilPattern
+  fullName: ACadSharp.Objects.VisualStyle.PencilPattern
+  nameWithType: VisualStyle.PencilPattern
+- uid: ACadSharp.Objects.VisualStyle.PencilPattern*
+  name: PencilPattern
+  href: api/ACadSharp.Objects.VisualStyle.html#ACadSharp_Objects_VisualStyle_PencilPattern_
+  commentId: Overload:ACadSharp.Objects.VisualStyle.PencilPattern
+  isSpec: "True"
+  fullName: ACadSharp.Objects.VisualStyle.PencilPattern
+  nameWithType: VisualStyle.PencilPattern
+- uid: ACadSharp.Objects.VisualStyle.PencilScale
+  name: PencilScale
+  href: api/ACadSharp.Objects.VisualStyle.html#ACadSharp_Objects_VisualStyle_PencilScale
+  commentId: P:ACadSharp.Objects.VisualStyle.PencilScale
+  fullName: ACadSharp.Objects.VisualStyle.PencilScale
+  nameWithType: VisualStyle.PencilScale
+- uid: ACadSharp.Objects.VisualStyle.PencilScale*
+  name: PencilScale
+  href: api/ACadSharp.Objects.VisualStyle.html#ACadSharp_Objects_VisualStyle_PencilScale_
+  commentId: Overload:ACadSharp.Objects.VisualStyle.PencilScale
+  isSpec: "True"
+  fullName: ACadSharp.Objects.VisualStyle.PencilScale
+  nameWithType: VisualStyle.PencilScale
+- uid: ACadSharp.Objects.VisualStyle.PostBrightness
+  name: PostBrightness
+  href: api/ACadSharp.Objects.VisualStyle.html#ACadSharp_Objects_VisualStyle_PostBrightness
+  commentId: P:ACadSharp.Objects.VisualStyle.PostBrightness
+  fullName: ACadSharp.Objects.VisualStyle.PostBrightness
+  nameWithType: VisualStyle.PostBrightness
+- uid: ACadSharp.Objects.VisualStyle.PostBrightness*
+  name: PostBrightness
+  href: api/ACadSharp.Objects.VisualStyle.html#ACadSharp_Objects_VisualStyle_PostBrightness_
+  commentId: Overload:ACadSharp.Objects.VisualStyle.PostBrightness
+  isSpec: "True"
+  fullName: ACadSharp.Objects.VisualStyle.PostBrightness
+  nameWithType: VisualStyle.PostBrightness
+- uid: ACadSharp.Objects.VisualStyle.PostContrast
+  name: PostContrast
+  href: api/ACadSharp.Objects.VisualStyle.html#ACadSharp_Objects_VisualStyle_PostContrast
+  commentId: P:ACadSharp.Objects.VisualStyle.PostContrast
+  fullName: ACadSharp.Objects.VisualStyle.PostContrast
+  nameWithType: VisualStyle.PostContrast
+- uid: ACadSharp.Objects.VisualStyle.PostContrast*
+  name: PostContrast
+  href: api/ACadSharp.Objects.VisualStyle.html#ACadSharp_Objects_VisualStyle_PostContrast_
+  commentId: Overload:ACadSharp.Objects.VisualStyle.PostContrast
+  isSpec: "True"
+  fullName: ACadSharp.Objects.VisualStyle.PostContrast
+  nameWithType: VisualStyle.PostContrast
+- uid: ACadSharp.Objects.VisualStyle.PostPower
+  name: PostPower
+  href: api/ACadSharp.Objects.VisualStyle.html#ACadSharp_Objects_VisualStyle_PostPower
+  commentId: P:ACadSharp.Objects.VisualStyle.PostPower
+  fullName: ACadSharp.Objects.VisualStyle.PostPower
+  nameWithType: VisualStyle.PostPower
+- uid: ACadSharp.Objects.VisualStyle.PostPower*
+  name: PostPower
+  href: api/ACadSharp.Objects.VisualStyle.html#ACadSharp_Objects_VisualStyle_PostPower_
+  commentId: Overload:ACadSharp.Objects.VisualStyle.PostPower
+  isSpec: "True"
+  fullName: ACadSharp.Objects.VisualStyle.PostPower
+  nameWithType: VisualStyle.PostPower
+- uid: ACadSharp.Objects.VisualStyle.PosterEffectEnabled
+  name: PosterEffectEnabled
+  href: api/ACadSharp.Objects.VisualStyle.html#ACadSharp_Objects_VisualStyle_PosterEffectEnabled
+  commentId: P:ACadSharp.Objects.VisualStyle.PosterEffectEnabled
+  fullName: ACadSharp.Objects.VisualStyle.PosterEffectEnabled
+  nameWithType: VisualStyle.PosterEffectEnabled
+- uid: ACadSharp.Objects.VisualStyle.PosterEffectEnabled*
+  name: PosterEffectEnabled
+  href: api/ACadSharp.Objects.VisualStyle.html#ACadSharp_Objects_VisualStyle_PosterEffectEnabled_
+  commentId: Overload:ACadSharp.Objects.VisualStyle.PosterEffectEnabled
+  isSpec: "True"
+  fullName: ACadSharp.Objects.VisualStyle.PosterEffectEnabled
+  nameWithType: VisualStyle.PosterEffectEnabled
 - uid: ACadSharp.Objects.VisualStyle.PrecisionFlag
   name: PrecisionFlag
   href: api/ACadSharp.Objects.VisualStyle.html#ACadSharp_Objects_VisualStyle_PrecisionFlag
@@ -53959,6 +54356,45 @@ references:
   isSpec: "True"
   fullName: ACadSharp.Objects.VisualStyle.SubclassMarker
   nameWithType: VisualStyle.SubclassMarker
+- uid: ACadSharp.Objects.VisualStyle.TintColor
+  name: TintColor
+  href: api/ACadSharp.Objects.VisualStyle.html#ACadSharp_Objects_VisualStyle_TintColor
+  commentId: P:ACadSharp.Objects.VisualStyle.TintColor
+  fullName: ACadSharp.Objects.VisualStyle.TintColor
+  nameWithType: VisualStyle.TintColor
+- uid: ACadSharp.Objects.VisualStyle.TintColor*
+  name: TintColor
+  href: api/ACadSharp.Objects.VisualStyle.html#ACadSharp_Objects_VisualStyle_TintColor_
+  commentId: Overload:ACadSharp.Objects.VisualStyle.TintColor
+  isSpec: "True"
+  fullName: ACadSharp.Objects.VisualStyle.TintColor
+  nameWithType: VisualStyle.TintColor
+- uid: ACadSharp.Objects.VisualStyle.TintEffectEnabled
+  name: TintEffectEnabled
+  href: api/ACadSharp.Objects.VisualStyle.html#ACadSharp_Objects_VisualStyle_TintEffectEnabled
+  commentId: P:ACadSharp.Objects.VisualStyle.TintEffectEnabled
+  fullName: ACadSharp.Objects.VisualStyle.TintEffectEnabled
+  nameWithType: VisualStyle.TintEffectEnabled
+- uid: ACadSharp.Objects.VisualStyle.TintEffectEnabled*
+  name: TintEffectEnabled
+  href: api/ACadSharp.Objects.VisualStyle.html#ACadSharp_Objects_VisualStyle_TintEffectEnabled_
+  commentId: Overload:ACadSharp.Objects.VisualStyle.TintEffectEnabled
+  isSpec: "True"
+  fullName: ACadSharp.Objects.VisualStyle.TintEffectEnabled
+  nameWithType: VisualStyle.TintEffectEnabled
+- uid: ACadSharp.Objects.VisualStyle.Transparency
+  name: Transparency
+  href: api/ACadSharp.Objects.VisualStyle.html#ACadSharp_Objects_VisualStyle_Transparency
+  commentId: P:ACadSharp.Objects.VisualStyle.Transparency
+  fullName: ACadSharp.Objects.VisualStyle.Transparency
+  nameWithType: VisualStyle.Transparency
+- uid: ACadSharp.Objects.VisualStyle.Transparency*
+  name: Transparency
+  href: api/ACadSharp.Objects.VisualStyle.html#ACadSharp_Objects_VisualStyle_Transparency_
+  commentId: Overload:ACadSharp.Objects.VisualStyle.Transparency
+  isSpec: "True"
+  fullName: ACadSharp.Objects.VisualStyle.Transparency
+  nameWithType: VisualStyle.Transparency
 - uid: ACadSharp.Objects.VisualStyle.Type
   name: Type
   href: api/ACadSharp.Objects.VisualStyle.html#ACadSharp_Objects_VisualStyle_Type
@@ -53972,6 +54408,49 @@ references:
   isSpec: "True"
   fullName: ACadSharp.Objects.VisualStyle.Type
   nameWithType: VisualStyle.Type
+- uid: ACadSharp.Objects.VisualStyle.ViewportTransparencyEnabled
+  name: ViewportTransparencyEnabled
+  href: api/ACadSharp.Objects.VisualStyle.html#ACadSharp_Objects_VisualStyle_ViewportTransparencyEnabled
+  commentId: P:ACadSharp.Objects.VisualStyle.ViewportTransparencyEnabled
+  fullName: ACadSharp.Objects.VisualStyle.ViewportTransparencyEnabled
+  nameWithType: VisualStyle.ViewportTransparencyEnabled
+- uid: ACadSharp.Objects.VisualStyle.ViewportTransparencyEnabled*
+  name: ViewportTransparencyEnabled
+  href: api/ACadSharp.Objects.VisualStyle.html#ACadSharp_Objects_VisualStyle_ViewportTransparencyEnabled_
+  commentId: Overload:ACadSharp.Objects.VisualStyle.ViewportTransparencyEnabled
+  isSpec: "True"
+  fullName: ACadSharp.Objects.VisualStyle.ViewportTransparencyEnabled
+  nameWithType: VisualStyle.ViewportTransparencyEnabled
+- uid: ACadSharp.Objects.WiggleAmount
+  name: WiggleAmount
+  href: api/ACadSharp.Objects.WiggleAmount.html
+  commentId: T:ACadSharp.Objects.WiggleAmount
+  fullName: ACadSharp.Objects.WiggleAmount
+  nameWithType: WiggleAmount
+- uid: ACadSharp.Objects.WiggleAmount.High
+  name: High
+  href: api/ACadSharp.Objects.WiggleAmount.html#ACadSharp_Objects_WiggleAmount_High
+  commentId: F:ACadSharp.Objects.WiggleAmount.High
+  fullName: ACadSharp.Objects.WiggleAmount.High
+  nameWithType: WiggleAmount.High
+- uid: ACadSharp.Objects.WiggleAmount.Low
+  name: Low
+  href: api/ACadSharp.Objects.WiggleAmount.html#ACadSharp_Objects_WiggleAmount_Low
+  commentId: F:ACadSharp.Objects.WiggleAmount.Low
+  fullName: ACadSharp.Objects.WiggleAmount.Low
+  nameWithType: WiggleAmount.Low
+- uid: ACadSharp.Objects.WiggleAmount.Medium
+  name: Medium
+  href: api/ACadSharp.Objects.WiggleAmount.html#ACadSharp_Objects_WiggleAmount_Medium
+  commentId: F:ACadSharp.Objects.WiggleAmount.Medium
+  fullName: ACadSharp.Objects.WiggleAmount.Medium
+  nameWithType: WiggleAmount.Medium
+- uid: ACadSharp.Objects.WiggleAmount.None
+  name: None
+  href: api/ACadSharp.Objects.WiggleAmount.html#ACadSharp_Objects_WiggleAmount_None
+  commentId: F:ACadSharp.Objects.WiggleAmount.None
+  fullName: ACadSharp.Objects.WiggleAmount.None
+  nameWithType: WiggleAmount.None
 - uid: ACadSharp.Objects.WipeoutFrameType
   name: WipeoutFrameType
   href: api/ACadSharp.Objects.WipeoutFrameType.html

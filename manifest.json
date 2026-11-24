@@ -6817,6 +6817,20 @@
     },
     {
       "type": "ManagedReference",
+      "source_relative_path": "api/ACadSharp.Objects.VisualStyle.LineType.yml",
+      "output": {
+        ".html": {
+          "relative_path": "api/ACadSharp.Objects.VisualStyle.LineType.html"
+        }
+      },
+      "version": "",
+      "Uid": null,
+      "IsMRef": true,
+      "Title": "ACadSharp.Objects.VisualStyle.LineType",
+      "Summary": null
+    },
+    {
+      "type": "ManagedReference",
       "source_relative_path": "api/ACadSharp.Objects.VisualStyle.yml",
       "output": {
         ".html": {
@@ -6827,7 +6841,21 @@
       "Uid": null,
       "IsMRef": true,
       "Title": "ACadSharp.Objects.VisualStyle",
-      "Summary": "<p sourcefile=\"api/ACadSharp.Objects.VisualStyle.yml\" sourcestartlinenumber=\"1\">Represents a <xref href=\"ACadSharp.Objects.VisualStyle\" data-throw-if-not-resolved=\"false\"></xref> object</p>\n"
+      "Summary": "<p sourcefile=\"api/ACadSharp.Objects.VisualStyle.yml\" sourcestartlinenumber=\"1\">Represents a <xref href=\"ACadSharp.Objects.VisualStyle\" data-throw-if-not-resolved=\"false\"></xref> object.</p>\n"
+    },
+    {
+      "type": "ManagedReference",
+      "source_relative_path": "api/ACadSharp.Objects.WiggleAmount.yml",
+      "output": {
+        ".html": {
+          "relative_path": "api/ACadSharp.Objects.WiggleAmount.html"
+        }
+      },
+      "version": "",
+      "Uid": null,
+      "IsMRef": true,
+      "Title": "ACadSharp.Objects.WiggleAmount",
+      "Summary": null
     },
     {
       "type": "ManagedReference",
