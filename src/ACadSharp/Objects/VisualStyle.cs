@@ -12,7 +12,7 @@ namespace ACadSharp.Objects;
 /// </remarks>
 [DxfName(DxfFileToken.ObjectVisualStyle)]
 [DxfSubClass(DxfSubclassMarker.VisualStyle)]
-public partial class VisualStyle : NonGraphicalObject
+public partial class VisualStyle : NonGraphicalObject, IDxfClassDefined
 {
 	/// <summary>
 	/// Gets or sets the overall brightness level.
