@@ -6460,38 +6460,6 @@ namespace ACadSharp.IO.DWG
 			return template;
 		}
 
-		private CadTemplate readVisualStyle()
-		{
-			VisualStyle visualStyle = new VisualStyle();
-			CadTemplate<VisualStyle> template = new CadTemplate<VisualStyle>(visualStyle);
-
-			this.readCommonNonEntityData(template);
-
-			//WARNING: this object is not documented, the fields have been found using exploration methods and matching them with the dxf file
-
-			//2 Name
-			visualStyle.Name = this._textReader.ReadVariableText();
-			//70
-			visualStyle.Type = this._objectReader.ReadBitLong();
-
-			//177
-			var value177 = _objectReader.ReadBitShort();
-			//291 Internal use only flag
-			var value291 = this._objectReader.ReadBit();
-
-			//70 Count then repeat 90 and 176
-			int count = this._objectReader.ReadBitLong();
-
-#if TEST
-			var objValues = DwgStreamReaderBase.Explore(_objectReader);
-			var textValues = DwgStreamReaderBase.Explore(_textReader);
-#endif
-
-			//TODO: Finish dwg implementation for VisualStyle (avoids noise in the logs)
-
-			return template;
-		}
-
 		private CadTemplate readVPort()
 		{
 			VPort vport = new VPort();

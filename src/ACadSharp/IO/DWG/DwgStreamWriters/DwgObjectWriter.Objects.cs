@@ -51,7 +51,6 @@ internal partial class DwgObjectWriter : DwgSectionIO
 			case AecBinRecord:
 			case DimensionAssociation:
 			case UnknownNonGraphicalObject:
-			case VisualStyle:
 			case ProxyObject:
 				return true;
 		}
@@ -1920,6 +1919,9 @@ internal partial class DwgObjectWriter : DwgSectionIO
 			case FieldList fieldList:
 				this.writeFieldList(fieldList);
 				break;
+			case VisualStyle visualStyle:
+				this.writeVisualStyle(visualStyle);
+				break;
 			case XRecord record:
 				this.writeXRecord(record);
 				break;
@@ -2351,6 +2353,157 @@ internal partial class DwgObjectWriter : DwgSectionIO
 			this._writer.WriteBitLong(index);
 			this.writeCellStyleWithId(cellStyle);
 			index++;
+		}
+	}
+
+	private void writeVisualStyle(VisualStyle visualStyle)
+	{
+		//WARNING: this object is not documented, the fields have been found using exploration methods and matching them with the dxf file
+
+		//2 Name
+		this._writer.WriteVariableText(visualStyle.Description);
+		//70
+		this._writer.WriteBitLong(visualStyle.Type);
+
+		if (this.R2010Plus)
+		{
+			//177 Unknown, extended lighting model
+			this._writer.WriteBitShort(this.R2013Plus ? (short)3 : (short)2);
+			//291
+			this._writer.WriteBit(visualStyle.InternalUseOnlyFlag);
+		}
+
+		//Write face
+		this.writeVisualStyleProperty(() => this._writer.WriteBitLong((int)visualStyle.FaceLightingModel));
+		this.writeVisualStyleProperty(() => this._writer.WriteBitLong((int)visualStyle.FaceLightingQuality));
+		this.writeVisualStyleProperty(() => this._writer.WriteBitLong((int)visualStyle.FaceColorMode));
+
+		if (this.R2010Plus)
+		{
+			this.writeVisualStyleProperty(() => this._writer.WriteBitLong((int)visualStyle.FaceModifiers));
+		}
+
+		this.writeVisualStyleProperty(() => this._writer.WriteBitDouble(visualStyle.FaceSpecularLevel));
+		this.writeVisualStyleProperty(() => this._writer.WriteBitDouble(visualStyle.FaceOpacityLevel));
+		this.writeVisualStyleProperty(() => this._writer.WriteCmColor(visualStyle.FaceStyleMonoColor));
+
+		if (!this.R2010Plus)
+		{
+			this.writeVisualStyleProperty(() => this._writer.WriteBitLong((int)visualStyle.FaceModifiers));
+		}
+
+		//Write edge
+		this.writeVisualStyleProperty(() => this._writer.WriteBitLong((int)visualStyle.EdgeStyleModel));
+		this.writeVisualStyleProperty(() => this._writer.WriteBitLong(visualStyle.EdgeStyle));
+		this.writeVisualStyleProperty(() => this._writer.WriteCmColor(visualStyle.EdgeIntersectionColor));
+		this.writeVisualStyleProperty(() => this._writer.WriteCmColor(visualStyle.EdgeObscuredColor));
+		this.writeVisualStyleProperty(() => this._writer.WriteBitLong((int)visualStyle.EdgeObscuredLineType));
+
+		if (this.R2010Plus)
+		{
+			this.writeVisualStyleProperty(() => this._writer.WriteBitLong((int)visualStyle.EdgeIntersectionLineType));
+		}
+
+		this.writeVisualStyleProperty(() => this._writer.WriteBitDouble(visualStyle.EdgeCreaseAngle));
+		this.writeVisualStyleProperty(() => this._writer.WriteBitLong(visualStyle.EdgeModifiers));
+		this.writeVisualStyleProperty(() => this._writer.WriteCmColor(visualStyle.EdgeColor));
+		this.writeVisualStyleProperty(() => this._writer.WriteBitDouble(visualStyle.OpacityLevel));
+
+		if (this.R2010Plus)
+		{
+			this.writeVisualStyleProperty(() => this._writer.WriteBitLong(visualStyle.EdgeWidth));
+			this.writeVisualStyleProperty(() => this._writer.WriteBitLong(visualStyle.EdgeOverhang));
+		}
+		else
+		{
+			this.writeVisualStyleProperty(() => this._writer.WriteBitShort((short)visualStyle.EdgeWidth));
+			this.writeVisualStyleProperty(() => this._writer.WriteBitShort((short)visualStyle.EdgeOverhang));
+		}
+
+		this.writeVisualStyleProperty(() => this._writer.WriteBitLong(visualStyle.EdgeJitter));
+		this.writeVisualStyleProperty(() => this._writer.WriteCmColor(visualStyle.EdgeSilhouetteColor));
+
+		if (this.R2010Plus)
+		{
+			this.writeVisualStyleProperty(() => this._writer.WriteBitLong(visualStyle.EdgeSilhouetteWidth));
+			this.writeVisualStyleProperty(() => this._writer.WriteBitLong(visualStyle.HaloGap));
+			this.writeVisualStyleProperty(() => this._writer.WriteBitLong(visualStyle.EdgeIsolineCount));
+		}
+		else
+		{
+			this.writeVisualStyleProperty(() => this._writer.WriteBitShort((short)visualStyle.EdgeSilhouetteWidth));
+			this.writeVisualStyleProperty(() => this._writer.WriteByte((byte)visualStyle.HaloGap));
+			this.writeVisualStyleProperty(() => this._writer.WriteBitShort((short)visualStyle.EdgeIsolineCount));
+		}
+
+		this.writeVisualStyleProperty(() => this._writer.WriteBit(visualStyle.PrecisionFlag));
+
+		if (!this.R2010Plus)
+		{
+			this._writer.WriteBitShort((short)visualStyle.EdgeApplyStyleFlag);
+			this._writer.WriteBitShort((short)visualStyle.EdgeIntersectionLineType);
+		}
+
+		//Write display
+		this.writeVisualStyleProperty(() => this._writer.WriteBitLong(visualStyle.DisplaySettings));
+		this.writeVisualStyleProperty(() => this._writer.WriteBitLong((int)visualStyle.Brightness));
+		this.writeVisualStyleProperty(() => this._writer.WriteBitLong(visualStyle.ShadowType));
+
+		if (this._version == ACadVersion.AC1021)
+		{
+			//Unknown
+			this._writer.WriteBitDouble(0.0);
+		}
+
+		if (this.R2007Pre)
+		{
+			//Internal use only flag
+			this._writer.WriteBit(visualStyle.InternalUseOnlyFlag);
+		}
+
+		if (this.R2013Plus)
+		{
+			this.writeVisualStyleProperty(() => this._writer.WriteBit(visualStyle.DrawOrderEnabled));
+			this.writeVisualStyleProperty(() => this._writer.WriteBit(visualStyle.ViewportTransparencyEnabled));
+			this.writeVisualStyleProperty(() => this._writer.WriteBit(visualStyle.LightingEnabled));
+			this.writeVisualStyleProperty(() => this._writer.WriteBit(visualStyle.PosterEffectEnabled));
+			this.writeVisualStyleProperty(() => this._writer.WriteBit(visualStyle.MonoEffectEnabled));
+			this.writeVisualStyleProperty(() => this._writer.WriteBit(visualStyle.BlurEffectEnabled));
+			this.writeVisualStyleProperty(() => this._writer.WriteBit(visualStyle.PencilEffectEnabled));
+			this.writeVisualStyleProperty(() => this._writer.WriteBit(visualStyle.BloomEffectEnabled));
+			this.writeVisualStyleProperty(() => this._writer.WriteBit(visualStyle.PastelEffectEnabled));
+			this.writeVisualStyleProperty(() => this._writer.WriteBitLong(visualStyle.BlurAmount));
+			this.writeVisualStyleProperty(() => this._writer.WriteBitDouble(visualStyle.PencilAngle));
+			this.writeVisualStyleProperty(() => this._writer.WriteBitDouble(visualStyle.PencilScale));
+			this.writeVisualStyleProperty(() => this._writer.WriteBitLong(visualStyle.PencilPattern));
+			this.writeVisualStyleProperty(() => this._writer.WriteCmColor(visualStyle.PencilColor));
+			this.writeVisualStyleProperty(() => this._writer.WriteBitLong(visualStyle.BloomThreshold));
+			this.writeVisualStyleProperty(() => this._writer.WriteBitLong(visualStyle.BloomRadius));
+			this.writeVisualStyleProperty(() => this._writer.WriteCmColor(visualStyle.TintColor));
+			this.writeVisualStyleProperty(() => this._writer.WriteBit(visualStyle.FaceAdjustmentEnabled));
+			this.writeVisualStyleProperty(() => this._writer.WriteBitLong(visualStyle.PostContrast));
+			this.writeVisualStyleProperty(() => this._writer.WriteBitLong(visualStyle.PostBrightness));
+			this.writeVisualStyleProperty(() => this._writer.WriteBitLong(visualStyle.PostPower));
+			this.writeVisualStyleProperty(() => this._writer.WriteBit(visualStyle.TintEffectEnabled));
+			this.writeVisualStyleProperty(() => this._writer.WriteBitLong(visualStyle.BloomIntensity));
+			this.writeVisualStyleProperty(() => this._writer.WriteCmColor(visualStyle.Color));
+			this.writeVisualStyleProperty(() => this._writer.WriteBitDouble(visualStyle.Transparency));
+			this.writeVisualStyleProperty(() => this._writer.WriteBitLong((int)visualStyle.EdgeWiggleAmount));
+			this.writeVisualStyleProperty(() => this._writer.WriteVariableText(visualStyle.EdgeTexturePath));
+			this.writeVisualStyleProperty(() => this._writer.WriteBit(visualStyle.DepthOfFieldEnabled));
+			this.writeVisualStyleProperty(() => this._writer.WriteBitDouble(visualStyle.FocusDistance));
+			this.writeVisualStyleProperty(() => this._writer.WriteBitDouble(visualStyle.FocusWidth));
+		}
+	}
+
+	private void writeVisualStyleProperty(Action write)
+	{
+		write();
+
+		if (this.R2010Plus)
+		{
+			//Unknown short S, 176 in the dxf, usually 1
+			this._writer.WriteBitShort(1);
 		}
 	}
 

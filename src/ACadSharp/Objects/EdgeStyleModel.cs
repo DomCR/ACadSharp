@@ -1,9 +1,8 @@
-﻿namespace ACadSharp.Objects
+﻿namespace ACadSharp.Objects;
+
+public enum EdgeStyleModel
 {
-	public enum EdgeStyleModel
-	{
-		NoEdges = 0,
-		Isolines = 1,
-		FacetEdges = 2
-	}
+	None = 0,
+	Isolines = 1,
+	FacetEdges = 2
 }
