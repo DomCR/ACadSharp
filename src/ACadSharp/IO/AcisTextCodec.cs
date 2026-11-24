@@ -134,16 +134,27 @@ internal static class AcisTextCodec
 			return data;
 		}
 
+		if (TryGetAcisEnd(data, out int end))
+			return cutAfter(data, end, out remaining);
+
+		return data;
+	}
+
+	/// <summary>Finds the end even when the marker ends on the last available byte.</summary>
+	internal static bool TryGetAcisEnd(byte[] data, out int end)
+	{
+		int firstIndex = int.MaxValue;
+		end = 0;
 		foreach (byte[] marker in _endMarkers)
 		{
 			int index = indexOf(data, marker, 0);
-			if (index >= 0)
+			if (index >= 0 && index < firstIndex)
 			{
-				return cutAfter(data, index + marker.Length, out remaining);
+				firstIndex = index;
+				end = index + marker.Length;
 			}
 		}
-
-		return data;
+		return end > 0;
 	}
 
 	private static byte[] cutAfter(byte[] data, int end, out byte[] remain)
