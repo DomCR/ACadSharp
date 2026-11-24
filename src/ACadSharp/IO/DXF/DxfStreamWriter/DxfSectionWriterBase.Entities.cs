@@ -175,6 +175,7 @@ internal abstract partial class DxfSectionWriterBase
 			case Region when this.Version < ACadVersion.AC1014:
 				return false;
 			case Shape:
+			case TableEntity when this.Version <= ACadVersion.AC1018:
 				return this.Configuration.WriteShapes;
 			case Surface:
 				this.notify($"Entity type not implemented {entity.GetType().FullName}", NotificationType.NotImplemented);
