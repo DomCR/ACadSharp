@@ -324,14 +324,38 @@ internal abstract partial class DxfSectionWriterBase
 		}
 	}
 
-	private void writeCell(TableEntity.Cell cell)
+	private void writeCell(TableEntity table, int rowIndex, int columnIndex)
 	{
-		this._writer.Write(171, (short)cell.Type);
+		TableEntity.Cell cell = table.Rows[rowIndex].Cells[columnIndex];
+
+		//Cells read from a dwg file have the type in the content
+		CellType type = cell.Type;
+		if (type == CellType.Unknown)
+		{
+			type = cell.Content?.ContentType == TableCellContentType.Block ? CellType.Block : CellType.Text;
+		}
+
+		//The merged cells are stored in each cell, the first cell of the range has its size
+		bool merged = cell.MergedValue;
+		int mergedWidth = Math.Max(cell.BorderWidth, 1);
+		int mergedHeight = Math.Max(cell.BorderHeight, 1);
+		CellRange range = table.MergedCellRanges.FirstOrDefault(r =>
+			r.TopRowIndex <= rowIndex && rowIndex <= r.BottomRowIndex
+			&& r.LeftColumnIndex <= columnIndex && columnIndex <= r.RightColumnIndex);
+		if (range != null)
+		{
+			bool isFirst = range.TopRowIndex == rowIndex && range.LeftColumnIndex == columnIndex;
+			merged = !isFirst;
+			mergedWidth = isFirst ? range.RightColumnIndex - range.LeftColumnIndex + 1 : 1;
+			mergedHeight = isFirst ? range.BottomRowIndex - range.TopRowIndex + 1 : 1;
+		}
+
+		this._writer.Write(171, (short)type);
 		this._writer.Write(172, (short)cell.EdgeFlags);
-		this._writer.Write(173, cell.MergedValue ? 1 : 0);
+		this._writer.Write(173, merged ? 1 : 0);
 		this._writer.Write(174, cell.AutoFit ? 1 : 0);
-		this._writer.Write(175, (short)cell.BorderWidth);
-		this._writer.Write(176, (short)cell.BorderHeight);
+		this._writer.Write(175, (short)mergedWidth);
+		this._writer.Write(176, (short)mergedHeight);
 
 		if (this.Version > ACadVersion.AC1018)
 		{
@@ -349,7 +373,7 @@ internal abstract partial class DxfSectionWriterBase
 		{
 			this.writeLongTextValue(1, 2, cell.Content.CadValue.FormattedValue);
 		}
-		else if (cell.Type == CellType.Block)
+		else if (type == CellType.Block)
 		{
 			if (cell.Content?.CadValue?.Value is BlockRecord record)
 			{
@@ -369,12 +393,28 @@ internal abstract partial class DxfSectionWriterBase
 			return;
 		}
 
+		CadValue value;
+		if (type == CellType.Block)
+		{
+			//The block is in 340, the value is an empty string
+			value = new CadValue();
+			value.ValueType = CadValueType.String;
+			value.IsEmpty = true;
+		}
+		else if (cell.Content == null)
+		{
+			//Same value as the empty cells, also used for the merged cells
+			value = new CadValue();
+			value.Flags = 7;
+		}
+		else
+		{
+			value = cell.Content.CadValue;
+		}
+
 		this._writer.Write(92, 0);
 		this._writer.Write(301, DxfFileToken.CellValue);
-
-		//Finish writing the cell value
-
-		this._writer.Write(304, "ACVALUE_END");
+		this.writeCadValue(value);
 	}
 
 	private void writeCircle(Circle circle)
@@ -1798,11 +1838,12 @@ internal abstract partial class DxfSectionWriterBase
 			this._writer.Write(142, col.Width);
 		}
 
-		foreach (TableEntity.Row row in table.Rows)
+		for (int i = 0; i < table.Rows.Count; i++)
 		{
-			foreach (TableEntity.Cell cell in row.Cells)
+			TableEntity.Row row = table.Rows[i];
+			for (int j = 0; j < row.Cells.Count; j++)
 			{
-				this.writeCell(cell);
+				this.writeCell(table, i, j);
 			}
 		}
 	}
