@@ -1251,7 +1251,13 @@ internal abstract partial class DxfSectionWriterBase
 
 		this._writer.Write(10, underlay.InsertPoint, map);
 
-		this._writer.Write(280, underlay.Flags, map);
+		this._writer.WriteIfNotDefault(41, underlay.XScale, 1.0, map);
+		this._writer.WriteIfNotDefault(42, underlay.YScale, 1.0, map);
+		this._writer.WriteIfNotDefault(43, underlay.ZScale, 1.0, map);
+
+		this._writer.WriteIfNotDefault(50, underlay.Rotation, 0.0, map);
+
+		this._writer.WriteIfNotDefault(280, underlay.Flags, UnderlayDisplayFlags.Default, map);
 		this._writer.Write(281, underlay.Contrast, map);
 		this._writer.Write(282, underlay.Fade, map);
 
