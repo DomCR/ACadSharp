@@ -51,7 +51,6 @@ internal partial class DwgObjectWriter : DwgSectionIO
 			case AecBinRecord:
 			case DimensionAssociation:
 			case UnknownNonGraphicalObject:
-			case VisualStyle:
 			case ProxyObject:
 				return true;
 		}
@@ -1920,6 +1919,9 @@ internal partial class DwgObjectWriter : DwgSectionIO
 			case FieldList fieldList:
 				this.writeFieldList(fieldList);
 				break;
+			case VisualStyle visualStyle:
+				this.writeVisualStyle(visualStyle);
+				break;
 			case XRecord record:
 				this.writeXRecord(record);
 				break;
@@ -2352,6 +2354,11 @@ internal partial class DwgObjectWriter : DwgSectionIO
 			this.writeCellStyleWithId(cellStyle);
 			index++;
 		}
+	}
+
+	private void writeVisualStyle(VisualStyle visualStyle)
+	{
+		throw new NotImplementedException();
 	}
 
 	private void writeWipeoutVariables(WipeoutVariables wipeoutVariables)
