@@ -352,7 +352,7 @@ internal abstract class DxfSectionReaderBase
 			case DxfFileToken.EntityExtrudedSurface:
 				return this.readEntityCodes<ExtrudedSurface>(new CadModelerGeometryTemplate<ExtrudedSurface>(), this.readExtrudedSurface);
 			case DxfFileToken.EntityLoftedSurface:
-				return this.readEntityCodes<LoftedSurface>(new CadModelerGeometryTemplate<LoftedSurface>(), this.readSurfaceEntity<LoftedSurface>);
+				return this.readEntityCodes<LoftedSurface>(new CadModelerGeometryTemplate<LoftedSurface>(), this.readLoftedSurface);
 			case DxfFileToken.EntityNurbSurface:
 				return this.readEntityCodes<NurbSurface>(new CadModelerGeometryTemplate<NurbSurface>(), this.readSurfaceEntity<NurbSurface>);
 			case DxfFileToken.EntityPlaneSurface:
@@ -1356,6 +1356,31 @@ internal abstract class DxfSectionReaderBase
 		}
 
 		return template;
+	}
+
+	private bool readLoftedSurface(CadEntityTemplate template, DxfMap map, string subclass = null)
+	{
+		var tmp = template as CadModelerGeometryTemplate<LoftedSurface>;
+
+		switch (this._reader.Code)
+		{
+			case 40:
+				tmp.CadObject.LoftTransform = this.readMatrix4(40);
+				return true;
+			case 90:
+				var profiles = tmp.CadObject.Profiles;
+				if (profiles.Count == 0 || profiles[profiles.Count - 1].BinaryData != null)
+				{
+					profiles.Add(new LoftedSurface.Profile { ClassId = this._reader.ValueAsInt });
+				}
+				else
+				{
+					profiles[profiles.Count - 1].BinaryData = this.readByteEntries(310)?.ToArray();
+				}
+				return true;
+			default:
+				return this.readSurfaceEntity<LoftedSurface>(template, map, subclass);
+		}
 	}
 
 	private CadHatchTemplate.CadBoundaryPathTemplate readLoop()
