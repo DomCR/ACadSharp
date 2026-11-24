@@ -1193,13 +1193,34 @@ internal partial class DwgObjectReader : DwgSectionIO
 		style.EdgeModifiers = this.readVisualStyleProperty(this._mergedReaders.ReadBitLong);
 		style.EdgeColor = this.readVisualStyleProperty(() => this._mergedReaders.ReadCmColor());
 		style.OpacityLevel = this.readVisualStyleProperty(this._mergedReaders.ReadBitDouble);
-		style.EdgeWidth = this.readVisualStyleProperty(() => (short)this._mergedReaders.ReadBitLong());
-		style.EdgeOverhang = this.readVisualStyleProperty(() => (short)this._mergedReaders.ReadBitLong());
+
+		if (this.R2010Plus)
+		{
+			style.EdgeWidth = this.readVisualStyleProperty(() => (short)this._mergedReaders.ReadBitLong());
+			style.EdgeOverhang = this.readVisualStyleProperty(() => (short)this._mergedReaders.ReadBitLong());
+		}
+		else
+		{
+			style.EdgeWidth = this.readVisualStyleProperty(() => (short)this._mergedReaders.ReadBitShort());
+			style.EdgeOverhang = this.readVisualStyleProperty(() => (short)this._mergedReaders.ReadBitShort());
+		}
+
 		style.EdgeJitter = this.readVisualStyleProperty(this._mergedReaders.ReadBitLong);
 		style.EdgeSilhouetteColor = this.readVisualStyleProperty(() => this._mergedReaders.ReadCmColor());
-		style.EdgeSilhouetteWidth = this.readVisualStyleProperty(() => (short)this._mergedReaders.ReadBitLong());
-		style.HaloGap = this.readVisualStyleProperty(() => (short)this._mergedReaders.ReadBitLong());
-		style.EdgeIsolineCount = this.readVisualStyleProperty(() => (short)this._mergedReaders.ReadBitLong());
+
+		if (this.R2010Plus)
+		{
+			style.EdgeSilhouetteWidth = this.readVisualStyleProperty(() => (short)this._mergedReaders.ReadBitLong());
+			style.HaloGap = this.readVisualStyleProperty(() => (short)this._mergedReaders.ReadBitLong());
+			style.EdgeIsolineCount = this.readVisualStyleProperty(() => (short)this._mergedReaders.ReadBitLong());
+		}
+		else
+		{
+			style.EdgeSilhouetteWidth = this.readVisualStyleProperty(() => (short)this._mergedReaders.ReadBitShort());
+			style.HaloGap = this.readVisualStyleProperty(() => (short)this._mergedReaders.ReadByte());
+			style.EdgeIsolineCount = this.readVisualStyleProperty(() => (short)this._mergedReaders.ReadBitShort());
+		}
+
 		style.PrecisionFlag = this.readVisualStyleProperty(this._mergedReaders.ReadBit);
 
 		if (!this.R2010Plus)

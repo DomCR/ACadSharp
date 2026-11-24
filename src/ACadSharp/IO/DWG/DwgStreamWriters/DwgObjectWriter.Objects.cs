@@ -2408,13 +2408,34 @@ internal partial class DwgObjectWriter : DwgSectionIO
 		this.writeVisualStyleProperty(() => this._writer.WriteBitLong(visualStyle.EdgeModifiers));
 		this.writeVisualStyleProperty(() => this._writer.WriteCmColor(visualStyle.EdgeColor));
 		this.writeVisualStyleProperty(() => this._writer.WriteBitDouble(visualStyle.OpacityLevel));
-		this.writeVisualStyleProperty(() => this._writer.WriteBitLong(visualStyle.EdgeWidth));
-		this.writeVisualStyleProperty(() => this._writer.WriteBitLong(visualStyle.EdgeOverhang));
+
+		if (this.R2010Plus)
+		{
+			this.writeVisualStyleProperty(() => this._writer.WriteBitLong(visualStyle.EdgeWidth));
+			this.writeVisualStyleProperty(() => this._writer.WriteBitLong(visualStyle.EdgeOverhang));
+		}
+		else
+		{
+			this.writeVisualStyleProperty(() => this._writer.WriteBitShort((short)visualStyle.EdgeWidth));
+			this.writeVisualStyleProperty(() => this._writer.WriteBitShort((short)visualStyle.EdgeOverhang));
+		}
+
 		this.writeVisualStyleProperty(() => this._writer.WriteBitLong(visualStyle.EdgeJitter));
 		this.writeVisualStyleProperty(() => this._writer.WriteCmColor(visualStyle.EdgeSilhouetteColor));
-		this.writeVisualStyleProperty(() => this._writer.WriteBitLong(visualStyle.EdgeSilhouetteWidth));
-		this.writeVisualStyleProperty(() => this._writer.WriteBitLong(visualStyle.HaloGap));
-		this.writeVisualStyleProperty(() => this._writer.WriteBitLong(visualStyle.EdgeIsolineCount));
+
+		if (this.R2010Plus)
+		{
+			this.writeVisualStyleProperty(() => this._writer.WriteBitLong(visualStyle.EdgeSilhouetteWidth));
+			this.writeVisualStyleProperty(() => this._writer.WriteBitLong(visualStyle.HaloGap));
+			this.writeVisualStyleProperty(() => this._writer.WriteBitLong(visualStyle.EdgeIsolineCount));
+		}
+		else
+		{
+			this.writeVisualStyleProperty(() => this._writer.WriteBitShort((short)visualStyle.EdgeSilhouetteWidth));
+			this.writeVisualStyleProperty(() => this._writer.WriteByte((byte)visualStyle.HaloGap));
+			this.writeVisualStyleProperty(() => this._writer.WriteBitShort((short)visualStyle.EdgeIsolineCount));
+		}
+
 		this.writeVisualStyleProperty(() => this._writer.WriteBit(visualStyle.PrecisionFlag));
 
 		if (!this.R2010Plus)
