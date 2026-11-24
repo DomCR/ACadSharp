@@ -15,6 +15,36 @@ namespace ACadSharp.Objects;
 public partial class VisualStyle : NonGraphicalObject, IDxfClassDefined
 {
 	/// <summary>
+	/// Gets or sets a value indicating whether the bloom effect is enabled.
+	/// </summary>
+	public bool BloomEffectEnabled { get; set; }
+
+	/// <summary>
+	/// Gets or sets the intensity of the bloom effect.
+	/// </summary>
+	public int BloomIntensity { get; set; }
+
+	/// <summary>
+	/// Gets or sets the radius of the bloom effect.
+	/// </summary>
+	public int BloomRadius { get; set; }
+
+	/// <summary>
+	/// Gets or sets the brightness threshold above which the bloom effect is applied.
+	/// </summary>
+	public int BloomThreshold { get; set; }
+
+	/// <summary>
+	/// Gets or sets the amount of blur applied by the blur effect.
+	/// </summary>
+	public int BlurAmount { get; set; }
+
+	/// <summary>
+	/// Gets or sets a value indicating whether the blur effect is enabled.
+	/// </summary>
+	public bool BlurEffectEnabled { get; set; }
+
+	/// <summary>
 	/// Gets or sets the overall brightness level.
 	/// </summary>
 	[DxfCodeValue(44)]
@@ -27,6 +57,11 @@ public partial class VisualStyle : NonGraphicalObject, IDxfClassDefined
 	public Color Color { get; set; }
 
 	/// <summary>
+	/// Gets or sets a value indicating whether the depth of field effect is enabled.
+	/// </summary>
+	public bool DepthOfFieldEnabled { get; set; }
+
+	/// <summary>
 	/// Gets or sets the user-defined description.
 	/// </summary>
 	[DxfCodeValue(2)]
@@ -37,6 +72,11 @@ public partial class VisualStyle : NonGraphicalObject, IDxfClassDefined
 	/// </summary>
 	[DxfCodeValue(93)]
 	public int DisplaySettings { get; set; }
+
+	/// <summary>
+	/// Gets or sets a value indicating whether the draw order is taken into account when rendering.
+	/// </summary>
+	public bool DrawOrderEnabled { get; set; }
 
 	/// <summary>
 	/// Gets or sets edge style application flags.
@@ -129,10 +169,25 @@ public partial class VisualStyle : NonGraphicalObject, IDxfClassDefined
 	public EdgeStyleModel EdgeStyleModel { get; set; }
 
 	/// <summary>
+	/// Gets or sets the path of the texture used to draw the edges.
+	/// </summary>
+	public string EdgeTexturePath { get; set; }
+
+	/// <summary>
 	/// Gets or sets the default edge width.
 	/// </summary>
 	[DxfCodeValue(76)]
 	public int EdgeWidth { get; set; }
+
+	/// <summary>
+	/// Gets or sets the amount of wiggle applied to the edges.
+	/// </summary>
+	public WiggleAmount EdgeWiggleAmount { get; set; }
+
+	/// <summary>
+	/// Gets or sets a value indicating whether the face color adjustment is enabled.
+	/// </summary>
+	public bool FaceAdjustmentEnabled { get; set; }
 
 	/// <summary>
 	/// Gets or sets the face color mode.
@@ -177,16 +232,36 @@ public partial class VisualStyle : NonGraphicalObject, IDxfClassDefined
 	public Color FaceStyleMonoColor { get; set; }
 
 	/// <summary>
+	/// Gets or sets the distance to the focal plane for the depth of field effect.
+	/// </summary>
+	public double FocusDistance { get; set; }
+
+	/// <summary>
+	/// Gets or sets the width of the in-focus region for the depth of field effect.
+	/// </summary>
+	public double FocusWidth { get; set; }
+
+	/// <summary>
 	/// Gets or sets the halo gap value.
 	/// </summary>
 	[DxfCodeValue(170)]
 	public short HaloGap { get; set; }
 
 	/// <summary>
-	/// Gets a value indicating whether this visual style is marked for internal use only.
+	/// Gets or sets a value indicating whether this visual style is marked for internal use only.
 	/// </summary>
 	[DxfCodeValue(291)]
-	public bool InternalUseOnlyFlag { get; internal set; }
+	public bool InternalUseOnlyFlag { get; set; }
+
+	/// <summary>
+	/// Gets or sets a value indicating whether lighting is enabled.
+	/// </summary>
+	public bool LightingEnabled { get; set; }
+
+	/// <summary>
+	/// Gets or sets a value indicating whether the monochrome effect is enabled.
+	/// </summary>
+	public bool MonoEffectEnabled { get; set; }
 
 	/// <inheritdoc/>
 	public override string ObjectName => DxfFileToken.ObjectVisualStyle;
@@ -199,6 +274,56 @@ public partial class VisualStyle : NonGraphicalObject, IDxfClassDefined
 	/// </summary>
 	[DxfCodeValue(43)]
 	public double OpacityLevel { get; set; }
+
+	/// <summary>
+	/// Gets or sets a value indicating whether the pastel effect is enabled.
+	/// </summary>
+	public bool PastelEffectEnabled { get; set; }
+
+	/// <summary>
+	/// Gets or sets the angle of the pencil effect strokes.
+	/// </summary>
+	public double PencilAngle { get; set; }
+
+	/// <summary>
+	/// Gets or sets the color of the pencil effect strokes.
+	/// </summary>
+	public Color PencilColor { get; set; }
+
+	/// <summary>
+	/// Gets or sets a value indicating whether the pencil effect is enabled.
+	/// </summary>
+	public bool PencilEffectEnabled { get; set; }
+
+	/// <summary>
+	/// Gets or sets the pattern used by the pencil effect.
+	/// </summary>
+	public int PencilPattern { get; set; }
+
+	/// <summary>
+	/// Gets or sets the scale of the pencil effect pattern.
+	/// </summary>
+	public double PencilScale { get; set; }
+
+	/// <summary>
+	/// Gets or sets the brightness adjustment applied in post-processing.
+	/// </summary>
+	public int PostBrightness { get; set; }
+
+	/// <summary>
+	/// Gets or sets the contrast adjustment applied in post-processing.
+	/// </summary>
+	public int PostContrast { get; set; }
+
+	/// <summary>
+	/// Gets or sets a value indicating whether the poster effect is enabled.
+	/// </summary>
+	public bool PosterEffectEnabled { get; set; }
+
+	/// <summary>
+	/// Gets or sets the power (gamma) adjustment applied in post-processing.
+	/// </summary>
+	public int PostPower { get; set; }
 
 	/// <summary>
 	/// Gets or sets a value indicating whether edge hide precision mode is enabled.
@@ -222,10 +347,30 @@ public partial class VisualStyle : NonGraphicalObject, IDxfClassDefined
 	public override string SubclassMarker => DxfSubclassMarker.VisualStyle;
 
 	/// <summary>
+	/// Gets or sets the color applied by the tint effect.
+	/// </summary>
+	public Color TintColor { get; set; }
+
+	/// <summary>
+	/// Gets or sets a value indicating whether the tint effect is enabled.
+	/// </summary>
+	public bool TintEffectEnabled { get; set; }
+
+	/// <summary>
+	/// Gets or sets the transparency level.
+	/// </summary>
+	public double Transparency { get; set; }
+
+	/// <summary>
 	/// Gets or sets the visual style type.
 	/// </summary>
 	[DxfCodeValue(70)]
 	public int Type { get; set; }
+
+	/// <summary>
+	/// Gets or sets a value indicating whether viewport transparency is enabled.
+	/// </summary>
+	public bool ViewportTransparencyEnabled { get; set; }
 
 	/// <summary>
 	/// Default <see cref="VisualStyle"/> name.
