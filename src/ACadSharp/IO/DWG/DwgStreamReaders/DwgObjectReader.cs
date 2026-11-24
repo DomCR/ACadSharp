@@ -1873,7 +1873,19 @@ namespace ACadSharp.IO.DWG
 			//Extrusion 3BD 210
 			ellipse.Normal = this._objectReader.Read3BitDouble();
 			//Axis ratio BD 40 Minor/major axis ratio
-			ellipse.RadiusRatio = this._objectReader.ReadBitDouble();
+			double ratio = this._objectReader.ReadBitDouble();
+			if (ratio <= 0)
+			{
+				ellipse.RadiusRatio = MathHelper.Epsilon;
+			}
+			else if (ratio > 1)
+			{
+				ellipse.RadiusRatio = 1;
+			}
+			else
+			{
+				ellipse.RadiusRatio = ratio;
+			}
 			//Beg angle BD 41 Starting angle (eccentric anomaly, radians)
 			ellipse.StartParameter = this._objectReader.ReadBitDouble();
 			//End angle BD 42 Ending angle (eccentric anomaly, radians)

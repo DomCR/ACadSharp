@@ -886,7 +886,7 @@ namespace ACadSharp.IO.DWG
 					flags |= 0x800;
 				}
 				//PSTYLEMODE Flags & 0x2000
-				if (this._header.PlotStyleMode == 1)
+				if (this._header.PlotStyleMode == PlotStyleMode.ColorDependent)
 				{
 					flags |= 0x2000;
 				}

@@ -26,10 +26,10 @@ public abstract class EvaluationExpression : NonGraphicalObject
 	public override string SubclassMarker => DxfSubclassMarker.EvalGraphExpr;
 
 	[DxfCodeValue(98)]
-	public int Value98 { get; set; }
+	public virtual int Value98 { get; set; }
 
 	[DxfCodeValue(99)]
-	public int Value99 { get; set; }
+	public virtual int Value99 { get; set; }
 
 	internal int Unknown { get; set; } = -1;
 }
