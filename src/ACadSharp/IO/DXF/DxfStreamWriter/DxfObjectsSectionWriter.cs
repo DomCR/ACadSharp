@@ -713,7 +713,7 @@ internal class DxfObjectsSectionWriter : DxfSectionWriterBase
 				case GroupCodeValueType.ObjectId:
 				case GroupCodeValueType.ExtendedDataHandle:
 					var obj = e.Value as IHandledCadObject;
-					if(obj == null)
+					if (obj == null)
 					{
 						continue;
 					}
@@ -1765,6 +1765,8 @@ internal class DxfObjectsSectionWriter : DxfSectionWriterBase
 
 		this._writer.Write(280, style.SuppressTitle ? 1 : 0, map);
 		this._writer.Write(281, style.SuppressHeaderRow ? 1 : 0, map);
+
+		this._writer.Write(7, style.Name, map);
 
 		this.writeCellStyle(style.DataCellStyle);
 		this.writeCellStyle(style.TitleCellStyle);

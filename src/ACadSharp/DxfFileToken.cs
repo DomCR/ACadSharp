@@ -24,6 +24,8 @@ public static class DxfFileToken
 
 	public const string BlocksSection = "BLOCKS";
 
+	public const string CellValue = "CELL_VALUE";
+
 	public const string ClassEntry = "CLASS";
 
 	public const string ClassesSection = "CLASSES";

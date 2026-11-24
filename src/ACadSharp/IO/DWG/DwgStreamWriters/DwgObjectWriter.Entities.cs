@@ -1,11 +1,15 @@
 ﻿using ACadSharp.Entities;
 using ACadSharp.Objects;
+using ACadSharp.Tables;
 using CSMath;
 using CSMath.Extensions;
 using System;
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
+using static ACadSharp.Entities.TableEntity;
+using static ACadSharp.IO.Templates.CadTableEntityTemplate;
+using static ACadSharp.Objects.TableStyle;
 
 namespace ACadSharp.IO.DWG;
 
@@ -2870,8 +2874,244 @@ internal partial class DwgObjectWriter : DwgSectionIO
 		//	0x10: table direction, 0 = up, 1 = down,
 		//	0x20: title suppressed.
 		//	Normally 0x06 is always set.
+		this._writer.WriteBitShort((short)table.ValueFlag);
 
-		throw new NotImplementedException();
+		//Hor.Dir.Vector 3BD 11
+		this._writer.Write3BitDouble(table.HorizontalDirection);
+
+		//Number of columns BL 92
+		this._writer.WriteBitLong(table.Columns.Count);
+		//Number of rows BL 91
+		this._writer.WriteBitLong(table.Rows.Count);
+
+		//Column widths BD 142 Repeats “# of columns” times
+		foreach (var c in table.Columns)
+		{
+			//Column widths BD 142 Repeats “# of columns” times
+			this._writer.WriteBitDouble(c.Width);
+		}
+
+		//Row heights BD 141 Repeats “# of rows” times
+		foreach (var r in table.Rows)
+		{
+			//Row heights BD 141 Repeats “# of rows” times
+			this._writer.WriteBitDouble(r.Height);
+		}
+
+		//Cells have more handles
+		//H 342 Table Style ID (hard pointer)
+		this._writer.HandleReference(DwgReferenceType.HardPointer, table.Style);
+
+		for (int n = 0; n < table.Rows.Count; n++)
+		{
+			for (int m = 0; m < table.Columns.Count; m++)
+			{
+				//Cell data, repeats for all cells in n x m table:
+				//Rows without all the cells are completed with default ones
+				var cells = table.Rows[n].Cells;
+				TableEntity.Cell cell = m < cells.Count ? cells[m] : new TableEntity.Cell();
+				this.writeTableCellData(cell);
+			}
+		}
+
+		//Common:
+		//End Cell Data(remaining data applies to entire table)
+		//Has table overrides B
+		TableStyle tableOverride = table.Content.StyleOverride;
+		this._writer.WriteBit(tableOverride != null);
+		if (tableOverride != null)
+		{
+			//Cell flag override BL 177 (deprecated)
+			//Only the title suppressed override is kept by the table model.
+			this._writer.WriteBitLong((int)TableEntity.TableOverrideFlags.TitleSuppressed);
+			//Title suppressed B 280 Present only if bit 0x0001 is set in table overrides
+			this._writer.WriteBit(tableOverride.SuppressTitle);
+		}
+
+		//End If has table overrides == 1
+		//Has border color overrides B
+		this._writer.WriteBit(false);
+		//Has border lineweight overrides B
+		this._writer.WriteBit(false);
+		//Has border visibility overrides B
+		this._writer.WriteBit(false);
+	}
+
+	private void writeTableCellData(TableEntity.Cell cell)
+	{
+		//Cell type BS 171 1 = text, 2 = block.
+		//In AutoCAD 2007 a cell can contain either 1 text
+		//or 1 block.In AutoCAD 2008 this changed(TODO).
+		this._writer.WriteBitShort((short)cell.Type);
+
+		//Cell edge flags RC 172
+		this._writer.WriteByte((byte)cell.EdgeFlags);
+
+		//Cell merged value B 173 Determines whether this cell is merged with another cell.
+		this._writer.WriteBit(cell.MergedValue);
+		//Autofit flag B 174
+		this._writer.WriteBit(cell.AutoFit);
+		//Merged width flag BL 175 Represents the horizontal number of merged cells.
+		this._writer.WriteBitLong(cell.BorderWidth);
+		//Merged height flag BL 176 Represents the vertical number of merged cells.
+		this._writer.WriteBitLong(cell.BorderHeight);
+		//Rotation value BD 145
+		this._writer.WriteBitDouble(cell.Rotation);
+
+		//H 344 for text cell, 340 for block cell (hard pointer)
+		BlockRecord blockRecord = cell.Contents
+			.Select(c => c.CadValue.Value)
+			.OfType<BlockRecord>()
+			.FirstOrDefault();
+		this._writer.HandleReference(DwgReferenceType.HardPointer, blockRecord);
+
+		switch (cell.Type)
+		{
+			//In AutoCAD 2007 a cell can contain either 1 text block.
+			case CellType.Text when blockRecord == null && !this.R2007Plus:
+				//Text string TV 1 Present only if 344 value below is 0
+				string text = cell.Contents
+					.Select(c => c.CadValue)
+					.FirstOrDefault(v => v.Value is string)?.Value as string;
+				this._writer.WriteVariableText(text);
+				break;
+			case CellType.Block:
+				//Block scale BD 144
+				this._writer.WriteBitDouble(cell.BlockScale);
+				//Has attributes flag B
+				this._writer.WriteBit(false);
+				break;
+		}
+
+		//Common to both text and block cells:
+		//has override flag B
+		CellStyle styleOverride = cell.StyleOverride;
+		CellOverrideFlags flags = styleOverride.OverrideFlags;
+		this._writer.WriteBit(flags != CellOverrideFlags.None);
+		if (flags != CellOverrideFlags.None)
+		{
+			//Cell flag override BL 177 (deprecated)
+			this._writer.WriteBitLong((int)flags);
+
+			//Virtual edge flag RC 178 Determines which edges are virtual, see also the
+			//explanation on the cell edge flags above.When an
+			//edge is virtual, that edge has no border overrides.
+			//1 = top, 2 = right, 4 = bottom, 8 = left.
+			this._writer.WriteByte((byte)cell.VirtualEdgeFlag);
+
+			if (flags.HasFlag(CellOverrideFlags.CellAlignment))
+			{
+				//Cell alignment RS 170 Present only if bit 0x01 is set in cell flag
+				this._writer.WriteBitShort((short)styleOverride.CellAlignment);
+			}
+			if (flags.HasFlag(CellOverrideFlags.BackgroundFillNone))
+			{
+				//Background fill none B 283 Present only if bit 0x02 is set in cell flag
+				this._writer.WriteBit(styleOverride.IsFillColorOn);
+			}
+			if (flags.HasFlag(CellOverrideFlags.BackgroundColor))
+			{
+				//Background color CMC 63 Present only if bit 0x04 is set in cell flag
+				this._writer.WriteCmColor(styleOverride.BackgroundColor, this.R2004Pre);
+			}
+			if (flags.HasFlag(CellOverrideFlags.ContentColor))
+			{
+				//Content color CMC 64 Present only if bit 0x08 is set in cell flag
+				this._writer.WriteCmColor(styleOverride.ContentColor, this.R2004Pre);
+			}
+			if (flags.HasFlag(CellOverrideFlags.TextStyle))
+			{
+				//Text style H 7 Present only if bit 0x10 is set in cell flag
+				this._writer.HandleReference(DwgReferenceType.HardPointer, styleOverride.TextStyle);
+			}
+			if (flags.HasFlag(CellOverrideFlags.TextHeight))
+			{
+				//Text height BD 140 Present only if bit 0x20 is set in cell flag
+				this._writer.WriteBitDouble(styleOverride.TextHeight);
+			}
+
+			if (flags.HasFlag(CellOverrideFlags.TopGridColor))
+			{
+				//Top grid color CMC 69 Present only if bit 0x00040 is set in cell flag
+				this._writer.WriteCmColor(styleOverride.TopBorder.Color, this.R2004Pre);
+			}
+			if (flags.HasFlag(CellOverrideFlags.TopGridLineWeight))
+			{
+				//Top grid lineweight BS 279 Present only if bit 0x00400 is set in cell flag
+				this._writer.WriteBitShort((short)styleOverride.TopBorder.LineWeight);
+			}
+			if (flags.HasFlag(CellOverrideFlags.TopVisibility))
+			{
+				//Top visibility BS 289 Present only if bit 0x04000 is set in cell flag
+				this._writer.WriteBitShort((short)(styleOverride.TopBorder.IsInvisible ? 0 : 1));
+			}
+
+			if (flags.HasFlag(CellOverrideFlags.RightGridColor))
+			{
+				//Right grid color CMC 65 Present only if bit 0x00080 is set in cell flag
+				this._writer.WriteCmColor(styleOverride.RightBorder.Color, this.R2004Pre);
+			}
+			if (flags.HasFlag(CellOverrideFlags.RightGridLineWeight))
+			{
+				//Right grid lineweight BS 275 Present only if bit 0x00800 is set in cell flag
+				this._writer.WriteBitShort((short)styleOverride.RightBorder.LineWeight);
+			}
+			if (flags.HasFlag(CellOverrideFlags.RightVisibility))
+			{
+				//Right visibility BS 285 Present only if bit 0x08000 is set in cell flag
+				this._writer.WriteBitShort((short)(styleOverride.RightBorder.IsInvisible ? 0 : 1));
+			}
+
+			if (flags.HasFlag(CellOverrideFlags.BottomGridColor))
+			{
+				//Bottom grid color CMC 66 Present only if bit 0x00100 is set in cell flag
+				this._writer.WriteCmColor(styleOverride.BottomBorder.Color, this.R2004Pre);
+			}
+			if (flags.HasFlag(CellOverrideFlags.BottomGridLineWeight))
+			{
+				//Bottom grid lineweight BS 276 Present only if bit 0x01000 is set in cell flag
+				this._writer.WriteBitShort((short)styleOverride.BottomBorder.LineWeight);
+			}
+			if (flags.HasFlag(CellOverrideFlags.BottomVisibility))
+			{
+				//Bottom visibility BS 286 Present only if bit 0x10000 is set in cell flag
+				this._writer.WriteBitShort((short)(styleOverride.BottomBorder.IsInvisible ? 0 : 1));
+			}
+
+			if (flags.HasFlag(CellOverrideFlags.LeftGridColor))
+			{
+				//Left grid color CMC 68 Present only if bit 0x00200 is set in cell flag
+				this._writer.WriteCmColor(styleOverride.LeftBorder.Color, this.R2004Pre);
+			}
+			if (flags.HasFlag(CellOverrideFlags.LeftGridLineWeight))
+			{
+				//Left grid lineweight BS 278 Present only if bit 0x02000 is set in cell flag
+				this._writer.WriteBitShort((short)styleOverride.LeftBorder.LineWeight);
+			}
+			if (flags.HasFlag(CellOverrideFlags.LeftVisibility))
+			{
+				//Left visibility BS 288 Present only if bit 0x20000 is set in cell flag
+				this._writer.WriteBitShort((short)(styleOverride.LeftBorder.IsInvisible ? 0 : 1));
+			}
+		}
+
+		//R2007+:
+		if (this.R2007Plus)
+		{
+			//Unknown BL
+			this._writer.WriteBitLong(0);
+			//Value fields … See paragraph 20.4.98.
+			CadValue value = cell.Contents
+				.Select(c => c.CadValue)
+				.FirstOrDefault(v => v.Value is not BlockRecord);
+			if (value == null)
+			{
+				value = new CadValue();
+				value.IsEmpty = true;
+			}
+
+			this.writeCadValue(value);
+		}
 	}
 
 	private void writeTextEntity(TextEntity text)

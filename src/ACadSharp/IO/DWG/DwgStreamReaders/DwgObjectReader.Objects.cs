@@ -10,111 +10,6 @@ namespace ACadSharp.IO.DWG;
 
 internal partial class DwgObjectReader : DwgSectionIO
 {
-	private void readCellStyle(CadTableStyleTemplate.CadCellStyleTemplate template)
-	{
-		//20.4.101.4
-		CellStyle cellStyle = (CellStyle)template.Format;
-
-		//BL 90 Cell style type
-		cellStyle.Type = (CellStyleType)this._mergedReaders.ReadBitLong();
-
-		//BS 170 Data flags, 0 = no data, 1 = data is present
-		//If data is present
-		cellStyle.HasData = this._mergedReaders.ReadBitShortAsBool();
-		if (!cellStyle.HasData)
-		{
-			return;
-		}
-
-		//BL 91 Property override flags. The definition is the same as the content format
-		//propery override flags, see paragraph 20.4.101.3.
-		cellStyle.PropertyOverrideFlags = (TableStyle.CellStylePropertyFlags)this._mergedReaders.ReadBitLong();
-		//BL  92 Merge flags, but may only for bits 0x8000 and 0x10000.
-		cellStyle.TableCellStylePropertyFlags = (CellStylePropertyFlags)this._mergedReaders.ReadBitLong();
-		//TC 62 Background color
-		cellStyle.BackgroundColor = this._mergedReaders.ReadCmColor(this.R2004Pre);
-
-		//BL 93 Content layout flags
-		cellStyle.ContentLayoutFlags = (CellContentLayoutFlags)this._mergedReaders.ReadBitLong();
-
-		//Content format fields (see paragraph 20.4.101.3)
-		this.readCellContentFormat(template, cellStyle);
-
-		//BS 171 Margin override flags, bit 1 is set if margin overrides are present
-		//If margin overrides are present
-		cellStyle.MarginOverrideFlags = (MarginFlags)this._mergedReaders.ReadBitShort();
-		if (cellStyle.MarginOverrideFlags.HasFlag(MarginFlags.Override))
-		{
-			//BD 40 Vertical margin
-			cellStyle.VerticalMargin = this._mergedReaders.ReadBitDouble();
-			//BD 40 Horizontal margin
-			cellStyle.HorizontalMargin = this._mergedReaders.ReadBitDouble();
-			//BD 40 Bottom margin
-			cellStyle.BottomMargin = this._mergedReaders.ReadBitDouble();
-			//BD 40 Right margin
-			cellStyle.RightMargin = this._mergedReaders.ReadBitDouble();
-			//BD 40 Margin horizontal spacing
-			cellStyle.MarginHorizontalSpacing = this._mergedReaders.ReadBitDouble();
-			//BD 40 Margin vertical spacing
-			cellStyle.MarginVerticalSpacing = this._mergedReaders.ReadBitDouble();
-		}
-
-		//BL 94 Number of borders present (0-6)
-		int nborders = this._mergedReaders.ReadBitLong();
-		//Begin repeat borders
-		for (int i = 0; i < nborders; i++)
-		{
-			//BL 95 Edge flags
-			CellEdgeFlags edgeFlags = (CellEdgeFlags)this._mergedReaders.ReadBitLong();
-
-			// If edge flags is non - zero
-			switch (edgeFlags)
-			{
-				case CellEdgeFlags.Top:
-					this.readBorder(template, cellStyle.TopBorder);
-					break;
-				case CellEdgeFlags.Right:
-					this.readBorder(template, cellStyle.RightBorder);
-					break;
-				case CellEdgeFlags.Bottom:
-					this.readBorder(template, cellStyle.BottomBorder);
-					break;
-				case CellEdgeFlags.Left:
-					this.readBorder(template, cellStyle.LeftBorder);
-					break;
-				case CellEdgeFlags.InsideVertical:
-					this.readBorder(template, cellStyle.VerticalInsideBorder);
-					break;
-				case CellEdgeFlags.InsideHorizontal:
-					this.readBorder(template, cellStyle.HorizontalInsideBorder);
-					break;
-				case CellEdgeFlags.Unknown:
-				default:
-					continue;
-			}
-		}
-	}
-
-	private void readBorder(CadCellStyleTemplate template, CellBorder border)
-	{
-		//BL 90 Border property override flags
-		border.PropertyOverrideFlags = (BorderPropertyFlags)this._mergedReaders.ReadBitLong();
-		//BL 91 Border type
-		border.Type = ((BorderType)this._mergedReaders.ReadBitLong());
-		//TC 62 Color
-		border.Color = this._mergedReaders.ReadCmColor(this.R2004Pre);
-		//BL 92 Line weight
-		border.LineWeight = ((LineWeightType)this._mergedReaders.ReadBitLong());
-		//H 40 Line type (hard pointer)
-		template.BorderLineTypePairs.Add(new Tuple<CellBorder, ulong>(border, this.handleReference()));
-		//BL 93 Invisibility: 1 = invisible, 0 = visible.
-		border.IsInvisible = (this._mergedReaders.ReadBitLong() == 1);
-		//BD 40 Double line spacing
-		border.DoubleLineSpacing = this._mergedReaders.ReadBitDouble();
-
-		border.ApplyBorder = true;
-	}
-
 	private CadTemplate readAlignmentGrip()
 	{
 		var grip = new BlockAlignmentGrip();
@@ -703,6 +598,26 @@ internal partial class DwgObjectReader : DwgSectionIO
 		return template;
 	}
 
+	private void readBorder(CadCellStyleTemplate template, CellBorder border)
+	{
+		//BL 90 Border property override flags
+		border.PropertyOverrideFlags = (BorderPropertyFlags)this._mergedReaders.ReadBitLong();
+		//BL 91 Border type
+		border.Type = ((BorderType)this._mergedReaders.ReadBitLong());
+		//TC 62 Color
+		border.Color = this._mergedReaders.ReadCmColor(this.R2004Pre);
+		//BL 92 Line weight
+		border.LineWeight = ((LineWeightType)this._mergedReaders.ReadBitLong());
+		//H 40 Line type (hard pointer)
+		template.BorderLineTypePairs.Add(new Tuple<CellBorder, ulong>(border, this.handleReference()));
+		//BL 93 Invisibility: 1 = invisible, 0 = visible.
+		border.IsInvisible = (this._mergedReaders.ReadBitLong() == 1);
+		//BD 40 Double line spacing
+		border.DoubleLineSpacing = this._mergedReaders.ReadBitDouble();
+
+		border.ApplyBorder = true;
+	}
+
 	private CadValueTemplate readCadValue(CadValue value)
 	{
 		CadValueTemplate template = new CadValueTemplate(value);
@@ -768,6 +683,91 @@ internal partial class DwgObjectReader : DwgSectionIO
 		}
 
 		return template;
+	}
+
+	private void readCellStyle(CadTableStyleTemplate.CadCellStyleTemplate template)
+	{
+		//20.4.101.4
+		CellStyle cellStyle = (CellStyle)template.Format;
+
+		//BL 90 Cell style type
+		cellStyle.Type = (CellStyleType)this._mergedReaders.ReadBitLong();
+
+		//BS 170 Data flags, 0 = no data, 1 = data is present
+		//If data is present
+		cellStyle.HasData = this._mergedReaders.ReadBitShortAsBool();
+		if (!cellStyle.HasData)
+		{
+			return;
+		}
+
+		//BL 91 Property override flags. The definition is the same as the content format
+		//propery override flags, see paragraph 20.4.101.3.
+		cellStyle.PropertyOverrideFlags = (TableStyle.CellStylePropertyFlags)this._mergedReaders.ReadBitLong();
+		//BL  92 Merge flags, but may only for bits 0x8000 and 0x10000.
+		cellStyle.TableCellStylePropertyFlags = (CellStylePropertyFlags)this._mergedReaders.ReadBitLong();
+		//TC 62 Background color
+		cellStyle.BackgroundColor = this._mergedReaders.ReadCmColor(this.R2004Pre);
+
+		//BL 93 Content layout flags
+		cellStyle.ContentLayoutFlags = (CellContentLayoutFlags)this._mergedReaders.ReadBitLong();
+
+		//Content format fields (see paragraph 20.4.101.3)
+		this.readCellContentFormat(template, cellStyle);
+
+		//BS 171 Margin override flags, bit 1 is set if margin overrides are present
+		//If margin overrides are present
+		cellStyle.MarginOverrideFlags = (MarginFlags)this._mergedReaders.ReadBitShort();
+		if (cellStyle.MarginOverrideFlags.HasFlag(MarginFlags.Override))
+		{
+			//BD 40 Vertical margin
+			cellStyle.VerticalMargin = this._mergedReaders.ReadBitDouble();
+			//BD 40 Horizontal margin
+			cellStyle.HorizontalMargin = this._mergedReaders.ReadBitDouble();
+			//BD 40 Bottom margin
+			cellStyle.BottomMargin = this._mergedReaders.ReadBitDouble();
+			//BD 40 Right margin
+			cellStyle.RightMargin = this._mergedReaders.ReadBitDouble();
+			//BD 40 Margin horizontal spacing
+			cellStyle.MarginHorizontalSpacing = this._mergedReaders.ReadBitDouble();
+			//BD 40 Margin vertical spacing
+			cellStyle.MarginVerticalSpacing = this._mergedReaders.ReadBitDouble();
+		}
+
+		//BL 94 Number of borders present (0-6)
+		int nborders = this._mergedReaders.ReadBitLong();
+		//Begin repeat borders
+		for (int i = 0; i < nborders; i++)
+		{
+			//BL 95 Edge flags
+			CellEdgeFlags edgeFlags = (CellEdgeFlags)this._mergedReaders.ReadBitLong();
+
+			// If edge flags is non - zero
+			switch (edgeFlags)
+			{
+				case CellEdgeFlags.Top:
+					this.readBorder(template, cellStyle.TopBorder);
+					break;
+				case CellEdgeFlags.Right:
+					this.readBorder(template, cellStyle.RightBorder);
+					break;
+				case CellEdgeFlags.Bottom:
+					this.readBorder(template, cellStyle.BottomBorder);
+					break;
+				case CellEdgeFlags.Left:
+					this.readBorder(template, cellStyle.LeftBorder);
+					break;
+				case CellEdgeFlags.InsideVertical:
+					this.readBorder(template, cellStyle.VerticalInsideBorder);
+					break;
+				case CellEdgeFlags.InsideHorizontal:
+					this.readBorder(template, cellStyle.HorizontalInsideBorder);
+					break;
+				case CellEdgeFlags.Unknown:
+				default:
+					continue;
+			}
+		}
 	}
 
 	private CadTemplate readDynamicBlockPurgePreventer()
@@ -1136,6 +1136,162 @@ internal partial class DwgObjectReader : DwgSectionIO
 		}
 
 		return template;
+	}
+
+	private CadTemplate readVisualStyle()
+	{
+		VisualStyle style = new VisualStyle();
+		CadTemplate<VisualStyle> template = new CadTemplate<VisualStyle>(style);
+
+		this.readCommonNonEntityData(template);
+
+		//WARNING: this object is not documented, the fields have been found using exploration methods and matching them with the dxf file
+
+		//2 Name
+		style.Description = this._textReader.ReadVariableText();
+		//70
+		style.Type = this._objectReader.ReadBitLong();
+
+		if (this.R2010Plus)
+		{
+			this._mergedReaders.ReadBitShort();
+			this._mergedReaders.ReadBit();
+		}
+
+		//Read face
+		style.FaceLightingModel = (FaceLightingModelType)this.readVisualStyleProperty(this._mergedReaders.ReadBitLong);
+		style.FaceLightingQuality = (FaceLightingQualityType)this.readVisualStyleProperty(this._mergedReaders.ReadBitLong);
+		style.FaceColorMode = (FaceColorMode)this.readVisualStyleProperty(this._mergedReaders.ReadBitLong);
+
+		if (this.R2010Plus)
+		{
+			style.FaceModifiers = (FaceModifierType)this.readVisualStyleProperty(this._mergedReaders.ReadBitLong);
+		}
+
+		style.FaceSpecularLevel = this.readVisualStyleProperty(this._mergedReaders.ReadBitDouble);
+		style.FaceOpacityLevel = this.readVisualStyleProperty(this._mergedReaders.ReadBitDouble);
+		style.FaceStyleMonoColor = this.readVisualStyleProperty(() => this._mergedReaders.ReadCmColor());
+
+		if (!this.R2010Plus)
+		{
+			style.FaceModifiers = (FaceModifierType)this.readVisualStyleProperty(this._mergedReaders.ReadBitLong);
+		}
+
+		//Read edge
+		style.EdgeStyleModel = this.readVisualStyleProperty(() => (EdgeStyleModel)this._mergedReaders.ReadBitLong());
+		style.EdgeStyle = this.readVisualStyleProperty(this._mergedReaders.ReadBitLong);
+		style.EdgeIntersectionColor = this.readVisualStyleProperty(() => this._mergedReaders.ReadCmColor());
+		style.EdgeObscuredColor = this.readVisualStyleProperty(() => this._mergedReaders.ReadCmColor());
+		style.EdgeObscuredLineType = this.readVisualStyleProperty(() => (VisualStyle.LineType)this._mergedReaders.ReadBitLong());
+
+		if (this.R2010Plus)
+		{
+			style.EdgeIntersectionLineType = this.readVisualStyleProperty(() => (VisualStyle.LineType)this._mergedReaders.ReadBitLong());
+		}
+
+		style.EdgeCreaseAngle = this.readVisualStyleProperty(this._mergedReaders.ReadBitDouble);
+		style.EdgeModifiers = this.readVisualStyleProperty(this._mergedReaders.ReadBitLong);
+		style.EdgeColor = this.readVisualStyleProperty(() => this._mergedReaders.ReadCmColor());
+		style.OpacityLevel = this.readVisualStyleProperty(this._mergedReaders.ReadBitDouble);
+
+		if (this.R2010Plus)
+		{
+			style.EdgeWidth = this.readVisualStyleProperty(() => (short)this._mergedReaders.ReadBitLong());
+			style.EdgeOverhang = this.readVisualStyleProperty(() => (short)this._mergedReaders.ReadBitLong());
+		}
+		else
+		{
+			style.EdgeWidth = this.readVisualStyleProperty(() => (short)this._mergedReaders.ReadBitShort());
+			style.EdgeOverhang = this.readVisualStyleProperty(() => (short)this._mergedReaders.ReadBitShort());
+		}
+
+		style.EdgeJitter = this.readVisualStyleProperty(this._mergedReaders.ReadBitLong);
+		style.EdgeSilhouetteColor = this.readVisualStyleProperty(() => this._mergedReaders.ReadCmColor());
+
+		if (this.R2010Plus)
+		{
+			style.EdgeSilhouetteWidth = this.readVisualStyleProperty(() => (short)this._mergedReaders.ReadBitLong());
+			style.HaloGap = this.readVisualStyleProperty(() => (short)this._mergedReaders.ReadBitLong());
+			style.EdgeIsolineCount = this.readVisualStyleProperty(() => (short)this._mergedReaders.ReadBitLong());
+		}
+		else
+		{
+			style.EdgeSilhouetteWidth = this.readVisualStyleProperty(() => (short)this._mergedReaders.ReadBitShort());
+			style.HaloGap = this.readVisualStyleProperty(() => (short)this._mergedReaders.ReadByte());
+			style.EdgeIsolineCount = this.readVisualStyleProperty(() => (short)this._mergedReaders.ReadBitShort());
+		}
+
+		style.PrecisionFlag = this.readVisualStyleProperty(this._mergedReaders.ReadBit);
+
+		if (!this.R2010Plus)
+		{
+			style.EdgeApplyStyleFlag = this._mergedReaders.ReadBitShort();
+			style.EdgeIntersectionLineType = (VisualStyle.LineType)this._mergedReaders.ReadBitShort();
+		}
+
+		//read display
+		style.DisplaySettings = this.readVisualStyleProperty(this._mergedReaders.ReadBitLong);
+		style.Brightness = this.readVisualStyleProperty(this._mergedReaders.ReadBitLong);
+		style.ShadowType = this.readVisualStyleProperty(() => (short)this._mergedReaders.ReadBitLong());
+
+		if (this._version == ACadVersion.AC1021)
+		{
+			var unknown = this._mergedReaders.ReadBitDouble();
+		}
+
+		if (this.R2007Pre)
+		{
+			var unknown = this._mergedReaders.ReadBit();
+		}
+
+		if (this.R2013Plus)
+		{
+			style.DrawOrderEnabled = this.readVisualStyleProperty(this._mergedReaders.ReadBit);
+			style.ViewportTransparencyEnabled = this.readVisualStyleProperty(this._mergedReaders.ReadBit);
+			style.LightingEnabled = this.readVisualStyleProperty(this._mergedReaders.ReadBit);
+			style.PosterEffectEnabled = this.readVisualStyleProperty(this._mergedReaders.ReadBit);
+			style.MonoEffectEnabled = this.readVisualStyleProperty(this._mergedReaders.ReadBit);
+			style.BlurEffectEnabled = this.readVisualStyleProperty(this._mergedReaders.ReadBit);
+			style.PencilEffectEnabled = this.readVisualStyleProperty(this._mergedReaders.ReadBit);
+			style.BloomEffectEnabled = this.readVisualStyleProperty(this._mergedReaders.ReadBit);
+			style.PastelEffectEnabled = this.readVisualStyleProperty(this._mergedReaders.ReadBit);
+			style.BlurAmount = this.readVisualStyleProperty(this._mergedReaders.ReadBitLong);
+			style.PencilAngle = this.readVisualStyleProperty(this._mergedReaders.ReadBitDouble);
+			style.PencilScale = this.readVisualStyleProperty(this._mergedReaders.ReadBitDouble);
+			style.PencilPattern = this.readVisualStyleProperty(this._mergedReaders.ReadBitLong);
+			style.PencilColor = this.readVisualStyleProperty(() => this._mergedReaders.ReadCmColor());
+			style.BloomThreshold = this.readVisualStyleProperty(this._mergedReaders.ReadBitLong);
+			style.BloomRadius = this.readVisualStyleProperty(this._mergedReaders.ReadBitLong);
+			style.TintColor = this.readVisualStyleProperty(() => this._mergedReaders.ReadCmColor());
+			style.FaceAdjustmentEnabled = this.readVisualStyleProperty(this._mergedReaders.ReadBit);
+			style.PostContrast = this.readVisualStyleProperty(this._mergedReaders.ReadBitLong);
+			style.PostBrightness = this.readVisualStyleProperty(this._mergedReaders.ReadBitLong);
+			style.PostPower = this.readVisualStyleProperty(this._mergedReaders.ReadBitLong);
+			style.TintEffectEnabled = this.readVisualStyleProperty(this._mergedReaders.ReadBit);
+			style.BloomIntensity = this.readVisualStyleProperty(this._mergedReaders.ReadBitLong);
+			style.Color = this.readVisualStyleProperty(() => this._mergedReaders.ReadCmColor());
+			style.Transparency = this.readVisualStyleProperty(this._mergedReaders.ReadBitDouble);
+			style.EdgeWiggleAmount = this.readVisualStyleProperty(() => (WiggleAmount)this._mergedReaders.ReadBitLong());
+			style.EdgeTexturePath = this.readVisualStyleProperty(this._mergedReaders.ReadVariableText);
+			style.DepthOfFieldEnabled = this.readVisualStyleProperty(this._mergedReaders.ReadBit);
+			style.FocusDistance = this.readVisualStyleProperty(this._mergedReaders.ReadBitDouble);
+			style.FocusWidth = this.readVisualStyleProperty(this._mergedReaders.ReadBitDouble);
+		}
+
+		return template;
+	}
+
+	private T readVisualStyleProperty<T>(Func<T> read)
+	{
+		T value = read();
+
+		if (this.R2010Plus)
+		{
+			//Unknown short S
+			this._mergedReaders.ReadBitShort();
+		}
+
+		return value;
 	}
 
 	private CadTemplate readWipeoutVariables()
