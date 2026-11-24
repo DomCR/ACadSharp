@@ -240,6 +240,53 @@ public class HatchTests : CommonEntityTests<Hatch>
 	}
 
 	[Fact]
+	public void NonRationalSplineEdgeVertexesStayOnCurve()
+	{
+		// Readers store the weight in Z and leave it 0 for non-rational splines.
+		Hatch.BoundaryPath.Spline edge = new Hatch.BoundaryPath.Spline
+		{
+			Degree = 3,
+			IsRational = false,
+		};
+		edge.ControlPoints.Add(new XYZ(100, 100, 0));
+		edge.ControlPoints.Add(new XYZ(101, 102, 0));
+		edge.ControlPoints.Add(new XYZ(103, 102, 0));
+		edge.ControlPoints.Add(new XYZ(104, 100, 0));
+		edge.Knots.AddRange(new double[] { 0, 0, 0, 0, 1, 1, 1, 1 });
+
+		List<XYZ> vertexes = edge.PolygonalVertexes(16);
+
+		Assert.NotEmpty(vertexes);
+		Assert.All(vertexes, v =>
+		{
+			Assert.InRange(v.X, 100 - 1e-9, 104 + 1e-9);
+			Assert.InRange(v.Y, 100 - 1e-9, 102 + 1e-9);
+			Assert.Equal(0, v.Z);
+		});
+	}
+
+	[Fact]
+	public void RationalSplineEdgeKeepsWeights()
+	{
+		Hatch.BoundaryPath.Spline edge = new Hatch.BoundaryPath.Spline
+		{
+			Degree = 2,
+			IsRational = true,
+		};
+		edge.ControlPoints.Add(new XYZ(1, 0, 1));
+		edge.ControlPoints.Add(new XYZ(1, 1, Math.Sqrt(2) / 2));
+		edge.ControlPoints.Add(new XYZ(0, 1, 1));
+		edge.Knots.AddRange(new double[] { 0, 0, 0, 1, 1, 1 });
+
+		Spline spline = (Spline)edge.ToEntity();
+
+		Assert.Equal(new[] { 1, Math.Sqrt(2) / 2, 1 }, spline.Weights);
+		Assert.All(spline.ControlPoints, cp => Assert.Equal(0, cp.Z));
+		// A quarter circle: every evaluated point lies on the unit circle.
+		Assert.All(edge.PolygonalVertexes(8), v => Assert.Equal(1, Math.Sqrt(v.X * v.X + v.Y * v.Y), 6));
+	}
+
+	[Fact]
 	public void PolylineHatchNotAllowMoreEdges()
 	{
 		Hatch.BoundaryPath path = new Hatch.BoundaryPath();
