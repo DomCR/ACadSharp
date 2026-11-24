@@ -1,4 +1,5 @@
 ﻿using ACadSharp.Entities;
+using ACadSharp.Tables;
 using System.Collections.Generic;
 
 namespace ACadSharp.IO.Templates;
@@ -21,7 +22,7 @@ internal partial class CadTableEntityTemplate
 
 		public ulong? UnknownHandle { get; set; }
 
-		public ulong? ValueHandle { get; set; }
+		public ulong? BlockRecordHandle { get; set; }
 
 		public CadTableCellTemplate(TableEntity.Cell cell)
 		{
@@ -30,12 +31,13 @@ internal partial class CadTableEntityTemplate
 
 		public void Build(CadDocumentBuilder builder)
 		{
-			if (StyleId != 0)
+			if (builder.TryGetCadObject<BlockRecord>(this.BlockRecordHandle, out var block))
 			{
+				this.Cell.Contents.Add(new TableEntity.CellContent(block));
 			}
-
-			if (builder.TryGetCadObject<CadObject>(this.ValueHandle, out var cadObject))
+			else if (this.BlockRecordHandle != null && this.BlockRecordHandle != 0)
 			{
+				builder.Notify($"Block record with handle {this.BlockRecordHandle} not found for table cell.");
 			}
 
 			foreach (var contentTemplate in this.ContentTemplates)

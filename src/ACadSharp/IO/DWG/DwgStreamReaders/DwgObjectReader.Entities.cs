@@ -388,7 +388,7 @@ internal partial class DwgObjectReader : DwgSectionIO
 		if (cell.HasLinkedData)
 		{
 			//H 340 Handle to data link object (hard pointer).
-			template.ValueHandle = this._mergedReaders.HandleReference();
+			template.BlockRecordHandle = this._mergedReaders.HandleReference();
 			//BL 93 Row count.
 			this._mergedReaders.ReadBitLong();
 			//BL 94 Column count.
@@ -505,7 +505,7 @@ internal partial class DwgObjectReader : DwgSectionIO
 		cell.EdgeFlags = this._mergedReaders.ReadByte();
 
 		//Cell merged value B 173 Determines whether this cell is merged with another cell.
-		cell.MergedValue = this._mergedReaders.ReadBit() ? (short)1 : (short)0;
+		cell.MergedValue = this._mergedReaders.ReadBit();
 		//Autofit flag B 174
 		cell.AutoFit = this._mergedReaders.ReadBit();
 		//Merged width flag BL 175 Represents the horizontal number of merged cells.
@@ -516,12 +516,12 @@ internal partial class DwgObjectReader : DwgSectionIO
 		cell.Rotation = this._mergedReaders.ReadBitDouble();
 
 		//H 344 for text cell, 340 for block cell (hard pointer)
-		template.ValueHandle = this.handleReference();
+		template.BlockRecordHandle = this.handleReference();
 
 		switch (cell.Type)
 		{
 			//In AutoCAD 2007 a cell can contain either 1 text block.
-			case CellType.Text when template.ValueHandle == 0 && this._version < ACadVersion.AC1021:
+			case CellType.Text when template.BlockRecordHandle == 0 && this._version < ACadVersion.AC1021:
 				//Text string TV 1 Present only if 344 value below is 0
 				var content = new CellContent();
 				content.CadValue.SetValue(this._mergedReaders.ReadVariableText(), CadValueType.String);
@@ -557,7 +557,8 @@ internal partial class DwgObjectReader : DwgSectionIO
 		if (this._mergedReaders.ReadBit())
 		{
 			//Cell flag override BL 177 (deprecated)
-			TableEntity.CellOverrideFlags flags = (CellOverrideFlags)this._mergedReaders.ReadBitLong();
+			TableStyle.CellOverrideFlags flags = (CellOverrideFlags)this._mergedReaders.ReadBitLong();
+			cell.StyleOverride.OverrideFlags = flags;
 
 			//Virtual edge flag RC 178 Determines which edges are virtual, see also the
 			//explanation on the cell edge flags above.When an
@@ -606,7 +607,7 @@ internal partial class DwgObjectReader : DwgSectionIO
 				//Top grid lineweight BS 279 Present only if bit 0x00400 is set in cell flag
 				cell.StyleOverride.TopBorder.LineWeight = (LineWeightType)this._mergedReaders.ReadBitShort();
 			}
-			if (flags.HasFlag(CellOverrideFlags.TopGridLineWeight))
+			if (flags.HasFlag(CellOverrideFlags.TopVisibility))
 			{
 				//Top visibility BS 289 Present only if bit 0x04000 is set in cell flag
 				cell.StyleOverride.TopBorder.IsInvisible = !this._mergedReaders.ReadBitShortAsBool();
@@ -622,7 +623,7 @@ internal partial class DwgObjectReader : DwgSectionIO
 				//Right grid lineweight BS 275 Present only if bit 0x00800 is set in cell flag
 				cell.StyleOverride.RightBorder.LineWeight = (LineWeightType)this._mergedReaders.ReadBitShort();
 			}
-			if (flags.HasFlag(CellOverrideFlags.RightGridLineWeight))
+			if (flags.HasFlag(CellOverrideFlags.RightVisibility))
 			{
 				//Right visibility BS 285 Present only if bit 0x08000 is set in cell flag
 				cell.StyleOverride.RightBorder.IsInvisible = !this._mergedReaders.ReadBitShortAsBool();
@@ -638,7 +639,7 @@ internal partial class DwgObjectReader : DwgSectionIO
 				//Bottom grid lineweight BS 276 Present only if bit 0x01000 is set in cell flag
 				cell.StyleOverride.BottomBorder.LineWeight = (LineWeightType)this._mergedReaders.ReadBitShort();
 			}
-			if (flags.HasFlag(CellOverrideFlags.BottomGridLineWeight))
+			if (flags.HasFlag(CellOverrideFlags.BottomVisibility))
 			{
 				//Bottom visibility BS 286 Present only if bit 0x10000 is set in cell flag
 				cell.StyleOverride.BottomBorder.IsInvisible = !this._mergedReaders.ReadBitShortAsBool();
@@ -654,7 +655,7 @@ internal partial class DwgObjectReader : DwgSectionIO
 				//Left grid lineweight BS 278 Present only if bit 0x02000 is set in cell flag
 				cell.StyleOverride.LeftBorder.LineWeight = (LineWeightType)this._mergedReaders.ReadBitShort();
 			}
-			if (flags.HasFlag(CellOverrideFlags.LeftGridLineWeight))
+			if (flags.HasFlag(CellOverrideFlags.LeftVisibility))
 			{
 				//Left visibility BS 288 Present only if bit 0x20000 is set in cell flag
 				cell.StyleOverride.LeftBorder.IsInvisible = !this._mergedReaders.ReadBitShortAsBool();

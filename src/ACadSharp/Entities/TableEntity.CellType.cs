@@ -1,11 +1,13 @@
-﻿namespace ACadSharp.Entities
+﻿namespace ACadSharp.Entities;
+
+public partial class TableEntity
 {
-	public partial class TableEntity
+	public enum CellType
 	{
-		public enum CellType
-		{
-			Text = 1,
-			Block = 2
-		}
+		Unknown = 0,
+
+		Text = 1,
+
+		Block = 2
 	}
 }
