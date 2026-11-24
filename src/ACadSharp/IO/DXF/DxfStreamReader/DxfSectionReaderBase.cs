@@ -358,7 +358,7 @@ internal abstract class DxfSectionReaderBase
 			case DxfFileToken.EntityPlaneSurface:
 				return this.readEntityCodes<PlaneSurface>(new CadModelerGeometryTemplate<PlaneSurface>(), this.readSurfaceEntity<PlaneSurface>);
 			case DxfFileToken.EntityRevolvedSurface:
-				return this.readEntityCodes<RevolvedSurface>(new CadModelerGeometryTemplate<RevolvedSurface>(), this.readSurfaceEntity<RevolvedSurface>);
+				return this.readEntityCodes<RevolvedSurface>(new CadModelerGeometryTemplate<RevolvedSurface>(), this.readRevolvedSurface);
 			case DxfFileToken.EntitySweptSurface:
 				return this.readEntityCodes<SweptSurface>(new CadModelerGeometryTemplate<SweptSurface>(), this.readSweptSurface);
 			case DxfFileToken.EntityImage:
@@ -1238,39 +1238,6 @@ internal abstract class DxfSectionReaderBase
 		return this.tryAssignCurrentValue(template.CadObject, map);
 	}
 
-	private bool readSweptSurface(CadEntityTemplate template, DxfMap map, string subclass = null)
-	{
-		var tmp = template as CadModelerGeometryTemplate<SweptSurface>;
-
-		switch (this._reader.Code)
-		{
-			case 90:
-				if (!tmp.CadObject.ClassId.HasValue)
-				{
-					tmp.CadObject.ClassId = this._reader.ValueAsInt;
-				}
-				else
-				{
-					tmp.CadObject.BinaryData = this.readByteEntries(310)?.ToArray();
-				}
-				return true;
-			case 40:
-				tmp.CadObject.SweepTransform = this.readMatrix4(40);
-				return true;
-			case 41:
-				tmp.CadObject.PathTransform = this.readMatrix4(41);
-				return true;
-			case 46:
-				tmp.CadObject.SweepEntityTransform = this.readMatrix4(46);
-				return true;
-			case 47:
-				tmp.CadObject.PathEntityTransform = this.readMatrix4(47);
-				return true;
-			default:
-				return this.readSurfaceEntity<SweptSurface>(template, map, subclass);
-		}
-	}
-
 	private bool readExtrudedSurface(CadEntityTemplate template, DxfMap map, string subclass = null)
 	{
 		var tmp = template as CadModelerGeometryTemplate<ExtrudedSurface>;
@@ -2123,6 +2090,30 @@ internal abstract class DxfSectionReaderBase
 		return reactors;
 	}
 
+	private bool readRevolvedSurface(CadEntityTemplate template, DxfMap map, string subclass = null)
+	{
+		var tmp = template as CadModelerGeometryTemplate<RevolvedSurface>;
+
+		switch (this._reader.Code)
+		{
+			case 90:
+				if (!tmp.CadObject.ClassId.HasValue)
+				{
+					tmp.CadObject.ClassId = this._reader.ValueAsInt;
+				}
+				else
+				{
+					tmp.CadObject.BinaryData = this.readByteEntries(310)?.ToArray();
+				}
+				return true;
+			case 42:
+				tmp.CadObject.RevolveTransform = this.readMatrix4(42);
+				return true;
+			default:
+				return this.readSurfaceEntity<RevolvedSurface>(template, map, subclass);
+		}
+	}
+
 	private bool readShape(CadEntityTemplate template, DxfMap map, string subclass = null)
 	{
 		CadShapeTemplate tmp = template as CadShapeTemplate;
@@ -2224,6 +2215,39 @@ internal abstract class DxfSectionReaderBase
 				}
 
 				return this.readModelerGeometry<T>(template, map, DxfSubclassMarker.ModelerGeometry);
+		}
+	}
+
+	private bool readSweptSurface(CadEntityTemplate template, DxfMap map, string subclass = null)
+	{
+		var tmp = template as CadModelerGeometryTemplate<SweptSurface>;
+
+		switch (this._reader.Code)
+		{
+			case 90:
+				if (!tmp.CadObject.ClassId.HasValue)
+				{
+					tmp.CadObject.ClassId = this._reader.ValueAsInt;
+				}
+				else
+				{
+					tmp.CadObject.BinaryData = this.readByteEntries(310)?.ToArray();
+				}
+				return true;
+			case 40:
+				tmp.CadObject.SweepTransform = this.readMatrix4(40);
+				return true;
+			case 41:
+				tmp.CadObject.PathTransform = this.readMatrix4(41);
+				return true;
+			case 46:
+				tmp.CadObject.SweepEntityTransform = this.readMatrix4(46);
+				return true;
+			case 47:
+				tmp.CadObject.PathEntityTransform = this.readMatrix4(47);
+				return true;
+			default:
+				return this.readSurfaceEntity<SweptSurface>(template, map, subclass);
 		}
 	}
 
