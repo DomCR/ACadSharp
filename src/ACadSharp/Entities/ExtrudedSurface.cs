@@ -78,9 +78,6 @@ public class ExtrudedSurface : Surface
 	/// <summary>
 	/// Transform matrix of the extruded entity.
 	/// </summary>
-	/// <remarks>
-	/// Stored in the DXF as 16 consecutive values with code 40.
-	/// </remarks>
 	public Matrix4 ExtrusionTransform { get; set; } = Matrix4.Identity;
 
 	/// <summary>
@@ -95,9 +92,6 @@ public class ExtrudedSurface : Surface
 	/// <summary>
 	/// Transform matrix of the path entity.
 	/// </summary>
-	/// <remarks>
-	/// Stored in the DXF as 16 consecutive values with code 47.
-	/// </remarks>
 	public Matrix4 PathEntityTransform { get; set; } = Matrix4.Identity;
 
 	/// <summary>
@@ -130,9 +124,6 @@ public class ExtrudedSurface : Surface
 	/// <summary>
 	/// Transform matrix of the sweep entity.
 	/// </summary>
-	/// <remarks>
-	/// Stored in the DXF as 16 consecutive values with code 46.
-	/// </remarks>
 	public Matrix4 SweepEntityTransform { get; set; } = Matrix4.Identity;
 
 	/// <summary>

@@ -145,6 +145,8 @@ internal partial class DwgObjectWriter : DwgSectionIO
 
 		switch (entity)
 		{
+			case ExtrudedSurface:
+				return true;
 			case UnknownEntity:
 				return false;
 			case Shape:

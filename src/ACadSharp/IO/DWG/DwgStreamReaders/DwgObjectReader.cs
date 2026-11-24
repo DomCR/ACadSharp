@@ -5901,7 +5901,7 @@ namespace ACadSharp.IO.DWG
 					template = this.readSurface(new CadModelerGeometryTemplate<Surface>());
 					break;
 				case DxfFileToken.EntityExtrudedSurface:
-					template = this.readSurface(new CadModelerGeometryTemplate<ExtrudedSurface>());
+					template = this.readExtrudedSurface();
 					break;
 				case DxfFileToken.EntityLoftedSurface:
 					template = this.readSurface(new CadModelerGeometryTemplate<LoftedSurface>());
