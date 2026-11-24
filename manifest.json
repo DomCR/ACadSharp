@@ -6663,6 +6663,20 @@
     },
     {
       "type": "ManagedReference",
+      "source_relative_path": "api/ACadSharp.Objects.TableStyle.CellOverrideFlags.yml",
+      "output": {
+        ".html": {
+          "relative_path": "api/ACadSharp.Objects.TableStyle.CellOverrideFlags.html"
+        }
+      },
+      "version": "",
+      "Uid": null,
+      "IsMRef": true,
+      "Title": "ACadSharp.Objects.TableStyle.CellOverrideFlags",
+      "Summary": null
+    },
+    {
+      "type": "ManagedReference",
       "source_relative_path": "api/ACadSharp.Objects.TableStyle.CellStyle.yml",
       "output": {
         ".html": {

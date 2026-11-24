@@ -609,7 +609,7 @@ public bool HasLinkedData { get; set; }</code></pre>
 
   <div class="codewrapper">
     <pre><code class="lang-csharp hljs">[DxfCodeValue(new int[] { 173 })]
-public short MergedValue { get; set; }</code></pre>
+public bool MergedValue { get; set; }</code></pre>
   </div>
 
 
@@ -618,7 +618,7 @@ public short MergedValue { get; set; }</code></pre>
 
   <h4 class="section">Property Value</h4>
   <dl class="parameters">
-    <dt><a class="xref" href="https://learn.microsoft.com/dotnet/api/system.int16">short</a></dt>
+    <dt><a class="xref" href="https://learn.microsoft.com/dotnet/api/system.boolean">bool</a></dt>
     <dd></dd>
   </dl>
 
@@ -677,7 +677,7 @@ items.</p>
   <div class="markdown level1 conceptual"></div>
 
   <div class="codewrapper">
-    <pre><code class="lang-csharp hljs">[DxfCodeValue(new int[] { 145 })]
+    <pre><code class="lang-csharp hljs">[DxfCodeValue(DxfReferenceType.IsAngle, new int[] { 145 })]
 public double Rotation { get; set; }</code></pre>
   </div>
 

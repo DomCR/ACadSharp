@@ -4893,6 +4893,12 @@ references:
   commentId: F:ACadSharp.DxfFileToken.BlocksSection
   fullName: ACadSharp.DxfFileToken.BlocksSection
   nameWithType: DxfFileToken.BlocksSection
+- uid: ACadSharp.DxfFileToken.CellValue
+  name: CellValue
+  href: api/ACadSharp.DxfFileToken.html#ACadSharp_DxfFileToken_CellValue
+  commentId: F:ACadSharp.DxfFileToken.CellValue
+  fullName: ACadSharp.DxfFileToken.CellValue
+  nameWithType: DxfFileToken.CellValue
 - uid: ACadSharp.DxfFileToken.ClassEntry
   name: ClassEntry
   href: api/ACadSharp.DxfFileToken.html#ACadSharp_DxfFileToken_ClassEntry
@@ -25392,6 +25398,34 @@ references:
   commentId: T:ACadSharp.Entities.TableEntity.CellContent
   fullName: ACadSharp.Entities.TableEntity.CellContent
   nameWithType: TableEntity.CellContent
+- uid: ACadSharp.Entities.TableEntity.CellContent.#ctor
+  name: CellContent()
+  href: api/ACadSharp.Entities.TableEntity.CellContent.html#ACadSharp_Entities_TableEntity_CellContent__ctor
+  commentId: M:ACadSharp.Entities.TableEntity.CellContent.#ctor
+  name.vb: New()
+  fullName: ACadSharp.Entities.TableEntity.CellContent.CellContent()
+  fullName.vb: ACadSharp.Entities.TableEntity.CellContent.New()
+  nameWithType: TableEntity.CellContent.CellContent()
+  nameWithType.vb: TableEntity.CellContent.New()
+- uid: ACadSharp.Entities.TableEntity.CellContent.#ctor(ACadSharp.Tables.BlockRecord)
+  name: CellContent(BlockRecord)
+  href: api/ACadSharp.Entities.TableEntity.CellContent.html#ACadSharp_Entities_TableEntity_CellContent__ctor_ACadSharp_Tables_BlockRecord_
+  commentId: M:ACadSharp.Entities.TableEntity.CellContent.#ctor(ACadSharp.Tables.BlockRecord)
+  name.vb: New(BlockRecord)
+  fullName: ACadSharp.Entities.TableEntity.CellContent.CellContent(ACadSharp.Tables.BlockRecord)
+  fullName.vb: ACadSharp.Entities.TableEntity.CellContent.New(ACadSharp.Tables.BlockRecord)
+  nameWithType: TableEntity.CellContent.CellContent(BlockRecord)
+  nameWithType.vb: TableEntity.CellContent.New(BlockRecord)
+- uid: ACadSharp.Entities.TableEntity.CellContent.#ctor*
+  name: CellContent
+  href: api/ACadSharp.Entities.TableEntity.CellContent.html#ACadSharp_Entities_TableEntity_CellContent__ctor_
+  commentId: Overload:ACadSharp.Entities.TableEntity.CellContent.#ctor
+  isSpec: "True"
+  name.vb: New
+  fullName: ACadSharp.Entities.TableEntity.CellContent.CellContent
+  fullName.vb: ACadSharp.Entities.TableEntity.CellContent.New
+  nameWithType: TableEntity.CellContent.CellContent
+  nameWithType.vb: TableEntity.CellContent.New
 - uid: ACadSharp.Entities.TableEntity.CellContent.CadValue
   name: CadValue
   href: api/ACadSharp.Entities.TableEntity.CellContent.html#ACadSharp_Entities_TableEntity_CellContent_CadValue
@@ -25656,6 +25690,12 @@ references:
   commentId: F:ACadSharp.Entities.TableEntity.CellType.Text
   fullName: ACadSharp.Entities.TableEntity.CellType.Text
   nameWithType: TableEntity.CellType.Text
+- uid: ACadSharp.Entities.TableEntity.CellType.Unknown
+  name: Unknown
+  href: api/ACadSharp.Entities.TableEntity.CellType.html#ACadSharp_Entities_TableEntity_CellType_Unknown
+  commentId: F:ACadSharp.Entities.TableEntity.CellType.Unknown
+  fullName: ACadSharp.Entities.TableEntity.CellType.Unknown
+  nameWithType: TableEntity.CellType.Unknown
 - uid: ACadSharp.Entities.TableEntity.Clone
   name: Clone()
   href: api/ACadSharp.Entities.TableEntity.html#ACadSharp_Entities_TableEntity_Clone
@@ -52080,6 +52120,126 @@ references:
   commentId: F:ACadSharp.Objects.TableStyle.CellEdgeFlags.Unknown
   fullName: ACadSharp.Objects.TableStyle.CellEdgeFlags.Unknown
   nameWithType: TableStyle.CellEdgeFlags.Unknown
+- uid: ACadSharp.Objects.TableStyle.CellOverrideFlags
+  name: TableStyle.CellOverrideFlags
+  href: api/ACadSharp.Objects.TableStyle.CellOverrideFlags.html
+  commentId: T:ACadSharp.Objects.TableStyle.CellOverrideFlags
+  fullName: ACadSharp.Objects.TableStyle.CellOverrideFlags
+  nameWithType: TableStyle.CellOverrideFlags
+- uid: ACadSharp.Objects.TableStyle.CellOverrideFlags.BackgroundColor
+  name: BackgroundColor
+  href: api/ACadSharp.Objects.TableStyle.CellOverrideFlags.html#ACadSharp_Objects_TableStyle_CellOverrideFlags_BackgroundColor
+  commentId: F:ACadSharp.Objects.TableStyle.CellOverrideFlags.BackgroundColor
+  fullName: ACadSharp.Objects.TableStyle.CellOverrideFlags.BackgroundColor
+  nameWithType: TableStyle.CellOverrideFlags.BackgroundColor
+- uid: ACadSharp.Objects.TableStyle.CellOverrideFlags.BackgroundFillNone
+  name: BackgroundFillNone
+  href: api/ACadSharp.Objects.TableStyle.CellOverrideFlags.html#ACadSharp_Objects_TableStyle_CellOverrideFlags_BackgroundFillNone
+  commentId: F:ACadSharp.Objects.TableStyle.CellOverrideFlags.BackgroundFillNone
+  fullName: ACadSharp.Objects.TableStyle.CellOverrideFlags.BackgroundFillNone
+  nameWithType: TableStyle.CellOverrideFlags.BackgroundFillNone
+- uid: ACadSharp.Objects.TableStyle.CellOverrideFlags.BottomGridColor
+  name: BottomGridColor
+  href: api/ACadSharp.Objects.TableStyle.CellOverrideFlags.html#ACadSharp_Objects_TableStyle_CellOverrideFlags_BottomGridColor
+  commentId: F:ACadSharp.Objects.TableStyle.CellOverrideFlags.BottomGridColor
+  fullName: ACadSharp.Objects.TableStyle.CellOverrideFlags.BottomGridColor
+  nameWithType: TableStyle.CellOverrideFlags.BottomGridColor
+- uid: ACadSharp.Objects.TableStyle.CellOverrideFlags.BottomGridLineWeight
+  name: BottomGridLineWeight
+  href: api/ACadSharp.Objects.TableStyle.CellOverrideFlags.html#ACadSharp_Objects_TableStyle_CellOverrideFlags_BottomGridLineWeight
+  commentId: F:ACadSharp.Objects.TableStyle.CellOverrideFlags.BottomGridLineWeight
+  fullName: ACadSharp.Objects.TableStyle.CellOverrideFlags.BottomGridLineWeight
+  nameWithType: TableStyle.CellOverrideFlags.BottomGridLineWeight
+- uid: ACadSharp.Objects.TableStyle.CellOverrideFlags.BottomVisibility
+  name: BottomVisibility
+  href: api/ACadSharp.Objects.TableStyle.CellOverrideFlags.html#ACadSharp_Objects_TableStyle_CellOverrideFlags_BottomVisibility
+  commentId: F:ACadSharp.Objects.TableStyle.CellOverrideFlags.BottomVisibility
+  fullName: ACadSharp.Objects.TableStyle.CellOverrideFlags.BottomVisibility
+  nameWithType: TableStyle.CellOverrideFlags.BottomVisibility
+- uid: ACadSharp.Objects.TableStyle.CellOverrideFlags.CellAlignment
+  name: CellAlignment
+  href: api/ACadSharp.Objects.TableStyle.CellOverrideFlags.html#ACadSharp_Objects_TableStyle_CellOverrideFlags_CellAlignment
+  commentId: F:ACadSharp.Objects.TableStyle.CellOverrideFlags.CellAlignment
+  fullName: ACadSharp.Objects.TableStyle.CellOverrideFlags.CellAlignment
+  nameWithType: TableStyle.CellOverrideFlags.CellAlignment
+- uid: ACadSharp.Objects.TableStyle.CellOverrideFlags.ContentColor
+  name: ContentColor
+  href: api/ACadSharp.Objects.TableStyle.CellOverrideFlags.html#ACadSharp_Objects_TableStyle_CellOverrideFlags_ContentColor
+  commentId: F:ACadSharp.Objects.TableStyle.CellOverrideFlags.ContentColor
+  fullName: ACadSharp.Objects.TableStyle.CellOverrideFlags.ContentColor
+  nameWithType: TableStyle.CellOverrideFlags.ContentColor
+- uid: ACadSharp.Objects.TableStyle.CellOverrideFlags.LeftGridColor
+  name: LeftGridColor
+  href: api/ACadSharp.Objects.TableStyle.CellOverrideFlags.html#ACadSharp_Objects_TableStyle_CellOverrideFlags_LeftGridColor
+  commentId: F:ACadSharp.Objects.TableStyle.CellOverrideFlags.LeftGridColor
+  fullName: ACadSharp.Objects.TableStyle.CellOverrideFlags.LeftGridColor
+  nameWithType: TableStyle.CellOverrideFlags.LeftGridColor
+- uid: ACadSharp.Objects.TableStyle.CellOverrideFlags.LeftGridLineWeight
+  name: LeftGridLineWeight
+  href: api/ACadSharp.Objects.TableStyle.CellOverrideFlags.html#ACadSharp_Objects_TableStyle_CellOverrideFlags_LeftGridLineWeight
+  commentId: F:ACadSharp.Objects.TableStyle.CellOverrideFlags.LeftGridLineWeight
+  fullName: ACadSharp.Objects.TableStyle.CellOverrideFlags.LeftGridLineWeight
+  nameWithType: TableStyle.CellOverrideFlags.LeftGridLineWeight
+- uid: ACadSharp.Objects.TableStyle.CellOverrideFlags.LeftVisibility
+  name: LeftVisibility
+  href: api/ACadSharp.Objects.TableStyle.CellOverrideFlags.html#ACadSharp_Objects_TableStyle_CellOverrideFlags_LeftVisibility
+  commentId: F:ACadSharp.Objects.TableStyle.CellOverrideFlags.LeftVisibility
+  fullName: ACadSharp.Objects.TableStyle.CellOverrideFlags.LeftVisibility
+  nameWithType: TableStyle.CellOverrideFlags.LeftVisibility
+- uid: ACadSharp.Objects.TableStyle.CellOverrideFlags.None
+  name: None
+  href: api/ACadSharp.Objects.TableStyle.CellOverrideFlags.html#ACadSharp_Objects_TableStyle_CellOverrideFlags_None
+  commentId: F:ACadSharp.Objects.TableStyle.CellOverrideFlags.None
+  fullName: ACadSharp.Objects.TableStyle.CellOverrideFlags.None
+  nameWithType: TableStyle.CellOverrideFlags.None
+- uid: ACadSharp.Objects.TableStyle.CellOverrideFlags.RightGridColor
+  name: RightGridColor
+  href: api/ACadSharp.Objects.TableStyle.CellOverrideFlags.html#ACadSharp_Objects_TableStyle_CellOverrideFlags_RightGridColor
+  commentId: F:ACadSharp.Objects.TableStyle.CellOverrideFlags.RightGridColor
+  fullName: ACadSharp.Objects.TableStyle.CellOverrideFlags.RightGridColor
+  nameWithType: TableStyle.CellOverrideFlags.RightGridColor
+- uid: ACadSharp.Objects.TableStyle.CellOverrideFlags.RightGridLineWeight
+  name: RightGridLineWeight
+  href: api/ACadSharp.Objects.TableStyle.CellOverrideFlags.html#ACadSharp_Objects_TableStyle_CellOverrideFlags_RightGridLineWeight
+  commentId: F:ACadSharp.Objects.TableStyle.CellOverrideFlags.RightGridLineWeight
+  fullName: ACadSharp.Objects.TableStyle.CellOverrideFlags.RightGridLineWeight
+  nameWithType: TableStyle.CellOverrideFlags.RightGridLineWeight
+- uid: ACadSharp.Objects.TableStyle.CellOverrideFlags.RightVisibility
+  name: RightVisibility
+  href: api/ACadSharp.Objects.TableStyle.CellOverrideFlags.html#ACadSharp_Objects_TableStyle_CellOverrideFlags_RightVisibility
+  commentId: F:ACadSharp.Objects.TableStyle.CellOverrideFlags.RightVisibility
+  fullName: ACadSharp.Objects.TableStyle.CellOverrideFlags.RightVisibility
+  nameWithType: TableStyle.CellOverrideFlags.RightVisibility
+- uid: ACadSharp.Objects.TableStyle.CellOverrideFlags.TextHeight
+  name: TextHeight
+  href: api/ACadSharp.Objects.TableStyle.CellOverrideFlags.html#ACadSharp_Objects_TableStyle_CellOverrideFlags_TextHeight
+  commentId: F:ACadSharp.Objects.TableStyle.CellOverrideFlags.TextHeight
+  fullName: ACadSharp.Objects.TableStyle.CellOverrideFlags.TextHeight
+  nameWithType: TableStyle.CellOverrideFlags.TextHeight
+- uid: ACadSharp.Objects.TableStyle.CellOverrideFlags.TextStyle
+  name: TextStyle
+  href: api/ACadSharp.Objects.TableStyle.CellOverrideFlags.html#ACadSharp_Objects_TableStyle_CellOverrideFlags_TextStyle
+  commentId: F:ACadSharp.Objects.TableStyle.CellOverrideFlags.TextStyle
+  fullName: ACadSharp.Objects.TableStyle.CellOverrideFlags.TextStyle
+  nameWithType: TableStyle.CellOverrideFlags.TextStyle
+- uid: ACadSharp.Objects.TableStyle.CellOverrideFlags.TopGridColor
+  name: TopGridColor
+  href: api/ACadSharp.Objects.TableStyle.CellOverrideFlags.html#ACadSharp_Objects_TableStyle_CellOverrideFlags_TopGridColor
+  commentId: F:ACadSharp.Objects.TableStyle.CellOverrideFlags.TopGridColor
+  fullName: ACadSharp.Objects.TableStyle.CellOverrideFlags.TopGridColor
+  nameWithType: TableStyle.CellOverrideFlags.TopGridColor
+- uid: ACadSharp.Objects.TableStyle.CellOverrideFlags.TopGridLineWeight
+  name: TopGridLineWeight
+  href: api/ACadSharp.Objects.TableStyle.CellOverrideFlags.html#ACadSharp_Objects_TableStyle_CellOverrideFlags_TopGridLineWeight
+  commentId: F:ACadSharp.Objects.TableStyle.CellOverrideFlags.TopGridLineWeight
+  fullName: ACadSharp.Objects.TableStyle.CellOverrideFlags.TopGridLineWeight
+  nameWithType: TableStyle.CellOverrideFlags.TopGridLineWeight
+- uid: ACadSharp.Objects.TableStyle.CellOverrideFlags.TopVisibility
+  name: TopVisibility
+  href: api/ACadSharp.Objects.TableStyle.CellOverrideFlags.html#ACadSharp_Objects_TableStyle_CellOverrideFlags_TopVisibility
+  commentId: F:ACadSharp.Objects.TableStyle.CellOverrideFlags.TopVisibility
+  fullName: ACadSharp.Objects.TableStyle.CellOverrideFlags.TopVisibility
+  nameWithType: TableStyle.CellOverrideFlags.TopVisibility
 - uid: ACadSharp.Objects.TableStyle.CellStyle
   name: TableStyle.CellStyle
   href: api/ACadSharp.Objects.TableStyle.CellStyle.html
@@ -52235,6 +52395,19 @@ references:
   isSpec: "True"
   fullName: ACadSharp.Objects.TableStyle.CellStyle.DefaultTitleCellStyle
   nameWithType: TableStyle.CellStyle.DefaultTitleCellStyle
+- uid: ACadSharp.Objects.TableStyle.CellStyle.GetOverrideFlags
+  name: GetOverrideFlags()
+  href: api/ACadSharp.Objects.TableStyle.CellStyle.html#ACadSharp_Objects_TableStyle_CellStyle_GetOverrideFlags
+  commentId: M:ACadSharp.Objects.TableStyle.CellStyle.GetOverrideFlags
+  fullName: ACadSharp.Objects.TableStyle.CellStyle.GetOverrideFlags()
+  nameWithType: TableStyle.CellStyle.GetOverrideFlags()
+- uid: ACadSharp.Objects.TableStyle.CellStyle.GetOverrideFlags*
+  name: GetOverrideFlags
+  href: api/ACadSharp.Objects.TableStyle.CellStyle.html#ACadSharp_Objects_TableStyle_CellStyle_GetOverrideFlags_
+  commentId: Overload:ACadSharp.Objects.TableStyle.CellStyle.GetOverrideFlags
+  isSpec: "True"
+  fullName: ACadSharp.Objects.TableStyle.CellStyle.GetOverrideFlags
+  nameWithType: TableStyle.CellStyle.GetOverrideFlags
 - uid: ACadSharp.Objects.TableStyle.CellStyle.HeaderCellStyleName
   name: HeaderCellStyleName
   href: api/ACadSharp.Objects.TableStyle.CellStyle.html#ACadSharp_Objects_TableStyle_CellStyle_HeaderCellStyleName
@@ -52345,6 +52518,19 @@ references:
   isSpec: "True"
   fullName: ACadSharp.Objects.TableStyle.CellStyle.Name
   nameWithType: TableStyle.CellStyle.Name
+- uid: ACadSharp.Objects.TableStyle.CellStyle.OverrideFlags
+  name: OverrideFlags
+  href: api/ACadSharp.Objects.TableStyle.CellStyle.html#ACadSharp_Objects_TableStyle_CellStyle_OverrideFlags
+  commentId: P:ACadSharp.Objects.TableStyle.CellStyle.OverrideFlags
+  fullName: ACadSharp.Objects.TableStyle.CellStyle.OverrideFlags
+  nameWithType: TableStyle.CellStyle.OverrideFlags
+- uid: ACadSharp.Objects.TableStyle.CellStyle.OverrideFlags*
+  name: OverrideFlags
+  href: api/ACadSharp.Objects.TableStyle.CellStyle.html#ACadSharp_Objects_TableStyle_CellStyle_OverrideFlags_
+  commentId: Overload:ACadSharp.Objects.TableStyle.CellStyle.OverrideFlags
+  isSpec: "True"
+  fullName: ACadSharp.Objects.TableStyle.CellStyle.OverrideFlags
+  nameWithType: TableStyle.CellStyle.OverrideFlags
 - uid: ACadSharp.Objects.TableStyle.CellStyle.Owner
   name: Owner
   href: api/ACadSharp.Objects.TableStyle.CellStyle.html#ACadSharp_Objects_TableStyle_CellStyle_Owner
