@@ -360,7 +360,7 @@ internal abstract class DxfSectionReaderBase
 			case DxfFileToken.EntityRevolvedSurface:
 				return this.readEntityCodes<RevolvedSurface>(new CadModelerGeometryTemplate<RevolvedSurface>(), this.readSurfaceEntity<RevolvedSurface>);
 			case DxfFileToken.EntitySweptSurface:
-				return this.readEntityCodes<SweptSurface>(new CadModelerGeometryTemplate<SweptSurface>(), this.readSurfaceEntity<SweptSurface>);
+				return this.readEntityCodes<SweptSurface>(new CadModelerGeometryTemplate<SweptSurface>(), this.readSweptSurface);
 			case DxfFileToken.EntityImage:
 				return this.readEntityCodes<RasterImage>(new CadWipeoutBaseTemplate(new RasterImage()), this.readWipeoutBase);
 			case DxfFileToken.EntityProxyEntity:
@@ -1238,6 +1238,69 @@ internal abstract class DxfSectionReaderBase
 		return this.tryAssignCurrentValue(template.CadObject, map);
 	}
 
+	private bool readSweptSurface(CadEntityTemplate template, DxfMap map, string subclass = null)
+	{
+		var tmp = template as CadModelerGeometryTemplate<SweptSurface>;
+
+		switch (this._reader.Code)
+		{
+			case 90:
+				if (!tmp.CadObject.ClassId.HasValue)
+				{
+					tmp.CadObject.ClassId = this._reader.ValueAsInt;
+				}
+				else
+				{
+					tmp.CadObject.BinaryData = this.readByteEntries(310)?.ToArray();
+				}
+				return true;
+			case 40:
+				tmp.CadObject.SweepTransform = this.readMatrix4(40);
+				return true;
+			case 41:
+				tmp.CadObject.PathTransform = this.readMatrix4(41);
+				return true;
+			case 46:
+				tmp.CadObject.SweepEntityTransform = this.readMatrix4(46);
+				return true;
+			case 47:
+				tmp.CadObject.PathEntityTransform = this.readMatrix4(47);
+				return true;
+			default:
+				return this.readSurfaceEntity<SweptSurface>(template, map, subclass);
+		}
+	}
+
+	private bool readExtrudedSurface(CadEntityTemplate template, DxfMap map, string subclass = null)
+	{
+		var tmp = template as CadModelerGeometryTemplate<ExtrudedSurface>;
+
+		switch (this._reader.Code)
+		{
+			case 90:
+				if (!tmp.CadObject.ClassId.HasValue)
+				{
+					tmp.CadObject.ClassId = this._reader.ValueAsInt;
+				}
+				else
+				{
+					tmp.CadObject.BinaryData = this.readByteEntries(310)?.ToArray();
+				}
+				return true;
+			case 40:
+				tmp.CadObject.ExtrusionTransform = this.readMatrix4(40);
+				return true;
+			case 46:
+				tmp.CadObject.SweepEntityTransform = this.readMatrix4(46);
+				return true;
+			case 47:
+				tmp.CadObject.PathEntityTransform = this.readMatrix4(47);
+				return true;
+			default:
+				return this.readSurfaceEntity<ExtrudedSurface>(template, map, subclass);
+		}
+	}
+
 	private bool readInsert(CadEntityTemplate template, DxfMap map, string subclass = null)
 	{
 		CadInsertTemplate tmp = template as CadInsertTemplate;
@@ -1456,6 +1519,18 @@ internal abstract class DxfSectionReaderBase
 			default:
 				return this.tryAssignCurrentValue(template.CadObject, map);
 		}
+	}
+
+	private Matrix4 readMatrix4(int expectedCode)
+	{
+		List<double> arr = new();
+		arr.Add(this._reader.ValueAsDouble);
+		for (int i = 1; i < 16; i++)
+		{
+			this._reader.ExpectedCode(expectedCode);
+			arr.Add(this._reader.ValueAsDouble);
+		}
+		return new Matrix4(arr.ToArray());
 	}
 
 	private bool readMesh(CadEntityTemplate template, DxfMap map, string subclass = null)
@@ -2126,48 +2201,6 @@ internal abstract class DxfSectionReaderBase
 			default:
 				return this.tryAssignCurrentValue(template.CadObject, map);
 		}
-	}
-
-	private bool readExtrudedSurface(CadEntityTemplate template, DxfMap map, string subclass = null)
-	{
-		var tmp = template as CadModelerGeometryTemplate<ExtrudedSurface>;
-
-		switch (this._reader.Code)
-		{
-			case 90:
-				if (!tmp.CadObject.ClassId.HasValue)
-				{
-					tmp.CadObject.ClassId = this._reader.ValueAsInt;
-				}
-				else
-				{
-					tmp.CadObject.BinaryData = this.readByteEntries(310)?.ToArray();
-				}
-				return true;
-			case 40:
-				tmp.CadObject.ExtrusionTransform = this.readMatrix4(40);
-				return true;
-			case 46:
-				tmp.CadObject.SweepEntityTransform = this.readMatrix4(46);
-				return true;
-			case 47:
-				tmp.CadObject.PathEntityTransform = this.readMatrix4(47);
-				return true;
-			default:
-				return this.readSurfaceEntity<ExtrudedSurface>(template, map, subclass);
-		}
-	}
-
-	private Matrix4 readMatrix4(int expectedCode)
-	{
-		List<double> arr = new();
-		arr.Add(this._reader.ValueAsDouble);
-		for (int i = 1; i < 16; i++)
-		{
-			this._reader.ExpectedCode(expectedCode);
-			arr.Add(this._reader.ValueAsDouble);
-		}
-		return new Matrix4(arr.ToArray());
 	}
 
 	private bool readSurfaceEntity<T>(CadEntityTemplate template, DxfMap map, string subclass = null)
