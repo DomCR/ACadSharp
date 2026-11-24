@@ -5,6 +5,7 @@ using CSMath;
 using CSMath.Extensions;
 using System;
 using System.Collections.Generic;
+using System.IO;
 using System.Linq;
 using static ACadSharp.Entities.TableEntity;
 using static ACadSharp.IO.Templates.CadTableEntityTemplate;
@@ -1522,22 +1523,12 @@ internal partial class DwgObjectWriter : DwgSectionIO
 		//Chapter 24 - Info
 		if (!this.R2013Plus)
 		{
-			if (hasAcisData && geometry.IsBinaryAcisData)
-			{
-				//Version 2 (SAB) has no length in the stream, the reader has to
-				//consume the rest of the object, which cannot be written along
-				//with the wireframe data and the handle stream.
-				this.notify($"Binary ACIS data cannot be written for {geometry.ObjectName} in {this._version}, the geometry will be empty", NotificationType.Warning);
-				hasAcisData = false;
-			}
-
 			//ACIS Empty bit B X If 1, then no data follows
 			this._writer.WriteBit(!hasAcisData);
 
 			if (hasAcisData)
 			{
-				this.writeModelerGeometryData(geometry);
-				return;
+				this.writeModelerGeometryData(geometry, geometry.AcisData);
 			}
 		}
 
@@ -1577,7 +1568,15 @@ internal partial class DwgObjectWriter : DwgSectionIO
 			foreach (ModelerGeometry.Silhouette silhouette in geometry.Silhouettes)
 			{
 				//VP id BL X
-				this._writer.WriteBitLongLong(silhouette.ViewportId);
+				if (this.R2010Plus)
+				{
+					this._writer.WriteBitLongLong(silhouette.ViewportId);
+				}
+				else
+				{
+					this._writer.WriteBitLong((int)silhouette.ViewportId);
+				}
+
 				//VP Target 3BD X
 				this._writer.Write3BitDouble(silhouette.ViewportTarget);
 				//VP dir. From target 3BD X
@@ -1601,7 +1600,15 @@ internal partial class DwgObjectWriter : DwgSectionIO
 			}
 
 			//ACIS Empty bit B X Normally 1. If 0, then acis data follows.
-			this._writer.WriteBit(true);
+			if(geometry.WireframeAcisData != null && geometry.WireframeAcisData.Length > 0)
+			{
+				this._writer.WriteBit(false);
+				this.writeModelerGeometryData(geometry, geometry.WireframeAcisData);
+			}
+			else
+			{
+				this._writer.WriteBit(true);
+			}
 		}
 
 		//R2007 +:
@@ -1620,21 +1627,43 @@ internal partial class DwgObjectWriter : DwgSectionIO
 		}
 	}
 
-	private void writeModelerGeometryData(ModelerGeometry geometry)
+	private void writeModelerGeometryData(ModelerGeometry geometry, byte[] data)
 	{
+		short version = (short)(this._version <= ACadVersion.AC1015 ? 1 : 2);
+
 		//Unknown bit B X
-		this._writer.WriteBit(false);
+		this._writer.WriteBit(version == 1);
 
 		//Version BS Can be 1 or 2.
-		this._writer.WriteBitShort(1);
+		this._writer.WriteBitShort(version);
 
-		//Version == 1 (following 2 items repeat until Block Size is 0):
-		//Block Size BL X Number of bytes of SAT data in this block.
-		byte[] data = AcisTextCodec.Decode(geometry.AcisData);
-		this._writer.WriteBitLong(data.Length);
-		this._writer.WriteBytes(data);
+		switch (version)
+		{
+			case 1:
+				this.writeChunks(new MemoryStream(AcisEncryption.Encode(data)));
+				break;
+			case 2:
+				this._writer.WriteBytes(data);
+				break;
+		}
+	}
 
-		//End of the blocks
+	private void writeChunks(MemoryStream stream)
+	{
+		stream.Position = 0L;
+
+		byte[] buffer = new byte[4096];
+		var n = stream.Read(buffer, 0, buffer.Length);
+		while (n == buffer.Length)
+		{
+			this._writer.WriteBitLong(n);
+			this._writer.WriteBytes(buffer, 0, n);
+			n = stream.Read(buffer, 0, buffer.Length);
+		}
+
+		this._writer.WriteBitLong(n);
+		this._writer.WriteBytes(buffer, 0, n);
+
 		this._writer.WriteBitLong(0);
 	}
 

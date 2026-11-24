@@ -1,6 +1,5 @@
 using ACadSharp.DataStorage;
 using System;
-using System.Collections.Generic;
 using System.IO;
 
 namespace ACadSharp.IO.DXF.DxfStreamReader;

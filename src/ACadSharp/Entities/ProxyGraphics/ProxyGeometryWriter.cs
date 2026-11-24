@@ -1,4 +1,4 @@
-using ACadSharp.IO.DWG;
+using ACadSharp.IO.DWG.DwgStreamWriters;
 using CSMath;
 using CSUtilities.Converters;
 using CSUtilities.IO;

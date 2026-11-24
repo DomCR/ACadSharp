@@ -11,6 +11,11 @@ internal class SchemaIndex : FileSegment
 
 	public List<Pointer> SchemaPointers { get; set; } = new();
 
+	public SchemaIndex()
+		: base("schidx")
+	{
+	}
+
 	public IEnumerable<Pointer> GetAllPointers()
 	{
 		return this.PropertyPointers.Concat(this.SchemaPointers);
@@ -19,7 +24,7 @@ internal class SchemaIndex : FileSegment
 	public IEnumerable<uint> GetSchemaIndexes()
 	{
 		return this.SchemaPointers.Select(p => p.SegmentIndex).Distinct();
-	}	
+	}
 
 	public class Pointer
 	{

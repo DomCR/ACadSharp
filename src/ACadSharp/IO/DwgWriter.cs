@@ -118,7 +118,7 @@ public class DwgWriter : CadWriterBase<DwgWriterConfiguration>
 		this.writeObjects();
 		this.writeObjFreeSpace();
 		this.writeTemplate();
-		//this.writePrototype();
+		this.writePrototype();
 
 		//Write in the last place to avoid conflicts with versions < AC1018
 		this.writeHandles();
@@ -343,6 +343,27 @@ public class DwgWriter : CadWriterBase<DwgWriterConfiguration>
 			writer.Write();
 			this._fileHeaderWriter.AddSection(DwgSectionDefinition.Preview, stream, false, 0x400);
 		}
+	}
+
+	private void writePrototype()
+	{
+		if (this._version < ACadVersion.AC1027 || !this.Configuration.WriteACISData)
+		{
+			return;
+		}
+
+		var dataStorage = this._document.CreateDataStorage();
+		if (dataStorage == null)
+		{
+			return;
+		}
+
+		MemoryStream stream = new MemoryStream();
+		DwgPrototype1bWriter writer = new DwgPrototype1bWriter(this._version, stream, this._encoding, dataStorage);
+		writer.OnNotification += this.triggerNotification;
+		writer.Write();
+
+		this._fileHeaderWriter.AddSection(DwgSectionDefinition.AcDsPrototype, stream, true);
 	}
 
 	private void writeRevHistory()

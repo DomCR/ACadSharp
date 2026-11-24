@@ -5,4 +5,9 @@ namespace ACadSharp.DataStorage;
 internal class SchemaData : FileSegment
 {
 	public List<AcdsSchema> Schemes { get; } = new();
+
+	public SchemaData()
+		: base("schdat")
+	{
+	}
 }

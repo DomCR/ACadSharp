@@ -4,6 +4,11 @@ namespace ACadSharp.DataStorage;
 
 internal class DataIndexSegment : FileSegment
 {
+	public DataIndexSegment() 
+		: base("datidx")
+	{
+	}
+
 	public List<Entry> Entries { get; set; } = new();
 
 	public class Entry
