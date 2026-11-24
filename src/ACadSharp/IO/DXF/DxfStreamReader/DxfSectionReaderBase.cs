@@ -350,7 +350,7 @@ internal abstract class DxfSectionReaderBase
 			case DxfFileToken.EntitySurface:
 				return this.readEntityCodes<Surface>(new CadModelerGeometryTemplate<Surface>(), this.readSurfaceEntity<Surface>);
 			case DxfFileToken.EntityExtrudedSurface:
-				return this.readEntityCodes<ExtrudedSurface>(new CadModelerGeometryTemplate<ExtrudedSurface>(), this.readSurfaceEntity<ExtrudedSurface>);
+				return this.readEntityCodes<ExtrudedSurface>(new CadModelerGeometryTemplate<ExtrudedSurface>(), this.readExtrudedSurface);
 			case DxfFileToken.EntityLoftedSurface:
 				return this.readEntityCodes<LoftedSurface>(new CadModelerGeometryTemplate<LoftedSurface>(), this.readSurfaceEntity<LoftedSurface>);
 			case DxfFileToken.EntityNurbSurface:
@@ -2125,6 +2125,28 @@ internal abstract class DxfSectionReaderBase
 				return true;
 			default:
 				return this.tryAssignCurrentValue(template.CadObject, map);
+		}
+	}
+
+	private bool readExtrudedSurface(CadEntityTemplate template, DxfMap map, string subclass = null)
+	{
+		var tmp = template as CadModelerGeometryTemplate<ExtrudedSurface>;
+		List<double> arr = null;
+
+		switch (this._reader.Code)
+		{
+			case 40:
+				arr = new();
+				arr.Add(this._reader.ValueAsDouble);
+				for (int i = 1; i < 16; i++)
+				{
+					this._reader.ExpectedCode(40);
+					arr.Add(this._reader.ValueAsDouble);
+				}
+				tmp.CadObject.ExtrusionTransform = new Matrix4(arr.ToArray());
+				return true;
+			default:
+				return this.readSurfaceEntity<ExtrudedSurface>(template, map, subclass);
 		}
 	}
 

@@ -5429,17 +5429,6 @@ namespace ACadSharp.IO.DWG
 			return template;
 		}
 
-		private CadTemplate readSurface<T>(CadModelerGeometryTemplate<T> template)
-			where T : Surface, new()
-		{
-			this.readModelerGeometry(template);
-
-			//The AcDbSurface data (isoline counts) and the surface subclass data
-			//(sweep, loft and revolve parameters) that follow are not decoded yet;
-			//the object data is length delimited, so the unread tail is skipped
-			return template;
-		}
-
 		private CadTemplate readSortentsTable()
 		{
 			SortEntitiesTable sortTable = new SortEntitiesTable();

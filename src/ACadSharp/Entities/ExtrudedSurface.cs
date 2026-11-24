@@ -1,5 +1,6 @@
 using ACadSharp.Attributes;
 using ACadSharp.Classes;
+using CSMath;
 
 namespace ACadSharp.Entities;
 
@@ -14,6 +15,11 @@ namespace ACadSharp.Entities;
 [DxfSubClass(DxfSubclassMarker.ExtrudedSurface)]
 public class ExtrudedSurface : Surface
 {
+	public Matrix4 ExtrusionTransform { get; set; }
+
+	[DxfCodeValue(10, 20, 30)]
+	public XYZ Direction { get; set; }
+
 	/// <inheritdoc/>
 	public override string ObjectName => DxfFileToken.EntityExtrudedSurface;
 

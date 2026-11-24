@@ -368,6 +368,17 @@ internal partial class DwgObjectReader : DwgSectionIO
 		}
 	}
 
+	private CadTemplate readSurface<T>(CadModelerGeometryTemplate<T> template)
+		where T : Surface, new()
+	{
+		this.readModelerGeometry(template);
+
+		template.CadObject.UIsolines = this._mergedReaders.ReadBitShort();
+		template.CadObject.VIsolines = this._mergedReaders.ReadBitShort();
+
+		return template;
+	}
+
 	private void readTableCell(CadTableCellTemplate template)
 	{
 		Cell cell = template.Cell;
