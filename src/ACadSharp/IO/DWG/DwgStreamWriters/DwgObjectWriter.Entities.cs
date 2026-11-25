@@ -663,6 +663,9 @@ internal partial class DwgObjectWriter : DwgSectionIO
 			case ExtrudedSurface extrudedSurface:
 				this.writeExtrudedSurface(extrudedSurface);
 				break;
+			case LoftedSurface loftedSurface:
+				this.writeLoftedSurface(loftedSurface);
+				break;
 			case Region region:
 				this.writeModelerGeometry(region);
 				break;
@@ -749,19 +752,7 @@ internal partial class DwgObjectWriter : DwgSectionIO
 		this._writer.Write3BitDouble(extrudedSurface.Direction);
 		this.writeMatrix4(extrudedSurface.ExtrusionTransform);
 
-		this._writer.WriteBitLong(extrudedSurface.ClassId ?? 0);
-
-		//Data size is expressed in bits
-		byte[] data = extrudedSurface.BinaryData;
-		if (data != null && data.Length > 0)
-		{
-			this._writer.WriteBitLong(data.Length * 8);
-			this._writer.WriteBytes(data);
-		}
-		else
-		{
-			this._writer.WriteBitLong(0);
-		}
+		this.writeSurfaceEntityData(extrudedSurface.ClassId ?? 0, extrudedSurface.BinaryData);
 	}
 
 	private void writeFace3D(Face3D face)
@@ -1328,6 +1319,52 @@ internal partial class DwgObjectWriter : DwgSectionIO
 		this._writer.WriteBitThickness(line.Thickness);
 		//Extrusion BE 210
 		this._writer.WriteBitExtrusion(line.Normal);
+	}
+
+	private void writeLoftedSurface(LoftedSurface loftedSurface)
+	{
+		this.writeSurface(loftedSurface);
+
+		this.writeMatrix4(loftedSurface.LoftTransform);
+
+		this._writer.WriteBitShort((short)loftedSurface.CrossSections.Count);
+		this._writer.WriteBitShort((short)loftedSurface.Guides.Count);
+
+		this._writer.WriteBit(loftedSurface.Path != null);
+
+		this._writer.WriteBitDouble(loftedSurface.StartDraftAngle);
+		this._writer.WriteBitDouble(loftedSurface.EndDraftAngle);
+		this._writer.WriteBitDouble(loftedSurface.StartDraftMagnitude);
+		this._writer.WriteBitDouble(loftedSurface.EndDraftMagnitude);
+		this._writer.WriteBit(loftedSurface.ArcLengthParameterization);
+		this._writer.WriteBit(loftedSurface.NoTwist);
+		this._writer.WriteBit(loftedSurface.AlignDirection);
+		this._writer.WriteBit(loftedSurface.SimpleSurfaces);
+		this._writer.WriteBit(loftedSurface.ClosedSurfaces);
+		this._writer.WriteBit(loftedSurface.IsSolid);
+		this._writer.WriteBit(loftedSurface.RuledSurface);
+		this._writer.WriteBit(loftedSurface.VirtualGuide);
+		this._writer.WriteBitShort((short)loftedSurface.PlaneNormalLofting);
+
+		foreach (LoftedSurface.Profile cross in loftedSurface.CrossSections)
+		{
+			this.writeLoftedSurfaceProfile(cross);
+		}
+
+		foreach (LoftedSurface.Profile guide in loftedSurface.Guides)
+		{
+			this.writeLoftedSurfaceProfile(guide);
+		}
+
+		if (loftedSurface.Path != null)
+		{
+			this.writeLoftedSurfaceProfile(loftedSurface.Path);
+		}
+	}
+
+	private void writeLoftedSurfaceProfile(LoftedSurface.Profile profile)
+	{
+		this.writeSurfaceEntityData(profile.ClassId, profile.BinaryData);
 	}
 
 	private void writeLwPolyline(LwPolyline lwPolyline)
@@ -2638,6 +2675,22 @@ internal partial class DwgObjectWriter : DwgSectionIO
 
 		this._writer.WriteBitShort(surface.UIsolines);
 		this._writer.WriteBitShort(surface.VIsolines);
+	}
+
+	private void writeSurfaceEntityData(int classId, byte[] data)
+	{
+		this._writer.WriteBitLong(classId);
+
+		//Data size is expressed in bits
+		if (data != null && data.Length > 0)
+		{
+			this._writer.WriteBitLong(data.Length * 8);
+			this._writer.WriteBytes(data);
+		}
+		else
+		{
+			this._writer.WriteBitLong(0);
+		}
 	}
 
 	private void writeTableCell(TableEntity.Cell cell)
