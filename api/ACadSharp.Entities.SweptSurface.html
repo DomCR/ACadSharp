@@ -89,7 +89,7 @@
 
 
   <h1 id="ACadSharp_Entities_SweptSurface" data-uid="ACadSharp.Entities.SweptSurface" class="text-break">
-Class SweptSurface  <a class="header-action link-secondary" title="View source" href="https://github.com/DomCR/ACadSharp/blob/master/src/ACadSharp/Entities/SweptSurface.cs/#L13"><i class="bi bi-code-slash"></i></a>
+Class SweptSurface  <a class="header-action link-secondary" title="View source" href="https://github.com/DomCR/ACadSharp/blob/master/src/ACadSharp/Entities/SweptSurface.cs/#L14"><i class="bi bi-code-slash"></i></a>
   </h1>
 
   <div class="facts text-secondary">
@@ -350,11 +350,341 @@ Dxf class name <a class="xref" href="ACadSharp.DxfSubclassMarker.html#ACadSharp_
 </h2>
 
 
+  <a id="ACadSharp_Entities_SweptSurface_AlignAngle_" data-uid="ACadSharp.Entities.SweptSurface.AlignAngle*"></a>
+
+  <h3 id="ACadSharp_Entities_SweptSurface_AlignAngle" data-uid="ACadSharp.Entities.SweptSurface.AlignAngle">
+  AlignAngle
+  <a class="header-action link-secondary" title="View source" href="https://github.com/DomCR/ACadSharp/blob/master/src/ACadSharp/Entities/SweptSurface.cs/#L21"><i class="bi bi-code-slash"></i></a>
+  </h3>
+
+  <div class="markdown level1 summary"><p>Align angle, in radians.</p>
+</div>
+  <div class="markdown level1 conceptual"></div>
+
+  <div class="codewrapper">
+    <pre><code class="lang-csharp hljs">[DxfCodeValue(DxfReferenceType.IsAngle, new int[] { 49 })]
+public double AlignAngle { get; set; }</code></pre>
+  </div>
+
+
+
+
+
+  <h4 class="section">Property Value</h4>
+  <dl class="parameters">
+    <dt><a class="xref" href="https://learn.microsoft.com/dotnet/api/system.double">double</a></dt>
+    <dd></dd>
+  </dl>
+
+
+
+
+
+
+
+
+  <a id="ACadSharp_Entities_SweptSurface_AlignStart_" data-uid="ACadSharp.Entities.SweptSurface.AlignStart*"></a>
+
+  <h3 id="ACadSharp_Entities_SweptSurface_AlignStart" data-uid="ACadSharp.Entities.SweptSurface.AlignStart">
+  AlignStart
+  <a class="header-action link-secondary" title="View source" href="https://github.com/DomCR/ACadSharp/blob/master/src/ACadSharp/Entities/SweptSurface.cs/#L27"><i class="bi bi-code-slash"></i></a>
+  </h3>
+
+  <div class="markdown level1 summary"><p>Flag that indicates if the sweep entity is aligned at the start of the path.</p>
+</div>
+  <div class="markdown level1 conceptual"></div>
+
+  <div class="codewrapper">
+    <pre><code class="lang-csharp hljs">[DxfCodeValue(new int[] { 292 })]
+public bool AlignStart { get; set; }</code></pre>
+  </div>
+
+
+
+
+
+  <h4 class="section">Property Value</h4>
+  <dl class="parameters">
+    <dt><a class="xref" href="https://learn.microsoft.com/dotnet/api/system.boolean">bool</a></dt>
+    <dd></dd>
+  </dl>
+
+
+
+
+
+
+
+
+  <a id="ACadSharp_Entities_SweptSurface_Bank_" data-uid="ACadSharp.Entities.SweptSurface.Bank*"></a>
+
+  <h3 id="ACadSharp_Entities_SweptSurface_Bank" data-uid="ACadSharp.Entities.SweptSurface.Bank">
+  Bank
+  <a class="header-action link-secondary" title="View source" href="https://github.com/DomCR/ACadSharp/blob/master/src/ACadSharp/Entities/SweptSurface.cs/#L33"><i class="bi bi-code-slash"></i></a>
+  </h3>
+
+  <div class="markdown level1 summary"><p>Flag that indicates if the sweep entity banks (rotates) along a 3D path.</p>
+</div>
+  <div class="markdown level1 conceptual"></div>
+
+  <div class="codewrapper">
+    <pre><code class="lang-csharp hljs">[DxfCodeValue(new int[] { 293 })]
+public bool Bank { get; set; }</code></pre>
+  </div>
+
+
+
+
+
+  <h4 class="section">Property Value</h4>
+  <dl class="parameters">
+    <dt><a class="xref" href="https://learn.microsoft.com/dotnet/api/system.boolean">bool</a></dt>
+    <dd></dd>
+  </dl>
+
+
+
+
+
+
+
+
+  <a id="ACadSharp_Entities_SweptSurface_BasePointSet_" data-uid="ACadSharp.Entities.SweptSurface.BasePointSet*"></a>
+
+  <h3 id="ACadSharp_Entities_SweptSurface_BasePointSet" data-uid="ACadSharp.Entities.SweptSurface.BasePointSet">
+  BasePointSet
+  <a class="header-action link-secondary" title="View source" href="https://github.com/DomCR/ACadSharp/blob/master/src/ACadSharp/Entities/SweptSurface.cs/#L39"><i class="bi bi-code-slash"></i></a>
+  </h3>
+
+  <div class="markdown level1 summary"><p>Flag that indicates if the base point has been set.</p>
+</div>
+  <div class="markdown level1 conceptual"></div>
+
+  <div class="codewrapper">
+    <pre><code class="lang-csharp hljs">[DxfCodeValue(new int[] { 294 })]
+public bool BasePointSet { get; set; }</code></pre>
+  </div>
+
+
+
+
+
+  <h4 class="section">Property Value</h4>
+  <dl class="parameters">
+    <dt><a class="xref" href="https://learn.microsoft.com/dotnet/api/system.boolean">bool</a></dt>
+    <dd></dd>
+  </dl>
+
+
+
+
+
+
+
+
+  <a id="ACadSharp_Entities_SweptSurface_BinaryData_" data-uid="ACadSharp.Entities.SweptSurface.BinaryData*"></a>
+
+  <h3 id="ACadSharp_Entities_SweptSurface_BinaryData" data-uid="ACadSharp.Entities.SweptSurface.BinaryData">
+  BinaryData
+  <a class="header-action link-secondary" title="View source" href="https://github.com/DomCR/ACadSharp/blob/master/src/ACadSharp/Entities/SweptSurface.cs/#L45"><i class="bi bi-code-slash"></i></a>
+  </h3>
+
+  <div class="markdown level1 summary"><p>Binary data of the sweep entity.</p>
+</div>
+  <div class="markdown level1 conceptual"></div>
+
+  <div class="codewrapper">
+    <pre><code class="lang-csharp hljs">[DxfCodeValue(new int[] { 310 })]
+public byte[] BinaryData { get; set; }</code></pre>
+  </div>
+
+
+
+
+
+  <h4 class="section">Property Value</h4>
+  <dl class="parameters">
+    <dt><a class="xref" href="https://learn.microsoft.com/dotnet/api/system.byte">byte</a>[]</dt>
+    <dd></dd>
+  </dl>
+
+
+
+
+
+
+
+
+  <a id="ACadSharp_Entities_SweptSurface_ClassId_" data-uid="ACadSharp.Entities.SweptSurface.ClassId*"></a>
+
+  <h3 id="ACadSharp_Entities_SweptSurface_ClassId" data-uid="ACadSharp.Entities.SweptSurface.ClassId">
+  ClassId
+  <a class="header-action link-secondary" title="View source" href="https://github.com/DomCR/ACadSharp/blob/master/src/ACadSharp/Entities/SweptSurface.cs/#L51"><i class="bi bi-code-slash"></i></a>
+  </h3>
+
+  <div class="markdown level1 summary"><p>Class ID of the sweep entity.</p>
+</div>
+  <div class="markdown level1 conceptual"></div>
+
+  <div class="codewrapper">
+    <pre><code class="lang-csharp hljs">[DxfCodeValue(new int[] { 90 })]
+public int? ClassId { get; set; }</code></pre>
+  </div>
+
+
+
+
+
+  <h4 class="section">Property Value</h4>
+  <dl class="parameters">
+    <dt><a class="xref" href="https://learn.microsoft.com/dotnet/api/system.int32">int</a>?</dt>
+    <dd></dd>
+  </dl>
+
+
+
+
+
+
+
+
+  <a id="ACadSharp_Entities_SweptSurface_DraftAngle_" data-uid="ACadSharp.Entities.SweptSurface.DraftAngle*"></a>
+
+  <h3 id="ACadSharp_Entities_SweptSurface_DraftAngle" data-uid="ACadSharp.Entities.SweptSurface.DraftAngle">
+  DraftAngle
+  <a class="header-action link-secondary" title="View source" href="https://github.com/DomCR/ACadSharp/blob/master/src/ACadSharp/Entities/SweptSurface.cs/#L57"><i class="bi bi-code-slash"></i></a>
+  </h3>
+
+  <div class="markdown level1 summary"><p>Draft angle, in radians.</p>
+</div>
+  <div class="markdown level1 conceptual"></div>
+
+  <div class="codewrapper">
+    <pre><code class="lang-csharp hljs">[DxfCodeValue(DxfReferenceType.IsAngle, new int[] { 42 })]
+public double DraftAngle { get; set; }</code></pre>
+  </div>
+
+
+
+
+
+  <h4 class="section">Property Value</h4>
+  <dl class="parameters">
+    <dt><a class="xref" href="https://learn.microsoft.com/dotnet/api/system.double">double</a></dt>
+    <dd></dd>
+  </dl>
+
+
+
+
+
+
+
+
+  <a id="ACadSharp_Entities_SweptSurface_DraftEndDistance_" data-uid="ACadSharp.Entities.SweptSurface.DraftEndDistance*"></a>
+
+  <h3 id="ACadSharp_Entities_SweptSurface_DraftEndDistance" data-uid="ACadSharp.Entities.SweptSurface.DraftEndDistance">
+  DraftEndDistance
+  <a class="header-action link-secondary" title="View source" href="https://github.com/DomCR/ACadSharp/blob/master/src/ACadSharp/Entities/SweptSurface.cs/#L63"><i class="bi bi-code-slash"></i></a>
+  </h3>
+
+  <div class="markdown level1 summary"><p>Draft end distance.</p>
+</div>
+  <div class="markdown level1 conceptual"></div>
+
+  <div class="codewrapper">
+    <pre><code class="lang-csharp hljs">[DxfCodeValue(new int[] { 44 })]
+public double DraftEndDistance { get; set; }</code></pre>
+  </div>
+
+
+
+
+
+  <h4 class="section">Property Value</h4>
+  <dl class="parameters">
+    <dt><a class="xref" href="https://learn.microsoft.com/dotnet/api/system.double">double</a></dt>
+    <dd></dd>
+  </dl>
+
+
+
+
+
+
+
+
+  <a id="ACadSharp_Entities_SweptSurface_DraftStartDistance_" data-uid="ACadSharp.Entities.SweptSurface.DraftStartDistance*"></a>
+
+  <h3 id="ACadSharp_Entities_SweptSurface_DraftStartDistance" data-uid="ACadSharp.Entities.SweptSurface.DraftStartDistance">
+  DraftStartDistance
+  <a class="header-action link-secondary" title="View source" href="https://github.com/DomCR/ACadSharp/blob/master/src/ACadSharp/Entities/SweptSurface.cs/#L69"><i class="bi bi-code-slash"></i></a>
+  </h3>
+
+  <div class="markdown level1 summary"><p>Draft start distance.</p>
+</div>
+  <div class="markdown level1 conceptual"></div>
+
+  <div class="codewrapper">
+    <pre><code class="lang-csharp hljs">[DxfCodeValue(new int[] { 43 })]
+public double DraftStartDistance { get; set; }</code></pre>
+  </div>
+
+
+
+
+
+  <h4 class="section">Property Value</h4>
+  <dl class="parameters">
+    <dt><a class="xref" href="https://learn.microsoft.com/dotnet/api/system.double">double</a></dt>
+    <dd></dd>
+  </dl>
+
+
+
+
+
+
+
+
+  <a id="ACadSharp_Entities_SweptSurface_IsSolid_" data-uid="ACadSharp.Entities.SweptSurface.IsSolid*"></a>
+
+  <h3 id="ACadSharp_Entities_SweptSurface_IsSolid" data-uid="ACadSharp.Entities.SweptSurface.IsSolid">
+  IsSolid
+  <a class="header-action link-secondary" title="View source" href="https://github.com/DomCR/ACadSharp/blob/master/src/ACadSharp/Entities/SweptSurface.cs/#L75"><i class="bi bi-code-slash"></i></a>
+  </h3>
+
+  <div class="markdown level1 summary"><p>Flag that indicates if the sweep creates a solid.</p>
+</div>
+  <div class="markdown level1 conceptual"></div>
+
+  <div class="codewrapper">
+    <pre><code class="lang-csharp hljs">[DxfCodeValue(new int[] { 290 })]
+public bool IsSolid { get; set; }</code></pre>
+  </div>
+
+
+
+
+
+  <h4 class="section">Property Value</h4>
+  <dl class="parameters">
+    <dt><a class="xref" href="https://learn.microsoft.com/dotnet/api/system.boolean">bool</a></dt>
+    <dd></dd>
+  </dl>
+
+
+
+
+
+
+
+
   <a id="ACadSharp_Entities_SweptSurface_ObjectName_" data-uid="ACadSharp.Entities.SweptSurface.ObjectName*"></a>
 
   <h3 id="ACadSharp_Entities_SweptSurface_ObjectName" data-uid="ACadSharp.Entities.SweptSurface.ObjectName">
   ObjectName
-  <a class="header-action link-secondary" title="View source" href="https://github.com/DomCR/ACadSharp/blob/master/src/ACadSharp/Entities/SweptSurface.cs/#L18"><i class="bi bi-code-slash"></i></a>
+  <a class="header-action link-secondary" title="View source" href="https://github.com/DomCR/ACadSharp/blob/master/src/ACadSharp/Entities/SweptSurface.cs/#L79"><i class="bi bi-code-slash"></i></a>
   </h3>
 
   <div class="markdown level1 summary"><p>The CAD class name of an object.</p>
@@ -382,11 +712,242 @@ Dxf class name <a class="xref" href="ACadSharp.DxfSubclassMarker.html#ACadSharp_
 
 
 
+  <a id="ACadSharp_Entities_SweptSurface_PathBinaryData_" data-uid="ACadSharp.Entities.SweptSurface.PathBinaryData*"></a>
+
+  <h3 id="ACadSharp_Entities_SweptSurface_PathBinaryData" data-uid="ACadSharp.Entities.SweptSurface.PathBinaryData">
+  PathBinaryData
+  <a class="header-action link-secondary" title="View source" href="https://github.com/DomCR/ACadSharp/blob/master/src/ACadSharp/Entities/SweptSurface.cs/#L87"><i class="bi bi-code-slash"></i></a>
+  </h3>
+
+  <div class="markdown level1 summary"><p>Binary data of the path entity.</p>
+</div>
+  <div class="markdown level1 conceptual"></div>
+
+  <div class="codewrapper">
+    <pre><code class="lang-csharp hljs">public byte[] PathBinaryData { get; set; }</code></pre>
+  </div>
+
+
+
+
+
+  <h4 class="section">Property Value</h4>
+  <dl class="parameters">
+    <dt><a class="xref" href="https://learn.microsoft.com/dotnet/api/system.byte">byte</a>[]</dt>
+    <dd></dd>
+  </dl>
+
+
+
+
+  <h4 class="section" id="ACadSharp_Entities_SweptSurface_PathBinaryData_remarks">Remarks</h4>
+  <div class="markdown level1 remarks"><p>Second code 310 block, after <a class="xref" href="ACadSharp.Entities.SweptSurface.html#ACadSharp_Entities_SweptSurface_PathClassId">PathClassId</a>.</p>
+</div>
+
+
+
+
+  <a id="ACadSharp_Entities_SweptSurface_PathClassId_" data-uid="ACadSharp.Entities.SweptSurface.PathClassId*"></a>
+
+  <h3 id="ACadSharp_Entities_SweptSurface_PathClassId" data-uid="ACadSharp.Entities.SweptSurface.PathClassId">
+  PathClassId
+  <a class="header-action link-secondary" title="View source" href="https://github.com/DomCR/ACadSharp/blob/master/src/ACadSharp/Entities/SweptSurface.cs/#L92"><i class="bi bi-code-slash"></i></a>
+  </h3>
+
+  <div class="markdown level1 summary"><p>Class ID of the path entity.</p>
+</div>
+  <div class="markdown level1 conceptual"></div>
+
+  <div class="codewrapper">
+    <pre><code class="lang-csharp hljs">[DxfCodeValue(new int[] { 91 })]
+public int? PathClassId { get; set; }</code></pre>
+  </div>
+
+
+
+
+
+  <h4 class="section">Property Value</h4>
+  <dl class="parameters">
+    <dt><a class="xref" href="https://learn.microsoft.com/dotnet/api/system.int32">int</a>?</dt>
+    <dd></dd>
+  </dl>
+
+
+
+
+
+
+
+
+  <a id="ACadSharp_Entities_SweptSurface_PathEntityTransform_" data-uid="ACadSharp.Entities.SweptSurface.PathEntityTransform*"></a>
+
+  <h3 id="ACadSharp_Entities_SweptSurface_PathEntityTransform" data-uid="ACadSharp.Entities.SweptSurface.PathEntityTransform">
+  PathEntityTransform
+  <a class="header-action link-secondary" title="View source" href="https://github.com/DomCR/ACadSharp/blob/master/src/ACadSharp/Entities/SweptSurface.cs/#L98"><i class="bi bi-code-slash"></i></a>
+  </h3>
+
+  <div class="markdown level1 summary"><p>Transform matrix of the path entity (sweep options).</p>
+</div>
+  <div class="markdown level1 conceptual"></div>
+
+  <div class="codewrapper">
+    <pre><code class="lang-csharp hljs">public Matrix4 PathEntityTransform { get; set; }</code></pre>
+  </div>
+
+
+
+
+
+  <h4 class="section">Property Value</h4>
+  <dl class="parameters">
+    <dt><a class="xref" href="CSMath.Matrix4.html">Matrix4</a></dt>
+    <dd></dd>
+  </dl>
+
+
+
+
+
+
+
+
+  <a id="ACadSharp_Entities_SweptSurface_PathEntityTransformComputed_" data-uid="ACadSharp.Entities.SweptSurface.PathEntityTransformComputed*"></a>
+
+  <h3 id="ACadSharp_Entities_SweptSurface_PathEntityTransformComputed" data-uid="ACadSharp.Entities.SweptSurface.PathEntityTransformComputed">
+  PathEntityTransformComputed
+  <a class="header-action link-secondary" title="View source" href="https://github.com/DomCR/ACadSharp/blob/master/src/ACadSharp/Entities/SweptSurface.cs/#L103"><i class="bi bi-code-slash"></i></a>
+  </h3>
+
+  <div class="markdown level1 summary"><p>Flag that indicates if the path entity transform has been computed.</p>
+</div>
+  <div class="markdown level1 conceptual"></div>
+
+  <div class="codewrapper">
+    <pre><code class="lang-csharp hljs">[DxfCodeValue(new int[] { 296 })]
+public bool PathEntityTransformComputed { get; set; }</code></pre>
+  </div>
+
+
+
+
+
+  <h4 class="section">Property Value</h4>
+  <dl class="parameters">
+    <dt><a class="xref" href="https://learn.microsoft.com/dotnet/api/system.boolean">bool</a></dt>
+    <dd></dd>
+  </dl>
+
+
+
+
+
+
+
+
+  <a id="ACadSharp_Entities_SweptSurface_PathTransform_" data-uid="ACadSharp.Entities.SweptSurface.PathTransform*"></a>
+
+  <h3 id="ACadSharp_Entities_SweptSurface_PathTransform" data-uid="ACadSharp.Entities.SweptSurface.PathTransform">
+  PathTransform
+  <a class="header-action link-secondary" title="View source" href="https://github.com/DomCR/ACadSharp/blob/master/src/ACadSharp/Entities/SweptSurface.cs/#L109"><i class="bi bi-code-slash"></i></a>
+  </h3>
+
+  <div class="markdown level1 summary"><p>Transform matrix of the path entity.</p>
+</div>
+  <div class="markdown level1 conceptual"></div>
+
+  <div class="codewrapper">
+    <pre><code class="lang-csharp hljs">public Matrix4 PathTransform { get; set; }</code></pre>
+  </div>
+
+
+
+
+
+  <h4 class="section">Property Value</h4>
+  <dl class="parameters">
+    <dt><a class="xref" href="CSMath.Matrix4.html">Matrix4</a></dt>
+    <dd></dd>
+  </dl>
+
+
+
+
+
+
+
+
+  <a id="ACadSharp_Entities_SweptSurface_ReferenceVector_" data-uid="ACadSharp.Entities.SweptSurface.ReferenceVector*"></a>
+
+  <h3 id="ACadSharp_Entities_SweptSurface_ReferenceVector" data-uid="ACadSharp.Entities.SweptSurface.ReferenceVector">
+  ReferenceVector
+  <a class="header-action link-secondary" title="View source" href="https://github.com/DomCR/ACadSharp/blob/master/src/ACadSharp/Entities/SweptSurface.cs/#L114"><i class="bi bi-code-slash"></i></a>
+  </h3>
+
+  <div class="markdown level1 summary"><p>Reference vector for controlling twist.</p>
+</div>
+  <div class="markdown level1 conceptual"></div>
+
+  <div class="codewrapper">
+    <pre><code class="lang-csharp hljs">[DxfCodeValue(new int[] { 11, 21, 31 })]
+public XYZ ReferenceVector { get; set; }</code></pre>
+  </div>
+
+
+
+
+
+  <h4 class="section">Property Value</h4>
+  <dl class="parameters">
+    <dt><a class="xref" href="CSMath.XYZ.html">XYZ</a></dt>
+    <dd></dd>
+  </dl>
+
+
+
+
+
+
+
+
+  <a id="ACadSharp_Entities_SweptSurface_ScaleFactor_" data-uid="ACadSharp.Entities.SweptSurface.ScaleFactor*"></a>
+
+  <h3 id="ACadSharp_Entities_SweptSurface_ScaleFactor" data-uid="ACadSharp.Entities.SweptSurface.ScaleFactor">
+  ScaleFactor
+  <a class="header-action link-secondary" title="View source" href="https://github.com/DomCR/ACadSharp/blob/master/src/ACadSharp/Entities/SweptSurface.cs/#L120"><i class="bi bi-code-slash"></i></a>
+  </h3>
+
+  <div class="markdown level1 summary"><p>Scale factor applied along the sweep.</p>
+</div>
+  <div class="markdown level1 conceptual"></div>
+
+  <div class="codewrapper">
+    <pre><code class="lang-csharp hljs">[DxfCodeValue(new int[] { 48 })]
+public double ScaleFactor { get; set; }</code></pre>
+  </div>
+
+
+
+
+
+  <h4 class="section">Property Value</h4>
+  <dl class="parameters">
+    <dt><a class="xref" href="https://learn.microsoft.com/dotnet/api/system.double">double</a></dt>
+    <dd></dd>
+  </dl>
+
+
+
+
+
+
+
+
   <a id="ACadSharp_Entities_SweptSurface_SubclassMarker_" data-uid="ACadSharp.Entities.SweptSurface.SubclassMarker*"></a>
 
   <h3 id="ACadSharp_Entities_SweptSurface_SubclassMarker" data-uid="ACadSharp.Entities.SweptSurface.SubclassMarker">
   SubclassMarker
-  <a class="header-action link-secondary" title="View source" href="https://github.com/DomCR/ACadSharp/blob/master/src/ACadSharp/Entities/SweptSurface.cs/#L21"><i class="bi bi-code-slash"></i></a>
+  <a class="header-action link-secondary" title="View source" href="https://github.com/DomCR/ACadSharp/blob/master/src/ACadSharp/Entities/SweptSurface.cs/#L124"><i class="bi bi-code-slash"></i></a>
   </h3>
 
   <div class="markdown level1 summary"><p>Object Subclass marker.</p>
@@ -414,6 +975,202 @@ Dxf class name <a class="xref" href="ACadSharp.DxfSubclassMarker.html#ACadSharp_
 
 
 
+  <a id="ACadSharp_Entities_SweptSurface_SweepAlignment_" data-uid="ACadSharp.Entities.SweptSurface.SweepAlignment*"></a>
+
+  <h3 id="ACadSharp_Entities_SweptSurface_SweepAlignment" data-uid="ACadSharp.Entities.SweptSurface.SweepAlignment">
+  SweepAlignment
+  <a class="header-action link-secondary" title="View source" href="https://github.com/DomCR/ACadSharp/blob/master/src/ACadSharp/Entities/SweptSurface.cs/#L129"><i class="bi bi-code-slash"></i></a>
+  </h3>
+
+  <div class="markdown level1 summary"><p>Sweep alignment option.</p>
+</div>
+  <div class="markdown level1 conceptual"></div>
+
+  <div class="codewrapper">
+    <pre><code class="lang-csharp hljs">[DxfCodeValue(new int[] { 70 })]
+public SweepAlignment SweepAlignment { get; set; }</code></pre>
+  </div>
+
+
+
+
+
+  <h4 class="section">Property Value</h4>
+  <dl class="parameters">
+    <dt><a class="xref" href="ACadSharp.Entities.SweepAlignment.html">SweepAlignment</a></dt>
+    <dd></dd>
+  </dl>
+
+
+
+
+
+
+
+
+  <a id="ACadSharp_Entities_SweptSurface_SweepEntityTransform_" data-uid="ACadSharp.Entities.SweptSurface.SweepEntityTransform*"></a>
+
+  <h3 id="ACadSharp_Entities_SweptSurface_SweepEntityTransform" data-uid="ACadSharp.Entities.SweptSurface.SweepEntityTransform">
+  SweepEntityTransform
+  <a class="header-action link-secondary" title="View source" href="https://github.com/DomCR/ACadSharp/blob/master/src/ACadSharp/Entities/SweptSurface.cs/#L135"><i class="bi bi-code-slash"></i></a>
+  </h3>
+
+  <div class="markdown level1 summary"><p>Transform matrix of the sweep entity (sweep options).</p>
+</div>
+  <div class="markdown level1 conceptual"></div>
+
+  <div class="codewrapper">
+    <pre><code class="lang-csharp hljs">public Matrix4 SweepEntityTransform { get; set; }</code></pre>
+  </div>
+
+
+
+
+
+  <h4 class="section">Property Value</h4>
+  <dl class="parameters">
+    <dt><a class="xref" href="CSMath.Matrix4.html">Matrix4</a></dt>
+    <dd></dd>
+  </dl>
+
+
+
+
+
+
+
+
+  <a id="ACadSharp_Entities_SweptSurface_SweepEntityTransformComputed_" data-uid="ACadSharp.Entities.SweptSurface.SweepEntityTransformComputed*"></a>
+
+  <h3 id="ACadSharp_Entities_SweptSurface_SweepEntityTransformComputed" data-uid="ACadSharp.Entities.SweptSurface.SweepEntityTransformComputed">
+  SweepEntityTransformComputed
+  <a class="header-action link-secondary" title="View source" href="https://github.com/DomCR/ACadSharp/blob/master/src/ACadSharp/Entities/SweptSurface.cs/#L140"><i class="bi bi-code-slash"></i></a>
+  </h3>
+
+  <div class="markdown level1 summary"><p>Flag that indicates if the sweep entity transform has been computed.</p>
+</div>
+  <div class="markdown level1 conceptual"></div>
+
+  <div class="codewrapper">
+    <pre><code class="lang-csharp hljs">[DxfCodeValue(new int[] { 295 })]
+public bool SweepEntityTransformComputed { get; set; }</code></pre>
+  </div>
+
+
+
+
+
+  <h4 class="section">Property Value</h4>
+  <dl class="parameters">
+    <dt><a class="xref" href="https://learn.microsoft.com/dotnet/api/system.boolean">bool</a></dt>
+    <dd></dd>
+  </dl>
+
+
+
+
+
+
+
+
+  <a id="ACadSharp_Entities_SweptSurface_SweepTransform_" data-uid="ACadSharp.Entities.SweptSurface.SweepTransform*"></a>
+
+  <h3 id="ACadSharp_Entities_SweptSurface_SweepTransform" data-uid="ACadSharp.Entities.SweptSurface.SweepTransform">
+  SweepTransform
+  <a class="header-action link-secondary" title="View source" href="https://github.com/DomCR/ACadSharp/blob/master/src/ACadSharp/Entities/SweptSurface.cs/#L146"><i class="bi bi-code-slash"></i></a>
+  </h3>
+
+  <div class="markdown level1 summary"><p>Transform matrix of the sweep entity.</p>
+</div>
+  <div class="markdown level1 conceptual"></div>
+
+  <div class="codewrapper">
+    <pre><code class="lang-csharp hljs">public Matrix4 SweepTransform { get; set; }</code></pre>
+  </div>
+
+
+
+
+
+  <h4 class="section">Property Value</h4>
+  <dl class="parameters">
+    <dt><a class="xref" href="CSMath.Matrix4.html">Matrix4</a></dt>
+    <dd></dd>
+  </dl>
+
+
+
+
+
+
+
+
+  <a id="ACadSharp_Entities_SweptSurface_TwistAngle_" data-uid="ACadSharp.Entities.SweptSurface.TwistAngle*"></a>
+
+  <h3 id="ACadSharp_Entities_SweptSurface_TwistAngle" data-uid="ACadSharp.Entities.SweptSurface.TwistAngle">
+  TwistAngle
+  <a class="header-action link-secondary" title="View source" href="https://github.com/DomCR/ACadSharp/blob/master/src/ACadSharp/Entities/SweptSurface.cs/#L151"><i class="bi bi-code-slash"></i></a>
+  </h3>
+
+  <div class="markdown level1 summary"><p>Twist angle, in radians.</p>
+</div>
+  <div class="markdown level1 conceptual"></div>
+
+  <div class="codewrapper">
+    <pre><code class="lang-csharp hljs">[DxfCodeValue(DxfReferenceType.IsAngle, new int[] { 45 })]
+public double TwistAngle { get; set; }</code></pre>
+  </div>
+
+
+
+
+
+  <h4 class="section">Property Value</h4>
+  <dl class="parameters">
+    <dt><a class="xref" href="https://learn.microsoft.com/dotnet/api/system.double">double</a></dt>
+    <dd></dd>
+  </dl>
+
+
+
+
+
+
+
+
+  <a id="ACadSharp_Entities_SweptSurface_Unknown71_" data-uid="ACadSharp.Entities.SweptSurface.Unknown71*"></a>
+
+  <h3 id="ACadSharp_Entities_SweptSurface_Unknown71" data-uid="ACadSharp.Entities.SweptSurface.Unknown71">
+  Unknown71
+  <a class="header-action link-secondary" title="View source" href="https://github.com/DomCR/ACadSharp/blob/master/src/ACadSharp/Entities/SweptSurface.cs/#L157"><i class="bi bi-code-slash"></i></a>
+  </h3>
+
+  <div class="markdown level1 summary"><p>Undocumented value.</p>
+</div>
+  <div class="markdown level1 conceptual"></div>
+
+  <div class="codewrapper">
+    <pre><code class="lang-csharp hljs">[DxfCodeValue(new int[] { 71 })]
+public short Unknown71 { get; set; }</code></pre>
+  </div>
+
+
+
+
+
+  <h4 class="section">Property Value</h4>
+  <dl class="parameters">
+    <dt><a class="xref" href="https://learn.microsoft.com/dotnet/api/system.int16">short</a></dt>
+    <dd></dd>
+  </dl>
+
+
+
+
+
+
+
+
   <h2 class="section" id="methods">Methods
 </h2>
 
@@ -422,7 +1179,7 @@ Dxf class name <a class="xref" href="ACadSharp.DxfSubclassMarker.html#ACadSharp_
 
   <h3 id="ACadSharp_Entities_SweptSurface_GetDxfClass" data-uid="ACadSharp.Entities.SweptSurface.GetDxfClass">
   GetDxfClass()
-  <a class="header-action link-secondary" title="View source" href="https://github.com/DomCR/ACadSharp/blob/master/src/ACadSharp/Entities/SweptSurface.cs/#L24"><i class="bi bi-code-slash"></i></a>
+  <a class="header-action link-secondary" title="View source" href="https://github.com/DomCR/ACadSharp/blob/master/src/ACadSharp/Entities/SweptSurface.cs/#L161"><i class="bi bi-code-slash"></i></a>
   </h3>
 
   <div class="markdown level1 summary"><p>Gets the <a class="xref" href="ACadSharp.Classes.DxfClass.html">DxfClass</a> instance associated with this class.</p>
@@ -455,7 +1212,7 @@ Dxf class name <a class="xref" href="ACadSharp.DxfSubclassMarker.html#ACadSharp_
 </article>
 
         <div class="contribution d-print-none">
-          <a href="https://github.com/DomCR/ACadSharp/blob/master/src/ACadSharp/Entities/SweptSurface.cs/#L13" class="edit-link">Edit this page</a>
+          <a href="https://github.com/DomCR/ACadSharp/blob/master/src/ACadSharp/Entities/SweptSurface.cs/#L14" class="edit-link">Edit this page</a>
         </div>
 
 

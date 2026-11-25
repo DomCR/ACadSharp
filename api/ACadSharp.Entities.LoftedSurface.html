@@ -89,7 +89,7 @@
 
 
   <h1 id="ACadSharp_Entities_LoftedSurface" data-uid="ACadSharp.Entities.LoftedSurface" class="text-break">
-Class LoftedSurface  <a class="header-action link-secondary" title="View source" href="https://github.com/DomCR/ACadSharp/blob/master/src/ACadSharp/Entities/LoftedSurface.cs/#L13"><i class="bi bi-code-slash"></i></a>
+Class LoftedSurface  <a class="header-action link-secondary" title="View source" href="https://github.com/DomCR/ACadSharp/blob/master/src/ACadSharp/Entities/LoftedSurface.Profile.cs/#L3"><i class="bi bi-code-slash"></i></a>
   </h1>
 
   <div class="facts text-secondary">
@@ -236,9 +236,6 @@ public class LoftedSurface : Surface, IEntity, IHandledCadObject, IGeometricEnti
       <a class="xref" href="ACadSharp.Entities.Entity.html#ACadSharp_Entities_Entity_ApplyTranslation_CSMath_XYZ_">Entity.ApplyTranslation(XYZ)</a>
     </div>
     <div>
-      <a class="xref" href="ACadSharp.Entities.Entity.html#ACadSharp_Entities_Entity_Clone">Entity.Clone()</a>
-    </div>
-    <div>
       <a class="xref" href="ACadSharp.Entities.Entity.html#ACadSharp_Entities_Entity_GetActiveColor">Entity.GetActiveColor()</a>
     </div>
     <div>
@@ -350,11 +347,341 @@ Dxf class name <a class="xref" href="ACadSharp.DxfSubclassMarker.html#ACadSharp_
 </h2>
 
 
+  <a id="ACadSharp_Entities_LoftedSurface_AlignDirection_" data-uid="ACadSharp.Entities.LoftedSurface.AlignDirection*"></a>
+
+  <h3 id="ACadSharp_Entities_LoftedSurface_AlignDirection" data-uid="ACadSharp.Entities.LoftedSurface.AlignDirection">
+  AlignDirection
+  <a class="header-action link-secondary" title="View source" href="https://github.com/DomCR/ACadSharp/blob/master/src/ACadSharp/Entities/LoftedSurface.cs/#L22"><i class="bi bi-code-slash"></i></a>
+  </h3>
+
+  <div class="markdown level1 summary"><p>Flag that indicates if the loft aligns the direction of the cross sections.</p>
+</div>
+  <div class="markdown level1 conceptual"></div>
+
+  <div class="codewrapper">
+    <pre><code class="lang-csharp hljs">[DxfCodeValue(new int[] { 292 })]
+public bool AlignDirection { get; set; }</code></pre>
+  </div>
+
+
+
+
+
+  <h4 class="section">Property Value</h4>
+  <dl class="parameters">
+    <dt><a class="xref" href="https://learn.microsoft.com/dotnet/api/system.boolean">bool</a></dt>
+    <dd></dd>
+  </dl>
+
+
+
+
+
+
+
+
+  <a id="ACadSharp_Entities_LoftedSurface_ArcLengthParameterization_" data-uid="ACadSharp.Entities.LoftedSurface.ArcLengthParameterization*"></a>
+
+  <h3 id="ACadSharp_Entities_LoftedSurface_ArcLengthParameterization" data-uid="ACadSharp.Entities.LoftedSurface.ArcLengthParameterization">
+  ArcLengthParameterization
+  <a class="header-action link-secondary" title="View source" href="https://github.com/DomCR/ACadSharp/blob/master/src/ACadSharp/Entities/LoftedSurface.cs/#L28"><i class="bi bi-code-slash"></i></a>
+  </h3>
+
+  <div class="markdown level1 summary"><p>Flag that indicates if the loft uses arc length parameterization.</p>
+</div>
+  <div class="markdown level1 conceptual"></div>
+
+  <div class="codewrapper">
+    <pre><code class="lang-csharp hljs">[DxfCodeValue(new int[] { 290 })]
+public bool ArcLengthParameterization { get; set; }</code></pre>
+  </div>
+
+
+
+
+
+  <h4 class="section">Property Value</h4>
+  <dl class="parameters">
+    <dt><a class="xref" href="https://learn.microsoft.com/dotnet/api/system.boolean">bool</a></dt>
+    <dd></dd>
+  </dl>
+
+
+
+
+
+
+
+
+  <a id="ACadSharp_Entities_LoftedSurface_ClosedSurfaces_" data-uid="ACadSharp.Entities.LoftedSurface.ClosedSurfaces*"></a>
+
+  <h3 id="ACadSharp_Entities_LoftedSurface_ClosedSurfaces" data-uid="ACadSharp.Entities.LoftedSurface.ClosedSurfaces">
+  ClosedSurfaces
+  <a class="header-action link-secondary" title="View source" href="https://github.com/DomCR/ACadSharp/blob/master/src/ACadSharp/Entities/LoftedSurface.cs/#L34"><i class="bi bi-code-slash"></i></a>
+  </h3>
+
+  <div class="markdown level1 summary"><p>Flag that indicates if the loft creates closed surfaces.</p>
+</div>
+  <div class="markdown level1 conceptual"></div>
+
+  <div class="codewrapper">
+    <pre><code class="lang-csharp hljs">[DxfCodeValue(new int[] { 294 })]
+public bool ClosedSurfaces { get; set; }</code></pre>
+  </div>
+
+
+
+
+
+  <h4 class="section">Property Value</h4>
+  <dl class="parameters">
+    <dt><a class="xref" href="https://learn.microsoft.com/dotnet/api/system.boolean">bool</a></dt>
+    <dd></dd>
+  </dl>
+
+
+
+
+
+
+
+
+  <a id="ACadSharp_Entities_LoftedSurface_CrossSections_" data-uid="ACadSharp.Entities.LoftedSurface.CrossSections*"></a>
+
+  <h3 id="ACadSharp_Entities_LoftedSurface_CrossSections" data-uid="ACadSharp.Entities.LoftedSurface.CrossSections">
+  CrossSections
+  <a class="header-action link-secondary" title="View source" href="https://github.com/DomCR/ACadSharp/blob/master/src/ACadSharp/Entities/LoftedSurface.cs/#L40"><i class="bi bi-code-slash"></i></a>
+  </h3>
+
+  <div class="markdown level1 summary"><p>Gets the cross sections that define the lofted surface.</p>
+</div>
+  <div class="markdown level1 conceptual"></div>
+
+  <div class="codewrapper">
+    <pre><code class="lang-csharp hljs">public List&lt;LoftedSurface.Profile&gt; CrossSections { get; }</code></pre>
+  </div>
+
+
+
+
+
+  <h4 class="section">Property Value</h4>
+  <dl class="parameters">
+    <dt><a class="xref" href="https://learn.microsoft.com/dotnet/api/system.collections.generic.list-1">List</a>&lt;<a class="xref" href="ACadSharp.Entities.LoftedSurface.html">LoftedSurface</a>.<a class="xref" href="ACadSharp.Entities.LoftedSurface.Profile.html">Profile</a>&gt;</dt>
+    <dd></dd>
+  </dl>
+
+
+
+
+
+
+
+
+  <a id="ACadSharp_Entities_LoftedSurface_EndDraftAngle_" data-uid="ACadSharp.Entities.LoftedSurface.EndDraftAngle*"></a>
+
+  <h3 id="ACadSharp_Entities_LoftedSurface_EndDraftAngle" data-uid="ACadSharp.Entities.LoftedSurface.EndDraftAngle">
+  EndDraftAngle
+  <a class="header-action link-secondary" title="View source" href="https://github.com/DomCR/ACadSharp/blob/master/src/ACadSharp/Entities/LoftedSurface.cs/#L45"><i class="bi bi-code-slash"></i></a>
+  </h3>
+
+  <div class="markdown level1 summary"><p>Draft angle at the end of the loft, in radians.</p>
+</div>
+  <div class="markdown level1 conceptual"></div>
+
+  <div class="codewrapper">
+    <pre><code class="lang-csharp hljs">[DxfCodeValue(new int[] { 42 })]
+public double EndDraftAngle { get; set; }</code></pre>
+  </div>
+
+
+
+
+
+  <h4 class="section">Property Value</h4>
+  <dl class="parameters">
+    <dt><a class="xref" href="https://learn.microsoft.com/dotnet/api/system.double">double</a></dt>
+    <dd></dd>
+  </dl>
+
+
+
+
+
+
+
+
+  <a id="ACadSharp_Entities_LoftedSurface_EndDraftMagnitude_" data-uid="ACadSharp.Entities.LoftedSurface.EndDraftMagnitude*"></a>
+
+  <h3 id="ACadSharp_Entities_LoftedSurface_EndDraftMagnitude" data-uid="ACadSharp.Entities.LoftedSurface.EndDraftMagnitude">
+  EndDraftMagnitude
+  <a class="header-action link-secondary" title="View source" href="https://github.com/DomCR/ACadSharp/blob/master/src/ACadSharp/Entities/LoftedSurface.cs/#L51"><i class="bi bi-code-slash"></i></a>
+  </h3>
+
+  <div class="markdown level1 summary"><p>Draft magnitude at the end of the loft.</p>
+</div>
+  <div class="markdown level1 conceptual"></div>
+
+  <div class="codewrapper">
+    <pre><code class="lang-csharp hljs">[DxfCodeValue(new int[] { 44 })]
+public double EndDraftMagnitude { get; set; }</code></pre>
+  </div>
+
+
+
+
+
+  <h4 class="section">Property Value</h4>
+  <dl class="parameters">
+    <dt><a class="xref" href="https://learn.microsoft.com/dotnet/api/system.double">double</a></dt>
+    <dd></dd>
+  </dl>
+
+
+
+
+
+
+
+
+  <a id="ACadSharp_Entities_LoftedSurface_Guides_" data-uid="ACadSharp.Entities.LoftedSurface.Guides*"></a>
+
+  <h3 id="ACadSharp_Entities_LoftedSurface_Guides" data-uid="ACadSharp.Entities.LoftedSurface.Guides">
+  Guides
+  <a class="header-action link-secondary" title="View source" href="https://github.com/DomCR/ACadSharp/blob/master/src/ACadSharp/Entities/LoftedSurface.cs/#L57"><i class="bi bi-code-slash"></i></a>
+  </h3>
+
+  <div class="markdown level1 summary"><p>Gets the profiles that guide the lofted surface.</p>
+</div>
+  <div class="markdown level1 conceptual"></div>
+
+  <div class="codewrapper">
+    <pre><code class="lang-csharp hljs">public List&lt;LoftedSurface.Profile&gt; Guides { get; }</code></pre>
+  </div>
+
+
+
+
+
+  <h4 class="section">Property Value</h4>
+  <dl class="parameters">
+    <dt><a class="xref" href="https://learn.microsoft.com/dotnet/api/system.collections.generic.list-1">List</a>&lt;<a class="xref" href="ACadSharp.Entities.LoftedSurface.html">LoftedSurface</a>.<a class="xref" href="ACadSharp.Entities.LoftedSurface.Profile.html">Profile</a>&gt;</dt>
+    <dd></dd>
+  </dl>
+
+
+
+
+
+
+
+
+  <a id="ACadSharp_Entities_LoftedSurface_IsSolid_" data-uid="ACadSharp.Entities.LoftedSurface.IsSolid*"></a>
+
+  <h3 id="ACadSharp_Entities_LoftedSurface_IsSolid" data-uid="ACadSharp.Entities.LoftedSurface.IsSolid">
+  IsSolid
+  <a class="header-action link-secondary" title="View source" href="https://github.com/DomCR/ACadSharp/blob/master/src/ACadSharp/Entities/LoftedSurface.cs/#L62"><i class="bi bi-code-slash"></i></a>
+  </h3>
+
+  <div class="markdown level1 summary"><p>Flag that indicates if the loft creates a solid.</p>
+</div>
+  <div class="markdown level1 conceptual"></div>
+
+  <div class="codewrapper">
+    <pre><code class="lang-csharp hljs">[DxfCodeValue(new int[] { 295 })]
+public bool IsSolid { get; set; }</code></pre>
+  </div>
+
+
+
+
+
+  <h4 class="section">Property Value</h4>
+  <dl class="parameters">
+    <dt><a class="xref" href="https://learn.microsoft.com/dotnet/api/system.boolean">bool</a></dt>
+    <dd></dd>
+  </dl>
+
+
+
+
+
+
+
+
+  <a id="ACadSharp_Entities_LoftedSurface_LoftTransform_" data-uid="ACadSharp.Entities.LoftedSurface.LoftTransform*"></a>
+
+  <h3 id="ACadSharp_Entities_LoftedSurface_LoftTransform" data-uid="ACadSharp.Entities.LoftedSurface.LoftTransform">
+  LoftTransform
+  <a class="header-action link-secondary" title="View source" href="https://github.com/DomCR/ACadSharp/blob/master/src/ACadSharp/Entities/LoftedSurface.cs/#L71"><i class="bi bi-code-slash"></i></a>
+  </h3>
+
+  <div class="markdown level1 summary"><p>Transform matrix of the loft entity.</p>
+</div>
+  <div class="markdown level1 conceptual"></div>
+
+  <div class="codewrapper">
+    <pre><code class="lang-csharp hljs">public Matrix4 LoftTransform { get; set; }</code></pre>
+  </div>
+
+
+
+
+
+  <h4 class="section">Property Value</h4>
+  <dl class="parameters">
+    <dt><a class="xref" href="CSMath.Matrix4.html">Matrix4</a></dt>
+    <dd></dd>
+  </dl>
+
+
+
+
+  <h4 class="section" id="ACadSharp_Entities_LoftedSurface_LoftTransform_remarks">Remarks</h4>
+  <div class="markdown level1 remarks"><p>Stored in the DXF as 16 consecutive values with code 40.</p>
+</div>
+
+
+
+
+  <a id="ACadSharp_Entities_LoftedSurface_NoTwist_" data-uid="ACadSharp.Entities.LoftedSurface.NoTwist*"></a>
+
+  <h3 id="ACadSharp_Entities_LoftedSurface_NoTwist" data-uid="ACadSharp.Entities.LoftedSurface.NoTwist">
+  NoTwist
+  <a class="header-action link-secondary" title="View source" href="https://github.com/DomCR/ACadSharp/blob/master/src/ACadSharp/Entities/LoftedSurface.cs/#L76"><i class="bi bi-code-slash"></i></a>
+  </h3>
+
+  <div class="markdown level1 summary"><p>Flag that indicates if twisting is prevented.</p>
+</div>
+  <div class="markdown level1 conceptual"></div>
+
+  <div class="codewrapper">
+    <pre><code class="lang-csharp hljs">[DxfCodeValue(new int[] { 291 })]
+public bool NoTwist { get; set; }</code></pre>
+  </div>
+
+
+
+
+
+  <h4 class="section">Property Value</h4>
+  <dl class="parameters">
+    <dt><a class="xref" href="https://learn.microsoft.com/dotnet/api/system.boolean">bool</a></dt>
+    <dd></dd>
+  </dl>
+
+
+
+
+
+
+
+
   <a id="ACadSharp_Entities_LoftedSurface_ObjectName_" data-uid="ACadSharp.Entities.LoftedSurface.ObjectName*"></a>
 
   <h3 id="ACadSharp_Entities_LoftedSurface_ObjectName" data-uid="ACadSharp.Entities.LoftedSurface.ObjectName">
   ObjectName
-  <a class="header-action link-secondary" title="View source" href="https://github.com/DomCR/ACadSharp/blob/master/src/ACadSharp/Entities/LoftedSurface.cs/#L18"><i class="bi bi-code-slash"></i></a>
+  <a class="header-action link-secondary" title="View source" href="https://github.com/DomCR/ACadSharp/blob/master/src/ACadSharp/Entities/LoftedSurface.cs/#L80"><i class="bi bi-code-slash"></i></a>
   </h3>
 
   <div class="markdown level1 summary"><p>The CAD class name of an object.</p>
@@ -382,11 +709,208 @@ Dxf class name <a class="xref" href="ACadSharp.DxfSubclassMarker.html#ACadSharp_
 
 
 
+  <a id="ACadSharp_Entities_LoftedSurface_Path_" data-uid="ACadSharp.Entities.LoftedSurface.Path*"></a>
+
+  <h3 id="ACadSharp_Entities_LoftedSurface_Path" data-uid="ACadSharp.Entities.LoftedSurface.Path">
+  Path
+  <a class="header-action link-secondary" title="View source" href="https://github.com/DomCR/ACadSharp/blob/master/src/ACadSharp/Entities/LoftedSurface.cs/#L85"><i class="bi bi-code-slash"></i></a>
+  </h3>
+
+  <div class="markdown level1 summary"><p>Gets or sets the profile used to define the path.</p>
+</div>
+  <div class="markdown level1 conceptual"></div>
+
+  <div class="codewrapper">
+    <pre><code class="lang-csharp hljs">public LoftedSurface.Profile Path { get; set; }</code></pre>
+  </div>
+
+
+
+
+
+  <h4 class="section">Property Value</h4>
+  <dl class="parameters">
+    <dt><a class="xref" href="ACadSharp.Entities.LoftedSurface.html">LoftedSurface</a>.<a class="xref" href="ACadSharp.Entities.LoftedSurface.Profile.html">Profile</a></dt>
+    <dd></dd>
+  </dl>
+
+
+
+
+
+
+
+
+  <a id="ACadSharp_Entities_LoftedSurface_PlaneNormalLofting_" data-uid="ACadSharp.Entities.LoftedSurface.PlaneNormalLofting*"></a>
+
+  <h3 id="ACadSharp_Entities_LoftedSurface_PlaneNormalLofting" data-uid="ACadSharp.Entities.LoftedSurface.PlaneNormalLofting">
+  PlaneNormalLofting
+  <a class="header-action link-secondary" title="View source" href="https://github.com/DomCR/ACadSharp/blob/master/src/ACadSharp/Entities/LoftedSurface.cs/#L90"><i class="bi bi-code-slash"></i></a>
+  </h3>
+
+  <div class="markdown level1 summary"><p>Plane normal lofting type.</p>
+</div>
+  <div class="markdown level1 conceptual"></div>
+
+  <div class="codewrapper">
+    <pre><code class="lang-csharp hljs">[DxfCodeValue(new int[] { 70 })]
+public LoftPlaneNormalType PlaneNormalLofting { get; set; }</code></pre>
+  </div>
+
+
+
+
+
+  <h4 class="section">Property Value</h4>
+  <dl class="parameters">
+    <dt><a class="xref" href="ACadSharp.Entities.LoftPlaneNormalType.html">LoftPlaneNormalType</a></dt>
+    <dd></dd>
+  </dl>
+
+
+
+
+
+
+
+
+  <a id="ACadSharp_Entities_LoftedSurface_RuledSurface_" data-uid="ACadSharp.Entities.LoftedSurface.RuledSurface*"></a>
+
+  <h3 id="ACadSharp_Entities_LoftedSurface_RuledSurface" data-uid="ACadSharp.Entities.LoftedSurface.RuledSurface">
+  RuledSurface
+  <a class="header-action link-secondary" title="View source" href="https://github.com/DomCR/ACadSharp/blob/master/src/ACadSharp/Entities/LoftedSurface.cs/#L96"><i class="bi bi-code-slash"></i></a>
+  </h3>
+
+  <div class="markdown level1 summary"><p>Flag that indicates if the loft creates ruled surfaces.</p>
+</div>
+  <div class="markdown level1 conceptual"></div>
+
+  <div class="codewrapper">
+    <pre><code class="lang-csharp hljs">[DxfCodeValue(new int[] { 296 })]
+public bool RuledSurface { get; set; }</code></pre>
+  </div>
+
+
+
+
+
+  <h4 class="section">Property Value</h4>
+  <dl class="parameters">
+    <dt><a class="xref" href="https://learn.microsoft.com/dotnet/api/system.boolean">bool</a></dt>
+    <dd></dd>
+  </dl>
+
+
+
+
+
+
+
+
+  <a id="ACadSharp_Entities_LoftedSurface_SimpleSurfaces_" data-uid="ACadSharp.Entities.LoftedSurface.SimpleSurfaces*"></a>
+
+  <h3 id="ACadSharp_Entities_LoftedSurface_SimpleSurfaces" data-uid="ACadSharp.Entities.LoftedSurface.SimpleSurfaces">
+  SimpleSurfaces
+  <a class="header-action link-secondary" title="View source" href="https://github.com/DomCR/ACadSharp/blob/master/src/ACadSharp/Entities/LoftedSurface.cs/#L102"><i class="bi bi-code-slash"></i></a>
+  </h3>
+
+  <div class="markdown level1 summary"><p>Flag that indicates if the loft creates simple surfaces.</p>
+</div>
+  <div class="markdown level1 conceptual"></div>
+
+  <div class="codewrapper">
+    <pre><code class="lang-csharp hljs">[DxfCodeValue(new int[] { 293 })]
+public bool SimpleSurfaces { get; set; }</code></pre>
+  </div>
+
+
+
+
+
+  <h4 class="section">Property Value</h4>
+  <dl class="parameters">
+    <dt><a class="xref" href="https://learn.microsoft.com/dotnet/api/system.boolean">bool</a></dt>
+    <dd></dd>
+  </dl>
+
+
+
+
+
+
+
+
+  <a id="ACadSharp_Entities_LoftedSurface_StartDraftAngle_" data-uid="ACadSharp.Entities.LoftedSurface.StartDraftAngle*"></a>
+
+  <h3 id="ACadSharp_Entities_LoftedSurface_StartDraftAngle" data-uid="ACadSharp.Entities.LoftedSurface.StartDraftAngle">
+  StartDraftAngle
+  <a class="header-action link-secondary" title="View source" href="https://github.com/DomCR/ACadSharp/blob/master/src/ACadSharp/Entities/LoftedSurface.cs/#L108"><i class="bi bi-code-slash"></i></a>
+  </h3>
+
+  <div class="markdown level1 summary"><p>Draft angle at the start of the loft, in radians.</p>
+</div>
+  <div class="markdown level1 conceptual"></div>
+
+  <div class="codewrapper">
+    <pre><code class="lang-csharp hljs">[DxfCodeValue(new int[] { 41 })]
+public double StartDraftAngle { get; set; }</code></pre>
+  </div>
+
+
+
+
+
+  <h4 class="section">Property Value</h4>
+  <dl class="parameters">
+    <dt><a class="xref" href="https://learn.microsoft.com/dotnet/api/system.double">double</a></dt>
+    <dd></dd>
+  </dl>
+
+
+
+
+
+
+
+
+  <a id="ACadSharp_Entities_LoftedSurface_StartDraftMagnitude_" data-uid="ACadSharp.Entities.LoftedSurface.StartDraftMagnitude*"></a>
+
+  <h3 id="ACadSharp_Entities_LoftedSurface_StartDraftMagnitude" data-uid="ACadSharp.Entities.LoftedSurface.StartDraftMagnitude">
+  StartDraftMagnitude
+  <a class="header-action link-secondary" title="View source" href="https://github.com/DomCR/ACadSharp/blob/master/src/ACadSharp/Entities/LoftedSurface.cs/#L114"><i class="bi bi-code-slash"></i></a>
+  </h3>
+
+  <div class="markdown level1 summary"><p>Draft magnitude at the start of the loft.</p>
+</div>
+  <div class="markdown level1 conceptual"></div>
+
+  <div class="codewrapper">
+    <pre><code class="lang-csharp hljs">[DxfCodeValue(new int[] { 43 })]
+public double StartDraftMagnitude { get; set; }</code></pre>
+  </div>
+
+
+
+
+
+  <h4 class="section">Property Value</h4>
+  <dl class="parameters">
+    <dt><a class="xref" href="https://learn.microsoft.com/dotnet/api/system.double">double</a></dt>
+    <dd></dd>
+  </dl>
+
+
+
+
+
+
+
+
   <a id="ACadSharp_Entities_LoftedSurface_SubclassMarker_" data-uid="ACadSharp.Entities.LoftedSurface.SubclassMarker*"></a>
 
   <h3 id="ACadSharp_Entities_LoftedSurface_SubclassMarker" data-uid="ACadSharp.Entities.LoftedSurface.SubclassMarker">
   SubclassMarker
-  <a class="header-action link-secondary" title="View source" href="https://github.com/DomCR/ACadSharp/blob/master/src/ACadSharp/Entities/LoftedSurface.cs/#L21"><i class="bi bi-code-slash"></i></a>
+  <a class="header-action link-secondary" title="View source" href="https://github.com/DomCR/ACadSharp/blob/master/src/ACadSharp/Entities/LoftedSurface.cs/#L118"><i class="bi bi-code-slash"></i></a>
   </h3>
 
   <div class="markdown level1 summary"><p>Object Subclass marker.</p>
@@ -414,15 +938,84 @@ Dxf class name <a class="xref" href="ACadSharp.DxfSubclassMarker.html#ACadSharp_
 
 
 
+  <a id="ACadSharp_Entities_LoftedSurface_VirtualGuide_" data-uid="ACadSharp.Entities.LoftedSurface.VirtualGuide*"></a>
+
+  <h3 id="ACadSharp_Entities_LoftedSurface_VirtualGuide" data-uid="ACadSharp.Entities.LoftedSurface.VirtualGuide">
+  VirtualGuide
+  <a class="header-action link-secondary" title="View source" href="https://github.com/DomCR/ACadSharp/blob/master/src/ACadSharp/Entities/LoftedSurface.cs/#L123"><i class="bi bi-code-slash"></i></a>
+  </h3>
+
+  <div class="markdown level1 summary"><p>Flag that indicates if the loft uses a virtual guide.</p>
+</div>
+  <div class="markdown level1 conceptual"></div>
+
+  <div class="codewrapper">
+    <pre><code class="lang-csharp hljs">[DxfCodeValue(new int[] { 297 })]
+public bool VirtualGuide { get; set; }</code></pre>
+  </div>
+
+
+
+
+
+  <h4 class="section">Property Value</h4>
+  <dl class="parameters">
+    <dt><a class="xref" href="https://learn.microsoft.com/dotnet/api/system.boolean">bool</a></dt>
+    <dd></dd>
+  </dl>
+
+
+
+
+
+
+
+
   <h2 class="section" id="methods">Methods
 </h2>
+
+
+  <a id="ACadSharp_Entities_LoftedSurface_Clone_" data-uid="ACadSharp.Entities.LoftedSurface.Clone*"></a>
+
+  <h3 id="ACadSharp_Entities_LoftedSurface_Clone" data-uid="ACadSharp.Entities.LoftedSurface.Clone">
+  Clone()
+  <a class="header-action link-secondary" title="View source" href="https://github.com/DomCR/ACadSharp/blob/master/src/ACadSharp/Entities/LoftedSurface.cs/#L127"><i class="bi bi-code-slash"></i></a>
+  </h3>
+
+  <div class="markdown level1 summary"><p>Creates a new object that is a copy of the current instance.</p>
+</div>
+  <div class="markdown level1 conceptual"></div>
+
+  <div class="codewrapper">
+    <pre><code class="lang-csharp hljs">public override CadObject Clone()</code></pre>
+  </div>
+
+
+  <h4 class="section">Returns</h4>
+  <dl class="parameters">
+    <dt><a class="xref" href="ACadSharp.CadObject.html">CadObject</a></dt>
+    <dd><p>A new object that is a copy of this instance.</p>
+</dd>
+  </dl>
+
+
+
+
+
+
+
+  <h4 class="section" id="ACadSharp_Entities_LoftedSurface_Clone_remarks">Remarks</h4>
+  <div class="markdown level1 remarks"><p>The copy will be unattached from the document or any reference.</p>
+</div>
+
+
 
 
   <a id="ACadSharp_Entities_LoftedSurface_GetDxfClass_" data-uid="ACadSharp.Entities.LoftedSurface.GetDxfClass*"></a>
 
   <h3 id="ACadSharp_Entities_LoftedSurface_GetDxfClass" data-uid="ACadSharp.Entities.LoftedSurface.GetDxfClass">
   GetDxfClass()
-  <a class="header-action link-secondary" title="View source" href="https://github.com/DomCR/ACadSharp/blob/master/src/ACadSharp/Entities/LoftedSurface.cs/#L24"><i class="bi bi-code-slash"></i></a>
+  <a class="header-action link-secondary" title="View source" href="https://github.com/DomCR/ACadSharp/blob/master/src/ACadSharp/Entities/LoftedSurface.cs/#L149"><i class="bi bi-code-slash"></i></a>
   </h3>
 
   <div class="markdown level1 summary"><p>Gets the <a class="xref" href="ACadSharp.Classes.DxfClass.html">DxfClass</a> instance associated with this class.</p>
@@ -455,7 +1048,7 @@ Dxf class name <a class="xref" href="ACadSharp.DxfSubclassMarker.html#ACadSharp_
 </article>
 
         <div class="contribution d-print-none">
-          <a href="https://github.com/DomCR/ACadSharp/blob/master/src/ACadSharp/Entities/LoftedSurface.cs/#L13" class="edit-link">Edit this page</a>
+          <a href="https://github.com/DomCR/ACadSharp/blob/master/src/ACadSharp/Entities/LoftedSurface.Profile.cs/#L3" class="edit-link">Edit this page</a>
         </div>
 
 

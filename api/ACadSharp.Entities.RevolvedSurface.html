@@ -89,7 +89,7 @@
 
 
   <h1 id="ACadSharp_Entities_RevolvedSurface" data-uid="ACadSharp.Entities.RevolvedSurface" class="text-break">
-Class RevolvedSurface  <a class="header-action link-secondary" title="View source" href="https://github.com/DomCR/ACadSharp/blob/master/src/ACadSharp/Entities/RevolvedSurface.cs/#L13"><i class="bi bi-code-slash"></i></a>
+Class RevolvedSurface  <a class="header-action link-secondary" title="View source" href="https://github.com/DomCR/ACadSharp/blob/master/src/ACadSharp/Entities/RevolvedSurface.cs/#L14"><i class="bi bi-code-slash"></i></a>
   </h1>
 
   <div class="facts text-secondary">
@@ -350,11 +350,308 @@ Dxf class name <a class="xref" href="ACadSharp.DxfSubclassMarker.html#ACadSharp_
 </h2>
 
 
+  <a id="ACadSharp_Entities_RevolvedSurface_AxisPoint_" data-uid="ACadSharp.Entities.RevolvedSurface.AxisPoint*"></a>
+
+  <h3 id="ACadSharp_Entities_RevolvedSurface_AxisPoint" data-uid="ACadSharp.Entities.RevolvedSurface.AxisPoint">
+  AxisPoint
+  <a class="header-action link-secondary" title="View source" href="https://github.com/DomCR/ACadSharp/blob/master/src/ACadSharp/Entities/RevolvedSurface.cs/#L21"><i class="bi bi-code-slash"></i></a>
+  </h3>
+
+  <div class="markdown level1 summary"><p>Point on the revolution axis.</p>
+</div>
+  <div class="markdown level1 conceptual"></div>
+
+  <div class="codewrapper">
+    <pre><code class="lang-csharp hljs">[DxfCodeValue(new int[] { 10, 20, 30 })]
+public XYZ AxisPoint { get; set; }</code></pre>
+  </div>
+
+
+
+
+
+  <h4 class="section">Property Value</h4>
+  <dl class="parameters">
+    <dt><a class="xref" href="CSMath.XYZ.html">XYZ</a></dt>
+    <dd></dd>
+  </dl>
+
+
+
+
+
+
+
+
+  <a id="ACadSharp_Entities_RevolvedSurface_AxisVector_" data-uid="ACadSharp.Entities.RevolvedSurface.AxisVector*"></a>
+
+  <h3 id="ACadSharp_Entities_RevolvedSurface_AxisVector" data-uid="ACadSharp.Entities.RevolvedSurface.AxisVector">
+  AxisVector
+  <a class="header-action link-secondary" title="View source" href="https://github.com/DomCR/ACadSharp/blob/master/src/ACadSharp/Entities/RevolvedSurface.cs/#L27"><i class="bi bi-code-slash"></i></a>
+  </h3>
+
+  <div class="markdown level1 summary"><p>Direction of the revolution axis.</p>
+</div>
+  <div class="markdown level1 conceptual"></div>
+
+  <div class="codewrapper">
+    <pre><code class="lang-csharp hljs">[DxfCodeValue(new int[] { 11, 21, 31 })]
+public XYZ AxisVector { get; set; }</code></pre>
+  </div>
+
+
+
+
+
+  <h4 class="section">Property Value</h4>
+  <dl class="parameters">
+    <dt><a class="xref" href="CSMath.XYZ.html">XYZ</a></dt>
+    <dd></dd>
+  </dl>
+
+
+
+
+
+
+
+
+  <a id="ACadSharp_Entities_RevolvedSurface_BinaryData_" data-uid="ACadSharp.Entities.RevolvedSurface.BinaryData*"></a>
+
+  <h3 id="ACadSharp_Entities_RevolvedSurface_BinaryData" data-uid="ACadSharp.Entities.RevolvedSurface.BinaryData">
+  BinaryData
+  <a class="header-action link-secondary" title="View source" href="https://github.com/DomCR/ACadSharp/blob/master/src/ACadSharp/Entities/RevolvedSurface.cs/#L33"><i class="bi bi-code-slash"></i></a>
+  </h3>
+
+  <div class="markdown level1 summary"><p>Binary data of the revolved entity.</p>
+</div>
+  <div class="markdown level1 conceptual"></div>
+
+  <div class="codewrapper">
+    <pre><code class="lang-csharp hljs">[DxfCodeValue(new int[] { 310 })]
+public byte[] BinaryData { get; set; }</code></pre>
+  </div>
+
+
+
+
+
+  <h4 class="section">Property Value</h4>
+  <dl class="parameters">
+    <dt><a class="xref" href="https://learn.microsoft.com/dotnet/api/system.byte">byte</a>[]</dt>
+    <dd></dd>
+  </dl>
+
+
+
+
+
+
+
+
+  <a id="ACadSharp_Entities_RevolvedSurface_ClassId_" data-uid="ACadSharp.Entities.RevolvedSurface.ClassId*"></a>
+
+  <h3 id="ACadSharp_Entities_RevolvedSurface_ClassId" data-uid="ACadSharp.Entities.RevolvedSurface.ClassId">
+  ClassId
+  <a class="header-action link-secondary" title="View source" href="https://github.com/DomCR/ACadSharp/blob/master/src/ACadSharp/Entities/RevolvedSurface.cs/#L39"><i class="bi bi-code-slash"></i></a>
+  </h3>
+
+  <div class="markdown level1 summary"><p>Class ID of the revolved entity.</p>
+</div>
+  <div class="markdown level1 conceptual"></div>
+
+  <div class="codewrapper">
+    <pre><code class="lang-csharp hljs">[DxfCodeValue(new int[] { 90 })]
+public int? ClassId { get; set; }</code></pre>
+  </div>
+
+
+
+
+
+  <h4 class="section">Property Value</h4>
+  <dl class="parameters">
+    <dt><a class="xref" href="https://learn.microsoft.com/dotnet/api/system.int32">int</a>?</dt>
+    <dd></dd>
+  </dl>
+
+
+
+
+
+
+
+
+  <a id="ACadSharp_Entities_RevolvedSurface_DraftAngle_" data-uid="ACadSharp.Entities.RevolvedSurface.DraftAngle*"></a>
+
+  <h3 id="ACadSharp_Entities_RevolvedSurface_DraftAngle" data-uid="ACadSharp.Entities.RevolvedSurface.DraftAngle">
+  DraftAngle
+  <a class="header-action link-secondary" title="View source" href="https://github.com/DomCR/ACadSharp/blob/master/src/ACadSharp/Entities/RevolvedSurface.cs/#L51"><i class="bi bi-code-slash"></i></a>
+  </h3>
+
+  <div class="markdown level1 summary"><p>Draft angle, in radians.</p>
+</div>
+  <div class="markdown level1 conceptual"></div>
+
+  <div class="codewrapper">
+    <pre><code class="lang-csharp hljs">[DxfCodeValue(new int[] { 43 })]
+public double DraftAngle { get; set; }</code></pre>
+  </div>
+
+
+
+
+
+  <h4 class="section">Property Value</h4>
+  <dl class="parameters">
+    <dt><a class="xref" href="https://learn.microsoft.com/dotnet/api/system.double">double</a></dt>
+    <dd></dd>
+  </dl>
+
+
+
+
+
+
+
+
+  <a id="ACadSharp_Entities_RevolvedSurface_DraftEndDistance_" data-uid="ACadSharp.Entities.RevolvedSurface.DraftEndDistance*"></a>
+
+  <h3 id="ACadSharp_Entities_RevolvedSurface_DraftEndDistance" data-uid="ACadSharp.Entities.RevolvedSurface.DraftEndDistance">
+  DraftEndDistance
+  <a class="header-action link-secondary" title="View source" href="https://github.com/DomCR/ACadSharp/blob/master/src/ACadSharp/Entities/RevolvedSurface.cs/#L57"><i class="bi bi-code-slash"></i></a>
+  </h3>
+
+  <div class="markdown level1 summary"><p>Draft end distance.</p>
+</div>
+  <div class="markdown level1 conceptual"></div>
+
+  <div class="codewrapper">
+    <pre><code class="lang-csharp hljs">[DxfCodeValue(new int[] { 45 })]
+public double DraftEndDistance { get; set; }</code></pre>
+  </div>
+
+
+
+
+
+  <h4 class="section">Property Value</h4>
+  <dl class="parameters">
+    <dt><a class="xref" href="https://learn.microsoft.com/dotnet/api/system.double">double</a></dt>
+    <dd></dd>
+  </dl>
+
+
+
+
+
+
+
+
+  <a id="ACadSharp_Entities_RevolvedSurface_DraftStartDistance_" data-uid="ACadSharp.Entities.RevolvedSurface.DraftStartDistance*"></a>
+
+  <h3 id="ACadSharp_Entities_RevolvedSurface_DraftStartDistance" data-uid="ACadSharp.Entities.RevolvedSurface.DraftStartDistance">
+  DraftStartDistance
+  <a class="header-action link-secondary" title="View source" href="https://github.com/DomCR/ACadSharp/blob/master/src/ACadSharp/Entities/RevolvedSurface.cs/#L63"><i class="bi bi-code-slash"></i></a>
+  </h3>
+
+  <div class="markdown level1 summary"><p>Draft start distance.</p>
+</div>
+  <div class="markdown level1 conceptual"></div>
+
+  <div class="codewrapper">
+    <pre><code class="lang-csharp hljs">[DxfCodeValue(new int[] { 44 })]
+public double DraftStartDistance { get; set; }</code></pre>
+  </div>
+
+
+
+
+
+  <h4 class="section">Property Value</h4>
+  <dl class="parameters">
+    <dt><a class="xref" href="https://learn.microsoft.com/dotnet/api/system.double">double</a></dt>
+    <dd></dd>
+  </dl>
+
+
+
+
+
+
+
+
+  <a id="ACadSharp_Entities_RevolvedSurface_IsCloseToAxis_" data-uid="ACadSharp.Entities.RevolvedSurface.IsCloseToAxis*"></a>
+
+  <h3 id="ACadSharp_Entities_RevolvedSurface_IsCloseToAxis" data-uid="ACadSharp.Entities.RevolvedSurface.IsCloseToAxis">
+  IsCloseToAxis
+  <a class="header-action link-secondary" title="View source" href="https://github.com/DomCR/ACadSharp/blob/master/src/ACadSharp/Entities/RevolvedSurface.cs/#L45"><i class="bi bi-code-slash"></i></a>
+  </h3>
+
+  <div class="markdown level1 summary"><p>Flag that indicates if the revolution is closed to the axis.</p>
+</div>
+  <div class="markdown level1 conceptual"></div>
+
+  <div class="codewrapper">
+    <pre><code class="lang-csharp hljs">[DxfCodeValue(new int[] { 291 })]
+public bool IsCloseToAxis { get; set; }</code></pre>
+  </div>
+
+
+
+
+
+  <h4 class="section">Property Value</h4>
+  <dl class="parameters">
+    <dt><a class="xref" href="https://learn.microsoft.com/dotnet/api/system.boolean">bool</a></dt>
+    <dd></dd>
+  </dl>
+
+
+
+
+
+
+
+
+  <a id="ACadSharp_Entities_RevolvedSurface_IsSolid_" data-uid="ACadSharp.Entities.RevolvedSurface.IsSolid*"></a>
+
+  <h3 id="ACadSharp_Entities_RevolvedSurface_IsSolid" data-uid="ACadSharp.Entities.RevolvedSurface.IsSolid">
+  IsSolid
+  <a class="header-action link-secondary" title="View source" href="https://github.com/DomCR/ACadSharp/blob/master/src/ACadSharp/Entities/RevolvedSurface.cs/#L69"><i class="bi bi-code-slash"></i></a>
+  </h3>
+
+  <div class="markdown level1 summary"><p>Flag that indicates if the revolution creates a solid.</p>
+</div>
+  <div class="markdown level1 conceptual"></div>
+
+  <div class="codewrapper">
+    <pre><code class="lang-csharp hljs">[DxfCodeValue(new int[] { 290 })]
+public bool IsSolid { get; set; }</code></pre>
+  </div>
+
+
+
+
+
+  <h4 class="section">Property Value</h4>
+  <dl class="parameters">
+    <dt><a class="xref" href="https://learn.microsoft.com/dotnet/api/system.boolean">bool</a></dt>
+    <dd></dd>
+  </dl>
+
+
+
+
+
+
+
+
   <a id="ACadSharp_Entities_RevolvedSurface_ObjectName_" data-uid="ACadSharp.Entities.RevolvedSurface.ObjectName*"></a>
 
   <h3 id="ACadSharp_Entities_RevolvedSurface_ObjectName" data-uid="ACadSharp.Entities.RevolvedSurface.ObjectName">
   ObjectName
-  <a class="header-action link-secondary" title="View source" href="https://github.com/DomCR/ACadSharp/blob/master/src/ACadSharp/Entities/RevolvedSurface.cs/#L18"><i class="bi bi-code-slash"></i></a>
+  <a class="header-action link-secondary" title="View source" href="https://github.com/DomCR/ACadSharp/blob/master/src/ACadSharp/Entities/RevolvedSurface.cs/#L73"><i class="bi bi-code-slash"></i></a>
   </h3>
 
   <div class="markdown level1 summary"><p>The CAD class name of an object.</p>
@@ -382,11 +679,109 @@ Dxf class name <a class="xref" href="ACadSharp.DxfSubclassMarker.html#ACadSharp_
 
 
 
+  <a id="ACadSharp_Entities_RevolvedSurface_RevolveAngle_" data-uid="ACadSharp.Entities.RevolvedSurface.RevolveAngle*"></a>
+
+  <h3 id="ACadSharp_Entities_RevolvedSurface_RevolveAngle" data-uid="ACadSharp.Entities.RevolvedSurface.RevolveAngle">
+  RevolveAngle
+  <a class="header-action link-secondary" title="View source" href="https://github.com/DomCR/ACadSharp/blob/master/src/ACadSharp/Entities/RevolvedSurface.cs/#L78"><i class="bi bi-code-slash"></i></a>
+  </h3>
+
+  <div class="markdown level1 summary"><p>Revolve angle, in radians.</p>
+</div>
+  <div class="markdown level1 conceptual"></div>
+
+  <div class="codewrapper">
+    <pre><code class="lang-csharp hljs">[DxfCodeValue(new int[] { 40 })]
+public double RevolveAngle { get; set; }</code></pre>
+  </div>
+
+
+
+
+
+  <h4 class="section">Property Value</h4>
+  <dl class="parameters">
+    <dt><a class="xref" href="https://learn.microsoft.com/dotnet/api/system.double">double</a></dt>
+    <dd></dd>
+  </dl>
+
+
+
+
+
+
+
+
+  <a id="ACadSharp_Entities_RevolvedSurface_RevolveTransform_" data-uid="ACadSharp.Entities.RevolvedSurface.RevolveTransform*"></a>
+
+  <h3 id="ACadSharp_Entities_RevolvedSurface_RevolveTransform" data-uid="ACadSharp.Entities.RevolvedSurface.RevolveTransform">
+  RevolveTransform
+  <a class="header-action link-secondary" title="View source" href="https://github.com/DomCR/ACadSharp/blob/master/src/ACadSharp/Entities/RevolvedSurface.cs/#L84"><i class="bi bi-code-slash"></i></a>
+  </h3>
+
+  <div class="markdown level1 summary"><p>Transform matrix of the revolved entity.</p>
+</div>
+  <div class="markdown level1 conceptual"></div>
+
+  <div class="codewrapper">
+    <pre><code class="lang-csharp hljs">public Matrix4 RevolveTransform { get; set; }</code></pre>
+  </div>
+
+
+
+
+
+  <h4 class="section">Property Value</h4>
+  <dl class="parameters">
+    <dt><a class="xref" href="CSMath.Matrix4.html">Matrix4</a></dt>
+    <dd></dd>
+  </dl>
+
+
+
+
+
+
+
+
+  <a id="ACadSharp_Entities_RevolvedSurface_StartAngle_" data-uid="ACadSharp.Entities.RevolvedSurface.StartAngle*"></a>
+
+  <h3 id="ACadSharp_Entities_RevolvedSurface_StartAngle" data-uid="ACadSharp.Entities.RevolvedSurface.StartAngle">
+  StartAngle
+  <a class="header-action link-secondary" title="View source" href="https://github.com/DomCR/ACadSharp/blob/master/src/ACadSharp/Entities/RevolvedSurface.cs/#L89"><i class="bi bi-code-slash"></i></a>
+  </h3>
+
+  <div class="markdown level1 summary"><p>Start angle, in radians.</p>
+</div>
+  <div class="markdown level1 conceptual"></div>
+
+  <div class="codewrapper">
+    <pre><code class="lang-csharp hljs">[DxfCodeValue(new int[] { 41 })]
+public double StartAngle { get; set; }</code></pre>
+  </div>
+
+
+
+
+
+  <h4 class="section">Property Value</h4>
+  <dl class="parameters">
+    <dt><a class="xref" href="https://learn.microsoft.com/dotnet/api/system.double">double</a></dt>
+    <dd></dd>
+  </dl>
+
+
+
+
+
+
+
+
   <a id="ACadSharp_Entities_RevolvedSurface_SubclassMarker_" data-uid="ACadSharp.Entities.RevolvedSurface.SubclassMarker*"></a>
 
   <h3 id="ACadSharp_Entities_RevolvedSurface_SubclassMarker" data-uid="ACadSharp.Entities.RevolvedSurface.SubclassMarker">
   SubclassMarker
-  <a class="header-action link-secondary" title="View source" href="https://github.com/DomCR/ACadSharp/blob/master/src/ACadSharp/Entities/RevolvedSurface.cs/#L21"><i class="bi bi-code-slash"></i></a>
+  <a class="header-action link-secondary" title="View source" href="https://github.com/DomCR/ACadSharp/blob/master/src/ACadSharp/Entities/RevolvedSurface.cs/#L93"><i class="bi bi-code-slash"></i></a>
   </h3>
 
   <div class="markdown level1 summary"><p>Object Subclass marker.</p>
@@ -414,6 +809,39 @@ Dxf class name <a class="xref" href="ACadSharp.DxfSubclassMarker.html#ACadSharp_
 
 
 
+  <a id="ACadSharp_Entities_RevolvedSurface_TwistAngle_" data-uid="ACadSharp.Entities.RevolvedSurface.TwistAngle*"></a>
+
+  <h3 id="ACadSharp_Entities_RevolvedSurface_TwistAngle" data-uid="ACadSharp.Entities.RevolvedSurface.TwistAngle">
+  TwistAngle
+  <a class="header-action link-secondary" title="View source" href="https://github.com/DomCR/ACadSharp/blob/master/src/ACadSharp/Entities/RevolvedSurface.cs/#L98"><i class="bi bi-code-slash"></i></a>
+  </h3>
+
+  <div class="markdown level1 summary"><p>Twist angle, in radians.</p>
+</div>
+  <div class="markdown level1 conceptual"></div>
+
+  <div class="codewrapper">
+    <pre><code class="lang-csharp hljs">[DxfCodeValue(new int[] { 46 })]
+public double TwistAngle { get; set; }</code></pre>
+  </div>
+
+
+
+
+
+  <h4 class="section">Property Value</h4>
+  <dl class="parameters">
+    <dt><a class="xref" href="https://learn.microsoft.com/dotnet/api/system.double">double</a></dt>
+    <dd></dd>
+  </dl>
+
+
+
+
+
+
+
+
   <h2 class="section" id="methods">Methods
 </h2>
 
@@ -422,7 +850,7 @@ Dxf class name <a class="xref" href="ACadSharp.DxfSubclassMarker.html#ACadSharp_
 
   <h3 id="ACadSharp_Entities_RevolvedSurface_GetDxfClass" data-uid="ACadSharp.Entities.RevolvedSurface.GetDxfClass">
   GetDxfClass()
-  <a class="header-action link-secondary" title="View source" href="https://github.com/DomCR/ACadSharp/blob/master/src/ACadSharp/Entities/RevolvedSurface.cs/#L24"><i class="bi bi-code-slash"></i></a>
+  <a class="header-action link-secondary" title="View source" href="https://github.com/DomCR/ACadSharp/blob/master/src/ACadSharp/Entities/RevolvedSurface.cs/#L102"><i class="bi bi-code-slash"></i></a>
   </h3>
 
   <div class="markdown level1 summary"><p>Gets the <a class="xref" href="ACadSharp.Classes.DxfClass.html">DxfClass</a> instance associated with this class.</p>
@@ -455,7 +883,7 @@ Dxf class name <a class="xref" href="ACadSharp.DxfSubclassMarker.html#ACadSharp_
 </article>
 
         <div class="contribution d-print-none">
-          <a href="https://github.com/DomCR/ACadSharp/blob/master/src/ACadSharp/Entities/RevolvedSurface.cs/#L13" class="edit-link">Edit this page</a>
+          <a href="https://github.com/DomCR/ACadSharp/blob/master/src/ACadSharp/Entities/RevolvedSurface.cs/#L14" class="edit-link">Edit this page</a>
         </div>
 
 

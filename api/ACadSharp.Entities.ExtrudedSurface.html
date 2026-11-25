@@ -89,7 +89,7 @@
 
 
   <h1 id="ACadSharp_Entities_ExtrudedSurface" data-uid="ACadSharp.Entities.ExtrudedSurface" class="text-break">
-Class ExtrudedSurface  <a class="header-action link-secondary" title="View source" href="https://github.com/DomCR/ACadSharp/blob/master/src/ACadSharp/Entities/ExtrudedSurface.cs/#L13"><i class="bi bi-code-slash"></i></a>
+Class ExtrudedSurface  <a class="header-action link-secondary" title="View source" href="https://github.com/DomCR/ACadSharp/blob/master/src/ACadSharp/Entities/ExtrudedSurface.cs/#L14"><i class="bi bi-code-slash"></i></a>
   </h1>
 
   <div class="facts text-secondary">
@@ -350,11 +350,406 @@ Dxf class name <a class="xref" href="ACadSharp.DxfSubclassMarker.html#ACadSharp_
 </h2>
 
 
+  <a id="ACadSharp_Entities_ExtrudedSurface_AlignAngle_" data-uid="ACadSharp.Entities.ExtrudedSurface.AlignAngle*"></a>
+
+  <h3 id="ACadSharp_Entities_ExtrudedSurface_AlignAngle" data-uid="ACadSharp.Entities.ExtrudedSurface.AlignAngle">
+  AlignAngle
+  <a class="header-action link-secondary" title="View source" href="https://github.com/DomCR/ACadSharp/blob/master/src/ACadSharp/Entities/ExtrudedSurface.cs/#L21"><i class="bi bi-code-slash"></i></a>
+  </h3>
+
+  <div class="markdown level1 summary"><p>Align angle, in radians.</p>
+</div>
+  <div class="markdown level1 conceptual"></div>
+
+  <div class="codewrapper">
+    <pre><code class="lang-csharp hljs">[DxfCodeValue(DxfReferenceType.IsAngle, new int[] { 49 })]
+public double AlignAngle { get; set; }</code></pre>
+  </div>
+
+
+
+
+
+  <h4 class="section">Property Value</h4>
+  <dl class="parameters">
+    <dt><a class="xref" href="https://learn.microsoft.com/dotnet/api/system.double">double</a></dt>
+    <dd></dd>
+  </dl>
+
+
+
+
+
+
+
+
+  <a id="ACadSharp_Entities_ExtrudedSurface_AlignStart_" data-uid="ACadSharp.Entities.ExtrudedSurface.AlignStart*"></a>
+
+  <h3 id="ACadSharp_Entities_ExtrudedSurface_AlignStart" data-uid="ACadSharp.Entities.ExtrudedSurface.AlignStart">
+  AlignStart
+  <a class="header-action link-secondary" title="View source" href="https://github.com/DomCR/ACadSharp/blob/master/src/ACadSharp/Entities/ExtrudedSurface.cs/#L27"><i class="bi bi-code-slash"></i></a>
+  </h3>
+
+  <div class="markdown level1 summary"><p>Flag that indicates if the sweep entity is aligned at the start of the path.</p>
+</div>
+  <div class="markdown level1 conceptual"></div>
+
+  <div class="codewrapper">
+    <pre><code class="lang-csharp hljs">[DxfCodeValue(new int[] { 292 })]
+public bool AlignStart { get; set; }</code></pre>
+  </div>
+
+
+
+
+
+  <h4 class="section">Property Value</h4>
+  <dl class="parameters">
+    <dt><a class="xref" href="https://learn.microsoft.com/dotnet/api/system.boolean">bool</a></dt>
+    <dd></dd>
+  </dl>
+
+
+
+
+
+
+
+
+  <a id="ACadSharp_Entities_ExtrudedSurface_Bank_" data-uid="ACadSharp.Entities.ExtrudedSurface.Bank*"></a>
+
+  <h3 id="ACadSharp_Entities_ExtrudedSurface_Bank" data-uid="ACadSharp.Entities.ExtrudedSurface.Bank">
+  Bank
+  <a class="header-action link-secondary" title="View source" href="https://github.com/DomCR/ACadSharp/blob/master/src/ACadSharp/Entities/ExtrudedSurface.cs/#L33"><i class="bi bi-code-slash"></i></a>
+  </h3>
+
+  <div class="markdown level1 summary"><p>Flag that indicates if the sweep entity banks (rotates) along a 3D path.</p>
+</div>
+  <div class="markdown level1 conceptual"></div>
+
+  <div class="codewrapper">
+    <pre><code class="lang-csharp hljs">[DxfCodeValue(new int[] { 293 })]
+public bool Bank { get; set; }</code></pre>
+  </div>
+
+
+
+
+
+  <h4 class="section">Property Value</h4>
+  <dl class="parameters">
+    <dt><a class="xref" href="https://learn.microsoft.com/dotnet/api/system.boolean">bool</a></dt>
+    <dd></dd>
+  </dl>
+
+
+
+
+
+
+
+
+  <a id="ACadSharp_Entities_ExtrudedSurface_BasePointSet_" data-uid="ACadSharp.Entities.ExtrudedSurface.BasePointSet*"></a>
+
+  <h3 id="ACadSharp_Entities_ExtrudedSurface_BasePointSet" data-uid="ACadSharp.Entities.ExtrudedSurface.BasePointSet">
+  BasePointSet
+  <a class="header-action link-secondary" title="View source" href="https://github.com/DomCR/ACadSharp/blob/master/src/ACadSharp/Entities/ExtrudedSurface.cs/#L39"><i class="bi bi-code-slash"></i></a>
+  </h3>
+
+  <div class="markdown level1 summary"><p>Flag that indicates if the base point has been set.</p>
+</div>
+  <div class="markdown level1 conceptual"></div>
+
+  <div class="codewrapper">
+    <pre><code class="lang-csharp hljs">[DxfCodeValue(new int[] { 294 })]
+public bool BasePointSet { get; set; }</code></pre>
+  </div>
+
+
+
+
+
+  <h4 class="section">Property Value</h4>
+  <dl class="parameters">
+    <dt><a class="xref" href="https://learn.microsoft.com/dotnet/api/system.boolean">bool</a></dt>
+    <dd></dd>
+  </dl>
+
+
+
+
+
+
+
+
+  <a id="ACadSharp_Entities_ExtrudedSurface_BinaryData_" data-uid="ACadSharp.Entities.ExtrudedSurface.BinaryData*"></a>
+
+  <h3 id="ACadSharp_Entities_ExtrudedSurface_BinaryData" data-uid="ACadSharp.Entities.ExtrudedSurface.BinaryData">
+  BinaryData
+  <a class="header-action link-secondary" title="View source" href="https://github.com/DomCR/ACadSharp/blob/master/src/ACadSharp/Entities/ExtrudedSurface.cs/#L45"><i class="bi bi-code-slash"></i></a>
+  </h3>
+
+  <div class="markdown level1 summary"><p>Binary data of the extruded entity.</p>
+</div>
+  <div class="markdown level1 conceptual"></div>
+
+  <div class="codewrapper">
+    <pre><code class="lang-csharp hljs">[DxfCodeValue(new int[] { 310 })]
+public byte[] BinaryData { get; set; }</code></pre>
+  </div>
+
+
+
+
+
+  <h4 class="section">Property Value</h4>
+  <dl class="parameters">
+    <dt><a class="xref" href="https://learn.microsoft.com/dotnet/api/system.byte">byte</a>[]</dt>
+    <dd></dd>
+  </dl>
+
+
+
+
+
+
+
+
+  <a id="ACadSharp_Entities_ExtrudedSurface_ClassId_" data-uid="ACadSharp.Entities.ExtrudedSurface.ClassId*"></a>
+
+  <h3 id="ACadSharp_Entities_ExtrudedSurface_ClassId" data-uid="ACadSharp.Entities.ExtrudedSurface.ClassId">
+  ClassId
+  <a class="header-action link-secondary" title="View source" href="https://github.com/DomCR/ACadSharp/blob/master/src/ACadSharp/Entities/ExtrudedSurface.cs/#L51"><i class="bi bi-code-slash"></i></a>
+  </h3>
+
+  <div class="markdown level1 summary"><p>Class ID.</p>
+</div>
+  <div class="markdown level1 conceptual"></div>
+
+  <div class="codewrapper">
+    <pre><code class="lang-csharp hljs">[DxfCodeValue(new int[] { 90 })]
+public int? ClassId { get; set; }</code></pre>
+  </div>
+
+
+
+
+
+  <h4 class="section">Property Value</h4>
+  <dl class="parameters">
+    <dt><a class="xref" href="https://learn.microsoft.com/dotnet/api/system.int32">int</a>?</dt>
+    <dd></dd>
+  </dl>
+
+
+
+
+
+
+
+
+  <a id="ACadSharp_Entities_ExtrudedSurface_Direction_" data-uid="ACadSharp.Entities.ExtrudedSurface.Direction*"></a>
+
+  <h3 id="ACadSharp_Entities_ExtrudedSurface_Direction" data-uid="ACadSharp.Entities.ExtrudedSurface.Direction">
+  Direction
+  <a class="header-action link-secondary" title="View source" href="https://github.com/DomCR/ACadSharp/blob/master/src/ACadSharp/Entities/ExtrudedSurface.cs/#L57"><i class="bi bi-code-slash"></i></a>
+  </h3>
+
+  <div class="markdown level1 summary"><p>Sweep vector that defines the direction and length of the extrusion.</p>
+</div>
+  <div class="markdown level1 conceptual"></div>
+
+  <div class="codewrapper">
+    <pre><code class="lang-csharp hljs">[DxfCodeValue(new int[] { 10, 20, 30 })]
+public XYZ Direction { get; set; }</code></pre>
+  </div>
+
+
+
+
+
+  <h4 class="section">Property Value</h4>
+  <dl class="parameters">
+    <dt><a class="xref" href="CSMath.XYZ.html">XYZ</a></dt>
+    <dd></dd>
+  </dl>
+
+
+
+
+
+
+
+
+  <a id="ACadSharp_Entities_ExtrudedSurface_DraftAngle_" data-uid="ACadSharp.Entities.ExtrudedSurface.DraftAngle*"></a>
+
+  <h3 id="ACadSharp_Entities_ExtrudedSurface_DraftAngle" data-uid="ACadSharp.Entities.ExtrudedSurface.DraftAngle">
+  DraftAngle
+  <a class="header-action link-secondary" title="View source" href="https://github.com/DomCR/ACadSharp/blob/master/src/ACadSharp/Entities/ExtrudedSurface.cs/#L63"><i class="bi bi-code-slash"></i></a>
+  </h3>
+
+  <div class="markdown level1 summary"><p>Draft angle, in radians.</p>
+</div>
+  <div class="markdown level1 conceptual"></div>
+
+  <div class="codewrapper">
+    <pre><code class="lang-csharp hljs">[DxfCodeValue(DxfReferenceType.IsAngle, new int[] { 42 })]
+public double DraftAngle { get; set; }</code></pre>
+  </div>
+
+
+
+
+
+  <h4 class="section">Property Value</h4>
+  <dl class="parameters">
+    <dt><a class="xref" href="https://learn.microsoft.com/dotnet/api/system.double">double</a></dt>
+    <dd></dd>
+  </dl>
+
+
+
+
+
+
+
+
+  <a id="ACadSharp_Entities_ExtrudedSurface_DraftEndDistance_" data-uid="ACadSharp.Entities.ExtrudedSurface.DraftEndDistance*"></a>
+
+  <h3 id="ACadSharp_Entities_ExtrudedSurface_DraftEndDistance" data-uid="ACadSharp.Entities.ExtrudedSurface.DraftEndDistance">
+  DraftEndDistance
+  <a class="header-action link-secondary" title="View source" href="https://github.com/DomCR/ACadSharp/blob/master/src/ACadSharp/Entities/ExtrudedSurface.cs/#L69"><i class="bi bi-code-slash"></i></a>
+  </h3>
+
+  <div class="markdown level1 summary"><p>Draft end distance.</p>
+</div>
+  <div class="markdown level1 conceptual"></div>
+
+  <div class="codewrapper">
+    <pre><code class="lang-csharp hljs">[DxfCodeValue(new int[] { 44 })]
+public double DraftEndDistance { get; set; }</code></pre>
+  </div>
+
+
+
+
+
+  <h4 class="section">Property Value</h4>
+  <dl class="parameters">
+    <dt><a class="xref" href="https://learn.microsoft.com/dotnet/api/system.double">double</a></dt>
+    <dd></dd>
+  </dl>
+
+
+
+
+
+
+
+
+  <a id="ACadSharp_Entities_ExtrudedSurface_DraftStartDistance_" data-uid="ACadSharp.Entities.ExtrudedSurface.DraftStartDistance*"></a>
+
+  <h3 id="ACadSharp_Entities_ExtrudedSurface_DraftStartDistance" data-uid="ACadSharp.Entities.ExtrudedSurface.DraftStartDistance">
+  DraftStartDistance
+  <a class="header-action link-secondary" title="View source" href="https://github.com/DomCR/ACadSharp/blob/master/src/ACadSharp/Entities/ExtrudedSurface.cs/#L75"><i class="bi bi-code-slash"></i></a>
+  </h3>
+
+  <div class="markdown level1 summary"><p>Draft start distance.</p>
+</div>
+  <div class="markdown level1 conceptual"></div>
+
+  <div class="codewrapper">
+    <pre><code class="lang-csharp hljs">[DxfCodeValue(new int[] { 43 })]
+public double DraftStartDistance { get; set; }</code></pre>
+  </div>
+
+
+
+
+
+  <h4 class="section">Property Value</h4>
+  <dl class="parameters">
+    <dt><a class="xref" href="https://learn.microsoft.com/dotnet/api/system.double">double</a></dt>
+    <dd></dd>
+  </dl>
+
+
+
+
+
+
+
+
+  <a id="ACadSharp_Entities_ExtrudedSurface_ExtrusionTransform_" data-uid="ACadSharp.Entities.ExtrudedSurface.ExtrusionTransform*"></a>
+
+  <h3 id="ACadSharp_Entities_ExtrudedSurface_ExtrusionTransform" data-uid="ACadSharp.Entities.ExtrudedSurface.ExtrusionTransform">
+  ExtrusionTransform
+  <a class="header-action link-secondary" title="View source" href="https://github.com/DomCR/ACadSharp/blob/master/src/ACadSharp/Entities/ExtrudedSurface.cs/#L81"><i class="bi bi-code-slash"></i></a>
+  </h3>
+
+  <div class="markdown level1 summary"><p>Transform matrix of the extruded entity.</p>
+</div>
+  <div class="markdown level1 conceptual"></div>
+
+  <div class="codewrapper">
+    <pre><code class="lang-csharp hljs">public Matrix4 ExtrusionTransform { get; set; }</code></pre>
+  </div>
+
+
+
+
+
+  <h4 class="section">Property Value</h4>
+  <dl class="parameters">
+    <dt><a class="xref" href="CSMath.Matrix4.html">Matrix4</a></dt>
+    <dd></dd>
+  </dl>
+
+
+
+
+
+
+
+
+  <a id="ACadSharp_Entities_ExtrudedSurface_IsSolid_" data-uid="ACadSharp.Entities.ExtrudedSurface.IsSolid*"></a>
+
+  <h3 id="ACadSharp_Entities_ExtrudedSurface_IsSolid" data-uid="ACadSharp.Entities.ExtrudedSurface.IsSolid">
+  IsSolid
+  <a class="header-action link-secondary" title="View source" href="https://github.com/DomCR/ACadSharp/blob/master/src/ACadSharp/Entities/ExtrudedSurface.cs/#L86"><i class="bi bi-code-slash"></i></a>
+  </h3>
+
+  <div class="markdown level1 summary"><p>Flag that indicates if the extrusion creates a solid.</p>
+</div>
+  <div class="markdown level1 conceptual"></div>
+
+  <div class="codewrapper">
+    <pre><code class="lang-csharp hljs">[DxfCodeValue(new int[] { 290 })]
+public bool IsSolid { get; set; }</code></pre>
+  </div>
+
+
+
+
+
+  <h4 class="section">Property Value</h4>
+  <dl class="parameters">
+    <dt><a class="xref" href="https://learn.microsoft.com/dotnet/api/system.boolean">bool</a></dt>
+    <dd></dd>
+  </dl>
+
+
+
+
+
+
+
+
   <a id="ACadSharp_Entities_ExtrudedSurface_ObjectName_" data-uid="ACadSharp.Entities.ExtrudedSurface.ObjectName*"></a>
 
   <h3 id="ACadSharp_Entities_ExtrudedSurface_ObjectName" data-uid="ACadSharp.Entities.ExtrudedSurface.ObjectName">
   ObjectName
-  <a class="header-action link-secondary" title="View source" href="https://github.com/DomCR/ACadSharp/blob/master/src/ACadSharp/Entities/ExtrudedSurface.cs/#L18"><i class="bi bi-code-slash"></i></a>
+  <a class="header-action link-secondary" title="View source" href="https://github.com/DomCR/ACadSharp/blob/master/src/ACadSharp/Entities/ExtrudedSurface.cs/#L90"><i class="bi bi-code-slash"></i></a>
   </h3>
 
   <div class="markdown level1 summary"><p>The CAD class name of an object.</p>
@@ -382,11 +777,142 @@ Dxf class name <a class="xref" href="ACadSharp.DxfSubclassMarker.html#ACadSharp_
 
 
 
+  <a id="ACadSharp_Entities_ExtrudedSurface_PathEntityTransform_" data-uid="ACadSharp.Entities.ExtrudedSurface.PathEntityTransform*"></a>
+
+  <h3 id="ACadSharp_Entities_ExtrudedSurface_PathEntityTransform" data-uid="ACadSharp.Entities.ExtrudedSurface.PathEntityTransform">
+  PathEntityTransform
+  <a class="header-action link-secondary" title="View source" href="https://github.com/DomCR/ACadSharp/blob/master/src/ACadSharp/Entities/ExtrudedSurface.cs/#L95"><i class="bi bi-code-slash"></i></a>
+  </h3>
+
+  <div class="markdown level1 summary"><p>Transform matrix of the path entity.</p>
+</div>
+  <div class="markdown level1 conceptual"></div>
+
+  <div class="codewrapper">
+    <pre><code class="lang-csharp hljs">public Matrix4 PathEntityTransform { get; set; }</code></pre>
+  </div>
+
+
+
+
+
+  <h4 class="section">Property Value</h4>
+  <dl class="parameters">
+    <dt><a class="xref" href="CSMath.Matrix4.html">Matrix4</a></dt>
+    <dd></dd>
+  </dl>
+
+
+
+
+
+
+
+
+  <a id="ACadSharp_Entities_ExtrudedSurface_PathEntityTransformComputed_" data-uid="ACadSharp.Entities.ExtrudedSurface.PathEntityTransformComputed*"></a>
+
+  <h3 id="ACadSharp_Entities_ExtrudedSurface_PathEntityTransformComputed" data-uid="ACadSharp.Entities.ExtrudedSurface.PathEntityTransformComputed">
+  PathEntityTransformComputed
+  <a class="header-action link-secondary" title="View source" href="https://github.com/DomCR/ACadSharp/blob/master/src/ACadSharp/Entities/ExtrudedSurface.cs/#L100"><i class="bi bi-code-slash"></i></a>
+  </h3>
+
+  <div class="markdown level1 summary"><p>Flag that indicates if the path entity transform has been computed.</p>
+</div>
+  <div class="markdown level1 conceptual"></div>
+
+  <div class="codewrapper">
+    <pre><code class="lang-csharp hljs">[DxfCodeValue(new int[] { 296 })]
+public bool PathEntityTransformComputed { get; set; }</code></pre>
+  </div>
+
+
+
+
+
+  <h4 class="section">Property Value</h4>
+  <dl class="parameters">
+    <dt><a class="xref" href="https://learn.microsoft.com/dotnet/api/system.boolean">bool</a></dt>
+    <dd></dd>
+  </dl>
+
+
+
+
+
+
+
+
+  <a id="ACadSharp_Entities_ExtrudedSurface_ReferenceVector_" data-uid="ACadSharp.Entities.ExtrudedSurface.ReferenceVector*"></a>
+
+  <h3 id="ACadSharp_Entities_ExtrudedSurface_ReferenceVector" data-uid="ACadSharp.Entities.ExtrudedSurface.ReferenceVector">
+  ReferenceVector
+  <a class="header-action link-secondary" title="View source" href="https://github.com/DomCR/ACadSharp/blob/master/src/ACadSharp/Entities/ExtrudedSurface.cs/#L106"><i class="bi bi-code-slash"></i></a>
+  </h3>
+
+  <div class="markdown level1 summary"><p>Reference vector for controlling twist.</p>
+</div>
+  <div class="markdown level1 conceptual"></div>
+
+  <div class="codewrapper">
+    <pre><code class="lang-csharp hljs">[DxfCodeValue(new int[] { 11, 21, 31 })]
+public XYZ ReferenceVector { get; set; }</code></pre>
+  </div>
+
+
+
+
+
+  <h4 class="section">Property Value</h4>
+  <dl class="parameters">
+    <dt><a class="xref" href="CSMath.XYZ.html">XYZ</a></dt>
+    <dd></dd>
+  </dl>
+
+
+
+
+
+
+
+
+  <a id="ACadSharp_Entities_ExtrudedSurface_ScaleFactor_" data-uid="ACadSharp.Entities.ExtrudedSurface.ScaleFactor*"></a>
+
+  <h3 id="ACadSharp_Entities_ExtrudedSurface_ScaleFactor" data-uid="ACadSharp.Entities.ExtrudedSurface.ScaleFactor">
+  ScaleFactor
+  <a class="header-action link-secondary" title="View source" href="https://github.com/DomCR/ACadSharp/blob/master/src/ACadSharp/Entities/ExtrudedSurface.cs/#L112"><i class="bi bi-code-slash"></i></a>
+  </h3>
+
+  <div class="markdown level1 summary"><p>Scale factor applied along the extrusion.</p>
+</div>
+  <div class="markdown level1 conceptual"></div>
+
+  <div class="codewrapper">
+    <pre><code class="lang-csharp hljs">[DxfCodeValue(new int[] { 48 })]
+public double ScaleFactor { get; set; }</code></pre>
+  </div>
+
+
+
+
+
+  <h4 class="section">Property Value</h4>
+  <dl class="parameters">
+    <dt><a class="xref" href="https://learn.microsoft.com/dotnet/api/system.double">double</a></dt>
+    <dd></dd>
+  </dl>
+
+
+
+
+
+
+
+
   <a id="ACadSharp_Entities_ExtrudedSurface_SubclassMarker_" data-uid="ACadSharp.Entities.ExtrudedSurface.SubclassMarker*"></a>
 
   <h3 id="ACadSharp_Entities_ExtrudedSurface_SubclassMarker" data-uid="ACadSharp.Entities.ExtrudedSurface.SubclassMarker">
   SubclassMarker
-  <a class="header-action link-secondary" title="View source" href="https://github.com/DomCR/ACadSharp/blob/master/src/ACadSharp/Entities/ExtrudedSurface.cs/#L21"><i class="bi bi-code-slash"></i></a>
+  <a class="header-action link-secondary" title="View source" href="https://github.com/DomCR/ACadSharp/blob/master/src/ACadSharp/Entities/ExtrudedSurface.cs/#L116"><i class="bi bi-code-slash"></i></a>
   </h3>
 
   <div class="markdown level1 summary"><p>Object Subclass marker.</p>
@@ -414,6 +940,170 @@ Dxf class name <a class="xref" href="ACadSharp.DxfSubclassMarker.html#ACadSharp_
 
 
 
+  <a id="ACadSharp_Entities_ExtrudedSurface_SweepAlignment_" data-uid="ACadSharp.Entities.ExtrudedSurface.SweepAlignment*"></a>
+
+  <h3 id="ACadSharp_Entities_ExtrudedSurface_SweepAlignment" data-uid="ACadSharp.Entities.ExtrudedSurface.SweepAlignment">
+  SweepAlignment
+  <a class="header-action link-secondary" title="View source" href="https://github.com/DomCR/ACadSharp/blob/master/src/ACadSharp/Entities/ExtrudedSurface.cs/#L121"><i class="bi bi-code-slash"></i></a>
+  </h3>
+
+  <div class="markdown level1 summary"><p>Sweep alignment option.</p>
+</div>
+  <div class="markdown level1 conceptual"></div>
+
+  <div class="codewrapper">
+    <pre><code class="lang-csharp hljs">[DxfCodeValue(new int[] { 70 })]
+public SweepAlignment SweepAlignment { get; set; }</code></pre>
+  </div>
+
+
+
+
+
+  <h4 class="section">Property Value</h4>
+  <dl class="parameters">
+    <dt><a class="xref" href="ACadSharp.Entities.SweepAlignment.html">SweepAlignment</a></dt>
+    <dd></dd>
+  </dl>
+
+
+
+
+
+
+
+
+  <a id="ACadSharp_Entities_ExtrudedSurface_SweepEntityTransform_" data-uid="ACadSharp.Entities.ExtrudedSurface.SweepEntityTransform*"></a>
+
+  <h3 id="ACadSharp_Entities_ExtrudedSurface_SweepEntityTransform" data-uid="ACadSharp.Entities.ExtrudedSurface.SweepEntityTransform">
+  SweepEntityTransform
+  <a class="header-action link-secondary" title="View source" href="https://github.com/DomCR/ACadSharp/blob/master/src/ACadSharp/Entities/ExtrudedSurface.cs/#L127"><i class="bi bi-code-slash"></i></a>
+  </h3>
+
+  <div class="markdown level1 summary"><p>Transform matrix of the sweep entity.</p>
+</div>
+  <div class="markdown level1 conceptual"></div>
+
+  <div class="codewrapper">
+    <pre><code class="lang-csharp hljs">public Matrix4 SweepEntityTransform { get; set; }</code></pre>
+  </div>
+
+
+
+
+
+  <h4 class="section">Property Value</h4>
+  <dl class="parameters">
+    <dt><a class="xref" href="CSMath.Matrix4.html">Matrix4</a></dt>
+    <dd></dd>
+  </dl>
+
+
+
+
+
+
+
+
+  <a id="ACadSharp_Entities_ExtrudedSurface_SweepEntityTransformComputed_" data-uid="ACadSharp.Entities.ExtrudedSurface.SweepEntityTransformComputed*"></a>
+
+  <h3 id="ACadSharp_Entities_ExtrudedSurface_SweepEntityTransformComputed" data-uid="ACadSharp.Entities.ExtrudedSurface.SweepEntityTransformComputed">
+  SweepEntityTransformComputed
+  <a class="header-action link-secondary" title="View source" href="https://github.com/DomCR/ACadSharp/blob/master/src/ACadSharp/Entities/ExtrudedSurface.cs/#L132"><i class="bi bi-code-slash"></i></a>
+  </h3>
+
+  <div class="markdown level1 summary"><p>Flag that indicates if the sweep entity transform has been computed.</p>
+</div>
+  <div class="markdown level1 conceptual"></div>
+
+  <div class="codewrapper">
+    <pre><code class="lang-csharp hljs">[DxfCodeValue(new int[] { 295 })]
+public bool SweepEntityTransformComputed { get; set; }</code></pre>
+  </div>
+
+
+
+
+
+  <h4 class="section">Property Value</h4>
+  <dl class="parameters">
+    <dt><a class="xref" href="https://learn.microsoft.com/dotnet/api/system.boolean">bool</a></dt>
+    <dd></dd>
+  </dl>
+
+
+
+
+
+
+
+
+  <a id="ACadSharp_Entities_ExtrudedSurface_TwistAngle_" data-uid="ACadSharp.Entities.ExtrudedSurface.TwistAngle*"></a>
+
+  <h3 id="ACadSharp_Entities_ExtrudedSurface_TwistAngle" data-uid="ACadSharp.Entities.ExtrudedSurface.TwistAngle">
+  TwistAngle
+  <a class="header-action link-secondary" title="View source" href="https://github.com/DomCR/ACadSharp/blob/master/src/ACadSharp/Entities/ExtrudedSurface.cs/#L138"><i class="bi bi-code-slash"></i></a>
+  </h3>
+
+  <div class="markdown level1 summary"><p>Twist angle, in radians.</p>
+</div>
+  <div class="markdown level1 conceptual"></div>
+
+  <div class="codewrapper">
+    <pre><code class="lang-csharp hljs">[DxfCodeValue(DxfReferenceType.IsAngle, new int[] { 45 })]
+public double TwistAngle { get; set; }</code></pre>
+  </div>
+
+
+
+
+
+  <h4 class="section">Property Value</h4>
+  <dl class="parameters">
+    <dt><a class="xref" href="https://learn.microsoft.com/dotnet/api/system.double">double</a></dt>
+    <dd></dd>
+  </dl>
+
+
+
+
+
+
+
+
+  <a id="ACadSharp_Entities_ExtrudedSurface_Unknown71_" data-uid="ACadSharp.Entities.ExtrudedSurface.Unknown71*"></a>
+
+  <h3 id="ACadSharp_Entities_ExtrudedSurface_Unknown71" data-uid="ACadSharp.Entities.ExtrudedSurface.Unknown71">
+  Unknown71
+  <a class="header-action link-secondary" title="View source" href="https://github.com/DomCR/ACadSharp/blob/master/src/ACadSharp/Entities/ExtrudedSurface.cs/#L144"><i class="bi bi-code-slash"></i></a>
+  </h3>
+
+  <div class="markdown level1 summary"><p>Undocumented value.</p>
+</div>
+  <div class="markdown level1 conceptual"></div>
+
+  <div class="codewrapper">
+    <pre><code class="lang-csharp hljs">[DxfCodeValue(new int[] { 71 })]
+public short Unknown71 { get; set; }</code></pre>
+  </div>
+
+
+
+
+
+  <h4 class="section">Property Value</h4>
+  <dl class="parameters">
+    <dt><a class="xref" href="https://learn.microsoft.com/dotnet/api/system.int16">short</a></dt>
+    <dd></dd>
+  </dl>
+
+
+
+
+
+
+
+
   <h2 class="section" id="methods">Methods
 </h2>
 
@@ -422,7 +1112,7 @@ Dxf class name <a class="xref" href="ACadSharp.DxfSubclassMarker.html#ACadSharp_
 
   <h3 id="ACadSharp_Entities_ExtrudedSurface_GetDxfClass" data-uid="ACadSharp.Entities.ExtrudedSurface.GetDxfClass">
   GetDxfClass()
-  <a class="header-action link-secondary" title="View source" href="https://github.com/DomCR/ACadSharp/blob/master/src/ACadSharp/Entities/ExtrudedSurface.cs/#L24"><i class="bi bi-code-slash"></i></a>
+  <a class="header-action link-secondary" title="View source" href="https://github.com/DomCR/ACadSharp/blob/master/src/ACadSharp/Entities/ExtrudedSurface.cs/#L148"><i class="bi bi-code-slash"></i></a>
   </h3>
 
   <div class="markdown level1 summary"><p>Gets the <a class="xref" href="ACadSharp.Classes.DxfClass.html">DxfClass</a> instance associated with this class.</p>
@@ -455,7 +1145,7 @@ Dxf class name <a class="xref" href="ACadSharp.DxfSubclassMarker.html#ACadSharp_
 </article>
 
         <div class="contribution d-print-none">
-          <a href="https://github.com/DomCR/ACadSharp/blob/master/src/ACadSharp/Entities/ExtrudedSurface.cs/#L13" class="edit-link">Edit this page</a>
+          <a href="https://github.com/DomCR/ACadSharp/blob/master/src/ACadSharp/Entities/ExtrudedSurface.cs/#L14" class="edit-link">Edit this page</a>
         </div>
 
 
