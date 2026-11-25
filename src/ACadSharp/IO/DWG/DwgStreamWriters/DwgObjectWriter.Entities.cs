@@ -669,6 +669,9 @@ internal partial class DwgObjectWriter : DwgSectionIO
 			case RevolvedSurface revolvedSurface:
 				this.writeRevolvedSurface(revolvedSurface);
 				break;
+			case SweptSurface sweptSurface:
+				this.writeSweptSurface(sweptSurface);
+				break;
 			case Surface surface:
 				this.writeSurface(surface);
 				break;
@@ -731,26 +734,6 @@ internal partial class DwgObjectWriter : DwgSectionIO
 		this.registerObject(entity);
 
 		this.writeChildEntities(children, seqend);
-	}
-
-	private void writeRevolvedSurface(RevolvedSurface revolvedSurface)
-	{
-		this.writeSurface(revolvedSurface);
-
-		this._writer.WriteBitDouble(revolvedSurface.DraftAngle);
-		this._writer.WriteBitDouble(revolvedSurface.DraftStartDistance);
-		this._writer.WriteBitDouble(revolvedSurface.DraftEndDistance);
-		this._writer.WriteBitDouble(revolvedSurface.TwistAngle);
-		this._writer.WriteBit(revolvedSurface.IsSolid);
-		this._writer.WriteBit(revolvedSurface.IsCloseToAxis);
-
-		this._writer.Write3BitDouble(revolvedSurface.AxisPoint);
-		this._writer.Write3BitDouble(revolvedSurface.AxisVector);
-		this.writeMatrix4(revolvedSurface.RevolveTransform);
-		this._writer.WriteBitDouble(revolvedSurface.RevolveAngle);
-		this._writer.WriteBitDouble(revolvedSurface.StartAngle);
-
-		this.writeSurfaceEntityData(revolvedSurface.ClassId ?? 0, revolvedSurface.BinaryData);
 	}
 
 	private void writeExtrudedSurface(ExtrudedSurface extrudedSurface)
@@ -2505,6 +2488,26 @@ internal partial class DwgObjectWriter : DwgSectionIO
 		this._writer.Write3BitDouble(ray.Direction);
 	}
 
+	private void writeRevolvedSurface(RevolvedSurface revolvedSurface)
+	{
+		this.writeSurface(revolvedSurface);
+
+		this._writer.WriteBitDouble(revolvedSurface.DraftAngle);
+		this._writer.WriteBitDouble(revolvedSurface.DraftStartDistance);
+		this._writer.WriteBitDouble(revolvedSurface.DraftEndDistance);
+		this._writer.WriteBitDouble(revolvedSurface.TwistAngle);
+		this._writer.WriteBit(revolvedSurface.IsSolid);
+		this._writer.WriteBit(revolvedSurface.IsCloseToAxis);
+
+		this._writer.Write3BitDouble(revolvedSurface.AxisPoint);
+		this._writer.Write3BitDouble(revolvedSurface.AxisVector);
+		this.writeMatrix4(revolvedSurface.RevolveTransform);
+		this._writer.WriteBitDouble(revolvedSurface.RevolveAngle);
+		this._writer.WriteBitDouble(revolvedSurface.StartAngle);
+
+		this.writeSurfaceEntityData(revolvedSurface.ClassId ?? 0, revolvedSurface.BinaryData);
+	}
+
 	private void writeSeqend(Seqend seqend)
 	{
 		//for empty list seqend is null
@@ -2717,6 +2720,35 @@ internal partial class DwgObjectWriter : DwgSectionIO
 		{
 			this._writer.WriteBitLong(0);
 		}
+	}
+
+	private void writeSweptSurface(SweptSurface sweptSurface)
+	{
+		this.writeSurface(sweptSurface);
+
+		this._writer.WriteBitDouble(sweptSurface.DraftAngle);
+		this._writer.WriteBitDouble(sweptSurface.DraftStartDistance);
+		this._writer.WriteBitDouble(sweptSurface.DraftEndDistance);
+		this._writer.WriteBitDouble(sweptSurface.TwistAngle);
+		this._writer.WriteBitDouble(sweptSurface.ScaleFactor);
+		this._writer.WriteBitDouble(sweptSurface.AlignAngle);
+		this._writer.WriteBit(sweptSurface.IsSolid);
+		this._writer.WriteBitShort((short)sweptSurface.SweepAlignment);
+		this._writer.WriteBitShort(sweptSurface.Unknown71);
+		this._writer.WriteBit(sweptSurface.AlignStart);
+		this._writer.WriteBit(sweptSurface.Bank);
+		this._writer.WriteBit(sweptSurface.BasePointSet);
+		this._writer.Write3BitDouble(sweptSurface.ReferenceVector);
+		this._writer.WriteBit(sweptSurface.SweepEntityTransformComputed);
+		this._writer.WriteBit(sweptSurface.PathEntityTransformComputed);
+		this.writeMatrix4(sweptSurface.SweepEntityTransform);
+		this.writeMatrix4(sweptSurface.PathEntityTransform);
+
+		this.writeMatrix4(sweptSurface.SweepTransform);
+		this.writeMatrix4(sweptSurface.PathTransform);
+
+		this.writeSurfaceEntityData(sweptSurface.ClassId ?? 0, sweptSurface.BinaryData);
+		this.writeSurfaceEntityData(sweptSurface.PathClassId ?? 0, sweptSurface.PathBinaryData);
 	}
 
 	private void writeTableCell(TableEntity.Cell cell)
