@@ -131,6 +131,24 @@ internal abstract partial class DxfSectionWriterBase
 			case Spline spline:
 				this.writeSpline(spline);
 				break;
+			case ExtrudedSurface extrudedSurface:
+				this.writeExtrudedSurface(extrudedSurface);
+				break;
+			case LoftedSurface loftedSurface:
+				this.writeLoftedSurface(loftedSurface);
+				break;
+			case PlaneSurface planeSurface:
+				this.writePlaneSurface(planeSurface);
+				break;
+			case RevolvedSurface revolvedSurface:
+				this.writeRevolvedSurface(revolvedSurface);
+				break;
+			case SweptSurface sweptSurface:
+				this.writeSweptSurface(sweptSurface);
+				break;
+			case Surface surface:
+				this.writeSurface(surface);
+				break;
 			case TextEntity text:
 				this.writeTextEntity(text);
 				break;
@@ -170,6 +188,7 @@ internal abstract partial class DxfSectionWriterBase
 			case UnknownEntity:
 			case MechanicalEntity:
 			case Wall:
+			case Surface when this.Version < ACadVersion.AC1021:
 			case Solid3D when this.Version < ACadVersion.AC1014:
 			case CadBody when this.Version < ACadVersion.AC1014:
 			case Region when this.Version < ACadVersion.AC1014:
@@ -177,7 +196,7 @@ internal abstract partial class DxfSectionWriterBase
 			case Shape:
 			case TableEntity when this.Version <= ACadVersion.AC1018:
 				return this.Configuration.WriteShapes;
-			case Surface:
+			case NurbSurface:
 				this.notify($"Entity type not implemented {entity.GetType().FullName}", NotificationType.NotImplemented);
 				return false;
 			default:
@@ -220,6 +239,17 @@ internal abstract partial class DxfSectionWriterBase
 				this._writer.Write(101, "Embedded Object");
 				this.writeMText(att.MText, false);
 			}
+		}
+	}
+
+	private void writeBinaryData(int sizeCode, byte[] data, DxfClassMap map = null)
+	{
+		int length = data?.Length ?? 0;
+		this._writer.Write(sizeCode, length, map);
+
+		if (length > 0)
+		{
+			this._writer.Write(310, data, map);
 		}
 	}
 
@@ -292,6 +322,59 @@ internal abstract partial class DxfSectionWriterBase
 				this._writer.Write(14, bv, map);
 			}
 		}
+	}
+
+	private void writeCell(TableEntity.Cell cell)
+	{
+		this._writer.Write(171, (short)cell.Type);
+		this._writer.Write(172, (short)cell.EdgeFlags);
+		this._writer.Write(173, cell.MergedValue ? 1 : 0);
+		this._writer.Write(174, cell.AutoFit ? 1 : 0);
+		this._writer.Write(175, (short)cell.BorderWidth);
+		this._writer.Write(176, (short)cell.BorderHeight);
+
+		if (this.Version > ACadVersion.AC1018)
+		{
+			this._writer.Write(91, cell.StyleOverride.OverrideFlags);
+		}
+		else
+		{
+			this._writer.Write(177, (short)((uint)cell.StyleOverride.OverrideFlags & 0xFFFF));
+		}
+
+		this._writer.Write(178, cell.VirtualEdgeFlag);
+		this._writer.Write(145, MathHelper.RadToDeg(cell.Rotation));
+
+		if (cell.Type == CellType.Text && this.Version <= ACadVersion.AC1018)
+		{
+			this.writeLongTextValue(1, 2, cell.Content.CadValue.FormattedValue);
+		}
+		else if (cell.Type == CellType.Block)
+		{
+			if (cell.Content?.CadValue?.Value is BlockRecord record)
+			{
+				this._writer.WriteHandle(340, record);
+				this._writer.Write(144, cell.BlockScale);
+			}
+
+			//Attribute count
+			this._writer.Write(179, 0);
+		}
+
+		//Write override properties
+		//...
+
+		if (this.Version <= ACadVersion.AC1018)
+		{
+			return;
+		}
+
+		this._writer.Write(92, 0);
+		this._writer.Write(301, DxfFileToken.CellValue);
+
+		//Finish writing the cell value
+
+		this._writer.Write(304, "ACVALUE_END");
 	}
 
 	private void writeCircle(Circle circle)
@@ -485,6 +568,43 @@ internal abstract partial class DxfSectionWriterBase
 		this._writer.Write(40, ellipse.RadiusRatio, map);
 		this._writer.Write(41, ellipse.StartParameter, map);
 		this._writer.Write(42, ellipse.EndParameter, map);
+	}
+
+	private void writeExtrudedSurface(ExtrudedSurface surface)
+	{
+		DxfClassMap map = DxfClassMap.Create<ExtrudedSurface>();
+
+		this.writeSurface(surface);
+
+		this._writer.Write(DxfCode.Subclass, DxfSubclassMarker.ExtrudedSurface);
+
+		this._writer.Write(90, surface.ClassId ?? 0, map);
+		this.writeBinaryData(90, surface.BinaryData, map);
+
+		this._writer.Write(10, surface.Direction, map);
+
+		this.writeMatrix4(40, surface.ExtrusionTransform);
+
+		this._writer.Write(42, surface.DraftAngle, map);
+		this._writer.Write(43, surface.DraftStartDistance, map);
+		this._writer.Write(44, surface.DraftEndDistance, map);
+		this._writer.Write(45, surface.TwistAngle, map);
+		this._writer.Write(48, surface.ScaleFactor, map);
+		this._writer.Write(49, surface.AlignAngle, map);
+
+		this.writeMatrix4(46, surface.SweepEntityTransform);
+		this.writeMatrix4(47, surface.PathEntityTransform);
+
+		this._writer.Write(290, surface.IsSolid, map);
+		this._writer.Write(70, (short)surface.SweepAlignment, map);
+		this._writer.Write(71, surface.Unknown71, map);
+		this._writer.Write(292, surface.AlignStart, map);
+		this._writer.Write(293, surface.Bank, map);
+		this._writer.Write(294, surface.BasePointSet, map);
+		this._writer.Write(295, surface.SweepEntityTransformComputed, map);
+		this._writer.Write(296, surface.PathEntityTransformComputed, map);
+
+		this._writer.Write(11, surface.ReferenceVector, map);
 	}
 
 	private void writeFace3D(Face3D face)
@@ -827,6 +947,53 @@ internal abstract partial class DxfSectionWriterBase
 		this._writer.Write(210, line.Normal, map);
 	}
 
+	private void writeLoftedSurface(LoftedSurface surface)
+	{
+		DxfClassMap map = DxfClassMap.Create<LoftedSurface>();
+
+		this.writeSurface(surface);
+
+		this._writer.Write(DxfCode.Subclass, DxfSubclassMarker.LoftedSurface);
+
+		this.writeMatrix4(40, surface.LoftTransform);
+
+		foreach (LoftedSurface.Profile cross in surface.CrossSections)
+		{
+			this.writeLoftProfile(90, cross);
+		}
+
+		foreach (LoftedSurface.Profile guide in surface.Guides)
+		{
+			this.writeLoftProfile(91, guide);
+		}
+
+		if (surface.Path != null)
+		{
+			this.writeLoftProfile(92, surface.Path);
+		}
+
+		this._writer.Write(70, (short)surface.PlaneNormalLofting, map);
+		this._writer.Write(41, surface.StartDraftAngle, map);
+		this._writer.Write(42, surface.EndDraftAngle, map);
+		this._writer.Write(43, surface.StartDraftMagnitude, map);
+		this._writer.Write(44, surface.EndDraftMagnitude, map);
+
+		this._writer.Write(290, surface.ArcLengthParameterization, map);
+		this._writer.Write(291, surface.NoTwist, map);
+		this._writer.Write(292, surface.AlignDirection, map);
+		this._writer.Write(293, surface.SimpleSurfaces, map);
+		this._writer.Write(294, surface.ClosedSurfaces, map);
+		this._writer.Write(295, surface.IsSolid, map);
+		this._writer.Write(296, surface.RuledSurface, map);
+		this._writer.Write(297, surface.VirtualGuide, map);
+	}
+
+	private void writeLoftProfile(int classIdCode, LoftedSurface.Profile profile)
+	{
+		this._writer.Write(classIdCode, profile.ClassId);
+		this.writeBinaryData(90, profile.BinaryData);
+	}
+
 	private void writeLwPolyline(LwPolyline polyline)
 	{
 		DxfClassMap map = DxfClassMap.Create<LwPolyline>();
@@ -853,6 +1020,17 @@ internal abstract partial class DxfSectionWriterBase
 		}
 
 		this._writer.Write(210, polyline.Normal, map);
+	}
+
+	private void writeMatrix4(int code, Matrix4 matrix)
+	{
+		for (int row = 0; row < 4; row++)
+		{
+			for (int col = 0; col < 4; col++)
+			{
+				this._writer.Write(code, matrix[col, row]);
+			}
+		}
 	}
 
 	private void writeMesh(Mesh mesh)
@@ -972,7 +1150,7 @@ internal abstract partial class DxfSectionWriterBase
 		{
 			//Encrypted sat
 			var sat = AcisEncryption.Encode(geometry.GetAcisText());
-			if(string.IsNullOrEmpty(sat))
+			if (string.IsNullOrEmpty(sat))
 			{
 				this.notify($"Failed to encode SAT data for ModelerGeometry {geometry.Handle}.", NotificationType.Warning);
 				return;
@@ -1253,6 +1431,13 @@ internal abstract partial class DxfSectionWriterBase
 		}
 	}
 
+	private void writePlaneSurface(PlaneSurface surface)
+	{
+		DxfClassMap map = DxfClassMap.Create<PlaneSurface>();
+
+		this.writeSurface(surface);
+	}
+
 	private void writePoint(Point point)
 	{
 		DxfClassMap map = DxfClassMap.Create<Point>();
@@ -1391,6 +1576,34 @@ internal abstract partial class DxfSectionWriterBase
 		this._writer.Write(11, ray.Direction, map);
 	}
 
+	private void writeRevolvedSurface(RevolvedSurface surface)
+	{
+		DxfClassMap map = DxfClassMap.Create<RevolvedSurface>();
+
+		this.writeSurface(surface);
+
+		this._writer.Write(DxfCode.Subclass, DxfSubclassMarker.RevolvedSurface);
+
+		this._writer.Write(90, surface.ClassId ?? 0, map);
+		this.writeBinaryData(90, surface.BinaryData, map);
+
+		this._writer.Write(10, surface.AxisPoint, map);
+		this._writer.Write(11, surface.AxisVector, map);
+
+		this._writer.Write(40, surface.RevolveAngle, map);
+		this._writer.Write(41, surface.StartAngle, map);
+
+		this.writeMatrix4(42, surface.RevolveTransform);
+
+		this._writer.Write(43, surface.DraftAngle, map);
+		this._writer.Write(44, surface.DraftStartDistance, map);
+		this._writer.Write(45, surface.DraftEndDistance, map);
+		this._writer.Write(46, surface.TwistAngle, map);
+
+		this._writer.Write(290, surface.IsSolid, map);
+		this._writer.Write(291, surface.IsCloseToAxis, map);
+	}
+
 	private void writeSeqend(Seqend seqend)
 	{
 		this._writer.Write(0, seqend.ObjectName);
@@ -1501,6 +1714,57 @@ internal abstract partial class DxfSectionWriterBase
 		}
 	}
 
+	private void writeSurface(Surface surface)
+	{
+		DxfClassMap map = DxfClassMap.Create<Surface>();
+
+		this.writeModelerGeometry(surface);
+
+		this._writer.Write(DxfCode.Subclass, DxfSubclassMarker.Surface);
+
+		this._writer.Write(71, (short)surface.UIsolines, map);
+		this._writer.Write(72, (short)surface.VIsolines, map);
+	}
+
+	private void writeSweptSurface(SweptSurface surface)
+	{
+		DxfClassMap map = DxfClassMap.Create<SweptSurface>();
+
+		this.writeSurface(surface);
+
+		this._writer.Write(DxfCode.Subclass, DxfSubclassMarker.SweptSurface);
+
+		this._writer.Write(90, surface.ClassId ?? 0, map);
+		this.writeBinaryData(90, surface.BinaryData, map);
+
+		this._writer.Write(91, surface.PathClassId ?? 0, map);
+		this.writeBinaryData(90, surface.PathBinaryData, map);
+
+		this.writeMatrix4(40, surface.SweepTransform);
+		this.writeMatrix4(41, surface.PathTransform);
+
+		this._writer.Write(42, surface.DraftAngle, map);
+		this._writer.Write(43, surface.DraftStartDistance, map);
+		this._writer.Write(44, surface.DraftEndDistance, map);
+		this._writer.Write(45, surface.TwistAngle, map);
+		this._writer.Write(48, surface.ScaleFactor, map);
+		this._writer.Write(49, surface.AlignAngle, map);
+
+		this.writeMatrix4(46, surface.SweepEntityTransform);
+		this.writeMatrix4(47, surface.PathEntityTransform);
+
+		this._writer.Write(290, surface.IsSolid, map);
+		this._writer.Write(70, (short)surface.SweepAlignment, map);
+		this._writer.Write(71, surface.Unknown71, map);
+		this._writer.Write(292, surface.AlignStart, map);
+		this._writer.Write(293, surface.Bank, map);
+		this._writer.Write(294, surface.BasePointSet, map);
+		this._writer.Write(295, surface.SweepEntityTransformComputed, map);
+		this._writer.Write(296, surface.PathEntityTransformComputed, map);
+
+		this._writer.Write(11, surface.ReferenceVector, map);
+	}
+
 	private void writeTable(TableEntity table)
 	{
 		DxfClassMap map = DxfClassMap.Create<TableEntity>();
@@ -1541,59 +1805,6 @@ internal abstract partial class DxfSectionWriterBase
 				this.writeCell(cell);
 			}
 		}
-	}
-
-	private void writeCell(TableEntity.Cell cell)
-	{
-		this._writer.Write(171, (short)cell.Type);
-		this._writer.Write(172, (short)cell.EdgeFlags);
-		this._writer.Write(173, cell.MergedValue ? 1 : 0);
-		this._writer.Write(174, cell.AutoFit ? 1 : 0);
-		this._writer.Write(175, (short)cell.BorderWidth);
-		this._writer.Write(176, (short)cell.BorderHeight);
-
-		if (this.Version > ACadVersion.AC1018)
-		{
-			this._writer.Write(91, cell.StyleOverride.OverrideFlags);
-		}
-		else
-		{
-			this._writer.Write(177, (short)((uint)cell.StyleOverride.OverrideFlags & 0xFFFF));
-		}
-
-		this._writer.Write(178, cell.VirtualEdgeFlag);
-		this._writer.Write(145, MathHelper.RadToDeg(cell.Rotation));
-
-		if (cell.Type == CellType.Text && this.Version <= ACadVersion.AC1018)
-		{
-			this.writeLongTextValue(1, 2, cell.Content.CadValue.FormattedValue);
-		}
-		else if (cell.Type == CellType.Block)
-		{
-			if (cell.Content?.CadValue?.Value is BlockRecord record)
-			{
-				this._writer.WriteHandle(340, record);
-				this._writer.Write(144, cell.BlockScale);
-			}
-
-			//Attribute count
-			this._writer.Write(179, 0);
-		}
-
-		//Write override properties
-		//...
-
-		if (this.Version <= ACadVersion.AC1018)
-		{
-			return;
-		}
-
-		this._writer.Write(92, 0);
-		this._writer.Write(301, DxfFileToken.CellValue);
-
-		//Finish writing the cell value
-
-		this._writer.Write(304, "ACVALUE_END");
 	}
 
 	private void writeTextEntity(TextEntity text)

@@ -5429,17 +5429,6 @@ namespace ACadSharp.IO.DWG
 			return template;
 		}
 
-		private CadTemplate readSurface<T>(CadModelerGeometryTemplate<T> template)
-			where T : Surface, new()
-		{
-			this.readModelerGeometry(template);
-
-			//The AcDbSurface data (isoline counts) and the surface subclass data
-			//(sweep, loft and revolve parameters) that follow are not decoded yet;
-			//the object data is length delimited, so the unread tail is skipped
-			return template;
-		}
-
 		private CadTemplate readSortentsTable()
 		{
 			SortEntitiesTable sortTable = new SortEntitiesTable();
@@ -5912,10 +5901,10 @@ namespace ACadSharp.IO.DWG
 					template = this.readSurface(new CadModelerGeometryTemplate<Surface>());
 					break;
 				case DxfFileToken.EntityExtrudedSurface:
-					template = this.readSurface(new CadModelerGeometryTemplate<ExtrudedSurface>());
+					template = this.readExtrudedSurface();
 					break;
 				case DxfFileToken.EntityLoftedSurface:
-					template = this.readSurface(new CadModelerGeometryTemplate<LoftedSurface>());
+					template = this.readLoftedSurface();
 					break;
 				case DxfFileToken.EntityNurbSurface:
 					template = this.readSurface(new CadModelerGeometryTemplate<NurbSurface>());
@@ -5924,10 +5913,10 @@ namespace ACadSharp.IO.DWG
 					template = this.readSurface(new CadModelerGeometryTemplate<PlaneSurface>());
 					break;
 				case DxfFileToken.EntityRevolvedSurface:
-					template = this.readSurface(new CadModelerGeometryTemplate<RevolvedSurface>());
+					template = this.readRevolvedSurface();
 					break;
 				case DxfFileToken.EntitySweptSurface:
-					template = this.readSurface(new CadModelerGeometryTemplate<SweptSurface>());
+					template = this.readSweptSurface();
 					break;
 				case DxfFileToken.ObjectRasterVariables:
 					template = this.readRasterVariables();

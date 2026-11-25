@@ -120,6 +120,25 @@ internal partial class DwgObjectWriter : DwgSectionIO
 		}
 	}
 
+	private void writeChunks(MemoryStream stream)
+	{
+		stream.Position = 0L;
+
+		byte[] buffer = new byte[4096];
+		var n = stream.Read(buffer, 0, buffer.Length);
+		while (n == buffer.Length)
+		{
+			this._writer.WriteBitLong(n);
+			this._writer.WriteBytes(buffer, 0, n);
+			n = stream.Read(buffer, 0, buffer.Length);
+		}
+
+		this._writer.WriteBitLong(n);
+		this._writer.WriteBytes(buffer, 0, n);
+
+		this._writer.WriteBitLong(0);
+	}
+
 	private void writeCircle(Circle circle)
 	{
 		this._writer.Write3BitDouble(circle.Center);
@@ -641,6 +660,21 @@ internal partial class DwgObjectWriter : DwgSectionIO
 			case Spline spline:
 				this.writeSpline(spline);
 				break;
+			case ExtrudedSurface extrudedSurface:
+				this.writeExtrudedSurface(extrudedSurface);
+				break;
+			case LoftedSurface loftedSurface:
+				this.writeLoftedSurface(loftedSurface);
+				break;
+			case RevolvedSurface revolvedSurface:
+				this.writeRevolvedSurface(revolvedSurface);
+				break;
+			case SweptSurface sweptSurface:
+				this.writeSweptSurface(sweptSurface);
+				break;
+			case Surface surface:
+				this.writeSurface(surface);
+				break;
 			case Region region:
 				this.writeModelerGeometry(region);
 				break;
@@ -700,6 +734,34 @@ internal partial class DwgObjectWriter : DwgSectionIO
 		this.registerObject(entity);
 
 		this.writeChildEntities(children, seqend);
+	}
+
+	private void writeExtrudedSurface(ExtrudedSurface extrudedSurface)
+	{
+		this.writeSurface(extrudedSurface);
+
+		this._writer.WriteBitDouble(extrudedSurface.DraftAngle);
+		this._writer.WriteBitDouble(extrudedSurface.DraftStartDistance);
+		this._writer.WriteBitDouble(extrudedSurface.DraftEndDistance);
+		this._writer.WriteBitDouble(extrudedSurface.TwistAngle);
+		this._writer.WriteBitDouble(extrudedSurface.ScaleFactor);
+		this._writer.WriteBitDouble(extrudedSurface.AlignAngle);
+		this._writer.WriteBit(extrudedSurface.IsSolid);
+		this._writer.WriteBitShort((short)extrudedSurface.SweepAlignment);
+		this._writer.WriteBitShort(extrudedSurface.Unknown71);
+		this._writer.WriteBit(extrudedSurface.AlignStart);
+		this._writer.WriteBit(extrudedSurface.Bank);
+		this._writer.WriteBit(extrudedSurface.BasePointSet);
+		this._writer.Write3BitDouble(extrudedSurface.ReferenceVector);
+		this._writer.WriteBit(extrudedSurface.SweepEntityTransformComputed);
+		this._writer.WriteBit(extrudedSurface.PathEntityTransformComputed);
+		this.writeMatrix4(extrudedSurface.SweepEntityTransform);
+		this.writeMatrix4(extrudedSurface.PathEntityTransform);
+
+		this._writer.Write3BitDouble(extrudedSurface.Direction);
+		this.writeMatrix4(extrudedSurface.ExtrusionTransform);
+
+		this.writeSurfaceEntityData(extrudedSurface.ClassId ?? 0, extrudedSurface.BinaryData);
 	}
 
 	private void writeFace3D(Face3D face)
@@ -1268,6 +1330,52 @@ internal partial class DwgObjectWriter : DwgSectionIO
 		this._writer.WriteBitExtrusion(line.Normal);
 	}
 
+	private void writeLoftedSurface(LoftedSurface loftedSurface)
+	{
+		this.writeSurface(loftedSurface);
+
+		this.writeMatrix4(loftedSurface.LoftTransform);
+
+		this._writer.WriteBitShort((short)loftedSurface.CrossSections.Count);
+		this._writer.WriteBitShort((short)loftedSurface.Guides.Count);
+
+		this._writer.WriteBit(loftedSurface.Path != null);
+
+		this._writer.WriteBitDouble(loftedSurface.StartDraftAngle);
+		this._writer.WriteBitDouble(loftedSurface.EndDraftAngle);
+		this._writer.WriteBitDouble(loftedSurface.StartDraftMagnitude);
+		this._writer.WriteBitDouble(loftedSurface.EndDraftMagnitude);
+		this._writer.WriteBit(loftedSurface.ArcLengthParameterization);
+		this._writer.WriteBit(loftedSurface.NoTwist);
+		this._writer.WriteBit(loftedSurface.AlignDirection);
+		this._writer.WriteBit(loftedSurface.SimpleSurfaces);
+		this._writer.WriteBit(loftedSurface.ClosedSurfaces);
+		this._writer.WriteBit(loftedSurface.IsSolid);
+		this._writer.WriteBit(loftedSurface.RuledSurface);
+		this._writer.WriteBit(loftedSurface.VirtualGuide);
+		this._writer.WriteBitShort((short)loftedSurface.PlaneNormalLofting);
+
+		foreach (LoftedSurface.Profile cross in loftedSurface.CrossSections)
+		{
+			this.writeLoftedSurfaceProfile(cross);
+		}
+
+		foreach (LoftedSurface.Profile guide in loftedSurface.Guides)
+		{
+			this.writeLoftedSurfaceProfile(guide);
+		}
+
+		if (loftedSurface.Path != null)
+		{
+			this.writeLoftedSurfaceProfile(loftedSurface.Path);
+		}
+	}
+
+	private void writeLoftedSurfaceProfile(LoftedSurface.Profile profile)
+	{
+		this.writeSurfaceEntityData(profile.ClassId, profile.BinaryData);
+	}
+
 	private void writeLwPolyline(LwPolyline lwPolyline)
 	{
 		bool nbulges = false;
@@ -1396,6 +1504,26 @@ internal partial class DwgObjectWriter : DwgSectionIO
 				this._writer.WriteBitDouble(lwPolyline.Vertices[l].EndWidth);
 			}
 		}
+	}
+
+	private void writeMatrix4(Matrix4 matrix)
+	{
+		this._writer.WriteBitDouble(matrix.M00);
+		this._writer.WriteBitDouble(matrix.M01);
+		this._writer.WriteBitDouble(matrix.M02);
+		this._writer.WriteBitDouble(matrix.M03);
+		this._writer.WriteBitDouble(matrix.M10);
+		this._writer.WriteBitDouble(matrix.M11);
+		this._writer.WriteBitDouble(matrix.M12);
+		this._writer.WriteBitDouble(matrix.M13);
+		this._writer.WriteBitDouble(matrix.M20);
+		this._writer.WriteBitDouble(matrix.M21);
+		this._writer.WriteBitDouble(matrix.M22);
+		this._writer.WriteBitDouble(matrix.M23);
+		this._writer.WriteBitDouble(matrix.M30);
+		this._writer.WriteBitDouble(matrix.M31);
+		this._writer.WriteBitDouble(matrix.M32);
+		this._writer.WriteBitDouble(matrix.M33);
 	}
 
 	private void writeMesh(Mesh mesh)
@@ -1600,7 +1728,7 @@ internal partial class DwgObjectWriter : DwgSectionIO
 			}
 
 			//ACIS Empty bit B X Normally 1. If 0, then acis data follows.
-			if(geometry.WireframeAcisData != null && geometry.WireframeAcisData.Length > 0)
+			if (geometry.WireframeAcisData != null && geometry.WireframeAcisData.Length > 0)
 			{
 				this._writer.WriteBit(false);
 				this.writeModelerGeometryData(geometry, geometry.WireframeAcisData);
@@ -1646,25 +1774,6 @@ internal partial class DwgObjectWriter : DwgSectionIO
 				this._writer.WriteBytes(data);
 				break;
 		}
-	}
-
-	private void writeChunks(MemoryStream stream)
-	{
-		stream.Position = 0L;
-
-		byte[] buffer = new byte[4096];
-		var n = stream.Read(buffer, 0, buffer.Length);
-		while (n == buffer.Length)
-		{
-			this._writer.WriteBitLong(n);
-			this._writer.WriteBytes(buffer, 0, n);
-			n = stream.Read(buffer, 0, buffer.Length);
-		}
-
-		this._writer.WriteBitLong(n);
-		this._writer.WriteBytes(buffer, 0, n);
-
-		this._writer.WriteBitLong(0);
 	}
 
 	private void writeMText(MText mtext)
@@ -2379,6 +2488,26 @@ internal partial class DwgObjectWriter : DwgSectionIO
 		this._writer.Write3BitDouble(ray.Direction);
 	}
 
+	private void writeRevolvedSurface(RevolvedSurface revolvedSurface)
+	{
+		this.writeSurface(revolvedSurface);
+
+		this._writer.WriteBitDouble(revolvedSurface.DraftAngle);
+		this._writer.WriteBitDouble(revolvedSurface.DraftStartDistance);
+		this._writer.WriteBitDouble(revolvedSurface.DraftEndDistance);
+		this._writer.WriteBitDouble(revolvedSurface.TwistAngle);
+		this._writer.WriteBit(revolvedSurface.IsSolid);
+		this._writer.WriteBit(revolvedSurface.IsCloseToAxis);
+
+		this._writer.Write3BitDouble(revolvedSurface.AxisPoint);
+		this._writer.Write3BitDouble(revolvedSurface.AxisVector);
+		this.writeMatrix4(revolvedSurface.RevolveTransform);
+		this._writer.WriteBitDouble(revolvedSurface.RevolveAngle);
+		this._writer.WriteBitDouble(revolvedSurface.StartAngle);
+
+		this.writeSurfaceEntityData(revolvedSurface.ClassId ?? 0, revolvedSurface.BinaryData);
+	}
+
 	private void writeSeqend(Seqend seqend)
 	{
 		//for empty list seqend is null
@@ -2569,6 +2698,59 @@ internal partial class DwgObjectWriter : DwgSectionIO
 		}
 	}
 
+	private void writeSurface(Surface surface)
+	{
+		this.writeModelerGeometry(surface);
+
+		this._writer.WriteBitShort(surface.UIsolines);
+		this._writer.WriteBitShort(surface.VIsolines);
+	}
+
+	private void writeSurfaceEntityData(int classId, byte[] data)
+	{
+		this._writer.WriteBitLong(classId);
+
+		//Data size is expressed in bits
+		if (data != null && data.Length > 0)
+		{
+			this._writer.WriteBitLong(data.Length * 8);
+			this._writer.WriteBytes(data);
+		}
+		else
+		{
+			this._writer.WriteBitLong(0);
+		}
+	}
+
+	private void writeSweptSurface(SweptSurface sweptSurface)
+	{
+		this.writeSurface(sweptSurface);
+
+		this._writer.WriteBitDouble(sweptSurface.DraftAngle);
+		this._writer.WriteBitDouble(sweptSurface.DraftStartDistance);
+		this._writer.WriteBitDouble(sweptSurface.DraftEndDistance);
+		this._writer.WriteBitDouble(sweptSurface.TwistAngle);
+		this._writer.WriteBitDouble(sweptSurface.ScaleFactor);
+		this._writer.WriteBitDouble(sweptSurface.AlignAngle);
+		this._writer.WriteBit(sweptSurface.IsSolid);
+		this._writer.WriteBitShort((short)sweptSurface.SweepAlignment);
+		this._writer.WriteBitShort(sweptSurface.Unknown71);
+		this._writer.WriteBit(sweptSurface.AlignStart);
+		this._writer.WriteBit(sweptSurface.Bank);
+		this._writer.WriteBit(sweptSurface.BasePointSet);
+		this._writer.Write3BitDouble(sweptSurface.ReferenceVector);
+		this._writer.WriteBit(sweptSurface.SweepEntityTransformComputed);
+		this._writer.WriteBit(sweptSurface.PathEntityTransformComputed);
+		this.writeMatrix4(sweptSurface.SweepEntityTransform);
+		this.writeMatrix4(sweptSurface.PathEntityTransform);
+
+		this.writeMatrix4(sweptSurface.SweepTransform);
+		this.writeMatrix4(sweptSurface.PathTransform);
+
+		this.writeSurfaceEntityData(sweptSurface.ClassId ?? 0, sweptSurface.BinaryData);
+		this.writeSurfaceEntityData(sweptSurface.PathClassId ?? 0, sweptSurface.PathBinaryData);
+	}
+
 	private void writeTableCell(TableEntity.Cell cell)
 	{
 		//BL 90 Cell state flags:
@@ -2681,6 +2863,183 @@ internal partial class DwgObjectWriter : DwgSectionIO
 		if (content.Format.HasData)
 		{
 			this.writeCellContentFormat(content.Format);
+		}
+	}
+
+	private void writeTableCellData(TableEntity.Cell cell)
+	{
+		//Cell type BS 171 1 = text, 2 = block.
+		//In AutoCAD 2007 a cell can contain either 1 text
+		//or 1 block.In AutoCAD 2008 this changed(TODO).
+		this._writer.WriteBitShort((short)cell.Type);
+
+		//Cell edge flags RC 172
+		this._writer.WriteByte((byte)cell.EdgeFlags);
+
+		//Cell merged value B 173 Determines whether this cell is merged with another cell.
+		this._writer.WriteBit(cell.MergedValue);
+		//Autofit flag B 174
+		this._writer.WriteBit(cell.AutoFit);
+		//Merged width flag BL 175 Represents the horizontal number of merged cells.
+		this._writer.WriteBitLong(cell.BorderWidth);
+		//Merged height flag BL 176 Represents the vertical number of merged cells.
+		this._writer.WriteBitLong(cell.BorderHeight);
+		//Rotation value BD 145
+		this._writer.WriteBitDouble(cell.Rotation);
+
+		//H 344 for text cell, 340 for block cell (hard pointer)
+		BlockRecord blockRecord = cell.Contents
+			.Select(c => c.CadValue.Value)
+			.OfType<BlockRecord>()
+			.FirstOrDefault();
+		this._writer.HandleReference(DwgReferenceType.HardPointer, blockRecord);
+
+		switch (cell.Type)
+		{
+			//In AutoCAD 2007 a cell can contain either 1 text block.
+			case CellType.Text when blockRecord == null && !this.R2007Plus:
+				//Text string TV 1 Present only if 344 value below is 0
+				string text = cell.Contents
+					.Select(c => c.CadValue)
+					.FirstOrDefault(v => v.Value is string)?.Value as string;
+				this._writer.WriteVariableText(text);
+				break;
+			case CellType.Block:
+				//Block scale BD 144
+				this._writer.WriteBitDouble(cell.BlockScale);
+				//Has attributes flag B
+				this._writer.WriteBit(false);
+				break;
+		}
+
+		//Common to both text and block cells:
+		//has override flag B
+		CellStyle styleOverride = cell.StyleOverride;
+		CellOverrideFlags flags = styleOverride.OverrideFlags;
+		this._writer.WriteBit(flags != CellOverrideFlags.None);
+		if (flags != CellOverrideFlags.None)
+		{
+			//Cell flag override BL 177 (deprecated)
+			this._writer.WriteBitLong((int)flags);
+
+			//Virtual edge flag RC 178 Determines which edges are virtual, see also the
+			//explanation on the cell edge flags above.When an
+			//edge is virtual, that edge has no border overrides.
+			//1 = top, 2 = right, 4 = bottom, 8 = left.
+			this._writer.WriteByte((byte)cell.VirtualEdgeFlag);
+
+			if (flags.HasFlag(CellOverrideFlags.CellAlignment))
+			{
+				//Cell alignment RS 170 Present only if bit 0x01 is set in cell flag
+				this._writer.WriteBitShort((short)styleOverride.CellAlignment);
+			}
+			if (flags.HasFlag(CellOverrideFlags.BackgroundFillNone))
+			{
+				//Background fill none B 283 Present only if bit 0x02 is set in cell flag
+				this._writer.WriteBit(styleOverride.IsFillColorOn);
+			}
+			if (flags.HasFlag(CellOverrideFlags.BackgroundColor))
+			{
+				//Background color CMC 63 Present only if bit 0x04 is set in cell flag
+				this._writer.WriteCmColor(styleOverride.BackgroundColor, this.R2004Pre);
+			}
+			if (flags.HasFlag(CellOverrideFlags.ContentColor))
+			{
+				//Content color CMC 64 Present only if bit 0x08 is set in cell flag
+				this._writer.WriteCmColor(styleOverride.ContentColor, this.R2004Pre);
+			}
+			if (flags.HasFlag(CellOverrideFlags.TextStyle))
+			{
+				//Text style H 7 Present only if bit 0x10 is set in cell flag
+				this._writer.HandleReference(DwgReferenceType.HardPointer, styleOverride.TextStyle);
+			}
+			if (flags.HasFlag(CellOverrideFlags.TextHeight))
+			{
+				//Text height BD 140 Present only if bit 0x20 is set in cell flag
+				this._writer.WriteBitDouble(styleOverride.TextHeight);
+			}
+
+			if (flags.HasFlag(CellOverrideFlags.TopGridColor))
+			{
+				//Top grid color CMC 69 Present only if bit 0x00040 is set in cell flag
+				this._writer.WriteCmColor(styleOverride.TopBorder.Color, this.R2004Pre);
+			}
+			if (flags.HasFlag(CellOverrideFlags.TopGridLineWeight))
+			{
+				//Top grid lineweight BS 279 Present only if bit 0x00400 is set in cell flag
+				this._writer.WriteBitShort((short)styleOverride.TopBorder.LineWeight);
+			}
+			if (flags.HasFlag(CellOverrideFlags.TopVisibility))
+			{
+				//Top visibility BS 289 Present only if bit 0x04000 is set in cell flag
+				this._writer.WriteBitShort((short)(styleOverride.TopBorder.IsInvisible ? 0 : 1));
+			}
+
+			if (flags.HasFlag(CellOverrideFlags.RightGridColor))
+			{
+				//Right grid color CMC 65 Present only if bit 0x00080 is set in cell flag
+				this._writer.WriteCmColor(styleOverride.RightBorder.Color, this.R2004Pre);
+			}
+			if (flags.HasFlag(CellOverrideFlags.RightGridLineWeight))
+			{
+				//Right grid lineweight BS 275 Present only if bit 0x00800 is set in cell flag
+				this._writer.WriteBitShort((short)styleOverride.RightBorder.LineWeight);
+			}
+			if (flags.HasFlag(CellOverrideFlags.RightVisibility))
+			{
+				//Right visibility BS 285 Present only if bit 0x08000 is set in cell flag
+				this._writer.WriteBitShort((short)(styleOverride.RightBorder.IsInvisible ? 0 : 1));
+			}
+
+			if (flags.HasFlag(CellOverrideFlags.BottomGridColor))
+			{
+				//Bottom grid color CMC 66 Present only if bit 0x00100 is set in cell flag
+				this._writer.WriteCmColor(styleOverride.BottomBorder.Color, this.R2004Pre);
+			}
+			if (flags.HasFlag(CellOverrideFlags.BottomGridLineWeight))
+			{
+				//Bottom grid lineweight BS 276 Present only if bit 0x01000 is set in cell flag
+				this._writer.WriteBitShort((short)styleOverride.BottomBorder.LineWeight);
+			}
+			if (flags.HasFlag(CellOverrideFlags.BottomVisibility))
+			{
+				//Bottom visibility BS 286 Present only if bit 0x10000 is set in cell flag
+				this._writer.WriteBitShort((short)(styleOverride.BottomBorder.IsInvisible ? 0 : 1));
+			}
+
+			if (flags.HasFlag(CellOverrideFlags.LeftGridColor))
+			{
+				//Left grid color CMC 68 Present only if bit 0x00200 is set in cell flag
+				this._writer.WriteCmColor(styleOverride.LeftBorder.Color, this.R2004Pre);
+			}
+			if (flags.HasFlag(CellOverrideFlags.LeftGridLineWeight))
+			{
+				//Left grid lineweight BS 278 Present only if bit 0x02000 is set in cell flag
+				this._writer.WriteBitShort((short)styleOverride.LeftBorder.LineWeight);
+			}
+			if (flags.HasFlag(CellOverrideFlags.LeftVisibility))
+			{
+				//Left visibility BS 288 Present only if bit 0x20000 is set in cell flag
+				this._writer.WriteBitShort((short)(styleOverride.LeftBorder.IsInvisible ? 0 : 1));
+			}
+		}
+
+		//R2007+:
+		if (this.R2007Plus)
+		{
+			//Unknown BL
+			this._writer.WriteBitLong(0);
+			//Value fields … See paragraph 20.4.98.
+			CadValue value = cell.Contents
+				.Select(c => c.CadValue)
+				.FirstOrDefault(v => v.Value is not BlockRecord);
+			if (value == null)
+			{
+				value = new CadValue();
+				value.IsEmpty = true;
+			}
+
+			this.writeCadValue(value);
 		}
 	}
 
@@ -2935,183 +3294,6 @@ internal partial class DwgObjectWriter : DwgSectionIO
 		this._writer.WriteBit(false);
 		//Has border visibility overrides B
 		this._writer.WriteBit(false);
-	}
-
-	private void writeTableCellData(TableEntity.Cell cell)
-	{
-		//Cell type BS 171 1 = text, 2 = block.
-		//In AutoCAD 2007 a cell can contain either 1 text
-		//or 1 block.In AutoCAD 2008 this changed(TODO).
-		this._writer.WriteBitShort((short)cell.Type);
-
-		//Cell edge flags RC 172
-		this._writer.WriteByte((byte)cell.EdgeFlags);
-
-		//Cell merged value B 173 Determines whether this cell is merged with another cell.
-		this._writer.WriteBit(cell.MergedValue);
-		//Autofit flag B 174
-		this._writer.WriteBit(cell.AutoFit);
-		//Merged width flag BL 175 Represents the horizontal number of merged cells.
-		this._writer.WriteBitLong(cell.BorderWidth);
-		//Merged height flag BL 176 Represents the vertical number of merged cells.
-		this._writer.WriteBitLong(cell.BorderHeight);
-		//Rotation value BD 145
-		this._writer.WriteBitDouble(cell.Rotation);
-
-		//H 344 for text cell, 340 for block cell (hard pointer)
-		BlockRecord blockRecord = cell.Contents
-			.Select(c => c.CadValue.Value)
-			.OfType<BlockRecord>()
-			.FirstOrDefault();
-		this._writer.HandleReference(DwgReferenceType.HardPointer, blockRecord);
-
-		switch (cell.Type)
-		{
-			//In AutoCAD 2007 a cell can contain either 1 text block.
-			case CellType.Text when blockRecord == null && !this.R2007Plus:
-				//Text string TV 1 Present only if 344 value below is 0
-				string text = cell.Contents
-					.Select(c => c.CadValue)
-					.FirstOrDefault(v => v.Value is string)?.Value as string;
-				this._writer.WriteVariableText(text);
-				break;
-			case CellType.Block:
-				//Block scale BD 144
-				this._writer.WriteBitDouble(cell.BlockScale);
-				//Has attributes flag B
-				this._writer.WriteBit(false);
-				break;
-		}
-
-		//Common to both text and block cells:
-		//has override flag B
-		CellStyle styleOverride = cell.StyleOverride;
-		CellOverrideFlags flags = styleOverride.OverrideFlags;
-		this._writer.WriteBit(flags != CellOverrideFlags.None);
-		if (flags != CellOverrideFlags.None)
-		{
-			//Cell flag override BL 177 (deprecated)
-			this._writer.WriteBitLong((int)flags);
-
-			//Virtual edge flag RC 178 Determines which edges are virtual, see also the
-			//explanation on the cell edge flags above.When an
-			//edge is virtual, that edge has no border overrides.
-			//1 = top, 2 = right, 4 = bottom, 8 = left.
-			this._writer.WriteByte((byte)cell.VirtualEdgeFlag);
-
-			if (flags.HasFlag(CellOverrideFlags.CellAlignment))
-			{
-				//Cell alignment RS 170 Present only if bit 0x01 is set in cell flag
-				this._writer.WriteBitShort((short)styleOverride.CellAlignment);
-			}
-			if (flags.HasFlag(CellOverrideFlags.BackgroundFillNone))
-			{
-				//Background fill none B 283 Present only if bit 0x02 is set in cell flag
-				this._writer.WriteBit(styleOverride.IsFillColorOn);
-			}
-			if (flags.HasFlag(CellOverrideFlags.BackgroundColor))
-			{
-				//Background color CMC 63 Present only if bit 0x04 is set in cell flag
-				this._writer.WriteCmColor(styleOverride.BackgroundColor, this.R2004Pre);
-			}
-			if (flags.HasFlag(CellOverrideFlags.ContentColor))
-			{
-				//Content color CMC 64 Present only if bit 0x08 is set in cell flag
-				this._writer.WriteCmColor(styleOverride.ContentColor, this.R2004Pre);
-			}
-			if (flags.HasFlag(CellOverrideFlags.TextStyle))
-			{
-				//Text style H 7 Present only if bit 0x10 is set in cell flag
-				this._writer.HandleReference(DwgReferenceType.HardPointer, styleOverride.TextStyle);
-			}
-			if (flags.HasFlag(CellOverrideFlags.TextHeight))
-			{
-				//Text height BD 140 Present only if bit 0x20 is set in cell flag
-				this._writer.WriteBitDouble(styleOverride.TextHeight);
-			}
-
-			if (flags.HasFlag(CellOverrideFlags.TopGridColor))
-			{
-				//Top grid color CMC 69 Present only if bit 0x00040 is set in cell flag
-				this._writer.WriteCmColor(styleOverride.TopBorder.Color, this.R2004Pre);
-			}
-			if (flags.HasFlag(CellOverrideFlags.TopGridLineWeight))
-			{
-				//Top grid lineweight BS 279 Present only if bit 0x00400 is set in cell flag
-				this._writer.WriteBitShort((short)styleOverride.TopBorder.LineWeight);
-			}
-			if (flags.HasFlag(CellOverrideFlags.TopVisibility))
-			{
-				//Top visibility BS 289 Present only if bit 0x04000 is set in cell flag
-				this._writer.WriteBitShort((short)(styleOverride.TopBorder.IsInvisible ? 0 : 1));
-			}
-
-			if (flags.HasFlag(CellOverrideFlags.RightGridColor))
-			{
-				//Right grid color CMC 65 Present only if bit 0x00080 is set in cell flag
-				this._writer.WriteCmColor(styleOverride.RightBorder.Color, this.R2004Pre);
-			}
-			if (flags.HasFlag(CellOverrideFlags.RightGridLineWeight))
-			{
-				//Right grid lineweight BS 275 Present only if bit 0x00800 is set in cell flag
-				this._writer.WriteBitShort((short)styleOverride.RightBorder.LineWeight);
-			}
-			if (flags.HasFlag(CellOverrideFlags.RightVisibility))
-			{
-				//Right visibility BS 285 Present only if bit 0x08000 is set in cell flag
-				this._writer.WriteBitShort((short)(styleOverride.RightBorder.IsInvisible ? 0 : 1));
-			}
-
-			if (flags.HasFlag(CellOverrideFlags.BottomGridColor))
-			{
-				//Bottom grid color CMC 66 Present only if bit 0x00100 is set in cell flag
-				this._writer.WriteCmColor(styleOverride.BottomBorder.Color, this.R2004Pre);
-			}
-			if (flags.HasFlag(CellOverrideFlags.BottomGridLineWeight))
-			{
-				//Bottom grid lineweight BS 276 Present only if bit 0x01000 is set in cell flag
-				this._writer.WriteBitShort((short)styleOverride.BottomBorder.LineWeight);
-			}
-			if (flags.HasFlag(CellOverrideFlags.BottomVisibility))
-			{
-				//Bottom visibility BS 286 Present only if bit 0x10000 is set in cell flag
-				this._writer.WriteBitShort((short)(styleOverride.BottomBorder.IsInvisible ? 0 : 1));
-			}
-
-			if (flags.HasFlag(CellOverrideFlags.LeftGridColor))
-			{
-				//Left grid color CMC 68 Present only if bit 0x00200 is set in cell flag
-				this._writer.WriteCmColor(styleOverride.LeftBorder.Color, this.R2004Pre);
-			}
-			if (flags.HasFlag(CellOverrideFlags.LeftGridLineWeight))
-			{
-				//Left grid lineweight BS 278 Present only if bit 0x02000 is set in cell flag
-				this._writer.WriteBitShort((short)styleOverride.LeftBorder.LineWeight);
-			}
-			if (flags.HasFlag(CellOverrideFlags.LeftVisibility))
-			{
-				//Left visibility BS 288 Present only if bit 0x20000 is set in cell flag
-				this._writer.WriteBitShort((short)(styleOverride.LeftBorder.IsInvisible ? 0 : 1));
-			}
-		}
-
-		//R2007+:
-		if (this.R2007Plus)
-		{
-			//Unknown BL
-			this._writer.WriteBitLong(0);
-			//Value fields … See paragraph 20.4.98.
-			CadValue value = cell.Contents
-				.Select(c => c.CadValue)
-				.FirstOrDefault(v => v.Value is not BlockRecord);
-			if (value == null)
-			{
-				value = new CadValue();
-				value.IsEmpty = true;
-			}
-
-			this.writeCadValue(value);
-		}
 	}
 
 	private void writeTextEntity(TextEntity text)

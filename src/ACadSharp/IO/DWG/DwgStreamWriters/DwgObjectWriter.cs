@@ -151,7 +151,7 @@ internal partial class DwgObjectWriter : DwgSectionIO
 				return this.WriteShapes;
 			case Wall:
 			case MechanicalEntity:
-			case Surface:
+			case NurbSurface:
 				this.notify($"Entity type not implemented {entity.GetType().FullName}", NotificationType.NotImplemented);
 				return false;
 			default:
