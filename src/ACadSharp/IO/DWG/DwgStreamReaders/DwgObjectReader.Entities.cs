@@ -233,6 +233,20 @@ internal partial class DwgObjectReader : DwgSectionIO
 		return template;
 	}
 
+	private LoftedSurface.Profile readLoftedSurfaceProfile()
+	{
+		var profile = new LoftedSurface.Profile();
+		profile.ClassId = this._mergedReaders.ReadBitLong();
+
+		var dataSize = this._mergedReaders.ReadBitLong();
+		if (dataSize > 0)
+		{
+			profile.BinaryData = this._mergedReaders.ReadBytes((dataSize + 7) / 8);
+		}
+
+		return profile;
+	}
+
 	private CadModelerGeometryTemplate<T> readModelerGeometry<T>(CadModelerGeometryTemplate<T> template)
 		where T : ModelerGeometry, new()
 	{
@@ -416,18 +430,34 @@ internal partial class DwgObjectReader : DwgSectionIO
 		}
 	}
 
-	private LoftedSurface.Profile readLoftedSurfaceProfile()
+	private CadTemplate readRevolvedSurface()
 	{
-		var profile = new LoftedSurface.Profile();
-		profile.ClassId = this._mergedReaders.ReadBitLong();
+		var surface = new RevolvedSurface();
+		var template = new CadModelerGeometryTemplate<RevolvedSurface>(surface);
 
+		this.readSurface(template);
+
+		surface.DraftAngle = this._mergedReaders.ReadBitDouble();
+		surface.DraftStartDistance = this._mergedReaders.ReadBitDouble();
+		surface.DraftEndDistance = this._mergedReaders.ReadBitDouble();
+		surface.TwistAngle = this._mergedReaders.ReadBitDouble();
+		surface.IsSolid = this._mergedReaders.ReadBit();
+		surface.IsCloseToAxis = this._mergedReaders.ReadBit();
+
+		surface.AxisPoint = this._mergedReaders.Read3BitDouble();
+		surface.AxisVector = this._mergedReaders.Read3BitDouble();
+		surface.RevolveTransform = this.readMatrix4();
+		surface.RevolveAngle = this._mergedReaders.ReadBitDouble();
+		surface.StartAngle = this._mergedReaders.ReadBitDouble();
+
+		surface.ClassId = this._mergedReaders.ReadBitLong();
 		var dataSize = this._mergedReaders.ReadBitLong();
 		if (dataSize > 0)
 		{
-			profile.BinaryData = this._mergedReaders.ReadBytes((dataSize + 7) / 8);
+			surface.BinaryData = this._mergedReaders.ReadBytes((dataSize + 7) / 8);
 		}
 
-		return profile;
+		return template;
 	}
 
 	private CadTemplate readSolid3D()

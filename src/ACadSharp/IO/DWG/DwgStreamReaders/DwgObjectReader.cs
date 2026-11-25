@@ -5913,7 +5913,7 @@ namespace ACadSharp.IO.DWG
 					template = this.readSurface(new CadModelerGeometryTemplate<PlaneSurface>());
 					break;
 				case DxfFileToken.EntityRevolvedSurface:
-					template = this.readSurface(new CadModelerGeometryTemplate<RevolvedSurface>());
+					template = this.readRevolvedSurface();
 					break;
 				case DxfFileToken.EntitySweptSurface:
 					template = this.readSurface(new CadModelerGeometryTemplate<SweptSurface>());

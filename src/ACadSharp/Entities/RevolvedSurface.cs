@@ -43,7 +43,7 @@ public class RevolvedSurface : Surface
 	/// Flag that indicates if the revolution is closed to the axis.
 	/// </summary>
 	[DxfCodeValue(291)]
-	public bool CloseToAxis { get; set; }
+	public bool IsCloseToAxis { get; set; }
 
 	/// <summary>
 	/// Draft angle, in radians.
