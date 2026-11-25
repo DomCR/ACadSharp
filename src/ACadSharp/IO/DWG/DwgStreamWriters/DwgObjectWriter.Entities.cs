@@ -666,6 +666,9 @@ internal partial class DwgObjectWriter : DwgSectionIO
 			case LoftedSurface loftedSurface:
 				this.writeLoftedSurface(loftedSurface);
 				break;
+			case RevolvedSurface revolvedSurface:
+				this.writeRevolvedSurface(revolvedSurface);
+				break;
 			case Region region:
 				this.writeModelerGeometry(region);
 				break;
@@ -725,6 +728,26 @@ internal partial class DwgObjectWriter : DwgSectionIO
 		this.registerObject(entity);
 
 		this.writeChildEntities(children, seqend);
+	}
+
+	private void writeRevolvedSurface(RevolvedSurface revolvedSurface)
+	{
+		this.writeSurface(revolvedSurface);
+
+		this._writer.WriteBitDouble(revolvedSurface.DraftAngle);
+		this._writer.WriteBitDouble(revolvedSurface.DraftStartDistance);
+		this._writer.WriteBitDouble(revolvedSurface.DraftEndDistance);
+		this._writer.WriteBitDouble(revolvedSurface.TwistAngle);
+		this._writer.WriteBit(revolvedSurface.IsSolid);
+		this._writer.WriteBit(revolvedSurface.IsCloseToAxis);
+
+		this._writer.Write3BitDouble(revolvedSurface.AxisPoint);
+		this._writer.Write3BitDouble(revolvedSurface.AxisVector);
+		this.writeMatrix4(revolvedSurface.RevolveTransform);
+		this._writer.WriteBitDouble(revolvedSurface.RevolveAngle);
+		this._writer.WriteBitDouble(revolvedSurface.StartAngle);
+
+		this.writeSurfaceEntityData(revolvedSurface.ClassId ?? 0, revolvedSurface.BinaryData);
 	}
 
 	private void writeExtrudedSurface(ExtrudedSurface extrudedSurface)
