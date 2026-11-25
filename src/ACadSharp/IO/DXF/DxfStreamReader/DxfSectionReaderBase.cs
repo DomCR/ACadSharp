@@ -1368,15 +1368,27 @@ internal abstract class DxfSectionReaderBase
 				tmp.CadObject.LoftTransform = this.readMatrix4(40);
 				return true;
 			case 90:
-				var profiles = tmp.CadObject.Profiles;
-				if (profiles.Count == 0 || profiles[profiles.Count - 1].BinaryData != null)
-				{
-					profiles.Add(new LoftedSurface.Profile { ClassId = this._reader.ValueAsInt });
-				}
-				else
-				{
-					profiles[profiles.Count - 1].BinaryData = this.readByteEntries(310)?.ToArray();
-				}
+				var cross = new LoftedSurface.Profile { ClassId = this._reader.ValueAsInt };
+				tmp.CadObject.CrossSections.Add(cross);
+
+				this._reader.ExpectedCode(90);
+
+				cross.BinaryData = this.readByteEntries(310)?.ToArray();
+				return true;
+			case 91:
+				var guide = new LoftedSurface.Profile { ClassId = this._reader.ValueAsInt };
+				tmp.CadObject.CrossSections.Add(guide);
+
+				this._reader.ExpectedCode(90);
+
+				guide.BinaryData = this.readByteEntries(310)?.ToArray();
+				return true;
+			case 92:
+				tmp.CadObject.Path = new LoftedSurface.Profile { ClassId = this._reader.ValueAsInt };
+
+				this._reader.ExpectedCode(90);
+
+				tmp.CadObject.Path.BinaryData = this.readByteEntries(310)?.ToArray();
 				return true;
 			default:
 				return this.readSurfaceEntity<LoftedSurface>(template, map, subclass);

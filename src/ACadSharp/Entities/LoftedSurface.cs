@@ -35,6 +35,11 @@ public partial class LoftedSurface : Surface
 	public bool ClosedSurfaces { get; set; }
 
 	/// <summary>
+	/// Gets the cross sections that define the lofted surface.
+	/// </summary>
+	public List<Profile> CrossSections { get; private set; } = new();
+
+	/// <summary>
 	/// Draft angle at the end of the loft, in radians.
 	/// </summary>
 	[DxfCodeValue(42)]
@@ -45,6 +50,11 @@ public partial class LoftedSurface : Surface
 	/// </summary>
 	[DxfCodeValue(44)]
 	public double EndDraftMagnitude { get; set; }
+
+	/// <summary>
+	/// Gets the profiles that guide the lofted surface.
+	/// </summary>
+	public List<Profile> Guides { get; private set; } = new();
 
 	/// <summary>
 	/// Flag that indicates if the loft creates a solid.
@@ -70,18 +80,15 @@ public partial class LoftedSurface : Surface
 	public override string ObjectName => DxfFileToken.EntityLoftedSurface;
 
 	/// <summary>
+	/// Gets or sets the profile used to define the path.
+	/// </summary>
+	public Profile Path { get; set; }
+
+	/// <summary>
 	/// Plane normal lofting type.
 	/// </summary>
 	[DxfCodeValue(70)]
 	public LoftPlaneNormalType PlaneNormalLofting { get; set; }
-
-	/// <summary>
-	/// Entities used to build the loft: cross sections, guides and path.
-	/// </summary>
-	/// <remarks>
-	/// Each entry is stored in the DXF as a 90 (class id), 90 (size), 310 (data) group.
-	/// </remarks>
-	public List<Profile> Profiles { get; private set; } = new();
 
 	/// <summary>
 	/// Flag that indicates if the loft creates ruled surfaces.
@@ -121,11 +128,19 @@ public partial class LoftedSurface : Surface
 	{
 		LoftedSurface clone = (LoftedSurface)base.Clone();
 
-		clone.Profiles = new List<Profile>();
-		foreach (Profile profile in this.Profiles)
+		clone.CrossSections = new List<Profile>();
+		foreach (Profile profile in this.CrossSections)
 		{
-			clone.Profiles.Add((Profile)profile.Clone());
+			clone.CrossSections.Add(profile.Clone());
 		}
+
+		clone.Guides = new List<Profile>();
+		foreach (Profile profile in this.Guides)
+		{
+			clone.Guides.Add(profile.Clone());
+		}
+
+		clone.Path = this.Path?.Clone();
 
 		return clone;
 	}
