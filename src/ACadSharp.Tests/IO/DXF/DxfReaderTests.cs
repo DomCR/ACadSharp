@@ -2,6 +2,9 @@
 using ACadSharp.IO;
 using ACadSharp.Tests.TestModels;
 using System.Collections.Generic;
+using System.IO;
+using System.Linq;
+using System.Text;
 using Xunit;
 using Xunit.Abstractions;
 
@@ -179,5 +182,95 @@ public class DxfReaderTests : CadReaderTestsBase<DxfReader>
 		Assert.NotNull(doc.UCSs);
 		Assert.NotNull(doc.Views);
 		Assert.NotNull(doc.VPorts);
+	}
+
+	[Fact]
+	public void ReadMTextColumnHeightAfterRotation()
+	{
+		//Issue #1396: the group 50 that follows the column data is a column height, not the rotation
+		string[] lines =
+		{
+			"0",
+			"SECTION",
+			"2",
+			"HEADER",
+			"9",
+			"$ACADVER",
+			"1",
+			"AC1015",
+			"0",
+			"ENDSEC",
+			"0",
+			"SECTION",
+			"2",
+			"ENTITIES",
+			"0",
+			"MTEXT",
+			"5",
+			"2A",
+			"100",
+			"AcDbEntity",
+			"8",
+			"0",
+			"100",
+			"AcDbMText",
+			"10",
+			"5.0",
+			"20",
+			"7.0",
+			"30",
+			"0.0",
+			"40",
+			"2.5",
+			"41",
+			"50.0",
+			"71",
+			"1",
+			"72",
+			"1",
+			"1",
+			"Hello",
+			"11",
+			"0.8660254037844386",
+			"21",
+			"0.5",
+			"31",
+			"0.0",
+			"50",
+			"30.0",
+			"73",
+			"1",
+			"44",
+			"1.0",
+			"75",
+			"0",
+			"76",
+			"0",
+			"78",
+			"0",
+			"79",
+			"1",
+			"48",
+			"0.0",
+			"49",
+			"0.0",
+			"50",
+			"0.0",
+			"0",
+			"ENDSEC",
+			"0",
+			"EOF",
+		};
+
+		CadDocument doc;
+		using (MemoryStream stream = new MemoryStream(Encoding.ASCII.GetBytes(string.Join("\n", lines))))
+		{
+			doc = DxfReader.Read(stream);
+		}
+
+		MText mtext = doc.Entities.OfType<MText>().Single();
+		Assert.Equal(System.Math.PI / 6, mtext.Rotation, 6);
+		Assert.Equal(System.Math.Cos(System.Math.PI / 6), mtext.AlignmentPoint.X, 6);
+		Assert.Equal(0.5, mtext.AlignmentPoint.Y, 6);
 	}
 }
