@@ -18,6 +18,8 @@ public static class DxfFileToken
 
 	public const string BlkRefObjectContextData = "ACDB_BLKREFOBJECTCONTEXTDATA_CLASS";
 
+	public const string TextObjectContextData = "ACDB_TEXTOBJECTCONTEXTDATA_CLASS";
+
 	public const string BlkRefToken = "{BLKREFS";
 
 	public const string Block = "BLOCK";
