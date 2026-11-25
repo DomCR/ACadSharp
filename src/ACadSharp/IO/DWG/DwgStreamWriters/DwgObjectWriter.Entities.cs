@@ -669,6 +669,9 @@ internal partial class DwgObjectWriter : DwgSectionIO
 			case RevolvedSurface revolvedSurface:
 				this.writeRevolvedSurface(revolvedSurface);
 				break;
+			case Surface surface:
+				this.writeSurface(surface);
+				break;
 			case Region region:
 				this.writeModelerGeometry(region);
 				break;

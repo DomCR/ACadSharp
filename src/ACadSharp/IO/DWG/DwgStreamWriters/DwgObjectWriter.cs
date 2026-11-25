@@ -145,17 +145,13 @@ internal partial class DwgObjectWriter : DwgSectionIO
 
 		switch (entity)
 		{
-			case ExtrudedSurface:
-			case LoftedSurface:
-			case RevolvedSurface:
-				return true;
 			case UnknownEntity:
 				return false;
 			case Shape:
 				return this.WriteShapes;
 			case Wall:
 			case MechanicalEntity:
-			case Surface:
+			case NurbSurface:
 				this.notify($"Entity type not implemented {entity.GetType().FullName}", NotificationType.NotImplemented);
 				return false;
 			default:

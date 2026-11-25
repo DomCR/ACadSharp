@@ -509,6 +509,51 @@ internal partial class DwgObjectReader : DwgSectionIO
 		return template;
 	}
 
+	private CadTemplate readSweptSurface()
+	{
+		var surface = new SweptSurface();
+		var template = new CadModelerGeometryTemplate<SweptSurface>(surface);
+
+		this.readSurface(template);
+
+		surface.DraftAngle = _mergedReaders.ReadBitDouble();
+		surface.DraftStartDistance = _mergedReaders.ReadBitDouble();
+		surface.DraftEndDistance = _mergedReaders.ReadBitDouble();
+		surface.TwistAngle = _mergedReaders.ReadBitDouble();
+		surface.ScaleFactor = _mergedReaders.ReadBitDouble();
+		surface.AlignAngle = _mergedReaders.ReadBitDouble();
+		surface.IsSolid = _mergedReaders.ReadBit();
+		surface.SweepAlignment = (SweepAlignment)_mergedReaders.ReadBitShort();
+		surface.Unknown71 = _mergedReaders.ReadBitShort();
+		surface.AlignStart = _mergedReaders.ReadBit();
+		surface.Bank = _mergedReaders.ReadBit();
+		surface.BasePointSet = _mergedReaders.ReadBit();
+		surface.ReferenceVector = _mergedReaders.Read3BitDouble();
+		surface.SweepEntityTransformComputed = _mergedReaders.ReadBit();
+		surface.PathEntityTransformComputed = _mergedReaders.ReadBit();
+		surface.SweepEntityTransform = this.readMatrix4();
+		surface.PathEntityTransform = this.readMatrix4();
+
+		surface.SweepTransform = this.readMatrix4();
+		surface.PathTransform = this.readMatrix4();
+
+		surface.ClassId = this._mergedReaders.ReadBitLong();
+		var dataSize = this._mergedReaders.ReadBitLong();
+		if (dataSize > 0)
+		{
+			surface.BinaryData = this._mergedReaders.ReadBytes((dataSize + 7) / 8);
+		}
+
+		surface.PathClassId = this._mergedReaders.ReadBitLong();
+		dataSize = this._mergedReaders.ReadBitLong();
+		if (dataSize > 0)
+		{
+			surface.PathBinaryData = this._mergedReaders.ReadBytes((dataSize + 7) / 8);
+		}
+
+		return template;
+	}
+
 	private void readTableCell(CadTableCellTemplate template)
 	{
 		Cell cell = template.Cell;

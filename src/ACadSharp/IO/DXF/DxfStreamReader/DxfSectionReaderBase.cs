@@ -2262,14 +2262,14 @@ internal abstract class DxfSectionReaderBase
 		switch (this._reader.Code)
 		{
 			case 90:
-				if (!tmp.CadObject.ClassId.HasValue)
-				{
-					tmp.CadObject.ClassId = this._reader.ValueAsInt;
-				}
-				else
-				{
-					tmp.CadObject.BinaryData = this.readByteEntries(310)?.ToArray();
-				}
+				tmp.CadObject.ClassId = this._reader.ValueAsInt;
+				this._reader.ExpectedCode(90);
+				tmp.CadObject.BinaryData = this.readByteEntries(310)?.ToArray();
+				return true;
+			case 91:
+				tmp.CadObject.PathClassId = this._reader.ValueAsInt;
+				this._reader.ExpectedCode(90);
+				tmp.CadObject.PathBinaryData = this.readByteEntries(310)?.ToArray();
 				return true;
 			case 40:
 				tmp.CadObject.SweepTransform = this.readMatrix4(40);
