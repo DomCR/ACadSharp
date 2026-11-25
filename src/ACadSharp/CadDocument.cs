@@ -624,6 +624,11 @@ public class CadDocument : IHandledCadObject
 		}
 	}
 
+	internal IEnumerable<CadObject> GetCadObjects()
+	{
+		return this._cadObjects.Values.OfType<CadObject>().ToArray();
+	}
+
 	internal void AddCadObject(CadObject cadObject)
 	{
 		if (cadObject.Document != null)
