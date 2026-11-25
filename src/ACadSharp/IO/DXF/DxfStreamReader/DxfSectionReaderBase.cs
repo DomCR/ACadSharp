@@ -1377,7 +1377,7 @@ internal abstract class DxfSectionReaderBase
 				return true;
 			case 91:
 				var guide = new LoftedSurface.Profile { ClassId = this._reader.ValueAsInt };
-				tmp.CadObject.CrossSections.Add(guide);
+				tmp.CadObject.Guides.Add(guide);
 
 				this._reader.ExpectedCode(90);
 
