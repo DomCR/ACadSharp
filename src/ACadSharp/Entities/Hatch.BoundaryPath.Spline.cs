@@ -193,7 +193,12 @@ public partial class Hatch
 				spline.EndTangent = this.EndTangent.Convert<XYZ>();
 
 				spline.ControlPoints.AddRange(this.ControlPoints.Select(cp => new XYZ(cp.X, cp.Y, 0)));
-				spline.Weights.AddRange(this.ControlPoints.Select(x => x.Z));
+				// The Z of each control point holds its weight, which is only meaningful for rational splines.
+				// Leaving the weights empty for non-rational edges lets the spline default them to 1.
+				if (this.IsRational)
+				{
+					spline.Weights.AddRange(this.ControlPoints.Select(x => x.Z));
+				}
 				spline.FitPoints.AddRange(this.FitPoints.Select(x => x.Convert<XYZ>()));
 				spline.Knots.AddRange(this.Knots);
 

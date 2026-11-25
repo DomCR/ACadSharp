@@ -2505,7 +2505,8 @@ namespace ACadSharp.IO.DWG
 									//pt0 2RD 10 control point
 									var cp = this._objectReader.Read2RawDouble();
 
-									double wheight = 0;
+									//Non-rational control points have an implicit weight of 1, same as the DXF reader
+									double wheight = 1;
 									if (splineEdge.IsRational)
 										//weight BD 40 weight
 										wheight = this._objectReader.ReadBitDouble();
