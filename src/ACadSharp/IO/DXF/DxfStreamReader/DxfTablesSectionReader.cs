@@ -249,6 +249,15 @@ internal class DxfTablesSectionReader : DxfSectionReaderBase
 
 		while (this._reader.DxfCode != DxfCode.Start)
 		{
+			//Some applications write entries without a name: in failsafe mode the name is left empty
+			//and Table.Add gives the entry a generated one
+			if (this._reader.Code == 2 && string.IsNullOrWhiteSpace(this._reader.ValueAsString) && this._builder.Configuration.Failsafe)
+			{
+				this._builder.Notify($"Entry without a name found in {template.CadObject.ObjectName} at line {this._reader.Position}", NotificationType.Warning);
+				this._reader.ReadNext();
+				continue;
+			}
+
 			if (!readEntry(template, map.SubClasses[template.CadObject.SubclassMarker]))
 			{
 				this.readCommonTableEntryCodes(template, out bool isExtendedData, map);
