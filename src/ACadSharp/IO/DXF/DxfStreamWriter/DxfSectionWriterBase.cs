@@ -173,7 +173,8 @@ internal abstract partial class DxfSectionWriterBase
 			this._writer.Write(DxfCode.ControlString, "}");
 		}
 
-		this._writer.Write(DxfCode.SoftPointerId, cadObject.Owner.Handle);
+		//An object read without its owner (an orphaned FIELD listed by ACAD_FIELDLIST) is written with a null owner handle
+		this._writer.Write(DxfCode.SoftPointerId, cadObject.Owner?.Handle ?? 0);
 	}
 
 	protected void writeExtendedData(ExtendedDataDictionary xdata)
