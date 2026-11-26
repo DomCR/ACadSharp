@@ -1,6 +1,8 @@
 ﻿using ACadSharp.Entities;
 using ACadSharp.IO;
+using ACadSharp.Objects;
 using CSMath;
+using System;
 using System.IO;
 using System.Linq;
 using Xunit;
@@ -52,6 +54,33 @@ public class DxfWriterSingleObjectTests : WriterSingleObjectTests
 	public void WriteCasesAC1032(SingleCaseGenerator data)
 	{
 		this.writeDxfFile(data, ACadVersion.AC1032);
+	}
+
+	[Fact]
+	public void WriteFieldDateValue()
+	{
+		DateTime date = new DateTime(2026, 9, 30, 10, 15, 30, 250);
+
+		SingleCaseGenerator data = new SingleCaseGenerator();
+		data.FieldCadValues();
+
+		MText text = Assert.Single(data.Document.Entities.OfType<MText>());
+		Field field = text.XDictionary.GetEntry<CadDictionary>("ACAD_FIELD").GetEntry<Field>("TEXT");
+		CadValue dateValue = new CadValue();
+		dateValue.SetValue(date, CadValueType.Date);
+		field.Values.Add("date", dateValue);
+
+		using MemoryStream output = new MemoryStream();
+		DxfWriter.Write(output, data.Document);
+
+		using MemoryStream input = new MemoryStream(output.ToArray());
+		CadDocument result = DxfReader.Read(input);
+		Field writtenField = result.GetCadObject<Field>(field.Handle);
+
+		Assert.NotNull(writtenField);
+		Assert.True(writtenField.Values.TryGetValue("date", out CadValue value));
+		Assert.Equal(CadValueType.Date, value.ValueType);
+		Assert.Equal(date, value.Value);
 	}
 
 	[Theory]
