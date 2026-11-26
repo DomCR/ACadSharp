@@ -1587,7 +1587,7 @@ internal partial class DwgObjectWriter : DwgSectionIO
 		//Bigfont name TV 4
 		this._writer.WriteVariableText(style.BigFontFilename);
 
-		this._writer.HandleReference(DwgReferenceType.HardPointer, this._document.TextStyles);
+		this._writer.HandleReference(DwgReferenceType.HardPointer, 0);
 
 		this.registerObject(style);
 	}
