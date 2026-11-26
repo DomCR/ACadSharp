@@ -1,5 +1,6 @@
 ﻿using ACadSharp.Entities;
 using ACadSharp.Objects;
+using System;
 using System.Collections.Generic;
 using static ACadSharp.Entities.TableEntity;
 using static ACadSharp.IO.Templates.CadTableStyleTemplate;
@@ -75,6 +76,11 @@ internal partial class CadTableEntityTemplate : CadInsertTemplate
 			cellTemplate.Build(builder);
 		}
 
+		if (this.TableEntity.MergedCellRanges.Count == 0)
+		{
+			this.buildMergedCellRanges();
+		}
+
 		foreach (var component in this.CadTableComponentTemplates)
 		{
 			component.Build(builder, this.TableEntity.Style);
@@ -85,5 +91,30 @@ internal partial class CadTableEntityTemplate : CadInsertTemplate
 		}
 
 		this.CellStyleTemplate?.Build(builder);
+	}
+
+	private void buildMergedCellRanges()
+	{
+		//The cells store the merged ranges, the first cell of the range has its size
+		for (int i = 0; i < this.TableEntity.Rows.Count; i++)
+		{
+			Row row = this.TableEntity.Rows[i];
+			for (int j = 0; j < row.Cells.Count; j++)
+			{
+				Cell cell = row.Cells[j];
+				if (cell.BorderWidth <= 1 && cell.BorderHeight <= 1)
+				{
+					continue;
+				}
+
+				this.TableEntity.MergedCellRanges.Add(new CellRange
+				{
+					TopRowIndex = i,
+					LeftColumnIndex = j,
+					BottomRowIndex = i + Math.Max(cell.BorderHeight, 1) - 1,
+					RightColumnIndex = j + Math.Max(cell.BorderWidth, 1) - 1,
+				});
+			}
+		}
 	}
 }

@@ -92,11 +92,23 @@ internal abstract class DxfSectionReaderBase
 				case 91:
 					value.SetValue(this._reader.ValueAsInt);
 					break;
+				case 92:
+					//Size of the date data in 310
+					break;
 				case 93:
 					value.Flags = this._reader.ValueAsInt;
 					break;
 				case 140:
 					value.SetValue(this._reader.ValueAsDouble);
+					break;
+				case 310 when value.ValueType == CadValueType.Date:
+					{
+						byte[] array = this._reader.ValueAsBinaryChunk;
+						if (array.Length == 16)
+						{
+							value.SetValue(CadUtils.FromSystemTime(array));
+						}
+					}
 					break;
 				case 330:
 					template.ValueHandle = this._reader.ValueAsHandle;
@@ -2446,6 +2458,16 @@ internal abstract class DxfSectionReaderBase
 				return true;
 			case 301:
 				content = new TableEntity.CellContent();
+				if (tmp.CurrentCell.Type == TableEntity.CellType.Block)
+				{
+					//The block is in 340, the value is an empty string
+					content.ContentType = TableEntity.TableCellContentType.Block;
+					tmp.CurrentCell.Contents.Add(content);
+					this.readCadValue(new CadValue());
+					return true;
+				}
+
+				content.ContentType = TableEntity.TableCellContentType.Value;
 				var contentTemplate = new CadTableCellContentTemplate(content);
 				tmp.CurrentCell.Contents.Add(content);
 				var valTemplate = readCadValue(content.CadValue);

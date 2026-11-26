@@ -114,6 +114,8 @@ public abstract class WriterSingleObjectTests : IOTestsBase
 		Data.Add(new(nameof(SingleCaseGenerator.ProxyShellWithHole)));
 		Data.Add(new(nameof(SingleCaseGenerator.AnonymousBlockWithShortName)));
 		Data.Add(new(nameof(SingleCaseGenerator.LongTableEntryNames)));
+		Data.Add(new(nameof(SingleCaseGenerator.FieldCadValues)));
+		Data.Add(new(nameof(SingleCaseGenerator.TableEntityCellValues)));
 	}
 
 	public WriterSingleObjectTests(ITestOutputHelper output) : base(output)
@@ -1832,6 +1834,68 @@ public abstract class WriterSingleObjectTests : IOTestsBase
 			};
 		}
 
+		public void FieldCadValues()
+		{
+			MText text = new MText();
+			text.Value = "cad values";
+			this.Document.Entities.Add(text);
+
+			Field field = new Field();
+			field.EvaluatorId = "_text";
+			field.FieldCode = "cad values";
+			field.FormatString = string.Empty;
+			field.Value.SetValue("cad values", CadValueType.String);
+
+			CadValue unknownEmpty = new CadValue();
+			unknownEmpty.IsEmpty = true;
+			field.Values.Add("unknown_empty", unknownEmpty);
+
+			//Unknown value that is not empty, as read from a pre R2007 dwg
+			CadValue unknown = new CadValue();
+			unknown.SetValue(0);
+			field.Values.Add("unknown", unknown);
+
+			CadValue longValue = new CadValue();
+			longValue.SetValue(42, CadValueType.Long);
+			field.Values.Add("long", longValue);
+
+			CadValue doubleValue = new CadValue();
+			doubleValue.SetValue(0.5, CadValueType.Double);
+			field.Values.Add("double", doubleValue);
+
+			CadValue stringValue = new CadValue();
+			stringValue.SetValue("text value", CadValueType.String);
+			field.Values.Add("string", stringValue);
+
+			CadValue pointValue = new CadValue();
+			pointValue.SetValue(new XYZ(1, 2, 3), CadValueType.Point3D);
+			field.Values.Add("point", pointValue);
+
+			CadDictionary dict = text.CreateExtendedDictionary();
+			CadDictionary fields = new CadDictionary("ACAD_FIELD");
+			dict.Add(fields);
+			fields.Add("TEXT", field);
+
+			this.AssertRoundtrip = (doc) =>
+			{
+				if (this.Format == CadFileFormat.DWG)
+				{
+					return;
+				}
+
+				Field result = doc.GetCadObject<Field>(field.Handle);
+
+				Assert.NotNull(result);
+				foreach (var item in field.Values)
+				{
+					Assert.True(result.Values.TryGetValue(item.Key, out CadValue value), $"Value {item.Key} not found");
+					Assert.Equal(item.Value.ValueType, value.ValueType);
+					Assert.Equal(item.Value.IsEmpty, value.IsEmpty);
+					Assert.Equal(item.Value.Value, value.Value);
+				}
+			};
+		}
+
 		public void GenerateExampleDxf()
 		{
 			this.Document.Header.UnitMode = (short)ACadSharp.Types.Units.UnitsType.Millimeters;
@@ -3148,6 +3212,100 @@ public abstract class WriterSingleObjectTests : IOTestsBase
 				Assert.NotNull(result);
 				EntityComparator.IsEqual(spline, result);
 				Assert.Equal(this.Document.ModelSpace.Entities.Count, doc.ModelSpace.Entities.Count);
+			};
+		}
+
+		public void TableEntityCellValues()
+		{
+			TableEntity table = new TableEntity(new BlockRecord("*T1"));
+
+			object[,] values =
+			{
+				{ "title", null, null },
+				{ "text", 42, 3.75 },
+				{ new DateTime(2024, 11, 15), new XYZ(1, 2, 3), null },
+			};
+
+			for (int j = 0; j < 3; j++)
+			{
+				table.Columns.Add(new TableEntity.Column() { Width = 10 });
+			}
+
+			for (int i = 0; i < 3; i++)
+			{
+				TableEntity.Row row = new TableEntity.Row() { Height = 5 };
+				for (int j = 0; j < 3; j++)
+				{
+					TableEntity.Cell cell = new TableEntity.Cell();
+					cell.Type = TableEntity.CellType.Text;
+
+					TableEntity.CellContent content = new TableEntity.CellContent();
+					content.ContentType = TableEntity.TableCellContentType.Value;
+					switch (values[i, j])
+					{
+						case string str:
+							content.CadValue.SetValue(str, CadValueType.String);
+							break;
+						case int l:
+							content.CadValue.SetValue(l, CadValueType.Long);
+							break;
+						case double d:
+							content.CadValue.SetValue(d, CadValueType.Double);
+							break;
+						case DateTime date:
+							content.CadValue.SetValue(date, CadValueType.Date);
+							break;
+						case XYZ xyz:
+							content.CadValue.SetValue(xyz, CadValueType.Point3D);
+							break;
+						default:
+							content.CadValue.IsEmpty = true;
+							break;
+					}
+
+					cell.Contents.Add(content);
+					row.Cells.Add(cell);
+				}
+
+				table.Rows.Add(row);
+			}
+
+			table.MergedCellRanges.Add(new TableEntity.CellRange() { TopRowIndex = 0, BottomRowIndex = 0, LeftColumnIndex = 0, RightColumnIndex = 2 });
+
+			this.Document.Entities.Add(table);
+
+			this.AssertRoundtrip = (doc) =>
+			{
+				//The cell values are written in dxf from AutoCAD 2007
+				if (this.Format == CadFileFormat.DWG || doc.Header.Version < ACadVersion.AC1021)
+				{
+					return;
+				}
+
+				TableEntity result = doc.GetCadObject<TableEntity>(table.Handle);
+
+				Assert.NotNull(result);
+
+				TableEntity.CellRange range = Assert.Single(result.MergedCellRanges);
+				Assert.Equal(0, range.TopRowIndex);
+				Assert.Equal(0, range.BottomRowIndex);
+				Assert.Equal(0, range.LeftColumnIndex);
+				Assert.Equal(2, range.RightColumnIndex);
+
+				for (int i = 0; i < 3; i++)
+				{
+					for (int j = 0; j < 3; j++)
+					{
+						TableEntity.CellContent expected = table.Rows[i].Cells[j].Content;
+						TableEntity.CellContent content = result.Rows[i].Cells[j].Content;
+
+						Assert.NotNull(content);
+						Assert.Equal(expected.ContentType, content.ContentType);
+						Assert.Equal(expected.CadValue.ValueType, content.CadValue.ValueType);
+						Assert.Equal(expected.CadValue.IsEmpty, content.CadValue.IsEmpty);
+						Assert.Equal(expected.CadValue.Value, content.CadValue.Value);
+					}
+				}
 			};
 		}
 

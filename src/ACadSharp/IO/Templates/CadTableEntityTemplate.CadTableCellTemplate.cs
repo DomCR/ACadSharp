@@ -1,6 +1,7 @@
 ﻿using ACadSharp.Entities;
 using ACadSharp.Tables;
 using System.Collections.Generic;
+using System.Linq;
 
 namespace ACadSharp.IO.Templates;
 
@@ -33,7 +34,15 @@ internal partial class CadTableEntityTemplate
 		{
 			if (builder.TryGetCadObject<BlockRecord>(this.BlockRecordHandle, out var block))
 			{
-				this.Cell.Contents.Add(new TableEntity.CellContent(block));
+				TableEntity.CellContent content = this.Cell.Contents.FirstOrDefault(c => c.ContentType == TableEntity.TableCellContentType.Block);
+				if (content != null)
+				{
+					content.CadValue.SetValue(block);
+				}
+				else
+				{
+					this.Cell.Contents.Add(new TableEntity.CellContent(block));
+				}
 			}
 			else if (this.BlockRecordHandle != null && this.BlockRecordHandle != 0)
 			{
