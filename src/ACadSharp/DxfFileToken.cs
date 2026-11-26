@@ -8,6 +8,8 @@ public static class DxfFileToken
 
 	public const string AcdsSchema = "ACDSSCHEMA";
 
+	public const string AcIdBlockReference = "ACIDBLOCKREFERENCE";
+
 	public const string AcmBalloon = "ACMBALLOON";
 
 	public const string AcmPartList = "ACMPARTLIST";

@@ -5798,6 +5798,9 @@ namespace ACadSharp.IO.DWG
 
 			switch (c.DxfName)
 			{
+				case DxfFileToken.AcIdBlockReference:
+					template = this.readInsert();
+					break;
 				case DxfFileToken.AcmPartRef:
 					template = this.readAcmPartRef();
 					break;
