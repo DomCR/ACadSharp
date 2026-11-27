@@ -153,6 +153,9 @@ public class TextEntity : Entity, IText
 	public override void ApplyTransform(Transform transform)
 	{
 		bool mirrText = this.Mirror.HasFlag(TextMirrorFlag.Backward);
+		XYZ originalAlignmentPoint = this.AlignmentPoint;
+		bool hasAlignmentPoint = this.HorizontalAlignment != TextHorizontalAlignment.Left
+			|| this.VerticalAlignment != TextVerticalAlignmentType.Baseline;
 
 		XYZ newInsert = transform.ApplyTransform(this.InsertPoint);
 		XYZ newNormal = this.transformNormal(transform, this.Normal);
@@ -271,6 +274,10 @@ public class TextEntity : Entity, IText
 		}
 
 		this.InsertPoint = newInsert;
+		if (hasAlignmentPoint)
+		{
+			this.AlignmentPoint = transform.ApplyTransform(originalAlignmentPoint);
+		}
 		this.Normal = newNormal;
 		this.Rotation = newRotation;
 		this.Height = newHeight;
