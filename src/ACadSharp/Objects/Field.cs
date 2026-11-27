@@ -132,6 +132,29 @@ public class Field : NonGraphicalObject, IDxfClassDefined
 		};
 	}
 
+	/// <inheritdoc/>
+	public override CadObject Clone()
+	{
+		Field clone = (Field)base.Clone();
+
+		clone.Children = new CadObjectCollection<Field>(clone);
+		foreach (Field child in this.Children)
+		{
+			clone.Children.Add((Field)child.Clone());
+		}
+
+		clone.CadObjects = new List<CadObject>(this.CadObjects);
+
+		clone.Value = this.Value?.Clone();
+		clone.Values = new Dictionary<string, CadValue>(StringComparer.InvariantCultureIgnoreCase);
+		foreach (var item in this.Values)
+		{
+			clone.Values.Add(item.Key, item.Value?.Clone());
+		}
+
+		return clone;
+	}
+
 	internal override void AssignDocument(CadDocument doc)
 	{
 		base.AssignDocument(doc);
