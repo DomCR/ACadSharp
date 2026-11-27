@@ -21,6 +21,30 @@ internal class DwgFileHeaderWriterAC18 : DwgFileHeaderWriterBase<DwgFileHeaderAC
 
 	private List<DwgLocalSectionMap> _localSectionsMaps = new List<DwgLocalSectionMap>();
 
+	/// <summary>
+	/// Section ids as written by AutoCAD.
+	/// </summary>
+	/// <remarks>
+	/// The empty section has the id 0, the other sections are numbered descending in map order.
+	/// The ids are written in the section map and in the header of every data page; AutoCAD and DWG TrueView
+	/// reject a file where all section ids are 0 ("Drawing file is not valid").
+	/// </remarks>
+	private static readonly Dictionary<string, int> _sectionIds = new Dictionary<string, int>
+	{
+		{ DwgSectionDefinition.Header, 1 },
+		{ DwgSectionDefinition.AuxHeader, 2 },
+		{ DwgSectionDefinition.Classes, 3 },
+		{ DwgSectionDefinition.Handles, 4 },
+		{ DwgSectionDefinition.Template, 5 },
+		{ DwgSectionDefinition.ObjFreeSpace, 6 },
+		{ DwgSectionDefinition.AcDbObjects, 7 },
+		{ DwgSectionDefinition.RevHistory, 8 },
+		{ DwgSectionDefinition.SummaryInfo, 9 },
+		{ DwgSectionDefinition.Preview, 10 },
+		{ DwgSectionDefinition.AppInfo, 11 },
+		{ DwgSectionDefinition.FileDepList, 12 },
+	};
+
 	public DwgFileHeaderWriterAC18(Stream stream, Encoding encoding, CadDocument document) : base(stream, encoding, document)
 	{
 		// File header info
@@ -35,6 +59,10 @@ internal class DwgFileHeaderWriterAC18 : DwgFileHeaderWriterBase<DwgFileHeaderAC
 		DwgSectionDescriptor descriptor = new DwgSectionDescriptor(name);
 		this.FileHeader.AddSection(descriptor);
 		descriptor.DecompressedSize = (ulong)decompsize;
+		//The id is written into the page headers, it has to be assigned before the pages are created
+		descriptor.SectionId = _sectionIds.TryGetValue(name, out int sectionId)
+			? sectionId
+			: Math.Max(_sectionIds.Count, this._descriptors.Count) + 1;
 
 		descriptor.CompressedSize = (ulong)stream.Length;
 		descriptor.CompressedCode = !isCompressed ? 1 : 2;
@@ -291,8 +319,13 @@ internal class DwgFileHeaderWriterAC18 : DwgFileHeaderWriterBase<DwgFileHeaderAC
 		MemoryStream stream = new MemoryStream();
 		var swriter = DwgStreamWriterBase.GetStreamWriter(_version, stream, _encoding);
 
+		//The map starts with the empty section (id 0), followed by the sections in descending id order
+		var emptySection = new DwgSectionDescriptor(string.Empty) { CompressedSize = 0, PageCount = 0, SectionId = 0 };
+		var orderedDescriptors = new List<DwgSectionDescriptor> { emptySection };
+		orderedDescriptors.AddRange(System.Linq.Enumerable.OrderByDescending(this._descriptors.Values, d => d.SectionId));
+
 		//0x00	4	Number of section descriptions(NumDescriptions)
-		swriter.WriteInt(this._descriptors.Count);
+		swriter.WriteInt(orderedDescriptors.Count);
 
 		//0x04	4	0x02 (long)
 		swriter.WriteInt(2);
@@ -302,8 +335,8 @@ internal class DwgFileHeaderWriterAC18 : DwgFileHeaderWriterBase<DwgFileHeaderAC
 		swriter.WriteInt(0);
 
 		//0x10	4	Unknown (long), ODA writes NumDescriptions here.
-		swriter.WriteInt(this._descriptors.Count);
-		foreach (var descriptors in this._descriptors.Values)
+		swriter.WriteInt(orderedDescriptors.Count);
+		foreach (var descriptors in orderedDescriptors)
 		{
 			//0x00	8	Size of section(OdUInt64)
 			swriter.WriteBytes(LittleEndianConverter.Instance.GetBytes(descriptors.CompressedSize));
