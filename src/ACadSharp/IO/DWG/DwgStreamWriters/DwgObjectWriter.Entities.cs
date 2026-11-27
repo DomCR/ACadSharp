@@ -1803,9 +1803,9 @@ internal partial class DwgObjectWriter : DwgSectionIO
 		this._writer.WriteBitShort((short)mtext.DrawingDirection);
 
 		//Extents ht BD ---Undocumented and not present in DXF or entget
-		this._writer.WriteBitDouble(0);
+		this._writer.WriteBitDouble(mtext.VerticalHeight);
 		//Extents wid BD ---Undocumented and not present in DXF or entget
-		this._writer.WriteBitDouble(0);
+		this._writer.WriteBitDouble(mtext.HorizontalWidth);
 
 		//Text TV 1 All text in one long string
 		this._writer.WriteVariableText(mtext.Value);
