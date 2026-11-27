@@ -2,8 +2,11 @@
 using ACadSharp.Exceptions;
 using ACadSharp.Header;
 using ACadSharp.IO;
+using ACadSharp.IO.DWG;
+using ACadSharp.IO.DWG.FileHeaders;
 using ACadSharp.Tests.Common;
 using System.IO;
+using System.Linq;
 using Xunit;
 using Xunit.Abstractions;
 
@@ -69,6 +72,39 @@ public class DwgWriterTests : IOTestsBase
 		using (var re = new DwgReader(stream, this.onNotification))
 		{
 			CadHeader header = re.ReadHeader();
+		}
+	}
+
+	[Theory]
+	[InlineData(ACadVersion.AC1018)]
+	[InlineData(ACadVersion.AC1024)]
+	[InlineData(ACadVersion.AC1027)]
+	[InlineData(ACadVersion.AC1032)]
+	public void WriteSectionIdsTest(ACadVersion version)
+	{
+		CadDocument doc = new CadDocument();
+		doc.Header.Version = version;
+
+		MemoryStream stream = new MemoryStream();
+		using (var wr = new DwgWriter(stream, doc))
+		{
+			wr.Write();
+		}
+
+		stream = new MemoryStream(stream.ToArray());
+
+		using (var re = new DwgReader(stream, this.onNotification))
+		{
+			DwgFileHeaderAC18 fileHeader = (DwgFileHeaderAC18)re.readFileHeader();
+
+			//AutoCAD rejects the file if the section ids are not set ("Drawing file is not valid")
+			Assert.True(fileHeader.Descriptors.TryGetValue(string.Empty, out DwgSectionDescriptor empty));
+			Assert.Equal(0, empty.SectionId);
+			Assert.Equal(1, fileHeader.Descriptors[DwgSectionDefinition.Header].SectionId);
+
+			var ids = fileHeader.Descriptors.Values.Where(d => d.Name != string.Empty).Select(d => d.SectionId).ToList();
+			Assert.DoesNotContain(0, ids);
+			Assert.Equal(ids.Count, ids.Distinct().Count());
 		}
 	}
 
