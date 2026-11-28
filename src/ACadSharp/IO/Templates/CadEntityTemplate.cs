@@ -102,6 +102,8 @@ internal class CadEntityTemplate : CadTemplate<Entity>
 		if (builder.TryGetCadObject(this.ColorHandle, out color))
 		{
 			this.CadObject.BookColor = color;
+			//The DWG reader sets ByBlock as a placeholder for a book color
+			this.CadObject.Color = color.Color;
 		}
 		else if (!this.BookColorName.IsNullOrEmpty() &&
 			builder.DocumentToBuild != null &&
